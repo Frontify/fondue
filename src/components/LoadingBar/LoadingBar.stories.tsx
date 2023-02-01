@@ -7,6 +7,7 @@ import { LoadingBar as LoadingBarComponent, LoadingBarProps, LoadingBarSize, Loa
 export default {
     title: 'Components/LoadingBar',
     component: LoadingBarComponent,
+    tags: ['autodocs'],
     argTypes: {
         state: {
             options: Object.values(LoadingBarState),

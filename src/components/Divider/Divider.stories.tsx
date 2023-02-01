@@ -7,6 +7,7 @@ import { Divider as DividerComponent, DividerHeight, DividerProps, DividerStyle 
 export default {
     title: 'Components/Divider',
     component: DividerComponent,
+    tags: ['autodocs'],
     args: {
         color: 'red',
     },

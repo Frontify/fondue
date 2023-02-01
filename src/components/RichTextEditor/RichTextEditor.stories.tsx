@@ -51,18 +51,22 @@ import { defaultDesignTokens } from './utils/defaultDesignTokens';
 export default {
     title: 'Components/Rich Text Editor',
     component: RichTextEditorComponent,
+    tags: ['autodocs'],
     args: {
         value: JSON.stringify(value),
+        updateValueOnChange: true,
         placeholder: 'Some placeholder',
         readonly: false,
         clear: false,
         position: Position.FLOATING,
-        padding: PaddingSizes.None,
+        padding: Object.keys(PaddingSizes)[2],
+        border: true,
     },
     argTypes: {
         onTextChange: { action: 'onTextChange' },
         onBlur: { action: 'onBlur' },
         value: { type: 'string' },
+        updateValueOnChange: { type: 'boolean' },
         position: {
             options: Object.values(Position),
             mapping: Position,
@@ -78,6 +82,10 @@ export default {
                 type: 'radio',
                 labels: Object.entries(PaddingSizes).map(([key, value]) => [value, key]),
             },
+        },
+        layout: {
+            columns: { type: 'string' },
+            gap: { type: 'string' },
         },
     },
 } as Meta;
@@ -163,8 +171,12 @@ export const MarkdownSerializerDeserializer: StoryFn<RichTextEditorProps> = () =
                 <pre id="json">{JSON.stringify(resultSlate, undefined, 2)}</pre>
             </div>
             Rich Text Editor:
-            <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
-                <RichTextEditorComponent value={JSON.stringify(resultSlate)} plugins={allPlugins} />
+            <div className="tw-m-6">
+                <RichTextEditorComponent
+                    value={JSON.stringify(resultSlate)}
+                    plugins={allPlugins}
+                    padding={PaddingSizes.Medium}
+                />
             </div>
         </>
     );
@@ -177,6 +189,7 @@ export const Multiple: StoryFn<RichTextEditorProps> = () => (
                 placeholder="I'm placeholder one"
                 id="editor-one"
                 value="<p>I'm editor <strong>one</strong>.</p>"
+                border={false}
             />
         </div>
         <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-h-36">
@@ -184,6 +197,7 @@ export const Multiple: StoryFn<RichTextEditorProps> = () => (
                 placeholder="I'm placeholder two"
                 id="editor-two"
                 value="<p>I'm editor <strong>two</strong>.</p>"
+                border={false}
             />
         </div>
         <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-h-36">
@@ -191,6 +205,7 @@ export const Multiple: StoryFn<RichTextEditorProps> = () => (
                 placeholder="I'm placeholder three"
                 id="editor-three"
                 value="<p>I'm editor <strong>three</strong>.</p>"
+                border={false}
             />
         </div>
         <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-h-36">
@@ -198,6 +213,7 @@ export const Multiple: StoryFn<RichTextEditorProps> = () => (
                 placeholder="I'm placeholder four"
                 id="editor-four"
                 value="<p>I'm editor <strong>four</strong>.</p>"
+                border={false}
             />
         </div>
     </div>
@@ -421,11 +437,16 @@ WithoutToolbar.args = {
 };
 
 export const BreakAfterColumn: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
-    <div className="tw-block tw-column tw-columns-2">
-        <RichTextEditorComponent {...args} />
-    </div>
+    <RichTextEditorComponent {...args} />
 );
 BreakAfterColumn.args = {
     value: JSON.stringify(defaultValue),
     plugins: defaultPluginsWithColumns,
+    border: false,
+    layout: {
+        columns: 3,
+    },
+};
+BreakAfterColumn.argTypes = {
+    border: { table: { disable: true } },
 };

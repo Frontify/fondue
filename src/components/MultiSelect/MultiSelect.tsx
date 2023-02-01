@@ -9,13 +9,17 @@ import { FocusScope, useFocusRing } from '@react-aria/focus';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
 import { AnimatePresence, motion } from 'framer-motion';
-import React, { ChangeEvent, FC, KeyboardEvent, useRef, useState } from 'react';
+import React, { ChangeEvent, FC, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { getInputWidth, getPaddingClasses } from './helpers';
 import { Menu } from '@components/Menu';
 import { MenuItem } from '@components/MenuItem';
 import { useClickOutside } from '@hooks/useClickOutside';
 import { DefaultItem, NoSearchResults, OptionalItems } from './SelectMenuItems';
 import { CheckboxState } from '@components/Checkbox/Checkbox';
+import { createPortal } from 'react-dom';
+import { usePopper } from 'react-popper';
+import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from '@components/Dropdown/useDropdownAutoHeight';
+import { DEFAULT_DROPDOWN_MIN_ANIMATION_HEIGHT } from '@components/Dropdown/Dropdown';
 
 export enum MultiSelectType {
     Default = 'Default',
@@ -59,6 +63,7 @@ export type MultiSelectProps = {
     noResultsLabel?: string;
     summarizedLabel?: string;
     indeterminateItemKeys?: (string | number)[];
+    flip?: boolean;
 };
 
 export type Item = {
@@ -89,22 +94,20 @@ export const MultiSelect: FC<MultiSelectProps> = ({
     filterable = false,
     summarizedLabel: summarizedLabelFromProps,
     indeterminateItemKeys,
+    flip = false,
 }) => {
     const [open, setOpen] = useState(false);
-    const [checkboxes, setCheckboxes] = useState<Item[]>(
-        items.map((item) => {
-            const checkboxBaseItem = { ...item, label: item.value };
-            if (indeterminateItemKeys?.includes(item.value)) {
-                return { ...checkboxBaseItem, state: CheckboxState.Mixed };
-            }
-            return checkboxBaseItem;
-        }),
-    );
+    const [checkboxes, setCheckboxes] = useState<Item[]>([]);
     const hasResults = !!checkboxes.find((item) => !item.isCategory && !item.isDivider);
-    const triggerRef = useRef<HTMLDivElement | null>(null);
     const multiSelectRef = useRef<HTMLDivElement | null>(null);
+
+    const [multiSelectMenuRef, setMultiSelectMenuRef] = useState<null | HTMLDivElement>(null);
+    const [triggerRef, setTriggerRef] = useState<HTMLDivElement | null>(null);
+
     const filterInputRef = useRef<HTMLInputElement | null>(null);
     const { isFocusVisible, focusProps } = useFocusRing();
+
+    const { maxHeight } = useDropdownAutoHeight({ current: triggerRef }, { isOpen: open, autoResize: true });
 
     const hasSelectedItems = activeItemKeys.length > 0;
     const summarizedLabel = summarizedLabelFromProps ?? [activeItemKeys.length, 'selected'].join(' ');
@@ -112,7 +115,9 @@ export const MultiSelect: FC<MultiSelectProps> = ({
 
     const handleClose = () => setOpen(false);
 
-    useClickOutside(null, handleClose, [multiSelectRef?.current as HTMLElement]);
+    useClickOutside(null, handleClose, [multiSelectRef?.current as HTMLElement, multiSelectMenuRef as HTMLElement]);
+
+    const heightIsReady = maxHeight !== DEFAULT_DROPDOWN_MAX_HEIGHT;
 
     const toggleOpen = () => setOpen((open) => !open);
 
@@ -126,7 +131,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
             },
             elementType: 'div',
         },
-        triggerRef,
+        { current: triggerRef },
     );
 
     const toggleSelection = (key: string | number) => {
@@ -176,6 +181,41 @@ export const MultiSelect: FC<MultiSelectProps> = ({
         );
     };
 
+    useEffect(() => {
+        setCheckboxes(
+            items.map((item) => {
+                const checkboxBaseItem = { ...item, label: item.value };
+                if (indeterminateItemKeys?.includes(item.value)) {
+                    return { ...checkboxBaseItem, state: CheckboxState.Mixed };
+                }
+                return checkboxBaseItem;
+            }),
+        );
+    }, [items, indeterminateItemKeys]);
+
+    const popperInstance = usePopper(triggerRef, multiSelectMenuRef, {
+        placement: 'bottom-start',
+        strategy: 'fixed',
+        modifiers: [
+            {
+                name: 'offset',
+                options: {
+                    offset: [0, 8],
+                },
+            },
+            {
+                name: 'flip',
+                enabled: flip,
+            },
+        ],
+    });
+
+    useEffect(() => {
+        if (popperInstance.update) {
+            popperInstance.update();
+        }
+    }, [activeItemKeys]);
+
     return (
         <div className="tw-relative" ref={multiSelectRef}>
             <Trigger
@@ -186,7 +226,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                 validation={validation}
                 emphasis={emphasis === MultiSelectEmphasis.Default ? TriggerEmphasis.Default : TriggerEmphasis.Weak}
             >
-                <div className={merge(['tw-flex tw-flex-1 tw-gap-2', getPaddingClasses(size)])}>
+                <div className={merge(['tw-flex tw-flex-1 tw-gap-2', getPaddingClasses(size)])} ref={setTriggerRef}>
                     <div
                         className="tw-flex tw-flex-1 tw-gap-2 focus:tw-outline-0"
                         onClick={(e) => {
@@ -214,12 +254,14 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                                     />
                                 ))}
 
-                            {type === MultiSelectType.Summarized && hasSelectedItems && (
+                            {type === MultiSelectType.Summarized && (hasSelectedItems || summarizedLabelFromProps) && (
                                 <Tag
                                     type={getTagType()}
                                     label={summarizedLabel}
                                     size={size === MultiSelectSize.Small ? TagSize.Small : TagSize.Medium}
-                                    onClick={() => onSelectionChange([])}
+                                    onClick={
+                                        indeterminateItemKeys?.length === 0 ? () => onSelectionChange([]) : undefined
+                                    }
                                 />
                             )}
 
@@ -239,19 +281,30 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                     </div>
                 </div>
             </Trigger>
-            <AnimatePresence>
-                {open &&
-                    (emphasis === MultiSelectEmphasis.Default ? (
+
+            {open &&
+                heightIsReady &&
+                emphasis === MultiSelectEmphasis.Default &&
+                createPortal(
+                    <AnimatePresence>
                         <motion.div
+                            ref={setMultiSelectMenuRef}
                             className="tw-absolute tw-left-0 tw-w-full tw-overflow-hidden tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-30 tw-bg-base tw-min-w-[18rem]"
                             key="content"
-                            initial={{ height: 0 }}
+                            style={{
+                                ...popperInstance.styles.popper,
+                                width: triggerRef?.getBoundingClientRect().width,
+                            }}
+                            {...popperInstance.attributes.popper}
+                            initial={{ height: DEFAULT_DROPDOWN_MIN_ANIMATION_HEIGHT }}
                             animate={{ height: 'auto' }}
-                            exit={{ height: 0 }}
-                            transition={{ ease: [0.04, 0.62, 0.23, 0.98] }}
+                            transition={{ ease: [0.04, 0.62, 0.23, 0.98], duration: 0.5 }}
                         >
                             <FocusScope restoreFocus>
-                                <div className="tw-p-4">
+                                <div
+                                    className="tw-p-4 tw-overflow-y-auto tw-overflow-x-hidden tw-w-full"
+                                    style={{ maxHeight }}
+                                >
                                     <Checklist
                                         activeValues={activeItemKeys.map((key) => key.toString())}
                                         setActiveValues={onSelectionChange}
@@ -262,20 +315,25 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                                 </div>
                             </FocusScope>
                         </motion.div>
-                    ) : (
+                    </AnimatePresence>,
+                    document.body,
+                )}
+            {open &&
+                heightIsReady &&
+                emphasis === MultiSelectEmphasis.Weak &&
+                createPortal(
+                    <AnimatePresence>
                         <motion.div
-                            initial={{
-                                opacity: 0,
+                            ref={setMultiSelectMenuRef}
+                            style={{
+                                ...popperInstance.styles.popper,
+                                width: triggerRef?.getBoundingClientRect().width,
+                                minWidth: 'fit-content',
                             }}
-                            animate={{
-                                opacity: 1,
-                                transition: { duration: 0.15 },
-                            }}
-                            exit={{
-                                opacity: 0,
-                                transition: { duration: 0.15 },
-                            }}
-                            transition={{ ease: [0.04, 0.62, 0.23, 0.98] }}
+                            {...popperInstance.attributes.popper}
+                            initial={{ height: DEFAULT_DROPDOWN_MIN_ANIMATION_HEIGHT }}
+                            animate={{ height: 'auto' }}
+                            transition={{ ease: [0.04, 0.62, 0.23, 0.98], duration: 0.5 }}
                         >
                             <Menu open={open} onClose={handleClose} triggerRef={multiSelectRef}>
                                 {checkboxes.length > 0 && hasResults ? (
@@ -307,8 +365,9 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                                 )}
                             </Menu>
                         </motion.div>
-                    ))}
-            </AnimatePresence>
+                    </AnimatePresence>,
+                    document.body,
+                )}
         </div>
     );
 };

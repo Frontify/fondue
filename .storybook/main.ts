@@ -10,7 +10,7 @@ export default <StorybookConfig>{
     addons: ['storybook-dark-mode', '@storybook/addon-links', '@storybook/addon-essentials', '@storybook/addon-a11y'],
     staticDirs: ['assets'],
     docs: {
-        docsPage: 'automatic',
+        autodocs: 'tag',
     },
     viteFinal(config: UserConfig) {
         //@ts-ignore

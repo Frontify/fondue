@@ -68,13 +68,14 @@ describe('MultiSelect Component', () => {
         cy.get(TRIGGER_ID).click();
 
         cy.get(CHECKBOX_ID).first().click();
-        cy.get(CHECKBOX_ID).first().find('svg').invoke('attr', 'name').should('eq', 'IconCheckMark16');
+        cy.get(CHECKBOX_ID).find('svg').invoke('attr', 'name').should('eq', 'IconCheckMark16');
         cy.get(TAG_ID).contains('Checkbox label 1');
 
         cy.get(CHECKBOX_ID).eq(1).click();
         cy.get(CHECKBOX_ID).eq(1).find('svg').should('not.exist');
         cy.get(TRIGGER_ID).contains('Short tag').should('not.exist');
         cy.get(TAG_ID).first().click();
+
         cy.get(CHECKBOX_ID).eq(1).find('svg').should('not.exist');
 
         cy.get(CHECKBOX_ID).eq(2).click();

@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { useEffect, useState } from 'react';
 import IconCheckMark from '@foundation/Icon/Generated/IconCheckMark';
 import IconMinus from '@foundation/Icon/Generated/IconMinus';
 import { InputLabel, InputLabelTooltipProps } from '@components/InputLabel/InputLabel';
@@ -55,11 +56,34 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
 ) => {
     const id = useMemoizedId(propId);
     const inputRef = useForwardedRef<HTMLInputElement | null>(ref);
-    const { isFocusVisible, focusProps } = useFocusRing();
+    const { focusProps } = useFocusRing();
     const toggleState = useToggleState({
         onChange: disabled ? undefined : onChange,
         isSelected: state === CheckboxState.Checked,
     });
+    const [showFocus, setShowFocus] = useState<Nullable<boolean>>();
+    const [listeningForKeyboardEvents, setListeningForKeyboardEvents] = useState<Nullable<boolean>>();
+
+    const tabFocusListener = (event: KeyboardEvent) => {
+        if (event.key === 'Tab') {
+            setShowFocus(true);
+        }
+    };
+
+    const blurListener = () => {
+        setShowFocus(false);
+    };
+
+    useEffect(() => {
+        if (!listeningForKeyboardEvents) {
+            inputRef?.current?.removeEventListener('keyup', tabFocusListener);
+            inputRef?.current?.addEventListener('keyup', tabFocusListener);
+            inputRef?.current?.removeEventListener('blur', blurListener);
+            inputRef?.current?.addEventListener('blur', blurListener);
+
+            setListeningForKeyboardEvents(true);
+        }
+    }, [listeningForKeyboardEvents, inputRef]);
 
     const { inputProps } = useCheckbox(
         {
@@ -87,12 +111,13 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                     ref={inputRef}
                     className="tw-sr-only"
                     data-test-id="checkbox-input"
+                    required={required}
                 />
                 <span
                     aria-hidden="true"
                     className={merge([
-                        'tw-relative tw-flex tw-w-4 tw-h-4 tw-items-center tw-justify-center tw-rounded tw-border tw-shrink-0 tw-flex-none',
-                        isFocusVisible && FOCUS_STYLE,
+                        'tw-leading-4 tw-relative tw-flex tw-w-4 tw-h-4 tw-items-center tw-justify-center tw-rounded tw-border tw-shrink-0 tw-flex-none',
+                        showFocus ? FOCUS_STYLE : '',
                         disabled
                             ? merge([
                                   'tw-text-white tw-pointer-events-none',
@@ -125,7 +150,11 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                     </InputLabel>
                 )}
             </label>
-            {note && <span className="tw-text-black-60 tw-font-sans tw-text-xs tw-font-normal">{note}</span>}
+            {note && (
+                <span data-test-id="checkbox-note" className="tw-text-black-60 tw-font-sans tw-text-xs tw-font-normal">
+                    {note}
+                </span>
+            )}
         </div>
     );
 };

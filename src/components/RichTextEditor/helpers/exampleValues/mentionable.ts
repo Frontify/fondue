@@ -4,13 +4,13 @@ import { MentionableCategory, MentionableItems } from '@components/RichTextEdito
 
 export const mentionable: MentionableItems = [
     { data: { category: MentionableCategory.ALL }, key: '0', text: 'All' },
-    { data: { category: MentionableCategory.GROUP }, key: '1', text: 'Adi Gallia' },
+    { data: { category: MentionableCategory.GROUP }, key: '11', text: 'Adi Gallia' },
     {
         data: {
             category: MentionableCategory.GROUP,
             image: 'https://secure.gravatar.com/avatar/306bfbd0fba40f51c12bb08fa2e8bddb?d=mm&s=22',
         },
-        key: '2',
+        key: '31',
         text: 'Admiral Dodd Rancit',
     },
     {
