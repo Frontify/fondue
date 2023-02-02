@@ -211,10 +211,10 @@ export const MultiSelect: FC<MultiSelectProps> = ({
     });
 
     useEffect(() => {
-        setTimeout(() => {
-            popperInstance.update && popperInstance.update();
-        }, 100);
-    }, [activeItemKeys, popperInstance.update]);
+        if (popperInstance.update) {
+            popperInstance.update();
+        }
+    }, [activeItemKeys]);
 
     return (
         <div className="tw-relative" ref={multiSelectRef}>
@@ -327,43 +327,44 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                             ref={setMultiSelectMenuRef}
                             style={{
                                 ...popperInstance.styles.popper,
-                                width: triggerRef?.getBoundingClientRect().width,
-                                minWidth: 'fit-content',
+                                width: 'fit-content',
                             }}
                             {...popperInstance.attributes.popper}
                             initial={{ height: DEFAULT_DROPDOWN_MIN_ANIMATION_HEIGHT }}
                             animate={{ height: 'auto' }}
                             transition={{ ease: [0.04, 0.62, 0.23, 0.98], duration: 0.5 }}
                         >
-                            <Menu open={open} onClose={handleClose} triggerRef={multiSelectRef}>
-                                {checkboxes.length > 0 && hasResults ? (
-                                    checkboxes.map((item, index) => {
-                                        const { label, value, avatar, imgSrc } = item;
-                                        const isChecked = !!activeItemKeys.find((key) => key === value);
-                                        const handleMenuItemClick = () => toggleSelection(label);
+                            <div className="tw-z-30">
+                                <Menu open={open} onClose={handleClose}>
+                                    {checkboxes.length > 0 && hasResults ? (
+                                        checkboxes.map((item, index) => {
+                                            const { label, value, avatar, imgSrc } = item;
+                                            const isChecked = !!activeItemKeys.find((key) => key === value);
+                                            const handleMenuItemClick = () => toggleSelection(label);
 
-                                        if (item.isCategory || item.isDivider) {
+                                            if (item.isCategory || item.isDivider) {
+                                                return (
+                                                    <OptionalItems
+                                                        key={value + item}
+                                                        {...{
+                                                            checkboxes,
+                                                            index,
+                                                        }}
+                                                    />
+                                                );
+                                            }
+
                                             return (
-                                                <OptionalItems
-                                                    key={value + item}
-                                                    {...{
-                                                        checkboxes,
-                                                        index,
-                                                    }}
-                                                />
+                                                <MenuItem checked={isChecked} onClick={handleMenuItemClick} key={value}>
+                                                    <DefaultItem {...{ label, value, avatar, imgSrc, isChecked }} />
+                                                </MenuItem>
                                             );
-                                        }
-
-                                        return (
-                                            <MenuItem checked={isChecked} onClick={handleMenuItemClick} key={value}>
-                                                <DefaultItem {...{ label, value, avatar, imgSrc, isChecked }} />
-                                            </MenuItem>
-                                        );
-                                    })
-                                ) : (
-                                    <NoSearchResults label={noResultsLabel} />
-                                )}
-                            </Menu>
+                                        })
+                                    ) : (
+                                        <NoSearchResults label={noResultsLabel} />
+                                    )}
+                                </Menu>
+                            </div>
                         </motion.div>
                     </AnimatePresence>,
                     document.body,
