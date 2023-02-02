@@ -24,6 +24,7 @@ import {
     AlignLeftPlugin,
     AlignRightPlugin,
     BoldPlugin,
+    BreakAfterPlugin,
     ButtonPlugin,
     CheckboxListPlugin,
     CodePlugin,
@@ -40,32 +41,32 @@ import {
     TextStylePlugin,
     UnderlinePlugin,
     UnorderedListPlugin,
-    defaultPluginsWithColumns,
 } from './Plugins';
 import { TextStyles } from './Plugins/TextStylePlugin/TextStyles';
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from './RichTextEditor';
-import { Transform } from './serializer';
-import { MarkdownToSlate } from './serializer/markdown';
-import { SlateToMarkdown } from './serializer/markdown/SlateToMarkdown';
-import { serializeNodesToHtml } from './serializer/serializeToHtml';
+import { MarkdownToSlate, SlateToMarkdown, Transform, serializeNodesToHtml } from './serializer';
 import { PaddingSizes } from './types';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
 
 export default {
     title: 'Components/Rich Text Editor',
     component: RichTextEditorComponent,
+    tags: ['autodocs'],
     args: {
         value: JSON.stringify(value),
+        updateValueOnChange: true,
         placeholder: 'Some placeholder',
         readonly: false,
         clear: false,
         position: Position.FLOATING,
-        padding: PaddingSizes.None,
+        padding: Object.keys(PaddingSizes)[2],
+        border: true,
     },
     argTypes: {
         onTextChange: { action: 'onTextChange' },
         onBlur: { action: 'onBlur' },
         value: { type: 'string' },
+        updateValueOnChange: { type: 'boolean' },
         position: {
             options: Object.values(Position),
             mapping: Position,
@@ -81,6 +82,10 @@ export default {
                 type: 'radio',
                 labels: Object.entries(PaddingSizes).map(([key, value]) => [value, key]),
             },
+        },
+        layout: {
+            columns: { type: 'string' },
+            gap: { type: 'string' },
         },
     },
 } as Meta;
@@ -166,8 +171,12 @@ export const MarkdownSerializerDeserializer: StoryFn<RichTextEditorProps> = () =
                 <pre id="json">{JSON.stringify(resultSlate, undefined, 2)}</pre>
             </div>
             Rich Text Editor:
-            <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
-                <RichTextEditorComponent value={JSON.stringify(resultSlate)} plugins={allPlugins} />
+            <div className="tw-m-6">
+                <RichTextEditorComponent
+                    value={JSON.stringify(resultSlate)}
+                    plugins={allPlugins}
+                    padding={PaddingSizes.Medium}
+                />
             </div>
         </>
     );
@@ -180,6 +189,7 @@ export const Multiple: StoryFn<RichTextEditorProps> = () => (
                 placeholder="I'm placeholder one"
                 id="editor-one"
                 value="<p>I'm editor <strong>one</strong>.</p>"
+                border={false}
             />
         </div>
         <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-h-36">
@@ -187,6 +197,7 @@ export const Multiple: StoryFn<RichTextEditorProps> = () => (
                 placeholder="I'm placeholder two"
                 id="editor-two"
                 value="<p>I'm editor <strong>two</strong>.</p>"
+                border={false}
             />
         </div>
         <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-h-36">
@@ -194,6 +205,7 @@ export const Multiple: StoryFn<RichTextEditorProps> = () => (
                 placeholder="I'm placeholder three"
                 id="editor-three"
                 value="<p>I'm editor <strong>three</strong>.</p>"
+                border={false}
             />
         </div>
         <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-h-36">
@@ -201,6 +213,7 @@ export const Multiple: StoryFn<RichTextEditorProps> = () => (
                 placeholder="I'm placeholder four"
                 id="editor-four"
                 value="<p>I'm editor <strong>four</strong>.</p>"
+                border={false}
             />
         </div>
     </div>
@@ -394,16 +407,17 @@ WithToolbarTopAndSmallPadding.args = {
     ]),
 };
 
-const mentionPlugins = new PluginComposer();
-mentionPlugins
-    .setPlugin([new InitPlugin()])
+const mentionAndEmojisPlugins = new PluginComposer();
+mentionAndEmojisPlugins
+    .setPlugin([new InitPlugin(), new ParagraphPlugin()])
     .setPlugin([new MentionPlugin({ mentionableItems: mentionable })])
     .setPlugin([new UnorderedListPlugin(), new OrderedListPlugin()])
-    .setPlugin([new BoldPlugin(), new LinkPlugin()]);
-export const WithMentions = RichTextEditorTemplate.bind({});
-WithMentions.args = {
+    .setPlugin([new BoldPlugin(), new ItalicPlugin(), new UnderlinePlugin(), new StrikethroughPlugin()])
+    .setPlugin([new EmojiPlugin(), new LinkPlugin()]);
+export const WithMentionsAndEmojis = RichTextEditorTemplate.bind({});
+WithMentionsAndEmojis.args = {
     value: JSON.stringify(mentionValue),
-    plugins: mentionPlugins,
+    plugins: mentionAndEmojisPlugins,
 };
 
 const withoutToolbarPlugins = new PluginComposer({ noToolbar: true });
@@ -422,12 +436,35 @@ WithoutToolbar.args = {
     plugins: withoutToolbarPlugins,
 };
 
-export const BreakAfterColumn: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
-    <div className="tw-block tw-column tw-columns-2">
-        <RichTextEditorComponent {...args} />
-    </div>
+const defaultPluginsWithColumns = new PluginComposer();
+defaultPluginsWithColumns
+    .setPlugin([new InitPlugin(), new ParagraphPlugin()])
+    .setPlugin(new TextStylePlugin())
+    .setPlugin([
+        new BoldPlugin(),
+        new ItalicPlugin(),
+        new UnderlinePlugin(),
+        new StrikethroughPlugin(),
+        new LinkPlugin(),
+        new ButtonPlugin(),
+        new CodePlugin(),
+        new BreakAfterPlugin({ columns: 2, gap: 20 }),
+    ]);
+
+export const TwoColumns: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
+    <RichTextEditorComponent {...args} />
 );
-BreakAfterColumn.args = {
+TwoColumns.args = {
     value: JSON.stringify(defaultValue),
     plugins: defaultPluginsWithColumns,
+    border: false,
+};
+
+export const SimpleTwoColumns: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
+    <RichTextEditorComponent {...args} />
+);
+SimpleTwoColumns.args = {
+    value: `<p>${IPSUM}</p>`,
+    plugins: defaultPluginsWithColumns,
+    border: false,
 };

@@ -8,13 +8,14 @@ import { TooltipIconTriggerStyle } from '@components/TooltipIcon';
 
 export default {
     title: 'Components/Checkbox',
+    tags: ['autodocs'],
     argTypes: {
         state: {
             options: Object.values(CheckboxState),
             control: { type: 'radio' },
         },
         onChange: {
-            table: { disable: true },
+            table: { disable: false },
             action: 'Change',
         },
     },

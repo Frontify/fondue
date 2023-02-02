@@ -72,6 +72,7 @@ export const Checklist = ({
     direction = ChecklistDirection.Horizontal,
     ...props
 }: ChecklistProps) => {
+    const listContainerRef = useRef<HTMLUListElement | null>(null);
     const state = useCheckboxGroupState({
         value: activeValues,
         onChange: setActiveValues,
@@ -94,10 +95,16 @@ export const Checklist = ({
                           'columns' in props && props.columns !== undefined && columnsStyle[props.columns]
                       }`,
             ])}
+            ref={listContainerRef}
         >
             {checkboxes.map((checkbox) => {
                 return (
-                    <li key={checkbox.value}>
+                    <li
+                        key={checkbox.value}
+                        style={{
+                            maxWidth: listContainerRef?.current?.getBoundingClientRect().width,
+                        }}
+                    >
                         <ChecklistItem checkbox={checkbox} state={state} />
                     </li>
                 );

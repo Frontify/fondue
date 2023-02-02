@@ -1,9 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { PropsWithChildren, ReactElement, RefObject, useCallback, useEffect, useState } from 'react';
+import React, { PropsWithChildren, ReactNode, RefObject, useCallback, useEffect, useState } from 'react';
 import { usePopper } from 'react-popper';
 import { merge } from '@utilities/merge';
-import { MenuItemProps } from '@components/MenuItem';
 import { useMenuKeyboardNavigation } from '@components/Menu/useMenuKeyboardNavigation';
 import { useClickOutside } from '@hooks/useClickOutside';
 import { INSET_BORDER } from '@utilities/borderStyle';
@@ -11,7 +10,7 @@ import { INSET_BORDER } from '@utilities/borderStyle';
 interface Props {
     triggerRef?: RefObject<Element>;
     open?: boolean;
-    children?: ReactElement<MenuItemProps> | ReactElement<MenuItemProps>[];
+    children?: ReactNode | ReactNode[];
     onClose?: () => void;
     offset?: [number, number];
 }

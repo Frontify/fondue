@@ -1,14 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { AnyObject, PlatePlugin, PlatePluginComponent } from '@udecode/plate';
+import { PlatePluginComponent } from '@udecode/plate';
+import { ToolbarPositionWithButtons } from '../Toolbar/ToolbarPositionWithButtons';
 import { MarkupElement } from './MarkupElement';
-import { Button, Buttons, InlineData, ObjectType, Plugin, PluginComposerProps, Plugins } from './types';
+import { InlineData, ObjectType, PlatePluginList, Plugin, PluginComposerProps, Plugins, ToolbarButtons } from './types';
 
 export class PluginComposer {
-    private platePlugins: Map<string, PlatePlugin<AnyObject>[]> = new Map();
+    private platePlugins: PlatePluginList = new Map();
     private markupElements: ObjectType<PlatePluginComponent> = {};
-    private toolbarButtons: Buttons = [];
     private inlineElements: InlineData[] = [];
+    private toolbarButtons: ToolbarButtons = new ToolbarPositionWithButtons();
 
     constructor(protected props?: PluginComposerProps) {}
 
@@ -18,13 +19,14 @@ export class PluginComposer {
 
             for (const plugin of groupOfPlugins) {
                 this.addElement(plugin.markupElement);
+                this.addElement(plugin.markupInputElement);
                 this.addLeafElements(plugin.leafMarkupElements);
                 this.addPlugin(plugin);
                 this.addInline(plugin.inline());
             }
 
             if (this.hasToolbar) {
-                this.addButtons(groupOfPlugins);
+                this.toolbarButtons.createGroupOfButtons(groupOfPlugins);
             }
         }
 
@@ -67,31 +69,6 @@ export class PluginComposer {
         }
     }
 
-    private addButtons(plugins: Plugin[]) {
-        const groupOfButtons = this.createGroupOfButtons(plugins);
-
-        if (groupOfButtons.length > 0) {
-            this.toolbarButtons.push(groupOfButtons);
-        }
-    }
-
-    private createGroupOfButtons(plugins: Plugin[]): Button[] {
-        const groupOfButtons: Button[] = [];
-
-        for (const { markupElement, button, id, props } of plugins) {
-            if (!button || props?.noButton) {
-                continue;
-            }
-
-            groupOfButtons.push({
-                id: markupElement?.getId() || id,
-                button,
-            });
-        }
-
-        return groupOfButtons;
-    }
-
     get elements() {
         return { ...this.defaultElementsFromPlugins, ...this.markupElements };
     }
@@ -118,7 +95,7 @@ export class PluginComposer {
         return platePlugins;
     }
 
-    get buttons(): Buttons {
+    get buttons(): ToolbarButtons {
         return this.toolbarButtons;
     }
 

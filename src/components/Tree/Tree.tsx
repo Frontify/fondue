@@ -1,12 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useEffect, useState } from 'react';
+import React, { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { TreeContext } from '@components/Tree/TreeContext';
 import type { TreeProps } from '@components/Tree/types';
-import { DndWrapper } from '@utilities/dnd';
+import { TreeContext } from '@components/Tree/TreeContext';
+import { DndWrapper, DraggableItem, DropZonePosition } from '@utilities/dnd';
 
-export const Tree = ({ id, activeIds, draggable = false, children }: TreeProps) => {
+import { useDraggableEnhancedChildren } from './hooks/useDraggableEnhancedChildren';
+
+const noop = () => undefined;
+
+export const Tree = ({ id, activeIds, draggable = false, onDrop, children }: TreeProps) => {
     const [selectedIds, setSelectedIds] = useState<string[]>(activeIds || []);
     const [multiselect, setMultiselect] = useState<boolean>(false);
 
@@ -16,15 +20,6 @@ export const Tree = ({ id, activeIds, draggable = false, children }: TreeProps) 
 
     const upKeyHandler = (event: KeyboardEvent) => {
         setMultiselect(!(event.key === 'Meta' || event.ctrlKey));
-    };
-
-    const handleSelect = (id: string) => {
-        setSelectedIds((prevState) => {
-            if (!multiselect) {
-                return [id];
-            }
-            return prevState.includes(id) ? prevState.filter((selectedId) => selectedId !== id) : [...prevState, id];
-        });
     };
 
     useEffect(() => {
@@ -37,14 +32,64 @@ export const Tree = ({ id, activeIds, draggable = false, children }: TreeProps) 
         };
     }, []);
 
+    const handleSelect = useCallback(
+        (id: string) => {
+            setSelectedIds((prevState) => {
+                if (!multiselect) {
+                    return [id];
+                }
+                return prevState.includes(id)
+                    ? prevState.filter((selectedId) => selectedId !== id)
+                    : [...prevState, id];
+            });
+        },
+        [multiselect],
+    );
+
+    const handleDrop = useCallback(
+        (
+            targetItem: DraggableItem<{ id: string; sort: Nullable<number> }>,
+            sourceItem: DraggableItem<{ id: string; sort: Nullable<number> }>,
+            position: DropZonePosition,
+        ) => {
+            if (onDrop) {
+                onDrop(targetItem, sourceItem, position);
+            } else {
+                return null;
+            }
+        },
+        [onDrop],
+    );
+
+    const { draggableEnhancedChildren } = useDraggableEnhancedChildren({ accept: id, onDrop: handleDrop, children });
+
+    const memoizedTreeContextValue = useMemo(
+        () => ({
+            treeId: id,
+            selectedIds,
+            onSelect: handleSelect,
+            draggable,
+            onDrop: handleDrop ?? noop,
+        }),
+        [id, selectedIds, handleSelect, draggable, handleDrop],
+    );
+
+    const childrenArray = React.Children.toArray(children);
+
+    let enhancedChildren: ReactNode = childrenArray;
+
+    if (draggable) {
+        enhancedChildren = draggableEnhancedChildren;
+    }
+
     return (
-        <TreeContext.Provider value={{ treeId: id, selectedIds, onSelect: handleSelect, draggable }}>
+        <TreeContext.Provider value={memoizedTreeContextValue}>
             <ul
                 id={id}
                 data-test-id="tree"
                 className="tw-p-0 tw-m-0 tw-font-sans tw-font-normal tw-list-none tw-text-left tw-text-sm tw-select-none"
             >
-                <DndWrapper id={id}>{children}</DndWrapper>
+                <DndWrapper id={id}>{enhancedChildren}</DndWrapper>
             </ul>
         </TreeContext.Provider>
     );
