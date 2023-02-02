@@ -448,22 +448,24 @@ defaultPluginsWithColumns
         new LinkPlugin(),
         new ButtonPlugin(),
         new CodePlugin(),
-        new BreakAfterPlugin({ columns: 2, gap: 20 }),
+        new UnorderedListPlugin(),
+        new OrderedListPlugin(),
+        new BreakAfterPlugin({ columns: 5, gap: 20 }),
     ]);
 
-export const TwoColumns: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
+export const MultiColumns: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
     <RichTextEditorComponent {...args} />
 );
-TwoColumns.args = {
+MultiColumns.args = {
     value: JSON.stringify(defaultValue),
     plugins: defaultPluginsWithColumns,
     border: false,
 };
 
-export const SimpleTwoColumns: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
+export const SimpleMultiColumns: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
     <RichTextEditorComponent {...args} />
 );
-SimpleTwoColumns.args = {
+SimpleMultiColumns.args = {
     value: `<p>${IPSUM}</p>`,
     plugins: defaultPluginsWithColumns,
     border: false,
