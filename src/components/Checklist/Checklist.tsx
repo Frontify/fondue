@@ -108,7 +108,7 @@ export const Checklist = ({
             className={merge([
                 direction === ChecklistDirection.Horizontal
                     ? 'tw-flex tw-flex-row tw-gap-12'
-                    : `tw-grid tw-gap-4 ${columnsStyle[columns as Columns]}`,
+                    : `tw-grid tw-gap-4 ${columnsStyle[columns]}`,
             ])}
             ref={listContainerRef}
         >
