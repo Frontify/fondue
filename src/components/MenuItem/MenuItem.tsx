@@ -16,7 +16,7 @@ export type MenuItemProps = {
     /** @deprecated this prop is not being used anymore */
     type?: string;
     link?: string;
-    onClick?: <T extends HTMLElement>(event: MouseEvent<T>) => void;
+    onClick?: <T extends HTMLButtonElement | HTMLAnchorElement>(event: MouseEvent<T>) => void;
 } & Omit<MenuItemContentProps, 'iconSize'>;
 
 export const menuItemSizeClassMap: Record<MenuItemContentSize, string> = {
