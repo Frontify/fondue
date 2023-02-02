@@ -8,6 +8,7 @@ import { BasicMenuComponent, ITEMS, ITEMS_WITH_LINKS, Item, NoTriggerMenuCompone
 export default {
     title: 'Components/Menu',
     component: Menu,
+    tags: ['autodocs'],
 } as Meta<MenuProps>;
 
 const TemplateWithoutTrigger: StoryFn<MenuProps & { items: Item[] }> = (args) => (

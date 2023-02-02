@@ -10,6 +10,7 @@ import { Validation } from '@utilities/validation';
 export default {
     title: 'Components/DatePicker',
     component: DatePicker,
+    tags: ['autodocs'],
     argTypes: {
         validation: {
             options: Object.values(Validation),

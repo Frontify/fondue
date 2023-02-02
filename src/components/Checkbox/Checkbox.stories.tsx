@@ -8,6 +8,7 @@ import { TooltipIconTriggerStyle } from '@components/TooltipIcon';
 
 export default {
     title: 'Components/Checkbox',
+    tags: ['autodocs'],
     argTypes: {
         state: {
             options: Object.values(CheckboxState),

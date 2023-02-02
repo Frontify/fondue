@@ -6,7 +6,7 @@ import { merge } from '@utilities/merge';
 import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
 import { MarkupElement } from '../MarkupElement';
 import { alignmentClassnames } from '../TextStylePlugin/TextStyles';
-import { breakAfterClassNames } from '@components/RichTextEditor/utils/constants';
+import { columnBreakClassNames } from '@components/RichTextEditor/utils/constants';
 
 export const PARAGRAPH_CLASSES = 'tw-m-0 tw-px-0 tw-py-0';
 
@@ -16,7 +16,7 @@ export const ParagraphMarkupElementNode = ({ element, attributes, children }: Pl
     const hasColumn = element.breakAfterColumn as boolean;
     const className = merge([
         align && alignmentClassnames[align],
-        hasColumn && breakAfterClassNames,
+        hasColumn && columnBreakClassNames,
         PARAGRAPH_CLASSES,
     ]);
 

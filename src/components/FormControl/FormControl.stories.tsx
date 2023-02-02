@@ -13,6 +13,7 @@ import { FormControl, FormControlDirection, FormControlProps, FormControlStyle, 
 export default {
     title: 'Components/Form Control',
     component: FormControl,
+    tags: ['autodocs'],
     args: {
         style: FormControlStyle.Primary,
         disabled: false,

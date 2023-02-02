@@ -10,6 +10,7 @@ import { IconIcon } from '@foundation/Icon';
 export default {
     title: 'Components/Text Input',
     component: TextInput,
+    tags: ['autodocs'],
     args: {
         clearable: false,
         disabled: false,
