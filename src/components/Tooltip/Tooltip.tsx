@@ -9,7 +9,6 @@ import React, {
     FocusEvent,
     HTMLAttributes,
     PropsWithChildren,
-    ReactChild,
     ReactElement,
     ReactNode,
     cloneElement,
@@ -39,7 +38,7 @@ export type TooltipProps = PropsWithChildren<{
     linkLabel?: string;
     brightHeader?: BrightHeaderStyle;
     buttons?: [TooltipButton, TooltipButton] | [TooltipButton];
-    children?: ReactChild;
+    children?: ReactNode;
     position?: TooltipPosition;
     alignment?: TooltipAlignment;
     flip?: boolean;
