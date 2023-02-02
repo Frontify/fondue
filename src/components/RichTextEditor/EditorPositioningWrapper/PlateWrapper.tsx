@@ -5,10 +5,10 @@ import { WrapperProps } from './types';
 import { useRichTextEditorContext } from '../context/RichTextEditorContext';
 
 export const PlateWrapper = forwardRef<HTMLDivElement, WrapperProps>(({ children }, ref) => {
-    const { wrapperClassNames, style } = useRichTextEditorContext();
+    const { wrapperClassNames } = useRichTextEditorContext();
 
     return (
-        <div data-test-id="rich-text-editor" className={wrapperClassNames} style={style} ref={ref}>
+        <div data-test-id="rich-text-editor" className={wrapperClassNames} ref={ref}>
             {children}
         </div>
     );
