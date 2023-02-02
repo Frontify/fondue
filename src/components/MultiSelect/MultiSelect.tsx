@@ -211,10 +211,10 @@ export const MultiSelect: FC<MultiSelectProps> = ({
     });
 
     useEffect(() => {
-        if (popperInstance.update) {
-            popperInstance.update();
-        }
-    }, [activeItemKeys]);
+        setTimeout(() => {
+            popperInstance.update && popperInstance.update();
+        }, 100);
+    }, [activeItemKeys, popperInstance.update]);
 
     return (
         <div className="tw-relative" ref={multiSelectRef}>
@@ -302,7 +302,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                         >
                             <FocusScope restoreFocus>
                                 <div
-                                    className="tw-p-4 tw-overflow-y-auto tw-overflow-x-hidden tw-w-full"
+                                    className="tw-p-4 tw-overflow-y-auto tw-overflow-x-hidden tw-w-full tw-relative"
                                     style={{ maxHeight }}
                                 >
                                     <Checklist
