@@ -328,43 +328,42 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                             style={{
                                 ...popperInstance.styles.popper,
                                 width: 'fit-content',
+                                zIndex: 30,
                             }}
                             {...popperInstance.attributes.popper}
                             initial={{ height: DEFAULT_DROPDOWN_MIN_ANIMATION_HEIGHT }}
                             animate={{ height: 'auto' }}
                             transition={{ ease: [0.04, 0.62, 0.23, 0.98], duration: 0.5 }}
                         >
-                            <div className="tw-z-30">
-                                <Menu open={open} onClose={handleClose}>
-                                    {checkboxes.length > 0 && hasResults ? (
-                                        checkboxes.map((item, index) => {
-                                            const { label, value, avatar, imgSrc } = item;
-                                            const isChecked = !!activeItemKeys.find((key) => key === value);
-                                            const handleMenuItemClick = () => toggleSelection(label);
+                            <Menu open={open} onClose={handleClose}>
+                                {checkboxes.length > 0 && hasResults ? (
+                                    checkboxes.map((item, index) => {
+                                        const { label, value, avatar, imgSrc } = item;
+                                        const isChecked = !!activeItemKeys.find((key) => key === value);
+                                        const handleMenuItemClick = () => toggleSelection(label);
 
-                                            if (item.isCategory || item.isDivider) {
-                                                return (
-                                                    <OptionalItems
-                                                        key={value + item}
-                                                        {...{
-                                                            checkboxes,
-                                                            index,
-                                                        }}
-                                                    />
-                                                );
-                                            }
-
+                                        if (item.isCategory || item.isDivider) {
                                             return (
-                                                <MenuItem checked={isChecked} onClick={handleMenuItemClick} key={value}>
-                                                    <DefaultItem {...{ label, value, avatar, imgSrc, isChecked }} />
-                                                </MenuItem>
+                                                <OptionalItems
+                                                    key={value + item}
+                                                    {...{
+                                                        checkboxes,
+                                                        index,
+                                                    }}
+                                                />
                                             );
-                                        })
-                                    ) : (
-                                        <NoSearchResults label={noResultsLabel} />
-                                    )}
-                                </Menu>
-                            </div>
+                                        }
+
+                                        return (
+                                            <MenuItem checked={isChecked} onClick={handleMenuItemClick} key={value}>
+                                                <DefaultItem {...{ label, value, avatar, imgSrc, isChecked }} />
+                                            </MenuItem>
+                                        );
+                                    })
+                                ) : (
+                                    <NoSearchResults label={noResultsLabel} />
+                                )}
+                            </Menu>
                         </motion.div>
                     </AnimatePresence>,
                     document.body,
