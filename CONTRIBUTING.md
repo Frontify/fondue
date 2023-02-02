@@ -5,7 +5,7 @@
 1. Clone the Git repository
 2. Install the dependencies
 3. Run Storybook
-4. ???
+4. ????
 5. Profit!
 
 ```
