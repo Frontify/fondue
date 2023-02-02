@@ -16,7 +16,7 @@ export type MenuItemProps = {
     /** @deprecated this prop is not being used anymore */
     type?: string;
     link?: string;
-    onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
+    onClick?: <T extends HTMLElement>(event: MouseEvent<T>) => void;
 } & Omit<MenuItemContentProps, 'iconSize'>;
 
 export const menuItemSizeClassMap: Record<MenuItemContentSize, string> = {
@@ -107,7 +107,7 @@ export const MenuItem = ({
                     ])}
                 >
                     {mainElementType === 'a' && (
-                        <a href={link} className={ITEM_BASE_CLASSES}>
+                        <a href={link} className={ITEM_BASE_CLASSES} onClick={onClick}>
                             {children}
                         </a>
                     )}
