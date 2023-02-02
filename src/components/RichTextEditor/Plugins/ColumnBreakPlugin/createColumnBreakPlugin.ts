@@ -117,8 +117,6 @@ const handleEnterKeyEvent = (
     event: React.KeyboardEvent<Element>,
 ) => {
     if (event.shiftKey && event.ctrlKey && isColumnBreakEnabled(editor, columns, isActive)) {
-        console.log(isColumnBreakEnabled(editor, columns, isActive));
-        console.log('handle enter key event', columns);
         return getPreventDefaultHandler(setBreakAfter, editor, {
             value: !isActive,
         })(event);
