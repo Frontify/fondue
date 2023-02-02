@@ -1,0 +1,10 @@
+# The Design System will be the default owners for everything in
+# the repository except for package.json and src directory.
+
+# Core
+* @Frontify/design-system
+package.json
+package-lock.json
+/src
+
+# Components
