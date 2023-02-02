@@ -64,7 +64,7 @@ const getTooltip = (content: string, placement?: BasePlacement) => ({
     placement,
 });
 
-const getColumnBreakCount = (editor: PlateEditor): number => {
+export const getColumnBreakCount = (editor: PlateEditor): number => {
     const nodeEntries = getNodeEntries(editor, { at: [], match: { breakAfterColumn: true } });
     return Array.from(nodeEntries).length;
 };

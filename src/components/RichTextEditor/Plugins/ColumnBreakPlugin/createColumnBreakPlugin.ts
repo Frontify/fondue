@@ -15,6 +15,7 @@ import { Plugin, PluginProps } from '../Plugin';
 import { ColumnBreakButton } from './ColumnBreakButton';
 import { isColumnBreakEnabled } from './ColumnBreakButton/ColumnBreakoolbarButton';
 import { setBreakAfter } from './utils/setBreakAfter';
+import { withColumnBreak } from './withColumnBreak';
 
 export const KEY_ELEMENT_BREAK_AFTER = 'breakAfterColumn';
 
@@ -78,6 +79,7 @@ export const createColumnBreakPlugin = (columns: number, gap: number) => {
                 onKeyDownBreakAfter(editor, columns);
             },
         },
+        withOverrides: withColumnBreak(columns),
         options: {
             columns,
             gap,
