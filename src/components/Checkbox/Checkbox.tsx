@@ -30,7 +30,7 @@ export type CheckboxProps = {
     label?: string;
     tooltip?: InputLabelTooltipProps;
     note?: string;
-    ariaLabel?: string;
+    'aria-label'?: string;
     groupInputProps?: HTMLAttributes<HTMLElement>;
 };
 
@@ -46,7 +46,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
         label,
         tooltip,
         note,
-        ariaLabel,
+        'aria-label': ariaLabel = 'Checkbox',
         value,
         groupInputProps,
         onChange,
@@ -116,6 +116,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                                 ref={inputRef}
                                 className="tw-sr-only"
                                 data-test-id="checkbox-input"
+                                aria-label={ariaLabel}
                                 required={required}
                             />
                             <span

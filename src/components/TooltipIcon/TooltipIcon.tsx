@@ -12,7 +12,7 @@ export type TooltipIconProps = {
     iconSize?: IconSize;
     triggerIcon?: ReactElement<IconProps>;
     triggerStyle?: TooltipIconTriggerStyle;
-    ariaLabel?: string;
+    'aria-label'?: string;
 };
 
 export enum TooltipIconTriggerStyle {
@@ -29,7 +29,7 @@ const tooltipTriggerStyleClass: Record<TooltipIconTriggerStyle, string> = {
 
 export const TooltipIcon: FC<TooltipIconProps> = ({
     tooltip,
-    ariaLabel,
+    'aria-label': ariaLabel = 'More info',
     iconSize = IconSize.Size16,
     triggerIcon = <IconQuestionMarkCircle />,
     triggerStyle = TooltipIconTriggerStyle.Primary,
