@@ -1073,7 +1073,7 @@ describe('RichTextEditor Component', () => {
 
             insertTextAndOpenToolbar();
             cy.get(TOOLBAR_FLOATING).should('be.visible');
-            cy.get(TOOLBAR_GROUP_2).children().eq(2).click();
+            cy.get(TOOLBAR_GROUP_2).children().eq(0).click();
             cy.get('[contenteditable=true]').should('not.include.html', columnBreakClassNames);
             cy.get(TOOLBAR_GROUP_1).children().eq(-1).click();
             cy.get('[contenteditable=true]').should('include.html', columnBreakClassNames);
