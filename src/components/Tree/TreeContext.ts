@@ -6,8 +6,12 @@ import { OnDropCallback } from '@components/DropZone';
 
 export type TreeContextProps = {
     treeId: string;
-    selectedIds: string[];
-    onSelect: (id: string) => void;
+    // selectedIds: string[];
+    // onSelect: (id: string) => void;
+
+    activeIndex: number;
+    setActiveIndex: React.Dispatch<React.SetStateAction<number>>;
+
     draggable: boolean;
     onDrop: OnDropCallback<{ id: string; sort: Nullable<number> }>;
 };

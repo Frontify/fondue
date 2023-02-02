@@ -1,50 +1,55 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { ReactNode, useCallback, useMemo, useState } from 'react';
 
 import type { TreeProps } from '@components/Tree/types';
 import { TreeContext } from '@components/Tree/TreeContext';
 import { DndWrapper, DraggableItem, DropZonePosition } from '@utilities/dnd';
 
 import { useDraggableEnhancedChildren } from './hooks/useDraggableEnhancedChildren';
+import { DescendantProvider, useDescendantsInit } from './descendants';
+import { DescendantContext } from './DescendantContext';
 
 const noop = () => undefined;
 
-export const Tree = ({ id, activeIds, draggable = false, onDrop, children }: TreeProps) => {
-    const [selectedIds, setSelectedIds] = useState<string[]>(activeIds || []);
-    const [multiselect, setMultiselect] = useState<boolean>(false);
+export const Tree = ({ id, draggable = false, onDrop, children }: TreeProps) => {
+    // const [selectedIds, setSelectedIds] = useState<string[]>(activeIds || []);
+    // const [multiselect, setMultiselect] = useState<boolean>(false);
 
-    const downKeyHandler = (event: KeyboardEvent) => {
-        setMultiselect(event.key === 'Meta' || event.ctrlKey);
-    };
+    const [descendants, setDescendants] = useDescendantsInit();
+    const [activeIndex, setActiveIndex] = useState(-1);
 
-    const upKeyHandler = (event: KeyboardEvent) => {
-        setMultiselect(!(event.key === 'Meta' || event.ctrlKey));
-    };
+    // const downKeyHandler = (event: KeyboardEvent) => {
+    //     setMultiselect(event.key === 'Meta' || event.ctrlKey);
+    // };
 
-    useEffect(() => {
-        window.addEventListener('keydown', downKeyHandler);
-        window.addEventListener('keyup', upKeyHandler);
+    // const upKeyHandler = (event: KeyboardEvent) => {
+    //     setMultiselect(!(event.key === 'Meta' || event.ctrlKey));
+    // };
 
-        return () => {
-            window.removeEventListener('keydown', downKeyHandler);
-            window.removeEventListener('keyup', upKeyHandler);
-        };
-    }, []);
+    // useEffect(() => {
+    //     window.addEventListener('keydown', downKeyHandler);
+    //     window.addEventListener('keyup', upKeyHandler);
 
-    const handleSelect = useCallback(
-        (id: string) => {
-            setSelectedIds((prevState) => {
-                if (!multiselect) {
-                    return [id];
-                }
-                return prevState.includes(id)
-                    ? prevState.filter((selectedId) => selectedId !== id)
-                    : [...prevState, id];
-            });
-        },
-        [multiselect],
-    );
+    //     return () => {
+    //         window.removeEventListener('keydown', downKeyHandler);
+    //         window.removeEventListener('keyup', upKeyHandler);
+    //     };
+    // }, []);
+
+    // const handleSelect = useCallback(
+    //     (id: string) => {
+    //         setSelectedIds((prevState) => {
+    //             if (!multiselect) {
+    //                 return [id];
+    //             }
+    //             return prevState.includes(id)
+    //                 ? prevState.filter((selectedId) => selectedId !== id)
+    //                 : [...prevState, id];
+    //         });
+    //     },
+    //     [multiselect],
+    // );
 
     const handleDrop = useCallback(
         (
@@ -66,12 +71,14 @@ export const Tree = ({ id, activeIds, draggable = false, onDrop, children }: Tre
     const memoizedTreeContextValue = useMemo(
         () => ({
             treeId: id,
-            selectedIds,
-            onSelect: handleSelect,
+            // selectedIds,
+            // onSelect: handleSelect,
+            activeIndex,
+            setActiveIndex,
             draggable,
             onDrop: handleDrop ?? noop,
         }),
-        [id, selectedIds, handleSelect, draggable, handleDrop],
+        [id, activeIndex, setActiveIndex, draggable, handleDrop],
     );
 
     const childrenArray = React.Children.toArray(children);
@@ -83,14 +90,16 @@ export const Tree = ({ id, activeIds, draggable = false, onDrop, children }: Tre
     }
 
     return (
-        <TreeContext.Provider value={memoizedTreeContextValue}>
-            <ul
-                id={id}
-                data-test-id="tree"
-                className="tw-p-0 tw-m-0 tw-font-sans tw-font-normal tw-list-none tw-text-left tw-text-sm tw-select-none"
-            >
-                <DndWrapper id={id}>{enhancedChildren}</DndWrapper>
-            </ul>
-        </TreeContext.Provider>
+        <DescendantProvider context={DescendantContext} items={descendants} set={setDescendants}>
+            <TreeContext.Provider value={memoizedTreeContextValue}>
+                <ul
+                    id={id}
+                    data-test-id="tree"
+                    className="tw-p-0 tw-m-0 tw-font-sans tw-font-normal tw-list-none tw-text-left tw-text-sm tw-select-none"
+                >
+                    <DndWrapper id={id}>{enhancedChildren}</DndWrapper>
+                </ul>
+            </TreeContext.Provider>
+        </DescendantProvider>
     );
 };

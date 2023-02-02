@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode, useRef, useState } from 'react';
 import { useDrag } from 'react-dnd';
 
 import { merge } from '@utilities/merge';
@@ -11,22 +11,35 @@ import type { TreeItemProps } from '@components/Tree/types';
 import { useTreeContext } from '@components/Tree/TreeContext';
 
 import { useDraggableEnhancedChildren } from './hooks/useDraggableEnhancedChildren';
+import { useDescendant } from './descendants';
+import { DescendantContext } from './DescendantContext';
 
 const DRAGGING_OPACITY = 0.4;
 const DEFAULT_OPACITY = 1;
 
-export const TreeItem = ({
-    id,
-    sort,
-    label,
-    contentComponent,
-    onSelect,
-    onDrop,
-    type,
-    accepts,
-    children,
-}: TreeItemProps) => {
-    const { treeId, selectedIds, onSelect: onItemSelect, draggable, onDrop: onTreeDrop } = useTreeContext();
+export const TreeItem = ({ id, sort, label, contentComponent, onDrop, type, accepts, children }: TreeItemProps) => {
+    const { treeId, activeIndex, setActiveIndex, draggable, onDrop: onTreeDrop } = useTreeContext();
+
+    const descendantRef = useRef<Nullable<HTMLLIElement>>(null);
+
+    const descendantIndex = useDescendant(
+        {
+            // Assign the DOM node using a ref
+            element: descendantRef.current,
+        },
+        // Tell the useDescendant hook to use a specific context.
+        // This is key in case you have a compound component that needs index
+        // tracking in separate correlating descendant components (like `Tabs`)
+        DescendantContext,
+    );
+
+    // Now we know the index, so let's use it!
+    const isSelected = descendantIndex === activeIndex;
+    const select = () => {
+        if (!isSelected) {
+            setActiveIndex(descendantIndex);
+        }
+    };
 
     const [expanded, setExpanded] = useState<boolean>(false);
     const [hovered, setHovered] = useState<boolean>(false);
@@ -58,11 +71,6 @@ export const TreeItem = ({
         children,
     });
 
-    const handleSelect = () => {
-        onItemSelect(id);
-        onSelect?.(id);
-    };
-
     const toggleExpand = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         event.stopPropagation();
         setExpanded((previousExpanded) => !previousExpanded);
@@ -82,7 +90,6 @@ export const TreeItem = ({
                 className={merge([
                     'tw-transition-transform tw-w-0 tw-h-0 tw-text-black-100 tw-text-opacity-40 tw-font-normal tw-border-t-4 tw-border-t-transparent tw-border-b-4 tw-border-b-transparent tw-border-l-4 tw-border-l-x-strong',
                     expanded ? 'tw-rotate-90' : '',
-                    selectedIds.includes(id) && 'tw-text-box-selected-strong-inverse',
                 ])}
             />
         ) : (
@@ -90,7 +97,16 @@ export const TreeItem = ({
         );
 
     return (
-        <li data-test-id="tree-item" ref={drag} style={{ opacity }}>
+        <li
+            data-test-id="tree-item"
+            style={{ opacity }}
+            ref={(element: HTMLLIElement) => {
+                drag(element);
+                descendantRef.current = element;
+            }}
+            tabIndex={-1}
+            onMouseEnter={select}
+        >
             <DropZone
                 data-position={DropZonePosition.Within}
                 data={{
@@ -104,11 +120,8 @@ export const TreeItem = ({
                 <div
                     className={merge([
                         'tw-flex tw-py-2 tw-px-2.5 tw-no-underline tw-leading-5 tw-h-10',
-                        selectedIds.includes(id)
-                            ? 'tw-font-medium tw-bg-box-selected-strong tw-text-box-selected-strong-inverse hover:tw-bg-box-selected-strong-hover hover:tw-text-box-selected-strong-inverse-hover'
-                            : 'tw-text-text hover:tw-bg-box-neutral-hover hover:tw-text-box-neutral-inverse-hover',
+                        'tw-text-text hover:tw-bg-box-neutral-hover hover:tw-text-box-neutral-inverse-hover',
                     ])}
-                    onClick={handleSelect}
                     onMouseEnter={handleMouseEnter}
                     onMouseLeave={handleMouseLeave}
                 >
@@ -127,7 +140,7 @@ export const TreeItem = ({
 
                         {label && <span>{label}</span>}
 
-                        {contentComponent?.({ selected: selectedIds.includes(id), hovered })}
+                        {contentComponent?.({ selected: false, hovered })}
                     </div>
                 </div>
             </DropZone>
