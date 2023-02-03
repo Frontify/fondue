@@ -210,12 +210,6 @@ export const MultiSelect: FC<MultiSelectProps> = ({
         ],
     });
 
-    useEffect(() => {
-        if (popperInstance.update) {
-            popperInstance.update();
-        }
-    }, [activeItemKeys]);
-
     return (
         <div className="tw-relative" ref={multiSelectRef}>
             <Trigger
@@ -296,7 +290,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                                 width: triggerRef?.getBoundingClientRect().width,
                             }}
                             {...popperInstance.attributes.popper}
-                            initial={{ height: DEFAULT_DROPDOWN_MIN_ANIMATION_HEIGHT }}
+                            initial={false} //disabling animation for now
                             animate={{ height: 'auto' }}
                             transition={{ ease: [0.04, 0.62, 0.23, 0.98], duration: 0.5 }}
                         >
