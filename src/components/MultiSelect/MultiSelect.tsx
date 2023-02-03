@@ -302,7 +302,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                         >
                             <FocusScope restoreFocus>
                                 <div
-                                    className="tw-p-4 tw-overflow-y-auto tw-overflow-x-hidden tw-w-full"
+                                    className="tw-p-4 tw-overflow-y-auto tw-overflow-x-hidden tw-w-full tw-relative"
                                     style={{ maxHeight }}
                                 >
                                     <Checklist
@@ -327,15 +327,15 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                             ref={setMultiSelectMenuRef}
                             style={{
                                 ...popperInstance.styles.popper,
-                                width: triggerRef?.getBoundingClientRect().width,
-                                minWidth: 'fit-content',
+                                width: 'fit-content',
+                                zIndex: 30,
                             }}
                             {...popperInstance.attributes.popper}
                             initial={{ height: DEFAULT_DROPDOWN_MIN_ANIMATION_HEIGHT }}
                             animate={{ height: 'auto' }}
                             transition={{ ease: [0.04, 0.62, 0.23, 0.98], duration: 0.5 }}
                         >
-                            <Menu open={open} onClose={handleClose} triggerRef={multiSelectRef}>
+                            <Menu open={open} onClose={handleClose}>
                                 {checkboxes.length > 0 && hasResults ? (
                                     checkboxes.map((item, index) => {
                                         const { label, value, avatar, imgSrc } = item;
