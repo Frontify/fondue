@@ -34,7 +34,7 @@ export const InsertModal: FC<Props> = ({
     testId,
     children,
 }) => (
-    <div data-test-id={testId} className="tw-bg-white tw-rounded tw-shadow tw-p-7 tw-min-w-[400px]">
+    <div data-test-id={testId} className="tw-bg-white tw-rounded tw-shadow tw-p-7 tw-min-w-[400px] tw-overflow-y-auto">
         <FormControl
             label={{
                 children: 'Text',
