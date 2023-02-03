@@ -6,7 +6,7 @@ import { merge } from '@utilities/merge';
 import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
 import { TextStyles } from './textStyles';
 import { alignmentClassnames } from './alignment';
-import { breakAfterClassNames } from '../../../utils/constants';
+import { columnBreakClassNames } from '../../../utils/constants';
 
 export const Heading1MarkupElementNode = ({ element, attributes, children }: PlateRenderElementProps) => {
     const { designTokens } = useRichTextEditorContext();
@@ -16,7 +16,7 @@ export const Heading1MarkupElementNode = ({ element, attributes, children }: Pla
     return (
         <h1
             {...attributes}
-            className={merge([align && alignmentClassnames[align], hasColumn && breakAfterClassNames])}
+            className={merge([align && alignmentClassnames[align], hasColumn && columnBreakClassNames])}
             style={designTokens.heading1}
         >
             {children}

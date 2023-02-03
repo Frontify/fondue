@@ -8,6 +8,7 @@ import { FrontifyPattern, FrontifyPatternProps } from './FrontifyPattern';
 export default {
     title: 'Components/FrontifyPattern',
     component: FrontifyPattern,
+    tags: ['autodocs'],
     argTypes: {
         pattern: {
             options: Object.keys(PatternDesign),

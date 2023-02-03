@@ -12,7 +12,7 @@ export type TreeProps = {
     children: ReactElement<TreeItemProps> | ReactElement<TreeItemProps>[];
 };
 
-type ContentComponentArguments = {
+export type ContentComponentArguments = {
     selected: boolean;
     hovered: boolean;
 };
@@ -31,5 +31,15 @@ export type TreeItemProps = {
     id: string;
     sort: Nullable<number>;
     onSelect?: (id: Nullable<string>) => void;
+    onDrop?: OnDropCallback<{ id: string; sort: Nullable<number> }>;
+    /**
+     * The type of item being dragged.
+     */
+    type?: string;
+    /**
+     * The kinds of dragItems this dropTarget accepts
+     */
+    accepts?: { within: string | string[]; after: string | string[]; before: string | string[] } | string | string[];
+
     children?: ReactElement<TreeItemProps> | ReactElement<TreeItemProps>[];
 } & (TreeItemWithLabelProps | TreeItemWIthContentComponentProps);

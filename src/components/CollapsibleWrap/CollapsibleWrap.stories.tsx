@@ -11,6 +11,7 @@ import { Card } from '@components/Card';
 export default {
     title: 'Components/Collapsible Wrap',
     component: CollapsibleWrapComponent,
+    tags: ['autodocs'],
     args: { isOpen: true, animateOpacity: true },
 } as Meta<CollapsibleWrapProps>;
 

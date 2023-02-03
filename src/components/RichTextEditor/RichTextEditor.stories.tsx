@@ -24,6 +24,7 @@ import {
     AlignLeftPlugin,
     AlignRightPlugin,
     BoldPlugin,
+    BreakAfterPlugin,
     ButtonPlugin,
     CheckboxListPlugin,
     CodePlugin,
@@ -40,7 +41,6 @@ import {
     TextStylePlugin,
     UnderlinePlugin,
     UnorderedListPlugin,
-    defaultPluginsWithColumns,
 } from './Plugins';
 import { TextStyles } from './Plugins/TextStylePlugin/TextStyles';
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from './RichTextEditor';
@@ -51,6 +51,7 @@ import { defaultDesignTokens } from './utils/defaultDesignTokens';
 export default {
     title: 'Components/Rich Text Editor',
     component: RichTextEditorComponent,
+    tags: ['autodocs'],
     args: {
         value: JSON.stringify(value),
         updateValueOnChange: true,
@@ -435,17 +436,35 @@ WithoutToolbar.args = {
     plugins: withoutToolbarPlugins,
 };
 
-export const BreakAfterColumn: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
+const defaultPluginsWithColumns = new PluginComposer();
+defaultPluginsWithColumns
+    .setPlugin([new InitPlugin(), new ParagraphPlugin()])
+    .setPlugin(new TextStylePlugin())
+    .setPlugin([
+        new BoldPlugin(),
+        new ItalicPlugin(),
+        new UnderlinePlugin(),
+        new StrikethroughPlugin(),
+        new LinkPlugin(),
+        new ButtonPlugin(),
+        new CodePlugin(),
+        new BreakAfterPlugin({ columns: 2, gap: 20 }),
+    ]);
+
+export const TwoColumns: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
     <RichTextEditorComponent {...args} />
 );
-BreakAfterColumn.args = {
+TwoColumns.args = {
     value: JSON.stringify(defaultValue),
     plugins: defaultPluginsWithColumns,
     border: false,
-    layout: {
-        columns: 3,
-    },
 };
-BreakAfterColumn.argTypes = {
-    border: { table: { disable: true } },
+
+export const SimpleTwoColumns: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
+    <RichTextEditorComponent {...args} />
+);
+SimpleTwoColumns.args = {
+    value: `<p>${IPSUM}</p>`,
+    plugins: defaultPluginsWithColumns,
+    border: false,
 };
