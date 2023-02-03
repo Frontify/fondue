@@ -10,6 +10,7 @@ export enum MentionableCategory {
 }
 
 export type MentionItemData = {
+    id: string;
     category: MentionableCategory;
     image?: string;
 };
