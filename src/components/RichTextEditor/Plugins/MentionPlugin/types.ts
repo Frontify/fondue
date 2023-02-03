@@ -22,3 +22,5 @@ export type MentionableItems = MentionableItem[];
 export type MentionPluginProps = PluginProps & {
     mentionableItems: MentionableItems;
 };
+
+export type MappedMentionableItems = Map<string, string>;
