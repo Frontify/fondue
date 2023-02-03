@@ -79,7 +79,7 @@ MultipleColumns.args = {
 export const MultipleColumnsInContainedSpace = (args: ChecklistProps) => {
     return (
         <div className="tw-w-[300px] tw-p-2 tw-border- tw-border tw-rounded tw-border-line">
-            <ChecklistComponent {...args} checkboxes={COLUMN_CHECKBOXES} />
+            <MultipleColumnsComponent {...args} checkboxes={COLUMN_CHECKBOXES} />
         </div>
     );
 };
@@ -95,7 +95,7 @@ MultipleColumnsInContainedSpace.argTypes = {
 export const MultipleColumnsInContainedSpaceAndSpannedColumn = (args: ChecklistProps) => {
     return (
         <div className="tw-w-[300px] tw-p-2 tw-border- tw-border tw-rounded tw-border-line">
-            <ChecklistComponent {...args} checkboxes={COLUMN_CHECKBOXES.slice(0, -1)} />
+            <MultipleColumnsComponent {...args} checkboxes={COLUMN_CHECKBOXES.slice(0, -1)} />
         </div>
     );
 };
