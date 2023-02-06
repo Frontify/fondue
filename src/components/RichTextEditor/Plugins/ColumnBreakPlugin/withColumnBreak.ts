@@ -23,7 +23,7 @@ export const withColumnBreak =
                 case 'merge_node':
                     const pointBefore = getPointBefore(editor, operation.path);
                     setBreakAfter(editor, { at: pointBefore, value: false });
-                    return editor;
+                    break;
             }
 
             apply(operation);
