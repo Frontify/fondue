@@ -63,4 +63,9 @@ export const parameters = {
         light: { ...light },
     },
     layout: 'fullscreen',
+    docs: {
+        canvas: {
+            sourceState: 'shown',
+        },
+    },
 };
