@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlateEditor, getPointBefore } from '@udecode/plate';
+import { PlateEditor, getParentNode, getPointBefore } from '@udecode/plate';
 import { getColumnBreakCount } from './ColumnBreakButton/ColumnBreakoolbarButton';
 import { setBreakAfter } from './utils/setBreakAfter';
 
@@ -22,7 +22,18 @@ export const withColumnBreak =
                     break;
                 case 'merge_node':
                     const pointBefore = getPointBefore(editor, operation.path);
+
+                    if (!pointBefore) {
+                        break;
+                    }
+
+                    const node = getParentNode(editor, pointBefore.path);
                     setBreakAfter(editor, { at: pointBefore, value: false });
+
+                    if (node?.[0].breakAfterColumn) {
+                        return editor;
+                    }
+
                     break;
             }
 
