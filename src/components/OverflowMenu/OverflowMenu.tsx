@@ -11,7 +11,7 @@ export interface OverflowMenuItemProps {
     id?: string;
     label: string;
     link?: string;
-    onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
+    onClick?: <T extends HTMLAnchorElement | HTMLButtonElement>(event: MouseEvent<T>) => void;
     disabled?: boolean;
 }
 
