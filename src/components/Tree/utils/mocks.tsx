@@ -1,29 +1,29 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { ReactElement, ReactNode } from 'react';
-import { IconDocument, IconFaceExtraHappy, IconFolder, IconPlus, IconProps, IconSize } from '@foundation/Icon';
+import { IconDocument16, IconFaceExtraHappy16, IconFolder16, IconPlus, IconPlus16, IconProps } from '@foundation/Icon';
 
 import { Badge, BadgeProps } from '@components/Badge';
 import { Button, ButtonSize } from '@components/Button';
 import { MenuItemContentSize } from '@components/MenuItem';
 import { DraggableItem } from '@utilities/dnd';
 
-interface TreeFlatListItem {
+type TreeFlatListItem = {
     name: string;
     icon?: ReactElement<IconProps>;
     label?: string;
     value?: string;
-    actions?: React.ReactNode[];
+    actions?: ReactNode[];
     badge?: ReactElement<IconProps> | ReactElement<BadgeProps>;
     tooltipContent?: ReactNode;
     parentId: Nullable<string>;
     editable?: boolean;
     forceCaret?: boolean;
-}
+};
 
-export interface TreeNodeItem extends TreeFlatListItem {
+export type TreeNodeItem = TreeFlatListItem & {
     nodes?: DraggableItem<TreeNodeItem>[];
-}
+};
 
 export const actionMenuBlocksMock = [
     {
@@ -84,7 +84,7 @@ const uncategorizedPagesNodes = [
         name: 'Home',
         label: 'Page',
         value: 'https://weare.frontify.com/page/1',
-        icon: <IconDocument size={IconSize.Size16} />,
+        icon: <IconDocument16 />,
     },
     {
         id: '1-1-2',
@@ -92,7 +92,7 @@ const uncategorizedPagesNodes = [
         name: 'Members',
         label: 'Page',
         value: 'https://weare.frontify.com/page/2',
-        icon: <IconDocument size={IconSize.Size16} />,
+        icon: <IconDocument16 />,
         sort: null,
     },
     {
@@ -101,7 +101,7 @@ const uncategorizedPagesNodes = [
         name: 'About us',
         label: 'Page',
         value: 'https://weare.frontify.com/page/3',
-        icon: <IconDocument size={IconSize.Size16} />,
+        icon: <IconDocument16 />,
         sort: null,
         editable: true,
     },
@@ -114,9 +114,9 @@ const testCategoryNodes = [
         name: 'Home Category Test Category Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
         label: 'Home Page',
         value: 'https://weare.frontify.com/page/4',
-        icon: <IconDocument size={IconSize.Size16} />,
+        icon: <IconDocument16 />,
         sort: null,
-        badge: <Badge icon={<IconFaceExtraHappy size={IconSize.Size16} />}></Badge>,
+        badge: <Badge icon={<IconFaceExtraHappy16 />}></Badge>,
         editable: true,
     },
     {
@@ -125,7 +125,7 @@ const testCategoryNodes = [
         name: 'Members Category',
         label: 'Members Page',
         value: 'https://weare.frontify.com/page/5',
-        icon: <IconDocument size={IconSize.Size16} />,
+        icon: <IconDocument16 />,
         sort: null,
     },
     {
@@ -134,11 +134,11 @@ const testCategoryNodes = [
         name: 'About us Category Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed consectetur quis tellus id elementum.',
         label: 'About Us Page',
         value: 'https://weare.frontify.com/page/6',
-        icon: <IconDocument size={IconSize.Size16} />,
+        icon: <IconDocument16 />,
         sort: null,
         badge: <Badge>Hello, I am a badge</Badge>,
         tooltipContent: 'Hello, I am tooltip content',
-        actions: [<Button key={'About Us Page Test'} size={ButtonSize.Small} icon={<IconPlus></IconPlus>} />],
+        actions: [<Button key="About Us Page Test" size={ButtonSize.Small} icon={<IconPlus16 />} />],
     },
 ];
 
@@ -150,8 +150,8 @@ export const nodesFlatMock: nodeMockType = () => [
         name: 'Design System Testing',
         label: 'Document',
         value: 'https://weare.frontify.com/document/1',
-        icon: <IconFolder size={IconSize.Size16} />,
-        actions: [<Button key={'Design System Testing'} size={ButtonSize.Small} icon={<IconPlus></IconPlus>} />],
+        icon: <IconFolder16 />,
+        actions: [<Button key="Design System Testing" size={ButtonSize.Small} icon={<IconPlus16 />} />],
         parentId: null,
         sort: 1,
         editable: true,
@@ -159,13 +159,9 @@ export const nodesFlatMock: nodeMockType = () => [
     {
         id: '1-1',
         name: 'Uncategorizes Pages',
-        icon: <IconFolder size={IconSize.Size16} />,
+        icon: <IconFolder16 />,
         actions: [
-            <Button
-                key={'Design System Testing Uncategorizes Pages'}
-                size={ButtonSize.Small}
-                icon={<IconPlus></IconPlus>}
-            />,
+            <Button key="Design System Testing Uncategorizes Pages" size={ButtonSize.Small} icon={<IconPlus16 />} />,
         ],
         parentId: '1',
         sort: 1,
@@ -176,28 +172,28 @@ export const nodesFlatMock: nodeMockType = () => [
         parentId: '1',
         name: 'Test Category Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
         label: 'Document',
-        icon: <IconFolder size={IconSize.Size16} />,
+        icon: <IconFolder16 />,
         actions: [
             <Button
-                key={'Design System Testing Uncategorizes Pages Test'}
+                key="Design System Testing Uncategorizes Pages Test"
                 size={ButtonSize.Small}
-                icon={<IconPlus></IconPlus>}
+                icon={<IconPlus16 />}
             />,
         ],
         value: 'https://weare.frontify.com/document/923#/test',
         sort: null,
-        badge: <IconFaceExtraHappy size={IconSize.Size16} />,
+        badge: <IconFaceExtraHappy16 />,
     },
     ...testCategoryNodes,
     {
         id: '1-3',
         name: 'Category Without Subitems',
-        icon: <IconFolder size={IconSize.Size16} />,
+        icon: <IconFolder16 />,
         actions: [
             <Button
-                key={'Design System Testing Uncategorizes Pages Test Subitems'}
+                key="Design System Testing Uncategorizes Pages Test Subitems"
                 size={ButtonSize.Small}
-                icon={<IconPlus></IconPlus>}
+                icon={<IconPlus16 />}
             />,
         ],
         parentId: '1',
@@ -212,22 +208,22 @@ export const treeNodesMock: DraggableItem<TreeNodeItem>[] = [
         name: 'Design System Testing',
         label: 'Document',
         value: 'https://weare.frontify.com/document/1',
-        icon: <IconFolder size={IconSize.Size16} />,
+        icon: <IconFolder16 />,
         parentId: null,
         sort: 1,
-        actions: [<Button key={'Design System Testing'} size={ButtonSize.Small} icon={<IconPlus></IconPlus>} />],
+        actions: [<Button key="Design System Testing" size={ButtonSize.Small} icon={<IconPlus />} />],
         nodes: [
             {
                 id: '1-1',
                 name: 'Uncategorizes Pages',
-                icon: <IconFolder size={IconSize.Size16} />,
+                icon: <IconFolder16 />,
                 parentId: '1',
                 sort: 1,
                 actions: [
                     <Button
-                        key={'Design System Testing Uncategorizes Pages'}
+                        key="Design System Testing Uncategorizes Pages"
                         size={ButtonSize.Small}
-                        icon={<IconPlus></IconPlus>}
+                        icon={<IconPlus />}
                     />,
                 ],
                 nodes: [...uncategorizedPagesNodes],
@@ -237,18 +233,27 @@ export const treeNodesMock: DraggableItem<TreeNodeItem>[] = [
                 parentId: '1',
                 name: 'Test Category',
                 label: 'Document',
-                icon: <IconFolder size={IconSize.Size16} />,
+                icon: <IconFolder16 />,
                 value: 'https://weare.frontify.com/document/923#/test',
                 sort: null,
                 actions: [
                     <Button
-                        key={'Design System Testing Uncategorizes Pages Test'}
+                        key="Design System Testing Uncategorizes Pages Test"
                         size={ButtonSize.Small}
-                        icon={<IconPlus></IconPlus>}
+                        icon={<IconPlus />}
                     />,
                 ],
                 nodes: [...testCategoryNodes],
             },
         ],
+    },
+    {
+        id: '2',
+        name: 'Design System Testing - Childless',
+        label: 'Document',
+        value: 'https://weare.frontify.com/document/1',
+        icon: <IconFolder16 />,
+        parentId: null,
+        sort: 2,
     },
 ];

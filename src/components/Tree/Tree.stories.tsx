@@ -16,6 +16,17 @@ export default {
     args: {
         id: 'treeId',
     },
+    argTypes: {
+        draggable: {
+            control: { type: 'boolean' },
+        },
+        // selectedIds: {
+        //     control: { type: 'object' },
+        // },
+        // expandedIds: {
+        //     control: { type: 'object' },
+        // },
+    },
 } as Meta<TreeProps>;
 
 interface TreeItemComponentProps {
@@ -79,15 +90,13 @@ export const TreeWithLabel = ({ ...args }: TreeProps) => {
             <Tree {...args}>
                 {treeNodesMock.map((node) => (
                     <TreeItem key={node.id} id={node.id} sort={node.sort} label={node.name}>
-                        {node.nodes &&
-                            node.nodes.map((node) => (
-                                <TreeItem key={node.id} id={node.id} sort={node.sort} label={node.name}>
-                                    {node.nodes &&
-                                        node.nodes.map((node) => (
-                                            <TreeItem key={node.id} id={node.id} sort={node.sort} label={node.name} />
-                                        ))}
-                                </TreeItem>
-                            ))}
+                        {node.nodes?.map((node) => (
+                            <TreeItem key={node.id} id={node.id} sort={node.sort} label={node.name}>
+                                {node.nodes?.map((node) => (
+                                    <TreeItem key={node.id} id={node.id} sort={node.sort} label={node.name} />
+                                ))}
+                            </TreeItem>
+                        ))}
                     </TreeItem>
                 ))}
             </Tree>
@@ -101,13 +110,13 @@ export const TreeWithBasicItem = ({ ...args }: TreeProps) => {
             <Tree {...args}>
                 {treeNodesMock.map((node) => (
                     <TreeItemBasic key={node.id} node={node}>
-                        {node.nodes &&
-                            node.nodes.map((node) => (
-                                <TreeItemBasic key={node.id} node={node}>
-                                    {node.nodes &&
-                                        node.nodes.map((node) => <TreeItemBasic key={node.id} node={node} />)}
-                                </TreeItemBasic>
-                            ))}
+                        {node.nodes?.map((node) => (
+                            <TreeItemBasic key={node.id} node={node}>
+                                {node.nodes?.map((node) => (
+                                    <TreeItemBasic key={node.id} node={node} />
+                                ))}
+                            </TreeItemBasic>
+                        ))}
                     </TreeItemBasic>
                 ))}
             </Tree>
@@ -121,13 +130,13 @@ export const TreeWithLegacyItem = ({ ...args }: TreeProps) => {
             <Tree {...args}>
                 {treeNodesMock.map((node) => (
                     <TreeItemLegacy key={node.id} node={node}>
-                        {node.nodes &&
-                            node.nodes.map((node) => (
-                                <TreeItemLegacy key={node.id} node={node}>
-                                    {node.nodes &&
-                                        node.nodes.map((node) => <TreeItemLegacy key={node.id} node={node} />)}
-                                </TreeItemLegacy>
-                            ))}
+                        {node.nodes?.map((node) => (
+                            <TreeItemLegacy key={node.id} node={node}>
+                                {node.nodes?.map((node) => (
+                                    <TreeItemLegacy key={node.id} node={node} />
+                                ))}
+                            </TreeItemLegacy>
+                        ))}
                     </TreeItemLegacy>
                 ))}
             </Tree>
