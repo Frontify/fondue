@@ -9,6 +9,7 @@ import { IconIcon } from '@foundation/Icon';
 export default {
     title: 'Components/Radio Pill',
     component: RadioPillComponent,
+    tags: ['autodocs'],
     args: {
         label: 'Label',
         active: true,

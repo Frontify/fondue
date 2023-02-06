@@ -9,6 +9,7 @@ import {
     ELEMENT_IMAGE,
     ELEMENT_LI,
     ELEMENT_LINK,
+    ELEMENT_MENTION,
     ELEMENT_OL,
     ELEMENT_PARAGRAPH,
     ELEMENT_UL,
@@ -44,6 +45,7 @@ export const options = (editor: PlateEditor): PartialOptionType => ({
             5: getPluginType(editor, ELEMENT_H5),
             6: getPluginType(editor, ELEMENT_H6),
         },
+        mention: getPluginType(editor, ELEMENT_MENTION),
     },
     linkDestinationKey: 'url',
 });

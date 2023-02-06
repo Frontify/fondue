@@ -17,6 +17,8 @@ import {
     imageTree,
     linkMarkdown,
     linkTree,
+    mentionsMarkdown,
+    mentionsTree,
     mixedMarkdown,
     mixedTree,
     orderedListMarkdown,
@@ -95,5 +97,19 @@ describe('Markdown to slate Transformer', () => {
     it('should transform mixed text', () => {
         const result = transformer.process(mixedMarkdown);
         expect(result).to.deep.equal(mixedTree);
+    });
+
+    it('should transform mentions text', () => {
+        let result = transformer.process(mentionsMarkdown[0]);
+        expect(result).to.deep.equal(mentionsTree[0]);
+
+        result = transformer.process(mentionsMarkdown[1]);
+        expect(result).to.deep.equal(mentionsTree[1]);
+
+        result = transformer.process(mentionsMarkdown[2]);
+        expect(result).to.deep.equal(mentionsTree[2]);
+
+        result = transformer.process(mentionsMarkdown[3]);
+        expect(result).to.deep.equal(mentionsTree[3]);
     });
 });

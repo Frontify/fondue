@@ -27,7 +27,7 @@ export type TextOrNumberItem = {
 export type SliderProps = {
     id?: string;
     items: (TextOrNumberItem | IconItem)[];
-    activeItemId: string;
+    activeItemId?: string;
     onChange: (id: string) => void;
     ariaLabel?: string;
     disabled?: boolean;
@@ -78,7 +78,7 @@ const SliderItem = (props: SliderItemProps) => {
     };
 
     return (
-        <li key={item.id} className={merge(['tw-relative', isFocusVisible && FOCUS_STYLE])}>
+        <div key={item.id} className={merge(['tw-relative', isFocusVisible && FOCUS_STYLE])}>
             <div
                 // TODO: Change element back to label when bug #2380 from @react-aria is fixed
                 // https://github.com/adobe/react-spectrum/issues/2380
@@ -86,7 +86,7 @@ const SliderItem = (props: SliderItemProps) => {
                 onClick={handleMockLabelClick}
                 data-test-id={getSliderItemTestId()}
                 className={merge([
-                    'tw-relative tw-w-full tw-z-10 tw-inline-flex tw-justify-center tw-items-center tw-font-sans tw-font-normal tw-h-full tw-text-center',
+                    'tw-relative tw-w-full tw-inline-flex tw-justify-center tw-items-center tw-font-sans tw-font-normal tw-h-full tw-text-center',
                     isActive && !disabled ? 'tw-text-black' : 'tw-text-black-80',
                     !disabled ? 'hover:tw-text-black hover:tw-cursor-pointer' : '',
                 ])}
@@ -99,7 +99,7 @@ const SliderItem = (props: SliderItemProps) => {
                     {item.value && <span className={isIconItem(item) ? 'tw-ml-2' : ''}>{item.value.toString()}</span>}
                 </span>
             </div>
-        </li>
+        </div>
     );
 };
 
@@ -129,10 +129,10 @@ export const Slider: FC<SliderProps> = ({
     const selectedIndex = items.findIndex((item) => item.id === radioGroupState.selectedValue);
 
     return (
-        <ul
+        <fieldset
             {...radioGroupProps}
             data-test-id="slider"
-            className="tw-relative tw-h-9 tw-w-full tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly tw-p-0 tw-border tw-border-black-20 tw-m-0 tw-bg-black-0 tw-rounded tw-font-sans tw-text-s tw-list-none tw-select-none"
+            className="tw-relative tw-h-9 tw-w-full tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly tw-p-0 tw-border tw-border-black-20 tw-m-0 tw-bg-black-0 tw-rounded tw-font-sans tw-text-s tw-select-none"
         >
             <motion.div
                 aria-hidden="true"
@@ -143,6 +143,7 @@ export const Slider: FC<SliderProps> = ({
                 style={{
                     width: `${100 / items.length}%`,
                 }}
+                hidden={!activeItemId}
                 className={merge([
                     'tw-absolute tw--inset-px tw-h-full tw-box-content tw-border tw-rounded tw-pointer-events-none',
                     disabled
@@ -151,6 +152,6 @@ export const Slider: FC<SliderProps> = ({
                 ])}
             />
             {itemElements}
-        </ul>
+        </fieldset>
     );
 };
