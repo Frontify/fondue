@@ -9,6 +9,7 @@ import { Tooltip, TooltipAlignment, TooltipPosition, TooltipProps } from './Tool
 const TOOLTIP_TEXT = 'This is a tooltip';
 const TOOLTIP_ID = '[data-test-id=tooltip]';
 const TOOLTIP_LINK_ID = '[data-test-id=tooltip-link]';
+const TOOLTIP_ARROW_ID = '[data-test-id=popover-arrow]';
 const TOOLTIP_LINK_URL = 'https://www.frontify.com';
 const TOOLTIP_HEADING_TEXT = "I'm a heading";
 const GENERIC_ICON = <IconIcon />;
@@ -57,7 +58,7 @@ const initTooltip = (args: TooltipTestProps, triggerOpen = true) => {
 };
 
 const getByTooltipPlacement = (placement: string) => cy.get(`[data-popper-placement=${placement}]`);
-const getTooltipArrow = () => cy.get('[data-test-id=popover-arrow]');
+const getTooltipArrow = () => cy.get(TOOLTIP_ARROW_ID);
 
 describe('Tooltip Component', () => {
     it('should render a tooltip with content', () => {
@@ -260,13 +261,13 @@ describe('Tooltip Component', () => {
     it('should render the tooltip with arrow', () => {
         initTooltip({ content: TOOLTIP_TEXT, withArrow: true });
 
-        getTooltipArrow().should('be.visible');
+        getTooltipArrow().should('have.attr', 'data-popper-arrow', 'true');
     });
 
     it('should render the tooltip without arrow', () => {
         initTooltip({ content: TOOLTIP_TEXT, withArrow: false });
 
-        getTooltipArrow().should('not.be.visible');
+        getTooltipArrow().should('have.attr', 'data-popper-arrow', 'false');
     });
 
     it('should render the arrow for Top Tooltip placement', () => {
@@ -278,7 +279,7 @@ describe('Tooltip Component', () => {
     it('should render the arrow for Right Tooltip placement', () => {
         initTooltip({ content: TOOLTIP_TEXT, withArrow: true, position: TooltipPosition.Right });
 
-        getTooltipArrow().should('have.class', 'tw-left-[-6px]').and('have.class', 'before:tw-bg-black-100');
+        getTooltipArrow().should('have.class', 'tw-left-[-5px]').and('have.class', 'before:tw-bg-black-100');
     });
 
     it('should render the arrow for Right Tooltip placement with Bright Header and alignment Start', () => {
@@ -290,13 +291,13 @@ describe('Tooltip Component', () => {
             brightHeader: BrightHeaderStyle.Warning,
         });
 
-        getTooltipArrow().should('have.class', 'tw-left-[-6px]').and('have.class', 'before:tw-bg-red-60');
+        getTooltipArrow().should('have.class', 'tw-left-[-5px]').and('have.class', 'before:tw-bg-red-60');
     });
 
     it('should render the arrow for Left Tooltip placement', () => {
         initTooltip({ content: TOOLTIP_TEXT, withArrow: true, position: TooltipPosition.Left });
 
-        getTooltipArrow().should('have.class', 'tw-right-[-6px]');
+        getTooltipArrow().should('have.class', 'tw-right-[-5px]');
     });
 
     it('should render the arrow for Left Tooltip placement with Bright Header and alignment Start', () => {
@@ -308,7 +309,7 @@ describe('Tooltip Component', () => {
             brightHeader: BrightHeaderStyle.Information,
         });
 
-        getTooltipArrow().should('have.class', 'tw-right-[-6px]').and('have.class', 'before:tw-bg-violet-60');
+        getTooltipArrow().should('have.class', 'tw-right-[-5px]').and('have.class', 'before:tw-bg-violet-60');
     });
 
     it('should render the arrow for Bottom Tooltip placement', () => {
