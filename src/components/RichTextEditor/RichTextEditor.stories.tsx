@@ -83,10 +83,6 @@ export default {
                 labels: Object.entries(PaddingSizes).map(([key, value]) => [value, key]),
             },
         },
-        layout: {
-            columns: { type: 'string' },
-            gap: { type: 'string' },
-        },
     },
 } as Meta;
 
