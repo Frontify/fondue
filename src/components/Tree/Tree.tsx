@@ -19,8 +19,6 @@ const noop = () => undefined;
 export const ROOT_ID = '__ROOT__';
 
 const reducer = (state: TreeState, action: TreeStateAction): TreeState => {
-    console.log('REDUCER', action.type, action.payload, state);
-
     switch (action.type) {
         case 'SET_SELECT': {
             const { id, isSelected } = action.payload;
@@ -29,11 +27,11 @@ const reducer = (state: TreeState, action: TreeStateAction): TreeState => {
                 throw new Error(`No tree item registered with id ${id}.`);
             }
 
-            if (state.selectionMode === 'single') {
-                state.selectedIds.clear();
-            }
-
             if (isSelected) {
+                if (state.selectionMode === 'single') {
+                    state.selectedIds.clear();
+                }
+
                 return {
                     ...state,
                     selectedIds: state.selectedIds.add(id),
@@ -119,7 +117,12 @@ const reducer = (state: TreeState, action: TreeStateAction): TreeState => {
             };
 
         case 'REPLACE_STATE':
-            return action.payload;
+            return {
+                ...state,
+                selectedIds: action.payload.selectedIds,
+                expandedIds: action.payload.expandedIds,
+                selectionMode: action.payload.selectionMode,
+            };
 
         default:
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
