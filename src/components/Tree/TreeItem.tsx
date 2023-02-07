@@ -4,6 +4,7 @@ import React, {
     KeyboardEvent,
     MouseEvent,
     ReactNode,
+    isValidElement,
     useCallback,
     useLayoutEffect,
     useMemo,
@@ -191,16 +192,16 @@ export const TreeItem = ({
     });
     const enhancedChildren: ReactNode = draggable ? draggableEnhancedChildren : childrenArray;
 
-    const caretComponent =
-        childrenArray.length > 0 ? (
-            <div
-                className={merge([
-                    'tw-transition-transform tw-w-0 tw-h-0 tw-text-black-100 tw-text-opacity-40 tw-font-normal tw-border-t-4 tw-border-t-transparent tw-border-b-4 tw-border-b-transparent tw-border-l-4 tw-border-l-x-strong',
-                    treeState.selectedIds.has(id) && 'tw-text-box-selected-strong-inverse',
-                    treeState.expandedIds.has(id) && 'tw-rotate-90',
-                ])}
-            />
-        ) : null;
+    const hasChildren = isValidElement(enhancedChildren);
+    const caretComponent = (
+        <div
+            className={merge([
+                'tw-transition-transform tw-w-0 tw-h-0 tw-text-black-100 tw-text-opacity-40 tw-font-normal tw-border-t-4 tw-border-t-transparent tw-border-b-4 tw-border-b-transparent tw-border-l-4 tw-border-l-x-strong',
+                treeState.selectedIds.has(id) && 'tw-text-box-selected-strong-inverse',
+                treeState.expandedIds.has(id) && 'tw-rotate-90',
+            ])}
+        />
+    );
 
     return (
         <li data-test-id="tree-item" ref={drag} style={{ opacity }}>
@@ -239,11 +240,11 @@ export const TreeItem = ({
                             data-test-id="tree-item-toggle"
                             className={merge([
                                 'tw-w-2 tw-h-3 tw-flex tw-items-center tw-justify-center tw-py-3',
-                                childrenArray.length > 0 && 'tw-cursor-pointer',
+                                hasChildren && 'tw-cursor-pointer',
                             ])}
                             onClick={handleExpand}
                         >
-                            {caretComponent}
+                            {hasChildren && caretComponent}
                         </span>
 
                         {label ? <span>{label}</span> : null}

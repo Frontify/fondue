@@ -1,10 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement, useCallback, useEffect, useMemo, useReducer } from 'react';
+import React, { useCallback, useEffect, useMemo, useReducer } from 'react';
 
 import type {
     RegisterTreeItemPayload,
-    TreeItemProps,
     TreeItemState,
     TreeProps,
     TreeState,
@@ -224,10 +223,7 @@ export const Tree = ({
         [],
     );
 
-    const childrenArray: ReactElement<TreeItemProps>[] = useMemo(
-        () => cloneThroughFragments(children, { level: 0, parentId: ROOT_ID }),
-        [children],
-    );
+    const childrenArray = useMemo(() => cloneThroughFragments(children, { level: 0, parentId: ROOT_ID }), [children]);
     const { draggableEnhancedChildren } = useDraggableEnhancedChildren({
         accept: id,
         onDrop: handleDrop,

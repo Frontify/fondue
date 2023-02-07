@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import type { ReactElement, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 import type { OnDropCallback } from '@components/DropZone';
 
@@ -17,7 +17,7 @@ export type TreeProps = {
     onSelect?: OnSelectCallback;
     onExpand?: OnExpandCallback;
     onDrop?: OnDropCallback<{ id: string; sort: Nullable<number> }>;
-    children: ReactElement<TreeItemProps> | ReactElement<TreeItemProps>[];
+    children: ReactNode;
 };
 
 export type ContentComponentArguments = {
@@ -48,7 +48,7 @@ export type TreeItemProps = {
      * The kinds of dragItems this dropTarget accepts
      */
     accepts?: { within: string | string[]; after: string | string[]; before: string | string[] } | string | string[];
-    children?: ReactElement<TreeItemProps> | ReactElement<TreeItemProps>[];
+    children?: ReactNode;
 
     parentId?: string;
     level?: number;

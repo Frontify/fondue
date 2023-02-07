@@ -1,13 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Children, ReactElement, cloneElement, isValidElement } from 'react';
+import { Children, ReactElement, ReactNode, cloneElement, isValidElement } from 'react';
 import { isFragment } from 'react-is';
 
-export const cloneThroughFragments = <T>(
-    children: ReactElement<T> | ReactElement<T>[],
-    props?: Partial<T>,
-): ReactElement<T>[] => {
-    return Children.map(children, (child: ReactElement<T>) => {
+export const cloneThroughFragments = <T>(children: ReactNode, props?: Partial<T>): ReactNode => {
+    return Children.toArray(children).map((child) => {
         if (isValidElement(child)) {
             const childProps = child.props;
 
@@ -19,5 +16,5 @@ export const cloneThroughFragments = <T>(
         }
 
         return child;
-    }) as ReactElement<T>[];
+    });
 };

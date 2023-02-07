@@ -1,23 +1,21 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { Children, ReactElement, cloneElement, useMemo } from 'react';
+import React, { Children, ReactNode, cloneElement, isValidElement, useMemo } from 'react';
 
 import { DropZone, OnDropCallback } from '@components/DropZone';
 import { DraggableItem, DropZonePosition } from '@utilities/dnd';
 
-import { TreeItemProps } from '../types';
-
 type Configuration<T> = {
     onDrop?: OnDropCallback<T>;
     accept: string | string[];
-    children?: Nullable<ReactElement<TreeItemProps>> | Nullable<ReactElement<TreeItemProps>>[];
+    children?: ReactNode;
     sort?: number;
 };
 
 export const useDraggableEnhancedChildren = <T extends object>(config: Configuration<T>) => {
     const draggableEnhancedChildren = useMemo(() => {
         return Children.map(config.children, (child, index) => {
-            if (!child) {
+            if (!isValidElement(child)) {
                 return null;
             }
 
