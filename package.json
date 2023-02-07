@@ -109,7 +109,7 @@
         "vite-plugin-eslint": "1.8.1"
     },
     "dependencies": {
-        "@frontify/fondue-tokens": "3.2.1",
+        "@frontify/fondue-tokens": "3.1.0-next.5",
         "@popperjs/core": "2.11.6",
         "@react-aria/accordion": "3.0.0-alpha.13",
         "@react-aria/aria-modal-polyfill": "3.6.1",

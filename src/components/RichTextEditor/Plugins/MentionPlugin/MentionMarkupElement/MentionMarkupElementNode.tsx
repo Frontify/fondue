@@ -2,26 +2,26 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
-import { MentionableCategory, MentionableItem, MentionableItems } from '../types';
+import { combineMentionableKeyWith } from '../helpers';
+import { MappedMentionableItems, MentionableCategory } from '../types';
 import { MarkupElementNodeComponent } from './MarkupElementNode';
 import { MarkupElementNodeType } from './types';
 
-const renderLabel = (mentionable: MentionableItems, key: string, category: MentionableCategory) =>
-    mentionable.find(
-        (mention: MentionableItem) => String(mention.key) === String(key) && category === mention.data.category,
-    )?.text ?? key;
+const renderLabel = (mentionable: MappedMentionableItems, key: string, id: string) => mentionable.get(key) ?? id;
 
 export const MentionMarkupElementNode =
-    (mentionable: MentionableItems): MarkupElementNodeType =>
+    (mentionable: MappedMentionableItems): MarkupElementNodeType =>
     (props) => {
         const {
-            element: { key, category },
+            element: { id, category },
             children,
         } = props;
 
+        const key = combineMentionableKeyWith(category as MentionableCategory, String(id));
+
         return (
             <MarkupElementNodeComponent category={category as MentionableCategory} {...props}>
-                {renderLabel(mentionable, String(key), category as MentionableCategory)}
+                {renderLabel(mentionable, key, String(id))}
                 {children}
             </MarkupElementNodeComponent>
         );
