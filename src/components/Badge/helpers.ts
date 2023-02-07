@@ -31,7 +31,7 @@ export const getStyleClasses = (style: BadgeStyle, hasHover: boolean, strong: bo
           }
         : {
               [BadgeStyle.Primary]: merge([
-                  'tw-bg-box-neutral tw-text-text-weak',
+                  'tw-bg-box-neutral tw-text-box-neutral-inverse',
                   hasHover && 'hover:tw-bg-box-neutral-hover hover:tw-text-box-neutral-inverse-hover',
               ]),
               [BadgeStyle.Positive]: merge([
