@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export const mentionsMarkdown_0 = 'Try mentioning characters, like: @[all:0]\n';
-export const mentionsMarkdown_1 = 'Multiple mentions: @[all:0], @[group:10] and @[user:20]\n';
+export const mentionsMarkdown_0 = 'Try mentioning characters, like: @[all:false]\n';
+export const mentionsMarkdown_1 = 'Multiple mentions: @[all:true], @[group:10] and @[user:20]\n';
 export const mentionsMarkdown_2 = 'A single mention at the end of a sentence @[group:10]\n';
 export const mentionsMarkdown_3 = 'Mention @[user:20] in the middle of a sentence.\n';
 export const mentionsMarkdown = [mentionsMarkdown_0, mentionsMarkdown_1, mentionsMarkdown_2, mentionsMarkdown_3];
@@ -13,7 +13,7 @@ export const mentionsTree_0 = [
             { text: 'Try mentioning characters, like: ' },
             {
                 type: 'mention',
-                key: '0',
+                id: 'false',
                 category: 'all',
                 children: [{ text: '' }],
             },
@@ -28,21 +28,21 @@ export const mentionsTree_1 = [
             { text: 'Multiple mentions: ' },
             {
                 type: 'mention',
-                key: '0',
+                id: 'true',
                 category: 'all',
                 children: [{ text: '' }],
             },
             { text: ', ' },
             {
                 type: 'mention',
-                key: '10',
+                id: '10',
                 category: 'group',
                 children: [{ text: '' }],
             },
             { text: ' and ' },
             {
                 type: 'mention',
-                key: '20',
+                id: '20',
                 category: 'user',
                 children: [{ text: '' }],
             },
@@ -58,7 +58,7 @@ export const mentionsTree_2 = [
             {
                 type: 'mention',
                 children: [{ text: '' }],
-                key: '10',
+                id: '10',
                 category: 'group',
             },
             { text: '' },
@@ -72,7 +72,7 @@ export const mentionsTree_3 = [
             { text: 'Mention ' },
             {
                 type: 'mention',
-                key: '20',
+                id: '20',
                 category: 'user',
                 children: [{ text: '' }],
             },
