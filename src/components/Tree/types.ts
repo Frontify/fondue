@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement, ReactNode } from 'react';
+import { ReactNode } from 'react';
 
 import { OnDropCallback } from '@components/DropZone';
 
@@ -9,7 +9,7 @@ export type TreeProps = {
     activeIds?: string[];
     draggable?: boolean;
     onDrop?: OnDropCallback<{ id: string; sort: Nullable<number> }>;
-    children: ReactElement<TreeItemProps> | ReactElement<TreeItemProps>[];
+    children: ReactNode;
 };
 
 export type ContentComponentArguments = {
@@ -41,5 +41,5 @@ export type TreeItemProps = {
      */
     accepts?: { within: string | string[]; after: string | string[]; before: string | string[] } | string | string[];
 
-    children?: ReactElement<TreeItemProps> | ReactElement<TreeItemProps>[];
+    children?: ReactNode;
 } & (TreeItemWithLabelProps | TreeItemWIthContentComponentProps);

@@ -1,16 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement } from 'react';
+import React, { ReactNode } from 'react';
 
 import { DropZone, OnDropCallback } from '@components/DropZone';
 import { DraggableItem, DropZonePosition } from '@utilities/dnd';
 
-import { TreeItemProps } from '../types';
-
 type Configuration<T> = {
     onDrop?: OnDropCallback<T>;
     accept: string | string[];
-    children?: ReactElement<TreeItemProps> | ReactElement<TreeItemProps>[];
+    children?: ReactNode;
 };
 
 export const useDraggableEnhancedChildren = <T extends object>(config: Configuration<T>) => {
@@ -21,7 +19,7 @@ export const useDraggableEnhancedChildren = <T extends object>(config: Configura
 
         return React.cloneElement(
             <>
-                {index === 0 && (
+                {index === 0 && React.isValidElement(child) && (
                     <DropZone
                         data-position={DropZonePosition.Before}
                         data={{

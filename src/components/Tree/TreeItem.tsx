@@ -163,3 +163,5 @@ function getAcceptTypes<
         return accepts as string | string[];
     }
 }
+
+TreeItem.type = TreeItem;
