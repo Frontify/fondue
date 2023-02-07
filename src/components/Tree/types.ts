@@ -9,8 +9,6 @@ export type OnExpandCallback = (id: string, isExpanded: boolean) => void;
 
 export type TreeProps = {
     id: string;
-    /** @deprecated Please use `selectedIds` */
-    activeIds?: string[];
     selectedIds?: string[];
     expandedIds?: string[];
     draggable?: boolean;
@@ -37,8 +35,6 @@ type TreeItemWithContentComponentProps = {
 
 export type TreeItemProps = {
     id: string;
-    onSelect?: OnSelectCallback;
-    onExpand?: OnExpandCallback;
     onDrop?: OnDropCallback<{ id: string; sort: Nullable<number> }>;
     /**
      * The type of item being dragged.

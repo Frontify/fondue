@@ -134,7 +134,6 @@ const reducer = (state: TreeState, action: TreeStateAction): TreeState => {
 
 export const Tree = ({
     id,
-    activeIds,
     selectedIds,
     expandedIds,
     draggable = false,
@@ -146,11 +145,11 @@ export const Tree = ({
     const initialState: TreeState = useMemo(
         () => ({
             items: new Map<string, TreeItemState>().set(ROOT_ID, { level: -1 }),
-            selectedIds: new Set(selectedIds ?? activeIds ?? []),
+            selectedIds: new Set(selectedIds ?? []),
             expandedIds: new Set(expandedIds ?? []),
             selectionMode: 'single',
         }),
-        [activeIds, expandedIds, selectedIds],
+        [expandedIds, selectedIds],
     );
 
     const [treeState, updateTreeState] = useReducer(reducer, initialState);
