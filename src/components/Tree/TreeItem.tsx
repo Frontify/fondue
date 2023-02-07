@@ -106,10 +106,20 @@ export const TreeItem = ({
         [id, onSelect],
     );
 
-    const handleExpand = useCallback(
+    const handleExpandClick = useCallback(
         (event: MouseEvent) => {
             event.stopPropagation();
             onExpand(id, !treeState.expandedIds.has(id));
+        },
+        [id, onExpand, treeState.expandedIds],
+    );
+
+    const handleExpandKeyDown = useCallback(
+        (event: KeyboardEvent) => {
+            if (event.key === 'Space' || event.key === 'Enter') {
+                event.stopPropagation();
+                onExpand(id, !treeState.expandedIds.has(id));
+            }
         },
         [id, onExpand, treeState.expandedIds],
     );
@@ -193,15 +203,6 @@ export const TreeItem = ({
     const enhancedChildren: ReactNode = draggable ? draggableEnhancedChildren : childrenArray;
 
     const hasChildren = Children.count(enhancedChildren) > 0;
-    const caretComponent = (
-        <div
-            className={merge([
-                'tw-transition-transform tw-w-0 tw-h-0 tw-text-black-100 tw-text-opacity-40 tw-font-normal tw-border-t-4 tw-border-t-transparent tw-border-b-4 tw-border-b-transparent tw-border-l-4 tw-border-l-x-strong',
-                treeState.selectedIds.has(id) && 'tw-text-box-selected-strong-inverse',
-                treeState.expandedIds.has(id) && 'tw-rotate-90',
-            ])}
-        />
-    );
 
     return (
         <li data-test-id="tree-item" ref={drag} style={{ opacity }}>
@@ -236,16 +237,25 @@ export const TreeItem = ({
                 >
                     <div className="tw-flex tw-flex-1 tw-space-x-1 tw-items-center tw-h-6">
                         {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
-                        <span
-                            data-test-id="tree-item-toggle"
-                            className={merge([
-                                'tw-w-2 tw-h-3 tw-flex tw-items-center tw-justify-center tw-py-3',
-                                hasChildren && 'tw-cursor-pointer',
-                            ])}
-                            onClick={handleExpand}
-                        >
-                            {hasChildren && caretComponent}
-                        </span>
+                        <div className="tw-w-2 tw-h-3 tw-flex tw-items-center tw-justify-center">
+                            {hasChildren && (
+                                <button
+                                    data-test-id="tree-item-toggle"
+                                    className="tw-flex tw-items-center tw-justify-center tw-py-3 tw-cursor-pointer"
+                                    onClick={handleExpandClick}
+                                    onKeyDown={handleExpandKeyDown}
+                                    tabIndex={0}
+                                >
+                                    <div
+                                        className={merge([
+                                            'tw-transition-transform tw-w-0 tw-h-0 tw-text-black-100 tw-text-opacity-40 tw-font-normal tw-border-t-4 tw-border-t-transparent tw-border-b-4 tw-border-b-transparent tw-border-l-4 tw-border-l-x-strong',
+                                            treeState.selectedIds.has(id) && 'tw-text-box-selected-strong-inverse',
+                                            treeState.expandedIds.has(id) && 'tw-rotate-90',
+                                        ])}
+                                    />
+                                </button>
+                            )}
+                        </div>
 
                         {label ? <span>{label}</span> : null}
 
