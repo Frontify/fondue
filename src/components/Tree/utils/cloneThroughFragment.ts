@@ -10,9 +10,11 @@ export const cloneThroughFragments = <T>(
     return Children.map(children, (child: ReactElement<T>) => {
         if (isValidElement(child)) {
             const childProps = child.props;
+
             if (isFragment(child)) {
                 return cloneThroughFragments((child as ReactElement<{ children: ReactElement }>).props.children, props);
             }
+
             return cloneElement(child, { ...childProps, ...props });
         }
 

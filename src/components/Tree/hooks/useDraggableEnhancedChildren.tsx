@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { Children, ReactElement, useMemo } from 'react';
+import React, { Children, ReactElement, cloneElement, useMemo } from 'react';
 
 import { DropZone, OnDropCallback } from '@components/DropZone';
 import { DraggableItem, DropZonePosition } from '@utilities/dnd';
@@ -39,7 +39,7 @@ export const useDraggableEnhancedChildren = <T extends object>(config: Configura
                         />
                     ) : null}
 
-                    {child}
+                    {cloneElement(child)}
                 </>
             );
         });

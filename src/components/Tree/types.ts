@@ -69,6 +69,7 @@ export type TreeState = {
 };
 
 export type TreeStateAction =
+    | { type: 'REPLACE_STATE'; payload: TreeState }
     | { type: 'SET_SELECT'; payload: { id: string; isSelected: boolean } }
     | { type: 'SET_EXPAND'; payload: { id: string; isExpanded: boolean } }
     | { type: 'SET_SELECTION_MODE'; payload: { selectionMode: TreeState['selectionMode'] } }

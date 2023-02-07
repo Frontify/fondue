@@ -12,29 +12,24 @@ const TreeComponent = ({ onSelect }: { onSelect?: (id: Nullable<string>) => void
                 <TreeItem
                     key={node.id}
                     id={node.id}
-                    sort={node.sort}
-                    contentComponent={() => <span>{node.name}</span>}
+                    contentComponent={() => <span>{node.label}</span>}
                     onSelect={onSelect}
                 >
-                    {node.nodes &&
-                        node.nodes.map((node) => (
-                            <TreeItem
-                                key={node.id}
-                                id={node.id}
-                                sort={node.sort}
-                                contentComponent={() => <span>{node.name}</span>}
-                            >
-                                {node.nodes &&
-                                    node.nodes.map((node) => (
+                    {node.nodes?.map((node) => (
+                        <TreeItem key={node.id} id={node.id} contentComponent={() => <span>{node.label}</span>}>
+                            {node.nodes?.map((node) => (
+                                <TreeItem key={node.id} id={node.id} contentComponent={() => <span>{node.label}</span>}>
+                                    {node.nodes?.map((node) => (
                                         <TreeItem
                                             key={node.id}
                                             id={node.id}
-                                            sort={node.sort}
-                                            contentComponent={() => <span>{node.name}</span>}
+                                            contentComponent={() => <span>{node.label}</span>}
                                         />
                                     ))}
-                            </TreeItem>
-                        ))}
+                                </TreeItem>
+                            ))}
+                        </TreeItem>
+                    ))}
                 </TreeItem>
             ))}
         </Tree>

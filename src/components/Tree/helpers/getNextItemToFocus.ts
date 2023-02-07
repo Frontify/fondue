@@ -16,18 +16,11 @@ export const getNextItemToFocus = (
         }
 
         return firstChildState;
-    } else if (currentItemState.parentId && !isItemLastInParent(id, currentItemState.parentId, treeState)) {
-        // If within a folder, select the next child
-        const parentState = treeState.items.get(currentItemState.parentId);
-        if (parentState?.childrenIds && parentState.childrenIds.length > 0) {
-            const currentItemIndexInParent = parentState.childrenIds.findIndex((childId) => childId === id) as number;
-            const nextSiblingId = parentState.childrenIds[currentItemIndexInParent + 1] as string;
-            return treeState.items.get(nextSiblingId);
-        }
-    } else if (currentItemState.parentId && isItemLastInParent(id, currentItemState.parentId, treeState)) {
-        // If within a folder and last child, select the next sibling of parent
+    } else if (currentItemState.parentId) {
+        // If within a folder, select the next sibling
         const nextFirstItemId = getNextFirstItemIdInParent(id, treeState);
-        if (nextFirstItemId) {
+
+        if (nextFirstItemId !== undefined) {
             const nextFirstItemState = treeState.items.get(nextFirstItemId);
             nextFirstItemState?.domElement?.focus();
         }
@@ -51,24 +44,18 @@ const getNextFirstItemIdInParent = (id: string, treeState: TreeState): string | 
         throw new Error(`Item with id ${id} is not a registered item.`);
     }
 
-    if (currentItemState.parentId) {
+    if (currentItemState.parentId !== undefined) {
         const parentState = treeState.items.get(currentItemState.parentId);
         if (!parentState) {
             throw new Error(`Item with id ${currentItemState.parentId} is not a registered item.`);
         }
 
-        if (parentState.parentId !== undefined) {
-            const grandParentState = treeState.items.get(parentState.parentId);
-            if (grandParentState && grandParentState.childrenIds) {
-                const currentParentIndexInGrandParent: number = grandParentState.childrenIds.findIndex(
-                    (childId) => childId === currentItemState.parentId,
-                );
-                const nextParentSiblingId: string = grandParentState.childrenIds[currentParentIndexInGrandParent + 1];
-
-                if (!nextParentSiblingId) {
-                    return getNextFirstItemIdInParent(currentItemState.parentId, treeState);
-                }
-                return nextParentSiblingId;
+        if (parentState && parentState.childrenIds && parentState.childrenIds.length > 0) {
+            if (isItemLastInParent(id, currentItemState.parentId, treeState)) {
+                return getNextFirstItemIdInParent(currentItemState.parentId, treeState);
+            } else {
+                const currentItemIndexInParent = parentState.childrenIds.findIndex((childId) => childId === id);
+                return parentState.childrenIds[currentItemIndexInParent + 1];
             }
         }
     }

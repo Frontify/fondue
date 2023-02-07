@@ -19,12 +19,17 @@ const noop = () => undefined;
 export const ROOT_ID = '__ROOT__';
 
 const reducer = (state: TreeState, action: TreeStateAction): TreeState => {
+    console.log('REDUCER', action.type, action.payload, state);
     switch (action.type) {
         case 'SET_SELECT': {
             const { id, isSelected } = action.payload;
 
             if (!state.items.has(id)) {
                 throw new Error(`No tree item registered with id ${id}.`);
+            }
+
+            if (state.selectionMode === 'single') {
+                state.selectedIds.clear();
             }
 
             if (isSelected) {
@@ -112,6 +117,9 @@ const reducer = (state: TreeState, action: TreeStateAction): TreeState => {
                 items: state.items,
             };
 
+        case 'REPLACE_STATE':
+            return action.payload;
+
         default:
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             //@ts-ignore
@@ -124,19 +132,22 @@ export const Tree = ({
     id,
     activeIds,
     selectedIds,
-    expandedIds = [],
+    expandedIds,
     draggable = false,
     onSelect,
     onExpand,
     onDrop,
     children,
 }: TreeProps) => {
-    const initialState: TreeState = {
-        items: new Map<string, TreeItemState>().set(ROOT_ID, { level: -1 }),
-        selectedIds: new Set(selectedIds ?? activeIds ?? []),
-        expandedIds: new Set(expandedIds),
-        selectionMode: 'single',
-    };
+    const initialState: TreeState = useMemo(
+        () => ({
+            items: new Map<string, TreeItemState>().set(ROOT_ID, { level: -1 }),
+            selectedIds: new Set(selectedIds ?? activeIds ?? []),
+            expandedIds: new Set(expandedIds ?? []),
+            selectionMode: 'single',
+        }),
+        [activeIds, expandedIds, selectedIds],
+    );
 
     const [treeState, updateTreeState] = useReducer(reducer, initialState);
 
@@ -167,6 +178,13 @@ export const Tree = ({
             window.removeEventListener('keyup', keyUpHandler);
         };
     }, [keyDownHandler, keyUpHandler]);
+
+    useEffect(() => {
+        updateTreeState({
+            type: 'REPLACE_STATE',
+            payload: initialState,
+        });
+    }, [initialState]);
 
     const handleSelect = useCallback(
         (id: string) => {
@@ -212,7 +230,7 @@ export const Tree = ({
         onDrop: handleDrop,
         children: childrenArray,
     });
-    const enhancedChildren: ReactNode = draggable ? draggableEnhancedChildren : children;
+    const enhancedChildren: ReactNode = draggable ? draggableEnhancedChildren : childrenArray;
 
     return (
         <TreeContext.Provider
