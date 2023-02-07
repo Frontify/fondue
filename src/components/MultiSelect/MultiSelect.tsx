@@ -286,36 +286,31 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                 heightIsReady &&
                 emphasis === MultiSelectEmphasis.Default &&
                 createPortal(
-                    <AnimatePresence>
-                        <motion.div
-                            ref={setMultiSelectMenuRef}
-                            className="tw-absolute tw-left-0 tw-w-full tw-overflow-hidden tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-30 tw-bg-base tw-min-w-[18rem]"
-                            key="content"
-                            style={{
-                                ...popperInstance.styles.popper,
-                                width: triggerRef?.getBoundingClientRect().width,
-                            }}
-                            {...popperInstance.attributes.popper}
-                            initial={{ height: DEFAULT_DROPDOWN_MIN_ANIMATION_HEIGHT }}
-                            animate={{ height: 'auto' }}
-                            transition={{ ease: [0.04, 0.62, 0.23, 0.98], duration: 0.5 }}
-                        >
-                            <FocusScope restoreFocus>
-                                <div
-                                    className="tw-p-4 tw-overflow-y-auto tw-overflow-x-hidden tw-w-full"
-                                    style={{ maxHeight }}
-                                >
-                                    <Checklist
-                                        activeValues={activeItemKeys.map((key) => key.toString())}
-                                        setActiveValues={onSelectionChange}
-                                        checkboxes={checkboxes.filter((item) => !item.isDivider && !item.isCategory)}
-                                        direction={ChecklistDirection.Vertical}
-                                        ariaLabel={ariaLabel}
-                                    />
-                                </div>
-                            </FocusScope>
-                        </motion.div>
-                    </AnimatePresence>,
+                    <div
+                        ref={setMultiSelectMenuRef}
+                        className="tw-absolute tw-left-0 tw-w-full tw-overflow-hidden tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-30 tw-bg-base tw-min-w-[18rem]"
+                        key="content"
+                        style={{
+                            ...popperInstance.styles.popper,
+                            width: triggerRef?.getBoundingClientRect().width,
+                        }}
+                        {...popperInstance.attributes.popper}
+                    >
+                        <FocusScope restoreFocus>
+                            <div
+                                className="tw-p-4 tw-overflow-y-auto tw-overflow-x-hidden tw-w-full tw-relative"
+                                style={{ maxHeight }}
+                            >
+                                <Checklist
+                                    activeValues={activeItemKeys.map((key) => key.toString())}
+                                    setActiveValues={onSelectionChange}
+                                    checkboxes={checkboxes.filter((item) => !item.isDivider && !item.isCategory)}
+                                    direction={ChecklistDirection.Vertical}
+                                    ariaLabel={ariaLabel}
+                                />
+                            </div>
+                        </FocusScope>
+                    </div>,
                     document.body,
                 )}
             {open &&
@@ -327,15 +322,15 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                             ref={setMultiSelectMenuRef}
                             style={{
                                 ...popperInstance.styles.popper,
-                                width: triggerRef?.getBoundingClientRect().width,
-                                minWidth: 'fit-content',
+                                width: 'fit-content',
+                                zIndex: 30,
                             }}
                             {...popperInstance.attributes.popper}
                             initial={{ height: DEFAULT_DROPDOWN_MIN_ANIMATION_HEIGHT }}
                             animate={{ height: 'auto' }}
                             transition={{ ease: [0.04, 0.62, 0.23, 0.98], duration: 0.5 }}
                         >
-                            <Menu open={open} onClose={handleClose} triggerRef={multiSelectRef}>
+                            <Menu open={open} onClose={handleClose}>
                                 {checkboxes.length > 0 && hasResults ? (
                                     checkboxes.map((item, index) => {
                                         const { label, value, avatar, imgSrc } = item;
