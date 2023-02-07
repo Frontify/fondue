@@ -64,14 +64,14 @@ describe('Tree Component', () => {
         cy.get(TREE_ITEM_TOGGLE_ID).eq(2).click();
         cy.get(TREE_ITEM_TOGGLE_ID).eq(1).click();
 
-        cy.get(TREE_ITEM_ID).should('have.length', 9);
+        cy.get(TREE_ITEM_ID).should('have.length', 10);
     });
 
     it('calls the onSelect callback', () => {
         const onSelectStub = cy.stub().as('onSelectStub');
         cy.mount(<TreeComponent onSelect={onSelectStub} />);
 
-        cy.get(TREE_ITEM_ID).click();
+        cy.get(TREE_ITEM_ID).eq(0).click();
         cy.get('@onSelectStub').should('have.been.called');
     });
 });
