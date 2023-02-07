@@ -12,7 +12,7 @@ export const cloneThroughFragments = <T>(
             const childProps = child.props;
 
             if (isFragment(child)) {
-                return cloneThroughFragments((child as ReactElement<{ children: ReactElement }>).props.children, props);
+                return cloneThroughFragments((child as ReactElement).props.children, props);
             }
 
             return cloneElement(child, { ...childProps, ...props });

@@ -63,24 +63,21 @@ export const TreeWithLabel = ({ ...args }: TreeProps) => {
     return (
         <div style={{ maxWidth: '800px' }}>
             <Tree {...args}>
-                {treeNodesMock.map((node) => {
-                    console.log(node);
-                    return (
-                        <TreeItem {...node} key={node.id}>
-                            {node.nodes?.map((node) => (
-                                <TreeItem {...node} key={node.id}>
-                                    {node.nodes?.map((node) => (
-                                        <TreeItem {...node} key={node.id}>
-                                            {node.nodes?.map((node) => (
-                                                <TreeItem {...node} key={node.id} />
-                                            ))}
-                                        </TreeItem>
-                                    ))}
-                                </TreeItem>
-                            ))}
-                        </TreeItem>
-                    );
-                })}
+                {treeNodesMock.map((node) => (
+                    <TreeItem {...node} key={node.id}>
+                        {node.nodes?.map((node) => (
+                            <TreeItem {...node} key={node.id}>
+                                {node.nodes?.map((node) => (
+                                    <TreeItem {...node} key={node.id}>
+                                        {node.nodes?.map((node) => (
+                                            <TreeItem {...node} key={node.id} />
+                                        ))}
+                                    </TreeItem>
+                                ))}
+                            </TreeItem>
+                        ))}
+                    </TreeItem>
+                ))}
             </Tree>
         </div>
     );

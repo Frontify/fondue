@@ -10,7 +10,7 @@ import { TreeItemProps } from '../types';
 type Configuration<T> = {
     onDrop?: OnDropCallback<T>;
     accept: string | string[];
-    children?: ReactElement<TreeItemProps> | ReactElement<TreeItemProps>[];
+    children?: Nullable<ReactElement<TreeItemProps>> | Nullable<ReactElement<TreeItemProps>>[];
     sort?: number;
 };
 
@@ -43,7 +43,7 @@ export const useDraggableEnhancedChildren = <T extends object>(config: Configura
                 </>
             );
         });
-    }, [config.accept, config.children, config.onDrop, config.sort]);
+    }, [config]);
 
     return { draggableEnhancedChildren };
 };

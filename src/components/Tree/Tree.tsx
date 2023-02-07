@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactNode, useCallback, useEffect, useMemo, useReducer } from 'react';
+import React, { ReactElement, useCallback, useEffect, useMemo, useReducer } from 'react';
 
 import type {
     RegisterTreeItemPayload,
+    TreeItemProps,
     TreeItemState,
     TreeProps,
     TreeState,
@@ -19,7 +20,6 @@ const noop = () => undefined;
 export const ROOT_ID = '__ROOT__';
 
 const reducer = (state: TreeState, action: TreeStateAction): TreeState => {
-    console.log('REDUCER', action.type, action.payload, state);
     switch (action.type) {
         case 'SET_SELECT': {
             const { id, isSelected } = action.payload;
@@ -224,13 +224,16 @@ export const Tree = ({
         [],
     );
 
-    const childrenArray = useMemo(() => cloneThroughFragments(children, { level: 0, parentId: ROOT_ID }), [children]);
+    const childrenArray: ReactElement<TreeItemProps>[] = useMemo(
+        () => cloneThroughFragments(children, { level: 0, parentId: ROOT_ID }),
+        [children],
+    );
     const { draggableEnhancedChildren } = useDraggableEnhancedChildren({
         accept: id,
         onDrop: handleDrop,
         children: childrenArray,
     });
-    const enhancedChildren: ReactNode = draggable ? draggableEnhancedChildren : childrenArray;
+    const enhancedChildren = draggable ? draggableEnhancedChildren : childrenArray;
 
     return (
         <TreeContext.Provider
