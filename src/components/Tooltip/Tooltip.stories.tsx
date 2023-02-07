@@ -241,3 +241,38 @@ HiddenTooltip.decorators = [
         </div>
     ),
 ];
+
+const TooltipWithinOverflownContainer: StoryFn<TooltipProps> = (args: TooltipProps) => {
+    return (
+        <div className="tw-overflow-y-auto tw-shadow tw-h-[100px] tw-my-6">
+            <p className="tw-p2">Title</p>
+            <p className="tw-p2">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut mattis iaculis eros. Curabitur quis tortor
+                vestibulum lacus gravida ultrices eget sed velit. Donec id interdum nibh.
+            </p>
+            <div className="tw-w-4">
+                <Tooltip
+                    {...args}
+                    triggerElement={
+                        <button className="tw-mr-1">
+                            <IconExclamationMarkCircle16Filled />
+                        </button>
+                    }
+                />
+            </div>
+            <p className="tw-p2">
+                Duis orci sapien, gravida pellentesque cursus non, cursus vitae dolor. Etiam luctus aliquam sem, non
+                maximus risus efficitur sit amet. Nulla diam urna
+            </p>
+            <p className="tw-p2">
+                Duis orci sapien, gravida pellentesque cursus non, cursus vitae dolor. Etiam luctus aliquam sem, non
+                maximus risus efficitur sit amet. Nulla diam urna
+            </p>
+        </div>
+    );
+};
+
+export const WithOverflownContainer = TooltipWithinOverflownContainer.bind({});
+WithOverflownContainer.args = {
+    withArrow: true,
+};
