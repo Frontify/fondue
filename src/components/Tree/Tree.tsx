@@ -19,6 +19,8 @@ const noop = () => undefined;
 export const ROOT_ID = '__ROOT__';
 
 const reducer = (state: TreeState, action: TreeStateAction): TreeState => {
+    console.log('REDUCER', action.type, action.payload, state);
+
     switch (action.type) {
         case 'SET_SELECT': {
             const { id, isSelected } = action.payload;

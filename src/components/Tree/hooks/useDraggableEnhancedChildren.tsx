@@ -19,7 +19,7 @@ export const useDraggableEnhancedChildren = <T extends object>(config: Configura
                 return null;
             }
 
-            return (
+            return cloneElement(
                 <>
                     {index === 0 ? (
                         <DropZone
@@ -37,8 +37,8 @@ export const useDraggableEnhancedChildren = <T extends object>(config: Configura
                         />
                     ) : null}
 
-                    {cloneElement(child)}
-                </>
+                    {child}
+                </>,
             );
         });
     }, [config]);

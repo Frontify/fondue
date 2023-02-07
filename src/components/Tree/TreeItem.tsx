@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, {
+    Children,
     KeyboardEvent,
     MouseEvent,
     ReactNode,
-    isValidElement,
     useCallback,
-    useLayoutEffect,
+    useEffect,
     useMemo,
     useRef,
     useState,
@@ -59,7 +59,7 @@ export const TreeItem = ({
 
     const sort = treeItemState?.parentId ? getItemPositionInParent(id, treeItemState.parentId, treeState) : -1;
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         if (itemRef.current) {
             const childrenIds = flattenChildren(children).map((child) => child.props.id);
 
@@ -192,7 +192,7 @@ export const TreeItem = ({
     });
     const enhancedChildren: ReactNode = draggable ? draggableEnhancedChildren : childrenArray;
 
-    const hasChildren = isValidElement(enhancedChildren);
+    const hasChildren = Children.count(enhancedChildren) > 0;
     const caretComponent = (
         <div
             className={merge([
