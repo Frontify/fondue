@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { Children, ReactNode, cloneElement, isValidElement, useMemo } from 'react';
+import React, { Children, ReactNode, isValidElement, useMemo } from 'react';
 
 import { DropZone, OnDropCallback } from '@components/DropZone';
 import { DraggableItem, DropZonePosition } from '@utilities/dnd';
@@ -19,7 +19,7 @@ export const useDraggableEnhancedChildren = <T extends object>(config: Configura
                 return null;
             }
 
-            return cloneElement(
+            return (
                 <>
                     {index === 0 ? (
                         <DropZone
@@ -38,7 +38,7 @@ export const useDraggableEnhancedChildren = <T extends object>(config: Configura
                     ) : null}
 
                     {child}
-                </>,
+                </>
             );
         });
     }, [config]);
