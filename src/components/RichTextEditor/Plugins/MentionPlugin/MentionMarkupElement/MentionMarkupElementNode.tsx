@@ -7,8 +7,7 @@ import { MappedMentionableItems, MentionableCategory } from '../types';
 import { MarkupElementNodeComponent } from './MarkupElementNode';
 import { MarkupElementNodeType } from './types';
 
-const renderLabel = (mentionable: MappedMentionableItems, key: string, id: string) =>
-    mentionable.has(key) ? mentionable.get(key) : id;
+const renderLabel = (mentionable: MappedMentionableItems, key: string, id: string) => mentionable.get(key) ?? id;
 
 export const MentionMarkupElementNode =
     (mentionable: MappedMentionableItems): MarkupElementNodeType =>
