@@ -21,7 +21,6 @@ import { mergeProps } from '@react-aria/utils';
 import { useSelectState } from '@react-stately/select';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
-import { AnimatePresence, motion } from 'framer-motion';
 import React, { FC, ReactElement, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { usePopper } from 'react-popper';
@@ -214,42 +213,32 @@ export const Dropdown: FC<DropdownProps> = ({
                 isOpen &&
                 heightIsReady &&
                 createPortal(
-                    <AnimatePresence>
-                        <motion.div
-                            ref={dropdownRef}
-                            style={{
-                                ...popperInstance.styles.popper,
-                                width: triggerRef.current?.getBoundingClientRect().width,
-                                minWidth: 'fit-content',
-                            }}
-                            {...popperInstance.attributes.popper}
-                            className="tw-absolute tw-p-0 tw-shadow tw-list-none tw-m-0 tw-z-[120000] tw-min-w-full tw-overflow-hidden"
-                            key="content"
-                            initial={{ height: DEFAULT_DROPDOWN_MIN_ANIMATION_HEIGHT }}
-                            animate={{ height: 'auto' }}
-                            transition={{ ease: [0.04, 0.62, 0.23, 0.98], duration: 0.5 }}
-                        >
-                            <FocusScope restoreFocus>
-                                <div
-                                    {...overlayProps}
-                                    ref={overlayRef}
-                                    style={autoResize ? { maxHeight } : {}}
-                                    className="tw-flex tw-flex-col"
-                                    data-test-id="dropdown-menu"
-                                    role="dialog"
-                                >
-                                    <DismissButton onDismiss={() => close()} />
-                                    <SelectMenu
-                                        ariaProps={menuProps}
-                                        state={state}
-                                        menuBlocks={menuBlocks}
-                                        scrollable
-                                    />
-                                    <DismissButton onDismiss={() => close()} />
-                                </div>
-                            </FocusScope>
-                        </motion.div>
-                    </AnimatePresence>,
+                    <div
+                        ref={dropdownRef}
+                        style={{
+                            ...popperInstance.styles.popper,
+                            width: triggerRef.current?.getBoundingClientRect().width,
+                            minWidth: 'fit-content',
+                        }}
+                        {...popperInstance.attributes.popper}
+                        className="tw-absolute tw-p-0 tw-shadow tw-list-none tw-m-0 tw-z-[120000] tw-min-w-full tw-overflow-hidden"
+                        key="content"
+                    >
+                        <FocusScope restoreFocus>
+                            <div
+                                {...overlayProps}
+                                ref={overlayRef}
+                                style={autoResize ? { maxHeight } : {}}
+                                className="tw-flex tw-flex-col"
+                                data-test-id="dropdown-menu"
+                                role="dialog"
+                            >
+                                <DismissButton onDismiss={() => close()} />
+                                <SelectMenu ariaProps={menuProps} state={state} menuBlocks={menuBlocks} scrollable />
+                                <DismissButton onDismiss={() => close()} />
+                            </div>
+                        </FocusScope>
+                    </div>,
                     document.body,
                 )}
             {validation === Validation.Loading && (
