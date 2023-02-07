@@ -1,11 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { MentionableCategory } from '@components/RichTextEditor/Plugins';
 import { OptionType, PartialOptionType, defaultNodeTypes } from './types';
 
 const MENTION_ID_REGEX = '[\\d=a-z]+';
-const MENTION_TYPE_REGEX = '[a-z]+';
-export const MENTION_SERIALIZE_REGEX = new RegExp(`@\\[${MENTION_TYPE_REGEX}:${MENTION_ID_REGEX}\\]`, 'gi');
-export const MENTION_DESERIALIZE_REGEX = new RegExp(`@\\[(${MENTION_TYPE_REGEX}):(${MENTION_ID_REGEX})\\]`, 'i');
+const MENTIONABLE_CATEGORIES = Object.values(MentionableCategory).join('|');
+const MENTION_REGEX_PATTERN = `@\\[${MENTIONABLE_CATEGORIES}:${MENTION_ID_REGEX}\\]`;
+export const MENTION_WITH_GROUPS_REGEX_PATTERN = `@\\[(${MENTIONABLE_CATEGORIES}):(${MENTION_ID_REGEX})\\]`;
+export const MENTION_SERIALIZE_REGEX = new RegExp(MENTION_REGEX_PATTERN, 'gi');
+export const MENTION_DESERIALIZE_REGEX = new RegExp(MENTION_WITH_GROUPS_REGEX_PATTERN, 'i');
 
 export const BREAK_TAG = '<br>';
 export const LINK_DESTINATION_KEY = 'link';
