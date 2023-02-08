@@ -21,6 +21,7 @@ export default {
             content: 'Lorem ipsum dolor sit amet.',
         },
         triggerStyle: 'Primary',
+        ariaLabel: 'More info',
     },
 } as Meta<TooltipIconProps>;
 
