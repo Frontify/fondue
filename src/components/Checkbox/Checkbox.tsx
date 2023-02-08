@@ -36,7 +36,7 @@ export type CheckboxProps = {
     label?: string;
     tooltip?: InputLabelTooltipProps;
     note?: string;
-    ariaLabel?: string;
+    'aria-label'?: string;
     groupInputProps?: HTMLAttributes<HTMLElement>;
 };
 
@@ -53,7 +53,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
         label,
         tooltip,
         note,
-        ariaLabel,
+        'aria-label': ariaLabel = 'Checkbox',
         value,
         groupInputProps,
         onChange,
@@ -106,73 +106,78 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
 
     return (
         <div className="tw-flex tw-flex-col tw-gap-1 tw-transition-colors" data-test-id="checkbox">
-            <label
-                className={merge([
-                    'tw-group tw-flex tw-items-center tw-gap-2 tw-select-none tw-outline-none',
-                    !disabled && 'hover:tw-cursor-pointer',
-                ])}
-            >
-                <input
-                    {...mergeProps(groupInputProps || inputProps, focusProps)}
-                    id={id}
-                    ref={inputRef}
-                    className="tw-sr-only"
-                    data-test-id="checkbox-input"
+            <div className="tw-inline-flex tw-flex-row">
+                <InputLabel
+                    disabled={disabled}
+                    clickable
+                    htmlFor={id}
+                    tooltip={tooltip ?? undefined}
                     required={required}
-                />
-                <span
-                    aria-hidden="true"
-                    className={merge([
-                        'tw-p-2 tw-leading-4 tw-relative tw-flex tw-w-4 tw-h-4 tw-items-center tw-justify-center tw-rounded tw-border tw-shrink-0 tw-flex-none',
-                        showFocus ? FOCUS_STYLE : '',
-                        disabled
-                            ? merge([
-                                  'tw-text-white tw-pointer-events-none',
-                                  !isCheckedOrMixed(state) && 'tw-bg-box-disabled-strong-inverse tw-border-line-strong',
-                                  isCheckedOrMixed(state) &&
-                                      'tw-bg-box-disabled-strong tw-text-box-disabled-strong-inverse',
-                              ])
-                            : merge([
-                                  !isCheckedOrMixed(state) &&
-                                      'tw-bg-box-positive-strong-inverse tw-border-line-xx-strong',
-                                  isCheckedOrMixed(state) &&
-                                      emphasis === CheckboxEmphasis.Weak &&
-                                      'tw-bg-box-neutral-strong tw-text-box-neutral-strong-inverse hover:tw-bg-box-neutral-strong-hover',
-
-                                  isCheckedOrMixed(state) &&
-                                      emphasis === CheckboxEmphasis.Default &&
-                                      'tw-bg-box-selected-strong tw-text-box-selected-strong-inverse hover:tw-bg-box-selected-strong-hover',
-                              ]),
-                    ])}
+                    bold={isCheckedOrMixed(state)}
                 >
-                    {state === CheckboxState.Checked && <IconCheckMark />}
-                    {state === CheckboxState.Mixed && <IconMinus />}
-                </span>
-                <span className="tw-inline-flex tw-flex-col">
-                    <span className="tw-inline-flex tw-flex-row">
-                        {label && (
-                            <InputLabel
-                                disabled={disabled}
-                                clickable
-                                htmlFor={id}
-                                tooltip={tooltip ?? undefined}
+                    <span className="tw-flex tw-items-center">
+                        <span className="tw-inline-flex tw-mr-1.5">
+                            <input
+                                {...mergeProps(groupInputProps || inputProps, focusProps)}
+                                id={id}
+                                ref={inputRef}
+                                className="tw-sr-only"
+                                data-test-id="checkbox-input"
+                                aria-label={ariaLabel}
                                 required={required}
-                                bold={isCheckedOrMixed(state)}
+                            />
+                            <span
+                                aria-hidden="true"
+                                className={merge([
+                                    'tw-p-2 tw-leading-4 tw-relative tw-flex tw-w-4 tw-h-4 tw-items-center tw-justify-center tw-rounded tw-border tw-shrink-0 tw-flex-none',
+                                    showFocus ? FOCUS_STYLE : '',
+                                    disabled
+                                        ? merge([
+                                              'tw-text-white tw-pointer-events-none',
+                                              !isCheckedOrMixed(state) &&
+                                                  'tw-bg-box-disabled-strong-inverse tw-border-line-strong',
+                                              isCheckedOrMixed(state) &&
+                                                  'tw-bg-box-disabled-strong tw-text-box-disabled-strong-inverse',
+                                          ])
+                                        : merge([
+                                              !isCheckedOrMixed(state) &&
+                                                  'tw-bg-box-positive-strong-inverse tw-border-line-xx-strong',
+                                              isCheckedOrMixed(state) &&
+                                                  emphasis === CheckboxEmphasis.Weak &&
+                                                  'tw-bg-box-neutral-strong tw-text-box-neutral-strong-inverse hover:tw-bg-box-neutral-strong-hover',
+                                              isCheckedOrMixed(state) &&
+                                                  emphasis === CheckboxEmphasis.Default &&
+                                                  'tw-bg-box-selected-strong tw-text-box-selected-strong-inverse hover:tw-bg-box-selected-strong-hover',
+                                          ]),
+                                ])}
                             >
-                                <span className="tw-text-xs">{label}</span>
-                            </InputLabel>
-                        )}
-                    </span>
-                    {note && (
-                        <span
-                            data-test-id="checkbox-note"
-                            className="tw-text-text-weak  tw-font-sans tw-text-xs tw-font-normal"
-                        >
-                            {note}
+                                {state === CheckboxState.Checked && <IconCheckMark />}
+                                {state === CheckboxState.Mixed && <IconMinus />}
+                            </span>
                         </span>
-                    )}
-                </span>
-            </label>
+                        <span className="tw-inline-flex tw-flex-col">
+                            {label && (
+                                <span
+                                    className={merge([
+                                        'tw-text-xs tw-select-none hover:tw-cursor-pointer hover:tw-text-black dark:hover:tw-text-white group-hover:tw-text-black dark:group-hover:tw-text-white',
+                                        isCheckedOrMixed(state) ? 'tw-font-medium' : '',
+                                    ])}
+                                >
+                                    {label}
+                                </span>
+                            )}
+                            {note && (
+                                <span
+                                    data-test-id="checkbox-note"
+                                    className="tw-text-text-x-weak tw-font-sans tw-text-xs tw-font-normal"
+                                >
+                                    {note}
+                                </span>
+                            )}
+                        </span>
+                    </span>
+                </InputLabel>
+            </div>
         </div>
     );
 };
