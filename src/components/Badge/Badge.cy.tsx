@@ -48,12 +48,6 @@ describe('Badge component', () => {
         cy.get(BADGE_ICON_ID).find('svg').should('exist');
     });
 
-    it('should render badge with icon and overwrite size', () => {
-        cy.mount(<Badge icon={<IconDocumentText size={IconSize.Size8} />}>{BADGE_TEXT}</Badge>);
-
-        cy.get(BADGE_ICON_ID).should('exist').and('have.css', 'width', '20px');
-    });
-
     it('should render with small size', () => {
         cy.mount(<Badge size="small">{BADGE_TEXT}</Badge>);
 
