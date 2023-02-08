@@ -48,7 +48,7 @@ const FLOATING_LINK_EDIT = '[data-test-id=floating-link-edit]';
 const FLOATING_BUTTON_EDIT = '[data-test-id=floating-button-edit]';
 const FLOATING_BUTTON_SECONDARY = '[data-test-id=floating-button-insert-secondary]';
 const BUTTON = '[data-test-id=button]';
-const LINK_CHOOSER_CHECKBOX = '.tw-group > .tw-inline-flex > .tw-flex-1 > .tw-select-none';
+const CHECKBOX_INPUT_ID = '[data-test-id=checkbox-input]';
 
 const insertTextAndOpenToolbar = () => cy.get('[contenteditable=true]').click().type('hello{selectall}');
 
@@ -619,7 +619,7 @@ describe('RichTextEditor Component', () => {
             cy.get('[type=text]').eq(0).should('have.attr', 'value', 'hello');
             cy.get('[type=text]').eq(1).click().type(link);
             cy.get(BUTTON).eq(1).should('not.be.disabled');
-            cy.get(LINK_CHOOSER_CHECKBOX).click();
+            cy.get(CHECKBOX_INPUT_ID).click({ force: true });
             cy.get(BUTTON).eq(1).click();
             cy.get('[contenteditable=true] a').should('have.attr', 'target', '_blank');
             cy.get('[contenteditable=true] a').should('have.attr', 'href', link);
@@ -655,7 +655,7 @@ describe('RichTextEditor Component', () => {
             cy.get(EDIT_LINK_BUTTON).click();
 
             cy.get('[type=text]').eq(1).click().type(additionalLink);
-            cy.get(LINK_CHOOSER_CHECKBOX).click();
+            cy.get(CHECKBOX_INPUT_ID).click({ force: true });
 
             cy.get(BUTTON).eq(1).click();
             cy.get('[contenteditable=true] a').should('have.attr', 'href', link + additionalLink);
@@ -703,7 +703,7 @@ describe('RichTextEditor Component', () => {
             cy.get(EDIT_LINK_BUTTON).click();
 
             cy.get('[type=text]').eq(1).click().type(additionalLink);
-            cy.get(LINK_CHOOSER_CHECKBOX).click();
+            cy.get(CHECKBOX_INPUT_ID).click({ force: true });
 
             cy.get(BUTTON).eq(1).click();
             cy.get('[contenteditable=true] a').should('have.attr', 'href', link + additionalLink);
@@ -733,7 +733,7 @@ describe('RichTextEditor Component', () => {
             cy.get('[type=text]').eq(0).should('have.attr', 'value', 'hello');
             cy.get('[type=text]').eq(1).click().type(link);
             cy.get(BUTTON).eq(1).should('not.be.disabled');
-            cy.get(LINK_CHOOSER_CHECKBOX).click();
+            cy.get(CHECKBOX_INPUT_ID).click({ force: true });
             cy.get(BUTTON).eq(1).click();
             cy.get('[contenteditable=true] a').should('have.attr', 'href', link);
             cy.get('[contenteditable=true] a').should('have.attr', 'target', '_blank');
@@ -769,7 +769,7 @@ describe('RichTextEditor Component', () => {
             cy.get(EDIT_BUTTON_BUTTON).click();
 
             cy.get('[type=text]').eq(1).click().type(additionalLink);
-            cy.get(LINK_CHOOSER_CHECKBOX).click();
+            cy.get(CHECKBOX_INPUT_ID).click({ force: true });
 
             cy.get(BUTTON).eq(1).click();
             cy.get('[contenteditable=true] a').should('have.attr', 'href', link + additionalLink);
@@ -1002,12 +1002,16 @@ describe('RichTextEditor Component', () => {
 
         return (
             <RichTextEditor
+                border={false}
                 plugins={pluginsWithColumns}
                 value={initialValue}
                 onTextChange={(value) => setInitialValue(value)}
             />
         );
     };
+
+    const activeButtonClassNames = 'tw-bg-box-selected tw-rounded !tw-text-box-selected-inverse';
+    const disabledButtonClassNames = '!tw-cursor-not-allowed !tw-opacity-50';
 
     describe('column break plugin', () => {
         it('it should add column break on paragraph', () => {
@@ -1099,6 +1103,80 @@ describe('RichTextEditor Component', () => {
             checkPosition('be.lessThan', 100, 'first');
             checkPosition('be.gt', 100, 'second');
             checkPosition('be.gt', 100, 'Level 5');
+        });
+
+        it('should add only one column break after the first break, when there is a maximum of two columns', () => {
+            cy.mount(<RichTextEditorWithTwoColumns />);
+            const content = 'hello{enter} World {enter} another newline{enter} last newline{selectAll}';
+
+            cy.get('[contenteditable=true]').click().type(content);
+            cy.get(TOOLBAR_GROUP_1).children().eq(-1).click();
+
+            // toolbar button should be active
+            selectTextValue('hello');
+            cy.get(TOOLBAR_GROUP_1).children().eq(-1).realHover().should('include.html', activeButtonClassNames);
+            checkPosition('be.lessThan', 100, 'hello');
+
+            // break after should not be enabled
+            selectTextValue('last newline');
+            cy.get(TOOLBAR_GROUP_1).children().eq(-1).realHover().should('not.include.html', activeButtonClassNames);
+            checkPosition('be.lessThan', 500, 'last newline');
+            checkPosition('be.lessThan', 500, 'World');
+        });
+
+        it('should disable the column break button when already at max column breaks', () => {
+            cy.mount(<RichTextEditorWithTwoColumns />);
+
+            insertTextAndOpenToolbar();
+            cy.get(TOOLBAR_GROUP_1).children().eq(-1).click();
+            cy.get('[contenteditable=true]').click().type('{enter}content');
+
+            selectTextValue('content');
+            cy.get(TOOLBAR_GROUP_1).children().eq(-1).realHover().should('include.html', disabledButtonClassNames);
+        });
+
+        it('should set column break with hotkeys', () => {
+            cy.mount(<RichTextEditorWithTwoColumns />);
+
+            insertTextAndOpenToolbar();
+            cy.get('[contenteditable=true]').type('content{shift+ctrl+enter}{enter}newline');
+            selectTextValue('content');
+            cy.get(TOOLBAR_GROUP_1).children().eq(-1).realHover().should('include.html', activeButtonClassNames);
+            cy.get('[contenteditable=true]').click();
+            selectTextValue('newline');
+            cy.get(TOOLBAR_GROUP_1).children().eq(-1).realHover().should('not.include.html', activeButtonClassNames);
+        });
+
+        it('should delete a column break with backspace key', () => {
+            cy.mount(<RichTextEditorWithTwoColumns />);
+            cy.get('[contenteditable=true]').click().type('hello{shift+ctrl+enter}{enter}W{leftArrow}{backspace}');
+            cy.get('[contenteditable=true]').should('not.include.html', columnBreakClassNames);
+
+            // checks that the words are still separated 'hello' and 'W'
+            selectTextValue('hello');
+            cy.get(TOOLBAR_FLOATING).should('be.visible');
+        });
+
+        it('should delete a column break with del key', () => {
+            cy.mount(<RichTextEditorWithTwoColumns />);
+            cy.get('[contenteditable=true]').click().type('hello{shift+ctrl+enter}{enter}W{leftArrow}{leftArrow}{del}');
+            cy.get('[contenteditable=true]').should('not.include.html', columnBreakClassNames);
+            // checks that the words are still separated 'hello' and 'W', as only the column break should be deleted
+            selectTextValue('hello');
+            cy.get(TOOLBAR_FLOATING).should('be.visible');
+        });
+
+        it('should only add one column break with hotkeys, when there is a maximum of two columns', () => {
+            cy.mount(<RichTextEditorWithTwoColumns />);
+            const content =
+                'hello{enter} World {enter} another newline{enter} last newline{selectAll}{shift+ctrl+enter}';
+            cy.get('[contenteditable=true]').click().type(content);
+
+            selectTextValue('hello');
+            cy.get(TOOLBAR_GROUP_1).children().eq(-1).realHover().should('include.html', disabledButtonClassNames);
+            cy.get('[contenteditable=true]').click();
+            selectTextValue('last newline');
+            cy.get(TOOLBAR_GROUP_1).children().eq(-1).realHover().should('include.html', activeButtonClassNames);
         });
     });
 
