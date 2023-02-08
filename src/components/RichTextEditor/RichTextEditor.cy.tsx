@@ -1166,7 +1166,7 @@ describe('RichTextEditor Component', () => {
             cy.get(TOOLBAR_FLOATING).should('be.visible');
         });
 
-        it('it should only add one column break with hotkeys, when there are two columns', () => {
+        it('should only add one column break with hotkeys, when there is a maximum of two columns', () => {
             cy.mount(<RichTextEditorWithTwoColumns />);
             const content =
                 'hello{enter} World {enter} another newline{enter} last newline{selectAll}{shift+ctrl+enter}';
