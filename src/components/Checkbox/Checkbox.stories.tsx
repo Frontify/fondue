@@ -25,6 +25,7 @@ export default {
         required: false,
         value: "whatever-you'd-like",
         label: 'Checkbox label',
+        'aria-label': 'Custom aria label',
         note: 'Note about this input',
         tooltip: {
             content: 'Lorem ipsum dolor sit amet.',
