@@ -89,11 +89,12 @@ export const TreeItem = ({
 
     const handleDrop = useCallback(
         (
-            targetItem: DraggableItem<{ id: string; sort: Nullable<number> }>,
-            sourceItem: DraggableItem<{ id: string; sort: Nullable<number> }>,
-            position: DropZonePosition,
+            targetItem: DraggableItem<{ id: string; sort: number }>,
+            sourceItem: DraggableItem<{ id: string; sort: number }>,
+            position: DropZonePosition, // [abc, def, ghi]
         ) => {
-            (onDrop ?? onTreeDrop)?.(targetItem, sourceItem, position);
+            onTreeDrop(targetItem, sourceItem, position);
+            onDrop?.(targetItem, sourceItem, position);
         },
         [onDrop, onTreeDrop],
     );

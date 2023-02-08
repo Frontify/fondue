@@ -14,7 +14,7 @@ export type TreeContextProps = {
     registerTreeItem(payload: RegisterTreeItemPayload): void;
     onSelect: OnSelectCallback;
     onExpand: OnExpandCallback;
-    onDrop: OnDropCallback<{ id: string; sort: Nullable<number> }>;
+    onDrop: OnDropCallback<{ id: string; sort: number }>;
 };
 
 export const TreeContext = createContext<TreeContextProps>({} as TreeContextProps);

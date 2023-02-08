@@ -3,6 +3,7 @@
 import type { ReactNode } from 'react';
 
 import type { OnDropCallback } from '@components/DropZone';
+import { DropZonePosition } from '@utilities/dnd';
 
 export type OnSelectCallback = (id: string) => void;
 export type OnExpandCallback = (id: string, isExpanded: boolean) => void;
@@ -14,7 +15,7 @@ export type TreeProps = {
     draggable?: boolean;
     onSelect?: OnSelectCallback;
     onExpand?: OnExpandCallback;
-    onDrop?: OnDropCallback<{ id: string; sort: Nullable<number> }>;
+    onDrop?: OnDropCallback<{ id: string; sort: number }>;
     children: ReactNode;
 };
 
@@ -25,7 +26,7 @@ export type ContentComponentArguments = {
 
 type TreeItemBaseProps = {
     id: string;
-    onDrop?: OnDropCallback<{ id: string; sort: Nullable<number> }>;
+    onDrop?: OnDropCallback<{ id: string; sort: number }>;
     /**
      * The type of item being dragged.
      */
@@ -71,6 +72,7 @@ export type TreeStateAction =
     | { type: 'SET_SELECT'; payload: { id: string; isSelected: boolean } }
     | { type: 'SET_EXPAND'; payload: { id: string; isExpanded: boolean } }
     | { type: 'SET_SELECTION_MODE'; payload: { selectionMode: TreeState['selectionMode'] } }
+    | { type: 'ON_DROP'; payload: { id: string; targetId: string; position: DropZonePosition } }
     | { type: 'REGISTER_TREE_ITEM'; payload: { id: string } & TreeItemState }
     | { type: 'UNREGISTER_TREE_ITEM'; payload: { id: string } };
 

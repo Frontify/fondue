@@ -64,11 +64,75 @@ const reducer = (state: TreeState, action: TreeStateAction): TreeState => {
             };
         }
 
-        case 'SET_SELECTION_MODE':
+        case 'ON_DROP': {
+            console.log('REDUCER', action.type, action.payload, state);
+
+            const { targetId, id, position } = action.payload;
+            const targetState = state.items.get(targetId);
+
+            if (!targetState) {
+                throw new Error(`No tree item registered with id ${targetId}.`);
+            }
+
+            if (position === DropZonePosition.Before) {
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                const parentTargetState = state.items.get(targetState.parentId!);
+                if (!parentTargetState || !parentTargetState.childrenIds) {
+                    throw new Error(`No tree item registered with id ${targetState.parentId}.`);
+                }
+
+                const sourceIndexInParent = parentTargetState.childrenIds.findIndex((childId) => childId === id);
+                const targetIndexInParent = parentTargetState.childrenIds.findIndex((childId) => childId === targetId);
+
+                const element = parentTargetState.childrenIds[sourceIndexInParent];
+                const arrayWithoutElement = [
+                    ...parentTargetState.childrenIds.slice(0, sourceIndexInParent),
+                    ...parentTargetState.childrenIds.slice(sourceIndexInParent + 1),
+                ];
+                const newArray = [
+                    ...arrayWithoutElement.slice(0, targetIndexInParent),
+                    element,
+                    ...arrayWithoutElement.slice(targetIndexInParent),
+                ];
+
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                state.items.set(targetState.parentId!, { ...parentTargetState, childrenIds: newArray });
+            } else if (position === DropZonePosition.After) {
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                const parentTargetState = state.items.get(targetState.parentId!);
+                if (!parentTargetState || !parentTargetState.childrenIds) {
+                    throw new Error(`No tree item registered with id ${targetState.parentId}.`);
+                }
+
+                const sourceIndexInParent = parentTargetState.childrenIds.findIndex((childId) => childId === id);
+                const targetIndexInParent = parentTargetState.childrenIds.findIndex((childId) => childId === targetId);
+
+                const element = parentTargetState.childrenIds[sourceIndexInParent];
+                const arrayWithoutElement = [
+                    ...parentTargetState.childrenIds.slice(0, sourceIndexInParent),
+                    ...parentTargetState.childrenIds.slice(sourceIndexInParent + 1),
+                ];
+                const newArray = [
+                    ...arrayWithoutElement.slice(0, targetIndexInParent + 1),
+                    element,
+                    ...arrayWithoutElement.slice(targetIndexInParent + 1),
+                ];
+
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                state.items.set(targetState.parentId!, { ...parentTargetState, childrenIds: newArray });
+            }
+
+            return {
+                ...state,
+            };
+        }
+
+        case 'SET_SELECTION_MODE': {
             return {
                 ...state,
                 selectionMode: action.payload.selectionMode,
             };
+        }
 
         case 'REGISTER_TREE_ITEM': {
             const { id, childrenIds, level, parentId, domElement: ref } = action.payload;
@@ -81,8 +145,8 @@ const reducer = (state: TreeState, action: TreeStateAction): TreeState => {
             if (parentId) {
                 const parentState = state.items.get(parentId);
                 if (parentState) {
-                    const newChildrenIds = [...(parentState?.childrenIds ?? []), id];
-                    state.items.set(parentId, { ...parentState, childrenIds: newChildrenIds });
+                    const newChildrenIds = new Set([...(parentState?.childrenIds ?? []), id]);
+                    state.items.set(parentId, { ...parentState, childrenIds: [...newChildrenIds] });
                 }
             }
 
@@ -97,7 +161,7 @@ const reducer = (state: TreeState, action: TreeStateAction): TreeState => {
             };
         }
 
-        case 'UNREGISTER_TREE_ITEM':
+        case 'UNREGISTER_TREE_ITEM': {
             const { id } = action.payload;
             const currentItem = state.items.get(id);
 
@@ -115,6 +179,7 @@ const reducer = (state: TreeState, action: TreeStateAction): TreeState => {
                 ...state,
                 items: state.items,
             };
+        }
 
         case 'REPLACE_STATE':
             return {
@@ -208,10 +273,11 @@ export const Tree = ({
 
     const handleDrop = useCallback(
         (
-            targetItem: DraggableItem<{ id: string; sort: Nullable<number> }>,
-            sourceItem: DraggableItem<{ id: string; sort: Nullable<number> }>,
+            targetItem: DraggableItem<{ id: string; sort: number }>,
+            sourceItem: DraggableItem<{ id: string; sort: number }>,
             position: DropZonePosition,
         ) => {
+            updateTreeState({ type: 'ON_DROP', payload: { id: sourceItem.id, targetId: targetItem.id, position } });
             onDrop?.(targetItem, sourceItem, position);
         },
         [onDrop],
