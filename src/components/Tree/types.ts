@@ -27,7 +27,7 @@ type TreeItemBaseProps = {
     id: string;
     onDrop?: OnDropCallback<{ id: string; sort: Nullable<number> }>;
     /**
-     * The type of item being dragged.xw
+     * The type of item being dragged.
      */
     type?: string;
     /**
