@@ -191,7 +191,7 @@ export const TreeItem = ({
 
     return (
         <>
-            {(propsDraggable ?? draggable) && sort === 0 ? (
+            {sort === 0 ? (
                 <DropZone
                     data-position={DropZonePosition.Before}
                     data={{
@@ -234,7 +234,6 @@ export const TreeItem = ({
                         onMouseLeave={handleMouseLeave}
                     >
                         <div className="tw-flex tw-flex-1 tw-space-x-1 tw-items-center tw-h-6">
-                            {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
                             <div className="tw-w-2 tw-h-3 tw-flex tw-items-center tw-justify-center">
                                 {hasChildren && (
                                     <button

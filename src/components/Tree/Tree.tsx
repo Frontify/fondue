@@ -157,24 +157,17 @@ const reducer = (state: TreeState, action: TreeStateAction): TreeState => {
             const { id, childrenIds } = action.payload;
 
             const itemState = state.items.get(id);
-            if (itemState) {
-                state.items.set(id, { ...itemState, childrenIds });
+            if (!itemState) {
+                throw new Error(`No tree item registered with id ${id}.`);
             }
+
+            state.items.set(id, { ...itemState, childrenIds });
 
             return { ...state };
         }
 
         case 'UNREGISTER_TREE_ITEM': {
             const { id } = action.payload;
-            const currentItem = state.items.get(id);
-
-            if (currentItem?.parentId) {
-                const parentState = state.items.get(currentItem.parentId);
-                if (parentState) {
-                    const newChildrenIds = (parentState?.childrenIds ?? []).filter((childId) => childId !== id);
-                    state.items.set(currentItem.parentId, { ...parentState, childrenIds: newChildrenIds });
-                }
-            }
 
             state.items.delete(id);
 
