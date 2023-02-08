@@ -2,7 +2,7 @@
 
 import { PlateEditor, getParentNode, getPointBefore, getStartPoint, select } from '@udecode/plate';
 import { Path } from 'slate';
-import { getColumnBreakCount } from './ColumnBreakButton/ColumnBreakoolbarButton';
+import { getColumnBreakCount } from './ColumnBreakButton/ColumnBreakToolbarButton';
 import { setBreakAfter } from './utils/setBreakAfter';
 
 const moveCursorToPath = (editor: PlateEditor, path: Path) => {
