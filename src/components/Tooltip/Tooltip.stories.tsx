@@ -1,10 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Meta, StoryFn } from '@storybook/react';
-import React from 'react';
+import React, { useState } from 'react';
 import { BrightHeaderStyle } from './BrightHeader';
 import { Tooltip, TooltipAlignment, TooltipPosition, TooltipProps } from './Tooltip';
 import { IconExclamationMarkCircle16Filled, IconExclamationMarkTriangle16, IconIcon } from '@foundation/Icon';
+import { useOverlayTriggerState } from '@react-stately/overlays';
+import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
+import { Modal } from '@components/Modal';
+import { ModalProps } from '@components/Modal/types';
+import { ScrollWrapperDirection } from '@components/ScrollWrapper/types';
+import { action } from '@storybook/addon-actions';
+import { Dropdown } from '@components/Dropdown';
+import { FormControl } from '..';
 
 export default {
     title: 'Components/Tooltip',
@@ -275,4 +283,111 @@ const TooltipWithinOverflownContainer: StoryFn<TooltipProps> = (args: TooltipPro
 export const WithOverflownContainer = TooltipWithinOverflownContainer.bind({});
 WithOverflownContainer.args = {
     withArrow: true,
+};
+
+const ModalComponent = (args: ModalProps) => {
+    const state = useOverlayTriggerState({});
+
+    return (
+        <>
+            <Button onClick={() => state.open()}>Open Modal</Button>
+            <Modal onClose={state.close} isOpen={state.isOpen} isDismissable>
+                <Modal.Header title="Modal title" leadText="Lead text" />
+                <Modal.Body direction={ScrollWrapperDirection.Vertical}>{args.children}</Modal.Body>
+                <Modal.Footer
+                    buttons={[
+                        {
+                            children: 'Cancel',
+                            onClick: () => {
+                                state.close();
+                            },
+                            style: ButtonStyle.Default,
+                            emphasis: ButtonEmphasis.Default,
+                        },
+                        {
+                            children: 'Confirm',
+                            onClick: () => {
+                                action('click');
+                                state.close();
+                            },
+                            style: ButtonStyle.Default,
+                            emphasis: ButtonEmphasis.Strong,
+                        },
+                    ]}
+                />
+            </Modal>
+        </>
+    );
+};
+
+const DropdownComponent = () => {
+    const [active, setActive] = useState<string | number | undefined>();
+
+    return (
+        <Dropdown
+            menuBlocks={[
+                {
+                    id: 'block1',
+                    ariaLabel: 'First section',
+                    menuItems: [
+                        {
+                            id: 1,
+                            title: 'Item 1',
+                        },
+                        {
+                            id: 2,
+                            title: 'Item 2',
+                        },
+                        {
+                            id: 3,
+                            title: 'Item 3',
+                        },
+                        {
+                            id: 4,
+                            title: 'Item 4',
+                        },
+                    ],
+                },
+            ]}
+            activeItemId={active}
+            onChange={(id) => setActive(id)}
+        />
+    );
+};
+
+const WithModalWithTooltipAndDropdown: StoryFn<TooltipProps> = (args: TooltipProps) => {
+    return (
+        <ModalComponent isOpen={false}>
+            <div>
+                <div className="tw-flex">
+                    <DropdownComponent />
+                    <Tooltip
+                        {...args}
+                        triggerElement={
+                            <button className="tw-mr-1">
+                                <IconExclamationMarkCircle16Filled />
+                            </button>
+                        }
+                    />
+                </div>
+                <FormControl
+                    label={{
+                        children: 'Input Label',
+                        required: false,
+                        htmlFor: 'dropdownId',
+                        tooltip: { content: 'Tooltip Text' },
+                    }}
+                >
+                    <DropdownComponent />
+                </FormControl>
+            </div>
+        </ModalComponent>
+    );
+};
+
+export const InsideModalWithDropdown = WithModalWithTooltipAndDropdown.bind({});
+
+InsideModalWithDropdown.args = {
+    alignment: TooltipAlignment.End,
+    position: TooltipPosition.Top,
 };
