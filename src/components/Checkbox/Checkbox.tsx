@@ -136,6 +136,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                                 required={required}
                             />
                             <span
+                                data-test-id="checkbox-icon-box"
                                 aria-hidden="true"
                                 className={merge([
                                     'tw-p-2 tw-leading-4 tw-relative tw-flex tw-items-center tw-justify-center tw-rounded tw-border tw-shrink-0 tw-flex-none',
@@ -167,6 +168,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                         <span className="tw-inline-flex tw-flex-col">
                             {label && !hideLabel && (
                                 <span
+                                    data-test-id="checkbox-label"
                                     className={merge([
                                         'tw-text-xs tw-select-none hover:tw-cursor-pointer hover:tw-text-black dark:hover:tw-text-white group-hover:tw-text-black dark:group-hover:tw-text-white',
                                         isCheckedOrMixed(state) ? 'tw-font-medium' : '',
@@ -175,9 +177,9 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                                     {label}
                                 </span>
                             )}
-                            {helperText && (
+                            {helperText && !hideLabel && (
                                 <span
-                                    data-test-id="checkbox-note"
+                                    data-test-id="checkbox-helper-text"
                                     className={merge([
                                         'tw-font-sans tw-text-xs tw-font-normal',
                                         disabled ? 'text-disabled' : 'tw-text-text-x-weak',

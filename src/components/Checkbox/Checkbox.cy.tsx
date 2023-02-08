@@ -1,17 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { FC, useState } from 'react';
-import { Checkbox, CheckboxProps, CheckboxState } from './Checkbox';
+import { Checkbox, CheckboxProps, CheckboxSize, CheckboxState } from './Checkbox';
 
 const CHECKBOX_LABEL = 'Checkbox label';
-const NOTE_TEXT = 'Note about this input';
+const HELPER_TEXT = 'Note about this input';
 const CHECKBOX_ID = '[data-test-id=checkbox]';
 const TOOLTIP_ID = '[data-test-id=tooltip]';
 const CHECKBOX_INPUT_ID = '[data-test-id=checkbox-input]';
 const TOOLTIP_ICON_TRIGGER_ID = '[data-test-id=tooltip-icon-trigger]';
 const CHECKBOX_VALUE = 'value';
 const INPUT_LABEL_REQUIRED_ID = '[data-test-id=input-label-required]';
-const CHECKBOX_NOTE_ID = '[data-test-id=checkbox-note]';
+const CHECKBOX_HELPER_TEXT_ID = '[data-test-id=checkbox-helper-text]';
+const CHECKBOX_ICON_BOX_ID = '[data-test-id=checkbox-icon-box]';
+const CHECKBOX_LABEL_ID = '[data-test-id=checkbox-label]';
 
 const CheckboxComponent: FC<CheckboxProps> = (props) => {
     const [checked, setChecked] = useState(props.state);
@@ -91,6 +93,30 @@ describe('Checkbox component', () => {
         cy.get(CHECKBOX_INPUT_ID).invoke('attr', 'disabled').should('eq', 'disabled');
     });
 
+    it('renders with default size when size is not defined', () => {
+        cy.mount(<CheckboxComponent label={CHECKBOX_LABEL} />);
+
+        cy.get(CHECKBOX_ICON_BOX_ID).should('have.class', 'tw-h-4').should('have.class', 'tw-w-4');
+    });
+
+    it('renders with default size', () => {
+        cy.mount(<CheckboxComponent label={CHECKBOX_LABEL} size={CheckboxSize.Default} />);
+
+        cy.get(CHECKBOX_ICON_BOX_ID).should('have.class', 'tw-h-4').should('have.class', 'tw-w-4');
+    });
+
+    it('renders with large size', () => {
+        cy.mount(<CheckboxComponent label={CHECKBOX_LABEL} size={CheckboxSize.Large} />);
+
+        cy.get(CHECKBOX_ICON_BOX_ID).should('have.class', 'tw-h-5').should('have.class', 'tw-w-5');
+    });
+
+    it('renders without a label when hideLabel is true', () => {
+        cy.mount(<CheckboxComponent label={CHECKBOX_LABEL} hideLabel={true} />);
+
+        cy.get(CHECKBOX_LABEL_ID).should('not.exist');
+    });
+
     it('should check with keyboard', () => {
         cy.mount(<CheckboxComponent state={CheckboxState.Unchecked} />);
 
@@ -118,10 +144,10 @@ describe('Checkbox component', () => {
     });
 
     it('should render helper text', () => {
-        cy.mount(<CheckboxComponent helperText={NOTE_TEXT} />);
+        cy.mount(<CheckboxComponent helperText={HELPER_TEXT} />);
 
-        cy.get(CHECKBOX_NOTE_ID).should('exist');
-        cy.get(CHECKBOX_NOTE_ID).should('contain', NOTE_TEXT);
+        cy.get(CHECKBOX_HELPER_TEXT_ID).should('exist');
+        cy.get(CHECKBOX_HELPER_TEXT_ID).should('contain', HELPER_TEXT);
     });
 
     it('should call onChange', () => {
