@@ -118,7 +118,7 @@ describe('Checkbox component', () => {
     });
 
     it('should render note', () => {
-        cy.mount(<CheckboxComponent note={NOTE_TEXT} />);
+        cy.mount(<CheckboxComponent helperText={NOTE_TEXT} />);
 
         cy.get(CHECKBOX_NOTE_ID).should('exist');
         cy.get(CHECKBOX_NOTE_ID).should('contain', NOTE_TEXT);

@@ -41,7 +41,7 @@ export type CheckboxProps = {
     onChange?: (isChecked: boolean) => void;
     label?: string;
     tooltip?: InputLabelTooltipProps;
-    note?: string;
+    helperText?: string;
     'aria-label'?: string;
     groupInputProps?: HTMLAttributes<HTMLElement>;
 };
@@ -59,7 +59,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
         required,
         label,
         tooltip,
-        note,
+        helperText,
         'aria-label': ariaLabel = 'Checkbox',
         value,
         groupInputProps,
@@ -173,7 +173,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                                     {label}
                                 </span>
                             )}
-                            {note && (
+                            {helperText && (
                                 <span
                                     data-test-id="checkbox-note"
                                     className={merge([
@@ -181,7 +181,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                                         disabled ? 'text-disabled' : 'tw-text-text-x-weak',
                                     ])}
                                 >
-                                    {note}
+                                    {helperText}
                                 </span>
                             )}
                         </span>
