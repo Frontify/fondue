@@ -1105,7 +1105,7 @@ describe('RichTextEditor Component', () => {
             checkPosition('be.gt', 100, 'Level 5');
         });
 
-        it('it should add only one column break after the first break, when there are only two columns', () => {
+        it('should add only one column break after the first break, when there is a maximum of two columns', () => {
             cy.mount(<RichTextEditorWithTwoColumns />);
             const content = 'hello{enter} World {enter} another newline{enter} last newline{selectAll}';
 
