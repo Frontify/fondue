@@ -5,19 +5,21 @@ import { Plugin, PluginProps } from '../Plugin';
 import { ColumnBreakButton } from './ColumnBreakButton';
 import { withColumnBreak } from './withColumnBreak';
 import { onKeyDownColumnBreak } from './onKeyDownColumnBreak';
+import { CSSProperties } from 'react';
 
 export const KEY_ELEMENT_BREAK_AFTER = 'breakAfterColumn';
+export const GAP_DEFAULT = 'normal';
 
 export class BreakAfterPlugin extends Plugin {
     private columns: number;
-    private gap: string | number;
+    private gap: CSSProperties['gap'];
     constructor(props?: PluginProps) {
         super('break-after-plugin', {
             button: ColumnBreakButton,
             ...props,
         });
         this.columns = props?.columns ?? 1;
-        this.gap = props?.gap ?? 'normal';
+        this.gap = props?.gap ?? GAP_DEFAULT;
     }
 
     plugins() {
@@ -25,7 +27,7 @@ export class BreakAfterPlugin extends Plugin {
     }
 }
 
-export const createColumnBreakPlugin = (columns: number, gap: string | number) => {
+export const createColumnBreakPlugin = (columns: number, gap: CSSProperties['gap']) => {
     return createPluginFactory({
         key: KEY_ELEMENT_BREAK_AFTER,
         handlers: {
