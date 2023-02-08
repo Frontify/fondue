@@ -87,7 +87,7 @@ export const TreeItem = ({
         (
             targetItem: DraggableItem<{ id: string; sort: number }>,
             sourceItem: DraggableItem<{ id: string; sort: number }>,
-            position: DropZonePosition, // [abc, def, ghi]
+            position: DropZonePosition,
         ) => {
             onTreeDrop(targetItem, sourceItem, position);
             onDrop?.(targetItem, sourceItem, position);
