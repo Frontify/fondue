@@ -151,7 +151,8 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                                                   'tw-bg-box-disabled tw-text-box-disabled-inverse tw-border-line-strong',
                                           ])
                                         : merge([
-                                              !isCheckedOrMixed(state) && 'tw-bg-box-neutral tw-border-line-xx-strong',
+                                              !isCheckedOrMixed(state) &&
+                                                  'tw-bg-base tw-border-line-xx-strong hover:tw-bg-box-neutral',
                                               isCheckedOrMixed(state) &&
                                                   emphasis === CheckboxEmphasis.Weak &&
                                                   'tw-bg-box-neutral-strong tw-text-box-neutral-strong-inverse hover:tw-bg-box-neutral-strong-hover',
