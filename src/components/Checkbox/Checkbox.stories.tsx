@@ -3,7 +3,13 @@
 import { Meta, StoryFn } from '@storybook/react';
 import React, { useEffect, useState } from 'react';
 import { IconExclamationMarkCircle, IconInfo, IconQuestionMarkCircle } from '@foundation/Icon/Generated';
-import { Checkbox as CheckboxComponent, CheckboxEmphasis, CheckboxProps, CheckboxState } from './Checkbox';
+import {
+    Checkbox as CheckboxComponent,
+    CheckboxEmphasis,
+    CheckboxProps,
+    CheckboxSize,
+    CheckboxState,
+} from './Checkbox';
 import { TooltipIconTriggerStyle } from '@components/TooltipIcon';
 
 export default {
@@ -18,6 +24,10 @@ export default {
             options: Object.values(CheckboxEmphasis),
             control: { type: 'radio' },
         },
+        size: {
+            options: Object.values(CheckboxSize),
+            control: { type: 'radio' },
+        },
         onChange: {
             table: { disable: false },
             action: 'Change',
@@ -28,6 +38,7 @@ export default {
         disabled: false,
         required: false,
         emphasis: 'Default',
+        size: 'Default',
         value: "whatever-you'd-like",
         label: 'Checkbox label',
         'aria-label': 'Custom aria label',

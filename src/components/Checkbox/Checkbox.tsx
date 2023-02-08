@@ -25,10 +25,16 @@ export enum CheckboxEmphasis {
     Weak = 'Weak',
 }
 
+export enum CheckboxSize {
+    Default = 'Default',
+    Large = 'Large',
+}
+
 export type CheckboxProps = {
     id?: string;
     state?: CheckboxState;
     emphasis?: CheckboxEmphasis;
+    size?: CheckboxSize;
     disabled?: boolean;
     required?: boolean;
     value?: string;
@@ -48,6 +54,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
     {
         id: propId,
         emphasis = CheckboxEmphasis.Default,
+        size = CheckboxSize.Default,
         disabled,
         required,
         label,
@@ -129,7 +136,8 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                             <span
                                 aria-hidden="true"
                                 className={merge([
-                                    'tw-p-2 tw-leading-4 tw-relative tw-flex tw-w-4 tw-h-4 tw-items-center tw-justify-center tw-rounded tw-border tw-shrink-0 tw-flex-none',
+                                    'tw-p-2 tw-leading-4 tw-relative tw-flex tw-items-center tw-justify-center tw-rounded tw-border tw-shrink-0 tw-flex-none',
+                                    size === 'Default' ? 'tw-h-4 tw-w-4' : 'tw-h-5 tw-w-5',
                                     showFocus ? FOCUS_STYLE : '',
                                     disabled
                                         ? merge([
