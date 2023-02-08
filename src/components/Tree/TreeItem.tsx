@@ -58,7 +58,6 @@ export const TreeItem = ({
             registerTreeItem({
                 id,
                 parentId,
-                childrenIds: undefined,
                 level: level ?? 0,
                 domElement: itemRef.current,
             });

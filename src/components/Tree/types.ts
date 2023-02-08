@@ -78,7 +78,7 @@ export type TreeStateAction =
     | { type: 'SET_EXPAND'; payload: { id: string; isExpanded: boolean } }
     | { type: 'SET_SELECTION_MODE'; payload: { selectionMode: TreeState['selectionMode'] } }
     | { type: 'ON_DROP'; payload: { id: string; targetId: string; position: DropZonePosition } }
-    | { type: 'REGISTER_TREE_ITEM'; payload: { id: string } & TreeItemState }
+    | { type: 'REGISTER_TREE_ITEM'; payload: { id: string } & Omit<TreeItemState, 'childrenIds'> }
     | { type: 'REGISTER_TREE_ITEM_CHILDREN'; payload: { id: string; childrenIds: TreeItemState['childrenIds'] } }
     | { type: 'UNREGISTER_TREE_ITEM'; payload: { id: string } };
 

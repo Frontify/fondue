@@ -135,28 +135,20 @@ const reducer = (state: TreeState, action: TreeStateAction): TreeState => {
         }
 
         case 'REGISTER_TREE_ITEM': {
-            const { id, childrenIds, level, parentId, domElement: ref } = action.payload;
+            const { id, level, parentId, domElement: ref } = action.payload;
 
             if (state.items.has(id)) {
                 console.warn('Tree item already registered.');
                 return state;
             }
 
-            if (parentId) {
-                const parentState = state.items.get(parentId);
-                if (parentState) {
-                    const newChildrenIds = new Set([...(parentState?.childrenIds ?? []), id]);
-                    state.items.set(parentId, { ...parentState, childrenIds: [...newChildrenIds] });
-                }
-            }
-
             return {
                 ...state,
                 items: state.items.set(id, {
                     parentId,
-                    childrenIds,
                     level,
                     domElement: ref,
+                    childrenIds: undefined,
                 }),
             };
         }
