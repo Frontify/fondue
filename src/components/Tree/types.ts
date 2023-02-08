@@ -13,6 +13,7 @@ export type TreeProps = {
     selectedIds?: string[];
     expandedIds?: string[];
     draggable?: boolean;
+    multiselect?: boolean;
     onSelect?: OnSelectCallback;
     onExpand?: OnExpandCallback;
     onDrop?: OnDropCallback<{ id: string; sort: number }>;
@@ -37,7 +38,11 @@ type TreeItemBaseProps = {
     accepts?: { within: string | string[]; after: string | string[]; before: string | string[] } | string | string[];
     children?: ReactNode;
 
+    draggable?: boolean;
+
+    /** @private */
     parentId?: string;
+    /** @private */
     level?: number;
 };
 
@@ -74,6 +79,11 @@ export type TreeStateAction =
     | { type: 'SET_SELECTION_MODE'; payload: { selectionMode: TreeState['selectionMode'] } }
     | { type: 'ON_DROP'; payload: { id: string; targetId: string; position: DropZonePosition } }
     | { type: 'REGISTER_TREE_ITEM'; payload: { id: string } & TreeItemState }
+    | { type: 'REGISTER_TREE_ITEM_CHILDREN'; payload: { id: string; childrenIds: TreeItemState['childrenIds'] } }
     | { type: 'UNREGISTER_TREE_ITEM'; payload: { id: string } };
 
 export type RegisterTreeItemPayload = Extract<TreeStateAction, { type: 'REGISTER_TREE_ITEM' }>['payload'];
+export type RegisterTreeItemChildrenPayload = Extract<
+    TreeStateAction,
+    { type: 'REGISTER_TREE_ITEM_CHILDREN' }
+>['payload'];
