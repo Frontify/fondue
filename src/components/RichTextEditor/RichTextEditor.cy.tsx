@@ -1124,7 +1124,7 @@ describe('RichTextEditor Component', () => {
             checkPosition('be.lessThan', 500, 'World');
         });
 
-        it('the button should be disabled when already at max column breaks', () => {
+        it('should disable the column break button when already at max column breaks', () => {
             cy.mount(<RichTextEditorWithTwoColumns />);
 
             insertTextAndOpenToolbar();
