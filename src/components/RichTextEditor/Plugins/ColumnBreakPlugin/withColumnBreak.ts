@@ -5,8 +5,8 @@ import { Path } from 'slate';
 import { getColumnBreakCount } from './ColumnBreakButton/ColumnBreakoolbarButton';
 import { setBreakAfter } from './utils/setBreakAfter';
 
-const moveCursorToNextNode = (editor: PlateEditor, currentPath: Path) => {
-    const startPoint = getStartPoint(editor, currentPath);
+const moveCursorToPath = (editor: PlateEditor, path: Path) => {
+    const startPoint = getStartPoint(editor, path);
     setTimeout(() => {
         select(editor, {
             anchor: startPoint,
@@ -42,7 +42,7 @@ export const withColumnBreak =
                     setBreakAfter(editor, { at: pointBefore, value: false });
 
                     if (node?.[0].breakAfterColumn) {
-                        moveCursorToNextNode(editor, operation.path);
+                        moveCursorToPath(editor, operation.path);
                         return editor;
                     }
 
