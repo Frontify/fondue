@@ -133,15 +133,14 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                                     showFocus ? FOCUS_STYLE : '',
                                     disabled
                                         ? merge([
-                                              'tw-text-white tw-pointer-events-none',
+                                              'tw-bg-box-disabled tw-pointer-events-none',
                                               !isCheckedOrMixed(state) &&
-                                                  'tw-bg-box-disabled-strong-inverse tw-border-line-strong',
+                                                  'tw-bg-box-disabled tw-text-box-disabled-inverse tw-border-line-strong',
                                               isCheckedOrMixed(state) &&
-                                                  'tw-bg-box-disabled-strong tw-text-box-disabled-strong-inverse',
+                                                  'tw-bg-box-disabled tw-text-box-disabled-inverse tw-border-line-strong',
                                           ])
                                         : merge([
-                                              !isCheckedOrMixed(state) &&
-                                                  'tw-bg-box-positive-strong-inverse tw-border-line-xx-strong',
+                                              !isCheckedOrMixed(state) && 'tw-bg-box-neutral tw-border-line-xx-strong',
                                               isCheckedOrMixed(state) &&
                                                   emphasis === CheckboxEmphasis.Weak &&
                                                   'tw-bg-box-neutral-strong tw-text-box-neutral-strong-inverse hover:tw-bg-box-neutral-strong-hover',
@@ -169,7 +168,10 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                             {note && (
                                 <span
                                     data-test-id="checkbox-note"
-                                    className="tw-text-text-x-weak tw-font-sans tw-text-xs tw-font-normal"
+                                    className={merge([
+                                        'tw-font-sans tw-text-xs tw-font-normal',
+                                        disabled ? 'text-disabled' : 'tw-text-text-x-weak',
+                                    ])}
                                 >
                                     {note}
                                 </span>
