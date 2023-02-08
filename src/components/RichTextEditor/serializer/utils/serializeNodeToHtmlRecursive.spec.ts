@@ -33,7 +33,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
                 },
             ],
         };
-        const result = serializeNodeToHtmlRecursive(node, defaultDesignTokens);
+        const result = serializeNodeToHtmlRecursive(node, { designTokens: defaultDesignTokens });
 
         expect(result).to.equal(
             `<ol class="${getOrderedListClasses(
@@ -52,7 +52,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
                 },
             ],
         };
-        const result = serializeNodeToHtmlRecursive(node, defaultDesignTokens);
+        const result = serializeNodeToHtmlRecursive(node, { designTokens: defaultDesignTokens });
 
         expect(result).to.equal(
             `<p class="${columnBreakClassNames}" style="font-size: 14px; font-style: normal; font-weight: normal;">This is a paragraph.</p>`,
@@ -60,7 +60,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
     });
 
     it('serializes ordered list with correct list style types to html', () => {
-        const result = serializeNodeToHtmlRecursive(orderedListValue, defaultDesignTokens);
+        const result = serializeNodeToHtmlRecursive(orderedListValue, { designTokens: defaultDesignTokens });
 
         const parser = new DOMParser();
         const htmlDoc = parser.parseFromString(result, 'text/html');
@@ -71,7 +71,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
     });
 
     it('serializes list item with custom styles to html', () => {
-        const result = serializeNodeToHtmlRecursive(unorderedListValue, defaultDesignTokens);
+        const result = serializeNodeToHtmlRecursive(unorderedListValue, { designTokens: defaultDesignTokens });
 
         const parser = new DOMParser();
         const htmlDoc = parser.parseFromString(result, 'text/html');
@@ -112,7 +112,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
                 },
             ],
         };
-        const result = serializeNodeToHtmlRecursive(node, defaultDesignTokens);
+        const result = serializeNodeToHtmlRecursive(node, { designTokens: defaultDesignTokens });
 
         expect(result).to.equal(
             `<ul class="${UL_CLASSES}"><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><p style="">This comes first.</p></li><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><p style="">This comes second.</p></li></ul>`,
@@ -130,7 +130,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
                 },
             ],
         };
-        const result = serializeNodeToHtmlRecursive(node, defaultDesignTokens);
+        const result = serializeNodeToHtmlRecursive(node, { designTokens: defaultDesignTokens });
 
         expect(result).to.equal(
             '<p style="font-size: 14px; font-style: normal; font-weight: normal;"><a style="font-size: 14px; font-style: normal; color: rgb(113, 89, 215); text-decoration: underline; cursor: pointer;" href="https://frontify.com">This is a Link.</a></p>',
@@ -157,7 +157,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
                 },
             ],
         };
-        const result = serializeNodeToHtmlRecursive(node, defaultDesignTokens);
+        const result = serializeNodeToHtmlRecursive(node, { designTokens: defaultDesignTokens });
 
         expect(result).to.equal(
             '<p style="font-size: 14px; font-style: normal; font-weight: normal;"><a style="font-size: 14px; font-style: normal; color: rgb(113, 89, 215); text-decoration: underline; cursor: pointer;" target=_blank href="https://smartive.ch">This is also a Link.</a></p>',
@@ -235,7 +235,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
             ],
         };
 
-        const result = serializeNodeToHtmlRecursive(node, defaultDesignTokens);
+        const result = serializeNodeToHtmlRecursive(node, { designTokens: defaultDesignTokens });
 
         expect(result).to.equal(
             '<p style="font-size: 14px; font-style: normal; font-weight: normal;"><h1 style="font-size: 48px; font-weight: 700; font-style: normal;">This is a h1.</h1><h2 style="font-size: 32px; font-weight: 700; font-style: normal;">This is a h2.</h2><h3 style="font-size: 24px; font-weight: normal; font-style: normal;">This is a h3.</h3><h4 style="font-size: 18px; font-weight: normal; font-style: normal;">This is a h4.</h4><p style="font-size: 14px; font-weight: normal; font-style: normal;">This is a custom1.</p><p style="font-size: 14px; font-weight: 600; font-style: normal;">This is a custom2.</p><p style="font-size: 14px; font-weight: normal; font-style: normal; text-decoration: underline;">This is a custom3.</p><p style="font-size: 16px; font-weight: normal; font-style: italic;">This is a quote.</p></p>',

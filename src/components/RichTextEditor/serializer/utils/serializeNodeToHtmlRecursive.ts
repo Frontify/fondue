@@ -3,6 +3,7 @@
 import {
     ELEMENT_BUTTON,
     ELEMENT_CHECK_ITEM,
+    MappedMentionableItems,
     UL_CLASSES,
     getOrderedListClasses,
 } from '@components/RichTextEditor/Plugins';
@@ -15,6 +16,7 @@ import {
     ELEMENT_LI,
     ELEMENT_LIC,
     ELEMENT_LINK,
+    ELEMENT_MENTION,
     ELEMENT_OL,
     ELEMENT_PARAGRAPH,
     ELEMENT_UL,
@@ -26,6 +28,7 @@ import {
 import escapeHtml from 'escape-html';
 import { reactCssPropsToCss } from './reactCssPropsToCss';
 import { serializeLeafToHtml } from './serializeLeafToHtml';
+import { mentionHtmlNode } from './mentionHtmlNode';
 
 const countNodesOfType = (nodes: TDescendant[], type: string): number => {
     return nodes.reduce((acc, node) => {
@@ -43,10 +46,15 @@ type NestingCount = {
     [type: string]: number;
 };
 
+type SerializeNodeToHtmlRecursiveOptions = {
+    designTokens: DesignTokens;
+    mappedMentionable?: MappedMentionableItems;
+    nestingCount?: NestingCount;
+};
+
 export const serializeNodeToHtmlRecursive = (
     node: TDescendant,
-    designTokens: DesignTokens,
-    nestingCount: NestingCount = {},
+    { designTokens, mappedMentionable, nestingCount = {} }: SerializeNodeToHtmlRecursiveOptions,
 ): string => {
     if (isText(node)) {
         return serializeLeafToHtml(node as TText);
@@ -55,9 +63,13 @@ export const serializeNodeToHtmlRecursive = (
     const rootNestingCount = nestingCount[node.type] || countNodesOfType([node], node.type);
     const children = (node.children as TDescendant[])
         .map((n: TDescendant) =>
-            serializeNodeToHtmlRecursive(n, designTokens, {
-                ...nestingCount,
-                [n.type as string]: rootNestingCount,
+            serializeNodeToHtmlRecursive(n, {
+                designTokens,
+                nestingCount: {
+                    ...nestingCount,
+                    [n.type as string]: rootNestingCount,
+                },
+                mappedMentionable,
             }),
         )
         .join('');
@@ -112,6 +124,8 @@ export const serializeNodeToHtmlRecursive = (
             return `<a class="btn btn-${node.buttonStyle}" href="${escapeHtml(node.url as string)}">${children}</a>`;
         case ELEMENT_CHECK_ITEM:
             return `<input type="checkbox"/><label>${children}</label>`;
+        case ELEMENT_MENTION:
+            return mappedMentionable ? mentionHtmlNode({ mentionable: mappedMentionable, node }) : '';
 
         default:
             return children;

@@ -15,7 +15,7 @@ describe('serializeNodesToHtml()', () => {
     });
 
     it('should serialize nodes to html with custom design tokens', () => {
-        const serialized = serializeNodesToHtml(nodesToSerialize, customDesignTokens);
+        const serialized = serializeNodesToHtml(nodesToSerialize, { designTokens: customDesignTokens });
         expect(serialized).to.equal(serializedHtmlWithCustomDesignTokens);
     });
 });

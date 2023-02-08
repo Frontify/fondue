@@ -210,6 +210,26 @@ export const defaultValue = [
     {
         type: ELEMENT_PARAGRAPH,
         children: [
+            { text: 'Try mentioning characters, like ' },
+            {
+                type: ELEMENT_MENTION,
+                category: 'user',
+                id: 'aaaaaaaa20',
+                children: [{ text: '' }],
+            },
+            { text: ' or ' },
+            {
+                type: ELEMENT_MENTION,
+                category: 'group',
+                id: '1111111111',
+                children: [{ text: '' }],
+            },
+            { text: '.' },
+        ],
+    },
+    {
+        type: ELEMENT_PARAGRAPH,
+        children: [
             {
                 type: ELEMENT_LINK,
                 chosenLink: {
@@ -384,15 +404,15 @@ export const mentionValue = [
             { text: 'Try mentioning characters, like ' },
             {
                 type: ELEMENT_MENTION,
-                children: [{ text: '' }],
                 category: 'user',
-                key: '28',
+                id: 'aaaaaaaa20',
+                children: [{ text: '' }],
             },
             { text: ' or ' },
             {
                 type: ELEMENT_MENTION,
                 category: 'group',
-                key: '11',
+                id: '1111111111',
                 children: [{ text: '' }],
             },
             { text: '.' },
