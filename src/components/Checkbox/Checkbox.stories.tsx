@@ -41,6 +41,7 @@ export default {
         size: 'Default',
         value: "whatever-you'd-like",
         label: 'Checkbox label',
+        hideLabel: false,
         'aria-label': 'Custom aria label',
         helperText: 'Note about this input',
         tooltip: {

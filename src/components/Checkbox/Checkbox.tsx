@@ -40,6 +40,7 @@ export type CheckboxProps = {
     value?: string;
     onChange?: (isChecked: boolean) => void;
     label?: string;
+    hideLabel?: boolean;
     tooltip?: InputLabelTooltipProps;
     helperText?: string;
     'aria-label'?: string;
@@ -58,6 +59,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
         disabled,
         required,
         label,
+        hideLabel,
         tooltip,
         helperText,
         'aria-label': ariaLabel = 'Checkbox',
@@ -163,7 +165,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                             </span>
                         </span>
                         <span className="tw-inline-flex tw-flex-col">
-                            {label && (
+                            {label && !hideLabel && (
                                 <span
                                     className={merge([
                                         'tw-text-xs tw-select-none hover:tw-cursor-pointer hover:tw-text-black dark:hover:tw-text-white group-hover:tw-text-black dark:group-hover:tw-text-white',
