@@ -1,13 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconExclamationMarkCircle, IconIcon, IconSize } from '@foundation/Icon';
+import { mount } from 'cypress/react';
 import React from 'react';
 import { BrightHeaderStyle, brightHeaderBackgroundColors } from './BrightHeader';
-import { Tooltip, TooltipProps } from './Tooltip';
+import { Tooltip, TooltipAlignment, TooltipPosition, TooltipProps } from './Tooltip';
 
 const TOOLTIP_TEXT = 'This is a tooltip';
 const TOOLTIP_ID = '[data-test-id=tooltip]';
 const TOOLTIP_LINK_ID = '[data-test-id=tooltip-link]';
+const TOOLTIP_ARROW_ID = '[data-test-id=popover-arrow]';
 const TOOLTIP_LINK_URL = 'https://www.frontify.com';
 const TOOLTIP_HEADING_TEXT = "I'm a heading";
 const GENERIC_ICON = <IconIcon />;
@@ -17,9 +19,13 @@ const ENTER_DELAY = 1000;
 const DEFAULT_HOVER_DELAY = 200;
 const CUSTOM_HOVER_DELAY = 1000;
 
-export const TooltipComponent = (args: TooltipProps) => {
+type TooltipTestProps = TooltipProps & { testFlip?: boolean };
+
+export const TooltipComponent = (args: TooltipTestProps) => {
     return (
-        <div className="tw-w-screen tw-h-screen tw-flex tw-justify-center tw-items-center">
+        <div
+            className={`tw-w-screen tw-h-screen tw-flex tw-justify-center tw-items-${args.testFlip ? 'end' : 'center'}`}
+        >
             <Tooltip
                 {...args}
                 triggerElement={
@@ -32,8 +38,18 @@ export const TooltipComponent = (args: TooltipProps) => {
         </div>
     );
 };
+export const TooltipComponentWithoutTrigger = (args: TooltipTestProps) => {
+    return (
+        <div
+            className={`tw-w-screen tw-h-screen tw-flex tw-justify-center tw-items-${args.testFlip ? 'end' : 'center'}`}
+            data-test-id="tooltip-wrapper"
+        >
+            <Tooltip {...args} />
+        </div>
+    );
+};
 
-const initTooltip = (args: TooltipProps, triggerOpen = true) => {
+const initTooltip = (args: TooltipTestProps, triggerOpen = true) => {
     cy.mount(<TooltipComponent {...args} />);
     cy.get('[data-test-id=tooltip-trigger]').as('Trigger');
     if (triggerOpen) {
@@ -41,8 +57,11 @@ const initTooltip = (args: TooltipProps, triggerOpen = true) => {
     }
 };
 
+const getByTooltipPlacement = (placement: string) => cy.get(`[data-popper-placement=${placement}]`);
+const getTooltipArrow = () => cy.get(TOOLTIP_ARROW_ID);
+
 describe('Tooltip Component', () => {
-    it('should render a tooltip', () => {
+    it('should render a tooltip with content', () => {
         initTooltip({ content: TOOLTIP_TEXT });
         cy.get(TOOLTIP_ID).should('contain', TOOLTIP_TEXT);
         cy.get(BRIGHT_HEADER_ID).should('not.exist');
@@ -50,6 +69,23 @@ describe('Tooltip Component', () => {
 
     it('should render a tooltip open by default via component prop', () => {
         initTooltip({ content: TOOLTIP_TEXT, open: true }, false);
+        cy.get(TOOLTIP_ID).should('contain', TOOLTIP_TEXT);
+    });
+
+    it('should render the triggerElement properly', () => {
+        initTooltip({ content: TOOLTIP_TEXT });
+        cy.get('@Trigger').should('exist');
+    });
+
+    it('should render an empty div if no triggerElement', () => {
+        mount(<TooltipComponentWithoutTrigger content={TOOLTIP_TEXT} />);
+        cy.get('[data-test-id=tooltip-trigger]').should('not.exist');
+        cy.get('[data-test-id=tooltip-wrapper] div').eq(0).should('have.text', '');
+    });
+
+    it('should render only the content if no triggerElement and tootlipt is open', () => {
+        mount(<TooltipComponentWithoutTrigger content={TOOLTIP_TEXT} open={true} />);
+        cy.get('[data-test-id=tooltip-trigger]').should('not.exist');
         cy.get(TOOLTIP_ID).should('contain', TOOLTIP_TEXT);
     });
 
@@ -190,5 +226,112 @@ describe('Tooltip Component', () => {
 
         cy.get(TOOLTIP_ID).should('not.be.visible');
         cy.get(TOOLTIP_ID).should('have.class', 'tw-hidden');
+    });
+
+    it('should render the tooltip with Start alignment', () => {
+        initTooltip({ content: TOOLTIP_TEXT, alignment: TooltipAlignment.Start });
+
+        getByTooltipPlacement('bottom-start').should('exist');
+    });
+
+    it('should render the tooltip with Middle alignment', () => {
+        initTooltip({ content: TOOLTIP_TEXT, alignment: TooltipAlignment.Middle });
+
+        getByTooltipPlacement('bottom').should('exist');
+    });
+
+    it('should render the tooltip with End alignment', () => {
+        initTooltip({ content: TOOLTIP_TEXT, alignment: TooltipAlignment.End });
+
+        getByTooltipPlacement('bottom-end').should('exist');
+    });
+
+    it('should flip the tooltip', () => {
+        initTooltip({ content: TOOLTIP_TEXT, flip: true, testFlip: true });
+
+        getByTooltipPlacement('top').should('exist');
+    });
+
+    it('should NOT flip the tooltip', () => {
+        initTooltip({ content: TOOLTIP_TEXT, flip: false, testFlip: true });
+
+        getByTooltipPlacement('bottom').should('exist');
+    });
+
+    it('should render the tooltip with arrow', () => {
+        initTooltip({ content: TOOLTIP_TEXT, withArrow: true });
+
+        getTooltipArrow().should('have.attr', 'data-popper-arrow', 'true');
+    });
+
+    it('should render the tooltip without arrow', () => {
+        initTooltip({ content: TOOLTIP_TEXT, withArrow: false });
+
+        getTooltipArrow().should('have.attr', 'data-popper-arrow', 'false');
+    });
+
+    it('should render the arrow for Top Tooltip placement', () => {
+        initTooltip({ content: TOOLTIP_TEXT, withArrow: true, position: TooltipPosition.Top });
+
+        getTooltipArrow().should('have.class', 'tw-bottom-[-6px]');
+    });
+
+    it('should render the arrow for Right Tooltip placement', () => {
+        initTooltip({ content: TOOLTIP_TEXT, withArrow: true, position: TooltipPosition.Right });
+
+        getTooltipArrow().should('have.class', 'tw-left-[-5px]').and('have.class', 'before:tw-bg-black-100');
+    });
+
+    it('should render the arrow for Right Tooltip placement with Bright Header and alignment Start', () => {
+        initTooltip({
+            content: TOOLTIP_TEXT,
+            withArrow: true,
+            position: TooltipPosition.Right,
+            alignment: TooltipAlignment.Start,
+            brightHeader: BrightHeaderStyle.Warning,
+        });
+
+        getTooltipArrow().should('have.class', 'tw-left-[-5px]').and('have.class', 'before:tw-bg-red-60');
+    });
+
+    it('should render the arrow for Left Tooltip placement', () => {
+        initTooltip({ content: TOOLTIP_TEXT, withArrow: true, position: TooltipPosition.Left });
+
+        getTooltipArrow().should('have.class', 'tw-right-[-5px]');
+    });
+
+    it('should render the arrow for Left Tooltip placement with Bright Header and alignment Start', () => {
+        initTooltip({
+            content: TOOLTIP_TEXT,
+            withArrow: true,
+            position: TooltipPosition.Left,
+            alignment: TooltipAlignment.Start,
+            brightHeader: BrightHeaderStyle.Information,
+        });
+
+        getTooltipArrow().should('have.class', 'tw-right-[-5px]').and('have.class', 'before:tw-bg-violet-60');
+    });
+
+    it('should render the arrow for Bottom Tooltip placement', () => {
+        initTooltip({ content: TOOLTIP_TEXT, withArrow: true, position: TooltipPosition.Bottom });
+
+        getTooltipArrow().should('have.class', 'tw-top-[-6px]');
+    });
+
+    it('should render the arrow for Bottom Tooltip placement with Bright Header', () => {
+        initTooltip({
+            content: TOOLTIP_TEXT,
+            withArrow: true,
+            position: TooltipPosition.Bottom,
+            brightHeader: BrightHeaderStyle.Note,
+        });
+
+        getTooltipArrow().should('have.class', 'tw-top-[-6px]').and('have.class', 'before:tw-bg-yellow-60');
+    });
+
+    it('should render the arrow when no Tooltip placement is provided (Bottom by default)', () => {
+        initTooltip({ content: TOOLTIP_TEXT, withArrow: true });
+
+        getTooltipArrow().should('have.class', 'tw-top-[-6px]');
     });
 });
