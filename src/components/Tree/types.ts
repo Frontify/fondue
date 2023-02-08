@@ -23,17 +23,7 @@ export type ContentComponentArguments = {
     hovered: boolean;
 };
 
-type TreeItemWithLabelProps = {
-    label?: string;
-    contentComponent?: never;
-};
-
-type TreeItemWithContentComponentProps = {
-    label?: never;
-    contentComponent?: ({ selected, hovered }: ContentComponentArguments) => ReactNode;
-};
-
-export type TreeItemProps = {
+type TreeItemBaseProps = {
     id: string;
     onDrop?: OnDropCallback<{ id: string; sort: Nullable<number> }>;
     /**
@@ -48,7 +38,19 @@ export type TreeItemProps = {
 
     parentId?: string;
     level?: number;
-} & (TreeItemWithLabelProps | TreeItemWithContentComponentProps);
+};
+
+export type TreeItemWithLabelProps = {
+    label?: string;
+    contentComponent?: never;
+} & TreeItemBaseProps;
+
+export type TreeItemWithContentComponentProps = {
+    label?: never;
+    contentComponent?: (props: ContentComponentArguments) => ReactNode;
+} & TreeItemBaseProps;
+
+export type TreeItemProps = TreeItemWithLabelProps | TreeItemWithContentComponentProps;
 
 export type TreeItemState = {
     parentId?: string;
