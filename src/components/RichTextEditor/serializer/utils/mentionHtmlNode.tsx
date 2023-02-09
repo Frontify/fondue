@@ -4,7 +4,7 @@ import * as ReactDOMServer from 'react-dom/server';
 import { MappedMentionableItems } from '@components/RichTextEditor/Plugins/MentionPlugin';
 import { MentionMarkupElementNode } from '@components/RichTextEditor/Plugins/MentionPlugin';
 // import { NodeType } from '../markdown/types';
-import { TElement, TMentionElement } from '@udecode/plate';
+import { TElement } from '@udecode/plate';
 
 type MentionHtmlNodeProps = { mentionable?: MappedMentionableItems };
 
