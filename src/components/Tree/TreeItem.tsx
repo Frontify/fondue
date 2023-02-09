@@ -12,7 +12,7 @@ import { useTreeContext } from '@components/Tree/TreeContext';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 
 import { getAcceptTypes, getItemPositionInParent, getNextItemToFocus, getPreviousItemToFocus } from './helpers';
-import { cloneThroughFragments, flattenChildren } from './utils';
+import { cloneThroughFragments, flattenChildren, isDescendant } from './utils';
 
 const DRAGGING_OPACITY = 0.4;
 const DEFAULT_OPACITY = 1;
@@ -96,9 +96,11 @@ export const TreeItem = ({
     );
 
     const handleSelect = useCallback(
-        (event: MouseEvent) => {
-            event.stopPropagation();
-            onSelect(id);
+        (event: MouseEvent<HTMLDivElement>) => {
+            if (itemRef.current && isDescendant(event.target as HTMLElement, itemRef.current)) {
+                event.stopPropagation();
+                onSelect(id);
+            }
         },
         [id, onSelect],
     );
@@ -113,7 +115,7 @@ export const TreeItem = ({
 
     const handleExpandKeyDown = useCallback(
         (event: KeyboardEvent) => {
-            if (event.key === 'Space' || event.key === 'Enter') {
+            if (document.activeElement === itemRef.current && (event.key === 'Space' || event.key === 'Enter')) {
                 event.stopPropagation();
                 onExpand(id, !treeState.expandedIds.has(id));
             }
