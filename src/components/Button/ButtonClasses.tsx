@@ -102,15 +102,15 @@ const ButtonEmphasisWeak = {
             'group-active:tw-text-button-negative-icon-pressed ',
     },
     [ButtonStyle.Loud]: {
-        button: 'tw-border-transparent ' + 'hover:tw-bg-box-selected-hover ' + 'active:tw-bg-box-selected-pressed ',
+        button: 'tw-border-transparent hover:tw-bg-box-selected-hover active:tw-bg-box-selected-pressed ',
         icon:
-            'tw-text-box-selected-strong ' +
-            'group-hover:tw-text-box-selected-strong-hover' +
-            'group-active:tw-text-box-selected-strong-pressed tw-leading-none ',
+            'tw-text-box-selected-inverse ' +
+            'group-hover:tw-text-box-selected-inverse-hover' +
+            'group-active:tw-text-box-selected-inverse-pressed tw-leading-none ',
         text:
-            'tw-text-box-selected-strong ' +
-            'group-hover:tw-text-box-selected-strong-hover' +
-            'group-active:tw-text-box-selected-strong-pressed ',
+            'tw-text-box-selected-inverse ' +
+            'group-hover:tw-text-box-selected-inverse-hover' +
+            'group-active:tw-text-box-selected-inverse-pressed ',
     },
 };
 /**
@@ -183,13 +183,13 @@ export const ButtonStyleClasses: Record<ButtonEmphasis, Record<UpdatedButtonStyl
                 'hover:tw-bg-box-selected-hover ' +
                 'active:tw-bg-box-selected-pressed ',
             icon:
-                'tw-text-box-selected-strong ' +
-                'group-hover:tw-text-box-selected-strong-hover' +
-                'group-active:tw-text-box-selected-strong-pressed tw-leading-none ',
+                'tw-text-box-selected-inverse ' +
+                'group-hover:tw-text-box-selected-inverse-hover' +
+                'group-active:tw-text-box-selected-inverse-pressed tw-leading-none ',
             text:
-                'tw-text-box-selected-strong ' +
-                'group-hover:tw-text-box-selected-strong-hover' +
-                'group-active:tw-text-box-selected-strong-pressed ',
+                'tw-text-box-selected-inverse ' +
+                'group-hover:tw-text-box-selected-inverse-hover' +
+                'group-active:tw-text-box-selected-inverse-pressed ',
         },
     },
     [ButtonEmphasis.Strong]: {
@@ -256,12 +256,12 @@ export const ButtonStyleClasses: Record<ButtonEmphasis, Record<UpdatedButtonStyl
                 'active:tw-bg-box-selected-strong-pressed ',
             icon:
                 'tw-text-box-selected-strong-inverse ' +
-                'group-hover:tw-text-box-selected-strong-inverse-hover' +
-                'group-active:tw-text-box-selected-strong-inverse-pressed tw-leading-none ',
+                'group-hover:tw-text-box-selected-strong-inverse' +
+                'group-active:tw-text-box-selected-strong-inverse tw-leading-none ',
             text:
                 'tw-text-box-selected-strong-inverse ' +
-                'group-hover:tw-text-box-selected-strong-inverse-hover' +
-                'group-active:tw-text-box-selected-strong-inverse-pressed ',
+                'group-hover:tw-text-box-selected-strong-inverse' +
+                'group-active:tw-text-box-selected-strong-inverse ',
         },
     },
     [ButtonEmphasis.Weak]: ButtonEmphasisWeak,
