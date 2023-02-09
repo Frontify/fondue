@@ -7,12 +7,9 @@ import { TElement, TMentionElement } from '@udecode/plate';
 
 type MentionHtmlNodeProps = { mentionable?: MappedMentionableItems };
 
-export const mentionHtmlNode = (node: TElement, { mentionable }: MentionHtmlNodeProps = {}) => {
-    if (!mentionable) {
-        return '';
-    }
-
-    return ReactDOMServer.renderToStaticMarkup(
-        MentionMarkupElementNode(mentionable)({ element: node as TMentionElement }),
-    );
-};
+export const mentionHtmlNode = (node: TElement, { mentionable }: MentionHtmlNodeProps = {}) =>
+    mentionable
+        ? ReactDOMServer.renderToStaticMarkup(
+              MentionMarkupElementNode(mentionable)({ element: node as TMentionElement }),
+          )
+        : '';
