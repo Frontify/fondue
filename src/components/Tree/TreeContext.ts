@@ -2,19 +2,26 @@
 
 import { createContext, useContext } from 'react';
 
-import { OnDropCallback } from '@components/DropZone';
+import type { OnDropCallback } from '@components/DropZone';
 
-import { OnExpandCallback, OnSelectCallback, RegisterTreeItemPayload, TreeState } from './types';
+import type {
+    OnExpandCallback,
+    OnSelectCallback,
+    RegisterTreeItemChildrenPayload,
+    RegisterTreeItemPayload,
+    TreeState,
+} from './types';
 
 export type TreeContextProps = {
     treeId: string;
     draggable: boolean;
     treeState: TreeState;
-    unregisterTreeItem(id: string): void;
     registerTreeItem(payload: RegisterTreeItemPayload): void;
+    registerTreeItemChildren(payload: RegisterTreeItemChildrenPayload): void;
+    unregisterTreeItem(id: string): void;
     onSelect: OnSelectCallback;
     onExpand: OnExpandCallback;
-    onDrop: OnDropCallback<{ id: string; sort: Nullable<number> }>;
+    onDrop: OnDropCallback<{ id: string; sort: number }>;
 };
 
 export const TreeContext = createContext<TreeContextProps>({} as TreeContextProps);
