@@ -191,39 +191,51 @@ export const TreeItem = ({
 
     const hasChildren = Children.count(enhancedChildren) > 0;
 
+    const paddingLeftByLevel = treeItemState && `${treeItemState.level > 0 ? treeItemState.level : 0}rem`;
+
     return (
-        <>
+        <li data-test-id="tree-item" ref={drag} style={{ opacity }}>
             {sort === 0 ? (
-                <DropZone
-                    data-position={DropZonePosition.Before}
-                    data={{
-                        targetItem: { id, sort: sort ?? 0, type },
-                        position: DropZonePosition.Before,
+                <div
+                    style={{
+                        paddingLeft: paddingLeftByLevel,
                     }}
-                    onDrop={handleDrop}
-                    accept={getAcceptTypes(accepts ?? treeId, 'before')}
-                />
+                >
+                    <DropZone
+                        data-position={DropZonePosition.Before}
+                        data={{
+                            targetItem: { id, sort: sort ?? 0, type },
+                            position: DropZonePosition.Before,
+                        }}
+                        onDrop={handleDrop}
+                        accept={getAcceptTypes(accepts ?? treeId, 'before')}
+                    />
+                </div>
             ) : null}
 
-            <li data-test-id="tree-item" ref={drag} style={{ opacity }}>
-                <DropZone
-                    data-position={DropZonePosition.Within}
-                    data={{
-                        targetItem: { id, sort: sort ?? 0, type },
-                        position: DropZonePosition.Within,
+            <DropZone
+                data-position={DropZonePosition.Within}
+                data={{
+                    targetItem: { id, sort: sort ?? 0, type },
+                    position: DropZonePosition.Within,
+                }}
+                onDrop={handleDrop}
+                accept={getAcceptTypes(accepts ?? treeId, 'within')}
+            >
+                <div
+                    className={merge([
+                        FOCUS_VISIBLE_STYLE,
+                        treeState.selectedIds.has(id)
+                            ? 'tw-font-medium tw-bg-box-selected-strong tw-text-box-selected-strong-inverse hover:tw-bg-box-selected-strong-hover hover:tw-text-box-selected-strong-inverse-hover'
+                            : 'tw-text-text hover:tw-bg-box-neutral-hover hover:tw-text-box-neutral-inverse-hover',
+                    ])}
+                    style={{
+                        paddingLeft: paddingLeftByLevel,
                     }}
-                    onDrop={handleDrop}
-                    accept={getAcceptTypes(accepts ?? treeId, 'within')}
                 >
                     <div
                         ref={itemRef}
-                        className={merge([
-                            'tw-flex tw-py-2 tw-px-2.5 tw-no-underline tw-leading-5 tw-h-10',
-                            FOCUS_VISIBLE_STYLE,
-                            treeState.selectedIds.has(id)
-                                ? 'tw-font-medium tw-bg-box-selected-strong tw-text-box-selected-strong-inverse hover:tw-bg-box-selected-strong-hover hover:tw-text-box-selected-strong-inverse-hover'
-                                : 'tw-text-text hover:tw-bg-box-neutral-hover hover:tw-text-box-neutral-inverse-hover',
-                        ])}
+                        className="tw-flex tw-py-2 tw-px-2.5 tw-no-underline tw-leading-5 tw-h-10"
                         role="treeitem"
                         aria-label={label}
                         aria-level={treeItemState?.level}
@@ -261,17 +273,23 @@ export const TreeItem = ({
                             {contentComponent?.({ selected: treeState.selectedIds.has(id) ?? false, hovered })}
                         </div>
                     </div>
-                </DropZone>
+                </div>
+            </DropZone>
 
-                {treeState.expandedIds.has(id) ? (
-                    <ul
-                        className="tw-p-0 tw-m-0 tw-list-none tw-font-sans tw-font-normal tw-text-left [&>li]:tw-pl-4"
-                        data-test-id="sub-tree-items"
-                    >
-                        {enhancedChildren}
-                    </ul>
-                ) : null}
+            {treeState.expandedIds.has(id) ? (
+                <ul
+                    className="tw-p-0 tw-m-0 tw-list-none tw-font-sans tw-font-normal tw-text-left"
+                    data-test-id="sub-tree-items"
+                >
+                    {enhancedChildren}
+                </ul>
+            ) : null}
 
+            <div
+                style={{
+                    paddingLeft: paddingLeftByLevel,
+                }}
+            >
                 <DropZone
                     data-position={DropZonePosition.After}
                     data={{
@@ -281,8 +299,8 @@ export const TreeItem = ({
                     onDrop={handleDrop}
                     accept={getAcceptTypes(accepts ?? treeId, 'after')}
                 />
-            </li>
-        </>
+            </div>
+        </li>
     );
 };
 TreeItem.displayName = 'FondueTreeItem';
