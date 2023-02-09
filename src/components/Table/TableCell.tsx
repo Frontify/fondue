@@ -60,7 +60,7 @@ export const TableCell = ({
             >
                 <CheckboxComponent
                     value={key}
-                    aria-label={cell['aria-label'] || key}
+                    ariaLabel={cell['aria-label'] || key}
                     state={isChecked ? CheckboxState.Checked : CheckboxState.Unchecked}
                     onChange={handleChange}
                 />
