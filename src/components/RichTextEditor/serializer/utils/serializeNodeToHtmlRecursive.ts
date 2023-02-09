@@ -125,7 +125,7 @@ export const serializeNodeToHtmlRecursive = (
         case ELEMENT_CHECK_ITEM:
             return `<input type="checkbox"/><label>${children}</label>`;
         case ELEMENT_MENTION:
-            return mappedMentionable ? mentionHtmlNode({ mentionable: mappedMentionable, node }) : '';
+            return mentionHtmlNode(node, { mentionable: mappedMentionable });
 
         default:
             return children;

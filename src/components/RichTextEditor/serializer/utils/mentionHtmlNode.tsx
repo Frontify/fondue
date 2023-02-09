@@ -1,19 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TElement } from '@udecode/plate';
-import {
-    MappedMentionableItems,
-    MentionableCategory,
-    combineMentionableKeyWith,
-    renderMentionLabel,
-} from '@components/RichTextEditor/Plugins/MentionPlugin';
+import * as ReactDOMServer from 'react-dom/server';
+import { MappedMentionableItems } from '@components/RichTextEditor/Plugins/MentionPlugin';
+import { MentionMarkupElementNode } from '@components/RichTextEditor/Plugins/MentionPlugin';
+// import { NodeType } from '../markdown/types';
+import { TElement, TMentionElement } from '@udecode/plate';
 
-type MentionHtmlNodeProps = { mentionable: MappedMentionableItems; node: TElement };
+type MentionHtmlNodeProps = { mentionable?: MappedMentionableItems };
 
-export const mentionHtmlNode = ({ mentionable, node }: MentionHtmlNodeProps) => {
-    const { id, category } = node;
-
-    const key = combineMentionableKeyWith(category as MentionableCategory, String(id));
-
-    return `<span>${renderMentionLabel(mentionable, key, String(id))}</span>`;
+export const mentionHtmlNode = (node: TElement, { mentionable }: MentionHtmlNodeProps = {}) => {
+    return mentionable
+        ? ReactDOMServer.renderToStaticMarkup(MentionMarkupElementNode(mentionable)({ element: node }))
+        : '';
 };

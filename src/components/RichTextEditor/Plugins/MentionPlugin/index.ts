@@ -28,6 +28,7 @@ export class MentionPlugin extends Plugin<MentionPluginProps> {
 }
 
 export { MentionMarkupElement } from './MentionMarkupElement';
+export { MentionMarkupElementNode } from './MentionMarkupElement/MentionMarkupElementNode';
 export { combineMentionableKeyWith, mapMentionable, renderMentionLabel } from './helpers';
 export { MentionableCategory } from './types';
 export type { MentionableItems, MentionableItem, MappedMentionableItems } from './types';
