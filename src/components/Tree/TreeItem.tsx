@@ -224,7 +224,6 @@ export const TreeItem = ({
             >
                 <div
                     className={merge([
-                        FOCUS_VISIBLE_STYLE,
                         treeState.selectedIds.has(id)
                             ? 'tw-font-medium tw-bg-box-selected-strong tw-text-box-selected-strong-inverse hover:tw-bg-box-selected-strong-hover hover:tw-text-box-selected-strong-inverse-hover'
                             : 'tw-text-text hover:tw-bg-box-neutral-hover hover:tw-text-box-neutral-inverse-hover',
@@ -235,7 +234,10 @@ export const TreeItem = ({
                 >
                     <div
                         ref={itemRef}
-                        className="tw-flex tw-py-2 tw-px-2.5 tw-no-underline tw-leading-5 tw-h-10"
+                        className={merge([
+                            'tw-flex tw-py-2 tw-px-2.5 tw-no-underline tw-leading-5 tw-h-10',
+                            FOCUS_VISIBLE_STYLE,
+                        ])}
                         role="treeitem"
                         aria-label={label}
                         aria-level={treeItemState?.level}
