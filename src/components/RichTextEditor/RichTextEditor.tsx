@@ -2,7 +2,7 @@
 
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { Plate } from '@udecode/plate';
-import React, { KeyboardEvent, useRef } from 'react';
+import React, { KeyboardEvent } from 'react';
 import { EditableProps, RenderPlaceholderProps } from 'slate-react/dist/components/editable';
 import { ContentReplacement } from './ContentReplacement';
 import { RichTextEditorProvider } from './context/RichTextEditorContext';
@@ -60,12 +60,11 @@ export const RichTextEditor = ({
         plugins,
         onValueChanged,
     });
-
     const breakAfterPlugin = plugins.plugins.find((plugin) => plugin.key === 'breakAfterColumn');
     const columns = breakAfterPlugin?.options?.columns ?? 1;
     const columnGap = breakAfterPlugin?.options?.gap ?? GAP_DEFAULT;
 
-    const editableProps = useRef<EditableProps>({
+    const editableProps: EditableProps = {
         placeholder,
         renderPlaceholder: ({ children, attributes }) => {
             const mergedAttributes = {
@@ -92,7 +91,7 @@ export const RichTextEditor = ({
 
             onKeyDown && onKeyDown(event, localValue.current);
         },
-    });
+    };
 
     return (
         <RichTextEditorProvider
@@ -105,7 +104,7 @@ export const RichTextEditor = ({
             <Plate
                 id={editorId}
                 onChange={onChange}
-                editableProps={editableProps.current}
+                editableProps={editableProps}
                 plugins={config.create()}
                 initialValue={memoizedValue}
             >
