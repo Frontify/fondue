@@ -44,7 +44,6 @@ export default defineConfig({
         lib: {
             entry: resolve(__dirname, 'src/index.ts'),
             fileName: (format: string) => `[name].${format}.js`,
-            name: 'Fondue',
         },
         sourcemap: true,
         minify: true,
@@ -52,6 +51,7 @@ export default defineConfig({
             external: [...dependencies, ...peerDependencies],
             output: [
                 {
+                    name: 'Fondue',
                     format: 'es',
                     preserveModules: true,
                     preserveModulesRoot: 'src',
@@ -59,11 +59,13 @@ export default defineConfig({
                     globals,
                 },
                 {
+                    name: 'Fondue',
                     format: 'umd',
                     assetFileNames,
                     globals,
                 },
                 {
+                    name: 'Fondue',
                     format: 'cjs',
                     assetFileNames,
                     globals,
