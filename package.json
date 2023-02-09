@@ -84,7 +84,7 @@
         "conventional-changelog-conventionalcommits": "5.0.0",
         "cross-env": "7.0.3",
         "cypress": "11.1.0",
-        "cypress-real-events": "1.7.4",
+        "cypress-real-events": "1.7.6",
         "eslint": "8.28.0",
         "eslint-plugin-jsx-a11y": "6.6.1",
         "eslint-plugin-notice": "0.9.10",
