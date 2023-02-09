@@ -191,7 +191,7 @@ export const TreeItem = ({
 
     const hasChildren = Children.count(enhancedChildren) > 0;
 
-    const paddingLeftByLevel = treeItemState && `${treeItemState.level > 0 ? treeItemState.level : 0}rem`;
+    const paddingLeftByLevel = `${treeItemState?.level ?? 0}rem`;
 
     return (
         <li data-test-id="tree-item" ref={drag} style={{ opacity }}>
