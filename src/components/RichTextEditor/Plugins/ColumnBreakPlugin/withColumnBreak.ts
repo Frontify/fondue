@@ -3,6 +3,7 @@
 import { PlateEditor, getParentNode, getPointBefore, getStartPoint, select } from '@udecode/plate';
 import { Path } from 'slate';
 import { getColumnBreakCount } from './ColumnBreakButton/ColumnBreakoolbarButton';
+import { normalizeColumnBreaks } from './normalizer/normalizeColumnBreaks';
 import { setBreakAfter } from './utils/setBreakAfter';
 
 const moveCursorToPath = (editor: PlateEditor, path: Path) => {
@@ -19,6 +20,8 @@ export const withColumnBreak =
     (columns: number) =>
     <E extends PlateEditor = PlateEditor>(editor: E) => {
         const { apply } = editor;
+
+        editor.normalizeNode = normalizeColumnBreaks(editor, columns);
 
         editor.apply = (operation) => {
             switch (operation.type) {

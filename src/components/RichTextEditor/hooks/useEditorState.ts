@@ -44,5 +44,5 @@ export const useEditorState = ({
 
     const config = GeneratePlugins(editorId, plugins);
 
-    return { localValue, onChange, memoizedValue, config };
+    return { localValue, onChange, memoizedValue, config, plugins };
 };

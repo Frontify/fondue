@@ -189,7 +189,17 @@ export const defaultValue = [
     createElement({ text: 'This text is a code line.', mark: MARK_CODE }),
     {
         type: ELEMENT_PARAGRAPH,
-        children: [{ text: 'This text is followed by a break.' }],
+        children: [{ text: 'This text is followed by a break 1.' }],
+        breakAfterColumn: true,
+    },
+    {
+        type: ELEMENT_PARAGRAPH,
+        children: [{ text: 'This text is followed by a break 2.' }],
+        breakAfterColumn: true,
+    },
+    {
+        type: ELEMENT_PARAGRAPH,
+        children: [{ text: 'This text is followed by a break 3.' }],
         breakAfterColumn: true,
     },
     createElement({

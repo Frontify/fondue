@@ -6,7 +6,7 @@ import { merge } from '@utilities/merge';
 import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
 import { TextStyles } from './textStyles';
 import { alignmentClassnames } from './alignment';
-import { columnBreakClassNames } from '../../../utils/constants';
+import { COLUMN_BREAK_CLASS_NAMES } from '../../../utils/constants';
 
 export const QuoteMarkupElementNode = ({ element, attributes, children }: PlateRenderElementProps) => {
     const { designTokens } = useRichTextEditorContext();
@@ -16,7 +16,7 @@ export const QuoteMarkupElementNode = ({ element, attributes, children }: PlateR
     return (
         <blockquote
             {...attributes}
-            className={merge([align && alignmentClassnames[align], hasColumn && columnBreakClassNames])}
+            className={merge([align && alignmentClassnames[align], hasColumn && COLUMN_BREAK_CLASS_NAMES])}
             style={designTokens.quote}
         >
             {children}

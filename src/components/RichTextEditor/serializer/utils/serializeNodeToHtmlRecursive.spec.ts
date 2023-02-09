@@ -3,7 +3,7 @@
 import { orderedListValue, unorderedListValue } from '@components/RichTextEditor/helpers/exampleValues';
 import { UL_CLASSES, getOrderedListClasses } from '@components/RichTextEditor/Plugins';
 import { TextStyles } from '@components/RichTextEditor/Plugins/TextStylePlugin/TextStyles';
-import { columnBreakClassNames } from '@components/RichTextEditor/utils/constants';
+import { COLUMN_BREAK_CLASS_NAMES } from '@components/RichTextEditor/utils/constants';
 import { defaultDesignTokens } from '@components/RichTextEditor/utils/defaultDesignTokens';
 import { ELEMENT_LI, ELEMENT_LIC, ELEMENT_LINK, ELEMENT_OL, ELEMENT_PARAGRAPH, ELEMENT_UL } from '@udecode/plate';
 import { serializeNodeToHtmlRecursive } from './serializeNodeToHtmlRecursive';
@@ -55,7 +55,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
         const result = serializeNodeToHtmlRecursive(node, defaultDesignTokens);
 
         expect(result).to.equal(
-            `<p class="${columnBreakClassNames}" style="font-size: 14px; font-style: normal; font-weight: normal;">This is a paragraph.</p>`,
+            `<p class="${COLUMN_BREAK_CLASS_NAMES}" style="font-size: 14px; font-style: normal; font-weight: normal;">This is a paragraph.</p>`,
         );
     });
 

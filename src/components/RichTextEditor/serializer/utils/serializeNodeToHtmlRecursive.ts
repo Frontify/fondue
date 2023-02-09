@@ -10,7 +10,7 @@ import { TLinkElement } from '@components/RichTextEditor/Plugins/LinkPlugin/type
 import { getTextStyle } from '@components/RichTextEditor/Plugins/ListPlugin/ListItemContentMarkupElement';
 import { TextStyles } from '@components/RichTextEditor/Plugins/TextStylePlugin/TextStyles';
 import { DesignTokens } from '@components/RichTextEditor/types';
-import { columnBreakClassNames } from '@components/RichTextEditor/utils';
+import { COLUMN_BREAK_CLASS_NAMES } from '@components/RichTextEditor/utils';
 import {
     ELEMENT_LI,
     ELEMENT_LIC,
@@ -62,7 +62,7 @@ export const serializeNodeToHtmlRecursive = (
         )
         .join('');
 
-    const breakAfterColumn = node.breakAfterColumn ? `class="${columnBreakClassNames}" ` : '';
+    const breakAfterColumn = node.breakAfterColumn ? `class="${COLUMN_BREAK_CLASS_NAMES}" ` : '';
 
     switch (node.type) {
         case TextStyles.ELEMENT_HEADING1:

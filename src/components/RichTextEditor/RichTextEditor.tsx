@@ -65,7 +65,7 @@ export const RichTextEditor = ({
     const columns = breakAfterPlugin?.options?.columns ?? 1;
     const columnGap = breakAfterPlugin?.options?.gap ?? 0;
 
-    const editableProps = useRef<EditableProps>({
+    const editableProps: EditableProps = {
         placeholder,
         renderPlaceholder: ({ children, attributes }) => {
             const mergedAttributes = {
@@ -92,7 +92,7 @@ export const RichTextEditor = ({
 
             onKeyDown && onKeyDown(event, localValue.current);
         },
-    });
+    };
 
     return (
         <RichTextEditorProvider
@@ -105,7 +105,7 @@ export const RichTextEditor = ({
             <Plate
                 id={editorId}
                 onChange={onChange}
-                editableProps={editableProps.current}
+                editableProps={editableProps}
                 plugins={config.create()}
                 initialValue={memoizedValue}
             >
