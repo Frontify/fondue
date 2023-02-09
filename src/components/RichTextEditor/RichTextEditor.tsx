@@ -13,6 +13,7 @@ import { GAP_DEFAULT, PluginComposer, defaultPlugins } from './Plugins';
 import { DesignTokens, PaddingSizes, TreeOfNodes } from './types';
 import { parseRawValue } from './utils';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
+import { serializeRawToHtml } from './serializer/serializeToHtml';
 
 const PLACEHOLDER_STYLES: RenderPlaceholderProps['attributes']['style'] = {
     position: 'relative',
@@ -64,6 +65,18 @@ export const RichTextEditor = ({
     const breakAfterPlugin = plugins.plugins.find((plugin) => plugin.key === 'breakAfterColumn');
     const columns = breakAfterPlugin?.options?.columns ?? 1;
     const columnGap = breakAfterPlugin?.options?.gap ?? GAP_DEFAULT;
+
+    if (readonly) {
+        const rawValue = JSON.stringify(parseRawValue({ raw: value ?? '' }));
+        const html = serializeRawToHtml(rawValue, designTokens);
+        return (
+            <div
+                className="tw-relative tw-w-full tw-break-words"
+                style={{ columns, columnGap }}
+                dangerouslySetInnerHTML={{ __html: html }}
+            />
+        );
+    }
 
     const editableProps: EditableProps = {
         placeholder,
