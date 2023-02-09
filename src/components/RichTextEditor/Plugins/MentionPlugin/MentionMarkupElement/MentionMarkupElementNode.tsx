@@ -12,16 +12,13 @@ export const renderLabel = (mentionable: MappedMentionableItems, key: string, id
 export const MentionMarkupElementNode =
     (mentionable: MappedMentionableItems): MarkupElementNodeType =>
     (props) => {
-        const {
-            element: { id, category },
-            children,
-        } = props;
+        const { element, children } = props;
 
-        const key = combineMentionableKeyWith(category as MentionableCategory, String(id));
+        const key = combineMentionableKeyWith(element?.category as MentionableCategory, String(element?.id));
 
         return (
-            <MarkupElementNodeComponent category={category as MentionableCategory} {...props}>
-                {renderMentionLabel(mentionable, key, String(id))}
+            <MarkupElementNodeComponent category={element?.category as MentionableCategory} {...props}>
+                {renderMentionLabel(mentionable, key, String(element?.id))}
                 {children}
             </MarkupElementNodeComponent>
         );
