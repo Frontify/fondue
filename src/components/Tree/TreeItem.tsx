@@ -193,6 +193,8 @@ export const TreeItem = ({
 
     const paddingLeftByLevel = `${treeItemState?.level ?? 0}rem`;
 
+    const dropZoneAcceptTypes = accepts ?? treeId;
+
     return (
         <li data-test-id="tree-item" ref={drag} style={{ opacity }}>
             {sort === 0 ? (
@@ -208,7 +210,7 @@ export const TreeItem = ({
                             position: DropZonePosition.Before,
                         }}
                         onDrop={handleDrop}
-                        accept={getAcceptTypes(accepts ?? treeId, 'before')}
+                        accept={getAcceptTypes(dropZoneAcceptTypes, 'before')}
                     />
                 </div>
             ) : null}
@@ -220,7 +222,7 @@ export const TreeItem = ({
                     position: DropZonePosition.Within,
                 }}
                 onDrop={handleDrop}
-                accept={getAcceptTypes(accepts ?? treeId, 'within')}
+                accept={getAcceptTypes(dropZoneAcceptTypes, 'within')}
             >
                 <div
                     className={merge([
@@ -299,7 +301,7 @@ export const TreeItem = ({
                         position: DropZonePosition.After,
                     }}
                     onDrop={handleDrop}
-                    accept={getAcceptTypes(accepts ?? treeId, 'after')}
+                    accept={getAcceptTypes(dropZoneAcceptTypes, 'after')}
                 />
             </div>
         </li>
