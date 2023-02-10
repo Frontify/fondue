@@ -154,7 +154,7 @@ describe('Checkbox component', () => {
         const onChangeStub = cy.stub().as('onChangeStub');
         cy.mount(<CheckboxComponent onChange={onChangeStub} />);
 
-        cy.get(CHECKBOX_INPUT_ID).click({ force: true });
+        cy.get(CHECKBOX_ID).click();
         cy.get('@onChangeStub').should('be.calledOnce');
     });
 });

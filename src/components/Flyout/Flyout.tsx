@@ -66,10 +66,12 @@ export type FlyoutProps = PropsWithChildren<{
     placement?: FlyoutPlacement;
     offset?: number;
     updatePositionOnContentChange?: boolean;
+    isTriggerDisabled?: boolean;
 }>;
 
 export const Flyout: FC<FlyoutProps> = ({
     trigger,
+    isTriggerDisabled = false,
     decorator,
     onConfirm,
     onCancel,
@@ -111,7 +113,10 @@ export const Flyout: FC<FlyoutProps> = ({
         updatePositionOnContentChange,
     });
 
-    const { buttonProps, isPressed } = useButton({ onPress: () => toggle(), elementType: 'div' }, triggerRef);
+    const { buttonProps, isPressed } = useButton(
+        { onPress: () => toggle(), elementType: 'div', isDisabled: isTriggerDisabled },
+        triggerRef,
+    );
 
     useEffect(() => {
         const revert = watchModals();
