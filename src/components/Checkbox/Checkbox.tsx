@@ -43,7 +43,7 @@ export type CheckboxProps = {
     hideLabel?: boolean;
     tooltip?: InputLabelTooltipProps;
     helperText?: string;
-    ariaLabel?: string;
+    'aria-label'?: string;
     groupInputProps?: HTMLAttributes<HTMLElement>;
 };
 
@@ -62,7 +62,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
         hideLabel,
         tooltip,
         helperText,
-        ariaLabel = 'Checkbox',
+        'aria-label': ariaLabel = 'Checkbox',
         value,
         groupInputProps,
         onChange,
