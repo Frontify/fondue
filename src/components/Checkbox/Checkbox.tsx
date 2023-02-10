@@ -139,7 +139,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                                 data-test-id="checkbox-icon-box"
                                 aria-hidden="true"
                                 className={merge([
-                                    'tw-p-2 tw-leading-4 tw-relative tw-flex tw-items-center tw-justify-center tw-rounded tw-border tw-shrink-0 tw-flex-none',
+                                    'tw-leading-3  tw-p-2 tw-relative tw-flex tw-items-center tw-justify-center tw-rounded tw-border tw-shrink-0 tw-flex-none',
                                     size === 'Default' ? 'tw-h-4 tw-w-4' : 'tw-h-5 tw-w-5',
                                     showFocus ? FOCUS_STYLE : '',
                                     disabled
