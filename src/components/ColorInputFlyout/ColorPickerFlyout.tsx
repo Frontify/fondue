@@ -54,6 +54,7 @@ export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
             contentMinHeight={300}
             fixedHeader={<ColorPreview color={currentColor || { red: 255, green: 255, blue: 255 }} />}
             onOpenChange={handleOpenChange}
+            isTriggerDisabled={disabled}
             trigger={
                 <ColorInputTrigger
                     isOpen={open}
