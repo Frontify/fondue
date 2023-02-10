@@ -41,7 +41,7 @@ jobs:
                       ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
                       ~/.cache/Cypress
                   key: pnpm-with-cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-                  restore-key: pnpm-with-cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+                  restore-keys: pnpm-with-cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
 
             - name: Install dependencies
               run: pnpm install --frozen-lockfile
@@ -79,7 +79,7 @@ jobs:
                       ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
                       ~/.cache/Cypress
                   key: pnpm-with-cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-                  restore-key: pnpm-with-cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+                  restore-keys: pnpm-with-cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
 
             - name: Install dependencies
               run: pnpm install --frozen-lockfile
@@ -122,7 +122,7 @@ jobs:
                       ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
                       ~/.cache/Cypress
                   key: pnpm-with-cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-                  restore-key: pnpm-with-cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+                  restore-keys: pnpm-with-cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
 
             - name: Install dependencies
               if: steps.npm_cache.outputs.cache-hit != 'true'
