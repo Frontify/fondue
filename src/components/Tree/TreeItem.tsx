@@ -194,7 +194,7 @@ export const TreeItem = ({
     const paddingLeftByLevel = `${treeItemState?.level ?? 0}rem`;
 
     return (
-        <li data-test-id="tree-item" ref={drag} style={{ opacity }}>
+        <li data-test-id="tree-item" ref={drag} style={{ opacity, transform: 'translate3d(0, 0, 0)' }}>
             {sort === 0 ? (
                 <div
                     style={{
