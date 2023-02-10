@@ -8,8 +8,8 @@ export const mentionPlugin: Partial<PlatePlugin<MentionPlugin<MentionItemData>>>
         trigger: '@',
         createMentionNode: (item) => ({
             value: item.text,
-            key: item.key,
             category: item.data.category,
+            id: item.data.id,
         }),
     },
 };

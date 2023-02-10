@@ -10,6 +10,7 @@ export enum ButtonStyle {
     Positive = 'Positive',
     Negative = 'Negative',
     Danger = 'Danger',
+    Loud = 'Loud',
     /** @deprecated use ButtonStyle.Default and ButtonEmphasis.Strong */
     Primary = 'Primary',
     /** @deprecated use ButtonStyle.Default and ButtonEmphasis.Default */
@@ -21,6 +22,7 @@ export enum UpdatedButtonStyle {
     Positive = 'Positive',
     Negative = 'Negative',
     Danger = 'Danger',
+    Loud = 'Loud',
 }
 
 export enum ButtonSize {
