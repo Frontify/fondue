@@ -4,7 +4,7 @@ import React from 'react';
 import { IconSize, IconTextColumnBreak } from '@foundation/Icon';
 import { ButtonWrapper, IconStylingWrapper, buttonClassNames, buttonStyles } from '../../helper';
 import { PluginButtonProps } from '../../types';
-import { ColumnBreakToolbarButton } from './ColumnBreakoolbarButton';
+import { ColumnBreakToolbarButton } from './ColumnBreakToolbarButton';
 
 export const ColumnBreakButton = ({ id }: PluginButtonProps) => {
     return (
