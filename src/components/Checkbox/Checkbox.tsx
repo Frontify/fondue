@@ -20,17 +20,30 @@ export enum CheckboxState {
     Mixed = 'Mixed',
 }
 
+export enum CheckboxEmphasis {
+    Default = 'Default',
+    Weak = 'Weak',
+}
+
+export enum CheckboxSize {
+    Default = 'Default',
+    Large = 'Large',
+}
+
 export type CheckboxProps = {
     id?: string;
     state?: CheckboxState;
+    emphasis?: CheckboxEmphasis;
+    size?: CheckboxSize;
     disabled?: boolean;
     required?: boolean;
     value?: string;
     onChange?: (isChecked: boolean) => void;
     label?: string;
+    hideLabel?: boolean;
     tooltip?: InputLabelTooltipProps;
-    note?: string;
-    'aria-label'?: string;
+    helperText?: string;
+    ariaLabel?: string;
     groupInputProps?: HTMLAttributes<HTMLElement>;
 };
 
@@ -41,12 +54,15 @@ const isCheckedOrMixed = (checked: CheckboxState): boolean => {
 const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProps> = (
     {
         id: propId,
+        emphasis = CheckboxEmphasis.Default,
+        size = CheckboxSize.Default,
         disabled,
         required,
         label,
+        hideLabel,
         tooltip,
-        note,
-        'aria-label': ariaLabel = 'Checkbox',
+        helperText,
+        ariaLabel = 'Checkbox',
         value,
         groupInputProps,
         onChange,
@@ -120,23 +136,29 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                                 required={required}
                             />
                             <span
+                                data-test-id="checkbox-icon-box"
                                 aria-hidden="true"
                                 className={merge([
-                                    'tw-relative tw-flex tw-w-4 tw-h-4 tw-items-center tw-justify-center tw-rounded tw-border tw-shrink-0 tw-flex-none',
+                                    'tw-p-2 tw-leading-4 tw-relative tw-flex tw-items-center tw-justify-center tw-rounded tw-border tw-shrink-0 tw-flex-none',
+                                    size === 'Default' ? 'tw-h-4 tw-w-4' : 'tw-h-5 tw-w-5',
                                     showFocus ? FOCUS_STYLE : '',
                                     disabled
                                         ? merge([
-                                              'tw-text-white tw-pointer-events-none',
+                                              'tw-bg-box-disabled tw-pointer-events-none',
                                               !isCheckedOrMixed(state) &&
-                                                  'tw-border-black-20 tw-bg-white dark:tw-border-black-80 dark:tw-bg-black-90',
+                                                  'tw-bg-box-disabled tw-text-box-disabled-inverse tw-border-line-strong',
                                               isCheckedOrMixed(state) &&
-                                                  'tw-border-black-40 tw-bg-black-40 dark:tw-border-black-60 dark:tw-bg-black-60',
+                                                  'tw-bg-box-disabled tw-text-box-disabled-inverse tw-border-line-strong',
                                           ])
                                         : merge([
                                               !isCheckedOrMixed(state) &&
-                                                  'tw-border-black-80 tw-bg-white hover:tw-border-black dark:tw-border-white dark:tw-bg-black dark:hover:tw-border-black-20 dark:hover:tw-bg-black-90 group-hover:tw-bg-white group-hover:tw-border-black dark:group-hover:tw-border-black-20 dark:group-hover:tw-bg-black-90',
+                                                  'tw-bg-base tw-border-line-xx-strong hover:tw-bg-box-neutral',
                                               isCheckedOrMixed(state) &&
-                                                  'tw-border-violet-60 tw-bg-violet-60 tw-text-white hover:tw-border-violet-70 hover:tw-bg-violet-70 dark:tw-border-violet-50 dark:tw-bg-violet-50 dark:hover:tw-border-violet-60 dark:hover:tw-bg-violet-60 group-hover:tw-text-white group-hover:tw-border-violet-70 group-hover:tw-bg-violet-70 dark:group-hover:tw-border-violet-60 dark:group-hover:tw-bg-violet-60',
+                                                  emphasis === CheckboxEmphasis.Weak &&
+                                                  'tw-bg-box-neutral-strong tw-text-box-neutral-strong-inverse hover:tw-bg-box-neutral-strong-hover',
+                                              isCheckedOrMixed(state) &&
+                                                  emphasis === CheckboxEmphasis.Default &&
+                                                  'tw-bg-box-selected-strong tw-text-box-selected-strong-inverse hover:tw-bg-box-selected-strong-hover',
                                           ]),
                                 ])}
                             >
@@ -145,8 +167,9 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                             </span>
                         </span>
                         <span className="tw-inline-flex tw-flex-col">
-                            {label && (
+                            {label && !hideLabel && (
                                 <span
+                                    data-test-id="checkbox-label"
                                     className={merge([
                                         'tw-text-xs tw-select-none hover:tw-cursor-pointer hover:tw-text-black dark:hover:tw-text-white group-hover:tw-text-black dark:group-hover:tw-text-white',
                                         isCheckedOrMixed(state) ? 'tw-font-medium' : '',
@@ -155,12 +178,15 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                                     {label}
                                 </span>
                             )}
-                            {note && (
+                            {helperText && !hideLabel && (
                                 <span
-                                    data-test-id="checkbox-note"
-                                    className="tw-text-text-x-weak tw-font-sans tw-text-xs tw-font-normal"
+                                    data-test-id="checkbox-helper-text"
+                                    className={merge([
+                                        'tw-font-sans tw-text-xs tw-font-normal',
+                                        disabled ? 'text-disabled' : 'tw-text-text-x-weak',
+                                    ])}
                                 >
-                                    {note}
+                                    {helperText}
                                 </span>
                             )}
                         </span>
