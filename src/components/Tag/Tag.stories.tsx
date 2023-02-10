@@ -8,6 +8,7 @@ import { Tag, TagProps, TagSize, TagType } from './Tag';
 export default {
     title: 'Components/Tag',
     component: Tag,
+    tags: ['autodocs'],
     args: {
         label: 'Label',
         size: TagSize.Medium,

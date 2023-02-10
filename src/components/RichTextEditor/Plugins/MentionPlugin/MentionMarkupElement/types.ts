@@ -4,7 +4,7 @@ import { ReactElement, ReactNode } from 'react';
 import { MentionElementProps, Value } from '@udecode/plate';
 import { MentionableCategory } from '../types';
 
-export type MarkupElementProps = { children: ReactNode } & MentionElementProps<Value>;
+export type MarkupElementProps = Partial<{ children: ReactNode } & MentionElementProps<Value>>;
 export type MarkupElementNodeType = ({ children, ...props }: MarkupElementProps) => ReactElement;
 
 export type MarkupElementNodeComponentProps = { category: MentionableCategory } & MarkupElementProps;

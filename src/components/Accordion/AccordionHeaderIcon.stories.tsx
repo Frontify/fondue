@@ -8,6 +8,7 @@ import { AccordionHeaderIconProps, AccordionHeaderIconSize } from './types';
 export default {
     title: 'Components/Accordion/Accordion Header Icon',
     component: AccordionHeaderIconComponent,
+    tags: ['autodocs'],
     argTypes: {
         size: { control: 'select', options: Object.values(AccordionHeaderIconSize) },
     },

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
-import { MentionCombobox } from '@udecode/plate';
+import { MentionCombobox, autoUpdate } from '@udecode/plate';
 import { MentionComboboxItem, MentionComboboxStyles } from './MentionCombobox';
 import { MentionableItems } from './types';
 import { filterItems } from './helpers';
@@ -17,6 +17,11 @@ export const MentionInline = (items: MentionableItems) => () => {
             classNames={{
                 item: 'tw-group',
                 highlightedItem: 'tw-group',
+            }}
+            floatingOptions={{
+                whileElementsMounted(...args) {
+                    return autoUpdate(...args, { animationFrame: true });
+                },
             }}
         />
     );

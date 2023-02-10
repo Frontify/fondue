@@ -3,6 +3,7 @@
 import {
     ELEMENT_BUTTON,
     ELEMENT_CHECK_ITEM,
+    MappedMentionableItems,
     UL_CLASSES,
     getOrderedListClasses,
 } from '@components/RichTextEditor/Plugins';
@@ -10,11 +11,12 @@ import { TLinkElement } from '@components/RichTextEditor/Plugins/LinkPlugin/type
 import { getTextStyle } from '@components/RichTextEditor/Plugins/ListPlugin/ListItemContentMarkupElement';
 import { TextStyles } from '@components/RichTextEditor/Plugins/TextStylePlugin/TextStyles';
 import { DesignTokens } from '@components/RichTextEditor/types';
-import { breakAfterClassNames } from '@components/RichTextEditor/utils';
+import { columnBreakClassNames } from '@components/RichTextEditor/utils';
 import {
     ELEMENT_LI,
     ELEMENT_LIC,
     ELEMENT_LINK,
+    ELEMENT_MENTION,
     ELEMENT_OL,
     ELEMENT_PARAGRAPH,
     ELEMENT_UL,
@@ -26,6 +28,7 @@ import {
 import escapeHtml from 'escape-html';
 import { reactCssPropsToCss } from './reactCssPropsToCss';
 import { serializeLeafToHtml } from './serializeLeafToHtml';
+import { mentionHtmlNode } from './mentionHtmlNode';
 
 const countNodesOfType = (nodes: TDescendant[], type: string): number => {
     return nodes.reduce((acc, node) => {
@@ -43,10 +46,15 @@ type NestingCount = {
     [type: string]: number;
 };
 
+type SerializeNodeToHtmlRecursiveOptions = {
+    designTokens: DesignTokens;
+    mappedMentionable?: MappedMentionableItems;
+    nestingCount?: NestingCount;
+};
+
 export const serializeNodeToHtmlRecursive = (
     node: TDescendant,
-    designTokens: DesignTokens,
-    nestingCount: NestingCount = {},
+    { designTokens, mappedMentionable, nestingCount = {} }: SerializeNodeToHtmlRecursiveOptions,
 ): string => {
     if (isText(node)) {
         return serializeLeafToHtml(node as TText);
@@ -55,14 +63,18 @@ export const serializeNodeToHtmlRecursive = (
     const rootNestingCount = nestingCount[node.type] || countNodesOfType([node], node.type);
     const children = (node.children as TDescendant[])
         .map((n: TDescendant) =>
-            serializeNodeToHtmlRecursive(n, designTokens, {
-                ...nestingCount,
-                [n.type as string]: rootNestingCount,
+            serializeNodeToHtmlRecursive(n, {
+                designTokens,
+                nestingCount: {
+                    ...nestingCount,
+                    [n.type as string]: rootNestingCount,
+                },
+                mappedMentionable,
             }),
         )
         .join('');
 
-    const breakAfterColumn = node.breakAfterColumn ? `class="${breakAfterClassNames}" ` : '';
+    const breakAfterColumn = node.breakAfterColumn ? `class="${columnBreakClassNames}" ` : '';
 
     switch (node.type) {
         case TextStyles.ELEMENT_HEADING1:
@@ -112,6 +124,8 @@ export const serializeNodeToHtmlRecursive = (
             return `<a class="btn btn-${node.buttonStyle}" href="${escapeHtml(node.url as string)}">${children}</a>`;
         case ELEMENT_CHECK_ITEM:
             return `<input type="checkbox"/><label>${children}</label>`;
+        case ELEMENT_MENTION:
+            return mentionHtmlNode(node, { mentionable: mappedMentionable });
 
         default:
             return children;

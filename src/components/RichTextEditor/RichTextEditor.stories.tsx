@@ -24,6 +24,7 @@ import {
     AlignLeftPlugin,
     AlignRightPlugin,
     BoldPlugin,
+    BreakAfterPlugin,
     ButtonPlugin,
     CheckboxListPlugin,
     CodePlugin,
@@ -40,7 +41,6 @@ import {
     TextStylePlugin,
     UnderlinePlugin,
     UnorderedListPlugin,
-    defaultPluginsWithColumns,
 } from './Plugins';
 import { TextStyles } from './Plugins/TextStylePlugin/TextStyles';
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from './RichTextEditor';
@@ -51,6 +51,7 @@ import { defaultDesignTokens } from './utils/defaultDesignTokens';
 export default {
     title: 'Components/Rich Text Editor',
     component: RichTextEditorComponent,
+    tags: ['autodocs'],
     args: {
         value: JSON.stringify(value),
         updateValueOnChange: true,
@@ -82,10 +83,6 @@ export default {
                 labels: Object.entries(PaddingSizes).map(([key, value]) => [value, key]),
             },
         },
-        layout: {
-            columns: { type: 'string' },
-            gap: { type: 'string' },
-        },
     },
 } as Meta;
 
@@ -106,7 +103,7 @@ export const Flex: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) =>
 );
 
 export const SerializedToHTML: StoryFn<RichTextEditorProps> = () => {
-    const serialized = serializeNodesToHtml(nodesToSerialize, customDesignTokens);
+    const serialized = serializeNodesToHtml(nodesToSerialize, { designTokens: customDesignTokens, mentionable });
     return (
         <>
             {serialized ? (
@@ -417,6 +414,7 @@ export const WithMentionsAndEmojis = RichTextEditorTemplate.bind({});
 WithMentionsAndEmojis.args = {
     value: JSON.stringify(mentionValue),
     plugins: mentionAndEmojisPlugins,
+    position: Position.BOTTOM,
 };
 
 const withoutToolbarPlugins = new PluginComposer({ noToolbar: true });
@@ -435,17 +433,37 @@ WithoutToolbar.args = {
     plugins: withoutToolbarPlugins,
 };
 
-export const BreakAfterColumn: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
+const defaultPluginsWithColumns = new PluginComposer();
+defaultPluginsWithColumns
+    .setPlugin([new InitPlugin(), new ParagraphPlugin()])
+    .setPlugin(new TextStylePlugin())
+    .setPlugin([
+        new BoldPlugin(),
+        new ItalicPlugin(),
+        new UnderlinePlugin(),
+        new StrikethroughPlugin(),
+        new LinkPlugin(),
+        new ButtonPlugin(),
+        new CodePlugin(),
+        new UnorderedListPlugin(),
+        new OrderedListPlugin(),
+        new BreakAfterPlugin({ columns: 5, gap: 20 }),
+    ]);
+
+export const MultiColumns: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
     <RichTextEditorComponent {...args} />
 );
-BreakAfterColumn.args = {
+MultiColumns.args = {
     value: JSON.stringify(defaultValue),
     plugins: defaultPluginsWithColumns,
     border: false,
-    layout: {
-        columns: 3,
-    },
 };
-BreakAfterColumn.argTypes = {
-    border: { table: { disable: true } },
+
+export const SimpleMultiColumns: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
+    <RichTextEditorComponent {...args} />
+);
+SimpleMultiColumns.args = {
+    value: `<p>${IPSUM}</p>`,
+    plugins: defaultPluginsWithColumns,
+    border: false,
 };
