@@ -409,6 +409,12 @@ import IconChartBars16 from '@foundation/Icon/Generated/IconChartBars16';
 import IconChartBars20 from '@foundation/Icon/Generated/IconChartBars20';
 import IconChartBars24 from '@foundation/Icon/Generated/IconChartBars24';
 import IconChartBars32 from '@foundation/Icon/Generated/IconChartBars32';
+import IconChartLine from '@foundation/Icon/Generated/IconChartLine';
+import IconChartLine12 from '@foundation/Icon/Generated/IconChartLine12';
+import IconChartLine16 from '@foundation/Icon/Generated/IconChartLine16';
+import IconChartLine20 from '@foundation/Icon/Generated/IconChartLine20';
+import IconChartLine24 from '@foundation/Icon/Generated/IconChartLine24';
+import IconChartLine32 from '@foundation/Icon/Generated/IconChartLine32';
 import IconChartPie from '@foundation/Icon/Generated/IconChartPie';
 import IconChartPie12 from '@foundation/Icon/Generated/IconChartPie12';
 import IconChartPie16 from '@foundation/Icon/Generated/IconChartPie16';
@@ -2223,6 +2229,12 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.ChartBars20]: <IconChartBars20 />,
     [IconEnum.ChartBars24]: <IconChartBars24 />,
     [IconEnum.ChartBars32]: <IconChartBars32 />,
+    [IconEnum.ChartLine]: <IconChartLine />,
+    [IconEnum.ChartLine12]: <IconChartLine12 />,
+    [IconEnum.ChartLine16]: <IconChartLine16 />,
+    [IconEnum.ChartLine20]: <IconChartLine20 />,
+    [IconEnum.ChartLine24]: <IconChartLine24 />,
+    [IconEnum.ChartLine32]: <IconChartLine32 />,
     [IconEnum.ChartPie]: <IconChartPie />,
     [IconEnum.ChartPie12]: <IconChartPie12 />,
     [IconEnum.ChartPie16]: <IconChartPie16 />,

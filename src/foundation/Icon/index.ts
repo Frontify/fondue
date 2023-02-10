@@ -6,4 +6,6 @@ export * from './IconEnum';
 export * from './IconProps';
 export * from './IconSize';
 export * from './IconsMap';
-export * as AllIcons from './Generated';
+
+import * as AllIcons from './Generated';
+export { AllIcons };
