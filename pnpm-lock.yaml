@@ -1,7 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
-  '@babel/core': ^7.20.12
+  '@babel/core': 7.20.12
   '@cypress/vite-dev-server': 5.0.2
   '@frontify/eslint-config-react': 0.15.5
   '@frontify/fondue-icons': 0.1.31
@@ -48,14 +48,14 @@ specifiers:
   '@storybook/react': 7.0.0-beta.36
   '@storybook/react-vite': 7.0.0-beta.36
   '@storybook/theming': 7.0.0-beta.36
-  '@svgr/babel-plugin-transform-svg-component': ^6.5.1
+  '@svgr/babel-plugin-transform-svg-component': 6.5.1
   '@svgr/core': 6.5.1
   '@svgr/plugin-jsx': 6.5.1
   '@svgr/plugin-prettier': 6.5.1
   '@svgr/plugin-svgo': 6.5.1
-  '@types/escape-html': ^1.0.2
-  '@types/is-hotkey': ^0.1.7
-  '@types/lodash-es': ^4.17.6
+  '@types/escape-html': 1.0.2
+  '@types/is-hotkey': 0.1.7
+  '@types/lodash-es': 4.17.6
   '@types/node': 18.13.0
   '@types/react': 17.0.52
   '@types/react-datepicker': 4.8.0
@@ -64,7 +64,7 @@ specifiers:
   '@types/tinycolor2': 1.4.3
   '@udecode/plate': 19.0.5
   '@udecode/plate-core': 19.4.4
-  '@udecode/zustood': ^1.1.3
+  '@udecode/zustood': 1.1.3
   '@xstate/immer': 0.3.1
   '@xstate/react': 1.6.3
   autoprefixer: 10.4.13
@@ -83,10 +83,10 @@ specifiers:
   esno: 0.16.3
   fast-glob: 3.2.12
   framer-motion: 6.4.3
-  glob: ^8.1.0
+  glob: 8.1.0
   immer: 9.0.12
   is-hotkey: 0.2.0
-  lodash-es: ^4.17.21
+  lodash-es: 4.17.21
   postcss: 8.4.20
   postcss-cli: 10.0.0
   postcss-import: 15.1.0
@@ -123,7 +123,7 @@ specifiers:
   vite-plugin-dts: 1.7.2
   vite-plugin-eslint: 1.8.1
   xstate: 4.28.1
-  zustand: ^4.3.3
+  zustand: 4.3.3
 
 dependencies:
   '@frontify/fondue-tokens': 3.1.0-next.5_ra2vnoek4vhbzktaezawwqbin4
