@@ -7,6 +7,11 @@ export const exitBreakPluginConfig: Partial<PlatePlugin<ExitBreakPlugin>> = {
         rules: [
             {
                 hotkey: 'shift+enter',
+                level: 1,
+            },
+            {
+                hotkey: 'mod+enter',
+                before: false,
             },
         ],
     },
