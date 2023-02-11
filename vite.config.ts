@@ -42,6 +42,7 @@ export default defineConfig({
     plugins: [dts({ insertTypesEntry: true })],
     build: {
         lib: {
+            name: 'Fondue',
             entry: resolve(__dirname, 'src/index.ts'),
             fileName: (format: string) => `[name].${format}.js`,
         },
