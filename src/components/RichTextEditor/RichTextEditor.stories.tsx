@@ -37,6 +37,7 @@ import {
     ParagraphPlugin,
     PluginComposer,
     ResetFormattingPlugin,
+    ShiftEnterBreakPlugin,
     StrikethroughPlugin,
     TextStylePlugin,
     UnderlinePlugin,
@@ -405,7 +406,8 @@ WithToolbarTopAndSmallPadding.args = {
 
 const mentionAndEmojisPlugins = new PluginComposer();
 mentionAndEmojisPlugins
-    .setPlugin([new InitPlugin(), new ParagraphPlugin()])
+    .setPlugin([new ShiftEnterBreakPlugin()])
+    .setPlugin([new ParagraphPlugin()])
     .setPlugin([new MentionPlugin({ mentionableItems: mentionable })])
     .setPlugin([new UnorderedListPlugin(), new OrderedListPlugin()])
     .setPlugin([new BoldPlugin(), new ItalicPlugin(), new UnderlinePlugin(), new StrikethroughPlugin()])
