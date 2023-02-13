@@ -2,14 +2,14 @@
 
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { Plate } from '@udecode/plate';
-import React, { KeyboardEvent, useRef } from 'react';
+import React, { KeyboardEvent } from 'react';
 import { EditableProps, RenderPlaceholderProps } from 'slate-react/dist/components/editable';
 import { ContentReplacement } from './ContentReplacement';
 import { RichTextEditorProvider } from './context/RichTextEditorContext';
 import { Position } from './EditorPositioningWrapper';
 import { forceToBlurActiveElement } from './helpers';
 import { useEditorState } from './hooks';
-import { PluginComposer, defaultPlugins } from './Plugins';
+import { KEY_ELEMENT_BREAK_AFTER, PluginComposer, defaultPlugins } from './Plugins';
 import { DesignTokens, PaddingSizes, TreeOfNodes } from './types';
 import { parseRawValue } from './utils';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
@@ -61,7 +61,7 @@ export const RichTextEditor = ({
         onValueChanged,
     });
 
-    const breakAfterPlugin = plugins.plugins.find((plugin) => plugin.key === 'breakAfterColumn');
+    const breakAfterPlugin = plugins.plugins.find((plugin) => plugin.key === KEY_ELEMENT_BREAK_AFTER);
     const columns = breakAfterPlugin?.options?.columns ?? 1;
     const columnGap = breakAfterPlugin?.options?.gap ?? 0;
 
