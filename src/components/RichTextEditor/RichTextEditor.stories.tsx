@@ -44,7 +44,13 @@ import {
 } from './Plugins';
 import { TextStyles } from './Plugins/TextStylePlugin/TextStyles';
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from './RichTextEditor';
-import { MarkdownToSlate, SlateToMarkdown, Transform, serializeNodesToHtml } from './serializer';
+import {
+    MarkdownToSlate,
+    SerializeNodesToHtmlOptions,
+    SlateToMarkdown,
+    Transform,
+    serializeNodesToHtml,
+} from './serializer';
 import { PaddingSizes } from './types';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
 
@@ -103,23 +109,7 @@ export const Flex: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) =>
 );
 
 export const SerializedToHTML: StoryFn<RichTextEditorProps> = () => {
-    const serialized = serializeNodesToHtml(nodesToSerialize, { designTokens: customDesignTokens, mentionable });
-    return (
-        <>
-            {serialized ? (
-                <>
-                    Serialized:
-                    <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
-                        <code>{serialized}</code>
-                    </div>
-                    Rendered:
-                    <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
-                        <div dangerouslySetInnerHTML={{ __html: serialized }} />
-                    </div>
-                </>
-            ) : null}
-        </>
-    );
+    return getSerializedContent();
 };
 
 export const MarkdownSerializerDeserializer: StoryFn<RichTextEditorProps> = () => {
@@ -450,7 +440,7 @@ defaultPluginsWithColumns
         new BreakAfterPlugin({ columns: 5, gap: 20 }),
     ]);
 
-type MultiColumnProps = ComponentProps<typeof RichTextEditorComponent> & { columns: number };
+type MultiColumnProps = ComponentProps<typeof RichTextEditorComponent> & { columns: number; columnGap: string };
 
 export const MultiColumns: StoryFn<MultiColumnProps> = (args: MultiColumnProps) => {
     delete args.plugins;
@@ -480,6 +470,21 @@ MultiColumns.args = {
     plugins: defaultPluginsWithColumns,
     border: false,
     columns: 2,
+    columnGap: '20px',
+};
+
+export const MultiColumnsSerializedToHTML: StoryFn<MultiColumnProps> = (args) => {
+    return getSerializedContent({
+        designTokens: customDesignTokens,
+        mentionable,
+        columns: args.columns,
+        columnGap: args.columnGap,
+    });
+};
+
+MultiColumnsSerializedToHTML.args = {
+    columns: 2,
+    columnGap: '20px',
 };
 
 export const SimpleMultiColumns: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
@@ -490,3 +495,30 @@ SimpleMultiColumns.args = {
     plugins: defaultPluginsWithColumns,
     border: false,
 };
+
+function getSerializedContent(
+    props: SerializeNodesToHtmlOptions = {
+        designTokens: customDesignTokens,
+        mentionable,
+        columns: 1,
+        columnGap: 'normal',
+    },
+): JSX.Element {
+    const serialized = serializeNodesToHtml(nodesToSerialize, props);
+    return (
+        <>
+            {serialized ? (
+                <>
+                    Serialized:
+                    <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
+                        <code>{serialized}</code>
+                    </div>
+                    Rendered:
+                    <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
+                        <div dangerouslySetInnerHTML={{ __html: serialized }} />
+                    </div>
+                </>
+            ) : null}
+        </>
+    );
+}

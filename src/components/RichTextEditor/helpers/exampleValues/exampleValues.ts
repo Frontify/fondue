@@ -195,12 +195,12 @@ export const defaultValue = [
     {
         type: ELEMENT_PARAGRAPH,
         children: [{ text: 'This text is followed by a break 2.' }],
-        breakAfterColumn: 'active',
+        breakAfterColumn: 'inactive',
     },
     {
         type: ELEMENT_PARAGRAPH,
         children: [{ text: 'This text is followed by a break 3.' }],
-        breakAfterColumn: 'active',
+        breakAfterColumn: 'inactive',
     },
     createElement({
         text: IPSUM,
