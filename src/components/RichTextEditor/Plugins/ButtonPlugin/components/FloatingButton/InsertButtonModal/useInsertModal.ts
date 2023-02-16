@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { CheckboxState } from '@components/Checkbox';
-import { isValidUrl } from '@components/RichTextEditor/utils/isValidUrl';
-import { useEditorRef, useHotkeys } from '@udecode/plate';
+import { getPluginOptions, useEditorRef, useHotkeys } from '@udecode/plate';
 import React, { Dispatch, Reducer, useEffect, useReducer } from 'react';
+import { ButtonPlugin, ELEMENT_BUTTON } from '../../../createButtonPlugin';
 import { submitFloatingButton } from '../../../transforms/submitFloatingButton';
 import { RichTextButtonStyle } from '../../../types';
 import { getButtonStyle } from '../../../utils/getButtonStyle';
@@ -113,7 +113,8 @@ export const useInsertModal = () => {
     const hasValues = state.url !== '' && state.text !== '';
 
     const isValidUrlOrEmpty = () => {
-        return !state.url || isValidUrl(state.url);
+        const { isUrl } = getPluginOptions<ButtonPlugin>(editor, ELEMENT_BUTTON);
+        return !state.url || (isUrl && isUrl(state.url));
     };
 
     useHotkeys(
