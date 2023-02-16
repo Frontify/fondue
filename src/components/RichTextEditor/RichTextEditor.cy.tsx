@@ -1153,7 +1153,7 @@ describe('RichTextEditor Component', () => {
         it('should delete a column break with backspace key', () => {
             cy.mount(<RichTextEditorWithTwoColumns />);
             cy.get('[contenteditable=true]').click().type('hello{shift+ctrl+enter}{enter}W{leftArrow}{backspace}');
-            cy.get('[contenteditable=true]').should('not.include.html', columnBreakClassNames);
+            cy.get('[contenteditable=true]').should('not.include.html', activeButtonClassNames);
 
             // checks that the words are still separated 'hello' and 'W'
             selectTextValue('hello');
@@ -1163,7 +1163,7 @@ describe('RichTextEditor Component', () => {
         it('should delete a column break with del key', () => {
             cy.mount(<RichTextEditorWithTwoColumns />);
             cy.get('[contenteditable=true]').click().type('hello{shift+ctrl+enter}{enter}W{leftArrow}{leftArrow}{del}');
-            cy.get('[contenteditable=true]').should('not.include.html', columnBreakClassNames);
+            cy.get('[contenteditable=true]').should('not.include.html', activeButtonClassNames);
             // checks that the words are still separated 'hello' and 'W', as only the column break should be deleted
             selectTextValue('hello');
             cy.get(TOOLBAR_FLOATING).should('be.visible');
