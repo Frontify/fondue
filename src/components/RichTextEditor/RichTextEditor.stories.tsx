@@ -473,7 +473,7 @@ export const MultiColumns: StoryFn<RichTextEditorProps> = (args: RichTextEditorP
     return (
         <div>
             <input type="text" onChange={(e) => setValue(e.target.value as any)} />
-            <RichTextEditorComponent plugins={plugins} {...args} />
+            <RichTextEditorComponent updateValueOnChange={false} plugins={plugins} {...args} />
         </div>
     );
 };

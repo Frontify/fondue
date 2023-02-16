@@ -190,17 +190,17 @@ export const defaultValue = [
     {
         type: ELEMENT_PARAGRAPH,
         children: [{ text: 'This text is followed by a break 1.' }],
-        breakAfterColumn: true,
+        breakAfterColumn: 'active',
     },
     {
         type: ELEMENT_PARAGRAPH,
         children: [{ text: 'This text is followed by a break 2.' }],
-        breakAfterColumn: true,
+        breakAfterColumn: 'active',
     },
     {
         type: ELEMENT_PARAGRAPH,
         children: [{ text: 'This text is followed by a break 3.' }],
-        breakAfterColumn: true,
+        breakAfterColumn: 'active',
     },
     createElement({
         text: IPSUM,

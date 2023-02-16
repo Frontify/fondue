@@ -111,7 +111,7 @@ export const RichTextEditor = ({
             >
                 {config.toolbar()}
                 {config.inline()}
-                {updateValueOnChange && <ContentReplacement value={parseRawValue({ editorId, raw: value })} />}
+                {updateValueOnChange && <ContentReplacement value={parseRawValue({ editorId, raw: value, plugins })} />}
             </Plate>
         </RichTextEditorProvider>
     );

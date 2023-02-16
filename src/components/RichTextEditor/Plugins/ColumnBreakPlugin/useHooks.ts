@@ -2,10 +2,11 @@
 
 import { PlateEditor, getParentNode, getPointBefore, getStartPoint, select } from '@udecode/plate';
 import { Path } from 'slate';
-import { getColumnBreakCount } from './ColumnBreakButton/ColumnBreakoolbarButton';
 import { KEY_ELEMENT_BREAK_AFTER } from './createColumnBreakPlugin';
-import { setBreakAfter } from './utils/setBreakAfter';
-import { toggleBreakWithinRange } from './utils/toggleBreakWithinRange';
+import { toggleColumnBreak } from './onKeyDownColumnBreak';
+import { getColumnBreakEntries } from './utils/getColumnBreakEntries';
+import { setColumnBreaks } from './utils/setColumnBreaks';
+import { updateColumnBreak, updateColumnBreaks } from './utils/updateColumnBreaks';
 
 const moveCursorToPath = (editor: PlateEditor, path: Path) => {
     const startPoint = getStartPoint(editor, path);
@@ -17,17 +18,19 @@ const moveCursorToPath = (editor: PlateEditor, path: Path) => {
     });
 };
 
-type Handler = null | (() => void);
-
-export const onChangeHandler = <E extends PlateEditor = PlateEditor>(editor: E) => {
-    const { apply } = editor;
+const getColumnCount = (editor: PlateEditor) => {
     const breakAfterPlugin = editor.plugins.find((plugin) => plugin.key === KEY_ELEMENT_BREAK_AFTER);
-    const columns = (breakAfterPlugin?.options as { columns: number })?.columns ?? 1;
+    return (breakAfterPlugin?.options as { columns: number })?.columns ?? 1;
+};
+
+export const useHooks = <E extends PlateEditor = PlateEditor>(editor: E) => {
+    const { apply } = editor;
+    const columnCount = getColumnCount(editor);
 
     editor.apply = (operation) => {
         switch (operation.type) {
             case 'split_node':
-                operation.properties = { ...operation.properties, breakAfterColumn: false };
+                operation.properties = { ...operation.properties, breakAfterColumn: undefined };
                 break;
             case 'merge_node':
                 const pointBefore = getPointBefore(editor, operation.path);
@@ -37,7 +40,8 @@ export const onChangeHandler = <E extends PlateEditor = PlateEditor>(editor: E) 
                 }
 
                 const node = getParentNode(editor, pointBefore.path);
-                setBreakAfter(editor, { at: pointBefore, value: false });
+                setColumnBreaks(editor, { at: pointBefore, value: undefined });
+                updateColumnBreaks(editor, columnCount);
 
                 if (node?.[0].breakAfterColumn) {
                     moveCursorToPath(editor, operation.path);
@@ -50,6 +54,5 @@ export const onChangeHandler = <E extends PlateEditor = PlateEditor>(editor: E) 
         apply(operation);
     };
 
-    // TOOD: only apply initially and on above events
-    return () => toggleBreakWithinRange(editor, columns);
+    setTimeout(() => updateColumnBreaks(editor, columnCount));
 };
