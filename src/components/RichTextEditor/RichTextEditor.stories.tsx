@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Meta, StoryFn } from '@storybook/react';
-import React, { useState } from 'react';
+import React, { ComponentProps, useState } from 'react';
 import { Position } from './EditorPositioningWrapper';
 import {
     IPSUM,
@@ -449,8 +449,9 @@ defaultPluginsWithColumns
         new BreakAfterPlugin({ columns: 5, gap: 20 }),
     ]);
 
-export const MultiColumns: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => {
-    const [value, setValue] = useState<number>(2);
+type MultiColumnProps = ComponentProps<typeof RichTextEditorComponent> & { columns: number };
+
+export const MultiColumns: StoryFn<MultiColumnProps> = (args: MultiColumnProps) => {
     delete args.plugins;
 
     const plugins = new PluginComposer();
@@ -467,20 +468,17 @@ export const MultiColumns: StoryFn<RichTextEditorProps> = (args: RichTextEditorP
             new CodePlugin(),
             new UnorderedListPlugin(),
             new OrderedListPlugin(),
-            new BreakAfterPlugin({ columns: value, gap: 20 }),
+            new BreakAfterPlugin({ columns: args.columns, gap: 20 }),
         ]);
 
-    return (
-        <div>
-            <input type="text" onChange={(e) => setValue(e.target.value as any)} />
-            <RichTextEditorComponent updateValueOnChange={false} plugins={plugins} {...args} />
-        </div>
-    );
+    return <RichTextEditorComponent updateValueOnChange={false} plugins={plugins} {...args} />;
 };
+
 MultiColumns.args = {
     value: JSON.stringify(defaultValue),
     plugins: defaultPluginsWithColumns,
     border: false,
+    columns: 2,
 };
 
 export const SimpleMultiColumns: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (

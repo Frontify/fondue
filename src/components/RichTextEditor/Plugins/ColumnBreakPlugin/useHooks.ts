@@ -3,10 +3,8 @@
 import { PlateEditor, getParentNode, getPointBefore, getStartPoint, select } from '@udecode/plate';
 import { Path } from 'slate';
 import { KEY_ELEMENT_BREAK_AFTER } from './createColumnBreakPlugin';
-import { toggleColumnBreak } from './onKeyDownColumnBreak';
-import { getColumnBreakEntries } from './utils/getColumnBreakEntries';
 import { setColumnBreaks } from './utils/setColumnBreaks';
-import { updateColumnBreak, updateColumnBreaks } from './utils/updateColumnBreaks';
+import { updateColumnBreaks } from './utils/updateColumnBreaks';
 
 const moveCursorToPath = (editor: PlateEditor, path: Path) => {
     const startPoint = getStartPoint(editor, path);
