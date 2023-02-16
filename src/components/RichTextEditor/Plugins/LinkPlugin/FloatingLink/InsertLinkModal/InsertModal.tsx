@@ -4,7 +4,7 @@ import { ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
 import { Button } from '@components/Button/Button';
 import { Checkbox } from '@components/Checkbox';
 import { FormControl } from '@components/FormControl';
-import { isUrl } from '@components/RichTextEditor/utils/isUrl';
+import { isValidUrl } from '@components/RichTextEditor/utils/isValidUrl';
 import { TextInput } from '@components/TextInput';
 import { IconCheckMark } from '@foundation/Icon';
 import React, { FC } from 'react';
@@ -54,9 +54,17 @@ export const InsertModal: FC<Props> = ({
                     required: true,
                 }}
             >
-                <TextInput id="url" value={state.url} placeholder="https://example.com" onChange={onUrlChange} />
+                <TextInput
+                    id="url"
+                    value={state.url}
+                    placeholder="https://example.com"
+                    focusOnMount
+                    onChange={onUrlChange}
+                />
             </FormControl>
-            {state.url && !isUrl(state.url) && <div className="tw-text-red-65 tw-mt-3">Please enter a valid URL.</div>}
+            {state.url && !isValidUrl(state.url) && (
+                <div className="tw-text-red-65 tw-mt-3">Please enter a valid URL.</div>
+            )}
         </div>
         <div className="tw-pt-5">
             <Checkbox value="new-tab" label="Open in new tab" state={state.newTab} onChange={onToggleTab} />
@@ -75,7 +83,7 @@ export const InsertModal: FC<Props> = ({
                     onClick={onSave}
                     size={ButtonSize.Medium}
                     icon={<IconCheckMark />}
-                    disabled={!isUrl(state.url) || !hasValues}
+                    disabled={!isValidUrl(state.url) || !hasValues}
                 >
                     Save
                 </Button>

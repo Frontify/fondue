@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { CheckboxState } from '@components/Checkbox';
-import { isUrl } from '@components/RichTextEditor/utils/isUrl';
+import { isValidUrl } from '@components/RichTextEditor/utils/isValidUrl';
 import { useEditorRef, useHotkeys } from '@udecode/plate';
 import React, { Dispatch, Reducer, useEffect, useReducer } from 'react';
 import { submitFloatingButton } from '../../../transforms/submitFloatingButton';
@@ -113,7 +113,7 @@ export const useInsertModal = () => {
     const hasValues = state.url !== '' && state.text !== '';
 
     const isValidUrlOrEmpty = () => {
-        return !state.url || isUrl(state.url);
+        return !state.url || isValidUrl(state.url);
     };
 
     useHotkeys(
