@@ -8,11 +8,11 @@ describe('Valid urls', () => {
     });
 
     it('https://frontify.com/something', () => {
-        expect(isValidUrl('http://frontify.com/something')).to.be.true;
+        expect(isValidUrl('https://frontify.com/something')).to.be.true;
     });
 
     it('https://frontify.com/something?q=query#hash', () => {
-        expect(isValidUrl('http://frontify.com/something?q=query#hash')).to.be.true;
+        expect(isValidUrl('https://frontify.com/something?q=query#hash')).to.be.true;
     });
 
     it('mailto:hello@frontify.com', () => {
