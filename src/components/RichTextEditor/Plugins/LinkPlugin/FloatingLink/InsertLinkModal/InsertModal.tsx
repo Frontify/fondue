@@ -4,7 +4,6 @@ import { ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
 import { Button } from '@components/Button/Button';
 import { Checkbox } from '@components/Checkbox';
 import { FormControl } from '@components/FormControl';
-import { isValidUrl } from '@components/RichTextEditor/utils/isValidUrl';
 import { TextInput } from '@components/TextInput';
 import { IconCheckMark } from '@foundation/Icon';
 import React, { FC } from 'react';
@@ -18,6 +17,7 @@ type Props = {
     onCancel: () => void;
     onSave: (e: React.MouseEvent<HTMLButtonElement, MouseEvent> | KeyboardEvent | undefined) => void;
     hasValues: boolean;
+    isValidUrlOrEmpty: () => boolean | undefined;
     testId?: string;
     children?: React.ReactNode;
 };
@@ -29,6 +29,7 @@ export const InsertModal: FC<Props> = ({
     onToggleTab,
     onCancel,
     onSave,
+    isValidUrlOrEmpty,
     hasValues,
     testId,
     children,
@@ -62,9 +63,7 @@ export const InsertModal: FC<Props> = ({
                     onChange={onUrlChange}
                 />
             </FormControl>
-            {state.url && !isValidUrl(state.url) && (
-                <div className="tw-text-red-65 tw-mt-3">Please enter a valid URL.</div>
-            )}
+            {!isValidUrlOrEmpty() && <div className="tw-text-red-65 tw-mt-3">Please enter a valid URL.</div>}
         </div>
         <div className="tw-pt-5">
             <Checkbox value="new-tab" label="Open in new tab" state={state.newTab} onChange={onToggleTab} />
@@ -83,7 +82,7 @@ export const InsertModal: FC<Props> = ({
                     onClick={onSave}
                     size={ButtonSize.Medium}
                     icon={<IconCheckMark />}
-                    disabled={!isValidUrl(state.url) || !hasValues}
+                    disabled={!isValidUrlOrEmpty() || !hasValues}
                 >
                     Save
                 </Button>
