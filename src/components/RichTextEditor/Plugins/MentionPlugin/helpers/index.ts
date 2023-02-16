@@ -2,3 +2,4 @@
 
 export * from './filterItems';
 export * from './mapMentionable';
+export * from './renderMentionLabel';

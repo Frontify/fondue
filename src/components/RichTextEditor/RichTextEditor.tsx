@@ -9,7 +9,7 @@ import { RichTextEditorProvider } from './context/RichTextEditorContext';
 import { Position } from './EditorPositioningWrapper';
 import { forceToBlurActiveElement } from './helpers';
 import { useEditorState } from './hooks';
-import { KEY_ELEMENT_BREAK_AFTER, PluginComposer, defaultPlugins } from './Plugins';
+import { GAP_DEFAULT, KEY_ELEMENT_BREAK_AFTER, PluginComposer, defaultPlugins } from './Plugins';
 import { DesignTokens, PaddingSizes, TreeOfNodes } from './types';
 import { parseRawValue } from './utils';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
@@ -63,7 +63,7 @@ export const RichTextEditor = ({
 
     const breakAfterPlugin = plugins.plugins.find((plugin) => plugin.key === KEY_ELEMENT_BREAK_AFTER);
     const columns = breakAfterPlugin?.options?.columns ?? 1;
-    const columnGap = breakAfterPlugin?.options?.gap ?? 0;
+    const columnGap = breakAfterPlugin?.options?.gap ?? GAP_DEFAULT;
 
     const editableProps: EditableProps = {
         placeholder,

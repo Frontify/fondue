@@ -19,10 +19,11 @@ import {
     TextStylePlugin,
     UnorderedListPlugin,
 } from './Plugins';
+import { ACTIVE_COLUMN_BREAK_CLASS_NAMES } from './Plugins/ColumnBreakPlugin/utils/getColumnBreakClasses';
 import { ButtonStyles } from './Plugins/TextStylePlugin/TextStyles';
 import { RichTextEditor } from './RichTextEditor';
 import { DesignTokens } from './types';
-import { COLUMN_BREAK_CLASS_NAMES, ON_SAVE_DELAY_IN_MS } from './utils';
+import { ON_SAVE_DELAY_IN_MS } from './utils';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
 
 const RICH_TEXT_EDITOR = '[data-test-id=rich-text-editor]';
@@ -1019,9 +1020,9 @@ describe('RichTextEditor Component', () => {
 
             insertTextAndOpenToolbar();
             cy.get(TOOLBAR_FLOATING).should('be.visible');
-            cy.get('[contenteditable=true]').should('not.include.html', COLUMN_BREAK_CLASS_NAMES);
+            cy.get('[contenteditable=true]').should('not.include.html', ACTIVE_COLUMN_BREAK_CLASS_NAMES);
             cy.get(TOOLBAR_GROUP_1).children().eq(-1).click();
-            cy.get('[contenteditable=true]').should('include.html', COLUMN_BREAK_CLASS_NAMES);
+            cy.get('[contenteditable=true]').should('include.html', ACTIVE_COLUMN_BREAK_CLASS_NAMES);
         });
 
         it('it should add column break on unordered list', () => {
@@ -1030,9 +1031,9 @@ describe('RichTextEditor Component', () => {
             insertTextAndOpenToolbar();
             cy.get(TOOLBAR_FLOATING).should('be.visible');
             cy.get(TOOLBAR_GROUP_2).children().eq(1).click();
-            cy.get('[contenteditable=true]').should('not.include.html', COLUMN_BREAK_CLASS_NAMES);
+            cy.get('[contenteditable=true]').should('not.include.html', ACTIVE_COLUMN_BREAK_CLASS_NAMES);
             cy.get(TOOLBAR_GROUP_1).children().eq(-1).click();
-            cy.get('[contenteditable=true]').should('include.html', COLUMN_BREAK_CLASS_NAMES);
+            cy.get('[contenteditable=true]').should('include.html', ACTIVE_COLUMN_BREAK_CLASS_NAMES);
         });
 
         it('it should add column break on ordered list', () => {
@@ -1041,9 +1042,9 @@ describe('RichTextEditor Component', () => {
             insertTextAndOpenToolbar();
             cy.get(TOOLBAR_FLOATING).should('be.visible');
             cy.get(TOOLBAR_GROUP_2).children().eq(2).click();
-            cy.get('[contenteditable=true]').should('not.include.html', COLUMN_BREAK_CLASS_NAMES);
+            cy.get('[contenteditable=true]').should('not.include.html', ACTIVE_COLUMN_BREAK_CLASS_NAMES);
             cy.get(TOOLBAR_GROUP_1).children().eq(-1).click();
-            cy.get('[contenteditable=true]').should('include.html', COLUMN_BREAK_CLASS_NAMES);
+            cy.get('[contenteditable=true]').should('include.html', ACTIVE_COLUMN_BREAK_CLASS_NAMES);
         });
 
         it('it should add column break on heading', () => {
@@ -1053,10 +1054,12 @@ describe('RichTextEditor Component', () => {
             cy.get(TOOLBAR_FLOATING).should('be.visible');
             cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
             cy.get(TEXTSTYLE_OPTION).first().click();
-            cy.get('[contenteditable=true]').click('topLeft').should('not.include.html', COLUMN_BREAK_CLASS_NAMES);
+            cy.get('[contenteditable=true]')
+                .click('topLeft')
+                .should('not.include.html', ACTIVE_COLUMN_BREAK_CLASS_NAMES);
             selectTextValue('hello');
             cy.get(TOOLBAR_GROUP_1).children().eq(-1).click();
-            cy.get('[contenteditable=true]').should('include.html', COLUMN_BREAK_CLASS_NAMES);
+            cy.get('[contenteditable=true]').should('include.html', ACTIVE_COLUMN_BREAK_CLASS_NAMES);
         });
 
         it('it should add column break on custom textstyle', () => {
@@ -1066,10 +1069,10 @@ describe('RichTextEditor Component', () => {
             cy.get(TOOLBAR_FLOATING).should('be.visible');
             cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
             cy.get(TEXTSTYLE_OPTION).eq(4).click();
-            cy.get('[contenteditable=true]').click().should('not.include.html', COLUMN_BREAK_CLASS_NAMES);
+            cy.get('[contenteditable=true]').click().should('not.include.html', ACTIVE_COLUMN_BREAK_CLASS_NAMES);
             selectTextValue('hello');
             cy.get(TOOLBAR_GROUP_1).children().eq(-1).click();
-            cy.get('[contenteditable=true]').should('include.html', COLUMN_BREAK_CLASS_NAMES);
+            cy.get('[contenteditable=true]').should('include.html', ACTIVE_COLUMN_BREAK_CLASS_NAMES);
         });
 
         it('it should add column break on right aligned text', () => {
@@ -1078,9 +1081,9 @@ describe('RichTextEditor Component', () => {
             insertTextAndOpenToolbar();
             cy.get(TOOLBAR_FLOATING).should('be.visible');
             cy.get(TOOLBAR_GROUP_2).children().eq(0).click();
-            cy.get('[contenteditable=true]').should('not.include.html', COLUMN_BREAK_CLASS_NAMES);
+            cy.get('[contenteditable=true]').should('not.include.html', ACTIVE_COLUMN_BREAK_CLASS_NAMES);
             cy.get(TOOLBAR_GROUP_1).children().eq(-1).click();
-            cy.get('[contenteditable=true]').should('include.html', COLUMN_BREAK_CLASS_NAMES);
+            cy.get('[contenteditable=true]').should('include.html', ACTIVE_COLUMN_BREAK_CLASS_NAMES);
         });
 
         it('it should add column break on when bold is applied', () => {
@@ -1088,9 +1091,9 @@ describe('RichTextEditor Component', () => {
             insertTextAndOpenToolbar();
             cy.get(TOOLBAR_FLOATING).should('be.visible');
             cy.get(TOOLBAR_GROUP_1).children().eq(0).click();
-            cy.get('[contenteditable=true]').should('not.include.html', COLUMN_BREAK_CLASS_NAMES);
+            cy.get('[contenteditable=true]').should('not.include.html', ACTIVE_COLUMN_BREAK_CLASS_NAMES);
             cy.get(TOOLBAR_GROUP_1).children().eq(-1).click();
-            cy.get('[contenteditable=true]').should('include.html', COLUMN_BREAK_CLASS_NAMES);
+            cy.get('[contenteditable=true]').should('include.html', ACTIVE_COLUMN_BREAK_CLASS_NAMES);
         });
 
         it('it should move the text after the column break to the second column', () => {
@@ -1099,13 +1102,13 @@ describe('RichTextEditor Component', () => {
             selectTextValue('first');
             cy.get(TOOLBAR_FLOATING).should('be.visible');
             cy.get(TOOLBAR_GROUP_1).children().eq(-1).click();
-            cy.get('[contenteditable=true]').should('include.html', COLUMN_BREAK_CLASS_NAMES);
+            cy.get('[contenteditable=true]').should('include.html', ACTIVE_COLUMN_BREAK_CLASS_NAMES);
             checkPosition('be.lessThan', 100, 'first');
             checkPosition('be.gt', 100, 'second');
             checkPosition('be.gt', 100, 'Level 5');
         });
 
-        it('it should add only one column break after the first break, when there are only two columns', () => {
+        it('should add only one column break after the first break, when there is a maximum of two columns', () => {
             cy.mount(<RichTextEditorWithTwoColumns />);
             const content = 'hello{enter} World {enter} another newline{enter} last newline{selectAll}';
 
@@ -1124,7 +1127,7 @@ describe('RichTextEditor Component', () => {
             checkPosition('be.lessThan', 500, 'World');
         });
 
-        it('the button should be disabled when already at max column breaks', () => {
+        it('should disable the column break button when already at max column breaks', () => {
             cy.mount(<RichTextEditorWithTwoColumns />);
 
             insertTextAndOpenToolbar();
@@ -1150,7 +1153,7 @@ describe('RichTextEditor Component', () => {
         it('should delete a column break with backspace key', () => {
             cy.mount(<RichTextEditorWithTwoColumns />);
             cy.get('[contenteditable=true]').click().type('hello{shift+ctrl+enter}{enter}W{leftArrow}{backspace}');
-            cy.get('[contenteditable=true]').should('not.include.html', COLUMN_BREAK_CLASS_NAMES);
+            cy.get('[contenteditable=true]').should('not.include.html', columnBreakClassNames);
 
             // checks that the words are still separated 'hello' and 'W'
             selectTextValue('hello');
@@ -1160,13 +1163,13 @@ describe('RichTextEditor Component', () => {
         it('should delete a column break with del key', () => {
             cy.mount(<RichTextEditorWithTwoColumns />);
             cy.get('[contenteditable=true]').click().type('hello{shift+ctrl+enter}{enter}W{leftArrow}{leftArrow}{del}');
-            cy.get('[contenteditable=true]').should('not.include.html', COLUMN_BREAK_CLASS_NAMES);
+            cy.get('[contenteditable=true]').should('not.include.html', columnBreakClassNames);
             // checks that the words are still separated 'hello' and 'W', as only the column break should be deleted
             selectTextValue('hello');
             cy.get(TOOLBAR_FLOATING).should('be.visible');
         });
 
-        it('it should only add one column break with hotkeys, when there are two columns', () => {
+        it('should only add one column break with hotkeys, when there is a maximum of two columns', () => {
             cy.mount(<RichTextEditorWithTwoColumns />);
             const content =
                 'hello{enter} World {enter} another newline{enter} last newline{selectAll}{shift+ctrl+enter}';

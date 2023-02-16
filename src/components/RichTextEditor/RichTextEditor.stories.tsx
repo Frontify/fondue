@@ -103,7 +103,7 @@ export const Flex: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) =>
 );
 
 export const SerializedToHTML: StoryFn<RichTextEditorProps> = () => {
-    const serialized = serializeNodesToHtml(nodesToSerialize, customDesignTokens);
+    const serialized = serializeNodesToHtml(nodesToSerialize, { designTokens: customDesignTokens, mentionable });
     return (
         <>
             {serialized ? (
@@ -414,6 +414,7 @@ export const WithMentionsAndEmojis = RichTextEditorTemplate.bind({});
 WithMentionsAndEmojis.args = {
     value: JSON.stringify(mentionValue),
     plugins: mentionAndEmojisPlugins,
+    position: Position.BOTTOM,
 };
 
 const withoutToolbarPlugins = new PluginComposer({ noToolbar: true });
