@@ -1,11 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { orderedListValue, unorderedListValue } from '@components/RichTextEditor/helpers/exampleValues';
-import { UL_CLASSES, getOrderedListClasses } from '@components/RichTextEditor/Plugins';
+import { mentionable, orderedListValue, unorderedListValue } from '@components/RichTextEditor/helpers/exampleValues';
+import { UL_CLASSES, getOrderedListClasses, mapMentionable } from '@components/RichTextEditor/Plugins';
 import { TextStyles } from '@components/RichTextEditor/Plugins/TextStylePlugin/TextStyles';
 import { columnBreakClassNames } from '@components/RichTextEditor/utils/constants';
 import { defaultDesignTokens } from '@components/RichTextEditor/utils/defaultDesignTokens';
-import { ELEMENT_LI, ELEMENT_LIC, ELEMENT_LINK, ELEMENT_OL, ELEMENT_PARAGRAPH, ELEMENT_UL } from '@udecode/plate';
+import {
+    ELEMENT_LI,
+    ELEMENT_LIC,
+    ELEMENT_LINK,
+    ELEMENT_MENTION,
+    ELEMENT_OL,
+    ELEMENT_PARAGRAPH,
+    ELEMENT_UL,
+} from '@udecode/plate';
 import { serializeNodeToHtmlRecursive } from './serializeNodeToHtmlRecursive';
 
 describe('serializeNodeToHtmlRecursive()', () => {
@@ -239,6 +247,38 @@ describe('serializeNodeToHtmlRecursive()', () => {
 
         expect(result).to.equal(
             '<p style="font-size: 14px; font-style: normal; font-weight: normal;"><h1 style="font-size: 48px; font-weight: 700; font-style: normal;">This is a h1.</h1><h2 style="font-size: 32px; font-weight: 700; font-style: normal;">This is a h2.</h2><h3 style="font-size: 24px; font-weight: normal; font-style: normal;">This is a h3.</h3><h4 style="font-size: 18px; font-weight: normal; font-style: normal;">This is a h4.</h4><p style="font-size: 14px; font-weight: normal; font-style: normal;">This is a custom1.</p><p style="font-size: 14px; font-weight: 600; font-style: normal;">This is a custom2.</p><p style="font-size: 14px; font-weight: normal; font-style: normal; text-decoration: underline;">This is a custom3.</p><p style="font-size: 16px; font-weight: normal; font-style: italic;">This is a quote.</p></p>',
+        );
+    });
+
+    it('serializes Mentions to html', () => {
+        const node = {
+            type: ELEMENT_PARAGRAPH,
+            children: [
+                {
+                    text: 'new annotation ',
+                },
+                {
+                    type: ELEMENT_MENTION,
+                    category: 'user',
+                    id: '3333333333',
+                    children: [
+                        {
+                            text: '',
+                        },
+                    ],
+                },
+                {
+                    text: ' adding changes :)',
+                },
+            ],
+        };
+
+        const result = serializeNodeToHtmlRecursive(node, {
+            designTokens: defaultDesignTokens,
+            mappedMentionable: mapMentionable(mentionable),
+        });
+        expect(result).to.equal(
+            '<p style="font-size: 14px; font-style: normal; font-weight: normal;">new annotation <span data-slate-category="user" contenteditable="false" style="line-height: 10px; padding: 1px; margin: 0px 1px; font-weight: bold; vertical-align: baseline; display: inline-block; border-radius: 2px; background-color: rgb(227, 232, 246); color: rgb(130, 95, 255);">Admiral Gial Ackbar</span> adding changes :)</p>',
         );
     });
 });
