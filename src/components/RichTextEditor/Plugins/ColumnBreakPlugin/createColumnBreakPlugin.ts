@@ -3,8 +3,8 @@
 import { createPluginFactory } from '@udecode/plate';
 import { Plugin, PluginProps } from '../Plugin';
 import { ColumnBreakButton } from './ColumnBreakButton';
-import { useHooks } from './useHooks';
 import { onKeyDownColumnBreak } from './onKeyDownColumnBreak';
+import { useColumnBreakHandler } from './useColumnBreakHandler';
 
 export const KEY_ELEMENT_BREAK_AFTER = 'breakAfterColumn';
 export const KEY_ELEMENT_BREAK_WITHIN_RANGE = 'breakWithinRange';
@@ -32,7 +32,7 @@ export const createColumnBreakPlugin = (columns: number, gap: string | number) =
         handlers: {
             onKeyDown: onKeyDownColumnBreak,
         },
-        useHooks,
+        useHooks: useColumnBreakHandler,
         options: {
             columns,
             gap,

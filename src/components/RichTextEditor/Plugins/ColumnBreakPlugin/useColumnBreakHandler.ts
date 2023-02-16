@@ -21,7 +21,7 @@ const getColumnCount = (editor: PlateEditor) => {
     return (breakAfterPlugin?.options as { columns: number })?.columns ?? 1;
 };
 
-export const useHooks = <E extends PlateEditor = PlateEditor>(editor: E) => {
+export const useColumnBreakHandler = <E extends PlateEditor = PlateEditor>(editor: E) => {
     const { apply } = editor;
     const columnCount = getColumnCount(editor);
 
