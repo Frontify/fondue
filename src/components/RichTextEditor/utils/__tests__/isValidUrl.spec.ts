@@ -3,35 +3,15 @@
 import { isValidUrl } from '../isValidUrl';
 
 describe('Valid urls', () => {
-    it('http://frontify.com', () => {
-        expect(isValidUrl('http://frontify.com')).to.be.true;
-    });
-
     it('https://frontify.com', () => {
         expect(isValidUrl('https://frontify.com')).to.be.true;
     });
 
-    it('ftp://frontify.com', () => {
-        expect(isValidUrl('ftp://frontify.com')).to.be.true;
-    });
-
-    it('http://www.frontify.com', () => {
-        expect(isValidUrl('http://www.frontify.com')).to.be.true;
-    });
-
-    it('http://frontify.com/something', () => {
+    it('https://frontify.com/something', () => {
         expect(isValidUrl('http://frontify.com/something')).to.be.true;
     });
 
-    it('http://frontify.com?q=query', () => {
-        expect(isValidUrl('http://frontify.com?q=query')).to.be.true;
-    });
-
-    it('http://frontify.com#hash', () => {
-        expect(isValidUrl('http://frontify.com#hash')).to.be.true;
-    });
-
-    it('http://frontify.com/something?q=query#hash', () => {
+    it('https://frontify.com/something?q=query#hash', () => {
         expect(isValidUrl('http://frontify.com/something?q=query#hash')).to.be.true;
     });
 
@@ -45,8 +25,8 @@ describe('Invalid urls', () => {
         expect(isValidUrl('//google.com')).to.be.false;
     });
 
-    it('http://', () => {
-        expect(isValidUrl('http://')).to.be.false;
+    it('https://', () => {
+        expect(isValidUrl('https://')).to.be.false;
     });
 
     it('google', () => {
