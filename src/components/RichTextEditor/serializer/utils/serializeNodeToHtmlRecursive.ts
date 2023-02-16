@@ -6,11 +6,11 @@ import {
     UL_CLASSES,
     getOrderedListClasses,
 } from '@components/RichTextEditor/Plugins';
+import { ACTIVE_COLUMN_BREAK_CLASS_NAMES } from '@components/RichTextEditor/Plugins/ColumnBreakPlugin/utils/getColumnBreakClasses';
 import { TLinkElement } from '@components/RichTextEditor/Plugins/LinkPlugin/types';
 import { getTextStyle } from '@components/RichTextEditor/Plugins/ListPlugin/ListItemContentMarkupElement';
 import { TextStyles } from '@components/RichTextEditor/Plugins/TextStylePlugin/TextStyles';
 import { DesignTokens } from '@components/RichTextEditor/types';
-import { COLUMN_BREAK_CLASS_NAMES } from '@components/RichTextEditor/utils';
 import {
     ELEMENT_LI,
     ELEMENT_LIC,
@@ -62,7 +62,7 @@ export const serializeNodeToHtmlRecursive = (
         )
         .join('');
 
-    const breakAfterColumn = node.breakAfterColumn ? `class="${COLUMN_BREAK_CLASS_NAMES}" ` : '';
+    const breakAfterColumn = node.breakAfterColumn ? `class="${ACTIVE_COLUMN_BREAK_CLASS_NAMES}" ` : '';
 
     switch (node.type) {
         case TextStyles.ELEMENT_HEADING1:

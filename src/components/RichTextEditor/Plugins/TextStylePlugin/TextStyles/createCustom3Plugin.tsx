@@ -1,22 +1,21 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
+import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
 import { PlateRenderElementProps, createPluginFactory } from '@udecode/plate';
 import { merge } from '@utilities/merge';
-import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
-import { TextStyles } from './textStyles';
+import React from 'react';
+import { getColumnBreakClasses } from '../../ColumnBreakPlugin/utils/getColumnBreakClasses';
 import { alignmentClassnames } from './alignment';
-import { COLUMN_BREAK_CLASS_NAMES } from '../../../utils/constants';
+import { TextStyles } from './textStyles';
 
 export const Custom3MarkupElementNode = ({ element, attributes, children }: PlateRenderElementProps) => {
     const { designTokens } = useRichTextEditorContext();
     const align = element.align as string;
-    const hasColumn = element.breakAfterColumn as boolean;
 
     return (
         <p
             {...attributes}
-            className={merge([align && alignmentClassnames[align], hasColumn && COLUMN_BREAK_CLASS_NAMES])}
+            className={merge([align && alignmentClassnames[align], getColumnBreakClasses(element)])}
             style={designTokens.custom3}
         >
             {children}
