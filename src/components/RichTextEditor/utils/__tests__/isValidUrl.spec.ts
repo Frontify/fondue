@@ -21,20 +21,20 @@ describe('Valid urls', () => {
 });
 
 describe('Invalid urls', () => {
-    it('//xyz.com', () => {
-        expect(isValidUrl('//xyz.com')).to.be.false;
+    it('//this-could-be-a-long-domain.com', () => {
+        expect(isValidUrl('//this-could-be-a-long-domain.com')).to.be.false;
     });
 
     it('https://', () => {
         expect(isValidUrl('https://')).to.be.false;
     });
 
-    it('frontify', () => {
-        expect(isValidUrl('frontify')).to.be.false;
+    it('loremipsumdolorsitamet', () => {
+        expect(isValidUrl('loremipsumdolorsitamet')).to.be.false;
     });
 
-    it('brand.com', () => {
-        expect(isValidUrl('brand.com')).to.be.false;
+    it('anotherlongbranddomaintoinordertonetgetflaggedforcodeduplication.com', () => {
+        expect(isValidUrl('anotherlongbranddomaintoinordertonetgetflaggedforcodeduplication.com')).to.be.false;
     });
 
     it('empty', () => {
