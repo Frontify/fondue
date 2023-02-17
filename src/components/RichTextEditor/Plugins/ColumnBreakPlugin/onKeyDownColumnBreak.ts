@@ -10,7 +10,7 @@ import {
 } from '@udecode/plate';
 import isHotkey from 'is-hotkey';
 import { Location } from 'slate';
-import { KEY_ELEMENT_BREAK_AFTER } from './createColumnBreakPlugin';
+import { KEY_ELEMENT_BREAK_AFTER_COLUMN } from './createColumnBreakPlugin';
 import { getColumnBreakCount } from './utils/getColumnBreakCount';
 import { setColumnBreaks } from './utils/setColumnBreaks';
 import { updateColumnBreaks } from './utils/updateColumnBreaks';
@@ -54,8 +54,8 @@ export const onKeyDownColumnBreak =
         }
 
         if (isHotkey('shift+ctrl+enter', e)) {
-            const breakAfterPlugin = editor.plugins.find((plugin) => plugin.key === KEY_ELEMENT_BREAK_AFTER);
-            const columns = (breakAfterPlugin?.options as { columns: number })?.columns ?? 1;
+            const columnBreakPlugin = editor.plugins.find((plugin) => plugin.key === KEY_ELEMENT_BREAK_AFTER_COLUMN);
+            const columns = (columnBreakPlugin?.options as { columns: number })?.columns ?? 1;
             toggleColumnBreak(editor, columns, e);
         }
     };

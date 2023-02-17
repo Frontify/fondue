@@ -2,7 +2,7 @@
 
 import { PlateEditor, getParentNode, getPointBefore, getStartPoint, select } from '@udecode/plate';
 import { Path } from 'slate';
-import { KEY_ELEMENT_BREAK_AFTER } from './createColumnBreakPlugin';
+import { KEY_ELEMENT_BREAK_AFTER_COLUMN } from './createColumnBreakPlugin';
 import { setColumnBreaks } from './utils/setColumnBreaks';
 import { updateColumnBreaks } from './utils/updateColumnBreaks';
 
@@ -17,8 +17,8 @@ const moveCursorToPath = (editor: PlateEditor, path: Path) => {
 };
 
 const getColumnCount = (editor: PlateEditor) => {
-    const breakAfterPlugin = editor.plugins.find((plugin) => plugin.key === KEY_ELEMENT_BREAK_AFTER);
-    return (breakAfterPlugin?.options as { columns: number })?.columns ?? 1;
+    const columnBreakPlugin = editor.plugins.find((plugin) => plugin.key === KEY_ELEMENT_BREAK_AFTER_COLUMN);
+    return (columnBreakPlugin?.options as { columns: number })?.columns ?? 1;
 };
 
 export const useColumnBreakHandler = <E extends PlateEditor = PlateEditor>(editor: E) => {
