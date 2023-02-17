@@ -1,14 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { CheckboxState } from '@components/Checkbox';
-import { getPluginOptions, useEditorRef, useHotkeys } from '@udecode/plate';
 import React, { Dispatch, Reducer, useEffect, useReducer } from 'react';
+import { getPluginOptions, useEditorRef, useHotkeys } from '@udecode/plate';
+import { CheckboxState } from '@components/Checkbox';
+import { InsertModalDispatchType, InsertModalStateProps } from './types';
+import { floatingButtonActions, floatingButtonSelectors } from '../floatingButtonStore';
 import { ButtonPlugin, ELEMENT_BUTTON } from '../../../createButtonPlugin';
 import { submitFloatingButton } from '../../../transforms/submitFloatingButton';
 import { RichTextButtonStyle } from '../../../types';
 import { getButtonStyle } from '../../../utils/getButtonStyle';
-import { floatingButtonActions, floatingButtonSelectors } from '../floatingButtonStore';
-import { InsertModalDispatchType, InsertModalStateProps } from './types';
 
 const initialState: InsertModalStateProps = {
     url: '',
