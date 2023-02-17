@@ -21,20 +21,20 @@ describe('Valid urls', () => {
 });
 
 describe('Invalid urls', () => {
-    it('//google.com', () => {
-        expect(isValidUrl('//google.com')).to.be.false;
+    it('//xyz.com', () => {
+        expect(isValidUrl('//xyz.com')).to.be.false;
     });
 
     it('https://', () => {
         expect(isValidUrl('https://')).to.be.false;
     });
 
-    it('google', () => {
-        expect(isValidUrl('google')).to.be.false;
+    it('frontify', () => {
+        expect(isValidUrl('frontify')).to.be.false;
     });
 
-    it('google.com', () => {
-        expect(isValidUrl('google.com')).to.be.false;
+    it('brand.com', () => {
+        expect(isValidUrl('brand.com')).to.be.false;
     });
 
     it('empty', () => {
