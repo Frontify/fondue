@@ -2,7 +2,7 @@
 
 import { isValidUrl } from '../isValidUrl';
 
-describe('Valid urls', () => {
+describe('Validate urls correctly', () => {
     it('https://frontify.com', () => {
         expect(isValidUrl('https://frontify.com')).to.be.true;
     });
@@ -18,9 +18,7 @@ describe('Valid urls', () => {
     it('mailto:hello@frontify.com', () => {
         expect(isValidUrl('mailto:hello@frontify.com')).to.be.true;
     });
-});
 
-describe('Invalid urls', () => {
     it('//this-could-be-a-long-domain.com', () => {
         expect(isValidUrl('//this-could-be-a-long-domain.com')).to.be.false;
     });
