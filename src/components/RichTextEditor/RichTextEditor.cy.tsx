@@ -1115,14 +1115,16 @@ describe('RichTextEditor Component', () => {
             cy.get('[contenteditable=true]').click().type(content);
             cy.get(TOOLBAR_GROUP_1).children().eq(-1).click();
 
-            // toolbar button should be active
+            // break after should not be enabled
+            cy.get('[contenteditable=true]').click();
             selectTextValue('hello');
-            cy.get(TOOLBAR_GROUP_1).children().eq(-1).realHover().should('include.html', activeButtonClassNames);
+            cy.get(TOOLBAR_GROUP_1).children().eq(-1).realHover().should('not.include.html', activeButtonClassNames);
             checkPosition('be.lessThan', 100, 'hello');
 
-            // break after should not be enabled
+            // toolbar button should be active
+            cy.get('[contenteditable=true]').click();
             selectTextValue('last newline');
-            cy.get(TOOLBAR_GROUP_1).children().eq(-1).realHover().should('not.include.html', activeButtonClassNames);
+            cy.get(TOOLBAR_GROUP_1).children().eq(-1).realHover().should('include.html', activeButtonClassNames);
             checkPosition('be.lessThan', 500, 'last newline');
             checkPosition('be.lessThan', 500, 'World');
         });
