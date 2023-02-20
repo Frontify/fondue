@@ -62,3 +62,74 @@ export const NoTriggerMenuComponent = (props: MenuProps & { items: Item[] }) => 
         </div>
     );
 };
+
+const GET_MENU_ITEM_CODE_SNIPPET = `
+const getMenuItem = (item: Item, index?: number) => (
+    <MenuItem link={item.link} onClick={item.onClick} disabled={item.disabled} key={\`item-\${index}\`}>
+        {item.label}
+    </MenuItem>
+);
+`;
+
+const BASIC_MENU_CODE_SNIPPET = `
+${GET_MENU_ITEM_CODE_SNIPPET}
+export const BasicMenuComponent = (props: MenuProps & { items: Item[] }) => {
+    const triggerRef = useRef<HTMLButtonElement>(null);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+    const handleTriggerClick = () => {
+        setIsMenuOpen((isOpen) => !isOpen);
+    };
+
+    const handleOnClose = () => {
+        setIsMenuOpen(false);
+    };
+
+    return (
+        <div data-test-id="menu">
+            <Button ref={triggerRef} onClick={handleTriggerClick}>
+                Open menu
+            </Button>
+            <Menu {...props} triggerRef={triggerRef} open={isMenuOpen} onClose={handleOnClose}>
+                {props.items.map(getMenuItem)}
+            </Menu>
+        </div>
+    );
+};
+`;
+export const BASIC_MENU_WITH_ONCLICK_CODE_SNIPPET = `
+${BASIC_MENU_CODE_SNIPPET}
+// Usage Example
+
+<BasicMenuComponent
+    items={[
+    { label: 'Button Item 1', onClick: () => void 0 },
+    { label: 'Button Item 2', onClick: () => void 0 },
+    { label: 'Button Item 3', onClick: () => void 0 },
+  ]}
+/>
+`;
+
+export const BASIC_MENU_WITH_LINKS_CODE_SNIPPET = `
+${BASIC_MENU_CODE_SNIPPET}
+// Usage Example
+
+<BasicMenuComponent
+    items={[
+    { label: 'Button Item 1', onClick: () => void 0 },
+    { label: 'Button Item 2', onClick: () => void 0 },
+    { label: 'Button Item 3', onClick: () => void 0 },
+  ]}
+/>
+`;
+
+export const MENU_WITHOUT_TRIGGER_CODE_SNIPPET = `
+${GET_MENU_ITEM_CODE_SNIPPET}
+export const NoTriggerMenuComponent = (props: MenuProps & { items: Item[] }) => {
+    return (
+        <div data-test-id="menu">
+            <Menu {...props}>{props.items.map(getMenuItem)}</Menu>
+        </div>
+    );
+};
+`;
