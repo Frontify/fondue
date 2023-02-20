@@ -96,7 +96,37 @@ const RichTextEditorTemplate: StoryFn<RichTextEditorProps> = (args: RichTextEdit
     <RichTextEditorComponent {...args} />
 );
 
+const fullyFledgedPlugins = new PluginComposer();
+fullyFledgedPlugins
+    .setPlugin(new InitPlugin(), new ParagraphPlugin())
+    .setPlugin(new TextStylePlugin())
+    .setPlugin(
+        [
+            new BoldPlugin(),
+            new ItalicPlugin(),
+            new UnderlinePlugin(),
+            new StrikethroughPlugin(),
+            new LinkPlugin(),
+            new ButtonPlugin(),
+            new CodePlugin(),
+            new BreakAfterPlugin(),
+        ],
+        [
+            new AlignLeftPlugin(),
+            new AlignCenterPlugin(),
+            new AlignRightPlugin(),
+            new AlignJustifyPlugin(),
+            new UnorderedListPlugin(),
+            new CheckboxListPlugin(),
+            new OrderedListPlugin(),
+            new ResetFormattingPlugin(),
+            new EmojiPlugin(),
+        ],
+    );
 export const FullyFledged = RichTextEditorTemplate.bind({});
+FullyFledged.args = {
+    plugins: fullyFledgedPlugins,
+};
 
 export const Flex: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
     <div className="tw-flex tw-gap-x-7 tw-justify-start">
