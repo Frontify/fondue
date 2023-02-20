@@ -4,9 +4,11 @@ import {
     ELEMENT_BUTTON,
     ELEMENT_CHECK_ITEM,
     MappedMentionableItems,
+    RichTextButtonStyle,
     UL_CLASSES,
     getOrderedListClasses,
 } from '@components/RichTextEditor/Plugins';
+import { getButtonStyle } from '@components/RichTextEditor/Plugins/ButtonPlugin/ButtonMarkupElement/ButtonMarkupElementNode';
 import { TLinkElement } from '@components/RichTextEditor/Plugins/LinkPlugin/types';
 import { getTextStyle } from '@components/RichTextEditor/Plugins/ListPlugin/ListItemContentMarkupElement';
 import { TextStyles } from '@components/RichTextEditor/Plugins/TextStylePlugin/TextStyles';
@@ -137,7 +139,9 @@ export const serializeNodeToHtmlRecursive = (
                 node.url as string,
             )}">${children}</a>`;
         case ELEMENT_BUTTON:
-
+            return `<a href="${node.url}" target=${node.target ?? '_blank'} style="${reactCssPropsToCss(
+                getButtonStyle(designTokens, (node.buttonStyle as RichTextButtonStyle) ?? 'primary'),
+            )}">${children}</a>`;
         case ELEMENT_CHECK_ITEM:
             return `<div disabled class="tw-flex tw-flex-row tw-pb-2 first-of-type:tw-ml-0" style="margin-left:${
                 ((node.indent as number) ?? 0) * 24
