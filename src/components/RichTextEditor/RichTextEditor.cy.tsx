@@ -1183,6 +1183,31 @@ describe('RichTextEditor Component', () => {
             selectTextValue('last newline');
             cy.get(TOOLBAR_GROUP_1).children().eq(-1).realHover().should('include.html', activeButtonClassNames);
         });
+
+        it('should set column breaks inactive when initialized with more column breaks than allowed', () => {
+            cy.mount(
+                <RichTextEditorWithTwoColumns
+                    value={JSON.stringify([
+                        {
+                            type: ELEMENT_PARAGRAPH,
+                            children: [{ text: 'This text is followed by a break 3.' }],
+                            breakAfterColumn: 'active',
+                        },
+                        {
+                            type: ELEMENT_PARAGRAPH,
+                            children: [{ text: 'This text is followed by a break 3.' }],
+                            breakAfterColumn: 'active',
+                        },
+                        {
+                            type: ELEMENT_PARAGRAPH,
+                            children: [{ text: 'This text is followed by a break 3.' }],
+                            breakAfterColumn: 'active',
+                        },
+                    ])}
+                />,
+            );
+            cy.get('[contenteditable=true] .tw-break-after-column').should('have.length', 1);
+        });
     });
 
     describe('initial value', () => {
