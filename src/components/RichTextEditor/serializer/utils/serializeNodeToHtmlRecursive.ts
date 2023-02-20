@@ -7,7 +7,6 @@ import {
     UL_CLASSES,
     getOrderedListClasses,
 } from '@components/RichTextEditor/Plugins';
-import { getColumnBreakClasses } from '@components/RichTextEditor/Plugins/ColumnBreakPlugin/utils/getColumnBreakClasses';
 import { TLinkElement } from '@components/RichTextEditor/Plugins/LinkPlugin/types';
 import { getTextStyle } from '@components/RichTextEditor/Plugins/ListPlugin/ListItemContentMarkupElement';
 import { TextStyles } from '@components/RichTextEditor/Plugins/TextStylePlugin/TextStyles';
@@ -26,9 +25,9 @@ import {
     isText,
 } from '@udecode/plate';
 import escapeHtml from 'escape-html';
+import { mentionHtmlNode } from './mentionHtmlNode';
 import { reactCssPropsToCss } from './reactCssPropsToCss';
 import { serializeLeafToHtml } from './serializeLeafToHtml';
-import { mentionHtmlNode } from './mentionHtmlNode';
 
 const countNodesOfType = (nodes: TDescendant[], type: string): number => {
     return nodes.reduce((acc, node) => {
