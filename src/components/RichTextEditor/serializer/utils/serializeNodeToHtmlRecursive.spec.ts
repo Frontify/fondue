@@ -63,6 +63,22 @@ describe('serializeNodeToHtmlRecursive()', () => {
         expect(result).to.include('tw-break-inside-avoid-column');
     });
 
+    it('does not serialize inactive break after column element to html', () => {
+        const node = {
+            type: ELEMENT_PARAGRAPH,
+            breakAfterColumn: 'inactive',
+            children: [
+                {
+                    text: 'This is a paragraph.',
+                },
+            ],
+        };
+        const result = serializeNodeToHtmlRecursive(node, { designTokens: defaultDesignTokens });
+
+        expect(result).to.not.include('tw-break-after-column');
+        expect(result).to.not.include('tw-break-inside-avoid-column');
+    });
+
     it('serializes ordered list with correct list style types to html', () => {
         const result = serializeNodeToHtmlRecursive(orderedListValue, { designTokens: defaultDesignTokens });
 
