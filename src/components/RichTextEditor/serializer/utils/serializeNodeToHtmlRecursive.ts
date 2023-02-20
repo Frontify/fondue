@@ -139,9 +139,14 @@ export const serializeNodeToHtmlRecursive = (
                 node.url as string,
             )}">${children}</a>`;
         case ELEMENT_BUTTON:
+            const buttonStyle = getButtonStyle(designTokens, (node.buttonStyle as RichTextButtonStyle) ?? 'primary');
             return `<a href="${node.url}" target=${node.target ?? '_blank'} style="${reactCssPropsToCss(
-                getButtonStyle(designTokens, (node.buttonStyle as RichTextButtonStyle) ?? 'primary'),
-            )}">${children}</a>`;
+                buttonStyle,
+            )}" onmouseover="(e) => { e.target.style = '${reactCssPropsToCss(
+                buttonStyle.hover,
+            )}'; }" onmouseout="(e) => { e.target.style = '${reactCssPropsToCss(
+                buttonStyle.hover,
+            )}'; }">${children}</a>`;
         case ELEMENT_CHECK_ITEM:
             return `<div disabled class="tw-flex tw-flex-row tw-pb-2 first-of-type:tw-ml-0" style="margin-left:${
                 ((node.indent as number) ?? 0) * 24
