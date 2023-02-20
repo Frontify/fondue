@@ -74,63 +74,70 @@ export const serializeNodeToHtmlRecursive = (
         )
         .join('');
 
-    const breakAfterColumn = getColumnBreakClasses(node);
+    const hasColumnBreak = node.breakAfterColumn === 'active';
+    const columnBreakClasses = hasColumnBreak ? 'tw-break-after-column tw-break-inside-avoid-column' : '';
 
     switch (node.type) {
         case TextStyles.ELEMENT_HEADING1:
-            return `<h1 class="${breakAfterColumn}" style="${reactCssPropsToCss(
+            return `<h1 class="${columnBreakClasses}" style="${reactCssPropsToCss(
                 designTokens.heading1,
             )}">${children}</h1>`;
         case TextStyles.ELEMENT_HEADING2:
-            return `<h2 class="${breakAfterColumn}" style="${reactCssPropsToCss(
+            return `<h2 class="${columnBreakClasses}" style="${reactCssPropsToCss(
                 designTokens.heading2,
             )}">${children}</h2>`;
         case TextStyles.ELEMENT_HEADING3:
-            return `<h3 class="${breakAfterColumn}" style="${reactCssPropsToCss(
+            return `<h3 class="${columnBreakClasses}" style="${reactCssPropsToCss(
                 designTokens.heading3,
             )}">${children}</h3>`;
         case TextStyles.ELEMENT_HEADING4:
-            return `<h4 class="${breakAfterColumn}" style="${reactCssPropsToCss(
+            return `<h4 class="${columnBreakClasses}" style="${reactCssPropsToCss(
                 designTokens.heading4,
             )}">${children}</h4>`;
         case TextStyles.ELEMENT_CUSTOM1:
-            return `<p class="${breakAfterColumn}" style="${reactCssPropsToCss(designTokens.custom1)}">${children}</p>`;
+            return `<p class="${columnBreakClasses}" style="${reactCssPropsToCss(
+                designTokens.custom1,
+            )}">${children}</p>`;
         case TextStyles.ELEMENT_CUSTOM2:
-            return `<p class="${breakAfterColumn}" style="${reactCssPropsToCss(designTokens.custom2)}">${children}</p>`;
+            return `<p class="${columnBreakClasses}" style="${reactCssPropsToCss(
+                designTokens.custom2,
+            )}">${children}</p>`;
         case TextStyles.ELEMENT_CUSTOM3:
-            return `<p class="${breakAfterColumn}" style="${reactCssPropsToCss(designTokens.custom3)}">${children}</p>`;
+            return `<p class="${columnBreakClasses}" style="${reactCssPropsToCss(
+                designTokens.custom3,
+            )}">${children}</p>`;
         case TextStyles.ELEMENT_QUOTE:
-            return `<p class="${breakAfterColumn}" style="${reactCssPropsToCss(designTokens.quote)}">${children}</p>`;
+            return `<p class="${columnBreakClasses}" style="${reactCssPropsToCss(designTokens.quote)}">${children}</p>`;
         case ELEMENT_PARAGRAPH:
-            return `<p class="${breakAfterColumn}" style="${reactCssPropsToCss(designTokens.p)}">${children}</p>`;
+            return `<p class="${columnBreakClasses}" style="${reactCssPropsToCss(designTokens.p)}">${children}</p>`;
         case ELEMENT_UL:
-            return `<ul class="${UL_CLASSES} ${breakAfterColumn}">${children}</ul>`;
+            return `<ul class="${UL_CLASSES} ${columnBreakClasses}">${children}</ul>`;
         case ELEMENT_OL:
             const nestingLevel = Math.max(rootNestingCount - countNodesOfType([node], ELEMENT_OL), 0);
-            return `<ol class="${getOrderedListClasses(nestingLevel)} ${breakAfterColumn}">${children}</ol>`;
+            return `<ol class="${getOrderedListClasses(nestingLevel)} ${columnBreakClasses}">${children}</ol>`;
         case ELEMENT_LI:
             const liElement = node as TElement;
             const styledLicElement = (liElement.children[0]?.children as TDescendant[])?.[0];
             const liStyles = { ...designTokens[getTextStyle(styledLicElement)], textDecoration: 'none' };
 
-            return `<li class="${breakAfterColumn}" style="${reactCssPropsToCss(liStyles)}">${children}</li>`;
+            return `<li class="${columnBreakClasses}" style="${reactCssPropsToCss(liStyles)}">${children}</li>`;
         case ELEMENT_LIC:
             const licElement = node as TElement;
             const licStyles = { textDecoration: designTokens[getTextStyle(licElement.children[0])]?.textDecoration };
-            return `<p class="${breakAfterColumn}" style="${reactCssPropsToCss(licStyles)}">${children}</p>`;
+            return `<p class="${columnBreakClasses}" style="${reactCssPropsToCss(licStyles)}">${children}</p>`;
         case ELEMENT_LINK:
             if (node.chosenLink) {
                 const { chosenLink } = node as TLinkElement;
-                return `<a class="${breakAfterColumn}" style="${reactCssPropsToCss(designTokens.link)}" target=${
+                return `<a class="${columnBreakClasses}" style="${reactCssPropsToCss(designTokens.link)}" target=${
                     chosenLink?.openInNewTab ? '_blank' : '_self'
                 } href="${escapeHtml(chosenLink?.searchResult?.link)}">${children}</a>`;
             }
-            return `<a ${breakAfterColumn} style="${reactCssPropsToCss(designTokens.link)}" href="${escapeHtml(
+            return `<a ${columnBreakClasses} style="${reactCssPropsToCss(designTokens.link)}" href="${escapeHtml(
                 node.url as string,
             )}">${children}</a>`;
         case ELEMENT_BUTTON:
         case ELEMENT_CHECK_ITEM:
-            return `<input class="${breakAfterColumn}" type="checkbox"/><label>${children}</label>`;
+            return `<input class="${columnBreakClasses}" type="checkbox"/><label>${children}</label>`;
         case ELEMENT_MENTION:
             return mentionHtmlNode(node, { mentionable: mappedMentionable });
 
