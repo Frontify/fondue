@@ -389,7 +389,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
         });
     }
 
-    it('serializes an empty paragraph to visiblie html', () => {
+    it('serializes an empty paragraph html', () => {
         const node = {
             type: ELEMENT_PARAGRAPH,
             children: [{ text: '' }],
