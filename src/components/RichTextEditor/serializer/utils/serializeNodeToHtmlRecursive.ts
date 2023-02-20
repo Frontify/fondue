@@ -138,15 +138,16 @@ export const serializeNodeToHtmlRecursive = (
             return `<a class="${defaultClassNames}" style="${reactCssPropsToCss(designTokens.link)}" href="${escapeHtml(
                 node.url as string,
             )}">${children}</a>`;
-        case ELEMENT_BUTTON:
-            const buttonStyle = getButtonStyle(designTokens, (node.buttonStyle as RichTextButtonStyle) ?? 'primary');
-            return `<a href="${node.url}" target=${node.target ?? '_blank'} style="${reactCssPropsToCss(
-                buttonStyle,
-            )}" onmouseover="(e) => { e.target.style = '${reactCssPropsToCss(
-                buttonStyle.hover,
-            )}'; }" onmouseout="(e) => { e.target.style = '${reactCssPropsToCss(
-                buttonStyle.hover,
-            )}'; }">${children}</a>`;
+        // case ELEMENT_BUTTON:
+        //     const buttonStyle = getButtonStyle(designTokens, (node.buttonStyle as RichTextButtonStyle) ?? 'primary');
+        //     const defaultStyles = reactCssPropsToCss(buttonStyle);
+        //     return `<a
+        //         href="${node.url}"
+        //         target=${node.target ?? '_blank'}
+        //         style="${defaultStyles}"
+        //         onmouseenter="this.setAttribute('style', '${defaultStyles} ${reactCssPropsToCss(buttonStyle.hover)}');"
+        //         onmouseleave="this.setAttribute('style', '${reactCssPropsToCss(buttonStyle)}');"
+        //         >${children}</a>`;
         case ELEMENT_CHECK_ITEM:
             return `<div disabled class="tw-flex tw-flex-row tw-pb-2 first-of-type:tw-ml-0" style="margin-left:${
                 ((node.indent as number) ?? 0) * 24
