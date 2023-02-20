@@ -139,7 +139,9 @@ export const Flex: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) =>
 );
 
 export const SerializedToHTML: StoryFn<RichTextEditorProps> = () => {
-    return getSerializedContent();
+    return getSerializedContent({
+        columns: 2,
+    });
 };
 
 export const MarkdownSerializerDeserializer: StoryFn<RichTextEditorProps> = () => {
