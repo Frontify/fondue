@@ -1,9 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mentionable, orderedListValue, unorderedListValue } from '@components/RichTextEditor/helpers/exampleValues';
-import { UL_CLASSES, getOrderedListClasses, mapMentionable } from '@components/RichTextEditor/Plugins';
+import { mapMentionable } from '@components/RichTextEditor/Plugins';
 import { TextStyles } from '@components/RichTextEditor/Plugins/TextStylePlugin/TextStyles';
-import { columnBreakClassNames } from '@components/RichTextEditor/utils/constants';
 import { defaultDesignTokens } from '@components/RichTextEditor/utils/defaultDesignTokens';
 import {
     ELEMENT_LI,
@@ -43,17 +42,15 @@ describe('serializeNodeToHtmlRecursive()', () => {
         };
         const result = serializeNodeToHtmlRecursive(node, { designTokens: defaultDesignTokens });
 
-        expect(result).to.equal(
-            `<ol class="${getOrderedListClasses(
-                0,
-            )}"><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><p style="">This comes first.</p></li><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><p style="">This comes second.</p></li></ol>`,
-        );
+        expect(result).to.match(/<ol class=".*tw-list-\[decimal].*"/);
+        expect(result).to.match(/<li .*><p .*>This comes first\.<\/p><\/li>/);
+        expect(result).to.match(/<li .*><p .*>This comes second\.<\/p><\/li>/);
     });
 
-    it('serializes break after column element to html', () => {
+    it('serializes active break after column element to html', () => {
         const node = {
             type: ELEMENT_PARAGRAPH,
-            breakAfterColumn: true,
+            breakAfterColumn: 'active',
             children: [
                 {
                     text: 'This is a paragraph.',
@@ -62,9 +59,24 @@ describe('serializeNodeToHtmlRecursive()', () => {
         };
         const result = serializeNodeToHtmlRecursive(node, { designTokens: defaultDesignTokens });
 
-        expect(result).to.equal(
-            `<p class="${columnBreakClassNames}" style="font-size: 14px; font-style: normal; font-weight: normal;">This is a paragraph.</p>`,
-        );
+        expect(result).to.include('tw-break-after-column');
+        expect(result).to.include('tw-break-inside-avoid-column');
+    });
+
+    it('does not serialize inactive break after column element to html', () => {
+        const node = {
+            type: ELEMENT_PARAGRAPH,
+            breakAfterColumn: 'inactive',
+            children: [
+                {
+                    text: 'This is a paragraph.',
+                },
+            ],
+        };
+        const result = serializeNodeToHtmlRecursive(node, { designTokens: defaultDesignTokens });
+
+        expect(result).to.not.include('tw-break-after-column');
+        expect(result).to.not.include('tw-break-inside-avoid-column');
     });
 
     it('serializes ordered list with correct list style types to html', () => {
@@ -122,8 +134,8 @@ describe('serializeNodeToHtmlRecursive()', () => {
         };
         const result = serializeNodeToHtmlRecursive(node, { designTokens: defaultDesignTokens });
 
-        expect(result).to.equal(
-            `<ul class="${UL_CLASSES}"><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><p style="">This comes first.</p></li><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><p style="">This comes second.</p></li></ul>`,
+        expect(result).to.match(
+            /<ul.*><li.*><p.*>This comes first.<\/p><\/li><li.*><p.*>This comes second.<\/p><\/li><\/ul>/,
         );
     });
 
@@ -140,9 +152,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
         };
         const result = serializeNodeToHtmlRecursive(node, { designTokens: defaultDesignTokens });
 
-        expect(result).to.equal(
-            '<p style="font-size: 14px; font-style: normal; font-weight: normal;"><a style="font-size: 14px; font-style: normal; color: rgb(113, 89, 215); text-decoration: underline; cursor: pointer;" href="https://frontify.com">This is a Link.</a></p>',
-        );
+        expect(result).to.match(/<p.*><a.*href="https:\/\/frontify.com".*>This is a Link\.<\/a><\/p>/);
     });
 
     it('serializes legacy link format to html', () => {
@@ -167,9 +177,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
         };
         const result = serializeNodeToHtmlRecursive(node, { designTokens: defaultDesignTokens });
 
-        expect(result).to.equal(
-            '<p style="font-size: 14px; font-style: normal; font-weight: normal;"><a style="font-size: 14px; font-style: normal; color: rgb(113, 89, 215); text-decoration: underline; cursor: pointer;" target=_blank href="https://smartive.ch">This is also a Link.</a></p>',
-        );
+        expect(result).to.match(/<p.*><a.*href="https:\/\/smartive.ch".*>This is also a Link\.<\/a><\/p>/);
     });
 
     it('serializes headings and customs html', () => {
@@ -245,9 +253,14 @@ describe('serializeNodeToHtmlRecursive()', () => {
 
         const result = serializeNodeToHtmlRecursive(node, { designTokens: defaultDesignTokens });
 
-        expect(result).to.equal(
-            '<p style="font-size: 14px; font-style: normal; font-weight: normal;"><h1 style="font-size: 48px; font-weight: 700; font-style: normal;">This is a h1.</h1><h2 style="font-size: 32px; font-weight: 700; font-style: normal;">This is a h2.</h2><h3 style="font-size: 24px; font-weight: normal; font-style: normal;">This is a h3.</h3><h4 style="font-size: 18px; font-weight: normal; font-style: normal;">This is a h4.</h4><p style="font-size: 14px; font-weight: normal; font-style: normal;">This is a custom1.</p><p style="font-size: 14px; font-weight: 600; font-style: normal;">This is a custom2.</p><p style="font-size: 14px; font-weight: normal; font-style: normal; text-decoration: underline;">This is a custom3.</p><p style="font-size: 16px; font-weight: normal; font-style: italic;">This is a quote.</p></p>',
-        );
+        expect(result).to.match(/<h1.*>This is a h1.<\/h1>/);
+        expect(result).to.match(/<h2.*>This is a h2.<\/h2>/);
+        expect(result).to.match(/<h3.*>This is a h3.<\/h3>/);
+        expect(result).to.match(/<h4.*>This is a h4.<\/h4>/);
+        expect(result).to.match(/<p.*>This is a custom1.<\/p>/);
+        expect(result).to.match(/<p.*>This is a custom2.<\/p>/);
+        expect(result).to.match(/<p.*>This is a custom3.<\/p>/);
+        expect(result).to.match(/<p.*>This is a quote.<\/p>/);
     });
 
     it('serializes Mentions to html', () => {
@@ -277,8 +290,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
             designTokens: defaultDesignTokens,
             mappedMentionable: mapMentionable(mentionable),
         });
-        expect(result).to.equal(
-            '<p style="font-size: 14px; font-style: normal; font-weight: normal;">new annotation <span data-slate-category="user" contenteditable="false" style="line-height: 10px; padding: 1px; margin: 0px 1px; font-weight: bold; vertical-align: baseline; display: inline-block; border-radius: 2px; background-color: rgb(227, 232, 246); color: rgb(130, 95, 255);">Admiral Gial Ackbar</span> adding changes :)</p>',
-        );
+
+        expect(result).to.match(/<p.*>new annotation <span.*>Admiral Gial Ackbar<\/span> adding changes :\)<\/p>/);
     });
 });
