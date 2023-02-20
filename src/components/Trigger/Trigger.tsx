@@ -117,6 +117,7 @@ export const Trigger: FC<TriggerProps> = ({
                     {...buttonProps}
                     aria-hidden="true"
                     type="button"
+                    disabled={disabled}
                     className={merge([
                         'tw-rounded',
                         disabled
