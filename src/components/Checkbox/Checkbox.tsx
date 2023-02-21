@@ -160,3 +160,4 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
 };
 
 export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(CheckboxComponent);
+Checkbox.displayName = 'FondueCheckbox';

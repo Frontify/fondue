@@ -56,3 +56,4 @@ export const AssetThumbnail: FC<AssetThumbnailProps> = ({ asset, size, isActive 
         </div>
     );
 };
+AssetThumbnail.displayName = 'FondueAssetThumbnail';

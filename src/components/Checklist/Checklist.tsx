@@ -131,3 +131,4 @@ export const Checklist = ({
         </ul>
     );
 };
+Checklist.displayName = 'FondueChecklist';

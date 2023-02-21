@@ -40,3 +40,4 @@ export const MultiInput: FC<MultiInputProps> = ({ layout, spanLastItem, children
         </div>
     );
 };
+MultiInput.displayName = 'FondueMultiInput';

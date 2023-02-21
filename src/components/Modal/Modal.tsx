@@ -116,6 +116,8 @@ export const Modal = ({ isOpen, ...modalProps }: ModalProps) => (
     </OverlayContainer>
 );
 
+Modal.displayName = 'FondueModal';
+
 Modal.Header = ModalHeader;
 Modal.Body = ModalBody;
 Modal.Footer = ModalFooter;

@@ -8,6 +8,7 @@ import { Item } from '../MultiSelect';
 export const DividerItem = () => {
     return <div className="tw-border-t tw-w-full tw-border-solid tw-my-2 tw-border-line" />;
 };
+DividerItem.displayName = 'FondueDividerItem';
 
 type CategoryItemProps = {
     label: string;
@@ -23,6 +24,7 @@ export const CategoryItem = ({ label }: CategoryItemProps) => {
         </div>
     );
 };
+CategoryItem.displayName = 'FondueCategoryItem';
 
 type DefaultItemProps = {
     label: string;
@@ -58,6 +60,7 @@ export const DefaultItem = ({ label, value, avatar = <></>, imgSrc, isChecked = 
         </div>
     );
 };
+DefaultItem.displayName = 'FondueDefaultItem';
 
 type NoSearchResultsProps = {
     label?: string;
@@ -70,6 +73,7 @@ export const NoSearchResults = ({ label = '' }: NoSearchResultsProps) => {
         </div>
     );
 };
+NoSearchResults.displayName = 'FondueNoSearchResults';
 
 type OptionalItemsProps = {
     checkboxes: Item[];
@@ -91,3 +95,4 @@ export const OptionalItems = ({ checkboxes, index }: OptionalItemsProps) => {
     }
     return null;
 };
+OptionalItems.displayName = 'FondueOptionalItems';

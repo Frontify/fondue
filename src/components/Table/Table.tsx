@@ -198,3 +198,4 @@ export const Table = ({
         </div>
     );
 };
+Table.displayName = 'FondueTable';

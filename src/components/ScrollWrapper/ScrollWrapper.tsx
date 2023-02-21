@@ -65,3 +65,4 @@ export const ScrollWrapper: FC<ScrollWrapperProps> = ({ direction = ScrollWrappe
         </div>
     );
 };
+ScrollWrapper.displayName = 'FondueScrollWrapper';

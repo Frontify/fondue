@@ -58,3 +58,4 @@ export const TooltipIcon: FC<TooltipIconProps> = ({
         </div>
     );
 };
+TooltipIcon.displayName = 'FondueTooltipIcon';

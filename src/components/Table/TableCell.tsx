@@ -81,3 +81,4 @@ export const TableCell = ({
         </td>
     );
 };
+TableCell.displayName = 'FondueTableCell';

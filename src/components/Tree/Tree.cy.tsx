@@ -43,7 +43,7 @@ describe('Tree Component', () => {
         cy.get(TREE_ID).should('be.visible');
     });
 
-    it('expands and shrinks the tree on toggle click', () => {
+    it('expands and shrinks the tree on toggle click (uncontrolled)', () => {
         cy.mount(<TreeComponent />);
 
         cy.get(TREE_ITEM_TOGGLE_ID).click();
@@ -69,4 +69,20 @@ describe('Tree Component', () => {
         cy.get(TREE_ITEM_ID).eq(0).click();
         cy.get('@onSelectStub').should('have.been.called');
     });
+
+    it('calls the onExpand callback', () => {});
+
+    it('expands and shrinks the tree on toggle click (controlled)', () => {});
+
+    it('expands and shrinks the tree on toggle click after first rendering (controlled)', () => {});
+
+    it('navigate correctly through the nodes with keyboard', () => {});
+
+    it('navigate correctly through the nodes with keyboard when children are async', () => {});
+
+    it('makes sure that first child have `id`', () => {});
+
+    it('calls the TreeItem `onDrop` callback', () => {});
+
+    it('calls the Tree `onDrop` callback', () => {});
 });

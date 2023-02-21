@@ -25,3 +25,4 @@ export const ButtonGroup: FC<ButtonGroupProps> = ({ children, size }) => {
         </div>
     );
 };
+ButtonGroup.displayName = 'FondueButtonGroup';

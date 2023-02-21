@@ -116,3 +116,4 @@ export const RichTextEditor = ({
         </RichTextEditorProvider>
     );
 };
+RichTextEditor.displayName = 'FondueRichTextEditor';

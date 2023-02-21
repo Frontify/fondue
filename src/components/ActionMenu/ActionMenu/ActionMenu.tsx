@@ -73,3 +73,4 @@ export const ActionMenu = ({
         </AriaList>
     );
 };
+ActionMenu.displayName = 'FondueActionMenu';

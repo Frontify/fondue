@@ -28,6 +28,7 @@ export const FlyoutFooter: FC<FlyoutFooterProps> = ({ buttons, border = true }) 
         </div>
     );
 };
+FlyoutFooter.displayName = 'FondueFlyoutFooter';
 
 export const LegacyFlyoutFooter = ({ onConfirm, onCancel }: { onConfirm?: () => void; onCancel?: () => void }) => (
     <FlyoutFooter
@@ -59,3 +60,4 @@ export const LegacyFlyoutFooter = ({ onConfirm, onCancel }: { onConfirm?: () => 
         }
     />
 );
+LegacyFlyoutFooter.displayName = 'FondueLegacyFlyoutFooter';

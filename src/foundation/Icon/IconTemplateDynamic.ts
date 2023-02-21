@@ -29,13 +29,13 @@ const importsTsx = (components: Array<IconComponent>) => {
 };
 
 export const IconTemplateDynamic = (props: IconShapeTemplateInputs) => {
-    return `import React, { memo } from 'react';
+    return `import React, { ReactElement, memo } from 'react';
 import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 import { IconSize } from '@foundation/Icon/IconSize';
 
 ${importsTsx(props.components)}
 
-function ${props.name}(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
+const ${props.name} = (props: GeneratedIconProps): ReactElement<GeneratedIconProps> => {
     const size = props.size || IconSize.Size16;
     return (
         <span>
@@ -44,5 +44,8 @@ function ${props.name}(props: GeneratedIconProps): React.ReactElement<GeneratedI
     );
 }
 
-export default memo(${props.name});`;
+const Memoized${props.name} = memo(${props.name});
+Memoized${props.name}.displayName = 'Fondue${props.name}';
+
+export default Memoized${props.name};`;
 };
