@@ -13,6 +13,7 @@ export const OrderedListButton = ({ editor, id }: PluginButtonProps) => (
             icon={<IconStylingWrapper icon={<IconListNumbers size={IconSize.Size16} />} />}
             classNames={buttonClassNames}
             styles={buttonStyles}
+            actionHandler="onMouseDown"
         />
     </ButtonWrapper>
 );
