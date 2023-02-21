@@ -62,4 +62,4 @@ export * from './ResetFormattingPlugin';
 export * from './StrikethroughPlugin';
 export * from './TextStylePlugin';
 export * from './UnderlinePlugin';
-export * from './ShiftEnterBreakPlugin';
+export * from './BlurOnBreakPlugin';
