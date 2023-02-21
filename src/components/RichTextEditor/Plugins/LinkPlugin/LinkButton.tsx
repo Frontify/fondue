@@ -12,6 +12,7 @@ export const LinkButton = ({ id }: PluginButtonProps) => (
             icon={<IconStylingWrapper icon={<IconLink size={IconSize.Size16} />} />}
             classNames={buttonClassNames}
             styles={buttonStyles}
+            actionHandler="onMouseDown"
         />
     </ButtonWrapper>
 );

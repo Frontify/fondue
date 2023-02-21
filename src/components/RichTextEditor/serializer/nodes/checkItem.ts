@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { TElement } from '@udecode/plate-core';
-import { merge } from 'lodash';
+import { merge } from 'lodash-es';
 
 export const checkItemNode = (
     node: TElement,
