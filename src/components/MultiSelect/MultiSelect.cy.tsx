@@ -6,6 +6,7 @@ import { MultiSelect } from './MultiSelect';
 
 const TRIGGER_ID = '[data-test-id=trigger]';
 const CHECKBOX_ID = '[data-test-id=checkbox]';
+const CHECKBOX_INPUT_ID = '[data-test-id=checkbox-input]';
 const TAG_ID = '[data-test-id=tag]';
 const CHECKLIST_ID = '[data-test-id=checklist]';
 const EXCLAMATION_MARK_ICON_ID = '[data-test-id=error-state-exclamation-mark-icon]';
@@ -67,18 +68,18 @@ describe('MultiSelect Component', () => {
         cy.mount(<Component />);
         cy.get(TRIGGER_ID).click();
 
-        cy.get(CHECKBOX_ID).first().click();
+        cy.get(CHECKBOX_ID).first().find(CHECKBOX_INPUT_ID).click({ force: true });
         cy.get(CHECKBOX_ID).find('svg').invoke('attr', 'name').should('eq', 'IconCheckMark16');
         cy.get(TAG_ID).contains('Checkbox label 1');
 
-        cy.get(CHECKBOX_ID).eq(1).click();
+        cy.get(CHECKBOX_ID).eq(1).find(CHECKBOX_INPUT_ID).click({ force: true });
         cy.get(CHECKBOX_ID).eq(1).find('svg').should('not.exist');
         cy.get(TRIGGER_ID).contains('Short tag').should('not.exist');
         cy.get(TAG_ID).first().click();
 
         cy.get(CHECKBOX_ID).eq(1).find('svg').should('not.exist');
 
-        cy.get(CHECKBOX_ID).eq(2).click();
+        cy.get(CHECKBOX_ID).eq(2).find(CHECKBOX_INPUT_ID).click({ force: true });
         cy.get(CHECKBOX_ID).eq(2).find('svg').invoke('attr', 'name').should('eq', 'IconCheckMark16');
         cy.get(TAG_ID).contains('Checkbox label 2');
     });
