@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconDocumentText } from '@foundation/Icon';
+import { IconSize } from '@foundation/Icon/IconSize';
 import React from 'react';
 import { BadgeStyle } from '.';
 import { Badge } from './Badge';
@@ -45,6 +46,12 @@ describe('Badge component', () => {
         cy.mount(<Badge icon={<IconDocumentText />}>{BADGE_TEXT}</Badge>);
 
         cy.get(BADGE_ICON_ID).find('svg').should('exist');
+    });
+
+    it('should render badge with icon and overwrite size', () => {
+        cy.mount(<Badge icon={<IconDocumentText size={IconSize.Size8} />}>{BADGE_TEXT}</Badge>);
+
+        cy.get(BADGE_ICON_ID).should('exist').and('have.css', 'width', '20px');
     });
 
     it('should render with small size', () => {
