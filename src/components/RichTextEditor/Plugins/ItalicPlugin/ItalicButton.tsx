@@ -13,6 +13,7 @@ export const ItalicButton = ({ editor, id }: PluginButtonProps) => (
             icon={<IconStylingWrapper icon={<IconTextFormatItalic size={IconSize.Size16} />} />}
             classNames={buttonClassNames}
             styles={buttonStyles}
+            actionHandler="onMouseDown"
         />
     </ButtonWrapper>
 );

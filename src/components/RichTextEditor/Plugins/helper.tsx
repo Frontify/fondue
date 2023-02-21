@@ -8,8 +8,8 @@ export const IconStylingWrapper = ({ icon }: IconStylingWrapperProps) => (
 );
 
 export const buttonClassNames = {
-    root: 'tw-text-text-weak tw-ml-0.5 hover:tw-bg-box-selected hover:!tw-text-box-selected-inverse hover:tw-rounded',
-    active: 'tw-bg-box-selected tw-rounded !tw-text-box-selected-inverse',
+    root: 'tw-ml-0.5 !tw-text-text-weak hover:!tw-bg-box-selected hover:!tw-text-box-selected-inverse hover:tw-rounded',
+    active: '!tw-bg-box-selected tw-rounded !tw-text-box-selected-inverse',
 };
 export const buttonStyles = { root: { width: '24px', height: '24px' } };
 
