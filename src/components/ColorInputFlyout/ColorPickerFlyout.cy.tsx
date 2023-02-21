@@ -30,7 +30,6 @@ const Component: FC<Props> = ({ palettes, currentColor = null, clearable = false
             currentColor={temporaryColor ?? selectedColor}
             onClick={() => setSelectedColor(temporaryColor)}
             onClose={() => setTemporaryColor(null)}
-            a
             onSelect={(color) => setTemporaryColor(color)}
             palettes={palettes}
             clearable={clearable}
