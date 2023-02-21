@@ -144,16 +144,17 @@ export const serializeNodeToHtmlRecursive = (
             return `<a href="${node.url}"
                 target="${node.target ?? '_blank'}"
                 style="${defaultStyles}"
+                class="${defaultClassNames}"
                 onmouseenter="this.setAttribute('style', '${defaultStyles} ${reactCssPropsToCss(buttonStyle.hover)}');"
                 onmouseleave="this.setAttribute('style', '${reactCssPropsToCss(buttonStyle)}');"
                 >${children}</a>`;
         case ELEMENT_CHECK_ITEM:
-            return `<div disabled class="tw-flex tw-flex-row tw-pb-2 first-of-type:tw-ml-0" style="margin-left:${
+            return `<div disabled class="tw-flex tw-flex-row tw-pb-2 first-of-type:tw-ml-0 ${defaultClassNames}" style="margin-left:${
                 ((node.indent as number) ?? 0) * 24
             }px;">
                 <div class="tw-flex tw-items-center tw-justify-center tw-select-none tw-mr-1.5">
                     <input 
-                        class="${defaultClassNames} tw-w-4 tw-h-4 tw-m-0"
+                        class="tw-w-4 tw-h-4 tw-m-0"
                         type="checkbox"
                         ${node.checked ? 'checked' : ''}
                         onclick="return false;" />
