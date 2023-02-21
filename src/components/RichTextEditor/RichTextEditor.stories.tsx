@@ -23,7 +23,6 @@ import {
     AlignJustifyPlugin,
     AlignLeftPlugin,
     AlignRightPlugin,
-    BlurOnBreakPlugin,
     BoldPlugin,
     BreakAfterPlugin,
     ButtonPlugin,
@@ -429,7 +428,6 @@ WithToolbarTopAndSmallPadding.args = {
 const mentionAndEmojisPlugins = new PluginComposer();
 mentionAndEmojisPlugins
     .setPlugin([new ParagraphPlugin()])
-    .setPlugin([new BlurOnBreakPlugin({ onBreak: (value: any) => console.log('value', value) })])
     .setPlugin([new MentionPlugin({ mentionableItems: mentionable })])
     .setPlugin([new UnorderedListPlugin(), new OrderedListPlugin()])
     .setPlugin([new BoldPlugin(), new ItalicPlugin(), new UnderlinePlugin(), new StrikethroughPlugin()])
