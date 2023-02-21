@@ -29,7 +29,6 @@ import {
     CheckboxListPlugin,
     CodePlugin,
     EmojiPlugin,
-    InitPlugin,
     ItalicPlugin,
     LinkPlugin,
     MentionPlugin,
@@ -98,7 +97,7 @@ const RichTextEditorTemplate: StoryFn<RichTextEditorProps> = (args: RichTextEdit
 
 const fullyFledgedPlugins = new PluginComposer();
 fullyFledgedPlugins
-    .setPlugin(new InitPlugin(), new ParagraphPlugin())
+    .setPlugin(new ParagraphPlugin())
     .setPlugin(new TextStylePlugin())
     .setPlugin(
         [
@@ -145,7 +144,7 @@ export const SerializedToHTML: StoryFn<RichTextEditorProps> = () => {
 export const MarkdownSerializerDeserializer: StoryFn<RichTextEditorProps> = () => {
     const allPlugins = new PluginComposer();
     allPlugins
-        .setPlugin([new InitPlugin(), new ParagraphPlugin(), new TextStylePlugin()])
+        .setPlugin([new ParagraphPlugin(), new TextStylePlugin()])
         .setPlugin([new MentionPlugin({ mentionableItems: mentionable })])
         .setPlugin(
             [
@@ -398,10 +397,7 @@ WithChecklist.args = {
 
 const customPlugins = new PluginComposer();
 customPlugins
-    .setPlugin([
-        new InitPlugin(),
-        new TextStylePlugin({ textStyles: [TextStyles.ELEMENT_HEADING1, TextStyles.ELEMENT_PARAGRAPH] }),
-    ])
+    .setPlugin([new TextStylePlugin({ textStyles: [TextStyles.ELEMENT_HEADING1, TextStyles.ELEMENT_PARAGRAPH] })])
     .setPlugin([new LinkPlugin()])
     .setPlugin([new ItalicPlugin(), new BoldPlugin(), new UnderlinePlugin()])
     .setPlugin([new OrderedListPlugin(), new UnorderedListPlugin()]);
@@ -425,7 +421,7 @@ WithToolbarTopAndSmallPadding.args = {
 
 const mentionAndEmojisPlugins = new PluginComposer();
 mentionAndEmojisPlugins
-    .setPlugin([new InitPlugin(), new ParagraphPlugin()])
+    .setPlugin([new ParagraphPlugin()])
     .setPlugin([new MentionPlugin({ mentionableItems: mentionable })])
     .setPlugin([new UnorderedListPlugin(), new OrderedListPlugin()])
     .setPlugin([new BoldPlugin(), new ItalicPlugin(), new UnderlinePlugin(), new StrikethroughPlugin()])
@@ -439,7 +435,7 @@ WithMentionsAndEmojis.args = {
 
 const withoutToolbarPlugins = new PluginComposer({ noToolbar: true });
 withoutToolbarPlugins
-    .setPlugin([new InitPlugin(), new ParagraphPlugin()])
+    .setPlugin([new ParagraphPlugin()])
     .setPlugin([
         new BoldPlugin(),
         new LinkPlugin(),
@@ -455,7 +451,7 @@ WithoutToolbar.args = {
 
 const defaultPluginsWithColumns = new PluginComposer();
 defaultPluginsWithColumns
-    .setPlugin([new InitPlugin(), new ParagraphPlugin()])
+    .setPlugin([new ParagraphPlugin()])
     .setPlugin(new TextStylePlugin())
     .setPlugin([
         new BoldPlugin(),
@@ -477,7 +473,7 @@ export const MultiColumns: StoryFn<MultiColumnProps> = (args: MultiColumnProps) 
 
     const plugins = new PluginComposer();
     plugins
-        .setPlugin([new InitPlugin(), new ParagraphPlugin()])
+        .setPlugin([new ParagraphPlugin()])
         .setPlugin(new TextStylePlugin())
         .setPlugin([
             new BoldPlugin(),
