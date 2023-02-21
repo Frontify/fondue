@@ -15,7 +15,7 @@ const componentsTsx = (components: Array<IconComponent>) => {
     return components.map((component: IconComponent) => {
         return `{size === IconSize.Size${component.size} && ${
             component.filled ? 'props.filled' : '!props.filled'
-        } && <${component.name} {...props}/>}`;
+        } && <${component.name} {...props} />}`;
     }).join(`
             `);
 };
@@ -33,7 +33,7 @@ export const IconTemplateDynamic = (props: IconShapeTemplateInputs) => {
 import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 import { IconSize } from '@foundation/Icon/IconSize';
 
-${importsTsx(props.components)}
+${importsTsx(props.components)};
 
 const ${props.name} = (props: GeneratedIconProps): ReactElement<GeneratedIconProps> => {
     const size = props.size || IconSize.Size16;
@@ -42,10 +42,11 @@ const ${props.name} = (props: GeneratedIconProps): ReactElement<GeneratedIconPro
             ${componentsTsx(props.components)}
         </span>
     );
-}
+};
 
 const Memoized${props.name} = memo(${props.name});
 Memoized${props.name}.displayName = 'Fondue${props.name}';
 
-export default Memoized${props.name};`;
+export default Memoized${props.name};
+`;
 };

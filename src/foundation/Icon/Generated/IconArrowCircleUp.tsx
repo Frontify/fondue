@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { ReactElement, memo } from 'react';
 import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 import { IconSize } from '@foundation/Icon/IconSize';
 
@@ -6,19 +6,22 @@ import IconArrowCircleUp12 from './IconArrowCircleUp12';
 import IconArrowCircleUp16 from './IconArrowCircleUp16';
 import IconArrowCircleUp20 from './IconArrowCircleUp20';
 import IconArrowCircleUp24 from './IconArrowCircleUp24';
-import IconArrowCircleUp32 from './IconArrowCircleUp32'
+import IconArrowCircleUp32 from './IconArrowCircleUp32';
 
-function IconArrowCircleUp(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
+const IconArrowCircleUp = (props: GeneratedIconProps): ReactElement<GeneratedIconProps> => {
     const size = props.size || IconSize.Size16;
     return (
         <span>
-            {size === IconSize.Size12 && !props.filled && <IconArrowCircleUp12 {...props}/>}
-            {size === IconSize.Size16 && !props.filled && <IconArrowCircleUp16 {...props}/>}
-            {size === IconSize.Size20 && !props.filled && <IconArrowCircleUp20 {...props}/>}
-            {size === IconSize.Size24 && !props.filled && <IconArrowCircleUp24 {...props}/>}
-            {size === IconSize.Size32 && !props.filled && <IconArrowCircleUp32 {...props}/>}
+            {size === IconSize.Size12 && !props.filled && <IconArrowCircleUp12 {...props} />}
+            {size === IconSize.Size16 && !props.filled && <IconArrowCircleUp16 {...props} />}
+            {size === IconSize.Size20 && !props.filled && <IconArrowCircleUp20 {...props} />}
+            {size === IconSize.Size24 && !props.filled && <IconArrowCircleUp24 {...props} />}
+            {size === IconSize.Size32 && !props.filled && <IconArrowCircleUp32 {...props} />}
         </span>
     );
-}
+};
 
-export default memo(IconArrowCircleUp);
+const MemoizedIconArrowCircleUp = memo(IconArrowCircleUp);
+MemoizedIconArrowCircleUp.displayName = 'FondueIconArrowCircleUp';
+
+export default MemoizedIconArrowCircleUp;

@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { ReactElement, memo } from 'react';
 import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 import { IconSize } from '@foundation/Icon/IconSize';
 
@@ -6,19 +6,22 @@ import IconDocumentBadge12 from './IconDocumentBadge12';
 import IconDocumentBadge16 from './IconDocumentBadge16';
 import IconDocumentBadge20 from './IconDocumentBadge20';
 import IconDocumentBadge24 from './IconDocumentBadge24';
-import IconDocumentBadge32 from './IconDocumentBadge32'
+import IconDocumentBadge32 from './IconDocumentBadge32';
 
-function IconDocumentBadge(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
+const IconDocumentBadge = (props: GeneratedIconProps): ReactElement<GeneratedIconProps> => {
     const size = props.size || IconSize.Size16;
     return (
         <span>
-            {size === IconSize.Size12 && !props.filled && <IconDocumentBadge12 {...props}/>}
-            {size === IconSize.Size16 && !props.filled && <IconDocumentBadge16 {...props}/>}
-            {size === IconSize.Size20 && !props.filled && <IconDocumentBadge20 {...props}/>}
-            {size === IconSize.Size24 && !props.filled && <IconDocumentBadge24 {...props}/>}
-            {size === IconSize.Size32 && !props.filled && <IconDocumentBadge32 {...props}/>}
+            {size === IconSize.Size12 && !props.filled && <IconDocumentBadge12 {...props} />}
+            {size === IconSize.Size16 && !props.filled && <IconDocumentBadge16 {...props} />}
+            {size === IconSize.Size20 && !props.filled && <IconDocumentBadge20 {...props} />}
+            {size === IconSize.Size24 && !props.filled && <IconDocumentBadge24 {...props} />}
+            {size === IconSize.Size32 && !props.filled && <IconDocumentBadge32 {...props} />}
         </span>
     );
-}
+};
 
-export default memo(IconDocumentBadge);
+const MemoizedIconDocumentBadge = memo(IconDocumentBadge);
+MemoizedIconDocumentBadge.displayName = 'FondueIconDocumentBadge';
+
+export default MemoizedIconDocumentBadge;
