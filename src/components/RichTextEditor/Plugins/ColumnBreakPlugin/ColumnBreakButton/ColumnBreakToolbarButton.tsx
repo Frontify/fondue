@@ -5,20 +5,18 @@ import {
     PlateEditor,
     ToolbarButton,
     ToolbarButtonProps,
-    getNodeEntries,
-    getPreventDefaultHandler,
     someNode,
     useEventPlateId,
     usePlateEditorState,
 } from '@udecode/plate';
 import React from 'react';
 import { buttonClassNames } from '../../helper';
-import { KEY_ELEMENT_BREAK_AFTER } from '../createColumnBreakPlugin';
-import { setBreakAfter } from '../utils/setBreakAfter';
+import { toggleColumnBreak } from '../onKeyDownColumnBreak';
+import { getColumnBreakCount } from '../utils/getColumnBreakCount';
 
-export const ColumnBreakToolbarButton = ({ id, pluginKey = KEY_ELEMENT_BREAK_AFTER, ...props }: ToolbarButtonProps) => {
+export const ColumnBreakToolbarButton = ({ id, ...props }: ToolbarButtonProps) => {
     const editor = usePlateEditorState(useEventPlateId(id));
-    const isActive = !!editor?.selection && someNode(editor, { match: { breakAfterColumn: true } });
+    const isActive = !!editor?.selection && someNode(editor, { match: (node) => !!node.breakAfterColumn });
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const breakAfterPlugin = editor.pluginsByKey['breakAfterColumn'] as any;
@@ -33,14 +31,7 @@ export const ColumnBreakToolbarButton = ({ id, pluginKey = KEY_ELEMENT_BREAK_AFT
             tooltip={getTooltip(
                 canBreakAfter ? 'Column Break\nShift+Ctrl+Return' : 'Already at maximum numbers of columns',
             )}
-            onMouseDown={(event) =>
-                canBreakAfter
-                    ? getPreventDefaultHandler(setBreakAfter, editor, {
-                          value: !isActive,
-                          key: pluginKey,
-                      })(event)
-                    : undefined
-            }
+            onMouseDown={(event) => toggleColumnBreak(editor, columnCount, event)}
             {...props}
             classNames={{
                 root: `${buttonClassNames.root} ${canBreakAfter ? '' : '!tw-cursor-not-allowed !tw-opacity-50'}`,
@@ -63,11 +54,6 @@ const getTooltip = (content: string, placement?: BasePlacement) => ({
     }),
     placement,
 });
-
-export const getColumnBreakCount = (editor: PlateEditor): number => {
-    const nodeEntries = getNodeEntries(editor, { at: [], match: { breakAfterColumn: true } });
-    return Array.from(nodeEntries).length;
-};
 
 export const isColumnBreakEnabled = (editor: PlateEditor, columnCount: number, isButtonActive: boolean): boolean =>
     getColumnBreakCount(editor) + 1 < columnCount || isButtonActive;
