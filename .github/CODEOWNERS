@@ -4,7 +4,7 @@
 # Core
 * @Frontify/design-system
 package.json
-package-lock.json
+pnpm-lock.yaml
 /src
 
 # Components

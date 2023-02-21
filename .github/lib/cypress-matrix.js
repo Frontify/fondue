@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-const { once } = require("node:events");
-const { createReadStream } = require("node:fs");
-const { createInterface } = require("node:readline");
-const glob = require("glob");
+const { once } = require('node:events');
+const { createReadStream } = require('node:fs');
+const { createInterface } = require('node:readline');
+const glob = require('glob');
 
 /**
  * Build Matrix that contains cypress spec files for GitHub action
@@ -20,19 +20,19 @@ const glob = require("glob");
  * Returns (logs) the array with the currentIndex (currentRunner)
  */
 
-const CYPRESS_CONFIG_FILE_NAME = "cypress.config.ts";
-const SECTION = "component";
-const SPEC_PATTERN = "specPattern";
+const CYPRESS_CONFIG_FILE_NAME = 'cypress.config.ts';
+const SECTION = 'component';
+const SPEC_PATTERN = 'specPattern';
 
 const [totalRunners, currentRunner] = process.argv.splice(2);
 const parseSpecPattern = (line) =>
     line
         .trimEnd()
         .trimStart()
-        .replace(/(^,)|(,$)/g, "")
-        .replaceAll("'", "\"")
-        .split(":")
-        .reduce((acc, cur, index) => (index !== 0 ? `${acc}${cur}` : `"${cur}":`), "");
+        .replace(/(^,)|(,$)/g, '')
+        .replaceAll("'", '"')
+        .split(':')
+        .reduce((acc, cur, index) => (index !== 0 ? `${acc}${cur}` : `"${cur}":`), '');
 
 /**
  * Parses line by line through config file to read out
@@ -49,7 +49,7 @@ const getSectionSpecPattern = async () =>
             });
 
             let insideSectionConfig = false;
-            rl.on("line", (line) => {
+            rl.on('line', (line) => {
                 if (line.includes(SECTION) || insideSectionConfig) {
                     insideSectionConfig = true;
                     if (line.includes(SPEC_PATTERN)) {
@@ -64,8 +64,9 @@ const getSectionSpecPattern = async () =>
                 }
             });
 
-            await once(rl, "close");
+            await once(rl, 'close');
         } catch (err) {
+            console.error('Error while cypress-matrix.js:getSectionSpecPattern');
             console.error(err);
         }
     });
@@ -79,24 +80,21 @@ const getSectionSpecPattern = async () =>
  * @returns {inputArray[][] * slices}
  */
 const splitIntoChunkedSlices = (slices, inputArray) => {
-    // Smooth edges cases by adding + 1
-    const chunksize = inputArray.length / slices + 1;
-    return inputArray.reduce((resultArray, item, index) => {
-        const chunkIndex = Math.floor(index / chunksize);
+    const chunks = [];
+    for (let i = slices; i > 0; i--) {
+        chunks.push(inputArray.splice(0, Math.ceil(inputArray.length / i)));
+    }
 
-        if (!resultArray[chunkIndex]) {
-            // start a new chunk
-            resultArray[chunkIndex] = [];
-        }
-        resultArray[chunkIndex].push(item);
+    if (chunks.length !== slices) {
+        throw new Error('Too much/less containers for the number of chunks');
+    }
 
-        return resultArray;
-    }, []);
+    return chunks;
 };
 
 getSectionSpecPattern().then((pattern) => {
-    glob(pattern, (er, files) => {
-        const output = splitIntoChunkedSlices(totalRunners, files);
+    glob(pattern, (_error, files) => {
+        const output = splitIntoChunkedSlices(Number(totalRunners), files);
 
         // console.log to print to github action Console
         console.log(`'${output[currentRunner]}'`);

@@ -1010,7 +1010,7 @@ describe('RichTextEditor Component', () => {
         );
     };
 
-    const activeButtonClassNames = 'tw-bg-box-selected tw-rounded !tw-text-box-selected-inverse';
+    const activeButtonClassNames = '!tw-bg-box-selected tw-rounded !tw-text-box-selected-inverse';
     const disabledButtonClassNames = '!tw-cursor-not-allowed !tw-opacity-50';
 
     describe('column break plugin', () => {
