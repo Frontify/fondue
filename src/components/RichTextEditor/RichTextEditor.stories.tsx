@@ -96,7 +96,37 @@ const RichTextEditorTemplate: StoryFn<RichTextEditorProps> = (args: RichTextEdit
     <RichTextEditorComponent {...args} />
 );
 
+const fullyFledgedPlugins = new PluginComposer();
+fullyFledgedPlugins
+    .setPlugin(new InitPlugin(), new ParagraphPlugin())
+    .setPlugin(new TextStylePlugin())
+    .setPlugin(
+        [
+            new BoldPlugin(),
+            new ItalicPlugin(),
+            new UnderlinePlugin(),
+            new StrikethroughPlugin(),
+            new LinkPlugin(),
+            new ButtonPlugin(),
+            new CodePlugin(),
+            new BreakAfterPlugin(),
+        ],
+        [
+            new AlignLeftPlugin(),
+            new AlignCenterPlugin(),
+            new AlignRightPlugin(),
+            new AlignJustifyPlugin(),
+            new UnorderedListPlugin(),
+            new CheckboxListPlugin(),
+            new OrderedListPlugin(),
+            new ResetFormattingPlugin(),
+            new EmojiPlugin(),
+        ],
+    );
 export const FullyFledged = RichTextEditorTemplate.bind({});
+FullyFledged.args = {
+    plugins: fullyFledgedPlugins,
+};
 
 export const Flex: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
     <div className="tw-flex tw-gap-x-7 tw-justify-start">
@@ -109,7 +139,9 @@ export const Flex: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) =>
 );
 
 export const SerializedToHTML: StoryFn<RichTextEditorProps> = () => {
-    return getSerializedContent();
+    return getSerializedContent({
+        columns: 2,
+    });
 };
 
 export const MarkdownSerializerDeserializer: StoryFn<RichTextEditorProps> = () => {
@@ -305,10 +337,10 @@ WithCustomButtonStyles.args = {
             fontFamily: 'inherit',
             fontSize: '13px',
             backgroundColor: 'rgba(230,0,0,1)',
-            paddingTop: 10,
-            paddingRight: 20,
-            paddingBottom: 10,
-            paddingLeft: 20,
+            paddingTop: '10px',
+            paddingRight: '20px',
+            paddingBottom: '10px',
+            paddingLeft: '20px',
             color: 'rgba(102,102,102,1)',
             borderColor: 'rgba(207, 207, 207, 1)',
         },
@@ -321,10 +353,10 @@ WithCustomButtonStyles.args = {
             fontFamily: 'inherit',
             fontSize: '13px',
             backgroundColor: 'rgba(230,230,230,1)',
-            paddingTop: 20,
-            paddingRight: 40,
-            paddingBottom: 20,
-            paddingLeft: 40,
+            paddingTop: '20px',
+            paddingRight: '40px',
+            paddingBottom: '20px',
+            paddingLeft: '40px',
             color: 'rgba(102,102,102,1)',
             borderColor: 'rgba(207, 207, 207, 1)',
         },
@@ -336,10 +368,10 @@ WithCustomButtonStyles.args = {
             },
             fontSize: '14px',
             color: 'rgb(255, 246, 0)',
-            paddingTop: 11,
-            paddingRight: 21,
-            paddingBottom: 11,
-            paddingLeft: 21,
+            paddingTop: '11px',
+            paddingRight: '21px',
+            paddingBottom: '11px',
+            paddingLeft: '21px',
             fontFamily: 'Arial',
             fontStyle: 'italic',
             fontWeight: '900',
