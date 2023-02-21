@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Meta, StoryFn } from '@storybook/react';
-import React from 'react';
+import React, { ComponentProps } from 'react';
 import { Position } from './EditorPositioningWrapper';
 import {
     IPSUM,
@@ -44,7 +44,13 @@ import {
 } from './Plugins';
 import { TextStyles } from './Plugins/TextStylePlugin/TextStyles';
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from './RichTextEditor';
-import { MarkdownToSlate, SlateToMarkdown, Transform, serializeNodesToHtml } from './serializer';
+import {
+    MarkdownToSlate,
+    SerializeNodesToHtmlOptions,
+    SlateToMarkdown,
+    Transform,
+    serializeNodesToHtml,
+} from './serializer';
 import { PaddingSizes } from './types';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
 
@@ -90,7 +96,37 @@ const RichTextEditorTemplate: StoryFn<RichTextEditorProps> = (args: RichTextEdit
     <RichTextEditorComponent {...args} />
 );
 
+const fullyFledgedPlugins = new PluginComposer();
+fullyFledgedPlugins
+    .setPlugin(new InitPlugin(), new ParagraphPlugin())
+    .setPlugin(new TextStylePlugin())
+    .setPlugin(
+        [
+            new BoldPlugin(),
+            new ItalicPlugin(),
+            new UnderlinePlugin(),
+            new StrikethroughPlugin(),
+            new LinkPlugin(),
+            new ButtonPlugin(),
+            new CodePlugin(),
+            new BreakAfterPlugin(),
+        ],
+        [
+            new AlignLeftPlugin(),
+            new AlignCenterPlugin(),
+            new AlignRightPlugin(),
+            new AlignJustifyPlugin(),
+            new UnorderedListPlugin(),
+            new CheckboxListPlugin(),
+            new OrderedListPlugin(),
+            new ResetFormattingPlugin(),
+            new EmojiPlugin(),
+        ],
+    );
 export const FullyFledged = RichTextEditorTemplate.bind({});
+FullyFledged.args = {
+    plugins: fullyFledgedPlugins,
+};
 
 export const Flex: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
     <div className="tw-flex tw-gap-x-7 tw-justify-start">
@@ -103,23 +139,9 @@ export const Flex: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) =>
 );
 
 export const SerializedToHTML: StoryFn<RichTextEditorProps> = () => {
-    const serialized = serializeNodesToHtml(nodesToSerialize, { designTokens: customDesignTokens, mentionable });
-    return (
-        <>
-            {serialized ? (
-                <>
-                    Serialized:
-                    <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
-                        <code>{serialized}</code>
-                    </div>
-                    Rendered:
-                    <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
-                        <div dangerouslySetInnerHTML={{ __html: serialized }} />
-                    </div>
-                </>
-            ) : null}
-        </>
-    );
+    return getSerializedContent({
+        columns: 2,
+    });
 };
 
 export const MarkdownSerializerDeserializer: StoryFn<RichTextEditorProps> = () => {
@@ -315,10 +337,10 @@ WithCustomButtonStyles.args = {
             fontFamily: 'inherit',
             fontSize: '13px',
             backgroundColor: 'rgba(230,0,0,1)',
-            paddingTop: 10,
-            paddingRight: 20,
-            paddingBottom: 10,
-            paddingLeft: 20,
+            paddingTop: '10px',
+            paddingRight: '20px',
+            paddingBottom: '10px',
+            paddingLeft: '20px',
             color: 'rgba(102,102,102,1)',
             borderColor: 'rgba(207, 207, 207, 1)',
         },
@@ -331,10 +353,10 @@ WithCustomButtonStyles.args = {
             fontFamily: 'inherit',
             fontSize: '13px',
             backgroundColor: 'rgba(230,230,230,1)',
-            paddingTop: 20,
-            paddingRight: 40,
-            paddingBottom: 20,
-            paddingLeft: 40,
+            paddingTop: '20px',
+            paddingRight: '40px',
+            paddingBottom: '20px',
+            paddingLeft: '40px',
             color: 'rgba(102,102,102,1)',
             borderColor: 'rgba(207, 207, 207, 1)',
         },
@@ -346,10 +368,10 @@ WithCustomButtonStyles.args = {
             },
             fontSize: '14px',
             color: 'rgb(255, 246, 0)',
-            paddingTop: 11,
-            paddingRight: 21,
-            paddingBottom: 11,
-            paddingLeft: 21,
+            paddingTop: '11px',
+            paddingRight: '21px',
+            paddingBottom: '11px',
+            paddingLeft: '21px',
             fontFamily: 'Arial',
             fontStyle: 'italic',
             fontWeight: '900',
@@ -450,13 +472,51 @@ defaultPluginsWithColumns
         new BreakAfterPlugin({ columns: 5, gap: 20 }),
     ]);
 
-export const MultiColumns: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
-    <RichTextEditorComponent {...args} />
-);
+type MultiColumnProps = ComponentProps<typeof RichTextEditorComponent> & { columns: number; columnGap: string };
+
+export const MultiColumns: StoryFn<MultiColumnProps> = (args: MultiColumnProps) => {
+    delete args.plugins;
+
+    const plugins = new PluginComposer();
+    plugins
+        .setPlugin([new InitPlugin(), new ParagraphPlugin()])
+        .setPlugin(new TextStylePlugin())
+        .setPlugin([
+            new BoldPlugin(),
+            new ItalicPlugin(),
+            new UnderlinePlugin(),
+            new StrikethroughPlugin(),
+            new LinkPlugin(),
+            new ButtonPlugin(),
+            new CodePlugin(),
+            new UnorderedListPlugin(),
+            new OrderedListPlugin(),
+            new BreakAfterPlugin({ columns: args.columns, gap: 20 }),
+        ]);
+
+    return <RichTextEditorComponent updateValueOnChange={false} plugins={plugins} {...args} />;
+};
+
 MultiColumns.args = {
     value: JSON.stringify(defaultValue),
     plugins: defaultPluginsWithColumns,
     border: false,
+    columns: 2,
+    columnGap: '20px',
+};
+
+export const MultiColumnsSerializedToHTML: StoryFn<MultiColumnProps> = (args) => {
+    return getSerializedContent({
+        designTokens: customDesignTokens,
+        mentionable,
+        columns: args.columns,
+        columnGap: args.columnGap,
+    });
+};
+
+MultiColumnsSerializedToHTML.args = {
+    columns: 2,
+    columnGap: '20px',
 };
 
 export const SimpleMultiColumns: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
@@ -467,3 +527,30 @@ SimpleMultiColumns.args = {
     plugins: defaultPluginsWithColumns,
     border: false,
 };
+
+function getSerializedContent(
+    props: SerializeNodesToHtmlOptions = {
+        designTokens: customDesignTokens,
+        mentionable,
+        columns: 1,
+        columnGap: 'normal',
+    },
+): JSX.Element {
+    const serialized = serializeNodesToHtml(nodesToSerialize, props);
+    return (
+        <>
+            {serialized ? (
+                <>
+                    Serialized:
+                    <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
+                        <code>{serialized}</code>
+                    </div>
+                    Rendered:
+                    <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
+                        <div dangerouslySetInnerHTML={{ __html: serialized }} />
+                    </div>
+                </>
+            ) : null}
+        </>
+    );
+}

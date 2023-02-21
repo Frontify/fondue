@@ -13,6 +13,7 @@ export const UnderlineButton = ({ editor, id }: PluginButtonProps) => (
             icon={<IconStylingWrapper icon={<IconTextFormatUnderline size={IconSize.Size16} />} />}
             classNames={buttonClassNames}
             styles={buttonStyles}
+            actionHandler="onMouseDown"
         />
     </ButtonWrapper>
 );

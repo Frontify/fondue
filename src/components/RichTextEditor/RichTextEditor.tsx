@@ -9,7 +9,7 @@ import { RichTextEditorProvider } from './context/RichTextEditorContext';
 import { Position } from './EditorPositioningWrapper';
 import { forceToBlurActiveElement } from './helpers';
 import { useEditorState } from './hooks';
-import { GAP_DEFAULT, PluginComposer, defaultPlugins } from './Plugins';
+import { GAP_DEFAULT, KEY_ELEMENT_BREAK_AFTER_COLUMN, PluginComposer, defaultPlugins } from './Plugins';
 import { DesignTokens, PaddingSizes, TreeOfNodes } from './types';
 import { parseRawValue } from './utils';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
@@ -60,7 +60,8 @@ export const RichTextEditor = ({
         plugins,
         onValueChanged,
     });
-    const breakAfterPlugin = plugins.plugins.find((plugin) => plugin.key === 'breakAfterColumn');
+
+    const breakAfterPlugin = plugins.plugins.find((plugin) => plugin.key === KEY_ELEMENT_BREAK_AFTER_COLUMN);
     const columns = breakAfterPlugin?.options?.columns ?? 1;
     const columnGap = breakAfterPlugin?.options?.gap ?? GAP_DEFAULT;
 
@@ -110,7 +111,7 @@ export const RichTextEditor = ({
             >
                 {config.toolbar()}
                 {config.inline()}
-                {updateValueOnChange && <ContentReplacement value={parseRawValue({ editorId, raw: value })} />}
+                {updateValueOnChange && <ContentReplacement value={parseRawValue({ editorId, raw: value, plugins })} />}
             </Plate>
         </RichTextEditorProvider>
     );
