@@ -4,12 +4,9 @@ import {
     ELEMENT_BUTTON,
     ELEMENT_CHECK_ITEM,
     MappedMentionableItems,
-    RichTextButtonStyle,
     UL_CLASSES,
     getOrderedListClasses,
 } from '@components/RichTextEditor/Plugins';
-import { getButtonStyle } from '@components/RichTextEditor/Plugins/ButtonPlugin/ButtonMarkupElement/ButtonMarkupElementNode';
-import { TLinkElement } from '@components/RichTextEditor/Plugins/LinkPlugin/types';
 import { getTextStyle } from '@components/RichTextEditor/Plugins/ListPlugin/ListItemContentMarkupElement';
 import { TextStyles } from '@components/RichTextEditor/Plugins/TextStylePlugin/TextStyles';
 import { DesignTokens } from '@components/RichTextEditor/types';
@@ -27,8 +24,10 @@ import {
     isText,
 } from '@udecode/plate';
 import { merge } from '@utilities/merge';
-import escapeHtml from 'escape-html';
-import { mentionHtmlNode } from './mentionHtmlNode';
+import { buttonNode } from '../nodes/button';
+import { checkItemNode } from '../nodes/checkItem';
+import { linkNode } from '../nodes/link';
+import { mentionHtmlNode } from '../nodes/mentionHtmlNode';
 import { reactCssPropsToCss } from './reactCssPropsToCss';
 import { serializeLeafToHtml } from './serializeLeafToHtml';
 
@@ -129,41 +128,11 @@ export const serializeNodeToHtmlRecursive = (
             const licStyles = { textDecoration: designTokens[getTextStyle(licElement.children[0])]?.textDecoration };
             return `<p class="${defaultClassNames}" style="${reactCssPropsToCss(licStyles)}">${children}</p>`;
         case ELEMENT_LINK:
-            if (node.chosenLink) {
-                const { chosenLink } = node as TLinkElement;
-                return `<a class="${defaultClassNames}" style="${reactCssPropsToCss(designTokens.link)}" target=${
-                    chosenLink?.openInNewTab ? '_blank' : '_self'
-                } href="${escapeHtml(chosenLink?.searchResult?.link)}">${children}</a>`;
-            }
-            return `<a class="${defaultClassNames}" style="${reactCssPropsToCss(designTokens.link)}" href="${escapeHtml(
-                node.url as string,
-            )}">${children}</a>`;
+            return linkNode(node, children, designTokens, defaultClassNames);
         case ELEMENT_BUTTON:
-            const buttonStyle = getButtonStyle(designTokens, (node.buttonStyle as RichTextButtonStyle) ?? 'primary');
-            const defaultStyles = reactCssPropsToCss(buttonStyle);
-            return `<a href="${node.url}"
-                target="${node.target ?? '_blank'}"
-                style="${defaultStyles}"
-                class="${defaultClassNames}"
-                onmouseenter="this.setAttribute('style', '${defaultStyles} ${reactCssPropsToCss(buttonStyle.hover)}');"
-                onmouseleave="this.setAttribute('style', '${reactCssPropsToCss(buttonStyle)}');"
-                >${children}</a>`;
+            return buttonNode(node, children, designTokens, defaultClassNames);
         case ELEMENT_CHECK_ITEM:
-            return `<div disabled class="tw-flex tw-flex-row tw-pb-2 first-of-type:tw-ml-0 ${defaultClassNames}" style="margin-left:${
-                ((node.indent as number) ?? 0) * 24
-            }px;">
-                <div class="tw-flex tw-items-center tw-justify-center tw-select-none tw-mr-1.5">
-                    <input 
-                        class="tw-w-4 tw-h-4 tw-m-0"
-                        type="checkbox"
-                        ${node.checked ? 'checked' : ''}
-                        onclick="return false;" />
-                </div>
-                <span class="${merge([
-                    'tw-flex-1 tw-focus:outline-none',
-                    (node.checked as boolean) && 'tw-line-through',
-                ])}">${children}</span>
-            </div>`;
+            return checkItemNode(node, children, defaultClassNames);
         case ELEMENT_MENTION:
             return mentionHtmlNode(node, { mentionable: mappedMentionable });
 
