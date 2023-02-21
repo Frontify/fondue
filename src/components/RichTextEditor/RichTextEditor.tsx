@@ -2,7 +2,7 @@
 
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { Plate } from '@udecode/plate';
-import React, { KeyboardEvent } from 'react';
+import React from 'react';
 import { EditableProps, RenderPlaceholderProps } from 'slate-react/dist/components/editable';
 import { ContentReplacement } from './ContentReplacement';
 import { RichTextEditorProvider } from './context/RichTextEditorContext';
@@ -30,7 +30,6 @@ export type RichTextEditorProps = {
     padding?: PaddingSizes;
     position?: Position;
     plugins?: PluginComposer;
-    onKeyDown?: (event: KeyboardEvent<HTMLDivElement>, value: TreeOfNodes | null) => void;
     onValueChanged?: (value: TreeOfNodes | null) => void;
     border?: boolean;
     updateValueOnChange?: boolean; // Only set to true when you are sure that performance isn't an issue
@@ -48,7 +47,6 @@ export const RichTextEditor = ({
     position = Position.FLOATING,
     plugins = defaultPlugins,
     updateValueOnChange = false,
-    onKeyDown,
     onValueChanged,
     border = true,
 }: RichTextEditorProps) => {
@@ -89,8 +87,6 @@ export const RichTextEditor = ({
                 // Forcing a blur event because of accessibility
                 forceToBlurActiveElement();
             }
-
-            onKeyDown && onKeyDown(event, localValue.current);
         },
     };
 
