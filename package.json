@@ -73,6 +73,7 @@
         "@svgr/plugin-jsx": "6.5.1",
         "@svgr/plugin-prettier": "6.5.1",
         "@svgr/plugin-svgo": "6.5.1",
+        "@types/escape-html": "1.0.2",
         "@types/react": "17.0.52",
         "@types/react-datepicker": "4.8.0",
         "@types/react-dom": "17.0.18",
