@@ -19,11 +19,10 @@ import {
     TextStylePlugin,
     UnorderedListPlugin,
 } from './Plugins';
-import { ACTIVE_COLUMN_BREAK_CLASS_NAMES } from './Plugins/ColumnBreakPlugin/utils/getColumnBreakClasses';
 import { ButtonStyles } from './Plugins/TextStylePlugin/TextStyles';
 import { RichTextEditor } from './RichTextEditor';
 import { DesignTokens } from './types';
-import { ON_SAVE_DELAY_IN_MS } from './utils';
+import { ON_SAVE_DELAY_IN_MS, columnBreakClassNames } from './utils';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
 
 const RICH_TEXT_EDITOR = '[data-test-id=rich-text-editor]';
@@ -49,7 +48,7 @@ const FLOATING_LINK_EDIT = '[data-test-id=floating-link-edit]';
 const FLOATING_BUTTON_EDIT = '[data-test-id=floating-button-edit]';
 const FLOATING_BUTTON_SECONDARY = '[data-test-id=floating-button-insert-secondary]';
 const BUTTON = '[data-test-id=button]';
-const LINK_CHOOSER_CHECKBOX = '.tw-group > .tw-inline-flex > .tw-flex-1 > .tw-select-none';
+const CHECKBOX_INPUT_ID = '[data-test-id=checkbox-input]';
 
 const insertTextAndOpenToolbar = () => cy.get('[contenteditable=true]').click().type('hello{selectall}');
 
@@ -620,7 +619,7 @@ describe('RichTextEditor Component', () => {
             cy.get('[type=text]').eq(0).should('have.attr', 'value', 'hello');
             cy.get('[type=text]').eq(1).click().type(link);
             cy.get(BUTTON).eq(1).should('not.be.disabled');
-            cy.get(LINK_CHOOSER_CHECKBOX).click();
+            cy.get(CHECKBOX_INPUT_ID).click({ force: true });
             cy.get(BUTTON).eq(1).click();
             cy.get('[contenteditable=true] a').should('have.attr', 'target', '_blank');
             cy.get('[contenteditable=true] a').should('have.attr', 'href', link);
@@ -656,7 +655,7 @@ describe('RichTextEditor Component', () => {
             cy.get(EDIT_LINK_BUTTON).click();
 
             cy.get('[type=text]').eq(1).click().type(additionalLink);
-            cy.get(LINK_CHOOSER_CHECKBOX).click();
+            cy.get(CHECKBOX_INPUT_ID).click({ force: true });
 
             cy.get(BUTTON).eq(1).click();
             cy.get('[contenteditable=true] a').should('have.attr', 'href', link + additionalLink);
@@ -704,7 +703,7 @@ describe('RichTextEditor Component', () => {
             cy.get(EDIT_LINK_BUTTON).click();
 
             cy.get('[type=text]').eq(1).click().type(additionalLink);
-            cy.get(LINK_CHOOSER_CHECKBOX).click();
+            cy.get(CHECKBOX_INPUT_ID).click({ force: true });
 
             cy.get(BUTTON).eq(1).click();
             cy.get('[contenteditable=true] a').should('have.attr', 'href', link + additionalLink);
@@ -734,7 +733,7 @@ describe('RichTextEditor Component', () => {
             cy.get('[type=text]').eq(0).should('have.attr', 'value', 'hello');
             cy.get('[type=text]').eq(1).click().type(link);
             cy.get(BUTTON).eq(1).should('not.be.disabled');
-            cy.get(LINK_CHOOSER_CHECKBOX).click();
+            cy.get(CHECKBOX_INPUT_ID).click({ force: true });
             cy.get(BUTTON).eq(1).click();
             cy.get('[contenteditable=true] a').should('have.attr', 'href', link);
             cy.get('[contenteditable=true] a').should('have.attr', 'target', '_blank');
@@ -770,7 +769,7 @@ describe('RichTextEditor Component', () => {
             cy.get(EDIT_BUTTON_BUTTON).click();
 
             cy.get('[type=text]').eq(1).click().type(additionalLink);
-            cy.get(LINK_CHOOSER_CHECKBOX).click();
+            cy.get(CHECKBOX_INPUT_ID).click({ force: true });
 
             cy.get(BUTTON).eq(1).click();
             cy.get('[contenteditable=true] a').should('have.attr', 'href', link + additionalLink);
@@ -1020,9 +1019,9 @@ describe('RichTextEditor Component', () => {
 
             insertTextAndOpenToolbar();
             cy.get(TOOLBAR_FLOATING).should('be.visible');
-            cy.get('[contenteditable=true]').should('not.include.html', ACTIVE_COLUMN_BREAK_CLASS_NAMES);
+            cy.get('[contenteditable=true]').should('not.include.html', columnBreakClassNames);
             cy.get(TOOLBAR_GROUP_1).children().eq(-1).click();
-            cy.get('[contenteditable=true]').should('include.html', ACTIVE_COLUMN_BREAK_CLASS_NAMES);
+            cy.get('[contenteditable=true]').should('include.html', columnBreakClassNames);
         });
 
         it('it should add column break on unordered list', () => {
@@ -1031,9 +1030,9 @@ describe('RichTextEditor Component', () => {
             insertTextAndOpenToolbar();
             cy.get(TOOLBAR_FLOATING).should('be.visible');
             cy.get(TOOLBAR_GROUP_2).children().eq(1).click();
-            cy.get('[contenteditable=true]').should('not.include.html', ACTIVE_COLUMN_BREAK_CLASS_NAMES);
+            cy.get('[contenteditable=true]').should('not.include.html', columnBreakClassNames);
             cy.get(TOOLBAR_GROUP_1).children().eq(-1).click();
-            cy.get('[contenteditable=true]').should('include.html', ACTIVE_COLUMN_BREAK_CLASS_NAMES);
+            cy.get('[contenteditable=true]').should('include.html', columnBreakClassNames);
         });
 
         it('it should add column break on ordered list', () => {
@@ -1042,9 +1041,9 @@ describe('RichTextEditor Component', () => {
             insertTextAndOpenToolbar();
             cy.get(TOOLBAR_FLOATING).should('be.visible');
             cy.get(TOOLBAR_GROUP_2).children().eq(2).click();
-            cy.get('[contenteditable=true]').should('not.include.html', ACTIVE_COLUMN_BREAK_CLASS_NAMES);
+            cy.get('[contenteditable=true]').should('not.include.html', columnBreakClassNames);
             cy.get(TOOLBAR_GROUP_1).children().eq(-1).click();
-            cy.get('[contenteditable=true]').should('include.html', ACTIVE_COLUMN_BREAK_CLASS_NAMES);
+            cy.get('[contenteditable=true]').should('include.html', columnBreakClassNames);
         });
 
         it('it should add column break on heading', () => {
@@ -1054,12 +1053,10 @@ describe('RichTextEditor Component', () => {
             cy.get(TOOLBAR_FLOATING).should('be.visible');
             cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
             cy.get(TEXTSTYLE_OPTION).first().click();
-            cy.get('[contenteditable=true]')
-                .click('topLeft')
-                .should('not.include.html', ACTIVE_COLUMN_BREAK_CLASS_NAMES);
+            cy.get('[contenteditable=true]').click('topLeft').should('not.include.html', columnBreakClassNames);
             selectTextValue('hello');
             cy.get(TOOLBAR_GROUP_1).children().eq(-1).click();
-            cy.get('[contenteditable=true]').should('include.html', ACTIVE_COLUMN_BREAK_CLASS_NAMES);
+            cy.get('[contenteditable=true]').should('include.html', columnBreakClassNames);
         });
 
         it('it should add column break on custom textstyle', () => {
@@ -1069,10 +1066,10 @@ describe('RichTextEditor Component', () => {
             cy.get(TOOLBAR_FLOATING).should('be.visible');
             cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
             cy.get(TEXTSTYLE_OPTION).eq(4).click();
-            cy.get('[contenteditable=true]').click().should('not.include.html', ACTIVE_COLUMN_BREAK_CLASS_NAMES);
+            cy.get('[contenteditable=true]').click().should('not.include.html', columnBreakClassNames);
             selectTextValue('hello');
             cy.get(TOOLBAR_GROUP_1).children().eq(-1).click();
-            cy.get('[contenteditable=true]').should('include.html', ACTIVE_COLUMN_BREAK_CLASS_NAMES);
+            cy.get('[contenteditable=true]').should('include.html', columnBreakClassNames);
         });
 
         it('it should add column break on right aligned text', () => {
@@ -1081,9 +1078,9 @@ describe('RichTextEditor Component', () => {
             insertTextAndOpenToolbar();
             cy.get(TOOLBAR_FLOATING).should('be.visible');
             cy.get(TOOLBAR_GROUP_2).children().eq(0).click();
-            cy.get('[contenteditable=true]').should('not.include.html', ACTIVE_COLUMN_BREAK_CLASS_NAMES);
+            cy.get('[contenteditable=true]').should('not.include.html', columnBreakClassNames);
             cy.get(TOOLBAR_GROUP_1).children().eq(-1).click();
-            cy.get('[contenteditable=true]').should('include.html', ACTIVE_COLUMN_BREAK_CLASS_NAMES);
+            cy.get('[contenteditable=true]').should('include.html', columnBreakClassNames);
         });
 
         it('it should add column break on when bold is applied', () => {
@@ -1091,9 +1088,9 @@ describe('RichTextEditor Component', () => {
             insertTextAndOpenToolbar();
             cy.get(TOOLBAR_FLOATING).should('be.visible');
             cy.get(TOOLBAR_GROUP_1).children().eq(0).click();
-            cy.get('[contenteditable=true]').should('not.include.html', ACTIVE_COLUMN_BREAK_CLASS_NAMES);
+            cy.get('[contenteditable=true]').should('not.include.html', columnBreakClassNames);
             cy.get(TOOLBAR_GROUP_1).children().eq(-1).click();
-            cy.get('[contenteditable=true]').should('include.html', ACTIVE_COLUMN_BREAK_CLASS_NAMES);
+            cy.get('[contenteditable=true]').should('include.html', columnBreakClassNames);
         });
 
         it('it should move the text after the column break to the second column', () => {
@@ -1102,7 +1099,7 @@ describe('RichTextEditor Component', () => {
             selectTextValue('first');
             cy.get(TOOLBAR_FLOATING).should('be.visible');
             cy.get(TOOLBAR_GROUP_1).children().eq(-1).click();
-            cy.get('[contenteditable=true]').should('include.html', ACTIVE_COLUMN_BREAK_CLASS_NAMES);
+            cy.get('[contenteditable=true]').should('include.html', columnBreakClassNames);
             checkPosition('be.lessThan', 100, 'first');
             checkPosition('be.gt', 100, 'second');
             checkPosition('be.gt', 100, 'Level 5');
@@ -1115,16 +1112,14 @@ describe('RichTextEditor Component', () => {
             cy.get('[contenteditable=true]').click().type(content);
             cy.get(TOOLBAR_GROUP_1).children().eq(-1).click();
 
-            // break after should not be enabled
-            cy.get('[contenteditable=true]').click();
+            // toolbar button should be active
             selectTextValue('hello');
-            cy.get(TOOLBAR_GROUP_1).children().eq(-1).realHover().should('not.include.html', activeButtonClassNames);
+            cy.get(TOOLBAR_GROUP_1).children().eq(-1).realHover().should('include.html', activeButtonClassNames);
             checkPosition('be.lessThan', 100, 'hello');
 
-            // toolbar button should be active
-            cy.get('[contenteditable=true]').click();
+            // break after should not be enabled
             selectTextValue('last newline');
-            cy.get(TOOLBAR_GROUP_1).children().eq(-1).realHover().should('include.html', activeButtonClassNames);
+            cy.get(TOOLBAR_GROUP_1).children().eq(-1).realHover().should('not.include.html', activeButtonClassNames);
             checkPosition('be.lessThan', 500, 'last newline');
             checkPosition('be.lessThan', 500, 'World');
         });
@@ -1155,7 +1150,7 @@ describe('RichTextEditor Component', () => {
         it('should delete a column break with backspace key', () => {
             cy.mount(<RichTextEditorWithTwoColumns />);
             cy.get('[contenteditable=true]').click().type('hello{shift+ctrl+enter}{enter}W{leftArrow}{backspace}');
-            cy.get('[contenteditable=true]').should('not.include.html', activeButtonClassNames);
+            cy.get('[contenteditable=true]').should('not.include.html', columnBreakClassNames);
 
             // checks that the words are still separated 'hello' and 'W'
             selectTextValue('hello');
@@ -1165,7 +1160,7 @@ describe('RichTextEditor Component', () => {
         it('should delete a column break with del key', () => {
             cy.mount(<RichTextEditorWithTwoColumns />);
             cy.get('[contenteditable=true]').click().type('hello{shift+ctrl+enter}{enter}W{leftArrow}{leftArrow}{del}');
-            cy.get('[contenteditable=true]').should('not.include.html', activeButtonClassNames);
+            cy.get('[contenteditable=true]').should('not.include.html', columnBreakClassNames);
             // checks that the words are still separated 'hello' and 'W', as only the column break should be deleted
             selectTextValue('hello');
             cy.get(TOOLBAR_FLOATING).should('be.visible');
@@ -1182,31 +1177,6 @@ describe('RichTextEditor Component', () => {
             cy.get('[contenteditable=true]').click();
             selectTextValue('last newline');
             cy.get(TOOLBAR_GROUP_1).children().eq(-1).realHover().should('include.html', activeButtonClassNames);
-        });
-
-        it('should set column breaks inactive when initialized with more column breaks than allowed', () => {
-            cy.mount(
-                <RichTextEditorWithTwoColumns
-                    value={JSON.stringify([
-                        {
-                            type: ELEMENT_PARAGRAPH,
-                            children: [{ text: 'This text is followed by a break 3.' }],
-                            breakAfterColumn: 'active',
-                        },
-                        {
-                            type: ELEMENT_PARAGRAPH,
-                            children: [{ text: 'This text is followed by a break 3.' }],
-                            breakAfterColumn: 'active',
-                        },
-                        {
-                            type: ELEMENT_PARAGRAPH,
-                            children: [{ text: 'This text is followed by a break 3.' }],
-                            breakAfterColumn: 'active',
-                        },
-                    ])}
-                />,
-            );
-            cy.get('[contenteditable=true] .tw-break-after-column').should('have.length', 1);
         });
     });
 
