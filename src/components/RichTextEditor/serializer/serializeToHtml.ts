@@ -48,7 +48,7 @@ export const serializeNodesToHtml = (
         .join('');
 
     if (columns > 1) {
-        return `<div style="columns: ${columns}; column-gap: ${columnGap};">${html}</div>`;
+        return `<div style="columns:${columns}; column-gap:${columnGap};">${html}</div>`;
     }
 
     return html;
