@@ -80,7 +80,6 @@ specifiers:
   eslint-plugin-jsx-a11y: 6.6.1
   eslint-plugin-notice: 0.9.10
   eslint-plugin-storybook: 0.6.8
-  esno: 0.16.3
   fast-glob: 3.2.12
   framer-motion: 6.4.3
   glob: 8.1.0
@@ -116,6 +115,7 @@ specifiers:
   tailwindcss: 3.2.4
   tinycolor2: 1.4.2
   ts-node: 10.9.1
+  tsx: 3.12.3
   typescript: 4.7.4
   unified: 10.1.2
   unist-util-visit: 4.1.2
@@ -230,7 +230,6 @@ devDependencies:
   eslint-plugin-jsx-a11y: 6.6.1_eslint@8.28.0
   eslint-plugin-notice: 0.9.10_eslint@8.28.0
   eslint-plugin-storybook: 0.6.8_tqvwk7sh3taph5wf7sr5z34mke
-  esno: 0.16.3
   fast-glob: 3.2.12
   glob: 8.1.0
   lodash-es: 4.17.21
@@ -247,6 +246,7 @@ devDependencies:
   storybook-dark-mode: 1.1.2_sfoxds7t5ydpegc3knd667wn6m
   tailwindcss: 3.2.4_ra2vnoek4vhbzktaezawwqbin4
   ts-node: 10.9.1_j777nnsruz44drbtesvg2fqc7y
+  tsx: 3.12.3
   typescript: 4.7.4
   vite: 4.1.1_@types+node@18.13.0
   vite-plugin-dts: 1.7.2_rgy4fnry75xg7rw6lgswyd3x2m
@@ -10051,13 +10051,6 @@ packages:
       text-table: 0.2.0
     transitivePeerDependencies:
       - supports-color
-    dev: true
-
-  /esno/0.16.3:
-    resolution: {integrity: sha512-6slSBEV1lMKcX13DBifvnDFpNno5WXhw4j/ff7RI0y51BZiDqEe5dNhhjhIQ3iCOQuzsm2MbVzmwqbN78BBhPg==}
-    hasBin: true
-    dependencies:
-      tsx: 3.12.3
     dev: true
 
   /espree/9.4.1:
