@@ -2,56 +2,47 @@
 
 import { ELEMENT_LINK, ELEMENT_PARAGRAPH } from '@udecode/plate';
 import React, { CSSProperties, FC, useState } from 'react';
-import { Position } from './EditorPositioningWrapper';
-import { orderedListValue, unorderedListValue } from './helpers/exampleValues';
+import { orderedListValue } from '../helpers/exampleValues';
 import {
     AlignRightPlugin,
     BoldPlugin,
     BreakAfterPlugin,
     ELEMENT_BUTTON,
-    InitPlugin,
-    ItalicPlugin,
-    LinkPlugin,
     OrderedListPlugin,
     ParagraphPlugin,
     PluginComposer,
     RichTextButtonStyle,
     TextStylePlugin,
     UnorderedListPlugin,
-} from './Plugins';
-import { ACTIVE_COLUMN_BREAK_CLASS_NAMES } from './Plugins/ColumnBreakPlugin/utils/getColumnBreakClasses';
-import { ButtonStyles } from './Plugins/TextStylePlugin/TextStyles';
-import { RichTextEditor } from './RichTextEditor';
-import { DesignTokens } from './types';
-import { ON_SAVE_DELAY_IN_MS } from './utils';
-import { defaultDesignTokens } from './utils/defaultDesignTokens';
-
-const RICH_TEXT_EDITOR = '[data-test-id=rich-text-editor]';
-const TOOLBAR_FLOATING = '[data-test-id=toolbar-floating]';
-const TOOLBAR_BOTTOM = '[data-test-id=toolbar-bottom]';
-const TOOLBAR_TOP = '[data-test-id=toolbar-top]';
-const TOOLBAR_GROUP_0 = '[data-test-id=toolbar-group-0]';
-const TOOLBAR_GROUP_1 = '[data-test-id=toolbar-group-1]';
-const TOOLBAR_GROUP_2 = '[data-test-id=toolbar-group-2]';
-const TOOLBAR_GROUP_3 = '[data-test-id=toolbar-group-3]';
-const TOOLBAR_PLUGIN_OL = '[data-plugin-id=ol]';
-const TEXTSTYLE_DROPDOWN_TRIGGER = '[data-test-id=textstyle-dropdown-trigger]';
-const CHANGE_DESIGN_TOKENS_TRIGGER = '[data-test-id=change-design-tokens-button]';
-const TEXTSTYLE_OPTION = '[data-test-id=textstyle-option]';
-const CHECKBOX_INPUT = '[data-test-id=checkbox-input]';
-const EDIT_LINK_BUTTON = '[data-test-id=edit-link-button]';
-const EDIT_BUTTON_BUTTON = '[data-test-id=edit-button-button]';
-const REMOVE_LINK_BUTTON = '[data-test-id=remove-link-button]';
-const REMOVE_BUTTON_BUTTON = '[data-test-id=remove-button-button]';
-const FLOATING_LINK_INSERT = '[data-test-id=floating-link-insert]';
-const FLOATING_BUTTON_INSERT = '[data-test-id=floating-button-insert]';
-const FLOATING_LINK_EDIT = '[data-test-id=floating-link-edit]';
-const FLOATING_BUTTON_EDIT = '[data-test-id=floating-button-edit]';
-const FLOATING_BUTTON_SECONDARY = '[data-test-id=floating-button-insert-secondary]';
-const BUTTON = '[data-test-id=button]';
-const CHECKBOX_INPUT_ID = '[data-test-id=checkbox-input]';
-
-const insertTextAndOpenToolbar = () => cy.get('[contenteditable=true]').click().type('hello{selectall}');
+} from '../Plugins';
+import { ACTIVE_COLUMN_BREAK_CLASS_NAMES } from '../Plugins/ColumnBreakPlugin/utils/getColumnBreakClasses';
+import { ButtonStyles } from '../Plugins/TextStylePlugin/TextStyles';
+import { RichTextEditor } from '../RichTextEditor';
+import { DesignTokens } from '../types';
+import { ON_SAVE_DELAY_IN_MS } from '../utils';
+import { defaultDesignTokens } from '../utils/defaultDesignTokens';
+import { insertTextAndOpenToolbar } from './fixtures/RichTextEditor';
+import {
+    BUTTON,
+    CHANGE_DESIGN_TOKENS_TRIGGER,
+    CHECKBOX_INPUT,
+    CHECKBOX_INPUT_ID,
+    EDIT_BUTTON_BUTTON,
+    EDIT_LINK_BUTTON,
+    FLOATING_BUTTON_EDIT,
+    FLOATING_BUTTON_INSERT,
+    FLOATING_BUTTON_SECONDARY,
+    FLOATING_LINK_EDIT,
+    FLOATING_LINK_INSERT,
+    REMOVE_BUTTON_BUTTON,
+    REMOVE_LINK_BUTTON,
+    RICH_TEXT_EDITOR,
+    TEXTSTYLE_DROPDOWN_TRIGGER,
+    TEXTSTYLE_OPTION,
+    TOOLBAR_FLOATING,
+    TOOLBAR_GROUP_1,
+    TOOLBAR_GROUP_2,
+} from './fixtures/selectors';
 
 const checkPosition = (chainers: string, value: number, text: string) => {
     cy.window().then(() => {
@@ -175,17 +166,11 @@ const RichTextWithChangeDesignTokensButton: FC = () => {
     );
 };
 
-const RichTextWithToolbarPositioning = ({ position }: { position?: Position }) => (
-    <RichTextEditor position={position} />
-);
-
 const RichTextEditorWithValueSetOutside = ({ value }: { value: string }) => {
     const [initialValue, setInitialValue] = useState(value);
 
     return <RichTextEditor onTextChange={(value) => setInitialValue(value)} value={initialValue} />;
 };
-
-const RichTextEditorWithUnorderedListStyles = () => <RichTextEditor value={JSON.stringify([unorderedListValue])} />;
 
 const RichTextEditorWithOrderedListStyles = () => <RichTextEditor value={JSON.stringify([orderedListValue])} />;
 
@@ -283,32 +268,6 @@ describe('RichTextEditor Component', () => {
             cy.mount(<RichTextEditor />);
 
             cy.get('[contenteditable=true]').click().type('hello');
-        });
-    });
-
-    describe('Toolbar', () => {
-        it('should display toolbar when selecting inserted text', () => {
-            cy.mount(<RichTextEditor />);
-
-            insertTextAndOpenToolbar();
-            cy.get(TOOLBAR_FLOATING).should('be.visible');
-        });
-
-        it('renders a toolbar with custom controls', () => {
-            const plugins = new PluginComposer();
-            plugins
-                .setPlugin([new InitPlugin()])
-                .setPlugin([new LinkPlugin()])
-                .setPlugin([new BoldPlugin(), new ItalicPlugin()])
-                .setPlugin([new UnorderedListPlugin()]);
-            cy.mount(<RichTextEditor plugins={plugins} />);
-
-            insertTextAndOpenToolbar();
-            cy.get(TOOLBAR_FLOATING).should('be.visible');
-            cy.get(TOOLBAR_GROUP_0).find('[data-testid=ToolbarButton]').should('have.length', 1);
-            cy.get(TOOLBAR_GROUP_1).find('[data-testid=ToolbarButton]').should('have.length', 2);
-            cy.get(TOOLBAR_GROUP_2).find('[data-testid=ToolbarButton]').should('have.length', 1);
-            cy.get(TOOLBAR_GROUP_3).should('not.exist');
         });
     });
 
@@ -555,46 +514,6 @@ describe('RichTextEditor Component', () => {
                         JSON.stringify([{ type: ELEMENT_PARAGRAPH, children: [{ text: content }] }]),
                     );
                 });
-        });
-    });
-
-    describe('list plugin', () => {
-        it('applies the selected text style to the list item', () => {
-            cy.mount(<RichTextEditorWithOrderedListStyles />);
-
-            const firstListItemSelector = '[contenteditable=true] ol:first-child > li:first-child';
-            cy.mount(<RichTextEditor />);
-
-            insertTextAndOpenToolbar();
-            cy.get(TOOLBAR_FLOATING).should('be.visible');
-            cy.get(TOOLBAR_PLUGIN_OL).click();
-            cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
-            cy.get(TEXTSTYLE_OPTION).first().click();
-            cy.get(firstListItemSelector).should(
-                'have.attr',
-                'style',
-                'font-size: 48px; font-style: normal; font-weight: 700;',
-            );
-        });
-
-        it('renders the list item without text decoration underline', () => {
-            cy.mount(<RichTextEditorWithUnorderedListStyles />);
-
-            cy.get('[contenteditable=true] li').should('have.class', '!tw-no-underline');
-        });
-
-        it('renders custom styled list items', () => {
-            cy.mount(<RichTextEditorWithUnorderedListStyles />);
-            cy.get('[contenteditable=true] li:first-child').should(
-                'have.attr',
-                'style',
-                'font-size: 14px; font-weight: normal; font-style: normal;',
-            );
-            cy.get('[contenteditable=true] li:nth-child(2)').should(
-                'have.attr',
-                'style',
-                'font-size: 14px; font-weight: 600; font-style: normal;',
-            );
         });
     });
 
@@ -994,7 +913,7 @@ describe('RichTextEditor Component', () => {
 
         const pluginsWithColumns = new PluginComposer();
         pluginsWithColumns
-            .setPlugin([new InitPlugin(), new ParagraphPlugin()])
+            .setPlugin([new ParagraphPlugin()])
             .setPlugin(new TextStylePlugin())
             .setPlugin(
                 [new BoldPlugin(), new BreakAfterPlugin({ columns: 2, gap: 20 })],
@@ -1232,21 +1151,5 @@ describe('RichTextEditor Component', () => {
                     );
                 });
         });
-    });
-});
-
-describe('RichTextEditor Component: Positioning of Toolbar', () => {
-    it('should render with fixed top toolbar', () => {
-        cy.mount(<RichTextWithToolbarPositioning position={Position.TOP} />);
-
-        cy.get(RICH_TEXT_EDITOR).should('be.visible');
-        cy.get(TOOLBAR_TOP).should('be.visible');
-    });
-
-    it('should render with fixed bottom toolbar', () => {
-        cy.mount(<RichTextWithToolbarPositioning position={Position.BOTTOM} />);
-
-        cy.get(RICH_TEXT_EDITOR).should('be.visible');
-        cy.get(TOOLBAR_BOTTOM).should('be.visible');
     });
 });
