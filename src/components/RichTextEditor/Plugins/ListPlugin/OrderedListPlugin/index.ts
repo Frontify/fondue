@@ -4,10 +4,10 @@ import { LIST_PLUGIN } from '../id';
 import { OrderedListMarkupElement } from './OrderedListMarkupElement';
 import { OrderedListButton } from './OrderedListButton';
 import { ListPlugin } from '../ListPlugin';
-import { PluginProps } from '../../Plugin';
+import { ListPluginProps } from '../types';
 
 export class OrderedListPlugin extends ListPlugin {
-    constructor(props?: PluginProps) {
+    constructor(props?: ListPluginProps) {
         super({
             id: LIST_PLUGIN,
             button: OrderedListButton,

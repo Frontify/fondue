@@ -14,6 +14,7 @@ export const BoldButton = ({ editor, id }: PluginButtonProps) => (
             icon={<IconStylingWrapper icon={<IconTextFormatBold size={IconSize.Size16} />} />}
             classNames={buttonClassNames}
             styles={buttonStyles}
+            actionHandler="onMouseDown"
         />
     </ButtonWrapper>
 );
