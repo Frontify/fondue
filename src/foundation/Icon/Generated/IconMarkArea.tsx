@@ -20,8 +20,6 @@ const IconMarkArea = (props: GeneratedIconProps): ReactElement<GeneratedIconProp
         </span>
     );
 };
+IconMarkArea.displayName = 'FondueIconMarkArea';
 
-const MemoizedIconMarkArea = memo(IconMarkArea);
-MemoizedIconMarkArea.displayName = 'FondueIconMarkArea';
-
-export default MemoizedIconMarkArea;
+export default memo(IconMarkArea);

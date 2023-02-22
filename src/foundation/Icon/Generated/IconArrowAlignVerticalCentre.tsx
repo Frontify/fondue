@@ -20,8 +20,6 @@ const IconArrowAlignVerticalCentre = (props: GeneratedIconProps): ReactElement<G
         </span>
     );
 };
+IconArrowAlignVerticalCentre.displayName = 'FondueIconArrowAlignVerticalCentre';
 
-const MemoizedIconArrowAlignVerticalCentre = memo(IconArrowAlignVerticalCentre);
-MemoizedIconArrowAlignVerticalCentre.displayName = 'FondueIconArrowAlignVerticalCentre';
-
-export default MemoizedIconArrowAlignVerticalCentre;
+export default memo(IconArrowAlignVerticalCentre);

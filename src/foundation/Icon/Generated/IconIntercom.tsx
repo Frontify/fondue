@@ -20,8 +20,6 @@ const IconIntercom = (props: GeneratedIconProps): ReactElement<GeneratedIconProp
         </span>
     );
 };
+IconIntercom.displayName = 'FondueIconIntercom';
 
-const MemoizedIconIntercom = memo(IconIntercom);
-MemoizedIconIntercom.displayName = 'FondueIconIntercom';
-
-export default MemoizedIconIntercom;
+export default memo(IconIntercom);

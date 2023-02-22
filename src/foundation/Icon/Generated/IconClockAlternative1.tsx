@@ -20,8 +20,6 @@ const IconClockAlternative1 = (props: GeneratedIconProps): ReactElement<Generate
         </span>
     );
 };
+IconClockAlternative1.displayName = 'FondueIconClockAlternative1';
 
-const MemoizedIconClockAlternative1 = memo(IconClockAlternative1);
-MemoizedIconClockAlternative1.displayName = 'FondueIconClockAlternative1';
-
-export default MemoizedIconClockAlternative1;
+export default memo(IconClockAlternative1);

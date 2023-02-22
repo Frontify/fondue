@@ -20,8 +20,6 @@ const IconFooter = (props: GeneratedIconProps): ReactElement<GeneratedIconProps>
         </span>
     );
 };
+IconFooter.displayName = 'FondueIconFooter';
 
-const MemoizedIconFooter = memo(IconFooter);
-MemoizedIconFooter.displayName = 'FondueIconFooter';
-
-export default MemoizedIconFooter;
+export default memo(IconFooter);

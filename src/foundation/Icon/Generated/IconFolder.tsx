@@ -20,8 +20,6 @@ const IconFolder = (props: GeneratedIconProps): ReactElement<GeneratedIconProps>
         </span>
     );
 };
+IconFolder.displayName = 'FondueIconFolder';
 
-const MemoizedIconFolder = memo(IconFolder);
-MemoizedIconFolder.displayName = 'FondueIconFolder';
-
-export default MemoizedIconFolder;
+export default memo(IconFolder);

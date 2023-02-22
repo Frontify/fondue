@@ -20,8 +20,6 @@ const IconListCheck = (props: GeneratedIconProps): ReactElement<GeneratedIconPro
         </span>
     );
 };
+IconListCheck.displayName = 'FondueIconListCheck';
 
-const MemoizedIconListCheck = memo(IconListCheck);
-MemoizedIconListCheck.displayName = 'FondueIconListCheck';
-
-export default MemoizedIconListCheck;
+export default memo(IconListCheck);

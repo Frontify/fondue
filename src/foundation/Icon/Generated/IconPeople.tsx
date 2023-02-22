@@ -20,8 +20,6 @@ const IconPeople = (props: GeneratedIconProps): ReactElement<GeneratedIconProps>
         </span>
     );
 };
+IconPeople.displayName = 'FondueIconPeople';
 
-const MemoizedIconPeople = memo(IconPeople);
-MemoizedIconPeople.displayName = 'FondueIconPeople';
-
-export default MemoizedIconPeople;
+export default memo(IconPeople);

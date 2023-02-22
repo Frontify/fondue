@@ -20,8 +20,6 @@ const IconVimeo = (props: GeneratedIconProps): ReactElement<GeneratedIconProps> 
         </span>
     );
 };
+IconVimeo.displayName = 'FondueIconVimeo';
 
-const MemoizedIconVimeo = memo(IconVimeo);
-MemoizedIconVimeo.displayName = 'FondueIconVimeo';
-
-export default MemoizedIconVimeo;
+export default memo(IconVimeo);

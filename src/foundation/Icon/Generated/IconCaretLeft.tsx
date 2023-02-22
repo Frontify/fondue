@@ -20,8 +20,6 @@ const IconCaretLeft = (props: GeneratedIconProps): ReactElement<GeneratedIconPro
         </span>
     );
 };
+IconCaretLeft.displayName = 'FondueIconCaretLeft';
 
-const MemoizedIconCaretLeft = memo(IconCaretLeft);
-MemoizedIconCaretLeft.displayName = 'FondueIconCaretLeft';
-
-export default MemoizedIconCaretLeft;
+export default memo(IconCaretLeft);

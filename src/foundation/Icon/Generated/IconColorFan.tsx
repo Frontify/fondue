@@ -20,8 +20,6 @@ const IconColorFan = (props: GeneratedIconProps): ReactElement<GeneratedIconProp
         </span>
     );
 };
+IconColorFan.displayName = 'FondueIconColorFan';
 
-const MemoizedIconColorFan = memo(IconColorFan);
-MemoizedIconColorFan.displayName = 'FondueIconColorFan';
-
-export default MemoizedIconColorFan;
+export default memo(IconColorFan);

@@ -20,8 +20,6 @@ const IconArrowLeftToRight = (props: GeneratedIconProps): ReactElement<Generated
         </span>
     );
 };
+IconArrowLeftToRight.displayName = 'FondueIconArrowLeftToRight';
 
-const MemoizedIconArrowLeftToRight = memo(IconArrowLeftToRight);
-MemoizedIconArrowLeftToRight.displayName = 'FondueIconArrowLeftToRight';
-
-export default MemoizedIconArrowLeftToRight;
+export default memo(IconArrowLeftToRight);

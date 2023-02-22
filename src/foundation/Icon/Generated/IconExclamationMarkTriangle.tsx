@@ -20,8 +20,6 @@ const IconExclamationMarkTriangle = (props: GeneratedIconProps): ReactElement<Ge
         </span>
     );
 };
+IconExclamationMarkTriangle.displayName = 'FondueIconExclamationMarkTriangle';
 
-const MemoizedIconExclamationMarkTriangle = memo(IconExclamationMarkTriangle);
-MemoizedIconExclamationMarkTriangle.displayName = 'FondueIconExclamationMarkTriangle';
-
-export default MemoizedIconExclamationMarkTriangle;
+export default memo(IconExclamationMarkTriangle);

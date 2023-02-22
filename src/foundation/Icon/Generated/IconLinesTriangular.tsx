@@ -20,8 +20,6 @@ const IconLinesTriangular = (props: GeneratedIconProps): ReactElement<GeneratedI
         </span>
     );
 };
+IconLinesTriangular.displayName = 'FondueIconLinesTriangular';
 
-const MemoizedIconLinesTriangular = memo(IconLinesTriangular);
-MemoizedIconLinesTriangular.displayName = 'FondueIconLinesTriangular';
-
-export default MemoizedIconLinesTriangular;
+export default memo(IconLinesTriangular);

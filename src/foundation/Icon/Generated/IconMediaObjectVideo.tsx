@@ -20,8 +20,6 @@ const IconMediaObjectVideo = (props: GeneratedIconProps): ReactElement<Generated
         </span>
     );
 };
+IconMediaObjectVideo.displayName = 'FondueIconMediaObjectVideo';
 
-const MemoizedIconMediaObjectVideo = memo(IconMediaObjectVideo);
-MemoizedIconMediaObjectVideo.displayName = 'FondueIconMediaObjectVideo';
-
-export default MemoizedIconMediaObjectVideo;
+export default memo(IconMediaObjectVideo);

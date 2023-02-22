@@ -20,8 +20,6 @@ const IconCross = (props: GeneratedIconProps): ReactElement<GeneratedIconProps> 
         </span>
     );
 };
+IconCross.displayName = 'FondueIconCross';
 
-const MemoizedIconCross = memo(IconCross);
-MemoizedIconCross.displayName = 'FondueIconCross';
-
-export default MemoizedIconCross;
+export default memo(IconCross);

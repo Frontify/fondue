@@ -20,8 +20,6 @@ const IconCalendarChecked = (props: GeneratedIconProps): ReactElement<GeneratedI
         </span>
     );
 };
+IconCalendarChecked.displayName = 'FondueIconCalendarChecked';
 
-const MemoizedIconCalendarChecked = memo(IconCalendarChecked);
-MemoizedIconCalendarChecked.displayName = 'FondueIconCalendarChecked';
-
-export default MemoizedIconCalendarChecked;
+export default memo(IconCalendarChecked);

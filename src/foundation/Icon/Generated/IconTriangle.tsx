@@ -20,8 +20,6 @@ const IconTriangle = (props: GeneratedIconProps): ReactElement<GeneratedIconProp
         </span>
     );
 };
+IconTriangle.displayName = 'FondueIconTriangle';
 
-const MemoizedIconTriangle = memo(IconTriangle);
-MemoizedIconTriangle.displayName = 'FondueIconTriangle';
-
-export default MemoizedIconTriangle;
+export default memo(IconTriangle);

@@ -20,8 +20,6 @@ const IconPointout = (props: GeneratedIconProps): ReactElement<GeneratedIconProp
         </span>
     );
 };
+IconPointout.displayName = 'FondueIconPointout';
 
-const MemoizedIconPointout = memo(IconPointout);
-MemoizedIconPointout.displayName = 'FondueIconPointout';
-
-export default MemoizedIconPointout;
+export default memo(IconPointout);

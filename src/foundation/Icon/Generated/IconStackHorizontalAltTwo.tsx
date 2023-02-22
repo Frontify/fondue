@@ -20,8 +20,6 @@ const IconStackHorizontalAltTwo = (props: GeneratedIconProps): ReactElement<Gene
         </span>
     );
 };
+IconStackHorizontalAltTwo.displayName = 'FondueIconStackHorizontalAltTwo';
 
-const MemoizedIconStackHorizontalAltTwo = memo(IconStackHorizontalAltTwo);
-MemoizedIconStackHorizontalAltTwo.displayName = 'FondueIconStackHorizontalAltTwo';
-
-export default MemoizedIconStackHorizontalAltTwo;
+export default memo(IconStackHorizontalAltTwo);

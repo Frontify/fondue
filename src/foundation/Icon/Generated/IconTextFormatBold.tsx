@@ -20,8 +20,6 @@ const IconTextFormatBold = (props: GeneratedIconProps): ReactElement<GeneratedIc
         </span>
     );
 };
+IconTextFormatBold.displayName = 'FondueIconTextFormatBold';
 
-const MemoizedIconTextFormatBold = memo(IconTextFormatBold);
-MemoizedIconTextFormatBold.displayName = 'FondueIconTextFormatBold';
-
-export default MemoizedIconTextFormatBold;
+export default memo(IconTextFormatBold);

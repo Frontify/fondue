@@ -20,8 +20,6 @@ const IconCheckmarkCircleBox = (props: GeneratedIconProps): ReactElement<Generat
         </span>
     );
 };
+IconCheckmarkCircleBox.displayName = 'FondueIconCheckmarkCircleBox';
 
-const MemoizedIconCheckmarkCircleBox = memo(IconCheckmarkCircleBox);
-MemoizedIconCheckmarkCircleBox.displayName = 'FondueIconCheckmarkCircleBox';
-
-export default MemoizedIconCheckmarkCircleBox;
+export default memo(IconCheckmarkCircleBox);

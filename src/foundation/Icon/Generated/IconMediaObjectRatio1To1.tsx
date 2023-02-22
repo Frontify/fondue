@@ -20,8 +20,6 @@ const IconMediaObjectRatio1To1 = (props: GeneratedIconProps): ReactElement<Gener
         </span>
     );
 };
+IconMediaObjectRatio1To1.displayName = 'FondueIconMediaObjectRatio1To1';
 
-const MemoizedIconMediaObjectRatio1To1 = memo(IconMediaObjectRatio1To1);
-MemoizedIconMediaObjectRatio1To1.displayName = 'FondueIconMediaObjectRatio1To1';
-
-export default MemoizedIconMediaObjectRatio1To1;
+export default memo(IconMediaObjectRatio1To1);

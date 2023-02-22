@@ -20,8 +20,6 @@ const IconArrowScaleVertical = (props: GeneratedIconProps): ReactElement<Generat
         </span>
     );
 };
+IconArrowScaleVertical.displayName = 'FondueIconArrowScaleVertical';
 
-const MemoizedIconArrowScaleVertical = memo(IconArrowScaleVertical);
-MemoizedIconArrowScaleVertical.displayName = 'FondueIconArrowScaleVertical';
-
-export default MemoizedIconArrowScaleVertical;
+export default memo(IconArrowScaleVertical);

@@ -20,8 +20,6 @@ const IconArrowCircleDown = (props: GeneratedIconProps): ReactElement<GeneratedI
         </span>
     );
 };
+IconArrowCircleDown.displayName = 'FondueIconArrowCircleDown';
 
-const MemoizedIconArrowCircleDown = memo(IconArrowCircleDown);
-MemoizedIconArrowCircleDown.displayName = 'FondueIconArrowCircleDown';
-
-export default MemoizedIconArrowCircleDown;
+export default memo(IconArrowCircleDown);

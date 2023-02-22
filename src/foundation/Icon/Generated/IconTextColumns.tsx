@@ -20,8 +20,6 @@ const IconTextColumns = (props: GeneratedIconProps): ReactElement<GeneratedIconP
         </span>
     );
 };
+IconTextColumns.displayName = 'FondueIconTextColumns';
 
-const MemoizedIconTextColumns = memo(IconTextColumns);
-MemoizedIconTextColumns.displayName = 'FondueIconTextColumns';
-
-export default MemoizedIconTextColumns;
+export default memo(IconTextColumns);

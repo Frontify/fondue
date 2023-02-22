@@ -20,8 +20,6 @@ const IconTester = (props: GeneratedIconProps): ReactElement<GeneratedIconProps>
         </span>
     );
 };
+IconTester.displayName = 'FondueIconTester';
 
-const MemoizedIconTester = memo(IconTester);
-MemoizedIconTester.displayName = 'FondueIconTester';
-
-export default MemoizedIconTester;
+export default memo(IconTester);

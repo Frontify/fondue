@@ -20,8 +20,6 @@ const IconArrowUp = (props: GeneratedIconProps): ReactElement<GeneratedIconProps
         </span>
     );
 };
+IconArrowUp.displayName = 'FondueIconArrowUp';
 
-const MemoizedIconArrowUp = memo(IconArrowUp);
-MemoizedIconArrowUp.displayName = 'FondueIconArrowUp';
-
-export default MemoizedIconArrowUp;
+export default memo(IconArrowUp);

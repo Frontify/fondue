@@ -20,8 +20,6 @@ const IconLollipop = (props: GeneratedIconProps): ReactElement<GeneratedIconProp
         </span>
     );
 };
+IconLollipop.displayName = 'FondueIconLollipop';
 
-const MemoizedIconLollipop = memo(IconLollipop);
-MemoizedIconLollipop.displayName = 'FondueIconLollipop';
-
-export default MemoizedIconLollipop;
+export default memo(IconLollipop);

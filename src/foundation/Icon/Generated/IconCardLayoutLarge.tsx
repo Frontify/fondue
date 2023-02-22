@@ -20,8 +20,6 @@ const IconCardLayoutLarge = (props: GeneratedIconProps): ReactElement<GeneratedI
         </span>
     );
 };
+IconCardLayoutLarge.displayName = 'FondueIconCardLayoutLarge';
 
-const MemoizedIconCardLayoutLarge = memo(IconCardLayoutLarge);
-MemoizedIconCardLayoutLarge.displayName = 'FondueIconCardLayoutLarge';
-
-export default MemoizedIconCardLayoutLarge;
+export default memo(IconCardLayoutLarge);

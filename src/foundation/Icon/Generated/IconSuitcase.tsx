@@ -20,8 +20,6 @@ const IconSuitcase = (props: GeneratedIconProps): ReactElement<GeneratedIconProp
         </span>
     );
 };
+IconSuitcase.displayName = 'FondueIconSuitcase';
 
-const MemoizedIconSuitcase = memo(IconSuitcase);
-MemoizedIconSuitcase.displayName = 'FondueIconSuitcase';
-
-export default MemoizedIconSuitcase;
+export default memo(IconSuitcase);

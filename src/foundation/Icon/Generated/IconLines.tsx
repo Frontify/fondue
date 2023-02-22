@@ -20,8 +20,6 @@ const IconLines = (props: GeneratedIconProps): ReactElement<GeneratedIconProps> 
         </span>
     );
 };
+IconLines.displayName = 'FondueIconLines';
 
-const MemoizedIconLines = memo(IconLines);
-MemoizedIconLines.displayName = 'FondueIconLines';
-
-export default MemoizedIconLines;
+export default memo(IconLines);

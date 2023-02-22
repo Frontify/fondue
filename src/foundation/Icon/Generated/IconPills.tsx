@@ -20,8 +20,6 @@ const IconPills = (props: GeneratedIconProps): ReactElement<GeneratedIconProps> 
         </span>
     );
 };
+IconPills.displayName = 'FondueIconPills';
 
-const MemoizedIconPills = memo(IconPills);
-MemoizedIconPills.displayName = 'FondueIconPills';
-
-export default MemoizedIconPills;
+export default memo(IconPills);

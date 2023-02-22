@@ -20,8 +20,6 @@ const IconTextFormatItalic = (props: GeneratedIconProps): ReactElement<Generated
         </span>
     );
 };
+IconTextFormatItalic.displayName = 'FondueIconTextFormatItalic';
 
-const MemoizedIconTextFormatItalic = memo(IconTextFormatItalic);
-MemoizedIconTextFormatItalic.displayName = 'FondueIconTextFormatItalic';
-
-export default MemoizedIconTextFormatItalic;
+export default memo(IconTextFormatItalic);

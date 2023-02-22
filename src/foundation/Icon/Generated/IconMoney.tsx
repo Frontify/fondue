@@ -20,8 +20,6 @@ const IconMoney = (props: GeneratedIconProps): ReactElement<GeneratedIconProps> 
         </span>
     );
 };
+IconMoney.displayName = 'FondueIconMoney';
 
-const MemoizedIconMoney = memo(IconMoney);
-MemoizedIconMoney.displayName = 'FondueIconMoney';
-
-export default MemoizedIconMoney;
+export default memo(IconMoney);

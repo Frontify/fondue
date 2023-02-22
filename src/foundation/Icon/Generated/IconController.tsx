@@ -20,8 +20,6 @@ const IconController = (props: GeneratedIconProps): ReactElement<GeneratedIconPr
         </span>
     );
 };
+IconController.displayName = 'FondueIconController';
 
-const MemoizedIconController = memo(IconController);
-MemoizedIconController.displayName = 'FondueIconController';
-
-export default MemoizedIconController;
+export default memo(IconController);

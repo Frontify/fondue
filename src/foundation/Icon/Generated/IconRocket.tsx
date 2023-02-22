@@ -20,8 +20,6 @@ const IconRocket = (props: GeneratedIconProps): ReactElement<GeneratedIconProps>
         </span>
     );
 };
+IconRocket.displayName = 'FondueIconRocket';
 
-const MemoizedIconRocket = memo(IconRocket);
-MemoizedIconRocket.displayName = 'FondueIconRocket';
-
-export default MemoizedIconRocket;
+export default memo(IconRocket);

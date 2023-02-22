@@ -20,8 +20,6 @@ const IconMagnifier = (props: GeneratedIconProps): ReactElement<GeneratedIconPro
         </span>
     );
 };
+IconMagnifier.displayName = 'FondueIconMagnifier';
 
-const MemoizedIconMagnifier = memo(IconMagnifier);
-MemoizedIconMagnifier.displayName = 'FondueIconMagnifier';
-
-export default MemoizedIconMagnifier;
+export default memo(IconMagnifier);

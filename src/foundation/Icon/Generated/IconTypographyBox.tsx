@@ -20,8 +20,6 @@ const IconTypographyBox = (props: GeneratedIconProps): ReactElement<GeneratedIco
         </span>
     );
 };
+IconTypographyBox.displayName = 'FondueIconTypographyBox';
 
-const MemoizedIconTypographyBox = memo(IconTypographyBox);
-MemoizedIconTypographyBox.displayName = 'FondueIconTypographyBox';
-
-export default MemoizedIconTypographyBox;
+export default memo(IconTypographyBox);

@@ -20,8 +20,6 @@ const IconPlusCircle = (props: GeneratedIconProps): ReactElement<GeneratedIconPr
         </span>
     );
 };
+IconPlusCircle.displayName = 'FondueIconPlusCircle';
 
-const MemoizedIconPlusCircle = memo(IconPlusCircle);
-MemoizedIconPlusCircle.displayName = 'FondueIconPlusCircle';
-
-export default MemoizedIconPlusCircle;
+export default memo(IconPlusCircle);

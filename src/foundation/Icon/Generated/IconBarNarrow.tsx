@@ -20,8 +20,6 @@ const IconBarNarrow = (props: GeneratedIconProps): ReactElement<GeneratedIconPro
         </span>
     );
 };
+IconBarNarrow.displayName = 'FondueIconBarNarrow';
 
-const MemoizedIconBarNarrow = memo(IconBarNarrow);
-MemoizedIconBarNarrow.displayName = 'FondueIconBarNarrow';
-
-export default MemoizedIconBarNarrow;
+export default memo(IconBarNarrow);

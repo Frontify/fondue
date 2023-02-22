@@ -20,8 +20,6 @@ const IconNook = (props: GeneratedIconProps): ReactElement<GeneratedIconProps> =
         </span>
     );
 };
+IconNook.displayName = 'FondueIconNook';
 
-const MemoizedIconNook = memo(IconNook);
-MemoizedIconNook.displayName = 'FondueIconNook';
-
-export default MemoizedIconNook;
+export default memo(IconNook);

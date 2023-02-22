@@ -20,8 +20,6 @@ const IconRectanglePortraitSquare = (props: GeneratedIconProps): ReactElement<Ge
         </span>
     );
 };
+IconRectanglePortraitSquare.displayName = 'FondueIconRectanglePortraitSquare';
 
-const MemoizedIconRectanglePortraitSquare = memo(IconRectanglePortraitSquare);
-MemoizedIconRectanglePortraitSquare.displayName = 'FondueIconRectanglePortraitSquare';
-
-export default MemoizedIconRectanglePortraitSquare;
+export default memo(IconRectanglePortraitSquare);

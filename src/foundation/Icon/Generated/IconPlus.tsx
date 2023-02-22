@@ -20,8 +20,6 @@ const IconPlus = (props: GeneratedIconProps): ReactElement<GeneratedIconProps> =
         </span>
     );
 };
+IconPlus.displayName = 'FondueIconPlus';
 
-const MemoizedIconPlus = memo(IconPlus);
-MemoizedIconPlus.displayName = 'FondueIconPlus';
-
-export default MemoizedIconPlus;
+export default memo(IconPlus);

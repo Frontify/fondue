@@ -20,8 +20,6 @@ const IconStackHorizontalAltFour = (props: GeneratedIconProps): ReactElement<Gen
         </span>
     );
 };
+IconStackHorizontalAltFour.displayName = 'FondueIconStackHorizontalAltFour';
 
-const MemoizedIconStackHorizontalAltFour = memo(IconStackHorizontalAltFour);
-MemoizedIconStackHorizontalAltFour.displayName = 'FondueIconStackHorizontalAltFour';
-
-export default MemoizedIconStackHorizontalAltFour;
+export default memo(IconStackHorizontalAltFour);

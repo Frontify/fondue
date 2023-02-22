@@ -20,8 +20,6 @@ const IconLightbulb = (props: GeneratedIconProps): ReactElement<GeneratedIconPro
         </span>
     );
 };
+IconLightbulb.displayName = 'FondueIconLightbulb';
 
-const MemoizedIconLightbulb = memo(IconLightbulb);
-MemoizedIconLightbulb.displayName = 'FondueIconLightbulb';
-
-export default MemoizedIconLightbulb;
+export default memo(IconLightbulb);

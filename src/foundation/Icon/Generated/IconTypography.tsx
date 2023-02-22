@@ -20,8 +20,6 @@ const IconTypography = (props: GeneratedIconProps): ReactElement<GeneratedIconPr
         </span>
     );
 };
+IconTypography.displayName = 'FondueIconTypography';
 
-const MemoizedIconTypography = memo(IconTypography);
-MemoizedIconTypography.displayName = 'FondueIconTypography';
-
-export default MemoizedIconTypography;
+export default memo(IconTypography);

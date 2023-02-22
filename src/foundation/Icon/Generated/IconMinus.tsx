@@ -20,8 +20,6 @@ const IconMinus = (props: GeneratedIconProps): ReactElement<GeneratedIconProps> 
         </span>
     );
 };
+IconMinus.displayName = 'FondueIconMinus';
 
-const MemoizedIconMinus = memo(IconMinus);
-MemoizedIconMinus.displayName = 'FondueIconMinus';
-
-export default MemoizedIconMinus;
+export default memo(IconMinus);

@@ -20,8 +20,6 @@ const IconEyeOff = (props: GeneratedIconProps): ReactElement<GeneratedIconProps>
         </span>
     );
 };
+IconEyeOff.displayName = 'FondueIconEyeOff';
 
-const MemoizedIconEyeOff = memo(IconEyeOff);
-MemoizedIconEyeOff.displayName = 'FondueIconEyeOff';
-
-export default MemoizedIconEyeOff;
+export default memo(IconEyeOff);

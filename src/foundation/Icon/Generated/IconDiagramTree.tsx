@@ -20,8 +20,6 @@ const IconDiagramTree = (props: GeneratedIconProps): ReactElement<GeneratedIconP
         </span>
     );
 };
+IconDiagramTree.displayName = 'FondueIconDiagramTree';
 
-const MemoizedIconDiagramTree = memo(IconDiagramTree);
-MemoizedIconDiagramTree.displayName = 'FondueIconDiagramTree';
-
-export default MemoizedIconDiagramTree;
+export default memo(IconDiagramTree);

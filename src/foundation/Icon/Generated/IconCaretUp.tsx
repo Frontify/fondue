@@ -20,8 +20,6 @@ const IconCaretUp = (props: GeneratedIconProps): ReactElement<GeneratedIconProps
         </span>
     );
 };
+IconCaretUp.displayName = 'FondueIconCaretUp';
 
-const MemoizedIconCaretUp = memo(IconCaretUp);
-MemoizedIconCaretUp.displayName = 'FondueIconCaretUp';
-
-export default MemoizedIconCaretUp;
+export default memo(IconCaretUp);

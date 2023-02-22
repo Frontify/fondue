@@ -20,8 +20,6 @@ const IconCrossCircleBox = (props: GeneratedIconProps): ReactElement<GeneratedIc
         </span>
     );
 };
+IconCrossCircleBox.displayName = 'FondueIconCrossCircleBox';
 
-const MemoizedIconCrossCircleBox = memo(IconCrossCircleBox);
-MemoizedIconCrossCircleBox.displayName = 'FondueIconCrossCircleBox';
-
-export default MemoizedIconCrossCircleBox;
+export default memo(IconCrossCircleBox);

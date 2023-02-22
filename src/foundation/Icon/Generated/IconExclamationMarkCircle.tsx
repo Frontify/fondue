@@ -30,8 +30,6 @@ const IconExclamationMarkCircle = (props: GeneratedIconProps): ReactElement<Gene
         </span>
     );
 };
+IconExclamationMarkCircle.displayName = 'FondueIconExclamationMarkCircle';
 
-const MemoizedIconExclamationMarkCircle = memo(IconExclamationMarkCircle);
-MemoizedIconExclamationMarkCircle.displayName = 'FondueIconExclamationMarkCircle';
-
-export default MemoizedIconExclamationMarkCircle;
+export default memo(IconExclamationMarkCircle);

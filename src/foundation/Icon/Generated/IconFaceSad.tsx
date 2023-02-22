@@ -30,8 +30,6 @@ const IconFaceSad = (props: GeneratedIconProps): ReactElement<GeneratedIconProps
         </span>
     );
 };
+IconFaceSad.displayName = 'FondueIconFaceSad';
 
-const MemoizedIconFaceSad = memo(IconFaceSad);
-MemoizedIconFaceSad.displayName = 'FondueIconFaceSad';
-
-export default MemoizedIconFaceSad;
+export default memo(IconFaceSad);

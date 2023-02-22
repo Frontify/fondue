@@ -20,8 +20,6 @@ const IconTextAlignmentCentre = (props: GeneratedIconProps): ReactElement<Genera
         </span>
     );
 };
+IconTextAlignmentCentre.displayName = 'FondueIconTextAlignmentCentre';
 
-const MemoizedIconTextAlignmentCentre = memo(IconTextAlignmentCentre);
-MemoizedIconTextAlignmentCentre.displayName = 'FondueIconTextAlignmentCentre';
-
-export default MemoizedIconTextAlignmentCentre;
+export default memo(IconTextAlignmentCentre);

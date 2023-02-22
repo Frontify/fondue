@@ -20,8 +20,6 @@ const IconArrowOutShare = (props: GeneratedIconProps): ReactElement<GeneratedIco
         </span>
     );
 };
+IconArrowOutShare.displayName = 'FondueIconArrowOutShare';
 
-const MemoizedIconArrowOutShare = memo(IconArrowOutShare);
-MemoizedIconArrowOutShare.displayName = 'FondueIconArrowOutShare';
-
-export default MemoizedIconArrowOutShare;
+export default memo(IconArrowOutShare);

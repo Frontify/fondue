@@ -20,8 +20,6 @@ const IconArrowOutExternal = (props: GeneratedIconProps): ReactElement<Generated
         </span>
     );
 };
+IconArrowOutExternal.displayName = 'FondueIconArrowOutExternal';
 
-const MemoizedIconArrowOutExternal = memo(IconArrowOutExternal);
-MemoizedIconArrowOutExternal.displayName = 'FondueIconArrowOutExternal';
-
-export default MemoizedIconArrowOutExternal;
+export default memo(IconArrowOutExternal);

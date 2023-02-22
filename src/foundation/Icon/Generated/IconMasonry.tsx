@@ -20,8 +20,6 @@ const IconMasonry = (props: GeneratedIconProps): ReactElement<GeneratedIconProps
         </span>
     );
 };
+IconMasonry.displayName = 'FondueIconMasonry';
 
-const MemoizedIconMasonry = memo(IconMasonry);
-MemoizedIconMasonry.displayName = 'FondueIconMasonry';
-
-export default MemoizedIconMasonry;
+export default memo(IconMasonry);

@@ -20,8 +20,6 @@ const IconSkip5SecondsForward = (props: GeneratedIconProps): ReactElement<Genera
         </span>
     );
 };
+IconSkip5SecondsForward.displayName = 'FondueIconSkip5SecondsForward';
 
-const MemoizedIconSkip5SecondsForward = memo(IconSkip5SecondsForward);
-MemoizedIconSkip5SecondsForward.displayName = 'FondueIconSkip5SecondsForward';
-
-export default MemoizedIconSkip5SecondsForward;
+export default memo(IconSkip5SecondsForward);

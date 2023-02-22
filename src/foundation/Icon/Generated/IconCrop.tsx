@@ -20,8 +20,6 @@ const IconCrop = (props: GeneratedIconProps): ReactElement<GeneratedIconProps> =
         </span>
     );
 };
+IconCrop.displayName = 'FondueIconCrop';
 
-const MemoizedIconCrop = memo(IconCrop);
-MemoizedIconCrop.displayName = 'FondueIconCrop';
-
-export default MemoizedIconCrop;
+export default memo(IconCrop);

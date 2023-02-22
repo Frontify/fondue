@@ -30,8 +30,6 @@ const IconFaceHappy = (props: GeneratedIconProps): ReactElement<GeneratedIconPro
         </span>
     );
 };
+IconFaceHappy.displayName = 'FondueIconFaceHappy';
 
-const MemoizedIconFaceHappy = memo(IconFaceHappy);
-MemoizedIconFaceHappy.displayName = 'FondueIconFaceHappy';
-
-export default MemoizedIconFaceHappy;
+export default memo(IconFaceHappy);

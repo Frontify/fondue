@@ -20,8 +20,6 @@ const IconTextAlignmentLeft = (props: GeneratedIconProps): ReactElement<Generate
         </span>
     );
 };
+IconTextAlignmentLeft.displayName = 'FondueIconTextAlignmentLeft';
 
-const MemoizedIconTextAlignmentLeft = memo(IconTextAlignmentLeft);
-MemoizedIconTextAlignmentLeft.displayName = 'FondueIconTextAlignmentLeft';
-
-export default MemoizedIconTextAlignmentLeft;
+export default memo(IconTextAlignmentLeft);

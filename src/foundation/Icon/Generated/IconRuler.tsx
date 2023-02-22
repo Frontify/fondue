@@ -20,8 +20,6 @@ const IconRuler = (props: GeneratedIconProps): ReactElement<GeneratedIconProps> 
         </span>
     );
 };
+IconRuler.displayName = 'FondueIconRuler';
 
-const MemoizedIconRuler = memo(IconRuler);
-MemoizedIconRuler.displayName = 'FondueIconRuler';
-
-export default MemoizedIconRuler;
+export default memo(IconRuler);

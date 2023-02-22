@@ -20,8 +20,6 @@ const IconCard = (props: GeneratedIconProps): ReactElement<GeneratedIconProps> =
         </span>
     );
 };
+IconCard.displayName = 'FondueIconCard';
 
-const MemoizedIconCard = memo(IconCard);
-MemoizedIconCard.displayName = 'FondueIconCard';
-
-export default MemoizedIconCard;
+export default memo(IconCard);

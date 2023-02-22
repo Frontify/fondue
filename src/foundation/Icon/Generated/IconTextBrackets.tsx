@@ -20,8 +20,6 @@ const IconTextBrackets = (props: GeneratedIconProps): ReactElement<GeneratedIcon
         </span>
     );
 };
+IconTextBrackets.displayName = 'FondueIconTextBrackets';
 
-const MemoizedIconTextBrackets = memo(IconTextBrackets);
-MemoizedIconTextBrackets.displayName = 'FondueIconTextBrackets';
-
-export default MemoizedIconTextBrackets;
+export default memo(IconTextBrackets);

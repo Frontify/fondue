@@ -20,8 +20,6 @@ const IconArrowAlignHorizontalCentre = (props: GeneratedIconProps): ReactElement
         </span>
     );
 };
+IconArrowAlignHorizontalCentre.displayName = 'FondueIconArrowAlignHorizontalCentre';
 
-const MemoizedIconArrowAlignHorizontalCentre = memo(IconArrowAlignHorizontalCentre);
-MemoizedIconArrowAlignHorizontalCentre.displayName = 'FondueIconArrowAlignHorizontalCentre';
-
-export default MemoizedIconArrowAlignHorizontalCentre;
+export default memo(IconArrowAlignHorizontalCentre);

@@ -20,8 +20,6 @@ const IconFixedHeight = (props: GeneratedIconProps): ReactElement<GeneratedIconP
         </span>
     );
 };
+IconFixedHeight.displayName = 'FondueIconFixedHeight';
 
-const MemoizedIconFixedHeight = memo(IconFixedHeight);
-MemoizedIconFixedHeight.displayName = 'FondueIconFixedHeight';
-
-export default MemoizedIconFixedHeight;
+export default memo(IconFixedHeight);

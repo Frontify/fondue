@@ -20,8 +20,6 @@ const IconMapPointer = (props: GeneratedIconProps): ReactElement<GeneratedIconPr
         </span>
     );
 };
+IconMapPointer.displayName = 'FondueIconMapPointer';
 
-const MemoizedIconMapPointer = memo(IconMapPointer);
-MemoizedIconMapPointer.displayName = 'FondueIconMapPointer';
-
-export default MemoizedIconMapPointer;
+export default memo(IconMapPointer);

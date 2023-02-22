@@ -20,8 +20,6 @@ const IconTwitter = (props: GeneratedIconProps): ReactElement<GeneratedIconProps
         </span>
     );
 };
+IconTwitter.displayName = 'FondueIconTwitter';
 
-const MemoizedIconTwitter = memo(IconTwitter);
-MemoizedIconTwitter.displayName = 'FondueIconTwitter';
-
-export default MemoizedIconTwitter;
+export default memo(IconTwitter);

@@ -20,8 +20,6 @@ const IconDoAndDontBox = (props: GeneratedIconProps): ReactElement<GeneratedIcon
         </span>
     );
 };
+IconDoAndDontBox.displayName = 'FondueIconDoAndDontBox';
 
-const MemoizedIconDoAndDontBox = memo(IconDoAndDontBox);
-MemoizedIconDoAndDontBox.displayName = 'FondueIconDoAndDontBox';
-
-export default MemoizedIconDoAndDontBox;
+export default memo(IconDoAndDontBox);

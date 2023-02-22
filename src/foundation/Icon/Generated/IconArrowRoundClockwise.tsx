@@ -20,8 +20,6 @@ const IconArrowRoundClockwise = (props: GeneratedIconProps): ReactElement<Genera
         </span>
     );
 };
+IconArrowRoundClockwise.displayName = 'FondueIconArrowRoundClockwise';
 
-const MemoizedIconArrowRoundClockwise = memo(IconArrowRoundClockwise);
-MemoizedIconArrowRoundClockwise.displayName = 'FondueIconArrowRoundClockwise';
-
-export default MemoizedIconArrowRoundClockwise;
+export default memo(IconArrowRoundClockwise);

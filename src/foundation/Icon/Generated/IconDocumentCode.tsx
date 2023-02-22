@@ -20,8 +20,6 @@ const IconDocumentCode = (props: GeneratedIconProps): ReactElement<GeneratedIcon
         </span>
     );
 };
+IconDocumentCode.displayName = 'FondueIconDocumentCode';
 
-const MemoizedIconDocumentCode = memo(IconDocumentCode);
-MemoizedIconDocumentCode.displayName = 'FondueIconDocumentCode';
-
-export default MemoizedIconDocumentCode;
+export default memo(IconDocumentCode);

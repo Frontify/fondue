@@ -20,8 +20,6 @@ const IconExclamationMark = (props: GeneratedIconProps): ReactElement<GeneratedI
         </span>
     );
 };
+IconExclamationMark.displayName = 'FondueIconExclamationMark';
 
-const MemoizedIconExclamationMark = memo(IconExclamationMark);
-MemoizedIconExclamationMark.displayName = 'FondueIconExclamationMark';
-
-export default MemoizedIconExclamationMark;
+export default memo(IconExclamationMark);

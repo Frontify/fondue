@@ -20,8 +20,6 @@ const IconMusicNote = (props: GeneratedIconProps): ReactElement<GeneratedIconPro
         </span>
     );
 };
+IconMusicNote.displayName = 'FondueIconMusicNote';
 
-const MemoizedIconMusicNote = memo(IconMusicNote);
-MemoizedIconMusicNote.displayName = 'FondueIconMusicNote';
-
-export default MemoizedIconMusicNote;
+export default memo(IconMusicNote);

@@ -20,8 +20,6 @@ const IconTextOutdent = (props: GeneratedIconProps): ReactElement<GeneratedIconP
         </span>
     );
 };
+IconTextOutdent.displayName = 'FondueIconTextOutdent';
 
-const MemoizedIconTextOutdent = memo(IconTextOutdent);
-MemoizedIconTextOutdent.displayName = 'FondueIconTextOutdent';
-
-export default MemoizedIconTextOutdent;
+export default memo(IconTextOutdent);

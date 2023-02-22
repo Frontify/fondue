@@ -20,8 +20,6 @@ const IconSubscript = (props: GeneratedIconProps): ReactElement<GeneratedIconPro
         </span>
     );
 };
+IconSubscript.displayName = 'FondueIconSubscript';
 
-const MemoizedIconSubscript = memo(IconSubscript);
-MemoizedIconSubscript.displayName = 'FondueIconSubscript';
-
-export default MemoizedIconSubscript;
+export default memo(IconSubscript);

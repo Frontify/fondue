@@ -20,8 +20,6 @@ const IconArrowOutLogout = (props: GeneratedIconProps): ReactElement<GeneratedIc
         </span>
     );
 };
+IconArrowOutLogout.displayName = 'FondueIconArrowOutLogout';
 
-const MemoizedIconArrowOutLogout = memo(IconArrowOutLogout);
-MemoizedIconArrowOutLogout.displayName = 'FondueIconArrowOutLogout';
-
-export default MemoizedIconArrowOutLogout;
+export default memo(IconArrowOutLogout);

@@ -20,8 +20,6 @@ const IconStrikethroughBox = (props: GeneratedIconProps): ReactElement<Generated
         </span>
     );
 };
+IconStrikethroughBox.displayName = 'FondueIconStrikethroughBox';
 
-const MemoizedIconStrikethroughBox = memo(IconStrikethroughBox);
-MemoizedIconStrikethroughBox.displayName = 'FondueIconStrikethroughBox';
-
-export default MemoizedIconStrikethroughBox;
+export default memo(IconStrikethroughBox);

@@ -20,8 +20,6 @@ const IconChartPie = (props: GeneratedIconProps): ReactElement<GeneratedIconProp
         </span>
     );
 };
+IconChartPie.displayName = 'FondueIconChartPie';
 
-const MemoizedIconChartPie = memo(IconChartPie);
-MemoizedIconChartPie.displayName = 'FondueIconChartPie';
-
-export default MemoizedIconChartPie;
+export default memo(IconChartPie);

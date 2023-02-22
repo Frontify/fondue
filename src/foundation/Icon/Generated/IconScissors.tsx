@@ -20,8 +20,6 @@ const IconScissors = (props: GeneratedIconProps): ReactElement<GeneratedIconProp
         </span>
     );
 };
+IconScissors.displayName = 'FondueIconScissors';
 
-const MemoizedIconScissors = memo(IconScissors);
-MemoizedIconScissors.displayName = 'FondueIconScissors';
-
-export default MemoizedIconScissors;
+export default memo(IconScissors);

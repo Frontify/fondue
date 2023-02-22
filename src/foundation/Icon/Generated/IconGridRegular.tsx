@@ -30,8 +30,6 @@ const IconGridRegular = (props: GeneratedIconProps): ReactElement<GeneratedIconP
         </span>
     );
 };
+IconGridRegular.displayName = 'FondueIconGridRegular';
 
-const MemoizedIconGridRegular = memo(IconGridRegular);
-MemoizedIconGridRegular.displayName = 'FondueIconGridRegular';
-
-export default MemoizedIconGridRegular;
+export default memo(IconGridRegular);

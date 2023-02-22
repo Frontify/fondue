@@ -20,8 +20,6 @@ const IconArrowBidirectional = (props: GeneratedIconProps): ReactElement<Generat
         </span>
     );
 };
+IconArrowBidirectional.displayName = 'FondueIconArrowBidirectional';
 
-const MemoizedIconArrowBidirectional = memo(IconArrowBidirectional);
-MemoizedIconArrowBidirectional.displayName = 'FondueIconArrowBidirectional';
-
-export default MemoizedIconArrowBidirectional;
+export default memo(IconArrowBidirectional);

@@ -20,8 +20,6 @@ const IconPolygon = (props: GeneratedIconProps): ReactElement<GeneratedIconProps
         </span>
     );
 };
+IconPolygon.displayName = 'FondueIconPolygon';
 
-const MemoizedIconPolygon = memo(IconPolygon);
-MemoizedIconPolygon.displayName = 'FondueIconPolygon';
-
-export default MemoizedIconPolygon;
+export default memo(IconPolygon);

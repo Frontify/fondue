@@ -20,8 +20,6 @@ const IconMediaObjectTextTop = (props: GeneratedIconProps): ReactElement<Generat
         </span>
     );
 };
+IconMediaObjectTextTop.displayName = 'FondueIconMediaObjectTextTop';
 
-const MemoizedIconMediaObjectTextTop = memo(IconMediaObjectTextTop);
-MemoizedIconMediaObjectTextTop.displayName = 'FondueIconMediaObjectTextTop';
-
-export default MemoizedIconMediaObjectTextTop;
+export default memo(IconMediaObjectTextTop);

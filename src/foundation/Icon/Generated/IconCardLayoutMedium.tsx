@@ -20,8 +20,6 @@ const IconCardLayoutMedium = (props: GeneratedIconProps): ReactElement<Generated
         </span>
     );
 };
+IconCardLayoutMedium.displayName = 'FondueIconCardLayoutMedium';
 
-const MemoizedIconCardLayoutMedium = memo(IconCardLayoutMedium);
-MemoizedIconCardLayoutMedium.displayName = 'FondueIconCardLayoutMedium';
-
-export default MemoizedIconCardLayoutMedium;
+export default memo(IconCardLayoutMedium);

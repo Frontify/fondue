@@ -20,8 +20,6 @@ const IconCog = (props: GeneratedIconProps): ReactElement<GeneratedIconProps> =>
         </span>
     );
 };
+IconCog.displayName = 'FondueIconCog';
 
-const MemoizedIconCog = memo(IconCog);
-MemoizedIconCog.displayName = 'FondueIconCog';
-
-export default MemoizedIconCog;
+export default memo(IconCog);

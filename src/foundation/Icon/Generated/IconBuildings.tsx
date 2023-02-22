@@ -20,8 +20,6 @@ const IconBuildings = (props: GeneratedIconProps): ReactElement<GeneratedIconPro
         </span>
     );
 };
+IconBuildings.displayName = 'FondueIconBuildings';
 
-const MemoizedIconBuildings = memo(IconBuildings);
-MemoizedIconBuildings.displayName = 'FondueIconBuildings';
-
-export default MemoizedIconBuildings;
+export default memo(IconBuildings);

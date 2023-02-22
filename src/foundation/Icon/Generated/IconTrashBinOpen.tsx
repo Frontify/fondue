@@ -20,8 +20,6 @@ const IconTrashBinOpen = (props: GeneratedIconProps): ReactElement<GeneratedIcon
         </span>
     );
 };
+IconTrashBinOpen.displayName = 'FondueIconTrashBinOpen';
 
-const MemoizedIconTrashBinOpen = memo(IconTrashBinOpen);
-MemoizedIconTrashBinOpen.displayName = 'FondueIconTrashBinOpen';
-
-export default MemoizedIconTrashBinOpen;
+export default memo(IconTrashBinOpen);

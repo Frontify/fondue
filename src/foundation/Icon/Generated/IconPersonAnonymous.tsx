@@ -20,8 +20,6 @@ const IconPersonAnonymous = (props: GeneratedIconProps): ReactElement<GeneratedI
         </span>
     );
 };
+IconPersonAnonymous.displayName = 'FondueIconPersonAnonymous';
 
-const MemoizedIconPersonAnonymous = memo(IconPersonAnonymous);
-MemoizedIconPersonAnonymous.displayName = 'FondueIconPersonAnonymous';
-
-export default MemoizedIconPersonAnonymous;
+export default memo(IconPersonAnonymous);

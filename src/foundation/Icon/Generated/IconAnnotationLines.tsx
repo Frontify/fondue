@@ -20,8 +20,6 @@ const IconAnnotationLines = (props: GeneratedIconProps): ReactElement<GeneratedI
         </span>
     );
 };
+IconAnnotationLines.displayName = 'FondueIconAnnotationLines';
 
-const MemoizedIconAnnotationLines = memo(IconAnnotationLines);
-MemoizedIconAnnotationLines.displayName = 'FondueIconAnnotationLines';
-
-export default MemoizedIconAnnotationLines;
+export default memo(IconAnnotationLines);

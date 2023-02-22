@@ -20,8 +20,6 @@ const IconHeartCircleStack = (props: GeneratedIconProps): ReactElement<Generated
         </span>
     );
 };
+IconHeartCircleStack.displayName = 'FondueIconHeartCircleStack';
 
-const MemoizedIconHeartCircleStack = memo(IconHeartCircleStack);
-MemoizedIconHeartCircleStack.displayName = 'FondueIconHeartCircleStack';
-
-export default MemoizedIconHeartCircleStack;
+export default memo(IconHeartCircleStack);

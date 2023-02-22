@@ -20,8 +20,6 @@ const IconDividerDotted = (props: GeneratedIconProps): ReactElement<GeneratedIco
         </span>
     );
 };
+IconDividerDotted.displayName = 'FondueIconDividerDotted';
 
-const MemoizedIconDividerDotted = memo(IconDividerDotted);
-MemoizedIconDividerDotted.displayName = 'FondueIconDividerDotted';
-
-export default MemoizedIconDividerDotted;
+export default memo(IconDividerDotted);

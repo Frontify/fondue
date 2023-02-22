@@ -20,8 +20,6 @@ const IconQuestionMark = (props: GeneratedIconProps): ReactElement<GeneratedIcon
         </span>
     );
 };
+IconQuestionMark.displayName = 'FondueIconQuestionMark';
 
-const MemoizedIconQuestionMark = memo(IconQuestionMark);
-MemoizedIconQuestionMark.displayName = 'FondueIconQuestionMark';
-
-export default MemoizedIconQuestionMark;
+export default memo(IconQuestionMark);

@@ -20,8 +20,6 @@ const IconListBullet = (props: GeneratedIconProps): ReactElement<GeneratedIconPr
         </span>
     );
 };
+IconListBullet.displayName = 'FondueIconListBullet';
 
-const MemoizedIconListBullet = memo(IconListBullet);
-MemoizedIconListBullet.displayName = 'FondueIconListBullet';
-
-export default MemoizedIconListBullet;
+export default memo(IconListBullet);

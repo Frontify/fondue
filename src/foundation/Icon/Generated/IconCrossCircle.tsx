@@ -30,8 +30,6 @@ const IconCrossCircle = (props: GeneratedIconProps): ReactElement<GeneratedIconP
         </span>
     );
 };
+IconCrossCircle.displayName = 'FondueIconCrossCircle';
 
-const MemoizedIconCrossCircle = memo(IconCrossCircle);
-MemoizedIconCrossCircle.displayName = 'FondueIconCrossCircle';
-
-export default MemoizedIconCrossCircle;
+export default memo(IconCrossCircle);

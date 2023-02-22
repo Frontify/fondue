@@ -20,8 +20,6 @@ const IconLayersSingle = (props: GeneratedIconProps): ReactElement<GeneratedIcon
         </span>
     );
 };
+IconLayersSingle.displayName = 'FondueIconLayersSingle';
 
-const MemoizedIconLayersSingle = memo(IconLayersSingle);
-MemoizedIconLayersSingle.displayName = 'FondueIconLayersSingle';
-
-export default MemoizedIconLayersSingle;
+export default memo(IconLayersSingle);

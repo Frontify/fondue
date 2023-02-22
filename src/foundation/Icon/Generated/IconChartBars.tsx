@@ -20,8 +20,6 @@ const IconChartBars = (props: GeneratedIconProps): ReactElement<GeneratedIconPro
         </span>
     );
 };
+IconChartBars.displayName = 'FondueIconChartBars';
 
-const MemoizedIconChartBars = memo(IconChartBars);
-MemoizedIconChartBars.displayName = 'FondueIconChartBars';
-
-export default MemoizedIconChartBars;
+export default memo(IconChartBars);

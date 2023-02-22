@@ -30,8 +30,6 @@ const IconPause = (props: GeneratedIconProps): ReactElement<GeneratedIconProps> 
         </span>
     );
 };
+IconPause.displayName = 'FondueIconPause';
 
-const MemoizedIconPause = memo(IconPause);
-MemoizedIconPause.displayName = 'FondueIconPause';
-
-export default MemoizedIconPause;
+export default memo(IconPause);

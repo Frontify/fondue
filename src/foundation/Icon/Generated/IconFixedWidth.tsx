@@ -20,8 +20,6 @@ const IconFixedWidth = (props: GeneratedIconProps): ReactElement<GeneratedIconPr
         </span>
     );
 };
+IconFixedWidth.displayName = 'FondueIconFixedWidth';
 
-const MemoizedIconFixedWidth = memo(IconFixedWidth);
-MemoizedIconFixedWidth.displayName = 'FondueIconFixedWidth';
-
-export default MemoizedIconFixedWidth;
+export default memo(IconFixedWidth);

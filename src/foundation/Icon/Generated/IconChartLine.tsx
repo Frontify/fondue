@@ -20,8 +20,6 @@ const IconChartLine = (props: GeneratedIconProps): ReactElement<GeneratedIconPro
         </span>
     );
 };
+IconChartLine.displayName = 'FondueIconChartLine';
 
-const MemoizedIconChartLine = memo(IconChartLine);
-MemoizedIconChartLine.displayName = 'FondueIconChartLine';
-
-export default MemoizedIconChartLine;
+export default memo(IconChartLine);

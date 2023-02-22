@@ -20,8 +20,6 @@ const IconTable = (props: GeneratedIconProps): ReactElement<GeneratedIconProps> 
         </span>
     );
 };
+IconTable.displayName = 'FondueIconTable';
 
-const MemoizedIconTable = memo(IconTable);
-MemoizedIconTable.displayName = 'FondueIconTable';
-
-export default MemoizedIconTable;
+export default memo(IconTable);

@@ -20,8 +20,6 @@ const IconPlayBox = (props: GeneratedIconProps): ReactElement<GeneratedIconProps
         </span>
     );
 };
+IconPlayBox.displayName = 'FondueIconPlayBox';
 
-const MemoizedIconPlayBox = memo(IconPlayBox);
-MemoizedIconPlayBox.displayName = 'FondueIconPlayBox';
-
-export default MemoizedIconPlayBox;
+export default memo(IconPlayBox);

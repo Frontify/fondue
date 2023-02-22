@@ -20,8 +20,6 @@ const IconArrowStretchBox = (props: GeneratedIconProps): ReactElement<GeneratedI
         </span>
     );
 };
+IconArrowStretchBox.displayName = 'FondueIconArrowStretchBox';
 
-const MemoizedIconArrowStretchBox = memo(IconArrowStretchBox);
-MemoizedIconArrowStretchBox.displayName = 'FondueIconArrowStretchBox';
-
-export default MemoizedIconArrowStretchBox;
+export default memo(IconArrowStretchBox);

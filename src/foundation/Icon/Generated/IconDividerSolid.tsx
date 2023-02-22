@@ -20,8 +20,6 @@ const IconDividerSolid = (props: GeneratedIconProps): ReactElement<GeneratedIcon
         </span>
     );
 };
+IconDividerSolid.displayName = 'FondueIconDividerSolid';
 
-const MemoizedIconDividerSolid = memo(IconDividerSolid);
-MemoizedIconDividerSolid.displayName = 'FondueIconDividerSolid';
-
-export default MemoizedIconDividerSolid;
+export default memo(IconDividerSolid);

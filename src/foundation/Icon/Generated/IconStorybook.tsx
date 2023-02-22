@@ -20,8 +20,6 @@ const IconStorybook = (props: GeneratedIconProps): ReactElement<GeneratedIconPro
         </span>
     );
 };
+IconStorybook.displayName = 'FondueIconStorybook';
 
-const MemoizedIconStorybook = memo(IconStorybook);
-MemoizedIconStorybook.displayName = 'FondueIconStorybook';
-
-export default MemoizedIconStorybook;
+export default memo(IconStorybook);

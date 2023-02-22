@@ -20,8 +20,6 @@ const IconFocalPoint = (props: GeneratedIconProps): ReactElement<GeneratedIconPr
         </span>
     );
 };
+IconFocalPoint.displayName = 'FondueIconFocalPoint';
 
-const MemoizedIconFocalPoint = memo(IconFocalPoint);
-MemoizedIconFocalPoint.displayName = 'FondueIconFocalPoint';
-
-export default MemoizedIconFocalPoint;
+export default memo(IconFocalPoint);

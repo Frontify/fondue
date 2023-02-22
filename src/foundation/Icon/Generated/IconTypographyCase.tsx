@@ -20,8 +20,6 @@ const IconTypographyCase = (props: GeneratedIconProps): ReactElement<GeneratedIc
         </span>
     );
 };
+IconTypographyCase.displayName = 'FondueIconTypographyCase';
 
-const MemoizedIconTypographyCase = memo(IconTypographyCase);
-MemoizedIconTypographyCase.displayName = 'FondueIconTypographyCase';
-
-export default MemoizedIconTypographyCase;
+export default memo(IconTypographyCase);

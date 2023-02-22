@@ -20,8 +20,6 @@ const IconLanguage = (props: GeneratedIconProps): ReactElement<GeneratedIconProp
         </span>
     );
 };
+IconLanguage.displayName = 'FondueIconLanguage';
 
-const MemoizedIconLanguage = memo(IconLanguage);
-MemoizedIconLanguage.displayName = 'FondueIconLanguage';
-
-export default MemoizedIconLanguage;
+export default memo(IconLanguage);

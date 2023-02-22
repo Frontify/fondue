@@ -20,8 +20,6 @@ const IconScaleSmall = (props: GeneratedIconProps): ReactElement<GeneratedIconPr
         </span>
     );
 };
+IconScaleSmall.displayName = 'FondueIconScaleSmall';
 
-const MemoizedIconScaleSmall = memo(IconScaleSmall);
-MemoizedIconScaleSmall.displayName = 'FondueIconScaleSmall';
-
-export default MemoizedIconScaleSmall;
+export default memo(IconScaleSmall);

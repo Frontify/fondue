@@ -20,8 +20,6 @@ const IconPen = (props: GeneratedIconProps): ReactElement<GeneratedIconProps> =>
         </span>
     );
 };
+IconPen.displayName = 'FondueIconPen';
 
-const MemoizedIconPen = memo(IconPen);
-MemoizedIconPen.displayName = 'FondueIconPen';
-
-export default MemoizedIconPen;
+export default memo(IconPen);

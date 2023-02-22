@@ -20,8 +20,6 @@ const IconFunnel = (props: GeneratedIconProps): ReactElement<GeneratedIconProps>
         </span>
     );
 };
+IconFunnel.displayName = 'FondueIconFunnel';
 
-const MemoizedIconFunnel = memo(IconFunnel);
-MemoizedIconFunnel.displayName = 'FondueIconFunnel';
-
-export default MemoizedIconFunnel;
+export default memo(IconFunnel);

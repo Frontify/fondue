@@ -20,8 +20,6 @@ const IconBasketball = (props: GeneratedIconProps): ReactElement<GeneratedIconPr
         </span>
     );
 };
+IconBasketball.displayName = 'FondueIconBasketball';
 
-const MemoizedIconBasketball = memo(IconBasketball);
-MemoizedIconBasketball.displayName = 'FondueIconBasketball';
-
-export default MemoizedIconBasketball;
+export default memo(IconBasketball);

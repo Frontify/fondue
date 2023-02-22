@@ -30,8 +30,6 @@ const IconFaceNeutral = (props: GeneratedIconProps): ReactElement<GeneratedIconP
         </span>
     );
 };
+IconFaceNeutral.displayName = 'FondueIconFaceNeutral';
 
-const MemoizedIconFaceNeutral = memo(IconFaceNeutral);
-MemoizedIconFaceNeutral.displayName = 'FondueIconFaceNeutral';
-
-export default MemoizedIconFaceNeutral;
+export default memo(IconFaceNeutral);

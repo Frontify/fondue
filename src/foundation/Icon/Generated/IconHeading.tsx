@@ -20,8 +20,6 @@ const IconHeading = (props: GeneratedIconProps): ReactElement<GeneratedIconProps
         </span>
     );
 };
+IconHeading.displayName = 'FondueIconHeading';
 
-const MemoizedIconHeading = memo(IconHeading);
-MemoizedIconHeading.displayName = 'FondueIconHeading';
-
-export default MemoizedIconHeading;
+export default memo(IconHeading);

@@ -20,8 +20,6 @@ const IconSpeakerOff = (props: GeneratedIconProps): ReactElement<GeneratedIconPr
         </span>
     );
 };
+IconSpeakerOff.displayName = 'FondueIconSpeakerOff';
 
-const MemoizedIconSpeakerOff = memo(IconSpeakerOff);
-MemoizedIconSpeakerOff.displayName = 'FondueIconSpeakerOff';
-
-export default MemoizedIconSpeakerOff;
+export default memo(IconSpeakerOff);

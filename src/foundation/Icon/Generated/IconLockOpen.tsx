@@ -30,8 +30,6 @@ const IconLockOpen = (props: GeneratedIconProps): ReactElement<GeneratedIconProp
         </span>
     );
 };
+IconLockOpen.displayName = 'FondueIconLockOpen';
 
-const MemoizedIconLockOpen = memo(IconLockOpen);
-MemoizedIconLockOpen.displayName = 'FondueIconLockOpen';
-
-export default MemoizedIconLockOpen;
+export default memo(IconLockOpen);

@@ -20,8 +20,6 @@ const IconPersonSlash = (props: GeneratedIconProps): ReactElement<GeneratedIconP
         </span>
     );
 };
+IconPersonSlash.displayName = 'FondueIconPersonSlash';
 
-const MemoizedIconPersonSlash = memo(IconPersonSlash);
-MemoizedIconPersonSlash.displayName = 'FondueIconPersonSlash';
-
-export default MemoizedIconPersonSlash;
+export default memo(IconPersonSlash);

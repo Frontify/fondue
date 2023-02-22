@@ -20,8 +20,6 @@ const IconPlusBoxStack = (props: GeneratedIconProps): ReactElement<GeneratedIcon
         </span>
     );
 };
+IconPlusBoxStack.displayName = 'FondueIconPlusBoxStack';
 
-const MemoizedIconPlusBoxStack = memo(IconPlusBoxStack);
-MemoizedIconPlusBoxStack.displayName = 'FondueIconPlusBoxStack';
-
-export default MemoizedIconPlusBoxStack;
+export default memo(IconPlusBoxStack);

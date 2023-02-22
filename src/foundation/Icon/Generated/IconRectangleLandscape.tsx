@@ -20,8 +20,6 @@ const IconRectangleLandscape = (props: GeneratedIconProps): ReactElement<Generat
         </span>
     );
 };
+IconRectangleLandscape.displayName = 'FondueIconRectangleLandscape';
 
-const MemoizedIconRectangleLandscape = memo(IconRectangleLandscape);
-MemoizedIconRectangleLandscape.displayName = 'FondueIconRectangleLandscape';
-
-export default MemoizedIconRectangleLandscape;
+export default memo(IconRectangleLandscape);

@@ -20,8 +20,6 @@ const IconDrops = (props: GeneratedIconProps): ReactElement<GeneratedIconProps> 
         </span>
     );
 };
+IconDrops.displayName = 'FondueIconDrops';
 
-const MemoizedIconDrops = memo(IconDrops);
-MemoizedIconDrops.displayName = 'FondueIconDrops';
-
-export default MemoizedIconDrops;
+export default memo(IconDrops);

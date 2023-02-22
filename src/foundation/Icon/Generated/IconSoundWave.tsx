@@ -20,8 +20,6 @@ const IconSoundWave = (props: GeneratedIconProps): ReactElement<GeneratedIconPro
         </span>
     );
 };
+IconSoundWave.displayName = 'FondueIconSoundWave';
 
-const MemoizedIconSoundWave = memo(IconSoundWave);
-MemoizedIconSoundWave.displayName = 'FondueIconSoundWave';
-
-export default MemoizedIconSoundWave;
+export default memo(IconSoundWave);

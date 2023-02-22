@@ -20,8 +20,6 @@ const IconArrowAlignUp = (props: GeneratedIconProps): ReactElement<GeneratedIcon
         </span>
     );
 };
+IconArrowAlignUp.displayName = 'FondueIconArrowAlignUp';
 
-const MemoizedIconArrowAlignUp = memo(IconArrowAlignUp);
-MemoizedIconArrowAlignUp.displayName = 'FondueIconArrowAlignUp';
-
-export default MemoizedIconArrowAlignUp;
+export default memo(IconArrowAlignUp);

@@ -20,8 +20,6 @@ const IconEnvelope = (props: GeneratedIconProps): ReactElement<GeneratedIconProp
         </span>
     );
 };
+IconEnvelope.displayName = 'FondueIconEnvelope';
 
-const MemoizedIconEnvelope = memo(IconEnvelope);
-MemoizedIconEnvelope.displayName = 'FondueIconEnvelope';
-
-export default MemoizedIconEnvelope;
+export default memo(IconEnvelope);

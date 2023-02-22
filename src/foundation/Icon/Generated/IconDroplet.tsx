@@ -20,8 +20,6 @@ const IconDroplet = (props: GeneratedIconProps): ReactElement<GeneratedIconProps
         </span>
     );
 };
+IconDroplet.displayName = 'FondueIconDroplet';
 
-const MemoizedIconDroplet = memo(IconDroplet);
-MemoizedIconDroplet.displayName = 'FondueIconDroplet';
-
-export default MemoizedIconDroplet;
+export default memo(IconDroplet);

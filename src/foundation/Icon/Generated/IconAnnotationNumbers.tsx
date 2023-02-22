@@ -20,8 +20,6 @@ const IconAnnotationNumbers = (props: GeneratedIconProps): ReactElement<Generate
         </span>
     );
 };
+IconAnnotationNumbers.displayName = 'FondueIconAnnotationNumbers';
 
-const MemoizedIconAnnotationNumbers = memo(IconAnnotationNumbers);
-MemoizedIconAnnotationNumbers.displayName = 'FondueIconAnnotationNumbers';
-
-export default MemoizedIconAnnotationNumbers;
+export default memo(IconAnnotationNumbers);

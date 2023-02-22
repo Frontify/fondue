@@ -20,8 +20,6 @@ const IconMoneyCircle = (props: GeneratedIconProps): ReactElement<GeneratedIconP
         </span>
     );
 };
+IconMoneyCircle.displayName = 'FondueIconMoneyCircle';
 
-const MemoizedIconMoneyCircle = memo(IconMoneyCircle);
-MemoizedIconMoneyCircle.displayName = 'FondueIconMoneyCircle';
-
-export default MemoizedIconMoneyCircle;
+export default memo(IconMoneyCircle);

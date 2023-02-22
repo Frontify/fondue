@@ -20,8 +20,6 @@ const IconMegaphone = (props: GeneratedIconProps): ReactElement<GeneratedIconPro
         </span>
     );
 };
+IconMegaphone.displayName = 'FondueIconMegaphone';
 
-const MemoizedIconMegaphone = memo(IconMegaphone);
-MemoizedIconMegaphone.displayName = 'FondueIconMegaphone';
-
-export default MemoizedIconMegaphone;
+export default memo(IconMegaphone);

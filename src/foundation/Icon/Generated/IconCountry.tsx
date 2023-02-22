@@ -20,8 +20,6 @@ const IconCountry = (props: GeneratedIconProps): ReactElement<GeneratedIconProps
         </span>
     );
 };
+IconCountry.displayName = 'FondueIconCountry';
 
-const MemoizedIconCountry = memo(IconCountry);
-MemoizedIconCountry.displayName = 'FondueIconCountry';
-
-export default MemoizedIconCountry;
+export default memo(IconCountry);

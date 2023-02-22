@@ -20,8 +20,6 @@ const IconCarousel = (props: GeneratedIconProps): ReactElement<GeneratedIconProp
         </span>
     );
 };
+IconCarousel.displayName = 'FondueIconCarousel';
 
-const MemoizedIconCarousel = memo(IconCarousel);
-MemoizedIconCarousel.displayName = 'FondueIconCarousel';
-
-export default MemoizedIconCarousel;
+export default memo(IconCarousel);

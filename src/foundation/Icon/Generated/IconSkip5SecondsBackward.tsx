@@ -20,8 +20,6 @@ const IconSkip5SecondsBackward = (props: GeneratedIconProps): ReactElement<Gener
         </span>
     );
 };
+IconSkip5SecondsBackward.displayName = 'FondueIconSkip5SecondsBackward';
 
-const MemoizedIconSkip5SecondsBackward = memo(IconSkip5SecondsBackward);
-MemoizedIconSkip5SecondsBackward.displayName = 'FondueIconSkip5SecondsBackward';
-
-export default MemoizedIconSkip5SecondsBackward;
+export default memo(IconSkip5SecondsBackward);

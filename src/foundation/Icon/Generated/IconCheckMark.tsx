@@ -20,8 +20,6 @@ const IconCheckMark = (props: GeneratedIconProps): ReactElement<GeneratedIconPro
         </span>
     );
 };
+IconCheckMark.displayName = 'FondueIconCheckMark';
 
-const MemoizedIconCheckMark = memo(IconCheckMark);
-MemoizedIconCheckMark.displayName = 'FondueIconCheckMark';
-
-export default MemoizedIconCheckMark;
+export default memo(IconCheckMark);

@@ -20,8 +20,6 @@ const IconDotsVertical = (props: GeneratedIconProps): ReactElement<GeneratedIcon
         </span>
     );
 };
+IconDotsVertical.displayName = 'FondueIconDotsVertical';
 
-const MemoizedIconDotsVertical = memo(IconDotsVertical);
-MemoizedIconDotsVertical.displayName = 'FondueIconDotsVertical';
-
-export default MemoizedIconDotsVertical;
+export default memo(IconDotsVertical);

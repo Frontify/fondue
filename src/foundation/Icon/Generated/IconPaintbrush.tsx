@@ -20,8 +20,6 @@ const IconPaintbrush = (props: GeneratedIconProps): ReactElement<GeneratedIconPr
         </span>
     );
 };
+IconPaintbrush.displayName = 'FondueIconPaintbrush';
 
-const MemoizedIconPaintbrush = memo(IconPaintbrush);
-MemoizedIconPaintbrush.displayName = 'FondueIconPaintbrush';
-
-export default MemoizedIconPaintbrush;
+export default memo(IconPaintbrush);

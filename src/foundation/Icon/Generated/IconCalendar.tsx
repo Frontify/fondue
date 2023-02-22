@@ -20,8 +20,6 @@ const IconCalendar = (props: GeneratedIconProps): ReactElement<GeneratedIconProp
         </span>
     );
 };
+IconCalendar.displayName = 'FondueIconCalendar';
 
-const MemoizedIconCalendar = memo(IconCalendar);
-MemoizedIconCalendar.displayName = 'FondueIconCalendar';
-
-export default MemoizedIconCalendar;
+export default memo(IconCalendar);

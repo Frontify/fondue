@@ -20,8 +20,6 @@ const IconBracketsCurly = (props: GeneratedIconProps): ReactElement<GeneratedIco
         </span>
     );
 };
+IconBracketsCurly.displayName = 'FondueIconBracketsCurly';
 
-const MemoizedIconBracketsCurly = memo(IconBracketsCurly);
-MemoizedIconBracketsCurly.displayName = 'FondueIconBracketsCurly';
-
-export default MemoizedIconBracketsCurly;
+export default memo(IconBracketsCurly);

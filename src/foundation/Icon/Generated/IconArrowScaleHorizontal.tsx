@@ -20,8 +20,6 @@ const IconArrowScaleHorizontal = (props: GeneratedIconProps): ReactElement<Gener
         </span>
     );
 };
+IconArrowScaleHorizontal.displayName = 'FondueIconArrowScaleHorizontal';
 
-const MemoizedIconArrowScaleHorizontal = memo(IconArrowScaleHorizontal);
-MemoizedIconArrowScaleHorizontal.displayName = 'FondueIconArrowScaleHorizontal';
-
-export default MemoizedIconArrowScaleHorizontal;
+export default memo(IconArrowScaleHorizontal);

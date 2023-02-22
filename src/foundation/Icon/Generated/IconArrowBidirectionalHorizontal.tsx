@@ -20,8 +20,6 @@ const IconArrowBidirectionalHorizontal = (props: GeneratedIconProps): ReactEleme
         </span>
     );
 };
+IconArrowBidirectionalHorizontal.displayName = 'FondueIconArrowBidirectionalHorizontal';
 
-const MemoizedIconArrowBidirectionalHorizontal = memo(IconArrowBidirectionalHorizontal);
-MemoizedIconArrowBidirectionalHorizontal.displayName = 'FondueIconArrowBidirectionalHorizontal';
-
-export default MemoizedIconArrowBidirectionalHorizontal;
+export default memo(IconArrowBidirectionalHorizontal);

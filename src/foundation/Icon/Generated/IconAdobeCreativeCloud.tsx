@@ -20,8 +20,6 @@ const IconAdobeCreativeCloud = (props: GeneratedIconProps): ReactElement<Generat
         </span>
     );
 };
+IconAdobeCreativeCloud.displayName = 'FondueIconAdobeCreativeCloud';
 
-const MemoizedIconAdobeCreativeCloud = memo(IconAdobeCreativeCloud);
-MemoizedIconAdobeCreativeCloud.displayName = 'FondueIconAdobeCreativeCloud';
-
-export default MemoizedIconAdobeCreativeCloud;
+export default memo(IconAdobeCreativeCloud);

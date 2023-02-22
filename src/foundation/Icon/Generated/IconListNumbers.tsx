@@ -20,8 +20,6 @@ const IconListNumbers = (props: GeneratedIconProps): ReactElement<GeneratedIconP
         </span>
     );
 };
+IconListNumbers.displayName = 'FondueIconListNumbers';
 
-const MemoizedIconListNumbers = memo(IconListNumbers);
-MemoizedIconListNumbers.displayName = 'FondueIconListNumbers';
-
-export default MemoizedIconListNumbers;
+export default memo(IconListNumbers);

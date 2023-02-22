@@ -20,8 +20,6 @@ const IconSide = (props: GeneratedIconProps): ReactElement<GeneratedIconProps> =
         </span>
     );
 };
+IconSide.displayName = 'FondueIconSide';
 
-const MemoizedIconSide = memo(IconSide);
-MemoizedIconSide.displayName = 'FondueIconSide';
-
-export default MemoizedIconSide;
+export default memo(IconSide);

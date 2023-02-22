@@ -20,8 +20,6 @@ const IconTextAlignmentJustify = (props: GeneratedIconProps): ReactElement<Gener
         </span>
     );
 };
+IconTextAlignmentJustify.displayName = 'FondueIconTextAlignmentJustify';
 
-const MemoizedIconTextAlignmentJustify = memo(IconTextAlignmentJustify);
-MemoizedIconTextAlignmentJustify.displayName = 'FondueIconTextAlignmentJustify';
-
-export default MemoizedIconTextAlignmentJustify;
+export default memo(IconTextAlignmentJustify);

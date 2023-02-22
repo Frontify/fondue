@@ -20,8 +20,6 @@ const IconCodeBox = (props: GeneratedIconProps): ReactElement<GeneratedIconProps
         </span>
     );
 };
+IconCodeBox.displayName = 'FondueIconCodeBox';
 
-const MemoizedIconCodeBox = memo(IconCodeBox);
-MemoizedIconCodeBox.displayName = 'FondueIconCodeBox';
-
-export default MemoizedIconCodeBox;
+export default memo(IconCodeBox);

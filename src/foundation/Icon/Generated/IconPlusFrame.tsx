@@ -20,8 +20,6 @@ const IconPlusFrame = (props: GeneratedIconProps): ReactElement<GeneratedIconPro
         </span>
     );
 };
+IconPlusFrame.displayName = 'FondueIconPlusFrame';
 
-const MemoizedIconPlusFrame = memo(IconPlusFrame);
-MemoizedIconPlusFrame.displayName = 'FondueIconPlusFrame';
-
-export default MemoizedIconPlusFrame;
+export default memo(IconPlusFrame);

@@ -20,8 +20,6 @@ const IconLeaf = (props: GeneratedIconProps): ReactElement<GeneratedIconProps> =
         </span>
     );
 };
+IconLeaf.displayName = 'FondueIconLeaf';
 
-const MemoizedIconLeaf = memo(IconLeaf);
-MemoizedIconLeaf.displayName = 'FondueIconLeaf';
-
-export default MemoizedIconLeaf;
+export default memo(IconLeaf);

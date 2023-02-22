@@ -43,10 +43,8 @@ const ${props.name} = (props: GeneratedIconProps): ReactElement<GeneratedIconPro
         </span>
     );
 };
+${props.name}.displayName = 'Fondue${props.name}';
 
-const Memoized${props.name} = memo(${props.name});
-Memoized${props.name}.displayName = 'Fondue${props.name}';
-
-export default Memoized${props.name};
+export default memo(${props.name});
 `;
 };

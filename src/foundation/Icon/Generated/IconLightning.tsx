@@ -30,8 +30,6 @@ const IconLightning = (props: GeneratedIconProps): ReactElement<GeneratedIconPro
         </span>
     );
 };
+IconLightning.displayName = 'FondueIconLightning';
 
-const MemoizedIconLightning = memo(IconLightning);
-MemoizedIconLightning.displayName = 'FondueIconLightning';
-
-export default MemoizedIconLightning;
+export default memo(IconLightning);

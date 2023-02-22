@@ -20,8 +20,6 @@ const IconBell = (props: GeneratedIconProps): ReactElement<GeneratedIconProps> =
         </span>
     );
 };
+IconBell.displayName = 'FondueIconBell';
 
-const MemoizedIconBell = memo(IconBell);
-MemoizedIconBell.displayName = 'FondueIconBell';
-
-export default MemoizedIconBell;
+export default memo(IconBell);

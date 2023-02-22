@@ -20,8 +20,6 @@ const IconAnchor = (props: GeneratedIconProps): ReactElement<GeneratedIconProps>
         </span>
     );
 };
+IconAnchor.displayName = 'FondueIconAnchor';
 
-const MemoizedIconAnchor = memo(IconAnchor);
-MemoizedIconAnchor.displayName = 'FondueIconAnchor';
-
-export default MemoizedIconAnchor;
+export default memo(IconAnchor);

@@ -30,8 +30,6 @@ const IconSidebarLeftShow = (props: GeneratedIconProps): ReactElement<GeneratedI
         </span>
     );
 };
+IconSidebarLeftShow.displayName = 'FondueIconSidebarLeftShow';
 
-const MemoizedIconSidebarLeftShow = memo(IconSidebarLeftShow);
-MemoizedIconSidebarLeftShow.displayName = 'FondueIconSidebarLeftShow';
-
-export default MemoizedIconSidebarLeftShow;
+export default memo(IconSidebarLeftShow);

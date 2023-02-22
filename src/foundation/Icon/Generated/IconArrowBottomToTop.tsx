@@ -20,8 +20,6 @@ const IconArrowBottomToTop = (props: GeneratedIconProps): ReactElement<Generated
         </span>
     );
 };
+IconArrowBottomToTop.displayName = 'FondueIconArrowBottomToTop';
 
-const MemoizedIconArrowBottomToTop = memo(IconArrowBottomToTop);
-MemoizedIconArrowBottomToTop.displayName = 'FondueIconArrowBottomToTop';
-
-export default MemoizedIconArrowBottomToTop;
+export default memo(IconArrowBottomToTop);

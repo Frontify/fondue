@@ -20,8 +20,6 @@ const IconEye = (props: GeneratedIconProps): ReactElement<GeneratedIconProps> =>
         </span>
     );
 };
+IconEye.displayName = 'FondueIconEye';
 
-const MemoizedIconEye = memo(IconEye);
-MemoizedIconEye.displayName = 'FondueIconEye';
-
-export default MemoizedIconEye;
+export default memo(IconEye);

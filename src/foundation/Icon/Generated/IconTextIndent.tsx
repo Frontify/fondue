@@ -20,8 +20,6 @@ const IconTextIndent = (props: GeneratedIconProps): ReactElement<GeneratedIconPr
         </span>
     );
 };
+IconTextIndent.displayName = 'FondueIconTextIndent';
 
-const MemoizedIconTextIndent = memo(IconTextIndent);
-MemoizedIconTextIndent.displayName = 'FondueIconTextIndent';
-
-export default MemoizedIconTextIndent;
+export default memo(IconTextIndent);

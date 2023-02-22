@@ -20,8 +20,6 @@ const IconTextFormatStrikethrough = (props: GeneratedIconProps): ReactElement<Ge
         </span>
     );
 };
+IconTextFormatStrikethrough.displayName = 'FondueIconTextFormatStrikethrough';
 
-const MemoizedIconTextFormatStrikethrough = memo(IconTextFormatStrikethrough);
-MemoizedIconTextFormatStrikethrough.displayName = 'FondueIconTextFormatStrikethrough';
-
-export default MemoizedIconTextFormatStrikethrough;
+export default memo(IconTextFormatStrikethrough);

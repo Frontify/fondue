@@ -20,8 +20,6 @@ const IconTextBoxStack = (props: GeneratedIconProps): ReactElement<GeneratedIcon
         </span>
     );
 };
+IconTextBoxStack.displayName = 'FondueIconTextBoxStack';
 
-const MemoizedIconTextBoxStack = memo(IconTextBoxStack);
-MemoizedIconTextBoxStack.displayName = 'FondueIconTextBoxStack';
-
-export default MemoizedIconTextBoxStack;
+export default memo(IconTextBoxStack);

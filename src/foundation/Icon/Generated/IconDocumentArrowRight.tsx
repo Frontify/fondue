@@ -20,8 +20,6 @@ const IconDocumentArrowRight = (props: GeneratedIconProps): ReactElement<Generat
         </span>
     );
 };
+IconDocumentArrowRight.displayName = 'FondueIconDocumentArrowRight';
 
-const MemoizedIconDocumentArrowRight = memo(IconDocumentArrowRight);
-MemoizedIconDocumentArrowRight.displayName = 'FondueIconDocumentArrowRight';
-
-export default MemoizedIconDocumentArrowRight;
+export default memo(IconDocumentArrowRight);

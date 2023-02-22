@@ -20,8 +20,6 @@ const IconDividerBlank = (props: GeneratedIconProps): ReactElement<GeneratedIcon
         </span>
     );
 };
+IconDividerBlank.displayName = 'FondueIconDividerBlank';
 
-const MemoizedIconDividerBlank = memo(IconDividerBlank);
-MemoizedIconDividerBlank.displayName = 'FondueIconDividerBlank';
-
-export default MemoizedIconDividerBlank;
+export default memo(IconDividerBlank);

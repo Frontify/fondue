@@ -20,8 +20,6 @@ const IconDotsHorizontal = (props: GeneratedIconProps): ReactElement<GeneratedIc
         </span>
     );
 };
+IconDotsHorizontal.displayName = 'FondueIconDotsHorizontal';
 
-const MemoizedIconDotsHorizontal = memo(IconDotsHorizontal);
-MemoizedIconDotsHorizontal.displayName = 'FondueIconDotsHorizontal';
-
-export default MemoizedIconDotsHorizontal;
+export default memo(IconDotsHorizontal);

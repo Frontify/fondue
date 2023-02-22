@@ -20,8 +20,6 @@ const IconSuperscript = (props: GeneratedIconProps): ReactElement<GeneratedIconP
         </span>
     );
 };
+IconSuperscript.displayName = 'FondueIconSuperscript';
 
-const MemoizedIconSuperscript = memo(IconSuperscript);
-MemoizedIconSuperscript.displayName = 'FondueIconSuperscript';
-
-export default MemoizedIconSuperscript;
+export default memo(IconSuperscript);

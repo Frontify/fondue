@@ -20,8 +20,6 @@ const IconDocumentBadge = (props: GeneratedIconProps): ReactElement<GeneratedIco
         </span>
     );
 };
+IconDocumentBadge.displayName = 'FondueIconDocumentBadge';
 
-const MemoizedIconDocumentBadge = memo(IconDocumentBadge);
-MemoizedIconDocumentBadge.displayName = 'FondueIconDocumentBadge';
-
-export default MemoizedIconDocumentBadge;
+export default memo(IconDocumentBadge);

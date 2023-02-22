@@ -20,8 +20,6 @@ const IconGradient = (props: GeneratedIconProps): ReactElement<GeneratedIconProp
         </span>
     );
 };
+IconGradient.displayName = 'FondueIconGradient';
 
-const MemoizedIconGradient = memo(IconGradient);
-MemoizedIconGradient.displayName = 'FondueIconGradient';
-
-export default MemoizedIconGradient;
+export default memo(IconGradient);

@@ -20,8 +20,6 @@ const IconArrowMinimize = (props: GeneratedIconProps): ReactElement<GeneratedIco
         </span>
     );
 };
+IconArrowMinimize.displayName = 'FondueIconArrowMinimize';
 
-const MemoizedIconArrowMinimize = memo(IconArrowMinimize);
-MemoizedIconArrowMinimize.displayName = 'FondueIconArrowMinimize';
-
-export default MemoizedIconArrowMinimize;
+export default memo(IconArrowMinimize);

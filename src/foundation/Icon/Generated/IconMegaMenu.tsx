@@ -20,8 +20,6 @@ const IconMegaMenu = (props: GeneratedIconProps): ReactElement<GeneratedIconProp
         </span>
     );
 };
+IconMegaMenu.displayName = 'FondueIconMegaMenu';
 
-const MemoizedIconMegaMenu = memo(IconMegaMenu);
-MemoizedIconMegaMenu.displayName = 'FondueIconMegaMenu';
-
-export default MemoizedIconMegaMenu;
+export default memo(IconMegaMenu);

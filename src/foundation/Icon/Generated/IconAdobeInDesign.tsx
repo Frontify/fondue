@@ -20,8 +20,6 @@ const IconAdobeInDesign = (props: GeneratedIconProps): ReactElement<GeneratedIco
         </span>
     );
 };
+IconAdobeInDesign.displayName = 'FondueIconAdobeInDesign';
 
-const MemoizedIconAdobeInDesign = memo(IconAdobeInDesign);
-MemoizedIconAdobeInDesign.displayName = 'FondueIconAdobeInDesign';
-
-export default MemoizedIconAdobeInDesign;
+export default memo(IconAdobeInDesign);

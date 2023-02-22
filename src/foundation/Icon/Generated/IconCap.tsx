@@ -20,8 +20,6 @@ const IconCap = (props: GeneratedIconProps): ReactElement<GeneratedIconProps> =>
         </span>
     );
 };
+IconCap.displayName = 'FondueIconCap';
 
-const MemoizedIconCap = memo(IconCap);
-MemoizedIconCap.displayName = 'FondueIconCap';
-
-export default MemoizedIconCap;
+export default memo(IconCap);

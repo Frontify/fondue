@@ -20,8 +20,6 @@ const IconEraser = (props: GeneratedIconProps): ReactElement<GeneratedIconProps>
         </span>
     );
 };
+IconEraser.displayName = 'FondueIconEraser';
 
-const MemoizedIconEraser = memo(IconEraser);
-MemoizedIconEraser.displayName = 'FondueIconEraser';
-
-export default MemoizedIconEraser;
+export default memo(IconEraser);

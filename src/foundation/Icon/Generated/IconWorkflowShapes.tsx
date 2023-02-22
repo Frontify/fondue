@@ -20,8 +20,6 @@ const IconWorkflowShapes = (props: GeneratedIconProps): ReactElement<GeneratedIc
         </span>
     );
 };
+IconWorkflowShapes.displayName = 'FondueIconWorkflowShapes';
 
-const MemoizedIconWorkflowShapes = memo(IconWorkflowShapes);
-MemoizedIconWorkflowShapes.displayName = 'FondueIconWorkflowShapes';
-
-export default MemoizedIconWorkflowShapes;
+export default memo(IconWorkflowShapes);

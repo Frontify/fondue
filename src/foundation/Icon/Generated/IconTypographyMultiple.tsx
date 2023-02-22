@@ -20,8 +20,6 @@ const IconTypographyMultiple = (props: GeneratedIconProps): ReactElement<Generat
         </span>
     );
 };
+IconTypographyMultiple.displayName = 'FondueIconTypographyMultiple';
 
-const MemoizedIconTypographyMultiple = memo(IconTypographyMultiple);
-MemoizedIconTypographyMultiple.displayName = 'FondueIconTypographyMultiple';
-
-export default MemoizedIconTypographyMultiple;
+export default memo(IconTypographyMultiple);

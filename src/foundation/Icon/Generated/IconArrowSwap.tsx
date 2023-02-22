@@ -20,8 +20,6 @@ const IconArrowSwap = (props: GeneratedIconProps): ReactElement<GeneratedIconPro
         </span>
     );
 };
+IconArrowSwap.displayName = 'FondueIconArrowSwap';
 
-const MemoizedIconArrowSwap = memo(IconArrowSwap);
-MemoizedIconArrowSwap.displayName = 'FondueIconArrowSwap';
-
-export default MemoizedIconArrowSwap;
+export default memo(IconArrowSwap);

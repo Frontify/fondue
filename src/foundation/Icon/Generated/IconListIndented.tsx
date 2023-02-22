@@ -20,8 +20,6 @@ const IconListIndented = (props: GeneratedIconProps): ReactElement<GeneratedIcon
         </span>
     );
 };
+IconListIndented.displayName = 'FondueIconListIndented';
 
-const MemoizedIconListIndented = memo(IconListIndented);
-MemoizedIconListIndented.displayName = 'FondueIconListIndented';
-
-export default MemoizedIconListIndented;
+export default memo(IconListIndented);

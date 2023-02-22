@@ -20,8 +20,6 @@ const IconLockClosed = (props: GeneratedIconProps): ReactElement<GeneratedIconPr
         </span>
     );
 };
+IconLockClosed.displayName = 'FondueIconLockClosed';
 
-const MemoizedIconLockClosed = memo(IconLockClosed);
-MemoizedIconLockClosed.displayName = 'FondueIconLockClosed';
-
-export default MemoizedIconLockClosed;
+export default memo(IconLockClosed);

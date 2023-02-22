@@ -20,8 +20,6 @@ const IconCursorClick = (props: GeneratedIconProps): ReactElement<GeneratedIconP
         </span>
     );
 };
+IconCursorClick.displayName = 'FondueIconCursorClick';
 
-const MemoizedIconCursorClick = memo(IconCursorClick);
-MemoizedIconCursorClick.displayName = 'FondueIconCursorClick';
-
-export default MemoizedIconCursorClick;
+export default memo(IconCursorClick);

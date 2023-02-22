@@ -20,8 +20,6 @@ const IconTextFormatUnderline = (props: GeneratedIconProps): ReactElement<Genera
         </span>
     );
 };
+IconTextFormatUnderline.displayName = 'FondueIconTextFormatUnderline';
 
-const MemoizedIconTextFormatUnderline = memo(IconTextFormatUnderline);
-MemoizedIconTextFormatUnderline.displayName = 'FondueIconTextFormatUnderline';
-
-export default MemoizedIconTextFormatUnderline;
+export default memo(IconTextFormatUnderline);

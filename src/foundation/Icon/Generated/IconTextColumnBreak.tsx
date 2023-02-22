@@ -20,8 +20,6 @@ const IconTextColumnBreak = (props: GeneratedIconProps): ReactElement<GeneratedI
         </span>
     );
 };
+IconTextColumnBreak.displayName = 'FondueIconTextColumnBreak';
 
-const MemoizedIconTextColumnBreak = memo(IconTextColumnBreak);
-MemoizedIconTextColumnBreak.displayName = 'FondueIconTextColumnBreak';
-
-export default MemoizedIconTextColumnBreak;
+export default memo(IconTextColumnBreak);

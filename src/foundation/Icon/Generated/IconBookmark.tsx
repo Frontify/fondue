@@ -30,8 +30,6 @@ const IconBookmark = (props: GeneratedIconProps): ReactElement<GeneratedIconProp
         </span>
     );
 };
+IconBookmark.displayName = 'FondueIconBookmark';
 
-const MemoizedIconBookmark = memo(IconBookmark);
-MemoizedIconBookmark.displayName = 'FondueIconBookmark';
-
-export default MemoizedIconBookmark;
+export default memo(IconBookmark);

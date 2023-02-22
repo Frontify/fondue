@@ -20,8 +20,6 @@ const IconJohanna = (props: GeneratedIconProps): ReactElement<GeneratedIconProps
         </span>
     );
 };
+IconJohanna.displayName = 'FondueIconJohanna';
 
-const MemoizedIconJohanna = memo(IconJohanna);
-MemoizedIconJohanna.displayName = 'FondueIconJohanna';
-
-export default MemoizedIconJohanna;
+export default memo(IconJohanna);

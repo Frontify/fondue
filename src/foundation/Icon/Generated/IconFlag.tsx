@@ -20,8 +20,6 @@ const IconFlag = (props: GeneratedIconProps): ReactElement<GeneratedIconProps> =
         </span>
     );
 };
+IconFlag.displayName = 'FondueIconFlag';
 
-const MemoizedIconFlag = memo(IconFlag);
-MemoizedIconFlag.displayName = 'FondueIconFlag';
-
-export default MemoizedIconFlag;
+export default memo(IconFlag);

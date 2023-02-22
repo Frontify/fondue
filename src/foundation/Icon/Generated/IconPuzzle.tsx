@@ -20,8 +20,6 @@ const IconPuzzle = (props: GeneratedIconProps): ReactElement<GeneratedIconProps>
         </span>
     );
 };
+IconPuzzle.displayName = 'FondueIconPuzzle';
 
-const MemoizedIconPuzzle = memo(IconPuzzle);
-MemoizedIconPuzzle.displayName = 'FondueIconPuzzle';
-
-export default MemoizedIconPuzzle;
+export default memo(IconPuzzle);

@@ -20,8 +20,6 @@ const IconClipboard = (props: GeneratedIconProps): ReactElement<GeneratedIconPro
         </span>
     );
 };
+IconClipboard.displayName = 'FondueIconClipboard';
 
-const MemoizedIconClipboard = memo(IconClipboard);
-MemoizedIconClipboard.displayName = 'FondueIconClipboard';
-
-export default MemoizedIconClipboard;
+export default memo(IconClipboard);

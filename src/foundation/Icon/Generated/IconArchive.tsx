@@ -20,8 +20,6 @@ const IconArchive = (props: GeneratedIconProps): ReactElement<GeneratedIconProps
         </span>
     );
 };
+IconArchive.displayName = 'FondueIconArchive';
 
-const MemoizedIconArchive = memo(IconArchive);
-MemoizedIconArchive.displayName = 'FondueIconArchive';
-
-export default MemoizedIconArchive;
+export default memo(IconArchive);

@@ -30,8 +30,6 @@ const IconCheckMarkCircle = (props: GeneratedIconProps): ReactElement<GeneratedI
         </span>
     );
 };
+IconCheckMarkCircle.displayName = 'FondueIconCheckMarkCircle';
 
-const MemoizedIconCheckMarkCircle = memo(IconCheckMarkCircle);
-MemoizedIconCheckMarkCircle.displayName = 'FondueIconCheckMarkCircle';
-
-export default MemoizedIconCheckMarkCircle;
+export default memo(IconCheckMarkCircle);

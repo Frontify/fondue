@@ -20,8 +20,6 @@ const IconLinkBox = (props: GeneratedIconProps): ReactElement<GeneratedIconProps
         </span>
     );
 };
+IconLinkBox.displayName = 'FondueIconLinkBox';
 
-const MemoizedIconLinkBox = memo(IconLinkBox);
-MemoizedIconLinkBox.displayName = 'FondueIconLinkBox';
-
-export default MemoizedIconLinkBox;
+export default memo(IconLinkBox);

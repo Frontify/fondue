@@ -20,8 +20,6 @@ const IconSpeechBubbleStack = (props: GeneratedIconProps): ReactElement<Generate
         </span>
     );
 };
+IconSpeechBubbleStack.displayName = 'FondueIconSpeechBubbleStack';
 
-const MemoizedIconSpeechBubbleStack = memo(IconSpeechBubbleStack);
-MemoizedIconSpeechBubbleStack.displayName = 'FondueIconSpeechBubbleStack';
-
-export default MemoizedIconSpeechBubbleStack;
+export default memo(IconSpeechBubbleStack);

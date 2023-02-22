@@ -20,8 +20,6 @@ const IconImageWithText = (props: GeneratedIconProps): ReactElement<GeneratedIco
         </span>
     );
 };
+IconImageWithText.displayName = 'FondueIconImageWithText';
 
-const MemoizedIconImageWithText = memo(IconImageWithText);
-MemoizedIconImageWithText.displayName = 'FondueIconImageWithText';
-
-export default MemoizedIconImageWithText;
+export default memo(IconImageWithText);

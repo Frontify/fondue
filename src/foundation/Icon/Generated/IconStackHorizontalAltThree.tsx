@@ -20,8 +20,6 @@ const IconStackHorizontalAltThree = (props: GeneratedIconProps): ReactElement<Ge
         </span>
     );
 };
+IconStackHorizontalAltThree.displayName = 'FondueIconStackHorizontalAltThree';
 
-const MemoizedIconStackHorizontalAltThree = memo(IconStackHorizontalAltThree);
-MemoizedIconStackHorizontalAltThree.displayName = 'FondueIconStackHorizontalAltThree';
-
-export default MemoizedIconStackHorizontalAltThree;
+export default memo(IconStackHorizontalAltThree);

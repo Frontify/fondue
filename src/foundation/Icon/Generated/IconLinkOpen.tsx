@@ -20,8 +20,6 @@ const IconLinkOpen = (props: GeneratedIconProps): ReactElement<GeneratedIconProp
         </span>
     );
 };
+IconLinkOpen.displayName = 'FondueIconLinkOpen';
 
-const MemoizedIconLinkOpen = memo(IconLinkOpen);
-MemoizedIconLinkOpen.displayName = 'FondueIconLinkOpen';
-
-export default MemoizedIconLinkOpen;
+export default memo(IconLinkOpen);

@@ -20,8 +20,6 @@ const IconArrowFitBottomRight = (props: GeneratedIconProps): ReactElement<Genera
         </span>
     );
 };
+IconArrowFitBottomRight.displayName = 'FondueIconArrowFitBottomRight';
 
-const MemoizedIconArrowFitBottomRight = memo(IconArrowFitBottomRight);
-MemoizedIconArrowFitBottomRight.displayName = 'FondueIconArrowFitBottomRight';
-
-export default MemoizedIconArrowFitBottomRight;
+export default memo(IconArrowFitBottomRight);

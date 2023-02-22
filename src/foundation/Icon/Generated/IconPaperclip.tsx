@@ -20,8 +20,6 @@ const IconPaperclip = (props: GeneratedIconProps): ReactElement<GeneratedIconPro
         </span>
     );
 };
+IconPaperclip.displayName = 'FondueIconPaperclip';
 
-const MemoizedIconPaperclip = memo(IconPaperclip);
-MemoizedIconPaperclip.displayName = 'FondueIconPaperclip';
-
-export default MemoizedIconPaperclip;
+export default memo(IconPaperclip);

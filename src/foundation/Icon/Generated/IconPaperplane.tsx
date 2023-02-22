@@ -20,8 +20,6 @@ const IconPaperplane = (props: GeneratedIconProps): ReactElement<GeneratedIconPr
         </span>
     );
 };
+IconPaperplane.displayName = 'FondueIconPaperplane';
 
-const MemoizedIconPaperplane = memo(IconPaperplane);
-MemoizedIconPaperplane.displayName = 'FondueIconPaperplane';
-
-export default MemoizedIconPaperplane;
+export default memo(IconPaperplane);

@@ -20,8 +20,6 @@ const IconGrabHandle = (props: GeneratedIconProps): ReactElement<GeneratedIconPr
         </span>
     );
 };
+IconGrabHandle.displayName = 'FondueIconGrabHandle';
 
-const MemoizedIconGrabHandle = memo(IconGrabHandle);
-MemoizedIconGrabHandle.displayName = 'FondueIconGrabHandle';
-
-export default MemoizedIconGrabHandle;
+export default memo(IconGrabHandle);

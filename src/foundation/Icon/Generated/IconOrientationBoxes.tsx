@@ -20,8 +20,6 @@ const IconOrientationBoxes = (props: GeneratedIconProps): ReactElement<Generated
         </span>
     );
 };
+IconOrientationBoxes.displayName = 'FondueIconOrientationBoxes';
 
-const MemoizedIconOrientationBoxes = memo(IconOrientationBoxes);
-MemoizedIconOrientationBoxes.displayName = 'FondueIconOrientationBoxes';
-
-export default MemoizedIconOrientationBoxes;
+export default memo(IconOrientationBoxes);

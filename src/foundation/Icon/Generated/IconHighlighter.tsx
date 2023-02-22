@@ -20,8 +20,6 @@ const IconHighlighter = (props: GeneratedIconProps): ReactElement<GeneratedIconP
         </span>
     );
 };
+IconHighlighter.displayName = 'FondueIconHighlighter';
 
-const MemoizedIconHighlighter = memo(IconHighlighter);
-MemoizedIconHighlighter.displayName = 'FondueIconHighlighter';
-
-export default MemoizedIconHighlighter;
+export default memo(IconHighlighter);

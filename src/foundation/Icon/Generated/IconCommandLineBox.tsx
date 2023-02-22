@@ -20,8 +20,6 @@ const IconCommandLineBox = (props: GeneratedIconProps): ReactElement<GeneratedIc
         </span>
     );
 };
+IconCommandLineBox.displayName = 'FondueIconCommandLineBox';
 
-const MemoizedIconCommandLineBox = memo(IconCommandLineBox);
-MemoizedIconCommandLineBox.displayName = 'FondueIconCommandLineBox';
-
-export default MemoizedIconCommandLineBox;
+export default memo(IconCommandLineBox);
