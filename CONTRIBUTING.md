@@ -3,15 +3,17 @@
 ## Running Fondue Locally
 
 1. Clone the Git repository
-2. Install the dependencies
+2. Install the dependencies with
 3. Run Storybook
 4. ???
 5. Profit!
 
+> We use `pnpm`. If you don't have it installed in your local, please follow their installation guide https://pnpm.io/installation
+
 ```
 $ git clone git@github.com:Frontify/fondue.git
-$ npm ci
-$ npm run storybook
+$ pnpm i
+$ pnpm run storybook
 $ echo "YAY ✨"
 ```
 
@@ -39,7 +41,7 @@ The name of the branch is not really relevant. Nonetheless we usually go for a p
 Theres a nifty script that creates that files you'll need:
 
 ```
-npm run component:create CoolCatsAndKittens
+pnpm run component:create CoolCatsAndKittens
 ```
 
 This will add a folder inside `src/components` with the name `CoolCatsAndKittens` and three files:
