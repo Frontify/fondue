@@ -74,7 +74,7 @@ describe('List Plugin', () => {
     });
 
     it('renders new list item with soft break', () => {
-        cy.mount(<RichTextEditorWithUnorderedListStyles isSoftBreak={false} />);
+        cy.mount(<RichTextEditorWithUnorderedListStyles isSoftBreak={true} />);
         const itemValue = 'New item in list';
 
         const firstListItemSelector = '[contenteditable=true] ul:first-child > li:first-child';
