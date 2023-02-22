@@ -80,6 +80,12 @@ import IconArrowBidirectional16 from '@foundation/Icon/Generated/IconArrowBidire
 import IconArrowBidirectional20 from '@foundation/Icon/Generated/IconArrowBidirectional20';
 import IconArrowBidirectional24 from '@foundation/Icon/Generated/IconArrowBidirectional24';
 import IconArrowBidirectional32 from '@foundation/Icon/Generated/IconArrowBidirectional32';
+import IconArrowBidirectionalHorizontal from '@foundation/Icon/Generated/IconArrowBidirectionalHorizontal';
+import IconArrowBidirectionalHorizontal12 from '@foundation/Icon/Generated/IconArrowBidirectionalHorizontal12';
+import IconArrowBidirectionalHorizontal16 from '@foundation/Icon/Generated/IconArrowBidirectionalHorizontal16';
+import IconArrowBidirectionalHorizontal20 from '@foundation/Icon/Generated/IconArrowBidirectionalHorizontal20';
+import IconArrowBidirectionalHorizontal24 from '@foundation/Icon/Generated/IconArrowBidirectionalHorizontal24';
+import IconArrowBidirectionalHorizontal32 from '@foundation/Icon/Generated/IconArrowBidirectionalHorizontal32';
 import IconArrowBottomToTop from '@foundation/Icon/Generated/IconArrowBottomToTop';
 import IconArrowBottomToTop12 from '@foundation/Icon/Generated/IconArrowBottomToTop12';
 import IconArrowBottomToTop16 from '@foundation/Icon/Generated/IconArrowBottomToTop16';
@@ -403,6 +409,12 @@ import IconChartBars16 from '@foundation/Icon/Generated/IconChartBars16';
 import IconChartBars20 from '@foundation/Icon/Generated/IconChartBars20';
 import IconChartBars24 from '@foundation/Icon/Generated/IconChartBars24';
 import IconChartBars32 from '@foundation/Icon/Generated/IconChartBars32';
+import IconChartLine from '@foundation/Icon/Generated/IconChartLine';
+import IconChartLine12 from '@foundation/Icon/Generated/IconChartLine12';
+import IconChartLine16 from '@foundation/Icon/Generated/IconChartLine16';
+import IconChartLine20 from '@foundation/Icon/Generated/IconChartLine20';
+import IconChartLine24 from '@foundation/Icon/Generated/IconChartLine24';
+import IconChartLine32 from '@foundation/Icon/Generated/IconChartLine32';
 import IconChartPie from '@foundation/Icon/Generated/IconChartPie';
 import IconChartPie12 from '@foundation/Icon/Generated/IconChartPie12';
 import IconChartPie16 from '@foundation/Icon/Generated/IconChartPie16';
@@ -450,6 +462,12 @@ import IconClipboard16 from '@foundation/Icon/Generated/IconClipboard16';
 import IconClipboard20 from '@foundation/Icon/Generated/IconClipboard20';
 import IconClipboard24 from '@foundation/Icon/Generated/IconClipboard24';
 import IconClipboard32 from '@foundation/Icon/Generated/IconClipboard32';
+import IconClipboardAt from '@foundation/Icon/Generated/IconClipboardAt';
+import IconClipboardAt12 from '@foundation/Icon/Generated/IconClipboardAt12';
+import IconClipboardAt16 from '@foundation/Icon/Generated/IconClipboardAt16';
+import IconClipboardAt20 from '@foundation/Icon/Generated/IconClipboardAt20';
+import IconClipboardAt24 from '@foundation/Icon/Generated/IconClipboardAt24';
+import IconClipboardAt32 from '@foundation/Icon/Generated/IconClipboardAt32';
 import IconClock from '@foundation/Icon/Generated/IconClock';
 import IconClock12 from '@foundation/Icon/Generated/IconClock12';
 import IconClock16 from '@foundation/Icon/Generated/IconClock16';
@@ -468,6 +486,12 @@ import IconClockAlternative16 from '@foundation/Icon/Generated/IconClockAlternat
 import IconClockAlternative20 from '@foundation/Icon/Generated/IconClockAlternative20';
 import IconClockAlternative24 from '@foundation/Icon/Generated/IconClockAlternative24';
 import IconClockAlternative32 from '@foundation/Icon/Generated/IconClockAlternative32';
+import IconClockList from '@foundation/Icon/Generated/IconClockList';
+import IconClockList12 from '@foundation/Icon/Generated/IconClockList12';
+import IconClockList16 from '@foundation/Icon/Generated/IconClockList16';
+import IconClockList20 from '@foundation/Icon/Generated/IconClockList20';
+import IconClockList24 from '@foundation/Icon/Generated/IconClockList24';
+import IconClockList32 from '@foundation/Icon/Generated/IconClockList32';
 import IconCloudArrowDown from '@foundation/Icon/Generated/IconCloudArrowDown';
 import IconCloudArrowDown12 from '@foundation/Icon/Generated/IconCloudArrowDown12';
 import IconCloudArrowDown16 from '@foundation/Icon/Generated/IconCloudArrowDown16';
@@ -835,6 +859,12 @@ import IconGrabHandle16 from '@foundation/Icon/Generated/IconGrabHandle16';
 import IconGrabHandle20 from '@foundation/Icon/Generated/IconGrabHandle20';
 import IconGrabHandle24 from '@foundation/Icon/Generated/IconGrabHandle24';
 import IconGrabHandle32 from '@foundation/Icon/Generated/IconGrabHandle32';
+import IconGradient from '@foundation/Icon/Generated/IconGradient';
+import IconGradient12 from '@foundation/Icon/Generated/IconGradient12';
+import IconGradient16 from '@foundation/Icon/Generated/IconGradient16';
+import IconGradient20 from '@foundation/Icon/Generated/IconGradient20';
+import IconGradient24 from '@foundation/Icon/Generated/IconGradient24';
+import IconGradient32 from '@foundation/Icon/Generated/IconGradient32';
 import IconGridRegular from '@foundation/Icon/Generated/IconGridRegular';
 import IconGridRegular12 from '@foundation/Icon/Generated/IconGridRegular12';
 import IconGridRegular12Filled from '@foundation/Icon/Generated/IconGridRegular12Filled';
@@ -1263,6 +1293,18 @@ import IconPerson16 from '@foundation/Icon/Generated/IconPerson16';
 import IconPerson20 from '@foundation/Icon/Generated/IconPerson20';
 import IconPerson24 from '@foundation/Icon/Generated/IconPerson24';
 import IconPerson32 from '@foundation/Icon/Generated/IconPerson32';
+import IconPersonAnonymous from '@foundation/Icon/Generated/IconPersonAnonymous';
+import IconPersonAnonymous12 from '@foundation/Icon/Generated/IconPersonAnonymous12';
+import IconPersonAnonymous16 from '@foundation/Icon/Generated/IconPersonAnonymous16';
+import IconPersonAnonymous20 from '@foundation/Icon/Generated/IconPersonAnonymous20';
+import IconPersonAnonymous24 from '@foundation/Icon/Generated/IconPersonAnonymous24';
+import IconPersonAnonymous32 from '@foundation/Icon/Generated/IconPersonAnonymous32';
+import IconPersonSlash from '@foundation/Icon/Generated/IconPersonSlash';
+import IconPersonSlash12 from '@foundation/Icon/Generated/IconPersonSlash12';
+import IconPersonSlash16 from '@foundation/Icon/Generated/IconPersonSlash16';
+import IconPersonSlash20 from '@foundation/Icon/Generated/IconPersonSlash20';
+import IconPersonSlash24 from '@foundation/Icon/Generated/IconPersonSlash24';
+import IconPersonSlash32 from '@foundation/Icon/Generated/IconPersonSlash32';
 import IconPills from '@foundation/Icon/Generated/IconPills';
 import IconPills12 from '@foundation/Icon/Generated/IconPills12';
 import IconPills16 from '@foundation/Icon/Generated/IconPills16';
@@ -1423,12 +1465,56 @@ import IconSidebarLeft16 from '@foundation/Icon/Generated/IconSidebarLeft16';
 import IconSidebarLeft20 from '@foundation/Icon/Generated/IconSidebarLeft20';
 import IconSidebarLeft24 from '@foundation/Icon/Generated/IconSidebarLeft24';
 import IconSidebarLeft32 from '@foundation/Icon/Generated/IconSidebarLeft32';
+import IconSidebarLeftHide from '@foundation/Icon/Generated/IconSidebarLeftHide';
+import IconSidebarLeftHide12 from '@foundation/Icon/Generated/IconSidebarLeftHide12';
+import IconSidebarLeftHide12Filled from '@foundation/Icon/Generated/IconSidebarLeftHide12Filled';
+import IconSidebarLeftHide16 from '@foundation/Icon/Generated/IconSidebarLeftHide16';
+import IconSidebarLeftHide16Filled from '@foundation/Icon/Generated/IconSidebarLeftHide16Filled';
+import IconSidebarLeftHide20 from '@foundation/Icon/Generated/IconSidebarLeftHide20';
+import IconSidebarLeftHide20Filled from '@foundation/Icon/Generated/IconSidebarLeftHide20Filled';
+import IconSidebarLeftHide24 from '@foundation/Icon/Generated/IconSidebarLeftHide24';
+import IconSidebarLeftHide24Filled from '@foundation/Icon/Generated/IconSidebarLeftHide24Filled';
+import IconSidebarLeftHide32 from '@foundation/Icon/Generated/IconSidebarLeftHide32';
+import IconSidebarLeftHide32Filled from '@foundation/Icon/Generated/IconSidebarLeftHide32Filled';
+import IconSidebarLeftShow from '@foundation/Icon/Generated/IconSidebarLeftShow';
+import IconSidebarLeftShow12 from '@foundation/Icon/Generated/IconSidebarLeftShow12';
+import IconSidebarLeftShow12Filled from '@foundation/Icon/Generated/IconSidebarLeftShow12Filled';
+import IconSidebarLeftShow16 from '@foundation/Icon/Generated/IconSidebarLeftShow16';
+import IconSidebarLeftShow16Filled from '@foundation/Icon/Generated/IconSidebarLeftShow16Filled';
+import IconSidebarLeftShow20 from '@foundation/Icon/Generated/IconSidebarLeftShow20';
+import IconSidebarLeftShow20Filled from '@foundation/Icon/Generated/IconSidebarLeftShow20Filled';
+import IconSidebarLeftShow24 from '@foundation/Icon/Generated/IconSidebarLeftShow24';
+import IconSidebarLeftShow24Filled from '@foundation/Icon/Generated/IconSidebarLeftShow24Filled';
+import IconSidebarLeftShow32 from '@foundation/Icon/Generated/IconSidebarLeftShow32';
+import IconSidebarLeftShow32Filled from '@foundation/Icon/Generated/IconSidebarLeftShow32Filled';
 import IconSidebarRight from '@foundation/Icon/Generated/IconSidebarRight';
 import IconSidebarRight12 from '@foundation/Icon/Generated/IconSidebarRight12';
 import IconSidebarRight16 from '@foundation/Icon/Generated/IconSidebarRight16';
 import IconSidebarRight20 from '@foundation/Icon/Generated/IconSidebarRight20';
 import IconSidebarRight24 from '@foundation/Icon/Generated/IconSidebarRight24';
 import IconSidebarRight32 from '@foundation/Icon/Generated/IconSidebarRight32';
+import IconSidebarRightHide from '@foundation/Icon/Generated/IconSidebarRightHide';
+import IconSidebarRightHide12 from '@foundation/Icon/Generated/IconSidebarRightHide12';
+import IconSidebarRightHide12Filled from '@foundation/Icon/Generated/IconSidebarRightHide12Filled';
+import IconSidebarRightHide16 from '@foundation/Icon/Generated/IconSidebarRightHide16';
+import IconSidebarRightHide16Filled from '@foundation/Icon/Generated/IconSidebarRightHide16Filled';
+import IconSidebarRightHide20 from '@foundation/Icon/Generated/IconSidebarRightHide20';
+import IconSidebarRightHide20Filled from '@foundation/Icon/Generated/IconSidebarRightHide20Filled';
+import IconSidebarRightHide24 from '@foundation/Icon/Generated/IconSidebarRightHide24';
+import IconSidebarRightHide24Filled from '@foundation/Icon/Generated/IconSidebarRightHide24Filled';
+import IconSidebarRightHide32 from '@foundation/Icon/Generated/IconSidebarRightHide32';
+import IconSidebarRightHide32Filled from '@foundation/Icon/Generated/IconSidebarRightHide32Filled';
+import IconSidebarRightShow from '@foundation/Icon/Generated/IconSidebarRightShow';
+import IconSidebarRightShow12 from '@foundation/Icon/Generated/IconSidebarRightShow12';
+import IconSidebarRightShow12Filled from '@foundation/Icon/Generated/IconSidebarRightShow12Filled';
+import IconSidebarRightShow16 from '@foundation/Icon/Generated/IconSidebarRightShow16';
+import IconSidebarRightShow16Filled from '@foundation/Icon/Generated/IconSidebarRightShow16Filled';
+import IconSidebarRightShow20 from '@foundation/Icon/Generated/IconSidebarRightShow20';
+import IconSidebarRightShow20Filled from '@foundation/Icon/Generated/IconSidebarRightShow20Filled';
+import IconSidebarRightShow24 from '@foundation/Icon/Generated/IconSidebarRightShow24';
+import IconSidebarRightShow24Filled from '@foundation/Icon/Generated/IconSidebarRightShow24Filled';
+import IconSidebarRightShow32 from '@foundation/Icon/Generated/IconSidebarRightShow32';
+import IconSidebarRightShow32Filled from '@foundation/Icon/Generated/IconSidebarRightShow32Filled';
 import IconSketch from '@foundation/Icon/Generated/IconSketch';
 import IconSketch12 from '@foundation/Icon/Generated/IconSketch12';
 import IconSketch16 from '@foundation/Icon/Generated/IconSketch16';
@@ -1814,6 +1900,12 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.ArrowBidirectional20]: <IconArrowBidirectional20 />,
     [IconEnum.ArrowBidirectional24]: <IconArrowBidirectional24 />,
     [IconEnum.ArrowBidirectional32]: <IconArrowBidirectional32 />,
+    [IconEnum.ArrowBidirectionalHorizontal]: <IconArrowBidirectionalHorizontal />,
+    [IconEnum.ArrowBidirectionalHorizontal12]: <IconArrowBidirectionalHorizontal12 />,
+    [IconEnum.ArrowBidirectionalHorizontal16]: <IconArrowBidirectionalHorizontal16 />,
+    [IconEnum.ArrowBidirectionalHorizontal20]: <IconArrowBidirectionalHorizontal20 />,
+    [IconEnum.ArrowBidirectionalHorizontal24]: <IconArrowBidirectionalHorizontal24 />,
+    [IconEnum.ArrowBidirectionalHorizontal32]: <IconArrowBidirectionalHorizontal32 />,
     [IconEnum.ArrowBottomToTop]: <IconArrowBottomToTop />,
     [IconEnum.ArrowBottomToTop12]: <IconArrowBottomToTop12 />,
     [IconEnum.ArrowBottomToTop16]: <IconArrowBottomToTop16 />,
@@ -2137,6 +2229,12 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.ChartBars20]: <IconChartBars20 />,
     [IconEnum.ChartBars24]: <IconChartBars24 />,
     [IconEnum.ChartBars32]: <IconChartBars32 />,
+    [IconEnum.ChartLine]: <IconChartLine />,
+    [IconEnum.ChartLine12]: <IconChartLine12 />,
+    [IconEnum.ChartLine16]: <IconChartLine16 />,
+    [IconEnum.ChartLine20]: <IconChartLine20 />,
+    [IconEnum.ChartLine24]: <IconChartLine24 />,
+    [IconEnum.ChartLine32]: <IconChartLine32 />,
     [IconEnum.ChartPie]: <IconChartPie />,
     [IconEnum.ChartPie12]: <IconChartPie12 />,
     [IconEnum.ChartPie16]: <IconChartPie16 />,
@@ -2184,6 +2282,12 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.Clipboard20]: <IconClipboard20 />,
     [IconEnum.Clipboard24]: <IconClipboard24 />,
     [IconEnum.Clipboard32]: <IconClipboard32 />,
+    [IconEnum.ClipboardAt]: <IconClipboardAt />,
+    [IconEnum.ClipboardAt12]: <IconClipboardAt12 />,
+    [IconEnum.ClipboardAt16]: <IconClipboardAt16 />,
+    [IconEnum.ClipboardAt20]: <IconClipboardAt20 />,
+    [IconEnum.ClipboardAt24]: <IconClipboardAt24 />,
+    [IconEnum.ClipboardAt32]: <IconClipboardAt32 />,
     [IconEnum.Clock]: <IconClock />,
     [IconEnum.Clock12]: <IconClock12 />,
     [IconEnum.Clock16]: <IconClock16 />,
@@ -2202,6 +2306,12 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.ClockAlternative20]: <IconClockAlternative20 />,
     [IconEnum.ClockAlternative24]: <IconClockAlternative24 />,
     [IconEnum.ClockAlternative32]: <IconClockAlternative32 />,
+    [IconEnum.ClockList]: <IconClockList />,
+    [IconEnum.ClockList12]: <IconClockList12 />,
+    [IconEnum.ClockList16]: <IconClockList16 />,
+    [IconEnum.ClockList20]: <IconClockList20 />,
+    [IconEnum.ClockList24]: <IconClockList24 />,
+    [IconEnum.ClockList32]: <IconClockList32 />,
     [IconEnum.CloudArrowDown]: <IconCloudArrowDown />,
     [IconEnum.CloudArrowDown12]: <IconCloudArrowDown12 />,
     [IconEnum.CloudArrowDown16]: <IconCloudArrowDown16 />,
@@ -2569,6 +2679,12 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.GrabHandle20]: <IconGrabHandle20 />,
     [IconEnum.GrabHandle24]: <IconGrabHandle24 />,
     [IconEnum.GrabHandle32]: <IconGrabHandle32 />,
+    [IconEnum.Gradient]: <IconGradient />,
+    [IconEnum.Gradient12]: <IconGradient12 />,
+    [IconEnum.Gradient16]: <IconGradient16 />,
+    [IconEnum.Gradient20]: <IconGradient20 />,
+    [IconEnum.Gradient24]: <IconGradient24 />,
+    [IconEnum.Gradient32]: <IconGradient32 />,
     [IconEnum.GridRegular]: <IconGridRegular />,
     [IconEnum.GridRegular12]: <IconGridRegular12 />,
     [IconEnum.GridRegular12Filled]: <IconGridRegular12Filled />,
@@ -2997,6 +3113,18 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.Person20]: <IconPerson20 />,
     [IconEnum.Person24]: <IconPerson24 />,
     [IconEnum.Person32]: <IconPerson32 />,
+    [IconEnum.PersonAnonymous]: <IconPersonAnonymous />,
+    [IconEnum.PersonAnonymous12]: <IconPersonAnonymous12 />,
+    [IconEnum.PersonAnonymous16]: <IconPersonAnonymous16 />,
+    [IconEnum.PersonAnonymous20]: <IconPersonAnonymous20 />,
+    [IconEnum.PersonAnonymous24]: <IconPersonAnonymous24 />,
+    [IconEnum.PersonAnonymous32]: <IconPersonAnonymous32 />,
+    [IconEnum.PersonSlash]: <IconPersonSlash />,
+    [IconEnum.PersonSlash12]: <IconPersonSlash12 />,
+    [IconEnum.PersonSlash16]: <IconPersonSlash16 />,
+    [IconEnum.PersonSlash20]: <IconPersonSlash20 />,
+    [IconEnum.PersonSlash24]: <IconPersonSlash24 />,
+    [IconEnum.PersonSlash32]: <IconPersonSlash32 />,
     [IconEnum.Pills]: <IconPills />,
     [IconEnum.Pills12]: <IconPills12 />,
     [IconEnum.Pills16]: <IconPills16 />,
@@ -3157,12 +3285,56 @@ export const iconsMap: Record<IconEnum, ReactElement> = {
     [IconEnum.SidebarLeft20]: <IconSidebarLeft20 />,
     [IconEnum.SidebarLeft24]: <IconSidebarLeft24 />,
     [IconEnum.SidebarLeft32]: <IconSidebarLeft32 />,
+    [IconEnum.SidebarLeftHide]: <IconSidebarLeftHide />,
+    [IconEnum.SidebarLeftHide12]: <IconSidebarLeftHide12 />,
+    [IconEnum.SidebarLeftHide12Filled]: <IconSidebarLeftHide12Filled />,
+    [IconEnum.SidebarLeftHide16]: <IconSidebarLeftHide16 />,
+    [IconEnum.SidebarLeftHide16Filled]: <IconSidebarLeftHide16Filled />,
+    [IconEnum.SidebarLeftHide20]: <IconSidebarLeftHide20 />,
+    [IconEnum.SidebarLeftHide20Filled]: <IconSidebarLeftHide20Filled />,
+    [IconEnum.SidebarLeftHide24]: <IconSidebarLeftHide24 />,
+    [IconEnum.SidebarLeftHide24Filled]: <IconSidebarLeftHide24Filled />,
+    [IconEnum.SidebarLeftHide32]: <IconSidebarLeftHide32 />,
+    [IconEnum.SidebarLeftHide32Filled]: <IconSidebarLeftHide32Filled />,
+    [IconEnum.SidebarLeftShow]: <IconSidebarLeftShow />,
+    [IconEnum.SidebarLeftShow12]: <IconSidebarLeftShow12 />,
+    [IconEnum.SidebarLeftShow12Filled]: <IconSidebarLeftShow12Filled />,
+    [IconEnum.SidebarLeftShow16]: <IconSidebarLeftShow16 />,
+    [IconEnum.SidebarLeftShow16Filled]: <IconSidebarLeftShow16Filled />,
+    [IconEnum.SidebarLeftShow20]: <IconSidebarLeftShow20 />,
+    [IconEnum.SidebarLeftShow20Filled]: <IconSidebarLeftShow20Filled />,
+    [IconEnum.SidebarLeftShow24]: <IconSidebarLeftShow24 />,
+    [IconEnum.SidebarLeftShow24Filled]: <IconSidebarLeftShow24Filled />,
+    [IconEnum.SidebarLeftShow32]: <IconSidebarLeftShow32 />,
+    [IconEnum.SidebarLeftShow32Filled]: <IconSidebarLeftShow32Filled />,
     [IconEnum.SidebarRight]: <IconSidebarRight />,
     [IconEnum.SidebarRight12]: <IconSidebarRight12 />,
     [IconEnum.SidebarRight16]: <IconSidebarRight16 />,
     [IconEnum.SidebarRight20]: <IconSidebarRight20 />,
     [IconEnum.SidebarRight24]: <IconSidebarRight24 />,
     [IconEnum.SidebarRight32]: <IconSidebarRight32 />,
+    [IconEnum.SidebarRightHide]: <IconSidebarRightHide />,
+    [IconEnum.SidebarRightHide12]: <IconSidebarRightHide12 />,
+    [IconEnum.SidebarRightHide12Filled]: <IconSidebarRightHide12Filled />,
+    [IconEnum.SidebarRightHide16]: <IconSidebarRightHide16 />,
+    [IconEnum.SidebarRightHide16Filled]: <IconSidebarRightHide16Filled />,
+    [IconEnum.SidebarRightHide20]: <IconSidebarRightHide20 />,
+    [IconEnum.SidebarRightHide20Filled]: <IconSidebarRightHide20Filled />,
+    [IconEnum.SidebarRightHide24]: <IconSidebarRightHide24 />,
+    [IconEnum.SidebarRightHide24Filled]: <IconSidebarRightHide24Filled />,
+    [IconEnum.SidebarRightHide32]: <IconSidebarRightHide32 />,
+    [IconEnum.SidebarRightHide32Filled]: <IconSidebarRightHide32Filled />,
+    [IconEnum.SidebarRightShow]: <IconSidebarRightShow />,
+    [IconEnum.SidebarRightShow12]: <IconSidebarRightShow12 />,
+    [IconEnum.SidebarRightShow12Filled]: <IconSidebarRightShow12Filled />,
+    [IconEnum.SidebarRightShow16]: <IconSidebarRightShow16 />,
+    [IconEnum.SidebarRightShow16Filled]: <IconSidebarRightShow16Filled />,
+    [IconEnum.SidebarRightShow20]: <IconSidebarRightShow20 />,
+    [IconEnum.SidebarRightShow20Filled]: <IconSidebarRightShow20Filled />,
+    [IconEnum.SidebarRightShow24]: <IconSidebarRightShow24 />,
+    [IconEnum.SidebarRightShow24Filled]: <IconSidebarRightShow24Filled />,
+    [IconEnum.SidebarRightShow32]: <IconSidebarRightShow32 />,
+    [IconEnum.SidebarRightShow32Filled]: <IconSidebarRightShow32Filled />,
     [IconEnum.Sketch]: <IconSketch />,
     [IconEnum.Sketch12]: <IconSketch12 />,
     [IconEnum.Sketch16]: <IconSketch16 />,

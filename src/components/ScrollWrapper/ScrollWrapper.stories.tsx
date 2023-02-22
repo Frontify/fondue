@@ -12,6 +12,7 @@ import { ScrollWrapperProps } from './types';
 export default {
     title: 'Components/ScrollWrapper',
     component: ScrollWrapper,
+    tags: ['autodocs'],
 } as Meta<ScrollWrapperProps>;
 
 export const Default: StoryFn<ScrollWrapperProps> = (args) => {

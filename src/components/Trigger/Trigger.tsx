@@ -3,7 +3,7 @@
 import IconCaretDown from '@foundation/Icon/Generated/IconCaretDown';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { useFocusRing } from '@react-aria/focus';
-import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { FOCUS_STYLE, FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
 import React, { FC, HTMLAttributes } from 'react';
@@ -104,6 +104,7 @@ export const Trigger: FC<TriggerProps> = ({
                         aria-label="Delete selection"
                         type="button"
                         className={merge([
+                            'tw-rounded',
                             isOnDeleteFocusVisible && FOCUS_STYLE,
                             disabled ? 'tw-pointer-events-none tw-text-black-40' : 'tw-text-black-80',
                         ])}
@@ -116,10 +117,16 @@ export const Trigger: FC<TriggerProps> = ({
                     {...buttonProps}
                     aria-hidden="true"
                     type="button"
+                    disabled={disabled}
                     className={merge([
+                        'tw-rounded',
                         disabled
                             ? 'tw-pointer-events-none tw-text-black-40'
-                            : merge(['group-hover:tw-text-black', isOpen ? 'tw-text-black-100' : 'tw-text-black-80']),
+                            : merge([
+                                  'group-hover:tw-text-black ',
+                                  isOpen ? 'tw-text-black-100' : 'tw-text-black-80',
+                                  FOCUS_VISIBLE_STYLE,
+                              ]),
                     ])}
                 >
                     <div className={merge(['tw-transition-transform', isOpen && 'tw-rotate-180'])}>

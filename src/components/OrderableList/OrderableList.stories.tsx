@@ -11,6 +11,7 @@ import { renderContent, storyItems } from '@components/OrderableList/utils';
 export default {
     title: 'Components/Orderable List',
     component: OrderableListComponent,
+    tags: ['autodocs'],
     args: {
         dragDisabled: false,
     },

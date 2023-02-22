@@ -16,10 +16,10 @@ end tell\`
 This is [link to frontify.com](https://www.frontify.com/).
 I am normal Paragraph
 > Presenting the Quote
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna @[user: 10] aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna @[user:aaaaaaaa06] aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
 
 Presenting the Paragraph
-Lorem ipsum dolor sit amet, consetetur @[group: 2] sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+Lorem ipsum dolor sit amet, consetetur @[group:1111111111] sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. @[user:aaaaaaaa13]
 
 - list
 
@@ -145,7 +145,7 @@ export const mixedTree = [
                     {
                         type: 'mention',
                         category: 'user',
-                        key: '10',
+                        id: 'aaaaaaaa06',
                         children: [{ text: '' }],
                     },
                     {
@@ -164,11 +164,20 @@ export const mixedTree = [
             {
                 type: 'mention',
                 category: 'group',
-                key: '2',
+                id: '1111111111',
                 children: [{ text: '' }],
             },
             {
-                text: ' sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.',
+                text: ' sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. ',
+            },
+            {
+                type: 'mention',
+                category: 'user',
+                id: 'aaaaaaaa13',
+                children: [{ text: '' }],
+            },
+            {
+                text: '',
             },
         ],
     },
