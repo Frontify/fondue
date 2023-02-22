@@ -35,7 +35,7 @@ const RichTextEditorWithOrderedListStyles = ({ isSoftBreak = false }) => (
 );
 
 describe('List Plugin', () => {
-    it.skip('applies the selected text style to the list item', () => {
+    it('applies the selected text style to the list item', () => {
         cy.mount(<RichTextEditorWithOrderedListStyles />);
 
         const firstListItemSelector = '[contenteditable=true] ol:first-child > li:first-child';
@@ -53,13 +53,13 @@ describe('List Plugin', () => {
         );
     });
 
-    it.skip('renders the list item without text decoration underline', () => {
+    it('renders the list item without text decoration underline', () => {
         cy.mount(<RichTextEditorWithUnorderedListStyles />);
 
         cy.get('[contenteditable=true] li').should('have.class', '!tw-no-underline');
     });
 
-    it.skip('renders custom styled list items', () => {
+    it('renders custom styled list items', () => {
         cy.mount(<RichTextEditorWithUnorderedListStyles />);
         cy.get('[contenteditable=true] li:first-child').should(
             'have.attr',
