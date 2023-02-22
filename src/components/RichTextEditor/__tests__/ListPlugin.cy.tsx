@@ -77,11 +77,13 @@ describe('List Plugin', () => {
         cy.mount(<RichTextEditorWithUnorderedListStyles isSoftBreak={true} />);
         const itemValue = 'New item in list';
 
+        const listItemSelector = '[contenteditable=true] ul';
         const firstListItemSelector = '[contenteditable=true] ul:first-child > li:first-child';
         const secondListItemSelector = '[contenteditable=true] ul:first-child > li:nth-child(2)';
 
         cy.get(firstListItemSelector).type(`{end}{shift+enter}${itemValue}`);
 
+        cy.get(listItemSelector).children().should('have.length', 4);
         cy.get(firstListItemSelector).children().should('have.length', 1);
         cy.get(secondListItemSelector).should('include.text', itemValue);
     });
