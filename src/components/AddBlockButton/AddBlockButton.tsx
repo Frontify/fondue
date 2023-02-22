@@ -55,4 +55,4 @@ export const AddBlockButton: FC<AddBlockButtonProps> = ({
         </button>
     );
 };
-AddBlockButton.displayName = 'AddBlockButton';
+AddBlockButton.displayName = 'FondueAddBlockButton';

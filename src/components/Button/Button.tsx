@@ -135,4 +135,4 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
 };
 
 export const Button = forwardRef(ButtonComponent);
-Button.displayName = 'Button';
+Button.displayName = 'FondueButton';
