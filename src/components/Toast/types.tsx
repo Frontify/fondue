@@ -1,24 +1,24 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactChild } from 'react';
+import { ReactNode } from 'react';
 
 export type ToastProps = {
     isOpen: boolean;
-    style: ToastStyles;
-    icon: ReactChild;
-    children?: ReactChild;
+    style: ToastStyle;
+    icon: ReactNode;
+    children?: ReactNode;
 };
 
-export enum ToastStyles {
-    Information = 'Information',
+export enum ToastStyle {
+    Loud = 'Loud',
+    Danger = 'Danger',
+    Success = 'Success',
     Warning = 'Warning',
-    Tip = 'Tip',
-    Note = 'Note',
 }
 
-export const toastStylesBackgroundColorsMap: Record<ToastStyles, string> = {
-    [ToastStyles.Information]: 'tw-bg-violet-60',
-    [ToastStyles.Warning]: 'tw-bg-red-60',
-    [ToastStyles.Tip]: 'tw-bg-green-60',
-    [ToastStyles.Note]: 'tw-bg-yellow-60',
+export const toastStylesBackgroundColorsMap: Record<ToastStyle, string> = {
+    [ToastStyle.Loud]: 'tw-bg-box-selected-strong',
+    [ToastStyle.Danger]: 'tw-bg-box-negative-strong-pressed',
+    [ToastStyle.Success]: 'tw-bg-box-positive-strong-pressed',
+    [ToastStyle.Warning]: 'tw-bg-box-warning-strong',
 };
