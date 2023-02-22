@@ -96,10 +96,10 @@ const RichTextEditorTemplate: StoryFn<RichTextEditorProps> = (args: RichTextEdit
     <RichTextEditorComponent {...args} />
 );
 
-const fullyFledgedPlugins = new PluginComposer();
-fullyFledgedPlugins
-    .setPlugin(new InitPlugin(), new ParagraphPlugin())
-    .setPlugin(new TextStylePlugin())
+const allPlugins = new PluginComposer();
+allPlugins
+    .setPlugin([new InitPlugin(), new ParagraphPlugin(), new TextStylePlugin()])
+    .setPlugin([new MentionPlugin({ mentionableItems: mentionable })])
     .setPlugin(
         [
             new BoldPlugin(),
@@ -119,13 +119,14 @@ fullyFledgedPlugins
             new UnorderedListPlugin(),
             new CheckboxListPlugin(),
             new OrderedListPlugin(),
-            new ResetFormattingPlugin(),
             new EmojiPlugin(),
+            new ResetFormattingPlugin(),
         ],
     );
+
 export const FullyFledged = RichTextEditorTemplate.bind({});
 FullyFledged.args = {
-    plugins: fullyFledgedPlugins,
+    plugins: allPlugins,
 };
 
 export const Flex: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
@@ -145,33 +146,6 @@ export const SerializedToHTML: StoryFn<RichTextEditorProps> = () => {
 };
 
 export const MarkdownSerializerDeserializer: StoryFn<RichTextEditorProps> = () => {
-    const allPlugins = new PluginComposer();
-    allPlugins
-        .setPlugin([new InitPlugin(), new ParagraphPlugin(), new TextStylePlugin()])
-        .setPlugin([new MentionPlugin({ mentionableItems: mentionable })])
-        .setPlugin(
-            [
-                new BoldPlugin(),
-                new ItalicPlugin(),
-                new UnderlinePlugin(),
-                new StrikethroughPlugin(),
-                new LinkPlugin(),
-                new ButtonPlugin(),
-                new CodePlugin(),
-            ],
-            [
-                new AlignLeftPlugin(),
-                new AlignCenterPlugin(),
-                new AlignRightPlugin(),
-                new AlignJustifyPlugin(),
-                new UnorderedListPlugin(),
-                new CheckboxListPlugin(),
-                new OrderedListPlugin(),
-                new EmojiPlugin(),
-                new ResetFormattingPlugin(),
-            ],
-        );
-
     const toSlateTransform = Transform.use(new MarkdownToSlate());
     const resultSlate = toSlateTransform.process(markdownText);
 
