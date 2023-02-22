@@ -23,7 +23,6 @@ import {
     TText,
     isText,
 } from '@udecode/plate';
-import { merge } from '@utilities/merge';
 import { buttonNode } from '../nodes/button';
 import { checkItemNode } from '../nodes/checkItem';
 import { linkNode } from '../nodes/link';
