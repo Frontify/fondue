@@ -8,7 +8,6 @@ import {
     BoldPlugin,
     BreakAfterPlugin,
     ELEMENT_BUTTON,
-    InitPlugin,
     OrderedListPlugin,
     ParagraphPlugin,
     PluginComposer,
@@ -914,7 +913,7 @@ describe('RichTextEditor Component', () => {
 
         const pluginsWithColumns = new PluginComposer();
         pluginsWithColumns
-            .setPlugin([new InitPlugin(), new ParagraphPlugin()])
+            .setPlugin([new ParagraphPlugin()])
             .setPlugin(new TextStylePlugin())
             .setPlugin(
                 [new BoldPlugin(), new BreakAfterPlugin({ columns: 2, gap: 20 })],

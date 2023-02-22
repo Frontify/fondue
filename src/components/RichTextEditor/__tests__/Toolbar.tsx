@@ -3,7 +3,7 @@
 import React from 'react';
 import { RichTextEditor } from '../RichTextEditor';
 import { Position } from '../EditorPositioningWrapper';
-import { BoldPlugin, InitPlugin, ItalicPlugin, LinkPlugin, PluginComposer, UnorderedListPlugin } from '../Plugins';
+import { BoldPlugin, ItalicPlugin, LinkPlugin, PluginComposer, UnorderedListPlugin } from '../Plugins';
 import { insertTextAndOpenToolbar } from './fixtures/RichTextEditor';
 
 const RICH_TEXT_EDITOR = '[data-test-id=rich-text-editor]';
@@ -44,7 +44,6 @@ describe('Toolbar', () => {
     it('renders a toolbar with custom controls', () => {
         const plugins = new PluginComposer();
         plugins
-            .setPlugin([new InitPlugin()])
             .setPlugin([new LinkPlugin()])
             .setPlugin([new BoldPlugin(), new ItalicPlugin()])
             .setPlugin([new UnorderedListPlugin()]);
