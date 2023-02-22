@@ -9,7 +9,6 @@ import {
     BoldPlugin,
     BreakAfterPlugin,
     ELEMENT_BUTTON,
-    InitPlugin,
     ItalicPlugin,
     LinkPlugin,
     OrderedListPlugin,
@@ -297,7 +296,6 @@ describe('RichTextEditor Component', () => {
         it('renders a toolbar with custom controls', () => {
             const plugins = new PluginComposer();
             plugins
-                .setPlugin([new InitPlugin()])
                 .setPlugin([new LinkPlugin()])
                 .setPlugin([new BoldPlugin(), new ItalicPlugin()])
                 .setPlugin([new UnorderedListPlugin()]);
@@ -994,7 +992,7 @@ describe('RichTextEditor Component', () => {
 
         const pluginsWithColumns = new PluginComposer();
         pluginsWithColumns
-            .setPlugin([new InitPlugin(), new ParagraphPlugin()])
+            .setPlugin([new ParagraphPlugin()])
             .setPlugin(new TextStylePlugin())
             .setPlugin(
                 [new BoldPlugin(), new BreakAfterPlugin({ columns: 2, gap: 20 })],

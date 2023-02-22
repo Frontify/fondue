@@ -6,7 +6,6 @@ import { ButtonPlugin } from './ButtonPlugin';
 import { CheckboxListPlugin } from './CheckboxListPlugin';
 import { CodePlugin } from './CodePlugin';
 import { EmojiPlugin } from './EmojiPlugin';
-import { InitPlugin } from './InitPlugin';
 import { ItalicPlugin } from './ItalicPlugin';
 import { LinkPlugin } from './LinkPlugin';
 import { OrderedListPlugin, UnorderedListPlugin } from './ListPlugin';
@@ -19,7 +18,7 @@ import { UnderlinePlugin } from './UnderlinePlugin';
 
 export const defaultPlugins = new PluginComposer();
 defaultPlugins
-    .setPlugin(new InitPlugin(), new ParagraphPlugin())
+    .setPlugin(new ParagraphPlugin())
     .setPlugin(new TextStylePlugin())
     .setPlugin(
         [
@@ -51,7 +50,6 @@ export * from './CheckboxListPlugin';
 export * from './CodePlugin';
 export * from './EmojiPlugin';
 export * from './GeneratePlugins';
-export * from './InitPlugin';
 export * from './ItalicPlugin';
 export * from './LinkPlugin';
 export * from './ListPlugin';
