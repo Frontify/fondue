@@ -12,20 +12,26 @@ import {
     TOOLBAR_PLUGIN_OL,
 } from './fixtures/selectors';
 
-const RichTextEditorWithListPluginWithSoftBreak = ({ value }: { value: string }) => {
+const RichTextEditorWithListPluginWithSoftBreak = ({
+    isSoftBreak = false,
+    value,
+}: {
+    isSoftBreak?: boolean;
+    value: string;
+}) => {
     const plugins = new PluginComposer().setPlugin([
-        new UnorderedListPlugin({ isSoftBreak: true }),
-        new OrderedListPlugin({ isSoftBreak: true }),
+        new UnorderedListPlugin({ isSoftBreak }),
+        new OrderedListPlugin({ isSoftBreak }),
     ]);
 
     return <RichTextEditor border={false} plugins={plugins} value={value} />;
 };
 
-const RichTextEditorWithUnorderedListStyles = () => (
-    <RichTextEditorWithListPluginWithSoftBreak value={JSON.stringify([unorderedListValue])} />
+const RichTextEditorWithUnorderedListStyles = ({ isSoftBreak = false }) => (
+    <RichTextEditorWithListPluginWithSoftBreak value={JSON.stringify([unorderedListValue])} isSoftBreak={isSoftBreak} />
 );
-const RichTextEditorWithOrderedListStyles = () => (
-    <RichTextEditorWithListPluginWithSoftBreak value={JSON.stringify([orderedListValue])} />
+const RichTextEditorWithOrderedListStyles = ({ isSoftBreak = false }) => (
+    <RichTextEditorWithListPluginWithSoftBreak value={JSON.stringify([orderedListValue])} isSoftBreak={isSoftBreak} />
 );
 
 describe('List Plugin', () => {
@@ -67,9 +73,16 @@ describe('List Plugin', () => {
         );
     });
 
-    it('renders ', () => {
-        cy.mount(<RichTextEditorWithUnorderedListStyles />);
+    it('renders new list item with soft break', () => {
+        cy.mount(<RichTextEditorWithUnorderedListStyles isSoftBreak={false} />);
+        const itemValue = 'New item in list';
 
-        cy.get('[contenteditable=true] li').should('have.class', '!tw-no-underline');
+        const firstListItemSelector = '[contenteditable=true] ul:first-child > li:first-child';
+        const secondListItemSelector = '[contenteditable=true] ul:first-child > li:nth-child(2)';
+
+        cy.get(firstListItemSelector).type(`{end}{shift+enter}${itemValue}`);
+
+        cy.get(firstListItemSelector).children().should('have.length', 1);
+        cy.get(secondListItemSelector).should('include.text', itemValue);
     });
 });
