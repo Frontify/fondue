@@ -8,13 +8,11 @@ import { Validation } from '@utilities/validation';
 export default {
     title: 'Components/Textarea',
     component: TextareaComponent,
-    tags: ['autodocs'],
     args: {
         disabled: false,
         required: false,
         autosize: false,
         resizeable: true,
-        selectable: false,
         validation: Validation.Default,
     },
     argTypes: {
@@ -24,7 +22,6 @@ export default {
         onInput: { action: 'onInput' },
         onBlur: { action: 'onBlur' },
         onClear: { action: 'onClear' },
-        onFocus: { action: 'onFocus' },
         validation: {
             options: Object.values(Validation),
             control: { type: 'select' },

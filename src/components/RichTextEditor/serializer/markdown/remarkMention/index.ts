@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { VisitorResult, visit } from 'unist-util-visit';
-import { MENTION_SERIALIZE_REGEX } from '../utils';
 import { NodeChild, NodeChildKey, ParagraphNode, RegExpMatchArray, Transformer } from './types';
 
 const transformer = (tree: ParagraphNode) => {
@@ -17,7 +16,7 @@ const transformer = (tree: ParagraphNode) => {
                 continue;
             }
 
-            const matches = [...child.value.matchAll(MENTION_SERIALIZE_REGEX)] as RegExpMatchArray[];
+            const matches = [...child.value.matchAll(/@\[[a-z]+:\s\d+]/gi)] as RegExpMatchArray[];
 
             if (matches === null || matches.length === 0) {
                 node.children.push(child);
@@ -60,11 +59,6 @@ const createNodes = (matches: RegExpMatchArray[], node: ParagraphNode, value: st
         node.children.push({
             type: 'text',
             value: value.slice(lastMatch.index + lastMatch[0].length),
-        });
-    } else {
-        node.children.push({
-            type: 'text',
-            value: '',
         });
     }
 };

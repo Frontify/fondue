@@ -9,5 +9,4 @@ export enum DropZonePosition {
 export type DraggableItem<T = Record<string, unknown>> = T & {
     id: string;
     sort: NullableNumber;
-    type?: string;
 };

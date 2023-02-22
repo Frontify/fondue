@@ -41,12 +41,12 @@ export const textStyleTitle: Record<TextStyles, string> = {
     [TextStyles.ELEMENT_HEADING2]: 'Heading 2',
     [TextStyles.ELEMENT_HEADING3]: 'Heading 3',
     [TextStyles.ELEMENT_HEADING4]: 'Heading 4',
-    [TextStyles.ELEMENT_CUSTOM1]: 'Custom 1',
-    [TextStyles.ELEMENT_CUSTOM2]: 'Custom 2',
-    [TextStyles.ELEMENT_CUSTOM3]: 'Custom 3',
+    [TextStyles.ELEMENT_CUSTOM1]: 'Custom 01',
+    [TextStyles.ELEMENT_CUSTOM2]: 'Custom 02',
+    [TextStyles.ELEMENT_CUSTOM3]: 'Custom 03',
     [TextStyles.ELEMENT_QUOTE]: 'Quote',
     [TextStyles.ELEMENT_LINK]: 'Link',
-    [TextStyles.ELEMENT_PARAGRAPH]: 'Body Text',
+    [TextStyles.ELEMENT_PARAGRAPH]: 'Paragraph',
 };
 
 export const AVAILABLE_STYLE_TITLES = { ...listStyleTitle, ...textStyleTitle };

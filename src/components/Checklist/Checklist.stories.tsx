@@ -8,7 +8,6 @@ import { Checklist as ChecklistComponent, ChecklistDirection, ChecklistProps } f
 export default {
     title: 'Components/Checklist',
     component: ChecklistComponent,
-    tags: ['autodocs'],
     argTypes: {
         columns: {
             options: [1, 2, 3, 4],
@@ -62,14 +61,17 @@ export const Checklist: StoryFn<ChecklistProps> = (args: ChecklistProps) => {
     );
 };
 
-const MultipleColumnsComponent = (args: ChecklistProps) => {
+export const MultipleColumns = (args: ChecklistProps) => {
     const [activeBoxes, setActiveBoxes] = useState<string[]>([]);
 
-    return <ChecklistComponent {...args} activeValues={activeBoxes} setActiveValues={setActiveBoxes} />;
-};
-
-export const MultipleColumns = (args: ChecklistProps) => {
-    return <MultipleColumnsComponent {...args} checkboxes={COLUMN_CHECKBOXES} />;
+    return (
+        <ChecklistComponent
+            {...args}
+            checkboxes={COLUMN_CHECKBOXES}
+            activeValues={activeBoxes}
+            setActiveValues={setActiveBoxes}
+        />
+    );
 };
 MultipleColumns.args = {
     direction: ChecklistDirection.Vertical,
@@ -77,9 +79,16 @@ MultipleColumns.args = {
 };
 
 export const MultipleColumnsInContainedSpace = (args: ChecklistProps) => {
+    const [activeBoxes, setActiveBoxes] = useState<string[]>([]);
+
     return (
         <div className="tw-w-[300px] tw-p-2 tw-border- tw-border tw-rounded tw-border-line">
-            <MultipleColumnsComponent {...args} checkboxes={COLUMN_CHECKBOXES} />
+            <ChecklistComponent
+                {...args}
+                checkboxes={COLUMN_CHECKBOXES}
+                activeValues={activeBoxes}
+                setActiveValues={setActiveBoxes}
+            />
         </div>
     );
 };
@@ -89,21 +98,5 @@ MultipleColumnsInContainedSpace.args = {
 };
 
 MultipleColumnsInContainedSpace.argTypes = {
-    direction: { table: { disable: true } },
-};
-
-export const MultipleColumnsInContainedSpaceAndSpannedColumn = (args: ChecklistProps) => {
-    return (
-        <div className="tw-w-[300px] tw-p-2 tw-border- tw-border tw-rounded tw-border-line">
-            <MultipleColumnsComponent {...args} checkboxes={COLUMN_CHECKBOXES.slice(0, -1)} />
-        </div>
-    );
-};
-MultipleColumnsInContainedSpaceAndSpannedColumn.args = {
-    direction: ChecklistDirection.Vertical,
-    columns: 3,
-};
-
-MultipleColumnsInContainedSpaceAndSpannedColumn.argTypes = {
     direction: { table: { disable: true } },
 };

@@ -13,7 +13,6 @@ export const AlignJustifyButton = ({ id }: PluginButtonProps) => (
             icon={<IconStylingWrapper icon={<IconTextAlignmentJustify size={IconSize.Size16} />} />}
             classNames={buttonClassNames}
             styles={buttonStyles}
-            actionHandler="onMouseDown"
         />
     </ButtonWrapper>
 );

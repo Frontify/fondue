@@ -31,7 +31,7 @@ export const getStyleClasses = (style: BadgeStyle, hasHover: boolean, strong: bo
           }
         : {
               [BadgeStyle.Primary]: merge([
-                  'tw-bg-box-neutral tw-text-box-neutral-inverse',
+                  'tw-bg-box-neutral tw-text-text-weak',
                   hasHover && 'hover:tw-bg-box-neutral-hover hover:tw-text-box-neutral-inverse-hover',
               ]),
               [BadgeStyle.Positive]: merge([
@@ -66,15 +66,14 @@ export const getSizeClasses = (
     status: BadgeProps['status'],
     icon: BadgeProps['icon'],
     size: BadgeSize,
-    isDismissable: boolean,
 ) => {
     const isSmall = size === 'small';
 
     if (isSmall) {
-        return merge(['tw-h-5 tw-px-1.5', isDismissable && 'tw-pr-5']);
+        return 'tw-h-5 tw-px-1.5';
     } else {
         const hasMaximumTwoComponents = !Boolean(children && status && icon);
-        return merge(['tw-h-6', 'tw-px-2', hasMaximumTwoComponents && 'tw-gap-x-0.5', isDismissable && 'tw-pr-6']);
+        return merge(['tw-h-6', 'tw-px-2', hasMaximumTwoComponents && 'tw-gap-x-0.5']);
     }
 };
 

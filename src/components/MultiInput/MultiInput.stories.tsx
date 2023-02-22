@@ -12,7 +12,6 @@ import { IconIcon } from '@foundation/Icon';
 export default {
     title: 'Components/Multi Input',
     component: MultiInputComponent,
-    tags: ['autodocs'],
     args: {
         layout: MultiInputLayout.Columns,
         spanLastItem: false,

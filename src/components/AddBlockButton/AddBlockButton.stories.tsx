@@ -11,7 +11,6 @@ import {
 export default {
     title: 'Components/Add Block Button',
     component: AddBlockButtonComponent,
-    tags: ['autodocs'],
     args: {
         title: 'Add Block Button',
         orientation: AddBlockButtonDirection.Horizontal,

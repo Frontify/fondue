@@ -16,7 +16,7 @@ export type MenuItemProps = {
     /** @deprecated this prop is not being used anymore */
     type?: string;
     link?: string;
-    onClick?: <T extends HTMLButtonElement | HTMLAnchorElement>(event: MouseEvent<T>) => void;
+    onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
 } & Omit<MenuItemContentProps, 'iconSize'>;
 
 export const menuItemSizeClassMap: Record<MenuItemContentSize, string> = {
@@ -42,17 +42,6 @@ export const menuItemTextColorRecord: Record<MenuItemStyle, Record<MenuItemTextC
         [MenuItemTextColorState.Active]: 'tw-text-red-70',
         [MenuItemTextColorState.Disabled]: 'tw-text-red-40',
     },
-    [MenuItemStyle.Warning]: {
-        [MenuItemTextColorState.Default]: 'tw-text-text-warning',
-        [MenuItemTextColorState.Active]: 'tw-text-yellow-90',
-        [MenuItemTextColorState.Disabled]: 'tw-text-yellow-40',
-    },
-};
-
-const menuItemHoverColorRecord: Record<MenuItemStyle, string> = {
-    [MenuItemStyle.Primary]: 'hover:tw-text-text',
-    [MenuItemStyle.Danger]: 'hover:tw-text-text-negative',
-    [MenuItemStyle.Warning]: 'hover:tw-text-text-warning',
 };
 
 const ITEM_WRAPPER_CLASSES =
@@ -76,6 +65,8 @@ export const MenuItem = ({
     link,
     onClick,
 }: PropsWithChildren<MenuItemProps>) => {
+    const isDangerStyle = style === MenuItemStyle.Danger;
+
     const currentIconSize = size === MenuItemContentSize.XSmall ? IconSize.Size16 : IconSize.Size20;
 
     const currentIcon = {
@@ -116,7 +107,7 @@ export const MenuItem = ({
                     ])}
                 >
                     {mainElementType === 'a' && (
-                        <a href={link} className={ITEM_BASE_CLASSES} onClick={onClick}>
+                        <a href={link} className={ITEM_BASE_CLASSES}>
                             {children}
                         </a>
                     )}
@@ -136,7 +127,7 @@ export const MenuItem = ({
                 <div
                     className={merge([
                         ITEM_WRAPPER_CLASSES,
-                        menuItemHoverColorRecord[style],
+                        isDangerStyle ? 'hover:tw-text-negative' : 'hover:tw-text-text',
                         menuItemSizeClassMap[size],
                         disabled && 'tw-bg-box-disabled tw-pointer-events-none',
                         active && 'tw-font-medium',

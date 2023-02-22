@@ -2,7 +2,6 @@
 
 import { ELEMENT_MENTION } from '@udecode/plate';
 import { MarkupElement } from '../../MarkupElement';
-import { mapMentionable } from '../helpers';
 import { MentionableItems } from '../types';
 import { MentionMarkupElementNode } from './MentionMarkupElementNode';
 
@@ -12,7 +11,7 @@ export class MentionMarkupElement extends MarkupElement {
     }
 
     setNodeWithMentionable(mentionable: MentionableItems) {
-        this.node = MentionMarkupElementNode(mapMentionable(mentionable));
+        this.node = MentionMarkupElementNode(mentionable);
         return this;
     }
 }

@@ -48,7 +48,6 @@ export const ColorInputTrigger: FC<ColorInputTriggerProps> = ({
                 {...focusProps}
                 type="button"
                 id={useMemoizedId(id)}
-                disabled={disabled}
                 className={merge([
                     'tw-overflow-hidden tw-flex-auto tw-h-full tw-rounded tw-text-left tw-outline-none tw-py-2 tw-pl-3 tw-min-h-[34px] tw-pr-7',
                     !currentColor && 'tw-text-black-60',

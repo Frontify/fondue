@@ -13,7 +13,6 @@ export const AlignCenterButton = ({ id }: PluginButtonProps) => (
             icon={<IconStylingWrapper icon={<IconTextAlignmentCentre size={IconSize.Size16} />} />}
             classNames={buttonClassNames}
             styles={buttonStyles}
-            actionHandler="onMouseDown"
         />
     </ButtonWrapper>
 );

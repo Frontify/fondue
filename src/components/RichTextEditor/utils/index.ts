@@ -8,4 +8,3 @@ export * from './defaultDesignTokens';
 export * from './deepMerge';
 export * from './calculateToolbarWidth';
 export * from './InitPlateEditor';
-export * from './isPlateValueEmpty';

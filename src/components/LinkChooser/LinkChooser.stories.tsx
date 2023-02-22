@@ -12,7 +12,6 @@ import { doesContainSubstring } from './utils/helpers';
 export default {
     title: 'Components/Link Chooser',
     component: LinkChooserComponent,
-    tags: ['autodocs'],
     args: {
         placeholder: 'https://example.com',
         disabled: false,

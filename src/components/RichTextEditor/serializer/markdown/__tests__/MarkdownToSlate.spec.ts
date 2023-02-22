@@ -105,11 +105,5 @@ describe('Markdown to slate Transformer', () => {
 
         result = transformer.process(mentionsMarkdown[1]);
         expect(result).to.deep.equal(mentionsTree[1]);
-
-        result = transformer.process(mentionsMarkdown[2]);
-        expect(result).to.deep.equal(mentionsTree[2]);
-
-        result = transformer.process(mentionsMarkdown[3]);
-        expect(result).to.deep.equal(mentionsTree[3]);
     });
 });

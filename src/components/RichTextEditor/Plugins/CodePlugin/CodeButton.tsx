@@ -13,7 +13,6 @@ export const CodeButton = ({ editor, id }: PluginButtonProps) => (
             icon={<IconStylingWrapper icon={<IconTextBrackets size={IconSize.Size16} />} />}
             classNames={buttonClassNames}
             styles={buttonStyles}
-            actionHandler="onMouseDown"
         />
     </ButtonWrapper>
 );

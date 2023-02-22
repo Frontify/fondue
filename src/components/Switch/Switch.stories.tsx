@@ -9,7 +9,6 @@ import { TooltipIconTriggerStyle } from '@components/TooltipIcon';
 export default {
     title: 'Components/Switch',
     component: Switch,
-    tags: ['autodocs'],
     argTypes: {
         size: {
             options: Object.values(SwitchSize),

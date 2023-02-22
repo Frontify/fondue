@@ -10,9 +10,7 @@ export enum MentionableCategory {
 }
 
 export type MentionItemData = {
-    id: string;
     category: MentionableCategory;
-    image?: string;
 };
 
 export type MentionableItem = TComboboxItemWithData<MentionItemData>;
@@ -22,5 +20,3 @@ export type MentionableItems = MentionableItem[];
 export type MentionPluginProps = PluginProps & {
     mentionableItems: MentionableItems;
 };
-
-export type MappedMentionableItems = Map<string, string>;

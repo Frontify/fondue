@@ -88,17 +88,15 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
     };
 
     const filterTabList = (array: TabItemProps[], direction: string) => {
-        const activeItemIndex = array.findIndex((tab) => tab.id === activeItemId);
-
-        return array.filter((tab, index) => {
+        return array.filter((tab) => {
             if (direction === 'next') {
-                if (index > activeItemIndex && !tab.disabled) {
+                if (tab.id > activeItemId && !tab.disabled) {
                     return tab;
                 }
             }
 
             if (direction === 'previous') {
-                if (index < activeItemIndex && !tab.disabled) {
+                if (tab.id < activeItemId && !tab.disabled) {
                     return tab;
                 }
             }

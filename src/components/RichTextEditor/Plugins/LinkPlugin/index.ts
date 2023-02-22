@@ -1,18 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { isValidUrl } from '@components/RichTextEditor/utils/isValidUrl';
 import { createLinkPlugin as createPlateLinkPlugin, createPluginFactory } from '@udecode/plate';
-import { Plugin, PluginProps } from '../Plugin';
-import { CustomFloatingLink } from './FloatingLink/CustomFloatingLink';
 import { LINK_PLUGIN } from './id';
-import { LinkButton } from './LinkButton';
 import { LinkMarkupElement } from './LinkMarkupElement';
+import { LinkButton } from './LinkButton';
+import { CustomFloatingLink } from './FloatingLink/CustomFloatingLink';
+import { Plugin, PluginProps } from '../Plugin';
+import { isUrlOrPath } from './utils';
 
 export const createLinkPlugin = createPluginFactory({
     ...createPlateLinkPlugin(),
     renderAfterEditable: CustomFloatingLink,
     options: {
-        isUrl: isValidUrl,
+        isUrl: isUrlOrPath,
         rangeBeforeOptions: {
             matchString: ' ',
             skipInvalid: true,

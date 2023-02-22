@@ -51,7 +51,6 @@ export const InputLabel: FC<InputLabelProps> = ({
                             : 'hover:tw-cursor-pointer hover:tw-text-black dark:hover:tw-text-white group-hover:tw-text-black dark:group-hover:tw-text-white',
                     ])}
                     data-test-id="input-label"
-                    title={typeof children === 'string' ? children : ''}
                 >
                     {children}
                 </label>

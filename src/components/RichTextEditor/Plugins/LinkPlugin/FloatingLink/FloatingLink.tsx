@@ -10,12 +10,7 @@ import {
 import { useFloatingLinkEdit } from './EditLinkModal';
 
 const FloatingLinkInsertRoot = createComponentAs<FloatingLinkProps>((props) => {
-    const htmlProps = useFloatingLinkInsert({
-        ...props,
-        floatingOptions: {
-            strategy: 'fixed',
-        },
-    });
+    const htmlProps = useFloatingLinkInsert(props);
 
     if (htmlProps.style?.display === 'none') {
         return null;
@@ -25,12 +20,7 @@ const FloatingLinkInsertRoot = createComponentAs<FloatingLinkProps>((props) => {
 });
 
 const FloatingLinkEditRoot = createComponentAs<FloatingLinkProps>((props) => {
-    const htmlProps = useFloatingLinkEdit({
-        ...props,
-        floatingOptions: {
-            strategy: 'fixed',
-        },
-    });
+    const htmlProps = useFloatingLinkEdit(props);
 
     if (htmlProps.style?.display === 'none') {
         return null;

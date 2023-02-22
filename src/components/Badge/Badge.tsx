@@ -2,7 +2,6 @@
 
 import RejectIcon from '@foundation/Icon/Generated/IconCross';
 import { IconSize } from '@foundation/Icon/IconSize';
-import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import React, { FC, ReactNode, cloneElement } from 'react';
 import { BadgeStatusIcon } from './BadgeStatusIcon';
@@ -24,7 +23,7 @@ export const Badge: FC<BadgeProps> = ({
         return null;
     }
 
-    const Container = onClick ? 'button' : 'span';
+    const Container = onClick ? 'a' : 'span';
 
     const getNodeText = (node: ReactNode): string => {
         if (['string', 'number'].includes(typeof node)) {
@@ -43,58 +42,46 @@ export const Badge: FC<BadgeProps> = ({
     const isCircular = !children && !onDismiss && Boolean(status || icon);
 
     return (
-        <div
+        <Container
+            onClick={() => onClick && onClick()}
             className={merge([
-                'tw-relative tw-rounded-full tw-inline-flex tw-items-center tw-align-top tw-min-w-0 tw-flex-initial tw-transition-color',
+                'tw-inline-flex tw-items-center tw-justify-center tw-rounded-full tw-transition-color tw-select-none tw-flex-initial tw-min-w-0 tw-align-top',
                 disabled
                     ? 'tw-bg-box-disabled tw-text-box-disabled-inverse'
                     : getStyleClasses(style, !!onClick, emphasis === BadgeEmphasis.Strong),
+                onClick && !disabled ? 'hover:tw-cursor-pointer' : 'tw-cursor-default',
+                isCircular ? getCircularSizeClasses(size) : getSizeClasses(children, status, icon, size),
             ])}
             data-test-id="badge"
+            title={badgeTitle}
         >
-            <Container
-                onClick={() => onClick && onClick()}
-                className={merge([
-                    'tw-inline-flex tw-items-center tw-justify-center tw-rounded-full tw-select-none tw-flex-initial tw-min-w-0',
-                    onClick && !disabled ? 'hover:tw-cursor-pointer' : 'tw-cursor-default',
-                    isCircular
-                        ? getCircularSizeClasses(size)
-                        : getSizeClasses(children, status, icon, size, !!onDismiss),
-                    FOCUS_VISIBLE_STYLE,
-                ])}
-                data-test-id="badge-button"
-                title={badgeTitle}
-            >
-                {status && <BadgeStatusIcon status={status} disabled={disabled} />}
-                {icon && (
-                    <span
-                        data-test-id="badge-icon"
-                        className={merge([disabled && 'tw-opacity-30', 'tw-flex-none tw-leading-none', 'tw-pr-1'])}
-                    >
-                        {cloneElement(icon, { size: IconSize.Size16 })}
-                    </span>
-                )}
-                {children && (
-                    <span className="tw-text-center tw-text-xxs tw-font-sans tw-font-normal tw-truncate tw-px-0.5">
-                        {children}
-                    </span>
-                )}
-            </Container>
+            {status && <BadgeStatusIcon status={status} disabled={disabled} />}
+            {icon && (
+                <span
+                    data-test-id="badge-icon"
+                    className={merge([disabled && 'tw-opacity-30', 'tw-flex-none tw-leading-none'])}
+                >
+                    {cloneElement(icon, { size: IconSize.Size16 })}
+                </span>
+            )}
+            {children && (
+                <span className="tw-text-center tw-text-xxs tw-font-sans tw-font-normal tw-truncate tw-px-0.5">
+                    {children}
+                </span>
+            )}
             {onDismiss && (
                 <button
                     type="button"
                     data-test-id="badge-dismiss"
-                    className={merge([
-                        'tw-absolute tw-rounded tw-leading-4',
-                        FOCUS_VISIBLE_STYLE,
-                        size === 'medium' ? 'tw-right-1.5' : 'tw-right-1',
-                    ])}
-                    onClick={() => onDismiss()}
-                    aria-label={`Dismiss ${badgeTitle}`}
+                    className="tw--mx-0.5"
+                    onClick={(event) => {
+                        event.stopPropagation();
+                        onDismiss();
+                    }}
                 >
                     <RejectIcon size={IconSize.Size16} />
                 </button>
             )}
-        </div>
+        </Container>
     );
 };

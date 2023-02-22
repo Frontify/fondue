@@ -13,7 +13,6 @@ export const StrikethroughButton = ({ editor, id }: PluginButtonProps) => (
             icon={<IconStylingWrapper icon={<IconTextFormatStrikethrough size={IconSize.Size16} />} />}
             classNames={buttonClassNames}
             styles={buttonStyles}
-            actionHandler="onMouseDown"
         />
     </ButtonWrapper>
 );

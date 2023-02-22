@@ -7,9 +7,8 @@ import { IconSize } from '@foundation/Icon/IconSize';
 import { IconExclamationMarkCircle } from '@foundation/Icon/Generated';
 
 export default {
-    title: 'Deprecating/TooltipIcon',
+    title: 'Components/TooltipIcon',
     component: TooltipIcon,
-    tags: ['autodocs'],
     argTypes: {
         triggerStyle: {
             options: Object.values(TooltipIconTriggerStyle),

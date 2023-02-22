@@ -7,24 +7,34 @@ import { treeNodesMock } from '@components/Tree/utils/mocks';
 
 const TreeComponent = ({ onSelect }: { onSelect?: (id: Nullable<string>) => void }) => {
     return (
-        <Tree id="treeId" onSelect={onSelect}>
+        <Tree id="treeId">
             {treeNodesMock.map((node) => (
-                <TreeItem key={node.id} id={node.id} contentComponent={() => <span>{node.label}</span>}>
-                    {node.nodes?.map((node) => (
-                        <TreeItem key={node.id} id={node.id} contentComponent={() => <span>{node.label}</span>}>
-                            {node.nodes?.map((node) => (
-                                <TreeItem key={node.id} id={node.id} contentComponent={() => <span>{node.label}</span>}>
-                                    {node.nodes?.map((node) => (
+                <TreeItem
+                    key={node.id}
+                    id={node.id}
+                    sort={node.sort}
+                    contentComponent={() => <span>{node.name}</span>}
+                    onSelect={onSelect}
+                >
+                    {node.nodes &&
+                        node.nodes.map((node) => (
+                            <TreeItem
+                                key={node.id}
+                                id={node.id}
+                                sort={node.sort}
+                                contentComponent={() => <span>{node.name}</span>}
+                            >
+                                {node.nodes &&
+                                    node.nodes.map((node) => (
                                         <TreeItem
                                             key={node.id}
                                             id={node.id}
-                                            contentComponent={() => <span>{node.label}</span>}
+                                            sort={node.sort}
+                                            contentComponent={() => <span>{node.name}</span>}
                                         />
                                     ))}
-                                </TreeItem>
-                            ))}
-                        </TreeItem>
-                    ))}
+                            </TreeItem>
+                        ))}
                 </TreeItem>
             ))}
         </Tree>
@@ -59,14 +69,14 @@ describe('Tree Component', () => {
         cy.get(TREE_ITEM_TOGGLE_ID).eq(2).click();
         cy.get(TREE_ITEM_TOGGLE_ID).eq(1).click();
 
-        cy.get(TREE_ITEM_ID).should('have.length', 10);
+        cy.get(TREE_ITEM_ID).should('have.length', 9);
     });
 
     it('calls the onSelect callback', () => {
         const onSelectStub = cy.stub().as('onSelectStub');
         cy.mount(<TreeComponent onSelect={onSelectStub} />);
 
-        cy.get(TREE_ITEM_ID).eq(0).click();
+        cy.get(TREE_ITEM_ID).click();
         cy.get('@onSelectStub').should('have.been.called');
     });
 });

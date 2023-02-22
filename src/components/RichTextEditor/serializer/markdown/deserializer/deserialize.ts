@@ -17,7 +17,6 @@ import {
     TextNode,
     ThematicBreakNode,
 } from '../types';
-import { MENTION_DESERIALIZE_REGEX } from '../utils';
 
 export default function deserialize<T extends InputNodeTypes>(node: MarkdownAstNode, options: OptionType) {
     const types = options?.nodeTypes as InputNodeTypes;
@@ -40,11 +39,11 @@ export default function deserialize<T extends InputNodeTypes>(node: MarkdownAstN
     switch (node.type) {
         case 'mention':
             const value = node.children ? node.children[0].value : undefined;
-            const matches = value?.match(MENTION_DESERIALIZE_REGEX) as RegExpMatchArray;
+            const matches = value?.match(/@\[([a-z]+):\s(\d+)]/i) as RegExpMatchArray;
             return {
                 type: types.mention,
                 category: matches[1],
-                id: matches[2],
+                key: matches[2],
                 children: [{ text: '' }],
             };
         case 'heading':

@@ -88,7 +88,7 @@ export type BlockType = {
     break?: boolean;
     link?: string;
     url?: string;
-    id?: string;
+    key?: string;
     category?: string;
 };
 

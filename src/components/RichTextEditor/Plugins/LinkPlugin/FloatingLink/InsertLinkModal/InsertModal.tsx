@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
+import React, { FC } from 'react';
+import { IconCheckMark } from '@foundation/Icon';
 import { Button } from '@components/Button/Button';
 import { Checkbox } from '@components/Checkbox';
 import { FormControl } from '@components/FormControl';
 import { TextInput } from '@components/TextInput';
-import { IconCheckMark } from '@foundation/Icon';
-import React, { FC } from 'react';
+import { ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
 import { InsertModalStateProps } from './types';
 
 type Props = {
@@ -34,7 +34,7 @@ export const InsertModal: FC<Props> = ({
     testId,
     children,
 }) => (
-    <div data-test-id={testId} className="tw-bg-white tw-rounded tw-shadow tw-p-7 tw-min-w-[400px] tw-overflow-y-auto">
+    <div data-test-id={testId} className="tw-bg-white tw-rounded tw-shadow tw-p-7 tw-min-w-[400px]">
         <FormControl
             label={{
                 children: 'Text',
@@ -55,13 +55,7 @@ export const InsertModal: FC<Props> = ({
                     required: true,
                 }}
             >
-                <TextInput
-                    id="url"
-                    value={state.url}
-                    placeholder="https://example.com"
-                    focusOnMount
-                    onChange={onUrlChange}
-                />
+                <TextInput id="url" value={state.url} placeholder="https://example.com" onChange={onUrlChange} />
             </FormControl>
             {!isValidUrlOrEmpty() && <div className="tw-text-red-65 tw-mt-3">Please enter a valid URL.</div>}
         </div>

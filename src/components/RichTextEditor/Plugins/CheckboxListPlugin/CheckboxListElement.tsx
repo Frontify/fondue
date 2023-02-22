@@ -12,7 +12,7 @@ export const CheckboxListElementNode = (props: PlateRenderElementProps) => {
     const rootProps = getRootProps(props);
     const checked = element.checked as boolean;
     return (
-        <div {...attributes} {...rootProps} className="tw-flex tw-flex-row tw-pb-2">
+        <div {...attributes} {...rootProps} className="tw-flex tw-flex-row tw-py-1">
             <div contentEditable={false} className="tw-flex tw-items-center tw-justify-center tw-select-none tw-mr-1.5">
                 <input
                     data-test-id="checkbox-input"

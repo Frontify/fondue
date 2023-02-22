@@ -12,7 +12,6 @@ import escapeHtml from 'escape-html';
 
 export const serializeLeafToHtml = (node: TText): string => {
     let string = escapeHtml(node.text);
-    string = string.replace('\n', '<br />');
     if (node.bold) {
         string = `<span class="${BOLD_CLASSES}">${string}</span>`;
     }

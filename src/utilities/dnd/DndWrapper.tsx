@@ -24,6 +24,8 @@ export const DndWrapper = memo(({ id, children }: DndWrapperProps) => {
         <DndProvider backend={HTML5Backend} options={{ rootElement: context }}>
             {children}
         </DndProvider>
-    ) : null;
+    ) : (
+        <></>
+    );
 });
 DndWrapper.displayName = 'DndWrapper';

@@ -27,7 +27,7 @@ const shouldIgnoreParagraphNewline = (
     nodeTypes: InputNodeTypes,
 ) =>
     !ignoreParagraphNewline &&
-    text === '\n' &&
+    (text === '' || text === '\n') &&
     chunk.parentType === nodeTypes.paragraph &&
     !isMentionType((chunk as BlockType).type, nodeTypes);
 

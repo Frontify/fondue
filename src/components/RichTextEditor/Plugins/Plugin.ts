@@ -2,37 +2,29 @@
 
 import { AnyObject, PlatePlugin } from '@udecode/plate';
 import { InlineData, PluginButton } from './types';
-import { Position } from '../EditorPositioningWrapper';
 import type { MarkupElement } from './MarkupElement';
 
 export type PluginProps = {
     id?: string;
     button?: PluginButton;
     markupElement?: MarkupElement;
-    markupInputElement?: MarkupElement;
     leafMarkupElements?: MarkupElement | MarkupElement[];
-    showIn?: Position[];
-    columns?: number;
-    gap?: string | number;
+    noButton?: boolean;
 };
 
 export abstract class Plugin<P extends PluginProps = PluginProps> {
     readonly id: string;
     readonly button?: PluginButton;
     readonly markupElement?: MarkupElement;
-    readonly markupInputElement?: MarkupElement;
     readonly leafMarkupElements?: MarkupElement | MarkupElement[];
-    readonly showIn: Position[];
     readonly props?: P;
 
-    constructor(id: string, rest?: P) {
-        this.id = rest?.id || id;
-        this.button = rest?.button;
-        this.markupElement = rest?.markupElement;
-        this.markupInputElement = rest?.markupInputElement;
-        this.leafMarkupElements = rest?.leafMarkupElements;
-        this.showIn = rest?.showIn ?? [Position.BOTTOM, Position.TOP, Position.FLOATING];
-        this.props = rest;
+    constructor(id: string, protected rest: P) {
+        this.id = this.rest.id || id;
+        this.button = this.rest?.button;
+        this.markupElement = this.rest?.markupElement;
+        this.leafMarkupElements = this.rest?.leafMarkupElements;
+        this.props = this.rest;
     }
 
     inline(): InlineData | undefined {

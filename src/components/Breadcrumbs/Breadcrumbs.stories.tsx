@@ -17,7 +17,6 @@ const ITEMS = [
 export default {
     title: 'Components/Breadcrumbs',
     component: Breadcrumbs,
-    tags: ['autodocs'],
     argTypes: {
         onBlur: { action: 'onBlur' },
     },

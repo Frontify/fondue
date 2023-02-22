@@ -1,17 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TEditableProps, useFloatingLinkSelectors } from '@udecode/plate';
 import React from 'react';
-import { EditModal } from './EditLinkModal';
+import { useFloatingLinkSelectors } from '@udecode/plate';
 import { FloatingLink } from './FloatingLink';
+import { EditModal } from './EditLinkModal';
 import { InsertLinkModal } from './InsertLinkModal/InsertLinkModal';
 
-export const CustomFloatingLink = ({ readOnly }: TEditableProps) => {
+export const CustomFloatingLink = () => {
     const isEditing = useFloatingLinkSelectors().isEditing();
-
-    if (readOnly) {
-        return null;
-    }
 
     const input = <InsertLinkModal />;
     const editContent = isEditing ? input : <EditModal />;

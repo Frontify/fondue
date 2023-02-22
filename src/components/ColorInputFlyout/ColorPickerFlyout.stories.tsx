@@ -9,7 +9,6 @@ import { ColorPickerFlyout as ColorPickerFlyoutComponent, ColorPickerFlyoutProps
 export default {
     title: 'Components/Color Picker/Flyout',
     component: ColorPickerFlyoutComponent,
-    tags: ['autodocs'],
     args: {
         disabled: false,
         currentColor: null,

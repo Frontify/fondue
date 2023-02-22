@@ -2,15 +2,15 @@
 
 import { useButton } from '@react-aria/button';
 import { merge } from '@utilities/merge';
-import React, { FC, ReactNode, useRef } from 'react';
+import React, { FC, ReactChild, useRef } from 'react';
 import { PressEvent } from '@react-types/shared';
 import { mergeProps } from '@react-aria/utils';
 import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 
 export type CardProps = {
-    children: ReactNode | ReactNode[];
     hoverable?: boolean;
+    children?: ReactChild;
     onClick?: (event: PressEvent) => void;
 };
 
@@ -30,7 +30,7 @@ export const Card: FC<CardProps> = ({ hoverable = false, children, onClick }) =>
             data-test-id="card"
             ref={ref}
             className={merge([
-                'tw-w-full tw-outline-none tw-bg-white tw-border tw-border-black-10 tw-rounded tw-overflow-hidden',
+                'tw-w-full tw-outline-none tw-bg-white tw-border tw-border-black-10 tw-rounded',
                 hoverable ? 'hover:tw-border-black' : '',
                 onClick ? 'tw-cursor-pointer' : 'tw-cursor-default',
                 isFocusVisible && FOCUS_STYLE,

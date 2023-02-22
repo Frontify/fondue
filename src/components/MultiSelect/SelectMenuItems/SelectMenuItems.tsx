@@ -27,12 +27,11 @@ export const CategoryItem = ({ label }: CategoryItemProps) => {
 type DefaultItemProps = {
     label: string;
     value: string;
-    avatar?: React.ReactNode;
     isChecked?: boolean;
     imgSrc?: string;
 };
 
-export const DefaultItem = ({ label, value, avatar = <></>, imgSrc, isChecked = false }: DefaultItemProps) => {
+export const DefaultItem = ({ label, value, imgSrc, isChecked = false }: DefaultItemProps) => {
     return (
         <div
             className={`tw-flex tw-items-center tw-justify-between tw-min-w-[18rem] ${
@@ -40,7 +39,6 @@ export const DefaultItem = ({ label, value, avatar = <></>, imgSrc, isChecked = 
             }`}
         >
             <div className="tw-flex tw-gap-3 tw-items-center">
-                {avatar}
                 {imgSrc && (
                     <img
                         src={imgSrc}

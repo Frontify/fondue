@@ -1,7 +1,23 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
-import { EmojiCombobox as EmojiComboboxPlate } from '@udecode/plate';
+import { Combobox, ELEMENT_EMOJI, EmojiItemData, TEmojiCombobox, useEmojiCombobox } from '@udecode/plate';
 import { EmojiComboboxItem, EmojiComboboxStyles } from './';
 
-export const EmojiCombobox = () => <EmojiComboboxPlate onRenderItem={EmojiComboboxItem} styles={EmojiComboboxStyles} />;
+export const EmojiCombobox = <TData extends EmojiItemData = EmojiItemData>({
+    pluginKey = ELEMENT_EMOJI,
+    id = pluginKey,
+}: TEmojiCombobox<TData>) => {
+    const { trigger, onSelectItem } = useEmojiCombobox(pluginKey);
+
+    return (
+        <Combobox
+            id={id}
+            trigger={trigger}
+            controlled
+            onSelectItem={onSelectItem}
+            onRenderItem={EmojiComboboxItem}
+            styles={EmojiComboboxStyles}
+        />
+    );
+};

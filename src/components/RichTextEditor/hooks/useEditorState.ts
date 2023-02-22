@@ -1,29 +1,22 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useCallback, useMemo, useRef } from 'react';
+import { TNode } from '@udecode/plate';
 import { debounce } from '@utilities/debounce';
 import { ON_SAVE_DELAY_IN_MS, parseRawValue } from '../utils';
-import { GeneratePlugins, PluginComposer } from '../Plugins';
-import { TreeOfNodes } from '../types';
+import { PluginComposer } from '../Plugins';
 
 type useEditorStateProps = {
     editorId: string;
-    plugins: PluginComposer;
+    onTextChange: ((value: string) => void) | undefined;
+    plugins?: PluginComposer;
     initialValue?: string;
-    onTextChange?: (value: string) => void;
-    onValueChanged?: (value: TreeOfNodes | null) => void;
 };
 
-export const useEditorState = ({
-    editorId,
-    initialValue,
-    plugins,
-    onTextChange,
-    onValueChanged,
-}: useEditorStateProps) => {
-    const localValue = useRef<TreeOfNodes | null>(null);
+export const useEditorState = ({ editorId, onTextChange, initialValue, plugins }: useEditorStateProps) => {
+    const localValue = useRef<TNode[] | null>(null);
 
-    const debouncedOnChange = debounce((value: TreeOfNodes) => {
+    const debouncedOnChange = debounce((value: TNode[]) => {
         onTextChange && onTextChange(JSON.stringify(value));
     }, ON_SAVE_DELAY_IN_MS);
 
@@ -31,9 +24,8 @@ export const useEditorState = ({
         (value) => {
             debouncedOnChange(value);
             localValue.current = value;
-            onValueChanged && onValueChanged(value);
         },
-        [debouncedOnChange, localValue, onValueChanged],
+        [debouncedOnChange, localValue],
     );
 
     const memoizedValue = useMemo(
@@ -42,7 +34,5 @@ export const useEditorState = ({
         [editorId],
     );
 
-    const config = GeneratePlugins(editorId, plugins);
-
-    return { localValue, onChange, memoizedValue, config };
+    return { localValue, onChange, memoizedValue };
 };

@@ -13,7 +13,6 @@ import { IconIcon } from '@foundation/Icon';
 export default {
     title: 'Components/Fieldset Header',
     component: FieldsetHeaderComponent,
-    tags: ['autodocs'],
     argTypes: {
         size: {
             options: [FieldsetHeaderSize.Small, FieldsetHeaderSize.Medium, FieldsetHeaderSize.Large],

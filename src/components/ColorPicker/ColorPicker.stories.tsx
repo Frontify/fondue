@@ -9,7 +9,6 @@ import { EXAMPLE_PALETTES } from './example-palettes';
 export default {
     title: 'Components/Color Picker',
     component: ColorPicker,
-    tags: ['autodocs'],
     args: {
         currentColor: { red: 85, green: 102, blue: 255 },
     },

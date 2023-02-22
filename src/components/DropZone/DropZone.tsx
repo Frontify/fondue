@@ -20,13 +20,13 @@ type DropZoneData<T> = {
 export type DropZoneProps<T> = {
     data: DropZoneData<T>;
     onDrop?: OnDropCallback<T>;
-    accept: string | string[];
+    treeId: string;
     children?: JSX.Element;
 };
 
-export const DropZone = <T extends object>({ data, onDrop, accept, children }: DropZoneProps<T>) => {
+export const DropZone = <T extends object>({ data, onDrop, children, treeId }: DropZoneProps<T>) => {
     const [{ isOver, canDrop }, drop] = useDrop({
-        accept: accept || '',
+        accept: treeId,
         drop: (item: OrderableListItem<T>) => {
             onDrop?.(data.targetItem, item, data.position);
         },
@@ -45,9 +45,9 @@ export const DropZone = <T extends object>({ data, onDrop, accept, children }: D
     });
 
     const isActive = isOver && canDrop;
-    const bgColorClassName = 'tw-bg-violet-20';
     const outerDropZoneClassNames = 'tw-my-[-4px] tw-h-[10px] tw-py-1 tw-outline-none tw-relative tw-z-20';
     const activeOuterDropZoneClassNames = 'tw-border-violet-60 tw-border-2 tw-h-7 tw-bg-clip-content';
+    const bgColorClassName = 'tw-bg-violet-20';
 
     return (
         <div

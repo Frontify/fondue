@@ -4,19 +4,17 @@ import React from 'react';
 import { createContext, useContext } from 'react';
 import { DesignTokens } from '../types';
 import { defaultDesignTokens } from '../utils/defaultDesignTokens';
-import { Position, getEditorWrapperClassNames } from '../EditorPositioningWrapper';
+import { Position } from '../EditorPositioningWrapper';
 import { EditorResizeContextProvider } from './EditorResizeContext';
 
 export type RichTextEditorContextProps = {
     designTokens: DesignTokens;
     position: Position;
-    wrapperClassNames: string;
 };
 
-export const RichTextEditorContext = createContext<RichTextEditorContextProps>({
+const RichTextEditorContext = createContext<RichTextEditorContextProps>({
     designTokens: defaultDesignTokens,
     position: Position.FLOATING,
-    wrapperClassNames: '',
 });
 export const useRichTextEditorContext = () => useContext(RichTextEditorContext);
 
@@ -25,17 +23,15 @@ type RichTextEditorProviderProps = {
     value: {
         designTokens: DesignTokens;
         position: Position;
-        border: boolean;
     };
 };
 
 export const RichTextEditorProvider = ({ children, value }: RichTextEditorProviderProps) => {
-    const { designTokens, position, border } = value;
+    const { designTokens, position } = value;
 
     const state = {
         designTokens: designTokens ?? defaultDesignTokens,
-        position,
-        wrapperClassNames: getEditorWrapperClassNames(position, border),
+        position: position ?? Position.FLOATING,
     };
 
     return (

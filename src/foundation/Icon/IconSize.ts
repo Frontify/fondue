@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 export enum IconSize {
+    Size8 = 'Size8',
     Size12 = 'Size12',
     Size16 = 'Size16',
     Size20 = 'Size20',
@@ -9,6 +10,7 @@ export enum IconSize {
 }
 
 export const IconSizeMap = {
+    [IconSize.Size8]: '!tw-h-2 !tw-w-2',
     [IconSize.Size12]: '!tw-h-3 !tw-w-3',
     [IconSize.Size16]: '!tw-h-4 !tw-w-4',
     [IconSize.Size20]: '!tw-h-5 !tw-w-5',

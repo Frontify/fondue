@@ -14,7 +14,6 @@ import { IconDotsVertical, IconFaceHappy } from '@foundation/Icon';
 export default {
     title: 'Components/Table',
     component: Table,
-    tags: ['autodocs'],
     args: {
         selectionMode: SelectionMode.NoSelect,
     },

@@ -10,7 +10,6 @@ import { ButtonGroup as ButtonGroupComponent, ButtonGroupProps } from './ButtonG
 export default {
     title: 'Components/Button Group',
     component: ButtonGroupComponent,
-    tags: ['autodocs'],
     argTypes: {
         size: {
             options: ButtonSize,

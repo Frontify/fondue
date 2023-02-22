@@ -31,7 +31,6 @@ import { Stack } from '@layout/Stack';
 export default {
     title: 'Components/Accordion',
     component: AccordionComponent,
-    tags: ['autodocs'],
 } as Meta<AccordionProps>;
 
 export const WithDifferentAccordionItems: StoryFn<AccordionProps> = () => {

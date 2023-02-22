@@ -1,12 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Position } from '../EditorPositioningWrapper';
-import { Button, Buttons, ToolbarButtons } from '../Plugins/types';
-
-export type ToolbarButtonsPosition = Record<Position, Buttons>;
+import { Button, Buttons } from '../Plugins/types';
 
 export type ToolbarProps = {
-    toolbarButtons: ToolbarButtons;
+    buttons: Buttons;
     editorId: string;
 };
 

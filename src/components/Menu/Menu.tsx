@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { PropsWithChildren, ReactNode, RefObject, useCallback, useEffect, useState } from 'react';
+import React, { PropsWithChildren, ReactElement, RefObject, useCallback, useEffect, useState } from 'react';
 import { usePopper } from 'react-popper';
 import { merge } from '@utilities/merge';
+import { MenuItemProps } from '@components/MenuItem';
 import { useMenuKeyboardNavigation } from '@components/Menu/useMenuKeyboardNavigation';
 import { useClickOutside } from '@hooks/useClickOutside';
 import { INSET_BORDER } from '@utilities/borderStyle';
@@ -10,7 +11,7 @@ import { INSET_BORDER } from '@utilities/borderStyle';
 interface Props {
     triggerRef?: RefObject<Element>;
     open?: boolean;
-    children?: ReactNode | ReactNode[];
+    children?: ReactElement<MenuItemProps> | ReactElement<MenuItemProps>[];
     onClose?: () => void;
     offset?: [number, number];
 }
@@ -69,10 +70,6 @@ export const Menu = ({ triggerRef, children, open = true, offset = [0, 8], onClo
 
     useEffect(() => {
         setIsMenuOpen(open);
-        if (popperInstance.update && open) {
-            popperInstance.update();
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open]);
 
     useEffect(() => {

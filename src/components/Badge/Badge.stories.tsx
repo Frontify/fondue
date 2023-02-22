@@ -9,7 +9,6 @@ import { BadgeEmphasis, BadgeProps, BadgeStatus, BadgeStyle } from './types';
 export default {
     title: 'Components/Badge',
     component: Badge,
-    tags: ['autodocs'],
     argTypes: {
         style: {
             options: Object.values(BadgeStyle),
@@ -23,8 +22,8 @@ export default {
             options: ['small', 'medium'],
             control: { type: 'select' },
         },
-        onClick: { table: { disable: false } },
-        onDismiss: { table: { disable: false } },
+        onClick: { table: { disable: true } },
+        onDismiss: { table: { disable: true } },
     },
     args: {
         style: BadgeStyle.Primary,

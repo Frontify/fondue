@@ -1,20 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
-import { EmojiToolbarDropdown, KEY_EMOJI } from '@udecode/plate';
+import { MarkToolbarButton, getPluginType } from '@udecode/plate';
 import { IconFaceHappy, IconSize } from '@foundation/Icon';
 import { ButtonWrapper, IconStylingWrapper, buttonClassNames, buttonStyles } from '../helper';
 import { PluginButtonProps } from '../types';
-import { EmojiPicker } from './EmojiPicker';
 
-export const EmojiButton = ({ id }: PluginButtonProps) => (
+export const EmojiButton = ({ editor, id }: PluginButtonProps) => (
     <ButtonWrapper id={id}>
-        <EmojiToolbarDropdown
-            pluginKey={KEY_EMOJI}
+        <MarkToolbarButton
+            type={getPluginType(editor, id)}
             icon={<IconStylingWrapper icon={<IconFaceHappy size={IconSize.Size16} />} />}
-            styles={buttonStyles}
             classNames={buttonClassNames}
-            EmojiPickerComponent={EmojiPicker}
+            styles={buttonStyles}
         />
     </ButtonWrapper>
 );

@@ -7,7 +7,6 @@ import { LoadingCircle, LoadingCircleProps, LoadingCircleSize, LoadingCircleStyl
 export default {
     title: 'Components/LoadingCircle',
     component: LoadingCircle,
-    tags: ['autodocs'],
     argTypes: {
         style: {
             options: Object.values(LoadingCircleStyle),

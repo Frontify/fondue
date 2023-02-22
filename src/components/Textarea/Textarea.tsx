@@ -20,7 +20,6 @@ export type TextareaProps = {
     disabled?: boolean;
     onInput?: (value: string) => void;
     onBlur?: (value: string) => void;
-    onFocus?: (e: FocusEvent<HTMLTextAreaElement>) => void;
     validation?: Validation;
     /** When autosize if false, this is used as 'rows' property for standard textarea */
     minRows?: number;
@@ -28,7 +27,6 @@ export type TextareaProps = {
     maxRows?: number;
     autosize?: boolean;
     resizeable?: boolean;
-    selectable?: boolean;
 };
 
 export const Textarea: FC<TextareaProps> = ({
@@ -45,8 +43,6 @@ export const Textarea: FC<TextareaProps> = ({
     maxRows,
     autosize = false,
     resizeable = true,
-    onFocus,
-    selectable = false,
 }) => {
     const Component = autosize ? TextareaAutosize : 'textarea';
 
@@ -87,14 +83,6 @@ export const Textarea: FC<TextareaProps> = ({
                     validation === Validation.Error && 'tw-pr-8',
                 ])}
                 disabled={disabled}
-                onFocus={(e) => {
-                    if (selectable) {
-                        e.target.select();
-                    }
-                    if (onFocus) {
-                        onFocus(e);
-                    }
-                }}
                 data-test-id="textarea"
             />
             {validation === Validation.Loading && (

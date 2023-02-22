@@ -13,7 +13,6 @@ export const AlignLeftButton = ({ id }: PluginButtonProps) => (
             icon={<IconStylingWrapper icon={<IconTextAlignmentLeft size={IconSize.Size16} />} />}
             classNames={buttonClassNames}
             styles={buttonStyles}
-            actionHandler="onMouseDown"
         />
     </ButtonWrapper>
 );

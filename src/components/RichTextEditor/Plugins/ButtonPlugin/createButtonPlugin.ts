@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { isValidUrl } from '@components/RichTextEditor/utils/isValidUrl';
-import { RangeBeforeOptions, createPluginFactory } from '@udecode/plate';
+import { RangeBeforeOptions, createPluginFactory, isUrl as isUrlProtocol } from '@udecode/plate';
 import { Plugin, PluginProps } from '../Plugin';
 import { ButtonMarkupElement } from './ButtonMarkupElement';
 import { ButtonButton } from './components/ButtonButton';
@@ -63,7 +62,7 @@ export const createButtonPlugin = createPluginFactory({
     withOverrides: withButton,
     renderAfterEditable: CustomFloatingButton,
     options: {
-        isUrl: isValidUrl,
+        isUrl: isUrlProtocol,
         rangeBeforeOptions: {
             matchString: ' ',
             skipInvalid: true,

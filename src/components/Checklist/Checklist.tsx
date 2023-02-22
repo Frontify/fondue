@@ -44,7 +44,7 @@ type ChecklistItemProps = { checkbox: CheckboxValue; state: CheckboxGroupState }
 
 const ChecklistItem = ({ checkbox, state }: ChecklistItemProps) => {
     const ref = useRef<HTMLInputElement | null>(null);
-    const { value, disabled, label, 'aria-label': checkboxAriaLabel, state: checkboxState } = checkbox;
+    const { value, disabled, label, ariaLabel: checkboxAriaLabel, state: checkboxState } = checkbox;
     const [checkState, setCheckState] = useState(checkboxState);
     const isSelected = state.isSelected(value);
     const { inputProps } = useCheckboxGroupItem(
@@ -64,21 +64,6 @@ const ChecklistItem = ({ checkbox, state }: ChecklistItemProps) => {
     return <Checkbox {...checkbox} state={checkState} groupInputProps={inputProps} ref={ref} />;
 };
 
-const getLastItemColumnSpan = (items: CheckboxValue[], columns: number) => {
-    if (!columns || columns <= 1) {
-        return '';
-    }
-
-    const gridSpan = 'auto / span';
-    const spanItems = items.length % columns;
-
-    if (spanItems === 0) {
-        return '';
-    }
-
-    return `${gridSpan} ${columns - spanItems + 1}`;
-};
-
 export const Checklist = ({
     checkboxes,
     setActiveValues,
@@ -87,7 +72,6 @@ export const Checklist = ({
     direction = ChecklistDirection.Horizontal,
     ...props
 }: ChecklistProps) => {
-    const listContainerRef = useRef<HTMLUListElement | null>(null);
     const state = useCheckboxGroupState({
         value: activeValues,
         onChange: setActiveValues,
@@ -99,8 +83,6 @@ export const Checklist = ({
         state,
     );
 
-    const columns = ('columns' in props && props.columns) || 1;
-
     return (
         <ul
             {...groupProps}
@@ -108,22 +90,14 @@ export const Checklist = ({
             className={merge([
                 direction === ChecklistDirection.Horizontal
                     ? 'tw-flex tw-flex-row tw-gap-12'
-                    : `tw-grid tw-gap-4 ${columnsStyle[columns]}`,
+                    : `tw-grid tw-gap-4 ${
+                          'columns' in props && props.columns !== undefined && columnsStyle[props.columns]
+                      }`,
             ])}
-            ref={listContainerRef}
         >
-            {checkboxes.map((checkbox, index) => {
+            {checkboxes.map((checkbox) => {
                 return (
-                    <li
-                        key={checkbox.value}
-                        style={{
-                            maxWidth: listContainerRef?.current?.getBoundingClientRect().width,
-                            gridColumn:
-                                index === checkboxes.length - 1 && direction === ChecklistDirection.Vertical
-                                    ? getLastItemColumnSpan(checkboxes, columns)
-                                    : undefined,
-                        }}
-                    >
+                    <li key={checkbox.value}>
                         <ChecklistItem checkbox={checkbox} state={state} />
                     </li>
                 );

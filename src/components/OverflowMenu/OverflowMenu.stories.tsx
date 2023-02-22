@@ -29,7 +29,6 @@ const MIXED_ITEMS = [
 export default {
     title: 'Components/OverflowMenu',
     component: OverflowMenu,
-    tags: ['autodocs'],
     decorators: [
         (StoryElement) => (
             <div className="tw-h-48">

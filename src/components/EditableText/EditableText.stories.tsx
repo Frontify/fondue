@@ -8,7 +8,6 @@ import { IconPen, IconSize } from '@foundation/Icon';
 export default {
     title: 'Components/Editable Text',
     component: EditableText,
-    tags: ['autodocs'],
     parameters: { actions: { argTypesRegex: '^on.*' } },
     argTypes: {
         children: {
