@@ -31,7 +31,6 @@ const LABEL_ID = "[data-test-id='link-chooser-label']";
 const REQUIRED_ID = "[data-test-id='link-chooser-label-required']";
 const MENU_ITEM = "[data-test-id='link-chooser-navigation-menu-item']";
 
-const DEFAULT_TIMEOUT = 100;
 const CUSTOM_QUERY = 'Custom link';
 const SELECTED_CLASS = 'tw-text-violet-60';
 const FOCUSED_OPTION_CLASS = 'tw-bg-black-10';
@@ -90,34 +89,22 @@ const PREFILLED_LOCAL_STORAGE = [
 
 const getLinkChooserComponent = (overwriteProps?: Partial<LinkChooserProps>, returnError = false) => {
     const getGlobalByQuery = (query: string): Promise<SearchResult[]> => {
-        return new Promise((resolve, reject) =>
-            setTimeout(() => {
-                returnError
-                    ? reject()
-                    : resolve(
-                          filterItems(query, data).map((item) => ({
-                              ...item,
-                              size: MenuItemContentSize.Large,
-                              selectionIndicator: SelectionIndicatorIcon.None,
-                          })),
-                      );
-            }, DEFAULT_TIMEOUT),
-        );
+        return returnError
+            ? Promise.reject()
+            : Promise.resolve(
+                  filterItems(query, data).map((item) => ({
+                      ...item,
+                      size: MenuItemContentSize.Large,
+                      selectionIndicator: SelectionIndicatorIcon.None,
+                  })),
+              );
     };
 
     const getTemplatesByQueryMock = (query: string): Promise<SearchResult[]> =>
-        new Promise((resolve, reject) =>
-            setTimeout(() => {
-                returnError ? reject() : resolve(filterItems(query, TEMPLATE_ITEMS));
-            }, DEFAULT_TIMEOUT),
-        );
+        returnError ? Promise.reject() : Promise.resolve(filterItems(query, TEMPLATE_ITEMS));
 
     const getGuidelinesByQueryMock = (query: string): Promise<SearchResult[]> =>
-        new Promise((resolve, reject) =>
-            setTimeout(() => {
-                returnError ? reject() : resolve(filterItems(query, GUIDELINE_ITEMS));
-            }, DEFAULT_TIMEOUT),
-        );
+        returnError ? Promise.reject() : Promise.resolve(filterItems(query, GUIDELINE_ITEMS));
 
     const extraSections = [
         { ...guidelineSection, getResults: getGuidelinesByQueryMock },
