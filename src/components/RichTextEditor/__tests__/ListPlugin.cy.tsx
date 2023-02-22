@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { ELEMENT_LI, ELEMENT_LIC, ELEMENT_OL } from '@udecode/plate';
 import React from 'react';
 import { orderedListValue, unorderedListValue } from '../helpers/exampleValues';
 import { OrderedListPlugin, PluginComposer, UnorderedListPlugin } from '../Plugins';
@@ -12,27 +13,17 @@ import {
     TOOLBAR_PLUGIN_OL,
 } from './fixtures/selectors';
 
-const RichTextEditorWithListPluginWithSoftBreak = ({
-    isSoftBreak = false,
-    value,
-}: {
-    isSoftBreak?: boolean;
-    value: string;
-}) => {
+const RichTextEditorWithListPluginWithSoftBreak = ({ value }: { value: string }) => {
     const plugins = new PluginComposer().setPlugin([
-        new UnorderedListPlugin({ isSoftBreak }),
-        new OrderedListPlugin({ isSoftBreak }),
+        new UnorderedListPlugin({ isSoftBreak: true }),
+        new OrderedListPlugin({ isSoftBreak: true }),
     ]);
 
     return <RichTextEditor border={false} plugins={plugins} value={value} />;
 };
 
-const RichTextEditorWithUnorderedListStyles = ({ isSoftBreak = false }) => (
-    <RichTextEditorWithListPluginWithSoftBreak value={JSON.stringify([unorderedListValue])} isSoftBreak={isSoftBreak} />
-);
-const RichTextEditorWithOrderedListStyles = ({ isSoftBreak = false }) => (
-    <RichTextEditorWithListPluginWithSoftBreak value={JSON.stringify([orderedListValue])} isSoftBreak={isSoftBreak} />
-);
+const RichTextEditorWithUnorderedListStyles = () => <RichTextEditor value={JSON.stringify([unorderedListValue])} />;
+const RichTextEditorWithOrderedListStyles = () => <RichTextEditor value={JSON.stringify([orderedListValue])} />;
 
 describe('List Plugin', () => {
     it('applies the selected text style to the list item', () => {
@@ -74,16 +65,26 @@ describe('List Plugin', () => {
     });
 
     it('renders new list item with soft break', () => {
-        cy.mount(<RichTextEditorWithUnorderedListStyles isSoftBreak={true} />);
-        const itemValue = 'New item in list';
+        const orderedListValue = {
+            type: ELEMENT_OL,
+            children: [
+                {
+                    type: ELEMENT_LI,
+                    children: [{ type: ELEMENT_LIC, children: [{ text: 'This comes first.' }] }],
+                },
+            ],
+        };
 
-        const listItemSelector = '[contenteditable=true] ul';
-        const firstListItemSelector = '[contenteditable=true] ul:first-child > li:first-child';
-        const secondListItemSelector = '[contenteditable=true] ul:first-child > li:nth-child(2)';
+        cy.mount(<RichTextEditorWithListPluginWithSoftBreak value={JSON.stringify([orderedListValue])} />);
+        const itemValue = 'This comes second';
+
+        const listItemSelector = '[contenteditable=true] ol';
+        const firstListItemSelector = '[contenteditable=true] ol:first-child > li:first-child';
+        const secondListItemSelector = '[contenteditable=true] ol:first-child > li:nth-child(2)';
 
         cy.get(firstListItemSelector).type(`{end}{shift+enter}${itemValue}`);
 
-        cy.get(listItemSelector).children().should('have.length', 4);
+        cy.get(listItemSelector).children().should('have.length', 2);
         cy.get(firstListItemSelector).children().should('have.length', 1);
         cy.get(secondListItemSelector).should('include.text', itemValue);
     });
