@@ -13,13 +13,21 @@ export const withTheme: DecoratorFn = (Story, context) => {
         case 'side-by-side': {
             return (
                 <div className="side-by-side">
-                    <div className="light theme">{Story()}</div>
-                    <div className="tw-dark theme">{Story()}</div>
+                    <div className="light theme">
+                        <Story />
+                    </div>
+                    <div className="tw-dark theme">
+                        <Story />
+                    </div>
                 </div>
             );
         }
         default: {
-            return <div className={`${theme} theme`}>{Story()}</div>;
+            return (
+                <div className={`${theme} theme`}>
+                    <Story />
+                </div>
+            );
         }
     }
 };
