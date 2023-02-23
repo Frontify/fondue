@@ -18,9 +18,9 @@ export const ITEMS: Item[] = [
 ];
 
 export const ITEMS_WITH_LINKS: Item[] = [
-    { label: 'Some first label', link: '/some-first-link' },
-    { label: 'Some second label', link: '/some-second-link' },
-    { label: 'Some third label', link: '/some-third-link' },
+    { label: 'Some first label', link: '/?path=/docs/components-menu--docs' },
+    { label: 'Some second label', link: '/?path=/docs/components-menu--docs' },
+    { label: 'Some third label', link: '/?path=/docs/components-menu--docs' },
 ];
 
 export const ITEMS_WITHOUT_ITERACTION = [{ label: 'Span Item 1' }, { label: 'Span Item 2' }, { label: 'Span Item 3' }];
@@ -30,6 +30,22 @@ const getMenuItem = (item: Item, index?: number) => (
         {item.label}
     </MenuItem>
 );
+
+export const ComponentStructure = () => (
+    <Menu>
+        <MenuItem link="/?path=/docs/components-menu--docs">Item 1</MenuItem>
+        <MenuItem link="/?path=/docs/components-menu--docs">Item 2</MenuItem>
+        <MenuItem link="/?path=/docs/components-menu--docs">Item 3</MenuItem>
+    </Menu>
+);
+
+export const NoTriggerMenuComponent = (props: MenuProps & { items: Item[] }) => {
+    return (
+        <div data-test-id="menu-container">
+            <Menu {...props}>{props.items.map(getMenuItem)}</Menu>
+        </div>
+    );
+};
 
 export const BasicMenuComponent = (props: MenuProps & { items: Item[] }) => {
     const triggerRef = useRef<HTMLButtonElement>(null);
@@ -44,7 +60,7 @@ export const BasicMenuComponent = (props: MenuProps & { items: Item[] }) => {
     };
 
     return (
-        <div data-test-id="menu">
+        <div data-test-id="menu-container">
             <Button ref={triggerRef} onClick={handleTriggerClick}>
                 Open menu
             </Button>
@@ -78,7 +94,7 @@ export const BasicMenuComponent = (props: MenuProps & { items: Item[] }) => {
     };
 
     return (
-        <div data-test-id="menu">
+        <div data-test-id="menu-container">
             <Button ref={triggerRef} onClick={handleTriggerClick}>
                 Open menu
             </Button>
@@ -108,17 +124,17 @@ ${BASIC_MENU_CODE_SNIPPET}
 
 <BasicMenuComponent
     items={[
-    { label: 'Some first label', link: '/some-first-link' },
-    { label: 'Some second label', link: '/some-second-link' },
-    { label: 'Some third label', link: '/some-third-link' },
+    { label: 'Some first label', link: '#' },
+    { label: 'Some second label', link: '#' },
+    { label: 'Some third label', link: '#' },
   ]}
 />
 `;
 
 export const COMPONENT_STRUCTURE_CODE_SNIPPET = `
 <Menu>
-    <MenuItem link="https://www.frontify.com">Item 1</MenuItem>
-    <MenuItem link="https://www.frontify.com">Item 2</MenuItem>
-    <MenuItem link="https://www.frontify.com">Item 3</MenuItem>
+    <MenuItem link="#">Item 1</MenuItem>
+    <MenuItem link="#">Item 2</MenuItem>
+    <MenuItem link="#">Item 3</MenuItem>
 </Menu>
 `;

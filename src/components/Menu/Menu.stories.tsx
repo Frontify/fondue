@@ -2,13 +2,13 @@
 
 import React from 'react';
 import { Meta, StoryFn } from '@storybook/react';
-import { MenuItem } from '@components/MenuItem';
 import { Menu, MenuProps } from './Menu';
 import {
     BASIC_MENU_WITH_LINKS_CODE_SNIPPET,
     BASIC_MENU_WITH_ONCLICK_CODE_SNIPPET,
     BasicMenuComponent,
     COMPONENT_STRUCTURE_CODE_SNIPPET,
+    ComponentStructure,
     ITEMS,
     ITEMS_WITH_LINKS,
     Item,
@@ -22,20 +22,16 @@ export default {
 
 const TemplateWithoutTrigger: StoryFn = () => (
     <div className="tw-p-4">
-        <Menu>
-            <MenuItem link="https://www.frontify.com">Item 1</MenuItem>
-            <MenuItem link="https://www.frontify.com">Item 2</MenuItem>
-            <MenuItem link="https://www.frontify.com">Item 3</MenuItem>
-        </Menu>
+        <ComponentStructure />
     </div>
 );
 const Template: StoryFn<MenuProps & { items: Item[] }> = (args) => <BasicMenuComponent {...args} />;
 
-export const ComponentStructure = TemplateWithoutTrigger.bind({});
-ComponentStructure.args = {
+export const BasicComponentStructure = TemplateWithoutTrigger.bind({});
+BasicComponentStructure.args = {
     items: ITEMS,
 };
-ComponentStructure.parameters = {
+BasicComponentStructure.parameters = {
     docs: {
         source: {
             code: COMPONENT_STRUCTURE_CODE_SNIPPET,
