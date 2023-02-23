@@ -17,4 +17,5 @@ export const getTooltip: GetToolip = (content, placement) => ({
         );
     }),
     placement,
+    delay: 300,
 });
