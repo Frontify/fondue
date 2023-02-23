@@ -6,6 +6,7 @@ import { DatePicker, DatePickerProps } from './DatePicker';
 import { FormControl } from '@components/FormControl';
 import { Slider } from '@components/Slider';
 import { Validation } from '@utilities/validation';
+import { subDays } from 'date-fns';
 
 export default {
     title: 'Components/DatePicker',
@@ -69,3 +70,52 @@ InsideFormControlAndOverSlider.args = {
     shouldCloseOnSelect: true,
     dateFormat: 'dd MMM yyyy',
 };
+
+const TemplateDateRange: StoryFn<DatePickerProps> = (args) => {
+    const [startDate, setStartDate] = useState<Date | null>(subDays(new Date(), 5));
+    const [endDate, setEndDate] = useState<Date | null>(new Date());
+    const onChange = (dates: [Date | null, Date | null] | null) => {
+        if (!dates) {
+            return;
+        }
+        const [start, end] = dates;
+        setStartDate(start);
+        setEndDate(end);
+    };
+
+    return (
+        <DatePicker
+            value={startDate}
+            startDate={startDate}
+            endDate={endDate}
+            onChange={onChange}
+            minDate={subDays(new Date(), 40)}
+            maxDate={new Date()}
+            variant="range"
+            selectsRange
+            customTrigger={
+                <button>
+                    {startDate?.toISOString()} - {endDate?.toISOString()}
+                </button>
+            }
+            hasPopperArrow={false}
+        >
+            {startDate && endDate && (
+                <div>
+                    <div className="tw-border-t tw-w-full tw-border-solid tw-border-line" />
+                    <div className="tw-p-2">
+                        <button
+                            className="tw-bg-button-background tw-border-button-border tw-w-full
+                                   hover:tw-bg-button-background-hover tw-rounded
+                                   active:tw-bg-button-background-pressed tw-px-4 tw-h-9 tw-text-body-medium"
+                        >
+                            Reset
+                        </button>
+                    </div>
+                </div>
+            )}
+        </DatePicker>
+    );
+};
+
+export const DateRange = TemplateDateRange.bind({});
