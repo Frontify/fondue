@@ -20,3 +20,4 @@ export const ModalFooter = ({ buttons }: ModalFooterProps): ReactElement => {
         </div>
     );
 };
+ModalFooter.displayName = 'FondueModalFooter';

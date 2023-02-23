@@ -36,3 +36,4 @@ export const RadioPill: FC<RadioPillProps> = ({ label, active, icon, onClick }) 
         </button>
     );
 };
+RadioPill.displayName = 'FondueRadioPill';

@@ -156,3 +156,4 @@ export const MenuItem = ({
         </>
     );
 };
+MenuItem.displayName = 'FondueMenuItem';

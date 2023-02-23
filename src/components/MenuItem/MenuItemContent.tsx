@@ -65,3 +65,4 @@ export const MenuItemContent = ({
         )}
     </div>
 );
+MenuItemContent.displayName = 'FondueMenuItemContent';

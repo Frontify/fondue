@@ -26,4 +26,4 @@ export const AriaList = forwardRef<HTMLUListElement | null, AriaListProps>(
     ),
 );
 
-AriaList.displayName = 'AriaList';
+AriaList.displayName = 'FondueAriaList';

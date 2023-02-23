@@ -51,3 +51,4 @@ export const Code: FC<CodeProps> = ({
         </Tag>
     );
 };
+Code.displayName = 'FondueCode';

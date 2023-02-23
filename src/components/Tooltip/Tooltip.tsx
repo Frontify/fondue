@@ -363,3 +363,4 @@ export const Tooltip = ({
         </>
     );
 };
+Tooltip.displayName = 'FondueTooltip';

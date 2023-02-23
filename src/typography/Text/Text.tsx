@@ -71,3 +71,4 @@ export const Text: FC<TextProps> = ({
         {children}
     </Tag>
 );
+Text.displayName = 'FondueText';

@@ -102,6 +102,7 @@ const filterValidChildren = ({ children }: AccordionProps): ReactElement<Accordi
     }, []);
 
 export const AccordionItem = ({ children }: AccordionItemProps): ReactElement => <>{children}</>;
+AccordionItem.displayName = 'FondueAccordionItem';
 
 const lastChildrenActive = (children: React.ReactNode | undefined): boolean | undefined => {
     const childrenArray = Children.toArray(children) as { key: string; props?: { header?: { active?: boolean } } }[];
@@ -184,3 +185,4 @@ export const Accordion: FC<AccordionProps> = (props) => {
         </div>
     );
 };
+Accordion.displayName = 'FondueAccordion';

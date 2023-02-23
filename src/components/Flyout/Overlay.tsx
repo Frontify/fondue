@@ -85,3 +85,4 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
 };
 
 export const Overlay = forwardRef<HTMLDivElement, OverlayProps>(OverlayComponent);
+Overlay.displayName = 'FondueOverlay';
