@@ -98,3 +98,4 @@ export const Badge: FC<BadgeProps> = ({
         </div>
     );
 };
+Badge.displayName = 'FondueBadge';

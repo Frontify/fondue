@@ -83,3 +83,4 @@ export const Tag = ({ type, label, onClick, size = TagSize.Medium }: TagProps) =
         </button>
     );
 };
+Tag.displayName = 'FondueTag';

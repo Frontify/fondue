@@ -35,3 +35,4 @@ export const FrontifyPattern: FC<FrontifyPatternProps> = ({
         </div>
     );
 };
+FrontifyPattern.displayName = 'FondueFrontifyPattern';

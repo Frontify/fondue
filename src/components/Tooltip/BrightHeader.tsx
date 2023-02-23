@@ -55,3 +55,4 @@ export const BrightHeader: FC<BrightHeaderProps> = ({ headerStyle }) => {
         </div>
     );
 };
+BrightHeader.displayName = 'FondueBrightHeader';

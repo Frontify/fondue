@@ -82,3 +82,4 @@ export const Stack: FC<StackProps> = ({
         </div>
     );
 };
+Stack.displayName = 'FondueStack';

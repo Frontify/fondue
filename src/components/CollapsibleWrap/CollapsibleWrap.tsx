@@ -28,3 +28,4 @@ export const CollapsibleWrap: FC<CollapsibleWrapProps> = ({
         )}
     </AnimatePresence>
 );
+CollapsibleWrap.displayName = 'FondueCollapsibleWrap';

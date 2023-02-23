@@ -67,3 +67,4 @@ export const Breadcrumbs: FC<BreadcrumbsProps> = ({ items }) => {
         </nav>
     );
 };
+Breadcrumbs.displayName = 'FondueBreadcrumbs';

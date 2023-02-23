@@ -87,3 +87,4 @@ export const OrderableList = <T extends object>({
         </DndProvider>
     );
 };
+OrderableList.displayName = 'FondueOrderableList';

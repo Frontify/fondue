@@ -49,3 +49,4 @@ export const LoadingCircle: FC<LoadingCircleProps> = ({
         ></div>
     );
 };
+LoadingCircle.displayName = 'FondueLoadingCircle';

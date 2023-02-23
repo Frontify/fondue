@@ -55,3 +55,4 @@ export const SelectMenuItem: FC<SelectMenuItemProps> = ({ state, menuItem, node 
         </li>
     );
 };
+SelectMenuItem.displayName = 'FondueSelectMenuItem';
