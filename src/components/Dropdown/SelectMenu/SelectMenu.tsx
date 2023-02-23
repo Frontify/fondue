@@ -72,3 +72,4 @@ export const SelectMenu = ({
         </ul>
     );
 };
+SelectMenu.displayName = 'FondueSelectMenu';

@@ -326,3 +326,4 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
         </>
     );
 };
+Tabs.displayName = 'FondueTabs';

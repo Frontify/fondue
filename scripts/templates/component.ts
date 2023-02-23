@@ -18,6 +18,7 @@ export const ${componentName} = ({ foo, children }: ${componentName}Props) => {
         </div>
     );
 };
+${componentName}.displayName = "Fondue${componentName}";
 `,
     extension: '.tsx',
 });

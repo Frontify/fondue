@@ -98,3 +98,4 @@ export const Menu = ({ triggerRef, children, open = true, offset = [0, 8], onClo
         </nav>
     );
 };
+Menu.displayName = 'FondueMenu';

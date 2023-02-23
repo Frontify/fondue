@@ -21,3 +21,4 @@ export const ColorPreview: FC<ColorPreviewProps> = ({ color }) => {
         ></div>
     );
 };
+ColorPreview.displayName = 'FondueColorPreview';

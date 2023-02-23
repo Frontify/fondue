@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { ReactElement, memo } from 'react';
 import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 import { IconSize } from '@foundation/Icon/IconSize';
 
@@ -11,24 +11,25 @@ import IconSidebarLeftShow20 from './IconSidebarLeftShow20';
 import IconSidebarLeftShow24Filled from './IconSidebarLeftShow24Filled';
 import IconSidebarLeftShow24 from './IconSidebarLeftShow24';
 import IconSidebarLeftShow32Filled from './IconSidebarLeftShow32Filled';
-import IconSidebarLeftShow32 from './IconSidebarLeftShow32'
+import IconSidebarLeftShow32 from './IconSidebarLeftShow32';
 
-function IconSidebarLeftShow(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
+const IconSidebarLeftShow = (props: GeneratedIconProps): ReactElement<GeneratedIconProps> => {
     const size = props.size || IconSize.Size16;
     return (
         <span>
-            {size === IconSize.Size12 && props.filled && <IconSidebarLeftShow12Filled {...props}/>}
-            {size === IconSize.Size12 && !props.filled && <IconSidebarLeftShow12 {...props}/>}
-            {size === IconSize.Size16 && props.filled && <IconSidebarLeftShow16Filled {...props}/>}
-            {size === IconSize.Size16 && !props.filled && <IconSidebarLeftShow16 {...props}/>}
-            {size === IconSize.Size20 && props.filled && <IconSidebarLeftShow20Filled {...props}/>}
-            {size === IconSize.Size20 && !props.filled && <IconSidebarLeftShow20 {...props}/>}
-            {size === IconSize.Size24 && props.filled && <IconSidebarLeftShow24Filled {...props}/>}
-            {size === IconSize.Size24 && !props.filled && <IconSidebarLeftShow24 {...props}/>}
-            {size === IconSize.Size32 && props.filled && <IconSidebarLeftShow32Filled {...props}/>}
-            {size === IconSize.Size32 && !props.filled && <IconSidebarLeftShow32 {...props}/>}
+            {size === IconSize.Size12 && props.filled && <IconSidebarLeftShow12Filled {...props} />}
+            {size === IconSize.Size12 && !props.filled && <IconSidebarLeftShow12 {...props} />}
+            {size === IconSize.Size16 && props.filled && <IconSidebarLeftShow16Filled {...props} />}
+            {size === IconSize.Size16 && !props.filled && <IconSidebarLeftShow16 {...props} />}
+            {size === IconSize.Size20 && props.filled && <IconSidebarLeftShow20Filled {...props} />}
+            {size === IconSize.Size20 && !props.filled && <IconSidebarLeftShow20 {...props} />}
+            {size === IconSize.Size24 && props.filled && <IconSidebarLeftShow24Filled {...props} />}
+            {size === IconSize.Size24 && !props.filled && <IconSidebarLeftShow24 {...props} />}
+            {size === IconSize.Size32 && props.filled && <IconSidebarLeftShow32Filled {...props} />}
+            {size === IconSize.Size32 && !props.filled && <IconSidebarLeftShow32 {...props} />}
         </span>
     );
-}
+};
+IconSidebarLeftShow.displayName = 'FondueIconSidebarLeftShow';
 
 export default memo(IconSidebarLeftShow);
