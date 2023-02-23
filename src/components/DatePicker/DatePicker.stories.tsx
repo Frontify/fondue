@@ -20,20 +20,38 @@ export default {
     },
 } as Meta<DatePickerProps>;
 
-const Template: StoryFn<DatePickerProps> = (args) => {
+const Template: StoryFn<DatePickerProps> = (args: DatePickerProps) => {
     const [selectedDate, setSelectedDate] = useState<Date | null>();
 
-    return <DatePicker {...args} value={selectedDate as Date} onChange={setSelectedDate} />;
+    return (
+        <DatePicker
+            {...args}
+            selectsRange={false}
+            variant="single"
+            startDate={null}
+            endDate={null}
+            value={selectedDate as Date}
+            onChange={(date) => setSelectedDate(date)}
+        />
+    );
 };
 
-const TemplateWithFormControl: StoryFn<DatePickerProps> = (args) => {
+const TemplateWithFormControl: StoryFn<DatePickerProps> = (args: DatePickerProps) => {
     const [selectedDate, setSelectedDate] = useState<Date | null>();
 
     return (
         <div className="tw-flex tw-flex-col">
             <div className="tw-px-5 tw-py-3 tw-flex tw-flex-col tw-gap-3">
                 <FormControl>
-                    <DatePicker {...args} value={selectedDate as Date} onChange={setSelectedDate} />
+                    <DatePicker
+                        {...args}
+                        selectsRange={false}
+                        variant="single"
+                        startDate={null}
+                        endDate={null}
+                        value={selectedDate as Date}
+                        onChange={(date) => setSelectedDate(date)}
+                    />
                 </FormControl>
             </div>
             <div className="tw-px-5 tw-py-3 tw-flex tw-flex-col tw-gap-3">
@@ -71,7 +89,7 @@ InsideFormControlAndOverSlider.args = {
     dateFormat: 'dd MMM yyyy',
 };
 
-const TemplateDateRange: StoryFn<DatePickerProps> = (args) => {
+const TemplateDateRange: StoryFn<DatePickerProps> = () => {
     const [startDate, setStartDate] = useState<Date | null>(subDays(new Date(), 5));
     const [endDate, setEndDate] = useState<Date | null>(new Date());
     const onChange = (dates: [Date | null, Date | null] | null) => {
