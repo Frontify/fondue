@@ -55,14 +55,6 @@ export const BasicMenuComponent = (props: MenuProps & { items: Item[] }) => {
     );
 };
 
-export const NoTriggerMenuComponent = (props: MenuProps & { items: Item[] }) => {
-    return (
-        <div data-test-id="menu">
-            <Menu {...props}>{props.items.map(getMenuItem)}</Menu>
-        </div>
-    );
-};
-
 const GET_MENU_ITEM_CODE_SNIPPET = `
 const getMenuItem = (item: Item, index?: number) => (
     <MenuItem link={item.link} onClick={item.onClick} disabled={item.disabled} key={\`item-\${index}\`}>
@@ -116,20 +108,17 @@ ${BASIC_MENU_CODE_SNIPPET}
 
 <BasicMenuComponent
     items={[
-    { label: 'Button Item 1', onClick: () => void 0 },
-    { label: 'Button Item 2', onClick: () => void 0 },
-    { label: 'Button Item 3', onClick: () => void 0 },
+    { label: 'Some first label', link: '/some-first-link' },
+    { label: 'Some second label', link: '/some-second-link' },
+    { label: 'Some third label', link: '/some-third-link' },
   ]}
 />
 `;
 
-export const MENU_WITHOUT_TRIGGER_CODE_SNIPPET = `
-${GET_MENU_ITEM_CODE_SNIPPET}
-export const NoTriggerMenuComponent = (props: MenuProps & { items: Item[] }) => {
-    return (
-        <div data-test-id="menu">
-            <Menu {...props}>{props.items.map(getMenuItem)}</Menu>
-        </div>
-    );
-};
+export const COMPONENT_STRUCTURE_CODE_SNIPPET = `
+<Menu>
+    <MenuItem link="https://www.frontify.com">Item 1</MenuItem>
+    <MenuItem link="https://www.frontify.com">Item 2</MenuItem>
+    <MenuItem link="https://www.frontify.com">Item 3</MenuItem>
+</Menu>
 `;
