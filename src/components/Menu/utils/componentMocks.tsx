@@ -124,17 +124,17 @@ ${BASIC_MENU_CODE_SNIPPET}
 
 <BasicMenuComponent
     items={[
-    { label: 'Some first label', link: '#' },
-    { label: 'Some second label', link: '#' },
-    { label: 'Some third label', link: '#' },
+    { label: 'Some first label', link: '/?path=/docs/components-menu--docs' },
+    { label: 'Some second label', link: '/?path=/docs/components-menu--docs' },
+    { label: 'Some third label', link: '/?path=/docs/components-menu--docs' },
   ]}
 />
 `;
 
 export const COMPONENT_STRUCTURE_CODE_SNIPPET = `
 <Menu>
-    <MenuItem link="#">Item 1</MenuItem>
-    <MenuItem link="#">Item 2</MenuItem>
-    <MenuItem link="#">Item 3</MenuItem>
+    <MenuItem link="/?path=/docs/components-menu--docs">Item 1</MenuItem>
+    <MenuItem link="/?path=/docs/components-menu--docs">Item 2</MenuItem>
+    <MenuItem link="/?path=/docs/components-menu--docs">Item 3</MenuItem>
 </Menu>
 `;
