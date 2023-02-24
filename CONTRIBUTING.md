@@ -10,7 +10,7 @@
 
 > Fondue uses `pnpm` to manage the dependencies. If you don't have it installed in your local, please refer to [their installation guide](https://pnpm.io/installation).
 
-```
+```shell
 $ git clone git@github.com:Frontify/fondue.git
 $ pnpm i
 $ pnpm storybook
