@@ -40,7 +40,7 @@ The name of the branch is not really relevant. Nonetheless we usually go for a p
 
 Theres a nifty script that creates that files you'll need:
 
-```
+```shell
 pnpm component:create CoolCatsAndKittens
 ```
 
