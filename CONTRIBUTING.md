@@ -13,7 +13,7 @@
 ```
 $ git clone git@github.com:Frontify/fondue.git
 $ pnpm i
-$ pnpm run storybook
+$ pnpm storybook
 $ echo "YAY ✨"
 ```
 
