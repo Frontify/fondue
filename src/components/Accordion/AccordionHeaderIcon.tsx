@@ -10,3 +10,4 @@ export const AccordionHeaderIcon: FC<AccordionHeaderIconProps> = ({
     disabled = false,
     type = FieldsetHeaderType.Accordion,
 }) => renderFieldsetHeaderIconType(type, '', FieldsetHeaderSize[AccordionHeaderIconSize[size]], isOpen, disabled);
+AccordionHeaderIcon.displayName = 'FondueAccordionHeaderIcon';

@@ -18,3 +18,4 @@ export const SelectMenuSection: FC<SelectMenuSectionProps> = ({ ariaLabel, child
         </li>
     );
 };
+SelectMenuSection.displayName = 'FondueSelectMenuSection';

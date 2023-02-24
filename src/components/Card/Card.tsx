@@ -40,3 +40,4 @@ export const Card: FC<CardProps> = ({ hoverable = false, children, onClick }) =>
         </div>
     );
 };
+Card.displayName = 'FondueCard';

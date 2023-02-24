@@ -366,3 +366,4 @@ export const MultiSelect: FC<MultiSelectProps> = ({
         </div>
     );
 };
+MultiSelect.displayName = 'FondueMultiSelect';

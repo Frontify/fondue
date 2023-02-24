@@ -276,3 +276,4 @@ export const TextInput: FC<TextInputProps> = ({
         </div>
     );
 };
+TextInput.displayName = 'FondueTextInput';

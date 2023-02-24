@@ -83,4 +83,4 @@ export const DatePickerTrigger = forwardRef<HTMLDivElement, DatePickerTriggerPro
     },
 );
 
-DatePickerTrigger.displayName = 'DatePickerTrigger';
+DatePickerTrigger.displayName = 'FondueDatePickerTrigger';

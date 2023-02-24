@@ -36,3 +36,4 @@ export const TabItem: FC<TabItemProps & { active?: boolean }> = ({ active, disab
         </div>
     );
 };
+TabItem.displayName = 'FondueTabItem';

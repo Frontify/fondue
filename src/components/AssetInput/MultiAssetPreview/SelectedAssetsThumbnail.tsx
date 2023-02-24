@@ -9,7 +9,7 @@ import { MultiAssetPreviewProps } from './MultiAssetPreview';
 const isImageAsset = (asset: AssetType): asset is ImageAsset & LibrarySource =>
     asset.type === 'image' || asset.type === 'logo';
 
-export const Assets: FC<Pick<MultiAssetPreviewProps, 'assets'>> = ({ assets }) => {
+export const SelectedAssetsThumbnail: FC<Pick<MultiAssetPreviewProps, 'assets'>> = ({ assets }) => {
     const assetslength = assets.length;
     const previewAssets = assets.slice(0, 4);
 
@@ -47,3 +47,4 @@ export const Assets: FC<Pick<MultiAssetPreviewProps, 'assets'>> = ({ assets }) =
         </div>
     );
 };
+SelectedAssetsThumbnail.displayName = 'FondueSelectedAssetsThumbnail';

@@ -11,7 +11,7 @@ export const checkItemNode = (
     ((node.indent as number) ?? 0) * 24
 }px;">
     <div class="tw-flex tw-items-center tw-justify-center tw-select-none tw-mr-1.5">
-        <input 
+        <input
             class="tw-w-4 tw-h-4 tw-m-0"
             type="checkbox"
             ${node.checked ? 'checked' : ''}
