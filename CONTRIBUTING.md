@@ -3,7 +3,7 @@
 ## Running Fondue Locally
 
 1. Clone the Git repository
-2. Install the dependencies with
+2. Install the dependencies
 3. Run Storybook
 4. ???
 5. Profit!
@@ -30,7 +30,7 @@ When adding a new component to Fondue this is the flow that is applied.
 
 Create a new branch for your additions
 
-```
+```shell
 git checkout -b feat/add-cool-cats-and-kittens
 ```
 
@@ -54,7 +54,7 @@ This will add a folder inside `src/components` with the name `CoolCatsAndKittens
 
 Once you're happy with your new component, it's time to open a new PR. Push your branch to GitHub as a start:
 
-```
+```shell
 git push -u origin feat/cool-cats-and-kittens
 ```
 
