@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Slider } from '@components/Slider/Slider';
+import { SegmentedPicker } from '@components/SegmentedPicker/SegmentedPicker';
 import { TextInput } from '@components/TextInput/TextInput';
 import { IconCheckMark, IconGridRegular, IconMagnifier, IconStackVertical } from '@foundation/Icon/Generated';
 import { IconSize } from '@foundation/Icon/IconSize';
@@ -62,7 +62,7 @@ export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], cu
                     />
                 </div>
                 <div className="tw-w-[72px]">
-                    <Slider
+                    <SegmentedPicker
                         items={views}
                         activeItemId={view}
                         onChange={(colorView) => setView(colorView as BrandColorView)}

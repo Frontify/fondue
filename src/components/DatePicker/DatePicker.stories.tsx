@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { DatePicker, DatePickerProps } from './DatePicker';
 import { FormControl } from '@components/FormControl';
-import { Slider } from '@components/Slider';
+import { SegmentedPicker } from '@components/SegmentedPicker';
 import { Validation } from '@utilities/validation';
 
 export default {
@@ -37,7 +37,7 @@ const TemplateWithFormControl: StoryFn<DatePickerProps> = (args) => {
             </div>
             <div className="tw-px-5 tw-py-3 tw-flex tw-flex-col tw-gap-3">
                 <FormControl>
-                    <Slider
+                    <SegmentedPicker
                         activeItemId="a"
                         items={[
                             { id: 'a', value: 'abc' },
@@ -62,8 +62,8 @@ Default.args = {
 
 Default.storyName = 'Date Picker';
 
-export const InsideFormControlAndOverSlider = TemplateWithFormControl.bind({});
-InsideFormControlAndOverSlider.args = {
+export const InsideFormControlAndOverSegmentedPicker = TemplateWithFormControl.bind({});
+InsideFormControlAndOverSegmentedPicker.args = {
     placeHolder: 'Select a date',
     isClearable: true,
     shouldCloseOnSelect: true,

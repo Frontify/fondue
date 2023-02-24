@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { Card, CardProps } from './Card';
-import { Slider } from '@components/Slider/Slider';
+import { SegmentedPicker } from '@components/SegmentedPicker/SegmentedPicker';
 import { Divider } from '@components/Divider/Divider';
 import { Stack } from '@layout/Stack';
 import { Text } from '@typography/Text';
@@ -77,7 +77,7 @@ const ChildComponent = () => {
         <>
             <div className="tw-px-4 tw-pt-4">
                 <div className="tw-w-64">
-                    <Slider activeItemId={activeItemId} items={items} onChange={setActiveItemId} />
+                    <SegmentedPicker activeItemId={activeItemId} items={items} onChange={setActiveItemId} />
                 </div>
             </div>
             <Divider color="#EAEBEB" />

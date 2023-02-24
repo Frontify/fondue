@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Slider } from '@components/Slider/Slider';
+import { SegmentedPicker } from '@components/SegmentedPicker/SegmentedPicker';
 import React, { useState } from 'react';
 import { Color, ColorFormat, Palette } from '../../types/colors';
 import { BrandColorPicker } from './BrandColorPicker';
@@ -44,7 +44,7 @@ export const ColorPicker = ({
             {showPreview && <ColorPreview color={currentColor} />}
             <div className="tw-p-5 tw-flex tw-flex-col tw-gap-2">
                 {palettes && allowCustomColor && (
-                    <Slider
+                    <SegmentedPicker
                         items={colorTypes}
                         activeItemId={colorType}
                         onChange={(type) => setColorType(type as ColorType)}

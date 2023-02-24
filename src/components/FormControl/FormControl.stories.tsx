@@ -3,7 +3,7 @@
 import { Checklist, ChecklistDirection } from '@components/Checklist/Checklist';
 import { Dropdown, DropdownSize } from '@components/Dropdown/Dropdown';
 import { MenuItemContentSize } from '@components/MenuItem';
-import { Slider } from '@components/Slider/Slider';
+import { SegmentedPicker } from '@components/SegmentedPicker/SegmentedPicker';
 import { TextInput } from '@components/TextInput/TextInput';
 import { Meta, StoryFn } from '@storybook/react';
 import { generateRandomId } from '@utilities/generateRandomId';
@@ -56,11 +56,11 @@ export const WithTextInput: StoryFn<FormControlProps> = (args) => {
     );
 };
 
-export const WithSlider: StoryFn<FormControlProps> = (args) => {
+export const WithSegmentedPicker: StoryFn<FormControlProps> = (args) => {
     const [activeItemId, setActiveItemId] = useState<string>('a');
     return (
         <FormControl {...args}>
-            <Slider
+            <SegmentedPicker
                 items={[
                     { id: '1', value: 'abc' },
                     { id: '2', value: 'def' },
