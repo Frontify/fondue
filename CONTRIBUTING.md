@@ -8,7 +8,7 @@
 4. ???
 5. Profit!
 
-> We use `pnpm`. If you don't have it installed in your local, please follow their installation guide https://pnpm.io/installation
+> Fondue uses `pnpm` to manage the dependencies. If you don't have it installed in your local, please refer to [their installation guide](https://pnpm.io/installation).
 
 ```
 $ git clone git@github.com:Frontify/fondue.git
