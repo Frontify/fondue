@@ -100,3 +100,4 @@ export const CurrentBreadcrumbItem: FC<CurrentBreadcrumbItemProps> = ({
         </li>
     );
 };
+CurrentBreadcrumbItem.displayName = 'FondueCurrentBreadcrumbItem';

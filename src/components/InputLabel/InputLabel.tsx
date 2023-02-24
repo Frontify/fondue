@@ -77,3 +77,4 @@ export const InputLabel: FC<InputLabelProps> = ({
         </div>
     );
 };
+InputLabel.displayName = 'FondueInputLabel';

@@ -547,6 +547,8 @@ function PatternSound(): ReactElement {
     );
 }
 
+PatternSound.displayName = 'FonduePatternSound';
+
 const Memo = memo(PatternSound);
 
 export default Memo;

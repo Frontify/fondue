@@ -29,7 +29,6 @@ import {
     CheckboxListPlugin,
     CodePlugin,
     EmojiPlugin,
-    InitPlugin,
     ItalicPlugin,
     LinkPlugin,
     MentionPlugin,
@@ -374,10 +373,7 @@ WithChecklist.args = {
 
 const customPlugins = new PluginComposer();
 customPlugins
-    .setPlugin([
-        new InitPlugin(),
-        new TextStylePlugin({ textStyles: [TextStyles.ELEMENT_HEADING1, TextStyles.ELEMENT_PARAGRAPH] }),
-    ])
+    .setPlugin([new TextStylePlugin({ textStyles: [TextStyles.ELEMENT_HEADING1, TextStyles.ELEMENT_PARAGRAPH] })])
     .setPlugin([new LinkPlugin()])
     .setPlugin([new ItalicPlugin(), new BoldPlugin(), new UnderlinePlugin()])
     .setPlugin([new OrderedListPlugin(), new UnorderedListPlugin()]);
@@ -403,7 +399,7 @@ const mentionAndEmojisPlugins = new PluginComposer();
 mentionAndEmojisPlugins
     .setPlugin([new ParagraphPlugin()])
     .setPlugin([new MentionPlugin({ mentionableItems: mentionable })])
-    .setPlugin([new UnorderedListPlugin(), new OrderedListPlugin()])
+    .setPlugin([new UnorderedListPlugin({ isSoftBreak: true }), new OrderedListPlugin({ isSoftBreak: true })])
     .setPlugin([new BoldPlugin(), new ItalicPlugin(), new UnderlinePlugin(), new StrikethroughPlugin()])
     .setPlugin([new EmojiPlugin(), new LinkPlugin()]);
 export const WithMentionsAndEmojis = RichTextEditorTemplate.bind({});
@@ -415,7 +411,7 @@ WithMentionsAndEmojis.args = {
 
 const withoutToolbarPlugins = new PluginComposer({ noToolbar: true });
 withoutToolbarPlugins
-    .setPlugin([new InitPlugin(), new ParagraphPlugin()])
+    .setPlugin([new ParagraphPlugin()])
     .setPlugin([
         new BoldPlugin(),
         new LinkPlugin(),
@@ -431,7 +427,7 @@ WithoutToolbar.args = {
 
 const defaultPluginsWithColumns = new PluginComposer();
 defaultPluginsWithColumns
-    .setPlugin([new InitPlugin(), new ParagraphPlugin()])
+    .setPlugin([new ParagraphPlugin()])
     .setPlugin(new TextStylePlugin())
     .setPlugin([
         new BoldPlugin(),
@@ -453,7 +449,7 @@ export const MultiColumns: StoryFn<MultiColumnProps> = (args: MultiColumnProps) 
 
     const plugins = new PluginComposer();
     plugins
-        .setPlugin([new InitPlugin(), new ParagraphPlugin()])
+        .setPlugin([new ParagraphPlugin()])
         .setPlugin(new TextStylePlugin())
         .setPlugin([
             new BoldPlugin(),
