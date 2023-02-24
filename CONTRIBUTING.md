@@ -41,7 +41,7 @@ The name of the branch is not really relevant. Nonetheless we usually go for a p
 Theres a nifty script that creates that files you'll need:
 
 ```
-pnpm run component:create CoolCatsAndKittens
+pnpm component:create CoolCatsAndKittens
 ```
 
 This will add a folder inside `src/components` with the name `CoolCatsAndKittens` and three files:
