@@ -5,10 +5,12 @@ import { AlignToolbarButton } from '@udecode/plate';
 import { IconSize, IconTextAlignmentJustify } from '@foundation/Icon';
 import { PluginButtonProps } from '../../types';
 import { ButtonWrapper, IconStylingWrapper, buttonClassNames, buttonStyles } from '../../helper';
+import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
 
 export const AlignJustifyButton = ({ id }: PluginButtonProps) => (
     <ButtonWrapper id={id}>
         <AlignToolbarButton
+            tooltip={getTooltip('Justify')}
             value="justify"
             icon={<IconStylingWrapper icon={<IconTextAlignmentJustify size={IconSize.Size16} />} />}
             classNames={buttonClassNames}
