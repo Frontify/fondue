@@ -11,14 +11,15 @@ const EXCLAMATION_MARK_ICON_ID = '[data-test-id=error-state-exclamation-mark-ico
 const CLEAR_ICON_ID = '[data-test-id=clear-icon]';
 
 describe('DatePicker Component', () => {
-    const onChangeStub = cy.stub().as('onChangeStub');
     it('renders text input as part of Datepicker component', () => {
+        const onChangeStub = cy.stub().as('onChangeStub');
         cy.mount(<DatePicker onChange={onChangeStub} />);
 
         cy.get(TEXT_INPUT_ID).should('have.length', 1);
     });
 
     it('renders calendar on text input click', () => {
+        const onChangeStub = cy.stub().as('onChangeStub');
         cy.mount(<DatePicker onChange={onChangeStub} />);
 
         cy.get(OPEN_CLOSE_CLICK_AREA_ID).click();
@@ -26,6 +27,7 @@ describe('DatePicker Component', () => {
     });
 
     it('should render cancel icon if isClearable prop is true', () => {
+        const onChangeStub = cy.stub().as('onChangeStub');
         cy.mount(<DatePicker onChange={onChangeStub} isClearable={true} value={new Date()} />);
 
         cy.get(OPEN_CLOSE_CLICK_AREA_ID).click();
@@ -34,6 +36,7 @@ describe('DatePicker Component', () => {
     });
 
     it('should clear the input if cancel icon is clicked', () => {
+        const onChangeStub = cy.stub().as('onChangeStub');
         cy.mount(<DatePicker isClearable={true} value={new Date()} onChange={onChangeStub} />);
 
         cy.get(OPEN_CLOSE_CLICK_AREA_ID).click();
@@ -42,6 +45,7 @@ describe('DatePicker Component', () => {
     });
 
     it('should close calendar if shouldCloseOnSelect is true, and date is selected', () => {
+        const onChangeStub = cy.stub().as('onChangeStub');
         cy.mount(<DatePicker onChange={onChangeStub} shouldCloseOnSelect={true} />);
 
         cy.get(OPEN_CLOSE_CLICK_AREA_ID).click();
@@ -59,6 +63,7 @@ describe('DatePicker Component', () => {
     });
 
     it('only error validation state should show the triangle warning icon', () => {
+        const onChangeStub = cy.stub().as('onChangeStub');
         for (const validationState of Object.values(Validation)) {
             if (validationState === Validation.Error) {
                 cy.mount(<DatePicker onChange={onChangeStub} validation={validationState} />);

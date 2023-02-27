@@ -29,6 +29,7 @@ export type DatePickerProps = {
     isClearable?: boolean;
     shouldCloseOnSelect?: boolean;
     dateFormat?: string;
+    /** @description when the variant is of type 'range', the value should be the startDate */
     value?: Date | null;
     minDate?: Date;
     maxDate?: Date;

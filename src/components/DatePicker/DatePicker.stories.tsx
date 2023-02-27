@@ -6,7 +6,9 @@ import { DatePicker, DatePickerProps } from './DatePicker';
 import { FormControl } from '@components/FormControl';
 import { Slider } from '@components/Slider';
 import { Validation } from '@utilities/validation';
-import { subDays } from 'date-fns';
+import { intlFormat, subDays } from 'date-fns';
+import { IconCalendar16 } from '@foundation/Icon';
+import { Badge, BadgeEmphasis, BadgeStyle } from '..';
 
 export default {
     title: 'Components/DatePicker',
@@ -87,6 +89,8 @@ InsideFormControlAndOverSlider.args = {
     dateFormat: 'dd MMM yyyy',
 };
 
+const formatOptions = { day: 'numeric', month: 'short', year: 'numeric' } as const;
+
 const TemplateDateRange: StoryFn<DatePickerProps> = () => {
     const [startDate, setStartDate] = useState<Date | null>(subDays(new Date(), 5));
     const [endDate, setEndDate] = useState<Date | null>(new Date());
@@ -109,8 +113,13 @@ const TemplateDateRange: StoryFn<DatePickerProps> = () => {
             maxDate={new Date()}
             variant="range"
             customTrigger={
-                <button>
-                    {startDate?.toISOString()} - {endDate?.toISOString()}
+                <button className="tw-flex tw-items-center hover:tw-bg-box-neutral-hover tw-py-2 tw-px-4 tw-rounded tw-gap-2">
+                    <IconCalendar16 />
+                    Date:
+                    <Badge style={BadgeStyle.Progress} emphasis={BadgeEmphasis.Strong} size="small">
+                        {intlFormat(startDate || new Date(), formatOptions)} -{' '}
+                        {intlFormat(endDate || new Date(), formatOptions)}
+                    </Badge>
                 </button>
             }
             hasPopperArrow={false}
