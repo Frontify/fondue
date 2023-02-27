@@ -607,6 +607,8 @@ function PatternTypography(): ReactElement {
     );
 }
 
+PatternTypography.displayName = 'FonduePatternTypography';
+
 const Memo = memo(PatternTypography);
 
 export default Memo;

@@ -30,6 +30,9 @@ export class BoldPlugin extends Plugin {
                 deserializeHtml: {
                     rules: [...PLATE_BOLD_RULES, { validNodeName: ['SPAN'], validClassName: BOLD_CLASSES }],
                 },
+                options: {
+                    hotkey: ['mod+b', 'ctrl+b'],
+                },
             }),
         ];
     }

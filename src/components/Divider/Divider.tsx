@@ -41,3 +41,4 @@ export const Divider: FC<DividerProps> = ({
         />
     </div>
 );
+Divider.displayName = 'FondueDivider';

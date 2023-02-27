@@ -145,3 +145,4 @@ export const Trigger: FC<TriggerProps> = ({
         </div>
     );
 };
+Trigger.displayName = 'FondueTrigger';

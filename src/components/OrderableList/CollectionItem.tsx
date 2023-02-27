@@ -39,3 +39,4 @@ export const CollectionItem = <T extends object>({
         </div>
     );
 };
+CollectionItem.displayName = 'FondueCollectionItem';

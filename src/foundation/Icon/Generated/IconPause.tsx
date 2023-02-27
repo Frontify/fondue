@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { ReactElement, memo } from 'react';
 import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 import { IconSize } from '@foundation/Icon/IconSize';
 
@@ -11,24 +11,25 @@ import IconPause20 from './IconPause20';
 import IconPause24Filled from './IconPause24Filled';
 import IconPause24 from './IconPause24';
 import IconPause32Filled from './IconPause32Filled';
-import IconPause32 from './IconPause32'
+import IconPause32 from './IconPause32';
 
-function IconPause(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
+const IconPause = (props: GeneratedIconProps): ReactElement<GeneratedIconProps> => {
     const size = props.size || IconSize.Size16;
     return (
         <span>
-            {size === IconSize.Size12 && props.filled && <IconPause12Filled {...props}/>}
-            {size === IconSize.Size12 && !props.filled && <IconPause12 {...props}/>}
-            {size === IconSize.Size16 && props.filled && <IconPause16Filled {...props}/>}
-            {size === IconSize.Size16 && !props.filled && <IconPause16 {...props}/>}
-            {size === IconSize.Size20 && props.filled && <IconPause20Filled {...props}/>}
-            {size === IconSize.Size20 && !props.filled && <IconPause20 {...props}/>}
-            {size === IconSize.Size24 && props.filled && <IconPause24Filled {...props}/>}
-            {size === IconSize.Size24 && !props.filled && <IconPause24 {...props}/>}
-            {size === IconSize.Size32 && props.filled && <IconPause32Filled {...props}/>}
-            {size === IconSize.Size32 && !props.filled && <IconPause32 {...props}/>}
+            {size === IconSize.Size12 && props.filled && <IconPause12Filled {...props} />}
+            {size === IconSize.Size12 && !props.filled && <IconPause12 {...props} />}
+            {size === IconSize.Size16 && props.filled && <IconPause16Filled {...props} />}
+            {size === IconSize.Size16 && !props.filled && <IconPause16 {...props} />}
+            {size === IconSize.Size20 && props.filled && <IconPause20Filled {...props} />}
+            {size === IconSize.Size20 && !props.filled && <IconPause20 {...props} />}
+            {size === IconSize.Size24 && props.filled && <IconPause24Filled {...props} />}
+            {size === IconSize.Size24 && !props.filled && <IconPause24 {...props} />}
+            {size === IconSize.Size32 && props.filled && <IconPause32Filled {...props} />}
+            {size === IconSize.Size32 && !props.filled && <IconPause32 {...props} />}
         </span>
     );
-}
+};
+IconPause.displayName = 'FondueIconPause';
 
 export default memo(IconPause);

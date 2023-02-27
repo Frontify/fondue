@@ -97,3 +97,4 @@ export const DatePicker: FC<DatePickerProps> = ({
         </div>
     );
 };
+DatePicker.displayName = 'FondueDatePicker';

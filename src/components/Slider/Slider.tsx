@@ -161,3 +161,4 @@ export const Slider: FC<SliderProps> = ({
         </div>
     );
 };
+Slider.displayName = 'FondueSlider';
