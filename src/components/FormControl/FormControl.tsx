@@ -51,6 +51,7 @@ const HelperText: FC<HelperTextProps> = ({ text, disabled, style, fullWidth = fa
         </span>
     );
 };
+HelperText.displayName = 'FondueHelperText';
 
 export enum HelperPosition {
     Before = 'Before',
@@ -147,3 +148,4 @@ export const FormControl: FC<FormControlProps> = ({
         </div>
     );
 };
+FormControl.displayName = 'FondueFormControl';

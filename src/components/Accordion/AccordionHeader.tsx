@@ -49,3 +49,4 @@ export const AccordionHeader: FC<AccordionHeaderProps> = ({
         </div>
     );
 };
+AccordionHeader.displayName = 'FondueAccordionHeader';

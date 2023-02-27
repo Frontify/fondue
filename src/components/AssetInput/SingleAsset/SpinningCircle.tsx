@@ -16,3 +16,4 @@ export const SpinningCircle: FC<Pick<AssetInputProps, 'size'>> = ({ size }) => (
         <path fill="none" stroke="#7159d7" strokeWidth="2" d="M2,22 a20,20 0 1,0 20,-20" />
     </svg>
 );
+SpinningCircle.displayName = 'FondueSpinningCircle';

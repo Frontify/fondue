@@ -8,10 +8,12 @@
 4. ???
 5. Profit!
 
-```
+> Fondue uses `pnpm` to manage the dependencies. If you don't have it installed in your local, please refer to [their installation guide](https://pnpm.io/installation).
+
+```shell
 $ git clone git@github.com:Frontify/fondue.git
-$ npm ci
-$ npm run storybook
+$ pnpm i
+$ pnpm storybook
 $ echo "YAY ✨"
 ```
 
@@ -28,7 +30,7 @@ When adding a new component to Fondue this is the flow that is applied.
 
 Create a new branch for your additions
 
-```
+```shell
 git checkout -b feat/add-cool-cats-and-kittens
 ```
 
@@ -38,8 +40,8 @@ The name of the branch is not really relevant. Nonetheless we usually go for a p
 
 Theres a nifty script that creates that files you'll need:
 
-```
-npm run component:create CoolCatsAndKittens
+```shell
+pnpm component:create CoolCatsAndKittens
 ```
 
 This will add a folder inside `src/components` with the name `CoolCatsAndKittens` and three files:
@@ -52,7 +54,7 @@ This will add a folder inside `src/components` with the name `CoolCatsAndKittens
 
 Once you're happy with your new component, it's time to open a new PR. Push your branch to GitHub as a start:
 
-```
+```shell
 git push -u origin feat/cool-cats-and-kittens
 ```
 

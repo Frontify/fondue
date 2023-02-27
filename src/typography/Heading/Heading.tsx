@@ -70,3 +70,4 @@ export const Heading: FC<HeadingProps> = ({
         {children}
     </Tag>
 );
+Heading.displayName = 'FondueHeading';

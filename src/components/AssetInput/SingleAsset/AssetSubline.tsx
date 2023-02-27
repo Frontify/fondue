@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, Fragment } from 'react';
+import React, { FC } from 'react';
 import { AssetInputProps } from '../AssetInput';
 import { SelectedAssetProps } from './SelectedAsset';
 import { IconArrowCircleUp, IconImageStack } from '@foundation/Icon';
@@ -34,6 +34,7 @@ export const AssetSubline: FC<AssetSublineProps> = ({
         </span>
     );
 };
+AssetSubline.displayName = 'FondueAssetSubline';
 
 const FileInfo: FC<{ label?: string | number; hide: boolean }> = ({ label, hide }) => {
     if (hide || !label) {
@@ -41,9 +42,10 @@ const FileInfo: FC<{ label?: string | number; hide: boolean }> = ({ label, hide 
     }
 
     return (
-        <Fragment>
+        <>
             <span className="tw-text-m tw-text-black-20 tw-h-4 tw-flex tw-items-center">•</span>
             <span className="tw-whitespace-nowrap">{label}</span>
-        </Fragment>
+        </>
     );
 };
+FileInfo.displayName = 'FondueFileInfo';

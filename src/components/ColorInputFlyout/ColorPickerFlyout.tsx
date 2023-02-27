@@ -89,3 +89,4 @@ export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
         </Flyout>
     );
 };
+ColorPickerFlyout.displayName = 'FondueColorPickerFlyout';

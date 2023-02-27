@@ -1270,6 +1270,7 @@ function PatternDigitalAssets(): ReactElement {
         </svg>
     );
 }
+PatternDigitalAssets.displayName = 'FonduePatternDigitalAssets';
 
 const Memo = memo(PatternDigitalAssets);
 

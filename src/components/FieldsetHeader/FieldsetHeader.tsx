@@ -172,3 +172,4 @@ export const FieldsetHeader: FC<FieldsetHeaderProps> = ({
         </header>
     );
 };
+FieldsetHeader.displayName = 'FondueFieldsetHeader';

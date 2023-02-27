@@ -126,3 +126,4 @@ export const TableColumnHeader = ({
         </th>
     );
 };
+TableColumnHeader.displayName = 'FondueTableColumnHeader';

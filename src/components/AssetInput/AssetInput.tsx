@@ -164,3 +164,4 @@ export const AssetInput: FC<AssetInputProps> = ({
         </div>
     );
 };
+AssetInput.displayName = 'FondueAssetInput';
