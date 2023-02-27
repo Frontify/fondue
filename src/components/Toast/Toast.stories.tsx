@@ -1,10 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconInfo24, IconTrashBin24 } from '@foundation/Icon';
+import { IconExclamationMarkCircle24, IconExclamationMarkTriangle24, IconTrashBin24 } from '@foundation/Icon';
 import { Meta, StoryFn } from '@storybook/react';
 import React from 'react';
+import { Button, ButtonGroup, ButtonSize, ButtonStyle } from '..';
 import { Toast as ToastComponent } from './Toast';
-import { ToastProps, ToastStyle } from './types';
+import { ToastAnimationDirection, ToastProps, ToastStyle } from './types';
 
 export default {
     title: 'Components/Toast',
@@ -12,30 +13,60 @@ export default {
     tags: ['autodocs'],
 } as Meta;
 
-const WithLeftContainer: StoryFn<ToastProps> = (args) => (
+const WithLeftBottomContainer: StoryFn<ToastProps> = (args) => (
     <div className="tw-fixed tw-bottom-0 tw-left-0 tw-m-3">
         <ToastComponent {...args} />
     </div>
 );
 
-const WithRightContainer: StoryFn<ToastProps> = (args) => (
+const WithRightTopContainer: StoryFn<ToastProps> = (args) => (
+    <div className="tw-fixed tw-top-0 tw-right-0 tw-m-3">
+        <ToastComponent {...args} />
+    </div>
+);
+
+const WithRightBottomContainer: StoryFn<ToastProps> = (args) => (
     <div className="tw-fixed tw-bottom-0 tw-right-0 tw-m-3">
         <ToastComponent {...args} />
     </div>
 );
 
-export const LeftLoud = WithLeftContainer.bind({});
-LeftLoud.args = {
+export const InformativeToastAtTheBottom = WithLeftBottomContainer.bind({});
+InformativeToastAtTheBottom.args = {
     isOpen: true,
     style: ToastStyle.Loud,
-    icon: <IconInfo24 />,
-    children: <div className="tw-p-3 tw-flex tw-items-center">I am a very important Information!</div>,
+    icon: <IconExclamationMarkCircle24 />,
+    children: <div className="tw-p-4 tw-flex tw-items-center">Item successfully added</div>,
 };
 
-export const RightDanger = WithRightContainer.bind({});
-RightDanger.args = {
+export const WarningToastAtTheTop = WithRightTopContainer.bind({});
+WarningToastAtTheTop.args = {
+    isOpen: true,
+    style: ToastStyle.Warning,
+    icon: <IconExclamationMarkTriangle24 />,
+    animationDirection: ToastAnimationDirection.TopToBottom,
+    children: <div className="tw-p-4 tw-flex tw-items-center">Your password will expire in 7 days</div>,
+};
+
+export const WithInteractiveContent = WithRightBottomContainer.bind({});
+WithInteractiveContent.args = {
     isOpen: true,
     style: ToastStyle.Danger,
     icon: <IconTrashBin24 />,
-    children: <div className="tw-p-3 tw-flex tw-items-center">I am also a very important Information!</div>,
+    children: (
+        <>
+            <div className="tw-flex tw-p-4">
+                <div className="tw-border-r tw-border-black-20 tw-pr-4">
+                    <div className="tw-font-bold">Item Deletion Confirmation</div>
+                    <span className="tw-mt-1">You are about to delete this item</span>
+                </div>
+            </div>
+            <div className="tw-flex tw-items-center tw-py-4 tw-pr-4">
+                <ButtonGroup size={ButtonSize.Medium}>
+                    <Button style={ButtonStyle.Secondary}>Yes, delete it</Button>
+                    <Button>Cancel</Button>
+                </ButtonGroup>
+            </div>
+        </>
+    ),
 };

@@ -1,18 +1,34 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { INSET_BORDER } from '@utilities/borderStyle';
 import { merge } from '@utilities/merge';
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { ReactElement } from 'react';
-import { ToastProps, toastStylesBackgroundColorsMap } from './types';
+import { ToastAnimationDirection, ToastProps, toastStylesBackgroundColorsMap } from './types';
 
-export const Toast = ({ isOpen, style, icon, children }: ToastProps): ReactElement => (
+const CONTAINER_BASE_CLASSES = 'tw-min-h-[4.25rem] tw-bg-base tw-rounded-lg tw-shadow-mid tw-z-[120000]';
+const CONTAINER_CLASSES = merge([CONTAINER_BASE_CLASSES, INSET_BORDER]);
+
+const getToastStartPosition = (animationDirection: ToastAnimationDirection) =>
+    animationDirection === ToastAnimationDirection.BottomToTop ? '150%' : '-150%';
+
+export const Toast = ({
+    isOpen,
+    style,
+    icon,
+    animationDirection = ToastAnimationDirection.BottomToTop,
+    children,
+}: ToastProps): ReactElement => (
     <AnimatePresence>
         {isOpen && (
             <motion.div
-                className="tw-min-h-[4.25rem] tw-rounded-lg tw-border tw-shadow-lg tw-bg-white tw-border-black-10"
-                initial={{ opacity: 0, y: '150%' }}
+                className={CONTAINER_CLASSES}
+                initial={{
+                    opacity: 0,
+                    y: getToastStartPosition(animationDirection),
+                }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: '150%' }}
+                exit={{ opacity: 0, y: getToastStartPosition(animationDirection) }}
                 data-test-id="toast"
             >
                 <div className="tw-flex">
@@ -30,3 +46,4 @@ export const Toast = ({ isOpen, style, icon, children }: ToastProps): ReactEleme
         )}
     </AnimatePresence>
 );
+Toast.displayName = 'FondueToast';

@@ -2,6 +2,7 @@
 
 import { IconLinkBox24 } from '@foundation/Icon';
 import React from 'react';
+import { Button } from '..';
 import { Toast } from './Toast';
 import { ToastStyle, toastStylesBackgroundColorsMap } from './types';
 
@@ -36,7 +37,7 @@ describe('Toast Rendering', () => {
             });
     });
 
-    it('should render with the correct background color', () => {
+    it('should render toast with the correct background color', () => {
         const style = ToastStyle.Loud;
         cy.mount(<Toast isOpen={true} style={style} icon={<IconLinkBox24 />} />);
         cy.get(TOAST_ID)
@@ -45,5 +46,19 @@ describe('Toast Rendering', () => {
             .children()
             .first()
             .should('have.class', toastStylesBackgroundColorsMap[style]);
+    });
+
+    it('should be able to use the keyboard for navigation within the toast', () => {
+        const onClickStub = cy.stub();
+        cy.mount(
+            <Toast isOpen={true} style={ToastStyle.Loud} icon={<IconLinkBox24 />}>
+                <Button onClick={onClickStub}>I am focusable</Button>
+            </Toast>,
+        );
+        cy.window().focus();
+        cy.get('body').realPress('Tab');
+        cy.get('button').should('have.focus');
+        cy.get('button').type('{enter}');
+        cy.wrap(onClickStub).should('have.been.calledOnce');
     });
 });

@@ -6,8 +6,14 @@ export type ToastProps = {
     isOpen: boolean;
     style: ToastStyle;
     icon: ReactNode;
+    animationDirection?: ToastAnimationDirection;
     children?: ReactNode;
 };
+
+export enum ToastAnimationDirection {
+    BottomToTop = 'BottomToTop',
+    TopToBottom = 'TopToBottom',
+}
 
 export enum ToastStyle {
     Loud = 'Loud',
