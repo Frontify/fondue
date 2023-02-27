@@ -13,7 +13,6 @@ import { Validation } from '@utilities/validation';
 type SingleDatePickerProps = {
     variant?: 'single';
     onChange: (date: Date | null) => void;
-    selectsRange?: false;
     startDate?: null;
     endDate?: null;
 };
@@ -21,7 +20,6 @@ type SingleDatePickerProps = {
 type RangeDatePickerProps = {
     variant: 'range';
     onChange: (date: [Date | null, Date | null] | null) => void;
-    selectsRange: true;
     startDate: Date | null;
     endDate: Date | null;
 };
@@ -59,7 +57,6 @@ export const DatePicker: FC<DatePickerProps> = ({
     endDate,
     minDate,
     maxDate,
-    selectsRange = false,
     validation = Validation.Default,
     customTrigger,
     children = <></>,
@@ -80,7 +77,7 @@ export const DatePicker: FC<DatePickerProps> = ({
                 maxDate={maxDate}
                 calendarStartDay={1}
                 onChange={onChange}
-                selectsRange={selectsRange}
+                selectsRange={variant === 'range' ? true : false}
                 showPopperArrow={hasPopperArrow}
                 filterDate={filterDate}
                 customInput={

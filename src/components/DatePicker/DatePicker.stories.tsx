@@ -26,7 +26,6 @@ const Template: StoryFn<DatePickerProps> = (args: DatePickerProps) => {
     return (
         <DatePicker
             {...args}
-            selectsRange={false}
             variant="single"
             startDate={null}
             endDate={null}
@@ -45,7 +44,6 @@ const TemplateWithFormControl: StoryFn<DatePickerProps> = (args: DatePickerProps
                 <FormControl>
                     <DatePicker
                         {...args}
-                        selectsRange={false}
                         variant="single"
                         startDate={null}
                         endDate={null}
@@ -110,7 +108,6 @@ const TemplateDateRange: StoryFn<DatePickerProps> = () => {
             minDate={subDays(new Date(), 40)}
             maxDate={new Date()}
             variant="range"
-            selectsRange
             customTrigger={
                 <button>
                     {startDate?.toISOString()} - {endDate?.toISOString()}
