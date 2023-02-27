@@ -38,6 +38,9 @@ export type DatePickerProps = {
     children?: React.ReactNode;
     hasPopperArrow?: boolean;
     filterDate?: (date: Date) => boolean;
+    onOpen?: () => void;
+    onClose?: () => void;
+    onBlur?: () => void;
 } & (SingleDatePickerProps | RangeDatePickerProps);
 
 const getDayClasses = (variant: DatePickerProps['variant'], date: Date) => {
@@ -52,6 +55,9 @@ export const DatePicker: FC<DatePickerProps> = ({
     isClearable,
     shouldCloseOnSelect,
     onChange,
+    onOpen,
+    onClose,
+    onBlur,
     dateFormat = 'dd MMM yyyy',
     value,
     startDate,
@@ -67,6 +73,16 @@ export const DatePicker: FC<DatePickerProps> = ({
 }) => {
     const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
 
+    const handleOpen = () => {
+        setIsCalendarOpen(true);
+        onOpen?.();
+    };
+
+    const handleClose = () => {
+        setIsCalendarOpen(false);
+        onClose?.();
+    };
+
     return (
         <div data-test-id="date-picker">
             <DatepickerComponent
@@ -78,6 +94,7 @@ export const DatePicker: FC<DatePickerProps> = ({
                 maxDate={maxDate}
                 calendarStartDay={1}
                 onChange={onChange}
+                onBlur={onBlur}
                 selectsRange={variant === 'range' ? true : false}
                 showPopperArrow={hasPopperArrow}
                 filterDate={filterDate}
@@ -95,8 +112,8 @@ export const DatePicker: FC<DatePickerProps> = ({
                 formatWeekDay={(day) => day.slice(0, 1)}
                 isClearable={isClearable}
                 dateFormat={dateFormat}
-                onCalendarClose={() => setIsCalendarOpen(false)}
-                onCalendarOpen={() => setIsCalendarOpen(true)}
+                onCalendarClose={handleClose}
+                onCalendarOpen={handleOpen}
                 shouldCloseOnSelect={shouldCloseOnSelect}
                 dayClassName={(date) => getDayClasses(variant, date)}
                 renderCustomHeader={({ date, decreaseMonth, increaseMonth, increaseYear, decreaseYear }) => (

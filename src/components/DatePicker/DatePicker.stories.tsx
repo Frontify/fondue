@@ -109,6 +109,9 @@ const TemplateDateRange: StoryFn<DatePickerProps> = () => {
             startDate={startDate}
             endDate={endDate}
             onChange={onChange}
+            onOpen={() => console.log('open')}
+            onClose={() => console.log('close')}
+            onBlur={() => console.log('blur')}
             minDate={subDays(new Date(), 40)}
             maxDate={new Date()}
             variant="range"
