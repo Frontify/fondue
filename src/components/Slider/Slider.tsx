@@ -95,7 +95,11 @@ const SliderItem = (props: SliderItemProps) => {
                     <input {...inputProps} {...focusProps} data-test-id="slider-input" ref={ref} />
                 </VisuallyHidden>
                 <span className="tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap tw-flex">
-                    {isIconItem(item) && <span aria-label={item.ariaLabel}>{item.icon}</span>}
+                    {isIconItem(item) && (
+                        <span className="tw-leading-3" aria-label={item.ariaLabel}>
+                            {item.icon}
+                        </span>
+                    )}
                     {item.value && <span className={isIconItem(item) ? 'tw-ml-2' : ''}>{item.value.toString()}</span>}
                 </span>
             </div>
