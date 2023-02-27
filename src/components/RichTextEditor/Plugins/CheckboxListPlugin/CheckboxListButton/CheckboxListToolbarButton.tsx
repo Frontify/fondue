@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
 import {
     BlockToolbarButtonProps,
     ToolbarButton,
@@ -21,6 +22,7 @@ export const CheckboxListToolbarButton = withPlateProvider(
 
         return (
             <ToolbarButton
+                tooltip={getTooltip('Checklist')}
                 active={isActive}
                 onMouseDown={(event) => {
                     if (!editor || !editor.selection) {
