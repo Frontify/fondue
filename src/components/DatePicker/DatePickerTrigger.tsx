@@ -14,7 +14,7 @@ type DatePickerTriggerProps = PropsWithChildren<{
     isCalendarOpen?: boolean;
     onClick?: () => void;
     validation?: Validation;
-    onDateChanged?: (date: Date | null) => void;
+    onDateChanged?: ((date: [Date | null, Date | null] | null) => void) | ((date: Date | null) => void);
 }>;
 
 export const DatePickerTrigger = forwardRef<HTMLDivElement, DatePickerTriggerProps>(
