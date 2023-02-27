@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { AriaAttributes, CSSProperties, useEffect, useState } from 'react';
+import React, { AriaAttributes, MouseEvent, useEffect, useState } from 'react';
 
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { merge } from '@utilities/merge';
@@ -58,9 +58,26 @@ export const Slider = ({
 
     const addValueUnitSuffix = () => {
         setValue((currentValue) => {
-            console.log(currentValue?.replace(valueUnitSuffix, '') + valueUnitSuffix);
             return currentValue?.replace(valueUnitSuffix, '') + valueUnitSuffix;
         });
+    };
+
+    const onMouseDown = (event: MouseEvent<HTMLDivElement>) => {
+        const sliderPosition = event.currentTarget.getBoundingClientRect().x;
+        const trackSize = event.currentTarget.clientWidth;
+        const mousePosition = event.clientX;
+        const positionInPixels = mousePosition - sliderPosition;
+        let percentage = positionInPixels / trackSize;
+
+        if (percentage < 0) {
+            percentage = 0;
+        } else if (percentage > 1) {
+            percentage = 1;
+        }
+
+        const newValue = (max - min) * percentage + min;
+
+        setValue(`${newValue.toFixed(decimalDigits)}${valueUnitSuffix}`);
     };
 
     useEffect(() => {
@@ -94,7 +111,6 @@ export const Slider = ({
 
         setError(undefined);
 
-        // console.log('Update slider position to percentage:', percentage, numberValue, step, stepMultiplier);
         setPercentagePosition(percentage * 100);
     }, [value, min, max, valueUnitSuffix]);
 
@@ -112,7 +128,13 @@ export const Slider = ({
             <div className="tw-flex">
                 <div className={merge(['tw-flex-1 tw-flex tw-items-center'])}>
                     <div>{min}</div>
-                    <div className="tw-flex-1 tw-relative tw-h-full tw-mx-3">
+                    <div
+                        role="slider"
+                        tabIndex={-1}
+                        aria-valuenow={percentagePosition}
+                        className="tw-flex-1 tw-relative tw-h-full tw-mx-3"
+                        onMouseDown={onMouseDown}
+                    >
                         <div className="tw-absolute tw-top-1/2 tw--translate-y-1/2 tw-w-full tw-h-1 tw-rounded-sm tw-bg-base tw-border tw-border-line-strong tw-flex-1"></div>
                         {percentagePosition !== undefined && (
                             <div
