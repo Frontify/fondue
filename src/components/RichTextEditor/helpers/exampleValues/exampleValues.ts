@@ -255,6 +255,12 @@ export const defaultValue = [
     createElement({ text: 'Quote', element: TextStyles.ELEMENT_QUOTE }),
 ];
 
+export const customControlValues = [
+    createElement({ text: 'Image Title', element: TextStyles.ELEMENT_IMAGE_TITLE }),
+    createElement({ text: 'Image Caption', element: TextStyles.ELEMENT_IMAGE_CAPTION }),
+    createElement({ text: IPSUM, element: ELEMENT_PARAGRAPH }),
+];
+
 export const valueWithColumnBreaks = [
     {
         type: ELEMENT_PARAGRAPH,

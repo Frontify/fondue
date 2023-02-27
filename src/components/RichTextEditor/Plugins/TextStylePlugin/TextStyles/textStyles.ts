@@ -29,6 +29,8 @@ export enum TextStyles {
     ELEMENT_CUSTOM1 = 'custom1',
     ELEMENT_CUSTOM2 = 'custom2',
     ELEMENT_CUSTOM3 = 'custom3',
+    ELEMENT_IMAGE_TITLE = 'image-title',
+    ELEMENT_IMAGE_CAPTION = 'imageCaption',
     ELEMENT_QUOTE = 'quote',
     ELEMENT_LINK = 'link',
     ELEMENT_PARAGRAPH = 'p',
@@ -47,6 +49,8 @@ export const textStyleTitle: Record<TextStyles, string> = {
     [TextStyles.ELEMENT_QUOTE]: 'Quote',
     [TextStyles.ELEMENT_LINK]: 'Link',
     [TextStyles.ELEMENT_PARAGRAPH]: 'Body Text',
+    [TextStyles.ELEMENT_IMAGE_TITLE]: 'Image Title',
+    [TextStyles.ELEMENT_IMAGE_CAPTION]: 'Image Caption',
 };
 
 export const AVAILABLE_STYLE_TITLES = { ...listStyleTitle, ...textStyleTitle };
