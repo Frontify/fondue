@@ -304,6 +304,28 @@ export const value = [
         children: [{ text: 'This is checked again.' }],
     },
 ];
+export const alignedValues = [
+    {
+        type: ELEMENT_PARAGRAPH,
+        children: [{ text: 'This text is left aligned.' }],
+        align: 'left',
+    },
+    {
+        type: ELEMENT_PARAGRAPH,
+        children: [{ text: 'This text is center aligned.' }],
+        align: 'center',
+    },
+    {
+        type: ELEMENT_PARAGRAPH,
+        children: [{ text: 'This text is right aligned.' }],
+        align: 'right',
+    },
+    {
+        type: ELEMENT_PARAGRAPH,
+        children: [{ text: 'This text is justified.' }],
+        align: 'justify',
+    },
+];
 
 export const htmlValue = `
         <p><strong>This text is bold.</strong></p>
@@ -444,6 +466,7 @@ export const buttonValues = [
 
 export const nodesToSerialize: TDescendant[] = [
     ...defaultValue,
+    ...alignedValues,
     ...valueWithColumnBreaks,
     ...checkboxValue,
     ...buttonValues,
