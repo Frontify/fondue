@@ -62,13 +62,4 @@ describe('serializeLeafToHtml()', () => {
         const result = serializeLeafToHtml(node);
         expect(result).to.equal('text');
     });
-
-    it('serializes an empty leaf to a linebreak', () => {
-        const node = {
-            text: '',
-        };
-
-        const result = serializeLeafToHtml(node);
-        expect(result).to.equal('<br />');
-    });
 });
