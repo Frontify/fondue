@@ -29,7 +29,7 @@ export enum TextStyles {
     ELEMENT_CUSTOM1 = 'custom1',
     ELEMENT_CUSTOM2 = 'custom2',
     ELEMENT_CUSTOM3 = 'custom3',
-    ELEMENT_IMAGE_TITLE = 'image-title',
+    ELEMENT_IMAGE_TITLE = 'imageTitle',
     ELEMENT_IMAGE_CAPTION = 'imageCaption',
     ELEMENT_QUOTE = 'quote',
     ELEMENT_LINK = 'link',

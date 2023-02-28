@@ -16,7 +16,7 @@ export const enum DesignTokenNames {
     LINK = 'link',
     PARAGRAPH = 'p',
     IMAGE_CAPTION = 'imageCaption',
-    IMAGE_TITLE = 'image-title',
+    IMAGE_TITLE = 'imageTitle',
 }
 
 export const TextStylesToDesignTokenMap = {

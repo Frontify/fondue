@@ -16,7 +16,7 @@ export const ImageTitleMarkupElementNode = ({ element, attributes, children }: P
         <p
             {...attributes}
             className={merge([align && alignmentClassnames[align], getColumnBreakClasses(element)])}
-            style={designTokens['image-title']}
+            style={designTokens.imageTitle}
         >
             {children}
         </p>
@@ -28,6 +28,6 @@ export const createImageTitlePlugin = createPluginFactory({
     isElement: true,
     component: ImageTitleMarkupElementNode,
     deserializeHtml: {
-        rules: [{ validClassName: 'image-title' }],
+        rules: [{ validClassName: 'imageTitle' }],
     },
 });
