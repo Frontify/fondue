@@ -39,12 +39,15 @@ export const serializeNodesToHtml = (
     const mappedMentionable = mentionable ? mapMentionable(mentionable) : new Map();
 
     const html = nodes
-        .map((node) =>
-            serializeNodeToHtmlRecursive(node, {
+        .map((node) => {
+            if (isBreakNode(node)) {
+                return '<br />';
+            }
+            return serializeNodeToHtmlRecursive(node, {
                 designTokens: mergedDesignTokens,
                 mappedMentionable,
-            }),
-        )
+            });
+        })
         .join('');
 
     if (columns > 1) {
@@ -52,4 +55,12 @@ export const serializeNodesToHtml = (
     }
 
     return html;
+};
+
+const isBreakNode = (node: TDescendant): boolean => {
+    if (!Array.isArray(node?.children)) {
+        return false;
+    }
+    const isChecklistElement = node?.type === 'checkbox-item';
+    return node.children?.length === 1 && node.children[0].text === '' && !isChecklistElement;
 };

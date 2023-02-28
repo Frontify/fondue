@@ -199,11 +199,13 @@ export const defaultValue = [
     {
         type: ELEMENT_PARAGRAPH,
         children: [
+            { text: '' },
             {
                 type: ELEMENT_LINK,
-                children: [{ text: 'This is a Link.' }],
+                children: [{ text: 'This is a Link. Without any breaks before or after' }],
                 url: 'https://frontify.com',
             },
+            { text: '' },
         ],
     },
     {
@@ -319,6 +321,15 @@ export const alignedValues = [
         children: [{ text: 'This text is justified.' }],
         align: 'justify',
     },
+
+    {
+        type: 'p',
+        children: [
+            { text: '' },
+            { type: 'a', url: 'https://frontify.com/', target: '_blank', children: [{ text: 'This is a Link.' }] },
+            { text: '' },
+        ],
+    },
 ];
 
 export const htmlValue = `
@@ -412,8 +423,9 @@ export const checkboxValue = [
         type: ELEMENT_CHECK_ITEM,
         checked: true,
         indent: 2,
-        children: [{ text: "And I'm checked!" }],
+        children: [{ text: "And I'm checked! Followed by an empty one!" }],
     },
+    { type: ELEMENT_CHECK_ITEM, children: [{ text: '' }] },
 ];
 
 export const buttonValues = [
