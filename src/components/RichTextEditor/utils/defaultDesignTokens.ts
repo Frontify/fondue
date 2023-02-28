@@ -56,7 +56,7 @@ export const defaultDesignTokens: DesignTokens = {
         fontStyle: 'normal',
         fontWeight: 'normal',
     },
-    'image-title': {
+    imageTitle: {
         color: 'rgb(0, 0, 0)',
         fontFamily: 'Droid Sans',
         fontSize: '15px',
