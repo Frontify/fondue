@@ -2,7 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@babel/core': 7.20.12
-  '@cypress/vite-dev-server': 5.0.2
+  '@cypress/vite-dev-server': 5.0.4
   '@frontify/eslint-config-react': 0.15.5
   '@frontify/fondue-icons': 0.1.31
   '@frontify/fondue-tokens': 3.1.0-next.5
@@ -195,7 +195,7 @@ dependencies:
 
 devDependencies:
   '@babel/core': 7.20.12
-  '@cypress/vite-dev-server': 5.0.2
+  '@cypress/vite-dev-server': 5.0.4
   '@frontify/eslint-config-react': 0.15.5_ug2b6qdfsv6lvnb6obdh5fij5m
   '@frontify/fondue-icons': 0.1.31
   '@storybook/addon-a11y': 7.0.0-beta.53_sfoxds7t5ydpegc3knd667wn6m
@@ -1590,8 +1590,8 @@ packages:
       uuid: 8.3.2
     dev: true
 
-  /@cypress/vite-dev-server/5.0.2:
-    resolution: {integrity: sha512-bhG5P0p423SiucYnFyGjQrPkIfNDKF+R0pwcB78y71soHXzh0cJ6dSAn67c8moU5YtQnAGgO3FKQmWcx8LFubw==}
+  /@cypress/vite-dev-server/5.0.4:
+    resolution: {integrity: sha512-F9ZkoBcHoILYKEQHDPnsBdzVbnudLoav3iMCOPRvgWfuMlen+zVed1g0nBBYTwfVYMfc9Xqn37ePC3GLSl1aYw==}
     dependencies:
       debug: 4.3.4
       find-up: 6.3.0

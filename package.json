@@ -62,7 +62,7 @@
     },
     "devDependencies": {
         "@babel/core": "7.20.12",
-        "@cypress/vite-dev-server": "5.0.2",
+        "@cypress/vite-dev-server": "5.0.4",
         "@frontify/eslint-config-react": "0.15.5",
         "@frontify/fondue-icons": "0.1.31",
         "@storybook/addon-a11y": "7.0.0-beta.53",
