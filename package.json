@@ -36,7 +36,7 @@
         "clean": "rimraf dist",
         "component:create": "esno scripts/createNewComponent.ts",
         "generate:icons": "pnpm generate:reactIcons && pnpm generate:iconsMap",
-        "generate:iconsMap": "esno ./scripts/generateIconMap.ts && eslint --fix ./src/foundation/Icon/IconEnum.ts ./src/foundation/Icon/IconsMap.tsx ./src/foundation/Icon/Generated/index.ts",
+        "generate:iconsMap": "eslint --fix ./src/foundation/Icon/IconEnum.ts ./src/foundation/Icon/Generated/index.ts",
         "generate:reactIcons": "esno ./scripts/generateReactIcons.ts",
         "lint": "eslint .",
         "lint:fix": "eslint --fix .",

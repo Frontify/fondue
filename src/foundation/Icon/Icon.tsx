@@ -1,7 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC } from 'react';
+import React, { FC, Suspense, lazy } from 'react';
 import { IconProps } from './IconProps';
-import { iconsMap } from './IconsMap';
+import { IconIcon } from '@foundation/Icon/Generated';
 
-export const Icon: FC<IconProps> = ({ size, icon }) => React.cloneElement(iconsMap[icon], { size });
+export const Icon: FC<IconProps> = ({ size, icon }) => {
+    const path = `../Icon/Generated/Icon${icon}`;
+    const IconComponent = lazy(() => import(`${path}`));
+    return (
+        <Suspense fallback={<IconIcon size={size} />}>
+            <IconComponent size={size} />
+        </Suspense>
+    );
+};
