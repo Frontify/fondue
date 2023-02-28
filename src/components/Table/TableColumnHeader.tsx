@@ -85,7 +85,7 @@ export const TableColumnHeader = ({
                 {selectionMode === SelectionMode.SingleSelect ? (
                     <span className="tw-sr-only">{ariaProps['aria-label']}</span>
                 ) : (
-                    <Checkbox value={key} ariaLabel={key} state={checkboxState} onChange={handleChange} />
+                    <Checkbox value={key} aria-label={key} state={checkboxState} onChange={handleChange} />
                 )}
             </th>
         );
@@ -126,3 +126,4 @@ export const TableColumnHeader = ({
         </th>
     );
 };
+TableColumnHeader.displayName = 'FondueTableColumnHeader';

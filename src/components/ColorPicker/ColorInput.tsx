@@ -77,3 +77,4 @@ export const ColorInput: FC<ColorInputProps> = ({
         </div>
     );
 };
+ColorInput.displayName = 'FondueColorInput';

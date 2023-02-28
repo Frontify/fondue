@@ -117,3 +117,4 @@ export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], cu
         </div>
     );
 };
+BrandColorPicker.displayName = 'FondueBrandColorPicker';

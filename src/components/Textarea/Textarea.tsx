@@ -113,3 +113,4 @@ export const Textarea: FC<TextareaProps> = ({
         </div>
     );
 };
+Textarea.displayName = 'FondueTextarea';

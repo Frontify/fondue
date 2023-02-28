@@ -52,3 +52,4 @@ export const OverflowMenu = ({ items }: OverflowMenuProps) => {
         </div>
     );
 };
+OverflowMenu.displayName = 'FondueOverflowMenu';

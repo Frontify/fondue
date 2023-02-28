@@ -254,7 +254,7 @@ export const TreeItem = ({
                                 {hasChildren && (
                                     <button
                                         data-test-id="tree-item-toggle"
-                                        className="tw-flex tw-items-center tw-justify-center tw-py-3 tw-cursor-pointer"
+                                        className="tw-flex tw-items-center tw-justify-center tw-p-1.5 tw-cursor-pointer"
                                         onClick={handleExpandClick}
                                         onKeyDown={handleExpandKeyDown}
                                         tabIndex={0}

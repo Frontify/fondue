@@ -43,7 +43,7 @@ describe('Tree Component', () => {
         cy.get(TREE_ID).should('be.visible');
     });
 
-    it('expands and shrinks the tree on toggle click', () => {
+    it('expands and shrinks the tree on toggle click (uncontrolled)', () => {
         cy.mount(<TreeComponent />);
 
         cy.get(TREE_ITEM_TOGGLE_ID).click();

@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { ReactElement, memo } from 'react';
 import { GeneratedIconProps } from '@foundation/Icon/IconProps';
 import { IconSize } from '@foundation/Icon/IconSize';
 
@@ -11,24 +11,25 @@ import IconBookmark20 from './IconBookmark20';
 import IconBookmark24Filled from './IconBookmark24Filled';
 import IconBookmark24 from './IconBookmark24';
 import IconBookmark32Filled from './IconBookmark32Filled';
-import IconBookmark32 from './IconBookmark32'
+import IconBookmark32 from './IconBookmark32';
 
-function IconBookmark(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
+const IconBookmark = (props: GeneratedIconProps): ReactElement<GeneratedIconProps> => {
     const size = props.size || IconSize.Size16;
     return (
         <span>
-            {size === IconSize.Size12 && props.filled && <IconBookmark12Filled {...props}/>}
-            {size === IconSize.Size12 && !props.filled && <IconBookmark12 {...props}/>}
-            {size === IconSize.Size16 && props.filled && <IconBookmark16Filled {...props}/>}
-            {size === IconSize.Size16 && !props.filled && <IconBookmark16 {...props}/>}
-            {size === IconSize.Size20 && props.filled && <IconBookmark20Filled {...props}/>}
-            {size === IconSize.Size20 && !props.filled && <IconBookmark20 {...props}/>}
-            {size === IconSize.Size24 && props.filled && <IconBookmark24Filled {...props}/>}
-            {size === IconSize.Size24 && !props.filled && <IconBookmark24 {...props}/>}
-            {size === IconSize.Size32 && props.filled && <IconBookmark32Filled {...props}/>}
-            {size === IconSize.Size32 && !props.filled && <IconBookmark32 {...props}/>}
+            {size === IconSize.Size12 && props.filled && <IconBookmark12Filled {...props} />}
+            {size === IconSize.Size12 && !props.filled && <IconBookmark12 {...props} />}
+            {size === IconSize.Size16 && props.filled && <IconBookmark16Filled {...props} />}
+            {size === IconSize.Size16 && !props.filled && <IconBookmark16 {...props} />}
+            {size === IconSize.Size20 && props.filled && <IconBookmark20Filled {...props} />}
+            {size === IconSize.Size20 && !props.filled && <IconBookmark20 {...props} />}
+            {size === IconSize.Size24 && props.filled && <IconBookmark24Filled {...props} />}
+            {size === IconSize.Size24 && !props.filled && <IconBookmark24 {...props} />}
+            {size === IconSize.Size32 && props.filled && <IconBookmark32Filled {...props} />}
+            {size === IconSize.Size32 && !props.filled && <IconBookmark32 {...props} />}
         </span>
     );
-}
+};
+IconBookmark.displayName = 'FondueIconBookmark';
 
 export default memo(IconBookmark);

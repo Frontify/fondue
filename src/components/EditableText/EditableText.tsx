@@ -213,3 +213,4 @@ export const EditableText = ({
         </div>
     );
 };
+EditableText.displayName = 'FondueEditableText';

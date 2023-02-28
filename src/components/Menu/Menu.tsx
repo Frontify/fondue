@@ -91,6 +91,7 @@ export const Menu = ({ triggerRef, children, open = true, offset = [0, 8], onClo
             ref={setMenuContainerRef}
             style={menuOpenerRef ? popperInstance.styles.popper : {}}
             {...(menuOpenerRef ? popperInstance.attributes.popper : {})}
+            data-test-id="menu"
         >
             <ol className="tw-list-none" role="menu">
                 {children}
@@ -98,3 +99,4 @@ export const Menu = ({ triggerRef, children, open = true, offset = [0, 8], onClo
         </nav>
     );
 };
+Menu.displayName = 'FondueMenu';

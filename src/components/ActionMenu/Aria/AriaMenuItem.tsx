@@ -122,3 +122,4 @@ export const AriaMenuItem: FC<AriaOptionProps> = ({ menuItem, node, state, isSel
         </li>
     );
 };
+AriaMenuItem.displayName = 'FondueAriaMenuItem';

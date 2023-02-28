@@ -79,3 +79,4 @@ export const ColorInputTrigger: FC<ColorInputTriggerProps> = ({
         </Trigger>
     );
 };
+ColorInputTrigger.displayName = 'FondueColorInputTrigger';

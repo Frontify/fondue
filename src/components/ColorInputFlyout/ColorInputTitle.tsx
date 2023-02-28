@@ -24,3 +24,4 @@ export const ColorInputTitle: FC<Props> = ({ currentColor, format }) => {
         </div>
     );
 };
+ColorInputTitle.displayName = 'FondueColorInputTitle';
