@@ -3,8 +3,9 @@
 import React from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { Button, ButtonProps } from './Button';
-import { IconEnum, iconsMap } from '@foundation/Icon';
+import { IconAnchor, IconColorFan, IconEnum, IconIcon } from '@foundation/Icon';
 import { ButtonEmphasis, ButtonRounding, ButtonSize, ButtonStyle, ButtonType } from './ButtonTypes';
+import IconDotsVertical from '@foundation/Icon/Generated/IconDotsVertical';
 
 const defaultArgs = {
     type: ButtonType.Button,
@@ -37,10 +38,10 @@ export default {
         icon: {
             options: [IconEnum.Icon, IconEnum.DotsVertical, IconEnum.ColorFan, IconEnum.Anchor],
             mapping: {
-                [IconEnum.Icon]: iconsMap[IconEnum.Icon],
-                [IconEnum.DotsVertical]: iconsMap[IconEnum.DotsVertical],
-                [IconEnum.ColorFan]: iconsMap[IconEnum.ColorFan],
-                [IconEnum.Anchor]: iconsMap[IconEnum.Anchor],
+                [IconEnum.Icon]: <IconIcon />,
+                [IconEnum.DotsVertical]: <IconDotsVertical />,
+                [IconEnum.ColorFan]: <IconColorFan />,
+                [IconEnum.Anchor]: <IconAnchor />,
             },
             control: { type: 'select' },
         },
@@ -63,14 +64,14 @@ Default.args = { ...defaultArgs };
 Default.storyName = 'Text Label Only';
 
 export const WithIcon = ButtonTemplate.bind({});
-WithIcon.args = { ...defaultArgs, hideLabel: true, icon: iconsMap[IconEnum.Icon] };
+WithIcon.args = { ...defaultArgs, hideLabel: true, icon: <IconIcon /> };
 WithIcon.storyName = 'Icon Only';
 
 export const WithRoundedIcon = ButtonTemplate.bind({});
 WithRoundedIcon.args = {
     ...defaultArgs,
     rounding: ButtonRounding.Full,
-    icon: iconsMap[IconEnum.Icon],
+    icon: <IconIcon />,
     hideLabel: true,
 };
 WithRoundedIcon.storyName = 'Icon Only rounded';
@@ -78,6 +79,6 @@ WithRoundedIcon.storyName = 'Icon Only rounded';
 export const WithIconAndLabel = ButtonTemplate.bind({});
 WithIconAndLabel.args = {
     ...defaultArgs,
-    icon: iconsMap[IconEnum.ColorFan],
+    icon: <IconColorFan />,
 };
 WithIconAndLabel.storyName = 'Icon and Text Label';
