@@ -161,3 +161,4 @@ export const SelectedAsset: FC<
         </div>
     );
 };
+SelectedAsset.displayName = 'FondueSelectedAsset';

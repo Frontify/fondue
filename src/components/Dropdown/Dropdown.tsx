@@ -249,3 +249,4 @@ export const Dropdown: FC<DropdownProps> = ({
         </div>
     );
 };
+Dropdown.displayName = 'FonduesDropdown';

@@ -29,3 +29,4 @@ export const BadgeStatusIcon = ({ status, disabled }: BadgeStatusIconProps) => (
         />
     </div>
 );
+BadgeStatusIcon.displayName = 'FondueBadgeStatusIcon';

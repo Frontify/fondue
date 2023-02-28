@@ -388,14 +388,4 @@ describe('serializeNodeToHtmlRecursive()', () => {
             expect(result).to.include(`margin-left:${entry.outcome};`);
         });
     }
-
-    it('serializes an empty paragraph html', () => {
-        const node = {
-            type: ELEMENT_PARAGRAPH,
-            children: [{ text: '' }],
-        };
-
-        const result = serializeNodeToHtmlRecursive(node, { designTokens: defaultDesignTokens });
-        expect(result).to.match(/<p.*class=".*empty:after:tw-content-\['\\00a0'].*><\/p>/);
-    });
 });

@@ -29,7 +29,6 @@ import {
     CheckboxListPlugin,
     CodePlugin,
     EmojiPlugin,
-    InitPlugin,
     ItalicPlugin,
     LinkPlugin,
     MentionPlugin,
@@ -96,10 +95,10 @@ const RichTextEditorTemplate: StoryFn<RichTextEditorProps> = (args: RichTextEdit
     <RichTextEditorComponent {...args} />
 );
 
-const fullyFledgedPlugins = new PluginComposer();
-fullyFledgedPlugins
-    .setPlugin(new InitPlugin(), new ParagraphPlugin())
-    .setPlugin(new TextStylePlugin())
+const allPlugins = new PluginComposer();
+allPlugins
+    .setPlugin([new ParagraphPlugin(), new TextStylePlugin()])
+    .setPlugin([new MentionPlugin({ mentionableItems: mentionable })])
     .setPlugin(
         [
             new BoldPlugin(),
@@ -119,13 +118,14 @@ fullyFledgedPlugins
             new UnorderedListPlugin(),
             new CheckboxListPlugin(),
             new OrderedListPlugin(),
-            new ResetFormattingPlugin(),
             new EmojiPlugin(),
+            new ResetFormattingPlugin(),
         ],
     );
+
 export const FullyFledged = RichTextEditorTemplate.bind({});
 FullyFledged.args = {
-    plugins: fullyFledgedPlugins,
+    plugins: allPlugins,
 };
 
 export const Flex: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
@@ -145,33 +145,6 @@ export const SerializedToHTML: StoryFn<RichTextEditorProps> = () => {
 };
 
 export const MarkdownSerializerDeserializer: StoryFn<RichTextEditorProps> = () => {
-    const allPlugins = new PluginComposer();
-    allPlugins
-        .setPlugin([new InitPlugin(), new ParagraphPlugin(), new TextStylePlugin()])
-        .setPlugin([new MentionPlugin({ mentionableItems: mentionable })])
-        .setPlugin(
-            [
-                new BoldPlugin(),
-                new ItalicPlugin(),
-                new UnderlinePlugin(),
-                new StrikethroughPlugin(),
-                new LinkPlugin(),
-                new ButtonPlugin(),
-                new CodePlugin(),
-            ],
-            [
-                new AlignLeftPlugin(),
-                new AlignCenterPlugin(),
-                new AlignRightPlugin(),
-                new AlignJustifyPlugin(),
-                new UnorderedListPlugin(),
-                new CheckboxListPlugin(),
-                new OrderedListPlugin(),
-                new EmojiPlugin(),
-                new ResetFormattingPlugin(),
-            ],
-        );
-
     const toSlateTransform = Transform.use(new MarkdownToSlate());
     const resultSlate = toSlateTransform.process(markdownText);
 
@@ -400,10 +373,7 @@ WithChecklist.args = {
 
 const customPlugins = new PluginComposer();
 customPlugins
-    .setPlugin([
-        new InitPlugin(),
-        new TextStylePlugin({ textStyles: [TextStyles.ELEMENT_HEADING1, TextStyles.ELEMENT_PARAGRAPH] }),
-    ])
+    .setPlugin([new TextStylePlugin({ textStyles: [TextStyles.ELEMENT_HEADING1, TextStyles.ELEMENT_PARAGRAPH] })])
     .setPlugin([new LinkPlugin()])
     .setPlugin([new ItalicPlugin(), new BoldPlugin(), new UnderlinePlugin()])
     .setPlugin([new OrderedListPlugin(), new UnorderedListPlugin()]);
@@ -427,9 +397,9 @@ WithToolbarTopAndSmallPadding.args = {
 
 const mentionAndEmojisPlugins = new PluginComposer();
 mentionAndEmojisPlugins
-    .setPlugin([new InitPlugin(), new ParagraphPlugin()])
+    .setPlugin([new ParagraphPlugin()])
     .setPlugin([new MentionPlugin({ mentionableItems: mentionable })])
-    .setPlugin([new UnorderedListPlugin(), new OrderedListPlugin()])
+    .setPlugin([new UnorderedListPlugin({ isSoftBreak: true }), new OrderedListPlugin({ isSoftBreak: true })])
     .setPlugin([new BoldPlugin(), new ItalicPlugin(), new UnderlinePlugin(), new StrikethroughPlugin()])
     .setPlugin([new EmojiPlugin(), new LinkPlugin()]);
 export const WithMentionsAndEmojis = RichTextEditorTemplate.bind({});
@@ -441,7 +411,7 @@ WithMentionsAndEmojis.args = {
 
 const withoutToolbarPlugins = new PluginComposer({ noToolbar: true });
 withoutToolbarPlugins
-    .setPlugin([new InitPlugin(), new ParagraphPlugin()])
+    .setPlugin([new ParagraphPlugin()])
     .setPlugin([
         new BoldPlugin(),
         new LinkPlugin(),
@@ -457,7 +427,7 @@ WithoutToolbar.args = {
 
 const defaultPluginsWithColumns = new PluginComposer();
 defaultPluginsWithColumns
-    .setPlugin([new InitPlugin(), new ParagraphPlugin()])
+    .setPlugin([new ParagraphPlugin()])
     .setPlugin(new TextStylePlugin())
     .setPlugin([
         new BoldPlugin(),
@@ -479,7 +449,7 @@ export const MultiColumns: StoryFn<MultiColumnProps> = (args: MultiColumnProps) 
 
     const plugins = new PluginComposer();
     plugins
-        .setPlugin([new InitPlugin(), new ParagraphPlugin()])
+        .setPlugin([new ParagraphPlugin()])
         .setPlugin(new TextStylePlugin())
         .setPlugin([
             new BoldPlugin(),

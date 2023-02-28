@@ -17,3 +17,4 @@ export const ModalBody: FC<ModalBodyProps> = ({ direction, children, horizontalP
         </div>
     );
 };
+ModalBody.displayName = 'FondueModalBody';

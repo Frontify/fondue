@@ -10,14 +10,44 @@ import { DatePickerTrigger } from './DatePickerTrigger';
 import { IconCaretLeft, IconCaretLeftDouble, IconCaretRight, IconCaretRightDouble } from '@foundation/Icon';
 import { Validation } from '@utilities/validation';
 
+type SingleDatePickerProps = {
+    variant?: 'single';
+    onChange: (date: Date | null) => void;
+    startDate?: null;
+    endDate?: null;
+};
+
+type RangeDatePickerProps = {
+    variant: 'range';
+    onChange: (date: [Date | null, Date | null] | null) => void;
+    startDate: Date | null;
+    endDate: Date | null;
+};
+
 export type DatePickerProps = {
     placeHolder?: string;
     isClearable?: boolean;
     shouldCloseOnSelect?: boolean;
-    onChange?: (date: Date | null) => void;
     dateFormat?: string;
-    value?: Date;
+    /** @description when the variant is of type 'range', the value should be the startDate */
+    value?: Date | null;
+    minDate?: Date;
+    maxDate?: Date;
     validation?: Validation;
+    customTrigger?: React.ReactNode;
+    children?: React.ReactNode;
+    hasPopperArrow?: boolean;
+    filterDate?: (date: Date) => boolean;
+    onOpen?: () => void;
+    onClose?: () => void;
+    onBlur?: () => void;
+} & (SingleDatePickerProps | RangeDatePickerProps);
+
+const getDayClasses = (variant: DatePickerProps['variant'], date: Date) => {
+    if (variant === 'single') {
+        return date < new Date() ? 'past-date' : 'future-date';
+    }
+    return 'range-day';
 };
 
 export const DatePicker: FC<DatePickerProps> = ({
@@ -25,39 +55,67 @@ export const DatePicker: FC<DatePickerProps> = ({
     isClearable,
     shouldCloseOnSelect,
     onChange,
+    onOpen,
+    onClose,
+    onBlur,
     dateFormat = 'dd MMM yyyy',
     value,
+    startDate,
+    endDate,
+    minDate,
+    maxDate,
     validation = Validation.Default,
+    customTrigger,
+    children = <></>,
+    hasPopperArrow = true,
+    filterDate = () => true,
+    variant = 'single',
 }) => {
     const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
-    const onDateChanged = (date: Date | null) => {
-        if (onChange) {
-            onChange(date);
-        }
+
+    const handleOpen = () => {
+        setIsCalendarOpen(true);
+        onOpen?.();
+    };
+
+    const handleClose = () => {
+        setIsCalendarOpen(false);
+        onClose?.();
     };
 
     return (
         <div data-test-id="date-picker">
             <DatepickerComponent
-                calendarClassName="tw-shadow-mid tw-rounded-sm tw-border-slate-200 react-datepicker-wrap"
+                calendarClassName="tw-rounded-sm tw-border tw-border-line-x-strong react-datepicker-wrap"
                 selected={value}
-                onChange={onDateChanged}
+                startDate={startDate}
+                endDate={endDate}
+                minDate={minDate}
+                maxDate={maxDate}
+                calendarStartDay={1}
+                onChange={onChange}
+                onBlur={onBlur}
+                selectsRange={variant === 'range' ? true : false}
+                showPopperArrow={hasPopperArrow}
+                filterDate={filterDate}
                 customInput={
-                    <DatePickerTrigger
-                        isCalendarOpen={isCalendarOpen}
-                        isClearable={isClearable}
-                        placeHolder={placeHolder}
-                        validation={validation}
-                        onDateChanged={onDateChanged}
-                    />
+                    customTrigger ?? (
+                        <DatePickerTrigger
+                            isCalendarOpen={isCalendarOpen}
+                            isClearable={isClearable}
+                            placeHolder={placeHolder}
+                            validation={validation}
+                            onDateChanged={onChange}
+                        />
+                    )
                 }
                 formatWeekDay={(day) => day.slice(0, 1)}
                 isClearable={isClearable}
                 dateFormat={dateFormat}
-                onCalendarClose={() => setIsCalendarOpen(false)}
-                onCalendarOpen={() => setIsCalendarOpen(true)}
+                onCalendarClose={handleClose}
+                onCalendarOpen={handleOpen}
                 shouldCloseOnSelect={shouldCloseOnSelect}
-                dayClassName={(date) => (date < new Date() ? 'past-date' : 'future-date')}
+                dayClassName={(date) => getDayClasses(variant, date)}
                 renderCustomHeader={({ date, decreaseMonth, increaseMonth, increaseYear, decreaseYear }) => (
                     <div className="tw-flex tw-justify-between tw-pb-4 tw-px-0">
                         <Button
@@ -93,7 +151,10 @@ export const DatePicker: FC<DatePickerProps> = ({
                         />
                     </div>
                 )}
-            />
+            >
+                {children}
+            </DatepickerComponent>
         </div>
     );
 };
+DatePicker.displayName = 'FondueDatePicker';

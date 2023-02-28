@@ -66,3 +66,4 @@ export const DropZone = <T extends object>({ data, onDrop, accept, children }: D
         </div>
     );
 };
+DropZone.displayName = 'FondueDropZone';

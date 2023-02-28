@@ -3,6 +3,7 @@
 import type { UserConfig } from 'vite';
 import type { StorybookConfig } from '@storybook/react-vite';
 import eslint from 'vite-plugin-eslint';
+import ts from 'typescript';
 
 export default <StorybookConfig>{
     framework: '@storybook/react-vite',
@@ -11,6 +12,11 @@ export default <StorybookConfig>{
     staticDirs: ['assets'],
     docs: {
         autodocs: 'tag',
+    },
+    typescript: {
+        reactDocgenTypescriptOptions: {
+            componentNameResolver: (expression: ts.Symbol) => expression.getName(),
+        },
     },
     viteFinal(config: UserConfig) {
         //@ts-ignore

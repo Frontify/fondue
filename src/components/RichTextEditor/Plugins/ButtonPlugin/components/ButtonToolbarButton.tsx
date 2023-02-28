@@ -4,6 +4,8 @@ import React from 'react';
 import { ToolbarButton, focusEditor, someNode, useEventPlateId, usePlateEditorState } from '@udecode/plate';
 import { triggerFloatingButton } from '../utils';
 import { BlockToolbarButtonProps } from '@udecode/plate';
+import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
+import { getHotkeyByPlatform } from '@components/RichTextEditor/helpers/getHotkeyByPlatform';
 
 export interface LinkToolbarButtonProps extends BlockToolbarButtonProps {
     /**
@@ -19,6 +21,7 @@ export const ButtonToolbarButton = ({ id, type, ...props }: LinkToolbarButtonPro
 
     return (
         <ToolbarButton
+            tooltip={getTooltip(`Button\n${getHotkeyByPlatform('Shift+Ctrl+k')}`)}
             active={isLink}
             onMouseDown={async (event) => {
                 if (!editor) {

@@ -131,3 +131,4 @@ export const Switch: FC<SwitchProps> = ({
         </div>
     );
 };
+Switch.displayName = 'FondueSwitch';

@@ -15,3 +15,4 @@ export const TableHeaderRow = ({ children }: TableHeaderRowProps) => {
         </tr>
     );
 };
+TableHeaderRow.displayName = 'FondueTableHeaderRow';

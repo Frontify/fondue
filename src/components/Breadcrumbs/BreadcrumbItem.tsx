@@ -82,3 +82,4 @@ export const BreadcrumbItem: FC<BreadcrumbItemProps> = ({ label, link, onClick, 
         </li>
     );
 };
+BreadcrumbItem.displayName = 'FondueBreadcrumbItem';
