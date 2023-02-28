@@ -1,11 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { AriaAttributes, MouseEvent, useEffect, useState } from 'react';
+import React, { AriaAttributes, MouseEvent, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { merge } from '@utilities/merge';
 import { TextInput, TextInputType } from '@components/TextInput';
 import { Validation } from '@utilities/validation';
+import { clamp } from '@utilities/number';
+import { debounce } from '@utilities/debounce';
 
 type BaseSliderProps = {
     id?: string;
@@ -50,6 +52,7 @@ export const Slider = ({
     const [value, setValue] = useState<string>();
     const [error, setError] = useState<SliderError>();
     const [percentagePosition, setPercentagePosition] = useState<number>();
+    const [sliderRef, setSliderRef] = useState<HTMLDivElement | null>(null);
     const id = useMemoizedId(propId);
 
     const onChange = (inputValue: string) => {
@@ -62,22 +65,56 @@ export const Slider = ({
         });
     };
 
-    const onMouseDown = (event: MouseEvent<HTMLDivElement>) => {
-        const sliderPosition = event.currentTarget.getBoundingClientRect().x;
-        const trackSize = event.currentTarget.clientWidth;
-        const mousePosition = event.clientX;
-        const positionInPixels = mousePosition - sliderPosition;
-        let percentage = positionInPixels / trackSize;
+    const updatePosition = useCallback(
+        (target: HTMLDivElement, clientX: number) => {
+            const sliderPosition = target.getBoundingClientRect().x;
+            const trackSize = target.clientWidth;
+            const mousePosition = clientX;
+            const positionInPixels = mousePosition - sliderPosition;
+            const percentage = clamp(positionInPixels / trackSize, 0, 1);
 
-        if (percentage < 0) {
-            percentage = 0;
-        } else if (percentage > 1) {
-            percentage = 1;
+            const newValue = (max - min) * percentage + min;
+
+            setValue(`${newValue.toFixed(decimalDigits)}${valueUnitSuffix}`);
+        },
+        [min, max, decimalDigits, valueUnitSuffix],
+    );
+
+    const onDrag = useMemo(
+        () =>
+            !sliderRef
+                ? () => void 0
+                : debounce((event: Event & { clientX: number }) => {
+                      updatePosition(sliderRef, event.clientX);
+                  }, 2),
+        [updatePosition, sliderRef],
+    );
+
+    const stopDrag = useCallback(() => {
+        if (!sliderRef) {
+            return;
         }
 
-        const newValue = (max - min) * percentage + min;
+        sliderRef.removeEventListener('mousemove', onDrag);
+        window.removeEventListener('mouseup', stopDrag);
+    }, [sliderRef, onDrag]);
 
-        setValue(`${newValue.toFixed(decimalDigits)}${valueUnitSuffix}`);
+    const onMouseDown = (event: MouseEvent<HTMLDivElement>) => {
+        if (!sliderRef) {
+            return;
+        }
+
+        updatePosition(event.currentTarget, event.clientX);
+        sliderRef.addEventListener('mousemove', onDrag);
+        window.addEventListener('mouseup', stopDrag);
+    };
+
+    const onMouseUp = () => {
+        if (!sliderRef) {
+            return;
+        }
+
+        stopDrag();
     };
 
     useEffect(() => {
@@ -129,11 +166,13 @@ export const Slider = ({
                 <div className={merge(['tw-flex-1 tw-flex tw-items-center'])}>
                     <div>{min}</div>
                     <div
+                        ref={setSliderRef}
                         role="slider"
                         tabIndex={-1}
                         aria-valuenow={percentagePosition}
                         className="tw-flex-1 tw-relative tw-h-full tw-mx-3"
                         onMouseDown={onMouseDown}
+                        onMouseUp={onMouseUp}
                     >
                         <div className="tw-absolute tw-top-1/2 tw--translate-y-1/2 tw-w-full tw-h-1 tw-rounded-sm tw-bg-base tw-border tw-border-line-strong tw-flex-1"></div>
                         {percentagePosition !== undefined && (
