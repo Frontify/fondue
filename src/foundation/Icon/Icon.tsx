@@ -5,7 +5,7 @@ import { IconProps } from './IconProps';
 import { IconIcon } from '@foundation/Icon/Generated';
 
 export const Icon: FC<IconProps> = ({ size, icon }) => {
-    const path = `../Icon/Generated/Icon${icon}`;
+    const path = `../../foundation/Icon/Generated/Icon${icon}`;
     const IconComponent = lazy(() => import(`${path}`));
     return (
         <Suspense fallback={<IconIcon size={size} />}>
