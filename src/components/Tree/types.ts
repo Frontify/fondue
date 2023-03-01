@@ -19,7 +19,8 @@ export type TreeProps = {
     onDrop?: OnDropCallback<{ id: string; sort: number }>;
     children: ReactNode;
     /**
-     *  Padding added to each TreeItem in the TreeContext. Default: {"top": 10, "right": 8, "bottom": 10, "left": 8}
+     *  Padding added to each TreeItem in the TreeContext.
+     * @default: {"top": 10, "right": 8, "bottom": 10, "left": 8}
      * */
     baseItemPadding?: Partial<TreeItemPadding>;
 };
