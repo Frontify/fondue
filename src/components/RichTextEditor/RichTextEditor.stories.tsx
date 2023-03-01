@@ -29,6 +29,7 @@ import {
     CheckboxListPlugin,
     CodePlugin,
     EmojiPlugin,
+    InitPlugin,
     ItalicPlugin,
     LinkPlugin,
     MentionPlugin,
@@ -373,7 +374,10 @@ WithChecklist.args = {
 
 const customPlugins = new PluginComposer();
 customPlugins
-    .setPlugin([new TextStylePlugin({ textStyles: [TextStyles.ELEMENT_HEADING1, TextStyles.ELEMENT_PARAGRAPH] })])
+    .setPlugin([
+        new InitPlugin(),
+        new TextStylePlugin({ textStyles: [TextStyles.ELEMENT_HEADING1, TextStyles.ELEMENT_PARAGRAPH] }),
+    ])
     .setPlugin([new LinkPlugin()])
     .setPlugin([new ItalicPlugin(), new BoldPlugin(), new UnderlinePlugin()])
     .setPlugin([new OrderedListPlugin(), new UnorderedListPlugin()]);
@@ -411,7 +415,7 @@ WithMentionsAndEmojis.args = {
 
 const withoutToolbarPlugins = new PluginComposer({ noToolbar: true });
 withoutToolbarPlugins
-    .setPlugin([new ParagraphPlugin()])
+    .setPlugin([new InitPlugin(), new ParagraphPlugin()])
     .setPlugin([
         new BoldPlugin(),
         new LinkPlugin(),
@@ -427,7 +431,7 @@ WithoutToolbar.args = {
 
 const defaultPluginsWithColumns = new PluginComposer();
 defaultPluginsWithColumns
-    .setPlugin([new ParagraphPlugin()])
+    .setPlugin([new InitPlugin(), new ParagraphPlugin()])
     .setPlugin(new TextStylePlugin())
     .setPlugin([
         new BoldPlugin(),
@@ -449,7 +453,7 @@ export const MultiColumns: StoryFn<MultiColumnProps> = (args: MultiColumnProps) 
 
     const plugins = new PluginComposer();
     plugins
-        .setPlugin([new ParagraphPlugin()])
+        .setPlugin([new InitPlugin(), new ParagraphPlugin()])
         .setPlugin(new TextStylePlugin())
         .setPlugin([
             new BoldPlugin(),
