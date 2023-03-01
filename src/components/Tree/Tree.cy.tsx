@@ -7,7 +7,7 @@ import { treeNodesMock } from '@components/Tree/utils/mocks';
 
 const TreeComponent = ({ onSelect }: { onSelect?: (id: Nullable<string>) => void }) => {
     return (
-        <Tree id="treeId" onSelect={onSelect} baseItemPadding={{ x: 50, y: 20 }}>
+        <Tree id="treeId" onSelect={onSelect} baseItemPadding={{ top: 10, right: 20, bottom: 30, left: 40 }}>
             {treeNodesMock.map((node) => (
                 <TreeItem key={node.id} id={node.id} contentComponent={() => <span>{node.label}</span>}>
                     {node.nodes?.map((node) => (
@@ -75,6 +75,6 @@ describe('Tree Component', () => {
         const onSelectStub = cy.stub().as('onSelectStub');
         cy.mount(<TreeComponent onSelect={onSelectStub} />);
 
-        cy.get(TREE_ITEM_CONTENT_ID).eq(0).should('have.css', 'padding', '20px 50px');
+        cy.get(TREE_ITEM_CONTENT_ID).eq(0).should('have.css', 'padding', '10px 20px 30px 40px');
     });
 });

@@ -1,3 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export const DEFAULT_TREE_ITEM_PADDING = { x: 10, y: 8 };
+import { TreeItemPadding } from '../types';
+
+export const DEFAULT_TREE_ITEM_PADDING: TreeItemPadding = { top: 8, right: 10, bottom: 8, left: 10 };
