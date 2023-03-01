@@ -40,7 +40,7 @@ export const serializeNodesToHtml = (
 
     const html = nodes
         .map((node) => {
-            if (isBreakNode(node)) {
+            if (isEmptyNode(node)) {
                 return '<br />';
             }
             return serializeNodeToHtmlRecursive(node, {
@@ -57,10 +57,9 @@ export const serializeNodesToHtml = (
     return html;
 };
 
-const isBreakNode = (node: TDescendant): boolean => {
+const isEmptyNode = (node: TDescendant): boolean => {
     if (!Array.isArray(node?.children)) {
         return false;
     }
-    const isChecklistElement = node?.type === 'checkbox-item';
-    return node.children?.length === 1 && node.children[0].text === '' && !isChecklistElement;
+    return node?.children?.every((child) => child.text === '');
 };
