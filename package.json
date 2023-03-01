@@ -93,6 +93,7 @@
         "cross-env": "7.0.3",
         "cypress": "12.5.1",
         "cypress-real-events": "1.7.6",
+        "esbuild": "0.17.10",
         "eslint": "8.28.0",
         "eslint-plugin-jsx-a11y": "6.6.1",
         "eslint-plugin-notice": "0.9.10",
@@ -109,6 +110,7 @@
         "react": "17.0.2",
         "react-dom": "17.0.2",
         "rimraf": "3.0.2",
+        "rollup": "3.17.3",
         "semantic-release": "19.0.5",
         "storybook": "7.0.0-beta.53",
         "storybook-dark-mode": "2.1.1",
@@ -188,7 +190,7 @@
         "zustand": "4.3.3"
     },
     "peerDependencies": {
-        "react": "^17.0.0 || ^18.0.0",
+        "react": "17.0.0 || ^18.0.0",
         "react-dom": "^17.0.0 || ^18.0.0"
     }
 }
