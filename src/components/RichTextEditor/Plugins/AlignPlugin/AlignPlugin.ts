@@ -19,6 +19,8 @@ export class AlignPlugin extends Plugin {
                             TextStyles.ELEMENT_CUSTOM1,
                             TextStyles.ELEMENT_CUSTOM2,
                             TextStyles.ELEMENT_CUSTOM3,
+                            TextStyles.ELEMENT_IMAGE_CAPTION,
+                            TextStyles.ELEMENT_IMAGE_TITLE,
                             TextStyles.ELEMENT_QUOTE,
                         ],
                     },

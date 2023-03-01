@@ -7,6 +7,7 @@ import {
     IPSUM,
     buttonValues,
     checkboxValue,
+    customControlValues,
     customDesignTokens,
     defaultValue,
     htmlValue,
@@ -376,14 +377,21 @@ const customPlugins = new PluginComposer();
 customPlugins
     .setPlugin([
         new InitPlugin(),
-        new TextStylePlugin({ textStyles: [TextStyles.ELEMENT_HEADING1, TextStyles.ELEMENT_PARAGRAPH] }),
+        new TextStylePlugin({
+            textStyles: [
+                TextStyles.ELEMENT_HEADING1,
+                TextStyles.ELEMENT_PARAGRAPH,
+                TextStyles.ELEMENT_IMAGE_CAPTION,
+                TextStyles.ELEMENT_IMAGE_TITLE,
+            ],
+        }),
     ])
     .setPlugin([new LinkPlugin()])
     .setPlugin([new ItalicPlugin(), new BoldPlugin(), new UnderlinePlugin()])
     .setPlugin([new OrderedListPlugin(), new UnorderedListPlugin()]);
 export const WithCustomControls = RichTextEditorTemplate.bind({});
 WithCustomControls.args = {
-    value: `<p>${IPSUM}</p>`,
+    value: JSON.stringify(customControlValues),
     plugins: customPlugins,
 };
 

@@ -99,7 +99,11 @@ export const serializeNodeToHtmlRecursive = (
         case TextStyles.ELEMENT_QUOTE:
             return `<p class="${classNames}" style="${reactCssPropsToCss(designTokens.quote)}">${children}</p>`;
         case ELEMENT_PARAGRAPH:
-            return `<p class="${classNames}" style="${reactCssPropsToCss(designTokens.p)}">${children}</p>`;
+            return `<p class="${classNames} style="${reactCssPropsToCss(designTokens.p)}">${children}</p>`;
+        case TextStyles.ELEMENT_IMAGE_TITLE:
+            return `<p class="${classNames}" style="${reactCssPropsToCss(designTokens.imageTitle)}">${children}</p>`;
+        case TextStyles.ELEMENT_IMAGE_CAPTION:
+            return `<p class="${classNames}" style="${reactCssPropsToCss(designTokens.imageCaption)}">${children}</p>`;
         case ELEMENT_UL:
             return `<ul class="${UL_CLASSES} ${classNames}">${children}</ul>`;
         case ELEMENT_OL:
