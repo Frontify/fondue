@@ -15,7 +15,7 @@ export default {
     tags: ['autodocs'],
     args: {
         id: 'treeId',
-        baseItemPadding: { x: 10, y: 8 },
+        baseItemPadding: { top: 8, right: 10, bottom: 8, left: 10 },
     },
     argTypes: {
         draggable: {
