@@ -1,6 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { Children, KeyboardEvent, MouseEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+    CSSProperties,
+    Children,
+    KeyboardEvent,
+    MouseEvent,
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
 import { useDrag } from 'react-dnd';
 
 import { merge } from '@utilities/merge';
@@ -191,16 +201,20 @@ export const TreeItem = ({
 
     const hasChildren = Children.count(enhancedChildren) > 0;
 
-    const paddingLeftByLevel = `${treeItemState?.level ?? 0}rem`;
-
     return (
-        <li data-test-id="tree-item" ref={drag} style={{ opacity, transform: 'translate3d(0, 0, 0)' }}>
+        <li
+            data-test-id="tree-item"
+            ref={drag}
+            style={
+                {
+                    opacity,
+                    transform: 'translate3d(0, 0, 0)',
+                    '--current-margin-level': `calc(1rem*${treeItemState?.level ?? 0})`,
+                } as CSSProperties
+            }
+        >
             {sort === 0 ? (
-                <div
-                    style={{
-                        paddingLeft: paddingLeftByLevel,
-                    }}
-                >
+                <div className="tw-ml-[var(--current-margin-level)]">
                     <DropZone
                         data-position={DropZonePosition.Before}
                         data={{
@@ -224,13 +238,11 @@ export const TreeItem = ({
             >
                 <div
                     className={merge([
+                        'tw-ml-[var(--current-margin-level)]',
                         treeState.selectedIds.has(id)
                             ? 'tw-font-medium tw-bg-box-selected-strong tw-text-box-selected-strong-inverse hover:tw-bg-box-selected-strong-hover hover:tw-text-box-selected-strong-inverse-hover'
                             : 'tw-text-text hover:tw-bg-box-neutral-hover hover:tw-text-box-neutral-inverse-hover',
                     ])}
-                    style={{
-                        paddingLeft: paddingLeftByLevel,
-                    }}
                 >
                     <div
                         ref={itemRef}
@@ -254,7 +266,10 @@ export const TreeItem = ({
                                 {hasChildren && (
                                     <button
                                         data-test-id="tree-item-toggle"
-                                        className="tw-flex tw-items-center tw-justify-center tw-p-1.5 tw-cursor-pointer"
+                                        className={merge([
+                                            'tw-flex tw-items-center tw-justify-center tw-p-1.5 tw-cursor-pointer',
+                                            FOCUS_VISIBLE_STYLE,
+                                        ])}
                                         onClick={handleExpandClick}
                                         onKeyDown={handleExpandKeyDown}
                                         tabIndex={0}
@@ -287,11 +302,7 @@ export const TreeItem = ({
                 </ul>
             ) : null}
 
-            <div
-                style={{
-                    paddingLeft: paddingLeftByLevel,
-                }}
-            >
+            <div className="tw-ml-[var(--current-margin-level)]">
                 <DropZone
                     data-position={DropZonePosition.After}
                     data={{

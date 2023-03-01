@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useCallback, useEffect, useMemo, useReducer } from 'react';
+import React, { CSSProperties, useCallback, useEffect, useMemo, useReducer } from 'react';
 
 import type {
     RegisterTreeItemChildrenPayload,
@@ -334,6 +334,7 @@ export const Tree = ({
                 data-test-id="tree"
                 className="tw-p-0 tw-m-0 tw-font-sans tw-font-normal tw-list-none tw-text-left tw-text-sm tw-select-none"
                 role="tree"
+                style={{ '--current-margin-level': '0rem' } as CSSProperties}
             >
                 <DndWrapper id={id}>{enhancedChildren}</DndWrapper>
             </ul>
