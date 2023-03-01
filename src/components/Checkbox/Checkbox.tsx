@@ -1,8 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useEffect, useState } from 'react';
-import IconCheckMark from '@foundation/Icon/Generated/IconCheckMark';
-import IconMinus from '@foundation/Icon/Generated/IconMinus';
+import { IconCheckMark, IconMinus } from '@foundation/Icon/Generated';
 import { InputLabel, InputLabelTooltipProps } from '@components/InputLabel/InputLabel';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { useCheckbox } from '@react-aria/checkbox';

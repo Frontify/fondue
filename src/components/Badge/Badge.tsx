@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import RejectIcon from '@foundation/Icon/Generated/IconCross';
+import { IconCross } from '@foundation/Icon/Generated';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
@@ -96,7 +96,7 @@ export const Badge: FC<BadgeProps> = ({
                     onClick={() => onDismiss()}
                     aria-label={`Dismiss ${badgeTitle}`}
                 >
-                    <RejectIcon size={IconSize.Size16} />
+                    <IconCross size={IconSize.Size16} />
                 </button>
             )}
         </div>
