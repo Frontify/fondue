@@ -42,12 +42,12 @@ export const bundleIconsInDevPlugin = (): Plugin => {
             // Only bundle icons when running the dev server.
             if (command === 'serve' && id.endsWith('/Icon/Generated/index.ts')) {
                 const { outputFiles } = await build({
+                    absWorkingDir: process.cwd(),
                     entryPoints: [id],
                     bundle: true,
-                    platform: 'browser',
                     write: false,
+                    platform: 'browser',
                     jsx: 'automatic',
-                    absWorkingDir: process.cwd(),
                     format: 'esm',
                     plugins: [
                         {
@@ -61,13 +61,13 @@ export const bundleIconsInDevPlugin = (): Plugin => {
                                     // If the file is in our icons, use standard resolution.
                                     if (args.path.startsWith('./Icon')) {
                                         return null;
-                                    } else {
-                                        // If vendors, mark as external
-                                        return {
-                                            path: args.path,
-                                            external: true,
-                                        };
                                     }
+
+                                    // If vendors, mark as external
+                                    return {
+                                        path: args.path,
+                                        external: true,
+                                    };
                                 });
                             },
                         },
@@ -78,7 +78,7 @@ export const bundleIconsInDevPlugin = (): Plugin => {
                     return null;
                 }
 
-                return outputFiles[0].text as string;
+                return outputFiles[0].text;
             }
             return null;
         },
