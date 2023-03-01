@@ -3,7 +3,7 @@
 import React, { MouseEvent, PropsWithChildren, useEffect, useState } from 'react';
 import { merge } from '@utilities/merge';
 import { IconCaretRight, IconCheckMark } from '@foundation/Icon/Generated';
-import {  IconSize } from '@foundation/Icon/IconSize';
+import { IconSize } from '@foundation/Icon/IconSize';
 import { MenuItemContent, MenuItemContentProps } from '@components/MenuItem/MenuItemContent';
 import { MenuItemContentSize, MenuItemStyle, SelectionIndicatorIcon } from './types';
 import { getItemElementType } from '@utilities/elements';
