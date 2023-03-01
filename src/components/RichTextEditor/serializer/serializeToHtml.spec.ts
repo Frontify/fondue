@@ -33,4 +33,16 @@ describe('serializeNodesToHtml()', () => {
         const serialized = serializeNodesToHtml(nodesToSerialize, { columns: 2 });
         expect(serialized).to.contain('column-gap:normal');
     });
+
+    it('serializes an empty line to a linebreak', () => {
+        const node = [
+            {
+                type: 'p',
+                children: [{ text: '' }],
+            },
+        ];
+
+        const result = serializeNodesToHtml(node);
+        expect(result).to.equal('<br />');
+    });
 });

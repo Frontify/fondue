@@ -248,4 +248,16 @@ describe('Badge component', () => {
 
         cy.get(BADGE_BUTTON).invoke('attr', 'title').should('equal', `${BADGE_TEXT}_1_${BADGE_TEXT}_2_${BADGE_TEXT}`);
     });
+
+    it('should have padding between icon and label', () => {
+        cy.mount(<Badge icon={<IconDocumentText />}>{BADGE_TEXT}</Badge>);
+
+        cy.get(BADGE_ICON_ID).should('have.css', 'padding-right', '4px');
+    });
+
+    it('should have no icon padding if there is no label', () => {
+        cy.mount(<Badge icon={<IconDocumentText />} />);
+
+        cy.get(BADGE_ICON_ID).should('have.css', 'padding-right', '0px');
+    });
 });
