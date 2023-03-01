@@ -18,6 +18,9 @@ export type TreeProps = {
     onExpand?: OnExpandCallback;
     onDrop?: OnDropCallback<{ id: string; sort: number }>;
     children: ReactNode;
+    /**
+     * Padding added to each TreeItem in the TreeContext. Default: {"x": 10, "y": 8}
+     *  */
     baseItemPadding?: Partial<TreeItemPadding>;
 };
 
