@@ -5,8 +5,6 @@ import { Meta, StoryFn } from '@storybook/react';
 import React, { useState } from 'react';
 import { Slider, SliderProps } from './Slider';
 import { IconTextAlignmentCentre, IconTextAlignmentLeft, IconTextAlignmentRight } from '@foundation/Icon';
-import { Button } from '..';
-import { AnimatePresence } from 'framer-motion';
 
 export default {
     title: 'Components/Slider',
@@ -21,17 +19,9 @@ export default {
 } as Meta<SliderProps>;
 
 const SliderTemplate: StoryFn<SliderProps> = (args: SliderProps) => {
-    const [isVisible, setVisible] = useState(true);
     const [activeItemId, setActiveItemId] = useState(args.items[0].id);
 
-    return (
-        <AnimatePresence>
-            <div>
-                <Button onClick={() => setVisible((bool) => !bool)}>Click me</Button>
-                {isVisible && <Slider {...args} activeItemId={activeItemId} onChange={setActiveItemId} />}
-            </div>
-        </AnimatePresence>
-    );
+    return <Slider {...args} activeItemId={activeItemId} onChange={setActiveItemId} />;
 };
 
 export const Text = SliderTemplate.bind({});

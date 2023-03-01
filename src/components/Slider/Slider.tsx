@@ -129,7 +129,7 @@ export const Slider: FC<SliderProps> = ({
     const selectedIndex = items.findIndex((item) => item.id === radioGroupState.selectedValue);
 
     return (
-        <div className="tw-flex tw-w-full">
+        <div className="tw-flex">
             <fieldset
                 {...radioGroupProps}
                 data-test-id="slider"
