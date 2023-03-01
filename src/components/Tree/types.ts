@@ -18,7 +18,10 @@ export type TreeProps = {
     onExpand?: OnExpandCallback;
     onDrop?: OnDropCallback<{ id: string; sort: number }>;
     children: ReactNode;
+    basePadding?: Partial<TreeItemPadding>;
 };
+
+export type TreeItemPadding = { x: number; y: number };
 
 export type ContentComponentArguments = {
     selected: boolean;

@@ -26,6 +26,9 @@ export default {
         expandedIds: {
             control: { type: 'object' },
         },
+        basePadding: {
+            control: { type: 'object' },
+        },
     },
 } as Meta<TreeProps>;
 

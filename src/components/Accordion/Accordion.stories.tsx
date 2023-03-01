@@ -34,6 +34,28 @@ export default {
     tags: ['autodocs'],
 } as Meta<AccordionProps>;
 
+const SliderTemplate = () => {
+    const [isVisible, setVisible] = useState(true);
+    const [activeItemId, setActiveItemId] = useState<undefined | string>();
+
+    return (
+        <div>
+            <Button onClick={() => setVisible((bool) => !bool)}>Click me</Button>
+            {isVisible && (
+                <Slider
+                    items={[
+                        { id: 'a', value: 'abc' },
+                        { id: 'b', value: 'def' },
+                        { id: 'c', value: 'ghi' },
+                    ]}
+                    activeItemId={activeItemId}
+                    onChange={setActiveItemId}
+                />
+            )}
+        </div>
+    );
+};
+
 export const WithDifferentAccordionItems: StoryFn<AccordionProps> = () => {
     const [showContent, setShowContent] = useState(true);
     const [input, setInput] = useState('');
@@ -90,6 +112,9 @@ export const WithDifferentAccordionItems: StoryFn<AccordionProps> = () => {
                     openInNewTab={openInNewTab}
                     onOpenInNewTabChange={setOpenInNewTab}
                 />
+            </AccordionItem>
+            <AccordionItem header={{ children: 'Item with slider', type: FieldsetHeaderType.AddRemove }}>
+                <SliderTemplate />
             </AccordionItem>
             <AccordionItem header={{ children: 'Item with assetinput', type: FieldsetHeaderType.AddRemove }}>
                 <AssetInput size={AssetInputSize.Large} assets={[EXAMPLE_IMAGES[0]]} actions={assetInputActions} />

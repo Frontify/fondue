@@ -14,6 +14,7 @@ import { TreeContext } from '@components/Tree/TreeContext';
 import { DndWrapper, DraggableItem, DropZonePosition } from '@utilities/dnd';
 
 import { cloneThroughFragments, flattenChildren } from './utils';
+import { DEFAULT_TREE_ITEM_PADDING } from './utils/defaultValues';
 
 const noop = () => undefined;
 export const ROOT_ID = '__ROOT__';
@@ -203,6 +204,7 @@ export const Tree = ({
     onDrop,
     children,
     multiselect = true,
+    basePadding = {},
 }: TreeProps) => {
     const initialState: TreeState = useMemo(
         () => ({
@@ -327,6 +329,7 @@ export const Tree = ({
                 unregisterTreeItem,
                 registerTreeItem,
                 registerTreeItemChildren,
+                basePadding: { ...DEFAULT_TREE_ITEM_PADDING, ...basePadding },
             }}
         >
             <ul
