@@ -40,7 +40,7 @@ export const TreeItem = ({
         registerTreeItemChildren,
         unregisterTreeItem,
         treeState,
-        basePadding,
+        baseItemPadding,
     } = useTreeContext();
 
     const treeItemState = treeState.items.get(id);
@@ -193,7 +193,7 @@ export const TreeItem = ({
 
     const hasChildren = Children.count(enhancedChildren) > 0;
 
-    const paddingLeftByLevel = (treeItemState?.level ?? 0) * 16 + basePadding.x;
+    const paddingLeftByLevel = (treeItemState?.level ?? 0) * 16 + baseItemPadding.x;
     // Dropzone positioning is matched with existing styles from before https://github.com/Frontify/fondue/pull/1270
     const dropzonePadding = paddingLeftByLevel - DEFAULT_TREE_ITEM_PADDING.x;
 
@@ -237,9 +237,9 @@ export const TreeItem = ({
                     data-test-id="tree-item-content"
                     style={{
                         paddingLeft: paddingLeftByLevel,
-                        paddingRight: basePadding.x,
-                        paddingTop: basePadding.y,
-                        paddingBottom: basePadding.y,
+                        paddingRight: baseItemPadding.x,
+                        paddingTop: baseItemPadding.y,
+                        paddingBottom: baseItemPadding.y,
                     }}
                     ref={itemRef}
                     role="treeitem"

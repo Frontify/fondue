@@ -20,7 +20,6 @@ export default {
 
 const SliderTemplate: StoryFn<SliderProps> = (args: SliderProps) => {
     const [activeItemId, setActiveItemId] = useState(args.items[0].id);
-
     return <Slider {...args} activeItemId={activeItemId} onChange={setActiveItemId} />;
 };
 

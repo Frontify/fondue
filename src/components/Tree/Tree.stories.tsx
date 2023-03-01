@@ -26,7 +26,7 @@ export default {
         expandedIds: {
             control: { type: 'object' },
         },
-        basePadding: {
+        baseItemPadding: {
             control: { type: 'object' },
         },
     },

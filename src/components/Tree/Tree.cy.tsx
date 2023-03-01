@@ -7,7 +7,7 @@ import { treeNodesMock } from '@components/Tree/utils/mocks';
 
 const TreeComponent = ({ onSelect }: { onSelect?: (id: Nullable<string>) => void }) => {
     return (
-        <Tree id="treeId" onSelect={onSelect} basePadding={{ x: 50, y: 20 }}>
+        <Tree id="treeId" onSelect={onSelect} baseItemPadding={{ x: 50, y: 20 }}>
             {treeNodesMock.map((node) => (
                 <TreeItem key={node.id} id={node.id} contentComponent={() => <span>{node.label}</span>}>
                     {node.nodes?.map((node) => (

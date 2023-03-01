@@ -204,7 +204,7 @@ export const Tree = ({
     onDrop,
     children,
     multiselect = true,
-    basePadding = {},
+    baseItemPadding = {},
 }: TreeProps) => {
     const initialState: TreeState = useMemo(
         () => ({
@@ -329,7 +329,7 @@ export const Tree = ({
                 unregisterTreeItem,
                 registerTreeItem,
                 registerTreeItemChildren,
-                basePadding: { ...DEFAULT_TREE_ITEM_PADDING, ...basePadding },
+                baseItemPadding: { ...DEFAULT_TREE_ITEM_PADDING, ...baseItemPadding },
             }}
         >
             <ul

@@ -17,7 +17,7 @@ export type TreeContextProps = {
     treeId: string;
     draggable: boolean;
     treeState: TreeState;
-    basePadding: TreeItemPadding;
+    baseItemPadding: TreeItemPadding;
     registerTreeItem(payload: RegisterTreeItemPayload): void;
     registerTreeItemChildren(payload: RegisterTreeItemChildrenPayload): void;
     unregisterTreeItem(id: string): void;
