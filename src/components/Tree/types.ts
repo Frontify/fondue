@@ -20,7 +20,7 @@ export type TreeProps = {
     children: ReactNode;
     /**
      *  Padding added to each TreeItem in the TreeContext.
-     * @default: {"top": 10, "right": 8, "bottom": 10, "left": 8}
+     * @default {"top": 10, "right": 8, "bottom": 10, "left": 8}
      * */
     baseItemPadding?: Partial<TreeItemPadding>;
 };
