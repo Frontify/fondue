@@ -98,7 +98,7 @@ const RichTextEditorTemplate: StoryFn<RichTextEditorProps> = (args: RichTextEdit
 
 const allPlugins = new PluginComposer();
 allPlugins
-    .setPlugin([new ParagraphPlugin(), new TextStylePlugin()])
+    .setPlugin([new InitPlugin(), new ParagraphPlugin(), new TextStylePlugin()])
     .setPlugin([new MentionPlugin({ mentionableItems: mentionable })])
     .setPlugin(
         [
