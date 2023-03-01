@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconTextAlignmentCentre, IconTextAlignmentLeft, IconTextAlignmentRight } from '@foundation/Icon';
+import { IconTextAlignmentCentre, IconTextAlignmentLeft, IconTextAlignmentRight } from '@foundation/Icon/Generated';
 import { IconSize } from '@foundation/Icon/IconSize';
 import React, { FC, useState } from 'react';
 import { IconItem, Slider, TextOrNumberItem } from './Slider';

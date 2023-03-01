@@ -7,7 +7,7 @@ import { mergeProps } from '@react-aria/utils';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import React, { MouseEvent, useRef } from 'react';
-import { IconCross } from '@foundation/Icon';
+import { IconCross } from '@foundation/Icon/Generated';
 
 export enum TagType {
     Suggested = 'Suggested',

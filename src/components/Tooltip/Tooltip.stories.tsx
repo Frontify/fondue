@@ -4,7 +4,7 @@ import { Meta, StoryFn } from '@storybook/react';
 import React, { useState } from 'react';
 import { BrightHeaderStyle } from './BrightHeader';
 import { Tooltip, TooltipAlignment, TooltipPosition, TooltipProps } from './Tooltip';
-import { IconExclamationMarkCircle16Filled, IconExclamationMarkTriangle16, IconIcon } from '@foundation/Icon';
+import { IconExclamationMarkCircle16Filled, IconExclamationMarkTriangle16, IconIcon } from '@foundation/Icon/Generated';
 import { useOverlayTriggerState } from '@react-stately/overlays';
 import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
 import { Modal } from '@components/Modal';

@@ -2,7 +2,7 @@
 
 import { MenuItemContentSize, MenuItemStyle } from '@components/MenuItem';
 import { TriggerEmphasis } from '@components/Trigger';
-import { IconMusicNote } from '@foundation/Icon';
+import { IconMusicNote } from '@foundation/Icon/Generated';
 import { Meta, StoryFn } from '@storybook/react';
 import { Validation } from '@utilities/validation';
 import React, { useEffect, useState } from 'react';

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
-import { IconSize, IconTextAlignmentCentre } from '@foundation/Icon';
+import { IconTextAlignmentCentre16 } from '@foundation/Icon/Generated';
 import { AlignToolbarButton } from '@udecode/plate';
 import React from 'react';
 import { ButtonWrapper, IconStylingWrapper, buttonClassNames, buttonStyles } from '../../helper';
@@ -12,7 +12,7 @@ export const AlignCenterButton = ({ id }: PluginButtonProps) => (
         <AlignToolbarButton
             tooltip={getTooltip('Align center')}
             value="center"
-            icon={<IconStylingWrapper icon={<IconTextAlignmentCentre size={IconSize.Size16} />} />}
+            icon={<IconStylingWrapper icon={<IconTextAlignmentCentre16 />} />}
             classNames={buttonClassNames}
             styles={buttonStyles}
             actionHandler="onMouseDown"

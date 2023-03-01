@@ -7,7 +7,7 @@ import { FormControl } from '@components/FormControl';
 import { Slider } from '@components/Slider';
 import { Validation } from '@utilities/validation';
 import { intlFormat, subDays } from 'date-fns';
-import { IconCalendar16 } from '@foundation/Icon';
+import { IconCalendar16 } from '@foundation/Icon/Generated';
 import { Badge, BadgeEmphasis, BadgeStyle } from '..';
 
 export default {

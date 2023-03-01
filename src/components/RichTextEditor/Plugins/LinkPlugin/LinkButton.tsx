@@ -2,7 +2,7 @@
 
 import { getHotkeyByPlatform } from '@components/RichTextEditor/helpers/getHotkeyByPlatform';
 import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
-import { IconLink, IconSize } from '@foundation/Icon';
+import { IconLink16 } from '@foundation/Icon/Generated';
 import { LinkToolbarButton } from '@udecode/plate';
 import React from 'react';
 import { ButtonWrapper, IconStylingWrapper, buttonClassNames, buttonStyles } from '../helper';
@@ -12,7 +12,7 @@ export const LinkButton = ({ id }: PluginButtonProps) => (
     <ButtonWrapper id={id}>
         <LinkToolbarButton
             tooltip={getTooltip(`Link\n${getHotkeyByPlatform('Ctrl+K')}`)}
-            icon={<IconStylingWrapper icon={<IconLink size={IconSize.Size16} />} />}
+            icon={<IconStylingWrapper icon={<IconLink16 />} />}
             classNames={buttonClassNames}
             styles={buttonStyles}
             actionHandler="onMouseDown"

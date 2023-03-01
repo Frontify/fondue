@@ -5,7 +5,7 @@ import { Button } from '@components/Button/Button';
 import { Checkbox } from '@components/Checkbox';
 import { FormControl } from '@components/FormControl';
 import { TextInput } from '@components/TextInput';
-import { IconCheckMark } from '@foundation/Icon';
+import { IconCheckMark20 } from '@foundation/Icon/Generated';
 import React, { FC } from 'react';
 import { InsertModalStateProps } from './types';
 
@@ -81,7 +81,7 @@ export const InsertModal: FC<Props> = ({
                 <Button
                     onClick={onSave}
                     size={ButtonSize.Medium}
-                    icon={<IconCheckMark />}
+                    icon={<IconCheckMark20 />}
                     disabled={!isValidUrlOrEmpty() || !hasValues}
                 >
                     Save
