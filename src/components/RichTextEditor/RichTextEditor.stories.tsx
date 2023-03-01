@@ -30,7 +30,6 @@ import {
     CheckboxListPlugin,
     CodePlugin,
     EmojiPlugin,
-    InitPlugin,
     ItalicPlugin,
     LinkPlugin,
     MentionPlugin,
@@ -38,6 +37,7 @@ import {
     ParagraphPlugin,
     PluginComposer,
     ResetFormattingPlugin,
+    SoftBreakPlugin,
     StrikethroughPlugin,
     TextStylePlugin,
     UnderlinePlugin,
@@ -99,7 +99,7 @@ const RichTextEditorTemplate: StoryFn<RichTextEditorProps> = (args: RichTextEdit
 
 const allPlugins = new PluginComposer();
 allPlugins
-    .setPlugin([new InitPlugin(), new ParagraphPlugin(), new TextStylePlugin()])
+    .setPlugin([new SoftBreakPlugin(), new ParagraphPlugin(), new TextStylePlugin()])
     .setPlugin([new MentionPlugin({ mentionableItems: mentionable })])
     .setPlugin(
         [
@@ -376,7 +376,7 @@ WithChecklist.args = {
 const customPlugins = new PluginComposer();
 customPlugins
     .setPlugin([
-        new InitPlugin(),
+        new SoftBreakPlugin(),
         new TextStylePlugin({
             textStyles: [
                 TextStyles.ELEMENT_HEADING1,
@@ -423,7 +423,7 @@ WithMentionsAndEmojis.args = {
 
 const withoutToolbarPlugins = new PluginComposer({ noToolbar: true });
 withoutToolbarPlugins
-    .setPlugin([new InitPlugin(), new ParagraphPlugin()])
+    .setPlugin([new SoftBreakPlugin(), new ParagraphPlugin()])
     .setPlugin([
         new BoldPlugin(),
         new LinkPlugin(),
@@ -439,7 +439,7 @@ WithoutToolbar.args = {
 
 const defaultPluginsWithColumns = new PluginComposer();
 defaultPluginsWithColumns
-    .setPlugin([new InitPlugin(), new ParagraphPlugin()])
+    .setPlugin([new SoftBreakPlugin(), new ParagraphPlugin()])
     .setPlugin(new TextStylePlugin())
     .setPlugin([
         new BoldPlugin(),
@@ -461,7 +461,7 @@ export const MultiColumns: StoryFn<MultiColumnProps> = (args: MultiColumnProps) 
 
     const plugins = new PluginComposer();
     plugins
-        .setPlugin([new InitPlugin(), new ParagraphPlugin()])
+        .setPlugin([new SoftBreakPlugin(), new ParagraphPlugin()])
         .setPlugin(new TextStylePlugin())
         .setPlugin([
             new BoldPlugin(),
