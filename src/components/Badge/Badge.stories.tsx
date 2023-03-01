@@ -3,7 +3,7 @@
 import React from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { Badge } from './Badge';
-import IconIcon from '@foundation/Icon/Generated/IconIcon';
+import { IconIcon } from '@foundation/Icon/Generated';
 import { BadgeEmphasis, BadgeProps, BadgeStatus, BadgeStyle } from './types';
 
 export default {
