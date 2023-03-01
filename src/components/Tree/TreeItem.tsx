@@ -194,7 +194,7 @@ export const TreeItem = ({
     const hasChildren = Children.count(enhancedChildren) > 0;
 
     const paddingLeftByLevel = (treeItemState?.level ?? 0) * 16 + basePadding.x;
-    // Dropzone padding is calculated using existing styles to not introduce a breaking style change
+    // Dropzone positioning is matched with existing styles from before https://github.com/Frontify/fondue/pull/1270
     const dropzonePadding = paddingLeftByLevel - DEFAULT_TREE_ITEM_PADDING.x;
 
     return (
