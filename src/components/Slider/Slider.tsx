@@ -178,7 +178,6 @@ export const Slider = ({
         const rawValue = +valueWithoutSuffix;
 
         if (Number.isNaN(rawValue) || !valueWithoutSuffix) {
-            console.log(Number.isNaN(rawValue));
             setValue(undefined);
             setError(SliderError.ValueNaN);
             return;
