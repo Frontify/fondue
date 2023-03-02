@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Button, ButtonEmphasis, ButtonProps, ButtonSize, ButtonStyle } from '@components/Button';
-import { IconCheckMark } from '@foundation/Icon';
+import { IconCheckMark } from '@foundation/Icon/Generated';
 import { merge } from '@utilities/merge';
 import React, { FC, PropsWithChildren } from 'react';
 

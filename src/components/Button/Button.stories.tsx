@@ -3,8 +3,9 @@
 import React from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { Button, ButtonProps } from './Button';
-import { IconAnchor16, IconColorFan16, IconDotsVertical16, IconEnum, IconIcon16 } from '@foundation/Icon';
+import { IconAnchor16, IconColorFan16, IconDotsVertical16, IconIcon16 } from '@foundation/Icon/Generated';
 import { ButtonEmphasis, ButtonRounding, ButtonSize, ButtonStyle, ButtonType } from './ButtonTypes';
+import { IconEnum } from '@foundation/Icon/IconEnum';
 
 const defaultArgs = {
     type: ButtonType.Button,

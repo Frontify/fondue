@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconDocumentText } from '@foundation/Icon';
+import { IconDocumentText } from '@foundation/Icon/Generated';
 import { IconSize } from '@foundation/Icon/IconSize';
 import React from 'react';
 import { BadgeStyle } from '.';

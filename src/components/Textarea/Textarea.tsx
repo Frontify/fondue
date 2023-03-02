@@ -9,7 +9,7 @@ import { Validation, validationClassMap } from '@utilities/validation';
 import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle';
 import React, { FC, FocusEvent, FormEvent, ReactNode } from 'react';
 import TextareaAutosize, { TextareaAutosizeProps } from 'react-textarea-autosize';
-import { IconExclamationMarkTriangle } from '@foundation/Icon';
+import { IconExclamationMarkTriangle } from '@foundation/Icon/Generated';
 
 export type TextareaProps = {
     id?: string;

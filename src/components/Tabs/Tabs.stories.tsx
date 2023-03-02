@@ -7,7 +7,8 @@ import { Button } from '@components/Button';
 import { Text } from '@typography/Text';
 import { Divider } from '@components/Divider';
 import { TabItem, TabItemProps } from '@components/Tabs/TabItem';
-import { IconIcon, IconSize } from '@foundation/Icon';
+import { IconSize } from '@foundation/Icon/IconSize';
+import { IconIcon } from '@foundation/Icon/Generated';
 import { BadgeStyle } from '@components/Badge';
 import { Checkbox as CheckboxComponent, CheckboxProps, CheckboxState } from '@components/Checkbox/Checkbox';
 

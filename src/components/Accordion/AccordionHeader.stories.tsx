@@ -4,7 +4,7 @@ import React from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { AccordionHeader as AccordionHeaderComponent } from './AccordionHeader';
 import { AccordionHeaderProps } from './types';
-import { IconExclamationMarkTriangle, IconHome, IconIcon } from '@foundation/Icon';
+import { IconExclamationMarkTriangle, IconHome, IconIcon } from '@foundation/Icon/Generated';
 
 const decorators = {
     IconNone: null,

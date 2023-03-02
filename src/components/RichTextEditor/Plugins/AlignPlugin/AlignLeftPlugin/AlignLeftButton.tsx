@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
-import { IconSize, IconTextAlignmentLeft } from '@foundation/Icon';
+import { IconTextAlignmentLeft16 } from '@foundation/Icon/Generated';
 import { AlignToolbarButton } from '@udecode/plate';
 import React from 'react';
 import { ButtonWrapper, IconStylingWrapper, buttonClassNames, buttonStyles } from '../../helper';
@@ -12,7 +12,7 @@ export const AlignLeftButton = ({ id }: PluginButtonProps) => (
         <AlignToolbarButton
             tooltip={getTooltip('Align left')}
             value="left"
-            icon={<IconStylingWrapper icon={<IconTextAlignmentLeft size={IconSize.Size16} />} />}
+            icon={<IconStylingWrapper icon={<IconTextAlignmentLeft16 />} />}
             classNames={buttonClassNames}
             styles={buttonStyles}
             actionHandler="onMouseDown"

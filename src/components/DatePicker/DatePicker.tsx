@@ -7,7 +7,7 @@ import React, { FC, useState } from 'react';
 import DatepickerComponent from 'react-datepicker';
 import './DatePicker.css';
 import { DatePickerTrigger } from './DatePickerTrigger';
-import { IconCaretLeft, IconCaretLeftDouble, IconCaretRight, IconCaretRightDouble } from '@foundation/Icon';
+import { IconCaretLeft, IconCaretLeftDouble, IconCaretRight, IconCaretRightDouble } from '@foundation/Icon/Generated';
 import { Validation } from '@utilities/validation';
 
 type SingleDatePickerProps = {

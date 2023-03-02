@@ -4,7 +4,7 @@ import { IconSize } from '@foundation/Icon/IconSize';
 import { Meta, StoryFn } from '@storybook/react';
 import React, { useState } from 'react';
 import { Slider, SliderProps } from './Slider';
-import { IconTextAlignmentCentre, IconTextAlignmentLeft, IconTextAlignmentRight } from '@foundation/Icon';
+import { IconTextAlignmentCentre, IconTextAlignmentLeft, IconTextAlignmentRight } from '@foundation/Icon/Generated';
 
 export default {
     title: 'Components/Slider',
