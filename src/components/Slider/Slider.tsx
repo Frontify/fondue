@@ -68,11 +68,8 @@ export const Slider = ({
     const id = useMemoizedId(propId);
 
     const onInputChange = (inputValue: string) => {
-        const valueWithoutSuffix = inputValue.replace(valueSuffix, '');
-
-        // make sure the suffix will be removed and added to the field value
-        // only when leaving it
-        setValueWithSuffix(valueWithoutSuffix);
+        // make sure the suffix will be added to the input field
+        setValueWithSuffix(inputValue.replace(valueSuffix, '') + valueSuffix);
     };
 
     const addValueUnitSuffix = () => {
@@ -180,12 +177,15 @@ export const Slider = ({
         const valueWithoutSuffix = valueWithSuffix.replace(valueSuffix, '');
         const rawValue = +valueWithoutSuffix;
 
-        if (Number.isNaN(rawValue)) {
+        if (Number.isNaN(rawValue) || !valueWithoutSuffix) {
+            console.log(Number.isNaN(rawValue));
+            setValue(undefined);
             setError(SliderError.ValueNaN);
             return;
         }
 
         if (rawValue < min || rawValue > max) {
+            setValue(undefined);
             setError(SliderError.ValueOutOfRange);
             return;
         }
@@ -195,15 +195,25 @@ export const Slider = ({
     }, [valueWithSuffix, valueSuffix, min, max]);
 
     useEffect(() => {
-        if (error || value === undefined || valueWithSuffix === undefined) {
+        if (error || value === undefined || !valueWithSuffix) {
             return;
         }
 
+        const valueWithoutSuffix = valueWithSuffix.replace(valueSuffix, '');
+        const rawValue = +valueWithoutSuffix;
+
+        // don't call onChange if value is invalid or different
+        // than the value in the text field
+        if (Number.isNaN(rawValue) || value !== rawValue) {
+            return;
+        }
+
+        updateThumbPosition({ rawValue: value });
         onChange({
             raw: value,
-            withSuffix: valueWithSuffix,
+            withSuffix: valueWithSuffix.replace(valueSuffix, '') + valueSuffix,
         });
-    }, [value, valueWithSuffix, error, onChange]);
+    }, [value, valueWithSuffix, valueSuffix, error, onChange, updateThumbPosition]);
 
     useEffect(() => {
         if (error && onError) {

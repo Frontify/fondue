@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useCallback, useState } from 'react';
+import React from 'react';
 import { Meta, StoryFn } from '@storybook/react';
-import { Slider, SliderProps, SliderValue } from './Slider';
+import { Slider, SliderProps } from './Slider';
 
 export default {
     title: 'Components/Slider',
@@ -17,7 +17,8 @@ export default {
         stepMultiplier: { type: 'number' },
         valueSuffix: { type: 'string' },
         showMinMax: { type: 'boolean' },
-        onChange: { type: 'function' },
+        onChange: { action: 'Value change' },
+        onError: { action: 'Slider error' },
     },
     args: {
         min: 0,
@@ -26,24 +27,7 @@ export default {
 } as Meta<SliderProps>;
 
 const SliderTemplate: StoryFn<SliderProps> = (args: SliderProps) => {
-    const argValue = args.value || args.min || 0;
-    const argSuffix = args.valueSuffix || '';
-    const [value, setValue] = useState<SliderValue>({
-        raw: argValue,
-        withSuffix: `${argValue}${argSuffix}`,
-    });
-
-    // onChange must be memoized to avoid infinite re-render of the Slider
-    const onChange = useCallback((value: SliderValue) => {
-        setValue(value);
-    }, []);
-    return (
-        <div>
-            <Slider {...args} value={argValue} valueSuffix={argSuffix} onChange={onChange} />
-            <div>Raw value: {value.raw}</div>
-            <div>Value with suffix: {value.withSuffix}</div>
-        </div>
-    );
+    return <Slider {...args} />;
 };
 
 export const BasicUsage = SliderTemplate.bind({});
@@ -53,42 +37,4 @@ BasicUsage.args = {
     value: 30,
     step: 1,
     valueSuffix: '%',
-};
-
-const BASIC_USAGE_CODE_SNIPPET = `
-const YourComponent = () => {
-    const DEFAULT_VALUE = 30;
-    const DEFAULT_SUFFIX = '%';
-    const [value, setValue] = useState<SliderValue>({
-        raw: DEFAULT_VALUE,
-        withSuffix: \`\${DEFAULT_VALUE}\${DEFAULT_SUFFIX}\`,
-    });
-
-    // onChange must be memoized to avoid infinite re-render of the Slider
-    const onChange = useCallback((value: SliderValue) => {
-        setValue(value);
-    }, []);
-    return (
-        <div>
-            <Slider 
-                min={0}
-                max={100}
-                step={1}
-                value={value.raw}
-                valueSuffix={DEFAULT_SUFFIX}
-                onChange={onChange} 
-            />
-            <div>Raw value: {value.raw}</div>
-            <div>Value with suffix: {value.withSuffix}</div>
-        </div>
-    );
-};
-`;
-BasicUsage.parameters = {
-    docs: {
-        source: {
-            code: BASIC_USAGE_CODE_SNIPPET,
-            language: 'tsx',
-        },
-    },
 };
