@@ -15,11 +15,18 @@ type BaseSliderProps = {
     value?: number;
     min?: number;
     max?: number;
+    showMinMax?: boolean;
     step?: number;
     stepMultiplier?: number;
     onError?: (errorCode: SliderError) => void;
-    valueUnitSuffix?: string;
+    onChange: (value: SliderValue) => void;
+    valueSuffix?: string;
     decimalDigits?: number;
+};
+
+export type SliderValue = {
+    raw: number;
+    withSuffix: string;
 };
 
 export type SliderProps = BaseSliderProps & Pick<AriaAttributes, 'aria-label'>;
@@ -28,6 +35,7 @@ export enum SliderError {
     MinMax = 'MinMax',
     ValueOutOfRange = 'ValueOutOfRange',
     ValueNaN = 'ValueNaN',
+    ValueOutOfSteps = 'ValueOutOfSteps',
 }
 
 const MIN_DEFAULT_VALUE = 0;
@@ -35,6 +43,7 @@ const MAX_DEFAULT_VALUE = 100;
 const STEP_DEFAULT_VALUE = 1;
 const STEP_MULTIPLIER_DEFAULT_VALUE = 1;
 const ARIA_LABEL_DEFAULT_VALUE = 'Slider text input';
+const DEBOUNCE_INTERVAL = 3;
 
 export const Slider = ({
     id: propId,
@@ -42,42 +51,65 @@ export const Slider = ({
     value: propValue,
     min = MIN_DEFAULT_VALUE,
     max = MAX_DEFAULT_VALUE,
+    showMinMax = false,
     step = STEP_DEFAULT_VALUE,
     stepMultiplier = STEP_MULTIPLIER_DEFAULT_VALUE,
-    valueUnitSuffix = '',
+    valueSuffix = '',
     decimalDigits = 0,
     onError,
+    onChange,
     ['aria-label']: ariaLabel = ARIA_LABEL_DEFAULT_VALUE,
 }: SliderProps) => {
-    const [value, setValue] = useState<string>();
+    const [value, setValue] = useState<number>();
+    const [valueWithSuffix, setValueWithSuffix] = useState('');
     const [error, setError] = useState<SliderError>();
     const [percentagePosition, setPercentagePosition] = useState<number>();
     const [sliderRef, setSliderRef] = useState<HTMLDivElement | null>(null);
     const id = useMemoizedId(propId);
 
-    const onChange = (inputValue: string) => {
-        setValue(inputValue);
+    const onInputChange = (inputValue: string) => {
+        const valueWithoutSuffix = inputValue.replace(valueSuffix, '');
+
+        // make sure the suffix will be removed and added to the field value
+        // only when leaving it
+        setValueWithSuffix(valueWithoutSuffix);
     };
 
     const addValueUnitSuffix = () => {
-        setValue((currentValue) => {
-            return currentValue?.replace(valueUnitSuffix, '') + valueUnitSuffix;
+        setValueWithSuffix((currentValue) => {
+            return currentValue.replace(valueSuffix, '') + valueSuffix;
         });
     };
 
-    const updatePosition = useCallback(
-        (target: HTMLDivElement, clientX: number) => {
-            const sliderPosition = target.getBoundingClientRect().x;
-            const trackSize = target.clientWidth;
-            const mousePosition = clientX;
-            const positionInPixels = mousePosition - sliderPosition;
-            const percentage = clamp(positionInPixels / trackSize, 0, 1);
+    const updateThumbPosition = useCallback(
+        ({ clientX, rawValue }: { clientX?: number; rawValue?: number }) => {
+            if (!sliderRef) {
+                return;
+            }
 
-            const newValue = (max - min) * percentage + min;
+            const range = max - min;
+            const sliderPosition = sliderRef.getBoundingClientRect().x;
+            const trackSize = sliderRef.clientWidth;
 
-            setValue(`${newValue.toFixed(decimalDigits)}${valueUnitSuffix}`);
+            let percentage;
+            if (clientX !== undefined) {
+                const mousePosition = clientX;
+                const positionInPixels = mousePosition - sliderPosition;
+                percentage = positionInPixels / trackSize;
+            } else {
+                // if raw value, update thumb position independently of steps
+                percentage = ((rawValue || min) - min) / range;
+                setPercentagePosition(clamp(percentage, 0, 1) * 100);
+                return;
+            }
+
+            const newPosition = clamp(percentage, 0, 1);
+            const totalSteps = range / step;
+            const stepValue = clamp(Math.round(newPosition * totalSteps) * step + min, min, max);
+            setPercentagePosition(((stepValue - min) / range) * 100);
+            setValueWithSuffix(stepValue.toFixed(decimalDigits) + valueSuffix);
         },
-        [min, max, decimalDigits, valueUnitSuffix],
+        [sliderRef, max, min, step, decimalDigits, valueSuffix],
     );
 
     const onDrag = useMemo(
@@ -85,9 +117,11 @@ export const Slider = ({
             !sliderRef
                 ? () => void 0
                 : debounce((event: Event & { clientX: number }) => {
-                      updatePosition(sliderRef, event.clientX);
-                  }, 2),
-        [updatePosition, sliderRef],
+                      updateThumbPosition({
+                          clientX: event.clientX,
+                      });
+                  }, DEBOUNCE_INTERVAL),
+        [updateThumbPosition, sliderRef],
     );
 
     const stopDrag = useCallback(() => {
@@ -104,7 +138,9 @@ export const Slider = ({
             return;
         }
 
-        updatePosition(event.currentTarget, event.clientX);
+        updateThumbPosition({
+            clientX: event.clientX,
+        });
         sliderRef.addEventListener('mousemove', onDrag);
         window.addEventListener('mouseup', stopDrag);
     };
@@ -117,43 +153,62 @@ export const Slider = ({
         stopDrag();
     };
 
+    // This side effect will handle the initial property values
+    // and their changes
     useEffect(() => {
-        if (min > max) {
-            setError(SliderError.MinMax);
-        }
-
-        const middle = (max - min) / 2 + min;
-        setValue(`${propValue?.toFixed(decimalDigits) || middle.toFixed(decimalDigits)}${valueUnitSuffix}`);
-    }, [min, max, propValue, valueUnitSuffix, decimalDigits]);
-
-    useEffect(() => {
-        if (value === undefined) {
+        if (!sliderRef) {
             return;
         }
 
-        const numberValue = +value.replace(valueUnitSuffix, '');
+        if (min > max) {
+            setError(SliderError.MinMax);
+            return;
+        }
 
-        if (Number.isNaN(numberValue)) {
+        const raw = propValue || min;
+
+        setValue(raw);
+        setValueWithSuffix(`${raw.toFixed(decimalDigits)}${valueSuffix}`);
+        updateThumbPosition({ rawValue: raw });
+    }, [sliderRef, updateThumbPosition, min, max, propValue, valueSuffix, decimalDigits]);
+
+    useEffect(() => {
+        if (!valueWithSuffix) {
+            return;
+        }
+
+        const valueWithoutSuffix = valueWithSuffix.replace(valueSuffix, '');
+        const rawValue = +valueWithoutSuffix;
+
+        if (Number.isNaN(rawValue)) {
             setError(SliderError.ValueNaN);
             return;
         }
 
-        if (+numberValue < min || +numberValue > max) {
+        if (rawValue < min || rawValue > max) {
             setError(SliderError.ValueOutOfRange);
             return;
         }
 
-        const range = max - min;
-        const percentage = (numberValue - min) / range;
-
         setError(undefined);
+        setValue(rawValue);
+    }, [valueWithSuffix, valueSuffix, min, max]);
 
-        setPercentagePosition(percentage * 100);
-    }, [value, min, max, valueUnitSuffix]);
+    useEffect(() => {
+        if (error || value === undefined || valueWithSuffix === undefined) {
+            return;
+        }
+
+        onChange({
+            raw: value,
+            withSuffix: valueWithSuffix,
+        });
+    }, [value, valueWithSuffix, error, onChange]);
 
     useEffect(() => {
         if (error && onError) {
             onError(error);
+            return;
         }
     }, [error, onError]);
 
@@ -164,7 +219,7 @@ export const Slider = ({
             </label>
             <div className="tw-flex">
                 <div className={merge(['tw-flex-1 tw-flex tw-items-center'])}>
-                    <div>{min}</div>
+                    {showMinMax && <div>{min}</div>}
                     <div
                         ref={setSliderRef}
                         role="slider"
@@ -186,16 +241,16 @@ export const Slider = ({
                             style={{ left: `${percentagePosition}%` }}
                         ></div>
                     </div>
-                    <div>{max}</div>
+                    {showMinMax && <div>{max}</div>}
                 </div>
                 <div className="tw-w-16 tw-ml-3">
                     <TextInput
                         id={id}
-                        value={value}
+                        value={valueWithSuffix}
                         aria-label={ariaLabel}
                         type={TextInputType.Text}
                         validation={error ? Validation.Error : Validation.Default}
-                        onChange={onChange}
+                        onChange={onInputChange}
                         onBlur={addValueUnitSuffix}
                         onEnterPressed={addValueUnitSuffix}
                     />
