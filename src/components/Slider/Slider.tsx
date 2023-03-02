@@ -225,7 +225,7 @@ export const Slider = ({
                         role="slider"
                         tabIndex={-1}
                         aria-valuenow={percentagePosition}
-                        className="tw-flex-1 tw-relative tw-h-full tw-mx-3"
+                        className="tw-flex-1 tw-relative tw-h-full tw-mx-3 tw-cursor-pointer"
                         onMouseDown={onMouseDown}
                         onMouseUp={onMouseUp}
                     >
