@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { AriaAttributes, MouseEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { AriaAttributes, KeyboardEvent, MouseEvent, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { merge } from '@utilities/merge';
@@ -41,9 +41,11 @@ export enum SliderError {
 const MIN_DEFAULT_VALUE = 0;
 const MAX_DEFAULT_VALUE = 100;
 const STEP_DEFAULT_VALUE = 1;
-const STEP_MULTIPLIER_DEFAULT_VALUE = 1;
+const STEP_MULTIPLIER_DEFAULT_VALUE = 5;
 const ARIA_LABEL_DEFAULT_VALUE = 'Slider text input';
 const DEBOUNCE_INTERVAL = 3;
+const INCREMENT_KEYS = ['ArrowUp', 'ArrowRight'];
+const DECREMENT_KEYS = ['ArrowDown', 'ArrowLeft'];
 
 export const Slider = ({
     id: propId,
@@ -150,6 +152,27 @@ export const Slider = ({
         stopDrag();
     };
 
+    const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+        if ((!INCREMENT_KEYS.includes(event.key) && !DECREMENT_KEYS.includes(event.key)) || value === undefined) {
+            return;
+        }
+
+        let variation = 0;
+        if (DECREMENT_KEYS.includes(event.key)) {
+            variation = -step;
+        } else if (INCREMENT_KEYS.includes(event.key)) {
+            variation = step;
+        }
+
+        if (event.shiftKey) {
+            variation *= stepMultiplier;
+        }
+
+        const rawValue = clamp(Math.floor(value / step) * step + variation, min, max);
+        setValue(rawValue);
+        setValueWithSuffix(rawValue + valueSuffix);
+    };
+
     // This side effect will handle the initial property values
     // and their changes
     useEffect(() => {
@@ -217,7 +240,6 @@ export const Slider = ({
     useEffect(() => {
         if (error && onError) {
             onError(error);
-            return;
         }
     }, [error, onError]);
 
@@ -237,6 +259,7 @@ export const Slider = ({
                         className="tw-flex-1 tw-relative tw-h-full tw-mx-3 tw-cursor-pointer"
                         onMouseDown={onMouseDown}
                         onMouseUp={onMouseUp}
+                        onKeyDown={onKeyDown}
                     >
                         <div className="tw-absolute tw-top-1/2 tw--translate-y-1/2 tw-w-full tw-h-1 tw-rounded-sm tw-bg-base tw-border tw-border-line-strong tw-flex-1"></div>
                         {percentagePosition !== undefined && (
