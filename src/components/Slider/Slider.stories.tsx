@@ -23,6 +23,7 @@ export default {
     args: {
         min: 0,
         max: 100,
+        stepMultiplier: 5,
     },
 } as Meta<SliderProps>;
 
