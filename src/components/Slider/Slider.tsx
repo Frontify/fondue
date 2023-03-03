@@ -30,7 +30,6 @@ type BaseSliderProps = {
     onError?: (errorCode: SliderError) => void;
     onChange: (value: SliderValue) => void;
     valueSuffix?: string;
-    decimalDigits?: number;
 };
 
 export type SliderValue = {
@@ -66,7 +65,6 @@ export const Slider = ({
     step = STEP_DEFAULT_VALUE,
     stepMultiplier = STEP_MULTIPLIER_DEFAULT_VALUE,
     valueSuffix = '',
-    decimalDigits = 0,
     onError,
     onChange,
     ['aria-label']: ariaLabel = ARIA_LABEL_DEFAULT_VALUE,
@@ -80,13 +78,7 @@ export const Slider = ({
 
     const onInputChange = (inputValue: string) => {
         // make sure the suffix will be added to the input field
-        setValueWithSuffix(inputValue.replace(valueSuffix, '') + valueSuffix);
-    };
-
-    const addValueUnitSuffix = () => {
-        setValueWithSuffix((currentValue) => {
-            return currentValue.replace(valueSuffix, '') + valueSuffix;
-        });
+        setValueWithSuffix(`${inputValue.replace(valueSuffix, '')}${valueSuffix}`);
     };
 
     const updateThumbPosition = useCallback(
@@ -115,9 +107,9 @@ export const Slider = ({
             const totalSteps = range / step;
             const stepValue = clamp(Math.round(newPosition * totalSteps) * step + min, min, max);
             setPercentagePosition(((stepValue - min) / range) * 100);
-            setValueWithSuffix(stepValue.toFixed(decimalDigits) + valueSuffix);
+            setValueWithSuffix(`${stepValue}${valueSuffix}`);
         },
-        [sliderRef, max, min, step, decimalDigits, valueSuffix],
+        [sliderRef, max, min, step, valueSuffix],
     );
 
     const onDrag = useMemo(
@@ -174,7 +166,7 @@ export const Slider = ({
 
         const rawValue = clamp(Math.floor(value / step) * step + variation, min, max);
         setValue(rawValue);
-        setValueWithSuffix(rawValue + valueSuffix);
+        setValueWithSuffix(`${rawValue}${valueSuffix}`);
     };
 
     // This side effect will handle the initial property values
@@ -192,9 +184,9 @@ export const Slider = ({
         const raw = propValue || min;
 
         setValue(raw);
-        setValueWithSuffix(`${raw.toFixed(decimalDigits)}${valueSuffix}`);
+        setValueWithSuffix(`${raw}${valueSuffix}`);
         updateThumbPosition({ rawValue: raw });
-    }, [sliderRef, updateThumbPosition, min, max, propValue, valueSuffix, decimalDigits]);
+    }, [sliderRef, updateThumbPosition, min, max, propValue, valueSuffix]);
 
     useEffect(() => {
         if (!valueWithSuffix) {
@@ -300,8 +292,6 @@ export const Slider = ({
                             type={TextInputType.Text}
                             validation={error ? Validation.Error : Validation.Default}
                             onChange={onInputChange}
-                            onBlur={addValueUnitSuffix}
-                            onEnterPressed={addValueUnitSuffix}
                         />
                     </div>
                 </div>
