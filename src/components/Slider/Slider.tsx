@@ -1,6 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { AriaAttributes, KeyboardEvent, MouseEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+    AriaAttributes,
+    KeyboardEvent,
+    MouseEvent,
+    TouchEvent,
+    useCallback,
+    useEffect,
+    useMemo,
+    useState,
+} from 'react';
 
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { merge } from '@utilities/merge';
@@ -115,9 +124,9 @@ export const Slider = ({
         () =>
             !sliderRef
                 ? () => void 0
-                : debounce((event: Event & { clientX: number }) => {
+                : debounce((event: Event & { clientX: number; touches: [{ clientX: number }] }) => {
                       updateThumbPosition({
-                          clientX: event.clientX,
+                          clientX: event.clientX ?? event.touches[0].clientX,
                       });
                   }, DEBOUNCE_INTERVAL),
         [updateThumbPosition, sliderRef],
@@ -129,27 +138,22 @@ export const Slider = ({
         }
 
         sliderRef.removeEventListener('mousemove', onDrag);
+        sliderRef.addEventListener('touchmove', onDrag);
         window.removeEventListener('mouseup', stopDrag);
     }, [sliderRef, onDrag]);
 
-    const onMouseDown = (event: MouseEvent<HTMLButtonElement>) => {
+    const startDrag = (event: MouseEvent<HTMLButtonElement> | TouchEvent<HTMLButtonElement>) => {
         if (!sliderRef) {
             return;
         }
 
         updateThumbPosition({
-            clientX: event.clientX,
+            clientX: (event as MouseEvent).clientX ?? (event as TouchEvent).touches[0].clientX,
         });
+
+        sliderRef.addEventListener('touchmove', onDrag);
         sliderRef.addEventListener('mousemove', onDrag);
         window.addEventListener('mouseup', stopDrag);
-    };
-
-    const onMouseUp = () => {
-        if (!sliderRef) {
-            return;
-        }
-
-        stopDrag();
     };
 
     const onKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
@@ -250,12 +254,19 @@ export const Slider = ({
             </label>
             <div className="tw-flex">
                 <div className={merge(['tw-flex-1 tw-flex tw-items-center'])}>
-                    {showMinMax && <div>{min}</div>}
+                    {showMinMax && (
+                        <div className="tw-mr-3">
+                            {min}
+                            {valueSuffix}
+                        </div>
+                    )}
                     <button
                         ref={setSliderRef}
-                        className="tw-flex-1 tw-relative tw-h-full tw-mx-3 tw-cursor-pointer"
-                        onMouseDown={onMouseDown}
-                        onMouseUp={onMouseUp}
+                        className="tw-flex-1 tw-relative tw-h-full tw-cursor-pointer"
+                        onMouseDown={startDrag}
+                        onMouseUp={stopDrag}
+                        onTouchStart={startDrag}
+                        onTouchEnd={stopDrag}
                         onKeyDown={onKeyDown}
                     >
                         <span className="tw-absolute tw-block tw-top-1/2 tw--translate-y-1/2 tw-w-full tw-h-1 tw-rounded-sm tw-bg-base tw-border tw-border-line-strong tw-flex-1"></span>
@@ -275,7 +286,12 @@ export const Slider = ({
                             style={{ left: `${percentagePosition}%` }}
                         ></span>
                     </button>
-                    {showMinMax && <div>{max}</div>}
+                    {showMinMax && (
+                        <div className="tw-ml-3">
+                            {max}
+                            {valueSuffix}
+                        </div>
+                    )}
                     <div className="tw-w-16 tw-ml-3">
                         <TextInput
                             id={id}
