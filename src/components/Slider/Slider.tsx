@@ -66,7 +66,7 @@ export const Slider = ({
     const [valueWithSuffix, setValueWithSuffix] = useState('');
     const [error, setError] = useState<SliderError>();
     const [percentagePosition, setPercentagePosition] = useState<number>();
-    const [sliderRef, setSliderRef] = useState<HTMLDivElement | null>(null);
+    const [sliderRef, setSliderRef] = useState<HTMLButtonElement | null>(null);
     const id = useMemoizedId(propId);
 
     const onInputChange = (inputValue: string) => {
@@ -132,7 +132,7 @@ export const Slider = ({
         window.removeEventListener('mouseup', stopDrag);
     }, [sliderRef, onDrag]);
 
-    const onMouseDown = (event: MouseEvent<HTMLDivElement>) => {
+    const onMouseDown = (event: MouseEvent<HTMLButtonElement>) => {
         if (!sliderRef) {
             return;
         }
@@ -152,7 +152,7 @@ export const Slider = ({
         stopDrag();
     };
 
-    const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    const onKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
         if ((!INCREMENT_KEYS.includes(event.key) && !DECREMENT_KEYS.includes(event.key)) || value === undefined) {
             return;
         }
@@ -251,41 +251,43 @@ export const Slider = ({
             <div className="tw-flex">
                 <div className={merge(['tw-flex-1 tw-flex tw-items-center'])}>
                     {showMinMax && <div>{min}</div>}
-                    <div
+                    <button
                         ref={setSliderRef}
-                        role="slider"
-                        tabIndex={-1}
-                        aria-valuenow={percentagePosition}
                         className="tw-flex-1 tw-relative tw-h-full tw-mx-3 tw-cursor-pointer"
                         onMouseDown={onMouseDown}
                         onMouseUp={onMouseUp}
                         onKeyDown={onKeyDown}
                     >
-                        <div className="tw-absolute tw-top-1/2 tw--translate-y-1/2 tw-w-full tw-h-1 tw-rounded-sm tw-bg-base tw-border tw-border-line-strong tw-flex-1"></div>
+                        <span className="tw-absolute tw-block tw-top-1/2 tw--translate-y-1/2 tw-w-full tw-h-1 tw-rounded-sm tw-bg-base tw-border tw-border-line-strong tw-flex-1"></span>
                         {percentagePosition !== undefined && (
-                            <div
-                                className="tw-absolute tw-top-1/2 tw--translate-y-1/2 tw-origin-left tw-w-full tw-h-1  tw-rounded-sm tw-bg-box-neutral-strong tw-border tw-border-line-strong tw-flex-1"
+                            <span
+                                role="slider"
+                                aria-valuenow={value}
+                                aria-valuemin={min}
+                                aria-valuemax={max}
+                                aria-label={ariaLabel}
+                                className="tw-absolute tw-block tw-top-1/2 tw--translate-y-1/2 tw-origin-left tw-w-full tw-h-1  tw-rounded-sm tw-bg-box-neutral-strong tw-border tw-border-line-strong tw-flex-1"
                                 style={{ width: `${percentagePosition}%` }}
-                            ></div>
+                            ></span>
                         )}
-                        <div
-                            className="tw-absolute tw-top-1/2 tw--translate-y-1/2 tw--translate-x-1/2 tw-w-5 tw-h-5 tw-bg-base tw-rounded-full tw-border tw-border-line-strong"
+                        <span
+                            className="tw-absolute tw-block tw-top-1/2 tw--translate-y-1/2 tw--translate-x-1/2 tw-w-5 tw-h-5 tw-bg-base tw-rounded-full tw-border tw-border-line-strong"
                             style={{ left: `${percentagePosition}%` }}
-                        ></div>
-                    </div>
+                        ></span>
+                    </button>
                     {showMinMax && <div>{max}</div>}
-                </div>
-                <div className="tw-w-16 tw-ml-3">
-                    <TextInput
-                        id={id}
-                        value={valueWithSuffix}
-                        aria-label={ariaLabel}
-                        type={TextInputType.Text}
-                        validation={error ? Validation.Error : Validation.Default}
-                        onChange={onInputChange}
-                        onBlur={addValueUnitSuffix}
-                        onEnterPressed={addValueUnitSuffix}
-                    />
+                    <div className="tw-w-16 tw-ml-3">
+                        <TextInput
+                            id={id}
+                            value={valueWithSuffix}
+                            placeholder={ariaLabel}
+                            type={TextInputType.Text}
+                            validation={error ? Validation.Error : Validation.Default}
+                            onChange={onInputChange}
+                            onBlur={addValueUnitSuffix}
+                            onEnterPressed={addValueUnitSuffix}
+                        />
+                    </div>
                 </div>
             </div>
         </div>

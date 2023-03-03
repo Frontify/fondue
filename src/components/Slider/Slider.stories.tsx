@@ -37,4 +37,5 @@ BasicUsage.args = {
     value: 30,
     step: 1,
     valueSuffix: '%',
+    ['aria-label']: 'Percentage slider',
 };
