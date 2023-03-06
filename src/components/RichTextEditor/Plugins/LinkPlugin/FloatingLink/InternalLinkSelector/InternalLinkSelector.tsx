@@ -16,7 +16,7 @@ type InternalLinkSelectorProps = {
 
 type InternalLinkItemProps = {
     node: InternalLinkNode;
-    level: number;
+    level?: number;
 };
 
 const InternalLinkItem = ({ node, level = 0 }: InternalLinkItemProps): ReactElement => {
