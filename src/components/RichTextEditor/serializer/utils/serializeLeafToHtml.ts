@@ -28,5 +28,5 @@ export const serializeLeafToHtml = (node: TText): string => {
     if (node.code) {
         string = `<span class="${CODE_CLASSES}">${string}</span>`;
     }
-    return string.trim().length === 0 ? '<br />' : string;
+    return string;
 };

@@ -4,7 +4,9 @@ import { Switch, SwitchSize } from '@components/Switch/Switch';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { merge } from '@utilities/merge';
 import React, { FC, ReactElement, ReactNode, cloneElement, isValidElement } from 'react';
-import { IconCaretDown, IconMinus, IconPlus, IconProps, IconSize } from '@foundation/Icon';
+import { IconCaretDown, IconMinus, IconPlus } from '@foundation/Icon/Generated';
+import { IconSize } from '@foundation/Icon/IconSize';
+import { IconProps } from '@foundation/Icon';
 
 export const ACCORDION_ICON_CONTAINER_ID = 'accordion-icon-container';
 

@@ -12,9 +12,12 @@ import { LinkChooser } from '@components/LinkChooser/LinkChooser.stories';
 import { Slider } from '@components/Slider/Slider';
 import { Switch, SwitchSize } from '@components/Switch/Switch';
 import { TextInput, TextInputType } from '@components/TextInput/TextInput';
-import IconIcon from '@foundation/Icon/Generated/IconIcon';
-import IconTextAlignmentLeft from '@foundation/Icon/Generated/IconTextAlignmentLeft';
-import IconTextAlignmentRight from '@foundation/Icon/Generated/IconTextAlignmentRight';
+import {
+    IconIcon,
+    IconTextAlignmentCentre,
+    IconTextAlignmentLeft,
+    IconTextAlignmentRight,
+} from '@foundation/Icon/Generated';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { action } from '@storybook/addon-actions';
 import { Meta, StoryFn } from '@storybook/react';
@@ -25,7 +28,6 @@ import { EXAMPLE_IMAGES } from '../AssetInput/example-assets';
 import { Accordion as AccordionComponent, AccordionItem } from './Accordion';
 import { AccordionHeaderIcon } from './AccordionHeaderIcon';
 import { AccordionHeaderIconSize, AccordionHeaderProps, AccordionProps } from './types';
-import IconTextAlignmentCentre from '@foundation/Icon/Generated/IconTextAlignmentCentre';
 import { Stack } from '@layout/Stack';
 
 export default {

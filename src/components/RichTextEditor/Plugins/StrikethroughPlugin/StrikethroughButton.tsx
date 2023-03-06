@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
-import { IconSize, IconTextFormatStrikethrough } from '@foundation/Icon';
+import { IconTextFormatStrikethrough } from '@foundation/Icon/Generated';
 import { MarkToolbarButton, getPluginType } from '@udecode/plate';
 import React from 'react';
 import { ButtonWrapper, IconStylingWrapper, buttonClassNames, buttonStyles } from '../helper';
@@ -12,7 +12,7 @@ export const StrikethroughButton = ({ editor, id }: PluginButtonProps) => (
         <MarkToolbarButton
             tooltip={getTooltip('Strikethrough')}
             type={getPluginType(editor, id)}
-            icon={<IconStylingWrapper icon={<IconTextFormatStrikethrough size={IconSize.Size16} />} />}
+            icon={<IconStylingWrapper icon={<IconTextFormatStrikethrough />} />}
             classNames={buttonClassNames}
             styles={buttonStyles}
             actionHandler="onMouseDown"

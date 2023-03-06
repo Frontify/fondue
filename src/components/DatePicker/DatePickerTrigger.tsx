@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { TextInput } from '@components/TextInput';
-import IconCalendar from '@foundation/Icon/Generated/IconCalendar';
+import { IconCalendar } from '@foundation/Icon/Generated';
 import { IconCaretDown, IconCaretUp, IconSize } from '@foundation/Icon/index';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
@@ -14,7 +14,7 @@ type DatePickerTriggerProps = PropsWithChildren<{
     isCalendarOpen?: boolean;
     onClick?: () => void;
     validation?: Validation;
-    onDateChanged?: (date: Date | null) => void;
+    onDateChanged?: ((date: [Date | null, Date | null] | null) => void) | ((date: Date | null) => void);
 }>;
 
 export const DatePickerTrigger = forwardRef<HTMLDivElement, DatePickerTriggerProps>(

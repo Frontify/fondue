@@ -7,6 +7,7 @@ import {
     IPSUM,
     buttonValues,
     checkboxValue,
+    customControlValues,
     customDesignTokens,
     defaultValue,
     htmlValue,
@@ -36,6 +37,7 @@ import {
     ParagraphPlugin,
     PluginComposer,
     ResetFormattingPlugin,
+    SoftBreakPlugin,
     StrikethroughPlugin,
     TextStylePlugin,
     UnderlinePlugin,
@@ -97,7 +99,7 @@ const RichTextEditorTemplate: StoryFn<RichTextEditorProps> = (args: RichTextEdit
 
 const allPlugins = new PluginComposer();
 allPlugins
-    .setPlugin([new ParagraphPlugin(), new TextStylePlugin()])
+    .setPlugin([new SoftBreakPlugin(), new ParagraphPlugin(), new TextStylePlugin()])
     .setPlugin([new MentionPlugin({ mentionableItems: mentionable })])
     .setPlugin(
         [
@@ -373,13 +375,23 @@ WithChecklist.args = {
 
 const customPlugins = new PluginComposer();
 customPlugins
-    .setPlugin([new TextStylePlugin({ textStyles: [TextStyles.ELEMENT_HEADING1, TextStyles.ELEMENT_PARAGRAPH] })])
+    .setPlugin([
+        new SoftBreakPlugin(),
+        new TextStylePlugin({
+            textStyles: [
+                TextStyles.ELEMENT_HEADING1,
+                TextStyles.ELEMENT_PARAGRAPH,
+                TextStyles.ELEMENT_IMAGE_CAPTION,
+                TextStyles.ELEMENT_IMAGE_TITLE,
+            ],
+        }),
+    ])
     .setPlugin([new LinkPlugin()])
     .setPlugin([new ItalicPlugin(), new BoldPlugin(), new UnderlinePlugin()])
     .setPlugin([new OrderedListPlugin(), new UnorderedListPlugin()]);
 export const WithCustomControls = RichTextEditorTemplate.bind({});
 WithCustomControls.args = {
-    value: `<p>${IPSUM}</p>`,
+    value: JSON.stringify(customControlValues),
     plugins: customPlugins,
 };
 
@@ -411,7 +423,7 @@ WithMentionsAndEmojis.args = {
 
 const withoutToolbarPlugins = new PluginComposer({ noToolbar: true });
 withoutToolbarPlugins
-    .setPlugin([new ParagraphPlugin()])
+    .setPlugin([new SoftBreakPlugin(), new ParagraphPlugin()])
     .setPlugin([
         new BoldPlugin(),
         new LinkPlugin(),
@@ -427,7 +439,7 @@ WithoutToolbar.args = {
 
 const defaultPluginsWithColumns = new PluginComposer();
 defaultPluginsWithColumns
-    .setPlugin([new ParagraphPlugin()])
+    .setPlugin([new SoftBreakPlugin(), new ParagraphPlugin()])
     .setPlugin(new TextStylePlugin())
     .setPlugin([
         new BoldPlugin(),
@@ -449,7 +461,7 @@ export const MultiColumns: StoryFn<MultiColumnProps> = (args: MultiColumnProps) 
 
     const plugins = new PluginComposer();
     plugins
-        .setPlugin([new ParagraphPlugin()])
+        .setPlugin([new SoftBreakPlugin(), new ParagraphPlugin()])
         .setPlugin(new TextStylePlugin())
         .setPlugin([
             new BoldPlugin(),

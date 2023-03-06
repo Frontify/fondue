@@ -6,7 +6,7 @@ import { IconSize } from '@foundation/Icon/IconSize';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import React, { Key, cloneElement, useEffect, useRef, useState } from 'react';
-import { IconArrowBidirectional, IconArrowDown, IconArrowUp } from '@foundation/Icon';
+import { IconArrowBidirectional, IconArrowDown, IconArrowUp } from '@foundation/Icon/Generated';
 import { SelectionMode, SortDirection } from '..';
 
 export enum TableColumnHeaderType {

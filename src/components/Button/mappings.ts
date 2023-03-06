@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconSize } from '@foundation/Icon';
+import { IconSize } from '@foundation/Icon/IconSize';
 import { ButtonSize, ButtonType } from '@components/Button/ButtonTypes';
 
 export const buttonIconSizeMap: Record<ButtonSize, IconSize> = {

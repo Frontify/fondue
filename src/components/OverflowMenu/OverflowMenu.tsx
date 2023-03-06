@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { MouseEvent, useRef, useState } from 'react';
-import { IconDotsHorizontal } from '@foundation/Icon';
+import { IconDotsHorizontal } from '@foundation/Icon/Generated';
 import { merge } from '@utilities/merge';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { Menu } from '@components/Menu';

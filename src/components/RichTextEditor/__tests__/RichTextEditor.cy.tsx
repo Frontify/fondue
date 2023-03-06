@@ -12,6 +12,7 @@ import {
     ParagraphPlugin,
     PluginComposer,
     RichTextButtonStyle,
+    SoftBreakPlugin,
     TextStylePlugin,
     UnorderedListPlugin,
 } from '../Plugins';
@@ -913,7 +914,7 @@ describe('RichTextEditor Component', () => {
 
         const pluginsWithColumns = new PluginComposer();
         pluginsWithColumns
-            .setPlugin([new ParagraphPlugin()])
+            .setPlugin([new SoftBreakPlugin(), new ParagraphPlugin()])
             .setPlugin(new TextStylePlugin())
             .setPlugin(
                 [new BoldPlugin(), new BreakAfterPlugin({ columns: 2, gap: 20 })],

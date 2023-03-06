@@ -9,7 +9,7 @@ import {
     FieldsetHeaderType,
 } from '@components/FieldsetHeader';
 import { SWITCH_ID } from '../Switch/Switch';
-import { IconIcon12 } from '@foundation/Icon';
+import { IconIcon12 } from '@foundation/Icon/Generated';
 
 const FIELDSET_HEADER_ID = '[data-test-id="fieldset-header"]';
 const ACCORDION_HEADER_TEXT_ID = '[data-test-id="accordion-header-text"]';

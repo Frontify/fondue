@@ -13,6 +13,7 @@ import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 
 import { getAcceptTypes, getItemPositionInParent, getNextItemToFocus, getPreviousItemToFocus } from './helpers';
 import { cloneThroughFragments, flattenChildren, isDescendant } from './utils';
+import { DEFAULT_TREE_ITEM_PADDING } from './utils/defaultValues';
 
 const DRAGGING_OPACITY = 0.4;
 const DEFAULT_OPACITY = 1;
@@ -39,6 +40,7 @@ export const TreeItem = ({
         registerTreeItemChildren,
         unregisterTreeItem,
         treeState,
+        baseItemPadding,
     } = useTreeContext();
 
     const treeItemState = treeState.items.get(id);
@@ -191,14 +193,16 @@ export const TreeItem = ({
 
     const hasChildren = Children.count(enhancedChildren) > 0;
 
-    const paddingLeftByLevel = `${treeItemState?.level ?? 0}rem`;
+    const paddingLeftByLevel = (treeItemState?.level ?? 0) * 16 + baseItemPadding.left;
+    // Dropzone positioning is matched with existing styles from before https://github.com/Frontify/fondue/pull/1270
+    const dropzonePadding = paddingLeftByLevel - DEFAULT_TREE_ITEM_PADDING.left;
 
     return (
         <li data-test-id="tree-item" ref={drag} style={{ opacity, transform: 'translate3d(0, 0, 0)' }}>
             {sort === 0 ? (
                 <div
                     style={{
-                        paddingLeft: paddingLeftByLevel,
+                        paddingLeft: dropzonePadding,
                     }}
                 >
                     <DropZone
@@ -227,53 +231,52 @@ export const TreeItem = ({
                         treeState.selectedIds.has(id)
                             ? 'tw-font-medium tw-bg-box-selected-strong tw-text-box-selected-strong-inverse hover:tw-bg-box-selected-strong-hover hover:tw-text-box-selected-strong-inverse-hover'
                             : 'tw-text-text hover:tw-bg-box-neutral-hover hover:tw-text-box-neutral-inverse-hover',
+                        FOCUS_VISIBLE_STYLE,
+                        'tw-leading-5 tw-no-underline tw-flex',
                     ])}
+                    data-test-id="tree-item-content"
                     style={{
                         paddingLeft: paddingLeftByLevel,
+                        paddingRight: baseItemPadding.right,
+                        paddingTop: baseItemPadding.top,
+                        paddingBottom: baseItemPadding.bottom,
                     }}
+                    ref={itemRef}
+                    role="treeitem"
+                    aria-label={label}
+                    aria-level={treeItemState?.level}
+                    aria-selected={treeState.selectedIds.has(id)}
+                    aria-expanded={treeState.expandedIds.has(id)}
+                    tabIndex={0}
+                    onClick={handleSelect}
+                    onKeyDown={handleKeyDown}
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
                 >
-                    <div
-                        ref={itemRef}
-                        className={merge([
-                            'tw-flex tw-py-2 tw-px-2.5 tw-no-underline tw-leading-5 tw-h-10',
-                            FOCUS_VISIBLE_STYLE,
-                        ])}
-                        role="treeitem"
-                        aria-label={label}
-                        aria-level={treeItemState?.level}
-                        aria-selected={treeState.selectedIds.has(id)}
-                        aria-expanded={treeState.expandedIds.has(id)}
-                        tabIndex={0}
-                        onClick={handleSelect}
-                        onKeyDown={handleKeyDown}
-                        onMouseEnter={handleMouseEnter}
-                        onMouseLeave={handleMouseLeave}
-                    >
-                        <div className="tw-flex tw-flex-1 tw-space-x-1 tw-items-center tw-h-6">
-                            <div className="tw-w-2 tw-h-3 tw-flex tw-items-center tw-justify-center">
-                                {hasChildren && (
-                                    <button
-                                        data-test-id="tree-item-toggle"
-                                        className="tw-flex tw-items-center tw-justify-center tw-p-1.5 tw-cursor-pointer"
-                                        onClick={handleExpandClick}
-                                        onKeyDown={handleExpandKeyDown}
-                                        tabIndex={0}
-                                    >
-                                        <div
-                                            className={merge([
-                                                'tw-transition-transform tw-w-0 tw-h-0 tw-text-black-100 tw-text-opacity-40 tw-font-normal tw-border-t-4 tw-border-t-transparent tw-border-b-4 tw-border-b-transparent tw-border-l-4 tw-border-l-x-strong',
-                                                treeState.selectedIds.has(id) && 'tw-text-box-selected-strong-inverse',
-                                                treeState.expandedIds.has(id) && 'tw-rotate-90',
-                                            ])}
-                                        />
-                                    </button>
-                                )}
-                            </div>
-
-                            {label ? <span>{label}</span> : null}
-
-                            {contentComponent?.({ selected: treeState.selectedIds.has(id) ?? false, hovered })}
+                    <div className="tw-flex tw-flex-1 tw-space-x-1 tw-items-center tw-h-6 tw-min-w-0">
+                        <div className="tw-w-2 tw-h-3 tw-flex tw-items-center tw-justify-center">
+                            {hasChildren && (
+                                <button
+                                    data-test-id="tree-item-toggle"
+                                    className="tw-flex tw-items-center tw-justify-center tw-p-1.5 tw-cursor-pointer"
+                                    onClick={handleExpandClick}
+                                    onKeyDown={handleExpandKeyDown}
+                                    tabIndex={0}
+                                >
+                                    <div
+                                        className={merge([
+                                            'tw-transition-transform tw-w-0 tw-h-0 tw-text-black-100 tw-text-opacity-40 tw-font-normal tw-border-t-4 tw-border-t-transparent tw-border-b-4 tw-border-b-transparent tw-border-l-4 tw-border-l-x-strong',
+                                            treeState.selectedIds.has(id) && 'tw-text-box-selected-strong-inverse',
+                                            treeState.expandedIds.has(id) && 'tw-rotate-90',
+                                        ])}
+                                    />
+                                </button>
+                            )}
                         </div>
+
+                        {label ? <span>{label}</span> : null}
+
+                        {contentComponent?.({ selected: treeState.selectedIds.has(id) ?? false, hovered })}
                     </div>
                 </div>
             </DropZone>
@@ -289,7 +292,7 @@ export const TreeItem = ({
 
             <div
                 style={{
-                    paddingLeft: paddingLeftByLevel,
+                    paddingLeft: dropzonePadding,
                 }}
             >
                 <DropZone

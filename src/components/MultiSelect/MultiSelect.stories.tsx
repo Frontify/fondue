@@ -11,7 +11,7 @@ import {
     MultiSelectSize,
     MultiSelectType,
 } from './MultiSelect';
-import { IconNook16, IconPerson16 } from '@foundation/Icon';
+import { IconNook16, IconPerson16 } from '@foundation/Icon/Generated';
 
 export default {
     title: 'Components/Multi Select',
