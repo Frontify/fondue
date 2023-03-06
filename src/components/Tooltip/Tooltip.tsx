@@ -253,12 +253,8 @@ export const Tooltip = ({
             <div {...triggerProps} ref={setTriggerElementContainerRef}>
                 {triggerElement &&
                     cloneElement(triggerElement, {
-<<<<<<< HEAD
-                        ref: triggerRefElement,
-                        'aria-describedby': id,
-=======
                         ref: setTriggerElementRef,
->>>>>>> beta
+                        'aria-describedby': id,
                     })}
             </div>
             <div
