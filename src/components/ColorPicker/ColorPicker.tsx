@@ -64,3 +64,4 @@ export const ColorPicker = ({
         </div>
     );
 };
+ColorPicker.displayName = 'FondueColorPicker';

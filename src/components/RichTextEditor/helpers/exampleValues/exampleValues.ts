@@ -189,8 +189,7 @@ export const defaultValue = [
     createElement({ text: 'This text is a code line.', mark: MARK_CODE }),
     {
         type: ELEMENT_PARAGRAPH,
-        children: [{ text: 'This text is followed by a break.' }],
-        breakAfterColumn: true,
+        children: [{ text: '' }],
     },
     createElement({
         text: IPSUM,
@@ -200,11 +199,33 @@ export const defaultValue = [
     {
         type: ELEMENT_PARAGRAPH,
         children: [
+            { text: '' },
             {
                 type: ELEMENT_LINK,
-                children: [{ text: 'This is a Link.' }],
+                children: [{ text: 'This is a Link. Without any breaks before or after' }],
                 url: 'https://frontify.com',
             },
+            { text: '' },
+        ],
+    },
+    {
+        type: ELEMENT_PARAGRAPH,
+        children: [
+            { text: 'Try mentioning characters, like ' },
+            {
+                type: ELEMENT_MENTION,
+                category: 'user',
+                id: 'aaaaaaaa20',
+                children: [{ text: '' }],
+            },
+            { text: ' or ' },
+            {
+                type: ELEMENT_MENTION,
+                category: 'group',
+                id: '1111111111',
+                children: [{ text: '' }],
+            },
+            { text: '.' },
         ],
     },
     {
@@ -236,6 +257,34 @@ export const defaultValue = [
     createElement({ text: 'Quote', element: TextStyles.ELEMENT_QUOTE }),
 ];
 
+export const customControlValues = [
+    createElement({ text: 'Image Title', element: TextStyles.ELEMENT_IMAGE_TITLE }),
+    createElement({ text: 'Image Caption', element: TextStyles.ELEMENT_IMAGE_CAPTION }),
+    createElement({ text: IPSUM, element: ELEMENT_PARAGRAPH }),
+];
+
+export const valueWithColumnBreaks = [
+    {
+        type: ELEMENT_PARAGRAPH,
+        children: [{ text: 'This text is followed by a break 1.' }],
+        breakAfterColumn: 'active',
+    },
+    {
+        type: ELEMENT_PARAGRAPH,
+        children: [{ text: '' }],
+    },
+    {
+        type: ELEMENT_PARAGRAPH,
+        children: [{ text: 'This text is followed by a break 2.' }],
+        breakAfterColumn: 'inactive',
+    },
+    {
+        type: ELEMENT_PARAGRAPH,
+        children: [{ text: 'This text is followed by a break 3.' }],
+        breakAfterColumn: 'inactive',
+    },
+];
+
 export const value = [
     ...defaultValue,
     {
@@ -255,6 +304,37 @@ export const value = [
         checked: true,
         indent: 0,
         children: [{ text: 'This is checked again.' }],
+    },
+];
+export const alignedValues = [
+    {
+        type: ELEMENT_PARAGRAPH,
+        children: [{ text: 'This text is left aligned.' }],
+        align: 'left',
+    },
+    {
+        type: ELEMENT_PARAGRAPH,
+        children: [{ text: 'This text is center aligned.' }],
+        align: 'center',
+    },
+    {
+        type: ELEMENT_PARAGRAPH,
+        children: [{ text: 'This text is right aligned.' }],
+        align: 'right',
+    },
+    {
+        type: ELEMENT_PARAGRAPH,
+        children: [{ text: 'This text is justified.' }],
+        align: 'justify',
+    },
+
+    {
+        type: 'p',
+        children: [
+            { text: '' },
+            { type: 'a', url: 'https://frontify.com/', target: '_blank', children: [{ text: 'This is a Link.' }] },
+            { text: '' },
+        ],
     },
 ];
 
@@ -349,59 +429,9 @@ export const checkboxValue = [
         type: ELEMENT_CHECK_ITEM,
         checked: true,
         indent: 2,
-        children: [{ text: "And I'm checked!" }],
+        children: [{ text: "And I'm checked! Followed by an empty one!" }],
     },
-];
-
-export const nodesToSerialize: TDescendant[] = defaultValue;
-
-export const serializedHtml =
-    '<p style="font-size: 14px; font-style: normal; font-weight: normal;"><span class="tw-font-bold">This text is bold.</span></p><p style="font-size: 14px; font-style: normal; font-weight: normal;"><span class="tw-italic">This text is italic.</span></p><p style="font-size: 14px; font-style: normal; font-weight: normal;"><span class="tw-underline">This text has an underline.</span></p><p style="font-size: 14px; font-style: normal; font-weight: normal;"><span class="tw-line-through">This text has a strikethrough.</span></p><p style="font-size: 14px; font-style: normal; font-weight: normal;"><span class="tw-table-cell tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-[0.2em] tw-font-mono tw-text-[85%]">This text is a code line.</span></p><p class="tw-border-b tw-border-dashed tw-border-line-x-strong tw-break-after-column tw-break-inside-avoid-column tw-pb-5" style="font-size: 14px; font-style: normal; font-weight: normal;">This text is followed by a break.</p><p style="font-size: 14px; font-style: normal; font-weight: normal;">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p><ul class="tw-list-disc tw-pl-[10px] tw-mb-[10px] tw-ml-[25px]"><li style="font-size: 14px; font-weight: normal; font-style: normal; text-decoration: none;"><p style="">This is list item number two.</p></li><li style="font-size: 14px; font-weight: 600; font-style: normal; text-decoration: none;"><p style="">This is list item number one.</p></li><li style="font-size: 14px; font-weight: normal; font-style: normal; text-decoration: none;"><p style="text-decoration: underline;">This is list item number three.</p><ul class="tw-list-disc tw-pl-[10px] tw-mb-[10px] tw-ml-[25px]"><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><p style="">This is child item number one.</p></li><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><p style="">This is child item number two, with more children.</p><ul class="tw-list-disc tw-pl-[10px] tw-mb-[10px] tw-ml-[25px]"><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><p style="">This is child of child item number one.</p></li><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><p style="">This is child of child item number two.</p></li></ul></li></ul></li></ul><ol class="tw-pl-[10px] tw-mb-[10px] tw-ml-[25px] tw-list-[decimal]"><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><p style="">This comes first.</p></li><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><p style="">This comes second.</p></li><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><p style="">And last but not least, this comes third.</p><ol class="tw-pl-[10px] tw-mb-[10px] tw-ml-[25px] tw-list-[lower-alpha]"><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><p style="">This is child item number one.</p></li><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><p style="">This is child item number two.</p><ol class="tw-pl-[10px] tw-mb-[10px] tw-ml-[25px] tw-list-[lower-roman]"><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><p style="">Nested child item number one.</p></li><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><p style="">Nested child item number two.</p><ol class="tw-pl-[10px] tw-mb-[10px] tw-ml-[25px] tw-list-[decimal]"><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><p style="">Level 5 item 1</p></li><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><p style="">Level 5 item 2</p></li></ol></li></ol></li></ol></li></ol><p style="font-size: 14px; font-style: normal; font-weight: normal;"><a style="font-size: 14px; font-style: normal; color: rgb(113, 89, 215); text-decoration: underline; cursor: pointer;" href="https://frontify.com">This is a Link.</a></p><p style="font-size: 14px; font-style: normal; font-weight: normal;"><a style="font-size: 14px; font-style: normal; color: rgb(113, 89, 215); text-decoration: underline; cursor: pointer;" target=_blank href="https://smartive.ch">This is also a Link (Legacy Format).</a></p><h1 style="font-size: 48px; font-weight: 700; font-style: normal;">Heading 1</h1><h2 style="font-size: 32px; font-weight: 700; font-style: normal;">Heading 2</h2><h3 style="font-size: 24px; font-weight: normal; font-style: normal;">Heading 3</h3><h4 style="font-size: 18px; font-weight: normal; font-style: normal;">Heading 4</h4><p style="font-size: 14px; font-weight: normal; font-style: normal;">Custom 1</p><p style="font-size: 14px; font-weight: 600; font-style: normal;">Custom 2</p><p style="font-size: 14px; font-weight: normal; font-style: normal; text-decoration: underline;">Custom 3</p><p style="font-size: 16px; font-weight: normal; font-style: italic;">Quote</p>';
-
-export const serializedHtmlWithCustomDesignTokens =
-    '<p style="font-size: 14px; font-style: normal; font-weight: normal;"><span class="tw-font-bold">This text is bold.</span></p><p style="font-size: 14px; font-style: normal; font-weight: normal;"><span class="tw-italic">This text is italic.</span></p><p style="font-size: 14px; font-style: normal; font-weight: normal;"><span class="tw-underline">This text has an underline.</span></p><p style="font-size: 14px; font-style: normal; font-weight: normal;"><span class="tw-line-through">This text has a strikethrough.</span></p><p style="font-size: 14px; font-style: normal; font-weight: normal;"><span class="tw-table-cell tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-[0.2em] tw-font-mono tw-text-[85%]">This text is a code line.</span></p><p class="tw-border-b tw-border-dashed tw-border-line-x-strong tw-break-after-column tw-break-inside-avoid-column tw-pb-5" style="font-size: 14px; font-style: normal; font-weight: normal;">This text is followed by a break.</p><p style="font-size: 14px; font-style: normal; font-weight: normal;">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p><ul class="tw-list-disc tw-pl-[10px] tw-mb-[10px] tw-ml-[25px]"><li style="font-size: 14px; font-weight: normal; font-style: normal; text-decoration: none;"><p style="">This is list item number two.</p></li><li style="font-size: 14px; font-weight: 600; font-style: normal; text-decoration: none;"><p style="">This is list item number one.</p></li><li style="font-size: 14px; font-weight: normal; font-style: normal; text-decoration: none;"><p style="text-decoration: underline;">This is list item number three.</p><ul class="tw-list-disc tw-pl-[10px] tw-mb-[10px] tw-ml-[25px]"><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><p style="">This is child item number one.</p></li><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><p style="">This is child item number two, with more children.</p><ul class="tw-list-disc tw-pl-[10px] tw-mb-[10px] tw-ml-[25px]"><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><p style="">This is child of child item number one.</p></li><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><p style="">This is child of child item number two.</p></li></ul></li></ul></li></ul><ol class="tw-pl-[10px] tw-mb-[10px] tw-ml-[25px] tw-list-[decimal]"><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><p style="">This comes first.</p></li><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><p style="">This comes second.</p></li><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><p style="">And last but not least, this comes third.</p><ol class="tw-pl-[10px] tw-mb-[10px] tw-ml-[25px] tw-list-[lower-alpha]"><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><p style="">This is child item number one.</p></li><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><p style="">This is child item number two.</p><ol class="tw-pl-[10px] tw-mb-[10px] tw-ml-[25px] tw-list-[lower-roman]"><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><p style="">Nested child item number one.</p></li><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><p style="">Nested child item number two.</p><ol class="tw-pl-[10px] tw-mb-[10px] tw-ml-[25px] tw-list-[decimal]"><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><p style="">Level 5 item 1</p></li><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><p style="">Level 5 item 2</p></li></ol></li></ol></li></ol></li></ol><p style="font-size: 14px; font-style: normal; font-weight: normal;"><a style="font-size: 14px; font-style: normal; color: rgb(113, 89, 215); text-decoration: underline; cursor: pointer;" href="https://frontify.com">This is a Link.</a></p><p style="font-size: 14px; font-style: normal; font-weight: normal;"><a style="font-size: 14px; font-style: normal; color: rgb(113, 89, 215); text-decoration: underline; cursor: pointer;" target=_blank href="https://smartive.ch">This is also a Link (Legacy Format).</a></p><h1 style="font-size: 1.5rem; font-weight: 800; font-style: normal;">Heading 1</h1><h2 style="font-size: 1.25rem; font-weight: 500; font-style: normal;">Heading 2</h2><h3 style="font-size: 24px; font-weight: normal; font-style: normal;">Heading 3</h3><h4 style="font-size: 18px; font-weight: normal; font-style: normal;">Heading 4</h4><p style="font-size: 14px; font-weight: normal; font-style: normal;">Custom 1</p><p style="font-size: 14px; font-weight: 600; font-style: normal;">Custom 2</p><p style="font-size: 14px; font-weight: normal; font-style: normal; text-decoration: underline;">Custom 3</p><p style="font-size: 16px; font-weight: normal; font-style: italic;">Quote</p>';
-
-export const customDesignTokens: DesignTokens = {
-    heading1: {
-        fontSize: '1.5rem',
-        fontWeight: 800,
-    },
-    heading2: {
-        fontSize: '1.25rem',
-        fontWeight: 500,
-    },
-};
-
-export const mentionValue = [
-    createElement({ text: '💬 Mention', element: TextStyles.ELEMENT_HEADING2 }),
-    createElement({
-        text: 'This example shows how you might implement a simple @-mentions feature that lets users autocomplete mentioning a user by their username. Which, in this case means Star Wars characters. The mentions are rendered as void inline elements inside the document.',
-        element: ELEMENT_PARAGRAPH,
-    }),
-    {
-        type: ELEMENT_PARAGRAPH,
-        children: [
-            { text: 'Try mentioning characters, like ' },
-            {
-                type: ELEMENT_MENTION,
-                children: [{ text: '' }],
-                category: 'user',
-                key: '28',
-            },
-            { text: ' or ' },
-            {
-                type: ELEMENT_MENTION,
-                category: 'group',
-                key: '11',
-                children: [{ text: '' }],
-            },
-            { text: '.' },
-        ],
-    },
-    {
-        type: ELEMENT_PARAGRAPH,
-        children: [{ text: 'Continue ...' }, { text: ' ' }],
-    },
+    { type: ELEMENT_CHECK_ITEM, children: [{ text: '' }] },
 ];
 
 export const buttonValues = [
@@ -443,5 +473,56 @@ export const buttonValues = [
             },
             { text: ' button.' },
         ],
+    },
+];
+
+export const nodesToSerialize: TDescendant[] = [
+    ...defaultValue,
+    ...alignedValues,
+    ...valueWithColumnBreaks,
+    ...checkboxValue,
+    ...buttonValues,
+];
+
+export const customDesignTokens: DesignTokens = {
+    heading1: {
+        fontSize: '1.5rem',
+        fontWeight: 800,
+    },
+    heading2: {
+        fontSize: '1.25rem',
+        fontWeight: 500,
+    },
+};
+
+export const mentionValue = [
+    createElement({ text: '💬 Mention', element: TextStyles.ELEMENT_HEADING2 }),
+    createElement({
+        text: 'This example shows how you might implement a simple @-mentions feature that lets users autocomplete mentioning a user by their username. Which, in this case means Star Wars characters. The mentions are rendered as void inline elements inside the document.',
+        element: ELEMENT_PARAGRAPH,
+    }),
+    {
+        type: ELEMENT_PARAGRAPH,
+        children: [
+            { text: 'Try mentioning characters, like ' },
+            {
+                type: ELEMENT_MENTION,
+                category: 'user',
+                id: 'aaaaaaaa20',
+                children: [{ text: '' }],
+            },
+            { text: ' or ' },
+            {
+                type: ELEMENT_MENTION,
+                category: 'group',
+                id: '1111111111',
+                children: [{ text: '' }],
+            },
+            { text: '.' },
+        ],
+    },
+    {
+        type: ELEMENT_PARAGRAPH,
+        children: [{ text: 'Continue ...' }, { text: ' ' }],
     },
 ];

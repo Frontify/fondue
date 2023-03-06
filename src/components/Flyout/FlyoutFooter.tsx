@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Button, ButtonEmphasis, ButtonProps, ButtonSize, ButtonStyle } from '@components/Button';
-import { IconCheckMark } from '@foundation/Icon';
+import { IconCheckMark } from '@foundation/Icon/Generated';
 import { merge } from '@utilities/merge';
 import React, { FC, PropsWithChildren } from 'react';
 
@@ -16,6 +16,10 @@ export const FlyoutFooter: FC<FlyoutFooterProps> = ({ buttons, border = true }) 
             className={merge([
                 'tw-flex tw-gap-x-3 tw-justify-end tw-py-5 tw-px-8 tw-bg-white dark:tw-bg-black-95',
                 border && 'tw-border-t tw-border-t-black-10',
+                // The footer min-height should be 76px, since we Tailwind doesn't have a tw-h-19 class
+                // we force TW to create it
+                // The 19 comes from, 10 from the tw-py-5 + 9 from button height tw-h-9
+                'tw-min-h-[4.75rem]',
             ])}
         >
             {buttons.map((button, index) => (
@@ -24,6 +28,7 @@ export const FlyoutFooter: FC<FlyoutFooterProps> = ({ buttons, border = true }) 
         </div>
     );
 };
+FlyoutFooter.displayName = 'FondueFlyoutFooter';
 
 export const LegacyFlyoutFooter = ({ onConfirm, onCancel }: { onConfirm?: () => void; onCancel?: () => void }) => (
     <FlyoutFooter
@@ -55,3 +60,4 @@ export const LegacyFlyoutFooter = ({ onConfirm, onCancel }: { onConfirm?: () => 
         }
     />
 );
+LegacyFlyoutFooter.displayName = 'FondueLegacyFlyoutFooter';

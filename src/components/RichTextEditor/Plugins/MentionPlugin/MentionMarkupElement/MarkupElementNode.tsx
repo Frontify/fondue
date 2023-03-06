@@ -1,16 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
-import { IconPeople, IconSize } from '@foundation/Icon';
+import { IconPeople12 } from '@foundation/Icon/Generated';
 import { MentionableCategory } from '../types';
 import { MarkupElementNodeComponentType, MarkupElementNodeType, MarkupElementProps } from './types';
 
 const MarkupElementNode = ({ attributes, element, nodeProps, children }: MarkupElementProps) => (
     <span
         {...attributes}
-        data-slate-value={element.value}
-        data-slate-key={element.key}
-        data-slate-category={element.category}
+        data-slate-value={element?.value}
+        data-slate-key={element?.key}
+        data-slate-category={element?.category}
         contentEditable={false}
         style={{
             lineHeight: '10px',
@@ -38,7 +38,7 @@ const MarkupElementNodeGroup: MarkupElementNodeType = ({ children, ...props }) =
                 margin: '-1px 0',
             }}
         >
-            <IconPeople size={IconSize.Size12} />
+            <IconPeople12 />
         </span>
         {children}
     </MarkupElementNode>

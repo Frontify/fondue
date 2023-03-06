@@ -30,3 +30,4 @@ export const ModalVisual: FC<ModalVisualProps> = ({ pattern = PatternDesign.Digi
         </div>
     );
 };
+ModalVisual.displayName = 'FondueModalVisual';

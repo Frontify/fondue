@@ -1,22 +1,21 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
+import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
 import { PlateRenderElementProps, createPluginFactory } from '@udecode/plate';
 import { merge } from '@utilities/merge';
-import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
-import { TextStyles } from './textStyles';
+import React from 'react';
+import { getColumnBreakClasses } from '../../ColumnBreakPlugin/utils/getColumnBreakClasses';
 import { alignmentClassnames } from './alignment';
-import { breakAfterClassNames } from '../../../utils/constants';
+import { TextStyles } from './textStyles';
 
 const Heading2MarkupElementNode = ({ element, attributes, children }: PlateRenderElementProps) => {
     const { designTokens } = useRichTextEditorContext();
     const align = element.align as string;
-    const hasColumn = element.breakAfterColumn as boolean;
 
     return (
         <h2
             {...attributes}
-            className={merge([align && alignmentClassnames[align], hasColumn && breakAfterClassNames])}
+            className={merge([align && alignmentClassnames[align], getColumnBreakClasses(element)])}
             style={designTokens.heading2}
         >
             {children}

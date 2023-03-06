@@ -51,9 +51,10 @@ export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
             onConfirm={handleClick}
             isOpen={open}
             onCancel={() => handleOpenChange(false)}
-            contentMinHeight={300}
+            contentMinHeight={150}
             fixedHeader={<ColorPreview color={currentColor || { red: 255, green: 255, blue: 255 }} />}
             onOpenChange={handleOpenChange}
+            isTriggerDisabled={disabled}
             trigger={
                 <ColorInputTrigger
                     isOpen={open}
@@ -88,3 +89,4 @@ export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
         </Flyout>
     );
 };
+ColorPickerFlyout.displayName = 'FondueColorPickerFlyout';

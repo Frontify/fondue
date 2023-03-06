@@ -499,6 +499,8 @@ function PatternImagery(): ReactElement {
     );
 }
 
+PatternImagery.displayName = 'FonduePatternImagery';
+
 const Memo = memo(PatternImagery);
 
 export default Memo;

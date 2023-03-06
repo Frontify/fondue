@@ -95,7 +95,11 @@ const SliderItem = (props: SliderItemProps) => {
                     <input {...inputProps} {...focusProps} data-test-id="slider-input" ref={ref} />
                 </VisuallyHidden>
                 <span className="tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap tw-flex">
-                    {isIconItem(item) && <span aria-label={item.ariaLabel}>{item.icon}</span>}
+                    {isIconItem(item) && (
+                        <span className="tw-leading-3" aria-label={item.ariaLabel}>
+                            {item.icon}
+                        </span>
+                    )}
                     {item.value && <span className={isIconItem(item) ? 'tw-ml-2' : ''}>{item.value.toString()}</span>}
                 </span>
             </div>
@@ -129,29 +133,32 @@ export const Slider: FC<SliderProps> = ({
     const selectedIndex = items.findIndex((item) => item.id === radioGroupState.selectedValue);
 
     return (
-        <fieldset
-            {...radioGroupProps}
-            data-test-id="slider"
-            className="tw-relative tw-h-9 tw-w-full tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly tw-p-0 tw-border tw-border-black-20 tw-m-0 tw-bg-black-0 tw-rounded tw-font-sans tw-text-s tw-select-none"
-        >
-            <motion.div
-                aria-hidden="true"
-                // div border is not included in width so it must be subtracted from translation.
-                animate={{ x: `calc(${100 * selectedIndex}% - ${2 * selectedIndex}px)` }}
-                initial={false}
-                transition={{ type: 'tween', duration: 0.3 }}
-                style={{
-                    width: `${100 / items.length}%`,
-                }}
-                hidden={!activeItemId}
-                className={merge([
-                    'tw-absolute tw--inset-px tw-h-full tw-box-content tw-border tw-rounded tw-pointer-events-none',
-                    disabled
-                        ? 'tw-border-line-x-strong tw-border-opacity-30 tw-bg-black-0'
-                        : 'tw-border-black tw-bg-white',
-                ])}
-            />
-            {itemElements}
-        </fieldset>
+        <div className="tw-flex">
+            <fieldset
+                {...radioGroupProps}
+                data-test-id="slider"
+                className="tw-relative tw-h-9 tw-w-full tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly tw-p-0 tw-border tw-border-black-20 tw-m-0 tw-bg-black-0 tw-rounded tw-font-sans tw-text-s tw-select-none"
+            >
+                <motion.div
+                    aria-hidden="true"
+                    // div border is not included in width so it must be subtracted from translation.
+                    animate={{ x: `calc(${100 * selectedIndex}% - ${2 * selectedIndex}px)` }}
+                    initial={false}
+                    transition={{ type: 'tween', duration: 0.3 }}
+                    style={{
+                        width: `${100 / items.length}%`,
+                    }}
+                    hidden={!activeItemId}
+                    className={merge([
+                        'tw-absolute tw--inset-px tw-h-full tw-box-content tw-border tw-rounded tw-pointer-events-none',
+                        disabled
+                            ? 'tw-border-line-x-strong tw-border-opacity-30 tw-bg-black-0'
+                            : 'tw-border-black tw-bg-white',
+                    ])}
+                />
+                {itemElements}
+            </fieldset>
+        </div>
     );
 };
+Slider.displayName = 'FondueSlider';

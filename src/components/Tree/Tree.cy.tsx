@@ -7,34 +7,24 @@ import { treeNodesMock } from '@components/Tree/utils/mocks';
 
 const TreeComponent = ({ onSelect }: { onSelect?: (id: Nullable<string>) => void }) => {
     return (
-        <Tree id="treeId">
+        <Tree id="treeId" onSelect={onSelect} baseItemPadding={{ top: 10, right: 20, bottom: 30, left: 40 }}>
             {treeNodesMock.map((node) => (
-                <TreeItem
-                    key={node.id}
-                    id={node.id}
-                    sort={node.sort}
-                    contentComponent={() => <span>{node.name}</span>}
-                    onSelect={onSelect}
-                >
-                    {node.nodes &&
-                        node.nodes.map((node) => (
-                            <TreeItem
-                                key={node.id}
-                                id={node.id}
-                                sort={node.sort}
-                                contentComponent={() => <span>{node.name}</span>}
-                            >
-                                {node.nodes &&
-                                    node.nodes.map((node) => (
+                <TreeItem key={node.id} id={node.id} contentComponent={() => <span>{node.label}</span>}>
+                    {node.nodes?.map((node) => (
+                        <TreeItem key={node.id} id={node.id} contentComponent={() => <span>{node.label}</span>}>
+                            {node.nodes?.map((node) => (
+                                <TreeItem key={node.id} id={node.id} contentComponent={() => <span>{node.label}</span>}>
+                                    {node.nodes?.map((node) => (
                                         <TreeItem
                                             key={node.id}
                                             id={node.id}
-                                            sort={node.sort}
-                                            contentComponent={() => <span>{node.name}</span>}
+                                            contentComponent={() => <span>{node.label}</span>}
                                         />
                                     ))}
-                            </TreeItem>
-                        ))}
+                                </TreeItem>
+                            ))}
+                        </TreeItem>
+                    ))}
                 </TreeItem>
             ))}
         </Tree>
@@ -43,6 +33,7 @@ const TreeComponent = ({ onSelect }: { onSelect?: (id: Nullable<string>) => void
 
 const TREE_ID = '[data-test-id=tree]';
 const TREE_ITEM_ID = '[data-test-id=tree-item]';
+const TREE_ITEM_CONTENT_ID = '[data-test-id=tree-item-content]';
 const TREE_ITEM_TOGGLE_ID = '[data-test-id=tree-item-toggle';
 const SUB_TREE_ITEMS_ID = '[data-test-id=sub-tree-items]';
 
@@ -53,7 +44,7 @@ describe('Tree Component', () => {
         cy.get(TREE_ID).should('be.visible');
     });
 
-    it('expands and shrinks the tree on toggle click', () => {
+    it('expands and shrinks the tree on toggle click (uncontrolled)', () => {
         cy.mount(<TreeComponent />);
 
         cy.get(TREE_ITEM_TOGGLE_ID).click();
@@ -69,14 +60,21 @@ describe('Tree Component', () => {
         cy.get(TREE_ITEM_TOGGLE_ID).eq(2).click();
         cy.get(TREE_ITEM_TOGGLE_ID).eq(1).click();
 
-        cy.get(TREE_ITEM_ID).should('have.length', 9);
+        cy.get(TREE_ITEM_ID).should('have.length', 10);
     });
 
     it('calls the onSelect callback', () => {
         const onSelectStub = cy.stub().as('onSelectStub');
         cy.mount(<TreeComponent onSelect={onSelectStub} />);
 
-        cy.get(TREE_ITEM_ID).click();
+        cy.get(TREE_ITEM_ID).eq(0).click();
         cy.get('@onSelectStub').should('have.been.called');
+    });
+
+    it('applies base padding to tree item', () => {
+        const onSelectStub = cy.stub().as('onSelectStub');
+        cy.mount(<TreeComponent onSelect={onSelectStub} />);
+
+        cy.get(TREE_ITEM_CONTENT_ID).eq(0).should('have.css', 'padding', '10px 20px 30px 40px');
     });
 });

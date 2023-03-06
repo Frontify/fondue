@@ -1,18 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { KeyboardEvent, useRef } from 'react';
-import { Plate } from '@udecode/plate';
 import { useMemoizedId } from '@hooks/useMemoizedId';
+import { Plate } from '@udecode/plate';
+import React from 'react';
 import { EditableProps, RenderPlaceholderProps } from 'slate-react/dist/components/editable';
-import { useEditorState } from './hooks';
-import { RichTextEditorProvider } from './context/RichTextEditorContext';
-import { DesignTokens, PaddingSizes, TreeOfNodes } from './types';
-import { defaultDesignTokens } from './utils/defaultDesignTokens';
-import { Position } from './EditorPositioningWrapper';
-import { PluginComposer, defaultPlugins } from './Plugins';
-import { forceToBlurActiveElement } from './helpers';
-import { parseRawValue } from './utils';
 import { ContentReplacement } from './ContentReplacement';
+import { RichTextEditorProvider } from './context/RichTextEditorContext';
+import { Position } from './EditorPositioningWrapper';
+import { forceToBlurActiveElement } from './helpers';
+import { useEditorState } from './hooks';
+import { GAP_DEFAULT, KEY_ELEMENT_BREAK_AFTER_COLUMN, PluginComposer, defaultPlugins } from './Plugins';
+import { DesignTokens, PaddingSizes, TreeOfNodes } from './types';
+import { parseRawValue } from './utils';
+import { defaultDesignTokens } from './utils/defaultDesignTokens';
 
 const PLACEHOLDER_STYLES: RenderPlaceholderProps['attributes']['style'] = {
     position: 'relative',
@@ -30,11 +30,6 @@ export type RichTextEditorProps = {
     padding?: PaddingSizes;
     position?: Position;
     plugins?: PluginComposer;
-    layout?: {
-        columns?: React.CSSProperties['columns'];
-        gap?: React.CSSProperties['gap'];
-    };
-    onKeyDown?: (event: KeyboardEvent<HTMLDivElement>, value: TreeOfNodes | null) => void;
     onValueChanged?: (value: TreeOfNodes | null) => void;
     border?: boolean;
     updateValueOnChange?: boolean; // Only set to true when you are sure that performance isn't an issue
@@ -52,9 +47,7 @@ export const RichTextEditor = ({
     position = Position.FLOATING,
     plugins = defaultPlugins,
     updateValueOnChange = false,
-    onKeyDown,
     onValueChanged,
-    layout,
     border = true,
 }: RichTextEditorProps) => {
     const editorId = useMemoizedId(id);
@@ -66,7 +59,11 @@ export const RichTextEditor = ({
         onValueChanged,
     });
 
-    const editableProps = useRef<EditableProps>({
+    const breakAfterPlugin = plugins.plugins.find((plugin) => plugin.key === KEY_ELEMENT_BREAK_AFTER_COLUMN);
+    const columns = breakAfterPlugin?.options?.columns ?? 1;
+    const columnGap = breakAfterPlugin?.options?.gap ?? GAP_DEFAULT;
+
+    const editableProps: EditableProps = {
         placeholder,
         renderPlaceholder: ({ children, attributes }) => {
             const mergedAttributes = {
@@ -80,41 +77,39 @@ export const RichTextEditor = ({
         },
         readOnly: readonly,
         onBlur: () => onBlur && onBlur(JSON.stringify(localValue.current)),
-        className: padding,
+        className: `${padding}`,
+        style: {
+            columns,
+            columnGap,
+        },
         onKeyDown: (event) => {
             if (event.code === 'Tab') {
                 // Forcing a blur event because of accessibility
                 forceToBlurActiveElement();
             }
-
-            onKeyDown && onKeyDown(event, localValue.current);
         },
-    });
+    };
 
     return (
         <RichTextEditorProvider
             value={{
                 designTokens,
                 position,
-                style: {
-                    display: 'block',
-                    columns: layout?.columns,
-                    gap: layout?.gap,
-                },
                 border,
             }}
         >
             <Plate
                 id={editorId}
                 onChange={onChange}
-                editableProps={editableProps.current}
+                editableProps={editableProps}
                 plugins={config.create()}
                 initialValue={memoizedValue}
             >
                 {config.toolbar()}
                 {config.inline()}
-                {updateValueOnChange && <ContentReplacement value={parseRawValue({ editorId, raw: value })} />}
+                {updateValueOnChange && <ContentReplacement value={parseRawValue({ editorId, raw: value, plugins })} />}
             </Plate>
         </RichTextEditorProvider>
     );
 };
+RichTextEditor.displayName = 'FondueRichTextEditor';

@@ -12,20 +12,23 @@ const CLEAR_ICON_ID = '[data-test-id=clear-icon]';
 
 describe('DatePicker Component', () => {
     it('renders text input as part of Datepicker component', () => {
-        cy.mount(<DatePicker />);
+        const onChangeStub = cy.stub().as('onChangeStub');
+        cy.mount(<DatePicker onChange={onChangeStub} />);
 
         cy.get(TEXT_INPUT_ID).should('have.length', 1);
     });
 
     it('renders calendar on text input click', () => {
-        cy.mount(<DatePicker />);
+        const onChangeStub = cy.stub().as('onChangeStub');
+        cy.mount(<DatePicker onChange={onChangeStub} />);
 
         cy.get(OPEN_CLOSE_CLICK_AREA_ID).click();
         cy.get(DATE_PICKER_ID).should('exist');
     });
 
     it('should render cancel icon if isClearable prop is true', () => {
-        cy.mount(<DatePicker isClearable={true} value={new Date()} />);
+        const onChangeStub = cy.stub().as('onChangeStub');
+        cy.mount(<DatePicker onChange={onChangeStub} isClearable={true} value={new Date()} />);
 
         cy.get(OPEN_CLOSE_CLICK_AREA_ID).click();
         cy.get('.react-datepicker__day').first().click();
@@ -42,7 +45,8 @@ describe('DatePicker Component', () => {
     });
 
     it('should close calendar if shouldCloseOnSelect is true, and date is selected', () => {
-        cy.mount(<DatePicker shouldCloseOnSelect={true} />);
+        const onChangeStub = cy.stub().as('onChangeStub');
+        cy.mount(<DatePicker onChange={onChangeStub} shouldCloseOnSelect={true} />);
 
         cy.get(OPEN_CLOSE_CLICK_AREA_ID).click();
         cy.get('.react-datepicker__day').first().click();
@@ -59,13 +63,14 @@ describe('DatePicker Component', () => {
     });
 
     it('only error validation state should show the triangle warning icon', () => {
+        const onChangeStub = cy.stub().as('onChangeStub');
         for (const validationState of Object.values(Validation)) {
             if (validationState === Validation.Error) {
-                cy.mount(<DatePicker validation={validationState} />);
+                cy.mount(<DatePicker onChange={onChangeStub} validation={validationState} />);
                 cy.get(EXCLAMATION_MARK_ICON_ID).should('be.visible');
                 return;
             }
-            cy.mount(<DatePicker validation={validationState} />);
+            cy.mount(<DatePicker onChange={onChangeStub} validation={validationState} />);
             cy.get(TEXT_INPUT_ID).find(EXCLAMATION_MARK_ICON_ID).should('have.length', 0);
         }
     });

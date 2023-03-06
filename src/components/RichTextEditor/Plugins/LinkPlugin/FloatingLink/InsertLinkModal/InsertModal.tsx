@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC } from 'react';
-import { IconCheckMark } from '@foundation/Icon';
+import { ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
 import { Button } from '@components/Button/Button';
 import { Checkbox } from '@components/Checkbox';
 import { FormControl } from '@components/FormControl';
 import { TextInput } from '@components/TextInput';
-import { ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
+import { IconCheckMark20 } from '@foundation/Icon/Generated';
+import React, { FC } from 'react';
 import { InsertModalStateProps } from './types';
 
 type Props = {
@@ -55,7 +55,13 @@ export const InsertModal: FC<Props> = ({
                     required: true,
                 }}
             >
-                <TextInput id="url" value={state.url} placeholder="https://example.com" onChange={onUrlChange} />
+                <TextInput
+                    id="url"
+                    value={state.url}
+                    placeholder="https://example.com"
+                    focusOnMount
+                    onChange={onUrlChange}
+                />
             </FormControl>
             {!isValidUrlOrEmpty() && <div className="tw-text-red-65 tw-mt-3">Please enter a valid URL.</div>}
         </div>
@@ -75,7 +81,7 @@ export const InsertModal: FC<Props> = ({
                 <Button
                     onClick={onSave}
                     size={ButtonSize.Medium}
-                    icon={<IconCheckMark />}
+                    icon={<IconCheckMark20 />}
                     disabled={!isValidUrlOrEmpty() || !hasValues}
                 >
                     Save

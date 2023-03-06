@@ -16,7 +16,7 @@ import {
     IconExclamationMarkTriangle,
     IconEye,
     IconEyeOff,
-} from '@foundation/Icon';
+} from '@foundation/Icon/Generated';
 
 export enum TextInputType {
     Text = 'text',
@@ -276,3 +276,4 @@ export const TextInput: FC<TextInputProps> = ({
         </div>
     );
 };
+TextInput.displayName = 'FondueTextInput';

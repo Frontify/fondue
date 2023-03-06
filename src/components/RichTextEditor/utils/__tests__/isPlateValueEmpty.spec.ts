@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { isPlateValueEmpty } from '../';
+import { isPlateValueEmpty } from '../isPlateValueEmpty';
 
 const emptyValue = [{ type: 'something', children: [{ text: '' }] }];
 

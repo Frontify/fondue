@@ -2,7 +2,7 @@
 
 import { MenuItemContent } from '@components/MenuItem/MenuItemContent';
 import { Trigger } from '@components/Trigger/Trigger';
-import IconDroplet from '@foundation/Icon/Generated/IconDroplet';
+import { IconDroplet } from '@foundation/Icon/Generated';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { useFocusRing } from '@react-aria/focus';
@@ -48,6 +48,7 @@ export const ColorInputTrigger: FC<ColorInputTriggerProps> = ({
                 {...focusProps}
                 type="button"
                 id={useMemoizedId(id)}
+                disabled={disabled}
                 className={merge([
                     'tw-overflow-hidden tw-flex-auto tw-h-full tw-rounded tw-text-left tw-outline-none tw-py-2 tw-pl-3 tw-min-h-[34px] tw-pr-7',
                     !currentColor && 'tw-text-black-60',
@@ -78,3 +79,4 @@ export const ColorInputTrigger: FC<ColorInputTriggerProps> = ({
         </Trigger>
     );
 };
+ColorInputTrigger.displayName = 'FondueColorInputTrigger';

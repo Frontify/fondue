@@ -2,7 +2,8 @@
 
 import React, { MouseEvent, PropsWithChildren, useEffect, useState } from 'react';
 import { merge } from '@utilities/merge';
-import { IconCaretRight, IconCheckMark, IconSize } from '@foundation/Icon';
+import { IconCaretRight, IconCheckMark } from '@foundation/Icon/Generated';
+import { IconSize } from '@foundation/Icon/IconSize';
 import { MenuItemContent, MenuItemContentProps } from '@components/MenuItem/MenuItemContent';
 import { MenuItemContentSize, MenuItemStyle, SelectionIndicatorIcon } from './types';
 import { getItemElementType } from '@utilities/elements';
@@ -16,7 +17,7 @@ export type MenuItemProps = {
     /** @deprecated this prop is not being used anymore */
     type?: string;
     link?: string;
-    onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
+    onClick?: <T extends HTMLButtonElement | HTMLAnchorElement>(event: MouseEvent<T>) => void;
 } & Omit<MenuItemContentProps, 'iconSize'>;
 
 export const menuItemSizeClassMap: Record<MenuItemContentSize, string> = {
@@ -116,7 +117,7 @@ export const MenuItem = ({
                     ])}
                 >
                     {mainElementType === 'a' && (
-                        <a href={link} className={ITEM_BASE_CLASSES}>
+                        <a href={link} className={ITEM_BASE_CLASSES} onClick={onClick}>
                             {children}
                         </a>
                     )}
@@ -156,3 +157,4 @@ export const MenuItem = ({
         </>
     );
 };
+MenuItem.displayName = 'FondueMenuItem';
