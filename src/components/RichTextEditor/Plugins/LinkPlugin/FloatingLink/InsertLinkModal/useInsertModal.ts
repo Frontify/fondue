@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { Dispatch, Reducer, useEffect, useReducer } from 'react';
+import { CheckboxState } from '@components/Checkbox';
+import { InternalLinkDocumentLoader } from '@components/RichTextEditor/Plugins/types';
 import {
     ELEMENT_LINK,
     LinkPlugin,
@@ -11,8 +12,8 @@ import {
     useEditorRef,
     useHotkeys,
 } from '@udecode/plate';
+import React, { Dispatch, Reducer, useEffect, useReducer } from 'react';
 import { getLegacyUrl, getUrl } from '../../utils';
-import { CheckboxState } from '@components/Checkbox';
 import { InsertModalDispatchType, InsertModalStateProps } from './types';
 
 const initialState: InsertModalStateProps = {
@@ -112,6 +113,11 @@ export const useInsertModal = () => {
         return !state.url || (isUrl && isUrl(state.url));
     };
 
+    const { loadInternalLinkDocument } = getPluginOptions<{ loadInternalLinkDocument: InternalLinkDocumentLoader }>(
+        editor,
+        ELEMENT_LINK,
+    );
+
     useHotkeys(
         'enter',
         onSave,
@@ -121,5 +127,15 @@ export const useInsertModal = () => {
         [],
     );
 
-    return { state, onTextChange, onUrlChange, onToggleTab, onCancel, onSave, hasValues, isValidUrlOrEmpty };
+    return {
+        state,
+        onTextChange,
+        onUrlChange,
+        onToggleTab,
+        onCancel,
+        onSave,
+        hasValues,
+        isValidUrlOrEmpty,
+        loadInternalLinkDocument,
+    };
 };

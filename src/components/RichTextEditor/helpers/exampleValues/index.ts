@@ -2,3 +2,4 @@
 
 export * from './exampleValues';
 export * from './mentionable';
+export * from './internalLinks';

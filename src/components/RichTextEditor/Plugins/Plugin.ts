@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { AnyObject, PlatePlugin } from '@udecode/plate';
-import { InlineData, PluginButton } from './types';
 import { Position } from '../EditorPositioningWrapper';
 import type { MarkupElement } from './MarkupElement';
+import { InlineData, InternalLinkDocumentLoader, PluginButton } from './types';
 
 export type PluginProps = {
     id?: string;
@@ -14,6 +14,7 @@ export type PluginProps = {
     showIn?: Position[];
     columns?: number;
     gap?: string | number;
+    loadInternalLinkDocument?: InternalLinkDocumentLoader;
 };
 
 export abstract class Plugin<P extends PluginProps = PluginProps> {

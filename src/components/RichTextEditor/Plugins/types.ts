@@ -44,3 +44,28 @@ export interface ToolbarButtons {
     createGroupOfButtons: (plugins: Plugin[]) => void;
     at(position: Position): Buttons;
 }
+
+export type InternalLinkDocumentLoader = () => Promise<InternalLinkDocument>;
+
+type InternalLinkSection = {
+    title: string;
+    url: string;
+};
+
+type InternalLinkPage = {
+    title: string;
+    url: string;
+    sections: InternalLinkSection[];
+};
+
+type InternalLinkCategory = {
+    title: string;
+    url: string;
+    pages: InternalLinkPage[];
+};
+
+export type InternalLinkDocument = {
+    documentTitle: string;
+    url: string;
+    categories: InternalLinkCategory[];
+};

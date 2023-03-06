@@ -11,6 +11,7 @@ import {
     customDesignTokens,
     defaultValue,
     htmlValue,
+    internalDocumentLinksExample,
     markdownText,
     mentionValue,
     mentionable,
@@ -107,7 +108,9 @@ allPlugins
             new ItalicPlugin(),
             new UnderlinePlugin(),
             new StrikethroughPlugin(),
-            new LinkPlugin(),
+            new LinkPlugin({
+                loadInternalLinkDocument: () => new Promise((resolve) => resolve(internalDocumentLinksExample)),
+            }),
             new ButtonPlugin(),
             new CodePlugin(),
             new BreakAfterPlugin(),
