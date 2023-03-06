@@ -253,7 +253,7 @@ export const TreeItem = ({
                     onMouseEnter={handleMouseEnter}
                     onMouseLeave={handleMouseLeave}
                 >
-                    <div className="tw-flex tw-flex-1 tw-space-x-1 tw-items-center tw-h-6">
+                    <div className="tw-flex tw-flex-1 tw-space-x-1 tw-items-center tw-h-6 tw-min-w-0">
                         <div className="tw-w-2 tw-h-3 tw-flex tw-items-center tw-justify-center">
                             {hasChildren && (
                                 <button
