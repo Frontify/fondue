@@ -4,22 +4,25 @@ import { IconCross } from '@foundation/Icon/Generated';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import React, { FC, ReactNode, cloneElement } from 'react';
+import React, { ForwardedRef, ReactNode, cloneElement, forwardRef } from 'react';
 import { BadgeStatusIcon } from './BadgeStatusIcon';
 import { getCircularSizeClasses, getSizeClasses, getStyleClasses } from './helpers';
 import { BadgeEmphasis, BadgeProps, BadgeStyle } from './types';
 
-export const Badge: FC<BadgeProps> = ({
-    children,
-    status,
-    icon,
-    style = BadgeStyle.Primary,
-    size = 'medium',
-    emphasis = BadgeEmphasis.None,
-    disabled = false,
-    onClick,
-    onDismiss,
-}) => {
+export const BadgeComponent = <T extends BadgeProps>(
+    {
+        children,
+        status,
+        icon,
+        style = BadgeStyle.Primary,
+        size = 'medium',
+        emphasis = BadgeEmphasis.None,
+        disabled = false,
+        onClick,
+        onDismiss,
+    }: T,
+    ref: ForwardedRef<T extends { onClick: never } ? HTMLSpanElement : HTMLButtonElement>,
+) => {
     if (!children && !icon && !status) {
         return null;
     }
@@ -64,6 +67,7 @@ export const Badge: FC<BadgeProps> = ({
                 ])}
                 data-test-id="badge-button"
                 title={badgeTitle}
+                ref={ref}
             >
                 {status && <BadgeStatusIcon status={status} disabled={disabled} />}
                 {icon && (
@@ -102,4 +106,6 @@ export const Badge: FC<BadgeProps> = ({
         </div>
     );
 };
+
+export const Badge = forwardRef(BadgeComponent);
 Badge.displayName = 'FondueBadge';
