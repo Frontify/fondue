@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { CheckboxState } from '@components/Checkbox';
-import { InternalLinkDocumentLoader } from '@components/RichTextEditor/Plugins/types';
+import { InternalLinksLoader } from '@components/RichTextEditor/Plugins/types';
 import {
     ELEMENT_LINK,
     LinkPlugin,
@@ -113,10 +113,7 @@ export const useInsertModal = () => {
         return !state.url || (isUrl && isUrl(state.url));
     };
 
-    const { loadInternalLinkDocument } = getPluginOptions<{ loadInternalLinkDocument: InternalLinkDocumentLoader }>(
-        editor,
-        ELEMENT_LINK,
-    );
+    const { loadInternalLinks } = getPluginOptions<{ loadInternalLinks: InternalLinksLoader }>(editor, ELEMENT_LINK);
 
     useHotkeys(
         'enter',
@@ -136,6 +133,6 @@ export const useInsertModal = () => {
         onSave,
         hasValues,
         isValidUrlOrEmpty,
-        loadInternalLinkDocument,
+        loadInternalLinks,
     };
 };

@@ -109,7 +109,7 @@ allPlugins
             new UnderlinePlugin(),
             new StrikethroughPlugin(),
             new LinkPlugin({
-                loadInternalLinkDocument: () => new Promise((resolve) => resolve(internalDocumentLinksExample)),
+                loadInternalLinks: () => new Promise((resolve) => resolve(internalDocumentLinksExample)),
             }),
             new ButtonPlugin(),
             new CodePlugin(),
