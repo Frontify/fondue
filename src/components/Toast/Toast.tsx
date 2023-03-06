@@ -30,6 +30,8 @@ export const Toast = ({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: getToastStartPosition(animationDirection) }}
                 data-test-id="toast"
+                aria-live="polite"
+                role="alert"
             >
                 <div className="tw-flex">
                     <div

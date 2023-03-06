@@ -11,6 +11,18 @@ export default {
     title: 'Components/Toast',
     component: ToastComponent,
     tags: ['autodocs'],
+    argTypes: {
+        style: {
+            options: Object.values(ToastStyle),
+            control: { type: 'select' },
+            defaultValue: ToastStyle.Loud,
+        },
+        animationDirection: {
+            options: Object.values(ToastAnimationDirection),
+            control: { type: 'select' },
+            defaultValue: ToastAnimationDirection.BottomToTop,
+        },
+    },
 } as Meta;
 
 const WithLeftBottomContainer: StoryFn<ToastProps> = (args) => (
