@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ELEMENT_PARAGRAPH, createAlignPlugin } from '@udecode/plate';
+import { ELEMENT_LIC, ELEMENT_PARAGRAPH, createAlignPlugin } from '@udecode/plate';
 import { Plugin } from '../Plugin';
 import { TextStyles } from '../TextStylePlugin/TextStyles';
 
@@ -22,6 +22,7 @@ export class AlignPlugin extends Plugin {
                             TextStyles.ELEMENT_IMAGE_CAPTION,
                             TextStyles.ELEMENT_IMAGE_TITLE,
                             TextStyles.ELEMENT_QUOTE,
+                            ELEMENT_LIC,
                         ],
                     },
                 },
