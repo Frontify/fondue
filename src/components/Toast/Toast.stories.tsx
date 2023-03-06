@@ -22,6 +22,8 @@ export default {
             control: { type: 'select' },
             defaultValue: ToastAnimationDirection.BottomToTop,
         },
+        icon: { table: { disable: true } },
+        children: { table: { disable: true } },
     },
 } as Meta;
 
