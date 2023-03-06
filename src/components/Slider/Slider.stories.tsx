@@ -15,6 +15,8 @@ export default {
         max: { type: 'number' },
         step: { type: 'number' },
         stepMultiplier: { type: 'number' },
+        label: { type: 'string' },
+        ['aria-label']: { type: 'string' },
         valueSuffix: { type: 'string' },
         showMinMax: { type: 'boolean' },
         onChange: { action: 'Value change' },
