@@ -238,8 +238,9 @@ export const Tooltip = ({
     };
 
     useEffect(() => {
-        setIsOpen(open);
-    }, [open]);
+        const shouldHideTooltip = disabled || hidden;
+        setIsOpen(shouldHideTooltip ? false : open);
+    }, [open, disabled, hidden]);
 
     useLayoutEffect(() => {
         if (typeof popperInstance.update === 'function' && isOpen) {
