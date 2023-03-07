@@ -13,7 +13,7 @@ export const linkNode = (node: TElement, children: string, designTokens: DesignT
             chosenLink?.openInNewTab ? '_blank' : '_self'
         } href="${escapeHtml(chosenLink?.searchResult?.link)}">${children}</a>`;
     }
-    return `<a class="${defaultClassNames}" style="${reactCssPropsToCss(designTokens.link)}" href="${escapeHtml(
-        node.url as string,
-    )}">${children}</a>`;
+    return `<a class="${defaultClassNames}" style="${reactCssPropsToCss(designTokens.link)}" target="${
+        node?.target ?? '_self'
+    }" href="${escapeHtml(node.url as string)}">${children}</a>`;
 };
