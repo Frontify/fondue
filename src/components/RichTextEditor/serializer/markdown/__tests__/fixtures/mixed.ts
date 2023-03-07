@@ -183,5 +183,5 @@ export const mixedTree = [
     },
 
     ...unorderedListTree[0],
-    ...orderedListTree,
+    ...orderedListTree[0],
 ];

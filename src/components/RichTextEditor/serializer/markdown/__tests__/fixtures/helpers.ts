@@ -7,6 +7,7 @@ const createListElement = <T>(type: string, children: Array<T>) => {
     };
 };
 
+export const createOL = <T>(children: Array<T>) => createListElement('ol', children);
 export const createUL = <T>(children: Array<T>) => createListElement('ul', children);
 
 export const createLI = <T>(children: Array<T>) => createListElement('li', children);

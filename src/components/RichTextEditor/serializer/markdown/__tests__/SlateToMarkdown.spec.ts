@@ -75,8 +75,16 @@ describe('Slate To Markdown transformer', () => {
     });
 
     it('should transform ordered list', () => {
-        const result = transformer.process(orderedListTree);
-        expect(result).to.deep.equal(orderedListMarkdown);
+        const result = transformer.process(orderedListTree[0]);
+        expect(result).to.deep.equal(orderedListMarkdown[0]);
+    });
+
+    it('should transform ordered list with child LIC', () => {
+        let result = transformer.process(orderedListTree[1]);
+        expect(result).to.deep.equal(orderedListMarkdown[1]);
+
+        result = transformer.process(orderedListTree[2]);
+        expect(result).to.deep.equal(orderedListMarkdown[2]);
     });
 
     it('should transform hr', () => {
