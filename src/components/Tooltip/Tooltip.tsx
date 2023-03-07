@@ -297,7 +297,7 @@ export const Tooltip = ({
                                 {cloneElement(tooltipIcon, { size: IconSize.Size16 })}
                             </span>
                         )}
-                        <p className="tw-text-s tw-min-w-0 tw-break-words">{content}</p>
+                        <span className="tw-text-s tw-min-w-0 tw-break-words">{content}</span>
                     </div>
                     {linkUrl && (
                         <a
