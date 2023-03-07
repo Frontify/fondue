@@ -59,8 +59,19 @@ describe('Slate To Markdown transformer', () => {
     });
 
     it('should transform unordered list', () => {
-        const result = transformer.process(unorderedListTree);
-        expect(result).to.deep.equal(unorderedListMarkdown);
+        const result = transformer.process(unorderedListTree[0]);
+        expect(result).to.deep.equal(unorderedListMarkdown[0]);
+    });
+
+    it('should transform unordered list with child LIC', () => {
+        let result = transformer.process(unorderedListTree[1]);
+        expect(result).to.deep.equal(unorderedListMarkdown[1]);
+
+        result = transformer.process(unorderedListTree[2]);
+        expect(result).to.deep.equal(unorderedListMarkdown[2]);
+
+        result = transformer.process(unorderedListTree[3]);
+        expect(result).to.deep.equal(unorderedListMarkdown[3]);
     });
 
     it('should transform ordered list', () => {
