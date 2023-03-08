@@ -204,7 +204,7 @@ describe('Tooltip Component', () => {
         cy.get('button').should('be.focused').and('contain', 'Secondary');
     });
 
-    it('should render but not display the tooltip content when hidden', () => {
+    it('should render but not display the tooltip content when disabled', () => {
         initTooltip(
             {
                 content: TOOLTIP_TEXT,
