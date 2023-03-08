@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Meta, StoryFn } from '@storybook/react';
-import { Dialog, DialogPosition, DialogProps } from '@components/Dialog';
+import { Dialog, DialogProps } from '@components/Dialog';
 import { DialogHeader, DialogHeaderSize } from '@components/DialogHeader';
 import { DialogFooter } from '@components/DialogFooter';
 import { Button } from '@components/Button';
@@ -13,25 +13,16 @@ import { IconExclamationMarkCircle } from '@foundation/Icon';
 export default {
     title: 'Components/Dialog',
     component: Dialog,
-    args: {
-        flip: false,
-    },
-    argTypes: {
-        position: {
-            options: Object.values(DialogPosition),
-            control: { type: 'select' },
-            defaultValue: DialogPosition.BottomStart,
-        },
-    },
+    tags: ['autodocs'],
 } as Meta<DialogProps>;
 
-const Template: StoryFn<DialogProps> = (args) => {
+const Template: StoryFn<DialogProps> = () => {
     const [isOpen, setIsOpen] = useState(false);
     return (
         <>
             <Button onClick={() => setIsOpen(!isOpen)}>Button</Button>
             {isOpen && (
-                <Dialog {...args}>
+                <Dialog>
                     <DialogHeader
                         title="Collaborator Settings"
                         close={true}
@@ -73,10 +64,10 @@ const Template: StoryFn<DialogProps> = (args) => {
                     </div>
                     <DialogFooter
                         buttons={[
-                            { label: 'Cancel', action: () => setIsOpen(false) },
+                            { children: 'Cancel', onClick: () => setIsOpen(false) },
                             {
-                                label: 'Confirm',
-                                action: () => console.log('confirm'),
+                                children: 'Confirm',
+                                onClick: () => console.log('confirm'),
                             },
                         ]}
                     ></DialogFooter>

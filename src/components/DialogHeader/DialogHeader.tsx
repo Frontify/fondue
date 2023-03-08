@@ -2,8 +2,7 @@
 
 import React, { ReactElement } from 'react';
 import { merge } from '@utilities/merge';
-import { IconCross } from '@foundation/Icon';
-import { Badge, BadgeProps } from '@components/Badge';
+import { IconCross } from '@foundation/Icon/Generated';
 
 export type DialogHeaderProps = {
     title: string;
@@ -12,7 +11,7 @@ export type DialogHeaderProps = {
     close?: boolean;
     onClose?: () => void;
     icon?: ReactElement;
-    badge?: BadgeProps;
+    badge?: ReactElement;
 };
 
 export enum DialogHeaderSize {
@@ -31,11 +30,11 @@ export const DialogHeader = ({
 }: DialogHeaderProps) => {
     return (
         <div
-            data-test-id="dialog-header"
+            data-test-id="fondue-dialog-header"
             className={merge([
-                'tw-px-6 tw-flex tw-items-center',
+                'tw-px-6 tw-flex tw-items-center tw-border-b tw-border-b-line',
                 size === DialogHeaderSize.Large ? 'tw-py-6' : 'tw-py-4',
-                !collapseBottom && 'tw-border-b tw-border-b-line',
+                collapseBottom && 'tw-pb-0 tw-border-none',
             ])}
         >
             <div className="tw-flex tw-items-center">
@@ -48,7 +47,7 @@ export const DialogHeader = ({
                 >
                     {title}
                 </p>
-                {badge && <Badge {...badge} />}
+                {badge}
             </div>
             {close && (
                 <button onClick={onClose} className="tw-absolute tw-right-12">
@@ -58,3 +57,5 @@ export const DialogHeader = ({
         </div>
     );
 };
+
+DialogHeader.displayName = 'FondueDialogHeader';

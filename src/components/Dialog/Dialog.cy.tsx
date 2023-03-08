@@ -1,16 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from "react";
-import { Dialog } from "./Dialog";
+import React from 'react';
+import { Dialog } from './Dialog';
 
-const Dialog_FOO = "bar";
+const Dialog_SELECTOR = '[data-test-id=fondue-dialog]';
 
-describe("Dialog Component", () => {
-    it("should render foo text correctly", () => {
-        cy.mount(<Dialog foo={Dialog_FOO} />);
+describe('Dialog Component', () => {
+    it('should render', () => {
+        cy.mount(
+            <Dialog>
+                <p>Hello!</p>
+            </Dialog>,
+        );
 
-        cy.get("[data-test-id=dialog]").as("Dialog");
-
-        cy.get("@Dialog").contains(Dialog_FOO);
+        cy.get(Dialog_SELECTOR).should('exist');
     });
 });

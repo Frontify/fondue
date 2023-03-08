@@ -1,16 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from "react";
-import { DialogFooter } from "./DialogFooter";
+import React from 'react';
+import { DialogFooter } from './DialogFooter';
 
-const DialogFooter_FOO = "bar";
+const DIALOG_FOOTER_SELECTOR = '[data-test-id=fondue-dialog-footer]';
 
-describe("DialogFooter Component", () => {
-    it("should render foo text correctly", () => {
-        cy.mount(<DialogFooter foo={DialogFooter_FOO} />);
+describe('DialogHeader Component', () => {
+    it('should render', () => {
+        cy.mount(<DialogFooter buttons={[{ children: 'Confirm', onClick: () => console.log('confirm') }]} />);
 
-        cy.get("[data-test-id=dialog-footer]").as("DialogFooter");
-
-        cy.get("@DialogFooter").contains(DialogFooter_FOO);
+        cy.get(DIALOG_FOOTER_SELECTOR).should('exist');
     });
 });

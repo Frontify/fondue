@@ -1,16 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from "react";
-import { DialogHeader } from "./DialogHeader";
+import React from 'react';
+import { DialogHeader } from './DialogHeader';
 
-const DialogHeader_FOO = "bar";
+const DIALOG_HEADER_SELECTOR = '[data-test-id=fondue-dialog-header]';
 
-describe("DialogHeader Component", () => {
-    it("should render foo text correctly", () => {
-        cy.mount(<DialogHeader foo={DialogHeader_FOO} />);
+describe('DialogHeader Component', () => {
+    it('should render foo text correctly', () => {
+        cy.mount(<DialogHeader title="Hello" />);
 
-        cy.get("[data-test-id=dialog-header]").as("DialogHeader");
-
-        cy.get("@DialogHeader").contains(DialogHeader_FOO);
+        cy.get(DIALOG_HEADER_SELECTOR).should('exist');
     });
 });
