@@ -235,17 +235,25 @@ export const Tooltip = ({
         }
     }, []);
 
+    const handleCloseIfFocusedOutside = useCallback(
+        (event: FocusEvent<HTMLElement>) => {
+            const { relatedTarget } = event;
+            const elements = [tooltipContainerRef, triggerElementContainerRef];
+
+            if (!relatedTarget || !elements.some((element) => element?.contains(relatedTarget))) {
+                setIsOpen(false);
+            }
+        },
+        [tooltipContainerRef, triggerElementContainerRef],
+    );
+
     const triggerEvents: HTMLAttributes<HTMLElement> = shouldPreventTooltipOpening
         ? {}
         : {
               onMouseOver: (event) => checkIfHovered(event.nativeEvent),
               onMouseLeave: handleHideTooltipOnHover,
               onFocus: () => setIsOpen(true),
-              onBlur: (event: FocusEvent) => {
-                  if (!tooltipContainerRef?.contains(event.relatedTarget)) {
-                      setIsOpen(false);
-                  }
-              },
+              onBlur: handleCloseIfFocusedOutside,
               onKeyDown: handleCloseTooltipOnEscape,
           };
 
@@ -256,6 +264,7 @@ export const Tooltip = ({
               onMouseOver: (event) => checkIfHovered(event.nativeEvent),
               onMouseLeave: handleHideTooltipOnHover,
               onKeyDown: handleCloseTooltipOnEscape,
+              onBlur: handleCloseIfFocusedOutside,
           };
 
     useEffect(() => {
@@ -329,7 +338,6 @@ export const Tooltip = ({
                                 'tw-text-xs tw-text-black-40 dark:tw-text-black-80 tw-underline tw-mt-1',
                                 FOCUS_VISIBLE_STYLE,
                             ])}
-                            onBlur={() => (buttons && buttons.length > 0 ? null : setIsOpen(false))}
                         >
                             {linkLabel ?? 'Click here to learn more.'}
                         </a>
@@ -337,30 +345,26 @@ export const Tooltip = ({
                     {buttons && (
                         <div className="tw-flex tw-flex-row-reverse tw-gap-x-1 tw-mt-4">
                             {buttons.length > 0 && (
-                                <div onBlur={() => (buttons && buttons.length < 2 ? setIsOpen(false) : null)}>
-                                    <Button
-                                        style={ButtonStyle.Default}
-                                        emphasis={ButtonEmphasis.Strong}
-                                        size={ButtonSize.Small}
-                                        onClick={buttons[0].action}
-                                        disabled={shouldPreventTooltipOpening}
-                                    >
-                                        {buttons[0].label}
-                                    </Button>
-                                </div>
+                                <Button
+                                    style={ButtonStyle.Default}
+                                    emphasis={ButtonEmphasis.Strong}
+                                    size={ButtonSize.Small}
+                                    onClick={buttons[0].action}
+                                    disabled={shouldPreventTooltipOpening}
+                                >
+                                    {buttons[0].label}
+                                </Button>
                             )}
                             {buttons.length === 2 && (
-                                <div onBlur={() => setIsOpen(false)}>
-                                    <Button
-                                        style={ButtonStyle.Default}
-                                        emphasis={ButtonEmphasis.Default}
-                                        size={ButtonSize.Small}
-                                        onClick={buttons[1].action}
-                                        disabled={shouldPreventTooltipOpening}
-                                    >
-                                        {buttons[1].label}
-                                    </Button>
-                                </div>
+                                <Button
+                                    style={ButtonStyle.Default}
+                                    emphasis={ButtonEmphasis.Default}
+                                    size={ButtonSize.Small}
+                                    onClick={buttons[1].action}
+                                    disabled={shouldPreventTooltipOpening}
+                                >
+                                    {buttons[1].label}
+                                </Button>
                             )}
                         </div>
                     )}
