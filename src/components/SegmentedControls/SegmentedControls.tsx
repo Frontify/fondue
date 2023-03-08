@@ -120,13 +120,13 @@ export const SegmentedControls: FC<SegmentedControlsProps> = ({
     const radioGroupState = useRadioGroupState(groupProps);
     const { radioGroupProps } = useRadioGroup(groupProps, radioGroupState);
     const itemElements = useMemo(() => {
-        return items.map((item, i) => (
+        return items.map((item) => (
             <SegmentedControlsItem
                 id={id}
                 item={item}
                 disabled={disabled}
                 radioGroupState={radioGroupState}
-                key={`fondue-segmented-controls-${id}-item-${i}`}
+                key={`fondue-segmented-controls-${id}-item-${item.id}`}
             />
         ));
     }, [items, id, disabled, radioGroupState]);
