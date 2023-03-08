@@ -8,6 +8,7 @@ import { merge } from '@utilities/merge';
 import React, {
     FocusEvent,
     HTMLAttributes,
+    KeyboardEvent,
     PropsWithChildren,
     ReactChild,
     ReactElement,
@@ -153,7 +154,9 @@ export const Tooltip = ({
         null,
     );
     const linkRef = useRef<HTMLAnchorElement | null>(null);
-    const { linkProps } = useLink({}, linkRef);
+
+    const shouldPreventTooltipOpening = hidden || disabled;
+    const { linkProps } = useLink({ isDisabled: shouldPreventTooltipOpening }, linkRef);
     const hasLargePaddingTop = useMemo(
         () => linkUrl || brightHeader || buttons || heading || headingIcon,
         [linkUrl, brightHeader, buttons, heading, headingIcon],
@@ -226,20 +229,38 @@ export const Tooltip = ({
         [handleShowTooltipOnHover, triggerElementRef, triggerElementContainerRef, tooltipContainerRef],
     );
 
-    const triggerProps: HTMLAttributes<HTMLElement> = {
-        onMouseOver: (event) => checkIfHovered(event.nativeEvent),
-        onMouseLeave: handleHideTooltipOnHover,
-        onFocus: () => setIsOpen(true),
-        onBlur: (event: FocusEvent) => {
-            if (!tooltipContainerRef?.contains(event.relatedTarget)) {
-                setIsOpen(false);
-            }
-        },
-    };
+    const handleCloseTooltipOnEscape = useCallback((event: KeyboardEvent<HTMLElement>) => {
+        if (event.key === 'Escape') {
+            setIsOpen(false);
+        }
+    }, []);
+
+    const triggerEvents: HTMLAttributes<HTMLElement> = shouldPreventTooltipOpening
+        ? {}
+        : {
+              onMouseOver: (event) => checkIfHovered(event.nativeEvent),
+              onMouseLeave: handleHideTooltipOnHover,
+              onFocus: () => setIsOpen(true),
+              onBlur: (event: FocusEvent) => {
+                  if (!tooltipContainerRef?.contains(event.relatedTarget)) {
+                      setIsOpen(false);
+                  }
+              },
+              onKeyDown: handleCloseTooltipOnEscape,
+          };
+
+    const tooltipEvents: HTMLAttributes<HTMLElement> = shouldPreventTooltipOpening
+        ? {}
+        : {
+              onFocus: () => setIsOpen(true),
+              onMouseOver: (event) => checkIfHovered(event.nativeEvent),
+              onMouseLeave: handleHideTooltipOnHover,
+              onKeyDown: handleCloseTooltipOnEscape,
+          };
 
     useEffect(() => {
-        setIsOpen(open);
-    }, [open]);
+        setIsOpen(shouldPreventTooltipOpening ? false : open);
+    }, [open, shouldPreventTooltipOpening]);
 
     useLayoutEffect(() => {
         if (typeof popperInstance.update === 'function' && isOpen) {
@@ -250,7 +271,7 @@ export const Tooltip = ({
 
     return (
         <>
-            <div {...triggerProps} ref={setTriggerElementContainerRef}>
+            <div {...triggerEvents} ref={setTriggerElementContainerRef}>
                 {triggerElement &&
                     cloneElement(triggerElement, {
                         ref: setTriggerElementRef,
@@ -261,7 +282,6 @@ export const Tooltip = ({
                 ref={setTooltipContainerRef}
                 className={merge([
                     'tw-popper-container tw-inline-block tw-max-w-[200px] tw-bg-black-100 dark:tw-bg-white tw-rounded-md tw-shadow-mid tw-text-white dark:tw-text-black-100 tw-z-[120000]',
-                    (hidden || disabled) && 'tw-hidden',
                     !isOpen && 'tw-opacity-0 tw-h-0 tw-w-0 tw-overflow-hidden',
                 ])}
                 data-test-id="tooltip"
@@ -269,9 +289,7 @@ export const Tooltip = ({
                 id={id}
                 style={popperInstance.styles.popper}
                 {...popperInstance.attributes.popper}
-                onFocus={() => setIsOpen(true)}
-                onMouseOver={(event) => checkIfHovered(event.nativeEvent)}
-                onMouseLeave={handleHideTooltipOnHover}
+                {...tooltipEvents}
             >
                 {brightHeader && <BrightHeader headerStyle={brightHeader} />}
                 <div
@@ -325,6 +343,7 @@ export const Tooltip = ({
                                         emphasis={ButtonEmphasis.Strong}
                                         size={ButtonSize.Small}
                                         onClick={buttons[0].action}
+                                        disabled={shouldPreventTooltipOpening}
                                     >
                                         {buttons[0].label}
                                     </Button>
@@ -337,6 +356,7 @@ export const Tooltip = ({
                                         emphasis={ButtonEmphasis.Default}
                                         size={ButtonSize.Small}
                                         onClick={buttons[1].action}
+                                        disabled={shouldPreventTooltipOpening}
                                     >
                                         {buttons[1].label}
                                     </Button>
