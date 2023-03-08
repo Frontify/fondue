@@ -2,9 +2,8 @@
 
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { merge } from '@utilities/merge';
-import React, { Children, isValidElement, ReactNode, useState } from 'react';
+import React, { Children, isValidElement, ReactNode, useEffect, useState } from 'react';
 import { RadioButtonEmphasis, RadioButtonProps } from './RadioButton';
-import { Text } from '@typography/Text';
 
 export enum RadioListDirection {
     Horizontal = 'Horizontal',
@@ -13,7 +12,7 @@ export enum RadioListDirection {
 
 export type RadioListProps = {
     children: ReactNode;
-    onChange: (value: string) => void;
+    onChange?: (value: string) => void;
     direction?: RadioListDirection;
     defaultValue?: string;
 };
@@ -55,7 +54,9 @@ export const RadioList = ({
                             ])}
                             onChange={() => {
                                 setActiveValue(radioButtons[index].value);
-                                onChange(radioButtons[index].value);
+                                if (onChange) {
+                                    onChange(radioButtons[index].value);
+                                }
                             }}
                         />
                         {!radio.hideLabel && (

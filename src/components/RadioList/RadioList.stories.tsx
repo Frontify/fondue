@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { action } from '@storybook/addon-actions';
 import { Meta, StoryFn } from '@storybook/react';
 import React from 'react';
@@ -24,13 +26,7 @@ export default {
 
 const DefaultTemplate: StoryFn<RadioListProps> = (args: RadioListProps) => {
     return (
-        <RadioList
-            direction={args.direction}
-            onChange={(val) => {
-                //
-            }}
-            defaultValue="Rib Eye"
-        >
+        <RadioList direction={args.direction} defaultValue="Rib Eye">
             <RadioButton value="Rib Eye" />
             <RadioButton value="T-Bone" />
             <RadioButton value="NY Strip" />
@@ -42,13 +38,7 @@ export const Default = DefaultTemplate.bind({});
 
 const WeakEmphasisRadioButtons: StoryFn<RadioListProps> = (args: RadioListProps) => {
     return (
-        <RadioList
-            direction={args.direction}
-            onChange={(val) => {
-                //
-            }}
-            defaultValue="Rib Eye"
-        >
+        <RadioList direction={args.direction} defaultValue="Rib Eye">
             <RadioButton value="Rib Eye" emphasis={RadioButtonEmphasis.Weak} />
             <RadioButton value="T-Bone" emphasis={RadioButtonEmphasis.Weak} />
             <RadioButton value="NY Strip" />
@@ -60,13 +50,7 @@ WithWeakEmphasisRadioButtons.storyName = 'Weak emphasis radio buttons';
 
 const DisabledRadioButton: StoryFn<RadioListProps> = (args: RadioListProps) => {
     return (
-        <RadioList
-            direction={args.direction}
-            onChange={(val) => {
-                //
-            }}
-            defaultValue="T-Bone"
-        >
+        <RadioList direction={args.direction} defaultValue="T-Bone">
             <RadioButton value="Rib Eye" disabled />
             <RadioButton value="T-Bone" />
             <RadioButton value="NY Strip" />
@@ -78,13 +62,7 @@ WithDisabledRadioButton.storyName = 'Disabled radio button';
 
 const HelperTextRadioButton: StoryFn<RadioListProps> = (args: RadioListProps) => {
     return (
-        <RadioList
-            direction={args.direction}
-            onChange={(val) => {
-                //
-            }}
-            defaultValue="Rib Eye"
-        >
+        <RadioList direction={args.direction} defaultValue="Rib Eye">
             <RadioButton value="Rib Eye" helperText="Best steak ever" />
             <RadioButton value="T-Bone" />
             <RadioButton value="NY Strip" />
