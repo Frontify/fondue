@@ -180,6 +180,23 @@ describe('serializeNodeToHtmlRecursive()', () => {
         expect(result).to.match(/<p.*><a.*href="https:\/\/smartive.ch".*>This is also a Link\.<\/a><\/p>/);
     });
 
+    it('serializes link with target blank to html', () => {
+        const node = {
+            type: ELEMENT_PARAGRAPH,
+            children: [
+                {
+                    type: ELEMENT_LINK,
+                    children: [{ text: 'This is a Link.' }],
+                    target: '_blank',
+                    url: 'https://frontify.com',
+                },
+            ],
+        };
+        const result = serializeNodeToHtmlRecursive(node, { designTokens: defaultDesignTokens });
+
+        expect(result).to.match(/<p.*><a.*target="_blank".*href="https:\/\/frontify.com".*>This is a Link\.<\/a><\/p>/);
+    });
+
     it('serializes headings and customs html', () => {
         const node = {
             type: ELEMENT_PARAGRAPH,
