@@ -255,10 +255,12 @@ export const Tooltip = ({
                     cloneElement(triggerElement, {
                         ref: setTriggerElementRef,
                         'aria-describedby': id,
+                        'aria-disabled': disabled ? true : false,
                     })}
             </div>
             <div
                 ref={setTooltipContainerRef}
+                aria-hidden={disabled ? true : false}
                 className={merge([
                     'tw-popper-container tw-inline-block tw-max-w-[200px] tw-bg-black-100 dark:tw-bg-white tw-rounded-md tw-shadow-mid tw-text-white dark:tw-text-black-100 tw-z-[120000]',
                     (hidden || disabled) && 'tw-hidden',
@@ -293,7 +295,11 @@ export const Tooltip = ({
                     )}
                     <div className="tw-flex">
                         {tooltipIcon && (
-                            <span className="tw-shrink-0 tw-mr-1 tw-leading-4">
+                            <span
+                                aria-label="Tooltip trigger icon"
+                                role="button"
+                                className="tw-shrink-0 tw-mr-1 tw-leading-4"
+                            >
                                 {cloneElement(tooltipIcon, { size: IconSize.Size16 })}
                             </span>
                         )}
