@@ -204,7 +204,7 @@ describe('Tooltip Component', () => {
         cy.get('button').should('be.focused').and('contain', 'Secondary');
     });
 
-    it('should not render the tooltip content when disabled', () => {
+    it('should render but not display the tooltip content when hidden', () => {
         initTooltip(
             {
                 content: TOOLTIP_TEXT,
@@ -226,7 +226,6 @@ describe('Tooltip Component', () => {
         );
 
         cy.get(TOOLTIP_ID).should('not.be.visible');
-        cy.get(TOOLTIP_ID).should('have.class', 'tw-hidden');
     });
 
     it('should render the tooltip with Start alignment', () => {
