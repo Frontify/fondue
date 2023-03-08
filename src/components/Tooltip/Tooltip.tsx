@@ -247,7 +247,7 @@ export const Tooltip = ({
         [tooltipContainerRef, triggerElementContainerRef],
     );
 
-    const triggerEvents: HTMLAttributes<HTMLElement> = shouldPreventTooltipOpening
+    const openingEvents: HTMLAttributes<HTMLElement> = shouldPreventTooltipOpening
         ? {}
         : {
               onMouseOver: (event) => checkIfHovered(event.nativeEvent),
@@ -255,16 +255,6 @@ export const Tooltip = ({
               onFocus: () => setIsOpen(true),
               onBlur: handleCloseIfFocusedOutside,
               onKeyDown: handleCloseTooltipOnEscape,
-          };
-
-    const tooltipEvents: HTMLAttributes<HTMLElement> = shouldPreventTooltipOpening
-        ? {}
-        : {
-              onFocus: () => setIsOpen(true),
-              onMouseOver: (event) => checkIfHovered(event.nativeEvent),
-              onMouseLeave: handleHideTooltipOnHover,
-              onKeyDown: handleCloseTooltipOnEscape,
-              onBlur: handleCloseIfFocusedOutside,
           };
 
     useEffect(() => {
@@ -280,7 +270,7 @@ export const Tooltip = ({
 
     return (
         <>
-            <div {...triggerEvents} ref={setTriggerElementContainerRef}>
+            <div {...openingEvents} ref={setTriggerElementContainerRef}>
                 {triggerElement &&
                     cloneElement(triggerElement, {
                         ref: setTriggerElementRef,
@@ -298,7 +288,7 @@ export const Tooltip = ({
                 id={id}
                 style={popperInstance.styles.popper}
                 {...popperInstance.attributes.popper}
-                {...tooltipEvents}
+                {...openingEvents}
             >
                 {brightHeader && <BrightHeader headerStyle={brightHeader} />}
                 <div
