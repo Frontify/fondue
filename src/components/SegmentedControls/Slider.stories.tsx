@@ -3,12 +3,12 @@
 import { IconSize } from '@foundation/Icon/IconSize';
 import { Meta, StoryFn } from '@storybook/react';
 import React, { useState } from 'react';
-import { Slider, SliderProps } from './Slider';
+import { SegmentedControls, SegmentedControlsProps } from './SegmentedControls';
 import { IconTextAlignmentCentre, IconTextAlignmentLeft, IconTextAlignmentRight } from '@foundation/Icon/Generated';
 
 export default {
-    title: 'Components/Slider',
-    component: Slider,
+    title: 'Components/SegmentedControls',
+    component: SegmentedControls,
     tags: ['autodocs'],
     argTypes: {
         id: { type: 'string' },
@@ -16,14 +16,14 @@ export default {
     args: {
         disabled: false,
     },
-} as Meta<SliderProps>;
+} as Meta<SegmentedControlsProps>;
 
-const SliderTemplate: StoryFn<SliderProps> = (args: SliderProps) => {
+const SegmentedControlsTemplate: StoryFn<SegmentedControlsProps> = (args: SegmentedControlsProps) => {
     const [activeItemId, setActiveItemId] = useState(args.items[0].id);
-    return <Slider {...args} activeItemId={activeItemId} onChange={setActiveItemId} />;
+    return <SegmentedControls {...args} activeItemId={activeItemId} onChange={setActiveItemId} />;
 };
 
-export const Text = SliderTemplate.bind({});
+export const Text = SegmentedControlsTemplate.bind({});
 Text.args = {
     items: [
         { id: 'a', value: 'abc' },
@@ -32,7 +32,7 @@ Text.args = {
     ],
 };
 
-export const Number = SliderTemplate.bind({});
+export const Number = SegmentedControlsTemplate.bind({});
 Number.args = {
     items: [
         { id: 'a', value: 10 },
@@ -41,7 +41,7 @@ Number.args = {
     ],
 };
 
-export const Icon = SliderTemplate.bind({});
+export const Icon = SegmentedControlsTemplate.bind({});
 Icon.args = {
     items: [
         { id: 'a', icon: <IconTextAlignmentLeft size={IconSize.Size16} />, ariaLabel: 'Text Align Left' },
@@ -50,7 +50,7 @@ Icon.args = {
     ],
 };
 
-export const IconAndText = SliderTemplate.bind({});
+export const IconAndText = SegmentedControlsTemplate.bind({});
 IconAndText.args = {
     items: [
         {

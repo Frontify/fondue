@@ -24,7 +24,7 @@ export type TextOrNumberItem = {
     value: string | number;
 };
 
-export type SliderProps = {
+export type SegmentedControlsProps = {
     id?: string;
     items: (TextOrNumberItem | IconItem)[];
     activeItemId?: string;
@@ -35,14 +35,14 @@ export type SliderProps = {
 
 const isIconItem = (item: TextOrNumberItem | IconItem): item is IconItem => (item as IconItem).icon !== undefined;
 
-interface SliderItemProps {
+interface SegmentedControlsItemProps {
     id: string;
     item: TextOrNumberItem | IconItem;
     disabled: boolean;
     radioGroupState: RadioGroupState;
 }
 
-const SliderItem = (props: SliderItemProps) => {
+const SegmentedControlsItem = (props: SegmentedControlsItemProps) => {
     const { id, item, disabled, radioGroupState } = props;
     const ref = useRef<HTMLInputElement | null>(null);
     const isActive = item.id === radioGroupState.selectedValue;
@@ -66,14 +66,14 @@ const SliderItem = (props: SliderItemProps) => {
         }
     };
 
-    const getSliderItemTestId = () => {
+    const getSegmentedControlsItemTestId = () => {
         switch (true) {
             case isIconItem(item):
-                return 'slider-item-icon';
+                return 'fondue-segmented-controls-item-icon';
             case typeof item.value === 'string':
-                return 'slider-item-text';
+                return 'fondue-segmented-controls-item-text';
             default:
-                return 'slider-item-number';
+                return 'fondue-segmented-controls-item-number';
         }
     };
 
@@ -84,7 +84,7 @@ const SliderItem = (props: SliderItemProps) => {
                 // https://github.com/adobe/react-spectrum/issues/2380
                 role="none"
                 onClick={handleMockLabelClick}
-                data-test-id={getSliderItemTestId()}
+                data-test-id={getSegmentedControlsItemTestId()}
                 className={merge([
                     'tw-relative tw-w-full tw-inline-flex tw-justify-center tw-items-center tw-font-sans tw-font-normal tw-h-full tw-text-center',
                     isActive && !disabled ? 'tw-text-black' : 'tw-text-black-80',
@@ -92,7 +92,7 @@ const SliderItem = (props: SliderItemProps) => {
                 ])}
             >
                 <VisuallyHidden>
-                    <input {...inputProps} {...focusProps} data-test-id="slider-input" ref={ref} />
+                    <input {...inputProps} {...focusProps} data-test-id="fondue-segmented-controls-input" ref={ref} />
                 </VisuallyHidden>
                 <span className="tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap tw-flex">
                     {isIconItem(item) && (
@@ -107,12 +107,12 @@ const SliderItem = (props: SliderItemProps) => {
     );
 };
 
-export const Slider: FC<SliderProps> = ({
+export const SegmentedControls: FC<SegmentedControlsProps> = ({
     id: propId,
     items,
     activeItemId,
     onChange,
-    ariaLabel = 'Slider',
+    ariaLabel = 'SegmentedControls',
     disabled = false,
 }) => {
     const id = useMemoizedId(propId);
@@ -121,12 +121,12 @@ export const Slider: FC<SliderProps> = ({
     const { radioGroupProps } = useRadioGroup(groupProps, radioGroupState);
     const itemElements = useMemo(() => {
         return items.map((item, i) => (
-            <SliderItem
+            <SegmentedControlsItem
                 id={id}
                 item={item}
                 disabled={disabled}
                 radioGroupState={radioGroupState}
-                key={`slider-${id}-item-${i}`}
+                key={`fondue-segmented-controls-${id}-item-${i}`}
             />
         ));
     }, [items, id, disabled, radioGroupState]);
@@ -136,7 +136,7 @@ export const Slider: FC<SliderProps> = ({
         <div className="tw-flex">
             <fieldset
                 {...radioGroupProps}
-                data-test-id="slider"
+                data-test-id="fondue-segmented-controls"
                 className="tw-relative tw-h-9 tw-w-full tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly tw-p-0 tw-border tw-border-black-20 tw-m-0 tw-bg-black-0 tw-rounded tw-font-sans tw-text-s tw-select-none"
             >
                 <motion.div
@@ -161,4 +161,4 @@ export const Slider: FC<SliderProps> = ({
         </div>
     );
 };
-Slider.displayName = 'FondueSlider';
+SegmentedControls.displayName = 'FondueSegmentedControls';
