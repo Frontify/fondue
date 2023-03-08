@@ -3,6 +3,7 @@
 import React, { ReactElement } from 'react';
 import { merge } from '@utilities/merge';
 import { IconCross } from '@foundation/Icon/Generated';
+import { Text } from '@typography/Text';
 
 export type DialogHeaderProps = {
     title: string;
@@ -15,14 +16,14 @@ export type DialogHeaderProps = {
 };
 
 export enum DialogHeaderSize {
-    Null = 'Null',
+    Default = 'Default',
     Large = 'Large',
 }
 
 export const DialogHeader = ({
     title,
     collapseBottom = false,
-    size = DialogHeaderSize.Null,
+    size = DialogHeaderSize.Default,
     close = false,
     onClose,
     icon,
@@ -39,15 +40,10 @@ export const DialogHeader = ({
         >
             <div className="tw-flex tw-items-center">
                 {icon && <span className="tw-mr-1.5">{icon}</span>}
-                <p
-                    className={merge([
-                        'tw-mr-1.5 tw-font-bold',
-                        size === DialogHeaderSize.Large ? 'tw-text-md' : 'tw-text-sm',
-                    ])}
-                >
+                <Text weight="x-strong" size={size === DialogHeaderSize.Large ? 'large' : 'medium'}>
                     {title}
-                </p>
-                {badge}
+                </Text>
+                <span className="tw-ml-1.5">{badge}</span>
             </div>
             {close && (
                 <button onClick={onClose} className="tw-absolute tw-right-12">

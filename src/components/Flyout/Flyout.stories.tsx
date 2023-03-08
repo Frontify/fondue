@@ -21,7 +21,7 @@ import { TooltipIcon } from '@components/TooltipIcon';
 import { IconDotsVertical, IconExclamationMarkCircle, IconIcon } from '@foundation/Icon/Generated';
 
 export default {
-    title: 'Components/Flyout',
+    title: 'Deprecated/Flyout',
     component: Flyout,
     tags: ['autodocs'],
     argTypes: {

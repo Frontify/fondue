@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement } from 'react';
+import { ReactElement, ReactNode } from 'react';
 
 export enum ScrollWrapperDirection {
     Both = 'Both',
@@ -16,5 +16,5 @@ export const scrollWrapperDirections: Record<ScrollWrapperDirection, string> = {
 
 export type ScrollWrapperProps = {
     direction?: ScrollWrapperDirection;
-    children?: ReactElement | ReactElement[];
+    children?: ReactElement | ReactElement[] | ReactNode;
 };

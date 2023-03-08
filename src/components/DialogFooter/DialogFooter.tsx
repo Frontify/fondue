@@ -13,8 +13,8 @@ export const DialogFooter = ({ buttons }: DialogFooterProps): ReactElement => {
             data-test-id="fondue-dialog-footer"
             className="tw-p-4 tw-border-t tw-border-t-line tw-flex tw-items-center tw-justify-end tw-gap-x-3"
         >
-            {buttons.map((button, index) => (
-                <Button key={`dialog-footer-button-${index}`} {...button} size={ButtonSize.Medium} />
+            {buttons.map((button) => (
+                <Button key={`dialog-footer-button-${button.children}`} {...button} size={ButtonSize.Medium} />
             ))}
         </div>
     );
