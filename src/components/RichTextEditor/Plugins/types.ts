@@ -49,6 +49,7 @@ export type InternalLinksLoader = () => Promise<InternalLinkNode>;
 
 export type InternalLinkNode = {
     id: string;
+    parentId?: string;
     title: string;
     url: string;
     icon?: ReactNode;

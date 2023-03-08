@@ -7,6 +7,7 @@ import { Tree, TreeItem } from '@components/Tree';
 import { IconLink } from '@foundation/Icon';
 import { useOverlayTriggerState } from '@react-stately/overlays';
 import React, { ReactElement, useEffect } from 'react';
+import { getExpandedIds, getLinkNodeByProp } from '../../utils';
 
 type InternalLinkSelectorProps = {
     url: string;
@@ -35,14 +36,20 @@ export const InternalLinkSelector = ({
     onUrlChange,
 }: InternalLinkSelectorProps): ReactElement => {
     const { open: openLinkTree, isOpen: isLinkTreeOpen, close: closeLinkTree } = useOverlayTriggerState({});
-    const [selectedId, setSelectedId] = React.useState<string>('');
+    const [selectedId, setSelectedId] = React.useState<string | null>(null);
     const [expandedIds, setExpandedIds] = React.useState<string[]>([]);
     const [internalLinkDocument, setInternalLinkDocument] = React.useState<InternalLinkNode>();
-    console.log(internalLinkDocument);
 
     useEffect(() => {
-        loadInternalLinks().then((document) => setInternalLinkDocument(document));
-    }, [loadInternalLinks]);
+        if (!internalLinkDocument) {
+            loadInternalLinks().then((document) => {
+                setInternalLinkDocument(document);
+                const linkNode = getLinkNodeByProp('url', url, document);
+                setSelectedId(linkNode?.id ?? '');
+                setExpandedIds(linkNode ? getExpandedIds(linkNode, document) : []);
+            });
+        }
+    }, [internalLinkDocument, loadInternalLinks, url]);
 
     return (
         <div className="tw-pt-5">
@@ -63,7 +70,7 @@ export const InternalLinkSelector = ({
                         <Tree
                             id="internal-link-tree"
                             selectedIds={selectedId ? [selectedId] : []}
-                            onSelect={(url) => setSelectedId(url)}
+                            onSelect={(id) => setSelectedId(id)}
                             expandedIds={expandedIds}
                             onExpand={(id, isExpanded) => {
                                 if (isExpanded) {
@@ -88,11 +95,16 @@ export const InternalLinkSelector = ({
                         {
                             children: 'Confirm',
                             onClick: () => {
-                                onUrlChange(selectedId ?? '');
+                                if (!selectedId || !internalLinkDocument) {
+                                    return;
+                                }
+
+                                onUrlChange(getLinkNodeByProp('id', selectedId, internalLinkDocument)?.url ?? '');
                                 closeLinkTree();
                             },
                             style: ButtonStyle.Default,
                             emphasis: ButtonEmphasis.Strong,
+                            disabled: !selectedId,
                         },
                     ]}
                 />
