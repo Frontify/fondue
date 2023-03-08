@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import RejectIcon from '@foundation/Icon/Generated/IconCross';
+import { IconCross } from '@foundation/Icon/Generated';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
@@ -69,7 +69,11 @@ export const Badge: FC<BadgeProps> = ({
                 {icon && (
                     <span
                         data-test-id="badge-icon"
-                        className={merge([disabled && 'tw-opacity-30', 'tw-flex-none tw-leading-none', 'tw-pr-1'])}
+                        className={merge([
+                            'tw-flex-none tw-leading-none',
+                            disabled && 'tw-opacity-30',
+                            !!children && 'tw-pr-1',
+                        ])}
                     >
                         {cloneElement(icon, { size: IconSize.Size16 })}
                     </span>
@@ -92,9 +96,10 @@ export const Badge: FC<BadgeProps> = ({
                     onClick={() => onDismiss()}
                     aria-label={`Dismiss ${badgeTitle}`}
                 >
-                    <RejectIcon size={IconSize.Size16} />
+                    <IconCross size={IconSize.Size16} />
                 </button>
             )}
         </div>
     );
 };
+Badge.displayName = 'FondueBadge';

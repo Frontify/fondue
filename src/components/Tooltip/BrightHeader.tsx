@@ -7,8 +7,8 @@ import {
     IconDocument,
     IconExclamationMarkCircle,
     IconExclamationMarkTriangle,
-    IconSize,
-} from '@foundation/Icon';
+} from '@foundation/Icon/Generated';
+import { IconSize } from '@foundation/Icon/IconSize';
 
 export enum BrightHeaderStyle {
     Information = 'Information',
@@ -55,3 +55,4 @@ export const BrightHeader: FC<BrightHeaderProps> = ({ headerStyle }) => {
         </div>
     );
 };
+BrightHeader.displayName = 'FondueBrightHeader';

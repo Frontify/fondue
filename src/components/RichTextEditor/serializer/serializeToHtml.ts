@@ -39,17 +39,27 @@ export const serializeNodesToHtml = (
     const mappedMentionable = mentionable ? mapMentionable(mentionable) : new Map();
 
     const html = nodes
-        .map((node) =>
-            serializeNodeToHtmlRecursive(node, {
+        .map((node) => {
+            if (isEmptyNode(node)) {
+                return '<br />';
+            }
+            return serializeNodeToHtmlRecursive(node, {
                 designTokens: mergedDesignTokens,
                 mappedMentionable,
-            }),
-        )
+            });
+        })
         .join('');
 
     if (columns > 1) {
-        return `<div style="columns: ${columns}; column-gap: ${columnGap};">${html}</div>`;
+        return `<div style="columns:${columns}; column-gap:${columnGap};">${html}</div>`;
     }
 
     return html;
+};
+
+const isEmptyNode = (node: TDescendant): boolean => {
+    if (!Array.isArray(node?.children)) {
+        return false;
+    }
+    return node?.children?.every((child) => child.text === '');
 };

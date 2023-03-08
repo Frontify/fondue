@@ -1,13 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { CSSProperties, FC, ReactNode, useState } from 'react';
-import {
-    RichTextEditorContextProps,
-    useRichTextEditorContext,
-} from '@components/RichTextEditor/context/RichTextEditorContext';
-import { RichTextButtonStyle, TButtonElement } from '../types';
+import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
+import { DesignTokens } from '@components/RichTextEditor/types';
 import { HTMLPropsAs, PlateRenderElementProps, Value, useElementProps } from '@udecode/plate';
+import React, { CSSProperties, FC, ReactNode, useState } from 'react';
 import { ButtonStyles } from '../../TextStylePlugin/TextStyles';
+import { RichTextButtonStyle, TButtonElement } from '../types';
 
 export type ButtonRootProps = PlateRenderElementProps<Value, TButtonElement> & HTMLPropsAs<'a'>;
 
@@ -40,32 +38,28 @@ export const ButtonMarkupElementNode = (props: ButtonRootProps) => {
             attributes={attributes}
             href={href}
             target={target}
-            styles={getButtonStyle(context, buttonStyle)}
+            styles={context ? getButtonStyle(context.designTokens, buttonStyle) : undefined}
         >
             {children}
         </HoverableButtonLink>
     );
 };
 
-const getButtonStyle = (rteContext: RichTextEditorContextProps | null, buttonStyle: RichTextButtonStyle) => {
-    if (rteContext) {
-        let styles;
-        const design = rteContext.designTokens as Partial<
-            Record<ButtonStyles, CSSProperties & { hover: CSSProperties }>
-        >;
-        switch (buttonStyle) {
-            case 'primary':
-                styles = design.buttonPrimary;
-                break;
-            case 'secondary':
-                styles = design.buttonSecondary;
-                break;
-            case 'tertiary':
-                styles = design.buttonTertiary;
-                break;
-        }
-        return { ...styles, cursor: 'pointer', display: 'inline-block', margin: '10px 0' };
+export const getButtonStyle = (designTokens: DesignTokens, buttonStyle: RichTextButtonStyle) => {
+    let styles;
+    const design = designTokens as Partial<Record<ButtonStyles, CSSProperties & { hover: CSSProperties }>>;
+    switch (buttonStyle) {
+        case 'primary':
+            styles = design.buttonPrimary;
+            break;
+        case 'secondary':
+            styles = design.buttonSecondary;
+            break;
+        case 'tertiary':
+            styles = design.buttonTertiary;
+            break;
     }
+    return { ...styles, cursor: 'pointer', display: 'inline-block', margin: '10px 0' };
 };
 
 type Props = {

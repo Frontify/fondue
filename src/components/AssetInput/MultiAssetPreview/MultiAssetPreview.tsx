@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconCaretRight, IconSize } from '@foundation/Icon';
+import { IconSize } from '@foundation/Icon/IconSize';
+import { IconCaretRight } from '@foundation/Icon/Generated';
 import { useButton } from '@react-aria/button';
 import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
@@ -8,7 +9,7 @@ import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import React, { FC, useRef } from 'react';
 import { AssetType } from '../AssetInput';
-import { Assets } from './Assets';
+import { SelectedAssetsThumbnail } from './SelectedAssetsThumbnail';
 
 export type MultiAssetPreviewProps = {
     numberOfLocations: number;
@@ -37,7 +38,8 @@ export const MultiAssetPreview: FC<MultiAssetPreviewProps> = ({ numberOfLocation
                         : 'tw-border-black-20 dark:tw-border-black-80',
                 ])}
             >
-                <Assets assets={assets} />
+                <SelectedAssetsThumbnail assets={assets} />
+
                 <div className="tw-py-6 tw-px-4 tw-flex">
                     <div className="tw-text-left">
                         <div className="tw-font-bold tw-text-m" data-test-id="assets-amount">

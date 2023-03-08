@@ -9,7 +9,7 @@ import { action } from '@storybook/addon-actions';
 import { generateRandomId } from '@utilities/generateRandomId';
 import { useOverlayTriggerState } from '@react-stately/overlays';
 import { PatternDesign, PatternTheme } from '@foundation/Pattern';
-import { IconCap, IconIcon, IconMusicNote } from '@foundation/Icon';
+import { IconCap, IconIcon, IconMusicNote } from '@foundation/Icon/Generated';
 import { ScrollWrapperDirection } from '@components/ScrollWrapper/types';
 import { OverlayContainer, OverlayProvider } from '@react-aria/overlays';
 import {

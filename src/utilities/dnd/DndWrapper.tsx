@@ -26,4 +26,4 @@ export const DndWrapper = memo(({ id, children }: DndWrapperProps) => {
         </DndProvider>
     ) : null;
 });
-DndWrapper.displayName = 'DndWrapper';
+DndWrapper.displayName = 'FondueDndWrapper';

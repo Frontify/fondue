@@ -44,7 +44,7 @@ type ChecklistItemProps = { checkbox: CheckboxValue; state: CheckboxGroupState }
 
 const ChecklistItem = ({ checkbox, state }: ChecklistItemProps) => {
     const ref = useRef<HTMLInputElement | null>(null);
-    const { value, disabled, label, ariaLabel: checkboxAriaLabel, state: checkboxState } = checkbox;
+    const { value, disabled, label, 'aria-label': checkboxAriaLabel, state: checkboxState } = checkbox;
     const [checkState, setCheckState] = useState(checkboxState);
     const isSelected = state.isSelected(value);
     const { inputProps } = useCheckboxGroupItem(
@@ -131,3 +131,4 @@ export const Checklist = ({
         </ul>
     );
 };
+Checklist.displayName = 'FondueChecklist';

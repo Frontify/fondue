@@ -18,3 +18,4 @@ export const AriaSection: FC<AriaSectionProps> = ({ ariaLabel, children }) => {
         </li>
     );
 };
+AriaSection.displayName = 'FondueAriaSection';

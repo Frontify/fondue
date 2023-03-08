@@ -7,6 +7,7 @@ import {
     IPSUM,
     buttonValues,
     checkboxValue,
+    customControlValues,
     customDesignTokens,
     defaultValue,
     htmlValue,
@@ -29,7 +30,6 @@ import {
     CheckboxListPlugin,
     CodePlugin,
     EmojiPlugin,
-    InitPlugin,
     ItalicPlugin,
     LinkPlugin,
     MentionPlugin,
@@ -37,6 +37,7 @@ import {
     ParagraphPlugin,
     PluginComposer,
     ResetFormattingPlugin,
+    SoftBreakPlugin,
     StrikethroughPlugin,
     TextStylePlugin,
     UnderlinePlugin,
@@ -96,7 +97,38 @@ const RichTextEditorTemplate: StoryFn<RichTextEditorProps> = (args: RichTextEdit
     <RichTextEditorComponent {...args} />
 );
 
+const allPlugins = new PluginComposer();
+allPlugins
+    .setPlugin([new SoftBreakPlugin(), new ParagraphPlugin(), new TextStylePlugin()])
+    .setPlugin([new MentionPlugin({ mentionableItems: mentionable })])
+    .setPlugin(
+        [
+            new BoldPlugin(),
+            new ItalicPlugin(),
+            new UnderlinePlugin(),
+            new StrikethroughPlugin(),
+            new LinkPlugin(),
+            new ButtonPlugin(),
+            new CodePlugin(),
+            new BreakAfterPlugin(),
+        ],
+        [
+            new AlignLeftPlugin(),
+            new AlignCenterPlugin(),
+            new AlignRightPlugin(),
+            new AlignJustifyPlugin(),
+            new UnorderedListPlugin(),
+            new CheckboxListPlugin(),
+            new OrderedListPlugin(),
+            new EmojiPlugin(),
+            new ResetFormattingPlugin(),
+        ],
+    );
+
 export const FullyFledged = RichTextEditorTemplate.bind({});
+FullyFledged.args = {
+    plugins: allPlugins,
+};
 
 export const Flex: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
     <div className="tw-flex tw-gap-x-7 tw-justify-start">
@@ -109,37 +141,12 @@ export const Flex: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) =>
 );
 
 export const SerializedToHTML: StoryFn<RichTextEditorProps> = () => {
-    return getSerializedContent();
+    return getSerializedContent({
+        columns: 2,
+    });
 };
 
 export const MarkdownSerializerDeserializer: StoryFn<RichTextEditorProps> = () => {
-    const allPlugins = new PluginComposer();
-    allPlugins
-        .setPlugin([new InitPlugin(), new ParagraphPlugin(), new TextStylePlugin()])
-        .setPlugin([new MentionPlugin({ mentionableItems: mentionable })])
-        .setPlugin(
-            [
-                new BoldPlugin(),
-                new ItalicPlugin(),
-                new UnderlinePlugin(),
-                new StrikethroughPlugin(),
-                new LinkPlugin(),
-                new ButtonPlugin(),
-                new CodePlugin(),
-            ],
-            [
-                new AlignLeftPlugin(),
-                new AlignCenterPlugin(),
-                new AlignRightPlugin(),
-                new AlignJustifyPlugin(),
-                new UnorderedListPlugin(),
-                new CheckboxListPlugin(),
-                new OrderedListPlugin(),
-                new EmojiPlugin(),
-                new ResetFormattingPlugin(),
-            ],
-        );
-
     const toSlateTransform = Transform.use(new MarkdownToSlate());
     const resultSlate = toSlateTransform.process(markdownText);
 
@@ -305,10 +312,10 @@ WithCustomButtonStyles.args = {
             fontFamily: 'inherit',
             fontSize: '13px',
             backgroundColor: 'rgba(230,0,0,1)',
-            paddingTop: 10,
-            paddingRight: 20,
-            paddingBottom: 10,
-            paddingLeft: 20,
+            paddingTop: '10px',
+            paddingRight: '20px',
+            paddingBottom: '10px',
+            paddingLeft: '20px',
             color: 'rgba(102,102,102,1)',
             borderColor: 'rgba(207, 207, 207, 1)',
         },
@@ -321,10 +328,10 @@ WithCustomButtonStyles.args = {
             fontFamily: 'inherit',
             fontSize: '13px',
             backgroundColor: 'rgba(230,230,230,1)',
-            paddingTop: 20,
-            paddingRight: 40,
-            paddingBottom: 20,
-            paddingLeft: 40,
+            paddingTop: '20px',
+            paddingRight: '40px',
+            paddingBottom: '20px',
+            paddingLeft: '40px',
             color: 'rgba(102,102,102,1)',
             borderColor: 'rgba(207, 207, 207, 1)',
         },
@@ -336,10 +343,10 @@ WithCustomButtonStyles.args = {
             },
             fontSize: '14px',
             color: 'rgb(255, 246, 0)',
-            paddingTop: 11,
-            paddingRight: 21,
-            paddingBottom: 11,
-            paddingLeft: 21,
+            paddingTop: '11px',
+            paddingRight: '21px',
+            paddingBottom: '11px',
+            paddingLeft: '21px',
             fontFamily: 'Arial',
             fontStyle: 'italic',
             fontWeight: '900',
@@ -369,15 +376,22 @@ WithChecklist.args = {
 const customPlugins = new PluginComposer();
 customPlugins
     .setPlugin([
-        new InitPlugin(),
-        new TextStylePlugin({ textStyles: [TextStyles.ELEMENT_HEADING1, TextStyles.ELEMENT_PARAGRAPH] }),
+        new SoftBreakPlugin(),
+        new TextStylePlugin({
+            textStyles: [
+                TextStyles.ELEMENT_HEADING1,
+                TextStyles.ELEMENT_PARAGRAPH,
+                TextStyles.ELEMENT_IMAGE_CAPTION,
+                TextStyles.ELEMENT_IMAGE_TITLE,
+            ],
+        }),
     ])
     .setPlugin([new LinkPlugin()])
     .setPlugin([new ItalicPlugin(), new BoldPlugin(), new UnderlinePlugin()])
     .setPlugin([new OrderedListPlugin(), new UnorderedListPlugin()]);
 export const WithCustomControls = RichTextEditorTemplate.bind({});
 WithCustomControls.args = {
-    value: `<p>${IPSUM}</p>`,
+    value: JSON.stringify(customControlValues),
     plugins: customPlugins,
 };
 
@@ -395,9 +409,9 @@ WithToolbarTopAndSmallPadding.args = {
 
 const mentionAndEmojisPlugins = new PluginComposer();
 mentionAndEmojisPlugins
-    .setPlugin([new InitPlugin(), new ParagraphPlugin()])
+    .setPlugin([new ParagraphPlugin()])
     .setPlugin([new MentionPlugin({ mentionableItems: mentionable })])
-    .setPlugin([new UnorderedListPlugin(), new OrderedListPlugin()])
+    .setPlugin([new UnorderedListPlugin({ isSoftBreak: true }), new OrderedListPlugin({ isSoftBreak: true })])
     .setPlugin([new BoldPlugin(), new ItalicPlugin(), new UnderlinePlugin(), new StrikethroughPlugin()])
     .setPlugin([new EmojiPlugin(), new LinkPlugin()]);
 export const WithMentionsAndEmojis = RichTextEditorTemplate.bind({});
@@ -409,7 +423,7 @@ WithMentionsAndEmojis.args = {
 
 const withoutToolbarPlugins = new PluginComposer({ noToolbar: true });
 withoutToolbarPlugins
-    .setPlugin([new InitPlugin(), new ParagraphPlugin()])
+    .setPlugin([new SoftBreakPlugin(), new ParagraphPlugin()])
     .setPlugin([
         new BoldPlugin(),
         new LinkPlugin(),
@@ -425,7 +439,7 @@ WithoutToolbar.args = {
 
 const defaultPluginsWithColumns = new PluginComposer();
 defaultPluginsWithColumns
-    .setPlugin([new InitPlugin(), new ParagraphPlugin()])
+    .setPlugin([new SoftBreakPlugin(), new ParagraphPlugin()])
     .setPlugin(new TextStylePlugin())
     .setPlugin([
         new BoldPlugin(),
@@ -447,7 +461,7 @@ export const MultiColumns: StoryFn<MultiColumnProps> = (args: MultiColumnProps) 
 
     const plugins = new PluginComposer();
     plugins
-        .setPlugin([new InitPlugin(), new ParagraphPlugin()])
+        .setPlugin([new SoftBreakPlugin(), new ParagraphPlugin()])
         .setPlugin(new TextStylePlugin())
         .setPlugin([
             new BoldPlugin(),

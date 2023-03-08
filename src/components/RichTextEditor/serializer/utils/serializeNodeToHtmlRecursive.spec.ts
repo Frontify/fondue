@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mentionable, orderedListValue, unorderedListValue } from '@components/RichTextEditor/helpers/exampleValues';
-import { mapMentionable } from '@components/RichTextEditor/Plugins';
+import { ELEMENT_BUTTON, ELEMENT_CHECK_ITEM, mapMentionable } from '@components/RichTextEditor/Plugins';
 import { TextStyles } from '@components/RichTextEditor/Plugins/TextStylePlugin/TextStyles';
 import { defaultDesignTokens } from '@components/RichTextEditor/utils/defaultDesignTokens';
 import {
@@ -180,6 +180,23 @@ describe('serializeNodeToHtmlRecursive()', () => {
         expect(result).to.match(/<p.*><a.*href="https:\/\/smartive.ch".*>This is also a Link\.<\/a><\/p>/);
     });
 
+    it('serializes link with target blank to html', () => {
+        const node = {
+            type: ELEMENT_PARAGRAPH,
+            children: [
+                {
+                    type: ELEMENT_LINK,
+                    children: [{ text: 'This is a Link.' }],
+                    target: '_blank',
+                    url: 'https://frontify.com',
+                },
+            ],
+        };
+        const result = serializeNodeToHtmlRecursive(node, { designTokens: defaultDesignTokens });
+
+        expect(result).to.match(/<p.*><a.*target="_blank".*href="https:\/\/frontify.com".*>This is a Link\.<\/a><\/p>/);
+    });
+
     it('serializes headings and customs html', () => {
         const node = {
             type: ELEMENT_PARAGRAPH,
@@ -293,4 +310,99 @@ describe('serializeNodeToHtmlRecursive()', () => {
 
         expect(result).to.match(/<p.*>new annotation <span.*>Admiral Gial Ackbar<\/span> adding changes :\)<\/p>/);
     });
+
+    it('serializes a button to html', () => {
+        const node = {
+            type: ELEMENT_PARAGRAPH,
+            children: [
+                {
+                    type: ELEMENT_BUTTON,
+                    url: 'https://frontify.com',
+                    buttonStyle: 'primary',
+                    children: [{ text: 'button' }],
+                },
+            ],
+        };
+
+        const result = serializeNodeToHtmlRecursive(node, {
+            designTokens: defaultDesignTokens,
+        });
+
+        expect(result).to.contain('button');
+        expect(result).to.contain('href="https://frontify.com"');
+        expect(result).to.contain('target="_blank"');
+    });
+
+    it('serializes a button with target _blank to html', () => {
+        const node = {
+            type: ELEMENT_PARAGRAPH,
+            children: [
+                {
+                    type: ELEMENT_BUTTON,
+                    target: '_blank',
+                    url: 'https://frontify.com',
+                    buttonStyle: 'primary',
+                    children: [{ text: 'button' }],
+                },
+            ],
+        };
+
+        const result = serializeNodeToHtmlRecursive(node, { designTokens: defaultDesignTokens });
+        expect(result).to.contain('button');
+        expect(result).to.contain('target="_blank"');
+    });
+
+    it('serializes a checked checklist item to html', () => {
+        const node = {
+            type: ELEMENT_CHECK_ITEM,
+            checked: true,
+            children: [{ text: 'item' }],
+        };
+
+        const result = serializeNodeToHtmlRecursive(node, { designTokens: defaultDesignTokens });
+        expect(result).to.contain('item');
+        expect(result).to.contain('checked');
+    });
+
+    it('serializes an unchecked checklist item to html', () => {
+        const node = {
+            type: ELEMENT_CHECK_ITEM,
+            checked: false,
+            children: [{ text: 'item' }],
+        };
+
+        const result = serializeNodeToHtmlRecursive(node, { designTokens: defaultDesignTokens });
+        expect(result).to.include('item');
+        expect(result).to.not.include('checked');
+    });
+
+    it('serializes a checklist item without an indent to html', () => {
+        const node = {
+            type: ELEMENT_CHECK_ITEM,
+            checked: false,
+            children: [{ text: 'item' }],
+        };
+
+        const result = serializeNodeToHtmlRecursive(node, { designTokens: defaultDesignTokens });
+        expect(result).to.include('item');
+        expect(result).to.include('margin-left:0px;');
+    });
+
+    for (const entry of [
+        { indent: 0, outcome: '0px' },
+        { indent: 1, outcome: '24px' },
+        { indent: 2, outcome: '48px' },
+    ]) {
+        it(`serializes a checklist item with an indent of ${entry.indent} to html`, () => {
+            const node = {
+                type: ELEMENT_CHECK_ITEM,
+                indent: entry.indent,
+                children: [{ text: 'item' }],
+            };
+
+            const result = serializeNodeToHtmlRecursive(node, { designTokens: defaultDesignTokens });
+            expect(result).to.include('item');
+            expect(result).to.include(`margin-left:${entry.outcome};`);
+        });
+    }
 });

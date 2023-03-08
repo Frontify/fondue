@@ -23,6 +23,7 @@ import React, {
 import { BrightHeader, BrightHeaderStyle, brightHeaderArrowBackgroundColors } from './BrightHeader';
 import { usePopper } from 'react-popper';
 import { Placement } from '@popperjs/core';
+import { useMemoizedId } from '@hooks/useMemoizedId';
 
 export type TooltipButton = {
     label: string;
@@ -162,6 +163,7 @@ export const Tooltip = ({
     const [tooltipContainerRef, setTooltipContainerRef] = useState<HTMLDivElement | null>(null);
     const [triggerElementContainerRef, setTriggerElementContainerRef] = useState<HTMLDivElement | null>(null);
     const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
+    const id = useMemoizedId();
 
     const tooltipOffset = withArrow ? 10 : 5;
     const popperInstance = usePopper(triggerElementRef, tooltipContainerRef, {
@@ -252,6 +254,7 @@ export const Tooltip = ({
                 {triggerElement &&
                     cloneElement(triggerElement, {
                         ref: setTriggerElementRef,
+                        'aria-describedby': id,
                     })}
             </div>
             <div
@@ -263,6 +266,7 @@ export const Tooltip = ({
                 ])}
                 data-test-id="tooltip"
                 role="tooltip"
+                id={id}
                 style={popperInstance.styles.popper}
                 {...popperInstance.attributes.popper}
                 onFocus={() => setIsOpen(true)}
@@ -293,7 +297,7 @@ export const Tooltip = ({
                                 {cloneElement(tooltipIcon, { size: IconSize.Size16 })}
                             </span>
                         )}
-                        <p className="tw-text-s tw-min-w-0 tw-break-words">{content}</p>
+                        <span className="tw-text-s tw-min-w-0 tw-break-words">{content}</span>
                     </div>
                     {linkUrl && (
                         <a
@@ -363,3 +367,4 @@ export const Tooltip = ({
         </>
     );
 };
+Tooltip.displayName = 'FondueTooltip';

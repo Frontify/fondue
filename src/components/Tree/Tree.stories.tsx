@@ -6,7 +6,7 @@ import { Meta } from '@storybook/react';
 import { Tree, Tree as TreeComponent, TreeItem } from '@components/Tree';
 import { TreeNodeItem, treeNodesMock } from '@components/Tree/utils';
 import type { TreeItemProps, TreeProps } from '@components/Tree/types';
-import { IconDocument } from '@foundation/Icon';
+import { IconDocument } from '@foundation/Icon/Generated';
 import { DraggableItem } from '@utilities/dnd';
 
 export default {
@@ -15,6 +15,7 @@ export default {
     tags: ['autodocs'],
     args: {
         id: 'treeId',
+        baseItemPadding: { top: 8, right: 10, bottom: 8, left: 10 },
     },
     argTypes: {
         draggable: {
@@ -24,6 +25,9 @@ export default {
             control: { type: 'object' },
         },
         expandedIds: {
+            control: { type: 'object' },
+        },
+        baseItemPadding: {
             control: { type: 'object' },
         },
     },

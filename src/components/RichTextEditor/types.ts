@@ -15,6 +15,8 @@ export const enum DesignTokenNames {
     QUOTE = 'quote',
     LINK = 'link',
     PARAGRAPH = 'p',
+    IMAGE_CAPTION = 'imageCaption',
+    IMAGE_TITLE = 'imageTitle',
 }
 
 export const TextStylesToDesignTokenMap = {
@@ -28,6 +30,8 @@ export const TextStylesToDesignTokenMap = {
     [TextStyles.ELEMENT_QUOTE]: DesignTokenNames.QUOTE,
     [TextStyles.ELEMENT_LINK]: DesignTokenNames.LINK,
     [TextStyles.ELEMENT_PARAGRAPH]: DesignTokenNames.PARAGRAPH,
+    [TextStyles.ELEMENT_IMAGE_CAPTION]: DesignTokenNames.IMAGE_CAPTION,
+    [TextStyles.ELEMENT_IMAGE_TITLE]: DesignTokenNames.IMAGE_TITLE,
 };
 
 export type DesignTokens = Partial<Record<DesignTokenNames, CSSProperties>> &

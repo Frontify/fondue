@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { TextInput } from '@components/TextInput/TextInput';
-import IconIcon from '@foundation/Icon/Generated/IconIcon';
+import { IconIcon } from '@foundation/Icon/Generated';
 import React, { FC, useState } from 'react';
 import { AccordionHeaderProps } from '.';
 import { Accordion, AccordionItem } from './Accordion';

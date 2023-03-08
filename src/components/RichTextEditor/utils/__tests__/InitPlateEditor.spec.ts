@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { InitPlateEditor } from '../';
+import { InitPlateEditor } from '../InitPlateEditor';
 
 describe('InitPlateEditor', () => {
     it('should create with random id', () => {

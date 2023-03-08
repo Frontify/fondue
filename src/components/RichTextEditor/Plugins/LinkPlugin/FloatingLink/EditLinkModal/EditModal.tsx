@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useFloatingLinkUrlInput } from '@udecode/plate';
-import { IconPen, IconTrashBin } from '@foundation/Icon';
+import { IconPen16, IconTrashBin16 } from '@foundation/Icon/Generated';
 import { FloatingLink } from '../FloatingLink';
 import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
 
@@ -24,7 +24,7 @@ export const EditModal = () => {
                         className="tw-transition tw-cursor-pointer tw-rounded hover:tw-bg-black-10 tw-p-1"
                     >
                         <FloatingLink.EditButton>
-                            <IconPen />
+                            <IconPen16 />
                         </FloatingLink.EditButton>
                     </span>
 
@@ -35,7 +35,7 @@ export const EditModal = () => {
                         className="tw-transition tw-cursor-pointer tw-rounded hover:tw-bg-black-10 tw-p-1"
                     >
                         <FloatingLink.UnlinkButton>
-                            <IconTrashBin />
+                            <IconTrashBin16 />
                         </FloatingLink.UnlinkButton>
                     </span>
                 </span>

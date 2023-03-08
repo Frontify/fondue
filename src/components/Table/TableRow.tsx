@@ -26,3 +26,4 @@ export const TableRow = ({ isSelected = false, children }: TableRowProps) => {
         </tr>
     );
 };
+TableRow.displayName = 'FondueTableRow';
