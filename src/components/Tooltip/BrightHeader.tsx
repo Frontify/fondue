@@ -19,14 +19,14 @@ export enum BrightHeaderStyle {
 
 export const brightHeaderBackgroundColors: Record<BrightHeaderStyle, string> = {
     [BrightHeaderStyle.Information]: 'tw-bg-violet-60',
-    [BrightHeaderStyle.Warning]: 'tw-bg-red-60',
+    [BrightHeaderStyle.Warning]: 'tw-dark tw-bg-button-danger-background',
     [BrightHeaderStyle.Tip]: 'tw-bg-green-60',
     [BrightHeaderStyle.Note]: 'tw-bg-yellow-60',
 };
 
 export const brightHeaderArrowBackgroundColors: Record<BrightHeaderStyle, string> = {
     [BrightHeaderStyle.Information]: 'before:tw-bg-violet-60',
-    [BrightHeaderStyle.Warning]: 'before:tw-bg-red-60',
+    [BrightHeaderStyle.Warning]: 'before:tw-dark before:tw-bg-button-danger-background',
     [BrightHeaderStyle.Tip]: 'before:tw-bg-green-60',
     [BrightHeaderStyle.Note]: 'before:tw-bg-yellow-60',
 };
