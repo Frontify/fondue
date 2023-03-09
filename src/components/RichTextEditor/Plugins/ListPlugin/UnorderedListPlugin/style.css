@@ -1,0 +1,9 @@
+ul > li > :first-child:not(.styled):before {
+    content: '• ';
+    width: 1em;
+}
+
+ul > li > :not(ul):not(ol):not(.styled) {
+    display: grid;
+    grid-template-columns: min-content repeat(3, auto);
+}

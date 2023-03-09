@@ -8,8 +8,9 @@ import React from 'react';
 import { getColumnBreakClasses } from '../ColumnBreakPlugin/utils/getColumnBreakClasses';
 import { MarkupElement } from '../MarkupElement';
 import { TextStyles } from '../TextStylePlugin';
-import { alignmentClassnames } from '../TextStylePlugin/TextStyles';
+import { justifyClassNames } from '../TextStylePlugin/TextStyles/alignment';
 import { MARK_TEXT_STYLE } from './ListPlugin';
+import './OrderedListPlugin/style.css';
 
 export const getTextStyle = (styledNode: TNode) => {
     const textStyles =
@@ -21,16 +22,19 @@ export const getTextStyle = (styledNode: TNode) => {
 
 export const ListItemContentMarkupElementNode = ({ attributes, children, element }: PlateRenderElementProps) => {
     const { designTokens } = useRichTextEditorContext();
-    const align = element.align;
-    console.log('align', element);
+    const align = element.align as unknown as string;
+    const isEmpty = element.children.every((child) => child.text === '');
 
     return (
         <p
             style={{ textDecoration: designTokens[getTextStyle(element.children[0])]?.textDecoration }}
-            className={merge([getColumnBreakClasses(element), align && alignmentClassnames[align]])}
+            className={merge([
+                getColumnBreakClasses(element),
+                align ? justifyClassNames[align] : 'tw-justify-start tw-flex',
+            ])}
             {...attributes}
         >
-            {children}
+            <span className={isEmpty ? 'tw-w-4' : ''}>{children}</span>
         </p>
     );
 };
