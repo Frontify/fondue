@@ -253,10 +253,12 @@ export const Tooltip = ({
                     cloneElement(triggerElement, {
                         ref: setTriggerElementRef,
                         'aria-describedby': id,
+                        'aria-disabled': hidden || disabled ? true : false,
                     })}
             </div>
             <div
                 ref={setTooltipContainerRef}
+                aria-hidden={hidden || disabled ? true : false}
                 className={merge([
                     'tw-popper-container tw-inline-block tw-max-w-[200px] tw-dark tw-bg-base tw-rounded-md tw-shadow-mid tw-text-text tw-z-[120000]',
                     (hidden || disabled) && 'tw-hidden',
