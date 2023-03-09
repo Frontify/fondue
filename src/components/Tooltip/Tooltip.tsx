@@ -8,7 +8,6 @@ import { merge } from '@utilities/merge';
 import React, {
     FocusEvent,
     HTMLAttributes,
-    KeyboardEvent,
     PropsWithChildren,
     ReactChild,
     ReactElement,
@@ -227,12 +226,6 @@ export const Tooltip = ({
         [handleShowTooltipOnHover, triggerElementRef, triggerElementContainerRef, tooltipContainerRef],
     );
 
-    const handleCloseTooltipOnEscape = useCallback((event: KeyboardEvent<HTMLElement>) => {
-        if (event.key === 'Escape') {
-            setIsOpen(false);
-        }
-    }, []);
-
     const handleCloseIfFocusedOutside = useCallback(
         (event: FocusEvent<HTMLElement>) => {
             const { relatedTarget } = event;
@@ -252,7 +245,6 @@ export const Tooltip = ({
               onMouseLeave: handleHideTooltipOnHover,
               onFocus: () => setIsOpen(true),
               onBlur: handleCloseIfFocusedOutside,
-              onKeyDown: handleCloseTooltipOnEscape,
           };
 
     useEffect(() => {
@@ -265,6 +257,14 @@ export const Tooltip = ({
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isOpen]);
+
+    useEffect(() => {
+        window.addEventListener('keydown', (event) => {
+            if (isOpen && event.key === 'Escape') {
+                setIsOpen(false);
+            }
+        });
+    });
 
     return (
         <>
