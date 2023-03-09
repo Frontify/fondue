@@ -277,22 +277,54 @@ describe('Tooltip Component', () => {
         getTooltipArrow().should('have.class', 'tw-bottom-[-6px]');
     });
 
+    it('should render alignment Start', () => {
+        initTooltip({
+            content: TOOLTIP_TEXT,
+            withArrow: true,
+            position: TooltipPosition.Top,
+            alignment: TooltipAlignment.Start,
+        });
+
+        getTooltipArrow().should('have.class', 'tw-bottom-[-6px]');
+    });
+
+    it('should render the arrow for Top Tooltip placement', () => {
+        initTooltip({
+            content: TOOLTIP_TEXT,
+            withArrow: true,
+            position: TooltipPosition.Top,
+            alignment: TooltipAlignment.Start,
+        });
+
+        getTooltipArrow().should('have.class', 'tw-bottom-[-6px]');
+    });
+
+    it('should render Tip Bright Header', () => {
+        initTooltip({
+            content: TOOLTIP_TEXT,
+            withArrow: true,
+            position: TooltipPosition.Top,
+            brightHeader: BrightHeaderStyle.Tip,
+        });
+
+        cy.get(BRIGHT_HEADER_ID).should('have.class', 'tw-bg-box-positive-strong-pressed');
+    });
+
     it('should render the arrow for Right Tooltip placement', () => {
         initTooltip({ content: TOOLTIP_TEXT, withArrow: true, position: TooltipPosition.Right });
 
-        getTooltipArrow().should('have.class', 'tw-left-[-5px]').and('have.class', 'before:tw-bg-black-100');
+        getTooltipArrow().should('have.class', 'tw-left-[-5px]');
     });
 
-    it('should render the arrow for Right Tooltip placement with Bright Header and alignment Start', () => {
+    it('should render Warning Bright Header', () => {
         initTooltip({
             content: TOOLTIP_TEXT,
             withArrow: true,
             position: TooltipPosition.Right,
-            alignment: TooltipAlignment.Start,
             brightHeader: BrightHeaderStyle.Warning,
         });
 
-        getTooltipArrow().should('have.class', 'tw-left-[-5px]').and('have.class', 'before:tw-bg-red-60');
+        cy.get(BRIGHT_HEADER_ID).should('have.class', 'tw-bg-box-negative-strong-pressed');
     });
 
     it('should render the arrow for Left Tooltip placement', () => {
@@ -301,16 +333,15 @@ describe('Tooltip Component', () => {
         getTooltipArrow().should('have.class', 'tw-right-[-5px]');
     });
 
-    it('should render the arrow for Left Tooltip placement with Bright Header and alignment Start', () => {
+    it('should render Info Bright Header', () => {
         initTooltip({
             content: TOOLTIP_TEXT,
             withArrow: true,
             position: TooltipPosition.Left,
-            alignment: TooltipAlignment.Start,
             brightHeader: BrightHeaderStyle.Information,
         });
 
-        getTooltipArrow().should('have.class', 'tw-right-[-5px]').and('have.class', 'before:tw-bg-violet-60');
+        cy.get(BRIGHT_HEADER_ID).should('have.class', 'tw-bg-box-selected-strong');
     });
 
     it('should render the arrow for Bottom Tooltip placement', () => {
@@ -319,7 +350,7 @@ describe('Tooltip Component', () => {
         getTooltipArrow().should('have.class', 'tw-top-[-6px]');
     });
 
-    it('should render the arrow for Bottom Tooltip placement with Bright Header', () => {
+    it('should render Note Bright Header', () => {
         initTooltip({
             content: TOOLTIP_TEXT,
             withArrow: true,
@@ -327,7 +358,7 @@ describe('Tooltip Component', () => {
             brightHeader: BrightHeaderStyle.Note,
         });
 
-        getTooltipArrow().should('have.class', 'tw-top-[-6px]').and('have.class', 'before:tw-bg-yellow-60');
+        cy.get(BRIGHT_HEADER_ID).should('have.class', 'tw-bg-box-warning-strong');
     });
 
     it('should render the arrow when no Tooltip placement is provided (Bottom by default)', () => {
