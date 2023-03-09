@@ -15,22 +15,22 @@ export const internalDocumentLinksExample: InternalLinkTree = {
             subNodes: [
                 {
                     id: 'uncategorized-pages',
-                    parentId: 'blocks',
+                    parentId: 'doc-1',
                     title: 'Uncategorized Pages',
                     url: '/r/wbunKrdESpopX0KGJGcBjKxvMxcOBUpc8ll6FiJmZmw',
                     label: 'Page',
                     subNodes: [
                         {
-                            id: 'section-1',
-                            parentId: 'company-update',
+                            id: 'uncategorized-section-1',
+                            parentId: 'uncategorized-pages',
                             title: 'Section 1',
                             url: '/r/nQ30Cr5eHms0OLR5t918qkUBGsyBqF1vdGodZ91WucU#section-1',
                             label: 'Section',
                             icon: <IconDocumentText />,
                         },
                         {
-                            id: 'section-2',
-                            parentId: 'company-update',
+                            id: 'uncategorized-section-2',
+                            parentId: 'uncategorized-pages',
                             title: 'Section 2',
                             url: '/r/nQ30Cr5eHms0OLR5t918qkUBGsyBqF1vdGodZ91WucU#section-2',
                             label: 'Section',
@@ -49,22 +49,22 @@ export const internalDocumentLinksExample: InternalLinkTree = {
             subNodes: [
                 {
                     id: 'categorized-pages',
-                    parentId: 'blocks',
+                    parentId: 'doc-2',
                     title: 'Categorized Pages',
                     url: '/r/abunKrdESpopX0KGJGcBjKxvMxcOBUpc8ll6FiJmZmw',
                     label: 'Page',
                     subNodes: [
                         {
-                            id: 'section-1',
-                            parentId: 'company-update',
+                            id: 'categorized-section-1',
+                            parentId: 'categorized-pages',
                             title: 'Section 1',
                             url: '/r/aQ30Cr5eHms0OLR5t918qkUBGsyBqF1vdGodZ91WucU#section-1',
                             label: 'Section',
                             icon: <IconDocumentText />,
                         },
                         {
-                            id: 'section-2',
-                            parentId: 'company-update',
+                            id: 'categorized-section-2',
+                            parentId: 'categorized-pages',
                             title: 'Section 2',
                             url: '/r/aQ30Cr5eHms0OLR5t918qkUBGsyBqF1vdGodZ91WucU#section-2',
                             label: 'Section',

@@ -100,11 +100,13 @@ export const InternalLinkSelector = ({
                             onSelect={(id) => (id === selectedId ? setSelectedId(null) : setSelectedId(id))}
                             expandedIds={expandedIds}
                             onExpand={(id, isExpanded) => {
-                                if (isExpanded) {
-                                    setExpandedIds([...expandedIds, id]);
-                                } else {
-                                    setExpandedIds(expandedIds.filter((expandedId) => expandedId !== id));
+                                const linkNode = getLinkNodeByProp('id', id, internalLinkDocument?.nodes ?? []);
+
+                                if (!linkNode || !internalLinkDocument) {
+                                    return;
                                 }
+
+                                setExpandedIds(isExpanded ? getExpandedIds(linkNode, internalLinkDocument) : []);
                             }}
                         >
                             {internalLinkDocument &&
