@@ -7,14 +7,14 @@ type SupportedNodeProps = Pick<InternalLinkNode, 'id' | 'url'>;
 export const getLinkNodeByProp = (
     nodeProp: keyof SupportedNodeProps,
     value: string,
-    node: InternalLinkNode,
+    nodes: InternalLinkNode[],
 ): InternalLinkNode | null => {
-    if (node[nodeProp] === value) {
-        return node;
-    }
+    for (const node of nodes) {
+        if (node[nodeProp] === value) {
+            return node;
+        }
 
-    for (const subNode of node.subNodes ?? []) {
-        const foundNode = getLinkNodeByProp(nodeProp, value, subNode);
+        const foundNode = getLinkNodeByProp(nodeProp, value, node.subNodes ?? []);
         if (foundNode) {
             return foundNode;
         }

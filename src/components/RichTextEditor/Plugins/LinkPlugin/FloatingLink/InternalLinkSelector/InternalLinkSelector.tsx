@@ -2,7 +2,7 @@
 
 import { Button, ButtonEmphasis, ButtonSize, ButtonStyle, ButtonType } from '@components/Button';
 import { Modal } from '@components/Modal';
-import { InternalLinkNode, InternalLinksLoader } from '@components/RichTextEditor/Plugins/types';
+import { InternalLinkNode, InternalLinkTree, InternalLinksLoader } from '@components/RichTextEditor/Plugins/types';
 import { Tree, TreeItem } from '@components/Tree';
 import { useTreeContext } from '@components/Tree/TreeContext';
 import { IconLink } from '@foundation/Icon';
@@ -65,15 +65,15 @@ export const InternalLinkSelector = ({
     const { open: openLinkTree, isOpen: isLinkTreeOpen, close: closeLinkTree } = useOverlayTriggerState({});
     const [selectedId, setSelectedId] = React.useState<string | null>(null);
     const [expandedIds, setExpandedIds] = React.useState<string[]>([]);
-    const [internalLinkDocument, setInternalLinkDocument] = React.useState<InternalLinkNode>();
+    const [internalLinkDocument, setInternalLinkDocument] = React.useState<InternalLinkTree>();
 
     useEffect(() => {
         if (!internalLinkDocument) {
-            loadInternalLinks().then((document) => {
-                setInternalLinkDocument(document);
-                const linkNode = getLinkNodeByProp('url', url, document);
+            loadInternalLinks().then((internalLinks) => {
+                setInternalLinkDocument(internalLinks);
+                const linkNode = getLinkNodeByProp('url', url, internalLinks.nodes ?? []);
                 setSelectedId(linkNode?.id ?? '');
-                setExpandedIds(linkNode ? getExpandedIds(linkNode, document) : []);
+                setExpandedIds(linkNode ? getExpandedIds(linkNode, internalLinks) : []);
             });
         }
     }, [internalLinkDocument, loadInternalLinks, url]);
@@ -107,7 +107,10 @@ export const InternalLinkSelector = ({
                                 }
                             }}
                         >
-                            {internalLinkDocument ? <InternalLinkItem node={internalLinkDocument} /> : 'No links found'}
+                            {internalLinkDocument &&
+                                internalLinkDocument.nodes?.map((node) => (
+                                    <InternalLinkItem key={node.id} node={node} />
+                                ))}
                         </Tree>
                     </div>
                 </Modal.Body>
@@ -126,7 +129,9 @@ export const InternalLinkSelector = ({
                                     return;
                                 }
 
-                                onUrlChange(getLinkNodeByProp('id', selectedId, internalLinkDocument)?.url ?? '');
+                                onUrlChange(
+                                    getLinkNodeByProp('id', selectedId, internalLinkDocument.nodes ?? [])?.url ?? '',
+                                );
                                 closeLinkTree();
                             },
                             style: ButtonStyle.Default,

@@ -45,7 +45,7 @@ export interface ToolbarButtons {
     at(position: Position): Buttons;
 }
 
-export type InternalLinksLoader = () => Promise<InternalLinkNode>;
+export type InternalLinksLoader = () => Promise<InternalLinkTree>;
 
 export type InternalLinkNode = {
     id: string;
@@ -55,4 +55,8 @@ export type InternalLinkNode = {
     icon?: ReactElement;
     subNodes?: InternalLinkNode[];
     label?: string;
+};
+
+export type InternalLinkTree = {
+    nodes?: InternalLinkNode[];
 };
