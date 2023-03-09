@@ -8,6 +8,7 @@ import { merge } from '@utilities/merge';
 import React, {
     FocusEvent,
     HTMLAttributes,
+    KeyboardEvent,
     PropsWithChildren,
     ReactChild,
     ReactElement,
@@ -151,7 +152,9 @@ export const Tooltip = ({
         null,
     );
     const linkRef = useRef<HTMLAnchorElement | null>(null);
-    const { linkProps } = useLink({}, linkRef);
+
+    const shouldPreventTooltipOpening = hidden || disabled;
+    const { linkProps } = useLink({ isDisabled: shouldPreventTooltipOpening }, linkRef);
     const hasLargePaddingTop = useMemo(
         () => linkUrl || brightHeader || buttons || heading || headingIcon,
         [linkUrl, brightHeader, buttons, heading, headingIcon],
@@ -224,20 +227,37 @@ export const Tooltip = ({
         [handleShowTooltipOnHover, triggerElementRef, triggerElementContainerRef, tooltipContainerRef],
     );
 
-    const triggerProps: HTMLAttributes<HTMLElement> = {
-        onMouseOver: (event) => checkIfHovered(event.nativeEvent),
-        onMouseLeave: handleHideTooltipOnHover,
-        onFocus: () => setIsOpen(true),
-        onBlur: (event: FocusEvent) => {
-            if (!tooltipContainerRef?.contains(event.relatedTarget)) {
+    const handleCloseTooltipOnEscape = useCallback((event: KeyboardEvent<HTMLElement>) => {
+        if (event.key === 'Escape') {
+            setIsOpen(false);
+        }
+    }, []);
+
+    const handleCloseIfFocusedOutside = useCallback(
+        (event: FocusEvent<HTMLElement>) => {
+            const { relatedTarget } = event;
+            const elements = [tooltipContainerRef, triggerElementContainerRef];
+
+            if (!relatedTarget || !elements.some((element) => element?.contains(relatedTarget))) {
                 setIsOpen(false);
             }
         },
-    };
+        [tooltipContainerRef, triggerElementContainerRef],
+    );
+
+    const openingEvents: HTMLAttributes<HTMLElement> = shouldPreventTooltipOpening
+        ? {}
+        : {
+              onMouseOver: (event) => checkIfHovered(event.nativeEvent),
+              onMouseLeave: handleHideTooltipOnHover,
+              onFocus: () => setIsOpen(true),
+              onBlur: handleCloseIfFocusedOutside,
+              onKeyDown: handleCloseTooltipOnEscape,
+          };
 
     useEffect(() => {
-        setIsOpen(open);
-    }, [open]);
+        setIsOpen(shouldPreventTooltipOpening ? false : open);
+    }, [open, shouldPreventTooltipOpening]);
 
     useLayoutEffect(() => {
         if (typeof popperInstance.update === 'function' && isOpen) {
@@ -248,20 +268,19 @@ export const Tooltip = ({
 
     return (
         <>
-            <div {...triggerProps} ref={setTriggerElementContainerRef}>
+            <div {...openingEvents} ref={setTriggerElementContainerRef}>
                 {triggerElement &&
                     cloneElement(triggerElement, {
                         ref: setTriggerElementRef,
                         'aria-describedby': id,
-                        'aria-disabled': hidden || disabled ? true : false,
+                        'aria-disabled': shouldPreventTooltipOpening,
                     })}
             </div>
             <div
                 ref={setTooltipContainerRef}
-                aria-hidden={hidden || disabled ? true : false}
+                aria-hidden={shouldPreventTooltipOpening}
                 className={merge([
                     'tw-popper-container tw-inline-block tw-max-w-[200px] tw-dark tw-bg-base tw-rounded-md tw-shadow-mid tw-text-text tw-z-[120000]',
-                    (hidden || disabled) && 'tw-hidden',
                     !isOpen && 'tw-opacity-0 tw-h-0 tw-w-0 tw-overflow-hidden',
                 ])}
                 data-test-id="tooltip"
@@ -269,9 +288,7 @@ export const Tooltip = ({
                 id={id}
                 style={popperInstance.styles.popper}
                 {...popperInstance.attributes.popper}
-                onFocus={() => setIsOpen(true)}
-                onMouseOver={(event) => checkIfHovered(event.nativeEvent)}
-                onMouseLeave={handleHideTooltipOnHover}
+                {...openingEvents}
             >
                 {brightHeader && <BrightHeader headerStyle={brightHeader} />}
                 <div
@@ -308,7 +325,6 @@ export const Tooltip = ({
                             target="_blank"
                             rel="noopener noreferrer"
                             className={merge(['tw-text-xs tw-text-black-40 tw-underline tw-mt-1', FOCUS_VISIBLE_STYLE])}
-                            onBlur={() => (buttons && buttons.length > 0 ? null : setIsOpen(false))}
                         >
                             {linkLabel ?? 'Click here to learn more.'}
                         </a>
@@ -316,28 +332,26 @@ export const Tooltip = ({
                     {buttons && (
                         <div className="tw-flex tw-flex-row-reverse tw-gap-x-1 tw-mt-4">
                             {buttons.length > 0 && (
-                                <div onBlur={() => (buttons && buttons.length < 2 ? setIsOpen(false) : null)}>
-                                    <Button
-                                        style={ButtonStyle.Default}
-                                        emphasis={ButtonEmphasis.Strong}
-                                        size={ButtonSize.Small}
-                                        onClick={buttons[0].action}
-                                    >
-                                        {buttons[0].label}
-                                    </Button>
-                                </div>
+                                <Button
+                                    style={ButtonStyle.Default}
+                                    emphasis={ButtonEmphasis.Strong}
+                                    size={ButtonSize.Small}
+                                    onClick={buttons[0].action}
+                                    disabled={shouldPreventTooltipOpening}
+                                >
+                                    {buttons[0].label}
+                                </Button>
                             )}
                             {buttons.length === 2 && (
-                                <div onBlur={() => setIsOpen(false)}>
-                                    <Button
-                                        style={ButtonStyle.Default}
-                                        emphasis={ButtonEmphasis.Default}
-                                        size={ButtonSize.Small}
-                                        onClick={buttons[1].action}
-                                    >
-                                        {buttons[1].label}
-                                    </Button>
-                                </div>
+                                <Button
+                                    style={ButtonStyle.Default}
+                                    emphasis={ButtonEmphasis.Default}
+                                    size={ButtonSize.Small}
+                                    onClick={buttons[1].action}
+                                    disabled={shouldPreventTooltipOpening}
+                                >
+                                    {buttons[1].label}
+                                </Button>
                             )}
                         </div>
                     )}

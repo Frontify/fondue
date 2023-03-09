@@ -23,6 +23,7 @@ export default {
         heading: '',
     },
     argTypes: {
+        triggerElement: { table: { disable: true } },
         brightHeader: {
             options: ['None', 'Information', 'Warning', 'Tip', 'Note'],
             mapping: {
@@ -66,6 +67,14 @@ export default {
         },
         open: {
             control: { type: 'boolean' },
+            defaultValue: false,
+        },
+        linkUrl: {
+            control: 'text',
+            defaultValue: false,
+        },
+        linkLabel: {
+            control: 'text',
             defaultValue: false,
         },
         disabled: {
