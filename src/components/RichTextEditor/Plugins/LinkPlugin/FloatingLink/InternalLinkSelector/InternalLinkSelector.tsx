@@ -21,7 +21,7 @@ const TreeLinkItem = ({ node: { id, title, icon } }: TreeLinkItemProps): ReactEl
 
     return (
         <div className="tw-flex tw-flex-auto tw-space-x-2">
-            {icon}
+            <span className="tw-ml-1">{icon}</span>
             <span className="tw-text-s">{title}</span>
             <span
                 className={merge([
