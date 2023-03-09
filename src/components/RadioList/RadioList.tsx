@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useMemoizedId } from '@hooks/useMemoizedId';
+import { generateRandomId } from '@utilities/generateRandomId';
 import { merge } from '@utilities/merge';
-import React, { Children, isValidElement, ReactNode, useEffect, useState } from 'react';
+import React, { Children, ReactNode, isValidElement, useState } from 'react';
 import { RadioButtonEmphasis, RadioButtonProps } from './RadioButton';
 
 export enum RadioListDirection {
@@ -34,12 +34,16 @@ export const RadioList = ({
         }) ?? [];
 
     return (
-        <div className={merge(['tw-flex', direction === RadioListDirection.Horizontal ? 'tw-gap-4' : 'tw-flex-col'])}>
+        <div
+            data-test-id="radio-list-wrapper"
+            className={merge(['tw-flex', direction === RadioListDirection.Horizontal ? 'tw-gap-4' : 'tw-flex-col'])}
+        >
             {radioButtons.map((radio, index) => {
-                const id = useMemoizedId(radio.value);
+                const id = generateRandomId();
                 return (
                     <div className="tw-flex tw-items-center tw-mb-2" key={id}>
                         <input
+                            data-test-id="radio-input"
                             disabled={radio.disabled}
                             id={id}
                             type="radio"
@@ -61,6 +65,7 @@ export const RadioList = ({
                         />
                         {!radio.hideLabel && (
                             <label
+                                data-test-id="radio-label"
                                 htmlFor={id}
                                 className={merge([
                                     'tw-flex tw-flex-col tw-pl-2 tw-text-sm tw-font-normal peer-checked:tw-font-medium tw-text-black-80 peer-disabled:tw-text-black-40',
