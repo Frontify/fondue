@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { InternalLinkNode, InternalLinkTree } from '../../types';
+import { LinkNode, LinkTree } from '../../types';
 import { getLinkNodeByProp } from './getLinkNodeByProp';
 
-export const getExpandedIds = (selectedNode: InternalLinkNode, tree: InternalLinkTree): string[] => {
+export const getExpandedIds = (selectedNode: LinkNode, tree: LinkTree): string[] => {
     const ids = [selectedNode.id];
 
     if (!selectedNode.parentId) {

@@ -11,7 +11,7 @@ import {
     customDesignTokens,
     defaultValue,
     htmlValue,
-    internalDocumentLinksExample,
+    linkTreeExample,
     markdownText,
     mentionValue,
     mentionable,
@@ -109,10 +109,10 @@ allPlugins
             new UnderlinePlugin(),
             new StrikethroughPlugin(),
             new LinkPlugin({
-                loadInternalLinks: () => new Promise((resolve) => resolve(internalDocumentLinksExample)),
+                loadLinkTree: () => new Promise((resolve) => resolve(linkTreeExample)),
             }),
             new ButtonPlugin({
-                loadInternalLinks: () => new Promise((resolve) => resolve(internalDocumentLinksExample)),
+                loadLinkTree: () => new Promise((resolve) => resolve(linkTreeExample)),
             }),
             new CodePlugin(),
             new BreakAfterPlugin(),
