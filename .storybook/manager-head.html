@@ -1,13 +1,188 @@
 <!-- Custom CSS for Storybook interface goes here -->
 <style>
+    @import '/styles/fondue-variables.css';
+
+    /* Header */
     .sidebar-header {
-        /* Center dropdown button */
         align-items: center !important;
+        margin-bottom: 24px;
+        padding: 8px;
+        padding-right: 0px;
     }
 
-    .sidebar-header img {
-        /* Responsive sidebar header image */
+    .sidebar-header > img {
+        margin-bottom: 24px;
+    }
+
+    /* Main list area */
+    #storybook-explorer-tree > div {
+        margin: 0 !important;
+    }
+
+    /* Collapsible subheadings */
+    .sidebar-subheading {
+        font-size: var(--body-size-large) !important;
+        line-height: var(--body-size-large-line-height) !important;
+        color: var(--text-color) !important;
+        font-weight: var(--body-weight-strong-number) !important;
+        text-transform: none !important;
+        letter-spacing: normal !important;
+        color: var(--text-color) !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        margin-top: 1rem !important;
+    }
+
+    .sidebar-subheading > button:first-of-type {
+        display: flex !important;
+        gap: 0.5rem !important;
+        align-items: center !important;
+        padding: 0 5px !important;
+        height: 2.25rem !important;
+        margin: 0 !important;
         width: 100%;
-        max-width: 200px;
+    }
+
+    .sidebar-subheading > button > span {
+        margin: 0 !important;
+    }
+
+    /* Sidebar item */
+    .sidebar-item {
+        display: flex !important;
+        gap: 0.5rem !important;
+        font-size: var(--body-size-medium) !important;
+        line-height: var(--body-size-medium-line-height) !important;
+        font-weight: var(--body-weight-number) !important;
+        color: var(--text-color) !important;
+        height: 1.75rem !important;
+        align-items: center !important;
+        border-radius: var(--radius);
+        white-space: nowrap !important;
+        overflow: hidden !important;
+    }
+
+    .sidebar-item:hover {
+        background-color: var(--box-neutral-color-hover) !important;
+        color: var(--box-neutral-inverse-color-hover) !important;
+    }
+
+    .sidebar-item:focus {
+        background-color: var(--box-selected-color-hover) !important;
+        color: var(--box-selected-inverse-color-hover) !important;
+    }
+
+    .sidebar-item[data-selected='true'] {
+        background-color: var(--box-selected-strong-color) !important;
+        color: var(--box-selected-strong-inverse-color) !important;
+        font-weight: var(--body-weight-strong-number) !important;
+    }
+
+    /* Sidebar item text */
+    .sidebar-item > span {
+        margin: 0 !important;
+        margin-left: 3px !important;
+    }
+
+    /* Sidebar item icon */
+    .sidebar-item > svg {
+        color: var(--text-color-interactive) !important;
+        margin: 0 !important;
+        height: 1rem;
+        width: 1rem;
+    }
+
+    a.sidebar-item > svg {
+        margin-left: -2px !important;
+    }
+
+    .sidebar-item:hover > svg {
+        color: var(--box-neutral-inverse-color-hover) !important;
+    }
+
+    .sidebar-item:focus > svg {
+        color: var(--box-selected-inverse-color-hover) !important;
+    }
+
+    .sidebar-item[data-selected='true'] > svg {
+        color: var(--box-selected-strong-inverse-color) !important;
+    }
+
+    /* Search field */
+    .search-field > input {
+        border-radius: var(--radius) !important;
+        border-color: var(--line-color-x-strong) !important;
+    }
+
+    .search-field > input:focus {
+        border-color: var(--line-color-xx-strong) !important;
+    }
+
+    .search-field > code {
+        right: 0.5rem;
+    }
+
+    /* Search results */
+    .search-result-recentlyOpened {
+        font-size: var(--body-size-large) !important;
+        line-height: var(--body-size-large-line-height) !important;
+        color: var(--text-color) !important;
+        font-weight: var(--body-weight-strong-number) !important;
+        text-transform: none !important;
+        letter-spacing: normal !important;
+        color: var(--text-color) !important;
+        padding: 0 2rem !important;
+        height: 2.25rem !important;
+        margin: 0 !important;
+        margin-top: 1rem !important;
+    }
+
+    .search-result-item {
+        padding: 0 !important;
+    }
+
+    .search-result-item > button,
+    .search-result-item > a {
+        display: flex !important;
+        align-items: center !important;
+        padding: 0.75rem 2rem !important;
+        gap: 0.75rem;
+    }
+
+    .search-result-item > button > svg,
+    .search-result-item > a > svg {
+        color: var(--text-color-interactive) !important;
+        height: 1rem !important;
+        width: 1rem !important;
+        margin: 0;
+    }
+
+    .search-result-item--label {
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    .search-result-item--label > * {
+        font-size: var(--body-size-medium) !important;
+        line-height: var(--body-size-medium-line-height) !important;
+    }
+
+    .search-result-item--label > span {
+        color: var(--text-color-weak) !important;
+        order: 1 !important;
+    }
+
+    .search-result-item--label > strong {
+        color: var(--text-color) !important;
+        font-weight: var(--body-weight-strong-number) !important;
+        order: 2 !important;
+    }
+
+    .search-result-item:focus,
+    .search-result-item:hover,
+    .search-result-item[aria-selected='true'] {
+        padding: 0 !important;
+        background-color: var(--box-selected-color) !important;
+        color: var(--box-selected-inverse-color) !important;
     }
 </style>

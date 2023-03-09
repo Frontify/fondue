@@ -10,7 +10,7 @@ export const light = create({
     // UI
     appBg: 'white',
     appBorderColor: '#EAEBEE',
-    appBorderRadius: 4,
+    appBorderRadius: 0,
 
     // Typography
     fontBase:
@@ -31,7 +31,7 @@ export const light = create({
     inputTextColor: '#2d3232',
     inputBorderRadius: 4,
 
-    brandTitle: 'Frontify Storybook',
+    brandTitle: 'Fondue',
     brandUrl: 'https://frontify.com',
     brandImage: '/img/logo-charcoal.svg',
 });
@@ -45,7 +45,7 @@ export const dark = create({
     // UI
     appBg: '#2d3232',
     appBorderColor: '#424747',
-    appBorderRadius: 4,
+    appBorderRadius: 0,
 
     // Typography
     fontBase:

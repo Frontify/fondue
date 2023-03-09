@@ -10,7 +10,7 @@ import { Meta, StoryFn } from '@storybook/react';
 import React from 'react';
 
 export default {
-    title: 'Tokens',
+    title: 'Foundation/Tokens',
 } as Meta;
 
 function getPalette(color: any) {
