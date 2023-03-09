@@ -258,12 +258,18 @@ export const Tooltip = ({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isOpen]);
 
+    const listenForEsc = (event: KeyboardEvent) => {
+        if (isOpen && event.key === 'Escape') {
+            setIsOpen(false);
+        }
+    };
+
     useEffect(() => {
-        window.addEventListener('keydown', (event) => {
-            if (isOpen && event.key === 'Escape') {
-                setIsOpen(false);
-            }
-        });
+        window.addEventListener('keydown', listenForEsc);
+
+        return () => {
+            window.removeEventListener('keydown', listenForEsc);
+        };
     });
 
     return (
