@@ -275,12 +275,12 @@ export const Tooltip = ({
                     cloneElement(triggerElement, {
                         ref: setTriggerElementRef,
                         'aria-describedby': id,
-                        'aria-disabled': shouldPreventTooltipOpening ? true : false,
+                        'aria-disabled': shouldPreventTooltipOpening,
                     })}
             </div>
             <div
                 ref={setTooltipContainerRef}
-                aria-hidden={shouldPreventTooltipOpening ? true : false}
+                aria-hidden={shouldPreventTooltipOpening}
                 className={merge([
                     'tw-popper-container tw-inline-block tw-max-w-[200px] tw-bg-black-100 dark:tw-bg-white tw-rounded-md tw-shadow-mid tw-text-white dark:tw-text-black-100 tw-z-[120000]',
                     !isOpen && 'tw-opacity-0 tw-h-0 tw-w-0 tw-overflow-hidden',
