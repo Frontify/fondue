@@ -119,7 +119,8 @@ export const LinkSelector = ({ url, loadLinkTree: loadLinkTree, onUrlChange }: L
                         },
                         {
                             children: 'Confirm',
-                            onClick: () => {
+                            onClick: (event) => {
+                                event?.preventDefault();
                                 if (!selectedId || !linkTree) {
                                     return;
                                 }
