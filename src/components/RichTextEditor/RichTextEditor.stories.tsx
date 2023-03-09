@@ -111,7 +111,9 @@ allPlugins
             new LinkPlugin({
                 loadInternalLinks: () => new Promise((resolve) => resolve(internalDocumentLinksExample)),
             }),
-            new ButtonPlugin(),
+            new ButtonPlugin({
+                loadInternalLinks: () => new Promise((resolve) => resolve(internalDocumentLinksExample)),
+            }),
             new CodePlugin(),
             new BreakAfterPlugin(),
         ],

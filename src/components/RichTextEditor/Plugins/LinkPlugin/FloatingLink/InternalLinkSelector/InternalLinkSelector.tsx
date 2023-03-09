@@ -79,7 +79,7 @@ export const InternalLinkSelector = ({
     }, [internalLinkDocument, loadInternalLinks, url]);
 
     return (
-        <div className="tw-pt-5">
+        <>
             <Button
                 icon={<IconLink />}
                 size={ButtonSize.Medium}
@@ -141,6 +141,6 @@ export const InternalLinkSelector = ({
                     ]}
                 />
             </Modal>
-        </div>
+        </>
     );
 };

@@ -3,6 +3,7 @@
 import { isValidUrl } from '@components/RichTextEditor/utils/isValidUrl';
 import { RangeBeforeOptions, createPluginFactory } from '@udecode/plate';
 import { Plugin, PluginProps } from '../Plugin';
+import { InternalLinksLoader } from '../types';
 import { ButtonMarkupElement } from './ButtonMarkupElement';
 import { ButtonButton } from './components/ButtonButton';
 import { CustomFloatingButton } from './components/FloatingButton/CustomFloatingButton';
@@ -53,51 +54,56 @@ export interface ButtonPlugin {
 /**
  * Enables support for hyperlinks.
  */
-export const createButtonPlugin = createPluginFactory({
-    key: ELEMENT_BUTTON,
-    isElement: true,
-    isInline: true,
-    props: ({ element }) => ({
-        nodeProps: { href: element?.url, target: element?.target },
-    }),
-    withOverrides: withButton,
-    renderAfterEditable: CustomFloatingButton,
-    options: {
-        isUrl: isValidUrl,
-        rangeBeforeOptions: {
-            matchString: ' ',
-            skipInvalid: true,
-            afterMatch: true,
+export const createButtonPlugin = (loadInternalLinks?: InternalLinksLoader) =>
+    createPluginFactory({
+        key: ELEMENT_BUTTON,
+        isElement: true,
+        isInline: true,
+        props: ({ element }) => ({
+            nodeProps: { href: element?.url, target: element?.target },
+        }),
+        withOverrides: withButton,
+        renderAfterEditable: CustomFloatingButton,
+        options: {
+            isUrl: isValidUrl,
+            rangeBeforeOptions: {
+                matchString: ' ',
+                skipInvalid: true,
+                afterMatch: true,
+            },
+            triggerFloatingButtonHotkeys: 'command+shift+k, ctrl+shift+k',
+            loadInternalLinks,
         },
-        triggerFloatingButtonHotkeys: 'command+shift+k, ctrl+shift+k',
-    },
-    then: (editor, { type }) => ({
-        deserializeHtml: {
-            rules: [
-                {
-                    validNodeName: 'A',
-                    validClassName: 'btn',
-                },
-            ],
-            getNode: (el) => ({
-                type,
-                url: el.getAttribute('href'),
-                target: el.getAttribute('target') || '_blank',
-            }),
-        },
-    }),
-});
+        then: (editor, { type }) => ({
+            deserializeHtml: {
+                rules: [
+                    {
+                        validNodeName: 'A',
+                        validClassName: 'btn',
+                    },
+                ],
+                getNode: (el) => ({
+                    type,
+                    url: el.getAttribute('href'),
+                    target: el.getAttribute('target') || '_blank',
+                }),
+            },
+        }),
+    })();
 
 export class ButtonPlugin extends Plugin {
+    private loadInternalLinks?: InternalLinksLoader;
+
     constructor(props?: PluginProps) {
         super(BUTTON_PLUGIN, {
             button: ButtonButton,
             markupElement: new ButtonMarkupElement(),
             ...props,
         });
+        this.loadInternalLinks = props?.loadInternalLinks;
     }
 
     plugins() {
-        return [createButtonPlugin()];
+        return [createButtonPlugin(this.loadInternalLinks)];
     }
 }

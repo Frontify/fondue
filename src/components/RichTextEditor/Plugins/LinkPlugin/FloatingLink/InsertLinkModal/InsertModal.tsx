@@ -68,14 +68,16 @@ export const InsertModal: FC<Props> = ({
             </FormControl>
             {!isValidUrlOrEmpty() && <div className="tw-text-red-65 tw-mt-3">Please enter a valid URL.</div>}
         </div>
-        <div className="tw-pt-5">
-            <Checkbox value="new-tab" label="Open in new tab" state={state.newTab} onChange={onToggleTab} />
-        </div>
 
         {loadInternalLinks && (
-            <InternalLinkSelector url={state.url} loadInternalLinks={loadInternalLinks} onUrlChange={onUrlChange} />
+            <div className="tw-mt-3">
+                <InternalLinkSelector url={state.url} loadInternalLinks={loadInternalLinks} onUrlChange={onUrlChange} />
+            </div>
         )}
 
+        <div className="tw-mt-3">
+            <Checkbox value="new-tab" label="Open in new tab" state={state.newTab} onChange={onToggleTab} />
+        </div>
         <div className="tw-mt-3">
             <div className={'tw-pt-5 tw-flex tw-gap-x-3 tw-justify-end tw-border-t tw-border-t-black-10'}>
                 <Button
