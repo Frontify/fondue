@@ -260,7 +260,7 @@ export const Tooltip = ({
             <div
                 ref={setTooltipContainerRef}
                 className={merge([
-                    'tw-popper-container tw-inline-block tw-max-w-[200px] tw-dark tw-bg-base tw-rounded-md tw-shadow-mid tw-text tw-z-[120000]',
+                    'tw-popper-container tw-inline-block tw-max-w-[200px] tw-dark tw-bg-base tw-rounded-md tw-shadow-mid tw-text-text tw-z-[120000]',
                     (hidden || disabled) && 'tw-hidden',
                     !isOpen && 'tw-opacity-0 tw-h-0 tw-w-0 tw-overflow-hidden',
                 ])}
