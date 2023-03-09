@@ -42,7 +42,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
         };
         const result = serializeNodeToHtmlRecursive(node, { designTokens: defaultDesignTokens });
 
-        expect(result).to.match(/<ol class=".*tw-list-\[decimal].*"/);
+        expect(result).to.match(/<ol class=".*decimal.*"/);
         expect(result).to.match(/<li .*><p .*>This comes first\.<\/p><\/li>/);
         expect(result).to.match(/<li .*><p .*>This comes second\.<\/p><\/li>/);
     });
@@ -85,9 +85,9 @@ describe('serializeNodeToHtmlRecursive()', () => {
         const parser = new DOMParser();
         const htmlDoc = parser.parseFromString(result, 'text/html');
         const orderedLists = htmlDoc.getElementsByTagName('ol');
-        expect(orderedLists[0]?.className).to.include('tw-list-[decimal]');
-        expect(orderedLists[1]?.className).to.include('tw-list-[lower-alpha]');
-        expect(orderedLists[2]?.className).to.include('tw-list-[lower-roman]');
+        expect(orderedLists[0]?.className).to.include('decimal');
+        expect(orderedLists[1]?.className).to.include('alpha');
+        expect(orderedLists[2]?.className).to.include('roman');
     });
 
     it('serializes list item with custom styles to html', () => {
