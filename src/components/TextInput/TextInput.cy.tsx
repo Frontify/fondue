@@ -4,6 +4,7 @@ import { Validation } from '@utilities/validation';
 import React, { FC, useEffect, useState } from 'react';
 import { TextInput, TextInputProps, TextInputType } from './TextInput';
 
+const TEXT_INPUT_COMPONENT = '[data-test-id=fondue-text-input-component]';
 const TEXT_INPUT_ID = '[data-test-id=text-input]';
 const DECORATOR_TEXT = 'decorator text';
 const DECORATOR = <span>{DECORATOR_TEXT}</span>;
@@ -193,9 +194,16 @@ describe('Text Input component', () => {
         cy.get(CLEAR_ICON_ID).should('have.attr', 'type', 'button');
     });
 
-    it('only error validation state should show the triangle warning icon', () => {
+    it('Error validation state should show the triangle warning icon', () => {
         cy.mount(<StatefulInput validation={Validation.Error} />);
         cy.get(EXCLAMATION_MARK_ICON_ID).should('be.visible');
+        cy.get(TEXT_INPUT_COMPONENT).should('have.class', 'tw-border-text-negative');
+    });
+
+    it('Warning validation state should show the triangle warning icon', () => {
+        cy.mount(<StatefulInput validation={Validation.Warning} />);
+        cy.get(EXCLAMATION_MARK_ICON_ID).should('be.visible');
+        cy.get(TEXT_INPUT_COMPONENT).should('have.class', 'tw-border-text-warning');
     });
 
     it('clearable should have a type definition', () => {
