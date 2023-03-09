@@ -52,6 +52,7 @@ export type InternalLinkNode = {
     parentId?: string;
     title: string;
     url: string;
-    icon?: ReactNode;
+    icon?: ReactElement;
     subNodes?: InternalLinkNode[];
+    label?: string;
 };

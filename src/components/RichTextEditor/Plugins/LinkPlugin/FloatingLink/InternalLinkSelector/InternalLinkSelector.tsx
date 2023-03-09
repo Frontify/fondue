@@ -4,15 +4,36 @@ import { Button, ButtonEmphasis, ButtonSize, ButtonStyle, ButtonType } from '@co
 import { Modal } from '@components/Modal';
 import { InternalLinkNode, InternalLinksLoader } from '@components/RichTextEditor/Plugins/types';
 import { Tree, TreeItem } from '@components/Tree';
+import { useTreeContext } from '@components/Tree/TreeContext';
 import { IconLink } from '@foundation/Icon';
 import { useOverlayTriggerState } from '@react-stately/overlays';
+import { merge } from '@utilities/merge';
 import React, { ReactElement, useEffect } from 'react';
 import { getExpandedIds, getLinkNodeByProp } from '../../utils';
 
-type InternalLinkSelectorProps = {
-    url: string;
-    loadInternalLinks: InternalLinksLoader;
-    onUrlChange: (value: string) => void;
+type TreeLinkItemProps = {
+    node: InternalLinkNode;
+};
+
+const TreeLinkItem = ({ node: { id, title, icon } }: TreeLinkItemProps): ReactElement => {
+    const { treeState } = useTreeContext();
+    const isActive = treeState.selectedIds.has(id);
+
+    return (
+        <div className="tw-flex tw-flex-auto tw-space-x-2">
+            {icon}
+            <span className="tw-text-s">{title}</span>
+            <span
+                className={merge([
+                    'tw-flex-auto tw-font-sans tw-text-xs tw-text-right',
+                    !isActive && 'tw-text-text-weak',
+                    isActive && 'tw-text-text-white',
+                ])}
+            >
+                {title}
+            </span>
+        </div>
+    );
 };
 
 type InternalLinkItemProps = {
@@ -22,12 +43,18 @@ type InternalLinkItemProps = {
 
 const InternalLinkItem = ({ node, level = 0 }: InternalLinkItemProps): ReactElement => {
     return (
-        <TreeItem id={node.id} label={node.title} level={level}>
+        <TreeItem id={node.id} contentComponent={() => <TreeLinkItem node={node} />} level={level}>
             {node.subNodes?.map((subNode) => (
                 <InternalLinkItem key={subNode.id} node={subNode} level={++level} />
             ))}
         </TreeItem>
     );
+};
+
+type InternalLinkSelectorProps = {
+    url: string;
+    loadInternalLinks: InternalLinksLoader;
+    onUrlChange: (value: string) => void;
 };
 
 export const InternalLinkSelector = ({
@@ -70,7 +97,7 @@ export const InternalLinkSelector = ({
                         <Tree
                             id="internal-link-tree"
                             selectedIds={selectedId ? [selectedId] : []}
-                            onSelect={(id) => setSelectedId(id)}
+                            onSelect={(id) => (id === selectedId ? setSelectedId(null) : setSelectedId(id))}
                             expandedIds={expandedIds}
                             onExpand={(id, isExpanded) => {
                                 if (isExpanded) {
