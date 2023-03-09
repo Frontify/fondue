@@ -295,7 +295,7 @@ export const Tooltip = ({
                     )}
                     <div className="tw-flex">
                         {tooltipIcon && (
-                            <span aria-describedby={id} className="tw-shrink-0 tw-mr-1 tw-leading-4">
+                            <span className="tw-shrink-0 tw-mr-1 tw-leading-4">
                                 {cloneElement(tooltipIcon, { size: IconSize.Size16 })}
                             </span>
                         )}
