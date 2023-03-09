@@ -125,7 +125,7 @@ export const MultipleTooltipsComponent: StoryFn<TooltipProps> = (args: TooltipPr
             <Tooltip
                 {...args}
                 triggerElement={
-                    <button className="tw-mr-1">
+                    <button aria-label="Exclamation mark circle icon" className="tw-mr-1">
                         <IconExclamationMarkCircle16Filled />
                     </button>
                 }
@@ -134,7 +134,7 @@ export const MultipleTooltipsComponent: StoryFn<TooltipProps> = (args: TooltipPr
                 {...args}
                 content="Second tooltip"
                 triggerElement={
-                    <button>
+                    <button aria-label="Exclamation mark triangle icon">
                         <IconExclamationMarkTriangle16 />
                     </button>
                 }
@@ -271,7 +271,7 @@ const TooltipWithinOverflownContainer: StoryFn<TooltipProps> = (args: TooltipPro
                 <Tooltip
                     {...args}
                     triggerElement={
-                        <button className="tw-mr-1">
+                        <button aria-label="Exclamation mark circle icon" className="tw-mr-1">
                             <IconExclamationMarkCircle16Filled />
                         </button>
                     }
@@ -373,7 +373,7 @@ const WithModalWithTooltipAndDropdown: StoryFn<TooltipProps> = (args: TooltipPro
                     <Tooltip
                         {...args}
                         triggerElement={
-                            <button className="tw-mr-1">
+                            <button aria-label="Exclamation mark circle icon" className="tw-mr-1">
                                 <IconExclamationMarkCircle16Filled />
                             </button>
                         }
