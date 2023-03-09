@@ -7,7 +7,6 @@ import { merge } from '@utilities/merge';
 import { MarkupElement } from '../MarkupElement';
 import { ELEMENT_CHECK_ITEM } from './id';
 import { justifyClassNames } from '../TextStylePlugin/TextStyles/alignment';
-import './style.css';
 
 export const CheckboxListElementNode = (props: PlateRenderElementProps) => {
     const { attributes, children, nodeProps, element, editor } = props;
