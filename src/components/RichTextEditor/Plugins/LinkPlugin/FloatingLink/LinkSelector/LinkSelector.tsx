@@ -2,7 +2,7 @@
 
 import { Button, ButtonEmphasis, ButtonSize, ButtonStyle, ButtonType } from '@components/Button';
 import { Modal } from '@components/Modal';
-import { InternalLinkNode, InternalLinkTree, InternalLinksLoader } from '@components/RichTextEditor/Plugins/types';
+import { LinkLoader, LinkNode, LinkTree } from '@components/RichTextEditor/Plugins/types';
 import { Tree, TreeItem } from '@components/Tree';
 import { useTreeContext } from '@components/Tree/TreeContext';
 import { IconLink } from '@foundation/Icon';
@@ -12,7 +12,7 @@ import React, { ReactElement, useEffect } from 'react';
 import { getExpandedIds, getLinkNodeByProp } from '../../utils';
 
 type TreeLinkItemProps = {
-    node: InternalLinkNode;
+    node: LinkNode;
 };
 
 const TreeLinkItem = ({ node: { id, title, icon } }: TreeLinkItemProps): ReactElement => {
@@ -36,47 +36,43 @@ const TreeLinkItem = ({ node: { id, title, icon } }: TreeLinkItemProps): ReactEl
     );
 };
 
-type InternalLinkItemProps = {
-    node: InternalLinkNode;
+type LinkItemProps = {
+    node: LinkNode;
     level?: number;
 };
 
-const InternalLinkItem = ({ node, level = 0 }: InternalLinkItemProps): ReactElement => {
+const LinkItem = ({ node, level = 0 }: LinkItemProps): ReactElement => {
     return (
         <TreeItem id={node.id} contentComponent={() => <TreeLinkItem node={node} />} level={level}>
             {node.subNodes?.map((subNode) => (
-                <InternalLinkItem key={subNode.id} node={subNode} level={++level} />
+                <LinkItem key={subNode.id} node={subNode} level={++level} />
             ))}
         </TreeItem>
     );
 };
 
-type InternalLinkSelectorProps = {
+type LinkSelectorProps = {
     url: string;
-    loadInternalLinks: InternalLinksLoader;
+    loadLinkTree: LinkLoader;
     onUrlChange: (value: string) => void;
 };
 
-export const InternalLinkSelector = ({
-    url,
-    loadInternalLinks,
-    onUrlChange,
-}: InternalLinkSelectorProps): ReactElement => {
+export const LinkSelector = ({ url, loadLinkTree: loadLinkTree, onUrlChange }: LinkSelectorProps): ReactElement => {
     const { open: openLinkTree, isOpen: isLinkTreeOpen, close: closeLinkTree } = useOverlayTriggerState({});
     const [selectedId, setSelectedId] = React.useState<string | null>(null);
     const [expandedIds, setExpandedIds] = React.useState<string[]>([]);
-    const [internalLinkDocument, setInternalLinkDocument] = React.useState<InternalLinkTree>();
+    const [linkTree, setLinkTree] = React.useState<LinkTree>();
 
     useEffect(() => {
-        if (!internalLinkDocument) {
-            loadInternalLinks().then((internalLinks) => {
-                setInternalLinkDocument(internalLinks);
-                const linkNode = getLinkNodeByProp('url', url, internalLinks.nodes ?? []);
+        if (!linkTree) {
+            loadLinkTree().then((linkTree) => {
+                setLinkTree(linkTree);
+                const linkNode = getLinkNodeByProp('url', url, linkTree.nodes ?? []);
                 setSelectedId(linkNode?.id ?? '');
-                setExpandedIds(linkNode ? getExpandedIds(linkNode, internalLinks) : []);
+                setExpandedIds(linkNode ? getExpandedIds(linkNode, linkTree) : []);
             });
         }
-    }, [internalLinkDocument, loadInternalLinks, url]);
+    }, [linkTree, loadLinkTree, url]);
 
     return (
         <>
@@ -93,26 +89,23 @@ export const InternalLinkSelector = ({
             <Modal onClose={() => closeLinkTree()} isOpen={isLinkTreeOpen}>
                 <Modal.Header title="Select internal link" />
                 <Modal.Body>
-                    <div className="internal-link-tree-container">
+                    <div className="link-tree-container">
                         <Tree
-                            id="internal-link-tree"
+                            id="link-tree"
                             selectedIds={selectedId ? [selectedId] : []}
                             onSelect={(id) => (id === selectedId ? setSelectedId(null) : setSelectedId(id))}
                             expandedIds={expandedIds}
                             onExpand={(id, isExpanded) => {
-                                const linkNode = getLinkNodeByProp('id', id, internalLinkDocument?.nodes ?? []);
+                                const linkNode = getLinkNodeByProp('id', id, linkTree?.nodes ?? []);
 
-                                if (!linkNode || !internalLinkDocument) {
+                                if (!linkNode || !linkTree) {
                                     return;
                                 }
 
-                                setExpandedIds(isExpanded ? getExpandedIds(linkNode, internalLinkDocument) : []);
+                                setExpandedIds(isExpanded ? getExpandedIds(linkNode, linkTree) : []);
                             }}
                         >
-                            {internalLinkDocument &&
-                                internalLinkDocument.nodes?.map((node) => (
-                                    <InternalLinkItem key={node.id} node={node} />
-                                ))}
+                            {linkTree && linkTree.nodes?.map((node) => <LinkItem key={node.id} node={node} />)}
                         </Tree>
                     </div>
                 </Modal.Body>
@@ -127,13 +120,11 @@ export const InternalLinkSelector = ({
                         {
                             children: 'Confirm',
                             onClick: () => {
-                                if (!selectedId || !internalLinkDocument) {
+                                if (!selectedId || !linkTree) {
                                     return;
                                 }
 
-                                onUrlChange(
-                                    getLinkNodeByProp('id', selectedId, internalLinkDocument.nodes ?? [])?.url ?? '',
-                                );
+                                onUrlChange(getLinkNodeByProp('id', selectedId, linkTree.nodes ?? [])?.url ?? '');
                                 closeLinkTree();
                             },
                             style: ButtonStyle.Default,

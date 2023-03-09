@@ -3,7 +3,7 @@
 import { isValidUrl } from '@components/RichTextEditor/utils/isValidUrl';
 import { RangeBeforeOptions, createPluginFactory } from '@udecode/plate';
 import { Plugin, PluginProps } from '../Plugin';
-import { InternalLinksLoader } from '../types';
+import { LinkLoader } from '../types';
 import { ButtonMarkupElement } from './ButtonMarkupElement';
 import { ButtonButton } from './components/ButtonButton';
 import { CustomFloatingButton } from './components/FloatingButton/CustomFloatingButton';
@@ -54,7 +54,7 @@ export interface ButtonPlugin {
 /**
  * Enables support for hyperlinks.
  */
-export const createButtonPlugin = (loadInternalLinks?: InternalLinksLoader) =>
+export const createButtonPlugin = (loadLinkTree?: LinkLoader) =>
     createPluginFactory({
         key: ELEMENT_BUTTON,
         isElement: true,
@@ -72,7 +72,7 @@ export const createButtonPlugin = (loadInternalLinks?: InternalLinksLoader) =>
                 afterMatch: true,
             },
             triggerFloatingButtonHotkeys: 'command+shift+k, ctrl+shift+k',
-            loadInternalLinks,
+            loadLinkTree,
         },
         then: (editor, { type }) => ({
             deserializeHtml: {
@@ -92,7 +92,7 @@ export const createButtonPlugin = (loadInternalLinks?: InternalLinksLoader) =>
     })();
 
 export class ButtonPlugin extends Plugin {
-    private loadInternalLinks?: InternalLinksLoader;
+    private loadLinkTree?: LinkLoader;
 
     constructor(props?: PluginProps) {
         super(BUTTON_PLUGIN, {
@@ -100,10 +100,10 @@ export class ButtonPlugin extends Plugin {
             markupElement: new ButtonMarkupElement(),
             ...props,
         });
-        this.loadInternalLinks = props?.loadInternalLinks;
+        this.loadLinkTree = props?.loadLinkTree;
     }
 
     plugins() {
-        return [createButtonPlugin(this.loadInternalLinks)];
+        return [createButtonPlugin(this.loadLinkTree)];
     }
 }

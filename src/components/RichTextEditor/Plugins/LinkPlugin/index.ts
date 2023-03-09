@@ -3,13 +3,13 @@
 import { isValidUrl } from '@components/RichTextEditor/utils/isValidUrl';
 import { createLinkPlugin as createPlateLinkPlugin, createPluginFactory } from '@udecode/plate';
 import { Plugin, PluginProps } from '../Plugin';
-import { InternalLinksLoader } from '../types';
+import { LinkLoader } from '../types';
 import { CustomFloatingLink } from './FloatingLink/CustomFloatingLink';
 import { LINK_PLUGIN } from './id';
 import { LinkButton } from './LinkButton';
 import { LinkMarkupElement } from './LinkMarkupElement';
 
-export const createLinkPlugin = (loadInternalLinks?: InternalLinksLoader) =>
+export const createLinkPlugin = (loadLinkTree?: LinkLoader) =>
     createPluginFactory({
         ...createPlateLinkPlugin(),
         renderAfterEditable: CustomFloatingLink,
@@ -21,12 +21,12 @@ export const createLinkPlugin = (loadInternalLinks?: InternalLinksLoader) =>
                 afterMatch: true,
             },
             triggerFloatingLinkHotkeys: 'command+k, ctrl+k',
-            loadInternalLinks,
+            loadLinkTree,
         },
     })();
 
 export class LinkPlugin extends Plugin {
-    private loadInternalLinks?: InternalLinksLoader;
+    private loadLinkTree?: LinkLoader;
 
     constructor(props?: PluginProps) {
         super(LINK_PLUGIN, {
@@ -34,10 +34,10 @@ export class LinkPlugin extends Plugin {
             markupElement: new LinkMarkupElement(),
             ...props,
         });
-        this.loadInternalLinks = props?.loadInternalLinks;
+        this.loadLinkTree = props?.loadLinkTree;
     }
 
     plugins() {
-        return [createLinkPlugin(this.loadInternalLinks)];
+        return [createLinkPlugin(this.loadLinkTree)];
     }
 }

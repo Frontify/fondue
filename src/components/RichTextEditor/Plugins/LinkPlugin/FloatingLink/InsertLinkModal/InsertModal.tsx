@@ -3,11 +3,11 @@
 import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
 import { Checkbox } from '@components/Checkbox';
 import { FormControl } from '@components/FormControl';
-import { InternalLinksLoader } from '@components/RichTextEditor/Plugins/types';
+import { LinkLoader } from '@components/RichTextEditor/Plugins/types';
 import { TextInput } from '@components/TextInput';
 import { IconCheckMark } from '@foundation/Icon';
 import React, { FC } from 'react';
-import { InternalLinkSelector } from '../InternalLinkSelector/InternalLinkSelector';
+import { LinkSelector } from '../LinkSelector/LinkSelector';
 import { InsertModalStateProps } from './types';
 
 type Props = {
@@ -19,7 +19,7 @@ type Props = {
     onSave: (e: React.MouseEvent<HTMLButtonElement, MouseEvent> | KeyboardEvent | undefined) => void;
     hasValues: boolean;
     isValidUrlOrEmpty: () => boolean | undefined;
-    loadInternalLinks?: InternalLinksLoader;
+    loadLinkTree?: LinkLoader;
     testId?: string;
     children?: React.ReactNode;
 };
@@ -32,7 +32,7 @@ export const InsertModal: FC<Props> = ({
     onCancel,
     onSave,
     isValidUrlOrEmpty,
-    loadInternalLinks,
+    loadLinkTree,
     hasValues,
     testId,
     children,
@@ -69,9 +69,9 @@ export const InsertModal: FC<Props> = ({
             {!isValidUrlOrEmpty() && <div className="tw-text-red-65 tw-mt-3">Please enter a valid URL.</div>}
         </div>
 
-        {loadInternalLinks && (
+        {loadLinkTree && (
             <div className="tw-mt-3">
-                <InternalLinkSelector url={state.url} loadInternalLinks={loadInternalLinks} onUrlChange={onUrlChange} />
+                <LinkSelector url={state.url} loadLinkTree={loadLinkTree} onUrlChange={onUrlChange} />
             </div>
         )}
 

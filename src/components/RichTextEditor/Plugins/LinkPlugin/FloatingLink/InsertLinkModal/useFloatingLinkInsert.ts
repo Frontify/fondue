@@ -46,7 +46,7 @@ export const useFloatingLinkInsert = ({ floatingOptions, ...props }: FloatingLin
 
     const ref = useOnClickOutside(
         (event) => {
-            const isClickedWithinModal = (event.target as HTMLElement).closest('.internal-link-tree-container');
+            const isClickedWithinModal = (event.target as HTMLElement).closest('.link-tree-container');
             if (floatingLinkSelectors.mode() === 'insert' && !isClickedWithinModal) {
                 floatingLinkActions.hide();
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

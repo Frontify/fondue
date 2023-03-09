@@ -44,7 +44,7 @@ export const useFloatingButtonInsert = ({ floatingOptions, ...props }: FloatingB
 
     const ref = useOnClickOutside(
         (event) => {
-            const isClickedWithinModal = (event.target as HTMLElement).closest('.internal-link-tree-container');
+            const isClickedWithinModal = (event.target as HTMLElement).closest('.link-tree-container');
             if (floatingButtonSelectors.mode() === 'insert' && !isClickedWithinModal) {
                 floatingButtonActions.hide();
                 focusEditor(editor, editor.selection ?? undefined);

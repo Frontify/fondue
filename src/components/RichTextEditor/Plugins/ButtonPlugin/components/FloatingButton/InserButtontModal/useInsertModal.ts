@@ -9,7 +9,7 @@ import { ButtonPlugin, ELEMENT_BUTTON } from '../../../createButtonPlugin';
 import { submitFloatingButton } from '../../../transforms/submitFloatingButton';
 import { RichTextButtonStyle } from '../../../types';
 import { getButtonStyle } from '../../../utils/getButtonStyle';
-import { InternalLinksLoader } from '@components/RichTextEditor/Plugins/types';
+import { LinkLoader } from '@components/RichTextEditor/Plugins/types';
 
 const initialState: InsertModalStateProps = {
     url: '',
@@ -118,7 +118,7 @@ export const useInsertModal = () => {
         return !state.url || (isUrl && isUrl(state.url));
     };
 
-    const { loadInternalLinks } = getPluginOptions<{ loadInternalLinks: InternalLinksLoader }>(editor, ELEMENT_BUTTON);
+    const { loadLinkTree } = getPluginOptions<{ loadLinkTree: LinkLoader }>(editor, ELEMENT_BUTTON);
 
     useHotkeys(
         'enter',
@@ -139,6 +139,6 @@ export const useInsertModal = () => {
         onSave,
         hasValues,
         isValidUrlOrEmpty,
-        loadInternalLinks,
+        loadLinkTree,
     };
 };

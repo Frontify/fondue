@@ -1,3 +1,3 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export * from './InternalLinkSelector';
+export * from './LinkSelector';

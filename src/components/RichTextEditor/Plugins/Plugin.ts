@@ -3,7 +3,7 @@
 import { AnyObject, PlatePlugin } from '@udecode/plate';
 import { Position } from '../EditorPositioningWrapper';
 import type { MarkupElement } from './MarkupElement';
-import { InlineData, InternalLinksLoader, PluginButton } from './types';
+import { InlineData, LinkLoader, PluginButton } from './types';
 
 export type PluginProps = {
     id?: string;
@@ -14,7 +14,7 @@ export type PluginProps = {
     showIn?: Position[];
     columns?: number;
     gap?: string | number;
-    loadInternalLinks?: InternalLinksLoader;
+    loadLinkTree?: LinkLoader;
 };
 
 export abstract class Plugin<P extends PluginProps = PluginProps> {
