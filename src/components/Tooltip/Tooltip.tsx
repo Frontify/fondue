@@ -251,26 +251,34 @@ export const Tooltip = ({
         setIsOpen(shouldPreventTooltipOpening ? false : open);
     }, [open, shouldPreventTooltipOpening]);
 
+    const listenForEsc = useCallback(
+        (event: KeyboardEvent) => {
+            if (isOpen && event.key === 'Escape') {
+                setIsOpen(false);
+            }
+        },
+        [isOpen],
+    );
+
     useLayoutEffect(() => {
         if (typeof popperInstance.update === 'function' && isOpen) {
             popperInstance.update();
         }
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isOpen]);
 
-    const listenForEsc = (event: KeyboardEvent) => {
-        if (isOpen && event.key === 'Escape') {
-            setIsOpen(false);
-        }
-    };
-
     useEffect(() => {
-        window.addEventListener('keydown', listenForEsc);
+        if (isOpen) {
+            window.addEventListener('keydown', listenForEsc);
+        } else {
+            window.removeEventListener('keydown', listenForEsc);
+        }
 
         return () => {
             window.removeEventListener('keydown', listenForEsc);
         };
-    });
+    }, [listenForEsc, isOpen]);
 
     return (
         <>
