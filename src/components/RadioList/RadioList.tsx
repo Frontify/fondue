@@ -2,7 +2,7 @@
 
 import { generateRandomId } from '@utilities/generateRandomId';
 import { merge } from '@utilities/merge';
-import React, { Children, ReactNode, isValidElement, useState } from 'react';
+import React, { Children, ReactNode, isValidElement, useState, useEffect } from 'react';
 import { RadioButtonEmphasis, RadioButtonProps } from './RadioButton';
 
 export enum RadioListDirection {
@@ -32,6 +32,10 @@ export const RadioList = ({
             }
             return child?.props;
         }) ?? [];
+
+    useEffect(() => {
+        setActiveValue(defaultValue);
+    }, [defaultValue]);
 
     return (
         <div

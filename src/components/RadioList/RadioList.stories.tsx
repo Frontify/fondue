@@ -26,7 +26,7 @@ export default {
 
 const DefaultTemplate: StoryFn<RadioListProps> = (args: RadioListProps) => {
     return (
-        <RadioList direction={args.direction} defaultValue="Rib Eye">
+        <RadioList direction={args.direction} defaultValue={args.defaultValue}>
             <RadioButton value="Rib Eye" />
             <RadioButton value="T-Bone" />
             <RadioButton value="NY Strip" />
@@ -41,7 +41,7 @@ const WeakEmphasisRadioButtons: StoryFn<RadioListProps> = (args: RadioListProps)
         <RadioList direction={args.direction} defaultValue="Rib Eye">
             <RadioButton value="Rib Eye" emphasis={RadioButtonEmphasis.Weak} />
             <RadioButton value="T-Bone" emphasis={RadioButtonEmphasis.Weak} />
-            <RadioButton value="NY Strip" />
+            <RadioButton value="NY Strip" emphasis={RadioButtonEmphasis.Weak} />
         </RadioList>
     );
 };
