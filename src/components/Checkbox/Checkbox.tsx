@@ -113,8 +113,8 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
     );
 
     return (
-        <div className="tw-flex tw-flex-col tw-gap-1 tw-transition-colors" data-test-id="checkbox">
-            <div className="tw-inline-flex tw-flex-row">
+        <div className="tw-gap-1 tw-transition-colors" data-test-id="checkbox">
+            <div className={merge(['tw-inline-flex tw-flex-row tw-rounded', showFocus ? FOCUS_STYLE : ''])}>
                 <InputLabel
                     disabled={disabled}
                     clickable
@@ -142,7 +142,6 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                                 className={merge([
                                     'tw-leading-3  tw-p-2 tw-relative tw-flex tw-items-center tw-justify-center tw-rounded tw-border tw-shrink-0 tw-flex-none',
                                     size === 'Default' ? 'tw-h-4 tw-w-4' : 'tw-h-5 tw-w-5',
-                                    showFocus ? FOCUS_STYLE : '',
                                     disabled
                                         ? merge([
                                               'tw-bg-box-disabled tw-pointer-events-none',
