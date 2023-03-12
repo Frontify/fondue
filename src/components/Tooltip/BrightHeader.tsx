@@ -18,17 +18,17 @@ export enum BrightHeaderStyle {
 }
 
 export const brightHeaderBackgroundColors: Record<BrightHeaderStyle, string> = {
-    [BrightHeaderStyle.Information]: 'tw-bg-violet-60',
-    [BrightHeaderStyle.Warning]: 'tw-bg-red-60',
-    [BrightHeaderStyle.Tip]: 'tw-bg-green-60',
-    [BrightHeaderStyle.Note]: 'tw-bg-yellow-60',
+    [BrightHeaderStyle.Information]: 'tw-bg-box-selected-strong',
+    [BrightHeaderStyle.Warning]: 'tw-bg-box-negative-strong-pressed',
+    [BrightHeaderStyle.Tip]: 'tw-bg-box-positive-strong-pressed',
+    [BrightHeaderStyle.Note]: 'tw-bg-box-warning-strong',
 };
 
 export const brightHeaderArrowBackgroundColors: Record<BrightHeaderStyle, string> = {
-    [BrightHeaderStyle.Information]: 'before:tw-bg-violet-60',
-    [BrightHeaderStyle.Warning]: 'before:tw-bg-red-60',
-    [BrightHeaderStyle.Tip]: 'before:tw-bg-green-60',
-    [BrightHeaderStyle.Note]: 'before:tw-bg-yellow-60',
+    [BrightHeaderStyle.Information]: 'before:tw-bg-box-selected-strong',
+    [BrightHeaderStyle.Warning]: 'before:tw-bg-box-negative-strong-pressed',
+    [BrightHeaderStyle.Tip]: 'before:tw-bg-box-positive-strong-pressed',
+    [BrightHeaderStyle.Note]: 'before:tw-bg-box-warning-strong',
 };
 
 const brightHeaderIcon: Record<BrightHeaderStyle, ReactElement> = {
@@ -47,7 +47,7 @@ export const BrightHeader: FC<BrightHeaderProps> = ({ headerStyle }) => {
         <div
             data-test-id="bright-header"
             className={merge([
-                'tw-h-9 tw-relative tw-z-[120000] tw-flex tw-justify-center tw-items-center tw-rounded-t-md tw-text-white',
+                'tw-h-9 tw-relative tw-z-[120000] tw-flex tw-justify-center tw-items-center tw-rounded-t-md tw-dark tw-text-text',
                 brightHeaderBackgroundColors[headerStyle],
             ])}
         >
