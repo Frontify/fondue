@@ -33,7 +33,7 @@ export const InputLabel: FC<InputLabelProps> = ({
     return (
         <div
             className={merge([
-                'tw-inline-flex tw-items-center tw-gap-1 tw-font-sans tw-text-s tw-max-w-full tw-min-w-0 tw-flex-initial',
+                'tw-inline-flex tw-leading-4 tw-items-center tw-gap-1 tw-font-sans tw-text-s tw-max-w-full tw-min-w-0 tw-flex-initial',
                 disabled
                     ? 'tw-text-black-40 hover:tw-text-black-40 dark:tw-text-black-60 dark:hover:tw-text-black-60'
                     : 'tw-text-black-90 dark:tw-text-white',
@@ -66,13 +66,15 @@ export const InputLabel: FC<InputLabelProps> = ({
                 </span>
             )}
             {tooltips.map(({ triggerIcon, triggerStyle, hoverDelay = 100, ...tooltipProps }, index) => (
-                <TooltipIcon
-                    tooltip={{ ...tooltipProps, hoverDelay }}
-                    key={index}
-                    iconSize={IconSize.Size16}
-                    triggerIcon={triggerIcon}
-                    triggerStyle={triggerStyle}
-                />
+                <div key={index} className="tw-leading-3">
+                    <TooltipIcon
+                        tooltip={{ ...tooltipProps, hoverDelay }}
+                        key={index}
+                        iconSize={IconSize.Size16}
+                        triggerIcon={triggerIcon}
+                        triggerStyle={triggerStyle}
+                    />
+                </div>
             ))}
         </div>
     );
