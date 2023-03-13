@@ -12,7 +12,7 @@ export const CheckboxListElementNode = (props: PlateRenderElementProps) => {
     const { attributes, children, nodeProps, element, editor } = props;
     const rootProps = getRootProps(props);
     const checked = element.checked as boolean;
-    const align = (element.align as unknown as string) ?? 'left';
+    const align = (element.align as string) ?? 'left';
     const isEmpty = element.children.every((child) => child.text === '');
 
     return (
