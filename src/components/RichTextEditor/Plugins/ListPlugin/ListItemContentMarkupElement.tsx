@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
-import { TextStylesToDesignTokenMap } from '@components/RichTextEditor/types';
+import { DesignTokenNames, TextStylesToDesignTokenMap } from '@components/RichTextEditor/types';
 import { ELEMENT_LIC, PlateRenderElementProps, TNode } from '@udecode/plate';
 import { merge } from '@utilities/merge';
 import React from 'react';
@@ -27,14 +27,20 @@ export const ListItemContentMarkupElementNode = ({ attributes, children, element
 
     return (
         <p
-            style={{ textDecoration: designTokens[getTextStyle(element.children[0])]?.textDecoration }}
             className={merge([
                 getColumnBreakClasses(element),
                 align ? justifyClassNames[align] : 'tw-justify-start tw-flex',
             ])}
             {...attributes}
         >
-            <span className={isEmpty ? 'tw-w-4' : ''}>{children}</span>
+            <span
+                className={merge([
+                    isEmpty && 'tw-w-4',
+                    designTokens[getTextStyle(element.children[0])]?.textDecoration === 'underline' && 'tw-underline',
+                ])}
+            >
+                {children}
+            </span>
         </p>
     );
 };
