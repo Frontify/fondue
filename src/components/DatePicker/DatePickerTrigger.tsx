@@ -22,7 +22,7 @@ export const DatePickerTrigger = forwardRef<HTMLDivElement, DatePickerTriggerPro
         { value, onClick, isClearable, placeHolder, isCalendarOpen, validation = Validation.Default, onDateChanged },
         ref,
     ) => {
-        const isErrorValidationState = validation === Validation.Error;
+        const isWarningOrErrorValidationState = validation === Validation.Error || validation === Validation.Warning;
 
         const twoSlotsAwayFromRightEdge = 'tw-right-14';
         const oneSlotAwayFromRightEdge = 'tw-right-8';
@@ -41,7 +41,7 @@ export const DatePickerTrigger = forwardRef<HTMLDivElement, DatePickerTriggerPro
         };
 
         const carrotOffsetForClearButton = value && isClearable ? 1 : 0;
-        const carrotOffsetForValidationErrorIcon = isErrorValidationState ? 1 : 0;
+        const carrotOffsetForValidationErrorIcon = isWarningOrErrorValidationState ? 1 : 0;
 
         const carrotRightSideTWPositionClass = carrotRightSideTWPositionClassByOffset(
             carrotOffsetForClearButton + carrotOffsetForValidationErrorIcon,

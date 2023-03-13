@@ -120,8 +120,13 @@ describe('Textarea component', () => {
         cy.get(TEXTAREA_ID).should('have.css', 'resize', 'none');
     });
 
-    it('only error validation state should show the triangle warning icon', () => {
+    it('shows error validation triangle icon in case of error validation state', () => {
         cy.mount(<Textarea validation={Validation.Error} />);
-        cy.get(EXCLAMATION_MARK_ICON_ID).should('be.visible');
+        cy.get(EXCLAMATION_MARK_ICON_ID).should('have.class', 'tw-text-text-negative');
+    });
+
+    it('shows warning validation triangle icon in case of warning validation state', () => {
+        cy.mount(<Textarea validation={Validation.Warning} />);
+        cy.get(EXCLAMATION_MARK_ICON_ID).should('have.class', 'tw-text-text-warning');
     });
 });
