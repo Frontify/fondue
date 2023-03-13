@@ -6,7 +6,7 @@ import { FormControl } from '@components/FormControl';
 import { LinkLoader } from '@components/RichTextEditor/Plugins/types';
 import { TextInput } from '@components/TextInput';
 import { IconCheckMark } from '@foundation/Icon';
-import React, { FC } from 'react';
+import React, { EventHandler, FC } from 'react';
 import { LinkSelector } from '../LinkSelector/LinkSelector';
 import { InsertModalStateProps } from './types';
 
@@ -16,7 +16,7 @@ type Props = {
     onUrlChange: (value: string) => void;
     onToggleTab: (checked: boolean) => void;
     onCancel: () => void;
-    onSave: (e: React.MouseEvent<HTMLButtonElement, MouseEvent> | KeyboardEvent | undefined) => void;
+    onSave: EventHandler<React>;
     hasValues: boolean;
     isValidUrlOrEmpty: () => boolean | undefined;
     loadLinkTree?: LinkLoader;
@@ -64,6 +64,7 @@ export const InsertModal: FC<Props> = ({
                     placeholder="https://example.com"
                     focusOnMount
                     onChange={onUrlChange}
+                    onEnterPressed={onSave}
                 />
             </FormControl>
             {!isValidUrlOrEmpty() && <div className="tw-text-red-65 tw-mt-3">Please enter a valid URL.</div>}
