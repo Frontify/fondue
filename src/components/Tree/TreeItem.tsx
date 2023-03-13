@@ -130,6 +130,7 @@ export const TreeItem = ({
             if (document.activeElement === itemRef.current) {
                 switch (event.code) {
                     case 'Enter':
+                        event.stopPropagation();
                         event.preventDefault();
                         onSelect(id);
                         break;
