@@ -132,9 +132,13 @@ export const Trigger: FC<TriggerProps> = ({
                         <IconCaretDown size={IconSize.Size16} />
                     </div>
                 </button>
-                {validation === Validation.Error && (
+                {(validation === Validation.Error || validation === Validation.Warning) && (
                     <span
-                        className="tw-flex tw-items-center tw-justify-center tw-text-red-60"
+                        className={merge([
+                            'tw-flex tw-items-center tw-justify-center',
+                            validation === Validation.Error && 'tw-text-text-negative',
+                            validation === Validation.Warning && 'tw-text-text-warning',
+                        ])}
                         data-test-id="error-state-exclamation-mark-icon"
                     >
                         <IconExclamationMarkTriangle />
