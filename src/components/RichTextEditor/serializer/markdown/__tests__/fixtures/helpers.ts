@@ -13,5 +13,3 @@ export const createUL = <T>(children: Array<T>) => createListElement('ul', child
 export const createLI = <T>(children: Array<T>) => createListElement('li', children);
 
 export const createLIC = (text: string) => createListElement('lic', [{ text }]);
-
-export const createP = (text: string) => createListElement('p', [{ text }]);
