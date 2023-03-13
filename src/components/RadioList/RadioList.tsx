@@ -2,7 +2,7 @@
 
 import { generateRandomId } from '@utilities/generateRandomId';
 import { merge } from '@utilities/merge';
-import React, { Children, ReactNode, isValidElement, useState, useEffect } from 'react';
+import React, { Children, ReactNode, isValidElement, useEffect, useState } from 'react';
 import { RadioButtonEmphasis, RadioButtonProps } from './RadioButton';
 
 export enum RadioListDirection {
