@@ -41,6 +41,7 @@ export const TooltipIcon: FC<TooltipIconProps> = ({
                         triggerElement={
                             <button
                                 type="button"
+                                aria-label="More info"
                                 data-test-id="tooltip-icon-trigger"
                                 className={merge([
                                     'tw-inline-flex tw-justify-center tw-items-center tw-cursor-default tw-outline-none tw-rounded-full',
