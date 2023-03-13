@@ -479,28 +479,24 @@ describe('RichTextEditor Component', () => {
             cy.mount(
                 <RichTextEditor
                     designTokens={{
-                        heading1: {
-                            fontSize: '48px',
-                            fontWeight: 700,
-                            fontStyle: 'normal',
+                        heading2: {
+                            fontSize: '12px',
+                            fontWeight: 200,
                         },
                     }}
                 />,
             );
+            const heading2Styles = 'font-size: 12px; font-weight: 200;';
 
             insertTextAndOpenToolbar();
             cy.get(TOOLBAR_GROUP_2).children().eq(5).click();
             cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
-            cy.get(TEXTSTYLE_OPTION).first().click();
-            cy.get('[contenteditable=true] > div > span').should(
-                'have.attr',
-                'style',
-                'font-size: 48px; font-weight: 700; font-style: normal;',
-            );
+            cy.get(TEXTSTYLE_OPTION).eq(1).click();
+            cy.get('[contenteditable=true] > div > span').should('have.attr', 'style', heading2Styles);
             //remove checklist again and textStyle stays
             cy.get('[contenteditable=true]').click().type('{selectall}');
             cy.get(TOOLBAR_GROUP_2).children().eq(5).click();
-            cy.get('[contenteditable=true]').should('include.html', '<h1');
+            cy.get('[contenteditable=true]').should('have.attr', 'style', heading2Styles);
         });
 
         it('renders switches a custom checkbox to list and keeps textStyle', () => {
@@ -515,24 +511,17 @@ describe('RichTextEditor Component', () => {
                     }}
                 />,
             );
+            const heading1Styles = 'font-size: 48px; font-weight: 700; font-style: normal;';
 
             insertTextAndOpenToolbar();
             cy.get(TOOLBAR_GROUP_2).children().eq(5).click();
             cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
             cy.get(TEXTSTYLE_OPTION).first().click();
-            cy.get('[contenteditable=true] > div > span').should(
-                'have.attr',
-                'style',
-                'font-size: 48px; font-weight: 700; font-style: normal;',
-            );
+            cy.get('[contenteditable=true] > div > span').should('have.attr', 'style', heading1Styles);
             //remove checklist again and textStyle stays
             cy.get('[contenteditable=true]').click().type('{selectall}');
             cy.get(TOOLBAR_GROUP_2).children().eq(4).click();
-            cy.get('[contenteditable=true] > ul > li').should(
-                'have.attr',
-                'style',
-                'font-size: 48px; font-weight: 700; font-style: normal;',
-            );
+            cy.get('[contenteditable=true] > ul > li').should('have.attr', 'style', heading1Styles);
         });
     });
 
