@@ -71,6 +71,14 @@ describe('Markdown to slate Transformer', () => {
         expect(result).to.deep.equal(orderedListTree[0]);
     });
 
+    it('should transform ordered list with child LIC', () => {
+        let result = transformer.process(orderedListMarkdown[1]);
+        expect(result).to.deep.equal(orderedListTree[1]);
+
+        result = transformer.process(orderedListMarkdown[2]);
+        expect(result).to.deep.equal(orderedListTree[2]);
+    });
+
     it('should transform hr', () => {
         const result = transformer.process(hrMarkdown);
         expect(result).to.deep.equal(hrTree);

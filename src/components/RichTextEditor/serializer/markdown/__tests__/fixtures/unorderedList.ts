@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createLI, createLIC, createP, createUL } from './helpers';
+import { createLI, createLIC, createUL } from './helpers';
 
 export const unorderedListMarkdown_0 = `
 - list
@@ -17,11 +17,11 @@ export const unorderedListMarkdown_0 = `
 const unorderedListTree_0 = [
     createUL([
         createLI([
-            createP('list'),
+            createLIC('list'),
             createUL([
-                createLI([createP('list'), createUL([createLI([createP('list')])])]),
-                createLI([createP('list')]),
-                createLI([createP('list')]),
+                createLI([createLIC('list'), createUL([createLI([createLIC('list')])])]),
+                createLI([createLIC('list')]),
+                createLI([createLIC('list')]),
             ]),
         ]),
     ]),
