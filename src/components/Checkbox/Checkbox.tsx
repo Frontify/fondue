@@ -132,6 +132,8 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                                 className="tw-sr-only"
                                 data-test-id="checkbox-input"
                                 aria-label={ariaLabel}
+                                role="checkbox"
+                                aria-checked={state === CheckboxState.Checked ? true : false}
                                 required={required}
                             />
                             <span
@@ -181,7 +183,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                                     data-test-id="checkbox-helper-text"
                                     className={merge([
                                         'tw-font-sans tw-text-xs tw-font-normal',
-                                        disabled ? 'text-disabled' : 'tw-text-text-x-weak',
+                                        disabled ? 'text-disabled' : 'tw-text-text-weak',
                                     ])}
                                 >
                                     {helperText}
