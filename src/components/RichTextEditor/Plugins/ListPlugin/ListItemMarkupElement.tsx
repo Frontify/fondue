@@ -6,6 +6,7 @@ import { merge } from '@utilities/merge';
 import React from 'react';
 import { MarkupElement } from '../MarkupElement';
 import { getTextStyle } from './ListItemContentMarkupElement';
+import './OrderedListPlugin/style.css';
 
 export const ListItemMarkupElementNode = ({ attributes, children, element }: PlateRenderElementProps) => {
     const { designTokens } = useRichTextEditorContext();
