@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
-import { DesignTokenNames, TextStylesToDesignTokenMap } from '@components/RichTextEditor/types';
+import { TextStylesToDesignTokenMap } from '@components/RichTextEditor/types';
 import { ELEMENT_LIC, PlateRenderElementProps, TNode } from '@udecode/plate';
 import { merge } from '@utilities/merge';
 import React from 'react';
