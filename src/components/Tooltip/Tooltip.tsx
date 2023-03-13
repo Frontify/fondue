@@ -8,7 +8,6 @@ import { merge } from '@utilities/merge';
 import React, {
     FocusEvent,
     HTMLAttributes,
-    KeyboardEvent,
     PropsWithChildren,
     ReactChild,
     ReactElement,
@@ -227,12 +226,6 @@ export const Tooltip = ({
         [handleShowTooltipOnHover, triggerElementRef, triggerElementContainerRef, tooltipContainerRef],
     );
 
-    const handleCloseTooltipOnEscape = useCallback((event: KeyboardEvent<HTMLElement>) => {
-        if (event.key === 'Escape') {
-            setIsOpen(false);
-        }
-    }, []);
-
     const handleCloseIfFocusedOutside = useCallback(
         (event: FocusEvent<HTMLElement>) => {
             const { relatedTarget } = event;
@@ -252,19 +245,40 @@ export const Tooltip = ({
               onMouseLeave: handleHideTooltipOnHover,
               onFocus: () => setIsOpen(true),
               onBlur: handleCloseIfFocusedOutside,
-              onKeyDown: handleCloseTooltipOnEscape,
           };
 
     useEffect(() => {
         setIsOpen(shouldPreventTooltipOpening ? false : open);
     }, [open, shouldPreventTooltipOpening]);
 
+    const listenForEsc = useCallback(
+        (event: KeyboardEvent) => {
+            if (isOpen && event.key === 'Escape') {
+                setIsOpen(false);
+            }
+        },
+        [isOpen],
+    );
+
     useLayoutEffect(() => {
         if (typeof popperInstance.update === 'function' && isOpen) {
             popperInstance.update();
         }
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isOpen]);
+
+    useEffect(() => {
+        if (isOpen) {
+            window.addEventListener('keydown', listenForEsc);
+        } else {
+            window.removeEventListener('keydown', listenForEsc);
+        }
+
+        return () => {
+            window.removeEventListener('keydown', listenForEsc);
+        };
+    }, [listenForEsc, isOpen]);
 
     return (
         <>
