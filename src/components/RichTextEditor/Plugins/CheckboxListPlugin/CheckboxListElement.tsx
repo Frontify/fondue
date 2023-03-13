@@ -17,7 +17,7 @@ export const CheckboxListElementNode = (props: PlateRenderElementProps) => {
     const tokenStyles = designTokens[getTextStyle(element.children[0])];
 
     return (
-        <div {...attributes} {...rootProps} style={tokenStyles} className="tw-flex tw-flex-row tw-pb-2">
+        <div {...attributes} {...rootProps} className="tw-flex tw-flex-row tw-pb-2">
             <div contentEditable={false} className="tw-flex tw-items-center tw-justify-center tw-select-none tw-mr-1.5">
                 <input
                     data-test-id="checkbox-input"
@@ -31,7 +31,12 @@ export const CheckboxListElementNode = (props: PlateRenderElementProps) => {
                     {...nodeProps}
                 />
             </div>
-            <span className={merge(['tw-flex-1 tw-focus:outline-none', checked && 'tw-line-through'])}>{children}</span>
+            <span
+                style={tokenStyles}
+                className={merge(['tw-flex-1 tw-focus:outline-none', checked && 'tw-line-through'])}
+            >
+                {children}
+            </span>
         </div>
     );
 };
