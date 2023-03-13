@@ -10,7 +10,7 @@ import {
     isBlock,
     setElements,
     unsetNodes,
-} from '@udecode/plate-core';
+} from '@udecode/plate';
 import { Location } from 'slate';
 import { KEY_ELEMENT_BREAK_AFTER_COLUMN } from '../createColumnBreakPlugin';
 
