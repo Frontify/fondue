@@ -22,7 +22,7 @@ export const getTextStyle = (styledNode: TNode) => {
 
 export const ListItemContentMarkupElementNode = ({ attributes, children, element }: PlateRenderElementProps) => {
     const { designTokens } = useRichTextEditorContext();
-    const align = element.align as unknown as string;
+    const align = element.align as string;
     const isEmpty = element.children.every((child) => child.text === '');
 
     return (
