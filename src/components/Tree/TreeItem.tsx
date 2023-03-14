@@ -13,6 +13,7 @@ import { useTreeContext } from '@components/Tree/TreeContext';
 
 import { cloneThroughFragments, flattenChildren, isDescendant } from './utils';
 import { getItemPositionInParent, getNextItemToFocus, getPreviousItemToFocus, getSupportedDrop } from './helpers';
+import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 
 export const TreeItem = ({
     id,
@@ -249,14 +250,18 @@ export const TreeItem = ({
     const containerClassName = useMemo(
         () =>
             merge([
-                !isActive && 'focus-within:tw-ring-4 focus-within:tw-ring-blue focus-within:tw-ring-offset-2',
-                'focus-visible:tw-ring-4 focus-visible:tw-ring-blue focus-visible:tw-ring-offset-2 tw-outline-none tw-rounded tw-group hover:tw-bg-black-10 tw-flex tw-items-center tw-gap-x-1.5 tw-px-2.5 tw-no-underline tw-leading-5 tw-h-10',
-                isSelected &&
-                    'tw-font-medium tw-bg-box-selected-strong tw-text-box-selected-strong-inverse hover:tw-bg-box-selected-strong-hover',
+                FOCUS_VISIBLE_STYLE,
+                !isActive && !isSelected && 'focus-within:tw-bg-box-neutral',
+                'tw-outline-none tw-ring-inset tw-group tw-flex tw-items-center tw-gap-x-1.5 tw-px-2.5 tw-no-underline tw-leading-5 tw-h-10',
+                isSelected
+                    ? 'tw-font-medium tw-bg-box-neutral-strong tw-text-box-neutral-strong-inverse hover:tw-bg-box-neutral-strong-hover'
+                    : 'hover:tw-bg-box-neutral tw-text-text',
                 isWithin &&
                     !(supportedDrop.within || !draggableItem) &&
-                    'tw-bg-red-40 tw-border-[#ED3956] tw-border-dashed tw-border-2',
-                isWithin && supportedDrop.within && 'tw-border-violet-60 tw-border-dashed tw-border-2 tw-bg-[#F0EAFA]',
+                    'tw-bg-box-negative-hover tw-border-box-negative-strong-hover tw-border-dashed tw-border-2',
+                isWithin &&
+                    supportedDrop.within &&
+                    'tw-border-box-selected-strong tw-border-dashed tw-border-2 tw-bg-box-selected-hover',
                 isActive && 'tw-opacity-40',
             ]),
         [draggableItem, isActive, isSelected, isWithin, supportedDrop.within],
@@ -293,7 +298,8 @@ export const TreeItem = ({
                             {...listeners}
                             {...attributes}
                             className={merge([
-                                'tw-p-1 first:tw-ml-2 group-hover:tw-opacity-100 group-focus-within:tw-opacity-100 focus-visible:tw-ring-2 focus-visible:tw-ring-blue focus-visible:tw-ring-offset-1 tw-outline-none tw-rounded-sm',
+                                FOCUS_VISIBLE_STYLE,
+                                'tw-p-1 first:tw-ml-2 group-hover:tw-opacity-100 group-focus-within:tw-opacity-100 tw-rounded-sm',
                                 isSelected ? 'tw-opacity-100' : 'tw-opacity-0',
                             ])}
                         >
@@ -305,7 +311,10 @@ export const TreeItem = ({
                             tabIndex={0}
                             onClick={handleExpand}
                             data-test-id="tree-item-toggle"
-                            className="tw-p-1.5 first:tw-ml-2 tw-h-5 tw-w-5 tw-flex tw-justify-center focus-visible:tw-ring-2 focus-visible:tw-ring-blue focus-visible:tw-ring-offset-1 tw-outline-none tw-rounded-sm"
+                            className={merge([
+                                FOCUS_VISIBLE_STYLE,
+                                'tw-p-1.5 first:tw-ml-2 tw-h-5 tw-w-5 tw-flex tw-justify-center tw-rounded-sm',
+                            ])}
                         >
                             {!isActive && (
                                 <div
@@ -319,7 +328,9 @@ export const TreeItem = ({
                         </button>
                     )}
 
-                    {label !== undefined && <span className="first:tw-ml-3.5">{label}</span>}
+                    {label !== undefined && (
+                        <span className="first:tw-ml-3.5 tw-w-full tw-h-full tw-flex tw-items-center">{label}</span>
+                    )}
 
                     {contentComponent?.({ selected: isSelected })}
                 </div>
@@ -350,12 +361,15 @@ export const TreeItem = ({
 const animateDropZone = (animate: boolean) => {
     return (
         <motion.div
-            layout
             role="row"
             aria-hidden={!animate}
             data-test-id="drop-zone"
             animate={{ height: animate ? 40 : 0 }}
-            className={animate ? 'tw-border-violet-60 tw-border-dashed tw-border-2 tw-bg-[#E4DAFA]' : undefined}
+            className={
+                animate
+                    ? 'tw-border-box-selected-strong tw-border-dashed tw-border-2 tw-bg-box-selected-hover'
+                    : undefined
+            }
         />
     );
 };
