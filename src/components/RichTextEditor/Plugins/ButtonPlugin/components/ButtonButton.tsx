@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { getPluginType } from '@udecode/plate';
-import { IconButton, IconSize } from '@foundation/Icon';
+import { IconButton16 } from '@foundation/Icon/Generated';
 import { PluginButtonProps } from '../../types';
 import { ButtonWrapper, IconStylingWrapper, buttonClassNames, buttonStyles } from '../../helper';
 import { ButtonToolbarButton } from './ButtonToolbarButton';
@@ -12,7 +12,7 @@ export const ButtonButton = ({ editor, id }: PluginButtonProps) => (
     <ButtonWrapper id={id}>
         <ButtonToolbarButton
             type={getPluginType(editor, ELEMENT_BUTTON)}
-            icon={<IconStylingWrapper icon={<IconButton size={IconSize.Size16} />} />}
+            icon={<IconStylingWrapper icon={<IconButton16 />} />}
             classNames={buttonClassNames}
             styles={buttonStyles}
         />

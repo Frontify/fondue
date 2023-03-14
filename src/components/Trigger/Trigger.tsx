@@ -1,13 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconCaretDown from '@foundation/Icon/Generated/IconCaretDown';
+import { IconCaretDown, IconCross, IconExclamationMarkTriangle, IconTrashBin } from '@foundation/Icon/Generated';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE, FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
 import React, { FC, HTMLAttributes } from 'react';
-import { IconCross, IconExclamationMarkTriangle, IconTrashBin } from '@foundation/Icon';
 
 export enum TriggerSize {
     Small = 'Small',
@@ -133,9 +132,13 @@ export const Trigger: FC<TriggerProps> = ({
                         <IconCaretDown size={IconSize.Size16} />
                     </div>
                 </button>
-                {validation === Validation.Error && (
+                {(validation === Validation.Error || validation === Validation.Warning) && (
                     <span
-                        className="tw-flex tw-items-center tw-justify-center tw-text-red-60"
+                        className={merge([
+                            'tw-flex tw-items-center tw-justify-center',
+                            validation === Validation.Error && 'tw-text-text-negative',
+                            validation === Validation.Warning && 'tw-text-text-warning',
+                        ])}
                         data-test-id="error-state-exclamation-mark-icon"
                     >
                         <IconExclamationMarkTriangle />
@@ -145,3 +148,4 @@ export const Trigger: FC<TriggerProps> = ({
         </div>
     );
 };
+Trigger.displayName = 'FondueTrigger';

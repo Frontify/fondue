@@ -9,7 +9,7 @@ import { Validation, validationClassMap } from '@utilities/validation';
 import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle';
 import React, { FC, FocusEvent, FormEvent, ReactNode } from 'react';
 import TextareaAutosize, { TextareaAutosizeProps } from 'react-textarea-autosize';
-import { IconExclamationMarkTriangle } from '@foundation/Icon';
+import { IconExclamationMarkTriangle } from '@foundation/Icon/Generated';
 
 export type TextareaProps = {
     id?: string;
@@ -102,9 +102,13 @@ export const Textarea: FC<TextareaProps> = ({
                     <LoadingCircle size={LoadingCircleSize.ExtraSmall} />
                 </span>
             )}
-            {validation === Validation.Error && (
+            {(validation === Validation.Error || validation === Validation.Warning) && (
                 <span
-                    className="tw-absolute tw-top-[0.6rem] tw-right-[0.6rem] tw-text-red-60"
+                    className={merge([
+                        'tw-absolute tw-top-[0.6rem] tw-right-[0.6rem]',
+                        validation === Validation.Error && 'tw-text-text-negative',
+                        validation === Validation.Warning && 'tw-text-text-warning',
+                    ])}
                     data-test-id="error-state-exclamation-mark-icon"
                 >
                     <IconExclamationMarkTriangle />
@@ -113,3 +117,4 @@ export const Textarea: FC<TextareaProps> = ({
         </div>
     );
 };
+Textarea.displayName = 'FondueTextarea';

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { BasePlacement } from '@popperjs/core';
+import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
 import {
     PlateEditor,
     ToolbarButton,
@@ -40,20 +40,6 @@ export const ColumnBreakToolbarButton = ({ id, ...props }: ToolbarButtonProps) =
         />
     );
 };
-
-const getTooltip = (content: string, placement?: BasePlacement) => ({
-    className:
-        'tw-bg-text tw-border tw-border-line-strong tw-text-box-neutral-strong-inverse tw-py-2 tw-px-3 -tw-mb-1 tw-rounded tw-shadow-lg tw-text-xs',
-    content: content.split('\n').map((item) => {
-        return (
-            <span key={item}>
-                {item}
-                <br />
-            </span>
-        );
-    }),
-    placement,
-});
 
 export const isColumnBreakEnabled = (editor: PlateEditor, columnCount: number, isButtonActive: boolean): boolean =>
     getColumnBreakCount(editor) + 1 < columnCount || isButtonActive;

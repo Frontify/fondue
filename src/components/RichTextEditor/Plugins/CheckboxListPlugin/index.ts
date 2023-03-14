@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createPluginFactory } from '@udecode/plate';
+import { createIndentPlugin, createPluginFactory } from '@udecode/plate';
 import { CHECKBOX_LIST_PLUGIN, ELEMENT_CHECK_ITEM } from './id';
 import { CheckboxListElement } from './CheckboxListElement';
 import { CheckboxListButton } from './CheckboxListButton';
@@ -21,7 +21,16 @@ export class CheckboxListPlugin extends Plugin {
     }
 
     plugins() {
-        return [createCheckboxListPlugin()];
+        return [
+            createCheckboxListPlugin(),
+            createIndentPlugin({
+                inject: {
+                    props: {
+                        validTypes: [ELEMENT_CHECK_ITEM],
+                    },
+                },
+            }),
+        ];
     }
 }
 

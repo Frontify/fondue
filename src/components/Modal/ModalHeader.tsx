@@ -3,7 +3,7 @@
 import React, { FC, cloneElement, useContext } from 'react';
 import { merge } from '@utilities/merge';
 import { ModalHeaderProps, ModalHeaderVariant, modalHeaderVariants } from './types';
-import { IconSize } from '@foundation/Icon';
+import { IconSize } from '@foundation/Icon/IconSize';
 import { ModalTitle } from './context/ModalTitle';
 import { ModalLayout } from './context/ModalLayout';
 
@@ -41,3 +41,4 @@ export const ModalHeader: FC<ModalHeaderProps> = ({
         </div>
     );
 };
+ModalHeader.displayName = 'FondueModalHeader';

@@ -4,7 +4,7 @@ import { Meta, StoryFn } from '@storybook/react';
 import React, { useState } from 'react';
 import { BrightHeaderStyle } from './BrightHeader';
 import { Tooltip, TooltipAlignment, TooltipPosition, TooltipProps } from './Tooltip';
-import { IconExclamationMarkCircle16Filled, IconExclamationMarkTriangle16, IconIcon } from '@foundation/Icon';
+import { IconExclamationMarkCircle16Filled, IconExclamationMarkTriangle16, IconIcon } from '@foundation/Icon/Generated';
 import { useOverlayTriggerState } from '@react-stately/overlays';
 import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
 import { Modal } from '@components/Modal';
@@ -23,6 +23,7 @@ export default {
         heading: '',
     },
     argTypes: {
+        triggerElement: { table: { disable: true } },
         brightHeader: {
             options: ['None', 'Information', 'Warning', 'Tip', 'Note'],
             mapping: {
@@ -66,6 +67,14 @@ export default {
         },
         open: {
             control: { type: 'boolean' },
+            defaultValue: false,
+        },
+        linkUrl: {
+            control: 'text',
+            defaultValue: false,
+        },
+        linkLabel: {
+            control: 'text',
             defaultValue: false,
         },
         disabled: {
@@ -116,7 +125,7 @@ export const MultipleTooltipsComponent: StoryFn<TooltipProps> = (args: TooltipPr
             <Tooltip
                 {...args}
                 triggerElement={
-                    <button className="tw-mr-1">
+                    <button aria-label="Exclamation mark circle icon" className="tw-mr-1">
                         <IconExclamationMarkCircle16Filled />
                     </button>
                 }
@@ -125,7 +134,7 @@ export const MultipleTooltipsComponent: StoryFn<TooltipProps> = (args: TooltipPr
                 {...args}
                 content="Second tooltip"
                 triggerElement={
-                    <button>
+                    <button aria-label="Exclamation mark triangle icon">
                         <IconExclamationMarkTriangle16 />
                     </button>
                 }
@@ -262,7 +271,7 @@ const TooltipWithinOverflownContainer: StoryFn<TooltipProps> = (args: TooltipPro
                 <Tooltip
                     {...args}
                     triggerElement={
-                        <button className="tw-mr-1">
+                        <button aria-label="Exclamation mark circle icon" className="tw-mr-1">
                             <IconExclamationMarkCircle16Filled />
                         </button>
                     }
@@ -364,7 +373,7 @@ const WithModalWithTooltipAndDropdown: StoryFn<TooltipProps> = (args: TooltipPro
                     <Tooltip
                         {...args}
                         triggerElement={
-                            <button className="tw-mr-1">
+                            <button aria-label="Exclamation mark circle icon" className="tw-mr-1">
                                 <IconExclamationMarkCircle16Filled />
                             </button>
                         }

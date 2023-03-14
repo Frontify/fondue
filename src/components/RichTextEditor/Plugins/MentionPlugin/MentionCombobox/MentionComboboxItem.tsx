@@ -3,7 +3,7 @@
 import React, { ReactElement } from 'react';
 import { ComboboxItemProps } from '@udecode/plate';
 import { MentionItemData, MentionableCategory } from '../types';
-import { IconPeople, IconPerson, IconSize, IconTarget } from '@foundation/Icon';
+import { IconPeople12, IconPerson12, IconTarget12 } from '@foundation/Icon/Generated';
 
 type RenderAvatarProps = {
     category: MentionableCategory;
@@ -19,11 +19,11 @@ const RenderImage = ({ image, category, text, id }: RenderAvatarProps) => {
 
     switch (category) {
         case MentionableCategory.GROUP:
-            return <IconPeople size={IconSize.Size12} />;
+            return <IconPeople12 />;
         case MentionableCategory.ALL:
-            return <IconTarget size={IconSize.Size12} />;
+            return <IconTarget12 />;
         default:
-            return <IconPerson size={IconSize.Size12} />;
+            return <IconPerson12 />;
     }
 };
 

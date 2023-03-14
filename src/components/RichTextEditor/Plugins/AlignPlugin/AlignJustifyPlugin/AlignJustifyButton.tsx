@@ -1,19 +1,26 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
-import { AlignToolbarButton } from '@udecode/plate';
-import { IconSize, IconTextAlignmentJustify } from '@foundation/Icon';
+import { AlignToolbarButton, someNode, useEventPlateId, usePlateEditorState } from '@udecode/plate';
+import { IconTextAlignmentJustify16 } from '@foundation/Icon/Generated';
 import { PluginButtonProps } from '../../types';
 import { ButtonWrapper, IconStylingWrapper, buttonClassNames, buttonStyles } from '../../helper';
+import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
 
-export const AlignJustifyButton = ({ id }: PluginButtonProps) => (
-    <ButtonWrapper id={id}>
-        <AlignToolbarButton
-            value="justify"
-            icon={<IconStylingWrapper icon={<IconTextAlignmentJustify size={IconSize.Size16} />} />}
-            classNames={buttonClassNames}
-            styles={buttonStyles}
-            actionHandler="onMouseDown"
-        />
-    </ButtonWrapper>
-);
+export const AlignJustifyButton = ({ id, editorId }: PluginButtonProps) => {
+    const editor = usePlateEditorState(useEventPlateId(editorId));
+    const isActive = !!editor?.selection && someNode(editor, { match: (node) => node.align === 'justify' });
+    return (
+        <ButtonWrapper id={id}>
+            <AlignToolbarButton
+                active={isActive}
+                tooltip={getTooltip('Justify')}
+                value="justify"
+                icon={<IconStylingWrapper icon={<IconTextAlignmentJustify16 />} />}
+                classNames={buttonClassNames}
+                styles={buttonStyles}
+                actionHandler="onMouseDown"
+            />
+        </ButtonWrapper>
+    );
+};

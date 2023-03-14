@@ -5,7 +5,8 @@ import { IconSize } from '@foundation/Icon/IconSize';
 import { Tooltip, TooltipProps } from '@components/Tooltip/Tooltip';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import { IconProps, IconQuestionMarkCircle } from '@foundation/Icon';
+import { IconProps } from '@foundation/Icon/IconProps';
+import { IconQuestionMarkCircle } from '@foundation/Icon/Generated';
 
 export type TooltipIconProps = {
     tooltip?: TooltipProps;
@@ -40,6 +41,7 @@ export const TooltipIcon: FC<TooltipIconProps> = ({
                         triggerElement={
                             <button
                                 type="button"
+                                aria-label="More info"
                                 data-test-id="tooltip-icon-trigger"
                                 className={merge([
                                     'tw-inline-flex tw-justify-center tw-items-center tw-cursor-default tw-outline-none tw-rounded-full',
@@ -58,3 +60,4 @@ export const TooltipIcon: FC<TooltipIconProps> = ({
         </div>
     );
 };
+TooltipIcon.displayName = 'FondueTooltipIcon';

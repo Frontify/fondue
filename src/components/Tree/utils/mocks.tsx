@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { ReactElement, ReactNode } from 'react';
-import { IconDocument16, IconFaceExtraHappy16, IconFolder16, IconPlus, IconPlus16, IconProps } from '@foundation/Icon';
+import { IconDocument16, IconFaceExtraHappy16, IconFolder16, IconPlus, IconPlus16 } from '@foundation/Icon/Generated';
+import { IconProps } from '@foundation/Icon/IconProps';
 
 import { Badge, BadgeProps } from '@components/Badge';
 import { Button, ButtonSize } from '@components/Button';

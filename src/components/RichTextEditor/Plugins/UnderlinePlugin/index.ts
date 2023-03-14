@@ -32,6 +32,9 @@ export class UnderlinePlugin extends Plugin {
                 deserializeHtml: {
                     rules: [...PLATE_UNDERLINE_RULES, { validNodeName: ['SPAN'], validClassName: UNDERLINE_CLASSES }],
                 },
+                options: {
+                    hotkey: ['mod+u', 'ctrl+u'],
+                },
             }),
         ];
     }

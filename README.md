@@ -14,20 +14,20 @@
 
 1. Install fondue from npm
 
-```
+```shell
 npm install @frontify/fondue
 ```
 
 2. Load Fondue Stylesheet
 
-```
-import "@frontify/fondue/style";
+```typescript
+import '@frontify/fondue/style';
 ```
 
 3. Use Components
 
-```
-import { Button } from "@frontify/fondue";
+```typescript
+import { Button } from '@frontify/fondue';
 ```
 
 Fondue provides two builds: ES modules and UMD modules. Documentation for the provided components and how to use them is available in [Storybook](https://fondue-components.frontify.com/).

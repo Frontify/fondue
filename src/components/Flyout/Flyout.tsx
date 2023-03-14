@@ -183,3 +183,4 @@ export const Flyout: FC<FlyoutProps> = ({
         </>
     );
 };
+Flyout.displayName = 'FondueFlyout';

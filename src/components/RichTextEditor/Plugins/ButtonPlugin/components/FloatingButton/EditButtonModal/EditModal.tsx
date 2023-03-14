@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
-import { IconPen, IconTrashBin } from '@foundation/Icon';
+import { IconPen16, IconTrashBin16 } from '@foundation/Icon/Generated';
 import { FloatingButton } from '../FloatingButton';
 import { useFloatingButtonUrlInput } from '../FloatingButtonUrlInput';
 import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
@@ -24,7 +24,7 @@ export const EditModal = () => {
                         className="tw-transition tw-cursor-pointer tw-rounded hover:tw-bg-black-10 tw-p-1"
                     >
                         <FloatingButton.EditButton>
-                            <IconPen />
+                            <IconPen16 />
                         </FloatingButton.EditButton>
                     </span>
 
@@ -35,7 +35,7 @@ export const EditModal = () => {
                         className="tw-transition tw-cursor-pointer tw-rounded hover:tw-bg-black-10 tw-p-1"
                     >
                         <FloatingButton.UnlinkButton>
-                            <IconTrashBin />
+                            <IconTrashBin16 />
                         </FloatingButton.UnlinkButton>
                     </span>
                 </span>

@@ -12,6 +12,7 @@ import {
     ParagraphPlugin,
     PluginComposer,
     RichTextButtonStyle,
+    SoftBreakPlugin,
     TextStylePlugin,
     UnorderedListPlugin,
 } from '../Plugins';
@@ -316,7 +317,7 @@ describe('RichTextEditor Component', () => {
             cy.get(TOOLBAR_GROUP_1).children().eq(6).click();
             cy.get('[contenteditable=true]').should(
                 'include.html',
-                'tw-table-cell tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-[0.2em] tw-font-mono tw-text-[85%]',
+                'tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-[0.2em] tw-font-mono tw-text-[85%]',
             );
         });
 
@@ -332,10 +333,19 @@ describe('RichTextEditor Component', () => {
         it('renders ordered list with correct list style types', () => {
             cy.mount(<RichTextEditorWithOrderedListStyles />);
 
-            cy.get('[contenteditable=true] ol').should('have.class', 'tw-list-[decimal]');
-            cy.get('[contenteditable=true] ol ol').should('have.class', 'tw-list-[lower-alpha]');
-            cy.get('[contenteditable=true] ol ol ol').should('have.class', 'tw-list-[lower-roman]');
-            cy.get('[contenteditable=true] ol ol ol ol').should('have.class', 'tw-list-[decimal]');
+            cy.get('[contenteditable=true] ol').should('have.class', 'decimal');
+            cy.get('[contenteditable=true] ol ol').should('have.class', 'alpha');
+            cy.get('[contenteditable=true] ol ol ol').should('have.class', 'roman');
+            cy.get('[contenteditable=true] ol ol ol ol').should('have.class', 'decimal');
+        });
+
+        it('renders ordered list right aligned', () => {
+            cy.mount(<RichTextEditorWithOrderedListStyles />);
+
+            insertTextAndOpenToolbar();
+            cy.get(TOOLBAR_FLOATING).should('be.visible');
+            cy.get(TOOLBAR_GROUP_2).children().eq(2).click();
+            cy.get('[contenteditable=true]').should('include.html', 'tw-justify-end tw-text-right');
         });
 
         it('renders an ordered list', () => {
@@ -788,13 +798,13 @@ describe('RichTextEditor Component', () => {
             cy.get(TOOLBAR_GROUP_1).children().eq(6).click();
             cy.get('[contenteditable=true]').should(
                 'include.html',
-                'tw-table-cell tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-[0.2em] tw-font-mono tw-text-[85%]',
+                'tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-[0.2em] tw-font-mono tw-text-[85%]',
             );
 
             cy.get(TOOLBAR_GROUP_2).children().last().click();
             cy.get('[contenteditable=true]').should(
                 'not.include.html',
-                'tw-table-cell tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-[0.2em] tw-font-mono tw-text-[85%]',
+                'tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-[0.2em] tw-font-mono tw-text-[85%]',
             );
         });
 
@@ -810,7 +820,7 @@ describe('RichTextEditor Component', () => {
             cy.get(TOOLBAR_GROUP_1).children().eq(6).click();
             cy.get('[contenteditable=true]').should(
                 'include.html',
-                'tw-table-cell tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-[0.2em] tw-font-mono tw-text-[85%]',
+                'tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-[0.2em] tw-font-mono tw-text-[85%]',
             );
             cy.get('[contenteditable=true]').should('include.html', 'tw-font-bold');
             cy.get('[contenteditable=true]').should('include.html', 'tw-italic');
@@ -820,7 +830,7 @@ describe('RichTextEditor Component', () => {
             cy.get(TOOLBAR_GROUP_2).children().last().click();
             cy.get('[contenteditable=true]').should(
                 'not.include.html',
-                'tw-table-cell tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-[0.2em] tw-font-mono tw-text-[85%]',
+                'tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-[0.2em] tw-font-mono tw-text-[85%]',
             );
             cy.get('[contenteditable=true]').should('not.include.html', 'tw-font-bold');
             cy.get('[contenteditable=true]').should('not.include.html', 'tw-italic');
@@ -913,7 +923,7 @@ describe('RichTextEditor Component', () => {
 
         const pluginsWithColumns = new PluginComposer();
         pluginsWithColumns
-            .setPlugin([new ParagraphPlugin()])
+            .setPlugin([new SoftBreakPlugin(), new ParagraphPlugin()])
             .setPlugin(new TextStylePlugin())
             .setPlugin(
                 [new BoldPlugin(), new BreakAfterPlugin({ columns: 2, gap: 20 })],

@@ -1,8 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useEffect, useState } from 'react';
-import IconCheckMark from '@foundation/Icon/Generated/IconCheckMark';
-import IconMinus from '@foundation/Icon/Generated/IconMinus';
+import { IconCheckMark, IconMinus } from '@foundation/Icon/Generated';
 import { InputLabel, InputLabelTooltipProps } from '@components/InputLabel/InputLabel';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { useCheckbox } from '@react-aria/checkbox';
@@ -114,8 +113,8 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
     );
 
     return (
-        <div className="tw-flex tw-flex-col tw-gap-1 tw-transition-colors" data-test-id="checkbox">
-            <div className="tw-inline-flex tw-flex-row">
+        <div className="tw-gap-1 tw-transition-colors" data-test-id="checkbox">
+            <div className={merge(['tw-inline-flex tw-flex-row tw-rounded', showFocus ? FOCUS_STYLE : ''])}>
                 <InputLabel
                     disabled={disabled}
                     clickable
@@ -133,6 +132,8 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                                 className="tw-sr-only"
                                 data-test-id="checkbox-input"
                                 aria-label={ariaLabel}
+                                role="checkbox"
+                                aria-checked={state === CheckboxState.Checked ? true : false}
                                 required={required}
                             />
                             <span
@@ -141,7 +142,6 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                                 className={merge([
                                     'tw-leading-3  tw-p-2 tw-relative tw-flex tw-items-center tw-justify-center tw-rounded tw-border tw-shrink-0 tw-flex-none',
                                     size === 'Default' ? 'tw-h-4 tw-w-4' : 'tw-h-5 tw-w-5',
-                                    showFocus ? FOCUS_STYLE : '',
                                     disabled
                                         ? merge([
                                               'tw-bg-box-disabled tw-pointer-events-none',
@@ -183,7 +183,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                                     data-test-id="checkbox-helper-text"
                                     className={merge([
                                         'tw-font-sans tw-text-xs tw-font-normal',
-                                        disabled ? 'text-disabled' : 'tw-text-text-x-weak',
+                                        disabled ? 'text-disabled' : 'tw-text-text-weak',
                                     ])}
                                 >
                                     {helperText}
@@ -198,3 +198,4 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
 };
 
 export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(CheckboxComponent);
+Checkbox.displayName = 'FondueCheckbox';

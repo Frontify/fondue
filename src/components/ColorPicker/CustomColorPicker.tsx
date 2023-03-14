@@ -129,3 +129,4 @@ export const CustomColorPicker: FC<Omit<ColorPickerProps, 'palette'>> = ({
         </div>
     );
 };
+CustomColorPicker.displayName = 'FondueCustomColorPicker';
