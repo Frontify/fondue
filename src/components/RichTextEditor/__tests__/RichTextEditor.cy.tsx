@@ -333,10 +333,19 @@ describe('RichTextEditor Component', () => {
         it('renders ordered list with correct list style types', () => {
             cy.mount(<RichTextEditorWithOrderedListStyles />);
 
-            cy.get('[contenteditable=true] ol').should('have.class', 'tw-list-[decimal]');
-            cy.get('[contenteditable=true] ol ol').should('have.class', 'tw-list-[lower-alpha]');
-            cy.get('[contenteditable=true] ol ol ol').should('have.class', 'tw-list-[lower-roman]');
-            cy.get('[contenteditable=true] ol ol ol ol').should('have.class', 'tw-list-[decimal]');
+            cy.get('[contenteditable=true] ol').should('have.class', 'decimal');
+            cy.get('[contenteditable=true] ol ol').should('have.class', 'alpha');
+            cy.get('[contenteditable=true] ol ol ol').should('have.class', 'roman');
+            cy.get('[contenteditable=true] ol ol ol ol').should('have.class', 'decimal');
+        });
+
+        it('renders ordered list right aligned', () => {
+            cy.mount(<RichTextEditorWithOrderedListStyles />);
+
+            insertTextAndOpenToolbar();
+            cy.get(TOOLBAR_FLOATING).should('be.visible');
+            cy.get(TOOLBAR_GROUP_2).children().eq(2).click();
+            cy.get('[contenteditable=true]').should('include.html', 'tw-justify-end tw-text-right');
         });
 
         it('renders an ordered list', () => {

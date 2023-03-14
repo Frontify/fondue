@@ -208,9 +208,9 @@ describe('Dropdown Component', () => {
         cy.get(MENU_ITEM_LIST_ID).children().should('have.length', 5);
     });
 
-    it('only error validation state should show the triangle warning icon', () => {
+    it('should show triangle exclamation icon in case of error or warning validation states', () => {
         for (const validationState of Object.values(Validation)) {
-            if (validationState === Validation.Error) {
+            if (validationState === Validation.Error || validationState === Validation.Warning) {
                 cy.mount(<Component menuBlocks={ITEMS} validation={validationState} />);
                 cy.get(EXCLAMATION_MARK_ICON_ID).should('be.visible');
                 return;
