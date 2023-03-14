@@ -229,7 +229,7 @@ export const TreeItem = ({
                 <div
                     className={merge([
                         treeState.selectedIds.has(id)
-                            ? 'tw-bg-box-neutral-strong tw-text-box-neutral-strong-inverse hover:tw-bg-box-neutral-strong-hover hover:tw-text-box-neutral-strong-inverse-hover'
+                            ? 'tw-font-medium tw-bg-box-neutral-strong tw-text-box-neutral-strong-inverse hover:tw-bg-box-neutral-strong-hover hover:tw-text-box-neutral-strong-inverse-hover'
                             : 'tw-text-text hover:tw-bg-box-neutral-hover hover:tw-text-box-neutral-inverse-hover',
                         FOCUS_VISIBLE_STYLE,
                         'tw-leading-5 tw-no-underline tw-flex',
