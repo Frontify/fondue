@@ -26,14 +26,7 @@ import type {
 } from '@components/Tree/types';
 import { TreeContext, TreeContextProps } from '@components/Tree/TreeContext';
 
-import {
-    cloneThroughFragments,
-    flattenChildren,
-    fondueCollisionDetection,
-    multipleContainersKeyboardCoordinates,
-    snapToHandle,
-    sortableTreeKeyboardCoordinates,
-} from './utils';
+import { cloneThroughFragments, flattenChildren, fondueCollisionDetection, snapToHandle } from './utils';
 import { type Overlay, TreeItemOverlay } from './TreeItemOverlay';
 
 export const ROOT_ID = '__ROOT__';
@@ -394,11 +387,9 @@ export const Tree = ({
         ],
     );
 
-    // const [coordinateGetter] = useState(() => sortableTreeKeyboardCoordinates(treeState));
-
     const sensors = useSensors(
         useSensor(PointerSensor),
-        useSensor(KeyboardSensor, { coordinateGetter: sortableTreeKeyboardCoordinates }),
+        useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
     );
     return (
         <TreeContext.Provider value={contextValue}>
