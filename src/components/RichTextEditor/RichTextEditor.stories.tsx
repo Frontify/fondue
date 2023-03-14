@@ -536,3 +536,54 @@ function getSerializedContent(
         </>
     );
 }
+
+export const InvestigatePageJump: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => {
+    return (
+        <div className="body" style={{ overflowX: 'hidden', overflowY: 'auto' }}>
+            <div
+                className="co-powerbar__content js-co-powerbar__content"
+                style={{ boxSizing: 'border-box', position: 'static' }}
+            >
+                <div className="container" style={{ margin: '0 auto', position: 'relative' }}>
+                    <div
+                        className="page"
+                        style={{ boxSizing: 'border-box', marginLeft: '220px', padding: '35px 50px', width: '900px' }}
+                    >
+                        <div
+                            className="page-content"
+                            style={{
+                                paddingBottom: '600px',
+                                boxSizing: 'border-box',
+                                marginTop: '0px',
+                                width: '800px',
+                                minHeight: '900px',
+                                position: 'relative',
+                            }}
+                        >
+                            <div className="sections">
+                                <section style={{ position: 'relative' }}>
+                                    <div
+                                        className="mod block js-cm-blockmanager__block mod-block-custom b-custom"
+                                        style={{
+                                            margin: '10px 0',
+                                            padding: '10px 0',
+                                            position: 'relative',
+                                            minHeight: '40px',
+                                        }}
+                                    >
+                                        <div className="react-container">
+                                            <RichTextEditorComponent
+                                                {...args}
+                                                value={`<p>${IPSUM}${IPSUM}${IPSUM}</p><p>${IPSUM}${IPSUM}${IPSUM}</p><p>${IPSUM}${IPSUM}${IPSUM}</p>`}
+                                            />
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
