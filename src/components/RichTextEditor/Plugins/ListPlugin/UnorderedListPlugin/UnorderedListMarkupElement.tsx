@@ -3,7 +3,7 @@
 import React from 'react';
 import { ELEMENT_UL, PlateRenderLeafProps } from '@udecode/plate';
 import { MarkupElement } from '../../MarkupElement';
-import './style.css';
+import './styles.css';
 
 export const UL_CLASSES = 'tw-list-none tw-pl-[10px] tw-mb-[10px] tw-ml-[15px]';
 
