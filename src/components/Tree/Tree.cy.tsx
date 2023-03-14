@@ -60,7 +60,7 @@ describe('Tree Component', () => {
         cy.get(TREE_ITEM_TOGGLE_ID).eq(2).click();
         cy.get(TREE_ITEM_TOGGLE_ID).eq(1).click();
 
-        cy.get(TREE_ITEM_ID).should('have.length', 10);
+        cy.get(TREE_ITEM_ID).should('have.length', 11);
     });
 
     it('calls the onSelect callback', () => {
