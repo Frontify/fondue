@@ -1,4 +1,4 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export * from './moveItems';
+export * from './SortableList';
 export * from './types';

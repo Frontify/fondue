@@ -1,13 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { UniqueIdentifier } from '@dnd-kit/core';
 import type { TreeItemState, TreeState } from '../types';
 
 export const getPreviousItemToFocus = (
-    id: string,
-    currentItemState: TreeItemState,
+    id: UniqueIdentifier,
+    currentItemState: TreeItemState | undefined,
     treeState: TreeState,
 ): TreeItemState | undefined => {
-    if (currentItemState.parentId && !isItemFirstInParent(id, currentItemState.parentId, treeState)) {
+    if (currentItemState?.parentId && !isItemFirstInParent(id, currentItemState.parentId, treeState)) {
         // If within a folder, select the previous child
         const parentState = treeState.items.get(currentItemState.parentId);
         if (parentState && parentState.childrenIds) {
@@ -20,7 +21,7 @@ export const getPreviousItemToFocus = (
 
             return treeState.items.get(previousSiblingId);
         }
-    } else if (currentItemState.parentId && isItemFirstInParent(id, currentItemState.parentId, treeState)) {
+    } else if (currentItemState?.parentId && isItemFirstInParent(id, currentItemState.parentId, treeState)) {
         // If within a folder and first child, select the parent
         return treeState.items.get(currentItemState.parentId);
     }
@@ -28,7 +29,7 @@ export const getPreviousItemToFocus = (
     return undefined;
 };
 
-const isItemFirstInParent = (id: string, parentId: string, treeState: TreeState): boolean => {
+const isItemFirstInParent = (id: UniqueIdentifier, parentId: UniqueIdentifier, treeState: TreeState): boolean => {
     const parentState = treeState.items.get(parentId);
     if (!parentState) {
         throw new Error(`Item with id ${parentId} is not a registered item.`);
@@ -37,7 +38,7 @@ const isItemFirstInParent = (id: string, parentId: string, treeState: TreeState)
     return parentState.childrenIds?.[0] === id;
 };
 
-const getLastNestedItemIdInParent = (parentId: string, treeState: TreeState): string => {
+const getLastNestedItemIdInParent = (parentId: UniqueIdentifier, treeState: TreeState): UniqueIdentifier => {
     const parentState = treeState.items.get(parentId);
     if (!parentState) {
         throw new Error(`Item with id ${parentId} is not a registered item.`);

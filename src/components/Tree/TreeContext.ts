@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { UniqueIdentifier } from '@dnd-kit/core';
 import { createContext, useContext } from 'react';
-
-import type { OnDropCallback } from '@components/DropZone';
+import { Overlay } from './TreeItemOverlay';
 
 import type {
     OnExpandCallback,
@@ -18,10 +18,10 @@ export type TreeContextProps = {
     treeState: TreeState;
     registerTreeItem(payload: RegisterTreeItemPayload): void;
     registerTreeItemChildren(payload: RegisterTreeItemChildrenPayload): void;
-    unregisterTreeItem(id: string): void;
+    unregisterTreeItem(id: UniqueIdentifier): void;
+    registerOverlay(overlay: Overlay): void;
     onSelect: OnSelectCallback;
     onExpand: OnExpandCallback;
-    onDrop: OnDropCallback<{ id: string; sort: number }>;
 };
 
 export const TreeContext = createContext<TreeContextProps>({} as TreeContextProps);

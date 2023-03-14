@@ -1,6 +1,20 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { useCallback, useEffect, useMemo, useReducer } from 'react';
+import {
+    DndContext,
+    DragEndEvent,
+    DragOverlay,
+    KeyboardSensor,
+    MeasuringConfiguration,
+    MeasuringStrategy,
+    PointerSensor,
+    UniqueIdentifier,
+    useSensor,
+    useSensors,
+} from '@dnd-kit/core';
+import { restrictToWindowEdges } from '@dnd-kit/modifiers';
+import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 
 import type {
     RegisterTreeItemChildrenPayload,
@@ -10,13 +24,25 @@ import type {
     TreeState,
     TreeStateAction,
 } from '@components/Tree/types';
-import { TreeContext } from '@components/Tree/TreeContext';
-import { DndWrapper, DraggableItem, DropZonePosition } from '@utilities/dnd';
+import { TreeContext, TreeContextProps } from '@components/Tree/TreeContext';
 
-import { cloneThroughFragments, flattenChildren } from './utils';
+import {
+    cloneThroughFragments,
+    flattenChildren,
+    fondueCollisionDetection,
+    multipleContainersKeyboardCoordinates,
+    snapToHandle,
+    sortableTreeKeyboardCoordinates,
+} from './utils';
+import { type Overlay, TreeItemOverlay } from './TreeItemOverlay';
 
-const noop = () => undefined;
 export const ROOT_ID = '__ROOT__';
+
+const measuring: MeasuringConfiguration = {
+    droppable: {
+        strategy: MeasuringStrategy.Always,
+    },
+};
 
 const reducer = (state: TreeState, action: TreeStateAction): TreeState => {
     switch (action.type) {
@@ -72,7 +98,7 @@ const reducer = (state: TreeState, action: TreeStateAction): TreeState => {
                 throw new Error(`No tree item registered with id ${targetId}.`);
             }
 
-            if (position === DropZonePosition.Before || position === DropZonePosition.After) {
+            if (position === 'before' || position === 'after') {
                 const parentTargetState = targetState.parentId ? state.items.get(targetState.parentId) : undefined;
                 if (!parentTargetState || !targetState.parentId || !parentTargetState.childrenIds) {
                     throw new Error(`No tree item registered with id ${targetState.parentId}.`);
@@ -87,7 +113,7 @@ const reducer = (state: TreeState, action: TreeStateAction): TreeState => {
                     ...parentTargetState.childrenIds.slice(sourceIndexInParent + 1),
                 ];
 
-                const indexOffset = position === DropZonePosition.After ? 1 : 0;
+                const indexOffset = position === 'after' ? 1 : 0;
 
                 const newArray = [
                     ...arrayWithoutElement.slice(0, targetIndexInParent + indexOffset),
@@ -96,7 +122,7 @@ const reducer = (state: TreeState, action: TreeStateAction): TreeState => {
                 ];
 
                 state.items.set(targetState.parentId, { ...parentTargetState, childrenIds: newArray });
-            } else if (position === DropZonePosition.Within) {
+            } else if (position === 'within') {
                 const sourceState = state.items.get(id);
                 if (!sourceState || !sourceState.parentId) {
                     throw new Error(`No tree item registered with id ${id ?? sourceState?.parentId}.`);
@@ -117,7 +143,7 @@ const reducer = (state: TreeState, action: TreeStateAction): TreeState => {
                             oldParentChildrenIds && oldParentChildrenIds.length > 0 ? oldParentChildrenIds : undefined,
                     })
                     // Add to new parent
-                    .set(targetId, { ...targetState, childrenIds: [...(targetState?.childrenIds ?? [], id)] })
+                    .set(targetId, { ...targetState, childrenIds: [...(targetState?.childrenIds ?? []), id] })
                     // Set new parent in source
                     .set(id, { ...sourceState, parentId: targetId });
             }
@@ -177,6 +203,13 @@ const reducer = (state: TreeState, action: TreeStateAction): TreeState => {
             };
         }
 
+        case 'REGISTER_OVERLAY_ITEM': {
+            return {
+                ...state,
+                overlay: action.payload,
+            };
+        }
+
         case 'REPLACE_STATE':
             return {
                 ...state,
@@ -195,106 +228,29 @@ const reducer = (state: TreeState, action: TreeStateAction): TreeState => {
 
 export const Tree = ({
     id,
+    onDrop,
+    onSelect,
+    onExpand,
+    children,
     selectedIds,
     expandedIds,
     draggable = false,
-    onSelect,
-    onExpand,
-    onDrop,
-    children,
-    multiselect = true,
+    multiselect = false,
 }: TreeProps) => {
     const initialState: TreeState = useMemo(
         () => ({
-            items: new Map<string, TreeItemState>().set(ROOT_ID, { level: -1 }),
+            selectionMode: 'single',
             selectedIds: new Set(selectedIds ?? []),
             expandedIds: new Set(expandedIds ?? []),
-            selectionMode: 'single',
+            items: new Map<UniqueIdentifier, TreeItemState>().set(ROOT_ID, { level: -1 }),
         }),
         [expandedIds, selectedIds],
     );
 
     const [treeState, updateTreeState] = useReducer(reducer, initialState);
 
-    const handleSelect = useCallback(
-        (id: string) => {
-            updateTreeState({
-                type: 'SET_SELECT',
-                payload: { id, isSelected: !treeState.selectedIds.has(id) },
-            });
-        },
-        [treeState.selectedIds],
-    );
-
-    const handleExpand = useCallback((id: string, isExpanded: boolean) => {
-        updateTreeState({
-            type: 'SET_EXPAND',
-            payload: { id, isExpanded },
-        });
-    }, []);
-
-    const handleDrop = useCallback(
-        (
-            targetItem: DraggableItem<{ id: string; sort: number }>,
-            sourceItem: DraggableItem<{ id: string; sort: number }>,
-            position: DropZonePosition,
-        ) => {
-            updateTreeState({ type: 'ON_DROP', payload: { id: sourceItem.id, targetId: targetItem.id, position } });
-            onDrop?.(targetItem, sourceItem, position);
-        },
-        [onDrop],
-    );
-
-    const enhancedChildren = useMemo(
-        () => cloneThroughFragments(children, { level: 0, parentId: ROOT_ID }),
-        [children],
-    );
-
-    const keyDownHandler = useCallback(
-        (event: KeyboardEvent) => {
-            if (multiselect && (event.key === 'Meta' || event.ctrlKey)) {
-                updateTreeState({
-                    type: 'SET_SELECTION_MODE',
-                    payload: { selectionMode: 'multiselect' },
-                });
-            }
-        },
-        [multiselect],
-    );
-
-    const keyUpHandler = useCallback(
-        (event: KeyboardEvent) => {
-            if (multiselect && (event.key === 'Meta' || event.ctrlKey)) {
-                updateTreeState({
-                    type: 'SET_SELECTION_MODE',
-                    payload: { selectionMode: 'single' },
-                });
-            }
-        },
-        [multiselect],
-    );
-
-    useEffect(() => {
-        if (multiselect) {
-            window.addEventListener('keydown', keyDownHandler);
-            window.addEventListener('keyup', keyUpHandler);
-        }
-
-        return () => {
-            window.removeEventListener('keydown', keyDownHandler);
-            window.removeEventListener('keyup', keyUpHandler);
-        };
-    }, [keyDownHandler, keyUpHandler, multiselect]);
-
-    useEffect(() => {
-        updateTreeState({
-            type: 'REPLACE_STATE',
-            payload: initialState,
-        });
-    }, [initialState]);
-
     const unregisterTreeItem = useCallback(
-        (id: string) => updateTreeState({ type: 'UNREGISTER_TREE_ITEM', payload: { id } }),
+        (id: UniqueIdentifier) => updateTreeState({ type: 'UNREGISTER_TREE_ITEM', payload: { id } }),
         [],
     );
 
@@ -308,36 +264,167 @@ export const Tree = ({
         [],
     );
 
-    useEffect(() => {
-        const childrenIds = flattenChildren(enhancedChildren)
-            .map((child) => child.props.id)
-            .filter(Boolean);
-        registerTreeItemChildren({ id: ROOT_ID, childrenIds });
-    }, [enhancedChildren, registerTreeItemChildren]);
+    const registerOverlay = useCallback(
+        (overlay: Overlay) => updateTreeState({ type: 'REGISTER_OVERLAY_ITEM', payload: overlay }),
+        [],
+    );
 
+    const enhancedChildren = useMemo(
+        () => cloneThroughFragments(children, { level: 0, parentId: ROOT_ID }),
+        [children],
+    );
+
+    const childrenIds = useMemo(
+        () =>
+            flattenChildren(enhancedChildren)
+                .map((child) => child.props.id)
+                .filter(Boolean),
+        [enhancedChildren],
+    );
+
+    useEffect(() => {
+        const keyDownHandler = (event: KeyboardEvent) => {
+            if (multiselect && (event.key === 'Meta' || event.ctrlKey)) {
+                updateTreeState({
+                    type: 'SET_SELECTION_MODE',
+                    payload: { selectionMode: 'multiselect' },
+                });
+            }
+        };
+
+        const keyUpHandler = (event: KeyboardEvent) => {
+            if (multiselect && (event.key === 'Meta' || event.ctrlKey)) {
+                updateTreeState({
+                    type: 'SET_SELECTION_MODE',
+                    payload: { selectionMode: 'single' },
+                });
+            }
+        };
+
+        if (multiselect) {
+            window.addEventListener('keydown', keyDownHandler);
+            window.addEventListener('keyup', keyUpHandler);
+        }
+
+        return () => {
+            window.removeEventListener('keydown', keyDownHandler);
+            window.removeEventListener('keyup', keyUpHandler);
+        };
+    }, [multiselect]);
+
+    useEffect(() => {
+        updateTreeState({
+            type: 'REPLACE_STATE',
+            payload: initialState,
+        });
+    }, [initialState]);
+
+    useEffect(() => {
+        registerTreeItemChildren({ id: ROOT_ID, childrenIds });
+    }, [childrenIds, registerTreeItemChildren]);
+
+    const handleSelect = useCallback(
+        (id: UniqueIdentifier) => {
+            updateTreeState({
+                type: 'SET_SELECT',
+                payload: { id, isSelected: !treeState.selectedIds.has(id) },
+            });
+        },
+        [treeState.selectedIds],
+    );
+
+    const handleExpand = useCallback(
+        (id: UniqueIdentifier) => {
+            updateTreeState({
+                type: 'SET_EXPAND',
+                payload: { id, isExpanded: !treeState.expandedIds.has(id) },
+            });
+        },
+        [treeState.expandedIds],
+    );
+
+    const handleDrop = useCallback(
+        (event: DragEndEvent) => {
+            const { over, active, collisions } = event;
+
+            if (!over?.id || !active?.id) {
+                return;
+            }
+
+            const collision = collisions?.find((collision) => collision.id === over?.id);
+
+            updateTreeState({
+                type: 'ON_DROP',
+                payload: {
+                    id: active.id,
+                    targetId: over?.id,
+                    position: collision?.data?.position,
+                },
+            });
+
+            onDrop?.({ id: over?.id, sort: 1 }, { id: active.id, sort: 1 }, collision?.data?.position);
+        },
+        [onDrop],
+    );
+
+    const contextValue: TreeContextProps = useMemo(
+        () => ({
+            treeId: id,
+            treeState,
+            draggable,
+            onSelect: onSelect ?? handleSelect,
+            onExpand: onExpand ?? handleExpand,
+            unregisterTreeItem,
+            registerTreeItem,
+            registerTreeItemChildren,
+            registerOverlay,
+        }),
+        [
+            draggable,
+            handleExpand,
+            handleSelect,
+            id,
+            onExpand,
+            onSelect,
+            registerOverlay,
+            registerTreeItem,
+            registerTreeItemChildren,
+            treeState,
+            unregisterTreeItem,
+        ],
+    );
+
+    // const [coordinateGetter] = useState(() => sortableTreeKeyboardCoordinates(treeState));
+
+    const sensors = useSensors(
+        useSensor(PointerSensor),
+        useSensor(KeyboardSensor, { coordinateGetter: sortableTreeKeyboardCoordinates }),
+    );
     return (
-        <TreeContext.Provider
-            value={{
-                treeId: id,
-                treeState,
-                draggable,
-                onSelect: onSelect ?? handleSelect,
-                onExpand: onExpand ?? handleExpand,
-                onDrop: handleDrop ?? noop,
-                unregisterTreeItem,
-                registerTreeItem,
-                registerTreeItemChildren,
-            }}
-        >
+        <TreeContext.Provider value={contextValue}>
             <ul
                 id={id}
+                role="tree"
                 data-test-id="tree"
                 className="tw-p-0 tw-m-0 tw-font-sans tw-font-normal tw-list-none tw-text-left tw-text-sm tw-select-none"
-                role="tree"
             >
-                <DndWrapper id={id}>{enhancedChildren}</DndWrapper>
+                <DndContext
+                    sensors={sensors}
+                    measuring={measuring}
+                    onDragEnd={handleDrop}
+                    collisionDetection={fondueCollisionDetection}
+                >
+                    <SortableContext items={childrenIds} strategy={verticalListSortingStrategy}>
+                        {enhancedChildren}
+                    </SortableContext>
+
+                    <DragOverlay dropAnimation={null} modifiers={[restrictToWindowEdges, snapToHandle]}>
+                        <TreeItemOverlay />
+                    </DragOverlay>
+                </DndContext>
             </ul>
         </TreeContext.Provider>
     );
 };
+
 Tree.displayName = 'FondueTree';

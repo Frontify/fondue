@@ -1,14 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
+import { UniqueIdentifier } from '@dnd-kit/core';
 
 import { Tree, TreeItem } from '@components/Tree';
-import { treeNodesMock } from '@components/Tree/utils/mocks';
+import { treeItemsMock } from '@components/Tree/utils';
 
-const TreeComponent = ({ onSelect }: { onSelect?: (id: Nullable<string>) => void }) => {
+const TreeComponent = ({ onSelect }: { onSelect?: (id: Nullable<UniqueIdentifier>) => void }) => {
     return (
         <Tree id="treeId" onSelect={onSelect}>
-            {treeNodesMock.map((node) => (
+            {treeItemsMock.map((node) => (
                 <TreeItem key={node.id} id={node.id} contentComponent={() => <span>{node.label}</span>}>
                     {node.nodes?.map((node) => (
                         <TreeItem key={node.id} id={node.id} contentComponent={() => <span>{node.label}</span>}>

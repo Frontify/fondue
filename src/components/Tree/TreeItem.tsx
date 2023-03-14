@@ -1,308 +1,363 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { Children, KeyboardEvent, MouseEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useDrag } from 'react-dnd';
+import React, { Children, useCallback, useEffect, useMemo } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { DragEndEvent, DragStartEvent, useDndContext, useDndMonitor } from '@dnd-kit/core';
+import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 
 import { merge } from '@utilities/merge';
-import { DraggableItem, DropZonePosition } from '@utilities/dnd';
+import { IconGrabHandle12 } from '@foundation/Icon';
 
-import { DropZone } from '@components/DropZone';
-import type { TreeItemProps } from '@components/Tree/types';
+import type { CollisionPosition, TreeItemProps } from '@components/Tree/types';
 import { useTreeContext } from '@components/Tree/TreeContext';
-import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 
-import { getAcceptTypes, getItemPositionInParent, getNextItemToFocus, getPreviousItemToFocus } from './helpers';
 import { cloneThroughFragments, flattenChildren, isDescendant } from './utils';
-
-const DRAGGING_OPACITY = 0.4;
-const DEFAULT_OPACITY = 1;
+import { getItemPositionInParent, getNextItemToFocus, getPreviousItemToFocus, getSupportedDrop } from './helpers';
 
 export const TreeItem = ({
     id,
     parentId,
     label,
-    draggable: propsDraggable,
     contentComponent,
     onDrop,
     type,
     accepts,
     children,
     level,
+    draggable: draggableItem = true,
 }: TreeItemProps) => {
     const {
-        treeId,
-        draggable,
-        onSelect,
         onExpand,
-        onDrop: onTreeDrop,
-        registerTreeItem,
-        registerTreeItemChildren,
-        unregisterTreeItem,
+        onSelect,
         treeState,
+        draggable,
+        registerOverlay,
+        registerTreeItem,
+        unregisterTreeItem,
+        registerTreeItemChildren,
     } = useTreeContext();
 
     const treeItemState = treeState.items.get(id);
-    const itemRef = useRef<HTMLDivElement>(null);
-
-    const [hovered, setHovered] = useState<boolean>(false);
-    const handleMouseEnter = useCallback(() => setHovered(true), []);
-    const handleMouseLeave = useCallback(() => setHovered(false), []);
-
-    const sort = useMemo(
-        () => (treeItemState?.parentId ? getItemPositionInParent(id, treeItemState.parentId, treeState) : -1),
-        [id, treeItemState?.parentId, treeState],
-    );
-
-    useEffect(() => {
-        if (itemRef.current) {
-            registerTreeItem({
-                id,
-                parentId,
-                level: level ?? 0,
-                domElement: itemRef.current,
-            });
-
-            return () => {
-                unregisterTreeItem(id);
-            };
-        }
-    }, [id, level, parentId, registerTreeItem, unregisterTreeItem, itemRef]);
-
-    useEffect(() => {
-        const childrenIds = flattenChildren(children).map((child) => child.props.id);
-        registerTreeItemChildren({ id, childrenIds: childrenIds.length > 0 ? childrenIds : undefined });
-    }, [children, id, registerTreeItemChildren]);
-
-    const [{ opacity }, drag] = useDrag({
-        item: { id, type, sort },
-        collect: (monitor) => ({
-            opacity: monitor.isDragging() ? DRAGGING_OPACITY : DEFAULT_OPACITY,
-            isDragging: monitor.isDragging(),
-        }),
-        type: type ?? treeId,
-        canDrag: propsDraggable ?? draggable,
-    });
-
-    const handleDrop = useCallback(
-        (
-            targetItem: DraggableItem<{ id: string; sort: number }>,
-            sourceItem: DraggableItem<{ id: string; sort: number }>,
-            position: DropZonePosition,
-        ) => {
-            onTreeDrop(targetItem, sourceItem, position);
-            onDrop?.(targetItem, sourceItem, position);
-        },
-        [onDrop, onTreeDrop],
-    );
-
-    const handleSelect = useCallback(
-        (event: MouseEvent<HTMLDivElement>) => {
-            if (itemRef.current && isDescendant(event.target as HTMLElement, itemRef.current)) {
-                event.stopPropagation();
-                onSelect(id);
-            }
-        },
-        [id, onSelect],
-    );
-
-    const handleExpandClick = useCallback(
-        (event: MouseEvent) => {
-            event.stopPropagation();
-            onExpand(id, !treeState.expandedIds.has(id));
-        },
-        [id, onExpand, treeState.expandedIds],
-    );
-
-    const handleExpandKeyDown = useCallback(
-        (event: KeyboardEvent) => {
-            if (document.activeElement === itemRef.current && (event.key === 'Space' || event.key === 'Enter')) {
-                event.stopPropagation();
-                onExpand(id, !treeState.expandedIds.has(id));
-            }
-        },
-        [id, onExpand, treeState.expandedIds],
-    );
-
-    const handleKeyDown = useCallback(
-        (event: KeyboardEvent) => {
-            if (document.activeElement === itemRef.current) {
-                switch (event.code) {
-                    case 'Enter':
-                        event.preventDefault();
-                        onSelect(id);
-                        break;
-
-                    case 'Space':
-                        event.preventDefault();
-                        if (treeItemState?.childrenIds) {
-                            onExpand(id, !treeState.expandedIds.has(id));
-                        } else {
-                            onSelect(id);
-                        }
-                        break;
-
-                    case 'ArrowRight':
-                        event.preventDefault();
-                        if (treeItemState?.childrenIds && !treeState.expandedIds.has(id)) {
-                            onExpand(id, true);
-                        } else if (treeItemState?.childrenIds?.[0]) {
-                            const firstChildId = treeItemState.childrenIds[0];
-                            const firstChildState = treeState.items.get(firstChildId);
-                            firstChildState?.domElement?.focus();
-                        }
-                        break;
-
-                    case 'ArrowLeft':
-                        event.preventDefault();
-                        if (treeItemState?.childrenIds && treeState.expandedIds.has(id)) {
-                            onExpand(id, false);
-                        } else if (treeItemState?.parentId) {
-                            const parentId = treeItemState.parentId;
-                            const parentState = treeState.items.get(parentId);
-                            parentState?.domElement?.focus();
-                        }
-                        break;
-
-                    case 'ArrowUp':
-                        event.preventDefault();
-                        if (treeItemState) {
-                            const previousItemToFocus = getPreviousItemToFocus(id, treeItemState, treeState);
-                            previousItemToFocus?.domElement?.focus();
-                        }
-                        break;
-
-                    case 'ArrowDown':
-                        event.preventDefault();
-                        if (treeItemState) {
-                            const nextItemToFocus = getNextItemToFocus(id, treeItemState, treeState);
-                            nextItemToFocus?.domElement?.focus();
-                        }
-                        break;
-                }
-            }
-        },
-        [id, onExpand, onSelect, treeItemState, treeState],
-    );
 
     const enhancedChildren = useMemo(
         () => (children ? cloneThroughFragments(children, { parentId: id, level: (level || 0) + 1 }) : []),
         [children, id, level],
     );
 
+    const { collisions, active, over } = useDndContext();
+
+    const collision = useMemo(() => collisions?.find((collision) => collision.id === id), [collisions, id]);
+
+    const supportedDrop = getSupportedDrop(accepts, active?.data?.current?.type);
+
+    const handleItemDragEnd = useCallback(
+        (event: DragEndEvent) => {
+            const { over, active } = event;
+
+            if (
+                onDrop &&
+                over?.id === id &&
+                active.id !== over?.id &&
+                supportedDrop[collision?.data?.position as CollisionPosition]
+            ) {
+                const treeItemStateOver = treeState.items.get(over.id);
+                const treeItemStateActive = treeState.items.get(active.id);
+
+                const sortActive = treeItemStateActive?.parentId
+                    ? getItemPositionInParent(active.id, treeItemStateActive.parentId, treeState)
+                    : -1;
+
+                const sortOver = treeItemStateOver?.parentId
+                    ? getItemPositionInParent(over.id, treeItemStateOver.parentId, treeState)
+                    : -1;
+
+                onDrop(
+                    { id: over.id, type: over?.data?.current?.type, sort: sortOver },
+                    { id: active.id, type: active.data?.current?.type, sort: sortActive },
+                    collision?.data?.position ?? undefined,
+                );
+            }
+        },
+        [collision?.data?.position, id, onDrop, supportedDrop, treeState],
+    );
+
+    const handleItemDragStart = useCallback(
+        (event: DragStartEvent) => {
+            if (event.active.id !== id) {
+                return;
+            }
+
+            registerOverlay({ contentComponent, children, id, label });
+        },
+        [children, contentComponent, id, label, registerOverlay],
+    );
+
+    useDndMonitor({ onDragEnd: handleItemDragEnd, onDragStart: handleItemDragStart });
+
+    const isActive = active?.id === id;
+    const isOver = over?.id === id && !isActive;
+    const isWithin = isOver && collision?.data?.position === 'within';
+    const isBefore = isOver && collision?.data?.position === 'before';
+    const isAfter = isOver && collision?.data?.position === 'after';
+    const isSelected = treeState.selectedIds.has(id);
+    const isExpanded = treeState.expandedIds.has(id);
+
+    const sort = treeItemState?.parentId ? getItemPositionInParent(id, treeItemState.parentId, treeState) : -1;
+
     const hasChildren = Children.count(enhancedChildren) > 0;
 
-    const paddingLeftByLevel = `${treeItemState?.level ?? 0}rem`;
+    const childrenIds = useMemo(() => flattenChildren(children).map((child) => child.props.id), [children]);
+
+    const { attributes, listeners, setNodeRef, node } = useSortable({
+        id,
+        disabled: !draggable || !draggableItem,
+        data: { type, accepts },
+    });
+
+    useEffect(() => {
+        if (node.current) {
+            registerTreeItem({
+                id,
+                parentId,
+                level: level ?? 0,
+                domElement: node.current,
+            });
+
+            return () => {
+                unregisterTreeItem(id);
+            };
+        }
+    }, [id, level, parentId, registerTreeItem, unregisterTreeItem, node]);
+
+    useEffect(() => {
+        registerTreeItemChildren({ id, childrenIds: childrenIds.length > 0 ? childrenIds : undefined });
+    }, [id, childrenIds, registerTreeItemChildren]);
+
+    const handleSelect = useCallback(
+        (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+            if (node.current && isDescendant(event.target as HTMLElement, node.current)) {
+                event.stopPropagation();
+
+                onSelect(id);
+            }
+        },
+        [id, node, onSelect],
+    );
+
+    const handleExpand = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        event.stopPropagation();
+
+        onExpand(id);
+    };
+
+    const handleKeyDown = useCallback(
+        (event: React.KeyboardEvent<HTMLDivElement>) => {
+            if (document.activeElement !== node.current) {
+                return;
+            }
+
+            const { code } = event;
+
+            const selectItem = () => {
+                event.preventDefault();
+                onSelect(id);
+            };
+
+            const expandItem = () => {
+                event.preventDefault();
+                onExpand(id);
+            };
+
+            const focusFirstChild = () => {
+                const firstChildId = treeItemState?.childrenIds?.[0];
+
+                if (!firstChildId) {
+                    return console.error(`list item ${id} missing children`);
+                }
+
+                const firstChildState = treeState.items.get(firstChildId);
+                firstChildState?.domElement?.focus();
+            };
+
+            const focusParent = () => {
+                const parentId = treeItemState?.parentId;
+
+                if (!parentId) {
+                    return console.error(`list item ${id} missing parent`);
+                }
+
+                const parentState = treeState.items.get(parentId);
+                parentState?.domElement?.focus();
+            };
+
+            const focusPreviousItem = () => {
+                const previousItemToFocus = getPreviousItemToFocus(id, treeItemState, treeState);
+                previousItemToFocus?.domElement?.focus();
+            };
+
+            const focusNextItem = () => {
+                const nextItemToFocus = getNextItemToFocus(id, treeItemState, treeState);
+                nextItemToFocus?.domElement?.focus();
+            };
+
+            switch (code) {
+                case 'Enter':
+                    selectItem();
+                    break;
+
+                case 'Space':
+                    if (treeItemState?.childrenIds) {
+                        expandItem();
+                    } else {
+                        selectItem();
+                    }
+                    break;
+
+                case 'ArrowRight':
+                    if (treeItemState?.childrenIds && !isExpanded) {
+                        expandItem();
+                    } else if (treeItemState?.childrenIds?.[0]) {
+                        focusFirstChild();
+                    }
+                    break;
+
+                case 'ArrowLeft':
+                    if (treeItemState?.childrenIds && isExpanded) {
+                        expandItem();
+                    } else if (treeItemState?.parentId) {
+                        focusParent();
+                    }
+                    break;
+
+                case 'ArrowUp':
+                    focusPreviousItem();
+                    break;
+
+                case 'ArrowDown':
+                    focusNextItem();
+                    break;
+
+                default:
+                    break;
+            }
+        },
+        [id, isExpanded, node, onExpand, onSelect, treeItemState, treeState],
+    );
+
+    const indentation = `${treeItemState?.level ?? 0}rem`;
+
+    const containerClassName = useMemo(
+        () =>
+            merge([
+                !isActive && 'focus-within:tw-ring-4 focus-within:tw-ring-blue focus-within:tw-ring-offset-2',
+                'focus-visible:tw-ring-4 focus-visible:tw-ring-blue focus-visible:tw-ring-offset-2 tw-outline-none tw-rounded tw-group hover:tw-bg-black-10 tw-flex tw-items-center tw-gap-x-1.5 tw-px-2.5 tw-no-underline tw-leading-5 tw-h-10',
+                isSelected &&
+                    'tw-font-medium tw-bg-box-selected-strong tw-text-box-selected-strong-inverse hover:tw-bg-box-selected-strong-hover',
+                isWithin &&
+                    !(supportedDrop.within || !draggableItem) &&
+                    'tw-bg-red-40 tw-border-[#ED3956] tw-border-dashed tw-border-2',
+                isWithin && supportedDrop.within && 'tw-border-violet-60 tw-border-dashed tw-border-2 tw-bg-[#F0EAFA]',
+                isActive && 'tw-opacity-40',
+            ]),
+        [draggableItem, isActive, isSelected, isWithin, supportedDrop.within],
+    );
+
+    const containerStyle = { paddingLeft: indentation };
+
+    const hasBeforeDrop = draggable && draggableItem && sort === 0 && supportedDrop.before;
+    const hasAfterDrop = draggable && draggableItem && supportedDrop.after;
 
     return (
-        <li data-test-id="tree-item" ref={drag} style={{ opacity, transform: 'translate3d(0, 0, 0)' }}>
-            {sort === 0 ? (
-                <div
-                    style={{
-                        paddingLeft: paddingLeftByLevel,
-                    }}
-                >
-                    <DropZone
-                        data-position={DropZonePosition.Before}
-                        data={{
-                            targetItem: { id, sort: sort ?? 0, type },
-                            position: DropZonePosition.Before,
-                        }}
-                        onDrop={handleDrop}
-                        accept={getAcceptTypes(accepts ?? treeId, 'before')}
-                    />
-                </div>
-            ) : null}
-
-            <DropZone
-                data-position={DropZonePosition.Within}
-                data={{
-                    targetItem: { id, sort: sort ?? 0, type },
-                    position: DropZonePosition.Within,
-                }}
-                onDrop={handleDrop}
-                accept={getAcceptTypes(accepts ?? treeId, 'within')}
+        <>
+            {hasBeforeDrop && animateDropZone(isBefore)}
+            <li
+                role="treeitem"
+                id={id.toString()}
+                aria-label={label}
+                data-test-id="tree-item"
+                aria-selected={isSelected}
+                aria-expanded={isExpanded}
+                aria-level={treeItemState?.level}
             >
                 <div
-                    className={merge([
-                        treeState.selectedIds.has(id)
-                            ? 'tw-font-medium tw-bg-box-selected-strong tw-text-box-selected-strong-inverse hover:tw-bg-box-selected-strong-hover hover:tw-text-box-selected-strong-inverse-hover'
-                            : 'tw-text-text hover:tw-bg-box-neutral-hover hover:tw-text-box-neutral-inverse-hover',
-                    ])}
-                    style={{
-                        paddingLeft: paddingLeftByLevel,
-                    }}
+                    role="row"
+                    tabIndex={0}
+                    ref={setNodeRef}
+                    onClick={handleSelect}
+                    style={containerStyle}
+                    onKeyDown={handleKeyDown}
+                    className={containerClassName}
                 >
-                    <div
-                        ref={itemRef}
-                        className={merge([
-                            'tw-flex tw-py-2 tw-px-2.5 tw-no-underline tw-leading-5 tw-h-10',
-                            FOCUS_VISIBLE_STYLE,
-                        ])}
-                        role="treeitem"
-                        aria-label={label}
-                        aria-level={treeItemState?.level}
-                        aria-selected={treeState.selectedIds.has(id)}
-                        aria-expanded={treeState.expandedIds.has(id)}
-                        tabIndex={0}
-                        onClick={handleSelect}
-                        onKeyDown={handleKeyDown}
-                        onMouseEnter={handleMouseEnter}
-                        onMouseLeave={handleMouseLeave}
-                    >
-                        <div className="tw-flex tw-flex-1 tw-space-x-1 tw-items-center tw-h-6">
-                            <div className="tw-w-2 tw-h-3 tw-flex tw-items-center tw-justify-center">
-                                {hasChildren && (
-                                    <button
-                                        data-test-id="tree-item-toggle"
-                                        className="tw-flex tw-items-center tw-justify-center tw-p-1.5 tw-cursor-pointer"
-                                        onClick={handleExpandClick}
-                                        onKeyDown={handleExpandKeyDown}
-                                        tabIndex={0}
-                                    >
-                                        <div
-                                            className={merge([
-                                                'tw-transition-transform tw-w-0 tw-h-0 tw-text-black-100 tw-text-opacity-40 tw-font-normal tw-border-t-4 tw-border-t-transparent tw-border-b-4 tw-border-b-transparent tw-border-l-4 tw-border-l-x-strong',
-                                                treeState.selectedIds.has(id) && 'tw-text-box-selected-strong-inverse',
-                                                treeState.expandedIds.has(id) && 'tw-rotate-90',
-                                            ])}
-                                        />
-                                    </button>
-                                )}
-                            </div>
+                    {draggable && draggableItem && (
+                        <button
+                            {...listeners}
+                            {...attributes}
+                            className={merge([
+                                'tw-p-1 first:tw-ml-2 group-hover:tw-opacity-100 group-focus-within:tw-opacity-100 focus-visible:tw-ring-2 focus-visible:tw-ring-blue focus-visible:tw-ring-offset-1 tw-outline-none tw-rounded-sm',
+                                isSelected ? 'tw-opacity-100' : 'tw-opacity-0',
+                            ])}
+                        >
+                            <IconGrabHandle12 />
+                        </button>
+                    )}
+                    {hasChildren && (
+                        <button
+                            tabIndex={0}
+                            onClick={handleExpand}
+                            data-test-id="tree-item-toggle"
+                            className="tw-p-1.5 first:tw-ml-2 tw-h-5 tw-w-5 tw-flex tw-justify-center focus-visible:tw-ring-2 focus-visible:tw-ring-blue focus-visible:tw-ring-offset-1 tw-outline-none tw-rounded-sm"
+                        >
+                            {!isActive && (
+                                <div
+                                    className={merge([
+                                        'tw-transition-transform tw-w-0 tw-h-0 tw-text-black-100 tw-text-opacity-40 tw-font-normal tw-border-t-4 tw-border-t-transparent tw-border-b-4 tw-border-b-transparent tw-border-l-4 tw-border-l-x-strong',
+                                        isSelected && 'tw-text-box-selected-strong-inverse',
+                                        isExpanded && 'tw-rotate-90',
+                                    ])}
+                                />
+                            )}
+                        </button>
+                    )}
 
-                            {label ? <span>{label}</span> : null}
+                    {label !== undefined && <span className="first:tw-ml-3.5">{label}</span>}
 
-                            {contentComponent?.({ selected: treeState.selectedIds.has(id) ?? false, hovered })}
-                        </div>
-                    </div>
+                    {contentComponent?.({ selected: isSelected })}
                 </div>
-            </DropZone>
+                <AnimatePresence>
+                    {isExpanded && !isActive && (
+                        <motion.ul
+                            role="group"
+                            key={`content-${id}`}
+                            data-test-id="sub-tree-items"
+                            exit={{ height: 0, opacity: 0 }}
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            transition={{ duration: 0.3, ease: 'easeInOut' }}
+                        >
+                            <SortableContext items={childrenIds} strategy={verticalListSortingStrategy}>
+                                {enhancedChildren}
+                            </SortableContext>
+                        </motion.ul>
+                    )}
+                </AnimatePresence>
+            </li>
 
-            {treeState.expandedIds.has(id) ? (
-                <ul
-                    className="tw-p-0 tw-m-0 tw-list-none tw-font-sans tw-font-normal tw-text-left"
-                    data-test-id="sub-tree-items"
-                >
-                    {enhancedChildren}
-                </ul>
-            ) : null}
-
-            <div
-                style={{
-                    paddingLeft: paddingLeftByLevel,
-                }}
-            >
-                <DropZone
-                    data-position={DropZonePosition.After}
-                    data={{
-                        targetItem: { id, sort: sort ?? 0, type },
-                        position: DropZonePosition.After,
-                    }}
-                    onDrop={handleDrop}
-                    accept={getAcceptTypes(accepts ?? treeId, 'after')}
-                />
-            </div>
-        </li>
+            {hasAfterDrop && animateDropZone(isAfter)}
+        </>
     );
 };
+
+const animateDropZone = (animate: boolean) => {
+    return (
+        <motion.div
+            layout
+            role="row"
+            aria-hidden={!animate}
+            data-test-id="drop-zone"
+            animate={{ height: animate ? 40 : 0 }}
+            className={animate ? 'tw-border-violet-60 tw-border-dashed tw-border-2 tw-bg-[#E4DAFA]' : undefined}
+        />
+    );
+};
+
 TreeItem.displayName = 'FondueTreeItem';

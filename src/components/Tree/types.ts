@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import type { ReactNode } from 'react';
+import { useSortable } from '@dnd-kit/sortable';
+import { UniqueIdentifier } from '@dnd-kit/core';
+import { Overlay } from './TreeItemOverlay';
 
-import type { OnDropCallback } from '@components/DropZone';
-import { DropZonePosition } from '@utilities/dnd';
-
-export type OnSelectCallback = (id: string) => void;
-export type OnExpandCallback = (id: string, isExpanded: boolean) => void;
+export type OnSelectCallback = (id: UniqueIdentifier) => void;
+export type OnExpandCallback = (id: UniqueIdentifier) => void;
 
 export type TreeProps = {
     id: string;
@@ -16,18 +16,17 @@ export type TreeProps = {
     multiselect?: boolean;
     onSelect?: OnSelectCallback;
     onExpand?: OnExpandCallback;
-    onDrop?: OnDropCallback<{ id: string; sort: number }>;
+    onDrop?: any;
     children: ReactNode;
 };
 
 export type ContentComponentArguments = {
-    selected: boolean;
-    hovered: boolean;
+    selected?: boolean;
 };
 
 type TreeItemBaseProps = {
-    id: string;
-    onDrop?: OnDropCallback<{ id: string; sort: number }>;
+    id: UniqueIdentifier;
+    onDrop?: any;
     /**
      * The type of item being dragged.
      */
@@ -56,34 +55,45 @@ export type TreeItemWithContentComponentProps = {
     contentComponent?: (props: ContentComponentArguments) => ReactNode;
 } & TreeItemBaseProps;
 
-export type TreeItemProps = TreeItemWithLabelProps | TreeItemWithContentComponentProps;
+export type SortableProps = Partial<ReturnType<typeof useSortable>>;
+
+export type TreeItemProps = SortableProps & (TreeItemWithLabelProps | TreeItemWithContentComponentProps);
+
+export type SortableTreeItemProps = TreeItemProps;
 
 export type TreeItemState = {
-    parentId?: string;
-    childrenIds?: string[];
+    parentId?: UniqueIdentifier;
+    childrenIds?: UniqueIdentifier[];
     level: number;
     domElement?: HTMLElement;
 };
 
 export type TreeState = {
-    items: Map<string, TreeItemState>;
-    selectedIds: Set<string>;
-    expandedIds: Set<string>;
+    items: Map<UniqueIdentifier, TreeItemState>;
+    selectedIds: Set<UniqueIdentifier>;
+    expandedIds: Set<UniqueIdentifier>;
     selectionMode: 'single' | 'multiselect';
+    overlay?: Overlay;
 };
 
 export type TreeStateAction =
     | { type: 'REPLACE_STATE'; payload: TreeState }
-    | { type: 'SET_SELECT'; payload: { id: string; isSelected: boolean } }
-    | { type: 'SET_EXPAND'; payload: { id: string; isExpanded: boolean } }
+    | { type: 'SET_SELECT'; payload: { id: UniqueIdentifier; isSelected: boolean } }
+    | { type: 'SET_EXPAND'; payload: { id: UniqueIdentifier; isExpanded: boolean } }
     | { type: 'SET_SELECTION_MODE'; payload: { selectionMode: TreeState['selectionMode'] } }
-    | { type: 'ON_DROP'; payload: { id: string; targetId: string; position: DropZonePosition } }
-    | { type: 'REGISTER_TREE_ITEM'; payload: { id: string } & Omit<TreeItemState, 'childrenIds'> }
-    | { type: 'REGISTER_TREE_ITEM_CHILDREN'; payload: { id: string; childrenIds: TreeItemState['childrenIds'] } }
-    | { type: 'UNREGISTER_TREE_ITEM'; payload: { id: string } };
+    | { type: 'ON_DROP'; payload: { id: UniqueIdentifier; targetId: UniqueIdentifier; position?: CollisionPosition } }
+    | { type: 'REGISTER_TREE_ITEM'; payload: { id: UniqueIdentifier } & Omit<TreeItemState, 'childrenIds'> }
+    | {
+          type: 'REGISTER_TREE_ITEM_CHILDREN';
+          payload: { id: UniqueIdentifier; childrenIds: TreeItemState['childrenIds'] };
+      }
+    | { type: 'UNREGISTER_TREE_ITEM'; payload: { id: UniqueIdentifier } }
+    | { type: 'REGISTER_OVERLAY_ITEM'; payload: Overlay };
 
 export type RegisterTreeItemPayload = Extract<TreeStateAction, { type: 'REGISTER_TREE_ITEM' }>['payload'];
 export type RegisterTreeItemChildrenPayload = Extract<
     TreeStateAction,
     { type: 'REGISTER_TREE_ITEM_CHILDREN' }
 >['payload'];
+
+export type CollisionPosition = 'before' | 'within' | 'after';

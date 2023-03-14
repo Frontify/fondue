@@ -1,13 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { UniqueIdentifier } from '@dnd-kit/core';
 import type { TreeItemState, TreeState } from '../types';
 
 export const getNextItemToFocus = (
-    id: string,
-    currentItemState: TreeItemState,
+    id: UniqueIdentifier,
+    currentItemState: TreeItemState | undefined,
     treeState: TreeState,
 ): TreeItemState | undefined => {
-    if (treeState.expandedIds.has(id) && currentItemState.childrenIds && currentItemState.childrenIds.length > 0) {
+    if (treeState.expandedIds.has(id) && currentItemState?.childrenIds && currentItemState.childrenIds.length > 0) {
         // If expanded folder, select the first child
         const firstChildId = currentItemState.childrenIds[0];
         const firstChildState = treeState.items.get(firstChildId);
@@ -16,7 +17,7 @@ export const getNextItemToFocus = (
         }
 
         return firstChildState;
-    } else if (currentItemState.parentId) {
+    } else if (currentItemState?.parentId) {
         // If within a folder, select the next sibling
         const nextFirstItemId = getNextFirstItemIdInParent(id, treeState);
 
@@ -29,7 +30,7 @@ export const getNextItemToFocus = (
     return undefined;
 };
 
-const isItemLastInParent = (id: string, parentId: string, treeState: TreeState): boolean => {
+const isItemLastInParent = (id: UniqueIdentifier, parentId: UniqueIdentifier, treeState: TreeState): boolean => {
     const parentState = treeState.items.get(parentId);
     if (!parentState) {
         throw new Error(`Item with id ${parentId} is not a registered item.`);
@@ -38,7 +39,7 @@ const isItemLastInParent = (id: string, parentId: string, treeState: TreeState):
     return parentState.childrenIds?.at(-1) === id;
 };
 
-const getNextFirstItemIdInParent = (id: string, treeState: TreeState): string | undefined => {
+const getNextFirstItemIdInParent = (id: UniqueIdentifier, treeState: TreeState): UniqueIdentifier | undefined => {
     const currentItemState = treeState.items.get(id);
     if (!currentItemState) {
         throw new Error(`Item with id ${id} is not a registered item.`);
