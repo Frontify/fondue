@@ -102,9 +102,13 @@ export const Textarea: FC<TextareaProps> = ({
                     <LoadingCircle size={LoadingCircleSize.ExtraSmall} />
                 </span>
             )}
-            {validation === Validation.Error && (
+            {(validation === Validation.Error || validation === Validation.Warning) && (
                 <span
-                    className="tw-absolute tw-top-[0.6rem] tw-right-[0.6rem] tw-text-red-60"
+                    className={merge([
+                        'tw-absolute tw-top-[0.6rem] tw-right-[0.6rem]',
+                        validation === Validation.Error && 'tw-text-text-negative',
+                        validation === Validation.Warning && 'tw-text-text-warning',
+                    ])}
                     data-test-id="error-state-exclamation-mark-icon"
                 >
                     <IconExclamationMarkTriangle />
