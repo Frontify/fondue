@@ -73,8 +73,8 @@ export const TreeItem = ({
                     : -1;
 
                 onDrop(
-                    { id: over.id, type: over?.data?.current?.type, sort: sortOver },
-                    { id: active.id, type: active.data?.current?.type, sort: sortActive },
+                    { id: over.id.toString(), type: over?.data?.current?.type, sort: sortOver },
+                    { id: active.id.toString(), type: active.data?.current?.type, sort: sortActive },
                     collision?.data?.position ?? undefined,
                 );
             }

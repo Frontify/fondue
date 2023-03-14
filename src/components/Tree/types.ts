@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { UniqueIdentifier } from '@dnd-kit/core';
 import { Overlay } from './TreeItemOverlay';
+import { OnDropCallback } from '@components/DropZone';
 
 export type OnSelectCallback = (id: UniqueIdentifier) => void;
 export type OnExpandCallback = (id: UniqueIdentifier) => void;
@@ -16,16 +17,9 @@ export type TreeProps = {
     multiselect?: boolean;
     onSelect?: OnSelectCallback;
     onExpand?: OnExpandCallback;
-    onDrop?: any;
+    onDrop?: OnDropCallback<{ id: string; sort: number }>;
     children: ReactNode;
-    /**
-     * Padding added to each TreeItem in the TreeContext.
-     * @default {"top": 10, "right": 8, "bottom": 10, "left": 8}
-     * */
-    baseItemPadding?: Partial<TreeItemPadding>;
 };
-
-export type TreeItemPadding = { top: number; right: number; bottom: number; left: number };
 
 export type ContentComponentArguments = {
     selected?: boolean;
@@ -33,7 +27,7 @@ export type ContentComponentArguments = {
 
 type TreeItemBaseProps = {
     id: UniqueIdentifier;
-    onDrop?: any;
+    onDrop?: OnDropCallback<{ id: string; sort: number }>;
     /**
      * The type of item being dragged.
      */

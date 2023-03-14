@@ -43,7 +43,8 @@ const reducer = (state: TreeState, action: TreeStateAction): TreeState => {
             const { id, isSelected } = action.payload;
 
             if (!state.items.has(id)) {
-                throw new Error(`No tree item registered with id ${id}.`);
+                console.error(`No tree item registered with id ${id}.`);
+                return state;
             }
 
             if (isSelected) {
@@ -85,22 +86,26 @@ const reducer = (state: TreeState, action: TreeStateAction): TreeState => {
 
         case 'ON_DROP': {
             const { targetId, id, position } = action.payload;
+
             const targetState = state.items.get(targetId);
 
             if (!targetState) {
-                throw new Error(`No tree item registered with id ${targetId}.`);
+                console.error(`No tree item registered with id ${targetId}.`);
+                return state;
             }
 
             if (position === 'before' || position === 'after') {
                 const parentTargetState = targetState.parentId ? state.items.get(targetState.parentId) : undefined;
                 if (!parentTargetState || !targetState.parentId || !parentTargetState.childrenIds) {
-                    throw new Error(`No tree item registered with id ${targetState.parentId}.`);
+                    console.error(`No tree item registered with id ${targetState.parentId}.`);
+                    return state;
                 }
 
                 const sourceIndexInParent = parentTargetState.childrenIds.findIndex((childId) => childId === id);
                 const targetIndexInParent = parentTargetState.childrenIds.findIndex((childId) => childId === targetId);
 
                 const element = parentTargetState.childrenIds[sourceIndexInParent];
+
                 const arrayWithoutElement = [
                     ...parentTargetState.childrenIds.slice(0, sourceIndexInParent),
                     ...parentTargetState.childrenIds.slice(sourceIndexInParent + 1),
@@ -117,13 +122,17 @@ const reducer = (state: TreeState, action: TreeStateAction): TreeState => {
                 state.items.set(targetState.parentId, { ...parentTargetState, childrenIds: newArray });
             } else if (position === 'within') {
                 const sourceState = state.items.get(id);
+
                 if (!sourceState || !sourceState.parentId) {
-                    throw new Error(`No tree item registered with id ${id ?? sourceState?.parentId}.`);
+                    console.error(`No tree item registered with id ${id ?? sourceState?.parentId}.`);
+                    return state;
                 }
                 const targetState = state.items.get(targetId);
                 const oldParentState = state.items.get(sourceState.parentId);
+
                 if (!targetState || !oldParentState) {
-                    throw new Error(`No tree item registered with id ${targetId ?? sourceState.parentId}.`);
+                    console.error(`No tree item registered with id ${targetId ?? sourceState.parentId}.`);
+                    return state;
                 }
 
                 const oldParentChildrenIds = oldParentState.childrenIds?.filter((childId) => childId !== id);
@@ -177,7 +186,8 @@ const reducer = (state: TreeState, action: TreeStateAction): TreeState => {
 
             const itemState = state.items.get(id);
             if (!itemState) {
-                throw new Error(`No tree item registered with id ${id}.`);
+                console.error(`No tree item registered with id ${id}.`);
+                return state;
             }
 
             state.items.set(id, { ...itemState, childrenIds });
@@ -355,7 +365,11 @@ export const Tree = ({
                 },
             });
 
-            onDrop?.({ id: over?.id, sort: 1 }, { id: active.id, sort: 1 }, collision?.data?.position);
+            onDrop?.(
+                { id: over?.id.toString(), sort: 1 },
+                { id: active.id.toString(), sort: 1 },
+                collision?.data?.position,
+            );
         },
         [onDrop],
     );

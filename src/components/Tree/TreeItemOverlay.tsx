@@ -29,7 +29,7 @@ export const TreeItemOverlay = () => {
             aria-level={treeItemState?.level}
             id={treeState.overlay.id.toString()}
             aria-label={treeState.overlay.label}
-            className="tw-pointer-events-none tw-bg-white tw-flex tw-items-center tw-gap-x-1 tw-py-2 tw-px-2.5 tw-no-underline tw-leading-5 tw-h-10 tw-box-border tw-w-fit tw-drop-shadow-xl"
+            className="tw-pointer-events-none tw-bg-white tw-flex tw-items-center tw-gap-x-1 tw-py-2 tw-px-2.5 tw-no-underline tw-leading-5 tw-h-10 tw-box-border tw-w-fit tw-drop-shadow-xl tw-rounded"
         >
             <button className="tw-p-1 tw-ml-2">
                 <IconGrabHandle12 />

@@ -9,7 +9,6 @@ import type {
     OnSelectCallback,
     RegisterTreeItemChildrenPayload,
     RegisterTreeItemPayload,
-    TreeItemPadding,
     TreeState,
 } from './types';
 
@@ -17,7 +16,6 @@ export type TreeContextProps = {
     treeId: string;
     draggable: boolean;
     treeState: TreeState;
-    baseItemPadding: TreeItemPadding;
     registerTreeItem(payload: RegisterTreeItemPayload): void;
     registerTreeItemChildren(payload: RegisterTreeItemChildrenPayload): void;
     unregisterTreeItem(id: UniqueIdentifier): void;
