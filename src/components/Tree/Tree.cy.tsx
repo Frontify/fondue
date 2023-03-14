@@ -34,6 +34,7 @@ const TreeComponent = ({ onSelect }: { onSelect?: (id: Nullable<UniqueIdentifier
 
 const TREE_ID = '[data-test-id=tree]';
 const TREE_ITEM_ID = '[data-test-id=tree-item]';
+const TREE_ITEM_CONTAINER_ID = '[data-test-id=tree-item-container]';
 const TREE_ITEM_TOGGLE_ID = '[data-test-id=tree-item-toggle';
 const SUB_TREE_ITEMS_ID = '[data-test-id=sub-tree-items]';
 
@@ -67,7 +68,7 @@ describe('Tree Component', () => {
         const onSelectStub = cy.stub().as('onSelectStub');
         cy.mount(<TreeComponent onSelect={onSelectStub} />);
 
-        cy.get(TREE_ITEM_ID).eq(0).click();
+        cy.get(TREE_ITEM_CONTAINER_ID).eq(0).click();
         cy.get('@onSelectStub').should('have.been.called');
     });
 });

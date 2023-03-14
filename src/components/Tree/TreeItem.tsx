@@ -292,6 +292,7 @@ export const TreeItem = ({
                     style={containerStyle}
                     onKeyDown={handleKeyDown}
                     className={containerClassName}
+                    data-test-id="tree-item-container"
                 >
                     {draggable && draggableItem && (
                         <button
