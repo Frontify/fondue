@@ -30,6 +30,11 @@ export const InputLabel: FC<InputLabelProps> = ({
 }) => {
     const tooltips = Array.isArray(tooltip) ? tooltip : [tooltip];
 
+    const tooltipsWithKeys = tooltips.map((tooltip, index) => ({
+        key: index,
+        ...tooltip,
+    }));
+
     return (
         <div
             className={merge([
@@ -65,11 +70,10 @@ export const InputLabel: FC<InputLabelProps> = ({
                     *
                 </span>
             )}
-            {tooltips.map(({ triggerIcon, triggerStyle, hoverDelay = 100, ...tooltipProps }, index) => (
-                <div key={index} className="tw-leading-3">
+            {tooltipsWithKeys.map(({ key, triggerIcon, triggerStyle, hoverDelay = 100, ...tooltipProps }) => (
+                <div key={key} className="tw-leading-3">
                     <TooltipIcon
                         tooltip={{ ...tooltipProps, hoverDelay }}
-                        key={index}
                         iconSize={IconSize.Size16}
                         triggerIcon={triggerIcon}
                         triggerStyle={triggerStyle}
