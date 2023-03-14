@@ -19,7 +19,6 @@ const FIELDSET_ADDREMOVE_ICON_CONTAINER_ID = `[data-test-id="${ADDREMOVE_ICON_CO
 const HEADER_ICON_CONTAINER_ID = '[data-test-id="header-icon-container"]';
 const HEADER_DECORATOR_ID = '[data-test-id="accordion-header-decorator"]';
 
-const LARGE_SWITCH_WIDTH = 38;
 const MEDIUM_SWITCH_WIDTH = 30;
 const SMALL_SWITCH_WIDTH = 22;
 
@@ -171,7 +170,7 @@ describe('AccordionHeader Component', () => {
             </AccordionHeader>,
         );
 
-        cy.get(HEADER_ICON_CONTAINER_ID).invoke('width').should('equal', LARGE_SWITCH_WIDTH);
+        cy.get(HEADER_ICON_CONTAINER_ID).invoke('width').should('equal', MEDIUM_SWITCH_WIDTH);
     });
 
     it('renders with medium switch', () => {

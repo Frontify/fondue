@@ -51,9 +51,6 @@ Small.args = { size: SwitchSize.Small };
 export const Medium: StoryFn<Props> = Default.bind({});
 Medium.args = { size: SwitchSize.Medium };
 
-export const Large: StoryFn<Props> = Default.bind({});
-Large.args = { size: SwitchSize.Large };
-
 export const WithLabel: StoryFn<Props> = Default.bind({});
 WithLabel.args = { label: 'Switch label' };
 
