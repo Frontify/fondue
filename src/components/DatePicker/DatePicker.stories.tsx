@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Meta, StoryFn } from '@storybook/react';
-import { DatePicker, DatePickerProps } from './DatePicker';
+import { DatePicker, DatePickerProps, ReactDatePickerRef } from './DatePicker';
 import { FormControl } from '@components/FormControl';
 import { Slider } from '@components/Slider';
 import { Validation } from '@utilities/validation';
@@ -92,7 +92,7 @@ InsideFormControlAndOverSlider.args = {
 const formatOptions = { day: 'numeric', month: 'short', year: 'numeric' } as const;
 
 const TemplateDateRange: StoryFn<DatePickerProps> = () => {
-    const [startDate, setStartDate] = useState<Date | null>(subDays(new Date(), 5));
+    const [startDate, setStartDate] = useState<Date | null>(subDays(new Date(), 40));
     const [endDate, setEndDate] = useState<Date | null>(new Date());
     const onChange = (dates: [Date | null, Date | null] | null) => {
         if (!dates) {
@@ -102,19 +102,29 @@ const TemplateDateRange: StoryFn<DatePickerProps> = () => {
         setStartDate(start);
         setEndDate(end);
     };
+    const datePickerRef = useRef<ReactDatePickerRef>(null);
 
     return (
         <DatePicker
-            value={startDate}
+            value={endDate}
             startDate={startDate}
             endDate={endDate}
             onChange={onChange}
-            onOpen={() => console.log('open')}
+            onOpen={() => {
+                (datePickerRef.current as any)?.setPreSelection(new Date());
+            }}
             onClose={() => console.log('close')}
             onBlur={() => console.log('blur')}
             minDate={subDays(new Date(), 40)}
             maxDate={new Date()}
             variant="range"
+            ref={datePickerRef}
+            onKeyDown={(e) => {
+                if (e.code === 'Tab' && e.shiftKey) {
+                    datePickerRef.current?.setOpen(false);
+                }
+            }}
+            preventOpenOnFocus
             customTrigger={
                 <button className="tw-flex tw-items-center hover:tw-bg-box-neutral-hover tw-py-2 tw-px-4 tw-rounded tw-gap-2">
                     <IconCalendar16 />
