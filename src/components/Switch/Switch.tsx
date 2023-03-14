@@ -12,13 +12,11 @@ export const SWITCH_ID = 'switch-container';
 export enum SwitchSize {
     Small = 'Small',
     Medium = 'Medium',
-    Large = 'Large',
 }
 
 const trackSizeClasses: Record<SwitchSize, string> = {
     [SwitchSize.Small]: 'tw-w-[22px] tw-h-3',
     [SwitchSize.Medium]: 'tw-w-[30px] tw-h-4',
-    [SwitchSize.Large]: 'tw-w-[38px] tw-h-5',
 };
 
 const dotSizeClasses: Record<SwitchSize, Record<'dimensions' | 'activeWidth' | 'activeTranslation', string>> = {
@@ -31,11 +29,6 @@ const dotSizeClasses: Record<SwitchSize, Record<'dimensions' | 'activeWidth' | '
         dimensions: 'tw-w-4 tw-h-4',
         activeWidth: 'group-active:tw-w-[18px]',
         activeTranslation: 'tw-translate-x-[13px]',
-    },
-    [SwitchSize.Large]: {
-        dimensions: 'tw-w-5 tw-h-5',
-        activeWidth: 'group-active:tw-w-[22px]',
-        activeTranslation: 'tw-translate-x-[17px]',
     },
 };
 
