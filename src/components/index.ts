@@ -31,7 +31,6 @@ export * from './MenuItem';
 export * from './Modal';
 export * from './MultiInput';
 export * from './MultiSelect';
-export * from './SortableList';
 export * from './OverflowMenu';
 export * from './RadioPill';
 export * from './RichTextEditor';
