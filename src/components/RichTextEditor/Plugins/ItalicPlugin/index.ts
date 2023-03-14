@@ -30,6 +30,9 @@ export class ItalicPlugin extends Plugin {
                 deserializeHtml: {
                     rules: [...PLATE_ITALIC_RULES, { validNodeName: ['SPAN'], validClassName: ITALIC_CLASSES }],
                 },
+                options: {
+                    hotkey: ['mod+i', 'ctrl+i'],
+                },
             }),
         ];
     }

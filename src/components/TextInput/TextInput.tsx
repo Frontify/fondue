@@ -16,7 +16,7 @@ import {
     IconExclamationMarkTriangle,
     IconEye,
     IconEyeOff,
-} from '@foundation/Icon';
+} from '@foundation/Icon/Generated';
 
 export enum TextInputType {
     Text = 'text',
@@ -147,6 +147,7 @@ export const TextInput: FC<TextInputProps> = ({
                               FOCUS_STYLE,
                       ]),
             ])}
+            data-test-id="fondue-text-input-component"
         >
             {decorator && (
                 <div
@@ -238,9 +239,13 @@ export const TextInput: FC<TextInputProps> = ({
                     <LoadingCircle size={LoadingCircleSize.ExtraSmall} />
                 </span>
             )}
-            {validation === Validation.Error && (
+            {(validation === Validation.Error || validation === Validation.Warning) && (
                 <span
-                    className="tw-flex tw-items-center tw-justify-center tw-text-red-60"
+                    className={merge([
+                        'tw-flex tw-items-center tw-justify-center',
+                        validation === Validation.Error && 'tw-text-text-negative',
+                        validation === Validation.Warning && 'tw-text-text-warning',
+                    ])}
                     data-test-id="error-state-exclamation-mark-icon"
                 >
                     <IconExclamationMarkTriangle />

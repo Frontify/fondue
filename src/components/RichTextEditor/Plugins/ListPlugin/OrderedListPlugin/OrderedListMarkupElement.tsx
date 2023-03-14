@@ -11,8 +11,9 @@ import {
 } from '@udecode/plate';
 import React from 'react';
 import { MarkupElement } from '../../MarkupElement';
+import './style.css';
 
-const LIST_TYPES = ['tw-list-[decimal]', 'tw-list-[lower-alpha]', 'tw-list-[lower-roman]'];
+const LIST_TYPES = ['decimal', 'alpha', 'roman'];
 
 const getNestingLevel = (editor: PlateEditor, element: TElement) => {
     const path = findNodePath(editor, element);
@@ -25,7 +26,7 @@ const getNestingLevel = (editor: PlateEditor, element: TElement) => {
 };
 
 export const getOrderedListClasses = (nestingLevel: number) =>
-    `tw-pl-[10px] tw-mb-[10px] tw-ml-[25px] ${LIST_TYPES[nestingLevel % 3]}`;
+    `tw-list-none tw-pl-[10px] tw-mb-[10px] tw-ml-[15px] ${LIST_TYPES[nestingLevel % 3]}`;
 
 export const OrderedListMarkupElementNode = ({
     attributes,

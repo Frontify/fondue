@@ -5,11 +5,13 @@ export enum Validation {
     Loading = 'Loading',
     Success = 'Success',
     Error = 'Error',
+    Warning = 'Warning',
 }
 
 export const validationClassMap: Record<Validation, string> = {
-    [Validation.Default]: 'tw-border-black-20',
-    [Validation.Loading]: 'tw-border-black-10',
-    [Validation.Success]: 'tw-border-green-50',
-    [Validation.Error]: 'tw-border-red-60',
+    [Validation.Default]: 'tw-border-line-strong',
+    [Validation.Loading]: 'tw-border-line',
+    [Validation.Success]: 'tw-border-text-positive',
+    [Validation.Error]: 'tw-border-text-negative',
+    [Validation.Warning]: 'tw-border-text-warning',
 };

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Text } from '@typography/Text';
-import { IconCheckMark16 } from '@foundation/Icon';
+import { IconCheckMark16 } from '@foundation/Icon/Generated';
 import { Item } from '../MultiSelect';
 
 export const DividerItem = () => {

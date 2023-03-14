@@ -10,7 +10,7 @@ import {
     SelectionIndicatorIcon,
 } from '@components/MenuItem';
 import { Switch, SwitchSize } from '@components/Switch';
-import { IconMusicNote } from '@foundation/Icon';
+import { IconMusicNote } from '@foundation/Icon/Generated';
 
 const SwitchComponent = () => {
     const [switchValue, setSwitchValue] = useState<boolean>(false);

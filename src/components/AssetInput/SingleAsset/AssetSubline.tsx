@@ -3,7 +3,7 @@
 import React, { FC } from 'react';
 import { AssetInputProps } from '../AssetInput';
 import { SelectedAssetProps } from './SelectedAsset';
-import { IconArrowCircleUp, IconImageStack } from '@foundation/Icon';
+import { IconArrowCircleUp, IconImageStack } from '@foundation/Icon/Generated';
 
 type AssetSublineProps = Pick<AssetInputProps, 'isLoading' | 'hideSize' | 'hideExtension'> &
     Pick<SelectedAssetProps, 'asset'>;

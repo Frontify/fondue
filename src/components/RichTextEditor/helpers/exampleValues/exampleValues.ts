@@ -199,11 +199,13 @@ export const defaultValue = [
     {
         type: ELEMENT_PARAGRAPH,
         children: [
+            { text: '' },
             {
                 type: ELEMENT_LINK,
-                children: [{ text: 'This is a Link.' }],
+                children: [{ text: 'This is a Link. Without any breaks before or after' }],
                 url: 'https://frontify.com',
             },
+            { text: '' },
         ],
     },
     {
@@ -255,6 +257,12 @@ export const defaultValue = [
     createElement({ text: 'Quote', element: TextStyles.ELEMENT_QUOTE }),
 ];
 
+export const customControlValues = [
+    createElement({ text: 'Image Title', element: TextStyles.ELEMENT_IMAGE_TITLE }),
+    createElement({ text: 'Image Caption', element: TextStyles.ELEMENT_IMAGE_CAPTION }),
+    createElement({ text: IPSUM, element: ELEMENT_PARAGRAPH }),
+];
+
 export const valueWithColumnBreaks = [
     {
         type: ELEMENT_PARAGRAPH,
@@ -296,6 +304,37 @@ export const value = [
         checked: true,
         indent: 0,
         children: [{ text: 'This is checked again.' }],
+    },
+];
+export const alignedValues = [
+    {
+        type: ELEMENT_PARAGRAPH,
+        children: [{ text: 'This text is left aligned.' }],
+        align: 'left',
+    },
+    {
+        type: ELEMENT_PARAGRAPH,
+        children: [{ text: 'This text is center aligned.' }],
+        align: 'center',
+    },
+    {
+        type: ELEMENT_PARAGRAPH,
+        children: [{ text: 'This text is right aligned.' }],
+        align: 'right',
+    },
+    {
+        type: ELEMENT_PARAGRAPH,
+        children: [{ text: 'This text is justified.' }],
+        align: 'justify',
+    },
+
+    {
+        type: 'p',
+        children: [
+            { text: '' },
+            { type: 'a', url: 'https://frontify.com/', target: '_blank', children: [{ text: 'This is a Link.' }] },
+            { text: '' },
+        ],
     },
 ];
 
@@ -390,8 +429,9 @@ export const checkboxValue = [
         type: ELEMENT_CHECK_ITEM,
         checked: true,
         indent: 2,
-        children: [{ text: "And I'm checked!" }],
+        children: [{ text: "And I'm checked! Followed by an empty one!" }],
     },
+    { type: ELEMENT_CHECK_ITEM, children: [{ text: '' }] },
 ];
 
 export const buttonValues = [
@@ -438,6 +478,7 @@ export const buttonValues = [
 
 export const nodesToSerialize: TDescendant[] = [
     ...defaultValue,
+    ...alignedValues,
     ...valueWithColumnBreaks,
     ...checkboxValue,
     ...buttonValues,

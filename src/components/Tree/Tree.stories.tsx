@@ -27,6 +27,9 @@ export default {
         expandedIds: {
             control: { type: 'object' },
         },
+        baseItemPadding: {
+            control: { type: 'object' },
+        },
     },
 } as Meta<TreeProps>;
 
@@ -99,19 +102,19 @@ export const TreeWithBasicItem = ({ ...args }: TreeProps) => {
                         key={args.id}
                         contentComponent={() => <TreeItemBasicContentComponent title={label} />}
                     >
-                        {args.nodes?.map(({ label, ...args }) => (
+                        {args.nodes?.map(({ label = 'NO TITLE', ...args }) => (
                             <TreeItem
                                 {...args}
                                 key={args.id}
                                 contentComponent={() => <TreeItemBasicContentComponent title={label} />}
                             >
-                                {args.nodes?.map(({ label, ...args }) => (
+                                {args.nodes?.map(({ label = 'NO TITLE', ...args }) => (
                                     <TreeItem
                                         {...args}
                                         key={args.id}
                                         contentComponent={() => <TreeItemBasicContentComponent title={label} />}
                                     >
-                                        {args.nodes?.map(({ label, ...args }) => (
+                                        {args.nodes?.map(({ label = 'NO TITLE', ...args }) => (
                                             <TreeItem
                                                 {...args}
                                                 key={args.id}
