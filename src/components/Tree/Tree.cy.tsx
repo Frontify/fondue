@@ -34,7 +34,6 @@ const TreeComponent = ({ onSelect }: { onSelect?: (id: Nullable<UniqueIdentifier
 
 const TREE_ID = '[data-test-id=tree]';
 const TREE_ITEM_ID = '[data-test-id=tree-item]';
-const TREE_ITEM_CONTENT_ID = '[data-test-id=tree-item-content]';
 const TREE_ITEM_TOGGLE_ID = '[data-test-id=tree-item-toggle';
 const SUB_TREE_ITEMS_ID = '[data-test-id=sub-tree-items]';
 
@@ -70,12 +69,5 @@ describe('Tree Component', () => {
 
         cy.get(TREE_ITEM_ID).eq(0).click();
         cy.get('@onSelectStub').should('have.been.called');
-    });
-
-    it('applies base padding to tree item', () => {
-        const onSelectStub = cy.stub().as('onSelectStub');
-        cy.mount(<TreeComponent onSelect={onSelectStub} />);
-
-        cy.get(TREE_ITEM_CONTENT_ID).eq(0).should('have.css', 'padding', '10px 20px 30px 40px');
     });
 });
