@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useMemoizedId } from '@hooks/useMemoizedId';
-import { Plate } from '@udecode/plate';
+import { Plate, TEditableProps } from '@udecode/plate';
 import React from 'react';
-import { EditableProps, RenderPlaceholderProps } from 'slate-react/dist/components/editable';
+import scrollIntoView from 'scroll-into-view-if-needed';
+import { ReactEditor } from 'slate-react';
+import { RenderPlaceholderProps } from 'slate-react/dist/components/editable';
 import { ContentReplacement } from './ContentReplacement';
 import { RichTextEditorProvider } from './context/RichTextEditorContext';
 import { Position } from './EditorPositioningWrapper';
@@ -63,7 +65,26 @@ export const RichTextEditor = ({
     const columns = breakAfterPlugin?.options?.columns ?? 1;
     const columnGap = breakAfterPlugin?.options?.gap ?? GAP_DEFAULT;
 
-    const editableProps: EditableProps = {
+    const defaultScrollSelectionIntoView = (editor: ReactEditor, domRange: Range) => {
+        console.log({ editor });
+        console.log('bounding client rect: ', domRange.getBoundingClientRect);
+
+        if (
+            domRange.getBoundingClientRect &&
+            (!editor.selection || (editor.selection && Range.isCollapsed(editor.selection)))
+        ) {
+            const leafEl = domRange.startContainer.parentElement!;
+            leafEl.getBoundingClientRect = domRange.getBoundingClientRect.bind(domRange);
+            scrollIntoView(leafEl, {
+                scrollMode: 'if-needed',
+            });
+
+            // @ts-expect-error an unorthodox delete D:
+            delete leafEl.getBoundingClientRect;
+        }
+    };
+
+    const editableProps: TEditableProps = {
         placeholder,
         renderPlaceholder: ({ children, attributes }) => {
             const mergedAttributes = {
@@ -88,28 +109,36 @@ export const RichTextEditor = ({
                 forceToBlurActiveElement();
             }
         },
+        scrollSelectionIntoView: defaultScrollSelectionIntoView,
     };
 
+    console.log('this is the newest RTE with newest PLATE & SLATE');
+
     return (
-        <RichTextEditorProvider
-            value={{
-                designTokens,
-                position,
-                border,
-            }}
-        >
-            <Plate
-                id={editorId}
-                onChange={onChange}
-                editableProps={editableProps}
-                plugins={config.create()}
-                initialValue={memoizedValue}
+        <>
+            <div>HOOOI</div>
+            <RichTextEditorProvider
+                value={{
+                    designTokens,
+                    position,
+                    border,
+                }}
             >
-                {config.toolbar()}
-                {config.inline()}
-                {updateValueOnChange && <ContentReplacement value={parseRawValue({ editorId, raw: value, plugins })} />}
-            </Plate>
-        </RichTextEditorProvider>
+                <Plate
+                    id={editorId}
+                    onChange={onChange}
+                    editableProps={editableProps}
+                    plugins={config.create()}
+                    initialValue={memoizedValue}
+                >
+                    {config.toolbar()}
+                    {config.inline()}
+                    {updateValueOnChange && (
+                        <ContentReplacement value={parseRawValue({ editorId, raw: value, plugins })} />
+                    )}
+                </Plate>
+            </RichTextEditorProvider>
+        </>
     );
 };
 RichTextEditor.displayName = 'FondueRichTextEditor';
