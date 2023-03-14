@@ -30,6 +30,7 @@ type BaseSliderProps = {
     onError?: (errorCode: SliderError) => void;
     onChange: (value: SliderValue) => void;
     valueSuffix?: string;
+    disabled?: boolean;
 };
 
 export type SliderValue = {
@@ -43,14 +44,13 @@ export enum SliderError {
     MinMax = 'MinMax',
     ValueOutOfRange = 'ValueOutOfRange',
     ValueNaN = 'ValueNaN',
-    ValueOutOfSteps = 'ValueOutOfSteps',
 }
 
-const MIN_DEFAULT_VALUE = 0;
-const MAX_DEFAULT_VALUE = 100;
-const STEP_DEFAULT_VALUE = 1;
-const STEP_MULTIPLIER_DEFAULT_VALUE = 5;
-const ARIA_LABEL_DEFAULT_VALUE = 'Slider text input';
+export const MIN_DEFAULT_VALUE = 0;
+export const MAX_DEFAULT_VALUE = 100;
+export const STEP_DEFAULT_VALUE = 1;
+export const STEP_MULTIPLIER_DEFAULT_VALUE = 5;
+export const ARIA_LABEL_DEFAULT_VALUE = 'Slider text input';
 const DEBOUNCE_INTERVAL = 3;
 const INCREMENT_KEYS = ['ArrowUp', 'ArrowRight'];
 const DECREMENT_KEYS = ['ArrowDown', 'ArrowLeft'];
@@ -68,12 +68,15 @@ export const Slider = ({
     onError,
     onChange,
     ['aria-label']: ariaLabel = ARIA_LABEL_DEFAULT_VALUE,
+    disabled = false,
 }: SliderProps) => {
     const [value, setValue] = useState<number>();
     const [valueWithSuffix, setValueWithSuffix] = useState('');
     const [error, setError] = useState<SliderError>();
     const [percentagePosition, setPercentagePosition] = useState<number>();
     const [sliderRef, setSliderRef] = useState<HTMLButtonElement | null>(null);
+    const [isMouseOver, setIsMouseOver] = useState(false);
+    const [isDragging, setIsDragging] = useState(false);
     const id = useMemoizedId(propId);
 
     const onInputChange = (inputValue: string) => {
@@ -117,11 +120,14 @@ export const Slider = ({
             !sliderRef
                 ? () => void 0
                 : debounce((event: Event & { clientX: number; touches: [{ clientX: number }] }) => {
+                      if (disabled) {
+                          return;
+                      }
                       updateThumbPosition({
                           clientX: event.clientX ?? event.touches[0].clientX,
                       });
                   }, DEBOUNCE_INTERVAL),
-        [updateThumbPosition, sliderRef],
+        [updateThumbPosition, sliderRef, disabled],
     );
 
     const stopDrag = useCallback(() => {
@@ -129,15 +135,18 @@ export const Slider = ({
             return;
         }
 
+        setIsDragging(false);
         sliderRef.removeEventListener('mousemove', onDrag);
         sliderRef.addEventListener('touchmove', onDrag);
         window.removeEventListener('mouseup', stopDrag);
     }, [sliderRef, onDrag]);
 
     const startDrag = (event: MouseEvent<HTMLButtonElement> | TouchEvent<HTMLButtonElement>) => {
-        if (!sliderRef) {
+        if (!sliderRef || disabled) {
             return;
         }
+
+        setIsDragging(true);
 
         updateThumbPosition({
             clientX: (event as MouseEvent).clientX ?? (event as TouchEvent).touches[0].clientX,
@@ -149,7 +158,11 @@ export const Slider = ({
     };
 
     const onKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
-        if ((!INCREMENT_KEYS.includes(event.key) && !DECREMENT_KEYS.includes(event.key)) || value === undefined) {
+        if (
+            (!INCREMENT_KEYS.includes(event.key) && !DECREMENT_KEYS.includes(event.key)) ||
+            value === undefined ||
+            disabled
+        ) {
             return;
         }
 
@@ -167,6 +180,38 @@ export const Slider = ({
         const rawValue = clamp(Math.floor(value / step) * step + variation, min, max);
         setValue(rawValue);
         setValueWithSuffix(`${rawValue}${valueSuffix}`);
+    };
+
+    const onMouseOver = () => {
+        if (disabled) {
+            return;
+        }
+
+        setIsMouseOver(true);
+    };
+
+    const onMouseOut = () => {
+        if (disabled) {
+            return;
+        }
+
+        setIsMouseOver(false);
+    };
+
+    const onFocus = () => {
+        if (disabled) {
+            return;
+        }
+
+        setIsDragging(true);
+    };
+
+    const onBlur = () => {
+        if (disabled) {
+            return;
+        }
+
+        setIsDragging(false);
     };
 
     // This side effect will handle the initial property values
@@ -227,10 +272,12 @@ export const Slider = ({
         }
 
         updateThumbPosition({ rawValue: value });
-        onChange({
-            raw: value,
-            withSuffix: valueWithSuffix.replace(valueSuffix, '') + valueSuffix,
-        });
+        if (!disabled) {
+            onChange({
+                raw: value,
+                withSuffix: valueWithSuffix.replace(valueSuffix, '') + valueSuffix,
+            });
+        }
     }, [value, valueWithSuffix, valueSuffix, error, onChange, updateThumbPosition]);
 
     useEffect(() => {
@@ -240,28 +287,38 @@ export const Slider = ({
     }, [error, onError]);
 
     return (
-        <div className="tw-flex tw-flex-col" data-test-id="fondue-slider">
-            <label htmlFor={id} className={merge([!label && 'tw-hidden'])}>
+        <div className="tw-flex tw-flex-col" data-test-id="fondue-slider" id={id}>
+            <label
+                htmlFor={id}
+                className={merge([!label && 'tw-hidden', disabled && 'tw-text-text-disabled'])}
+                data-test-id="fondue-slider-label"
+            >
                 {label}
             </label>
             <div className="tw-flex">
                 <div className={merge(['tw-flex-1 tw-flex tw-items-center'])}>
                     {showMinMax && (
-                        <div className="tw-mr-3">
+                        <div className={merge(['tw-mr-3', disabled && 'tw-text-text-disabled'])}>
                             {min}
                             {valueSuffix}
                         </div>
                     )}
                     <button
                         ref={setSliderRef}
-                        className="tw-flex-1 tw-relative tw-h-full tw-cursor-pointer"
+                        data-test-id="fondue-slider-interactive"
+                        className="tw-flex-1 tw-relative tw-h-full tw-cursor-pointer disabled:tw-cursor-default"
+                        onMouseOver={onMouseOver}
+                        onMouseOut={onMouseOut}
+                        onFocus={onFocus}
+                        onBlur={onBlur}
                         onMouseDown={startDrag}
                         onMouseUp={stopDrag}
                         onTouchStart={startDrag}
                         onTouchEnd={stopDrag}
                         onKeyDown={onKeyDown}
+                        disabled={disabled}
                     >
-                        <span className="tw-absolute tw-block tw-top-1/2 tw--translate-y-1/2 tw-w-full tw-h-1 tw-rounded-sm tw-bg-base tw-border tw-border-line-strong tw-flex-1"></span>
+                        <span className="tw-absolute tw-block tw-top-1/2 tw--translate-y-1/2 tw-w-full tw-h-1 tw-rounded-sm tw-bg-box-neutral tw-flex-1"></span>
                         {percentagePosition !== undefined && (
                             <span
                                 role="slider"
@@ -269,29 +326,41 @@ export const Slider = ({
                                 aria-valuemin={min}
                                 aria-valuemax={max}
                                 aria-label={ariaLabel}
-                                className="tw-absolute tw-block tw-top-1/2 tw--translate-y-1/2 tw-origin-left tw-w-full tw-h-1  tw-rounded-sm tw-bg-box-neutral-strong tw-border tw-border-line-strong tw-flex-1"
+                                data-test-id="fondue-slider-track"
+                                className={merge([
+                                    'tw-absolute tw-block tw-top-1/2 tw--translate-y-1/2 tw-origin-left tw-w-full tw-h-1  tw-rounded-sm tw-bg-box-neutral-strong tw-flex-1',
+                                    disabled && 'tw-bg-box-neutral',
+                                ])}
                                 style={{ width: `${percentagePosition}%` }}
                             ></span>
                         )}
                         <span
-                            className="tw-absolute tw-block tw-top-1/2 tw--translate-y-1/2 tw--translate-x-1/2 tw-w-5 tw-h-5 tw-bg-base tw-rounded-full tw-border tw-border-line-strong"
+                            className={merge([
+                                'tw-absolute tw-block tw-top-1/2 tw--translate-y-1/2 tw--translate-x-1/2 tw-w-5 tw-h-5',
+                                'after:tw-absolute after:tw-block after:tw-top-1/2 after:tw-left-1/2 after:tw--translate-y-1/2 after:tw--translate-x-1/2 after:tw-w-5 after:tw-h-5 after:tw-bg-base after:tw-rounded-full after:tw-border after:tw-border-line-strong',
+                                isMouseOver && !isDragging && 'after:tw-shadow',
+                                isDragging &&
+                                    "after:tw-border-line-xx-strong before:tw-content-[''] before:tw-opacity-25 before:tw-top-1/2 before:tw--translate-y-1/2 before:tw--translate-x-1/2 before:tw-left-1/2 before:tw-block before:tw-rounded-full before:tw-absolute before:tw-z-0 before:tw-w-9 before:tw-h-9 before:tw-bg-box-neutral-strong",
+                                disabled && 'after:tw-bg-box-neutral after:tw-border-line-weak',
+                            ])}
                             style={{ left: `${percentagePosition}%` }}
                         ></span>
                     </button>
                     {showMinMax && (
-                        <div className="tw-ml-3">
+                        <div className={merge(['tw-ml-3', disabled && 'tw-text-text-disabled'])}>
                             {max}
                             {valueSuffix}
                         </div>
                     )}
                     <div className="tw-w-16 tw-ml-3">
                         <TextInput
-                            id={id}
+                            id={`${id}-text-input`}
                             value={valueWithSuffix}
                             placeholder={ariaLabel}
                             type={TextInputType.Text}
                             validation={error ? Validation.Error : Validation.Default}
                             onChange={onInputChange}
+                            disabled={disabled}
                         />
                     </div>
                 </div>

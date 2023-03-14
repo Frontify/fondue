@@ -19,6 +19,7 @@ export default {
         ['aria-label']: { type: 'string' },
         valueSuffix: { type: 'string' },
         showMinMax: { type: 'boolean' },
+        disabled: { type: 'boolean' },
         onChange: { action: 'Value change' },
         onError: { action: 'Slider error' },
     },
@@ -41,4 +42,11 @@ BasicUsage.args = {
     step: 1,
     valueSuffix: '%',
     ['aria-label']: 'Percentage slider',
+};
+
+export const DisabledState = SliderTemplate.bind({});
+DisabledState.args = {
+    value: 20,
+    ['aria-label']: 'Percentage slider',
+    disabled: true,
 };
