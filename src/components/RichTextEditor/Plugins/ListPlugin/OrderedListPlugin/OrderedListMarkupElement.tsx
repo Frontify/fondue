@@ -11,7 +11,7 @@ import {
 } from '@udecode/plate';
 import React from 'react';
 import { MarkupElement } from '../../MarkupElement';
-import './style.css';
+import './styles.css';
 
 const LIST_TYPES = ['decimal', 'alpha', 'roman'];
 
@@ -37,7 +37,7 @@ export const OrderedListMarkupElementNode = ({
     const nestingLevel = getNestingLevel(editor, element);
 
     return (
-        <ol className={getOrderedListClasses(nestingLevel)} {...attributes}>
+        <ol className={getOrderedListClasses(nestingLevel)} {...attributes} style={{ counterReset: 'count' }}>
             {children}
         </ol>
     );

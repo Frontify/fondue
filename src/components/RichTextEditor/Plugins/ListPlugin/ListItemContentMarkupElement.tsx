@@ -10,7 +10,7 @@ import { MarkupElement } from '../MarkupElement';
 import { TextStyles } from '../TextStylePlugin';
 import { justifyClassNames } from '../TextStylePlugin/TextStyles/alignment';
 import { MARK_TEXT_STYLE } from './ListPlugin';
-import './OrderedListPlugin/style.css';
+import './OrderedListPlugin/styles.css';
 
 export const getTextStyle = (styledNode: TNode) => {
     const textStyles =
