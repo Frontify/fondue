@@ -248,6 +248,9 @@ export const Tooltip = ({
           };
 
     useEffect(() => {
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+        }
         setIsOpen(shouldPreventTooltipOpening ? false : open);
     }, [open, shouldPreventTooltipOpening]);
 
