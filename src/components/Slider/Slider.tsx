@@ -54,6 +54,7 @@ export const ARIA_LABEL_DEFAULT_VALUE = 'Slider text input';
 const DEBOUNCE_INTERVAL = 3;
 const INCREMENT_KEYS = ['ArrowUp', 'ArrowRight'];
 const DECREMENT_KEYS = ['ArrowDown', 'ArrowLeft'];
+const LIMITS_KEYS = ['Home', 'End'];
 
 export const Slider = ({
     id: propId,
@@ -159,25 +160,30 @@ export const Slider = ({
 
     const onKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
         if (
-            (!INCREMENT_KEYS.includes(event.key) && !DECREMENT_KEYS.includes(event.key)) ||
+            ![...INCREMENT_KEYS, ...DECREMENT_KEYS, ...LIMITS_KEYS].includes(event.key) ||
             value === undefined ||
             disabled
         ) {
             return;
         }
 
+        event.preventDefault();
+
         let variation = 0;
+        let rawValue = 0;
         if (DECREMENT_KEYS.includes(event.key)) {
             variation = -step;
         } else if (INCREMENT_KEYS.includes(event.key)) {
             variation = step;
         }
 
-        if (event.shiftKey) {
-            variation *= stepMultiplier;
+        if (!LIMITS_KEYS.includes(event.key)) {
+            variation *= event.shiftKey ? stepMultiplier : 1;
+            rawValue = clamp(Math.floor(value / step) * step + variation, min, max);
+        } else {
+            rawValue = event.key === 'Home' ? min : max;
         }
 
-        const rawValue = clamp(Math.floor(value / step) * step + variation, min, max);
         setValue(rawValue);
         setValueWithSuffix(`${rawValue}${valueSuffix}`);
     };
@@ -278,7 +284,7 @@ export const Slider = ({
                 withSuffix: valueWithSuffix.replace(valueSuffix, '') + valueSuffix,
             });
         }
-    }, [value, valueWithSuffix, valueSuffix, error, onChange, updateThumbPosition]);
+    }, [value, valueWithSuffix, valueSuffix, error, onChange, updateThumbPosition, disabled]);
 
     useEffect(() => {
         if (error && onError) {

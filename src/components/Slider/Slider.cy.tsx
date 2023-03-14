@@ -209,7 +209,7 @@ describe('Slider Component', () => {
         cy.get(SLIDER_INPUT_ID).should('be.disabled');
     });
 
-    it('changes the value using keyboard arrows', () => {
+    it.only('changes the value using keyboard arrows', () => {
         renderSlider({
             onChange: onChangeStub,
         });
@@ -220,17 +220,32 @@ describe('Slider Component', () => {
             raw: 1,
             withSuffix: '1',
         });
+
         cy.realPress('ArrowUp');
         cy.get('@onChangeStub').should('have.been.calledWith', {
             raw: 2,
             withSuffix: '2',
         });
+
         cy.realPress('ArrowDown');
         cy.get('@onChangeStub').should('have.been.calledWith', {
             raw: 1,
             withSuffix: '1',
         });
+
         cy.realPress('ArrowLeft');
+        cy.get('@onChangeStub').should('have.been.calledWith', {
+            raw: 0,
+            withSuffix: '0',
+        });
+
+        cy.get(SLIDER_INTERACTIVE_ID).trigger('keydown', { key: 'End' });
+        cy.get('@onChangeStub').should('have.been.calledWith', {
+            raw: 100,
+            withSuffix: '100',
+        });
+
+        cy.realPress('Home');
         cy.get('@onChangeStub').should('have.been.calledWith', {
             raw: 0,
             withSuffix: '0',
