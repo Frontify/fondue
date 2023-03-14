@@ -496,7 +496,7 @@ describe('RichTextEditor Component', () => {
             //remove checklist again and textStyle stays
             cy.get('[contenteditable=true]').click().type('{selectall}');
             cy.get(TOOLBAR_GROUP_2).children().eq(5).click();
-            cy.get('[contenteditable=true]').should('have.attr', 'style', heading2Styles);
+            cy.get('[contenteditable=true] > h2').should('have.attr', 'style', heading2Styles);
         });
 
         it('renders switches a custom checkbox to list and keeps textStyle', () => {
