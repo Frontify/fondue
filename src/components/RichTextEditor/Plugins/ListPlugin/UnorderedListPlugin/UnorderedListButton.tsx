@@ -3,7 +3,7 @@
 import React from 'react';
 import { ListToolbarButton, getPluginType } from '@udecode/plate';
 import { IconListBullet16 } from '@foundation/Icon/Generated';
-import { ButtonWrapper, IconStylingWrapper, buttonClassNames, buttonStyles } from '../../helper';
+import { ButtonWrapper, IconStylingWrapper, buttonStyles, getButtonClassNames } from '../../helper';
 import { PluginButtonProps } from '../../types';
 import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
 
@@ -13,7 +13,7 @@ export const UnorderedListButton = ({ editor, id }: PluginButtonProps) => (
             tooltip={getTooltip('Bullet list')}
             type={getPluginType(editor, id)}
             icon={<IconStylingWrapper icon={<IconListBullet16 />} />}
-            classNames={buttonClassNames}
+            classNames={getButtonClassNames()}
             styles={buttonStyles}
             actionHandler="onMouseDown"
         />

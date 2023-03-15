@@ -5,7 +5,7 @@ import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
 import { IconTextFormatUnderline16 } from '@foundation/Icon/Generated';
 import { MarkToolbarButton, getPluginType } from '@udecode/plate';
 import React from 'react';
-import { ButtonWrapper, IconStylingWrapper, buttonClassNames, buttonStyles } from '../helper';
+import { ButtonWrapper, IconStylingWrapper, buttonStyles, getButtonClassNames } from '../helper';
 import { PluginButtonProps } from '../types';
 
 export const UnderlineButton = ({ editor, id }: PluginButtonProps) => (
@@ -14,7 +14,7 @@ export const UnderlineButton = ({ editor, id }: PluginButtonProps) => (
             tooltip={getTooltip(`Underline\n${getHotkeyByPlatform('Ctrl+U')}`)}
             type={getPluginType(editor, id)}
             icon={<IconStylingWrapper icon={<IconTextFormatUnderline16 />} />}
-            classNames={buttonClassNames}
+            classNames={getButtonClassNames()}
             styles={buttonStyles}
             actionHandler="onMouseDown"
         />
