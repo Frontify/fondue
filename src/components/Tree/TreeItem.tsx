@@ -11,7 +11,7 @@ import { IconGrabHandle12 } from '@foundation/Icon';
 import type { CollisionPosition, TreeItemProps } from '@components/Tree/types';
 import { useTreeContext } from '@components/Tree/TreeContext';
 
-import { cloneThroughFragments, flattenChildren, isDescendant } from './utils';
+import { cloneThroughFragments, flattenChildren } from './utils';
 import { getItemPositionInParent, getNextItemToFocus, getPreviousItemToFocus, getSupportedDrop } from './helpers';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 
@@ -136,13 +136,11 @@ export const TreeItem = ({
 
     const handleSelect = useCallback(
         (event: MouseEvent<HTMLElement, globalThis.MouseEvent>) => {
-            if (node.current && isDescendant(event.target as HTMLElement, node.current)) {
-                event.stopPropagation();
+            event.stopPropagation();
 
-                onSelect(id);
-            }
+            onSelect(id);
         },
-        [id, node, onSelect],
+        [id, onSelect],
     );
 
     const handleExpand = (event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
