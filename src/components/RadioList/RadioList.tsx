@@ -5,7 +5,7 @@ import IconQuestionMarkCircle from '@foundation/Icon/Generated/IconQuestionMarkC
 import { IconSize } from '@foundation/index';
 import { generateRandomId } from '@utilities/generateRandomId';
 import { merge } from '@utilities/merge';
-import React, { Children, ReactNode, isValidElement, useEffect, useState } from 'react';
+import React, { Children, ReactNode, isValidElement, useEffect, useRef, useState } from 'react';
 import { RadioButtonEmphasis, RadioButtonProps } from './RadioButton';
 
 export enum RadioListDirection {
@@ -26,6 +26,8 @@ export const RadioList = ({
     direction = RadioListDirection.Horizontal,
     onChange,
 }: RadioListProps) => {
+    const radioGroupRef = useRef<HTMLDivElement | null>(null);
+
     const [activeValue, setActiveValue] = useState(defaultValue);
 
     const radioButtons: RadioButtonProps[] =
@@ -40,9 +42,21 @@ export const RadioList = ({
         setActiveValue(defaultValue);
     }, [defaultValue]);
 
+    useEffect(() => {
+        if (radioGroupRef.current) {
+            const activeRadioButton = radioGroupRef.current.querySelector(`input[value="${activeValue}"]`);
+            if (activeRadioButton) {
+                (activeRadioButton as HTMLDivElement).focus();
+            }
+        }
+    }, [activeValue]);
+
     return (
         <div
             data-test-id="radio-list-wrapper"
+            role="radiogroup"
+            aria-labelledby="radio-list"
+            ref={radioGroupRef}
             className={merge(['tw-flex', direction === RadioListDirection.Horizontal ? 'tw-gap-4' : 'tw-flex-col'])}
         >
             {radioButtons.map((radio, index) => {
@@ -56,9 +70,10 @@ export const RadioList = ({
                             type="radio"
                             name="default-radio"
                             value={radio.value}
+                            aria-checked={radio.value === activeValue}
                             defaultChecked={radio.value === activeValue}
                             className={merge([
-                                'tw-peer w-w-4 tw-h-4 tw-border-black-60 disabled:tw-border-black-10 focus:tw-ring-0 focus:tw-ring-offset-0',
+                                'tw-peer w-w-4 tw-h-4 tw-border-black-60 disabled:tw-border-black-10',
                                 radio.emphasis === RadioButtonEmphasis.Weak
                                     ? 'tw-text-black-80'
                                     : 'tw-text-box-selected-strong',
@@ -91,7 +106,7 @@ export const RadioList = ({
                                 hoverDelay={75}
                                 position={TooltipPosition.Top}
                                 triggerElement={
-                                    <div className="tw-text-black-80 tw-mx-2">
+                                    <div className="tw-text-black-80 tw-mx-2 tw-self-center">
                                         <IconQuestionMarkCircle size={IconSize.Size16} />
                                     </div>
                                 }
