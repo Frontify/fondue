@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export const mentionsMarkdown_0 = 'Try mentioning characters, like: @[all:false]\n';
-export const mentionsMarkdown_1 = 'Multiple mentions: @[all:true], @[group:10] and @[user:20]\n';
-export const mentionsMarkdown_2 = 'A single mention at the end of a sentence @[group:10]\n';
-export const mentionsMarkdown_3 = 'Mention @[user:20] in the middle of a sentence.\n';
-export const mentionsMarkdown = [mentionsMarkdown_0, mentionsMarkdown_1, mentionsMarkdown_2, mentionsMarkdown_3];
+export const mentionsMarkdown0 = 'Try mentioning characters, like: @[all:false]\n';
+export const mentionsMarkdown1 = 'Multiple mentions: @[all:true], @[group:10] and @[user:20]\n';
+export const mentionsMarkdown2 = 'A single mention at the end of a sentence @[group:10]\n';
+export const mentionsMarkdown3 = 'Mention @[user:20] in the middle of a sentence.\n';
+export const mentionsMarkdown = [mentionsMarkdown0, mentionsMarkdown1, mentionsMarkdown2, mentionsMarkdown3];
 
-export const mentionsTree_0 = [
+export const mentionsTree0 = [
     {
         type: 'p',
         children: [
@@ -21,7 +21,7 @@ export const mentionsTree_0 = [
         ],
     },
 ];
-export const mentionsTree_1 = [
+export const mentionsTree1 = [
     {
         type: 'p',
         children: [
@@ -50,7 +50,7 @@ export const mentionsTree_1 = [
         ],
     },
 ];
-export const mentionsTree_2 = [
+export const mentionsTree2 = [
     {
         type: 'p',
         children: [
@@ -65,7 +65,7 @@ export const mentionsTree_2 = [
         ],
     },
 ];
-export const mentionsTree_3 = [
+export const mentionsTree3 = [
     {
         type: 'p',
         children: [
@@ -80,4 +80,4 @@ export const mentionsTree_3 = [
         ],
     },
 ];
-export const mentionsTree = [mentionsTree_0, mentionsTree_1, mentionsTree_2, mentionsTree_3];
+export const mentionsTree = [mentionsTree0, mentionsTree1, mentionsTree2, mentionsTree3];

@@ -62,13 +62,19 @@ describe('Markdown to slate Transformer', () => {
     });
 
     it('should transform unordered list', () => {
-        const result = transformer.process(unorderedListMarkdown);
-        expect(result).to.deep.equal(unorderedListTree);
+        const result = transformer.process(unorderedListMarkdown[0]);
+        expect(result).to.deep.equal(unorderedListTree[0]);
     });
 
     it('should transform ordered list', () => {
-        const result = transformer.process(orderedListMarkdown);
-        expect(result).to.deep.equal(orderedListTree);
+        let result = transformer.process(orderedListMarkdown[0]);
+        expect(result).to.deep.equal(orderedListTree[0]);
+
+        result = transformer.process(orderedListMarkdown[1]);
+        expect(result).to.deep.equal(orderedListTree[1]);
+
+        result = transformer.process(orderedListMarkdown[2]);
+        expect(result).to.deep.equal(orderedListTree[2]);
     });
 
     it('should transform hr', () => {

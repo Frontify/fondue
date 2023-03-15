@@ -7,16 +7,11 @@ export type NodeChild = {
     children?: NodeChild[];
 };
 
-export type NodeChildKey = keyof NodeChild;
-
 export type ParagraphNode = {
     type: string;
     children: NodeChild[];
 };
 
-export type Transformer = (tree: ParagraphNode) => void;
+export type NodeChildKey = keyof NodeChild;
 
-export type RegExpMatchArray = string[] & {
-    index: number;
-    input: string;
-};
+export type RemarkExtension = (tree: ParagraphNode) => void;
