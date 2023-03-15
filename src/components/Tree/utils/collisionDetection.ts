@@ -39,7 +39,16 @@ export const fondueCollisionDetection: CollisionDetection = (args) => {
 
     const position = calculatePosition(draggableRect as DOMRect, droppableRect);
 
-    /* mutation - for performance reasons (avoiding iterations) */
+    /* 
+    The following mutation updates the 'position' property of the 'data' object
+    for the closest collision in the 'closestCornersCollisions' array.
+    
+    This mutation is done for performance reasons, to avoid iterating over the array
+    to find the closest collision again after calculating the position. Without this
+    mutation, the function would need to loop through the array again to update the
+    position of the closest collision, which could be a performance bottleneck for
+    large arrays.
+  */
     closest.data['position'] = position;
 
     return closestCornersCollisions;
