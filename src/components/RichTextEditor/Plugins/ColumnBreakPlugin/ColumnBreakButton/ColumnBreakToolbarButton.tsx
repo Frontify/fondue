@@ -10,7 +10,7 @@ import {
     usePlateEditorState,
 } from '@udecode/plate';
 import React from 'react';
-import { buttonClassNames } from '../../helper';
+import { getButtonClassNames } from '../../helper';
 import { toggleColumnBreak } from '../onKeyDownColumnBreak';
 import { getColumnBreakCount } from '../utils/getColumnBreakCount';
 
@@ -24,6 +24,7 @@ export const ColumnBreakToolbarButton = ({ id, ...props }: ToolbarButtonProps) =
 
     const columnCount = Number(columns) || 1;
     const canBreakAfter = isColumnBreakEnabled(editor, columnCount, isActive);
+    const buttonClassNames = getButtonClassNames(canBreakAfter);
 
     return (
         <ToolbarButton
@@ -33,10 +34,7 @@ export const ColumnBreakToolbarButton = ({ id, ...props }: ToolbarButtonProps) =
             )}
             onMouseDown={(event) => toggleColumnBreak(editor, columnCount, event)}
             {...props}
-            classNames={{
-                root: `${buttonClassNames.root} ${canBreakAfter ? '' : '!tw-cursor-not-allowed !tw-opacity-50'}`,
-                active: buttonClassNames.active,
-            }}
+            classNames={buttonClassNames}
         />
     );
 };

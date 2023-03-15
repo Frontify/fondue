@@ -4,7 +4,7 @@ import React from 'react';
 import { getPluginType } from '@udecode/plate';
 import { IconListCheck16 } from '@foundation/Icon/Generated';
 import { CheckboxListToolbarButton } from './CheckboxListToolbarButton';
-import { ButtonWrapper, IconStylingWrapper, buttonClassNames, buttonStyles } from '../../helper';
+import { ButtonWrapper, IconStylingWrapper, buttonStyles, getButtonClassNames } from '../../helper';
 import { PluginButtonProps } from '../../types';
 
 export const CheckboxListButton = ({ editor, id }: PluginButtonProps) => (
@@ -12,7 +12,7 @@ export const CheckboxListButton = ({ editor, id }: PluginButtonProps) => (
         <CheckboxListToolbarButton
             type={getPluginType(editor, id)}
             icon={<IconStylingWrapper icon={<IconListCheck16 />} />}
-            classNames={buttonClassNames}
+            classNames={getButtonClassNames()}
             styles={buttonStyles}
         />
     </ButtonWrapper>
