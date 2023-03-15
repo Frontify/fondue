@@ -1,8 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { VisitorResult, visit } from 'unist-util-visit';
-import { MENTION_SERIALIZE_REGEX } from '../utils';
-import { NodeChild, NodeChildKey, ParagraphNode, RegExpMatchArray, Transformer } from './types';
+import { NodeChild, NodeChildKey, ParagraphNode, RemarkExtension } from '../../types';
+import { MENTION_SERIALIZE_REGEX } from '../../../utils';
+import { RegExpMatchArray } from './types';
+
+export default function Extension(): RemarkExtension {
+    return transformer;
+}
 
 const transformer = (tree: ParagraphNode) => {
     visit(tree, 'paragraph', visitor);
@@ -68,9 +73,3 @@ const createNodes = (matches: RegExpMatchArray[], node: ParagraphNode, value: st
         });
     }
 };
-
-const plugin = (): Transformer => {
-    return transformer;
-};
-
-export default plugin;

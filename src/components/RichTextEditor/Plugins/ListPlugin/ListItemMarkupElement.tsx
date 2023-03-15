@@ -6,6 +6,7 @@ import { merge } from '@utilities/merge';
 import React from 'react';
 import { MarkupElement } from '../MarkupElement';
 import { getTextStyle } from './ListItemContentMarkupElement';
+import './OrderedListPlugin/styles.css';
 
 export const ListItemMarkupElementNode = ({ attributes, children, element }: PlateRenderElementProps) => {
     const { designTokens } = useRichTextEditorContext();
@@ -16,7 +17,11 @@ export const ListItemMarkupElementNode = ({ attributes, children, element }: Pla
         <li
             style={tokenStyles}
             {...attributes}
-            className={merge([tokenStyles?.textTransform === 'uppercase' && 'marker:tw-uppercase', '!tw-no-underline'])}
+            className={merge([
+                tokenStyles?.textTransform === 'uppercase' && 'marker:tw-uppercase',
+                '!tw-no-underline',
+                'listElement',
+            ])}
         >
             {children}
         </li>

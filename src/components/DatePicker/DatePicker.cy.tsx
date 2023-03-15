@@ -62,10 +62,10 @@ describe('DatePicker Component', () => {
         cy.get('@onChangeStub').should('be.calledOnce');
     });
 
-    it('only error validation state should show the triangle warning icon', () => {
+    it('should show triangle exclamation icon in case of error or warning validation states', () => {
         const onChangeStub = cy.stub().as('onChangeStub');
         for (const validationState of Object.values(Validation)) {
-            if (validationState === Validation.Error) {
+            if (validationState === Validation.Error || validationState === Validation.Warning) {
                 cy.mount(<DatePicker onChange={onChangeStub} validation={validationState} />);
                 cy.get(EXCLAMATION_MARK_ICON_ID).should('be.visible');
                 return;

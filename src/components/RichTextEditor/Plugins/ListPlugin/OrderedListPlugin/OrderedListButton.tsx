@@ -4,7 +4,7 @@ import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
 import { IconListNumbers16 } from '@foundation/Icon/Generated';
 import { ListToolbarButton, getPluginType } from '@udecode/plate';
 import React from 'react';
-import { ButtonWrapper, IconStylingWrapper, buttonClassNames, buttonStyles } from '../../helper';
+import { ButtonWrapper, IconStylingWrapper, buttonStyles, getButtonClassNames } from '../../helper';
 import { PluginButtonProps } from '../../types';
 
 export const OrderedListButton = ({ editor, id }: PluginButtonProps) => (
@@ -13,7 +13,7 @@ export const OrderedListButton = ({ editor, id }: PluginButtonProps) => (
             tooltip={getTooltip('Ordered list')}
             type={getPluginType(editor, id)}
             icon={<IconStylingWrapper icon={<IconListNumbers16 />} />}
-            classNames={buttonClassNames}
+            classNames={getButtonClassNames()}
             styles={buttonStyles}
             actionHandler="onMouseDown"
         />

@@ -4,7 +4,7 @@ import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
 import { IconTextBrackets16 } from '@foundation/Icon/Generated';
 import { MarkToolbarButton, getPluginType } from '@udecode/plate';
 import React from 'react';
-import { ButtonWrapper, IconStylingWrapper, buttonClassNames, buttonStyles } from '../helper';
+import { ButtonWrapper, IconStylingWrapper, buttonStyles, getButtonClassNames } from '../helper';
 import { PluginButtonProps } from '../types';
 
 export const CodeButton = ({ editor, id }: PluginButtonProps) => (
@@ -13,7 +13,7 @@ export const CodeButton = ({ editor, id }: PluginButtonProps) => (
             tooltip={getTooltip('Code')}
             type={getPluginType(editor, id)}
             icon={<IconStylingWrapper icon={<IconTextBrackets16 />} />}
-            classNames={buttonClassNames}
+            classNames={getButtonClassNames()}
             styles={buttonStyles}
             actionHandler="onMouseDown"
         />
