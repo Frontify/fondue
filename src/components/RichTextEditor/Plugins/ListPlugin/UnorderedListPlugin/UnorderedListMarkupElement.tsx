@@ -3,8 +3,9 @@
 import React from 'react';
 import { ELEMENT_UL, PlateRenderLeafProps } from '@udecode/plate';
 import { MarkupElement } from '../../MarkupElement';
+import './styles.css';
 
-export const UL_CLASSES = 'tw-list-disc tw-pl-[10px] tw-mb-[10px] tw-ml-[25px]';
+export const UL_CLASSES = 'tw-list-none tw-pl-[10px] tw-mb-[10px] tw-ml-[15px]';
 
 export const UnorderedListMarkupElementNode = ({ attributes, children }: PlateRenderLeafProps) => (
     <ul className={UL_CLASSES} {...attributes}>

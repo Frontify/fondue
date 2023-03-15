@@ -12,6 +12,7 @@ import {
 } from '@udecode/plate';
 import { merge } from '@utilities/merge';
 import React from 'react';
+import { ELEMENT_CHECK_ITEM } from '../../CheckboxListPlugin';
 import { MARK_TEXT_STYLE } from '../../ListPlugin/ListPlugin';
 import { DropdownItemProps } from './types';
 
@@ -19,12 +20,16 @@ const isInList = (editor: PlateEditor) =>
     getAboveNode(editor, {
         match: { type: ELEMENT_LI },
         mode: 'lowest',
+    }) ||
+    someNode(editor, {
+        match: { type: ELEMENT_CHECK_ITEM },
+        mode: 'lowest',
     });
 
 export const DropdownItem = ({ editor, type, children }: DropdownItemProps) => {
     const isActive =
         !!editor?.selection && isInList(editor)
-            ? (getMark(editor, MARK_TEXT_STYLE) as string) === type
+            ? getMark(editor, MARK_TEXT_STYLE) === type
             : someNode(editor, { match: { type } });
 
     return (
@@ -40,12 +45,7 @@ export const DropdownItem = ({ editor, type, children }: DropdownItemProps) => {
                     return;
                 }
 
-                const aboveListItem = getAboveNode(editor, {
-                    match: { type: ELEMENT_LI },
-                    mode: 'lowest',
-                });
-
-                if (aboveListItem) {
+                if (isInList(editor)) {
                     setMarks(editor, { [MARK_TEXT_STYLE]: type });
                 } else {
                     getPreventDefaultHandler(toggleNodeType, editor, {

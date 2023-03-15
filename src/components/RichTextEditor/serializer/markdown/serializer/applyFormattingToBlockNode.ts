@@ -6,6 +6,8 @@ import { isLeafNode } from './isLeafNode';
 
 const processMentionNode = (chunk: BlockType) => `@[${chunk.category}:${chunk.id}]`;
 
+const processListItemChildNode = (children: string) => `${children}\n`;
+
 const processListItemNode = (
     nodeTypes: InputNodeTypes,
     children: string,
@@ -86,6 +88,9 @@ export const applyFormattingToBlockNode = (
 
         case nodeTypes.listItem:
             return processListItemNode(nodeTypes, children, chunk, listDepth);
+
+        case nodeTypes.listItemChild:
+            return processListItemChildNode(children);
 
         case nodeTypes.paragraph:
             return `${children}\n`;

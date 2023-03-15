@@ -32,18 +32,18 @@ Lorem ipsum dolor sit amet, consetetur @[group:1111111111] sadipscing elitr, sed
 
 
 
-1. Ordered list
-1. Ordered list
+1. Ordered list item number one.
+1. Ordered list item number two.
 
-   1. aaa
-   1. aaa
+   1. Ordered list child item number one.
+   1. Ordered list child item number two.
 
-      1. eeeee
-      1. eeeee
+      1. Another ordered list child item number one.
+      1. Another ordered list child item number two.
 
-   1. aaa
+   1. Ordered list child item number three.
 
-1. Ordered list
+1. Ordered list item number three.
 
 `;
 
@@ -182,6 +182,6 @@ export const mixedTree = [
         ],
     },
 
-    ...unorderedListTree,
-    ...orderedListTree,
+    ...unorderedListTree[0],
+    ...orderedListTree[0],
 ];

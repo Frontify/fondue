@@ -8,6 +8,7 @@ export type InputNodeTypes = {
     ulList: string;
     olList: string;
     listItem: string;
+    listItemChild: string;
     heading: {
         1: string;
         2: string;
@@ -30,6 +31,7 @@ export type MarkdownAstNodeType =
     | 'heading'
     | 'list'
     | 'listItem'
+    | 'listItemChild'
     | 'link'
     | 'image'
     | 'blockquote'
@@ -51,6 +53,7 @@ export const defaultNodeTypes: InputNodeTypes = {
     ulList: 'ul_list',
     olList: 'ol_list',
     listItem: 'list_item',
+    listItemChild: 'lic',
     heading: {
         1: 'heading_one',
         2: 'heading_two',
@@ -151,6 +154,11 @@ export type ListItemNode<T extends InputNodeTypes> = {
     children: Array<DeserializedNode<T>>;
 };
 
+export type ListItemChildNode<T extends InputNodeTypes> = {
+    type: T['listItemChild'];
+    children: Array<DeserializedNode<T>>;
+};
+
 export type ParagraphNode<T extends InputNodeTypes> = {
     type: T['paragraph'];
     break?: true;
@@ -211,6 +219,7 @@ export type DeserializedNode<T extends InputNodeTypes> =
     | HeadingNode<T>
     | ListNode<T>
     | ListItemNode<T>
+    | ListItemChildNode<T>
     | ParagraphNode<T>
     | LinkNode<T>
     | ImageNode<T>
