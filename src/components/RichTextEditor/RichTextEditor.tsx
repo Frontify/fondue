@@ -93,8 +93,6 @@ export const RichTextEditor = ({
         },
     };
 
-    console.log('this is the newest RTE with newest PLATE & SLATE');
-
     return (
         <RichTextEditorProvider
             value={{
