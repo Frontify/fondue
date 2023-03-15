@@ -3,8 +3,6 @@
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { Plate, TEditableProps } from '@udecode/plate';
 import React from 'react';
-import scrollIntoView from 'scroll-into-view-if-needed';
-import { ReactEditor } from 'slate-react';
 import { RenderPlaceholderProps } from 'slate-react/dist/components/editable';
 import { ContentReplacement } from './ContentReplacement';
 import { RichTextEditorProvider } from './context/RichTextEditorContext';
@@ -65,25 +63,6 @@ export const RichTextEditor = ({
     const columns = breakAfterPlugin?.options?.columns ?? 1;
     const columnGap = breakAfterPlugin?.options?.gap ?? GAP_DEFAULT;
 
-    const defaultScrollSelectionIntoView = (editor: ReactEditor, domRange: Range) => {
-        console.log({ editor });
-        console.log('bounding client rect: ', domRange.getBoundingClientRect);
-
-        if (
-            domRange.getBoundingClientRect &&
-            (!editor.selection || (editor.selection && Range.isCollapsed(editor.selection)))
-        ) {
-            const leafEl = domRange.startContainer.parentElement!;
-            leafEl.getBoundingClientRect = domRange.getBoundingClientRect.bind(domRange);
-            scrollIntoView(leafEl, {
-                scrollMode: 'if-needed',
-            });
-
-            // @ts-expect-error an unorthodox delete D:
-            delete leafEl.getBoundingClientRect;
-        }
-    };
-
     const editableProps: TEditableProps = {
         placeholder,
         renderPlaceholder: ({ children, attributes }) => {
@@ -109,14 +88,15 @@ export const RichTextEditor = ({
                 forceToBlurActiveElement();
             }
         },
-        scrollSelectionIntoView: defaultScrollSelectionIntoView,
+        scrollSelectionIntoView: () => {
+            // We pass in an empty function here because we don't want the default scroll behaviour
+        },
     };
 
     console.log('this is the newest RTE with newest PLATE & SLATE');
 
     return (
         <>
-            <div>HOOOI</div>
             <RichTextEditorProvider
                 value={{
                     designTokens,
