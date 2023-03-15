@@ -4,7 +4,7 @@ import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
 import { IconTextAlignmentRight16 } from '@foundation/Icon/Generated';
 import { AlignToolbarButton, someNode, useEventPlateId, usePlateEditorState } from '@udecode/plate';
 import React from 'react';
-import { ButtonWrapper, IconStylingWrapper, buttonClassNames, buttonStyles } from '../../helper';
+import { ButtonWrapper, IconStylingWrapper, buttonStyles, getButtonClassNames } from '../../helper';
 import { PluginButtonProps } from '../../types';
 
 export const AlignRightButton = ({ id, editorId }: PluginButtonProps) => {
@@ -18,7 +18,7 @@ export const AlignRightButton = ({ id, editorId }: PluginButtonProps) => {
                 tooltip={getTooltip('Align right')}
                 value="right"
                 icon={<IconStylingWrapper icon={<IconTextAlignmentRight16 />} />}
-                classNames={buttonClassNames}
+                classNames={getButtonClassNames()}
                 styles={buttonStyles}
                 actionHandler="onMouseDown"
             />
