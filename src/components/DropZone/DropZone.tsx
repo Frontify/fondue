@@ -14,7 +14,7 @@ export type OnDropCallback<T> = (
     position: CollisionPosition,
 ) => void;
 
-type DropZoneData<T> = {
+export type DropZoneData<T> = {
     targetItem: DraggableItem<T>;
     position: CollisionPosition;
 };

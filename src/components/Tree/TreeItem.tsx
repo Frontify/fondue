@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { Children, useCallback, useEffect, useMemo } from 'react';
+import React, { Children, KeyboardEvent, MouseEvent, useCallback, useEffect, useMemo } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { DragEndEvent, DragStartEvent, useDndContext, useDndMonitor } from '@dnd-kit/core';
 import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
@@ -135,7 +135,7 @@ export const TreeItem = ({
     }, [id, childrenIds, registerTreeItemChildren]);
 
     const handleSelect = useCallback(
-        (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+        (event: MouseEvent<HTMLElement, globalThis.MouseEvent>) => {
             if (node.current && isDescendant(event.target as HTMLElement, node.current)) {
                 event.stopPropagation();
 
@@ -145,14 +145,14 @@ export const TreeItem = ({
         [id, node, onSelect],
     );
 
-    const handleExpand = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const handleExpand = (event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
         event.stopPropagation();
 
         onExpand(id);
     };
 
     const handleKeyDown = useCallback(
-        (event: React.KeyboardEvent<HTMLDivElement>) => {
+        (event: KeyboardEvent<HTMLDivElement>) => {
             if (document.activeElement !== node.current) {
                 return;
             }

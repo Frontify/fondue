@@ -39,7 +39,7 @@ export const fondueCollisionDetection: CollisionDetection = (args) => {
 
     const position = calculatePosition(draggableRect as DOMRect, droppableRect);
 
-    /* mutation - for performance reasons */
+    /* mutation - for performance reasons (avoiding iterations) */
     closest.data['position'] = position;
 
     return closestCornersCollisions;
