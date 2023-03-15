@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createPluginFactory } from '@udecode/plate-core';
+import { createPluginFactory } from '@udecode/plate';
 import { onKeyDownBlurOnBreak } from './onKeyDownBlurOnBreak';
 import { BlurOnBreakPlatePlugin } from './types';
 
