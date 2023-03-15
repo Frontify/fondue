@@ -39,9 +39,7 @@ export const InputLabel: FC<InputLabelProps> = ({
         <div
             className={merge([
                 'tw-inline-flex tw-leading-4 tw-items-center tw-gap-1 tw-font-sans tw-text-s tw-max-w-full tw-min-w-0 tw-flex-initial',
-                disabled
-                    ? 'tw-text-black-40 hover:tw-text-black-40 dark:tw-text-black-60 dark:hover:tw-text-black-60'
-                    : 'tw-text-black-90 dark:tw-text-white',
+                disabled ? 'tw-text-disabled' : 'tw-text-text-weak',
             ])}
             data-test-id="input-label-container"
         >
@@ -53,7 +51,7 @@ export const InputLabel: FC<InputLabelProps> = ({
                         bold && 'tw-font-medium',
                         disabled || !clickable
                             ? 'hover:tw-cursor-not-allowed tw-pointer-events-none'
-                            : 'hover:tw-cursor-pointer hover:tw-text-black dark:hover:tw-text-white group-hover:tw-text-black dark:group-hover:tw-text-white',
+                            : 'hover:tw-cursor-pointer hover:tw-text-text group-hover:tw-text-text',
                     ])}
                     data-test-id="input-label"
                     title={typeof children === 'string' ? children : ''}
@@ -65,7 +63,7 @@ export const InputLabel: FC<InputLabelProps> = ({
             {required && (
                 <span
                     data-test-id="input-label-required"
-                    className="tw-h-4 tw-text-m tw-text-red-60 dark:tw-text-red-50"
+                    className="tw-h-4 tw-text-m tw-text-box-negative-strong-pressed"
                 >
                     *
                 </span>
