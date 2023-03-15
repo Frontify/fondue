@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { IconTextColumnBreak16 } from '@foundation/Icon/Generated';
-import { ButtonWrapper, IconStylingWrapper, buttonClassNames, buttonStyles } from '../../helper';
+import { ButtonWrapper, IconStylingWrapper, buttonStyles, getButtonClassNames } from '../../helper';
 import { PluginButtonProps } from '../../types';
 import { ColumnBreakToolbarButton } from './ColumnBreakToolbarButton';
 
@@ -11,7 +11,7 @@ export const ColumnBreakButton = ({ id }: PluginButtonProps) => {
         <ButtonWrapper id={id}>
             <ColumnBreakToolbarButton
                 icon={<IconStylingWrapper icon={<IconTextColumnBreak16 />} />}
-                classNames={buttonClassNames}
+                classNames={getButtonClassNames()}
                 styles={buttonStyles}
             />
         </ButtonWrapper>
