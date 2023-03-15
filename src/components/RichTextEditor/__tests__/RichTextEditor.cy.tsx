@@ -499,7 +499,7 @@ describe('RichTextEditor Component', () => {
             cy.get('[contenteditable=true] > h2').should('have.attr', 'style', heading2Styles);
         });
 
-        it('renders switches a custom checkbox to list and keeps textStyle', () => {
+        it('switches a custom checkbox to list and keeps textStyle', () => {
             cy.mount(
                 <RichTextEditor
                     designTokens={{
