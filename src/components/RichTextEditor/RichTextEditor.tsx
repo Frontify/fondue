@@ -96,29 +96,25 @@ export const RichTextEditor = ({
     console.log('this is the newest RTE with newest PLATE & SLATE');
 
     return (
-        <>
-            <RichTextEditorProvider
-                value={{
-                    designTokens,
-                    position,
-                    border,
-                }}
+        <RichTextEditorProvider
+            value={{
+                designTokens,
+                position,
+                border,
+            }}
+        >
+            <Plate
+                id={editorId}
+                onChange={onChange}
+                editableProps={editableProps}
+                plugins={config.create()}
+                initialValue={memoizedValue}
             >
-                <Plate
-                    id={editorId}
-                    onChange={onChange}
-                    editableProps={editableProps}
-                    plugins={config.create()}
-                    initialValue={memoizedValue}
-                >
-                    {config.toolbar()}
-                    {config.inline()}
-                    {updateValueOnChange && (
-                        <ContentReplacement value={parseRawValue({ editorId, raw: value, plugins })} />
-                    )}
-                </Plate>
-            </RichTextEditorProvider>
-        </>
+                {config.toolbar()}
+                {config.inline()}
+                {updateValueOnChange && <ContentReplacement value={parseRawValue({ editorId, raw: value, plugins })} />}
+            </Plate>
+        </RichTextEditorProvider>
     );
 };
 RichTextEditor.displayName = 'FondueRichTextEditor';
