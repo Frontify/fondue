@@ -17,6 +17,7 @@ export * from './ColorPicker';
 export * from './DatePicker';
 export * from './Divider';
 export * from './Dropdown';
+export * from './DropZone';
 export * from './EditableText';
 export * from './FieldsetHeader';
 export * from './Flyout';

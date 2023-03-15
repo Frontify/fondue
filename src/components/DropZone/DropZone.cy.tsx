@@ -7,7 +7,7 @@ import { DndProvider, useDrag } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
 const LIST_ID = 'list-id';
-const DROP_ZONE_DATA: DropZoneData<{ id: '1'; sort: null }> = {
+const DROP_ZONE_DATA: DropZoneData<{ id: string; sort: Nullable<number> }> = {
     targetItem: { id: '1', sort: null },
     position: 'after',
 };
