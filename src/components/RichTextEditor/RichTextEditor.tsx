@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useMemoizedId } from '@hooks/useMemoizedId';
-import { Plate } from '@udecode/plate';
+import { Plate, TEditableProps } from '@udecode/plate';
 import React from 'react';
-import { EditableProps, RenderPlaceholderProps } from 'slate-react/dist/components/editable';
+import { RenderPlaceholderProps } from 'slate-react';
 import { ContentReplacement } from './ContentReplacement';
 import { RichTextEditorProvider } from './context/RichTextEditorContext';
 import { Position } from './EditorPositioningWrapper';
@@ -63,7 +63,7 @@ export const RichTextEditor = ({
     const columns = breakAfterPlugin?.options?.columns ?? 1;
     const columnGap = breakAfterPlugin?.options?.gap ?? GAP_DEFAULT;
 
-    const editableProps: EditableProps = {
+    const editableProps: TEditableProps = {
         placeholder,
         renderPlaceholder: ({ children, attributes }) => {
             const mergedAttributes = {
@@ -87,6 +87,9 @@ export const RichTextEditor = ({
                 // Forcing a blur event because of accessibility
                 forceToBlurActiveElement();
             }
+        },
+        scrollSelectionIntoView: () => {
+            // We pass in an empty function here because we don't want the default scroll behaviour
         },
     };
 
