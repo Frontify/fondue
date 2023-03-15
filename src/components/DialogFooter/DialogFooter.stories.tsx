@@ -7,7 +7,7 @@ import { ButtonEmphasis, ButtonStyle } from '@components/Button';
 import { IconCheckMark } from '@foundation/Icon';
 
 export default {
-    title: 'Components/DialogFooter',
+    title: 'Experimental/DialogFooter',
     component: DialogFooter,
     tags: ['autodocs'],
 } as Meta<DialogFooterProps>;

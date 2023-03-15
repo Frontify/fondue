@@ -12,7 +12,7 @@ import { IconExclamationMarkCircle } from '@foundation/Icon';
 import { DialogBody } from '@components/DialogBody/DialogBody';
 
 export default {
-    title: 'Components/Dialog',
+    title: 'Experimental/Dialog',
     component: Dialog,
     tags: ['autodocs'],
 } as Meta<DialogProps>;

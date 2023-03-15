@@ -10,7 +10,7 @@ import { ScrollWrapper } from './ScrollWrapper';
 import { ScrollWrapperProps } from './types';
 
 export default {
-    title: 'Components/ScrollWrapper',
+    title: 'Utilities/ScrollWrapper',
     component: ScrollWrapper,
     tags: ['autodocs'],
 } as Meta<ScrollWrapperProps>;

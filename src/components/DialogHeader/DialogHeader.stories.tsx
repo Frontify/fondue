@@ -7,7 +7,7 @@ import { Badge, BadgeStyle } from '@components/Badge';
 import { IconIcon } from '@foundation/Icon';
 
 export default {
-    title: 'Components/DialogHeader',
+    title: 'Experimental/DialogHeader',
     component: DialogHeaderComponent,
     tags: ['autodocs'],
     args: {

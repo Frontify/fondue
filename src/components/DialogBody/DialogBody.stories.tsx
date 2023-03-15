@@ -5,7 +5,7 @@ import { Meta, StoryFn } from '@storybook/react';
 import { DialogBody, DialogBodyProps } from './DialogBody';
 
 export default {
-    title: 'Components/DialogBody',
+    title: 'Experimental/DialogBody',
     component: DialogBody,
     tags: ['autodocs'],
 } as Meta<DialogBodyProps>;
