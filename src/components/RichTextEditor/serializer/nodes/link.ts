@@ -2,7 +2,7 @@
 
 import { TLinkElement } from '@components/RichTextEditor/Plugins/LinkPlugin/types';
 import { DesignTokens } from '@components/RichTextEditor/types';
-import { TElement } from '@udecode/plate-core';
+import { TElement } from '@udecode/plate';
 import escapeHtml from 'escape-html';
 import { reactCssPropsToCss } from '../utils/reactCssPropsToCss';
 

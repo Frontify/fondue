@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TElement } from '@udecode/plate-core';
+import { TElement } from '@udecode/plate';
 import { merge } from '@utilities/merge';
 
 export const checkItemNode = (

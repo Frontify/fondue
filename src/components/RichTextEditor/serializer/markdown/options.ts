@@ -8,6 +8,7 @@ import {
     ELEMENT_HR,
     ELEMENT_IMAGE,
     ELEMENT_LI,
+    ELEMENT_LIC,
     ELEMENT_LINK,
     ELEMENT_MENTION,
     ELEMENT_OL,
@@ -37,6 +38,7 @@ export const options = (editor: PlateEditor): PartialOptionType => ({
         ulList: getPluginType(editor, ELEMENT_UL),
         olList: getPluginType(editor, ELEMENT_OL),
         listItem: getPluginType(editor, ELEMENT_LI),
+        listItemChild: getPluginType(editor, ELEMENT_LIC),
         heading: {
             1: getPluginType(editor, TextStyles.ELEMENT_HEADING1),
             2: getPluginType(editor, TextStyles.ELEMENT_HEADING2),

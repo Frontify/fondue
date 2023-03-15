@@ -1,92 +1,81 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export const orderedListMarkdown = `
-1. Ordered list
-1. Ordered list
+import { createLi, createLic, createOl } from './helpers';
 
-   1. aaa
-   1. aaa
+const orderedListMarkdown0 = `
+1. Ordered list item number one.
+1. Ordered list item number two.
 
-      1. eeeee
-      1. eeeee
+   1. Ordered list child item number one.
+   1. Ordered list child item number two.
 
-   1. aaa
+      1. Another ordered list child item number one.
+      1. Another ordered list child item number two.
 
-1. Ordered list
+   1. Ordered list child item number three.
+
+1. Ordered list item number three.
 
 `;
 
-const listItemChild = {
-    type: 'p',
-    children: [
-        {
-            text: 'Ordered list',
-        },
-    ],
-};
-
-const listItem = {
-    type: 'li',
-    children: [listItemChild],
-};
-
-const secondListItemChild = {
-    type: 'p',
-    children: [
-        {
-            text: 'aaa',
-        },
-    ],
-};
-
-const secondListItem = {
-    type: 'li',
-    children: [secondListItemChild],
-};
-
-const thirdListItemChild = {
-    type: 'p',
-    children: [
-        {
-            text: 'eeeee',
-        },
-    ],
-};
-
-const thirdListItem = {
-    type: 'li',
-    children: [thirdListItemChild],
-};
-
-export const orderedListTree = [
-    {
-        type: 'ol',
-        children: [
-            listItem,
-            {
-                type: 'li',
-                children: [
-                    listItemChild,
-                    {
-                        type: 'ol',
-                        children: [
-                            secondListItem,
-                            {
-                                type: 'li',
-                                children: [
-                                    secondListItemChild,
-                                    {
-                                        type: 'ol',
-                                        children: [thirdListItem, thirdListItem],
-                                    },
-                                ],
-                            },
-                            secondListItem,
-                        ],
-                    },
-                ],
-            },
-            listItem,
-        ],
-    },
+const orderedListTree0 = [
+    createOl([
+        createLi([createLic('Ordered list item number one.')]),
+        createLi([
+            createLic('Ordered list item number two.'),
+            createOl([
+                createLi([createLic('Ordered list child item number one.')]),
+                createLi([
+                    createLic('Ordered list child item number two.'),
+                    createOl([
+                        createLi([createLic('Another ordered list child item number one.')]),
+                        createLi([createLic('Another ordered list child item number two.')]),
+                    ]),
+                ]),
+                createLi([createLic('Ordered list child item number three.')]),
+            ]),
+        ]),
+        createLi([createLic('Ordered list item number three.')]),
+    ]),
 ];
+
+const orderedListMarkdown1 = `
+1. This is list item number one.
+1. This is list item number two.
+
+`;
+
+const orderedListTree1 = [
+    createOl([
+        createLi([createLic('This is list item number one.')]),
+        createLi([createLic('This is list item number two.')]),
+    ]),
+];
+
+const orderedListMarkdown2 = `
+1. This is list item number one.
+1. This is list item number two.
+1. This is list item number three.
+
+   1. This is child item number one.
+   1. This is child item number two.
+
+
+`;
+
+const orderedListTree2 = [
+    createOl([
+        createLi([createLic('This is list item number one.')]),
+        createLi([createLic('This is list item number two.')]),
+        createLi([
+            createLic('This is list item number three.'),
+            createOl([
+                createLi([createLic('This is child item number one.')]),
+                createLi([createLic('This is child item number two.')]),
+            ]),
+        ]),
+    ]),
+];
+
+export const orderedListMarkdown = [orderedListMarkdown0, orderedListMarkdown1, orderedListMarkdown2];
+export const orderedListTree = [orderedListTree0, orderedListTree1, orderedListTree2];

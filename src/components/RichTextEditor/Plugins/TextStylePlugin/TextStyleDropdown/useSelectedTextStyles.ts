@@ -1,21 +1,22 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import {
+    ELEMENT_LI,
     ELEMENT_LIC,
+    ELEMENT_OL,
+    ELEMENT_UL,
     ENode,
     PlateEditor,
-    TElement,
     Value,
     getNodeEntries,
-    isElement,
     isNode,
     isText,
-    isType,
 } from '@udecode/plate';
+import { ELEMENT_CHECK_ITEM } from '../../CheckboxListPlugin';
 import { MARK_TEXT_STYLE } from '../../ListPlugin/ListPlugin';
-import { AVAILABLE_STYLE, AvailableStyles, TextStyles } from '../TextStyles';
+import { AvailableStyles, TextStyles } from '../TextStyles';
 
-const getLicStyle = (node: ENode<Value>): AvailableStyles => {
+const getTextStyle = (node: ENode<Value>): AvailableStyles => {
     if (Array.isArray(node.children)) {
         const textNode = node.children.find((node) => isText(node)) ?? {};
         return textNode[MARK_TEXT_STYLE] ?? TextStyles.ELEMENT_PARAGRAPH;
@@ -23,6 +24,8 @@ const getLicStyle = (node: ENode<Value>): AvailableStyles => {
 
     return TextStyles.ELEMENT_PARAGRAPH;
 };
+
+const excludeStyles = [ELEMENT_LI, ELEMENT_UL, ELEMENT_OL];
 
 export const useSelectedTextStyles = (editor: PlateEditor): AvailableStyles[] => {
     if (!editor || !editor.selection) {
@@ -32,10 +35,8 @@ export const useSelectedTextStyles = (editor: PlateEditor): AvailableStyles[] =>
     const nodeEntries = Array.from(
         getNodeEntries(editor, {
             unhang: true,
-            mode: 'lowest',
             at: editor.selection,
             reverse: true,
-            match: (node: TElement) => isElement(node) && isType(editor, node, AVAILABLE_STYLE),
         }),
     );
 
@@ -44,9 +45,12 @@ export const useSelectedTextStyles = (editor: PlateEditor): AvailableStyles[] =>
             return styles;
         }
 
-        const styleToAdd = node.type === ELEMENT_LIC ? getLicStyle(node) : (node.type as AvailableStyles);
+        const styleToAdd =
+            node.type === ELEMENT_LIC || node.type === ELEMENT_CHECK_ITEM
+                ? getTextStyle(node)
+                : (node.type as AvailableStyles);
 
-        if (styleToAdd && !styles.includes(styleToAdd)) {
+        if (styleToAdd && !styles.includes(styleToAdd) && !excludeStyles.includes(styleToAdd)) {
             styles.push(styleToAdd);
         }
 
