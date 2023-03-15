@@ -3,7 +3,7 @@
 import { RichTextButtonStyle } from '@components/RichTextEditor/Plugins';
 import { getButtonStyle } from '@components/RichTextEditor/Plugins/ButtonPlugin/ButtonMarkupElement/ButtonMarkupElementNode';
 import { DesignTokens } from '@components/RichTextEditor/types';
-import { TElement } from '@udecode/plate-core';
+import { TElement } from '@udecode/plate';
 import { reactCssPropsToCss } from '../utils/reactCssPropsToCss';
 
 export const buttonNode = (node: TElement, children: string, designTokens: DesignTokens, defaultClassNames: string) => {
