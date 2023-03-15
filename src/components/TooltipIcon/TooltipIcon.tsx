@@ -22,12 +22,16 @@ export enum TooltipIconTriggerStyle {
 }
 
 const tooltipTriggerStyleClass: Record<TooltipIconTriggerStyle, string> = {
-    [TooltipIconTriggerStyle.Danger]: 'tw-text-box-negative-strong hover:tw-text-box-negative-strong-hover',
-    [TooltipIconTriggerStyle.Warning]: 'tw-text-box-warning-strong hover:tw-text-box-warning-strong-hover',
+    [TooltipIconTriggerStyle.Danger]: 'tw-text-box-negative-strong',
+    [TooltipIconTriggerStyle.Warning]: 'tw-text-box-warning-strong',
     [TooltipIconTriggerStyle.Primary]: 'tw-text-text-weak',
 };
 
-const tooltipHoverClasses = 'hover:tw-text-text hover:tw-bg-box-neutral';
+const tooltipHoverClasses = {
+    [TooltipIconTriggerStyle.Danger]: 'hover:tw-text-box-negative-strong-hover hover:tw-bg-box-neutral',
+    [TooltipIconTriggerStyle.Warning]: 'hover:tw-text-box-warning-strong-hover hover:tw-bg-box-neutral',
+    [TooltipIconTriggerStyle.Primary]: 'hover:tw-text-text hover:tw-bg-box-neutral',
+};
 
 export const TooltipIcon: FC<TooltipIconProps> = ({
     tooltip,
@@ -49,7 +53,7 @@ export const TooltipIcon: FC<TooltipIconProps> = ({
                                     'tw-inline-flex tw-justify-center tw-items-center tw-cursor-default tw-outline-none tw-rounded-full',
                                     FOCUS_VISIBLE_STYLE,
                                     tooltipTriggerStyleClass[triggerStyle],
-                                    tooltipHoverClasses,
+                                    tooltipHoverClasses[triggerStyle],
                                 ])}
                             >
                                 {cloneElement(triggerIcon, { size: iconSize })}
