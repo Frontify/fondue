@@ -71,3 +71,15 @@ const HelperTextRadioButton: StoryFn<RadioListProps> = (args: RadioListProps) =>
 };
 export const WithHelperTextRadioButton = HelperTextRadioButton.bind({});
 WithHelperTextRadioButton.storyName = 'With helper text';
+
+const TooltipRadioButton: StoryFn<RadioListProps> = (args: RadioListProps) => {
+    return (
+        <RadioList direction={args.direction} defaultValue="Rib Eye">
+            <RadioButton value="Rib Eye" tooltip="Might choose this one" />
+            <RadioButton value="T-Bone" tooltip="Or this one" />
+            <RadioButton value="NY Strip" tooltip="Or maybe this one" />
+        </RadioList>
+    );
+};
+export const WithTooltipRadioButton = TooltipRadioButton.bind({});
+WithTooltipRadioButton.storyName = 'With tooltips';

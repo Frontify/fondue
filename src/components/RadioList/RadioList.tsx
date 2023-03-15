@@ -1,5 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { Tooltip, TooltipAlignment, TooltipPosition } from '@components/Tooltip';
+import IconQuestionMarkCircle from '@foundation/Icon/Generated/IconQuestionMarkCircle';
+import { IconSize } from '@foundation/index';
 import { generateRandomId } from '@utilities/generateRandomId';
 import { merge } from '@utilities/merge';
 import React, { Children, ReactNode, isValidElement, useEffect, useState } from 'react';
@@ -80,6 +83,20 @@ export const RadioList = ({
                                     <span className="tw-text-black-80 tw-font-normal">{radio.helperText}</span>
                                 )}
                             </label>
+                        )}
+                        {radio.tooltip && (
+                            <Tooltip
+                                alignment={TooltipAlignment.Middle}
+                                content={radio.tooltip}
+                                hoverDelay={75}
+                                position={TooltipPosition.Top}
+                                triggerElement={
+                                    <div className="tw-text-black-80 tw-mx-2">
+                                        <IconQuestionMarkCircle size={IconSize.Size16} />
+                                    </div>
+                                }
+                                withArrow
+                            />
                         )}
                     </div>
                 );

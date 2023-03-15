@@ -15,6 +15,7 @@ export type RadioButtonProps = {
     hideLabel?: boolean;
     emphasis?: RadioButtonEmphasis;
     helperText?: string;
+    tooltip?: string;
 };
 
 export const RadioButton = ({ ...props }: RadioButtonProps) => {
