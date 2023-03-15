@@ -3,7 +3,7 @@
 import React from 'react';
 import { MarkToolbarButton, getPluginType } from '@udecode/plate';
 import { IconTextFormatBold16 } from '@foundation/Icon/Generated';
-import { ButtonWrapper, IconStylingWrapper, buttonClassNames, buttonStyles } from '../helper';
+import { ButtonWrapper, IconStylingWrapper, buttonStyles, getButtonClassNames } from '../helper';
 import { PluginButtonProps } from '../types';
 import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
 import { getHotkeyByPlatform } from '@components/RichTextEditor/helpers/getHotkeyByPlatform';
@@ -15,7 +15,7 @@ export const BoldButton = ({ editor, id }: PluginButtonProps) => (
             key={id}
             type={getPluginType(editor, id)}
             icon={<IconStylingWrapper icon={<IconTextFormatBold16 />} />}
-            classNames={buttonClassNames}
+            classNames={getButtonClassNames()}
             styles={buttonStyles}
             actionHandler="onMouseDown"
         />
