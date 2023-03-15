@@ -312,7 +312,7 @@ export const Slider = ({
                     <button
                         ref={setSliderRef}
                         data-test-id="fondue-slider-interactive"
-                        className="tw-flex-1 tw-relative tw-h-full tw-cursor-pointer disabled:tw-cursor-default"
+                        className="tw-flex-1 tw-relative tw-h-full tw-cursor-pointer disabled:tw-cursor-default tw-outline-none"
                         onMouseOver={onMouseOver}
                         onMouseOut={onMouseOut}
                         onFocus={onFocus}
