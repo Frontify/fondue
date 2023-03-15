@@ -7,7 +7,7 @@ import deserializer from './deserializer';
 import { options } from './options';
 import { MarkdownTransformer } from './MarkdownTransformer';
 import { NodeType } from './types';
-import remarkFondue from './remarkFondue';
+import { remarkFondue } from './remarkFondue';
 
 export class MarkdownToSlate extends MarkdownTransformer<string, NodeType[]> {
     process(value: string): NodeType[] {

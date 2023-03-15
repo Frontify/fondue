@@ -15,6 +15,4 @@ const transformer = (tree: ParagraphNode) => {
     }
 };
 
-export default function remarkFondue() {
-    return transformer;
-}
+export const remarkFondue = () => transformer;

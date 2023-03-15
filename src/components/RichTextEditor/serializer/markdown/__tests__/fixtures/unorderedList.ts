@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createLI, createLIC, createUL } from './helpers';
+import { createLi, createLic, createUl } from './helpers';
 
-export const unorderedListMarkdown_0 = `
+export const unorderedListMarkdown0 = `
 - list
 
   - list
@@ -14,32 +14,32 @@ export const unorderedListMarkdown_0 = `
 
 
 `;
-const unorderedListTree_0 = [
-    createUL([
-        createLI([
-            createLIC('list'),
-            createUL([
-                createLI([createLIC('list'), createUL([createLI([createLIC('list')])])]),
-                createLI([createLIC('list')]),
-                createLI([createLIC('list')]),
+const unorderedListTree0 = [
+    createUl([
+        createLi([
+            createLic('list'),
+            createUl([
+                createLi([createLic('list'), createUl([createLi([createLic('list')])])]),
+                createLi([createLic('list')]),
+                createLi([createLic('list')]),
             ]),
         ]),
     ]),
 ];
 
-export const unorderedListMarkdown_1 = `
+export const unorderedListMarkdown1 = `
 - This is list item number one.
 - This is list item number two.
 
 `;
-const unorderedListTree_1 = [
-    createUL([
-        createLI([createLIC('This is list item number one.')]),
-        createLI([createLIC('This is list item number two.')]),
+const unorderedListTree1 = [
+    createUl([
+        createLi([createLic('This is list item number one.')]),
+        createLi([createLic('This is list item number two.')]),
     ]),
 ];
 
-export const unorderedListMarkdown_2 = `
+export const unorderedListMarkdown2 = `
 - This is list item number one.
 - This is list item number two.
 - This is list item number three.
@@ -49,21 +49,21 @@ export const unorderedListMarkdown_2 = `
 
 
 `;
-const unorderedListTree_2 = [
-    createUL([
-        createLI([createLIC('This is list item number one.')]),
-        createLI([createLIC('This is list item number two.')]),
-        createLI([
-            createLIC('This is list item number three.'),
-            createUL([
-                createLI([createLIC('This is child item number one.')]),
-                createLI([createLIC('This is child item number two.')]),
+const unorderedListTree2 = [
+    createUl([
+        createLi([createLic('This is list item number one.')]),
+        createLi([createLic('This is list item number two.')]),
+        createLi([
+            createLic('This is list item number three.'),
+            createUl([
+                createLi([createLic('This is child item number one.')]),
+                createLi([createLic('This is child item number two.')]),
             ]),
         ]),
     ]),
 ];
 
-export const unorderedListMarkdown_3 = `
+export const unorderedListMarkdown3 = `
 - This is list item number one.
 - This is list item number two.
 - This is list item number three.
@@ -79,32 +79,32 @@ export const unorderedListMarkdown_3 = `
 
 
 `;
-const unorderedListTree_3 = [
-    createUL([
-        createLI([createLIC('This is list item number one.')]),
-        createLI([createLIC('This is list item number two.')]),
-        createLI([
-            createLIC('This is list item number three.'),
-            createUL([
-                createLI([createLIC('This is child item number one.')]),
-                createLI([
-                    createLIC('This is child item number two.'),
-                    createUL([
-                        createLI([createLIC('This is another child item number one.')]),
-                        createLI([createLIC('This is another child item number two.')]),
-                        createLI([createLIC('This is another child item number three.')]),
+const unorderedListTree3 = [
+    createUl([
+        createLi([createLic('This is list item number one.')]),
+        createLi([createLic('This is list item number two.')]),
+        createLi([
+            createLic('This is list item number three.'),
+            createUl([
+                createLi([createLic('This is child item number one.')]),
+                createLi([
+                    createLic('This is child item number two.'),
+                    createUl([
+                        createLi([createLic('This is another child item number one.')]),
+                        createLi([createLic('This is another child item number two.')]),
+                        createLi([createLic('This is another child item number three.')]),
                     ]),
                 ]),
-                createLI([createLIC('This is child item number three.')]),
+                createLi([createLic('This is child item number three.')]),
             ]),
         ]),
     ]),
 ];
 
-export const unorderedListTree = [unorderedListTree_0, unorderedListTree_1, unorderedListTree_2, unorderedListTree_3];
+export const unorderedListTree = [unorderedListTree0, unorderedListTree1, unorderedListTree2, unorderedListTree3];
 export const unorderedListMarkdown = [
-    unorderedListMarkdown_0,
-    unorderedListMarkdown_1,
-    unorderedListMarkdown_2,
-    unorderedListMarkdown_3,
+    unorderedListMarkdown0,
+    unorderedListMarkdown1,
+    unorderedListMarkdown2,
+    unorderedListMarkdown3,
 ];
