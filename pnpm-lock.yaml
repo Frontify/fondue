@@ -63,7 +63,6 @@ specifiers:
   '@types/react-is': 17.0.3
   '@types/tinycolor2': 1.4.3
   '@udecode/plate': 19.6.0
-  '@udecode/plate-core': 19.5.0
   '@udecode/zustood': 1.1.3
   '@xstate/immer': 0.3.1
   '@xstate/react': 1.6.3
@@ -165,7 +164,6 @@ dependencies:
   '@react-types/dialog': 3.4.5_react@17.0.2
   '@react-types/shared': 3.16.0_react@17.0.2
   '@udecode/plate': 19.6.0_adhmxnq4clbcx3wp4thyjptmoy
-  '@udecode/plate-core': 19.5.0_obanyeqlp4pohfosvxlnfmojei
   '@udecode/zustood': 1.1.3_r7p2xqdvrmr4kyt2ey7qylzuau
   '@xstate/immer': 0.3.1_immer@9.0.12+xstate@4.28.1
   '@xstate/react': 1.6.3_yxeg42bftkbwkmueyqwfrcv7vi

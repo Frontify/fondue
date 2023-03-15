@@ -1,12 +1,8 @@
-ol {
-    counter-reset: count;
-}
-
-ol > li {
+ol > li.listElement {
     counter-increment: count;
 }
 
-ol > li > :not(ol):not(ul):not(.styled) {
+ol > li.listElement > :not(ol):not(ul):not(.styled) {
     display: grid;
     grid-template-columns: min-content repeat(3, auto);
 }
