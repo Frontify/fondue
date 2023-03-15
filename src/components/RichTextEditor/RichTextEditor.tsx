@@ -3,7 +3,7 @@
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { Plate, TEditableProps } from '@udecode/plate';
 import React from 'react';
-import { RenderPlaceholderProps } from 'slate-react/dist/components/editable';
+import { RenderPlaceholderProps } from 'slate-react';
 import { ContentReplacement } from './ContentReplacement';
 import { RichTextEditorProvider } from './context/RichTextEditorContext';
 import { Position } from './EditorPositioningWrapper';
