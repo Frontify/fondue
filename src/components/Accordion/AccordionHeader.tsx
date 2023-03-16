@@ -29,7 +29,7 @@ export const AccordionHeader: FC<AccordionHeaderProps> = ({
                 ])}
             >
                 {isValidElement(decorator) && (
-                    <span data-test-id="accordion-header-decorator" className="tw-shrink-0">
+                    <span data-test-id="accordion-header-decorator" className="tw-shrink-0 tw-leading-4">
                         {cloneElement(decorator as ReactElement<IconProps>, {
                             size: IconSize.Size16,
                         })}
