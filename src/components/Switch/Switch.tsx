@@ -32,9 +32,15 @@ const dotSizeClasses: Record<SwitchSize, Record<'dimensions' | 'activeWidth' | '
     },
 };
 
+export enum SwitchState {
+    On = 'On',
+    Off = 'Off',
+    Mixed = 'Mixed',
+}
+
 export type SwitchProps = {
     id?: string;
-    on?: boolean;
+    on?: SwitchState;
     disabled?: boolean;
     label?: string;
     name?: string;
@@ -62,9 +68,13 @@ export const Switch: FC<SwitchProps> = ({
     const trackClasses = useMemo(() => {
         const baseClasses = 'tw-group tw-border tw-inline-flex tw-rounded-full tw-shrink-0 tw-p-0 tw-transition-colors';
 
-        const valueClasses = on
-            ? 'tw-bg-text-weak tw-border-line-xx-strong hover:tw-bg-text'
-            : 'tw-bg-box-neutral tw-border-line-x-strong hover:tw-bg-box-neutral-hover';
+        const valueClasses =
+            on === SwitchState.On
+                ? 'tw-bg-text-weak tw-border-line-xx-strong hover:tw-bg-text'
+                : // eslint-disable-next-line unicorn/no-nested-ternary
+                on === SwitchState.Off
+                ? 'tw-bg-box-neutral tw-border-line-x-strong hover:tw-bg-box-neutral-hover'
+                : '';
 
         const disabledClasses = disabled ? 'tw-bg-box-disabled tw-border-line tw-pointer-events-none' : valueClasses;
 
@@ -75,7 +85,7 @@ export const Switch: FC<SwitchProps> = ({
     const dotWrapperClasses = useMemo(() => {
         const baseClasses = 'tw-relative tw-self-center tw-transition-transform';
 
-        const valueClasses = on && dotSizeClasses[size].activeTranslation;
+        const valueClasses = on === SwitchState.On && dotSizeClasses[size].activeTranslation;
 
         return merge([baseClasses, dotSizeClasses[size].dimensions, valueClasses]);
     }, [on, size]);
@@ -85,7 +95,14 @@ export const Switch: FC<SwitchProps> = ({
         const baseClasses =
             'tw-border tw-bg-base tw-rounded-full tw-absolute tw-block tw-self-center tw-transition-width tw-duration-75';
 
-        const valueClasses = on ? 'tw-right-0' : 'tw-left-0 -tw-translate-x-px';
+        const valueClasses =
+            // eslint-disable-next-line unicorn/no-nested-ternary
+            on === SwitchState.On
+                ? 'tw-right-0'
+                : // eslint-disable-next-line unicorn/no-nested-ternary
+                on === SwitchState.Off
+                ? 'tw-left-0 tw-translate-x-px'
+                : 'tw-left-0 tw-right-0';
 
         const disabledStateClasses = disabled
             ? 'tw-border-line-strong'

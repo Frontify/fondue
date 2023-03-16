@@ -3,7 +3,7 @@
 import { Meta, StoryFn } from '@storybook/react';
 import React, { useEffect, useState } from 'react';
 import { IconExclamationMarkCircle } from '@foundation/Icon/Generated';
-import { Switch, SwitchProps, SwitchSize } from './Switch';
+import { Switch, SwitchProps, SwitchSize, SwitchState } from './Switch';
 import { TooltipIconTriggerStyle } from '@components/TooltipIcon';
 
 export default {
@@ -22,9 +22,13 @@ export default {
                 type: 'text',
             },
         },
+        on: {
+            options: Object.values(SwitchState),
+            control: { type: 'radio' },
+        },
     },
     args: {
-        on: true,
+        on: SwitchState.On,
         disabled: false,
         hug: false,
         name: 'switch-name',
@@ -35,14 +39,22 @@ export default {
 type Props = SwitchProps & { hug?: boolean };
 
 const Default: StoryFn<Props> = (args: Props) => {
-    const [on, setOn] = useState(args.on);
-    const toggle = () => setOn(!on);
-
+    const [on, setOn] = useState<SwitchState>(args.on || SwitchState.Off);
     useEffect(() => {
+        if (args.on !== SwitchState.On && args.on !== SwitchState.Off && args.on !== SwitchState.Mixed) {
+            return;
+        }
+        if (args.on === on) {
+            return;
+        }
         setOn(args.on);
     }, [args.on]);
 
-    return <Switch {...args} onChange={toggle} on={on} />;
+    const toggle = () => {
+        setOn(on === SwitchState.On ? SwitchState.Off : SwitchState.On);
+    };
+
+    return <Switch {...args} onChange={toggle} on={args.on} />;
 };
 
 export const Small: StoryFn<Props> = Default.bind({});
