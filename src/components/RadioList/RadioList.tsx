@@ -59,7 +59,7 @@ export const RadioList = ({
             ref={radioGroupRef}
             className={merge(['tw-flex', direction === RadioListDirection.Horizontal ? 'tw-gap-4' : 'tw-flex-col'])}
         >
-            {radioButtons.map((radio, index) => {
+            {radioButtons.map((radio) => {
                 const id = generateRandomId();
                 return (
                     <div className="tw-flex tw-items-center tw-mb-2" key={id}>
@@ -73,15 +73,15 @@ export const RadioList = ({
                             aria-checked={radio.value === activeValue}
                             defaultChecked={radio.value === activeValue}
                             className={merge([
-                                'tw-peer w-w-4 tw-h-4 tw-border-black-60 disabled:tw-border-black-10',
+                                'tw-peer w-w-4 tw-h-4 tw-border-black-60 disabled:tw-border-black-10 focus:tw-ring-0 focus:tw-ring-offset-0 focus-visible:tw-ring-2 focus-visible:tw-ring-offset-2',
                                 radio.emphasis === RadioButtonEmphasis.Weak
                                     ? 'tw-text-black-80'
                                     : 'tw-text-box-selected-strong',
                             ])}
                             onChange={() => {
-                                setActiveValue(radioButtons[index].value);
+                                setActiveValue(radio.value);
                                 if (onChange) {
-                                    onChange(radioButtons[index].value);
+                                    onChange(radio.value);
                                 }
                             }}
                         />
