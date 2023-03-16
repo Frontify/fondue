@@ -22,14 +22,14 @@ export enum TooltipIconTriggerStyle {
 }
 
 const tooltipTriggerStyleClass: Record<TooltipIconTriggerStyle, string> = {
-    [TooltipIconTriggerStyle.Danger]: 'tw-text-box-negative-strong',
-    [TooltipIconTriggerStyle.Warning]: 'tw-text-box-warning-strong',
+    [TooltipIconTriggerStyle.Danger]: 'tw-text-box-negative-inverse',
+    [TooltipIconTriggerStyle.Warning]: 'tw-text-box-warning-inverse',
     [TooltipIconTriggerStyle.Primary]: 'tw-text-text-weak',
 };
 
 const tooltipHoverClasses = {
-    [TooltipIconTriggerStyle.Danger]: 'hover:tw-text-box-negative-strong-hover hover:tw-bg-box-neutral',
-    [TooltipIconTriggerStyle.Warning]: 'hover:tw-text-box-warning-strong-hover hover:tw-bg-box-neutral',
+    [TooltipIconTriggerStyle.Danger]: 'hover:tw-text-box-negative-inverse-hover hover:tw-bg-box-neutral',
+    [TooltipIconTriggerStyle.Warning]: 'hover:tw-text-box-warning-inverse-hover hover:tw-bg-box-neutral',
     [TooltipIconTriggerStyle.Primary]: 'hover:tw-text-text hover:tw-bg-box-neutral',
 };
 
