@@ -61,10 +61,7 @@ export const InputLabel: FC<InputLabelProps> = ({
             </div>
 
             {required && (
-                <span
-                    data-test-id="input-label-required"
-                    className="tw-h-4 tw-text-m tw-text-box-negative-strong-pressed"
-                >
+                <span data-test-id="input-label-required" className="tw-h-4 tw-text-m tw-text-text-negative">
                     *
                 </span>
             )}
