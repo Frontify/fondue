@@ -18,6 +18,7 @@ export type RadioListProps = {
     onChange?: (value: string) => void;
     direction?: RadioListDirection;
     defaultValue?: string;
+    ariaLabel?: string;
 };
 
 export const RadioList = ({
@@ -25,6 +26,7 @@ export const RadioList = ({
     defaultValue,
     direction = RadioListDirection.Horizontal,
     onChange,
+    ariaLabel,
 }: RadioListProps) => {
     const radioGroupRef = useRef<HTMLDivElement | null>(null);
 
@@ -55,7 +57,7 @@ export const RadioList = ({
         <div
             data-test-id="radio-list-wrapper"
             role="radiogroup"
-            aria-labelledby="radio-list"
+            aria-label={ariaLabel ?? 'Choose an option'}
             ref={radioGroupRef}
             className={merge(['tw-flex', direction === RadioListDirection.Horizontal ? 'tw-gap-4' : 'tw-flex-col'])}
         >
@@ -70,6 +72,7 @@ export const RadioList = ({
                             type="radio"
                             name="default-radio"
                             value={radio.value}
+                            aria-label="radio"
                             aria-checked={radio.value === activeValue}
                             defaultChecked={radio.value === activeValue}
                             className={merge([

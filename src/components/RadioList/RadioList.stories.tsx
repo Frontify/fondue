@@ -20,6 +20,9 @@ export default {
             control: { type: 'select' },
             defaultValue: 'Rib Eye',
         },
+        ariaLabel: {
+            control: { type: 'text' },
+        },
         onChange: action('change'),
     },
 } as Meta<RadioListProps>;
