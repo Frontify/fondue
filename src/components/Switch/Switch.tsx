@@ -102,7 +102,7 @@ export const Switch: FC<SwitchProps> = ({
                 : // eslint-disable-next-line unicorn/no-nested-ternary
                 on === SwitchState.Off
                 ? 'tw-left-0 tw-translate-x-px'
-                : 'tw-left-0 tw-right-0';
+                : 'tw-hidden';
 
         const disabledStateClasses = disabled
             ? 'tw-border-line-strong'

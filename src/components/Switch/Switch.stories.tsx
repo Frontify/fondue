@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Meta, StoryFn } from '@storybook/react';
-import React, { useEffect, useState } from 'react';
+import React, { MouseEvent, useEffect, useState } from 'react';
 import { IconExclamationMarkCircle } from '@foundation/Icon/Generated';
 import { Switch, SwitchProps, SwitchSize, SwitchState } from './Switch';
 import { TooltipIconTriggerStyle } from '@components/TooltipIcon';
@@ -25,6 +25,10 @@ export default {
         on: {
             options: Object.values(SwitchState),
             control: { type: 'radio' },
+        },
+        onChange: {
+            table: { disable: false },
+            action: 'Change',
         },
     },
     args: {
@@ -50,11 +54,15 @@ const Default: StoryFn<Props> = (args: Props) => {
         setOn(args.on);
     }, [args.on]);
 
-    const toggle = () => {
+    const toggle = (event: MouseEvent) => {
+        // console.log(on);
         setOn(on === SwitchState.On ? SwitchState.Off : SwitchState.On);
+        args.onChange && args.onChange(event);
     };
 
-    return <Switch {...args} onChange={toggle} on={args.on} />;
+    console.log(args.on);
+
+    return <Switch {...args} onChange={toggle} on={on} />;
 };
 
 export const Small: StoryFn<Props> = Default.bind({});
