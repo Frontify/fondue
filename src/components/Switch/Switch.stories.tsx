@@ -55,12 +55,9 @@ const Default: StoryFn<Props> = (args: Props) => {
     }, [args.on]);
 
     const toggle = (event: MouseEvent) => {
-        // console.log(on);
         setOn(on === SwitchState.On ? SwitchState.Off : SwitchState.On);
         args.onChange && args.onChange(event);
     };
-
-    console.log(args.on);
 
     return <Switch {...args} onChange={toggle} on={on} />;
 };

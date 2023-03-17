@@ -70,20 +70,24 @@ export const Switch: FC<SwitchProps> = ({
     const trackClasses = useMemo(() => {
         const baseClasses = 'tw-group tw-border tw-inline-flex tw-rounded-full tw-shrink-0 tw-p-0 tw-transition-colors';
 
-        const valueClasses =
+        const trueOrFalseValueClasses =
             on === SwitchState.On
                 ? 'tw-bg-text-weak tw-border-line-xx-strong hover:tw-bg-text'
-                : // eslint-disable-next-line unicorn/no-nested-ternary
-                on === SwitchState.Off
-                ? 'tw-bg-box-neutral tw-border-line-x-strong hover:tw-bg-box-neutral-hover'
-                : 'tw-bg-text-weak tw-flex tw-items-center tw-justify-center hover:tw-bg-text';
+                : 'tw-bg-box-neutral tw-border-line-x-strong hover:tw-bg-box-neutral-hover';
 
-        const disabledClasses = disabled
-            ? // eslint-disable-next-line unicorn/no-nested-ternary
-              on === SwitchState.Mixed
-                ? 'tw-flex tw-items-center tw-justify-center tw-bg-box-disabled tw-border-line tw-pointer-events-none'
-                : 'tw-bg-box-disabled tw-border-line tw-pointer-events-none'
+        const valueClasses =
+            on === SwitchState.Mixed
+                ? 'tw-bg-text-weak tw-flex tw-items-center tw-justify-center hover:tw-bg-text'
+                : trueOrFalseValueClasses;
+
+        const trueOrFalseDisabledClasses = disabled
+            ? 'tw-bg-box-disabled tw-border-line tw-pointer-events-none'
             : valueClasses;
+
+        const disabledClasses =
+            disabled && on === SwitchState.Mixed
+                ? 'tw-flex tw-items-center tw-justify-center tw-bg-box-disabled tw-border-line tw-pointer-events-none'
+                : trueOrFalseDisabledClasses;
 
         return merge([baseClasses, disabledClasses, trackSizeClasses[size], isFocusVisible && FOCUS_STYLE]);
     }, [on, disabled, size, isFocusVisible]);
@@ -92,13 +96,9 @@ export const Switch: FC<SwitchProps> = ({
     const dotWrapperClasses = useMemo(() => {
         const baseClasses = 'tw-relative tw-self-center tw-transition-transform';
 
-        const valueClasses =
-            on === SwitchState.On
-                ? dotSizeClasses[size].activeTranslation
-                : // eslint-disable-next-line unicorn/no-nested-ternary
-                on === SwitchState.Off
-                ? ''
-                : 'tw-bg-base';
+        const trueOrFalseValueClasses = on === SwitchState.On ? dotSizeClasses[size].activeTranslation : '';
+
+        const valueClasses = on === SwitchState.Mixed ? 'tw-bg-base' : trueOrFalseValueClasses;
 
         const disabledClasses = disabled && on === SwitchState.Mixed ? 'tw-bg-text-disabled' : valueClasses;
 
@@ -114,14 +114,11 @@ export const Switch: FC<SwitchProps> = ({
         const baseClasses =
             'tw-border tw-bg-base tw-rounded-full tw-absolute tw-block tw-self-center tw-transition-width tw-duration-75';
 
-        const valueClasses =
+        const trueOrFalseValueClasses =
             // eslint-disable-next-line unicorn/no-nested-ternary
-            on === SwitchState.On
-                ? 'tw-right-0  tw-translate-x-px'
-                : // eslint-disable-next-line unicorn/no-nested-ternary
-                on === SwitchState.Off
-                ? 'tw-left-0'
-                : 'tw-hidden';
+            on === SwitchState.On ? 'tw-right-0  tw-translate-x-px' : 'tw-left-0';
+
+        const valueClasses = on === SwitchState.Mixed ? 'tw-hidden' : trueOrFalseValueClasses;
 
         const disabledStateClasses = disabled
             ? 'tw-border-line-strong'

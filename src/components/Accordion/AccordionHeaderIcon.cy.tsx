@@ -8,7 +8,7 @@ import {
     FieldsetHeaderSize,
     FieldsetHeaderType,
 } from '@components/FieldsetHeader';
-import { SwitchState, SWITCH_ID } from '../Switch/Switch';
+import { SWITCH_ID, SwitchState } from '../Switch/Switch';
 
 const FIELDSET_SWITCH_CONTAINER_ID = `[data-test-id="${SWITCH_ID}"]`;
 const FIELDSET_ACCORDION_ICON_CONTAINER_ID = `[data-test-id="${ACCORDION_ICON_CONTAINER_ID}"]`;
