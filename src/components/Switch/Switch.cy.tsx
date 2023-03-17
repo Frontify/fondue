@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { FC, useState } from 'react';
-import { Switch, SwitchProps } from './Switch';
+import { Switch, SwitchProps, SwitchState } from './Switch';
 
-const Component: FC<SwitchProps> = ({ on = false, ...props }) => {
+const Component: FC<SwitchProps> = ({ on = SwitchState.Off, ...props }) => {
     const [active, setActive] = useState(on);
 
     return (
@@ -11,7 +11,7 @@ const Component: FC<SwitchProps> = ({ on = false, ...props }) => {
             {...props}
             on={active}
             onChange={(event) => {
-                setActive(!active);
+                setActive(active === SwitchState.Off ? SwitchState.On : SwitchState.Off);
                 props.onChange && props.onChange(event);
             }}
         />
