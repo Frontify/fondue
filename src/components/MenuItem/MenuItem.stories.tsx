@@ -9,14 +9,16 @@ import {
     MenuItemStyle,
     SelectionIndicatorIcon,
 } from '@components/MenuItem';
-import { Switch, SwitchSize } from '@components/Switch';
+import { Switch, SwitchSize, SwitchState } from '@components/Switch';
 import { IconMusicNote } from '@foundation/Icon/Generated';
 
 const SwitchComponent = () => {
     const [switchValue, setSwitchValue] = useState<boolean>(false);
     const toggleSwitch = () => setSwitchValue(!switchValue);
 
-    return <Switch size={SwitchSize.Small} on={switchValue} onChange={toggleSwitch} />;
+    return (
+        <Switch size={SwitchSize.Small} on={switchValue ? SwitchState.On : SwitchState.Off} onChange={toggleSwitch} />
+    );
 };
 
 export default {

@@ -10,7 +10,7 @@ import { FieldsetHeaderType } from '@components/FieldsetHeader/FieldsetHeader';
 import { FormControl } from '@components/FormControl/FormControl';
 import { LinkChooser } from '@components/LinkChooser/LinkChooser.stories';
 import { Slider } from '@components/Slider/Slider';
-import { Switch, SwitchSize } from '@components/Switch/Switch';
+import { Switch, SwitchSize, SwitchState } from '@components/Switch/Switch';
 import { TextInput, TextInputType } from '@components/TextInput/TextInput';
 import {
     IconIcon,
@@ -459,7 +459,7 @@ export const WithAdvancedFormControls: StoryFn<AccordionProps> = () => {
                     extra={
                         <Switch
                             label="advanced"
-                            on={showAdvancedSpacing}
+                            on={showAdvancedSpacing ? SwitchState.On : SwitchState.Off}
                             size={SwitchSize.Small}
                             onChange={() => setShowAdvancedSpacing(!showAdvancedSpacing)}
                         />

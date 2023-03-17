@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Switch, SwitchSize } from '@components/Switch/Switch';
+import { Switch, SwitchSize, SwitchState } from '@components/Switch/Switch';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { merge } from '@utilities/merge';
 import React, { FC, ReactElement, ReactNode, cloneElement, isValidElement } from 'react';
@@ -72,7 +72,12 @@ export const renderFieldsetHeaderIconType = (
         case FieldsetHeaderType.Switch:
             return (
                 <div data-test-id="fieldset-icon-wrapper">
-                    <Switch {...props} size={sizeMap[size].switch} on={active} disabled={disabled} />
+                    <Switch
+                        {...props}
+                        size={sizeMap[size].switch}
+                        on={active ? SwitchState.On : SwitchState.Off}
+                        disabled={disabled}
+                    />
                 </div>
             );
         case FieldsetHeaderType.Accordion:
