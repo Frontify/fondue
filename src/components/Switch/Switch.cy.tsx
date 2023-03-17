@@ -30,10 +30,18 @@ describe('Switch Component', () => {
 
         cy.get(SWITCH_ID).as('Switch');
         cy.get('@Switch').invoke('attr', 'name').should('eq', 'switch-test-value');
-        cy.get('@Switch').should('have.value', 'false');
+        cy.get('@Switch').should('have.value', SwitchState.Off);
 
         cy.get('@Switch').click();
-        cy.get('@Switch').should('have.value', 'true');
+        cy.get('@Switch').should('have.value', SwitchState.On);
+    });
+
+    it('should support indeterminate value', () => {
+        cy.mount(<Component name="switch-test-value" on={SwitchState.Mixed} />);
+
+        cy.get(SWITCH_ID).as('Switch');
+        cy.get('@Switch').invoke('attr', 'name').should('eq', 'switch-test-value');
+        cy.get('@Switch').should('have.value', SwitchState.Mixed);
     });
 
     it('should react on click', () => {
