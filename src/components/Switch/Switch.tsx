@@ -14,6 +14,12 @@ export enum SwitchSize {
     Medium = 'Medium',
 }
 
+export enum SwitchState {
+    On = 'On',
+    Off = 'Off',
+    Mixed = 'Mixed',
+}
+
 const trackSizeClasses: Record<SwitchSize, string> = {
     [SwitchSize.Small]: 'tw-w-[22px] tw-h-3',
     [SwitchSize.Medium]: 'tw-w-[30px] tw-h-4',
@@ -32,11 +38,7 @@ const dotSizeClasses: Record<SwitchSize, Record<'dimensions' | 'activeWidth' | '
     },
 };
 
-export enum SwitchState {
-    On = 'On',
-    Off = 'Off',
-    Mixed = 'Mixed',
-}
+const indeterminateLineClasses = 'tw-w-2 tw-h-[1px]';
 
 export type SwitchProps = {
     id?: string;
@@ -57,7 +59,7 @@ export const Switch: FC<SwitchProps> = ({
     disabled,
     onChange,
     size = SwitchSize.Medium,
-    on = false,
+    on = SwitchState.Off,
     hug = false,
     tooltip,
 }) => {
@@ -74,9 +76,14 @@ export const Switch: FC<SwitchProps> = ({
                 : // eslint-disable-next-line unicorn/no-nested-ternary
                 on === SwitchState.Off
                 ? 'tw-bg-box-neutral tw-border-line-x-strong hover:tw-bg-box-neutral-hover'
-                : '';
+                : 'tw-bg-text-weak tw-flex tw-items-center tw-justify-center hover:tw-bg-text';
 
-        const disabledClasses = disabled ? 'tw-bg-box-disabled tw-border-line tw-pointer-events-none' : valueClasses;
+        const disabledClasses = disabled
+            ? // eslint-disable-next-line unicorn/no-nested-ternary
+              on === SwitchState.Mixed
+                ? 'tw-flex tw-items-center tw-justify-center tw-bg-box-disabled tw-border-line tw-pointer-events-none'
+                : 'tw-bg-box-disabled tw-border-line tw-pointer-events-none'
+            : valueClasses;
 
         return merge([baseClasses, disabledClasses, trackSizeClasses[size], isFocusVisible && FOCUS_STYLE]);
     }, [on, disabled, size, isFocusVisible]);
@@ -85,9 +92,21 @@ export const Switch: FC<SwitchProps> = ({
     const dotWrapperClasses = useMemo(() => {
         const baseClasses = 'tw-relative tw-self-center tw-transition-transform';
 
-        const valueClasses = on === SwitchState.On && dotSizeClasses[size].activeTranslation;
+        const valueClasses =
+            on === SwitchState.On
+                ? dotSizeClasses[size].activeTranslation
+                : // eslint-disable-next-line unicorn/no-nested-ternary
+                on === SwitchState.Off
+                ? ''
+                : 'tw-bg-base';
 
-        return merge([baseClasses, dotSizeClasses[size].dimensions, valueClasses]);
+        const disabledClasses = disabled && on === SwitchState.Mixed ? 'tw-bg-text-disabled' : valueClasses;
+
+        return merge([
+            baseClasses,
+            on === SwitchState.Mixed ? indeterminateLineClasses : dotSizeClasses[size].dimensions,
+            disabledClasses,
+        ]);
     }, [on, size]);
 
     // Responsible for dot styling and width animation on hover
@@ -98,17 +117,22 @@ export const Switch: FC<SwitchProps> = ({
         const valueClasses =
             // eslint-disable-next-line unicorn/no-nested-ternary
             on === SwitchState.On
-                ? 'tw-right-0'
+                ? 'tw-right-0  tw-translate-x-px'
                 : // eslint-disable-next-line unicorn/no-nested-ternary
                 on === SwitchState.Off
-                ? 'tw-left-0 tw-translate-x-px'
+                ? 'tw-left-0'
                 : 'tw-hidden';
 
         const disabledStateClasses = disabled
             ? 'tw-border-line-strong'
             : merge(['tw-bg-base tw-border-line-xx-strong', dotSizeClasses[size].activeWidth]);
 
-        return merge([baseClasses, dotSizeClasses[size].dimensions, valueClasses, disabledStateClasses]);
+        return merge([
+            baseClasses,
+            on === SwitchState.Mixed ? indeterminateLineClasses : dotSizeClasses[size].dimensions,
+            valueClasses,
+            disabledStateClasses,
+        ]);
     }, [on, disabled, size]);
 
     // Wraps the InputLabel instance and switch element
