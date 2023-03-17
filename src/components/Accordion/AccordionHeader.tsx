@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement, cloneElement, isValidElement } from 'react';
+import React, { ReactElement, cloneElement, isValidElement, useState } from 'react';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { IconProps } from '@foundation/Icon/IconProps';
 import { merge } from '@utilities/merge';
@@ -15,15 +15,16 @@ export const AccordionHeader = ({
     size = AccordionHeaderIconSize.Medium,
     bold = true,
     type,
-    as: Heading = 'span',
 }: AccordionHeaderProps) => {
+    const [headingRef, setHeadingRef] = useState<HTMLSpanElement | null>(null);
     const icon = <AccordionHeaderIcon isOpen={isOpen} disabled={disabled} size={size} type={type} />;
+
     return (
         <span data-test-id="accordion-header" className="tw-block tw-px-8 tw-py-6">
             <span
                 data-test-id="fieldset-header"
                 role="navigation"
-                aria-label={`${children}`}
+                aria-label={`${headingRef?.innerText || ''}`}
                 className={merge([
                     'tw-flex tw-items-center tw-gap-x-1.5 tw-w-full tw-flex-row',
                     !disabled && isOpen ? 'tw-text-black' : 'tw-text-black-80',
@@ -37,12 +38,13 @@ export const AccordionHeader = ({
                         })}
                     </span>
                 )}
-                <Heading
+                <span
+                    ref={setHeadingRef}
                     data-test-id="accordion-header-text"
                     className={merge(['tw-text-left tw-text-m', bold ? 'tw-font-medium' : 'tw-font-normal'])}
                 >
                     {children}
-                </Heading>
+                </span>
                 {icon && (
                     <span data-test-id="header-icon-container" className="tw-ml-auto tw-shrink-0">
                         {icon}
