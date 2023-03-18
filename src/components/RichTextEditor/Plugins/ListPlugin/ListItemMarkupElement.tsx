@@ -1,28 +1,27 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
-import { ELEMENT_LI, PlateRenderElementProps, TDescendant } from '@udecode/plate';
-import { merge } from '@utilities/merge';
+import { DesignTokens } from '@components/RichTextEditor/types';
+import { ELEMENT_LI, PlateRenderElementProps, TDescendant, TElement } from '@udecode/plate';
 import React from 'react';
 import { MarkupElement } from '../MarkupElement';
 import { getTextStyle } from './ListItemContentMarkupElement';
-import './OrderedListPlugin/styles.css';
 
-export const ListItemMarkupElementNode = ({ attributes, children, element }: PlateRenderElementProps) => {
-    const { designTokens } = useRichTextEditorContext();
+export const LI_CLASSNAMES = '[&>]:tw-flex [&>]:tw-justify-end [&>]:tw-w-[1.2em] !tw-no-underline';
+export const getLiStyles = (designTokens: DesignTokens, element: TElement) => {
     const licElement = (element.children[0]?.children as TDescendant[])?.[0];
     const tokenStyles = designTokens[getTextStyle(licElement)];
 
+    return {
+        ...tokenStyles,
+        counterIncrement: 'count',
+    };
+};
+export const ListItemMarkupElementNode = ({ attributes, children, element }: PlateRenderElementProps) => {
+    const { designTokens } = useRichTextEditorContext();
+
     return (
-        <li
-            style={tokenStyles}
-            {...attributes}
-            className={merge([
-                tokenStyles?.textTransform === 'uppercase' && 'marker:tw-uppercase',
-                '!tw-no-underline',
-                'listElement',
-            ])}
-        >
+        <li style={getLiStyles(designTokens, element)} {...attributes} className={LI_CLASSNAMES}>
             {children}
         </li>
     );
