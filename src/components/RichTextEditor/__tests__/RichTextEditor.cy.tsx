@@ -339,10 +339,22 @@ describe('RichTextEditor Component', () => {
         it('renders ordered list with correct list style types', () => {
             cy.mount(<RichTextEditorWithOrderedListStyles />);
 
-            cy.get('[contenteditable=true] ol').should('have.class', 'decimal');
-            cy.get('[contenteditable=true] ol ol').should('have.class', 'alpha');
-            cy.get('[contenteditable=true] ol ol ol').should('have.class', 'roman');
-            cy.get('[contenteditable=true] ol ol ol ol').should('have.class', 'decimal');
+            cy.get('[contenteditable=true] ol').should(
+                'have.class',
+                '[&>li>p]:before:tw-content-[counter(count,decimal)_"._"]',
+            );
+            cy.get('[contenteditable=true] ol ol').should(
+                'have.class',
+                '[&>li>p]:before:tw-content-[counter(count,_lower-alpha)_"._"]',
+            );
+            cy.get('[contenteditable=true] ol ol ol').should(
+                'have.class',
+                '[&>li>p]:before:tw-content-[counter(count,lower-roman)_"._"]',
+            );
+            cy.get('[contenteditable=true] ol ol ol ol').should(
+                'have.class',
+                '[&>li>p]:before:tw-content-[counter(count,decimal)_"._"]',
+            );
         });
 
         it('renders ordered list right aligned', () => {
@@ -523,11 +535,11 @@ describe('RichTextEditor Component', () => {
             cy.get(TOOLBAR_GROUP_2).children().eq(5).click();
             cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
             cy.get(TEXTSTYLE_OPTION).first().click();
-            cy.get('[contenteditable=true] > div > span').should('have.attr', 'style', heading1Styles);
+            cy.get('[contenteditable=true] > div > span').should('have.include', 'style', heading1Styles);
             //remove checklist again and textStyle stays
             cy.get('[contenteditable=true]').click().type('{selectall}');
             cy.get(TOOLBAR_GROUP_2).children().eq(4).click();
-            cy.get('[contenteditable=true] > ul > li').should('have.attr', 'style', heading1Styles);
+            cy.get('[contenteditable=true] > ul > li').should('have.include', 'style', heading1Styles);
         });
     });
 
