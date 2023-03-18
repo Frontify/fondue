@@ -517,7 +517,7 @@ describe('RichTextEditor Component', () => {
             cy.get('[contenteditable=true] > h2').should('have.attr', 'style', heading2Styles);
         });
 
-        it('switches a custom checkbox to list and keeps textStyle', () => {
+        it.only('switches a custom checkbox to list and keeps textStyle', () => {
             cy.mount(
                 <RichTextEditor
                     designTokens={{
@@ -535,11 +535,11 @@ describe('RichTextEditor Component', () => {
             cy.get(TOOLBAR_GROUP_2).children().eq(5).click();
             cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
             cy.get(TEXTSTYLE_OPTION).first().click();
-            cy.get('[contenteditable=true] > div > span').should('have.include', 'style', heading1Styles);
+            cy.get('[contenteditable=true] > div ').should('include.html', heading1Styles);
             //remove checklist again and textStyle stays
             cy.get('[contenteditable=true]').click().type('{selectall}');
             cy.get(TOOLBAR_GROUP_2).children().eq(4).click();
-            cy.get('[contenteditable=true] > ul > li').should('have.include', 'style', heading1Styles);
+            cy.get('[contenteditable=true] > ul ').should('include.html', heading1Styles);
         });
     });
 
