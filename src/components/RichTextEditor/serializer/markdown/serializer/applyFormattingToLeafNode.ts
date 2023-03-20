@@ -2,6 +2,47 @@
 
 import { LeafType } from '../types';
 
+const reverseStr = (string: string) => string.split('').reverse().join('');
+
+// This function handles the case of a string like this: "   foo   "
+// Where it would be invalid markdown to generate this: "**   foo   **"
+// We instead, want to trim the whitespace out, apply formatting, and then
+// bring the whitespace back. So our returned string looks like this: "   **foo**   "
+const retainWhitespaceAndFormat = (string: string, format: string) => {
+    // we keep this for a comparison later
+    const frozenString = string.trim();
+
+    // children will be mutated
+    const children = frozenString;
+
+    // We reverse the right side formatting, to properly handle bold/italic and strikeThrough
+    // formats, so we can create ~~***FooBar***~~
+    const fullFormat = `${format}${children}${reverseStr(format)}`;
+
+    // This conditions accounts for no whitespace in our string
+    // if we don't have any, we can return early.
+    if (children.length === string.length) {
+        return fullFormat;
+    }
+
+    // if we do have whitespace, let's add our formatting around our trimmed string
+    // We reverse the right side formatting, to properly handle bold/italic and strikeThrough
+    // formats, so we can create ~~***FooBar***~~
+    const formattedString = format + children + reverseStr(format);
+
+    // and replace the non-whitespace content of the string
+    return string.replace(frozenString, formattedString);
+};
+
+const replaceLineBreak = (children: string, chunk: LeafType) => {
+    const lineBreak = '\n';
+    if ((chunk.strikethrough || chunk.bold || chunk.italic) && new RegExp(lineBreak, 'g').test(children)) {
+        children = children.replaceAll(lineBreak, '\\\n');
+    }
+
+    return children;
+};
+
 export const applyFormattingToLeafNode = (children: string, chunk: LeafType) => {
     // Never allow decorating break tags with rich text formatting,
     // this can malform generated markdown
@@ -32,43 +73,7 @@ export const applyFormattingToLeafNode = (children: string, chunk: LeafType) => 
         }
     }
 
-    // check for line break in basic markdown \n
-    const lineBreak = '\n';
-    if ((chunk.strikethrough || chunk.bold || chunk.italic) && new RegExp(lineBreak, 'g').test(children)) {
-        children = children.replaceAll(lineBreak, '\\\n');
-    }
+    children = replaceLineBreak(children, chunk);
 
     return children;
 };
-
-const reverseStr = (string: string) => string.split('').reverse().join('');
-
-// This function handles the case of a string like this: "   foo   "
-// Where it would be invalid markdown to generate this: "**   foo   **"
-// We instead, want to trim the whitespace out, apply formatting, and then
-// bring the whitespace back. So our returned string looks like this: "   **foo**   "
-function retainWhitespaceAndFormat(string: string, format: string) {
-    // we keep this for a comparison later
-    const frozenString = string.trim();
-
-    // children will be mutated
-    const children = frozenString;
-
-    // We reverse the right side formatting, to properly handle bold/italic and strikeThrough
-    // formats, so we can create ~~***FooBar***~~
-    const fullFormat = `${format}${children}${reverseStr(format)}`;
-
-    // This conditions accounts for no whitespace in our string
-    // if we don't have any, we can return early.
-    if (children.length === string.length) {
-        return fullFormat;
-    }
-
-    // if we do have whitespace, let's add our formatting around our trimmed string
-    // We reverse the right side formatting, to properly handle bold/italic and strikeThrough
-    // formats, so we can create ~~***FooBar***~~
-    const formattedString = format + children + reverseStr(format);
-
-    // and replace the non-whitespace content of the string
-    return string.replace(frozenString, formattedString);
-}
