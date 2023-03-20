@@ -34,7 +34,7 @@ export const ButtonToolbarButton = ({ id, type, ...props }: LinkToolbarButtonPro
         <ToolbarButton
             tooltip={getTooltip(
                 isEnabled
-                    ? `Button\n${getHotkeyByPlatform('Shift+Ctrl+k')}`
+                    ? `Button\n${getHotkeyByPlatform('Ctrl+Shift+K')}`
                     : 'Buttons can only be set for a single text block.',
             )}
             classNames={getButtonClassNames(isEnabled)}
