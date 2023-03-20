@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { LeafType } from '../../types';
+import { BlockType, LeafType } from '../../types';
 
 const createElement = <T>(type: string, children: Array<T>) => {
     return {
@@ -11,6 +11,18 @@ const createElement = <T>(type: string, children: Array<T>) => {
 
 const createLeafElement = (children: LeafType): LeafType => {
     return children;
+};
+
+export const createLink = (url: string, text: string): BlockType => {
+    return {
+        type: 'a',
+        url,
+        children: [
+            {
+                text,
+            },
+        ],
+    };
 };
 
 export const createText = (text: string) => createLeafElement({ text });
