@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 export const imageMarkdown =
-    'This is ![image](https://github.githubassets.com/images/modules/logos_page/Octocat.png).\n';
+    'This is ![image](https://github.githubassets.com/images/modules/logos_page/Octocat.png).\n\n';
 
 export const imageTree = [
     {

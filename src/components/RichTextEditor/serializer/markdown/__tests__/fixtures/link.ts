@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export const linkMarkdown = 'This is [link to frontify.com](https://www.frontify.com/).\n';
+export const linkMarkdown = 'This is [link to frontify.com](https://www.frontify.com/).\n\n';
 
 export const linkTree = [
     {

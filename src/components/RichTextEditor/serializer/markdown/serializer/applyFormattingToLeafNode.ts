@@ -32,6 +32,12 @@ export const applyFormattingToLeafNode = (children: string, chunk: LeafType) => 
         }
     }
 
+    // check for line break in basic markdown \n
+    const lineBreak = '\n';
+    if ((chunk.strikethrough || chunk.bold || chunk.italic) && new RegExp(lineBreak, 'g').test(children)) {
+        children = children.replaceAll(lineBreak, '\\\n');
+    }
+
     return children;
 };
 
