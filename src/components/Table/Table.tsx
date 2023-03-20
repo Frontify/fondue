@@ -184,7 +184,7 @@ export const Table = ({
                                     );
                                 })}
                                 {row?.actionElements && (
-                                    <td className="tw-sticky tw-right-0" data-test-id="table-actions">
+                                    <td className="tw-sticky tw-right-0 tw-z-10" data-test-id="table-actions">
                                         <div className="tw-float-right hover:tw-bg-gradient-to-r hover:tw-from-transparent hover:tw-to-black-0 dark:hover:tw-to-black-95 tw-py-4 tw-pr-8 tw-pl-4">
                                             {row.actionElements}
                                         </div>
