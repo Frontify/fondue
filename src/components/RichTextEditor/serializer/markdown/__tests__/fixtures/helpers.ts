@@ -17,6 +17,7 @@ export const createLink = (url: string, text: string): BlockType => {
     return {
         type: 'a',
         url,
+        target: '_blank',
         children: [
             {
                 text,

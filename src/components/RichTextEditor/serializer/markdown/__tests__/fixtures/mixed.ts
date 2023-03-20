@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { createLink } from './helpers';
 import { orderedListTree } from './orderedList';
 import { unorderedListTree } from './unorderedList';
 
@@ -121,15 +122,7 @@ export const mixedTree = [
             {
                 text: '\nThis is ',
             },
-            {
-                type: 'a',
-                url: 'https://www.frontify.com/',
-                children: [
-                    {
-                        text: 'link to frontify.com',
-                    },
-                ],
-            },
+            createLink('https://www.frontify.com/', 'link to frontify.com'),
             {
                 text: '.\nI am normal Paragraph',
             },
