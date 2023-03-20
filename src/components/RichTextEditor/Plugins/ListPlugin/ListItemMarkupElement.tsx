@@ -3,13 +3,13 @@
 import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
 import { DesignTokens } from '@components/RichTextEditor/types';
 import { ELEMENT_LI, PlateRenderElementProps, TDescendant, TElement } from '@udecode/plate';
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import { MarkupElement } from '../MarkupElement';
 import { getTextStyle } from './ListItemContentMarkupElement';
 
 export const LI_CLASSNAMES =
     '[&>p]:before:tw-flex [&>p]:before:tw-justify-end [&>p]:before:tw-w-[1.2em] !tw-no-underline';
-export const getLiStyles = (designTokens: DesignTokens, element: TElement) => {
+export const getLiStyles = (designTokens: DesignTokens, element: TElement): CSSProperties => {
     const licElement = (element.children[0]?.children as TDescendant[])?.[0];
     const tokenStyles = designTokens[getTextStyle(licElement)];
 
