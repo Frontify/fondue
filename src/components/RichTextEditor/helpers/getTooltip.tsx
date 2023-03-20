@@ -12,10 +12,10 @@ export const getTooltip: GetToolip = (content, placement) => {
             'tw-bg-text tw-border tw-border-line-strong tw-text-box-neutral-strong-inverse tw-py-2 tw-px-3 -tw-mb-1 tw-rounded tw-shadow-lg tw-text-xs',
         content: contentItems.map((item, index) => {
             return (
-                <div key={index}>
+                <span key={item}>
                     {contentItems.length > 1 && index === 0 ? <strong>{item}</strong> : item}
                     <br />
-                </div>
+                </span>
             );
         }),
         placement,
