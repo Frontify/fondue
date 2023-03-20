@@ -7,7 +7,7 @@ import { FocusScope, useFocusRing } from '@react-aria/focus';
 import { OverlayContainer, useOverlayTrigger } from '@react-aria/overlays';
 import { mergeProps } from '@react-aria/utils';
 import { useOverlayTriggerState } from '@react-stately/overlays';
-import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { FOCUS_STYLE } from '@utilities/focus';
 import { merge } from '@utilities/merge';
 import React, {
     FC,

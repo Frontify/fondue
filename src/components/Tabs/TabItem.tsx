@@ -3,7 +3,7 @@
 import React, { FC, ReactElement, ReactNode, useRef } from 'react';
 import { BadgeProps } from '@components/Badge';
 import { useFocusRing } from '@react-aria/focus';
-import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { FOCUS_STYLE } from '@utilities/focus';
 import { merge } from '@utilities/merge';
 import { checkIfContainInteractiveElements } from '@utilities/elements';
 

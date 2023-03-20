@@ -6,7 +6,7 @@ export * from './compose';
 export * from './debounce';
 export * from './dnd';
 export * from './elements';
-export * from './focusStyle';
+export * from './focus';
 export * from './generateRandomId';
 export * from './merge';
 export * from './useDebounce';

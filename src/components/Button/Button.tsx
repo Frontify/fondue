@@ -22,7 +22,7 @@ import {
     ButtonStyleClasses,
     IconSpacingClasses,
 } from './ButtonClasses';
-import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
+import { FOCUS_VISIBLE_STYLE } from '@utilities/focus';
 import { buttonIconSizeMap, buttonTypeMap } from '@components/Button/mappings';
 import { useFocusRing } from '@react-aria/focus';
 

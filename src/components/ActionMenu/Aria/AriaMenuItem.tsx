@@ -7,7 +7,7 @@ import { useMenuItem } from '@react-aria/menu';
 import { mergeProps } from '@react-aria/utils';
 import { TreeState } from '@react-stately/tree';
 import { Node } from '@react-types/shared';
-import { FOCUS_STYLE_INSET } from '@utilities/focusStyle';
+import { FOCUS_STYLE_INSET } from '@utilities/focus';
 import { merge } from '@utilities/merge';
 import React, { FC, ReactElement, useEffect, useRef, useState } from 'react';
 import { MenuItemType } from '@components/Dropdown';

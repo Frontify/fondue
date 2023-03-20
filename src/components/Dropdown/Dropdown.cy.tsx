@@ -3,7 +3,7 @@
 import { MenuBlock } from '@components/Dropdown/SelectMenu/SelectMenu';
 import { MenuItemContentSize } from '@components/MenuItem';
 import { IconIcon } from '@foundation/Icon/Generated';
-import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { FOCUS_STYLE } from '@utilities/focus';
 import { Validation } from '@utilities/validation';
 import React, { FC, ReactElement, useState } from 'react';
 import { Dropdown } from './Dropdown';

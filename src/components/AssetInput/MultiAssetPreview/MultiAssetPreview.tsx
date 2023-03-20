@@ -5,7 +5,7 @@ import { IconCaretRight } from '@foundation/Icon/Generated';
 import { useButton } from '@react-aria/button';
 import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
-import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { FOCUS_STYLE } from '@utilities/focus';
 import { merge } from '@utilities/merge';
 import React, { FC, useRef } from 'react';
 import { AssetType } from '../AssetInput';

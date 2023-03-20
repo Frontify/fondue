@@ -18,7 +18,7 @@ import { IconDotsHorizontal } from '@foundation/Icon/Generated';
 import { Badge } from '@components/Badge';
 import { motion } from 'framer-motion';
 import { useFocusRing } from '@react-aria/focus';
-import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { FOCUS_STYLE } from '@utilities/focus';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 
 export enum TabsPaddingX {

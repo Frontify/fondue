@@ -8,7 +8,7 @@ import { useCheckbox } from '@react-aria/checkbox';
 import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
 import { useToggleState } from '@react-stately/toggle';
-import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { FOCUS_STYLE } from '@utilities/focus';
 import { merge } from '@utilities/merge';
 import { useForwardedRef } from '@utilities/useForwardedRef';
 import React, { ForwardRefRenderFunction, HTMLAttributes, forwardRef } from 'react';

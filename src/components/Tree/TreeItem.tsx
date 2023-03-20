@@ -9,7 +9,7 @@ import { DraggableItem, DropZonePosition } from '@utilities/dnd';
 import { DropZone } from '@components/DropZone';
 import type { TreeItemProps } from '@components/Tree/types';
 import { useTreeContext } from '@components/Tree/TreeContext';
-import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
+import { FOCUS_VISIBLE_STYLE } from '@utilities/focus';
 
 import { getAcceptTypes, getItemPositionInParent, getNextItemToFocus, getPreviousItemToFocus } from './helpers';
 import { cloneThroughFragments, flattenChildren, isDescendant } from './utils';

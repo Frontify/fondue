@@ -7,7 +7,7 @@ import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle';
 import { Validation, validationClassMap } from '@utilities/validation';
 import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
-import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { FOCUS_STYLE } from '@utilities/focus';
 import { merge } from '@utilities/merge';
 import { useActor } from '@xstate/react';
 import React, { FC, MouseEvent, forwardRef } from 'react';

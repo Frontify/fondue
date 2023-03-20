@@ -6,7 +6,7 @@ import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
 import { Item as StatelyItem } from '@react-stately/collections';
 import { useTreeState } from '@react-stately/tree';
-import { FOCUS_STYLE_INSET } from '@utilities/focusStyle';
+import { FOCUS_STYLE_INSET } from '@utilities/focus';
 import { merge } from '@utilities/merge';
 import React, { Children, FC, Key, KeyboardEvent, ReactElement, isValidElement, useEffect, useRef } from 'react';
 import { AccordionHeader } from './AccordionHeader';

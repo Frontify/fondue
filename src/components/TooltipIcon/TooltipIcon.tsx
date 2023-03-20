@@ -3,7 +3,7 @@
 import React, { FC, ReactElement, cloneElement } from 'react';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { Tooltip, TooltipProps } from '@components/Tooltip/Tooltip';
-import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
+import { FOCUS_VISIBLE_STYLE } from '@utilities/focus';
 import { merge } from '@utilities/merge';
 import { IconProps } from '@foundation/Icon/IconProps';
 import { IconQuestionMarkCircle } from '@foundation/Icon/Generated';

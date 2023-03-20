@@ -5,7 +5,7 @@ import { useOption } from '@react-aria/listbox';
 import { mergeProps } from '@react-aria/utils';
 import { ListState } from '@react-stately/list';
 import { Node } from '@react-types/shared';
-import { FOCUS_STYLE_INSET } from '@utilities/focusStyle';
+import { FOCUS_STYLE_INSET } from '@utilities/focus';
 import { merge } from '@utilities/merge';
 import React, { FC, useRef } from 'react';
 import { MenuItem } from '../../MenuItem';

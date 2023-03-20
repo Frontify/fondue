@@ -12,7 +12,7 @@ import React, {
     useState,
 } from 'react';
 import { EditableTextHelper } from '@components/EditableText/lib/helper';
-import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
+import { FOCUS_VISIBLE_STYLE } from '@utilities/focus';
 import { merge } from '@utilities/merge';
 
 export enum EditableMode {

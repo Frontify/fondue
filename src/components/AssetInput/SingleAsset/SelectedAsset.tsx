@@ -10,7 +10,7 @@ import { useMenuTrigger } from '@react-aria/menu';
 import { DismissButton, useOverlay } from '@react-aria/overlays';
 import { mergeProps } from '@react-aria/utils';
 import { useMenuTriggerState } from '@react-stately/menu';
-import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { FOCUS_STYLE } from '@utilities/focus';
 import { merge } from '@utilities/merge';
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { FC, useEffect, useRef, useState } from 'react';

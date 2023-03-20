@@ -3,7 +3,7 @@
 import React, { FC, MouseEvent, useMemo } from 'react';
 import { merge } from '@utilities/merge';
 import { useFocusRing } from '@react-aria/focus';
-import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { FOCUS_STYLE } from '@utilities/focus';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { InputLabel, InputLabelTooltipProps } from '@components/InputLabel/InputLabel';
 

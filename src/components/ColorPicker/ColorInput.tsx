@@ -3,7 +3,7 @@
 import { TextInputBaseProps, TextInputType } from '@components/TextInput/TextInput';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { useFocusRing } from '@react-aria/focus';
-import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { FOCUS_STYLE } from '@utilities/focus';
 import { merge } from '@utilities/merge';
 import React, { FC, KeyboardEvent, useRef } from 'react';
 

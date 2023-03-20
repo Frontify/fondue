@@ -4,7 +4,7 @@ import { useBreadcrumbItem } from '@react-aria/breadcrumbs';
 import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
 import { getItemElementType } from '@utilities/elements';
-import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { FOCUS_STYLE } from '@utilities/focus';
 import { merge } from '@utilities/merge';
 import React, { FC, RefObject, useRef } from 'react';
 import { Breadcrumb } from './Breadcrumbs';

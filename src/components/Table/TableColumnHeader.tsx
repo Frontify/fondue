@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Checkbox, CheckboxState } from '@components/Checkbox/Checkbox';
 import { IconSize } from '@foundation/Icon/IconSize';
-import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
+import { FOCUS_VISIBLE_STYLE } from '@utilities/focus';
 import { merge } from '@utilities/merge';
 import React, { Key, cloneElement, useEffect, useRef, useState } from 'react';
 import { IconArrowBidirectional, IconArrowDown, IconArrowUp } from '@foundation/Icon/Generated';

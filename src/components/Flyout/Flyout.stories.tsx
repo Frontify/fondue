@@ -10,7 +10,7 @@ import { TextInput } from '@components/TextInput/TextInput';
 import { chain } from '@react-aria/utils';
 import { action } from '@storybook/addon-actions';
 import { Meta, StoryFn } from '@storybook/react';
-import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { FOCUS_STYLE } from '@utilities/focus';
 import { merge } from '@utilities/merge';
 import React, { MutableRefObject, useState } from 'react';
 import { FLYOUT_DIVIDER_COLOR, FLYOUT_DIVIDER_HEIGHT, Flyout, FlyoutPlacement, FlyoutProps } from './Flyout';

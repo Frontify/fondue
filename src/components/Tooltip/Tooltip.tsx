@@ -3,7 +3,7 @@
 import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { useLink } from '@react-aria/link';
-import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
+import { FOCUS_VISIBLE_STYLE } from '@utilities/focus';
 import { merge } from '@utilities/merge';
 import React, {
     FocusEvent,

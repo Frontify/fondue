@@ -2,7 +2,7 @@
 
 import { IconCross } from '@foundation/Icon/Generated';
 import { IconSize } from '@foundation/Icon/IconSize';
-import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
+import { FOCUS_VISIBLE_STYLE } from '@utilities/focus';
 import { merge } from '@utilities/merge';
 import React, { FC, ReactNode, cloneElement } from 'react';
 import { BadgeStatusIcon } from './BadgeStatusIcon';

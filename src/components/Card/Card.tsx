@@ -6,7 +6,7 @@ import React, { FC, ReactNode, useRef } from 'react';
 import { PressEvent } from '@react-types/shared';
 import { mergeProps } from '@react-aria/utils';
 import { useFocusRing } from '@react-aria/focus';
-import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { FOCUS_STYLE } from '@utilities/focus';
 
 export type CardProps = {
     children: ReactNode | ReactNode[];

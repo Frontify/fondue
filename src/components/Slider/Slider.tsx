@@ -7,7 +7,7 @@ import { setInteractionModality } from '@react-aria/interactions';
 import { useRadio, useRadioGroup } from '@react-aria/radio';
 import { VisuallyHidden } from '@react-aria/visually-hidden';
 import { RadioGroupState, useRadioGroupState } from '@react-stately/radio';
-import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { FOCUS_STYLE } from '@utilities/focus';
 import { merge } from '@utilities/merge';
 import { motion } from 'framer-motion';
 import React, { FC, ReactElement, useMemo, useRef } from 'react';

@@ -3,7 +3,7 @@
 import React, { MouseEvent, useRef, useState } from 'react';
 import { IconDotsHorizontal } from '@foundation/Icon/Generated';
 import { merge } from '@utilities/merge';
-import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
+import { FOCUS_VISIBLE_STYLE } from '@utilities/focus';
 import { Menu } from '@components/Menu';
 import { MenuItem } from '@components/MenuItem';
 

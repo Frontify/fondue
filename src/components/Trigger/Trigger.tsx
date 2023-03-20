@@ -3,7 +3,7 @@
 import { IconCaretDown, IconCross, IconExclamationMarkTriangle, IconTrashBin } from '@foundation/Icon/Generated';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { useFocusRing } from '@react-aria/focus';
-import { FOCUS_STYLE, FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
+import { FOCUS_STYLE, FOCUS_VISIBLE_STYLE } from '@utilities/focus';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
 import React, { FC, HTMLAttributes } from 'react';

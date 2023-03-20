@@ -2,7 +2,7 @@
 
 import { useFocusRing } from '@react-aria/focus';
 import { useId } from '@react-aria/utils';
-import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { FOCUS_STYLE } from '@utilities/focus';
 import React from 'react';
 import { merge } from '@utilities/merge';
 import { CollectionItemProps, ItemDragState } from './types';
