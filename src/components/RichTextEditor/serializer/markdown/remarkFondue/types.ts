@@ -6,11 +6,15 @@ export type NodeChild = {
     type: string;
     value?: string;
     text?: string;
-    target: TargetType;
-    children: NodeChild[];
+    target?: TargetType;
+    children?: NodeChild[];
 };
 
-export type TreeNode = NodeChild;
+export type TreeNode = {
+    type: string;
+    target?: TargetType;
+    children: NodeChild[];
+};
 
 export type NodeChildKey = keyof NodeChild;
 

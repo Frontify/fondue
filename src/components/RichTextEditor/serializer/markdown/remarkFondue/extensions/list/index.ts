@@ -1,16 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { VisitorResult, visit } from 'unist-util-visit';
-import { NodeChild, ParagraphNode, RemarkExtension } from '../../types';
+import { NodeChild, RemarkExtension, TreeNode } from '../../types';
 
 export default function Extension(): RemarkExtension {
     return transformer;
 }
 
-const transformer = (tree: ParagraphNode) => {
+const transformer = (tree: TreeNode) => {
     visit(tree, 'listItem', visitor);
 
-    function visitor(node: ParagraphNode): VisitorResult {
+    function visitor(node: TreeNode): VisitorResult {
         const { children } = node;
 
         for (const child of children) {
