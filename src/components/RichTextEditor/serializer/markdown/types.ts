@@ -130,6 +130,7 @@ export type MarkdownAstNode = {
     checked?: any;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     indent?: any;
+    target?: TargetType;
 };
 
 export enum TargetType {
