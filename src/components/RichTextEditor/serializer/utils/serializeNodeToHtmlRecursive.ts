@@ -4,10 +4,14 @@ import {
     ELEMENT_BUTTON,
     ELEMENT_CHECK_ITEM,
     MappedMentionableItems,
+    OL_STYLES,
     UL_CLASSES,
     getOrderedListClasses,
 } from '@components/RichTextEditor/Plugins';
-import { getTextStyle } from '@components/RichTextEditor/Plugins/ListPlugin/ListItemContentMarkupElement';
+import {
+    getLicElementClassNames,
+    getUnderlineClassNames,
+} from '@components/RichTextEditor/Plugins/ListPlugin/ListItemContentMarkupElement';
 import { TextStyles, alignmentClassnames } from '@components/RichTextEditor/Plugins/TextStylePlugin/TextStyles';
 import { DesignTokens } from '@components/RichTextEditor/types';
 import {
@@ -19,7 +23,6 @@ import {
     ELEMENT_PARAGRAPH,
     ELEMENT_UL,
     TDescendant,
-    TElement,
     TText,
     isText,
 } from '@udecode/plate';
@@ -30,6 +33,7 @@ import { mentionHtmlNode } from '../nodes/mentionHtmlNode';
 import { reactCssPropsToCss } from './reactCssPropsToCss';
 import { serializeLeafToHtml } from './serializeLeafToHtml';
 import { merge } from '@utilities/merge';
+import { LI_CLASSNAMES, getLiStyles } from '@components/RichTextEditor/Plugins/ListPlugin/ListItemMarkupElement';
 
 const countNodesOfType = (nodes: TDescendant[], type: string): number => {
     return nodes.reduce((acc, node) => {
@@ -83,42 +87,43 @@ export const serializeNodeToHtmlRecursive = (
 
     switch (node.type) {
         case TextStyles.ELEMENT_HEADING1:
-            return `<h1 class="${classNames}" style="${reactCssPropsToCss(designTokens.heading1)}">${children}</h1>`;
+            return `<h1 class="${classNames}" style='${reactCssPropsToCss(designTokens.heading1)}'>${children}</h1>`;
         case TextStyles.ELEMENT_HEADING2:
-            return `<h2 class="${classNames}" style="${reactCssPropsToCss(designTokens.heading2)}">${children}</h2>`;
+            return `<h2 class='${classNames}' style='${reactCssPropsToCss(designTokens.heading2)}'>${children}</h2>`;
         case TextStyles.ELEMENT_HEADING3:
-            return `<h3 class="${classNames}" style="${reactCssPropsToCss(designTokens.heading3)}">${children}</h3>`;
+            return `<h3 class='${classNames}' style='${reactCssPropsToCss(designTokens.heading3)}'>${children}</h3>`;
         case TextStyles.ELEMENT_HEADING4:
-            return `<h4 class="${classNames}" style="${reactCssPropsToCss(designTokens.heading4)}">${children}</h4>`;
+            return `<h4 class='${classNames}' style='${reactCssPropsToCss(designTokens.heading4)}'>${children}</h4>`;
         case TextStyles.ELEMENT_CUSTOM1:
-            return `<p class="${classNames}" style="${reactCssPropsToCss(designTokens.custom1)}">${children}</p>`;
+            return `<p class='${classNames}' style='${reactCssPropsToCss(designTokens.custom1)}'>${children}</p>`;
         case TextStyles.ELEMENT_CUSTOM2:
-            return `<p class="${classNames}" style="${reactCssPropsToCss(designTokens.custom2)}">${children}</p>`;
+            return `<p class='${classNames}' style='${reactCssPropsToCss(designTokens.custom2)}'>${children}</p>`;
         case TextStyles.ELEMENT_CUSTOM3:
-            return `<p class="${classNames}" style="${reactCssPropsToCss(designTokens.custom3)}">${children}</p>`;
+            return `<p class='${classNames}' style='${reactCssPropsToCss(designTokens.custom3)}'>${children}</p>`;
         case TextStyles.ELEMENT_QUOTE:
-            return `<p class="${classNames}" style="${reactCssPropsToCss(designTokens.quote)}">${children}</p>`;
+            return `<p class='${classNames}' style='${reactCssPropsToCss(designTokens.quote)}'>${children}</p>`;
         case ELEMENT_PARAGRAPH:
-            return `<p class="${classNames}" style="${reactCssPropsToCss(designTokens.p)}">${children}</p>`;
+            return `<p class='${classNames}' style='${reactCssPropsToCss(designTokens.p)}'>${children}</p>`;
         case TextStyles.ELEMENT_IMAGE_TITLE:
-            return `<p class="${classNames}" style="${reactCssPropsToCss(designTokens.imageTitle)}">${children}</p>`;
+            return `<p class='${classNames}' style='${reactCssPropsToCss(designTokens.imageTitle)}'>${children}</p>`;
         case TextStyles.ELEMENT_IMAGE_CAPTION:
-            return `<p class="${classNames}" style="${reactCssPropsToCss(designTokens.imageCaption)}">${children}</p>`;
+            return `<p class='${classNames}' style='${reactCssPropsToCss(designTokens.imageCaption)}'>${children}</p>`;
         case ELEMENT_UL:
-            return `<ul class="${UL_CLASSES} ${classNames}">${children}</ul>`;
+            return `<ul class='${UL_CLASSES} ${classNames}'>${children}</ul>`;
         case ELEMENT_OL:
             const nestingLevel = Math.max(rootNestingCount - countNodesOfType([node], ELEMENT_OL), 0);
-            return `<ol class="${getOrderedListClasses(nestingLevel)} ${classNames}">${children}</ol>`;
+            return `<ol class='${getOrderedListClasses(nestingLevel)} ${classNames}' style='${reactCssPropsToCss(
+                OL_STYLES,
+            )}'>${children}</ol>`;
         case ELEMENT_LI:
-            const liElement = node as TElement;
-            const styledLicElement = (liElement.children[0]?.children as TDescendant[])?.[0];
-            const liStyles = { ...designTokens[getTextStyle(styledLicElement)], textDecoration: 'none' };
-
-            return `<li class="${classNames}" style="${reactCssPropsToCss(liStyles)}">${children}</li>`;
+            return `<li class='${classNames} ${LI_CLASSNAMES}' style='${reactCssPropsToCss(
+                getLiStyles(designTokens, node),
+            )}'>${children}</li>`;
         case ELEMENT_LIC:
-            const licElement = node as TElement;
-            const licStyles = { textDecoration: designTokens[getTextStyle(licElement.children[0])]?.textDecoration };
-            return `<p class="${classNames}" style="${reactCssPropsToCss(licStyles)}">${children}</p>`;
+            const underline = getUnderlineClassNames(designTokens, node);
+            return `<p class='${classNames} ${getLicElementClassNames(
+                node,
+            )}'><span class='${underline}'>${children}</span></p>`;
         case ELEMENT_LINK:
             return linkNode(node, children, designTokens, classNames);
         case ELEMENT_BUTTON:
