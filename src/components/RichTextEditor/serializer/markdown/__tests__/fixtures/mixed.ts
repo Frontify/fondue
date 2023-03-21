@@ -14,7 +14,7 @@ I am inline basic mark**bold**_italic_~~delete~~\`inline code\`
 tell application "Foo";
     beep
 end tell\`
-This is [link to frontify.com](https://www.frontify.com/).
+This is [link to frontify.com](https://www.frontify.com/){:target="_self"}.
 I am normal Paragraph
 
 > Presenting the Quote
