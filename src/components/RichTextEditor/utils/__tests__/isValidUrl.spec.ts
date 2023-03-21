@@ -15,6 +15,10 @@ describe('Validate urls correctly', () => {
         expect(isValidUrl('mailto:hello@frontify.com')).to.be.true;
     });
 
+    it('tel:079', () => {
+        expect(isValidUrl('tel:079')).to.be.true;
+    });
+
     it('https://', () => {
         expect(isValidUrl('https://')).to.be.false;
     });
