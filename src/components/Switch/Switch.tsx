@@ -17,7 +17,7 @@ export enum SwitchSize {
 export enum SwitchState {
     On = 'On',
     Off = 'Off',
-    Mixed = 'Mixed',
+    Indeterminate = 'Indeterminate',
 }
 
 const trackSizeClasses: Record<SwitchSize, string> = {
@@ -42,7 +42,7 @@ const indeterminateLineClasses = 'tw-w-2 tw-h-[1px]';
 
 export type SwitchProps = {
     id?: string;
-    on?: SwitchState;
+    mode?: SwitchState;
     disabled?: boolean;
     label?: string;
     name?: string;
@@ -59,7 +59,7 @@ export const Switch: FC<SwitchProps> = ({
     disabled,
     onChange,
     size = SwitchSize.Medium,
-    on = SwitchState.Off,
+    mode = SwitchState.Off,
     hug = false,
     tooltip,
 }) => {
@@ -71,12 +71,12 @@ export const Switch: FC<SwitchProps> = ({
         const baseClasses = 'tw-group tw-border tw-inline-flex tw-rounded-full tw-shrink-0 tw-p-0 tw-transition-colors';
 
         const trueOrFalseValueClasses =
-            on === SwitchState.On
+            mode === SwitchState.On
                 ? 'tw-bg-text-weak tw-border-line-xx-strong hover:tw-bg-text'
                 : 'tw-bg-box-neutral tw-border-line-x-strong hover:tw-bg-box-neutral-hover';
 
         const valueClasses =
-            on === SwitchState.Mixed
+            mode === SwitchState.Indeterminate
                 ? 'tw-bg-text-weak tw-flex tw-items-center tw-justify-center hover:tw-bg-text'
                 : trueOrFalseValueClasses;
 
@@ -85,29 +85,29 @@ export const Switch: FC<SwitchProps> = ({
             : valueClasses;
 
         const disabledClasses =
-            disabled && on === SwitchState.Mixed
+            disabled && mode === SwitchState.Indeterminate
                 ? 'tw-flex tw-items-center tw-justify-center tw-bg-box-disabled tw-border-line tw-pointer-events-none'
                 : trueOrFalseDisabledClasses;
 
         return merge([baseClasses, disabledClasses, trackSizeClasses[size], isFocusVisible && FOCUS_STYLE]);
-    }, [on, disabled, size, isFocusVisible]);
+    }, [mode, disabled, size, isFocusVisible]);
 
     // Responsible for the left-right translation
     const dotWrapperClasses = useMemo(() => {
         const baseClasses = 'tw-relative tw-self-center tw-transition-transform';
 
-        const trueOrFalseValueClasses = on === SwitchState.On ? dotSizeClasses[size].activeTranslation : '';
+        const trueOrFalseValueClasses = mode === SwitchState.On ? dotSizeClasses[size].activeTranslation : '';
 
-        const valueClasses = on === SwitchState.Mixed ? 'tw-bg-base' : trueOrFalseValueClasses;
+        const valueClasses = mode === SwitchState.Indeterminate ? 'tw-bg-base' : trueOrFalseValueClasses;
 
-        const disabledClasses = disabled && on === SwitchState.Mixed ? 'tw-bg-text-disabled' : valueClasses;
+        const disabledClasses = disabled && mode === SwitchState.Indeterminate ? 'tw-bg-text-disabled' : valueClasses;
 
         return merge([
             baseClasses,
-            on === SwitchState.Mixed ? indeterminateLineClasses : dotSizeClasses[size].dimensions,
+            mode === SwitchState.Indeterminate ? indeterminateLineClasses : dotSizeClasses[size].dimensions,
             disabledClasses,
         ]);
-    }, [on, size]);
+    }, [mode, size]);
 
     // Responsible for dot styling and width animation on hover
     const dotClasses = useMemo(() => {
@@ -116,9 +116,9 @@ export const Switch: FC<SwitchProps> = ({
 
         const trueOrFalseValueClasses =
             // eslint-disable-next-line unicorn/no-nested-ternary
-            on === SwitchState.On ? 'tw-right-0  tw-translate-x-px' : 'tw-left-0';
+            mode === SwitchState.On ? 'tw-right-0  tw-translate-x-px' : 'tw-left-0';
 
-        const valueClasses = on === SwitchState.Mixed ? 'tw-hidden' : trueOrFalseValueClasses;
+        const valueClasses = mode === SwitchState.Indeterminate ? 'tw-hidden' : trueOrFalseValueClasses;
 
         const disabledStateClasses = disabled
             ? 'tw-border-line-strong'
@@ -126,11 +126,11 @@ export const Switch: FC<SwitchProps> = ({
 
         return merge([
             baseClasses,
-            on === SwitchState.Mixed ? indeterminateLineClasses : dotSizeClasses[size].dimensions,
+            mode === SwitchState.Indeterminate ? indeterminateLineClasses : dotSizeClasses[size].dimensions,
             valueClasses,
             disabledStateClasses,
         ]);
-    }, [on, disabled, size]);
+    }, [mode, disabled, size]);
 
     // Wraps the InputLabel instance and switch element
     const containerClasses = useMemo(() => {
@@ -151,7 +151,7 @@ export const Switch: FC<SwitchProps> = ({
                 name={name}
                 data-test-id="switch"
                 className={trackClasses}
-                value={on.toString()}
+                value={mode}
                 onClick={onChange}
                 type="button"
             >

@@ -3,13 +3,13 @@
 import React, { FC, useState } from 'react';
 import { Switch, SwitchProps, SwitchState } from './Switch';
 
-const Component: FC<SwitchProps> = ({ on = SwitchState.Off, ...props }) => {
-    const [active, setActive] = useState(on);
+const Component: FC<SwitchProps> = ({ mode = SwitchState.Off, ...props }) => {
+    const [active, setActive] = useState(mode);
 
     return (
         <Switch
             {...props}
-            on={active}
+            mode={active}
             onChange={(event) => {
                 setActive(active === SwitchState.Off ? SwitchState.On : SwitchState.Off);
                 props.onChange && props.onChange(event);
@@ -37,11 +37,11 @@ describe('Switch Component', () => {
     });
 
     it('should support indeterminate value', () => {
-        cy.mount(<Component name="switch-test-value" on={SwitchState.Mixed} />);
+        cy.mount(<Component name="switch-test-value" mode={SwitchState.Indeterminate} />);
 
         cy.get(SWITCH_ID).as('Switch');
         cy.get('@Switch').invoke('attr', 'name').should('eq', 'switch-test-value');
-        cy.get('@Switch').should('have.value', SwitchState.Mixed);
+        cy.get('@Switch').should('have.value', SwitchState.Indeterminate);
     });
 
     it('should react on click', () => {

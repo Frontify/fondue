@@ -22,7 +22,7 @@ export default {
                 type: 'text',
             },
         },
-        on: {
+        mode: {
             options: Object.values(SwitchState),
             control: { type: 'radio' },
         },
@@ -32,7 +32,7 @@ export default {
         },
     },
     args: {
-        on: SwitchState.On,
+        mode: SwitchState.On,
         disabled: false,
         hug: false,
         name: 'switch-name',
@@ -43,23 +43,23 @@ export default {
 type Props = SwitchProps & { hug?: boolean };
 
 const Default: StoryFn<Props> = (args: Props) => {
-    const [on, setOn] = useState<SwitchState>(args.on || SwitchState.Off);
+    const [mode, setMode] = useState<SwitchState>(args.mode || SwitchState.Off);
     useEffect(() => {
-        if (args.on !== SwitchState.On && args.on !== SwitchState.Off && args.on !== SwitchState.Mixed) {
+        if (args.mode !== SwitchState.On && args.mode !== SwitchState.Off && args.mode !== SwitchState.Indeterminate) {
             return;
         }
-        if (args.on === on) {
+        if (args.mode === mode) {
             return;
         }
-        setOn(args.on);
-    }, [args.on]);
+        setMode(args.mode);
+    }, [args.mode]);
 
     const toggle = (event: MouseEvent) => {
-        setOn(on === SwitchState.On ? SwitchState.Off : SwitchState.On);
+        setMode(mode === SwitchState.On ? SwitchState.Off : SwitchState.On);
         args.onChange && args.onChange(event);
     };
 
-    return <Switch {...args} onChange={toggle} on={on} />;
+    return <Switch {...args} onChange={toggle} mode={mode} />;
 };
 
 export const Small: StoryFn<Props> = Default.bind({});
