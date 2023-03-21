@@ -15,7 +15,6 @@ import {
     MarkdownAstNode,
     OptionType,
     ParagraphNode,
-    TargetType,
     TextNode,
     ThematicBreakNode,
 } from '../types';
@@ -69,7 +68,7 @@ export default function deserialize<T extends InputNodeTypes>(node: MarkdownAstN
             return {
                 type: types.link,
                 [linkDestinationKey]: node.url,
-                target: node.target ?? TargetType.BLANK,
+                target: node.target,
                 children,
             } as LinkNode<T>;
         case 'image':

@@ -18,18 +18,10 @@ export const linkMarkdownTargetBlank =
 export const linkTreeTargetBlank = [
     createP([
         createText('This is '),
-        createLink('https://www.frontify.com/', 'link to www.frontify.com', TargetType.BLANK),
-        createText('.'),
-    ]),
-];
-
-export const linkTreeTargetUndefined = [
-    createP([
-        createText('This is '),
         createLink('https://www.frontify.com/', 'link to www.frontify.com'),
         createText('.'),
     ]),
 ];
 
-export const linkMarkdown = [linkMarkdownTargetSelf, linkMarkdownTargetBlank, linkMarkdownTargetBlank];
-export const linkTree = [linkTreeTargetSelf, linkTreeTargetBlank, linkTreeTargetUndefined];
+export const linkMarkdown = [linkMarkdownTargetSelf, linkMarkdownTargetBlank];
+export const linkTree = [linkTreeTargetSelf, linkTreeTargetBlank];

@@ -132,7 +132,7 @@ export const mixedTree = [
     },
     createP([
         createText('This is second link '),
-        createLink('https://www.frontify.com/', 'link to www.frontify.com', TargetType.BLANK),
+        createLink('https://www.frontify.com/', 'link to www.frontify.com'),
         createText(' with target blank.'),
     ]),
     createP([createText('I am normal Paragraph')]),
