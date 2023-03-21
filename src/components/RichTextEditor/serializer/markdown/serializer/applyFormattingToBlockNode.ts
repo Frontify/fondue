@@ -76,7 +76,7 @@ export const applyFormattingToBlockNode = (
 
         case nodeTypes.link:
             const linkUrl = (chunk as BlockType).url ?? '';
-            const target = (chunk as BlockType).target ?? TargetType.SELF;
+            const target = (chunk as BlockType).target ?? TargetType.BLANK;
             return `[${children}](${linkUrl}){:target="${target}"}`;
 
         case nodeTypes.image:

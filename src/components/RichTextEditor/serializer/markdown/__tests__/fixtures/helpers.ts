@@ -13,7 +13,7 @@ const createLeafElement = (children: LeafType): LeafType => {
     return children;
 };
 
-export const createLink = (url: string, text: string, target: TargetType = TargetType.SELF): BlockType => {
+export const createLink = (url: string, text: string, target?: TargetType): BlockType => {
     return {
         type: 'a',
         url,

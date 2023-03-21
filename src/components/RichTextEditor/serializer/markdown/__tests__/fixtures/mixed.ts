@@ -126,7 +126,7 @@ export const mixedTree = [
             {
                 text: '\nThis is ',
             },
-            createLink('https://www.frontify.com/', 'link to frontify.com'),
+            createLink('https://www.frontify.com/', 'link to frontify.com', TargetType.SELF),
             createText('.'),
         ],
     },

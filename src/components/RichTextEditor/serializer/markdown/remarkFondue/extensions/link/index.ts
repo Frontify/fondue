@@ -18,9 +18,18 @@ const transformer = (tree: TreeNode) => {
 };
 
 const regex = new RegExp(`{:target="(${Object.values(TargetType).join('|')})"}`);
-const getTarget = (child: NodeChild): TargetType => {
+const getTarget = (child: NodeChild): TargetType | undefined => {
     const match = child.value?.match(regex);
-    return (!match ? TargetType.SELF : match[1]) as TargetType;
+
+    if (!match) {
+        return TargetType.SELF;
+    }
+
+    if (match[1] === '_blank') {
+        return undefined;
+    }
+
+    return match[1] as TargetType;
 };
 const replaceChildValue = (child: NodeChild): string => child.value?.replace(regex, '') ?? '';
 

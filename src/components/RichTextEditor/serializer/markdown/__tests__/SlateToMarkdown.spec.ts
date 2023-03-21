@@ -112,6 +112,11 @@ describe('Slate To Markdown transformer', () => {
             const result = transformer.process(linkTree[1]);
             expect(result).to.deep.equal(linkMarkdown[1]);
         });
+
+        it('should transform link - target undefined', () => {
+            const result = transformer.process(linkTree[2]);
+            expect(result).to.deep.equal(linkMarkdown[2]);
+        });
     });
 
     it('should transform image', () => {
