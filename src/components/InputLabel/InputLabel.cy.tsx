@@ -55,7 +55,7 @@ describe('InputLabel Component', () => {
         );
         cy.get(TOOLTIP_ICON_TRIGGER_ID)
             .first()
-            .should('have.class', 'tw-text-box-negative-strong')
+            .should('have.class', 'tw-text-box-negative-inverse')
             .find('svg')
             .should('have.attr', 'name', 'IconQuestionMarkCircle16');
         cy.get(TOOLTIP_ICON_TRIGGER_ID)

@@ -1,51 +1,58 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-const basicMarksMarkdown_1 = 'i am inline text**bold**_italic_~~delete~~`inline code`\n';
-const basicMarksTree_1 = [
-    {
-        type: 'p',
-        children: [
-            {
-                text: 'i am inline text',
-            },
-            {
-                bold: true,
-                text: 'bold',
-            },
-            {
-                italic: true,
-                text: 'italic',
-            },
-            {
-                strikethrough: true,
-                text: 'delete',
-            },
-            {
-                code: true,
-                text: 'inline code',
-            },
-        ],
-    },
+import {
+    createBoldText,
+    createCodeText,
+    createItalicText,
+    createP,
+    createStrikethroughText,
+    createText,
+} from './helpers';
+
+const basicMarksMarkdownInLine = 'i am inline text**i am bold**_is it italic_~~could strike~~`inline code`\n\n';
+const basicMarksTreeInLine = [
+    createP([
+        createText('i am inline text'),
+        createBoldText('i am bold'),
+        createItalicText('is it italic'),
+        createStrikethroughText('could strike'),
+        createCodeText('inline code'),
+    ]),
 ];
 
-const basicMarksMarkdown_2 = 'This is ~~text that has strikethrough~~ in it';
-const basicMarksTree_2 = [
-    {
-        type: 'p',
-        children: [
-            {
-                text: 'This is ',
-            },
-            {
-                strikethrough: true,
-                text: 'text that has strikethrough',
-            },
-            {
-                text: ' in it',
-            },
-        ],
-    },
+const basicMarksMarkdownMultipleLines = `i am inline text
+
+**i am bold**
+
+_is it italic_
+
+~~could strike~~
+
+\`inline code\`
+
+`;
+const basicMarksTreeMultipleLines = [
+    createP([createText('i am inline text')]),
+    createP([createBoldText('i am bold')]),
+    createP([createItalicText('is it italic')]),
+    createP([createStrikethroughText('could strike')]),
+    createP([createCodeText('inline code')]),
 ];
 
-export const basicMarksMarkdown = [basicMarksMarkdown_1, basicMarksMarkdown_2];
-export const basicMarksTree = [basicMarksTree_1, basicMarksTree_2];
+const basicMarksMarkdownSoftBreak =
+    '**This is bold text**\\\n_This is italic text_\\\n~~Strikethrough text~~\\\nUnstyled text\n\n';
+const basicMarksTreeSoftBreak = [
+    createP([
+        createBoldText('This is bold text\n'),
+        createItalicText('This is italic text\n'),
+        createStrikethroughText('Strikethrough text\n'),
+        createText('Unstyled text'),
+    ]),
+];
+
+export const basicMarksMarkdown = [
+    basicMarksMarkdownInLine,
+    basicMarksMarkdownMultipleLines,
+    basicMarksMarkdownSoftBreak,
+];
+export const basicMarksTree = [basicMarksTreeInLine, basicMarksTreeMultipleLines, basicMarksTreeSoftBreak];
