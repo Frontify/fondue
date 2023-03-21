@@ -17,7 +17,7 @@ const SwitchComponent = () => {
     const toggleSwitch = () => setSwitchValue(!switchValue);
 
     return (
-        <Switch size={SwitchSize.Small} on={switchValue ? SwitchState.On : SwitchState.Off} onChange={toggleSwitch} />
+        <Switch size={SwitchSize.Small} mode={switchValue ? SwitchState.On : SwitchState.Off} onChange={toggleSwitch} />
     );
 };
 

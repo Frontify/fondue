@@ -75,7 +75,7 @@ export const renderFieldsetHeaderIconType = (
                     <Switch
                         {...props}
                         size={sizeMap[size].switch}
-                        on={active ? SwitchState.On : SwitchState.Off}
+                        mode={active ? SwitchState.On : SwitchState.Off}
                         disabled={disabled}
                     />
                 </div>
