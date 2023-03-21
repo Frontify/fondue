@@ -4,12 +4,12 @@ import { TargetType } from '../../types';
 import { createLink, createP, createText } from './helpers';
 
 export const linkMarkdownTargetSelf =
-    'This is [link to www.frontify.com](https://www.frontify.com/){:target="_self"}.\n\n';
+    'This is [link to www.frontify.com](https://www.frontify.com/){:target="_self"} to the page.\n\n';
 export const linkTreeTargetSelf = [
     createP([
         createText('This is '),
         createLink('https://www.frontify.com/', 'link to www.frontify.com'),
-        createText('.'),
+        createText(' to the page.'),
     ]),
 ];
 
