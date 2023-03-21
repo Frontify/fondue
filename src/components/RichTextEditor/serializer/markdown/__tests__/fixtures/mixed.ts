@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createLink } from './helpers';
+import { TargetType } from '../../types';
+import { createLink, createP, createText } from './helpers';
 import { orderedListTree } from './orderedList';
 import { unorderedListTree } from './unorderedList';
 
@@ -15,6 +16,9 @@ tell application "Foo";
     beep
 end tell\`
 This is [link to frontify.com](https://www.frontify.com/){:target="_self"}.
+
+This is second link [link to www.frontify.com](https://www.frontify.com/){:target="_blank"} with target blank.
+
 I am normal Paragraph
 
 > Presenting the Quote
@@ -123,11 +127,15 @@ export const mixedTree = [
                 text: '\nThis is ',
             },
             createLink('https://www.frontify.com/', 'link to frontify.com'),
-            {
-                text: '.\nI am normal Paragraph',
-            },
+            createText('.'),
         ],
     },
+    createP([
+        createText('This is second link '),
+        createLink('https://www.frontify.com/', 'link to www.frontify.com', TargetType.BLANK),
+        createText(' with target blank.'),
+    ]),
+    createP([createText('I am normal Paragraph')]),
     {
         type: 'quote',
         children: [
