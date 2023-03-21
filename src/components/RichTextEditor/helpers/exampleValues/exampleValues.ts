@@ -115,6 +115,10 @@ export const unorderedListValue = {
                 },
             ],
         },
+        {
+            type: ELEMENT_LI,
+            children: [{ type: ELEMENT_LIC, children: [{ text: 'This is aligned right.' }], align: 'right' }],
+        },
     ],
 };
 
@@ -177,6 +181,10 @@ export const orderedListValue = {
                     ],
                 },
             ],
+        },
+        {
+            type: ELEMENT_LI,
+            children: [{ type: ELEMENT_LIC, children: [{ text: 'This is aligned right.' }], align: 'right' }],
         },
     ],
 };
@@ -305,6 +313,13 @@ export const value = [
         indent: 0,
         children: [{ text: 'This is checked again.' }],
     },
+    {
+        type: ELEMENT_CHECK_ITEM,
+        checked: true,
+        indent: 0,
+        align: 'right',
+        children: [{ text: 'This is aligned right and checked.' }],
+    },
 ];
 export const alignedValues = [
     {
@@ -327,7 +342,6 @@ export const alignedValues = [
         children: [{ text: 'This text is justified.' }],
         align: 'justify',
     },
-
     {
         type: 'p',
         children: [
