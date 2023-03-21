@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { FC, useState } from 'react';
-import { Switch, SwitchProps } from './Switch';
+import { Switch, SwitchLabelStyle, SwitchProps } from './Switch';
 
 const Component: FC<SwitchProps> = ({ on = false, ...props }) => {
     const [active, setActive] = useState(on);
@@ -21,6 +21,7 @@ const Component: FC<SwitchProps> = ({ on = false, ...props }) => {
 const SWITCH_ID = '[data-test-id=switch]';
 const SWITCH_CONTAINER_ID = '[data-test-id=switch-container]';
 const INPUT_LABEL_ID = '[data-test-id=input-label-container]';
+const SWITCH_LABEL_WRAPPER_ID = '[data-test-id=switch-label-wrapper';
 
 const SWITCH_LABEL = 'Switch Label';
 
@@ -60,6 +61,20 @@ describe('Switch Component', () => {
 
         cy.get(SWITCH_CONTAINER_ID).find(INPUT_LABEL_ID).should('exist');
         cy.get(INPUT_LABEL_ID).contains(SWITCH_LABEL);
+    });
+
+    it('should render default labelStyle', () => {
+        cy.mount(<Component label={SWITCH_LABEL} />);
+
+        cy.get(SWITCH_LABEL_WRAPPER_ID).should('have.class', 'tw-text-text-weak');
+        cy.get(SWITCH_LABEL_WRAPPER_ID).should('have.class', 'tw-font-medium');
+    });
+
+    it('should render heading labelStyle', () => {
+        cy.mount(<Component label={SWITCH_LABEL} labelStyle={SwitchLabelStyle.Heading} />);
+
+        cy.get(SWITCH_LABEL_WRAPPER_ID).should('have.class', 'tw-text-text');
+        cy.get(SWITCH_LABEL_WRAPPER_ID).should('have.class', 'tw-font-bold');
     });
 
     it('should hug the switch and label', () => {
