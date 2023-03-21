@@ -42,9 +42,9 @@ describe('serializeNodeToHtmlRecursive()', () => {
         };
         const result = serializeNodeToHtmlRecursive(node, { designTokens: defaultDesignTokens });
 
-        expect(result).to.match(/<ol class=".*decimal.*"/);
-        expect(result).to.match(/<li .*><p .*>This comes first\.<\/p><\/li>/);
-        expect(result).to.match(/<li .*><p .*>This comes second\.<\/p><\/li>/);
+        expect(result).to.match(/<ol class='.*(count,decimal)*'/);
+        expect(result).to.match(/<li .*><p .*><span .*>This comes first\.<\/span><\/p><\/li>/);
+        expect(result).to.match(/<li .*><p .*><span .*>This comes second\.<\/span><\/p><\/li>/);
     });
 
     it('serializes active break after column element to html', () => {
@@ -135,7 +135,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
         const result = serializeNodeToHtmlRecursive(node, { designTokens: defaultDesignTokens });
 
         expect(result).to.match(
-            /<ul.*><li.*><p.*>This comes first.<\/p><\/li><li.*><p.*>This comes second.<\/p><\/li><\/ul>/,
+            /<ul.*><li.*><p.*><span .*>This comes first.<\/span><\/p><\/li><li.*><p.*><span.*>This comes second.<\/span><\/p><\/li><\/ul>/,
         );
     });
 
