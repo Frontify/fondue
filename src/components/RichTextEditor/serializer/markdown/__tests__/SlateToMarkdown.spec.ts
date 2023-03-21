@@ -32,9 +32,21 @@ import {
 describe('Slate To Markdown transformer', () => {
     const transformer = Transform.use(new SlateToMarkdown());
 
-    it('should transform basic marks', () => {
-        const result = transformer.process(basicMarksTree[0]);
-        expect(result).to.deep.equal(basicMarksMarkdown[0]);
+    describe('Basic markdown transformation', () => {
+        it('should transform basic marks in single line', () => {
+            const result = transformer.process(basicMarksTree[0]);
+            expect(result).to.deep.equal(basicMarksMarkdown[0]);
+        });
+
+        it('should transform basic marks in multiple lines', () => {
+            const result = transformer.process(basicMarksTree[1]);
+            expect(result).to.deep.equal(basicMarksMarkdown[1]);
+        });
+
+        it('should transform basic marks with line breaks', () => {
+            const result = transformer.process(basicMarksTree[2]);
+            expect(result).to.deep.equal(basicMarksMarkdown[2]);
+        });
     });
 
     it('should transform headings', () => {

@@ -93,6 +93,7 @@ export type BlockType = {
     url?: string;
     id?: string;
     category?: string;
+    target?: '_blank' | '_self';
 };
 
 export type RecursivePartial<T> = {

@@ -342,7 +342,6 @@ export const alignedValues = [
         children: [{ text: 'This text is justified.' }],
         align: 'justify',
     },
-
     {
         type: 'p',
         children: [

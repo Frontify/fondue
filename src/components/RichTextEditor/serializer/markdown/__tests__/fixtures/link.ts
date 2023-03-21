@@ -1,26 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export const linkMarkdown = 'This is [link to frontify.com](https://www.frontify.com/).\n';
+import { createLink, createP, createText } from './helpers';
 
+export const linkMarkdown = 'This is [link to www.frontify.com](https://www.frontify.com/).\n\n';
 export const linkTree = [
-    {
-        type: 'p',
-        children: [
-            {
-                text: 'This is ',
-            },
-            {
-                type: 'a',
-                url: 'https://www.frontify.com/',
-                children: [
-                    {
-                        text: 'link to frontify.com',
-                    },
-                ],
-            },
-            {
-                text: '.',
-            },
-        ],
-    },
+    createP([
+        createText('This is '),
+        createLink('https://www.frontify.com/', 'link to www.frontify.com'),
+        createText('.'),
+    ]),
 ];

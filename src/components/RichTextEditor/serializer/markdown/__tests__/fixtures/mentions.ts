@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export const mentionsMarkdown0 = 'Try mentioning characters, like: @[all:false]\n';
-export const mentionsMarkdown1 = 'Multiple mentions: @[all:true], @[group:10] and @[user:20]\n';
-export const mentionsMarkdown2 = 'A single mention at the end of a sentence @[group:10]\n';
-export const mentionsMarkdown3 = 'Mention @[user:20] in the middle of a sentence.\n';
+export const mentionsMarkdown0 = 'Try mentioning characters, like: @[all:false]\n\n';
+export const mentionsMarkdown1 = 'Multiple mentions: @[all:true], @[group:10] and @[user:20]\n\n';
+export const mentionsMarkdown2 = 'A single mention at the end of a sentence @[group:10]\n\n';
+export const mentionsMarkdown3 = 'Mention @[user:20] in the middle of a sentence.\n\n';
 export const mentionsMarkdown = [mentionsMarkdown0, mentionsMarkdown1, mentionsMarkdown2, mentionsMarkdown3];
 
 export const mentionsTree0 = [

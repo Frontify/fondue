@@ -69,7 +69,7 @@ export const applyFormattingToBlockNode = (
              * continued blockquote, so adding two new lines ensures that doesn't
              * happen
              */
-            return `> ${children}\n`;
+            return `> ${children}`;
 
         case nodeTypes.codeBlock:
             return `\`\`\`${(chunk as BlockType).language || ''}\n${children}\n\`\`\`\n`;
@@ -93,7 +93,7 @@ export const applyFormattingToBlockNode = (
             return processListItemChildNode(children);
 
         case nodeTypes.paragraph:
-            return `${children}\n`;
+            return `${children}\n\n`;
 
         case nodeTypes.thematicBreak:
             return `\n---${children}\n\n`;
