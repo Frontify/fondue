@@ -272,7 +272,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
                         {filterable && (
                             <input
                                 ref={filterInputRef}
-                                className="focus:tw-outline-0 tw-text-s tw-bg-transparent"
+                                className="focus:tw-outline-0 tw-text-s tw-bg-transparent !tw-ring-0"
                                 style={{ maxWidth: inputWidth }}
                                 placeholder={activeItemKeys.length === 0 ? placeholder : filterLabel}
                                 onChange={handleFilterChange}
