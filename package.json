@@ -190,6 +190,7 @@
         "zustand": "4.3.3"
     },
     "peerDependencies": {
+        "framer-motion": "6.4.3",
         "react": "^17.0.0 || ^18.0.0",
         "react-dom": "^17.0.0 || ^18.0.0",
         "@udecode/plate": "19.6.0",
