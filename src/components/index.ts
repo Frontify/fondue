@@ -37,7 +37,7 @@ export * from './OverflowMenu';
 export * from './RadioPill';
 export * from './RichTextEditor';
 export * from './ScrollWrapper';
-export * from './Slider';
+export * from './SegmentedControls';
 export * from './Switch';
 export * from './Table';
 export * from './Tabs';
