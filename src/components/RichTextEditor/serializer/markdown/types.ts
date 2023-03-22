@@ -133,10 +133,12 @@ export type MarkdownAstNode = {
     target?: TargetValue;
 };
 
-export enum TargetValue {
-    BLANK = '_blank',
-    SELF = '_self',
-}
+export const Targets = {
+    Blank: '_blank',
+    Self: '_self',
+} as const;
+
+export type TargetValue = typeof Targets[keyof typeof Targets];
 
 export type TextNode = { text?: string };
 

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { VisitorResult, visit } from 'unist-util-visit';
-import { TargetValue } from '../../../types';
+import { TargetValue, Targets } from '../../../types';
 import { NodeChild, RemarkExtension, TreeNode } from '../../types';
 
 export default function Extension(): RemarkExtension {
@@ -17,12 +17,12 @@ const transformer = (tree: TreeNode) => {
     }
 };
 
-const targetValueRegex = new RegExp(`{:target="(${Object.values(TargetValue).join('|')})"}`);
+const targetValueRegex = new RegExp(`{:target="(${Object.values(Targets).join('|')})"}`);
 const getTarget = (child: NodeChild): TargetValue | undefined => {
     const match = child.value?.match(targetValueRegex);
 
     if (!match) {
-        return TargetValue.SELF;
+        return Targets.Self;
     }
 
     if (match[1] === '_blank') {

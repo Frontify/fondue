@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TargetValue } from '../../types';
+import { Targets } from '../../types';
 import { createLink, createP, createText } from './helpers';
 
 export const linkMarkdownTargetSelf =
@@ -8,7 +8,7 @@ export const linkMarkdownTargetSelf =
 export const linkTreeTargetSelf = [
     createP([
         createText('This is '),
-        createLink('https://www.frontify.com/', 'link to www.frontify.com', TargetValue.SELF),
+        createLink('https://www.frontify.com/', 'link to www.frontify.com', Targets.Self),
         createText(' to the page.'),
     ]),
 ];
