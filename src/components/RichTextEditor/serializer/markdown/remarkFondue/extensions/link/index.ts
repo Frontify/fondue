@@ -25,7 +25,7 @@ const getTarget = (child: NodeChild): TargetValue | undefined => {
         return Targets.Self;
     }
 
-    if (match[1] === '_blank') {
+    if (match[1] === Targets.Blank) {
         return undefined;
     }
 
