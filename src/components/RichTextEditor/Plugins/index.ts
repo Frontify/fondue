@@ -43,6 +43,8 @@ defaultPlugins
             new EmojiPlugin(),
         ],
     );
+
+export * from './Plugin';
 export * from './AlignPlugin';
 export * from './BoldPlugin';
 export * from './ColumnBreakPlugin';
