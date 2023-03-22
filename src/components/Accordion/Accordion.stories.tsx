@@ -9,7 +9,7 @@ import { Dropdown } from '@components/Dropdown';
 import { FieldsetHeaderType } from '@components/FieldsetHeader/FieldsetHeader';
 import { FormControl } from '@components/FormControl/FormControl';
 import { LinkChooser } from '@components/LinkChooser/LinkChooser.stories';
-import { Slider } from '@components/Slider/Slider';
+import { SegmentedControls } from '@components/SegmentedControls/SegmentedControls';
 import { Switch, SwitchSize, SwitchState } from '@components/Switch/Switch';
 import { TextInput, TextInputType } from '@components/TextInput/TextInput';
 import {
@@ -472,7 +472,7 @@ export const WithAdvancedFormControls: StoryFn<AccordionProps> = () => {
                                 <TextInput id="spacing" decorator="px" type={TextInputType.Number} />
                             </div>
                         ) : (
-                            <Slider
+                            <SegmentedControls
                                 id="spacing"
                                 onChange={setSpacing}
                                 activeItemId={spacing}
@@ -488,7 +488,7 @@ export const WithAdvancedFormControls: StoryFn<AccordionProps> = () => {
             </AccordionItem>
             <AccordionItem header={{ children: 'Alignment', type: FieldsetHeaderType.Accordion }}>
                 <FormControl label={{ children: 'Text', htmlFor: 'text-alignment' }}>
-                    <Slider
+                    <SegmentedControls
                         onChange={setAlignmnent}
                         activeItemId={alignment}
                         items={[
