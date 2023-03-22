@@ -17,9 +17,9 @@ const transformer = (tree: TreeNode) => {
     }
 };
 
-const regex = new RegExp(`{:target="(${Object.values(TargetValue).join('|')})"}`);
+const targetValueRegex = new RegExp(`{:target="(${Object.values(TargetValue).join('|')})"}`);
 const getTarget = (child: NodeChild): TargetValue | undefined => {
-    const match = child.value?.match(regex);
+    const match = child.value?.match(targetValueRegex);
 
     if (!match) {
         return TargetValue.SELF;
@@ -31,7 +31,7 @@ const getTarget = (child: NodeChild): TargetValue | undefined => {
 
     return match[1] as TargetValue;
 };
-const replaceChildValue = (child: NodeChild): string => child.value?.replace(regex, '') ?? '';
+const replaceChildValue = (child: NodeChild): string => child.value?.replace(targetValueRegex, '') ?? '';
 
 const updateLinkNodeWithTarget = (node: TreeNode, child: NodeChild) => {
     if (!child) {
