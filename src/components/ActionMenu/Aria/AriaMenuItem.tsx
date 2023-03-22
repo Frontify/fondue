@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { MenuItem } from '@components/MenuItem/MenuItem';
-import { Switch, SwitchSize, SwitchMode } from '@components/Switch';
+import { Switch, SwitchMode, SwitchSize } from '@components/Switch';
 import { useFocusRing } from '@react-aria/focus';
 import { useMenuItem } from '@react-aria/menu';
 import { mergeProps } from '@react-aria/utils';

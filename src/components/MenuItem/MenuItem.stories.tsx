@@ -9,7 +9,7 @@ import {
     MenuItemStyle,
     SelectionIndicatorIcon,
 } from '@components/MenuItem';
-import { Switch, SwitchSize, SwitchMode } from '@components/Switch';
+import { Switch, SwitchMode, SwitchSize } from '@components/Switch';
 import { IconMusicNote } from '@foundation/Icon/Generated';
 
 const SwitchComponent = () => {

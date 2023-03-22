@@ -10,7 +10,7 @@ import { FieldsetHeaderType } from '@components/FieldsetHeader/FieldsetHeader';
 import { FormControl } from '@components/FormControl/FormControl';
 import { LinkChooser } from '@components/LinkChooser/LinkChooser.stories';
 import { SegmentedControls } from '@components/SegmentedControls/SegmentedControls';
-import { Switch, SwitchSize, SwitchMode } from '@components/Switch/Switch';
+import { Switch, SwitchMode, SwitchSize } from '@components/Switch/Switch';
 import { TextInput, TextInputType } from '@components/TextInput/TextInput';
 import {
     IconIcon,
