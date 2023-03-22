@@ -38,6 +38,7 @@ export * from './RadioPill';
 export * from './RichTextEditor';
 export * from './ScrollWrapper';
 export * from './SegmentedControls';
+export * from './Slider';
 export * from './Switch';
 export * from './Table';
 export * from './Tabs';
