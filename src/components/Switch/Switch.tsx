@@ -20,6 +20,11 @@ export enum SwitchState {
     Indeterminate = 'Indeterminate',
 }
 
+export enum SwitchLabelStyle {
+    Default = 'Default',
+    Heading = 'Heading',
+}
+
 const trackSizeClasses: Record<SwitchSize, string> = {
     [SwitchSize.Small]: 'tw-w-[22px] tw-h-3',
     [SwitchSize.Medium]: 'tw-w-[30px] tw-h-4',
@@ -45,6 +50,7 @@ export type SwitchProps = {
     mode?: SwitchState;
     disabled?: boolean;
     label?: string;
+    labelStyle?: string;
     name?: string;
     size?: SwitchSize;
     hug?: boolean;
@@ -60,6 +66,7 @@ export const Switch: FC<SwitchProps> = ({
     onChange,
     size = SwitchSize.Medium,
     mode = SwitchState.Off,
+    labelStyle = SwitchLabelStyle.Default,
     hug = false,
     tooltip,
 }) => {
@@ -141,7 +148,15 @@ export const Switch: FC<SwitchProps> = ({
         <div className={containerClasses} data-test-id={SWITCH_ID}>
             {label && (
                 <InputLabel clickable={true} htmlFor={id} disabled={disabled} tooltip={tooltip}>
-                    {label}
+                    {labelStyle === SwitchLabelStyle.Default ? (
+                        <span data-test-id="switch-label-wrapper" className="tw-font-medium tw-text-text-weak">
+                            {label}
+                        </span>
+                    ) : (
+                        <span data-test-id="switch-label-wrapper" className="tw-font-bold tw-text-text">
+                            {label}
+                        </span>
+                    )}
                 </InputLabel>
             )}
             <button
