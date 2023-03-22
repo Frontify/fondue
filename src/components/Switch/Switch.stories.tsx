@@ -3,7 +3,7 @@
 import { Meta, StoryFn } from '@storybook/react';
 import React, { MouseEvent, useEffect, useState } from 'react';
 import { IconExclamationMarkCircle } from '@foundation/Icon/Generated';
-import { Switch, SwitchLabelStyle, SwitchMode, SwitchProps, SwitchSize } from './Switch';
+import { Switch, SwitchLabelStyle, SwitchMode, SwitchModeTypes, SwitchProps, SwitchSize } from './Switch';
 import { TooltipIconTriggerStyle } from '@components/TooltipIcon';
 
 export default {
@@ -27,7 +27,7 @@ export default {
             },
         },
         mode: {
-            options: Object.values(SwitchMode),
+            options: SwitchModeTypes,
             control: { type: 'radio' },
         },
         onChange: {

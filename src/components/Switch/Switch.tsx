@@ -14,7 +14,8 @@ export enum SwitchSize {
     Medium = 'Medium',
 }
 
-export type SwitchMode = 'On' | 'Off' | 'Indeterminate';
+export const SwitchModeTypes = ['On', 'Off', 'Indeterminate'] as const;
+export type SwitchMode = typeof SwitchModeTypes[number];
 
 export enum SwitchLabelStyle {
     Default = 'Default',

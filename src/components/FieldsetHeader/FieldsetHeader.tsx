@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Switch, SwitchMode, SwitchSize } from '@components/Switch/Switch';
+import { Switch, SwitchSize } from '@components/Switch/Switch';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { merge } from '@utilities/merge';
 import React, { FC, ReactElement, ReactNode, cloneElement, isValidElement } from 'react';
