@@ -36,7 +36,7 @@ export default {
         },
     },
     args: {
-        mode: SwitchMode.On,
+        mode: 'On',
         disabled: false,
         labelStyle: SwitchLabelStyle.Default,
         hug: false,
@@ -48,9 +48,9 @@ export default {
 type Props = SwitchProps & { hug?: boolean };
 
 const Default: StoryFn<Props> = (args: Props) => {
-    const [mode, setMode] = useState<SwitchMode>(args.mode || SwitchMode.Off);
+    const [mode, setMode] = useState<SwitchMode>(args.mode || 'Off');
     useEffect(() => {
-        if (args.mode !== SwitchMode.On && args.mode !== SwitchMode.Off && args.mode !== SwitchMode.Indeterminate) {
+        if (args.mode !== 'On' && args.mode !== 'Off' && args.mode !== 'Indeterminate') {
             return;
         }
         if (args.mode === mode) {
@@ -60,7 +60,7 @@ const Default: StoryFn<Props> = (args: Props) => {
     }, [args.mode]);
 
     const toggle = (event: MouseEvent) => {
-        setMode(mode === SwitchMode.On ? SwitchMode.Off : SwitchMode.On);
+        setMode(mode === 'On' ? 'Off' : 'On');
         args.onChange && args.onChange(event);
     };
 

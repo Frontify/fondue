@@ -459,7 +459,7 @@ export const WithAdvancedFormControls: StoryFn<AccordionProps> = () => {
                     extra={
                         <Switch
                             label="advanced"
-                            mode={showAdvancedSpacing ? SwitchMode.On : SwitchMode.Off}
+                            mode={showAdvancedSpacing ? 'On' : 'Off'}
                             size={SwitchSize.Small}
                             onChange={() => setShowAdvancedSpacing(!showAdvancedSpacing)}
                         />

@@ -14,11 +14,7 @@ export enum SwitchSize {
     Medium = 'Medium',
 }
 
-export enum SwitchMode {
-    On = 'On',
-    Off = 'Off',
-    Indeterminate = 'Indeterminate',
-}
+export type SwitchMode = 'On' | 'Off' | 'Indeterminate';
 
 export enum SwitchLabelStyle {
     Default = 'Default',
@@ -65,7 +61,7 @@ export const Switch: FC<SwitchProps> = ({
     disabled,
     onChange,
     size = SwitchSize.Medium,
-    mode = SwitchMode.Off,
+    mode = 'Off',
     labelStyle = SwitchLabelStyle.Default,
     hug = false,
     tooltip,
@@ -78,12 +74,12 @@ export const Switch: FC<SwitchProps> = ({
         const baseClasses = 'tw-group tw-border tw-inline-flex tw-rounded-full tw-shrink-0 tw-p-0 tw-transition-colors';
 
         const trueOrFalseValueClasses =
-            mode === SwitchMode.On
+            mode === 'On'
                 ? 'tw-bg-text-weak tw-border-line-xx-strong hover:tw-bg-text'
                 : 'tw-bg-box-neutral tw-border-line-x-strong hover:tw-bg-box-neutral-hover';
 
         const valueClasses =
-            mode === SwitchMode.Indeterminate
+            mode === 'Indeterminate'
                 ? 'tw-bg-text-weak tw-flex tw-items-center tw-justify-center hover:tw-bg-text'
                 : trueOrFalseValueClasses;
 
@@ -92,7 +88,7 @@ export const Switch: FC<SwitchProps> = ({
             : valueClasses;
 
         const disabledClasses =
-            disabled && mode === SwitchMode.Indeterminate
+            disabled && mode === 'Indeterminate'
                 ? 'tw-flex tw-items-center tw-justify-center tw-bg-box-disabled tw-border-line tw-pointer-events-none'
                 : trueOrFalseDisabledClasses;
 
@@ -103,15 +99,15 @@ export const Switch: FC<SwitchProps> = ({
     const dotWrapperClasses = useMemo(() => {
         const baseClasses = 'tw-relative tw-self-center tw-transition-transform';
 
-        const trueOrFalseValueClasses = mode === SwitchMode.On ? dotSizeClasses[size].activeTranslation : '';
+        const trueOrFalseValueClasses = mode === 'On' ? dotSizeClasses[size].activeTranslation : '';
 
-        const valueClasses = mode === SwitchMode.Indeterminate ? 'tw-bg-base' : trueOrFalseValueClasses;
+        const valueClasses = mode === 'Indeterminate' ? 'tw-bg-base' : trueOrFalseValueClasses;
 
-        const disabledClasses = disabled && mode === SwitchMode.Indeterminate ? 'tw-bg-text-disabled' : valueClasses;
+        const disabledClasses = disabled && mode === 'Indeterminate' ? 'tw-bg-text-disabled' : valueClasses;
 
         return merge([
             baseClasses,
-            mode === SwitchMode.Indeterminate ? indeterminateLineClasses : dotSizeClasses[size].dimensions,
+            mode === 'Indeterminate' ? indeterminateLineClasses : dotSizeClasses[size].dimensions,
             disabledClasses,
         ]);
     }, [mode, size]);
@@ -123,9 +119,9 @@ export const Switch: FC<SwitchProps> = ({
 
         const trueOrFalseValueClasses =
             // eslint-disable-next-line unicorn/no-nested-ternary
-            mode === SwitchMode.On ? 'tw-right-0  tw-translate-x-px' : 'tw-left-0';
+            mode === 'On' ? 'tw-right-0  tw-translate-x-px' : 'tw-left-0';
 
-        const valueClasses = mode === SwitchMode.Indeterminate ? 'tw-hidden' : trueOrFalseValueClasses;
+        const valueClasses = mode === 'Indeterminate' ? 'tw-hidden' : trueOrFalseValueClasses;
 
         const disabledStateClasses = disabled
             ? 'tw-border-line-strong'
@@ -133,7 +129,7 @@ export const Switch: FC<SwitchProps> = ({
 
         return merge([
             baseClasses,
-            mode === SwitchMode.Indeterminate ? indeterminateLineClasses : dotSizeClasses[size].dimensions,
+            mode === 'Indeterminate' ? indeterminateLineClasses : dotSizeClasses[size].dimensions,
             valueClasses,
             disabledStateClasses,
         ]);
