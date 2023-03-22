@@ -3,13 +3,13 @@
 import { IconTextAlignmentCentre, IconTextAlignmentLeft, IconTextAlignmentRight } from '@foundation/Icon/Generated';
 import { IconSize } from '@foundation/Icon/IconSize';
 import React, { FC, useState } from 'react';
-import { IconItem, Slider, TextOrNumberItem } from './Slider';
+import { IconItem, SegmentedControls, TextOrNumberItem } from './SegmentedControls';
 
-const SLIDER_ID = '[data-test-id=slider]';
-const ICON_ITEM_ID = '[data-test-id=slider-item-icon]';
-const TEXT_ITEM_ID = '[data-test-id=slider-item-text]';
-const NUMBER_ITEM_ID = '[data-test-id=slider-item-number]';
-const INPUT_ID = '[data-test-id=slider-input]';
+const SEGMENTED_CONTROLS_ID = '[data-test-id=fondue-segmented-controls]';
+const ICON_ITEM_ID = '[data-test-id=fondue-segmented-controls-item-icon]';
+const TEXT_ITEM_ID = '[data-test-id=fondue-segmented-controls-item-text]';
+const NUMBER_ITEM_ID = '[data-test-id=fondue-segmented-controls-item-number]';
+const INPUT_ID = '[data-test-id=fondue-segmented-controls-input]';
 
 const TEXT_ITEMS = [
     { id: 'a', value: 'abc' },
@@ -36,14 +36,14 @@ type Props = {
 
 const Component: FC<Props> = ({ items, disabled = false }) => {
     const [active, setActive] = useState(items[0].id);
-    return <Slider items={items} activeItemId={active} onChange={setActive} disabled={disabled} />;
+    return <SegmentedControls items={items} activeItemId={active} onChange={setActive} disabled={disabled} />;
 };
 
-describe('Slider Component', () => {
+describe('SegmentedControls Component', () => {
     it('renders text items', () => {
         cy.mount(<Component items={TEXT_ITEMS} />);
 
-        cy.get(SLIDER_ID).should('be.visible');
+        cy.get(SEGMENTED_CONTROLS_ID).should('be.visible');
         cy.get(TEXT_ITEM_ID).should('have.length', 3);
         cy.get(INPUT_ID).first().should('be.checked');
         cy.get(INPUT_ID).first().should('have.attr', 'aria-label', 'abc');
@@ -82,10 +82,10 @@ describe('Slider Component', () => {
         cy.get('body').type('{rightarrow}');
         cy.get(INPUT_ID).first().should('be.checked');
     });
-    it('renders disabled slider', () => {
+    it('renders disabled segmented controls', () => {
         cy.mount(<Component items={TEXT_ITEMS} disabled />);
 
-        cy.get(SLIDER_ID).should('have.attr', 'aria-disabled', 'true');
+        cy.get(SEGMENTED_CONTROLS_ID).should('have.attr', 'aria-disabled', 'true');
         cy.get(INPUT_ID).first().should('be.be.disabled');
         cy.get(TEXT_ITEM_ID).last().click();
         cy.get(INPUT_ID).last().should('not.be.checked');

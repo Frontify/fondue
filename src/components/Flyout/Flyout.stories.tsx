@@ -4,7 +4,7 @@ import { BadgeStatus, BadgeStyle } from '@components/Badge';
 import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
 import { Divider } from '@components/Divider/Divider';
 import { FormControl } from '@components/FormControl/FormControl';
-import { Slider } from '@components/Slider/Slider';
+import { SegmentedControls } from '@components/SegmentedControls/SegmentedControls';
 import { Textarea } from '@components/Textarea/Textarea';
 import { TextInput } from '@components/TextInput/TextInput';
 import { chain } from '@react-aria/utils';
@@ -80,11 +80,11 @@ const FlyoutTemplate: (addScrollingContent: boolean, inputFocus: boolean) => Sto
                             <Divider color={FLYOUT_DIVIDER_COLOR} height={FLYOUT_DIVIDER_HEIGHT} />
                             <FormControl
                                 label={{
-                                    children: 'Slider Label',
-                                    htmlFor: 'slider-id',
+                                    children: 'SegmentedControls Label',
+                                    htmlFor: 'segmented-controls-id',
                                 }}
                             >
-                                <Slider
+                                <SegmentedControls
                                     activeItemId={activeItemId}
                                     onChange={setActiveItemId}
                                     items={[
