@@ -9,7 +9,7 @@ import {
     MenuItemStyle,
     SelectionIndicatorIcon,
 } from '@components/MenuItem';
-import { Switch, SwitchSize, SwitchState } from '@components/Switch';
+import { Switch, SwitchSize, SwitchMode } from '@components/Switch';
 import { IconMusicNote } from '@foundation/Icon/Generated';
 
 const SwitchComponent = () => {
@@ -17,7 +17,7 @@ const SwitchComponent = () => {
     const toggleSwitch = () => setSwitchValue(!switchValue);
 
     return (
-        <Switch size={SwitchSize.Small} mode={switchValue ? SwitchState.On : SwitchState.Off} onChange={toggleSwitch} />
+        <Switch size={SwitchSize.Small} mode={switchValue ? SwitchMode.On : SwitchMode.Off} onChange={toggleSwitch} />
     );
 };
 

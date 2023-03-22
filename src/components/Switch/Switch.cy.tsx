@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { FC, useState } from 'react';
-import { Switch, SwitchLabelStyle, SwitchProps, SwitchState } from './Switch';
+import { Switch, SwitchLabelStyle, SwitchProps, SwitchMode } from './Switch';
 
-const Component: FC<SwitchProps> = ({ mode = SwitchState.Off, ...props }) => {
+const Component: FC<SwitchProps> = ({ mode = SwitchMode.Off, ...props }) => {
     const [active, setActive] = useState(mode);
 
     return (
@@ -11,7 +11,7 @@ const Component: FC<SwitchProps> = ({ mode = SwitchState.Off, ...props }) => {
             {...props}
             mode={active}
             onChange={(event) => {
-                setActive(active === SwitchState.Off ? SwitchState.On : SwitchState.Off);
+                setActive(active === SwitchMode.Off ? SwitchMode.On : SwitchMode.Off);
                 props.onChange && props.onChange(event);
             }}
         />
@@ -31,18 +31,18 @@ describe('Switch Component', () => {
 
         cy.get(SWITCH_ID).as('Switch');
         cy.get('@Switch').invoke('attr', 'name').should('eq', 'switch-test-value');
-        cy.get('@Switch').should('have.value', SwitchState.Off);
+        cy.get('@Switch').should('have.value', SwitchMode.Off);
 
         cy.get('@Switch').click();
-        cy.get('@Switch').should('have.value', SwitchState.On);
+        cy.get('@Switch').should('have.value', SwitchMode.On);
     });
 
     it('should support indeterminate value', () => {
-        cy.mount(<Component name="switch-test-value" mode={SwitchState.Indeterminate} />);
+        cy.mount(<Component name="switch-test-value" mode={SwitchMode.Indeterminate} />);
 
         cy.get(SWITCH_ID).as('Switch');
         cy.get('@Switch').invoke('attr', 'name').should('eq', 'switch-test-value');
-        cy.get('@Switch').should('have.value', SwitchState.Indeterminate);
+        cy.get('@Switch').should('have.value', SwitchMode.Indeterminate);
     });
 
     it('should react on click', () => {

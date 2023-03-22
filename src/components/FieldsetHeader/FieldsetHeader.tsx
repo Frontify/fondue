@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Switch, SwitchSize, SwitchState } from '@components/Switch/Switch';
+import { Switch, SwitchSize, SwitchMode } from '@components/Switch/Switch';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { merge } from '@utilities/merge';
 import React, { FC, ReactElement, ReactNode, cloneElement, isValidElement } from 'react';
@@ -75,7 +75,7 @@ export const renderFieldsetHeaderIconType = (
                     <Switch
                         {...props}
                         size={sizeMap[size].switch}
-                        mode={active ? SwitchState.On : SwitchState.Off}
+                        mode={active ? SwitchMode.On : SwitchMode.Off}
                         disabled={disabled}
                     />
                 </div>

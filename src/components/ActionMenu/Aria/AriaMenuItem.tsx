@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { MenuItem } from '@components/MenuItem/MenuItem';
-import { Switch, SwitchSize, SwitchState } from '@components/Switch';
+import { Switch, SwitchSize, SwitchMode } from '@components/Switch';
 import { useFocusRing } from '@react-aria/focus';
 import { useMenuItem } from '@react-aria/menu';
 import { mergeProps } from '@react-aria/utils';
@@ -48,7 +48,7 @@ const useSwitch = (isSwitch: boolean, initialValue: boolean) => {
         if (isSwitch) {
             const toggleSwitch = () => setSwitchValue(!switchValue);
             const switchComponent = (
-                <Switch size={SwitchSize.Small} mode={switchValue ? SwitchState.On : SwitchState.Off} />
+                <Switch size={SwitchSize.Small} mode={switchValue ? SwitchMode.On : SwitchMode.Off} />
             );
 
             setSwitchObject({

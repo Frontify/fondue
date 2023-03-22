@@ -3,7 +3,7 @@
 import { Meta, StoryFn } from '@storybook/react';
 import React, { MouseEvent, useEffect, useState } from 'react';
 import { IconExclamationMarkCircle } from '@foundation/Icon/Generated';
-import { Switch, SwitchLabelStyle, SwitchProps, SwitchSize, SwitchState } from './Switch';
+import { Switch, SwitchLabelStyle, SwitchProps, SwitchSize, SwitchMode } from './Switch';
 import { TooltipIconTriggerStyle } from '@components/TooltipIcon';
 
 export default {
@@ -27,7 +27,7 @@ export default {
             },
         },
         mode: {
-            options: Object.values(SwitchState),
+            options: Object.values(SwitchMode),
             control: { type: 'radio' },
         },
         onChange: {
@@ -36,7 +36,7 @@ export default {
         },
     },
     args: {
-        mode: SwitchState.On,
+        mode: SwitchMode.On,
         disabled: false,
         labelStyle: SwitchLabelStyle.Default,
         hug: false,
@@ -48,9 +48,9 @@ export default {
 type Props = SwitchProps & { hug?: boolean };
 
 const Default: StoryFn<Props> = (args: Props) => {
-    const [mode, setMode] = useState<SwitchState>(args.mode || SwitchState.Off);
+    const [mode, setMode] = useState<SwitchMode>(args.mode || SwitchMode.Off);
     useEffect(() => {
-        if (args.mode !== SwitchState.On && args.mode !== SwitchState.Off && args.mode !== SwitchState.Indeterminate) {
+        if (args.mode !== SwitchMode.On && args.mode !== SwitchMode.Off && args.mode !== SwitchMode.Indeterminate) {
             return;
         }
         if (args.mode === mode) {
@@ -60,7 +60,7 @@ const Default: StoryFn<Props> = (args: Props) => {
     }, [args.mode]);
 
     const toggle = (event: MouseEvent) => {
-        setMode(mode === SwitchState.On ? SwitchState.Off : SwitchState.On);
+        setMode(mode === SwitchMode.On ? SwitchMode.Off : SwitchMode.On);
         args.onChange && args.onChange(event);
     };
 
