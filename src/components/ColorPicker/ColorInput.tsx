@@ -60,7 +60,7 @@ export const ColorInput: FC<ColorInputProps> = ({
                     id={useMemoizedId()}
                     ref={inputElement}
                     className={merge([
-                        'tw-grow tw-border-none tw-outline-none tw-bg-transparent tw-hide-input-arrows tw-text-black tw-placeholder-black-60 dark:tw-text-white !tw-ring-0',
+                        'tw-grow tw-border-none tw-outline-none tw-bg-transparent tw-hide-input-arrows tw-text-black tw-placeholder-black-60 dark:tw-text-white',
                         decoratorPosition === DecoratorPosition.Right && 'tw-text-right',
                     ])}
                     onClick={() => inputElement.current?.focus()}
