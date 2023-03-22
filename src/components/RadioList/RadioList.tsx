@@ -76,7 +76,7 @@ export const RadioList = ({
                             aria-checked={radio.value === activeValue}
                             defaultChecked={radio.value === activeValue}
                             className={merge([
-                                'tw-peer w-w-4 tw-h-4 tw-border-black-60 disabled:tw-border-black-10 focus:tw-ring-0 focus:tw-ring-offset-0 focus-visible:tw-ring-2 focus-visible:tw-ring-offset-2',
+                                'tw-peer tw-form-radio w-w-4 tw-h-4 tw-border-black-60 disabled:tw-border-black-10 focus:tw-ring-0 focus:tw-ring-offset-0 focus-visible:tw-ring-2 focus-visible:tw-ring-offset-2',
                                 radio.emphasis === RadioButtonEmphasis.Weak
                                     ? 'tw-text-black-80'
                                     : 'tw-text-box-selected-strong',
