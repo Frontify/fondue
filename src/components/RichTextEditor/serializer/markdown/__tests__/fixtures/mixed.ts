@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TargetType } from '../../types';
+import { TargetValue } from '../../types';
 import { createLink, createP, createText } from './helpers';
 import { orderedListTree } from './orderedList';
 import { unorderedListTree } from './unorderedList';
@@ -126,7 +126,7 @@ export const mixedTree = [
             {
                 text: '\nThis is ',
             },
-            createLink('https://www.frontify.com/', 'link to frontify.com', TargetType.SELF),
+            createLink('https://www.frontify.com/', 'link to frontify.com', TargetValue.SELF),
             createText('.'),
         ],
     },

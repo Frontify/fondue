@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import escapeHtml from 'escape-html';
-import { BlockType, InputNodeTypes, NodeType, OptionType, TargetType } from '../types';
+import { BlockType, InputNodeTypes, NodeType, OptionType, TargetValue } from '../types';
 import { isLeafNode } from './isLeafNode';
 
 const processMentionNode = (chunk: BlockType) => `@[${chunk.category}:${chunk.id}]`;
@@ -76,7 +76,7 @@ export const applyFormattingToBlockNode = (
 
         case nodeTypes.link:
             const linkUrl = (chunk as BlockType).url ?? '';
-            const target = (chunk as BlockType).target ?? TargetType.BLANK;
+            const target = (chunk as BlockType).target ?? TargetValue.BLANK;
             return `[${children}](${linkUrl}){:target="${target}"}`;
 
         case nodeTypes.image:

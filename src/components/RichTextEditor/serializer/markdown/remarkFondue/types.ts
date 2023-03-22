@@ -1,18 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TargetType } from '../types';
+import { TargetValue } from '../types';
 
 export type NodeChild = {
     type: string;
     value?: string;
     text?: string;
-    target?: TargetType;
+    target?: TargetValue;
     children?: NodeChild[];
 };
 
 export type TreeNode = {
     type: string;
-    target?: TargetType;
+    target?: TargetValue;
     children: NodeChild[];
 };
 
