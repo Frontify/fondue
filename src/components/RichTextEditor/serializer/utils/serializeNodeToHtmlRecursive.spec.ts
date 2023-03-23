@@ -42,7 +42,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
         };
         const result = serializeNodeToHtmlRecursive(node, { designTokens: defaultDesignTokens });
 
-        expect(result).to.match(/<ol class='.*(count,decimal)*'/);
+        expect(result).to.match(/<ol class=".*(count,decimal)*"/);
         expect(result).to.match(/<li .*><p .*><span .*>This comes first\.<\/span><\/p><\/li>/);
         expect(result).to.match(/<li .*><p .*><span .*>This comes second\.<\/span><\/p><\/li>/);
     });
@@ -405,4 +405,28 @@ describe('serializeNodeToHtmlRecursive()', () => {
             expect(result).to.include(`margin-left:${entry.outcome};`);
         });
     }
+
+    it('serializes design tokens with quotes in them correctly', () => {
+        const node = {
+            type: ELEMENT_PARAGRAPH,
+            children: [
+                {
+                    type: ELEMENT_LINK,
+                    children: [{ text: 'This is a Link.' }],
+                    url: 'https://frontify.com',
+                },
+            ],
+        };
+        const result = serializeNodeToHtmlRecursive(node, {
+            designTokens: {
+                link: {
+                    fontFamily: '"Mier B", -apple-system, BlinkMacSystemFont',
+                },
+            },
+        });
+
+        expect(result).to.be.equal(
+            '<p class="tw-break-words" style=""><a class="tw-break-words" style="font-family: \'Mier B\', -apple-system, BlinkMacSystemFont;" target="_blank" href="https://frontify.com">This is a Link.</a></p>',
+        );
+    });
 });
