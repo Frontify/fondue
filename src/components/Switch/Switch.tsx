@@ -117,9 +117,7 @@ export const Switch: FC<SwitchProps> = ({
         const baseClasses =
             'tw-border tw-bg-base tw-rounded-full tw-absolute tw-block tw-self-center tw-transition-width tw-duration-75';
 
-        const trueOrFalseValueClasses =
-            // eslint-disable-next-line unicorn/no-nested-ternary
-            mode === 'On' ? 'tw-right-0  tw-translate-x-px' : 'tw-left-0';
+        const trueOrFalseValueClasses = mode === 'On' ? 'tw-right-0  tw-translate-x-px' : 'tw-left-0';
 
         const valueClasses = mode === 'Indeterminate' ? 'tw-hidden' : trueOrFalseValueClasses;
 
