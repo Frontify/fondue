@@ -13,9 +13,9 @@ import React from 'react';
 import { MarkupElement } from '../../MarkupElement';
 
 const LIST_TYPES = [
-    '[&>li>p]:before:tw-content-[counter(count,decimal)_"._"]',
-    '[&>li>p]:before:tw-content-[counter(count,_lower-alpha)_"._"]',
-    '[&>li>p]:before:tw-content-[counter(count,lower-roman)_"._"]',
+    "[&>li>p]:before:tw-content-[counter(count,decimal)_'._']",
+    "[&>li>p]:before:tw-content-[counter(count,_lower-alpha)_'._']",
+    "[&>li>p]:before:tw-content-[counter(count,lower-roman)_'._']",
 ];
 
 const getNestingLevel = (editor: PlateEditor, element: TElement) => {

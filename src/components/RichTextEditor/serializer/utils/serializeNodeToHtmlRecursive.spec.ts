@@ -132,10 +132,10 @@ describe('serializeNodeToHtmlRecursive()', () => {
                 },
             ],
         };
-        const result = serializeNodeToHtmlRecursive(node, { designTokens: defaultDesignTokens });
+        const result = serializeNodeToHtmlRecursive(node, { designTokens: {} });
 
-        expect(result).to.match(
-            /<ul.*><li.*><p.*><span .*>This comes first.<\/span><\/p><\/li><li.*><p.*><span.*>This comes second.<\/span><\/p><\/li><\/ul>/,
+        expect(result).to.be.equal(
+            '<ul class="[&>li>p]:before:tw-content-[\'•\'] [&>li>p]:before:tw-px-2 tw-list-none tw-pl-[10px] tw-mb-[10px] tw-ml-[15px] tw-break-words"><li class="tw-break-words [&>p]:before:tw-flex [&>p]:before:tw-justify-end [&>p]:before:tw-w-[1.2em] !tw-no-underline" style="counter-increment: count;"><p class="tw-break-words tw-justify-start tw-grid tw-grid-cols-[min-content_repeat(3,_auto)]"><span class="">This comes first.</span></p></li><li class="tw-break-words [&>p]:before:tw-flex [&>p]:before:tw-justify-end [&>p]:before:tw-w-[1.2em] !tw-no-underline" style="counter-increment: count;"><p class="tw-break-words tw-justify-start tw-grid tw-grid-cols-[min-content_repeat(3,_auto)]"><span class="">This comes second.</span></p></li></ul>',
         );
     });
 
