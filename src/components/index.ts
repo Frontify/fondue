@@ -36,7 +36,6 @@ export * from './OrderableList';
 export * from './OverflowMenu';
 export * from './RadioPill';
 export * from './RadioList';
-export * from './RadioPill';
 export * from './RichTextEditor';
 export * from './ScrollWrapper';
 export * from './SegmentedControls';
