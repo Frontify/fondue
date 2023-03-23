@@ -55,9 +55,7 @@ const Default: StoryFn<Props> = (args: Props) => {
         if (args.mode !== 'On' && args.mode !== 'Off' && args.mode !== 'Indeterminate') {
             return;
         }
-        if (args.mode === mode) {
-            return;
-        }
+
         setMode(args.mode);
     }, [args.mode]);
 
