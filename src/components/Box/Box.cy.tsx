@@ -30,6 +30,6 @@ describe('Box Component', () => {
         cy.mount(<Component className={BOX_TEST_CLASSNAME}>{BOX_CONTENT}</Component>);
 
         cy.get(BOX_ID).as('Box');
-        cy.get('@Box').should('have.attr', 'className', 'tw-font-bold tw-flex');
+        cy.get('@Box').should('have.attr', 'class', 'tw-font-bold tw-flex');
     });
 });
