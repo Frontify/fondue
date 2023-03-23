@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TNode, TNodeEntry } from '@udecode/plate';
+import { isValidUrl } from '@components/RichTextEditor/utils/isValidUrl';
 import {
     InsertNodesOptions,
     PlateEditor,
+    TNode,
+    TNodeEntry,
     UnwrapNodesOptions,
     Value,
     WrapNodesOptions,
@@ -12,7 +14,6 @@ import {
     getEditorString,
     getNodeLeaf,
     getNodeProps,
-    getPluginOptions,
     getPluginType,
     isDefined,
     isExpanded,
@@ -20,7 +21,7 @@ import {
     setNodes,
 } from '@udecode/plate';
 import { Path } from 'slate';
-import { ButtonPlugin, ELEMENT_BUTTON } from '../createButtonPlugin';
+import { ELEMENT_BUTTON } from '../createButtonPlugin';
 import { RichTextButtonStyle, TButtonElement } from '../types';
 import { CreateButtonNodeOptions } from '../utils/index';
 import { insertButton } from './insertButton';
@@ -36,7 +37,6 @@ export type UpsertButtonOptions<V extends Value = Value> = CreateButtonNodeOptio
     insertNodesOptions?: InsertNodesOptions<V>;
     unwrapNodesOptions?: UnwrapNodesOptions<V>;
     wrapNodesOptions?: WrapNodesOptions<V>;
-    isUrl?: (url: string) => boolean;
 };
 
 /**
@@ -49,15 +49,7 @@ export type UpsertButtonOptions<V extends Value = Value> = CreateButtonNodeOptio
  */
 export const upsertButton = <V extends Value>(
     editor: PlateEditor<V>,
-    {
-        url,
-        text,
-        buttonStyle,
-        target,
-        insertTextInButton,
-        insertNodesOptions,
-        isUrl = getPluginOptions<ButtonPlugin, V>(editor, ELEMENT_BUTTON).isUrl,
-    }: UpsertButtonOptions<V>,
+    { url, text, buttonStyle, target, insertTextInButton, insertNodesOptions }: UpsertButtonOptions<V>,
 ) => {
     const at = editor.selection;
     if (!at) {
@@ -76,7 +68,7 @@ export const upsertButton = <V extends Value>(
         return true;
     }
 
-    if (!isUrl?.(url)) {
+    if (!isValidUrl?.(url)) {
         return;
     }
 

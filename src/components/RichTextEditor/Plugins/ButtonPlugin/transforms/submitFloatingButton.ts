@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { isValidUrl } from '@components/RichTextEditor/utils/isValidUrl';
 import { PlateEditor, Value, focusEditor, getPluginOptions } from '@udecode/plate';
 import { floatingButtonActions, floatingButtonSelectors } from '../components/FloatingButton/floatingButtonStore';
 import { ButtonPlugin, ELEMENT_BUTTON } from '../createButtonPlugin';
@@ -10,10 +11,10 @@ export const submitFloatingButton = <V extends Value>(editor: PlateEditor<V>) =>
         return;
     }
 
-    const { isUrl, forceSubmit } = getPluginOptions<ButtonPlugin, V>(editor, ELEMENT_BUTTON);
+    const { forceSubmit } = getPluginOptions<ButtonPlugin, V>(editor, ELEMENT_BUTTON);
     const url = floatingButtonSelectors.url();
 
-    const isValid = isUrl?.(url) || forceSubmit;
+    const isValid = isValidUrl(url) || forceSubmit;
     if (!isValid) {
         return;
     }
@@ -29,7 +30,6 @@ export const submitFloatingButton = <V extends Value>(editor: PlateEditor<V>) =>
         text,
         buttonStyle,
         target,
-        isUrl: (_url) => (forceSubmit || !isUrl ? true : isUrl(_url)),
     });
 
     setTimeout(() => {

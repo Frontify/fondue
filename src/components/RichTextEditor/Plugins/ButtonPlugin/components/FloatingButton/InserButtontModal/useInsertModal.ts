@@ -1,14 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { Dispatch, Reducer, useEffect, useReducer } from 'react';
-import { getPluginOptions, useEditorRef, useHotkeys } from '@udecode/plate';
 import { CheckboxState } from '@components/Checkbox';
-import { InsertModalDispatchType, InsertModalStateProps } from './types';
-import { floatingButtonActions, floatingButtonSelectors } from '../floatingButtonStore';
-import { ButtonPlugin, ELEMENT_BUTTON } from '../../../createButtonPlugin';
+import { isValidUrl } from '@components/RichTextEditor/utils/isValidUrl';
+import { useEditorRef, useHotkeys } from '@udecode/plate';
+import React, { Dispatch, Reducer, useEffect, useReducer } from 'react';
 import { submitFloatingButton } from '../../../transforms/submitFloatingButton';
 import { RichTextButtonStyle } from '../../../types';
 import { getButtonStyle } from '../../../utils/getButtonStyle';
+import { floatingButtonActions, floatingButtonSelectors } from '../floatingButtonStore';
+import { InsertModalDispatchType, InsertModalStateProps } from './types';
 
 const initialState: InsertModalStateProps = {
     url: '',
@@ -113,8 +113,7 @@ export const useInsertModal = () => {
     const hasValues = state.url !== '' && state.text !== '';
 
     const isValidUrlOrEmpty = () => {
-        const { isUrl } = getPluginOptions<ButtonPlugin>(editor, ELEMENT_BUTTON);
-        return !state.url || (isUrl && isUrl(state.url));
+        return !state.url || isValidUrl(state.url);
     };
 
     useHotkeys(
