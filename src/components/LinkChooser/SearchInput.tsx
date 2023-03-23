@@ -70,7 +70,7 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                     readOnly={!isFocused}
                     ref={inputElement}
                     className={merge([
-                        'tw-flex-auto tw-border-none tw-outline-none tw-bg-transparent tw-hide-input-arrows tw-min-w-0 tw-whitespace-nowrap tw-truncate !tw-ring-0',
+                        'tw-flex-auto tw-border-none tw-outline-none tw-bg-transparent tw-hide-input-arrows tw-min-w-0 tw-whitespace-nowrap tw-truncate',
                         disabled
                             ? 'tw-text-black-40 tw-placeholder-black-30 dark:tw-text-black-30 dark:tw-placeholder-black-40'
                             : 'tw-text-black tw-placeholder-black-60 dark:tw-text-white',
