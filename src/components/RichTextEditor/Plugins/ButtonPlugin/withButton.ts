@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { isValidUrl } from '@components/RichTextEditor/utils/isValidUrl';
 import { AnyObject, EText } from '@udecode/plate';
 import {
     PlateEditor,
@@ -37,7 +38,7 @@ import { upsertButton } from './transforms/index';
  *
  */
 
-export const withButton: WithOverride = (editor, { type, options: { isUrl, getUrlHref, rangeBeforeOptions } }) => {
+export const withButton: WithOverride = (editor, { type, options: { getUrlHref, rangeBeforeOptions } }) => {
     const { insertData, insertText, apply, normalizeNode, insertBreak } = editor;
 
     const wrapButton = () => {
@@ -71,7 +72,7 @@ export const withButton: WithOverride = (editor, { type, options: { isUrl, getUr
             beforeWordText = getUrlHref?.(beforeWordText) ?? beforeWordText;
 
             // if word before is not an url, exit
-            if (!isUrl(beforeWordText)) {
+            if (!isValidUrl(beforeWordText)) {
                 return;
             }
 
