@@ -68,7 +68,7 @@ export default function deserialize<T extends InputNodeTypes>(node: MarkdownAstN
             return {
                 type: types.link,
                 [linkDestinationKey]: node.url,
-                target: '_blank',
+                target: node.target,
                 children,
             } as LinkNode<T>;
         case 'image':
