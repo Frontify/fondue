@@ -55,7 +55,7 @@ export const Switch: FC<SwitchProps> = ({
     disabled,
     onChange,
     size = 'medium',
-    mode = 'Off',
+    mode = 'off',
     labelStyle = 'default',
     hug = false,
     tooltip,
@@ -68,12 +68,12 @@ export const Switch: FC<SwitchProps> = ({
         const baseClasses = 'tw-group tw-border tw-inline-flex tw-rounded-full tw-shrink-0 tw-p-0 tw-transition-colors';
 
         const trueOrFalseValueClasses =
-            mode === 'On'
+            mode === 'on'
                 ? 'tw-bg-text-weak tw-border-line-xx-strong hover:tw-bg-text'
                 : 'tw-bg-box-neutral tw-border-line-x-strong hover:tw-bg-box-neutral-hover';
 
         const valueClasses =
-            mode === 'Indeterminate'
+            mode === 'indeterminate'
                 ? 'tw-bg-text-weak tw-flex tw-items-center tw-justify-center hover:tw-bg-text'
                 : trueOrFalseValueClasses;
 
@@ -82,7 +82,7 @@ export const Switch: FC<SwitchProps> = ({
             : valueClasses;
 
         const disabledClasses =
-            disabled && mode === 'Indeterminate'
+            disabled && mode === 'indeterminate'
                 ? 'tw-flex tw-items-center tw-justify-center tw-bg-box-disabled tw-border-line tw-pointer-events-none'
                 : trueOrFalseDisabledClasses;
 
@@ -93,15 +93,15 @@ export const Switch: FC<SwitchProps> = ({
     const dotWrapperClasses = useMemo(() => {
         const baseClasses = 'tw-relative tw-self-center tw-transition-transform';
 
-        const trueOrFalseValueClasses = mode === 'On' ? dotSizeClasses[size].activeTranslation : '';
+        const trueOrFalseValueClasses = mode === 'on' ? dotSizeClasses[size].activeTranslation : '';
 
-        const valueClasses = mode === 'Indeterminate' ? 'tw-bg-base' : trueOrFalseValueClasses;
+        const valueClasses = mode === 'indeterminate' ? 'tw-bg-base' : trueOrFalseValueClasses;
 
-        const disabledClasses = disabled && mode === 'Indeterminate' ? 'tw-bg-text-disabled' : valueClasses;
+        const disabledClasses = disabled && mode === 'indeterminate' ? 'tw-bg-text-disabled' : valueClasses;
 
         return merge([
             baseClasses,
-            mode === 'Indeterminate' ? indeterminateLineClasses : dotSizeClasses[size].dimensions,
+            mode === 'indeterminate' ? indeterminateLineClasses : dotSizeClasses[size].dimensions,
             disabledClasses,
         ]);
     }, [mode, size]);
@@ -111,9 +111,9 @@ export const Switch: FC<SwitchProps> = ({
         const baseClasses =
             'tw-border tw-bg-base tw-rounded-full tw-absolute tw-block tw-self-center tw-transition-width tw-duration-75';
 
-        const trueOrFalseValueClasses = mode === 'On' ? 'tw-right-0  tw-translate-x-px' : 'tw-left-0';
+        const trueOrFalseValueClasses = mode === 'on' ? 'tw-right-0  tw-translate-x-px' : 'tw-left-0';
 
-        const valueClasses = mode === 'Indeterminate' ? 'tw-hidden' : trueOrFalseValueClasses;
+        const valueClasses = mode === 'indeterminate' ? 'tw-hidden' : trueOrFalseValueClasses;
 
         const disabledStateClasses = disabled
             ? 'tw-border-line-strong'
@@ -121,7 +121,7 @@ export const Switch: FC<SwitchProps> = ({
 
         return merge([
             baseClasses,
-            mode === 'Indeterminate' ? indeterminateLineClasses : dotSizeClasses[size].dimensions,
+            mode === 'indeterminate' ? indeterminateLineClasses : dotSizeClasses[size].dimensions,
             valueClasses,
             disabledStateClasses,
         ]);

@@ -3,10 +3,14 @@
 import { Meta, StoryFn } from '@storybook/react';
 import React, { MouseEvent, useEffect, useState } from 'react';
 import { IconExclamationMarkCircle } from '@foundation/Icon/Generated';
-import { Switch, SwitchMode, SwitchProps, SwitchSize } from './Switch';
+import { Switch, SwitchMode, SwitchProps } from './Switch';
 import { TooltipIconTriggerStyle } from '@components/TooltipIcon';
 
-const SwitchModeTypes = ['On', 'Off', 'Indeterminate'];
+const SwitchSizeTypes = ['small', 'medium'];
+
+const SwitchModeTypes = ['on', 'off', 'indeterminate'];
+
+const SwitchLabelStyleTypes = ['default', 'heading'];
 
 export default {
     title: 'Components/Switch',
@@ -14,11 +18,11 @@ export default {
     tags: ['autodocs'],
     argTypes: {
         size: {
-            options: Object.values(SwitchSize),
+            options: SwitchSizeTypes,
             control: { type: 'radio' },
         },
         labelStyle: {
-            options: Object.values(SwitchLabelStyle),
+            options: SwitchLabelStyleTypes,
             control: { type: 'radio' },
         },
         label: {
@@ -38,7 +42,7 @@ export default {
         },
     },
     args: {
-        mode: 'On',
+        mode: 'on',
         disabled: false,
         labelStyle: 'default',
         hug: false,
@@ -50,9 +54,9 @@ export default {
 type Props = SwitchProps & { hug?: boolean };
 
 const Default: StoryFn<Props> = (args: Props) => {
-    const [mode, setMode] = useState<SwitchMode>(args.mode || 'Off');
+    const [mode, setMode] = useState<SwitchMode>(args.mode || 'off');
     useEffect(() => {
-        if (args.mode !== 'On' && args.mode !== 'Off' && args.mode !== 'Indeterminate') {
+        if (args.mode !== 'on' && args.mode !== 'off' && args.mode !== 'indeterminate') {
             return;
         }
 
@@ -60,7 +64,7 @@ const Default: StoryFn<Props> = (args: Props) => {
     }, [args.mode]);
 
     const toggle = (event: MouseEvent) => {
-        setMode(mode === 'On' ? 'Off' : 'On');
+        setMode(mode === 'on' ? 'off' : 'on');
         args.onChange && args.onChange(event);
     };
 

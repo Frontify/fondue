@@ -3,7 +3,7 @@
 import React, { FC, useState } from 'react';
 import { Switch, SwitchProps } from './Switch';
 
-const Component: FC<SwitchProps> = ({ mode = 'Off', ...props }) => {
+const Component: FC<SwitchProps> = ({ mode = 'off', ...props }) => {
     const [active, setActive] = useState(mode);
 
     return (
@@ -11,7 +11,7 @@ const Component: FC<SwitchProps> = ({ mode = 'Off', ...props }) => {
             {...props}
             mode={active}
             onChange={(event) => {
-                setActive(active === 'Off' ? 'On' : 'Off');
+                setActive(active === 'off' ? 'on' : 'off');
                 props.onChange && props.onChange(event);
             }}
         />
@@ -31,18 +31,18 @@ describe('Switch Component', () => {
 
         cy.get(SWITCH_ID).as('Switch');
         cy.get('@Switch').invoke('attr', 'name').should('eq', 'switch-test-value');
-        cy.get('@Switch').should('have.value', 'Off');
+        cy.get('@Switch').should('have.value', 'off');
 
         cy.get('@Switch').click();
-        cy.get('@Switch').should('have.value', 'On');
+        cy.get('@Switch').should('have.value', 'on');
     });
 
     it('should support indeterminate value', () => {
-        cy.mount(<Component name="switch-test-value" mode={'Indeterminate'} />);
+        cy.mount(<Component name="switch-test-value" mode={'indeterminate'} />);
 
         cy.get(SWITCH_ID).as('Switch');
         cy.get('@Switch').invoke('attr', 'name').should('eq', 'switch-test-value');
-        cy.get('@Switch').should('have.value', 'Indeterminate');
+        cy.get('@Switch').should('have.value', 'indeterminate');
     });
 
     it('should react on click', () => {

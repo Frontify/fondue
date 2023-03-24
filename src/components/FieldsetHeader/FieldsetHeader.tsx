@@ -72,7 +72,7 @@ export const renderFieldsetHeaderIconType = (
         case FieldsetHeaderType.Switch:
             return (
                 <div data-test-id="fieldset-icon-wrapper">
-                    <Switch {...props} size={sizeMap[size].switch} mode={active ? 'On' : 'Off'} disabled={disabled} />
+                    <Switch {...props} size={sizeMap[size].switch} mode={active ? 'on' : 'off'} disabled={disabled} />
                 </div>
             );
         case FieldsetHeaderType.Accordion:
