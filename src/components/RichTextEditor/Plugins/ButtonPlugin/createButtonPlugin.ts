@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { isValidUrl } from '@components/RichTextEditor/utils/isValidUrl';
 import { RangeBeforeOptions, createPluginFactory } from '@udecode/plate';
 import { Plugin, PluginProps } from '../Plugin';
 import { ButtonMarkupElement } from './ButtonMarkupElement';
@@ -31,6 +32,12 @@ export interface ButtonPlugin {
     triggerFloatingButtonHotkeys: string;
 
     /**
+     * Callback to validate an url.
+     * @default isUrl
+     */
+    isUrl: (text: string) => boolean;
+
+    /**
      * Callback to optionally get the href for a url
      * @returns href: an optional link to be used that is different from the text content (example https://google.com for google.com)
      */
@@ -56,6 +63,7 @@ export const createButtonPlugin = createPluginFactory({
     withOverrides: withButton,
     renderAfterEditable: CustomFloatingButton,
     options: {
+        isUrl: isValidUrl,
         rangeBeforeOptions: {
             matchString: ' ',
             skipInvalid: true,
