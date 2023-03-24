@@ -79,11 +79,7 @@ describe('Switch Component', () => {
     });
 
     it('should render heading labelStyle', () => {
-<<<<<<< HEAD
         cy.mount(<Component label={SWITCH_LABEL} labelStyle={'heading'} />);
-=======
-        cy.mount(<Component label={SWITCH_LABEL} labelStyle={'Heading'} />);
->>>>>>> 9fd17232377fc26ab64d4dd54e7476d830887ccb
 
         cy.get(SWITCH_LABEL_WRAPPER_ID).should('have.class', 'tw-text-text');
         cy.get(SWITCH_LABEL_WRAPPER_ID).should('have.class', 'tw-font-bold');
