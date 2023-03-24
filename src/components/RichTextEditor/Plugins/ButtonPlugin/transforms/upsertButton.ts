@@ -60,7 +60,6 @@ export const upsertButton = <V extends Value>(
     }: UpsertButtonOptions<V>,
 ) => {
     const at = editor.selection;
-
     if (!at) {
         return;
     }
