@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { FC, useState } from 'react';
-import { Switch, SwitchLabelStyle, SwitchProps } from './Switch';
+import { Switch, SwitchProps } from './Switch';
 
 const Component: FC<SwitchProps> = ({ mode = 'Off', ...props }) => {
     const [active, setActive] = useState(mode);
@@ -79,7 +79,7 @@ describe('Switch Component', () => {
     });
 
     it('should render heading labelStyle', () => {
-        cy.mount(<Component label={SWITCH_LABEL} labelStyle={SwitchLabelStyle.Heading} />);
+        cy.mount(<Component label={SWITCH_LABEL} labelStyle={'heading'} />);
 
         cy.get(SWITCH_LABEL_WRAPPER_ID).should('have.class', 'tw-text-text');
         cy.get(SWITCH_LABEL_WRAPPER_ID).should('have.class', 'tw-font-bold');
