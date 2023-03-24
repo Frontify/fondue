@@ -9,30 +9,24 @@ import { InputLabel, InputLabelTooltipProps } from '@components/InputLabel/Input
 
 export const SWITCH_ID = 'switch-container';
 
-export enum SwitchSize {
-    Small = 'Small',
-    Medium = 'Medium',
-}
+export type SwitchSize = 'Small' | 'Medium';
 
 export type SwitchMode = 'On' | 'Off' | 'Indeterminate';
 
-export enum SwitchLabelStyle {
-    Default = 'Default',
-    Heading = 'Heading',
-}
+export type SwitchLabelStyle = 'Default' | 'Heading';
 
 const trackSizeClasses: Record<SwitchSize, string> = {
-    [SwitchSize.Small]: 'tw-w-[22px] tw-h-3',
-    [SwitchSize.Medium]: 'tw-w-[30px] tw-h-4',
+    Small: 'tw-w-[22px] tw-h-3',
+    Medium: 'tw-w-[30px] tw-h-4',
 };
 
 const dotSizeClasses: Record<SwitchSize, Record<'dimensions' | 'activeWidth' | 'activeTranslation', string>> = {
-    [SwitchSize.Small]: {
+    Small: {
         dimensions: 'tw-w-3 tw-h-3',
         activeWidth: 'group-active:tw-w-[14px]',
         activeTranslation: 'tw-translate-x-[9px]',
     },
-    [SwitchSize.Medium]: {
+    Medium: {
         dimensions: 'tw-w-4 tw-h-4',
         activeWidth: 'group-active:tw-w-[18px]',
         activeTranslation: 'tw-translate-x-[13px]',
@@ -60,9 +54,9 @@ export const Switch: FC<SwitchProps> = ({
     label,
     disabled,
     onChange,
-    size = SwitchSize.Medium,
+    size = 'Medium',
     mode = 'Off',
-    labelStyle = SwitchLabelStyle.Default,
+    labelStyle = 'Default',
     hug = false,
     tooltip,
 }) => {
@@ -142,7 +136,7 @@ export const Switch: FC<SwitchProps> = ({
         <div className={containerClasses} data-test-id={SWITCH_ID}>
             {label && (
                 <InputLabel clickable={true} htmlFor={id} disabled={disabled} tooltip={tooltip}>
-                    {labelStyle === SwitchLabelStyle.Default ? (
+                    {labelStyle === 'Default' ? (
                         <span data-test-id="switch-label-wrapper" className="tw-font-medium tw-text-text-weak">
                             {label}
                         </span>

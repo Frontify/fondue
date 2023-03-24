@@ -22,17 +22,17 @@ const sizeMap: Record<FieldsetHeaderSize, { icon: IconSize; text: string; switch
     [FieldsetHeaderSize.Small]: {
         icon: IconSize.Size12,
         text: 'tw-text-s',
-        switch: SwitchSize.Small,
+        switch: 'Small',
     },
     [FieldsetHeaderSize.Medium]: {
         icon: IconSize.Size16,
         text: 'tw-text-m',
-        switch: SwitchSize.Medium,
+        switch: 'Medium',
     },
     [FieldsetHeaderSize.Large]: {
         icon: IconSize.Size20,
         text: 'tw-text-l',
-        switch: SwitchSize.Medium,
+        switch: 'Medium',
     },
 };
 

@@ -3,10 +3,12 @@
 import { Meta, StoryFn } from '@storybook/react';
 import React, { MouseEvent, useEffect, useState } from 'react';
 import { IconExclamationMarkCircle } from '@foundation/Icon/Generated';
-import { Switch, SwitchLabelStyle, SwitchMode, SwitchProps, SwitchSize } from './Switch';
+import { Switch, SwitchMode, SwitchProps } from './Switch';
 import { TooltipIconTriggerStyle } from '@components/TooltipIcon';
 
 const SwitchModeTypes = ['On', 'Off', 'Indeterminate'];
+const SwitchLabelStyleTypes = ['Default', 'Heading'];
+const SwitchSizeTypes = ['Small', 'Medium'];
 
 export default {
     title: 'Components/Switch',
@@ -14,11 +16,11 @@ export default {
     tags: ['autodocs'],
     argTypes: {
         size: {
-            options: Object.values(SwitchSize),
+            options: SwitchSizeTypes,
             control: { type: 'radio' },
         },
         labelStyle: {
-            options: Object.values(SwitchLabelStyle),
+            options: SwitchLabelStyleTypes,
             control: { type: 'radio' },
         },
         label: {
@@ -40,10 +42,10 @@ export default {
     args: {
         mode: 'On',
         disabled: false,
-        labelStyle: SwitchLabelStyle.Default,
+        labelStyle: 'Default',
         hug: false,
         name: 'switch-name',
-        size: SwitchSize.Small,
+        size: 'Small',
     },
 } as Meta<SwitchProps>;
 
@@ -68,10 +70,10 @@ const Default: StoryFn<Props> = (args: Props) => {
 };
 
 export const Small: StoryFn<Props> = Default.bind({});
-Small.args = { size: SwitchSize.Small };
+Small.args = { size: 'Small' };
 
 export const Medium: StoryFn<Props> = Default.bind({});
-Medium.args = { size: SwitchSize.Medium };
+Medium.args = { size: 'Medium' };
 
 export const WithLabel: StoryFn<Props> = Default.bind({});
 WithLabel.args = { label: 'Switch label' };
