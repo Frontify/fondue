@@ -61,8 +61,6 @@ export const upsertButton = <V extends Value>(
 ) => {
     const at = editor.selection;
 
-    console.log('upsertButton at', at);
-
     if (!at) {
         return;
     }
