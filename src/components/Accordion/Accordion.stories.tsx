@@ -6,7 +6,6 @@ import { Button } from '@components/Button/Button';
 import { ColorPickerFlyout as ColorPickerFlyoutComponent } from '@components/ColorInputFlyout/ColorPickerFlyout';
 import { EXAMPLE_PALETTES } from '@components/ColorPicker/example-palettes';
 import { Dropdown } from '@components/Dropdown';
-import { FieldsetHeaderType } from '@components/FieldsetHeader/FieldsetHeader';
 import { FormControl } from '@components/FormControl/FormControl';
 import { LinkChooser } from '@components/LinkChooser/LinkChooser.stories';
 import { SegmentedControls } from '@components/SegmentedControls/SegmentedControls';
@@ -22,12 +21,12 @@ import { IconSize } from '@foundation/Icon/IconSize';
 import { action } from '@storybook/addon-actions';
 import { Meta, StoryFn } from '@storybook/react';
 import { merge } from '@utilities/merge';
-import React, { FC, ReactNode, useState } from 'react';
+import React, { PropsWithChildren, ReactNode, useState } from 'react';
 import { Color } from '../../types';
 import { EXAMPLE_IMAGES } from '../AssetInput/example-assets';
 import { Accordion as AccordionComponent, AccordionItem } from './Accordion';
 import { AccordionHeaderIcon } from './AccordionHeaderIcon';
-import { AccordionHeaderIconSize, AccordionHeaderProps, AccordionProps } from './types';
+import { AccordionHeaderProps, AccordionProps } from './types';
 import { Stack } from '@layout/Stack';
 
 export default {
@@ -50,7 +49,6 @@ export const WithDifferentAccordionItems: StoryFn<AccordionProps> = () => {
                 header={{
                     children: 'Item with decorator, type Accordion and a FormControl child',
                     decorator: <IconIcon />,
-                    type: FieldsetHeaderType.Accordion,
                     active: true,
                 }}
                 divider
@@ -63,12 +61,8 @@ export const WithDifferentAccordionItems: StoryFn<AccordionProps> = () => {
                     <TextInput value={input} onChange={setInput} />
                 </FormControl>
             </AccordionItem>
-            <AccordionItem
-                header={{ children: 'Item with plain text child', type: FieldsetHeaderType.AddRemove, active: true }}
-            >
-                bar
-            </AccordionItem>
-            <AccordionItem header={{ children: 'Item with dropdown child', type: FieldsetHeaderType.AddRemove }}>
+            <AccordionItem header={{ children: 'Item with plain text child', active: true }}>bar</AccordionItem>
+            <AccordionItem header={{ children: 'Item with dropdown child' }}>
                 <Dropdown
                     onChange={(id) => setActiveItemId(id)}
                     activeItemId={activeItemId}
@@ -86,17 +80,17 @@ export const WithDifferentAccordionItems: StoryFn<AccordionProps> = () => {
                     ]}
                 />
             </AccordionItem>
-            <AccordionItem header={{ children: 'Item with linkchooser', type: FieldsetHeaderType.AddRemove }}>
+            <AccordionItem header={{ children: 'Item with linkchooser' }}>
                 <LinkChooser
                     onLinkChange={action('onLinkChange')}
                     openInNewTab={openInNewTab}
                     onOpenInNewTabChange={setOpenInNewTab}
                 />
             </AccordionItem>
-            <AccordionItem header={{ children: 'Item with assetinput', type: FieldsetHeaderType.AddRemove }}>
+            <AccordionItem header={{ children: 'Item with assetinput' }}>
                 <AssetInput size={AssetInputSize.Large} assets={[EXAMPLE_IMAGES[0]]} actions={assetInputActions} />
             </AccordionItem>
-            <AccordionItem header={{ children: 'Item with color picker flyout', type: FieldsetHeaderType.Accordion }}>
+            <AccordionItem header={{ children: 'Item with color picker flyout' }}>
                 <ColorPickerFlyoutComponent
                     disabled={false}
                     currentColor={temporaryColor}
@@ -112,16 +106,13 @@ export const WithDifferentAccordionItems: StoryFn<AccordionProps> = () => {
                     onClick: action('click'),
                 }}
             />
-            <AccordionItem header={{ children: 'Item with resizable content', type: FieldsetHeaderType.AddRemove }}>
+            <AccordionItem header={{ children: 'Item with resizable content' }}>
                 <div className={!showContent ? 'tw-hidden' : ''}>
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                 </div>
                 <Button onClick={() => setShowContent(!showContent)}>Toggle Content</Button>
             </AccordionItem>
-            <AccordionItem
-                header={{ children: 'Item without padding', type: FieldsetHeaderType.AddRemove }}
-                padding={false}
-            >
+            <AccordionItem header={{ children: 'Item without padding' }} padding={false}>
                 <p>
                     Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
                     labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores
@@ -132,7 +123,7 @@ export const WithDifferentAccordionItems: StoryFn<AccordionProps> = () => {
     );
 };
 
-const customHeader: FC<AccordionHeaderProps> = ({ isOpen, children }) => (
+const customHeader = ({ isOpen, children }: AccordionHeaderProps) => (
     <div
         className={merge([
             'tw-px-6 tw-py-4 tw-bg-black-5 tw-flex tw-justify-between tw-font-bold tw-items-center',
@@ -140,15 +131,15 @@ const customHeader: FC<AccordionHeaderProps> = ({ isOpen, children }) => (
         ])}
     >
         {children}
-        <AccordionHeaderIcon isOpen={isOpen} type={FieldsetHeaderType.Accordion} size={AccordionHeaderIconSize.Small} />
+        <AccordionHeaderIcon isOpen={isOpen} size="small" />
     </div>
 );
 
-const Code: FC = ({ children }) => (
+const Code = ({ children }: PropsWithChildren<unknown>) => (
     <code className="tw-bg-black-5 tw-rounded tw-px-2 tw-text-box-negative-strong tw-text-s">{children}</code>
 );
 
-const PropsTable: FC<{ rows: [ReactNode, ReactNode, ReactNode][] }> = ({ rows }) => (
+const PropsTable = ({ rows }: { rows: [ReactNode, ReactNode, ReactNode][] }) => (
     <table className="tw-table-fixed tw-border tw-border-black-10 tw-my-4">
         <thead className="tw-bg-black-5">
             <tr className="tw-p-3 tw-border-b tw-border-b-black-10">
@@ -294,7 +285,7 @@ export const WithAccordionItemAddition: StoryFn<
     const AccordtionItemsStart = [
         <AccordionItem
             key={1}
-            header={{ children: 'Accordion Divider & Border', type: FieldsetHeaderType.Accordion, active: true }}
+            header={{ children: 'Accordion Divider & Border', active: true }}
             divider={args['Item Divider']}
         >
             <div className="tw-p-6">
@@ -305,7 +296,7 @@ export const WithAccordionItemAddition: StoryFn<
         </AccordionItem>,
         <AccordionItem
             key={2}
-            header={{ children: 'AccordionItem Divider', type: FieldsetHeaderType.Accordion, active: true }}
+            header={{ children: 'AccordionItem Divider', active: true }}
             divider={args['Item Divider']}
         >
             <div className="tw-p-6">
@@ -314,11 +305,7 @@ export const WithAccordionItemAddition: StoryFn<
                 <Code>Accordion</Code>.
             </div>
         </AccordionItem>,
-        <AccordionItem
-            key={3}
-            header={{ children: 'Additional Info', type: FieldsetHeaderType.Accordion, active: true }}
-            divider={args['Item Divider']}
-        >
+        <AccordionItem key={3} header={{ children: 'Additional Info', active: true }} divider={args['Item Divider']}>
             <div className="tw-p-6">
                 Play around with the settings below to see the difference between these three properties. The&nbsp;
                 <Code>Accordion</Code> Ccomponent has the <Code>divider</Code> and <Code>border</Code> set to true by
@@ -329,11 +316,7 @@ export const WithAccordionItemAddition: StoryFn<
     ];
 
     const newItemOpen = (key: number) => (
-        <AccordionItem
-            key={key}
-            header={{ children: 'I Should be open', type: FieldsetHeaderType.Accordion, active: true }}
-            divider={args['Item Divider']}
-        >
+        <AccordionItem key={key} header={{ children: 'I Should be open', active: true }} divider={args['Item Divider']}>
             <div className="tw-p-6">
                 Settings the <Code>divider</Code> prop on the <Code>Accordion</Code> will add a divider between the
                 children of the <Code>Accordion</Code>, whereas the <Code>border</Code> prop will add a top and bottom
@@ -345,7 +328,7 @@ export const WithAccordionItemAddition: StoryFn<
     const inactive = (
         <AccordionItem
             key={10}
-            header={{ children: 'I should be closed', type: FieldsetHeaderType.Accordion, active: false }}
+            header={{ children: 'I should be closed', active: false }}
             divider={args['Item Divider']}
         >
             <div className="tw-p-6">
@@ -357,11 +340,7 @@ export const WithAccordionItemAddition: StoryFn<
     );
 
     const elementWithoutActive = (
-        <AccordionItem
-            key={22}
-            header={{ children: 'I should also be closed', type: FieldsetHeaderType.Accordion }}
-            divider={args['Item Divider']}
-        >
+        <AccordionItem key={22} header={{ children: 'I should also be closed' }} divider={args['Item Divider']}>
             <div className="tw-p-6">
                 Settings the <Code>divider</Code> prop on the <Code>Accordion</Code> will add a divider between the
                 children of the <Code>Accordion</Code>, whereas the <Code>border</Code> prop will add a top and bottom
@@ -406,30 +385,21 @@ export const WithDividers: StoryFn<
     }
 > = (args) => (
     <AccordionComponent divider={args['Accordion Divider']} border={args['Accordion Border']}>
-        <AccordionItem
-            header={{ children: 'Accordion Divider & Border', type: FieldsetHeaderType.Accordion, active: true }}
-            divider={args['Item Divider']}
-        >
+        <AccordionItem header={{ children: 'Accordion Divider & Border', active: true }} divider={args['Item Divider']}>
             <div className="tw-p-6">
                 Settings the <Code>divider</Code> prop on the <Code>Accordion</Code> will add a divider between the
                 children of the <Code>Accordion</Code>, whereas the <Code>border</Code> prop will add a top and bottom
                 border to the entire <Code>Accordion</Code>.
             </div>
         </AccordionItem>
-        <AccordionItem
-            header={{ children: 'AccordionItem Divider', type: FieldsetHeaderType.Accordion }}
-            divider={args['Item Divider']}
-        >
+        <AccordionItem header={{ children: 'AccordionItem Divider' }} divider={args['Item Divider']}>
             <div className="tw-p-6">
                 Settings the <Code>divider</Code> prop on the <Code>AccordionItem</Code> will add a divider between the
                 header and content of the <Code>AccordionItem</Code> when it is open.
                 <Code>Accordion</Code>.
             </div>
         </AccordionItem>
-        <AccordionItem
-            header={{ children: 'Additional Info', type: FieldsetHeaderType.Accordion }}
-            divider={args['Item Divider']}
-        >
+        <AccordionItem header={{ children: 'Additional Info' }} divider={args['Item Divider']}>
             <div className="tw-p-6">
                 Play around with the settings below to see the difference between these three properties. The&nbsp;
                 <Code>Accordion</Code> Ccomponent has the <Code>divider</Code> and <Code>border</Code> set to true by
@@ -453,7 +423,7 @@ export const WithAdvancedFormControls: StoryFn<AccordionProps> = () => {
 
     return (
         <AccordionComponent>
-            <AccordionItem header={{ children: 'Layout', type: FieldsetHeaderType.Accordion }}>
+            <AccordionItem header={{ children: 'Layout' }}>
                 <FormControl
                     label={{ children: 'Spacing', htmlFor: 'spacing' }}
                     extra={
@@ -486,7 +456,7 @@ export const WithAdvancedFormControls: StoryFn<AccordionProps> = () => {
                     </div>
                 </FormControl>
             </AccordionItem>
-            <AccordionItem header={{ children: 'Alignment', type: FieldsetHeaderType.Accordion }}>
+            <AccordionItem header={{ children: 'Alignment' }}>
                 <FormControl label={{ children: 'Text', htmlFor: 'text-alignment' }}>
                     <SegmentedControls
                         onChange={setAlignmnent}

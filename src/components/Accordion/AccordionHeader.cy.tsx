@@ -2,12 +2,7 @@
 
 import React from 'react';
 import { AccordionHeader } from './AccordionHeader';
-import {
-    ACCORDION_ICON_CONTAINER_ID,
-    ADDREMOVE_ICON_CONTAINER_ID,
-    FieldsetHeaderSize,
-    FieldsetHeaderType,
-} from '@components/FieldsetHeader';
+import { ACCORDION_ICON_CONTAINER_ID, ADDREMOVE_ICON_CONTAINER_ID } from '@components/FieldsetHeader';
 import { SWITCH_ID } from '../Switch/Switch';
 import { IconIcon12 } from '@foundation/Icon/Generated';
 
@@ -74,181 +69,109 @@ describe('AccordionHeader Component', () => {
     });
 
     it('should have font set to medium weight when bold prop is set to false', () => {
-        cy.mount(
-            <AccordionHeader isOpen bold={false}>
-                Title
-            </AccordionHeader>,
-        );
+        cy.mount(<AccordionHeader isOpen>Title</AccordionHeader>);
 
         cy.get(ACCORDION_HEADER_TEXT_ID).should('have.class', 'tw-font-normal');
     });
 
     it('should have bold text when bold prop is set to true', () => {
-        cy.mount(
-            <AccordionHeader isOpen bold={true}>
-                Title
-            </AccordionHeader>,
-        );
+        cy.mount(<AccordionHeader isOpen>Title</AccordionHeader>);
 
         cy.get(ACCORDION_HEADER_TEXT_ID).should('have.class', 'tw-font-medium');
     });
 
     it('renders switch type', () => {
-        cy.mount(
-            <AccordionHeader isOpen type={FieldsetHeaderType.Switch}>
-                Title
-            </AccordionHeader>,
-        );
+        cy.mount(<AccordionHeader isOpen>Title</AccordionHeader>);
 
         cy.get(FIELDSET_SWITCH_CONTAINER_ID).should('exist');
     });
 
     it('renders accordion type', () => {
-        cy.mount(
-            <AccordionHeader isOpen type={FieldsetHeaderType.Accordion}>
-                Title
-            </AccordionHeader>,
-        );
+        cy.mount(<AccordionHeader isOpen>Title</AccordionHeader>);
 
         cy.get(FIELDSET_ACCORDION_ICON_CONTAINER_ID).should('exist');
     });
 
     it('renders addremove type', () => {
-        cy.mount(
-            <AccordionHeader isOpen type={FieldsetHeaderType.AddRemove}>
-                Title
-            </AccordionHeader>,
-        );
+        cy.mount(<AccordionHeader isOpen>Title</AccordionHeader>);
 
         cy.get(FIELDSET_ADDREMOVE_ICON_CONTAINER_ID).should('exist');
     });
 
     it('renders default type', () => {
-        cy.mount(
-            <AccordionHeader isOpen type={FieldsetHeaderType.Default}>
-                Title
-            </AccordionHeader>,
-        );
+        cy.mount(<AccordionHeader isOpen>Title</AccordionHeader>);
 
         cy.get(HEADER_ICON_CONTAINER_ID).should('be.empty');
     });
 
     it('renders empty icon container when type is set to Default and size is set to large', () => {
-        cy.mount(
-            <AccordionHeader isOpen size={FieldsetHeaderSize.Large} type={FieldsetHeaderType.Default}>
-                Title
-            </AccordionHeader>,
-        );
+        cy.mount(<AccordionHeader isOpen>Title</AccordionHeader>);
 
         cy.get(HEADER_ICON_CONTAINER_ID).invoke('width').should('equal', 0);
     });
 
     it('renders empty icon container when type is set to Default and size is set to medium', () => {
-        cy.mount(
-            <AccordionHeader isOpen size={FieldsetHeaderSize.Medium} type={FieldsetHeaderType.Default}>
-                Title
-            </AccordionHeader>,
-        );
+        cy.mount(<AccordionHeader isOpen>Title</AccordionHeader>);
 
         cy.get(HEADER_ICON_CONTAINER_ID).invoke('width').should('equal', 0);
     });
 
     it('renders empty icon container when type is set to Default and size is set to small', () => {
-        cy.mount(
-            <AccordionHeader isOpen size={FieldsetHeaderSize.Small} type={FieldsetHeaderType.Default}>
-                Title
-            </AccordionHeader>,
-        );
+        cy.mount(<AccordionHeader isOpen>Title</AccordionHeader>);
 
         cy.get(HEADER_ICON_CONTAINER_ID).invoke('width').should('equal', 0);
     });
 
     it('renders with large switch', () => {
-        cy.mount(
-            <AccordionHeader isOpen size={FieldsetHeaderSize.Large} type={FieldsetHeaderType.Switch}>
-                Title
-            </AccordionHeader>,
-        );
+        cy.mount(<AccordionHeader isOpen>Title</AccordionHeader>);
 
         cy.get(HEADER_ICON_CONTAINER_ID).invoke('width').should('equal', MEDIUM_SWITCH_WIDTH);
     });
 
     it('renders with medium switch', () => {
-        cy.mount(
-            <AccordionHeader isOpen size={FieldsetHeaderSize.Medium} type={FieldsetHeaderType.Switch}>
-                Title
-            </AccordionHeader>,
-        );
+        cy.mount(<AccordionHeader isOpen>Title</AccordionHeader>);
 
         cy.get(HEADER_ICON_CONTAINER_ID).invoke('width').should('equal', MEDIUM_SWITCH_WIDTH);
     });
 
     it('renders with small switch', () => {
-        cy.mount(
-            <AccordionHeader isOpen size={FieldsetHeaderSize.Small} type={FieldsetHeaderType.Switch}>
-                Title
-            </AccordionHeader>,
-        );
+        cy.mount(<AccordionHeader isOpen>Title</AccordionHeader>);
 
         cy.get(HEADER_ICON_CONTAINER_ID).invoke('width').should('equal', SMALL_SWITCH_WIDTH);
     });
 
     it('renders with small accordion icon', () => {
-        cy.mount(
-            <AccordionHeader isOpen size={FieldsetHeaderSize.Small} type={FieldsetHeaderType.Accordion}>
-                Title
-            </AccordionHeader>,
-        );
+        cy.mount(<AccordionHeader isOpen>Title</AccordionHeader>);
 
         cy.get(HEADER_ICON_CONTAINER_ID).invoke('width').should('equal', SMALL_ACCORDION_ICON_WIDTH);
     });
 
     it('renders with medium accordion icon', () => {
-        cy.mount(
-            <AccordionHeader isOpen size={FieldsetHeaderSize.Medium} type={FieldsetHeaderType.Accordion}>
-                Title
-            </AccordionHeader>,
-        );
+        cy.mount(<AccordionHeader isOpen>Title</AccordionHeader>);
 
         cy.get(HEADER_ICON_CONTAINER_ID).invoke('width').should('equal', MEDIUM_ACCORDION_ICON_WIDTH);
     });
 
     it('renders with large accordion icon', () => {
-        cy.mount(
-            <AccordionHeader isOpen size={FieldsetHeaderSize.Large} type={FieldsetHeaderType.Accordion}>
-                Title
-            </AccordionHeader>,
-        );
+        cy.mount(<AccordionHeader isOpen>Title</AccordionHeader>);
 
         cy.get(HEADER_ICON_CONTAINER_ID).invoke('width').should('equal', LARGE_ACCORDION_ICON_WIDTH);
     });
 
     it('renders with large addremove icon', () => {
-        cy.mount(
-            <AccordionHeader isOpen size={FieldsetHeaderSize.Large} type={FieldsetHeaderType.AddRemove}>
-                Title
-            </AccordionHeader>,
-        );
+        cy.mount(<AccordionHeader isOpen>Title</AccordionHeader>);
 
         cy.get(HEADER_ICON_CONTAINER_ID).invoke('width').should('equal', LARGE_ADDREMOVE_ICON_WIDTH);
     });
 
     it('renders with medium addremove icon', () => {
-        cy.mount(
-            <AccordionHeader isOpen size={FieldsetHeaderSize.Medium} type={FieldsetHeaderType.AddRemove}>
-                Title
-            </AccordionHeader>,
-        );
+        cy.mount(<AccordionHeader isOpen>Title</AccordionHeader>);
 
         cy.get(HEADER_ICON_CONTAINER_ID).invoke('width').should('equal', MEDIUM_ADDREMOVE_ICON_WIDTH);
     });
 
     it('renders with small addremove icon', () => {
-        cy.mount(
-            <AccordionHeader isOpen size={FieldsetHeaderSize.Small} type={FieldsetHeaderType.AddRemove}>
-                Title
-            </AccordionHeader>,
-        );
+        cy.mount(<AccordionHeader isOpen>Title</AccordionHeader>);
 
         cy.get(HEADER_ICON_CONTAINER_ID).invoke('width').should('equal', SMALL_ADDREMOVE_ICON_WIDTH);
     });
@@ -264,11 +187,7 @@ describe('AccordionHeader Component', () => {
     });
 
     it("renders with 'as' prop", () => {
-        cy.mount(
-            <AccordionHeader isOpen as={'a'}>
-                Title
-            </AccordionHeader>,
-        );
+        cy.mount(<AccordionHeader isOpen>Title</AccordionHeader>);
 
         cy.get(FIELDSET_HEADER_ID).should('exist');
     });

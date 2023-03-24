@@ -4,20 +4,12 @@ import React, { ReactElement, cloneElement, isValidElement, useState } from 'rea
 import { IconSize } from '@foundation/Icon/IconSize';
 import { IconProps } from '@foundation/Icon/IconProps';
 import { merge } from '@utilities/merge';
-import { AccordionHeaderIconSize, AccordionHeaderProps } from './types';
+import { AccordionHeaderProps } from './types';
 import { AccordionHeaderIcon } from './AccordionHeaderIcon';
 
-export const AccordionHeader = ({
-    isOpen = false,
-    decorator,
-    disabled = false,
-    children,
-    size = AccordionHeaderIconSize.Medium,
-    bold = true,
-    type,
-}: AccordionHeaderProps) => {
+export const AccordionHeader = ({ isOpen = false, decorator, disabled = false, children }: AccordionHeaderProps) => {
     const [headingRef, setHeadingRef] = useState<HTMLSpanElement | null>(null);
-    const icon = <AccordionHeaderIcon isOpen={isOpen} disabled={disabled} size={size} type={type} />;
+    const icon = <AccordionHeaderIcon isOpen={isOpen} disabled={disabled} />;
 
     return (
         <span data-test-id="accordion-header" className="tw-block tw-px-8 tw-py-6">
@@ -41,7 +33,7 @@ export const AccordionHeader = ({
                 <span
                     ref={setHeadingRef}
                     data-test-id="accordion-header-text"
-                    className={merge(['tw-text-left tw-text-m', bold ? 'tw-font-medium' : 'tw-font-normal'])}
+                    className="tw-text-left tw-text-m tw-font-normal"
                 >
                     {children}
                 </span>

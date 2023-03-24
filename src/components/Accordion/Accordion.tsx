@@ -8,22 +8,22 @@ import { Item as StatelyItem } from '@react-stately/collections';
 import { useTreeState } from '@react-stately/tree';
 import { FOCUS_STYLE_INSET } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import React, { Children, FC, Key, KeyboardEvent, ReactElement, isValidElement, useEffect, useRef } from 'react';
+import React, { Children, Key, KeyboardEvent, ReactElement, isValidElement, useEffect, useRef } from 'react';
 import { AccordionHeader } from './AccordionHeader';
 import { AccordionItemProps, AccordionProps, AriaAccordionItemProps } from './types';
 
 const ACCORDION_ID = 'accordion';
 const ACCORDION_ITEM_ID = 'accordion-item';
 
-const AriaAccordionItem: FC<AriaAccordionItemProps> = ({
+const AriaAccordionItem = ({
     item,
     state,
     header,
     padding = true,
     divider = false,
     headerComponent: HeaderComponent = AccordionHeader,
-}) => {
-    const { size, active, ...headerProps } = header;
+}: AriaAccordionItemProps) => {
+    const { active, ...headerProps } = header;
     const triggerRef = useRef<HTMLButtonElement | null>(null);
     const { buttonProps, regionProps } = useAccordionItem({ item }, state, triggerRef);
     const isOpen = state.expandedKeys.has(item.key);
@@ -58,7 +58,7 @@ const AriaAccordionItem: FC<AriaAccordionItemProps> = ({
                 }}
                 className="tw-w-full focus-visible:tw-outline-none"
             >
-                <HeaderComponent isOpen={isOpen} size={size} {...headerProps} />
+                <HeaderComponent isOpen={isOpen} {...headerProps} />
             </button>
             <CollapsibleWrap isOpen={isOpen} preventInitialAnimation={active}>
                 <div {...regionProps} className={merge([padding && 'tw-px-8 tw-pb-6'])}>
@@ -109,7 +109,7 @@ const lastChildrenActive = (children: React.ReactNode | undefined): boolean | un
     return childrenArray[childrenArray.length - 1]?.props?.header?.active === true;
 };
 
-export const Accordion: FC<AccordionProps> = (props) => {
+export const Accordion = (props: AccordionProps) => {
     const { divider = true, border = true } = props;
     const children = filterValidChildren(props);
     const ariaProps = mapToAriaProps(children);
