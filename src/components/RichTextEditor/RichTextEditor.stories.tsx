@@ -130,6 +130,12 @@ FullyFledged.args = {
     plugins: allPlugins,
 };
 
+export const EmptyEditor = RichTextEditorTemplate.bind({});
+EmptyEditor.args = {
+    value: undefined,
+    plugins: allPlugins,
+};
+
 export const Flex: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
     <div className="tw-flex tw-gap-x-7 tw-justify-start">
         <div className="tw-min-w-[1rem]">
