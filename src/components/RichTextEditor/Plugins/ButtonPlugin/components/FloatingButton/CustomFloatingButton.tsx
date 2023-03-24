@@ -4,7 +4,7 @@ import React from 'react';
 import { EditModal } from './EditButtonModal/EditModal';
 import { FloatingButton } from './FloatingButton';
 import { useFloatingButtonSelectors } from './floatingButtonStore';
-import { InsertButtonModal } from './InserButtontModal/InsertButtonModal';
+import { InsertButtonModal } from './InsertButtonModal/InsertButtonModal';
 
 export const CustomFloatingButton = () => {
     const isEditing = useFloatingButtonSelectors().isEditing();
