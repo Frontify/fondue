@@ -33,6 +33,7 @@ export type AccordionHeaderProps = {
     children: string;
     disabled?: boolean;
     isOpen: boolean;
+    'data-test-id'?: string;
 };
 
 export type AccordionHeaderIconProps = {

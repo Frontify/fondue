@@ -7,14 +7,22 @@ import { merge } from '@utilities/merge';
 import { AccordionHeaderProps } from './types';
 import { AccordionHeaderIcon } from './AccordionHeaderIcon';
 
-export const AccordionHeader = ({ isOpen = false, decorator, disabled = false, children }: AccordionHeaderProps) => {
+export const ACCORDION_HEADER_TEST_ID = 'fondue-accordion-header';
+
+export const AccordionHeader = ({
+    isOpen = false,
+    decorator,
+    disabled = false,
+    children,
+    'data-test-id': testId = ACCORDION_HEADER_TEST_ID,
+}: AccordionHeaderProps) => {
     const [headingRef, setHeadingRef] = useState<HTMLSpanElement | null>(null);
     const icon = <AccordionHeaderIcon isOpen={isOpen} disabled={disabled} />;
 
     return (
-        <span data-test-id="accordion-header" className="tw-block tw-px-8 tw-py-6">
+        <span data-test-id={testId} className="tw-block tw-px-8 tw-py-6">
             <span
-                data-test-id="fieldset-header"
+                data-test-id={`${testId}-container`}
                 role="navigation"
                 aria-label={`${headingRef?.innerText || ''}`}
                 className={merge([
@@ -24,7 +32,7 @@ export const AccordionHeader = ({ isOpen = false, decorator, disabled = false, c
                 ])}
             >
                 {isValidElement(decorator) && (
-                    <span data-test-id="accordion-header-decorator" className="tw-shrink-0 tw-leading-4">
+                    <span data-test-id={`${testId}-decorator`} className="tw-shrink-0 tw-leading-4">
                         {cloneElement(decorator as ReactElement<IconProps>, {
                             size: IconSize.Size16,
                         })}
@@ -32,13 +40,13 @@ export const AccordionHeader = ({ isOpen = false, decorator, disabled = false, c
                 )}
                 <span
                     ref={setHeadingRef}
-                    data-test-id="accordion-header-text"
+                    data-test-id={`${testId}-text`}
                     className="tw-text-left tw-text-m tw-font-normal"
                 >
                     {children}
                 </span>
                 {icon && (
-                    <span data-test-id="header-icon-container" className="tw-ml-auto tw-shrink-0">
+                    <span data-test-id={`${testId}-icon-container`} className="tw-ml-auto tw-shrink-0">
                         {icon}
                     </span>
                 )}
