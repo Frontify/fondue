@@ -1,10 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC } from 'react';
+import React from 'react';
 
-export const Box: FC<JSX.IntrinsicElements['div']> = ({ children, ...props }) => {
+interface DataProps extends React.HTMLAttributes<HTMLDivElement> {
+    'data-test-id'?: string;
+}
+
+export const Box = ({ children, ...props }: DataProps) => {
     return (
-        <div data-test-id="fondue-box" {...props}>
+        <div data-test-id={props['data-test-id'] ? props['data-test-id'] : 'fondue-box'} {...props}>
             {children}
         </div>
     );
