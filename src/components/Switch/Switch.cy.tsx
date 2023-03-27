@@ -38,7 +38,7 @@ describe('Switch Component', () => {
     });
 
     it('should support indeterminate value', () => {
-        cy.mount(<Component name="switch-test-value" mode={'indeterminate'} />);
+        cy.mount(<Component name="switch-test-value" mode="indeterminate" />);
 
         cy.get(SWITCH_ID).as('Switch');
         cy.get('@Switch').invoke('attr', 'name').should('eq', 'switch-test-value');
@@ -79,7 +79,7 @@ describe('Switch Component', () => {
     });
 
     it('should render heading labelStyle', () => {
-        cy.mount(<Component label={SWITCH_LABEL} labelStyle={'heading'} />);
+        cy.mount(<Component label={SWITCH_LABEL} labelStyle="heading" />);
 
         cy.get(SWITCH_LABEL_WRAPPER_ID).should('have.class', 'tw-text-text');
         cy.get(SWITCH_LABEL_WRAPPER_ID).should('have.class', 'tw-font-bold');

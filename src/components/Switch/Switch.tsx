@@ -104,7 +104,7 @@ export const Switch: FC<SwitchProps> = ({
             mode === 'indeterminate' ? indeterminateLineClasses : dotSizeClasses[size].dimensions,
             disabledClasses,
         ]);
-    }, [mode, size]);
+    }, [disabled, mode, size]);
 
     // Responsible for dot styling and width animation on hover
     const dotClasses = useMemo(() => {

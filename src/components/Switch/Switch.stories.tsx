@@ -3,14 +3,14 @@
 import { Meta, StoryFn } from '@storybook/react';
 import React, { MouseEvent, useEffect, useState } from 'react';
 import { IconExclamationMarkCircle } from '@foundation/Icon/Generated';
-import { Switch, SwitchMode, SwitchProps } from './Switch';
+import { Switch, SwitchLabelStyle, SwitchMode, SwitchProps, SwitchSize } from './Switch';
 import { TooltipIconTriggerStyle } from '@components/TooltipIcon';
 
-const SwitchSizeTypes = ['small', 'medium'];
+const SwitchSizeTypes: SwitchSize[] = ['small', 'medium'];
 
-const SwitchModeTypes = ['on', 'off', 'indeterminate'];
+const SwitchModeTypes: SwitchMode[] = ['on', 'off', 'indeterminate'];
 
-const SwitchLabelStyleTypes = ['default', 'heading'];
+const SwitchLabelStyleTypes: SwitchLabelStyle[] = ['default', 'heading'];
 
 export default {
     title: 'Components/Switch',
@@ -56,11 +56,7 @@ type Props = SwitchProps & { hug?: boolean };
 const Default: StoryFn<Props> = (args: Props) => {
     const [mode, setMode] = useState<SwitchMode>(args.mode || 'off');
     useEffect(() => {
-        if (args.mode !== 'on' && args.mode !== 'off' && args.mode !== 'indeterminate') {
-            return;
-        }
-
-        setMode(args.mode);
+        args.mode && setMode(args.mode);
     }, [args.mode]);
 
     const toggle = (event: MouseEvent) => {

@@ -16,7 +16,7 @@ const SwitchComponent = () => {
     const [switchValue, setSwitchValue] = useState<boolean>(false);
     const toggleSwitch = () => setSwitchValue(!switchValue);
 
-    return <Switch size={'small'} mode={switchValue ? 'on' : 'off'} onChange={toggleSwitch} />;
+    return <Switch size="small" mode={switchValue ? 'on' : 'off'} onChange={toggleSwitch} />;
 };
 
 export default {
