@@ -25,7 +25,7 @@ export const getUnderlineClassNames = (designTokens: DesignTokens, element: TEle
 export const getLicElementClassNames = (element: TElement) =>
     merge([
         getColumnBreakClasses(element),
-        element.align ? justifyClassNames[element.align as string] : 'tw-justify-start tw-flex',
+        element.align ? justifyClassNames[element.align as string] : 'tw-justify-start',
         'tw-grid tw-grid-cols-[min-content_repeat(3,_auto)]',
     ]);
 
