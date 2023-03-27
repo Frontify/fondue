@@ -2,7 +2,11 @@
 
 import React, { FC } from 'react';
 
-export const Box: FC<JSX.IntrinsicElements['div']> = (props) => {
-    return <div data-test-id="fondue-box" {...props} />;
+export const Box: FC<JSX.IntrinsicElements['div']> = ({ children, ...props }) => {
+    return (
+        <div data-test-id="fondue-box" {...props}>
+            {children}
+        </div>
+    );
 };
 Box.displayName = 'FondueBox';
