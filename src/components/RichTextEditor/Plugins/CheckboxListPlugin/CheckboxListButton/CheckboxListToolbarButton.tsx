@@ -6,6 +6,7 @@ import {
     ELEMENT_PARAGRAPH,
     ToolbarButton,
     getNode,
+    getParentNode,
     getPreventDefaultHandler,
     setElements,
     someNode,
@@ -40,6 +41,13 @@ export const CheckboxListToolbarButton = withPlateProvider(
                     getPreventDefaultHandler(toggleNodeType, editor, {
                         activeType: type,
                     })(event);
+                    if (!node?.textStyle) {
+                        const parentNode = getParentNode(editor, editor?.selection?.focus?.path);
+                        const textStyle = parentNode && parentNode[0].type;
+                        setElements(editor, {
+                            textStyle,
+                        });
+                    }
 
                     if (isActive) {
                         setElements(editor, {
