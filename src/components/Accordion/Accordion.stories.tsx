@@ -257,16 +257,10 @@ export const WithCustomAccordionHeaderComponent: StoryFn<AccordionProps> = () =>
                             </>,
                         ],
                         ['disabled', 'boolean', 'Displays the component with disabled styles.'],
-                        ['size', 'AccordionHeaderIconSize', 'Determines the size of the component.'],
                         [
-                            <span className="tw-line-through" key="type">
-                                type (deprecated)
-                            </span>,
-                            'FieldsetHeaderType',
-                            <>
-                                Choose the kind of icon that should be presented. This property is deprected and will
-                                later be fixed as <Code>FieldsetHeaderType.Accordion</Code>
-                            </>,
+                            'size',
+                            'AccordionHeaderIconSize',
+                            'Determines the size of the component (small | medium | large).',
                         ],
                     ]}
                 />
