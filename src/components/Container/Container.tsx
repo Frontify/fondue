@@ -31,7 +31,7 @@ export const Container = ({ children, minWidth, maxWidth, padding = 0, ...props 
 
     return (
         <div
-            data-test-id={props['data-test-id'] ? props['data-test-id'] : 'fondue-container'}
+            data-test-id={props['data-test-id'] ? `fondue-${props['data-test-id']}` : 'fondue-container'}
             className={paddingClassName}
             style={{
                 maxWidth,
