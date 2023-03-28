@@ -8,15 +8,15 @@ export type ContainerProps = {
     minWidth?: number;
     maxWidth?: number;
     padding?: PaddingType;
-    dataTestId?: string;
+    ['data-test-id']?: string;
 };
 
-export const Container = ({ children, dataTestId, minWidth, maxWidth, padding = 0 }: ContainerProps) => {
+export const Container = ({ children, minWidth, maxWidth, padding = 0, ...props }: ContainerProps) => {
     const acceptablePaddingInput: PaddingType[] = [0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40];
 
     return (
         <div
-            data-test-id={dataTestId ? dataTestId : 'fondue-container'}
+            data-test-id={props['data-test-id'] ? props['data-test-id'] : 'fondue-container'}
             style={{
                 maxWidth,
                 minWidth,

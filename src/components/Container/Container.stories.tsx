@@ -7,7 +7,7 @@ import { Container as ContainerComponent, ContainerProps, PaddingType } from './
 const acceptablePaddingInput: PaddingType[] = [0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40];
 
 export default {
-    title: 'Components/Container',
+    title: 'Layout/Container',
     component: ContainerComponent,
     tags: ['autodocs'],
     argTypes: {
