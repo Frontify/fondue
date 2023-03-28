@@ -44,10 +44,8 @@ export const DropdownItem = ({ editor, type, children }: DropdownItemProps) => {
                 if (!editor || !editor.selection) {
                     return;
                 }
-
-                if (isInList(editor)) {
-                    setMarks(editor, { [MARK_TEXT_STYLE]: type });
-                } else {
+                setMarks(editor, { [MARK_TEXT_STYLE]: type });
+                if (!isInList(editor)) {
                     getPreventDefaultHandler(toggleNodeType, editor, {
                         activeType: type,
                         inactiveType: type,
