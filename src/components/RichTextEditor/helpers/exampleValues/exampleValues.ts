@@ -32,7 +32,7 @@ type CreateElementProps = {
 export const markdownText = mixedMarkdown;
 
 const createElement = ({ text, element = ELEMENT_PARAGRAPH, mark }: CreateElementProps) => {
-    const leaf: TDescendant = { text };
+    const leaf: TDescendant = { text, [MARK_TEXT_STYLE]: element };
     if (mark) {
         leaf[mark] = true;
     }
