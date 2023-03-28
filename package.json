@@ -103,7 +103,7 @@
         "fast-glob": "3.2.12",
         "glob": "8.1.0",
         "lodash-es": "4.17.21",
-        "postcss": "8.4.20",
+        "postcss": "8.4.21",
         "postcss-cli": "10.0.0",
         "postcss-import": "15.1.0",
         "postcss-nested": "6.0.0",
