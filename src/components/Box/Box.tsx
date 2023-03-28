@@ -8,7 +8,7 @@ interface DataProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export const Box = ({ children, ...props }: DataProps) => {
     return (
-        <div data-test-id={props['data-test-id'] ? props['data-test-id'] : 'fondue-box'} {...props}>
+        <div data-test-id={props['data-test-id'] ? `fondue-${props['data-test-id']}` : 'fondue-box'} {...props}>
             {children}
         </div>
     );
