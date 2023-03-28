@@ -13,11 +13,6 @@ const HEADER_DECORATOR_ID = `[data-test-id="${ACCORDION_HEADER_TEST_ID}-decorato
 const MEDIUM_ACCORDION_ICON_WIDTH = 16;
 
 describe('AccordionHeader Component', () => {
-    it('should render', () => {
-        cy.mount(<AccordionHeader isOpen>Title</AccordionHeader>);
-        cy.get(HEADER_ID).should('exist');
-    });
-
     it('should have dark gray text if isOpen is false', () => {
         cy.mount(<AccordionHeader isOpen={false}>Title</AccordionHeader>);
         cy.get(HEADER_CONTAINER_ID).should('have.class', 'tw-text-black-80');
@@ -46,13 +41,13 @@ describe('AccordionHeader Component', () => {
         cy.get(HEADER_CONTAINER_ID).should('have.class', 'tw-text-black-40');
     });
 
-    it('renders with medium accordion icon', () => {
+    it('should render with medium accordion icon', () => {
         cy.mount(<AccordionHeader isOpen>Title</AccordionHeader>);
 
         cy.get(HEADER_ICON_CONTAINER_ID).invoke('width').should('equal', MEDIUM_ACCORDION_ICON_WIDTH);
     });
 
-    it('renders with a decorator', () => {
+    it('should render with a decorator', () => {
         cy.mount(
             <AccordionHeader isOpen decorator={<IconIcon12 />}>
                 Title
@@ -60,5 +55,14 @@ describe('AccordionHeader Component', () => {
         );
 
         cy.get(HEADER_DECORATOR_ID).should('exist');
+    });
+
+    it('should use a custom data-test-id', () => {
+        cy.mount(
+            <AccordionHeader isOpen data-test-id="custom-data-test-id">
+                Title
+            </AccordionHeader>,
+        );
+        cy.get('[data-test-id=custom-data-test-id]').should('exist');
     });
 });

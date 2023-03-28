@@ -40,4 +40,5 @@ export type AccordionHeaderIconProps = {
     isOpen: boolean;
     size?: AccordionHeaderIconSize;
     disabled?: boolean;
+    'data-test-id'?: string;
 };

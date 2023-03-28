@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { PropsWithChildren } from 'react';
+import React from 'react';
 import { merge } from '@utilities/merge';
 import { IconCaretDown } from '@foundation/Icon/Generated';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { AccordionHeaderIconProps, AccordionHeaderIconSize } from './types';
 
-const ACCORDION_ICON_CONTAINER_ID = 'accordion-icon-container';
+export const ACCORDION_HEADER_ICON_ID = 'fondue-accordion-header-icon';
 
 const sizeMap: Record<AccordionHeaderIconSize, IconSize> = {
     small: IconSize.Size12,
@@ -18,16 +18,17 @@ export const AccordionHeaderIcon = ({
     size = 'medium',
     isOpen,
     disabled = false,
-}: PropsWithChildren<AccordionHeaderIconProps>) => {
+    'data-test-id': testId = ACCORDION_HEADER_ICON_ID,
+}: AccordionHeaderIconProps) => {
     const props = {
         'aria-labelledby': '',
         size: sizeMap[size],
     };
 
     return (
-        <span data-test-id="fondue-accordion-header-icon-wrapper" className="tw-block">
+        <span data-test-id={`${testId}-wrapper`} className="tw-block">
             <span
-                data-test-id={ACCORDION_ICON_CONTAINER_ID}
+                data-test-id={testId}
                 className={merge([
                     'tw-block tw-transition-transform',
                     isOpen && 'tw-rotate-180 tw-duration-300',
