@@ -50,7 +50,7 @@ export type SwitchProps = {
     onChange?: (e: MouseEvent) => void;
 };
 
-export const Switch: FC<SwitchProps> = ({
+export const Grid: FC<GridProps> = ({
     id: propId,
     name,
     label,
@@ -139,4 +139,4 @@ export const Switch: FC<SwitchProps> = ({
         </div>
     );
 };
-Switch.displayName = 'FondueSwitch';
+Grid.displayName = 'FondueGrid';
