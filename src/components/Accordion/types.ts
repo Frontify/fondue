@@ -8,6 +8,7 @@ export type AccordionProps = {
     children?: ReactNode;
     divider?: boolean;
     border?: boolean;
+    'data-test-id'?: string;
 };
 
 export type AriaAccordionItemProps = {
@@ -17,6 +18,7 @@ export type AriaAccordionItemProps = {
     padding?: boolean;
     divider?: boolean;
     headerComponent?: (props: AccordionHeaderProps) => JSX.Element | null;
+    'data-test-id'?: string;
 };
 
 export type AccordionItemProps = PropsWithChildren<{
@@ -24,6 +26,7 @@ export type AccordionItemProps = PropsWithChildren<{
     padding?: boolean;
     divider?: boolean;
     headerComponent?: (props: AccordionHeaderProps) => JSX.Element | null;
+    'data-test-id'?: string;
 }>;
 
 export type AccordionHeaderIconSize = 'small' | 'medium' | 'large';
@@ -39,6 +42,5 @@ export type AccordionHeaderProps = {
 export type AccordionHeaderIconProps = {
     isOpen: boolean;
     size?: AccordionHeaderIconSize;
-    disabled?: boolean;
     'data-test-id'?: string;
 };

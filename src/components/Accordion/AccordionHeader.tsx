@@ -14,25 +14,26 @@ export const AccordionHeader = ({
     decorator,
     disabled = false,
     children,
-    'data-test-id': testId = ACCORDION_HEADER_TEST_ID,
+    'data-test-id': dataTestId = ACCORDION_HEADER_TEST_ID,
 }: AccordionHeaderProps) => {
     const [headingRef, setHeadingRef] = useState<HTMLSpanElement | null>(null);
-    const icon = <AccordionHeaderIcon isOpen={isOpen} disabled={disabled} />;
+    const icon = <AccordionHeaderIcon isOpen={isOpen} />;
 
     return (
-        <span data-test-id={testId} className="tw-block tw-px-8 tw-py-6">
+        <span data-test-id={dataTestId} className="tw-block tw-px-8 tw-py-6">
             <span
-                data-test-id={`${testId}-container`}
+                data-test-id={`${dataTestId}-container`}
                 role="navigation"
                 aria-label={`${headingRef?.innerText || ''}`}
                 className={merge([
                     'tw-flex tw-items-center tw-gap-x-1.5 tw-w-full tw-flex-row',
-                    !disabled && isOpen ? 'tw-text-black' : 'tw-text-black-80',
-                    disabled ? 'tw-text-black-40' : 'dark:tw-text-white',
+                    !disabled && isOpen && 'tw-text-text',
+                    !disabled && !isOpen && 'tw-text-text-weak hover:tw-text-text',
+                    disabled && 'tw-text-text-disabled',
                 ])}
             >
                 {isValidElement(decorator) && (
-                    <span data-test-id={`${testId}-decorator`} className="tw-shrink-0 tw-leading-4">
+                    <span data-test-id={`${dataTestId}-decorator`} className="tw-shrink-0 tw-leading-4">
                         {cloneElement(decorator as ReactElement<IconProps>, {
                             size: IconSize.Size16,
                         })}
@@ -40,13 +41,13 @@ export const AccordionHeader = ({
                 )}
                 <span
                     ref={setHeadingRef}
-                    data-test-id={`${testId}-text`}
+                    data-test-id={`${dataTestId}-text`}
                     className="tw-text-left tw-text-m tw-font-normal"
                 >
                     {children}
                 </span>
                 {icon && (
-                    <span data-test-id={`${testId}-icon-container`} className="tw-ml-auto tw-shrink-0">
+                    <span data-test-id={`${dataTestId}-icon-container`} className="tw-ml-auto tw-shrink-0">
                         {icon}
                     </span>
                 )}

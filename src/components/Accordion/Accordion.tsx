@@ -12,8 +12,8 @@ import React, { Children, Key, KeyboardEvent, ReactElement, isValidElement, useE
 import { AccordionHeader } from './AccordionHeader';
 import { AccordionItemProps, AccordionProps, AriaAccordionItemProps } from './types';
 
-const ACCORDION_ID = 'accordion';
-const ACCORDION_ITEM_ID = 'accordion-item';
+const ACCORDION_ID = 'fondue-accordion';
+const ACCORDION_ITEM_ID = 'fondue-accordion-item';
 
 const AriaAccordionItem = ({
     item,
@@ -22,6 +22,7 @@ const AriaAccordionItem = ({
     padding = true,
     divider = false,
     headerComponent: HeaderComponent = AccordionHeader,
+    'data-test-id': dataTestId = ACCORDION_ITEM_ID,
 }: AriaAccordionItemProps) => {
     const { active, ...headerProps } = header;
     const triggerRef = useRef<HTMLButtonElement | null>(null);
@@ -36,7 +37,7 @@ const AriaAccordionItem = ({
         >
             <button
                 {...mergeProps(buttonProps, focusProps)}
-                data-test-id={ACCORDION_ITEM_ID}
+                data-test-id={dataTestId}
                 ref={triggerRef}
                 onClick={(event) => {
                     if (header.onClick) {
@@ -110,7 +111,7 @@ const lastChildrenActive = (children: React.ReactNode | undefined): boolean | un
 };
 
 export const Accordion = (props: AccordionProps) => {
-    const { divider = true, border = true } = props;
+    const { divider = true, border = true, 'data-test-id': dataTestId = ACCORDION_ID } = props;
     const children = filterValidChildren(props);
     const ariaProps = mapToAriaProps(children);
 
@@ -162,14 +163,20 @@ export const Accordion = (props: AccordionProps) => {
         <div
             {...propsWithModifiedKeyDown}
             ref={ref}
-            data-test-id={ACCORDION_ID}
+            data-test-id={dataTestId}
             className={merge([
                 divider && 'tw-divide-y tw-divide-black-10',
                 border && 'tw-border-t tw-border-b tw-border-black-10',
             ])}
         >
             {[...state.collection].map((item, index) => {
-                const { header, padding, headerComponent, divider } = children[index].props;
+                const {
+                    header,
+                    padding,
+                    headerComponent,
+                    divider,
+                    'data-test-id': itemDataTestId = ACCORDION_ITEM_ID,
+                } = children[index].props;
                 return (
                     <AriaAccordionItem
                         key={item.key}
@@ -179,6 +186,7 @@ export const Accordion = (props: AccordionProps) => {
                         header={header}
                         padding={padding}
                         headerComponent={headerComponent}
+                        data-test-id={itemDataTestId}
                     />
                 );
             })}

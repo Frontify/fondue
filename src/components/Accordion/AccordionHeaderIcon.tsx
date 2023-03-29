@@ -17,8 +17,7 @@ const sizeMap: Record<AccordionHeaderIconSize, IconSize> = {
 export const AccordionHeaderIcon = ({
     size = 'medium',
     isOpen,
-    disabled = false,
-    'data-test-id': testId = ACCORDION_HEADER_ICON_ID,
+    'data-test-id': dataTestId = ACCORDION_HEADER_ICON_ID,
 }: AccordionHeaderIconProps) => {
     const props = {
         'aria-labelledby': '',
@@ -26,16 +25,10 @@ export const AccordionHeaderIcon = ({
     };
 
     return (
-        <span data-test-id={`${testId}-wrapper`} className="tw-block">
+        <span data-test-id={`${dataTestId}-wrapper`} className="tw-block">
             <span
-                data-test-id={testId}
-                className={merge([
-                    'tw-block tw-transition-transform',
-                    isOpen && 'tw-rotate-180 tw-duration-300',
-                    !disabled && isOpen && 'tw-text-black',
-                    !disabled && !isOpen && 'tw-text-black-80',
-                    disabled && 'tw-text-black-40',
-                ])}
+                data-test-id={dataTestId}
+                className={merge(['tw-block tw-transition-transform', isOpen && 'tw-rotate-180 tw-duration-300'])}
             >
                 <IconCaretDown {...props} />
             </span>

@@ -15,12 +15,17 @@ const MEDIUM_ACCORDION_ICON_WIDTH = 16;
 describe('AccordionHeader Component', () => {
     it('should have dark gray text if isOpen is false', () => {
         cy.mount(<AccordionHeader isOpen={false}>Title</AccordionHeader>);
-        cy.get(HEADER_CONTAINER_ID).should('have.class', 'tw-text-black-80');
+        cy.get(HEADER_CONTAINER_ID).should('have.class', 'tw-text-text-weak');
     });
 
-    it('should have black text if isOpen is true', () => {
+    it('should have text default color if isOpen is true', () => {
         cy.mount(<AccordionHeader isOpen>Title</AccordionHeader>);
-        cy.get(HEADER_CONTAINER_ID).should('have.class', 'tw-text-black');
+        cy.get(HEADER_CONTAINER_ID).should('have.class', 'tw-text-text');
+    });
+
+    it('should have text default color for :hover state if isOpen is false', () => {
+        cy.mount(<AccordionHeader isOpen={false}>Title</AccordionHeader>);
+        cy.get(HEADER_CONTAINER_ID).should('have.class', 'hover:tw-text-text');
     });
 
     it('should render children', () => {
@@ -31,14 +36,14 @@ describe('AccordionHeader Component', () => {
         cy.get(HEADER_TEXT_ID).should('have.class', 'tw-font-normal');
     });
 
-    it('should have light gray text when disabled', () => {
+    it('should have text disabled color when disabled', () => {
         cy.mount(
             <AccordionHeader isOpen disabled={true}>
                 Title
             </AccordionHeader>,
         );
 
-        cy.get(HEADER_CONTAINER_ID).should('have.class', 'tw-text-black-40');
+        cy.get(HEADER_CONTAINER_ID).should('have.class', 'tw-text-text-disabled');
     });
 
     it('should render with medium accordion icon', () => {

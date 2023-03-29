@@ -13,19 +13,11 @@ describe('AccordionHeaderIcon Component', () => {
     it('should render rotated caret icon if isOpen is true', () => {
         cy.mount(<AccordionHeaderIcon isOpen />);
         cy.get(ACCORDION_HEADER_ICON_TEST_ID).should('have.class', 'tw-rotate-180');
-        cy.get(ACCORDION_HEADER_ICON_TEST_ID).should('have.class', 'tw-text-black');
     });
 
     it('should render normal caret icon if isOpen is false', () => {
         cy.mount(<AccordionHeaderIcon isOpen={false} />);
         cy.get(ACCORDION_HEADER_ICON_TEST_ID).should('not.have.class', 'tw-rotate-180');
-        cy.get(ACCORDION_HEADER_ICON_TEST_ID).should('have.class', 'tw-text-black-80');
-    });
-
-    it('should have light gray icon when disabled', () => {
-        cy.mount(<AccordionHeaderIcon isOpen disabled={true} />);
-
-        cy.get(ACCORDION_HEADER_ICON_TEST_ID).should('have.class', 'tw-text-black-40');
     });
 
     it('should render with small icon', () => {
