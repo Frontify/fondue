@@ -21,8 +21,8 @@ export default {
         minWidth: 50,
         maxWidth: 100,
         padding: 12,
-        ['data-test-id']: 'custom-test-id',
-        children: <div>This is a container</div>,
+        'data-test-id': 'custom-test-id',
+        children: <div className="tw-bg-box-positive">This is a container</div>,
     },
 } as Meta<ContainerProps>;
 

@@ -8,10 +8,16 @@ export type ContainerProps = {
     minWidth?: number;
     maxWidth?: number;
     padding?: PaddingType;
-    ['data-test-id']?: string;
+    'data-test-id'?: string;
 };
 
-export const Container = ({ children, minWidth, maxWidth, padding = 0, ...props }: ContainerProps) => {
+export const Container = ({
+    children,
+    'data-test-id': dataTestId,
+    minWidth,
+    maxWidth,
+    padding = 0,
+}: ContainerProps) => {
     const acceptablePaddingInput: PaddingType[] = [0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40];
     const paddingMap = {
         0: 'tw-p-0',
@@ -31,7 +37,7 @@ export const Container = ({ children, minWidth, maxWidth, padding = 0, ...props 
 
     return (
         <div
-            data-test-id={props['data-test-id'] ? `fondue-${props['data-test-id']}` : 'fondue-container'}
+            data-test-id={dataTestId ? dataTestId : 'fondue-container'}
             className={paddingClassName}
             style={{
                 maxWidth,
