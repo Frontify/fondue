@@ -1,32 +1,40 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import type { ReactNode } from 'react';
+import type { MutableRefObject, ReactElement, ReactNode } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { UniqueIdentifier } from '@dnd-kit/core';
-import { Overlay } from './TreeItemOverlay';
+
 import { OnDropCallback } from '@components/DropZone';
+
+import { type Overlay } from './TreeItem';
+import { type Projection } from './helpers';
+
+export type SensorContext = MutableRefObject<{
+    nodes: ReactElement[];
+    offset: number;
+}>;
 
 export type OnSelectCallback = (id: UniqueIdentifier) => void;
 export type OnExpandCallback = (id: UniqueIdentifier) => void;
 
 export type TreeProps = {
     id: string;
+    draggable?: boolean;
+    children: ReactNode;
+    multiselect?: boolean;
     selectedIds?: string[];
     expandedIds?: string[];
-    draggable?: boolean;
-    multiselect?: boolean;
+    'data-test-id'?: string;
     onSelect?: OnSelectCallback;
     onExpand?: OnExpandCallback;
     onDrop?: OnDropCallback<{ id: string; sort: number }>;
-    children: ReactNode;
-};
-
-export type ContentComponentArguments = {
-    selected?: boolean;
 };
 
 type TreeItemBaseProps = {
     id: UniqueIdentifier;
+
+    'data-test-id'?: string;
+
     onDrop?: OnDropCallback<{ id: string; sort: number }>;
     /**
      * The type of item being dragged.
@@ -34,8 +42,11 @@ type TreeItemBaseProps = {
     type?: string;
     /**
      * The kinds of dragItems this dropTarget accepts
+     *  @example ['itemA', 'itemA-within']
+     * if suffix '-within' is appended, then it will allow dropping item inside it
      */
-    accepts?: { within: string | string[]; after: string | string[]; before: string | string[] } | string | string[];
+    accepts?: string[];
+
     children?: ReactNode;
 
     draggable?: boolean;
@@ -53,7 +64,7 @@ export type TreeItemWithLabelProps = {
 
 export type TreeItemWithContentComponentProps = {
     label?: never;
-    contentComponent?: (props: ContentComponentArguments) => ReactNode;
+    contentComponent?: ReactNode;
 } & TreeItemBaseProps;
 
 export type SortableProps = Partial<ReturnType<typeof useSortable>>;
@@ -70,31 +81,25 @@ export type TreeItemState = {
 };
 
 export type TreeState = {
-    items: Map<UniqueIdentifier, TreeItemState>;
     selectedIds: Set<UniqueIdentifier>;
     expandedIds: Set<UniqueIdentifier>;
     selectionMode: 'single' | 'multiselect';
     overlay?: Overlay;
+    nodes: ReactElement[];
+    projection: Nullable<Projection>;
 };
 
 export type TreeStateAction =
     | { type: 'REPLACE_STATE'; payload: TreeState }
+    | { type: 'REGISTER_OVERLAY_ITEM'; payload: Overlay }
     | { type: 'SET_SELECT'; payload: { id: UniqueIdentifier; isSelected: boolean } }
     | { type: 'SET_EXPAND'; payload: { id: UniqueIdentifier; isExpanded: boolean } }
+    | { type: 'SET_HIDDEN'; payload: { ids: UniqueIdentifier[]; isHidden: boolean } }
     | { type: 'SET_SELECTION_MODE'; payload: { selectionMode: TreeState['selectionMode'] } }
-    | { type: 'ON_DROP'; payload: { id: UniqueIdentifier; targetId: UniqueIdentifier; position?: CollisionPosition } }
-    | { type: 'REGISTER_TREE_ITEM'; payload: { id: UniqueIdentifier } & Omit<TreeItemState, 'childrenIds'> }
-    | {
-          type: 'REGISTER_TREE_ITEM_CHILDREN';
-          payload: { id: UniqueIdentifier; childrenIds: TreeItemState['childrenIds'] };
-      }
-    | { type: 'UNREGISTER_TREE_ITEM'; payload: { id: UniqueIdentifier } }
-    | { type: 'REGISTER_OVERLAY_ITEM'; payload: Overlay };
+    | { type: 'SET_PROJECTION'; payload: Nullable<Projection> }
+    | { type: 'REGISTER_NODE_CHILDREN'; payload: { id: UniqueIdentifier; children: ReactElement[] } }
+    | { type: 'UNREGISTER_NODE_CHILDREN'; payload: ReactElement[] };
 
-export type RegisterTreeItemPayload = Extract<TreeStateAction, { type: 'REGISTER_TREE_ITEM' }>['payload'];
-export type RegisterTreeItemChildrenPayload = Extract<
-    TreeStateAction,
-    { type: 'REGISTER_TREE_ITEM_CHILDREN' }
->['payload'];
+export type RegisterNodeChildrenPayload = Extract<TreeStateAction, { type: 'REGISTER_NODE_CHILDREN' }>['payload'];
 
 export type CollisionPosition = 'before' | 'within' | 'after';

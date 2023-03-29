@@ -69,48 +69,7 @@ export const treeItemsMock: TreeItemMock[] = [
             },
             {
                 id: '1-3',
-                label: 'Test Category',
-                nodes: [
-                    {
-                        id: '1-3-1',
-                        label: 'Home Category Test Category',
-                    },
-                    {
-                        id: '1-3-2',
-                        label: 'Members Category',
-                    },
-                    {
-                        id: '1-3-3',
-                        label: 'About us Category',
-                        nodes: testSubCategoryMock,
-                    },
-                    {
-                        id: '1-3-4',
-                        label: 'Home Category Test Category',
-                    },
-                    {
-                        id: '1-3-5',
-                        label: 'Members Category',
-                    },
-                    {
-                        id: '1-3-6',
-                        label: 'About us Category',
-                        nodes: [
-                            {
-                                id: '1-3-6-1',
-                                label: 'SubItem 16',
-                            },
-                            {
-                                id: '1-3-6-2',
-                                label: 'SubItem 26',
-                            },
-                            {
-                                id: '1-3-6-3',
-                                label: 'SubItem 36',
-                            },
-                        ],
-                    },
-                ],
+                label: 'Test Something',
             },
         ],
     },

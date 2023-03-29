@@ -1,27 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { UniqueIdentifier } from '@dnd-kit/core';
-import { createContext, useContext } from 'react';
-import { Overlay } from './TreeItemOverlay';
+import { ReactNode, createContext, useContext } from 'react';
 
-import type {
-    OnExpandCallback,
-    OnSelectCallback,
-    RegisterTreeItemChildrenPayload,
-    RegisterTreeItemPayload,
-    TreeState,
-} from './types';
+import type { Overlay } from './TreeItem';
+import type { OnExpandCallback, OnSelectCallback, RegisterNodeChildrenPayload, TreeState } from './types';
 
 export type TreeContextProps = {
-    treeId: string;
     draggable: boolean;
     treeState: TreeState;
-    registerTreeItem(payload: RegisterTreeItemPayload): void;
-    registerTreeItemChildren(payload: RegisterTreeItemChildrenPayload): void;
-    unregisterTreeItem(id: UniqueIdentifier): void;
-    registerOverlay(overlay: Overlay): void;
     onSelect: OnSelectCallback;
     onExpand: OnExpandCallback;
+    registerOverlay(overlay: Overlay): void;
+    unregisterNodeChildren(payload: ReactNode): void;
+    registerNodeChildren(payload: RegisterNodeChildrenPayload): void;
 };
 
 export const TreeContext = createContext<TreeContextProps>({} as TreeContextProps);
