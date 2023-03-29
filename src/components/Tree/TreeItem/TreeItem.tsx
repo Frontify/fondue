@@ -47,38 +47,33 @@ export const TreeItem = ({
 
     const draggable = treeDraggable && itemDraggable;
 
-    // const supportedDrop = getSupportedDrop(accepts, active?.data?.current?.type);
-
     const isActive = active?.id === id;
 
-    let isWithin = false;
+    const canDropWithin = useMemo(() => {
+        if (!isActive || !accepts || !active?.data.current?.type) {
+            return true;
+        }
+
+        return accepts.includes(`${active.data.current.type}-within`);
+    }, [accepts, active?.data, isActive]);
+
+    const canDrop = useMemo(() => {
+        if (!isActive || !accepts || !active?.data.current?.type) {
+            return true;
+        }
+
+        return accepts.includes(active.data.current.type);
+    }, [accepts, active?.data, isActive]);
 
     const projection = isActive ? treeState.projection : null;
 
-    if (projection && over?.data.current) {
-        const parent = treeState.nodes.find((node) => node.props.id === projection.parentId);
-
-        isWithin = projection.depth > over.data.current.level;
-    }
-
-    if (isActive) {
-        console.group('TREE ITEM', id);
-        console.log('🚀 ~ over:', over);
-        console.log('🚀 ~ isWithin:', isWithin);
-        console.log('🚀 ~ projection:', projection);
-        console.groupEnd();
-    }
+    const isWithin = projection && over?.data.current?.level && projection.depth > over.data.current.level;
 
     const handleItemDragEnd = useCallback(
         (event: DragEndEvent) => {
             const { over, active } = event;
 
-            if (
-                onDrop &&
-                over?.id === id &&
-                active.id !== over?.id
-                // supportedDrop[collision?.data?.position as CollisionPosition]
-            ) {
+            if (onDrop && over?.id === id && active.id !== over?.id && (canDrop || canDropWithin)) {
                 const sortActive = getItemPositionInParent(
                     { id: active.id, parentId: active.data?.current?.parentId },
                     treeState.nodes,
@@ -89,6 +84,7 @@ export const TreeItem = ({
                     treeState.nodes,
                 );
 
+                // TODO: map items and position
                 onDrop(
                     { id: over.id.toString(), type: over?.data?.current?.type, sort: sortOver },
                     { id: active.id.toString(), type: active.data?.current?.type, sort: sortActive },
@@ -96,7 +92,7 @@ export const TreeItem = ({
                 );
             }
         },
-        [id, onDrop, treeState.nodes],
+        [canDrop, canDropWithin, id, onDrop, treeState.nodes],
     );
 
     const handleItemDragStart = useCallback(
@@ -207,6 +203,8 @@ export const TreeItem = ({
     const containerClassName = merge([
         'tw-flex tw-items-center tw-gap-x-1.5 tw-h-10 tw-leading-5 tw-width-full',
         isActive && 'tw-border-box-selected-strong tw-border-dashed tw-border-2 tw-bg-box-selected-hover',
+        ((isWithin && !canDropWithin) || !canDrop) &&
+            'tw-bg-box-negative-hover tw-border-box-negative-strong-hover tw-border-dashed tw-border-2',
     ]);
 
     const depthPadding = projection?.depth ? projection.depth * INDENTATION_WIDTH : undefined;
