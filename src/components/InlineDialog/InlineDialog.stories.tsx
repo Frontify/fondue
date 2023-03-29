@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Meta, StoryFn } from '@storybook/react';
-import { Dialog, DialogProps } from '@components/Dialog';
+import { InlineDialog, InlineDialogProps } from '@components/InlineDialog';
 import { DialogHeader, DialogHeaderSize } from '@components/DialogHeader';
 import { DialogFooter } from '@components/DialogFooter';
 import { Button } from '@components/Button';
@@ -12,18 +12,18 @@ import { IconExclamationMarkCircle } from '@foundation/Icon';
 import { DialogBody } from '@components/DialogBody/DialogBody';
 
 export default {
-    title: 'Experimental/Dialog',
-    component: Dialog,
+    title: 'Experimental/InlineDialog',
+    component: InlineDialog,
     tags: ['autodocs'],
-} as Meta<DialogProps>;
+} as Meta<InlineDialogProps>;
 
-const Template: StoryFn<DialogProps> = () => {
+const Template: StoryFn<InlineDialogProps> = () => {
     const [isOpen, setIsOpen] = useState(false);
     return (
         <>
             <Button onClick={() => setIsOpen(!isOpen)}>Button</Button>
             {isOpen && (
-                <Dialog>
+                <InlineDialog>
                     <DialogHeader
                         title="Collaborator Settings"
                         close={true}
@@ -75,7 +75,7 @@ const Template: StoryFn<DialogProps> = () => {
                             },
                         ]}
                     ></DialogFooter>
-                </Dialog>
+                </InlineDialog>
             )}
         </>
     );

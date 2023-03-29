@@ -2,13 +2,13 @@
 
 import React, { ReactElement, ReactNode } from 'react';
 
-export type DialogProps = {
+export type InlineDialogProps = {
     children?: ReactNode;
 };
 
-export const Dialog = ({ children }: DialogProps): ReactElement => {
+export const InlineDialog = ({ children }: InlineDialogProps): ReactElement => {
     return (
-        <div data-test-id="fondue-dialog" className="tw-relative tw-w-[400px]">
+        <div data-test-id="fondue-inlineDialog" className="tw-relative tw-w-[400px]">
             {children}
         </div>
     );
