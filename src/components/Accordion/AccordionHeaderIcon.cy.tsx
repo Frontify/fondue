@@ -35,12 +35,12 @@ describe('AccordionHeaderIcon Component', () => {
 
     it('should render switch in on mode when isOpen is true', () => {
         cy.mount(<AccordionHeaderIcon isOpen type={FieldsetHeaderType.Switch} />);
-        cy.get(FIELDSET_SWITCH_CONTAINER_ID).find('button').should('have.value', 'true');
+        cy.get(FIELDSET_SWITCH_CONTAINER_ID).find('button').should('have.value', 'on');
     });
 
     it('should render switch in off mode when isOpen is false', () => {
         cy.mount(<AccordionHeaderIcon isOpen={false} type={FieldsetHeaderType.Switch} />);
-        cy.get(FIELDSET_SWITCH_CONTAINER_ID).find('button').should('have.value', 'false');
+        cy.get(FIELDSET_SWITCH_CONTAINER_ID).find('button').should('have.value', 'off');
     });
 
     it('should render minus icon if isOpen is true and type is AddRemove', () => {
