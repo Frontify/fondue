@@ -93,6 +93,7 @@ export type BlockType = {
     url?: string;
     id?: string;
     category?: string;
+    target?: TargetValue;
 };
 
 export type RecursivePartial<T> = {
@@ -129,7 +130,15 @@ export type MarkdownAstNode = {
     checked?: any;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     indent?: any;
+    target?: TargetValue;
 };
+
+export const Targets = {
+    Blank: '_blank',
+    Self: '_self',
+} as const;
+
+export type TargetValue = typeof Targets[keyof typeof Targets];
 
 export type TextNode = { text?: string };
 

@@ -13,7 +13,7 @@ export const withTheme: DecoratorFn = (Story, context) => {
         case 'side-by-side': {
             return (
                 <div className="side-by-side">
-                    <div className="tw-light theme">
+                    <div className="light theme">
                         <Story />
                     </div>
                     <div className="tw-dark theme">
@@ -36,12 +36,12 @@ export const globalTypes = {
     theme: {
         name: 'Theme',
         description: 'Global theme for components',
-        defaultValue: 'tw-light',
+        defaultValue: 'light',
         toolbar: {
             // The icon for the toolbar item
             icon: 'circlehollow',
             items: [
-                { value: 'tw-light', icon: 'circlehollow', title: 'light' },
+                { value: 'light', icon: 'circlehollow', title: 'light' },
                 { value: 'tw-dark', icon: 'circle', title: 'dark' },
                 { value: 'side-by-side', icon: 'sidebar', title: 'side by side' },
             ],

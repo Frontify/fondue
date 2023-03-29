@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
-import { TextStylesToDesignTokenMap } from '@components/RichTextEditor/types';
-import { ELEMENT_LIC, PlateRenderElementProps, TNode } from '@udecode/plate';
+import { DesignTokens, TextStylesToDesignTokenMap } from '@components/RichTextEditor/types';
+import { ELEMENT_LIC, PlateRenderElementProps, TElement, TNode } from '@udecode/plate';
 import { merge } from '@utilities/merge';
 import React from 'react';
 import { getColumnBreakClasses } from '../ColumnBreakPlugin/utils/getColumnBreakClasses';
@@ -10,7 +10,6 @@ import { MarkupElement } from '../MarkupElement';
 import { TextStyles } from '../TextStylePlugin';
 import { justifyClassNames } from '../TextStylePlugin/TextStyles/alignment';
 import { MARK_TEXT_STYLE } from './ListPlugin';
-import './OrderedListPlugin/styles.css';
 
 export const getTextStyle = (styledNode: TNode) => {
     const textStyles =
@@ -20,25 +19,23 @@ export const getTextStyle = (styledNode: TNode) => {
     return TextStylesToDesignTokenMap[textStyles];
 };
 
+export const getUnderlineClassNames = (designTokens: DesignTokens, element: TElement) =>
+    designTokens[getTextStyle(element.children[0])]?.textDecoration === 'underline' ? 'tw-underline' : '';
+
+export const getLicElementClassNames = (element: TElement) =>
+    merge([
+        getColumnBreakClasses(element),
+        element.align ? justifyClassNames[element.align as string] : 'tw-justify-start',
+        'tw-grid tw-grid-cols-[min-content_repeat(3,_auto)]',
+    ]);
+
 export const ListItemContentMarkupElementNode = ({ attributes, children, element }: PlateRenderElementProps) => {
     const { designTokens } = useRichTextEditorContext();
-    const align = element.align as string;
     const isEmpty = element.children.every((child) => child.text === '');
 
     return (
-        <p
-            className={merge([
-                getColumnBreakClasses(element),
-                align ? justifyClassNames[align] : 'tw-justify-start tw-flex',
-            ])}
-            {...attributes}
-        >
-            <span
-                className={merge([
-                    isEmpty && 'tw-w-4',
-                    designTokens[getTextStyle(element.children[0])]?.textDecoration === 'underline' && 'tw-underline',
-                ])}
-            >
+        <p className={getLicElementClassNames(element)} {...attributes}>
+            <span className={merge([isEmpty && 'tw-w-4', getUnderlineClassNames(designTokens, element)])}>
                 {children}
             </span>
         </p>

@@ -32,9 +32,21 @@ import {
 describe('Slate To Markdown transformer', () => {
     const transformer = Transform.use(new SlateToMarkdown());
 
-    it('should transform basic marks', () => {
-        const result = transformer.process(basicMarksTree[0]);
-        expect(result).to.deep.equal(basicMarksMarkdown[0]);
+    describe('Basic markdown transformation', () => {
+        it('should transform basic marks in single line', () => {
+            const result = transformer.process(basicMarksTree[0]);
+            expect(result).to.deep.equal(basicMarksMarkdown[0]);
+        });
+
+        it('should transform basic marks in multiple lines', () => {
+            const result = transformer.process(basicMarksTree[1]);
+            expect(result).to.deep.equal(basicMarksMarkdown[1]);
+        });
+
+        it('should transform basic marks with line breaks', () => {
+            const result = transformer.process(basicMarksTree[2]);
+            expect(result).to.deep.equal(basicMarksMarkdown[2]);
+        });
     });
 
     it('should transform headings', () => {
@@ -90,9 +102,16 @@ describe('Slate To Markdown transformer', () => {
         expect(result).to.deep.equal(hrMarkdown);
     });
 
-    it('should transform link', () => {
-        const result = transformer.process(linkTree);
-        expect(result).to.deep.equal(linkMarkdown);
+    describe('Link transformation', () => {
+        it('should transform link - target self', () => {
+            const result = transformer.process(linkTree[0]);
+            expect(result).to.deep.equal(linkMarkdown[0]);
+        });
+
+        it('should transform link - target blank', () => {
+            const result = transformer.process(linkTree[1]);
+            expect(result).to.deep.equal(linkMarkdown[1]);
+        });
     });
 
     it('should transform image', () => {

@@ -1,20 +1,20 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export const codeBlockMarkdown_0 = `\`\`\`
+export const codeBlockMarkdown0 = `\`\`\`
 tell application "Foo";
     beep
 end tell
 \`\`\`
 `;
 
-const codeBlockMarkdown_1 = `\`\`\`
+const codeBlockMarkdown1 = `\`\`\`
 var add2 = function (number) {
     return number + 2;
 };
 \`\`\`
 `;
 
-const codeBlockMarkdown_2 = `\`\`\`
+const codeBlockMarkdown2 = `\`\`\`
 <!DOCTYPE html>
 <html>
 <body>
@@ -27,9 +27,9 @@ const codeBlockMarkdown_2 = `\`\`\`
 </html>
 \`\`\`
 `;
-export const codeBlockMarkdown = [codeBlockMarkdown_0, codeBlockMarkdown_1, codeBlockMarkdown_2];
+export const codeBlockMarkdown = [codeBlockMarkdown0, codeBlockMarkdown1, codeBlockMarkdown2];
 
-export const codeBlockTree_0 = [
+export const codeBlockTree0 = [
     {
         type: 'code_block',
         language: undefined,
@@ -43,7 +43,7 @@ end tell`,
     },
 ];
 
-export const codeBlockTree_1 = [
+export const codeBlockTree1 = [
     {
         type: 'code_block',
         language: undefined,
@@ -57,7 +57,7 @@ export const codeBlockTree_1 = [
     },
 ];
 
-export const codeBlockTree_2 = [
+export const codeBlockTree2 = [
     {
         type: 'code_block',
         language: undefined,
@@ -68,4 +68,4 @@ export const codeBlockTree_2 = [
         ],
     },
 ];
-export const codeBlockTree = [codeBlockTree_0, codeBlockTree_1, codeBlockTree_2];
+export const codeBlockTree = [codeBlockTree0, codeBlockTree1, codeBlockTree2];

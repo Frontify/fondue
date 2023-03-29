@@ -43,6 +43,8 @@ defaultPlugins
             new EmojiPlugin(),
         ],
     );
+
+export * from './Plugin';
 export * from './AlignPlugin';
 export * from './BoldPlugin';
 export * from './ColumnBreakPlugin';
@@ -63,3 +65,4 @@ export * from './StrikethroughPlugin';
 export * from './TextStylePlugin';
 export * from './UnderlinePlugin';
 export * from './BlurOnBreakPlugin';
+export * from './MarkupElement';

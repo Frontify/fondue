@@ -1,11 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
-import { ToolbarButton, focusEditor, someNode, useEventPlateId, usePlateEditorState } from '@udecode/plate';
+import {
+    ToolbarButton,
+    focusEditor,
+    isRangeInSameBlock,
+    someNode,
+    useEventPlateId,
+    usePlateEditorState,
+} from '@udecode/plate';
 import { triggerFloatingButton } from '../utils';
 import { BlockToolbarButtonProps } from '@udecode/plate';
 import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
 import { getHotkeyByPlatform } from '@components/RichTextEditor/helpers/getHotkeyByPlatform';
+import { getButtonClassNames } from '../../helper';
 
 export interface LinkToolbarButtonProps extends BlockToolbarButtonProps {
     /**
@@ -16,12 +24,20 @@ export interface LinkToolbarButtonProps extends BlockToolbarButtonProps {
 
 export const ButtonToolbarButton = ({ id, type, ...props }: LinkToolbarButtonProps) => {
     const editor = usePlateEditorState(useEventPlateId(id));
+    const isEnabled = !!isRangeInSameBlock(editor, {
+        at: editor.selection,
+    });
 
     const isLink = !!editor?.selection && someNode(editor, { match: { type } });
 
     return (
         <ToolbarButton
-            tooltip={getTooltip(`Button\n${getHotkeyByPlatform('Shift+Ctrl+k')}`)}
+            tooltip={getTooltip(
+                isEnabled
+                    ? `Button\n${getHotkeyByPlatform('Ctrl+Shift+K')}`
+                    : 'Buttons can only be set for a single text block.',
+            )}
+            classNames={getButtonClassNames(isEnabled)}
             active={isLink}
             onMouseDown={async (event) => {
                 if (!editor) {

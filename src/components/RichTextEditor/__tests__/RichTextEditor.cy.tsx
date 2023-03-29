@@ -7,7 +7,9 @@ import {
     AlignRightPlugin,
     BoldPlugin,
     BreakAfterPlugin,
+    ButtonPlugin,
     ELEMENT_BUTTON,
+    LinkPlugin,
     OrderedListPlugin,
     ParagraphPlugin,
     PluginComposer,
@@ -40,6 +42,7 @@ import {
     RICH_TEXT_EDITOR,
     TEXTSTYLE_DROPDOWN_TRIGGER,
     TEXTSTYLE_OPTION,
+    TOOLBAR_BUTTON,
     TOOLBAR_FLOATING,
     TOOLBAR_GROUP_1,
     TOOLBAR_GROUP_2,
@@ -174,6 +177,9 @@ const RichTextEditorWithValueSetOutside = ({ value }: { value: string }) => {
 };
 
 const RichTextEditorWithOrderedListStyles = () => <RichTextEditor value={JSON.stringify([orderedListValue])} />;
+
+const activeButtonClassNames = '!tw-bg-box-selected tw-rounded !tw-text-box-selected-inverse';
+const disabledButtonClassNames = '!tw-cursor-not-allowed !tw-opacity-50';
 
 describe('RichTextEditor Component', () => {
     describe('Rendering', () => {
@@ -333,10 +339,22 @@ describe('RichTextEditor Component', () => {
         it('renders ordered list with correct list style types', () => {
             cy.mount(<RichTextEditorWithOrderedListStyles />);
 
-            cy.get('[contenteditable=true] ol').should('have.class', 'decimal');
-            cy.get('[contenteditable=true] ol ol').should('have.class', 'alpha');
-            cy.get('[contenteditable=true] ol ol ol').should('have.class', 'roman');
-            cy.get('[contenteditable=true] ol ol ol ol').should('have.class', 'decimal');
+            cy.get('[contenteditable=true] ol').should(
+                'have.class',
+                "[&>li>p]:before:tw-content-[counter(count,decimal)_'._']",
+            );
+            cy.get('[contenteditable=true] ol ol').should(
+                'have.class',
+                "[&>li>p]:before:tw-content-[counter(count,_lower-alpha)_'._']",
+            );
+            cy.get('[contenteditable=true] ol ol ol').should(
+                'have.class',
+                "[&>li>p]:before:tw-content-[counter(count,lower-roman)_'._']",
+            );
+            cy.get('[contenteditable=true] ol ol ol ol').should(
+                'have.class',
+                "[&>li>p]:before:tw-content-[counter(count,decimal)_'._']",
+            );
         });
 
         it('renders ordered list right aligned', () => {
@@ -517,11 +535,11 @@ describe('RichTextEditor Component', () => {
             cy.get(TOOLBAR_GROUP_2).children().eq(5).click();
             cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
             cy.get(TEXTSTYLE_OPTION).first().click();
-            cy.get('[contenteditable=true] > div > span').should('have.attr', 'style', heading1Styles);
+            cy.get('[contenteditable=true] > div ').should('include.html', heading1Styles);
             //remove checklist again and textStyle stays
             cy.get('[contenteditable=true]').click().type('{selectall}');
             cy.get(TOOLBAR_GROUP_2).children().eq(4).click();
-            cy.get('[contenteditable=true] > ul > li').should('have.attr', 'style', heading1Styles);
+            cy.get('[contenteditable=true] > ul ').should('include.html', heading1Styles);
         });
     });
 
@@ -687,6 +705,17 @@ describe('RichTextEditor Component', () => {
             cy.get('[contenteditable=true] a').should('have.attr', 'href', link + additionalLink);
             cy.get('[contenteditable=true] a').should('have.attr', 'target', '_self');
         });
+
+        it('should disable link-button when multiple blocks are selected', () => {
+            const plugins = new PluginComposer();
+            plugins.setPlugin([new LinkPlugin()]);
+
+            cy.mount(<RichTextEditor plugins={plugins} />);
+
+            cy.get('[contenteditable=true]').click().type('block1{enter}block2{selectall}');
+            cy.get(TOOLBAR_FLOATING).should('be.visible');
+            cy.get(`${TOOLBAR_FLOATING} ${TOOLBAR_BUTTON}`).should('have.class', disabledButtonClassNames);
+        });
     });
 
     describe('button plugin', () => {
@@ -786,6 +815,17 @@ describe('RichTextEditor Component', () => {
 
             cy.get('[contenteditable=true]').should('contain.text', text);
             cy.get('[contenteditable=true] a').should('not.exist');
+        });
+
+        it('should disable button-button when multiple blocks are selected', () => {
+            const plugins = new PluginComposer();
+            plugins.setPlugin([new ButtonPlugin()]);
+
+            cy.mount(<RichTextEditor plugins={plugins} />);
+
+            cy.get('[contenteditable=true]').click().type('block1{enter}block2{selectall}');
+            cy.get(TOOLBAR_FLOATING).should('be.visible');
+            cy.get(`${TOOLBAR_FLOATING} ${TOOLBAR_BUTTON}`).should('have.class', disabledButtonClassNames);
         });
     });
 
@@ -987,9 +1027,6 @@ describe('RichTextEditor Component', () => {
             />
         );
     };
-
-    const activeButtonClassNames = '!tw-bg-box-selected tw-rounded !tw-text-box-selected-inverse';
-    const disabledButtonClassNames = '!tw-cursor-not-allowed !tw-opacity-50';
 
     describe('column break plugin', () => {
         it('it should add column break on paragraph', () => {

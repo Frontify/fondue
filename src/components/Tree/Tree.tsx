@@ -33,8 +33,8 @@ import type {
 } from '@components/Tree/types';
 import { TreeContext, TreeContextProps } from '@components/Tree/TreeContext';
 
-import { getMovementAnnouncement, getProjection } from './helpers';
 import { type Overlay, TreeItemOverlay } from './TreeItem';
+import { getMovementAnnouncement, getProjection } from './helpers';
 import { removeFragmentsAndEnrichChildren, sortableTreeKeyboardCoordinates } from './utils';
 
 export const ROOT_ID = '__ROOT__';
