@@ -10,16 +10,16 @@ const TreeComponent = ({ onSelect }: { onSelect?: (id: Nullable<UniqueIdentifier
     return (
         <Tree id="treeId" onSelect={onSelect}>
             {treeItemsMock.map((node) => (
-                <TreeItem key={node.id} id={node.id} contentComponent={() => <span>{node.label}</span>}>
+                <TreeItem key={node.id} id={node.id} contentComponent={<span>{node.label}</span>}>
                     {node.nodes?.map((node) => (
-                        <TreeItem key={node.id} id={node.id} contentComponent={() => <span>{node.label}</span>}>
+                        <TreeItem key={node.id} id={node.id} contentComponent={<span>{node.label}</span>}>
                             {node.nodes?.map((node) => (
-                                <TreeItem key={node.id} id={node.id} contentComponent={() => <span>{node.label}</span>}>
+                                <TreeItem key={node.id} id={node.id} contentComponent={<span>{node.label}</span>}>
                                     {node.nodes?.map((node) => (
                                         <TreeItem
                                             key={node.id}
                                             id={node.id}
-                                            contentComponent={() => <span>{node.label}</span>}
+                                            contentComponent={<span>{node.label}</span>}
                                         />
                                     ))}
                                 </TreeItem>
