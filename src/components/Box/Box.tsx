@@ -2,13 +2,13 @@
 
 import React from 'react';
 
-interface DataProps extends React.HTMLAttributes<HTMLDivElement> {
+export type BoxProps = {
     'data-test-id'?: string;
-}
+} & React.HTMLAttributes<HTMLDivElement>;
 
-export const Box = ({ children, ...props }: DataProps) => {
+export const Box = ({ children, 'data-test-id': dataTestId, ...props }: BoxProps) => {
     return (
-        <div data-test-id={props['data-test-id'] ? `fondue-${props['data-test-id']}` : 'fondue-box'} {...props}>
+        <div data-test-id={dataTestId ? dataTestId : 'fondue-box'} {...props}>
             {children}
         </div>
     );

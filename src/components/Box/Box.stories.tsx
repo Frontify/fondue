@@ -7,7 +7,7 @@ import { Box as BoxComponent } from './Box';
 type Props = JSX.IntrinsicElements['div'];
 
 export default {
-    title: 'Components/Box',
+    title: 'Layout/Box',
     component: BoxComponent,
     tags: ['autodocs'],
     argTypes: {
