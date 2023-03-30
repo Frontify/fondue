@@ -1,11 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useListBoxSection } from '@react-aria/listbox';
-import React, { PropsWithChildren, ReactElement } from 'react';
+import React, { ReactElement, ReactNode } from 'react';
 
-type SelectMenuSectionProps = PropsWithChildren<{
+type SelectMenuSectionProps = {
     ariaLabel?: string;
-}>;
+    children?: ReactNode;
+};
 
 export const SelectMenuSection = ({ ariaLabel, children }: SelectMenuSectionProps): ReactElement => {
     const { itemProps, groupProps } = useListBoxSection({ 'aria-label': ariaLabel });

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { merge } from '@utilities/merge';
-import React, { PropsWithChildren, ReactElement } from 'react';
+import React, { ReactElement, ReactNode } from 'react';
 import { decorationMap, displayMap, overflowMap, whitespaceMap, wordBreakMap } from '../shared/records';
 import { SharedTypographyProps } from '../shared/types';
 
@@ -9,14 +9,13 @@ type TextWeight = 'default' | 'strong' | 'x-strong';
 type TextSize = 'x-small' | 'small' | 'medium' | 'large';
 type TextColor = 'default' | 'weak' | 'x-weak' | 'disabled' | 'negative' | 'positive' | 'warning' | 'interactive';
 
-export type TextProps = PropsWithChildren<
-    SharedTypographyProps & {
-        size?: TextSize;
-        weight?: TextWeight;
-        as?: 'a' | 'abbr' | 'address' | 'em' | 'label' | 'li' | 'span' | 'strong' | 'time' | 'p';
-        color?: TextColor;
-    }
->;
+export type TextProps = SharedTypographyProps & {
+    size?: TextSize;
+    weight?: TextWeight;
+    as?: 'a' | 'abbr' | 'address' | 'em' | 'label' | 'li' | 'span' | 'strong' | 'time' | 'p';
+    color?: TextColor;
+    children?: ReactNode;
+};
 
 const weightMap: Record<TextWeight, string> = {
     default: 'tw-font-regular',

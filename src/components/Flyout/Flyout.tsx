@@ -9,16 +9,7 @@ import { mergeProps } from '@react-aria/utils';
 import { useOverlayTriggerState } from '@react-stately/overlays';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import React, {
-    HTMLAttributes,
-    MouseEvent,
-    MutableRefObject,
-    PropsWithChildren,
-    ReactElement,
-    ReactNode,
-    useEffect,
-    useRef,
-} from 'react';
+import React, { HTMLAttributes, MouseEvent, MutableRefObject, ReactElement, ReactNode, useEffect, useRef } from 'react';
 import { LegacyFlyoutFooter } from '.';
 import { useContainScroll } from './hooks/useContainScroll';
 import { useOverlayPositionWithBottomMargin } from './hooks/useOverlayPositionWithBottomMargin';
@@ -38,7 +29,7 @@ export enum FlyoutPlacement {
     Left = 'left',
 }
 
-export type FlyoutProps = PropsWithChildren<{
+export type FlyoutProps = {
     trigger:
         | ReactNode
         | ((
@@ -67,7 +58,8 @@ export type FlyoutProps = PropsWithChildren<{
     offset?: number;
     updatePositionOnContentChange?: boolean;
     isTriggerDisabled?: boolean;
-}>;
+    children?: ReactNode;
+};
 
 export const Flyout = ({
     trigger,

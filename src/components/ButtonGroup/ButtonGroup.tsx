@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { Children, PropsWithChildren, ReactElement, cloneElement, isValidElement } from 'react';
+import React, { Children, ReactElement, ReactNode, cloneElement, isValidElement } from 'react';
 import { ButtonProps, ButtonSize } from '@components/Button';
 import { merge } from '@utilities/merge';
 
-export type ButtonGroupProps = PropsWithChildren<{ size: ButtonSize }>;
+export type ButtonGroupProps = { size: ButtonSize; children?: ReactNode };
 
 const spacing: Record<ButtonSize, string> = {
     [ButtonSize.Small]: 'tw-gap-x-1',

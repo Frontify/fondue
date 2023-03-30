@@ -4,20 +4,21 @@ import { TooltipProps } from '@components/Tooltip/Tooltip';
 import { TooltipIcon, TooltipIconProps } from '@components/TooltipIcon/TooltipIcon';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { merge } from '@utilities/merge';
-import React, { PropsWithChildren, ReactElement } from 'react';
+import React, { ReactElement, ReactNode } from 'react';
 
 export type InputLabelTooltipProps =
     | (TooltipProps & Pick<TooltipIconProps, 'triggerStyle' | 'triggerIcon'>)
     | (TooltipProps & Pick<TooltipIconProps, 'triggerStyle' | 'triggerIcon'>)[];
 
-export type InputLabelProps = PropsWithChildren<{
+export type InputLabelProps = {
     htmlFor: string;
     required?: boolean;
     disabled?: boolean;
     clickable?: boolean;
     tooltip?: InputLabelTooltipProps;
     bold?: boolean;
-}>;
+    children?: ReactNode;
+};
 
 export const InputLabel = ({
     children,

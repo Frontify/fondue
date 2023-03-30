@@ -3,7 +3,7 @@
 import { InputLabel, InputLabelProps } from '@components/InputLabel/InputLabel';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
-import React, { PropsWithChildren, ReactElement, ReactNode, cloneElement, isValidElement } from 'react';
+import React, { ReactElement, ReactNode, cloneElement, isValidElement } from 'react';
 
 export enum FormControlStyle {
     Primary = 'Primary',
@@ -63,7 +63,7 @@ export enum FormControlDirection {
     Vertical = 'Vertical',
 }
 
-export type FormControlProps = PropsWithChildren<{
+export type FormControlProps = {
     direction?: FormControlDirection;
     disabled?: boolean;
     clickable?: boolean;
@@ -72,7 +72,8 @@ export type FormControlProps = PropsWithChildren<{
     helper?: Omit<HelperTextProps, 'disabled' | 'style'> & { position?: HelperPosition };
     style?: FormControlStyle;
     name?: string;
-}>;
+    children?: ReactNode;
+};
 
 export const FormControl = ({
     label,

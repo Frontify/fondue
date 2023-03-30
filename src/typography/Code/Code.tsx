@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { merge } from '@utilities/merge';
-import React, { PropsWithChildren, ReactElement } from 'react';
+import React, { ReactElement, ReactNode } from 'react';
 
 type CodeWeight = 'default' | 'strong';
 
@@ -9,12 +9,13 @@ type CodeSize = 'small' | 'medium' | 'large';
 
 type CodeColor = 'default' | 'weak' | 'x-weak' | 'disabled' | 'negative' | 'positive' | 'warning' | 'interactive';
 
-export type CodeProps = PropsWithChildren<{
+export type CodeProps = {
     size?: CodeSize;
     weight?: CodeWeight;
     as?: 'code' | 'pre' | 'span';
     color?: CodeColor;
-}>;
+    children?: ReactNode;
+};
 
 const weightMap: Record<CodeWeight, string> = {
     default: 'tw-font-regular',

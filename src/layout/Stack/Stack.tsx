@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { merge } from '@utilities/merge';
-import React, { PropsWithChildren, ReactElement } from 'react';
+import React, { ReactElement, ReactNode } from 'react';
 
 export type StackSpacing = 'none' | 'xxs' | 'xs' | 's' | 'm' | 'l' | 'xl' | 'xxl';
 
@@ -9,14 +9,15 @@ export type StackJustify = 'start' | 'end' | 'center' | 'between' | 'around' | '
 
 export type StackAlign = 'start' | 'end' | 'stretch' | 'center';
 
-export type StackProps = PropsWithChildren<{
+export type StackProps = {
     padding: StackSpacing;
     spacing: StackSpacing;
     direction?: 'row' | 'column';
     wrap?: boolean;
     justify?: StackJustify;
     align?: StackAlign;
-}>;
+    children?: ReactNode;
+};
 
 const paddingMap: Record<StackSpacing, string> = {
     none: 'tw-p-0',
