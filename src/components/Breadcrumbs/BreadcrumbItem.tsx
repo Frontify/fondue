@@ -6,7 +6,7 @@ import { mergeProps } from '@react-aria/utils';
 import { getItemElementType } from '@utilities/elements';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import React, { FC, RefObject, useRef } from 'react';
+import React, { RefObject, useRef } from 'react';
 import { Breadcrumb } from './Breadcrumbs';
 
 const Separator = () => (
