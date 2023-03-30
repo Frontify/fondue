@@ -20,16 +20,19 @@ const BREADCRUMB_ITEMS_MIXED_ELEMENTS = [
     { label: 'item with link', link: '/some-third-link' },
 ];
 
-const ChangingBreadcrumbs = ({}: BreadcrumbsProps): ReactElement => {
-    const [items, setItems] = useState(BREADCRUMB_ITEMS);
+const ChangingBreadcrumbs = ({ items }: BreadcrumbsProps): ReactElement => {
+    const [breadcrumbItems, setBreadcrumbItems] = useState(items);
 
     return (
         <div>
-            <Breadcrumbs items={items} />
+            <Breadcrumbs items={breadcrumbItems} />
             <button
                 data-test-id="add-item-button"
                 onClick={() => {
-                    setItems(() => [...items, { label: 'Some fourth label', link: '/some-fourth-link' }]);
+                    setBreadcrumbItems(() => [
+                        ...breadcrumbItems,
+                        { label: 'Some fourth label', link: '/some-fourth-link' },
+                    ]);
                 }}
             >
                 Add Block
