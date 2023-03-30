@@ -4,7 +4,7 @@ import { TooltipProps } from '@components/Tooltip/Tooltip';
 import { TooltipIcon, TooltipIconProps } from '@components/TooltipIcon/TooltipIcon';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { merge } from '@utilities/merge';
-import React, { FC, PropsWithChildren } from 'react';
+import React, { PropsWithChildren, ReactElement } from 'react';
 
 export type InputLabelTooltipProps =
     | (TooltipProps & Pick<TooltipIconProps, 'triggerStyle' | 'triggerIcon'>)
@@ -19,7 +19,7 @@ export type InputLabelProps = PropsWithChildren<{
     bold?: boolean;
 }>;
 
-export const InputLabel: FC<InputLabelProps> = ({
+export const InputLabel = ({
     children,
     htmlFor,
     required = false,
@@ -27,7 +27,7 @@ export const InputLabel: FC<InputLabelProps> = ({
     clickable = false,
     tooltip = [],
     bold,
-}) => {
+}: InputLabelProps): ReactElement => {
     const tooltips = Array.isArray(tooltip) ? tooltip : [tooltip];
 
     const tooltipsWithKeys = tooltips.map((tooltip, index) => ({

@@ -3,7 +3,7 @@
 import { InputLabel, InputLabelProps } from '@components/InputLabel/InputLabel';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
-import React, { FC, PropsWithChildren, ReactElement, ReactNode, cloneElement, isValidElement } from 'react';
+import React, { PropsWithChildren, ReactElement, ReactNode, cloneElement, isValidElement } from 'react';
 
 export enum FormControlStyle {
     Primary = 'Primary',
@@ -24,7 +24,7 @@ const inputValidation: Record<FormControlStyle, Validation> = {
     [FormControlStyle.Danger]: Validation.Error,
 };
 
-const HelperText: FC<HelperTextProps> = ({ text, disabled, style, fullWidth = false }) => {
+const HelperText = ({ text, disabled, style, fullWidth = false }: HelperTextProps): ReactElement => {
     let textColorClass;
 
     switch (true) {
@@ -74,7 +74,7 @@ export type FormControlProps = PropsWithChildren<{
     name?: string;
 }>;
 
-export const FormControl: FC<FormControlProps> = ({
+export const FormControl = ({
     label,
     children,
     extra,
@@ -84,7 +84,7 @@ export const FormControl: FC<FormControlProps> = ({
     clickable,
     direction = FormControlDirection.Vertical,
     style = FormControlStyle.Primary,
-}) => {
+}: FormControlProps): ReactElement => {
     const isHelperBefore = helper?.position === HelperPosition.Before;
 
     return (

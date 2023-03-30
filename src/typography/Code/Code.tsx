@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { merge } from '@utilities/merge';
-import React, { FC, PropsWithChildren } from 'react';
+import React, { PropsWithChildren, ReactElement } from 'react';
 
 type CodeWeight = 'default' | 'strong';
 
@@ -38,13 +38,13 @@ const colorMap: Record<CodeColor, string> = {
     interactive: 'tw-text-text-interactive',
 };
 
-export const Code: FC<CodeProps> = ({
+export const Code = ({
     children,
     as: Tag = 'span',
     weight = 'default',
     size = 'medium',
     color = 'default',
-}) => {
+}: CodeProps): ReactElement => {
     return (
         <Tag data-test-id="code" className={merge(['tw-font-code', weightMap[weight], sizeMap[size], colorMap[color]])}>
             {children}
