@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { TreeState } from '@react-stately/tree';
-import { FC, PropsWithChildren, ReactNode } from 'react';
+import { PropsWithChildren, ReactElement, ReactNode } from 'react';
 import { Node } from '@react-types/shared';
 import { FieldsetHeaderSize, FieldsetHeaderType } from '@components/FieldsetHeader';
 
@@ -17,14 +17,14 @@ export type AriaAccordionItemProps = {
     header: Omit<AccordionHeaderProps, 'isOpen'> & { active?: boolean; onClick?: () => void };
     padding?: boolean;
     divider?: boolean;
-    headerComponent?: FC<AccordionHeaderProps>;
+    headerComponent?: (props: AccordionHeaderProps) => ReactElement;
 };
 
 export type AccordionItemProps = PropsWithChildren<{
     header: Omit<AccordionHeaderProps, 'isOpen'> & { active?: boolean; onClick?: () => void };
     padding?: boolean;
     divider?: boolean;
-    headerComponent?: FC<AccordionHeaderProps>;
+    headerComponent?: (props: AccordionHeaderProps) => ReactElement;
 }>;
 
 export enum AccordionHeaderIconSize {

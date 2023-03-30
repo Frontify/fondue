@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { merge } from '@utilities/merge';
-import React, { FC, PropsWithChildren } from 'react';
+import React, { PropsWithChildren, ReactElement } from 'react';
 import { decorationMap, displayMap, overflowMap, whitespaceMap, wordBreakMap } from '../shared/records';
 import { SharedTypographyProps } from '../shared/types';
 
@@ -42,7 +42,7 @@ const colorMap: Record<TextColor, string> = {
     interactive: 'tw-text-text-interactive',
 };
 
-export const Text: FC<TextProps> = ({
+export const Text = ({
     children,
     as: Tag = 'span',
     weight = 'default',
@@ -53,7 +53,7 @@ export const Text: FC<TextProps> = ({
     whitespace = 'normal',
     overflow = 'visible',
     display,
-}) => (
+}: TextProps): ReactElement => (
     <Tag
         data-test-id="text"
         className={merge([

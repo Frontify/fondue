@@ -3,7 +3,7 @@
 import { getKeyItemRecord, getMenuItems } from '@components/ActionMenu/Aria/helper';
 import { useListBox } from '@react-aria/listbox';
 import { useActor } from '@xstate/react';
-import React, { FC, useMemo, useRef } from 'react';
+import React, { ReactElement, useMemo, useRef } from 'react';
 import BackgroundIcon from './assets/background.svg';
 import NoResultsIcon from './assets/no-results.svg';
 import FetchingIcon from './assets/nook-animated.png';
@@ -14,7 +14,7 @@ import { SearchResultListProps } from './types';
 import { findSection } from './utils/helpers';
 import { isFetching, isUnsuccessful, shouldGoBack } from './utils/state';
 
-export const SearchResultsList: FC<SearchResultListProps> = (props) => {
+export const SearchResultsList = (props: SearchResultListProps): ReactElement => {
     const ref = useRef<HTMLUListElement>(null);
     const { listBoxRef = ref, state, menuBlocks, machineService } = props;
     const { listBoxProps } = useListBox(props, state, listBoxRef);
@@ -92,7 +92,7 @@ export const SearchResultsList: FC<SearchResultListProps> = (props) => {
     );
 };
 
-const EmptyResults: FC<{ prompt: string; icon: string }> = ({ prompt, icon }) => (
+const EmptyResults = ({ prompt, icon }: { prompt: string; icon: string }): ReactElement => (
     <div
         data-test-id="link-chooser-empty-results"
         className="tw-flex tw-flex-col tw-justify-center tw-items-center tw-h-[278px] tw-p-3"
@@ -102,7 +102,11 @@ const EmptyResults: FC<{ prompt: string; icon: string }> = ({ prompt, icon }) =>
     </div>
 );
 
-const FetchingError: FC<{ error?: string }> = ({ error = 'An error occurred while fetching the results' }) => (
+const FetchingError = ({
+    error = 'An error occurred while fetching the results',
+}: {
+    error?: string;
+}): ReactElement => (
     <div
         data-test-id="link-chooser-error"
         className="tw-flex tw-flex-col tw-justify-center tw-items-center tw-h-[278px] tw-p-3"
@@ -112,7 +116,7 @@ const FetchingError: FC<{ error?: string }> = ({ error = 'An error occurred whil
     </div>
 );
 
-const FetchingAnimation: FC = () => (
+const FetchingAnimation = (): ReactElement => (
     <div
         data-test-id="link-chooser-loader"
         className="tw-flex tw-flex-col tw-justify-center tw-items-center tw-h-[278px] tw-p-3"

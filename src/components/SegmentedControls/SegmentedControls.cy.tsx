@@ -2,7 +2,7 @@
 
 import { IconTextAlignmentCentre, IconTextAlignmentLeft, IconTextAlignmentRight } from '@foundation/Icon/Generated';
 import { IconSize } from '@foundation/Icon/IconSize';
-import React, { FC, useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { IconItem, SegmentedControls, TextOrNumberItem } from './SegmentedControls';
 
 const SEGMENTED_CONTROLS_ID = '[data-test-id=fondue-segmented-controls]';
@@ -34,7 +34,7 @@ type Props = {
     disabled?: boolean;
 };
 
-const Component: FC<Props> = ({ items, disabled = false }) => {
+const Component = ({ items, disabled = false }: Props): ReactElement => {
     const [active, setActive] = useState(items[0].id);
     return <SegmentedControls items={items} activeItemId={active} onChange={setActive} disabled={disabled} />;
 };

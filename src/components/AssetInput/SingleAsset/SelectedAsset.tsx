@@ -13,7 +13,7 @@ import { useMenuTriggerState } from '@react-stately/menu';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { AnimatePresence, motion } from 'framer-motion';
-import React, { FC, useEffect, useRef, useState } from 'react';
+import React, { ReactElement, useEffect, useRef, useState } from 'react';
 import { AssetInputProps, AssetInputSize, AssetType } from '../AssetInput';
 import { AssetThumbnail } from '../AssetThumbnail';
 import { AssetSubline } from './AssetSubline';
@@ -26,10 +26,15 @@ export type SelectedAssetProps = Pick<
     asset: AssetType;
 };
 
-export const SelectedAsset: FC<
-    Required<Omit<SelectedAssetProps, 'hideSize' | 'hideExtension'>> &
-        Pick<SelectedAssetProps, 'hideSize' | 'hideExtension'>
-> = ({ asset, size, actions, isLoading, hideSize = false, hideExtension = false }) => {
+export const SelectedAsset = ({
+    asset,
+    size,
+    actions,
+    isLoading,
+    hideSize = false,
+    hideExtension = false,
+}: Required<Omit<SelectedAssetProps, 'hideSize' | 'hideExtension'>> &
+    Pick<SelectedAssetProps, 'hideSize' | 'hideExtension'>): ReactElement => {
     const menuId = useMemoizedId();
     const labelId = useMemoizedId();
     const buttonRef = useRef<HTMLButtonElement | null>(null);
