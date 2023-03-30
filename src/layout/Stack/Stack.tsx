@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { merge } from '@utilities/merge';
-import React, { FC, PropsWithChildren } from 'react';
+import React, { PropsWithChildren, ReactElement } from 'react';
 
 export type StackSpacing = 'none' | 'xxs' | 'xs' | 's' | 'm' | 'l' | 'xl' | 'xxl';
 
@@ -56,7 +56,7 @@ const alignMap: Record<StackAlign, string> = {
     stretch: 'tw-items-stretch',
 };
 
-export const Stack: FC<StackProps> = ({
+export const Stack = ({
     children,
     padding,
     spacing,
@@ -64,7 +64,7 @@ export const Stack: FC<StackProps> = ({
     wrap = false,
     justify = 'start',
     align = 'stretch',
-}) => {
+}: StackProps): ReactElement => {
     return (
         <div
             data-test-id="stack"
