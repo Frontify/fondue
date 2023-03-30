@@ -56,4 +56,5 @@ export type AccordionHeaderIconProps = {
     /** @deprecated Icon type will be fixed to FieldsetHeaderType.Accordion.
      Use headerComponent prop for custom header styles */
     type?: FieldsetHeaderType;
+    children?: ReactNode;
 };
