@@ -22,17 +22,17 @@ const sizeMap: Record<FieldsetHeaderSize, { icon: IconSize; text: string; switch
     [FieldsetHeaderSize.Small]: {
         icon: IconSize.Size12,
         text: 'tw-text-s',
-        switch: SwitchSize.Small,
+        switch: 'small',
     },
     [FieldsetHeaderSize.Medium]: {
         icon: IconSize.Size16,
         text: 'tw-text-m',
-        switch: SwitchSize.Medium,
+        switch: 'medium',
     },
     [FieldsetHeaderSize.Large]: {
         icon: IconSize.Size20,
         text: 'tw-text-l',
-        switch: SwitchSize.Medium,
+        switch: 'medium',
     },
 };
 
@@ -72,7 +72,7 @@ export const renderFieldsetHeaderIconType = (
         case FieldsetHeaderType.Switch:
             return (
                 <div data-test-id="fieldset-icon-wrapper">
-                    <Switch {...props} size={sizeMap[size].switch} on={active} disabled={disabled} />
+                    <Switch {...props} size={sizeMap[size].switch} mode={active ? 'on' : 'off'} disabled={disabled} />
                 </div>
             );
         case FieldsetHeaderType.Accordion:

@@ -9,7 +9,7 @@ import { Dropdown } from '@components/Dropdown';
 import { FormControl } from '@components/FormControl/FormControl';
 import { LinkChooser } from '@components/LinkChooser/LinkChooser.stories';
 import { SegmentedControls } from '@components/SegmentedControls/SegmentedControls';
-import { Switch, SwitchSize } from '@components/Switch/Switch';
+import { Switch } from '@components/Switch/Switch';
 import { TextInput, TextInputType } from '@components/TextInput/TextInput';
 import {
     IconIcon,
@@ -423,8 +423,8 @@ export const WithAdvancedFormControls: StoryFn<AccordionProps> = () => {
                     extra={
                         <Switch
                             label="advanced"
-                            on={showAdvancedSpacing}
-                            size={SwitchSize.Small}
+                            mode={showAdvancedSpacing ? 'on' : 'off'}
+                            size="small"
                             onChange={() => setShowAdvancedSpacing(!showAdvancedSpacing)}
                         />
                     }

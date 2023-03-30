@@ -232,7 +232,7 @@ export const TreeItem = ({
                             ? 'tw-font-medium tw-bg-box-neutral-strong tw-text-box-neutral-strong-inverse hover:tw-bg-box-neutral-strong-hover hover:tw-text-box-neutral-strong-inverse-hover'
                             : 'tw-text-text hover:tw-bg-box-neutral-hover hover:tw-text-box-neutral-inverse-hover',
                         FOCUS_VISIBLE_STYLE_INSET,
-                        'tw-relative tw-z-30 tw-leading-5 tw-no-underline tw-flex',
+                        'tw-relative tw-z-30 tw-leading-5 tw-no-underline tw-flex tw-group',
                     ])}
                     data-test-id="tree-item-content"
                     style={{
