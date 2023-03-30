@@ -65,7 +65,7 @@ type Props = {
     validation?: Validation;
 };
 
-const Component: FC<Props> = ({
+const Component = ({
     menuBlocks,
     placeholder,
     initialActiveId,
@@ -74,7 +74,7 @@ const Component: FC<Props> = ({
     decorator,
     autoResize = true,
     validation = Validation.Default,
-}) => {
+}: Props): ReactElement => {
     const [activeItemId, setActiveItemId] = useState(initialActiveId);
     return (
         <Dropdown
