@@ -3,7 +3,7 @@
 import { Switch, SwitchSize } from '@components/Switch/Switch';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { merge } from '@utilities/merge';
-import React, { FC, ReactElement, ReactNode, cloneElement, isValidElement } from 'react';
+import React, { ReactElement, ReactNode, cloneElement, isValidElement } from 'react';
 import { IconCaretDown, IconMinus, IconPlus } from '@foundation/Icon/Generated';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { IconProps } from '@foundation/Icon';
@@ -112,7 +112,7 @@ export const renderFieldsetHeaderIconType = (
     return null;
 };
 
-export const FieldsetHeader: FC<FieldsetHeaderProps> = ({
+export const FieldsetHeader = ({
     size = FieldsetHeaderSize.Large,
     active = true,
     decorator,
@@ -123,7 +123,7 @@ export const FieldsetHeader: FC<FieldsetHeaderProps> = ({
     onClick,
     as: Heading = 'label',
     tabIndex = -1,
-}) => {
+}: FieldsetHeaderProps): ReactElement => {
     const id = useMemoizedId();
     const clickOnNotDisabled = () => !disabled && onClick && onClick();
 

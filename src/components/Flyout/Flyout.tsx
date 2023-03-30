@@ -10,11 +10,11 @@ import { useOverlayTriggerState } from '@react-stately/overlays';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import React, {
-    FC,
     HTMLAttributes,
     MouseEvent,
     MutableRefObject,
     PropsWithChildren,
+    ReactElement,
     ReactNode,
     useEffect,
     useRef,
@@ -69,7 +69,7 @@ export type FlyoutProps = PropsWithChildren<{
     isTriggerDisabled?: boolean;
 }>;
 
-export const Flyout: FC<FlyoutProps> = ({
+export const Flyout = ({
     trigger,
     isTriggerDisabled = false,
     decorator,
@@ -89,7 +89,7 @@ export const Flyout: FC<FlyoutProps> = ({
     placement = FlyoutPlacement.BottomLeft,
     offset,
     updatePositionOnContentChange = false,
-}) => {
+}: FlyoutProps): ReactElement => {
     const state = useOverlayTriggerState({ isOpen, onOpenChange });
     const { toggle, close } = state;
     const triggerRef = useRef<HTMLDivElement | null>(null);
