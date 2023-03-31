@@ -10,7 +10,7 @@ import { RadioGroupState, useRadioGroupState } from '@react-stately/radio';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { motion } from 'framer-motion';
-import React, { FC, ReactElement, useMemo, useRef } from 'react';
+import React, { ReactElement, useMemo, useRef } from 'react';
 
 export type IconItem = {
     id: string;
@@ -107,14 +107,14 @@ const SegmentedControlsItem = (props: SegmentedControlsItemProps) => {
     );
 };
 
-export const SegmentedControls: FC<SegmentedControlsProps> = ({
+export const SegmentedControls = ({
     id: propId,
     items,
     activeItemId,
     onChange,
     ariaLabel = 'SegmentedControls',
     disabled = false,
-}) => {
+}: SegmentedControlsProps): ReactElement => {
     const id = useMemoizedId(propId);
     const groupProps = { onChange, value: activeItemId, label: ariaLabel, isDisabled: disabled };
     const radioGroupState = useRadioGroupState(groupProps);

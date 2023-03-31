@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, MouseEvent, useMemo } from 'react';
+import React, { MouseEvent, ReactElement, useMemo } from 'react';
 import { merge } from '@utilities/merge';
 import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
@@ -48,7 +48,7 @@ export type SwitchProps = {
     onChange?: (e: MouseEvent) => void;
 };
 
-export const Switch: FC<SwitchProps> = ({
+export const Switch = ({
     id: propId,
     name,
     label,
@@ -59,7 +59,7 @@ export const Switch: FC<SwitchProps> = ({
     labelStyle = 'default',
     hug = false,
     tooltip,
-}) => {
+}: SwitchProps): ReactElement => {
     const id = useMemoizedId(propId);
     const { isFocusVisible, focusProps } = useFocusRing();
 
