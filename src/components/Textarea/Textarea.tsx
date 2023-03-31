@@ -7,7 +7,7 @@ import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
 import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle';
-import React, { FC, FocusEvent, FormEvent, ReactNode } from 'react';
+import React, { FocusEvent, FormEvent, ReactElement, ReactNode } from 'react';
 import TextareaAutosize, { TextareaAutosizeProps } from 'react-textarea-autosize';
 import { IconExclamationMarkTriangle } from '@foundation/Icon/Generated';
 
@@ -31,7 +31,7 @@ export type TextareaProps = {
     selectable?: boolean;
 };
 
-export const Textarea: FC<TextareaProps> = ({
+export const Textarea = ({
     id: propId,
     value,
     required = false,
@@ -47,7 +47,7 @@ export const Textarea: FC<TextareaProps> = ({
     resizeable = true,
     onFocus,
     selectable = false,
-}) => {
+}: TextareaProps): ReactElement => {
     const Component = autosize ? TextareaAutosize : 'textarea';
 
     const { isFocusVisible, focusProps } = useFocusRing({ isTextInput: true });

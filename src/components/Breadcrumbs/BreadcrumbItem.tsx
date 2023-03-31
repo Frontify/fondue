@@ -6,7 +6,7 @@ import { mergeProps } from '@react-aria/utils';
 import { getItemElementType } from '@utilities/elements';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import React, { FC, RefObject, useRef } from 'react';
+import React, { ReactElement, RefObject, useRef } from 'react';
 import { Breadcrumb } from './Breadcrumbs';
 
 const Separator = () => (
@@ -27,7 +27,7 @@ type BreadcrumbItemProps = Pick<Breadcrumb, 'label' | 'link' | 'onClick'> & {
     showSeparator: boolean;
 };
 
-export const BreadcrumbItem: FC<BreadcrumbItemProps> = ({ label, link, onClick, showSeparator }) => {
+export const BreadcrumbItem = ({ label, link, onClick, showSeparator }: BreadcrumbItemProps): ReactElement => {
     const ref = useRef<HTMLAnchorElement | HTMLButtonElement | HTMLSpanElement | null>(null);
 
     const contentElementType = getItemElementType(link, onClick);

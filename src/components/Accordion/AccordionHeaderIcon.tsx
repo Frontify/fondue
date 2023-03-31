@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { merge } from '@utilities/merge';
 import { IconCaretDown } from '@foundation/Icon/Generated';
 import { IconSize } from '@foundation/Icon/IconSize';
@@ -18,7 +18,7 @@ export const AccordionHeaderIcon = ({
     size = 'medium',
     isOpen,
     'data-test-id': dataTestId = ACCORDION_HEADER_ICON_ID,
-}: AccordionHeaderIconProps) => {
+}: AccordionHeaderIconProps): ReactElement => {
     const props = {
         'aria-labelledby': '',
         size: sizeMap[size],

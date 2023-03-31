@@ -9,7 +9,7 @@ import { FocusScope, useFocusRing } from '@react-aria/focus';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
 import { AnimatePresence, motion } from 'framer-motion';
-import React, { ChangeEvent, FC, KeyboardEvent, useEffect, useRef, useState } from 'react';
+import React, { ChangeEvent, KeyboardEvent, ReactElement, useEffect, useRef, useState } from 'react';
 import { getInputWidth, getPaddingClasses } from './helpers';
 import { Menu } from '@components/Menu';
 import { MenuItem } from '@components/MenuItem';
@@ -76,7 +76,7 @@ export type Item = {
     ariaLabel?: string;
 };
 
-export const MultiSelect: FC<MultiSelectProps> = ({
+export const MultiSelect = ({
     items,
     activeItemKeys,
     onSelectionChange,
@@ -95,7 +95,7 @@ export const MultiSelect: FC<MultiSelectProps> = ({
     summarizedLabel: summarizedLabelFromProps,
     indeterminateItemKeys,
     flip = false,
-}) => {
+}: MultiSelectProps): ReactElement => {
     const [open, setOpen] = useState(false);
     const [checkboxes, setCheckboxes] = useState<Item[]>([]);
     const hasResults = !!checkboxes.find((item) => !item.isCategory && !item.isDivider);

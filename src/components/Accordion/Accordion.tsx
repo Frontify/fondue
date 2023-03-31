@@ -23,7 +23,7 @@ const AriaAccordionItem = ({
     divider = false,
     headerComponent: HeaderComponent = AccordionHeader,
     'data-test-id': dataTestId = ACCORDION_ITEM_ID,
-}: AriaAccordionItemProps) => {
+}: AriaAccordionItemProps): ReactElement => {
     const { active, ...headerProps } = header;
     const triggerRef = useRef<HTMLButtonElement | null>(null);
     const { buttonProps, regionProps } = useAccordionItem({ item }, state, triggerRef);
@@ -110,7 +110,7 @@ const lastChildrenActive = (children: React.ReactNode | undefined): boolean | un
     return childrenArray[childrenArray.length - 1]?.props?.header?.active === true;
 };
 
-export const Accordion = (props: AccordionProps) => {
+export const Accordion = (props: AccordionProps): ReactElement => {
     const { divider = true, border = true, 'data-test-id': dataTestId = ACCORDION_ID } = props;
     const children = filterValidChildren(props);
     const ariaProps = mapToAriaProps(children);

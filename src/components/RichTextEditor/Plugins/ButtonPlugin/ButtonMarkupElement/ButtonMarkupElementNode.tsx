@@ -3,7 +3,7 @@
 import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
 import { DesignTokens } from '@components/RichTextEditor/types';
 import { HTMLPropsAs, PlateRenderElementProps, Value, useElementProps } from '@udecode/plate';
-import React, { CSSProperties, FC, ReactNode, useState } from 'react';
+import React, { CSSProperties, ReactElement, ReactNode, useState } from 'react';
 import { ButtonStyles } from '../../TextStylePlugin/TextStyles';
 import { RichTextButtonStyle, TButtonElement } from '../types';
 
@@ -70,7 +70,13 @@ type Props = {
     target?: React.HTMLAttributeAnchorTarget;
 };
 
-const HoverableButtonLink: FC<Props> = ({ attributes, styles = { hover: {} }, children, href = '#', target }) => {
+const HoverableButtonLink = ({
+    attributes,
+    styles = { hover: {} },
+    children,
+    href = '#',
+    target,
+}: Props): ReactElement => {
     const [hovered, setHovered] = useState(false);
 
     return (

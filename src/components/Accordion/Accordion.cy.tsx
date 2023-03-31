@@ -2,7 +2,7 @@
 
 import { TextInput } from '@components/TextInput/TextInput';
 import { IconIcon } from '@foundation/Icon/Generated';
-import React, { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { AccordionHeaderProps } from '.';
 import { Accordion, AccordionItem } from './Accordion';
 
@@ -16,7 +16,7 @@ const itemClasses = ['tw-divide-y tw-divide-black-10'];
 const accordionWithBorderClasses = ['tw-border-b', 'tw-border-t', 'tw-border-black-10'];
 const accordionWithDividerClasses = ['tw-divide-y tw-divide-black-10'];
 
-const TestHeader = ({ isOpen, disabled, children }: AccordionHeaderProps) => (
+const TestHeader = ({ isOpen, disabled, children }: AccordionHeaderProps): ReactElement => (
     <div data-test-id="test-header" data-state={isOpen ? 'open' : 'closed'} data-disabled={disabled}>
         {children}
     </div>
@@ -271,7 +271,7 @@ describe('Accordion Component', () => {
     });
 });
 
-const TestAccordion = () => {
+const TestAccordion = (): ReactElement => {
     const accordionItems = [
         <AccordionItem key={0} header={{ children: '1' }}>
             1

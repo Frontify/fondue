@@ -2,8 +2,8 @@
 
 import React, {
     Children,
-    FC,
     KeyboardEvent,
+    ReactElement,
     ReactNode,
     cloneElement,
     isValidElement,
@@ -46,7 +46,7 @@ const paddingMap: Record<TabsPaddingX, string> = {
     [TabsPaddingX.Large]: 'tw-pl-l',
 };
 
-export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, onChange }) => {
+export const Tabs = ({ paddingX, size, activeItemId, children, onChange }: TabsProps): ReactElement => {
     const groupId = useMemoizedId();
     const tabNavRef = useRef<HTMLDivElement | null>(null);
     const [isOverflowing, setIsOverflowing] = useState(false);

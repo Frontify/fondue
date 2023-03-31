@@ -6,11 +6,11 @@ import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import React, { FC, RefObject, useRef } from 'react';
+import React, { ReactElement, ReactNode, RefObject, useRef } from 'react';
 import { Breadcrumb } from './Breadcrumbs';
 import { getItemElementType } from '@utilities/elements';
 
-const ItemWithBadges: FC<{ badges?: BadgeProps[] }> = ({ badges, children }) => (
+const ItemWithBadges = ({ badges, children }: { badges?: BadgeProps[]; children: ReactNode }): ReactElement => (
     <span className="tw-inline-flex tw-gap-x-2 tw-items-center">
         {children}
 
@@ -24,14 +24,14 @@ const ItemWithBadges: FC<{ badges?: BadgeProps[] }> = ({ badges, children }) => 
 
 type CurrentBreadcrumbItemProps = Breadcrumb;
 
-export const CurrentBreadcrumbItem: FC<CurrentBreadcrumbItemProps> = ({
+export const CurrentBreadcrumbItem = ({
     label,
     badges,
     bold,
     decorator,
     link,
     onClick,
-}) => {
+}: CurrentBreadcrumbItemProps): ReactElement => {
     const ref = useRef<HTMLAnchorElement | HTMLButtonElement | HTMLSpanElement | null>(null);
     const contentElementType = getItemElementType(link, onClick);
     const { itemProps } = useBreadcrumbItem(
