@@ -21,7 +21,7 @@ import { mergeProps } from '@react-aria/utils';
 import { useSelectState } from '@react-stately/select';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
-import React, { FC, ReactElement, useEffect, useRef } from 'react';
+import React, { ReactElement, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { usePopper } from 'react-popper';
 import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from './useDropdownAutoHeight';
@@ -76,7 +76,7 @@ const getActiveItem = (blocks: MenuBlock[], activeId: string | number): MenuItem
     );
 };
 
-export const Dropdown: FC<DropdownProps> = ({
+export const Dropdown = ({
     id: propId,
     menuBlocks,
     onChange,
@@ -93,7 +93,7 @@ export const Dropdown: FC<DropdownProps> = ({
     position = DropdownPosition.Bottom,
     emphasis = TriggerEmphasis.Default,
     flip = false,
-}) => {
+}: DropdownProps): ReactElement => {
     const activeItem = !!activeItemId ? getActiveItem(menuBlocks, activeItemId) : null;
     const props = mapToAriaProps(ariaLabel, menuBlocks);
     const state = useSelectState({

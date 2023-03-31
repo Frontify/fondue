@@ -8,8 +8,6 @@ import { merge } from '@utilities/merge';
 import React, {
     FocusEvent,
     HTMLAttributes,
-    PropsWithChildren,
-    ReactChild,
     ReactElement,
     ReactNode,
     cloneElement,
@@ -30,7 +28,7 @@ export type TooltipButton = {
     action: () => void;
 };
 
-export type TooltipProps = PropsWithChildren<{
+export type TooltipProps = {
     triggerElement?: ReactElement;
     content: ReactNode;
     tooltipIcon?: ReactElement;
@@ -40,7 +38,7 @@ export type TooltipProps = PropsWithChildren<{
     linkLabel?: string;
     brightHeader?: BrightHeaderStyle;
     buttons?: [TooltipButton, TooltipButton] | [TooltipButton];
-    children?: ReactChild;
+    children?: ReactNode;
     position?: TooltipPosition;
     alignment?: TooltipAlignment;
     flip?: boolean;
@@ -51,7 +49,7 @@ export type TooltipProps = PropsWithChildren<{
     disabled?: boolean;
     /** @deprecated use disabled since the tooltip is always present in the DOM now so hidden has no effect anymore */
     hidden?: boolean;
-}>;
+};
 
 /**
  * This is a temporary workaround because for some yet unknown reasons `tailwindcss` in clarify purges the `tw-pb-3.5` and `tw-pt-3.5` class.

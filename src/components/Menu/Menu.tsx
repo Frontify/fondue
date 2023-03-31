@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { PropsWithChildren, ReactNode, RefObject, useCallback, useEffect, useState } from 'react';
+import React, { ReactNode, RefObject, useCallback, useEffect, useState } from 'react';
 import { usePopper } from 'react-popper';
 import { merge } from '@utilities/merge';
 import { useMenuKeyboardNavigation } from '@components/Menu/useMenuKeyboardNavigation';
@@ -15,7 +15,7 @@ interface Props {
     offset?: [number, number];
 }
 
-export type MenuProps = PropsWithChildren<Props>;
+export type MenuProps = Props;
 
 const CONTAINER_BASE_CLASSES = 'tw-relative tw-bg-base tw-rounded tw-py-2 tw-shadow-mid tw-z-[120000]';
 const CONTAINER_CLASSES = merge([CONTAINER_BASE_CLASSES, INSET_BORDER]);

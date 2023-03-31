@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, ReactElement, cloneElement } from 'react';
+import React, { ReactElement, cloneElement } from 'react';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { Tooltip, TooltipProps } from '@components/Tooltip/Tooltip';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
@@ -33,12 +33,12 @@ const tooltipHoverClasses = {
     [TooltipIconTriggerStyle.Primary]: 'hover:tw-text-text hover:tw-bg-box-neutral',
 };
 
-export const TooltipIcon: FC<TooltipIconProps> = ({
+export const TooltipIcon = ({
     tooltip,
     iconSize = IconSize.Size16,
     triggerIcon = <IconQuestionMarkCircle />,
     triggerStyle = TooltipIconTriggerStyle.Primary,
-}: TooltipIconProps) => {
+}: TooltipIconProps): ReactElement => {
     return (
         <div data-test-id="tooltip-icon">
             {tooltip && (

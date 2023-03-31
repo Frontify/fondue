@@ -2,7 +2,7 @@
 
 import { IconSize } from '@foundation/Icon/IconSize';
 import { merge } from '@utilities/merge';
-import React, { FC, cloneElement } from 'react';
+import React, { ReactElement, cloneElement } from 'react';
 import { AssetInputProps, AssetInputSize } from './AssetInput';
 import { SelectedAssetProps } from './SingleAsset/SelectedAsset';
 import { IconMusicNote } from '@foundation/Icon/Generated';
@@ -25,7 +25,12 @@ const getIconSizeClassNames = (size: AssetInputSize, isMultiAsset: boolean) => {
     }
 };
 
-export const AssetThumbnail: FC<AssetThumbnailProps> = ({ asset, size, isActive = false, isMultiAsset = false }) => {
+export const AssetThumbnail = ({
+    asset,
+    size,
+    isActive = false,
+    isMultiAsset = false,
+}: AssetThumbnailProps): ReactElement => {
     const thumbnailVariant = asset.type === 'icon' || asset.type === 'audio' ? asset.type : 'default';
 
     return (
