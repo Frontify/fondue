@@ -4,12 +4,12 @@ import { IconCross } from '@foundation/Icon/Generated';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import React, { FC, ReactNode, cloneElement } from 'react';
+import React, { ReactElement, ReactNode, cloneElement } from 'react';
 import { BadgeStatusIcon } from './BadgeStatusIcon';
 import { getCircularSizeClasses, getSizeClasses, getStyleClasses } from './helpers';
 import { BadgeEmphasis, BadgeProps, BadgeStyle } from './types';
 
-export const Badge: FC<BadgeProps> = ({
+export const Badge = ({
     children,
     status,
     icon,
@@ -19,7 +19,7 @@ export const Badge: FC<BadgeProps> = ({
     disabled = false,
     onClick,
     onDismiss,
-}) => {
+}: BadgeProps): Nullable<ReactElement> => {
     if (!children && !icon && !status) {
         return null;
     }

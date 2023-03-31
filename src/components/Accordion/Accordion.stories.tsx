@@ -22,7 +22,7 @@ import { IconSize } from '@foundation/Icon/IconSize';
 import { action } from '@storybook/addon-actions';
 import { Meta, StoryFn } from '@storybook/react';
 import { merge } from '@utilities/merge';
-import React, { FC, ReactNode, useState } from 'react';
+import React, { ReactElement, ReactNode, useState } from 'react';
 import { Color } from '../../types';
 import { EXAMPLE_IMAGES } from '../AssetInput/example-assets';
 import { Accordion as AccordionComponent, AccordionItem } from './Accordion';
@@ -132,7 +132,7 @@ export const WithDifferentAccordionItems: StoryFn<AccordionProps> = () => {
     );
 };
 
-const customHeader: FC<AccordionHeaderProps> = ({ isOpen, children }) => (
+const customHeader = ({ isOpen, children }: AccordionHeaderProps): ReactElement => (
     <div
         className={merge([
             'tw-px-6 tw-py-4 tw-bg-black-5 tw-flex tw-justify-between tw-font-bold tw-items-center',
@@ -144,11 +144,11 @@ const customHeader: FC<AccordionHeaderProps> = ({ isOpen, children }) => (
     </div>
 );
 
-const Code: FC = ({ children }) => (
+const Code = ({ children }: { children: ReactNode }): ReactElement => (
     <code className="tw-bg-black-5 tw-rounded tw-px-2 tw-text-box-negative-strong tw-text-s">{children}</code>
 );
 
-const PropsTable: FC<{ rows: [ReactNode, ReactNode, ReactNode][] }> = ({ rows }) => (
+const PropsTable = ({ rows }: { rows: [ReactNode, ReactNode, ReactNode][] }): ReactElement => (
     <table className="tw-table-fixed tw-border tw-border-black-10 tw-my-4">
         <thead className="tw-bg-black-5">
             <tr className="tw-p-3 tw-border-b tw-border-b-black-10">

@@ -7,7 +7,7 @@ import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import React, { FC, useRef } from 'react';
+import React, { ReactElement, useRef } from 'react';
 
 export enum AddBlockButtonDirection {
     Horizontal = 'Horizontal',
@@ -20,11 +20,11 @@ export type AddBlockButtonProps = {
     orientation?: AddBlockButtonDirection;
 };
 
-export const AddBlockButton: FC<AddBlockButtonProps> = ({
+export const AddBlockButton = ({
     onClick,
     title,
     orientation = AddBlockButtonDirection.Horizontal,
-}) => {
+}: AddBlockButtonProps): ReactElement => {
     const { isFocusVisible, focusProps } = useFocusRing();
     const ref = useRef<HTMLButtonElement | null>(null);
     const { buttonProps } = useButton({ onPress: () => onClick() }, ref);

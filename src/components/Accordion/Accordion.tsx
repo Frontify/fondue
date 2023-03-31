@@ -8,21 +8,21 @@ import { Item as StatelyItem } from '@react-stately/collections';
 import { useTreeState } from '@react-stately/tree';
 import { FOCUS_STYLE_INSET } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import React, { Children, FC, Key, KeyboardEvent, ReactElement, isValidElement, useEffect, useRef } from 'react';
+import React, { Children, Key, KeyboardEvent, ReactElement, isValidElement, useEffect, useRef } from 'react';
 import { AccordionHeader } from './AccordionHeader';
 import { AccordionItemProps, AccordionProps, AriaAccordionItemProps } from './types';
 
 const ACCORDION_ID = 'accordion';
 const ACCORDION_ITEM_ID = 'accordion-item';
 
-const AriaAccordionItem: FC<AriaAccordionItemProps> = ({
+const AriaAccordionItem = ({
     item,
     state,
     header,
     padding = true,
     divider = false,
     headerComponent: HeaderComponent = AccordionHeader,
-}) => {
+}: AriaAccordionItemProps): ReactElement => {
     const { size, active, ...headerProps } = header;
     const triggerRef = useRef<HTMLButtonElement | null>(null);
     const { buttonProps, regionProps } = useAccordionItem({ item }, state, triggerRef);
@@ -109,7 +109,7 @@ const lastChildrenActive = (children: React.ReactNode | undefined): boolean | un
     return childrenArray[childrenArray.length - 1]?.props?.header?.active === true;
 };
 
-export const Accordion: FC<AccordionProps> = (props) => {
+export const Accordion = (props: AccordionProps): ReactElement => {
     const { divider = true, border = true } = props;
     const children = filterValidChildren(props);
     const ariaProps = mapToAriaProps(children);

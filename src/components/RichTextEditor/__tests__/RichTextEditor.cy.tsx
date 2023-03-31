@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ELEMENT_LINK, ELEMENT_PARAGRAPH } from '@udecode/plate';
-import React, { CSSProperties, FC, useState } from 'react';
+import React, { CSSProperties, ReactElement, useState } from 'react';
 import { orderedListValue } from '../helpers/exampleValues';
 import {
     AlignRightPlugin,
@@ -70,7 +70,7 @@ const selectTextValue = (value: string) => {
     });
 };
 
-const RichTextWithLink: FC<{ text: string; link: string }> = ({ text, link }) => {
+const RichTextWithLink = ({ text, link }: { text: string; link: string }): ReactElement => {
     return (
         <RichTextEditor
             value={JSON.stringify([
@@ -93,7 +93,7 @@ const RichTextWithLink: FC<{ text: string; link: string }> = ({ text, link }) =>
     );
 };
 
-const RichTextWithLegacyLink: FC<{ text: string; url: string }> = ({ text, url }) => {
+const RichTextWithLegacyLink = ({ text, url }: { text: string; url: string }): ReactElement => {
     return (
         <RichTextEditor
             value={JSON.stringify([
@@ -121,11 +121,15 @@ const RichTextWithLegacyLink: FC<{ text: string; url: string }> = ({ text, url }
     );
 };
 
-const RichTextWithButton: FC<{ text: string; link: string; buttonStyle: RichTextButtonStyle }> = ({
+const RichTextWithButton = ({
     text,
     link,
     buttonStyle,
-}) => {
+}: {
+    text: string;
+    link: string;
+    buttonStyle: RichTextButtonStyle;
+}): ReactElement => {
     return (
         <RichTextEditor
             value={JSON.stringify([
@@ -145,7 +149,7 @@ const RichTextWithButton: FC<{ text: string; link: string; buttonStyle: RichText
     );
 };
 
-const RichTextWithChangeDesignTokensButton: FC = () => {
+const RichTextWithChangeDesignTokensButton = (): ReactElement => {
     const [designTokens, setDesignTokens] = useState<DesignTokens>({
         custom1: {
             fontSize: '42px',
@@ -170,13 +174,15 @@ const RichTextWithChangeDesignTokensButton: FC = () => {
     );
 };
 
-const RichTextEditorWithValueSetOutside = ({ value }: { value: string }) => {
+const RichTextEditorWithValueSetOutside = ({ value }: { value: string }): ReactElement => {
     const [initialValue, setInitialValue] = useState(value);
 
     return <RichTextEditor onTextChange={(value) => setInitialValue(value)} value={initialValue} />;
 };
 
-const RichTextEditorWithOrderedListStyles = () => <RichTextEditor value={JSON.stringify([orderedListValue])} />;
+const RichTextEditorWithOrderedListStyles = (): ReactElement => (
+    <RichTextEditor value={JSON.stringify([orderedListValue])} />
+);
 
 const activeButtonClassNames = '!tw-bg-box-selected tw-rounded !tw-text-box-selected-inverse';
 const disabledButtonClassNames = '!tw-cursor-not-allowed !tw-opacity-50';

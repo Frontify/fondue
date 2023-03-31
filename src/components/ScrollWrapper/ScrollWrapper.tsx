@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useFocusRing } from '@react-aria/focus';
-import React, { FC, useRef } from 'react';
+import React, { ReactElement, useRef } from 'react';
 import { FOCUS_STYLE, merge } from '../..';
 import { useScrollWrapper } from './hooks/useScrollWrapper';
 import { ScrollWrapperDirection, ScrollWrapperProps, scrollWrapperDirections } from './types';
@@ -11,7 +11,10 @@ const GRADIENTS = {
     top: 'linear-gradient(0deg, rgba(232, 233, 233, 0) 0%, #E8E9E9 100%)',
 };
 
-export const ScrollWrapper: FC<ScrollWrapperProps> = ({ direction = ScrollWrapperDirection.Vertical, children }) => {
+export const ScrollWrapper = ({
+    direction = ScrollWrapperDirection.Vertical,
+    children,
+}: ScrollWrapperProps): ReactElement => {
     const scrollingContainer = useRef<HTMLDivElement>(null);
 
     const [{ showTopShadow, showBottomShadow }, scrollDivProps] = useScrollWrapper(scrollingContainer);

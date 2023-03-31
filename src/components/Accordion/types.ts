@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { TreeState } from '@react-stately/tree';
-import { FC, PropsWithChildren, ReactNode } from 'react';
+import { ReactElement, ReactNode } from 'react';
 import { Node } from '@react-types/shared';
 import { FieldsetHeaderSize, FieldsetHeaderType } from '@components/FieldsetHeader';
 
@@ -17,15 +17,16 @@ export type AriaAccordionItemProps = {
     header: Omit<AccordionHeaderProps, 'isOpen'> & { active?: boolean; onClick?: () => void };
     padding?: boolean;
     divider?: boolean;
-    headerComponent?: FC<AccordionHeaderProps>;
+    headerComponent?: (props: AccordionHeaderProps) => ReactElement;
 };
 
-export type AccordionItemProps = PropsWithChildren<{
+export type AccordionItemProps = {
     header: Omit<AccordionHeaderProps, 'isOpen'> & { active?: boolean; onClick?: () => void };
     padding?: boolean;
     divider?: boolean;
-    headerComponent?: FC<AccordionHeaderProps>;
-}>;
+    headerComponent?: (props: AccordionHeaderProps) => ReactElement;
+    children?: ReactNode;
+};
 
 export enum AccordionHeaderIconSize {
     Small = 'Small',
@@ -56,4 +57,5 @@ export type AccordionHeaderIconProps = {
     /** @deprecated Icon type will be fixed to FieldsetHeaderType.Accordion.
      Use headerComponent prop for custom header styles */
     type?: FieldsetHeaderType;
+    children?: ReactNode;
 };

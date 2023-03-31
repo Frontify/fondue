@@ -7,7 +7,7 @@ import { IconProps } from '@foundation/Icon/IconProps';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { merge } from '@utilities/merge';
-import React, { ChangeEvent, FC, ReactElement } from 'react';
+import React, { ChangeEvent, ReactElement } from 'react';
 import { MultiAssetPreview } from './MultiAssetPreview';
 import { SelectedAsset } from './SingleAsset/SelectedAsset';
 
@@ -73,7 +73,7 @@ export type AssetInputProps = {
     acceptFileType?: string;
 };
 
-export const AssetInput: FC<AssetInputProps> = ({
+export const AssetInput = ({
     assets = [],
     numberOfLocations = 1,
     actions = [],
@@ -85,7 +85,7 @@ export const AssetInput: FC<AssetInputProps> = ({
     onUploadClick,
     onMultiAssetClick,
     acceptFileType,
-}) => {
+}: AssetInputProps): ReactElement => {
     const assetsLength = assets.length;
     const id = useMemoizedId();
 

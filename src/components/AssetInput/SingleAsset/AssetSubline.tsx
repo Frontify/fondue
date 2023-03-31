@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC } from 'react';
+import React, { ReactElement } from 'react';
 import { AssetInputProps } from '../AssetInput';
 import { SelectedAssetProps } from './SelectedAsset';
 import { IconArrowCircleUp, IconImageStack } from '@foundation/Icon/Generated';
@@ -8,12 +8,12 @@ import { IconArrowCircleUp, IconImageStack } from '@foundation/Icon/Generated';
 type AssetSublineProps = Pick<AssetInputProps, 'isLoading' | 'hideSize' | 'hideExtension'> &
     Pick<SelectedAssetProps, 'asset'>;
 
-export const AssetSubline: FC<AssetSublineProps> = ({
+export const AssetSubline = ({
     asset,
     isLoading = false,
     hideSize = false,
     hideExtension = false,
-}) => {
+}: AssetSublineProps): ReactElement => {
     let title = isLoading ? 'Uploading' : 'Uploaded';
     if (asset?.source === 'library') {
         title = asset.sourceName;
@@ -36,7 +36,7 @@ export const AssetSubline: FC<AssetSublineProps> = ({
 };
 AssetSubline.displayName = 'FondueAssetSubline';
 
-const FileInfo: FC<{ label?: string | number; hide: boolean }> = ({ label, hide }) => {
+const FileInfo = ({ label, hide }: { label?: string | number; hide: boolean }): Nullable<ReactElement> => {
     if (hide || !label) {
         return null;
     }
