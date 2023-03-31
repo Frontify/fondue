@@ -5,10 +5,10 @@ import { Popper } from './Popper';
 import { Button } from '@components/Button';
 import { PopperPlacement, PopperProps } from '@components/Popper/types';
 
-const popper_SELECTOR = '[data-test-id=fondue-popper]';
+const popper_SELECTOR = '[data-test-id=custom-popper]';
 
 const PopperComponent = ({ placement, offset, flip }: PopperProps) => {
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(true);
 
     return (
         <Popper open={open} placement={placement} offset={offset} flip={flip}>
@@ -16,7 +16,7 @@ const PopperComponent = ({ placement, offset, flip }: PopperProps) => {
                 <Button onClick={() => setOpen(!open)}>Hello</Button>
             </Popper.Reference>
             <Popper.Content>
-                <div className="tw-border tw-border-black">
+                <div data-test-id="custom-popper" className="tw-border tw-border-black">
                     <p>Some content</p>
                 </div>
             </Popper.Content>

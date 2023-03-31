@@ -8,7 +8,7 @@ import { Popover, PopoverProps } from '@components/Popover/Popover';
 const popover_SELECTOR = '[data-test-id=fondue-popover]';
 
 const PopoverComponent = ({ placement, offset, flip }: PopoverProps) => {
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(true);
 
     return (
         <Popover open={open} placement={placement} offset={offset} flip={flip}>
