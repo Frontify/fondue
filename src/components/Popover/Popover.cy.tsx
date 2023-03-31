@@ -24,7 +24,7 @@ const PopoverComponent = ({ placement, offset, flip }: PopoverProps) => {
     );
 };
 
-describe('InlineDialog Component', () => {
+describe('Popover Component', () => {
     it('should render', () => {
         cy.mount(<PopoverComponent placement={PopperPlacement.Bottom} flip={false} offset={[0, 10]} />);
 
