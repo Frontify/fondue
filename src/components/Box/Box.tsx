@@ -1,14 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
+import React, { HTMLAttributes } from 'react';
 
 export type BoxProps = {
     'data-test-id'?: string;
-} & React.HTMLAttributes<HTMLDivElement>;
+} & HTMLAttributes<HTMLDivElement>;
 
-export const Box = ({ children, 'data-test-id': dataTestId, ...props }: BoxProps) => {
+export const BOX_TEST_ID = 'fondue-box';
+
+export const Box = ({ children, 'data-test-id': dataTestId = BOX_TEST_ID, ...props }: BoxProps) => {
     return (
-        <div data-test-id={dataTestId ? dataTestId : 'fondue-box'} {...props}>
+        <div data-test-id={dataTestId} {...props}>
             {children}
         </div>
     );

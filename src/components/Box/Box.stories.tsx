@@ -12,9 +12,13 @@ export default {
     tags: ['autodocs'],
     argTypes: {
         className: {
-            table: {
-                disable: true,
-            },
+            type: 'string',
+        },
+        'data-test-id': {
+            type: 'string',
+        },
+        'aria-label': {
+            type: 'string',
         },
     },
     args: {
@@ -23,5 +27,10 @@ export default {
 } as Meta<Props>;
 
 export const Box: StoryFn<Props> = (args: Props) => {
-    return <BoxComponent {...args}>You can pass any props you want into this component.</BoxComponent>;
+    return (
+        <BoxComponent {...args}>
+            You can pass any props you want into this component. In the controls you can find examples with camelCased,
+            aria and data attributes.
+        </BoxComponent>
+    );
 };
