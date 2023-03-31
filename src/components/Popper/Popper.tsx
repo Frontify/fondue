@@ -68,7 +68,7 @@ export const Popper = ({
                 if (isValidElement(child) && typeof child.type === 'function') {
                     const { name } = child.type;
 
-                    if (name === 'Reference') {
+                    if (name === Reference.name) {
                         return (
                             <div className="tw-w-fit" ref={setReferenceElement}>
                                 {cloneElement(child, { ...child.props })}
@@ -76,7 +76,7 @@ export const Popper = ({
                         );
                     }
 
-                    if (name === 'Content') {
+                    if (name === Content.name) {
                         return (
                             <>
                                 {enablePortal ? (

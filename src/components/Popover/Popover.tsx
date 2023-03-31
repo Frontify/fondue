@@ -32,11 +32,11 @@ export const Popover = ({
                 if (isValidElement(child) && typeof child.type === 'function') {
                     const { name } = child.type;
 
-                    if (name === 'Trigger') {
+                    if (name === Trigger.name) {
                         return <Popper.Reference>{cloneElement(child, { ...child.props })}</Popper.Reference>;
                     }
 
-                    if (name === 'Content') {
+                    if (name === Content.name) {
                         return (
                             <Popper.Content>
                                 <div data-test-id={dataTestId} className={CONTAINER_CLASSES}>
