@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { TreeState } from '@react-stately/tree';
-import { PropsWithChildren, ReactNode } from 'react';
+import { PropsWithChildren, ReactElement, ReactNode } from 'react';
 import { Node } from '@react-types/shared';
 
 export type AccordionProps = {
@@ -17,7 +17,7 @@ export type AriaAccordionItemProps = {
     header: Omit<AccordionHeaderProps, 'isOpen'> & { active?: boolean; onClick?: () => void };
     padding?: boolean;
     divider?: boolean;
-    headerComponent?: (props: AccordionHeaderProps) => JSX.Element | null;
+    headerComponent?: (props: AccordionHeaderProps) => ReactElement;
     'data-test-id'?: string;
 };
 
@@ -25,7 +25,7 @@ export type AccordionItemProps = PropsWithChildren<{
     header: Omit<AccordionHeaderProps, 'isOpen'> & { active?: boolean; onClick?: () => void };
     padding?: boolean;
     divider?: boolean;
-    headerComponent?: (props: AccordionHeaderProps) => JSX.Element | null;
+    headerComponent?: (props: AccordionHeaderProps) => ReactElement;
     'data-test-id'?: string;
 }>;
 
