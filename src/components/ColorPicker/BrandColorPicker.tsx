@@ -6,7 +6,7 @@ import { IconCheckMark, IconGridRegular, IconMagnifier, IconStackVertical } from
 import { IconSize } from '@foundation/Icon/IconSize';
 import { isColorLight, toShortRgb } from '@utilities/colors';
 import { merge } from '@utilities/merge';
-import React, { FC, useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import tinycolor from 'tinycolor2';
 import { ColorPickerProps } from './ColorPicker';
 
@@ -20,7 +20,7 @@ enum BrandColorView {
 
 type Props = Omit<ColorPickerProps, 'currentFormat' | 'setFormat'>;
 
-export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], currentColor, onSelect }) => {
+export const BrandColorPicker = ({ palettes: defaultPalettes = [], currentColor, onSelect }: Props): ReactElement => {
     const views = [
         { id: BrandColorView.Grid, icon: <IconGridRegular />, ariaLabel: 'Grid' },
         { id: BrandColorView.List, icon: <IconStackVertical />, ariaLabel: 'List' },

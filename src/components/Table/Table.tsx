@@ -9,7 +9,7 @@ import {
     TableStateProps,
     useTableState,
 } from '@react-stately/table';
-import React, { Key, PropsWithChildren, ReactNode, useRef, useState } from 'react';
+import React, { Key, ReactNode, useRef, useState } from 'react';
 import { TableCell, TableCellType } from './TableCell';
 import { TableColumnHeader, TableColumnHeaderType } from './TableColumnHeader';
 import { TableHeaderRow } from './TableHeaderRow';
@@ -41,7 +41,7 @@ export type Row = {
     actionElements?: ReactNode;
 };
 
-export type TableProps = PropsWithChildren<{
+export type TableProps = {
     columns: Column[];
     rows: Row[];
     onSelectionChange?: (ids?: Key[]) => void;
@@ -49,7 +49,8 @@ export type TableProps = PropsWithChildren<{
     selectionMode?: SelectionMode;
     selectedRowIds?: Key[];
     ariaLabel?: string;
-}>;
+    children?: ReactNode;
+};
 
 export enum SortDirection {
     Ascending = 'ascending',

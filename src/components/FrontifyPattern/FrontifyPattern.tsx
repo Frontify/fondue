@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, cloneElement } from 'react';
+import React, { ReactElement, cloneElement } from 'react';
 import { merge } from '@utilities/merge';
 import {
     PatternDesign,
@@ -19,12 +19,12 @@ export type FrontifyPatternProps = {
     foregroundColor?: PatternTheme;
 };
 
-export const FrontifyPattern: FC<FrontifyPatternProps> = ({
+export const FrontifyPattern = ({
     pattern = PatternDesign.DigitalAssets,
     scale = PatternScale.SM,
     scaleOrigin = ['top', 'left'],
     foregroundColor = PatternTheme.Black,
-}) => {
+}: FrontifyPatternProps): ReactElement => {
     return (
         <div
             data-test-id="frontify-pattern"

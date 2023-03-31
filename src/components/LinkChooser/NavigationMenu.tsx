@@ -7,12 +7,12 @@ import { getInteractionModality } from '@react-aria/interactions';
 import { useOption } from '@react-aria/listbox';
 import { merge } from '@utilities/merge';
 import { useActor } from '@xstate/react';
-import React, { FC, useMemo, useRef } from 'react';
+import React, { ReactElement, useMemo, useRef } from 'react';
 import { defaultSection } from './sections';
 import { DropdownState, LinkChooserState } from './state/types';
 import { NavigationMenuItemProps, NavigationMenuProps } from './types';
 
-export const NavigationMenu: FC<NavigationMenuProps> = ({ machineService, state }) => {
+export const NavigationMenu = ({ machineService, state }: NavigationMenuProps): Nullable<ReactElement> => {
     const [{ matches, context }, send] = useActor(machineService);
 
     return matches(`${LinkChooserState.Focused}.${DropdownState.Default}`) ? (
@@ -34,12 +34,12 @@ export const NavigationMenu: FC<NavigationMenuProps> = ({ machineService, state 
     ) : null;
 };
 
-export const NavigationMenuItem: FC<NavigationMenuItemProps> = ({
+export const NavigationMenuItem = ({
     section: { id, title },
     onPress,
     state,
     direction = 'right',
-}) => {
+}: NavigationMenuItemProps): ReactElement => {
     const ref = useRef<HTMLLIElement>(null);
     const { isFocused } = useOption(
         {
