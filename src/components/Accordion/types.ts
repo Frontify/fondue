@@ -17,14 +17,14 @@ export type AriaAccordionItemProps = {
     header: Omit<AccordionHeaderProps, 'isOpen'> & { active?: boolean; onClick?: () => void };
     padding?: boolean;
     divider?: boolean;
-    headerComponent?: (props: AccordionHeaderProps) => ReactElement | null;
+    headerComponent?: (props: AccordionHeaderProps) => ReactElement;
 };
 
 export type AccordionItemProps = {
     header: Omit<AccordionHeaderProps, 'isOpen'> & { active?: boolean; onClick?: () => void };
     padding?: boolean;
     divider?: boolean;
-    headerComponent?: (props: AccordionHeaderProps) => ReactElement | null;
+    headerComponent?: (props: AccordionHeaderProps) => ReactElement;
     children?: ReactNode;
 };
 
