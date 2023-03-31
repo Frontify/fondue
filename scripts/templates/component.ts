@@ -8,12 +8,11 @@ export const setup = (componentName: string): ComponentFileBuilderResponse => ({
 
 import React, { ReactNode } from "react";
 
-export type ${componentName}Props = { foo: string; children?: ReactNode; };
+export type ${componentName}Props = { children?: ReactNode; };
 
-export const ${componentName} = ({ foo, children }: ${componentName}Props) => {
+export const ${componentName} = ({ children }: ${componentName}Props) => {
     return (
         <div data-test-id="${toKebabCase(componentName)}">
-            <div>{foo}</div>
             {children}
         </div>
     );
