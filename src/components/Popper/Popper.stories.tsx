@@ -46,7 +46,7 @@ const Template: StoryFn<PopperProps> = (args) => {
                     <Button onClick={() => setOpen(!open)}>Hello</Button>
                 </Popper.Reference>
                 <Popper.Content>
-                    <div className="tw-border tw-border-black tw-w-[400px]">
+                    <div className="tw-bg-base tw-border tw-border-black tw-w-[400px]">
                         <p>Some content</p>
                     </div>
                 </Popper.Content>

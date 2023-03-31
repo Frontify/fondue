@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { useState } from 'react';
-import { Popper, PopperProps } from './Popper';
+import { Popper } from './Popper';
 import { Button } from '@components/Button';
+import { PopperPlacement, PopperProps } from '@components/Popper/types';
 
 const popper_SELECTOR = '[data-test-id=fondue-popper]';
 
@@ -25,7 +26,7 @@ const PopperComponent = ({ placement, offset, flip }: PopperProps) => {
 
 describe('InlineDialog Component', () => {
     it('should render', () => {
-        cy.mount(<PopperComponent placement="bottom" flip={false} offset={[0, 10]} />);
+        cy.mount(<PopperComponent placement={PopperPlacement.Bottom} flip={false} offset={[0, 10]} />);
 
         cy.get(popper_SELECTOR).should('exist');
     });
