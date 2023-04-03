@@ -2,28 +2,69 @@
 
 import React from 'react';
 import { Meta, StoryFn } from '@storybook/react';
-import { Container as ContainerComponent, ContainerProps, PaddingType } from './Container';
-
-const acceptablePaddingInput: PaddingType[] = [0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40];
+import { Container as ContainerComponent, ContainerProps } from './Container';
+import { SPACING_VALUES } from '@utilities/dimensions';
+import { BOX_ALIAS_TOKENS_PREFIX } from '@utilities/tokens';
 
 export default {
     title: 'Layout/Container',
     component: ContainerComponent,
     tags: ['autodocs'],
     argTypes: {
-        padding: {
-            options: Object.values(acceptablePaddingInput),
+        boxColorToken: {
+            options: BOX_ALIAS_TOKENS_PREFIX,
+            control: {
+                type: 'select',
+            },
+        },
+        margin: {
+            options: Object.values(SPACING_VALUES),
             control: { type: 'select' },
+        },
+        padding: {
+            options: Object.values(SPACING_VALUES),
+            control: { type: 'select' },
+        },
+        minWidth: {
+            type: 'string',
+        },
+        maxWidth: {
+            type: 'string',
+        },
+        minHeight: {
+            type: 'string',
+        },
+        maxHeight: {
+            type: 'string',
         },
         children: { table: { disable: false } },
     },
     args: {
-        minWidth: 50,
-        maxWidth: 100,
+        boxColorToken: '',
+        margin: 0,
         padding: 12,
+        minWidth: '50px',
+        maxWidth: '100px',
+        minHeight: undefined,
+        maxHeight: undefined,
         'data-test-id': 'custom-test-id',
-        children: <div className="tw-bg-box-positive">This is a container</div>,
+        children: <span>This is a container</span>,
     },
 } as Meta<ContainerProps>;
 
 export const Container: StoryFn<ContainerProps> = (args: ContainerProps) => <ContainerComponent {...args} />;
+export const ContainerWithBoxAliasToken: StoryFn<ContainerProps> = (args: ContainerProps) => (
+    <ContainerComponent {...args} />
+);
+ContainerWithBoxAliasToken.args = {
+    boxColorToken: 'box-neutral',
+    maxWidth: '100%',
+    children: (
+        <span>
+            This is a full width container with box{' '}
+            <a href="?path=/story/tokens--alias-tokens" className="tw-text-text-interactive" target="_blank">
+                Alias Tokens
+            </a>
+        </span>
+    ),
+};

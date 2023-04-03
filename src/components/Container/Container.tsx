@@ -1,47 +1,67 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
+import {
+    DimensionUnities,
+    MARGIN_VALUES_MAP,
+    PADDING_VALUES_MAP,
+    SPACING_VALUES,
+    SpacingValues,
+} from '@utilities/dimensions';
+import { merge } from '@utilities/merge';
+import { BOX_ALIAS_TOKENS_PREFIX } from '@utilities/tokens';
+import React, { useEffect } from 'react';
 
-export type PaddingType = 0 | 4 | 8 | 12 | 16 | 20 | 24 | 28 | 32 | 36 | 40;
 export type ContainerProps = {
     children?: React.ReactNode;
-    minWidth?: number;
-    maxWidth?: number;
-    padding?: PaddingType;
+    minWidth?: `${number}${DimensionUnities}`;
+    maxWidth?: `${number}${DimensionUnities}`;
+    minHeight?: `${number}${DimensionUnities}`;
+    maxHeight?: `${number}${DimensionUnities}`;
+    padding?: SpacingValues;
+    margin?: SpacingValues;
+    boxColorToken?: string;
     'data-test-id'?: string;
 };
 
+export const CONTAINER_TEST_ID = 'fondue-container';
+
 export const Container = ({
     children,
-    'data-test-id': dataTestId,
+    'data-test-id': dataTestId = CONTAINER_TEST_ID,
     minWidth,
     maxWidth,
+    maxHeight,
+    minHeight,
+    boxColorToken,
+    margin = 0,
     padding = 0,
 }: ContainerProps) => {
-    const acceptablePaddingInput: PaddingType[] = [0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40];
-    const paddingMap = {
-        0: 'tw-p-0',
-        4: 'tw-p-1',
-        8: 'tw-p-2',
-        12: 'tw-p-3',
-        16: 'tw-p-4',
-        20: 'tw-p-5',
-        24: 'tw-p-6',
-        28: 'tw-p-7',
-        32: 'tw-p-8',
-        36: 'tw-p-9',
-        40: 'tw-p-10',
-    };
+    const paddingClassName = SPACING_VALUES.includes(padding) ? PADDING_VALUES_MAP[padding] : PADDING_VALUES_MAP[0];
+    const marginClassName = SPACING_VALUES.includes(padding) ? MARGIN_VALUES_MAP[margin] : MARGIN_VALUES_MAP[0];
 
-    const paddingClassName = acceptablePaddingInput.includes(padding) ? paddingMap[padding] : paddingMap[0];
+    const colorClasses = !boxColorToken ? '' : `tw-bg-${boxColorToken} tw-text-${boxColorToken}-inverse`;
+
+    useEffect(() => {
+        if (!boxColorToken) {
+            return;
+        }
+
+        if (!BOX_ALIAS_TOKENS_PREFIX.includes(boxColorToken)) {
+            throw new Error(
+                `boxColorToken should be one of the following values \n${BOX_ALIAS_TOKENS_PREFIX.join('\n')}`,
+            );
+        }
+    }, [boxColorToken]);
 
     return (
         <div
-            data-test-id={dataTestId ? dataTestId : 'fondue-container'}
-            className={paddingClassName}
+            data-test-id={dataTestId}
+            className={merge([paddingClassName, marginClassName, colorClasses])}
             style={{
                 maxWidth,
                 minWidth,
+                maxHeight,
+                minHeight,
             }}
         >
             {children}
