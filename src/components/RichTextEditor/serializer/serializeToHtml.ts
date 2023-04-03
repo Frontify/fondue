@@ -42,13 +42,11 @@ export const serializeNodesToHtml = (
         if (isEmptyNode(node)) {
             return `${acc}<br />`;
         }
-        return (
-            acc +
-            serializeNodeToHtmlRecursive(node, {
+        return `${acc}
+            ${serializeNodeToHtmlRecursive(node, {
                 designTokens: mergedDesignTokens,
                 mappedMentionable,
-            })
-        );
+            })}`;
     }, '');
 
     if (columns > 1) {
