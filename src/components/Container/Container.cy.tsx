@@ -85,12 +85,18 @@ describe('Container component', () => {
 
     it('renders with proper color', () => {
         cy.mount(
-            <Container color="tw-text-box-neutra-inversel">
+            <Container color="tw-text-box-neutral-inverse">
                 <div>{CONTENT_STRING_LONG}</div>
             </Container>,
         );
 
         cy.get(CONTAINER_ID).should('have.class', 'tw-text-box-neutral-inverse');
+    });
+
+    it('renders as span tag', () => {
+        cy.mount(<Container as="span">{CONTENT_STRING_LONG}</Container>);
+
+        cy.get(CONTAINER_ID).first().should('have.prop', 'tagName', 'SPAN');
     });
 
     it('should render with custom data-test-id', () => {
