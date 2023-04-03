@@ -37,9 +37,4 @@ export const parseRawValue = ({ editorId = 'parseRawValue', raw, plugins }: Pars
         }) as Value;
         return parsedHtml ?? EMPTY_RICH_TEXT_VALUE;
     }
-
-    // editor.children = parsedValue;
-    // normalizeEditor(editor, { force: true });
-
-    // return editor.children;
 };
