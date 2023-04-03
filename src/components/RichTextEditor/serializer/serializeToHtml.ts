@@ -40,7 +40,7 @@ export const serializeNodesToHtml = (
 
     const html = nodes.reduce((acc, node) => {
         if (isEmptyNode(node)) {
-            return acc + '<br />';
+            return `${acc}<br />`;
         }
         return (
             acc +
