@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useEffect } from 'react';
+import React, { ReactElement, cloneElement, useEffect } from 'react';
 import { merge } from '@utilities/merge';
 import {
     DimensionUnities,
@@ -94,6 +94,14 @@ export const Grid = ({
         }
     }, [boxColorToken]);
 
+    const colClass = `tw-column-${column}`;
+
+    const renderedChildren = React.Children.map(children, (child) => {
+        return cloneElement(child as ReactElement, {
+            style: { flexBasis: `${Math.floor((1 / column) * 100)}%`, height: minHeight },
+        });
+    });
+
     return (
         <div
             data-test-id={dataTestId}
@@ -104,16 +112,17 @@ export const Grid = ({
                 paddingClassName,
                 marginClassName,
                 colorClasses,
+                colClass,
             ])}
             style={{
-                flexBasis: `${(1 / column) * 100}`,
+                display: 'flex',
                 maxWidth,
                 minWidth,
                 maxHeight,
                 minHeight,
             }}
         >
-            {children}
+            {children ? renderedChildren : <></>}
         </div>
     );
 };

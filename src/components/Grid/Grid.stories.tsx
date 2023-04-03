@@ -3,7 +3,7 @@
 import React from 'react';
 import { Grid, GridProps } from './Grid';
 import { SPACING_VALUES } from '@utilities/dimensions';
-import { StoryFn } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 
 export default {
     title: 'Layout/Grid',
@@ -18,36 +18,48 @@ export default {
             options: SPACING_VALUES,
             control: { type: 'radio' },
         },
+        padding: {
+            options: SPACING_VALUES,
+            control: { type: 'radio' },
+        },
+        margin: {
+            options: SPACING_VALUES,
+            control: { type: 'radio' },
+        },
     },
     args: {
-        spacingX: 2,
-        spacingY: 2,
+        spacingX: 4,
+        spacingY: 4,
         column: 4,
         'data-test-id': 'custom-test-id',
+        padding: 4,
+        margin: 4,
+        minWidth: '100px',
+        maxWidth: '900px',
+        minHeight: '100px',
+        maxHeight: undefined,
+        boxColorToken: 'box-neutral',
     },
 } as Meta<GridProps>;
 
 export const Default: StoryFn<GridProps> = (args: GridProps) => {
     return (
-        <Grid
-            data-test-id={args['data-test-id']}
-            column={args.column}
-            spacingX={args.spacingX}
-            spacingY={args.spacingY}
-        >
-            <div className="tw-bg-box-positive"></div>
-            <div className="tw-bg-box-positive"></div>
-            <div className="tw-bg-box-positive"></div>
-            <div className="tw-bg-box-positive"></div>
-            <div className="tw-bg-box-positive"></div>
-            <div className="tw-bg-box-positive"></div>
-            <div className="tw-bg-box-positive"></div>
-            <div className="tw-bg-box-positive"></div>
-            <div className="tw-bg-box-positive"></div>
-            <div className="tw-bg-box-positive"></div>
-            <div className="tw-bg-box-positive"></div>
-            <div className="tw-bg-box-positive"></div>
-            <div className="tw-bg-box-positive"></div>
+        <Grid {...args}>
+            <div className="tw-bg-box-selected-strong"></div>
+            <div className="tw-bg-box-positive-strong"></div>
+            <div className="tw-bg-box-negative-strong"></div>
+            <div className="tw-bg-box-warning-strong"></div>
+            <div className="tw-bg-box-neutral-strong"></div>
+            <div className="tw-bg-box-selected-strong"></div>
+            <div className="tw-bg-box-positive-strong"></div>
+            <div className="tw-bg-box-negative-strong"></div>
+            <div className="tw-bg-box-warning-strong"></div>
+            <div className="tw-bg-box-neutral-strong"></div>
+            <div className="tw-bg-box-selected-strong"></div>
+            <div className="tw-bg-box-positive-strong"></div>
+            <div className="tw-bg-box-negative-strong"></div>
+            <div className="tw-bg-box-warning-strong"></div>
+            <div className="tw-bg-box-neutral-strong"></div>
         </Grid>
     );
 };
