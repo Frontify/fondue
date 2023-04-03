@@ -1,21 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
-import React, { useEffect, useState } from 'react';
-import { IconExclamationMarkCircle } from '@foundation/Icon/Generated';
-import { Switch, SwitchLabelStyle, SwitchProps, SwitchSize } from './Switch';
-import { TooltipIconTriggerStyle } from '@components/TooltipIcon';
+import React from 'react';
+import { Grid } from './Grid';
 
 export default {
-    title: 'Components/Switch',
-    component: Switch,
+    title: 'Layout/Grid',
+    component: Grid,
     tags: ['autodocs'],
     argTypes: {
-        size: {
+        spacingX: {
             options: Object.values(SwitchSize),
             control: { type: 'radio' },
         },
-        labelStyle: {
+        spacingY: {
             options: Object.values(SwitchLabelStyle),
             control: { type: 'radio' },
         },
@@ -37,43 +34,31 @@ export default {
     },
 } as Meta<SwitchProps>;
 
-type Props = SwitchProps & { hug?: boolean };
+export const Default: StoryFn<Props> = (args: Props) => {
+    return (
+        <Grid column={4} spacingX={8} spacingY={8}>
+            <div className="tw-bg-box-positive"></div>
+            <div className="tw-bg-box-positive"></div>
+            <div className="tw-bg-box-positive"></div>
+            <div className="tw-bg-box-positive"></div>
 
-const Default: StoryFn<Props> = (args: Props) => {
-    const [on, setOn] = useState(args.on);
-    const toggle = () => setOn(!on);
+            <div className="tw-bg-box-positive"></div>
 
-    useEffect(() => {
-        setOn(args.on);
-    }, [args.on]);
+            <div className="tw-bg-box-positive"></div>
 
-    return <Switch {...args} onChange={toggle} on={on} />;
+            <div className="tw-bg-box-positive"></div>
+
+            <div className="tw-bg-box-positive"></div>
+
+            <div className="tw-bg-box-positive"></div>
+
+            <div className="tw-bg-box-positive"></div>
+
+            <div className="tw-bg-box-positive"></div>
+
+            <div className="tw-bg-box-positive"></div>
+
+            <div className="tw-bg-box-positive"></div>
+        </Grid>
+    );
 };
-
-export const Small: StoryFn<Props> = Default.bind({});
-Small.args = { size: SwitchSize.Small };
-
-export const Medium: StoryFn<Props> = Default.bind({});
-Medium.args = { size: SwitchSize.Medium };
-
-export const WithLabel: StoryFn<Props> = Default.bind({});
-WithLabel.args = { label: 'Switch label' };
-
-export const WithLabelAndTooltip: StoryFn<Props> = Default.bind({});
-WithLabelAndTooltip.args = { label: 'Switch label', tooltip: { content: 'Switch tooltip' } };
-
-export const WithLabelAndMultipleTooltips: StoryFn<Props> = Default.bind({});
-WithLabelAndMultipleTooltips.args = {
-    label: 'Switch label',
-    tooltip: [
-        { content: 'First tooltip' },
-        {
-            content: 'Second Tooltip',
-            triggerIcon: <IconExclamationMarkCircle />,
-            triggerStyle: TooltipIconTriggerStyle.Warning,
-        },
-    ],
-};
-
-export const HugLabel: StoryFn<Props> = Default.bind({});
-HugLabel.args = { hug: true, label: 'Switch label' };
