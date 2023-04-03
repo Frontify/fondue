@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { merge } from '@utilities/merge';
-import React, { FC } from 'react';
+import React, { ReactElement } from 'react';
 import { AssetInputSize, AssetType, ImageAsset, LibrarySource } from '../AssetInput';
 import { AssetThumbnail } from '../AssetThumbnail';
 import { MultiAssetPreviewProps } from './MultiAssetPreview';
@@ -9,7 +9,7 @@ import { MultiAssetPreviewProps } from './MultiAssetPreview';
 const isImageAsset = (asset: AssetType): asset is ImageAsset & LibrarySource =>
     asset.type === 'image' || asset.type === 'logo';
 
-export const SelectedAssetsThumbnail: FC<Pick<MultiAssetPreviewProps, 'assets'>> = ({ assets }) => {
+export const SelectedAssetsThumbnail = ({ assets }: Pick<MultiAssetPreviewProps, 'assets'>): ReactElement => {
     const assetslength = assets.length;
     const previewAssets = assets.slice(0, 4);
 

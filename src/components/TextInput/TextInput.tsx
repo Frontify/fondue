@@ -7,7 +7,7 @@ import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
-import React, { FC, FocusEvent, KeyboardEvent, ReactNode, useEffect, useRef, useState } from 'react';
+import React, { FocusEvent, KeyboardEvent, ReactElement, ReactNode, useEffect, useRef, useState } from 'react';
 import {
     IconCheckMark,
     IconClipboard,
@@ -65,7 +65,7 @@ export type TextInputProps =
           obfuscated?: boolean;
       } & TextInputBaseProps);
 
-export const TextInput: FC<TextInputProps> = ({
+export const TextInput = ({
     id: propId,
     type = TextInputType.Text,
     decorator,
@@ -89,7 +89,7 @@ export const TextInput: FC<TextInputProps> = ({
     readonly,
     focusOnMount,
     selectable = false,
-}) => {
+}: TextInputProps): ReactElement => {
     const { isFocusVisible, focusProps } = useFocusRing({ within: true, isTextInput: true });
     const { isFocusVisible: clearButtonIsFocusVisible, focusProps: clearButtonFocusProps } = useFocusRing();
     const { isFocusVisible: passwordButtonIsFocusVisible, focusProps: passwordButtonFocusProps } = useFocusRing();

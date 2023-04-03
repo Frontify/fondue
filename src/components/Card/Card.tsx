@@ -2,7 +2,7 @@
 
 import { useButton } from '@react-aria/button';
 import { merge } from '@utilities/merge';
-import React, { FC, ReactNode, useRef } from 'react';
+import React, { ReactElement, ReactNode, useRef } from 'react';
 import { PressEvent } from '@react-types/shared';
 import { mergeProps } from '@react-aria/utils';
 import { useFocusRing } from '@react-aria/focus';
@@ -14,7 +14,7 @@ export type CardProps = {
     onClick?: (event: PressEvent) => void;
 };
 
-export const Card: FC<CardProps> = ({ hoverable = false, children, onClick }) => {
+export const Card = ({ hoverable = false, children, onClick }: CardProps): ReactElement => {
     const ref = useRef<HTMLDivElement | null>(null);
     const { buttonProps } = useButton(
         { elementType: 'div', onPress: (event: PressEvent) => onClick && onClick(event) },

@@ -18,7 +18,7 @@ import { useComboBoxState } from '@react-stately/combobox';
 import { Validation } from '@utilities/validation';
 import { useMachine } from '@xstate/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import React, { FC, Key, MouseEvent, ReactElement, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { Key, MouseEvent, ReactElement, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { NavigationMenu } from './NavigationMenu';
 import { Popover } from './Popover';
 import { SearchInput } from './SearchInput';
@@ -46,7 +46,7 @@ export const CUSTOM_LINK_ID = 'custom-link';
 export const MAX_STORED_ITEMS = 5;
 export const QUERIES_STORAGE_KEY = 'queries';
 
-export const LinkChooser: FC<LinkChooserProps> = ({
+export const LinkChooser = ({
     getGlobalByQuery = getDefaultData,
     openPreview = window.open,
     clipboardOptions = navigator.clipboard,
@@ -62,7 +62,7 @@ export const LinkChooser: FC<LinkChooserProps> = ({
     clearable,
     required,
     validation = Validation.Default,
-}) => {
+}: LinkChooserProps): ReactElement => {
     const [{ context, matches, value }, send, service] = useMachine(() =>
         linkChooserMachine.withContext({
             searchResults: [],

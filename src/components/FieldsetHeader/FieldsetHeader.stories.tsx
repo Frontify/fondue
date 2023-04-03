@@ -11,7 +11,7 @@ import {
 import { IconIcon } from '@foundation/Icon/Generated';
 
 export default {
-    title: 'Components/Fieldset Header',
+    title: 'Deprecating/Fieldset Header',
     component: FieldsetHeaderComponent,
     tags: ['autodocs'],
     argTypes: {

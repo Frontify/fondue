@@ -2,13 +2,16 @@
 
 import { Meta, StoryFn } from '@storybook/react';
 import { merge } from '@utilities/merge';
-import React, { FC } from 'react';
+import React, { ReactElement } from 'react';
 import { Stack, StackProps } from './Stack';
 
-const Placeholder: FC<{ width?: 'auto' | 'large' | 'small'; height?: 'large' | 'small' }> = ({
+const Placeholder = ({
     width = 'auto',
     height = 'large',
-}) => (
+}: {
+    width?: 'auto' | 'large' | 'small';
+    height?: 'large' | 'small';
+}): ReactElement => (
     <div
         className={merge([
             width === 'auto' && 'tw-w-full',
@@ -53,7 +56,7 @@ export default {
     },
 } as Meta<StackProps>;
 
-const Template: StoryFn<StackProps> = (args) => (
+const Template: StoryFn<StackProps> = (args): ReactElement => (
     <div className="tw-bg-box-negative-inverse">
         <Stack {...args} />
     </div>

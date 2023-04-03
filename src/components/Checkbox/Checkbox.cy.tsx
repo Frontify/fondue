@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { Checkbox, CheckboxProps, CheckboxSize, CheckboxState } from './Checkbox';
 
 const CHECKBOX_LABEL = 'Checkbox label';
@@ -15,7 +15,7 @@ const CHECKBOX_HELPER_TEXT_ID = '[data-test-id=checkbox-helper-text]';
 const CHECKBOX_ICON_BOX_ID = '[data-test-id=checkbox-icon-box]';
 const CHECKBOX_LABEL_ID = '[data-test-id=checkbox-label]';
 
-const CheckboxComponent: FC<CheckboxProps> = (props) => {
+const CheckboxComponent = (props: CheckboxProps): ReactElement => {
     const [checked, setChecked] = useState(props.state);
 
     return (

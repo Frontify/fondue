@@ -5,7 +5,7 @@ import { MenuItemContentSize } from '@components/MenuItem';
 import { IconIcon } from '@foundation/Icon/Generated';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { Validation } from '@utilities/validation';
-import React, { FC, ReactElement, useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { Dropdown } from './Dropdown';
 
 const DROPDOWN_TRIGGER_ID = '[data-test-id=dropdown-trigger]';
@@ -65,7 +65,7 @@ type Props = {
     validation?: Validation;
 };
 
-const Component: FC<Props> = ({
+const Component = ({
     menuBlocks,
     placeholder,
     initialActiveId,
@@ -74,7 +74,7 @@ const Component: FC<Props> = ({
     decorator,
     autoResize = true,
     validation = Validation.Default,
-}) => {
+}: Props): ReactElement => {
     const [activeItemId, setActiveItemId] = useState(initialActiveId);
     return (
         <Dropdown
