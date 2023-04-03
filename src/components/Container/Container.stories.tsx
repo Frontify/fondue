@@ -1,18 +1,30 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
+import React, { ReactElement, ReactNode } from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { Container as ContainerComponent, ContainerProps } from './Container';
 import { SPACING_VALUES } from '@utilities/dimensions';
-import { BOX_ALIAS_TOKENS_PREFIX } from '@utilities/tokens';
+import { BOX_BG_ALIAS_TOKENS, BOX_TEXT_ALIAS_TOKENS } from '@utilities/tokens';
 
 export default {
     title: 'Layout/Container',
     component: ContainerComponent,
     tags: ['autodocs'],
     argTypes: {
-        boxColorToken: {
-            options: BOX_ALIAS_TOKENS_PREFIX,
+        as: {
+            options: ['div', 'span'],
+            control: {
+                type: 'select',
+            },
+        },
+        bg: {
+            options: BOX_BG_ALIAS_TOKENS,
+            control: {
+                type: 'select',
+            },
+        },
+        color: {
+            options: BOX_TEXT_ALIAS_TOKENS,
             control: {
                 type: 'select',
             },
@@ -40,11 +52,13 @@ export default {
         children: { table: { disable: false } },
     },
     args: {
-        boxColorToken: '',
+        as: 'div',
+        bg: '',
+        color: '',
         margin: 0,
         padding: 12,
-        minWidth: '50px',
-        maxWidth: '100px',
+        minWidth: undefined,
+        maxWidth: undefined,
         minHeight: undefined,
         maxHeight: undefined,
         'data-test-id': 'custom-test-id',
@@ -52,19 +66,54 @@ export default {
     },
 } as Meta<ContainerProps>;
 
+const Code = ({ children }: { children: ReactNode }): ReactElement => (
+    <code className="tw-bg-box-neutral tw-rounded tw-px-2 tw-text-box-neutral-inverse tw-text-s">{children}</code>
+);
+
 export const Container: StoryFn<ContainerProps> = (args: ContainerProps) => <ContainerComponent {...args} />;
 export const ContainerWithBoxAliasToken: StoryFn<ContainerProps> = (args: ContainerProps) => (
-    <ContainerComponent {...args} />
+    <ContainerComponent {...args}>
+        <p>
+            This is a full width container with bg and color{' '}
+            <a href="?path=/story/tokens--alias-tokens" className="tw-text-text-interactive" target="_blank">
+                Alias Tokens.
+            </a>
+        </p>
+        <p>
+            This story shows only Box Alias Tokens in controls, but you can pass any color token class to define bg and
+            color properties.
+        </p>
+    </ContainerComponent>
 );
 ContainerWithBoxAliasToken.args = {
-    boxColorToken: 'box-neutral',
+    bg: 'tw-bg-box-neutral',
     maxWidth: '100%',
-    children: (
-        <span>
-            This is a full width container with box{' '}
-            <a href="?path=/story/tokens--alias-tokens" className="tw-text-text-interactive" target="_blank">
-                Alias Tokens
-            </a>
-        </span>
-    ),
+};
+
+export const ContainerAsSpanElement: StoryFn<ContainerProps> = (args: ContainerProps) => (
+    <span className="tw-flex">
+        <ContainerComponent {...args} bg="tw-bg-box-positive" color="tw-text-box-positive-inverse">
+            <span>
+                To use <Code>Container</Code> as a <Code>span</Code> element and apply top and bottom{' '}
+                <Code>margin</Code> and <Code>padding</Code> wrap it into a flex or grid container.
+            </span>
+        </ContainerComponent>
+        <ContainerComponent {...args} bg="tw-bg-box-warning" color="tw-text-box-warning-inverse">
+            <span>
+                Use <Code>span</Code> element when there is a parent element that does not accept <Code>div</Code> as a
+                child element.
+            </span>
+        </ContainerComponent>
+        <ContainerComponent {...args} bg="tw-bg-box-negative" color="tw-text-box-negative-inverse">
+            <span>
+                It is not possible to define flex items CSS like <Code>flex: 1;</Code> in the Container component. Use a
+                combination of <Code>Flex</Code> and <Code>Box</Code> when that is needed.
+            </span>
+        </ContainerComponent>
+    </span>
+);
+ContainerAsSpanElement.args = {
+    as: 'span',
+    maxWidth: '33%',
+    margin: 8,
 };

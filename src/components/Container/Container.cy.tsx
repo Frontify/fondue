@@ -73,28 +73,24 @@ describe('Container component', () => {
         cy.get(CONTAINER_ID).should('have.css', 'margin', '12px');
     });
 
-    it('renders with proper box color tokens', () => {
+    it('renders with proper bg', () => {
         cy.mount(
-            <Container boxColorToken="box-neutral">
+            <Container bg="tw-bg-box-neutral">
                 <div>{CONTENT_STRING_LONG}</div>
             </Container>,
         );
 
         cy.get(CONTAINER_ID).should('have.class', 'tw-bg-box-neutral');
-        cy.get(CONTAINER_ID).should('have.class', 'tw-text-box-neutral-inverse');
     });
 
-    it('throws an error if wrong box color token prefix is provided', (done) => {
-        cy.on('uncaught:exception', (error) => {
-            expect(error.message).to.include('boxColorToken should be one of the following values');
-            done();
-            return false;
-        });
+    it('renders with proper color', () => {
         cy.mount(
-            <Container boxColorToken="box-wrong-token">
+            <Container color="tw-text-box-neutra-inversel">
                 <div>{CONTENT_STRING_LONG}</div>
             </Container>,
         );
+
+        cy.get(CONTAINER_ID).should('have.class', 'tw-text-box-neutral-inverse');
     });
 
     it('should render with custom data-test-id', () => {

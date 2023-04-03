@@ -49,3 +49,5 @@ export const getAliasTokensTailwindNamesByCategory = (category: PalleteName, ign
 };
 
 export const BOX_ALIAS_TOKENS_PREFIX = getAliasTokensTailwindNamesByCategory('box', true);
+export const BOX_BG_ALIAS_TOKENS = BOX_ALIAS_TOKENS_PREFIX.map((name) => `tw-bg-${name}`);
+export const BOX_TEXT_ALIAS_TOKENS = BOX_ALIAS_TOKENS_PREFIX.map((name) => `tw-text-${name}-inverse`);
