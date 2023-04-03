@@ -38,17 +38,18 @@ export const serializeNodesToHtml = (
     const mergedDesignTokens = setDefaultDesignTokensIfNull(defaultDesignTokens, designTokens);
     const mappedMentionable = mentionable ? mapMentionable(mentionable) : new Map();
 
-    const html = nodes
-        .map((node) => {
-            if (isEmptyNode(node)) {
-                return '<br />';
-            }
-            return serializeNodeToHtmlRecursive(node, {
+    const html = nodes.reduce((acc, node) => {
+        if (isEmptyNode(node)) {
+            return acc + '<br />';
+        }
+        return (
+            acc +
+            serializeNodeToHtmlRecursive(node, {
                 designTokens: mergedDesignTokens,
                 mappedMentionable,
-            });
-        })
-        .join('');
+            })
+        );
+    }, '');
 
     if (columns > 1) {
         return `<div style="columns:${columns}; column-gap:${columnGap};">${html}</div>`;

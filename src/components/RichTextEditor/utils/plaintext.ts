@@ -4,7 +4,7 @@ import { TDescendant, isDescendant } from '@udecode/plate';
 import { Node } from 'slate';
 
 export const toPlaintext = (nodes: TDescendant[] | string): string => {
-    const nodesArray = typeof nodes === 'string' ? JSON.parse(nodes) : nodes;
+    const nodesArray = Array.isArray(nodes) ? nodes : JSON.parse(nodes);
     return nodesArray
         .map((node: TDescendant) => {
             if (!isDescendant(node)) {

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ELEMENT_PARAGRAPH, Value, deserializeHtml, normalizeEditor } from '@udecode/plate';
+import { ELEMENT_PARAGRAPH, Value, deserializeHtml } from '@udecode/plate';
 import { PluginComposer } from '../Plugins';
 import { InitPlateEditor } from './InitPlateEditor';
 
@@ -21,14 +21,13 @@ type ParseRawValueOptions = {
 
 export const parseRawValue = ({ editorId = 'parseRawValue', raw, plugins }: ParseRawValueOptions): Value => {
     const editor = InitPlateEditor.init(`${editorId}_parseRawValue`, plugins).getInstance();
-    let parsedValue = EMPTY_RICH_TEXT_VALUE;
 
     if (!raw) {
-        return parsedValue;
+        return EMPTY_RICH_TEXT_VALUE;
     }
 
     try {
-        parsedValue = JSON.parse(raw);
+        return JSON.parse(raw);
     } catch {
         const trimmed = raw.trim().replace(/>\s+</g, '><');
         const htmlDocumentString = wrapTextInHtml(trimmed);
@@ -36,13 +35,11 @@ export const parseRawValue = ({ editorId = 'parseRawValue', raw, plugins }: Pars
             element: htmlDocumentString,
             stripWhitespace: true,
         }) as Value;
-        if (parsedHtml) {
-            parsedValue = parsedHtml;
-        }
+        return parsedHtml ?? EMPTY_RICH_TEXT_VALUE;
     }
 
-    editor.children = parsedValue;
-    normalizeEditor(editor, { force: true });
+    // editor.children = parsedValue;
+    // normalizeEditor(editor, { force: true });
 
-    return editor.children;
+    // return editor.children;
 };
