@@ -1,7 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
-import { Grid } from './Grid';
+import { Grid, GridProps } from './Grid';
+import { SPACING_VALUES } from '@utilities/dimensions';
+import { StoryFn } from '@storybook/react';
 
 export default {
     title: 'Layout/Grid',
@@ -9,55 +11,42 @@ export default {
     tags: ['autodocs'],
     argTypes: {
         spacingX: {
-            options: Object.values(SwitchSize),
+            options: SPACING_VALUES,
             control: { type: 'radio' },
         },
         spacingY: {
-            options: Object.values(SwitchLabelStyle),
+            options: SPACING_VALUES,
             control: { type: 'radio' },
-        },
-        label: {
-            placeholder: 'Switch label',
-            type: { name: 'string', required: false },
-            control: {
-                type: 'text',
-            },
         },
     },
     args: {
-        on: true,
-        disabled: false,
-        labelStyle: SwitchLabelStyle.Default,
-        hug: false,
-        name: 'switch-name',
-        size: SwitchSize.Small,
+        spacingX: 2,
+        spacingY: 2,
+        column: 4,
+        'data-test-id': 'custom-test-id',
     },
-} as Meta<SwitchProps>;
+} as Meta<GridProps>;
 
-export const Default: StoryFn<Props> = (args: Props) => {
+export const Default: StoryFn<GridProps> = (args: GridProps) => {
     return (
-        <Grid column={4} spacingX={8} spacingY={8}>
+        <Grid
+            data-test-id={args['data-test-id']}
+            column={args.column}
+            spacingX={args.spacingX}
+            spacingY={args.spacingY}
+        >
             <div className="tw-bg-box-positive"></div>
             <div className="tw-bg-box-positive"></div>
             <div className="tw-bg-box-positive"></div>
             <div className="tw-bg-box-positive"></div>
-
             <div className="tw-bg-box-positive"></div>
-
             <div className="tw-bg-box-positive"></div>
-
             <div className="tw-bg-box-positive"></div>
-
             <div className="tw-bg-box-positive"></div>
-
             <div className="tw-bg-box-positive"></div>
-
             <div className="tw-bg-box-positive"></div>
-
             <div className="tw-bg-box-positive"></div>
-
             <div className="tw-bg-box-positive"></div>
-
             <div className="tw-bg-box-positive"></div>
         </Grid>
     );

@@ -11,13 +11,10 @@ import {
 } from '@utilities/dimensions';
 import { BOX_ALIAS_TOKENS_PREFIX } from '@utilities/tokens';
 
-export type GridSpacingX = 0 | 4 | 8 | 12 | 16 | 20 | 24 | 28 | 32 | 36 | 40;
-export type GridSpacingY = 0 | 4 | 8 | 12 | 16 | 20 | 24 | 28 | 32 | 36 | 40;
-
 export type GridProps = {
     column?: number;
-    spacingX?: GridSpacingX;
-    spacingY?: GridSpacingY;
+    spacingX?: SpacingValues;
+    spacingY?: SpacingValues;
     children?: React.ReactNode;
     minWidth?: `${number}${DimensionUnities}`;
     maxWidth?: `${number}${DimensionUnities}`;
@@ -45,9 +42,6 @@ export const Grid = ({
     margin = 0,
     padding = 0,
 }: GridProps) => {
-    const acceptableSpacingXInput: GridSpacingX[] = [0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40];
-    const acceptableSpacingYInput: GridSpacingY[] = [0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40];
-
     const paddingClassName = SPACING_VALUES.includes(padding) ? PADDING_VALUES_MAP[padding] : PADDING_VALUES_MAP[0];
     const marginClassName = SPACING_VALUES.includes(padding) ? MARGIN_VALUES_MAP[margin] : MARGIN_VALUES_MAP[0];
 
@@ -79,10 +73,10 @@ export const Grid = ({
         40: 'tw-gap-10',
     };
 
-    const gridSpacingXClass = acceptableSpacingXInput.includes(spacingX)
+    const gridSpacingXClass = SPACING_VALUES.includes(spacingX)
         ? gridSpacingXMappings[spacingX]
         : gridSpacingXMappings[4];
-    const gridSpacingYClass = acceptableSpacingYInput.includes(spacingX)
+    const gridSpacingYClass = SPACING_VALUES.includes(spacingX)
         ? gridSpacingYMappings[spacingY]
         : gridSpacingYMappings[4];
 
