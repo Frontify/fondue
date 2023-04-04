@@ -70,7 +70,7 @@ describe('Grid Component', () => {
             </Grid>,
         );
 
-        cy.get(GRID_ITEM_ID).first().should('have.css', 'margin', '4px');
+        cy.get(GRID_ID).should('have.css', 'margin', '4px');
     });
 
     it('should render with specified padding', () => {
@@ -87,12 +87,12 @@ describe('Grid Component', () => {
             </Grid>,
         );
 
-        cy.get(GRID_ITEM_ID).first().should('have.css', 'padding', '4px');
+        cy.get(GRID_ID).should('have.css', 'padding', '4px');
     });
 
     it('should render with specified horizontal spacing', () => {
         cy.mount(
-            <Grid spacingX={4}>
+            <Grid spacingX={8}>
                 <div>{CONTENT_STRING}</div>
                 <div>{CONTENT_STRING}</div>
                 <div>{CONTENT_STRING}</div>
@@ -104,12 +104,12 @@ describe('Grid Component', () => {
             </Grid>,
         );
 
-        cy.get(GRID_ITEM_CONTENT_ID).first().should('have.css', 'margin', '0px 2px');
+        cy.get(GRID_ITEM_CONTENT_ID).first().should('have.css', 'margin', '2px 4px');
     });
 
     it('should render with specified vertical spacing', () => {
         cy.mount(
-            <Grid spacingY={4}>
+            <Grid spacingY={8}>
                 <div>{CONTENT_STRING}</div>
                 <div>{CONTENT_STRING}</div>
                 <div>{CONTENT_STRING}</div>
@@ -121,7 +121,7 @@ describe('Grid Component', () => {
             </Grid>,
         );
 
-        cy.get(GRID_ITEM_CONTENT_ID).first().should('have.css', 'margin', '2px 0px');
+        cy.get(GRID_ITEM_CONTENT_ID).first().should('have.css', 'margin', '4px 2px');
     });
 
     it('should render rows with specified height', () => {
@@ -143,7 +143,7 @@ describe('Grid Component', () => {
 
     it('should render with specified width', () => {
         cy.mount(
-            <Grid width="100%">
+            <Grid width="1000px">
                 <div>{CONTENT_STRING}</div>
                 <div>{CONTENT_STRING}</div>
                 <div>{CONTENT_STRING}</div>
@@ -155,6 +155,48 @@ describe('Grid Component', () => {
             </Grid>,
         );
 
-        cy.get(GRID_ID).first().should('have.css', 'width', '100%');
+        cy.get(GRID_ID).should('have.css', 'width', '1000px');
+    });
+
+    it('renders with proper box color tokens', () => {
+        cy.mount(
+            <Grid boxColorToken="box-neutral">
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+            </Grid>,
+        );
+
+        cy.get(GRID_ID).should('have.class', 'tw-bg-box-neutral');
+        cy.get(GRID_ID).should('have.class', 'tw-text-box-neutral-inverse');
+    });
+
+    it('throws an error if wrong box color token prefix is provided', (done) => {
+        cy.on('uncaught:exception', (error) => {
+            expect(error.message).to.include('boxColorToken should be one of the following values');
+            done();
+            return false;
+        });
+        cy.mount(
+            <Grid boxColorToken="box-wrong-token">
+                <div>{CONTENT_STRING}</div>
+            </Grid>,
+        );
+    });
+
+    it('should render with custom data-test-id', () => {
+        cy.mount(
+            <Grid data-test-id="custom-container-test-id">
+                <div>{CONTENT_STRING}</div>
+            </Grid>,
+        );
+
+        cy.get('[data-test-id=custom-container-test-id]').as('Grid');
+        cy.get('@Grid').should('exist');
     });
 });

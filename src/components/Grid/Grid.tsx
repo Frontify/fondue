@@ -55,7 +55,7 @@ export const Grid = ({
                         ['data-test-id']: 'fondue-grid-item-content',
                         style: {
                             height: rowHeight,
-                            margin: `${spacingY / 2}px ${spacingX / 2}px`,
+                            margin: `${spacingY / 2}px ${spacingX / 2}px `,
                         },
                     })}
                 </div>
