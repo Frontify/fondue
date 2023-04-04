@@ -50,9 +50,13 @@ export const Grid = ({
     const renderedChildren = React.Children.map(children, (child) => {
         return (
             <>
-                <div style={{ height: 'auto', margin: `${spacingY / 2}px 0px`, flexBasis, display: 'inline-flex' }}>
+                <div data-test-id="fondue-grid-item" style={{ height: 'auto', flexBasis, display: 'inline-flex' }}>
                     {cloneElement(child as ReactElement, {
-                        style: { height: rowHeight, margin: `0px ${spacingX / 2}px` },
+                        ['data-test-id']: 'fondue-grid-item-content',
+                        style: {
+                            height: rowHeight,
+                            margin: `${spacingY / 2}px ${spacingX / 2}px`,
+                        },
                     })}
                 </div>
             </>

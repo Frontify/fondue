@@ -1,91 +1,160 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, useState } from 'react';
-import { Switch, SwitchLabelStyle, SwitchProps } from './Switch';
+import React from 'react';
+import { Grid } from './Grid';
 
-const Component: FC<SwitchProps> = ({ on = false, ...props }) => {
-    const [active, setActive] = useState(on);
+const GRID_ID = '[data-test-id=fondue-grid]';
+const GRID_INNER_WRAPPER_ID = '[data-test-id=fondue-grid-inner-wrapper]';
+const GRID_ITEM_ID = '[data-test-id=fondue-grid-item]';
+const GRID_ITEM_CONTENT_ID = '[data-test-id=fondue-grid-item-content]';
+const CONTENT_STRING = 'Test';
 
-    return (
-        <Switch
-            {...props}
-            on={active}
-            onChange={(event) => {
-                setActive(!active);
-                props.onChange && props.onChange(event);
-            }}
-        />
-    );
-};
+describe('Grid Component', () => {
+    it('should exist', () => {
+        cy.mount(
+            <Grid>
+                <div>{CONTENT_STRING}</div>
+            </Grid>,
+        );
 
-const SWITCH_ID = '[data-test-id=switch]';
-const SWITCH_CONTAINER_ID = '[data-test-id=switch-container]';
-const INPUT_LABEL_ID = '[data-test-id=input-label-container]';
-const SWITCH_LABEL_WRAPPER_ID = '[data-test-id=switch-label-wrapper';
-
-const SWITCH_LABEL = 'Switch Label';
-
-describe('Switch Component', () => {
-    it('should render the value correctly', () => {
-        cy.mount(<Component name="switch-test-value" />);
-
-        cy.get(SWITCH_ID).as('Switch');
-        cy.get('@Switch').invoke('attr', 'name').should('eq', 'switch-test-value');
-        cy.get('@Switch').should('have.value', 'false');
-
-        cy.get('@Switch').click();
-        cy.get('@Switch').should('have.value', 'true');
+        cy.get(GRID_ID).should('exist');
+        cy.get(GRID_INNER_WRAPPER_ID).should('exist');
+        cy.get(GRID_ITEM_ID).should('exist');
     });
 
-    it('should react on click', () => {
-        const onChangeStub = cy.stub().as('onChangeStub');
+    it('should render specified number of columns with appropriate width', () => {
+        cy.mount(
+            <Grid column={4}>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+            </Grid>,
+        );
 
-        cy.mount(<Component name="switch-test-change" onChange={onChangeStub} />);
-        cy.get('@onChangeStub').should('not.be.called');
-
-        cy.get(SWITCH_ID).as('Switch');
-        cy.get('@Switch').click();
-        cy.get('@onChangeStub').should('be.calledOnce');
+        cy.get(GRID_ITEM_ID).first().should('have.css', 'flex-basis', '25%');
     });
 
-    it('should do nothing if disabled', () => {
-        cy.mount(<Component name="switch-test-disabled" disabled />);
+    it('should render specified number of columns', () => {
+        cy.mount(
+            <Grid column={4}>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+            </Grid>,
+        );
 
-        cy.get(SWITCH_ID).as('Switch');
-        cy.get('@Switch').invoke('attr', 'name').should('eq', 'switch-test-disabled');
-        cy.get('@Switch').invoke('attr', 'disabled').should('eq', 'disabled');
+        cy.get(GRID_ITEM_ID).first().should('have.css', 'flex-basis', '25%');
     });
 
-    it('should have a label', () => {
-        cy.mount(<Component label={SWITCH_LABEL} />);
+    it('should render with specified margins', () => {
+        cy.mount(
+            <Grid margin={4}>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+            </Grid>,
+        );
 
-        cy.get(SWITCH_CONTAINER_ID).find(INPUT_LABEL_ID).should('exist');
-        cy.get(INPUT_LABEL_ID).contains(SWITCH_LABEL);
+        cy.get(GRID_ITEM_ID).first().should('have.css', 'margin', '4px');
     });
 
-    it('should render default labelStyle', () => {
-        cy.mount(<Component label={SWITCH_LABEL} />);
+    it('should render with specified padding', () => {
+        cy.mount(
+            <Grid padding={4}>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+            </Grid>,
+        );
 
-        cy.get(SWITCH_LABEL_WRAPPER_ID).should('have.class', 'tw-text-text-weak');
-        cy.get(SWITCH_LABEL_WRAPPER_ID).should('have.class', 'tw-font-medium');
+        cy.get(GRID_ITEM_ID).first().should('have.css', 'padding', '4px');
     });
 
-    it('should render heading labelStyle', () => {
-        cy.mount(<Component label={SWITCH_LABEL} labelStyle={SwitchLabelStyle.Heading} />);
+    it('should render with specified horizontal spacing', () => {
+        cy.mount(
+            <Grid spacingX={4}>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+            </Grid>,
+        );
 
-        cy.get(SWITCH_LABEL_WRAPPER_ID).should('have.class', 'tw-text-text');
-        cy.get(SWITCH_LABEL_WRAPPER_ID).should('have.class', 'tw-font-bold');
+        cy.get(GRID_ITEM_CONTENT_ID).first().should('have.css', 'margin', '0px 2px');
     });
 
-    it('should hug the switch and label', () => {
-        cy.mount(<Component label={SWITCH_LABEL} hug={true} />);
+    it('should render with specified vertical spacing', () => {
+        cy.mount(
+            <Grid spacingY={4}>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+            </Grid>,
+        );
 
-        cy.get(SWITCH_CONTAINER_ID).should('have.css', 'display', 'inline-flex');
+        cy.get(GRID_ITEM_CONTENT_ID).first().should('have.css', 'margin', '2px 0px');
     });
 
-    it('switch should have a type definition', () => {
-        cy.mount(<Component label={SWITCH_LABEL} />);
+    it('should render rows with specified height', () => {
+        cy.mount(
+            <Grid rowHeight="100px">
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+            </Grid>,
+        );
 
-        cy.get(SWITCH_ID).should('have.attr', 'type', 'button');
+        cy.get(GRID_ITEM_CONTENT_ID).first().should('have.css', 'height', '100px');
+    });
+
+    it('should render with specified width', () => {
+        cy.mount(
+            <Grid width="100%">
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+                <div>{CONTENT_STRING}</div>
+            </Grid>,
+        );
+
+        cy.get(GRID_ID).first().should('have.css', 'width', '100%');
     });
 });
