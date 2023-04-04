@@ -1,14 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { ReactElement, cloneElement, useEffect } from 'react';
-import { merge } from '@utilities/merge';
-import {
-    DimensionUnities,
-    MARGIN_VALUES_MAP,
-    PADDING_VALUES_MAP,
-    SPACING_VALUES,
-    SpacingValues,
-} from '@utilities/dimensions';
+import { DimensionUnities, SpacingValues } from '@utilities/dimensions';
 import { BOX_ALIAS_TOKENS_PREFIX } from '@utilities/tokens';
 
 export type GridProps = {
@@ -16,10 +9,8 @@ export type GridProps = {
     spacingX?: SpacingValues;
     spacingY?: SpacingValues;
     children?: React.ReactNode;
-    minWidth?: `${number}${DimensionUnities}`;
-    maxWidth?: `${number}${DimensionUnities}`;
-    minHeight?: `${number}${DimensionUnities}`;
-    maxHeight?: `${number}${DimensionUnities}`;
+    width?: `${number}${DimensionUnities}`;
+    rowHeight?: `${number}${DimensionUnities}`;
     padding?: SpacingValues;
     margin?: SpacingValues;
     boxColorToken?: string;
@@ -34,52 +25,12 @@ export const Grid = ({
     spacingY = 4,
     children,
     'data-test-id': dataTestId = CONTAINER_TEST_ID,
-    minWidth,
-    maxWidth,
-    maxHeight,
-    minHeight,
+    width = '100%',
+    rowHeight,
     boxColorToken,
     margin = 0,
     padding = 0,
 }: GridProps) => {
-    const paddingClassName = SPACING_VALUES.includes(padding) ? PADDING_VALUES_MAP[padding] : PADDING_VALUES_MAP[0];
-    const marginClassName = SPACING_VALUES.includes(padding) ? MARGIN_VALUES_MAP[margin] : MARGIN_VALUES_MAP[0];
-
-    const gridSpacingXMappings = {
-        0: 'tw-gap-0',
-        4: 'tw-gap-1',
-        8: 'tw-gap-2',
-        12: 'tw-gap-3',
-        16: 'tw-gap-4',
-        20: 'tw-gap-5',
-        24: 'tw-gap-6',
-        28: 'tw-gap-7',
-        32: 'tw-gap-8',
-        36: 'tw-gap-9',
-        40: 'tw-gap-10',
-    };
-
-    const gridSpacingYMappings = {
-        0: 'tw-gap-0',
-        4: 'tw-gap-1',
-        8: 'tw-gap-2',
-        12: 'tw-gap-3',
-        16: 'tw-gap-4',
-        20: 'tw-gap-5',
-        24: 'tw-gap-6',
-        28: 'tw-gap-7',
-        32: 'tw-gap-8',
-        36: 'tw-gap-9',
-        40: 'tw-gap-10',
-    };
-
-    const gridSpacingXClass = SPACING_VALUES.includes(spacingX)
-        ? gridSpacingXMappings[spacingX]
-        : gridSpacingXMappings[4];
-    const gridSpacingYClass = SPACING_VALUES.includes(spacingX)
-        ? gridSpacingYMappings[spacingY]
-        : gridSpacingYMappings[4];
-
     const colorClasses = !boxColorToken ? '' : `tw-bg-${boxColorToken} tw-text-${boxColorToken}-inverse`;
 
     useEffect(() => {
@@ -94,35 +45,33 @@ export const Grid = ({
         }
     }, [boxColorToken]);
 
-    const colClass = `tw-column-${column}`;
+    const flexBasis = `${(1 / column) * 100}%`;
 
     const renderedChildren = React.Children.map(children, (child) => {
-        return cloneElement(child as ReactElement, {
-            style: { flexBasis: `${Math.floor((1 / column) * 100)}%`, height: minHeight },
-        });
+        return (
+            <>
+                <div style={{ height: 'auto', margin: `${spacingY / 2}px 0px`, flexBasis, display: 'inline-flex' }}>
+                    {cloneElement(child as ReactElement, {
+                        style: { height: rowHeight, margin: `0px ${spacingX / 2}px` },
+                    })}
+                </div>
+            </>
+        );
     });
 
     return (
         <div
             data-test-id={dataTestId}
-            className={merge([
-                'tw-flex',
-                gridSpacingXClass,
-                gridSpacingYClass,
-                paddingClassName,
-                marginClassName,
-                colorClasses,
-                colClass,
-            ])}
+            className={colorClasses}
             style={{
-                display: 'flex',
-                maxWidth,
-                minWidth,
-                maxHeight,
-                minHeight,
+                margin,
+                padding,
+                width,
             }}
         >
-            {children ? renderedChildren : <></>}
+            <div data-test-id="fondue-grid-inner-wrapper" className="tw-w-full tw-h-full tw-inline-flex tw-flex-wrap">
+                {children ? renderedChildren : <></>}
+            </div>
         </div>
     );
 };

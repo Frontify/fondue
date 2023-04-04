@@ -34,9 +34,8 @@ export default {
         'data-test-id': 'custom-test-id',
         padding: 4,
         margin: 4,
-        minWidth: '100px',
-        maxWidth: '900px',
-        minHeight: '100px',
+        width: '100%',
+        rowHeight: '100px',
         maxHeight: undefined,
         boxColorToken: 'box-neutral',
     },
@@ -45,21 +44,21 @@ export default {
 export const Default: StoryFn<GridProps> = (args: GridProps) => {
     return (
         <Grid {...args}>
-            <div className="tw-bg-box-selected-strong"></div>
-            <div className="tw-bg-box-positive-strong"></div>
-            <div className="tw-bg-box-negative-strong"></div>
-            <div className="tw-bg-box-warning-strong"></div>
-            <div className="tw-bg-box-neutral-strong"></div>
-            <div className="tw-bg-box-selected-strong"></div>
-            <div className="tw-bg-box-positive-strong"></div>
-            <div className="tw-bg-box-negative-strong"></div>
-            <div className="tw-bg-box-warning-strong"></div>
-            <div className="tw-bg-box-neutral-strong"></div>
-            <div className="tw-bg-box-selected-strong"></div>
-            <div className="tw-bg-box-positive-strong"></div>
-            <div className="tw-bg-box-negative-strong"></div>
-            <div className="tw-bg-box-warning-strong"></div>
-            <div className="tw-bg-box-neutral-strong"></div>
+            <div className="tw-w-full tw-h-full tw-bg-box-selected-strong"></div>
+            <div className="tw-w-full tw-h-full tw-bg-box-positive-strong"></div>
+            <div className="tw-w-full tw-h-full tw-bg-box-negative-strong"></div>
+            <div className="tw-w-full tw-h-full tw-bg-box-warning-strong"></div>
+            <div className="tw-w-full tw-h-full tw-bg-box-neutral-strong"></div>
+            <div className="tw-w-full tw-h-full tw-bg-box-selected-strong"></div>
+            <div className="tw-w-full tw-h-full tw-bg-box-positive-strong"></div>
+            <div className="tw-w-full tw-h-full tw-bg-box-negative-strong"></div>
+            <div className="tw-w-full tw-h-full tw-bg-box-warning-strong"></div>
+            <div className="tw-w-full tw-h-full tw-bg-box-neutral-strong"></div>
+            <div className="tw-w-full tw-h-full tw-bg-box-selected-strong"></div>
+            <div className="tw-w-full tw-h-full tw-bg-box-positive-strong"></div>
+            <div className="tw-w-full tw-h-full tw-bg-box-negative-strong"></div>
+            <div className="tw-w-full tw-h-full tw-bg-box-warning-strong"></div>
+            <div className="tw-w-full tw-h-full tw-bg-box-neutral-strong"></div>
         </Grid>
     );
 };
