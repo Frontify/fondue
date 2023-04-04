@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import {
-    DimensionUnities,
+    DimensionUnity,
     MARGIN_VALUES_MAP,
     PADDING_VALUES_MAP,
     SPACING_VALUES,
-    SpacingValues,
+    SpacingValue,
 } from '@utilities/dimensions';
 import { merge } from '@utilities/merge';
 import React, { ReactNode } from 'react';
@@ -13,12 +13,12 @@ import { ContainerHTMLElement } from 'src/types/elements';
 
 export type ContainerProps = {
     children?: ReactNode | ReactNode[];
-    minWidth?: `${number}${DimensionUnities}`;
-    maxWidth?: `${number}${DimensionUnities}`;
-    minHeight?: `${number}${DimensionUnities}`;
-    maxHeight?: `${number}${DimensionUnities}`;
-    padding?: SpacingValues;
-    margin?: SpacingValues;
+    minWidth?: `${number}${DimensionUnity}`;
+    maxWidth?: `${number}${DimensionUnity}`;
+    minHeight?: `${number}${DimensionUnity}`;
+    maxHeight?: `${number}${DimensionUnity}`;
+    padding?: SpacingValue;
+    margin?: SpacingValue;
     bg?: string;
     color?: string;
     'data-test-id'?: string;
