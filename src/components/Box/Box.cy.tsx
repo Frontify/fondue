@@ -31,6 +31,12 @@ describe('Box Box', () => {
         cy.get('@Box').should('have.attr', 'aria-label', BOX_ARIA_LABEL);
     });
 
+    it('should render as span tag', () => {
+        cy.mount(<Box as="span">{BOX_CONTENT}</Box>);
+
+        cy.get(BOX_ID).first().should('have.prop', 'tagName', 'SPAN');
+    });
+
     it('should render with custom data-test-id', () => {
         cy.mount(<Box data-test-id="custom-box-test-id">{BOX_CONTENT}</Box>);
 
