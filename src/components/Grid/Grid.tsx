@@ -1,18 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { ReactElement, cloneElement, useEffect } from 'react';
-import { DimensionUnities, SpacingValues } from '@utilities/dimensions';
+import { DimensionUnity, SpacingValue } from '@utilities/dimensions';
 import { BOX_ALIAS_TOKENS_PREFIX } from '@utilities/tokens';
 
 export type GridProps = {
     column?: number;
-    spacingX?: SpacingValues;
-    spacingY?: SpacingValues;
+    spacingX?: SpacingValue;
+    spacingY?: SpacingValue;
     children?: React.ReactNode;
-    width?: `${number}${DimensionUnities}`;
-    rowHeight?: `${number}${DimensionUnities}`;
-    padding?: SpacingValues;
-    margin?: SpacingValues;
+    width?: `${number}${DimensionUnity}`;
+    rowHeight?: `${number}${DimensionUnity}`;
+    padding?: SpacingValue;
+    margin?: SpacingValue;
     boxColorToken?: string;
     'data-test-id'?: string;
 };
