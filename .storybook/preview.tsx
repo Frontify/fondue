@@ -58,6 +58,7 @@ export const parameters = {
     darkMode: {
         darkClass: 'tw-dark',
         classTarget: 'html',
+        current: 'light',
         stylePreview: true,
         dark: { ...dark },
         light: { ...light },
