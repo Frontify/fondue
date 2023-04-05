@@ -2,7 +2,7 @@
 
 import './commands';
 
-import { MountOptions, MountReturn } from 'cypress/react';
+import { MountOptions, MountReturn } from 'cypress/react18';
 
 declare global {
     // eslint-disable-next-line @typescript-eslint/no-namespace

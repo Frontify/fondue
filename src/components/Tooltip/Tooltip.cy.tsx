@@ -2,7 +2,7 @@
 
 import { IconSize } from '@foundation/Icon/IconSize';
 import { IconExclamationMarkCircle, IconIcon } from '@foundation/Icon/Generated';
-import { mount } from 'cypress/react';
+import { mount } from 'cypress/react18';
 import React from 'react';
 import { BrightHeaderStyle, brightHeaderBackgroundColors } from './BrightHeader';
 import { Tooltip, TooltipAlignment, TooltipPosition, TooltipProps } from './Tooltip';
