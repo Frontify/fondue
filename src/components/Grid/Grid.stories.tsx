@@ -61,12 +61,10 @@ export const Default: StoryFn<GridProps> = (args: GridProps) => {
     ];
     return (
         <Grid {...args}>
-            {contentClasses.map((contentClass, i) => (
-                <div
-                    key={`content-key-${contentClass}-${i}`}
-                    className={`tw-w-full tw-h-full tw-bg-box-${contentClass}-strong`}
-                ></div>
-            ))}
+            {contentClasses.map((contentClass, i) => {
+                const key = `content-key-${contentClass}-${i}`;
+                return <div key={key} className={`tw-w-full tw-h-full tw-bg-box-${contentClass}-strong`}></div>;
+            })}
         </Grid>
     );
 };
