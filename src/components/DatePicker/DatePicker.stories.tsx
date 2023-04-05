@@ -6,7 +6,7 @@ import { DatePicker, DatePickerProps, ReactDatePickerRef } from './DatePicker';
 import { FormControl } from '@components/FormControl';
 import { SegmentedControls } from '@components/SegmentedControls';
 import { Validation } from '@utilities/validation';
-import { intlFormat, subDays } from 'date-fns';
+import { addDays, intlFormat, subDays } from 'date-fns';
 import { IconCalendar16 } from '@foundation/Icon/Generated';
 import { Badge, BadgeEmphasis, BadgeStyle } from '..';
 
@@ -80,6 +80,16 @@ Default.args = {
 };
 
 Default.storyName = 'Date Picker';
+
+export const DatePickerWithMinAndMaxDates = Template.bind({});
+DatePickerWithMinAndMaxDates.args = {
+    placeHolder: 'Select a date',
+    isClearable: true,
+    shouldCloseOnSelect: true,
+    dateFormat: 'dd MMM yyyy',
+    minDate: subDays(new Date(), 5),
+    maxDate: addDays(new Date(), 5),
+};
 
 export const InsideFormControlAndOverSegmentedControls = TemplateWithFormControl.bind({});
 InsideFormControlAndOverSegmentedControls.args = {
