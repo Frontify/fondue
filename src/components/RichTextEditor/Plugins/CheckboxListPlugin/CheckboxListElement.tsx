@@ -41,7 +41,11 @@ export const CheckboxListElementNode = (props: PlateRenderElementProps) => {
             </div>
             <span
                 style={tokenStyles}
-                className={merge(['focus:tw-outline-none', checked && 'tw-line-through', isEmpty && 'tw-w-10'])}
+                className={merge([
+                    'focus:tw-outline-none',
+                    checked && 'tw-line-through',
+                    isEmpty && 'tw-w-auto tw-min-w-[16px]',
+                ])}
             >
                 {children}
             </span>

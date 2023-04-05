@@ -35,7 +35,12 @@ export const ListItemContentMarkupElementNode = ({ attributes, children, element
 
     return (
         <p className={getLicElementClassNames(element)} {...attributes}>
-            <span className={merge([isEmpty && 'tw-w-4', getUnderlineClassNames(designTokens, element)])}>
+            <span
+                className={merge([
+                    isEmpty && 'tw-w-auto tw-min-w-[16px]',
+                    getUnderlineClassNames(designTokens, element),
+                ])}
+            >
                 {children}
             </span>
         </p>
