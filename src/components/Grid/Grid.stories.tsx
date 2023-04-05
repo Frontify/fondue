@@ -42,23 +42,31 @@ export default {
 } as Meta<GridProps>;
 
 export const Default: StoryFn<GridProps> = (args: GridProps) => {
+    const contentClasses = [
+        'selected',
+        'positive',
+        'negative',
+        'warning',
+        'neutral',
+        'selected',
+        'positive',
+        'negative',
+        'warning',
+        'neutral',
+        'selected',
+        'positive',
+        'negative',
+        'warning',
+        'neutral',
+    ];
     return (
         <Grid {...args}>
-            <div className="tw-w-full tw-h-full tw-bg-box-selected-strong"></div>
-            <div className="tw-w-full tw-h-full tw-bg-box-positive-strong"></div>
-            <div className="tw-w-full tw-h-full tw-bg-box-negative-strong"></div>
-            <div className="tw-w-full tw-h-full tw-bg-box-warning-strong"></div>
-            <div className="tw-w-full tw-h-full tw-bg-box-neutral-strong"></div>
-            <div className="tw-w-full tw-h-full tw-bg-box-selected-strong"></div>
-            <div className="tw-w-full tw-h-full tw-bg-box-positive-strong"></div>
-            <div className="tw-w-full tw-h-full tw-bg-box-negative-strong"></div>
-            <div className="tw-w-full tw-h-full tw-bg-box-warning-strong"></div>
-            <div className="tw-w-full tw-h-full tw-bg-box-neutral-strong"></div>
-            <div className="tw-w-full tw-h-full tw-bg-box-selected-strong"></div>
-            <div className="tw-w-full tw-h-full tw-bg-box-positive-strong"></div>
-            <div className="tw-w-full tw-h-full tw-bg-box-negative-strong"></div>
-            <div className="tw-w-full tw-h-full tw-bg-box-warning-strong"></div>
-            <div className="tw-w-full tw-h-full tw-bg-box-neutral-strong"></div>
+            {contentClasses.map((contentClass, i) => (
+                <div
+                    key={`content-key-${contentClass}-${i}`}
+                    className={`tw-w-full tw-h-full tw-bg-box-${contentClass}-strong`}
+                ></div>
+            ))}
         </Grid>
     );
 };

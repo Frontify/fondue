@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export type SpacingValues = 0 | 4 | 8 | 12 | 16 | 20 | 24 | 28 | 32 | 36 | 40;
-export type DimensionUnities = '%' | 'px' | 'rem' | 'em' | 'vh' | 'vw';
+export type SpacingValue = 0 | 4 | 8 | 12 | 16 | 20 | 24 | 28 | 32 | 36 | 40;
+export type DimensionUnity = '%' | 'px' | 'rem' | 'em' | 'vh' | 'vw';
 
-export const SPACING_VALUES: SpacingValues[] = [0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40];
-export const PADDING_VALUES_MAP = {
+export const SPACING_VALUES: SpacingValue[] = [0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40];
+export const PADDING_VALUES_MAP: Record<SpacingValue, string> = {
     0: 'tw-p-0',
     4: 'tw-p-1',
     8: 'tw-p-2',
@@ -18,7 +18,7 @@ export const PADDING_VALUES_MAP = {
     40: 'tw-p-10',
 };
 
-export const MARGIN_VALUES_MAP = {
+export const MARGIN_VALUES_MAP: Record<SpacingValue, string> = {
     0: 'tw-m-0',
     4: 'tw-m-1',
     8: 'tw-m-2',
