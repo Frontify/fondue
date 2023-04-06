@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement } from 'react';
+import React, { ReactNode } from 'react';
 import { merge } from '@utilities/merge';
+import { ContainerHTMLElement } from 'src/types/elements';
 
 export type FlexDirection = 'row' | 'column' | 'row-reverse' | 'column-reverse';
 export type FlexWrap = 'nowrap' | 'wrap' | 'wrap-reverse';
@@ -26,7 +27,10 @@ export type FlexProps = {
     alignContent?: FlexAlignContent;
     boxColorToken?: string;
     'data-test-id'?: string;
-    children?: ReactElement;
+    children?: ReactNode | ReactNode[];
+    bg?: string;
+    color?: string;
+    as?: ContainerHTMLElement;
 };
 
 export const Flex = ({
@@ -37,7 +41,10 @@ export const Flex = ({
     alignContent = 'center',
     'data-test-id': dataTestId = 'fondue-flex',
     children,
-}: FlexProps): ReactElement => {
+    bg,
+    color,
+    as: ContainerElement = 'div',
+}: FlexProps) => {
     const directionMapping = {
         row: 'tw-flex-row',
         column: 'tw-flex-col',
@@ -81,19 +88,22 @@ export const Flex = ({
     };
 
     return (
-        <div
+        <ContainerElement
             data-test-id={dataTestId}
             className={merge([
+                'tw-flex',
+                'tw-gap-1',
                 directionMapping[direction],
                 wrapMapping[wrap],
                 justifyMapping[justify],
                 alignItemsMapping[alignItems],
                 alignContentMapping[alignContent],
-                boxColorTokenClassName,
+                bg,
+                color,
             ])}
         >
             {children}
-        </div>
+        </ContainerElement>
     );
 };
 Flex.displayName = 'FondueFlex';

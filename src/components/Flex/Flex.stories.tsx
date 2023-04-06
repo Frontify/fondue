@@ -1,96 +1,81 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import React from 'react';
 import { Meta, StoryFn } from '@storybook/react';
-import React, { MouseEvent, useEffect, useState } from 'react';
-import { IconExclamationMarkCircle } from '@foundation/Icon/Generated';
-import { Switch, SwitchLabelStyle, SwitchMode, SwitchProps, SwitchSize } from './Switch';
-import { TooltipIconTriggerStyle } from '@components/TooltipIcon';
+import { Flex, FlexProps } from './Flex';
 
-const SwitchSizeTypes: SwitchSize[] = ['small', 'medium'];
+const DirectionTypes = ['tw-flex-row', 'tw-flex-col', 'tw-flex-row-reverse', 'tw-flex-col-reverse'];
 
-const SwitchModeTypes: SwitchMode[] = ['on', 'off', 'indeterminate'];
+const WrapTypes = ['tw-flex-nowrap', 'tw-flex-wrap', 'tw-flex-wrap-reverse'];
 
-const SwitchLabelStyleTypes: SwitchLabelStyle[] = ['default', 'heading'];
+const JustifyTypes = [
+    'tw-justify-start',
+    'tw-justify-end',
+    'tw-justify-center',
+    'tw-justify-between',
+    'tw-justify-around',
+    'tw-justify-evenly',
+];
+
+const AlignItemsTypes = ['tw-items-start', 'tw-items-end', 'tw-items-center', 'tw-items-baseline', 'tw-items-stretch'];
+
+const AlignContentTypes = [
+    'tw-content-start',
+    'tw-content-end',
+    'tw-content-center',
+    'tw-content-normal',
+    'tw-content-between',
+    'tw-content-around',
+    'tw-content-evenly',
+    'tw-content-baseline',
+    'tw-content-stretch',
+];
 
 export default {
-    title: 'Components/Switch',
-    component: Switch,
+    title: 'Layout/Flex',
+    component: Flex,
     tags: ['autodocs'],
     argTypes: {
-        size: {
-            options: SwitchSizeTypes,
-            control: { type: 'radio' },
+        direction: {
+            options: DirectionTypes,
+            control: { type: 'select' },
         },
-        labelStyle: {
-            options: SwitchLabelStyleTypes,
-            control: { type: 'radio' },
+        wrap: {
+            options: WrapTypes,
+            control: { type: 'select' },
         },
-        label: {
-            placeholder: 'Switch label',
-            type: { name: 'string', required: false },
-            control: {
-                type: 'text',
-            },
+        justify: {
+            options: JustifyTypes,
+            control: { type: 'select' },
         },
-        mode: {
-            options: SwitchModeTypes,
-            control: { type: 'radio' },
+        alignItems: {
+            options: AlignItemsTypes,
+            control: { type: 'select' },
         },
-        onChange: {
-            table: { disable: false },
-            action: 'Change',
+        alignContent: {
+            options: AlignContentTypes,
+            control: { type: 'select' },
         },
     },
     args: {
-        mode: 'on',
-        disabled: false,
-        labelStyle: 'default',
-        hug: false,
-        name: 'switch-name',
-        size: 'small',
+        direction: 'row',
+        wrap: 'wrap',
+        justify: 'center',
+        alignItems: 'center',
+        alignContent: 'center',
+        'data-test-id': 'custom-test-id',
+        bg: 'tw-bg-box-neutral',
+        color: 'tw-bg-box-positive-inverse',
     },
-} as Meta<SwitchProps>;
+} as Meta<FlexProps>;
 
-type Props = SwitchProps & { hug?: boolean };
-
-const Default: StoryFn<Props> = (args: Props) => {
-    const [mode, setMode] = useState<SwitchMode>(args.mode || 'off');
-    useEffect(() => {
-        args.mode && setMode(args.mode);
-    }, [args.mode]);
-
-    const toggle = (event: MouseEvent) => {
-        setMode(mode === 'on' ? 'off' : 'on');
-        args.onChange && args.onChange(event);
-    };
-
-    return <Switch {...args} onChange={toggle} mode={mode} />;
+export const Default: StoryFn<FlexProps> = (args: FlexProps) => {
+    return (
+        <Flex {...args}>
+            <div className="tw-w-12 tw-h-12 tw-bg-box-positive-strong"></div>
+            <div className="tw-w-12 tw-h-12 tw-bg-box-positive-strong"></div>
+            <div className="tw-w-12 tw-h-12 tw-bg-box-positive-strong"></div>
+            <div className="tw-w-12 tw-h-12 tw-bg-box-positive-strong"></div>
+        </Flex>
+    );
 };
-
-export const Small: StoryFn<Props> = Default.bind({});
-Small.args = { size: 'small' };
-
-export const Medium: StoryFn<Props> = Default.bind({});
-Medium.args = { size: 'medium' };
-
-export const WithLabel: StoryFn<Props> = Default.bind({});
-WithLabel.args = { label: 'Switch label' };
-
-export const WithLabelAndTooltip: StoryFn<Props> = Default.bind({});
-WithLabelAndTooltip.args = { label: 'Switch label', tooltip: { content: 'Switch tooltip' } };
-
-export const WithLabelAndMultipleTooltips: StoryFn<Props> = Default.bind({});
-WithLabelAndMultipleTooltips.args = {
-    label: 'Switch label',
-    tooltip: [
-        { content: 'First tooltip' },
-        {
-            content: 'Second Tooltip',
-            triggerIcon: <IconExclamationMarkCircle />,
-            triggerStyle: TooltipIconTriggerStyle.Warning,
-        },
-    ],
-};
-
-export const HugLabel: StoryFn<Props> = Default.bind({});
-HugLabel.args = { hug: true, label: 'Switch label' };
