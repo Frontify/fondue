@@ -11,7 +11,7 @@ import { Breadcrumb } from './Breadcrumbs';
 import { getItemElementType } from '@utilities/elements';
 
 const ItemWithBadges = ({ badges, children }: { badges?: BadgeProps[]; children: ReactNode }): ReactElement => (
-    <span className="tw-inline-flex tw-gap-x-2 tw-items-center">
+    <span className="tw-inline-flex tw-gap-x-1 tw-items-center">
         {children}
 
         {badges?.map(({ children: badge, ...props }, index) => (
@@ -49,7 +49,7 @@ export const CurrentBreadcrumbItem = ({
 
     return (
         <li
-            className="tw-w-full tw-inline-flex tw-align-middle tw-mt-1 tw-gap-x-1 tw-text-m tw-text-black dark:tw-text-white"
+            className="tw-w-full tw-inline-flex tw-align-middle tw-gap-x-1 tw-text-m tw-text-black dark:tw-text-white"
             data-test-id="breadcrumb-item"
         >
             {contentElementType === 'a' && (
