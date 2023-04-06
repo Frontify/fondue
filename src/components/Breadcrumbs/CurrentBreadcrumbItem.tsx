@@ -20,7 +20,7 @@ export const CurrentBreadcrumbItem = ({
     link,
     onClick,
 }: CurrentBreadcrumbItemProps): ReactElement => {
-    const ref = useRef<null>(null);
+    const ref = useRef(null);
     const Element = getItemElementType(link, onClick);
     const { itemProps } = useBreadcrumbItem(
         {
