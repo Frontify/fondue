@@ -3,12 +3,12 @@
 import { TreeState } from '@react-stately/tree';
 import { ReactElement, ReactNode } from 'react';
 import { Node } from '@react-types/shared';
-import { FieldsetHeaderSize, FieldsetHeaderType } from '@components/FieldsetHeader';
 
 export type AccordionProps = {
     children?: ReactNode;
     divider?: boolean;
     border?: boolean;
+    'data-test-id'?: string;
 };
 
 export type AriaAccordionItemProps = {
@@ -18,6 +18,7 @@ export type AriaAccordionItemProps = {
     padding?: boolean;
     divider?: boolean;
     headerComponent?: (props: AccordionHeaderProps) => ReactElement;
+    'data-test-id'?: string;
 };
 
 export type AccordionItemProps = {
@@ -25,37 +26,22 @@ export type AccordionItemProps = {
     padding?: boolean;
     divider?: boolean;
     headerComponent?: (props: AccordionHeaderProps) => ReactElement;
+    'data-test-id'?: string;
     children?: ReactNode;
 };
 
-export enum AccordionHeaderIconSize {
-    Small = 'Small',
-    Medium = 'Medium',
-    Large = 'Large',
-}
+export type AccordionHeaderIconSize = 'small' | 'medium' | 'large';
 
 export type AccordionHeaderProps = {
     decorator?: ReactNode;
     children: string;
     disabled?: boolean;
     isOpen: boolean;
-    /** @deprecated use headerComponent prop for custom header styles */
-    size?: AccordionHeaderIconSize | FieldsetHeaderSize;
-    /** @deprecated use headerComponent prop for custom header styles */
-    bold?: boolean;
-    /** @deprecated Icon type will be fixed to FieldsetHeaderType.Accordion.
-     Use headerComponent prop for custom header styles */
-    type?: FieldsetHeaderType;
-    /** @deprecated use headerComponent prop for custom header styles */
-    as?: keyof JSX.IntrinsicElements;
+    'data-test-id'?: string;
 };
 
 export type AccordionHeaderIconProps = {
     isOpen: boolean;
-    size?: AccordionHeaderIconSize | FieldsetHeaderSize;
-    disabled?: boolean;
-    /** @deprecated Icon type will be fixed to FieldsetHeaderType.Accordion.
-     Use headerComponent prop for custom header styles */
-    type?: FieldsetHeaderType;
-    children?: ReactNode;
+    size?: AccordionHeaderIconSize;
+    'data-test-id'?: string;
 };
