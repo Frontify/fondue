@@ -53,6 +53,10 @@ export const TreeItem = ({
         return isActive ? treeState.projection : null;
     }, [isActive, treeState.projection]);
 
+    const projectionNode = useMemo(() => {
+        return treeState.nodes.find(({ props }) => props.id === projection?.parentId);
+    }, [projection?.parentId, treeState.nodes]);
+
     const isWithin = useMemo(() => {
         return projection !== null && over !== null && projection.depth > over.data.current?.level;
     }, [projection, over]);
@@ -64,21 +68,44 @@ export const TreeItem = ({
         over?.data.current &&
         over.data.current.accepts.includes(active.data.current.type);
 
-    const canDropWithin =
+    // Moving down the tree
+    let canDropWithinMovingDown =
         isActive &&
         isWithin &&
         active.data.current &&
         over?.data.current &&
         over.data.current.accepts.includes(`${active.data.current.type}-within`);
 
+    // Moving up the tree
+    let canDropWithinMovingUp =
+        projection &&
+        projectionNode?.props.accepts &&
+        isActive &&
+        active.data.current &&
+        projectionNode.props.accepts.includes(`${active.data.current.type}-within`);
+
     const handleItemDragEnd = (event: DragEndEvent) => {
         const { over, active } = event;
+
+        const activeIndex = treeState.nodes.findIndex(({ props }) => props.id === active.id);
+        const overIndex = treeState.nodes.findIndex(({ props }) => props.id === over?.id);
+
+        const movingDown = activeIndex < overIndex;
+        const movingUp = !movingDown;
 
         if (active.id === over?.id) {
             return;
         }
 
-        if (isActive && over && (canDrop || canDropWithin)) {
+        if (movingUp) {
+            canDropWithinMovingDown = false;
+        }
+
+        if (movingDown) {
+            canDropWithinMovingUp = false;
+        }
+
+        if (isActive && over && (canDrop || canDropWithinMovingDown || canDropWithinMovingUp)) {
             const sortActive = getItemPositionInParent(
                 { id: active.id, parentId: active.data?.current?.parentId },
                 treeState.nodes,
@@ -94,14 +121,14 @@ export const TreeItem = ({
                 position = 'after';
             }
 
-            if (canDropWithin) {
+            if (canDropWithinMovingDown || canDropWithinMovingUp) {
                 position = 'within';
             }
 
             onDrop?.(
                 {
-                    id: over.id.toString(),
-                    type: canDropWithin ? projection?.parentId : over?.data?.current?.type,
+                    id: canDropWithinMovingUp ? projection?.parentId?.toString() ?? 'ID not found' : over.id.toString(),
+                    type: canDropWithinMovingUp ? projectionNode?.props.type : over?.data?.current?.type,
                     sort: sortOver,
                 },
                 { id: active.id.toString(), type: active.data?.current?.type, sort: sortActive },
@@ -219,7 +246,7 @@ export const TreeItem = ({
         'tw-flex tw-items-center tw-gap-x-1.5 tw-h-10 tw-leading-5 tw-width-full',
         isActive && 'tw-border-box-selected-strong tw-border-dashed tw-border-2 tw-bg-box-selected-hover',
         isActive &&
-            ((isWithin && !canDropWithin) || !canDrop) &&
+            ((isWithin && !(canDropWithinMovingDown || canDropWithinMovingUp)) || (!isWithin && !canDrop)) &&
             'tw-bg-box-negative-hover tw-border-box-negative-strong-hover tw-border-dashed tw-border-2',
     ]);
 
