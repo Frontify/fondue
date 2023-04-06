@@ -109,11 +109,15 @@ const reducer = (state: TreeState, action: TreeStateAction): TreeState => {
                 return state;
             }
 
-            const spliceIndex = index + 1;
+            const sliceIndex = index + 1;
+
+            const nodes = [...state.nodes.slice(0, sliceIndex), ...children, ...state.nodes.slice(sliceIndex)].filter(
+                (node, index, self) => index === self.findIndex((item) => item.key === node.key),
+            );
 
             return {
                 ...state,
-                nodes: [...state.nodes.slice(0, spliceIndex), ...children, ...state.nodes.slice(spliceIndex)],
+                nodes,
             };
         }
 
