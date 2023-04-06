@@ -3,14 +3,15 @@
 import { Button, ButtonEmphasis, ButtonProps, ButtonSize, ButtonStyle } from '@components/Button';
 import { IconCheckMark } from '@foundation/Icon/Generated';
 import { merge } from '@utilities/merge';
-import React, { FC, PropsWithChildren } from 'react';
+import React, { ReactElement, ReactNode } from 'react';
 
-export type FlyoutFooterProps = PropsWithChildren<{
+export type FlyoutFooterProps = {
     buttons: [ButtonProps, ButtonProps] | [ButtonProps];
     border?: boolean;
-}>;
+    children?: ReactNode;
+};
 
-export const FlyoutFooter: FC<FlyoutFooterProps> = ({ buttons, border = true }) => {
+export const FlyoutFooter = ({ buttons, border = true }: FlyoutFooterProps): ReactElement => {
     return (
         <div
             className={merge([
@@ -30,7 +31,13 @@ export const FlyoutFooter: FC<FlyoutFooterProps> = ({ buttons, border = true }) 
 };
 FlyoutFooter.displayName = 'FondueFlyoutFooter';
 
-export const LegacyFlyoutFooter = ({ onConfirm, onCancel }: { onConfirm?: () => void; onCancel?: () => void }) => (
+export const LegacyFlyoutFooter = ({
+    onConfirm,
+    onCancel,
+}: {
+    onConfirm?: () => void;
+    onCancel?: () => void;
+}): ReactElement => (
     <FlyoutFooter
         buttons={
             onConfirm

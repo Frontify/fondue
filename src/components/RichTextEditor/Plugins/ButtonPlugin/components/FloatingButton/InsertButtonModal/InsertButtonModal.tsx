@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { CSSProperties, FC, ReactNode, useState } from 'react';
+import React, { CSSProperties, ReactElement, ReactNode, useState } from 'react';
 
 import { FormControl } from '@components/FormControl';
 import { useInsertModal } from './useInsertModal';
@@ -67,7 +67,7 @@ type Props = {
     children: ReactNode;
 };
 
-const HoverableButton: FC<Props> = ({ id, styles, isActive, onClick, children }) => {
+const HoverableButton = ({ id, styles, isActive, onClick, children }: Props): ReactElement => {
     const [hovered, setHovered] = useState(false);
     const getStyles = () => (styles && styles.hover && hovered ? { ...styles, ...styles.hover } : styles);
 

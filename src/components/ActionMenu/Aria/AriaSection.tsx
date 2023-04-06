@@ -1,13 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useMenuSection } from '@react-aria/menu';
-import React, { FC } from 'react';
+import React, { ReactElement, ReactNode } from 'react';
 
 export type AriaSectionProps = {
     ariaLabel?: string;
+    children: ReactNode;
 };
 
-export const AriaSection: FC<AriaSectionProps> = ({ ariaLabel, children }) => {
+export const AriaSection = ({ ariaLabel, children }: AriaSectionProps): ReactElement => {
     const { itemProps, groupProps } = useMenuSection({ 'aria-label': ariaLabel });
 
     return (

@@ -7,7 +7,7 @@ import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import React, { FC, useRef } from 'react';
+import React, { ReactElement, useRef } from 'react';
 import { AssetType } from '../AssetInput';
 import { SelectedAssetsThumbnail } from './SelectedAssetsThumbnail';
 
@@ -19,7 +19,7 @@ export type MultiAssetPreviewProps = {
 
 // const FOCUS_STYLE = "tw-border-black-90 dark:tw-border-black-10";
 
-export const MultiAssetPreview: FC<MultiAssetPreviewProps> = ({ numberOfLocations, assets, onClick }) => {
+export const MultiAssetPreview = ({ numberOfLocations, assets, onClick }: MultiAssetPreviewProps): ReactElement => {
     const buttonRef = useRef<HTMLButtonElement | null>(null);
     const { buttonProps } = useButton({ onPress: onClick }, buttonRef);
     const { isFocusVisible, focusProps } = useFocusRing();

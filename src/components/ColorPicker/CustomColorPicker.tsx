@@ -3,7 +3,7 @@
 import { Dropdown } from '@components/Dropdown/Dropdown';
 import { TextInputType } from '@components/TextInput/TextInput';
 import { toLongRgb, toShortRgb } from '@utilities/colors';
-import React, { FC, useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { RgbaColorPicker } from 'react-colorful';
 import tinycolor from 'tinycolor2';
 import { Color, ColorFormat } from '../../types';
@@ -12,12 +12,12 @@ import { ColorPickerProps } from './ColorPicker';
 
 const convertToHex = (color: Color) => tinycolor(toShortRgb(color)).toHex();
 
-export const CustomColorPicker: FC<Omit<ColorPickerProps, 'palette'>> = ({
+export const CustomColorPicker = ({
     currentColor,
     currentFormat,
     setFormat,
     onSelect,
-}) => {
+}: Omit<ColorPickerProps, 'palette'>): ReactElement => {
     const formatMenuBlock = [
         {
             id: 'color-picker-format-dropdown-block',

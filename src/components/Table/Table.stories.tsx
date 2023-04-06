@@ -7,7 +7,7 @@ import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/But
 import { IconSize } from '@foundation/Icon/IconSize';
 import { action } from '@storybook/addon-actions';
 import { Meta, StoryFn } from '@storybook/react';
-import React, { FC, useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { Column, Row, SelectionMode, SortDirection, Table, TableProps } from './Table';
 import { IconDotsVertical, IconFaceHappy } from '@foundation/Icon/Generated';
 
@@ -26,7 +26,7 @@ export default {
     },
 } as Meta<TableProps>;
 
-const User: FC<{ name: string }> = ({ name }) => (
+const User = ({ name }: { name: string }): ReactElement => (
     <div className="tw-flex tw-gap-x-2 tw-items-center">
         <IconFaceHappy size={IconSize.Size32} />
         <div>
@@ -36,7 +36,7 @@ const User: FC<{ name: string }> = ({ name }) => (
     </div>
 );
 
-const ActionButton: FC = () => (
+const ActionButton = (): ReactElement => (
     <Button
         style={ButtonStyle.Default}
         emphasis={ButtonEmphasis.Default}
