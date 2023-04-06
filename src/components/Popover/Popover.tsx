@@ -52,7 +52,7 @@ export const Popover = ({
                                 <div
                                     data-test-id={dataTestId}
                                     className={CONTAINER_CLASSES}
-                                    role="dialog"
+                                    role="region"
                                     id={id}
                                     aria-hidden={!open}
                                     aria-labelledby={id}
