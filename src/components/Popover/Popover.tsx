@@ -4,6 +4,7 @@ import React, { Children, ReactElement, ReactNode, cloneElement, isValidElement 
 import { Popper } from '@components/Popper';
 import { PopperPlacement, PopperProps } from '@components/Popper/types';
 import { CONTAINER_CLASSES } from '@utilities/overlayStyle';
+import { useMemoizedId } from '@hooks/useMemoizedId';
 
 export type PopoverProps = {
     'data-test-id'?: string;
@@ -26,6 +27,7 @@ export const Popover = ({
     enablePortal = false,
     'data-test-id': dataTestId = 'fondue-popover',
 }: PopoverProps) => {
+    const id = useMemoizedId();
     return (
         <Popper open={open} placement={placement} offset={offset} flip={flip} enablePortal={enablePortal}>
             {Children.map(children, (child) => {
@@ -33,13 +35,28 @@ export const Popover = ({
                     const { name } = child.type;
 
                     if (name === Trigger.name) {
-                        return <Popper.Reference>{cloneElement(child, { ...child.props })}</Popper.Reference>;
+                        return (
+                            <Popper.Reference>
+                                <div className="tw-w-fit" id={id}>
+                                    {cloneElement(child, {
+                                        ...child.props,
+                                    })}
+                                </div>
+                            </Popper.Reference>
+                        );
                     }
 
                     if (name === Content.name) {
                         return (
                             <Popper.Content>
-                                <div data-test-id={dataTestId} className={CONTAINER_CLASSES}>
+                                <div
+                                    data-test-id={dataTestId}
+                                    className={CONTAINER_CLASSES}
+                                    role="dialog"
+                                    id={id}
+                                    aria-hidden={!open}
+                                    aria-labelledby={id}
+                                >
                                     {cloneElement(child, { ...child.props })}
                                 </div>
                             </Popper.Content>

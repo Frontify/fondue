@@ -8,7 +8,7 @@ import { Button } from '@components/Button';
 import IconExclamationMarkTriangle16 from '@foundation/Icon/Generated/IconExclamationMarkTriangle16';
 
 export default {
-    title: 'Components/Popover',
+    title: 'Experimental/Popover',
     component: Popover,
     tags: ['autodocs'],
     args: {
@@ -54,8 +54,12 @@ const TriggeredOnHoverTemplate: StoryFn<PopoverProps> = (args) => {
         <div className="tw-h-32 tw-flex tw-justify-center tw-items-center">
             <Popover open={open} {...args}>
                 <Popover.Trigger>
-                    <button onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
-                        <IconExclamationMarkTriangle16 />
+                    <button
+                        className="tw-flex tw-items-center"
+                        onMouseEnter={() => setOpen(true)}
+                        onMouseLeave={() => setOpen(false)}
+                    >
+                        <span>Information</span> <IconExclamationMarkTriangle16 />
                     </button>
                 </Popover.Trigger>
                 <Popover.Content>
@@ -68,7 +72,33 @@ const TriggeredOnHoverTemplate: StoryFn<PopoverProps> = (args) => {
     );
 };
 
+const WithInteractiveContentTemplate: StoryFn<PopoverProps> = (args) => {
+    const [open, setOpen] = useState(false);
+    return (
+        <div className="tw-h-32 tw-flex tw-justify-center tw-items-center">
+            <Popover open={open} {...args}>
+                <Popover.Trigger>
+                    <Button onClick={() => setOpen(!open)}>I am the Trigger</Button>
+                </Popover.Trigger>
+                <Popover.Content>
+                    <div className="tw-p-2 tw-w-[400px]">
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eos explicabo iure placeat quae
+                            quidem reiciendis sequi, veniam. Cupiditate eos necessitatibus nemo non obcaecati, quod
+                            ullam. Beatae deserunt eum quibusdam ratione.
+                        </p>
+                        <Button>Confirm</Button>
+                    </div>
+                </Popover.Content>
+            </Popover>
+        </div>
+    );
+};
+
 export const TriggeredOnClick = Template.bind({});
 TriggeredOnClick.args = {};
 export const TriggeredOnHover = TriggeredOnHoverTemplate.bind({});
 TriggeredOnHover.args = {};
+
+export const WithInteractiveContent = WithInteractiveContentTemplate.bind({});
+WithInteractiveContent.args = {};
