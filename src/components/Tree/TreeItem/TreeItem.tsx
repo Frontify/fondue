@@ -8,7 +8,7 @@ import { DragEndEvent, DragStartEvent, useDndContext, useDndMonitor } from '@dnd
 import { merge } from '@utilities/merge';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 
-import type { TreeItemProps } from '@components/Tree/types';
+import type { CollisionPosition, TreeItemProps } from '@components/Tree/types';
 import { useTreeContext } from '@components/Tree/TreeContext';
 
 import { DragHandle } from './DragHandle';
@@ -49,51 +49,66 @@ export const TreeItem = ({
 
     const isActive = active?.id === id;
 
-    const canDropWithin = useMemo(() => {
-        if (!isActive || !accepts || !active?.data.current?.type) {
-            return true;
+    const projection = useMemo(() => {
+        return isActive ? treeState.projection : null;
+    }, [isActive, treeState.projection]);
+
+    const isWithin = useMemo(() => {
+        return projection !== null && over !== null && projection.depth > over.data.current?.level;
+    }, [projection, over]);
+
+    const canDrop =
+        isActive &&
+        !isWithin &&
+        active.data.current &&
+        over?.data.current &&
+        over.data.current.accepts.includes(active.data.current.type);
+
+    const canDropWithin =
+        isActive &&
+        isWithin &&
+        active.data.current &&
+        over?.data.current &&
+        over.data.current.accepts.includes(`${active.data.current.type}-within`);
+
+    const handleItemDragEnd = (event: DragEndEvent) => {
+        const { over, active } = event;
+
+        if (active.id === over?.id) {
+            return;
         }
 
-        return accepts.includes(`${active.data.current.type}-within`);
-    }, [accepts, active?.data, isActive]);
+        if (isActive && over && (canDrop || canDropWithin)) {
+            const sortActive = getItemPositionInParent(
+                { id: active.id, parentId: active.data?.current?.parentId },
+                treeState.nodes,
+            );
 
-    const canDrop = useMemo(() => {
-        if (!isActive || !accepts || !active?.data.current?.type) {
-            return true;
-        }
+            const sortOver = getItemPositionInParent(
+                { id: over.id, parentId: over.data?.current?.parentId },
+                treeState.nodes,
+            );
 
-        return accepts.includes(active.data.current.type);
-    }, [accepts, active?.data, isActive]);
-
-    const projection = isActive ? treeState.projection : null;
-
-    const isWithin = projection && over?.data.current?.level && projection.depth > over.data.current.level;
-
-    const handleItemDragEnd = useCallback(
-        (event: DragEndEvent) => {
-            const { over, active } = event;
-
-            if (onDrop && over?.id === id && active.id !== over?.id && (canDrop || canDropWithin)) {
-                const sortActive = getItemPositionInParent(
-                    { id: active.id, parentId: active.data?.current?.parentId },
-                    treeState.nodes,
-                );
-
-                const sortOver = getItemPositionInParent(
-                    { id: over.id, parentId: over.data?.current?.parentId },
-                    treeState.nodes,
-                );
-
-                // TODO: map items and position
-                onDrop(
-                    { id: over.id.toString(), type: over?.data?.current?.type, sort: sortOver },
-                    { id: active.id.toString(), type: active.data?.current?.type, sort: sortActive },
-                    undefined as any,
-                );
+            let position: CollisionPosition = 'before';
+            if (canDrop) {
+                position = 'after';
             }
-        },
-        [canDrop, canDropWithin, id, onDrop, treeState.nodes],
-    );
+
+            if (canDropWithin) {
+                position = 'within';
+            }
+
+            onDrop?.(
+                {
+                    id: over.id.toString(),
+                    type: canDropWithin ? projection?.parentId : over?.data?.current?.type,
+                    sort: sortOver,
+                },
+                { id: active.id.toString(), type: active.data?.current?.type, sort: sortActive },
+                position,
+            );
+        }
+    };
 
     const handleItemDragStart = useCallback(
         (event: DragStartEvent) => {
@@ -203,7 +218,8 @@ export const TreeItem = ({
     const containerClassName = merge([
         'tw-flex tw-items-center tw-gap-x-1.5 tw-h-10 tw-leading-5 tw-width-full',
         isActive && 'tw-border-box-selected-strong tw-border-dashed tw-border-2 tw-bg-box-selected-hover',
-        ((isWithin && !canDropWithin) || !canDrop) &&
+        isActive &&
+            ((isWithin && !canDropWithin) || !canDrop) &&
             'tw-bg-box-negative-hover tw-border-box-negative-strong-hover tw-border-dashed tw-border-2',
     ]);
 
@@ -264,14 +280,15 @@ export const TreeItem = ({
                 className={containerClassName}
                 animate={transform ? animate : undefined}
             >
-                {showDragHandle && (
+                {showDragHandle ? (
                     <DragHandle ref={setActivatorNodeRef} active={isSelected} {...listeners} {...attributes} />
-                )}
-                {showExpandButton && <ExpandButton onClick={handleExpand} expanded={showChildren} />}
+                ) : null}
 
-                {showLabel && (
+                {showExpandButton ? <ExpandButton onClick={handleExpand} expanded={showChildren} /> : null}
+
+                {showLabel ? (
                     <span className="first:tw-ml-3.5 tw-w-full tw-h-full tw-flex tw-items-center">{label}</span>
-                )}
+                ) : null}
 
                 {showContent && contentComponent}
             </motion.div>
