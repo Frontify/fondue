@@ -16,9 +16,7 @@ export const CheckboxListElementNode = (props: PlateRenderElementProps) => {
     const checked = element.checked as boolean;
     const { designTokens } = useRichTextEditorContext();
     const tokenStyles = designTokens[getTextStyle(element.children[0])];
-
     const align = (element.align as string) ?? 'left';
-    const isEmpty = element.children.every((child) => child.text === '');
 
     return (
         <div
@@ -41,11 +39,7 @@ export const CheckboxListElementNode = (props: PlateRenderElementProps) => {
             </div>
             <span
                 style={tokenStyles}
-                className={merge([
-                    'focus:tw-outline-none',
-                    checked && 'tw-line-through',
-                    isEmpty && 'tw-w-auto tw-min-w-[16px]',
-                ])}
+                className={merge(['focus:tw-outline-none tw-w-auto tw-min-w-[10px]', checked && 'tw-line-through'])}
             >
                 {children}
             </span>

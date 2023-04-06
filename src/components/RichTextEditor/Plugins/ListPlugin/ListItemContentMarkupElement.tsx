@@ -31,16 +31,10 @@ export const getLicElementClassNames = (element: TElement) =>
 
 export const ListItemContentMarkupElementNode = ({ attributes, children, element }: PlateRenderElementProps) => {
     const { designTokens } = useRichTextEditorContext();
-    const isEmpty = element.children.every((child) => child.text === '');
 
     return (
         <p className={getLicElementClassNames(element)} {...attributes}>
-            <span
-                className={merge([
-                    isEmpty && 'tw-w-auto tw-min-w-[16px]',
-                    getUnderlineClassNames(designTokens, element),
-                ])}
-            >
+            <span className={merge(['tw-w-auto tw-min-w-[10px]', getUnderlineClassNames(designTokens, element)])}>
                 {children}
             </span>
         </p>
