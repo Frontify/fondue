@@ -49,6 +49,12 @@ export const TreeItem = ({
 
     const isActive = active?.id === id;
 
+    const activeIndex = treeState.nodes.findIndex(({ props }) => props.id === active?.id);
+    const overIndex = treeState.nodes.findIndex(({ props }) => props.id === over?.id);
+
+    const movingDown = activeIndex < overIndex;
+    const movingUp = !movingDown;
+
     const projection = useMemo(() => {
         return isActive ? treeState.projection : null;
     }, [isActive, treeState.projection]);
@@ -70,30 +76,28 @@ export const TreeItem = ({
 
     // Moving down the tree
     let canDropWithinMovingDown =
+        movingDown &&
         isActive &&
         isWithin &&
         active.data.current &&
         over?.data.current &&
+        projection?.depth !== projection?.minDepth &&
         over.data.current.accepts.includes(`${active.data.current.type}-within`);
 
     // Moving up the tree
     let canDropWithinMovingUp =
+        movingUp &&
+        isActive &&
+        isWithin &&
+        active.data.current &&
         projection &&
         projectionNode?.props.accepts &&
-        isActive &&
-        active.data.current &&
         projectionNode.props.accepts.includes(`${active.data.current.type}-within`);
 
     const handleItemDragEnd = (event: DragEndEvent) => {
         const { over, active } = event;
 
-        const activeIndex = treeState.nodes.findIndex(({ props }) => props.id === active.id);
-        const overIndex = treeState.nodes.findIndex(({ props }) => props.id === over?.id);
-
-        const movingDown = activeIndex < overIndex;
-        const movingUp = !movingDown;
-
-        if (active.id === over?.id) {
+        if (active.id === over?.id && projection?.depth === projection?.minDepth) {
             return;
         }
 
@@ -106,22 +110,20 @@ export const TreeItem = ({
         }
 
         if (isActive && over && (canDrop || canDropWithinMovingDown || canDropWithinMovingUp)) {
-            const sortActive = getItemPositionInParent(
-                { id: active.id, parentId: active.data?.current?.parentId },
-                treeState.nodes,
-            );
-
             const sortOver = getItemPositionInParent(
                 { id: over.id, parentId: over.data?.current?.parentId },
                 treeState.nodes,
             );
 
-            let position: CollisionPosition = 'before';
+            const sortActive = getItemPositionInParent(
+                { id: active.id, parentId: active.data?.current?.parentId },
+                treeState.nodes,
+            );
+
+            let position: CollisionPosition = null;
             if (canDrop) {
                 position = 'after';
-            }
-
-            if (canDropWithinMovingDown || canDropWithinMovingUp) {
+            } else if (canDropWithinMovingDown || canDropWithinMovingUp) {
                 position = 'within';
             }
 
@@ -129,10 +131,11 @@ export const TreeItem = ({
                 {
                     id: canDropWithinMovingUp ? projection?.parentId?.toString() ?? 'ID not found' : over.id.toString(),
                     type: canDropWithinMovingUp ? projectionNode?.props.type : over?.data?.current?.type,
-                    sort: sortOver,
+                    sort: sortOver + 1,
                 },
-                { id: active.id.toString(), type: active.data?.current?.type, sort: sortActive },
+                { id: active.id.toString(), type: active.data?.current?.type, sort: sortActive + 1 },
                 position,
+                movingUp ? 'up' : 'down',
             );
         }
     };
@@ -246,7 +249,8 @@ export const TreeItem = ({
         'tw-flex tw-items-center tw-gap-x-1.5 tw-h-10 tw-leading-5 tw-width-full',
         isActive && 'tw-border-box-selected-strong tw-border-dashed tw-border-2 tw-bg-box-selected-hover',
         isActive &&
-            ((isWithin && !(canDropWithinMovingDown || canDropWithinMovingUp)) || (!isWithin && !canDrop)) &&
+            ((isWithin && !((movingDown && canDropWithinMovingDown) || (movingUp && canDropWithinMovingUp))) ||
+                (!isWithin && !canDrop)) &&
             'tw-bg-box-negative-hover tw-border-box-negative-strong-hover tw-border-dashed tw-border-2',
     ]);
 

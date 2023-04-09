@@ -102,4 +102,4 @@ export type TreeStateAction =
 
 export type RegisterNodeChildrenPayload = Extract<TreeStateAction, { type: 'REGISTER_NODE_CHILDREN' }>['payload'];
 
-export type CollisionPosition = 'before' | 'within' | 'after';
+export type CollisionPosition = Nullable<'before' | 'within' | 'after'>;
