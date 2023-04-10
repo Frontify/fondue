@@ -71,7 +71,7 @@ export const TreeItem = ({
         isActive &&
         !isWithin &&
         active.data.current &&
-        over?.data.current &&
+        over?.data.current?.accepts !== undefined &&
         over.data.current.accepts.includes(active.data.current.type);
 
     // Moving down the tree
@@ -80,7 +80,7 @@ export const TreeItem = ({
         isActive &&
         isWithin &&
         active.data.current &&
-        over?.data.current &&
+        over?.data.current?.accepts !== undefined &&
         projection?.depth !== projection?.minDepth &&
         over.data.current.accepts.includes(`${active.data.current.type}-within`);
 
