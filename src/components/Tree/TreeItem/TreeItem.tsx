@@ -313,7 +313,9 @@ export const TreeItem = ({
             >
                 {showDragHandle ? (
                     <DragHandle ref={setActivatorNodeRef} active={isSelected} {...listeners} {...attributes} />
-                ) : null}
+                ) : (
+                    <div className="tw-w-6"></div>
+                )}
 
                 {showExpandButton ? <ExpandButton onClick={handleExpand} expanded={showChildren} /> : null}
 
