@@ -552,7 +552,7 @@ export const GetSerializedContent = ({
                     </div>
                 </>
             ) : (
-                <div>...loading</div>
+                <div className="tw-rounded-sm tw-bg-base-alt tw-animate-pulse tw-h-full tw-min-h-[10px] tw-w-full" />
             )}
         </>
     );
