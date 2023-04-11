@@ -418,7 +418,14 @@ export const Tree = ({
 
     const [coordinateGetter] = useState(() => sortableTreeKeyboardCoordinates(sensorContext));
 
-    const sensors = useSensors(useSensor(PointerSensor), useSensor(KeyboardSensor, { coordinateGetter }));
+    const sensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 8,
+            },
+        }),
+        useSensor(KeyboardSensor, { coordinateGetter }),
+    );
 
     const announcements: TreeAnnouncements = useMemo(
         () => ({
