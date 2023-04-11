@@ -14,11 +14,13 @@ export const ColorPreview = ({ color }: ColorPreviewProps): ReactElement => {
     const backgroundColor = parsedColor.toRgbString();
 
     return (
-        <div
-            className="tw-sticky tw-box-content tw-shrink-0 tw-h-2 tw-top-0 tw-bg-white tw-z-20 dark:tw-bg-black-95 tw-border-line tw-mt-[-1px] tw-rounded-t tw-border tw-border-b-0"
-            style={{ backgroundColor }}
-            data-test-id="color-preview"
-        ></div>
+        <div className="tw-sticky tw-ml-[-1px] tw-mt-[-1px] tw-border tw-border-transparent tw-w-full tw-box-content tw-shrink-0 tw-h-2 tw-top-0 tw-rounded-t tw-overflow-hidden">
+            <div
+                className="tw-h-full tw-w-full tw-bg-white tw-z-20 dark:tw-bg-black-95"
+                style={{ backgroundColor }}
+                data-test-id="color-preview"
+            ></div>
+        </div>
     );
 };
 ColorPreview.displayName = 'FondueColorPreview';
