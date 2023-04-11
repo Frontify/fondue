@@ -33,8 +33,8 @@ export const sortableTreeKeyboardCoordinates: (context: SensorContext) => Keyboa
             if (horizontal.includes(event.code) && over?.id) {
                 const { depth, maxDepth, minDepth } = getProjection({
                     nodes,
-                    activeId: active.id,
-                    overId: over.id,
+                    activeId: active.id as string,
+                    overId: over.id as string,
                     dragOffset: offset,
                 });
 
@@ -117,8 +117,8 @@ export const sortableTreeKeyboardCoordinates: (context: SensorContext) => Keyboa
                     if (newNode && activeNode) {
                         const { depth } = getProjection({
                             nodes,
-                            activeId: active.id,
-                            overId: closestId,
+                            activeId: active.id as string,
+                            overId: closestId as string,
                             dragOffset,
                         });
 
