@@ -32,6 +32,7 @@ export * from './MenuItem';
 export * from './Modal';
 export * from './MultiInput';
 export * from './MultiSelect';
+export * from './OrderableList';
 export * from './OverflowMenu';
 export * from './RadioPill';
 export * from './RadioList';
