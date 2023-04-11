@@ -66,6 +66,7 @@ export default {
         'data-test-id': 'custom-test-id',
         bg: 'tw-bg-box-neutral',
         color: 'tw-bg-box-positive-inverse',
+        as: 'div',
     },
 } as Meta<FlexProps>;
 

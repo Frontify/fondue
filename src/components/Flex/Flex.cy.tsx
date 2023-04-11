@@ -1,99 +1,268 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement, useState } from 'react';
-import { Switch, SwitchProps } from './Switch';
+import React from 'react';
+import { Flex, FlexProps } from './Flex';
 
-const Component = ({ mode = 'off', ...props }: SwitchProps): ReactElement => {
-    const [active, setActive] = useState(mode);
+const FLEX_ID = '[data-test-id=fondue-flex]';
+const CUSTOM_DATA_TEST_ID_STRING = 'my-custom-id';
+const CUSTOM_FLEX_ID = `[data-test-id=${CUSTOM_DATA_TEST_ID_STRING}]`;
+const FLEX_CHILD_ID_STRING = 'flex-child';
+const FLEX_CHILD_ID = `[data-test-id=${FLEX_CHILD_ID_STRING}]`;
 
+const FlexComponent = (props: FlexProps) => {
     return (
-        <Switch
-            {...props}
-            mode={active}
-            onChange={(event) => {
-                setActive(active === 'off' ? 'on' : 'off');
-                props.onChange && props.onChange(event);
-            }}
-        />
+        <Flex {...props}>
+            <span data-test-id={FLEX_CHILD_ID_STRING} className="tw-w-12 tw-h-12 tw-bg-box-positive-strong"></span>
+            <span data-test-id={FLEX_CHILD_ID_STRING} className="tw-w-12 tw-h-12 tw-bg-box-positive-strong"></span>
+            <span data-test-id={FLEX_CHILD_ID_STRING} className="tw-w-12 tw-h-12 tw-bg-box-positive-strong"></span>
+            <span data-test-id={FLEX_CHILD_ID_STRING} className="tw-w-12 tw-h-12 tw-bg-box-positive-strong"></span>
+        </Flex>
     );
 };
 
-const SWITCH_ID = '[data-test-id=switch]';
-const SWITCH_CONTAINER_ID = '[data-test-id=switch-container]';
-const INPUT_LABEL_ID = '[data-test-id=input-label-container]';
-const SWITCH_LABEL_WRAPPER_ID = '[data-test-id=switch-label-wrapper';
+describe('Flex Component', () => {
+    it('should render', () => {
+        cy.mount(<FlexComponent />);
 
-const SWITCH_LABEL = 'Switch Label';
-
-describe('Switch Component', () => {
-    it('should render the value correctly', () => {
-        cy.mount(<Component name="switch-test-value" />);
-
-        cy.get(SWITCH_ID).as('Switch');
-        cy.get('@Switch').invoke('attr', 'name').should('eq', 'switch-test-value');
-        cy.get('@Switch').should('have.value', 'off');
-
-        cy.get('@Switch').click();
-        cy.get('@Switch').should('have.value', 'on');
+        cy.get(FLEX_ID).as('Flex');
+        cy.get('@Flex').should('exist');
     });
 
-    it('should support indeterminate value', () => {
-        cy.mount(<Component name="switch-test-value" mode="indeterminate" />);
+    it('should support custom data-test-id', () => {
+        cy.mount(<FlexComponent data-test-id={CUSTOM_DATA_TEST_ID_STRING} />);
 
-        cy.get(SWITCH_ID).as('Switch');
-        cy.get('@Switch').invoke('attr', 'name').should('eq', 'switch-test-value');
-        cy.get('@Switch').should('have.value', 'indeterminate');
+        cy.get(CUSTOM_FLEX_ID).as('Flex');
+        cy.get('@Flex').should('have.attr', 'data-test-id', CUSTOM_DATA_TEST_ID_STRING);
     });
 
-    it('should react on click', () => {
-        const onChangeStub = cy.stub().as('onChangeStub');
+    it('should render with direction row', () => {
+        cy.mount(<FlexComponent direction="row" />);
 
-        cy.mount(<Component name="switch-test-change" onChange={onChangeStub} />);
-        cy.get('@onChangeStub').should('not.be.called');
-
-        cy.get(SWITCH_ID).as('Switch');
-        cy.get('@Switch').click();
-        cy.get('@onChangeStub').should('be.calledOnce');
+        cy.get(FLEX_ID).as('Flex');
+        cy.get('@Flex').should('have.class', 'tw-flex-row');
     });
 
-    it('should do nothing if disabled', () => {
-        cy.mount(<Component name="switch-test-disabled" disabled />);
+    it('should render with direction column', () => {
+        cy.mount(<FlexComponent direction="column" />);
 
-        cy.get(SWITCH_ID).as('Switch');
-        cy.get('@Switch').invoke('attr', 'name').should('eq', 'switch-test-disabled');
-        cy.get('@Switch').invoke('attr', 'disabled').should('eq', 'disabled');
+        cy.get(FLEX_ID).as('Flex');
+        cy.get('@Flex').should('have.class', 'tw-flex-col');
     });
 
-    it('should have a label', () => {
-        cy.mount(<Component label={SWITCH_LABEL} />);
+    it('should render with direction row-reverse', () => {
+        cy.mount(<FlexComponent direction="row-reverse" />);
 
-        cy.get(SWITCH_CONTAINER_ID).find(INPUT_LABEL_ID).should('exist');
-        cy.get(INPUT_LABEL_ID).contains(SWITCH_LABEL);
+        cy.get(FLEX_ID).as('Flex');
+        cy.get('@Flex').should('have.class', 'tw-flex-row-reverse');
     });
 
-    it('should render default labelStyle', () => {
-        cy.mount(<Component label={SWITCH_LABEL} />);
+    it('should render with direction column-reverse', () => {
+        cy.mount(<FlexComponent direction="column-reverse" />);
 
-        cy.get(SWITCH_LABEL_WRAPPER_ID).should('have.class', 'tw-text-text-weak');
-        cy.get(SWITCH_LABEL_WRAPPER_ID).should('have.class', 'tw-font-medium');
+        cy.get(FLEX_ID).as('Flex');
+        cy.get('@Flex').should('have.class', 'tw-flex-col-reverse');
     });
 
-    it('should render heading labelStyle', () => {
-        cy.mount(<Component label={SWITCH_LABEL} labelStyle="heading" />);
+    it('should render with wrap nowrap', () => {
+        cy.mount(<FlexComponent wrap="nowrap" />);
 
-        cy.get(SWITCH_LABEL_WRAPPER_ID).should('have.class', 'tw-text-text');
-        cy.get(SWITCH_LABEL_WRAPPER_ID).should('have.class', 'tw-font-bold');
+        cy.get(FLEX_ID).as('Flex');
+        cy.get('@Flex').should('have.class', 'tw-flex-nowrap');
     });
 
-    it('should hug the switch and label', () => {
-        cy.mount(<Component label={SWITCH_LABEL} hug={true} />);
+    it('should render with wrap', () => {
+        cy.mount(<FlexComponent wrap="wrap" />);
 
-        cy.get(SWITCH_CONTAINER_ID).should('have.css', 'display', 'inline-flex');
+        cy.get(FLEX_ID).as('Flex');
+        cy.get('@Flex').should('have.class', 'tw-flex-wrap');
     });
 
-    it('switch should have a type definition', () => {
-        cy.mount(<Component label={SWITCH_LABEL} />);
+    it('should render with wrap wrap-reverse', () => {
+        cy.mount(<FlexComponent wrap="wrap-reverse" />);
 
-        cy.get(SWITCH_ID).should('have.attr', 'type', 'button');
+        cy.get(FLEX_ID).as('Flex');
+        cy.get('@Flex').should('have.class', 'tw-flex-wrap-reverse');
+    });
+
+    it('should render with wrap justify center', () => {
+        cy.mount(<FlexComponent justify="center" />);
+
+        cy.get(FLEX_ID).as('Flex');
+        cy.get('@Flex').should('have.class', 'tw-justify-center');
+    });
+
+    it('should render with justify start', () => {
+        cy.mount(<FlexComponent justify="start" />);
+
+        cy.get(FLEX_ID).as('Flex');
+        cy.get('@Flex').should('have.class', 'tw-justify-start');
+    });
+
+    it('should render with justify end', () => {
+        cy.mount(<FlexComponent justify="end" />);
+
+        cy.get(FLEX_ID).as('Flex');
+        cy.get('@Flex').should('have.class', 'tw-justify-end');
+    });
+
+    it('should render with justify between', () => {
+        cy.mount(<FlexComponent justify="between" />);
+
+        cy.get(FLEX_ID).as('Flex');
+        cy.get('@Flex').should('have.class', 'tw-justify-between');
+    });
+
+    it('should render with justify around', () => {
+        cy.mount(<FlexComponent justify="around" />);
+
+        cy.get(FLEX_ID).as('Flex');
+        cy.get('@Flex').should('have.class', 'tw-justify-around');
+    });
+
+    it('should render with justify evenly', () => {
+        cy.mount(<FlexComponent justify="evenly" />);
+
+        cy.get(FLEX_ID).as('Flex');
+        cy.get('@Flex').should('have.class', 'tw-justify-evenly');
+    });
+
+    it('should render with alignItems start', () => {
+        cy.mount(<FlexComponent alignItems="start" />);
+
+        cy.get(FLEX_ID).as('Flex');
+        cy.get('@Flex').should('have.class', 'tw-items-start');
+    });
+
+    it('should render with alignItems end', () => {
+        cy.mount(<FlexComponent alignItems="end" />);
+
+        cy.get(FLEX_ID).as('Flex');
+        cy.get('@Flex').should('have.class', 'tw-items-end');
+    });
+
+    it('should render with alignItems center', () => {
+        cy.mount(<FlexComponent alignItems="center" />);
+
+        cy.get(FLEX_ID).as('Flex');
+        cy.get('@Flex').should('have.class', 'tw-items-center');
+    });
+
+    it('should render with alignItems baseline', () => {
+        cy.mount(<FlexComponent alignItems="baseline" />);
+
+        cy.get(FLEX_ID).as('Flex');
+        cy.get('@Flex').should('have.class', 'tw-items-baseline');
+    });
+
+    it('should render with alignItems stretch', () => {
+        cy.mount(<FlexComponent alignItems="stretch" />);
+
+        cy.get(FLEX_ID).as('Flex');
+        cy.get('@Flex').should('have.class', 'tw-items-stretch');
+    });
+
+    it('should render with alignItems stretch', () => {
+        cy.mount(<FlexComponent alignItems="stretch" />);
+
+        cy.get(FLEX_ID).as('Flex');
+        cy.get('@Flex').should('have.class', 'tw-items-stretch');
+    });
+
+    it('should render with alignContent start', () => {
+        cy.mount(<FlexComponent alignContent="start" />);
+
+        cy.get(FLEX_ID).as('Flex');
+        cy.get('@Flex').should('have.class', 'tw-content-start');
+    });
+
+    it('should render with alignContent end', () => {
+        cy.mount(<FlexComponent alignContent="end" />);
+
+        cy.get(FLEX_ID).as('Flex');
+        cy.get('@Flex').should('have.class', 'tw-content-end');
+    });
+
+    it('should render with alignContent center', () => {
+        cy.mount(<FlexComponent alignContent="center" />);
+
+        cy.get(FLEX_ID).as('Flex');
+        cy.get('@Flex').should('have.class', 'tw-content-center');
+    });
+
+    it('should render with alignContent normal', () => {
+        cy.mount(<FlexComponent alignContent="normal" />);
+
+        cy.get(FLEX_ID).as('Flex');
+        cy.get('@Flex').should('have.class', 'tw-content-normal');
+    });
+
+    it('should render with alignContent between', () => {
+        cy.mount(<FlexComponent alignContent="between" />);
+
+        cy.get(FLEX_ID).as('Flex');
+        cy.get('@Flex').should('have.class', 'tw-content-between');
+    });
+
+    it('should render with alignContent around', () => {
+        cy.mount(<FlexComponent alignContent="around" />);
+
+        cy.get(FLEX_ID).as('Flex');
+        cy.get('@Flex').should('have.class', 'tw-content-around');
+    });
+
+    it('should render with alignContent evenly', () => {
+        cy.mount(<FlexComponent alignContent="evenly" />);
+
+        cy.get(FLEX_ID).as('Flex');
+        cy.get('@Flex').should('have.class', 'tw-content-evenly');
+    });
+
+    it('should render with alignContent baseline', () => {
+        cy.mount(<FlexComponent alignContent="baseline" />);
+
+        cy.get(FLEX_ID).as('Flex');
+        cy.get('@Flex').should('have.class', 'tw-content-baseline');
+    });
+
+    it('should render with alignContent stretch', () => {
+        cy.mount(<FlexComponent alignContent="stretch" />);
+
+        cy.get(FLEX_ID).as('Flex');
+        cy.get('@Flex').should('have.class', 'tw-content-stretch');
+    });
+
+    it("should render as a span using the 'as' prop", () => {
+        cy.mount(<FlexComponent as="span" />);
+
+        cy.get(`span${FLEX_ID}`).as('Flex');
+        cy.get('@Flex').should('exist');
+    });
+
+    it("should render as a span using the 'as' prop", () => {
+        cy.mount(<FlexComponent as="span" />);
+
+        cy.get(`span${FLEX_ID}`).as('Flex');
+        cy.get('@Flex').should('exist');
+    });
+
+    it('should render with bg', () => {
+        cy.mount(<FlexComponent bg="tw-bg-box-positive-strong" />);
+
+        cy.get(FLEX_ID).as('Flex');
+        cy.get('@Flex').should('have.class', 'tw-bg-box-positive-strong');
+    });
+
+    it('should render with color', () => {
+        cy.mount(<FlexComponent color="tw-bg-box-positive-inverse" />);
+
+        cy.get(FLEX_ID).as('Flex');
+        cy.get('@Flex').should('have.class', 'tw-bg-box-positive-inverse');
+    });
+
+    it('should render with children', () => {
+        cy.mount(<FlexComponent />);
+
+        cy.get(FLEX_CHILD_ID).as('FlexChild');
+        cy.get('@FlexChild').should('have.length', 4);
     });
 });
