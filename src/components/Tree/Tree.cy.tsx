@@ -31,8 +31,8 @@ const TreeComponent = ({ onSelect }: { onSelect?: (id: Nullable<string>) => void
     );
 };
 
-const TREE_ID = '[data-test-id=tree]';
-const TREE_ITEM_ID = '[data-test-id=tree-item]';
+const TREE_ID = '[data-test-id=fondue-tree]';
+const TREE_ITEM_ID = '[data-test-id=fondue-tree-item]';
 const TREE_ITEM_TOGGLE_ID = '[data-test-id=tree-item-toggle]';
 
 describe('Tree Component', () => {
