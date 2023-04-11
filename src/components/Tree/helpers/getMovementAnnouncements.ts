@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { SetStateAction } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 import { arrayMove } from '@dnd-kit/sortable';
 
 import { TreeState } from '../types';
@@ -17,7 +17,7 @@ type AnnouncementArgs = {
     overId?: string;
     treeState: TreeState;
     currentPosition: Nullable<{ overId: string; parentId: Nullable<string> }>;
-    setCurrentPosition: React.Dispatch<
+    setCurrentPosition: Dispatch<
         SetStateAction<
             Nullable<{
                 overId: string;
