@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ReactElement } from 'react';
-import { UniqueIdentifier } from '@dnd-kit/core';
 
 /**
  * The getItemPositionInParent function returns the index of a given item within a list of sibling nodes, based on the item's ID and its parent ID.
@@ -14,9 +13,6 @@ import { UniqueIdentifier } from '@dnd-kit/core';
  * @returns
  * A number representing the index of the given item within the list of its sibling nodes. If the item is not found, the function will return -1.
  */
-export const getItemPositionInParent = (
-    item: { id: UniqueIdentifier; parentId: UniqueIdentifier },
-    nodes: ReactElement[],
-): number => {
+export const getItemPositionInParent = (item: { id: string; parentId: string }, nodes: ReactElement[]): number => {
     return nodes.filter((node) => node.props.parentId === item.parentId).findIndex((node) => node.props.id === item.id);
 };

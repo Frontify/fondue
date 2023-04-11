@@ -2,27 +2,26 @@
 
 import { SetStateAction } from 'react';
 import { arrayMove } from '@dnd-kit/sortable';
-import { UniqueIdentifier } from '@dnd-kit/core';
 
 import { TreeState } from '../types';
 
 type AnnouncementItem = {
     level: number;
-    id: UniqueIdentifier;
-    parentId: UniqueIdentifier;
+    id: string;
+    parentId: string;
 };
 
 type AnnouncementArgs = {
     eventName: string;
-    activeId: UniqueIdentifier;
-    overId?: UniqueIdentifier;
+    activeId: string;
+    overId?: string;
     treeState: TreeState;
-    currentPosition: Nullable<{ overId: UniqueIdentifier; parentId: Nullable<UniqueIdentifier> }>;
+    currentPosition: Nullable<{ overId: string; parentId: Nullable<string> }>;
     setCurrentPosition: React.Dispatch<
         SetStateAction<
             Nullable<{
-                overId: UniqueIdentifier;
-                parentId: Nullable<UniqueIdentifier>;
+                overId: string;
+                parentId: Nullable<string>;
             }>
         >
     >;
@@ -79,7 +78,7 @@ export const getMovementAnnouncement = ({
             } else {
                 let previousSibling: AnnouncementItem | undefined = previousItem;
                 while (previousSibling && projected.depth < previousSibling.level) {
-                    const parentId: UniqueIdentifier | null = previousSibling.parentId;
+                    const parentId: string | null = previousSibling.parentId;
                     previousSibling = sortedItems.find(({ id }) => id === parentId);
                 }
 

@@ -6,19 +6,15 @@ import { AnimatePresence } from 'framer-motion';
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import {
-    Announcements,
     DndContext,
     DragEndEvent,
     DragMoveEvent,
-    DragOverEvent,
     DragOverlay,
-    DragStartEvent,
     KeyboardCode,
     KeyboardSensor,
     MeasuringConfiguration,
     MeasuringStrategy,
     PointerSensor,
-    UniqueIdentifier,
     closestCenter,
     useSensor,
     useSensors,
@@ -27,6 +23,9 @@ import {
 import type {
     RegisterNodeChildrenPayload,
     SensorContext,
+    TreeAnnouncements,
+    TreeDragOverEvent,
+    TreeDragStartEvent,
     TreeProps,
     TreeState,
     TreeStateAction,
@@ -165,10 +164,10 @@ export const Tree = ({
 
     const [treeState, updateTreeState] = useReducer(reducer, initialState);
     const [offset, setOffset] = useState(0);
-    const [overId, setOverId] = useState<Nullable<UniqueIdentifier>>(null);
-    const [activeId, setActiveId] = useState<Nullable<UniqueIdentifier>>(null);
+    const [overId, setOverId] = useState<Nullable<string>>(null);
+    const [activeId, setActiveId] = useState<Nullable<string>>(null);
     const [currentPosition, setCurrentPosition] =
-        useState<Nullable<{ overId: UniqueIdentifier; parentId: Nullable<UniqueIdentifier> }>>(null);
+        useState<Nullable<{ overId: string; parentId: Nullable<string> }>>(null);
 
     const items = useMemo(() => treeState.nodes.map((node) => node.props.id), [treeState.nodes]);
 
@@ -218,7 +217,7 @@ export const Tree = ({
     );
 
     const handleSelect = useCallback(
-        (id: UniqueIdentifier) => {
+        (id: string) => {
             updateTreeState({
                 type: 'SET_SELECT',
                 payload: { id, isSelected: !treeState.selectedIds.has(id) },
@@ -228,7 +227,7 @@ export const Tree = ({
     );
 
     const handleExpand = useCallback(
-        (id: UniqueIdentifier) => {
+        (id: string) => {
             const isExpanded = !treeState.expandedIds.has(id);
 
             updateTreeState({
@@ -260,7 +259,7 @@ export const Tree = ({
         [onDrop],
     );
 
-    const handleDragStart = ({ active: { id: activeId } }: DragStartEvent) => {
+    const handleDragStart = ({ active: { id: activeId } }: TreeDragStartEvent) => {
         setActiveId(activeId);
         setOverId(activeId);
 
@@ -276,7 +275,7 @@ export const Tree = ({
         document.body.style.setProperty('cursor', 'grabbing');
     };
 
-    const handleDragOver = ({ over }: DragOverEvent) => {
+    const handleDragOver = ({ over }: TreeDragOverEvent) => {
         setOverId(over?.id ?? null);
     };
 
@@ -313,9 +312,9 @@ export const Tree = ({
 
             const node = treeState.nodes[currentIndex];
 
-            const id: UniqueIdentifier = node.props.id;
+            const id: string = node.props.id;
             const isExpanded = treeState.expandedIds.has(id);
-            const parentId: UniqueIdentifier = node.props.parentId;
+            const parentId: string = node.props.parentId;
             const hasChildren = activeElement.getAttribute('data-has-children') === 'true';
 
             const { code } = event;
@@ -421,7 +420,7 @@ export const Tree = ({
 
     const sensors = useSensors(useSensor(PointerSensor), useSensor(KeyboardSensor, { coordinateGetter }));
 
-    const announcements: Announcements = useMemo(
+    const announcements: TreeAnnouncements = useMemo(
         () => ({
             onDragStart({ active }) {
                 return `Picked up ${active.id}.`;

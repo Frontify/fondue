@@ -3,12 +3,12 @@
 import React, { Children, MouseEvent, useCallback, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { AnimateLayoutChanges, useSortable } from '@dnd-kit/sortable';
-import { DragEndEvent, DragStartEvent, useDndContext, useDndMonitor } from '@dnd-kit/core';
+import { useDndContext, useDndMonitor } from '@dnd-kit/core';
 
 import { merge } from '@utilities/merge';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 
-import type { CollisionPosition, TreeItemProps } from '@components/Tree/types';
+import type { CollisionPosition, TreeDragEndEvent, TreeDragStartEvent, TreeItemProps } from '@components/Tree/types';
 import { useTreeContext } from '@components/Tree/TreeContext';
 
 import { DragHandle } from './DragHandle';
@@ -94,7 +94,7 @@ export const TreeItem = ({
         projectionNode?.props.accepts &&
         projectionNode.props.accepts.includes(`${active.data.current.type}-within`);
 
-    const handleItemDragEnd = (event: DragEndEvent) => {
+    const handleItemDragEnd = (event: TreeDragEndEvent) => {
         const { over, active } = event;
 
         if (active.id === over?.id && projection?.depth === projection?.minDepth) {
@@ -141,7 +141,7 @@ export const TreeItem = ({
     };
 
     const handleItemDragStart = useCallback(
-        (event: DragStartEvent) => {
+        (event: TreeDragStartEvent) => {
             if (event.active.id !== id) {
                 return;
             }

@@ -1,11 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useContext } from 'react';
-import { UniqueIdentifier } from '@dnd-kit/core';
 
 import { TreeContext } from '../TreeContext';
 
-export const useTreeItem = (id: UniqueIdentifier) => {
+export const useTreeItem = (id: string) => {
     const { treeState } = useContext(TreeContext);
 
     const isSelected = treeState.selectedIds.has(id);

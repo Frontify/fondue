@@ -2,14 +2,13 @@
 
 import { ReactElement } from 'react';
 import { arrayMove } from '@dnd-kit/sortable';
-import { UniqueIdentifier } from '@dnd-kit/core';
 
 import { INDENTATION_WIDTH } from '../Tree';
 
 export type ProjectionArgs = {
     nodes: ReactElement[];
-    activeId: UniqueIdentifier;
-    overId: UniqueIdentifier;
+    activeId: string;
+    overId: string;
     dragOffset: number;
 };
 
@@ -17,7 +16,7 @@ export type Projection = {
     depth: number;
     maxDepth: number;
     minDepth: number;
-    parentId: Nullable<UniqueIdentifier>;
+    parentId: Nullable<string>;
 };
 
 const getMaxDepth = ({ previousNode }: { previousNode: ReactElement }) => {

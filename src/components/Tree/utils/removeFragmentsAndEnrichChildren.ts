@@ -1,11 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { UniqueIdentifier } from '@dnd-kit/core';
 import { Children, ReactElement, ReactNode, cloneElement, isValidElement } from 'react';
 import { isFragment } from 'react-is';
 
 type EnrichedProps = {
-    parentId: UniqueIdentifier;
+    parentId: string;
     level: number;
 };
 
