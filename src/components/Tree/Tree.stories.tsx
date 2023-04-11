@@ -30,7 +30,6 @@ export default {
     },
 } as Meta<TreeProps>;
 
-/* COMPONENTS */
 const TreeItemContentComponent = ({ title }: { title: string }) => {
     return (
         <div className="tw-flex tw-space-x-1.5 tw-w-full">
@@ -50,9 +49,7 @@ const CustomTreeItem = ({ label, contentComponent, nodes, ...otherProps }: TreeI
         </TreeItem>
     );
 };
-/* END COMPONENTS */
 
-/* RENDER FUNCTIONS */
 const renderCustomTreeItem = ({ id, ...treeItem }: TreeItemMock) => {
     return <CustomTreeItem key={`${id}-custom`} id={`${id}-custom`} {...treeItem} />;
 };
@@ -74,9 +71,7 @@ const renderTreeItemComponent = ({ nodes, label, ...treeItem }: TreeItemMock) =>
         {nodes?.map(renderTreeItemComponent)}
     </TreeItem>
 );
-/* END RENDER FUNCTIONS */
 
-/* STORIES */
 export const TreeWithLabel = ({ ...args }: TreeProps) => {
     return (
         <div style={{ width: 800 }}>
@@ -110,4 +105,3 @@ export const TreeWithBasicItem = ({ ...args }: TreeProps) => {
         </div>
     );
 };
-/* end STORIES */
