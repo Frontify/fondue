@@ -372,11 +372,13 @@ export const Tree = ({
                     break;
 
                 case KeyboardCode.Up:
+                    event.preventDefault();
                     focusPrevious();
 
                     break;
 
                 case KeyboardCode.Down:
+                    event.preventDefault();
                     focusNext();
 
                     break;
