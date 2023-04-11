@@ -33,7 +33,7 @@ type EnrichedProps = {
  *
  * const flattenedAndEnriched = flattenAndEnrichChildren(children, enrichedProps);
  *
- * // Output: An array of ReactElements with the three child elements from the example, each with the `parentId` and `level` props added.
+ * @returns {ReactElement[]} Array with the three child elements from the example, each with the `parentId` and `level` props added.
  */
 export const removeFragmentsAndEnrichChildren = (children?: ReactNode, enrichedProps?: EnrichedProps) => {
     const result: ReactElement[] = [];
