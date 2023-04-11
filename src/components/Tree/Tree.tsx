@@ -23,9 +23,11 @@ import {
 import type {
     RegisterNodeChildrenPayload,
     SensorContext,
+    TreeActive,
     TreeAnnouncements,
     TreeDragOverEvent,
     TreeDragStartEvent,
+    TreeOver,
     TreeProps,
     TreeState,
     TreeStateAction,
@@ -429,21 +431,23 @@ export const Tree = ({
         useSensor(KeyboardSensor, { coordinateGetter }),
     );
 
-    const announcements: TreeAnnouncements = useMemo(
-        () => ({
+    const announcements: TreeAnnouncements = useMemo(() => {
+        const getActiveTitle = (active: TreeActive) =>
+            treeState.nodes.find((node) => node.key === active.id)?.props.contentComponent.props.title;
+        const getOverTitle = (over: TreeOver | null) =>
+            treeState.nodes.find((node) => node.key === over?.id)?.props.contentComponent.props.title;
+
+        return {
             onDragStart({ active }) {
-                const nodeTitle = treeState.nodes.find((node) => node.key === active.id)?.props.contentComponent.props
-                    .title;
-
-                console.log(`Picked up ${nodeTitle || active.id}.`);
-
-                return `Picked up ${nodeTitle || active.id}.`;
+                return `Picked up ${getActiveTitle(active) || active.id}.`;
             },
             onDragMove({ active, over }) {
                 return getMovementAnnouncement({
                     eventName: 'onDragMove',
                     activeId: active.id,
+                    activeTitle: getActiveTitle(active),
                     overId: over?.id,
+                    overTitle: getOverTitle(over),
                     treeState,
                     setCurrentPosition,
                     currentPosition,
@@ -453,7 +457,9 @@ export const Tree = ({
                 return getMovementAnnouncement({
                     eventName: 'onDragOver',
                     activeId: active.id,
+                    activeTitle: getActiveTitle(active),
                     overId: over?.id,
+                    overTitle: getOverTitle(over),
                     treeState,
                     setCurrentPosition,
                     currentPosition,
@@ -463,7 +469,9 @@ export const Tree = ({
                 return getMovementAnnouncement({
                     eventName: 'onDragEnd',
                     activeId: active.id,
+                    activeTitle: getActiveTitle(active),
                     overId: over?.id,
+                    overTitle: getOverTitle(over),
                     treeState,
                     setCurrentPosition,
                     currentPosition,
@@ -475,9 +483,8 @@ export const Tree = ({
 
                 return `Moving was cancelled. ${nodeTitle || active.id} was dropped in its original position.`;
             },
-        }),
-        [currentPosition, treeState],
-    );
+        };
+    }, [currentPosition, treeState]);
 
     useEffect(() => {
         updateTreeState({

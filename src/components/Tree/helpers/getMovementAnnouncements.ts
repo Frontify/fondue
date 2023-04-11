@@ -14,7 +14,9 @@ type AnnouncementItem = {
 type AnnouncementArgs = {
     eventName: string;
     activeId: string;
+    activeTitle?: string;
     overId?: string;
+    overTitle?: string;
     treeState: TreeState;
     currentPosition: Nullable<{ overId: string; parentId: Nullable<string> }>;
     setCurrentPosition: Dispatch<
@@ -30,7 +32,9 @@ type AnnouncementArgs = {
 export const getMovementAnnouncement = ({
     eventName,
     activeId,
+    activeTitle,
     overId,
+    overTitle,
     treeState,
     currentPosition,
     setCurrentPosition,
@@ -71,10 +75,10 @@ export const getMovementAnnouncement = ({
 
         if (!previousItem) {
             const nextItem = sortedItems[overIndex + 1];
-            announcement = `${activeId} was ${movedVerb} before ${nextItem.id}.`;
+            announcement = `${activeTitle || activeId} was ${movedVerb} before ${overTitle || nextItem.id}.`;
         } else {
             if (projected.depth > previousItem.level) {
-                announcement = `${activeId} was ${nestedVerb} under ${previousItem.id}.`;
+                announcement = `${activeTitle || activeId} was ${nestedVerb} under ${overTitle || previousItem.id}.`;
             } else {
                 let previousSibling: AnnouncementItem | undefined = previousItem;
                 while (previousSibling && projected.depth < previousSibling.level) {
@@ -83,7 +87,9 @@ export const getMovementAnnouncement = ({
                 }
 
                 if (previousSibling) {
-                    announcement = `${activeId} was ${movedVerb} after ${previousSibling.id}.`;
+                    announcement = `${activeTitle || activeId} was ${movedVerb} after ${
+                        overTitle || previousSibling.id
+                    }.`;
                 }
             }
         }

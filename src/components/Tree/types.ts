@@ -105,11 +105,11 @@ export type RegisterNodeChildrenPayload = Extract<TreeStateAction, { type: 'REGI
 export type CollisionPosition = Nullable<'before' | 'within' | 'after'>;
 
 // dnd-kit type overrides
-type TreeActive = Omit<Active, 'id'> & {
+export type TreeActive = Omit<Active, 'id'> & {
     id: string;
 };
 
-type TreeOver = Omit<Over, 'id'> & {
+export type TreeOver = Omit<Over, 'id'> & {
     id: string;
 };
 
