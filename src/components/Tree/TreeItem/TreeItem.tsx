@@ -32,7 +32,7 @@ export const TreeItem = ({
     level = 0,
     contentComponent,
     draggable: itemDraggable = true,
-    'data-test-id': dataTestId = 'tree-item',
+    'data-test-id': dataTestId = 'fondue-tree-item',
 }: TreeItemProps) => {
     const {
         onExpand,

@@ -151,7 +151,7 @@ export const Tree = ({
     expandedIds,
     draggable = false,
     multiselect = false,
-    'data-test-id': dataTestId = 'tree',
+    'data-test-id': dataTestId = 'fondue-tree',
 }: TreeProps) => {
     const initialState: TreeState = useMemo(
         () => ({
