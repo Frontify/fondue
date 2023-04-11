@@ -10,8 +10,7 @@ import { ReactElement } from 'react';
  * @param item.parentId The unique identifier of the item's parent.
  * @param nodes An array of React elements representing the nodes in the tree structure.
  *
- * @returns
- * A number representing the index of the given item within the list of its sibling nodes. If the item is not found, the function will return -1.
+ * @returns {number} The index of the given item within the list of its sibling nodes. If the item is not found, the function will return -1.
  */
 export const getItemPositionInParent = (item: { id: string; parentId: string }, nodes: ReactElement[]): number => {
     return nodes.filter((node) => node.props.parentId === item.parentId).findIndex((node) => node.props.id === item.id);
