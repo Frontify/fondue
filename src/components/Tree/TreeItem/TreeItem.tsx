@@ -4,6 +4,7 @@ import React, { Children, MouseEvent, useCallback, useEffect, useMemo } from 're
 import { motion } from 'framer-motion';
 import { AnimateLayoutChanges, useSortable } from '@dnd-kit/sortable';
 import { useDndContext, useDndMonitor } from '@dnd-kit/core';
+import { noop } from 'lodash-es';
 
 import { merge } from '@utilities/merge';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
@@ -302,6 +303,7 @@ export const TreeItem = ({
             aria-expanded={isExpanded}
             data-has-children={hasChildren}
             aria-owns={childrenIds.join(' ')}
+            onKeyDown={noop}
         >
             <motion.div
                 transition={transition}
