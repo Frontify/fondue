@@ -286,7 +286,6 @@ export const TreeItem = ({
     };
 
     return (
-        // eslint-disable-next-line jsx-a11y/click-events-have-key-events
         <li
             key={id}
             tabIndex={0}
