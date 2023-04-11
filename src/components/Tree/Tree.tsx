@@ -433,9 +433,9 @@ export const Tree = ({
 
     const announcements: TreeAnnouncements = useMemo(() => {
         const getActiveTitle = (active: TreeActive) =>
-            treeState.nodes.find((node) => node.key === active.id)?.props.contentComponent.props.title;
+            treeState.nodes.find((node) => node.key === active.id)?.props.contentComponent?.props.title;
         const getOverTitle = (over: TreeOver | null) =>
-            treeState.nodes.find((node) => node.key === over?.id)?.props.contentComponent.props.title;
+            treeState.nodes.find((node) => node.key === over?.id)?.props.contentComponent?.props.title;
 
         return {
             onDragStart({ active }) {
