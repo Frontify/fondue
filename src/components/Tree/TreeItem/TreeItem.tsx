@@ -295,7 +295,6 @@ export const TreeItem = ({
             id={id.toString()}
             aria-label={label}
             aria-level={level}
-            // layoutId={String(id)}
             onClick={handleSelect}
             className={liClassName}
             ref={setDroppableNodeRef}
