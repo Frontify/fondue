@@ -34,9 +34,7 @@ const TreeComponent = ({ onSelect }: { onSelect?: (id: Nullable<UniqueIdentifier
 
 const TREE_ID = '[data-test-id=tree]';
 const TREE_ITEM_ID = '[data-test-id=tree-item]';
-const TREE_ITEM_CONTAINER_ID = '[data-test-id=tree-item-container]';
 const TREE_ITEM_TOGGLE_ID = '[data-test-id=tree-item-toggle]';
-const SUB_TREE_ITEMS_ID = '[data-test-id=sub-tree-items]';
 
 describe('Tree Component', () => {
     it('renders tree structure with children', () => {
@@ -48,10 +46,9 @@ describe('Tree Component', () => {
     it('expands and shrinks the tree on toggle click (uncontrolled)', () => {
         cy.mount(<TreeComponent />);
 
-        cy.get(TREE_ITEM_TOGGLE_ID).click();
-        cy.get(SUB_TREE_ITEMS_ID).should('be.visible');
+        cy.get(TREE_ITEM_ID).should('have.length', 2);
         cy.get(TREE_ITEM_TOGGLE_ID).first().click();
-        cy.get(SUB_TREE_ITEMS_ID).should('not.exist');
+        cy.get(TREE_ITEM_ID).should('have.length', 5);
     });
 
     it('renders all tree items', () => {
@@ -68,7 +65,7 @@ describe('Tree Component', () => {
         const onSelectStub = cy.stub().as('onSelectStub');
         cy.mount(<TreeComponent onSelect={onSelectStub} />);
 
-        cy.get(TREE_ITEM_CONTAINER_ID).eq(0).click();
+        cy.get(TREE_ITEM_ID).eq(0).click();
         cy.get('@onSelectStub').should('have.been.called');
     });
 });

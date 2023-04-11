@@ -265,7 +265,7 @@ export const TreeItem = ({
     const showChildren = isExpanded && !isActive;
     const showDragHandle = draggable && !isActive;
     const showLabel = label !== undefined && !isActive;
-    const showExpandButton = hasChildren && !isActive && draggable;
+    const showExpandButton = hasChildren && !isActive;
 
     const transition = {
         duration: !isDragging ? 0.25 : 0,
