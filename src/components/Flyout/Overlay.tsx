@@ -49,7 +49,7 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
         >
             <div
                 className={merge([
-                    'tw-flex tw-flex-col tw-flex-auto tw-min-h-0 tw-rounded tw-shadow tw-border tw-border-line-x-strong',
+                    'tw-flex tw-flex-col tw-flex-auto tw-min-h-0 tw-rounded tw-shadow-mid tw-border tw-border-line-x-strong',
                 ])}
             >
                 {fixedHeader}
