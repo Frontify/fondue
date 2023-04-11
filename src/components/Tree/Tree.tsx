@@ -432,7 +432,12 @@ export const Tree = ({
     const announcements: TreeAnnouncements = useMemo(
         () => ({
             onDragStart({ active }) {
-                return `Picked up ${active.id}.`;
+                const nodeTitle = treeState.nodes.find((node) => node.key === active.id)?.props.contentComponent.props
+                    .title;
+
+                console.log(`Picked up ${nodeTitle || active.id}.`);
+
+                return `Picked up ${nodeTitle || active.id}.`;
             },
             onDragMove({ active, over }) {
                 return getMovementAnnouncement({
@@ -465,7 +470,10 @@ export const Tree = ({
                 });
             },
             onDragCancel({ active }) {
-                return `Moving was cancelled. ${active.id} was dropped in its original position.`;
+                const nodeTitle = treeState.nodes.find((node) => node.key === active.id)?.props.contentComponent.props
+                    .title;
+
+                return `Moving was cancelled. ${nodeTitle || active.id} was dropped in its original position.`;
             },
         }),
         [currentPosition, treeState],
