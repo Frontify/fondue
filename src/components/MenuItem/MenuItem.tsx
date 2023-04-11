@@ -42,12 +42,12 @@ export const menuItemTextColorRecord: Record<MenuItemStyle, Record<MenuItemTextC
     [MenuItemStyle.Danger]: {
         [MenuItemTextColorState.Default]: 'tw-text-red-60',
         [MenuItemTextColorState.Active]: 'tw-text-red-70',
-        [MenuItemTextColorState.Disabled]: 'tw-text-red-40',
+        [MenuItemTextColorState.Disabled]: 'tw-text-text-disabled',
     },
     [MenuItemStyle.Warning]: {
         [MenuItemTextColorState.Default]: 'tw-text-text-warning',
         [MenuItemTextColorState.Active]: 'tw-text-yellow-90',
-        [MenuItemTextColorState.Disabled]: 'tw-text-yellow-40',
+        [MenuItemTextColorState.Disabled]: 'tw-text-text-disabled',
     },
 };
 
