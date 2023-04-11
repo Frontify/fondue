@@ -25,7 +25,6 @@ import {
     ELEMENT_UL,
     TDescendant,
     TElement,
-    TText,
     isText,
 } from '@udecode/plate';
 import { merge } from '@utilities/merge';
@@ -63,14 +62,13 @@ export const serializeNodeToHtmlRecursive = (
     { designTokens, mappedMentionable, nestingCount = {} }: SerializeNodeToHtmlRecursiveOptions,
 ): string => {
     if (isText(node)) {
-        return serializeLeafToHtml(node as TText);
+        return serializeLeafToHtml(node);
     }
 
     const rootNestingCount = nestingCount[node.type] || countNodesOfType([node], node.type);
     let children = '';
-    const childNodes = node.children as TDescendant[];
-    for (let i = 0; i < childNodes.length; i++) {
-        const n = childNodes[i];
+    for (const element of node.children) {
+        const n = element;
         children += serializeNodeToHtmlRecursive(n, {
             designTokens,
             nestingCount: {
@@ -113,7 +111,7 @@ const MapNodeTypesToHtml: { [key: string]: ({ ...args }: Arguments) => string } 
     [TextStyles.ELEMENT_QUOTE]: (args) => getTextStyleHtml(TextStyles.ELEMENT_QUOTE, args, 'p'),
     [TextStyles.ELEMENT_IMAGE_TITLE]: (args) => getTextStyleHtml(TextStyles.ELEMENT_IMAGE_TITLE, args, 'p'),
     [TextStyles.ELEMENT_IMAGE_CAPTION]: (args) => getTextStyleHtml(TextStyles.ELEMENT_IMAGE_CAPTION, args, 'p'),
-    [ELEMENT_UL]: ({ classNames, children }) => `<ul class="${UL_CLASSES} ${classNames}">${children}</ul>`,
+    [ELEMENT_UL]: (args) => `<ul class="${UL_CLASSES} ${args.classNames}">${args.children}</ul>`,
     [ELEMENT_OL]: ({ classNames, children, node, rootNestingCount }) => {
         const nestingLevel = Math.max(rootNestingCount - countNodesOfType([node], ELEMENT_OL), 0);
         return `<ol class="${getOrderedListClasses(nestingLevel)} ${classNames}" style="${reactCssPropsToCss(

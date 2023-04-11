@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Meta, StoryFn } from '@storybook/react';
-import React, { ComponentProps } from 'react';
+import React, { ComponentProps, useEffect, useState } from 'react';
 import { Position } from './EditorPositioningWrapper';
 import {
     IPSUM,
@@ -147,9 +147,13 @@ export const Flex: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) =>
 );
 
 export const SerializedToHTML: StoryFn<RichTextEditorProps> = () => {
-    return getSerializedContent({
-        columns: 2,
-    });
+    return (
+        <GetSerializedContent
+            props={{
+                columns: 2,
+            }}
+        />
+    );
 };
 
 export const MarkdownSerializerDeserializer: StoryFn<RichTextEditorProps> = () => {
@@ -494,12 +498,16 @@ MultiColumns.args = {
 };
 
 export const MultiColumnsSerializedToHTML: StoryFn<MultiColumnProps> = (args) => {
-    return getSerializedContent({
-        designTokens: customDesignTokens,
-        mentionable,
-        columns: args.columns,
-        columnGap: args.columnGap,
-    });
+    return (
+        <GetSerializedContent
+            props={{
+                designTokens: customDesignTokens,
+                mentionable,
+                columns: args.columns,
+                columnGap: args.columnGap,
+            }}
+        />
+    );
 };
 
 MultiColumnsSerializedToHTML.args = {
@@ -516,15 +524,20 @@ SimpleMultiColumns.args = {
     border: false,
 };
 
-function getSerializedContent(
-    props: SerializeNodesToHtmlOptions = {
-        designTokens: customDesignTokens,
-        mentionable,
-        columns: 1,
-        columnGap: 'normal',
-    },
-): JSX.Element {
-    const serialized = serializeNodesToHtml(nodesToSerialize, props);
+export const GetSerializedContent = ({
+    props = { designTokens: customDesignTokens, mentionable, columns: 1, columnGap: 'normal' },
+}: {
+    props: SerializeNodesToHtmlOptions;
+}) => {
+    const [serialized, setSerialized] = useState<string | null>(null);
+
+    useEffect(() => {
+        (async () => {
+            setSerialized(await serializeNodesToHtml(nodesToSerialize, props));
+        })();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [props, nodesToSerialize]);
+
     return (
         <>
             {serialized ? (
@@ -538,7 +551,9 @@ function getSerializedContent(
                         <div dangerouslySetInnerHTML={{ __html: serialized }} />
                     </div>
                 </>
-            ) : null}
+            ) : (
+                <div>...loading</div>
+            )}
         </>
     );
-}
+};

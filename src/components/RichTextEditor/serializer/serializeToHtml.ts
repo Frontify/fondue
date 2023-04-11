@@ -9,12 +9,12 @@ import { parseRawValue } from '../utils/parseRawValue';
 import { serializeNodeToHtmlRecursive } from './utils/serializeNodeToHtmlRecursive';
 import { setDefaultDesignTokensIfNull } from './utils/setDefaultDesignTokensIfNull';
 
-export const serializeRawToHtml = (
+export const serializeRawToHtml = async (
     raw: string,
     designTokens: DesignTokens = defaultDesignTokens,
     columns: SerializeNodesToHtmlOptions['columns'] = 1,
     columnGap: SerializeNodesToHtmlOptions['columnGap'] = 'normal',
-): string => {
+): Promise<string> => {
     const nodes = parseRawValue({ raw });
     return serializeNodesToHtml(nodes, { designTokens, columns, columnGap });
 };
@@ -26,7 +26,7 @@ export type SerializeNodesToHtmlOptions = {
     columnGap?: CSSProperties['columnGap'];
 };
 
-export const serializeNodesToHtml = (
+export const serializeNodesToHtml = async (
     nodes: TDescendant[],
     {
         designTokens = defaultDesignTokens,
@@ -34,7 +34,7 @@ export const serializeNodesToHtml = (
         columns = 1,
         columnGap = 'normal',
     }: SerializeNodesToHtmlOptions = {},
-): string => {
+): Promise<string> => {
     const mergedDesignTokens = setDefaultDesignTokensIfNull(defaultDesignTokens, designTokens);
     const mappedMentionable = mentionable ? mapMentionable(mentionable) : new Map();
 
