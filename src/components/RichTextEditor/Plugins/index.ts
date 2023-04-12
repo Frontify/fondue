@@ -66,3 +66,4 @@ export * from './TextStylePlugin';
 export * from './UnderlinePlugin';
 export * from './BlurOnBreakPlugin';
 export * from './MarkupElement';
+export * from './helper';

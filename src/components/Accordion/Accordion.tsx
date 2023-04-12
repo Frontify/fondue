@@ -12,8 +12,8 @@ import React, { Children, Key, KeyboardEvent, ReactElement, isValidElement, useE
 import { AccordionHeader } from './AccordionHeader';
 import { AccordionItemProps, AccordionProps, AriaAccordionItemProps } from './types';
 
-const ACCORDION_ID = 'accordion';
-const ACCORDION_ITEM_ID = 'accordion-item';
+const ACCORDION_ID = 'fondue-accordion';
+const ACCORDION_ITEM_ID = 'fondue-accordion-item';
 
 const AriaAccordionItem = ({
     item,
@@ -22,8 +22,9 @@ const AriaAccordionItem = ({
     padding = true,
     divider = false,
     headerComponent: HeaderComponent = AccordionHeader,
+    'data-test-id': dataTestId = ACCORDION_ITEM_ID,
 }: AriaAccordionItemProps): ReactElement => {
-    const { size, active, ...headerProps } = header;
+    const { active, ...headerProps } = header;
     const triggerRef = useRef<HTMLButtonElement | null>(null);
     const { buttonProps, regionProps } = useAccordionItem({ item }, state, triggerRef);
     const isOpen = state.expandedKeys.has(item.key);
@@ -36,7 +37,7 @@ const AriaAccordionItem = ({
         >
             <button
                 {...mergeProps(buttonProps, focusProps)}
-                data-test-id={ACCORDION_ITEM_ID}
+                data-test-id={dataTestId}
                 ref={triggerRef}
                 onClick={(event) => {
                     if (header.onClick) {
@@ -58,7 +59,7 @@ const AriaAccordionItem = ({
                 }}
                 className="tw-w-full focus-visible:tw-outline-none"
             >
-                <HeaderComponent isOpen={isOpen} size={size} {...headerProps} />
+                <HeaderComponent isOpen={isOpen} {...headerProps} />
             </button>
             <CollapsibleWrap isOpen={isOpen} preventInitialAnimation={active}>
                 <div {...regionProps} className={merge([padding && 'tw-px-8 tw-pb-6'])}>
@@ -110,7 +111,7 @@ const lastChildrenActive = (children: React.ReactNode | undefined): boolean | un
 };
 
 export const Accordion = (props: AccordionProps): ReactElement => {
-    const { divider = true, border = true } = props;
+    const { divider = true, border = true, 'data-test-id': dataTestId = ACCORDION_ID } = props;
     const children = filterValidChildren(props);
     const ariaProps = mapToAriaProps(children);
 
@@ -162,14 +163,20 @@ export const Accordion = (props: AccordionProps): ReactElement => {
         <div
             {...propsWithModifiedKeyDown}
             ref={ref}
-            data-test-id={ACCORDION_ID}
+            data-test-id={dataTestId}
             className={merge([
                 divider && 'tw-divide-y tw-divide-black-10',
                 border && 'tw-border-t tw-border-b tw-border-black-10',
             ])}
         >
             {[...state.collection].map((item, index) => {
-                const { header, padding, headerComponent, divider } = children[index].props;
+                const {
+                    header,
+                    padding,
+                    headerComponent,
+                    divider,
+                    'data-test-id': itemDataTestId = ACCORDION_ITEM_ID,
+                } = children[index].props;
                 return (
                     <AriaAccordionItem
                         key={item.key}
@@ -179,6 +186,7 @@ export const Accordion = (props: AccordionProps): ReactElement => {
                         header={header}
                         padding={padding}
                         headerComponent={headerComponent}
+                        data-test-id={itemDataTestId}
                     />
                 );
             })}
