@@ -3,7 +3,7 @@
 import { ColorPreview } from '@components/ColorPicker';
 import { ColorPicker, ColorPickerProps } from '@components/ColorPicker/ColorPicker';
 import { Flyout } from '@components/Flyout/Flyout';
-import React, { FC, useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { Color, ColorFormat } from '../../types/colors';
 import { ColorInputTrigger } from './ColorPickerTrigger';
 
@@ -18,7 +18,7 @@ export type ColorPickerFlyoutProps = Pick<ColorPickerProps, 'palettes' | 'onSele
     onDelete?: () => void;
 };
 
-export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
+export const ColorPickerFlyout = ({
     id,
     onClick,
     onClose,
@@ -29,7 +29,7 @@ export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
     clearable = false,
     onClear,
     onDelete,
-}) => {
+}: ColorPickerFlyoutProps): ReactElement => {
     const [open, setOpen] = useState(false);
     const [currentFormat, setCurrentFormat] = useState(ColorFormat.Hex);
 

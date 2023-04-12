@@ -2,21 +2,21 @@
 
 import { TextInput } from '@components/TextInput/TextInput';
 import { IconIcon } from '@foundation/Icon/Generated';
-import React, { FC, useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { AccordionHeaderProps } from '.';
 import { Accordion, AccordionItem } from './Accordion';
 
-const ACCORDION_ITEM_ID = '[data-test-id=accordion-item]';
+const ACCORDION_ID = '[data-test-id=fondue-accordion]';
+const ACCORDION_ITEM_ID = '[data-test-id=fondue-accordion-item]';
 const ACCORDION_ITEM_CONTENT_ID = '[data-test-id="collapsible-wrap"]';
 const TEXT_INPUT_ID = '[data-test-id=text-input]';
 const TEST_HEADER_ID = '[data-test-id="test-header"]';
-const ACCORDION_ID = '[data-test-id=accordion]';
 
 const itemClasses = ['tw-divide-y tw-divide-black-10'];
 const accordionWithBorderClasses = ['tw-border-b', 'tw-border-t', 'tw-border-black-10'];
 const accordionWithDividerClasses = ['tw-divide-y tw-divide-black-10'];
 
-const TestHeader: FC<AccordionHeaderProps> = ({ isOpen, disabled, children }) => (
+const TestHeader = ({ isOpen, disabled, children }: AccordionHeaderProps): ReactElement => (
     <div data-test-id="test-header" data-state={isOpen ? 'open' : 'closed'} data-disabled={disabled}>
         {children}
     </div>
@@ -248,9 +248,30 @@ describe('Accordion Component', () => {
         cy.get(ACCORDION_ITEM_ID).should('have.length', 3);
         cy.get(ACCORDION_ITEM_ID).eq(2).siblings(ACCORDION_ITEM_CONTENT_ID).should('exist');
     });
+
+    it('should render with custom data test ids', () => {
+        cy.mount(
+            <Accordion data-test-id="accordion-custom-test-id">
+                <AccordionItem header={{ children: '1' }} data-test-id="accordion-item-custom-test-id-1">
+                    1
+                </AccordionItem>
+                <AccordionItem header={{ children: '2' }} data-test-id="accordion-item-custom-test-id-2">
+                    2
+                </AccordionItem>
+                <AccordionItem header={{ children: '3' }} data-test-id="accordion-item-custom-test-id-3">
+                    2
+                </AccordionItem>
+            </Accordion>,
+        );
+
+        cy.get('[data-test-id="accordion-custom-test-id"]').should('have.length', 1);
+        cy.get('[data-test-id="accordion-item-custom-test-id-1"]').should('have.length', 1);
+        cy.get('[data-test-id="accordion-item-custom-test-id-2"]').should('have.length', 1);
+        cy.get('[data-test-id="accordion-item-custom-test-id-3"]').should('have.length', 1);
+    });
 });
 
-const TestAccordion = () => {
+const TestAccordion = (): ReactElement => {
     const accordionItems = [
         <AccordionItem key={0} header={{ children: '1' }}>
             1

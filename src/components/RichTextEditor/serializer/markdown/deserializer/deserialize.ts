@@ -9,6 +9,7 @@ import {
     InputNodeTypes,
     ItalicNode,
     LinkNode,
+    ListItemChildNode,
     ListItemNode,
     ListNode,
     MarkdownAstNode,
@@ -59,12 +60,15 @@ export default function deserialize<T extends InputNodeTypes>(node: MarkdownAstN
             } as ListNode<T>;
         case 'listItem':
             return { type: types.listItem, children } as ListItemNode<T>;
+        case 'listItemChild':
+            return { type: types.listItemChild, children } as ListItemChildNode<T>;
         case 'paragraph':
             return { type: types.paragraph, children } as ParagraphNode<T>;
         case 'link':
             return {
                 type: types.link,
                 [linkDestinationKey]: node.url,
+                target: node.target,
                 children,
             } as LinkNode<T>;
         case 'image':

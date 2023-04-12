@@ -9,7 +9,7 @@ import { DraggableItem, DropZonePosition } from '@utilities/dnd';
 import { DropZone } from '@components/DropZone';
 import type { TreeItemProps } from '@components/Tree/types';
 import { useTreeContext } from '@components/Tree/TreeContext';
-import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
+import { FOCUS_VISIBLE_STYLE, FOCUS_VISIBLE_STYLE_INSET } from '@utilities/focusStyle';
 
 import { getAcceptTypes, getItemPositionInParent, getNextItemToFocus, getPreviousItemToFocus } from './helpers';
 import { cloneThroughFragments, flattenChildren, isDescendant } from './utils';
@@ -231,8 +231,8 @@ export const TreeItem = ({
                         treeState.selectedIds.has(id)
                             ? 'tw-font-medium tw-bg-box-neutral-strong tw-text-box-neutral-strong-inverse hover:tw-bg-box-neutral-strong-hover hover:tw-text-box-neutral-strong-inverse-hover'
                             : 'tw-text-text hover:tw-bg-box-neutral-hover hover:tw-text-box-neutral-inverse-hover',
-                        FOCUS_VISIBLE_STYLE,
-                        'tw-leading-5 tw-no-underline tw-flex',
+                        FOCUS_VISIBLE_STYLE_INSET,
+                        'tw-relative tw-z-30 tw-leading-5 tw-no-underline tw-flex tw-group',
                     ])}
                     data-test-id="tree-item-content"
                     style={{
@@ -258,7 +258,10 @@ export const TreeItem = ({
                             {hasChildren && (
                                 <button
                                     data-test-id="tree-item-toggle"
-                                    className="tw-flex tw-items-center tw-justify-center tw-p-1.5 tw-cursor-pointer"
+                                    className={merge([
+                                        'tw-flex tw-items-center tw-justify-center tw-px-2 tw-py-1.5 tw-cursor-pointer tw-rounded',
+                                        FOCUS_VISIBLE_STYLE,
+                                    ])}
                                     onClick={handleExpandClick}
                                     onKeyDown={handleExpandKeyDown}
                                     tabIndex={0}

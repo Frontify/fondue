@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Validation } from '@utilities/validation';
-import React, { FC, useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { TextInput, TextInputProps, TextInputType } from './TextInput';
 
 const TEXT_INPUT_COMPONENT = '[data-test-id=fondue-text-input-component]';
@@ -17,7 +17,7 @@ const DECORATOR_ID = '[data-test-id=decorator]';
 const VISIBILITY_ICON_ID = '[data-test-id=visibility-icon]';
 const EXCLAMATION_MARK_ICON_ID = '[data-test-id=error-state-exclamation-mark-icon]';
 
-const StatefulInput: FC<TextInputProps> = (props) => {
+const StatefulInput = (props: TextInputProps): ReactElement => {
     const [input, setInput] = useState<string>('');
 
     useEffect(() => {

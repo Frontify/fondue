@@ -15,4 +15,14 @@ describe('reactCssPropsToCss()', () => {
             'font-size: 12px; text-align: center; font-weight: bold; font-family: Arial;',
         );
     });
+
+    it('converts css props with quotes correctly to inline style css', () => {
+        const props: CSSProperties = {
+            fontFamily:
+                '"Mier B", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
+        };
+        expect(reactCssPropsToCss(props)).to.equal(
+            "font-family: 'Mier B', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';",
+        );
+    });
 });

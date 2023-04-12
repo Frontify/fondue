@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { MouseEvent, PropsWithChildren, useEffect, useState } from 'react';
+import React, { MouseEvent, ReactNode, useEffect, useState } from 'react';
 import { merge } from '@utilities/merge';
 import { IconCaretRight, IconCheckMark } from '@foundation/Icon/Generated';
 import { IconSize } from '@foundation/Icon/IconSize';
@@ -18,6 +18,7 @@ export type MenuItemProps = {
     type?: string;
     link?: string;
     onClick?: <T extends HTMLButtonElement | HTMLAnchorElement>(event: MouseEvent<T>) => void;
+    children?: ReactNode;
 } & Omit<MenuItemContentProps, 'iconSize'>;
 
 export const menuItemSizeClassMap: Record<MenuItemContentSize, string> = {
@@ -76,7 +77,7 @@ export const MenuItem = ({
     children,
     link,
     onClick,
-}: PropsWithChildren<MenuItemProps>) => {
+}: MenuItemProps) => {
     const currentIconSize = size === MenuItemContentSize.XSmall ? IconSize.Size16 : IconSize.Size20;
 
     const currentIcon = {

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC } from 'react';
+import React, { ReactElement } from 'react';
 
 export enum DividerStyle {
     NoLine = 'noline',
@@ -28,11 +28,11 @@ const styleMap = {
     [DividerStyle.Dotted]: 'tw-border-dotted',
 };
 
-export const Divider: FC<DividerProps> = ({
+export const Divider = ({
     style = DividerStyle.Solid,
     height = DividerHeight.Small,
     color: borderTopColor = '#CCC',
-}) => (
+}: DividerProps): ReactElement => (
     <div className="tw-flex tw-items-center" style={{ height }} data-test-id="divider">
         <hr
             className={`tw-border-t tw-m-0 tw-w-full ${styleMap[style]}`}

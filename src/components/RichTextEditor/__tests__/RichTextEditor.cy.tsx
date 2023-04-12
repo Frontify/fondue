@@ -1,13 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ELEMENT_LINK, ELEMENT_PARAGRAPH } from '@udecode/plate';
-import React, { CSSProperties, FC, useState } from 'react';
+import React, { CSSProperties, ReactElement, useState } from 'react';
 import { orderedListValue } from '../helpers/exampleValues';
 import {
     AlignRightPlugin,
     BoldPlugin,
     BreakAfterPlugin,
+    ButtonPlugin,
     ELEMENT_BUTTON,
+    LinkPlugin,
     OrderedListPlugin,
     ParagraphPlugin,
     PluginComposer,
@@ -40,6 +42,7 @@ import {
     RICH_TEXT_EDITOR,
     TEXTSTYLE_DROPDOWN_TRIGGER,
     TEXTSTYLE_OPTION,
+    TOOLBAR_BUTTON,
     TOOLBAR_FLOATING,
     TOOLBAR_GROUP_1,
     TOOLBAR_GROUP_2,
@@ -67,7 +70,7 @@ const selectTextValue = (value: string) => {
     });
 };
 
-const RichTextWithLink: FC<{ text: string; link: string }> = ({ text, link }) => {
+const RichTextWithLink = ({ text, link }: { text: string; link: string }): ReactElement => {
     return (
         <RichTextEditor
             value={JSON.stringify([
@@ -90,7 +93,7 @@ const RichTextWithLink: FC<{ text: string; link: string }> = ({ text, link }) =>
     );
 };
 
-const RichTextWithLegacyLink: FC<{ text: string; url: string }> = ({ text, url }) => {
+const RichTextWithLegacyLink = ({ text, url }: { text: string; url: string }): ReactElement => {
     return (
         <RichTextEditor
             value={JSON.stringify([
@@ -118,11 +121,15 @@ const RichTextWithLegacyLink: FC<{ text: string; url: string }> = ({ text, url }
     );
 };
 
-const RichTextWithButton: FC<{ text: string; link: string; buttonStyle: RichTextButtonStyle }> = ({
+const RichTextWithButton = ({
     text,
     link,
     buttonStyle,
-}) => {
+}: {
+    text: string;
+    link: string;
+    buttonStyle: RichTextButtonStyle;
+}): ReactElement => {
     return (
         <RichTextEditor
             value={JSON.stringify([
@@ -142,7 +149,7 @@ const RichTextWithButton: FC<{ text: string; link: string; buttonStyle: RichText
     );
 };
 
-const RichTextWithChangeDesignTokensButton: FC = () => {
+const RichTextWithChangeDesignTokensButton = (): ReactElement => {
     const [designTokens, setDesignTokens] = useState<DesignTokens>({
         custom1: {
             fontSize: '42px',
@@ -167,13 +174,18 @@ const RichTextWithChangeDesignTokensButton: FC = () => {
     );
 };
 
-const RichTextEditorWithValueSetOutside = ({ value }: { value: string }) => {
+const RichTextEditorWithValueSetOutside = ({ value }: { value: string }): ReactElement => {
     const [initialValue, setInitialValue] = useState(value);
 
     return <RichTextEditor onTextChange={(value) => setInitialValue(value)} value={initialValue} />;
 };
 
-const RichTextEditorWithOrderedListStyles = () => <RichTextEditor value={JSON.stringify([orderedListValue])} />;
+const RichTextEditorWithOrderedListStyles = (): ReactElement => (
+    <RichTextEditor value={JSON.stringify([orderedListValue])} />
+);
+
+const activeButtonClassNames = '!tw-bg-box-selected tw-rounded !tw-text-box-selected-inverse';
+const disabledButtonClassNames = '!tw-cursor-not-allowed !tw-opacity-50';
 
 describe('RichTextEditor Component', () => {
     describe('Rendering', () => {
@@ -333,10 +345,22 @@ describe('RichTextEditor Component', () => {
         it('renders ordered list with correct list style types', () => {
             cy.mount(<RichTextEditorWithOrderedListStyles />);
 
-            cy.get('[contenteditable=true] ol').should('have.class', 'decimal');
-            cy.get('[contenteditable=true] ol ol').should('have.class', 'alpha');
-            cy.get('[contenteditable=true] ol ol ol').should('have.class', 'roman');
-            cy.get('[contenteditable=true] ol ol ol ol').should('have.class', 'decimal');
+            cy.get('[contenteditable=true] ol').should(
+                'have.class',
+                "[&>li>p]:before:tw-content-[counter(count,decimal)_'._']",
+            );
+            cy.get('[contenteditable=true] ol ol').should(
+                'have.class',
+                "[&>li>p]:before:tw-content-[counter(count,_lower-alpha)_'._']",
+            );
+            cy.get('[contenteditable=true] ol ol ol').should(
+                'have.class',
+                "[&>li>p]:before:tw-content-[counter(count,lower-roman)_'._']",
+            );
+            cy.get('[contenteditable=true] ol ol ol ol').should(
+                'have.class',
+                "[&>li>p]:before:tw-content-[counter(count,decimal)_'._']",
+            );
         });
 
         it('renders ordered list right aligned', () => {
@@ -474,6 +498,54 @@ describe('RichTextEditor Component', () => {
             cy.get(CHECKBOX_INPUT).should('exist');
             cy.get('ul li').should('not.exist');
             cy.get('ol li').should('not.exist');
+        });
+        it('renders a checkbox with custom textStyle', () => {
+            cy.mount(
+                <RichTextEditor
+                    designTokens={{
+                        heading2: {
+                            fontSize: '12px',
+                            fontWeight: 200,
+                        },
+                    }}
+                />,
+            );
+            const heading2Styles = 'font-size: 12px; font-weight: 200;';
+
+            insertTextAndOpenToolbar();
+            cy.get(TOOLBAR_GROUP_2).children().eq(5).click();
+            cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
+            cy.get(TEXTSTYLE_OPTION).eq(1).click();
+            cy.get('[contenteditable=true] > div > span').should('have.attr', 'style', heading2Styles);
+            //remove checklist again and textStyle stays
+            cy.get('[contenteditable=true]').click().type('{selectall}');
+            cy.get(TOOLBAR_GROUP_2).children().eq(5).click();
+            cy.get('[contenteditable=true] > h2').should('have.attr', 'style', heading2Styles);
+        });
+
+        it('switches a custom checkbox to list and keeps textStyle', () => {
+            cy.mount(
+                <RichTextEditor
+                    designTokens={{
+                        heading1: {
+                            fontSize: '48px',
+                            fontWeight: 700,
+                            fontStyle: 'normal',
+                        },
+                    }}
+                />,
+            );
+            const heading1Styles = 'font-size: 48px; font-weight: 700; font-style: normal;';
+
+            insertTextAndOpenToolbar();
+            cy.get(TOOLBAR_GROUP_2).children().eq(5).click();
+            cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
+            cy.get(TEXTSTYLE_OPTION).first().click();
+            cy.get('[contenteditable=true] > div ').should('include.html', heading1Styles);
+            //remove checklist again and textStyle stays
+            cy.get('[contenteditable=true]').click().type('{selectall}');
+            cy.get(TOOLBAR_GROUP_2).children().eq(4).click();
+            cy.get('[contenteditable=true] > ul ').should('include.html', heading1Styles);
         });
     });
 
@@ -639,6 +711,17 @@ describe('RichTextEditor Component', () => {
             cy.get('[contenteditable=true] a').should('have.attr', 'href', link + additionalLink);
             cy.get('[contenteditable=true] a').should('have.attr', 'target', '_self');
         });
+
+        it('should disable link-button when multiple blocks are selected', () => {
+            const plugins = new PluginComposer();
+            plugins.setPlugin([new LinkPlugin()]);
+
+            cy.mount(<RichTextEditor plugins={plugins} />);
+
+            cy.get('[contenteditable=true]').click().type('block1{enter}block2{selectall}');
+            cy.get(TOOLBAR_FLOATING).should('be.visible');
+            cy.get(`${TOOLBAR_FLOATING} ${TOOLBAR_BUTTON}`).should('have.class', disabledButtonClassNames);
+        });
     });
 
     describe('button plugin', () => {
@@ -738,6 +821,17 @@ describe('RichTextEditor Component', () => {
 
             cy.get('[contenteditable=true]').should('contain.text', text);
             cy.get('[contenteditable=true] a').should('not.exist');
+        });
+
+        it('should disable button-button when multiple blocks are selected', () => {
+            const plugins = new PluginComposer();
+            plugins.setPlugin([new ButtonPlugin()]);
+
+            cy.mount(<RichTextEditor plugins={plugins} />);
+
+            cy.get('[contenteditable=true]').click().type('block1{enter}block2{selectall}');
+            cy.get(TOOLBAR_FLOATING).should('be.visible');
+            cy.get(`${TOOLBAR_FLOATING} ${TOOLBAR_BUTTON}`).should('have.class', disabledButtonClassNames);
         });
     });
 
@@ -939,9 +1033,6 @@ describe('RichTextEditor Component', () => {
             />
         );
     };
-
-    const activeButtonClassNames = '!tw-bg-box-selected tw-rounded !tw-text-box-selected-inverse';
-    const disabledButtonClassNames = '!tw-cursor-not-allowed !tw-opacity-50';
 
     describe('column break plugin', () => {
         it('it should add column break on paragraph', () => {

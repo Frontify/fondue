@@ -3,6 +3,11 @@
 module.exports = {
     presets: [require('@frontify/fondue-tokens/tailwind')],
     content: ['./src/**/*.{js,ts,tsx}'],
+    plugins: [
+        require('@tailwindcss/forms')({
+            strategy: 'class',
+        }),
+    ],
     theme: {
         extend: {
             outline: {

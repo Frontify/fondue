@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, ReactElement, cloneElement } from 'react';
+import React, { ReactElement, cloneElement } from 'react';
 import { merge } from '@utilities/merge';
 import {
     IconCheckMark,
@@ -42,7 +42,7 @@ type BrightHeaderProps = {
     headerStyle: BrightHeaderStyle;
 };
 
-export const BrightHeader: FC<BrightHeaderProps> = ({ headerStyle }) => {
+export const BrightHeader = ({ headerStyle }: BrightHeaderProps): ReactElement => {
     return (
         <div
             data-test-id="bright-header"

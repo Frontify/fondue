@@ -13,5 +13,6 @@ export const reactCssPropsToCss = (props?: CSSProperties): string => {
             const value = props[key as keyof CSSProperties];
             return value ? `${acc}${convertCamelCaseToKebabCase(key)}: ${value}; ` : acc;
         }, '')
-        .trim();
+        .trim()
+        .replaceAll('"', "'");
 };

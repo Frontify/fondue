@@ -5,9 +5,9 @@ import { IconCalendar } from '@foundation/Icon/Generated';
 import { IconCaretDown, IconCaretUp, IconSize } from '@foundation/Icon/index';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
-import React, { PropsWithChildren, forwardRef } from 'react';
+import React, { ReactNode, forwardRef } from 'react';
 
-type DatePickerTriggerProps = PropsWithChildren<{
+type DatePickerTriggerProps = {
     placeHolder?: string;
     value?: string;
     isClearable?: boolean;
@@ -15,7 +15,8 @@ type DatePickerTriggerProps = PropsWithChildren<{
     onClick?: () => void;
     validation?: Validation;
     onDateChanged?: ((date: [Date | null, Date | null] | null) => void) | ((date: Date | null) => void);
-}>;
+    children?: ReactNode;
+};
 
 export const DatePickerTrigger = forwardRef<HTMLDivElement, DatePickerTriggerProps>(
     (

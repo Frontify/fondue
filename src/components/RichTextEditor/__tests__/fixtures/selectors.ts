@@ -20,3 +20,4 @@ export const FLOATING_BUTTON_EDIT = '[data-test-id=floating-button-edit]';
 export const FLOATING_BUTTON_SECONDARY = '[data-test-id=floating-button-insert-secondary]';
 export const BUTTON = '[data-test-id=button]';
 export const CHECKBOX_INPUT_ID = '[data-test-id=checkbox-input]';
+export const TOOLBAR_BUTTON = '[data-testid=ToolbarButton]';

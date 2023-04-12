@@ -1,13 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { VisitorResult, visit } from 'unist-util-visit';
-import { MENTION_SERIALIZE_REGEX } from '../utils';
-import { NodeChild, NodeChildKey, ParagraphNode, RegExpMatchArray, Transformer } from './types';
+import { NodeChild, NodeChildKey, RemarkExtension, TreeNode } from '../../types';
+import { MENTION_SERIALIZE_REGEX } from '../../../utils';
+import { RegExpMatchArray } from './types';
 
-const transformer = (tree: ParagraphNode) => {
+export default function Extension(): RemarkExtension {
+    return transformer;
+}
+
+const transformer = (tree: TreeNode) => {
     visit(tree, 'paragraph', visitor);
 
-    function visitor(node: ParagraphNode): VisitorResult {
+    function visitor(node: TreeNode): VisitorResult {
         const { children } = node;
         node.children = [];
 
@@ -31,7 +36,7 @@ const transformer = (tree: ParagraphNode) => {
 
 const is = (node: NodeChild, key: NodeChildKey): boolean => node[key] !== '' && !!node.value;
 
-const createNodes = (matches: RegExpMatchArray[], node: ParagraphNode, value: string) => {
+const createNodes = (matches: RegExpMatchArray[], node: TreeNode, value: string) => {
     if (matches[0].index > 0) {
         node.children.push({
             type: 'text',
@@ -68,9 +73,3 @@ const createNodes = (matches: RegExpMatchArray[], node: ParagraphNode, value: st
         });
     }
 };
-
-const plugin = (): Transformer => {
-    return transformer;
-};
-
-export default plugin;

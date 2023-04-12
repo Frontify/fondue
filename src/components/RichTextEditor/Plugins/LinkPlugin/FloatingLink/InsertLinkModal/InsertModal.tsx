@@ -6,7 +6,7 @@ import { Checkbox } from '@components/Checkbox';
 import { FormControl } from '@components/FormControl';
 import { TextInput } from '@components/TextInput';
 import { IconCheckMark20 } from '@foundation/Icon/Generated';
-import React, { FC } from 'react';
+import React, { ReactElement } from 'react';
 import { InsertModalStateProps } from './types';
 
 type Props = {
@@ -22,7 +22,7 @@ type Props = {
     children?: React.ReactNode;
 };
 
-export const InsertModal: FC<Props> = ({
+export const InsertModal = ({
     state,
     onTextChange,
     onUrlChange,
@@ -33,7 +33,7 @@ export const InsertModal: FC<Props> = ({
     hasValues,
     testId,
     children,
-}) => (
+}: Props): ReactElement => (
     <div data-test-id={testId} className="tw-bg-white tw-rounded tw-shadow tw-p-7 tw-min-w-[400px] tw-overflow-y-auto">
         <FormControl
             label={{
