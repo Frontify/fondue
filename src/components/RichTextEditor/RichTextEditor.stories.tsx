@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Meta, StoryFn } from '@storybook/react';
-import React, { ComponentProps, useEffect, useState } from 'react';
+import React, { ComponentProps } from 'react';
 import { Position } from './EditorPositioningWrapper';
 import {
     IPSUM,
@@ -528,15 +528,8 @@ export const GetSerializedContent = ({
     props = { designTokens: customDesignTokens, mentionable, columns: 1, columnGap: 'normal' },
 }: {
     props: SerializeNodesToHtmlOptions;
-}) => {
-    const [serialized, setSerialized] = useState<string | null>(null);
-
-    useEffect(() => {
-        (async () => {
-            setSerialized(await serializeNodesToHtml(nodesToSerialize, props));
-        })();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [props, nodesToSerialize]);
+}): JSX.Element => {
+    const serialized = serializeNodesToHtml(nodesToSerialize, props);
 
     return (
         <>
@@ -551,9 +544,7 @@ export const GetSerializedContent = ({
                         <div dangerouslySetInnerHTML={{ __html: serialized }} />
                     </div>
                 </>
-            ) : (
-                <div className="tw-rounded-sm tw-bg-base-alt tw-animate-pulse tw-h-full tw-min-h-[10px] tw-w-full" />
-            )}
+            ) : null}
         </>
     );
 };
