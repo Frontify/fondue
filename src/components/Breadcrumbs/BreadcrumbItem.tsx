@@ -50,7 +50,7 @@ export const BreadcrumbItem = ({ label, link, onClick, showSeparator }: Breadcru
 
     return (
         <li
-            className="tw-flex tw-items-center tw-text-black-80 hover:tw-text-black-100 tw-text-xs dark:tw-text-black-10 dark:hover:tw-text-black-30 tw-transition-colors"
+            className="tw-flex tw-items-center tw-text-text-weak hover:tw-text-text tw-text-xs tw-transition-colors"
             data-test-id="breadcrumb-item"
         >
             <Element ref={ref} {...props} className={merge(['tw-outline-none', isFocusVisible && FOCUS_STYLE])}>
