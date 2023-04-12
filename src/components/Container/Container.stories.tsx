@@ -4,7 +4,8 @@ import React, { ReactElement, ReactNode } from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { Container as ContainerComponent, ContainerProps } from './Container';
 import { SPACING_VALUES } from '@utilities/dimensions';
-import { BOX_BG_ALIAS_TOKENS, BOX_TEXT_ALIAS_TOKENS } from '@utilities/tokens';
+import { BOX_BG_ALIAS_TOKENS_CLASSES, BOX_TEXT_ALIAS_TOKENS_CLASSES } from '@utilities/tokens';
+import { Box } from '@components/Box';
 
 export default {
     title: 'Layout/Container',
@@ -18,13 +19,13 @@ export default {
             },
         },
         bg: {
-            options: BOX_BG_ALIAS_TOKENS,
+            options: BOX_BG_ALIAS_TOKENS_CLASSES,
             control: {
                 type: 'select',
             },
         },
         color: {
-            options: BOX_TEXT_ALIAS_TOKENS,
+            options: BOX_TEXT_ALIAS_TOKENS_CLASSES,
             control: {
                 type: 'select',
             },
@@ -49,7 +50,7 @@ export default {
         maxHeight: {
             type: 'string',
         },
-        children: { table: { disable: false } },
+        children: { table: { disable: true } },
     },
     args: {
         as: 'div',
@@ -91,29 +92,41 @@ ContainerWithBoxAliasToken.args = {
 };
 
 export const ContainerAsSpanElement: StoryFn<ContainerProps> = (args: ContainerProps) => (
-    <span className="tw-flex">
+    <Box as="span" className="tw-flex">
         <ContainerComponent {...args} bg="tw-bg-box-positive" color="tw-text-box-positive-inverse">
-            <span>
+            <Box as="span">
                 To use <Code>Container</Code> as a <Code>span</Code> element and apply top and bottom{' '}
                 <Code>margin</Code> and <Code>padding</Code> wrap it into a flex or grid container.
-            </span>
+            </Box>
         </ContainerComponent>
         <ContainerComponent {...args} bg="tw-bg-box-warning" color="tw-text-box-warning-inverse">
-            <span>
+            <Box as="span">
                 Use <Code>span</Code> element when there is a parent element that does not accept <Code>div</Code> as a
                 child element.
-            </span>
+            </Box>
         </ContainerComponent>
         <ContainerComponent {...args} bg="tw-bg-box-negative" color="tw-text-box-negative-inverse">
-            <span>
+            <Box as="span">
                 It is not possible to define flex items CSS like <Code>flex: 1;</Code> in the Container component. Use a
                 combination of <Code>Flex</Code> and <Code>Box</Code> when that is needed.
-            </span>
+            </Box>
         </ContainerComponent>
-    </span>
+    </Box>
 );
 ContainerAsSpanElement.args = {
     as: 'span',
     maxWidth: '33%',
     margin: 8,
+};
+ContainerAsSpanElement.argTypes = {
+    bg: {
+        control: {
+            disable: true,
+        },
+    },
+    color: {
+        control: {
+            disable: true,
+        },
+    },
 };

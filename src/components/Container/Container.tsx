@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { Box } from '@components/Box';
 import {
     DimensionUnity,
     MARGIN_VALUES_MAP,
@@ -44,7 +45,7 @@ export const Container = ({
     const marginClassName = SPACING_VALUES.includes(padding) ? MARGIN_VALUES_MAP[margin] : MARGIN_VALUES_MAP[0];
 
     return (
-        <ContainerElement
+        <Box
             data-test-id={dataTestId}
             className={merge([paddingClassName, marginClassName, bg, color])}
             style={{
@@ -53,9 +54,10 @@ export const Container = ({
                 maxHeight,
                 minHeight,
             }}
+            as={ContainerElement}
         >
             {children}
-        </ContainerElement>
+        </Box>
     );
 };
 Container.displayName = 'FondueContainer';
