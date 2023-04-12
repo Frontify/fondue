@@ -20,17 +20,38 @@ export default {
         'aria-label': {
             type: 'string',
         },
+        children: {
+            table: {
+                disable: true,
+            },
+        },
     },
     args: {
         className: 'tw-font-bold tw-flex',
+        children:
+            'You can pass any props you want into this component. In the controls you can find examples with camelCased, aria and data attributes.',
     },
 } as Meta<Props>;
 
-export const Box: StoryFn<Props> = (args: Props) => {
-    return (
-        <BoxComponent {...args}>
-            You can pass any props you want into this component. In the controls you can find examples with camelCased,
-            aria and data attributes.
+const BoxTemplate: StoryFn<Props> = (args: Props) => {
+    return <BoxComponent {...args} />;
+};
+
+export const Box = BoxTemplate.bind({});
+
+export const BoxWithAliasTokens = BoxTemplate.bind({});
+BoxWithAliasTokens.args = {
+    className:
+        'tw-bg-box-positive hover:tw-bg-box-positive-hover tw-text-box-positive-inverse hover:tw-text-box-positive-inverse-hover',
+};
+
+export const BoxWithNestedBoxAsSpan = BoxTemplate.bind({});
+BoxWithNestedBoxAsSpan.args = {
+    className:
+        'tw-flex tw-bg-box-positive hover:tw-bg-box-positive-hover tw-text-box-positive-inverse hover:tw-text-box-positive-inverse-hover',
+    children: (
+        <BoxComponent as="span" className="tw-p-4">
+            I am a Box component rendered as a span element inside another Box with display: flex.
         </BoxComponent>
-    );
+    ),
 };
