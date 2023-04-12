@@ -9,3 +9,4 @@ export * from './RichTextEditor';
 export * from './utils';
 export * from './Plugins';
 export * from './serializer';
+export * from './context';
