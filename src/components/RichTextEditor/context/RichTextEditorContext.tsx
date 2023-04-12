@@ -26,12 +26,11 @@ type RichTextEditorProviderProps = {
         designTokens: DesignTokens;
         position: Position;
         border: boolean;
-        editorWidth?: number;
     };
 };
 
 export const RichTextEditorProvider = ({ children, value }: RichTextEditorProviderProps) => {
-    const { designTokens, position, border, editorWidth } = value;
+    const { designTokens, position, border } = value;
 
     const state = {
         designTokens: designTokens ?? defaultDesignTokens,
@@ -41,7 +40,7 @@ export const RichTextEditorProvider = ({ children, value }: RichTextEditorProvid
 
     return (
         <RichTextEditorContext.Provider value={state}>
-            <EditorResizeContextProvider width={editorWidth}>{children}</EditorResizeContextProvider>
+            <EditorResizeContextProvider>{children}</EditorResizeContextProvider>
         </RichTextEditorContext.Provider>
     );
 };

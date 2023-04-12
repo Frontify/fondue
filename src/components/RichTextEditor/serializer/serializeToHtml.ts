@@ -25,7 +25,7 @@ export const serializeRawToHtmlAsync = async (
     columnGap: SerializeNodesToHtmlOptions['columnGap'] = 'normal',
 ): Promise<string> => {
     const nodes = parseRawValue({ raw });
-    return new Promise((resolve) => resolve(serializeNodesToHtml(nodes, { designTokens, columns, columnGap })));
+    return Promise.resolve(serializeNodesToHtml(nodes, { designTokens, columns, columnGap }));
 };
 
 export type SerializeNodesToHtmlOptions = {
