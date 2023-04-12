@@ -46,7 +46,7 @@ export const BreadcrumbItem = ({ label, link, onClick, showSeparator }: Breadcru
     const { isFocusVisible, focusProps } = useFocusRing();
 
     const elementTypeProps = { a: { href: link }, button: { onClick, type: 'button' as const }, span: {} };
-    const props = mergeProps(itemProps, focusProps, elementTypeProps);
+    const props = mergeProps(itemProps, focusProps, elementTypeProps[Element]);
 
     return (
         <li
