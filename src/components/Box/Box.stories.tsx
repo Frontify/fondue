@@ -4,7 +4,7 @@ import { Meta, StoryFn } from '@storybook/react';
 import React from 'react';
 import { Box as BoxComponent } from './Box';
 
-type Props = JSX.IntrinsicElements['div'];
+type Props = JSX.IntrinsicElements['div'] | JSX.IntrinsicElements['span'];
 
 export default {
     title: 'Layout/Box',

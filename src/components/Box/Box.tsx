@@ -6,7 +6,7 @@ import { ContainerHTMLElement } from 'src/types/elements';
 export type BoxProps = {
     'data-test-id'?: string;
     as?: ContainerHTMLElement;
-} & HTMLAttributes<HTMLDivElement>;
+} & HTMLAttributes<HTMLDivElement | HTMLSpanElement>;
 
 export const BOX_TEST_ID = 'fondue-box';
 
