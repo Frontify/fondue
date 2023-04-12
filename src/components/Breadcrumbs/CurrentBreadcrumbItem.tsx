@@ -49,7 +49,7 @@ export const CurrentBreadcrumbItem = ({
             className="tw-w-full tw-inline-flex tw-align-middle tw-gap-x-1 tw-text-m tw-text-text tw-items-center"
             data-test-id="breadcrumb-item"
         >
-            <Element ref={ref} {...props} href={link} className={classNames}>
+            <Element ref={ref} {...props} className={classNames}>
                 {decorator}
                 {label}
             </Element>
