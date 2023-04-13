@@ -93,6 +93,12 @@ describe('Grid Component', () => {
         cy.get(GRID_ID).should('have.class', 'tw-text-box-neutral-inverse');
     });
 
+    it("renders with with 'as' prop", () => {
+        cy.mount(<GridComponent as="span" />);
+
+        cy.get(`span${GRID_ID}`).should('exist');
+    });
+
     it('should render with custom data-test-id', () => {
         cy.mount(<GridComponent data-test-id="custom-container-test-id" />);
 
