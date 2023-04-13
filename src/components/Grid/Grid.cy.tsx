@@ -82,19 +82,15 @@ describe('Grid Component', () => {
     });
 
     it('renders with proper box color tokens', () => {
-        cy.mount(<GridComponent boxColorToken="box-neutral" />);
+        cy.mount(<GridComponent bg="tw-bg-box-neutral" />);
 
         cy.get(GRID_ID).should('have.class', 'tw-bg-box-neutral');
-        cy.get(GRID_ID).should('have.class', 'tw-text-box-neutral-inverse');
     });
 
-    it('throws an error if wrong box color token prefix is provided', (done) => {
-        cy.on('uncaught:exception', (error) => {
-            expect(error.message).to.include('boxColorToken should be one of the following values');
-            done();
-            return false;
-        });
-        cy.mount(<GridComponent boxColorToken="box-wrong-token" />);
+    it('renders with proper text color tokens', () => {
+        cy.mount(<GridComponent color="tw-text-box-neutral-inverse" />);
+
+        cy.get(GRID_ID).should('have.class', 'tw-text-box-neutral-inverse');
     });
 
     it('should render with custom data-test-id', () => {
