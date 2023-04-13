@@ -184,8 +184,8 @@ devDependencies:
     specifier: 7.20.12
     version: 7.20.12
   '@cypress/vite-dev-server':
-    specifier: 5.0.2
-    version: 5.0.2
+    specifier: 5.0.5
+    version: 5.0.5
   '@frontify/eslint-config-react':
     specifier: 0.15.5
     version: 0.15.5(eslint@8.28.0)(prettier@2.7.1)(react@17.0.2)(typescript@5.0.2)
@@ -1692,12 +1692,13 @@ packages:
       uuid: 8.3.2
     dev: true
 
-  /@cypress/vite-dev-server@5.0.2:
-    resolution: {integrity: sha512-bhG5P0p423SiucYnFyGjQrPkIfNDKF+R0pwcB78y71soHXzh0cJ6dSAn67c8moU5YtQnAGgO3FKQmWcx8LFubw==}
+  /@cypress/vite-dev-server@5.0.5:
+    resolution: {integrity: sha512-ZR6Smfe2Jpe7V//yrISgbe4CfLfjpMuqr9ryCmx7NV3XiKJVBMIYmDUQ0lVIR6m7JaHv0/rElM8dTA6R987olQ==}
     dependencies:
       debug: 4.3.4(supports-color@5.5.0)
       find-up: 6.3.0
       node-html-parser: 5.3.3
+      semver: 7.3.8
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -4095,7 +4096,7 @@ packages:
       '@storybook/csf-plugin': 7.0.0-beta.53
       '@storybook/csf-tools': 7.0.0-beta.53
       '@storybook/global': 5.0.0
-      '@storybook/mdx2-csf': 1.0.0-next.6
+      '@storybook/mdx2-csf': 1.0.0-next.8
       '@storybook/node-logger': 7.0.0-beta.53
       '@storybook/postinstall': 7.0.0-beta.53
       '@storybook/preview-api': 7.0.0-beta.53
@@ -4159,7 +4160,7 @@ packages:
     dependencies:
       '@storybook/client-logger': 7.0.0-beta.53
       '@storybook/core-events': 7.0.0-beta.53
-      '@storybook/csf': 0.0.2-next.10
+      '@storybook/csf': 0.0.2-next.11
       '@storybook/global': 5.0.0
       '@storybook/manager-api': 7.0.0-beta.53(react-dom@17.0.2)(react@17.0.2)
       '@storybook/preview-api': 7.0.0-beta.53
@@ -4318,7 +4319,7 @@ packages:
       '@storybook/client-logger': 7.0.0-beta.53
       '@storybook/components': 7.0.0-beta.53(react-dom@17.0.2)(react@17.0.2)
       '@storybook/core-events': 7.0.0-beta.53
-      '@storybook/csf': 0.0.2-next.10
+      '@storybook/csf': 0.0.2-next.11
       '@storybook/docs-tools': 7.0.0-beta.53
       '@storybook/global': 5.0.0
       '@storybook/manager-api': 7.0.0-beta.53(react-dom@17.0.2)(react@17.0.2)
@@ -4389,7 +4390,7 @@ packages:
       '@storybook/client-logger': 7.0.0-beta.53
       '@storybook/core-common': 7.0.0-beta.53
       '@storybook/csf-plugin': 7.0.0-beta.53
-      '@storybook/mdx2-csf': 1.0.0-next.6
+      '@storybook/mdx2-csf': 1.0.0-next.8
       '@storybook/node-logger': 7.0.0-beta.53
       '@storybook/preview': 7.0.0-beta.53
       '@storybook/preview-api': 7.0.0-beta.53
@@ -4508,7 +4509,7 @@ packages:
       '@babel/core': 7.20.12
       '@babel/preset-env': 7.20.2(@babel/core@7.20.12)
       '@babel/types': 7.20.7
-      '@storybook/csf': 0.0.2-next.10
+      '@storybook/csf': 0.0.2-next.11
       '@storybook/csf-tools': 7.0.0-beta.53
       '@storybook/node-logger': 7.0.0-beta.53
       '@storybook/types': 7.0.0-beta.53
@@ -4548,7 +4549,7 @@ packages:
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:
       '@storybook/client-logger': 7.0.0-beta.53
-      '@storybook/csf': 0.0.2-next.10
+      '@storybook/csf': 0.0.2-next.11
       '@storybook/global': 5.0.0
       '@storybook/theming': 7.0.0-beta.53(react-dom@17.0.2)(react@17.0.2)
       '@storybook/types': 7.0.0-beta.53
@@ -4611,9 +4612,9 @@ packages:
       '@storybook/builder-manager': 7.0.0-beta.53
       '@storybook/core-common': 7.0.0-beta.53
       '@storybook/core-events': 7.0.0-beta.53
-      '@storybook/csf': 0.0.2-next.10
+      '@storybook/csf': 0.0.2-next.11
       '@storybook/csf-tools': 7.0.0-beta.53
-      '@storybook/docs-mdx': 0.0.1-next.6
+      '@storybook/docs-mdx': 0.0.1-next.7
       '@storybook/global': 5.0.0
       '@storybook/manager': 7.0.0-beta.53
       '@storybook/node-logger': 7.0.0-beta.53
@@ -4667,7 +4668,7 @@ packages:
     resolution: {integrity: sha512-mWz9sQJHLNN9JyPhItgWOMgsUtIgA7Sy8bJT4QKdZUYly40xdycvy+3rIEbD+mPfFiGqVnRjb6omGosys3+gsg==}
     dependencies:
       '@babel/types': 7.20.7
-      '@storybook/csf': 0.0.2-next.10
+      '@storybook/csf': 0.0.2-next.11
       '@storybook/types': 7.0.0-beta.53
       fs-extra: 11.1.0
       recast: 0.23.1
@@ -4686,14 +4687,14 @@ packages:
       lodash: 4.17.21
     dev: true
 
-  /@storybook/csf@0.0.2-next.10:
-    resolution: {integrity: sha512-m2PFgBP/xRIF85VrDhvesn9ktaD2pN3VUjvMqkAL/cINp/3qXsCyI81uw7N5VEOkQAbWrY2FcydnvEPDEdE8fA==}
+  /@storybook/csf@0.0.2-next.11:
+    resolution: {integrity: sha512-xGt0YSVxZb43sKmEf1GIQD8xEbo+c+S6khDEL7Qu/pYA0gh5z3WUuhOlovnelYj/YJod+XRsfVvk23AaRfUJ4Q==}
     dependencies:
       type-fest: 2.19.0
     dev: true
 
-  /@storybook/docs-mdx@0.0.1-next.6:
-    resolution: {integrity: sha512-DjoSIXADmLJtdroXAjUotFiZlcZ2usWhqrS7aeOtZs0DVR0Ws5WQjnwtpDUXt8gryTSd+OZJ0cNsDcqg4JDEvQ==}
+  /@storybook/docs-mdx@0.0.1-next.7:
+    resolution: {integrity: sha512-JbgBf/EMBtx65iXtB3pOiX3818UeL9jZ+KAY241OAPqJVXjMQ5KaVOdg/57MSmd508HDIGx7CiImOMEmWwQ9/g==}
     dev: true
 
   /@storybook/docs-tools@7.0.0-beta.53:
@@ -4723,7 +4724,7 @@ packages:
       '@storybook/channels': 7.0.0-beta.53
       '@storybook/client-logger': 7.0.0-beta.53
       '@storybook/core-events': 7.0.0-beta.53
-      '@storybook/csf': 0.0.2-next.10
+      '@storybook/csf': 0.0.2-next.11
       '@storybook/global': 5.0.0
       '@storybook/router': 7.0.0-beta.53(react-dom@17.0.2)(react@17.0.2)
       '@storybook/theming': 7.0.0-beta.53(react-dom@17.0.2)(react@17.0.2)
@@ -4743,8 +4744,8 @@ packages:
     resolution: {integrity: sha512-2b6kUgnPM7sqIvwFvmqx5BJNgxRtdR9MfnTXIiWnR+QfRgDzXG8cfv8pZ6FbEHY7hjuI2l/CHjWMkKyMMnysLQ==}
     dev: true
 
-  /@storybook/mdx2-csf@1.0.0-next.6:
-    resolution: {integrity: sha512-m6plojocU/rmrqWd26yvm8D+oHZPZ6PtSSFmZIgpNDEPVmc8s4fBD6LXOAB5MiPI5f8KLUr2HVhOMZ97o5pDTw==}
+  /@storybook/mdx2-csf@1.0.0-next.8:
+    resolution: {integrity: sha512-t2O5s/HHTH5evZVHgVtCWTZgMZ/CaqDu3xVGgjVbKeTvpPAbi0Waab5SSX8T9PG5jNDei/x+jpAVCcNMOHoWzg==}
     dev: true
 
   /@storybook/node-logger@7.0.0-beta.53:
@@ -4767,7 +4768,7 @@ packages:
       '@storybook/channels': 7.0.0-beta.53
       '@storybook/client-logger': 7.0.0-beta.53
       '@storybook/core-events': 7.0.0-beta.53
-      '@storybook/csf': 0.0.2-next.10
+      '@storybook/csf': 0.0.2-next.11
       '@storybook/global': 5.0.0
       '@storybook/types': 7.0.0-beta.53
       '@types/qs': 6.9.7
