@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { Children, MouseEvent, useCallback, useEffect, useMemo } from 'react';
+import React, { Children, MouseEvent, useCallback, useLayoutEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { AnimateLayoutChanges, useSortable } from '@dnd-kit/sortable';
 import { useDndContext, useDndMonitor } from '@dnd-kit/core';
@@ -174,23 +174,16 @@ export const TreeItem = ({
 
     const childrenIds = useMemo(() => enrichedChildren.map((child) => child.props.id), [enrichedChildren]);
 
-    const {
-        attributes,
-        listeners,
-        transform,
-        isDragging,
-        setDraggableNodeRef,
-        setDroppableNodeRef,
-        setActivatorNodeRef,
-    } = useSortable({
-        id,
-        transition: null,
-        disabled: !draggable,
-        data: { type, accepts, parentId, level },
-        animateLayoutChanges,
-    });
+    const { attributes, listeners, transform, setDraggableNodeRef, setDroppableNodeRef, setActivatorNodeRef } =
+        useSortable({
+            id,
+            disabled: !draggable,
+            data: { type, accepts, parentId, level },
+            animateLayoutChanges,
+            transition: null,
+        });
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (Children.count(enrichedChildren) === 0) {
             return;
         }
@@ -201,19 +194,17 @@ export const TreeItem = ({
         }
 
         if (isExpanded) {
-            registerNodeChildren({ id, children: enrichedChildren });
+            registerNodeChildren({ id: enrichedChildren[0].props.parentId, children: enrichedChildren });
         } else {
             unregisterNodeChildren(enrichedChildren);
         }
     }, [
-        id,
-        level,
         isActive,
         isExpanded,
         isParentActive,
         isParentExpanded,
-        enrichedChildren,
         isAncestorMounted,
+        enrichedChildren,
         registerNodeChildren,
         unregisterNodeChildren,
     ]);
@@ -268,19 +259,6 @@ export const TreeItem = ({
     const showLabel = label !== undefined && !isActive;
     const showExpandButton = hasChildren && !isActive;
 
-    const transition = {
-        duration: !isDragging ? 0.25 : 0,
-        easings: {
-            type: 'spring',
-        },
-        scale: {
-            duration: 0.25,
-        },
-        zIndex: {
-            delay: isDragging ? 0 : 0.25,
-        },
-    };
-
     const animate = {
         x: transform?.x,
         y: transform?.y,
@@ -306,7 +284,11 @@ export const TreeItem = ({
             onKeyDown={noop}
         >
             <motion.div
-                transition={transition}
+                transition={{
+                    bounce: 0,
+                    delay: 0,
+                    duration: 0,
+                }}
                 ref={setDraggableNodeRef}
                 className={containerClassName}
                 animate={transform ? animate : undefined}
