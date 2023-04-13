@@ -1,8 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement, cloneElement, useEffect } from 'react';
+import React, { ReactElement, cloneElement } from 'react';
 import { DimensionUnity, SpacingValue } from '@utilities/dimensions';
-import { BOX_ALIAS_TOKENS_PREFIX } from '@utilities/tokens';
+import { ContainerHTMLElement } from 'src/types/elements';
+import { merge } from '@utilities/merge';
+import { Box } from '../Box/Box';
 
 export type GridProps = {
     column?: number;
@@ -13,8 +15,10 @@ export type GridProps = {
     rowHeight?: `${number}${DimensionUnity}`;
     padding?: SpacingValue;
     margin?: SpacingValue;
-    boxColorToken?: string;
+    bg?: string;
+    color?: string;
     'data-test-id'?: string;
+    as?: ContainerHTMLElement;
 };
 
 export const CONTAINER_TEST_ID = 'fondue-grid';
@@ -27,24 +31,12 @@ export const Grid = ({
     'data-test-id': dataTestId = CONTAINER_TEST_ID,
     width = '100%',
     rowHeight,
-    boxColorToken,
+    bg,
+    color,
     margin = 0,
     padding = 0,
+    as: ContainerElement = 'div',
 }: GridProps) => {
-    const colorClasses = !boxColorToken ? '' : `tw-bg-${boxColorToken} tw-text-${boxColorToken}-inverse`;
-
-    useEffect(() => {
-        if (!boxColorToken) {
-            return;
-        }
-
-        if (!BOX_ALIAS_TOKENS_PREFIX.includes(boxColorToken)) {
-            throw new Error(
-                `boxColorToken should be one of the following values \n${BOX_ALIAS_TOKENS_PREFIX.join('\n')}`,
-            );
-        }
-    }, [boxColorToken]);
-
     const flexBasis = `${(1 / column) * 100}%`;
 
     const renderedChildren = React.Children.map(children, (child) => {
@@ -64,19 +56,20 @@ export const Grid = ({
     });
 
     return (
-        <div
+        <Box
             data-test-id={dataTestId}
-            className={colorClasses}
+            className={merge([bg, color])}
             style={{
                 margin,
                 padding,
                 width,
             }}
+            as={ContainerElement}
         >
             <div data-test-id="fondue-grid-inner-wrapper" className="tw-w-full tw-h-full tw-inline-flex tw-flex-wrap">
                 {children ? renderedChildren : <></>}
             </div>
-        </div>
+        </Box>
     );
 };
 
