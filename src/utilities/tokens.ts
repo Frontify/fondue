@@ -1,53 +1,31 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import tokens from '@frontify/fondue-tokens';
+export const BOX_BG_ALIAS_TOKENS_CLASSES = [
+    'tw-bg-box-neutral',
+    'tw-bg-box-neutral-strong',
+    'tw-bg-box-selected',
+    'tw-bg-box-selected-strong',
+    'tw-bg-box-disabled',
+    'tw-bg-box-disabled-strong',
+    'tw-bg-box-positive',
+    'tw-bg-box-positive-strong',
+    'tw-bg-box-negative',
+    'tw-bg-box-negative-strong',
+    'tw-bg-box-warning',
+    'tw-bg-box-warning-strong',
+];
 
-export type PaletteName = 'base' | 'box' | 'focus' | 'line' | 'overlay' | 'shadow' | 'button';
-export type TokenPalette = {
-    name: PaletteName;
-    attributes: {
-        'tailwind-name': string;
-    };
-};
-
-export type TokenPalettes = Record<PaletteName | string, TokenPalette[]>;
-
-export const TOKEN_STATES = ['hover', 'pressed', 'inverse', 'inverse-hover', 'inverse-pressed'];
-export const TOKEN_STATES_REGEX = new RegExp(`(${TOKEN_STATES.join('|')})$`, 'i');
-export const ALIAS_TOKENS_CATEGORIES_NAMES = (Object.keys(tokens) as PaletteName[]).filter(
-    (category: PaletteName | 'color') => category !== 'color',
-);
-export const ALIAS_TOKENS_CATEGORIES = ALIAS_TOKENS_CATEGORIES_NAMES.reduce(
-    (categories: TokenPalettes, category: PaletteName | string): TokenPalettes => {
-        const newPalette = (
-            !!tokens[category].value ? [tokens[category]] : [...Object.values(tokens[category])]
-        ) as TokenPalette[];
-
-        return {
-            ...categories,
-            [category]: categories[category] ? [...categories[category], ...newPalette] : newPalette,
-        };
-    },
-    {},
-);
-
-export const getAliasTokensByCategory = (category: PaletteName): TokenPalette[] =>
-    ALIAS_TOKENS_CATEGORIES[category] || [];
-
-export const getAliasTokensTailwindNamesByCategory = (category: PaletteName, ignoreState = false) => {
-    const palettes = getAliasTokensByCategory(category);
-
-    if (!ignoreState) {
-        return palettes.map((palette) => `tw-${palette.attributes['tailwind-name']}`);
-    }
-
-    return palettes
-        .filter((palette) => !TOKEN_STATES_REGEX.test(palette.attributes['tailwind-name']))
-        .map((palette) => `${palette.attributes['tailwind-name']}`);
-};
-
-export const BOX_ALIAS_TOKENS_PREFIX = getAliasTokensTailwindNamesByCategory('box', true);
-export const BOX_BG_ALIAS_TOKENS = BOX_ALIAS_TOKENS_PREFIX.map((name) => `tw-bg-${name}`);
-export const BOX_TEXT_ALIAS_TOKENS = BOX_ALIAS_TOKENS_PREFIX.map((name) => `tw-text-${name}-inverse`);
+export const BOX_TEXT_ALIAS_TOKENS_CLASSES = [
+    'tw-text-box-neutral-inverse',
+    'tw-text-box-neutral-strong-inverse',
+    'tw-text-box-selected-inverse',
+    'tw-text-box-selected-strong-inverse',
+    'tw-text-box-disabled-inverse',
+    'tw-text-box-disabled-strong-inverse',
+    'tw-text-box-positive-inverse',
+    'tw-text-box-positive-strong-inverse',
+    'tw-text-box-negative-inverse',
+    'tw-text-box-negative-strong-inverse',
+    'tw-text-box-warning-inverse',
+    'tw-text-box-warning-strong-inverse',
+];

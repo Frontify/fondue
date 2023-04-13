@@ -78,7 +78,6 @@
     font-weight: normal;
 }
 
-
 .react-datepicker-wrap .react-datepicker__day--keyboard-selected,
 .react-datepicker .react-datepicker__day--selected,
 .react-datepicker .react-datepicker__day--selected:hover,
@@ -95,7 +94,7 @@
 
 .react-datepicker-wrap .react-datepicker__day.range-day:hover {
     border-radius: 0;
-    background-color: #E3E8F6;
+    background-color: #e3e8f6;
     color: var(--box-selected-strong-color-pressed);
 }
 
@@ -110,10 +109,10 @@
 
 .react-datepicker__day.react-datepicker__day--in-range.react-datepicker__day--range-start.range-day,
 .react-datepicker__day.range-day.react-datepicker__day--selected,
-.react-datepicker__day.react-datepicker__day--in-range.react-datepicker__day--range-end.range-day, 
+.react-datepicker__day.react-datepicker__day--in-range.react-datepicker__day--range-end.range-day,
 .react-datepicker__day.react-datepicker__day--in-range.react-datepicker__day--range-start.react-datepicker__day--in-selecting-range.range-day,
 .react-datepicker__day.react-datepicker__day--in-selecting-range.react-datepicker__day--selecting-range-start.range-day {
-    background-color: #825FFF;
+    background-color: #825fff;
     color: var(--base-color);
     border: none;
     outline-color: var(--base-color);
@@ -122,7 +121,7 @@
 .react-datepicker__day--in-range.range-day,
 .react-datepicker__day.react-datepicker__day--in-range.range-day,
 .react-datepicker__day.react-datepicker__day--in-selecting-range.range-day {
-    background-color: #F1F3F9;
+    background-color: #f1f3f9;
     color: var(--box-selected-strong-color-pressed);
     border-radius: 0;
 }
@@ -141,6 +140,10 @@
 }
 
 .react-datepicker__day.range-day.react-datepicker__day--disabled,
+.react-datepicker-wrap .future-date.react-datepicker__day--disabled,
+.react-datepicker-wrap .future-date.react-datepicker__day--disabled:hover,
+.react-datepicker-wrap .past-date.react-datepicker__day--disabled,
+.react-datepicker-wrap .past-date.react-datepicker__day--disabled:hover,
 .react-datepicker__day.range-day.react-datepicker__day--disabled:hover {
     cursor: not-allowed;
     background-color: transparent;
