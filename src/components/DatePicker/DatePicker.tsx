@@ -129,6 +129,9 @@ export const DatePicker = forwardRef<ReactDatePicker<never, boolean>, DatePicker
                     onCalendarOpen={handleOpen}
                     shouldCloseOnSelect={shouldCloseOnSelect}
                     dayClassName={(date) => getDayClasses(variant, date)}
+                    popperProps={{
+                        strategy: 'fixed',
+                    }}
                     renderCustomHeader={({ date, decreaseMonth, increaseMonth, increaseYear, decreaseYear }) => (
                         <div className="tw-flex tw-justify-between tw-pb-4 tw-px-0">
                             <Button
