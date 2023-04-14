@@ -35,6 +35,7 @@ export const TreeItemOverlay = () => {
             aria-level={level}
             id={id.toString()}
             aria-label={label}
+            aria-selected={isSelected}
             data-test-id="tree-item-overlay"
             className="tw-pointer-events-none tw-bg-white tw-flex tw-items-center tw-gap-x-1 tw-py-2 tw-px-2.5 tw-no-underline tw-leading-5 tw-h-10 tw-box-border tw-w-fit tw-drop-shadow-xl tw-rounded"
         >
