@@ -2,7 +2,7 @@
 
 import './commands';
 
-import { MountOptions, MountReturn } from 'cypress/react';
+import { mount } from 'cypress/react18';
 
 declare global {
     // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -13,7 +13,7 @@ declare global {
              * @param component React Node to mount
              * @param options Additional options to pass into mount
              */
-            mount(component: React.ReactNode, options?: MountOptions): Cypress.Chainable<MountReturn>;
+            mount(...parameters: Parameters<typeof mount>): ReturnType<typeof mount>;
         }
     }
 }
