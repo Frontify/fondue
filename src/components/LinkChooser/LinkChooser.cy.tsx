@@ -194,6 +194,7 @@ describe('LinkChooser Component', () => {
             cy.get(DROPDOWN_WRAPPER_ID).should('be.visible');
             cy.get(SEARCH_INPUT_ID).realPress('Escape');
             cy.get(DROPDOWN_WRAPPER_ID).should('not.exist');
+            cy.get(SEARCH_WRAPPER_ID).click();
             cy.get(SEARCH_INPUT_ID).type(' ');
             cy.get(DROPDOWN_WRAPPER_ID).should('be.visible');
         });

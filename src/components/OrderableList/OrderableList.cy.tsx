@@ -67,6 +67,7 @@ describe('OrderableList Component', () => {
         const stubbedOnMove = cy.stub().as('onMove');
         const dataTransfer = new DataTransfer();
         const targetDropZone = 4;
+        const dragAnimationDelay = 50;
 
         cy.mount(<OrderableListWithDefaultProps onMove={stubbedOnMove} />);
 
@@ -74,7 +75,8 @@ describe('OrderableList Component', () => {
         cy.get(DROP_ZONE).eq(targetDropZone).as('fourthDropZone');
         cy.get('@fourthDropZone')
             .trigger('dragenter', { dataTransfer, force: true })
-            .trigger('dragover', { dataTransfer, force: true });
+            .trigger('dragover', { dataTransfer, force: true })
+            .wait(dragAnimationDelay);
         cy.get(DROP_ZONE).each(($el, i) => {
             if (i === targetDropZone) {
                 expect($el).to.have.class('tw-border-violet-60');

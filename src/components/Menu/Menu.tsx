@@ -69,11 +69,14 @@ export const Menu = ({ triggerRef, children, open = true, offset = [0, 8], onClo
 
     useEffect(() => {
         setIsMenuOpen(open);
-        if (popperInstance.update && open) {
+    }, [open]);
+
+    useEffect(() => {
+        if (isMenuOpen && popperInstance.update) {
             popperInstance.update();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [open]);
+    }, [isMenuOpen]);
 
     useEffect(() => {
         if (menuKeyboardNavigationAction === 'CLOSE_MENU' && menuOpenerRef) {
