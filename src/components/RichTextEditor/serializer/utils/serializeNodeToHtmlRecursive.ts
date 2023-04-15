@@ -68,11 +68,11 @@ export const serializeNodeToHtmlRecursive = (
     const rootNestingCount = nestingCount[node.type] || countNodesOfType([node], node.type);
     let children = '';
     for (const element of node.children) {
-        const n = element;
-        children += serializeNodeToHtmlRecursive(n, {
+        children += serializeNodeToHtmlRecursive(element, {
             designTokens,
             nestingCount: {
-                [n.type as string]: rootNestingCount,
+                ...nestingCount,
+                [element.type as string]: rootNestingCount,
             },
             mappedMentionable,
         });
