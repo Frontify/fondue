@@ -24,6 +24,12 @@ export enum TextInputType {
     Number = 'number',
 }
 
+type TextInputExtraAction = {
+    icon: ReactNode;
+    onClick: () => void;
+    title: string;
+};
+
 export type TextInputBaseProps = {
     id?: string;
     type?: TextInputType;
@@ -47,6 +53,7 @@ export type TextInputBaseProps = {
     spellcheck?: boolean;
     focusOnMount?: boolean;
     selectable?: boolean;
+    extraAction?: TextInputExtraAction;
 };
 
 export type TextInputProps =
@@ -89,11 +96,13 @@ export const TextInput = ({
     readonly,
     focusOnMount,
     selectable = false,
+    extraAction,
 }: TextInputProps): ReactElement => {
     const { isFocusVisible, focusProps } = useFocusRing({ within: true, isTextInput: true });
     const { isFocusVisible: clearButtonIsFocusVisible, focusProps: clearButtonFocusProps } = useFocusRing();
     const { isFocusVisible: passwordButtonIsFocusVisible, focusProps: passwordButtonFocusProps } = useFocusRing();
     const { isFocusVisible: copyButtonIsFocusVisible, focusProps: copyButtonFocusProps } = useFocusRing();
+    const { isFocusVisible: extraActionButtonIsFocusVisible, focusProps: extraActionButtonFocusProps } = useFocusRing();
 
     const { copy, status } = useCopy();
 
@@ -192,6 +201,24 @@ export const TextInput = ({
                 data-test-id="text-input"
                 {...spellcheckProp}
             />
+            {extraAction && (
+                <button
+                    className={merge([
+                        'tw-flex tw-items-center tw-justify-center tw-transition-colors tw-rounded',
+                        disabled ? 'tw-cursor-default tw-text-black-40' : 'tw-text-black-60  hover:tw-text-black-100',
+                        extraActionButtonIsFocusVisible && FOCUS_STYLE,
+                    ])}
+                    onClick={() => extraAction.onClick()}
+                    data-test-id="extra-action-icon"
+                    title={extraAction.title}
+                    aria-label={extraAction.title}
+                    disabled={disabled}
+                    type="button"
+                    {...extraActionButtonFocusProps}
+                >
+                    {extraAction.icon}
+                </button>
+            )}
             {`${value}`.length > 0 && clearable && (
                 <button
                     className={merge([

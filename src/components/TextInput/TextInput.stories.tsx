@@ -148,3 +148,14 @@ SelectableInput.args = {
     value: 'Value text',
     selectable: true,
 };
+
+export const WithExtraAction = TextInputTemplate.bind({});
+
+WithExtraAction.args = {
+    value: 'Value text',
+    extraAction: {
+        title: 'Extra action',
+        onClick: () => alert('Extra action clicked'),
+        icon: <IconIcon />,
+    },
+};
