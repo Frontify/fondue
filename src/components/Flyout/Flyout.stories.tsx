@@ -19,6 +19,7 @@ import { Dropdown } from '@components/Dropdown';
 import { DatePicker } from '@components/DatePicker';
 import { TooltipIcon } from '@components/TooltipIcon';
 import { IconDotsVertical, IconExclamationMarkCircle, IconIcon } from '@foundation/Icon/Generated';
+import { Text } from '@typography/Text';
 
 export default {
     title: 'Components/Flyout',
@@ -415,3 +416,42 @@ WithPlacementAndOffset.args = {
 };
 
 export const WithTextInputAutofocusAndPageScrolling = FlyoutTemplate(true, true).bind({});
+
+const WithTextTemplate: StoryFn<FlyoutProps> = (args) => {
+    const [isOpen, setIsOpen] = useState(false);
+
+    return (
+        <Flyout
+            {...args}
+            trigger={({ 'aria-label': ariaLabel }, ref) => (
+                <div className="tw-flex tw-justify-center tw-items-center tw-w-full tw-h-screen">
+                    <Button
+                        style={ButtonStyle.Default}
+                        emphasis={ButtonEmphasis.Strong}
+                        onClick={() => setIsOpen(!isOpen)}
+                        ref={ref as MutableRefObject<HTMLButtonElement>}
+                        aria-label={ariaLabel}
+                    >
+                        Click me
+                    </Button>
+                </div>
+            )}
+            isOpen={isOpen}
+            onOpenChange={chain(args.onOpenChange, setIsOpen)}
+            onCancel={chain(args.onCancel, () => setIsOpen(false))}
+        >
+            <Text>
+                Here is some text, it spans many lines. Here is some text, it spans many lines. Here is some text, it
+                spans many lines. Here is some text, it spans many lines. Here is some text, it spans many lines. Here
+                is some text, it spans many lines. Here is some text, it spans many lines. Here is some text, it spans
+                many lines. Here is some text, it spans many lines. Here is some text, it spans many lines. Here is some
+                text, it spans many lines. Here is some text, it spans many lines. Here is some text, it spans many
+                lines. Here is some text, it spans many lines. Here is some text, it spans many lines. Here is some
+                text, it spans many lines. Here is some text, it spans many lines. Here is some text, it spans many
+                lines. Here is some text, it spans many lines. Here is some text, it spans many lines. Here is some
+                text, it spans many lines. Here is some text, it spans many lines.
+            </Text>
+        </Flyout>
+    );
+};
+export const WithText = WithTextTemplate.bind({});
