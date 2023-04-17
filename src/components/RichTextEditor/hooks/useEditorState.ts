@@ -28,7 +28,7 @@ export const useEditorState = ({
     }, ON_SAVE_DELAY_IN_MS);
 
     const onChange = useCallback(
-        (value) => {
+        (value: TreeOfNodes) => {
             debouncedOnChange(value);
             localValue.current = value;
             onValueChanged && onValueChanged(value);

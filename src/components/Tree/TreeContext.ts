@@ -1,29 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createContext, useContext } from 'react';
+import { ReactNode, createContext, useContext } from 'react';
 
-import type { OnDropCallback } from '@components/DropZone';
-
-import type {
-    OnExpandCallback,
-    OnSelectCallback,
-    RegisterTreeItemChildrenPayload,
-    RegisterTreeItemPayload,
-    TreeItemPadding,
-    TreeState,
-} from './types';
+import type { Overlay } from './TreeItem';
+import type { OnExpandCallback, OnSelectCallback, RegisterNodeChildrenPayload, TreeState } from './types';
 
 export type TreeContextProps = {
-    treeId: string;
     draggable: boolean;
     treeState: TreeState;
-    baseItemPadding: TreeItemPadding;
-    registerTreeItem(payload: RegisterTreeItemPayload): void;
-    registerTreeItemChildren(payload: RegisterTreeItemChildrenPayload): void;
-    unregisterTreeItem(id: string): void;
     onSelect: OnSelectCallback;
     onExpand: OnExpandCallback;
-    onDrop: OnDropCallback<{ id: string; sort: number }>;
+    registerOverlay(overlay: Overlay): void;
+    unregisterNodeChildren(payload: ReactNode): void;
+    registerNodeChildren(payload: RegisterNodeChildrenPayload): void;
 };
 
 export const TreeContext = createContext<TreeContextProps>({} as TreeContextProps);

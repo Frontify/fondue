@@ -213,15 +213,15 @@ export const Tooltip = ({
     }, [enterDelay]);
 
     const checkIfHovered = useCallback(
-        (event) => {
-            const hoveredElement = event.path ?? event.composedPath?.();
+        (event: MouseEvent) => {
+            const hoveredElement = event.composedPath?.();
             const hoverSources = [triggerElementRef, triggerElementContainerRef, tooltipContainerRef];
 
-            if (hoveredElement && hoverSources.some((el) => hoveredElement.includes(el))) {
+            if (hoveredElement && hoverSources.some((el) => el && hoveredElement.includes(el))) {
                 handleShowTooltipOnHover();
             }
         },
-        [handleShowTooltipOnHover, triggerElementRef, triggerElementContainerRef, tooltipContainerRef],
+        [handleShowTooltipOnHover, tooltipContainerRef, triggerElementContainerRef, triggerElementRef],
     );
 
     const handleCloseIfFocusedOutside = useCallback(
