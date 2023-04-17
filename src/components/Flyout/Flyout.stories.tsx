@@ -440,7 +440,7 @@ const WithTextTemplate: StoryFn<FlyoutProps> = (args) => {
             onOpenChange={chain(args.onOpenChange, setIsOpen)}
             onCancel={chain(args.onCancel, () => setIsOpen(false))}
         >
-            <Text>
+            <Text display="block">
                 Here is some text, it spans many lines. Here is some text, it spans many lines. Here is some text, it
                 spans many lines. Here is some text, it spans many lines. Here is some text, it spans many lines. Here
                 is some text, it spans many lines. Here is some text, it spans many lines. Here is some text, it spans
