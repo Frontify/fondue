@@ -22,8 +22,6 @@
 }
 
 .react-datepicker-wrap .react-datepicker__triangle {
-    transform: none !important;
-    left: var(--space-xxl) !important;
     z-index: 1;
 }
 
