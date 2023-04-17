@@ -24,12 +24,6 @@ export enum TextInputType {
     Number = 'number',
 }
 
-type TextInputExtraAction = {
-    icon: ReactNode;
-    onClick: () => void;
-    title: string;
-};
-
 export type TextInputBaseProps = {
     id?: string;
     type?: TextInputType;
@@ -53,7 +47,11 @@ export type TextInputBaseProps = {
     spellcheck?: boolean;
     focusOnMount?: boolean;
     selectable?: boolean;
-    extraAction?: TextInputExtraAction;
+    extraAction?: {
+        onClick: () => void;
+        icon: ReactElement;
+        title: string;
+    };
 };
 
 export type TextInputProps =
