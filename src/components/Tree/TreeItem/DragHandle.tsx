@@ -20,7 +20,7 @@ export const DragHandle = forwardRef(
                 className={merge([
                     FOCUS_VISIBLE_STYLE,
                     'tw-p-1 first:tw-ml-2 tw-text-text tw-opacity-0 group-hover:tw-opacity-100 group-focus-within:tw-opacity-100 tw-rounded-sm',
-                    active && 'tw-opacity-100',
+                    active && 'tw-opacity-100 tw-text-white',
                 ])}
             >
                 <IconGrabHandle12 />

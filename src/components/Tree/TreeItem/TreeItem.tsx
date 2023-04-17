@@ -299,7 +299,12 @@ export const TreeItem = ({
                     <div className="tw-w-6 tw-min-w-[24px]" />
                 )}
 
-                <ExpandButton onClick={handleExpand} expanded={showChildren} disabled={!showExpandButton} />
+                <ExpandButton
+                    onClick={handleExpand}
+                    expanded={showChildren}
+                    disabled={!showExpandButton}
+                    active={isSelected}
+                />
 
                 {showLabel ? (
                     <span className="first:tw-ml-3.5 tw-w-full tw-h-full tw-flex tw-items-center">{label}</span>
