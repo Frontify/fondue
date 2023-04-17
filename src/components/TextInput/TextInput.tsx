@@ -7,7 +7,16 @@ import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
-import React, { FocusEvent, KeyboardEvent, ReactElement, ReactNode, useEffect, useRef, useState } from 'react';
+import React, {
+    DOMAttributes,
+    FocusEvent,
+    KeyboardEvent,
+    ReactElement,
+    ReactNode,
+    useEffect,
+    useRef,
+    useState,
+} from 'react';
 import {
     IconCheckMark,
     IconClipboard,
@@ -17,6 +26,8 @@ import {
     IconEye,
     IconEyeOff,
 } from '@foundation/Icon/Generated';
+import { Tooltip, TooltipProps } from '..';
+import { FocusableElement } from '@react-types/shared';
 
 export enum TextInputType {
     Text = 'text',
@@ -51,6 +62,7 @@ export type TextInputBaseProps = {
         onClick: () => void;
         icon: ReactElement;
         title: string;
+        tooltip?: Omit<TooltipProps, 'triggerElement'>;
     };
 };
 
@@ -69,6 +81,40 @@ export type TextInputProps =
           type: TextInputType.Password;
           obfuscated?: boolean;
       } & TextInputBaseProps);
+
+const ExtraActionButton = ({
+    extraAction,
+    isFocusVisible,
+    focusProps,
+    disabled,
+}: {
+    extraAction: TextInputProps['extraAction'];
+    isFocusVisible: boolean;
+    focusProps: DOMAttributes<FocusableElement>;
+    disabled: boolean;
+}): ReactElement | null => {
+    if (!extraAction) {
+        return null;
+    }
+    const { onClick, icon, title } = extraAction;
+    return (
+        <button
+            className={merge([
+                'tw-flex tw-items-center tw-justify-center tw-transition-colors tw-rounded',
+                disabled ? 'tw-cursor-default tw-text-black-40' : 'tw-text-black-60  hover:tw-text-black-100',
+                isFocusVisible && FOCUS_STYLE,
+            ])}
+            onClick={onClick}
+            data-test-id="extra-action-icon"
+            aria-label={title.toLowerCase()}
+            disabled={disabled}
+            type="button"
+            {...focusProps}
+        >
+            {icon}
+        </button>
+    );
+};
 
 export const TextInput = ({
     id: propId,
@@ -199,24 +245,29 @@ export const TextInput = ({
                 data-test-id="text-input"
                 {...spellcheckProp}
             />
-            {extraAction && (
-                <button
-                    className={merge([
-                        'tw-flex tw-items-center tw-justify-center tw-transition-colors tw-rounded',
-                        disabled ? 'tw-cursor-default tw-text-black-40' : 'tw-text-black-60  hover:tw-text-black-100',
-                        extraActionButtonIsFocusVisible && FOCUS_STYLE,
-                    ])}
-                    onClick={() => extraAction.onClick()}
-                    data-test-id="extra-action-icon"
-                    title={extraAction.title}
-                    aria-label={extraAction.title}
-                    disabled={disabled}
-                    type="button"
-                    {...extraActionButtonFocusProps}
-                >
-                    {extraAction.icon}
-                </button>
-            )}
+            {extraAction &&
+                (extraAction.tooltip ? (
+                    <div className="tw-relative">
+                        <Tooltip
+                            {...extraAction.tooltip}
+                            triggerElement={
+                                <ExtraActionButton
+                                    extraAction={extraAction}
+                                    isFocusVisible={extraActionButtonIsFocusVisible}
+                                    focusProps={extraActionButtonFocusProps}
+                                    disabled={disabled}
+                                />
+                            }
+                        />
+                    </div>
+                ) : (
+                    <ExtraActionButton
+                        extraAction={extraAction}
+                        isFocusVisible={extraActionButtonIsFocusVisible}
+                        focusProps={extraActionButtonFocusProps}
+                        disabled={disabled}
+                    />
+                ))}
             {`${value}`.length > 0 && clearable && (
                 <button
                     className={merge([

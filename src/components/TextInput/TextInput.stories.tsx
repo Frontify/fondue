@@ -6,6 +6,7 @@ import { Meta, StoryFn } from '@storybook/react';
 import { TextInput, TextInputProps, TextInputType } from './TextInput';
 import { Validation } from '@utilities/validation';
 import { IconIcon } from '@foundation/Icon/Generated';
+import { TooltipAlignment, TooltipPosition } from '..';
 
 export default {
     title: 'Components/Text Input',
@@ -157,5 +158,21 @@ WithExtraAction.args = {
         title: 'Extra action',
         onClick: () => alert('Extra action clicked'),
         icon: <IconIcon />,
+    },
+};
+
+export const WithExtraActionWithTooltip = TextInputTemplate.bind({});
+
+WithExtraActionWithTooltip.args = {
+    value: 'Value text',
+    extraAction: {
+        title: 'Extra action',
+        onClick: () => alert('Extra action clicked'),
+        icon: <IconIcon />,
+        tooltip: {
+            content: 'Tooltip content',
+            position: TooltipPosition.Top,
+            alignment: TooltipAlignment.Middle,
+        },
     },
 };
