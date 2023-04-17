@@ -167,6 +167,22 @@ export const DatePicker = forwardRef<ReactDatePicker<never, boolean>, DatePicker
                             />
                         </div>
                     )}
+                    popperModifiers={[
+                        {
+                            name: 'arrow',
+                            options: {
+                                padding: ({ popper, reference, placement }) => {
+                                    const side = placement.includes('end') ? 'left' : 'right';
+                                    const padding = {
+                                        [`${side}`]:
+                                            Math.max(popper.width, Math.min(popper.width, reference.width)) - 40,
+                                    };
+
+                                    return padding;
+                                },
+                            },
+                        },
+                    ]}
                 >
                     {children}
                 </DatepickerComponent>
