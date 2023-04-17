@@ -238,7 +238,7 @@ export const TreeItem = ({
     );
 
     const containerClassName = merge([
-        'tw-flex tw-items-center tw-gap-x-1.5 tw-h-10 tw-leading-5 tw-width-full',
+        'tw-flex tw-items-center tw-h-10 tw-leading-5 tw-width-full',
         isActive && 'tw-border-box-selected-strong tw-border-dashed tw-border-2 tw-bg-box-selected-hover',
         isActive &&
             ((isWithin && !((movingDown && canDropWithinMovingDown) || (movingUp && canDropWithinMovingUp))) ||
@@ -299,7 +299,7 @@ export const TreeItem = ({
                     <div className="tw-w-6 tw-min-w-[24px]" />
                 )}
 
-                {showExpandButton ? <ExpandButton onClick={handleExpand} expanded={showChildren} /> : null}
+                <ExpandButton onClick={handleExpand} expanded={showChildren} disabled={!showExpandButton} />
 
                 {showLabel ? (
                     <span className="first:tw-ml-3.5 tw-w-full tw-h-full tw-flex tw-items-center">{label}</span>
