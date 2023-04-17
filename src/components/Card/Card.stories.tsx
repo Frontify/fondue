@@ -5,7 +5,7 @@ import { Meta, StoryFn } from '@storybook/react';
 import { Card, CardProps } from './Card';
 import { SegmentedControls } from '@components/SegmentedControls/SegmentedControls';
 import { Divider } from '@components/Divider/Divider';
-import { Stack } from '@layout/Stack';
+import { LegacyStack } from '../../layout/LegacyStack';
 import { Text } from '@typography/Text';
 import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
 
@@ -49,16 +49,16 @@ export const Default = Template.bind({});
 
 Default.args = {
     children: (
-        <Stack direction="row" padding="m" spacing="l" align="center" justify="between">
+        <LegacyStack direction="row" padding="m" spacing="l" align="center" justify="between">
             <Text>I am a card component with some content</Text>
-            <Stack spacing="m" padding="none">
+            <LegacyStack spacing="m" padding="none">
                 <Button>Button 1</Button>
                 <Button style={ButtonStyle.Default} emphasis={ButtonEmphasis.Default}>
                     Button 2
                 </Button>
                 <Button>Button 3</Button>
-            </Stack>
-        </Stack>
+            </LegacyStack>
+        </LegacyStack>
     ),
 };
 
@@ -113,19 +113,19 @@ export const WithOnClick = Template.bind({});
 
 WithOnClick.args = {
     children: (
-        <Stack direction="row" padding="m" spacing="l" align="center" justify="between">
+        <LegacyStack direction="row" padding="m" spacing="l" align="center" justify="between">
             <div>
                 <Text as="p">I am a card component with a clickable container</Text>
                 <Text as="p">Click anywhere to see the click action</Text>
             </div>
-            <Stack spacing="m" padding="none">
+            <LegacyStack spacing="m" padding="none">
                 <Button>Button 1</Button>
                 <Button style={ButtonStyle.Default} emphasis={ButtonEmphasis.Default}>
                     Button 2
                 </Button>
                 <Button>Button 3</Button>
-            </Stack>
-        </Stack>
+            </LegacyStack>
+        </LegacyStack>
     ),
 };
 

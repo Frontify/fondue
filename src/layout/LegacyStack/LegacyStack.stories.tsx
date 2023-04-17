@@ -3,7 +3,7 @@
 import { Meta, StoryFn } from '@storybook/react';
 import { merge } from '@utilities/merge';
 import React, { ReactElement } from 'react';
-import { Stack, StackProps } from './Stack';
+import { LegacyStack, LegacyStackProps } from './LegacyStack';
 
 const Placeholder = ({
     width = 'auto',
@@ -25,8 +25,8 @@ const Placeholder = ({
 );
 
 export default {
-    title: 'Layout/Stack',
-    component: Stack,
+    title: 'Layout/LegacyStack',
+    component: LegacyStack,
     argTypes: {
         children: {
             table: {
@@ -54,11 +54,11 @@ export default {
             control: { type: 'radio' },
         },
     },
-} as Meta<StackProps>;
+} as Meta<LegacyStackProps>;
 
-const Template: StoryFn<StackProps> = (args): ReactElement => (
+const Template: StoryFn<LegacyStackProps> = (args): ReactElement => (
     <div className="tw-bg-box-negative-inverse">
-        <Stack {...args} />
+        <LegacyStack {...args} />
     </div>
 );
 
