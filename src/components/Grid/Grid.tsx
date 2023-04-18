@@ -23,62 +23,30 @@ export type GridProps = {
 
 export const CONTAINER_TEST_ID = 'fondue-grid';
 
-const spacingXMap = {
-    0: 'tw-gap-x-0',
-    1: 'tw-gap-x-px',
-    4: 'tw-gap-x-1',
-    8: 'tw-gap-x-2',
-    12: 'tw-gap-x-3',
-    16: 'tw-gap-x-4',
-    20: 'tw-gap-x-5',
-    24: 'tw-gap-x-6',
-    28: 'tw-gap-x-7',
-    32: 'tw-gap-x-8',
-    36: 'tw-gap-x-9',
-    40: 'tw-gap-x-10',
-    44: 'tw-gap-x-11',
-    48: 'tw-gap-x-12',
-    52: 'tw-gap-x-13',
-    56: 'tw-gap-x-14',
-    60: 'tw-gap-x-15',
-    64: 'tw-gap-x-16',
-    68: 'tw-gap-x-17',
-    72: 'tw-gap-x-18',
-    76: 'tw-gap-x-19',
-    80: 'tw-gap-x-20',
-    84: 'tw-gap-x-21',
-    88: 'tw-gap-x-22',
-    92: 'tw-gap-x-23',
-    96: 'tw-gap-x-24',
-};
-
-const spacingYMap = {
-    0: 'tw-gap-y-0',
-    1: 'tw-gap-y-px',
-    4: 'tw-gap-y-1',
-    8: 'tw-gap-y-2',
-    12: 'tw-gap-y-3',
-    16: 'tw-gap-y-4',
-    20: 'tw-gap-y-5',
-    24: 'tw-gap-y-6',
-    28: 'tw-gap-y-7',
-    32: 'tw-gap-y-8',
-    36: 'tw-gap-y-9',
-    40: 'tw-gap-y-10',
-    44: 'tw-gap-y-11',
-    48: 'tw-gap-y-12',
-    52: 'tw-gap-y-13',
-    56: 'tw-gap-y-14',
-    60: 'tw-gap-y-15',
-    64: 'tw-gap-y-16',
-    68: 'tw-gap-y-17',
-    72: 'tw-gap-y-18',
-    76: 'tw-gap-y-19',
-    80: 'tw-gap-y-20',
-    84: 'tw-gap-y-21',
-    88: 'tw-gap-y-22',
-    92: 'tw-gap-y-23',
-    96: 'tw-gap-y-24',
+const spacingMap = {
+    0: '0',
+    1: 'px',
+    4: '1',
+    8: '2',
+    12: '3',
+    16: '4',
+    20: '5',
+    24: '6',
+    28: '7',
+    32: '8',
+    36: '9',
+    40: '10',
+    44: '11',
+    48: '12',
+    52: '13',
+    56: '14',
+    60: '15',
+    64: '16',
+    68: '17',
+    72: '18',
+    76: '19',
+    80: '20',
+    84: '21',
 };
 
 export const Grid = ({
@@ -95,8 +63,8 @@ export const Grid = ({
     padding = 0,
     as: ContainerElement = 'div',
 }: GridProps) => {
-    const spacingYClassName = spacingYMap[spacingY] ? spacingYMap[spacingY] : spacingYMap[4];
-    const spacingXClassName = spacingXMap[spacingX] ? spacingXMap[spacingX] : spacingXMap[4];
+    const spacingYClassName = spacingMap[spacingY] ? `tw-gap-y-${spacingMap[spacingY]}` : `tw-gap-y-${spacingMap[4]}`;
+    const spacingXClassName = spacingMap[spacingX] ? `tw-gap-x-${spacingMap[spacingX]}` : `tw-gap-x-${spacingMap[4]}`;
     let childrenLength = 0;
 
     React.Children.map(children, (child) => {
