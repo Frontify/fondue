@@ -6,7 +6,6 @@ import { Meta, StoryFn } from '@storybook/react';
 import { TextInput, TextInputProps, TextInputType } from './TextInput';
 import { Validation } from '@utilities/validation';
 import { IconIcon } from '@foundation/Icon/Generated';
-import { TooltipAlignment, TooltipPosition } from '..';
 
 export default {
     title: 'Components/Text Input',
