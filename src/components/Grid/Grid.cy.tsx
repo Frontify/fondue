@@ -5,9 +5,6 @@ import React, { ReactElement } from 'react';
 import { Grid, GridProps } from './Grid';
 
 const GRID_ID = '[data-test-id=fondue-grid]';
-const GRID_INNER_WRAPPER_ID = '[data-test-id=fondue-grid-inner-wrapper]';
-const GRID_ITEM_ID = '[data-test-id=fondue-grid-item]';
-const GRID_ITEM_CONTENT_ID = '[data-test-id=fondue-grid-item-content]';
 const CONTENT_STRING = 'Test';
 
 const GridComponent = (props: GridProps): ReactElement => {
@@ -30,20 +27,12 @@ describe('Grid Component', () => {
         cy.mount(<GridComponent />);
 
         cy.get(GRID_ID).should('exist');
-        cy.get(GRID_INNER_WRAPPER_ID).should('exist');
-        cy.get(GRID_ITEM_ID).should('exist');
-    });
-
-    it('should render specified number of columns with appropriate width', () => {
-        cy.mount(<GridComponent column={4} />);
-
-        cy.get(GRID_ITEM_ID).first().should('have.css', 'flex-basis', '25%');
     });
 
     it('should render specified number of columns', () => {
-        cy.mount(<GridComponent column={4} />);
+        cy.mount(<GridComponent width="400px" column={4} />);
 
-        cy.get(GRID_ITEM_ID).first().should('have.css', 'flex-basis', '25%');
+        cy.get(GRID_ID).should('have.css', 'grid-template-columns', '100px 100px 100px 100px');
     });
 
     it('should render with specified margins', () => {
@@ -61,19 +50,19 @@ describe('Grid Component', () => {
     it('should render with specified horizontal spacing', () => {
         cy.mount(<GridComponent spacingX={8} />);
 
-        cy.get(GRID_ITEM_CONTENT_ID).first().should('have.css', 'margin', '2px 4px');
+        cy.get(GRID_ID).should('have.class', 'tw-gap-x-2');
     });
 
     it('should render with specified vertical spacing', () => {
         cy.mount(<GridComponent spacingY={8} />);
 
-        cy.get(GRID_ITEM_CONTENT_ID).first().should('have.css', 'margin', '4px 2px');
+        cy.get(GRID_ID).should('have.class', 'tw-gap-y-2');
     });
 
     it('should render rows with specified height', () => {
         cy.mount(<GridComponent rowHeight="100px" />);
 
-        cy.get(GRID_ITEM_CONTENT_ID).first().should('have.css', 'height', '100px');
+        cy.get(GRID_ID).should('have.css', 'grid-template-rows', '100px 100px 100px 100px');
     });
 
     it('should render with specified width', () => {

@@ -107,24 +107,17 @@ export const Grid = ({
     return (
         <Box
             data-test-id={dataTestId}
-            className={merge([bg, color])}
+            className={merge(['tw-grid', bg, color, spacingXClassName, spacingYClassName])}
             style={{
                 margin,
                 padding,
                 width,
+                gridTemplateColumns: `repeat(${column}, ${(1 / column) * 100}%)`,
+                gridTemplateRows: `repeat(${Math.ceil(childrenLength / column)}, ${rowHeight})`,
             }}
             as={ContainerElement}
         >
-            <div
-                data-test-id="fondue-grid-inner-wrapper"
-                className={merge(['tw-w-full tw-h-full tw-grid', spacingXClassName, spacingYClassName])}
-                style={{
-                    gridTemplateColumns: `repeat(${column}, ${(1 / column) * 100}%)`,
-                    gridTemplateRows: `repeat(${Math.ceil(childrenLength / column)}, ${rowHeight})`,
-                }}
-            >
-                {children}
-            </div>
+            {children}
         </Box>
     );
 };
