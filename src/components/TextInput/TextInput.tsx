@@ -108,9 +108,10 @@ const ExtraActionButton: ForwardRefRenderFunction<HTMLButtonElement | null, Extr
                 isFocusVisible && FOCUS_STYLE,
             ])}
             onClick={extraAction.onClick}
-            data-test-id="extra-action-icon"
+            data-test-id="fondue-extra-action-icon"
             aria-label={extraAction.title.toLowerCase()}
             disabled={disabled}
+            aria-disabled={disabled}
             type="button"
             ref={ref}
             {...focusProps}
