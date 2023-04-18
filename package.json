@@ -193,7 +193,7 @@
     },
     "peerDependencies": {
         "@udecode/plate": "^19",
-        "framer-motion": "^6",
+        "framer-motion": "^10",
         "react": "^17 || ^18",
         "react-dom": "^17 || ^18"
     }
