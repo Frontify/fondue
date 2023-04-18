@@ -42,17 +42,31 @@ const TemplateWithFormControl: StoryFn<DatePickerProps> = (args: DatePickerProps
 
     return (
         <div className="tw-flex tw-flex-col">
-            <div className="tw-px-5 tw-py-3 tw-flex tw-flex-col tw-gap-3">
-                <FormControl>
-                    <DatePicker
-                        {...args}
-                        variant="single"
-                        startDate={null}
-                        endDate={null}
-                        value={selectedDate as Date}
-                        onChange={(date) => setSelectedDate(date)}
-                    />
-                </FormControl>
+            <div className="tw-flex tw-flex-row tw-justify-between">
+                <div className="tw-px-5 tw-py-3 tw-flex tw-flex-col tw-gap-3">
+                    <FormControl>
+                        <DatePicker
+                            {...args}
+                            variant="single"
+                            startDate={null}
+                            endDate={null}
+                            value={selectedDate as Date}
+                            onChange={(date) => setSelectedDate(date)}
+                        />
+                    </FormControl>
+                </div>
+                <div className="tw-px-5 tw-py-3 tw-flex tw-flex-col tw-gap-3">
+                    <FormControl>
+                        <DatePicker
+                            {...args}
+                            variant="single"
+                            startDate={null}
+                            endDate={null}
+                            value={selectedDate as Date}
+                            onChange={(date) => setSelectedDate(date)}
+                        />
+                    </FormControl>
+                </div>
             </div>
             <div className="tw-px-5 tw-py-3 tw-flex tw-flex-col tw-gap-3">
                 <FormControl>

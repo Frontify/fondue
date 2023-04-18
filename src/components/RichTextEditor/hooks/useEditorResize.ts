@@ -24,7 +24,9 @@ export const useEditorResize = () => {
             }
         });
 
-        observer.observe(node);
+        setTimeout(() => {
+            observer.observe(node);
+        }, 0);
         return observer;
     }, []);
 
