@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { Box } from '@components/Box';
 import React, { ReactElement } from 'react';
 import { Grid, GridProps } from './Grid';
 
@@ -12,14 +13,14 @@ const CONTENT_STRING = 'Test';
 const GridComponent = (props: GridProps): ReactElement => {
     return (
         <Grid {...props}>
-            <div>{CONTENT_STRING}</div>
-            <div>{CONTENT_STRING}</div>
-            <div>{CONTENT_STRING}</div>
-            <div>{CONTENT_STRING}</div>
-            <div>{CONTENT_STRING}</div>
-            <div>{CONTENT_STRING}</div>
-            <div>{CONTENT_STRING}</div>
-            <div>{CONTENT_STRING}</div>
+            <Box>{CONTENT_STRING}</Box>
+            <Box>{CONTENT_STRING}</Box>
+            <Box>{CONTENT_STRING}</Box>
+            <Box>{CONTENT_STRING}</Box>
+            <Box>{CONTENT_STRING}</Box>
+            <Box>{CONTENT_STRING}</Box>
+            <Box>{CONTENT_STRING}</Box>
+            <Box>{CONTENT_STRING}</Box>
         </Grid>
     );
 };

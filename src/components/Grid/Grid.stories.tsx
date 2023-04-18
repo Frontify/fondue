@@ -4,6 +4,8 @@ import React from 'react';
 import { Grid, GridProps } from './Grid';
 import { SPACING_VALUES } from '@utilities/dimensions';
 import { Meta, StoryFn } from '@storybook/react';
+import { Box } from '@components/Box';
+import { merge } from '@utilities/merge';
 
 export default {
     title: 'Layout/Grid',
@@ -43,27 +45,27 @@ export default {
 
 export const Default: StoryFn<GridProps> = (args: GridProps) => {
     const contentClasses = [
-        'selected',
-        'positive',
-        'negative',
-        'warning',
-        'neutral',
-        'selected',
-        'positive',
-        'negative',
-        'warning',
-        'neutral',
-        'selected',
-        'positive',
-        'negative',
-        'warning',
-        'neutral',
+        'tw-bg-box-selected-strong',
+        'tw-bg-box-positive-strong',
+        'tw-bg-box-negative-strong',
+        'tw-bg-box-warning-strong',
+        'tw-bg-box-neutral-strong',
+        'tw-bg-box-selected-strong',
+        'tw-bg-box-positive-strong',
+        'tw-bg-box-negative-strong',
+        'tw-bg-box-warning-strong',
+        'tw-bg-box-neutral-strong',
+        'tw-bg-box-selected-strong',
+        'tw-bg-box-positive-strong',
+        'tw-bg-box-negative-strong',
+        'tw-bg-box-warning-strong',
+        'tw-bg-box-neutral-strong',
     ];
     return (
         <Grid {...args}>
             {contentClasses.map((contentClass, i) => {
                 const key = `content-key-${contentClass}-${i}`;
-                return <div key={key} className={`tw-w-full tw-h-full tw-bg-box-${contentClass}-strong`}></div>;
+                return <Box key={key} className={merge(['tw-w-full tw-h-full', contentClass])}></Box>;
             })}
         </Grid>
     );
