@@ -10,6 +10,8 @@ import { DatePickerTrigger } from './DatePickerTrigger';
 import { IconCaretLeft, IconCaretLeftDouble, IconCaretRight, IconCaretRightDouble } from '@foundation/Icon/Generated';
 import { Validation } from '@utilities/validation';
 
+const ARROW_PADDING_CORRECTION = 40;
+
 type SingleDatePickerProps = {
     variant?: 'single';
     onChange: (date: Date | null) => void;
@@ -175,7 +177,8 @@ export const DatePicker = forwardRef<ReactDatePicker<never, boolean>, DatePicker
                                     const side = placement.includes('end') ? 'left' : 'right';
                                     const padding = {
                                         [`${side}`]:
-                                            Math.max(popper.width, Math.min(popper.width, reference.width)) - 40,
+                                            Math.max(popper.width, Math.min(popper.width, reference.width)) -
+                                            ARROW_PADDING_CORRECTION,
                                     };
 
                                     return padding;
