@@ -49,12 +49,11 @@ export const useMenuKeyboardNavigation = (
         }
 
         const focusableItems = menuContainerRef.querySelectorAll(focusableElementsSelector);
-
         for (const item of focusableItems) {
             (item as HTMLButtonElement | HTMLAnchorElement).onkeydown = handleKeyDown;
         }
 
-        if (!itemsElements) {
+        if (!itemsElements && focusableItems.length > 0) {
             setItemsElements(focusableItems);
         }
     }, [isMenuOpened, menuContainerRef, itemsElements, handleKeyDown, focusableElementsSelector]);
