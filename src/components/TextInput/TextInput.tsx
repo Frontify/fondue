@@ -7,7 +7,18 @@ import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
-import React, { FocusEvent, KeyboardEvent, ReactElement, ReactNode, useEffect, useRef, useState } from 'react';
+import React, {
+    DOMAttributes,
+    FocusEvent,
+    ForwardRefRenderFunction,
+    KeyboardEvent,
+    ReactElement,
+    ReactNode,
+    forwardRef,
+    useEffect,
+    useRef,
+    useState,
+} from 'react';
 import {
     IconCheckMark,
     IconClipboard,
@@ -18,6 +29,7 @@ import {
     IconEyeOff,
 } from '@foundation/Icon/Generated';
 import { Tooltip, TooltipProps } from '..';
+import { FocusableElement } from '@react-types/shared';
 
 export enum TextInputType {
     Text = 'text',
@@ -71,6 +83,43 @@ export type TextInputProps =
           type: TextInputType.Password;
           obfuscated?: boolean;
       } & TextInputBaseProps);
+
+type ExtraActionButtonProps = {
+    extraAction: TextInputProps['extraAction'];
+    disabled: boolean;
+    isFocusVisible: boolean;
+    focusProps: DOMAttributes<FocusableElement>;
+};
+
+const ExtraActionButton: ForwardRefRenderFunction<HTMLButtonElement | null, ExtraActionButtonProps> = (
+    { extraAction, disabled, isFocusVisible, focusProps },
+    ref,
+): ReactElement | null => {
+    if (!extraAction) {
+        return null;
+    }
+    return (
+        <button
+            className={merge([
+                'tw-flex tw-items-center tw-justify-center tw-transition-colors tw-rounded tw-p-1 -tw-mr-2',
+                disabled
+                    ? 'tw-cursor-default tw-text-text-disabled'
+                    : 'tw-text-text-weak hover:tw-bg-box-neutral-hover hover:tw-text-box-neutral-inverse-hover',
+                isFocusVisible && FOCUS_STYLE,
+            ])}
+            onClick={extraAction.onClick}
+            data-test-id="extra-action-icon"
+            aria-label={extraAction.title.toLowerCase()}
+            disabled={disabled}
+            type="button"
+            ref={ref}
+            {...focusProps}
+        >
+            {extraAction.icon}
+        </button>
+    );
+};
+const ExtraActionButtonWithRef = forwardRef(ExtraActionButton);
 
 export const TextInput = ({
     id: propId,
@@ -206,43 +255,21 @@ export const TextInput = ({
                     <Tooltip
                         {...extraAction.tooltip}
                         triggerElement={
-                            <button
-                                className={merge([
-                                    'tw-flex tw-items-center tw-justify-center tw-transition-colors tw-rounded',
-                                    disabled
-                                        ? 'tw-cursor-default tw-text-black-40'
-                                        : 'tw-text-black-60  hover:tw-text-black-100',
-                                    extraActionButtonIsFocusVisible && FOCUS_STYLE,
-                                ])}
-                                onClick={extraAction.onClick}
-                                data-test-id="extra-action-icon"
-                                aria-label={extraAction.title.toLowerCase()}
+                            <ExtraActionButtonWithRef
+                                extraAction={extraAction}
                                 disabled={disabled}
-                                type="button"
-                                {...extraActionButtonFocusProps}
-                            >
-                                {extraAction.icon}
-                            </button>
+                                isFocusVisible={extraActionButtonIsFocusVisible}
+                                focusProps={extraActionButtonFocusProps}
+                            />
                         }
                     />
                 ) : (
-                    <button
-                        className={merge([
-                            'tw-flex tw-items-center tw-justify-center tw-transition-colors tw-rounded',
-                            disabled
-                                ? 'tw-cursor-default tw-text-black-40'
-                                : 'tw-text-black-60  hover:tw-text-black-100',
-                            extraActionButtonIsFocusVisible && FOCUS_STYLE,
-                        ])}
-                        onClick={extraAction.onClick}
-                        data-test-id="extra-action-icon"
-                        aria-label={extraAction.title.toLowerCase()}
+                    <ExtraActionButtonWithRef
+                        extraAction={extraAction}
                         disabled={disabled}
-                        type="button"
-                        {...extraActionButtonFocusProps}
-                    >
-                        {extraAction.icon}
-                    </button>
+                        isFocusVisible={extraActionButtonIsFocusVisible}
+                        focusProps={extraActionButtonFocusProps}
+                    />
                 ))}
             {`${value}`.length > 0 && clearable && (
                 <button
