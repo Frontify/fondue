@@ -7,7 +7,18 @@ import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
-import React, { FocusEvent, KeyboardEvent, ReactElement, ReactNode, useEffect, useRef, useState } from 'react';
+import React, {
+    DOMAttributes,
+    FocusEvent,
+    ForwardRefRenderFunction,
+    KeyboardEvent,
+    ReactElement,
+    ReactNode,
+    forwardRef,
+    useEffect,
+    useRef,
+    useState,
+} from 'react';
 import {
     IconCheckMark,
     IconClipboard,
@@ -17,12 +28,22 @@ import {
     IconEye,
     IconEyeOff,
 } from '@foundation/Icon/Generated';
+import { Tooltip, TooltipProps } from '..';
+import { FocusableElement } from '@react-types/shared';
 
 export enum TextInputType {
     Text = 'text',
     Password = 'password',
     Number = 'number',
 }
+
+export type TextInputExtraAction = {
+    onClick: () => void;
+    icon: ReactElement;
+    title: string;
+    tooltip?: Omit<TooltipProps, 'triggerElement'>;
+    disabled?: boolean;
+};
 
 export type TextInputBaseProps = {
     id?: string;
@@ -47,6 +68,7 @@ export type TextInputBaseProps = {
     spellcheck?: boolean;
     focusOnMount?: boolean;
     selectable?: boolean;
+    extraActions?: TextInputExtraAction[];
 };
 
 export type TextInputProps =
@@ -64,6 +86,45 @@ export type TextInputProps =
           type: TextInputType.Password;
           obfuscated?: boolean;
       } & TextInputBaseProps);
+
+type ExtraActionButtonProps = {
+    extraAction: TextInputExtraAction;
+    disabled: boolean;
+    isFocusVisible: boolean;
+    focusProps: DOMAttributes<FocusableElement>;
+};
+
+const ExtraActionButton: ForwardRefRenderFunction<HTMLButtonElement | null, ExtraActionButtonProps> = (
+    { extraAction, disabled, isFocusVisible, focusProps },
+    ref,
+): ReactElement | null => {
+    if (!extraAction) {
+        return null;
+    }
+    const isDisabled = disabled || extraAction.disabled;
+    return (
+        <button
+            className={merge([
+                'tw-flex tw-items-center tw-justify-center tw-transition-colors tw-rounded tw-p-1 -tw-mr-2',
+                isDisabled
+                    ? 'tw-cursor-default tw-text-text-disabled'
+                    : 'tw-text-text-weak hover:tw-bg-box-neutral-hover hover:tw-text-box-neutral-inverse-hover',
+                isFocusVisible && FOCUS_STYLE,
+            ])}
+            onClick={extraAction.onClick}
+            data-test-id="fondue-extra-action-icon"
+            aria-label={extraAction.title.toLowerCase()}
+            disabled={isDisabled}
+            aria-disabled={isDisabled}
+            type="button"
+            ref={ref}
+            {...focusProps}
+        >
+            {extraAction.icon}
+        </button>
+    );
+};
+const ExtraActionButtonWithRef = forwardRef(ExtraActionButton);
 
 export const TextInput = ({
     id: propId,
@@ -89,11 +150,13 @@ export const TextInput = ({
     readonly,
     focusOnMount,
     selectable = false,
+    extraActions,
 }: TextInputProps): ReactElement => {
     const { isFocusVisible, focusProps } = useFocusRing({ within: true, isTextInput: true });
     const { isFocusVisible: clearButtonIsFocusVisible, focusProps: clearButtonFocusProps } = useFocusRing();
     const { isFocusVisible: passwordButtonIsFocusVisible, focusProps: passwordButtonFocusProps } = useFocusRing();
     const { isFocusVisible: copyButtonIsFocusVisible, focusProps: copyButtonFocusProps } = useFocusRing();
+    const { isFocusVisible: extraActionButtonIsFocusVisible, focusProps: extraActionButtonFocusProps } = useFocusRing();
 
     const { copy, status } = useCopy();
 
@@ -192,6 +255,36 @@ export const TextInput = ({
                 data-test-id="text-input"
                 {...spellcheckProp}
             />
+            {extraActions &&
+                extraActions.length > 0 &&
+                extraActions.map((extraAction: TextInputExtraAction, index: number) => {
+                    const key = `text-input-extra-action-${index}`;
+                    if (extraAction.tooltip) {
+                        return (
+                            <Tooltip
+                                key={key}
+                                {...extraAction.tooltip}
+                                triggerElement={
+                                    <ExtraActionButtonWithRef
+                                        extraAction={extraAction}
+                                        disabled={disabled}
+                                        isFocusVisible={extraActionButtonIsFocusVisible}
+                                        focusProps={extraActionButtonFocusProps}
+                                    />
+                                }
+                            />
+                        );
+                    }
+                    return (
+                        <ExtraActionButtonWithRef
+                            key={key}
+                            extraAction={extraAction}
+                            disabled={disabled}
+                            isFocusVisible={extraActionButtonIsFocusVisible}
+                            focusProps={extraActionButtonFocusProps}
+                        />
+                    );
+                })}
             {`${value}`.length > 0 && clearable && (
                 <button
                     className={merge([

@@ -6,6 +6,7 @@ import { Meta, StoryFn } from '@storybook/react';
 import { TextInput, TextInputProps, TextInputType } from './TextInput';
 import { Validation } from '@utilities/validation';
 import { IconIcon } from '@foundation/Icon/Generated';
+import { action } from '@storybook/addon-actions';
 
 export default {
     title: 'Components/Text Input',
@@ -147,4 +148,39 @@ export const SelectableInput = TextInputTemplate.bind({});
 SelectableInput.args = {
     value: 'Value text',
     selectable: true,
+};
+
+export const WithExtraActions = TextInputTemplate.bind({});
+
+WithExtraActions.args = {
+    value: 'Value text',
+    extraActions: [
+        {
+            title: 'Extra action A',
+            onClick: action('extraActionA'),
+            icon: <IconIcon />,
+        },
+        {
+            title: 'Extra action B',
+            onClick: action('extraActionB'),
+            icon: <IconIcon />,
+        },
+    ],
+};
+
+export const WithExtraActionWithTooltip = TextInputTemplate.bind({});
+
+WithExtraActionWithTooltip.args = {
+    value: 'Value text',
+    extraActions: [
+        {
+            title: 'Extra action',
+            onClick: action('extraAction'),
+            icon: <IconIcon />,
+            tooltip: {
+                content: 'Tooltip content',
+                withArrow: true,
+            },
+        },
+    ],
 };
