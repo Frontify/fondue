@@ -161,12 +161,12 @@ const WithButtonFlyoutTemplate: StoryFn<FlyoutProps> = (args) => {
     return (
         <Flyout
             {...args}
-            trigger={({ 'aria-label': ariaLabel }, ref: MutableRefObject<HTMLButtonElement>) => (
+            trigger={({ 'aria-label': ariaLabel }, ref) => (
                 <Button
                     style={ButtonStyle.Default}
                     emphasis={ButtonEmphasis.Strong}
                     onClick={() => setOpen(!open)}
-                    ref={ref}
+                    ref={ref as MutableRefObject<HTMLButtonElement>}
                     aria-label={ariaLabel}
                 >
                     Button
@@ -294,12 +294,12 @@ const WithCustomFooterAndHeaderTemplate: StoryFn<FlyoutProps> = (args) => {
     return (
         <Flyout
             {...args}
-            trigger={({ 'aria-label': ariaLabel }, ref: MutableRefObject<HTMLButtonElement>) => (
+            trigger={({ 'aria-label': ariaLabel }, ref) => (
                 <Button
                     style={ButtonStyle.Default}
                     emphasis={ButtonEmphasis.Strong}
                     onClick={() => setIsOpen(!isOpen)}
-                    ref={ref}
+                    ref={ref as MutableRefObject<HTMLButtonElement>}
                     aria-label={ariaLabel}
                 >
                     Click me
@@ -341,10 +341,10 @@ const WithRenderFunctionTriggerTemplate: StoryFn<FlyoutProps> = (args) => {
     return (
         <Flyout
             {...args}
-            trigger={(props, ref: MutableRefObject<HTMLDivElement>, state) => (
+            trigger={(props, ref, state) => (
                 <div
                     {...props}
-                    ref={ref}
+                    ref={ref as MutableRefObject<HTMLDivElement>}
                     className={merge([
                         'tw-border tw-rounded tw-w-[200px] tw-p-2 tw-text-s tw-text-center tw-h-[60px] tw-outline-none tw-items-center tw-flex tw-justify-center',
                         state.isFocusVisible && FOCUS_STYLE,
@@ -386,13 +386,13 @@ const WithPlacementAndOffsetTemplate: StoryFn<FlyoutProps> = (args) => {
     return (
         <Flyout
             {...args}
-            trigger={({ 'aria-label': ariaLabel }, ref: MutableRefObject<HTMLButtonElement>) => (
+            trigger={({ 'aria-label': ariaLabel }, ref) => (
                 <div className="tw-flex tw-justify-center tw-items-center tw-w-full tw-h-screen">
                     <Button
                         style={ButtonStyle.Default}
                         emphasis={ButtonEmphasis.Strong}
                         onClick={() => setIsOpen(!isOpen)}
-                        ref={ref}
+                        ref={ref as MutableRefObject<HTMLButtonElement>}
                         aria-label={ariaLabel}
                     >
                         Click me
