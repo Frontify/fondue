@@ -3,6 +3,7 @@
 import React from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { Flex, FlexProps } from './Flex';
+import { Box } from '@components/Box';
 
 const DirectionTypes = ['tw-flex-row', 'tw-flex-col', 'tw-flex-row-reverse', 'tw-flex-col-reverse'];
 
@@ -73,10 +74,10 @@ export default {
 export const Default: StoryFn<FlexProps> = (args: FlexProps) => {
     return (
         <Flex {...args}>
-            <div className="tw-w-12 tw-h-12 tw-bg-box-positive-strong"></div>
-            <div className="tw-w-12 tw-h-12 tw-bg-box-positive-strong"></div>
-            <div className="tw-w-12 tw-h-12 tw-bg-box-positive-strong"></div>
-            <div className="tw-w-12 tw-h-12 tw-bg-box-positive-strong"></div>
+            <Box className="tw-w-12 tw-h-12 tw-bg-box-positive-strong"></Box>
+            <Box className="tw-w-12 tw-h-12 tw-bg-box-positive-strong"></Box>
+            <Box className="tw-w-12 tw-h-12 tw-bg-box-positive-strong"></Box>
+            <Box className="tw-w-12 tw-h-12 tw-bg-box-positive-strong"></Box>
         </Flex>
     );
 };

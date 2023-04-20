@@ -3,6 +3,7 @@
 import React, { ReactNode } from 'react';
 import { merge } from '@utilities/merge';
 import { ContainerHTMLElement } from 'src/types/elements';
+import { Box } from '@components/Box';
 
 export type FlexDirection = 'row' | 'column' | 'row-reverse' | 'column-reverse';
 export type FlexWrap = 'nowrap' | 'wrap' | 'wrap-reverse';
@@ -25,12 +26,53 @@ export type FlexProps = {
     justify?: FlexJustify;
     alignItems?: FlexAlignItems;
     alignContent?: FlexAlignContent;
-    boxColorToken?: string;
     'data-test-id'?: string;
     children?: ReactNode | ReactNode[];
     bg?: string;
     color?: string;
     as?: ContainerHTMLElement;
+};
+
+const directionMapping = {
+    row: 'tw-flex-row',
+    column: 'tw-flex-col',
+    'row-reverse': 'tw-flex-row-reverse',
+    'column-reverse': 'tw-flex-col-reverse',
+};
+
+const wrapMapping = {
+    nowrap: 'tw-flex-nowrap',
+    wrap: 'tw-flex-wrap',
+    'wrap-reverse': 'tw-flex-wrap-reverse',
+};
+
+const justifyMapping = {
+    start: 'tw-justify-start',
+    end: 'tw-justify-end',
+    center: 'tw-justify-center',
+    between: 'tw-justify-between',
+    around: 'tw-justify-around',
+    evenly: 'tw-justify-evenly',
+};
+
+const alignItemsMapping = {
+    start: 'tw-items-start',
+    end: 'tw-items-end',
+    center: 'tw-items-center',
+    baseline: 'tw-items-baseline',
+    stretch: 'tw-items-stretch',
+};
+
+const alignContentMapping = {
+    start: 'tw-content-start',
+    end: 'tw-content-end',
+    center: 'tw-content-center',
+    normal: 'tw-content-normal',
+    between: 'tw-content-between',
+    around: 'tw-content-around',
+    evenly: 'tw-content-evenly',
+    baseline: 'tw-content-baseline',
+    stretch: 'tw-content-stretch',
 };
 
 export const Flex = ({
@@ -45,50 +87,8 @@ export const Flex = ({
     color,
     as: ContainerElement = 'div',
 }: FlexProps) => {
-    const directionMapping = {
-        row: 'tw-flex-row',
-        column: 'tw-flex-col',
-        'row-reverse': 'tw-flex-row-reverse',
-        'column-reverse': 'tw-flex-col-reverse',
-    };
-
-    const wrapMapping = {
-        nowrap: 'tw-flex-nowrap',
-        wrap: 'tw-flex-wrap',
-        'wrap-reverse': 'tw-flex-wrap-reverse',
-    };
-
-    const justifyMapping = {
-        start: 'tw-justify-start',
-        end: 'tw-justify-end',
-        center: 'tw-justify-center',
-        between: 'tw-justify-between',
-        around: 'tw-justify-around',
-        evenly: 'tw-justify-evenly',
-    };
-
-    const alignItemsMapping = {
-        start: 'tw-items-start',
-        end: 'tw-items-end',
-        center: 'tw-items-center',
-        baseline: 'tw-items-baseline',
-        stretch: 'tw-items-stretch',
-    };
-
-    const alignContentMapping = {
-        start: 'tw-content-start',
-        end: 'tw-content-end',
-        center: 'tw-content-center',
-        normal: 'tw-content-normal',
-        between: 'tw-content-between',
-        around: 'tw-content-around',
-        evenly: 'tw-content-evenly',
-        baseline: 'tw-content-baseline',
-        stretch: 'tw-content-stretch',
-    };
-
     return (
-        <ContainerElement
+        <Box
             data-test-id={dataTestId}
             className={merge([
                 'tw-flex',
@@ -101,9 +101,10 @@ export const Flex = ({
                 bg,
                 color,
             ])}
+            as={ContainerElement}
         >
             {children}
-        </ContainerElement>
+        </Box>
     );
 };
 Flex.displayName = 'FondueFlex';

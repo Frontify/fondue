@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { Box } from '@components/Box';
 import React from 'react';
 import { Flex, FlexProps } from './Flex';
 
@@ -12,10 +13,10 @@ const FLEX_CHILD_ID = `[data-test-id=${FLEX_CHILD_ID_STRING}]`;
 const FlexComponent = (props: FlexProps) => {
     return (
         <Flex {...props}>
-            <span data-test-id={FLEX_CHILD_ID_STRING} className="tw-w-12 tw-h-12 tw-bg-box-positive-strong"></span>
-            <span data-test-id={FLEX_CHILD_ID_STRING} className="tw-w-12 tw-h-12 tw-bg-box-positive-strong"></span>
-            <span data-test-id={FLEX_CHILD_ID_STRING} className="tw-w-12 tw-h-12 tw-bg-box-positive-strong"></span>
-            <span data-test-id={FLEX_CHILD_ID_STRING} className="tw-w-12 tw-h-12 tw-bg-box-positive-strong"></span>
+            <Box data-test-id={FLEX_CHILD_ID_STRING} className="tw-w-12 tw-h-12 tw-bg-box-positive-strong"></Box>
+            <Box data-test-id={FLEX_CHILD_ID_STRING} className="tw-w-12 tw-h-12 tw-bg-box-positive-strong"></Box>
+            <Box data-test-id={FLEX_CHILD_ID_STRING} className="tw-w-12 tw-h-12 tw-bg-box-positive-strong"></Box>
+            <Box data-test-id={FLEX_CHILD_ID_STRING} className="tw-w-12 tw-h-12 tw-bg-box-positive-strong"></Box>
         </Flex>
     );
 };
