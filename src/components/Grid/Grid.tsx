@@ -20,7 +20,7 @@ export type GridProps = {
     spacingY?: SpacingValue;
     children?: React.ReactNode;
     width?: `${number}${DimensionUnity}`;
-    rowHeight?: `${number}${DimensionUnity}`;
+    rowHeight?: `${number}${DimensionUnity}` | 'auto';
     padding?: SpacingValue;
     margin?: SpacingValue;
     bg?: string;
