@@ -2,9 +2,9 @@
 @import url('react-datepicker/dist/react-datepicker.min.css');
 
 .react-datepicker-popper {
-    /** 
+    /**
      *  The Modal default z-index is 50 (vide Modal.tsx file)
-     *  so it's better to place the DatePicker in a smaller z-index 
+     *  so it's better to place the DatePicker in a smaller z-index
      */
     z-index: 49;
 }
@@ -22,10 +22,9 @@
 }
 
 .react-datepicker-wrap .react-datepicker__triangle {
-    transform: none !important;
-    left: var(--space-xxl) !important;
     z-index: 1;
 }
+
 .react-datepicker-wrap .react-datepicker__month-container {
     padding: var(--space-m);
 }
