@@ -1,7 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
-import { DimensionUnity, SpacingValue } from '@utilities/dimensions';
+import {
+    DimensionUnity,
+    GapXMapping,
+    GapYMapping,
+    MARGIN_VALUES_MAP,
+    PADDING_VALUES_MAP,
+    SPACING_VALUES,
+    SpacingValue,
+} from '@utilities/dimensions';
 import { ContainerHTMLElement } from 'src/types/elements';
 import { merge } from '@utilities/merge';
 import { Box } from '../Box/Box';
@@ -23,32 +31,6 @@ export type GridProps = {
 
 export const CONTAINER_TEST_ID = 'fondue-grid';
 
-const spacingMap = {
-    0: '0',
-    1: 'px',
-    4: '1',
-    8: '2',
-    12: '3',
-    16: '4',
-    20: '5',
-    24: '6',
-    28: '7',
-    32: '8',
-    36: '9',
-    40: '10',
-    44: '11',
-    48: '12',
-    52: '13',
-    56: '14',
-    60: '15',
-    64: '16',
-    68: '17',
-    72: '18',
-    76: '19',
-    80: '20',
-    84: '21',
-};
-
 export const Grid = ({
     column = 2,
     spacingX = 4,
@@ -63,8 +45,10 @@ export const Grid = ({
     padding = 0,
     as: ContainerElement = 'div',
 }: GridProps) => {
-    const spacingYClassName = spacingMap[spacingY] ? `tw-gap-y-${spacingMap[spacingY]}` : `tw-gap-y-${spacingMap[4]}`;
-    const spacingXClassName = spacingMap[spacingX] ? `tw-gap-x-${spacingMap[spacingX]}` : `tw-gap-x-${spacingMap[4]}`;
+    const spacingYClassName = GapYMapping[spacingY] ? GapYMapping[spacingY] : GapYMapping[4];
+    const spacingXClassName = GapXMapping[spacingX] ? GapXMapping[spacingX] : GapXMapping[4];
+    const paddingClassName = SPACING_VALUES.includes(padding) ? PADDING_VALUES_MAP[padding] : PADDING_VALUES_MAP[0];
+    const marginClassName = SPACING_VALUES.includes(padding) ? MARGIN_VALUES_MAP[margin] : MARGIN_VALUES_MAP[0];
     let childrenLength = 0;
 
     React.Children.map(children, (child) => {
@@ -75,10 +59,16 @@ export const Grid = ({
     return (
         <Box
             data-test-id={dataTestId}
-            className={merge(['tw-grid', bg, color, spacingXClassName, spacingYClassName])}
+            className={merge([
+                'tw-grid',
+                bg,
+                color,
+                paddingClassName,
+                marginClassName,
+                spacingXClassName,
+                spacingYClassName,
+            ])}
             style={{
-                margin,
-                padding,
                 width,
                 gridTemplateColumns: `repeat(${column}, ${(1 / column) * 100}%)`,
                 gridTemplateRows: `repeat(${Math.ceil(childrenLength / column)}, ${rowHeight})`,
