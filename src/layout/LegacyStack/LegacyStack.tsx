@@ -17,7 +17,7 @@ export type LegacyStackProps = {
     justify?: LegacyStackJustify;
     align?: LegacyStackAlign;
     children?: ReactNode;
-    'data-test-id': string;
+    'data-test-id'?: string;
 };
 
 const paddingMap: Record<LegacyStackSpacing, string> = {
