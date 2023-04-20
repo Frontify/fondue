@@ -38,7 +38,7 @@ export const Grid = ({
     children,
     'data-test-id': dataTestId = CONTAINER_TEST_ID,
     width = '100%',
-    rowHeight,
+    rowHeight = 'auto',
     bg,
     color,
     margin = 0,
@@ -70,7 +70,7 @@ export const Grid = ({
             ])}
             style={{
                 width,
-                gridTemplateColumns: `repeat(${column}, ${(1 / column) * 100}%)`,
+                gridTemplateColumns: `repeat(${column}, 1fr)`,
                 gridTemplateRows: `repeat(${Math.ceil(childrenLength / column)}, ${rowHeight})`,
             }}
             as={ContainerElement}
