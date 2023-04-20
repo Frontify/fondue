@@ -182,8 +182,7 @@ jobs:
 
             - name: Release Fondue
               if: ${{ !contains(github.event.head_commit.message, format('chore(release-skip){0}', ':')) }}
-              run: |
-                  pnpx semantic-release
+              run: pnpx semantic-release
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
