@@ -28,7 +28,7 @@ import {
     IconEye,
     IconEyeOff,
 } from '@foundation/Icon/Generated';
-import { Tooltip, TooltipProps } from '..';
+import { Tooltip, TooltipProps } from '../Tooltip';
 import { FocusableElement } from '@react-types/shared';
 
 export enum TextInputType {
