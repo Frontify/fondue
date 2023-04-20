@@ -17,6 +17,7 @@ export type LegacyStackProps = {
     justify?: LegacyStackJustify;
     align?: LegacyStackAlign;
     children?: ReactNode;
+    'data-test-id': string;
 };
 
 const paddingMap: Record<LegacyStackSpacing, string> = {
@@ -57,6 +58,8 @@ const alignMap: Record<LegacyStackAlign, string> = {
     stretch: 'tw-items-stretch',
 };
 
+const DEFAULT_DATA_TEST_ID = 'fondue-legacy-stack';
+
 export const LegacyStack = ({
     children,
     padding,
@@ -65,10 +68,11 @@ export const LegacyStack = ({
     wrap = false,
     justify = 'start',
     align = 'stretch',
+    'data-test-id': dataTestId = DEFAULT_DATA_TEST_ID,
 }: LegacyStackProps): ReactElement => {
     return (
         <div
-            data-test-id="legacy-stack"
+            data-test-id={dataTestId}
             className={merge([
                 'tw-flex',
                 paddingMap[padding],
