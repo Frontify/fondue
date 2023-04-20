@@ -73,7 +73,7 @@ jobs:
                   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
               run: |
-                  unset GITHUB_ACTIONS && pnpx -p @semantic-release/exec -p semantic-release semantic-release --dry-run --no-ci --branches main,release-preview @semantic-release/exec --generateNotesCmd 'echo "${nextRelease.notes}" >> $GITHUB_STEP_SUMMARY'
+                  unset GITHUB_ACTIONS && pnpm exec semantic-release --debug --dry-run --no-ci --branches main,release-preview @semantic-release/exec --generateNotesCmd 'echo "${nextRelease.notes}" >> $GITHUB_STEP_SUMMARY'
 
             - name: Checkout PR commit
               uses: actions/checkout@v3
