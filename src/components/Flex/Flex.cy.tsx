@@ -247,7 +247,7 @@ describe('Flex Component', () => {
     });
 
     it('should render with color', () => {
-        cy.mount(<FlexComponent color="tw-bg-box-positive-inverse" />);
+        cy.mount(<FlexComponent color="tw-text-box-positive-inverse" />);
 
         cy.get(FLEX_ID).as('Flex');
         cy.get('@Flex').should('have.class', 'tw-text-box-positive-inverse');
