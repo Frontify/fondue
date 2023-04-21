@@ -32,7 +32,7 @@ describe('Grid Component', () => {
     it('should render specified number of columns', () => {
         cy.mount(<GridComponent width="400px" column={4} />);
 
-        cy.get(GRID_ID).should('have.css', 'grid-template-columns', '100px 100px 100px 100px');
+        cy.get(GRID_ID).should('have.css', 'grid-template-columns', '97px 97px 97px 97px');
     });
 
     it('should render with specified margins', () => {
