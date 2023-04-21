@@ -4,6 +4,7 @@ import React, { ReactNode } from 'react';
 import { merge } from '@utilities/merge';
 import { ContainerHTMLElement } from 'src/types/elements';
 import { Box } from '@components/Box';
+import { MARGIN_VALUES_MAP, PADDING_VALUES_MAP, SPACING_VALUES, SpacingValue } from '@utilities/dimensions';
 
 export type FlexDirection = 'row' | 'column' | 'row-reverse' | 'column-reverse';
 export type FlexWrap = 'nowrap' | 'wrap' | 'wrap-reverse';
@@ -31,6 +32,8 @@ export type FlexProps = {
     bg?: string;
     color?: string;
     as?: ContainerHTMLElement;
+    padding?: SpacingValue;
+    margin?: SpacingValue;
 };
 
 const directionMapping = {
@@ -86,7 +89,12 @@ export const Flex = ({
     bg,
     color,
     as: ContainerElement = 'div',
+    margin = 0,
+    padding = 0,
 }: FlexProps) => {
+    const paddingClassName = SPACING_VALUES.includes(padding) ? PADDING_VALUES_MAP[padding] : PADDING_VALUES_MAP[0];
+    const marginClassName = SPACING_VALUES.includes(padding) ? MARGIN_VALUES_MAP[margin] : MARGIN_VALUES_MAP[0];
+
     return (
         <Box
             data-test-id={dataTestId}
@@ -100,6 +108,8 @@ export const Flex = ({
                 alignContentMapping[alignContent],
                 bg,
                 color,
+                paddingClassName,
+                marginClassName,
             ])}
             as={ContainerElement}
         >

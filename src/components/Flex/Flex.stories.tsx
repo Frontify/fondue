@@ -66,7 +66,7 @@ export default {
         alignContent: 'center',
         'data-test-id': 'custom-test-id',
         bg: 'tw-bg-box-neutral',
-        color: 'tw-bg-box-positive-inverse',
+        color: 'tw-text-box-positive-inverse',
         as: 'div',
     },
 } as Meta<FlexProps>;
@@ -74,10 +74,10 @@ export default {
 export const Default: StoryFn<FlexProps> = (args: FlexProps) => {
     return (
         <Flex {...args}>
-            <Box className="tw-w-12 tw-h-12 tw-bg-box-positive-strong"></Box>
-            <Box className="tw-w-12 tw-h-12 tw-bg-box-positive-strong"></Box>
-            <Box className="tw-w-12 tw-h-12 tw-bg-box-positive-strong"></Box>
-            <Box className="tw-w-12 tw-h-12 tw-bg-box-positive-strong"></Box>
+            <Box className="tw-bg-box-positive-strong">Lorem ipsum dolor sit amet, consectetur adipiscing elit</Box>
+            <Box className="tw-bg-box-positive-strong">Lorem ipsum dolor sit amet, consectetur adipiscing elit</Box>
+            <Box className="tw-bg-box-positive-strong">Lorem ipsum dolor sit amet, consectetur adipiscing elit</Box>
+            <Box className="tw-bg-box-positive-strong">Lorem ipsum dolor sit amet, consectetur adipiscing elit</Box>
         </Flex>
     );
 };

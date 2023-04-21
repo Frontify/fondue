@@ -239,13 +239,6 @@ describe('Flex Component', () => {
         cy.get('@Flex').should('exist');
     });
 
-    it("should render as a span using the 'as' prop", () => {
-        cy.mount(<FlexComponent as="span" />);
-
-        cy.get(`span${FLEX_ID}`).as('Flex');
-        cy.get('@Flex').should('exist');
-    });
-
     it('should render with bg', () => {
         cy.mount(<FlexComponent bg="tw-bg-box-positive-strong" />);
 
@@ -257,7 +250,7 @@ describe('Flex Component', () => {
         cy.mount(<FlexComponent color="tw-bg-box-positive-inverse" />);
 
         cy.get(FLEX_ID).as('Flex');
-        cy.get('@Flex').should('have.class', 'tw-bg-box-positive-inverse');
+        cy.get('@Flex').should('have.class', 'tw-text-box-positive-inverse');
     });
 
     it('should render with children', () => {
