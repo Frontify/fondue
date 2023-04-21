@@ -205,37 +205,40 @@ devDependencies:
     specifier: 0.1.34
     version: 0.1.34
   '@semantic-release/commit-analyzer':
-    specifier: ^9.0.2
+    specifier: 9.0.2
     version: 9.0.2(semantic-release@21.0.1)
+  '@semantic-release/exec':
+    specifier: 6.0.3
+    version: 6.0.3(semantic-release@21.0.1)
   '@semantic-release/github':
-    specifier: ^8.0.7
+    specifier: 8.0.7
     version: 8.0.7(semantic-release@21.0.1)
   '@semantic-release/npm':
-    specifier: ^10.0.3
+    specifier: 10.0.3
     version: 10.0.3(semantic-release@21.0.1)
   '@semantic-release/release-notes-generator':
-    specifier: ^10.0.3
+    specifier: 10.0.3
     version: 10.0.3(semantic-release@21.0.1)
   '@storybook/addon-a11y':
-    specifier: ^7.0.6
+    specifier: 7.0.6
     version: 7.0.6(react-dom@18.2.0)(react@18.2.0)
   '@storybook/addon-actions':
-    specifier: ^7.0.6
+    specifier: 7.0.6
     version: 7.0.6(react-dom@18.2.0)(react@18.2.0)
   '@storybook/addon-essentials':
-    specifier: ^7.0.6
+    specifier: 7.0.6
     version: 7.0.6(react-dom@18.2.0)(react@18.2.0)
   '@storybook/addon-links':
-    specifier: ^7.0.6
+    specifier: 7.0.6
     version: 7.0.6(react-dom@18.2.0)(react@18.2.0)
   '@storybook/react':
-    specifier: ^7.0.6
+    specifier: 7.0.6
     version: 7.0.6(react-dom@18.2.0)(react@18.2.0)(typescript@5.0.4)
   '@storybook/react-vite':
-    specifier: ^7.0.6
+    specifier: 7.0.6
     version: 7.0.6(react-dom@18.2.0)(react@18.2.0)(typescript@5.0.4)(vite@4.1.1)
   '@storybook/theming':
-    specifier: ^7.0.6
+    specifier: 7.0.6
     version: 7.0.6(react-dom@18.2.0)(react@18.2.0)
   '@svgr/babel-plugin-transform-svg-component':
     specifier: 6.5.1
@@ -361,10 +364,10 @@ devDependencies:
     specifier: 3.20.2
     version: 3.20.2
   semantic-release:
-    specifier: ^21.0.1
+    specifier: 21.0.1
     version: 21.0.1
   storybook:
-    specifier: ^7.0.6
+    specifier: 7.0.6
     version: 7.0.6
   storybook-dark-mode:
     specifier: 3.0.0
@@ -4008,6 +4011,23 @@ packages:
   /@semantic-release/error@3.0.0:
     resolution: {integrity: sha512-5hiM4Un+tpl4cKw3lV4UgzJj+SmfNIDCLLw0TepzQxz9ZGV5ixnqkzIVF+3tp0ZHgcMKE+VNGHJjEeyFG2dcSw==}
     engines: {node: '>=14.17'}
+    dev: true
+
+  /@semantic-release/exec@6.0.3(semantic-release@21.0.1):
+    resolution: {integrity: sha512-bxAq8vLOw76aV89vxxICecEa8jfaWwYITw6X74zzlO0mc/Bgieqx9kBRz9z96pHectiTAtsCwsQcUyLYWnp3VQ==}
+    engines: {node: '>=14.17'}
+    peerDependencies:
+      semantic-release: '>=18.0.0'
+    dependencies:
+      '@semantic-release/error': 3.0.0
+      aggregate-error: 3.1.0
+      debug: 4.3.4(supports-color@5.5.0)
+      execa: 5.1.1
+      lodash: 4.17.21
+      parse-json: 5.2.0
+      semantic-release: 21.0.1
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /@semantic-release/github@8.0.7(semantic-release@21.0.1):
