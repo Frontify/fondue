@@ -162,7 +162,7 @@ jobs:
 
             - name: Get pnpm store directory
               id: pnpm-cache
-              run: echo "::set-output name=pnpm_cache_dir::$(pnpm store path)"
+              run: echo "pnpm_cache_dir=$(pnpm store path)" >> $GITHUB_OUTPUT
 
             - name: Setup pnpm cache
               uses: actions/cache@v3
@@ -182,8 +182,7 @@ jobs:
 
             - name: Release Fondue
               if: ${{ !contains(github.event.head_commit.message, format('chore(release-skip){0}', ':')) }}
-              run: |
-                  pnpx semantic-release
+              run: pnpm exec semantic-release
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
