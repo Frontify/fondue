@@ -13,7 +13,7 @@ describe('LegacyStack Layout', () => {
             </LegacyStack>,
         );
 
-        cy.get('[data-test-id=legacy-stack]').as('LegacyStack');
+        cy.get('[data-test-id=fondue-legacy-stack]').as('LegacyStack');
         cy.get('@LegacyStack').should('have.class', 'tw-flex-row');
     });
 
@@ -26,7 +26,7 @@ describe('LegacyStack Layout', () => {
             </LegacyStack>,
         );
 
-        cy.get('[data-test-id=legacy-stack]').as('LegacyStack');
+        cy.get('[data-test-id=fondue-legacy-stack]').as('LegacyStack');
         cy.get('@LegacyStack').should('have.class', 'tw-flex-col');
     });
 
@@ -39,7 +39,7 @@ describe('LegacyStack Layout', () => {
             </LegacyStack>,
         );
 
-        cy.get('[data-test-id=legacy-stack]').as('LegacyStack');
+        cy.get('[data-test-id=fondue-legacy-stack]').as('LegacyStack');
         cy.get('@LegacyStack').should('have.class', 'tw-p-m');
         cy.get('@LegacyStack').should('have.class', 'tw-gap-m');
     });
@@ -53,7 +53,7 @@ describe('LegacyStack Layout', () => {
             </LegacyStack>,
         );
 
-        cy.get('[data-test-id=legacy-stack]').as('LegacyStack');
+        cy.get('[data-test-id=fondue-legacy-stack]').as('LegacyStack');
         cy.get('@LegacyStack').should('have.class', 'tw-justify-between');
         cy.get('@LegacyStack').should('have.class', 'tw-items-start');
     });
