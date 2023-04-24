@@ -2,7 +2,7 @@
 
 import { Meta, StoryFn } from '@storybook/react';
 import React from 'react';
-import { Box as BoxComponent } from './Box';
+import { BOX_TEST_ID, Box as BoxComponent } from './Box';
 
 type Props = JSX.IntrinsicElements['div'] | JSX.IntrinsicElements['span'];
 
@@ -20,6 +20,12 @@ export default {
         'aria-label': {
             type: 'string',
         },
+        as: {
+            options: ['div', 'span'],
+            control: {
+                type: 'select',
+            },
+        },
         children: {
             table: {
                 disable: true,
@@ -28,6 +34,7 @@ export default {
     },
     args: {
         className: 'tw-font-bold tw-flex',
+        'data-test-id': BOX_TEST_ID,
         children:
             'You can pass any props you want into this component. In the controls you can find examples with camelCased, aria and data attributes.',
     },
