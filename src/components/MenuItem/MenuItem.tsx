@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { MouseEvent, ReactNode, useEffect, useState } from 'react';
+import React, { MouseEvent, ReactNode } from 'react';
 import { merge } from '@utilities/merge';
 import { IconCaretRight, IconCheckMark } from '@foundation/Icon/Generated';
 import { IconSize } from '@foundation/Icon/IconSize';
@@ -97,13 +97,7 @@ export const MenuItem = ({
 
     const textClass = menuItemTextColorRecord[style][textState];
 
-    const [mainElementType, setMainElementType] = useState('span');
-
-    useEffect(() => {
-        if (link || onClick) {
-            setMainElementType(getItemElementType(link, onClick));
-        }
-    }, [link, onClick]);
+    const mainElementType = getItemElementType(link, onClick);
 
     return (
         <>

@@ -40,7 +40,7 @@ export type DesignTokens = Partial<Record<DesignTokenNames, CSSProperties>> &
 export enum PaddingSizes {
     None = 'tw-p-0',
     Small = 'tw-p-2',
-    Medium = 'tw-p-4',
+    Medium = 'tw-p-5',
     Large = 'tw-p-6',
     XLarge = 'tw-p-8',
 }

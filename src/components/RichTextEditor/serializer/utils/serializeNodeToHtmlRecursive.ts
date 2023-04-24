@@ -12,6 +12,7 @@ import {
     getLicElementClassNames,
     getUnderlineClassNames,
 } from '@components/RichTextEditor/Plugins/ListPlugin/ListItemContentMarkupElement';
+import { LI_CLASSNAMES, getLiStyles } from '@components/RichTextEditor/Plugins/ListPlugin/ListItemMarkupElement';
 import { TextStyles, alignmentClassnames } from '@components/RichTextEditor/Plugins/TextStylePlugin/TextStyles';
 import { DesignTokens } from '@components/RichTextEditor/types';
 import {
@@ -23,17 +24,16 @@ import {
     ELEMENT_PARAGRAPH,
     ELEMENT_UL,
     TDescendant,
-    TText,
+    TElement,
     isText,
 } from '@udecode/plate';
+import { merge } from '@utilities/merge';
 import { buttonNode } from '../nodes/button';
 import { checkItemNode } from '../nodes/checkItem';
 import { linkNode } from '../nodes/link';
 import { mentionHtmlNode } from '../nodes/mentionHtmlNode';
 import { reactCssPropsToCss } from './reactCssPropsToCss';
 import { serializeLeafToHtml } from './serializeLeafToHtml';
-import { merge } from '@utilities/merge';
-import { LI_CLASSNAMES, getLiStyles } from '@components/RichTextEditor/Plugins/ListPlugin/ListItemMarkupElement';
 
 const countNodesOfType = (nodes: TDescendant[], type: string): number => {
     return nodes.reduce((acc, node) => {
@@ -62,78 +62,90 @@ export const serializeNodeToHtmlRecursive = (
     { designTokens, mappedMentionable, nestingCount = {} }: SerializeNodeToHtmlRecursiveOptions,
 ): string => {
     if (isText(node)) {
-        return serializeLeafToHtml(node as TText);
+        return serializeLeafToHtml(node);
     }
 
     const rootNestingCount = nestingCount[node.type] || countNodesOfType([node], node.type);
-    const children = (node.children as TDescendant[])
-        .map((n: TDescendant) =>
-            serializeNodeToHtmlRecursive(n, {
-                designTokens,
-                nestingCount: {
-                    ...nestingCount,
-                    [n.type as string]: rootNestingCount,
-                },
-                mappedMentionable,
-            }),
-        )
-        .join('');
-
-    const hasColumnBreak = node.breakAfterColumn === 'active';
-    const columnBreakClasses = hasColumnBreak ? 'tw-break-after-column tw-break-inside-avoid-column' : '';
-    const breakWordsClass = 'tw-break-words';
-    const alignClass = node?.align ? alignmentClassnames[node.align as string] : '';
-    const classNames = merge([alignClass, breakWordsClass, columnBreakClasses]);
-
-    switch (node.type) {
-        case TextStyles.ELEMENT_HEADING1:
-            return `<h1 class="${classNames}" style="${reactCssPropsToCss(designTokens.heading1)}">${children}</h1>`;
-        case TextStyles.ELEMENT_HEADING2:
-            return `<h2 class="${classNames}" style="${reactCssPropsToCss(designTokens.heading2)}">${children}</h2>`;
-        case TextStyles.ELEMENT_HEADING3:
-            return `<h3 class="${classNames}" style="${reactCssPropsToCss(designTokens.heading3)}">${children}</h3>`;
-        case TextStyles.ELEMENT_HEADING4:
-            return `<h4 class="${classNames}" style="${reactCssPropsToCss(designTokens.heading4)}">${children}</h4>`;
-        case TextStyles.ELEMENT_CUSTOM1:
-            return `<p class="${classNames}" style="${reactCssPropsToCss(designTokens.custom1)}">${children}</p>`;
-        case TextStyles.ELEMENT_CUSTOM2:
-            return `<p class="${classNames}" style="${reactCssPropsToCss(designTokens.custom2)}">${children}</p>`;
-        case TextStyles.ELEMENT_CUSTOM3:
-            return `<p class="${classNames}" style="${reactCssPropsToCss(designTokens.custom3)}">${children}</p>`;
-        case TextStyles.ELEMENT_QUOTE:
-            return `<p class="${classNames}" style="${reactCssPropsToCss(designTokens.quote)}">${children}</p>`;
-        case ELEMENT_PARAGRAPH:
-            return `<p class="${classNames}" style="${reactCssPropsToCss(designTokens.p)}">${children}</p>`;
-        case TextStyles.ELEMENT_IMAGE_TITLE:
-            return `<p class="${classNames}" style="${reactCssPropsToCss(designTokens.imageTitle)}">${children}</p>`;
-        case TextStyles.ELEMENT_IMAGE_CAPTION:
-            return `<p class="${classNames}" style="${reactCssPropsToCss(designTokens.imageCaption)}">${children}</p>`;
-        case ELEMENT_UL:
-            return `<ul class="${UL_CLASSES} ${classNames}">${children}</ul>`;
-        case ELEMENT_OL:
-            const nestingLevel = Math.max(rootNestingCount - countNodesOfType([node], ELEMENT_OL), 0);
-            return `<ol class="${getOrderedListClasses(nestingLevel)} ${classNames}" style="${reactCssPropsToCss(
-                OL_STYLES,
-            )}">${children}</ol>`;
-        case ELEMENT_LI:
-            return `<li class="${classNames} ${LI_CLASSNAMES}" style="${reactCssPropsToCss(
-                getLiStyles(designTokens, node),
-            )}">${children}</li>`;
-        case ELEMENT_LIC:
-            const underline = getUnderlineClassNames(designTokens, node);
-            return `<p class="${classNames} ${getLicElementClassNames(
-                node,
-            )}"><span class="${underline}">${children}</span></p>`;
-        case ELEMENT_LINK:
-            return linkNode(node, children, designTokens, classNames);
-        case ELEMENT_BUTTON:
-            return buttonNode(node, children, designTokens, classNames);
-        case ELEMENT_CHECK_ITEM:
-            return checkItemNode(node, children, classNames);
-        case ELEMENT_MENTION:
-            return mentionHtmlNode(node, { mentionable: mappedMentionable });
-
-        default:
-            return children;
+    let children = '';
+    for (const element of node.children) {
+        children += serializeNodeToHtmlRecursive(element, {
+            designTokens,
+            nestingCount: {
+                ...nestingCount,
+                [element.type as string]: rootNestingCount,
+            },
+            mappedMentionable,
+        });
     }
+
+    return (
+        MapNodeTypesToHtml[node.type]({
+            classNames: getClassNames(node.breakAfterColumn as string | undefined, node.align as string | undefined),
+            children,
+            designTokens,
+            rootNestingCount,
+            node,
+            mappedMentionable,
+        }) ?? children
+    );
+};
+
+type Arguments = {
+    classNames: string;
+    designTokens: DesignTokens;
+    children: string;
+    rootNestingCount: number;
+    node: TElement;
+    mappedMentionable?: MappedMentionableItems;
+};
+
+const MapNodeTypesToHtml: { [key: string]: ({ ...args }: Arguments) => string } = {
+    [TextStyles.ELEMENT_HEADING1]: (args) => getTextStyleHtml(TextStyles.ELEMENT_HEADING1, args, 'h1'),
+    [TextStyles.ELEMENT_HEADING2]: (args) => getTextStyleHtml(TextStyles.ELEMENT_HEADING2, args, 'h2'),
+    [TextStyles.ELEMENT_HEADING3]: (args) => getTextStyleHtml(TextStyles.ELEMENT_HEADING3, args, 'h3'),
+    [TextStyles.ELEMENT_HEADING4]: (args) => getTextStyleHtml(TextStyles.ELEMENT_HEADING4, args, 'h4'),
+    [ELEMENT_PARAGRAPH]: (args) => getTextStyleHtml(TextStyles.ELEMENT_PARAGRAPH, args, 'p'),
+    [TextStyles.ELEMENT_CUSTOM1]: (args) => getTextStyleHtml(TextStyles.ELEMENT_CUSTOM1, args, 'p'),
+    [TextStyles.ELEMENT_CUSTOM2]: (args) => getTextStyleHtml(TextStyles.ELEMENT_CUSTOM2, args, 'p'),
+    [TextStyles.ELEMENT_CUSTOM3]: (args) => getTextStyleHtml(TextStyles.ELEMENT_CUSTOM3, args, 'p'),
+    [TextStyles.ELEMENT_QUOTE]: (args) => getTextStyleHtml(TextStyles.ELEMENT_QUOTE, args, 'p'),
+    [TextStyles.ELEMENT_IMAGE_TITLE]: (args) => getTextStyleHtml(TextStyles.ELEMENT_IMAGE_TITLE, args, 'p'),
+    [TextStyles.ELEMENT_IMAGE_CAPTION]: (args) => getTextStyleHtml(TextStyles.ELEMENT_IMAGE_CAPTION, args, 'p'),
+    [ELEMENT_UL]: (args) => `<ul class="${UL_CLASSES} ${args.classNames}">${args.children}</ul>`,
+    [ELEMENT_OL]: ({ classNames, children, node, rootNestingCount }) => {
+        const nestingLevel = Math.max(rootNestingCount - countNodesOfType([node], ELEMENT_OL), 0);
+        return `<ol class="${getOrderedListClasses(nestingLevel)} ${classNames}" style="${reactCssPropsToCss(
+            OL_STYLES,
+        )}">${children}</ol>`;
+    },
+    [ELEMENT_LI]: ({ classNames, designTokens, children, node }) =>
+        `<li class="${classNames} ${LI_CLASSNAMES}" style="${reactCssPropsToCss(
+            getLiStyles(designTokens, node),
+        )}">${children}</li>`,
+    [ELEMENT_LIC]: ({ classNames, designTokens, children, node }) => {
+        const underline = getUnderlineClassNames(designTokens, node);
+        return `<p class="${classNames} ${getLicElementClassNames(
+            node,
+        )}"><span class="${underline}">${children}</span></p>`;
+    },
+    [ELEMENT_LINK]: ({ node, children, designTokens, classNames }) =>
+        linkNode(node, children, designTokens, classNames),
+    [ELEMENT_BUTTON]: ({ node, children, designTokens, classNames }) =>
+        buttonNode(node, children, designTokens, classNames),
+    [ELEMENT_CHECK_ITEM]: ({ node, children, classNames }) => checkItemNode(node, children, classNames),
+    [ELEMENT_MENTION]: ({ node, mappedMentionable }) => mentionHtmlNode(node, { mentionable: mappedMentionable }),
+};
+
+const getTextStyleHtml = (
+    tag: TextStyles,
+    { classNames, designTokens, children }: Arguments,
+    htmlTag: 'p' | 'h1' | 'h2' | 'h3' | 'h4',
+) => `<${htmlTag} class="${classNames}" style="${reactCssPropsToCss(designTokens[tag])}">${children}</${htmlTag}>`;
+
+const getClassNames = (breakAfterColumn?: string, align?: string) => {
+    const breakWordsClass = 'tw-break-words';
+    const columnBreakClasses =
+        breakAfterColumn === 'active' ? 'tw-break-after-column tw-break-inside-avoid-column' : '';
+    const alignClass = align ? alignmentClassnames[align as string] : '';
+    return merge([alignClass, breakWordsClass, columnBreakClasses]);
 };

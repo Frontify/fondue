@@ -2,7 +2,6 @@
 
 import { IconSize } from '@foundation/Icon/IconSize';
 import { IconExclamationMarkCircle, IconIcon } from '@foundation/Icon/Generated';
-import { mount } from 'cypress/react';
 import React from 'react';
 import { BrightHeaderStyle, brightHeaderBackgroundColors } from './BrightHeader';
 import { Tooltip, TooltipAlignment, TooltipPosition, TooltipProps } from './Tooltip';
@@ -79,13 +78,13 @@ describe('Tooltip Component', () => {
     });
 
     it('should render an empty div if no triggerElement', () => {
-        mount(<TooltipComponentWithoutTrigger content={TOOLTIP_TEXT} />);
+        cy.mount(<TooltipComponentWithoutTrigger content={TOOLTIP_TEXT} />);
         cy.get('[data-test-id=tooltip-trigger]').should('not.exist');
         cy.get('[data-test-id=tooltip-wrapper] div').eq(0).should('have.text', '');
     });
 
     it('should render only the content if no triggerElement and tootlipt is open', () => {
-        mount(<TooltipComponentWithoutTrigger content={TOOLTIP_TEXT} open={true} />);
+        cy.mount(<TooltipComponentWithoutTrigger content={TOOLTIP_TEXT} open={true} />);
         cy.get('[data-test-id=tooltip-trigger]').should('not.exist');
         cy.get(TOOLTIP_ID).should('contain', TOOLTIP_TEXT);
     });

@@ -7,8 +7,9 @@ import { OrderableListItem, OrderableListProps } from './types';
 import { DropZone } from '@components/DropZone';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider } from 'react-dnd';
-import { DropZonePosition, moveItems } from '@utilities/dnd';
+import { moveItems } from '@utilities/dnd';
 import { useId } from '@react-aria/utils';
+import { CollisionPosition } from '..';
 
 const listItemsCompareFn = <T extends object>(itemA: OrderableListItem<T>, itemB: OrderableListItem<T>): number => {
     if (itemA.sort === null && itemB.sort === null) {
@@ -43,7 +44,7 @@ export const OrderableList = <T extends object>({
     const handleDrop = (
         targetItem: OrderableListItem<T>,
         sourceItem: OrderableListItem<T>,
-        position: DropZonePosition,
+        position: CollisionPosition,
     ) => {
         const modifiedItems = moveItems(targetItem, sourceItem, position, itemsState);
         onMove(modifiedItems);
@@ -58,7 +59,7 @@ export const OrderableList = <T extends object>({
                             key={`orderable-list-item-${index}-before`}
                             data={{
                                 targetItem: item,
-                                position: DropZonePosition.Before,
+                                position: 'before' as const,
                             }}
                             onDrop={handleDrop}
                             accept={listId}
@@ -75,7 +76,7 @@ export const OrderableList = <T extends object>({
                                 key={`orderable-list-item-${index}-after`}
                                 data={{
                                     targetItem: item,
-                                    position: DropZonePosition.After,
+                                    position: 'after' as const,
                                 }}
                                 onDrop={handleDrop}
                                 accept={listId}

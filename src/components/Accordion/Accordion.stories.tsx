@@ -28,6 +28,8 @@ import { Accordion as AccordionComponent, AccordionItem } from './Accordion';
 import { AccordionHeaderIcon } from './AccordionHeaderIcon';
 import { AccordionHeaderProps, AccordionProps } from './types';
 import { Stack } from '@layout/Stack';
+import { DatePicker } from '@components/DatePicker';
+import { ScrollWrapper } from '@components/ScrollWrapper';
 
 export default {
     title: 'Components/Accordion',
@@ -42,6 +44,7 @@ export const WithDifferentAccordionItems: StoryFn<AccordionProps> = () => {
     const [temporaryColor, setTemporaryColor] = useState<Color | null>({ red: 0, green: 146, blue: 120 });
     const [selectedColor, setSelectedColor] = useState<Color | null>(null);
     const [openInNewTab, setOpenInNewTab] = useState<boolean>(false);
+    const [selectedDate, setSelectedDate] = useState<Date | null>();
 
     return (
         <AccordionComponent>
@@ -79,6 +82,17 @@ export const WithDifferentAccordionItems: StoryFn<AccordionProps> = () => {
                         },
                     ]}
                 />
+            </AccordionItem>
+            <AccordionItem header={{ children: 'Item with datepicker child' }}>
+                <ScrollWrapper>
+                    <DatePicker
+                        variant="single"
+                        startDate={null}
+                        endDate={null}
+                        value={selectedDate}
+                        onChange={(date) => setSelectedDate(date)}
+                    />
+                </ScrollWrapper>
             </AccordionItem>
             <AccordionItem header={{ children: 'Item with linkchooser' }}>
                 <LinkChooser
