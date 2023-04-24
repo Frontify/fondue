@@ -3,7 +3,7 @@
 import React, { Children, ReactElement, ReactNode, cloneElement, isValidElement } from 'react';
 import { Popper } from '@components/Popper';
 import { PopperPlacement, PopperProps } from '@components/Popper/types';
-import { CONTAINER_CLASSES } from '@utilities/overlayStyle';
+import { OVERLAY_CONTAINER_CLASSES } from '@utilities/overlayStyle';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 
 export type PopoverProps = {
@@ -51,7 +51,7 @@ export const Popover = ({
                             <Popper.Content>
                                 <div
                                     data-test-id={dataTestId}
-                                    className={CONTAINER_CLASSES}
+                                    className={OVERLAY_CONTAINER_CLASSES}
                                     role="region"
                                     id={id}
                                     aria-hidden={!open}
