@@ -29,14 +29,14 @@ export type GridProps = {
     as?: ContainerHTMLElement;
 };
 
-export const CONTAINER_TEST_ID = 'fondue-grid';
+export const GRID_TEST_ID = 'fondue-grid';
 
 export const Grid = ({
     column = 2,
     spacingX = 4,
     spacingY = 4,
     children,
-    'data-test-id': dataTestId = CONTAINER_TEST_ID,
+    'data-test-id': dataTestId = GRID_TEST_ID,
     width = '100%',
     rowHeight = 'auto',
     bg,
