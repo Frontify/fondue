@@ -3,8 +3,8 @@
 import React from 'react';
 import {
     DimensionUnity,
-    GapXMapping,
-    GapYMapping,
+    GAP_X_MAPPING,
+    GAP_Y_MAPPING,
     MARGIN_VALUES_MAP,
     PADDING_VALUES_MAP,
     SPACING_VALUES,
@@ -12,7 +12,7 @@ import {
 } from '@utilities/dimensions';
 import { ContainerHTMLElement } from 'src/types/elements';
 import { merge } from '@utilities/merge';
-import { Box } from '../Box/Box';
+import { Box } from '@components/Box';
 
 export type GridProps = {
     column?: number;
@@ -45,8 +45,8 @@ export const Grid = ({
     padding = 0,
     as: ContainerElement = 'div',
 }: GridProps) => {
-    const spacingYClassName = GapYMapping[spacingY] ? GapYMapping[spacingY] : GapYMapping[4];
-    const spacingXClassName = GapXMapping[spacingX] ? GapXMapping[spacingX] : GapXMapping[4];
+    const spacingYClassName = GAP_Y_MAPPING[spacingY] ? GAP_Y_MAPPING[spacingY] : GAP_Y_MAPPING[4];
+    const spacingXClassName = GAP_X_MAPPING[spacingX] ? GAP_X_MAPPING[spacingX] : GAP_X_MAPPING[4];
     const paddingClassName = SPACING_VALUES.includes(padding) ? PADDING_VALUES_MAP[padding] : PADDING_VALUES_MAP[0];
     const marginClassName = SPACING_VALUES.includes(padding) ? MARGIN_VALUES_MAP[margin] : MARGIN_VALUES_MAP[0];
     let childrenLength = 0;

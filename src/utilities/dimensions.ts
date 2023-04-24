@@ -32,7 +32,7 @@ export const MARGIN_VALUES_MAP: Record<SpacingValue, string> = {
     40: 'tw-m-10',
 };
 
-export const GapXMapping = {
+export const GAP_X_MAPPING = {
     0: 'tw-gap-x-0',
     1: 'tw-gap-x-px',
     4: 'tw-gap-x-1',
@@ -58,7 +58,7 @@ export const GapXMapping = {
     84: 'tw-gap-x-21',
 };
 
-export const GapYMapping = {
+export const GAP_Y_MAPPING = {
     0: 'tw-gap-y-0',
     1: 'tw-gap-y-px',
     4: 'tw-gap-y-1',

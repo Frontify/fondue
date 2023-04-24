@@ -30,6 +30,15 @@ export default {
             options: SPACING_VALUES,
             control: { type: 'select' },
         },
+        as: {
+            options: ['div', 'span'],
+            control: {
+                type: 'select',
+            },
+        },
+        maxHeight: {
+            type: 'string',
+        },
     },
     args: {
         spacingX: 4,
@@ -42,26 +51,27 @@ export default {
         rowHeight: '100px',
         maxHeight: undefined,
         bg: 'tw-bg-box-positive-strong',
-        color: 'tw-bg-box-positive-strong-inverse',
+        color: 'tw-text-box-positive-strong-inverse',
+        as: 'div',
     },
 } as Meta<GridProps>;
 
 const contentClasses = [
-    'tw-bg-box-selected-strong',
-    'tw-bg-box-positive-strong',
-    'tw-bg-box-negative-strong',
-    'tw-bg-box-warning-strong',
-    'tw-bg-box-neutral-strong',
-    'tw-bg-box-selected-strong',
-    'tw-bg-box-positive-strong',
-    'tw-bg-box-negative-strong',
-    'tw-bg-box-warning-strong',
-    'tw-bg-box-neutral-strong',
-    'tw-bg-box-selected-strong',
-    'tw-bg-box-positive-strong',
-    'tw-bg-box-negative-strong',
-    'tw-bg-box-warning-strong',
-    'tw-bg-box-neutral-strong',
+    'tw-bg-box-selected-strong tw-text-box-selected-strong-inverse',
+    'tw-bg-box-positive-strong tw-text-box-positive-strong-inverse',
+    'tw-bg-box-negative-strong tw-text-box-negative-strong-inverse',
+    'tw-bg-box-warning-strong tw-text-box-warning-strong-inverse',
+    'tw-bg-box-neutral-strong tw-text-box-neutral-strong-inverse',
+    'tw-bg-box-selected-strong tw-text-box-selected-strong-inverse',
+    'tw-bg-box-positive-strong tw-text-box-positive-strong-inverse',
+    'tw-bg-box-negative-strong tw-text-box-negative-strong-inverse',
+    'tw-bg-box-warning-strong tw-text-box-warning-strong-inverse',
+    'tw-bg-box-neutral-strong tw-text-box-neutral-strong-inverse',
+    'tw-bg-box-selected-strong tw-text-box-selected-strong-inverse',
+    'tw-bg-box-positive-strong tw-text-box-positive-strong-inverse',
+    'tw-bg-box-negative-strong tw-text-box-negative-strong-inverse',
+    'tw-bg-box-warning-strong tw-text-box-warning-strong-inverse',
+    'tw-bg-box-neutral-strong tw-text-box-neutral-strong-inverse',
 ];
 
 export const Default: StoryFn<GridProps> = (args: GridProps) => {
