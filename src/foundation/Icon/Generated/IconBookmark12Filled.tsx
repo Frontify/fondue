@@ -11,19 +11,10 @@ function IconBookmark12Filled(props: GeneratedIconProps): React.ReactElement<Gen
             name="IconBookmark12Filled"
             {...props}
         >
-            <g fill="none">
-                <g clipPath="url(#prefix__a)">
-                    <path
-                        fill="currentColor"
-                        d="M1 1.5A1.5 1.5 0 0 1 2.5 0h7A1.5 1.5 0 0 1 11 1.5v9.452a1 1 0 0 1-1.615.788L6 9.1l-3.385 2.64A1 1 0 0 1 1 10.952V1.5Z"
-                    />
-                </g>
-                <defs>
-                    <clipPath id="prefix__a">
-                        <path fill="#fff" d="M0 0h12v12H0z" />
-                    </clipPath>
-                </defs>
-            </g>
+            <path
+                fill="currentColor"
+                d="M1 1.5A1.5 1.5 0 0 1 2.5 0h7A1.5 1.5 0 0 1 11 1.5v9.452a1 1 0 0 1-1.615.788L6 9.1l-3.385 2.64A1 1 0 0 1 1 10.952V1.5Z"
+            />
         </svg>
     );
 }

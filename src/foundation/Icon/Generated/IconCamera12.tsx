@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { GeneratedIconProps } from '@foundation/Icon/IconProps';
-function IconTrashBin12(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
+function IconCamera12(props: GeneratedIconProps): React.ReactElement<GeneratedIconProps> {
     const customClassName = 'tw-flex tw-items-center tw-justify-center tw-fill-current';
     return (
         <svg
@@ -8,16 +8,16 @@ function IconTrashBin12(props: GeneratedIconProps): React.ReactElement<Generated
             width={12}
             height={12}
             className={customClassName}
-            name="IconTrashBin12"
+            name="IconCamera12"
             {...props}
         >
             <path
                 fill="currentColor"
                 fillRule="evenodd"
-                d="M5 1h2v1H5V1ZM4 2V1a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v1h2.515a.5.5 0 0 1 0 1H10v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V3h-.504a.5.5 0 1 1 0-1H4ZM3 3v6a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1V3H3Zm1 5.5v-4a.5.5 0 0 1 1 0v4a.5.5 0 0 1-1 0Zm3-4v4a.5.5 0 0 0 1 0v-4a.5.5 0 0 0-1 0Z"
+                d="M2.5 4h4a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5v-3a.5.5 0 0 1 .5-.5ZM1 4.5A1.5 1.5 0 0 1 2.5 3h4A1.5 1.5 0 0 1 8 4.5v.566l2.223-1.482A.5.5 0 0 1 11 4v4a.5.5 0 0 1-.777.416L8 6.934V7.5A1.5 1.5 0 0 1 6.5 9h-4A1.5 1.5 0 0 1 1 7.5v-3ZM8.401 6 10 7.066V4.934L8.401 6Z"
                 clipRule="evenodd"
             />
         </svg>
     );
 }
-export default memo(IconTrashBin12);
+export default memo(IconCamera12);
