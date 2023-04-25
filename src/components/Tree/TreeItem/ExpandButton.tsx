@@ -23,8 +23,8 @@ export const ExpandButton = ({ active, onClick, expanded, disabled }: ExpandButt
             className={merge([
                 'tw-p-1.5 first:tw-ml-2 tw-min-h-[20px] tw-min-w-[20px] tw-h-5 tw-w-5 tw-flex tw-justify-center tw-rounded-sm',
                 active
-                    ? 'tw-text-white tw-text-opacity-50 disabled:tw-text-opacity-20'
-                    : 'tw-text-line-x-strong disabled:tw-text-line',
+                    ? 'tw-text-white tw-text-opacity-50 disabled:tw-invisible'
+                    : 'tw-text-line-x-strong disabled:tw-invisible',
                 FOCUS_VISIBLE_STYLE,
             ])}
         >
