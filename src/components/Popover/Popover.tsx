@@ -8,6 +8,7 @@ import { useMemoizedId } from '@hooks/useMemoizedId';
 
 export type PopoverProps = {
     'data-test-id'?: string;
+    role?: string;
 } & PopperProps;
 
 const Trigger = ({ children }: { children: ReactElement }) => {
@@ -26,6 +27,7 @@ export const Popover = ({
     flip = false,
     enablePortal = false,
     'data-test-id': dataTestId = 'fondue-popover',
+    role = 'region',
 }: PopoverProps) => {
     const id = useMemoizedId();
     return (
@@ -52,7 +54,7 @@ export const Popover = ({
                                 <div
                                     data-test-id={dataTestId}
                                     className={OVERLAY_CONTAINER_CLASSES}
-                                    role="region"
+                                    role={role}
                                     id={id}
                                     aria-hidden={!open}
                                     aria-labelledby={id}
