@@ -1,11 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { Popover, PopoverProps } from '@components/Popover/Popover';
 import { PopperPlacement } from '@components/Popper/types';
 import { Button } from '@components/Button';
 import IconExclamationMarkTriangle16 from '@foundation/Icon/Generated/IconExclamationMarkTriangle16';
+import { useToggleOverlay } from '@hooks/useToggleOverlay';
 
 export default {
     title: 'Experimental/Popover',
@@ -31,12 +32,12 @@ export default {
 } as Meta<PopoverProps>;
 
 const Template: StoryFn<PopoverProps> = (args) => {
-    const [open, setOpen] = useState(false);
+    const [isOpen, setIsOpen] = useToggleOverlay(false);
     return (
         <div className="tw-h-32 tw-flex tw-justify-center tw-items-center">
-            <Popover open={open} {...args}>
+            <Popover open={isOpen} {...args}>
                 <Popover.Trigger>
-                    <Button onClick={() => setOpen(!open)}>I am the Trigger</Button>
+                    <Button onClick={() => setIsOpen(!isOpen)}>I am the Trigger</Button>
                 </Popover.Trigger>
                 <Popover.Content>
                     <div className="tw-p-2">
@@ -49,15 +50,17 @@ const Template: StoryFn<PopoverProps> = (args) => {
 };
 
 const TriggeredOnHoverTemplate: StoryFn<PopoverProps> = (args) => {
-    const [open, setOpen] = useState(false);
+    const [isOpen, setIsOpen] = useToggleOverlay(false);
     return (
         <div className="tw-h-32 tw-flex tw-justify-center tw-items-center">
-            <Popover open={open} {...args}>
+            <Popover open={isOpen} {...args}>
                 <Popover.Trigger>
                     <button
                         className="tw-flex tw-items-center"
-                        onMouseEnter={() => setOpen(true)}
-                        onMouseLeave={() => setOpen(false)}
+                        onMouseEnter={() => setIsOpen(true)}
+                        onFocus={() => setIsOpen(true)}
+                        onMouseLeave={() => setIsOpen(false)}
+                        onBlur={() => setIsOpen(false)}
                     >
                         <span>Information</span> <IconExclamationMarkTriangle16 />
                     </button>
@@ -73,12 +76,12 @@ const TriggeredOnHoverTemplate: StoryFn<PopoverProps> = (args) => {
 };
 
 const WithInteractiveContentTemplate: StoryFn<PopoverProps> = (args) => {
-    const [open, setOpen] = useState(false);
+    const [isOpen, setIsOpen] = useToggleOverlay(false);
     return (
         <div className="tw-h-32 tw-flex tw-justify-center tw-items-center">
-            <Popover open={open} {...args}>
+            <Popover open={isOpen} {...args}>
                 <Popover.Trigger>
-                    <Button onClick={() => setOpen(!open)}>I am the Trigger</Button>
+                    <Button onClick={() => setIsOpen(!isOpen)}>I am the Trigger</Button>
                 </Popover.Trigger>
                 <Popover.Content>
                     <div className="tw-p-2 tw-w-[400px]">
