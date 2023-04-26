@@ -71,6 +71,53 @@ export const TreeItem = memo(
         draggable: itemDraggable = true,
         'data-test-id': dataTestId = 'fondue-tree-item',
     }: InternalTreeItemProps) => {
+        useWhatChanged(
+            [
+                id,
+                type,
+                label,
+                onDrop,
+                accepts,
+                children,
+                parentId,
+                level,
+                contentComponent,
+                isSelected,
+                isExpanded,
+                treeDraggable,
+                projection,
+                onSelect,
+                onExpand,
+                registerOverlay,
+                registerNodeChildren,
+                unregisterNodeChildren,
+                itemDraggable,
+                dataTestId,
+            ],
+            `
+            id,
+            type,
+            label,
+            onDrop,
+            accepts,
+            children,
+            parentId,
+            level,
+            contentComponent,
+            isSelected,
+            isExpanded,
+            treeDraggable,
+            projection,
+            onSelect,
+            onExpand,
+            registerOverlay,
+            registerNodeChildren,
+            unregisterNodeChildren,
+            itemDraggable,
+            dataTestId
+            `,
+        );
+
         const { active, over } = useDndContext();
 
         const draggable = treeDraggable && itemDraggable;
