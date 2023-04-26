@@ -8,6 +8,7 @@ export type ToolbarButtonsPosition = Record<Position, Buttons>;
 export type ToolbarProps = {
     toolbarButtons: ToolbarButtons;
     editorId: string;
+    toolbarWidth?: number;
 };
 
 export type ButtonGroupWidths = { group: Button[]; buttonGroupWidth: number; index: number }[];
