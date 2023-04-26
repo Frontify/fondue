@@ -32,7 +32,7 @@ export const TreeItemOverlay = () => {
         <li
             role="treeitem"
             style={liStyle}
-            aria-level={level}
+            aria-level={level + 1}
             id={id.toString()}
             aria-label={label}
             aria-selected={isSelected}
