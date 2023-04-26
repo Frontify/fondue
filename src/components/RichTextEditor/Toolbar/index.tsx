@@ -9,7 +9,7 @@ import { ButtonGroupWrapper } from '../Plugins/helper';
 import { ToolbarProps } from './types';
 import { getButtonGroupWidths, getButtonGroupsPerRow } from './utils';
 
-export const Toolbar = ({ toolbarButtons, editorId }: ToolbarProps) => {
+export const Toolbar = ({ toolbarButtons, editorId, toolbarWidth }: ToolbarProps) => {
     const editor = usePlateEditorRef(editorId);
     const { editorWidth } = useEditorResizeContext();
     const { position } = useRichTextEditorContext();
@@ -20,7 +20,11 @@ export const Toolbar = ({ toolbarButtons, editorId }: ToolbarProps) => {
     const PositioningWrapper = EditorPositioningWrapper[position];
 
     return (
-        <PositioningWrapper.ToolbarWrapper editorWidth={editorWidth} toolbarButtonGroups={buttonGroupsPerRow}>
+        <PositioningWrapper.ToolbarWrapper
+            editorWidth={editorWidth}
+            toolbarWidth={toolbarWidth}
+            toolbarButtonGroups={buttonGroupsPerRow}
+        >
             {buttonGroupsPerRow.map((row, index) => (
                 <div className="tw-divide-x tw-divide-line tw-flex tw-w-full tw-flex-wrap" key={index}>
                     {row.map(({ group, index }) => (
