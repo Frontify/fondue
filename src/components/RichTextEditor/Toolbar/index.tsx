@@ -14,8 +14,9 @@ export const Toolbar = ({ toolbarButtons, editorId, toolbarWidth }: ToolbarProps
     const { editorWidth } = useEditorResizeContext();
     const { position } = useRichTextEditorContext();
 
+    const calculationToolbarWidth = toolbarWidth || editorWidth || 0;
     const buttonGroupWidths = getButtonGroupWidths(toolbarButtons.at(position));
-    const buttonGroupsPerRow = getButtonGroupsPerRow(editorWidth || 0, buttonGroupWidths);
+    const buttonGroupsPerRow = getButtonGroupsPerRow(calculationToolbarWidth, buttonGroupWidths);
 
     const PositioningWrapper = EditorPositioningWrapper[position];
 
