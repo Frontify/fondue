@@ -33,6 +33,7 @@ export type RichTextEditorProps = {
     onValueChanged?: (value: TreeOfNodes | null) => void;
     border?: boolean;
     updateValueOnChange?: boolean; // Only set to true when you are sure that performance isn't an issue
+    toolbarWidth?: number;
 };
 
 export const RichTextEditor = ({
@@ -49,6 +50,7 @@ export const RichTextEditor = ({
     updateValueOnChange = false,
     onValueChanged,
     border = true,
+    toolbarWidth,
 }: RichTextEditorProps) => {
     const editorId = useMemoizedId(id);
     const { localValue, onChange, memoizedValue, config } = useEditorState({
@@ -108,7 +110,7 @@ export const RichTextEditor = ({
                 plugins={config.create()}
                 initialValue={memoizedValue}
             >
-                {config.toolbar()}
+                {config.toolbar(toolbarWidth)}
                 {config.inline()}
                 {updateValueOnChange && <ContentReplacement value={parseRawValue({ editorId, raw: value, plugins })} />}
             </Plate>
