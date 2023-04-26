@@ -38,6 +38,7 @@ import type {
 import { type Overlay, TreeItemOverlay } from './TreeItem';
 import { getMovementAnnouncement, getNodeIdsInBranch, getProjection, removeNodesFromTree } from './helpers';
 import { removeFragmentsAndEnrichChildren, sortableTreeKeyboardCoordinates } from './utils';
+import { TreeContext, TreeContextProps } from './TreeContext';
 
 export const ROOT_ID = '__ROOT__';
 export const INDENTATION_WIDTH = 32;
@@ -526,43 +527,54 @@ export const Tree = memo(
             ],
         );
 
-        return (
-            <ul
-                id={id}
-                role="tree"
-                data-test-id={dataTestId}
-                onKeyDown={handleKeyDown}
-                aria-multiselectable={treeState.selectionMode === 'multiselect'}
-                className="tw-p-0 tw-m-0 tw-font-sans tw-font-normal tw-list-none tw-text-left tw-text-sm tw-select-none"
-            >
-                <DndContext
-                    sensors={sensors}
-                    measuring={measuring}
-                    onDragEnd={handleDragEnd}
-                    onDragOver={handleDragOver}
-                    onDragMove={handleDragMove}
-                    onDragStart={handleDragStart}
-                    onDragCancel={handleDragCancel}
-                    accessibility={{ announcements }}
-                    collisionDetection={closestCenter}
-                >
-                    <SortableContext items={items} strategy={verticalListSortingStrategy}>
-                        <AnimatePresence>{nodes}</AnimatePresence>
-                    </SortableContext>
+        const contextValue: TreeContextProps = useMemo(
+            () => ({
+                treeState,
+                onSelect: handleSelect,
+                onExpand: handleExpand,
+            }),
+            [treeState, handleSelect, handleExpand],
+        );
 
-                    {createPortal(
-                        <DragOverlay wrapperElement="ul" dropAnimation={null} modifiers={[restrictToWindowEdges]}>
-                            {treeState.overlay && (
-                                <TreeItemOverlay
-                                    {...treeState.overlay}
-                                    isSelected={treeState.selectedIds.has(treeState.overlay.id)}
-                                />
-                            )}
-                        </DragOverlay>,
-                        document.body,
-                    )}
-                </DndContext>
-            </ul>
+        return (
+            <TreeContext.Provider value={contextValue}>
+                <ul
+                    id={id}
+                    role="tree"
+                    data-test-id={dataTestId}
+                    onKeyDown={handleKeyDown}
+                    aria-multiselectable={treeState.selectionMode === 'multiselect'}
+                    className="tw-p-0 tw-m-0 tw-font-sans tw-font-normal tw-list-none tw-text-left tw-text-sm tw-select-none"
+                >
+                    <DndContext
+                        sensors={sensors}
+                        measuring={measuring}
+                        onDragEnd={handleDragEnd}
+                        onDragOver={handleDragOver}
+                        onDragMove={handleDragMove}
+                        onDragStart={handleDragStart}
+                        onDragCancel={handleDragCancel}
+                        accessibility={{ announcements }}
+                        collisionDetection={closestCenter}
+                    >
+                        <SortableContext items={items} strategy={verticalListSortingStrategy}>
+                            <AnimatePresence>{nodes}</AnimatePresence>
+                        </SortableContext>
+
+                        {createPortal(
+                            <DragOverlay wrapperElement="ul" dropAnimation={null} modifiers={[restrictToWindowEdges]}>
+                                {treeState.overlay && (
+                                    <TreeItemOverlay
+                                        {...treeState.overlay}
+                                        isSelected={treeState.selectedIds.has(treeState.overlay.id)}
+                                    />
+                                )}
+                            </DragOverlay>,
+                            document.body,
+                        )}
+                    </DndContext>
+                </ul>
+            </TreeContext.Provider>
         );
     },
 );

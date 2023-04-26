@@ -23,10 +23,6 @@ import { INDENTATION_WIDTH } from '../Tree';
 import { Projection } from '../helpers';
 import { Overlay } from './TreeItemOverlay';
 
-import { setUseWhatChange, useWhatChanged } from '../useWhatChanged';
-
-setUseWhatChange(true);
-
 const animateLayoutChanges: AnimateLayoutChanges = ({ isSorting, wasDragging }) =>
     isSorting || wasDragging ? false : true;
 
@@ -71,53 +67,6 @@ export const TreeItem = memo(
         draggable: itemDraggable = true,
         'data-test-id': dataTestId = 'fondue-tree-item',
     }: InternalTreeItemProps) => {
-        useWhatChanged(
-            [
-                id,
-                type,
-                label,
-                onDrop,
-                accepts,
-                children,
-                parentId,
-                level,
-                contentComponent,
-                isSelected,
-                isExpanded,
-                treeDraggable,
-                projection,
-                onSelect,
-                onExpand,
-                registerOverlay,
-                registerNodeChildren,
-                unregisterNodeChildren,
-                itemDraggable,
-                dataTestId,
-            ],
-            `
-            id,
-            type,
-            label,
-            onDrop,
-            accepts,
-            children,
-            parentId,
-            level,
-            contentComponent,
-            isSelected,
-            isExpanded,
-            treeDraggable,
-            projection,
-            onSelect,
-            onExpand,
-            registerOverlay,
-            registerNodeChildren,
-            unregisterNodeChildren,
-            itemDraggable,
-            dataTestId
-            `,
-        );
-
         const { active, over } = useDndContext();
 
         const draggable = treeDraggable && itemDraggable;
@@ -200,7 +149,6 @@ export const TreeItem = memo(
             if (Children.count(enrichedChildren) === 0) {
                 return;
             }
-            console.log(`isExpanded ${id}`, isExpanded);
 
             if (isActive || isParentActive) {
                 console.log('unregistered if active or parent active', id);
@@ -209,10 +157,8 @@ export const TreeItem = memo(
             }
 
             if (isExpanded) {
-                console.log('registerNodeChildren for node:', id);
                 registerNodeChildren({ id, children: enrichedChildren });
             } else {
-                console.log('unregisterNodeChildren NOT expanded for node:', id);
                 unregisterNodeChildren(id);
             }
         }, [isActive, isExpanded, isParentActive, enrichedChildren, registerNodeChildren, unregisterNodeChildren, id]);
@@ -265,7 +211,7 @@ export const TreeItem = memo(
                 style={liStyle}
                 onKeyDown={noop}
                 aria-label={label}
-                aria-level={level}
+                aria-level={level + 1}
                 onClick={handleSelect}
                 className={liClassName}
                 ref={setDroppableNodeRef}
@@ -293,11 +239,11 @@ export const TreeItem = memo(
                         active={isSelected}
                     />
 
-                    {showLabel ? (
+                    {showLabel && (
                         <span className="first:tw-ml-3.5 tw-w-full tw-h-full tw-flex tw-items-center">{label}</span>
-                    ) : null}
-                    {id}
-                    {/* {showContent && contentComponent} */}
+                    )}
+
+                    {showContent && contentComponent}
                 </motion.div>
             </li>
         );
