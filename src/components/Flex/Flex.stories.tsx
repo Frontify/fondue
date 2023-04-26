@@ -4,33 +4,22 @@ import React from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { Flex, FlexProps } from './Flex';
 import { Box } from '@components/Box';
+import { BOX_BG_ALIAS_TOKENS_CLASSES, BOX_TEXT_ALIAS_TOKENS_CLASSES } from '@utilities/tokens';
+import { SPACING_VALUES } from '@utilities/dimensions';
 
-const DirectionTypes = ['tw-flex-row', 'tw-flex-col', 'tw-flex-row-reverse', 'tw-flex-col-reverse'];
+const DirectionTypes = ['row', 'col', 'row-reverse', 'col-reverse'];
 
-const WrapTypes = ['tw-flex-nowrap', 'tw-flex-wrap', 'tw-flex-wrap-reverse'];
+const WrapTypes = ['nowrap', 'wrap', 'wrap-reverse'];
 
-const JustifyTypes = [
-    'tw-justify-start',
-    'tw-justify-end',
-    'tw-justify-center',
-    'tw-justify-between',
-    'tw-justify-around',
-    'tw-justify-evenly',
-];
+const JustifyTypes = ['start', 'end', 'center', 'between', 'around', 'evenly'];
 
-const AlignItemsTypes = ['tw-items-start', 'tw-items-end', 'tw-items-center', 'tw-items-baseline', 'tw-items-stretch'];
+const AlignItemsTypes = ['start', 'end', 'center', 'baseline', 'stretch'];
 
-const AlignContentTypes = [
-    'tw-content-start',
-    'tw-content-end',
-    'tw-content-center',
-    'tw-content-normal',
-    'tw-content-between',
-    'tw-content-around',
-    'tw-content-evenly',
-    'tw-content-baseline',
-    'tw-content-stretch',
-];
+const AlignContentTypes = ['start', 'end', 'center', 'normal', 'between', 'around', 'evenly', 'baseline', 'stretch'];
+
+const FlexItem = () => {
+    return <Box className="tw-bg-box-positive-strong">Lorem ipsum dolor sit amet, consectetur adipiscing elit</Box>;
+};
 
 export default {
     title: 'Layout/Flex',
@@ -57,6 +46,32 @@ export default {
             options: AlignContentTypes,
             control: { type: 'select' },
         },
+        as: {
+            options: ['div', 'span'],
+            control: {
+                type: 'select',
+            },
+        },
+        bg: {
+            options: BOX_BG_ALIAS_TOKENS_CLASSES,
+            control: {
+                type: 'select',
+            },
+        },
+        color: {
+            options: BOX_TEXT_ALIAS_TOKENS_CLASSES,
+            control: {
+                type: 'select',
+            },
+        },
+        margin: {
+            options: Object.values(SPACING_VALUES),
+            control: { type: 'select' },
+        },
+        padding: {
+            options: Object.values(SPACING_VALUES),
+            control: { type: 'select' },
+        },
     },
     args: {
         direction: 'row',
@@ -66,18 +81,20 @@ export default {
         alignContent: 'center',
         'data-test-id': 'custom-test-id',
         bg: 'tw-bg-box-neutral',
-        color: 'tw-text-box-positive-inverse',
+        color: 'tw-text-box-positive-strong-inverse',
         as: 'div',
+        margin: 4,
+        padding: 4,
     },
 } as Meta<FlexProps>;
 
 export const Default: StoryFn<FlexProps> = (args: FlexProps) => {
     return (
         <Flex {...args}>
-            <Box className="tw-bg-box-positive-strong">Lorem ipsum dolor sit amet, consectetur adipiscing elit</Box>
-            <Box className="tw-bg-box-positive-strong">Lorem ipsum dolor sit amet, consectetur adipiscing elit</Box>
-            <Box className="tw-bg-box-positive-strong">Lorem ipsum dolor sit amet, consectetur adipiscing elit</Box>
-            <Box className="tw-bg-box-positive-strong">Lorem ipsum dolor sit amet, consectetur adipiscing elit</Box>
+            <FlexItem />
+            <FlexItem />
+            <FlexItem />
+            <FlexItem />
         </Flex>
     );
 };
