@@ -9,15 +9,20 @@ export const ToolbarWrapperPositioningFloating = ({
     children,
     editorWidth,
     toolbarButtonGroups = [],
+    toolbarWidth,
 }: ToolbarWrapperProps) => {
     const [width, setWidth] = useState<number | undefined>();
 
     useEffect(() => {
-        const toolbarWidthSum = calculateToolbarWidth(toolbarButtonGroups);
-        if (toolbarWidthSum > 0) {
-            setWidth(toolbarWidthSum + toolbarButtonGroups.length + OFFSET_IN_PX);
+        if (toolbarWidth) {
+            setWidth(toolbarWidth);
+        } else {
+            const toolbarWidthSum = calculateToolbarWidth(toolbarButtonGroups);
+            if (toolbarWidthSum > 0) {
+                setWidth(toolbarWidthSum + toolbarButtonGroups.length + OFFSET_IN_PX);
+            }
         }
-    }, [editorWidth, toolbarButtonGroups]);
+    }, [editorWidth, toolbarWidth, toolbarButtonGroups]);
 
     return (
         <BalloonToolbar

@@ -18,6 +18,15 @@ export const serializeRawToHtml = (
     const nodes = parseRawValue({ raw });
     return serializeNodesToHtml(nodes, { designTokens, columns, columnGap });
 };
+export const serializeRawToHtmlAsync = async (
+    raw: string,
+    designTokens: DesignTokens = defaultDesignTokens,
+    columns: SerializeNodesToHtmlOptions['columns'] = 1,
+    columnGap: SerializeNodesToHtmlOptions['columnGap'] = 'normal',
+): Promise<string> => {
+    const nodes = parseRawValue({ raw });
+    return Promise.resolve(serializeNodesToHtml(nodes, { designTokens, columns, columnGap }));
+};
 
 export type SerializeNodesToHtmlOptions = {
     designTokens?: DesignTokens;
@@ -38,17 +47,18 @@ export const serializeNodesToHtml = (
     const mergedDesignTokens = setDefaultDesignTokensIfNull(defaultDesignTokens, designTokens);
     const mappedMentionable = mentionable ? mapMentionable(mentionable) : new Map();
 
-    const html = nodes
-        .map((node) => {
-            if (isEmptyNode(node)) {
-                return '<br />';
-            }
-            return serializeNodeToHtmlRecursive(node, {
+    let html = '';
+    for (let i = 0, len = nodes.length; i < len; i++) {
+        const node = nodes[i];
+        if (isEmptyNode(node)) {
+            html += '<br />';
+        } else {
+            html += serializeNodeToHtmlRecursive(node, {
                 designTokens: mergedDesignTokens,
                 mappedMentionable,
             });
-        })
-        .join('');
+        }
+    }
 
     if (columns > 1) {
         return `<div style="columns:${columns}; column-gap:${columnGap};">${html}</div>`;
