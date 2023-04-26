@@ -1,27 +1,22 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { Children } from 'react';
+import React, { Children, ReactNode } from 'react';
 
 import { merge } from '@utilities/merge';
 import { IconGrabHandle12 } from '@foundation/Icon';
 
 import { INDENTATION_WIDTH } from '../Tree';
-import type { TreeItemProps } from '../types';
-import { useTreeContext } from '../TreeContext';
 
-export type Overlay = Pick<TreeItemProps, 'id' | 'label' | 'contentComponent' | 'children' | 'level'>;
+export type Overlay = {
+    id: string;
+    label?: string;
+    level?: number;
+    children: ReactNode;
+    contentComponent?: ReactNode;
+    isSelected?: boolean;
+};
 
-export const TreeItemOverlay = () => {
-    const { treeState } = useTreeContext();
-
-    if (!treeState.overlay) {
-        return null;
-    }
-
-    const { id, children, label, level = 0, contentComponent } = treeState.overlay;
-
-    const isSelected = treeState.selectedIds.has(id);
-
+export const TreeItemOverlay = ({ id, label, level = 0, children, contentComponent, isSelected }: Overlay) => {
     const hasChildren = Children.count(children) > 0;
 
     const indentation = level * INDENTATION_WIDTH;

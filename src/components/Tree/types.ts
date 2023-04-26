@@ -4,8 +4,6 @@ import type { MutableRefObject, ReactElement, ReactNode } from 'react';
 import { Active, Collision, Over, Translate } from '@dnd-kit/core';
 import { useSortable } from '@dnd-kit/sortable';
 
-import { OnDropCallback } from '@components/DropZone';
-
 import { type Overlay } from './TreeItem';
 import { type Projection } from './helpers';
 
@@ -27,7 +25,7 @@ export type TreeProps = {
     'data-test-id'?: string;
     onSelect?: OnSelectCallback;
     onExpand?: OnExpandCallback;
-    onDrop?: OnDropCallback<{ id: string; sort: number }>;
+    onDrop?: (id: string, parentId: string, sort: number) => undefined;
 };
 
 type TreeItemBaseProps = {
@@ -35,7 +33,8 @@ type TreeItemBaseProps = {
 
     'data-test-id'?: string;
 
-    onDrop?: OnDropCallback<{ id: string; sort: number }>;
+    onDrop?: (id: string, parentId: string, sort: number) => undefined;
+
     /**
      * The type of item being dragged.
      */
@@ -45,16 +44,11 @@ type TreeItemBaseProps = {
      *  @example ['itemA', 'itemA-within']
      * if suffix '-within' is appended, then it will allow dropping item inside it
      */
-    accepts?: string[];
+    accepts?: string;
 
     children?: ReactNode;
 
     draggable?: boolean;
-
-    /** @private */
-    parentId?: string;
-    /** @private */
-    level?: number;
 };
 
 export type TreeItemWithLabelProps = {
@@ -92,13 +86,14 @@ export type TreeState = {
 export type TreeStateAction =
     | { type: 'REPLACE_STATE'; payload: TreeState }
     | { type: 'REGISTER_OVERLAY_ITEM'; payload: Overlay }
-    | { type: 'SET_SELECT'; payload: { id: string; isSelected: boolean } }
-    | { type: 'SET_EXPAND'; payload: { id: string; isExpanded: boolean } }
+    | { type: 'SET_SELECT'; payload: string }
+    | { type: 'SET_EXPAND'; payload: string }
     | { type: 'SET_HIDDEN'; payload: { ids: string[]; isHidden: boolean } }
     | { type: 'SET_SELECTION_MODE'; payload: { selectionMode: TreeState['selectionMode'] } }
     | { type: 'SET_PROJECTION'; payload: Nullable<Projection> }
     | { type: 'REGISTER_NODE_CHILDREN'; payload: { id: string; children: ReactElement[] } }
-    | { type: 'UNREGISTER_NODE_CHILDREN'; payload: ReactElement[] };
+    | { type: 'UNREGISTER_NODE_CHILDREN'; payload: string }
+    | { type: 'REGISTER_ROOT_NODES'; payload: ReactElement[] };
 
 export type RegisterNodeChildrenPayload = Extract<TreeStateAction, { type: 'REGISTER_NODE_CHILDREN' }>['payload'];
 
