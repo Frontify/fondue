@@ -283,6 +283,24 @@ describe('Flex Component', () => {
         cy.get(FLEX_ID).should('have.css', 'min-height', '50px');
     });
 
+    it('renders with padding', () => {
+        cy.mount(
+            <FlexComponent padding={12}>
+                <div>{CONTENT_STRING_LONG}</div>
+            </FlexComponent>,
+        );
+        cy.get(FLEX_ID).should('have.css', 'padding', '12px');
+    });
+
+    it('renders with margin', () => {
+        cy.mount(
+            <FlexComponent margin={12}>
+                <div>{CONTENT_STRING_LONG}</div>
+            </FlexComponent>,
+        );
+        cy.get(FLEX_ID).should('have.css', 'margin', '12px');
+    });
+
     it('renders with a maxHeight', () => {
         cy.mount(
             <FlexComponent maxHeight={'50px'}>
