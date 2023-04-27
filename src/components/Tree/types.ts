@@ -35,7 +35,7 @@ type TreeItemBaseProps = {
 
     'data-test-id'?: string;
 
-    onDrop?: OnDropCallback<{ id: string; sort: number }>;
+    onDrop?: OnDropCallback<{ id: string; sort: number; parentId: string }>;
     /**
      * The type of item being dragged.
      */
