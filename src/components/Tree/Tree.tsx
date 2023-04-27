@@ -1,12 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { cloneElement, memo, useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
-import { enableMapSet, produce } from 'immer';
-import { isEqual } from 'lodash-es';
-import { createPortal } from 'react-dom';
-import { AnimatePresence } from 'framer-motion';
-import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { restrictToWindowEdges } from '@dnd-kit/modifiers';
+import { enableMapSet, produce } from 'immer';
+import { createPortal } from 'react-dom';
+import { isEqual } from 'lodash-es';
 import {
     DndContext,
     DragEndEvent,
@@ -267,12 +266,18 @@ export const Tree = memo(
                 resetState();
 
                 const { over, active } = event;
+                console.log('🚀 ~ over:', over);
+                console.log('🚀 ~ active:', active);
 
                 if (!over?.id || !active?.id || !treeState.projection?.parentId) {
                     return;
                 }
 
-                onDrop?.(active.id.toString(), treeState.projection.parentId, 5);
+                onDrop?.({
+                    id: active.id.toString(),
+                    parentId: treeState.projection.parentId,
+                    sort: over.data.current?.sortable.index + 1,
+                });
             },
             [onDrop, treeState.projection?.parentId],
         );
@@ -473,6 +478,13 @@ export const Tree = memo(
         }, [currentPosition, treeState]);
 
         useEffect(() => {
+            updateTreeState({
+                type: 'REGISTER_ROOT_NODES',
+                payload: removeFragmentsAndEnrichChildren(children, { parentId: ROOT_ID, level: 0 }),
+            });
+        }, [children]);
+
+        useEffect(() => {
             sensorContext.current = {
                 nodes: treeState.nodes,
                 offset,
@@ -558,7 +570,7 @@ export const Tree = memo(
                         collisionDetection={closestCenter}
                     >
                         <SortableContext items={items} strategy={verticalListSortingStrategy}>
-                            <AnimatePresence>{nodes}</AnimatePresence>
+                            {nodes}
                         </SortableContext>
 
                         {createPortal(

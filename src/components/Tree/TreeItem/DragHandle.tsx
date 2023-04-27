@@ -12,7 +12,7 @@ export type DragHandleProps = DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonE
 };
 
 export const DragHandle = forwardRef(
-    ({ active, ...props }: DragHandleProps, ref: React.ForwardedRef<HTMLButtonElement>) => {
+    ({ active, className, ...props }: DragHandleProps, ref: React.ForwardedRef<HTMLButtonElement>) => {
         return (
             <button
                 {...props}
@@ -21,6 +21,7 @@ export const DragHandle = forwardRef(
                     FOCUS_VISIBLE_STYLE,
                     'tw-p-1 first:tw-ml-2 tw-text-text tw-opacity-0 group-hover:tw-opacity-100 group-focus-within:tw-opacity-100 tw-rounded-sm',
                     active && 'tw-opacity-100 tw-text-white',
+                    className,
                 ])}
             >
                 <IconGrabHandle12 />

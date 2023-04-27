@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { Children, MouseEvent, memo, useCallback, useLayoutEffect, useMemo } from 'react';
-import { motion } from 'framer-motion';
 import { AnimateLayoutChanges, useSortable } from '@dnd-kit/sortable';
 import { useDndContext, useDndMonitor } from '@dnd-kit/core';
+import { CSS } from '@dnd-kit/utilities';
 import { noop } from 'lodash-es';
 
 import { merge } from '@utilities/merge';
@@ -16,12 +16,13 @@ import type {
     TreeItemProps,
 } from '@components/Tree/types';
 
-import { DragHandle } from './DragHandle';
-import { removeFragmentsAndEnrichChildren } from '../utils';
-import { ExpandButton } from './ExpandButton';
-import { INDENTATION_WIDTH } from '../Tree';
 import { Projection } from '../helpers';
+import { INDENTATION_WIDTH } from '../Tree';
+import { removeFragmentsAndEnrichChildren } from '../utils';
+
+import { DragHandle } from './DragHandle';
 import { Overlay } from './TreeItemOverlay';
+import { ExpandButton } from './ExpandButton';
 
 const animateLayoutChanges: AnimateLayoutChanges = ({ isSorting, wasDragging }) =>
     isSorting || wasDragging ? false : true;
@@ -90,7 +91,7 @@ export const TreeItem = memo(
             }
 
             if (isActive && over && canDrop && projection?.parentId) {
-                onDrop?.(active.id, projection.parentId, 5);
+                onDrop?.({ id: active.id, parentId: projection.parentId, sort: over.data.current?.sortable.index + 1 });
             }
         };
 
@@ -136,14 +137,21 @@ export const TreeItem = memo(
 
         const childrenIds = useMemo(() => enrichedChildren.map((child) => child.props.id), [enrichedChildren]);
 
-        const { attributes, listeners, transform, setDraggableNodeRef, setDroppableNodeRef, setActivatorNodeRef } =
-            useSortable({
-                id,
-                disabled: !draggable,
-                data: { type, accepts, parentId, level },
-                animateLayoutChanges,
-                transition: null,
-            });
+        const {
+            attributes,
+            listeners,
+            transform,
+            transition,
+            setDraggableNodeRef,
+            setDroppableNodeRef,
+            setActivatorNodeRef,
+        } = useSortable({
+            id,
+            disabled: !draggable,
+            data: { type, accepts, parentId, level },
+            animateLayoutChanges,
+            transition: null,
+        });
 
         useLayoutEffect(() => {
             if (Children.count(enrichedChildren) === 0) {
@@ -197,9 +205,9 @@ export const TreeItem = memo(
         const showLabel = label !== undefined && !isActive;
         const showExpandButton = hasChildren && !isActive;
 
-        const animate = {
-            x: transform?.x,
-            y: transform?.y,
+        const style = {
+            transform: CSS.Transform.toString(transform),
+            transition,
         };
 
         return (
@@ -221,22 +229,24 @@ export const TreeItem = memo(
                 data-has-children={hasChildren}
                 aria-owns={childrenIds.join(' ')}
             >
-                <motion.div
-                    ref={setDraggableNodeRef}
-                    className={containerClassName}
-                    animate={transform ? animate : undefined}
-                >
-                    {showDragHandle ? (
-                        <DragHandle ref={setActivatorNodeRef} active={isSelected} {...listeners} {...attributes} />
-                    ) : (
-                        <div className="tw-w-5 tw-ml-2 tw-min-w-[20px]" />
-                    )}
+                <div ref={setDraggableNodeRef} className={containerClassName} style={style}>
+                    <DragHandle
+                        {...listeners}
+                        {...attributes}
+                        active={isSelected}
+                        ref={setActivatorNodeRef}
+                        disabled={!showDragHandle}
+                        aria-hidden={!showDragHandle}
+                        className={showDragHandle ? 'tw-visible' : 'tw-invisible tw-pointer-events-none'}
+                    />
 
                     <ExpandButton
+                        active={isSelected}
                         onClick={handleExpand}
                         expanded={showChildren}
                         disabled={!showExpandButton}
-                        active={isSelected}
+                        aria-hidden={!showExpandButton}
+                        className={showExpandButton ? 'tw-visible' : 'tw-invisible tw-pointer-events-none'}
                     />
 
                     {showLabel && (
@@ -244,7 +254,7 @@ export const TreeItem = memo(
                     )}
 
                     {showContent && contentComponent}
-                </motion.div>
+                </div>
             </li>
         );
     },

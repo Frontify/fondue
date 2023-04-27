@@ -25,7 +25,7 @@ export type TreeProps = {
     'data-test-id'?: string;
     onSelect?: OnSelectCallback;
     onExpand?: OnExpandCallback;
-    onDrop?: (id: string, parentId: string, sort: number) => undefined;
+    onDrop?: (args: { id: string; parentId: Nullable<string>; sort: number }) => undefined;
 };
 
 type TreeItemBaseProps = {
@@ -33,7 +33,7 @@ type TreeItemBaseProps = {
 
     'data-test-id'?: string;
 
-    onDrop?: (id: string, parentId: string, sort: number) => undefined;
+    onDrop?: (args: { id: string; parentId: Nullable<string>; sort: number }) => undefined;
 
     /**
      * The type of item being dragged.
