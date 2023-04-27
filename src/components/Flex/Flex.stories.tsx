@@ -7,7 +7,7 @@ import { Box } from '@components/Box';
 import { BOX_BG_ALIAS_TOKENS_CLASSES, BOX_TEXT_ALIAS_TOKENS_CLASSES } from '@utilities/tokens';
 import { SPACING_VALUES } from '@utilities/dimensions';
 
-const DirectionTypes = ['row', 'col', 'row-reverse', 'col-reverse'];
+const DirectionTypes = ['row', 'column', 'row-reverse', 'column-reverse'];
 
 const WrapTypes = ['nowrap', 'wrap', 'wrap-reverse'];
 
@@ -72,6 +72,18 @@ export default {
             options: Object.values(SPACING_VALUES),
             control: { type: 'select' },
         },
+        minWidth: {
+            type: 'string',
+        },
+        maxWidth: {
+            type: 'string',
+        },
+        minHeight: {
+            type: 'string',
+        },
+        maxHeight: {
+            type: 'string',
+        },
     },
     args: {
         direction: 'row',
@@ -85,6 +97,10 @@ export default {
         as: 'div',
         margin: 4,
         padding: 4,
+        minWidth: undefined,
+        maxWidth: undefined,
+        minHeight: '300px',
+        maxHeight: undefined,
     },
 } as Meta<FlexProps>;
 

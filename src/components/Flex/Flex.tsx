@@ -4,7 +4,13 @@ import React, { ReactNode } from 'react';
 import { merge } from '@utilities/merge';
 import { ContainerHTMLElement } from 'src/types/elements';
 import { Box } from '@components/Box';
-import { MARGIN_VALUES_MAP, PADDING_VALUES_MAP, SPACING_VALUES, SpacingValue } from '@utilities/dimensions';
+import {
+    DimensionUnity,
+    MARGIN_VALUES_MAP,
+    PADDING_VALUES_MAP,
+    SPACING_VALUES,
+    SpacingValue,
+} from '@utilities/dimensions';
 
 export type FlexDirection = 'row' | 'column' | 'row-reverse' | 'column-reverse';
 export type FlexWrap = 'nowrap' | 'wrap' | 'wrap-reverse';
@@ -34,6 +40,10 @@ export type FlexProps = {
     as?: ContainerHTMLElement;
     padding?: SpacingValue;
     margin?: SpacingValue;
+    minWidth?: `${number}${DimensionUnity}`;
+    maxWidth?: `${number}${DimensionUnity}`;
+    minHeight?: `${number}${DimensionUnity}`;
+    maxHeight?: `${number}${DimensionUnity}`;
 };
 
 const directionMapping = {
@@ -91,6 +101,10 @@ export const Flex = ({
     as: ContainerElement = 'div',
     margin = 0,
     padding = 0,
+    minWidth,
+    maxWidth,
+    maxHeight,
+    minHeight,
 }: FlexProps) => {
     const paddingClassName = SPACING_VALUES.includes(padding) ? PADDING_VALUES_MAP[padding] : PADDING_VALUES_MAP[0];
     const marginClassName = SPACING_VALUES.includes(padding) ? MARGIN_VALUES_MAP[margin] : MARGIN_VALUES_MAP[0];
@@ -111,6 +125,12 @@ export const Flex = ({
                 paddingClassName,
                 marginClassName,
             ])}
+            style={{
+                maxWidth,
+                minWidth,
+                maxHeight,
+                minHeight,
+            }}
             as={ContainerElement}
         >
             {children}
