@@ -7,4 +7,5 @@ export type ToolbarWrapperProps = {
     children: ReactNode;
     editorWidth?: number;
     toolbarButtonGroups?: ButtonGroupsPerRow;
+    toolbarWidth?: number;
 };
