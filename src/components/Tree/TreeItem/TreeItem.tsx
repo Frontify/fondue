@@ -306,7 +306,7 @@ export const TreeItem = ({
                     onClick={handleExpand}
                     expanded={showChildren}
                     disabled={!showExpandButton}
-                    active={isSelected}
+                    active={transform?.y ? false : isSelected}
                 />
 
                 {showLabel ? (
