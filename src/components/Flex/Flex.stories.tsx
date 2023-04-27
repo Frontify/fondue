@@ -17,8 +17,12 @@ const AlignItemsTypes = ['start', 'end', 'center', 'baseline', 'stretch'];
 
 const AlignContentTypes = ['start', 'end', 'center', 'normal', 'between', 'around', 'evenly', 'baseline', 'stretch'];
 
-const FlexItem = () => {
+const FlexItemLoremIpsum = () => {
     return <Box className="tw-bg-box-positive-strong">Lorem ipsum dolor sit amet, consectetur adipiscing elit</Box>;
+};
+
+const FlexItemTestContent = () => {
+    return <Box className="tw-bg-box-positive-strong">This is some test content</Box>;
 };
 
 export default {
@@ -107,10 +111,10 @@ export default {
 export const Default: StoryFn<FlexProps> = (args: FlexProps) => {
     return (
         <Flex {...args}>
-            <FlexItem />
-            <FlexItem />
-            <FlexItem />
-            <FlexItem />
+            <FlexItemLoremIpsum />
+            <FlexItemLoremIpsum />
+            <FlexItemTestContent />
+            <FlexItemTestContent />
         </Flex>
     );
 };
