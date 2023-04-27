@@ -233,8 +233,11 @@ export const TreeItem = ({
                 isSelected
                     ? 'tw-font-medium tw-bg-box-neutral-strong tw-text-box-neutral-strong-inverse hover:tw-bg-box-neutral-strong-hover'
                     : 'hover:tw-bg-box-neutral tw-text-text',
+                (isSelected && isActive) || transform?.y
+                    ? 'tw-bg-box-neutral-strong-inverse tw-text-text tw-font-normal'
+                    : '',
             ]),
-        [isActive, isSelected],
+        [isActive, isSelected, transform],
     );
 
     const containerClassName = merge([

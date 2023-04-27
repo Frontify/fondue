@@ -37,7 +37,7 @@ export const TreeItemOverlay = () => {
             aria-label={label}
             aria-selected={isSelected}
             data-test-id="tree-item-overlay"
-            className="tw-pointer-events-none tw-bg-white tw-text-text-weak tw-font-normal tw-flex tw-items-center tw-gap-x-1 tw-py-2 tw-px-2.5 tw-no-underline tw-leading-5 tw-h-10 tw-box-border tw-w-fit tw-drop-shadow-xl tw-rounded"
+            className="tw-pointer-events-none tw-bg-white tw-flex tw-items-center tw-gap-x-1 tw-py-2 tw-px-2.5 tw-no-underline tw-leading-5 tw-h-10 tw-box-border tw-w-fit tw-drop-shadow-xl tw-rounded"
         >
             <button tabIndex={-1} className="tw-p-1 tw-ml-2">
                 <IconGrabHandle12 />
