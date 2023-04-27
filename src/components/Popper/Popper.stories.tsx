@@ -5,6 +5,7 @@ import { Meta, StoryFn } from '@storybook/react';
 import { Popper } from './Popper';
 import { Button } from '@components/Button';
 import { PopperPlacement, PopperProps } from '@components/Popper/types';
+import { Box } from '@components/Box';
 
 export default {
     title: 'Utilities/Popper',
@@ -46,9 +47,9 @@ const Template: StoryFn<PopperProps> = (args) => {
                     <Button onClick={() => setOpen(!open)}>Hello</Button>
                 </Popper.Reference>
                 <Popper.Content>
-                    <div className="tw-bg-base tw-border tw-border-black tw-w-[400px]">
+                    <Box className="tw-bg-base tw-border tw-border-black tw-w-[400px]">
                         <p>Some content</p>
-                    </div>
+                    </Box>
                 </Popper.Content>
             </Popper>
         </div>

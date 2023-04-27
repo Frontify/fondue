@@ -7,6 +7,8 @@ import { PopperPlacement } from '@components/Popper/types';
 import { Button } from '@components/Button';
 import IconExclamationMarkTriangle16 from '@foundation/Icon/Generated/IconExclamationMarkTriangle16';
 import { useToggleOverlay } from '@hooks/useToggleOverlay';
+import { Box } from '@components/Box';
+import { Container } from '@components/Container';
 
 export default {
     title: 'Experimental/Popover',
@@ -28,6 +30,12 @@ export default {
             control: { type: 'boolean' },
         },
         open: { control: { type: 'boolean' } },
+        'data-test-id': {
+            type: 'string',
+        },
+        role: {
+            type: 'string',
+        },
     },
 } as Meta<PopoverProps>;
 
@@ -40,9 +48,9 @@ const Template: StoryFn<PopoverProps> = (args) => {
                     <Button onClick={() => setIsOpen(!isOpen)}>I am the Trigger</Button>
                 </Popover.Trigger>
                 <Popover.Content>
-                    <div className="tw-p-2">
+                    <Container padding={8}>
                         <p>Some Content</p>
-                    </div>
+                    </Container>
                 </Popover.Content>
             </Popover>
         </div>
@@ -66,9 +74,9 @@ const TriggeredOnHoverTemplate: StoryFn<PopoverProps> = (args) => {
                     </button>
                 </Popover.Trigger>
                 <Popover.Content>
-                    <div className="tw-p-2">
+                    <Box className="tw-p-2">
                         <p>Some Content</p>
-                    </div>
+                    </Box>
                 </Popover.Content>
             </Popover>
         </div>
@@ -84,14 +92,14 @@ const WithInteractiveContentTemplate: StoryFn<PopoverProps> = (args) => {
                     <Button onClick={() => setIsOpen(!isOpen)}>I am the Trigger</Button>
                 </Popover.Trigger>
                 <Popover.Content>
-                    <div className="tw-p-2 tw-w-[400px]">
+                    <Box className="tw-p-2 tw-w-[400px]">
                         <p>
                             Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eos explicabo iure placeat quae
                             quidem reiciendis sequi, veniam. Cupiditate eos necessitatibus nemo non obcaecati, quod
                             ullam. Beatae deserunt eum quibusdam ratione.
                         </p>
                         <Button>Confirm</Button>
-                    </div>
+                    </Box>
                 </Popover.Content>
             </Popover>
         </div>
