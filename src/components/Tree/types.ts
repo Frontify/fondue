@@ -14,6 +14,7 @@ export type SensorContext = MutableRefObject<{
 
 export type OnSelectCallback = (id: string) => void;
 export type OnExpandCallback = (id: string) => void;
+export type OnDropCallback = (args: { id: string; parentId: Nullable<string>; sort: number }) => void;
 
 export type TreeProps = {
     id: string;
@@ -25,7 +26,7 @@ export type TreeProps = {
     'data-test-id'?: string;
     onSelect?: OnSelectCallback;
     onExpand?: OnExpandCallback;
-    onDrop?: (args: { id: string; parentId: Nullable<string>; sort: number }) => undefined;
+    onDrop?: OnDropCallback;
 };
 
 type TreeItemBaseProps = {
@@ -33,7 +34,7 @@ type TreeItemBaseProps = {
 
     'data-test-id'?: string;
 
-    onDrop?: (args: { id: string; parentId: Nullable<string>; sort: number }) => undefined;
+    onDrop?: OnDropCallback;
 
     /**
      * The type of item being dragged.
