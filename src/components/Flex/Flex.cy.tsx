@@ -10,6 +10,9 @@ const CUSTOM_FLEX_ID = `[data-test-id=${CUSTOM_DATA_TEST_ID_STRING}]`;
 const FLEX_CHILD_ID_STRING = 'flex-child';
 const FLEX_CHILD_ID = `[data-test-id=${FLEX_CHILD_ID_STRING}]`;
 
+const CONTENT_STRING_LONG =
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
+
 const FlexComponent = (props: FlexProps) => {
     return (
         <Flex {...props}>
@@ -251,6 +254,42 @@ describe('Flex Component', () => {
 
         cy.get(FLEX_ID).as('Flex');
         cy.get('@Flex').should('have.class', 'tw-text-box-positive-inverse');
+    });
+
+    it('renders with a minWidth', () => {
+        cy.mount(
+            <FlexComponent minWidth={'50px'}>
+                <div></div>
+            </FlexComponent>,
+        );
+        cy.get(FLEX_ID).should('have.css', 'min-width', '50px');
+    });
+
+    it('renders with a maxWidth', () => {
+        cy.mount(
+            <FlexComponent maxWidth={'50px'}>
+                <div>{CONTENT_STRING_LONG}</div>
+            </FlexComponent>,
+        );
+        cy.get(FLEX_ID).should('have.css', 'max-width', '50px');
+    });
+
+    it('renders with a minHeight', () => {
+        cy.mount(
+            <FlexComponent minHeight={'50px'}>
+                <div></div>
+            </FlexComponent>,
+        );
+        cy.get(FLEX_ID).should('have.css', 'min-height', '50px');
+    });
+
+    it('renders with a maxHeight', () => {
+        cy.mount(
+            <FlexComponent maxHeight={'50px'}>
+                <div>{CONTENT_STRING_LONG}</div>
+            </FlexComponent>,
+        );
+        cy.get(FLEX_ID).should('have.css', 'max-height', '50px');
     });
 
     it('should render with children', () => {
