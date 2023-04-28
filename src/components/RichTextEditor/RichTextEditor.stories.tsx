@@ -417,6 +417,11 @@ WithToolbarTopAndSmallPadding.args = {
     ]),
 };
 
+export const WithCustomToolbarWidth = RichTextEditorTemplate.bind({});
+WithCustomToolbarWidth.args = {
+    toolbarWidth: 50,
+};
+
 const mentionAndEmojisPlugins = new PluginComposer();
 mentionAndEmojisPlugins
     .setPlugin([new ParagraphPlugin()])

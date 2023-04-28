@@ -77,4 +77,9 @@ export const treeItemsMock: TreeItemMock[] = [
         id: '2',
         label: 'Design System Testing - Root Childless',
     },
+    {
+        id: '3',
+        label: 'Design System Testing - Not draggable',
+        draggable: false,
+    },
 ];
