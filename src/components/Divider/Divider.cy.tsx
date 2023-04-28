@@ -7,20 +7,20 @@ const DEFAULT_COLOR = 'rgb(204, 204, 204)';
 const COLOR_RGB = 'rgb(64, 101, 174)';
 const COLOR_HEX = '#4065AE';
 const DIVIDER_SELECTOR = '[data-test-id=divider]';
-const DIVIDER_HR_SELECTOR = '[data-test-id=divider-hr]';
+const DIVIDER_LINE_SELECTOR = '[data-test-id=divider-line]';
 
 describe('Divider component', () => {
     it('renders', () => {
         cy.mount(<Divider />);
 
         cy.get(DIVIDER_SELECTOR).should('exist');
-        cy.get(DIVIDER_HR_SELECTOR).should('exist').and('have.css', 'border-top-color', DEFAULT_COLOR);
+        cy.get(DIVIDER_LINE_SELECTOR).should('exist').and('have.css', 'border-top-color', DEFAULT_COLOR);
     });
 
     it('has the correct color code', () => {
         cy.mount(<Divider color={COLOR_HEX} />);
 
-        cy.get(DIVIDER_HR_SELECTOR).should('exist').and('have.css', 'border-top-color', COLOR_RGB);
+        cy.get(DIVIDER_LINE_SELECTOR).should('exist').and('have.css', 'border-top-color', COLOR_RGB);
     });
 
     it("allows the height to be set to 'Small'", () => {
@@ -44,24 +44,36 @@ describe('Divider component', () => {
     it('allows the divider border style to be dashed', () => {
         cy.mount(<Divider style={DividerStyle.Dashed} />);
 
-        cy.get(DIVIDER_HR_SELECTOR).should('exist').and('have.class', 'tw-border-dashed');
+        cy.get(DIVIDER_LINE_SELECTOR).should('exist').and('have.class', 'tw-border-dashed');
     });
 
     it('allows the divider to have no border', () => {
         cy.mount(<Divider style={DividerStyle.NoLine} />);
 
-        cy.get(DIVIDER_HR_SELECTOR).should('exist').and('have.class', 'tw-border-none');
+        cy.get(DIVIDER_LINE_SELECTOR).should('exist').and('have.class', 'tw-border-none');
     });
 
     it('allows the divider border style to be solid', () => {
         cy.mount(<Divider style={DividerStyle.Solid} />);
 
-        cy.get(DIVIDER_HR_SELECTOR).should('exist').and('have.class', 'tw-border-solid');
+        cy.get(DIVIDER_LINE_SELECTOR).should('exist').and('have.class', 'tw-border-solid');
     });
 
     it('allows the divider border style to be dotted', () => {
         cy.mount(<Divider style={DividerStyle.Dotted} />);
 
-        cy.get(DIVIDER_HR_SELECTOR).should('exist').and('have.class', 'tw-border-dotted');
+        cy.get(DIVIDER_LINE_SELECTOR).should('exist').and('have.class', 'tw-border-dotted');
+    });
+
+    it('allows the divider border style to be dotted', () => {
+        cy.mount(<Divider style={DividerStyle.Dotted} />);
+
+        cy.get(DIVIDER_LINE_SELECTOR).should('exist').and('have.class', 'tw-border-dotted');
+    });
+
+    it('allows the divider to be vertical', () => {
+        cy.mount(<Divider vertical={true} />);
+
+        cy.get(DIVIDER_LINE_SELECTOR).should('exist').and('have.class', 'tw-border-r');
     });
 });

@@ -10,6 +10,7 @@ export default {
     tags: ['autodocs'],
     args: {
         color: 'red',
+        vertical: 'false',
     },
     argTypes: {
         color: {
@@ -33,6 +34,11 @@ export default {
                     (labels, [key, value]) => ({ ...labels, [value]: key }),
                     {},
                 ),
+            },
+        },
+        vertical: {
+            control: {
+                type: 'boolean',
             },
         },
     },
