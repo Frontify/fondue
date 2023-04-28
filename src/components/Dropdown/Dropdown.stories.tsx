@@ -7,7 +7,7 @@ import { Meta, StoryFn } from '@storybook/react';
 import { Validation } from '@utilities/validation';
 import React, { useEffect, useState } from 'react';
 import { Dropdown, DropdownAlignment, DropdownPosition, DropdownProps, DropdownSize } from './Dropdown';
-import { FormControl } from '..';
+import { FormControl } from '@components/FormControl';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 
 export default {
