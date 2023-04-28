@@ -2,7 +2,7 @@
 
 import { ReactElement } from 'react';
 
-export const removeNodesFromTree = (tree: ReactElement[], nodeIds: string[]): ReactElement[] => {
+export const removeNodesFromFlatArray = (tree: ReactElement[], nodeIds: string[]): ReactElement[] => {
     // Create a set of the node IDs to remove for faster lookup
     const nodesToRemove = new Set(nodeIds);
 
@@ -10,17 +10,14 @@ export const removeNodesFromTree = (tree: ReactElement[], nodeIds: string[]): Re
     return tree.filter((node) => !nodesToRemove.has(node.props.id));
 };
 
-export const getNodeIdsInBranch = (tree: ReactElement[], id: string): string[] => {
+export const getNodeIdsInBranch = (tree: ReactElement[], startingNodeId: string): string[] => {
     const nodeIds: string[] = [];
 
     // Create a map from node IDs to their corresponding nodes
-    const nodeMap = new Map<string, ReactElement>();
-    for (const node of tree) {
-        nodeMap.set(node.props.id, node);
-    }
+    const nodeMap = new Map<string, ReactElement>(tree.map((node) => [node.props.id, node]));
 
     // Find the node with the given id
-    const startingNode = nodeMap.get(id);
+    const startingNode = nodeMap.get(startingNodeId);
 
     if (startingNode) {
         // Recursively find all child nodes

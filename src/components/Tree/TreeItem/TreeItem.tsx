@@ -34,12 +34,12 @@ type TreeItemPrivateProps = {
     isSelected?: boolean;
     isExpanded?: boolean;
     treeDraggable?: boolean;
-    onSelect: (id: string) => void;
-    onExpand: (id: string) => void;
-    projection: Nullable<Projection>;
-    registerOverlay: (overlay: Overlay) => void;
-    unregisterNodeChildren: (payload: string) => void;
-    registerNodeChildren: (payload: RegisterNodeChildrenPayload) => void;
+    onSelect?: (id: string) => void;
+    onExpand?: (id: string) => void;
+    projection?: Nullable<Projection>;
+    registerOverlay?: (overlay: Overlay) => void;
+    unregisterNodeChildren?: (payload: string) => void;
+    registerNodeChildren?: (payload: RegisterNodeChildrenPayload) => void;
 };
 
 /** @private */
@@ -74,7 +74,8 @@ export const TreeItem = memo(
 
         const isActive = active?.id === id;
 
-        const isWithin = projection !== null && over !== null && projection.depth > over.data.current?.level;
+        // eslint-disable-next-line eqeqeq
+        const isWithin = projection != null && over !== null && projection.depth > over.data.current?.level;
 
         const canDrop =
             isActive &&
@@ -82,6 +83,13 @@ export const TreeItem = memo(
             active.data.current &&
             typeof over?.data?.current?.accepts === 'string' &&
             over.data.current.accepts?.split(', ').includes(active.data.current.type);
+
+        const computedContentComponent = useMemo(() => {
+            if (typeof contentComponent === 'function') {
+                return contentComponent({});
+            }
+            return contentComponent;
+        }, [contentComponent]);
 
         const handleItemDragEnd = (event: TreeDragEndEvent) => {
             const { over, active } = event;
@@ -101,9 +109,9 @@ export const TreeItem = memo(
                     return;
                 }
 
-                registerOverlay({ contentComponent, children, id, label, level });
+                registerOverlay?.({ contentComponent: computedContentComponent, children, id, label, level });
             },
-            [children, contentComponent, id, label, level, registerOverlay],
+            [children, computedContentComponent, id, label, level, registerOverlay],
         );
 
         useDndMonitor({
@@ -115,7 +123,7 @@ export const TreeItem = memo(
             (event: MouseEvent<HTMLElement, globalThis.MouseEvent>) => {
                 event.stopPropagation();
 
-                onSelect(id);
+                onSelect?.(id);
             },
             [id, onSelect],
         );
@@ -123,7 +131,7 @@ export const TreeItem = memo(
         const handleExpand = (event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
             event.stopPropagation();
 
-            onExpand(id);
+            onExpand?.(id);
         };
 
         const isParentActive = parentId && active?.id === parentId;
@@ -159,15 +167,14 @@ export const TreeItem = memo(
             }
 
             if (isActive || isParentActive) {
-                console.log('unregistered if active or parent active', id);
-                unregisterNodeChildren(id);
+                unregisterNodeChildren?.(id);
                 return;
             }
 
             if (isExpanded) {
-                registerNodeChildren({ id, children: enrichedChildren });
+                registerNodeChildren?.({ id, children: enrichedChildren });
             } else {
-                unregisterNodeChildren(id);
+                unregisterNodeChildren?.(id);
             }
         }, [isActive, isExpanded, isParentActive, enrichedChildren, registerNodeChildren, unregisterNodeChildren, id]);
 
@@ -253,7 +260,7 @@ export const TreeItem = memo(
                         <span className="first:tw-ml-3.5 tw-w-full tw-h-full tw-flex tw-items-center">{label}</span>
                     )}
 
-                    {showContent && contentComponent}
+                    {showContent && computedContentComponent}
                 </div>
             </li>
         );

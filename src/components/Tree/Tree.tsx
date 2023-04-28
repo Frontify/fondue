@@ -1,6 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { cloneElement, memo, useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import React, {
+    cloneElement,
+    memo,
+    useCallback,
+    useEffect,
+    useLayoutEffect,
+    useMemo,
+    useReducer,
+    useRef,
+    useState,
+} from 'react';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import { enableMapSet, produce } from 'immer';
@@ -35,7 +45,7 @@ import type {
 } from '@components/Tree/types';
 
 import { type Overlay, TreeItemOverlay } from './TreeItem';
-import { getMovementAnnouncement, getNodeIdsInBranch, getProjection, removeNodesFromTree } from './helpers';
+import { getMovementAnnouncement, getNodeIdsInBranch, getProjection, removeNodesFromFlatArray } from './helpers';
 import { removeFragmentsAndEnrichChildren, sortableTreeKeyboardCoordinates } from './utils';
 import { TreeContext, TreeContextProps } from './TreeContext';
 
@@ -135,13 +145,25 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
             {
                 const nodeIds = getNodeIdsInBranch(draft.nodes, action.payload);
 
-                draft.nodes = removeNodesFromTree(draft.nodes, nodeIds);
+                draft.nodes = removeNodesFromFlatArray(draft.nodes, nodeIds);
             }
             break;
 
         case 'REGISTER_ROOT_NODES':
             {
                 draft.nodes = action.payload;
+            }
+            break;
+
+        case 'REPLACE_EXPANDED':
+            {
+                draft.expandedIds = new Set(action.payload);
+            }
+            break;
+
+        case 'REPLACE_SELECTED':
+            {
+                draft.selectedIds = new Set(action.payload);
             }
             break;
 
@@ -266,8 +288,6 @@ export const Tree = memo(
                 resetState();
 
                 const { over, active } = event;
-                console.log('🚀 ~ over:', over);
-                console.log('🚀 ~ active:', active);
 
                 if (!over?.id || !active?.id || !treeState.projection?.parentId) {
                     return;
@@ -477,12 +497,26 @@ export const Tree = memo(
             };
         }, [currentPosition, treeState]);
 
-        useEffect(() => {
+        useLayoutEffect(() => {
             updateTreeState({
                 type: 'REGISTER_ROOT_NODES',
                 payload: removeFragmentsAndEnrichChildren(children, { parentId: ROOT_ID, level: 0 }),
             });
         }, [children]);
+
+        useEffect(() => {
+            updateTreeState({
+                type: 'REPLACE_EXPANDED',
+                payload: expandedIds ?? [],
+            });
+        }, [expandedIds]);
+
+        useEffect(() => {
+            updateTreeState({
+                type: 'REPLACE_SELECTED',
+                payload: selectedIds ?? [],
+            });
+        }, [selectedIds]);
 
         useEffect(() => {
             sensorContext.current = {

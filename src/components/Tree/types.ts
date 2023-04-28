@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import type { MutableRefObject, ReactElement, ReactNode } from 'react';
+import type { FC, MutableRefObject, ReactElement, ReactNode } from 'react';
 import { Active, Collision, Over, Translate } from '@dnd-kit/core';
 import { useSortable } from '@dnd-kit/sortable';
 
@@ -14,7 +14,7 @@ export type SensorContext = MutableRefObject<{
 
 export type OnSelectCallback = (id: string) => void;
 export type OnExpandCallback = (id: string) => void;
-export type OnDropCallback = (args: { id: string; parentId: Nullable<string>; sort: number }) => void;
+export type OnTreeDropCallback = (args: { id: string; parentId: Nullable<string>; sort: number }) => void;
 
 export type TreeProps = {
     id: string;
@@ -26,7 +26,7 @@ export type TreeProps = {
     'data-test-id'?: string;
     onSelect?: OnSelectCallback;
     onExpand?: OnExpandCallback;
-    onDrop?: OnDropCallback;
+    onDrop?: OnTreeDropCallback;
 };
 
 type TreeItemBaseProps = {
@@ -34,7 +34,7 @@ type TreeItemBaseProps = {
 
     'data-test-id'?: string;
 
-    onDrop?: OnDropCallback;
+    onDrop?: OnTreeDropCallback;
 
     /**
      * The type of item being dragged.
@@ -42,7 +42,7 @@ type TreeItemBaseProps = {
     type?: string;
     /**
      * The kinds of dragItems this dropTarget accepts
-     *  @example ['itemA', 'itemA-within']
+     *  @example 'itemA, itemA-within'
      * if suffix '-within' is appended, then it will allow dropping item inside it
      */
     accepts?: string;
@@ -59,7 +59,7 @@ export type TreeItemWithLabelProps = {
 
 export type TreeItemWithContentComponentProps = {
     label?: never;
-    contentComponent?: ReactNode;
+    contentComponent?: ReactNode | FC;
 } & TreeItemBaseProps;
 
 export type SortableProps = Partial<ReturnType<typeof useSortable>>;
@@ -94,6 +94,8 @@ export type TreeStateAction =
     | { type: 'SET_PROJECTION'; payload: Nullable<Projection> }
     | { type: 'REGISTER_NODE_CHILDREN'; payload: { id: string; children: ReactElement[] } }
     | { type: 'UNREGISTER_NODE_CHILDREN'; payload: string }
+    | { type: 'REPLACE_EXPANDED'; payload: string[] }
+    | { type: 'REPLACE_SELECTED'; payload: string[] }
     | { type: 'REGISTER_ROOT_NODES'; payload: ReactElement[] };
 
 export type RegisterNodeChildrenPayload = Extract<TreeStateAction, { type: 'REGISTER_NODE_CHILDREN' }>['payload'];
