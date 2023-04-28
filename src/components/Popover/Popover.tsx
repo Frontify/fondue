@@ -16,7 +16,8 @@ const Trigger = ({ children }: { children: ReactElement }) => {
 };
 
 const Content = ({ children }: { children?: ReactNode }) => {
-    return children;
+    // eslint-disable-next-line react/jsx-no-useless-fragment
+    return <>{children}</>;
 };
 
 export const Popover = ({

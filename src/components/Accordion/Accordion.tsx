@@ -102,7 +102,8 @@ const filterValidChildren = ({ children }: AccordionProps): ReactElement<Accordi
         return validChildren;
     }, []);
 
-export const AccordionItem = ({ children }: AccordionItemProps): ReactNode => children;
+// eslint-disable-next-line react/jsx-no-useless-fragment
+export const AccordionItem = ({ children }: AccordionItemProps): ReactElement => <>{children}</>;
 AccordionItem.displayName = 'FondueAccordionItem';
 
 const lastChildrenActive = (children: React.ReactNode | undefined): boolean | undefined => {

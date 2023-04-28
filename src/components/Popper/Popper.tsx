@@ -24,7 +24,8 @@ const Reference = ({ children }: { children: ReactElement }) => {
 
 const Content = ({ children }: { children?: ReactNode }) => {
     const { open } = usePopperContext();
-    return open && children;
+    // eslint-disable-next-line react/jsx-no-useless-fragment
+    return open ? <>{children}</> : null;
 };
 const usePopperContext = () => {
     const context = useContext(PopperContext);
