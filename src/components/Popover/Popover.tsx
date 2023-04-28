@@ -16,7 +16,7 @@ const Trigger = ({ children }: { children: ReactElement }) => {
 };
 
 const Content = ({ children }: { children?: ReactNode }) => {
-    return <>{children}</>;
+    return children;
 };
 
 export const Popover = ({

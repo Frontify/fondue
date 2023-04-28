@@ -4,7 +4,7 @@ import React, { Children, MouseEvent, useCallback, useLayoutEffect, useMemo } fr
 import { motion } from 'framer-motion';
 import { AnimateLayoutChanges, useSortable } from '@dnd-kit/sortable';
 import { useDndContext, useDndMonitor } from '@dnd-kit/core';
-import { noop } from 'lodash-es';
+import noop from 'lodash-es/noop';
 
 import { merge } from '@utilities/merge';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';

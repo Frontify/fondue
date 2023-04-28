@@ -28,15 +28,13 @@ const CustomCheckbox = () => {
     const [checked, setChecked] = useState<CheckboxState>(CheckboxState.Unchecked);
 
     return (
-        <>
-            <CheckboxComponent
-                {...checkboxArgs}
-                state={checked}
-                onChange={(isChecked) => {
-                    setChecked(isChecked ? CheckboxState.Checked : CheckboxState.Unchecked);
-                }}
-            />
-        </>
+        <CheckboxComponent
+            {...checkboxArgs}
+            state={checked}
+            onChange={(isChecked) => {
+                setChecked(isChecked ? CheckboxState.Checked : CheckboxState.Unchecked);
+            }}
+        />
     );
 };
 

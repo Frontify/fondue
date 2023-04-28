@@ -24,7 +24,7 @@ const Reference = ({ children }: { children: ReactElement }) => {
 
 const Content = ({ children }: { children?: ReactNode }) => {
     const { open } = usePopperContext();
-    return open ? <>{children}</> : null;
+    return open && children;
 };
 const usePopperContext = () => {
     const context = useContext(PopperContext);
@@ -77,32 +77,28 @@ export const Popper = ({
                     }
 
                     if (name === Content.name) {
-                        return (
-                            <>
-                                {enablePortal ? (
-                                    <Portal>
-                                        <div
-                                            ref={setPopperElement}
-                                            style={popperInstance.styles.popper}
-                                            {...popperInstance.attributes.popper}
-                                        >
-                                            {cloneElement(child, {
-                                                ...child.props,
-                                            })}
-                                        </div>
-                                    </Portal>
-                                ) : (
-                                    <div
-                                        ref={setPopperElement}
-                                        style={popperInstance.styles.popper}
-                                        {...popperInstance.attributes.popper}
-                                    >
-                                        {cloneElement(child, {
-                                            ...child.props,
-                                        })}
-                                    </div>
-                                )}
-                            </>
+                        return enablePortal ? (
+                            <Portal>
+                                <div
+                                    ref={setPopperElement}
+                                    style={popperInstance.styles.popper}
+                                    {...popperInstance.attributes.popper}
+                                >
+                                    {cloneElement(child, {
+                                        ...child.props,
+                                    })}
+                                </div>
+                            </Portal>
+                        ) : (
+                            <div
+                                ref={setPopperElement}
+                                style={popperInstance.styles.popper}
+                                {...popperInstance.attributes.popper}
+                            >
+                                {cloneElement(child, {
+                                    ...child.props,
+                                })}
+                            </div>
                         );
                     }
                 }
