@@ -102,7 +102,7 @@ const filterValidChildren = ({ children }: AccordionProps): ReactElement<Accordi
         return validChildren;
     }, []);
 
-export const AccordionItem = ({ children }: AccordionItemProps): ReactElement => <>{children}</>;
+export const AccordionItem = ({ children }: AccordionItemProps): ReactNode => children;
 AccordionItem.displayName = 'FondueAccordionItem';
 
 const lastChildrenActive = (children: React.ReactNode | undefined): boolean | undefined => {
