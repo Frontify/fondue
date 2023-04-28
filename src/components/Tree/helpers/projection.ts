@@ -3,7 +3,7 @@
 import { ReactElement } from 'react';
 import { arrayMove } from '@dnd-kit/sortable';
 
-import { INDENTATION_WIDTH } from '../Tree';
+import { INDENTATION_WIDTH, ROOT_ID } from '../Tree';
 
 export type ProjectionArgs = {
     nodes: ReactElement[];
@@ -19,6 +19,7 @@ export type Projection = {
     position: number;
     type?: string;
     accepts?: string;
+    rootCount: number;
     parentId: Nullable<string>;
 };
 
@@ -37,6 +38,7 @@ const getDragDepth = (offset: number) => {
 export const getProjection = ({ nodes, activeId, overId, dragOffset }: ProjectionArgs): Projection => {
     const overNodeIndex = nodes.findIndex(({ props }) => props.id === overId);
     const activeNodeIndex = nodes.findIndex(({ props }) => props.id === activeId);
+    const rootCount = nodes.filter(({ props }) => props.parentId === ROOT_ID).length ?? 1;
 
     const activeNode = nodes[activeNodeIndex];
     const newNodes = arrayMove(nodes, activeNodeIndex, overNodeIndex);
@@ -58,7 +60,7 @@ export const getProjection = ({ nodes, activeId, overId, dragOffset }: Projectio
         depth = minDepth;
     }
 
-    const getParent = () => {
+    const getParentId = () => {
         if (depth === 0 || !previousNode) {
             return null;
         }
@@ -74,18 +76,27 @@ export const getProjection = ({ nodes, activeId, overId, dragOffset }: Projectio
         const newParent = newNodes
             .slice(0, overNodeIndex)
             .reverse()
-            .find((item) => item.props.level === depth);
+            .find((item) => item.props.level === depth)?.props.parentId;
 
         return newParent ?? null;
     };
 
-    const parent = getParent();
+    const getParent = (parentId: Nullable<string>) => {
+        if (!parentId) {
+            return null;
+        }
+        return nodes.find(({ props }) => props.id === parentId)?.props;
+    };
+
+    const parentId = getParentId();
+    const parent = getParent(parentId);
 
     return {
         depth,
         maxDepth,
         minDepth,
-        parentId: parent?.parentId,
+        parentId,
+        rootCount,
         type: parent?.type,
         accepts: parent?.accepts,
         position: overNodeIndex,

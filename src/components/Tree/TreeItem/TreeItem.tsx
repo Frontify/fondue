@@ -17,7 +17,7 @@ import type {
 } from '@components/Tree/types';
 
 import { Projection } from '../helpers';
-import { INDENTATION_WIDTH } from '../Tree';
+import { INDENTATION_WIDTH, ROOT_ID } from '../Tree';
 import { removeFragmentsAndEnrichChildren } from '../utils';
 
 import { DragHandle } from './DragHandle';
@@ -74,8 +74,11 @@ export const TreeItem = memo(
 
         const isActive = active?.id === id;
 
-        // eslint-disable-next-line eqeqeq
-        const isWithin = projection != null && over !== null && projection.depth > over.data.current?.level;
+        const isWithin =
+            over !== null &&
+            projection !== null &&
+            projection !== undefined &&
+            projection.depth > over.data.current?.level;
 
         const canDrop =
             isActive &&
@@ -94,12 +97,26 @@ export const TreeItem = memo(
         const handleItemDragEnd = (event: TreeDragEndEvent) => {
             const { over, active } = event;
 
-            if (active.id === over?.id && projection?.depth === projection?.minDepth) {
+            if (!isActive || !projection || (active.id === over?.id && projection?.depth === projection?.minDepth)) {
                 return;
             }
 
+            const parentId = projection.parentId;
+
+            const sortable = over?.data.current?.sortable.items as string[];
+
+            let sort = (over?.data.current?.sortable.index ?? 0) as number;
+
+            if (parentId && parentId !== ROOT_ID) {
+                const parentIndex = sortable.indexOf(parentId);
+
+                sort -= parentIndex;
+            } else if (over?.data.current?.parentId === ROOT_ID) {
+                sort = sort > projection.rootCount ? sort - projection.rootCount : projection.rootCount - sort;
+            }
+
             if (isActive && over && canDrop && projection?.parentId) {
-                onDrop?.({ id: active.id, parentId: projection.parentId, sort: over.data.current?.sortable.index + 1 });
+                onDrop?.({ id: active.id, parentId: projection.parentId, sort });
             }
         };
 

@@ -293,13 +293,30 @@ export const Tree = memo(
                     return;
                 }
 
+                const parentId = treeState.projection.parentId;
+
+                const sortable = over.data.current?.sortable.items as string[];
+
+                let sort = (over.data.current?.sortable.index ?? 0) as number;
+
+                if (parentId && parentId !== ROOT_ID) {
+                    const parentIndex = sortable.indexOf(parentId);
+
+                    sort -= parentIndex;
+                } else if (over?.data.current?.parentId === ROOT_ID) {
+                    sort =
+                        sort > treeState.projection.rootCount
+                            ? sort - treeState.projection.rootCount
+                            : treeState.projection.rootCount - sort;
+                }
+
                 onDrop?.({
                     id: active.id.toString(),
                     parentId: treeState.projection.parentId,
-                    sort: over.data.current?.sortable.index + 1,
+                    sort,
                 });
             },
-            [onDrop, treeState.projection?.parentId],
+            [onDrop, treeState.projection?.parentId, treeState.projection?.rootCount],
         );
 
         const handleDragStart = ({ active: { id: activeId } }: TreeDragStartEvent) => {
