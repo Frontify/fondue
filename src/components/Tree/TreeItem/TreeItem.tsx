@@ -133,8 +133,14 @@ export const TreeItem = ({
                     id: canDropWithinMovingUp ? projection?.parentId?.toString() ?? 'ID not found' : over.id.toString(),
                     type: canDropWithinMovingUp ? projectionNode?.props.type : over?.data?.current?.type,
                     sort: sortOver + 1,
+                    parentId: projection?.parentId ?? '',
                 },
-                { id: active.id.toString(), type: active.data?.current?.type, sort: sortActive + 1 },
+                {
+                    id: active.id.toString(),
+                    type: active.data?.current?.type,
+                    sort: sortActive + 1,
+                    parentId: parentId ?? '',
+                },
                 position,
                 movingUp ? 'up' : 'down',
             );
