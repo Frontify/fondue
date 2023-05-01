@@ -17,7 +17,7 @@ import type {
 } from '@components/Tree/types';
 
 import { Projection } from '../helpers';
-import { INDENTATION_WIDTH, ROOT_ID } from '../Tree';
+import { INDENTATION_WIDTH } from '../Tree';
 import { removeFragmentsAndEnrichChildren } from '../utils';
 
 import { DragHandle } from './DragHandle';
@@ -43,7 +43,7 @@ type TreeItemPrivateProps = {
 };
 
 /** @private */
-type InternalTreeItemProps = TreeItemProps & TreeItemPrivateProps;
+export type InternalTreeItemProps = TreeItemProps & TreeItemPrivateProps;
 
 export const TreeItem = memo(
     ({
@@ -84,8 +84,9 @@ export const TreeItem = memo(
             isActive &&
             !isWithin &&
             active.data.current &&
-            typeof over?.data?.current?.accepts === 'string' &&
-            over.data.current.accepts?.split(', ').includes(active.data.current.type);
+            (over?.data?.current?.accepts === undefined ||
+                (typeof over?.data?.current?.accepts === 'string' &&
+                    over.data.current.accepts?.split(', ').includes(active.data.current.type)));
 
         const computedContentComponent = useMemo(() => {
             if (typeof contentComponent === 'function') {
@@ -94,31 +95,24 @@ export const TreeItem = memo(
             return contentComponent;
         }, [contentComponent]);
 
-        const handleItemDragEnd = (event: TreeDragEndEvent) => {
-            const { over, active } = event;
+        const handleItemDragEnd = useCallback(
+            (event: TreeDragEndEvent) => {
+                const { over, active } = event;
 
-            if (!isActive || !projection || (active.id === over?.id && projection?.depth === projection?.minDepth)) {
-                return;
-            }
+                if (
+                    !isActive ||
+                    !projection ||
+                    (active.id === over?.id && projection?.depth === projection?.minDepth)
+                ) {
+                    return;
+                }
 
-            const parentId = projection.parentId;
-
-            const sortable = over?.data.current?.sortable.items as string[];
-
-            let sort = (over?.data.current?.sortable.index ?? 0) as number;
-
-            if (parentId && parentId !== ROOT_ID) {
-                const parentIndex = sortable.indexOf(parentId);
-
-                sort -= parentIndex;
-            } else if (over?.data.current?.parentId === ROOT_ID) {
-                sort = sort > projection.rootCount ? sort - projection.rootCount : projection.rootCount - sort;
-            }
-
-            if (isActive && over && canDrop && projection?.parentId) {
-                onDrop?.({ id: active.id, parentId: projection.parentId, sort });
-            }
-        };
+                if (isActive && over && canDrop) {
+                    onDrop?.({ id: active.id, parentId: projection.parentId, sort: projection.position });
+                }
+            },
+            [canDrop, isActive, onDrop, projection],
+        );
 
         const handleItemDragStart = useCallback(
             (event: TreeDragStartEvent) => {

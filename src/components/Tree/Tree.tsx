@@ -45,7 +45,12 @@ import type {
 } from '@components/Tree/types';
 
 import { type Overlay, TreeItemOverlay } from './TreeItem';
-import { getMovementAnnouncement, getNodeIdsInFlatArray, getProjection, removeNodesFromFlatArray } from './helpers';
+import {
+    getMovementAnnouncement,
+    getProjection,
+    getReactNodeIdsInFlatArray,
+    removeReactNodesFromFlatArray,
+} from './helpers';
 import { removeFragmentsAndEnrichChildren, sortableTreeKeyboardCoordinates } from './utils';
 import { TreeContext, TreeContextProps } from './TreeContext';
 
@@ -143,9 +148,9 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
 
         case 'UNREGISTER_NODE_CHILDREN':
             {
-                const nodeIds = getNodeIdsInFlatArray(draft.nodes, action.payload);
+                const nodeIds = getReactNodeIdsInFlatArray(draft.nodes, action.payload);
 
-                draft.nodes = removeNodesFromFlatArray(draft.nodes, nodeIds);
+                draft.nodes = removeReactNodesFromFlatArray(draft.nodes, nodeIds);
             }
             break;
 
@@ -293,30 +298,13 @@ export const Tree = memo(
                     return;
                 }
 
-                const parentId = treeState.projection.parentId;
-
-                const sortable = over.data.current?.sortable.items as string[];
-
-                let sort = (over.data.current?.sortable.index ?? 0) as number;
-
-                if (parentId && parentId !== ROOT_ID) {
-                    const parentIndex = sortable.indexOf(parentId);
-
-                    sort -= parentIndex;
-                } else if (over?.data.current?.parentId === ROOT_ID) {
-                    sort =
-                        sort > treeState.projection.rootCount
-                            ? sort - treeState.projection.rootCount
-                            : treeState.projection.rootCount - sort;
-                }
-
                 onDrop?.({
                     id: active.id.toString(),
                     parentId: treeState.projection.parentId,
-                    sort,
+                    sort: treeState.projection.position,
                 });
             },
-            [onDrop, treeState.projection?.parentId, treeState.projection?.rootCount],
+            [onDrop, treeState.projection?.parentId, treeState.projection?.position],
         );
 
         const handleDragStart = ({ active: { id: activeId } }: TreeDragStartEvent) => {

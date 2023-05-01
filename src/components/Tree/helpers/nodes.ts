@@ -2,7 +2,7 @@
 
 import { ReactElement } from 'react';
 
-export const removeNodesFromFlatArray = (tree: ReactElement[], nodeIds: string[]): ReactElement[] => {
+export const removeReactNodesFromFlatArray = (tree: ReactElement[], nodeIds: string[]): ReactElement[] => {
     // Create a set of the node IDs to remove for faster lookup
     const nodesToRemove = new Set(nodeIds);
 
@@ -10,7 +10,7 @@ export const removeNodesFromFlatArray = (tree: ReactElement[], nodeIds: string[]
     return tree.filter((node) => !nodesToRemove.has(node.props.id));
 };
 
-export const getNodeIdsInFlatArray = (tree: ReactElement[], startingNodeId: string): string[] => {
+export const getReactNodeIdsInFlatArray = (tree: ReactElement[], startingNodeId: string): string[] => {
     const nodeIds: string[] = [];
 
     // Create a map from node IDs to their corresponding nodes
