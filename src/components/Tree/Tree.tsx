@@ -45,7 +45,7 @@ import type {
 } from '@components/Tree/types';
 
 import { type Overlay, TreeItemOverlay } from './TreeItem';
-import { getMovementAnnouncement, getNodeIdsInBranch, getProjection, removeNodesFromFlatArray } from './helpers';
+import { getMovementAnnouncement, getNodeIdsInFlatArray, getProjection, removeNodesFromFlatArray } from './helpers';
 import { removeFragmentsAndEnrichChildren, sortableTreeKeyboardCoordinates } from './utils';
 import { TreeContext, TreeContextProps } from './TreeContext';
 
@@ -143,7 +143,7 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
 
         case 'UNREGISTER_NODE_CHILDREN':
             {
-                const nodeIds = getNodeIdsInBranch(draft.nodes, action.payload);
+                const nodeIds = getNodeIdsInFlatArray(draft.nodes, action.payload);
 
                 draft.nodes = removeNodesFromFlatArray(draft.nodes, nodeIds);
             }

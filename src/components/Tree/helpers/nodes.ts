@@ -10,7 +10,7 @@ export const removeNodesFromFlatArray = (tree: ReactElement[], nodeIds: string[]
     return tree.filter((node) => !nodesToRemove.has(node.props.id));
 };
 
-export const getNodeIdsInBranch = (tree: ReactElement[], startingNodeId: string): string[] => {
+export const getNodeIdsInFlatArray = (tree: ReactElement[], startingNodeId: string): string[] => {
     const nodeIds: string[] = [];
 
     // Create a map from node IDs to their corresponding nodes
