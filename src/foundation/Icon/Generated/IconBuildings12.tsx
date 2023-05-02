@@ -11,21 +11,13 @@ function IconBuildings12(props: GeneratedIconProps): React.ReactElement<Generate
             name="IconBuildings12"
             {...props}
         >
-            <g fill="none">
-                <g clipPath="url(#prefix__a)">
-                    <path
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M3.5 6.5h1m-4 4h1m2-2h1m2 2v-6l4-1.5v5.5m-4 2h-5m5 0h5m-10 0v-8l5-2v2m1.5 4h1m-1 2h1m-5.5-4h1"
-                    />
-                </g>
-                <defs>
-                    <clipPath id="prefix__a">
-                        <path fill="#fff" d="M0 0h12v12H0z" />
-                    </clipPath>
-                </defs>
-            </g>
+            <path
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M3.5 6.5h1m-4 4h1m2-2h1m2 2v-6l4-1.5v5.5m-4 2h-5m5 0h5m-10 0v-8l5-2v2m1.5 4h1m-1 2h1m-5.5-4h1"
+            />
         </svg>
     );
 }

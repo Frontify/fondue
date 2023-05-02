@@ -11,21 +11,12 @@ function IconBookmark12(props: GeneratedIconProps): React.ReactElement<Generated
             name="IconBookmark12"
             {...props}
         >
-            <g fill="none">
-                <g clipPath="url(#prefix__a)">
-                    <path
-                        fill="currentColor"
-                        fillRule="evenodd"
-                        d="m6 7.832.615.48L10 10.952V1.5a.5.5 0 0 0-.5-.5h-7a.5.5 0 0 0-.5.5v9.452l3.385-2.64.615-.48ZM6 9.1l3.385 2.64A1 1 0 0 0 11 10.952V1.5A1.5 1.5 0 0 0 9.5 0h-7A1.5 1.5 0 0 0 1 1.5v9.452a1 1 0 0 0 1.615.788L6 9.1Z"
-                        clipRule="evenodd"
-                    />
-                </g>
-                <defs>
-                    <clipPath id="prefix__a">
-                        <path fill="#fff" d="M0 0h12v12H0z" />
-                    </clipPath>
-                </defs>
-            </g>
+            <path
+                fill="currentColor"
+                fillRule="evenodd"
+                d="m6 7.832.615.48L10 10.952V1.5a.5.5 0 0 0-.5-.5h-7a.5.5 0 0 0-.5.5v9.452l3.385-2.64.615-.48ZM6 9.1l3.385 2.64A1 1 0 0 0 11 10.952V1.5A1.5 1.5 0 0 0 9.5 0h-7A1.5 1.5 0 0 0 1 1.5v9.452a1 1 0 0 0 1.615.788L6 9.1Z"
+                clipRule="evenodd"
+            />
         </svg>
     );
 }
