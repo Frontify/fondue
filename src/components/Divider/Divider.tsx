@@ -39,21 +39,29 @@ export const Divider = ({
 }: DividerProps): ReactElement => {
     const verticalClassNames = `tw-w-px tw-h-full tw-border-r tw-m-0 ${styleMap[style]}`;
     return (
-        <div className="tw-flex tw-items-center" style={{ height }} data-test-id="divider">
+        <>
             {vertical ? (
                 <div
-                    className={`${verticalClassNames}`}
-                    style={{ borderRightColor: color }}
-                    data-test-id="divider-line"
-                ></div>
+                    className="tw-flex tw-self-stretch tw-mt-0 tw-mb-0 tw-items-center tw-justify-center"
+                    style={{ width: height }}
+                    data-test-id="divider"
+                >
+                    <div
+                        className={`tw-w-px ${verticalClassNames}`}
+                        style={{ borderRightColor: color }}
+                        data-test-id="divider-line"
+                    ></div>
+                </div>
             ) : (
-                <hr
-                    className={`tw-border-t tw-m-0 tw-w-full ${styleMap[style]}`}
-                    style={{ borderTopColor: color }}
-                    data-test-id="divider-line"
-                />
+                <div className="tw-flex tw-items-center" style={{ height }} data-test-id="divider">
+                    <hr
+                        className={`tw-border-t tw-m-0 tw-w-full ${styleMap[style]}`}
+                        style={{ borderTopColor: color }}
+                        data-test-id="divider-line"
+                    />
+                </div>
             )}
-        </div>
+        </>
     );
 };
 Divider.displayName = 'FondueDivider';

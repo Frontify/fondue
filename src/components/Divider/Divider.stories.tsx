@@ -44,4 +44,22 @@ export default {
     },
 } as Meta;
 
-export const Divider: StoryFn<DividerProps> = (args: DividerProps) => <DividerComponent {...args} />;
+export const Divider: StoryFn<DividerProps> = (args: DividerProps) => {
+    if (args.vertical) {
+        return (
+            <div className="tw-flex tw-flex-row">
+                <div>Test content</div>
+                <DividerComponent {...args} />
+                <div>Test content</div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="tw-flex tw-flex-col">
+            <div>Test content</div>
+            <DividerComponent {...args} />
+            <div>Test content</div>
+        </div>
+    );
+};
