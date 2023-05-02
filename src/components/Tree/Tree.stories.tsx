@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Meta } from '@storybook/react';
+import { action } from '@storybook/addon-actions';
 
 import { IconDocument } from '@foundation/Icon';
 
@@ -44,19 +45,19 @@ const CustomTreeItem = ({ label, contentComponent, nodes, ...otherProps }: TreeI
     const customLabel = `${label} CUSTOM`;
 
     return (
-        <TreeItem label={customLabel} {...otherProps}>
+        <TreeItem label={customLabel} {...otherProps} onDrop={action('onDrop')}>
             {nodes?.map((node) => renderCustomTreeItem({ ...node, nodes: node.nodes }))}
         </TreeItem>
     );
 };
 
 const renderCustomTreeItem = ({ id, ...treeItem }: TreeItemMock) => {
-    return <CustomTreeItem key={`${id}-custom`} id={`${id}-custom`} {...treeItem} />;
+    return <CustomTreeItem key={`${id}-custom`} id={`${id}-custom`} onDrop={action('onDrop')} {...treeItem} />;
 };
 
 const renderTreeItemLabel = ({ nodes, ...treeItem }: TreeItemMock) => {
     return (
-        <TreeItem {...treeItem} key={treeItem.id}>
+        <TreeItem {...treeItem} key={treeItem.id} onDrop={action('onDrop')}>
             {nodes?.map((node) => renderTreeItemLabel({ ...node, nodes: node.nodes }))}
         </TreeItem>
     );
@@ -67,6 +68,7 @@ const renderTreeItemComponent = ({ nodes, label, ...treeItem }: TreeItemMock) =>
         {...treeItem}
         key={treeItem.id}
         contentComponent={<TreeItemContentComponent title={label || 'NO TITLE'} />}
+        onDrop={action('onDrop')}
     >
         {nodes?.map(renderTreeItemComponent)}
     </TreeItem>

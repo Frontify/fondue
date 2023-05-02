@@ -11,21 +11,12 @@ function IconBell12(props: GeneratedIconProps): React.ReactElement<GeneratedIcon
             name="IconBell12"
             {...props}
         >
-            <g fill="none">
-                <g clipPath="url(#prefix__a)">
-                    <path
-                        fill="currentColor"
-                        fillRule="evenodd"
-                        d="M5 1a1 1 0 0 1 2 0v.626c1.725.444 3 2.01 3 3.874V10h.5a.5.5 0 0 1 0 1H7a1 1 0 1 1-2 0H1.5a.5.5 0 0 1 0-1H2V5.5a4.002 4.002 0 0 1 3-3.874V1Zm1 9h3V5.5a3 3 0 0 0-6 0V10h3Z"
-                        clipRule="evenodd"
-                    />
-                </g>
-                <defs>
-                    <clipPath id="prefix__a">
-                        <path fill="#fff" d="M0 0h12v12H0z" />
-                    </clipPath>
-                </defs>
-            </g>
+            <path
+                fill="currentColor"
+                fillRule="evenodd"
+                d="M5 1a1 1 0 0 1 2 0v.626c1.725.444 3 2.01 3 3.874V10h.5a.5.5 0 0 1 0 1H7a1 1 0 1 1-2 0H1.5a.5.5 0 0 1 0-1H2V5.5a4.002 4.002 0 0 1 3-3.874V1Zm1 9h3V5.5a3 3 0 0 0-6 0V10h3Z"
+                clipRule="evenodd"
+            />
         </svg>
     );
 }

@@ -11,21 +11,12 @@ function IconExclamationMark12(props: GeneratedIconProps): React.ReactElement<Ge
             name="IconExclamationMark12"
             {...props}
         >
-            <g fill="none">
-                <g clipPath="url(#prefix__a)">
-                    <path
-                        fill="currentColor"
-                        fillRule="evenodd"
-                        d="M5.5 1v7a.5.5 0 0 0 1 0V1a.5.5 0 0 0-1 0ZM6 11.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
-                        clipRule="evenodd"
-                    />
-                </g>
-                <defs>
-                    <clipPath id="prefix__a">
-                        <path fill="#fff" d="M0 0h12v12H0z" />
-                    </clipPath>
-                </defs>
-            </g>
+            <path
+                fill="currentColor"
+                fillRule="evenodd"
+                d="M5.5 1v7a.5.5 0 0 0 1 0V1a.5.5 0 0 0-1 0ZM6 11.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                clipRule="evenodd"
+            />
         </svg>
     );
 }
