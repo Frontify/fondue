@@ -2,13 +2,17 @@
 
 import React, { ReactElement, ReactNode } from 'react';
 import { Meta, StoryFn } from '@storybook/react';
-import { Stack as StackComponent, StackProps } from './Stack';
+import { STACK_PROPS, Stack as StackComponent } from './Stack';
 import { SPACING_VALUES } from '@utilities/dimensions';
 import { BOX_BG_ALIAS_TOKENS_CLASSES, BOX_TEXT_ALIAS_TOKENS_CLASSES } from '@utilities/tokens';
 import { Box } from '@components/Box';
 import { Divider } from '@components/Divider';
 
 const StackDirections = ['row', 'column', 'row-reverse', 'column-reverse'];
+
+const StackItem = () => {
+    return <Box as="span">Test content</Box>;
+};
 
 export default {
     title: 'Layout/Stack',
@@ -43,7 +47,7 @@ export default {
         },
         direction: {
             options: StackDirections,
-            control: { type: 'radio' },
+            control: { type: 'select' },
         },
         spacing: {
             options: SPACING_VALUES,
@@ -59,18 +63,39 @@ export default {
         padding: 12,
         direction: 'column',
         spacing: 8,
-        divider: <Divider />,
+        divider: <Divider height={'0px'} />,
         'data-test-id': 'custom-test-id',
-        children: <span>Item</span>,
     },
-} as Meta<StackProps>;
+} as Meta<STACK_PROPS>;
 
 const Code = ({ children }: { children: ReactNode }): ReactElement => (
     <code className="tw-bg-box-neutral tw-rounded tw-px-2 tw-text-box-neutral-inverse tw-text-s">{children}</code>
 );
 
-export const Stack: StoryFn<StackProps> = (args: StackProps) => <StackComponent {...args} />;
-export const StackWithBoxAliasToken: StoryFn<StackProps> = (args: StackProps) => (
+const StackComponentWithItems = (args: STACK_PROPS) => {
+    return (
+        <StackComponent {...args}>
+            <StackItem />
+            <StackItem />
+            <StackItem />
+            <StackItem />
+        </StackComponent>
+    );
+};
+
+export const Stack: StoryFn<STACK_PROPS> = (args: STACK_PROPS) => {
+    if (args.direction === 'column' || args.direction === 'column-reverse') {
+        return <StackComponentWithItems {...args} divider={<Divider height={'0px'} />} />;
+    }
+
+    if (args.direction === 'row' || args.direction === 'row-reverse') {
+        return <StackComponentWithItems {...args} divider={<Divider height={'0px'} vertical />} />;
+    }
+
+    return <StackComponentWithItems {...args} />;
+};
+
+export const StackWithBoxAliasToken: StoryFn<STACK_PROPS> = (args: STACK_PROPS) => (
     <StackComponent {...args}>
         <p>
             This is a full width container with bg and color{' '}
@@ -88,7 +113,7 @@ StackWithBoxAliasToken.args = {
     bg: 'tw-bg-box-neutral',
 };
 
-export const StackAsSpanElement: StoryFn<StackProps> = (args: StackProps) => (
+export const StackAsSpanElement: StoryFn<STACK_PROPS> = (args: STACK_PROPS) => (
     <Box as="span" className="tw-flex">
         <StackComponent {...args} bg="tw-bg-box-positive" color="tw-text-box-positive-inverse">
             <Box as="span">

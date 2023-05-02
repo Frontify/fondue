@@ -6,11 +6,11 @@ import { MARGIN_VALUES_MAP, PADDING_VALUES_MAP, SPACING_VALUES, SpacingValue } f
 import { merge } from '@utilities/merge';
 import { ContainerHTMLElement } from 'src/types/elements';
 
-export type StackDirection = 'row' | 'column' | 'row-reverse' | 'column-reverse';
+export type STACK_DIRECTION = 'row' | 'column' | 'row-reverse' | 'column-reverse';
 
-export type StackProps = {
-    children?: ReactNode | ReactNode[];
-    direction?: StackDirection;
+export type STACK_PROPS = {
+    children?: ReactNode | ReactNode[] | JSX.Element;
+    direction?: STACK_DIRECTION;
     spacing?: SpacingValue;
     divider?: ReactElement;
     margin?: SpacingValue;
@@ -21,18 +21,18 @@ export type StackProps = {
     as?: ContainerHTMLElement;
 };
 
-export const stackDirectionMapping = {
+export const STACK_DIRECTION_MAPPING = {
     row: 'tw-flex-row',
     column: 'tw-flex-col',
     'row-reverse': 'tw-flex-row-reverse',
     'column-reverse': 'tw-flex-col-reverse',
 };
 
-export const CONTAINER_TEST_ID = 'fondue-container';
+export const STACK_TEST_ID = 'fondue-stack';
 
 export const Stack = ({
     children,
-    'data-test-id': dataTestId = CONTAINER_TEST_ID,
+    'data-test-id': dataTestId = STACK_TEST_ID,
     direction = 'column',
     spacing = 4,
     divider,
@@ -41,27 +41,18 @@ export const Stack = ({
     bg,
     color,
     as: ContainerElement = 'div',
-}: StackProps) => {
+}: STACK_PROPS) => {
     const paddingClassName = SPACING_VALUES.includes(padding) ? PADDING_VALUES_MAP[padding] : PADDING_VALUES_MAP[0];
     const marginClassName = SPACING_VALUES.includes(padding) ? MARGIN_VALUES_MAP[margin] : MARGIN_VALUES_MAP[0];
-    const directionClassName = stackDirectionMapping[direction]
-        ? stackDirectionMapping[direction]
-        : stackDirectionMapping['row'];
+    const directionClassName = STACK_DIRECTION_MAPPING[direction]
+        ? STACK_DIRECTION_MAPPING[direction]
+        : STACK_DIRECTION_MAPPING['row'];
 
     const renderedChildren = React.Children.map(children, (child) => {
         return (
             <>
-                <div
-                    data-test-id="fondue-stack-item-wrapper"
-                    style={{
-                        height: 'auto',
-                        display: 'inline-flex',
-                        margin: direction === 'row' ? `0px ${spacing / 2}px` : `${spacing / 2}px 0px`,
-                    }}
-                >
-                    {child}
-                    {divider ? divider : <></>}
-                </div>
+                {child}
+                {divider ? divider : <></>}
             </>
         );
     });
@@ -69,7 +60,10 @@ export const Stack = ({
     return (
         <Box
             data-test-id={dataTestId}
-            className={merge([directionClassName, paddingClassName, marginClassName, bg, color])}
+            className={merge(['tw-flex', directionClassName, paddingClassName, marginClassName, bg, color])}
+            style={{
+                gap: spacing,
+            }}
             as={ContainerElement}
         >
             {renderedChildren}
