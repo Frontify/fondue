@@ -3,10 +3,11 @@
 import { ReactElement } from 'react';
 import { arrayMove } from '@dnd-kit/sortable';
 
-import { INDENTATION_WIDTH } from '../Tree';
+import { INDENTATION_WIDTH, ROOT_ID } from '../Tree';
+import type { InternalTreeItemProps } from '../TreeItem';
 
 export type ProjectionArgs = {
-    nodes: ReactElement[];
+    nodes: ReactElement<InternalTreeItemProps>[];
     activeId: string;
     overId: string;
     dragOffset: number;
@@ -16,6 +17,9 @@ export type Projection = {
     depth: number;
     maxDepth: number;
     minDepth: number;
+    position: number;
+    type?: string;
+    accepts?: string;
     parentId: Nullable<string>;
 };
 
@@ -36,13 +40,13 @@ export const getProjection = ({ nodes, activeId, overId, dragOffset }: Projectio
     const activeNodeIndex = nodes.findIndex(({ props }) => props.id === activeId);
 
     const activeNode = nodes[activeNodeIndex];
-    const newNode = arrayMove(nodes, activeNodeIndex, overNodeIndex);
+    const newNodes = arrayMove(nodes, activeNodeIndex, overNodeIndex);
 
-    const previousNode = newNode[overNodeIndex - 1];
-    const nextNode = newNode[overNodeIndex + 1];
+    const previousNode = newNodes[overNodeIndex - 1];
+    const nextNode = newNodes[overNodeIndex + 1];
 
     const dragDepth = getDragDepth(dragOffset);
-    const projectedDepth = activeNode?.props?.level + dragDepth;
+    const projectedDepth = (activeNode?.props?.level ?? 0) + dragDepth;
 
     const maxDepth = getMaxDepth({ previousNode });
 
@@ -57,18 +61,18 @@ export const getProjection = ({ nodes, activeId, overId, dragOffset }: Projectio
 
     const getParentId = () => {
         if (depth === 0 || !previousNode) {
-            return null;
+            return ROOT_ID;
         }
 
-        if (depth === previousNode.props.level) {
-            return previousNode.props.parentId;
+        if (previousNode.props.parentId && depth === previousNode.props.level) {
+            return previousNode.props.parentId ?? null;
         }
 
-        if (depth > previousNode.props.level) {
+        if (previousNode.props.level !== undefined && depth > previousNode.props.level) {
             return previousNode.props.id;
         }
 
-        const newParent = newNode
+        const newParent = newNodes
             .slice(0, overNodeIndex)
             .reverse()
             .find((item) => item.props.level === depth)?.props.parentId;
@@ -76,5 +80,28 @@ export const getProjection = ({ nodes, activeId, overId, dragOffset }: Projectio
         return newParent ?? null;
     };
 
-    return { depth, maxDepth, minDepth, parentId: getParentId() };
+    const parentId = getParentId();
+
+    const dropIndexInParent = nodes
+        .filter(({ props }) => props.parentId === parentId)
+        .findIndex(({ props }) => props.id === overId);
+
+    const getParent = (parentId: Nullable<string>) => {
+        if (!parentId) {
+            return null;
+        }
+        return nodes.find(({ props }) => props.id === parentId)?.props;
+    };
+
+    const parent = getParent(parentId);
+
+    return {
+        depth,
+        maxDepth,
+        minDepth,
+        parentId: parentId !== ROOT_ID ? parentId : null,
+        type: parent?.type,
+        accepts: parent?.accepts,
+        position: dropIndexInParent,
+    };
 };

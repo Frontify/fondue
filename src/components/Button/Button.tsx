@@ -49,6 +49,7 @@ export type ButtonProps = {
     solid?: boolean;
     /** @deprecated inverted can be done by wrapping the component in a className="tw-dark" */
     inverted?: boolean;
+    'data-test-id'?: string;
 };
 
 const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, ButtonProps> = (
@@ -69,6 +70,7 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
         formId,
         solid,
         inverted,
+        'data-test-id': dataTestId = 'button',
     },
     externalRef,
 ) => {
@@ -109,13 +111,13 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
 
     return (
         <button
+            data-test-id={dataTestId}
             aria-label={ariaLabel}
             aria-disabled={disabled}
             aria-describedby={ariaDescribedBy}
             ref={ref}
             className={merge([buttonClassName, inverted && 'tw-dark', isFocusVisible && FOCUS_VISIBLE_STYLE])}
             disabled={disabled}
-            data-test-id="button"
             form={formId}
             {...buttonProps}
             {...focusProps}

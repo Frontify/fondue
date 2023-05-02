@@ -47,7 +47,7 @@ describe('Tree Component', () => {
 
         cy.get(TREE_ITEM_ID).should('have.length', 3);
         cy.get(TREE_ITEM_TOGGLE_ID).first().click();
-        cy.get(TREE_ITEM_ID).should('have.length', 6);
+        cy.get(TREE_ITEM_ID).should('have.length', 8);
     });
 
     it('renders all tree items', () => {
@@ -57,7 +57,7 @@ describe('Tree Component', () => {
         cy.get(TREE_ITEM_TOGGLE_ID).eq(2).click();
         cy.get(TREE_ITEM_TOGGLE_ID).eq(1).click();
 
-        cy.get(TREE_ITEM_ID).should('have.length', 12);
+        cy.get(TREE_ITEM_ID).should('have.length', 14);
     });
 
     it('calls the onSelect callback', () => {
