@@ -40,7 +40,7 @@ export const InputLabel = ({
         <div
             className={merge([
                 'tw-inline-flex tw-leading-4 tw-items-center tw-gap-1 tw-font-sans tw-text-s tw-max-w-full tw-min-w-0 tw-flex-initial',
-                disabled ? 'tw-text-disabled' : 'tw-text-text-weak',
+                disabled ? 'tw-text-text-disabled' : 'tw-text-text-weak',
             ])}
             data-test-id="input-label-container"
         >
