@@ -40,7 +40,7 @@ export const Divider = ({
     const verticalClassNames = `tw-w-px tw-h-full tw-border-r tw-m-0 ${styleMap[style]}`;
     return (
         <>
-            {vertical ? (
+            {vertical && (
                 <div
                     className="tw-flex tw-self-stretch tw-mt-0 tw-mb-0 tw-items-center tw-justify-center"
                     style={{ width: height }}
@@ -52,7 +52,8 @@ export const Divider = ({
                         data-test-id="divider-line"
                     ></div>
                 </div>
-            ) : (
+            )}
+            {!vertical && (
                 <div className="tw-flex tw-items-center" style={{ height }} data-test-id="divider">
                     <hr
                         className={`tw-border-t tw-m-0 tw-w-full ${styleMap[style]}`}

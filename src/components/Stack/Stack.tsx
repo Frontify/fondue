@@ -52,7 +52,7 @@ export const Stack = ({
         return (
             <>
                 {child}
-                {divider ? divider : <></>}
+                {divider}
             </>
         );
     });
