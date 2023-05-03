@@ -4,7 +4,8 @@ import React from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { DialogFooter, DialogFooterProps } from './DialogFooter';
 import { ButtonEmphasis, ButtonStyle } from '@components/Button';
-import { IconCheckMark } from '@foundation/Icon';
+import { IconCheckMark } from '@foundation/Icon/Generated';
+import { action } from '@storybook/addon-actions';
 
 export default {
     title: 'Experimental/DialogFooter',
@@ -23,13 +24,13 @@ export const Default: StoryFn<DialogFooterProps> = () => {
             buttons={[
                 {
                     children: 'Cancel',
-                    onClick: () => console.log('Cancel'),
+                    onClick: () => action('click'),
                     style: ButtonStyle.Default,
                     emphasis: ButtonEmphasis.Default,
                 },
                 {
                     children: 'Confirm',
-                    onClick: () => console.log('Confirm'),
+                    onClick: () => action('click'),
                     style: ButtonStyle.Default,
                     emphasis: ButtonEmphasis.Strong,
                     icon: <IconCheckMark />,

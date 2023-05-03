@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { DialogHeader, DialogHeaderSize } from './DialogHeader';
-import { IconIcon } from '@foundation/Icon';
+import { IconIcon } from '@foundation/Icon/Generated';
 import { Badge, BadgeStyle } from '@components/Badge';
 
 const DIALOG_HEADER_SELECTOR = '[data-test-id=fondue-dialog-header]';

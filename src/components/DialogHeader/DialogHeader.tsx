@@ -4,14 +4,18 @@ import React, { ReactElement } from 'react';
 import { merge } from '@utilities/merge';
 import { IconCross } from '@foundation/Icon/Generated';
 import { Text } from '@typography/Text';
+import { Flex } from '@components/Flex';
+import { IconProps } from '@foundation/Icon';
+import { BadgeProps } from '@components/Badge';
+import { Box } from '@components/Box';
 
 export type DialogHeaderProps = {
     title: string;
     size?: DialogHeaderSize;
     collapseBottom?: boolean;
     onClose?: () => void;
-    icon?: ReactElement;
-    badge?: ReactElement;
+    icon?: ReactElement<IconProps>;
+    badge?: ReactElement<BadgeProps>;
     'data-test-id'?: string;
 };
 
@@ -30,7 +34,7 @@ export const DialogHeader = ({
     'data-test-id': dataTestId = 'fondue-dialog-header',
 }: DialogHeaderProps) => {
     return (
-        <div
+        <Box
             data-test-id={dataTestId}
             className={merge([
                 'tw-px-6 tw-flex tw-items-center tw-border-b tw-border-b-line',
@@ -38,7 +42,7 @@ export const DialogHeader = ({
                 collapseBottom && 'tw-pb-0 tw-border-none',
             ])}
         >
-            <div className="tw-flex tw-items-center" data-test-id={`${dataTestId}-title`}>
+            <Flex alignItems="center" data-test-id={`${dataTestId}-title`}>
                 {icon && (
                     <span data-test-id={`${dataTestId}-icon`} className="tw-mr-1.5">
                         {icon}
@@ -48,11 +52,11 @@ export const DialogHeader = ({
                     {title}
                 </Text>
                 {badge && (
-                    <span data-test-id={`${dataTestId}-badge`} className="tw-ml-1.5">
+                    <div data-test-id={`${dataTestId}-badge`} className="tw-ml-1.5">
                         {badge}
-                    </span>
+                    </div>
                 )}
-            </div>
+            </Flex>
             {onClose && (
                 <button
                     data-test-id={`${dataTestId}-close`}
@@ -63,7 +67,7 @@ export const DialogHeader = ({
                     <IconCross />
                 </button>
             )}
-        </div>
+        </Box>
     );
 };
 
