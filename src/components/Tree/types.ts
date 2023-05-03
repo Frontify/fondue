@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import type { FC, MutableRefObject, ReactElement, ReactNode } from 'react';
+import type { MutableRefObject, ReactElement, ReactNode } from 'react';
 import { Active, Collision, Over, Translate } from '@dnd-kit/core';
 import { useSortable } from '@dnd-kit/sortable';
 
@@ -55,6 +55,8 @@ type TreeItemBaseProps = {
     children?: ReactNode;
 
     draggable?: boolean;
+
+    showCaret?: boolean;
 };
 
 export type TreeItemWithLabelProps = {
@@ -64,7 +66,7 @@ export type TreeItemWithLabelProps = {
 
 export type TreeItemWithContentComponentProps = {
     label?: never;
-    contentComponent?: ReactNode | FC;
+    contentComponent?: ReactNode;
 } & TreeItemBaseProps;
 
 export type SortableProps = Partial<ReturnType<typeof useSortable>>;

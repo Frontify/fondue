@@ -1,16 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, {
-    cloneElement,
-    memo,
-    useCallback,
-    useEffect,
-    useLayoutEffect,
-    useMemo,
-    useReducer,
-    useRef,
-    useState,
-} from 'react';
+import React, { cloneElement, memo, useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import { enableMapSet, produce } from 'immer';
@@ -51,7 +41,7 @@ import {
     getReactNodeIdsInFlatArray,
     removeReactNodesFromFlatArray,
 } from './helpers';
-import { removeFragmentsAndEnrichChildren, sortableTreeKeyboardCoordinates } from './utils';
+import { removeFragmentsAndEnrichChildren, sortableTreeKeyboardCoordinates, useDeepCompareEffect } from './utils';
 import { TreeContext, TreeContextProps } from './TreeContext';
 
 export const ROOT_ID = '__ROOT__';
@@ -142,8 +132,8 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
                     ...draft.nodes.slice(sliceIndex),
                 ].filter(
                     (node, index, self) =>
-                        index === self.findIndex((item) => item.key === node.key) &&
-                        ((node.props.parentId === id && newNodeChildrenIds.includes(node.key)) ||
+                        index === self.findIndex((item) => item.props.id === node.props.id) &&
+                        ((node.props.parentId === id && newNodeChildrenIds.includes(node.props.id)) ||
                             node.props.parentId !== id),
                 );
 
@@ -507,7 +497,7 @@ export const Tree = memo(
             };
         }, [currentPosition, treeState]);
 
-        useLayoutEffect(() => {
+        useDeepCompareEffect(() => {
             updateTreeState({
                 type: 'REGISTER_ROOT_NODES',
                 payload: removeFragmentsAndEnrichChildren(children, { parentId: ROOT_ID, level: 0 }),
@@ -528,7 +518,7 @@ export const Tree = memo(
             });
         }, [selectedIds]);
 
-        useEffect(() => {
+        useDeepCompareEffect(() => {
             sensorContext.current = {
                 nodes: treeState.nodes,
                 offset,
@@ -556,7 +546,6 @@ export const Tree = memo(
             () =>
                 treeState.nodes.map((node) => {
                     return cloneElement(node, {
-                        ...node.props,
                         projection: node.props.id === activeId ? treeState.projection : null,
                         treeDraggable: draggable,
                         isSelected: treeState.selectedIds.has(node.props.id),

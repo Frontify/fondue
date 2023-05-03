@@ -3,3 +3,4 @@
 export * from './keyboardCoordinates';
 export * from './mocks';
 export * from './removeFragmentsAndEnrichChildren';
+export * from './useDeepCompareEffect';
