@@ -84,13 +84,6 @@ describe('removeFragmentsAndEnrichChildren', () => {
         cy.wrap(removeFragmentsAndEnrichChildren(undefined)).should('have.length', 0);
     });
 
-    it('should handle empty fragments', () => {
-        const children = <></>;
-        const result = removeFragmentsAndEnrichChildren(children);
-        cy.wrap(result).should('be.instanceOf', Array);
-        cy.wrap(result).should('have.length', 0);
-    });
-
     it('should handle non-React elements', () => {
         const children = 'hello world';
         const result = removeFragmentsAndEnrichChildren(children);

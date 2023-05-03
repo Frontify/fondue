@@ -8,6 +8,6 @@
  */
 export const toKebabCase = (name: string): string =>
     name
-        .replace(/([a-z])([A-Z])/g, '$1-$2')
-        .replace(/[\s_]+/g, '-')
+        .replaceAll(/([a-z])([A-Z])/g, '$1-$2')
+        .replaceAll(/[\s_]+/g, '-')
         .toLowerCase();

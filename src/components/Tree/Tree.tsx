@@ -15,7 +15,7 @@ import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import { enableMapSet, produce } from 'immer';
 import { createPortal } from 'react-dom';
-import { isEqual } from 'lodash-es';
+import isEqual from 'lodash-es/isEqual';
 import {
     DndContext,
     DragEndEvent,
@@ -140,7 +140,12 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
                     ...draft.nodes.slice(0, sliceIndex),
                     ...children,
                     ...draft.nodes.slice(sliceIndex),
-                ].filter((node, index, self) => index === self.findIndex((item) => item.key === node.key));
+                ].filter(
+                    (node, index, self) =>
+                        index === self.findIndex((item) => item.key === node.key) &&
+                        ((node.props.parentId === id && newNodeChildrenIds.includes(node.key)) ||
+                            node.props.parentId !== id),
+                );
 
                 draft.nodes = nodes;
             }
