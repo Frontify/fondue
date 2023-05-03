@@ -14,11 +14,11 @@ export type PopoverProps = {
 const Trigger = ({ children }: { children: ReactElement }) => {
     return children;
 };
+Trigger.displayName = 'FonduePopoverTrigger';
 
-const Content = ({ children }: { children?: ReactNode }) => {
-    // eslint-disable-next-line react/jsx-no-useless-fragment
-    return <>{children}</>;
-};
+// eslint-disable-next-line react/jsx-no-useless-fragment
+const Content = ({ children }: { children?: ReactNode }): ReactElement => <>{children}</>;
+Content.displayName = 'FonduePopoverContent';
 
 export const Popover = ({
     children,
