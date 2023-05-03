@@ -24,13 +24,13 @@ export const Default: StoryFn<DialogFooterProps> = () => {
             buttons={[
                 {
                     children: 'Cancel',
-                    onClick: () => action('click'),
+                    onClick: action('click'),
                     style: ButtonStyle.Default,
                     emphasis: ButtonEmphasis.Default,
                 },
                 {
                     children: 'Confirm',
-                    onClick: () => action('click'),
+                    onClick: action('click'),
                     style: ButtonStyle.Default,
                     emphasis: ButtonEmphasis.Strong,
                     icon: <IconCheckMark />,
