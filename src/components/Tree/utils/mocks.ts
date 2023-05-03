@@ -59,17 +59,35 @@ export const treeItemsMock: TreeItemMock[] = [
         nodes: [
             {
                 id: '1-1',
-                label: 'Uncategorizes Pages',
+                label: 'Document Category 1',
                 nodes: uncategorizedPagesMock,
+                type: 'document-category',
+                accepts: ['document-page', 'document-page-within', 'document-category'].join(', '),
             },
             {
                 id: '1-2',
-                label: 'Test Category',
+                label: 'Document Category 2',
                 nodes: testCategoryMock,
+                type: 'document-category',
+                accepts: ['document-page', 'document-page-within', 'document-category'].join(', '),
             },
             {
                 id: '1-3',
-                label: 'Test Something',
+                label: 'Document Page 1',
+                type: 'document-page',
+                accepts: 'document-page',
+            },
+            {
+                id: '1-4',
+                label: 'Document Page 2',
+                type: 'document-page',
+                accepts: 'document-page',
+            },
+            {
+                id: '1-5',
+                label: 'Document Page 3',
+                type: 'document-page',
+                accepts: 'document-page',
             },
         ],
     },
