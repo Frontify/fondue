@@ -8,10 +8,15 @@ import { BOX_BG_ALIAS_TOKENS_CLASSES, BOX_TEXT_ALIAS_TOKENS_CLASSES } from '@uti
 import { Box } from '@components/Box';
 import { Divider } from '@components/Divider';
 
-const StackDirections = ['row', 'column', 'row-reverse', 'column-reverse'];
+const STACK_DIRECTIONS = ['row', 'column', 'row-reverse', 'column-reverse'];
 
 const StackItem = () => {
     return <Box as="span">Test content</Box>;
+};
+
+const spacingSelect = {
+    options: Object.values(SPACING_VALUES),
+    control: { type: 'select' },
 };
 
 export default {
@@ -37,16 +42,10 @@ export default {
                 type: 'select',
             },
         },
-        margin: {
-            options: Object.values(SPACING_VALUES),
-            control: { type: 'select' },
-        },
-        padding: {
-            options: Object.values(SPACING_VALUES),
-            control: { type: 'select' },
-        },
+        margin: spacingSelect,
+        padding: spacingSelect,
         direction: {
-            options: StackDirections,
+            options: STACK_DIRECTIONS,
             control: { type: 'select' },
         },
         spacing: {
