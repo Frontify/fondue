@@ -75,7 +75,7 @@ export const DatePicker = forwardRef<ReactDatePicker<never, boolean>, DatePicker
             maxDate,
             validation = Validation.Default,
             customTrigger,
-            children = <></>,
+            children,
             hasPopperArrow = true,
             preventOpenOnFocus = false,
             filterDate = () => true,
@@ -108,7 +108,7 @@ export const DatePicker = forwardRef<ReactDatePicker<never, boolean>, DatePicker
                     onChange={onChange}
                     onKeyDown={onKeyDown}
                     onBlur={onBlur}
-                    selectsRange={variant === 'range' ? true : false}
+                    selectsRange={variant === 'range'}
                     showPopperArrow={hasPopperArrow}
                     preventOpenOnFocus={preventOpenOnFocus}
                     filterDate={filterDate}
