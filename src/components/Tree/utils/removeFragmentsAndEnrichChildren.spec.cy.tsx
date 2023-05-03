@@ -84,7 +84,7 @@ describe('removeFragmentsAndEnrichChildren', () => {
         cy.wrap(removeFragmentsAndEnrichChildren(undefined)).should('have.length', 0);
     });
 
-    it('should handle empty fragments', () => {
+    it('should handle nullable children', () => {
         const children = null;
         const result = removeFragmentsAndEnrichChildren(children);
         cy.wrap(result).should('be.instanceOf', Array);
