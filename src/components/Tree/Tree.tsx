@@ -620,7 +620,10 @@ export const Tree = memo(
                         onDragMove={handleDragMove}
                         onDragStart={handleDragStart}
                         onDragCancel={handleDragCancel}
-                        accessibility={{ announcements }}
+                        accessibility={{
+                            announcements,
+                            container: document.getElementById(id)?.parentElement ?? document.body,
+                        }}
                         collisionDetection={closestCenter}
                     >
                         <SortableContext items={items} strategy={verticalListSortingStrategy}>

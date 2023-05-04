@@ -15,6 +15,7 @@ export const DragHandle = forwardRef(
     ({ active, className, ...props }: DragHandleProps, ref: React.ForwardedRef<HTMLButtonElement>) => {
         return (
             <button
+                aria-labelledby="DraggableLabel"
                 {...props}
                 ref={ref}
                 className={merge([
