@@ -107,8 +107,13 @@ export const TreeItem = memo(
                     return;
                 }
 
-                if (isActive && over && canDrop) {
-                    onDrop?.({ id: active.id, parentId: projection.parentId, sort: projection.position });
+                if (isActive && over && canDrop && onDrop) {
+                    onDrop({
+                        id: active.id,
+                        parentId: projection.parentId,
+                        sort: projection.position,
+                        parentType: projection.type,
+                    });
                 }
             },
             [canDrop, isActive, onDrop, projection],

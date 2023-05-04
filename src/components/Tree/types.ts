@@ -14,7 +14,12 @@ export type SensorContext = MutableRefObject<{
 
 export type OnSelectCallback = (id: string) => void;
 export type OnExpandCallback = (id: string) => void;
-export type OnTreeDropCallback = (args: { id: string; parentId: Nullable<string>; sort: number }) => void;
+export type OnTreeDropCallback = (args: {
+    id: string;
+    parentId: Nullable<string>;
+    sort: number;
+    parentType?: string;
+}) => void;
 
 export type TreeProps = {
     id: string;
