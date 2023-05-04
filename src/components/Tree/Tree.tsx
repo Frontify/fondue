@@ -1,16 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, {
-    cloneElement,
-    memo,
-    useCallback,
-    useEffect,
-    useLayoutEffect,
-    useMemo,
-    useReducer,
-    useRef,
-    useState,
-} from 'react';
+import React, { cloneElement, memo, useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import { enableMapSet, produce } from 'immer';
@@ -51,7 +41,7 @@ import {
     getReactNodeIdsInFlatArray,
     removeReactNodesFromFlatArray,
 } from './helpers';
-import { removeFragmentsAndEnrichChildren, sortableTreeKeyboardCoordinates } from './utils';
+import { removeFragmentsAndEnrichChildren, sortableTreeKeyboardCoordinates, useDeepCompareEffect } from './utils';
 import { TreeContext, TreeContextProps } from './TreeContext';
 
 export const ROOT_ID = '__ROOT__';
@@ -83,14 +73,17 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
             }
             break;
 
-        case 'SET_EXPAND':
+        case 'EXPAND_NODE':
+            {
+                const newExpanded = new Set(draft.expandedIds).add(action.payload);
+                draft.expandedIds = newExpanded;
+            }
+            break;
+
+        case 'SHRINK_NODE':
             {
                 const newExpanded = new Set(draft.expandedIds);
-
-                const isExpanded = !draft.expandedIds.has(action.payload);
-
-                isExpanded ? newExpanded.add(action.payload) : newExpanded.delete(action.payload);
-
+                newExpanded.delete(action.payload);
                 draft.expandedIds = newExpanded;
             }
             break;
@@ -142,8 +135,8 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
                     ...draft.nodes.slice(sliceIndex),
                 ].filter(
                     (node, index, self) =>
-                        index === self.findIndex((item) => item.key === node.key) &&
-                        ((node.props.parentId === id && newNodeChildrenIds.includes(node.key)) ||
+                        index === self.findIndex((item) => item.props.id === node.props.id) &&
+                        ((node.props.parentId === id && newNodeChildrenIds.includes(node.props.id)) ||
                             node.props.parentId !== id),
                 );
 
@@ -196,6 +189,7 @@ export const Tree = memo(
         onDrop,
         onSelect,
         onExpand,
+        onShrink,
         children,
         selectedIds,
         expandedIds,
@@ -286,11 +280,25 @@ export const Tree = memo(
                 }
 
                 updateTreeState({
-                    type: 'SET_EXPAND',
+                    type: 'EXPAND_NODE',
                     payload: id,
                 });
             },
             [onExpand],
+        );
+
+        const handleShrink = useCallback(
+            (id: string) => {
+                if (onShrink) {
+                    return onShrink(id);
+                }
+
+                updateTreeState({
+                    type: 'SHRINK_NODE',
+                    payload: id,
+                });
+            },
+            [onShrink],
         );
 
         const handleDragEnd = useCallback(
@@ -507,7 +515,7 @@ export const Tree = memo(
             };
         }, [currentPosition, treeState]);
 
-        useLayoutEffect(() => {
+        useDeepCompareEffect(() => {
             updateTreeState({
                 type: 'REGISTER_ROOT_NODES',
                 payload: removeFragmentsAndEnrichChildren(children, { parentId: ROOT_ID, level: 0 }),
@@ -528,7 +536,7 @@ export const Tree = memo(
             });
         }, [selectedIds]);
 
-        useEffect(() => {
+        useDeepCompareEffect(() => {
             sensorContext.current = {
                 nodes: treeState.nodes,
                 offset,
@@ -556,7 +564,6 @@ export const Tree = memo(
             () =>
                 treeState.nodes.map((node) => {
                     return cloneElement(node, {
-                        ...node.props,
                         projection: node.props.id === activeId ? treeState.projection : null,
                         treeDraggable: draggable,
                         isSelected: treeState.selectedIds.has(node.props.id),
@@ -565,12 +572,14 @@ export const Tree = memo(
                         registerNodeChildren,
                         unregisterNodeChildren,
                         onExpand: handleExpand,
+                        onShrink: handleShrink,
                         onSelect: handleSelect,
                     });
                 }),
             [
                 draggable,
                 handleExpand,
+                handleShrink,
                 handleSelect,
                 activeId,
                 registerNodeChildren,
@@ -588,8 +597,9 @@ export const Tree = memo(
                 treeState,
                 onSelect: handleSelect,
                 onExpand: handleExpand,
+                onShrink: handleShrink,
             }),
-            [treeState, handleSelect, handleExpand],
+            [treeState, handleSelect, handleExpand, handleShrink],
         );
 
         return (

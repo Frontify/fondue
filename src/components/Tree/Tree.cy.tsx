@@ -60,7 +60,7 @@ describe('Tree Component', () => {
         cy.get(TREE_ITEM_ID).should('have.length', 14);
     });
 
-    it('calls the onSelect callback', () => {
+    it('calls the Tree `onSelect` callback', () => {
         const onSelectStub = cy.stub().as('onSelectStub');
         cy.mount(<TreeComponent onSelect={onSelectStub} />);
 
