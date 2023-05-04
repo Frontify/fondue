@@ -34,7 +34,7 @@ type DefaultItemProps = {
     imgSrc?: string;
 };
 
-export const DefaultItem = ({ label, value, avatar = <></>, imgSrc, isChecked = false }: DefaultItemProps) => {
+export const DefaultItem = ({ label, value, avatar, imgSrc, isChecked = false }: DefaultItemProps) => {
     return (
         <div
             className={`tw-flex tw-items-center tw-justify-between tw-min-w-[18rem] ${
@@ -88,10 +88,10 @@ export const OptionalItems = ({ checkboxes, index }: OptionalItemsProps) => {
     const hasNextValue = checkboxes[index + 1] && !isNextItemDivider;
 
     if (isCategory) {
-        return !hasNextValue ? <></> : <CategoryItem key={value} label={label} />;
+        return !hasNextValue ? null : <CategoryItem key={value} label={label} />;
     }
     if (isDivider) {
-        return isPrevItemCategory || !hasItemAfterCategory ? <></> : <DividerItem key={value + index} />;
+        return isPrevItemCategory || !hasItemAfterCategory ? null : <DividerItem key={value + index} />;
     }
     return null;
 };
