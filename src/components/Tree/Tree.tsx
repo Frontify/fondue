@@ -73,14 +73,17 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
             }
             break;
 
-        case 'SET_EXPAND':
+        case 'EXPAND_NODE':
+            {
+                const newExpanded = new Set(draft.expandedIds).add(action.payload);
+                draft.expandedIds = newExpanded;
+            }
+            break;
+
+        case 'SHRINK_NODE':
             {
                 const newExpanded = new Set(draft.expandedIds);
-
-                const isExpanded = !draft.expandedIds.has(action.payload);
-
-                isExpanded ? newExpanded.add(action.payload) : newExpanded.delete(action.payload);
-
+                newExpanded.delete(action.payload);
                 draft.expandedIds = newExpanded;
             }
             break;
@@ -186,6 +189,7 @@ export const Tree = memo(
         onDrop,
         onSelect,
         onExpand,
+        onShrink,
         children,
         selectedIds,
         expandedIds,
@@ -276,11 +280,25 @@ export const Tree = memo(
                 }
 
                 updateTreeState({
-                    type: 'SET_EXPAND',
+                    type: 'EXPAND_NODE',
                     payload: id,
                 });
             },
             [onExpand],
+        );
+
+        const handleShrink = useCallback(
+            (id: string) => {
+                if (onShrink) {
+                    return onShrink(id);
+                }
+
+                updateTreeState({
+                    type: 'SHRINK_NODE',
+                    payload: id,
+                });
+            },
+            [onShrink],
         );
 
         const handleDragEnd = useCallback(
@@ -554,12 +572,14 @@ export const Tree = memo(
                         registerNodeChildren,
                         unregisterNodeChildren,
                         onExpand: handleExpand,
+                        onShrink: handleShrink,
                         onSelect: handleSelect,
                     });
                 }),
             [
                 draggable,
                 handleExpand,
+                handleShrink,
                 handleSelect,
                 activeId,
                 registerNodeChildren,
@@ -577,8 +597,9 @@ export const Tree = memo(
                 treeState,
                 onSelect: handleSelect,
                 onExpand: handleExpand,
+                onShrink: handleShrink,
             }),
-            [treeState, handleSelect, handleExpand],
+            [treeState, handleSelect, handleExpand, handleShrink],
         );
 
         return (

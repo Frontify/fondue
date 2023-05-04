@@ -14,6 +14,8 @@ export type SensorContext = MutableRefObject<{
 
 export type OnSelectCallback = (id: string) => void;
 export type OnExpandCallback = (id: string) => void;
+
+export type OnShrinkCallback = (id: string) => void;
 export type OnTreeDropCallback = (args: {
     id: string;
     parentId: Nullable<string>;
@@ -31,6 +33,7 @@ export type TreeProps = {
     'data-test-id'?: string;
     onSelect?: OnSelectCallback;
     onExpand?: OnExpandCallback;
+    onShrink?: OnShrinkCallback;
     onDrop?: OnTreeDropCallback;
 };
 
@@ -95,7 +98,8 @@ export type TreeStateAction =
     | { type: 'REPLACE_STATE'; payload: TreeState }
     | { type: 'REGISTER_OVERLAY_ITEM'; payload: Overlay }
     | { type: 'SET_SELECT'; payload: string }
-    | { type: 'SET_EXPAND'; payload: string }
+    | { type: 'EXPAND_NODE'; payload: string }
+    | { type: 'SHRINK_NODE'; payload: string }
     | { type: 'SET_HIDDEN'; payload: { ids: string[]; isHidden: boolean } }
     | { type: 'SET_SELECTION_MODE'; payload: { selectionMode: TreeState['selectionMode'] } }
     | { type: 'SET_PROJECTION'; payload: Nullable<Projection> }

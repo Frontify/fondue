@@ -36,6 +36,7 @@ type TreeItemPrivateProps = {
     treeDraggable?: boolean;
     onSelect?: (id: string) => void;
     onExpand?: (id: string) => void;
+    onShrink?: (id: string) => void;
     projection?: Nullable<Projection>;
     registerOverlay?: (overlay: Overlay) => void;
     unregisterNodeChildren?: (payload: string) => void;
@@ -63,6 +64,7 @@ export const TreeItem = memo(
         projection,
         onSelect,
         onExpand,
+        onShrink,
         registerOverlay,
         registerNodeChildren,
         unregisterNodeChildren,
@@ -130,7 +132,7 @@ export const TreeItem = memo(
         });
 
         const handleSelect = useCallback(
-            (event: MouseEvent<HTMLElement, globalThis.MouseEvent>) => {
+            (event: MouseEvent<HTMLElement>) => {
                 event.stopPropagation();
 
                 onSelect?.(id);
@@ -138,11 +140,13 @@ export const TreeItem = memo(
             [id, onSelect],
         );
 
-        const handleExpand = (event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
-            event.stopPropagation();
-
-            onExpand?.(id);
-        };
+        const toggleExpand = useCallback(
+            (event: MouseEvent<HTMLButtonElement>) => {
+                event.stopPropagation();
+                isExpanded ? onShrink?.(id) : onExpand?.(id);
+            },
+            [id, isExpanded, onExpand, onShrink],
+        );
 
         const isParentActive = parentId && active?.id === parentId;
 
@@ -259,7 +263,7 @@ export const TreeItem = memo(
 
                     <ExpandButton
                         active={isSelected}
-                        onClick={handleExpand}
+                        onClick={toggleExpand}
                         expanded={showChildren}
                         disabled={!showExpandButton}
                         aria-hidden={!showExpandButton}
