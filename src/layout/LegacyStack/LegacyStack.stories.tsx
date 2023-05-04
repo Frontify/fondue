@@ -25,7 +25,7 @@ const Placeholder = ({
 );
 
 export default {
-    title: 'Layout/LegacyStack',
+    title: 'Deprecated/LegacyStack',
     component: LegacyStack,
     argTypes: {
         children: {
