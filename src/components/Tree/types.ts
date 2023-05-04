@@ -4,7 +4,7 @@ import type { MutableRefObject, ReactElement, ReactNode } from 'react';
 import { Active, Collision, Over, Translate } from '@dnd-kit/core';
 import { useSortable } from '@dnd-kit/sortable';
 
-import { type Overlay } from './TreeItem';
+import { InternalTreeItemProps, type Overlay } from './TreeItem';
 import { type Projection } from './helpers';
 
 export type SensorContext = MutableRefObject<{
@@ -90,7 +90,7 @@ export type TreeState = {
     expandedIds: Set<string>;
     selectionMode: 'single' | 'multiselect';
     overlay?: Overlay;
-    nodes: ReactElement[];
+    nodes: ReactElement<InternalTreeItemProps>[];
     projection: Nullable<Projection>;
 };
 

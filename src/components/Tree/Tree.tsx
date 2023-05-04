@@ -129,16 +129,13 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
                     return;
                 }
 
+                const offset = draft.nodes.findLastIndex((node) => node.props.parentId === id) - sliceIndex;
+
                 const nodes = [
                     ...draft.nodes.slice(0, sliceIndex),
                     ...children,
-                    ...draft.nodes.slice(sliceIndex),
-                ].filter(
-                    (node, index, self) =>
-                        index === self.findIndex((item) => item.props.id === node.props.id) &&
-                        ((node.props.parentId === id && newNodeChildrenIds.includes(node.props.id)) ||
-                            node.props.parentId !== id),
-                );
+                    ...draft.nodes.slice(sliceIndex + offset),
+                ];
 
                 draft.nodes = nodes;
             }
