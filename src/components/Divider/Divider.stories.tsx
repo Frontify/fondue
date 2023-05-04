@@ -3,6 +3,7 @@
 import { Meta, StoryFn } from '@storybook/react';
 import React from 'react';
 import { Divider as DividerComponent, DividerHeight, DividerProps, DividerStyle } from './Divider';
+import { Flex } from '@components/Flex';
 
 export default {
     title: 'Components/Divider',
@@ -47,11 +48,11 @@ export default {
 export const Divider: StoryFn<DividerProps> = (args: DividerProps) => {
     if (args.vertical) {
         return (
-            <div className="tw-flex tw-flex-row">
+            <Flex direction="row">
                 <div>Test content</div>
                 <DividerComponent {...args} />
                 <div>Test content</div>
-            </div>
+            </Flex>
         );
     }
 
