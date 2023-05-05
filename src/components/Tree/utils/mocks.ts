@@ -104,17 +104,20 @@ export const treeItemsMock: TreeItemMock[] = [
         id: '1',
         label: 'Design System Testing - Deep Nested Items',
         type: 'document',
+        accepts: 'document',
         nodes: testGroupMock,
     },
     {
         id: '2',
         label: 'Design System Testing - Root Childless',
         type: 'document',
+        accepts: 'document',
     },
     {
         id: '3',
         label: 'Design System Testing - Not draggable',
         type: 'document',
+        accepts: 'document',
         draggable: false,
     },
 ];
