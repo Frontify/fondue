@@ -3,7 +3,7 @@
 import React from 'react';
 
 import { OnTreeDropCallback, Tree, TreeItem } from '@components/Tree';
-import { treeItemsMock } from '@components/Tree/utils';
+import { TreeItemMock, treeItemsMock } from '@components/Tree/utils';
 
 const TreeComponent = ({
     onSelect,
@@ -164,5 +164,33 @@ describe('Tree component with controlled onDrop', () => {
             .realPress('Space');
 
         cy.get('@onDropStub').should('have.been.calledOnce');
+    });
+});
+
+describe('Adding / Removing item dynamically', () => {
+    it('Allow adding an item dynamically to the Tree', () => {
+        const newNode: TreeItemMock = {
+            id: '4',
+            label: 'New Added Item',
+        };
+        const rootItemsLength = treeItemsMock.length;
+
+        cy.mount(<TreeComponent />).then(({ rerender }) => {
+            cy.get(TREE_ITEM_ID).should('have.length', rootItemsLength);
+            treeItemsMock.push(newNode);
+            rerender(<TreeComponent />);
+            cy.get(TREE_ITEM_ID).should('have.length', rootItemsLength + 1);
+        });
+    });
+
+    it('Allow removing an item dynamically to the Tree', () => {
+        const rootItemsLength = treeItemsMock.length;
+
+        cy.mount(<TreeComponent />).then(({ rerender }) => {
+            cy.get(TREE_ITEM_ID).should('have.length', rootItemsLength);
+            treeItemsMock.pop();
+            rerender(<TreeComponent />);
+            cy.get(TREE_ITEM_ID).should('have.length', rootItemsLength - 1);
+        });
     });
 });
