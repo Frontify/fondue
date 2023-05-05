@@ -23,6 +23,7 @@ export const DragHandle = forwardRef(
                     active && 'tw-opacity-100 tw-text-white',
                     className,
                 ])}
+                data-test-id="tree-item-drag-handle"
             >
                 <IconGrabHandle12 />
             </button>
