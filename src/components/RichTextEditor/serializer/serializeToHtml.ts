@@ -2,12 +2,13 @@
 
 import { TDescendant } from '@udecode/plate';
 import { CSSProperties } from 'react';
-import { MentionableItems, mapMentionable } from '../Plugins/MentionPlugin';
-import { DesignTokens } from '../types';
+import { mapMentionable } from '../Plugins/MentionPlugin/helpers';
 import { defaultDesignTokens } from '../utils/defaultDesignTokens';
 import { parseRawValue } from '../utils/parseRawValue';
 import { serializeNodeToHtmlRecursive } from './utils/serializeNodeToHtmlRecursive';
 import { setDefaultDesignTokensIfNull } from './utils/setDefaultDesignTokensIfNull';
+import type { MentionableItems } from '../Plugins/MentionPlugin';
+import type { DesignTokens } from '../types';
 
 export const serializeRawToHtml = (
     raw: string,
