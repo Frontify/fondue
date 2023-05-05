@@ -8,10 +8,8 @@ export const findLastIndexByParentId = (nodes: ReactElement[], parentId: string)
     return nodes.findLastIndex((node) => node.props.parentId === parentId);
 };
 
-export const getNodeChildrenIds = (nodes: ReactElement[], nodeIndex: number, id: string) => {
-    const lastChildIndex = findLastIndexByParentId(nodes, id);
-
-    return nodes.slice(nodeIndex + 1, lastChildIndex - nodeIndex).map((node) => node.props.id as string);
+export const getNodeChildrenIds = (nodes: ReactElement[], id: string) => {
+    return nodes.filter((node) => node.props.parentId === id).map((node) => node.props.id as string);
 };
 
 export const updateNodesWithNewChildren = (

@@ -131,7 +131,7 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
                     return;
                 }
 
-                const currentChildrenIds = getNodeChildrenIds(draft.nodes, nodeIndex, id);
+                const currentChildrenIds = getNodeChildrenIds(draft.nodes, id);
 
                 const newChildrenIds = children.map((node) => node.props.id as string);
 
