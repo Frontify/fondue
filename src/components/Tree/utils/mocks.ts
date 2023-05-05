@@ -122,5 +122,6 @@ export const treeItemsMock: TreeItemMock[] = [
         label: 'Design System Testing - Not draggable',
         type: 'level-0-item',
         accepts: 'level-0-item',
+        draggable: false,
     },
 ];

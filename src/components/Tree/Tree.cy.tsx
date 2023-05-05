@@ -150,7 +150,23 @@ describe('Tree component with controlled onExpand and onShrink', () => {
 });
 
 describe('Tree component with controlled onDrop', () => {
-    it('calls onDrop on the Tree', () => {
+    it('calls onDrop with mouse on the Tree', () => {
+        const onDropStub = cy.stub().as('onDropStub');
+
+        cy.mount(<TreeComponent draggable onDrop={onDropStub} />);
+
+        cy.get(TREE_ITEM_ID)
+            .eq(0)
+            .click()
+            .find(TREE_ITEM_DRAG_HANDLE_ID)
+            .realMouseDown()
+            .realMouseMove(40, 40)
+            .realMouseUp();
+
+        cy.get('@onDropStub').should('have.been.calledOnce');
+    });
+
+    it('calls onDrop on the Tree with keyboard', () => {
         const onDropStub = cy.stub().as('onDropStub');
 
         cy.mount(<TreeComponent draggable onDrop={onDropStub} />);
