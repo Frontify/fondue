@@ -47,13 +47,12 @@ import type {
 import { type Overlay, TreeItemOverlay } from './TreeItem';
 import {
     findIndexById,
-    findLastIndexByParentId,
     getMovementAnnouncement,
     getNodeChildrenIds,
     getProjection,
     getReactNodeIdsInFlatArray,
     removeReactNodesFromFlatArray,
-    updateNodesWithNewChildren,
+    updateNodeWithNewChildren,
 } from './helpers';
 import { removeFragmentsAndEnrichChildren, sortableTreeKeyboardCoordinates, useDeepCompareEffect } from './utils';
 import { TreeContext, TreeContextProps } from './TreeContext';
@@ -122,28 +121,24 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
 
         case 'REGISTER_NODE_CHILDREN':
             {
-                const { id, children } = action.payload;
+                const { id: parentId, children } = action.payload;
 
-                const nodeIndex = findIndexById(draft.nodes, id);
+                const parentNodeIndex = findIndexById(draft.nodes, parentId);
 
-                if (nodeIndex === -1) {
-                    console.error(`Element with ID "${id}" not found.`);
+                if (parentNodeIndex === -1) {
+                    console.error(`Element with ID "${parentId}" not found.`);
                     return;
                 }
 
-                const currentChildrenIds = getNodeChildrenIds(draft.nodes, id);
+                const currentChildrenIds = getNodeChildrenIds(draft.nodes, parentId);
 
-                const newChildrenIds = children.map((node) => node.props.id as string);
+                const newChildrenIds = children.map((node) => node.props.id);
 
                 if (isEqual(currentChildrenIds, newChildrenIds)) {
                     return;
                 }
 
-                const offsetIndex = findLastIndexByParentId(draft.nodes, id) + 1;
-
-                const offset = offsetIndex > 0 ? offsetIndex : nodeIndex + 1;
-
-                draft.nodes = updateNodesWithNewChildren(draft.nodes, nodeIndex, children, offset);
+                draft.nodes = updateNodeWithNewChildren(draft.nodes, parentNodeIndex, children);
             }
             break;
 

@@ -103,11 +103,11 @@ export type TreeStateAction =
     | { type: 'SET_HIDDEN'; payload: { ids: string[]; isHidden: boolean } }
     | { type: 'SET_SELECTION_MODE'; payload: { selectionMode: TreeState['selectionMode'] } }
     | { type: 'SET_PROJECTION'; payload: Nullable<Projection> }
-    | { type: 'REGISTER_NODE_CHILDREN'; payload: { id: string; children: ReactElement[] } }
+    | { type: 'REGISTER_NODE_CHILDREN'; payload: { id: string; children: ReactElement<InternalTreeItemProps>[] } }
     | { type: 'UNREGISTER_NODE_CHILDREN'; payload: string }
     | { type: 'REPLACE_EXPANDED'; payload: string[] }
     | { type: 'REPLACE_SELECTED'; payload: string[] }
-    | { type: 'REGISTER_ROOT_NODES'; payload: ReactElement[] };
+    | { type: 'REGISTER_ROOT_NODES'; payload: ReactElement<InternalTreeItemProps>[] };
 
 export type RegisterNodeChildrenPayload = Extract<TreeStateAction, { type: 'REGISTER_NODE_CHILDREN' }>['payload'];
 
