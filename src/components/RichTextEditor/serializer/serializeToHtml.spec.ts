@@ -34,6 +34,21 @@ describe('serializeNodesToHtml()', () => {
         expect(serialized).to.contain('column-gap:normal');
     });
 
+    it('should serialize the html text', () => {
+        const node = [
+            {
+                type: 'p',
+                children: [
+                    {
+                        text: "<img src=x onerror='alert(123)'/>\\n",
+                    },
+                ],
+            },
+        ];
+        const serialized = serializeNodesToHtml(node);
+        expect(serialized).to.be.a('string');
+    });
+
     it('serializes an empty line to a linebreak', () => {
         const node = [
             {
