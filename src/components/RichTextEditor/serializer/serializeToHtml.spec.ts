@@ -46,7 +46,7 @@ describe('serializeNodesToHtml()', () => {
             },
         ];
         const serialized = serializeNodesToHtml(node);
-        expect(serialized).to.be.a('string');
+        expect(serialized).to.contain('&lt;img src=x onerror=&#39;alert(123)&#39;/&gt;\\n');
     });
 
     it('serializes an empty line to a linebreak', () => {
