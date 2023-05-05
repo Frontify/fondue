@@ -533,23 +533,19 @@ export const GetSerializedContent = ({
     props = { designTokens: customDesignTokens, mentionable, columns: 1, columnGap: 'normal' },
 }: {
     props: SerializeNodesToHtmlOptions;
-}): JSX.Element => {
+}): JSX.Element | null => {
     const serialized = serializeNodesToHtml(nodesToSerialize, props);
 
-    return (
+    return serialized ? (
         <>
-            {serialized ? (
-                <>
-                    Serialized:
-                    <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
-                        <code>{serialized}</code>
-                    </div>
-                    Rendered:
-                    <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
-                        <div dangerouslySetInnerHTML={{ __html: serialized }} />
-                    </div>
-                </>
-            ) : null}
+            Serialized:
+            <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
+                <code>{serialized}</code>
+            </div>
+            Rendered:
+            <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
+                <div dangerouslySetInnerHTML={{ __html: serialized }} />
+            </div>
         </>
-    );
+    ) : null;
 };

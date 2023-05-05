@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { Children, MouseEvent, memo, useCallback, useLayoutEffect, useMemo } from 'react';
+import React, { Children, MouseEvent, memo, useCallback, useMemo } from 'react';
 import { AnimateLayoutChanges, useSortable } from '@dnd-kit/sortable';
 import { useDndContext, useDndMonitor } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
-import { noop } from 'lodash-es';
+import noop from 'lodash-es/noop';
 
 import { merge } from '@utilities/merge';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
@@ -18,7 +18,7 @@ import type {
 
 import { Projection } from '../helpers';
 import { INDENTATION_WIDTH } from '../Tree';
-import { removeFragmentsAndEnrichChildren } from '../utils';
+import { removeFragmentsAndEnrichChildren, useDeepCompareEffect } from '../utils';
 
 import { DragHandle } from './DragHandle';
 import { Overlay } from './TreeItemOverlay';
@@ -36,6 +36,7 @@ type TreeItemPrivateProps = {
     treeDraggable?: boolean;
     onSelect?: (id: string) => void;
     onExpand?: (id: string) => void;
+    onShrink?: (id: string) => void;
     projection?: Nullable<Projection>;
     registerOverlay?: (overlay: Overlay) => void;
     unregisterNodeChildren?: (payload: string) => void;
@@ -52,6 +53,7 @@ export const TreeItem = memo(
         label,
         onDrop,
         accepts,
+        showCaret,
         children,
         parentId,
         level = 0,
@@ -62,6 +64,7 @@ export const TreeItem = memo(
         projection,
         onSelect,
         onExpand,
+        onShrink,
         registerOverlay,
         registerNodeChildren,
         unregisterNodeChildren,
@@ -88,13 +91,6 @@ export const TreeItem = memo(
                 (typeof over?.data?.current?.accepts === 'string' &&
                     over.data.current.accepts?.split(', ').includes(active.data.current.type)));
 
-        const computedContentComponent = useMemo(() => {
-            if (typeof contentComponent === 'function') {
-                return contentComponent({});
-            }
-            return contentComponent;
-        }, [contentComponent]);
-
         const handleItemDragEnd = useCallback(
             (event: TreeDragEndEvent) => {
                 const { over, active } = event;
@@ -107,8 +103,13 @@ export const TreeItem = memo(
                     return;
                 }
 
-                if (isActive && over && canDrop) {
-                    onDrop?.({ id: active.id, parentId: projection.parentId, sort: projection.position });
+                if (isActive && over && canDrop && onDrop) {
+                    onDrop({
+                        id: active.id,
+                        parentId: projection.parentId,
+                        sort: projection.position,
+                        parentType: projection.type,
+                    });
                 }
             },
             [canDrop, isActive, onDrop, projection],
@@ -120,9 +121,9 @@ export const TreeItem = memo(
                     return;
                 }
 
-                registerOverlay?.({ contentComponent: computedContentComponent, children, id, label, level });
+                registerOverlay?.({ contentComponent, children, id, label, level });
             },
-            [children, computedContentComponent, id, label, level, registerOverlay],
+            [children, contentComponent, id, label, level, registerOverlay],
         );
 
         useDndMonitor({
@@ -131,7 +132,7 @@ export const TreeItem = memo(
         });
 
         const handleSelect = useCallback(
-            (event: MouseEvent<HTMLElement, globalThis.MouseEvent>) => {
+            (event: MouseEvent<HTMLElement>) => {
                 event.stopPropagation();
 
                 onSelect?.(id);
@@ -139,11 +140,13 @@ export const TreeItem = memo(
             [id, onSelect],
         );
 
-        const handleExpand = (event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
-            event.stopPropagation();
-
-            onExpand?.(id);
-        };
+        const toggleExpand = useCallback(
+            (event: MouseEvent<HTMLButtonElement>) => {
+                event.stopPropagation();
+                isExpanded ? onShrink?.(id) : onExpand?.(id);
+            },
+            [id, isExpanded, onExpand, onShrink],
+        );
 
         const isParentActive = parentId && active?.id === parentId;
 
@@ -172,7 +175,7 @@ export const TreeItem = memo(
             transition: null,
         });
 
-        useLayoutEffect(() => {
+        useDeepCompareEffect(() => {
             if (Children.count(enrichedChildren) === 0) {
                 return;
             }
@@ -221,7 +224,7 @@ export const TreeItem = memo(
         const showChildren = isExpanded && !isActive;
         const showDragHandle = draggable && !isActive;
         const showLabel = label !== undefined && !isActive;
-        const showExpandButton = hasChildren && !isActive;
+        const showExpandButton = showCaret === undefined ? hasChildren && !isActive : showCaret;
 
         const style = {
             transform: CSS.Transform.toString(transform),
@@ -260,7 +263,7 @@ export const TreeItem = memo(
 
                     <ExpandButton
                         active={isSelected}
-                        onClick={handleExpand}
+                        onClick={toggleExpand}
                         expanded={showChildren}
                         disabled={!showExpandButton}
                         aria-hidden={!showExpandButton}
@@ -271,7 +274,7 @@ export const TreeItem = memo(
                         <span className="first:tw-ml-3.5 tw-w-full tw-h-full tw-flex tw-items-center">{label}</span>
                     )}
 
-                    {showContent && computedContentComponent}
+                    {showContent && contentComponent}
                 </div>
             </li>
         );
