@@ -46,10 +46,14 @@ import type {
 
 import { type Overlay, TreeItemOverlay } from './TreeItem';
 import {
+    findIndexById,
+    findLastIndexByParentId,
     getMovementAnnouncement,
+    getNodeChildrenIds,
     getProjection,
     getReactNodeIdsInFlatArray,
     removeReactNodesFromFlatArray,
+    updateNodesWithNewChildren,
 } from './helpers';
 import { removeFragmentsAndEnrichChildren, sortableTreeKeyboardCoordinates, useDeepCompareEffect } from './utils';
 import { TreeContext, TreeContextProps } from './TreeContext';
@@ -120,34 +124,26 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
             {
                 const { id, children } = action.payload;
 
-                const index = draft.nodes.findIndex((node) => node.props.id === id);
+                const nodeIndex = findIndexById(draft.nodes, id);
 
-                if (index === -1) {
+                if (nodeIndex === -1) {
                     console.error(`Element with ID "${id}" not found.`);
                     return;
                 }
 
-                const sliceIndex = index + 1;
+                const currentChildrenIds = getNodeChildrenIds(draft.nodes, nodeIndex, id);
 
-                const currentNodeChildrenIds = draft.nodes
-                    .slice(sliceIndex, children.length - 1)
-                    .map((node) => node.props.id);
+                const newChildrenIds = children.map((node) => node.props.id as string);
 
-                const newNodeChildrenIds = children.map((node) => node.props.id);
-
-                if (isEqual(currentNodeChildrenIds, newNodeChildrenIds)) {
+                if (isEqual(currentChildrenIds, newChildrenIds)) {
                     return;
                 }
 
-                const offset = draft.nodes.findLastIndex((node) => node.props.parentId === id) - sliceIndex;
+                const offsetIndex = findLastIndexByParentId(draft.nodes, id) + 1;
 
-                const nodes = [
-                    ...draft.nodes.slice(0, sliceIndex),
-                    ...children,
-                    ...draft.nodes.slice(sliceIndex + offset),
-                ];
+                const offset = offsetIndex > 0 ? offsetIndex : nodeIndex + 1;
 
-                draft.nodes = nodes;
+                draft.nodes = updateNodesWithNewChildren(draft.nodes, nodeIndex, children, offset);
             }
             break;
 
