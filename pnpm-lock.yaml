@@ -23,8 +23,8 @@ dependencies:
     specifier: 3.0.0-alpha.13
     version: 3.0.0-alpha.13(react@18.2.0)
   '@react-aria/aria-modal-polyfill':
-    specifier: 3.6.1
-    version: 3.6.1(@types/react@18.2.0)(react@18.2.0)
+    specifier: 3.7.1
+    version: 3.7.1(@types/react@18.2.0)(react@18.2.0)
   '@react-aria/breadcrumbs':
     specifier: 3.4.0
     version: 3.4.0(react@18.2.0)
@@ -2894,13 +2894,13 @@ packages:
       react: 18.2.0
     dev: false
 
-  /@react-aria/aria-modal-polyfill@3.6.1(@types/react@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-Tbcrd+ec7ygELIJuqd6w7D7xtCVw4dnp/b9rey2/7xjJ+5W92tgb5/ntIM0/jlBWesDZjVj977rPRJY/+MnBgQ==}
+  /@react-aria/aria-modal-polyfill@3.7.1(@types/react@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-wF4/dF2+C2dwqTV4bLoSa4HBTWdTFLlWoJAxidDBsVz+3D+PB6a7rnfWv527Iqll789z5nvmRUQ9A8KiTMovJA==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@babel/runtime': 7.20.13
-      '@react-types/shared': 3.16.0(react@18.2.0)
+      '@react-types/shared': 3.18.0(react@18.2.0)
+      '@swc/helpers': 0.4.14
       aria-hidden: 1.2.2(@types/react@18.2.0)(react@18.2.0)
       react: 18.2.0
     transitivePeerDependencies:
