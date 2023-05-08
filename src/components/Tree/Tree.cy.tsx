@@ -252,10 +252,10 @@ describe('Tree and TreeItem components', () => {
 
         cy.get(TREE_ITEM_TOGGLE_ID).first().click();
 
-        cy.get(TREE_ITEM_DRAG_HANDLE_ID).eq(6).realMouseDown().realMouseMove(40, -160).realMouseUp();
+        cy.get(TREE_ITEM_DRAG_HANDLE_ID).eq(6).realMouseDown().realMouseMove(40, -40).realMouseUp();
         cy.get('@onDropStub').should('not.have.been.called');
 
-        cy.get(TREE_ITEM_DRAG_HANDLE_ID).eq(6).realMouseDown().realMouseMove(40, -40).realMouseUp();
+        cy.get(TREE_ITEM_DRAG_HANDLE_ID).eq(6).realMouseDown().realMouseMove(40, -80).realMouseUp();
         cy.get('@onDropStub').should('have.been.calledOnce');
     });
 
