@@ -80,14 +80,14 @@ export const treeItemsMock: TreeItemMock[] = [
                 label: 'Document Category 1',
                 nodes: uncategorizedPagesMock,
                 type: 'level-1-item',
-                accepts: ['level-1-item'].join(', '),
+                accepts: 'level-1-item',
             },
             {
                 id: '1-2',
                 label: 'Document Category 2',
                 nodes: testCategoryMock,
                 type: 'level-1-item',
-                accepts: ['level-1-item'].join(', '),
+                accepts: 'level-1-item',
             },
             {
                 id: '1-3',
@@ -99,7 +99,7 @@ export const treeItemsMock: TreeItemMock[] = [
                 id: '1-4',
                 label: 'Document Page 2',
                 type: 'level-1-item',
-                accepts: 'level-1-item',
+                accepts: ['level-0-item', 'level-1-item'].join(', '),
             },
             {
                 id: '1-5',
@@ -109,19 +109,19 @@ export const treeItemsMock: TreeItemMock[] = [
             },
         ],
         type: 'level-0-item',
-        accepts: 'level-0-item',
+        accepts: ['level-0-item', 'level-1-item-within'].join(', '),
     },
     {
         id: '2',
         label: 'Design System Testing - Root Childless',
         type: 'level-0-item',
-        accepts: 'level-0-item',
+        accepts: ['level-0-item', 'level-1-item', 'level-1-item-within'].join(', '),
     },
     {
         id: '3',
         label: 'Design System Testing - Not draggable',
         type: 'level-0-item',
-        accepts: 'level-0-item',
+        accepts: ['level-0-item', 'level-1-item-within'].join(', '),
         draggable: false,
     },
 ];
