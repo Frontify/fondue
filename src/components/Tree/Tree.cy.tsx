@@ -25,26 +25,22 @@ const TreeComponent = ({
     return (
         <Tree
             id="treeId"
+            onDrop={onDrop}
             onSelect={onSelect}
             onExpand={onExpand}
             onShrink={onShrink}
-            onDrop={onDrop}
             selectedIds={selectedIds}
             expandedIds={expandedIds}
             draggable={draggable}
         >
-            {treeItemsMock.map((node) => (
-                <TreeItem key={node.id} id={node.id} contentComponent={<span>{node.label}</span>}>
-                    {node.nodes?.map((node) => (
-                        <TreeItem key={node.id} id={node.id} contentComponent={<span>{node.label}</span>}>
-                            {node.nodes?.map((node) => (
-                                <TreeItem key={node.id} id={node.id} contentComponent={<span>{node.label}</span>}>
-                                    {node.nodes?.map((node) => (
-                                        <TreeItem
-                                            key={node.id}
-                                            id={node.id}
-                                            contentComponent={<span>{node.label}</span>}
-                                        />
+            {treeItemsMock.map(({ nodes, ...treeItem }: TreeItemMock) => (
+                <TreeItem {...treeItem} key={treeItem.id} id={treeItem.id}>
+                    {nodes?.map(({ nodes, ...treeItem }: TreeItemMock) => (
+                        <TreeItem {...treeItem} key={treeItem.id} id={treeItem.id}>
+                            {nodes?.map(({ nodes, ...treeItem }: TreeItemMock) => (
+                                <TreeItem {...treeItem} key={treeItem.id} id={treeItem.id}>
+                                    {nodes?.map(({ nodes, ...treeItem }: TreeItemMock) => (
+                                        <TreeItem {...treeItem} key={treeItem.id} id={treeItem.id} />
                                     ))}
                                 </TreeItem>
                             ))}
@@ -62,101 +58,114 @@ const TREE_ITEM_TOGGLE_ID = '[data-test-id=tree-item-toggle]';
 const TREE_ITEM_DRAG_HANDLE_ID = '[data-test-id="tree-item-drag-handle"]';
 const TREE_ITEM_OVERLAY_ID = '[data-test-id="tree-item-overlay"]';
 
-describe('Tree component with uncontrolled onSelect', () => {
-    beforeEach(() => {
+describe('Tree and TreeItem components', () => {
+    it('renders the Tree with TreeItem correctly', () => {
+        cy.mount(<TreeComponent />);
+
+        cy.get(TREE_ID).should('be.visible');
+        cy.get(TREE_ITEM_ID).should('be.visible').should('have.length', 3);
+        cy.get(TREE_ITEM_TOGGLE_ID).first().should('be.visible');
+        cy.get(TREE_ITEM_ID).first().should('have.attr', 'aria-selected', 'false');
+    });
+
+    it('renders the a TreeItem with contentComponent correctly', () => {
         cy.mount(
-            <Tree key="tree-id" id="tree-id">
-                <TreeItem key="item-id" id="item-id" label="Tree Item" />
+            <Tree key="tree" id="tree">
+                <TreeItem
+                    key="tree-item"
+                    id="tree-item"
+                    contentComponent={
+                        <div>
+                            <button>Hello</button>
+                        </div>
+                    }
+                />
             </Tree>,
         );
+
+        cy.get(TREE_ITEM_ID).find('button').should('exist').contains('Hello');
     });
 
-    it('renders the Tree with TreeItem correctly', () => {
-        cy.get(TREE_ID).should('be.visible');
-        cy.get(TREE_ITEM_ID).should('be.visible').should('have.length', 1);
-        cy.get(TREE_ITEM_TOGGLE_ID).should('not.be.visible');
-        cy.get(TREE_ITEM_ID).should('have.attr', 'aria-selected', 'false');
-    });
+    it('selects the correct items when uncontrolled', () => {
+        cy.mount(<TreeComponent />);
 
-    it('selects the correct items', () => {
-        cy.get(TREE_ITEM_ID).click();
+        cy.get(TREE_ITEM_ID).first().click();
 
         cy.get(TREE_ITEM_ID).should('have.attr', 'aria-selected', 'true');
     });
-});
 
-describe('Tree component with uncontrolled onExpand and onShrink', () => {
-    beforeEach(() => {
-        cy.mount(
-            <Tree id="tree-id">
-                <TreeItem key="item-id" id="item-id" label="Tree Item">
-                    <TreeItem key="child-item-id" id="child-item-id" label="Child Tree Item" />
-                </TreeItem>
-            </Tree>,
-        );
-    });
-
-    it('renders the Tree with TreeItem correctly', () => {
-        cy.get(TREE_ID).should('be.visible');
-        cy.get(TREE_ITEM_ID).should('be.visible').should('have.length', 1);
-        cy.get(TREE_ITEM_TOGGLE_ID).should('be.visible');
-    });
-
-    it('expands and shrinks the correct items', () => {
-        cy.get(TREE_ITEM_TOGGLE_ID).click();
-        cy.get(TREE_ITEM_ID).should('have.length', 2);
-
-        cy.get(TREE_ITEM_TOGGLE_ID).first().click();
-        cy.get(TREE_ITEM_ID).should('have.length', 1);
-    });
-});
-
-describe('Tree component with controlled onSelect', () => {
-    beforeEach(() => {
+    it('calls the onSelect when selecting when controlled by the Tree', () => {
         const onSelectStub = cy.stub().as('onSelectStub');
 
-        cy.mount(<TreeComponent onSelect={onSelectStub} selectedIds={['2']} />);
-    });
+        cy.mount(<TreeComponent onSelect={onSelectStub} />);
 
-    it('calls onSelect on the Tree when selecting', () => {
-        cy.get(TREE_ITEM_ID).eq(0).click();
+        cy.get(TREE_ITEM_ID).first().click();
+
         cy.get('@onSelectStub').should('have.been.calledOnce');
     });
 
-    it('calls onSelect on the Tree when deselecting', () => {
-        cy.get(TREE_ITEM_ID).eq(1).click();
+    it('calls the onSelect when deselecting when controlled by the Tree', () => {
+        const onSelectStub = cy.stub().as('onSelectStub');
+
+        cy.mount(<TreeComponent onSelect={onSelectStub} selectedIds={['1']} />);
+
+        cy.get(TREE_ITEM_ID).first().click();
+
         cy.get('@onSelectStub').should('have.been.calledOnce');
     });
-});
 
-describe('Tree component with controlled onExpand and onShrink', () => {
-    it('calls onExpand on the Tree', () => {
+    it('expands/shrinks the correct items when uncontrolled', () => {
+        cy.mount(<TreeComponent />);
+
+        cy.get(TREE_ITEM_TOGGLE_ID).first().click();
+        cy.get(TREE_ITEM_ID).should('have.length', 8);
+
+        cy.get(TREE_ITEM_TOGGLE_ID).first().click();
+        cy.get(TREE_ITEM_ID).should('have.length', 3);
+    });
+
+    it('calls onExpand when controlled by the Tree', () => {
         const onExpandStub = cy.stub().as('onExpandStub');
 
         cy.mount(<TreeComponent onExpand={onExpandStub} />);
 
-        cy.get(TREE_ITEM_TOGGLE_ID).eq(0).click();
+        cy.get(TREE_ITEM_TOGGLE_ID).first().click();
         cy.get('@onExpandStub').should('have.been.calledOnce');
     });
 
-    it('calls onShrink the Tree', () => {
+    it('calls onExpand when controlled by the Tree', () => {
         const onShrinkStub = cy.stub().as('onShrinkStub');
 
-        cy.mount(<TreeComponent onShrink={onShrinkStub} expandedIds={['1']} />);
+        cy.mount(<TreeComponent onShrink={onShrinkStub} />);
 
-        cy.get(TREE_ITEM_TOGGLE_ID).eq(0).click();
+        cy.get(TREE_ITEM_TOGGLE_ID).first().click().click();
         cy.get('@onShrinkStub').should('have.been.calledOnce');
     });
-});
 
-describe('Tree component with controlled onDrop', () => {
-    it('calls onDrop with mouse on the Tree', () => {
+    it('does not show then drag handle when not draggable', () => {
+        cy.mount(<TreeComponent />);
+
+        cy.get(TREE_ITEM_ID).first().realHover();
+        cy.get(TREE_ITEM_DRAG_HANDLE_ID).should('not.be.visible');
+    });
+
+    it('shows then drag handle and allows dragging when draggable', () => {
+        cy.mount(<TreeComponent draggable />);
+
+        cy.get(TREE_ITEM_ID).first().realHover();
+        cy.get(TREE_ITEM_DRAG_HANDLE_ID).should('be.visible');
+        cy.get(TREE_ITEM_OVERLAY_ID).should('not.exist');
+        cy.get(TREE_ITEM_DRAG_HANDLE_ID).realMouseDown();
+        cy.get(TREE_ITEM_OVERLAY_ID).should('be.visible');
+    });
+
+    it('calls onDrop with mouse when controlled by the Tree', () => {
         const onDropStub = cy.stub().as('onDropStub');
 
         cy.mount(<TreeComponent draggable onDrop={onDropStub} />);
 
         cy.get(TREE_ITEM_ID)
-            .eq(0)
+            .first()
             .click()
             .find(TREE_ITEM_DRAG_HANDLE_ID)
             .realMouseDown()
@@ -166,13 +175,13 @@ describe('Tree component with controlled onDrop', () => {
         cy.get('@onDropStub').should('have.been.calledOnce');
     });
 
-    it('calls onDrop on the Tree with keyboard', () => {
+    it('calls onDrop with keyboard when controlled by the Tree', () => {
         const onDropStub = cy.stub().as('onDropStub');
 
         cy.mount(<TreeComponent draggable onDrop={onDropStub} />);
 
         cy.get(TREE_ITEM_DRAG_HANDLE_ID)
-            .eq(0)
+            .first()
             .focus()
             .realPress('Space')
             .realPress('ArrowDown')
@@ -181,10 +190,8 @@ describe('Tree component with controlled onDrop', () => {
 
         cy.get('@onDropStub').should('have.been.calledOnce');
     });
-});
 
-describe('Adding / Removing item dynamically', () => {
-    it('Allow adding an item dynamically to the Tree', () => {
+    it('allows adding an item dynamically to the Tree', () => {
         const newNode: TreeItemMock = {
             id: '4',
             label: 'New Added Item',
@@ -199,7 +206,7 @@ describe('Adding / Removing item dynamically', () => {
         });
     });
 
-    it('Allow removing an item dynamically to the Tree', () => {
+    it('allows removing an item dynamically to the Tree', () => {
         const rootItemsLength = treeItemsMock.length;
 
         cy.mount(<TreeComponent />).then(({ rerender }) => {
