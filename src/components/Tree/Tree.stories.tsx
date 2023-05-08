@@ -1,21 +1,22 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Meta } from '@storybook/react';
+import { action } from '@storybook/addon-actions';
 
-import { Tree, Tree as TreeComponent, TreeItem } from '@components/Tree';
-import { TreeNodeItem, treeNodesMock } from '@components/Tree/utils';
-import type { TreeItemProps, TreeProps } from '@components/Tree/types';
-import { IconDocument } from '@foundation/Icon/Generated';
-import { DraggableItem } from '@utilities/dnd';
+import { IconDocument } from '@foundation/Icon';
+
+import type { TreeProps } from '@components/Tree/types';
+import { TreeItem, Tree as TreeView } from '@components/Tree';
+import { type TreeItemMock, treeItemsMock } from '@components/Tree/utils';
 
 export default {
     title: 'Components/Tree',
-    component: TreeComponent,
+    component: TreeView,
     tags: ['autodocs'],
     args: {
-        id: 'treeId',
-        baseItemPadding: { top: 8, right: 10, bottom: 8, left: 10 },
+        id: 'storybook-tree',
+        draggable: true,
     },
     argTypes: {
         draggable: {
@@ -27,34 +28,10 @@ export default {
         expandedIds: {
             control: { type: 'object' },
         },
-        baseItemPadding: {
-            control: { type: 'object' },
-        },
     },
 } as Meta<TreeProps>;
 
-type TreeItemComponentProps = {
-    children?: ReactElement<TreeItemProps> | Array<ReactElement<TreeItemProps>>;
-} & DraggableItem<TreeNodeItem>;
-
-const TreeItemBasic = ({ children, ...node }: TreeItemComponentProps) => {
-    return (
-        <TreeItem
-            {...node}
-            label={undefined}
-            key={node.id}
-            contentComponent={() => <TreeItemBasicContentComponent title={node.label} />}
-        >
-            {children}
-        </TreeItem>
-    );
-};
-
-interface TreeWithBasicItemContentComponentProps {
-    title: string;
-}
-
-const TreeItemBasicContentComponent = ({ title }: TreeWithBasicItemContentComponentProps) => {
+const TreeItemContentComponent = ({ title }: { title: string }) => {
     return (
         <div className="tw-flex tw-space-x-1.5 tw-w-full">
             <span className="tw-flex tw-justify-center tw-items-center tw-w-5">{<IconDocument />}</span>
@@ -63,26 +40,62 @@ const TreeItemBasicContentComponent = ({ title }: TreeWithBasicItemContentCompon
     );
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const CustomTreeItem = ({ label, contentComponent, nodes, ...otherProps }: TreeItemMock) => {
+    const customLabel = `${label} CUSTOM`;
+
+    return (
+        <TreeItem label={customLabel} {...otherProps} onDrop={action('onDrop')}>
+            {nodes?.map((node) => renderCustomTreeItem({ ...node, nodes: node.nodes }))}
+        </TreeItem>
+    );
+};
+
+const renderCustomTreeItem = ({ id, ...treeItem }: TreeItemMock) => {
+    return <CustomTreeItem key={`${id}-custom`} id={`${id}-custom`} onDrop={action('onDrop')} {...treeItem} />;
+};
+
+const renderTreeItemLabel = ({ nodes, ...treeItem }: TreeItemMock) => {
+    return (
+        <TreeItem {...treeItem} key={treeItem.id} onDrop={action('onDrop')}>
+            {nodes?.map((node) => renderTreeItemLabel({ ...node, nodes: node.nodes }))}
+        </TreeItem>
+    );
+};
+
+const renderTreeItemComponent = ({ nodes, label, ...treeItem }: TreeItemMock) => (
+    <TreeItem
+        {...treeItem}
+        key={treeItem.id}
+        contentComponent={<TreeItemContentComponent title={label || 'NO TITLE'} />}
+        onDrop={action('onDrop')}
+    >
+        {nodes?.map(renderTreeItemComponent)}
+    </TreeItem>
+);
+
 export const TreeWithLabel = ({ ...args }: TreeProps) => {
     return (
-        <div style={{ maxWidth: '800px' }}>
-            <Tree {...args}>
-                {treeNodesMock.map((node) => (
-                    <TreeItem {...node} key={node.id}>
-                        {node.nodes?.map((node) => (
-                            <TreeItem {...node} key={node.id}>
-                                {node.nodes?.map((node) => (
-                                    <TreeItem {...node} key={node.id}>
-                                        {node.nodes?.map((node) => (
-                                            <TreeItem {...node} key={node.id} />
-                                        ))}
-                                    </TreeItem>
-                                ))}
-                            </TreeItem>
-                        ))}
-                    </TreeItem>
-                ))}
-            </Tree>
+        <div style={{ width: 800 }}>
+            <TreeView {...args}>{treeItemsMock.map(renderTreeItemLabel)}</TreeView>
+        </div>
+    );
+};
+
+export const TreeWithCustomTreeItem = ({ ...args }: TreeProps) => {
+    return (
+        <div style={{ width: 800 }}>
+            <TreeView {...args}>{treeItemsMock.map(renderCustomTreeItem)}</TreeView>
+        </div>
+    );
+};
+
+export const ScrollableTreeWithLabel = ({ ...args }: TreeProps) => {
+    return (
+        <div style={{ position: 'fixed', height: '800px', width: '800px', backgroundColor: 'white' }}>
+            <div style={{ width: '800px', height: '300px', overflow: 'auto', position: 'absolute' }}>
+                <TreeView {...args}>{treeItemsMock.map(renderTreeItemLabel)}</TreeView>
+            </div>
         </div>
     );
 };
@@ -90,23 +103,47 @@ export const TreeWithLabel = ({ ...args }: TreeProps) => {
 export const TreeWithBasicItem = ({ ...args }: TreeProps) => {
     return (
         <div style={{ maxWidth: '800px' }}>
-            <Tree {...args}>
-                {treeNodesMock.map((args) => (
-                    <TreeItemBasic key={args.id} {...args}>
-                        {args.nodes?.map((args) => (
-                            <TreeItemBasic key={args.id} {...args}>
-                                {args.nodes?.map((args) => (
-                                    <TreeItemBasic key={args.id} {...args}>
-                                        {args.nodes?.map((args) => (
-                                            <TreeItemBasic key={args.id} {...args} />
-                                        ))}
-                                    </TreeItemBasic>
-                                ))}
-                            </TreeItemBasic>
-                        ))}
-                    </TreeItemBasic>
-                ))}
-            </Tree>
+            <TreeView {...args}>{treeItemsMock.map(renderTreeItemComponent)}</TreeView>
+        </div>
+    );
+};
+
+export const TreeWithAwaitedItem = ({ ...args }: TreeProps) => {
+    const [awaitedItems, setAwaitedItems] = useState<TreeItemMock[]>([]);
+
+    useEffect(() => {
+        setTimeout(() => {
+            setAwaitedItems([
+                {
+                    id: '2-1',
+                    label: 'Document Category 2',
+                    nodes: [
+                        {
+                            id: '2-1-1',
+                            label: 'Home',
+                        },
+                        {
+                            id: '2-1-2',
+                            label: 'Members',
+                        },
+                        {
+                            id: '2-1-3',
+                            label: 'About us',
+                        },
+                    ],
+                    type: 'document-category',
+                    accepts: ['document-page', 'document-page-within', 'document-category'].join(', '),
+                },
+            ]);
+        }, 500);
+    }, []);
+
+    return (
+        <div style={{ maxWidth: '800px' }}>
+            <TreeView {...args}>
+                {treeItemsMock.map(renderTreeItemComponent)}
+                {awaitedItems.map(renderTreeItemComponent)}
+            </TreeView>
         </div>
     );
 };

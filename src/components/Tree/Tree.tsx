@@ -1,344 +1,668 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useCallback, useEffect, useMemo, useReducer } from 'react';
+import React, {
+    cloneElement,
+    isValidElement,
+    memo,
+    useCallback,
+    useEffect,
+    useMemo,
+    useReducer,
+    useRef,
+    useState,
+} from 'react';
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { restrictToWindowEdges } from '@dnd-kit/modifiers';
+import { enableMapSet, produce } from 'immer';
+import { createPortal } from 'react-dom';
+import isEqual from 'lodash-es/isEqual';
+import {
+    DndContext,
+    DragEndEvent,
+    DragMoveEvent,
+    DragOverlay,
+    KeyboardCode,
+    KeyboardSensor,
+    MeasuringConfiguration,
+    MeasuringStrategy,
+    PointerSensor,
+    closestCenter,
+    useSensor,
+    useSensors,
+} from '@dnd-kit/core';
 
 import type {
-    RegisterTreeItemChildrenPayload,
-    RegisterTreeItemPayload,
-    TreeItemState,
+    RegisterNodeChildrenPayload,
+    SensorContext,
+    TreeActive,
+    TreeAnnouncements,
+    TreeDragOverEvent,
+    TreeDragStartEvent,
+    TreeOver,
     TreeProps,
     TreeState,
     TreeStateAction,
 } from '@components/Tree/types';
-import { TreeContext } from '@components/Tree/TreeContext';
-import { DndWrapper, DraggableItem, DropZonePosition } from '@utilities/dnd';
-import { DEFAULT_TREE_ITEM_PADDING, cloneThroughFragments, flattenChildren } from './utils';
 
-const noop = () => undefined;
+import { type Overlay, TreeItemOverlay } from './TreeItem';
+import {
+    findIndexById,
+    getMovementAnnouncement,
+    getNodeChildrenIds,
+    getProjection,
+    getReactNodeIdsInFlatArray,
+    removeReactNodesFromFlatArray,
+    updateNodeWithNewChildren,
+} from './helpers';
+import { removeFragmentsAndEnrichChildren, sortableTreeKeyboardCoordinates, useDeepCompareEffect } from './utils';
+import { TreeContext, TreeContextProps } from './TreeContext';
+
 export const ROOT_ID = '__ROOT__';
+export const INDENTATION_WIDTH = 32;
 
-const reducer = (state: TreeState, action: TreeStateAction): TreeState => {
+const measuring: MeasuringConfiguration = {
+    droppable: {
+        strategy: MeasuringStrategy.Always,
+    },
+};
+
+enableMapSet();
+
+const reducer = produce((draft: TreeState, action: TreeStateAction) => {
     switch (action.type) {
-        case 'SET_SELECT': {
-            const { id, isSelected } = action.payload;
+        case 'SET_SELECT':
+            {
+                const newSelected = new Set(draft.selectedIds);
 
-            if (!state.items.has(id)) {
-                throw new Error(`No tree item registered with id ${id}.`);
-            }
+                const isSelected = !draft.selectedIds.has(action.payload);
 
-            if (isSelected) {
-                if (state.selectionMode === 'single') {
-                    state.selectedIds.clear();
+                if (isSelected && draft.selectionMode === 'single') {
+                    newSelected.clear();
                 }
 
-                return {
-                    ...state,
-                    selectedIds: state.selectedIds.add(id),
-                };
+                isSelected ? newSelected.add(action.payload) : newSelected.delete(action.payload);
+
+                draft.selectedIds = newSelected;
             }
+            break;
 
-            state.selectedIds.delete(id);
-            return {
-                ...state,
-            };
-        }
-
-        case 'SET_EXPAND': {
-            const { id, isExpanded } = action.payload;
-
-            if (!state.items.has(id)) {
-                throw new Error(`No tree item registered with id ${id}.`);
+        case 'EXPAND_NODE':
+            {
+                const newExpanded = new Set(draft.expandedIds).add(action.payload);
+                draft.expandedIds = newExpanded;
             }
+            break;
 
-            if (isExpanded) {
-                return {
-                    ...state,
-                    expandedIds: state.expandedIds.add(id),
-                };
+        case 'SHRINK_NODE':
+            {
+                const newExpanded = new Set(draft.expandedIds);
+                newExpanded.delete(action.payload);
+                draft.expandedIds = newExpanded;
             }
+            break;
 
-            state.expandedIds.delete(id);
-            return {
-                ...state,
-            };
-        }
-
-        case 'ON_DROP': {
-            const { targetId, id, position } = action.payload;
-            const targetState = state.items.get(targetId);
-
-            if (!targetState) {
-                throw new Error(`No tree item registered with id ${targetId}.`);
+        case 'SET_SELECTION_MODE':
+            {
+                draft.selectionMode = action.payload.selectionMode;
             }
+            break;
 
-            if (position === DropZonePosition.Before || position === DropZonePosition.After) {
-                const parentTargetState = targetState.parentId ? state.items.get(targetState.parentId) : undefined;
-                if (!parentTargetState || !targetState.parentId || !parentTargetState.childrenIds) {
-                    throw new Error(`No tree item registered with id ${targetState.parentId}.`);
+        case 'SET_PROJECTION':
+            {
+                draft.projection = action.payload;
+            }
+            break;
+
+        case 'REGISTER_OVERLAY_ITEM':
+            {
+                draft.overlay = action.payload;
+            }
+            break;
+
+        case 'REGISTER_NODE_CHILDREN':
+            {
+                const { id: parentId, children } = action.payload;
+
+                const parentNodeIndex = findIndexById(draft.nodes, parentId);
+
+                if (parentNodeIndex === -1) {
+                    console.error(`Element with ID "${parentId}" not found.`);
+                    return;
                 }
 
-                const sourceIndexInParent = parentTargetState.childrenIds.findIndex((childId) => childId === id);
-                const targetIndexInParent = parentTargetState.childrenIds.findIndex((childId) => childId === targetId);
+                const currentChildrenIds = getNodeChildrenIds(draft.nodes, parentId);
 
-                const element = parentTargetState.childrenIds[sourceIndexInParent];
-                const arrayWithoutElement = [
-                    ...parentTargetState.childrenIds.slice(0, sourceIndexInParent),
-                    ...parentTargetState.childrenIds.slice(sourceIndexInParent + 1),
-                ];
+                const newChildrenIds = children.map((node) => node.props.id);
 
-                const indexOffset = position === DropZonePosition.After ? 1 : 0;
-
-                const newArray = [
-                    ...arrayWithoutElement.slice(0, targetIndexInParent + indexOffset),
-                    element,
-                    ...arrayWithoutElement.slice(targetIndexInParent + indexOffset),
-                ];
-
-                state.items.set(targetState.parentId, { ...parentTargetState, childrenIds: newArray });
-            } else if (position === DropZonePosition.Within) {
-                const sourceState = state.items.get(id);
-                if (!sourceState || !sourceState.parentId) {
-                    throw new Error(`No tree item registered with id ${id ?? sourceState?.parentId}.`);
-                }
-                const targetState = state.items.get(targetId);
-                const oldParentState = state.items.get(sourceState.parentId);
-                if (!targetState || !oldParentState) {
-                    throw new Error(`No tree item registered with id ${targetId ?? sourceState.parentId}.`);
+                if (isEqual(currentChildrenIds, newChildrenIds)) {
+                    return;
                 }
 
-                const oldParentChildrenIds = oldParentState.childrenIds?.filter((childId) => childId !== id);
-
-                state.items
-                    // Delete from old parent
-                    .set(sourceState.parentId, {
-                        ...oldParentState,
-                        childrenIds:
-                            oldParentChildrenIds && oldParentChildrenIds.length > 0 ? oldParentChildrenIds : undefined,
-                    })
-                    // Add to new parent
-                    .set(targetId, { ...targetState, childrenIds: [...(targetState?.childrenIds ?? [], id)] })
-                    // Set new parent in source
-                    .set(id, { ...sourceState, parentId: targetId });
+                draft.nodes = updateNodeWithNewChildren(draft.nodes, parentNodeIndex, children);
             }
+            break;
 
-            return {
-                ...state,
-            };
-        }
+        case 'UNREGISTER_NODE_CHILDREN':
+            {
+                const nodeIds = getReactNodeIdsInFlatArray(draft.nodes, action.payload);
 
-        case 'SET_SELECTION_MODE': {
-            return {
-                ...state,
-                selectionMode: action.payload.selectionMode,
-            };
-        }
-
-        case 'REGISTER_TREE_ITEM': {
-            const { id, level, parentId, domElement: ref } = action.payload;
-
-            if (state.items.has(id)) {
-                console.warn('Tree item already registered.');
-                return state;
+                draft.nodes = removeReactNodesFromFlatArray(draft.nodes, nodeIds);
             }
+            break;
 
-            return {
-                ...state,
-                items: state.items.set(id, {
-                    parentId,
-                    level,
-                    domElement: ref,
-                    childrenIds: undefined,
-                }),
-            };
-        }
-
-        case 'REGISTER_TREE_ITEM_CHILDREN': {
-            const { id, childrenIds } = action.payload;
-
-            const itemState = state.items.get(id);
-            if (!itemState) {
-                throw new Error(`No tree item registered with id ${id}.`);
+        case 'REGISTER_ROOT_NODES':
+            {
+                draft.nodes = action.payload;
             }
+            break;
 
-            state.items.set(id, { ...itemState, childrenIds });
+        case 'REPLACE_EXPANDED':
+            {
+                draft.expandedIds = new Set(action.payload);
+            }
+            break;
 
-            return { ...state };
-        }
-
-        case 'UNREGISTER_TREE_ITEM': {
-            const { id } = action.payload;
-
-            state.items.delete(id);
-
-            return {
-                ...state,
-                items: state.items,
-            };
-        }
+        case 'REPLACE_SELECTED':
+            {
+                draft.selectedIds = new Set(action.payload);
+            }
+            break;
 
         case 'REPLACE_STATE':
-            return {
-                ...state,
-                selectedIds: action.payload.selectedIds,
-                expandedIds: action.payload.expandedIds,
-                selectionMode: action.payload.selectionMode,
+            draft.nodes = action.payload.nodes;
+            draft.overlay = action.payload.overlay;
+            draft.projection = action.payload.projection;
+            draft.selectedIds = action.payload.selectedIds;
+            draft.expandedIds = action.payload.expandedIds;
+            draft.selectionMode = action.payload.selectionMode;
+            break;
+        default:
+            console.warn(`Updated tree with action "${action.type}" but it has not effect.`);
+    }
+});
+
+export const Tree = memo(
+    ({
+        id,
+        onDrop,
+        onSelect,
+        onExpand,
+        onShrink,
+        children,
+        selectedIds,
+        expandedIds,
+        draggable = false,
+        multiselect = false,
+        'data-test-id': dataTestId = 'fondue-tree',
+    }: TreeProps) => {
+        const initialState: TreeState = useMemo(
+            () => ({
+                selectionMode: 'single',
+                selectedIds: new Set(selectedIds ?? []),
+                expandedIds: new Set(expandedIds ?? []),
+                nodes: removeFragmentsAndEnrichChildren(children, { parentId: ROOT_ID, level: 0 }),
+                projection: null,
+            }),
+            [children, expandedIds, selectedIds],
+        );
+
+        const [treeState, updateTreeState] = useReducer(reducer, initialState);
+        const [offset, setOffset] = useState(0);
+        const [overId, setOverId] = useState<Nullable<string>>(null);
+        const [activeId, setActiveId] = useState<Nullable<string>>(null);
+        const [currentPosition, setCurrentPosition] =
+            useState<Nullable<{ overId: string; parentId: Nullable<string> }>>(null);
+
+        const items = useMemo(() => treeState.nodes.map((node) => node.props.id), [treeState.nodes]);
+
+        useEffect(() => {
+            const keyDownHandler = (event: globalThis.KeyboardEvent) => {
+                if (multiselect && (event.key === 'Meta' || event.ctrlKey)) {
+                    updateTreeState({
+                        type: 'SET_SELECTION_MODE',
+                        payload: { selectionMode: 'multiselect' },
+                    });
+                }
             };
 
-        default:
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            //@ts-ignore
-            console.warn(`Updated tree with action "${action.type}" but it has not effect.`);
-            return state;
-    }
-};
+            const keyUpHandler = (event: globalThis.KeyboardEvent) => {
+                if (multiselect && (event.key === 'Meta' || event.ctrlKey)) {
+                    updateTreeState({
+                        type: 'SET_SELECTION_MODE',
+                        payload: { selectionMode: 'single' },
+                    });
+                }
+            };
 
-export const Tree = ({
-    id,
-    selectedIds,
-    expandedIds,
-    draggable = false,
-    onSelect,
-    onExpand,
-    onDrop,
-    children,
-    multiselect = true,
-    baseItemPadding = {},
-}: TreeProps) => {
-    const initialState: TreeState = useMemo(
-        () => ({
-            items: new Map<string, TreeItemState>().set(ROOT_ID, { level: -1 }),
-            selectedIds: new Set(selectedIds ?? []),
-            expandedIds: new Set(expandedIds ?? []),
-            selectionMode: 'single',
-        }),
-        [expandedIds, selectedIds],
-    );
+            if (multiselect) {
+                window.addEventListener('keydown', keyDownHandler);
+                window.addEventListener('keyup', keyUpHandler);
+            }
 
-    const [treeState, updateTreeState] = useReducer(reducer, initialState);
+            return () => {
+                window.removeEventListener('keydown', keyDownHandler);
+                window.removeEventListener('keyup', keyUpHandler);
+            };
+        }, [multiselect]);
 
-    const handleSelect = useCallback(
-        (id: string) => {
-            updateTreeState({
-                type: 'SET_SELECT',
-                payload: { id, isSelected: !treeState.selectedIds.has(id) },
-            });
-        },
-        [treeState.selectedIds],
-    );
+        const registerOverlay = useCallback((overlay: Overlay) => {
+            updateTreeState({ type: 'REGISTER_OVERLAY_ITEM', payload: overlay });
+        }, []);
 
-    const handleExpand = useCallback((id: string, isExpanded: boolean) => {
-        updateTreeState({
-            type: 'SET_EXPAND',
-            payload: { id, isExpanded },
-        });
-    }, []);
+        const registerNodeChildren = useCallback((payload: RegisterNodeChildrenPayload) => {
+            updateTreeState({ type: 'REGISTER_NODE_CHILDREN', payload });
+        }, []);
 
-    const handleDrop = useCallback(
-        (
-            targetItem: DraggableItem<{ id: string; sort: number }>,
-            sourceItem: DraggableItem<{ id: string; sort: number }>,
-            position: DropZonePosition,
-        ) => {
-            updateTreeState({ type: 'ON_DROP', payload: { id: sourceItem.id, targetId: targetItem.id, position } });
-            onDrop?.(targetItem, sourceItem, position);
-        },
-        [onDrop],
-    );
+        const unregisterNodeChildren = useCallback((payload: string) => {
+            updateTreeState({ type: 'UNREGISTER_NODE_CHILDREN', payload });
+        }, []);
 
-    const enhancedChildren = useMemo(
-        () => cloneThroughFragments(children, { level: 0, parentId: ROOT_ID }),
-        [children],
-    );
+        const handleSelect = useCallback(
+            (id: string) => {
+                if (onSelect) {
+                    return onSelect(id);
+                }
 
-    const keyDownHandler = useCallback(
-        (event: KeyboardEvent) => {
-            if (multiselect && (event.key === 'Meta' || event.ctrlKey)) {
                 updateTreeState({
-                    type: 'SET_SELECTION_MODE',
-                    payload: { selectionMode: 'multiselect' },
+                    type: 'SET_SELECT',
+                    payload: id,
+                });
+            },
+            [onSelect],
+        );
+
+        const handleExpand = useCallback(
+            (id: string) => {
+                if (onExpand) {
+                    return onExpand(id);
+                }
+
+                updateTreeState({
+                    type: 'EXPAND_NODE',
+                    payload: id,
+                });
+            },
+            [onExpand],
+        );
+
+        const handleShrink = useCallback(
+            (id: string) => {
+                if (onShrink) {
+                    return onShrink(id);
+                }
+
+                updateTreeState({
+                    type: 'SHRINK_NODE',
+                    payload: id,
+                });
+            },
+            [onShrink],
+        );
+
+        const handleDragEnd = useCallback(
+            (event: DragEndEvent) => {
+                resetState();
+
+                const { over, active } = event;
+
+                if (!over?.id || !active?.id || !treeState.projection?.parentId) {
+                    return;
+                }
+
+                onDrop?.({
+                    id: active.id.toString(),
+                    parentId: treeState.projection.parentId,
+                    sort: treeState.projection.position,
+                });
+            },
+            [onDrop, treeState.projection?.parentId, treeState.projection?.position],
+        );
+
+        const handleDragStart = ({ active: { id: activeId, data } }: TreeDragStartEvent) => {
+            setActiveId(activeId);
+            setOverId(activeId);
+
+            if (activeId && data.current) {
+                setCurrentPosition({
+                    parentId: data.current.parentId,
+                    overId: activeId,
                 });
             }
-        },
-        [multiselect],
-    );
 
-    const keyUpHandler = useCallback(
-        (event: KeyboardEvent) => {
-            if (multiselect && (event.key === 'Meta' || event.ctrlKey)) {
-                updateTreeState({
-                    type: 'SET_SELECTION_MODE',
-                    payload: { selectionMode: 'single' },
-                });
-            }
-        },
-        [multiselect],
-    );
-
-    useEffect(() => {
-        if (multiselect) {
-            window.addEventListener('keydown', keyDownHandler);
-            window.addEventListener('keyup', keyUpHandler);
-        }
-
-        return () => {
-            window.removeEventListener('keydown', keyDownHandler);
-            window.removeEventListener('keyup', keyUpHandler);
+            document.body.style.setProperty('cursor', 'grabbing');
         };
-    }, [keyDownHandler, keyUpHandler, multiselect]);
 
-    useEffect(() => {
-        updateTreeState({
-            type: 'REPLACE_STATE',
-            payload: initialState,
+        const handleDragOver = ({ over }: TreeDragOverEvent) => {
+            setOverId(over?.id ?? null);
+        };
+
+        const handleDragMove = ({ delta }: DragMoveEvent) => {
+            setOffset(delta.x);
+        };
+
+        const handleDragCancel = () => {
+            resetState();
+        };
+
+        const resetState = () => {
+            setOverId(null);
+            setActiveId(null);
+            setOffset(0);
+            setCurrentPosition(null);
+
+            document.body.style.setProperty('cursor', '');
+        };
+
+        const handleKeyDown = useCallback(
+            (event: React.KeyboardEvent<HTMLUListElement>) => {
+                const activeElement = document.activeElement;
+
+                if (!activeElement || !activeElement.parentElement || !(activeElement instanceof HTMLLIElement)) {
+                    return;
+                }
+
+                const items = Array.from(activeElement.parentElement.children).filter(
+                    (child) => child.nodeName === 'LI',
+                ) as HTMLLIElement[];
+
+                const currentIndex = items.indexOf(activeElement);
+
+                const node = treeState.nodes[currentIndex];
+
+                const id: string = node.props.id;
+                const isExpanded = treeState.expandedIds.has(id);
+                const parentId: string | undefined = node.props.parentId;
+                const hasChildren = activeElement.getAttribute('data-has-children') === 'true';
+
+                const { code } = event;
+
+                const toggleSelect = () => {
+                    event.preventDefault();
+
+                    handleSelect(id);
+                };
+
+                const toggleExpand = () => {
+                    event.preventDefault();
+
+                    handleExpand(id);
+                };
+
+                const focusPrevious = () => {
+                    const previousIndex = (currentIndex + items.length - 1) % items.length;
+                    items[previousIndex].focus();
+                };
+
+                const focusNext = () => {
+                    const nextIndex = (currentIndex + 1) % items.length;
+                    items[nextIndex].focus();
+                };
+
+                switch (code) {
+                    case KeyboardCode.Enter:
+                        toggleSelect();
+
+                        break;
+
+                    case KeyboardCode.Space:
+                        hasChildren ? toggleExpand() : toggleSelect();
+
+                        break;
+
+                    case KeyboardCode.Right:
+                        if (!hasChildren) {
+                            break;
+                        }
+
+                        isExpanded ? focusNext() : toggleExpand();
+
+                        break;
+
+                    case KeyboardCode.Left:
+                        if (hasChildren && isExpanded) {
+                            toggleExpand();
+                        } else if (parentId && parentId !== ROOT_ID) {
+                            const parentIndex = treeState.nodes.findIndex((node) => node.props.id === parentId);
+
+                            items[parentIndex].focus();
+                        }
+                        break;
+
+                    case KeyboardCode.Up:
+                        event.preventDefault();
+                        focusPrevious();
+
+                        break;
+
+                    case KeyboardCode.Down:
+                        event.preventDefault();
+                        focusNext();
+
+                        break;
+
+                    default:
+                        break;
+                }
+            },
+            [handleExpand, handleSelect, treeState.expandedIds, treeState.nodes],
+        );
+
+        const sensorContext: SensorContext = useRef({
+            nodes: treeState.nodes,
+            offset,
         });
-    }, [initialState]);
 
-    const unregisterTreeItem = useCallback(
-        (id: string) => updateTreeState({ type: 'UNREGISTER_TREE_ITEM', payload: { id } }),
-        [],
-    );
+        const [coordinateGetter] = useState(() => sortableTreeKeyboardCoordinates(sensorContext));
 
-    const registerTreeItem = useCallback(
-        (payload: RegisterTreeItemPayload) => updateTreeState({ type: 'REGISTER_TREE_ITEM', payload }),
-        [],
-    );
+        const sensors = useSensors(useSensor(PointerSensor), useSensor(KeyboardSensor, { coordinateGetter }));
 
-    const registerTreeItemChildren = useCallback(
-        (payload: RegisterTreeItemChildrenPayload) => updateTreeState({ type: 'REGISTER_TREE_ITEM_CHILDREN', payload }),
-        [],
-    );
+        const announcements: TreeAnnouncements = useMemo(() => {
+            const getActiveTitle = (active: TreeActive) => {
+                let title: string = active.id;
 
-    useEffect(() => {
-        const childrenIds = flattenChildren(enhancedChildren)
-            .map((child) => child.props.id)
-            .filter(Boolean);
-        registerTreeItemChildren({ id: ROOT_ID, childrenIds });
-    }, [enhancedChildren, registerTreeItemChildren]);
+                const activeNode = treeState.nodes.find((node) => node.props.id === active.id);
 
-    return (
-        <TreeContext.Provider
-            value={{
-                treeId: id,
-                treeState,
+                if (activeNode && isValidElement(activeNode.props.contentComponent)) {
+                    title = activeNode.props.contentComponent.props.title;
+                } else if (activeNode && activeNode.props.label) {
+                    title = activeNode.props.label;
+                }
+
+                return title;
+            };
+            const getOverTitle = (over: TreeOver | null) => {
+                let title = over?.id;
+
+                const overNode = treeState.nodes.find((node) => node.props.id === over?.id);
+
+                if (overNode && isValidElement(overNode.props.contentComponent)) {
+                    title = overNode.props.contentComponent.props.title;
+                } else if (overNode && overNode.props.label) {
+                    title = overNode.props.label;
+                }
+
+                return title;
+            };
+
+            return {
+                onDragStart({ active }) {
+                    return `Picked up ${getActiveTitle(active) || active.id}.`;
+                },
+                onDragMove({ active, over }) {
+                    return getMovementAnnouncement({
+                        eventName: 'onDragMove',
+                        activeId: active.id,
+                        activeTitle: getActiveTitle(active),
+                        overId: over?.id,
+                        overTitle: getOverTitle(over),
+                        treeState,
+                        setCurrentPosition,
+                        currentPosition,
+                    });
+                },
+                onDragOver({ active, over }) {
+                    return getMovementAnnouncement({
+                        eventName: 'onDragOver',
+                        activeId: active.id,
+                        activeTitle: getActiveTitle(active),
+                        overId: over?.id,
+                        overTitle: getOverTitle(over),
+                        treeState,
+                        setCurrentPosition,
+                        currentPosition,
+                    });
+                },
+                onDragEnd({ active, over }) {
+                    return getMovementAnnouncement({
+                        eventName: 'onDragEnd',
+                        activeId: active.id,
+                        activeTitle: getActiveTitle(active),
+                        overId: over?.id,
+                        overTitle: getOverTitle(over),
+                        treeState,
+                        setCurrentPosition,
+                        currentPosition,
+                    });
+                },
+                onDragCancel({ active }) {
+                    const title = getActiveTitle(active);
+
+                    return `Moving was cancelled. ${title} was dropped in its original position.`;
+                },
+            };
+        }, [currentPosition, treeState]);
+
+        useDeepCompareEffect(() => {
+            updateTreeState({
+                type: 'REGISTER_ROOT_NODES',
+                payload: removeFragmentsAndEnrichChildren(children, { parentId: ROOT_ID, level: 0 }),
+            });
+        }, [children]);
+
+        useEffect(() => {
+            updateTreeState({
+                type: 'REPLACE_EXPANDED',
+                payload: expandedIds ?? [],
+            });
+        }, [expandedIds]);
+
+        useEffect(() => {
+            updateTreeState({
+                type: 'REPLACE_SELECTED',
+                payload: selectedIds ?? [],
+            });
+        }, [selectedIds]);
+
+        useDeepCompareEffect(() => {
+            sensorContext.current = {
+                nodes: treeState.nodes,
+                offset,
+            };
+        }, [offset, treeState.nodes]);
+
+        useEffect(() => {
+            const projection =
+                activeId && overId
+                    ? getProjection({
+                          nodes: treeState.nodes,
+                          activeId,
+                          overId,
+                          dragOffset: offset,
+                      })
+                    : null;
+
+            updateTreeState({
+                type: 'SET_PROJECTION',
+                payload: projection,
+            });
+        }, [activeId, offset, overId, treeState.nodes]);
+
+        const nodes = useMemo(
+            () =>
+                treeState.nodes.map((node) => {
+                    return cloneElement(node, {
+                        projection: node.props.id === activeId ? treeState.projection : null,
+                        treeDraggable: draggable,
+                        isSelected: treeState.selectedIds.has(node.props.id),
+                        isExpanded: treeState.expandedIds.has(node.props.id),
+                        registerOverlay,
+                        registerNodeChildren,
+                        unregisterNodeChildren,
+                        onExpand: handleExpand,
+                        onShrink: handleShrink,
+                        onSelect: handleSelect,
+                    });
+                }),
+            [
                 draggable,
-                onSelect: onSelect ?? handleSelect,
-                onExpand: onExpand ?? handleExpand,
-                onDrop: handleDrop ?? noop,
-                unregisterTreeItem,
-                registerTreeItem,
-                registerTreeItemChildren,
-                baseItemPadding: { ...DEFAULT_TREE_ITEM_PADDING, ...baseItemPadding },
-            }}
-        >
-            <ul
-                id={id}
-                data-test-id="tree"
-                className="tw-p-0 tw-m-0 tw-font-sans tw-font-normal tw-list-none tw-text-left tw-text-sm tw-select-none"
-                role="tree"
-            >
-                <DndWrapper id={id}>{enhancedChildren}</DndWrapper>
-            </ul>
-        </TreeContext.Provider>
-    );
-};
+                handleExpand,
+                handleShrink,
+                handleSelect,
+                activeId,
+                registerNodeChildren,
+                registerOverlay,
+                treeState.expandedIds,
+                treeState.nodes,
+                treeState.projection,
+                treeState.selectedIds,
+                unregisterNodeChildren,
+            ],
+        );
+
+        const contextValue: TreeContextProps = useMemo(
+            () => ({
+                treeState,
+                onSelect: handleSelect,
+                onExpand: handleExpand,
+                onShrink: handleShrink,
+            }),
+            [treeState, handleSelect, handleExpand, handleShrink],
+        );
+
+        return (
+            <TreeContext.Provider value={contextValue}>
+                <ul
+                    id={id}
+                    role="tree"
+                    data-test-id={dataTestId}
+                    onKeyDown={handleKeyDown}
+                    aria-multiselectable={treeState.selectionMode === 'multiselect'}
+                    className="tw-p-0 tw-m-0 tw-font-sans tw-font-normal tw-list-none tw-text-left tw-text-sm tw-select-none"
+                >
+                    <DndContext
+                        sensors={sensors}
+                        measuring={measuring}
+                        onDragEnd={handleDragEnd}
+                        onDragOver={handleDragOver}
+                        onDragMove={handleDragMove}
+                        onDragStart={handleDragStart}
+                        onDragCancel={handleDragCancel}
+                        accessibility={{
+                            announcements,
+                            container: document.getElementById(id)?.parentElement ?? document.body,
+                        }}
+                        collisionDetection={closestCenter}
+                    >
+                        <SortableContext items={items} strategy={verticalListSortingStrategy}>
+                            {nodes}
+                        </SortableContext>
+
+                        {createPortal(
+                            <DragOverlay wrapperElement="ul" dropAnimation={null} modifiers={[restrictToWindowEdges]}>
+                                {treeState.overlay && (
+                                    <TreeItemOverlay
+                                        {...treeState.overlay}
+                                        isSelected={treeState.selectedIds.has(treeState.overlay.id)}
+                                    />
+                                )}
+                            </DragOverlay>,
+                            document.body,
+                        )}
+                    </DndContext>
+                </ul>
+            </TreeContext.Provider>
+        );
+    },
+);
+
 Tree.displayName = 'FondueTree';

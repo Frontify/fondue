@@ -12,20 +12,21 @@ import escapeHtml from 'escape-html';
 
 export const serializeLeafToHtml = (node: TText): string => {
     let string = escapeHtml(node.text);
-    string = string.replace('\n', '<br />');
-    if (node.bold) {
+    string = string.replaceAll('\n', '<br />');
+    const { bold, italic, underline, strikethrough, code } = node;
+    if (bold) {
         string = `<span class="${BOLD_CLASSES}">${string}</span>`;
     }
-    if (node.italic) {
+    if (italic) {
         string = `<span class="${ITALIC_CLASSES}">${string}</span>`;
     }
-    if (node.underline) {
+    if (underline) {
         string = `<span class="${UNDERLINE_CLASSES}">${string}</span>`;
     }
-    if (node.strikethrough) {
+    if (strikethrough) {
         string = `<span class="${STRIKETHROUGH_CLASSES}">${string}</span>`;
     }
-    if (node.code) {
+    if (code) {
         string = `<span class="${CODE_CLASSES}">${string}</span>`;
     }
     return string;

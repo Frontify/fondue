@@ -147,9 +147,13 @@ export const Flex: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) =>
 );
 
 export const SerializedToHTML: StoryFn<RichTextEditorProps> = () => {
-    return getSerializedContent({
-        columns: 2,
-    });
+    return (
+        <GetSerializedContent
+            props={{
+                columns: 2,
+            }}
+        />
+    );
 };
 
 export const MarkdownSerializerDeserializer: StoryFn<RichTextEditorProps> = () => {
@@ -413,6 +417,11 @@ WithToolbarTopAndSmallPadding.args = {
     ]),
 };
 
+export const WithCustomToolbarWidth = RichTextEditorTemplate.bind({});
+WithCustomToolbarWidth.args = {
+    toolbarWidth: 50,
+};
+
 const mentionAndEmojisPlugins = new PluginComposer();
 mentionAndEmojisPlugins
     .setPlugin([new ParagraphPlugin()])
@@ -494,12 +503,16 @@ MultiColumns.args = {
 };
 
 export const MultiColumnsSerializedToHTML: StoryFn<MultiColumnProps> = (args) => {
-    return getSerializedContent({
-        designTokens: customDesignTokens,
-        mentionable,
-        columns: args.columns,
-        columnGap: args.columnGap,
-    });
+    return (
+        <GetSerializedContent
+            props={{
+                designTokens: customDesignTokens,
+                mentionable,
+                columns: args.columns,
+                columnGap: args.columnGap,
+            }}
+        />
+    );
 };
 
 MultiColumnsSerializedToHTML.args = {
@@ -516,29 +529,23 @@ SimpleMultiColumns.args = {
     border: false,
 };
 
-function getSerializedContent(
-    props: SerializeNodesToHtmlOptions = {
-        designTokens: customDesignTokens,
-        mentionable,
-        columns: 1,
-        columnGap: 'normal',
-    },
-): JSX.Element {
+export const GetSerializedContent = ({
+    props = { designTokens: customDesignTokens, mentionable, columns: 1, columnGap: 'normal' },
+}: {
+    props: SerializeNodesToHtmlOptions;
+}): JSX.Element | null => {
     const serialized = serializeNodesToHtml(nodesToSerialize, props);
-    return (
+
+    return serialized ? (
         <>
-            {serialized ? (
-                <>
-                    Serialized:
-                    <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
-                        <code>{serialized}</code>
-                    </div>
-                    Rendered:
-                    <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
-                        <div dangerouslySetInnerHTML={{ __html: serialized }} />
-                    </div>
-                </>
-            ) : null}
+            Serialized:
+            <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
+                <code>{serialized}</code>
+            </div>
+            Rendered:
+            <div className="tw-border-2 tw-border-black-10 tw-p-2 tw-m-6">
+                <div dangerouslySetInnerHTML={{ __html: serialized }} />
+            </div>
         </>
-    );
-}
+    ) : null;
+};

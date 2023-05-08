@@ -3,7 +3,7 @@
 const { once } = require('node:events');
 const { createReadStream } = require('node:fs');
 const { createInterface } = require('node:readline');
-const glob = require('glob');
+const { globSync } = require('glob');
 
 /**
  * Build Matrix that contains cypress spec files for GitHub action
@@ -93,10 +93,9 @@ const splitIntoChunkedSlices = (slices, inputArray) => {
 };
 
 getSectionSpecPattern().then((pattern) => {
-    glob(pattern, (_error, files) => {
-        const output = splitIntoChunkedSlices(Number(totalRunners), files);
+    const files = globSync(pattern);
+    const output = splitIntoChunkedSlices(Number(totalRunners), files);
 
-        // console.log to print to github action Console
-        console.log(`'${output[currentRunner]}'`);
-    });
+    // console.log to print to github action Console
+    console.log(`'${output[currentRunner]}'`);
 });

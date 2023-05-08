@@ -10,6 +10,8 @@ import { DatePickerTrigger } from './DatePickerTrigger';
 import { IconCaretLeft, IconCaretLeftDouble, IconCaretRight, IconCaretRightDouble } from '@foundation/Icon/Generated';
 import { Validation } from '@utilities/validation';
 
+const ARROW_PADDING_CORRECTION = 40;
+
 type SingleDatePickerProps = {
     variant?: 'single';
     onChange: (date: Date | null) => void;
@@ -73,7 +75,7 @@ export const DatePicker = forwardRef<ReactDatePicker<never, boolean>, DatePicker
             maxDate,
             validation = Validation.Default,
             customTrigger,
-            children = <></>,
+            children,
             hasPopperArrow = true,
             preventOpenOnFocus = false,
             filterDate = () => true,
@@ -106,7 +108,7 @@ export const DatePicker = forwardRef<ReactDatePicker<never, boolean>, DatePicker
                     onChange={onChange}
                     onKeyDown={onKeyDown}
                     onBlur={onBlur}
-                    selectsRange={variant === 'range' ? true : false}
+                    selectsRange={variant === 'range'}
                     showPopperArrow={hasPopperArrow}
                     preventOpenOnFocus={preventOpenOnFocus}
                     filterDate={filterDate}
@@ -129,6 +131,9 @@ export const DatePicker = forwardRef<ReactDatePicker<never, boolean>, DatePicker
                     onCalendarOpen={handleOpen}
                     shouldCloseOnSelect={shouldCloseOnSelect}
                     dayClassName={(date) => getDayClasses(variant, date)}
+                    popperProps={{
+                        strategy: 'fixed',
+                    }}
                     renderCustomHeader={({ date, decreaseMonth, increaseMonth, increaseYear, decreaseYear }) => (
                         <div className="tw-flex tw-justify-between tw-pb-4 tw-px-0">
                             <Button
@@ -164,6 +169,23 @@ export const DatePicker = forwardRef<ReactDatePicker<never, boolean>, DatePicker
                             />
                         </div>
                     )}
+                    popperModifiers={[
+                        {
+                            name: 'arrow',
+                            options: {
+                                padding: ({ popper, reference, placement }) => {
+                                    const side = placement.includes('end') ? 'left' : 'right';
+                                    const padding = {
+                                        [`${side}`]:
+                                            Math.max(popper.width, Math.min(popper.width, reference.width)) -
+                                            ARROW_PADDING_CORRECTION,
+                                    };
+
+                                    return padding;
+                                },
+                            },
+                        },
+                    ]}
                 >
                     {children}
                 </DatepickerComponent>

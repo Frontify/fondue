@@ -25,7 +25,7 @@
 
             "slate-react": ["node_modules/slate-react"]
         },
-        "types": ["cypress", "cypress-real-events", "vite/client"]
+        "types": ["cypress", "cypress-real-events", "vite/client", "node"]
     },
     "include": ["src/types", "src/**/*", "cypress/support/component.ts", "scripts/**/*"],
     "exclude": ["node_modules", "dist"]

@@ -4,17 +4,20 @@ import React from 'react';
 import { useDrop } from 'react-dnd';
 import { merge } from '@utilities/merge';
 import { OrderableListItem } from '@components/OrderableList/types';
-import { DraggableItem, DropZonePosition } from '@utilities/dnd';
+import { DraggableItem } from '@utilities/dnd';
+
+import { CollisionPosition } from '..';
 
 export type OnDropCallback<T> = (
     targetItem: DraggableItem<T>,
     sourceItem: DraggableItem<T>,
-    position: DropZonePosition,
+    position: CollisionPosition,
+    direction?: 'up' | 'down',
 ) => void;
 
-type DropZoneData<T> = {
+export type DropZoneData<T> = {
     targetItem: DraggableItem<T>;
-    position: DropZonePosition;
+    position: CollisionPosition;
 };
 
 export type DropZoneProps<T> = {
@@ -56,9 +59,9 @@ export const DropZone = <T extends object>({ data, onDrop, accept, children }: D
             data-test-id="drop-zone"
             className={merge([
                 'tw-w-full tw-transition-height',
-                data.position !== DropZonePosition.Within ? outerDropZoneClassNames : 'tw-h-auto',
-                isActive && data.position !== DropZonePosition.Within ? activeOuterDropZoneClassNames : '',
-                isActive && data.position === DropZonePosition.Within ? bgColorClassName : '',
+                data.position !== 'within' ? outerDropZoneClassNames : 'tw-h-auto',
+                isActive && data.position !== 'within' ? activeOuterDropZoneClassNames : '',
+                isActive && data.position === 'within' ? bgColorClassName : '',
             ])}
             ref={drop}
         >
@@ -66,4 +69,5 @@ export const DropZone = <T extends object>({ data, onDrop, accept, children }: D
         </div>
     );
 };
+
 DropZone.displayName = 'FondueDropZone';

@@ -8,7 +8,7 @@ import { Item as StatelyItem } from '@react-stately/collections';
 import { useTreeState } from '@react-stately/tree';
 import { FOCUS_STYLE_INSET } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import React, { Children, Key, KeyboardEvent, ReactElement, isValidElement, useEffect, useRef } from 'react';
+import React, { Children, Key, KeyboardEvent, ReactElement, ReactNode, isValidElement, useEffect, useRef } from 'react';
 import { AccordionHeader } from './AccordionHeader';
 import { AccordionItemProps, AccordionProps, AriaAccordionItemProps } from './types';
 
@@ -76,7 +76,7 @@ const mapToAriaProps = (children: ReactElement<AccordionItemProps>[]) => {
 
         return (
             <StatelyItem key={index} textValue={header.children}>
-                {children ? () => children : null}
+                {children ? ((() => children) as unknown as ReactNode) : null}
             </StatelyItem>
         );
     });
@@ -102,6 +102,7 @@ const filterValidChildren = ({ children }: AccordionProps): ReactElement<Accordi
         return validChildren;
     }, []);
 
+// eslint-disable-next-line react/jsx-no-useless-fragment
 export const AccordionItem = ({ children }: AccordionItemProps): ReactElement => <>{children}</>;
 AccordionItem.displayName = 'FondueAccordionItem';
 
