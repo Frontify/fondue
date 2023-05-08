@@ -171,7 +171,7 @@ describe('Tree and TreeItem components', () => {
         cy.get(TREE_ITEM_DRAG_HANDLE_ID).first().realMouseUp();
     });
 
-    it('shrinks expanded items when dragging', () => {
+    it('collapses expanded items when dragging', () => {
         cy.mount(<TreeComponent draggable />);
 
         cy.get(TREE_ITEM_TOGGLE_ID).first().click();
@@ -222,17 +222,6 @@ describe('Tree and TreeItem components', () => {
 
         cy.get('@onDropStub').should('have.been.calledOnce');
     });
-
-    // it('calls onDrop on the root level within when controlled by the TreeItem', () => {
-    //     const onDropStub = cy.stub().as('onDropStub');
-
-    //     cy.mount(<TreeComponent draggable onDropTreeItem={onDropStub} />);
-
-    //     cy.get(TREE_ITEM_TOGGLE_ID).first().click();
-    //     cy.get(TREE_ITEM_DRAG_HANDLE_ID).eq(5).realMouseDown().realMouseMove(0, 40).realMouseUp();
-
-    //     cy.get('@onDropStub').should('have.been.calledOnce');
-    // });
 
     it('calls onDrop on level 1 when controlled by the TreeItem', () => {
         const onDropStub = cy.stub().as('onDropStub');
