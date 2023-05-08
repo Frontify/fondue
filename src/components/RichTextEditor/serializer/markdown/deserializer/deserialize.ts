@@ -95,7 +95,7 @@ export default function deserialize<T extends InputNodeTypes>(node: MarkdownAstN
                     children: [{ text: node.value?.replace(/<br>/g, '') || '' }],
                 } as ParagraphNode<T>;
             }
-            return { type: 'paragraph', children: [{ text: node.value || '' }] };
+            return { type: types.paragraph, children: [{ text: node.value || '' }] };
 
         case 'emphasis':
             return {
