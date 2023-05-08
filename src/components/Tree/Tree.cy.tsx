@@ -9,7 +9,8 @@ const TreeComponent = ({
     onSelect,
     onExpand,
     onShrink,
-    onDrop,
+    onDropTree,
+    onDropTreeItem,
     selectedIds,
     expandedIds,
     draggable,
@@ -17,15 +18,20 @@ const TreeComponent = ({
     onSelect?: (id: string) => void;
     onExpand?: (id: string) => void;
     onShrink?: (id: string) => void;
-    onDrop?: OnTreeDropCallback;
+    onDropTree?: OnTreeDropCallback;
+    onDropTreeItem?: OnTreeDropCallback;
     selectedIds?: string[];
     expandedIds?: string[];
     draggable?: boolean;
 }) => {
+    const treeItemSharedProps = {
+        onDrop: onDropTreeItem,
+    };
+
     return (
         <Tree
             id="treeId"
-            onDrop={onDrop}
+            onDrop={onDropTree}
             onSelect={onSelect}
             onExpand={onExpand}
             onShrink={onShrink}
@@ -34,13 +40,18 @@ const TreeComponent = ({
             draggable={draggable}
         >
             {treeItemsMock.map(({ nodes, ...treeItem }: TreeItemMock) => (
-                <TreeItem {...treeItem} key={treeItem.id} id={treeItem.id}>
+                <TreeItem {...treeItem} {...treeItemSharedProps} key={treeItem.id} id={treeItem.id}>
                     {nodes?.map(({ nodes, ...treeItem }: TreeItemMock) => (
-                        <TreeItem {...treeItem} key={treeItem.id} id={treeItem.id}>
+                        <TreeItem {...treeItem} {...treeItemSharedProps} key={treeItem.id} id={treeItem.id}>
                             {nodes?.map(({ nodes, ...treeItem }: TreeItemMock) => (
-                                <TreeItem {...treeItem} key={treeItem.id} id={treeItem.id}>
+                                <TreeItem {...treeItem} {...treeItemSharedProps} key={treeItem.id} id={treeItem.id}>
                                     {nodes?.map(({ nodes, ...treeItem }: TreeItemMock) => (
-                                        <TreeItem {...treeItem} key={treeItem.id} id={treeItem.id} />
+                                        <TreeItem
+                                            {...treeItem}
+                                            {...treeItemSharedProps}
+                                            key={treeItem.id}
+                                            id={treeItem.id}
+                                        />
                                     ))}
                                 </TreeItem>
                             ))}
@@ -157,12 +168,23 @@ describe('Tree and TreeItem components', () => {
         cy.get(TREE_ITEM_OVERLAY_ID).should('not.exist');
         cy.get(TREE_ITEM_DRAG_HANDLE_ID).realMouseDown();
         cy.get(TREE_ITEM_OVERLAY_ID).should('be.visible');
+        cy.get(TREE_ITEM_DRAG_HANDLE_ID).first().realMouseUp();
+    });
+
+    it('shrinks expanded items when dragging', () => {
+        cy.mount(<TreeComponent draggable />);
+
+        cy.get(TREE_ITEM_TOGGLE_ID).first().click();
+        cy.get(TREE_ITEM_ID).should('have.length', 8);
+        cy.get(TREE_ITEM_DRAG_HANDLE_ID).first().realMouseDown();
+        cy.get(TREE_ITEM_ID).should('have.length', 3);
+        cy.get(TREE_ITEM_DRAG_HANDLE_ID).first().realMouseUp();
     });
 
     it('calls onDrop with mouse when controlled by the Tree', () => {
         const onDropStub = cy.stub().as('onDropStub');
 
-        cy.mount(<TreeComponent draggable onDrop={onDropStub} />);
+        cy.mount(<TreeComponent draggable onDropTree={onDropStub} />);
 
         cy.get(TREE_ITEM_ID)
             .first()
@@ -178,7 +200,7 @@ describe('Tree and TreeItem components', () => {
     it('calls onDrop with keyboard when controlled by the Tree', () => {
         const onDropStub = cy.stub().as('onDropStub');
 
-        cy.mount(<TreeComponent draggable onDrop={onDropStub} />);
+        cy.mount(<TreeComponent draggable onDropTree={onDropStub} />);
 
         cy.get(TREE_ITEM_DRAG_HANDLE_ID)
             .first()
@@ -188,6 +210,66 @@ describe('Tree and TreeItem components', () => {
             .realPress('ArrowRight')
             .realPress('Space');
 
+        cy.get('@onDropStub').should('have.been.calledOnce');
+    });
+
+    it('calls onDrop on the root level when controlled by the TreeItem', () => {
+        const onDropStub = cy.stub().as('onDropStub');
+
+        cy.mount(<TreeComponent draggable onDropTreeItem={onDropStub} />);
+
+        cy.get(TREE_ITEM_DRAG_HANDLE_ID).first().realMouseDown().realMouseMove(0, 40).realMouseUp();
+
+        cy.get('@onDropStub').should('have.been.calledOnce');
+    });
+
+    // it('calls onDrop on the root level within when controlled by the TreeItem', () => {
+    //     const onDropStub = cy.stub().as('onDropStub');
+
+    //     cy.mount(<TreeComponent draggable onDropTreeItem={onDropStub} />);
+
+    //     cy.get(TREE_ITEM_TOGGLE_ID).first().click();
+    //     cy.get(TREE_ITEM_DRAG_HANDLE_ID).eq(5).realMouseDown().realMouseMove(0, 40).realMouseUp();
+
+    //     cy.get('@onDropStub').should('have.been.calledOnce');
+    // });
+
+    it('calls onDrop on level 1 when controlled by the TreeItem', () => {
+        const onDropStub = cy.stub().as('onDropStub');
+
+        cy.mount(<TreeComponent draggable onDropTreeItem={onDropStub} />);
+
+        cy.get(TREE_ITEM_TOGGLE_ID).first().click();
+        cy.get(TREE_ITEM_DRAG_HANDLE_ID).eq(4).realMouseDown().realMouseMove(0, -40).realMouseUp();
+
+        cy.get('@onDropStub').should('have.been.calledOnce');
+    });
+
+    it('calls onDrop when moving to an inside item controlled by the TreeItem', () => {
+        const onDropStub = cy.stub().as('onDropStub');
+
+        cy.mount(<TreeComponent draggable onDropTreeItem={onDropStub} />);
+
+        cy.get(TREE_ITEM_TOGGLE_ID).first().click();
+
+        cy.get(TREE_ITEM_DRAG_HANDLE_ID).eq(6).realMouseDown().realMouseMove(40, -160).realMouseUp();
+        cy.get('@onDropStub').should('not.have.been.called');
+
+        cy.get(TREE_ITEM_DRAG_HANDLE_ID).eq(6).realMouseDown().realMouseMove(40, -40).realMouseUp();
+        cy.get('@onDropStub').should('have.been.calledOnce');
+    });
+
+    it('calls onDrop when moving to an outside item controlled by the TreeItem', () => {
+        const onDropStub = cy.stub().as('onDropStub');
+
+        cy.mount(<TreeComponent draggable onDropTreeItem={onDropStub} />);
+
+        cy.get(TREE_ITEM_TOGGLE_ID).first().click();
+
+        cy.get(TREE_ITEM_DRAG_HANDLE_ID).eq(5).realMouseDown().realMouseMove(-40, 80).realMouseUp();
+        cy.get('@onDropStub').should('not.have.been.called');
+
+        cy.get(TREE_ITEM_DRAG_HANDLE_ID).eq(5).realMouseDown().realMouseMove(-40, 40).realMouseUp();
         cy.get('@onDropStub').should('have.been.calledOnce');
     });
 
@@ -215,5 +297,24 @@ describe('Tree and TreeItem components', () => {
             rerender(<TreeComponent />);
             cy.get(TREE_ITEM_ID).should('have.length', rootItemsLength - 1);
         });
+    });
+
+    it('navigates correctly with the keyboard', () => {
+        cy.mount(<TreeComponent />);
+
+        cy.get(TREE_ITEM_TOGGLE_ID)
+            .first()
+            .focus()
+            .realPress('Space')
+            .realPress('Tab')
+            .realPress('Space')
+            .realPress('ArrowDown')
+            .realPress('ArrowDown')
+            .realPress('ArrowDown')
+            .realPress('ArrowDown')
+            .realPress('ArrowRight')
+            .realPress('ArrowUp');
+        cy.get(TREE_ITEM_ID).should('have.length', 14);
+        cy.get(TREE_ITEM_ID).eq(4).should('have.focus');
     });
 });
