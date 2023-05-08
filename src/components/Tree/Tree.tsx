@@ -15,7 +15,7 @@ import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import { enableMapSet, produce } from 'immer';
 import { createPortal } from 'react-dom';
-import isEqual from 'lodash-es/isEqual';
+
 import {
     DndContext,
     DragEndEvent,
@@ -48,7 +48,6 @@ import { type Overlay, TreeItemOverlay } from './TreeItem';
 import {
     findIndexById,
     getMovementAnnouncement,
-    getNodeChildrenIds,
     getProjection,
     getReactNodeIdsInFlatArray,
     removeReactNodesFromFlatArray,
@@ -127,14 +126,6 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
 
                 if (parentNodeIndex === -1) {
                     console.error(`Element with ID "${parentId}" not found.`);
-                    return;
-                }
-
-                const currentChildrenIds = getNodeChildrenIds(draft.nodes, parentId);
-
-                const newChildrenIds = children.map((node) => node.props.id);
-
-                if (isEqual(currentChildrenIds, newChildrenIds)) {
                     return;
                 }
 
