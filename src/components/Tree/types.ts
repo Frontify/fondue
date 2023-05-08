@@ -4,7 +4,7 @@ import type { MutableRefObject, ReactElement, ReactNode } from 'react';
 import { Active, Collision, Over, Translate } from '@dnd-kit/core';
 import { useSortable } from '@dnd-kit/sortable';
 
-import { type Overlay } from './TreeItem';
+import { InternalTreeItemProps, type Overlay } from './TreeItem';
 import { type Projection } from './helpers';
 
 export type SensorContext = MutableRefObject<{
@@ -90,7 +90,7 @@ export type TreeState = {
     expandedIds: Set<string>;
     selectionMode: 'single' | 'multiselect';
     overlay?: Overlay;
-    nodes: ReactElement[];
+    nodes: ReactElement<InternalTreeItemProps>[];
     projection: Nullable<Projection>;
 };
 
@@ -103,11 +103,11 @@ export type TreeStateAction =
     | { type: 'SET_HIDDEN'; payload: { ids: string[]; isHidden: boolean } }
     | { type: 'SET_SELECTION_MODE'; payload: { selectionMode: TreeState['selectionMode'] } }
     | { type: 'SET_PROJECTION'; payload: Nullable<Projection> }
-    | { type: 'REGISTER_NODE_CHILDREN'; payload: { id: string; children: ReactElement[] } }
+    | { type: 'REGISTER_NODE_CHILDREN'; payload: { id: string; children: ReactElement<InternalTreeItemProps>[] } }
     | { type: 'UNREGISTER_NODE_CHILDREN'; payload: string }
     | { type: 'REPLACE_EXPANDED'; payload: string[] }
     | { type: 'REPLACE_SELECTED'; payload: string[] }
-    | { type: 'REGISTER_ROOT_NODES'; payload: ReactElement[] };
+    | { type: 'REGISTER_ROOT_NODES'; payload: ReactElement<InternalTreeItemProps>[] };
 
 export type RegisterNodeChildrenPayload = Extract<TreeStateAction, { type: 'REGISTER_NODE_CHILDREN' }>['payload'];
 
