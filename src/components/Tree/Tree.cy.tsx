@@ -45,7 +45,7 @@ const TreeComponent = ({
                         <TreeItem {...treeItem} {...treeItemSharedProps} key={treeItem.id} id={treeItem.id}>
                             {nodes?.map(({ nodes, ...treeItem }: TreeItemMock) => (
                                 <TreeItem {...treeItem} {...treeItemSharedProps} key={treeItem.id} id={treeItem.id}>
-                                    {nodes?.map(({ nodes, ...treeItem }: TreeItemMock) => (
+                                    {nodes?.map(({ ...treeItem }: TreeItemMock) => (
                                         <TreeItem
                                             {...treeItem}
                                             {...treeItemSharedProps}
