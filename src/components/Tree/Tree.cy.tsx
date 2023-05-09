@@ -97,7 +97,7 @@ describe('Tree and TreeItem components', () => {
         cy.get(TREE_ITEM_ID).find('button').should('exist').contains('Hello');
     });
 
-    it('selects the correct items when uncontrolled', () => {
+    it('selects the correct items as uncontrolled component', () => {
         cy.mount(<TreeComponent />);
 
         cy.get(TREE_ITEM_ID).first().click();
@@ -105,7 +105,7 @@ describe('Tree and TreeItem components', () => {
         cy.get(TREE_ITEM_ID).should('have.attr', 'aria-selected', 'true');
     });
 
-    it('calls the onSelect when selecting when controlled by the Tree', () => {
+    it('should trigger onSelect as a controlled component when selecting and item', () => {
         const onSelectStub = cy.stub().as('onSelectStub');
 
         cy.mount(<TreeComponent onSelect={onSelectStub} />);
@@ -115,7 +115,7 @@ describe('Tree and TreeItem components', () => {
         cy.get('@onSelectStub').should('have.been.calledOnce');
     });
 
-    it('calls the onSelect when deselecting when controlled by the Tree', () => {
+    it('should trigger onSelect as a controlled component when deselecting and item', () => {
         const onSelectStub = cy.stub().as('onSelectStub');
 
         cy.mount(<TreeComponent onSelect={onSelectStub} selectedIds={['1']} />);
@@ -125,7 +125,7 @@ describe('Tree and TreeItem components', () => {
         cy.get('@onSelectStub').should('have.been.calledOnce');
     });
 
-    it('expands/shrinks the correct items when uncontrolled', () => {
+    it('expands/shrinks the correct items as uncontrolled component', () => {
         cy.mount(<TreeComponent />);
 
         cy.get(TREE_ITEM_TOGGLE_ID).first().click();
@@ -135,7 +135,7 @@ describe('Tree and TreeItem components', () => {
         cy.get(TREE_ITEM_ID).should('have.length', 3);
     });
 
-    it('calls onExpand when controlled by the Tree', () => {
+    it('should trigger onExpand as a controlled component', () => {
         const onExpandStub = cy.stub().as('onExpandStub');
 
         cy.mount(<TreeComponent onExpand={onExpandStub} />);
@@ -144,7 +144,7 @@ describe('Tree and TreeItem components', () => {
         cy.get('@onExpandStub').should('have.been.calledOnce');
     });
 
-    it('calls onExpand when controlled by the Tree', () => {
+    it('should trigger onShrink as a controlled component', () => {
         const onShrinkStub = cy.stub().as('onShrinkStub');
 
         cy.mount(<TreeComponent onShrink={onShrinkStub} />);
@@ -181,7 +181,7 @@ describe('Tree and TreeItem components', () => {
         cy.get(TREE_ITEM_DRAG_HANDLE_ID).first().realMouseUp();
     });
 
-    it('calls onDrop with mouse when controlled by the Tree', () => {
+    it('should trigger onDrop with the mouse as a controlled component', () => {
         const onDropStub = cy.stub().as('onDropStub');
 
         cy.mount(<TreeComponent draggable onDropTree={onDropStub} />);
@@ -197,7 +197,7 @@ describe('Tree and TreeItem components', () => {
         cy.get('@onDropStub').should('have.been.calledOnce');
     });
 
-    it('calls onDrop with keyboard when controlled by the Tree', () => {
+    it('should trigger onDrop with the keyboard as a controlled component', () => {
         const onDropStub = cy.stub().as('onDropStub');
 
         cy.mount(<TreeComponent draggable onDropTree={onDropStub} />);
@@ -213,7 +213,7 @@ describe('Tree and TreeItem components', () => {
         cy.get('@onDropStub').should('have.been.calledOnce');
     });
 
-    it('calls onDrop on the root level when controlled by the TreeItem', () => {
+    it('should trigger onDrop on the root item as a controlled component', () => {
         const onDropStub = cy.stub().as('onDropStub');
 
         cy.mount(<TreeComponent draggable onDropTreeItem={onDropStub} />);
@@ -223,7 +223,7 @@ describe('Tree and TreeItem components', () => {
         cy.get('@onDropStub').should('have.been.calledOnce');
     });
 
-    it('calls onDrop on level 1 when controlled by the TreeItem', () => {
+    it('should trigger onDrop on a level 1 item as a controlled component', () => {
         const onDropStub = cy.stub().as('onDropStub');
 
         cy.mount(<TreeComponent draggable onDropTreeItem={onDropStub} />);
@@ -234,7 +234,7 @@ describe('Tree and TreeItem components', () => {
         cy.get('@onDropStub').should('have.been.calledOnce');
     });
 
-    it('calls onDrop when moving to an inside item controlled by the TreeItem', () => {
+    it('should trigger onDrop when moving to an inside item as a controlled component', () => {
         const onDropStub = cy.stub().as('onDropStub');
 
         cy.mount(<TreeComponent draggable onDropTreeItem={onDropStub} />);
@@ -248,7 +248,7 @@ describe('Tree and TreeItem components', () => {
         cy.get('@onDropStub').should('have.been.calledOnce');
     });
 
-    it('calls onDrop when moving to an outside item controlled by the TreeItem', () => {
+    it('should trigger onDrop when moving to an outside item as a controlled component', () => {
         const onDropStub = cy.stub().as('onDropStub');
 
         cy.mount(<TreeComponent draggable onDropTreeItem={onDropStub} />);
