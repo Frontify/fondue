@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Meta } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 
@@ -104,6 +104,46 @@ export const TreeWithBasicItem = ({ ...args }: TreeProps) => {
     return (
         <div style={{ maxWidth: '800px' }}>
             <TreeView {...args}>{treeItemsMock.map(renderTreeItemComponent)}</TreeView>
+        </div>
+    );
+};
+
+export const TreeWithAwaitedItem = ({ ...args }: TreeProps) => {
+    const [awaitedItems, setAwaitedItems] = useState<TreeItemMock[]>([]);
+
+    useEffect(() => {
+        setTimeout(() => {
+            setAwaitedItems([
+                {
+                    id: '2-1',
+                    label: 'Document Category 2',
+                    nodes: [
+                        {
+                            id: '2-1-1',
+                            label: 'Home',
+                        },
+                        {
+                            id: '2-1-2',
+                            label: 'Members',
+                        },
+                        {
+                            id: '2-1-3',
+                            label: 'About us',
+                        },
+                    ],
+                    type: 'document-category',
+                    accepts: ['document-page', 'document-page-within', 'document-category'].join(', '),
+                },
+            ]);
+        }, 500);
+    }, []);
+
+    return (
+        <div style={{ maxWidth: '800px' }}>
+            <TreeView {...args}>
+                {treeItemsMock.map(renderTreeItemComponent)}
+                {awaitedItems.map(renderTreeItemComponent)}
+            </TreeView>
         </div>
     );
 };

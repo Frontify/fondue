@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import type { FC, MutableRefObject, ReactElement, ReactNode } from 'react';
+import type { MutableRefObject, ReactElement, ReactNode } from 'react';
 import { Active, Collision, Over, Translate } from '@dnd-kit/core';
 import { useSortable } from '@dnd-kit/sortable';
 
@@ -14,7 +14,14 @@ export type SensorContext = MutableRefObject<{
 
 export type OnSelectCallback = (id: string) => void;
 export type OnExpandCallback = (id: string) => void;
-export type OnTreeDropCallback = (args: { id: string; parentId: Nullable<string>; sort: number }) => void;
+
+export type OnShrinkCallback = (id: string) => void;
+export type OnTreeDropCallback = (args: {
+    id: string;
+    parentId: Nullable<string>;
+    sort: number;
+    parentType?: string;
+}) => void;
 
 export type TreeProps = {
     id: string;
@@ -26,6 +33,7 @@ export type TreeProps = {
     'data-test-id'?: string;
     onSelect?: OnSelectCallback;
     onExpand?: OnExpandCallback;
+    onShrink?: OnShrinkCallback;
     onDrop?: OnTreeDropCallback;
 };
 
@@ -50,6 +58,8 @@ type TreeItemBaseProps = {
     children?: ReactNode;
 
     draggable?: boolean;
+
+    showCaret?: boolean;
 };
 
 export type TreeItemWithLabelProps = {
@@ -59,7 +69,7 @@ export type TreeItemWithLabelProps = {
 
 export type TreeItemWithContentComponentProps = {
     label?: never;
-    contentComponent?: ReactNode | FC;
+    contentComponent?: ReactNode;
 } & TreeItemBaseProps;
 
 export type SortableProps = Partial<ReturnType<typeof useSortable>>;
@@ -88,7 +98,8 @@ export type TreeStateAction =
     | { type: 'REPLACE_STATE'; payload: TreeState }
     | { type: 'REGISTER_OVERLAY_ITEM'; payload: Overlay }
     | { type: 'SET_SELECT'; payload: string }
-    | { type: 'SET_EXPAND'; payload: string }
+    | { type: 'EXPAND_NODE'; payload: string }
+    | { type: 'SHRINK_NODE'; payload: string }
     | { type: 'SET_HIDDEN'; payload: { ids: string[]; isHidden: boolean } }
     | { type: 'SET_SELECTION_MODE'; payload: { selectionMode: TreeState['selectionMode'] } }
     | { type: 'SET_PROJECTION'; payload: Nullable<Projection> }
