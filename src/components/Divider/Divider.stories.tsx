@@ -11,7 +11,8 @@ export default {
     tags: ['autodocs'],
     args: {
         color: 'red',
-        vertical: 'false',
+        vertical: false,
+        'data-test-id': 'custom-test-id',
     },
     argTypes: {
         color: {
