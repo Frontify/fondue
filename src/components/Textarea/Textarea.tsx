@@ -6,7 +6,9 @@ import { Validation, validationClassMap } from '@utilities/validation';
 
 import React, { FocusEvent, FormEvent, ReactElement, ReactNode } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
-import { InputValidation } from '@internal/inputs/InputValidation';
+import { InputExtraAction } from '@internal/inputs/InputExtraActions';
+import { InputActionsAndValidation } from '@internal/inputs/InputActionsAndValidation';
+import { Box } from '@components/Box';
 
 export type TextareaProps = {
     id?: string;
@@ -27,6 +29,7 @@ export type TextareaProps = {
     resizeable?: boolean;
     selectable?: boolean;
     readOnly?: boolean;
+    extraActions?: InputExtraAction[];
 };
 
 export const Textarea = ({
@@ -46,20 +49,24 @@ export const Textarea = ({
     onFocus,
     selectable = false,
     readOnly = false,
+    extraActions = [],
 }: TextareaProps): ReactElement => {
     const Component = autosize ? TextareaAutosize : 'textarea';
 
     const autosizeProps = { maxRows, minRows };
 
+    const paddingMultiplier =
+        (validation !== Validation.Default && validation !== Validation.Loading ? 1 : 0) + extraActions.length;
+
     return (
-        <div className="tw-relative">
+        <Box className="tw-relative">
             {decorator && (
-                <div
+                <Box
                     className="tw-absolute tw-top-2 tw-left-2 tw-inline-flex tw-items-end tw-text-text"
                     data-test-id="decorator"
                 >
                     {decorator}
-                </div>
+                </Box>
             )}
             <Component
                 {...(autosize ? autosizeProps : { rows: minRows })}
@@ -76,8 +83,10 @@ export const Textarea = ({
                     !disabled && validationClassMap[validation],
                     !disabled && readOnly && 'tw-bg-transparent tw-border-0',
                     !resizeable && 'tw-resize-none',
-                    validation !== Validation.Default && validation !== Validation.Loading && 'tw-pr-8',
                 ])}
+                style={{
+                    paddingRight: `calc(${paddingMultiplier} * 1.5rem)`,
+                }}
                 disabled={disabled}
                 readOnly={readOnly}
                 onFocus={(e: FocusEvent<HTMLTextAreaElement>) => {
@@ -93,8 +102,8 @@ export const Textarea = ({
                 onBlur={(event: FocusEvent<HTMLTextAreaElement>) => onBlur?.(event.target.value)}
                 data-test-id="textarea"
             />
-            <InputValidation value={validation} />
-        </div>
+            <InputActionsAndValidation extraActions={extraActions} validation={validation} />
+        </Box>
     );
 };
 Textarea.displayName = 'FondueTextarea';

@@ -10,7 +10,7 @@ export type InputValidationProps = {
     value: Validation;
 };
 
-const validationIconWrapperClasses = 'tw-absolute tw-top-[0.6rem] tw-right-[0.6rem]';
+const validationIconWrapperClasses = 'tw-p-1';
 
 export const InputValidation = ({ value = Validation.Default }: InputValidationProps) => {
     return (
