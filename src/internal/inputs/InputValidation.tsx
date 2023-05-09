@@ -16,7 +16,7 @@ export const InputValidation = ({ value = Validation.Default }: InputValidationP
     return (
         <>
             {value === Validation.Loading && (
-                <span className="tw-absolute tw-top-[-0.55rem] tw-right-[-0.55rem] tw-bg-base tw-rounded-full tw-p-[2px] tw-border tw-border-line">
+                <span className="tw-absolute -tw-top-4 -tw-right-4 tw-bg-base tw-rounded-full tw-p-[2px] tw-border tw-border-line">
                     <LoadingCircle size={LoadingCircleSize.ExtraSmall} />
                 </span>
             )}

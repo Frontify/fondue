@@ -13,7 +13,10 @@ export type InputActionsAndValidationProps = {
 
 export const InputActionsAndValidation = ({ validation, extraActions = [] }: InputActionsAndValidationProps) => {
     return validation !== Validation.Default || extraActions.length > 0 ? (
-        <Box className="tw-absolute tw-flex tw-top-px tw-right-px">
+        // In the Figma designs the icons are 10px from the border
+        // each icon item will have a 4px padding from tw-p-1
+        // so we need to add 6px more and 1px for the border
+        <Box className="tw-absolute tw-flex tw-top-[7px] tw-right-[7px]">
             <InputExtraActions items={extraActions} />
             <InputValidation value={validation} />
         </Box>
