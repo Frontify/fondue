@@ -12,7 +12,7 @@ export default {
     args: {
         color: 'red',
         vertical: false,
-        'data-test-id': 'custom-test-id',
+        'data-test-id': 'my-test-id',
     },
     argTypes: {
         color: {
