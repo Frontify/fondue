@@ -45,7 +45,10 @@ export const ButtonMarkupElementNode = (props: ButtonRootProps) => {
     );
 };
 
-export const getButtonStyle = (designTokens: DesignTokens, buttonStyle: RichTextButtonStyle) => {
+export const getButtonStyle = (
+    designTokens: DesignTokens,
+    buttonStyle: RichTextButtonStyle,
+): CSSProperties & { hover?: CSSProperties } => {
     let styles;
     const design = designTokens as Partial<Record<ButtonStyles, CSSProperties & { hover: CSSProperties }>>;
     switch (buttonStyle) {
