@@ -31,6 +31,11 @@ export default {
         },
         minRows: { type: 'number' },
         maxRows: { type: 'number' },
+        disabled: { type: 'boolean' },
+        required: { type: 'boolean' },
+        autosize: { type: 'boolean' },
+        resizeable: { type: 'boolean' },
+        selectable: { type: 'boolean' },
     },
 } as Meta<TextareaProps>;
 

@@ -3,10 +3,10 @@
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
-import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle';
+
 import React, { FocusEvent, FormEvent, ReactElement, ReactNode } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
-import { IconCheckMark16, IconExclamationMarkTriangle16 } from '@foundation/Icon/Generated';
+import { InputValidation } from '@internal/inputs/InputValidation';
 
 export type TextareaProps = {
     id?: string;
@@ -29,7 +29,6 @@ export type TextareaProps = {
     readOnly?: boolean;
 };
 
-const validationIconWrapperClasses = 'tw-absolute tw-top-[0.6rem] tw-right-[0.6rem]';
 export const Textarea = ({
     id: propId,
     value,
@@ -46,7 +45,7 @@ export const Textarea = ({
     resizeable = true,
     onFocus,
     selectable = false,
-    readOnly = true,
+    readOnly = false,
 }: TextareaProps): ReactElement => {
     const Component = autosize ? TextareaAutosize : 'textarea';
 
@@ -95,31 +94,7 @@ export const Textarea = ({
                 onBlur={(event: FocusEvent<HTMLTextAreaElement>) => onBlur && onBlur(event.target.value)}
                 data-test-id="textarea"
             />
-            {validation === Validation.Loading && (
-                <span className="tw-absolute tw-top-[-0.55rem] tw-right-[-0.55rem] tw-bg-base tw-rounded-full tw-p-[2px] tw-border tw-border-line">
-                    <LoadingCircle size={LoadingCircleSize.ExtraSmall} />
-                </span>
-            )}
-            {(validation === Validation.Error || validation === Validation.Warning) && (
-                <span
-                    className={merge([
-                        validationIconWrapperClasses,
-                        validation === Validation.Error && 'tw-text-text-negative',
-                        validation === Validation.Warning && 'tw-text-text-warning',
-                    ])}
-                    data-test-id="error-state-exclamation-mark-icon"
-                >
-                    <IconExclamationMarkTriangle16 />
-                </span>
-            )}
-            {validation === Validation.Success && (
-                <span
-                    className={merge([validationIconWrapperClasses, 'tw-text-text-positive'])}
-                    data-test-id="success-state-check-mark-icon"
-                >
-                    <IconCheckMark16 />
-                </span>
-            )}
+            <InputValidation value={validation} />
         </div>
     );
 };

@@ -17,6 +17,7 @@ export const alias = {
     '@layout': resolve(__dirname, './src/layout'),
     '@typography': resolve(__dirname, './src/typography'),
     '@utilities': resolve(__dirname, './src/utilities'),
+    '@internal': resolve(__dirname, './src/internal'),
 };
 
 export const globals = {

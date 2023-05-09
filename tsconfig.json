@@ -22,7 +22,7 @@
             "@layout/*": ["./src/layout/*"],
             "@typography/*": ["./src/typography/*"],
             "@utilities/*": ["./src/utilities/*"],
-
+            "@internal/*": ["./src/internal/*"],
             "slate-react": ["node_modules/slate-react"]
         },
         "types": ["cypress", "cypress-real-events", "vite/client", "node"]
