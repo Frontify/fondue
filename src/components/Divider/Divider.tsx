@@ -20,6 +20,7 @@ export type DividerProps = {
     height?: DividerHeight | string;
     color?: string;
     vertical?: boolean;
+    'data-test-id'?: string;
 };
 
 const styleMap = {
@@ -29,10 +30,13 @@ const styleMap = {
     [DividerStyle.Dotted]: 'tw-border-dotted',
 };
 
+const DIVIDER_TEST_ID = 'fondue-divider';
+
 export const Divider = ({
     vertical = false,
     style = DividerStyle.Solid,
     height = DividerHeight.Small,
+    'data-test-id': dataTestId = DIVIDER_TEST_ID,
     color = '#CCC',
 }: DividerProps): ReactElement => {
     const verticalClassNames = `tw-w-px tw-h-full tw-border-r tw-m-0 ${styleMap[style]}`;
@@ -43,21 +47,26 @@ export const Divider = ({
                     aria-hidden="true"
                     className="tw-flex tw-self-stretch tw-mt-0 tw-mb-0 tw-items-center tw-justify-center"
                     style={{ width: height }}
-                    data-test-id="divider"
+                    data-test-id={dataTestId}
                 >
                     <div
                         className={verticalClassNames}
                         style={{ borderRightColor: color }}
-                        data-test-id="divider-line"
+                        data-test-id="fondue-divider-line"
                     ></div>
                 </div>
             )}
             {!vertical && (
-                <div aria-hidden="true" className="tw-flex tw-items-center" style={{ height }} data-test-id="divider">
+                <div
+                    aria-hidden="true"
+                    className="tw-flex tw-items-center"
+                    style={{ height }}
+                    data-test-id={dataTestId}
+                >
                     <hr
                         className={`tw-border-t tw-m-0 tw-w-full ${styleMap[style]}`}
                         style={{ borderTopColor: color }}
-                        data-test-id="divider-line"
+                        data-test-id="fondue-divider-line"
                     />
                 </div>
             )}

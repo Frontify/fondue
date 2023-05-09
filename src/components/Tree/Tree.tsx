@@ -2,10 +2,10 @@
 
 import React, {
     cloneElement,
+    isValidElement,
     memo,
     useCallback,
     useEffect,
-    useLayoutEffect,
     useMemo,
     useReducer,
     useRef,
@@ -46,12 +46,15 @@ import type {
 
 import { type Overlay, TreeItemOverlay } from './TreeItem';
 import {
+    findIndexById,
     getMovementAnnouncement,
+    getNodeChildrenIds,
     getProjection,
     getReactNodeIdsInFlatArray,
     removeReactNodesFromFlatArray,
+    updateNodeWithNewChildren,
 } from './helpers';
-import { removeFragmentsAndEnrichChildren, sortableTreeKeyboardCoordinates } from './utils';
+import { removeFragmentsAndEnrichChildren, sortableTreeKeyboardCoordinates, useDeepCompareEffect } from './utils';
 import { TreeContext, TreeContextProps } from './TreeContext';
 
 export const ROOT_ID = '__ROOT__';
@@ -83,14 +86,17 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
             }
             break;
 
-        case 'SET_EXPAND':
+        case 'EXPAND_NODE':
+            {
+                const newExpanded = new Set(draft.expandedIds).add(action.payload);
+                draft.expandedIds = newExpanded;
+            }
+            break;
+
+        case 'SHRINK_NODE':
             {
                 const newExpanded = new Set(draft.expandedIds);
-
-                const isExpanded = !draft.expandedIds.has(action.payload);
-
-                isExpanded ? newExpanded.add(action.payload) : newExpanded.delete(action.payload);
-
+                newExpanded.delete(action.payload);
                 draft.expandedIds = newExpanded;
             }
             break;
@@ -115,39 +121,24 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
 
         case 'REGISTER_NODE_CHILDREN':
             {
-                const { id, children } = action.payload;
+                const { id: parentId, children } = action.payload;
 
-                const index = draft.nodes.findIndex((node) => node.props.id === id);
+                const parentNodeIndex = findIndexById(draft.nodes, parentId);
 
-                if (index === -1) {
-                    console.error(`Element with ID "${id}" not found.`);
+                if (parentNodeIndex === -1) {
+                    console.error(`Element with ID "${parentId}" not found.`);
                     return;
                 }
 
-                const sliceIndex = index + 1;
+                const currentChildrenIds = getNodeChildrenIds(draft.nodes, parentId);
 
-                const currentNodeChildrenIds = draft.nodes
-                    .slice(sliceIndex, children.length - 1)
-                    .map((node) => node.props.id);
+                const newChildrenIds = children.map((node) => node.props.id);
 
-                const newNodeChildrenIds = children.map((node) => node.props.id);
-
-                if (isEqual(currentNodeChildrenIds, newNodeChildrenIds)) {
+                if (isEqual(currentChildrenIds, newChildrenIds)) {
                     return;
                 }
 
-                const nodes = [
-                    ...draft.nodes.slice(0, sliceIndex),
-                    ...children,
-                    ...draft.nodes.slice(sliceIndex),
-                ].filter(
-                    (node, index, self) =>
-                        index === self.findIndex((item) => item.key === node.key) &&
-                        ((node.props.parentId === id && newNodeChildrenIds.includes(node.key)) ||
-                            node.props.parentId !== id),
-                );
-
-                draft.nodes = nodes;
+                draft.nodes = updateNodeWithNewChildren(draft.nodes, parentNodeIndex, children);
             }
             break;
 
@@ -196,6 +187,7 @@ export const Tree = memo(
         onDrop,
         onSelect,
         onExpand,
+        onShrink,
         children,
         selectedIds,
         expandedIds,
@@ -286,11 +278,25 @@ export const Tree = memo(
                 }
 
                 updateTreeState({
-                    type: 'SET_EXPAND',
+                    type: 'EXPAND_NODE',
                     payload: id,
                 });
             },
             [onExpand],
+        );
+
+        const handleShrink = useCallback(
+            (id: string) => {
+                if (onShrink) {
+                    return onShrink(id);
+                }
+
+                updateTreeState({
+                    type: 'SHRINK_NODE',
+                    payload: id,
+                });
+            },
+            [onShrink],
         );
 
         const handleDragEnd = useCallback(
@@ -312,15 +318,13 @@ export const Tree = memo(
             [onDrop, treeState.projection?.parentId, treeState.projection?.position],
         );
 
-        const handleDragStart = ({ active: { id: activeId } }: TreeDragStartEvent) => {
+        const handleDragStart = ({ active: { id: activeId, data } }: TreeDragStartEvent) => {
             setActiveId(activeId);
             setOverId(activeId);
 
-            const activeNode = treeState.nodes.find((node) => node.props.id === activeId);
-
-            if (activeNode) {
+            if (activeId && data.current) {
                 setCurrentPosition({
-                    parentId: activeNode.props.parentId,
+                    parentId: data.current.parentId,
                     overId: activeId,
                 });
             }
@@ -367,7 +371,7 @@ export const Tree = memo(
 
                 const id: string = node.props.id;
                 const isExpanded = treeState.expandedIds.has(id);
-                const parentId: string = node.props.parentId;
+                const parentId: string | undefined = node.props.parentId;
                 const hasChildren = activeElement.getAttribute('data-has-children') === 'true';
 
                 const { code } = event;
@@ -453,10 +457,32 @@ export const Tree = memo(
         const sensors = useSensors(useSensor(PointerSensor), useSensor(KeyboardSensor, { coordinateGetter }));
 
         const announcements: TreeAnnouncements = useMemo(() => {
-            const getActiveTitle = (active: TreeActive) =>
-                treeState.nodes.find((node) => node.key === active.id)?.props.contentComponent?.props.title;
-            const getOverTitle = (over: TreeOver | null) =>
-                treeState.nodes.find((node) => node.key === over?.id)?.props.contentComponent?.props.title;
+            const getActiveTitle = (active: TreeActive) => {
+                let title: string = active.id;
+
+                const activeNode = treeState.nodes.find((node) => node.props.id === active.id);
+
+                if (activeNode && isValidElement(activeNode.props.contentComponent)) {
+                    title = activeNode.props.contentComponent.props.title;
+                } else if (activeNode && activeNode.props.label) {
+                    title = activeNode.props.label;
+                }
+
+                return title;
+            };
+            const getOverTitle = (over: TreeOver | null) => {
+                let title = over?.id;
+
+                const overNode = treeState.nodes.find((node) => node.props.id === over?.id);
+
+                if (overNode && isValidElement(overNode.props.contentComponent)) {
+                    title = overNode.props.contentComponent.props.title;
+                } else if (overNode && overNode.props.label) {
+                    title = overNode.props.label;
+                }
+
+                return title;
+            };
 
             return {
                 onDragStart({ active }) {
@@ -499,15 +525,14 @@ export const Tree = memo(
                     });
                 },
                 onDragCancel({ active }) {
-                    const nodeTitle = treeState.nodes.find((node) => node.key === active.id)?.props.contentComponent
-                        .props.title;
+                    const title = getActiveTitle(active);
 
-                    return `Moving was cancelled. ${nodeTitle || active.id} was dropped in its original position.`;
+                    return `Moving was cancelled. ${title} was dropped in its original position.`;
                 },
             };
         }, [currentPosition, treeState]);
 
-        useLayoutEffect(() => {
+        useDeepCompareEffect(() => {
             updateTreeState({
                 type: 'REGISTER_ROOT_NODES',
                 payload: removeFragmentsAndEnrichChildren(children, { parentId: ROOT_ID, level: 0 }),
@@ -528,7 +553,7 @@ export const Tree = memo(
             });
         }, [selectedIds]);
 
-        useEffect(() => {
+        useDeepCompareEffect(() => {
             sensorContext.current = {
                 nodes: treeState.nodes,
                 offset,
@@ -556,7 +581,6 @@ export const Tree = memo(
             () =>
                 treeState.nodes.map((node) => {
                     return cloneElement(node, {
-                        ...node.props,
                         projection: node.props.id === activeId ? treeState.projection : null,
                         treeDraggable: draggable,
                         isSelected: treeState.selectedIds.has(node.props.id),
@@ -565,12 +589,14 @@ export const Tree = memo(
                         registerNodeChildren,
                         unregisterNodeChildren,
                         onExpand: handleExpand,
+                        onShrink: handleShrink,
                         onSelect: handleSelect,
                     });
                 }),
             [
                 draggable,
                 handleExpand,
+                handleShrink,
                 handleSelect,
                 activeId,
                 registerNodeChildren,
@@ -588,8 +614,9 @@ export const Tree = memo(
                 treeState,
                 onSelect: handleSelect,
                 onExpand: handleExpand,
+                onShrink: handleShrink,
             }),
-            [treeState, handleSelect, handleExpand],
+            [treeState, handleSelect, handleExpand, handleShrink],
         );
 
         return (
@@ -610,7 +637,10 @@ export const Tree = memo(
                         onDragMove={handleDragMove}
                         onDragStart={handleDragStart}
                         onDragCancel={handleDragCancel}
-                        accessibility={{ announcements }}
+                        accessibility={{
+                            announcements,
+                            container: document.getElementById(id)?.parentElement ?? document.body,
+                        }}
                         collisionDetection={closestCenter}
                     >
                         <SortableContext items={items} strategy={verticalListSortingStrategy}>

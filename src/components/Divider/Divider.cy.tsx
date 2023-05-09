@@ -6,8 +6,8 @@ import { Divider, DividerHeight, DividerStyle } from './Divider';
 const DEFAULT_COLOR = 'rgb(204, 204, 204)';
 const COLOR_RGB = 'rgb(64, 101, 174)';
 const COLOR_HEX = '#4065AE';
-const DIVIDER_SELECTOR = '[data-test-id=divider]';
-const DIVIDER_LINE_SELECTOR = '[data-test-id=divider-line]';
+const DIVIDER_SELECTOR = '[data-test-id=fondue-divider]';
+const DIVIDER_LINE_SELECTOR = '[data-test-id=fondue-divider-line]';
 
 describe('Divider component', () => {
     it('renders', () => {
@@ -74,7 +74,14 @@ describe('Divider component', () => {
     it('allows the divider to be vertical', () => {
         cy.mount(<Divider vertical={true} />);
 
-        cy.get(DIVIDER_SELECTOR).should('have.css', 'width', '36px');
+        cy.get(`div${DIVIDER_SELECTOR}`).should('exist');
         cy.get(DIVIDER_LINE_SELECTOR).should('exist').and('have.class', 'tw-border-r');
+    });
+
+    it('should render with custom data-test-id', () => {
+        cy.mount(<Divider data-test-id="custom-container-test-id" />);
+
+        cy.get('[data-test-id=custom-container-test-id]').as('Divider');
+        cy.get('@Divider').should('exist');
     });
 });

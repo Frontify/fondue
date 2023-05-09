@@ -67,6 +67,13 @@ describe('Tooltip Component', () => {
         cy.get(BRIGHT_HEADER_ID).should('not.exist');
     });
 
+    it('should render a tooltip attached to the body tag when enablePortal is true', () => {
+        initTooltip({ content: TOOLTIP_TEXT, enablePortal: true });
+        cy.get(`body > ${TOOLTIP_ID}`).should('exist');
+        cy.get(`body > ${TOOLTIP_ID}`).should('contain', TOOLTIP_TEXT);
+        cy.get(`body > ${BRIGHT_HEADER_ID}`).should('not.exist');
+    });
+
     it('should render a tooltip open by default via component prop', () => {
         initTooltip({ content: TOOLTIP_TEXT, open: true }, false);
         cy.get(TOOLTIP_ID).should('contain', TOOLTIP_TEXT);
