@@ -97,6 +97,10 @@ export default {
             control: { type: 'number' },
             defaultValue: null,
         },
+        enablePortal: {
+            control: { type: 'boolean' },
+            defaultValue: false,
+        },
     },
 } as Meta<TooltipProps>;
 
@@ -142,6 +146,11 @@ export const MultipleTooltipsComponent: StoryFn<TooltipProps> = (args: TooltipPr
             />
         </div>
     );
+};
+
+export const WithPortal = TooltipComponent.bind({});
+WithPortal.args = {
+    enablePortal: true,
 };
 
 export const WithInfoBrightHeader = TooltipComponent.bind({});
