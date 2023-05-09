@@ -84,14 +84,13 @@ export const Textarea = ({
                     if (selectable) {
                         e.target.select();
                     }
-                    if (onFocus) {
-                        onFocus(e);
-                    }
+
+                    onFocus?.(e);
                 }}
                 onInput={(event: FormEvent<HTMLTextAreaElement>) =>
-                    onInput && onInput((event.target as HTMLTextAreaElement).value)
+                    onInput?.((event.target as HTMLTextAreaElement).value)
                 }
-                onBlur={(event: FocusEvent<HTMLTextAreaElement>) => onBlur && onBlur(event.target.value)}
+                onBlur={(event: FocusEvent<HTMLTextAreaElement>) => onBlur?.(event.target.value)}
                 data-test-id="textarea"
             />
             <InputValidation value={validation} />
