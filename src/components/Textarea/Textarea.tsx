@@ -85,7 +85,7 @@ export const Textarea = ({
                     !resizeable && 'tw-resize-none',
                 ])}
                 style={{
-                    paddingRight: `calc(${paddingMultiplier} * 1.5rem)`,
+                    paddingRight: `calc(${paddingMultiplier} * 1.5rem + 0.5rem)`,
                 }}
                 disabled={disabled}
                 readOnly={readOnly}
