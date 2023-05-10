@@ -89,7 +89,7 @@ WithExtraActionsWithTooltips.args = {
 };
 
 export const WithDecoratorAndExtraActions = TextareaFieldTemplate.bind({});
-WithDecorator.args = {
+WithDecoratorAndExtraActions.args = {
     decorator: <IconIcon16 />,
     extraActions: [
         {
