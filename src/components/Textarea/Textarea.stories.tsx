@@ -18,15 +18,16 @@ export default {
         autosize: false,
         resizeable: true,
         selectable: false,
+        readOnly: false,
         validation: Validation.Default,
     },
     argTypes: {
+        id: { type: 'string' },
         value: { type: 'string' },
         placeholder: { type: 'string' },
         decorator: { type: 'string' },
         onInput: { action: 'onInput' },
         onBlur: { action: 'onBlur' },
-        onClear: { action: 'onClear' },
         onFocus: { action: 'onFocus' },
         validation: {
             options: Object.values(Validation),
