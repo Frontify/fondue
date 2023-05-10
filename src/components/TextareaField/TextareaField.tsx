@@ -62,7 +62,7 @@ export const TextareaField = ({
         <Box className="tw-relative">
             {decorator && (
                 <Box
-                    className="tw-absolute tw-top-2 tw-left-2 tw-inline-flex tw-items-end tw-text-text"
+                    className="tw-absolute tw-top-[7px] tw-left-[7px] tw-p-1 tw-inline-flex tw-items-end tw-text-text"
                     data-test-id="decorator"
                 >
                     {decorator}
