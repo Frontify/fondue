@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createStore } from '@udecode/plate';
+import { createStore } from '@udecode/zustood';
 import { RichTextButtonStyle } from '../../types';
 
 export type FloatingButtonMode = '' | 'insert' | 'edit';
