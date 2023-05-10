@@ -13,7 +13,8 @@ import {
     getUnderlineClassNames,
 } from '@components/RichTextEditor/Plugins/ListPlugin/ListItemContentMarkupElement';
 import { LI_CLASSNAMES, getLiStyles } from '@components/RichTextEditor/Plugins/ListPlugin/ListItemMarkupElement';
-import { TextStyles, alignmentClassnames } from '@components/RichTextEditor/Plugins/TextStylePlugin/TextStyles';
+import { TextStyles } from '@components/RichTextEditor/Plugins/TextStylePlugin/TextStyles';
+import { alignmentClassnames } from '@components/RichTextEditor/Plugins/shared';
 import { DesignTokens } from '@components/RichTextEditor/types';
 import {
     ELEMENT_LI,

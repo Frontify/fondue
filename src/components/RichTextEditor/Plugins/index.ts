@@ -14,13 +14,11 @@ import { ParagraphPlugin } from './ParagraphPlugin';
 import { PluginComposer } from './PluginComposer';
 import { ResetFormattingPlugin } from './ResetFormattingPlugin';
 import { StrikethroughPlugin } from './StrikethroughPlugin';
-import { TextStylePlugin } from './TextStylePlugin';
 import { UnderlinePlugin } from './UnderlinePlugin';
 
 export const defaultPlugins = new PluginComposer();
 defaultPlugins
     .setPlugin(new SoftBreakPlugin(), new ParagraphPlugin())
-    .setPlugin(new TextStylePlugin())
     .setPlugin(
         [
             new BoldPlugin(),
@@ -62,7 +60,6 @@ export * from './ParagraphPlugin';
 export * from './PluginComposer';
 export * from './ResetFormattingPlugin';
 export * from './StrikethroughPlugin';
-export * from './TextStylePlugin';
 export * from './UnderlinePlugin';
 export * from './BlurOnBreakPlugin';
 export * from './MarkupElement';

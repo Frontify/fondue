@@ -8,7 +8,7 @@ import React from 'react';
 import { getColumnBreakClasses } from '../ColumnBreakPlugin/utils/getColumnBreakClasses';
 import { MarkupElement } from '../MarkupElement';
 import { TextStyles } from '../TextStylePlugin';
-import { justifyClassNames } from '../TextStylePlugin/TextStyles/alignment';
+import { justifyClassNames } from '../shared/alignment';
 import { MARK_TEXT_STYLE } from './ListPlugin';
 
 export const getTextStyle = (styledNode: TNode) => {

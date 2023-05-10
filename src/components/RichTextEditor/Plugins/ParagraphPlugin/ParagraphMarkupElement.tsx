@@ -6,7 +6,7 @@ import { merge } from '@utilities/merge';
 import React from 'react';
 import { getColumnBreakClasses } from '../ColumnBreakPlugin/utils/getColumnBreakClasses';
 import { MarkupElement } from '../MarkupElement';
-import { alignmentClassnames } from '../TextStylePlugin/TextStyles';
+import { alignmentClassnames } from '../shared';
 
 export const PARAGRAPH_CLASSES = 'tw-m-0 tw-px-0 tw-py-0';
 

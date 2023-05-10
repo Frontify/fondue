@@ -8,7 +8,7 @@ import { MarkupElement } from '../MarkupElement';
 import { ELEMENT_CHECK_ITEM } from './id';
 import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
 import { getTextStyle } from '../ListPlugin/ListItemContentMarkupElement';
-import { justifyClassNames } from '../TextStylePlugin/TextStyles/alignment';
+import { justifyClassNames } from '../shared/alignment';
 
 export const CheckboxListElementNode = (props: PlateRenderElementProps) => {
     const { attributes, children, nodeProps, element, editor } = props;

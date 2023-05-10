@@ -19,3 +19,4 @@ export class ParagraphPlugin extends Plugin {
 }
 
 export * from './ParagraphMarkupElement';
+export * from './createParagraphPlugin';
