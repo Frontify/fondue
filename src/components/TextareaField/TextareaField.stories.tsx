@@ -3,44 +3,17 @@
 import React, { useEffect, useState } from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { TextareaField as TextareaFieldComponent, TextareaFieldProps } from './TextareaField';
-import { Validation } from '@utilities/validation';
 import { action } from '@storybook/addon-actions';
 import { IconIcon16 } from '@foundation/Icon/Generated';
 import { BrightHeaderStyle } from '@components/Tooltip';
+import { textareaFieldArgTypes, textareaFieldArgs } from './helpers/constants';
 
 export default {
     title: 'Components/TextareaField',
     component: TextareaFieldComponent,
     tags: ['autodocs'],
-    args: {
-        disabled: false,
-        required: false,
-        autosize: false,
-        resizeable: true,
-        selectable: false,
-        readOnly: false,
-        validation: Validation.Default,
-    },
-    argTypes: {
-        id: { type: 'string' },
-        value: { type: 'string' },
-        placeholder: { type: 'string' },
-        onInput: { action: 'onInput' },
-        onBlur: { action: 'onBlur' },
-        onFocus: { action: 'onFocus' },
-        validation: {
-            options: Object.values(Validation),
-            control: { type: 'select' },
-        },
-        minRows: { type: 'number' },
-        maxRows: { type: 'number' },
-        disabled: { type: 'boolean' },
-        required: { type: 'boolean' },
-        autosize: { type: 'boolean' },
-        resizeable: { type: 'boolean' },
-        selectable: { type: 'boolean' },
-        readOnly: { type: 'boolean' },
-    },
+    args: textareaFieldArgs,
+    argTypes: textareaFieldArgTypes,
 } as Meta<TextareaFieldProps>;
 
 const TextareaFieldTemplate: StoryFn<TextareaFieldProps> = (args: TextareaFieldProps) => {
