@@ -12,6 +12,7 @@ import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import type {
     RegisterNodeChildrenPayload,
     TreeDragEndEvent,
+    TreeDragMoveEvent,
     TreeDragStartEvent,
     TreeItemProps,
 } from '@components/Tree/types';
@@ -126,9 +127,19 @@ export const TreeItem = memo(
             [children, contentComponent, id, label, level, registerOverlay],
         );
 
+        const handleItemDragMove = useCallback(
+            (event: TreeDragMoveEvent) => {
+                if (event.active.id === id) {
+                    document.body.style.setProperty('cursor', canDrop ? 'grabbing' : 'no-drop');
+                }
+            },
+            [canDrop, id],
+        );
+
         useDndMonitor({
             onDragEnd: handleItemDragEnd,
             onDragStart: handleItemDragStart,
+            onDragMove: handleItemDragMove,
         });
 
         const handleSelect = useCallback(
