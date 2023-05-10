@@ -2,7 +2,7 @@
 
 import { CSSProperties } from 'react';
 import { TNode } from '@udecode/plate';
-import { ButtonStyles, TextStyles } from './Plugins/TextStylePlugin/TextStyles';
+import { ButtonStyles } from './Plugins/TextStylePlugin/TextStyles';
 
 export const enum DesignTokenNames {
     HEADING1 = 'heading1',
@@ -18,21 +18,6 @@ export const enum DesignTokenNames {
     IMAGE_CAPTION = 'imageCaption',
     IMAGE_TITLE = 'imageTitle',
 }
-
-export const TextStylesToDesignTokenMap = {
-    [TextStyles.ELEMENT_HEADING1]: DesignTokenNames.HEADING1,
-    [TextStyles.ELEMENT_HEADING2]: DesignTokenNames.HEADING2,
-    [TextStyles.ELEMENT_HEADING3]: DesignTokenNames.HEADING3,
-    [TextStyles.ELEMENT_HEADING4]: DesignTokenNames.HEADING3,
-    [TextStyles.ELEMENT_CUSTOM1]: DesignTokenNames.CUSTOM1,
-    [TextStyles.ELEMENT_CUSTOM2]: DesignTokenNames.CUSTOM2,
-    [TextStyles.ELEMENT_CUSTOM3]: DesignTokenNames.CUSTOM3,
-    [TextStyles.ELEMENT_QUOTE]: DesignTokenNames.QUOTE,
-    [TextStyles.ELEMENT_LINK]: DesignTokenNames.LINK,
-    [TextStyles.ELEMENT_PARAGRAPH]: DesignTokenNames.PARAGRAPH,
-    [TextStyles.ELEMENT_IMAGE_CAPTION]: DesignTokenNames.IMAGE_CAPTION,
-    [TextStyles.ELEMENT_IMAGE_TITLE]: DesignTokenNames.IMAGE_TITLE,
-};
 
 export type DesignTokens = Partial<Record<DesignTokenNames, CSSProperties>> &
     Partial<Record<ButtonStyles, CSSProperties & { hover?: CSSProperties }>>;

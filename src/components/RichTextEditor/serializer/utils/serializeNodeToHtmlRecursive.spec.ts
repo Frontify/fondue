@@ -2,7 +2,6 @@
 
 import { mentionable, orderedListValue, unorderedListValue } from '@components/RichTextEditor/helpers/exampleValues';
 import { ELEMENT_BUTTON, ELEMENT_CHECK_ITEM, mapMentionable } from '@components/RichTextEditor/Plugins';
-import { TextStyles } from '@components/RichTextEditor/Plugins/TextStylePlugin/TextStyles';
 import { defaultDesignTokens } from '@components/RichTextEditor/utils/defaultDesignTokens';
 import {
     ELEMENT_LI,
@@ -186,89 +185,6 @@ describe('serializeNodeToHtmlRecursive()', () => {
         const result = serializeNodeToHtmlRecursive(node, { designTokens: defaultDesignTokens });
 
         expect(result).to.match(/<p.*><a.*target="_blank".*href="https:\/\/frontify.com".*>This is a Link\.<\/a><\/p>/);
-    });
-
-    it('serializes headings and customs html', () => {
-        const node = {
-            type: ELEMENT_PARAGRAPH,
-            children: [
-                {
-                    type: TextStyles.ELEMENT_HEADING1,
-                    children: [
-                        {
-                            text: 'This is a h1.',
-                        },
-                    ],
-                },
-                {
-                    type: TextStyles.ELEMENT_HEADING2,
-                    children: [
-                        {
-                            text: 'This is a h2.',
-                        },
-                    ],
-                },
-                {
-                    type: TextStyles.ELEMENT_HEADING3,
-                    children: [
-                        {
-                            text: 'This is a h3.',
-                        },
-                    ],
-                },
-                {
-                    type: TextStyles.ELEMENT_HEADING4,
-                    children: [
-                        {
-                            text: 'This is a h4.',
-                        },
-                    ],
-                },
-                {
-                    type: TextStyles.ELEMENT_CUSTOM1,
-                    children: [
-                        {
-                            text: 'This is a custom1.',
-                        },
-                    ],
-                },
-                {
-                    type: TextStyles.ELEMENT_CUSTOM2,
-                    children: [
-                        {
-                            text: 'This is a custom2.',
-                        },
-                    ],
-                },
-                {
-                    type: TextStyles.ELEMENT_CUSTOM3,
-                    children: [
-                        {
-                            text: 'This is a custom3.',
-                        },
-                    ],
-                },
-                {
-                    type: TextStyles.ELEMENT_QUOTE,
-                    children: [
-                        {
-                            text: 'This is a quote.',
-                        },
-                    ],
-                },
-            ],
-        };
-
-        const result = serializeNodeToHtmlRecursive(node, { designTokens: defaultDesignTokens });
-
-        expect(result).to.match(/<h1.*>This is a h1.<\/h1>/);
-        expect(result).to.match(/<h2.*>This is a h2.<\/h2>/);
-        expect(result).to.match(/<h3.*>This is a h3.<\/h3>/);
-        expect(result).to.match(/<h4.*>This is a h4.<\/h4>/);
-        expect(result).to.match(/<p.*>This is a custom1.<\/p>/);
-        expect(result).to.match(/<p.*>This is a custom2.<\/p>/);
-        expect(result).to.match(/<p.*>This is a custom3.<\/p>/);
-        expect(result).to.match(/<p.*>This is a quote.<\/p>/);
     });
 
     it('serializes Mentions to html', () => {

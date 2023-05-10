@@ -6,16 +6,12 @@ import { PlateRenderElementProps, TTodoListItemElement, getRootProps, setNodes }
 import { merge } from '@utilities/merge';
 import { MarkupElement } from '../MarkupElement';
 import { ELEMENT_CHECK_ITEM } from './id';
-import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
-import { getTextStyle } from '../ListPlugin/ListItemContentMarkupElement';
-import { justifyClassNames } from '../shared/alignment';
+import { getTextStyleCssProperties, justifyClassNames } from '../';
 
 export const CheckboxListElementNode = (props: PlateRenderElementProps) => {
     const { attributes, children, nodeProps, element, editor } = props;
     const rootProps = getRootProps(props);
     const checked = element.checked as boolean;
-    const { designTokens } = useRichTextEditorContext();
-    const tokenStyles = designTokens[getTextStyle(element.children[0])];
     const align = (element.align as string) ?? 'left';
 
     return (
@@ -38,7 +34,7 @@ export const CheckboxListElementNode = (props: PlateRenderElementProps) => {
                 />
             </div>
             <span
-                style={tokenStyles}
+                style={getTextStyleCssProperties(element.children[0].textStyle as string)}
                 className={merge(['focus:tw-outline-none tw-w-auto tw-min-w-[10px]', checked && 'tw-line-through'])}
             >
                 {children}

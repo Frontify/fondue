@@ -1,8 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TextStyles } from '@components/RichTextEditor/Plugins/TextStylePlugin/TextStyles';
 import {
+    ELEMENT_BLOCKQUOTE,
     ELEMENT_CODE_BLOCK,
+    ELEMENT_H1,
+    ELEMENT_H2,
+    ELEMENT_H3,
+    ELEMENT_H4,
     ELEMENT_H5,
     ELEMENT_H6,
     ELEMENT_HR,
@@ -27,7 +31,7 @@ export const options = (editor: PlateEditor): PartialOptionType => ({
     nodeTypes: {
         paragraph: getPluginType(editor, ELEMENT_PARAGRAPH),
         link: getPluginType(editor, ELEMENT_LINK),
-        blockQuote: getPluginType(editor, TextStyles.ELEMENT_QUOTE),
+        blockQuote: getPluginType(editor, ELEMENT_BLOCKQUOTE),
         inlineCodeMark: getPluginType(editor, MARK_CODE),
         strongMark: getPluginType(editor, MARK_BOLD),
         emphasisMark: getPluginType(editor, MARK_ITALIC),
@@ -40,10 +44,10 @@ export const options = (editor: PlateEditor): PartialOptionType => ({
         listItem: getPluginType(editor, ELEMENT_LI),
         listItemChild: getPluginType(editor, ELEMENT_LIC),
         heading: {
-            1: getPluginType(editor, TextStyles.ELEMENT_HEADING1),
-            2: getPluginType(editor, TextStyles.ELEMENT_HEADING2),
-            3: getPluginType(editor, TextStyles.ELEMENT_HEADING3),
-            4: getPluginType(editor, TextStyles.ELEMENT_HEADING4),
+            1: getPluginType(editor, ELEMENT_H1),
+            2: getPluginType(editor, ELEMENT_H2),
+            3: getPluginType(editor, ELEMENT_H3),
+            4: getPluginType(editor, ELEMENT_H4),
             5: getPluginType(editor, ELEMENT_H5),
             6: getPluginType(editor, ELEMENT_H6),
         },

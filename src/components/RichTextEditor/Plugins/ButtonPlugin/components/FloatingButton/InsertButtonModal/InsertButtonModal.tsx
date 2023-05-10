@@ -4,18 +4,12 @@ import React, { CSSProperties, ReactElement, ReactNode, useState } from 'react';
 
 import { FormControl } from '@components/FormControl';
 import { useInsertModal } from './useInsertModal';
-import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
 import { InsertModal } from '@components/RichTextEditor/Plugins/LinkPlugin/FloatingLink/InsertLinkModal';
-import { ButtonStyles } from '@components/RichTextEditor/Plugins/TextStylePlugin/TextStyles';
+import { getButtonStyleCssProperties } from '../../../ButtonMarkupElement/ButtonMarkupElementNode';
 
 export const InsertButtonModal = () => {
     const modalProps = useInsertModal();
     const { state, onButtonStyleChange } = modalProps;
-    const context = useRichTextEditorContext();
-
-    const designTokens = context.designTokens as Partial<
-        Record<ButtonStyles, CSSProperties & { hover: CSSProperties }>
-    >;
 
     return (
         <InsertModal {...modalProps} testId="floating-button-insert">
@@ -29,7 +23,7 @@ export const InsertButtonModal = () => {
                 >
                     <HoverableButton
                         id="primary"
-                        styles={designTokens.buttonPrimary}
+                        styles={getButtonStyleCssProperties('primary')}
                         isActive={state.buttonStyle === 'primary'}
                         onClick={() => onButtonStyleChange('primary')}
                     >
@@ -38,7 +32,7 @@ export const InsertButtonModal = () => {
 
                     <HoverableButton
                         id="secondary"
-                        styles={designTokens.buttonSecondary}
+                        styles={getButtonStyleCssProperties('secondary')}
                         isActive={state.buttonStyle === 'secondary'}
                         onClick={() => onButtonStyleChange('secondary')}
                     >
@@ -47,7 +41,7 @@ export const InsertButtonModal = () => {
 
                     <HoverableButton
                         id="tertiary"
-                        styles={designTokens.buttonTertiary}
+                        styles={getButtonStyleCssProperties('tertiary')}
                         isActive={state.buttonStyle === 'tertiary'}
                         onClick={() => onButtonStyleChange('tertiary')}
                     >

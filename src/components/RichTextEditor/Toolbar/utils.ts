@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TEXT_STYLE_PLUGIN } from '../Plugins/TextStylePlugin/id';
 import { Button, Buttons } from '../Plugins/types';
 import { ButtonGroupWidths, ButtonGroupsPerRow } from './types';
 
@@ -13,7 +12,7 @@ export const getButtonGroupWidths = (buttons: Buttons) =>
         group,
         buttonGroupWidth: group.reduce(
             (prev, button: Button) =>
-                button.id === TEXT_STYLE_PLUGIN ? BUTTON_GROUP_DROPDOWN_PX : BUTTON_GROUP_SIZE_PX + prev,
+                button.id === 'text-style-plugin' ? BUTTON_GROUP_DROPDOWN_PX : BUTTON_GROUP_SIZE_PX + prev,
             BUTTON_GROUP_PADDING_PX,
         ),
         index,
