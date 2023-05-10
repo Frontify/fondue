@@ -79,9 +79,9 @@ describe('Divider component', () => {
     });
 
     it('should render with custom data-test-id', () => {
-        cy.mount(<Divider data-test-id="custom-container-test-id" />);
+        cy.mount(<Divider data-test-id="custom-divider-test-id" />);
 
-        cy.get('[data-test-id=custom-container-test-id]').as('Divider');
+        cy.get('[data-test-id=custom-divider-test-id]').as('Divider');
         cy.get('@Divider').should('exist');
     });
 });

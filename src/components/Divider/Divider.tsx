@@ -46,8 +46,11 @@ export const Divider = ({
                 <div
                     aria-hidden="true"
                     className="tw-flex tw-self-stretch tw-mt-0 tw-mb-0 tw-items-center tw-justify-center"
-                    style={{ width: height }}
                     data-test-id={dataTestId}
+                    style={{
+                        marginLeft: parseInt(height) / 2,
+                        marginRight: parseInt(height) / 2,
+                    }}
                 >
                     <div
                         className={verticalClassNames}
