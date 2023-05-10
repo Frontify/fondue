@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { Children, MouseEvent, memo, useCallback, useEffect, useMemo } from 'react';
+import React, { Children, MouseEvent, memo, useCallback, useMemo } from 'react';
 import { AnimateLayoutChanges, useSortable } from '@dnd-kit/sortable';
 import { useDndContext, useDndMonitor } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
@@ -12,6 +12,7 @@ import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import type {
     RegisterNodeChildrenPayload,
     TreeDragEndEvent,
+    TreeDragMoveEvent,
     TreeDragStartEvent,
     TreeItemProps,
 } from '@components/Tree/types';
@@ -91,12 +92,6 @@ export const TreeItem = memo(
                 (typeof over?.data?.current?.accepts === 'string' &&
                     over.data.current.accepts?.split(', ').includes(active.data.current.type)));
 
-        useEffect(() => {
-            if (isActive) {
-                document.body.style.setProperty('cursor', canDrop ? 'grabbing' : 'no-drop');
-            }
-        }, [canDrop, isActive]);
-
         const handleItemDragEnd = useCallback(
             (event: TreeDragEndEvent) => {
                 const { over, active } = event;
@@ -132,9 +127,19 @@ export const TreeItem = memo(
             [children, contentComponent, id, label, level, registerOverlay],
         );
 
+        const handleItemDragMove = useCallback(
+            (event: TreeDragMoveEvent) => {
+                if (event.active.id === id) {
+                    document.body.style.setProperty('cursor', canDrop ? 'grabbing' : 'no-drop');
+                }
+            },
+            [canDrop, id],
+        );
+
         useDndMonitor({
             onDragEnd: handleItemDragEnd,
             onDragStart: handleItemDragStart,
+            onDragMove: handleItemDragMove,
         });
 
         const handleSelect = useCallback(
