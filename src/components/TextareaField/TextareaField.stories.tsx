@@ -45,7 +45,7 @@ export default {
 
 const TextareaFieldTemplate: StoryFn<TextareaFieldProps> = (args: TextareaFieldProps) => {
     const [input, setInput] = useState('');
-    useEffect(() => setInput(`${args.value || ''}`), [args.value]);
+    useEffect(() => setInput(`${args.value ?? ''}`), [args.value]);
 
     return <TextareaFieldComponent {...args} value={input} onInput={setInput} />;
 };
