@@ -54,6 +54,8 @@ import {
 } from './serializer';
 import { PaddingSizes } from './types';
 import { defaultDesignTokens } from './utils/defaultDesignTokens';
+import { SubscriptPlugin } from '@components/RichTextEditor/Plugins/SubscriptPlugin';
+import { SuperscriptPlugin } from '@components/RichTextEditor/Plugins/SuperscriptPlugin';
 
 export default {
     title: 'Components/Rich Text Editor',
@@ -111,6 +113,8 @@ allPlugins
             new ButtonPlugin(),
             new CodePlugin(),
             new BreakAfterPlugin(),
+            new SubscriptPlugin(),
+            new SuperscriptPlugin(),
         ],
         [
             new AlignLeftPlugin(),
@@ -397,7 +401,13 @@ customPlugins
         }),
     ])
     .setPlugin([new LinkPlugin()])
-    .setPlugin([new ItalicPlugin(), new BoldPlugin(), new UnderlinePlugin()])
+    .setPlugin([
+        new ItalicPlugin(),
+        new BoldPlugin(),
+        new UnderlinePlugin(),
+        new SubscriptPlugin(),
+        new SuperscriptPlugin(),
+    ])
     .setPlugin([new OrderedListPlugin(), new UnorderedListPlugin()]);
 export const WithCustomControls = RichTextEditorTemplate.bind({});
 WithCustomControls.args = {
@@ -427,7 +437,14 @@ mentionAndEmojisPlugins
     .setPlugin([new ParagraphPlugin()])
     .setPlugin([new MentionPlugin({ mentionableItems: mentionable })])
     .setPlugin([new UnorderedListPlugin({ isSoftBreak: true }), new OrderedListPlugin({ isSoftBreak: true })])
-    .setPlugin([new BoldPlugin(), new ItalicPlugin(), new UnderlinePlugin(), new StrikethroughPlugin()])
+    .setPlugin([
+        new BoldPlugin(),
+        new ItalicPlugin(),
+        new UnderlinePlugin(),
+        new StrikethroughPlugin(),
+        new SubscriptPlugin(),
+        new SuperscriptPlugin(),
+    ])
     .setPlugin([new EmojiPlugin(), new LinkPlugin()]);
 export const WithMentionsAndEmojis = RichTextEditorTemplate.bind({});
 WithMentionsAndEmojis.args = {
@@ -445,6 +462,8 @@ withoutToolbarPlugins
         new UnorderedListPlugin(),
         new OrderedListPlugin(),
         new CheckboxListPlugin(),
+        new SubscriptPlugin(),
+        new SuperscriptPlugin(),
     ]);
 export const WithoutToolbar = RichTextEditorTemplate.bind({});
 WithoutToolbar.args = {
@@ -467,6 +486,8 @@ defaultPluginsWithColumns
         new UnorderedListPlugin(),
         new OrderedListPlugin(),
         new BreakAfterPlugin({ columns: 5, gap: 20 }),
+        new SubscriptPlugin(),
+        new SuperscriptPlugin(),
     ]);
 
 type MultiColumnProps = ComponentProps<typeof RichTextEditorComponent> & { columns: number; columnGap: string };
@@ -489,6 +510,8 @@ export const MultiColumns: StoryFn<MultiColumnProps> = (args: MultiColumnProps) 
             new UnorderedListPlugin(),
             new OrderedListPlugin(),
             new BreakAfterPlugin({ columns: args.columns, gap: 20 }),
+            new SubscriptPlugin(),
+            new SuperscriptPlugin(),
         ]);
 
     return <RichTextEditorComponent updateValueOnChange={false} plugins={plugins} {...args} />;
