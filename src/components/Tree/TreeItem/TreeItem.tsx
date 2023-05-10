@@ -198,11 +198,12 @@ export const TreeItem = memo(
                     FOCUS_VISIBLE_STYLE,
                     !isActive && !isSelected && 'focus-within:tw-bg-box-neutral',
                     'tw-outline-none tw-ring-inset tw-group tw-px-2.5 tw-no-underline tw-leading-5 tw-h-10',
-                    isSelected
+                    isSelected && !transform?.y
                         ? 'tw-font-medium tw-bg-box-neutral-strong tw-text-box-neutral-strong-inverse hover:tw-bg-box-neutral-strong-hover'
                         : 'hover:tw-bg-box-neutral tw-text-text',
+                    transform?.y ? 'tw-bg-box-neutral-strong-inverse tw-text-text tw-font-normal' : '',
                 ]),
-            [isActive, isSelected],
+            [isActive, isSelected, transform?.y],
         );
 
         const containerClassName = merge([
@@ -262,7 +263,7 @@ export const TreeItem = memo(
                     />
 
                     <ExpandButton
-                        active={isSelected}
+                        active={transform?.y ? false : isSelected}
                         onClick={toggleExpand}
                         expanded={showChildren}
                         disabled={!showExpandButton}
