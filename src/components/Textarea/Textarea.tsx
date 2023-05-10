@@ -102,7 +102,10 @@ export const Textarea = ({
                 onBlur={(event: FocusEvent<HTMLTextAreaElement>) => onBlur?.(event.target.value)}
                 data-test-id="textarea"
             />
-            <InputActionsAndValidation extraActions={extraActions} validation={validation} />
+            <InputActionsAndValidation
+                extraActions={extraActions.map((action) => ({ ...action, disabled: action.disabled ?? disabled }))}
+                validation={validation}
+            />
         </Box>
     );
 };

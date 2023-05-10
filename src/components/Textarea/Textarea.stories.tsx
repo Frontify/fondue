@@ -6,6 +6,7 @@ import { Textarea as TextareaComponent, TextareaProps } from './Textarea';
 import { Validation } from '@utilities/validation';
 import { action } from '@storybook/addon-actions';
 import { IconIcon16 } from '@foundation/Icon/Generated';
+import { BrightHeaderStyle } from '..';
 
 export default {
     title: 'Components/Textarea',
@@ -38,6 +39,7 @@ export default {
         autosize: { type: 'boolean' },
         resizeable: { type: 'boolean' },
         selectable: { type: 'boolean' },
+        readOnly: { type: 'boolean' },
     },
 } as Meta<TextareaProps>;
 
@@ -62,6 +64,48 @@ WithExtraActions.args = {
             onClick: action('onExtraAction2Click'),
             icon: <IconIcon16 />,
             title: 'Extra Action 2',
+        },
+    ],
+};
+
+export const WithDisabledExtraAction = TextareaTemplate.bind({});
+WithDisabledExtraAction.args = {
+    extraActions: [
+        {
+            onClick: action('onExtraAction1Click'),
+            icon: <IconIcon16 />,
+            title: 'Extra Action 1',
+        },
+        {
+            onClick: action('onExtraAction2Click'),
+            icon: <IconIcon16 />,
+            title: 'Extra Action 2',
+            disabled: true,
+        },
+    ],
+};
+
+export const WithExtraActionsWithTooltips = TextareaTemplate.bind({});
+WithExtraActionsWithTooltips.args = {
+    extraActions: [
+        {
+            onClick: action('onExtraAction1Click'),
+            icon: <IconIcon16 />,
+            title: 'Extra Action 1',
+            tooltip: {
+                content: 'Tooltip content',
+                withArrow: true,
+            },
+        },
+        {
+            onClick: action('onExtraAction2Click'),
+            icon: <IconIcon16 />,
+            title: 'Extra Action 2',
+            tooltip: {
+                content: 'Tooltip content 2',
+                brightHeader: BrightHeaderStyle.Warning,
+                withArrow: true,
+            },
         },
     ],
 };
