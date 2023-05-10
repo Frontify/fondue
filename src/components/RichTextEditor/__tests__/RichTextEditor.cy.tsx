@@ -9,6 +9,7 @@ import {
     BreakAfterPlugin,
     ButtonPlugin,
     ELEMENT_BUTTON,
+    ItalicPlugin,
     LinkPlugin,
     OrderedListPlugin,
     ParagraphPlugin,
@@ -16,6 +17,8 @@ import {
     RichTextButtonStyle,
     SoftBreakPlugin,
     TextStylePlugin,
+    TextStyles,
+    UnderlinePlugin,
     UnorderedListPlugin,
 } from '../Plugins';
 import { ACTIVE_COLUMN_BREAK_CLASS_NAMES } from '../Plugins/ColumnBreakPlugin/utils/getColumnBreakClasses';
@@ -47,6 +50,8 @@ import {
     TOOLBAR_GROUP_1,
     TOOLBAR_GROUP_2,
 } from './fixtures/selectors';
+import { SubscriptPlugin } from '@components/RichTextEditor/Plugins/SubscriptPlugin';
+import { SuperscriptPlugin } from '@components/RichTextEditor/Plugins/SuperscriptPlugin';
 
 const checkPosition = (chainers: string, value: number, text: string) => {
     cy.window().then(() => {
@@ -1251,6 +1256,52 @@ describe('RichTextEditor Component', () => {
                         ]),
                     );
                 });
+        });
+    });
+
+    describe('Subscript and Superscript', () => {
+        beforeEach(() => {
+            const plugins = new PluginComposer();
+            plugins
+                .setPlugin([
+                    new TextStylePlugin({
+                        textStyles: [TextStyles.ELEMENT_HEADING1, TextStyles.ELEMENT_PARAGRAPH],
+                    }),
+                ])
+                .setPlugin([
+                    new ItalicPlugin(),
+                    new BoldPlugin(),
+                    new UnderlinePlugin(),
+                    new SubscriptPlugin(),
+                    new SuperscriptPlugin(),
+                ]);
+
+            cy.mount(<RichTextEditor plugins={plugins} />);
+            insertTextAndOpenToolbar();
+        });
+
+        it('renders subscript', () => {
+            cy.get(TOOLBAR_FLOATING).should('be.visible');
+            cy.get(TOOLBAR_GROUP_1).children().eq(3).click();
+            cy.get('[contenteditable=true]').should('include.html', 'sub');
+        });
+
+        it('renders superscript', () => {
+            cy.get(TOOLBAR_FLOATING).should('be.visible');
+            cy.get(TOOLBAR_GROUP_1).children().eq(4).click();
+            cy.get('[contenteditable=true]').should('include.html', 'sup');
+        });
+
+        it('should reset format', () => {
+            cy.get(TOOLBAR_FLOATING).should('be.visible');
+            cy.get(TOOLBAR_GROUP_1).children().eq(3).click();
+            cy.get('[contenteditable=true]').should('include.html', 'sub');
+            cy.get(TOOLBAR_GROUP_1).children().eq(4).click();
+            cy.get('[contenteditable=true]').should('not.include.html', 'sub');
+            cy.get('[contenteditable=true]').should('include.html', 'sup');
+            cy.get(TOOLBAR_GROUP_1).children().eq(3).click();
+            cy.get('[contenteditable=true]').should('not.include.html', 'sup');
+            cy.get('[contenteditable=true]').should('include.html', 'sub');
         });
     });
 });
