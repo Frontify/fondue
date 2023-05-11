@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ELEMENT_LINK, ELEMENT_PARAGRAPH } from '@udecode/plate';
-import React, { CSSProperties, ReactElement, useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { orderedListValue } from '../helpers/exampleValues';
 import {
     AlignRightPlugin,
@@ -15,19 +15,14 @@ import {
     PluginComposer,
     RichTextButtonStyle,
     SoftBreakPlugin,
-    TextStylePlugin,
     UnorderedListPlugin,
 } from '../Plugins';
 import { ACTIVE_COLUMN_BREAK_CLASS_NAMES } from '../Plugins/ColumnBreakPlugin/utils/getColumnBreakClasses';
-import { ButtonStyles } from '../Plugins/TextStylePlugin/TextStyles';
 import { RichTextEditor } from '../RichTextEditor';
-import { DesignTokens } from '../types';
 import { ON_SAVE_DELAY_IN_MS } from '../utils';
-import { defaultDesignTokens } from '../utils/defaultDesignTokens';
 import { insertTextAndOpenToolbar } from './fixtures/RichTextEditor';
 import {
     BUTTON,
-    CHANGE_DESIGN_TOKENS_TRIGGER,
     CHECKBOX_INPUT,
     CHECKBOX_INPUT_ID,
     EDIT_BUTTON_BUTTON,
@@ -146,31 +141,6 @@ const RichTextWithButton = ({
                 },
             ])}
         />
-    );
-};
-
-const RichTextWithChangeDesignTokensButton = (): ReactElement => {
-    const [designTokens, setDesignTokens] = useState<DesignTokens>({
-        custom1: {
-            fontSize: '42px',
-        },
-    });
-    return (
-        <div>
-            <button
-                data-test-id="change-design-tokens-button"
-                onClick={() =>
-                    setDesignTokens({
-                        custom1: {
-                            fontSize: '11px',
-                        },
-                    })
-                }
-            >
-                Change font size from 42 to 11
-            </button>
-            <RichTextEditor designTokens={designTokens} />
-        </div>
     );
 };
 
@@ -415,35 +385,13 @@ describe('RichTextEditor Component', () => {
         });
 
         it('renders a passed font style', () => {
-            cy.mount(
-                <RichTextEditor
-                    designTokens={{
-                        custom1: {
-                            fontSize: '42px',
-                        },
-                    }}
-                />,
-            );
+            cy.mount(<RichTextEditor />);
 
             insertTextAndOpenToolbar();
             cy.get(TOOLBAR_FLOATING).should('be.visible');
             cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
             cy.get(TEXTSTYLE_OPTION).eq(4).click();
             cy.get('[contenteditable=true] > p').should('have.attr', 'style', 'font-size: 42px;');
-        });
-
-        it('change a passed font style', () => {
-            cy.mount(<RichTextWithChangeDesignTokensButton />);
-
-            insertTextAndOpenToolbar();
-            cy.get(TOOLBAR_FLOATING).should('be.visible');
-            cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
-            cy.get(TEXTSTYLE_OPTION).eq(4).click();
-            cy.get('[contenteditable=true] > p').should('have.attr', 'style', 'font-size: 42px;');
-
-            cy.get(CHANGE_DESIGN_TOKENS_TRIGGER).click();
-
-            cy.get('[contenteditable=true] > p').should('have.attr', 'style', 'font-size: 11px;');
         });
 
         it('renders multiple editors', () => {
@@ -500,16 +448,7 @@ describe('RichTextEditor Component', () => {
             cy.get('ol li').should('not.exist');
         });
         it('renders a checkbox with custom textStyle', () => {
-            cy.mount(
-                <RichTextEditor
-                    designTokens={{
-                        heading2: {
-                            fontSize: '12px',
-                            fontWeight: 200,
-                        },
-                    }}
-                />,
-            );
+            cy.mount(<RichTextEditor />);
             const heading2Styles = 'font-size: 12px; font-weight: 200;';
 
             insertTextAndOpenToolbar();
@@ -524,17 +463,7 @@ describe('RichTextEditor Component', () => {
         });
 
         it('switches a custom checkbox to list and keeps textStyle', () => {
-            cy.mount(
-                <RichTextEditor
-                    designTokens={{
-                        heading1: {
-                            fontSize: '48px',
-                            fontWeight: 700,
-                            fontStyle: 'normal',
-                        },
-                    }}
-                />,
-            );
+            cy.mount(<RichTextEditor />);
             const heading1Styles = 'font-size: 48px; font-weight: 700; font-style: normal;';
 
             insertTextAndOpenToolbar();
@@ -792,24 +721,14 @@ describe('RichTextEditor Component', () => {
         it('should edit button style', () => {
             const link = 'https://smartive.ch';
             const text = 'This is a link';
-            const designTokens = defaultDesignTokens as Partial<
-                Record<ButtonStyles, CSSProperties & { hover: CSSProperties }>
-            >;
 
             cy.mount(<RichTextWithButton link={link} text={text} buttonStyle="primary" />);
-            cy.get('[contenteditable=true] a')
-                .invoke('attr', 'style')
-                .should('contain', `color: ${designTokens.buttonPrimary?.color}`);
 
             cy.get('[contenteditable=true] a').realClick();
             cy.get(EDIT_BUTTON_BUTTON).click();
 
             cy.get(FLOATING_BUTTON_SECONDARY).realClick();
             cy.get(BUTTON).eq(1).click();
-
-            cy.get('[contenteditable=true] a')
-                .invoke('attr', 'style')
-                .should('contain', `color: ${designTokens.buttonSecondary?.color}`);
         });
 
         it('should remove button', () => {
@@ -1018,7 +937,7 @@ describe('RichTextEditor Component', () => {
         const pluginsWithColumns = new PluginComposer();
         pluginsWithColumns
             .setPlugin([new SoftBreakPlugin(), new ParagraphPlugin()])
-            .setPlugin(new TextStylePlugin())
+            .setPlugin()
             .setPlugin(
                 [new BoldPlugin(), new BreakAfterPlugin({ columns: 2, gap: 20 })],
                 [new AlignRightPlugin(), new UnorderedListPlugin(), new OrderedListPlugin()],

@@ -29,6 +29,7 @@ import { linkNode } from '../nodes/link';
 import { mentionHtmlNode } from '../nodes/mentionHtmlNode';
 import { reactCssPropsToCss } from './reactCssPropsToCss';
 import { serializeLeafToHtml } from './serializeLeafToHtml';
+import { defaultNode } from '../nodes/default';
 
 const countNodesOfType = (nodes: TDescendant[], type: string): number => {
     return nodes.reduce((acc, node) => {
@@ -71,15 +72,18 @@ export const serializeNodeToHtmlRecursive = (
         });
     }
 
-    return (
-        MapNodeTypesToHtml[node.type]({
+    const htmlMapper = MapNodeTypesToHtml[node.type];
+    if (typeof htmlMapper !== 'undefined') {
+        return htmlMapper({
             classNames: getClassNames(node.breakAfterColumn as string | undefined, node.align as string | undefined),
             children,
             rootNestingCount,
             node,
             mappedMentionable,
-        }) ?? children
-    );
+        });
+    } else {
+        return defaultNode(node, children);
+    }
 };
 
 type Arguments = {

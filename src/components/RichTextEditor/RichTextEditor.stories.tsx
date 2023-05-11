@@ -8,7 +8,6 @@ import {
     buttonValues,
     checkboxValue,
     customControlValues,
-    customDesignTokens,
     defaultValue,
     htmlValue,
     markdownText,
@@ -39,11 +38,9 @@ import {
     ResetFormattingPlugin,
     SoftBreakPlugin,
     StrikethroughPlugin,
-    TextStylePlugin,
     UnderlinePlugin,
     UnorderedListPlugin,
 } from './Plugins';
-import { TextStyles } from './Plugins/TextStylePlugin/TextStyles';
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from './RichTextEditor';
 import {
     MarkdownToSlate,
@@ -53,7 +50,6 @@ import {
     serializeNodesToHtml,
 } from './serializer';
 import { PaddingSizes } from './types';
-import { defaultDesignTokens } from './utils/defaultDesignTokens';
 
 export default {
     title: 'Components/Rich Text Editor',
@@ -99,7 +95,7 @@ const RichTextEditorTemplate: StoryFn<RichTextEditorProps> = (args: RichTextEdit
 
 const allPlugins = new PluginComposer();
 allPlugins
-    .setPlugin([new SoftBreakPlugin(), new ParagraphPlugin(), new TextStylePlugin()])
+    .setPlugin([new SoftBreakPlugin(), new ParagraphPlugin()])
     .setPlugin([new MentionPlugin({ mentionableItems: mentionable })])
     .setPlugin(
         [
@@ -234,7 +230,7 @@ WithHtmlAsValue.args = {
 
 export const WithCustomTextStyle = RichTextEditorTemplate.bind({});
 WithCustomTextStyle.args = {
-    designTokens: {
+    /*designTokens: {
         ...defaultDesignTokens,
         heading1: {
             fontSize: '48px',
@@ -305,13 +301,13 @@ WithCustomTextStyle.args = {
             textDecoration: 'none',
             textTransform: 'none',
         },
-    },
+    },*/
 };
 
 export const WithCustomButtonStyles = RichTextEditorTemplate.bind({});
 WithCustomButtonStyles.args = {
     value: JSON.stringify(buttonValues),
-    designTokens: {
+    /*designTokens: {
         ...defaultDesignTokens,
         buttonPrimary: {
             hover: {
@@ -367,11 +363,11 @@ WithCustomButtonStyles.args = {
             borderRadius: '6px',
             backgroundColor: 'rgb(255, 0, 0)',
         },
-    },
+    },*/
 };
 
 const listPlugins = new PluginComposer();
-listPlugins.setPlugin([new UnorderedListPlugin(), new OrderedListPlugin(), new TextStylePlugin(), new BoldPlugin()]);
+listPlugins.setPlugin([new UnorderedListPlugin(), new OrderedListPlugin(), new BoldPlugin()]);
 export const WithList = RichTextEditorTemplate.bind({});
 WithList.args = {
     plugins: listPlugins,
@@ -385,17 +381,7 @@ WithChecklist.args = {
 
 const customPlugins = new PluginComposer();
 customPlugins
-    .setPlugin([
-        new SoftBreakPlugin(),
-        new TextStylePlugin({
-            textStyles: [
-                TextStyles.ELEMENT_HEADING1,
-                TextStyles.ELEMENT_PARAGRAPH,
-                TextStyles.ELEMENT_IMAGE_CAPTION,
-                TextStyles.ELEMENT_IMAGE_TITLE,
-            ],
-        }),
-    ])
+    .setPlugin([new SoftBreakPlugin()])
     .setPlugin([new LinkPlugin()])
     .setPlugin([new ItalicPlugin(), new BoldPlugin(), new UnderlinePlugin()])
     .setPlugin([new OrderedListPlugin(), new UnorderedListPlugin()]);
@@ -410,11 +396,7 @@ export const WithToolbarTopAndSmallPadding = RichTextEditorTemplate.bind({});
 WithToolbarTopAndSmallPadding.args = {
     position: Position.TOP,
     padding: PaddingSizes.Medium,
-    plugins: topbarPlugins.setPlugin([
-        new TextStylePlugin({
-            textStyles: [TextStyles.ELEMENT_CUSTOM1, TextStyles.ELEMENT_HEADING1, TextStyles.ELEMENT_PARAGRAPH],
-        }),
-    ]),
+    plugins: topbarPlugins,
 };
 
 export const WithCustomToolbarWidth = RichTextEditorTemplate.bind({});
@@ -455,7 +437,6 @@ WithoutToolbar.args = {
 const defaultPluginsWithColumns = new PluginComposer();
 defaultPluginsWithColumns
     .setPlugin([new SoftBreakPlugin(), new ParagraphPlugin()])
-    .setPlugin(new TextStylePlugin())
     .setPlugin([
         new BoldPlugin(),
         new ItalicPlugin(),
@@ -477,7 +458,6 @@ export const MultiColumns: StoryFn<MultiColumnProps> = (args: MultiColumnProps) 
     const plugins = new PluginComposer();
     plugins
         .setPlugin([new SoftBreakPlugin(), new ParagraphPlugin()])
-        .setPlugin(new TextStylePlugin())
         .setPlugin([
             new BoldPlugin(),
             new ItalicPlugin(),
@@ -506,7 +486,6 @@ export const MultiColumnsSerializedToHTML: StoryFn<MultiColumnProps> = (args) =>
     return (
         <GetSerializedContent
             props={{
-                designTokens: customDesignTokens,
                 mentionable,
                 columns: args.columns,
                 columnGap: args.columnGap,
@@ -530,7 +509,7 @@ SimpleMultiColumns.args = {
 };
 
 export const GetSerializedContent = ({
-    props = { designTokens: customDesignTokens, mentionable, columns: 1, columnGap: 'normal' },
+    props = { mentionable, columns: 1, columnGap: 'normal' },
 }: {
     props: SerializeNodesToHtmlOptions;
 }): JSX.Element | null => {

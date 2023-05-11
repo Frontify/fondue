@@ -28,8 +28,6 @@ export const LinkMarkupElementNode = (props: LinkRootProps) => {
     const htmlProps = useLink(props);
     const { attributes, children } = props;
 
-    console.log('LinkMarkupElementNode', props);
-
     return (
         <a {...attributes} href={htmlProps.href} target={htmlProps.target} style={getTextStyleCssProperties('link')}>
             {children}

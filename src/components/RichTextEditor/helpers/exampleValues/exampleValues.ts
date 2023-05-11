@@ -14,12 +14,9 @@ import {
     MARK_STRIKETHROUGH,
     MARK_UNDERLINE,
     TDescendant,
-    TNode,
 } from '@udecode/plate';
 import { ELEMENT_BUTTON } from '../../Plugins';
 import { ELEMENT_CHECK_ITEM } from '../../Plugins/CheckboxListPlugin/id';
-import { TextStyles } from '../../Plugins/TextStylePlugin/TextStyles';
-import { DesignTokens } from '../../types';
 import { mixedMarkdown } from '../../serializer/markdown/__tests__/fixtures';
 import { MARK_TEXT_STYLE } from '../../Plugins/ListPlugin/ListPlugin';
 
@@ -44,18 +41,12 @@ const createElement = ({ text, element = ELEMENT_PARAGRAPH, mark }: CreateElemen
 
 type CreateLicElementProps = {
     text: string;
-    textStyle?: TextStyles;
 };
 
-const createLicElement = ({ text, textStyle }: CreateLicElementProps) => {
-    const textNode: TNode = { text };
-    if (textStyle) {
-        textNode[MARK_TEXT_STYLE] = textStyle;
-    }
-
+const createLicElement = ({ text }: CreateLicElementProps) => {
     return {
         type: ELEMENT_LIC,
-        children: [{ text, [MARK_TEXT_STYLE]: textStyle }],
+        children: [{ text, [MARK_TEXT_STYLE]: ELEMENT_PARAGRAPH }],
     };
 };
 
@@ -67,20 +58,16 @@ export const unorderedListValue = {
     children: [
         {
             type: ELEMENT_LI,
-            children: [
-                createLicElement({ text: 'This is list item number two.', textStyle: TextStyles.ELEMENT_CUSTOM1 }),
-            ],
+            children: [createLicElement({ text: 'This is list item number two.' })],
+        },
+        {
+            type: ELEMENT_LI,
+            children: [createLicElement({ text: 'This is list item number one.' })],
         },
         {
             type: ELEMENT_LI,
             children: [
-                createLicElement({ text: 'This is list item number one.', textStyle: TextStyles.ELEMENT_CUSTOM2 }),
-            ],
-        },
-        {
-            type: ELEMENT_LI,
-            children: [
-                createLicElement({ text: 'This is list item number three.', textStyle: TextStyles.ELEMENT_CUSTOM3 }),
+                createLicElement({ text: 'This is list item number three.' }),
                 {
                     type: ELEMENT_UL,
                     children: [
@@ -255,21 +242,9 @@ export const defaultValue = [
             },
         ],
     },
-    createElement({ text: 'Heading 1', element: TextStyles.ELEMENT_HEADING1 }),
-    createElement({ text: 'Heading 2', element: TextStyles.ELEMENT_HEADING2 }),
-    createElement({ text: 'Heading 3', element: TextStyles.ELEMENT_HEADING3 }),
-    createElement({ text: 'Heading 4', element: TextStyles.ELEMENT_HEADING4 }),
-    createElement({ text: 'Custom 1', element: TextStyles.ELEMENT_CUSTOM1 }),
-    createElement({ text: 'Custom 2', element: TextStyles.ELEMENT_CUSTOM2 }),
-    createElement({ text: 'Custom 3', element: TextStyles.ELEMENT_CUSTOM3 }),
-    createElement({ text: 'Quote', element: TextStyles.ELEMENT_QUOTE }),
 ];
 
-export const customControlValues = [
-    createElement({ text: 'Image Title', element: TextStyles.ELEMENT_IMAGE_TITLE }),
-    createElement({ text: 'Image Caption', element: TextStyles.ELEMENT_IMAGE_CAPTION }),
-    createElement({ text: IPSUM, element: ELEMENT_PARAGRAPH }),
-];
+export const customControlValues = [createElement({ text: IPSUM, element: ELEMENT_PARAGRAPH })];
 
 export const valueWithColumnBreaks = [
     {
@@ -498,19 +473,8 @@ export const nodesToSerialize: TDescendant[] = [
     ...buttonValues,
 ];
 
-export const customDesignTokens: DesignTokens = {
-    heading1: {
-        fontSize: '1.5rem',
-        fontWeight: 800,
-    },
-    heading2: {
-        fontSize: '1.25rem',
-        fontWeight: 500,
-    },
-};
-
 export const mentionValue = [
-    createElement({ text: '💬 Mention', element: TextStyles.ELEMENT_HEADING2 }),
+    createElement({ text: '💬 Mention' }),
     createElement({
         text: 'This example shows how you might implement a simple @-mentions feature that lets users autocomplete mentioning a user by their username. Which, in this case means Star Wars characters. The mentions are rendered as void inline elements inside the document.',
         element: ELEMENT_PARAGRAPH,

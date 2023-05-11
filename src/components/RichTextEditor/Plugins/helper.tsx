@@ -41,7 +41,11 @@ export const justifyClassNames: Record<string, string> = {
     right: 'tw-justify-end tw-text-right',
 };
 
-export const getTextStyleCssProperties = (textStyle: string): any => {
+export const getTextStyleCssProperties = (textStyle: string): CSSProperties => {
+    if (textStyle === 'p') {
+        textStyle = 'body';
+    }
+
     if (textStyle === 'link') {
         return {
             color: `var(--f-theme-settings-${textStyle}-color)`,
@@ -51,7 +55,7 @@ export const getTextStyleCssProperties = (textStyle: string): any => {
             letterSpacing: `var(--f-theme-settings-${textStyle}-letter-spacing)`,
             lineHeight: `var(--f-theme-settings-${textStyle}-line-height)`,
             textDecoration: `var(--f-theme-settings-${textStyle}-text-decoration)`,
-            textTransform: `var(--f-theme-settings-${textStyle}-text-transform)`,
+            textTransform: `var(--f-theme-settings-${textStyle}-text-transform)` as CSSProperties['textTransform'],
         };
     }
     return {
@@ -94,3 +98,9 @@ export const getButtonStyleCssProperties = (
     };
     return { ...styles, cursor: 'pointer', display: 'inline-block', margin: '10px 0' };
 };
+
+export enum ButtonStyles {
+    ELEMENT_BUTTON_PRIMARY = 'buttonPrimary',
+    ELEMENT_BUTTON_SECONDARY = 'buttonSecondary',
+    ELEMENT_BUTTON_TERTIARY = 'buttonTertiary',
+}
