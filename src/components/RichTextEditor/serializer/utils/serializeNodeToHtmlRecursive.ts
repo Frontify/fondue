@@ -82,7 +82,11 @@ export const serializeNodeToHtmlRecursive = (
             mappedMentionable,
         });
     } else {
-        return defaultNode(node, children);
+        return defaultNode(
+            node,
+            children,
+            getClassNames(node.breakAfterColumn as string | undefined, node.align as string | undefined),
+        );
     }
 };
 
