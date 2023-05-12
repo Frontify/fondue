@@ -3,6 +3,7 @@
 import React, { CSSProperties, ReactNode } from 'react';
 import { ButtonGroupProps, IconStylingWrapperProps } from './types';
 import { RichTextButtonStyle } from './ButtonPlugin';
+import { TElement } from '@udecode/plate';
 
 export const IconStylingWrapper = ({ icon }: IconStylingWrapperProps) => (
     <span className="tw-p-2 tw-h-8 tw-justify-center tw-items-center tw-flex">{icon}</span>
@@ -41,33 +42,35 @@ export const justifyClassNames: Record<string, string> = {
     right: 'tw-justify-end tw-text-right',
 };
 
+const PREFIX = '--f-theme-settings-';
 export const getTextStyleCssProperties = (textStyle: string): CSSProperties => {
+    if (textStyle === 'undefined') {
+        return {};
+    }
     if (textStyle === 'p') {
         textStyle = 'body';
     }
 
     if (textStyle === 'link') {
         return {
-            color: `var(--f-theme-settings-${textStyle}-color)`,
-            fontFamily: `var(--f-theme-settings-${textStyle}-font-family)`,
-            fontStyle: `var(--f-theme-settings-${textStyle}-font-style)`,
-            fontWeight: `var(--f-theme-settings-${textStyle}-font-weight)`,
-            letterSpacing: `var(--f-theme-settings-${textStyle}-letter-spacing)`,
-            lineHeight: `var(--f-theme-settings-${textStyle}-line-height)`,
-            textDecoration: `var(--f-theme-settings-${textStyle}-text-decoration)`,
-            textTransform: `var(--f-theme-settings-${textStyle}-text-transform)` as CSSProperties['textTransform'],
+            color: `var(${PREFIX}${textStyle}-color)`,
+            fontStyle: `var(${PREFIX}${textStyle}-font-style)`,
+            fontWeight: `var(${PREFIX}${textStyle}-font-weight)`,
+            letterSpacing: `var(${PREFIX}${textStyle}-letter-spacing)`,
+            textDecoration: `var(${PREFIX}${textStyle}-text-decoration)`,
+            textTransform: `var(${PREFIX}${textStyle}-text-transform)` as CSSProperties['textTransform'],
         };
     }
     return {
-        color: `var(--f-theme-settings-${textStyle}-color)`,
-        fontFamily: `var(--f-theme-settings-${textStyle}-font-family)`,
-        fontSize: `var(--f-theme-settings-${textStyle}-font-size)`,
-        fontStyle: `var(--f-theme-settings-${textStyle}-font-style)`,
-        fontWeight: `var(--f-theme-settings-${textStyle}-font-weight)`,
-        letterSpacing: `var(--f-theme-settings-${textStyle}-letter-spacing)`,
-        lineHeight: `var(--f-theme-settings-${textStyle}-line-height)`,
-        textDecoration: `var(--f-theme-settings-${textStyle}-text-decoration)`,
-        textTransform: `var(--f-theme-settings-${textStyle}-text-transform)` as CSSProperties['textTransform'],
+        color: `var(${PREFIX}${textStyle}-color)`,
+        fontFamily: `var(${PREFIX}${textStyle}-font-family)`,
+        fontSize: `var(${PREFIX}${textStyle}-font-size)`,
+        fontStyle: `var(${PREFIX}${textStyle}-font-style)`,
+        fontWeight: `var(${PREFIX}${textStyle}-font-weight)`,
+        letterSpacing: `var(${PREFIX}${textStyle}-letter-spacing)`,
+        lineHeight: `var(${PREFIX}${textStyle}-line-height)`,
+        textDecoration: `var(${PREFIX}${textStyle}-text-decoration)`,
+        textTransform: `var(${PREFIX}${textStyle}-text-transform)` as CSSProperties['textTransform'],
     };
 };
 
@@ -75,28 +78,56 @@ export const getButtonStyleCssProperties = (
     buttonStyle: RichTextButtonStyle,
 ): CSSProperties & { hover: CSSProperties } => {
     const styles = {
-        fontSize: `var(--f-theme-settings-button-${buttonStyle}-font-size)`,
-        color: `var(--f-theme-settings-button-${buttonStyle}-color)`,
-        paddingTop: `var(--f-theme-settings-button-${buttonStyle}-padding-top)`,
-        paddingRight: `var(--f-theme-settings-button-${buttonStyle}-padding-right)`,
-        paddingBottom: `var(--f-theme-settings-button-${buttonStyle}-padding-bottom)`,
-        paddingLeft: `var(--f-theme-settings-button-${buttonStyle}-padding-left)`,
-        fontFamily: `var(--f-theme-settings-button-${buttonStyle}-font-family)`,
-        fontStyle: `var(--f-theme-settings-button-${buttonStyle}-font-style)`,
-        fontWeight: `var(--f-theme-settings-button-${buttonStyle}-font-weight)`,
-        textTransform: `var(--f-theme-settings-button-${buttonStyle}-text-transform)` as CSSProperties['textTransform'],
-        lineHeight: `var(--f-theme-settings-button-${buttonStyle}-line-height)`,
-        borderColor: `var(--f-theme-settings-button-${buttonStyle}-border-color)`,
-        borderWidth: `var(--f-theme-settings-button-${buttonStyle}-border-width)`,
-        borderRadius: `var(--f-theme-settings-button-${buttonStyle}-border-radius)`,
-        backgroundColor: `var(--f-theme-settings-button-${buttonStyle}-background-color)`,
+        fontSize: `var(${PREFIX}button-${buttonStyle}-font-size)`,
+        color: `var(${PREFIX}button-${buttonStyle}-color)`,
+        paddingTop: `var(${PREFIX}button-${buttonStyle}-padding-top)`,
+        paddingRight: `var(${PREFIX}button-${buttonStyle}-padding-right)`,
+        paddingBottom: `var(${PREFIX}button-${buttonStyle}-padding-bottom)`,
+        paddingLeft: `var(${PREFIX}button-${buttonStyle}-padding-left)`,
+        fontFamily: `var(${PREFIX}button-${buttonStyle}-font-family)`,
+        fontStyle: `var(${PREFIX}button-${buttonStyle}-font-style)`,
+        fontWeight: `var(${PREFIX}button-${buttonStyle}-font-weight)`,
+        textTransform: `var(${PREFIX}button-${buttonStyle}-text-transform)` as CSSProperties['textTransform'],
+        lineHeight: `var(${PREFIX}button-${buttonStyle}-line-height)`,
+        borderColor: `var(${PREFIX}button-${buttonStyle}-border-color)`,
+        borderWidth: `var(${PREFIX}button-${buttonStyle}-border-width)`,
+        borderRadius: `var(${PREFIX}button-${buttonStyle}-border-radius)`,
+        backgroundColor: `var(${PREFIX}button-${buttonStyle}-background-color)`,
         hover: {
-            color: `var(--f-theme-settings-button-${buttonStyle}-hover-color)`,
-            borderColor: `var(--f-theme-settings-button-${buttonStyle}-hover-border-color)`,
-            backgroundColor: `var(--f-theme-settings-button-${buttonStyle}-hover-background-color)`,
+            color: `var(${PREFIX}button-${buttonStyle}-hover-color)`,
+            borderColor: `var(${PREFIX}button-${buttonStyle}-hover-border-color)`,
+            backgroundColor: `var(${PREFIX}button-${buttonStyle}-hover-background-color)`,
         },
     };
     return { ...styles, cursor: 'pointer', display: 'inline-block', margin: '10px 0' };
+};
+
+export const getLiStyles = (element: TElement): CSSProperties => {
+    return {
+        ...getTextStyleCssProperties(getDeepestTextStyle(element)),
+        counterIncrement: 'count',
+    };
+};
+
+const getDeepestTextStyle = (node: TElement): string => {
+    let deepestTextStyle;
+
+    if (node.type === 'a') {
+        deepestTextStyle = node.children[0].textStyle;
+    } else if (node.children) {
+        for (const childNode of node.children) {
+            const childDeepestTextStyle = getDeepestTextStyle(childNode as TElement);
+            if (childDeepestTextStyle) {
+                if (!deepestTextStyle || childDeepestTextStyle.startsWith(deepestTextStyle)) {
+                    deepestTextStyle = childDeepestTextStyle;
+                }
+            }
+        }
+    } else {
+        deepestTextStyle = node.textStyle;
+    }
+
+    return deepestTextStyle as string;
 };
 
 export enum ButtonStyles {

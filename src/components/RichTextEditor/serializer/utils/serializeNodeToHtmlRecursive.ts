@@ -9,7 +9,8 @@ import {
     getOrderedListClasses,
 } from '@components/RichTextEditor/Plugins';
 import { getLicElementClassNames } from '@components/RichTextEditor/Plugins/ListPlugin/ListItemContentMarkupElement';
-import { LI_CLASSNAMES, getLiStyles } from '@components/RichTextEditor/Plugins/ListPlugin/ListItemMarkupElement';
+import { LI_CLASSNAMES } from '@components/RichTextEditor/Plugins/ListPlugin/ListItemMarkupElement';
+import { getLiStyles } from '@components/RichTextEditor/Plugins';
 import { alignmentClassnames } from '@components/RichTextEditor/Plugins/';
 import {
     ELEMENT_LI,
@@ -108,9 +109,8 @@ const MapNodeTypesToHtml: { [key: string]: ({ ...args }: Arguments) => string } 
     },
     [ELEMENT_LI]: ({ classNames, children, node }) =>
         `<li class="${classNames} ${LI_CLASSNAMES}" style="${reactCssPropsToCss(getLiStyles(node))}">${children}</li>`,
-    [ELEMENT_LIC]: ({ classNames, children, node }) => {
-        return `<p class="${classNames} ${getLicElementClassNames(node)}"><span>${children}</span></p>`;
-    },
+    [ELEMENT_LIC]: ({ classNames, children, node }) =>
+        `<p class="${classNames} ${getLicElementClassNames(node)}"><span>${children}</span></p>`,
     [ELEMENT_LINK]: ({ node, children, classNames }) => linkNode(node, children, classNames),
     [ELEMENT_BUTTON]: ({ node, children, classNames }) => buttonNode(node, children, classNames),
     [ELEMENT_CHECK_ITEM]: ({ node, children, classNames }) => checkItemNode(node, children, classNames),
