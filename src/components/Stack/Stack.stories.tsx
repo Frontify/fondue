@@ -10,9 +10,9 @@ import { Divider } from '@components/Divider';
 
 const STACK_DIRECTIONS = ['row', 'column', 'row-reverse', 'column-reverse'];
 
-const StackItem = () => {
-    return <Box as="span">Test content</Box>;
-};
+const STACK_JUSTIFY_TYPES = ['start', 'end', 'center', 'between', 'around', 'evenly'];
+
+const STACK_ALIGN_ITEMS_TYPES = ['start', 'end', 'center', 'baseline', 'stretch'];
 
 const spacingSelect = {
     options: Object.values(SPACING_VALUES),
@@ -52,6 +52,14 @@ export default {
             options: SPACING_VALUES,
             control: { type: 'select' },
         },
+        justify: {
+            options: STACK_JUSTIFY_TYPES,
+            control: { type: 'select' },
+        },
+        alignItems: {
+            options: STACK_ALIGN_ITEMS_TYPES,
+            control: { type: 'select' },
+        },
         children: { table: { disable: true } },
     },
     args: {
@@ -61,6 +69,8 @@ export default {
         margin: 0,
         padding: 12,
         direction: 'column',
+        justify: 'start',
+        alignItems: 'start',
         spacing: 8,
         divider: <Divider height={'0px'} />,
         'data-test-id': 'custom-test-id',
@@ -71,27 +81,23 @@ const Code = ({ children }: { children: ReactNode }): ReactElement => (
     <code className="tw-bg-box-neutral tw-rounded tw-px-2 tw-text-box-neutral-inverse tw-text-s">{children}</code>
 );
 
-const StackComponentWithItems = (args: STACK_PROPS) => {
+export const Stack: StoryFn<STACK_PROPS> = (args: STACK_PROPS) => {
+    const isVertical = args.direction === 'row' || args.direction === 'row-reverse';
+
     return (
-        <StackComponent {...args}>
-            <StackItem />
-            <StackItem />
-            <StackItem />
-            <StackItem />
+        <StackComponent {...args} divider={<Divider vertical={isVertical} />}>
+            <div>Test content.</div>
+            <div>
+                First line
+                <br />
+                Next line
+                <br />
+                Last line
+            </div>
+            <div>All the good stuff is in the middle but the rest of it is necessary too.</div>
+            <div>Test!</div>
         </StackComponent>
     );
-};
-
-export const Stack: StoryFn<STACK_PROPS> = (args: STACK_PROPS) => {
-    if (args.direction === 'column' || args.direction === 'column-reverse') {
-        return <StackComponentWithItems {...args} divider={<Divider height={'0px'} />} />;
-    }
-
-    if (args.direction === 'row' || args.direction === 'row-reverse') {
-        return <StackComponentWithItems {...args} divider={<Divider height={'0px'} vertical />} />;
-    }
-
-    return <StackComponentWithItems {...args} />;
 };
 
 export const StackWithBoxAliasToken: StoryFn<STACK_PROPS> = (args: STACK_PROPS) => (

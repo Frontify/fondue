@@ -62,7 +62,7 @@ export const Divider = ({
             {!vertical && (
                 <div
                     aria-hidden="true"
-                    className="tw-flex tw-items-center"
+                    className="tw-flex tw-items-center tw-w-full"
                     style={{ height }}
                     data-test-id={dataTestId}
                 >
