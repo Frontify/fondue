@@ -8,13 +8,13 @@ import { TreeState } from '../types';
 type AnnouncementItem = {
     level: number;
     id: string;
-    parentId: string;
+    parentId?: string;
 };
 
 type AnnouncementArgs = {
     eventName: string;
     activeId: string;
-    activeTitle?: string;
+    activeTitle: string;
     overId?: string;
     overTitle?: string;
     treeState: TreeState;
@@ -59,7 +59,7 @@ export const getMovementAnnouncement = ({
 
         const announcementNodes: AnnouncementItem[] = treeState.nodes.map(({ props }) => ({
             id: props.id,
-            level: props.level,
+            level: props.level ?? 0,
             parentId: props.parentId,
         }));
 
@@ -75,21 +75,19 @@ export const getMovementAnnouncement = ({
 
         if (!previousItem) {
             const nextItem = sortedItems[overIndex + 1];
-            announcement = `${activeTitle || activeId} was ${movedVerb} before ${overTitle || nextItem.id}.`;
+            announcement = `${activeTitle} was ${movedVerb} before ${overTitle || nextItem.id}.`;
         } else {
             if (projected.depth > previousItem.level) {
-                announcement = `${activeTitle || activeId} was ${nestedVerb} under ${overTitle || previousItem.id}.`;
+                announcement = `${activeTitle} was ${nestedVerb} under ${overTitle || previousItem.id}.`;
             } else {
                 let previousSibling: AnnouncementItem | undefined = previousItem;
                 while (previousSibling && projected.depth < previousSibling.level) {
-                    const parentId: string | null = previousSibling.parentId;
+                    const parentId: string | undefined = previousSibling.parentId;
                     previousSibling = sortedItems.find(({ id }) => id === parentId);
                 }
 
                 if (previousSibling) {
-                    announcement = `${activeTitle || activeId} was ${movedVerb} after ${
-                        overTitle || previousSibling.id
-                    }.`;
+                    announcement = `${activeTitle} was ${movedVerb} after ${overTitle || previousSibling.id}.`;
                 }
             }
         }
