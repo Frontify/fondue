@@ -12,6 +12,7 @@ import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import type {
     RegisterNodeChildrenPayload,
     TreeDragEndEvent,
+    TreeDragMoveEvent,
     TreeDragStartEvent,
     TreeItemProps,
 } from '@components/Tree/types';
@@ -126,9 +127,19 @@ export const TreeItem = memo(
             [children, contentComponent, id, label, level, registerOverlay],
         );
 
+        const handleItemDragMove = useCallback(
+            (event: TreeDragMoveEvent) => {
+                if (event.active.id === id) {
+                    document.body.style.setProperty('cursor', canDrop ? 'grabbing' : 'no-drop');
+                }
+            },
+            [canDrop, id],
+        );
+
         useDndMonitor({
             onDragEnd: handleItemDragEnd,
             onDragStart: handleItemDragStart,
+            onDragMove: handleItemDragMove,
         });
 
         const handleSelect = useCallback(
@@ -198,11 +209,12 @@ export const TreeItem = memo(
                     FOCUS_VISIBLE_STYLE,
                     !isActive && !isSelected && 'focus-within:tw-bg-box-neutral',
                     'tw-outline-none tw-ring-inset tw-group tw-px-2.5 tw-no-underline tw-leading-5 tw-h-10',
-                    isSelected
+                    isSelected && !transform?.y
                         ? 'tw-font-medium tw-bg-box-neutral-strong tw-text-box-neutral-strong-inverse hover:tw-bg-box-neutral-strong-hover'
                         : 'hover:tw-bg-box-neutral tw-text-text',
+                    transform?.y ? 'tw-bg-box-neutral-strong-inverse tw-text-text tw-font-normal' : '',
                 ]),
-            [isActive, isSelected],
+            [isActive, isSelected, transform?.y],
         );
 
         const containerClassName = merge([
@@ -262,7 +274,7 @@ export const TreeItem = memo(
                     />
 
                     <ExpandButton
-                        active={isSelected}
+                        active={transform?.y ? false : isSelected}
                         onClick={toggleExpand}
                         expanded={showChildren}
                         disabled={!showExpandButton}
