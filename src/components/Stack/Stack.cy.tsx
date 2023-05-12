@@ -90,6 +90,90 @@ describe('Stack component', () => {
         cy.get(STACK_ID).first().should('have.prop', 'tagName', 'SPAN');
     });
 
+    it('should render with wrap justify center', () => {
+        cy.mount(<Stack justify="center" />);
+
+        cy.get(STACK_ID).as('Stack');
+        cy.get('@Stack').should('have.class', 'tw-justify-center');
+    });
+
+    it('should render with justify start', () => {
+        cy.mount(<Stack justify="start" />);
+
+        cy.get(STACK_ID).as('Stack');
+        cy.get('@Stack').should('have.class', 'tw-justify-start');
+    });
+
+    it('should render with justify end', () => {
+        cy.mount(<Stack justify="end" />);
+
+        cy.get(STACK_ID).as('Stack');
+        cy.get('@Stack').should('have.class', 'tw-justify-end');
+    });
+
+    it('should render with justify between', () => {
+        cy.mount(<Stack justify="between" />);
+
+        cy.get(STACK_ID).as('Stack');
+        cy.get('@Stack').should('have.class', 'tw-justify-between');
+    });
+
+    it('should render with justify around', () => {
+        cy.mount(<Stack justify="around" />);
+
+        cy.get(STACK_ID).as('Stack');
+        cy.get('@Stack').should('have.class', 'tw-justify-around');
+    });
+
+    it('should render with justify evenly', () => {
+        cy.mount(<Stack justify="evenly" />);
+
+        cy.get(STACK_ID).as('Stack');
+        cy.get('@Stack').should('have.class', 'tw-justify-evenly');
+    });
+
+    it('should render with alignItems start', () => {
+        cy.mount(<Stack alignItems="start" />);
+
+        cy.get(STACK_ID).as('Stack');
+        cy.get('@Stack').should('have.class', 'tw-items-start');
+    });
+
+    it('should render with alignItems end', () => {
+        cy.mount(<Stack alignItems="end" />);
+
+        cy.get(STACK_ID).as('Stack');
+        cy.get('@Stack').should('have.class', 'tw-items-end');
+    });
+
+    it('should render with alignItems center', () => {
+        cy.mount(<Stack alignItems="center" />);
+
+        cy.get(STACK_ID).as('Stack');
+        cy.get('@Stack').should('have.class', 'tw-items-center');
+    });
+
+    it('should render with alignItems baseline', () => {
+        cy.mount(<Stack alignItems="baseline" />);
+
+        cy.get(STACK_ID).as('Stack');
+        cy.get('@Stack').should('have.class', 'tw-items-baseline');
+    });
+
+    it('should render with alignItems stretch', () => {
+        cy.mount(<Stack alignItems="stretch" />);
+
+        cy.get(STACK_ID).as('Stack');
+        cy.get('@Stack').should('have.class', 'tw-items-stretch');
+    });
+
+    it('should render with alignItems stretch', () => {
+        cy.mount(<Stack alignItems="stretch" />);
+
+        cy.get(STACK_ID).as('Stack');
+        cy.get('@Stack').should('have.class', 'tw-items-stretch');
+    });
+
     it('should render with custom data-test-id', () => {
         cy.mount(<Stack data-test-id="custom-container-test-id">{CONTENT_STRING_LONG}</Stack>);
 
