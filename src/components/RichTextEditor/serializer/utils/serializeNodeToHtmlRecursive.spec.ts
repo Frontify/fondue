@@ -13,6 +13,24 @@ import {
 } from '@udecode/plate';
 import { serializeNodeToHtmlRecursive } from './serializeNodeToHtmlRecursive';
 
+type ChildElement = {
+    type: string;
+    children: {
+        text: string;
+    }[];
+};
+
+const createChildElement = (type: string, text: string): ChildElement => {
+    return {
+        type,
+        children: [
+            {
+                text,
+            },
+        ],
+    };
+};
+
 describe('serializeNodeToHtmlRecursive()', () => {
     it('serializes ordered list to html', () => {
         const node = {
@@ -190,70 +208,14 @@ describe('serializeNodeToHtmlRecursive()', () => {
         const node = {
             type: ELEMENT_PARAGRAPH,
             children: [
-                {
-                    type: 'heading1',
-                    children: [
-                        {
-                            text: 'This is a h1.',
-                        },
-                    ],
-                },
-                {
-                    type: 'heading2',
-                    children: [
-                        {
-                            text: 'This is a h2.',
-                        },
-                    ],
-                },
-                {
-                    type: 'heading3',
-                    children: [
-                        {
-                            text: 'This is a h3.',
-                        },
-                    ],
-                },
-                {
-                    type: 'heading4',
-                    children: [
-                        {
-                            text: 'This is a h4.',
-                        },
-                    ],
-                },
-                {
-                    type: 'custom1',
-                    children: [
-                        {
-                            text: 'This is a custom1.',
-                        },
-                    ],
-                },
-                {
-                    type: 'custom2',
-                    children: [
-                        {
-                            text: 'This is a custom2.',
-                        },
-                    ],
-                },
-                {
-                    type: 'custom3',
-                    children: [
-                        {
-                            text: 'This is a custom3.',
-                        },
-                    ],
-                },
-                {
-                    type: 'quote',
-                    children: [
-                        {
-                            text: 'This is a quote.',
-                        },
-                    ],
-                },
+                createChildElement('heading1', 'This is a h1.'),
+                createChildElement('heading2', 'This is a h2.'),
+                createChildElement('heading3', 'This is a h3.'),
+                createChildElement('heading4', 'This is a h4.'),
+                createChildElement('custom1', 'This is a custom1.'),
+                createChildElement('custom2', 'This is a custom2.'),
+                createChildElement('custom3', 'This is a custom3.'),
+                createChildElement('quote', 'This is a quote.'),
             ],
         };
 

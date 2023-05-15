@@ -6,11 +6,12 @@ import {
     MappedMentionableItems,
     OL_STYLES,
     UL_CLASSES,
+    alignmentClassnames,
+    getLiStyles,
     getOrderedListClasses,
 } from '@components/RichTextEditor/Plugins';
 import { getLicElementClassNames } from '@components/RichTextEditor/Plugins/ListPlugin/ListItemContentMarkupElement';
 import { LI_CLASSNAMES } from '@components/RichTextEditor/Plugins/ListPlugin/ListItemMarkupElement';
-import { alignmentClassnames, getLiStyles } from '@components/RichTextEditor/Plugins';
 import {
     ELEMENT_LI,
     ELEMENT_LIC,
