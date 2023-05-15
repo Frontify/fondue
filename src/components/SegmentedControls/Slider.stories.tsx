@@ -32,8 +32,18 @@ Text.args = {
     ],
 };
 
-export const Number = SegmentedControlsTemplate.bind({});
-Number.args = {
+export const TextWithHugWidth = SegmentedControlsTemplate.bind({});
+TextWithHugWidth.args = {
+    items: [
+        { id: 'a', value: 'All' },
+        { id: 'b', value: 'Top 10' },
+        { id: 'c', value: 'Bottom 10' },
+    ],
+    hugWidth: true,
+};
+
+export const Numbers = SegmentedControlsTemplate.bind({});
+Numbers.args = {
     items: [
         { id: 'a', value: 10 },
         { id: 'b', value: 20 },

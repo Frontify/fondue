@@ -31,6 +31,7 @@ export type SegmentedControlsProps = {
     onChange: (id: string) => void;
     ariaLabel?: string;
     disabled?: boolean;
+    hugWidth?: boolean;
 };
 
 const isIconItem = (item: TextOrNumberItem | IconItem): item is IconItem => (item as IconItem).icon !== undefined;
@@ -86,7 +87,7 @@ const SegmentedControlsItem = (props: SegmentedControlsItemProps) => {
                 onClick={handleMockLabelClick}
                 data-test-id={getSegmentedControlsItemTestId()}
                 className={merge([
-                    'tw-relative tw-w-full tw-inline-flex tw-justify-center tw-items-center tw-font-sans tw-font-normal tw-h-full tw-text-center',
+                    'tw-relative tw-w-full tw-px-4 tw-py-2 tw-inline-flex tw-justify-center tw-items-center tw-font-sans tw-font-normal tw-h-full tw-text-center',
                     isActive && !disabled ? 'tw-text-black' : 'tw-text-black-80',
                     !disabled ? 'hover:tw-text-black hover:tw-cursor-pointer' : '',
                 ])}
@@ -114,6 +115,7 @@ export const SegmentedControls = ({
     onChange,
     ariaLabel = 'SegmentedControls',
     disabled = false,
+    hugWidth = false,
 }: SegmentedControlsProps): ReactElement => {
     const id = useMemoizedId(propId);
     const groupProps = { onChange, value: activeItemId, label: ariaLabel, isDisabled: disabled };
@@ -131,13 +133,17 @@ export const SegmentedControls = ({
         ));
     }, [items, id, disabled, radioGroupState]);
     const selectedIndex = items.findIndex((item) => item.id === radioGroupState.selectedValue);
+    const width = hugWidth ? '' : 'tw-w-full';
 
     return (
         <div className="tw-flex">
             <fieldset
                 {...radioGroupProps}
                 data-test-id="fondue-segmented-controls"
-                className="tw-relative tw-h-9 tw-w-full tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly tw-p-0 tw-border tw-border-black-20 tw-m-0 tw-bg-black-0 tw-rounded tw-font-sans tw-text-s tw-select-none"
+                className={merge([
+                    'tw-relative tw-h-9 tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly tw-p-0 tw-border tw-border-black-20 tw-m-0 tw-bg-black-0 tw-rounded tw-font-sans tw-text-s tw-select-none',
+                    width,
+                ])}
             >
                 <motion.div
                     aria-hidden="true"
