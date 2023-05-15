@@ -4,17 +4,28 @@ import { ELEMENT_LINK, ELEMENT_PARAGRAPH } from '@udecode/plate';
 import React, { ReactElement, useState } from 'react';
 import { orderedListValue } from '../helpers/exampleValues';
 import {
+    AlignCenterPlugin,
+    AlignJustifyPlugin,
+    AlignLeftPlugin,
     AlignRightPlugin,
     BoldPlugin,
     BreakAfterPlugin,
     ButtonPlugin,
+    CheckboxListPlugin,
+    CodePlugin,
     ELEMENT_BUTTON,
+    EmojiPlugin,
+    ItalicPlugin,
     LinkPlugin,
     OrderedListPlugin,
     ParagraphPlugin,
     PluginComposer,
+    ResetFormattingPlugin,
     RichTextButtonStyle,
     SoftBreakPlugin,
+    StrikethroughPlugin,
+    TextStylePlugin,
+    UnderlinePlugin,
     UnorderedListPlugin,
 } from '../Plugins';
 import { ACTIVE_COLUMN_BREAK_CLASS_NAMES } from '../Plugins/ColumnBreakPlugin/utils/getColumnBreakClasses';
@@ -42,6 +53,13 @@ import {
     TOOLBAR_GROUP_1,
     TOOLBAR_GROUP_2,
 } from './fixtures/selectors';
+import { Heading1Plugin } from '../Plugins/TextStylePlugin/examples/heading1Plugin';
+import { Custom1Plugin } from '../Plugins/TextStylePlugin/examples/custom1Plugin';
+import { Custom2Plugin } from '../Plugins/TextStylePlugin/examples/custom2Plugin';
+import { Custom3Plugin } from '../Plugins/TextStylePlugin/examples/custom3Plugin';
+import { Heading2Plugin } from '../Plugins/TextStylePlugin/examples/heading2Plugin';
+import { Heading3Plugin } from '../Plugins/TextStylePlugin/examples/heading3Plugin';
+import { Heading4Plugin } from '../Plugins/TextStylePlugin/examples/heading4Plugin';
 
 const checkPosition = (chainers: string, value: number, text: string) => {
     cy.window().then(() => {
@@ -154,8 +172,56 @@ const RichTextEditorWithOrderedListStyles = (): ReactElement => (
     <RichTextEditor value={JSON.stringify([orderedListValue])} />
 );
 
+const TextStylePlugins = [
+    new Heading1Plugin(),
+    new Heading2Plugin(),
+    new Heading3Plugin(),
+    new Heading4Plugin(),
+    new ParagraphPlugin(),
+    new Custom1Plugin(),
+    new Custom2Plugin(),
+    new Custom3Plugin(),
+];
+
+const RichTextWithCustomTextStyles = (): ReactElement => {
+    const plugins = new PluginComposer();
+    plugins
+        .setPlugin(new SoftBreakPlugin())
+        .setPlugin(
+            new TextStylePlugin({
+                textStyles: TextStylePlugins,
+            }),
+        )
+        .setPlugin(
+            [
+                new BoldPlugin(),
+                new ItalicPlugin(),
+                new UnderlinePlugin(),
+                new StrikethroughPlugin(),
+                new LinkPlugin(),
+                new ButtonPlugin(),
+                new CodePlugin(),
+            ],
+            [
+                new AlignLeftPlugin(),
+                new AlignCenterPlugin(),
+                new AlignRightPlugin(),
+                new AlignJustifyPlugin(),
+                new UnorderedListPlugin(),
+                new CheckboxListPlugin(),
+                new OrderedListPlugin(),
+                new ResetFormattingPlugin(),
+                new EmojiPlugin(),
+            ],
+        );
+
+    return <RichTextEditor plugins={plugins} />;
+};
+
 const activeButtonClassNames = '!tw-bg-box-selected tw-rounded !tw-text-box-selected-inverse';
 const disabledButtonClassNames = '!tw-cursor-not-allowed !tw-opacity-50';
+
+import './fixtures/theme.css';
 
 describe('RichTextEditor Component', () => {
     describe('Rendering', () => {
@@ -361,7 +427,7 @@ describe('RichTextEditor Component', () => {
         });
 
         it('renders a heading', () => {
-            cy.mount(<RichTextEditor />);
+            cy.mount(<RichTextWithCustomTextStyles />);
 
             insertTextAndOpenToolbar();
             cy.get(TOOLBAR_FLOATING).should('be.visible');
@@ -370,8 +436,8 @@ describe('RichTextEditor Component', () => {
             cy.get('[contenteditable=true]').should('include.html', '<h1');
         });
 
-        it('renders a custom font', () => {
-            cy.mount(<RichTextEditor />);
+        it('renders a custom text style', () => {
+            cy.mount(<RichTextWithCustomTextStyles />);
 
             insertTextAndOpenToolbar();
             cy.get(TOOLBAR_FLOATING).should('be.visible');
@@ -380,18 +446,8 @@ describe('RichTextEditor Component', () => {
             cy.get('[contenteditable=true] > p').should(
                 'have.attr',
                 'style',
-                'font-size: 14px; font-weight: normal; font-style: normal; text-decoration: underline;',
+                'color: var(--f-theme-settings-custom2-color); font-family: var(--f-theme-settings-custom2-font-family); font-size: var(--f-theme-settings-custom2-font-size); font-style: var(--f-theme-settings-custom2-font-style); font-weight: var(--f-theme-settings-custom2-font-weight); letter-spacing: var(--f-theme-settings-custom2-letter-spacing); line-height: var(--f-theme-settings-custom2-line-height); text-decoration: var(--f-theme-settings-custom2-text-decoration); text-transform: var(--f-theme-settings-custom2-text-transform);',
             );
-        });
-
-        it('renders a passed font style', () => {
-            cy.mount(<RichTextEditor />);
-
-            insertTextAndOpenToolbar();
-            cy.get(TOOLBAR_FLOATING).should('be.visible');
-            cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
-            cy.get(TEXTSTYLE_OPTION).eq(4).click();
-            cy.get('[contenteditable=true] > p').should('have.attr', 'style', 'font-size: 42px;');
         });
 
         it('renders multiple editors', () => {
@@ -416,7 +472,6 @@ describe('RichTextEditor Component', () => {
             cy.get(TOOLBAR_GROUP_2).children().eq(5).click();
             cy.get(CHECKBOX_INPUT).check().should('be.checked');
         });
-
         it('switches between checkbox and lists', () => {
             cy.mount(<RichTextEditor />);
 
@@ -448,8 +503,9 @@ describe('RichTextEditor Component', () => {
             cy.get('ol li').should('not.exist');
         });
         it('renders a checkbox with custom textStyle', () => {
-            cy.mount(<RichTextEditor />);
-            const heading2Styles = 'font-size: 12px; font-weight: 200;';
+            cy.mount(<RichTextWithCustomTextStyles />);
+            const heading2Styles =
+                'color: var(--f-theme-settings-heading2-color); font-family: var(--f-theme-settings-heading2-font-family); font-size: var(--f-theme-settings-heading2-font-size); font-style: var(--f-theme-settings-heading2-font-style); font-weight: var(--f-theme-settings-heading2-font-weight); letter-spacing: var(--f-theme-settings-heading2-letter-spacing); line-height: var(--f-theme-settings-heading2-line-height); text-decoration: var(--f-theme-settings-heading2-text-decoration); text-transform: var(--f-theme-settings-heading2-text-transform);';
 
             insertTextAndOpenToolbar();
             cy.get(TOOLBAR_GROUP_2).children().eq(5).click();
@@ -463,8 +519,9 @@ describe('RichTextEditor Component', () => {
         });
 
         it('switches a custom checkbox to list and keeps textStyle', () => {
-            cy.mount(<RichTextEditor />);
-            const heading1Styles = 'font-size: 48px; font-weight: 700; font-style: normal;';
+            cy.mount(<RichTextWithCustomTextStyles />);
+            const heading1Styles =
+                'color: var(--f-theme-settings-heading1-color); font-family: var(--f-theme-settings-heading1-font-family); font-size: var(--f-theme-settings-heading1-font-size); font-style: var(--f-theme-settings-heading1-font-style); font-weight: var(--f-theme-settings-heading1-font-weight); letter-spacing: var(--f-theme-settings-heading1-letter-spacing); line-height: var(--f-theme-settings-heading1-line-height); text-decoration: var(--f-theme-settings-heading1-text-decoration); text-transform: var(--f-theme-settings-heading1-text-transform);';
 
             insertTextAndOpenToolbar();
             cy.get(TOOLBAR_GROUP_2).children().eq(5).click();
@@ -918,7 +975,7 @@ describe('RichTextEditor Component', () => {
         });
 
         it('should reset a heading', () => {
-            cy.mount(<RichTextEditor />);
+            cy.mount(<RichTextWithCustomTextStyles />);
 
             insertTextAndOpenToolbar();
             cy.get(TOOLBAR_FLOATING).should('be.visible');
@@ -937,7 +994,7 @@ describe('RichTextEditor Component', () => {
         const pluginsWithColumns = new PluginComposer();
         pluginsWithColumns
             .setPlugin([new SoftBreakPlugin(), new ParagraphPlugin()])
-            .setPlugin()
+            .setPlugin([new TextStylePlugin({ textStyles: TextStylePlugins })])
             .setPlugin(
                 [new BoldPlugin(), new BreakAfterPlugin({ columns: 2, gap: 20 })],
                 [new AlignRightPlugin(), new UnorderedListPlugin(), new OrderedListPlugin()],

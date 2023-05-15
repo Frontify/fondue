@@ -10,8 +10,8 @@ const ID = 'imageCaption';
 export class ImageCaptionPlugin extends Plugin {
     constructor(props?: PluginProps) {
         super(ID, {
-            markupElement: new ImageCaptionMarkupElement(),
             label: 'Image Caption',
+            markupElement: new ImageCaptionMarkupElement(),
             ...props,
         });
     }

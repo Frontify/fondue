@@ -54,6 +54,8 @@ export const getTextStyleCssProperties = (textStyle: string): CSSProperties => {
     if (textStyle === 'link') {
         return {
             color: `var(${PREFIX}${textStyle}-color)`,
+            fontFamily: `var(${PREFIX}${textStyle}-font-family)`,
+            fontSize: `var(${PREFIX}${textStyle}-font-size)`,
             fontStyle: `var(${PREFIX}${textStyle}-font-style)`,
             fontWeight: `var(${PREFIX}${textStyle}-font-weight)`,
             letterSpacing: `var(${PREFIX}${textStyle}-letter-spacing)`,

@@ -41,7 +41,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
         const result = serializeNodeToHtmlRecursive(node, {});
 
         expect(result).to.be.equal(
-            '<ol class="tw-list-none tw-pl-[10px] tw-mb-[10px] tw-ml-[15px] [&>li>p]:before:tw-pr-1 [&>li>p]:before:tw-content-[counter(count,decimal)_\'._\'] tw-break-words" style="counter-reset: count;"><li class="tw-break-words [&>p]:before:tw-flex [&>p]:before:tw-justify-end [&>p]:before:tw-w-[1.2em] !tw-no-underline" style="counter-increment: count;"><p class="tw-break-words tw-justify-start tw-grid tw-grid-cols-[min-content_repeat(3,_auto)]"><span class="">First item</span></p></li><li class="tw-break-words [&>p]:before:tw-flex [&>p]:before:tw-justify-end [&>p]:before:tw-w-[1.2em] !tw-no-underline" style="counter-increment: count;"><p class="tw-break-words tw-justify-start tw-grid tw-grid-cols-[min-content_repeat(3,_auto)]"><span class="">Second item</span></p></li></ol>',
+            '<ol class="tw-list-none tw-pl-[10px] tw-mb-[10px] tw-ml-[15px] [&>li>p]:before:tw-pr-1 [&>li>p]:before:tw-content-[counter(count,decimal)_\'._\'] tw-break-words" style="counter-reset: count;"><li class="tw-break-words [&>p]:before:tw-flex [&>p]:before:tw-justify-end [&>p]:before:tw-w-[1.2em] !tw-no-underline" style="color: var(--f-theme-settings-undefined-color); font-family: var(--f-theme-settings-undefined-font-family); font-size: var(--f-theme-settings-undefined-font-size); font-style: var(--f-theme-settings-undefined-font-style); font-weight: var(--f-theme-settings-undefined-font-weight); letter-spacing: var(--f-theme-settings-undefined-letter-spacing); line-height: var(--f-theme-settings-undefined-line-height); text-decoration: var(--f-theme-settings-undefined-text-decoration); text-transform: var(--f-theme-settings-undefined-text-transform); counter-increment: count;"><p class="tw-break-words tw-justify-start tw-grid tw-grid-cols-[min-content_repeat(3,_auto)]"><span>First item</span></p></li><li class="tw-break-words [&>p]:before:tw-flex [&>p]:before:tw-justify-end [&>p]:before:tw-w-[1.2em] !tw-no-underline" style="color: var(--f-theme-settings-undefined-color); font-family: var(--f-theme-settings-undefined-font-family); font-size: var(--f-theme-settings-undefined-font-size); font-style: var(--f-theme-settings-undefined-font-style); font-weight: var(--f-theme-settings-undefined-font-weight); letter-spacing: var(--f-theme-settings-undefined-letter-spacing); line-height: var(--f-theme-settings-undefined-line-height); text-decoration: var(--f-theme-settings-undefined-text-decoration); text-transform: var(--f-theme-settings-undefined-text-transform); counter-increment: count;"><p class="tw-break-words tw-justify-start tw-grid tw-grid-cols-[min-content_repeat(3,_auto)]"><span>Second item</span></p></li></ol>',
         );
     });
 
@@ -96,14 +96,14 @@ describe('serializeNodeToHtmlRecursive()', () => {
         const listItems = htmlDoc.getElementsByTagName('li');
 
         // custom1
-        expect(listItems[0]?.style.fontSize).to.contain('14px');
-        expect(listItems[0]?.style.fontStyle).to.contain('normal');
-        expect(listItems[0]?.style.fontWeight).to.contain('normal');
+        expect(listItems[0]?.style.fontSize).to.contain('var(--f-theme-settings-custom1-font-size)');
+        expect(listItems[0]?.style.fontStyle).to.contain('var(--f-theme-settings-custom1-font-style)');
+        expect(listItems[0]?.style.fontWeight).to.contain('var(--f-theme-settings-custom1-font-weight)');
 
         // custom2
-        expect(listItems[1]?.style.fontSize).to.contain('14px');
-        expect(listItems[1]?.style.fontStyle).to.contain('normal');
-        expect(listItems[1]?.style.fontWeight).to.contain(600);
+        expect(listItems[1]?.style.fontSize).to.contain('var(--f-theme-settings-custom2-font-size)');
+        expect(listItems[1]?.style.fontStyle).to.contain('var(--f-theme-settings-custom2-font-style)');
+        expect(listItems[1]?.style.fontWeight).to.contain('var(--f-theme-settings-custom2-font-weight)');
     });
 
     it('serializes unordered list to html', () => {
@@ -124,7 +124,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
         const result = serializeNodeToHtmlRecursive(node, {});
 
         expect(result).to.be.equal(
-            '<ul class="[&>li>p]:before:tw-content-[\'•\'] [&>li>p]:before:tw-px-2 tw-list-none tw-pl-[10px] tw-mb-[10px] tw-ml-[15px] tw-break-words"><li class="tw-break-words [&>p]:before:tw-flex [&>p]:before:tw-justify-end [&>p]:before:tw-w-[1.2em] !tw-no-underline" style="counter-increment: count;"><p class="tw-break-words tw-justify-start tw-grid tw-grid-cols-[min-content_repeat(3,_auto)]"><span class="">This comes first.</span></p></li></ul>',
+            '<ul class="[&>li>p]:before:tw-content-[\'•\'] [&>li>p]:before:tw-px-2 tw-list-none tw-pl-[10px] tw-mb-[10px] tw-ml-[15px] tw-break-words"><li class="tw-break-words [&>p]:before:tw-flex [&>p]:before:tw-justify-end [&>p]:before:tw-w-[1.2em] !tw-no-underline" style="color: var(--f-theme-settings-undefined-color); font-family: var(--f-theme-settings-undefined-font-family); font-size: var(--f-theme-settings-undefined-font-size); font-style: var(--f-theme-settings-undefined-font-style); font-weight: var(--f-theme-settings-undefined-font-weight); letter-spacing: var(--f-theme-settings-undefined-letter-spacing); line-height: var(--f-theme-settings-undefined-line-height); text-decoration: var(--f-theme-settings-undefined-text-decoration); text-transform: var(--f-theme-settings-undefined-text-transform); counter-increment: count;"><p class="tw-break-words tw-justify-start tw-grid tw-grid-cols-[min-content_repeat(3,_auto)]"><span>This comes first.</span></p></li></ul>',
         );
     });
 
@@ -184,6 +184,89 @@ describe('serializeNodeToHtmlRecursive()', () => {
         const result = serializeNodeToHtmlRecursive(node, {});
 
         expect(result).to.match(/<p.*><a.*target="_blank".*href="https:\/\/frontify.com".*>This is a Link\.<\/a><\/p>/);
+    });
+
+    it('serializes headings and customs html', () => {
+        const node = {
+            type: ELEMENT_PARAGRAPH,
+            children: [
+                {
+                    type: 'heading1',
+                    children: [
+                        {
+                            text: 'This is a h1.',
+                        },
+                    ],
+                },
+                {
+                    type: 'heading2',
+                    children: [
+                        {
+                            text: 'This is a h2.',
+                        },
+                    ],
+                },
+                {
+                    type: 'heading3',
+                    children: [
+                        {
+                            text: 'This is a h3.',
+                        },
+                    ],
+                },
+                {
+                    type: 'heading4',
+                    children: [
+                        {
+                            text: 'This is a h4.',
+                        },
+                    ],
+                },
+                {
+                    type: 'custom1',
+                    children: [
+                        {
+                            text: 'This is a custom1.',
+                        },
+                    ],
+                },
+                {
+                    type: 'custom2',
+                    children: [
+                        {
+                            text: 'This is a custom2.',
+                        },
+                    ],
+                },
+                {
+                    type: 'custom3',
+                    children: [
+                        {
+                            text: 'This is a custom3.',
+                        },
+                    ],
+                },
+                {
+                    type: 'quote',
+                    children: [
+                        {
+                            text: 'This is a quote.',
+                        },
+                    ],
+                },
+            ],
+        };
+
+        const result = serializeNodeToHtmlRecursive(node, {});
+
+        expect(result).to.match(/<h1.*>This is a h1.<\/h1>/);
+        expect(result).to.match(/<h2.*>This is a h2.<\/h2>/);
+        expect(result).to.match(/<h3.*>This is a h3.<\/h3>/);
+        expect(result).to.match(/<h4.*>This is a h4.<\/h4>/);
+        expect(result).to.match(/<p.*>This is a custom1.<\/p>/);
+        expect(result).to.match(/<p.*>This is a custom2.<\/p>/);
+        expect(result).to.match(/<p.*>This is a custom3.<\/p>/);
+        expect(result).to.match(/<p.*>This is a quote.<\/p>/);
     });
 
     it('serializes Mentions to html', () => {
@@ -309,7 +392,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
         });
     }
 
-    it('serializes design tokens with quotes in them correctly', () => {
+    it('serializes with quotes in them correctly', () => {
         const node = {
             type: ELEMENT_PARAGRAPH,
             children: [
@@ -323,7 +406,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
         const result = serializeNodeToHtmlRecursive(node, {});
 
         expect(result).to.be.equal(
-            '<p class="tw-break-words" style=""><a class="tw-break-words" style="font-family: \'Mier B\', -apple-system, BlinkMacSystemFont;" target="_blank" href="https://frontify.com">This is a Link.</a></p>',
+            '<p class="tw-break-words" style="color: var(--f-theme-settings-body-color); font-family: var(--f-theme-settings-body-font-family); font-size: var(--f-theme-settings-body-font-size); font-style: var(--f-theme-settings-body-font-style); font-weight: var(--f-theme-settings-body-font-weight); letter-spacing: var(--f-theme-settings-body-letter-spacing); line-height: var(--f-theme-settings-body-line-height); text-decoration: var(--f-theme-settings-body-text-decoration); text-transform: var(--f-theme-settings-body-text-transform);"><a class="tw-break-words" style="color: var(--f-theme-settings-link-color); font-family: var(--f-theme-settings-link-font-family); font-size: var(--f-theme-settings-link-font-size); font-style: var(--f-theme-settings-link-font-style); font-weight: var(--f-theme-settings-link-font-weight); letter-spacing: var(--f-theme-settings-link-letter-spacing); text-decoration: var(--f-theme-settings-link-text-decoration); text-transform: var(--f-theme-settings-link-text-transform);" target="_blank" href="https://frontify.com">This is a Link.</a></p>',
         );
     });
 });

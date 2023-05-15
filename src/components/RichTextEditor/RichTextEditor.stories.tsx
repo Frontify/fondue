@@ -56,7 +56,7 @@ import { ImageTitlePlugin } from './Plugins/TextStylePlugin/examples/imageTitleP
 import { Heading1Plugin } from './Plugins/TextStylePlugin/examples/heading1Plugin';
 import { Custom1Plugin } from './Plugins/TextStylePlugin/examples/custom1Plugin';
 
-import './storybook-theme.css';
+import './__tests__/fixtures/theme.css';
 
 export default {
     title: 'Components/Rich Text Editor',

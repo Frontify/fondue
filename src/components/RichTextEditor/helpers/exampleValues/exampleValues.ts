@@ -14,6 +14,7 @@ import {
     MARK_STRIKETHROUGH,
     MARK_UNDERLINE,
     TDescendant,
+    TNode,
 } from '@udecode/plate';
 import { ELEMENT_BUTTON } from '../../Plugins';
 import { ELEMENT_CHECK_ITEM } from '../../Plugins/CheckboxListPlugin/id';
@@ -41,12 +42,17 @@ const createElement = ({ text, element = ELEMENT_PARAGRAPH, mark }: CreateElemen
 
 type CreateLicElementProps = {
     text: string;
+    textStyle?: string;
 };
 
-const createLicElement = ({ text }: CreateLicElementProps) => {
+const createLicElement = ({ text, textStyle }: CreateLicElementProps) => {
+    const textNode: TNode = { text };
+    if (textStyle) {
+        textNode[MARK_TEXT_STYLE] = textStyle;
+    }
     return {
         type: ELEMENT_LIC,
-        children: [{ text, [MARK_TEXT_STYLE]: ELEMENT_PARAGRAPH }],
+        children: [{ text, [MARK_TEXT_STYLE]: textStyle }],
     };
 };
 
@@ -58,16 +64,16 @@ export const unorderedListValue = {
     children: [
         {
             type: ELEMENT_LI,
-            children: [createLicElement({ text: 'This is list item number two.' })],
+            children: [createLicElement({ text: 'This is list item number two.', textStyle: 'custom1' })],
         },
         {
             type: ELEMENT_LI,
-            children: [createLicElement({ text: 'This is list item number one.' })],
+            children: [createLicElement({ text: 'This is list item number one.', textStyle: 'custom2' })],
         },
         {
             type: ELEMENT_LI,
             children: [
-                createLicElement({ text: 'This is list item number three.' }),
+                createLicElement({ text: 'This is list item number three.', textStyle: 'custom3' }),
                 {
                     type: ELEMENT_UL,
                     children: [
@@ -242,9 +248,21 @@ export const defaultValue = [
             },
         ],
     },
+    createElement({ text: 'Heading 1', element: 'heading1' }),
+    createElement({ text: 'Heading 2', element: 'heading2' }),
+    createElement({ text: 'Heading 3', element: 'heading3' }),
+    createElement({ text: 'Heading 4', element: 'heading4' }),
+    createElement({ text: 'Custom 1', element: 'custom1' }),
+    createElement({ text: 'Custom 2', element: 'custom2' }),
+    createElement({ text: 'Custom 3', element: 'custom3' }),
+    createElement({ text: 'Quote', element: 'quote' }),
 ];
 
-export const customControlValues = [createElement({ text: IPSUM, element: ELEMENT_PARAGRAPH })];
+export const customControlValues = [
+    createElement({ text: 'Image Title', element: 'imageTitle' }),
+    createElement({ text: 'Image Caption', element: 'imageCaption' }),
+    createElement({ text: IPSUM, element: ELEMENT_PARAGRAPH }),
+];
 
 export const valueWithColumnBreaks = [
     {

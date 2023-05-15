@@ -9,6 +9,36 @@
     --f-theme-settings-heading1-text-decoration: none;
     --f-theme-settings-heading1-text-transform: uppercase;
 
+    --f-theme-settings-heading2-font-family: 'Georgia', serif;
+    --f-theme-settings-heading2-color: #666;
+    --f-theme-settings-heading2-font-weight: bold;
+    --f-theme-settings-heading2-font-size: 26px;
+    --f-theme-settings-heading2-letter-spacing: 0.05em;
+    --f-theme-settings-heading2-line-height: 1.3;
+    --f-theme-settings-heading2-font-style: normal;
+    --f-theme-settings-heading2-text-decoration: none;
+    --f-theme-settings-heading2-text-transform: capitalize;
+
+    --f-theme-settings-heading3-font-family: 'Helvetica Neue', sans-serif;
+    --f-theme-settings-heading3-color: #444;
+    --f-theme-settings-heading3-font-weight: bold;
+    --f-theme-settings-heading3-font-size: 22px;
+    --f-theme-settings-heading3-letter-spacing: 0.02em;
+    --f-theme-settings-heading3-line-height: 1.4;
+    --f-theme-settings-heading3-font-style: italic;
+    --f-theme-settings-heading3-text-decoration: underline;
+    --f-theme-settings-heading3-text-transform: none;
+
+    --f-theme-settings-heading4-font-family: 'Times New Roman', serif;
+    --f-theme-settings-heading4-color: #555;
+    --f-theme-settings-heading4-font-weight: bold;
+    --f-theme-settings-heading4-font-size: 18px;
+    --f-theme-settings-heading4-letter-spacing: 0.01em;
+    --f-theme-settings-heading4-line-height: 1.5;
+    --f-theme-settings-heading4-font-style: normal;
+    --f-theme-settings-heading4-text-decoration: underline;
+    --f-theme-settings-heading4-text-transform: uppercase;
+
     --f-theme-settings-body-font-family: 'Open Sans', sans-serif;
     --f-theme-settings-body-color: #777;
     --f-theme-settings-body-font-weight: normal;
@@ -29,6 +59,14 @@
     --f-theme-settings-link-text-decoration: underline;
     --f-theme-settings-link-text-transform: none;
 
+    --f-theme-settings-quote-font-weight: normal;
+    --f-theme-settings-quote-font-size: 20px;
+    --f-theme-settings-quote-letter-spacing: 0.02em;
+    --f-theme-settings-quote-line-height: 1.5;
+    --f-theme-settings-quote-font-style: italic;
+    --f-theme-settings-quote-text-decoration: none;
+    --f-theme-settings-quote-text-transform: none;
+
     --f-theme-settings-custom1-font-family: 'Montserrat', sans-serif;
     --f-theme-settings-custom1-color: #999;
     --f-theme-settings-custom1-font-weight: bold;
@@ -38,6 +76,26 @@
     --f-theme-settings-custom1-font-style: normal;
     --f-theme-settings-custom1-text-decoration: underline;
     --f-theme-settings-custom1-text-transform: uppercase;
+
+    --f-theme-settings-custom2-font-family: 'Roboto', sans-serif;
+    --f-theme-settings-custom2-color: #666;
+    --f-theme-settings-custom2-font-weight: normal;
+    --f-theme-settings-custom2-font-size: 20px;
+    --f-theme-settings-custom2-letter-spacing: 0.01em;
+    --f-theme-settings-custom2-line-height: 1.3;
+    --f-theme-settings-custom2-font-style: normal;
+    --f-theme-settings-custom2-text-decoration: none;
+    --f-theme-settings-custom2-text-transform: capitalize;
+
+    --f-theme-settings-custom3-font-family: 'Merriweather', serif;
+    --f-theme-settings-custom3-color: #555;
+    --f-theme-settings-custom3-font-weight: bold;
+    --f-theme-settings-custom3-font-size: 24px;
+    --f-theme-settings-custom3-letter-spacing: 0.02em;
+    --f-theme-settings-custom3-line-height: 1.4;
+    --f-theme-settings-custom3-font-style: normal;
+    --f-theme-settings-custom3-text-decoration: underline;
+    --f-theme-settings-custom3-text-transform: none;
 
     --f-theme-settings-accent-color-info-color: #17a2b8;
     --f-theme-settings-accent-color-note-color: #6c757d;

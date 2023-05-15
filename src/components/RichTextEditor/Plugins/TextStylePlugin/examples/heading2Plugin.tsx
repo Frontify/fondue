@@ -6,46 +6,47 @@ import { MarkupElement, Plugin, PluginProps, getColumnBreakClasses } from '../..
 import { alignmentClassnames, getTextStyleCssProperties } from '../../helper';
 import { merge } from '@utilities/merge';
 
-const ID = 'imageTitle';
+const ID = 'heading2';
 
-export class ImageTitlePlugin extends Plugin {
+export class Heading2Plugin extends Plugin {
     constructor(props?: PluginProps) {
         super(ID, {
-            label: 'Image Title',
-            markupElement: new ImageTitleMarkupElement(),
+            label: 'Heading 2',
+            markupElement: new Heading2MarkupElement(),
             ...props,
         });
     }
 
     plugins() {
-        return [createImageTitlePlugin()];
+        return [createHeading2Plugin()];
     }
 }
 
-class ImageTitleMarkupElement extends MarkupElement {
-    constructor(id = ID, node = ImageTitleMarkupElementNode) {
+class Heading2MarkupElement extends MarkupElement {
+    constructor(id = ID, node = Heading2MarkupElementNode) {
         super(id, node);
     }
 }
-const ImageTitleMarkupElementNode = ({ element, attributes, children }: PlateRenderElementProps) => {
+
+const Heading2MarkupElementNode = ({ element, attributes, children }: PlateRenderElementProps) => {
     const align = element.align as string;
 
     return (
-        <p
+        <h2
             {...attributes}
             className={merge([align && alignmentClassnames[align], getColumnBreakClasses(element)])}
             style={getTextStyleCssProperties(element.type)}
         >
             {children}
-        </p>
+        </h2>
     );
 };
 
-const createImageTitlePlugin = createPluginFactory({
+const createHeading2Plugin = createPluginFactory({
     key: ID,
     isElement: true,
-    component: ImageTitleMarkupElementNode,
+    component: Heading2MarkupElementNode,
     deserializeHtml: {
-        rules: [{ validClassName: 'imageTitle' }],
+        rules: [{ validNodeName: ['h2', 'H2'] }],
     },
 });
