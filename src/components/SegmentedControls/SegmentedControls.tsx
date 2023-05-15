@@ -162,7 +162,7 @@ export const SegmentedControls = ({
                 {...radioGroupProps}
                 data-test-id="fondue-segmented-controls"
                 className={merge([
-                    'tw-relative tw-h-9 tw-p-0 tw-border tw-border-black-20 tw-m-0 tw-bg-black-0 tw-rounded tw-font-sans tw-text-s tw-select-none',
+                    'tw-relative tw-h-9 tw-p-0 tw-border tw-border-solid tw-border-black-20 tw-m-0 tw-bg-black-0 tw-rounded tw-font-sans tw-text-s tw-select-none',
                     width,
                     alignment,
                 ])}
