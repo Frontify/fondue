@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
-import { DialogHeader, DialogHeaderSize } from './DialogHeader';
+import { DialogHeader } from './DialogHeader';
 import { IconIcon } from '@foundation/Icon/Generated';
 import { Badge, BadgeStyle } from '@components/Badge';
+import { DialogPadding } from '../../types/dialog';
 
 const DIALOG_HEADER_SELECTOR = '[data-test-id=fondue-dialog-header]';
 const DIALOG_HEADER_TITLE = '[data-test-id=fondue-dialog-header-title]';
@@ -26,7 +27,7 @@ describe('DialogHeader Component', () => {
     });
 
     it('should render in Large size', () => {
-        cy.mount(<DialogHeader title="Hello" size={DialogHeaderSize.Large} />);
+        cy.mount(<DialogHeader title="Hello" size={DialogPadding.Large} />);
         cy.get(DIALOG_HEADER_SELECTOR).should('have.class', 'tw-py-6');
         cy.get(DIALOG_HEADER_TITLE).find('span').should('have.class', 'tw-text-body-large');
     });

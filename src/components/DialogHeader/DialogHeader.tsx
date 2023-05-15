@@ -1,28 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement } from 'react';
+import React from 'react';
 import { merge } from '@utilities/merge';
 import { IconCross } from '@foundation/Icon/Generated';
 import { Text } from '@typography/Text';
 import { Flex } from '@components/Flex';
-import { IconProps } from '@foundation/Icon';
-import { BadgeProps } from '@components/Badge';
 import { Box } from '@components/Box';
-
-export type DialogHeaderProps = {
-    title: string;
-    size?: DialogHeaderSize;
-    collapseBottom?: boolean;
-    onClose?: () => void;
-    icon?: ReactElement<IconProps>;
-    badge?: ReactElement<BadgeProps>;
-    'data-test-id'?: string;
-};
-
-export enum DialogHeaderSize {
-    Default = 'Default',
-    Large = 'Large',
-}
+import { DialogHeaderProps, DialogHeaderSize } from '../../types/dialog';
 
 export const DialogHeader = ({
     title,
