@@ -16,17 +16,16 @@ export const TextStyleDropdown = ({ editorId, textStyles = [] }: TextStyleDropdo
         key,
     } = useTextStyleDropdown(editorId);
 
-    let label = 'Mixed';
+    let activeLabel = 'Mixed';
     for (const style of textStyles) {
-        if (style.id === key) {
-            label = style.props?.label || 'Mixed';
-            break;
+        if (style.id === key && style.props?.label) {
+            activeLabel = style.props?.label;
         }
     }
 
     return (
         <>
-            <DropdownTrigger label={label} open={isOpen} onClick={toggle} ref={triggerRef} />
+            <DropdownTrigger label={activeLabel} open={isOpen} onClick={toggle} ref={triggerRef} />
             {isOpen && (
                 <div
                     className="tw-divide-y tw-divide-line tw-bg-base tw-shadow-md tw-border tw-border-line tw-z-[1000] tw-overflow-auto tw-min-h-[40px]"

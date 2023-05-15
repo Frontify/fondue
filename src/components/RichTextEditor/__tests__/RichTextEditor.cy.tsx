@@ -993,7 +993,7 @@ describe('RichTextEditor Component', () => {
 
         const pluginsWithColumns = new PluginComposer();
         pluginsWithColumns
-            .setPlugin([new SoftBreakPlugin(), new ParagraphPlugin()])
+            .setPlugin([new SoftBreakPlugin()])
             .setPlugin([new TextStylePlugin({ textStyles: TextStylePlugins })])
             .setPlugin(
                 [new BoldPlugin(), new BreakAfterPlugin({ columns: 2, gap: 20 })],

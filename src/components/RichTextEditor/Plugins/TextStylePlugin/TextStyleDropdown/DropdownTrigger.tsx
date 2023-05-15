@@ -3,8 +3,7 @@
 
 import React, { ForwardedRef, forwardRef } from 'react';
 import { getPreventDefaultHandler } from '@udecode/plate';
-
-import { IconCaretDown12 } from '@foundation/Icon';
+import { IconCaretDown12 } from '@foundation/Icon/Generated';
 import { merge } from '@utilities/merge';
 import { DropdownTriggerProps } from './types';
 

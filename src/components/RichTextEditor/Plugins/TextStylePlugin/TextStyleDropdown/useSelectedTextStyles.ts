@@ -4,6 +4,7 @@ import {
     ELEMENT_LI,
     ELEMENT_LIC,
     ELEMENT_OL,
+    ELEMENT_PARAGRAPH,
     ELEMENT_UL,
     ENode,
     PlateEditor,
@@ -21,7 +22,7 @@ const getTextStyle = (node: ENode<Value>): string => {
         return textNode[MARK_TEXT_STYLE];
     }
 
-    return 'p';
+    return ELEMENT_PARAGRAPH;
 };
 
 const excludeStyles = [ELEMENT_LI, ELEMENT_UL, ELEMENT_OL];

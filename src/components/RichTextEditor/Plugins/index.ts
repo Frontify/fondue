@@ -14,13 +14,13 @@ import { ParagraphPlugin } from './ParagraphPlugin';
 import { PluginComposer } from './PluginComposer';
 import { ResetFormattingPlugin } from './ResetFormattingPlugin';
 import { StrikethroughPlugin } from './StrikethroughPlugin';
-import { UnderlinePlugin } from './UnderlinePlugin';
 import { TextStylePlugin } from './TextStylePlugin';
+import { UnderlinePlugin } from './UnderlinePlugin';
 
 export const defaultPlugins = new PluginComposer();
 defaultPlugins
-    .setPlugin(new SoftBreakPlugin(), new ParagraphPlugin())
-    .setPlugin(new TextStylePlugin())
+    .setPlugin(new SoftBreakPlugin())
+    .setPlugin(new TextStylePlugin({ textStyles: [new ParagraphPlugin()] }))
     .setPlugin(
         [
             new BoldPlugin(),

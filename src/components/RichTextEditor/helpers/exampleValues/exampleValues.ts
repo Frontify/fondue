@@ -492,7 +492,7 @@ export const nodesToSerialize: TDescendant[] = [
 ];
 
 export const mentionValue = [
-    createElement({ text: '💬 Mention' }),
+    createElement({ text: '💬 Mention', element: 'heading2' }),
     createElement({
         text: 'This example shows how you might implement a simple @-mentions feature that lets users autocomplete mentioning a user by their username. Which, in this case means Star Wars characters. The mentions are rendered as void inline elements inside the document.',
         element: ELEMENT_PARAGRAPH,
