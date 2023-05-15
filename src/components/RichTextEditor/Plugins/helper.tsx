@@ -44,10 +44,7 @@ export const justifyClassNames: Record<string, string> = {
 
 const PREFIX = '--f-theme-settings-';
 export const getTextStyleCssProperties = (textStyle: string): CSSProperties => {
-    if (textStyle === 'undefined') {
-        return {};
-    }
-    if (textStyle === 'p') {
+    if (textStyle === 'p' || !textStyle) {
         textStyle = 'body';
     }
 

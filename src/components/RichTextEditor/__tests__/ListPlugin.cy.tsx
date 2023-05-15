@@ -3,7 +3,14 @@
 import { ELEMENT_LI, ELEMENT_LIC, ELEMENT_OL } from '@udecode/plate';
 import React from 'react';
 import { orderedListValue, unorderedListValue } from '../helpers/exampleValues';
-import { OrderedListPlugin, PluginComposer, TextStylePlugin, UnorderedListPlugin } from '../Plugins';
+import {
+    OrderedListPlugin,
+    ParagraphPlugin,
+    PluginComposer,
+    SoftBreakPlugin,
+    TextStylePlugin,
+    UnorderedListPlugin,
+} from '../Plugins';
 import { RichTextEditor } from '../RichTextEditor';
 import { insertTextAndOpenToolbar } from './fixtures/RichTextEditor';
 import {
@@ -12,8 +19,6 @@ import {
     TOOLBAR_FLOATING,
     TOOLBAR_PLUGIN_OL,
 } from './fixtures/selectors';
-import { SoftBreakPlugin } from '../Plugins';
-import { ParagraphPlugin } from '../Plugins';
 
 const RichTextEditorWithListPluginWithSoftBreak = ({ value }: { value: string }) => {
     const plugins = new PluginComposer().setPlugin([

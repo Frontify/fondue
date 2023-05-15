@@ -10,8 +10,7 @@ import {
 } from '@components/RichTextEditor/Plugins';
 import { getLicElementClassNames } from '@components/RichTextEditor/Plugins/ListPlugin/ListItemContentMarkupElement';
 import { LI_CLASSNAMES } from '@components/RichTextEditor/Plugins/ListPlugin/ListItemMarkupElement';
-import { getLiStyles } from '@components/RichTextEditor/Plugins';
-import { alignmentClassnames } from '@components/RichTextEditor/Plugins/';
+import { alignmentClassnames, getLiStyles } from '@components/RichTextEditor/Plugins';
 import {
     ELEMENT_LI,
     ELEMENT_LIC,
