@@ -18,7 +18,7 @@ import { MARK_TEXT_STYLE } from '../../ListPlugin';
 const getTextStyle = (node: ENode<Value>): string => {
     if (Array.isArray(node.children)) {
         const textNode = node.children.find((node) => isText(node)) ?? {};
-        return textNode[MARK_TEXT_STYLE] ?? 'p';
+        return textNode[MARK_TEXT_STYLE];
     }
 
     return 'p';
@@ -26,7 +26,7 @@ const getTextStyle = (node: ENode<Value>): string => {
 
 const excludeStyles = [ELEMENT_LI, ELEMENT_UL, ELEMENT_OL];
 
-export const useSelectedTextStyles = (editor: PlateEditor): string => {
+export const useSelectedTextStyles = (editor: PlateEditor): string[] => {
     if (!editor || !editor.selection) {
         return [];
     }

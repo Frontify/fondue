@@ -9,6 +9,7 @@ export class ParagraphPlugin extends Plugin {
     constructor(props?: PluginProps) {
         super(PARAGRAPH_PLUGIN, {
             markupElement: new ParagraphMarkupElement(),
+            label: 'Body Text',
             ...props,
         });
     }

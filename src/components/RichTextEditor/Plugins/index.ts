@@ -15,10 +15,12 @@ import { PluginComposer } from './PluginComposer';
 import { ResetFormattingPlugin } from './ResetFormattingPlugin';
 import { StrikethroughPlugin } from './StrikethroughPlugin';
 import { UnderlinePlugin } from './UnderlinePlugin';
+import { TextStylePlugin } from './TextStylePlugin';
 
 export const defaultPlugins = new PluginComposer();
 defaultPlugins
     .setPlugin(new SoftBreakPlugin(), new ParagraphPlugin())
+    .setPlugin(new TextStylePlugin())
     .setPlugin(
         [
             new BoldPlugin(),

@@ -1,0 +1,126 @@
+:root {
+    --f-theme-settings-heading1-font-family: 'Arial', sans-serif;
+    --f-theme-settings-heading1-color: #333;
+    --f-theme-settings-heading1-font-weight: bold;
+    --f-theme-settings-heading1-font-size: 32px;
+    --f-theme-settings-heading1-letter-spacing: 0.1em;
+    --f-theme-settings-heading1-line-height: 1.2;
+    --f-theme-settings-heading1-font-style: normal;
+    --f-theme-settings-heading1-text-decoration: none;
+    --f-theme-settings-heading1-text-transform: uppercase;
+
+    --f-theme-settings-body-font-family: 'Open Sans', sans-serif;
+    --f-theme-settings-body-color: #777;
+    --f-theme-settings-body-font-weight: normal;
+    --f-theme-settings-body-font-size: 16px;
+    --f-theme-settings-body-letter-spacing: 0;
+    --f-theme-settings-body-line-height: 1.6;
+    --f-theme-settings-body-font-style: normal;
+    --f-theme-settings-body-text-decoration: none;
+    --f-theme-settings-body-text-transform: none;
+
+    --f-theme-settings-link-font-family: 'Lato', sans-serif;
+    --f-theme-settings-link-color: #007bff;
+    --f-theme-settings-link-font-weight: bold;
+    --f-theme-settings-link-font-size: inherit;
+    --f-theme-settings-link-letter-spacing: 0.01em;
+    --f-theme-settings-link-line-height: 1.4;
+    --f-theme-settings-link-font-style: normal;
+    --f-theme-settings-link-text-decoration: underline;
+    --f-theme-settings-link-text-transform: none;
+
+    --f-theme-settings-custom1-font-family: 'Montserrat', sans-serif;
+    --f-theme-settings-custom1-color: #999;
+    --f-theme-settings-custom1-font-weight: bold;
+    --f-theme-settings-custom1-font-size: 18px;
+    --f-theme-settings-custom1-letter-spacing: 0.03em;
+    --f-theme-settings-custom1-line-height: 1.2;
+    --f-theme-settings-custom1-font-style: normal;
+    --f-theme-settings-custom1-text-decoration: underline;
+    --f-theme-settings-custom1-text-transform: uppercase;
+
+    --f-theme-settings-accent-color-info-color: #17a2b8;
+    --f-theme-settings-accent-color-note-color: #6c757d;
+    --f-theme-settings-accent-color-tip-color: #28a745;
+    --f-theme-settings-accent-color-warning-color: #ffc107;
+
+    --f-theme-settings-imageTitle-font-family: 'Arial', sans-serif;
+    --f-theme-settings-imageTitle-color: #333;
+    --f-theme-settings-imageTitle-font-weight: bold;
+    --f-theme-settings-imageTitle-font-size: 20px;
+    --f-theme-settings-imageTitle-letter-spacing: 0.02em;
+    --f-theme-settings-imageTitle-line-height: 1.5;
+    --f-theme-settings-imageTitle-font-style: normal;
+    --f-theme-settings-imageTitle-text-decoration: none;
+    --f-theme-settings-imageTitle-text-transform: uppercase;
+
+    --f-theme-settings-imageCaption-font-family: 'Georgia', serif;
+    --f-theme-settings-imageCaption-color: #666;
+    --f-theme-settings-imageCaption-font-weight: normal;
+    --f-theme-settings-imageCaption-font-size: 16px;
+    --f-theme-settings-imageCaption-letter-spacing: 0.01em;
+    --f-theme-settings-imageCaption-line-height: 1.2;
+    --f-theme-settings-imageCaption-font-style: italic;
+    --f-theme-settings-imageCaption-text-decoration: underline;
+    --f-theme-settings-imageCaption-text-transform: none;
+
+    /* primary button */
+    --f-theme-settings-button-primary-font-size: 13px;
+    --f-theme-settings-button-primary-color: #fff;
+    --f-theme-settings-button-primary-padding-top: 10px;
+    --f-theme-settings-button-primary-padding-right: 20px;
+    --f-theme-settings-button-primary-padding-bottom: 10px;
+    --f-theme-settings-button-primary-padding-left: 20px;
+    --f-theme-settings-button-primary-font-family: 'inherit';
+    --f-theme-settings-button-primary-font-style: '';
+    --f-theme-settings-button-primary-font-weight: 400;
+    --f-theme-settings-button-primary-text-transform: 'none';
+    --f-theme-settings-button-primary-line-height: '1.3';
+    --f-theme-settings-button-primary-border-color: #663cff;
+    --f-theme-settings-button-primary-border-width: 2px;
+    --f-theme-settings-button-primary-border-radius: 5px;
+    --f-theme-settings-button-primary-background-color: #825fff;
+    --f-theme-settings-button-primary-hover-color: #fff;
+    --f-theme-settings-button-primary-hover-border-color: #3200ec;
+    --f-theme-settings-button-primary-hover-background-color: #3d07ff;
+
+    /* secondary button */
+    --f-theme-settings-button-secondary-font-size: 13px;
+    --f-theme-settings-button-secondary-color: #666;
+    --f-theme-settings-button-secondary-padding-top: 10px;
+    --f-theme-settings-button-secondary-padding-right: 20px;
+    --f-theme-settings-button-secondary-padding-bottom: 10px;
+    --f-theme-settings-button-secondary-padding-left: 20px;
+    --f-theme-settings-button-secondary-font-family: 'inherit';
+    --f-theme-settings-button-secondary-font-style: '';
+    --f-theme-settings-button-secondary-font-weight: 400;
+    --f-theme-settings-button-secondary-text-transform: 'none';
+    --f-theme-settings-button-secondary-line-height: '1.3';
+    --f-theme-settings-button-secondary-border-color: #cfcfcf;
+    --f-theme-settings-button-secondary-border-width: 2px;
+    --f-theme-settings-button-secondary-border-radius: 5px;
+    --f-theme-settings-button-secondary-background-color: #e6e6e6;
+    --f-theme-settings-button-secondary-hover-color: #4c4c4c;
+    --f-theme-settings-button-secondary-hover-border-color: #9b9b9b;
+    --f-theme-settings-button-secondary-hover-background-color: #acacac;
+
+    /* tertiary button */
+    --f-theme-settings-button-tertiary-font-size: 13px;
+    --f-theme-settings-button-tertiary-color: #663cff;
+    --f-theme-settings-button-tertiary-padding-top: 10px;
+    --f-theme-settings-button-tertiary-padding-right: 20px;
+    --f-theme-settings-button-tertiary-padding-bottom: 10px;
+    --f-theme-settings-button-tertiary-padding-left: 20px;
+    --f-theme-settings-button-tertiary-font-family: 'inherit';
+    --f-theme-settings-button-tertiary-font-style: '';
+    --f-theme-settings-button-tertiary-font-weight: 400;
+    --f-theme-settings-button-tertiary-text-transform: 'none';
+    --f-theme-settings-button-tertiary-line-height: '1.3';
+    --f-theme-settings-button-tertiary-border-color: #825fff;
+    --f-theme-settings-button-tertiary-border-width: 2px;
+    --f-theme-settings-button-tertiary-border-radius: 5px;
+    --f-theme-settings-button-tertiary-background-color: #ffffff;
+    --f-theme-settings-button-tertiary-hover-color: #3500f4;
+    --f-theme-settings-button-tertiary-hover-border-color: #3d07ff;
+    --f-theme-settings-button-tertiary-hover-background-color: #ffffff;
+}

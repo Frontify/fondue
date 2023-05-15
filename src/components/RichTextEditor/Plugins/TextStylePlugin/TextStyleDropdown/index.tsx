@@ -13,8 +13,16 @@ export const TextStyleDropdown = ({ editorId, textStyles = [] }: TextStyleDropdo
         dropdownProps,
         triggerRef,
         dropdownRef,
-        label,
+        key,
     } = useTextStyleDropdown(editorId);
+
+    let label = 'Mixed';
+    for (const style of textStyles) {
+        if (style.id === key) {
+            label = style.props?.label || 'Mixed';
+            break;
+        }
+    }
 
     return (
         <>
@@ -27,7 +35,7 @@ export const TextStyleDropdown = ({ editorId, textStyles = [] }: TextStyleDropdo
                 >
                     {textStyles.map((style) => (
                         <DropdownItem editor={editor} type={style} key={style.id}>
-                            <span style={getTextStyleCssProperties(style.id)}>{style.id}</span>
+                            <span style={getTextStyleCssProperties(style.id)}>{style.props?.label}</span>
                         </DropdownItem>
                     ))}
                 </div>
