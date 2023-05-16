@@ -35,7 +35,7 @@ export const InputHelpText = ({
 
     return (
         (!readOnly && content && (
-            <Box className={merge(['tw-text-s', textClass])} data-test-id="fondue-input-help-text">
+            <Box className={merge(['tw-text-xs', textClass])} data-test-id="fondue-input-help-text">
                 {content}
             </Box>
         )) ||

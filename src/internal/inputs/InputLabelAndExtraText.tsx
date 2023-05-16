@@ -25,7 +25,7 @@ export const InputLabelAndExtraText = ({
             minWidth="100%"
             data-test-id="fondue-input-label-and-extra-text"
         >
-            <InputLabel disabled={disabled} {...labelProps}>
+            <InputLabel disabled={disabled} {...labelProps} bold>
                 {label}
             </InputLabel>
             {labelExtraText && (
