@@ -53,6 +53,22 @@ const isCheckedOrMixed = (checked: CheckboxState): boolean => {
     return checked === CheckboxState.Checked || checked === CheckboxState.Mixed;
 };
 
+const emphasisDefaultClasses =
+    'tw-bg-box-selected-strong tw-text-box-selected-strong-inverse hover:tw-bg-box-selected-strong-hover';
+
+const emphasisCheckedClassesMap: Record<CheckboxEmphasis, string> = {
+    [CheckboxEmphasis.Weak]:
+        'tw-bg-box-neutral-strong tw-text-box-neutral-strong-inverse hover:tw-bg-box-neutral-strong-hover',
+    [CheckboxEmphasis.Default]: emphasisDefaultClasses,
+    [CheckboxEmphasis.Strong]: emphasisDefaultClasses,
+};
+
+const sizeClassesMap: Record<CheckboxSize, string> = {
+    [CheckboxSize.Default]: 'tw-h-4 tw-w-4',
+    [CheckboxSize.Large]: 'tw-h-5 tw-w-5',
+    [CheckboxSize.XLarge]: 'tw-h-8 tw-w-8',
+};
+
 const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProps> = (
     {
         id: propId,
@@ -114,21 +130,6 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
         toggleState,
         inputRef,
     );
-
-    const emphasisCheckedClassesMap: Record<CheckboxEmphasis, string> = {
-        [CheckboxEmphasis.Weak]:
-            'tw-bg-box-neutral-strong tw-text-box-neutral-strong-inverse hover:tw-bg-box-neutral-strong-hover',
-        [CheckboxEmphasis.Default]:
-            'tw-bg-box-selected-strong tw-text-box-selected-strong-inverse hover:tw-bg-box-selected-strong-hover',
-        [CheckboxEmphasis.Strong]:
-            'tw-bg-box-selected-strong tw-text-box-selected-strong-inverse hover:tw-bg-box-selected-strong-hover',
-    };
-
-    const sizeClassesMap: Record<CheckboxSize, string> = {
-        [CheckboxSize.Default]: 'tw-h-4 tw-w-4',
-        [CheckboxSize.Large]: 'tw-h-5 tw-w-5',
-        [CheckboxSize.XLarge]: 'tw-h-8 tw-w-8',
-    };
 
     const stateMap: Record<CheckboxState, ReactNode> = {
         [CheckboxState.Checked]: (
