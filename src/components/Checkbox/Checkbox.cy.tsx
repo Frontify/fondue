@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement, useState } from 'react';
 import { Checkbox, CheckboxProps, CheckboxSize, CheckboxState } from './Checkbox';
+import React, { ReactElement, useState } from 'react';
 
 const CHECKBOX_LABEL = 'Checkbox label';
 const HELPER_TEXT = 'Note about this input';
@@ -109,6 +109,12 @@ describe('Checkbox component', () => {
         cy.mount(<CheckboxComponent label={CHECKBOX_LABEL} size={CheckboxSize.Large} />);
 
         cy.get(CHECKBOX_ICON_BOX_ID).should('have.class', 'tw-h-5').should('have.class', 'tw-w-5');
+    });
+
+    it('renders with X-large size', () => {
+        cy.mount(<CheckboxComponent label={CHECKBOX_LABEL} size={CheckboxSize.XLarge} />);
+
+        cy.get(CHECKBOX_ICON_BOX_ID).should('have.class', 'tw-h-8').should('have.class', 'tw-w-8');
     });
 
     it('renders without a label when hideLabel is true', () => {
