@@ -5,7 +5,7 @@ import React, { CSSProperties, ReactElement, ReactNode, useState } from 'react';
 import { FormControl } from '@components/FormControl';
 import { useInsertModal } from './useInsertModal';
 import { InsertModal } from '@components/RichTextEditor/Plugins/LinkPlugin/FloatingLink/InsertLinkModal';
-import { getButtonStyleCssProperties } from '@components/RichTextEditor/Plugins/helper';
+import { getButtonStyleCssProperties } from '../../../helpers';
 
 export const InsertButtonModal = () => {
     const modalProps = useInsertModal();

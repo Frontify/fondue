@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { RichTextButtonStyle } from '@components/RichTextEditor/Plugins';
-import { getButtonStyleCssProperties } from '@components/RichTextEditor/Plugins/helper';
+import { RichTextButtonStyle, getButtonStyleCssProperties } from '@components/RichTextEditor/Plugins';
 import { TElement } from '@udecode/plate';
 import { reactCssPropsToCss } from '../utils/reactCssPropsToCss';
 

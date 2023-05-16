@@ -4,7 +4,7 @@ import { useRichTextEditorContext } from '@components/RichTextEditor/context/Ric
 import { HTMLPropsAs, PlateRenderElementProps, Value, useElementProps } from '@udecode/plate';
 import React, { ReactElement, ReactNode, useState } from 'react';
 import { RichTextButtonStyle, TButtonElement } from '../types';
-import { getButtonStyleCssProperties } from '../../helper';
+import { getButtonStyleCssProperties } from '../helpers';
 
 export type ButtonRootProps = PlateRenderElementProps<Value, TButtonElement> & HTMLPropsAs<'a'>;
 
