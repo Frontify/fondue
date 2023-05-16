@@ -12,6 +12,7 @@ export default {
     tags: ['autodocs'],
     argTypes: {
         id: { type: 'string' },
+        hugWidth: { type: 'boolean' },
     },
     args: {
         disabled: false,
@@ -20,7 +21,14 @@ export default {
 
 const SegmentedControlsTemplate: StoryFn<SegmentedControlsProps> = (args: SegmentedControlsProps) => {
     const [activeItemId, setActiveItemId] = useState(args.items[0].id);
-    return <SegmentedControls {...args} activeItemId={activeItemId} onChange={setActiveItemId} />;
+    return (
+        <SegmentedControls
+            {...args}
+            key={String(args.hugWidth)}
+            activeItemId={activeItemId}
+            onChange={setActiveItemId}
+        />
+    );
 };
 
 export const Text = SegmentedControlsTemplate.bind({});
@@ -38,6 +46,9 @@ TextWithHugWidth.args = {
         { id: 'a', value: 'All' },
         { id: 'b', value: 'Top 10' },
         { id: 'c', value: 'Bottom 10' },
+        { id: 'd', value: 'Top 10' },
+        { id: 'e', value: 'All' },
+        { id: 'f', value: 'Bottom 100000' },
     ],
     hugWidth: true,
 };
