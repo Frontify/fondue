@@ -19,8 +19,8 @@ export const TextStyleDropdown = ({ editorId, textStyles = [] }: TextStyleDropdo
 
     let activeLabel = DEFAULT_TEXT_STYLE_VALUE;
     const textStyle = textStyles.find((style) => style.id === key && style.props?.label);
-    if (textStyle && textStyle.props?.label) {
-        activeLabel = textStyle.props?.label;
+    if (textStyle) {
+        activeLabel = textStyle.props?.label || DEFAULT_TEXT_STYLE_VALUE;
     }
     return (
         <>
