@@ -282,7 +282,9 @@ const listPlugins = new PluginComposer();
 listPlugins.setPlugin([
     new UnorderedListPlugin(),
     new OrderedListPlugin(),
-    new TextStylePlugin({ textStyles: [new Custom1Plugin(), new Custom2Plugin(), new Custom3Plugin()] }),
+    new TextStylePlugin({
+        textStyles: [new Custom1Plugin(), new Custom2Plugin(), new Custom3Plugin(), new ParagraphPlugin()],
+    }),
     new BoldPlugin(),
 ]);
 export const WithList = RichTextEditorTemplate.bind({});

@@ -17,11 +17,16 @@ export const TextStyleDropdown = ({ editorId, textStyles = [] }: TextStyleDropdo
         key,
     } = useTextStyleDropdown(editorId);
 
+    if (textStyles.length === 0) {
+        return null;
+    }
+
     let activeLabel = DEFAULT_TEXT_STYLE_VALUE;
     const textStyle = textStyles.find((style) => style.id === key && style.props?.label);
     if (textStyle) {
         activeLabel = textStyle.props?.label || DEFAULT_TEXT_STYLE_VALUE;
     }
+
     return (
         <>
             <DropdownTrigger label={activeLabel} open={isOpen} onClick={toggle} ref={triggerRef} />
