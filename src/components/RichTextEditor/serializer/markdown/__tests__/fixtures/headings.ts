@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { exampleTextStyles } from '@components/RichTextEditor/helpers/exampleValues';
+
 export const headingsMarkdown = `# Heading 1
 ## Heading 2
 ### Heading 3
@@ -10,7 +12,7 @@ export const headingsMarkdown = `# Heading 1
 
 export const headingsTree = [
     {
-        type: 'heading1',
+        type: exampleTextStyles.heading1,
         children: [
             {
                 text: 'Heading 1',
@@ -18,7 +20,7 @@ export const headingsTree = [
         ],
     },
     {
-        type: 'heading2',
+        type: exampleTextStyles.heading2,
         children: [
             {
                 text: 'Heading 2',
@@ -26,7 +28,7 @@ export const headingsTree = [
         ],
     },
     {
-        type: 'heading3',
+        type: exampleTextStyles.heading3,
         children: [
             {
                 text: 'Heading 3',
@@ -34,7 +36,7 @@ export const headingsTree = [
         ],
     },
     {
-        type: 'heading4',
+        type: exampleTextStyles.heading4,
         children: [
             {
                 text: 'Heading 4',

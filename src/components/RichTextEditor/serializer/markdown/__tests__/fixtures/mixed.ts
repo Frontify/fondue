@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { exampleTextStyles } from '@components/RichTextEditor/helpers/exampleValues';
 import { Targets } from '../../types';
 import { createLink, createP, createText } from './helpers';
 import { orderedListTree } from './orderedList';
 import { unorderedListTree } from './unorderedList';
+import { ELEMENT_PARAGRAPH } from '@udecode/plate';
 
 export const mixedMarkdown = `# Heading 1
 ## Heading 2
@@ -56,7 +58,7 @@ Lorem ipsum dolor sit amet, consetetur @[group:1111111111] sadipscing elitr, sed
 
 export const mixedTree = [
     {
-        type: 'heading1',
+        type: exampleTextStyles.heading1,
         children: [
             {
                 text: 'Heading 1',
@@ -64,7 +66,7 @@ export const mixedTree = [
         ],
     },
     {
-        type: 'heading2',
+        type: exampleTextStyles.heading2,
         children: [
             {
                 text: 'Heading 2',
@@ -72,7 +74,7 @@ export const mixedTree = [
         ],
     },
     {
-        type: 'heading3',
+        type: exampleTextStyles.heading3,
         children: [
             {
                 text: 'Heading 3',
@@ -80,7 +82,7 @@ export const mixedTree = [
         ],
     },
     {
-        type: 'heading4',
+        type: exampleTextStyles.heading4,
         children: [
             {
                 text: 'Heading 4',
@@ -88,7 +90,7 @@ export const mixedTree = [
         ],
     },
     {
-        type: 'p',
+        type: ELEMENT_PARAGRAPH,
         children: [
             {
                 text: 'This is ',
@@ -137,10 +139,10 @@ export const mixedTree = [
     ]),
     createP([createText('I am normal Paragraph')]),
     {
-        type: 'quote',
+        type: exampleTextStyles.quote,
         children: [
             {
-                type: 'p',
+                type: ELEMENT_PARAGRAPH,
                 children: [
                     {
                         text: 'Presenting the Quote\nLorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna ',
@@ -159,7 +161,7 @@ export const mixedTree = [
         ],
     },
     {
-        type: 'p',
+        type: ELEMENT_PARAGRAPH,
         children: [
             {
                 text: 'Presenting the Paragraph\nLorem ipsum dolor sit amet, consetetur ',
