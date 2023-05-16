@@ -9,6 +9,7 @@ import {
     checkboxValue,
     customControlValues,
     defaultValue,
+    exampleTextStyles,
     htmlValue,
     markdownText,
     mentionValue,
@@ -107,6 +108,8 @@ const RichTextEditorTemplate: StoryFn<RichTextEditorProps> = (args: RichTextEdit
     <RichTextEditorComponent {...args} />
 );
 
+const allTextStyles = Object.values(exampleTextStyles);
+
 const allPlugins = new PluginComposer();
 allPlugins
     .setPlugin([
@@ -141,10 +144,18 @@ allPlugins
             new SuperscriptPlugin(),
         ],
         [
-            new AlignLeftPlugin(),
-            new AlignCenterPlugin(),
-            new AlignRightPlugin(),
-            new AlignJustifyPlugin(),
+            new AlignLeftPlugin({
+                validTypes: allTextStyles,
+            }),
+            new AlignCenterPlugin({
+                validTypes: allTextStyles,
+            }),
+            new AlignRightPlugin({
+                validTypes: allTextStyles,
+            }),
+            new AlignJustifyPlugin({
+                validTypes: allTextStyles,
+            }),
             new UnorderedListPlugin(),
             new CheckboxListPlugin(),
             new OrderedListPlugin(),
