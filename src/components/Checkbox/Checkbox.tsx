@@ -1,17 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useEffect, useState } from 'react';
 import { IconCheckMark, IconMinus } from '@foundation/Icon/Generated';
 import { InputLabel, InputLabelTooltipProps } from '@components/InputLabel/InputLabel';
-import { useMemoizedId } from '@hooks/useMemoizedId';
-import { useCheckbox } from '@react-aria/checkbox';
-import { useFocusRing } from '@react-aria/focus';
-import { mergeProps } from '@react-aria/utils';
-import { useToggleState } from '@react-stately/toggle';
+import React, { ForwardRefRenderFunction, HTMLAttributes, forwardRef } from 'react';
+import { useEffect, useState } from 'react';
+
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
+import { mergeProps } from '@react-aria/utils';
+import { useCheckbox } from '@react-aria/checkbox';
+import { useFocusRing } from '@react-aria/focus';
 import { useForwardedRef } from '@utilities/useForwardedRef';
-import React, { ForwardRefRenderFunction, HTMLAttributes, forwardRef } from 'react';
+import { useMemoizedId } from '@hooks/useMemoizedId';
+import { useToggleState } from '@react-stately/toggle';
 
 export enum CheckboxState {
     Checked = 'Checked',
@@ -22,11 +23,13 @@ export enum CheckboxState {
 export enum CheckboxEmphasis {
     Default = 'Default',
     Weak = 'Weak',
+    Strong = 'Strong',
 }
 
 export enum CheckboxSize {
     Default = 'Default',
     Large = 'Large',
+    XLarge = 'XLarge',
 }
 
 export type CheckboxProps = {
@@ -112,6 +115,21 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
         inputRef,
     );
 
+    const getCheckboxSize = () => {
+        switch (size) {
+            case CheckboxSize.Large: {
+                return 'tw-h-6 tw-w-6';
+            }
+            case CheckboxSize.XLarge: {
+                return 'tw-h-8 tw-w-8';
+            }
+            case CheckboxSize.Default:
+            default: {
+                return 'tw-h-4 tw-w-4';
+            }
+        }
+    };
+
     return (
         <div className="tw-gap-1 tw-transition-colors" data-test-id="checkbox">
             <div className={merge(['tw-inline-flex tw-flex-row tw-rounded', showFocus ? FOCUS_STYLE : ''])}>
@@ -140,8 +158,8 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                                 data-test-id="checkbox-icon-box"
                                 aria-hidden="true"
                                 className={merge([
-                                    'tw-leading-3  tw-p-2 tw-relative tw-flex tw-items-center tw-justify-center tw-rounded tw-border tw-shrink-0 tw-flex-none',
-                                    size === 'Default' ? 'tw-h-4 tw-w-4' : 'tw-h-5 tw-w-5',
+                                    'tw-leading-3 tw-p-2 tw-relative tw-flex tw-items-center tw-justify-center tw-rounded tw-shrink-0 tw-flex-none',
+                                    getCheckboxSize(),
                                     disabled
                                         ? merge([
                                               'tw-bg-box-disabled tw-pointer-events-none',
@@ -151,13 +169,21 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                                                   'tw-bg-box-disabled tw-text-box-disabled-inverse tw-border-line-strong',
                                           ])
                                         : merge([
+                                              !isCheckedOrMixed(state) && 'tw-bg-base hover:tw-bg-box-neutral',
                                               !isCheckedOrMixed(state) &&
-                                                  'tw-bg-base tw-border-line-xx-strong hover:tw-bg-box-neutral',
+                                                  emphasis !== CheckboxEmphasis.Strong &&
+                                                  'tw-border tw-border-line-xx-strong',
+                                              !isCheckedOrMixed(state) &&
+                                                  emphasis === CheckboxEmphasis.Strong &&
+                                                  'tw-border-2 tw-border-box-selected-strong',
                                               isCheckedOrMixed(state) &&
                                                   emphasis === CheckboxEmphasis.Weak &&
                                                   'tw-bg-box-neutral-strong tw-text-box-neutral-strong-inverse hover:tw-bg-box-neutral-strong-hover',
                                               isCheckedOrMixed(state) &&
                                                   emphasis === CheckboxEmphasis.Default &&
+                                                  'tw-bg-box-selected-strong tw-text-box-selected-strong-inverse hover:tw-bg-box-selected-strong-hover',
+                                              isCheckedOrMixed(state) &&
+                                                  emphasis === CheckboxEmphasis.Strong &&
                                                   'tw-bg-box-selected-strong tw-text-box-selected-strong-inverse hover:tw-bg-box-selected-strong-hover',
                                           ]),
                                 ])}
