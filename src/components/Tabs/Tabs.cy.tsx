@@ -195,4 +195,14 @@ describe('Tabs Component', () => {
         cy.get('[data-test-id=tab-item]').eq(2).trigger('keydown', { key: 'ArrowLeft' });
         cy.get('[data-test-id=tab-item]').eq(1).should('not.have.class', 'tw-font-medium');
     });
+
+    it('tab item should have hovered state', () => {
+        cy.get('[data-test-id=tab-item]').realHover();
+        cy.get('[data-test-id=tab-item]').should('have.class', 'hover:tw-text-text');
+    });
+
+    it('disabled tab item should not have hovered state', () => {
+        cy.get('#tab-2-btn[data-test-id=tab-item]').realHover();
+        cy.get('#tab-2-btn[data-test-id=tab-item]').should('not.have.class', 'hover:tw-text-text');
+    });
 });
