@@ -279,7 +279,12 @@ WithCustomButtonStyles.args = {
 };
 
 const listPlugins = new PluginComposer();
-listPlugins.setPlugin([new UnorderedListPlugin(), new OrderedListPlugin(), new TextStylePlugin(), new BoldPlugin()]);
+listPlugins.setPlugin([
+    new UnorderedListPlugin(),
+    new OrderedListPlugin(),
+    new TextStylePlugin({ textStyles: [new Custom1Plugin(), new Custom2Plugin(), new Custom3Plugin()] }),
+    new BoldPlugin(),
+]);
 export const WithList = RichTextEditorTemplate.bind({});
 WithList.args = {
     plugins: listPlugins,

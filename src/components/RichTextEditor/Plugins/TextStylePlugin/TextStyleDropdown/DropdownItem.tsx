@@ -29,10 +29,9 @@ const isInList = (editor: PlateEditor) =>
     });
 
 export const DropdownItem = ({ editor, type, children }: DropdownItemProps) => {
-    const isActive =
-        !!editor?.selection && isInList(editor)
-            ? getMark(editor, MARK_TEXT_STYLE) === type.id
-            : someNode(editor, { match: { type } });
+    const isActive = editor?.selection
+        ? getMark(editor, MARK_TEXT_STYLE) === type.id
+        : someNode(editor, { match: { type } });
 
     return (
         <button
