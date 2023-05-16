@@ -118,7 +118,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
     const getCheckboxSize = () => {
         switch (size) {
             case CheckboxSize.Large: {
-                return 'tw-h-6 tw-w-6';
+                return 'tw-h-5 tw-w-5';
             }
             case CheckboxSize.XLarge: {
                 return 'tw-h-8 tw-w-8';
