@@ -109,24 +109,22 @@ export const getLiStyles = (element: TElement): CSSProperties => {
 };
 
 const getDeepestTextStyle = (node: TElement): string => {
-    let deepestTextStyle;
+    let textStyle;
 
     if (node.type === 'a') {
-        deepestTextStyle = node.children[0].textStyle;
+        textStyle = node.children[0].textStyle;
     } else if (node.children) {
         for (const childNode of node.children) {
-            const childDeepestTextStyle = getDeepestTextStyle(childNode as TElement);
-            if (childDeepestTextStyle) {
-                if (!deepestTextStyle || childDeepestTextStyle.startsWith(deepestTextStyle)) {
-                    deepestTextStyle = childDeepestTextStyle;
-                }
+            const deepestTextStyle = getDeepestTextStyle(childNode as TElement);
+            if (deepestTextStyle && (!textStyle || deepestTextStyle.startsWith(textStyle))) {
+                textStyle = deepestTextStyle;
             }
         }
     } else {
-        deepestTextStyle = node.textStyle;
+        textStyle = node.textStyle;
     }
 
-    return deepestTextStyle as string;
+    return textStyle as string;
 };
 
 export enum ButtonStyles {

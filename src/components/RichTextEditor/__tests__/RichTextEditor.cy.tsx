@@ -63,6 +63,8 @@ import { Heading4Plugin } from '../Plugins/TextStylePlugin/examples/heading4Plug
 import { SubscriptPlugin } from '@components/RichTextEditor/Plugins/SubscriptPlugin';
 import { SuperscriptPlugin } from '@components/RichTextEditor/Plugins/SuperscriptPlugin';
 
+import './fixtures/theme.css';
+
 const checkPosition = (chainers: string, value: number, text: string) => {
     cy.window().then(() => {
         cy.get('[contenteditable=true]')
@@ -222,8 +224,6 @@ const RichTextWithCustomTextStyles = (): ReactElement => {
 
 const activeButtonClassNames = '!tw-bg-box-selected tw-rounded !tw-text-box-selected-inverse';
 const disabledButtonClassNames = '!tw-cursor-not-allowed !tw-opacity-50';
-
-import './fixtures/theme.css';
 
 describe('RichTextEditor Component', () => {
     describe('Rendering', () => {

@@ -18,7 +18,7 @@ export const ListItemContentMarkupElementNode = ({ attributes, children, element
     return (
         <p className={getLicElementClassNames(element)} {...attributes}>
             <span
-                className={merge(['tw-w-auto tw-min-w-[10px]'])}
+                className="tw-w-auto tw-min-w-[10px]"
                 style={getTextStyleCssProperties(element.children[0].textStyle as string)}
             >
                 {children}

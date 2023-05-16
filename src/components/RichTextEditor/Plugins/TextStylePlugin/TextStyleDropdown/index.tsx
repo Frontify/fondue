@@ -6,6 +6,7 @@ import { DropdownTrigger } from './DropdownTrigger';
 import { TextStyleDropdownProps } from './types';
 import { useTextStyleDropdown } from './useTextStyleDropdown';
 import { getTextStyleCssProperties } from '../../helper';
+import { DEFAULT_TEXT_STYLE_VALUE } from '../types';
 
 export const TextStyleDropdown = ({ editorId, textStyles = [] }: TextStyleDropdownProps) => {
     const {
@@ -16,13 +17,11 @@ export const TextStyleDropdown = ({ editorId, textStyles = [] }: TextStyleDropdo
         key,
     } = useTextStyleDropdown(editorId);
 
-    let activeLabel = 'Mixed';
-    for (const style of textStyles) {
-        if (style.id === key && style.props?.label) {
-            activeLabel = style.props?.label;
-        }
+    let activeLabel = DEFAULT_TEXT_STYLE_VALUE;
+    const textStyle = textStyles.find((style) => style.id === key && style.props?.label);
+    if (textStyle && textStyle.props?.label) {
+        activeLabel = textStyle.props?.label;
     }
-
     return (
         <>
             <DropdownTrigger label={activeLabel} open={isOpen} onClick={toggle} ref={triggerRef} />

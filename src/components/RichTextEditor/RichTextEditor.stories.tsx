@@ -59,6 +59,11 @@ import { Custom1Plugin } from './Plugins/TextStylePlugin/examples/custom1Plugin'
 import './__tests__/fixtures/theme.css';
 import { SubscriptPlugin } from '@components/RichTextEditor/Plugins/SubscriptPlugin';
 import { SuperscriptPlugin } from '@components/RichTextEditor/Plugins/SuperscriptPlugin';
+import { Heading2Plugin } from './Plugins/TextStylePlugin/examples/heading2Plugin';
+import { Heading3Plugin } from './Plugins/TextStylePlugin/examples/heading3Plugin';
+import { Heading4Plugin } from './Plugins/TextStylePlugin/examples/heading4Plugin';
+import { Custom2Plugin } from './Plugins/TextStylePlugin/examples/custom2Plugin';
+import { Custom3Plugin } from './Plugins/TextStylePlugin/examples/custom3Plugin';
 
 export default {
     title: 'Components/Rich Text Editor',
@@ -104,7 +109,23 @@ const RichTextEditorTemplate: StoryFn<RichTextEditorProps> = (args: RichTextEdit
 
 const allPlugins = new PluginComposer();
 allPlugins
-    .setPlugin([new SoftBreakPlugin(), new TextStylePlugin()])
+    .setPlugin([
+        new SoftBreakPlugin(),
+        new TextStylePlugin({
+            textStyles: [
+                new Heading1Plugin(),
+                new Heading2Plugin(),
+                new Heading3Plugin(),
+                new Heading4Plugin(),
+                new ParagraphPlugin(),
+                new Custom1Plugin(),
+                new Custom2Plugin(),
+                new Custom3Plugin(),
+                new ImageTitlePlugin(),
+                new ImageCaptionPlugin(),
+            ],
+        }),
+    ])
     .setPlugin([new MentionPlugin({ mentionableItems: mentionable })])
     .setPlugin(
         [

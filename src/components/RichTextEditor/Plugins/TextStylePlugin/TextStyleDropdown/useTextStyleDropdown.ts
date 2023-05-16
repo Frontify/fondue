@@ -5,8 +5,7 @@ import { Dispatch, HTMLAttributes, SetStateAction, useCallback, useEffect, useSt
 import { usePopper } from 'react-popper';
 import { useSelectedTextStyles } from './useSelectedTextStyles';
 import { verticalPositionModifier } from './verticalPositionModifier';
-
-const DEFAULT_TEXT_STYLE_VALUE = 'Mixed';
+import { DEFAULT_TEXT_STYLE_VALUE } from '../types';
 
 type UseTextStyleDropdownReturn<T, P> = {
     state: { isOpen: boolean; toggle: () => void; editor: PlateEditor };

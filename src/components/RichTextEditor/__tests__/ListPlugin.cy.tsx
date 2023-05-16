@@ -19,6 +19,11 @@ import {
     TOOLBAR_FLOATING,
     TOOLBAR_PLUGIN_OL,
 } from './fixtures/selectors';
+import './fixtures/theme.css';
+import { Heading1Plugin } from '../Plugins/TextStylePlugin/examples/heading1Plugin';
+import { Custom1Plugin } from '../Plugins/TextStylePlugin/examples/custom1Plugin';
+import { Custom2Plugin } from '../Plugins/TextStylePlugin/examples/custom2Plugin';
+import { Custom3Plugin } from '../Plugins/TextStylePlugin/examples/custom3Plugin';
 
 const RichTextEditorWithListPluginWithSoftBreak = ({ value }: { value: string }) => {
     const plugins = new PluginComposer().setPlugin([
@@ -51,12 +56,6 @@ const RichTextEditorWithUnorderedListStyles = () => (
 const RichTextEditorWithOrderedListStyles = () => (
     <RichTextEditor value={JSON.stringify([orderedListValue])} plugins={plugins} />
 );
-
-import './fixtures/theme.css';
-import { Heading1Plugin } from '../Plugins/TextStylePlugin/examples/heading1Plugin';
-import { Custom1Plugin } from '../Plugins/TextStylePlugin/examples/custom1Plugin';
-import { Custom2Plugin } from '../Plugins/TextStylePlugin/examples/custom2Plugin';
-import { Custom3Plugin } from '../Plugins/TextStylePlugin/examples/custom3Plugin';
 
 describe('List Plugin', () => {
     it('applies the selected text style to the list item', () => {
