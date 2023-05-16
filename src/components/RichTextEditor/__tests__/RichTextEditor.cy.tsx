@@ -25,7 +25,6 @@ import {
     SoftBreakPlugin,
     StrikethroughPlugin,
     TextStylePlugin,
-    TextStyles,
     UnderlinePlugin,
     UnorderedListPlugin,
 } from '../Plugins';
@@ -1239,7 +1238,7 @@ describe('RichTextEditor Component', () => {
             plugins
                 .setPlugin([
                     new TextStylePlugin({
-                        textStyles: [TextStyles.ELEMENT_HEADING1, TextStyles.ELEMENT_PARAGRAPH],
+                        textStyles: [new Heading1Plugin(), new ParagraphPlugin()],
                     }),
                 ])
                 .setPlugin([
