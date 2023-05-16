@@ -108,12 +108,18 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
             isDisabled: disabled,
             isRequired: required,
             isIndeterminate: state === CheckboxState.Mixed,
-            'aria-label': ariaLabel || label,
+            'aria-label': ariaLabel,
             value,
         },
         toggleState,
         inputRef,
     );
+
+    const emphasisCheckedClassesMap: Record<CheckboxEmphasis, string> = {
+        [CheckboxEmphasis.Weak]: 'tw-h-4 tw-w-4',
+        [CheckboxEmphasis.Default]: 'tw-h-5 tw-w-5',
+        [CheckboxEmphasis.Strong]: 'tw-h-8 tw-w-8',
+    };
 
     const sizeClassesMap: Record<CheckboxSize, string> = {
         [CheckboxSize.Default]: 'tw-h-4 tw-w-4',
@@ -132,27 +138,18 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
     const checkedOrMixed = isCheckedOrMixed(state);
 
     const disabledClasses = merge([
-        'tw-bg-box-disabled tw-pointer-events-none',
-        'tw-bg-box-disabled tw-text-box-disabled-inverse tw-border-line-strong',
-        checkedOrMixed && 'tw-bg-box-disabled tw-text-box-disabled-inverse tw-border-line-strong',
+        'tw-bg-box-disabled tw-pointer-events-none tw-text-box-disabled-inverse tw-border-line-strong',
+        checkedOrMixed && 'tw-text-box-disabled-inverse tw-border-line-strong',
     ]);
 
-    const enabledClasses = merge(
-        checkedOrMixed
-            ? [
-                  emphasis === CheckboxEmphasis.Weak &&
-                      'tw-bg-box-neutral-strong tw-text-box-neutral-strong-inverse hover:tw-bg-box-neutral-strong-hover',
-                  emphasis === CheckboxEmphasis.Default &&
-                      'tw-bg-box-selected-strong tw-text-box-selected-strong-inverse hover:tw-bg-box-selected-strong-hover',
-                  emphasis === CheckboxEmphasis.Strong &&
-                      'tw-bg-box-selected-strong tw-text-box-selected-strong-inverse hover:tw-bg-box-selected-strong-hover',
-              ]
-            : [
-                  'tw-bg-base hover:tw-bg-box-neutral',
-                  emphasis !== CheckboxEmphasis.Strong && 'tw-border tw-border-line-xx-strong',
-                  emphasis === CheckboxEmphasis.Strong && 'tw-border-2 tw-border-box-selected-strong',
-              ],
-    );
+    const enabledClasses = checkedOrMixed
+        ? emphasisCheckedClassesMap[emphasis]
+        : merge([
+              'tw-bg-base hover:tw-bg-box-neutral',
+              emphasis === CheckboxEmphasis.Strong
+                  ? 'tw-border-2 tw-border-box-selected-strong'
+                  : 'tw-border tw-border-line-xx-strong',
+          ]);
 
     return (
         <div className="tw-gap-1 tw-transition-colors" data-test-id="checkbox">
@@ -161,7 +158,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                     disabled={disabled}
                     clickable
                     htmlFor={id}
-                    tooltip={tooltip ?? undefined}
+                    tooltip={tooltip}
                     required={required}
                     bold={checkedOrMixed}
                 >
@@ -175,7 +172,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                                 data-test-id="checkbox-input"
                                 aria-label={ariaLabel}
                                 role="checkbox"
-                                aria-checked={state === CheckboxState.Checked ? true : false}
+                                aria-checked={state === CheckboxState.Checked}
                                 required={required}
                             />
                             <span
@@ -196,7 +193,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                                     data-test-id="checkbox-label"
                                     className={merge([
                                         'tw-text-xs tw-select-none hover:tw-cursor-pointer hover:tw-text-black dark:hover:tw-text-white group-hover:tw-text-black dark:group-hover:tw-text-white',
-                                        checkedOrMixed ? 'tw-font-medium' : '',
+                                        checkedOrMixed && 'tw-font-medium',
                                     ])}
                                 >
                                     {label}
