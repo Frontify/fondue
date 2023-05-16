@@ -18,7 +18,7 @@ export const checkItemNode = (node: TElement, children: string, defaultClassName
     </div>
     <span class="${merge([
         'tw-flex-1 tw-focus:outline-none',
-        node.checked ? 'tw-line-through' : '',
+        node.checked ? '!tw-line-through' : '',
     ])}" style="${reactCssPropsToCss(
         getTextStyleCssProperties(node.children[0].textStyle as string),
     )}">${children}</span>
