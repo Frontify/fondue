@@ -62,7 +62,10 @@ export const TextareaField = ({
         <Box className="tw-relative tw-w-full tw-mt-1">
             {decorator && (
                 <Box
-                    className="tw-absolute tw-top-[7px] tw-left-[7px] tw-p-1 tw-inline-flex tw-items-end tw-text-text"
+                    className={merge([
+                        'tw-absolute tw-top-[7px] tw-left-[7px] tw-p-1 tw-inline-flex tw-items-end',
+                        disabled ? 'tw-text-text-disabled' : 'tw-text-text',
+                    ])}
                     data-test-id="decorator"
                 >
                     {decorator}
