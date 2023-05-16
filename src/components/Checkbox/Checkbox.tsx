@@ -133,24 +133,26 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
 
     const disabledClasses = merge([
         'tw-bg-box-disabled tw-pointer-events-none',
-        !checkedOrMixed && 'tw-bg-box-disabled tw-text-box-disabled-inverse tw-border-line-strong',
+        'tw-bg-box-disabled tw-text-box-disabled-inverse tw-border-line-strong',
         checkedOrMixed && 'tw-bg-box-disabled tw-text-box-disabled-inverse tw-border-line-strong',
     ]);
 
-    const enabledClasses = merge([
-        !checkedOrMixed && 'tw-bg-base hover:tw-bg-box-neutral',
-        !checkedOrMixed && emphasis !== CheckboxEmphasis.Strong && 'tw-border tw-border-line-xx-strong',
-        !checkedOrMixed && emphasis === CheckboxEmphasis.Strong && 'tw-border-2 tw-border-box-selected-strong',
-        checkedOrMixed &&
-            emphasis === CheckboxEmphasis.Weak &&
-            'tw-bg-box-neutral-strong tw-text-box-neutral-strong-inverse hover:tw-bg-box-neutral-strong-hover',
-        checkedOrMixed &&
-            emphasis === CheckboxEmphasis.Default &&
-            'tw-bg-box-selected-strong tw-text-box-selected-strong-inverse hover:tw-bg-box-selected-strong-hover',
-        checkedOrMixed &&
-            emphasis === CheckboxEmphasis.Strong &&
-            'tw-bg-box-selected-strong tw-text-box-selected-strong-inverse hover:tw-bg-box-selected-strong-hover',
-    ]);
+    const enabledClasses = merge(
+        checkedOrMixed
+            ? [
+                  emphasis === CheckboxEmphasis.Weak &&
+                      'tw-bg-box-neutral-strong tw-text-box-neutral-strong-inverse hover:tw-bg-box-neutral-strong-hover',
+                  emphasis === CheckboxEmphasis.Default &&
+                      'tw-bg-box-selected-strong tw-text-box-selected-strong-inverse hover:tw-bg-box-selected-strong-hover',
+                  emphasis === CheckboxEmphasis.Strong &&
+                      'tw-bg-box-selected-strong tw-text-box-selected-strong-inverse hover:tw-bg-box-selected-strong-hover',
+              ]
+            : [
+                  'tw-bg-base hover:tw-bg-box-neutral',
+                  emphasis !== CheckboxEmphasis.Strong && 'tw-border tw-border-line-xx-strong',
+                  emphasis === CheckboxEmphasis.Strong && 'tw-border-2 tw-border-box-selected-strong',
+              ],
+    );
 
     return (
         <div className="tw-gap-1 tw-transition-colors" data-test-id="checkbox">
