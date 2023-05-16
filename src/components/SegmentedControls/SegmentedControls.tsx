@@ -10,7 +10,7 @@ import { RadioGroupState, useRadioGroupState } from '@react-stately/radio';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { motion } from 'framer-motion';
-import React, { ReactElement, useMemo, useRef } from 'react';
+import React, { ReactElement, forwardRef, useMemo, useRef } from 'react';
 
 export type IconItem = {
     id: string;
@@ -43,9 +43,9 @@ interface SegmentedControlsItemProps {
     radioGroupState: RadioGroupState;
 }
 
-const SegmentedControlsItem = (props: SegmentedControlsItemProps) => {
+const SegmentedControlsItem = forwardRef<HTMLDivElement, SegmentedControlsItemProps>((props, ref) => {
     const { id, item, disabled, radioGroupState } = props;
-    const ref = useRef<HTMLInputElement | null>(null);
+    const inputRef = useRef<HTMLInputElement | null>(null);
     const isActive = item.id === radioGroupState.selectedValue;
     const { inputProps } = useRadio(
         {
@@ -55,14 +55,14 @@ const SegmentedControlsItem = (props: SegmentedControlsItemProps) => {
             id: isActive ? id : undefined,
         },
         radioGroupState,
-        ref,
+        inputRef,
     );
     const { isFocusVisible, focusProps } = useFocusRing();
 
     const handleMockLabelClick = () => {
         if (!disabled) {
             radioGroupState.setSelectedValue(item.id);
-            ref.current?.focus();
+            inputRef.current?.focus();
             setInteractionModality('pointer');
         }
     };
@@ -79,7 +79,7 @@ const SegmentedControlsItem = (props: SegmentedControlsItemProps) => {
     };
 
     return (
-        <div key={item.id} className={merge(['tw-relative', isFocusVisible && FOCUS_STYLE])}>
+        <div key={item.id} ref={ref} className={merge(['tw-relative', isFocusVisible && FOCUS_STYLE])}>
             <div
                 // TODO: Change element back to label when bug #2380 from @react-aria is fixed
                 // https://github.com/adobe/react-spectrum/issues/2380
@@ -93,7 +93,12 @@ const SegmentedControlsItem = (props: SegmentedControlsItemProps) => {
                 ])}
             >
                 <VisuallyHidden>
-                    <input {...inputProps} {...focusProps} data-test-id="fondue-segmented-controls-input" ref={ref} />
+                    <input
+                        {...inputProps}
+                        {...focusProps}
+                        data-test-id="fondue-segmented-controls-input"
+                        ref={inputRef}
+                    />
                 </VisuallyHidden>
                 <span className="tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap tw-flex">
                     {isIconItem(item) && (
@@ -106,7 +111,9 @@ const SegmentedControlsItem = (props: SegmentedControlsItemProps) => {
             </div>
         </div>
     );
-};
+});
+
+SegmentedControlsItem.displayName = 'SegmentedControlsItem';
 
 export const SegmentedControls = ({
     id: propId,
@@ -121,19 +128,33 @@ export const SegmentedControls = ({
     const groupProps = { onChange, value: activeItemId, label: ariaLabel, isDisabled: disabled };
     const radioGroupState = useRadioGroupState(groupProps);
     const { radioGroupProps } = useRadioGroup(groupProps, radioGroupState);
+    const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
     const itemElements = useMemo(() => {
-        return items.map((item) => (
+        return items.map((item, index) => (
             <SegmentedControlsItem
                 id={id}
                 item={item}
                 disabled={disabled}
                 radioGroupState={radioGroupState}
+                ref={(el) => (itemsRef.current[index] = el)}
                 key={`fondue-segmented-controls-${id}-item-${item.id}`}
             />
         ));
     }, [items, id, disabled, radioGroupState]);
     const selectedIndex = items.findIndex((item) => item.id === radioGroupState.selectedValue);
     const width = hugWidth ? '' : 'tw-w-full';
+    const alignment = hugWidth ? 'tw-flex' : 'tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly';
+
+    const getSliderX = () => {
+        let translateX = selectedIndex ? -1 : 0;
+        for (let i = 0; i < selectedIndex; i++) {
+            translateX += itemsRef.current[i]?.clientWidth || 0;
+        }
+        return `${translateX}px`;
+    };
+
+    const sliderWidth = hugWidth ? `${itemsRef.current[selectedIndex]?.clientWidth}px` : `${100 / items.length}%`;
+    const sliderTranslation = hugWidth ? getSliderX() : `calc(${100 * selectedIndex}% - ${2 * selectedIndex}px)`;
 
     return (
         <div className="tw-flex">
@@ -141,19 +162,17 @@ export const SegmentedControls = ({
                 {...radioGroupProps}
                 data-test-id="fondue-segmented-controls"
                 className={merge([
-                    'tw-relative tw-h-9 tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly tw-p-0 tw-border tw-border-black-20 tw-m-0 tw-bg-black-0 tw-rounded tw-font-sans tw-text-s tw-select-none',
+                    'tw-relative tw-h-9 tw-p-0 tw-border tw-border-black-20 tw-m-0 tw-bg-black-0 tw-rounded tw-font-sans tw-text-s tw-select-none',
                     width,
+                    alignment,
                 ])}
             >
                 <motion.div
                     aria-hidden="true"
                     // div border is not included in width so it must be subtracted from translation.
-                    animate={{ x: `calc(${100 * selectedIndex}% - ${2 * selectedIndex}px)` }}
+                    animate={{ x: sliderTranslation, width: sliderWidth }}
                     initial={false}
                     transition={{ type: 'tween', duration: 0.3 }}
-                    style={{
-                        width: `${100 / items.length}%`,
-                    }}
                     hidden={!activeItemId}
                     className={merge([
                         'tw-absolute tw--inset-px tw-h-full tw-box-content tw-border tw-rounded tw-pointer-events-none',
