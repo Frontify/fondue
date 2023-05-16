@@ -5,6 +5,7 @@ import { InputLabel, InputLabelTooltipProps } from '@components/InputLabel/Input
 import React, { ForwardRefRenderFunction, HTMLAttributes, ReactNode, forwardRef, useEffect, useState } from 'react';
 
 import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { IconSize } from '@foundation/Icon';
 import { merge } from '@utilities/merge';
 import { mergeProps } from '@react-aria/utils';
 import { useCheckbox } from '@react-aria/checkbox';
@@ -121,7 +122,9 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
     };
 
     const stateMap: Record<CheckboxState, ReactNode> = {
-        [CheckboxState.Checked]: <IconCheckMark />,
+        [CheckboxState.Checked]: (
+            <IconCheckMark size={size === CheckboxSize.XLarge ? IconSize.Size24 : IconSize.Size16} />
+        ),
         [CheckboxState.Mixed]: <IconMinus />,
         [CheckboxState.Unchecked]: null,
     };
