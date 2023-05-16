@@ -116,9 +116,12 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
     );
 
     const emphasisCheckedClassesMap: Record<CheckboxEmphasis, string> = {
-        [CheckboxEmphasis.Weak]: 'tw-h-4 tw-w-4',
-        [CheckboxEmphasis.Default]: 'tw-h-5 tw-w-5',
-        [CheckboxEmphasis.Strong]: 'tw-h-8 tw-w-8',
+        [CheckboxEmphasis.Weak]:
+            'tw-bg-box-neutral-strong tw-text-box-neutral-strong-inverse hover:tw-bg-box-neutral-strong-hover',
+        [CheckboxEmphasis.Default]:
+            'tw-bg-box-selected-strong tw-text-box-selected-strong-inverse hover:tw-bg-box-selected-strong-hover',
+        [CheckboxEmphasis.Strong]:
+            'tw-bg-box-selected-strong tw-text-box-selected-strong-inverse hover:tw-bg-box-selected-strong-hover',
     };
 
     const sizeClassesMap: Record<CheckboxSize, string> = {
