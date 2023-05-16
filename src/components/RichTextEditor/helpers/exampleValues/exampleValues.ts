@@ -190,6 +190,14 @@ export const defaultValue = [
     createElement({ text: 'This text is a code line.', mark: MARK_CODE }),
     {
         type: ELEMENT_PARAGRAPH,
+        children: [{ text: 'An example of subscript is N' }, { text: '2', subscript: true }],
+    },
+    {
+        type: ELEMENT_PARAGRAPH,
+        children: [{ text: 'An example of superscript is 2' }, { text: '5', superscript: true }],
+    },
+    {
+        type: ELEMENT_PARAGRAPH,
         children: [{ text: '' }],
     },
     createElement({
@@ -379,7 +387,7 @@ export const htmlValue = `
         <p class="custom1">Custom 1</p>
         <p class="custom2">Custom 2</p>
         <p class="custom3">Custom 3</p>
-        <blockquote>Quote</blockquote> 
+        <blockquote>Quote</blockquote>
         <a class="btn btn-primary" contenteditable="false" href="https://smartive.ch/" data-design="primary">﻿<span contenteditable="false">Test</span>﻿</a>
     `;
 

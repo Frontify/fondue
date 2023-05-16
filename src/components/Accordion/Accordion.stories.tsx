@@ -27,7 +27,7 @@ import { EXAMPLE_IMAGES } from '../AssetInput/example-assets';
 import { Accordion as AccordionComponent, AccordionItem } from './Accordion';
 import { AccordionHeaderIcon } from './AccordionHeaderIcon';
 import { AccordionHeaderProps, AccordionProps } from './types';
-import { Stack } from '@layout/Stack';
+import { LegacyStack } from '@layout/LegacyStack';
 import { DatePicker } from '@components/DatePicker';
 import { ScrollWrapper } from '@components/ScrollWrapper';
 
@@ -364,7 +364,7 @@ export const WithAccordionItemAddition: StoryFn<
             <AccordionComponent divider={args['Accordion Divider']} border={args['Accordion Border']}>
                 {accordionItem.map((item) => item)}
             </AccordionComponent>
-            <Stack padding="xs" spacing="xs">
+            <LegacyStack padding="xs" spacing="xs">
                 <Button
                     onClick={() => {
                         setAccordionKey(accordionKey + 1);
@@ -380,7 +380,7 @@ export const WithAccordionItemAddition: StoryFn<
                 <Button onClick={() => setAccordionItem([...accordionItem.slice(0, accordionItem.length - 1)])}>
                     Remove an Element from the Accordion
                 </Button>
-            </Stack>
+            </LegacyStack>
         </>
     );
 };

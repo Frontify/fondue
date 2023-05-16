@@ -1,3 +1,3 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export * from './LegacyStack';
+export const SUPERSCRIPT_PLUGIN = 'superscript-plugin';
