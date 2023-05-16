@@ -21,13 +21,13 @@ type ExtraActionButtonProps = {
 };
 
 const ExtraActionButton: ForwardRefRenderFunction<HTMLButtonElement | null, ExtraActionButtonProps> = (
-    { extraAction },
+    { extraAction: { onClick, title, icon, disabled } },
     ref,
 ): ReactElement | null => {
-    if (!extraAction) {
+    if (!onClick || !icon || !title) {
         return null;
     }
-    const isDisabled = extraAction.disabled;
+    const isDisabled = disabled;
     return (
         <button
             className={merge([
@@ -36,15 +36,15 @@ const ExtraActionButton: ForwardRefRenderFunction<HTMLButtonElement | null, Extr
                     ? 'tw-cursor-default tw-text-text-disabled'
                     : 'tw-text-text-weak hover:tw-bg-box-neutral-hover hover:tw-text-box-neutral-inverse-hover',
             ])}
-            onClick={extraAction.onClick}
-            data-test-id="fondue-input-extra-action-button"
-            aria-label={extraAction.title.toLowerCase()}
+            onClick={onClick}
+            aria-label={title.toLowerCase()}
             disabled={isDisabled}
             aria-disabled={isDisabled}
             type="button"
             ref={ref}
+            data-test-id="fondue-input-extra-action-button"
         >
-            {extraAction.icon}
+            {icon}
         </button>
     );
 };

@@ -16,7 +16,10 @@ export const InputValidation = ({ value = Validation.Default }: InputValidationP
     return (
         <>
             {value === Validation.Loading && (
-                <span className="tw-absolute -tw-top-4 -tw-right-4 tw-bg-base tw-rounded-full tw-p-[2px] tw-border tw-border-line">
+                <span
+                    className="tw-absolute -tw-top-4 -tw-right-4 tw-bg-base tw-rounded-full tw-p-[2px] tw-border tw-border-line"
+                    data-test-id="fondue-input-valdiation-loading-state"
+                >
                     <LoadingCircle size={LoadingCircleSize.ExtraSmall} />
                 </span>
             )}
@@ -35,7 +38,7 @@ export const InputValidation = ({ value = Validation.Default }: InputValidationP
             {value === Validation.Success && (
                 <span
                     className={merge([validationIconWrapperClasses, 'tw-text-text-positive'])}
-                    data-test-id="success-state-check-mark-icon"
+                    data-test-id="fondue-input-valdiation-success-state"
                 >
                     <IconCheckMark16 />
                 </span>

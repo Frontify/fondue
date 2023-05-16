@@ -2,10 +2,15 @@
 
 import React, { ReactElement } from 'react';
 import { TextareaField, TextareaFieldProps } from '@components/TextareaField';
+import { TextareaInput, TextareaInputProps } from '@internal/inputs/Textarea/TextareaInput';
 
-export type TextareaProps = TextareaFieldProps;
+export type TextareaProps =
+    | TextareaInputProps
+    | ({
+          label?: string;
+      } & TextareaFieldProps);
 
-export const Textarea = ({ ...props }: TextareaProps): ReactElement => {
-    return <TextareaField {...props} />;
+export const Textarea = ({ label, ...props }: TextareaProps): ReactElement => {
+    return label ? <TextareaInput label={label} {...props} /> : <TextareaField {...props} />;
 };
 Textarea.displayName = 'FondueTextarea';

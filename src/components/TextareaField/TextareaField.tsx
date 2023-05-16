@@ -59,7 +59,7 @@ export const TextareaField = ({
         (validation !== Validation.Default && validation !== Validation.Loading ? 1 : 0) + extraActions.length;
 
     return (
-        <Box className="tw-relative">
+        <Box className="tw-relative tw-w-full tw-mt-1">
             {decorator && (
                 <Box
                     className="tw-absolute tw-top-[7px] tw-left-[7px] tw-p-1 tw-inline-flex tw-items-end tw-text-text"

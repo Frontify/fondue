@@ -21,3 +21,11 @@ const TextareaTemplate: StoryFn<TextareaProps> = (args: TextareaProps) => {
 };
 
 export const TextareaFieldOnly = TextareaTemplate.bind({});
+
+export const TextareaInput = TextareaTemplate.bind({});
+TextareaInput.args = {
+    label: 'Name',
+    labelExtraText: '0/100',
+    helpText: 'Type your name',
+    errorText: 'Invalid name',
+};
