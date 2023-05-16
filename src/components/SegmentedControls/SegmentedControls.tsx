@@ -79,7 +79,15 @@ const SegmentedControlsItem = forwardRef<HTMLDivElement, SegmentedControlsItemPr
     };
 
     return (
-        <div key={item.id} ref={ref} className={merge(['tw-relative', isFocusVisible && FOCUS_STYLE])}>
+        <div
+            key={item.id}
+            ref={ref}
+            className={merge([
+                'tw-relative',
+                "after:tw-content-[''] after:tw-border-r after:tw-border-solid after:tw-border-line-strong after:tw-absolute after:tw-right-0 after:tw-h-full last:after:tw-hidden",
+                isFocusVisible && FOCUS_STYLE,
+            ])}
+        >
             <div
                 // TODO: Change element back to label when bug #2380 from @react-aria is fixed
                 // https://github.com/adobe/react-spectrum/issues/2380
@@ -88,8 +96,10 @@ const SegmentedControlsItem = forwardRef<HTMLDivElement, SegmentedControlsItemPr
                 data-test-id={getSegmentedControlsItemTestId()}
                 className={merge([
                     'tw-relative tw-w-full tw-px-4 tw-py-2 tw-inline-flex tw-justify-center tw-items-center tw-font-sans tw-font-normal tw-h-full tw-text-center',
-                    isActive && !disabled ? 'tw-text-black' : 'tw-text-black-80',
-                    !disabled ? 'hover:tw-text-black hover:tw-cursor-pointer' : '',
+                    isActive && !disabled ? 'tw-text-text' : 'tw-text-text-weak',
+                    !disabled
+                        ? 'hover:tw-text-text hover:tw-cursor-pointer'
+                        : 'tw-text-box-disabled-inverse hover:tw-cursor-not-allowed',
                 ])}
             >
                 <VisuallyHidden>
@@ -146,7 +156,7 @@ export const SegmentedControls = ({
     const alignment = hugWidth ? 'tw-flex' : 'tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly';
 
     const getSliderX = () => {
-        let translateX = selectedIndex ? -1 : 0;
+        let translateX = -1;
         for (let i = 0; i < selectedIndex; i++) {
             translateX += itemsRef.current[i]?.clientWidth || 0;
         }
@@ -162,7 +172,7 @@ export const SegmentedControls = ({
                 {...radioGroupProps}
                 data-test-id="fondue-segmented-controls"
                 className={merge([
-                    'tw-relative tw-h-9 tw-p-0 tw-border tw-border-solid tw-border-black-20 tw-m-0 tw-bg-black-0 tw-rounded tw-font-sans tw-text-s tw-select-none',
+                    'tw-relative tw-h-9 tw-p-0 tw-border tw-border-solid tw-border-line-strong tw-m-0 tw-bg-base-alt tw-rounded tw-font-sans tw-text-s tw-select-none',
                     width,
                     alignment,
                 ])}
@@ -176,9 +186,7 @@ export const SegmentedControls = ({
                     hidden={!activeItemId}
                     className={merge([
                         'tw-absolute tw--inset-px tw-h-full tw-box-content tw-border tw-rounded tw-pointer-events-none',
-                        disabled
-                            ? 'tw-border-line-x-strong tw-border-opacity-30 tw-bg-black-0'
-                            : 'tw-border-black tw-bg-white',
+                        disabled ? 'tw-border-line-x-strong tw-bg-box-disabled' : 'tw-border-line-xx-strong tw-bg-base',
                     ])}
                 />
                 {itemElements}
