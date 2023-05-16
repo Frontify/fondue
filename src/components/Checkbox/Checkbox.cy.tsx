@@ -112,7 +112,7 @@ describe('Checkbox component', () => {
     });
 
     it('renders with X-large size', () => {
-        cy.mount(<CheckboxComponent label={CHECKBOX_LABEL} size={CheckboxSize.Large} />);
+        cy.mount(<CheckboxComponent label={CHECKBOX_LABEL} size={CheckboxSize.XLarge} />);
 
         cy.get(CHECKBOX_ICON_BOX_ID).should('have.class', 'tw-h-8').should('have.class', 'tw-w-8');
     });
