@@ -17,6 +17,11 @@ const TEXT_ITEMS = [
     { id: 'c', value: 'ghi' },
 ];
 
+const TEXT_ITEMS_DIFFERENT_WIDTH = [
+    { id: 'a', value: 'abcdefghi' },
+    { id: 'b', value: 'jkl' },
+];
+
 const NUMBER_ITEMS = [
     { id: 'a', value: 12 },
     { id: 'b', value: 34 },
@@ -32,11 +37,20 @@ const ICON_ITEMS = [
 type Props = {
     items: TextOrNumberItem[] | IconItem[];
     disabled?: boolean;
+    hugWidth?: boolean;
 };
 
-const Component = ({ items, disabled = false }: Props): ReactElement => {
+const Component = ({ items, disabled = false, hugWidth }: Props): ReactElement => {
     const [active, setActive] = useState(items[0].id);
-    return <SegmentedControls items={items} activeItemId={active} onChange={setActive} disabled={disabled} />;
+    return (
+        <SegmentedControls
+            items={items}
+            activeItemId={active}
+            onChange={setActive}
+            disabled={disabled}
+            hugWidth={hugWidth}
+        />
+    );
 };
 
 describe('SegmentedControls Component', () => {
@@ -89,5 +103,17 @@ describe('SegmentedControls Component', () => {
         cy.get(INPUT_ID).first().should('be.be.disabled');
         cy.get(TEXT_ITEM_ID).last().click();
         cy.get(INPUT_ID).last().should('not.be.checked');
+    });
+    it('renders elements with different widths if hugWidth is true', () => {
+        cy.mount(<Component items={TEXT_ITEMS_DIFFERENT_WIDTH} disabled hugWidth />);
+
+        const first = cy.get(TEXT_ITEM_ID).first();
+        const last = cy.get(TEXT_ITEM_ID).last();
+
+        first.then(($el1) => {
+            last.should(($el2) => {
+                expect($el1.width()).to.be.greaterThan($el2.width() || 0);
+            });
+        });
     });
 });
