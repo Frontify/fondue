@@ -4,7 +4,7 @@ import React, { MouseEvent } from 'react';
 import { HTMLPropsAs, LinkRootProps, useElementProps } from '@udecode/plate';
 import { getUrlFromLinkOrLegacyLink } from '../utils';
 import { TLinkElement } from '../types';
-import { getTextStyleCssProperties } from '../../';
+import { getTextStyleCssProperties } from '../../helper';
 
 const useLink = (props: LinkRootProps): HTMLPropsAs<'a'> => {
     const _props = useElementProps<TLinkElement, 'a'>({

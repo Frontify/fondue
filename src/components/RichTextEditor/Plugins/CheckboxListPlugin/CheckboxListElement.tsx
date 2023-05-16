@@ -6,7 +6,7 @@ import { PlateRenderElementProps, TTodoListItemElement, getRootProps, setNodes }
 import { merge } from '@utilities/merge';
 import { MarkupElement } from '../MarkupElement';
 import { ELEMENT_CHECK_ITEM } from './id';
-import { getTextStyleCssProperties, justifyClassNames } from '../';
+import { getTextStyleCssProperties, justifyClassNames } from '../helper';
 
 export const CheckboxListElementNode = (props: PlateRenderElementProps) => {
     const { attributes, children, nodeProps, element, editor } = props;

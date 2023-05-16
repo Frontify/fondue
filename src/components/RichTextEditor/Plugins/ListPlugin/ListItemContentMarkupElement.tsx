@@ -5,7 +5,7 @@ import { merge } from '@utilities/merge';
 import React from 'react';
 import { getColumnBreakClasses } from '../ColumnBreakPlugin/utils/getColumnBreakClasses';
 import { MarkupElement } from '../MarkupElement';
-import { getTextStyleCssProperties, justifyClassNames } from '../';
+import { getTextStyleCssProperties, justifyClassNames } from '../helper';
 
 export const getLicElementClassNames = (element: TElement) =>
     merge([

@@ -4,7 +4,7 @@ import React from 'react';
 import { IconPen16, IconTrashBin16 } from '@foundation/Icon/Generated';
 import { FloatingButton } from '../FloatingButton';
 import { useFloatingButtonUrlInput } from '../FloatingButtonUrlInput';
-import { getTextStyleCssProperties } from '@components/RichTextEditor/Plugins';
+import { getTextStyleCssProperties } from '../../../../helper';
 
 export const EditModal = () => {
     const urlHtmlProps = useFloatingButtonUrlInput({});

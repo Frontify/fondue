@@ -4,7 +4,7 @@ import React from 'react';
 import { useFloatingLinkUrlInput } from '@udecode/plate';
 import { IconPen16, IconTrashBin16 } from '@foundation/Icon/Generated';
 import { FloatingLink } from '../FloatingLink';
-import { getTextStyleCssProperties } from '@components/RichTextEditor/Plugins/';
+import { getTextStyleCssProperties } from '../../../helper';
 
 export const EditModal = () => {
     const urlHtmlProps = useFloatingLinkUrlInput({});
