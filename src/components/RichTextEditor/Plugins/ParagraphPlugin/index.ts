@@ -3,11 +3,11 @@
 import { ParagraphMarkupElement } from './ParagraphMarkupElement';
 import { Plugin, PluginProps } from '../Plugin';
 import { createParagraphPlugin } from './createParagraphPlugin';
-import { ELEMENT_PARAGRAPH } from '@udecode/plate';
+import { PARAGRAPH_PLUGIN } from './id';
 
 export class ParagraphPlugin extends Plugin {
     constructor(props?: PluginProps) {
-        super(ELEMENT_PARAGRAPH, {
+        super(PARAGRAPH_PLUGIN, {
             markupElement: new ParagraphMarkupElement(),
             label: 'Body Text',
             ...props,

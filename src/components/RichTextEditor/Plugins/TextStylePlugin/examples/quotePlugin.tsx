@@ -5,12 +5,13 @@ import React from 'react';
 import { MarkupElement, Plugin, PluginProps, getColumnBreakClasses } from '../../../';
 import { alignmentClassnames, getTextStyleCssProperties } from '../../helper';
 import { merge } from '@utilities/merge';
+import { TextStyles } from '../types';
 
-const ID = 'quote';
+const ID = 'textstyle-quote-plugin';
 
 export class QuotePlugin extends Plugin {
     constructor(props?: PluginProps) {
-        super(ID, {
+        super(TextStyles.quote, {
             label: 'Quote',
             markupElement: new QuoteMarkupElement(),
             ...props,
@@ -30,7 +31,6 @@ class QuoteMarkupElement extends MarkupElement {
 
 export const QuoteMarkupElementNode = ({ element, attributes, children }: PlateRenderElementProps) => {
     const align = element.align as string;
-
     return (
         <blockquote
             {...attributes}
@@ -43,7 +43,7 @@ export const QuoteMarkupElementNode = ({ element, attributes, children }: PlateR
 };
 
 export const createQuotePlugin = createPluginFactory({
-    key: ID,
+    key: TextStyles.quote,
     isElement: true,
     component: QuoteMarkupElementNode,
     deserializeHtml: {

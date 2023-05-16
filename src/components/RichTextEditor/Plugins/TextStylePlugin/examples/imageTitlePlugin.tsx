@@ -5,12 +5,13 @@ import React from 'react';
 import { MarkupElement, Plugin, PluginProps, getColumnBreakClasses } from '../../../';
 import { alignmentClassnames, getTextStyleCssProperties } from '../../helper';
 import { merge } from '@utilities/merge';
+import { TextStyles } from '../types';
 
-const ID = 'imageTitle';
+const ID = 'textstyle-imageTitle-plugin';
 
 export class ImageTitlePlugin extends Plugin {
     constructor(props?: PluginProps) {
-        super(ID, {
+        super(TextStyles.imageTitle, {
             label: 'Image Title',
             markupElement: new ImageTitleMarkupElement(),
             ...props,
@@ -42,7 +43,7 @@ const ImageTitleMarkupElementNode = ({ element, attributes, children }: PlateRen
 };
 
 const createImageTitlePlugin = createPluginFactory({
-    key: ID,
+    key: TextStyles.imageTitle,
     isElement: true,
     component: ImageTitleMarkupElementNode,
     deserializeHtml: {

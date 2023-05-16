@@ -1,11 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import {
-    exampleTextStyles,
-    mentionable,
-    orderedListValue,
-    unorderedListValue,
-} from '@components/RichTextEditor/helpers/exampleValues';
+import { mentionable, orderedListValue, unorderedListValue } from '@components/RichTextEditor/helpers/exampleValues';
 import { ELEMENT_BUTTON, ELEMENT_CHECK_ITEM, mapMentionable } from '@components/RichTextEditor/Plugins';
 import {
     ELEMENT_LI,
@@ -17,6 +12,7 @@ import {
     ELEMENT_UL,
 } from '@udecode/plate';
 import { serializeNodeToHtmlRecursive } from './serializeNodeToHtmlRecursive';
+import { TextStyles } from '@components/RichTextEditor/Plugins/TextStylePlugin/types';
 
 type ChildElement = {
     type: string;
@@ -213,14 +209,14 @@ describe('serializeNodeToHtmlRecursive()', () => {
         const node = {
             type: ELEMENT_PARAGRAPH,
             children: [
-                createChildElement(exampleTextStyles.heading1, 'This is a h1.'),
-                createChildElement(exampleTextStyles.heading2, 'This is a h2.'),
-                createChildElement(exampleTextStyles.heading3, 'This is a h3.'),
-                createChildElement(exampleTextStyles.heading4, 'This is a h4.'),
-                createChildElement(exampleTextStyles.custom1, 'This is a custom1.'),
-                createChildElement(exampleTextStyles.custom2, 'This is a custom2.'),
-                createChildElement(exampleTextStyles.custom3, 'This is a custom3.'),
-                createChildElement(exampleTextStyles.quote, 'This is a quote.'),
+                createChildElement(TextStyles.heading1, 'This is a h1.'),
+                createChildElement(TextStyles.heading2, 'This is a h2.'),
+                createChildElement(TextStyles.heading3, 'This is a h3.'),
+                createChildElement(TextStyles.heading4, 'This is a h4.'),
+                createChildElement(TextStyles.custom1, 'This is a custom1.'),
+                createChildElement(TextStyles.custom2, 'This is a custom2.'),
+                createChildElement(TextStyles.custom3, 'This is a custom3.'),
+                createChildElement(TextStyles.quote, 'This is a quote.'),
             ],
         };
 

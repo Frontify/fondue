@@ -21,12 +21,13 @@ import {
     getPluginType,
 } from '@udecode/plate';
 import { PartialOptionType } from './types';
+import { TextStyles } from '@components/RichTextEditor/Plugins/TextStylePlugin/types';
 
 export const options = (editor: PlateEditor): PartialOptionType => ({
     nodeTypes: {
         paragraph: getPluginType(editor, ELEMENT_PARAGRAPH),
         link: getPluginType(editor, ELEMENT_LINK),
-        blockQuote: getPluginType(editor, 'quote'),
+        blockQuote: getPluginType(editor, TextStyles.quote),
         inlineCodeMark: getPluginType(editor, MARK_CODE),
         strongMark: getPluginType(editor, MARK_BOLD),
         emphasisMark: getPluginType(editor, MARK_ITALIC),
@@ -39,10 +40,10 @@ export const options = (editor: PlateEditor): PartialOptionType => ({
         listItem: getPluginType(editor, ELEMENT_LI),
         listItemChild: getPluginType(editor, ELEMENT_LIC),
         heading: {
-            1: getPluginType(editor, 'heading1'),
-            2: getPluginType(editor, 'heading2'),
-            3: getPluginType(editor, 'heading3'),
-            4: getPluginType(editor, 'heading4'),
+            1: getPluginType(editor, TextStyles.heading1),
+            2: getPluginType(editor, TextStyles.heading2),
+            3: getPluginType(editor, TextStyles.heading3),
+            4: getPluginType(editor, TextStyles.heading4),
             5: getPluginType(editor, ELEMENT_H5),
             6: getPluginType(editor, ELEMENT_H6),
         },

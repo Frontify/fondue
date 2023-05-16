@@ -5,12 +5,13 @@ import React from 'react';
 import { MarkupElement, Plugin, PluginProps, getColumnBreakClasses } from '../../../';
 import { alignmentClassnames, getTextStyleCssProperties } from '../../helper';
 import { merge } from '@utilities/merge';
+import { TextStyles } from '../types';
 
-const ID = 'heading1';
+const ID = 'textstyle-heading1-plugin';
 
 export class Heading1Plugin extends Plugin {
     constructor(props?: PluginProps) {
-        super(ID, {
+        super(TextStyles.heading1, {
             markupElement: new Heading1MarkupElement(),
             label: 'Heading 1',
             ...props,
@@ -42,7 +43,7 @@ const Heading1MarkupElementNode = ({ element, attributes, children }: PlateRende
 };
 
 const createHeading1Plugin = createPluginFactory({
-    key: ID,
+    key: TextStyles.heading1,
     isElement: true,
     component: Heading1MarkupElementNode,
     deserializeHtml: {

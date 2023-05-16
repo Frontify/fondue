@@ -5,12 +5,13 @@ import React from 'react';
 import { MarkupElement, Plugin, PluginProps, getColumnBreakClasses } from '../../../';
 import { alignmentClassnames, getTextStyleCssProperties } from '../../helper';
 import { merge } from '@utilities/merge';
+import { TextStyles } from '../types';
 
-const ID = 'custom1';
+const ID = 'textstyle-custom1-plugin';
 
 export class Custom1Plugin extends Plugin {
     constructor(props?: PluginProps) {
-        super(ID, {
+        super(TextStyles.custom1, {
             label: 'Custom 1',
             markupElement: new Custom1MarkupElement(),
             ...props,
@@ -43,7 +44,7 @@ const Custom1MarkupElementNode = ({ element, attributes, children }: PlateRender
 };
 
 const createCustom1Plugin = createPluginFactory({
-    key: ID,
+    key: TextStyles.custom1,
     isElement: true,
     component: Custom1MarkupElementNode,
     deserializeHtml: {

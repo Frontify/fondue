@@ -20,6 +20,7 @@ import { ELEMENT_BUTTON } from '../../Plugins';
 import { ELEMENT_CHECK_ITEM } from '../../Plugins/CheckboxListPlugin/id';
 import { mixedMarkdown } from '../../serializer/markdown/__tests__/fixtures';
 import { MARK_TEXT_STYLE } from '../../Plugins/ListPlugin/ListPlugin';
+import { TextStyles } from '../../Plugins/TextStylePlugin/types';
 
 type CreateElementProps = {
     text: string;
@@ -56,19 +57,6 @@ const createLicElement = ({ text, textStyle }: CreateLicElementProps) => {
     };
 };
 
-export enum exampleTextStyles {
-    heading1 = 'heading1',
-    heading2 = 'heading2',
-    heading3 = 'heading3',
-    heading4 = 'heading4',
-    custom1 = 'custom1',
-    custom2 = 'custom2',
-    custom3 = 'custom3',
-    quote = 'quote',
-    imageCaption = 'imageCaption',
-    imageTitle = 'imageTitle',
-}
-
 export const IPSUM =
     'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.';
 
@@ -77,20 +65,16 @@ export const unorderedListValue = {
     children: [
         {
             type: ELEMENT_LI,
-            children: [
-                createLicElement({ text: 'This is list item number two.', textStyle: exampleTextStyles.custom1 }),
-            ],
+            children: [createLicElement({ text: 'This is list item number two.', textStyle: TextStyles.custom1 })],
+        },
+        {
+            type: ELEMENT_LI,
+            children: [createLicElement({ text: 'This is list item number one.', textStyle: TextStyles.custom2 })],
         },
         {
             type: ELEMENT_LI,
             children: [
-                createLicElement({ text: 'This is list item number one.', textStyle: exampleTextStyles.custom2 }),
-            ],
-        },
-        {
-            type: ELEMENT_LI,
-            children: [
-                createLicElement({ text: 'This is list item number three.', textStyle: exampleTextStyles.custom3 }),
+                createLicElement({ text: 'This is list item number three.', textStyle: TextStyles.custom3 }),
                 {
                     type: ELEMENT_UL,
                     children: [
@@ -273,19 +257,19 @@ export const defaultValue = [
             },
         ],
     },
-    createElement({ text: 'Heading 1', element: exampleTextStyles.heading1 }),
-    createElement({ text: 'Heading 2', element: exampleTextStyles.heading2 }),
-    createElement({ text: 'Heading 3', element: exampleTextStyles.heading3 }),
-    createElement({ text: 'Heading 4', element: exampleTextStyles.heading4 }),
-    createElement({ text: 'Custom 1', element: exampleTextStyles.custom1 }),
-    createElement({ text: 'Custom 2', element: exampleTextStyles.custom2 }),
-    createElement({ text: 'Custom 3', element: exampleTextStyles.custom3 }),
-    createElement({ text: 'Quote', element: exampleTextStyles.quote }),
+    createElement({ text: 'Heading 1', element: TextStyles.heading1 }),
+    createElement({ text: 'Heading 2', element: TextStyles.heading2 }),
+    createElement({ text: 'Heading 3', element: TextStyles.heading3 }),
+    createElement({ text: 'Heading 4', element: TextStyles.heading4 }),
+    createElement({ text: 'Custom 1', element: TextStyles.custom1 }),
+    createElement({ text: 'Custom 2', element: TextStyles.custom2 }),
+    createElement({ text: 'Custom 3', element: TextStyles.custom3 }),
+    createElement({ text: 'Quote', element: TextStyles.quote }),
 ];
 
 export const customControlValues = [
-    createElement({ text: 'Image Title', element: exampleTextStyles.imageTitle }),
-    createElement({ text: 'Image Caption', element: exampleTextStyles.imageCaption }),
+    createElement({ text: 'Image Title', element: TextStyles.imageTitle }),
+    createElement({ text: 'Image Caption', element: TextStyles.imageCaption }),
     createElement({ text: IPSUM, element: ELEMENT_PARAGRAPH }),
 ];
 
@@ -517,7 +501,7 @@ export const nodesToSerialize: TDescendant[] = [
 ];
 
 export const mentionValue = [
-    createElement({ text: '💬 Mention', element: exampleTextStyles.heading2 }),
+    createElement({ text: '💬 Mention', element: TextStyles.heading2 }),
     createElement({
         text: 'This example shows how you might implement a simple @-mentions feature that lets users autocomplete mentioning a user by their username. Which, in this case means Star Wars characters. The mentions are rendered as void inline elements inside the document.',
         element: ELEMENT_PARAGRAPH,

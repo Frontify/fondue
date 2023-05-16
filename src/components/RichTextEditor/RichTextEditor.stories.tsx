@@ -9,7 +9,6 @@ import {
     checkboxValue,
     customControlValues,
     defaultValue,
-    exampleTextStyles,
     htmlValue,
     markdownText,
     mentionValue,
@@ -65,6 +64,8 @@ import { Heading3Plugin } from './Plugins/TextStylePlugin/examples/heading3Plugi
 import { Heading4Plugin } from './Plugins/TextStylePlugin/examples/heading4Plugin';
 import { Custom2Plugin } from './Plugins/TextStylePlugin/examples/custom2Plugin';
 import { Custom3Plugin } from './Plugins/TextStylePlugin/examples/custom3Plugin';
+import { TextStyles } from './Plugins/TextStylePlugin/types';
+import { QuotePlugin } from './Plugins/TextStylePlugin/examples/quotePlugin';
 
 export default {
     title: 'Components/Rich Text Editor',
@@ -108,7 +109,7 @@ const RichTextEditorTemplate: StoryFn<RichTextEditorProps> = (args: RichTextEdit
     <RichTextEditorComponent {...args} />
 );
 
-const allTextStyles = Object.values(exampleTextStyles);
+const allTextStyles = Object.values(TextStyles);
 
 const allPlugins = new PluginComposer();
 allPlugins
@@ -126,6 +127,7 @@ allPlugins
                 new Custom3Plugin(),
                 new ImageTitlePlugin(),
                 new ImageCaptionPlugin(),
+                new QuotePlugin(),
             ],
         }),
     ])

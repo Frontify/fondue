@@ -63,8 +63,6 @@ import { Heading4Plugin } from '../Plugins/TextStylePlugin/examples/heading4Plug
 import { SubscriptPlugin } from '@components/RichTextEditor/Plugins/SubscriptPlugin';
 import { SuperscriptPlugin } from '@components/RichTextEditor/Plugins/SuperscriptPlugin';
 
-import './fixtures/theme.css';
-
 const checkPosition = (chainers: string, value: number, text: string) => {
     cy.window().then(() => {
         cy.get('[contenteditable=true]')
@@ -1066,7 +1064,7 @@ describe('RichTextEditor Component', () => {
             insertTextAndOpenToolbar();
             cy.get(TOOLBAR_FLOATING).should('be.visible');
             cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
-            cy.get(TEXTSTYLE_OPTION).eq(4).click();
+            cy.get(TEXTSTYLE_OPTION).eq(5).click();
             cy.get('[contenteditable=true]').click().should('not.include.html', ACTIVE_COLUMN_BREAK_CLASS_NAMES);
             selectTextValue('hello');
             cy.get(TOOLBAR_GROUP_1).children().eq(-1).click();
