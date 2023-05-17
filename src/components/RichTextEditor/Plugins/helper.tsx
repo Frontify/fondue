@@ -50,6 +50,8 @@ export const getTextStyleCssProperties = (textStyle: string): CSSProperties => {
             letterSpacing: `var(${THEME_PREFIX}${textStyle}-letter-spacing)`,
             textDecoration: `var(${THEME_PREFIX}${textStyle}-text-decoration)`,
             textTransform: `var(${THEME_PREFIX}${textStyle}-text-transform)` as CSSProperties['textTransform'],
+            marginTop: `var(${THEME_PREFIX}${textStyle}-margin-top)`,
+            marginBottom: `var(${THEME_PREFIX}${textStyle}-margin-bottom)`,
         };
     }
     return {
@@ -62,5 +64,7 @@ export const getTextStyleCssProperties = (textStyle: string): CSSProperties => {
         lineHeight: `var(${THEME_PREFIX}${textStyle}-line-height)`,
         textDecoration: `var(${THEME_PREFIX}${textStyle}-text-decoration)`,
         textTransform: `var(${THEME_PREFIX}${textStyle}-text-transform)` as CSSProperties['textTransform'],
+        marginTop: `var(${THEME_PREFIX}${textStyle}-margin-top)`,
+        marginBottom: `var(${THEME_PREFIX}${textStyle}-margin-bottom)`,
     };
 };
