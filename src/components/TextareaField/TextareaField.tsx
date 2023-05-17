@@ -9,6 +9,7 @@ import TextareaAutosize from 'react-textarea-autosize';
 import { InputExtraAction } from '@internal/inputs/InputExtraActions';
 import { InputActionsAndValidation } from '@internal/inputs/InputActionsAndValidation';
 import { Box } from '@components/Box';
+import { InputDecorator } from '@internal/inputs/InputDecorator';
 
 export type TextareaFieldProps = {
     id?: string;
@@ -60,17 +61,7 @@ export const TextareaField = ({
 
     return (
         <Box className="tw-relative tw-w-full tw-mt-1">
-            {decorator && (
-                <Box
-                    className={merge([
-                        'tw-absolute tw-top-[7px] tw-left-[7px] tw-p-1 tw-inline-flex tw-items-end',
-                        disabled ? 'tw-text-text-disabled' : 'tw-text-text',
-                    ])}
-                    data-test-id="decorator"
-                >
-                    {decorator}
-                </Box>
-            )}
+            {decorator && <InputDecorator element={decorator} disabled={disabled} />}
             <Component
                 {...(autosize ? autosizeProps : { rows: minRows })}
                 id={useMemoizedId(propId)}
