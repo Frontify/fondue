@@ -2,7 +2,7 @@
 
 import { BadgeStyle } from '@components/Badge';
 import { TabItem, TabItemProps } from '@components/Tabs/TabItem';
-import { TabSize, Tabs, TabsPaddingX } from '@components/Tabs/Tabs';
+import { Tabs, TabsPaddingX } from '@components/Tabs/Tabs';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { IconIcon } from '@foundation/Icon/Generated';
 import React, { useState } from 'react';
@@ -53,15 +53,10 @@ const data: TabItemProps[] = [
     },
 ];
 
-const TabComponent = () => {
+const TabComponent = ({ paddingX }: { paddingX?: TabsPaddingX }) => {
     const [activeItemId, setActiveItemId] = useState(data[0].id);
     return (
-        <Tabs
-            activeItemId={activeItemId}
-            onChange={(value) => setActiveItemId(value)}
-            paddingX={TabsPaddingX.Small}
-            size={TabSize.Small}
-        >
+        <Tabs activeItemId={activeItemId} onChange={(value) => setActiveItemId(value)} paddingX={paddingX} size="Small">
             {data.map((item) => (
                 <TabItem
                     id={item.id}
@@ -194,5 +189,32 @@ describe('Tabs Component', () => {
         cy.get('[data-test-id=tab-item]').eq(1).should('not.have.class', 'tw-font-medium');
         cy.get('[data-test-id=tab-item]').eq(2).trigger('keydown', { key: 'ArrowLeft' });
         cy.get('[data-test-id=tab-item]').eq(1).should('not.have.class', 'tw-font-medium');
+    });
+
+    it('tabs should render with paddingX of "8"', () => {
+        cy.mount(<TabComponent paddingX="8" />);
+        cy.get('[data-test-id=tabs] > div').should('have.class', 'tw-pl-0');
+        cy.get('[data-test-id=tabs] > div').should('have.class', 'tw-pr-0');
+    });
+
+    it('tabs should render with paddingX of "16"', () => {
+        cy.mount(<TabComponent paddingX="16" />);
+
+        cy.get('[data-test-id=tabs] > div').should('have.class', 'tw-pl-2');
+        cy.get('[data-test-id=tabs] > div').should('have.class', 'tw-pr-2');
+    });
+
+    it('tabs should render with paddingX of "20"', () => {
+        cy.mount(<TabComponent paddingX="20" />);
+
+        cy.get('[data-test-id=tabs] > div').should('have.class', 'tw-pl-3.5');
+        cy.get('[data-test-id=tabs] > div').should('have.class', 'tw-pr-3.5');
+    });
+
+    it('tabs should render with paddingX of "24"', () => {
+        cy.mount(<TabComponent paddingX="24" />);
+
+        cy.get('[data-test-id=tabs] > div').should('have.class', 'tw-pl-4');
+        cy.get('[data-test-id=tabs] > div').should('have.class', 'tw-pr-4');
     });
 });
