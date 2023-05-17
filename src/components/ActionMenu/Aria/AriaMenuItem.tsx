@@ -96,7 +96,7 @@ export const AriaMenuItem = ({ menuItem, node, state, isSelected, onClick }: Ari
             {...mergeProps(menuItemProps, focusProps)}
             data-test-id="menu-item"
             className={merge([
-                'tw-relative hover:tw-bg-base-alt tw-list-none tw-outline-none',
+                'tw-relative hover:tw-bg-box-neutral-hover tw-list-none tw-outline-none',
                 disabled && 'tw-pointer-events-none tw-top-px',
                 isFocusVisible && FOCUS_STYLE_INSET,
             ])}
