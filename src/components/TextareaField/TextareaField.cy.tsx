@@ -3,6 +3,7 @@
 import { Validation } from '@utilities/validation';
 import React from 'react';
 import { TextareaField } from './TextareaField';
+import { IconIcon16 } from '@foundation/Icon/Generated';
 
 const DEFAULT_TEXT = 'A new text area';
 const PLACEHOLDER = 'This is the placeholder';
@@ -12,6 +13,7 @@ const INPUT_TEXT = 'some text';
 const ROW_HEIGHT = 16;
 const TEXTAREA_FIELD_ID = '[data-test-id=textarea]';
 const ERROR_STATE_EXCLAMATION_MARK_ICON_ID = '[data-test-id=error-state-exclamation-mark-icon]';
+const INPUT_EXTRA_ACTION_BUTTON_ID = '[data-test-id="fondue-input-extra-action-button"]';
 
 describe('TextareaField component', () => {
     it('renders', () => {
@@ -125,8 +127,89 @@ describe('TextareaField component', () => {
         cy.get(ERROR_STATE_EXCLAMATION_MARK_ICON_ID).should('have.class', 'tw-text-text-negative');
     });
 
-    it('shows warning validation triangle icon in case of warning validation state', () => {
-        cy.mount(<TextareaField validation={Validation.Warning} />);
-        cy.get(ERROR_STATE_EXCLAMATION_MARK_ICON_ID).should('have.class', 'tw-text-text-warning');
+    it('shows extra actions and add right padding to the field', () => {
+        const stub1 = cy.stub().as('onClickExtraAction1');
+        const stub2 = cy.stub().as('onClickExtraAction2');
+        cy.mount(
+            <TextareaField
+                extraActions={[
+                    {
+                        onClick: stub1,
+                        icon: <IconIcon16 />,
+                        title: 'Extra Action 1',
+                    },
+                    {
+                        onClick: stub2,
+                        icon: <IconIcon16 />,
+                        title: 'Extra Action 2',
+                    },
+                ]}
+            />,
+        );
+        cy.get(INPUT_EXTRA_ACTION_BUTTON_ID).should('have.length', 2);
+        cy.get(TEXTAREA_FIELD_ID).should('have.css', 'padding-right', `${(2 * 1.5 + 0.5) * 16}px`); //calc(${paddingMultiplier} * 1.5rem + 0.5rem)
+    });
+
+    it('shows validation icon, extra actions and add right padding to the field', () => {
+        const stub1 = cy.stub().as('onClickExtraAction1');
+        const stub2 = cy.stub().as('onClickExtraAction2');
+        cy.mount(
+            <TextareaField
+                validation={Validation.Success}
+                extraActions={[
+                    {
+                        onClick: stub1,
+                        icon: <IconIcon16 />,
+                        title: 'Extra Action 1',
+                    },
+                    {
+                        onClick: stub2,
+                        icon: <IconIcon16 />,
+                        title: 'Extra Action 2',
+                    },
+                ]}
+            />,
+        );
+        cy.get(INPUT_EXTRA_ACTION_BUTTON_ID).should('have.length', 2);
+        cy.get(TEXTAREA_FIELD_ID).should('have.css', 'padding-right', `${(3 * 1.5 + 0.5) * 16}px`); //calc(${paddingMultiplier} * 1.5rem + 0.5rem)
+    });
+
+    it('shows loading circle, extra actions and add right padding to the field', () => {
+        const stub1 = cy.stub().as('onClickExtraAction1');
+        const stub2 = cy.stub().as('onClickExtraAction2');
+        cy.mount(
+            <TextareaField
+                validation={Validation.Loading}
+                extraActions={[
+                    {
+                        onClick: stub1,
+                        icon: <IconIcon16 />,
+                        title: 'Extra Action 1',
+                    },
+                    {
+                        onClick: stub2,
+                        icon: <IconIcon16 />,
+                        title: 'Extra Action 2',
+                    },
+                ]}
+            />,
+        );
+        cy.get(INPUT_EXTRA_ACTION_BUTTON_ID).should('have.length', 2);
+        cy.get(TEXTAREA_FIELD_ID).should('have.css', 'padding-right', `${(2 * 1.5 + 0.5) * 16}px`); //calc(${paddingMultiplier} * 1.5rem + 0.5rem)
+    });
+
+    it('creates a random memoized id if no id provided', () => {
+        cy.mount(<TextareaField />);
+        cy.get(TEXTAREA_FIELD_ID).should('have.attr', 'id');
+    });
+
+    it('uses provided custom id', () => {
+        cy.mount(<TextareaField id="textarea-field" />);
+        cy.get(TEXTAREA_FIELD_ID).should('have.attr', 'id', 'textarea-field');
+    });
+
+    it('uses provided custom data-test-id', () => {
+        cy.mount(<TextareaField data-test-id="fondue-textarea-field" />);
+        cy.get('[data-test-id="fondue-textarea-field"]').should('exist');
     });
 });

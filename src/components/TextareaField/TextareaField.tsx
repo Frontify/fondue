@@ -31,6 +31,7 @@ export type TextareaFieldProps = {
     selectable?: boolean;
     readOnly?: boolean;
     extraActions?: InputExtraAction[];
+    'data-test-id'?: string;
 };
 
 export const TextareaField = ({
@@ -51,6 +52,7 @@ export const TextareaField = ({
     selectable = false,
     readOnly = false,
     extraActions = [],
+    'data-test-id': dataTestId = 'textarea',
 }: TextareaFieldProps): ReactElement => {
     const Component = autosize ? TextareaAutosize : 'textarea';
 
@@ -94,7 +96,7 @@ export const TextareaField = ({
                     onInput?.((event.target as HTMLTextAreaElement).value)
                 }
                 onBlur={(event: FocusEvent<HTMLTextAreaElement>) => onBlur?.(event.target.value)}
-                data-test-id="textarea"
+                data-test-id={dataTestId}
             />
             <InputActionsAndValidation
                 extraActions={extraActions.map((action) => ({ ...action, disabled: action.disabled ?? disabled }))}
