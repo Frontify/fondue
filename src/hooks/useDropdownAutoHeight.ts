@@ -7,27 +7,29 @@ export const DEFAULT_DROPDOWN_MAX_HEIGHT = 'auto';
 type DropdownAutoHeightProps = {
     isOpen: boolean;
     autoResize?: boolean;
+    isDialog?: boolean;
 };
 
-const getInnerOverlayHeight = (triggerRef: MutableRefObject<HTMLElement | null>) => {
+export const getInnerOverlayHeight = (triggerRef: MutableRefObject<HTMLElement | null>, isDialog: boolean) => {
     let maxHeight = 'auto';
     if (triggerRef.current) {
         const { innerHeight } = window;
         const { bottom } = triggerRef.current.getBoundingClientRect();
         const viewportPadding = 33;
         const triggerMargin = 8;
-        maxHeight = `${Math.max(innerHeight - (bottom + viewportPadding + triggerMargin), 130)}px`;
+        const extraSpace = isDialog ? innerHeight / 3 : 0;
+        maxHeight = `${Math.max(innerHeight - (bottom + viewportPadding + triggerMargin + extraSpace), 130)}px`;
     }
     return maxHeight;
 };
 
 export const useDropdownAutoHeight = (
     triggerRef: MutableRefObject<HTMLElement | null>,
-    { isOpen, autoResize }: DropdownAutoHeightProps,
+    { isOpen, autoResize, isDialog = false }: DropdownAutoHeightProps,
 ) => {
     const [maxHeight, setMaxHeight] = useState(DEFAULT_DROPDOWN_MAX_HEIGHT);
     useEffect(() => {
-        const updateMaxHeight = () => setMaxHeight(getInnerOverlayHeight(triggerRef));
+        const updateMaxHeight = () => setMaxHeight(getInnerOverlayHeight(triggerRef, isDialog));
         if (autoResize && isOpen) {
             updateMaxHeight();
             window.addEventListener('resize', updateMaxHeight);

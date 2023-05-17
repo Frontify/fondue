@@ -18,7 +18,7 @@ import { DefaultItem, NoSearchResults, OptionalItems } from './SelectMenuItems';
 import { CheckboxState } from '@components/Checkbox/Checkbox';
 import { createPortal } from 'react-dom';
 import { usePopper } from 'react-popper';
-import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from '@components/Dropdown/useDropdownAutoHeight';
+import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from '@hooks/useDropdownAutoHeight';
 import { DEFAULT_DROPDOWN_MIN_ANIMATION_HEIGHT } from '@components/Dropdown/Dropdown';
 
 export enum MultiSelectType {

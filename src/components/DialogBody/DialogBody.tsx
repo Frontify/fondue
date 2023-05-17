@@ -18,7 +18,7 @@ export const DialogBody = ({
         if (contentRef.current && containerRef.current) {
             setIsOverflowing(containerRef.current?.clientHeight > contentRef.current?.clientHeight);
         }
-    }, []);
+    }, [contentRef, containerRef]);
 
     return (
         <div ref={containerRef} data-test-id={dataTestId} className={isOverflowing ? 'tw-pr-2' : ''}>
