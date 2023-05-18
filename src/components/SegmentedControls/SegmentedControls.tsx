@@ -95,7 +95,7 @@ const SegmentedControlsItem = forwardRef<HTMLDivElement, SegmentedControlsItemPr
                 onClick={handleMockLabelClick}
                 data-test-id={getSegmentedControlsItemTestId()}
                 className={merge([
-                    'tw-relative tw-w-full tw-px-4 tw-py-2 tw-inline-flex tw-justify-center tw-items-center tw-font-sans tw-font-normal tw-h-full tw-text-center',
+                    'tw-relative tw-w-full tw-py-2 tw-inline-flex tw-justify-center tw-items-center tw-font-sans tw-font-normal tw-h-full tw-text-center',
                     isActive && !disabled ? 'tw-text-text' : 'tw-text-text-weak',
                     !disabled
                         ? 'hover:tw-text-text hover:tw-cursor-pointer'
