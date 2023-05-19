@@ -3,6 +3,7 @@
 import { Validation } from '@utilities/validation';
 import React, { useState } from 'react';
 import { MultiSelect } from './MultiSelect';
+import { TriggerEmphasis } from '..';
 
 const TRIGGER_ID = '[data-test-id=trigger]';
 const CHECKBOX_ID = '[data-test-id=checkbox]';
@@ -37,9 +38,10 @@ const ITEMS = {
 
 type Props = {
     validation?: Validation;
+    emphasis?: TriggerEmphasis;
 };
 
-const Component = ({ validation = Validation.Default }: Props) => {
+const Component = ({ validation = Validation.Default, emphasis = TriggerEmphasis.Default }: Props) => {
     const [activeItems, setActiveItems] = useState<(string | number)[]>(ITEMS.activeItemKeys);
     return (
         <MultiSelect
@@ -47,6 +49,7 @@ const Component = ({ validation = Validation.Default }: Props) => {
             activeItemKeys={activeItems}
             onSelectionChange={(keys) => setActiveItems(keys)}
             validation={validation}
+            emphasis={emphasis}
         />
     );
 };
@@ -94,5 +97,10 @@ describe('MultiSelect Component', () => {
             cy.mount(<Component validation={validationState} />);
             cy.get(TRIGGER_ID).find(EXCLAMATION_MARK_ICON_ID).should('have.length', 0);
         }
+    });
+
+    it('should render Trigger Waek emphasis', () => {
+        cy.mount(<Component emphasis={TriggerEmphasis.Weak} />);
+        cy.get(TRIGGER_ID).should('have.class', 'tw-border-0');
     });
 });

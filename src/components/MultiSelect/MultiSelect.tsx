@@ -2,7 +2,7 @@
 
 import { Checklist, ChecklistDirection } from '@components/Checklist/Checklist';
 import { Tag, TagSize, TagType } from '@components/Tag';
-import { Trigger } from '@components/Trigger';
+import { Trigger, TriggerEmphasis } from '@components/Trigger';
 import { Text } from '@typography/Text';
 import { useButton } from '@react-aria/button';
 import { FocusScope, useFocusRing } from '@react-aria/focus';
@@ -12,9 +12,9 @@ import React, { KeyboardEvent, ReactElement, useEffect, useRef, useState } from 
 import { getPaddingClasses } from './helpers';
 import { useClickOutside } from '@hooks/useClickOutside';
 import { CheckboxState } from '@components/Checkbox/Checkbox';
-import { createPortal } from 'react-dom';
 import { usePopper } from 'react-popper';
 import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from '@components/Dropdown/useDropdownAutoHeight';
+import { Portal } from '@components/Portal';
 
 export enum MultiSelectType {
     Default = 'Default',
@@ -49,6 +49,7 @@ export type MultiSelectProps = {
     summarizedLabel?: string;
     indeterminateItemKeys?: (string | number)[];
     flip?: boolean;
+    emphasis?: TriggerEmphasis;
 };
 
 export type Item = {
@@ -75,6 +76,7 @@ export const MultiSelect = ({
     summarizedLabel: summarizedLabelFromProps,
     indeterminateItemKeys,
     flip = false,
+    emphasis = TriggerEmphasis.Default,
 }: MultiSelectProps): ReactElement => {
     const [open, setOpen] = useState(false);
     const [checkboxes, setCheckboxes] = useState<Item[]>([]);
@@ -181,6 +183,7 @@ export const MultiSelect = ({
                 isFocusVisible={isFocusVisible}
                 isOpen={open}
                 validation={validation}
+                emphasis={emphasis}
             >
                 <div className={merge(['tw-flex tw-flex-1 tw-gap-2', getPaddingClasses(size)])} ref={setTriggerRef}>
                     <div
@@ -226,9 +229,8 @@ export const MultiSelect = ({
                 </div>
             </Trigger>
 
-            {open &&
-                heightIsReady &&
-                createPortal(
+            {open && heightIsReady && (
+                <Portal>
                     <div
                         ref={setMultiSelectMenuRef}
                         className="tw-absolute tw-left-0 tw-w-full tw-overflow-hidden tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-30 tw-bg-base tw-min-w-[18rem]"
@@ -253,9 +255,9 @@ export const MultiSelect = ({
                                 />
                             </div>
                         </FocusScope>
-                    </div>,
-                    document.body,
-                )}
+                    </div>
+                </Portal>
+            )}
         </div>
     );
 };
