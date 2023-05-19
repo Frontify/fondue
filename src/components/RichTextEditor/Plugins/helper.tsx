@@ -40,31 +40,34 @@ export const getTextStyleCssProperties = (textStyle: string): CSSProperties => {
         textStyle = 'body';
     }
 
-    if (textStyle === 'link') {
+    const style = toKebabCase(textStyle);
+
+    if (style === 'link') {
         return {
-            color: `var(${THEME_PREFIX}${textStyle}-color)`,
-            fontFamily: `var(${THEME_PREFIX}${textStyle}-font-family)`,
-            fontSize: `var(${THEME_PREFIX}${textStyle}-font-size)`,
-            fontStyle: `var(${THEME_PREFIX}${textStyle}-font-style)`,
-            fontWeight: `var(${THEME_PREFIX}${textStyle}-font-weight)`,
-            letterSpacing: `var(${THEME_PREFIX}${textStyle}-letter-spacing)`,
-            textDecoration: `var(${THEME_PREFIX}${textStyle}-text-decoration)`,
-            textTransform: `var(${THEME_PREFIX}${textStyle}-text-transform)` as CSSProperties['textTransform'],
-            marginTop: `var(${THEME_PREFIX}${textStyle}-margin-top)`,
-            marginBottom: `var(${THEME_PREFIX}${textStyle}-margin-bottom)`,
+            color: `var(${THEME_PREFIX}${style}-color)`,
+            fontFamily: `var(${THEME_PREFIX}${style}-font-family)`,
+            fontSize: `var(${THEME_PREFIX}${style}-font-size)`,
+            fontStyle: `var(${THEME_PREFIX}${style}-font-style)`,
+            fontWeight: `var(${THEME_PREFIX}${style}-font-weight)`,
+            letterSpacing: `var(${THEME_PREFIX}${style}-letter-spacing)`,
+            textDecoration: `var(${THEME_PREFIX}${style}-text-decoration)`,
+            textTransform: `var(${THEME_PREFIX}${style}-text-transform)` as CSSProperties['textTransform'],
+            marginTop: `var(${THEME_PREFIX}${style}-margin-top)`,
+            marginBottom: `var(${THEME_PREFIX}${style}-margin-bottom)`,
         };
     }
     return {
-        color: `var(${THEME_PREFIX}${textStyle}-color)`,
-        fontFamily: `var(${THEME_PREFIX}${textStyle}-font-family)`,
-        fontSize: `var(${THEME_PREFIX}${textStyle}-font-size)`,
-        fontStyle: `var(${THEME_PREFIX}${textStyle}-font-style)`,
-        fontWeight: `var(${THEME_PREFIX}${textStyle}-font-weight)`,
-        letterSpacing: `var(${THEME_PREFIX}${textStyle}-letter-spacing)`,
-        lineHeight: `var(${THEME_PREFIX}${textStyle}-line-height)`,
-        textDecoration: `var(${THEME_PREFIX}${textStyle}-text-decoration)`,
-        textTransform: `var(${THEME_PREFIX}${textStyle}-text-transform)` as CSSProperties['textTransform'],
-        marginTop: `var(${THEME_PREFIX}${textStyle}-margin-top)`,
-        marginBottom: `var(${THEME_PREFIX}${textStyle}-margin-bottom)`,
+        color: `var(${THEME_PREFIX}${style}-color)`,
+        fontFamily: `var(${THEME_PREFIX}${style}-font-family)`,
+        fontSize: `var(${THEME_PREFIX}${style}-font-size)`,
+        fontStyle: `var(${THEME_PREFIX}${style}-font-style)`,
+        fontWeight: `var(${THEME_PREFIX}${style}-font-weight)`,
+        letterSpacing: `var(${THEME_PREFIX}${style}-letter-spacing)`,
+        lineHeight: `var(${THEME_PREFIX}${style}-line-height)`,
+        textDecoration: `var(${THEME_PREFIX}${style}-text-decoration)`,
+        textTransform: `var(${THEME_PREFIX}${style}-text-transform)` as CSSProperties['textTransform'],
+        marginTop: `var(${THEME_PREFIX}${style}-margin-top)`,
+        marginBottom: `var(${THEME_PREFIX}${style}-margin-bottom)`,
     };
 };
+const toKebabCase = (str: string) => str.replaceAll(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
