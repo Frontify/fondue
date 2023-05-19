@@ -21,3 +21,5 @@ export class TextStylePlugin extends Plugin<TextStylePluginProps> {
         return this.textStyles.map((textStyle) => textStyle.plugins()).flat();
     }
 }
+
+export * from './types';
