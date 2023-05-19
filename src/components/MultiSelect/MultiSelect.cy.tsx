@@ -3,7 +3,7 @@
 import { Validation } from '@utilities/validation';
 import React, { useState } from 'react';
 import { MultiSelect } from './MultiSelect';
-import { TriggerEmphasis } from '..';
+import { TriggerEmphasis } from '@components/Trigger';
 
 const TRIGGER_ID = '[data-test-id=trigger]';
 const CHECKBOX_ID = '[data-test-id=checkbox]';
