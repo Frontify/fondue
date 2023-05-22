@@ -40,11 +40,12 @@ interface SegmentedControlsItemProps {
     id: string;
     item: TextOrNumberItem | IconItem;
     disabled: boolean;
+    hugWidth: boolean;
     radioGroupState: RadioGroupState;
 }
 
 const SegmentedControlsItem = forwardRef<HTMLDivElement, SegmentedControlsItemProps>((props, ref) => {
-    const { id, item, disabled, radioGroupState } = props;
+    const { id, item, disabled, radioGroupState, hugWidth } = props;
     const inputRef = useRef<HTMLInputElement | null>(null);
     const isActive = item.id === radioGroupState.selectedValue;
     const { inputProps } = useRadio(
@@ -100,6 +101,7 @@ const SegmentedControlsItem = forwardRef<HTMLDivElement, SegmentedControlsItemPr
                     !disabled
                         ? 'hover:tw-text-text hover:tw-cursor-pointer'
                         : 'tw-text-box-disabled-inverse hover:tw-cursor-not-allowed',
+                    hugWidth ? 'tw-px-4' : 'tw-px-2',
                 ])}
             >
                 <VisuallyHidden>
@@ -144,13 +146,14 @@ export const SegmentedControls = ({
             <SegmentedControlsItem
                 id={id}
                 item={item}
+                hugWidth={hugWidth}
                 disabled={disabled}
                 radioGroupState={radioGroupState}
                 ref={(el) => (itemsRef.current[index] = el)}
                 key={`fondue-segmented-controls-${id}-item-${item.id}`}
             />
         ));
-    }, [items, id, disabled, radioGroupState]);
+    }, [items, id, disabled, radioGroupState, hugWidth]);
     const selectedIndex = items.findIndex((item) => item.id === radioGroupState.selectedValue);
     const width = hugWidth ? '' : 'tw-w-full';
     const alignment = hugWidth ? 'tw-flex' : 'tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly';
