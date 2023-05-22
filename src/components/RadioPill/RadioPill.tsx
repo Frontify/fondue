@@ -4,7 +4,7 @@ import { IconSize } from '@foundation/Icon/IconSize';
 import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import React, { FC, MouseEvent, cloneElement } from 'react';
+import React, { MouseEvent, ReactElement, cloneElement } from 'react';
 
 export type RadioPillProps = {
     label: string;
@@ -13,7 +13,7 @@ export type RadioPillProps = {
     icon?: React.ReactElement;
 };
 
-export const RadioPill: FC<RadioPillProps> = ({ label, active, icon, onClick }) => {
+export const RadioPill = ({ label, active, icon, onClick }: RadioPillProps): ReactElement => {
     const { isFocusVisible, focusProps } = useFocusRing();
 
     return (
@@ -36,3 +36,4 @@ export const RadioPill: FC<RadioPillProps> = ({ label, active, icon, onClick }) 
         </button>
     );
 };
+RadioPill.displayName = 'FondueRadioPill';

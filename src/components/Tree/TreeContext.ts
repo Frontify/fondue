@@ -2,15 +2,17 @@
 
 import { createContext, useContext } from 'react';
 
+import type { OnExpandCallback, OnSelectCallback, OnShrinkCallback, TreeState } from './types';
+
 export type TreeContextProps = {
-    treeId: string;
-    selectedIds: string[];
-    onSelect: (id: string) => void;
-    draggable: boolean;
+    treeState: TreeState;
+    onSelect: OnSelectCallback;
+    onExpand: OnExpandCallback;
+    onShrink: OnShrinkCallback;
 };
 
 export const TreeContext = createContext<TreeContextProps>({} as TreeContextProps);
 
-export const useTreeContext = () => {
+export const useTreeContext = (): TreeContextProps => {
     return useContext(TreeContext);
 };

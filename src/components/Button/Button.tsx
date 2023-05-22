@@ -43,11 +43,13 @@ export type ButtonProps = {
     onClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
     hugWidth?: boolean;
     'aria-label'?: string;
+    'aria-describedby'?: string;
     formId?: string;
     /** @deprecated use emphasis with ButtonEmphasis.Weak */
     solid?: boolean;
     /** @deprecated inverted can be done by wrapping the component in a className="tw-dark" */
     inverted?: boolean;
+    'data-test-id'?: string;
 };
 
 const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, ButtonProps> = (
@@ -64,9 +66,11 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
         onClick,
         hugWidth = true,
         'aria-label': ariaLabel,
+        'aria-describedby': ariaDescribedBy,
         formId,
         solid,
         inverted,
+        'data-test-id': dataTestId = 'button',
     },
     externalRef,
 ) => {
@@ -107,12 +111,13 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
 
     return (
         <button
+            data-test-id={dataTestId}
             aria-label={ariaLabel}
             aria-disabled={disabled}
+            aria-describedby={ariaDescribedBy}
             ref={ref}
             className={merge([buttonClassName, inverted && 'tw-dark', isFocusVisible && FOCUS_VISIBLE_STYLE])}
             disabled={disabled}
-            data-test-id="button"
             form={formId}
             {...buttonProps}
             {...focusProps}
@@ -135,3 +140,4 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
 };
 
 export const Button = forwardRef(ButtonComponent);
+Button.displayName = 'FondueButton';

@@ -60,7 +60,7 @@ export const TableCell = ({
             >
                 <CheckboxComponent
                     value={key}
-                    ariaLabel={cell['aria-label'] || key}
+                    aria-label={cell['aria-label'] || key}
                     state={isChecked ? CheckboxState.Checked : CheckboxState.Unchecked}
                     onChange={handleChange}
                 />
@@ -81,3 +81,4 @@ export const TableCell = ({
         </td>
     );
 };
+TableCell.displayName = 'FondueTableCell';

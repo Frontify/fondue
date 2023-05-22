@@ -1,9 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
 import {
     BlockToolbarButtonProps,
+    ELEMENT_PARAGRAPH,
     ToolbarButton,
+    getNode,
+    getParentNode,
     getPreventDefaultHandler,
+    setElements,
     someNode,
     toggleNodeType,
     unwrapList,
@@ -14,13 +19,15 @@ import {
 import React from 'react';
 
 export const CheckboxListToolbarButton = withPlateProvider(
-    ({ id, type, inactiveType, active, ...props }: BlockToolbarButtonProps) => {
+    ({ id, type, active, ...props }: BlockToolbarButtonProps) => {
         const editor = usePlateEditorState(useEventPlateId(id));
+        const node = editor.selection?.focus.path && getNode(editor, editor?.selection?.focus?.path);
 
         const isActive = active ?? (!!editor?.selection && someNode(editor, { match: { type } }));
 
         return (
             <ToolbarButton
+                tooltip={getTooltip('Checklist')}
                 active={isActive}
                 onMouseDown={(event) => {
                     if (!editor || !editor.selection) {
@@ -33,8 +40,20 @@ export const CheckboxListToolbarButton = withPlateProvider(
 
                     getPreventDefaultHandler(toggleNodeType, editor, {
                         activeType: type,
-                        inactiveType,
                     })(event);
+                    if (!node?.textStyle) {
+                        const parentNode = getParentNode(editor, editor?.selection?.focus?.path);
+                        const textStyle = parentNode && parentNode[0].type;
+                        setElements(editor, {
+                            textStyle,
+                        });
+                    }
+
+                    if (isActive) {
+                        setElements(editor, {
+                            type: (node?.textStyle as string) ?? ELEMENT_PARAGRAPH,
+                        });
+                    }
                 }}
                 {...props}
             />

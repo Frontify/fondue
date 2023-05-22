@@ -3,6 +3,11 @@
 module.exports = {
     presets: [require('@frontify/fondue-tokens/tailwind')],
     content: ['./src/**/*.{js,ts,tsx}'],
+    plugins: [
+        require('@tailwindcss/forms')({
+            strategy: 'class',
+        }),
+    ],
     theme: {
         extend: {
             outline: {
@@ -10,7 +15,7 @@ module.exports = {
             },
             boxShadow: {
                 large: '0 25px 80px 0 rgba(45, 50, 50, 0.4)',
-                mid: '0 3px 10px 0 rgba(45, 50, 50, 0.1)',
+                mid: '0 3px 10px 0 rgba(8, 8, 8, 0.15)',
                 'mid-top': '0 -10px 10px -5px rgba(45, 50, 50, 0.1)',
                 'mid-bottom': '0 10px 10px -5px rgba(45, 50, 50, 0.1)',
                 none: 'none',
@@ -110,6 +115,14 @@ module.exports = {
             transitionProperty: {
                 height: 'height',
                 width: 'width',
+            },
+            screens: {
+                xs: '480px',
+                sm: '600px',
+                md: '768px',
+                lg: '1024px',
+                xl: '1280px',
+                '2xl': '1536px',
             },
         },
     },

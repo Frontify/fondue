@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, useContext } from 'react';
+import React, { ReactElement, useContext } from 'react';
 import { ModalBodyProps } from './types';
 import { ScrollWrapper } from '@components/ScrollWrapper/ScrollWrapper';
 import { ModalLayout } from './context/ModalLayout';
 
-export const ModalBody: FC<ModalBodyProps> = ({ direction, children, horizontalPadding = true }) => {
+export const ModalBody = ({ direction, children, horizontalPadding = true }: ModalBodyProps): ReactElement => {
     const { padding } = useContext(ModalLayout);
 
     return (
@@ -17,3 +17,4 @@ export const ModalBody: FC<ModalBodyProps> = ({ direction, children, horizontalP
         </div>
     );
 };
+ModalBody.displayName = 'FondueModalBody';

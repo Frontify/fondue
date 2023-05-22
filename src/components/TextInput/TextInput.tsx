@@ -7,7 +7,18 @@ import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
-import React, { FC, FocusEvent, KeyboardEvent, ReactNode, useEffect, useRef, useState } from 'react';
+import React, {
+    DOMAttributes,
+    FocusEvent,
+    ForwardRefRenderFunction,
+    KeyboardEvent,
+    ReactElement,
+    ReactNode,
+    forwardRef,
+    useEffect,
+    useRef,
+    useState,
+} from 'react';
 import {
     IconCheckMark,
     IconClipboard,
@@ -16,13 +27,23 @@ import {
     IconExclamationMarkTriangle,
     IconEye,
     IconEyeOff,
-} from '@foundation/Icon';
+} from '@foundation/Icon/Generated';
+import { Tooltip, TooltipProps } from '../Tooltip';
+import { FocusableElement } from '@react-types/shared';
 
 export enum TextInputType {
     Text = 'text',
     Password = 'password',
     Number = 'number',
 }
+
+export type TextInputExtraAction = {
+    onClick: () => void;
+    icon: ReactElement;
+    title: string;
+    tooltip?: Omit<TooltipProps, 'triggerElement'>;
+    disabled?: boolean;
+};
 
 export type TextInputBaseProps = {
     id?: string;
@@ -41,10 +62,13 @@ export type TextInputBaseProps = {
     onChange?: (value: string) => void;
     onEnterPressed?: (event: KeyboardEvent<HTMLInputElement>) => void;
     onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
+    onFocus?: (event: FocusEvent<HTMLInputElement>) => void;
     onClear?: () => void;
     size?: number;
     spellcheck?: boolean;
     focusOnMount?: boolean;
+    selectable?: boolean;
+    extraActions?: TextInputExtraAction[];
 };
 
 export type TextInputProps =
@@ -63,7 +87,46 @@ export type TextInputProps =
           obfuscated?: boolean;
       } & TextInputBaseProps);
 
-export const TextInput: FC<TextInputProps> = ({
+type ExtraActionButtonProps = {
+    extraAction: TextInputExtraAction;
+    disabled: boolean;
+    isFocusVisible: boolean;
+    focusProps: DOMAttributes<FocusableElement>;
+};
+
+const ExtraActionButton: ForwardRefRenderFunction<HTMLButtonElement | null, ExtraActionButtonProps> = (
+    { extraAction, disabled, isFocusVisible, focusProps },
+    ref,
+): ReactElement | null => {
+    if (!extraAction) {
+        return null;
+    }
+    const isDisabled = disabled || extraAction.disabled;
+    return (
+        <button
+            className={merge([
+                'tw-flex tw-items-center tw-justify-center tw-transition-colors tw-rounded tw-p-1 -tw-mr-2',
+                isDisabled
+                    ? 'tw-cursor-default tw-text-text-disabled'
+                    : 'tw-text-text-weak hover:tw-bg-box-neutral-hover hover:tw-text-box-neutral-inverse-hover',
+                isFocusVisible && FOCUS_STYLE,
+            ])}
+            onClick={extraAction.onClick}
+            data-test-id="fondue-extra-action-icon"
+            aria-label={extraAction.title.toLowerCase()}
+            disabled={isDisabled}
+            aria-disabled={isDisabled}
+            type="button"
+            ref={ref}
+            {...focusProps}
+        >
+            {extraAction.icon}
+        </button>
+    );
+};
+const ExtraActionButtonWithRef = forwardRef(ExtraActionButton);
+
+export const TextInput = ({
     id: propId,
     type = TextInputType.Text,
     decorator,
@@ -81,15 +144,19 @@ export const TextInput: FC<TextInputProps> = ({
     onEnterPressed,
     onBlur,
     onClear,
+    onFocus,
     size,
     spellcheck,
     readonly,
     focusOnMount,
-}) => {
+    selectable = false,
+    extraActions,
+}: TextInputProps): ReactElement => {
     const { isFocusVisible, focusProps } = useFocusRing({ within: true, isTextInput: true });
     const { isFocusVisible: clearButtonIsFocusVisible, focusProps: clearButtonFocusProps } = useFocusRing();
     const { isFocusVisible: passwordButtonIsFocusVisible, focusProps: passwordButtonFocusProps } = useFocusRing();
     const { isFocusVisible: copyButtonIsFocusVisible, focusProps: copyButtonFocusProps } = useFocusRing();
+    const { isFocusVisible: extraActionButtonIsFocusVisible, focusProps: extraActionButtonFocusProps } = useFocusRing();
 
     const { copy, status } = useCopy();
 
@@ -143,6 +210,7 @@ export const TextInput: FC<TextInputProps> = ({
                               FOCUS_STYLE,
                       ]),
             ])}
+            data-test-id="fondue-text-input-component"
         >
             {decorator && (
                 <div
@@ -174,11 +242,49 @@ export const TextInput: FC<TextInputProps> = ({
                 required={required}
                 readOnly={readonly}
                 disabled={disabled}
+                onFocus={(e) => {
+                    if (selectable) {
+                        e.target.select();
+                    }
+                    if (onFocus) {
+                        onFocus(e);
+                    }
+                }}
                 autoComplete={autocomplete ? 'on' : 'off'}
                 size={size}
                 data-test-id="text-input"
                 {...spellcheckProp}
             />
+            {extraActions &&
+                extraActions.length > 0 &&
+                extraActions.map((extraAction: TextInputExtraAction, index: number) => {
+                    const key = `text-input-extra-action-${index}`;
+                    if (extraAction.tooltip) {
+                        return (
+                            <Tooltip
+                                key={key}
+                                {...extraAction.tooltip}
+                                triggerElement={
+                                    <ExtraActionButtonWithRef
+                                        extraAction={extraAction}
+                                        disabled={disabled}
+                                        isFocusVisible={extraActionButtonIsFocusVisible}
+                                        focusProps={extraActionButtonFocusProps}
+                                    />
+                                }
+                            />
+                        );
+                    }
+                    return (
+                        <ExtraActionButtonWithRef
+                            key={key}
+                            extraAction={extraAction}
+                            disabled={disabled}
+                            isFocusVisible={extraActionButtonIsFocusVisible}
+                            focusProps={extraActionButtonFocusProps}
+                        />
+                    );
+                })}
             {`${value}`.length > 0 && clearable && (
                 <button
                     className={merge([
@@ -226,9 +332,13 @@ export const TextInput: FC<TextInputProps> = ({
                     <LoadingCircle size={LoadingCircleSize.ExtraSmall} />
                 </span>
             )}
-            {validation === Validation.Error && (
+            {(validation === Validation.Error || validation === Validation.Warning) && (
                 <span
-                    className="tw-flex tw-items-center tw-justify-center tw-text-red-60"
+                    className={merge([
+                        'tw-flex tw-items-center tw-justify-center',
+                        validation === Validation.Error && 'tw-text-text-negative',
+                        validation === Validation.Warning && 'tw-text-text-warning',
+                    ])}
                     data-test-id="error-state-exclamation-mark-icon"
                 >
                     <IconExclamationMarkTriangle />
@@ -264,3 +374,4 @@ export const TextInput: FC<TextInputProps> = ({
         </div>
     );
 };
+TextInput.displayName = 'FondueTextInput';

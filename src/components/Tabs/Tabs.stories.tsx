@@ -7,19 +7,51 @@ import { Button } from '@components/Button';
 import { Text } from '@typography/Text';
 import { Divider } from '@components/Divider';
 import { TabItem, TabItemProps } from '@components/Tabs/TabItem';
-import { IconIcon, IconSize } from '@foundation/Icon';
+import { IconSize } from '@foundation/Icon/IconSize';
+import { IconIcon } from '@foundation/Icon/Generated';
 import { BadgeStyle } from '@components/Badge';
+import { Checkbox as CheckboxComponent, CheckboxProps, CheckboxState } from '@components/Checkbox/Checkbox';
+
+const checkboxArgs = {
+    state: CheckboxState.Unchecked,
+    disabled: false,
+    required: false,
+    value: "whatever-you'd-like",
+    label: 'Checkbox label',
+    note: 'Note about this input',
+    tooltip: {
+        content: 'Lorem ipsum dolor sit amet.',
+    },
+} as Meta<CheckboxProps>;
+
+const CustomCheckbox = () => {
+    const [checked, setChecked] = useState<CheckboxState>(CheckboxState.Unchecked);
+
+    return (
+        <CheckboxComponent
+            {...checkboxArgs}
+            state={checked}
+            onChange={(isChecked) => {
+                setChecked(isChecked ? CheckboxState.Checked : CheckboxState.Unchecked);
+            }}
+        />
+    );
+};
 
 const data: TabItemProps[] = [
     {
         id: 'tab-1',
         label: 'A tab',
         children: (
-            <Text>
-                Bacon ipsum dolor amet spare ribs swine meatloaf, pastrami cupim tail leberkas frankfurter jowl chislic
-                shoulder. Frankfurter drumstick t-bone bacon ground round. Cupim pork loin shank kielbasa. Short loin
-                shank meatloaf tongue. Chicken sirloin swine ball tip. Turkey pork kevin burgdoggen meatball t-bone.
-            </Text>
+            <>
+                <CustomCheckbox />
+                <Text>
+                    Bacon ipsum dolor amet spare ribs swine meatloaf, pastrami cupim tail leberkas frankfurter jowl
+                    chislic shoulder. Frankfurter drumstick t-bone bacon ground round. Cupim pork loin shank kielbasa.
+                    Short loin shank meatloaf tongue. Chicken sirloin swine ball tip. Turkey pork kevin burgdoggen
+                    meatball t-bone.
+                </Text>
+            </>
         ),
     },
     {
@@ -73,6 +105,7 @@ const data: TabItemProps[] = [
 export default {
     title: 'Components/Tabs',
     component: Tabs,
+    tags: ['autodocs'],
     argTypes: {
         paddingX: {
             options: Object.values(TabsPaddingX),

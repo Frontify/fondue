@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MarkdownToSlate } from '../';
+import { MarkdownToSlate } from '../MarkdownToSlate';
 import { Transform } from '../../transform';
 import {
     basicMarksMarkdown,
@@ -62,13 +62,19 @@ describe('Markdown to slate Transformer', () => {
     });
 
     it('should transform unordered list', () => {
-        const result = transformer.process(unorderedListMarkdown);
-        expect(result).to.deep.equal(unorderedListTree);
+        const result = transformer.process(unorderedListMarkdown[0]);
+        expect(result).to.deep.equal(unorderedListTree[0]);
     });
 
     it('should transform ordered list', () => {
-        const result = transformer.process(orderedListMarkdown);
-        expect(result).to.deep.equal(orderedListTree);
+        let result = transformer.process(orderedListMarkdown[0]);
+        expect(result).to.deep.equal(orderedListTree[0]);
+
+        result = transformer.process(orderedListMarkdown[1]);
+        expect(result).to.deep.equal(orderedListTree[1]);
+
+        result = transformer.process(orderedListMarkdown[2]);
+        expect(result).to.deep.equal(orderedListTree[2]);
     });
 
     it('should transform hr', () => {
@@ -76,9 +82,16 @@ describe('Markdown to slate Transformer', () => {
         expect(result).to.deep.equal(hrTree);
     });
 
-    it('should transform link', () => {
-        const result = transformer.process(linkMarkdown);
-        expect(result).to.deep.equal(linkTree);
+    describe('Link transformation', () => {
+        it('should transform link - target self', () => {
+            const result = transformer.process(linkMarkdown[0]);
+            expect(result).to.deep.equal(linkTree[0]);
+        });
+
+        it('should transform link - target blank', () => {
+            const result = transformer.process(linkMarkdown[1]);
+            expect(result).to.deep.equal(linkTree[1]);
+        });
     });
 
     it('should transform image', () => {
@@ -105,5 +118,11 @@ describe('Markdown to slate Transformer', () => {
 
         result = transformer.process(mentionsMarkdown[1]);
         expect(result).to.deep.equal(mentionsTree[1]);
+
+        result = transformer.process(mentionsMarkdown[2]);
+        expect(result).to.deep.equal(mentionsTree[2]);
+
+        result = transformer.process(mentionsMarkdown[3]);
+        expect(result).to.deep.equal(mentionsTree[3]);
     });
 });

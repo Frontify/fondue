@@ -1,23 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
-import { ELEMENT_LI, PlateRenderElementProps, TDescendant } from '@udecode/plate';
-import { merge } from '@utilities/merge';
-import React from 'react';
+import { ELEMENT_LI, PlateRenderElementProps, TElement } from '@udecode/plate';
+import React, { CSSProperties } from 'react';
 import { MarkupElement } from '../MarkupElement';
-import { getTextStyle } from './ListItemContentMarkupElement';
+import { getTextStyleCssProperties } from '../helper';
+
+export const LI_CLASSNAMES =
+    '[&>p]:before:tw-flex [&>p]:before:tw-justify-end [&>p]:before:tw-w-[1.2em] !tw-no-underline';
 
 export const ListItemMarkupElementNode = ({ attributes, children, element }: PlateRenderElementProps) => {
-    const { designTokens } = useRichTextEditorContext();
-    const licElement = (element.children[0]?.children as TDescendant[])?.[0];
-    const tokenStyles = designTokens[getTextStyle(licElement)];
-
     return (
-        <li
-            style={tokenStyles}
-            {...attributes}
-            className={merge([tokenStyles?.textTransform === 'uppercase' && 'marker:tw-uppercase', '!tw-no-underline'])}
-        >
+        <li style={getLiStyles(element)} {...attributes} className={LI_CLASSNAMES}>
             {children}
         </li>
     );
@@ -28,3 +21,29 @@ export class ListItemMarkupElement extends MarkupElement {
         super(id, node);
     }
 }
+
+export const getLiStyles = (element: TElement): CSSProperties => {
+    return {
+        ...getTextStyleCssProperties(getDeepestTextStyle(element)),
+        counterIncrement: 'count',
+    };
+};
+
+const getDeepestTextStyle = (node: TElement): string => {
+    let textStyle;
+
+    if (node.type === 'a') {
+        textStyle = node.children[0].textStyle;
+    } else if (node.children) {
+        for (const childNode of node.children) {
+            const deepestTextStyle = getDeepestTextStyle(childNode as TElement);
+            if (deepestTextStyle && (!textStyle || deepestTextStyle.startsWith(textStyle))) {
+                textStyle = deepestTextStyle;
+            }
+        }
+    } else {
+        textStyle = node.textStyle;
+    }
+
+    return textStyle as string;
+};

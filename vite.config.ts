@@ -2,7 +2,8 @@
 
 import { resolve } from 'path';
 import { PreRenderedAsset } from 'rollup';
-import { defineConfig } from 'vite';
+import { build } from 'esbuild';
+import { Plugin, defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import { dependencies as dependenciesMap, peerDependencies as peerDependenciesMap } from './package.json';
 
@@ -30,6 +31,60 @@ const assetFileNames = (chunkInfo: PreRenderedAsset): string => {
     return chunkInfo.name ?? 'UnknownFileName';
 };
 
+export const bundleIconsInDevPlugin = (): Plugin => {
+    let command: string;
+    return {
+        name: 'bundle-icons',
+        config(_config, { command: _command }) {
+            command = _command;
+        },
+        async load(id: string) {
+            // Only bundle icons when running the dev server.
+            if (command === 'serve' && id.endsWith('/Icon/Generated/index.ts')) {
+                const { outputFiles } = await build({
+                    absWorkingDir: process.cwd(),
+                    entryPoints: [id],
+                    bundle: true,
+                    write: false,
+                    platform: 'browser',
+                    jsx: 'automatic',
+                    format: 'esm',
+                    plugins: [
+                        {
+                            name: 'externals',
+                            setup(build) {
+                                build.onResolve({ namespace: 'file', filter: /.*/ }, (args) => {
+                                    if (args.kind === 'entry-point') {
+                                        return null;
+                                    }
+
+                                    // If the file is in our icons, use standard resolution.
+                                    if (args.path.startsWith('./Icon')) {
+                                        return null;
+                                    }
+
+                                    // If vendors, mark as external
+                                    return {
+                                        path: args.path,
+                                        external: true,
+                                    };
+                                });
+                            },
+                        },
+                    ],
+                });
+
+                if (!outputFiles || outputFiles.length !== 1) {
+                    return null;
+                }
+
+                return outputFiles[0].text;
+            }
+            return null;
+        },
+    };
+};
+
 export default defineConfig({
     resolve: {
         alias,
@@ -39,12 +94,11 @@ export default defineConfig({
         'process.env.REACT_APP_SC_ATTR': JSON.stringify(process.env.REACT_APP_SC_ATTR),
         'process.env.SC_ATTR': JSON.stringify(process.env.SC_ATTR),
     },
-    plugins: [dts({ insertTypesEntry: true })],
+    plugins: [dts({ insertTypesEntry: true }), bundleIconsInDevPlugin()],
     build: {
         lib: {
             entry: resolve(__dirname, 'src/index.ts'),
             fileName: (format: string) => `[name].${format}.js`,
-            name: 'Fondue',
         },
         sourcemap: true,
         minify: true,
@@ -52,6 +106,7 @@ export default defineConfig({
             external: [...dependencies, ...peerDependencies],
             output: [
                 {
+                    name: 'Fondue',
                     format: 'es',
                     preserveModules: true,
                     preserveModulesRoot: 'src',
@@ -59,11 +114,13 @@ export default defineConfig({
                     globals,
                 },
                 {
+                    name: 'Fondue',
                     format: 'umd',
                     assetFileNames,
                     globals,
                 },
                 {
+                    name: 'Fondue',
                     format: 'cjs',
                     assetFileNames,
                     globals,

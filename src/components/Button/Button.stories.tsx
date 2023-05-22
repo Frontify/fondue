@@ -3,8 +3,9 @@
 import React from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { Button, ButtonProps } from './Button';
-import { IconEnum, iconsMap } from '@foundation/Icon';
+import { IconAnchor16, IconColorFan16, IconDotsVertical16, IconIcon16 } from '@foundation/Icon/Generated';
 import { ButtonEmphasis, ButtonRounding, ButtonSize, ButtonStyle, ButtonType } from './ButtonTypes';
+import { IconEnum } from '@foundation/Icon/IconEnum';
 
 const defaultArgs = {
     type: ButtonType.Button,
@@ -20,6 +21,7 @@ const defaultArgs = {
 export default {
     title: 'Components/Button',
     component: Button,
+    tags: ['autodocs'],
     argTypes: {
         size: {
             options: Object.values(ButtonSize),
@@ -36,10 +38,10 @@ export default {
         icon: {
             options: [IconEnum.Icon, IconEnum.DotsVertical, IconEnum.ColorFan, IconEnum.Anchor],
             mapping: {
-                [IconEnum.Icon]: iconsMap[IconEnum.Icon],
-                [IconEnum.DotsVertical]: iconsMap[IconEnum.DotsVertical],
-                [IconEnum.ColorFan]: iconsMap[IconEnum.ColorFan],
-                [IconEnum.Anchor]: iconsMap[IconEnum.Anchor],
+                [IconEnum.Icon]: <IconIcon16 />,
+                [IconEnum.DotsVertical]: <IconDotsVertical16 />,
+                [IconEnum.ColorFan]: <IconColorFan16 />,
+                [IconEnum.Anchor]: <IconAnchor16 />,
             },
             control: { type: 'select' },
         },
@@ -62,14 +64,14 @@ Default.args = { ...defaultArgs };
 Default.storyName = 'Text Label Only';
 
 export const WithIcon = ButtonTemplate.bind({});
-WithIcon.args = { ...defaultArgs, hideLabel: true, icon: iconsMap[IconEnum.Icon] };
+WithIcon.args = { ...defaultArgs, hideLabel: true, icon: <IconIcon16 /> };
 WithIcon.storyName = 'Icon Only';
 
 export const WithRoundedIcon = ButtonTemplate.bind({});
 WithRoundedIcon.args = {
     ...defaultArgs,
     rounding: ButtonRounding.Full,
-    icon: iconsMap[IconEnum.Icon],
+    icon: <IconIcon16 />,
     hideLabel: true,
 };
 WithRoundedIcon.storyName = 'Icon Only rounded';
@@ -77,6 +79,6 @@ WithRoundedIcon.storyName = 'Icon Only rounded';
 export const WithIconAndLabel = ButtonTemplate.bind({});
 WithIconAndLabel.args = {
     ...defaultArgs,
-    icon: iconsMap[IconEnum.ColorFan],
+    icon: <IconColorFan16 />,
 };
 WithIconAndLabel.storyName = 'Icon and Text Label';

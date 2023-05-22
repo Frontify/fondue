@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { CheckboxState } from '@components/Checkbox/Checkbox';
-import React, { FC, useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { Checklist, ChecklistDirection, Columns } from './Checklist';
 
 const CHECKBOXES = [
@@ -24,7 +24,7 @@ const CHECKBOXES = [
 
 const CHECKLIST_ID = '[data-test-id=checklist]';
 
-const Component: FC<{ direction: ChecklistDirection; columns?: Columns }> = ({ direction, columns }) => {
+const Component = ({ direction, columns }: { direction: ChecklistDirection; columns?: Columns }): ReactElement => {
     const [activeBoxes, setActiveBoxes] = useState<string[]>([]);
 
     return direction === ChecklistDirection.Horizontal ? (

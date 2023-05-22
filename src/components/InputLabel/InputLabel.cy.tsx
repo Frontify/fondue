@@ -9,6 +9,7 @@ const LABEL_TEXT = 'This is a fancy label.';
 const LABEL_TOOLTIP = 'This is a fancy tooltip.';
 
 const INPUT_LABEL_ID = '[data-test-id=input-label]';
+const INPUT_LABEL_CONTAINER_ID = '[data-test-id=input-label-container]';
 const TOOLTIP_ICON_TRIGGER_ID = '[data-test-id=tooltip-icon-trigger]';
 const TOOLTIP_ID = '[data-test-id=tooltip]';
 const INPUT_LABEL_REQUIRED_ID = '[data-test-id=input-label-required]';
@@ -18,6 +19,7 @@ describe('InputLabel Component', () => {
         cy.mount(<InputLabel htmlFor="input">{LABEL_TEXT}</InputLabel>);
 
         cy.get(INPUT_LABEL_ID).should('contain', LABEL_TEXT);
+        cy.get(INPUT_LABEL_CONTAINER_ID).should('have.class', 'tw-text-text-weak');
     });
 
     it('should render a required label', () => {
@@ -28,6 +30,16 @@ describe('InputLabel Component', () => {
         );
 
         cy.get(INPUT_LABEL_REQUIRED_ID).should('be.visible').and('contain', '*');
+    });
+
+    it('should render a disabled label', () => {
+        cy.mount(
+            <InputLabel htmlFor="input" disabled>
+                {LABEL_TEXT}
+            </InputLabel>,
+        );
+
+        cy.get(INPUT_LABEL_CONTAINER_ID).should('have.class', 'tw-text-text-disabled');
     });
 
     it('renders with a tooltip', () => {
@@ -55,7 +67,7 @@ describe('InputLabel Component', () => {
         );
         cy.get(TOOLTIP_ICON_TRIGGER_ID)
             .first()
-            .should('have.class', 'tw-text-box-negative-strong')
+            .should('have.class', 'tw-text-box-negative-inverse')
             .find('svg')
             .should('have.attr', 'name', 'IconQuestionMarkCircle16');
         cy.get(TOOLTIP_ICON_TRIGGER_ID)

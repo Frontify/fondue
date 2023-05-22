@@ -1,30 +1,34 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import {
+    ELEMENT_LI,
     ELEMENT_LIC,
+    ELEMENT_OL,
+    ELEMENT_PARAGRAPH,
+    ELEMENT_UL,
     ENode,
     PlateEditor,
-    TElement,
     Value,
     getNodeEntries,
-    isElement,
     isNode,
     isText,
-    isType,
 } from '@udecode/plate';
-import { MARK_TEXT_STYLE } from '../../ListPlugin/ListPlugin';
-import { AVAILABLE_STYLE, AvailableStyles, TextStyles } from '../TextStyles';
+import { ELEMENT_CHECK_ITEM } from '../../CheckboxListPlugin';
+import { MARK_TEXT_STYLE } from '../../ListPlugin';
 
-const getLicStyle = (node: ENode<Value>): AvailableStyles => {
+const getTextStyle = (node: ENode<Value>): string => {
     if (Array.isArray(node.children)) {
         const textNode = node.children.find((node) => isText(node)) ?? {};
-        return textNode[MARK_TEXT_STYLE] ?? TextStyles.ELEMENT_PARAGRAPH;
+
+        return textNode[MARK_TEXT_STYLE];
     }
 
-    return TextStyles.ELEMENT_PARAGRAPH;
+    return ELEMENT_PARAGRAPH;
 };
 
-export const useSelectedTextStyles = (editor: PlateEditor): AvailableStyles[] => {
+const excludeStyles = [ELEMENT_LI, ELEMENT_UL, ELEMENT_OL];
+
+export const useSelectedTextStyles = (editor: PlateEditor): string[] => {
     if (!editor || !editor.selection) {
         return [];
     }
@@ -32,21 +36,22 @@ export const useSelectedTextStyles = (editor: PlateEditor): AvailableStyles[] =>
     const nodeEntries = Array.from(
         getNodeEntries(editor, {
             unhang: true,
-            mode: 'lowest',
             at: editor.selection,
             reverse: true,
-            match: (node: TElement) => isElement(node) && isType(editor, node, AVAILABLE_STYLE),
         }),
     );
 
-    return nodeEntries.reduce<AvailableStyles[]>((styles, [node]) => {
+    return nodeEntries.reduce<string[]>((styles, [node]) => {
         if (!isNode(node)) {
             return styles;
         }
 
-        const styleToAdd = node.type === ELEMENT_LIC ? getLicStyle(node) : (node.type as AvailableStyles);
+        const styleToAdd =
+            node.type === ELEMENT_LIC || node.type === ELEMENT_CHECK_ITEM
+                ? getTextStyle(node)
+                : (node.textStyle as string);
 
-        if (styleToAdd && !styles.includes(styleToAdd)) {
+        if (styleToAdd && !styles.includes(styleToAdd) && !excludeStyles.includes(styleToAdd)) {
             styles.push(styleToAdd);
         }
 

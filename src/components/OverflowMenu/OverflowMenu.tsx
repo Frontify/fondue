@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { MouseEvent, useRef, useState } from 'react';
-import { IconDotsHorizontal } from '@foundation/Icon';
+import { IconDotsHorizontal } from '@foundation/Icon/Generated';
 import { merge } from '@utilities/merge';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { Menu } from '@components/Menu';
@@ -11,7 +11,7 @@ export interface OverflowMenuItemProps {
     id?: string;
     label: string;
     link?: string;
-    onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
+    onClick?: <T extends HTMLAnchorElement | HTMLButtonElement>(event: MouseEvent<T>) => void;
     disabled?: boolean;
 }
 
@@ -52,3 +52,4 @@ export const OverflowMenu = ({ items }: OverflowMenuProps) => {
         </div>
     );
 };
+OverflowMenu.displayName = 'FondueOverflowMenu';

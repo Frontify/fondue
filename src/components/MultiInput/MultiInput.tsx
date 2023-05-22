@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { Children, FC } from 'react';
+import React, { Children, ReactElement, ReactNode } from 'react';
 
 export enum MultiInputLayout {
     Columns = 'Columns',
@@ -10,9 +10,10 @@ export enum MultiInputLayout {
 export type MultiInputProps = {
     layout: MultiInputLayout;
     spanLastItem?: boolean;
+    children: ReactNode;
 };
 
-export const MultiInput: FC<MultiInputProps> = ({ layout, spanLastItem, children }) => {
+export const MultiInput = ({ layout, spanLastItem, children }: MultiInputProps): ReactElement => {
     const childrenArray = Children.toArray(children);
 
     return (
@@ -40,3 +41,4 @@ export const MultiInput: FC<MultiInputProps> = ({ layout, spanLastItem, children
         </div>
     );
 };
+MultiInput.displayName = 'FondueMultiInput';

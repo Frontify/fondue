@@ -1,17 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconCheckMark from '@foundation/Icon/Generated/IconCheckMark';
-import IconMinus from '@foundation/Icon/Generated/IconMinus';
+import { IconCheckMark, IconMinus } from '@foundation/Icon/Generated';
 import { InputLabel, InputLabelTooltipProps } from '@components/InputLabel/InputLabel';
-import { useMemoizedId } from '@hooks/useMemoizedId';
+import React, { ForwardRefRenderFunction, HTMLAttributes, ReactNode, forwardRef, useEffect, useState } from 'react';
+
+import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { IconSize } from '@foundation/Icon';
+import { merge } from '@utilities/merge';
+import { mergeProps } from '@react-aria/utils';
 import { useCheckbox } from '@react-aria/checkbox';
 import { useFocusRing } from '@react-aria/focus';
-import { mergeProps } from '@react-aria/utils';
-import { useToggleState } from '@react-stately/toggle';
-import { FOCUS_STYLE } from '@utilities/focusStyle';
-import { merge } from '@utilities/merge';
 import { useForwardedRef } from '@utilities/useForwardedRef';
-import React, { ForwardRefRenderFunction, HTMLAttributes, forwardRef } from 'react';
+import { useMemoizedId } from '@hooks/useMemoizedId';
+import { useToggleState } from '@react-stately/toggle';
 
 export enum CheckboxState {
     Checked = 'Checked',
@@ -19,17 +20,32 @@ export enum CheckboxState {
     Mixed = 'Mixed',
 }
 
+export enum CheckboxEmphasis {
+    Default = 'Default',
+    Weak = 'Weak',
+    Strong = 'Strong',
+}
+
+export enum CheckboxSize {
+    Default = 'Default',
+    Large = 'Large',
+    XLarge = 'XLarge',
+}
+
 export type CheckboxProps = {
     id?: string;
     state?: CheckboxState;
+    emphasis?: CheckboxEmphasis;
+    size?: CheckboxSize;
     disabled?: boolean;
     required?: boolean;
     value?: string;
     onChange?: (isChecked: boolean) => void;
     label?: string;
+    hideLabel?: boolean;
     tooltip?: InputLabelTooltipProps;
-    note?: string;
-    ariaLabel?: string;
+    helperText?: string;
+    'aria-label'?: string;
     groupInputProps?: HTMLAttributes<HTMLElement>;
 };
 
@@ -37,15 +53,34 @@ const isCheckedOrMixed = (checked: CheckboxState): boolean => {
     return checked === CheckboxState.Checked || checked === CheckboxState.Mixed;
 };
 
+const emphasisDefaultClasses =
+    'tw-bg-box-selected-strong tw-text-box-selected-strong-inverse hover:tw-bg-box-selected-strong-hover';
+
+const emphasisCheckedClassesMap: Record<CheckboxEmphasis, string> = {
+    [CheckboxEmphasis.Weak]:
+        'tw-bg-box-neutral-strong tw-text-box-neutral-strong-inverse hover:tw-bg-box-neutral-strong-hover',
+    [CheckboxEmphasis.Default]: emphasisDefaultClasses,
+    [CheckboxEmphasis.Strong]: emphasisDefaultClasses,
+};
+
+const sizeClassesMap: Record<CheckboxSize, string> = {
+    [CheckboxSize.Default]: 'tw-h-4 tw-w-4',
+    [CheckboxSize.Large]: 'tw-h-5 tw-w-5',
+    [CheckboxSize.XLarge]: 'tw-h-8 tw-w-8',
+};
+
 const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProps> = (
     {
         id: propId,
+        emphasis = CheckboxEmphasis.Default,
+        size = CheckboxSize.Default,
         disabled,
         required,
         label,
+        hideLabel,
         tooltip,
-        note,
-        ariaLabel,
+        helperText,
+        'aria-label': ariaLabel = 'Checkbox',
         value,
         groupInputProps,
         onChange,
@@ -55,79 +90,137 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
 ) => {
     const id = useMemoizedId(propId);
     const inputRef = useForwardedRef<HTMLInputElement | null>(ref);
-    const { isFocusVisible, focusProps } = useFocusRing();
+    const { focusProps } = useFocusRing();
     const toggleState = useToggleState({
         onChange: disabled ? undefined : onChange,
         isSelected: state === CheckboxState.Checked,
     });
+    const [showFocus, setShowFocus] = useState<Nullable<boolean>>();
+    const [listeningForKeyboardEvents, setListeningForKeyboardEvents] = useState<Nullable<boolean>>();
+
+    const tabFocusListener = (event: KeyboardEvent) => {
+        if (event.key === 'Tab') {
+            setShowFocus(true);
+        }
+    };
+
+    const blurListener = () => {
+        setShowFocus(false);
+    };
+
+    useEffect(() => {
+        if (!listeningForKeyboardEvents) {
+            inputRef?.current?.removeEventListener('keyup', tabFocusListener);
+            inputRef?.current?.addEventListener('keyup', tabFocusListener);
+            inputRef?.current?.removeEventListener('blur', blurListener);
+            inputRef?.current?.addEventListener('blur', blurListener);
+
+            setListeningForKeyboardEvents(true);
+        }
+    }, [listeningForKeyboardEvents, inputRef]);
 
     const { inputProps } = useCheckbox(
         {
             isDisabled: disabled,
             isRequired: required,
             isIndeterminate: state === CheckboxState.Mixed,
-            'aria-label': ariaLabel || label,
+            'aria-label': ariaLabel,
             value,
         },
         toggleState,
         inputRef,
     );
 
+    const stateMap: Record<CheckboxState, ReactNode> = {
+        [CheckboxState.Checked]: (
+            <IconCheckMark size={size === CheckboxSize.XLarge ? IconSize.Size24 : IconSize.Size16} />
+        ),
+        [CheckboxState.Mixed]: <IconMinus />,
+        [CheckboxState.Unchecked]: null,
+    };
+
+    const checkedOrMixed = isCheckedOrMixed(state);
+
+    const disabledClasses = merge([
+        'tw-bg-box-disabled tw-pointer-events-none tw-text-box-disabled-inverse tw-border-line-strong',
+        checkedOrMixed && 'tw-text-box-disabled-inverse tw-border-line-strong',
+    ]);
+
+    const enabledClasses = checkedOrMixed
+        ? emphasisCheckedClassesMap[emphasis]
+        : merge([
+              'tw-bg-base hover:tw-bg-box-neutral',
+              emphasis === CheckboxEmphasis.Strong
+                  ? 'tw-border-2 tw-border-box-selected-strong'
+                  : 'tw-border tw-border-line-xx-strong',
+          ]);
+
     return (
-        <div className="tw-flex tw-flex-col tw-gap-1 tw-transition-colors" data-test-id="checkbox">
-            <label
-                className={merge([
-                    'tw-group tw-flex tw-items-center tw-gap-2 tw-select-none tw-outline-none',
-                    !disabled && 'hover:tw-cursor-pointer',
-                ])}
-            >
-                <input
-                    {...mergeProps(groupInputProps || inputProps, focusProps)}
-                    id={id}
-                    ref={inputRef}
-                    className="tw-sr-only"
-                    data-test-id="checkbox-input"
-                />
-                <span
-                    aria-hidden="true"
-                    className={merge([
-                        'tw-relative tw-flex tw-w-4 tw-h-4 tw-items-center tw-justify-center tw-rounded tw-border tw-shrink-0 tw-flex-none',
-                        isFocusVisible && FOCUS_STYLE,
-                        disabled
-                            ? merge([
-                                  'tw-text-white tw-pointer-events-none',
-                                  !isCheckedOrMixed(state) &&
-                                      'tw-border-black-20 tw-bg-white dark:tw-border-black-80 dark:tw-bg-black-90',
-                                  isCheckedOrMixed(state) &&
-                                      'tw-border-black-40 tw-bg-black-40 dark:tw-border-black-60 dark:tw-bg-black-60',
-                              ])
-                            : merge([
-                                  !isCheckedOrMixed(state) &&
-                                      'tw-border-black-80 tw-bg-white hover:tw-border-black dark:tw-border-white dark:tw-bg-black dark:hover:tw-border-black-20 dark:hover:tw-bg-black-90 group-hover:tw-bg-white group-hover:tw-border-black dark:group-hover:tw-border-black-20 dark:group-hover:tw-bg-black-90',
-                                  isCheckedOrMixed(state) &&
-                                      'tw-border-violet-60 tw-bg-violet-60 tw-text-white hover:tw-border-violet-70 hover:tw-bg-violet-70 dark:tw-border-violet-50 dark:tw-bg-violet-50 dark:hover:tw-border-violet-60 dark:hover:tw-bg-violet-60 group-hover:tw-text-white group-hover:tw-border-violet-70 group-hover:tw-bg-violet-70 dark:group-hover:tw-border-violet-60 dark:group-hover:tw-bg-violet-60',
-                              ]),
-                    ])}
+        <div className="tw-gap-1 tw-transition-colors" data-test-id="checkbox">
+            <div className={merge(['tw-inline-flex tw-flex-row tw-rounded', showFocus ? FOCUS_STYLE : ''])}>
+                <InputLabel
+                    disabled={disabled}
+                    clickable
+                    htmlFor={id}
+                    tooltip={tooltip}
+                    required={required}
+                    bold={checkedOrMixed}
                 >
-                    {state === CheckboxState.Checked && <IconCheckMark />}
-                    {state === CheckboxState.Mixed && <IconMinus />}
-                </span>
-                {label && (
-                    <InputLabel
-                        disabled={disabled}
-                        clickable
-                        htmlFor={id}
-                        tooltip={tooltip ?? undefined}
-                        required={required}
-                        bold={isCheckedOrMixed(state)}
-                    >
-                        {label}
-                    </InputLabel>
-                )}
-            </label>
-            {note && <span className="tw-text-black-60 tw-font-sans tw-text-xs tw-font-normal">{note}</span>}
+                    <span className="tw-flex tw-items-center">
+                        <span className="tw-inline-flex tw-mr-1.5">
+                            <input
+                                {...mergeProps(groupInputProps || inputProps, focusProps)}
+                                id={id}
+                                ref={inputRef}
+                                className="tw-sr-only"
+                                data-test-id="checkbox-input"
+                                aria-label={ariaLabel}
+                                role="checkbox"
+                                aria-checked={state === CheckboxState.Checked}
+                                required={required}
+                            />
+                            <span
+                                data-test-id="checkbox-icon-box"
+                                aria-hidden="true"
+                                className={merge([
+                                    'tw-leading-3 tw-p-2 tw-relative tw-flex tw-items-center tw-justify-center tw-rounded tw-shrink-0 tw-flex-none',
+                                    sizeClassesMap[size],
+                                    disabled ? disabledClasses : enabledClasses,
+                                ])}
+                            >
+                                {stateMap[state]}
+                            </span>
+                        </span>
+                        <span className="tw-inline-flex tw-flex-col">
+                            {label && !hideLabel && (
+                                <span
+                                    data-test-id="checkbox-label"
+                                    className={merge([
+                                        'tw-text-xs tw-select-none hover:tw-cursor-pointer hover:tw-text-black dark:hover:tw-text-white group-hover:tw-text-black dark:group-hover:tw-text-white',
+                                        checkedOrMixed && 'tw-font-medium',
+                                    ])}
+                                >
+                                    {label}
+                                </span>
+                            )}
+                            {helperText && !hideLabel && (
+                                <span
+                                    data-test-id="checkbox-helper-text"
+                                    className={merge([
+                                        'tw-font-sans tw-text-xs tw-font-normal',
+                                        disabled ? 'text-disabled' : 'tw-text-text-weak',
+                                    ])}
+                                >
+                                    {helperText}
+                                </span>
+                            )}
+                        </span>
+                    </span>
+                </InputLabel>
+            </div>
         </div>
     );
 };
 
 export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(CheckboxComponent);
+Checkbox.displayName = 'FondueCheckbox';

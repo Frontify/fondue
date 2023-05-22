@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, ReactElement, ReactNode, useRef } from 'react';
+import React, { ReactElement, ReactNode, useRef } from 'react';
 import { BadgeProps } from '@components/Badge';
 import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
@@ -17,7 +17,7 @@ export type TabItemProps = {
     children: ReactNode;
 };
 
-export const TabItem: FC<TabItemProps & { active?: boolean }> = ({ active, disabled, children, id }) => {
+export const TabItem = ({ active, disabled, children, id }: TabItemProps & { active?: boolean }): ReactElement => {
     const { focusProps } = useFocusRing();
     const ref = useRef<HTMLDivElement | null>(null);
     const hasInteractiveElements = checkIfContainInteractiveElements(ref.current);
@@ -36,3 +36,4 @@ export const TabItem: FC<TabItemProps & { active?: boolean }> = ({ active, disab
         </div>
     );
 };
+TabItem.displayName = 'FondueTabItem';

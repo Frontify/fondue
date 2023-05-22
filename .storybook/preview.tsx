@@ -56,6 +56,7 @@ export const parameters = {
         },
     },
     darkMode: {
+        current: 'light',
         darkClass: 'tw-dark',
         classTarget: 'html',
         stylePreview: true,
@@ -63,4 +64,9 @@ export const parameters = {
         light: { ...light },
     },
     layout: 'fullscreen',
+    docs: {
+        canvas: {
+            sourceState: 'shown',
+        },
+    },
 };

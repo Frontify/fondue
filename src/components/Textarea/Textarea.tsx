@@ -7,9 +7,9 @@ import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
 import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle';
-import React, { FC, FocusEvent, FormEvent, ReactNode } from 'react';
+import React, { FocusEvent, FormEvent, ReactElement, ReactNode } from 'react';
 import TextareaAutosize, { TextareaAutosizeProps } from 'react-textarea-autosize';
-import { IconExclamationMarkTriangle } from '@foundation/Icon';
+import { IconExclamationMarkTriangle } from '@foundation/Icon/Generated';
 
 export type TextareaProps = {
     id?: string;
@@ -20,6 +20,7 @@ export type TextareaProps = {
     disabled?: boolean;
     onInput?: (value: string) => void;
     onBlur?: (value: string) => void;
+    onFocus?: (e: FocusEvent<HTMLTextAreaElement>) => void;
     validation?: Validation;
     /** When autosize if false, this is used as 'rows' property for standard textarea */
     minRows?: number;
@@ -27,9 +28,10 @@ export type TextareaProps = {
     maxRows?: number;
     autosize?: boolean;
     resizeable?: boolean;
+    selectable?: boolean;
 };
 
-export const Textarea: FC<TextareaProps> = ({
+export const Textarea = ({
     id: propId,
     value,
     required = false,
@@ -43,7 +45,9 @@ export const Textarea: FC<TextareaProps> = ({
     maxRows,
     autosize = false,
     resizeable = true,
-}) => {
+    onFocus,
+    selectable = false,
+}: TextareaProps): ReactElement => {
     const Component = autosize ? TextareaAutosize : 'textarea';
 
     const { isFocusVisible, focusProps } = useFocusRing({ isTextInput: true });
@@ -83,6 +87,14 @@ export const Textarea: FC<TextareaProps> = ({
                     validation === Validation.Error && 'tw-pr-8',
                 ])}
                 disabled={disabled}
+                onFocus={(e) => {
+                    if (selectable) {
+                        e.target.select();
+                    }
+                    if (onFocus) {
+                        onFocus(e);
+                    }
+                }}
                 data-test-id="textarea"
             />
             {validation === Validation.Loading && (
@@ -90,9 +102,13 @@ export const Textarea: FC<TextareaProps> = ({
                     <LoadingCircle size={LoadingCircleSize.ExtraSmall} />
                 </span>
             )}
-            {validation === Validation.Error && (
+            {(validation === Validation.Error || validation === Validation.Warning) && (
                 <span
-                    className="tw-absolute tw-top-[0.6rem] tw-right-[0.6rem] tw-text-red-60"
+                    className={merge([
+                        'tw-absolute tw-top-[0.6rem] tw-right-[0.6rem]',
+                        validation === Validation.Error && 'tw-text-text-negative',
+                        validation === Validation.Warning && 'tw-text-text-warning',
+                    ])}
                     data-test-id="error-state-exclamation-mark-icon"
                 >
                     <IconExclamationMarkTriangle />
@@ -101,3 +117,4 @@ export const Textarea: FC<TextareaProps> = ({
         </div>
     );
 };
+Textarea.displayName = 'FondueTextarea';

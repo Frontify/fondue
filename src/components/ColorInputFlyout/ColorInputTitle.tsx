@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { getColorDisplayValue, toShortRgb } from '@utilities/colors';
-import React, { FC } from 'react';
+import React, { ReactElement } from 'react';
 import tinycolor from 'tinycolor2';
 import { Color, ColorFormat } from '../../types/colors';
 
@@ -10,7 +10,7 @@ type Props = {
     format: ColorFormat;
 };
 
-export const ColorInputTitle: FC<Props> = ({ currentColor, format }) => {
+export const ColorInputTitle = ({ currentColor, format }: Props): ReactElement => {
     const { name, alpha } = currentColor;
     const parsedColor = tinycolor(toShortRgb(currentColor));
     const colorValue = getColorDisplayValue(currentColor, format, false);
@@ -24,3 +24,4 @@ export const ColorInputTitle: FC<Props> = ({ currentColor, format }) => {
         </div>
     );
 };
+ColorInputTitle.displayName = 'FondueColorInputTitle';

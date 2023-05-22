@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Validation } from '@utilities/validation';
-import React, { FC, useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { TextInput, TextInputProps, TextInputType } from './TextInput';
+import { IconIcon } from '@foundation/Icon';
 
+const TEXT_INPUT_COMPONENT = '[data-test-id=fondue-text-input-component]';
 const TEXT_INPUT_ID = '[data-test-id=text-input]';
 const DECORATOR_TEXT = 'decorator text';
 const DECORATOR = <span>{DECORATOR_TEXT}</span>;
@@ -15,8 +17,14 @@ const COPY_ICON_ID = '[data-test-id=copy-icon]';
 const DECORATOR_ID = '[data-test-id=decorator]';
 const VISIBILITY_ICON_ID = '[data-test-id=visibility-icon]';
 const EXCLAMATION_MARK_ICON_ID = '[data-test-id=error-state-exclamation-mark-icon]';
+const EXTRA_ACTION_ID = '[data-test-id=fondue-extra-action-icon]';
+const EXTRA_ACTION = {
+    icon: <IconIcon />,
+    onClick: () => void 0,
+    title: 'extra action',
+};
 
-const StatefulInput: FC<TextInputProps> = (props) => {
+const StatefulInput = (props: TextInputProps): ReactElement => {
     const [input, setInput] = useState<string>('');
 
     useEffect(() => {
@@ -34,6 +42,7 @@ describe('Text Input component', () => {
         cy.get(TEXT_INPUT_ID).find(CLEAR_ICON_ID).should('have.length', 0);
         cy.get(TEXT_INPUT_ID).find(DECORATOR_ID).should('have.length', 0);
         cy.get(TEXT_INPUT_ID).find(EXCLAMATION_MARK_ICON_ID).should('have.length', 0);
+        cy.get(TEXT_INPUT_ID).find(EXTRA_ACTION_ID).should('have.length', 0);
     });
 
     it('set and get the value', () => {
@@ -82,6 +91,54 @@ describe('Text Input component', () => {
         cy.get(CLEAR_ICON_ID).should('exist');
         cy.get(CLEAR_ICON_ID).click();
         cy.get(CLEAR_ICON_ID).should('not.exist');
+    });
+
+    it('renders the extra action', () => {
+        cy.mount(<TextInput extraActions={[EXTRA_ACTION]} />);
+        cy.get(EXTRA_ACTION_ID).should('be.visible');
+    });
+
+    it('renders three extra actions', () => {
+        cy.mount(<TextInput extraActions={[EXTRA_ACTION, EXTRA_ACTION, EXTRA_ACTION]} />);
+        cy.get(EXTRA_ACTION_ID).should('have.length', 3);
+    });
+
+    it('renders the extra action with tooltip', () => {
+        const TOOLTIP_CONTENT = 'tooltip content';
+        cy.mount(
+            <TextInput
+                extraActions={[
+                    {
+                        ...EXTRA_ACTION,
+                        tooltip: {
+                            content: TOOLTIP_CONTENT,
+                        },
+                    },
+                ]}
+            />,
+        );
+        cy.get(EXTRA_ACTION_ID).should('be.visible');
+        cy.get(EXTRA_ACTION_ID).parent().next().should('have.attr', 'data-test-id', 'tooltip');
+        cy.get(EXTRA_ACTION_ID).parent().next().find('span').first().should('have.text', TOOLTIP_CONTENT);
+    });
+
+    it('calls extra action onClick event', () => {
+        const onClickStub = cy.stub().as('onClickStub');
+        cy.mount(<TextInput extraActions={[{ ...EXTRA_ACTION, onClick: onClickStub }]} />);
+        cy.get(EXTRA_ACTION_ID).click();
+        cy.get('@onClickStub').should('be.calledOnce');
+    });
+
+    it('does not call extra action onClick event when input disabled', () => {
+        const onClickStub = cy.stub().as('onClickStub');
+        cy.mount(<TextInput disabled extraActions={[{ ...EXTRA_ACTION, onClick: onClickStub }]} />);
+        cy.get(EXTRA_ACTION_ID).should('be.disabled');
+    });
+
+    it('does not call extra action onClick event when extra action disabled', () => {
+        const onClickStub = cy.stub().as('onClickStub');
+        cy.mount(<TextInput extraActions={[{ ...EXTRA_ACTION, onClick: onClickStub, disabled: true }]} />);
+        cy.get(EXTRA_ACTION_ID).should('be.disabled');
     });
 
     it('calls the onChange event', () => {
@@ -193,9 +250,16 @@ describe('Text Input component', () => {
         cy.get(CLEAR_ICON_ID).should('have.attr', 'type', 'button');
     });
 
-    it('only error validation state should show the triangle warning icon', () => {
+    it('Error validation state should show the triangle warning icon', () => {
         cy.mount(<StatefulInput validation={Validation.Error} />);
         cy.get(EXCLAMATION_MARK_ICON_ID).should('be.visible');
+        cy.get(TEXT_INPUT_COMPONENT).should('have.class', 'tw-border-text-negative');
+    });
+
+    it('Warning validation state should show the triangle warning icon', () => {
+        cy.mount(<StatefulInput validation={Validation.Warning} />);
+        cy.get(EXCLAMATION_MARK_ICON_ID).should('be.visible');
+        cy.get(TEXT_INPUT_COMPONENT).should('have.class', 'tw-border-text-warning');
     });
 
     it('clearable should have a type definition', () => {

@@ -2,7 +2,7 @@
 
 import { OrderableListItem } from '@components/OrderableList';
 import { HighlightColor, HighlightProps, StoryListItem } from '@components/OrderableList/utils/types';
-import React, { FC } from 'react';
+import React, { ReactElement } from 'react';
 import { merge } from '@utilities/merge';
 
 const HighlightClasses: Record<HighlightColor, string> = {
@@ -11,7 +11,7 @@ const HighlightClasses: Record<HighlightColor, string> = {
     [HighlightColor.Red]: 'tw-text-red-60',
 };
 
-const Highlight: FC<HighlightProps> = ({ color, children }) => (
+const Highlight = ({ color, children }: HighlightProps): ReactElement => (
     <span className={merge(['tw-font-medium', HighlightClasses[color]])}>{children}</span>
 );
 

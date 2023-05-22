@@ -3,7 +3,8 @@
 import fastGlob from 'fast-glob';
 import { join } from 'path';
 import { readFile, writeFile } from 'fs/promises';
-import { camelCase, toUpper } from 'lodash';
+import camelCase from 'lodash-es/camelCase';
+import toUpper from 'lodash-es/toUpper';
 import { transform } from '@svgr/core';
 import { Entry } from 'fast-glob/out/types';
 import { IconTemplate } from '@foundation/Icon/IconTemplate';

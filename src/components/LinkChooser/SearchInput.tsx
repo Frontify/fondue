@@ -10,9 +10,9 @@ import { mergeProps } from '@react-aria/utils';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { useActor } from '@xstate/react';
-import React, { FC, MouseEvent, forwardRef } from 'react';
+import React, { MouseEvent, ReactElement, forwardRef } from 'react';
 import { IconButtonProps, SearchInputProps } from './types';
-import { IconArrowOutExternal, IconClipboard, IconCross } from '@foundation/Icon';
+import { IconArrowOutExternal, IconClipboard, IconCross } from '@foundation/Icon/Generated';
 
 export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>(
     (
@@ -121,7 +121,15 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
 );
 SearchInput.displayName = 'SearchInput';
 
-const IconButton: FC<IconButtonProps> = ({ disabled, title, ariaLabel, testId, icon, onClick, isComboBoxControl }) => {
+const IconButton = ({
+    disabled,
+    title,
+    ariaLabel,
+    testId,
+    icon,
+    onClick,
+    isComboBoxControl,
+}: IconButtonProps): ReactElement => {
     const { isFocusVisible, focusProps } = useFocusRing();
 
     const handleClick = (event: MouseEvent<HTMLButtonElement>) => {

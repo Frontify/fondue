@@ -5,7 +5,7 @@ import { useMemoizedId } from '@hooks/useMemoizedId';
 import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import React, { FC, KeyboardEvent, useRef } from 'react';
+import React, { KeyboardEvent, ReactElement, useRef } from 'react';
 
 export type ColorInputProps = { min?: number; max?: number; decoratorPosition?: DecoratorPosition } & Pick<
     TextInputBaseProps,
@@ -17,7 +17,7 @@ export enum DecoratorPosition {
     Right = 'Right',
 }
 
-export const ColorInput: FC<ColorInputProps> = ({
+export const ColorInput = ({
     min,
     max,
     decorator,
@@ -28,7 +28,7 @@ export const ColorInput: FC<ColorInputProps> = ({
     value = '',
     decoratorPosition = DecoratorPosition.Left,
     type = TextInputType.Text,
-}) => {
+}: ColorInputProps): ReactElement => {
     const { isFocusVisible, focusProps } = useFocusRing({ within: true, isTextInput: true });
     const inputElement = useRef<HTMLInputElement | null>(null);
     const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
@@ -77,3 +77,4 @@ export const ColorInput: FC<ColorInputProps> = ({
         </div>
     );
 };
+ColorInput.displayName = 'FondueColorInput';

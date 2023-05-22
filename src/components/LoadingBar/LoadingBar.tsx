@@ -70,3 +70,4 @@ export const LoadingBar = ({
         />
     </div>
 );
+LoadingBar.displayName = 'FondueLoadingBar';

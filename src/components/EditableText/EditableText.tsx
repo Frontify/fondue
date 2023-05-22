@@ -198,9 +198,7 @@ export const EditableText = ({
                         </span>
                     </div>
                 </div>
-            ) : (
-                <></>
-            )}
+            ) : null}
             <button
                 style={{ display: editableState === EditableMode.INPUT ? 'none' : 'flex' }}
                 className={merge([isOverflowing && 'tw-w-full', 'tw-h-full tw-items-center', FOCUS_VISIBLE_STYLE])}
@@ -213,3 +211,4 @@ export const EditableText = ({
         </div>
     );
 };
+EditableText.displayName = 'FondueEditableText';

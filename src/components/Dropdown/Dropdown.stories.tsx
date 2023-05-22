@@ -2,15 +2,18 @@
 
 import { MenuItemContentSize, MenuItemStyle } from '@components/MenuItem';
 import { TriggerEmphasis } from '@components/Trigger';
-import { IconMusicNote } from '@foundation/Icon';
+import { IconMusicNote } from '@foundation/Icon/Generated';
 import { Meta, StoryFn } from '@storybook/react';
 import { Validation } from '@utilities/validation';
 import React, { useEffect, useState } from 'react';
 import { Dropdown, DropdownAlignment, DropdownPosition, DropdownProps, DropdownSize } from './Dropdown';
+import { FormControl } from '@components/FormControl';
+import { useMemoizedId } from '@hooks/useMemoizedId';
 
 export default {
     title: 'Components/Dropdown',
     component: Dropdown,
+    tags: ['autodocs'],
     args: {
         placeholder: 'select item',
         disabled: false,
@@ -93,6 +96,25 @@ const DropdownWithBackgroundTemplate: StoryFn<DropdownProps> = (args: DropdownPr
         <div className="tw-p-4 tw-bg-black-5 tw-w-[400px]">
             <Dropdown {...args} activeItemId={active} onChange={(id) => setActive(id)} />
         </div>
+    );
+};
+
+const InsideFormControlTemplate: StoryFn<DropdownProps> = (args: DropdownProps) => {
+    const [active, setActive] = useState(args.activeItemId);
+    useEffect(() => setActive(args.activeItemId), [args.activeItemId]);
+    const id = useMemoizedId();
+
+    return (
+        <FormControl
+            disabled={args.disabled}
+            label={{
+                children: 'Dropdown Label',
+                required: false,
+                htmlFor: id,
+            }}
+        >
+            <Dropdown {...args} id={id} activeItemId={active} onChange={(id) => setActive(id)} />
+        </FormControl>
     );
 };
 
@@ -411,6 +433,30 @@ export const WeakSelect = DropdownWithBackgroundTemplate.bind({});
 WeakSelect.args = {
     size: DropdownSize.Small,
     emphasis: TriggerEmphasis.Weak,
+    menuBlocks: [
+        {
+            id: 'block1',
+            ariaLabel: 'First section',
+            menuItems: [
+                {
+                    id: 1,
+                    title: 'Example item A',
+                },
+                {
+                    id: 2,
+                    title: 'Example item B',
+                },
+                {
+                    id: 3,
+                    title: 'Example item C',
+                },
+            ],
+        },
+    ],
+};
+
+export const InsideFormControl = InsideFormControlTemplate.bind({});
+InsideFormControl.args = {
     menuBlocks: [
         {
             id: 'block1',

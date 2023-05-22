@@ -1,19 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
-import { IconPen, IconTrashBin } from '@foundation/Icon';
+import { IconPen16, IconTrashBin16 } from '@foundation/Icon/Generated';
 import { FloatingButton } from '../FloatingButton';
 import { useFloatingButtonUrlInput } from '../FloatingButtonUrlInput';
-import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
+import { getTextStyleCssProperties } from '../../../../helper';
 
 export const EditModal = () => {
     const urlHtmlProps = useFloatingButtonUrlInput({});
-    const { designTokens } = useRichTextEditorContext();
 
     return (
         <div data-test-id="floating-button-edit" className="tw-bg-white tw-rounded tw-shadow tw-p-4 tw-min-w-[400px]">
             <span data-test-id={'preview-button-flyout'} className="tw-flex tw-justify-between">
-                <span className="tw-pointer-events-none" style={designTokens.link}>
+                <span className="tw-pointer-events-none" style={getTextStyleCssProperties('link')}>
                     {urlHtmlProps.defaultValue}
                 </span>
                 <span className="tw-flex tw-gap-2">
@@ -24,7 +23,7 @@ export const EditModal = () => {
                         className="tw-transition tw-cursor-pointer tw-rounded hover:tw-bg-black-10 tw-p-1"
                     >
                         <FloatingButton.EditButton>
-                            <IconPen />
+                            <IconPen16 />
                         </FloatingButton.EditButton>
                     </span>
 
@@ -35,7 +34,7 @@ export const EditModal = () => {
                         className="tw-transition tw-cursor-pointer tw-rounded hover:tw-bg-black-10 tw-p-1"
                     >
                         <FloatingButton.UnlinkButton>
-                            <IconTrashBin />
+                            <IconTrashBin16 />
                         </FloatingButton.UnlinkButton>
                     </span>
                 </span>

@@ -4,7 +4,7 @@ import { BadgeStatus, BadgeStyle } from '@components/Badge';
 import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
 import { Divider } from '@components/Divider/Divider';
 import { FormControl } from '@components/FormControl/FormControl';
-import { Slider } from '@components/Slider/Slider';
+import { SegmentedControls } from '@components/SegmentedControls/SegmentedControls';
 import { Textarea } from '@components/Textarea/Textarea';
 import { TextInput } from '@components/TextInput/TextInput';
 import { chain } from '@react-aria/utils';
@@ -18,11 +18,12 @@ import { FlyoutFooter } from './FlyoutFooter';
 import { Dropdown } from '@components/Dropdown';
 import { DatePicker } from '@components/DatePicker';
 import { TooltipIcon } from '@components/TooltipIcon';
-import { IconDotsVertical, IconExclamationMarkCircle, IconIcon } from '@foundation/Icon';
+import { IconDotsVertical, IconExclamationMarkCircle, IconIcon } from '@foundation/Icon/Generated';
 
 export default {
     title: 'Components/Flyout',
     component: Flyout,
+    tags: ['autodocs'],
     argTypes: {
         onCancel: { action: 'onCancel', table: { disable: true } },
         onOpenChange: { action: 'onOpenChange', table: { disable: true } },
@@ -79,11 +80,11 @@ const FlyoutTemplate: (addScrollingContent: boolean, inputFocus: boolean) => Sto
                             <Divider color={FLYOUT_DIVIDER_COLOR} height={FLYOUT_DIVIDER_HEIGHT} />
                             <FormControl
                                 label={{
-                                    children: 'Slider Label',
-                                    htmlFor: 'slider-id',
+                                    children: 'SegmentedControls Label',
+                                    htmlFor: 'segmented-controls-id',
                                 }}
                             >
-                                <Slider
+                                <SegmentedControls
                                     activeItemId={activeItemId}
                                     onChange={setActiveItemId}
                                     items={[
@@ -160,12 +161,12 @@ const WithButtonFlyoutTemplate: StoryFn<FlyoutProps> = (args) => {
     return (
         <Flyout
             {...args}
-            trigger={({ 'aria-label': ariaLabel }, ref: MutableRefObject<HTMLButtonElement>) => (
+            trigger={({ 'aria-label': ariaLabel }, ref) => (
                 <Button
                     style={ButtonStyle.Default}
                     emphasis={ButtonEmphasis.Strong}
                     onClick={() => setOpen(!open)}
-                    ref={ref}
+                    ref={ref as MutableRefObject<HTMLButtonElement>}
                     aria-label={ariaLabel}
                 >
                     Button
@@ -293,12 +294,12 @@ const WithCustomFooterAndHeaderTemplate: StoryFn<FlyoutProps> = (args) => {
     return (
         <Flyout
             {...args}
-            trigger={({ 'aria-label': ariaLabel }, ref: MutableRefObject<HTMLButtonElement>) => (
+            trigger={({ 'aria-label': ariaLabel }, ref) => (
                 <Button
                     style={ButtonStyle.Default}
                     emphasis={ButtonEmphasis.Strong}
                     onClick={() => setIsOpen(!isOpen)}
-                    ref={ref}
+                    ref={ref as MutableRefObject<HTMLButtonElement>}
                     aria-label={ariaLabel}
                 >
                     Click me
@@ -340,10 +341,10 @@ const WithRenderFunctionTriggerTemplate: StoryFn<FlyoutProps> = (args) => {
     return (
         <Flyout
             {...args}
-            trigger={(props, ref: MutableRefObject<HTMLDivElement>, state) => (
+            trigger={(props, ref, state) => (
                 <div
                     {...props}
-                    ref={ref}
+                    ref={ref as MutableRefObject<HTMLDivElement>}
                     className={merge([
                         'tw-border tw-rounded tw-w-[200px] tw-p-2 tw-text-s tw-text-center tw-h-[60px] tw-outline-none tw-items-center tw-flex tw-justify-center',
                         state.isFocusVisible && FOCUS_STYLE,
@@ -385,13 +386,13 @@ const WithPlacementAndOffsetTemplate: StoryFn<FlyoutProps> = (args) => {
     return (
         <Flyout
             {...args}
-            trigger={({ 'aria-label': ariaLabel }, ref: MutableRefObject<HTMLButtonElement>) => (
+            trigger={({ 'aria-label': ariaLabel }, ref) => (
                 <div className="tw-flex tw-justify-center tw-items-center tw-w-full tw-h-screen">
                     <Button
                         style={ButtonStyle.Default}
                         emphasis={ButtonEmphasis.Strong}
                         onClick={() => setIsOpen(!isOpen)}
-                        ref={ref}
+                        ref={ref as MutableRefObject<HTMLButtonElement>}
                         aria-label={ariaLabel}
                     >
                         Click me

@@ -1,27 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { ELEMENT_PARAGRAPH, PlateRenderElementProps } from '@udecode/plate';
 import { merge } from '@utilities/merge';
-import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
+import React from 'react';
+import { getColumnBreakClasses } from '../ColumnBreakPlugin/utils/getColumnBreakClasses';
 import { MarkupElement } from '../MarkupElement';
-import { alignmentClassnames } from '../TextStylePlugin/TextStyles';
-import { breakAfterClassNames } from '@components/RichTextEditor/utils/constants';
+import { alignmentClassnames, getTextStyleCssProperties } from '../helper';
 
-export const PARAGRAPH_CLASSES = 'tw-m-0 tw-py-1 tw-px-0';
+export const PARAGRAPH_CLASSES = 'tw-m-0 tw-px-0 tw-py-0';
 
 export const ParagraphMarkupElementNode = ({ element, attributes, children }: PlateRenderElementProps) => {
-    const { designTokens } = useRichTextEditorContext();
     const align = element.align as string;
-    const hasColumn = element.breakAfterColumn as boolean;
-    const className = merge([
-        align && alignmentClassnames[align],
-        hasColumn && breakAfterClassNames,
-        PARAGRAPH_CLASSES,
-    ]);
-
+    const className = merge([align && alignmentClassnames[align], PARAGRAPH_CLASSES, getColumnBreakClasses(element)]);
     return (
-        <p {...attributes} className={className} style={designTokens.p}>
+        <p {...attributes} className={className} style={getTextStyleCssProperties('body')}>
             {children}
         </p>
     );

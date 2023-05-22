@@ -1,19 +1,29 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Meta, StoryFn } from '@storybook/react';
-import React from 'react';
+import React, { useState } from 'react';
 import { BrightHeaderStyle } from './BrightHeader';
 import { Tooltip, TooltipAlignment, TooltipPosition, TooltipProps } from './Tooltip';
-import { IconExclamationMarkCircle, IconExclamationMarkTriangle, IconIcon, IconSize } from '@foundation/Icon';
+import { IconExclamationMarkCircle16Filled, IconExclamationMarkTriangle16, IconIcon } from '@foundation/Icon/Generated';
+import { useOverlayTriggerState } from '@react-stately/overlays';
+import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
+import { Modal } from '@components/Modal';
+import { ModalProps } from '@components/Modal/types';
+import { ScrollWrapperDirection } from '@components/ScrollWrapper/types';
+import { action } from '@storybook/addon-actions';
+import { Dropdown } from '@components/Dropdown';
+import { FormControl } from '..';
 
 export default {
     title: 'Components/Tooltip',
     component: Tooltip,
+    tags: ['autodocs'],
     args: {
         content: 'Cupcake ipsum dolor sit amet ice cream. (https://Cupcakeipsumdolorsitameticecream.com)',
         heading: '',
     },
     argTypes: {
+        triggerElement: { table: { disable: true } },
         brightHeader: {
             options: ['None', 'Information', 'Warning', 'Tip', 'Note'],
             mapping: {
@@ -59,6 +69,14 @@ export default {
             control: { type: 'boolean' },
             defaultValue: false,
         },
+        linkUrl: {
+            control: 'text',
+            defaultValue: false,
+        },
+        linkLabel: {
+            control: 'text',
+            defaultValue: false,
+        },
         disabled: {
             control: { type: 'boolean' },
             defaultValue: false,
@@ -79,6 +97,10 @@ export default {
             control: { type: 'number' },
             defaultValue: null,
         },
+        enablePortal: {
+            control: { type: 'boolean' },
+            defaultValue: false,
+        },
     },
 } as Meta<TooltipProps>;
 
@@ -89,7 +111,9 @@ export const TooltipComponent: StoryFn<TooltipProps> = (args: TooltipProps) => {
                 {...args}
                 triggerElement={
                     <button className="tw-flex tw-justify-center tw-items-center">
-                        <IconExclamationMarkCircle size={IconSize.Size16} filled />
+                        <span className="tw-flex tw-leading-3">
+                            <IconExclamationMarkCircle16Filled />
+                        </span>
                         <span>Tooltip trigger</span>
                     </button>
                 }
@@ -105,8 +129,8 @@ export const MultipleTooltipsComponent: StoryFn<TooltipProps> = (args: TooltipPr
             <Tooltip
                 {...args}
                 triggerElement={
-                    <button className="tw-mr-1">
-                        <IconExclamationMarkCircle size={IconSize.Size16} filled />
+                    <button aria-label="Exclamation mark circle icon" className="tw-mr-1">
+                        <IconExclamationMarkCircle16Filled />
                     </button>
                 }
             />
@@ -114,14 +138,19 @@ export const MultipleTooltipsComponent: StoryFn<TooltipProps> = (args: TooltipPr
                 {...args}
                 content="Second tooltip"
                 triggerElement={
-                    <button>
-                        <IconExclamationMarkTriangle size={IconSize.Size16} />
+                    <button aria-label="Exclamation mark triangle icon">
+                        <IconExclamationMarkTriangle16 />
                     </button>
                 }
                 brightHeader={BrightHeaderStyle.Warning}
             />
         </div>
     );
+};
+
+export const WithPortal = TooltipComponent.bind({});
+WithPortal.args = {
+    enablePortal: true,
 };
 
 export const WithInfoBrightHeader = TooltipComponent.bind({});
@@ -238,3 +267,145 @@ HiddenTooltip.decorators = [
         </div>
     ),
 ];
+
+const TooltipWithinOverflownContainer: StoryFn<TooltipProps> = (args: TooltipProps) => {
+    return (
+        <div className="tw-overflow-y-auto tw-shadow tw-h-[100px] tw-my-6">
+            <p className="tw-p2">Title</p>
+            <p className="tw-p2">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut mattis iaculis eros. Curabitur quis tortor
+                vestibulum lacus gravida ultrices eget sed velit. Donec id interdum nibh.
+            </p>
+            <div className="tw-w-4">
+                <Tooltip
+                    {...args}
+                    triggerElement={
+                        <button aria-label="Exclamation mark circle icon" className="tw-mr-1">
+                            <IconExclamationMarkCircle16Filled />
+                        </button>
+                    }
+                />
+            </div>
+            <p className="tw-p2">
+                Duis orci sapien, gravida pellentesque cursus non, cursus vitae dolor. Etiam luctus aliquam sem, non
+                maximus risus efficitur sit amet. Nulla diam urna
+            </p>
+            <p className="tw-p2">
+                Duis orci sapien, gravida pellentesque cursus non, cursus vitae dolor. Etiam luctus aliquam sem, non
+                maximus risus efficitur sit amet. Nulla diam urna
+            </p>
+        </div>
+    );
+};
+
+export const WithOverflownContainer = TooltipWithinOverflownContainer.bind({});
+WithOverflownContainer.args = {
+    withArrow: true,
+};
+
+const ModalComponent = (args: ModalProps) => {
+    const state = useOverlayTriggerState({});
+
+    return (
+        <>
+            <Button onClick={() => state.open()}>Open Modal</Button>
+            <Modal onClose={state.close} isOpen={state.isOpen} isDismissable>
+                <Modal.Header title="Modal title" leadText="Lead text" />
+                <Modal.Body direction={ScrollWrapperDirection.Vertical}>{args.children}</Modal.Body>
+                <Modal.Footer
+                    buttons={[
+                        {
+                            children: 'Cancel',
+                            onClick: () => {
+                                state.close();
+                            },
+                            style: ButtonStyle.Default,
+                            emphasis: ButtonEmphasis.Default,
+                        },
+                        {
+                            children: 'Confirm',
+                            onClick: () => {
+                                action('click');
+                                state.close();
+                            },
+                            style: ButtonStyle.Default,
+                            emphasis: ButtonEmphasis.Strong,
+                        },
+                    ]}
+                />
+            </Modal>
+        </>
+    );
+};
+
+const DropdownComponent = () => {
+    const [active, setActive] = useState<string | number | undefined>();
+
+    return (
+        <Dropdown
+            menuBlocks={[
+                {
+                    id: 'block1',
+                    ariaLabel: 'First section',
+                    menuItems: [
+                        {
+                            id: 1,
+                            title: 'Item 1',
+                        },
+                        {
+                            id: 2,
+                            title: 'Item 2',
+                        },
+                        {
+                            id: 3,
+                            title: 'Item 3',
+                        },
+                        {
+                            id: 4,
+                            title: 'Item 4',
+                        },
+                    ],
+                },
+            ]}
+            activeItemId={active}
+            onChange={(id) => setActive(id)}
+        />
+    );
+};
+
+const WithModalWithTooltipAndDropdown: StoryFn<TooltipProps> = (args: TooltipProps) => {
+    return (
+        <ModalComponent isOpen={false}>
+            <div>
+                <div className="tw-flex">
+                    <DropdownComponent />
+                    <Tooltip
+                        {...args}
+                        triggerElement={
+                            <button aria-label="Exclamation mark circle icon" className="tw-mr-1">
+                                <IconExclamationMarkCircle16Filled />
+                            </button>
+                        }
+                    />
+                </div>
+                <FormControl
+                    label={{
+                        children: 'Input Label',
+                        required: false,
+                        htmlFor: 'dropdownId',
+                        tooltip: { content: 'Tooltip Text' },
+                    }}
+                >
+                    <DropdownComponent />
+                </FormControl>
+            </div>
+        </ModalComponent>
+    );
+};
+
+export const InsideModalWithDropdown = WithModalWithTooltipAndDropdown.bind({});
+
+InsideModalWithDropdown.args = {
+    alignment: TooltipAlignment.End,
+    position: TooltipPosition.Top,
+};

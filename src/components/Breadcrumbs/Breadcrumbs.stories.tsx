@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { BadgeStatus, BadgeStyle } from '@components/Badge';
-import IconIcon from '@foundation/Icon/Generated/IconIcon';
+import { IconIcon } from '@foundation/Icon/Generated';
 import { action } from '@storybook/addon-actions';
 import { Meta, StoryFn } from '@storybook/react';
 import React from 'react';
@@ -17,6 +17,7 @@ const ITEMS = [
 export default {
     title: 'Components/Breadcrumbs',
     component: Breadcrumbs,
+    tags: ['autodocs'],
     argTypes: {
         onBlur: { action: 'onBlur' },
     },
