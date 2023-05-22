@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { useEffect, useState } from 'react';
 import { TreeItemProps } from '../types';
 
 export type TreeItemMock = TreeItemProps & {
     nodes?: TreeItemMock[];
+    numChildNodes?: number;
 };
 
 const uncategorizedPagesMock: TreeItemMock[] = [
@@ -101,3 +103,30 @@ export const treeItemsMock: TreeItemMock[] = [
         draggable: false,
     },
 ];
+
+const reducer = (nodes: TreeItemMock[], expandedIds: string[]) => {
+    const newNodes = [...nodes];
+
+    return newNodes.map((item) => {
+        const numChildNodes = item.nodes?.length ?? 0;
+        const childNodes = expandedIds.includes(item.id) ? item.nodes : undefined;
+
+        return {
+            ...item,
+            numChildNodes,
+            nodes: childNodes,
+        };
+    });
+};
+
+export const useDynamicNavigationMock = (expandedIds: string[]) => {
+    const [nodes, setNodes] = useState<TreeItemMock[]>([]);
+
+    useEffect(() => {
+        setTimeout(() => {
+            setNodes(reducer(treeItemsMock, expandedIds));
+        }, 500);
+    }, [expandedIds]);
+
+    return [nodes, setNodes];
+};

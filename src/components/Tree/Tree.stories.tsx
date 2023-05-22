@@ -8,7 +8,7 @@ import { IconDocument } from '@foundation/Icon';
 
 import type { TreeProps } from '@components/Tree/types';
 import { TreeItem, Tree as TreeView } from '@components/Tree';
-import { type TreeItemMock, treeItemsMock } from '@components/Tree/utils';
+import { type TreeItemMock, treeItemsMock, useDynamicNavigationMock } from '@components/Tree/utils';
 
 export default {
     title: 'Components/Tree',
@@ -63,12 +63,13 @@ const renderTreeItemLabel = ({ nodes, ...treeItem }: TreeItemMock) => {
     );
 };
 
-const renderTreeItemComponent = ({ nodes, label, ...treeItem }: TreeItemMock) => (
+const renderTreeItemComponent = ({ nodes, label, numChildNodes, ...treeItem }: TreeItemMock) => (
     <TreeItem
         {...treeItem}
         key={treeItem.id}
         contentComponent={<TreeItemContentComponent title={label || 'NO TITLE'} />}
         onDrop={action('onDrop')}
+        showCaret={!!numChildNodes}
     >
         {nodes?.map(renderTreeItemComponent)}
     </TreeItem>
@@ -144,6 +145,43 @@ export const TreeWithAwaitedItem = ({ ...args }: TreeProps) => {
                 {treeItemsMock.map(renderTreeItemComponent)}
                 {awaitedItems.map(renderTreeItemComponent)}
             </TreeView>
+        </div>
+    );
+};
+
+const DynamicNavigation = () => {
+    const [expandedIds, setExpandedIds] = useState<string[]>([]);
+    // const [selectedIds, setSelectedIds] = useState<string[]>([]);
+    const [nodes] = useDynamicNavigationMock(expandedIds);
+
+    const handleItemExpand = (id: string) => {
+        setExpandedIds([...expandedIds, id]);
+    };
+
+    const handleItemShrink = (id: string) => {
+        setExpandedIds(expandedIds.filter((itemId) => itemId !== id));
+    };
+
+    return (
+        <TreeView
+            id="dynamic-navigation"
+            draggable
+            expandedIds={expandedIds}
+            // selectedIds={selectedIds}
+            onExpand={handleItemExpand}
+            onShrink={handleItemShrink}
+        >
+            {renderTreeItemComponent({ id: 'first-fixed-tree-item', draggable: false, label: 'First Fixed TreeItem' })}
+            {nodes.length > 0 && (nodes as TreeItemMock[]).map(renderTreeItemComponent)}
+            {renderTreeItemComponent({ id: 'last-fixed-tree-item', draggable: false, label: 'Last Fixed TreeItem' })}
+        </TreeView>
+    );
+};
+
+export const WithDynamicNavigation = () => {
+    return (
+        <div>
+            <DynamicNavigation />
         </div>
     );
 };
