@@ -3,7 +3,7 @@
 import React, { ReactElement, ReactNode, useRef } from 'react';
 import { BadgeProps } from '@components/Badge';
 import { useFocusRing } from '@react-aria/focus';
-import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { checkIfContainInteractiveElements } from '@utilities/elements';
 
@@ -18,7 +18,7 @@ export type TabItemProps = {
 };
 
 export const TabItem = ({ active, disabled, children, id }: TabItemProps & { active?: boolean }): ReactElement => {
-    const { isFocusVisible, focusProps } = useFocusRing();
+    const { focusProps } = useFocusRing();
     const ref = useRef<HTMLDivElement | null>(null);
     const hasInteractiveElements = checkIfContainInteractiveElements(ref.current);
 
@@ -28,7 +28,7 @@ export const TabItem = ({ active, disabled, children, id }: TabItemProps & { act
             ref={ref}
             id={`${id}-content`}
             aria-labelledby={id}
-            className={merge([!active || disabled ? 'tw-hidden' : '', isFocusVisible && FOCUS_STYLE])}
+            className={merge([!active || disabled ? 'tw-hidden' : '', !hasInteractiveElements && FOCUS_VISIBLE_STYLE])}
             tabIndex={hasInteractiveElements ? -1 : 0}
             {...focusProps}
         >
