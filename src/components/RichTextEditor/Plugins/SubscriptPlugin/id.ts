@@ -1,3 +1,3 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export const PARAGRAPH_PLUGIN = 'paragraph-plugin';
+export const SUBSCRIPT_PLUGIN = 'subscript-plugin';

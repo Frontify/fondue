@@ -3,23 +3,24 @@
 import { merge } from '@utilities/merge';
 import React, { ReactElement, ReactNode } from 'react';
 
-export type StackSpacing = 'none' | 'xxs' | 'xs' | 's' | 'm' | 'l' | 'xl' | 'xxl';
+export type LegacyStackSpacing = 'none' | 'xxs' | 'xs' | 's' | 'm' | 'l' | 'xl' | 'xxl';
 
-export type StackJustify = 'start' | 'end' | 'center' | 'between' | 'around' | 'evenly';
+export type LegacyStackJustify = 'start' | 'end' | 'center' | 'between' | 'around' | 'evenly';
 
-export type StackAlign = 'start' | 'end' | 'stretch' | 'center';
+export type LegacyStackAlign = 'start' | 'end' | 'stretch' | 'center';
 
-export type StackProps = {
-    padding: StackSpacing;
-    spacing: StackSpacing;
+export type LegacyStackProps = {
+    padding: LegacyStackSpacing;
+    spacing: LegacyStackSpacing;
     direction?: 'row' | 'column';
     wrap?: boolean;
-    justify?: StackJustify;
-    align?: StackAlign;
+    justify?: LegacyStackJustify;
+    align?: LegacyStackAlign;
     children?: ReactNode;
+    'data-test-id'?: string;
 };
 
-const paddingMap: Record<StackSpacing, string> = {
+const paddingMap: Record<LegacyStackSpacing, string> = {
     none: 'tw-p-0',
     xxs: 'tw-p-xxs',
     xs: 'tw-p-xs',
@@ -30,7 +31,7 @@ const paddingMap: Record<StackSpacing, string> = {
     xxl: 'tw-p-xxl',
 };
 
-const spacingMap: Record<StackSpacing, string> = {
+const spacingMap: Record<LegacyStackSpacing, string> = {
     none: 'tw-gap-0',
     xxs: 'tw-gap-xxs',
     xs: 'tw-gap-xs',
@@ -41,7 +42,7 @@ const spacingMap: Record<StackSpacing, string> = {
     xxl: 'tw-gap-xxl',
 };
 
-const justifyMap: Record<StackJustify, string> = {
+const justifyMap: Record<LegacyStackJustify, string> = {
     start: 'tw-justify-start',
     end: 'tw-justify-end',
     center: 'tw-justify-center',
@@ -50,14 +51,16 @@ const justifyMap: Record<StackJustify, string> = {
     evenly: 'tw-justify-evenly',
 };
 
-const alignMap: Record<StackAlign, string> = {
+const alignMap: Record<LegacyStackAlign, string> = {
     start: 'tw-items-start',
     end: 'tw-items-end',
     center: 'tw-items-center',
     stretch: 'tw-items-stretch',
 };
 
-export const Stack = ({
+const DEFAULT_DATA_TEST_ID = 'fondue-legacy-stack';
+
+export const LegacyStack = ({
     children,
     padding,
     spacing,
@@ -65,10 +68,11 @@ export const Stack = ({
     wrap = false,
     justify = 'start',
     align = 'stretch',
-}: StackProps): ReactElement => {
+    'data-test-id': dataTestId = DEFAULT_DATA_TEST_ID,
+}: LegacyStackProps): ReactElement => {
     return (
         <div
-            data-test-id="stack"
+            data-test-id={dataTestId}
             className={merge([
                 'tw-flex',
                 paddingMap[padding],
@@ -83,4 +87,4 @@ export const Stack = ({
         </div>
     );
 };
-Stack.displayName = 'FondueStack';
+LegacyStack.displayName = 'FondueLegacyStack';

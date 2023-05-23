@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import {
+    ELEMENT_LI,
     ELEMENT_OL,
     PlateEditor,
     PlateRenderLeafProps,
@@ -25,7 +26,7 @@ const getNestingLevel = (editor: PlateEditor, element: TElement) => {
     }
 
     const nodeAncestors = getNodeAncestors(editor, path);
-    return Array.from(nodeAncestors).filter((node) => node[0].type === ELEMENT_OL).length;
+    return Array.from(nodeAncestors).filter((node) => node[0].type === ELEMENT_LI).length;
 };
 
 export const getOrderedListClasses = (nestingLevel: number) =>

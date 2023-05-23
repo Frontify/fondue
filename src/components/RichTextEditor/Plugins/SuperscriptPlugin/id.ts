@@ -1,3 +1,3 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export * from './Stack';
+export const SUPERSCRIPT_PLUGIN = 'superscript-plugin';

@@ -18,10 +18,9 @@ import {
 } from '@udecode/plate';
 import { ELEMENT_BUTTON } from '../../Plugins';
 import { ELEMENT_CHECK_ITEM } from '../../Plugins/CheckboxListPlugin/id';
-import { TextStyles } from '../../Plugins/TextStylePlugin/TextStyles';
-import { DesignTokens } from '../../types';
 import { mixedMarkdown } from '../../serializer/markdown/__tests__/fixtures';
 import { MARK_TEXT_STYLE } from '../../Plugins/ListPlugin/ListPlugin';
+import { TextStyles } from '../../Plugins/TextStylePlugin/types';
 
 type CreateElementProps = {
     text: string;
@@ -44,7 +43,7 @@ const createElement = ({ text, element = ELEMENT_PARAGRAPH, mark }: CreateElemen
 
 type CreateLicElementProps = {
     text: string;
-    textStyle?: TextStyles;
+    textStyle?: string;
 };
 
 const createLicElement = ({ text, textStyle }: CreateLicElementProps) => {
@@ -52,7 +51,6 @@ const createLicElement = ({ text, textStyle }: CreateLicElementProps) => {
     if (textStyle) {
         textNode[MARK_TEXT_STYLE] = textStyle;
     }
-
     return {
         type: ELEMENT_LIC,
         children: [{ text, [MARK_TEXT_STYLE]: textStyle }],
@@ -67,20 +65,16 @@ export const unorderedListValue = {
     children: [
         {
             type: ELEMENT_LI,
-            children: [
-                createLicElement({ text: 'This is list item number two.', textStyle: TextStyles.ELEMENT_CUSTOM1 }),
-            ],
+            children: [createLicElement({ text: 'This is list item number two.', textStyle: TextStyles.custom1 })],
+        },
+        {
+            type: ELEMENT_LI,
+            children: [createLicElement({ text: 'This is list item number one.', textStyle: TextStyles.custom2 })],
         },
         {
             type: ELEMENT_LI,
             children: [
-                createLicElement({ text: 'This is list item number one.', textStyle: TextStyles.ELEMENT_CUSTOM2 }),
-            ],
-        },
-        {
-            type: ELEMENT_LI,
-            children: [
-                createLicElement({ text: 'This is list item number three.', textStyle: TextStyles.ELEMENT_CUSTOM3 }),
+                createLicElement({ text: 'This is list item number three.', textStyle: TextStyles.custom3 }),
                 {
                     type: ELEMENT_UL,
                     children: [
@@ -197,6 +191,14 @@ export const defaultValue = [
     createElement({ text: 'This text is a code line.', mark: MARK_CODE }),
     {
         type: ELEMENT_PARAGRAPH,
+        children: [{ text: 'An example of subscript is N' }, { text: '2', subscript: true }],
+    },
+    {
+        type: ELEMENT_PARAGRAPH,
+        children: [{ text: 'An example of superscript is 2' }, { text: '5', superscript: true }],
+    },
+    {
+        type: ELEMENT_PARAGRAPH,
         children: [{ text: '' }],
     },
     createElement({
@@ -255,19 +257,19 @@ export const defaultValue = [
             },
         ],
     },
-    createElement({ text: 'Heading 1', element: TextStyles.ELEMENT_HEADING1 }),
-    createElement({ text: 'Heading 2', element: TextStyles.ELEMENT_HEADING2 }),
-    createElement({ text: 'Heading 3', element: TextStyles.ELEMENT_HEADING3 }),
-    createElement({ text: 'Heading 4', element: TextStyles.ELEMENT_HEADING4 }),
-    createElement({ text: 'Custom 1', element: TextStyles.ELEMENT_CUSTOM1 }),
-    createElement({ text: 'Custom 2', element: TextStyles.ELEMENT_CUSTOM2 }),
-    createElement({ text: 'Custom 3', element: TextStyles.ELEMENT_CUSTOM3 }),
-    createElement({ text: 'Quote', element: TextStyles.ELEMENT_QUOTE }),
+    createElement({ text: 'Heading 1', element: TextStyles.heading1 }),
+    createElement({ text: 'Heading 2', element: TextStyles.heading2 }),
+    createElement({ text: 'Heading 3', element: TextStyles.heading3 }),
+    createElement({ text: 'Heading 4', element: TextStyles.heading4 }),
+    createElement({ text: 'Custom 1', element: TextStyles.custom1 }),
+    createElement({ text: 'Custom 2', element: TextStyles.custom2 }),
+    createElement({ text: 'Custom 3', element: TextStyles.custom3 }),
+    createElement({ text: 'Quote', element: TextStyles.quote }),
 ];
 
 export const customControlValues = [
-    createElement({ text: 'Image Title', element: TextStyles.ELEMENT_IMAGE_TITLE }),
-    createElement({ text: 'Image Caption', element: TextStyles.ELEMENT_IMAGE_CAPTION }),
+    createElement({ text: 'Image Title', element: TextStyles.imageTitle }),
+    createElement({ text: 'Image Caption', element: TextStyles.imageCaption }),
     createElement({ text: IPSUM, element: ELEMENT_PARAGRAPH }),
 ];
 
@@ -386,7 +388,7 @@ export const htmlValue = `
         <p class="custom1">Custom 1</p>
         <p class="custom2">Custom 2</p>
         <p class="custom3">Custom 3</p>
-        <blockquote>Quote</blockquote> 
+        <blockquote>Quote</blockquote>
         <a class="btn btn-primary" contenteditable="false" href="https://smartive.ch/" data-design="primary">﻿<span contenteditable="false">Test</span>﻿</a>
     `;
 
@@ -498,19 +500,8 @@ export const nodesToSerialize: TDescendant[] = [
     ...buttonValues,
 ];
 
-export const customDesignTokens: DesignTokens = {
-    heading1: {
-        fontSize: '1.5rem',
-        fontWeight: 800,
-    },
-    heading2: {
-        fontSize: '1.25rem',
-        fontWeight: 500,
-    },
-};
-
 export const mentionValue = [
-    createElement({ text: '💬 Mention', element: TextStyles.ELEMENT_HEADING2 }),
+    createElement({ text: '💬 Mention', element: TextStyles.heading2 }),
     createElement({
         text: 'This example shows how you might implement a simple @-mentions feature that lets users autocomplete mentioning a user by their username. Which, in this case means Star Wars characters. The mentions are rendered as void inline elements inside the document.',
         element: ELEMENT_PARAGRAPH,

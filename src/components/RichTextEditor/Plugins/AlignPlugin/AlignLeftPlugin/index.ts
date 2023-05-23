@@ -2,13 +2,12 @@
 
 import { AlignLeftMarkupElement } from './AlignLeftMarkupElement';
 import { AlignLeftButton } from './AlignLeftButton';
-import { ALIGN_PLUGIN } from '../id';
 import { AlignPlugin } from '../AlignPlugin';
-import { PluginProps } from '../../Plugin';
+import { AlignPluginProps } from '../types';
 
 export class AlignLeftPlugin extends AlignPlugin {
-    constructor(props?: PluginProps) {
-        super(ALIGN_PLUGIN, {
+    constructor(props?: AlignPluginProps) {
+        super({
             button: AlignLeftButton,
             markupElement: new AlignLeftMarkupElement(),
             ...props,

@@ -3,34 +3,28 @@
 import { TDescendant } from '@udecode/plate';
 import { CSSProperties } from 'react';
 import { mapMentionable } from '../Plugins/MentionPlugin/helpers';
-import { defaultDesignTokens } from '../utils/defaultDesignTokens';
 import { parseRawValue } from '../utils/parseRawValue';
 import { serializeNodeToHtmlRecursive } from './utils/serializeNodeToHtmlRecursive';
-import { setDefaultDesignTokensIfNull } from './utils/setDefaultDesignTokensIfNull';
 import type { MentionableItems } from '../Plugins/MentionPlugin';
-import type { DesignTokens } from '../types';
 
 export const serializeRawToHtml = (
     raw: string,
-    designTokens: DesignTokens = defaultDesignTokens,
     columns: SerializeNodesToHtmlOptions['columns'] = 1,
     columnGap: SerializeNodesToHtmlOptions['columnGap'] = 'normal',
 ): string => {
     const nodes = parseRawValue({ raw });
-    return serializeNodesToHtml(nodes, { designTokens, columns, columnGap });
+    return serializeNodesToHtml(nodes, { columns, columnGap });
 };
 export const serializeRawToHtmlAsync = async (
     raw: string,
-    designTokens: DesignTokens = defaultDesignTokens,
     columns: SerializeNodesToHtmlOptions['columns'] = 1,
     columnGap: SerializeNodesToHtmlOptions['columnGap'] = 'normal',
 ): Promise<string> => {
     const nodes = parseRawValue({ raw });
-    return Promise.resolve(serializeNodesToHtml(nodes, { designTokens, columns, columnGap }));
+    return Promise.resolve(serializeNodesToHtml(nodes, { columns, columnGap }));
 };
 
 export type SerializeNodesToHtmlOptions = {
-    designTokens?: DesignTokens;
     mentionable?: MentionableItems;
     columns?: number;
     columnGap?: CSSProperties['columnGap'];
@@ -38,14 +32,8 @@ export type SerializeNodesToHtmlOptions = {
 
 export const serializeNodesToHtml = (
     nodes: TDescendant[],
-    {
-        designTokens = defaultDesignTokens,
-        mentionable,
-        columns = 1,
-        columnGap = 'normal',
-    }: SerializeNodesToHtmlOptions = {},
+    { mentionable, columns = 1, columnGap = 'normal' }: SerializeNodesToHtmlOptions = {},
 ): string => {
-    const mergedDesignTokens = setDefaultDesignTokensIfNull(defaultDesignTokens, designTokens);
     const mappedMentionable = mentionable ? mapMentionable(mentionable) : new Map();
 
     let html = '';
@@ -55,7 +43,6 @@ export const serializeNodesToHtml = (
             html += '<br />';
         } else {
             html += serializeNodeToHtmlRecursive(node, {
-                designTokens: mergedDesignTokens,
                 mappedMentionable,
             });
         }

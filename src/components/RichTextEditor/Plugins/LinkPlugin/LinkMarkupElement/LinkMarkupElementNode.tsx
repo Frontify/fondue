@@ -4,7 +4,7 @@ import React, { MouseEvent } from 'react';
 import { HTMLPropsAs, LinkRootProps, useElementProps } from '@udecode/plate';
 import { getUrlFromLinkOrLegacyLink } from '../utils';
 import { TLinkElement } from '../types';
-import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
+import { getTextStyleCssProperties } from '../../helper';
 
 const useLink = (props: LinkRootProps): HTMLPropsAs<'a'> => {
     const _props = useElementProps<TLinkElement, 'a'>({
@@ -26,11 +26,10 @@ const useLink = (props: LinkRootProps): HTMLPropsAs<'a'> => {
 
 export const LinkMarkupElementNode = (props: LinkRootProps) => {
     const htmlProps = useLink(props);
-    const context = useRichTextEditorContext();
     const { attributes, children } = props;
 
     return (
-        <a {...attributes} href={htmlProps.href} target={htmlProps.target} style={context?.designTokens.link}>
+        <a {...attributes} href={htmlProps.href} target={htmlProps.target} style={getTextStyleCssProperties('link')}>
             {children}
         </a>
     );
