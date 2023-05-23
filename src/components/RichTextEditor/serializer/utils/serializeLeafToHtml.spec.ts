@@ -55,6 +55,24 @@ describe('serializeLeafToHtml()', () => {
         expect(result).to.equal(`<span class="${UNDERLINE_CLASSES}">text</span>`);
     });
 
+    it('serializes subscript plate leaf to html', () => {
+        const node = {
+            text: 'text',
+            subscript: true,
+        };
+        const result = serializeLeafToHtml(node);
+        expect(result).to.equal('<sub>text</sub>');
+    });
+
+    it('serializes superscript plate leaf to html', () => {
+        const node = {
+            text: 'text',
+            superscript: true,
+        };
+        const result = serializeLeafToHtml(node);
+        expect(result).to.equal('<sup>text</sup>');
+    });
+
     it('serializes leaf to html', () => {
         const node = {
             text: 'text',

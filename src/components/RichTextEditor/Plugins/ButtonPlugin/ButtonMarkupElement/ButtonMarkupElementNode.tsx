@@ -1,11 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
-import { DesignTokens } from '@components/RichTextEditor/types';
 import { HTMLPropsAs, PlateRenderElementProps, Value, useElementProps } from '@udecode/plate';
-import React, { CSSProperties, ReactElement, ReactNode, useState } from 'react';
-import { ButtonStyles } from '../../TextStylePlugin/TextStyles';
+import React, { ReactElement, ReactNode, useState } from 'react';
 import { RichTextButtonStyle, TButtonElement } from '../types';
+import { getButtonStyleCssProperties } from '../helpers';
 
 export type ButtonRootProps = PlateRenderElementProps<Value, TButtonElement> & HTMLPropsAs<'a'>;
 
@@ -38,31 +37,11 @@ export const ButtonMarkupElementNode = (props: ButtonRootProps) => {
             attributes={attributes}
             href={href}
             target={target}
-            styles={context ? getButtonStyle(context.designTokens, buttonStyle) : undefined}
+            styles={context ? getButtonStyleCssProperties(buttonStyle) : undefined}
         >
             {children}
         </HoverableButtonLink>
     );
-};
-
-export const getButtonStyle = (
-    designTokens: DesignTokens,
-    buttonStyle: RichTextButtonStyle,
-): CSSProperties & { hover?: CSSProperties } => {
-    let styles;
-    const design = designTokens as Partial<Record<ButtonStyles, CSSProperties & { hover: CSSProperties }>>;
-    switch (buttonStyle) {
-        case 'primary':
-            styles = design.buttonPrimary;
-            break;
-        case 'secondary':
-            styles = design.buttonSecondary;
-            break;
-        case 'tertiary':
-            styles = design.buttonTertiary;
-            break;
-    }
-    return { ...styles, cursor: 'pointer', display: 'inline-block', margin: '10px 0' };
 };
 
 type Props = {

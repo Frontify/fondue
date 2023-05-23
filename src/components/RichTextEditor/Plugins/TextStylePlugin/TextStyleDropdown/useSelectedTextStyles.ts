@@ -4,6 +4,7 @@ import {
     ELEMENT_LI,
     ELEMENT_LIC,
     ELEMENT_OL,
+    ELEMENT_PARAGRAPH,
     ELEMENT_UL,
     ENode,
     PlateEditor,
@@ -13,21 +14,21 @@ import {
     isText,
 } from '@udecode/plate';
 import { ELEMENT_CHECK_ITEM } from '../../CheckboxListPlugin';
-import { MARK_TEXT_STYLE } from '../../ListPlugin/ListPlugin';
-import { AvailableStyles, TextStyles } from '../TextStyles';
+import { MARK_TEXT_STYLE } from '../../ListPlugin';
 
-const getTextStyle = (node: ENode<Value>): AvailableStyles => {
+const getTextStyle = (node: ENode<Value>): string => {
     if (Array.isArray(node.children)) {
         const textNode = node.children.find((node) => isText(node)) ?? {};
-        return textNode[MARK_TEXT_STYLE] ?? TextStyles.ELEMENT_PARAGRAPH;
+
+        return textNode[MARK_TEXT_STYLE];
     }
 
-    return TextStyles.ELEMENT_PARAGRAPH;
+    return ELEMENT_PARAGRAPH;
 };
 
 const excludeStyles = [ELEMENT_LI, ELEMENT_UL, ELEMENT_OL];
 
-export const useSelectedTextStyles = (editor: PlateEditor): AvailableStyles[] => {
+export const useSelectedTextStyles = (editor: PlateEditor): string[] => {
     if (!editor || !editor.selection) {
         return [];
     }
@@ -40,7 +41,7 @@ export const useSelectedTextStyles = (editor: PlateEditor): AvailableStyles[] =>
         }),
     );
 
-    return nodeEntries.reduce<AvailableStyles[]>((styles, [node]) => {
+    return nodeEntries.reduce<string[]>((styles, [node]) => {
         if (!isNode(node)) {
             return styles;
         }
@@ -48,7 +49,7 @@ export const useSelectedTextStyles = (editor: PlateEditor): AvailableStyles[] =>
         const styleToAdd =
             node.type === ELEMENT_LIC || node.type === ELEMENT_CHECK_ITEM
                 ? getTextStyle(node)
-                : (node.type as AvailableStyles);
+                : (node.textStyle as string);
 
         if (styleToAdd && !styles.includes(styleToAdd) && !excludeStyles.includes(styleToAdd)) {
             styles.push(styleToAdd);

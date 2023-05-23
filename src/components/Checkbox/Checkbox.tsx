@@ -1,17 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useEffect, useState } from 'react';
 import { IconCheckMark, IconMinus } from '@foundation/Icon/Generated';
 import { InputLabel, InputLabelTooltipProps } from '@components/InputLabel/InputLabel';
-import { useMemoizedId } from '@hooks/useMemoizedId';
+import React, { ForwardRefRenderFunction, HTMLAttributes, ReactNode, forwardRef, useEffect, useState } from 'react';
+
+import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { IconSize } from '@foundation/Icon';
+import { merge } from '@utilities/merge';
+import { mergeProps } from '@react-aria/utils';
 import { useCheckbox } from '@react-aria/checkbox';
 import { useFocusRing } from '@react-aria/focus';
-import { mergeProps } from '@react-aria/utils';
-import { useToggleState } from '@react-stately/toggle';
-import { FOCUS_STYLE } from '@utilities/focusStyle';
-import { merge } from '@utilities/merge';
 import { useForwardedRef } from '@utilities/useForwardedRef';
-import React, { ForwardRefRenderFunction, HTMLAttributes, forwardRef } from 'react';
+import { useMemoizedId } from '@hooks/useMemoizedId';
+import { useToggleState } from '@react-stately/toggle';
 
 export enum CheckboxState {
     Checked = 'Checked',
@@ -22,11 +23,13 @@ export enum CheckboxState {
 export enum CheckboxEmphasis {
     Default = 'Default',
     Weak = 'Weak',
+    Strong = 'Strong',
 }
 
 export enum CheckboxSize {
     Default = 'Default',
     Large = 'Large',
+    XLarge = 'XLarge',
 }
 
 export type CheckboxProps = {
@@ -48,6 +51,22 @@ export type CheckboxProps = {
 
 const isCheckedOrMixed = (checked: CheckboxState): boolean => {
     return checked === CheckboxState.Checked || checked === CheckboxState.Mixed;
+};
+
+const emphasisDefaultClasses =
+    'tw-bg-box-selected-strong tw-text-box-selected-strong-inverse hover:tw-bg-box-selected-strong-hover';
+
+const emphasisCheckedClassesMap: Record<CheckboxEmphasis, string> = {
+    [CheckboxEmphasis.Weak]:
+        'tw-bg-box-neutral-strong tw-text-box-neutral-strong-inverse hover:tw-bg-box-neutral-strong-hover',
+    [CheckboxEmphasis.Default]: emphasisDefaultClasses,
+    [CheckboxEmphasis.Strong]: emphasisDefaultClasses,
+};
+
+const sizeClassesMap: Record<CheckboxSize, string> = {
+    [CheckboxSize.Default]: 'tw-h-4 tw-w-4',
+    [CheckboxSize.Large]: 'tw-h-5 tw-w-5',
+    [CheckboxSize.XLarge]: 'tw-h-8 tw-w-8',
 };
 
 const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProps> = (
@@ -105,12 +124,36 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
             isDisabled: disabled,
             isRequired: required,
             isIndeterminate: state === CheckboxState.Mixed,
-            'aria-label': ariaLabel || label,
+            'aria-label': ariaLabel,
             value,
         },
         toggleState,
         inputRef,
     );
+
+    const stateMap: Record<CheckboxState, ReactNode> = {
+        [CheckboxState.Checked]: (
+            <IconCheckMark size={size === CheckboxSize.XLarge ? IconSize.Size24 : IconSize.Size16} />
+        ),
+        [CheckboxState.Mixed]: <IconMinus />,
+        [CheckboxState.Unchecked]: null,
+    };
+
+    const checkedOrMixed = isCheckedOrMixed(state);
+
+    const disabledClasses = merge([
+        'tw-bg-box-disabled tw-pointer-events-none tw-text-box-disabled-inverse tw-border-line-strong',
+        checkedOrMixed && 'tw-text-box-disabled-inverse tw-border-line-strong',
+    ]);
+
+    const enabledClasses = checkedOrMixed
+        ? emphasisCheckedClassesMap[emphasis]
+        : merge([
+              'tw-bg-base hover:tw-bg-box-neutral',
+              emphasis === CheckboxEmphasis.Strong
+                  ? 'tw-border-2 tw-border-box-selected-strong'
+                  : 'tw-border tw-border-line-xx-strong',
+          ]);
 
     return (
         <div className="tw-gap-1 tw-transition-colors" data-test-id="checkbox">
@@ -119,9 +162,9 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                     disabled={disabled}
                     clickable
                     htmlFor={id}
-                    tooltip={tooltip ?? undefined}
+                    tooltip={tooltip}
                     required={required}
-                    bold={isCheckedOrMixed(state)}
+                    bold={checkedOrMixed}
                 >
                     <span className="tw-flex tw-items-center">
                         <span className="tw-inline-flex tw-mr-1.5">
@@ -133,37 +176,19 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                                 data-test-id="checkbox-input"
                                 aria-label={ariaLabel}
                                 role="checkbox"
-                                aria-checked={state === CheckboxState.Checked ? true : false}
+                                aria-checked={state === CheckboxState.Checked}
                                 required={required}
                             />
                             <span
                                 data-test-id="checkbox-icon-box"
                                 aria-hidden="true"
                                 className={merge([
-                                    'tw-leading-3  tw-p-2 tw-relative tw-flex tw-items-center tw-justify-center tw-rounded tw-border tw-shrink-0 tw-flex-none',
-                                    size === 'Default' ? 'tw-h-4 tw-w-4' : 'tw-h-5 tw-w-5',
-                                    disabled
-                                        ? merge([
-                                              'tw-bg-box-disabled tw-pointer-events-none',
-                                              !isCheckedOrMixed(state) &&
-                                                  'tw-bg-box-disabled tw-text-box-disabled-inverse tw-border-line-strong',
-                                              isCheckedOrMixed(state) &&
-                                                  'tw-bg-box-disabled tw-text-box-disabled-inverse tw-border-line-strong',
-                                          ])
-                                        : merge([
-                                              !isCheckedOrMixed(state) &&
-                                                  'tw-bg-base tw-border-line-xx-strong hover:tw-bg-box-neutral',
-                                              isCheckedOrMixed(state) &&
-                                                  emphasis === CheckboxEmphasis.Weak &&
-                                                  'tw-bg-box-neutral-strong tw-text-box-neutral-strong-inverse hover:tw-bg-box-neutral-strong-hover',
-                                              isCheckedOrMixed(state) &&
-                                                  emphasis === CheckboxEmphasis.Default &&
-                                                  'tw-bg-box-selected-strong tw-text-box-selected-strong-inverse hover:tw-bg-box-selected-strong-hover',
-                                          ]),
+                                    'tw-leading-3 tw-p-2 tw-relative tw-flex tw-items-center tw-justify-center tw-rounded tw-shrink-0 tw-flex-none',
+                                    sizeClassesMap[size],
+                                    disabled ? disabledClasses : enabledClasses,
                                 ])}
                             >
-                                {state === CheckboxState.Checked && <IconCheckMark />}
-                                {state === CheckboxState.Mixed && <IconMinus />}
+                                {stateMap[state]}
                             </span>
                         </span>
                         <span className="tw-inline-flex tw-flex-col">
@@ -172,7 +197,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                                     data-test-id="checkbox-label"
                                     className={merge([
                                         'tw-text-xs tw-select-none hover:tw-cursor-pointer hover:tw-text-black dark:hover:tw-text-white group-hover:tw-text-black dark:group-hover:tw-text-white',
-                                        isCheckedOrMixed(state) ? 'tw-font-medium' : '',
+                                        checkedOrMixed && 'tw-font-medium',
                                     ])}
                                 >
                                     {label}

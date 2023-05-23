@@ -2,14 +2,11 @@
 
 import { ToggleMarkPlugin, createListPlugin, createPluginFactory } from '@udecode/plate';
 import { Plugin } from '../Plugin';
-import { TextStyles } from '../TextStylePlugin/TextStyles';
 import { LIST_PLUGIN } from './id';
 import { ListItemContentMarkupElement } from './ListItemContentMarkupElement';
 import { ListItemMarkupElement } from './ListItemMarkupElement';
 import { ListPluginProps } from './types';
 import { withList } from './withList';
-
-export const getListItemStylePluginKey = (style: TextStyles) => `list-item-${style}`;
 
 export const MARK_TEXT_STYLE = 'textStyle';
 
