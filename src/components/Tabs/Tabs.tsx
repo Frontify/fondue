@@ -214,6 +214,7 @@ export const Tabs = ({ paddingX, size, activeItemId, children, onChange }: TabsP
                                 className={merge([
                                     'tw-group tw-relative tw-mx-0 tw-py-4 tw-px-2 tw-w-max tw-cursor-pointer tw-flex tw-items-center tw-justify-center tw-whitespace-nowrap',
                                     tab.disabled && 'tw-text-text-disabled',
+                                    !tab.disabled && 'hover:tw-text-text',
                                     tab.id === activeItemId ? 'tw-font-medium tw-text-text' : 'tw-text-text-weak',
                                     size === TabSize.Small ? 'tw-text-sm' : 'tw-text-md',
                                 ])}
@@ -245,9 +246,6 @@ export const Tabs = ({ paddingX, size, activeItemId, children, onChange }: TabsP
                                         layoutId={groupId}
                                         className="tw-absolute tw-h-[3px] tw-bg-violet-60 tw-rounded-t-x-large tw-w-full tw-bottom-0"
                                     />
-                                )}
-                                {tab.id !== activeItemId && !tab.disabled && (
-                                    <div className="group-hover:tw-absolute group-hover:tw-h-[3px] group-hover:tw-bg-box-neutral-hover group-hover:tw-rounded-t-x-large group-hover:tw-w-full group-hover:tw-bottom-0" />
                                 )}
                             </button>
                         );
