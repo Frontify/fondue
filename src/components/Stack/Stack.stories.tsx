@@ -112,6 +112,7 @@ export const StackWithVerticalDivider: StoryFn<STACK_PROPS> = (args: STACK_PROPS
     return <Stack {...args} />;
 };
 StackWithVerticalDivider.args = {
+    direction: 'row',
     divider: <Divider vertical={true} />,
 };
 
