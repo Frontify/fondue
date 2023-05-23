@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
 export const useToggleOverlay = (
-    initialState = false,
+    initialState: boolean,
     { isBlockingModal }: { isBlockingModal?: boolean },
 ): [boolean, (value: boolean) => void] => {
     const [open, setOpen] = useState<boolean>(initialState);
