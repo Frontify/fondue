@@ -104,12 +104,12 @@ export const treeItemsMock: TreeItemMock[] = [
     },
 ];
 
-const reducer = (nodes: TreeItemMock[], expandedIds: string[]) => {
+const reducer = (nodes: TreeItemMock[], expandedIds: string[] = []): TreeItemMock[] => {
     const newNodes = [...nodes];
 
     return newNodes.map((item) => {
         const numChildNodes = item.nodes?.length ?? 0;
-        const childNodes = expandedIds.includes(item.id) ? item.nodes : undefined;
+        const childNodes = expandedIds.includes(item.id) ? reducer(item?.nodes ?? [], expandedIds) : undefined;
 
         return {
             ...item,
@@ -125,6 +125,7 @@ export const useDynamicNavigationMock = (expandedIds: string[]) => {
     useEffect(() => {
         setTimeout(() => {
             setNodes(reducer(treeItemsMock, expandedIds));
+            console.log('Changed the nodes object');
         }, 500);
     }, [expandedIds]);
 

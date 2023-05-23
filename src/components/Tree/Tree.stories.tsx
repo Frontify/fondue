@@ -63,13 +63,14 @@ const renderTreeItemLabel = ({ nodes, ...treeItem }: TreeItemMock) => {
     );
 };
 
-const renderTreeItemComponent = ({ nodes, label, numChildNodes, ...treeItem }: TreeItemMock) => (
+const renderTreeItemComponent = ({ nodes, label, numChildNodes, onDrop, ...treeItem }: TreeItemMock) => (
     <TreeItem
         {...treeItem}
         key={treeItem.id}
         contentComponent={<TreeItemContentComponent title={label || 'NO TITLE'} />}
-        onDrop={action('onDrop')}
+        onDrop={onDrop ?? action('onDrop')}
         showCaret={!!numChildNodes}
+        isExpanded={true}
     >
         {nodes?.map(renderTreeItemComponent)}
     </TreeItem>
@@ -92,10 +93,24 @@ export const TreeWithCustomTreeItem = ({ ...args }: TreeProps) => {
 };
 
 export const ScrollableTreeWithLabel = ({ ...args }: TreeProps) => {
+    const [expandedIds, setExpandedIds] = useState<string[]>([]);
+
+    const handleItemExpand = (id: string) => {
+        console.log('Expand', id);
+        setExpandedIds([...expandedIds, id]);
+    };
+
+    const handleItemShrink = (id: string) => {
+        console.log('Shrink', id);
+        setExpandedIds(expandedIds.filter((itemId: string) => itemId !== id));
+    };
+
     return (
         <div style={{ position: 'fixed', height: '800px', width: '800px', backgroundColor: 'white' }}>
             <div style={{ width: '800px', height: '300px', overflow: 'auto', position: 'absolute' }}>
-                <TreeView {...args}>{treeItemsMock.map(renderTreeItemLabel)}</TreeView>
+                <TreeView {...args} expandedIds={expandedIds} onExpand={handleItemExpand} onShrink={handleItemShrink}>
+                    {treeItemsMock.map(renderTreeItemLabel)}
+                </TreeView>
             </div>
         </div>
     );
@@ -155,12 +170,18 @@ const DynamicNavigation = () => {
     const [nodes] = useDynamicNavigationMock(expandedIds);
 
     const handleItemExpand = (id: string) => {
+        console.log('Expand', id);
         setExpandedIds([...expandedIds, id]);
     };
 
     const handleItemShrink = (id: string) => {
+        console.log('Shrink', id);
         setExpandedIds(expandedIds.filter((itemId) => itemId !== id));
     };
+
+    useEffect(() => {
+        console.log('Changed nodes', nodes);
+    }, [nodes]);
 
     return (
         <TreeView
