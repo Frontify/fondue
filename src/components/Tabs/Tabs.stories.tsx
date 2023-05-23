@@ -38,6 +38,18 @@ const CustomCheckbox = () => {
     );
 };
 
+const TextParagraph = () => {
+    return (
+        <Text>
+            <p>
+                Bacon ipsum dolor amet spare ribs swine meatloaf, pastrami cupim tail leberkas frankfurter jowl chislic
+                shoulder. Frankfurter drumstick t-bone bacon ground round. Cupim pork loin shank kielbasa. Short loin
+                shank meatloaf tongue. Chicken sirloin swine ball tip. Turkey pork kevin burgdoggen meatball t-bone.
+            </p>
+        </Text>
+    );
+};
+
 const data: TabItemProps[] = [
     {
         id: 'tab-1',
@@ -45,12 +57,14 @@ const data: TabItemProps[] = [
         children: (
             <>
                 <CustomCheckbox />
-                <Text>
-                    Bacon ipsum dolor amet spare ribs swine meatloaf, pastrami cupim tail leberkas frankfurter jowl
-                    chislic shoulder. Frankfurter drumstick t-bone bacon ground round. Cupim pork loin shank kielbasa.
-                    Short loin shank meatloaf tongue. Chicken sirloin swine ball tip. Turkey pork kevin burgdoggen
-                    meatball t-bone.
-                </Text>
+                <br />
+                <TextParagraph />
+                <br />
+                <TextParagraph />
+                <br />
+                <TextParagraph />
+                <br />
+                <TextParagraph />
             </>
         ),
     },
@@ -123,13 +137,15 @@ export default {
 const TabTemplate: StoryFn<TabsProps> = (args) => {
     const [activeItemId, setActiveItemId] = useState(data[0].id);
     return (
-        <Tabs {...args} activeItemId={activeItemId} onChange={(value) => setActiveItemId(value)}>
-            {data.map((item) => (
-                <TabItem id={item.id} key={item.id} label={item.label} disabled={item.disabled ?? false}>
-                    <div className="tw-p-3">{item.children}</div>
-                </TabItem>
-            ))}
-        </Tabs>
+        <div className="tw-max-h-[200px] tw-flex tw-flex-col">
+            <Tabs {...args} activeItemId={activeItemId} onChange={(value) => setActiveItemId(value)}>
+                {data.map((item) => (
+                    <TabItem id={item.id} key={item.id} label={item.label} disabled={item.disabled ?? false}>
+                        <div className="tw-p-3">{item.children}</div>
+                    </TabItem>
+                ))}
+            </Tabs>
+        </div>
     );
 };
 export const Default = TabTemplate.bind({});
@@ -139,19 +155,21 @@ const dataWithIcon = data.map((item) => Object.assign({}, item, { decorator: <Ic
 const TabWithIconTemplate: StoryFn<TabsProps> = (args) => {
     const [activeItemId, setActiveItemId] = useState(data[0].id);
     return (
-        <Tabs {...args} activeItemId={activeItemId} onChange={(value) => setActiveItemId(value)}>
-            {dataWithIcon.map((item) => (
-                <TabItem
-                    id={item.id}
-                    key={item.id}
-                    label={item.label}
-                    disabled={item.disabled ?? false}
-                    decorator={item.decorator}
-                >
-                    <div className="tw-p-3">{item.children}</div>
-                </TabItem>
-            ))}
-        </Tabs>
+        <div className="tw-max-h-[200px] tw-flex tw-flex-col">
+            <Tabs {...args} activeItemId={activeItemId} onChange={(value) => setActiveItemId(value)}>
+                {dataWithIcon.map((item) => (
+                    <TabItem
+                        id={item.id}
+                        key={item.id}
+                        label={item.label}
+                        disabled={item.disabled ?? false}
+                        decorator={item.decorator}
+                    >
+                        <div className="tw-p-3">{item.children}</div>
+                    </TabItem>
+                ))}
+            </Tabs>
+        </div>
     );
 };
 export const WithIcon = TabWithIconTemplate.bind({});
@@ -168,19 +186,21 @@ const dataWithBadge = data.map((item) =>
 const TabWithBadgeTemplate: StoryFn<TabsProps> = (args) => {
     const [activeItemId, setActiveItemId] = useState(data[0].id);
     return (
-        <Tabs {...args} activeItemId={activeItemId} onChange={(value) => setActiveItemId(value)}>
-            {dataWithBadge.map((item) => (
-                <TabItem
-                    id={item.id}
-                    key={item.id}
-                    label={item.label}
-                    disabled={item.disabled ?? false}
-                    badge={item.badge}
-                >
-                    <div className="tw-p-3">{item.children}</div>
-                </TabItem>
-            ))}
-        </Tabs>
+        <div className="tw-max-h-[200px] tw-flex tw-flex-col">
+            <Tabs {...args} activeItemId={activeItemId} onChange={(value) => setActiveItemId(value)}>
+                {dataWithBadge.map((item) => (
+                    <TabItem
+                        id={item.id}
+                        key={item.id}
+                        label={item.label}
+                        disabled={item.disabled ?? false}
+                        badge={item.badge}
+                    >
+                        <div className="tw-p-3">{item.children}</div>
+                    </TabItem>
+                ))}
+            </Tabs>
+        </div>
     );
 };
 export const WithBadge = TabWithBadgeTemplate.bind({});
@@ -192,20 +212,22 @@ const dataWithBadgeAndIcon = dataWithBadge.map((item) =>
 const TabWithBadgeAndIconTemplate: StoryFn<TabsProps> = (args) => {
     const [activeItemId, setActiveItemId] = useState(data[0].id);
     return (
-        <Tabs {...args} activeItemId={activeItemId} onChange={(value) => setActiveItemId(value)}>
-            {dataWithBadgeAndIcon.map((item) => (
-                <TabItem
-                    id={item.id}
-                    key={item.id}
-                    label={item.label}
-                    disabled={item.disabled ?? false}
-                    badge={item.badge}
-                    decorator={item.decorator}
-                >
-                    <div className="tw-p-3">{item.children}</div>
-                </TabItem>
-            ))}
-        </Tabs>
+        <div className="tw-max-h-[200px] tw-flex tw-flex-col">
+            <Tabs {...args} activeItemId={activeItemId} onChange={(value) => setActiveItemId(value)}>
+                {dataWithBadgeAndIcon.map((item) => (
+                    <TabItem
+                        id={item.id}
+                        key={item.id}
+                        label={item.label}
+                        disabled={item.disabled ?? false}
+                        badge={item.badge}
+                        decorator={item.decorator}
+                    >
+                        <div className="tw-p-3">{item.children}</div>
+                    </TabItem>
+                ))}
+            </Tabs>
+        </div>
     );
 };
 export const WithBadgeAndIcon = TabWithBadgeAndIconTemplate.bind({});
