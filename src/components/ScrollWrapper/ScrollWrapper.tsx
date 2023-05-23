@@ -15,6 +15,7 @@ const SCROLL_WRAPPER_TEST_ID = 'fondue-scroll-wrapper';
 
 export const ScrollWrapper = ({
     'data-test-id': dataTestId = SCROLL_WRAPPER_TEST_ID,
+    tabIndex = 0,
     direction = ScrollWrapperDirection.Vertical,
     children,
 }: ScrollWrapperProps): ReactElement => {
@@ -43,7 +44,7 @@ export const ScrollWrapper = ({
             <div
                 ref={scrollingContainer}
                 // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-                tabIndex={0}
+                tabIndex={tabIndex}
                 role="region"
                 aria-label="Scrollable dialogue content"
                 className={merge([

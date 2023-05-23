@@ -7,9 +7,6 @@ import { IconSize } from '@foundation/Icon/IconSize';
 import { IconIcon } from '@foundation/Icon/Generated';
 import React, { useState } from 'react';
 
-const TAB_SCROLL_WRAPPER_ID = '[data-test-id=tab-scroll-wrapper]';
-const INTERACTIVE_ELEMENT_ID = '[data-test-id=interactive-element]';
-
 const data: TabItemProps[] = [
     {
         id: 'tab-1',
@@ -52,12 +49,7 @@ const data: TabItemProps[] = [
         label: 'Last tab',
         decorator: <IconIcon size={IconSize.Size12} />,
         badge: { style: BadgeStyle.Danger, children: 'Badge 2' },
-        children: (
-            <div>
-                <h2>Hello</h2>
-                <button data-test-id="interactive-element">This is content for label 6</button>
-            </div>
-        ),
+        children: <button>This is content for label 6</button>,
     },
 ];
 
@@ -173,23 +165,23 @@ describe('Tabs Component', () => {
         cy.get('button#tab-3-btn').should('be.focused');
         cy.get('body').realPress('Tab');
         cy.get('body').realPress('Tab');
-        cy.get(`${TAB_SCROLL_WRAPPER_ID} > div`).should('be.focused');
-        cy.get(`${TAB_SCROLL_WRAPPER_ID} > div`).should('contain.text', data[2].children);
+        cy.get('[data-test-id=tab-content]').children().not('.tw-hidden').should('be.focused');
+        cy.get('[data-test-id=tab-content]').children().not('.tw-hidden').should('contain.text', data[2].children);
         cy.get('body').realPress(['Shift', 'Tab']);
         cy.get('body').realPress(['Shift', 'Tab']);
         cy.get('button#tab-3-btn').should('be.focused');
     });
 
-    it.only('should not focus on tab content if it contains interactive elements', () => {
+    it('should not focus on tab content if it contains interactive elements', () => {
         cy.get('[data-test-id=tab-item]').first().click();
         cy.get('body').realPress('Tab');
         cy.get('body').realPress('Tab');
-        cy.get(`${TAB_SCROLL_WRAPPER_ID} > div`).should('be.focused');
+        cy.get('#tab-1-content').should('be.focused');
         cy.get('[data-test-id=tab-item]').eq(5).click();
         cy.get('body').realPress('Tab');
         cy.get('body').realPress('Tab');
-        cy.get(`${INTERACTIVE_ELEMENT_ID}`).should('be.focused');
-        cy.get(`${TAB_SCROLL_WRAPPER_ID} > div`).should('not.be.focused');
+        cy.get('#tab-6-content').children().first().should('be.focused');
+        cy.get('#tab-6-content').should('not.be.focused');
     });
 
     it('should not pass on disabled tab with keyboard', () => {

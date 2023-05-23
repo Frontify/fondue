@@ -130,11 +130,6 @@ export const Tabs = ({ paddingX, size, activeItemId, children, onChange }: TabsP
         if (!target.id.includes('-m')) {
             setIsMenuOpened(false);
         }
-
-        if (event.key === 'Tab') {
-            const contentSection = document.getElementById(`${currentTabId}-content`) as HTMLDivElement;
-            contentSection.focus();
-        }
     };
 
     const triggerTabButton = (elementId: string, fromOverflow: boolean) => {
@@ -314,7 +309,7 @@ export const Tabs = ({ paddingX, size, activeItemId, children, onChange }: TabsP
                 )}
             </div>
 
-            <ScrollWrapper data-test-id="tab-scroll-wrapper">
+            <ScrollWrapper tabIndex={-1}>
                 <div data-test-id="tab-content">
                     {Children.map(children, (child) => {
                         if (!isValidElement(child)) {
