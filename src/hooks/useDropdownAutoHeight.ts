@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MutableRefObject, useEffect, useState } from 'react';
+import { MutableRefObject, useLayoutEffect, useState } from 'react';
 
 export const DEFAULT_DROPDOWN_MAX_HEIGHT = 'auto';
 
@@ -28,21 +28,21 @@ export const useDropdownAutoHeight = (
     { isOpen, autoResize, isDialog = false }: DropdownAutoHeightProps,
 ) => {
     const [maxHeight, setMaxHeight] = useState(DEFAULT_DROPDOWN_MAX_HEIGHT);
-    useEffect(() => {
+    useLayoutEffect(() => {
         const updateMaxHeight = () => setMaxHeight(getInnerOverlayHeight(triggerRef, isDialog));
-        if (autoResize && isOpen) {
+        if ((autoResize || isDialog) && isOpen) {
             updateMaxHeight();
             window.addEventListener('resize', updateMaxHeight);
-        } else if (autoResize && !isOpen) {
+        } else if ((autoResize || isDialog) && !isOpen) {
             setMaxHeight(DEFAULT_DROPDOWN_MAX_HEIGHT);
         }
 
         return () => {
-            if (isOpen && autoResize) {
+            if (isOpen && (autoResize || isDialog)) {
                 window.removeEventListener('resize', updateMaxHeight);
             }
         };
-    }, [isOpen, autoResize, triggerRef]);
+    }, [isOpen, autoResize, triggerRef, isDialog]);
 
     return { maxHeight };
 };

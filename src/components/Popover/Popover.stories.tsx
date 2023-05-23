@@ -40,7 +40,7 @@ export default {
 } as Meta<PopoverProps>;
 
 const Template: StoryFn<PopoverProps> = (args) => {
-    const [isOpen, setIsOpen] = useToggleOverlay(false);
+    const [isOpen, setIsOpen] = useToggleOverlay(false, { isBlockingModal: false });
     return (
         <div className="tw-h-32 tw-flex tw-justify-center tw-items-center">
             <Popover open={isOpen} {...args}>
@@ -58,7 +58,7 @@ const Template: StoryFn<PopoverProps> = (args) => {
 };
 
 const TriggeredOnHoverTemplate: StoryFn<PopoverProps> = (args) => {
-    const [isOpen, setIsOpen] = useToggleOverlay(false);
+    const [isOpen, setIsOpen] = useToggleOverlay(false, { isBlockingModal: false });
     return (
         <div className="tw-h-32 tw-flex tw-justify-center tw-items-center">
             <Popover open={isOpen} {...args}>
@@ -84,7 +84,7 @@ const TriggeredOnHoverTemplate: StoryFn<PopoverProps> = (args) => {
 };
 
 const WithInteractiveContentTemplate: StoryFn<PopoverProps> = (args) => {
-    const [isOpen, setIsOpen] = useToggleOverlay(false);
+    const [isOpen, setIsOpen] = useToggleOverlay(false, { isBlockingModal: false });
     return (
         <div className="tw-h-32 tw-flex tw-justify-center tw-items-center">
             <Popover open={isOpen} {...args}>

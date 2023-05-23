@@ -9,7 +9,7 @@ import { Dropdown } from '@components/Dropdown';
 import { TooltipIcon } from '@components/TooltipIcon';
 import IconExclamationMarkCircle from '@foundation/Icon/Generated/IconExclamationMarkCircle';
 import { DialogFooter } from '@components/DialogFooter';
-import { DialogHeaderSize } from '../../types/dialog';
+import { DialogHeaderSize, Modality } from '../../types/dialog';
 import { Button, ButtonEmphasis } from '@components/Button';
 import IconCheckMark16 from '@foundation/Icon/Generated/IconCheckMark16';
 import { useToggleOverlay } from '@hooks/useToggleOverlay';
@@ -19,19 +19,22 @@ export default {
     title: 'Experimental/InlineDialog',
     component: InlineDialog,
     tags: ['autodocs'],
+    argTypes: {
+        modality: {
+            options: Object.values(Modality),
+            control: { type: 'select' },
+        },
+    },
 } as Meta<InlineDialogProps>;
 
-const Template: StoryFn<InlineDialogProps> = () => {
-    const [isOpen, setIsOpen] = useToggleOverlay(false);
-    const [triggerElementRef, setTriggerElementRef] = useState<HTMLElement | HTMLDivElement | HTMLButtonElement | null>(
-        null,
-    );
-    const { maxHeight } = useDropdownAutoHeight(
-        { current: triggerElementRef },
-        { isOpen, autoResize: true, isDialog: true },
-    );
+const Template: StoryFn<InlineDialogProps> = (args) => {
+    const [isOpen, setIsOpen] = useToggleOverlay(false, { isBlockingModal: args.modality === Modality.BlockingModal });
+    const [triggerElementRef, setTriggerElementRef] = useState<HTMLButtonElement | null>(null);
+    const { maxHeight } = useDropdownAutoHeight({ current: triggerElementRef }, { isOpen, isDialog: true });
     return (
         <InlineDialog
+            handleClose={() => setIsOpen(false)}
+            modality={args.modality}
             triggerElement={
                 <Button ref={setTriggerElementRef} onClick={() => setIsOpen(!isOpen)}>
                     Trigger

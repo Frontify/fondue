@@ -5,3 +5,4 @@ export * from './useMemoizedId';
 export * from './useCopy';
 export * from './useToggleOverlay';
 export * from './useDropdownAutoHeight';
+export * from './useFocusTrap';

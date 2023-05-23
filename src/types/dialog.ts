@@ -5,12 +5,6 @@ import { IconProps } from '@foundation/Icon';
 import { BadgeProps } from '@components/Badge';
 import { ButtonProps } from '@components/Button';
 
-export enum DialogPaddingSize {
-    None = 'None',
-    Default = 'Default',
-    Large = 'Large',
-}
-
 export enum DialogHeaderSize {
     Default = 'Default',
     Large = 'Large',
@@ -36,3 +30,9 @@ export type DialogFooterProps = {
     buttons: ButtonProps[];
     'data-test-id'?: string;
 };
+
+export enum Modality {
+    Modal = 'modal',
+    NonModal = 'non-modal',
+    BlockingModal = 'blocking-modal',
+}
