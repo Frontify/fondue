@@ -244,7 +244,7 @@ export const Tabs = ({ paddingX, size, activeItemId, children, onChange }: TabsP
                                         layoutDependency={activeItemId}
                                         data-test-id="tab-active-highlight"
                                         layoutId={groupId}
-                                        className="tw-absolute tw-h-[3px] tw-bg-violet-60 tw-rounded-t-x-large tw-w-full tw-bottom-0"
+                                        className="tw-absolute tw-h-[3px] tw-bg-box-selected-strong tw-rounded-t-x-large tw-w-full tw-bottom-0"
                                     />
                                 )}
                             </button>
