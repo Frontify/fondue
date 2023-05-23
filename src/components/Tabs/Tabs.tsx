@@ -256,7 +256,7 @@ export const Tabs = ({ paddingX, size, activeItemId, children, onChange }: TabsP
                 {isOverflowing && (
                     <div
                         data-test-id="tab-overflow"
-                        className="tw-absolute tw-right-3 tw-bottom-0 tw-top-0 tw-flex tw-justify-center tw-items-center"
+                        className="tw-absolute tw-z-50 tw-right-3 tw-bottom-0 tw-top-0 tw-flex tw-justify-center tw-items-center"
                     >
                         <button
                             className={merge([
