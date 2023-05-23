@@ -230,9 +230,11 @@ export const Tabs = ({ paddingX, size, activeItemId, children, onChange }: TabsP
                                 <span>{tab.label}</span>
 
                                 {tab.badge && (
-                                    <Badge disabled={tab.disabled} style={tab.badge.style}>
-                                        {tab.badge.children}
-                                    </Badge>
+                                    <span className="tw-ml-1.5">
+                                        <Badge disabled={tab.disabled} style={tab.badge.style}>
+                                            {tab.badge.children}
+                                        </Badge>
+                                    </span>
                                 )}
                                 {tab.id === activeItemId && (
                                     <motion.div
