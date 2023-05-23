@@ -327,8 +327,8 @@ export const Tooltip = ({
                     <div
                         className={merge([
                             'tw-px-4 tw-dark tw-bg-base tw-rounded-md tw-relative tw-z-[120000]',
-                            hasLargePaddingTop ? paddingsTop.small : paddingsTop.large,
-                            linkUrl ? paddingsBottom.small : paddingsBottom.large,
+                            hasLargePaddingTop ? paddingsTop.large : paddingsTop.small,
+                            linkUrl ? paddingsBottom.large : paddingsBottom.small,
                         ])}
                     >
                         {heading && (
