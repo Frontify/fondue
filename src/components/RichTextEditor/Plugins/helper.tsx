@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactNode } from 'react';
-import { ButtonGroupProps, IconStylingWrapperProps } from './types';
+import React, { CSSProperties, ReactNode } from 'react';
+import { IconStylingWrapperProps } from './types';
 
 export const IconStylingWrapper = ({ icon }: IconStylingWrapperProps) => (
     <span className="tw-p-2 tw-h-8 tw-justify-center tw-items-center tw-flex">{icon}</span>
@@ -16,12 +16,58 @@ export const getButtonClassNames = (isEnabled = true) => ({
 });
 export const buttonStyles = { root: { width: '24px', height: '24px' } };
 
-export const ButtonGroupWrapper = ({ index, children }: ButtonGroupProps) => (
-    <div data-test-id={`toolbar-group-${index}`} className="tw-flex tw-items-center tw-h-9 tw-p-2">
-        {children}
-    </div>
-);
-
 export const ButtonWrapper = ({ children, id }: { children: ReactNode; id: string }) => (
     <div data-plugin-id={id}>{children}</div>
 );
+
+export const alignmentClassnames: Record<string, string> = {
+    left: 'tw-text-left',
+    right: 'tw-text-right',
+    center: 'tw-text-center',
+    justify: 'tw-text-justify',
+};
+
+export const justifyClassNames: Record<string, string> = {
+    left: 'tw-justify-start tw-text-left',
+    center: 'tw-justify-center tw-text-center',
+    justify: 'tw-text-justify',
+    right: 'tw-justify-end tw-text-right',
+};
+
+export const THEME_PREFIX = '--f-theme-settings-';
+export const getTextStyleCssProperties = (textStyle: string): CSSProperties => {
+    if (textStyle === 'p' || !textStyle) {
+        textStyle = 'body';
+    }
+
+    const style = toKebabCase(textStyle);
+
+    if (style === 'link') {
+        return {
+            color: `var(${THEME_PREFIX}${style}-color)`,
+            fontFamily: `var(${THEME_PREFIX}${style}-font-family)`,
+            fontSize: `var(${THEME_PREFIX}${style}-font-size)`,
+            fontStyle: `var(${THEME_PREFIX}${style}-font-style)`,
+            fontWeight: `var(${THEME_PREFIX}${style}-font-weight)`,
+            letterSpacing: `var(${THEME_PREFIX}${style}-letter-spacing)`,
+            textDecoration: `var(${THEME_PREFIX}${style}-text-decoration)`,
+            textTransform: `var(${THEME_PREFIX}${style}-text-transform)` as CSSProperties['textTransform'],
+            marginTop: `var(${THEME_PREFIX}${style}-margin-top)`,
+            marginBottom: `var(${THEME_PREFIX}${style}-margin-bottom)`,
+        };
+    }
+    return {
+        color: `var(${THEME_PREFIX}${style}-color)`,
+        fontFamily: `var(${THEME_PREFIX}${style}-font-family)`,
+        fontSize: `var(${THEME_PREFIX}${style}-font-size)`,
+        fontStyle: `var(${THEME_PREFIX}${style}-font-style)`,
+        fontWeight: `var(${THEME_PREFIX}${style}-font-weight)`,
+        letterSpacing: `var(${THEME_PREFIX}${style}-letter-spacing)`,
+        lineHeight: `var(${THEME_PREFIX}${style}-line-height)`,
+        textDecoration: `var(${THEME_PREFIX}${style}-text-decoration)`,
+        textTransform: `var(${THEME_PREFIX}${style}-text-transform)` as CSSProperties['textTransform'],
+        marginTop: `var(${THEME_PREFIX}${style}-margin-top)`,
+        marginBottom: `var(${THEME_PREFIX}${style}-margin-bottom)`,
+    };
+};
+const toKebabCase = (str: string) => str.replaceAll(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
