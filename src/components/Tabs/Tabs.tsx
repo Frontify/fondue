@@ -22,16 +22,9 @@ import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { ScrollWrapper } from '@components/ScrollWrapper';
 
-export enum TabsPaddingX {
-    Small = 'Small',
-    Medium = 'Medium',
-    Large = 'Large',
-}
+export type TabsPaddingX = '8' | '16' | '20' | '24';
 
-export enum TabSize {
-    Small = 'Small',
-    Large = 'Large',
-}
+export type TabSize = 'Small' | 'Large';
 
 export type TabsProps = {
     paddingX?: TabsPaddingX;
@@ -41,10 +34,11 @@ export type TabsProps = {
     onChange?: (tabId: string) => void;
 };
 
-const paddingMap: Record<TabsPaddingX, string> = {
-    [TabsPaddingX.Small]: 'tw-pl-s',
-    [TabsPaddingX.Medium]: 'tw-pl-m',
-    [TabsPaddingX.Large]: 'tw-pl-l',
+const TABS_PADDING_MAP: Record<TabsPaddingX, string> = {
+    '8': 'tw-pl-0 tw-pr-0',
+    '16': 'tw-pl-2 tw-pr-2',
+    '20': 'tw-pl-3.5 tw-pr-3.5',
+    '24': 'tw-pl-4 tw-pr-4',
 };
 
 export const Tabs = ({ paddingX, size, activeItemId, children, onChange }: TabsProps): ReactElement => {
@@ -195,9 +189,9 @@ export const Tabs = ({ paddingX, size, activeItemId, children, onChange }: TabsP
                     ref={tabNavRef}
                     role="tablist"
                     className={merge([
-                        'tw-overflow-x-hidden tw-flex-shrink-0 tw-h-full tw-w-full tw-flex tw-justify-start tw-pr-8',
-                        paddingMap[paddingX ?? TabsPaddingX.Small],
-                        size === TabSize.Small ? 'tw-gap-xxs' : 'tw-gap-xs ',
+                        'tw-overflow-x-hidden tw-flex-shrink-0 tw-h-full tw-w-full tw-flex tw-justify-start',
+                        TABS_PADDING_MAP[paddingX ?? '8'],
+                        size === 'Small' ? 'tw-gap-xxs' : 'tw-gap-xs ',
                     ])}
                 >
                     {tabs.map((tab) => {
@@ -216,7 +210,7 @@ export const Tabs = ({ paddingX, size, activeItemId, children, onChange }: TabsP
                                     tab.disabled && 'tw-text-text-disabled',
                                     !tab.disabled && 'hover:tw-text-text',
                                     tab.id === activeItemId ? 'tw-font-medium tw-text-text' : 'tw-text-text-weak',
-                                    size === TabSize.Small ? 'tw-text-sm' : 'tw-text-md',
+                                    size === 'Small' ? 'tw-text-sm' : 'tw-text-md',
                                 ])}
                                 key={tab.id}
                                 onClick={() => {
