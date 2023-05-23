@@ -53,9 +53,6 @@ export type TooltipProps = {
     enablePortal?: boolean;
 };
 
-/**
- * This is a temporary workaround because for some yet unknown reasons `tailwindcss` in clarify purges the `tw-pb-3.5` and `tw-pt-3.5` class.
- */
 const paddingsTop = {
     small: 'tw-pt-2',
     large: 'tw-pt-3',
