@@ -167,8 +167,8 @@ export const Tooltip = ({
     const shouldPreventTooltipOpening = hidden || disabled;
     const { linkProps } = useLink({ isDisabled: shouldPreventTooltipOpening }, linkRef);
     const hasLargePaddingTop = useMemo(
-        () => linkUrl || brightHeader || buttons || heading || headingIcon,
-        [linkUrl, brightHeader, buttons, heading, headingIcon],
+        () => linkUrl || buttons || heading || headingIcon,
+        [linkUrl, buttons, heading, headingIcon],
     );
 
     const placement = placementMap[`${position}-${alignment}`];
@@ -323,7 +323,7 @@ export const Tooltip = ({
                     {brightHeader && <BrightHeader headerStyle={brightHeader} />}
                     <div
                         className={merge([
-                            'tw-px-4 tw-dark tw-bg-base tw-rounded-md tw-relative tw-z-[120000]',
+                            'tw-px-3 tw-dark tw-bg-base tw-rounded-md tw-relative tw-z-[120000]',
                             hasLargePaddingTop ? paddingsTop.large : paddingsTop.small,
                             linkUrl ? paddingsBottom.large : paddingsBottom.small,
                         ])}
