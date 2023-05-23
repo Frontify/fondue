@@ -3,13 +3,13 @@
 import { PlateEditor, usePlateEditorState } from '@udecode/plate';
 import { Dispatch, HTMLAttributes, SetStateAction, useCallback, useEffect, useState } from 'react';
 import { usePopper } from 'react-popper';
-import { AVAILABLE_STYLE_TITLES, DEFAULT_TEXT_STYLE_VALUE } from '../TextStyles';
 import { useSelectedTextStyles } from './useSelectedTextStyles';
 import { verticalPositionModifier } from './verticalPositionModifier';
+import { DEFAULT_TEXT_STYLE_VALUE } from '../types';
 
 type UseTextStyleDropdownReturn<T, P> = {
     state: { isOpen: boolean; toggle: () => void; editor: PlateEditor };
-    label: string;
+    key: string;
     dropdownProps: HTMLAttributes<P>;
     triggerRef: Dispatch<SetStateAction<T | null>>;
     dropdownRef: Dispatch<SetStateAction<P | null>>;
@@ -23,8 +23,7 @@ export const useTextStyleDropdown = <T extends HTMLElement, P extends HTMLElemen
     const [popperElement, setPopperElement] = useState<P | null>(null);
     const editor = usePlateEditorState(editorId);
     const selectedTextStyles = useSelectedTextStyles(editor);
-    const label =
-        selectedTextStyles.length === 1 ? AVAILABLE_STYLE_TITLES[selectedTextStyles[0]] : DEFAULT_TEXT_STYLE_VALUE;
+    const key = selectedTextStyles.length === 1 ? selectedTextStyles[0] : DEFAULT_TEXT_STYLE_VALUE;
 
     const toggle = useCallback(() => {
         setIsOpen((open) => !open);
@@ -74,7 +73,7 @@ export const useTextStyleDropdown = <T extends HTMLElement, P extends HTMLElemen
             ...popperInstance.attributes.popper,
             style: popperInstance.styles.popper,
         },
-        label,
+        key,
         dropdownRef: setPopperElement,
         triggerRef: setTriggerElement,
     };

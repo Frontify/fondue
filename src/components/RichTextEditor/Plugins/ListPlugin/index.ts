@@ -3,3 +3,4 @@
 export * from './id';
 export * from './OrderedListPlugin';
 export * from './UnorderedListPlugin';
+export * from './ListPlugin';

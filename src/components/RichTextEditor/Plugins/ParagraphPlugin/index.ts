@@ -1,14 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PARAGRAPH_PLUGIN } from './id';
 import { ParagraphMarkupElement } from './ParagraphMarkupElement';
 import { Plugin, PluginProps } from '../Plugin';
 import { createParagraphPlugin } from './createParagraphPlugin';
+import { ELEMENT_PARAGRAPH } from '@udecode/plate';
 
 export class ParagraphPlugin extends Plugin {
     constructor(props?: PluginProps) {
-        super(PARAGRAPH_PLUGIN, {
+        super(ELEMENT_PARAGRAPH, {
             markupElement: new ParagraphMarkupElement(),
+            label: 'Body Text',
             ...props,
         });
     }
@@ -19,3 +20,4 @@ export class ParagraphPlugin extends Plugin {
 }
 
 export * from './ParagraphMarkupElement';
+export * from './createParagraphPlugin';
