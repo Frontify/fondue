@@ -54,13 +54,13 @@ export type TooltipProps = PropsWithChildren<{
  * This is a temporary workaround because for some yet unknown reasons `tailwindcss` in clarify purges the `tw-pb-3.5` and `tw-pt-3.5` class.
  */
 const paddingsTop = {
-    small: 'tw-pt-3.5',
-    large: 'tw-pt-4',
+    small: 'tw-pt-2',
+    large: 'tw-pt-3',
 };
 
 const paddingsBottom = {
-    small: 'tw-pb-3.5',
-    large: 'tw-pb-4',
+    small: 'tw-pb-2',
+    large: 'tw-pb-3',
 };
 
 export enum TooltipPosition {
