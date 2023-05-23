@@ -72,7 +72,6 @@ export default {
         justify: 'start',
         alignItems: 'start',
         spacing: 8,
-        divider: <Divider height={'0px'} />,
         'data-test-id': 'custom-test-id',
     },
 } as Meta<STACK_PROPS>;
@@ -82,22 +81,38 @@ const Code = ({ children }: { children: ReactNode }): ReactElement => (
 );
 
 export const Stack: StoryFn<STACK_PROPS> = (args: STACK_PROPS) => {
-    const isVertical = args.direction === 'row' || args.direction === 'row-reverse';
-
+    const STACK_ITEM_CLASS_NAMES =
+        'tw-bg-box-positive-strong tw-text-box-positive-strong-inverse tw-rounded-md tw-px-3 tw-py-1';
     return (
-        <StackComponent {...args} divider={<Divider vertical={isVertical} />}>
-            <div>Test content.</div>
-            <div>
+        <StackComponent {...args}>
+            <div className={STACK_ITEM_CLASS_NAMES}>Test content.</div>
+            <div className={STACK_ITEM_CLASS_NAMES}>
                 First line
                 <br />
                 Next line
                 <br />
                 Last line
             </div>
-            <div>All the good stuff is in the middle but the rest of it is necessary too.</div>
-            <div>Test!</div>
+            <div className={STACK_ITEM_CLASS_NAMES}>
+                All the good stuff is in the middle but the rest of it is necessary too.
+            </div>
+            <div className={STACK_ITEM_CLASS_NAMES}>Test!</div>
         </StackComponent>
     );
+};
+
+export const StackWithHorizontalDivider: StoryFn<STACK_PROPS> = (args: STACK_PROPS) => {
+    return <Stack {...args} />;
+};
+StackWithHorizontalDivider.args = {
+    divider: <Divider />,
+};
+
+export const StackWithVerticalDivider: StoryFn<STACK_PROPS> = (args: STACK_PROPS) => {
+    return <Stack {...args} />;
+};
+StackWithVerticalDivider.args = {
+    divider: <Divider vertical={true} />,
 };
 
 export const StackWithBoxAliasToken: StoryFn<STACK_PROPS> = (args: STACK_PROPS) => (
