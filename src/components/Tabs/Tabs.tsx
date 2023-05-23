@@ -2,8 +2,8 @@
 
 import React, {
     Children,
-    FC,
     KeyboardEvent,
+    ReactElement,
     ReactNode,
     cloneElement,
     isValidElement,
@@ -14,7 +14,7 @@ import React, {
 } from 'react';
 import { TabItemProps } from '@components/Tabs/TabItem';
 import { merge } from '@utilities/merge';
-import { IconDotsHorizontal } from '@foundation/Icon';
+import { IconDotsHorizontal } from '@foundation/Icon/Generated';
 import { Badge } from '@components/Badge';
 import { motion } from 'framer-motion';
 import { useFocusRing } from '@react-aria/focus';
@@ -46,7 +46,7 @@ const paddingMap: Record<TabsPaddingX, string> = {
     [TabsPaddingX.Large]: 'tw-pl-l',
 };
 
-export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, onChange }) => {
+export const Tabs = ({ paddingX, size, activeItemId, children, onChange }: TabsProps): ReactElement => {
     const groupId = useMemoizedId();
     const tabNavRef = useRef<HTMLDivElement | null>(null);
     const [isOverflowing, setIsOverflowing] = useState(false);
@@ -88,15 +88,17 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
     };
 
     const filterTabList = (array: TabItemProps[], direction: string) => {
-        return array.filter((tab) => {
+        const activeItemIndex = array.findIndex((tab) => tab.id === activeItemId);
+
+        return array.filter((tab, index) => {
             if (direction === 'next') {
-                if (tab.id > activeItemId && !tab.disabled) {
+                if (index > activeItemIndex && !tab.disabled) {
                     return tab;
                 }
             }
 
             if (direction === 'previous') {
-                if (tab.id < activeItemId && !tab.disabled) {
+                if (index < activeItemIndex && !tab.disabled) {
                     return tab;
                 }
             }
@@ -324,3 +326,4 @@ export const Tabs: FC<TabsProps> = ({ paddingX, size, activeItemId, children, on
         </>
     );
 };
+Tabs.displayName = 'FondueTabs';

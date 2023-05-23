@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { MouseEvent, PropsWithChildren, useEffect, useState } from 'react';
+import React, { MouseEvent, ReactNode } from 'react';
 import { merge } from '@utilities/merge';
-import { IconCaretRight, IconCheckMark, IconSize } from '@foundation/Icon';
+import { IconCaretRight, IconCheckMark } from '@foundation/Icon/Generated';
+import { IconSize } from '@foundation/Icon/IconSize';
 import { MenuItemContent, MenuItemContentProps } from '@components/MenuItem/MenuItemContent';
 import { MenuItemContentSize, MenuItemStyle, SelectionIndicatorIcon } from './types';
 import { getItemElementType } from '@utilities/elements';
@@ -16,7 +17,8 @@ export type MenuItemProps = {
     /** @deprecated this prop is not being used anymore */
     type?: string;
     link?: string;
-    onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
+    onClick?: <T extends HTMLButtonElement | HTMLAnchorElement>(event: MouseEvent<T>) => void;
+    children?: ReactNode;
 } & Omit<MenuItemContentProps, 'iconSize'>;
 
 export const menuItemSizeClassMap: Record<MenuItemContentSize, string> = {
@@ -40,8 +42,19 @@ export const menuItemTextColorRecord: Record<MenuItemStyle, Record<MenuItemTextC
     [MenuItemStyle.Danger]: {
         [MenuItemTextColorState.Default]: 'tw-text-red-60',
         [MenuItemTextColorState.Active]: 'tw-text-red-70',
-        [MenuItemTextColorState.Disabled]: 'tw-text-red-40',
+        [MenuItemTextColorState.Disabled]: 'tw-text-text-disabled',
     },
+    [MenuItemStyle.Warning]: {
+        [MenuItemTextColorState.Default]: 'tw-text-text-warning',
+        [MenuItemTextColorState.Active]: 'tw-text-yellow-90',
+        [MenuItemTextColorState.Disabled]: 'tw-text-text-disabled',
+    },
+};
+
+const menuItemHoverColorRecord: Record<MenuItemStyle, string> = {
+    [MenuItemStyle.Primary]: 'hover:tw-text-text',
+    [MenuItemStyle.Danger]: 'hover:tw-text-text-negative',
+    [MenuItemStyle.Warning]: 'hover:tw-text-text-warning',
 };
 
 const ITEM_WRAPPER_CLASSES =
@@ -64,9 +77,7 @@ export const MenuItem = ({
     children,
     link,
     onClick,
-}: PropsWithChildren<MenuItemProps>) => {
-    const isDangerStyle = style === MenuItemStyle.Danger;
-
+}: MenuItemProps) => {
     const currentIconSize = size === MenuItemContentSize.XSmall ? IconSize.Size16 : IconSize.Size20;
 
     const currentIcon = {
@@ -86,13 +97,7 @@ export const MenuItem = ({
 
     const textClass = menuItemTextColorRecord[style][textState];
 
-    const [mainElementType, setMainElementType] = useState('span');
-
-    useEffect(() => {
-        if (link || onClick) {
-            setMainElementType(getItemElementType(link, onClick));
-        }
-    }, [link, onClick]);
+    const mainElementType = getItemElementType(link, onClick);
 
     return (
         <>
@@ -107,7 +112,7 @@ export const MenuItem = ({
                     ])}
                 >
                     {mainElementType === 'a' && (
-                        <a href={link} className={ITEM_BASE_CLASSES}>
+                        <a href={link} className={ITEM_BASE_CLASSES} onClick={onClick}>
                             {children}
                         </a>
                     )}
@@ -127,7 +132,7 @@ export const MenuItem = ({
                 <div
                     className={merge([
                         ITEM_WRAPPER_CLASSES,
-                        isDangerStyle ? 'hover:tw-text-negative' : 'hover:tw-text-text',
+                        menuItemHoverColorRecord[style],
                         menuItemSizeClassMap[size],
                         disabled && 'tw-bg-box-disabled tw-pointer-events-none',
                         active && 'tw-font-medium',
@@ -147,3 +152,4 @@ export const MenuItem = ({
         </>
     );
 };
+MenuItem.displayName = 'FondueMenuItem';

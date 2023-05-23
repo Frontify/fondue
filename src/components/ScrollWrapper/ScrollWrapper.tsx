@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useFocusRing } from '@react-aria/focus';
-import React, { FC, useRef } from 'react';
+import React, { ReactElement, useRef } from 'react';
 import { FOCUS_STYLE, merge } from '../..';
 import { useScrollWrapper } from './hooks/useScrollWrapper';
 import { ScrollWrapperDirection, ScrollWrapperProps, scrollWrapperDirections } from './types';
@@ -11,7 +11,10 @@ const GRADIENTS = {
     top: 'linear-gradient(0deg, rgba(232, 233, 233, 0) 0%, #E8E9E9 100%)',
 };
 
-export const ScrollWrapper: FC<ScrollWrapperProps> = ({ direction = ScrollWrapperDirection.Vertical, children }) => {
+export const ScrollWrapper = ({
+    direction = ScrollWrapperDirection.Vertical,
+    children,
+}: ScrollWrapperProps): ReactElement => {
     const scrollingContainer = useRef<HTMLDivElement>(null);
 
     const [{ showTopShadow, showBottomShadow }, scrollDivProps] = useScrollWrapper(scrollingContainer);
@@ -45,7 +48,7 @@ export const ScrollWrapper: FC<ScrollWrapperProps> = ({ direction = ScrollWrappe
                 aria-label="Scrollable dialogue content"
                 className={merge([
                     scrollWrapperDirections[direction],
-                    'tw-flex-auto tw-min-h-0 tw-outline-none tw-pb-2 tw-px-2 tw--mx-2',
+                    'tw-flex-auto tw-min-h-0 tw-outline-none tw-pt-px tw-pb-2 tw-px-2 tw--mx-2',
                     isFocusVisible && FOCUS_STYLE,
                 ])}
                 {...scrollDivProps}
@@ -65,3 +68,4 @@ export const ScrollWrapper: FC<ScrollWrapperProps> = ({ direction = ScrollWrappe
         </div>
     );
 };
+ScrollWrapper.displayName = 'FondueScrollWrapper';

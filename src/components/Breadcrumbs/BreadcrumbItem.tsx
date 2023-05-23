@@ -1,11 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import React, { ReactElement, useRef } from 'react';
 import { useBreadcrumbItem } from '@react-aria/breadcrumbs';
 import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
+
 import { getItemElementType } from '@utilities/elements';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
-import React, { FC, RefObject, useRef } from 'react';
+import { merge } from '@utilities/merge';
+
 import { Breadcrumb } from './Breadcrumbs';
 
 const Separator = () => (
@@ -26,54 +29,35 @@ type BreadcrumbItemProps = Pick<Breadcrumb, 'label' | 'link' | 'onClick'> & {
     showSeparator: boolean;
 };
 
-export const BreadcrumbItem: FC<BreadcrumbItemProps> = ({ label, link, onClick, showSeparator }) => {
-    const ref = useRef<HTMLAnchorElement | HTMLButtonElement | HTMLSpanElement | null>(null);
+export const BreadcrumbItem = ({ label, link, onClick, showSeparator }: BreadcrumbItemProps): ReactElement => {
+    const ref = useRef(null);
 
-    const contentElementType = getItemElementType(link, onClick);
+    const Element = getItemElementType(link, onClick);
 
     const { itemProps } = useBreadcrumbItem(
         {
             isCurrent: false,
             children: label,
-            elementType: contentElementType,
+            elementType: Element,
         },
         ref,
     );
+
     const { isFocusVisible, focusProps } = useFocusRing();
-    const props = mergeProps(itemProps, focusProps);
+
+    const elementTypeProps = { a: { href: link }, button: { onClick, type: 'button' as const }, span: {} };
+    const props = mergeProps(itemProps, focusProps, elementTypeProps[Element]);
 
     return (
         <li
-            className="tw-flex tw-items-center tw-text-black-80 hover:tw-text-black-100 tw-text-xs dark:tw-text-black-10 dark:hover:tw-text-black-30 tw-transition-colors"
+            className="tw-flex tw-items-center tw-text-text-weak hover:tw-text-text tw-text-xs tw-transition-colors"
             data-test-id="breadcrumb-item"
         >
-            {contentElementType === 'a' && (
-                <a
-                    ref={ref as RefObject<HTMLAnchorElement>}
-                    {...props}
-                    href={link}
-                    className={isFocusVisible ? FOCUS_STYLE : ''}
-                >
-                    {label}
-                </a>
-            )}
-            {contentElementType === 'button' && (
-                <button
-                    ref={ref as RefObject<HTMLButtonElement>}
-                    type="button"
-                    {...props}
-                    onClick={onClick}
-                    className={isFocusVisible ? FOCUS_STYLE : ''}
-                >
-                    {label}
-                </button>
-            )}
-            {contentElementType === 'span' && (
-                <span ref={ref as RefObject<HTMLSpanElement>} {...props} className={isFocusVisible ? FOCUS_STYLE : ''}>
-                    {label}
-                </span>
-            )}
+            <Element ref={ref} {...props} className={merge(['tw-outline-none', isFocusVisible && FOCUS_STYLE])}>
+                {label}
+            </Element>
             {showSeparator && <Separator />}
         </li>
     );
 };
+BreadcrumbItem.displayName = 'FondueBreadcrumbItem';

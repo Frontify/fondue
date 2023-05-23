@@ -8,6 +8,7 @@ export type InputNodeTypes = {
     ulList: string;
     olList: string;
     listItem: string;
+    listItemChild: string;
     heading: {
         1: string;
         2: string;
@@ -30,6 +31,7 @@ export type MarkdownAstNodeType =
     | 'heading'
     | 'list'
     | 'listItem'
+    | 'listItemChild'
     | 'link'
     | 'image'
     | 'blockquote'
@@ -51,6 +53,7 @@ export const defaultNodeTypes: InputNodeTypes = {
     ulList: 'ul_list',
     olList: 'ol_list',
     listItem: 'list_item',
+    listItemChild: 'lic',
     heading: {
         1: 'heading_one',
         2: 'heading_two',
@@ -88,8 +91,9 @@ export type BlockType = {
     break?: boolean;
     link?: string;
     url?: string;
-    key?: string;
+    id?: string;
     category?: string;
+    target?: TargetValue;
 };
 
 export type RecursivePartial<T> = {
@@ -126,7 +130,15 @@ export type MarkdownAstNode = {
     checked?: any;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     indent?: any;
+    target?: TargetValue;
 };
+
+export const Targets = {
+    Blank: '_blank',
+    Self: '_self',
+} as const;
+
+export type TargetValue = typeof Targets[keyof typeof Targets];
 
 export type TextNode = { text?: string };
 
@@ -148,6 +160,11 @@ export type ListNode<T extends InputNodeTypes> = {
 
 export type ListItemNode<T extends InputNodeTypes> = {
     type: T['listItem'];
+    children: Array<DeserializedNode<T>>;
+};
+
+export type ListItemChildNode<T extends InputNodeTypes> = {
+    type: T['listItemChild'];
     children: Array<DeserializedNode<T>>;
 };
 
@@ -211,6 +228,7 @@ export type DeserializedNode<T extends InputNodeTypes> =
     | HeadingNode<T>
     | ListNode<T>
     | ListItemNode<T>
+    | ListItemChildNode<T>
     | ParagraphNode<T>
     | LinkNode<T>
     | ImageNode<T>

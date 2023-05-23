@@ -1,28 +1,29 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { TextInput } from '@components/TextInput';
-import IconCalendar from '@foundation/Icon/Generated/IconCalendar';
+import { IconCalendar } from '@foundation/Icon/Generated';
 import { IconCaretDown, IconCaretUp, IconSize } from '@foundation/Icon/index';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
-import React, { PropsWithChildren, forwardRef } from 'react';
+import React, { ReactNode, forwardRef } from 'react';
 
-type DatePickerTriggerProps = PropsWithChildren<{
+type DatePickerTriggerProps = {
     placeHolder?: string;
     value?: string;
     isClearable?: boolean;
     isCalendarOpen?: boolean;
     onClick?: () => void;
     validation?: Validation;
-    onDateChanged?: (date: Date | null) => void;
-}>;
+    onDateChanged?: ((date: [Date | null, Date | null] | null) => void) | ((date: Date | null) => void);
+    children?: ReactNode;
+};
 
 export const DatePickerTrigger = forwardRef<HTMLDivElement, DatePickerTriggerProps>(
     (
         { value, onClick, isClearable, placeHolder, isCalendarOpen, validation = Validation.Default, onDateChanged },
         ref,
     ) => {
-        const isErrorValidationState = validation === Validation.Error;
+        const isWarningOrErrorValidationState = validation === Validation.Error || validation === Validation.Warning;
 
         const twoSlotsAwayFromRightEdge = 'tw-right-14';
         const oneSlotAwayFromRightEdge = 'tw-right-8';
@@ -41,7 +42,7 @@ export const DatePickerTrigger = forwardRef<HTMLDivElement, DatePickerTriggerPro
         };
 
         const carrotOffsetForClearButton = value && isClearable ? 1 : 0;
-        const carrotOffsetForValidationErrorIcon = isErrorValidationState ? 1 : 0;
+        const carrotOffsetForValidationErrorIcon = isWarningOrErrorValidationState ? 1 : 0;
 
         const carrotRightSideTWPositionClass = carrotRightSideTWPositionClassByOffset(
             carrotOffsetForClearButton + carrotOffsetForValidationErrorIcon,
@@ -83,4 +84,4 @@ export const DatePickerTrigger = forwardRef<HTMLDivElement, DatePickerTriggerPro
     },
 );
 
-DatePickerTrigger.displayName = 'DatePickerTrigger';
+DatePickerTrigger.displayName = 'FondueDatePickerTrigger';

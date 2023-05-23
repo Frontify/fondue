@@ -3,7 +3,7 @@
 import { InputLabel, InputLabelProps } from '@components/InputLabel/InputLabel';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
-import React, { FC, PropsWithChildren, ReactElement, ReactNode, cloneElement, isValidElement } from 'react';
+import React, { ReactElement, ReactNode, cloneElement, isValidElement } from 'react';
 
 export enum FormControlStyle {
     Primary = 'Primary',
@@ -24,7 +24,7 @@ const inputValidation: Record<FormControlStyle, Validation> = {
     [FormControlStyle.Danger]: Validation.Error,
 };
 
-const HelperText: FC<HelperTextProps> = ({ text, disabled, style, fullWidth = false }) => {
+const HelperText = ({ text, disabled, style, fullWidth = false }: HelperTextProps): ReactElement => {
     let textColorClass;
 
     switch (true) {
@@ -51,6 +51,7 @@ const HelperText: FC<HelperTextProps> = ({ text, disabled, style, fullWidth = fa
         </span>
     );
 };
+HelperText.displayName = 'FondueHelperText';
 
 export enum HelperPosition {
     Before = 'Before',
@@ -62,7 +63,7 @@ export enum FormControlDirection {
     Vertical = 'Vertical',
 }
 
-export type FormControlProps = PropsWithChildren<{
+export type FormControlProps = {
     direction?: FormControlDirection;
     disabled?: boolean;
     clickable?: boolean;
@@ -71,9 +72,10 @@ export type FormControlProps = PropsWithChildren<{
     helper?: Omit<HelperTextProps, 'disabled' | 'style'> & { position?: HelperPosition };
     style?: FormControlStyle;
     name?: string;
-}>;
+    children?: ReactNode;
+};
 
-export const FormControl: FC<FormControlProps> = ({
+export const FormControl = ({
     label,
     children,
     extra,
@@ -83,7 +85,7 @@ export const FormControl: FC<FormControlProps> = ({
     clickable,
     direction = FormControlDirection.Vertical,
     style = FormControlStyle.Primary,
-}) => {
+}: FormControlProps): ReactElement => {
     const isHelperBefore = helper?.position === HelperPosition.Before;
 
     return (
@@ -147,3 +149,4 @@ export const FormControl: FC<FormControlProps> = ({
         </div>
     );
 };
+FormControl.displayName = 'FondueFormControl';

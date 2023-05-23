@@ -5,11 +5,12 @@ import { action } from '@storybook/addon-actions';
 import { Meta, StoryFn } from '@storybook/react';
 import React from 'react';
 import { ActionMenu as ActionMenuComponent, ActionMenuProps } from './ActionMenu';
-import IconMusicNote from '@foundation/Icon/Generated/IconMusicNote';
+import { IconMusicNote } from '@foundation/Icon/Generated';
 
 export default {
     title: 'Components/Action Menu',
     component: ActionMenuComponent,
+    tags: ['autodocs'],
     argTypes: {
         onClick: { action: 'onClick' },
     },
@@ -39,7 +40,7 @@ ActionMenu.args = {
                 },
                 {
                     id: '2',
-                    title: 'Small item with icon warning',
+                    title: 'Small item with icon danger',
                     size: MenuItemContentSize.Small,
                     decorator: <IconMusicNote />,
                     style: MenuItemStyle.Danger,
@@ -48,6 +49,15 @@ ActionMenu.args = {
                 },
                 {
                     id: '3',
+                    title: 'Small item with icon warning',
+                    size: MenuItemContentSize.Small,
+                    decorator: <IconMusicNote />,
+                    style: MenuItemStyle.Warning,
+                    selectionIndicator: SelectionIndicatorIcon.CaretRight,
+                    onClick: action('click'),
+                },
+                {
+                    id: '4',
                     title: 'Small item with icon disabled',
                     size: MenuItemContentSize.Small,
                     decorator: <IconMusicNote />,
@@ -55,11 +65,20 @@ ActionMenu.args = {
                     onClick: action('click'),
                 },
                 {
-                    id: '4',
-                    title: 'Small item with icon warning disabled',
+                    id: '5',
+                    title: 'Small item with icon danger disabled',
                     size: MenuItemContentSize.Small,
                     decorator: <IconMusicNote />,
                     style: MenuItemStyle.Danger,
+                    disabled: true,
+                    onClick: action('click'),
+                },
+                {
+                    id: '6',
+                    title: 'Small item with icon warning disabled',
+                    size: MenuItemContentSize.Small,
+                    decorator: <IconMusicNote />,
+                    style: MenuItemStyle.Warning,
                     disabled: true,
                     onClick: action('click'),
                 },
@@ -70,23 +89,39 @@ ActionMenu.args = {
             ariaLabel: 'Second section',
             menuItems: [
                 {
-                    id: '9',
+                    id: '7',
                     title: 'Small item',
                     size: MenuItemContentSize.Small,
                     selectionIndicator: SelectionIndicatorIcon.CaretRight,
                     onClick: action('click'),
                 },
                 {
-                    id: '10',
-                    title: 'Small item warning',
+                    id: '8',
+                    title: 'Small item danger',
                     size: MenuItemContentSize.Small,
                     style: MenuItemStyle.Danger,
                     selectionIndicator: SelectionIndicatorIcon.CaretRight,
                     onClick: action('click'),
                 },
                 {
-                    id: '11',
+                    id: '9',
+                    title: 'Small item warning',
+                    size: MenuItemContentSize.Small,
+                    style: MenuItemStyle.Warning,
+                    selectionIndicator: SelectionIndicatorIcon.CaretRight,
+                    onClick: action('click'),
+                },
+                {
+                    id: '10',
                     title: 'Small item disabled',
+                    size: MenuItemContentSize.Small,
+                    disabled: true,
+                    onClick: action('click'),
+                },
+                {
+                    id: '11',
+                    title: 'Small item danger disabled',
+                    style: MenuItemStyle.Danger,
                     size: MenuItemContentSize.Small,
                     disabled: true,
                     onClick: action('click'),
@@ -94,7 +129,7 @@ ActionMenu.args = {
                 {
                     id: '12',
                     title: 'Small item warning disabled',
-                    style: MenuItemStyle.Danger,
+                    style: MenuItemStyle.Warning,
                     size: MenuItemContentSize.Small,
                     disabled: true,
                     onClick: action('click'),
@@ -106,7 +141,7 @@ ActionMenu.args = {
             ariaLabel: 'Third section',
             menuItems: [
                 {
-                    id: '5',
+                    id: '13',
                     title: 'Large item with icon',
                     subtitle: 'Subtitle',
                     decorator: <IconMusicNote />,
@@ -115,8 +150,8 @@ ActionMenu.args = {
                     onClick: action('click'),
                 },
                 {
-                    id: '6',
-                    title: 'Large item with icon warning',
+                    id: '14',
+                    title: 'Large item with icon danger',
                     subtitle: 'Subtitle',
                     decorator: <IconMusicNote />,
                     size: MenuItemContentSize.Large,
@@ -125,7 +160,17 @@ ActionMenu.args = {
                     onClick: action('click'),
                 },
                 {
-                    id: '7',
+                    id: '15',
+                    title: 'Large item with icon warning',
+                    subtitle: 'Subtitle',
+                    decorator: <IconMusicNote />,
+                    size: MenuItemContentSize.Large,
+                    style: MenuItemStyle.Warning,
+                    selectionIndicator: SelectionIndicatorIcon.CaretRight,
+                    onClick: action('click'),
+                },
+                {
+                    id: '16',
                     title: 'Large item with icon disabled',
                     subtitle: 'Subtitle',
                     decorator: <IconMusicNote />,
@@ -134,12 +179,22 @@ ActionMenu.args = {
                     onClick: action('click'),
                 },
                 {
-                    id: '8',
-                    title: 'Large item with icon warning disabled',
+                    id: '17',
+                    title: 'Large item with icon danger disabled',
                     subtitle: 'Subtitle',
                     decorator: <IconMusicNote />,
                     size: MenuItemContentSize.Large,
                     style: MenuItemStyle.Danger,
+                    disabled: true,
+                    onClick: action('click'),
+                },
+                {
+                    id: '18',
+                    title: 'Large item with icon warning disabled',
+                    subtitle: 'Subtitle',
+                    decorator: <IconMusicNote />,
+                    size: MenuItemContentSize.Large,
+                    style: MenuItemStyle.Warning,
                     disabled: true,
                     onClick: action('click'),
                 },
@@ -150,7 +205,7 @@ ActionMenu.args = {
             ariaLabel: 'Fourth section',
             menuItems: [
                 {
-                    id: '13',
+                    id: '19',
                     title: 'Large item',
                     subtitle: 'Subtitle',
                     size: MenuItemContentSize.Large,
@@ -158,8 +213,8 @@ ActionMenu.args = {
                     onClick: action('click'),
                 },
                 {
-                    id: '14',
-                    title: 'Large item warning',
+                    id: '20',
+                    title: 'Large item danger',
                     subtitle: 'Subtitle',
                     size: MenuItemContentSize.Large,
                     style: MenuItemStyle.Danger,
@@ -167,7 +222,16 @@ ActionMenu.args = {
                     onClick: action('click'),
                 },
                 {
-                    id: '15',
+                    id: '21',
+                    title: 'Large item warning',
+                    subtitle: 'Subtitle',
+                    size: MenuItemContentSize.Large,
+                    style: MenuItemStyle.Warning,
+                    selectionIndicator: SelectionIndicatorIcon.CaretRight,
+                    onClick: action('click'),
+                },
+                {
+                    id: '22',
                     title: 'Large item disabled',
                     subtitle: 'Subtitle',
                     size: MenuItemContentSize.Large,
@@ -175,11 +239,20 @@ ActionMenu.args = {
                     onClick: action('click'),
                 },
                 {
-                    id: '16',
-                    title: 'Large item warning disabled',
+                    id: '23',
+                    title: 'Large item danger disabled',
                     subtitle: 'Subtitle',
                     size: MenuItemContentSize.Large,
                     style: MenuItemStyle.Danger,
+                    disabled: true,
+                    onClick: action('click'),
+                },
+                {
+                    id: '24',
+                    title: 'Large item warning disabled',
+                    subtitle: 'Subtitle',
+                    size: MenuItemContentSize.Large,
+                    style: MenuItemStyle.Warning,
                     disabled: true,
                     onClick: action('click'),
                 },

@@ -6,14 +6,21 @@ import { PlateRenderElementProps, TTodoListItemElement, getRootProps, setNodes }
 import { merge } from '@utilities/merge';
 import { MarkupElement } from '../MarkupElement';
 import { ELEMENT_CHECK_ITEM } from './id';
+import { getTextStyleCssProperties, justifyClassNames } from '../helper';
 
 export const CheckboxListElementNode = (props: PlateRenderElementProps) => {
     const { attributes, children, nodeProps, element, editor } = props;
     const rootProps = getRootProps(props);
     const checked = element.checked as boolean;
+    const align = (element.align as string) ?? 'left';
+
     return (
-        <div {...attributes} {...rootProps} className="tw-flex tw-flex-row tw-py-1">
-            <div contentEditable={false} className="tw-flex tw-items-center tw-justify-center tw-select-none tw-mr-1.5">
+        <div
+            {...attributes}
+            {...rootProps}
+            className={merge(['tw-flex tw-flex-row tw-pb-2 tw-gap-1.5 tw-items-center', justifyClassNames[align]])}
+        >
+            <div contentEditable={false} className="tw-select-none">
                 <input
                     data-test-id="checkbox-input"
                     className="tw-w-4 tw-h-4 tw-m-0"
@@ -26,7 +33,12 @@ export const CheckboxListElementNode = (props: PlateRenderElementProps) => {
                     {...nodeProps}
                 />
             </div>
-            <span className={merge(['tw-flex-1 tw-focus:outline-none', checked && 'tw-line-through'])}>{children}</span>
+            <span
+                style={getTextStyleCssProperties(element.children[0].textStyle as string)}
+                className={merge(['focus:tw-outline-none tw-w-auto tw-min-w-[10px]', checked && '!tw-line-through'])}
+            >
+                {children}
+            </span>
         </div>
     );
 };

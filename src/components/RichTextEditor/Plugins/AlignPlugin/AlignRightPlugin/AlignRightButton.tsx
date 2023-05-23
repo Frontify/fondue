@@ -1,18 +1,27 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
+import { IconTextAlignmentRight16 } from '@foundation/Icon/Generated';
+import { AlignToolbarButton, someNode, useEventPlateId, usePlateEditorState } from '@udecode/plate';
 import React from 'react';
-import { AlignToolbarButton } from '@udecode/plate';
-import { IconSize, IconTextAlignmentRight } from '@foundation/Icon';
+import { ButtonWrapper, IconStylingWrapper, buttonStyles, getButtonClassNames } from '../../helper';
 import { PluginButtonProps } from '../../types';
-import { ButtonWrapper, IconStylingWrapper, buttonClassNames, buttonStyles } from '../../helper';
 
-export const AlignRightButton = ({ id }: PluginButtonProps) => (
-    <ButtonWrapper id={id}>
-        <AlignToolbarButton
-            value="right"
-            icon={<IconStylingWrapper icon={<IconTextAlignmentRight size={IconSize.Size16} />} />}
-            classNames={buttonClassNames}
-            styles={buttonStyles}
-        />
-    </ButtonWrapper>
-);
+export const AlignRightButton = ({ id, editorId }: PluginButtonProps) => {
+    const editor = usePlateEditorState(useEventPlateId(editorId));
+    const isActive = !!editor?.selection && someNode(editor, { match: (node) => node.align === 'right' });
+
+    return (
+        <ButtonWrapper id={id}>
+            <AlignToolbarButton
+                active={isActive}
+                tooltip={getTooltip('Align right')}
+                value="right"
+                icon={<IconStylingWrapper icon={<IconTextAlignmentRight16 />} />}
+                classNames={getButtonClassNames()}
+                styles={buttonStyles}
+                actionHandler="onMouseDown"
+            />
+        </ButtonWrapper>
+    );
+};

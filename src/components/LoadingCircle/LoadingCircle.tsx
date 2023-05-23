@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { merge } from '@utilities/merge';
-import React, { FC } from 'react';
+import React, { ReactElement } from 'react';
 
 export enum LoadingCircleStyle {
     Progress = 'Progress',
@@ -34,10 +34,10 @@ export const sizeClasses: Record<LoadingCircleSize, string> = {
     [LoadingCircleSize.Large]: 'tw-w-16 tw-h-16',
 };
 
-export const LoadingCircle: FC<LoadingCircleProps> = ({
+export const LoadingCircle = ({
     style = LoadingCircleStyle.Progress,
     size = LoadingCircleSize.Medium,
-}) => {
+}: LoadingCircleProps): ReactElement => {
     return (
         <div
             data-test-id="loading-circle"
@@ -49,3 +49,4 @@ export const LoadingCircle: FC<LoadingCircleProps> = ({
         ></div>
     );
 };
+LoadingCircle.displayName = 'FondueLoadingCircle';

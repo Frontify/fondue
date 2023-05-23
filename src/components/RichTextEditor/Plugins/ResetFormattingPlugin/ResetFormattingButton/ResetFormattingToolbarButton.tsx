@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
 import { resetFormatting } from '@components/RichTextEditor/utils/resetFormatting';
 import {
     ToolbarButton,
@@ -15,6 +16,7 @@ export const ResetFormattingToolbarButton = withPlateProvider(({ id, ...props }:
 
     return (
         <ToolbarButton
+            tooltip={getTooltip('Clear formatting')}
             onMouseDown={() => {
                 resetFormatting(editor);
             }}

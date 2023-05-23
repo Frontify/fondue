@@ -6,29 +6,30 @@ import { useLink } from '@react-aria/link';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import React, {
+    FocusEvent,
     HTMLAttributes,
-    PropsWithChildren,
-    ReactChild,
     ReactElement,
     ReactNode,
     cloneElement,
     useCallback,
     useEffect,
+    useLayoutEffect,
     useMemo,
     useRef,
     useState,
 } from 'react';
 import { BrightHeader, BrightHeaderStyle, brightHeaderArrowBackgroundColors } from './BrightHeader';
 import { usePopper } from 'react-popper';
-import { createPortal } from 'react-dom';
 import { Placement } from '@popperjs/core';
+import { useMemoizedId } from '@hooks/useMemoizedId';
+import { Portal } from '@components/Portal';
 
 export type TooltipButton = {
     label: string;
     action: () => void;
 };
 
-export type TooltipProps = PropsWithChildren<{
+export type TooltipProps = {
     triggerElement?: ReactElement;
     content: ReactNode;
     tooltipIcon?: ReactElement;
@@ -38,7 +39,7 @@ export type TooltipProps = PropsWithChildren<{
     linkLabel?: string;
     brightHeader?: BrightHeaderStyle;
     buttons?: [TooltipButton, TooltipButton] | [TooltipButton];
-    children?: ReactChild;
+    children?: ReactNode;
     position?: TooltipPosition;
     alignment?: TooltipAlignment;
     flip?: boolean;
@@ -47,8 +48,10 @@ export type TooltipProps = PropsWithChildren<{
     enterDelay?: number;
     open?: boolean;
     disabled?: boolean;
+    /** @deprecated use disabled since the tooltip is always present in the DOM now so hidden has no effect anymore */
     hidden?: boolean;
-}>;
+    enablePortal?: boolean;
+};
 
 /**
  * This is a temporary workaround because for some yet unknown reasons `tailwindcss` in clarify purges the `tw-pb-3.5` and `tw-pt-3.5` class.
@@ -94,31 +97,47 @@ const placementMap: Record<`${TooltipPosition}-${TooltipAlignment}`, Placement> 
 const getArrowClasses = (currentPlacement: string, brightHeader: BrightHeaderStyle | undefined, alignment: string) => {
     switch (true) {
         case currentPlacement.toString().includes(TooltipPosition.Top.toLowerCase()):
-            return 'before:tw-border-t-0 before:tw-border-l-0 tw-bottom-[-6px] before:tw-bg-black-100 before:dark:tw-bg-white';
+            return 'before:tw-border-t-0 before:tw-border-l-0 tw-bottom-[-6px] before:tw-dark before:tw-bg-base';
         case currentPlacement.toString().includes(TooltipPosition.Right.toLowerCase()):
             return merge([
-                'before:tw-border-t-0 before:tw-border-r-0 tw-left-[-6px]',
-                brightHeader && alignment === TooltipAlignment.Start
+                'before:tw-border-t-0 before:tw-border-r-0 tw-left-[-5px]',
+                brightHeader &&
+                alignment === TooltipAlignment.Start &&
+                currentPlacement.toString().includes(TooltipAlignment.Start.toLowerCase())
                     ? brightHeaderArrowBackgroundColors[brightHeader]
-                    : 'before:tw-bg-black-100 before:dark:tw-bg-white',
+                    : 'before:tw-dark before:tw-bg-base',
             ]);
         case currentPlacement.toString().includes(TooltipPosition.Bottom.toLowerCase()):
             return merge([
                 'before:tw-border-b-0 before:tw-border-r-0 tw-top-[-6px]',
-                brightHeader
-                    ? brightHeaderArrowBackgroundColors[brightHeader]
-                    : 'before:tw-bg-black-100 before:dark:tw-bg-white',
+                brightHeader ? brightHeaderArrowBackgroundColors[brightHeader] : 'before:tw-dark before:tw-bg-base',
             ]);
         case currentPlacement.toString().includes(TooltipPosition.Left.toLowerCase()):
             return merge([
-                'before:tw-border-b-0 before:tw-border-l-0 tw-right-[-6px]',
-                brightHeader && alignment === TooltipAlignment.Start
+                'before:tw-border-b-0 before:tw-border-l-0 tw-right-[-5px]',
+                brightHeader &&
+                alignment === TooltipAlignment.Start &&
+                currentPlacement.toString().includes(TooltipAlignment.Start.toLowerCase())
                     ? brightHeaderArrowBackgroundColors[brightHeader]
-                    : 'before:tw-bg-black-100 before:dark:tw-bg-white',
+                    : 'before:tw-dark before:tw-bg-base',
             ]);
         default:
-            return 'before:tw-border-b-0 before:tw-border-r-0 tw-top-[-6px] before:tw-bg-black-100 before:dark:tw-bg-white';
+            return 'before:tw-border-b-0 before:tw-border-r-0 tw-top-[-6px] before:tw-dark before:tw-bg-base';
     }
+};
+
+const TooltipWrapper = ({
+    enablePortal = false,
+    children,
+}: {
+    enablePortal?: boolean;
+    children?: ReactNode | ReactNode[];
+}) => {
+    if (enablePortal) {
+        return (<Portal>{children}</Portal>) as JSX.Element;
+    }
+
+    return children as JSX.Element;
 };
 
 export const Tooltip = ({
@@ -140,23 +159,29 @@ export const Tooltip = ({
     enterDelay = 0,
     open = false,
     disabled = false,
+    enablePortal = false,
     hidden = false,
 }: TooltipProps) => {
-    const triggerRefElement = useRef<HTMLElement | HTMLDivElement | HTMLButtonElement | null>(null);
+    const [triggerElementRef, setTriggerElementRef] = useState<HTMLElement | HTMLDivElement | HTMLButtonElement | null>(
+        null,
+    );
     const linkRef = useRef<HTMLAnchorElement | null>(null);
-    const { linkProps } = useLink({}, linkRef);
+
+    const shouldPreventTooltipOpening = hidden || disabled;
+    const { linkProps } = useLink({ isDisabled: shouldPreventTooltipOpening }, linkRef);
     const hasLargePaddingTop = useMemo(
         () => linkUrl || brightHeader || buttons || heading || headingIcon,
         [linkUrl, brightHeader, buttons, heading, headingIcon],
     );
 
     const placement = placementMap[`${position}-${alignment}`];
-    const tooltipContainerRef = useRef<HTMLDivElement | null>(null);
-    const triggerElementContainerRef = useRef<HTMLDivElement | null>(null);
+    const [tooltipContainerRef, setTooltipContainerRef] = useState<HTMLDivElement | null>(null);
+    const [triggerElementContainerRef, setTriggerElementContainerRef] = useState<HTMLDivElement | null>(null);
     const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
+    const id = useMemoizedId();
 
     const tooltipOffset = withArrow ? 10 : 5;
-    const popperInstance = usePopper(triggerRefElement?.current, tooltipContainerRef.current, {
+    const popperInstance = usePopper(triggerElementRef, tooltipContainerRef, {
         placement,
         strategy: 'fixed',
         modifiers: [
@@ -205,141 +230,189 @@ export const Tooltip = ({
     }, [enterDelay]);
 
     const checkIfHovered = useCallback(
-        (event) => {
-            const hoveredElement = event.path ?? event.composedPath?.();
-            const hoverSources = [triggerRefElement, triggerElementContainerRef, tooltipContainerRef];
+        (event: MouseEvent) => {
+            const hoveredElement = event.composedPath?.();
+            const hoverSources = [triggerElementRef, triggerElementContainerRef, tooltipContainerRef];
 
-            if (hoveredElement && hoverSources.some((el) => hoveredElement.includes(el?.current))) {
+            if (hoveredElement && hoverSources.some((el) => el && hoveredElement.includes(el))) {
                 handleShowTooltipOnHover();
             }
         },
-        [handleShowTooltipOnHover],
+        [handleShowTooltipOnHover, tooltipContainerRef, triggerElementContainerRef, triggerElementRef],
     );
 
-    const hasInteractiveElements = !!(buttons?.length || linkUrl?.length);
-    const triggerProps: HTMLAttributes<HTMLElement> = {
-        onMouseOver: (event) => checkIfHovered(event.nativeEvent),
-        onMouseLeave: handleHideTooltipOnHover,
-        onFocus: () => setIsOpen(true),
-        onBlur: () => (!hasInteractiveElements ? setIsOpen(false) : null),
-    };
+    const handleCloseIfFocusedOutside = useCallback(
+        (event: FocusEvent<HTMLElement>) => {
+            const { relatedTarget } = event;
+            const elements = [tooltipContainerRef, triggerElementContainerRef];
+
+            if (!relatedTarget || !elements.some((element) => element?.contains(relatedTarget))) {
+                setIsOpen(false);
+            }
+        },
+        [tooltipContainerRef, triggerElementContainerRef],
+    );
+
+    const openingEvents: HTMLAttributes<HTMLElement> = shouldPreventTooltipOpening
+        ? {}
+        : {
+              onMouseOver: (event) => checkIfHovered(event.nativeEvent),
+              onMouseLeave: handleHideTooltipOnHover,
+              onFocus: () => setIsOpen(true),
+              onBlur: handleCloseIfFocusedOutside,
+          };
 
     useEffect(() => {
-        setIsOpen(open);
-    }, [open]);
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+        }
+        setIsOpen(shouldPreventTooltipOpening ? false : open);
+    }, [open, shouldPreventTooltipOpening]);
+
+    const listenForEsc = useCallback(
+        (event: KeyboardEvent) => {
+            if (isOpen && event.key === 'Escape') {
+                setIsOpen(false);
+            }
+        },
+        [isOpen],
+    );
+
+    useLayoutEffect(() => {
+        if (typeof popperInstance.update === 'function' && isOpen) {
+            popperInstance.update();
+        }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isOpen]);
+
+    useEffect(() => {
+        if (isOpen) {
+            window.addEventListener('keydown', listenForEsc);
+        } else {
+            window.removeEventListener('keydown', listenForEsc);
+        }
+
+        return () => {
+            window.removeEventListener('keydown', listenForEsc);
+        };
+    }, [listenForEsc, isOpen]);
 
     return (
         <>
-            <div {...triggerProps} ref={triggerElementContainerRef}>
+            <div {...openingEvents} ref={setTriggerElementContainerRef}>
                 {triggerElement &&
                     cloneElement(triggerElement, {
-                        ref: triggerRefElement,
+                        ref: setTriggerElementRef,
+                        'aria-describedby': id,
+                        'aria-disabled': shouldPreventTooltipOpening,
                     })}
             </div>
-            {isOpen &&
-                !disabled &&
-                createPortal(
+            <TooltipWrapper enablePortal={enablePortal}>
+                <div
+                    ref={setTooltipContainerRef}
+                    aria-hidden={shouldPreventTooltipOpening}
+                    className={merge([
+                        'tw-popper-container tw-inline-block tw-max-w-[200px] tw-dark tw-bg-base tw-rounded-md tw-shadow-mid tw-text-text tw-z-[120000]',
+                        !isOpen && 'tw-opacity-0 tw-h-0 tw-w-0 tw-overflow-hidden',
+                    ])}
+                    data-test-id="tooltip"
+                    role="tooltip"
+                    id={id}
+                    style={popperInstance.styles.popper}
+                    {...popperInstance.attributes.popper}
+                    {...openingEvents}
+                >
+                    {brightHeader && <BrightHeader headerStyle={brightHeader} />}
                     <div
-                        ref={tooltipContainerRef}
                         className={merge([
-                            'tw-popper-container tw-inline-block tw-max-w-[200px] tw-bg-black-100 dark:tw-bg-white tw-rounded-md tw-shadow-mid tw-text-white dark:tw-text-black-100 tw-z-[120000]',
-                            hidden && 'tw-hidden',
+                            'tw-px-4 tw-dark tw-bg-base tw-rounded-md tw-relative tw-z-[120000]',
+                            hasLargePaddingTop ? paddingsTop.small : paddingsTop.large,
+                            linkUrl ? paddingsBottom.small : paddingsBottom.large,
                         ])}
-                        data-test-id="tooltip"
-                        role="tooltip"
-                        style={popperInstance.styles.popper}
-                        {...popperInstance.attributes.popper}
-                        onFocus={() => setIsOpen(true)}
-                        onMouseOver={(event) => checkIfHovered(event.nativeEvent)}
-                        onMouseLeave={handleHideTooltipOnHover}
                     >
-                        {brightHeader && <BrightHeader headerStyle={brightHeader} />}
-                        <div
-                            className={merge([
-                                'tw-px-4',
-                                hasLargePaddingTop ? paddingsTop.small : paddingsTop.large,
-                                linkUrl ? paddingsBottom.small : paddingsBottom.large,
-                            ])}
-                        >
-                            {heading && (
-                                <h4 className="tw-flex tw-text-m tw-font-bold tw-mb-1">
-                                    {headingIcon && (
-                                        <span className="tw-mr-1.5">
-                                            {cloneElement(headingIcon, { size: IconSize.Size20 })}
-                                        </span>
-                                    )}
-                                    {heading}
-                                </h4>
-                            )}
-                            <div className="tw-flex">
-                                {tooltipIcon && (
-                                    <span className="tw-shrink-0 tw-mr-1">
-                                        {cloneElement(tooltipIcon, { size: IconSize.Size16 })}
+                        {heading && (
+                            <h4 className="tw-flex tw-text-m tw-font-bold tw-mb-1">
+                                {headingIcon && (
+                                    <span className="tw-mr-1.5">
+                                        {cloneElement(headingIcon, { size: IconSize.Size20 })}
                                     </span>
                                 )}
-                                <p className="tw-text-s tw-min-w-0 tw-break-words">{content}</p>
-                            </div>
-                            {linkUrl && (
-                                <a
-                                    {...linkProps}
-                                    data-test-id="tooltip-link"
-                                    ref={linkRef}
-                                    href={linkUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className={merge([
-                                        'tw-text-xs tw-text-black-40 dark:tw-text-black-80 tw-underline tw-mt-1',
-                                        FOCUS_VISIBLE_STYLE,
-                                    ])}
-                                    onBlur={() => (buttons && buttons.length > 0 ? null : setIsOpen(false))}
-                                >
-                                    {linkLabel ?? 'Click here to learn more.'}
-                                </a>
+                                {heading}
+                            </h4>
+                        )}
+                        <div className="tw-flex">
+                            {tooltipIcon && (
+                                <span className="tw-shrink-0 tw-mr-1 tw-leading-4">
+                                    {cloneElement(tooltipIcon, { size: IconSize.Size16 })}
+                                </span>
                             )}
-                            {buttons && (
-                                <div className="tw-flex tw-flex-row-reverse tw-gap-x-1 tw-mt-4">
-                                    {buttons.length > 0 && (
-                                        <div onBlur={() => (buttons && buttons.length < 2 ? setIsOpen(false) : null)}>
-                                            <Button
-                                                style={ButtonStyle.Default}
-                                                emphasis={ButtonEmphasis.Strong}
-                                                size={ButtonSize.Small}
-                                                onClick={buttons[0].action}
-                                            >
-                                                {buttons[0].label}
-                                            </Button>
-                                        </div>
-                                    )}
-                                    {buttons.length === 2 && (
-                                        <div onBlur={() => setIsOpen(false)}>
-                                            <Button
-                                                style={ButtonStyle.Default}
-                                                emphasis={ButtonEmphasis.Default}
-                                                size={ButtonSize.Small}
-                                                onClick={buttons[1].action}
-                                            >
-                                                {buttons[1].label}
-                                            </Button>
-                                        </div>
-                                    )}
-                                </div>
-                            )}
-                            <div
-                                data-test-id="popover-arrow"
-                                data-popper-arrow={withArrow}
-                                ref={setArrowElement}
-                                style={popperInstance.styles.arrow}
-                                className={merge([
-                                    withArrow &&
-                                        'tw-popper-arrow tw-absolute tw-w-3 tw-h-3 tw-pointer-events-none before:tw-absolute before:tw-w-3 before:tw-h-3 before:tw-rotate-45 before:tw-border before:tw-border-line',
-                                    withArrow && arrowStyling,
-                                ])}
-                            />
+                            <span className="tw-text-s tw-min-w-0 tw-break-words">{content}</span>
                         </div>
-                        {children}
-                    </div>,
-                    document.body,
-                )}
+                        {linkUrl && (
+                            <a
+                                {...linkProps}
+                                data-test-id="tooltip-link"
+                                ref={linkRef}
+                                href={linkUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={merge([
+                                    'tw-text-xs tw-text-black-40 tw-underline tw-mt-1',
+                                    FOCUS_VISIBLE_STYLE,
+                                ])}
+                            >
+                                {linkLabel ?? 'Click here to learn more.'}
+                            </a>
+                        )}
+                        {buttons && (
+                            <div className="tw-flex tw-flex-row-reverse tw-gap-x-1 tw-mt-4">
+                                {buttons.length > 0 && (
+                                    <Button
+                                        style={ButtonStyle.Default}
+                                        emphasis={ButtonEmphasis.Strong}
+                                        size={ButtonSize.Small}
+                                        onClick={buttons[0].action}
+                                        disabled={shouldPreventTooltipOpening}
+                                    >
+                                        {buttons[0].label}
+                                    </Button>
+                                )}
+                                {buttons.length === 2 && (
+                                    <Button
+                                        style={ButtonStyle.Default}
+                                        emphasis={ButtonEmphasis.Default}
+                                        size={ButtonSize.Small}
+                                        onClick={buttons[1].action}
+                                        disabled={shouldPreventTooltipOpening}
+                                    >
+                                        {buttons[1].label}
+                                    </Button>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                    {/**
+                     * This container is needed for the arrow element to not be styled by popperJS
+                     * selectors for its immediate children .tw-popper-container > .tw-popper-arrow
+                     * */}
+                    <div aria-hidden="true">
+                        <div
+                            data-test-id="popover-arrow"
+                            data-popper-arrow={withArrow}
+                            ref={setArrowElement}
+                            style={popperInstance.styles.arrow}
+                            className={merge([
+                                withArrow &&
+                                    'tw-popper-arrow tw-z-[110000] tw-absolute tw-w-3 tw-h-3 tw-pointer-events-none before:tw-absolute before:tw-w-3 before:tw-h-3 before:tw-rotate-45 before:tw-border before:tw-border-line',
+                                withArrow && arrowStyling,
+                            ])}
+                        />
+                    </div>
+                    {children}
+                </div>
+            </TooltipWrapper>
         </>
     );
 };
+Tooltip.displayName = 'FondueTooltip';

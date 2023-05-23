@@ -7,11 +7,12 @@ import { IconSize } from '@foundation/Icon/IconSize';
 import { Meta, StoryFn } from '@storybook/react';
 import React, { useState } from 'react';
 import { MultiInput as MultiInputComponent, MultiInputLayout, MultiInputProps } from './MultiInput';
-import { IconIcon } from '@foundation/Icon';
+import { IconIcon } from '@foundation/Icon/Generated';
 
 export default {
     title: 'Components/Multi Input',
     component: MultiInputComponent,
+    tags: ['autodocs'],
     args: {
         layout: MultiInputLayout.Columns,
         spanLastItem: false,

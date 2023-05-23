@@ -2,6 +2,8 @@
 
 import { MouseEvent } from 'react';
 
+export type ItemElementType = 'a' | 'button' | 'span';
+
 export const getItemElementType = (link?: string, onClick?: (event: MouseEvent<HTMLButtonElement>) => void) => {
     if (link) {
         return 'a';

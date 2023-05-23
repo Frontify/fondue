@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { EditableTextHelper } from '@components/EditableText/lib/helper';
-import { IconPen } from '@foundation/Icon';
+import { IconPen } from '@foundation/Icon/Generated';
 
 describe('Test Children Nesting', () => {
     it('Output correct Text insdie div', () => {

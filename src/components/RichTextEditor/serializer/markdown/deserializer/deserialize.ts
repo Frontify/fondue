@@ -9,6 +9,7 @@ import {
     InputNodeTypes,
     ItalicNode,
     LinkNode,
+    ListItemChildNode,
     ListItemNode,
     ListNode,
     MarkdownAstNode,
@@ -17,6 +18,7 @@ import {
     TextNode,
     ThematicBreakNode,
 } from '../types';
+import { MENTION_DESERIALIZE_REGEX } from '../utils';
 
 export default function deserialize<T extends InputNodeTypes>(node: MarkdownAstNode, options: OptionType) {
     const types = options?.nodeTypes as InputNodeTypes;
@@ -39,11 +41,11 @@ export default function deserialize<T extends InputNodeTypes>(node: MarkdownAstN
     switch (node.type) {
         case 'mention':
             const value = node.children ? node.children[0].value : undefined;
-            const matches = value?.match(/@\[([a-z]+):\s(\d+)]/i) as RegExpMatchArray;
+            const matches = value?.match(MENTION_DESERIALIZE_REGEX) as RegExpMatchArray;
             return {
                 type: types.mention,
                 category: matches[1],
-                key: matches[2],
+                id: matches[2],
                 children: [{ text: '' }],
             };
         case 'heading':
@@ -58,12 +60,15 @@ export default function deserialize<T extends InputNodeTypes>(node: MarkdownAstN
             } as ListNode<T>;
         case 'listItem':
             return { type: types.listItem, children } as ListItemNode<T>;
+        case 'listItemChild':
+            return { type: types.listItemChild, children } as ListItemChildNode<T>;
         case 'paragraph':
             return { type: types.paragraph, children } as ParagraphNode<T>;
         case 'link':
             return {
                 type: types.link,
                 [linkDestinationKey]: node.url,
+                target: node.target,
                 children,
             } as LinkNode<T>;
         case 'image':
@@ -90,7 +95,7 @@ export default function deserialize<T extends InputNodeTypes>(node: MarkdownAstN
                     children: [{ text: node.value?.replace(/<br>/g, '') || '' }],
                 } as ParagraphNode<T>;
             }
-            return { type: 'paragraph', children: [{ text: node.value || '' }] };
+            return { type: types.paragraph, children: [{ text: node.value || '' }] };
 
         case 'emphasis':
             return {

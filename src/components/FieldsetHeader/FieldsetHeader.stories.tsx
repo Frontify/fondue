@@ -8,11 +8,12 @@ import {
     FieldsetHeaderSize,
     FieldsetHeaderType,
 } from './FieldsetHeader';
-import { IconIcon } from '@foundation/Icon';
+import { IconIcon } from '@foundation/Icon/Generated';
 
 export default {
-    title: 'Components/Fieldset Header',
+    title: 'Deprecated/Fieldset Header',
     component: FieldsetHeaderComponent,
+    tags: ['autodocs'],
     argTypes: {
         size: {
             options: [FieldsetHeaderSize.Small, FieldsetHeaderSize.Medium, FieldsetHeaderSize.Large],

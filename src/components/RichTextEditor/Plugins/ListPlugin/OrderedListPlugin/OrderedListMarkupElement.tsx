@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import {
+    ELEMENT_LI,
     ELEMENT_OL,
     PlateEditor,
     PlateRenderLeafProps,
@@ -12,7 +13,11 @@ import {
 import React from 'react';
 import { MarkupElement } from '../../MarkupElement';
 
-const LIST_TYPES = ['tw-list-[decimal]', 'tw-list-[lower-alpha]', 'tw-list-[lower-roman]'];
+const LIST_TYPES = [
+    "[&>li>p]:before:tw-content-[counter(count,decimal)_'._']",
+    "[&>li>p]:before:tw-content-[counter(count,_lower-alpha)_'._']",
+    "[&>li>p]:before:tw-content-[counter(count,lower-roman)_'._']",
+];
 
 const getNestingLevel = (editor: PlateEditor, element: TElement) => {
     const path = findNodePath(editor, element);
@@ -21,11 +26,12 @@ const getNestingLevel = (editor: PlateEditor, element: TElement) => {
     }
 
     const nodeAncestors = getNodeAncestors(editor, path);
-    return Array.from(nodeAncestors).filter((node) => node[0].type === ELEMENT_OL).length;
+    return Array.from(nodeAncestors).filter((node) => node[0].type === ELEMENT_LI).length;
 };
 
 export const getOrderedListClasses = (nestingLevel: number) =>
-    `tw-pl-[10px] tw-mb-[10px] tw-ml-[25px] ${LIST_TYPES[nestingLevel % 3]}`;
+    `tw-list-none tw-pl-[10px] tw-mb-[10px] tw-ml-[15px] [&>li>p]:before:tw-pr-1 ${LIST_TYPES[nestingLevel % 3]}`;
+export const OL_STYLES = { counterReset: 'count' };
 
 export const OrderedListMarkupElementNode = ({
     attributes,
@@ -36,7 +42,7 @@ export const OrderedListMarkupElementNode = ({
     const nestingLevel = getNestingLevel(editor, element);
 
     return (
-        <ol className={getOrderedListClasses(nestingLevel)} {...attributes}>
+        <ol className={getOrderedListClasses(nestingLevel)} {...attributes} style={OL_STYLES}>
             {children}
         </ol>
     );

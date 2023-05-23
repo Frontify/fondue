@@ -2,12 +2,13 @@
 
 import React from 'react';
 import { Text } from '@typography/Text';
-import { IconCheckMark16 } from '@foundation/Icon';
+import { IconCheckMark16 } from '@foundation/Icon/Generated';
 import { Item } from '../MultiSelect';
 
 export const DividerItem = () => {
     return <div className="tw-border-t tw-w-full tw-border-solid tw-my-2 tw-border-line" />;
 };
+DividerItem.displayName = 'FondueDividerItem';
 
 type CategoryItemProps = {
     label: string;
@@ -23,15 +24,17 @@ export const CategoryItem = ({ label }: CategoryItemProps) => {
         </div>
     );
 };
+CategoryItem.displayName = 'FondueCategoryItem';
 
 type DefaultItemProps = {
     label: string;
     value: string;
+    avatar?: React.ReactNode;
     isChecked?: boolean;
     imgSrc?: string;
 };
 
-export const DefaultItem = ({ label, value, imgSrc, isChecked = false }: DefaultItemProps) => {
+export const DefaultItem = ({ label, value, avatar, imgSrc, isChecked = false }: DefaultItemProps) => {
     return (
         <div
             className={`tw-flex tw-items-center tw-justify-between tw-min-w-[18rem] ${
@@ -39,6 +42,7 @@ export const DefaultItem = ({ label, value, imgSrc, isChecked = false }: Default
             }`}
         >
             <div className="tw-flex tw-gap-3 tw-items-center">
+                {avatar}
                 {imgSrc && (
                     <img
                         src={imgSrc}
@@ -56,6 +60,7 @@ export const DefaultItem = ({ label, value, imgSrc, isChecked = false }: Default
         </div>
     );
 };
+DefaultItem.displayName = 'FondueDefaultItem';
 
 type NoSearchResultsProps = {
     label?: string;
@@ -68,6 +73,7 @@ export const NoSearchResults = ({ label = '' }: NoSearchResultsProps) => {
         </div>
     );
 };
+NoSearchResults.displayName = 'FondueNoSearchResults';
 
 type OptionalItemsProps = {
     checkboxes: Item[];
@@ -82,10 +88,11 @@ export const OptionalItems = ({ checkboxes, index }: OptionalItemsProps) => {
     const hasNextValue = checkboxes[index + 1] && !isNextItemDivider;
 
     if (isCategory) {
-        return !hasNextValue ? <></> : <CategoryItem key={value} label={label} />;
+        return !hasNextValue ? null : <CategoryItem key={value} label={label} />;
     }
     if (isDivider) {
-        return isPrevItemCategory || !hasItemAfterCategory ? <></> : <DividerItem key={value + index} />;
+        return isPrevItemCategory || !hasItemAfterCategory ? null : <DividerItem key={value + index} />;
     }
     return null;
 };
+OptionalItems.displayName = 'FondueOptionalItems';

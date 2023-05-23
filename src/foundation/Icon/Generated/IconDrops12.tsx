@@ -11,21 +11,12 @@ function IconDrops12(props: GeneratedIconProps): React.ReactElement<GeneratedIco
             name="IconDrops12"
             {...props}
         >
-            <g fill="none">
-                <g clipPath="url(#prefix__a)">
-                    <path
-                        fill="currentColor"
-                        fillRule="evenodd"
-                        d="M6 7a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm0 1a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM2.5 9.5A.5.5 0 0 1 3 9h6a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5ZM4 11a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1H4Z"
-                        clipRule="evenodd"
-                    />
-                </g>
-                <defs>
-                    <clipPath id="prefix__a">
-                        <path fill="#fff" d="M0 0h12v12H0z" />
-                    </clipPath>
-                </defs>
-            </g>
+            <path
+                fill="currentColor"
+                fillRule="evenodd"
+                d="M6 7a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm0 1a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM2.5 9.5A.5.5 0 0 1 3 9h6a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5ZM4 11a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1H4Z"
+                clipRule="evenodd"
+            />
         </svg>
     );
 }

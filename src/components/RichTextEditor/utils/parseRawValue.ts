@@ -30,7 +30,7 @@ export const parseRawValue = ({ editorId = 'parseRawValue', raw, plugins }: Pars
     try {
         parsedValue = JSON.parse(raw);
     } catch {
-        const trimmed = raw.trim().replace(/>\s+</g, '><');
+        const trimmed = raw.trim().replaceAll(/>\s+</g, '><');
         const htmlDocumentString = wrapTextInHtml(trimmed);
         const parsedHtml = deserializeHtml(editor, {
             element: htmlDocumentString,
