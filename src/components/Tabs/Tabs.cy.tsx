@@ -53,6 +53,8 @@ const data: TabItemProps[] = [
     },
 ];
 
+const TABS_DATA_TEST_ID = '[data-test-id=fondue-tabs]';
+
 const TabComponent = ({ paddingX }: { paddingX?: TabsPaddingX }) => {
     const [activeItemId, setActiveItemId] = useState(data[0].id);
     return (
@@ -76,7 +78,7 @@ const TabComponent = ({ paddingX }: { paddingX?: TabsPaddingX }) => {
 describe('Tabs Component', () => {
     beforeEach('Mount Component', () => {
         cy.mount(<TabComponent />);
-        cy.get('[data-test-id=tabs]').as('Tabs');
+        cy.get(TABS_DATA_TEST_ID).as('Tabs');
     });
 
     it('should render correctly', () => {
@@ -203,22 +205,22 @@ describe('Tabs Component', () => {
 
     it('tabs should render with paddingX of "8"', () => {
         cy.mount(<TabComponent paddingX="8" />);
-        cy.get('[data-test-id=tabs] > div').should('have.class', 'tw-pl-0');
-        cy.get('[data-test-id=tabs] > div').should('have.class', 'tw-pr-0');
+        cy.get(`${TABS_DATA_TEST_ID} > div`).should('have.class', 'tw-pl-0');
+        cy.get(`${TABS_DATA_TEST_ID} > div`).should('have.class', 'tw-pr-0');
     });
     it('tabs should render with paddingX of "16"', () => {
         cy.mount(<TabComponent paddingX="16" />);
-        cy.get('[data-test-id=tabs] > div').should('have.class', 'tw-pl-2');
-        cy.get('[data-test-id=tabs] > div').should('have.class', 'tw-pr-2');
+        cy.get(`${TABS_DATA_TEST_ID} > div`).should('have.class', 'tw-pl-2');
+        cy.get(`${TABS_DATA_TEST_ID} > div`).should('have.class', 'tw-pr-2');
     });
     it('tabs should render with paddingX of "20"', () => {
         cy.mount(<TabComponent paddingX="20" />);
-        cy.get('[data-test-id=tabs] > div').should('have.class', 'tw-pl-3.5');
-        cy.get('[data-test-id=tabs] > div').should('have.class', 'tw-pr-3.5');
+        cy.get(`${TABS_DATA_TEST_ID} > div`).should('have.class', 'tw-pl-3.5');
+        cy.get(`${TABS_DATA_TEST_ID} > div`).should('have.class', 'tw-pr-3.5');
     });
     it('tabs should render with paddingX of "24"', () => {
         cy.mount(<TabComponent paddingX="24" />);
-        cy.get('[data-test-id=tabs] > div').should('have.class', 'tw-pl-4');
-        cy.get('[data-test-id=tabs] > div').should('have.class', 'tw-pr-4');
+        cy.get(`${TABS_DATA_TEST_ID} > div`).should('have.class', 'tw-pl-4');
+        cy.get(`${TABS_DATA_TEST_ID} > div`).should('have.class', 'tw-pr-4');
     });
 });
