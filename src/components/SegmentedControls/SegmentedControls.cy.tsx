@@ -3,7 +3,7 @@
 import { IconTextAlignmentCentre, IconTextAlignmentLeft, IconTextAlignmentRight } from '@foundation/Icon/Generated';
 import { IconSize } from '@foundation/Icon/IconSize';
 import React, { ReactElement, useState } from 'react';
-import { IconItem, SegmentedControls, TextOrNumberItem } from './SegmentedControls';
+import { IconItem, SegmentPadding, SegmentedControls, TextOrNumberItem } from './SegmentedControls';
 
 const SEGMENTED_CONTROLS_ID = '[data-test-id=fondue-segmented-controls]';
 const ICON_ITEM_ID = '[data-test-id=fondue-segmented-controls-item-icon]';
@@ -38,9 +38,10 @@ type Props = {
     items: TextOrNumberItem[] | IconItem[];
     disabled?: boolean;
     hugWidth?: boolean;
+    padding?: SegmentPadding;
 };
 
-const Component = ({ items, disabled = false, hugWidth }: Props): ReactElement => {
+const Component = ({ items, disabled = false, hugWidth, padding }: Props): ReactElement => {
     const [active, setActive] = useState(items[0].id);
     return (
         <SegmentedControls
@@ -49,6 +50,7 @@ const Component = ({ items, disabled = false, hugWidth }: Props): ReactElement =
             onChange={setActive}
             disabled={disabled}
             hugWidth={hugWidth}
+            padding={padding}
         />
     );
 };
@@ -115,5 +117,17 @@ describe('SegmentedControls Component', () => {
                 expect($el1.width()).to.be.greaterThan($el2.width() || 0);
             });
         });
+    });
+
+    it('renders with a default padding', () => {
+        cy.mount(<Component items={TEXT_ITEMS} padding="default" />);
+
+        cy.get(TEXT_ITEM_ID).should('have.class', 'tw-px-4');
+    });
+
+    it('renders with a small padding', () => {
+        cy.mount(<Component items={TEXT_ITEMS} padding="small" />);
+
+        cy.get(TEXT_ITEM_ID).should('have.class', 'tw-px-2');
     });
 });

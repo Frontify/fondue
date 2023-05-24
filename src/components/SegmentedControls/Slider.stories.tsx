@@ -16,6 +16,7 @@ export default {
     },
     args: {
         disabled: false,
+        padding: 'default',
     },
 } as Meta<SegmentedControlsProps>;
 
@@ -28,6 +29,20 @@ const SegmentedControlsTemplate: StoryFn<SegmentedControlsProps> = (args: Segmen
             activeItemId={activeItemId}
             onChange={setActiveItemId}
         />
+    );
+};
+
+const LimitedWidthTemplate: StoryFn<SegmentedControlsProps> = (args: SegmentedControlsProps) => {
+    const [activeItemId, setActiveItemId] = useState(args.items[0].id);
+    return (
+        <div className="tw-w-[200px]">
+            <SegmentedControls
+                {...args}
+                key={String(args.hugWidth)}
+                activeItemId={activeItemId}
+                onChange={setActiveItemId}
+            />
+        </div>
     );
 };
 
@@ -51,6 +66,17 @@ TextWithHugWidth.args = {
         { id: 'f', value: 'Bottom 100000' },
     ],
     hugWidth: true,
+};
+
+export const TextWithSmallPadding = LimitedWidthTemplate.bind({});
+TextWithSmallPadding.args = {
+    items: [
+        { id: 'a', value: 'Auto' },
+        { id: 'b', value: 'S' },
+        { id: 'c', value: 'M' },
+        { id: 'd', value: 'L' },
+    ],
+    padding: 'small',
 };
 
 export const Numbers = SegmentedControlsTemplate.bind({});
