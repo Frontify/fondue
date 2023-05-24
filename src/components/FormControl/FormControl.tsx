@@ -16,6 +16,7 @@ type HelperTextProps = {
     style: FormControlStyle;
     disabled?: boolean;
     fullWidth?: boolean;
+    'data-test-id'?: string;
 };
 
 const inputValidation: Record<FormControlStyle, Validation> = {
@@ -24,7 +25,13 @@ const inputValidation: Record<FormControlStyle, Validation> = {
     [FormControlStyle.Danger]: Validation.Error,
 };
 
-const HelperText = ({ text, disabled, style, fullWidth = false }: HelperTextProps): ReactElement => {
+const HelperText = ({
+    text,
+    disabled,
+    style,
+    fullWidth = false,
+    'data-test-id': dataTestId = 'form-control',
+}: HelperTextProps): ReactElement => {
     let textColorClass;
 
     switch (true) {
@@ -44,7 +51,7 @@ const HelperText = ({ text, disabled, style, fullWidth = false }: HelperTextProp
 
     return (
         <span
-            data-test-id="form-control-helper-text"
+            data-test-id={`${dataTestId}-helper-text`}
             className={`tw-text-s tw-font-sans ${fullWidth ? 'tw-w-full' : ''} ${textColorClass}`}
         >
             {text}
@@ -73,6 +80,7 @@ export type FormControlProps = {
     style?: FormControlStyle;
     name?: string;
     children?: ReactNode;
+    'data-test-id'?: string;
 };
 
 export const FormControl = ({
@@ -85,12 +93,13 @@ export const FormControl = ({
     clickable,
     direction = FormControlDirection.Vertical,
     style = FormControlStyle.Primary,
+    'data-test-id': dataTestId = 'form-control',
 }: FormControlProps): ReactElement => {
     const isHelperBefore = helper?.position === HelperPosition.Before;
 
     return (
         <div
-            data-test-id="form-control"
+            data-test-id={dataTestId}
             data-name={name}
             className={merge([
                 'tw-flex tw-items-center tw-gap-2',
@@ -104,10 +113,12 @@ export const FormControl = ({
                         direction === FormControlDirection.Vertical && 'tw-w-full',
                     ])}
                 >
-                    {label?.children && <InputLabel {...label} disabled={disabled} clickable={clickable} />}
+                    {label?.children && (
+                        <InputLabel {...label} disabled={disabled} clickable={clickable} data-test-id={dataTestId} />
+                    )}
                     {extra && (
                         <span
-                            data-test-id="form-control-extra"
+                            data-test-id={`${dataTestId}-extra`}
                             className="tw-pl-2 tw-text-black-80 tw-font-sans tw-text-s tw-whitespace-nowrap"
                         >
                             {extra}
@@ -121,6 +132,7 @@ export const FormControl = ({
                     fullWidth={direction === FormControlDirection.Vertical}
                     text={helper.text}
                     disabled={disabled}
+                    data-test-id={dataTestId}
                 />
             )}
             {children && (
@@ -144,6 +156,7 @@ export const FormControl = ({
                     text={helper.text}
                     disabled={disabled}
                     style={style}
+                    data-test-id={dataTestId}
                 />
             )}
         </div>
