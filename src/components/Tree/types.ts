@@ -91,6 +91,9 @@ export type TreeState = {
     selectionMode: 'single' | 'multiselect';
     overlay?: Overlay;
     nodes: ReactElement<InternalTreeItemProps>[];
+    rootNodes: ReactElement<InternalTreeItemProps>[];
+    expandedNodes: ReactElement<InternalTreeItemProps>[];
+    nodesReady: boolean;
     projection: Nullable<Projection>;
 };
 
@@ -107,7 +110,10 @@ export type TreeStateAction =
     | { type: 'UNREGISTER_NODE_CHILDREN'; payload: string }
     | { type: 'REPLACE_EXPANDED'; payload: string[] }
     | { type: 'REPLACE_SELECTED'; payload: string[] }
-    | { type: 'REGISTER_ROOT_NODES'; payload: ReactElement<InternalTreeItemProps>[] };
+    | { type: 'REGISTER_ROOT_NODES'; payload: ReactElement<InternalTreeItemProps>[] }
+    | { type: 'REGISTER_NODES'; payload: ReactElement<InternalTreeItemProps>[] }
+    | { type: 'INIT_EXPANDED_NODES'; payload: ReactElement<InternalTreeItemProps>[] }
+    | { type: 'SET_NODES_READY'; payload: boolean };
 
 export type RegisterNodeChildrenPayload = Extract<TreeStateAction, { type: 'REGISTER_NODE_CHILDREN' }>['payload'];
 

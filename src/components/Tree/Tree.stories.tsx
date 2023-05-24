@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Meta } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 
@@ -70,7 +70,6 @@ const renderTreeItemComponent = ({ nodes, label, numChildNodes, onDrop, ...treeI
         contentComponent={<TreeItemContentComponent title={label || 'NO TITLE'} />}
         onDrop={onDrop ?? action('onDrop')}
         showCaret={!!numChildNodes}
-        isExpanded={true}
     >
         {nodes?.map(renderTreeItemComponent)}
     </TreeItem>
@@ -95,15 +94,13 @@ export const TreeWithCustomTreeItem = ({ ...args }: TreeProps) => {
 export const ScrollableTreeWithLabel = ({ ...args }: TreeProps) => {
     const [expandedIds, setExpandedIds] = useState<string[]>([]);
 
-    const handleItemExpand = (id: string) => {
-        console.log('Expand', id);
-        setExpandedIds([...expandedIds, id]);
-    };
+    const handleItemExpand = useCallback((id: string) => {
+        setExpandedIds((ids) => [...ids, id]);
+    }, []);
 
-    const handleItemShrink = (id: string) => {
-        console.log('Shrink', id);
-        setExpandedIds(expandedIds.filter((itemId: string) => itemId !== id));
-    };
+    const handleItemShrink = useCallback((id: string) => {
+        setExpandedIds((ids) => ids.filter((itemId: string) => itemId !== id));
+    }, []);
 
     return (
         <div style={{ position: 'fixed', height: '800px', width: '800px', backgroundColor: 'white' }}>

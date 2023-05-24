@@ -32,7 +32,6 @@ import {
 } from '@dnd-kit/core';
 
 import type {
-    RegisterNodeChildrenPayload,
     SensorContext,
     TreeActive,
     TreeAnnouncements,
@@ -123,14 +122,14 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
             {
                 const { id: parentId, children } = action.payload;
 
-                const parentNodeIndex = findIndexById(draft.nodes, parentId);
+                const parentNodeIndex = findIndexById(draft.expandedNodes, parentId);
 
                 if (parentNodeIndex === -1) {
                     console.error(`Element with ID "${parentId}" not found.`);
                     return;
                 }
 
-                const currentChildrenIds = getNodeChildrenIds(draft.nodes, parentId);
+                const currentChildrenIds = getNodeChildrenIds(draft.expandedNodes, parentId);
 
                 const newChildrenIds = children.map((node) => node.props.id);
 
@@ -138,21 +137,44 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
                     return;
                 }
 
-                draft.nodes = updateNodeWithNewChildren(draft.nodes, parentNodeIndex, children);
+                draft.expandedNodes = updateNodeWithNewChildren(draft.expandedNodes, parentNodeIndex, children);
+                console.log('REGISTER_NODE_CHILDREN', draft.expandedNodes);
             }
             break;
 
         case 'UNREGISTER_NODE_CHILDREN':
             {
-                const nodeIds = getReactNodeIdsInFlatArray(draft.nodes, action.payload);
+                const nodeIds = getReactNodeIdsInFlatArray(draft.expandedNodes, action.payload);
 
-                draft.nodes = removeReactNodesFromFlatArray(draft.nodes, nodeIds);
+                draft.expandedNodes = removeReactNodesFromFlatArray(draft.expandedNodes, nodeIds);
+                console.log('UNREGISTER_NODE_CHILDREN', action.payload);
             }
             break;
 
         case 'REGISTER_ROOT_NODES':
             {
+                draft.rootNodes = action.payload;
+                console.log('REGISTER_ROOT_NODES', action.payload);
+            }
+            break;
+
+        case 'INIT_EXPANDED_NODES':
+            {
+                draft.expandedNodes = action.payload;
+                console.log('INIT_EXPANDED_NODES', action.payload);
+            }
+            break;
+
+        case 'REGISTER_NODES':
+            {
                 draft.nodes = action.payload;
+                console.log('REGISTER_NODES', action.payload);
+            }
+            break;
+
+        case 'SET_NODES_READY':
+            {
+                draft.nodesReady = action.payload;
             }
             break;
 
@@ -175,6 +197,7 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
             draft.selectedIds = action.payload.selectedIds;
             draft.expandedIds = action.payload.expandedIds;
             draft.selectionMode = action.payload.selectionMode;
+            console.log('REPLACE_STATE');
             break;
         default:
             console.warn(`Updated tree with action "${action.type}" but it has not effect.`);
@@ -200,10 +223,13 @@ export const Tree = memo(
                 selectionMode: 'single',
                 selectedIds: new Set(selectedIds ?? []),
                 expandedIds: new Set(expandedIds ?? []),
-                nodes: removeFragmentsAndEnrichChildren(children, { parentId: ROOT_ID, level: 0 }),
+                rootNodes: [],
+                expandedNodes: [],
+                nodes: [],
+                nodesReady: false,
                 projection: null,
             }),
-            [children, expandedIds, selectedIds],
+            [expandedIds, selectedIds],
         );
 
         const [treeState, updateTreeState] = useReducer(reducer, initialState);
@@ -247,14 +273,6 @@ export const Tree = memo(
 
         const registerOverlay = useCallback((overlay: Overlay) => {
             updateTreeState({ type: 'REGISTER_OVERLAY_ITEM', payload: overlay });
-        }, []);
-
-        const registerNodeChildren = useCallback((payload: RegisterNodeChildrenPayload) => {
-            updateTreeState({ type: 'REGISTER_NODE_CHILDREN', payload });
-        }, []);
-
-        const unregisterNodeChildren = useCallback((payload: string) => {
-            updateTreeState({ type: 'UNREGISTER_NODE_CHILDREN', payload });
         }, []);
 
         const handleSelect = useCallback(
@@ -534,10 +552,66 @@ export const Tree = memo(
 
         useDeepCompareEffect(() => {
             updateTreeState({
+                type: 'SET_NODES_READY',
+                payload: false,
+            });
+            updateTreeState({
                 type: 'REGISTER_ROOT_NODES',
                 payload: removeFragmentsAndEnrichChildren(children, { parentId: ROOT_ID, level: 0 }),
             });
         }, [children]);
+
+        useDeepCompareEffect(() => {
+            if (treeState.rootNodes.length === 0) {
+                return;
+            }
+
+            if (treeState.expandedNodes.length === 0) {
+                updateTreeState({
+                    type: 'INIT_EXPANDED_NODES',
+                    payload: treeState.rootNodes,
+                });
+
+                return;
+            }
+
+            for (const node of treeState.expandedNodes) {
+                if (treeState.expandedIds.has(node.props.id)) {
+                    updateTreeState({
+                        type: 'REGISTER_NODE_CHILDREN',
+                        payload: {
+                            id: node.props.id,
+                            children: removeFragmentsAndEnrichChildren(node.props.children, {
+                                parentId: node.props.id,
+                                level: (node.props.level ?? 0) + 1,
+                            }),
+                        },
+                    });
+                } else {
+                    updateTreeState({
+                        type: 'UNREGISTER_NODE_CHILDREN',
+                        payload: node.props.id,
+                    });
+                }
+            }
+
+            updateTreeState({
+                type: 'SET_NODES_READY',
+                payload: true,
+            });
+            console.log('Updated rootNodes or expandedIds', treeState.rootNodes, treeState.expandedIds.values());
+        }, [treeState.rootNodes, treeState.expandedNodes, treeState.expandedIds]);
+
+        useEffect(() => {
+            if (!treeState.nodesReady) {
+                return;
+            }
+
+            updateTreeState({
+                type: 'REGISTER_NODES',
+                payload: treeState.expandedNodes,
+            });
+        }, [treeState.nodesReady, treeState.expandedNodes]);
 
         useEffect(() => {
             updateTreeState({
@@ -577,37 +651,32 @@ export const Tree = memo(
             });
         }, [activeId, offset, overId, treeState.nodes]);
 
-        const nodes = useMemo(
-            () =>
-                treeState.nodes.map((node) => {
-                    return cloneElement(node, {
-                        projection: node.props.id === activeId ? treeState.projection : null,
-                        treeDraggable: draggable,
-                        isSelected: treeState.selectedIds.has(node.props.id),
-                        isExpanded: treeState.expandedIds.has(node.props.id),
-                        registerOverlay,
-                        registerNodeChildren,
-                        unregisterNodeChildren,
-                        onExpand: handleExpand,
-                        onShrink: handleShrink,
-                        onSelect: handleSelect,
-                    });
-                }),
-            [
-                draggable,
-                handleExpand,
-                handleShrink,
-                handleSelect,
-                activeId,
-                registerNodeChildren,
-                registerOverlay,
-                treeState.expandedIds,
-                treeState.nodes,
-                treeState.projection,
-                treeState.selectedIds,
-                unregisterNodeChildren,
-            ],
-        );
+        const nodes = useMemo(() => {
+            const newNodes = treeState.nodes.map((node) => {
+                return cloneElement(node, {
+                    projection: node.props.id === activeId ? treeState.projection : null,
+                    treeDraggable: draggable,
+                    isSelected: treeState.selectedIds.has(node.props.id),
+                    isExpanded: treeState.expandedIds.has(node.props.id),
+                    registerOverlay,
+                    onExpand: handleExpand,
+                    onShrink: handleShrink,
+                    onSelect: handleSelect,
+                });
+            });
+            return newNodes;
+        }, [
+            draggable,
+            handleExpand,
+            handleShrink,
+            handleSelect,
+            activeId,
+            registerOverlay,
+            treeState.expandedIds,
+            treeState.nodes,
+            treeState.projection,
+            treeState.selectedIds,
+        ]);
 
         const contextValue: TreeContextProps = useMemo(
             () => ({

@@ -195,12 +195,6 @@ export const TreeItem = memo(
                 unregisterNodeChildren?.(id);
                 return;
             }
-
-            if (isExpanded) {
-                registerNodeChildren?.({ id, children: enrichedChildren });
-            } else {
-                unregisterNodeChildren?.(id);
-            }
         }, [isActive, isExpanded, isParentActive, enrichedChildren, registerNodeChildren, unregisterNodeChildren, id]);
 
         const liClassName = useMemo(
