@@ -113,9 +113,7 @@ export const FormControl = ({
                         direction === FormControlDirection.Vertical && 'tw-w-full',
                     ])}
                 >
-                    {label?.children && (
-                        <InputLabel {...label} disabled={disabled} clickable={clickable} data-test-id={dataTestId} />
-                    )}
+                    {label?.children && <InputLabel {...label} disabled={disabled} clickable={clickable} />}
                     {extra && (
                         <span
                             data-test-id={`${dataTestId}-extra`}

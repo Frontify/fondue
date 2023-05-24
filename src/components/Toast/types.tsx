@@ -8,6 +8,7 @@ export type ToastProps = {
     icon: ReactNode;
     animationDirection?: ToastAnimationDirection;
     children?: ReactNode;
+    'data-test-id'?: string;
 };
 
 export enum ToastAnimationDirection {
