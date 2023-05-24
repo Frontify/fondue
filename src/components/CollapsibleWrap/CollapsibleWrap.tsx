@@ -9,6 +9,7 @@ export const CollapsibleWrap = ({
     isOpen = false,
     preventInitialAnimation = false,
     animateOpacity = true,
+    'data-test-id': dataTestId = 'collapsible-wrap',
 }: CollapsibleWrapProps): ReactElement => (
     <AnimatePresence initial={preventInitialAnimation ? false : undefined}>
         {isOpen && children && (
@@ -21,7 +22,7 @@ export const CollapsibleWrap = ({
                     collapsed: { height: 0, overflow: 'hidden', opacity: animateOpacity ? 0 : 1 },
                 }}
                 transition={{ type: 'tween' }}
-                data-test-id="collapsible-wrap"
+                data-test-id={dataTestId}
             >
                 {children}
             </motion.div>
