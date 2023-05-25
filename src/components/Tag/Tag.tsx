@@ -75,7 +75,7 @@ export const Tag = ({ type, label, onClick, size = TagSize.Medium }: TagProps) =
             {isClickable && (
                 <span
                     data-test-id="tag-reject-icon"
-                    className="tw-opacity-80 group-hover:tw-opacity-100 tw-transition-opacity tw-ml-1"
+                    className="tw-opacity-80 group-hover:tw-opacity-100 tw-transition-opacity tw-ml-1 tw-leading-[0]"
                 >
                     <IconCross size={IconSize.Size12} />
                 </span>
