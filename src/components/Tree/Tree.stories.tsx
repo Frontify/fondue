@@ -162,7 +162,7 @@ export const TreeWithAwaitedItem = ({ ...args }: TreeProps) => {
 };
 
 const DynamicNavigation = () => {
-    const [expandedIds, setExpandedIds] = useState<string[]>([]);
+    const [expandedIds, setExpandedIds] = useState<string[]>(['1-2-3', '1', '1-1-1', '1-2', '1-1']);
     // const [selectedIds, setSelectedIds] = useState<string[]>([]);
     const [nodes] = useDynamicNavigationMock(expandedIds);
 
@@ -175,10 +175,6 @@ const DynamicNavigation = () => {
         console.log('Shrink', id);
         setExpandedIds(expandedIds.filter((itemId) => itemId !== id));
     };
-
-    useEffect(() => {
-        console.log('Changed nodes', nodes);
-    }, [nodes]);
 
     return (
         <TreeView

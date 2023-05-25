@@ -92,8 +92,6 @@ export type TreeState = {
     overlay?: Overlay;
     nodes: ReactElement<InternalTreeItemProps>[];
     rootNodes: ReactElement<InternalTreeItemProps>[];
-    expandedNodes: ReactElement<InternalTreeItemProps>[];
-    nodesReady: boolean;
     projection: Nullable<Projection>;
 };
 
@@ -106,14 +104,10 @@ export type TreeStateAction =
     | { type: 'SET_HIDDEN'; payload: { ids: string[]; isHidden: boolean } }
     | { type: 'SET_SELECTION_MODE'; payload: { selectionMode: TreeState['selectionMode'] } }
     | { type: 'SET_PROJECTION'; payload: Nullable<Projection> }
-    | { type: 'REGISTER_NODE_CHILDREN'; payload: { id: string; children: ReactElement<InternalTreeItemProps>[] } }
-    | { type: 'UNREGISTER_NODE_CHILDREN'; payload: string }
     | { type: 'REPLACE_EXPANDED'; payload: string[] }
     | { type: 'REPLACE_SELECTED'; payload: string[] }
     | { type: 'REGISTER_ROOT_NODES'; payload: ReactElement<InternalTreeItemProps>[] }
-    | { type: 'REGISTER_NODES'; payload: ReactElement<InternalTreeItemProps>[] }
-    | { type: 'INIT_EXPANDED_NODES'; payload: ReactElement<InternalTreeItemProps>[] }
-    | { type: 'SET_NODES_READY'; payload: boolean };
+    | { type: 'REGISTER_NODES'; payload: ReactElement<InternalTreeItemProps>[] };
 
 export type RegisterNodeChildrenPayload = Extract<TreeStateAction, { type: 'REGISTER_NODE_CHILDREN' }>['payload'];
 
