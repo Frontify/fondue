@@ -94,7 +94,8 @@
         "@types/react-dom": "^18.2.1",
         "@types/react-is": "^18.2.0",
         "@types/tinycolor2": "1.4.3",
-        "@udecode/plate": "19.6.0",
+        "@udecode/plate": "21.1.5",
+        "@udecode/plate-common": "^21.1.5",
         "@udecode/zustood": "^1.1.3",
         "autoprefixer": "10.4.13",
         "chalk": "5.1.2",
@@ -199,7 +200,7 @@
         "xstate": "4.28.1"
     },
     "peerDependencies": {
-        "@udecode/plate": "^19",
+        "@udecode/plate": "^21",
         "framer-motion": "^10",
         "react": "^17 || ^18",
         "react-dom": "^17 || ^18"
