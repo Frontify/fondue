@@ -53,17 +53,14 @@ export type TooltipProps = {
     enablePortal?: boolean;
 };
 
-/**
- * This is a temporary workaround because for some yet unknown reasons `tailwindcss` in clarify purges the `tw-pb-3.5` and `tw-pt-3.5` class.
- */
 const paddingsTop = {
-    small: 'tw-pt-3.5',
-    large: 'tw-pt-4',
+    small: 'tw-pt-2',
+    large: 'tw-pt-3',
 };
 
 const paddingsBottom = {
-    small: 'tw-pb-3.5',
-    large: 'tw-pb-4',
+    small: 'tw-pb-2',
+    large: 'tw-pb-3',
 };
 
 export enum TooltipPosition {
@@ -170,8 +167,8 @@ export const Tooltip = ({
     const shouldPreventTooltipOpening = hidden || disabled;
     const { linkProps } = useLink({ isDisabled: shouldPreventTooltipOpening }, linkRef);
     const hasLargePaddingTop = useMemo(
-        () => linkUrl || brightHeader || buttons || heading || headingIcon,
-        [linkUrl, brightHeader, buttons, heading, headingIcon],
+        () => linkUrl || buttons || heading || headingIcon,
+        [linkUrl, buttons, heading, headingIcon],
     );
 
     const placement = placementMap[`${position}-${alignment}`];
@@ -326,9 +323,9 @@ export const Tooltip = ({
                     {brightHeader && <BrightHeader headerStyle={brightHeader} />}
                     <div
                         className={merge([
-                            'tw-px-4 tw-dark tw-bg-base tw-rounded-md tw-relative tw-z-[120000]',
-                            hasLargePaddingTop ? paddingsTop.small : paddingsTop.large,
-                            linkUrl ? paddingsBottom.small : paddingsBottom.large,
+                            'tw-px-3 tw-dark tw-bg-base tw-rounded-md tw-relative tw-z-[120000]',
+                            hasLargePaddingTop ? paddingsTop.large : paddingsTop.small,
+                            linkUrl ? paddingsBottom.large : paddingsBottom.small,
                         ])}
                     >
                         {heading && (
