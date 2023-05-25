@@ -32,7 +32,7 @@ export const ColumnBreakToolbarButton = ({ id, ...props }: ToolbarButtonProps) =
             tooltip={getTooltip(
                 canBreakAfter ? 'Column Break\nShift+Ctrl+Return' : 'Already at maximum numbers of columns',
             )}
-            onMouseDown={(event) => toggleColumnBreak(editor, columnCount, event)}
+            onMouseDown={() => toggleColumnBreak(editor, columnCount)}
             {...props}
             classNames={buttonClassNames}
         />

@@ -6,11 +6,11 @@ import {
     ELEMENT_PARAGRAPH,
     ToolbarButton,
     getNode,
-    getParentNode,
-    getPreventDefaultHandler,
+    // getParentNode,
+    // getPreventDefaultHandler,
     setElements,
     someNode,
-    toggleNodeType,
+    // toggleNodeType,
     unwrapList,
     useEventPlateId,
     usePlateEditorState,
@@ -29,7 +29,7 @@ export const CheckboxListToolbarButton = withPlateProvider(
             <ToolbarButton
                 tooltip={getTooltip('Checklist')}
                 active={isActive}
-                onMouseDown={(event) => {
+                onMouseDown={() => {
                     if (!editor || !editor.selection) {
                         return;
                     }
@@ -38,15 +38,19 @@ export const CheckboxListToolbarButton = withPlateProvider(
                         unwrapList(editor, {});
                     }
 
-                    getPreventDefaultHandler(toggleNodeType, editor, {
-                        activeType: type,
-                    })(event);
+                    // getPreventDefaultHandler(toggleNodeType, editor, {
+                    //     activeType: type,
+                    // })(event);
                     if (!node?.textStyle) {
-                        const parentNode = getParentNode(editor, editor?.selection?.focus?.path);
-                        const textStyle = parentNode && parentNode[0].type;
-                        setElements(editor, {
-                            textStyle,
-                        });
+                        // const parentNode = getParentNode(editor, editor?.selection?.focus?.path);
+                        // const textStyle = parentNode && parentNode[0].type;
+                        setElements(
+                            editor,
+                            { type },
+                            // {
+                            //     textStyle,
+                            // },
+                        );
                     }
 
                     if (isActive) {
