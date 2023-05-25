@@ -18,7 +18,7 @@ export const useFloatingButtonEnter = () => {
             }
         },
         {
-            enableOnTags: ['INPUT'],
+            enableOnFormTags: ['INPUT'],
         },
         [],
     );

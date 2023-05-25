@@ -22,7 +22,7 @@ export const useFloatingButtonEscape = () => {
             floatingButtonActions.hide();
         },
         {
-            enableOnTags: ['INPUT'],
+            enableOnFormTags: ['INPUT'],
             enableOnContentEditable: true,
         },
         [],
