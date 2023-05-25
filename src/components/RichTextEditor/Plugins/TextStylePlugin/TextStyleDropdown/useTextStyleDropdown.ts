@@ -28,7 +28,6 @@ export const useTextStyleDropdown = <T extends HTMLElement, P extends HTMLElemen
     if (selectedTextStyles.length === 1) {
         key = selectedTextStyles[0];
     } else if (selectedTextStyles.length === 0) {
-        console.log('length 0', editor);
         key = 'p';
     } else {
         key = DEFAULT_TEXT_STYLE_VALUE;
