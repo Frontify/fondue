@@ -29,8 +29,6 @@ export const useTextStyleDropdown = <T extends HTMLElement, P extends HTMLElemen
         key = selectedTextStyles[0];
     } else if (selectedTextStyles.length === 0) {
         key = 'p';
-    } else {
-        key = DEFAULT_TEXT_STYLE_VALUE;
     }
 
     const toggle = useCallback(() => {
