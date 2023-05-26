@@ -30,9 +30,10 @@ export const ButtonMarkupElementNode = (props: ButtonRootProps) => {
     const { theme } = useRichTextEditorContext();
     const { href, target, buttonStyle } = useButton(props);
     const { attributes, children } = props;
+    const button = `button${buttonStyle.charAt(0).toUpperCase()}${buttonStyle.slice(1)}`;
 
     return (
-        <HoverableButtonLink attributes={attributes} href={href} target={target} styles={theme[buttonStyle]}>
+        <HoverableButtonLink attributes={attributes} href={href} target={target} styles={theme[button]}>
             {children}
         </HoverableButtonLink>
     );
