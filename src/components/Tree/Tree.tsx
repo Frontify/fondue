@@ -16,6 +16,7 @@ import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import { enableMapSet, produce } from 'immer';
 import { createPortal } from 'react-dom';
+import isEqual from 'lodash-es/isEqual';
 import {
     DndContext,
     DragEndEvent,
@@ -32,6 +33,7 @@ import {
 } from '@dnd-kit/core';
 
 import type {
+    RegisterNodeChildrenPayload,
     SensorContext,
     TreeActive,
     TreeAnnouncements,
@@ -44,12 +46,23 @@ import type {
 } from '@components/Tree/types';
 
 import { type Overlay, TreeItemOverlay } from './TreeItem';
-import { getMovementAnnouncement, getProjection } from './helpers';
+
 import {
     recursivelyRemoveFragmentsAndEnrichChildren,
     sortableTreeKeyboardCoordinates,
     useDeepCompareEffect,
 } from './utils';
+
+import {
+    findIndexById,
+    getMovementAnnouncement,
+    getNodeChildrenIds,
+    getProjection,
+    getReactNodeIdsInFlatArray,
+    removeReactNodesFromFlatArray,
+    updateNodeWithNewChildren,
+} from './helpers';
+
 import { TreeContext, TreeContextProps } from './TreeContext';
 
 export const ROOT_ID = '__ROOT__';
@@ -118,6 +131,39 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
             {
                 draft.rootNodes = action.payload;
                 console.log('REGISTER_ROOT_NODES', action.payload);
+            }
+            break;
+
+        case 'REGISTER_NODE_CHILDREN':
+            {
+                const { id: parentId, children } = action.payload;
+
+                const parentNodeIndex = findIndexById(draft.rootNodes, parentId);
+
+                if (parentNodeIndex === -1) {
+                    console.error(`Element with ID "${parentId}" not found.`);
+                    return;
+                }
+
+                const currentChildrenIds = getNodeChildrenIds(draft.rootNodes, parentId);
+
+                const newChildrenIds = children.map((node) => node.props.id);
+
+                if (isEqual(currentChildrenIds, newChildrenIds)) {
+                    return;
+                }
+
+                draft.rootNodes = updateNodeWithNewChildren(draft.rootNodes, parentNodeIndex, children);
+            }
+            break;
+
+        case 'UNREGISTER_NODE_CHILDREN':
+            {
+                const nodeIds = getReactNodeIdsInFlatArray(draft.rootNodes, action.payload);
+
+                if (nodeIds.length > 0) {
+                    draft.rootNodes = removeReactNodesFromFlatArray(draft.rootNodes, nodeIds);
+                }
             }
             break;
 
@@ -222,6 +268,16 @@ export const Tree = memo(
 
         const registerOverlay = useCallback((overlay: Overlay) => {
             updateTreeState({ type: 'REGISTER_OVERLAY_ITEM', payload: overlay });
+        }, []);
+
+        const registerNodeChildren = useCallback((payload: RegisterNodeChildrenPayload) => {
+            console.log('REGISTER_NODE_CHILDREN', payload);
+            updateTreeState({ type: 'REGISTER_NODE_CHILDREN', payload });
+        }, []);
+
+        const unregisterNodeChildren = useCallback((payload: string) => {
+            console.log('UNREGISTER_NODE_CHILDREN', payload);
+            updateTreeState({ type: 'UNREGISTER_NODE_CHILDREN', payload });
         }, []);
 
         const handleSelect = useCallback(
@@ -500,6 +556,12 @@ export const Tree = memo(
         }, [currentPosition, treeState]);
 
         useDeepCompareEffect(() => {
+            if (!children) {
+                return;
+            }
+
+            console.log('New children', children);
+
             updateTreeState({
                 type: 'REGISTER_ROOT_NODES',
                 payload: recursivelyRemoveFragmentsAndEnrichChildren(children, { parentId: ROOT_ID, level: 0 }),
@@ -511,7 +573,10 @@ export const Tree = memo(
                 return;
             }
 
-            const createMap = (nodes: ReactElement[], map: Map<string, any>) => {
+            const createMap = (
+                nodes: ReactElement[],
+                map: Map<string, { id: string; parentId: string; level: number; node: ReactElement }>,
+            ) => {
                 if (!nodes) {
                     return map;
                 }
@@ -520,7 +585,6 @@ export const Tree = memo(
                         id: node.props.id,
                         parentId: node.props.parentId,
                         level: node.props.level,
-                        children: node.props.children,
                         node,
                     });
                     createMap(node.props.children, map);
@@ -596,6 +660,8 @@ export const Tree = memo(
                     onExpand: handleExpand,
                     onShrink: handleShrink,
                     onSelect: handleSelect,
+                    registerNodeChildren,
+                    unregisterNodeChildren,
                 });
             });
             return newNodes;
@@ -610,6 +676,8 @@ export const Tree = memo(
             treeState.nodes,
             treeState.projection,
             treeState.selectedIds,
+            registerNodeChildren,
+            unregisterNodeChildren,
         ]);
 
         const contextValue: TreeContextProps = useMemo(

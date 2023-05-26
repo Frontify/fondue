@@ -1,14 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { Meta } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 
 import { IconDocument } from '@foundation/Icon';
 
 import type { TreeProps } from '@components/Tree/types';
-import { TreeItem, Tree as TreeView } from '@components/Tree';
-import { type TreeItemMock, treeItemsMock, useDynamicNavigationMock } from '@components/Tree/utils';
+import { TreeItem, Tree as TreeView, useTreeItem } from '@components/Tree';
+import {
+    type TreeItemMock,
+    treeItemsMock,
+    useDynamicNavigationMock,
+    useNavigationWithLazyLoadedItemsMock,
+} from '@components/Tree/utils';
 
 export default {
     title: 'Components/Tree',
@@ -162,7 +167,7 @@ export const TreeWithAwaitedItem = ({ ...args }: TreeProps) => {
 };
 
 const DynamicNavigation = () => {
-    const [expandedIds, setExpandedIds] = useState<string[]>(['1-2-3', '1', '1-1-1', '1-2', '1-1']);
+    const [expandedIds, setExpandedIds] = useState<string[]>(['1']);
     // const [selectedIds, setSelectedIds] = useState<string[]>([]);
     const [nodes] = useDynamicNavigationMock(expandedIds);
 
@@ -198,4 +203,72 @@ export const WithDynamicNavigation = () => {
             <DynamicNavigation />
         </div>
     );
+};
+
+const LazyLoadingTreeItem = memo(({ label, numChildNodes, ...otherProps }: TreeItemMock) => {
+    const { isExpanded } = useTreeItem(otherProps.id);
+
+    const { nodes } = useNavigationWithLazyLoadedItemsMock(otherProps.id, isExpanded);
+
+    const nodesToRender = useMemo(() => {
+        return nodes.map((n) => n);
+    }, [nodes]);
+
+    return (
+        <TreeItem
+            contentComponent={<TreeItemContentComponent title={label || 'NO TITLE'} />}
+            onDrop={action('onDrop')}
+            {...otherProps}
+            showCaret={!!numChildNodes}
+        >
+            {nodesToRender.map(renderLazyLoadingTreeItem)}
+        </TreeItem>
+    );
+});
+LazyLoadingTreeItem.displayName = 'FondueStoryLazyLoadingTreeItem';
+
+const renderLazyLoadingTreeItem = ({ id, ...treeItem }: TreeItemMock) => {
+    return (
+        <LazyLoadingTreeItem key={`${id}-lazyloaded`} id={`${id}-lazyloaded`} onDrop={action('onDrop')} {...treeItem} />
+    );
+};
+
+const LazyLoadingTreeRoot = memo(() => {
+    const [expandedIds, setExpandedIds] = useState<string[]>([]);
+
+    const { nodes: rootNodesData } = useNavigationWithLazyLoadedItemsMock(undefined, true, true);
+
+    const handleItemExpand = useCallback(
+        (id: string) => {
+            console.log('Expand', id);
+            setExpandedIds([...expandedIds, id]);
+        },
+        [expandedIds],
+    );
+
+    const handleItemShrink = useCallback(
+        (id: string) => {
+            console.log('Shrink', id);
+            setExpandedIds(expandedIds.filter((itemId) => itemId !== id));
+        },
+        [expandedIds],
+    );
+
+    return (
+        <TreeView
+            id="dynamic-navigation"
+            draggable
+            expandedIds={expandedIds}
+            // selectedIds={selectedIds}
+            onExpand={handleItemExpand}
+            onShrink={handleItemShrink}
+        >
+            {rootNodesData.map(renderLazyLoadingTreeItem)}
+        </TreeView>
+    );
+});
+LazyLoadingTreeRoot.displayName = 'FondueStoryLazyLoadingTreeRoot';
+
+export const CustomItemsWithLazyLoadedChildren = () => {
+    return <LazyLoadingTreeRoot />;
 };
