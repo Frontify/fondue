@@ -130,7 +130,6 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
         case 'REGISTER_ROOT_NODES':
             {
                 draft.rootNodes = action.payload;
-                console.log('REGISTER_ROOT_NODES', action.payload);
             }
             break;
 
@@ -170,7 +169,6 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
         case 'REGISTER_NODES':
             {
                 draft.nodes = action.payload;
-                console.log('REGISTER_NODES', action.payload);
             }
             break;
 
@@ -271,12 +269,10 @@ export const Tree = memo(
         }, []);
 
         const registerNodeChildren = useCallback((payload: RegisterNodeChildrenPayload) => {
-            console.log('REGISTER_NODE_CHILDREN', payload);
             updateTreeState({ type: 'REGISTER_NODE_CHILDREN', payload });
         }, []);
 
         const unregisterNodeChildren = useCallback((payload: string) => {
-            console.log('UNREGISTER_NODE_CHILDREN', payload);
             updateTreeState({ type: 'UNREGISTER_NODE_CHILDREN', payload });
         }, []);
 
@@ -559,8 +555,6 @@ export const Tree = memo(
             if (!children) {
                 return;
             }
-
-            console.log('New children', children);
 
             updateTreeState({
                 type: 'REGISTER_ROOT_NODES',

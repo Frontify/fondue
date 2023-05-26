@@ -197,10 +197,8 @@ export const TreeItem = memo(
             }
 
             if (isExpanded) {
-                console.log('Calling Register');
                 registerNodeChildren?.({ id, children: enrichedChildren });
             } else {
-                console.log('Calling Unregister');
                 unregisterNodeChildren?.(id);
             }
         }, [isActive, isExpanded, isParentActive, enrichedChildren, registerNodeChildren, unregisterNodeChildren, id]);

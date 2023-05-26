@@ -128,7 +128,6 @@ export const useDynamicNavigationMock = (expandedIds: string[]) => {
     useEffect(() => {
         setTimeout(() => {
             setNodes(reducer(treeItemsMock, expandedIds));
-            console.log('Changed the nodes object');
         }, 500);
     }, [expandedIds]);
 
@@ -163,7 +162,7 @@ export const useNavigationWithLazyLoadedItemsMock = (id?: string, isExpanded = f
             if (id === '1-2-3-lazyloaded') {
                 return setNodes(reducer(testSubCategoryMock));
             }
-        }, 5000);
+        }, 500);
     }, [id, isExpanded, isRoot]);
 
     return { nodes, setNodes };

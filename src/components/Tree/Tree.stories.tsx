@@ -168,16 +168,13 @@ export const TreeWithAwaitedItem = ({ ...args }: TreeProps) => {
 
 const DynamicNavigation = () => {
     const [expandedIds, setExpandedIds] = useState<string[]>(['1']);
-    // const [selectedIds, setSelectedIds] = useState<string[]>([]);
     const [nodes] = useDynamicNavigationMock(expandedIds);
 
     const handleItemExpand = (id: string) => {
-        console.log('Expand', id);
         setExpandedIds([...expandedIds, id]);
     };
 
     const handleItemShrink = (id: string) => {
-        console.log('Shrink', id);
         setExpandedIds(expandedIds.filter((itemId) => itemId !== id));
     };
 
@@ -186,7 +183,6 @@ const DynamicNavigation = () => {
             id="dynamic-navigation"
             draggable
             expandedIds={expandedIds}
-            // selectedIds={selectedIds}
             onExpand={handleItemExpand}
             onShrink={handleItemShrink}
         >
@@ -240,7 +236,6 @@ const LazyLoadingTreeRoot = memo(() => {
 
     const handleItemExpand = useCallback(
         (id: string) => {
-            console.log('Expand', id);
             setExpandedIds([...expandedIds, id]);
         },
         [expandedIds],
@@ -248,7 +243,6 @@ const LazyLoadingTreeRoot = memo(() => {
 
     const handleItemShrink = useCallback(
         (id: string) => {
-            console.log('Shrink', id);
             setExpandedIds(expandedIds.filter((itemId) => itemId !== id));
         },
         [expandedIds],
@@ -259,7 +253,6 @@ const LazyLoadingTreeRoot = memo(() => {
             id="dynamic-navigation"
             draggable
             expandedIds={expandedIds}
-            // selectedIds={selectedIds}
             onExpand={handleItemExpand}
             onShrink={handleItemShrink}
         >
