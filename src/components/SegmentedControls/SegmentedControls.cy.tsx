@@ -120,7 +120,7 @@ describe('SegmentedControls Component', () => {
     });
 
     it('renders with a default padding', () => {
-        cy.mount(<Component items={TEXT_ITEMS} padding="default" />);
+        cy.mount(<Component items={TEXT_ITEMS} />);
 
         cy.get(TEXT_ITEM_ID).should('have.class', 'tw-px-4');
     });

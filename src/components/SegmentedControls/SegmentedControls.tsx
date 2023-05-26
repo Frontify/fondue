@@ -24,7 +24,7 @@ export type TextOrNumberItem = {
     value: string | number;
 };
 
-export type SegmentPadding = 'small' | 'default';
+export type SegmentPadding = 'small' | 'medium';
 
 export type SegmentedControlsProps = {
     id?: string;
@@ -100,7 +100,7 @@ const SegmentedControlsItem = forwardRef<HTMLDivElement, SegmentedControlsItemPr
                 data-test-id={getSegmentedControlsItemTestId()}
                 className={merge([
                     'tw-relative tw-w-full tw-py-2 tw-inline-flex tw-justify-center tw-items-center tw-font-sans tw-font-normal tw-h-full tw-text-center',
-                    padding === 'default' ? 'tw-px-4' : 'tw-px-2',
+                    padding === 'small' ? 'tw-px-2' : 'tw-px-4',
                     isActive && !disabled ? 'tw-text-text' : 'tw-text-text-weak',
                     !disabled
                         ? 'hover:tw-text-text hover:tw-cursor-pointer'
@@ -138,7 +138,7 @@ export const SegmentedControls = ({
     ariaLabel = 'SegmentedControls',
     disabled = false,
     hugWidth = false,
-    padding = 'default',
+    padding,
 }: SegmentedControlsProps): ReactElement => {
     const id = useMemoizedId(propId);
     const groupProps = { onChange, value: activeItemId, label: ariaLabel, isDisabled: disabled };
