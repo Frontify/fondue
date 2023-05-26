@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement, ReactNode, useRef } from 'react';
+import React, { ReactElement, ReactNode, useEffect, useRef, useState } from 'react';
 import { BadgeProps } from '@components/Badge';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
@@ -18,7 +18,11 @@ export type TabItemProps = {
 
 export const TabItem = ({ active, disabled, children, id }: TabItemProps & { active?: boolean }): ReactElement => {
     const ref = useRef<HTMLDivElement | null>(null);
-    const hasInteractiveElements = checkIfContainInteractiveElements(ref.current);
+    const [hasInteractiveElements, setHasInteractiveElements] = useState(false);
+
+    useEffect(() => {
+        setHasInteractiveElements(checkIfContainInteractiveElements(ref.current));
+    }, [children]);
 
     return (
         <div
