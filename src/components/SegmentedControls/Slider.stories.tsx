@@ -16,7 +16,7 @@ export default {
     },
     args: {
         disabled: false,
-        padding: 'default',
+        padding: 'medium',
     },
 } as Meta<SegmentedControlsProps>;
 
