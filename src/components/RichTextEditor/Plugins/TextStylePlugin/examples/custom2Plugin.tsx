@@ -2,8 +2,8 @@
 
 import { PlateRenderElementProps, createPluginFactory } from '@udecode/plate';
 import React from 'react';
-import { MarkupElement, Plugin, PluginProps, getColumnBreakClasses } from '../../../';
-import { alignmentClassnames, getTextStyleCssProperties } from '../../helper';
+import { MarkupElement, Plugin, PluginProps, getColumnBreakClasses, useRichTextEditorContext } from '../../../';
+import { alignmentClassnames } from '../../helper';
 import { merge } from '@utilities/merge';
 import { TextStyles } from '../types';
 
@@ -31,12 +31,12 @@ class Custom2MarkupElement extends MarkupElement {
 
 const Custom2MarkupElementNode = ({ element, attributes, children }: PlateRenderElementProps) => {
     const align = element.align as string;
-
+    const { theme } = useRichTextEditorContext();
     return (
         <p
             {...attributes}
             className={merge([align && alignmentClassnames[align], getColumnBreakClasses(element)])}
-            style={getTextStyleCssProperties(element.type)}
+            style={theme.custom2}
         >
             {children}
         </p>

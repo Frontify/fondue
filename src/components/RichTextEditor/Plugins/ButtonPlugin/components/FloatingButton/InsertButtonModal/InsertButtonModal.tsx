@@ -5,12 +5,12 @@ import React, { CSSProperties, ReactElement, ReactNode, useState } from 'react';
 import { FormControl } from '@components/FormControl';
 import { useInsertModal } from './useInsertModal';
 import { InsertModal } from '@components/RichTextEditor/Plugins/LinkPlugin/FloatingLink/InsertLinkModal';
-import { getButtonStyleCssProperties } from '../../../helpers';
+import { useRichTextEditorContext } from '@components/RichTextEditor/context';
 
 export const InsertButtonModal = () => {
     const modalProps = useInsertModal();
     const { state, onButtonStyleChange } = modalProps;
-
+    const { theme } = useRichTextEditorContext();
     return (
         <InsertModal {...modalProps} testId="floating-button-insert">
             <div className="tw-pt-5">
@@ -23,7 +23,7 @@ export const InsertButtonModal = () => {
                 >
                     <HoverableButton
                         id="primary"
-                        styles={getButtonStyleCssProperties('primary')}
+                        styles={theme.buttonPrimary}
                         isActive={state.buttonStyle === 'primary'}
                         onClick={() => onButtonStyleChange('primary')}
                     >
@@ -32,7 +32,7 @@ export const InsertButtonModal = () => {
 
                     <HoverableButton
                         id="secondary"
-                        styles={getButtonStyleCssProperties('secondary')}
+                        styles={theme.buttonSecondary}
                         isActive={state.buttonStyle === 'secondary'}
                         onClick={() => onButtonStyleChange('secondary')}
                     >
@@ -41,7 +41,7 @@ export const InsertButtonModal = () => {
 
                     <HoverableButton
                         id="tertiary"
-                        styles={getButtonStyleCssProperties('tertiary')}
+                        styles={theme.buttonTertiary}
                         isActive={state.buttonStyle === 'tertiary'}
                         onClick={() => onButtonStyleChange('tertiary')}
                     >

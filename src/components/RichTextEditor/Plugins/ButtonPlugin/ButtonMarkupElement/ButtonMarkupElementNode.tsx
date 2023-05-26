@@ -4,7 +4,6 @@ import { useRichTextEditorContext } from '@components/RichTextEditor/context/Ric
 import { HTMLPropsAs, PlateRenderElementProps, Value, useElementProps } from '@udecode/plate';
 import React, { ReactElement, ReactNode, useState } from 'react';
 import { RichTextButtonStyle, TButtonElement } from '../types';
-import { getButtonStyleCssProperties } from '../helpers';
 
 export type ButtonRootProps = PlateRenderElementProps<Value, TButtonElement> & HTMLPropsAs<'a'>;
 
@@ -28,17 +27,12 @@ const useButton = (props: ButtonRootProps): HTMLPropsAs<'a'> & { buttonStyle: Ri
 };
 
 export const ButtonMarkupElementNode = (props: ButtonRootProps) => {
-    const context = useRichTextEditorContext();
+    const { theme } = useRichTextEditorContext();
     const { href, target, buttonStyle } = useButton(props);
     const { attributes, children } = props;
 
     return (
-        <HoverableButtonLink
-            attributes={attributes}
-            href={href}
-            target={target}
-            styles={context ? getButtonStyleCssProperties(buttonStyle) : undefined}
-        >
+        <HoverableButtonLink attributes={attributes} href={href} target={target} styles={theme[buttonStyle]}>
             {children}
         </HoverableButtonLink>
     );

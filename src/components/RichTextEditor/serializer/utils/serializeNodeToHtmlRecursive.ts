@@ -30,6 +30,7 @@ import { mentionHtmlNode } from '../nodes/mentionHtmlNode';
 import { reactCssPropsToCss } from './reactCssPropsToCss';
 import { serializeLeafToHtml } from './serializeLeafToHtml';
 import { defaultNode } from '../nodes/default';
+import { CSSProperties } from 'react';
 
 const countNodesOfType = (nodes: TDescendant[], type: string): number => {
     return nodes.reduce((acc, node) => {
@@ -54,6 +55,7 @@ type SerializeNodeToHtmlRecursiveOptions = {
 
 export const serializeNodeToHtmlRecursive = (
     node: TDescendant,
+    theme: Record<string, CSSProperties & { hover?: CSSProperties }>,
     { mappedMentionable, nestingCount = {} }: SerializeNodeToHtmlRecursiveOptions,
 ): string => {
     if (isText(node)) {
@@ -63,7 +65,7 @@ export const serializeNodeToHtmlRecursive = (
     const rootNestingCount = nestingCount[node.type] || countNodesOfType([node], node.type);
     let children = '';
     for (const element of node.children) {
-        children += serializeNodeToHtmlRecursive(element, {
+        children += serializeNodeToHtmlRecursive(element, theme, {
             nestingCount: {
                 ...nestingCount,
                 [element.type as string]: rootNestingCount,
@@ -80,11 +82,13 @@ export const serializeNodeToHtmlRecursive = (
             rootNestingCount,
             node,
             mappedMentionable,
+            theme,
         });
     } else {
         return defaultNode(
             node,
             children,
+            theme[node.type],
             getClassNames(node.breakAfterColumn as string | undefined, node.align as string | undefined),
         );
     }
@@ -96,6 +100,7 @@ type Arguments = {
     rootNestingCount: number;
     node: TElement;
     mappedMentionable?: MappedMentionableItems;
+    theme: Record<string, CSSProperties & { hover?: CSSProperties }>;
 };
 
 const MapNodeTypesToHtml: { [key: string]: ({ ...args }: Arguments) => string } = {
@@ -106,13 +111,15 @@ const MapNodeTypesToHtml: { [key: string]: ({ ...args }: Arguments) => string } 
             OL_STYLES,
         )}">${children}</ol>`;
     },
-    [ELEMENT_LI]: ({ classNames, children, node }) =>
-        `<li class="${classNames} ${LI_CLASSNAMES}" style="${reactCssPropsToCss(getLiStyles(node))}">${children}</li>`,
+    [ELEMENT_LI]: ({ classNames, children, node, theme }) =>
+        `<li class="${classNames} ${LI_CLASSNAMES}" style="${reactCssPropsToCss(
+            getLiStyles(node, theme),
+        )}">${children}</li>`,
     [ELEMENT_LIC]: ({ classNames, children, node }) =>
         `<p class="${classNames} ${getLicElementClassNames(node)}"><span>${children}</span></p>`,
-    [ELEMENT_LINK]: ({ node, children, classNames }) => linkNode(node, children, classNames),
-    [ELEMENT_BUTTON]: ({ node, children, classNames }) => buttonNode(node, children, classNames),
-    [ELEMENT_CHECK_ITEM]: ({ node, children, classNames }) => checkItemNode(node, children, classNames),
+    [ELEMENT_LINK]: ({ node, children, classNames, theme }) => linkNode(node, children, classNames, theme),
+    [ELEMENT_BUTTON]: ({ node, children, classNames, theme }) => buttonNode(node, children, classNames, theme),
+    [ELEMENT_CHECK_ITEM]: ({ node, children, classNames, theme }) => checkItemNode(node, children, classNames, theme),
     [ELEMENT_MENTION]: ({ node, mappedMentionable }) => mentionHtmlNode(node, { mentionable: mappedMentionable }),
 };
 

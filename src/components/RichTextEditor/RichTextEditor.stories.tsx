@@ -55,8 +55,6 @@ import { ImageCaptionPlugin } from './Plugins/TextStylePlugin/examples/imageCapt
 import { ImageTitlePlugin } from './Plugins/TextStylePlugin/examples/imageTitlePlugin';
 import { Heading1Plugin } from './Plugins/TextStylePlugin/examples/heading1Plugin';
 import { Custom1Plugin } from './Plugins/TextStylePlugin/examples/custom1Plugin';
-
-import './__tests__/fixtures/theme.css';
 import { SubscriptPlugin } from '@components/RichTextEditor/Plugins/SubscriptPlugin';
 import { SuperscriptPlugin } from '@components/RichTextEditor/Plugins/SuperscriptPlugin';
 import { Heading2Plugin } from './Plugins/TextStylePlugin/examples/heading2Plugin';
@@ -471,7 +469,7 @@ export const GetSerializedContent = ({
 }: {
     props: SerializeNodesToHtmlOptions;
 }): JSX.Element | null => {
-    const serialized = serializeNodesToHtml(nodesToSerialize, props);
+    const serialized = serializeNodesToHtml(nodesToSerialize, { heading1: { color: 'red' } }, props);
 
     return serialized ? (
         <>

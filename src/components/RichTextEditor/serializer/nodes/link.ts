@@ -4,18 +4,21 @@ import { TLinkElement } from '@components/RichTextEditor/Plugins/LinkPlugin/type
 import { TElement } from '@udecode/plate';
 import escapeHtml from 'escape-html';
 import { reactCssPropsToCss } from '../utils/reactCssPropsToCss';
-import { getTextStyleCssProperties } from '@components/RichTextEditor/Plugins';
+import { CSSProperties } from 'react';
 
-export const linkNode = (node: TElement, children: string, defaultClassNames: string) => {
+export const linkNode = (
+    node: TElement,
+    children: string,
+    defaultClassNames: string,
+    theme: Record<string, CSSProperties & { hover?: CSSProperties }>,
+) => {
     if (node.chosenLink) {
         const { chosenLink } = node as TLinkElement;
-        return `<a class="${defaultClassNames}" style="${reactCssPropsToCss(
-            getTextStyleCssProperties('link'),
-        )}" target=${chosenLink?.openInNewTab ? '_blank' : '_self'} href="${escapeHtml(
-            chosenLink?.searchResult?.link,
-        )}">${children}</a>`;
+        return `<a class="${defaultClassNames}" style="${reactCssPropsToCss(theme.link)}" target=${
+            chosenLink?.openInNewTab ? '_blank' : '_self'
+        } href="${escapeHtml(chosenLink?.searchResult?.link)}">${children}</a>`;
     }
-    return `<a class="${defaultClassNames}" style="${reactCssPropsToCss(getTextStyleCssProperties('link'))}" target="${
+    return `<a class="${defaultClassNames}" style="${reactCssPropsToCss(theme.link)}" target="${
         node?.target ?? '_blank'
     }" href="${escapeHtml(node.url as string)}">${children}</a>`;
 };

@@ -5,8 +5,8 @@ import { DropdownItem } from './DropdownItem';
 import { DropdownTrigger } from './DropdownTrigger';
 import { TextStyleDropdownProps } from './types';
 import { useTextStyleDropdown } from './useTextStyleDropdown';
-import { getTextStyleCssProperties } from '../../helper';
 import { DEFAULT_TEXT_STYLE_VALUE } from '../types';
+import { useRichTextEditorContext } from '@components/RichTextEditor/context';
 
 export const TextStyleDropdown = ({ editorId, textStyles = [] }: TextStyleDropdownProps) => {
     const {
@@ -16,6 +16,7 @@ export const TextStyleDropdown = ({ editorId, textStyles = [] }: TextStyleDropdo
         dropdownRef,
         key,
     } = useTextStyleDropdown(editorId);
+    const { theme } = useRichTextEditorContext();
 
     if (textStyles.length === 0) {
         return null;
@@ -38,7 +39,7 @@ export const TextStyleDropdown = ({ editorId, textStyles = [] }: TextStyleDropdo
                 >
                     {textStyles.map((style) => (
                         <DropdownItem editor={editor} type={style} key={style.id}>
-                            <span style={getTextStyleCssProperties(style.id)}>{style.props?.label}</span>
+                            <span style={theme[style.id]}>{style.props?.label}</span>
                         </DropdownItem>
                     ))}
                 </div>

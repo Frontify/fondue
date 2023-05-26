@@ -446,7 +446,7 @@ describe('RichTextEditor Component', () => {
             cy.get('[contenteditable=true] > p').should(
                 'have.attr',
                 'style',
-                'color: var(--f-theme-settings-custom2-color); font-family: var(--f-theme-settings-custom2-font-family); font-size: var(--f-theme-settings-custom2-font-size); font-style: var(--f-theme-settings-custom2-font-style); font-weight: var(--f-theme-settings-custom2-font-weight); letter-spacing: var(--f-theme-settings-custom2-letter-spacing); line-height: var(--f-theme-settings-custom2-line-height); text-decoration: var(--f-theme-settings-custom2-text-decoration); text-transform: var(--f-theme-settings-custom2-text-transform); margin-top: var(--f-theme-settings-custom2-margin-top); margin-bottom: var(--f-theme-settings-custom2-margin-bottom);',
+                'font-size: 14px; font-weight: 600; font-style: normal;',
             );
         });
 
@@ -504,8 +504,7 @@ describe('RichTextEditor Component', () => {
         });
         it('renders a checkbox with custom textStyle', () => {
             cy.mount(<RichTextWithCustomTextStyles />);
-            const heading2Styles =
-                'color: var(--f-theme-settings-heading2-color); font-family: var(--f-theme-settings-heading2-font-family); font-size: var(--f-theme-settings-heading2-font-size); font-style: var(--f-theme-settings-heading2-font-style); font-weight: var(--f-theme-settings-heading2-font-weight); letter-spacing: var(--f-theme-settings-heading2-letter-spacing); line-height: var(--f-theme-settings-heading2-line-height); text-decoration: var(--f-theme-settings-heading2-text-decoration); text-transform: var(--f-theme-settings-heading2-text-transform); margin-top: var(--f-theme-settings-heading2-margin-top); margin-bottom: var(--f-theme-settings-heading2-margin-bottom);';
+            const heading2Styles = 'font-size: 32px; font-weight: 700; font-style: normal;';
 
             insertTextAndOpenToolbar();
             cy.get(TOOLBAR_GROUP_2).children().eq(5).click();
@@ -520,8 +519,7 @@ describe('RichTextEditor Component', () => {
 
         it('switches a custom checkbox to list and keeps textStyle', () => {
             cy.mount(<RichTextWithCustomTextStyles />);
-            const heading1Styles =
-                'color: var(--f-theme-settings-heading1-color); font-family: var(--f-theme-settings-heading1-font-family); font-size: var(--f-theme-settings-heading1-font-size); font-style: var(--f-theme-settings-heading1-font-style); font-weight: var(--f-theme-settings-heading1-font-weight); letter-spacing: var(--f-theme-settings-heading1-letter-spacing); line-height: var(--f-theme-settings-heading1-line-height); text-decoration: var(--f-theme-settings-heading1-text-decoration); text-transform: var(--f-theme-settings-heading1-text-transform); margin-top: var(--f-theme-settings-heading1-margin-top); margin-bottom: var(--f-theme-settings-heading1-margin-bottom);';
+            const heading1Styles = 'font-size: 48px; font-weight: 700; font-style: normal;';
 
             insertTextAndOpenToolbar();
             cy.get(TOOLBAR_GROUP_2).children().eq(5).click();

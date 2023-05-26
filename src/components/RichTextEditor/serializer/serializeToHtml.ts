@@ -6,33 +6,37 @@ import { mapMentionable } from '../Plugins/MentionPlugin/helpers';
 import { parseRawValue } from '../utils/parseRawValue';
 import { serializeNodeToHtmlRecursive } from './utils/serializeNodeToHtmlRecursive';
 import type { MentionableItems } from '../Plugins/MentionPlugin';
+import { defaultTheme } from '../utils';
 
 export const serializeRawToHtml = (
     raw: string,
     columns: SerializeNodesToHtmlOptions['columns'] = 1,
     columnGap: SerializeNodesToHtmlOptions['columnGap'] = 'normal',
+    theme: Record<string, CSSProperties & { hover?: CSSProperties }>,
 ): string => {
     const nodes = parseRawValue({ raw });
-    return serializeNodesToHtml(nodes, { columns, columnGap });
+    return serializeNodesToHtml(nodes, { columns, columnGap, theme });
 };
 export const serializeRawToHtmlAsync = async (
     raw: string,
     columns: SerializeNodesToHtmlOptions['columns'] = 1,
     columnGap: SerializeNodesToHtmlOptions['columnGap'] = 'normal',
+    theme: Record<string, CSSProperties & { hover?: CSSProperties }>,
 ): Promise<string> => {
     const nodes = parseRawValue({ raw });
-    return Promise.resolve(serializeNodesToHtml(nodes, { columns, columnGap }));
+    return Promise.resolve(serializeNodesToHtml(nodes, { columns, columnGap, theme }));
 };
 
 export type SerializeNodesToHtmlOptions = {
     mentionable?: MentionableItems;
     columns?: number;
     columnGap?: CSSProperties['columnGap'];
+    theme?: Record<string, CSSProperties & { hover?: CSSProperties }>;
 };
 
 export const serializeNodesToHtml = (
     nodes: TDescendant[],
-    { mentionable, columns = 1, columnGap = 'normal' }: SerializeNodesToHtmlOptions = {},
+    { mentionable, columns = 1, columnGap = 'normal', theme = defaultTheme }: SerializeNodesToHtmlOptions = {},
 ): string => {
     const mappedMentionable = mentionable ? mapMentionable(mentionable) : new Map();
 
@@ -42,7 +46,7 @@ export const serializeNodesToHtml = (
         if (isEmptyNode(node)) {
             html += '<br />';
         } else {
-            html += serializeNodeToHtmlRecursive(node, {
+            html += serializeNodeToHtmlRecursive(node, theme, {
                 mappedMentionable,
             });
         }
