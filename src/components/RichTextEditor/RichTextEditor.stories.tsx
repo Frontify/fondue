@@ -64,6 +64,7 @@ import { Custom2Plugin } from './Plugins/TextStylePlugin/examples/custom2Plugin'
 import { Custom3Plugin } from './Plugins/TextStylePlugin/examples/custom3Plugin';
 import { TextStyles } from './Plugins/TextStylePlugin/types';
 import { QuotePlugin } from './Plugins/TextStylePlugin/examples/quotePlugin';
+import { defaultTheme } from './utils';
 
 export default {
     title: 'Components/Rich Text Editor',
@@ -465,11 +466,11 @@ SimpleMultiColumns.args = {
 };
 
 export const GetSerializedContent = ({
-    props = { mentionable, columns: 1, columnGap: 'normal' },
+    props = { mentionable, columns: 1, columnGap: 'normal', theme: defaultTheme },
 }: {
     props: SerializeNodesToHtmlOptions;
 }): JSX.Element | null => {
-    const serialized = serializeNodesToHtml(nodesToSerialize, { heading1: { color: 'red' } }, props);
+    const serialized = serializeNodesToHtml(nodesToSerialize, props);
 
     return serialized ? (
         <>
