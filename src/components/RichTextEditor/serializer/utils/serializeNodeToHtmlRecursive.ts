@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import {
-    ELEMENT_BUTTON,
     ELEMENT_CHECK_ITEM,
     MappedMentionableItems,
     OL_STYLES,
@@ -118,7 +117,7 @@ const MapNodeTypesToHtml: { [key: string]: ({ ...args }: Arguments) => string } 
     [ELEMENT_LIC]: ({ classNames, children, node }) =>
         `<p class="${classNames} ${getLicElementClassNames(node)}"><span>${children}</span></p>`,
     [ELEMENT_LINK]: ({ node, children, classNames, theme }) => linkNode(node, children, classNames, theme),
-    [ELEMENT_BUTTON]: ({ node, children, classNames, theme }) => buttonNode(node, children, classNames, theme),
+    ['button']: ({ node, children, classNames, theme }) => buttonNode(node, children, classNames, theme),
     [ELEMENT_CHECK_ITEM]: ({ node, children, classNames, theme }) => checkItemNode(node, children, classNames, theme),
     [ELEMENT_MENTION]: ({ node, mappedMentionable }) => mentionHtmlNode(node, { mentionable: mappedMentionable }),
 };

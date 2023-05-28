@@ -1,3 +1,3 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export * from './FloatingButton/index';
+export const ELEMENT_BUTTON = 'button';

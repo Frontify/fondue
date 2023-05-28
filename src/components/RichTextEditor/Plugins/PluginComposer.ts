@@ -46,7 +46,6 @@ export class PluginComposer {
 
     private addTextStylesOfSubPlugins(textStyles: Plugin<PluginProps>[]) {
         for (const textStylePlugins of textStyles) {
-            console.log(textStylePlugins);
             if (textStylePlugins.styles) {
                 this.addStyles(textStylePlugins.styles, textStylePlugins.id);
             }
@@ -91,8 +90,6 @@ export class PluginComposer {
 
     private addStyles(styles: CSSProperties, id: string) {
         this.styles[id] = styles;
-
-        console.log(this.styles);
     }
 
     get elements() {

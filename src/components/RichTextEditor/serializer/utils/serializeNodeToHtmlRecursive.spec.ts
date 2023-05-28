@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { mentionable, orderedListValue, unorderedListValue } from '@components/RichTextEditor/helpers/exampleValues';
-import { ELEMENT_BUTTON, ELEMENT_CHECK_ITEM, mapMentionable } from '@components/RichTextEditor/Plugins';
+import { ELEMENT_CHECK_ITEM, mapMentionable } from '@components/RichTextEditor/Plugins';
 import {
     ELEMENT_LI,
     ELEMENT_LIC,
@@ -268,7 +268,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
             type: ELEMENT_PARAGRAPH,
             children: [
                 {
-                    type: ELEMENT_BUTTON,
+                    type: 'button',
                     url: 'https://frontify.com',
                     buttonStyle: 'primary',
                     children: [{ text: 'button' }],
@@ -288,7 +288,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
             type: ELEMENT_PARAGRAPH,
             children: [
                 {
-                    type: ELEMENT_BUTTON,
+                    type: 'button',
                     target: '_blank',
                     url: 'https://frontify.com',
                     buttonStyle: 'primary',

@@ -2,7 +2,6 @@
 
 import { AlignCenterPlugin, AlignJustifyPlugin, AlignLeftPlugin, AlignRightPlugin } from './AlignPlugin';
 import { BoldPlugin } from './BoldPlugin';
-import { ButtonPlugin } from './ButtonPlugin';
 import { CheckboxListPlugin } from './CheckboxListPlugin';
 import { CodePlugin } from './CodePlugin';
 import { EmojiPlugin } from './EmojiPlugin';
@@ -28,7 +27,6 @@ defaultPlugins
             new UnderlinePlugin(),
             new StrikethroughPlugin(),
             new LinkPlugin(),
-            new ButtonPlugin(),
             new CodePlugin(),
         ],
         [

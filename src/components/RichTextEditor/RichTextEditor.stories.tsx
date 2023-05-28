@@ -5,7 +5,6 @@ import React, { ComponentProps } from 'react';
 import { Position } from './EditorPositioningWrapper';
 import {
     IPSUM,
-    buttonValues,
     checkboxValue,
     customControlValues,
     defaultValue,
@@ -25,7 +24,6 @@ import {
     AlignRightPlugin,
     BoldPlugin,
     BreakAfterPlugin,
-    ButtonPlugin,
     CheckboxListPlugin,
     CodePlugin,
     EmojiPlugin,
@@ -138,7 +136,6 @@ allPlugins
             new UnderlinePlugin(),
             new StrikethroughPlugin(),
             new LinkPlugin(),
-            new ButtonPlugin(),
             new CodePlugin(),
             new BreakAfterPlugin(),
             new SubscriptPlugin(),
@@ -270,11 +267,6 @@ WithReadonlyState.args = {
 export const WithHtmlAsValue = RichTextEditorTemplate.bind({});
 WithHtmlAsValue.args = {
     value: htmlValue,
-};
-
-export const WithCustomButtonStyles = RichTextEditorTemplate.bind({});
-WithCustomButtonStyles.args = {
-    value: JSON.stringify(buttonValues),
 };
 
 const listPlugins = new PluginComposer();
@@ -496,7 +488,6 @@ defaultPluginsWithColumns
         new UnderlinePlugin(),
         new StrikethroughPlugin(),
         new LinkPlugin(),
-        new ButtonPlugin(),
         new CodePlugin(),
         new UnorderedListPlugin(),
         new OrderedListPlugin(),
@@ -519,7 +510,6 @@ export const MultiColumns: StoryFn<MultiColumnProps> = (args: MultiColumnProps) 
             new UnderlinePlugin(),
             new StrikethroughPlugin(),
             new LinkPlugin(),
-            new ButtonPlugin(),
             new CodePlugin(),
             new UnorderedListPlugin(),
             new OrderedListPlugin(),
