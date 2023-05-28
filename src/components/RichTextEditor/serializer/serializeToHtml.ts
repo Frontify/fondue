@@ -6,6 +6,7 @@ import { mapMentionable } from '../Plugins/MentionPlugin/helpers';
 import { parseRawValue } from '../utils/parseRawValue';
 import { serializeNodeToHtmlRecursive } from './utils/serializeNodeToHtmlRecursive';
 import type { MentionableItems } from '../Plugins/MentionPlugin';
+import { defaultStyles } from '../utils';
 
 export const serializeRawToHtml = (
     raw: string,
@@ -35,7 +36,7 @@ export type SerializeNodesToHtmlOptions = {
 
 export const serializeNodesToHtml = (
     nodes: TDescendant[],
-    { mentionable, columns = 1, columnGap = 'normal', styles = {} }: SerializeNodesToHtmlOptions = {},
+    { mentionable, columns = 1, columnGap = 'normal', styles = defaultStyles }: SerializeNodesToHtmlOptions = {},
 ): string => {
     const mappedMentionable = mentionable ? mapMentionable(mentionable) : new Map();
 
