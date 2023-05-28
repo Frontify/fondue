@@ -10,7 +10,7 @@ import { useRichTextEditorContext } from '@components/RichTextEditor/context';
 export const InsertButtonModal = () => {
     const modalProps = useInsertModal();
     const { state, onButtonStyleChange } = modalProps;
-    const { theme } = useRichTextEditorContext();
+    const { styles } = useRichTextEditorContext();
     return (
         <InsertModal {...modalProps} testId="floating-button-insert">
             <div className="tw-pt-5">
@@ -23,7 +23,7 @@ export const InsertButtonModal = () => {
                 >
                     <HoverableButton
                         id="primary"
-                        styles={theme.buttonPrimary}
+                        styles={styles.buttonPrimary}
                         isActive={state.buttonStyle === 'primary'}
                         onClick={() => onButtonStyleChange('primary')}
                     >
@@ -32,7 +32,7 @@ export const InsertButtonModal = () => {
 
                     <HoverableButton
                         id="secondary"
-                        styles={theme.buttonSecondary}
+                        styles={styles.buttonSecondary}
                         isActive={state.buttonStyle === 'secondary'}
                         onClick={() => onButtonStyleChange('secondary')}
                     >
@@ -41,7 +41,7 @@ export const InsertButtonModal = () => {
 
                     <HoverableButton
                         id="tertiary"
-                        styles={theme.buttonTertiary}
+                        styles={styles.buttonTertiary}
                         isActive={state.buttonStyle === 'tertiary'}
                         onClick={() => onButtonStyleChange('tertiary')}
                     >

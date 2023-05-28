@@ -7,6 +7,7 @@ import { CustomFloatingLink } from './FloatingLink/CustomFloatingLink';
 import { LINK_PLUGIN } from './id';
 import { LinkButton } from './LinkButton';
 import { LinkMarkupElement } from './LinkMarkupElement';
+import { CSSProperties } from 'react';
 
 export const createLinkPlugin = createPluginFactory({
     ...createPlateLinkPlugin(),
@@ -23,15 +24,25 @@ export const createLinkPlugin = createPluginFactory({
 });
 
 export class LinkPlugin extends Plugin {
-    constructor(props?: PluginProps) {
+    public styles: CSSProperties = {};
+    constructor({ styles = defaultLinkStyles, ...props }: PluginProps = {}) {
         super(LINK_PLUGIN, {
             button: LinkButton,
             markupElement: new LinkMarkupElement(),
             ...props,
         });
+        this.styles = styles;
     }
 
     plugins() {
         return [createLinkPlugin()];
     }
 }
+
+const defaultLinkStyles = {
+    fontSize: '14px',
+    fontStyle: 'normal',
+    color: 'rgb(113, 89, 215)',
+    textDecoration: 'underline',
+    cursor: 'pointer',
+};

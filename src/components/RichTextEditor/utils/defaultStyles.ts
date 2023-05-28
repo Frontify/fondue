@@ -2,7 +2,7 @@
 
 import { CSSProperties } from 'react';
 
-export const defaultTheme: Record<string, CSSProperties & { hover?: CSSProperties }> = {
+export const defaultStyles: Record<string, CSSProperties & { hover?: CSSProperties }> = {
     heading1: {
         fontSize: '48px',
         fontWeight: 700,

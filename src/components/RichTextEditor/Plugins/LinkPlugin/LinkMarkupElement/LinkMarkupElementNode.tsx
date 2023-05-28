@@ -27,9 +27,10 @@ const useLink = (props: LinkRootProps): HTMLPropsAs<'a'> => {
 export const LinkMarkupElementNode = (props: LinkRootProps) => {
     const htmlProps = useLink(props);
     const { attributes, children } = props;
-    const { theme } = useRichTextEditorContext();
+    const { styles } = useRichTextEditorContext();
+
     return (
-        <a {...attributes} href={htmlProps.href} target={htmlProps.target} style={theme.link}>
+        <a {...attributes} href={htmlProps.href} target={htmlProps.target} style={styles['link-plugin']}>
             {children}
         </a>
     );

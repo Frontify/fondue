@@ -185,7 +185,7 @@ const TextStylePlugins = [
     new Custom3Plugin(),
 ];
 
-const RichTextWithCustomTextStyles = (): ReactElement => {
+const RichTextWithCustomTextStylesDefaultValues = (): ReactElement => {
     const plugins = new PluginComposer();
     plugins
         .setPlugin(new SoftBreakPlugin())
@@ -427,7 +427,7 @@ describe('RichTextEditor Component', () => {
         });
 
         it('renders a heading', () => {
-            cy.mount(<RichTextWithCustomTextStyles />);
+            cy.mount(<RichTextWithCustomTextStylesDefaultValues />);
 
             insertTextAndOpenToolbar();
             cy.get(TOOLBAR_FLOATING).should('be.visible');
@@ -437,7 +437,7 @@ describe('RichTextEditor Component', () => {
         });
 
         it('renders a custom text style', () => {
-            cy.mount(<RichTextWithCustomTextStyles />);
+            cy.mount(<RichTextWithCustomTextStylesDefaultValues />);
 
             insertTextAndOpenToolbar();
             cy.get(TOOLBAR_FLOATING).should('be.visible');
@@ -503,7 +503,7 @@ describe('RichTextEditor Component', () => {
             cy.get('ol li').should('not.exist');
         });
         it('renders a checkbox with custom textStyle', () => {
-            cy.mount(<RichTextWithCustomTextStyles />);
+            cy.mount(<RichTextWithCustomTextStylesDefaultValues />);
             const heading2Styles = 'font-size: 32px; font-weight: 700; font-style: normal;';
 
             insertTextAndOpenToolbar();
@@ -518,7 +518,7 @@ describe('RichTextEditor Component', () => {
         });
 
         it('switches a custom checkbox to list and keeps textStyle', () => {
-            cy.mount(<RichTextWithCustomTextStyles />);
+            cy.mount(<RichTextWithCustomTextStylesDefaultValues />);
             const heading1Styles = 'font-size: 48px; font-weight: 700; font-style: normal;';
 
             insertTextAndOpenToolbar();
@@ -973,7 +973,7 @@ describe('RichTextEditor Component', () => {
         });
 
         it('should reset a heading', () => {
-            cy.mount(<RichTextWithCustomTextStyles />);
+            cy.mount(<RichTextWithCustomTextStylesDefaultValues />);
 
             insertTextAndOpenToolbar();
             cy.get(TOOLBAR_FLOATING).should('be.visible');

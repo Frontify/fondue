@@ -9,9 +9,9 @@ export const LI_CLASSNAMES =
     '[&>p]:before:tw-flex [&>p]:before:tw-justify-end [&>p]:before:tw-w-[1.2em] !tw-no-underline';
 
 export const ListItemMarkupElementNode = ({ attributes, children, element }: PlateRenderElementProps) => {
-    const { theme } = useRichTextEditorContext();
+    const { styles } = useRichTextEditorContext();
     return (
-        <li style={getLiStyles(element, theme)} {...attributes} className={LI_CLASSNAMES}>
+        <li style={getLiStyles(element, styles)} {...attributes} className={LI_CLASSNAMES}>
             {children}
         </li>
     );
@@ -25,10 +25,10 @@ export class ListItemMarkupElement extends MarkupElement {
 
 export const getLiStyles = (
     element: TElement,
-    theme: Record<string, CSSProperties & { hover?: CSSProperties }>,
+    styles: Record<string, CSSProperties & { hover?: CSSProperties }>,
 ): CSSProperties => {
     return {
-        ...theme[getDeepestTextStyle(element)],
+        ...styles[getDeepestTextStyle(element)],
         counterIncrement: 'count',
     };
 };

@@ -9,6 +9,7 @@ type GeneratePluginsReturn = {
     create: () => PlatePlugin<AnyObject>[];
     toolbar: (toolbarWidth: number | undefined) => ReactNode;
     inline: () => ReactNode;
+    styles: () => Record<string, React.CSSProperties>;
 };
 
 export const createPlatePlugins = (pluginComposer: PluginComposer) =>
@@ -30,5 +31,6 @@ export const GeneratePlugins = (editorId: string, pluginComposer: PluginComposer
                 ))}
             </>
         ),
+        styles: () => pluginComposer.getStyles,
     };
 };

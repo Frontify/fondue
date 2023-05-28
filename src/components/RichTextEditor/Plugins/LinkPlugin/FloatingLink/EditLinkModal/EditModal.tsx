@@ -8,11 +8,11 @@ import { useRichTextEditorContext } from '@components/RichTextEditor/context';
 
 export const EditModal = () => {
     const urlHtmlProps = useFloatingLinkUrlInput({});
-    const { theme } = useRichTextEditorContext();
+    const { styles } = useRichTextEditorContext();
     return (
         <div data-test-id="floating-link-edit" className="tw-bg-white tw-rounded tw-shadow tw-p-4 tw-min-w-[400px]">
             <span data-test-id={'preview-link-flyout'} className="tw-flex tw-justify-between">
-                <span style={theme.link} className="tw-pointer-events-none">
+                <span style={styles.link} className="tw-pointer-events-none">
                     {urlHtmlProps.defaultValue}
                 </span>
                 <span className="tw-flex tw-gap-2">

@@ -16,7 +16,7 @@ export const TextStyleDropdown = ({ editorId, textStyles = [] }: TextStyleDropdo
         dropdownRef,
         key,
     } = useTextStyleDropdown(editorId);
-    const { theme } = useRichTextEditorContext();
+    const { styles } = useRichTextEditorContext();
 
     if (textStyles.length === 0) {
         return null;
@@ -39,7 +39,7 @@ export const TextStyleDropdown = ({ editorId, textStyles = [] }: TextStyleDropdo
                 >
                     {textStyles.map((style) => (
                         <DropdownItem editor={editor} type={style} key={style.id}>
-                            <span style={theme[style.id]}>{style.props?.label}</span>
+                            <span style={styles[style.id] ?? {}}>{style.props?.label}</span>
                         </DropdownItem>
                     ))}
                 </div>

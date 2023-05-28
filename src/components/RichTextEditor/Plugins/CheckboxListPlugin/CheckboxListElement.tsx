@@ -1,20 +1,23 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import { ReactEditor } from 'slate-react';
-import { PlateRenderElementProps, TTodoListItemElement, getRootProps, setNodes } from '@udecode/plate';
+import { PlateRenderElementProps, TElement, TTodoListItemElement, getRootProps, setNodes } from '@udecode/plate';
 import { merge } from '@utilities/merge';
 import { MarkupElement } from '../MarkupElement';
 import { ELEMENT_CHECK_ITEM } from './id';
 import { justifyClassNames } from '../helper';
 import { useRichTextEditorContext } from '@components/RichTextEditor/context';
 
+const getCheckboxListStyles = (styles: Record<string, CSSProperties>, element: TElement): CSSProperties =>
+    styles[element.children[0].textStyle as string];
+
 export const CheckboxListElementNode = (props: PlateRenderElementProps) => {
     const { attributes, children, nodeProps, element, editor } = props;
     const rootProps = getRootProps(props);
     const checked = element.checked as boolean;
     const align = (element.align as string) ?? 'left';
-    const { theme } = useRichTextEditorContext();
+    const { styles } = useRichTextEditorContext();
 
     return (
         <div
@@ -36,7 +39,7 @@ export const CheckboxListElementNode = (props: PlateRenderElementProps) => {
                 />
             </div>
             <span
-                style={theme[element.children[0].textStyle as string]}
+                style={getCheckboxListStyles(styles, element)}
                 className={merge(['focus:tw-outline-none tw-w-auto tw-min-w-[10px]', checked && '!tw-line-through'])}
             >
                 {children}

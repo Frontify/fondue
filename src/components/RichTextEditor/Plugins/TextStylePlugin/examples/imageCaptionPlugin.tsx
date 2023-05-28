@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { PlateRenderElementProps, createPluginFactory } from '@udecode/plate';
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import { MarkupElement, Plugin, PluginProps, getColumnBreakClasses, useRichTextEditorContext } from '../../../';
 import { alignmentClassnames } from '../../helper';
 import { merge } from '@utilities/merge';
@@ -10,12 +10,14 @@ import { TextStyles } from '../types';
 const ID = 'textstyle-imageCaption-plugin';
 
 export class ImageCaptionPlugin extends Plugin {
-    constructor(props?: PluginProps) {
+    public styles: CSSProperties = {};
+    constructor({ styles = defaultImageCaptionStyles, ...pluginProps }: PluginProps = {}) {
         super(TextStyles.imageCaption, {
-            label: 'Image Caption',
             markupElement: new ImageCaptionMarkupElement(),
-            ...props,
+            label: 'Image Caption',
+            ...pluginProps,
         });
+        this.styles = styles;
     }
 
     plugins() {
@@ -30,12 +32,12 @@ class ImageCaptionMarkupElement extends MarkupElement {
 }
 const ImageCaptionMarkupElementNode = ({ element, attributes, children }: PlateRenderElementProps) => {
     const align = element.align as string;
-    const { theme } = useRichTextEditorContext();
+    const { styles } = useRichTextEditorContext();
     return (
         <p
             {...attributes}
             className={merge([align && alignmentClassnames[align], getColumnBreakClasses(element)])}
-            style={theme.imageCaption}
+            style={styles.imageCaption}
         >
             {children}
         </p>
@@ -50,3 +52,10 @@ const createImageCaptionPlugin = createPluginFactory({
         rules: [{ validClassName: 'imageCaption' }],
     },
 });
+
+const defaultImageCaptionStyles = {
+    color: 'rgb(153, 153, 153)',
+    fontFamily: 'Droid Sans',
+    fontSize: '13.5px',
+    lineHeight: '1.5',
+};

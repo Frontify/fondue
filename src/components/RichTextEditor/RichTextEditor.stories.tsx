@@ -64,7 +64,7 @@ import { Custom2Plugin } from './Plugins/TextStylePlugin/examples/custom2Plugin'
 import { Custom3Plugin } from './Plugins/TextStylePlugin/examples/custom3Plugin';
 import { TextStyles } from './Plugins/TextStylePlugin/types';
 import { QuotePlugin } from './Plugins/TextStylePlugin/examples/quotePlugin';
-import { defaultTheme } from './utils';
+import { defaultStyles } from './utils';
 
 export default {
     title: 'Components/Rich Text Editor',
@@ -337,6 +337,106 @@ WithCustomToolbarWidth.args = {
     toolbarWidth: 50,
 };
 
+const customStylesPlugin = new PluginComposer();
+customStylesPlugin
+    .setPlugin(
+        new TextStylePlugin({
+            textStyles: [
+                new Heading1Plugin({
+                    styles: {
+                        color: 'blue',
+                        fontSize: '45px',
+                        marginBottom: '20px',
+                    },
+                }),
+                new Heading2Plugin({
+                    styles: {
+                        color: 'green',
+                        fontSize: '40px',
+                        textDecoration: 'underline',
+                        fontFamily: 'monospace',
+                        marginBottom: '15px',
+                    },
+                }),
+                new Heading3Plugin({
+                    styles: {
+                        color: 'red',
+                        fontSize: '35px',
+                        marginBottom: '10px',
+                    },
+                }),
+                new Heading4Plugin({
+                    styles: {
+                        color: 'purple',
+                        fontSize: '30px',
+                        marginBottom: '5px',
+                    },
+                }),
+                new Custom1Plugin({
+                    styles: {
+                        color: 'orange',
+                        fontSize: '25px',
+                        textTransform: 'uppercase',
+                        textDecoration: 'strike-through',
+                    },
+                }),
+                new Custom2Plugin({
+                    styles: {
+                        color: 'yellow',
+                        fontSize: '20px',
+                        fontStyle: 'italic',
+                    },
+                }),
+                new Custom3Plugin({
+                    styles: {
+                        color: 'pink',
+                        fontSize: '15px',
+                        fontWeight: 'bold',
+                        fontFamily: 'fantasy',
+                    },
+                }),
+                new ParagraphPlugin({
+                    styles: {
+                        color: 'red',
+                        fontSize: '20px',
+                    },
+                }),
+                new QuotePlugin({
+                    styles: {
+                        color: 'grey',
+                        fontSize: '28px',
+                        fontStyle: 'italic',
+                        borderLeft: '5px solid black',
+                        paddingLeft: '10px',
+                        marginBottom: '10px',
+                        marginTop: '10px',
+                    },
+                }),
+            ],
+        }),
+    )
+    .setPlugin([
+        new BoldPlugin(),
+        new LinkPlugin({
+            styles: {
+                color: 'blue',
+                fontSize: '12px',
+                textDecoration: 'underline',
+            },
+        }),
+        new UnorderedListPlugin(),
+        new OrderedListPlugin(),
+        new CheckboxListPlugin(),
+        new SubscriptPlugin(),
+        new SuperscriptPlugin(),
+    ]);
+
+export const WithCustomStyles = RichTextEditorTemplate.bind({});
+WithCustomStyles.args = {
+    plugins: customStylesPlugin,
+    position: Position.FLOATING,
+};
+
 const mentionAndEmojisPlugins = new PluginComposer();
 mentionAndEmojisPlugins
     .setPlugin([new ParagraphPlugin()])
@@ -466,7 +566,7 @@ SimpleMultiColumns.args = {
 };
 
 export const GetSerializedContent = ({
-    props = { mentionable, columns: 1, columnGap: 'normal', theme: defaultTheme },
+    props = { mentionable, columns: 1, columnGap: 'normal', styles: defaultStyles },
 }: {
     props: SerializeNodesToHtmlOptions;
 }): JSX.Element | null => {

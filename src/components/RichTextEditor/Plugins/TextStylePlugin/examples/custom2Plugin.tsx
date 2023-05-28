@@ -1,8 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { PlateRenderElementProps, createPluginFactory } from '@udecode/plate';
-import React from 'react';
-import { MarkupElement, Plugin, PluginProps, getColumnBreakClasses, useRichTextEditorContext } from '../../../';
+import React, { CSSProperties } from 'react';
+import {
+    MarkupElement,
+    Plugin,
+    PluginProps,
+    defaultStyles,
+    getColumnBreakClasses,
+    useRichTextEditorContext,
+} from '../../../';
 import { alignmentClassnames } from '../../helper';
 import { merge } from '@utilities/merge';
 import { TextStyles } from '../types';
@@ -10,12 +17,14 @@ import { TextStyles } from '../types';
 const ID = 'textstyle-custom2-plugin';
 
 export class Custom2Plugin extends Plugin {
-    constructor(props?: PluginProps) {
+    public styles: CSSProperties = {};
+    constructor({ styles = defaultStyles.custom2, ...pluginProps }: PluginProps = {}) {
         super(TextStyles.custom2, {
-            label: 'Custom 2',
             markupElement: new Custom2MarkupElement(),
-            ...props,
+            label: 'Custom 2',
+            ...pluginProps,
         });
+        this.styles = styles;
     }
 
     plugins() {
@@ -31,12 +40,12 @@ class Custom2MarkupElement extends MarkupElement {
 
 const Custom2MarkupElementNode = ({ element, attributes, children }: PlateRenderElementProps) => {
     const align = element.align as string;
-    const { theme } = useRichTextEditorContext();
+    const { styles } = useRichTextEditorContext();
     return (
         <p
             {...attributes}
             className={merge([align && alignmentClassnames[align], getColumnBreakClasses(element)])}
-            style={theme.custom2}
+            style={styles.custom2}
         >
             {children}
         </p>

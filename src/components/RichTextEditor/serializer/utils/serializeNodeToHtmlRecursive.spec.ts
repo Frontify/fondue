@@ -13,7 +13,7 @@ import {
 } from '@udecode/plate';
 import { serializeNodeToHtmlRecursive } from './serializeNodeToHtmlRecursive';
 import { TextStyles } from '@components/RichTextEditor/Plugins/TextStylePlugin/types';
-import { defaultTheme } from '@components/RichTextEditor/utils';
+import { defaultStyles } from '@components/RichTextEditor/utils';
 
 type ChildElement = {
     type: string;
@@ -58,7 +58,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
                 },
             ],
         };
-        const result = serializeNodeToHtmlRecursive(node, defaultTheme, {});
+        const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
 
         expect(result).to.be.equal(
             '<ol class="tw-list-none tw-pl-[10px] tw-mb-[10px] tw-ml-[15px] [&>li>p]:before:tw-pr-1 [&>li>p]:before:tw-content-[counter(count,decimal)_\'._\'] tw-break-words" style="counter-reset: count;"><li class="tw-break-words [&>p]:before:tw-flex [&>p]:before:tw-justify-end [&>p]:before:tw-w-[1.2em] !tw-no-underline" style="counter-increment: count;"><p class="tw-break-words tw-justify-start tw-grid tw-grid-cols-[min-content_repeat(3,_auto)]"><span>First item</span></p></li><li class="tw-break-words [&>p]:before:tw-flex [&>p]:before:tw-justify-end [&>p]:before:tw-w-[1.2em] !tw-no-underline" style="counter-increment: count;"><p class="tw-break-words tw-justify-start tw-grid tw-grid-cols-[min-content_repeat(3,_auto)]"><span>Second item</span></p></li></ol>',
@@ -75,7 +75,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
                 },
             ],
         };
-        const result = serializeNodeToHtmlRecursive(node, defaultTheme, {});
+        const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
 
         expect(result).to.include('tw-break-after-column');
         expect(result).to.include('tw-break-inside-avoid-column');
@@ -91,14 +91,14 @@ describe('serializeNodeToHtmlRecursive()', () => {
                 },
             ],
         };
-        const result = serializeNodeToHtmlRecursive(node, defaultTheme, {});
+        const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
 
         expect(result).to.not.include('tw-break-after-column');
         expect(result).to.not.include('tw-break-inside-avoid-column');
     });
 
     it('serializes ordered list with correct list style types to html', () => {
-        const result = serializeNodeToHtmlRecursive(orderedListValue, defaultTheme, {});
+        const result = serializeNodeToHtmlRecursive(orderedListValue, defaultStyles, {});
 
         const parser = new DOMParser();
         const htmlDoc = parser.parseFromString(result, 'text/html');
@@ -109,7 +109,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
     });
 
     it('serializes list item with custom styles to html', () => {
-        const result = serializeNodeToHtmlRecursive(unorderedListValue, defaultTheme, {});
+        const result = serializeNodeToHtmlRecursive(unorderedListValue, defaultStyles, {});
 
         const parser = new DOMParser();
         const htmlDoc = parser.parseFromString(result, 'text/html');
@@ -141,7 +141,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
                 },
             ],
         };
-        const result = serializeNodeToHtmlRecursive(node, defaultTheme, {});
+        const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
 
         expect(result).to.be.equal(
             '<ul class="[&>li>p]:before:tw-content-[\'•\'] [&>li>p]:before:tw-px-2 tw-list-none tw-pl-[10px] tw-mb-[10px] tw-ml-[15px] tw-break-words"><li class="tw-break-words [&>p]:before:tw-flex [&>p]:before:tw-justify-end [&>p]:before:tw-w-[1.2em] !tw-no-underline" style="counter-increment: count;"><p class="tw-break-words tw-justify-start tw-grid tw-grid-cols-[min-content_repeat(3,_auto)]"><span>This comes first.</span></p></li></ul>',
@@ -159,7 +159,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
                 },
             ],
         };
-        const result = serializeNodeToHtmlRecursive(node, defaultTheme, {});
+        const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
 
         expect(result).to.match(/<p.*><a.*href="https:\/\/frontify.com".*>This is a Link\.<\/a><\/p>/);
     });
@@ -184,7 +184,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
                 },
             ],
         };
-        const result = serializeNodeToHtmlRecursive(node, defaultTheme, {});
+        const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
 
         expect(result).to.match(/<p.*><a.*href="https:\/\/smartive.ch".*>This is also a Link\.<\/a><\/p>/);
     });
@@ -201,7 +201,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
                 },
             ],
         };
-        const result = serializeNodeToHtmlRecursive(node, defaultTheme, {});
+        const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
 
         expect(result).to.match(/<p.*><a.*target="_blank".*href="https:\/\/frontify.com".*>This is a Link\.<\/a><\/p>/);
     });
@@ -221,7 +221,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
             ],
         };
 
-        const result = serializeNodeToHtmlRecursive(node, defaultTheme, {});
+        const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
 
         expect(result).to.match(/<h1.*>This is a h1.<\/h1>/);
         expect(result).to.match(/<h2.*>This is a h2.<\/h2>/);
@@ -256,7 +256,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
             ],
         };
 
-        const result = serializeNodeToHtmlRecursive(node, defaultTheme, {
+        const result = serializeNodeToHtmlRecursive(node, defaultStyles, {
             mappedMentionable: mapMentionable(mentionable),
         });
 
@@ -276,7 +276,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
             ],
         };
 
-        const result = serializeNodeToHtmlRecursive(node, defaultTheme, {});
+        const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
 
         expect(result).to.contain('button');
         expect(result).to.contain('href="https://frontify.com"');
@@ -297,7 +297,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
             ],
         };
 
-        const result = serializeNodeToHtmlRecursive(node, defaultTheme, {});
+        const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
         expect(result).to.contain('button');
         expect(result).to.contain('target="_blank"');
     });
@@ -309,7 +309,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
             children: [{ text: 'item' }],
         };
 
-        const result = serializeNodeToHtmlRecursive(node, defaultTheme, {});
+        const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
         expect(result).to.contain('item');
         expect(result).to.contain('checked');
     });
@@ -321,7 +321,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
             children: [{ text: 'item' }],
         };
 
-        const result = serializeNodeToHtmlRecursive(node, defaultTheme, {});
+        const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
         expect(result).to.include('item');
         expect(result).to.not.include('checked');
     });
@@ -333,7 +333,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
             children: [{ text: 'item' }],
         };
 
-        const result = serializeNodeToHtmlRecursive(node, defaultTheme, {});
+        const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
         expect(result).to.include('item');
         expect(result).to.include('margin-left:0px;');
     });
@@ -350,7 +350,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
                 children: [{ text: 'item' }],
             };
 
-            const result = serializeNodeToHtmlRecursive(node, defaultTheme, {});
+            const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
             expect(result).to.include('item');
             expect(result).to.include(`margin-left:${entry.outcome};`);
         });
@@ -367,7 +367,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
                 },
             ],
         };
-        const result = serializeNodeToHtmlRecursive(node, defaultTheme, {});
+        const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
 
         expect(result).to.be.equal(
             '<p class="tw-break-words" style="font-size: 14px; font-style: normal; font-weight: normal;"><a class="tw-break-words" style="font-size: 14px; font-style: normal; color: rgb(113, 89, 215); text-decoration: underline; cursor: pointer;" target="_blank" href="https://frontify.com">This is a Link.</a></p>',

@@ -6,7 +6,6 @@ import React from 'react';
 import { getColumnBreakClasses } from '../ColumnBreakPlugin/utils/getColumnBreakClasses';
 import { MarkupElement } from '../MarkupElement';
 import { justifyClassNames } from '../helper';
-import { useRichTextEditorContext } from '@components/RichTextEditor/context';
 
 export const getLicElementClassNames = (element: TElement) =>
     merge([
@@ -16,12 +15,9 @@ export const getLicElementClassNames = (element: TElement) =>
     ]);
 
 export const ListItemContentMarkupElementNode = ({ attributes, children, element }: PlateRenderElementProps) => {
-    const { theme } = useRichTextEditorContext();
     return (
         <p className={getLicElementClassNames(element)} {...attributes}>
-            <span className="tw-w-auto tw-min-w-[10px]" style={theme[element.children[0].textStyle as string]}>
-                {children}
-            </span>
+            <span className="tw-w-auto tw-min-w-[10px]">{children}</span>
         </p>
     );
 };

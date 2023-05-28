@@ -6,8 +6,8 @@ import { Plugin } from '../Plugin';
 import { TextStylePluginProps } from './types';
 import { withTextStyles } from './TextStyleDropdown/withTextStyles';
 
-export class TextStylePlugin extends Plugin<TextStylePluginProps> {
-    protected textStyles: Plugin[];
+export class TextStylePlugin extends Plugin {
+    public textStyles: Plugin[];
     constructor({ textStyles = [], ...pluginProps }: Partial<TextStylePluginProps> = {}) {
         super(TEXT_STYLE_PLUGIN, {
             button: withTextStyles(TextStyleButton, textStyles),
