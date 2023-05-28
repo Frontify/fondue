@@ -44,7 +44,7 @@ export const defaultStyles: Record<string, CSSProperties & { hover?: CSSProperti
         fontWeight: 'normal',
         fontStyle: 'italic',
     },
-    link: {
+    'link-plugin': {
         fontSize: '14px',
         fontStyle: 'normal',
         color: 'rgb(113, 89, 215)',

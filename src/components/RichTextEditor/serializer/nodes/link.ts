@@ -14,11 +14,11 @@ export const linkNode = (
 ) => {
     if (node.chosenLink) {
         const { chosenLink } = node as TLinkElement;
-        return `<a class="${defaultClassNames}" style="${reactCssPropsToCss(styles.link)}" target=${
+        return `<a class="${defaultClassNames}" style="${reactCssPropsToCss(styles['link-plugin'])}" target=${
             chosenLink?.openInNewTab ? '_blank' : '_self'
         } href="${escapeHtml(chosenLink?.searchResult?.link)}">${children}</a>`;
     }
-    return `<a class="${defaultClassNames}" style="${reactCssPropsToCss(styles.link)}" target="${
+    return `<a class="${defaultClassNames}" style="${reactCssPropsToCss(styles['link-plugin'])}" target="${
         node?.target ?? '_blank'
     }" href="${escapeHtml(node.url as string)}">${children}</a>`;
 };
