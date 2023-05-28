@@ -18,11 +18,11 @@ const ID = 'textstyle-heading4-plugin';
 
 export class Heading4Plugin extends Plugin {
     public styles: CSSProperties = {};
-    constructor({ styles = defaultStyles.heading4, ...pluginProps }: PluginProps = {}) {
+    constructor({ styles = defaultStyles.heading4, ...props }: PluginProps = {}) {
         super(TextStyles.heading4, {
-            markupElement: new Heading4MarkupElement(),
             label: 'Heading 4',
-            ...pluginProps,
+            markupElement: new Heading4MarkupElement(),
+            ...props,
         });
         this.styles = styles;
     }

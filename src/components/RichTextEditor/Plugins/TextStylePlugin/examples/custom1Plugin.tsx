@@ -18,11 +18,11 @@ const ID = 'textstyle-custom1-plugin';
 
 export class Custom1Plugin extends Plugin {
     public styles: CSSProperties = {};
-    constructor({ styles = defaultStyles.custom1, ...pluginProps }: PluginProps = {}) {
+    constructor({ styles = defaultStyles.custom1, ...props }: PluginProps = {}) {
         super(TextStyles.custom1, {
+            label: 'Custom 1',
             markupElement: new Custom1MarkupElement(),
-            label: 'Quote',
-            ...pluginProps,
+            ...props,
         });
         this.styles = styles;
     }

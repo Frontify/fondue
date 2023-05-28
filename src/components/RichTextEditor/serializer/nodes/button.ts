@@ -8,11 +8,11 @@ export const buttonNode = (
     node: TElement,
     children: string,
     defaultClassNames: string,
-    theme: Record<string, CSSProperties & { hover?: CSSProperties }>,
+    styles: Record<string, CSSProperties & { hover?: CSSProperties }>,
 ) => {
     const buttonTypeString = (node.buttonType as string) ?? 'primary';
     const buttonType = `button${buttonTypeString.charAt(0).toUpperCase()}${buttonTypeString.slice(1)}`;
-    const buttonStyle = theme[buttonType];
+    const buttonStyle = styles[buttonType];
 
     const defaultStyles = reactCssPropsToCss(buttonStyle);
     return `<a href="${node.url}"

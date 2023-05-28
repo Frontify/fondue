@@ -17,11 +17,11 @@ import { TextStyles } from '../types';
 const ID = 'textstyle-heading1-plugin';
 export class Heading1Plugin extends Plugin {
     public styles: CSSProperties = {};
-    constructor({ styles = defaultStyles.heading1, ...pluginProps }: PluginProps = {}) {
+    constructor({ styles = defaultStyles.heading1, ...props }: PluginProps = {}) {
         super(TextStyles.heading1, {
-            markupElement: new Heading1MarkupElement(),
             label: 'Heading 1',
-            ...pluginProps,
+            markupElement: new Heading1MarkupElement(),
+            ...props,
         });
         this.styles = styles;
     }

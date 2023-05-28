@@ -8,6 +8,7 @@ import { LINK_PLUGIN } from './id';
 import { LinkButton } from './LinkButton';
 import { LinkMarkupElement } from './LinkMarkupElement';
 import { CSSProperties } from 'react';
+import { defaultStyles } from '@components/RichTextEditor/utils';
 
 export const createLinkPlugin = createPluginFactory({
     ...createPlateLinkPlugin(),
@@ -25,7 +26,7 @@ export const createLinkPlugin = createPluginFactory({
 
 export class LinkPlugin extends Plugin {
     public styles: CSSProperties = {};
-    constructor({ styles = defaultLinkStyles, ...props }: PluginProps = {}) {
+    constructor({ styles = defaultStyles.link, ...props }: PluginProps = {}) {
         super(LINK_PLUGIN, {
             button: LinkButton,
             markupElement: new LinkMarkupElement(),
@@ -38,11 +39,3 @@ export class LinkPlugin extends Plugin {
         return [createLinkPlugin()];
     }
 }
-
-const defaultLinkStyles = {
-    fontSize: '14px',
-    fontStyle: 'normal',
-    color: 'rgb(113, 89, 215)',
-    textDecoration: 'underline',
-    cursor: 'pointer',
-};

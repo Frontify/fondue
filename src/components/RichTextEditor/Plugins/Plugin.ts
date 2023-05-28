@@ -18,7 +18,6 @@ export type PluginProps = {
     label?: string;
     textStyles?: Plugin<PluginProps>[];
     styles?: CSSProperties;
-    buttonStyles?: Record<string, CSSProperties & { hover?: CSSProperties }>;
 };
 
 export abstract class Plugin<P extends PluginProps = PluginProps> {

@@ -2,7 +2,14 @@
 
 import { PlateRenderElementProps, createPluginFactory } from '@udecode/plate';
 import React, { CSSProperties } from 'react';
-import { MarkupElement, Plugin, PluginProps, getColumnBreakClasses, useRichTextEditorContext } from '../../../';
+import {
+    MarkupElement,
+    Plugin,
+    PluginProps,
+    defaultStyles,
+    getColumnBreakClasses,
+    useRichTextEditorContext,
+} from '../../../';
 import { alignmentClassnames } from '../../helper';
 import { merge } from '@utilities/merge';
 import { TextStyles } from '../types';
@@ -11,11 +18,11 @@ const ID = 'textstyle-imageCaption-plugin';
 
 export class ImageCaptionPlugin extends Plugin {
     public styles: CSSProperties = {};
-    constructor({ styles = defaultImageCaptionStyles, ...pluginProps }: PluginProps = {}) {
+    constructor({ styles = defaultStyles.imageCaption, ...props }: PluginProps = {}) {
         super(TextStyles.imageCaption, {
-            markupElement: new ImageCaptionMarkupElement(),
             label: 'Image Caption',
-            ...pluginProps,
+            markupElement: new ImageCaptionMarkupElement(),
+            ...props,
         });
         this.styles = styles;
     }
@@ -52,10 +59,3 @@ const createImageCaptionPlugin = createPluginFactory({
         rules: [{ validClassName: 'imageCaption' }],
     },
 });
-
-const defaultImageCaptionStyles = {
-    color: 'rgb(153, 153, 153)',
-    fontFamily: 'Droid Sans',
-    fontSize: '13.5px',
-    lineHeight: '1.5',
-};

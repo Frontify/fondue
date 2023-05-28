@@ -5,10 +5,11 @@ import { Plugin, PluginProps } from '../Plugin';
 import { createParagraphPlugin } from './createParagraphPlugin';
 import { ELEMENT_PARAGRAPH } from '@udecode/plate';
 import { CSSProperties } from 'react';
+import { defaultStyles } from '@components/RichTextEditor/utils';
 
 export class ParagraphPlugin extends Plugin {
     public styles: CSSProperties = {};
-    constructor({ styles = defaultParagraph, ...props }: PluginProps = {}) {
+    constructor({ styles = defaultStyles.p, ...props }: PluginProps = {}) {
         super(ELEMENT_PARAGRAPH, {
             markupElement: new ParagraphMarkupElement(),
             label: 'Body Text',
@@ -21,12 +22,6 @@ export class ParagraphPlugin extends Plugin {
         return [createParagraphPlugin()];
     }
 }
-
-const defaultParagraph = {
-    fontSize: '14px',
-    fontStyle: 'normal',
-    fontWeight: 'normal',
-};
 
 export * from './ParagraphMarkupElement';
 export * from './createParagraphPlugin';

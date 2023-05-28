@@ -10,15 +10,15 @@ export const linkNode = (
     node: TElement,
     children: string,
     defaultClassNames: string,
-    theme: Record<string, CSSProperties & { hover?: CSSProperties }>,
+    styles: Record<string, CSSProperties & { hover?: CSSProperties }>,
 ) => {
     if (node.chosenLink) {
         const { chosenLink } = node as TLinkElement;
-        return `<a class="${defaultClassNames}" style="${reactCssPropsToCss(theme.link)}" target=${
+        return `<a class="${defaultClassNames}" style="${reactCssPropsToCss(styles.link)}" target=${
             chosenLink?.openInNewTab ? '_blank' : '_self'
         } href="${escapeHtml(chosenLink?.searchResult?.link)}">${children}</a>`;
     }
-    return `<a class="${defaultClassNames}" style="${reactCssPropsToCss(theme.link)}" target="${
+    return `<a class="${defaultClassNames}" style="${reactCssPropsToCss(styles.link)}" target="${
         node?.target ?? '_blank'
     }" href="${escapeHtml(node.url as string)}">${children}</a>`;
 };

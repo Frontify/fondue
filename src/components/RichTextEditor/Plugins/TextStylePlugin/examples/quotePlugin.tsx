@@ -18,11 +18,11 @@ const ID = 'textstyle-quote-plugin';
 
 export class QuotePlugin extends Plugin {
     public styles: CSSProperties = {};
-    constructor({ styles = defaultStyles.quote, ...pluginProps }: PluginProps = {}) {
+    constructor({ styles = defaultStyles.quote, ...props }: PluginProps = {}) {
         super(TextStyles.quote, {
-            markupElement: new QuoteMarkupElement(),
             label: 'Quote',
-            ...pluginProps,
+            markupElement: new QuoteMarkupElement(),
+            ...props,
         });
         this.styles = styles;
     }

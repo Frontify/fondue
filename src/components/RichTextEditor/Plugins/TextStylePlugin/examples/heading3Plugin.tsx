@@ -18,11 +18,11 @@ const ID = 'textstyle-heading3-plugin';
 
 export class Heading3Plugin extends Plugin {
     public styles: CSSProperties = {};
-    constructor({ styles = defaultStyles.heading3, ...pluginProps }: PluginProps = {}) {
+    constructor({ styles = defaultStyles.heading3, ...props }: PluginProps = {}) {
         super(TextStyles.heading3, {
-            markupElement: new Heading3MarkupElement(),
             label: 'Heading 3',
-            ...pluginProps,
+            markupElement: new Heading3MarkupElement(),
+            ...props,
         });
         this.styles = styles;
     }

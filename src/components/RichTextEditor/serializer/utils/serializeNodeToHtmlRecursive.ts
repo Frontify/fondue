@@ -54,7 +54,7 @@ type SerializeNodeToHtmlRecursiveOptions = {
 
 export const serializeNodeToHtmlRecursive = (
     node: TDescendant,
-    theme: Record<string, CSSProperties & { hover?: CSSProperties }>,
+    styles: Record<string, CSSProperties & { hover?: CSSProperties }>,
     { mappedMentionable, nestingCount = {} }: SerializeNodeToHtmlRecursiveOptions,
 ): string => {
     if (isText(node)) {
@@ -64,7 +64,7 @@ export const serializeNodeToHtmlRecursive = (
     const rootNestingCount = nestingCount[node.type] || countNodesOfType([node], node.type);
     let children = '';
     for (const element of node.children) {
-        children += serializeNodeToHtmlRecursive(element, theme, {
+        children += serializeNodeToHtmlRecursive(element, styles, {
             nestingCount: {
                 ...nestingCount,
                 [element.type as string]: rootNestingCount,
@@ -81,13 +81,13 @@ export const serializeNodeToHtmlRecursive = (
             rootNestingCount,
             node,
             mappedMentionable,
-            theme,
+            styles,
         });
     } else {
         return defaultNode(
             node,
             children,
-            theme[node.type],
+            styles[node.type],
             getClassNames(node.breakAfterColumn as string | undefined, node.align as string | undefined),
         );
     }
@@ -99,7 +99,7 @@ type Arguments = {
     rootNestingCount: number;
     node: TElement;
     mappedMentionable?: MappedMentionableItems;
-    theme: Record<string, CSSProperties & { hover?: CSSProperties }>;
+    styles: Record<string, CSSProperties & { hover?: CSSProperties }>;
 };
 
 const MapNodeTypesToHtml: { [key: string]: ({ ...args }: Arguments) => string } = {
@@ -110,15 +110,15 @@ const MapNodeTypesToHtml: { [key: string]: ({ ...args }: Arguments) => string } 
             OL_STYLES,
         )}">${children}</ol>`;
     },
-    [ELEMENT_LI]: ({ classNames, children, node, theme }) =>
+    [ELEMENT_LI]: ({ classNames, children, node, styles }) =>
         `<li class="${classNames} ${LI_CLASSNAMES}" style="${reactCssPropsToCss(
-            getLiStyles(node, theme),
+            getLiStyles(node, styles),
         )}">${children}</li>`,
     [ELEMENT_LIC]: ({ classNames, children, node }) =>
         `<p class="${classNames} ${getLicElementClassNames(node)}"><span>${children}</span></p>`,
-    [ELEMENT_LINK]: ({ node, children, classNames, theme }) => linkNode(node, children, classNames, theme),
-    ['button']: ({ node, children, classNames, theme }) => buttonNode(node, children, classNames, theme),
-    [ELEMENT_CHECK_ITEM]: ({ node, children, classNames, theme }) => checkItemNode(node, children, classNames, theme),
+    [ELEMENT_LINK]: ({ node, children, classNames, styles }) => linkNode(node, children, classNames, styles),
+    ['button']: ({ node, children, classNames, styles }) => buttonNode(node, children, classNames, styles),
+    [ELEMENT_CHECK_ITEM]: ({ node, children, classNames, styles }) => checkItemNode(node, children, classNames, styles),
     [ELEMENT_MENTION]: ({ node, mappedMentionable }) => mentionHtmlNode(node, { mentionable: mappedMentionable }),
 };
 

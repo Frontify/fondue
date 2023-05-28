@@ -9,7 +9,7 @@ export const checkItemNode = (
     node: TElement,
     children: string,
     defaultClassNames: string,
-    theme: Record<string, CSSProperties & { hover?: CSSProperties }>,
+    styles: Record<string, CSSProperties & { hover?: CSSProperties }>,
 ) => {
     return `<div disabled class="tw-flex tw-flex-row tw-pb-2 first-of-type:tw-ml-0 ${defaultClassNames}" style="margin-left:${
         ((node.indent as number) ?? 0) * 24
@@ -24,6 +24,6 @@ export const checkItemNode = (
     <span class="${merge([
         'tw-flex-1 tw-focus:outline-none',
         node.checked ? '!tw-line-through' : '',
-    ])}" style="${reactCssPropsToCss(theme[node.children[0].textStyle as string])}">${children}</span>
+    ])}" style="${reactCssPropsToCss(styles[node.children[0].textStyle as string])}">${children}</span>
 </div>`;
 };
