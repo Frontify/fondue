@@ -19,10 +19,10 @@ import {
     TOOLBAR_FLOATING,
     TOOLBAR_PLUGIN_OL,
 } from './fixtures/selectors';
-import { Heading1Plugin } from '../Plugins/TextStylePlugin/examples/heading1Plugin';
-import { Custom1Plugin } from '../Plugins/TextStylePlugin/examples/custom1Plugin';
-import { Custom2Plugin } from '../Plugins/TextStylePlugin/examples/custom2Plugin';
-import { Custom3Plugin } from '../Plugins/TextStylePlugin/examples/custom3Plugin';
+import { Heading1Plugin } from '../Plugins/TextStylePlugin/TextStyles/heading1Plugin';
+import { Custom1Plugin } from '../Plugins/TextStylePlugin/TextStyles/custom1Plugin';
+import { Custom2Plugin } from '../Plugins/TextStylePlugin/TextStyles/custom2Plugin';
+import { Custom3Plugin } from '../Plugins/TextStylePlugin/TextStyles/custom3Plugin';
 
 const RichTextEditorWithListPluginWithSoftBreak = ({ value }: { value: string }) => {
     const plugins = new PluginComposer().setPlugin([

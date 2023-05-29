@@ -12,7 +12,16 @@ import {
     BreakAfterPlugin,
     CheckboxListPlugin,
     CodePlugin,
+    Custom1Plugin,
+    Custom2Plugin,
+    Custom3Plugin,
     EmojiPlugin,
+    Heading1Plugin,
+    Heading2Plugin,
+    Heading3Plugin,
+    Heading4Plugin,
+    ImageCaptionPlugin,
+    ImageTitlePlugin,
     ItalicPlugin,
     LinkPlugin,
     OrderedListPlugin,
@@ -45,13 +54,6 @@ import {
     TOOLBAR_GROUP_1,
     TOOLBAR_GROUP_2,
 } from './fixtures/selectors';
-import { Heading1Plugin } from '../Plugins/TextStylePlugin/examples/heading1Plugin';
-import { Custom1Plugin } from '../Plugins/TextStylePlugin/examples/custom1Plugin';
-import { Custom2Plugin } from '../Plugins/TextStylePlugin/examples/custom2Plugin';
-import { Custom3Plugin } from '../Plugins/TextStylePlugin/examples/custom3Plugin';
-import { Heading2Plugin } from '../Plugins/TextStylePlugin/examples/heading2Plugin';
-import { Heading3Plugin } from '../Plugins/TextStylePlugin/examples/heading3Plugin';
-import { Heading4Plugin } from '../Plugins/TextStylePlugin/examples/heading4Plugin';
 import { SubscriptPlugin } from '@components/RichTextEditor/Plugins/SubscriptPlugin';
 import { SuperscriptPlugin } from '@components/RichTextEditor/Plugins/SuperscriptPlugin';
 
@@ -147,6 +149,8 @@ const TextStylePlugins = [
     new Custom1Plugin(),
     new Custom2Plugin(),
     new Custom3Plugin(),
+    new ImageTitlePlugin(),
+    new ImageCaptionPlugin(),
 ];
 
 const RichTextWithCustomTextStylesDefaultValues = (): ReactElement => {

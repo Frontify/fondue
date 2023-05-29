@@ -1,23 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlateRenderElementProps, createPluginFactory } from '@udecode/plate';
-import React, { CSSProperties } from 'react';
-import {
-    MarkupElement,
-    Plugin,
-    PluginProps,
-    defaultStyles,
-    getColumnBreakClasses,
-    useRichTextEditorContext,
-} from '../../../';
+import { createPluginFactory } from '@udecode/plate';
+import React from 'react';
+import { MarkupElement, Plugin, PluginProps, defaultStyles, getColumnBreakClasses } from '../../..';
 import { alignmentClassnames } from '../../helper';
 import { merge } from '@utilities/merge';
-import { TextStyles } from '../types';
+import { TextStyleRenderElementProps, TextStyles } from '../types';
+import { CSSPropertiesHover } from '@components/RichTextEditor/types';
 
 const ID = 'textstyle-custom1-plugin';
 
 export class Custom1Plugin extends Plugin {
-    public styles: CSSProperties = {};
+    public styles: CSSPropertiesHover = {};
     constructor({ styles = defaultStyles.custom1, ...props }: PluginProps = {}) {
         super(TextStyles.custom1, {
             label: 'Custom 1',
@@ -28,7 +22,7 @@ export class Custom1Plugin extends Plugin {
     }
 
     plugins() {
-        return [createCustom1Plugin()];
+        return [createCustom1Plugin(this.styles)];
     }
 }
 
@@ -38,25 +32,26 @@ class Custom1MarkupElement extends MarkupElement {
     }
 }
 
-const Custom1MarkupElementNode = ({ element, attributes, children }: PlateRenderElementProps) => {
+const Custom1MarkupElementNode = ({ element, attributes, children, styles }: TextStyleRenderElementProps) => {
     const align = element.align as string;
-    const { styles } = useRichTextEditorContext();
     return (
         <p
             {...attributes}
             className={merge([align && alignmentClassnames[align], getColumnBreakClasses(element)])}
-            style={styles.custom1}
+            style={styles}
         >
             {children}
         </p>
     );
 };
 
-const createCustom1Plugin = createPluginFactory({
-    key: TextStyles.custom1,
-    isElement: true,
-    component: Custom1MarkupElementNode,
-    deserializeHtml: {
-        rules: [{ validClassName: ID }],
-    },
-});
+const createCustom1Plugin = (styles: CSSPropertiesHover) =>
+    createPluginFactory({
+        key: TextStyles.custom1,
+        isElement: true,
+        deserializeHtml: {
+            rules: [{ validClassName: TextStyles.custom1 }],
+        },
+    })({
+        component: (props: TextStyleRenderElementProps) => <Custom1MarkupElementNode {...props} styles={styles} />,
+    });

@@ -1,18 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlateRenderElementProps, createPluginFactory } from '@udecode/plate';
+import { createPluginFactory } from '@udecode/plate';
 import React, { CSSProperties } from 'react';
-import {
-    MarkupElement,
-    Plugin,
-    PluginProps,
-    defaultStyles,
-    getColumnBreakClasses,
-    useRichTextEditorContext,
-} from '../../../';
+import { MarkupElement, Plugin, PluginProps, defaultStyles, getColumnBreakClasses } from '../../..';
 import { alignmentClassnames } from '../../helper';
 import { merge } from '@utilities/merge';
-import { TextStyles } from '../types';
+import { TextStyleRenderElementProps, TextStyles } from '../types';
+import { CSSPropertiesHover } from '@components/RichTextEditor/types';
 
 const ID = 'textstyle-quote-plugin';
 
@@ -28,7 +22,7 @@ export class QuotePlugin extends Plugin {
     }
 
     plugins() {
-        return [createQuotePlugin()];
+        return [createQuotePlugin(this.styles)];
     }
 }
 
@@ -38,25 +32,27 @@ class QuoteMarkupElement extends MarkupElement {
     }
 }
 
-export const QuoteMarkupElementNode = ({ element, attributes, children }: PlateRenderElementProps) => {
+export const QuoteMarkupElementNode = ({ element, attributes, children, styles }: TextStyleRenderElementProps) => {
     const align = element.align as string;
-    const { styles } = useRichTextEditorContext();
     return (
         <blockquote
             {...attributes}
             className={merge([align && alignmentClassnames[align], getColumnBreakClasses(element)])}
-            style={styles.quote}
+            style={styles}
         >
             {children}
         </blockquote>
     );
 };
 
-export const createQuotePlugin = createPluginFactory({
-    key: TextStyles.quote,
-    isElement: true,
-    component: QuoteMarkupElementNode,
-    deserializeHtml: {
-        rules: [{ validNodeName: ['blockquote', 'BLOCKQUOTE'] }],
-    },
-});
+export const createQuotePlugin = (styles: CSSPropertiesHover) =>
+    createPluginFactory({
+        key: TextStyles.quote,
+        isElement: true,
+        component: QuoteMarkupElementNode,
+        deserializeHtml: {
+            rules: [{ validNodeName: ['blockquote', 'BLOCKQUOTE'] }],
+        },
+    })({
+        component: (props: TextStyleRenderElementProps) => <QuoteMarkupElementNode {...props} styles={styles} />,
+    });

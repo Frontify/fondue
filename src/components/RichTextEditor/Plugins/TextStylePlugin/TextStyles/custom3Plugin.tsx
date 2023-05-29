@@ -2,17 +2,11 @@
 
 import { PlateRenderElementProps, createPluginFactory } from '@udecode/plate';
 import React, { CSSProperties } from 'react';
-import {
-    MarkupElement,
-    Plugin,
-    PluginProps,
-    defaultStyles,
-    getColumnBreakClasses,
-    useRichTextEditorContext,
-} from '../../../';
+import { MarkupElement, Plugin, PluginProps, defaultStyles, getColumnBreakClasses } from '../../..';
 import { alignmentClassnames } from '../../helper';
 import { merge } from '@utilities/merge';
-import { TextStyles } from '../types';
+import { TextStyleRenderElementProps, TextStyles } from '../types';
+import { CSSPropertiesHover } from '@components/RichTextEditor/types';
 
 const ID = 'textstyle-custom3-plugin';
 
@@ -28,7 +22,7 @@ export class Custom3Plugin extends Plugin {
     }
 
     plugins() {
-        return [createCustom3Plugin()];
+        return [createCustom3Plugin(this.styles)];
     }
 }
 
@@ -38,25 +32,26 @@ class Custom3MarkupElement extends MarkupElement {
     }
 }
 
-const Custom3MarkupElementNode = ({ element, attributes, children }: PlateRenderElementProps) => {
+const Custom3MarkupElementNode = ({ element, attributes, children, styles }: TextStyleRenderElementProps) => {
     const align = element.align as string;
-    const { styles } = useRichTextEditorContext();
     return (
         <p
             {...attributes}
             className={merge([align && alignmentClassnames[align], getColumnBreakClasses(element)])}
-            style={styles.custom3}
+            style={styles}
         >
             {children}
         </p>
     );
 };
 
-const createCustom3Plugin = createPluginFactory({
-    key: TextStyles.custom3,
-    isElement: true,
-    component: Custom3MarkupElementNode,
-    deserializeHtml: {
-        rules: [{ validClassName: 'custom3' }],
-    },
-});
+const createCustom3Plugin = (styles: CSSPropertiesHover) =>
+    createPluginFactory({
+        key: TextStyles.custom3,
+        isElement: true,
+        deserializeHtml: {
+            rules: [{ validClassName: TextStyles.custom3 }],
+        },
+    })({
+        component: (props: PlateRenderElementProps) => <Custom3MarkupElementNode {...props} styles={styles} />,
+    });

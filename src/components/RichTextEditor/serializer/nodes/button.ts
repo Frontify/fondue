@@ -2,13 +2,13 @@
 
 import { TElement } from '@udecode/plate';
 import { reactCssPropsToCss } from '../utils/reactCssPropsToCss';
-import { CSSProperties } from 'react';
+import { CSSPropertiesHover } from '@components/RichTextEditor/types';
 
 export const buttonNode = (
     node: TElement,
     children: string,
     defaultClassNames: string,
-    styles: Record<string, CSSProperties & { hover?: CSSProperties }>,
+    styles: Record<string, CSSPropertiesHover>,
 ) => {
     const buttonTypeString = (node.buttonType as string) ?? 'primary';
     const buttonType = `button${buttonTypeString.charAt(0).toUpperCase()}${buttonTypeString.slice(1)}`;

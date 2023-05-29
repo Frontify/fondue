@@ -33,3 +33,5 @@ export const justifyClassNames: Record<string, string> = {
     justify: 'tw-text-justify',
     right: 'tw-justify-end tw-text-right',
 };
+
+export const ELEMENT_BUTTON = 'button';

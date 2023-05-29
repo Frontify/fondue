@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MentionableCategory } from '@components/RichTextEditor/Plugins';
+import { MentionableCategory } from '@components/RichTextEditor/Plugins/MentionPlugin';
 import { OptionType, PartialOptionType, defaultNodeTypes } from './types';
 
 const MENTION_ID_REGEX = '[\\d=a-z]+';

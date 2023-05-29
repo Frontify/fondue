@@ -29,7 +29,7 @@ import { mentionHtmlNode } from '../nodes/mentionHtmlNode';
 import { reactCssPropsToCss } from './reactCssPropsToCss';
 import { serializeLeafToHtml } from './serializeLeafToHtml';
 import { defaultNode } from '../nodes/default';
-import { CSSProperties } from 'react';
+import { CSSPropertiesHover } from '@components/RichTextEditor/types';
 
 const countNodesOfType = (nodes: TDescendant[], type: string): number => {
     return nodes.reduce((acc, node) => {
@@ -54,7 +54,7 @@ type SerializeNodeToHtmlRecursiveOptions = {
 
 export const serializeNodeToHtmlRecursive = (
     node: TDescendant,
-    styles: Record<string, CSSProperties & { hover?: CSSProperties }>,
+    styles: Record<string, CSSPropertiesHover>,
     { mappedMentionable, nestingCount = {} }: SerializeNodeToHtmlRecursiveOptions,
 ): string => {
     if (isText(node)) {
@@ -99,7 +99,7 @@ type Arguments = {
     rootNestingCount: number;
     node: TElement;
     mappedMentionable?: MappedMentionableItems;
-    styles: Record<string, CSSProperties & { hover?: CSSProperties }>;
+    styles: Record<string, CSSPropertiesHover>;
 };
 
 const MapNodeTypesToHtml: { [key: string]: ({ ...args }: Arguments) => string } = {

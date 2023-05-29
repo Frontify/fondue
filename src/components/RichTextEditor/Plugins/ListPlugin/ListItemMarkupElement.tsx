@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ELEMENT_LI, PlateRenderElementProps, TElement } from '@udecode/plate';
-import React, { CSSProperties } from 'react';
+import React from 'react';
 import { MarkupElement } from '../MarkupElement';
 import { useRichTextEditorContext } from '@components/RichTextEditor/context';
+import { CSSPropertiesHover } from '@components/RichTextEditor/types';
 
 export const LI_CLASSNAMES =
     '[&>p]:before:tw-flex [&>p]:before:tw-justify-end [&>p]:before:tw-w-[1.2em] !tw-no-underline';
@@ -23,10 +24,7 @@ export class ListItemMarkupElement extends MarkupElement {
     }
 }
 
-export const getLiStyles = (
-    element: TElement,
-    styles: Record<string, CSSProperties & { hover?: CSSProperties }>,
-): CSSProperties => {
+export const getLiStyles = (element: TElement, styles: Record<string, CSSPropertiesHover>): CSSPropertiesHover => {
     return {
         ...styles[getDeepestTextStyle(element)],
         counterIncrement: 'count',

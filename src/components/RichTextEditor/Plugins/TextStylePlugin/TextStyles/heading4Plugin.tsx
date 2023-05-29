@@ -1,18 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlateRenderElementProps, createPluginFactory } from '@udecode/plate';
+import { createPluginFactory } from '@udecode/plate';
 import React, { CSSProperties } from 'react';
-import {
-    MarkupElement,
-    Plugin,
-    PluginProps,
-    defaultStyles,
-    getColumnBreakClasses,
-    useRichTextEditorContext,
-} from '../../../';
+import { MarkupElement, Plugin, PluginProps, defaultStyles, getColumnBreakClasses } from '../../..';
 import { alignmentClassnames } from '../../helper';
 import { merge } from '@utilities/merge';
-import { TextStyles } from '../types';
+import { TextStyleRenderElementProps, TextStyles } from '../types';
+import { CSSPropertiesHover } from '@components/RichTextEditor/types';
 
 const ID = 'textstyle-heading4-plugin';
 
@@ -28,7 +22,7 @@ export class Heading4Plugin extends Plugin {
     }
 
     plugins() {
-        return [createHeading4Plugin()];
+        return [createHeading4Plugin(this.styles)];
     }
 }
 
@@ -38,25 +32,27 @@ class Heading4MarkupElement extends MarkupElement {
     }
 }
 
-const Heading4MarkupElementNode = ({ element, attributes, children }: PlateRenderElementProps) => {
+const Heading4MarkupElementNode = ({ element, attributes, children, styles }: TextStyleRenderElementProps) => {
     const align = element.align as string;
-    const { styles } = useRichTextEditorContext();
     return (
         <h4
             {...attributes}
             className={merge([align && alignmentClassnames[align], getColumnBreakClasses(element)])}
-            style={styles.heading4}
+            style={styles}
         >
             {children}
         </h4>
     );
 };
 
-const createHeading4Plugin = createPluginFactory({
-    key: TextStyles.heading4,
-    isElement: true,
-    component: Heading4MarkupElementNode,
-    deserializeHtml: {
-        rules: [{ validNodeName: ['h4', 'H4'] }],
-    },
-});
+const createHeading4Plugin = (styles: CSSPropertiesHover) =>
+    createPluginFactory({
+        key: TextStyles.heading4,
+        isElement: true,
+        component: Heading4MarkupElementNode,
+        deserializeHtml: {
+            rules: [{ validNodeName: ['h4', 'H4'] }],
+        },
+    })({
+        component: (props: TextStyleRenderElementProps) => <Heading4MarkupElementNode {...props} styles={styles} />,
+    });

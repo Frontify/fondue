@@ -4,7 +4,7 @@ import { AnyObject, PlatePlugin } from '@udecode/plate';
 import { InlineData, PluginButton } from './types';
 import { Position } from '../EditorPositioningWrapper';
 import type { MarkupElement } from './MarkupElement';
-import { CSSProperties } from 'react';
+import { CSSPropertiesHover } from '../types';
 
 export type PluginProps = {
     id?: string;
@@ -17,7 +17,7 @@ export type PluginProps = {
     gap?: string | number;
     label?: string;
     textStyles?: Plugin<PluginProps>[];
-    styles?: CSSProperties;
+    styles?: CSSPropertiesHover;
 };
 
 export abstract class Plugin<P extends PluginProps = PluginProps> {
@@ -29,7 +29,7 @@ export abstract class Plugin<P extends PluginProps = PluginProps> {
     readonly showIn: Position[];
     readonly props?: P;
     readonly textStyles?: Plugin<PluginProps>[];
-    readonly styles?: CSSProperties;
+    readonly styles?: CSSPropertiesHover;
 
     constructor(id: string, rest?: P) {
         this.id = rest?.id || id;

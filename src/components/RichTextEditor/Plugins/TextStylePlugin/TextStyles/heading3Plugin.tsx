@@ -1,18 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlateRenderElementProps, createPluginFactory } from '@udecode/plate';
+import { createPluginFactory } from '@udecode/plate';
 import React, { CSSProperties } from 'react';
-import {
-    MarkupElement,
-    Plugin,
-    PluginProps,
-    defaultStyles,
-    getColumnBreakClasses,
-    useRichTextEditorContext,
-} from '../../../';
+import { MarkupElement, Plugin, PluginProps, defaultStyles, getColumnBreakClasses } from '../../..';
 import { alignmentClassnames } from '../../helper';
 import { merge } from '@utilities/merge';
-import { TextStyles } from '../types';
+import { TextStyleRenderElementProps, TextStyles } from '../types';
+import { CSSPropertiesHover } from '@components/RichTextEditor/types';
 
 const ID = 'textstyle-heading3-plugin';
 
@@ -28,7 +22,7 @@ export class Heading3Plugin extends Plugin {
     }
 
     plugins() {
-        return [createHeading3Plugin()];
+        return [createHeading3Plugin(this.styles)];
     }
 }
 
@@ -37,25 +31,27 @@ class Heading3MarkupElement extends MarkupElement {
         super(id, node);
     }
 }
-const Heading3MarkupElementNode = ({ element, attributes, children }: PlateRenderElementProps) => {
+const Heading3MarkupElementNode = ({ element, attributes, children, styles }: TextStyleRenderElementProps) => {
     const align = element.align as string;
-    const { styles } = useRichTextEditorContext();
     return (
         <h3
             {...attributes}
             className={merge([align && alignmentClassnames[align], getColumnBreakClasses(element)])}
-            style={styles.heading3}
+            style={styles}
         >
             {children}
         </h3>
     );
 };
 
-const createHeading3Plugin = createPluginFactory({
-    key: TextStyles.heading3,
-    isElement: true,
-    component: Heading3MarkupElementNode,
-    deserializeHtml: {
-        rules: [{ validNodeName: ['h3', 'H3'] }],
-    },
-});
+const createHeading3Plugin = (styles: CSSPropertiesHover) =>
+    createPluginFactory({
+        key: TextStyles.heading3,
+        isElement: true,
+        component: Heading3MarkupElementNode,
+        deserializeHtml: {
+            rules: [{ validNodeName: ['h3', 'H3'] }],
+        },
+    })({
+        component: (props: TextStyleRenderElementProps) => <Heading3MarkupElementNode {...props} styles={styles} />,
+    });

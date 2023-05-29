@@ -7,12 +7,13 @@ import { parseRawValue } from '../utils/parseRawValue';
 import { serializeNodeToHtmlRecursive } from './utils/serializeNodeToHtmlRecursive';
 import type { MentionableItems } from '../Plugins/MentionPlugin';
 import { defaultStyles } from '../utils';
+import { CSSPropertiesHover } from '../types';
 
 export const serializeRawToHtml = (
     raw: string,
     columns: SerializeNodesToHtmlOptions['columns'] = 1,
     columnGap: SerializeNodesToHtmlOptions['columnGap'] = 'normal',
-    styles: Record<string, CSSProperties & { hover?: CSSProperties }>,
+    styles: Record<string, CSSPropertiesHover> = defaultStyles,
 ): string => {
     const nodes = parseRawValue({ raw });
     return serializeNodesToHtml(nodes, { columns, columnGap, styles });
@@ -21,7 +22,7 @@ export const serializeRawToHtmlAsync = async (
     raw: string,
     columns: SerializeNodesToHtmlOptions['columns'] = 1,
     columnGap: SerializeNodesToHtmlOptions['columnGap'] = 'normal',
-    styles: Record<string, CSSProperties & { hover?: CSSProperties }>,
+    styles: Record<string, CSSPropertiesHover> = defaultStyles,
 ): Promise<string> => {
     const nodes = parseRawValue({ raw });
     return Promise.resolve(serializeNodesToHtml(nodes, { columns, columnGap, styles }));
@@ -31,7 +32,7 @@ export type SerializeNodesToHtmlOptions = {
     mentionable?: MentionableItems;
     columns?: number;
     columnGap?: CSSProperties['columnGap'];
-    styles?: Record<string, CSSProperties & { hover?: CSSProperties }>;
+    styles?: Record<string, CSSPropertiesHover>;
 };
 
 export const serializeNodesToHtml = (

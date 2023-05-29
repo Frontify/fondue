@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TNode } from '@udecode/plate';
+import type { TNode } from '@udecode/plate';
+import type { CSSProperties } from 'react';
 
 export enum PaddingSizes {
     None = 'tw-p-0',
@@ -11,3 +12,5 @@ export enum PaddingSizes {
 }
 
 export type TreeOfNodes = TNode[];
+
+export type CSSPropertiesHover = CSSProperties & { hover?: CSSProperties };

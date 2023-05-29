@@ -26,17 +26,28 @@ import {
     BreakAfterPlugin,
     CheckboxListPlugin,
     CodePlugin,
+    Custom1Plugin,
+    Custom2Plugin,
+    Custom3Plugin,
     EmojiPlugin,
+    Heading1Plugin,
+    Heading2Plugin,
+    Heading3Plugin,
+    Heading4Plugin,
+    ImageCaptionPlugin,
+    ImageTitlePlugin,
     ItalicPlugin,
     LinkPlugin,
     MentionPlugin,
     OrderedListPlugin,
     ParagraphPlugin,
     PluginComposer,
+    QuotePlugin,
     ResetFormattingPlugin,
     SoftBreakPlugin,
     StrikethroughPlugin,
     TextStylePlugin,
+    TextStyles,
     UnderlinePlugin,
     UnorderedListPlugin,
 } from './Plugins';
@@ -49,19 +60,8 @@ import {
     serializeNodesToHtml,
 } from './serializer';
 import { PaddingSizes } from './types';
-import { ImageCaptionPlugin } from './Plugins/TextStylePlugin/examples/imageCaptionPlugin';
-import { ImageTitlePlugin } from './Plugins/TextStylePlugin/examples/imageTitlePlugin';
-import { Heading1Plugin } from './Plugins/TextStylePlugin/examples/heading1Plugin';
-import { Custom1Plugin } from './Plugins/TextStylePlugin/examples/custom1Plugin';
 import { SubscriptPlugin } from '@components/RichTextEditor/Plugins/SubscriptPlugin';
 import { SuperscriptPlugin } from '@components/RichTextEditor/Plugins/SuperscriptPlugin';
-import { Heading2Plugin } from './Plugins/TextStylePlugin/examples/heading2Plugin';
-import { Heading3Plugin } from './Plugins/TextStylePlugin/examples/heading3Plugin';
-import { Heading4Plugin } from './Plugins/TextStylePlugin/examples/heading4Plugin';
-import { Custom2Plugin } from './Plugins/TextStylePlugin/examples/custom2Plugin';
-import { Custom3Plugin } from './Plugins/TextStylePlugin/examples/custom3Plugin';
-import { TextStyles } from './Plugins/TextStylePlugin/types';
-import { QuotePlugin } from './Plugins/TextStylePlugin/examples/quotePlugin';
 
 export default {
     title: 'Components/Rich Text Editor',
@@ -106,27 +106,25 @@ const RichTextEditorTemplate: StoryFn<RichTextEditorProps> = (args: RichTextEdit
 );
 
 const allTextStyles = Object.values(TextStyles);
+const allTextStylesPlugin = new TextStylePlugin({
+    textStyles: [
+        new Heading1Plugin(),
+        new Heading2Plugin(),
+        new Heading3Plugin(),
+        new Heading4Plugin(),
+        new ParagraphPlugin(),
+        new Custom1Plugin(),
+        new Custom2Plugin(),
+        new Custom3Plugin(),
+        new ImageTitlePlugin(),
+        new ImageCaptionPlugin(),
+        new QuotePlugin(),
+    ],
+});
 
 const allPlugins = new PluginComposer();
 allPlugins
-    .setPlugin([
-        new SoftBreakPlugin(),
-        new TextStylePlugin({
-            textStyles: [
-                new Heading1Plugin(),
-                new Heading2Plugin(),
-                new Heading3Plugin(),
-                new Heading4Plugin(),
-                new ParagraphPlugin(),
-                new Custom1Plugin(),
-                new Custom2Plugin(),
-                new Custom3Plugin(),
-                new ImageTitlePlugin(),
-                new ImageCaptionPlugin(),
-                new QuotePlugin(),
-            ],
-        }),
-    ])
+    .setPlugin([new SoftBreakPlugin(), allTextStylesPlugin])
     .setPlugin([new MentionPlugin({ mentionableItems: mentionable })])
     .setPlugin(
         [
@@ -260,23 +258,18 @@ export const Multiple: StoryFn<RichTextEditorProps> = () => (
 
 export const WithReadonlyState = RichTextEditorTemplate.bind({});
 WithReadonlyState.args = {
+    plugins: allPlugins,
     readonly: true,
 };
 
 export const WithHtmlAsValue = RichTextEditorTemplate.bind({});
 WithHtmlAsValue.args = {
+    plugins: allPlugins,
     value: htmlValue,
 };
 
 const listPlugins = new PluginComposer();
-listPlugins.setPlugin([
-    new UnorderedListPlugin(),
-    new OrderedListPlugin(),
-    new TextStylePlugin({
-        textStyles: [new Custom1Plugin(), new Custom2Plugin(), new Custom3Plugin(), new ParagraphPlugin()],
-    }),
-    new BoldPlugin(),
-]);
+listPlugins.setPlugin([new UnorderedListPlugin(), new OrderedListPlugin(), allTextStylesPlugin, new BoldPlugin()]);
 export const WithList = RichTextEditorTemplate.bind({});
 WithList.args = {
     plugins: listPlugins,
@@ -290,12 +283,7 @@ WithChecklist.args = {
 
 const customPlugins = new PluginComposer();
 customPlugins
-    .setPlugin([
-        new SoftBreakPlugin(),
-        new TextStylePlugin({
-            textStyles: [new Heading1Plugin(), new ParagraphPlugin(), new ImageCaptionPlugin(), new ImageTitlePlugin()],
-        }),
-    ])
+    .setPlugin([new SoftBreakPlugin(), allTextStylesPlugin])
     .setPlugin([new LinkPlugin()])
     .setPlugin([
         new ItalicPlugin(),
@@ -311,21 +299,17 @@ WithCustomControls.args = {
     plugins: customPlugins,
 };
 
-const topbarPlugins = new PluginComposer();
 export const WithToolbarTopAndSmallPadding = RichTextEditorTemplate.bind({});
 WithToolbarTopAndSmallPadding.args = {
     position: Position.TOP,
     padding: PaddingSizes.Medium,
-    plugins: topbarPlugins.setPlugin([
-        new TextStylePlugin({
-            textStyles: [new Custom1Plugin(), new Heading1Plugin(), new ParagraphPlugin()],
-        }),
-    ]),
+    plugins: allPlugins,
 };
 
 export const WithCustomToolbarWidth = RichTextEditorTemplate.bind({});
 WithCustomToolbarWidth.args = {
     toolbarWidth: 50,
+    plugins: allPlugins,
 };
 
 const customStylesPlugin = new PluginComposer();
@@ -451,7 +435,7 @@ WithMentionsAndEmojis.args = {
 
 const withoutToolbarPlugins = new PluginComposer({ noToolbar: true });
 withoutToolbarPlugins
-    .setPlugin([new SoftBreakPlugin(), new ParagraphPlugin()])
+    .setPlugin([new SoftBreakPlugin(), allTextStylesPlugin])
     .setPlugin([
         new BoldPlugin(),
         new LinkPlugin(),
@@ -470,17 +454,7 @@ WithoutToolbar.args = {
 const defaultPluginsWithColumns = new PluginComposer();
 defaultPluginsWithColumns
     .setPlugin([new SoftBreakPlugin(), new ParagraphPlugin()])
-    .setPlugin(
-        new TextStylePlugin({
-            textStyles: [
-                new Heading1Plugin(),
-                new ParagraphPlugin(),
-                new ImageCaptionPlugin(),
-                new ImageTitlePlugin(),
-                new Custom1Plugin(),
-            ],
-        }),
-    )
+    .setPlugin(allTextStylesPlugin)
     .setPlugin([
         new BoldPlugin(),
         new ItalicPlugin(),

@@ -4,12 +4,13 @@ import React, { ReactNode } from 'react';
 import { AnyObject, PlatePlugin, createPlateUI, createPlugins } from '@udecode/plate';
 import { Toolbar } from '../Toolbar';
 import type { PluginComposer } from './PluginComposer';
+import { CSSPropertiesHover } from '../types';
 
 type GeneratePluginsReturn = {
     create: () => PlatePlugin<AnyObject>[];
     toolbar: (toolbarWidth: number | undefined) => ReactNode;
     inline: () => ReactNode;
-    styles: () => Record<string, React.CSSProperties>;
+    styles: () => Record<string, CSSPropertiesHover>;
 };
 
 export const createPlatePlugins = (pluginComposer: PluginComposer) =>

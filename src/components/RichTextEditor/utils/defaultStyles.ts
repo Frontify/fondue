@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { CSSProperties } from 'react';
+import type { CSSPropertiesHover } from '../types';
 
-export const defaultStyles: Record<string, CSSProperties & { hover?: CSSProperties }> = {
+export const defaultStyles: Record<string, CSSPropertiesHover> = {
     heading1: {
         fontSize: '48px',
         fontWeight: 700,

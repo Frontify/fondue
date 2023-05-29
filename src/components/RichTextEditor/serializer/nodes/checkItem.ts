@@ -3,13 +3,13 @@
 import { TElement } from '@udecode/plate';
 import { merge } from '@utilities/merge';
 import { reactCssPropsToCss } from '../utils/reactCssPropsToCss';
-import { CSSProperties } from 'react';
+import { CSSPropertiesHover } from '@components/RichTextEditor/types';
 
 export const checkItemNode = (
     node: TElement,
     children: string,
     defaultClassNames: string,
-    styles: Record<string, CSSProperties & { hover?: CSSProperties }>,
+    styles: Record<string, CSSPropertiesHover>,
 ) => {
     return `<div disabled class="tw-flex tw-flex-row tw-pb-2 first-of-type:tw-ml-0 ${defaultClassNames}" style="margin-left:${
         ((node.indent as number) ?? 0) * 24

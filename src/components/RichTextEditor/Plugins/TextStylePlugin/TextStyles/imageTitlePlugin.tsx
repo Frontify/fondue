@@ -1,18 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlateRenderElementProps, createPluginFactory } from '@udecode/plate';
+import { createPluginFactory } from '@udecode/plate';
 import React, { CSSProperties } from 'react';
-import {
-    MarkupElement,
-    Plugin,
-    PluginProps,
-    defaultStyles,
-    getColumnBreakClasses,
-    useRichTextEditorContext,
-} from '../../../';
+import { MarkupElement, Plugin, PluginProps, defaultStyles, getColumnBreakClasses } from '../../..';
 import { alignmentClassnames } from '../../helper';
 import { merge } from '@utilities/merge';
-import { TextStyles } from '../types';
+import { TextStyleRenderElementProps, TextStyles } from '../types';
+import { CSSPropertiesHover } from '@components/RichTextEditor/types';
 
 const ID = 'textstyle-imageTitle-plugin';
 
@@ -28,7 +22,7 @@ export class ImageTitlePlugin extends Plugin {
     }
 
     plugins() {
-        return [createImageTitlePlugin()];
+        return [createImageTitlePlugin(this.styles)];
     }
 }
 
@@ -37,25 +31,27 @@ class ImageTitleMarkupElement extends MarkupElement {
         super(id, node);
     }
 }
-const ImageTitleMarkupElementNode = ({ element, attributes, children }: PlateRenderElementProps) => {
+const ImageTitleMarkupElementNode = ({ element, attributes, children, styles }: TextStyleRenderElementProps) => {
     const align = element.align as string;
-    const { styles } = useRichTextEditorContext();
     return (
         <p
             {...attributes}
             className={merge([align && alignmentClassnames[align], getColumnBreakClasses(element)])}
-            style={styles.imageTitle}
+            style={styles}
         >
             {children}
         </p>
     );
 };
 
-const createImageTitlePlugin = createPluginFactory({
-    key: TextStyles.imageTitle,
-    isElement: true,
-    component: ImageTitleMarkupElementNode,
-    deserializeHtml: {
-        rules: [{ validClassName: 'imageTitle' }],
-    },
-});
+const createImageTitlePlugin = (styles: CSSPropertiesHover) =>
+    createPluginFactory({
+        key: TextStyles.imageTitle,
+        isElement: true,
+        component: ImageTitleMarkupElementNode,
+        deserializeHtml: {
+            rules: [{ validClassName: TextStyles.imageTitle }],
+        },
+    })({
+        component: (props: TextStyleRenderElementProps) => <ImageTitleMarkupElementNode {...props} styles={styles} />,
+    });

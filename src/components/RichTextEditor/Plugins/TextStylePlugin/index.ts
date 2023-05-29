@@ -23,3 +23,4 @@ export class TextStylePlugin extends Plugin {
 }
 
 export * from './types';
+export * from './TextStyles';
