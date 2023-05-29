@@ -1,17 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { createPluginFactory } from '@udecode/plate';
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import { MarkupElement, Plugin, PluginProps, defaultStyles, getColumnBreakClasses } from '../../..';
 import { alignmentClassnames } from '../../helper';
 import { merge } from '@utilities/merge';
 import { TextStyleRenderElementProps, TextStyles } from '../types';
-import { CSSPropertiesHover } from '@components/RichTextEditor/types';
 
 const ID = 'textstyle-custom2-plugin';
 
 export class Custom2Plugin extends Plugin {
-    public styles: CSSPropertiesHover = {};
+    public styles: CSSProperties = {};
     constructor({ styles = defaultStyles.custom2, ...props }: PluginProps = {}) {
         super(TextStyles.custom2, {
             label: 'Custom 2',
@@ -45,7 +44,7 @@ const Custom2MarkupElementNode = ({ element, attributes, children, styles }: Tex
     );
 };
 
-const createCustom2Plugin = (styles: CSSPropertiesHover) =>
+const createCustom2Plugin = (styles: CSSProperties) =>
     createPluginFactory({
         key: TextStyles.custom2,
         isElement: true,

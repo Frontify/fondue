@@ -1,17 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { createPluginFactory } from '@udecode/plate';
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import { MarkupElement, Plugin, PluginProps, defaultStyles, getColumnBreakClasses } from '../../..';
 import { alignmentClassnames } from '../../helper';
 import { merge } from '@utilities/merge';
 import { TextStyleRenderElementProps, TextStyles } from '../types';
-import { CSSPropertiesHover } from '@components/RichTextEditor/types';
 
 const ID = 'textstyle-heading2-plugin';
 
 export class Heading2Plugin extends Plugin {
-    public styles: CSSPropertiesHover = {};
+    public styles: CSSProperties = {};
     constructor({ styles = defaultStyles.heading2, ...props }: PluginProps = {}) {
         super(TextStyles.heading2, {
             label: 'Heading 2',
@@ -45,7 +44,7 @@ const Heading2MarkupElementNode = ({ element, attributes, children, styles }: Te
     );
 };
 
-const createHeading2Plugin = (styles: CSSPropertiesHover) =>
+const createHeading2Plugin = (styles: CSSProperties) =>
     createPluginFactory({
         key: TextStyles.heading2,
         isElement: true,

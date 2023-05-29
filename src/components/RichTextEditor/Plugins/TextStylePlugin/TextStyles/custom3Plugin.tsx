@@ -6,7 +6,6 @@ import { MarkupElement, Plugin, PluginProps, defaultStyles, getColumnBreakClasse
 import { alignmentClassnames } from '../../helper';
 import { merge } from '@utilities/merge';
 import { TextStyleRenderElementProps, TextStyles } from '../types';
-import { CSSPropertiesHover } from '@components/RichTextEditor/types';
 
 const ID = 'textstyle-custom3-plugin';
 
@@ -45,7 +44,7 @@ const Custom3MarkupElementNode = ({ element, attributes, children, styles }: Tex
     );
 };
 
-const createCustom3Plugin = (styles: CSSPropertiesHover) =>
+const createCustom3Plugin = (styles: CSSProperties) =>
     createPluginFactory({
         key: TextStyles.custom3,
         isElement: true,

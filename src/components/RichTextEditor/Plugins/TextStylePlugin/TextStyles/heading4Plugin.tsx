@@ -6,7 +6,6 @@ import { MarkupElement, Plugin, PluginProps, defaultStyles, getColumnBreakClasse
 import { alignmentClassnames } from '../../helper';
 import { merge } from '@utilities/merge';
 import { TextStyleRenderElementProps, TextStyles } from '../types';
-import { CSSPropertiesHover } from '@components/RichTextEditor/types';
 
 const ID = 'textstyle-heading4-plugin';
 
@@ -45,7 +44,7 @@ const Heading4MarkupElementNode = ({ element, attributes, children, styles }: Te
     );
 };
 
-const createHeading4Plugin = (styles: CSSPropertiesHover) =>
+const createHeading4Plugin = (styles: CSSProperties) =>
     createPluginFactory({
         key: TextStyles.heading4,
         isElement: true,

@@ -6,7 +6,6 @@ import { MarkupElement, Plugin, PluginProps, defaultStyles, getColumnBreakClasse
 import { alignmentClassnames } from '../../helper';
 import { merge } from '@utilities/merge';
 import { TextStyleRenderElementProps, TextStyles } from '../types';
-import { CSSPropertiesHover } from '@components/RichTextEditor/types';
 
 const ID = 'textstyle-imageTitle-plugin';
 
@@ -44,7 +43,7 @@ const ImageTitleMarkupElementNode = ({ element, attributes, children, styles }: 
     );
 };
 
-const createImageTitlePlugin = (styles: CSSPropertiesHover) =>
+const createImageTitlePlugin = (styles: CSSProperties) =>
     createPluginFactory({
         key: TextStyles.imageTitle,
         isElement: true,

@@ -3,7 +3,7 @@
 import { TElement } from '@udecode/plate';
 import { merge } from '@utilities/merge';
 import { reactCssPropsToCss } from '../utils/reactCssPropsToCss';
-import { CSSPropertiesHover } from '@components/RichTextEditor/types';
+import { CSSPropertiesHover } from '../types';
 
 export const checkItemNode = (
     node: TElement,

@@ -1,14 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
-import { createContext, useContext } from 'react';
+import React, { CSSProperties, createContext, useContext } from 'react';
 import { Position, getEditorWrapperClassNames } from '../EditorPositioningWrapper';
 import { EditorResizeContextProvider } from './EditorResizeContext';
 import { defaultStyles } from '../utils';
-import { CSSPropertiesHover } from '../types';
 
 export type RichTextEditorContextProps = {
-    styles: Record<string, CSSPropertiesHover>;
+    styles: Record<string, CSSProperties>;
     position: Position;
     wrapperClassNames: string;
 };
@@ -23,7 +21,7 @@ export const useRichTextEditorContext = () => useContext(RichTextEditorContext);
 type RichTextEditorProviderProps = {
     children: React.ReactNode;
     value: {
-        styles: Record<string, CSSPropertiesHover>;
+        styles: Record<string, CSSProperties>;
         position: Position;
         border: boolean;
     };

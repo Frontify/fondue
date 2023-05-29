@@ -29,7 +29,7 @@ import { mentionHtmlNode } from '../nodes/mentionHtmlNode';
 import { reactCssPropsToCss } from './reactCssPropsToCss';
 import { serializeLeafToHtml } from './serializeLeafToHtml';
 import { defaultNode } from '../nodes/default';
-import { CSSPropertiesHover } from '@components/RichTextEditor/types';
+import { CSSPropertiesHover } from '../types';
 
 const countNodesOfType = (nodes: TDescendant[], type: string): number => {
     return nodes.reduce((acc, node) => {

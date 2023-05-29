@@ -7,7 +7,7 @@ import { parseRawValue } from '../utils/parseRawValue';
 import { serializeNodeToHtmlRecursive } from './utils/serializeNodeToHtmlRecursive';
 import type { MentionableItems } from '../Plugins/MentionPlugin';
 import { defaultStyles } from '../utils';
-import { CSSPropertiesHover } from '../types';
+import { CSSPropertiesHover } from './types';
 
 export const serializeRawToHtml = (
     raw: string,

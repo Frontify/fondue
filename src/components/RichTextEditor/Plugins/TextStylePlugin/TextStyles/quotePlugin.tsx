@@ -6,7 +6,6 @@ import { MarkupElement, Plugin, PluginProps, defaultStyles, getColumnBreakClasse
 import { alignmentClassnames } from '../../helper';
 import { merge } from '@utilities/merge';
 import { TextStyleRenderElementProps, TextStyles } from '../types';
-import { CSSPropertiesHover } from '@components/RichTextEditor/types';
 
 const ID = 'textstyle-quote-plugin';
 
@@ -45,7 +44,7 @@ export const QuoteMarkupElementNode = ({ element, attributes, children, styles }
     );
 };
 
-export const createQuotePlugin = (styles: CSSPropertiesHover) =>
+export const createQuotePlugin = (styles: CSSProperties) =>
     createPluginFactory({
         key: TextStyles.quote,
         isElement: true,

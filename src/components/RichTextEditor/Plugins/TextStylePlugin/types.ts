@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { CSSPropertiesHover } from '@components/RichTextEditor/types';
+import { CSSProperties } from 'react';
 import { Plugin, PluginProps } from '../Plugin';
 import { ELEMENT_PARAGRAPH, PlateRenderElementProps } from '@udecode/plate';
 
@@ -11,7 +11,7 @@ export type TextStylePluginProps = PluginProps & {
 };
 
 export type TextStyleRenderElementProps = {
-    styles: CSSPropertiesHover;
+    styles: CSSProperties;
 } & PlateRenderElementProps;
 
 export enum TextStyles {

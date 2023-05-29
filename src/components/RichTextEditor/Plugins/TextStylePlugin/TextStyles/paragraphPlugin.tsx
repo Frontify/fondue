@@ -1,15 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { createParagraphPlugin as createPlateParagraphPlugin, createPluginFactory } from '@udecode/plate';
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import { MarkupElement, Plugin, PluginProps, defaultStyles, getColumnBreakClasses } from '../../..';
 import { alignmentClassnames } from '../../helper';
 import { merge } from '@utilities/merge';
 import { TextStyleRenderElementProps, TextStyles } from '../types';
-import { CSSPropertiesHover } from '@components/RichTextEditor/types';
 
 export class ParagraphPlugin extends Plugin {
-    public styles: CSSPropertiesHover = {};
+    public styles: CSSProperties = {};
     constructor({ styles = defaultStyles.p, ...props }: PluginProps = {}) {
         super(TextStyles.p, {
             markupElement: new ParagraphMarkupElement(),
@@ -42,7 +41,7 @@ export class ParagraphMarkupElement extends MarkupElement {
     }
 }
 
-export const createParagraphPlugin = (styles: CSSPropertiesHover) =>
+export const createParagraphPlugin = (styles: CSSProperties) =>
     createPluginFactory({
         ...createPlateParagraphPlugin(),
         key: TextStyles.p,

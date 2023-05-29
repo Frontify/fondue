@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import type { CSSPropertiesHover } from '../types';
+import type { CSSPropertiesHover } from '../serializer/types';
 
 export const defaultStyles: Record<string, CSSPropertiesHover> = {
     heading1: {

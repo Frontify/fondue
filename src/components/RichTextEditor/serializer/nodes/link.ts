@@ -4,7 +4,7 @@ import { TLinkElement } from '@components/RichTextEditor/Plugins/LinkPlugin/type
 import { TElement } from '@udecode/plate';
 import escapeHtml from 'escape-html';
 import { reactCssPropsToCss } from '../utils/reactCssPropsToCss';
-import { CSSPropertiesHover } from '@components/RichTextEditor/types';
+import { CSSPropertiesHover } from '../types';
 import { LINK_PLUGIN } from '@components/RichTextEditor/Plugins/LinkPlugin/id';
 
 export const linkNode = (

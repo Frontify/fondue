@@ -6,7 +6,6 @@ import { MarkupElement, Plugin, PluginProps, defaultStyles, getColumnBreakClasse
 import { alignmentClassnames } from '../../helper';
 import { merge } from '@utilities/merge';
 import { TextStyleRenderElementProps, TextStyles } from '../types';
-import { CSSPropertiesHover } from '@components/RichTextEditor/types';
 
 const ID = 'textstyle-imageCaption-plugin';
 
@@ -44,7 +43,7 @@ const ImageCaptionMarkupElementNode = ({ element, attributes, children, styles }
     );
 };
 
-const createImageCaptionPlugin = (styles: CSSPropertiesHover) =>
+const createImageCaptionPlugin = (styles: CSSProperties) =>
     createPluginFactory({
         key: TextStyles.imageCaption,
         isElement: true,
