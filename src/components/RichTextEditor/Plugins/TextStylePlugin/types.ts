@@ -1,14 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { CSSProperties } from 'react';
-import { Plugin, PluginProps } from '../Plugin';
 import { PlateRenderElementProps } from '@udecode/plate';
 
 export const DEFAULT_TEXT_STYLE_VALUE = 'Mixed';
-
-export type TextStylePluginProps = PluginProps & {
-    textStyles?: Plugin[];
-};
 
 export type TextStyleRenderElementProps = {
     styles: CSSProperties;
