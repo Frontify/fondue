@@ -31,7 +31,7 @@ export class PluginComposer {
                     this.addStyles(plugin.styles, plugin.id);
                 }
 
-                if (plugin.id === 'text-style-plugin' && plugin.textStyles) {
+                if (plugin.textStyles) {
                     this.addTextStylesOfSubPlugins(plugin.textStyles);
                 }
             }

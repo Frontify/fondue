@@ -26,7 +26,7 @@ export const createLinkPlugin = createPluginFactory({
 
 export class LinkPlugin extends Plugin {
     public styles: CSSProperties = {};
-    constructor({ styles = defaultStyles['link-plugin'], ...props }: PluginProps = {}) {
+    constructor({ styles = defaultStyles[LINK_PLUGIN], ...props }: PluginProps = {}) {
         super(LINK_PLUGIN, {
             button: LinkButton,
             markupElement: new LinkMarkupElement(),

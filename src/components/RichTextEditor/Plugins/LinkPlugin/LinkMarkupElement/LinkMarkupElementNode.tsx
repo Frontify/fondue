@@ -5,6 +5,7 @@ import { HTMLPropsAs, LinkRootProps, useElementProps } from '@udecode/plate';
 import { getUrlFromLinkOrLegacyLink } from '../utils';
 import { TLinkElement } from '../types';
 import { useRichTextEditorContext } from '@components/RichTextEditor/context';
+import { LINK_PLUGIN } from '../id';
 
 const useLink = (props: LinkRootProps): HTMLPropsAs<'a'> => {
     const _props = useElementProps<TLinkElement, 'a'>({
@@ -30,7 +31,7 @@ export const LinkMarkupElementNode = (props: LinkRootProps) => {
     const { styles } = useRichTextEditorContext();
 
     return (
-        <a {...attributes} href={htmlProps.href} target={htmlProps.target} style={styles['link-plugin']}>
+        <a {...attributes} href={htmlProps.href} target={htmlProps.target} style={styles[LINK_PLUGIN]}>
             {children}
         </a>
     );
