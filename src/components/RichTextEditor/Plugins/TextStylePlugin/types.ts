@@ -2,7 +2,7 @@
 
 import { CSSProperties } from 'react';
 import { Plugin, PluginProps } from '../Plugin';
-import { ELEMENT_PARAGRAPH, PlateRenderElementProps } from '@udecode/plate';
+import { PlateRenderElementProps } from '@udecode/plate';
 
 export const DEFAULT_TEXT_STYLE_VALUE = 'Mixed';
 
@@ -25,5 +25,5 @@ export enum TextStyles {
     quote = 'quote',
     imageCaption = 'imageCaption',
     imageTitle = 'imageTitle',
-    p = ELEMENT_PARAGRAPH,
+    p = 'p',
 }
