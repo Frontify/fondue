@@ -24,4 +24,4 @@ export const defaultNode = (node: TElement, children: string, styles: CSSPropert
 };
 
 const getStyledChild = (children: string, styles: string, classNames: string) =>
-    `<span class=class="${classNames}" style="${styles}">${children}</span>`;
+    `<span class="${classNames}" style="${styles}">${children}</span>`;
