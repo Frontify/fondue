@@ -160,8 +160,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
             ],
         };
         const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
-
-        expect(result).to.match(/<p.*><a.*href="https:\/\/frontify.com".*>This is a Link\.<\/a><\/p>/);
+        expect(result).to.match(/<p.*><span.*><a.*href="https:\/\/frontify.com".*>This is a Link\.<\/a><\/span><\/p>/);
     });
 
     it('serializes legacy link format to html', () => {
@@ -186,7 +185,9 @@ describe('serializeNodeToHtmlRecursive()', () => {
         };
         const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
 
-        expect(result).to.match(/<p.*><a.*href="https:\/\/smartive.ch".*>This is also a Link\.<\/a><\/p>/);
+        expect(result).to.match(
+            /<p.*><span.*><a.*href="https:\/\/smartive.ch".*>This is also a Link\.<\/a><\/span><\/p>/,
+        );
     });
 
     it('serializes link with target blank to html', () => {
@@ -203,7 +204,9 @@ describe('serializeNodeToHtmlRecursive()', () => {
         };
         const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
 
-        expect(result).to.match(/<p.*><a.*target="_blank".*href="https:\/\/frontify.com".*>This is a Link\.<\/a><\/p>/);
+        expect(result).to.match(
+            /<p.*><span.*><a.*target="_blank".*href="https:\/\/frontify.com".*>This is a Link\.<\/a><\/span><\/p>/,
+        );
     });
 
     it('serializes headings and customs html', () => {
@@ -223,14 +226,14 @@ describe('serializeNodeToHtmlRecursive()', () => {
 
         const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
 
-        expect(result).to.match(/<h1.*>This is a h1.<\/h1>/);
-        expect(result).to.match(/<h2.*>This is a h2.<\/h2>/);
-        expect(result).to.match(/<h3.*>This is a h3.<\/h3>/);
-        expect(result).to.match(/<h4.*>This is a h4.<\/h4>/);
-        expect(result).to.match(/<p.*>This is a custom1.<\/p>/);
-        expect(result).to.match(/<p.*>This is a custom2.<\/p>/);
-        expect(result).to.match(/<p.*>This is a custom3.<\/p>/);
-        expect(result).to.match(/<p.*>This is a quote.<\/p>/);
+        expect(result).to.match(/<h1.*><span.*>This is a h1.<\/span><\/h1>/);
+        expect(result).to.match(/<h2.*><span.*>This is a h2.<\/span><\/h2>/);
+        expect(result).to.match(/<h3.*><span.*>This is a h3.<\/span><\/h3>/);
+        expect(result).to.match(/<h4.*><span.*>This is a h4.<\/span><\/h4>/);
+        expect(result).to.match(/<p.*><span.*>This is a custom1.<\/span><\/p>/);
+        expect(result).to.match(/<p.*><span.*>This is a custom2.<\/span><\/p>/);
+        expect(result).to.match(/<p.*><span.*>This is a custom3.<\/span><\/p>/);
+        expect(result).to.match(/<p.*><span.*>This is a quote.<\/span><\/p>/);
     });
 
     it('serializes Mentions to html', () => {
@@ -260,7 +263,9 @@ describe('serializeNodeToHtmlRecursive()', () => {
             mappedMentionable: mapMentionable(mentionable),
         });
 
-        expect(result).to.match(/<p.*>new annotation <span.*>Admiral Gial Ackbar<\/span> adding changes :\)<\/p>/);
+        expect(result).to.match(
+            /<p.*><span.*>new annotation <span.*>Admiral Gial Ackbar<\/span> adding changes :\)<\/span><\/p>/,
+        );
     });
 
     it('serializes a button to html', () => {
@@ -370,7 +375,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
         const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
 
         expect(result).to.be.equal(
-            '<p class="tw-break-words" style="font-size: 14px; font-style: normal; font-weight: normal;"><a class="tw-break-words" style="font-size: 14px; font-style: normal; color: rgb(113, 89, 215); text-decoration: underline; cursor: pointer;" target="_blank" href="https://frontify.com">This is a Link.</a></p>',
+            '<p><span class="tw-break-words" style="font-size: 14px; font-style: normal; font-weight: normal;"><a class="tw-break-words" style="font-size: 14px; font-style: normal; color: rgb(113, 89, 215); text-decoration: underline; cursor: pointer;" target="_blank" href="https://frontify.com">This is a Link.</a></span></p>',
         );
     });
 });
