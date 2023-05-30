@@ -375,7 +375,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
         const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
 
         expect(result).to.be.equal(
-            '<p><span class="tw-break-words" style="font-size: 14px; font-style: normal; font-weight: normal;"><a class="tw-break-words" style="font-size: 14px; font-style: normal; color: rgb(113, 89, 215); text-decoration: underline; cursor: pointer;" target="_blank" href="https://frontify.com">This is a Link.</a></span></p>',
+            '<p class="tw-break-words"><span style="display: inline-block; font-size: 14px; font-style: normal; font-weight: normal;"><a class="tw-break-words" style="font-size: 14px; font-style: normal; color: rgb(113, 89, 215); text-decoration: underline; cursor: pointer;" target="_blank" href="https://frontify.com">This is a Link.</a></span></p>',
         );
     });
 });
