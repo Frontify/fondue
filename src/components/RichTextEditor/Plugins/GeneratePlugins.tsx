@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactNode } from 'react';
+import React, { CSSProperties, ReactNode } from 'react';
 import { AnyObject, PlatePlugin, createPlateUI, createPlugins } from '@udecode/plate';
 import { Toolbar } from '../Toolbar';
 import type { PluginComposer } from './PluginComposer';
@@ -9,6 +9,7 @@ type GeneratePluginsReturn = {
     create: () => PlatePlugin<AnyObject>[];
     toolbar: (toolbarWidth: number | undefined) => ReactNode;
     inline: () => ReactNode;
+    styles: () => Record<string, CSSProperties>;
 };
 
 export const createPlatePlugins = (pluginComposer: PluginComposer) =>
@@ -30,5 +31,6 @@ export const GeneratePlugins = (editorId: string, pluginComposer: PluginComposer
                 ))}
             </>
         ),
+        styles: () => pluginComposer.getStyles,
     };
 };
