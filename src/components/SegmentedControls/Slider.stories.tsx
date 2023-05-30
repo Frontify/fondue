@@ -16,7 +16,7 @@ export default {
     },
     args: {
         disabled: false,
-        padding: 'medium',
+        size: 'medium',
     },
 } as Meta<SegmentedControlsProps>;
 
@@ -68,15 +68,15 @@ TextWithHugWidth.args = {
     hugWidth: true,
 };
 
-export const TextWithSmallPadding = LimitedWidthTemplate.bind({});
-TextWithSmallPadding.args = {
+export const TextWithSmallSize = LimitedWidthTemplate.bind({});
+TextWithSmallSize.args = {
     items: [
         { id: 'a', value: 'Auto' },
         { id: 'b', value: 'S' },
         { id: 'c', value: 'M' },
         { id: 'd', value: 'L' },
     ],
-    padding: 'small',
+    size: 'small',
 };
 
 export const Numbers = SegmentedControlsTemplate.bind({});
