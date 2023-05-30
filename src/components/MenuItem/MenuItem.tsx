@@ -19,6 +19,7 @@ export type MenuItemProps = {
     link?: string;
     onClick?: <T extends HTMLButtonElement | HTMLAnchorElement>(event: MouseEvent<T>) => void;
     children?: ReactNode;
+    'data-test-id'?: string;
 } & Omit<MenuItemContentProps, 'iconSize'>;
 
 export const menuItemSizeClassMap: Record<MenuItemContentSize, string> = {
@@ -77,13 +78,16 @@ export const MenuItem = ({
     children,
     link,
     onClick,
+    'data-test-id': dataTestId = 'menu-item',
 }: MenuItemProps) => {
     const currentIconSize = size === MenuItemContentSize.XSmall ? IconSize.Size16 : IconSize.Size20;
 
     const currentIcon = {
-        [SelectionIndicatorIcon.CaretRight]: <IconCaretRight data-test-id="menu-item-caret" size={currentIconSize} />,
+        [SelectionIndicatorIcon.CaretRight]: (
+            <IconCaretRight data-test-id={`${dataTestId}-caret`} size={currentIconSize} />
+        ),
         [SelectionIndicatorIcon.Check]: active && (
-            <IconCheckMark data-test-id="menu-item-active" size={currentIconSize} />
+            <IconCheckMark data-test-id={`${dataTestId}-active`} size={currentIconSize} />
         ),
         [SelectionIndicatorIcon.None]: null,
     }[selectionIndicator];
@@ -103,7 +107,7 @@ export const MenuItem = ({
         <>
             {children && (
                 <li
-                    data-test-id="menu-item"
+                    data-test-id={dataTestId}
                     role="menuitem"
                     className={merge([
                         'tw-text-sm tw-leading-4 tw-text-text-weak',

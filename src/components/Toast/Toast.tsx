@@ -18,6 +18,7 @@ export const Toast = ({
     icon,
     animationDirection = ToastAnimationDirection.BottomToTop,
     children,
+    'data-test-id': dataTestId = 'toast',
 }: ToastProps): ReactElement => (
     <AnimatePresence>
         {isOpen && (
@@ -29,7 +30,7 @@ export const Toast = ({
                 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: getToastStartPosition(animationDirection) }}
-                data-test-id="toast"
+                data-test-id={dataTestId}
                 aria-live="polite"
                 role="alert"
             >

@@ -124,14 +124,17 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
         >
             {icon && (
                 <span
-                    data-test-id="button-icon"
+                    data-test-id={`${dataTestId}-icon`}
                     className={merge([children && !hideLabel ? IconSpacingClasses[size] : '', getStyles('icon')])}
                 >
                     {cloneElement(icon, { size: buttonIconSizeMap[size] })}
                 </span>
             )}
             {children && (
-                <span data-test-id="button-text" className={merge([getStyles('text'), hideLabel && 'tw-sr-only'])}>
+                <span
+                    data-test-id={`${dataTestId}-text`}
+                    className={merge([getStyles('text'), hideLabel && 'tw-sr-only'])}
+                >
                     {children}
                 </span>
             )}

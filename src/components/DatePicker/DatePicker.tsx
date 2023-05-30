@@ -45,6 +45,7 @@ export type DatePickerProps = {
     onClose?: () => void;
     onBlur?: () => void;
     onKeyDown?: (event: React.KeyboardEvent<HTMLDivElement>) => void;
+    'data-test-id'?: string;
 } & (SingleDatePickerProps | RangeDatePickerProps);
 
 const getDayClasses = (variant: DatePickerProps['variant'], date: Date) => {
@@ -80,6 +81,7 @@ export const DatePicker = forwardRef<ReactDatePicker<never, boolean>, DatePicker
             preventOpenOnFocus = false,
             filterDate = () => true,
             variant = 'single',
+            'data-test-id': dataTestId = 'date-picker',
         },
         ref,
     ) => {
@@ -96,7 +98,7 @@ export const DatePicker = forwardRef<ReactDatePicker<never, boolean>, DatePicker
         };
 
         return (
-            <div data-test-id="date-picker">
+            <div data-test-id={dataTestId}>
                 <DatepickerComponent
                     calendarClassName="tw-rounded-sm tw-border tw-border-line-x-strong react-datepicker-wrap"
                     selected={value}

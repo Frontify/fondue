@@ -17,14 +17,15 @@ export interface OverflowMenuItemProps {
 
 export interface OverflowMenuProps {
     items: OverflowMenuItemProps[];
+    'data-test-id'?: string;
 }
 
-export const OverflowMenu = ({ items }: OverflowMenuProps) => {
+export const OverflowMenu = ({ items, 'data-test-id': dataTestId = 'overflow-menu' }: OverflowMenuProps) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const menuOpenerRef = useRef<HTMLButtonElement>(null);
 
     return (
-        <div data-test-id="overflow-menu" className="tw-relative tw-bottom-0 tw-top-0 tw-flex">
+        <div data-test-id={dataTestId} className="tw-relative tw-bottom-0 tw-top-0 tw-flex">
             <button
                 aria-haspopup="true"
                 aria-expanded={isMenuOpen}

@@ -30,6 +30,7 @@ export const OrderableList = <T extends object>({
     dragDisabled,
     items,
     renderContent,
+    'data-test-id': dataTestId = 'orderable-list',
 }: OrderableListProps<T>) => {
     const [itemsState, setItemsState] = useState(items);
     const listId = useId();
@@ -52,7 +53,7 @@ export const OrderableList = <T extends object>({
 
     return (
         <DndProvider backend={HTML5Backend}>
-            <div className="tw-outline-none" data-test-id="orderable-list">
+            <div className="tw-outline-none" data-test-id={dataTestId}>
                 {itemsState.map((item, index) => (
                     <React.Fragment key={`dropzone-orderable-list-key-${index}`}>
                         <DropZone
