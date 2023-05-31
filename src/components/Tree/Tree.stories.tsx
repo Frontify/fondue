@@ -49,20 +49,24 @@ const TreeItemContentComponent = ({ title }: { title: string }) => {
 const CustomTreeItem = ({ label, contentComponent, nodes, ...otherProps }: TreeItemMock) => {
     const customLabel = `${label} CUSTOM`;
 
+    const onDrop = useCallback(() => action('onDrop'), []);
+
     return (
-        <TreeItem label={customLabel} {...otherProps} onDrop={action('onDrop')}>
+        <TreeItem label={customLabel} {...otherProps} onDrop={onDrop}>
             {nodes?.map((node) => renderCustomTreeItem({ ...node, nodes: node.nodes }))}
         </TreeItem>
     );
 };
 
-const renderCustomTreeItem = ({ id, ...treeItem }: TreeItemMock) => {
-    return <CustomTreeItem key={`${id}-custom`} id={`${id}-custom`} onDrop={action('onDrop')} {...treeItem} />;
+const renderCustomTreeItem = ({ id, onDrop, ...treeItem }: TreeItemMock) => {
+    return (
+        <CustomTreeItem key={`${id}-custom`} id={`${id}-custom`} onDrop={onDrop ?? action('onDrop')} {...treeItem} />
+    );
 };
 
-const renderTreeItemLabel = ({ nodes, ...treeItem }: TreeItemMock) => {
+const renderTreeItemLabel = ({ nodes, onDrop, ...treeItem }: TreeItemMock) => {
     return (
-        <TreeItem {...treeItem} key={treeItem.id} onDrop={action('onDrop')}>
+        <TreeItem {...treeItem} key={treeItem.id} onDrop={onDrop ?? action('onDrop')}>
             {nodes?.map((node) => renderTreeItemLabel({ ...node, nodes: node.nodes }))}
         </TreeItem>
     );
@@ -81,17 +85,20 @@ const renderTreeItemComponent = ({ nodes, label, numChildNodes, onDrop, ...treeI
 );
 
 export const TreeWithLabel = ({ ...args }: TreeProps) => {
+    const onDrop = useCallback(() => action('onDrop'), []);
+
     return (
         <div style={{ width: 800 }}>
-            <TreeView {...args}>{treeItemsMock.map(renderTreeItemLabel)}</TreeView>
+            <TreeView {...args}>{treeItemsMock.map((item) => renderTreeItemLabel({ ...item, onDrop }))}</TreeView>
         </div>
     );
 };
 
 export const TreeWithCustomTreeItem = ({ ...args }: TreeProps) => {
+    const onDrop = useCallback(() => action('onDrop'), []);
     return (
         <div style={{ width: 800 }}>
-            <TreeView {...args}>{treeItemsMock.map(renderCustomTreeItem)}</TreeView>
+            <TreeView {...args}>{treeItemsMock.map((item) => renderCustomTreeItem({ ...item, onDrop }))}</TreeView>
         </div>
     );
 };

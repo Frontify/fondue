@@ -140,7 +140,7 @@ export const useNavigationWithLazyLoadedItemsMock = (id?: string, isExpanded = f
     useEffect(() => {
         setTimeout(() => {
             if (!isExpanded) {
-                return;
+                return setNodes([]);
             }
 
             if (isRoot) {

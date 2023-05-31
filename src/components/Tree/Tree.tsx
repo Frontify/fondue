@@ -140,7 +140,11 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
                 const parentNodeIndex = findIndexById(draft.rootNodes, parentId);
 
                 if (parentNodeIndex === -1) {
-                    console.error(`Element with ID "${parentId}" not found.`);
+                    // This can happen when this action is triggered before the rootNodes array is updated
+                    // It happens if using static data will all nodes and handling expandedIds outside the Tree component
+                    // Most of the cases, it will register the children properly afterwards
+                    // See Scrollable Tree With Label story
+                    console.warn(`Parent element with ID "${parentId}" not found when registering children.`);
                     return;
                 }
 
