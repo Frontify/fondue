@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { CSSProperties, ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import { IconStylingWrapperProps } from './types';
 
 export const IconStylingWrapper = ({ icon }: IconStylingWrapperProps) => (
@@ -35,41 +35,3 @@ export const justifyClassNames: Record<string, string> = {
 };
 
 export const ELEMENT_BUTTON = 'button';
-
-export const THEME_PREFIX = '--f-theme-settings-';
-export const getTextStyleCssProperties = (textStyle: string): CSSProperties => {
-    if (textStyle === 'p' || !textStyle) {
-        textStyle = 'body';
-    }
-
-    const style = toKebabCase(textStyle);
-
-    if (style === 'link') {
-        return {
-            color: `var(${THEME_PREFIX}${style}-color)`,
-            fontFamily: `var(${THEME_PREFIX}${style}-font-family)`,
-            fontSize: `var(${THEME_PREFIX}${style}-font-size)`,
-            fontStyle: `var(${THEME_PREFIX}${style}-font-style)`,
-            fontWeight: `var(${THEME_PREFIX}${style}-font-weight)`,
-            letterSpacing: `var(${THEME_PREFIX}${style}-letter-spacing)`,
-            textDecoration: `var(${THEME_PREFIX}${style}-text-decoration)`,
-            textTransform: `var(${THEME_PREFIX}${style}-text-transform)` as CSSProperties['textTransform'],
-            marginTop: `var(${THEME_PREFIX}${style}-margin-top)`,
-            marginBottom: `var(${THEME_PREFIX}${style}-margin-bottom)`,
-        };
-    }
-    return {
-        color: `var(${THEME_PREFIX}${style}-color)`,
-        fontFamily: `var(${THEME_PREFIX}${style}-font-family)`,
-        fontSize: `var(${THEME_PREFIX}${style}-font-size)`,
-        fontStyle: `var(${THEME_PREFIX}${style}-font-style)`,
-        fontWeight: `var(${THEME_PREFIX}${style}-font-weight)`,
-        letterSpacing: `var(${THEME_PREFIX}${style}-letter-spacing)`,
-        lineHeight: `var(${THEME_PREFIX}${style}-line-height)`,
-        textDecoration: `var(${THEME_PREFIX}${style}-text-decoration)`,
-        textTransform: `var(${THEME_PREFIX}${style}-text-transform)` as CSSProperties['textTransform'],
-        marginTop: `var(${THEME_PREFIX}${style}-margin-top)`,
-        marginBottom: `var(${THEME_PREFIX}${style}-margin-bottom)`,
-    };
-};
-const toKebabCase = (str: string) => str.replaceAll(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
