@@ -201,7 +201,7 @@ export const WithDynamicNavigation = () => {
     );
 };
 
-const LazyLoadingTreeItem = memo(({ label, numChildNodes, ...otherProps }: TreeItemMock) => {
+const LazyLoadingTreeItem = memo(({ label, numChildNodes, onDrop, ...otherProps }: TreeItemMock) => {
     const { isExpanded } = useTreeItem(otherProps.id);
 
     const { nodes } = useNavigationWithLazyLoadedItemsMock(otherProps.id, isExpanded);
@@ -210,12 +210,14 @@ const LazyLoadingTreeItem = memo(({ label, numChildNodes, ...otherProps }: TreeI
         return nodes.map((n) => n);
     }, [nodes]);
 
+    const handleDrop = useCallback(() => action('onDrop'), []);
+
     return (
         <TreeItem
             contentComponent={<TreeItemContentComponent title={label || 'NO TITLE'} />}
-            onDrop={action('onDrop')}
-            {...otherProps}
+            onDrop={onDrop ?? handleDrop}
             showCaret={!!numChildNodes}
+            {...otherProps}
         >
             {nodesToRender.map(renderLazyLoadingTreeItem)}
         </TreeItem>
@@ -224,9 +226,7 @@ const LazyLoadingTreeItem = memo(({ label, numChildNodes, ...otherProps }: TreeI
 LazyLoadingTreeItem.displayName = 'FondueStoryLazyLoadingTreeItem';
 
 const renderLazyLoadingTreeItem = ({ id, ...treeItem }: TreeItemMock) => {
-    return (
-        <LazyLoadingTreeItem key={`${id}-lazyloaded`} id={`${id}-lazyloaded`} onDrop={action('onDrop')} {...treeItem} />
-    );
+    return <LazyLoadingTreeItem key={`${id}-lazyloaded`} id={`${id}-lazyloaded`} {...treeItem} />;
 };
 
 const LazyLoadingTreeRoot = memo(() => {
@@ -248,6 +248,8 @@ const LazyLoadingTreeRoot = memo(() => {
         [expandedIds],
     );
 
+    const onRootDrop = useCallback(() => action('onDrop'), []);
+
     return (
         <TreeView
             id="dynamic-navigation"
@@ -256,7 +258,19 @@ const LazyLoadingTreeRoot = memo(() => {
             onExpand={handleItemExpand}
             onShrink={handleItemShrink}
         >
-            {rootNodesData.map(renderLazyLoadingTreeItem)}
+            {renderTreeItemComponent({
+                id: 'first-fixed-tree-item',
+                draggable: false,
+                label: 'First Fixed TreeItem',
+                onDrop: onRootDrop,
+            })}
+            {...rootNodesData.map(renderLazyLoadingTreeItem)}
+            {renderTreeItemComponent({
+                id: 'last-fixed-tree-item',
+                draggable: false,
+                label: 'Last Fixed TreeItem',
+                onDrop: onRootDrop,
+            })}
         </TreeView>
     );
 });
