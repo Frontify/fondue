@@ -95,6 +95,7 @@ export const RichTextEditor = ({
     return (
         <RichTextEditorProvider
             value={{
+                styles: config.styles(),
                 position,
                 border,
             }}

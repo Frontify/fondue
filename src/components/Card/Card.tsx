@@ -12,9 +12,15 @@ export type CardProps = {
     children: ReactNode | ReactNode[];
     hoverable?: boolean;
     onClick?: (event: PressEvent) => void;
+    'data-test-id'?: string;
 };
 
-export const Card = ({ hoverable = false, children, onClick }: CardProps): ReactElement => {
+export const Card = ({
+    hoverable = false,
+    children,
+    onClick,
+    'data-test-id': dataTestId = 'card',
+}: CardProps): ReactElement => {
     const ref = useRef<HTMLDivElement | null>(null);
     const { buttonProps } = useButton(
         { elementType: 'div', onPress: (event: PressEvent) => onClick && onClick(event) },
@@ -27,7 +33,7 @@ export const Card = ({ hoverable = false, children, onClick }: CardProps): React
     return (
         <div
             {...clickableProps}
-            data-test-id="card"
+            data-test-id={dataTestId}
             ref={ref}
             className={merge([
                 'tw-w-full tw-outline-none tw-bg-white tw-border tw-border-black-10 tw-rounded tw-overflow-hidden',

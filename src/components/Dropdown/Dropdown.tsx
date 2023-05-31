@@ -60,6 +60,7 @@ export type DropdownProps = {
     position?: DropdownPosition;
     emphasis?: TriggerEmphasis;
     flip?: boolean;
+    'data-test-id'?: string;
 };
 
 const getActiveItem = (blocks: MenuBlock[], activeId: string | number): MenuItemType | null => {
@@ -93,6 +94,7 @@ export const Dropdown = ({
     position = DropdownPosition.Bottom,
     emphasis = TriggerEmphasis.Default,
     flip = false,
+    'data-test-id': dataTestId = 'dropdown',
 }: DropdownProps): ReactElement => {
     const activeItem = !!activeItemId ? getActiveItem(menuBlocks, activeItemId) : null;
     const props = mapToAriaProps(ariaLabel, menuBlocks);
@@ -173,7 +175,7 @@ export const Dropdown = ({
     });
 
     return (
-        <div className="tw-relative tw-w-full tw-font-sans tw-text-s">
+        <div className="tw-relative tw-w-full tw-font-sans tw-text-s" data-test-id={dataTestId}>
             <Trigger
                 disabled={disabled}
                 buttonProps={buttonProps}
@@ -190,7 +192,7 @@ export const Dropdown = ({
                     {...mergeProps(buttonProps, focusProps)}
                     id={useMemoizedId(propId)}
                     ref={triggerRef}
-                    data-test-id="dropdown-trigger"
+                    data-test-id={`${dataTestId}-trigger`}
                     className={merge([
                         'tw-overflow-hidden tw-flex-auto tw-h-full tw-rounded tw-text-left tw-outline-none',
                         size === DropdownSize.Small
@@ -230,7 +232,7 @@ export const Dropdown = ({
                                 ref={overlayRef}
                                 style={autoResize ? { maxHeight } : {}}
                                 className="tw-flex tw-flex-col"
-                                data-test-id="dropdown-menu"
+                                data-test-id={`${dataTestId}-menu`}
                                 role="dialog"
                             >
                                 <DismissButton onDismiss={() => close()} />

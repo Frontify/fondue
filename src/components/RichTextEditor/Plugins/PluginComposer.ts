@@ -4,12 +4,15 @@ import { PlatePluginComponent } from '@udecode/plate';
 import { ToolbarPositionWithButtons } from '../Toolbar/ToolbarPositionWithButtons';
 import { MarkupElement } from './MarkupElement';
 import { InlineData, ObjectType, PlatePluginList, Plugin, PluginComposerProps, Plugins, ToolbarButtons } from './types';
+import { CSSProperties } from 'react';
+import { PluginProps } from './Plugin';
 
 export class PluginComposer {
     private platePlugins: PlatePluginList = new Map();
     private markupElements: ObjectType<PlatePluginComponent> = {};
     private inlineElements: InlineData[] = [];
     private toolbarButtons: ToolbarButtons = new ToolbarPositionWithButtons();
+    private styles: Record<string, CSSProperties> = {};
 
     constructor(protected props?: PluginComposerProps) {}
 
@@ -23,6 +26,14 @@ export class PluginComposer {
                 this.addLeafElements(plugin.leafMarkupElements);
                 this.addPlugin(plugin);
                 this.addInline(plugin.inline());
+
+                if (plugin.styles) {
+                    this.addStyles(plugin.styles, plugin.id);
+                }
+
+                if (plugin.textStyles) {
+                    this.addTextStylesOfSubPlugins(plugin.textStyles);
+                }
             }
 
             if (this.hasToolbar) {
@@ -31,6 +42,14 @@ export class PluginComposer {
         }
 
         return this;
+    }
+
+    private addTextStylesOfSubPlugins(textStyles: Plugin<PluginProps>[]) {
+        for (const textStylePlugins of textStyles) {
+            if (textStylePlugins.styles) {
+                this.addStyles(textStylePlugins.styles, textStylePlugins.id);
+            }
+        }
     }
 
     private addLeafElements(leafMarkupElement: MarkupElement | MarkupElement[] | undefined) {
@@ -69,6 +88,10 @@ export class PluginComposer {
         }
     }
 
+    private addStyles(styles: CSSProperties, id: string) {
+        this.styles[id] = styles;
+    }
+
     get elements() {
         return { ...this.defaultElementsFromPlugins, ...this.markupElements };
     }
@@ -105,5 +128,9 @@ export class PluginComposer {
 
     get hasToolbar(): boolean {
         return !this.props?.noToolbar;
+    }
+
+    get getStyles(): Record<string, CSSProperties> {
+        return this.styles;
     }
 }

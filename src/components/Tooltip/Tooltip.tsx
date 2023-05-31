@@ -51,19 +51,17 @@ export type TooltipProps = {
     /** @deprecated use disabled since the tooltip is always present in the DOM now so hidden has no effect anymore */
     hidden?: boolean;
     enablePortal?: boolean;
+    'data-test-id'?: string;
 };
 
-/**
- * This is a temporary workaround because for some yet unknown reasons `tailwindcss` in clarify purges the `tw-pb-3.5` and `tw-pt-3.5` class.
- */
 const paddingsTop = {
-    small: 'tw-pt-3.5',
-    large: 'tw-pt-4',
+    small: 'tw-pt-2',
+    large: 'tw-pt-3',
 };
 
 const paddingsBottom = {
-    small: 'tw-pb-3.5',
-    large: 'tw-pb-4',
+    small: 'tw-pb-2',
+    large: 'tw-pb-3',
 };
 
 export enum TooltipPosition {
@@ -161,6 +159,7 @@ export const Tooltip = ({
     disabled = false,
     enablePortal = false,
     hidden = false,
+    'data-test-id': dataTestId = 'tooltip',
 }: TooltipProps) => {
     const [triggerElementRef, setTriggerElementRef] = useState<HTMLElement | HTMLDivElement | HTMLButtonElement | null>(
         null,
@@ -170,8 +169,8 @@ export const Tooltip = ({
     const shouldPreventTooltipOpening = hidden || disabled;
     const { linkProps } = useLink({ isDisabled: shouldPreventTooltipOpening }, linkRef);
     const hasLargePaddingTop = useMemo(
-        () => linkUrl || brightHeader || buttons || heading || headingIcon,
-        [linkUrl, brightHeader, buttons, heading, headingIcon],
+        () => linkUrl || buttons || heading || headingIcon,
+        [linkUrl, buttons, heading, headingIcon],
     );
 
     const placement = placementMap[`${position}-${alignment}`];
@@ -316,7 +315,7 @@ export const Tooltip = ({
                         'tw-popper-container tw-inline-block tw-max-w-[200px] tw-dark tw-bg-base tw-rounded-md tw-shadow-mid tw-text-text tw-z-[120000]',
                         !isOpen && 'tw-opacity-0 tw-h-0 tw-w-0 tw-overflow-hidden',
                     ])}
-                    data-test-id="tooltip"
+                    data-test-id={dataTestId}
                     role="tooltip"
                     id={id}
                     style={popperInstance.styles.popper}
@@ -326,9 +325,9 @@ export const Tooltip = ({
                     {brightHeader && <BrightHeader headerStyle={brightHeader} />}
                     <div
                         className={merge([
-                            'tw-px-4 tw-dark tw-bg-base tw-rounded-md tw-relative tw-z-[120000]',
-                            hasLargePaddingTop ? paddingsTop.small : paddingsTop.large,
-                            linkUrl ? paddingsBottom.small : paddingsBottom.large,
+                            'tw-px-3 tw-dark tw-bg-base tw-rounded-md tw-relative tw-z-[120000]',
+                            hasLargePaddingTop ? paddingsTop.large : paddingsTop.small,
+                            linkUrl ? paddingsBottom.large : paddingsBottom.small,
                         ])}
                     >
                         {heading && (
@@ -352,7 +351,7 @@ export const Tooltip = ({
                         {linkUrl && (
                             <a
                                 {...linkProps}
-                                data-test-id="tooltip-link"
+                                data-test-id={`${dataTestId}-link`}
                                 ref={linkRef}
                                 href={linkUrl}
                                 target="_blank"

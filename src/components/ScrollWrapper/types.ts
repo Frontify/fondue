@@ -17,4 +17,5 @@ export const scrollWrapperDirections: Record<ScrollWrapperDirection, string> = {
 export type ScrollWrapperProps = {
     direction?: ScrollWrapperDirection;
     children?: ReactElement | ReactElement[];
+    'data-test-id'?: string;
 };
