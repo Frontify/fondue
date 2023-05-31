@@ -54,6 +54,7 @@ import {
 } from './utils';
 
 import {
+    currentNodesChanged,
     findIndexById,
     getMovementAnnouncement,
     getNodeChildrenIds,
@@ -152,7 +153,10 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
 
                 const newChildrenIds = children.map((node) => node.props.id);
 
-                if (isEqual(currentChildrenIds, newChildrenIds)) {
+                if (
+                    isEqual(currentChildrenIds, newChildrenIds) &&
+                    currentNodesChanged(currentChildrenIds, draft.rootNodes, children) === false
+                ) {
                     return;
                 }
 
