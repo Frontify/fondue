@@ -47,3 +47,29 @@ export const removeFragmentsAndEnrichChildren = (children?: ReactNode, enrichedP
 
     return result.filter(Boolean);
 };
+
+export const recursivelyRemoveFragmentsAndEnrichChildren = (
+    children?: ReactNode,
+    enrichedProps?: EnrichedProps,
+): ReactElement[] => {
+    if (!children) {
+        return [];
+    }
+
+    const enriched = removeFragmentsAndEnrichChildren(children, enrichedProps);
+
+    return enriched.map((child: ReactElement) => {
+        const newEnriched = {
+            ...child,
+            props: {
+                ...child.props,
+                children: recursivelyRemoveFragmentsAndEnrichChildren(child.props.children, {
+                    parentId: child.props.id,
+                    level: child.props.level + 1,
+                }),
+            },
+        };
+
+        return newEnriched;
+    });
+};
