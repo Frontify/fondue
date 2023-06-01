@@ -202,6 +202,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                                         'tw-text-xs tw-select-none hover:tw-cursor-pointer hover:tw-text-black dark:hover:tw-text-white group-hover:tw-text-black dark:group-hover:tw-text-white',
                                         checkedOrMixed && 'tw-font-medium',
                                     ])}
+                                    title={label}
                                 >
                                     {label}
                                 </span>
@@ -214,6 +215,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                                         'tw-font-sans tw-text-xs tw-font-normal',
                                         disabled ? 'text-disabled' : 'tw-text-text-weak',
                                     ])}
+                                    title={helperText}
                                 >
                                     {helperText}
                                 </span>
