@@ -22,7 +22,7 @@ import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { ScrollWrapper } from '@components/ScrollWrapper';
 
-export type TabsPaddingX = '8' | '16' | '20' | '24';
+export type TabsPaddingX = 'small' | 'medium' | 'large';
 
 export enum TabSize {
     Small = 'Small',
@@ -39,10 +39,9 @@ export type TabsProps = {
 };
 
 const TABS_PADDING_MAP: Record<TabsPaddingX, string> = {
-    '8': 'tw-px-0',
-    '16': 'tw-pl-2 tw-pr-2',
-    '20': 'tw-pl-3.5 tw-pr-3.5',
-    '24': 'tw-pl-4 tw-pr-4',
+    small: 'tw-px-s',
+    medium: 'tw-px-m',
+    large: 'tw-px-l',
 };
 
 export const Tabs = ({ paddingX, size, activeItemId, children, onChange }: TabsProps): ReactElement => {
@@ -194,7 +193,7 @@ export const Tabs = ({ paddingX, size, activeItemId, children, onChange }: TabsP
                     role="tablist"
                     className={merge([
                         'tw-overflow-x-hidden tw-flex-shrink-0 tw-h-full tw-w-full tw-flex tw-justify-start',
-                        TABS_PADDING_MAP[paddingX ?? '8'],
+                        TABS_PADDING_MAP[paddingX ?? 'small'],
                         size === 'Small' ? 'tw-gap-xxs' : 'tw-gap-xs ',
                     ])}
                 >

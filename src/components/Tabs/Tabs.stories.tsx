@@ -12,7 +12,7 @@ import { IconIcon } from '@foundation/Icon/Generated';
 import { BadgeStyle } from '@components/Badge';
 import { Checkbox as CheckboxComponent, CheckboxProps, CheckboxState } from '@components/Checkbox/Checkbox';
 
-const TABS_PADDING_X_TYPES = ['8', '16', '20', '24'];
+const TABS_PADDING_X_TYPES = ['small', 'medium', 'large'];
 
 const TABS_SIZE_TYPES = ['Small', 'Large'];
 

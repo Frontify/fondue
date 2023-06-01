@@ -208,24 +208,16 @@ describe('Tabs Component', () => {
         cy.get('#tab-2-btn[data-test-id=tab-item]').should('not.have.class', 'hover:tw-text-text');
     });
 
-    it('tabs should render with paddingX of "8"', () => {
-        cy.mount(<TabComponent paddingX="8" />);
-        cy.get(`${TABS_DATA_TEST_ID} > div`).should('have.class', 'tw-pl-0');
-        cy.get(`${TABS_DATA_TEST_ID} > div`).should('have.class', 'tw-pr-0');
+    it('tabs should render with paddingX of "small"', () => {
+        cy.mount(<TabComponent paddingX="small" />);
+        cy.get(`${TABS_DATA_TEST_ID} > div`).should('have.class', 'tw-px-s');
     });
-    it('tabs should render with paddingX of "16"', () => {
-        cy.mount(<TabComponent paddingX="16" />);
-        cy.get(`${TABS_DATA_TEST_ID} > div`).should('have.class', 'tw-pl-2');
-        cy.get(`${TABS_DATA_TEST_ID} > div`).should('have.class', 'tw-pr-2');
+    it('tabs should render with paddingX of "medium"', () => {
+        cy.mount(<TabComponent paddingX="medium" />);
+        cy.get(`${TABS_DATA_TEST_ID} > div`).should('have.class', 'tw-px-m');
     });
-    it('tabs should render with paddingX of "20"', () => {
-        cy.mount(<TabComponent paddingX="20" />);
-        cy.get(`${TABS_DATA_TEST_ID} > div`).should('have.class', 'tw-pl-3.5');
-        cy.get(`${TABS_DATA_TEST_ID} > div`).should('have.class', 'tw-pr-3.5');
-    });
-    it('tabs should render with paddingX of "24"', () => {
-        cy.mount(<TabComponent paddingX="24" />);
-        cy.get(`${TABS_DATA_TEST_ID} > div`).should('have.class', 'tw-pl-4');
-        cy.get(`${TABS_DATA_TEST_ID} > div`).should('have.class', 'tw-pr-4');
+    it('tabs should render with paddingX of "large"', () => {
+        cy.mount(<TabComponent paddingX="large" />);
+        cy.get(`${TABS_DATA_TEST_ID} > div`).should('have.class', 'tw-px-l');
     });
 });
