@@ -17,6 +17,7 @@ export type FrontifyPatternProps = {
     scale?: PatternScale;
     scaleOrigin?: PatternScaleOrigin;
     foregroundColor?: PatternTheme;
+    'data-test-id'?: string;
 };
 
 export const FrontifyPattern = ({
@@ -24,10 +25,11 @@ export const FrontifyPattern = ({
     scale = PatternScale.SM,
     scaleOrigin = ['top', 'left'],
     foregroundColor = PatternTheme.Black,
+    'data-test-id': dataTestId = 'frontify-pattern',
 }: FrontifyPatternProps): ReactElement => {
     return (
         <div
-            data-test-id="frontify-pattern"
+            data-test-id={dataTestId}
             className={merge(['tw-w-[260px]', patternThemes[foregroundColor]])}
             style={{ transformOrigin: `${scaleOrigin.join(' ')}`, transform: `scale(${patternScales[scale]})` }}
         >

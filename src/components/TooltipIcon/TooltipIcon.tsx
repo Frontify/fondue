@@ -13,6 +13,7 @@ export type TooltipIconProps = {
     iconSize?: IconSize;
     triggerIcon?: ReactElement<IconProps>;
     triggerStyle?: TooltipIconTriggerStyle;
+    'data-test-id'?: string;
 };
 
 export enum TooltipIconTriggerStyle {
@@ -38,9 +39,10 @@ export const TooltipIcon = ({
     iconSize = IconSize.Size16,
     triggerIcon = <IconQuestionMarkCircle />,
     triggerStyle = TooltipIconTriggerStyle.Primary,
+    'data-test-id': dataTestId = 'tooltip-icon',
 }: TooltipIconProps): ReactElement => {
     return (
-        <div data-test-id="tooltip-icon">
+        <div data-test-id={dataTestId}>
             {tooltip && (
                 <div>
                     <Tooltip
@@ -48,7 +50,7 @@ export const TooltipIcon = ({
                             <button
                                 type="button"
                                 aria-label="More info"
-                                data-test-id="tooltip-icon-trigger"
+                                data-test-id={`${dataTestId}-trigger`}
                                 className={merge([
                                     'tw-inline-flex tw-justify-center tw-items-center tw-cursor-default tw-outline-none tw-rounded-full',
                                     FOCUS_VISIBLE_STYLE,

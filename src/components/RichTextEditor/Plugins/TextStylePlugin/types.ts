@@ -1,12 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Plugin, PluginProps } from '../Plugin';
+import { CSSProperties } from 'react';
+import { PlateRenderElementProps } from '@udecode/plate';
 
 export const DEFAULT_TEXT_STYLE_VALUE = 'Mixed';
 
-export type TextStylePluginProps = PluginProps & {
-    textStyles?: Plugin[];
-};
+export type TextStyleRenderElementProps = {
+    styles: CSSProperties;
+} & PlateRenderElementProps;
 
 export enum TextStyles {
     heading1 = 'heading1',
@@ -19,4 +20,5 @@ export enum TextStyles {
     quote = 'quote',
     imageCaption = 'imageCaption',
     imageTitle = 'imageTitle',
+    p = 'p',
 }

@@ -1,11 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { RichTextButtonStyle, getButtonStyleCssProperties } from '@components/RichTextEditor/Plugins';
 import { TElement } from '@udecode/plate';
 import { reactCssPropsToCss } from '../utils/reactCssPropsToCss';
+import { CSSPropertiesHover } from '../types';
 
-export const buttonNode = (node: TElement, children: string, defaultClassNames: string) => {
-    const buttonStyle = getButtonStyleCssProperties((node.buttonStyle as RichTextButtonStyle) ?? 'primary');
+export const buttonNode = (
+    node: TElement,
+    children: string,
+    defaultClassNames: string,
+    styles: Record<string, CSSPropertiesHover>,
+) => {
+    const buttonTypeString = (node.buttonType as string) ?? 'primary';
+    const buttonType = `button${buttonTypeString.charAt(0).toUpperCase()}${buttonTypeString.slice(1)}`;
+    const buttonStyle = styles[buttonType];
+
     const defaultStyles = reactCssPropsToCss(buttonStyle);
     return `<a href="${node.url}"
                 target="${node.target ?? '_blank'}"

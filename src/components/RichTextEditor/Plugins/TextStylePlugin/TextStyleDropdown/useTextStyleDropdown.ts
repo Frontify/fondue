@@ -23,7 +23,13 @@ export const useTextStyleDropdown = <T extends HTMLElement, P extends HTMLElemen
     const [popperElement, setPopperElement] = useState<P | null>(null);
     const editor = usePlateEditorState(editorId);
     const selectedTextStyles = useSelectedTextStyles(editor);
-    const key = selectedTextStyles.length === 1 ? selectedTextStyles[0] : DEFAULT_TEXT_STYLE_VALUE;
+
+    let key = DEFAULT_TEXT_STYLE_VALUE;
+    if (selectedTextStyles.length === 1) {
+        key = selectedTextStyles[0];
+    } else if (selectedTextStyles.length === 0) {
+        key = 'p';
+    }
 
     const toggle = useCallback(() => {
         setIsOpen((open) => !open);
