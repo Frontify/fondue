@@ -71,7 +71,7 @@ describe('List Plugin', () => {
         cy.get(firstListItemSelector).should(
             'have.attr',
             'style',
-            'counter-increment: count 1; font-size: 48px; font-weight: 700; font-style: normal;',
+            'font-size: 48px; font-style: normal; font-weight: 700; counter-increment: count 1;',
         );
     });
 
