@@ -14,6 +14,7 @@ export type PluginProps = {
     showIn?: Position[];
     columns?: number;
     gap?: string | number;
+    label?: string;
 };
 
 export abstract class Plugin<P extends PluginProps = PluginProps> {

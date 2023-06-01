@@ -10,9 +10,8 @@ import { Position } from './EditorPositioningWrapper';
 import { forceToBlurActiveElement } from './helpers';
 import { useEditorState } from './hooks';
 import { GAP_DEFAULT, KEY_ELEMENT_BREAK_AFTER_COLUMN, PluginComposer, defaultPlugins } from './Plugins';
-import { DesignTokens, PaddingSizes, TreeOfNodes } from './types';
+import { PaddingSizes, TreeOfNodes } from './types';
 import { parseRawValue } from './utils';
-import { defaultDesignTokens } from './utils/defaultDesignTokens';
 
 const PLACEHOLDER_STYLES: RenderPlaceholderProps['attributes']['style'] = {
     position: 'relative',
@@ -26,7 +25,6 @@ export type RichTextEditorProps = {
     onTextChange?: (value: string) => void;
     onBlur?: (value: string) => void;
     readonly?: boolean;
-    designTokens?: DesignTokens;
     padding?: PaddingSizes;
     position?: Position;
     plugins?: PluginComposer;
@@ -41,7 +39,6 @@ export const RichTextEditor = ({
     value,
     placeholder = '',
     readonly = false,
-    designTokens = defaultDesignTokens,
     onTextChange,
     onBlur,
     padding = PaddingSizes.None,
@@ -98,7 +95,6 @@ export const RichTextEditor = ({
     return (
         <RichTextEditorProvider
             value={{
-                designTokens,
                 position,
                 border,
             }}

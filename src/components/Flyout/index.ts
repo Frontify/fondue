@@ -2,3 +2,4 @@
 
 export * from './Flyout';
 export * from './FlyoutFooter';
+export * from './helpers/getVerticalPositioning';

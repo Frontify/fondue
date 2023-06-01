@@ -3,13 +3,13 @@
 import React, { useState } from 'react';
 import { Button } from '@components/Button';
 import { PopperPlacement } from '@components/Popper/types';
-import { Popover, PopoverProps } from '@components/Popover/Popover';
+import { Popover, PopoverComponentProps } from '@components/Popover/Popover';
 
 const POPOVER_SELECTOR = '[data-test-id=fondue-popover]';
 const POPOVER_TRIGGER = '[data-test-id=popover-trigger]';
 const POPOVER_INTERACTIVE_ELEMENT = '[data-test-id=popover-content-button]';
 
-const PopoverComponent = ({ placement, offset, flip }: PopoverProps) => {
+const PopoverComponent = ({ placement, offset, flip }: PopoverComponentProps) => {
     const [open, setOpen] = useState(false);
 
     return (
