@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement, ReactNode } from 'react';
+import { ReactElement } from 'react';
 
 import type { InternalTreeItemProps } from '../TreeItem';
 import isEqual from 'lodash-es/isEqual';
