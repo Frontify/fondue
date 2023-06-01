@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
-import { Tag, TagType } from './Tag';
+import { Tag, TagSize, TagType } from './Tag';
 
 const TAG_ID = '[data-test-id=tag]';
 const TAG_LABEL = 'My awesome tag';
@@ -12,6 +12,18 @@ describe('Tag Component', () => {
         cy.mount(<Tag type={TagType.Suggested} label={TAG_LABEL} />);
 
         cy.get(TAG_ID).contains(TAG_LABEL);
+    });
+
+    it('should render a small label', () => {
+        cy.mount(<Tag type={TagType.Suggested} size={TagSize.Small} label={TAG_LABEL} />);
+
+        cy.get(TAG_ID).should('have.class', 'tw-px-[6px]').should('have.class', 'tw-py-[2px]');
+    });
+
+    it('should render a medium label', () => {
+        cy.mount(<Tag type={TagType.Suggested} size={TagSize.Medium} label={TAG_LABEL} />);
+
+        cy.get(TAG_ID).should('have.class', 'tw-px-2.5').should('have.class', 'tw-py-1');
     });
 
     it('should render a suggested tag', () => {
