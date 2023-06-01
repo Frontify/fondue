@@ -2,7 +2,7 @@
 
 import { BadgeStyle } from '@components/Badge';
 import { TabItem, TabItemProps } from '@components/Tabs/TabItem';
-import { Tabs, TabsPaddingX } from '@components/Tabs/Tabs';
+import { TabSize, Tabs, TabsPaddingX } from '@components/Tabs/Tabs';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { IconIcon } from '@foundation/Icon/Generated';
 import React, { useState } from 'react';
@@ -58,7 +58,12 @@ const TABS_DATA_TEST_ID = '[data-test-id=tabs]';
 const TabComponent = ({ paddingX }: { paddingX?: TabsPaddingX }) => {
     const [activeItemId, setActiveItemId] = useState(data[0].id);
     return (
-        <Tabs activeItemId={activeItemId} onChange={(value) => setActiveItemId(value)} paddingX={paddingX} size="Small">
+        <Tabs
+            activeItemId={activeItemId}
+            onChange={(value) => setActiveItemId(value)}
+            paddingX={paddingX}
+            size={TabSize.Small}
+        >
             {data.map((item) => (
                 <TabItem
                     id={item.id}
