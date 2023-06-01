@@ -1,19 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { InlineDialog, InlineDialogProps } from './InlineDialog';
 import { DialogHeader } from '@components/DialogHeader';
 import { DialogBody } from '@components/DialogBody/DialogBody';
 import { Dropdown } from '@components/Dropdown';
-import { TooltipIcon } from '@components/TooltipIcon';
-import IconExclamationMarkCircle from '@foundation/Icon/Generated/IconExclamationMarkCircle';
 import { DialogFooter } from '@components/DialogFooter';
 import { DialogHeaderSize, Modality } from '../../types/dialog';
 import { Button, ButtonEmphasis } from '@components/Button';
 import IconCheckMark16 from '@foundation/Icon/Generated/IconCheckMark16';
 import { useToggleOverlay } from '@hooks/useToggleOverlay';
-import { useDropdownAutoHeight } from '@hooks/useDropdownAutoHeight';
 
 export default {
     title: 'Experimental/InlineDialog',
@@ -28,18 +25,14 @@ export default {
 } as Meta<InlineDialogProps>;
 
 const Template: StoryFn<InlineDialogProps> = (args) => {
-    const [isOpen, setIsOpen] = useToggleOverlay(false, { isBlockingModal: args.modality === Modality.BlockingModal });
-    const [triggerElementRef, setTriggerElementRef] = useState<HTMLButtonElement | null>(null);
-    const { maxHeight } = useDropdownAutoHeight({ current: triggerElementRef }, { isOpen, isDialog: true });
+    const [isOpen, setIsOpen] = useToggleOverlay(false);
+    //const [triggerElementRef, setTriggerElementRef] = useState<HTMLButtonElement | null>(null);
+    //const { maxHeight } = useDropdownAutoHeight({ current: triggerElementRef }, { isOpen, isDialog: true });
     return (
         <InlineDialog
             handleClose={() => setIsOpen(false)}
             modality={args.modality}
-            triggerElement={
-                <Button ref={setTriggerElementRef} onClick={() => setIsOpen(!isOpen)}>
-                    Trigger
-                </Button>
-            }
+            triggerElement={<Button onClick={() => setIsOpen(!isOpen)}>Trigger</Button>}
             open={isOpen}
         >
             <DialogHeader
@@ -47,7 +40,7 @@ const Template: StoryFn<InlineDialogProps> = (args) => {
                 size={DialogHeaderSize.Large}
                 onClose={() => setIsOpen(false)}
             />
-            <DialogBody maxHeight={maxHeight}>
+            <DialogBody maxHeight={400}>
                 <div className="tw-p-2">
                     <Dropdown
                         onChange={(id) => console.log(id)}
@@ -65,15 +58,7 @@ const Template: StoryFn<InlineDialogProps> = (args) => {
                             },
                         ]}
                     />
-                    <p className="tw-flex tw-items-center tw-my-2">
-                        Label 2
-                        <span className="tw-ml-2">
-                            <TooltipIcon
-                                tooltip={{ content: 'Lorem ipsum dolor sit amet.' }}
-                                triggerIcon={<IconExclamationMarkCircle />}
-                            />
-                        </span>
-                    </p>
+                    <p className="tw-flex tw-items-center tw-my-2">Label 2</p>
 
                     <p>
                         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam beatae, labore mollitia nemo

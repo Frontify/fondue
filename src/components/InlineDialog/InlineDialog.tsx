@@ -2,15 +2,15 @@
 
 import React, { ReactElement, cloneElement } from 'react';
 import { Popover } from '@components/Popover';
-import { useFocusTrap } from '@hooks/useFocusTrap';
 import { PopperProps } from '@components/Popper/types';
 import { Modality } from '../../types/dialog';
-import { useClickOutside } from '@hooks/useClickOutside';
 
 export type InlineDialogProps = {
     triggerElement: ReactElement;
     open: boolean;
     modality?: Modality;
+    maxWidth?: string | number;
+    maxHeight?: string | number;
     handleClose: () => void;
 } & PopperProps;
 
@@ -18,23 +18,15 @@ export const InlineDialog = ({
     children,
     triggerElement,
     open = false,
-    handleClose,
-    modality = Modality.NonModal,
+    maxWidth = 400,
+    maxHeight,
 }: InlineDialogProps): ReactElement => {
-    const ref = useFocusTrap(modality);
-    const handleClosingInteraction = () => {
-        if (open && modality !== Modality.BlockingModal) {
-            handleClose();
-        }
-        return;
-    };
-    useClickOutside(ref.current, handleClosingInteraction);
     return (
-        <div data-test-id="fondue-inlineDialog" ref={ref}>
+        <div data-test-id="fondue-inlineDialog">
             <Popover open={open} role="dialog">
                 <Popover.Trigger>{triggerElement && cloneElement(triggerElement)}</Popover.Trigger>
                 <Popover.Content>
-                    <div className="tw-min-w-0 tw-max-w-[400px]">{children}</div>
+                    <div style={{ maxWidth, maxHeight }}>{children}</div>
                 </Popover.Content>
             </Popover>
         </div>
