@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement } from 'react';
+import { ReactElement, ReactNode } from 'react';
 
 import type { InternalTreeItemProps } from '../TreeItem';
 import isEqual from 'lodash-es/isEqual';
@@ -30,8 +30,12 @@ export const currentNodesChanged = (
 ) => {
     for (const nodeId of currentChildrenIds) {
         const newNode = newNodes.find((n) => n.props.id === nodeId);
+        const newContentComponent = newNode?.props?.contentComponent as Partial<ReactElement>;
+
         const currentNode = currentNodes.find((n) => n.props.id === nodeId);
-        if (!isEqual(currentNode?.props?.contentComponent?.props, newNode?.props?.contentComponent?.props)) {
+        const currentContentComponent = currentNode?.props?.contentComponent as Partial<ReactElement>;
+
+        if (!isEqual(currentContentComponent?.props, newContentComponent?.props)) {
             return true;
         }
     }
