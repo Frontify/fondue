@@ -1,28 +1,35 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { DesignTokens } from '@components/RichTextEditor/types';
 import React from 'react';
-import { useRichTextEditorContext } from '../../../context/RichTextEditorContext';
-import { textStyleTitle } from '../TextStyles';
-import { defaultTextStyles } from '../TextStyles/defaultTextStyles';
 import { DropdownItem } from './DropdownItem';
 import { DropdownTrigger } from './DropdownTrigger';
 import { TextStyleDropdownProps } from './types';
 import { useTextStyleDropdown } from './useTextStyleDropdown';
+import { getTextStyleCssProperties } from '../../helper';
+import { DEFAULT_TEXT_STYLE_VALUE } from '../types';
 
-export const TextStyleDropdown = ({ editorId, textStyles = defaultTextStyles }: TextStyleDropdownProps) => {
-    const { designTokens } = useRichTextEditorContext();
+export const TextStyleDropdown = ({ editorId, textStyles = [] }: TextStyleDropdownProps) => {
     const {
         state: { editor, toggle, isOpen },
         dropdownProps,
         triggerRef,
         dropdownRef,
-        label,
+        key,
     } = useTextStyleDropdown(editorId);
+
+    if (textStyles.length === 0) {
+        return null;
+    }
+
+    let activeLabel = DEFAULT_TEXT_STYLE_VALUE;
+    const textStyle = textStyles.find((style) => style.id === key && style.props?.label);
+    if (textStyle) {
+        activeLabel = textStyle.props?.label || DEFAULT_TEXT_STYLE_VALUE;
+    }
 
     return (
         <>
-            <DropdownTrigger label={label} open={isOpen} onClick={toggle} ref={triggerRef} />
+            <DropdownTrigger label={activeLabel} open={isOpen} onClick={toggle} ref={triggerRef} />
             {isOpen && (
                 <div
                     className="tw-divide-y tw-divide-line tw-bg-base tw-shadow-md tw-border tw-border-line tw-z-[1000] tw-overflow-auto tw-min-h-[40px]"
@@ -30,10 +37,8 @@ export const TextStyleDropdown = ({ editorId, textStyles = defaultTextStyles }: 
                     {...dropdownProps}
                 >
                     {textStyles.map((style) => (
-                        <DropdownItem editor={editor} type={style} key={style}>
-                            <span style={designTokens[style as unknown as keyof DesignTokens]}>
-                                {textStyleTitle[style]}
-                            </span>
+                        <DropdownItem editor={editor} type={style} key={style.id}>
+                            <span style={getTextStyleCssProperties(style.id)}>{style.props?.label}</span>
                         </DropdownItem>
                     ))}
                 </div>

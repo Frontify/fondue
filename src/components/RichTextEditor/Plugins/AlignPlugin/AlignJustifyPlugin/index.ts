@@ -2,13 +2,12 @@
 
 import { AlignJustifyMarkupElement } from './AlignJustifyMarkupElement';
 import { AlignJustifyButton } from './AlignJustifyButton';
-import { ALIGN_PLUGIN } from '../id';
 import { AlignPlugin } from '../AlignPlugin';
-import { PluginProps } from '../../Plugin';
+import { AlignPluginProps } from '../types';
 
 export class AlignJustifyPlugin extends AlignPlugin {
-    constructor(props?: PluginProps) {
-        super(ALIGN_PLUGIN, {
+    constructor(props?: AlignPluginProps) {
+        super({
             button: AlignJustifyButton,
             markupElement: new AlignJustifyMarkupElement(),
             ...props,
