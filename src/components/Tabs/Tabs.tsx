@@ -24,7 +24,10 @@ import { ScrollWrapper } from '@components/ScrollWrapper';
 
 export type TabsPaddingX = '8' | '16' | '20' | '24';
 
-export type TabSize = 'Small' | 'Large';
+export enum TabSize {
+    Small = 'Small',
+    Large = 'Large',
+}
 
 export type TabsProps = {
     paddingX?: TabsPaddingX;
@@ -35,23 +38,14 @@ export type TabsProps = {
     'data-test-id'?: string;
 };
 
-const TABS_DATA_TEST_ID = 'fondue-tabs';
-
 const TABS_PADDING_MAP: Record<TabsPaddingX, string> = {
-    '8': 'tw-pl-0 tw-pr-0',
+    '8': 'tw-px-0',
     '16': 'tw-pl-2 tw-pr-2',
     '20': 'tw-pl-3.5 tw-pr-3.5',
     '24': 'tw-pl-4 tw-pr-4',
 };
 
-export const Tabs = ({
-    'data-test-id': dataTestId = TABS_DATA_TEST_ID,
-    paddingX,
-    size,
-    activeItemId,
-    children,
-    onChange,
-}: TabsProps): ReactElement => {
+export const Tabs = ({ paddingX, size, activeItemId, children, onChange }: TabsProps): ReactElement => {
     const groupId = useMemoizedId();
     const tabNavRef = useRef<HTMLDivElement | null>(null);
     const [isOverflowing, setIsOverflowing] = useState(false);
@@ -194,7 +188,7 @@ export const Tabs = ({
 
     return (
         <>
-            <div data-test-id={dataTestId} className="tw-flex tw-relative tw-border-b tw-border-line">
+            <div data-test-id="tabs" className="tw-flex tw-relative tw-border-b tw-border-line">
                 <div
                     ref={tabNavRef}
                     role="tablist"

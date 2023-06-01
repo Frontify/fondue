@@ -53,7 +53,7 @@ const data: TabItemProps[] = [
     },
 ];
 
-const TABS_DATA_TEST_ID = '[data-test-id=fondue-tabs]';
+const TABS_DATA_TEST_ID = '[data-test-id=tabs]';
 
 const TabComponent = ({ paddingX }: { paddingX?: TabsPaddingX }) => {
     const [activeItemId, setActiveItemId] = useState(data[0].id);
