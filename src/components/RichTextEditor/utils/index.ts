@@ -3,6 +3,7 @@
 export * from './plaintext';
 export * from './constants';
 export * from './calculateToolbarWidth';
+export * from './defaultStyles';
 export * from './parseRawValue';
 export * from './deepMerge';
 export * from './calculateToolbarWidth';

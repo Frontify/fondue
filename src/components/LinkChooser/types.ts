@@ -64,6 +64,7 @@ export type LinkChooserProps = {
     readonly clipboardOptions?: Clipboard;
     readonly getGlobalByQuery?: (query: string) => Promise<SearchResult[]>;
     readonly openPreview?: (value: string, target: string) => void;
+    'data-test-id'?: string;
 };
 
 export type SearchResult = Omit<MenuItemType, 'title'> & { icon: string; title: string; local?: boolean };

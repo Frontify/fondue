@@ -16,9 +16,10 @@ export type BadgeProps = {
     emphasis?: BadgeEmphasis;
     size?: BadgeSize;
     children?: ReactNode;
+    'data-test-id'?: string;
 };
 
-export type BadgeStatusIconProps = { status: BadgeStatus | Color | string; disabled: boolean };
+export type BadgeStatusIconProps = { status: BadgeStatus | Color | string; disabled: boolean; 'data-test-id'?: string };
 
 export enum BadgeStatus {
     Positive = 'Positive',

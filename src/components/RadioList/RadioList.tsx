@@ -2,7 +2,7 @@
 
 import { Tooltip, TooltipAlignment, TooltipPosition } from '@components/Tooltip';
 import IconQuestionMarkCircle from '@foundation/Icon/Generated/IconQuestionMarkCircle';
-import { IconSize } from '@foundation/index';
+import { IconSize } from '@foundation/Icon';
 import { generateRandomId } from '@utilities/generateRandomId';
 import { merge } from '@utilities/merge';
 import React, { Children, ReactNode, isValidElement, useEffect, useRef, useState } from 'react';
