@@ -29,7 +29,13 @@ describe('Tag Component', () => {
     it('should render a suggested tag', () => {
         cy.mount(<Tag type={TagType.Suggested} label={TAG_LABEL} />);
 
-        cy.get(TAG_ID).should('have.class', 'tw-bg-white').and('have.class', 'tw-text-black-80');
+        cy.get(TAG_ID)
+            .should('have.class', 'tw-bg-base')
+            .and('have.class', 'tw-text-text-weak')
+            .should('have.class', 'tw-border')
+            .should('have.class', 'tw-border-line')
+            .should('have.class', 'hover:tw-text-text')
+            .should('have.class', 'hover:tw-border-line-strong');
         cy.get(TAG_REJECT_ICON_ATTRIBUTE).should('not.exist');
     });
 
@@ -38,7 +44,11 @@ describe('Tag Component', () => {
 
         cy.mount(<Tag type={TagType.Selected} label={TAG_LABEL} onClick={onClickStub} />);
 
-        cy.get(TAG_ID).should('have.class', 'tw-bg-black-5');
+        cy.get(TAG_ID)
+            .should('have.class', 'tw-bg-box-neutral')
+            .should('have.class', 'tw-text-text-weak')
+            .should('have.class', 'hover:tw-bg-box-neutral-hover')
+            .should('have.class', 'hover:tw-text-box-neutral-inverse-hover');
         cy.get(TAG_ID).should('be.visible', TAG_REJECT_ICON_ATTRIBUTE);
     });
 
@@ -47,14 +57,23 @@ describe('Tag Component', () => {
 
         cy.mount(<Tag type={TagType.SelectedWithFocus} label={TAG_LABEL} onClick={onClickStub} />);
 
-        cy.get(TAG_ID).should('have.class', 'tw-bg-violet-60');
+        cy.get(TAG_ID)
+            .should('have.class', 'tw-bg-box-selected-strong')
+            .should('have.class', 'tw-text-box-selected-strong-inverse')
+            .should('have.class', 'hover:tw-bg-box-selected-strong-hover');
         cy.get(TAG_ID).should('be.visible', TAG_REJECT_ICON_ATTRIBUTE);
     });
 
     it('should render a previously selected tag', () => {
         cy.mount(<Tag type={TagType.PreviouslySelected} label={TAG_LABEL} />);
 
-        cy.get(TAG_ID).should('have.class', 'tw-bg-white').and('have.class', 'tw-text-violet-60');
+        cy.get(TAG_ID)
+            .should('have.class', 'tw-bg-base')
+            .should('have.class', 'tw-text-box-selected-strong')
+            .should('have.class', 'tw-border')
+            .should('have.class', 'hover:tw-bg-box-neutral')
+            .should('have.class', 'hover:tw-text-box-selected-inverse')
+            .should('have.class', 'hover:tw-border-box-selected-inverse');
         cy.get(TAG_REJECT_ICON_ATTRIBUTE).should('not.exist');
     });
 
