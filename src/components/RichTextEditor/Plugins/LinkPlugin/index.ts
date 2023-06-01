@@ -7,6 +7,8 @@ import { CustomFloatingLink } from './FloatingLink/CustomFloatingLink';
 import { LINK_PLUGIN } from './id';
 import { LinkButton } from './LinkButton';
 import { LinkMarkupElement } from './LinkMarkupElement';
+import { CSSProperties } from 'react';
+import { defaultStyles } from '@components/RichTextEditor/utils';
 
 export const createLinkPlugin = createPluginFactory({
     ...createPlateLinkPlugin(),
@@ -23,12 +25,14 @@ export const createLinkPlugin = createPluginFactory({
 });
 
 export class LinkPlugin extends Plugin {
-    constructor(props?: PluginProps) {
+    public styles: CSSProperties = {};
+    constructor({ styles = defaultStyles[LINK_PLUGIN], ...props }: PluginProps = {}) {
         super(LINK_PLUGIN, {
             button: LinkButton,
             markupElement: new LinkMarkupElement(),
             ...props,
         });
+        this.styles = styles;
     }
 
     plugins() {

@@ -15,6 +15,7 @@ export const ScrollWrapper = ({
     tabIndex = 0,
     direction = ScrollWrapperDirection.Vertical,
     children,
+    'data-test-id': dataTestId = 'scroll-wrapper',
 }: ScrollWrapperProps): ReactElement => {
     const scrollingContainer = useRef<HTMLDivElement>(null);
 
@@ -28,10 +29,7 @@ export const ScrollWrapper = ({
     const gradientWidth = scrollingContainer.current ? scrollingContainer.current.clientWidth + 8 : '100%';
 
     return (
-        <div
-            data-test-id="scroll-wrapper"
-            className="tw-h-full tw-relative tw-flex-auto tw-flex tw-flex-col tw-min-h-0"
-        >
+        <div data-test-id={dataTestId} className="tw-h-full tw-relative tw-flex-auto tw-flex tw-flex-col tw-min-h-0">
             {directionVertical && showTopShadow && (
                 <div
                     className="tw-h-3 tw-w-full tw-absolute tw-z-10 tw-top-0 tw-left-0 tw-mix-blend-darken tw-border-t tw-border-line"

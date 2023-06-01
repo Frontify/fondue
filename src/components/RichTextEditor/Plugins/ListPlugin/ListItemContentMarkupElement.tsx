@@ -5,7 +5,7 @@ import { merge } from '@utilities/merge';
 import React from 'react';
 import { getColumnBreakClasses } from '../ColumnBreakPlugin/utils/getColumnBreakClasses';
 import { MarkupElement } from '../MarkupElement';
-import { getTextStyleCssProperties, justifyClassNames } from '../helper';
+import { justifyClassNames } from '../helper';
 
 export const getLicElementClassNames = (element: TElement) =>
     merge([
@@ -17,12 +17,7 @@ export const getLicElementClassNames = (element: TElement) =>
 export const ListItemContentMarkupElementNode = ({ attributes, children, element }: PlateRenderElementProps) => {
     return (
         <p className={getLicElementClassNames(element)} {...attributes}>
-            <span
-                className="tw-w-auto tw-min-w-[10px]"
-                style={getTextStyleCssProperties(element.children[0].textStyle as string)}
-            >
-                {children}
-            </span>
+            <span className="tw-w-auto tw-min-w-[10px]">{children}</span>
         </p>
     );
 };

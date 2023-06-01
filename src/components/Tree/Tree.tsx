@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, {
+    ReactElement,
     cloneElement,
     isValidElement,
     memo,
@@ -45,7 +46,15 @@ import type {
 } from '@components/Tree/types';
 
 import { type Overlay, TreeItemOverlay } from './TreeItem';
+
 import {
+    recursivelyRemoveFragmentsAndEnrichChildren,
+    sortableTreeKeyboardCoordinates,
+    useDeepCompareEffect,
+} from './utils';
+
+import {
+    currentNodesChanged,
     findIndexById,
     getMovementAnnouncement,
     getNodeChildrenIds,
@@ -54,7 +63,7 @@ import {
     removeReactNodesFromFlatArray,
     updateNodeWithNewChildren,
 } from './helpers';
-import { removeFragmentsAndEnrichChildren, sortableTreeKeyboardCoordinates, useDeepCompareEffect } from './utils';
+
 import { TreeContext, TreeContextProps } from './TreeContext';
 
 export const ROOT_ID = '__ROOT__';
@@ -119,38 +128,53 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
             }
             break;
 
+        case 'REGISTER_ROOT_NODES':
+            {
+                draft.rootNodes = action.payload;
+            }
+            break;
+
         case 'REGISTER_NODE_CHILDREN':
             {
                 const { id: parentId, children } = action.payload;
 
-                const parentNodeIndex = findIndexById(draft.nodes, parentId);
+                const parentNodeIndex = findIndexById(draft.rootNodes, parentId);
 
                 if (parentNodeIndex === -1) {
-                    console.error(`Element with ID "${parentId}" not found.`);
+                    // This can happen when this action is triggered before the rootNodes array is updated
+                    // It happens if using static data will all nodes and handling expandedIds outside the Tree component
+                    // Most of the cases, it will register the children properly afterwards
+                    // See Scrollable Tree With Label story
+                    console.warn(`Parent element with ID "${parentId}" not found when registering children.`);
                     return;
                 }
 
-                const currentChildrenIds = getNodeChildrenIds(draft.nodes, parentId);
+                const currentChildrenIds = getNodeChildrenIds(draft.rootNodes, parentId);
 
                 const newChildrenIds = children.map((node) => node.props.id);
 
-                if (isEqual(currentChildrenIds, newChildrenIds)) {
+                if (
+                    isEqual(currentChildrenIds, newChildrenIds) &&
+                    currentNodesChanged(currentChildrenIds, draft.rootNodes, children) === false
+                ) {
                     return;
                 }
 
-                draft.nodes = updateNodeWithNewChildren(draft.nodes, parentNodeIndex, children);
+                draft.rootNodes = updateNodeWithNewChildren(draft.rootNodes, parentNodeIndex, children);
             }
             break;
 
         case 'UNREGISTER_NODE_CHILDREN':
             {
-                const nodeIds = getReactNodeIdsInFlatArray(draft.nodes, action.payload);
+                const nodeIds = getReactNodeIdsInFlatArray(draft.rootNodes, action.payload);
 
-                draft.nodes = removeReactNodesFromFlatArray(draft.nodes, nodeIds);
+                if (nodeIds.length > 0) {
+                    draft.rootNodes = removeReactNodesFromFlatArray(draft.rootNodes, nodeIds);
+                }
             }
             break;
 
-        case 'REGISTER_ROOT_NODES':
+        case 'REGISTER_NODES':
             {
                 draft.nodes = action.payload;
             }
@@ -169,7 +193,7 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
             break;
 
         case 'REPLACE_STATE':
-            draft.nodes = action.payload.nodes;
+            draft.rootNodes = action.payload.rootNodes;
             draft.overlay = action.payload.overlay;
             draft.projection = action.payload.projection;
             draft.selectedIds = action.payload.selectedIds;
@@ -200,10 +224,13 @@ export const Tree = memo(
                 selectionMode: 'single',
                 selectedIds: new Set(selectedIds ?? []),
                 expandedIds: new Set(expandedIds ?? []),
-                nodes: removeFragmentsAndEnrichChildren(children, { parentId: ROOT_ID, level: 0 }),
+                rootNodes: [],
+                expandedNodes: [],
+                nodes: [],
+                nodesReady: false,
                 projection: null,
             }),
-            [children, expandedIds, selectedIds],
+            [expandedIds, selectedIds],
         );
 
         const [treeState, updateTreeState] = useReducer(reducer, initialState);
@@ -533,11 +560,58 @@ export const Tree = memo(
         }, [currentPosition, treeState]);
 
         useDeepCompareEffect(() => {
+            if (!children) {
+                return;
+            }
+
             updateTreeState({
                 type: 'REGISTER_ROOT_NODES',
-                payload: removeFragmentsAndEnrichChildren(children, { parentId: ROOT_ID, level: 0 }),
+                payload: recursivelyRemoveFragmentsAndEnrichChildren(children, { parentId: ROOT_ID, level: 0 }),
             });
         }, [children]);
+
+        useDeepCompareEffect(() => {
+            if (treeState.rootNodes.length === 0) {
+                return;
+            }
+
+            const createMap = (
+                nodes: ReactElement[],
+                map: Map<string, { id: string; parentId: string; level: number; node: ReactElement }>,
+            ) => {
+                if (!nodes) {
+                    return map;
+                }
+                for (const node of nodes) {
+                    map.set(node.props.id, {
+                        id: node.props.id,
+                        parentId: node.props.parentId,
+                        level: node.props.level,
+                        node,
+                    });
+                    createMap(node.props.children, map);
+                }
+
+                return map;
+            };
+            const treeMap = createMap(treeState.rootNodes, new Map());
+
+            const nodesToRender: { id: string; node: ReactElement }[] = [];
+            for (const [, treeItem] of treeMap) {
+                if (
+                    treeItem.parentId === ROOT_ID ||
+                    (treeState.expandedIds.has(treeItem.parentId) &&
+                        nodesToRender.find((n) => n.id === treeItem.parentId))
+                ) {
+                    nodesToRender.push({ id: treeItem.id, node: treeItem.node });
+                }
+            }
+
+            updateTreeState({
+                type: 'REGISTER_NODES',
+                payload: nodesToRender.map((n) => n.node),
+            });
+        }, [treeState.rootNodes, treeState.expandedIds]);
 
         useEffect(() => {
             updateTreeState({
@@ -577,37 +651,36 @@ export const Tree = memo(
             });
         }, [activeId, offset, overId, treeState.nodes]);
 
-        const nodes = useMemo(
-            () =>
-                treeState.nodes.map((node) => {
-                    return cloneElement(node, {
-                        projection: node.props.id === activeId ? treeState.projection : null,
-                        treeDraggable: draggable,
-                        isSelected: treeState.selectedIds.has(node.props.id),
-                        isExpanded: treeState.expandedIds.has(node.props.id),
-                        registerOverlay,
-                        registerNodeChildren,
-                        unregisterNodeChildren,
-                        onExpand: handleExpand,
-                        onShrink: handleShrink,
-                        onSelect: handleSelect,
-                    });
-                }),
-            [
-                draggable,
-                handleExpand,
-                handleShrink,
-                handleSelect,
-                activeId,
-                registerNodeChildren,
-                registerOverlay,
-                treeState.expandedIds,
-                treeState.nodes,
-                treeState.projection,
-                treeState.selectedIds,
-                unregisterNodeChildren,
-            ],
-        );
+        const nodes = useMemo(() => {
+            const newNodes = treeState.nodes.map((node) => {
+                return cloneElement(node, {
+                    projection: node.props.id === activeId ? treeState.projection : null,
+                    treeDraggable: draggable,
+                    isSelected: treeState.selectedIds.has(node.props.id),
+                    isExpanded: treeState.expandedIds.has(node.props.id),
+                    registerOverlay,
+                    onExpand: handleExpand,
+                    onShrink: handleShrink,
+                    onSelect: handleSelect,
+                    registerNodeChildren,
+                    unregisterNodeChildren,
+                });
+            });
+            return newNodes;
+        }, [
+            draggable,
+            handleExpand,
+            handleShrink,
+            handleSelect,
+            activeId,
+            registerOverlay,
+            treeState.expandedIds,
+            treeState.nodes,
+            treeState.projection,
+            treeState.selectedIds,
+            registerNodeChildren,
+            unregisterNodeChildren,
+        ]);
 
         const contextValue: TreeContextProps = useMemo(
             () => ({

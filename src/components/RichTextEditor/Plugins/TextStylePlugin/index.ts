@@ -3,18 +3,16 @@
 import { TEXT_STYLE_PLUGIN } from './id';
 import { TextStyleButton } from './TextStyleDropdown/TextStyleButton';
 import { Plugin } from '../Plugin';
-import { TextStylePluginProps } from './types';
 import { withTextStyles } from './TextStyleDropdown/withTextStyles';
 
-export class TextStylePlugin extends Plugin<TextStylePluginProps> {
-    protected textStyles: Plugin[];
-    constructor({ textStyles = [], ...pluginProps }: Partial<TextStylePluginProps> = {}) {
+export class TextStylePlugin extends Plugin {
+    public textStyles: Plugin[];
+    constructor({ ...pluginProps }) {
         super(TEXT_STYLE_PLUGIN, {
-            button: withTextStyles(TextStyleButton, textStyles),
-            textStyles,
+            button: withTextStyles(TextStyleButton, pluginProps.textStyles),
             ...pluginProps,
         });
-        this.textStyles = textStyles;
+        this.textStyles = pluginProps.textStyles;
     }
 
     plugins() {
@@ -23,3 +21,4 @@ export class TextStylePlugin extends Plugin<TextStylePluginProps> {
 }
 
 export * from './types';
+export * from './TextStyles';

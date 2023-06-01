@@ -13,6 +13,7 @@ interface Props {
     children?: ReactNode | ReactNode[];
     onClose?: () => void;
     offset?: [number, number];
+    'data-test-id'?: string;
 }
 
 export type MenuProps = Props;
@@ -20,7 +21,14 @@ export type MenuProps = Props;
 const CONTAINER_BASE_CLASSES = 'tw-relative tw-bg-base tw-rounded tw-py-2 tw-shadow-mid tw-z-[120000]';
 const CONTAINER_CLASSES = merge([CONTAINER_BASE_CLASSES, INSET_BORDER]);
 
-export const Menu = ({ triggerRef, children, open = true, offset = [0, 8], onClose }: MenuProps) => {
+export const Menu = ({
+    triggerRef,
+    children,
+    open = true,
+    offset = [0, 8],
+    onClose,
+    'data-test-id': dataTestId = 'menu',
+}: MenuProps) => {
     const [isMenuOpen, setIsMenuOpen] = useState(open);
     const [menuContainerRef, setMenuContainerRef] = useState<HTMLElement | null>(null);
     const [menuOpenerRef, setMenuOpenerRef] = useState<HTMLElement | null>(null);
@@ -94,7 +102,7 @@ export const Menu = ({ triggerRef, children, open = true, offset = [0, 8], onClo
             ref={setMenuContainerRef}
             style={menuOpenerRef ? popperInstance.styles.popper : {}}
             {...(menuOpenerRef ? popperInstance.attributes.popper : {})}
-            data-test-id="menu"
+            data-test-id={dataTestId}
         >
             <ol className="tw-list-none" role="menu">
                 {children}
