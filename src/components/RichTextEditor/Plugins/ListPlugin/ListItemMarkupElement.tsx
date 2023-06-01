@@ -25,7 +25,6 @@ export class ListItemMarkupElement extends MarkupElement {
 }
 
 export const getLiStyles = (element: TElement, styles: Record<string, CSSProperties>): CSSProperties => {
-    console.log(getDeepestTextStyle(element));
     return {
         ...styles[getDeepestTextStyle(element) ?? TextStyles.p],
         counterIncrement: 'count',
