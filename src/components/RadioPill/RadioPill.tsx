@@ -11,14 +11,21 @@ export type RadioPillProps = {
     active: boolean;
     onClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
     icon?: React.ReactElement;
+    'data-test-id'?: string;
 };
 
-export const RadioPill = ({ label, active, icon, onClick }: RadioPillProps): ReactElement => {
+export const RadioPill = ({
+    label,
+    active,
+    icon,
+    onClick,
+    'data-test-id': dataTestId = 'radio-pill',
+}: RadioPillProps): ReactElement => {
     const { isFocusVisible, focusProps } = useFocusRing();
 
     return (
         <button
-            data-test-id="radio-pill"
+            data-test-id={dataTestId}
             type="button"
             className={merge([
                 'tw-inline-flex tw-items-center tw-rounded-full tw-text-xs tw-px-2 tw-py-1',

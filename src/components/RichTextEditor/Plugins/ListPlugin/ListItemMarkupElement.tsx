@@ -3,14 +3,16 @@
 import { ELEMENT_LI, PlateRenderElementProps, TElement } from '@udecode/plate';
 import React, { CSSProperties } from 'react';
 import { MarkupElement } from '../MarkupElement';
-import { getTextStyleCssProperties } from '../helper';
+import { useRichTextEditorContext } from '@components/RichTextEditor/context';
+import { TextStyles } from '../TextStylePlugin';
 
 export const LI_CLASSNAMES =
     '[&>p]:before:tw-flex [&>p]:before:tw-justify-end [&>p]:before:tw-w-[1.2em] !tw-no-underline';
 
 export const ListItemMarkupElementNode = ({ attributes, children, element }: PlateRenderElementProps) => {
+    const { styles } = useRichTextEditorContext();
     return (
-        <li style={getLiStyles(element)} {...attributes} className={LI_CLASSNAMES}>
+        <li style={getLiStyles(element, styles)} {...attributes} className={LI_CLASSNAMES}>
             {children}
         </li>
     );
@@ -22,9 +24,9 @@ export class ListItemMarkupElement extends MarkupElement {
     }
 }
 
-export const getLiStyles = (element: TElement): CSSProperties => {
+export const getLiStyles = (element: TElement, styles: Record<string, CSSProperties>): CSSProperties => {
     return {
-        ...getTextStyleCssProperties(getDeepestTextStyle(element)),
+        ...styles[getDeepestTextStyle(element) ?? TextStyles.p],
         counterIncrement: 'count',
     };
 };

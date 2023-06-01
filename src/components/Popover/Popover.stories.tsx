@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Meta, StoryFn } from '@storybook/react';
-import { Popover, PopoverProps } from '@components/Popover/Popover';
+import { Popover, PopoverComponentProps } from '@components/Popover/Popover';
 import { PopperPlacement } from '@components/Popper/types';
 import { Button } from '@components/Button';
 import IconExclamationMarkTriangle16 from '@foundation/Icon/Generated/IconExclamationMarkTriangle16';
@@ -37,10 +37,10 @@ export default {
             type: 'string',
         },
     },
-} as Meta<PopoverProps>;
+} as Meta<PopoverComponentProps>;
 
-const Template: StoryFn<PopoverProps> = (args) => {
-    const [isOpen, setIsOpen] = useToggleOverlay(false, { isBlockingModal: false });
+const Template: StoryFn<PopoverComponentProps> = (args) => {
+    const [isOpen, setIsOpen] = useToggleOverlay(false);
     return (
         <div className="tw-h-32 tw-flex tw-justify-center tw-items-center">
             <Popover open={isOpen} {...args}>
@@ -57,8 +57,8 @@ const Template: StoryFn<PopoverProps> = (args) => {
     );
 };
 
-const TriggeredOnHoverTemplate: StoryFn<PopoverProps> = (args) => {
-    const [isOpen, setIsOpen] = useToggleOverlay(false, { isBlockingModal: false });
+const TriggeredOnHoverTemplate: StoryFn<PopoverComponentProps> = (args) => {
+    const [isOpen, setIsOpen] = useToggleOverlay(false);
     return (
         <div className="tw-h-32 tw-flex tw-justify-center tw-items-center">
             <Popover open={isOpen} {...args}>
@@ -83,8 +83,8 @@ const TriggeredOnHoverTemplate: StoryFn<PopoverProps> = (args) => {
     );
 };
 
-const WithInteractiveContentTemplate: StoryFn<PopoverProps> = (args) => {
-    const [isOpen, setIsOpen] = useToggleOverlay(false, { isBlockingModal: false });
+const WithInteractiveContentTemplate: StoryFn<PopoverComponentProps> = (args) => {
+    const [isOpen, setIsOpen] = useToggleOverlay(false);
     return (
         <div className="tw-h-32 tw-flex tw-justify-center tw-items-center">
             <Popover open={isOpen} {...args}>

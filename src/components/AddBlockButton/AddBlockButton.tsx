@@ -18,12 +18,14 @@ export type AddBlockButtonProps = {
     onClick: () => void;
     title?: string;
     orientation?: AddBlockButtonDirection;
+    'data-test-id'?: string;
 };
 
 export const AddBlockButton = ({
     onClick,
     title,
     orientation = AddBlockButtonDirection.Horizontal,
+    'data-test-id': dataTestId = 'add-block-button',
 }: AddBlockButtonProps): ReactElement => {
     const { isFocusVisible, focusProps } = useFocusRing();
     const ref = useRef<HTMLButtonElement | null>(null);
@@ -33,7 +35,7 @@ export const AddBlockButton = ({
         <button
             {...mergeProps(buttonProps, focusProps)}
             title={title}
-            data-test-id="add-block-button"
+            data-test-id={dataTestId}
             className={merge([
                 'tw-group tw-leading-none tw-rounded-sm tw-outline-none',
                 isFocusVisible && FOCUS_STYLE,

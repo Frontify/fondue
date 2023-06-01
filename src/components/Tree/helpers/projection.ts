@@ -49,10 +49,8 @@ export const getProjection = ({ nodes, activeId, overId, dragOffset }: Projectio
     const projectedDepth = (activeNode?.props?.level ?? 0) + dragDepth;
 
     const maxDepth = getMaxDepth({ previousNode });
-
     const minDepth = getMinDepth({ nextNode });
     let depth = projectedDepth;
-
     if (projectedDepth >= maxDepth) {
         depth = maxDepth;
     } else if (projectedDepth < minDepth) {
@@ -80,12 +78,6 @@ export const getProjection = ({ nodes, activeId, overId, dragOffset }: Projectio
         return newParent ?? null;
     };
 
-    const parentId = getParentId();
-
-    const dropIndexInParent = nodes
-        .filter(({ props }) => props.parentId === parentId)
-        .findIndex(({ props }) => props.id === overId);
-
     const getParent = (parentId: Nullable<string>) => {
         if (!parentId) {
             return null;
@@ -93,7 +85,17 @@ export const getProjection = ({ nodes, activeId, overId, dragOffset }: Projectio
         return nodes.find(({ props }) => props.id === parentId)?.props;
     };
 
+    const parentId = getParentId();
     const parent = getParent(parentId);
+
+    const nodesInParent = newNodes.filter(({ props }) => props.parentId === parentId);
+    const activeNewIndex = nodesInParent.findIndex(({ props }) => props.id === activeId);
+    const dropIndexInParent =
+        activeNewIndex >= 0 ? activeNewIndex : nodesInParent.findIndex(({ props }) => props.id === overId);
+
+    // whether we are moving down there is a +1 offset, unless we are in the same document
+    const correctionDueDragDirection =
+        activeNodeIndex < overNodeIndex && activeNode.props.parentId === parentId ? 1 : 0;
 
     return {
         depth,
@@ -102,6 +104,6 @@ export const getProjection = ({ nodes, activeId, overId, dragOffset }: Projectio
         parentId: parentId !== ROOT_ID ? parentId : null,
         type: parent?.type,
         accepts: parent?.accepts,
-        position: dropIndexInParent,
+        position: (dropIndexInParent >= 0 ? dropIndexInParent : 0) + correctionDueDragDirection,
     };
 };

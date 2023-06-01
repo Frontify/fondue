@@ -31,6 +31,7 @@ type BaseSliderProps = {
     onChange: (value: SliderValue) => void;
     valueSuffix?: string;
     disabled?: boolean;
+    'data-test-id'?: string;
 };
 
 export type SliderValue = {
@@ -68,8 +69,9 @@ export const Slider = ({
     valueSuffix = '',
     onError,
     onChange,
-    ['aria-label']: ariaLabel = ARIA_LABEL_DEFAULT_VALUE,
+    'aria-label': ariaLabel = ARIA_LABEL_DEFAULT_VALUE,
     disabled = false,
+    'data-test-id': dataTestId = 'fondue-slider',
 }: SliderProps) => {
     const [value, setValue] = useState<number>();
     const [valueWithSuffix, setValueWithSuffix] = useState('');
@@ -293,11 +295,11 @@ export const Slider = ({
     }, [error, onError]);
 
     return (
-        <div className="tw-flex tw-flex-col" data-test-id="fondue-slider" id={id}>
+        <div className="tw-flex tw-flex-col" data-test-id={dataTestId} id={id}>
             <label
                 htmlFor={id}
                 className={merge([!label && 'tw-hidden', disabled && 'tw-text-text-disabled'])}
-                data-test-id="fondue-slider-label"
+                data-test-id={`${dataTestId}-label`}
             >
                 {label}
             </label>
@@ -311,7 +313,7 @@ export const Slider = ({
                     )}
                     <button
                         ref={setSliderRef}
-                        data-test-id="fondue-slider-interactive"
+                        data-test-id={`${dataTestId}-interactive`}
                         className="tw-flex-1 tw-relative tw-h-full tw-cursor-pointer disabled:tw-cursor-default tw-outline-none"
                         onMouseOver={onMouseOver}
                         onMouseOut={onMouseOut}
@@ -332,7 +334,7 @@ export const Slider = ({
                                 aria-valuemin={min}
                                 aria-valuemax={max}
                                 aria-label={ariaLabel}
-                                data-test-id="fondue-slider-track"
+                                data-test-id={`${dataTestId}-track`}
                                 className={merge([
                                     'tw-absolute tw-block tw-top-1/2 tw--translate-y-1/2 tw-origin-left tw-w-full tw-h-1  tw-rounded-sm tw-bg-box-neutral-strong tw-flex-1',
                                     disabled && 'tw-bg-box-neutral',

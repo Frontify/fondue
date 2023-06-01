@@ -22,18 +22,20 @@ export type Breadcrumb = {
     decorator?: ReactElement<IconProps>;
     bold?: boolean;
     badges?: BadgeProps[];
+    'data-test-id'?: string;
 };
 
 export type BreadcrumbsProps = {
     items: Breadcrumb[];
+    'data-test-id'?: string;
 };
 
-export const Breadcrumbs = ({ items }: BreadcrumbsProps): ReactElement => {
+export const Breadcrumbs = ({ items, 'data-test-id': dataTestId = 'breadcrumb' }: BreadcrumbsProps): ReactElement => {
     const props = mapBreadcrumbsToAriaProps(items);
     const { navProps } = useBreadcrumbs(props as AriaBreadcrumbsProps);
 
     return (
-        <nav {...navProps} className="tw-font-sans" aria-label="Breadcrumb">
+        <nav {...navProps} className="tw-font-sans" aria-label="Breadcrumb" data-test-id={dataTestId}>
             <ol className="tw-list-none tw-flex tw-flex-wrap tw-gap-y-1">
                 {items.map(({ label, badges, bold, decorator, link, onClick }, index) => {
                     const isCurrent = index === items.length - 1;
@@ -49,6 +51,7 @@ export const Breadcrumbs = ({ items }: BreadcrumbsProps): ReactElement => {
                                 decorator={decorator}
                                 link={link}
                                 onClick={onClick}
+                                data-test-id={dataTestId}
                             />
                         );
                     }
@@ -60,6 +63,7 @@ export const Breadcrumbs = ({ items }: BreadcrumbsProps): ReactElement => {
                             link={link}
                             onClick={onClick}
                             showSeparator={index < items.length - 2}
+                            data-test-id={dataTestId}
                         />
                     );
                 })}

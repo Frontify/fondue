@@ -10,18 +10,24 @@ import {
     AlignRightPlugin,
     BoldPlugin,
     BreakAfterPlugin,
-    ButtonPlugin,
     CheckboxListPlugin,
     CodePlugin,
-    ELEMENT_BUTTON,
+    Custom1Plugin,
+    Custom2Plugin,
+    Custom3Plugin,
     EmojiPlugin,
+    Heading1Plugin,
+    Heading2Plugin,
+    Heading3Plugin,
+    Heading4Plugin,
+    ImageCaptionPlugin,
+    ImageTitlePlugin,
     ItalicPlugin,
     LinkPlugin,
     OrderedListPlugin,
     ParagraphPlugin,
     PluginComposer,
     ResetFormattingPlugin,
-    RichTextButtonStyle,
     SoftBreakPlugin,
     StrikethroughPlugin,
     TextStylePlugin,
@@ -36,14 +42,9 @@ import {
     BUTTON,
     CHECKBOX_INPUT,
     CHECKBOX_INPUT_ID,
-    EDIT_BUTTON_BUTTON,
     EDIT_LINK_BUTTON,
-    FLOATING_BUTTON_EDIT,
-    FLOATING_BUTTON_INSERT,
-    FLOATING_BUTTON_SECONDARY,
     FLOATING_LINK_EDIT,
     FLOATING_LINK_INSERT,
-    REMOVE_BUTTON_BUTTON,
     REMOVE_LINK_BUTTON,
     RICH_TEXT_EDITOR,
     TEXTSTYLE_DROPDOWN_TRIGGER,
@@ -53,13 +54,6 @@ import {
     TOOLBAR_GROUP_1,
     TOOLBAR_GROUP_2,
 } from './fixtures/selectors';
-import { Heading1Plugin } from '../Plugins/TextStylePlugin/examples/heading1Plugin';
-import { Custom1Plugin } from '../Plugins/TextStylePlugin/examples/custom1Plugin';
-import { Custom2Plugin } from '../Plugins/TextStylePlugin/examples/custom2Plugin';
-import { Custom3Plugin } from '../Plugins/TextStylePlugin/examples/custom3Plugin';
-import { Heading2Plugin } from '../Plugins/TextStylePlugin/examples/heading2Plugin';
-import { Heading3Plugin } from '../Plugins/TextStylePlugin/examples/heading3Plugin';
-import { Heading4Plugin } from '../Plugins/TextStylePlugin/examples/heading4Plugin';
 import { SubscriptPlugin } from '@components/RichTextEditor/Plugins/SubscriptPlugin';
 import { SuperscriptPlugin } from '@components/RichTextEditor/Plugins/SuperscriptPlugin';
 
@@ -136,34 +130,6 @@ const RichTextWithLegacyLink = ({ text, url }: { text: string; url: string }): R
     );
 };
 
-const RichTextWithButton = ({
-    text,
-    link,
-    buttonStyle,
-}: {
-    text: string;
-    link: string;
-    buttonStyle: RichTextButtonStyle;
-}): ReactElement => {
-    return (
-        <RichTextEditor
-            value={JSON.stringify([
-                {
-                    type: ELEMENT_PARAGRAPH,
-                    children: [
-                        {
-                            type: ELEMENT_BUTTON,
-                            url: link,
-                            buttonStyle,
-                            children: [{ text }],
-                        },
-                    ],
-                },
-            ])}
-        />
-    );
-};
-
 const RichTextEditorWithValueSetOutside = ({ value }: { value: string }): ReactElement => {
     const [initialValue, setInitialValue] = useState(value);
 
@@ -183,9 +149,11 @@ const TextStylePlugins = [
     new Custom1Plugin(),
     new Custom2Plugin(),
     new Custom3Plugin(),
+    new ImageTitlePlugin(),
+    new ImageCaptionPlugin(),
 ];
 
-const RichTextWithCustomTextStyles = (): ReactElement => {
+const RichTextWithCustomTextStylesDefaultValues = (): ReactElement => {
     const plugins = new PluginComposer();
     plugins
         .setPlugin(new SoftBreakPlugin())
@@ -201,7 +169,6 @@ const RichTextWithCustomTextStyles = (): ReactElement => {
                 new UnderlinePlugin(),
                 new StrikethroughPlugin(),
                 new LinkPlugin(),
-                new ButtonPlugin(),
                 new CodePlugin(),
             ],
             [
@@ -362,7 +329,7 @@ describe('RichTextEditor Component', () => {
 
             insertTextAndOpenToolbar();
             cy.get(TOOLBAR_FLOATING).should('be.visible');
-            cy.get(TOOLBAR_GROUP_1).children().eq(6).click();
+            cy.get(TOOLBAR_GROUP_1).children().eq(5).click();
             cy.get('[contenteditable=true]').should(
                 'include.html',
                 'tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-[0.2em] tw-font-mono tw-text-[85%]',
@@ -427,7 +394,7 @@ describe('RichTextEditor Component', () => {
         });
 
         it('renders a heading', () => {
-            cy.mount(<RichTextWithCustomTextStyles />);
+            cy.mount(<RichTextWithCustomTextStylesDefaultValues />);
 
             insertTextAndOpenToolbar();
             cy.get(TOOLBAR_FLOATING).should('be.visible');
@@ -437,7 +404,7 @@ describe('RichTextEditor Component', () => {
         });
 
         it('renders a custom text style', () => {
-            cy.mount(<RichTextWithCustomTextStyles />);
+            cy.mount(<RichTextWithCustomTextStylesDefaultValues />);
 
             insertTextAndOpenToolbar();
             cy.get(TOOLBAR_FLOATING).should('be.visible');
@@ -446,7 +413,7 @@ describe('RichTextEditor Component', () => {
             cy.get('[contenteditable=true] > p').should(
                 'have.attr',
                 'style',
-                'color: var(--f-theme-settings-custom2-color); font-family: var(--f-theme-settings-custom2-font-family); font-size: var(--f-theme-settings-custom2-font-size); font-style: var(--f-theme-settings-custom2-font-style); font-weight: var(--f-theme-settings-custom2-font-weight); letter-spacing: var(--f-theme-settings-custom2-letter-spacing); line-height: var(--f-theme-settings-custom2-line-height); text-decoration: var(--f-theme-settings-custom2-text-decoration); text-transform: var(--f-theme-settings-custom2-text-transform); margin-top: var(--f-theme-settings-custom2-margin-top); margin-bottom: var(--f-theme-settings-custom2-margin-bottom);',
+                'font-size: 14px; font-weight: 600; font-style: normal;',
             );
         });
 
@@ -503,9 +470,8 @@ describe('RichTextEditor Component', () => {
             cy.get('ol li').should('not.exist');
         });
         it('renders a checkbox with custom textStyle', () => {
-            cy.mount(<RichTextWithCustomTextStyles />);
-            const heading2Styles =
-                'color: var(--f-theme-settings-heading2-color); font-family: var(--f-theme-settings-heading2-font-family); font-size: var(--f-theme-settings-heading2-font-size); font-style: var(--f-theme-settings-heading2-font-style); font-weight: var(--f-theme-settings-heading2-font-weight); letter-spacing: var(--f-theme-settings-heading2-letter-spacing); line-height: var(--f-theme-settings-heading2-line-height); text-decoration: var(--f-theme-settings-heading2-text-decoration); text-transform: var(--f-theme-settings-heading2-text-transform); margin-top: var(--f-theme-settings-heading2-margin-top); margin-bottom: var(--f-theme-settings-heading2-margin-bottom);';
+            cy.mount(<RichTextWithCustomTextStylesDefaultValues />);
+            const heading2Styles = 'font-size: 32px; font-weight: 700; font-style: normal;';
 
             insertTextAndOpenToolbar();
             cy.get(TOOLBAR_GROUP_2).children().eq(5).click();
@@ -519,9 +485,8 @@ describe('RichTextEditor Component', () => {
         });
 
         it('switches a custom checkbox to list and keeps textStyle', () => {
-            cy.mount(<RichTextWithCustomTextStyles />);
-            const heading1Styles =
-                'color: var(--f-theme-settings-heading1-color); font-family: var(--f-theme-settings-heading1-font-family); font-size: var(--f-theme-settings-heading1-font-size); font-style: var(--f-theme-settings-heading1-font-style); font-weight: var(--f-theme-settings-heading1-font-weight); letter-spacing: var(--f-theme-settings-heading1-letter-spacing); line-height: var(--f-theme-settings-heading1-line-height); text-decoration: var(--f-theme-settings-heading1-text-decoration); text-transform: var(--f-theme-settings-heading1-text-transform); margin-top: var(--f-theme-settings-heading1-margin-top); margin-bottom: var(--f-theme-settings-heading1-margin-bottom);';
+            cy.mount(<RichTextWithCustomTextStylesDefaultValues />);
+            const heading1Styles = 'font-size: 48px; font-weight: 700; font-style: normal;';
 
             insertTextAndOpenToolbar();
             cy.get(TOOLBAR_GROUP_2).children().eq(5).click();
@@ -710,107 +675,6 @@ describe('RichTextEditor Component', () => {
         });
     });
 
-    describe('button plugin', () => {
-        it('should render with button', () => {
-            const link = 'https://smartive.ch';
-            const text = 'This is a link';
-            cy.mount(<RichTextWithButton link={link} text={text} buttonStyle="primary" />);
-
-            cy.get('[contenteditable=true] a').should('contain.text', text);
-            cy.get('[contenteditable=true] a').should('have.attr', 'href', link);
-            cy.get('[contenteditable=true] a').should('have.attr', 'target', '_blank');
-        });
-
-        it('should open floating button insert', () => {
-            const link = 'https://smartive.ch';
-            cy.mount(<RichTextEditor />);
-            insertTextAndOpenToolbar();
-            cy.get(TOOLBAR_FLOATING).should('be.visible');
-            cy.get(TOOLBAR_GROUP_1).children().eq(5).click();
-            cy.get(FLOATING_BUTTON_INSERT).should('exist');
-            cy.get(BUTTON).eq(1).should('be.disabled');
-            cy.get('[type=text]').eq(0).should('have.attr', 'value', 'hello');
-            cy.get('[type=text]').eq(1).click().type(link);
-            cy.get(BUTTON).eq(1).should('not.be.disabled');
-            cy.get(CHECKBOX_INPUT_ID).click({ force: true });
-            cy.get(BUTTON).eq(1).click();
-            cy.get('[contenteditable=true] a').should('have.attr', 'href', link);
-            cy.get('[contenteditable=true] a').should('have.attr', 'target', '_blank');
-        });
-
-        it('should open floating button insert and edit', () => {
-            const link = 'https://smartive.ch';
-            const text = 'This is a link';
-            cy.mount(<RichTextWithButton link={link} text={text} buttonStyle="primary" />);
-            cy.get(FLOATING_BUTTON_EDIT).should('not.exist');
-            cy.get(FLOATING_BUTTON_INSERT).should('not.exist');
-            cy.get(EDIT_BUTTON_BUTTON).should('not.exist');
-            cy.get(REMOVE_BUTTON_BUTTON).should('not.exist');
-
-            cy.get('[contenteditable=true] a').realClick();
-            cy.get(FLOATING_BUTTON_EDIT).should('contain', link);
-            cy.get(EDIT_BUTTON_BUTTON).should('exist');
-            cy.get(REMOVE_BUTTON_BUTTON).should('exist');
-            cy.get(EDIT_BUTTON_BUTTON).click();
-            cy.get(FLOATING_BUTTON_INSERT).should('exist');
-
-            cy.get('[type=text]').eq(0).should('have.attr', 'value', text);
-            cy.get('[type=text]').eq(1).should('have.attr', 'value', link);
-            cy.get('[type=checkbox]').should('be.checked');
-        });
-
-        it('should edit button link', () => {
-            const link = 'https://smartive.ch';
-            const text = 'This is a link';
-            const additionalLink = '/team';
-            cy.mount(<RichTextWithButton link={link} text={text} buttonStyle="primary" />);
-            cy.get('[contenteditable=true] a').realClick();
-            cy.get(EDIT_BUTTON_BUTTON).click();
-
-            cy.get('[type=text]').eq(1).click().type(additionalLink);
-            cy.get(CHECKBOX_INPUT_ID).click({ force: true });
-
-            cy.get(BUTTON).eq(1).click();
-            cy.get('[contenteditable=true] a').should('have.attr', 'href', link + additionalLink);
-            cy.get('[contenteditable=true] a').should('have.attr', 'target', '_self');
-        });
-
-        it('should edit button style', () => {
-            const link = 'https://smartive.ch';
-            const text = 'This is a link';
-
-            cy.mount(<RichTextWithButton link={link} text={text} buttonStyle="primary" />);
-
-            cy.get('[contenteditable=true] a').realClick();
-            cy.get(EDIT_BUTTON_BUTTON).click();
-
-            cy.get(FLOATING_BUTTON_SECONDARY).realClick();
-            cy.get(BUTTON).eq(1).click();
-        });
-
-        it('should remove button', () => {
-            const link = 'https://smartive.ch';
-            const text = 'This is a link';
-            cy.mount(<RichTextWithButton link={link} text={text} buttonStyle="primary" />);
-            cy.get('[contenteditable=true] a').realClick();
-            cy.get(REMOVE_BUTTON_BUTTON).click();
-
-            cy.get('[contenteditable=true]').should('contain.text', text);
-            cy.get('[contenteditable=true] a').should('not.exist');
-        });
-
-        it('should disable button-button when multiple blocks are selected', () => {
-            const plugins = new PluginComposer();
-            plugins.setPlugin([new ButtonPlugin()]);
-
-            cy.mount(<RichTextEditor plugins={plugins} />);
-
-            cy.get('[contenteditable=true]').click().type('block1{enter}block2{selectall}');
-            cy.get(TOOLBAR_FLOATING).should('be.visible');
-            cy.get(`${TOOLBAR_FLOATING} ${TOOLBAR_BUTTON}`).should('have.class', disabledButtonClassNames);
-        });
-    });
-
     describe('reset formatting plugin', () => {
         it('should reset bold', () => {
             cy.mount(<RichTextEditor />);
@@ -865,7 +729,7 @@ describe('RichTextEditor Component', () => {
 
             insertTextAndOpenToolbar();
             cy.get(TOOLBAR_FLOATING).should('be.visible');
-            cy.get(TOOLBAR_GROUP_1).children().eq(6).click();
+            cy.get(TOOLBAR_GROUP_1).children().eq(5).click();
             cy.get('[contenteditable=true]').should(
                 'include.html',
                 'tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-[0.2em] tw-font-mono tw-text-[85%]',
@@ -887,7 +751,7 @@ describe('RichTextEditor Component', () => {
             cy.get(TOOLBAR_GROUP_1).children().eq(1).click();
             cy.get(TOOLBAR_GROUP_1).children().eq(2).click();
             cy.get(TOOLBAR_GROUP_1).children().eq(3).click();
-            cy.get(TOOLBAR_GROUP_1).children().eq(6).click();
+            cy.get(TOOLBAR_GROUP_1).children().eq(5).click();
             cy.get('[contenteditable=true]').should(
                 'include.html',
                 'tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-[0.2em] tw-font-mono tw-text-[85%]',
@@ -975,7 +839,7 @@ describe('RichTextEditor Component', () => {
         });
 
         it('should reset a heading', () => {
-            cy.mount(<RichTextWithCustomTextStyles />);
+            cy.mount(<RichTextWithCustomTextStylesDefaultValues />);
 
             insertTextAndOpenToolbar();
             cy.get(TOOLBAR_FLOATING).should('be.visible');

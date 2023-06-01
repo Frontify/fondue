@@ -6,7 +6,7 @@ import { PopperPlacement, PopperProps } from '@components/Popper/types';
 import { OVERLAY_CONTAINER_CLASSES } from '@utilities/overlayStyle';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 
-export type PopoverProps = {
+export type PopoverComponentProps = {
     'data-test-id'?: string;
     role?: string;
 } & PopperProps;
@@ -29,7 +29,7 @@ export const Popover = ({
     enablePortal = false,
     'data-test-id': dataTestId = 'fondue-popover',
     role = 'region',
-}: PopoverProps) => {
+}: PopoverComponentProps) => {
     const id = useMemoizedId();
     return (
         <Popper open={open} placement={placement} offset={offset} flip={flip} enablePortal={enablePortal}>
