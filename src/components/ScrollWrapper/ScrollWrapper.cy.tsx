@@ -3,7 +3,7 @@
 import React from 'react';
 import { ScrollWrapper } from './ScrollWrapper';
 
-const SCROLL_WRAPPER_CONTAINER = '[data-test-id=fondue-scroll-wrapper]';
+const SCROLL_WRAPPER_CONTAINER = '[data-test-id=scroll-wrapper]';
 
 const SCROLL_WRAPPER_CONTAINER_CUSTOM_ID = '[data-test-id=custom-data-test-id]';
 
