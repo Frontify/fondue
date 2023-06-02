@@ -21,8 +21,13 @@ import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { ScrollWrapper } from '@components/ScrollWrapper';
+import { DimensionUnity } from '@utilities/dimensions';
 
-export type TabsPaddingX = 'small' | 'medium' | 'large';
+export enum TabsPaddingX {
+    Small = 'Small',
+    Medium = 'Medium',
+    Large = 'Large',
+}
 
 export enum TabSize {
     Small = 'Small',
@@ -35,16 +40,25 @@ export type TabsProps = {
     activeItemId: string;
     children: ReactNode;
     onChange?: (tabId: string) => void;
-    'data-test-id'?: string;
+    scrollbar?: boolean;
+    contentMaxHeight?: `${number}${DimensionUnity}`;
 };
 
 const TABS_PADDING_MAP: Record<TabsPaddingX, string> = {
-    small: 'tw-px-s',
-    medium: 'tw-px-m',
-    large: 'tw-px-l',
+    Small: 'tw-px-s',
+    Medium: 'tw-px-m',
+    Large: 'tw-px-l',
 };
 
-export const Tabs = ({ paddingX, size, activeItemId, children, onChange }: TabsProps): ReactElement => {
+export const Tabs = ({
+    paddingX,
+    size,
+    activeItemId,
+    children,
+    onChange,
+    scrollbar,
+    contentMaxHeight,
+}: TabsProps): ReactElement => {
     const groupId = useMemoizedId();
     const tabNavRef = useRef<HTMLDivElement | null>(null);
     const [isOverflowing, setIsOverflowing] = useState(false);
@@ -193,7 +207,7 @@ export const Tabs = ({ paddingX, size, activeItemId, children, onChange }: TabsP
                     role="tablist"
                     className={merge([
                         'tw-overflow-x-hidden tw-flex-shrink-0 tw-h-full tw-w-full tw-flex tw-justify-start',
-                        TABS_PADDING_MAP[paddingX ?? 'small'],
+                        TABS_PADDING_MAP[paddingX ?? 'Small'],
                         size === 'Small' ? 'tw-gap-xxs' : 'tw-gap-xs ',
                     ])}
                 >
@@ -312,8 +326,22 @@ export const Tabs = ({ paddingX, size, activeItemId, children, onChange }: TabsP
                 )}
             </div>
 
-            <ScrollWrapper tabIndex={-1}>
-                <div data-test-id="tab-content">
+            {scrollbar ? (
+                <div data-test-id="tab-content" className="tw-overflow-auto" style={{ maxHeight: contentMaxHeight }}>
+                    <ScrollWrapper tabIndex={-1}>
+                        <>
+                            {Children.map(children, (child) => {
+                                if (!isValidElement(child)) {
+                                    return null;
+                                }
+
+                                return cloneElement(child, { ...child.props, active: child.props.id === activeItemId });
+                            })}
+                        </>
+                    </ScrollWrapper>
+                </div>
+            ) : (
+                <div data-test-id="tab-content" style={{ maxHeight: contentMaxHeight }}>
                     {Children.map(children, (child) => {
                         if (!isValidElement(child)) {
                             return null;
@@ -322,7 +350,7 @@ export const Tabs = ({ paddingX, size, activeItemId, children, onChange }: TabsP
                         return cloneElement(child, { ...child.props, active: child.props.id === activeItemId });
                     })}
                 </div>
-            </ScrollWrapper>
+            )}
         </>
     );
 };

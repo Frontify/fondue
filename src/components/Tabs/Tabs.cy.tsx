@@ -209,15 +209,15 @@ describe('Tabs Component', () => {
     });
 
     it('tabs should render with paddingX of "small"', () => {
-        cy.mount(<TabComponent paddingX="small" />);
+        cy.mount(<TabComponent paddingX={TabsPaddingX.Small} />);
         cy.get(`${TABS_DATA_TEST_ID} > div`).should('have.class', 'tw-px-s');
     });
     it('tabs should render with paddingX of "medium"', () => {
-        cy.mount(<TabComponent paddingX="medium" />);
+        cy.mount(<TabComponent paddingX={TabsPaddingX.Medium} />);
         cy.get(`${TABS_DATA_TEST_ID} > div`).should('have.class', 'tw-px-m');
     });
     it('tabs should render with paddingX of "large"', () => {
-        cy.mount(<TabComponent paddingX="large" />);
+        cy.mount(<TabComponent paddingX={TabsPaddingX.Large} />);
         cy.get(`${TABS_DATA_TEST_ID} > div`).should('have.class', 'tw-px-l');
     });
 });
