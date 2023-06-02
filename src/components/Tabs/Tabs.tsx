@@ -20,7 +20,6 @@ import { motion } from 'framer-motion';
 import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { useMemoizedId } from '@hooks/useMemoizedId';
-import { ScrollWrapper } from '@components/ScrollWrapper';
 
 export type TabsPaddingX = 'small' | 'medium' | 'large';
 
@@ -312,17 +311,15 @@ export const Tabs = ({ paddingX, size, activeItemId, children, onChange }: TabsP
                 )}
             </div>
 
-            <ScrollWrapper tabIndex={-1}>
-                <div data-test-id="tab-content">
-                    {Children.map(children, (child) => {
-                        if (!isValidElement(child)) {
-                            return null;
-                        }
+            <div data-test-id="tab-content">
+                {Children.map(children, (child) => {
+                    if (!isValidElement(child)) {
+                        return null;
+                    }
 
-                        return cloneElement(child, { ...child.props, active: child.props.id === activeItemId });
-                    })}
-                </div>
-            </ScrollWrapper>
+                    return cloneElement(child, { ...child.props, active: child.props.id === activeItemId });
+                })}
+            </div>
         </>
     );
 };
