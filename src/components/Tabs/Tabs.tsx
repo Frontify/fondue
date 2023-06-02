@@ -21,7 +21,11 @@ import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 
-export type TabsPaddingX = 'small' | 'medium' | 'large';
+export enum TabsPaddingX {
+    Small = 'Small',
+    Medium = 'Medium',
+    Large = 'Large',
+}
 
 export enum TabSize {
     Small = 'Small',
@@ -34,13 +38,12 @@ export type TabsProps = {
     activeItemId: string;
     children: ReactNode;
     onChange?: (tabId: string) => void;
-    'data-test-id'?: string;
 };
 
 const TABS_PADDING_MAP: Record<TabsPaddingX, string> = {
-    small: 'tw-px-s',
-    medium: 'tw-px-m',
-    large: 'tw-px-l',
+    Small: 'tw-px-s',
+    Medium: 'tw-px-m',
+    Large: 'tw-px-l',
 };
 
 export const Tabs = ({ paddingX, size, activeItemId, children, onChange }: TabsProps): ReactElement => {
@@ -192,7 +195,7 @@ export const Tabs = ({ paddingX, size, activeItemId, children, onChange }: TabsP
                     role="tablist"
                     className={merge([
                         'tw-overflow-x-hidden tw-flex-shrink-0 tw-h-full tw-w-full tw-flex tw-justify-start',
-                        TABS_PADDING_MAP[paddingX ?? 'small'],
+                        TABS_PADDING_MAP[paddingX ?? 'Small'],
                         size === 'Small' ? 'tw-gap-xxs' : 'tw-gap-xs ',
                     ])}
                 >
