@@ -26,6 +26,7 @@ export type OrderableListProps<T> = {
     dragDisabled: boolean;
     onMove: (modifiedItems: OrderableListItem<T>[]) => void;
     renderContent: RenderListItem<T>;
+    'data-test-id'?: string;
 };
 
 export enum ItemDragState {

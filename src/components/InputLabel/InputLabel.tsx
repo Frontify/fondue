@@ -18,6 +18,7 @@ export type InputLabelProps = {
     tooltip?: InputLabelTooltipProps;
     bold?: boolean;
     children?: ReactNode;
+    'data-test-id'?: string;
 };
 
 export const InputLabel = ({
@@ -28,6 +29,7 @@ export const InputLabel = ({
     clickable = false,
     tooltip = [],
     bold,
+    'data-test-id': dataTestId = 'input-label',
 }: InputLabelProps): ReactElement => {
     const tooltips = Array.isArray(tooltip) ? tooltip : [tooltip];
 
@@ -42,7 +44,7 @@ export const InputLabel = ({
                 'tw-inline-flex tw-leading-4 tw-items-center tw-gap-1 tw-font-sans tw-text-s tw-max-w-full tw-min-w-0 tw-flex-initial',
                 disabled ? 'tw-text-text-disabled' : 'tw-text-text-weak',
             ])}
-            data-test-id="input-label-container"
+            data-test-id={`${dataTestId}-container`}
         >
             <div className="tw-flex-1 tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap">
                 <label
@@ -54,7 +56,7 @@ export const InputLabel = ({
                             ? 'hover:tw-cursor-not-allowed tw-pointer-events-none'
                             : 'hover:tw-cursor-pointer hover:tw-text-text group-hover:tw-text-text',
                     ])}
-                    data-test-id="input-label"
+                    data-test-id={dataTestId}
                     title={typeof children === 'string' ? children : ''}
                 >
                     {children}
@@ -62,7 +64,7 @@ export const InputLabel = ({
             </div>
 
             {required && (
-                <span data-test-id="input-label-required" className="tw-h-4 tw-text-m tw-text-text-negative">
+                <span data-test-id={`${dataTestId}-required`} className="tw-h-4 tw-text-m tw-text-text-negative">
                     *
                 </span>
             )}
