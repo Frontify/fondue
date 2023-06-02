@@ -135,10 +135,6 @@ export default {
             control: { type: 'select' },
             defaultValue: 'Small',
         },
-        maxHeight: {
-            type: 'string',
-            defaultValue: '100px',
-        },
     },
 } as Meta<TabsProps>;
 
@@ -156,31 +152,6 @@ const TabTemplate: StoryFn<TabsProps> = (args) => {
 };
 export const Default = TabTemplate.bind({});
 Default.storyName = 'Label Only';
-
-const TabWithMaxHeight: StoryFn<TabsProps> = (args) => {
-    const [activeItemId, setActiveItemId] = useState(data[0].id);
-    return (
-        <Tabs
-            {...args}
-            contentMaxHeight="100px"
-            activeItemId={activeItemId}
-            onChange={(value) => setActiveItemId(value)}
-        >
-            {data.map((item) => (
-                <TabItem
-                    id={item.id}
-                    key={item.id}
-                    label={item.label}
-                    disabled={item.disabled ?? false}
-                    decorator={item.decorator}
-                >
-                    <div className="tw-p-3">{item.children}</div>
-                </TabItem>
-            ))}
-        </Tabs>
-    );
-};
-export const WithMaxHeight = TabWithMaxHeight.bind({});
 
 const dataWithIcon = data.map((item) => Object.assign({}, item, { decorator: <IconIcon size={IconSize.Size16} /> }));
 const TabWithIconTemplate: StoryFn<TabsProps> = (args) => {
