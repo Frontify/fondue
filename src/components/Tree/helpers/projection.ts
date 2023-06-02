@@ -95,7 +95,7 @@ export const getProjection = ({ nodes, activeId, overId, dragOffset }: Projectio
 
     // whether we are moving down there is a +1 offset, unless we are in the same document
     const correctionDueDragDirection =
-        activeNodeIndex < overNodeIndex && activeNode.props.parentId === parentId ? 1 : 0;
+        activeNodeIndex < overNodeIndex && activeNode.props.parentId !== parentId ? 1 : 0;
 
     return {
         depth,
