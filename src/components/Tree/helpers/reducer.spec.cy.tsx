@@ -1,10 +1,22 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
-import { findIndexById, getNodeChildrenIds, updateNodeWithNewChildren } from './reducer';
+import React, { ReactNode } from 'react';
+import { currentNodesChanged, findIndexById, getNodeChildrenIds, updateNodeWithNewChildren } from './reducer';
 
-const Component = ({ id, parentId }: { id?: string; parentId?: string }) => (
+const Component = ({ id, parentId }: { id?: string; parentId?: string; contentComponent?: ReactNode }) => (
     <div id={id} data-parent-id={parentId}></div>
+);
+
+const ContentComponent = ({
+    id,
+    document,
+}: {
+    id: string;
+    document: { id: string; targets: number[]; visibility: string };
+}) => (
+    <div id={id} data-id={`content-${id}`}>
+        document {document.id}
+    </div>
 );
 
 describe('reducer', () => {
@@ -130,6 +142,49 @@ describe('reducer', () => {
                 nodes[4],
                 nodes[5],
             ]);
+        });
+    });
+
+    describe('currentNodesChanged', () => {
+        it('should return true if new nodes contentComponent props changed', () => {
+            const contentComponent = (
+                    <ContentComponent id="content1" document={{ id: '1', targets: [], visibility: 'EDITOR' }} />
+                ),
+                newContentComponent = (
+                    <ContentComponent id="content1" document={{ id: '1', targets: [1], visibility: 'EDITOR' }} />
+                );
+            const currentNodes = [
+                <Component key="1" id="1" contentComponent={contentComponent} />,
+                <Component key="3" id="3" contentComponent={contentComponent} />,
+                <Component key="4" id="4" contentComponent={contentComponent} />,
+            ];
+
+            const newNodes = [
+                <Component key="1" id="1" contentComponent={contentComponent} />,
+                <Component key="3" id="3" contentComponent={newContentComponent} />,
+                <Component key="4" id="4" contentComponent={contentComponent} />,
+            ];
+
+            expect(currentNodesChanged(['1', '3', '4'], currentNodes, newNodes)).to.be.true;
+        });
+
+        it('should return false if new nodes contentComponent props do not changed', () => {
+            const contentComponent = (
+                <ContentComponent id="content1" document={{ id: '1', targets: [], visibility: 'EDITOR' }} />
+            );
+            const currentNodes = [
+                <Component key="1" id="1" contentComponent={contentComponent} />,
+                <Component key="3" id="3" contentComponent={contentComponent} />,
+                <Component key="4" id="4" contentComponent={contentComponent} />,
+            ];
+
+            const newNodes = [
+                <Component key="1" id="1" contentComponent={contentComponent} />,
+                <Component key="3" id="3" contentComponent={contentComponent} />,
+                <Component key="4" id="4" contentComponent={contentComponent} />,
+            ];
+
+            expect(currentNodesChanged(['1', '3', '4'], currentNodes, newNodes)).to.be.false;
         });
     });
 });
