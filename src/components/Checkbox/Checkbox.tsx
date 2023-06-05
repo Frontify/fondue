@@ -2,7 +2,16 @@
 
 import { IconCheckMark, IconMinus } from '@foundation/Icon/Generated';
 import { InputLabel, InputLabelTooltipProps } from '@components/InputLabel/InputLabel';
-import React, { ForwardRefRenderFunction, HTMLAttributes, ReactNode, forwardRef, useEffect, useState } from 'react';
+import React, {
+    ForwardRefRenderFunction,
+    HTMLAttributes,
+    ReactNode,
+    forwardRef,
+    useCallback,
+    useEffect,
+    useRef,
+    useState,
+} from 'react';
 
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { IconSize } from '@foundation/Icon';
@@ -99,6 +108,10 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
     });
     const [showFocus, setShowFocus] = useState<Nullable<boolean>>();
     const [listeningForKeyboardEvents, setListeningForKeyboardEvents] = useState<Nullable<boolean>>();
+    const labelContainer = useRef<HTMLSpanElement>(null);
+    const helperTextContainer = useRef<HTMLSpanElement>(null);
+    const [isLabelOverflowing, setIsLabelOverflowing] = useState(false);
+    const [isHelperTextOverflowing, setIsHelperTextOverflowing] = useState(false);
 
     const tabFocusListener = (event: KeyboardEvent) => {
         if (event.key === 'Tab') {
@@ -157,6 +170,31 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                   : 'tw-border tw-border-line-xx-strong',
           ]);
 
+    const checkOverflowing = useCallback(() => {
+        if (labelContainer.current) {
+            setIsLabelOverflowing(labelContainer.current?.scrollWidth > labelContainer.current?.clientWidth);
+        }
+
+        if (helperTextContainer.current) {
+            setIsHelperTextOverflowing(
+                helperTextContainer.current?.scrollWidth > helperTextContainer.current?.clientWidth,
+            );
+        }
+    }, [labelContainer, helperTextContainer]);
+
+    useEffect(() => {
+        if (!label && !helperText) {
+            return;
+        }
+        checkOverflowing();
+
+        window.addEventListener('resize', checkOverflowing);
+
+        return () => {
+            window.removeEventListener('resize', checkOverflowing);
+        };
+    }, [label, helperText, checkOverflowing]);
+
     return (
         <div className="tw-gap-1 tw-transition-colors tw-w-full" data-test-id={dataTestId}>
             <div className={merge(['tw-inline-flex tw-flex-row tw-rounded tw-w-full', showFocus ? FOCUS_STYLE : ''])}>
@@ -196,26 +234,28 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                         <span className="tw-inline-flex tw-flex-col tw-min-w-0">
                             {label && !hideLabel && (
                                 <span
+                                    ref={labelContainer}
                                     data-test-id={`${dataTestId}-label`}
                                     className={merge([
                                         'tw-text-ellipsis tw-overflow-hidden',
                                         'tw-text-xs tw-select-none hover:tw-cursor-pointer hover:tw-text-black dark:hover:tw-text-white group-hover:tw-text-black dark:group-hover:tw-text-white',
                                         checkedOrMixed && 'tw-font-medium',
                                     ])}
-                                    title={label}
+                                    title={isLabelOverflowing ? label : undefined}
                                 >
                                     {label}
                                 </span>
                             )}
                             {helperText && !hideLabel && (
                                 <span
+                                    ref={helperTextContainer}
                                     data-test-id={`${dataTestId}-helper-text`}
                                     className={merge([
                                         'tw-text-ellipsis tw-overflow-hidden',
                                         'tw-font-sans tw-text-xs tw-font-normal',
                                         disabled ? 'text-disabled' : 'tw-text-text-weak',
                                     ])}
-                                    title={helperText}
+                                    title={isHelperTextOverflowing ? helperText : undefined}
                                 >
                                     {helperText}
                                 </span>
