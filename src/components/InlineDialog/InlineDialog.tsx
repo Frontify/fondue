@@ -1,34 +1,47 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement, cloneElement } from 'react';
-import { Popover } from '@components/Popover';
-import { PopperProps } from '@components/Popper/types';
-import { Modality } from '../../types/dialog';
+import React from 'react';
+import { BaseDialogProps, Modality, OverlayProps } from '../../types/dialog';
+import { PopperPlacement } from '@components/Popper/types';
+import { Trigger } from '@utilities/dialogs/Trigger';
+import { Content } from '@utilities/dialogs/Content';
+import { Overlay } from '@utilities/dialogs/Overlay';
 
-export type InlineDialogProps = {
-    triggerElement: ReactElement;
-    open: boolean;
-    modality?: Modality;
-    maxWidth?: string | number;
-    maxHeight?: string | number;
-    handleClose: () => void;
-} & PopperProps;
+export type InlineDialogProps = OverlayProps & BaseDialogProps;
+
+Trigger.displayName = 'FondueInlineDialogTrigger';
+Content.displayName = 'FondueInlineDialogContent';
 
 export const InlineDialog = ({
     children,
-    triggerElement,
-    open = false,
+    open,
+    placement = PopperPlacement.BottomStart,
+    offset = [0, 8],
+    flip = false,
+    enablePortal = false,
+    maxHeight = 'auto',
     maxWidth = 400,
-    maxHeight,
-}: InlineDialogProps): ReactElement => {
+    modality = Modality.Modal,
+    handleClose,
+}: InlineDialogProps) => {
     return (
         <div data-test-id="fondue-inlineDialog">
-            <Popover open={open} role="dialog">
-                <Popover.Trigger>{triggerElement && cloneElement(triggerElement)}</Popover.Trigger>
-                <Popover.Content>
-                    <div style={{ maxWidth, maxHeight }}>{children}</div>
-                </Popover.Content>
-            </Popover>
+            <Overlay
+                open={open}
+                placement={placement}
+                offset={offset}
+                flip={flip}
+                enablePortal={enablePortal}
+                maxWidth={maxWidth}
+                maxHeight={maxHeight}
+                modality={modality}
+                handleClose={handleClose}
+            >
+                {children}
+            </Overlay>
         </div>
     );
 };
+InlineDialog.displayName = 'FondueInlineDialog';
+InlineDialog.Trigger = Trigger;
+InlineDialog.Content = Content;

@@ -4,6 +4,7 @@ import React, { ReactElement, useEffect, useRef, useState } from 'react';
 import { DialogBodyProps } from '../../types/dialog';
 import { ScrollWrapper } from '@components/ScrollWrapper';
 import { ScrollWrapperDirection } from '@components/ScrollWrapper/types';
+import { merge } from '@utilities/merge';
 
 export const DialogBody = ({
     children,
@@ -21,7 +22,11 @@ export const DialogBody = ({
     }, [contentRef, containerRef]);
 
     return (
-        <div ref={containerRef} data-test-id={dataTestId} className={isOverflowing ? 'tw-pr-2' : ''}>
+        <div
+            ref={containerRef}
+            data-test-id={dataTestId}
+            className={merge(['tw-overflow-y-auto tw-overflow-x-hidden', isOverflowing ? 'tw-pr-2' : ''])}
+        >
             <ScrollWrapper direction={ScrollWrapperDirection.Vertical}>
                 <div ref={contentRef} style={{ maxHeight }}>
                     {children}

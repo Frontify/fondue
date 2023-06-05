@@ -4,6 +4,7 @@ import { ReactElement, ReactNode } from 'react';
 import { IconProps } from '@foundation/Icon';
 import { BadgeProps } from '@components/Badge';
 import { ButtonProps } from '@components/Button';
+import { PopperProps } from '@components/Popper/types';
 
 export enum DialogHeaderSize {
     Default = 'Default',
@@ -36,3 +37,16 @@ export enum Modality {
     NonModal = 'non-modal',
     BlockingModal = 'blocking-modal',
 }
+
+export type BaseDialogProps = {
+    modality?: Modality;
+    maxWidth?: string | number;
+    maxHeight?: string | number;
+    handleClose?: () => void;
+};
+
+export type OverlayProps = {
+    open: boolean;
+    'data-test-id'?: string;
+    role?: string;
+} & PopperProps;

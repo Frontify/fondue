@@ -1,23 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { Children, ReactElement, ReactNode, cloneElement, isValidElement } from 'react';
-import { Popper } from '@components/Popper';
-import { PopperPlacement, PopperProps } from '@components/Popper/types';
-import { OVERLAY_CONTAINER_CLASSES } from '@utilities/overlayStyle';
-import { useMemoizedId } from '@hooks/useMemoizedId';
+import React from 'react';
+import { PopperPlacement } from '@components/Popper/types';
+import { Trigger } from '@utilities/dialogs/Trigger';
+import { Content } from '@utilities/dialogs/Content';
+import { OverlayProps } from '../../types/dialog';
+import { Overlay } from '@utilities/dialogs/Overlay';
 
-export type PopoverComponentProps = {
-    'data-test-id'?: string;
-    role?: string;
-} & PopperProps;
+export type PopoverComponentProps = OverlayProps;
 
-const Trigger = ({ children }: { children: ReactElement }) => {
-    return children;
-};
 Trigger.displayName = 'FonduePopoverTrigger';
-
-// eslint-disable-next-line react/jsx-no-useless-fragment
-const Content = ({ children }: { children?: ReactNode }): ReactElement => <>{children}</>;
 Content.displayName = 'FonduePopoverContent';
 
 export const Popover = ({
@@ -30,44 +22,18 @@ export const Popover = ({
     'data-test-id': dataTestId = 'fondue-popover',
     role = 'region',
 }: PopoverComponentProps) => {
-    const id = useMemoizedId();
     return (
-        <Popper open={open} placement={placement} offset={offset} flip={flip} enablePortal={enablePortal}>
-            {Children.map(children, (child) => {
-                if (isValidElement(child) && typeof child.type === 'function') {
-                    const { name } = child.type;
-
-                    if (name === Trigger.name) {
-                        return (
-                            <Popper.Reference>
-                                <div className="tw-w-fit" id={id}>
-                                    {cloneElement(child, {
-                                        ...child.props,
-                                    })}
-                                </div>
-                            </Popper.Reference>
-                        );
-                    }
-
-                    if (name === Content.name) {
-                        return (
-                            <Popper.Content>
-                                <div
-                                    data-test-id={dataTestId}
-                                    className={OVERLAY_CONTAINER_CLASSES}
-                                    role={role}
-                                    id={id}
-                                    aria-hidden={!open}
-                                    aria-labelledby={id}
-                                >
-                                    {cloneElement(child, { ...child.props })}
-                                </div>
-                            </Popper.Content>
-                        );
-                    }
-                }
-            })}
-        </Popper>
+        <Overlay
+            open={open}
+            placement={placement}
+            offset={offset}
+            flip={flip}
+            enablePortal={enablePortal}
+            role={role}
+            data-test-id={dataTestId}
+        >
+            {children}
+        </Overlay>
     );
 };
 Popover.displayName = 'FonduePopover';

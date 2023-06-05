@@ -2,16 +2,27 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
-export const useToggleOverlay = (initialState: boolean): [boolean, (value: boolean) => void] => {
+export const useToggleOverlay = (
+    initialState = false,
+    { isBlockingModal }: { isBlockingModal?: boolean } = { isBlockingModal: false },
+): [boolean, (value: boolean) => void] => {
     const [open, setOpen] = useState<boolean>(initialState);
     const checkKeyboardEvent = useCallback(
         (event: KeyboardEvent) => {
-            if (open && event.key === 'Escape') {
+            if (open && !isBlockingModal && event.key === 'Escape') {
                 setOpen(false);
             }
         },
-        [open],
+        [isBlockingModal, open],
     );
+
+    useEffect(() => {
+        window.addEventListener('keydown', checkKeyboardEvent);
+
+        return () => {
+            window.removeEventListener('keydown', checkKeyboardEvent);
+        };
+    }, [checkKeyboardEvent, open]);
 
     useEffect(() => {
         window.addEventListener('keydown', checkKeyboardEvent);
