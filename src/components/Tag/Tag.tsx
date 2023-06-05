@@ -63,8 +63,8 @@ export const Tag = ({ type, label, onClick, size = TagSize.Medium, 'data-test-id
         <button
             data-test-id={dataTestId}
             className={merge([
-                'tw-inline-flex tw-items-center tw-rounded-full tw-text-xs tw-transition-colors tw-group  tw-break-word',
-                size === TagSize.Small ? 'tw-px-[6px] tw-py-[2px]' : 'tw-px-2.5 tw-py-1',
+                'tw-inline-flex tw-items-center tw-rounded-full tw-text-xs tw-transition-colors tw-group tw-outline-none tw-break-word',
+                size === TagSize.Small ? 'tw-px-1.5 tw-py-0.5' : 'tw-px-2.5 tw-py-1',
                 tagStyles[type],
                 isClickable ? 'tw-cursor-pointer' : 'tw-cursor-default',
                 isFocusVisible && FOCUS_STYLE,

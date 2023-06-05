@@ -17,13 +17,16 @@ describe('Tag Component', () => {
     it('should render a small label', () => {
         cy.mount(<Tag type={TagType.Suggested} size={TagSize.Small} label={TAG_LABEL} />);
 
-        cy.get(TAG_ID).should('have.class', 'tw-px-[6px]').should('have.class', 'tw-py-[2px]');
+        cy.get(TAG_ID).should('have.class', 'tw-px-1.5').should('have.class', 'tw-py-0.5');
     });
 
     it('should render a medium label', () => {
         cy.mount(<Tag type={TagType.Suggested} size={TagSize.Medium} label={TAG_LABEL} />);
 
-        cy.get(TAG_ID).should('have.class', 'tw-px-2.5').should('have.class', 'tw-py-1');
+        cy.get(TAG_ID)
+            .should('have.class', 'tw-px-2.5')
+            .should('have.class', 'tw-py-1')
+            .should('have.class', 'tw-px-2.5');
     });
 
     it('should render a suggested tag', () => {
