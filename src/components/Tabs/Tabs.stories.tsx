@@ -122,12 +122,12 @@ export default {
     tags: ['autodocs'],
     argTypes: {
         paddingX: {
-            options: TabsPaddingX,
+            options: Object.values(TabsPaddingX),
             control: { type: 'select' },
             defaultValue: '8',
         },
         size: {
-            options: TabSize,
+            options: Object.values(TabSize),
             control: { type: 'select' },
             defaultValue: 'Small',
         },
