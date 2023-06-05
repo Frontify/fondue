@@ -50,19 +50,24 @@ export default {
     },
 } as Meta<CheckboxProps>;
 
-export const Checkbox: StoryFn<CheckboxProps> = (args: CheckboxProps) => {
+export const Checkbox: StoryFn<CheckboxProps & { wrapperClasses: string }> = ({
+    wrapperClasses,
+    ...args
+}: CheckboxProps & { wrapperClasses: string }) => {
     const [checked, setChecked] = useState<CheckboxState>(args.state || CheckboxState.Unchecked);
     useEffect(() => setChecked(args.state || CheckboxState.Unchecked), [args.state]);
 
     return (
-        <CheckboxComponent
-            {...args}
-            state={checked}
-            onChange={(isChecked) => {
-                setChecked(isChecked ? CheckboxState.Checked : CheckboxState.Unchecked);
-                args.onChange && args.onChange(isChecked);
-            }}
-        />
+        <div className={wrapperClasses}>
+            <CheckboxComponent
+                {...args}
+                state={checked}
+                onChange={(isChecked) => {
+                    setChecked(isChecked ? CheckboxState.Checked : CheckboxState.Unchecked);
+                    args.onChange && args.onChange(isChecked);
+                }}
+            />
+        </div>
     );
 };
 
@@ -83,4 +88,24 @@ CheckboxWithMultipleTooltips.args = {
             content: 'Tooltip 3',
         },
     ],
+};
+
+export const CheckboxWithMultipleTooltipsAndEllipsis = Checkbox.bind({});
+
+CheckboxWithMultipleTooltipsAndEllipsis.args = {
+    ...Checkbox.args,
+    tooltip: [
+        { triggerIcon: <IconInfo />, triggerStyle: TooltipIconTriggerStyle.Danger, content: 'Tooltip 1' },
+        {
+            triggerIcon: <IconQuestionMarkCircle />,
+            triggerStyle: TooltipIconTriggerStyle.Primary,
+            content: 'Tooltip 2',
+        },
+        {
+            triggerIcon: <IconExclamationMarkCircle filled />,
+            triggerStyle: TooltipIconTriggerStyle.Warning,
+            content: 'Tooltip 3',
+        },
+    ],
+    wrapperClasses: 'tw-w-40',
 };
