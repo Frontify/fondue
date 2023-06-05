@@ -50,7 +50,7 @@ export const InputLabel = ({
                 <label
                     htmlFor={htmlFor}
                     className={merge([
-                        'tw-select-none',
+                        'tw-select-none tw-max-w-full',
                         bold && 'tw-font-medium',
                         disabled || !clickable
                             ? 'hover:tw-cursor-not-allowed tw-pointer-events-none'
