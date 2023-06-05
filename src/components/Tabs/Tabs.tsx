@@ -41,8 +41,8 @@ export type TabsProps = {
 };
 
 const TABS_PADDING_MAP: Record<TabsPaddingX, string> = {
-    Small: 'tw-px-s',
-    Medium: 'tw-px-m',
+    Small: 'tw-px-xxs',
+    Medium: 'tw-px-s',
     Large: 'tw-px-l',
 };
 
@@ -195,8 +195,8 @@ export const Tabs = ({ paddingX, size, activeItemId, children, onChange }: TabsP
                     role="tablist"
                     className={merge([
                         'tw-overflow-x-hidden tw-flex-shrink-0 tw-h-full tw-w-full tw-flex tw-justify-start',
-                        TABS_PADDING_MAP[paddingX ?? 'Small'],
-                        size === 'Small' ? 'tw-gap-xxs' : 'tw-gap-xs ',
+                        TABS_PADDING_MAP[paddingX ?? TabsPaddingX.Small],
+                        size === TabSize.Small ? 'tw-gap-xxs' : 'tw-gap-xs ',
                     ])}
                 >
                     {tabs.map((tab) => {

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Meta, StoryFn } from '@storybook/react';
-import { Tabs, TabsProps } from './Tabs';
+import { TabSize, Tabs, TabsPaddingX, TabsProps } from './Tabs';
 import { Button } from '@components/Button';
 import { Text } from '@typography/Text';
 import { Divider } from '@components/Divider';
@@ -11,10 +11,6 @@ import { IconSize } from '@foundation/Icon/IconSize';
 import { IconIcon } from '@foundation/Icon/Generated';
 import { BadgeStyle } from '@components/Badge';
 import { Checkbox as CheckboxComponent, CheckboxProps, CheckboxState } from '@components/Checkbox/Checkbox';
-
-const TABS_PADDING_X_TYPES = ['small', 'medium', 'large'];
-
-const TABS_SIZE_TYPES = ['Small', 'Large'];
 
 const checkboxArgs = {
     state: CheckboxState.Unchecked,
@@ -126,12 +122,12 @@ export default {
     tags: ['autodocs'],
     argTypes: {
         paddingX: {
-            options: TABS_PADDING_X_TYPES,
+            options: TabsPaddingX,
             control: { type: 'select' },
             defaultValue: '8',
         },
         size: {
-            options: TABS_SIZE_TYPES,
+            options: TabSize,
             control: { type: 'select' },
             defaultValue: 'Small',
         },
