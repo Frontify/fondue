@@ -3,23 +3,22 @@
 import { TEXT_STYLE_PLUGIN } from './id';
 import { TextStyleButton } from './TextStyleDropdown/TextStyleButton';
 import { Plugin } from '../Plugin';
-import { TextStylePluginProps } from './TextStyles/types';
 import { withTextStyles } from './TextStyleDropdown/withTextStyles';
-import { defaultTextStyles } from './TextStyles/defaultTextStyles';
-import { getTextStylePlugins } from './getTextStylePlugins';
 
-export { TextStyles } from './TextStyles';
-
-export class TextStylePlugin extends Plugin<TextStylePluginProps> {
-    constructor({ textStyles = defaultTextStyles, ...pluginProps }: Partial<TextStylePluginProps> = {}) {
+export class TextStylePlugin extends Plugin {
+    public textStyles: Plugin[];
+    constructor({ ...pluginProps }) {
         super(TEXT_STYLE_PLUGIN, {
-            button: withTextStyles(TextStyleButton, textStyles),
-            textStyles,
+            button: withTextStyles(TextStyleButton, pluginProps.textStyles),
             ...pluginProps,
         });
+        this.textStyles = pluginProps.textStyles;
     }
 
     plugins() {
-        return getTextStylePlugins(this.props?.textStyles ?? []);
+        return this.textStyles.map((textStyle) => textStyle.plugins()).flat();
     }
 }
+
+export * from './types';
+export * from './TextStyles';

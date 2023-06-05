@@ -5,10 +5,8 @@ import React, { ComponentProps } from 'react';
 import { Position } from './EditorPositioningWrapper';
 import {
     IPSUM,
-    buttonValues,
     checkboxValue,
     customControlValues,
-    customDesignTokens,
     defaultValue,
     htmlValue,
     markdownText,
@@ -26,24 +24,33 @@ import {
     AlignRightPlugin,
     BoldPlugin,
     BreakAfterPlugin,
-    ButtonPlugin,
     CheckboxListPlugin,
     CodePlugin,
+    Custom1Plugin,
+    Custom2Plugin,
+    Custom3Plugin,
     EmojiPlugin,
+    Heading1Plugin,
+    Heading2Plugin,
+    Heading3Plugin,
+    Heading4Plugin,
+    ImageCaptionPlugin,
+    ImageTitlePlugin,
     ItalicPlugin,
     LinkPlugin,
     MentionPlugin,
     OrderedListPlugin,
     ParagraphPlugin,
     PluginComposer,
+    QuotePlugin,
     ResetFormattingPlugin,
     SoftBreakPlugin,
     StrikethroughPlugin,
     TextStylePlugin,
+    TextStyles,
     UnderlinePlugin,
     UnorderedListPlugin,
 } from './Plugins';
-import { TextStyles } from './Plugins/TextStylePlugin/TextStyles';
 import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from './RichTextEditor';
 import {
     MarkdownToSlate,
@@ -53,7 +60,6 @@ import {
     serializeNodesToHtml,
 } from './serializer';
 import { PaddingSizes } from './types';
-import { defaultDesignTokens } from './utils/defaultDesignTokens';
 import { SubscriptPlugin } from '@components/RichTextEditor/Plugins/SubscriptPlugin';
 import { SuperscriptPlugin } from '@components/RichTextEditor/Plugins/SuperscriptPlugin';
 
@@ -99,9 +105,26 @@ const RichTextEditorTemplate: StoryFn<RichTextEditorProps> = (args: RichTextEdit
     <RichTextEditorComponent {...args} />
 );
 
+const allTextStyles = Object.values(TextStyles);
+const allTextStylesPlugin = new TextStylePlugin({
+    textStyles: [
+        new Heading1Plugin(),
+        new Heading2Plugin(),
+        new Heading3Plugin(),
+        new Heading4Plugin(),
+        new ParagraphPlugin(),
+        new Custom1Plugin(),
+        new Custom2Plugin(),
+        new Custom3Plugin(),
+        new ImageTitlePlugin(),
+        new ImageCaptionPlugin(),
+        new QuotePlugin(),
+    ],
+});
+
 const allPlugins = new PluginComposer();
 allPlugins
-    .setPlugin([new SoftBreakPlugin(), new ParagraphPlugin(), new TextStylePlugin()])
+    .setPlugin([new SoftBreakPlugin(), allTextStylesPlugin])
     .setPlugin([new MentionPlugin({ mentionableItems: mentionable })])
     .setPlugin(
         [
@@ -110,17 +133,24 @@ allPlugins
             new UnderlinePlugin(),
             new StrikethroughPlugin(),
             new LinkPlugin(),
-            new ButtonPlugin(),
             new CodePlugin(),
             new BreakAfterPlugin(),
             new SubscriptPlugin(),
             new SuperscriptPlugin(),
         ],
         [
-            new AlignLeftPlugin(),
-            new AlignCenterPlugin(),
-            new AlignRightPlugin(),
-            new AlignJustifyPlugin(),
+            new AlignLeftPlugin({
+                validTypes: allTextStyles,
+            }),
+            new AlignCenterPlugin({
+                validTypes: allTextStyles,
+            }),
+            new AlignRightPlugin({
+                validTypes: allTextStyles,
+            }),
+            new AlignJustifyPlugin({
+                validTypes: allTextStyles,
+            }),
             new UnorderedListPlugin(),
             new CheckboxListPlugin(),
             new OrderedListPlugin(),
@@ -228,154 +258,18 @@ export const Multiple: StoryFn<RichTextEditorProps> = () => (
 
 export const WithReadonlyState = RichTextEditorTemplate.bind({});
 WithReadonlyState.args = {
+    plugins: allPlugins,
     readonly: true,
 };
 
 export const WithHtmlAsValue = RichTextEditorTemplate.bind({});
 WithHtmlAsValue.args = {
+    plugins: allPlugins,
     value: htmlValue,
 };
 
-export const WithCustomTextStyle = RichTextEditorTemplate.bind({});
-WithCustomTextStyle.args = {
-    designTokens: {
-        ...defaultDesignTokens,
-        heading1: {
-            fontSize: '48px',
-            color: 'rgb(0, 0, 0)',
-            fontStyle: 'italic',
-            fontWeight: '800',
-            textDecoration: 'underline',
-            textTransform: 'uppercase',
-        },
-        heading2: {
-            fontSize: '32px',
-            color: 'rgb(0, 0, 0)',
-            fontStyle: 'normal',
-            fontWeight: '300',
-            textDecoration: 'underline',
-            textTransform: 'none',
-        },
-        heading3: {
-            fontSize: '24px',
-            color: 'rgb(0, 0, 0)',
-            fontStyle: 'normal',
-            fontWeight: 'normal',
-            textDecoration: 'initial',
-            textTransform: 'none',
-        },
-        heading4: {
-            fontSize: '18px',
-            color: 'rgb(0, 0, 0)',
-            fontStyle: 'italic',
-            fontWeight: 'normal',
-            textDecoration: 'initial',
-            textTransform: 'none',
-        },
-        custom1: {
-            fontSize: '14px',
-            color: 'rgb(255, 0, 0)',
-            fontStyle: 'normal',
-            fontWeight: '700',
-            textDecoration: 'initial',
-            textTransform: 'uppercase',
-        },
-        custom2: {
-            fontSize: '14px',
-            color: 'rgb(0, 0, 0)',
-            letterSpacing: 10,
-        },
-        custom3: {
-            fontSize: '14px',
-            color: 'rgb(0, 0, 0)',
-            fontStyle: 'normal',
-            fontWeight: 'normal',
-            textDecoration: 'initial',
-            textTransform: 'none',
-        },
-        quote: {
-            fontSize: '16px',
-            color: 'rgb(0, 0, 0)',
-            fontStyle: 'italic',
-            fontWeight: 'normal',
-            textDecoration: 'initial',
-            textTransform: 'none',
-        },
-        p: {
-            fontSize: '16px',
-            color: 'rgb(0, 0, 0)',
-            fontStyle: 'normal',
-            fontWeight: 'normal',
-            textDecoration: 'none',
-            textTransform: 'none',
-        },
-    },
-};
-
-export const WithCustomButtonStyles = RichTextEditorTemplate.bind({});
-WithCustomButtonStyles.args = {
-    value: JSON.stringify(buttonValues),
-    designTokens: {
-        ...defaultDesignTokens,
-        buttonPrimary: {
-            hover: {
-                color: 'rgba(76, 76, 76, 1)',
-                backgroundColor: 'rgba(0, 230, 0, 1)',
-                borderColor: 'rgba(155, 155, 155, 1)',
-            },
-            fontFamily: 'inherit',
-            fontSize: '13px',
-            backgroundColor: 'rgba(230,0,0,1)',
-            paddingTop: '10px',
-            paddingRight: '20px',
-            paddingBottom: '10px',
-            paddingLeft: '20px',
-            color: 'rgba(102,102,102,1)',
-            borderColor: 'rgba(207, 207, 207, 1)',
-        },
-        buttonSecondary: {
-            hover: {
-                color: 'rgba(76, 76, 76, 1)',
-                backgroundColor: 'rgba(172, 172, 172, 1)',
-                borderColor: 'rgba(155, 155, 155, 1)',
-            },
-            fontFamily: 'inherit',
-            fontSize: '13px',
-            backgroundColor: 'rgba(230,230,230,1)',
-            paddingTop: '20px',
-            paddingRight: '40px',
-            paddingBottom: '20px',
-            paddingLeft: '40px',
-            color: 'rgba(102,102,102,1)',
-            borderColor: 'rgba(207, 207, 207, 1)',
-        },
-        buttonTertiary: {
-            hover: {
-                color: 'rgb(194, 185, 223)',
-                borderColor: 'rgb(255, 7, 212)',
-                backgroundColor: 'rgb(0, 0, 0)',
-            },
-            fontSize: '14px',
-            color: 'rgb(255, 246, 0)',
-            paddingTop: '11px',
-            paddingRight: '21px',
-            paddingBottom: '11px',
-            paddingLeft: '21px',
-            fontFamily: 'Arial',
-            fontStyle: 'italic',
-            fontWeight: '900',
-            textTransform: 'uppercase',
-            lineHeight: '1.4',
-            borderColor: 'rgb(0, 255, 21)',
-            borderWidth: '3px',
-            borderRadius: '6px',
-            backgroundColor: 'rgb(255, 0, 0)',
-        },
-    },
-};
-
 const listPlugins = new PluginComposer();
-listPlugins.setPlugin([new UnorderedListPlugin(), new OrderedListPlugin(), new TextStylePlugin(), new BoldPlugin()]);
+listPlugins.setPlugin([new UnorderedListPlugin(), new OrderedListPlugin(), allTextStylesPlugin, new BoldPlugin()]);
 export const WithList = RichTextEditorTemplate.bind({});
 WithList.args = {
     plugins: listPlugins,
@@ -389,17 +283,7 @@ WithChecklist.args = {
 
 const customPlugins = new PluginComposer();
 customPlugins
-    .setPlugin([
-        new SoftBreakPlugin(),
-        new TextStylePlugin({
-            textStyles: [
-                TextStyles.ELEMENT_HEADING1,
-                TextStyles.ELEMENT_PARAGRAPH,
-                TextStyles.ELEMENT_IMAGE_CAPTION,
-                TextStyles.ELEMENT_IMAGE_TITLE,
-            ],
-        }),
-    ])
+    .setPlugin([new SoftBreakPlugin(), allTextStylesPlugin])
     .setPlugin([new LinkPlugin()])
     .setPlugin([
         new ItalicPlugin(),
@@ -415,21 +299,117 @@ WithCustomControls.args = {
     plugins: customPlugins,
 };
 
-const topbarPlugins = new PluginComposer();
 export const WithToolbarTopAndSmallPadding = RichTextEditorTemplate.bind({});
 WithToolbarTopAndSmallPadding.args = {
     position: Position.TOP,
     padding: PaddingSizes.Medium,
-    plugins: topbarPlugins.setPlugin([
-        new TextStylePlugin({
-            textStyles: [TextStyles.ELEMENT_CUSTOM1, TextStyles.ELEMENT_HEADING1, TextStyles.ELEMENT_PARAGRAPH],
-        }),
-    ]),
+    plugins: allPlugins,
 };
 
 export const WithCustomToolbarWidth = RichTextEditorTemplate.bind({});
 WithCustomToolbarWidth.args = {
     toolbarWidth: 50,
+    plugins: allPlugins,
+};
+
+const customStylesPlugin = new PluginComposer();
+customStylesPlugin
+    .setPlugin(
+        new TextStylePlugin({
+            textStyles: [
+                new Heading1Plugin({
+                    styles: {
+                        color: 'blue',
+                        fontSize: '45px',
+                        marginBottom: '20px',
+                    },
+                }),
+                new Heading2Plugin({
+                    styles: {
+                        color: 'green',
+                        fontSize: '40px',
+                        textDecoration: 'underline',
+                        fontFamily: 'monospace',
+                        marginBottom: '15px',
+                    },
+                }),
+                new Heading3Plugin({
+                    styles: {
+                        color: 'red',
+                        fontSize: '35px',
+                        marginBottom: '10px',
+                    },
+                }),
+                new Heading4Plugin({
+                    styles: {
+                        color: 'purple',
+                        fontSize: '30px',
+                        marginBottom: '5px',
+                    },
+                }),
+                new Custom1Plugin({
+                    styles: {
+                        color: 'orange',
+                        fontSize: '25px',
+                        textTransform: 'uppercase',
+                        textDecoration: 'strike-through',
+                    },
+                }),
+                new Custom2Plugin({
+                    styles: {
+                        color: 'yellow',
+                        fontSize: '20px',
+                        fontStyle: 'italic',
+                    },
+                }),
+                new Custom3Plugin({
+                    styles: {
+                        color: 'pink',
+                        fontSize: '15px',
+                        fontWeight: 'bold',
+                        fontFamily: 'fantasy',
+                    },
+                }),
+                new ParagraphPlugin({
+                    styles: {
+                        color: 'red',
+                        fontSize: '20px',
+                    },
+                }),
+                new QuotePlugin({
+                    styles: {
+                        color: 'grey',
+                        fontSize: '28px',
+                        fontStyle: 'italic',
+                        borderLeft: '5px solid black',
+                        paddingLeft: '10px',
+                        marginBottom: '10px',
+                        marginTop: '10px',
+                    },
+                }),
+            ],
+        }),
+    )
+    .setPlugin([
+        new BoldPlugin(),
+        new LinkPlugin({
+            styles: {
+                color: 'blue',
+                fontSize: '12px',
+                textDecoration: 'underline',
+            },
+        }),
+        new UnorderedListPlugin(),
+        new OrderedListPlugin(),
+        new CheckboxListPlugin(),
+        new SubscriptPlugin(),
+        new SuperscriptPlugin(),
+    ]);
+
+export const WithCustomStyles = RichTextEditorTemplate.bind({});
+WithCustomStyles.args = {
+    plugins: customStylesPlugin,
+    position: Position.FLOATING,
 };
 
 const mentionAndEmojisPlugins = new PluginComposer();
@@ -455,7 +435,7 @@ WithMentionsAndEmojis.args = {
 
 const withoutToolbarPlugins = new PluginComposer({ noToolbar: true });
 withoutToolbarPlugins
-    .setPlugin([new SoftBreakPlugin(), new ParagraphPlugin()])
+    .setPlugin([new SoftBreakPlugin(), allTextStylesPlugin])
     .setPlugin([
         new BoldPlugin(),
         new LinkPlugin(),
@@ -474,14 +454,13 @@ WithoutToolbar.args = {
 const defaultPluginsWithColumns = new PluginComposer();
 defaultPluginsWithColumns
     .setPlugin([new SoftBreakPlugin(), new ParagraphPlugin()])
-    .setPlugin(new TextStylePlugin())
+    .setPlugin(allTextStylesPlugin)
     .setPlugin([
         new BoldPlugin(),
         new ItalicPlugin(),
         new UnderlinePlugin(),
         new StrikethroughPlugin(),
         new LinkPlugin(),
-        new ButtonPlugin(),
         new CodePlugin(),
         new UnorderedListPlugin(),
         new OrderedListPlugin(),
@@ -498,14 +477,12 @@ export const MultiColumns: StoryFn<MultiColumnProps> = (args: MultiColumnProps) 
     const plugins = new PluginComposer();
     plugins
         .setPlugin([new SoftBreakPlugin(), new ParagraphPlugin()])
-        .setPlugin(new TextStylePlugin())
         .setPlugin([
             new BoldPlugin(),
             new ItalicPlugin(),
             new UnderlinePlugin(),
             new StrikethroughPlugin(),
             new LinkPlugin(),
-            new ButtonPlugin(),
             new CodePlugin(),
             new UnorderedListPlugin(),
             new OrderedListPlugin(),
@@ -529,7 +506,6 @@ export const MultiColumnsSerializedToHTML: StoryFn<MultiColumnProps> = (args) =>
     return (
         <GetSerializedContent
             props={{
-                designTokens: customDesignTokens,
                 mentionable,
                 columns: args.columns,
                 columnGap: args.columnGap,
@@ -553,7 +529,7 @@ SimpleMultiColumns.args = {
 };
 
 export const GetSerializedContent = ({
-    props = { designTokens: customDesignTokens, mentionable, columns: 1, columnGap: 'normal' },
+    props = { mentionable, columns: 1, columnGap: 'normal' },
 }: {
     props: SerializeNodesToHtmlOptions;
 }): JSX.Element | null => {

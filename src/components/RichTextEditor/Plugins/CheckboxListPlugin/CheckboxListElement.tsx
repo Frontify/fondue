@@ -1,22 +1,23 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import { ReactEditor } from 'slate-react';
-import { PlateRenderElementProps, TTodoListItemElement, getRootProps, setNodes } from '@udecode/plate';
+import { PlateRenderElementProps, TElement, TTodoListItemElement, getRootProps, setNodes } from '@udecode/plate';
 import { merge } from '@utilities/merge';
 import { MarkupElement } from '../MarkupElement';
 import { ELEMENT_CHECK_ITEM } from './id';
-import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
-import { getTextStyle } from '../ListPlugin/ListItemContentMarkupElement';
-import { justifyClassNames } from '../TextStylePlugin/TextStyles/alignment';
+import { justifyClassNames } from '../helper';
+import { useRichTextEditorContext } from '@components/RichTextEditor/context';
+
+const getCheckboxListStyles = (styles: Record<string, CSSProperties>, element: TElement): CSSProperties =>
+    styles[element.children[0].textStyle as string];
 
 export const CheckboxListElementNode = (props: PlateRenderElementProps) => {
     const { attributes, children, nodeProps, element, editor } = props;
     const rootProps = getRootProps(props);
     const checked = element.checked as boolean;
-    const { designTokens } = useRichTextEditorContext();
-    const tokenStyles = designTokens[getTextStyle(element.children[0])];
     const align = (element.align as string) ?? 'left';
+    const { styles } = useRichTextEditorContext();
 
     return (
         <div
@@ -38,8 +39,8 @@ export const CheckboxListElementNode = (props: PlateRenderElementProps) => {
                 />
             </div>
             <span
-                style={tokenStyles}
-                className={merge(['focus:tw-outline-none tw-w-auto tw-min-w-[10px]', checked && 'tw-line-through'])}
+                style={getCheckboxListStyles(styles, element)}
+                className={merge(['focus:tw-outline-none tw-w-auto tw-min-w-[10px]', checked && '!tw-line-through'])}
             >
                 {children}
             </span>

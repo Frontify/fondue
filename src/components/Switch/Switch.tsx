@@ -46,6 +46,7 @@ export type SwitchProps = {
     hug?: boolean;
     tooltip?: InputLabelTooltipProps;
     onChange?: (e: MouseEvent) => void;
+    'data-test-id'?: string;
 };
 
 export const Switch = ({
@@ -59,6 +60,7 @@ export const Switch = ({
     labelStyle = 'default',
     hug = false,
     tooltip,
+    'data-test-id': dataTestId = 'switch',
 }: SwitchProps): ReactElement => {
     const id = useMemoizedId(propId);
     const { isFocusVisible, focusProps } = useFocusRing();
@@ -133,18 +135,17 @@ export const Switch = ({
     }, [hug]);
 
     return (
-        <div className={containerClasses} data-test-id={SWITCH_ID}>
+        <div className={containerClasses} data-test-id={`${dataTestId}-container`}>
             {label && (
-                <InputLabel clickable={true} htmlFor={id} disabled={disabled} tooltip={tooltip}>
-                    {labelStyle === 'default' ? (
-                        <span data-test-id="switch-label-wrapper" className="tw-font-medium tw-text-text-weak">
-                            {label}
-                        </span>
-                    ) : (
-                        <span data-test-id="switch-label-wrapper" className="tw-font-bold tw-text-text">
-                            {label}
-                        </span>
-                    )}
+                <InputLabel clickable htmlFor={id} disabled={disabled} tooltip={tooltip}>
+                    <span
+                        data-test-id={`${dataTestId}-label-wrapper`}
+                        className={
+                            labelStyle === 'default' ? 'tw-font-medium tw-text-text-weak' : 'tw-font-bold tw-text-text'
+                        }
+                    >
+                        {label}
+                    </span>
                 </InputLabel>
             )}
             <button
@@ -152,7 +153,7 @@ export const Switch = ({
                 id={id}
                 disabled={disabled}
                 name={name}
-                data-test-id="switch"
+                data-test-id={dataTestId}
                 className={trackClasses}
                 value={mode}
                 onClick={onChange}

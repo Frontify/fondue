@@ -27,9 +27,16 @@ const Separator = () => (
 
 type BreadcrumbItemProps = Pick<Breadcrumb, 'label' | 'link' | 'onClick'> & {
     showSeparator: boolean;
+    'data-test-id'?: string;
 };
 
-export const BreadcrumbItem = ({ label, link, onClick, showSeparator }: BreadcrumbItemProps): ReactElement => {
+export const BreadcrumbItem = ({
+    label,
+    link,
+    onClick,
+    showSeparator,
+    'data-test-id': dataTestId = 'breadcrumb',
+}: BreadcrumbItemProps): ReactElement => {
     const ref = useRef(null);
 
     const Element = getItemElementType(link, onClick);
@@ -51,7 +58,7 @@ export const BreadcrumbItem = ({ label, link, onClick, showSeparator }: Breadcru
     return (
         <li
             className="tw-flex tw-items-center tw-text-text-weak hover:tw-text-text tw-text-xs tw-transition-colors"
-            data-test-id="breadcrumb-item"
+            data-test-id={`${dataTestId}-item`}
         >
             <Element ref={ref} {...props} className={merge(['tw-outline-none', isFocusVisible && FOCUS_STYLE])}>
                 {label}

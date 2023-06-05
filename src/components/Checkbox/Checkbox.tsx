@@ -2,7 +2,16 @@
 
 import { IconCheckMark, IconMinus } from '@foundation/Icon/Generated';
 import { InputLabel, InputLabelTooltipProps } from '@components/InputLabel/InputLabel';
-import React, { ForwardRefRenderFunction, HTMLAttributes, ReactNode, forwardRef, useEffect, useState } from 'react';
+import React, {
+    ForwardRefRenderFunction,
+    HTMLAttributes,
+    ReactNode,
+    forwardRef,
+    useCallback,
+    useEffect,
+    useRef,
+    useState,
+} from 'react';
 
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { IconSize } from '@foundation/Icon';
@@ -47,6 +56,7 @@ export type CheckboxProps = {
     helperText?: string;
     'aria-label'?: string;
     groupInputProps?: HTMLAttributes<HTMLElement>;
+    'data-test-id'?: string;
 };
 
 const isCheckedOrMixed = (checked: CheckboxState): boolean => {
@@ -85,6 +95,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
         groupInputProps,
         onChange,
         state = CheckboxState.Unchecked,
+        'data-test-id': dataTestId = 'checkbox',
     },
     ref,
 ) => {
@@ -97,6 +108,10 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
     });
     const [showFocus, setShowFocus] = useState<Nullable<boolean>>();
     const [listeningForKeyboardEvents, setListeningForKeyboardEvents] = useState<Nullable<boolean>>();
+    const labelContainer = useRef<HTMLSpanElement>(null);
+    const helperTextContainer = useRef<HTMLSpanElement>(null);
+    const [isLabelOverflowing, setIsLabelOverflowing] = useState(false);
+    const [isHelperTextOverflowing, setIsHelperTextOverflowing] = useState(false);
 
     const tabFocusListener = (event: KeyboardEvent) => {
         if (event.key === 'Tab') {
@@ -155,9 +170,35 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                   : 'tw-border tw-border-line-xx-strong',
           ]);
 
+    const checkOverflowing = useCallback(() => {
+        if (labelContainer.current) {
+            setIsLabelOverflowing(labelContainer.current?.scrollWidth > labelContainer.current?.clientWidth);
+        }
+
+        if (helperTextContainer.current) {
+            setIsHelperTextOverflowing(
+                helperTextContainer.current?.scrollWidth > helperTextContainer.current?.clientWidth,
+            );
+        }
+    }, [labelContainer, helperTextContainer]);
+
+    useEffect(() => {
+        if ((!label && !helperText) || hideLabel) {
+            return;
+        }
+        checkOverflowing();
+
+        window.removeEventListener('resize', checkOverflowing);
+        window.addEventListener('resize', checkOverflowing);
+
+        return () => {
+            window.removeEventListener('resize', checkOverflowing);
+        };
+    }, [label, helperText, hideLabel, checkOverflowing]);
+
     return (
-        <div className="tw-gap-1 tw-transition-colors" data-test-id="checkbox">
-            <div className={merge(['tw-inline-flex tw-flex-row tw-rounded', showFocus ? FOCUS_STYLE : ''])}>
+        <div className="tw-gap-1 tw-transition-colors tw-w-full" data-test-id={dataTestId}>
+            <div className={merge(['tw-inline-flex tw-flex-row tw-rounded tw-w-full', showFocus ? FOCUS_STYLE : ''])}>
                 <InputLabel
                     disabled={disabled}
                     clickable
@@ -166,21 +207,21 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                     required={required}
                     bold={checkedOrMixed}
                 >
-                    <span className="tw-flex tw-items-center">
+                    <span className="tw-flex tw-items-center tw-whitespace-nowrap">
                         <span className="tw-inline-flex tw-mr-1.5">
                             <input
                                 {...mergeProps(groupInputProps || inputProps, focusProps)}
                                 id={id}
                                 ref={inputRef}
                                 className="tw-sr-only"
-                                data-test-id="checkbox-input"
+                                data-test-id={`${dataTestId}-input`}
                                 aria-label={ariaLabel}
                                 role="checkbox"
                                 aria-checked={state === CheckboxState.Checked}
                                 required={required}
                             />
                             <span
-                                data-test-id="checkbox-icon-box"
+                                data-test-id={`${dataTestId}-icon-box`}
                                 aria-hidden="true"
                                 className={merge([
                                     'tw-leading-3 tw-p-2 tw-relative tw-flex tw-items-center tw-justify-center tw-rounded tw-shrink-0 tw-flex-none',
@@ -191,25 +232,31 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                                 {stateMap[state]}
                             </span>
                         </span>
-                        <span className="tw-inline-flex tw-flex-col">
+                        <span className="tw-inline-flex tw-flex-col tw-min-w-0">
                             {label && !hideLabel && (
                                 <span
-                                    data-test-id="checkbox-label"
+                                    ref={labelContainer}
+                                    data-test-id={`${dataTestId}-label`}
                                     className={merge([
+                                        'tw-text-ellipsis tw-overflow-hidden',
                                         'tw-text-xs tw-select-none hover:tw-cursor-pointer hover:tw-text-black dark:hover:tw-text-white group-hover:tw-text-black dark:group-hover:tw-text-white',
                                         checkedOrMixed && 'tw-font-medium',
                                     ])}
+                                    title={isLabelOverflowing ? label : undefined}
                                 >
                                     {label}
                                 </span>
                             )}
                             {helperText && !hideLabel && (
                                 <span
-                                    data-test-id="checkbox-helper-text"
+                                    ref={helperTextContainer}
+                                    data-test-id={`${dataTestId}-helper-text`}
                                     className={merge([
+                                        'tw-text-ellipsis tw-overflow-hidden',
                                         'tw-font-sans tw-text-xs tw-font-normal',
                                         disabled ? 'text-disabled' : 'tw-text-text-weak',
                                     ])}
+                                    title={isHelperTextOverflowing ? helperText : undefined}
                                 >
                                     {helperText}
                                 </span>

@@ -54,6 +54,7 @@ export type FieldsetHeaderProps = {
     onClick?: () => void;
     as?: keyof JSX.IntrinsicElements;
     tabIndex?: number;
+    'data-test-id'?: string;
 };
 
 export const renderFieldsetHeaderIconType = (
@@ -123,6 +124,7 @@ export const FieldsetHeader = ({
     onClick,
     as: Heading = 'label',
     tabIndex = -1,
+    'data-test-id': dataTestId = 'fieldset-header',
 }: FieldsetHeaderProps): ReactElement => {
     const id = useMemoizedId();
     const clickOnNotDisabled = () => !disabled && onClick && onClick();
@@ -136,7 +138,7 @@ export const FieldsetHeader = ({
 
     return (
         <header
-            data-test-id="fieldset-header"
+            data-test-id={dataTestId}
             role={onClick ? 'button' : undefined}
             onClick={clickOnNotDisabled}
             onKeyPress={clickOnNotDisabled}

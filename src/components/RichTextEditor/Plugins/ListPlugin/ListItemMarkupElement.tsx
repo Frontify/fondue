@@ -1,28 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useRichTextEditorContext } from '@components/RichTextEditor/context/RichTextEditorContext';
-import { DesignTokens } from '@components/RichTextEditor/types';
-import { ELEMENT_LI, PlateRenderElementProps, TDescendant, TElement } from '@udecode/plate';
+import { ELEMENT_LI, PlateRenderElementProps, TElement } from '@udecode/plate';
 import React, { CSSProperties } from 'react';
 import { MarkupElement } from '../MarkupElement';
-import { getTextStyle } from './ListItemContentMarkupElement';
+import { useRichTextEditorContext } from '@components/RichTextEditor/context';
+import { TextStyles } from '../TextStylePlugin';
 
 export const LI_CLASSNAMES =
     '[&>p]:before:tw-flex [&>p]:before:tw-justify-end [&>p]:before:tw-w-[1.2em] !tw-no-underline';
-export const getLiStyles = (designTokens: DesignTokens, element: TElement): CSSProperties => {
-    const licElement = (element.children[0]?.children as TDescendant[])?.[0];
-    const tokenStyles = designTokens[getTextStyle(licElement)];
 
-    return {
-        ...tokenStyles,
-        counterIncrement: 'count',
-    };
-};
 export const ListItemMarkupElementNode = ({ attributes, children, element }: PlateRenderElementProps) => {
-    const { designTokens } = useRichTextEditorContext();
-
+    const { styles } = useRichTextEditorContext();
     return (
-        <li style={getLiStyles(designTokens, element)} {...attributes} className={LI_CLASSNAMES}>
+        <li style={getLiStyles(element, styles)} {...attributes} className={LI_CLASSNAMES}>
             {children}
         </li>
     );
@@ -33,3 +23,29 @@ export class ListItemMarkupElement extends MarkupElement {
         super(id, node);
     }
 }
+
+export const getLiStyles = (element: TElement, styles: Record<string, CSSProperties>): CSSProperties => {
+    return {
+        ...styles[getDeepestTextStyle(element) ?? TextStyles.p],
+        counterIncrement: 'count',
+    };
+};
+
+const getDeepestTextStyle = (node: TElement): string => {
+    let textStyle;
+
+    if (node.type === 'a') {
+        textStyle = node.children[0].textStyle;
+    } else if (node.children) {
+        for (const childNode of node.children) {
+            const deepestTextStyle = getDeepestTextStyle(childNode as TElement);
+            if (deepestTextStyle && (!textStyle || deepestTextStyle.startsWith(textStyle))) {
+                textStyle = deepestTextStyle;
+            }
+        }
+    } else {
+        textStyle = node.textStyle;
+    }
+
+    return textStyle as string;
+};

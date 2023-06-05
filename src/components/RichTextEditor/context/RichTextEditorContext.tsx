@@ -1,20 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
-import { createContext, useContext } from 'react';
-import { DesignTokens } from '../types';
-import { defaultDesignTokens } from '../utils/defaultDesignTokens';
+import React, { CSSProperties, createContext, useContext } from 'react';
 import { Position, getEditorWrapperClassNames } from '../EditorPositioningWrapper';
 import { EditorResizeContextProvider } from './EditorResizeContext';
+import { defaultStyles } from '../utils';
 
 export type RichTextEditorContextProps = {
-    designTokens: DesignTokens;
+    styles: Record<string, CSSProperties>;
     position: Position;
     wrapperClassNames: string;
 };
 
 export const RichTextEditorContext = createContext<RichTextEditorContextProps>({
-    designTokens: defaultDesignTokens,
+    styles: defaultStyles,
     position: Position.FLOATING,
     wrapperClassNames: '',
 });
@@ -23,17 +21,17 @@ export const useRichTextEditorContext = () => useContext(RichTextEditorContext);
 type RichTextEditorProviderProps = {
     children: React.ReactNode;
     value: {
-        designTokens: DesignTokens;
+        styles: Record<string, CSSProperties>;
         position: Position;
         border: boolean;
     };
 };
 
 export const RichTextEditorProvider = ({ children, value }: RichTextEditorProviderProps) => {
-    const { designTokens, position, border } = value;
+    const { styles, position, border } = value;
 
     const state = {
-        designTokens: designTokens ?? defaultDesignTokens,
+        styles,
         position,
         wrapperClassNames: getEditorWrapperClassNames(position, border),
     };

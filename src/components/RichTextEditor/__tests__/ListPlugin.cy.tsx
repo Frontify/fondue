@@ -3,7 +3,14 @@
 import { ELEMENT_LI, ELEMENT_LIC, ELEMENT_OL } from '@udecode/plate';
 import React from 'react';
 import { orderedListValue, unorderedListValue } from '../helpers/exampleValues';
-import { OrderedListPlugin, PluginComposer, UnorderedListPlugin } from '../Plugins';
+import {
+    OrderedListPlugin,
+    ParagraphPlugin,
+    PluginComposer,
+    SoftBreakPlugin,
+    TextStylePlugin,
+    UnorderedListPlugin,
+} from '../Plugins';
 import { RichTextEditor } from '../RichTextEditor';
 import { insertTextAndOpenToolbar } from './fixtures/RichTextEditor';
 import {
@@ -12,6 +19,10 @@ import {
     TOOLBAR_FLOATING,
     TOOLBAR_PLUGIN_OL,
 } from './fixtures/selectors';
+import { Heading1Plugin } from '../Plugins/TextStylePlugin/TextStyles/heading1Plugin';
+import { Custom1Plugin } from '../Plugins/TextStylePlugin/TextStyles/custom1Plugin';
+import { Custom2Plugin } from '../Plugins/TextStylePlugin/TextStyles/custom2Plugin';
+import { Custom3Plugin } from '../Plugins/TextStylePlugin/TextStyles/custom3Plugin';
 
 const RichTextEditorWithListPluginWithSoftBreak = ({ value }: { value: string }) => {
     const plugins = new PluginComposer().setPlugin([
@@ -22,15 +33,35 @@ const RichTextEditorWithListPluginWithSoftBreak = ({ value }: { value: string })
     return <RichTextEditor border={false} plugins={plugins} value={value} />;
 };
 
-const RichTextEditorWithUnorderedListStyles = () => <RichTextEditor value={JSON.stringify([unorderedListValue])} />;
-const RichTextEditorWithOrderedListStyles = () => <RichTextEditor value={JSON.stringify([orderedListValue])} />;
+const plugins = new PluginComposer();
+plugins
+    .setPlugin(new SoftBreakPlugin())
+    .setPlugin(
+        new TextStylePlugin({
+            textStyles: [
+                new Heading1Plugin(),
+                new ParagraphPlugin(),
+                new Custom1Plugin(),
+                new Custom2Plugin(),
+                new Custom3Plugin(),
+            ],
+        }),
+    )
+    .setPlugin([new UnorderedListPlugin(), new OrderedListPlugin()]);
+
+const RichTextEditorWithUnorderedListStyles = () => (
+    <RichTextEditor value={JSON.stringify([unorderedListValue])} plugins={plugins} />
+);
+const RichTextEditorWithOrderedListStyles = () => (
+    <RichTextEditor value={JSON.stringify([orderedListValue])} plugins={plugins} />
+);
 
 describe('List Plugin', () => {
     it('applies the selected text style to the list item', () => {
         cy.mount(<RichTextEditorWithOrderedListStyles />);
 
         const firstListItemSelector = '[contenteditable=true] ol:first-child > li:first-child';
-        cy.mount(<RichTextEditor />);
+        cy.mount(<RichTextEditor plugins={plugins} />);
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR_FLOATING).should('be.visible');

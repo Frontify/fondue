@@ -62,6 +62,7 @@ export const LinkChooser = ({
     clearable,
     required,
     validation = Validation.Default,
+    'data-test-id': dataTestId = 'link-chooser',
 }: LinkChooserProps): ReactElement => {
     const [{ context, matches, value }, send, service] = useMachine(() =>
         linkChooserMachine.withContext({
@@ -247,17 +248,17 @@ export const LinkChooser = ({
     }, []);
 
     return (
-        <div data-test-id="link-chooser" ref={triggerRef} className="tw-w-full tw-font-sans tw-text-s">
+        <div data-test-id={dataTestId} ref={triggerRef} className="tw-w-full tw-font-sans tw-text-s">
             {!!label && (
                 <label
                     {...labelProps}
-                    data-test-id="link-chooser-label"
+                    data-test-id={`${dataTestId}-label`}
                     className="tw-text-black-80 tw-mb-1 tw-flex tw-align-items-center"
                 >
                     {label}
                     {required && (
                         <span
-                            data-test-id="link-chooser-label-required"
+                            data-test-id={`${dataTestId}-label-required`}
                             className="tw-h-4 tw-text-m tw-text-red-60 dark:tw-text-red-50 tw-ml-1"
                         >
                             *
@@ -290,7 +291,7 @@ export const LinkChooser = ({
                         animate={{ height: 'auto' }}
                         exit={{ height: 0 }}
                         transition={{ ease: [0.04, 0.62, 0.23, 0.98], duration: 0.5 }}
-                        data-test-id="link-chooser-dropdown"
+                        data-test-id={`${dataTestId}-dropdown`}
                     >
                         <DismissButton onDismiss={handleDropdownClose} />
                         <Popover
@@ -307,7 +308,7 @@ export const LinkChooser = ({
                                 border={false}
                                 machineService={service}
                             />
-                            <div data-test-id="link-chooser-action-menu" className="tw-border-t tw-border-black-10">
+                            <div data-test-id={`${dataTestId}-action-menu`} className="tw-border-t tw-border-black-10">
                                 <NavigationMenu machineService={service} state={state} />
                             </div>
                         </Popover>
@@ -315,7 +316,7 @@ export const LinkChooser = ({
                     </motion.div>
                 )}
             </AnimatePresence>
-            <div className="tw-my-2" data-test-id="link-chooser-new-tab">
+            <div className="tw-my-2" data-test-id={`${dataTestId}-new-tab`}>
                 <Checkbox
                     value="new-tab"
                     disabled={disabled}

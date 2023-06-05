@@ -5,9 +5,9 @@ import React from 'react';
 import { useEditorResizeContext } from '../context/EditorResizeContext';
 import { useRichTextEditorContext } from '../context/RichTextEditorContext';
 import { EditorPositioningWrapper } from '../EditorPositioningWrapper';
-import { ButtonGroupWrapper } from '../Plugins/helper';
 import { ToolbarProps } from './types';
 import { getButtonGroupWidths, getButtonGroupsPerRow } from './utils';
+import { ButtonGroupWrapper } from './ButtonGroupWrapper';
 
 export const Toolbar = ({ toolbarButtons, editorId, toolbarWidth }: ToolbarProps) => {
     const editor = usePlateEditorRef(editorId);

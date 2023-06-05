@@ -19,6 +19,7 @@ export enum LoadingCircleSize {
 export type LoadingCircleProps = {
     style?: LoadingCircleStyle;
     size?: LoadingCircleSize;
+    'data-test-id'?: string;
 };
 
 export const statusClasses: Record<LoadingCircleStyle, string> = {
@@ -37,10 +38,11 @@ export const sizeClasses: Record<LoadingCircleSize, string> = {
 export const LoadingCircle = ({
     style = LoadingCircleStyle.Progress,
     size = LoadingCircleSize.Medium,
+    'data-test-id': dataTestId = 'loading-circle',
 }: LoadingCircleProps): ReactElement => {
     return (
         <div
-            data-test-id="loading-circle"
+            data-test-id={dataTestId}
             className={merge([
                 'tw-border-2 tw-border-solid tw-rounded-full tw-border-t-transparent tw-animate-spin',
                 statusClasses[style],
