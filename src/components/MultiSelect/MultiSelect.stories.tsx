@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import { FormControl } from '@components/FormControl';
 import { Validation } from '@utilities/validation';
 import { MultiSelect as MultiSelectComponent, MultiSelectProps, MultiSelectSize, MultiSelectType } from './MultiSelect';
+import { TriggerEmphasis } from '@components/Trigger';
 
 export default {
     title: 'Components/Multi Select',
@@ -42,6 +43,10 @@ export default {
             options: Object.keys(MultiSelectType),
             control: { type: 'select' },
         },
+        emphasis: {
+            options: Object.keys(TriggerEmphasis),
+            control: { type: 'select' },
+        },
         size: {
             options: Object.keys(MultiSelectSize),
             control: { type: 'select' },
@@ -52,6 +57,21 @@ export default {
         },
         disabled: {
             type: 'boolean',
+        },
+        flip: {
+            type: 'boolean',
+        },
+        ariaLabel: {
+            type: 'string',
+        },
+        summarizedLabel: {
+            type: 'string',
+        },
+        activeItemKeys: {
+            table: { disable: true },
+        },
+        indeterminateItemKeys: {
+            table: { disable: true },
         },
     },
 } as Meta;
@@ -145,4 +165,12 @@ WithRightAlignedContainer.args = {
         },
     ],
     flip: true,
+};
+
+export const WithWeakTriggerEmphasis = MultiSelectTemplate.bind({});
+
+WithWeakTriggerEmphasis.args = {
+    activeItemKeys: [],
+    placeholder: 'Weak emphasis placeholder text',
+    emphasis: TriggerEmphasis.Weak,
 };
