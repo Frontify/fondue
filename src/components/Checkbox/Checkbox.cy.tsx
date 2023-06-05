@@ -189,4 +189,11 @@ describe('Checkbox component', () => {
 
         cy.get(CHECKBOX_HELPER_TEXT_ID).should('not.have.attr', 'title');
     });
+
+    it('should NOT show ellipsis and add title attribute for label and helper text if hideLabel', () => {
+        cy.mount(<CheckboxComponent label={CHECKBOX_LONG_LABEL} helperText={CHECKBOX_LONG_LABEL} hideLabel />);
+
+        cy.get(CHECKBOX_LABEL_ID).should('not.exist');
+        cy.get(CHECKBOX_HELPER_TEXT_ID).should('not.exist');
+    });
 });
