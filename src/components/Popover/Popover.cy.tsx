@@ -9,7 +9,7 @@ const POPOVER_SELECTOR = '[data-test-id=fondue-popover]';
 const POPOVER_TRIGGER = '[data-test-id=popover-trigger]';
 const POPOVER_INTERACTIVE_ELEMENT = '[data-test-id=popover-content-button]';
 
-const PopoverComponent = ({ placement, offset, flip }: PopoverComponentProps) => {
+const PopoverComponent = ({ placement, offset, flip }: Omit<PopoverComponentProps, 'open'>) => {
     const [open, setOpen] = useState(false);
 
     return (

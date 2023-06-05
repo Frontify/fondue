@@ -29,7 +29,6 @@ export default {
         enablePortal: {
             control: { type: 'boolean' },
         },
-        open: { control: { type: 'boolean' } },
         'data-test-id': {
             type: 'string',
         },
@@ -43,7 +42,7 @@ const Template: StoryFn<PopoverComponentProps> = (args) => {
     const [isOpen, setIsOpen] = useToggleOverlay(false);
     return (
         <div className="tw-h-32 tw-flex tw-justify-center tw-items-center">
-            <Popover open={isOpen} {...args}>
+            <Popover {...args} open={isOpen}>
                 <Popover.Trigger>
                     <Button onClick={() => setIsOpen(!isOpen)}>I am the Trigger</Button>
                 </Popover.Trigger>
@@ -61,7 +60,7 @@ const TriggeredOnHoverTemplate: StoryFn<PopoverComponentProps> = (args) => {
     const [isOpen, setIsOpen] = useToggleOverlay(false);
     return (
         <div className="tw-h-32 tw-flex tw-justify-center tw-items-center">
-            <Popover open={isOpen} {...args}>
+            <Popover {...args} open={isOpen}>
                 <Popover.Trigger>
                     <button
                         className="tw-flex tw-items-center"
@@ -87,7 +86,7 @@ const WithInteractiveContentTemplate: StoryFn<PopoverComponentProps> = (args) =>
     const [isOpen, setIsOpen] = useToggleOverlay(false);
     return (
         <div className="tw-h-32 tw-flex tw-justify-center tw-items-center">
-            <Popover open={isOpen} {...args}>
+            <Popover {...args} open={isOpen}>
                 <Popover.Trigger>
                     <Button onClick={() => setIsOpen(!isOpen)}>I am the Trigger</Button>
                 </Popover.Trigger>

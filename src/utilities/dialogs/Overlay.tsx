@@ -2,7 +2,7 @@
 
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { Popper } from '@components/Popper';
-import React, { Children, cloneElement, isValidElement, useRef } from 'react';
+import React, { Children, cloneElement, isValidElement } from 'react';
 import { Trigger } from '@utilities/dialogs/Trigger';
 import { Content } from '@utilities/dialogs/Content';
 import { OVERLAY_CONTAINER_CLASSES } from '@utilities/overlayStyle';
