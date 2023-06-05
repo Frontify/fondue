@@ -4,6 +4,8 @@ import { Checkbox, CheckboxProps, CheckboxSize, CheckboxState } from './Checkbox
 import React, { ReactElement, useState } from 'react';
 
 const CHECKBOX_LABEL = 'Checkbox label';
+const CHECKBOX_LONG_LABEL =
+    'Super long label that should be rendered with ellipsis: Bacon ipsum dolor amet ribeye tail cow pancetta, andouille bacon sausage kielbasa drumstick hamburger biltong boudin turducken corned beef doner. Fatback swine meatloaf, jerky shankle pastrami short ribs strip steak sausage leberkas bresaola.';
 const HELPER_TEXT = 'Note about this input';
 const CHECKBOX_ID = '[data-test-id=checkbox]';
 const TOOLTIP_ID = '[data-test-id=tooltip]';
@@ -162,5 +164,29 @@ describe('Checkbox component', () => {
 
         cy.get(CHECKBOX_INPUT_ID).click({ force: true });
         cy.get('@onChangeStub').should('be.calledOnce');
+    });
+
+    it('should show ellipsis and add title attribute for the label when overflowing', () => {
+        cy.mount(<CheckboxComponent label={CHECKBOX_LONG_LABEL} />);
+
+        cy.get(CHECKBOX_LABEL_ID).should('have.attr', 'title', CHECKBOX_LONG_LABEL);
+    });
+
+    it('should NOT show ellipsis and add title attribute for the label when text is NOT overflowing', () => {
+        cy.mount(<CheckboxComponent label={CHECKBOX_LABEL} />);
+
+        cy.get(CHECKBOX_LABEL_ID).should('not.have.attr', 'title');
+    });
+
+    it('should show ellipsis and add title attribute for the helper text when overflowing', () => {
+        cy.mount(<CheckboxComponent helperText={CHECKBOX_LONG_LABEL} />);
+
+        cy.get(CHECKBOX_HELPER_TEXT_ID).should('have.attr', 'title', CHECKBOX_LONG_LABEL);
+    });
+
+    it('should NOT show ellipsis and add title attribute for the helper text when text is NOT overflowing', () => {
+        cy.mount(<CheckboxComponent helperText={CHECKBOX_LABEL} />);
+
+        cy.get(CHECKBOX_HELPER_TEXT_ID).should('not.have.attr', 'title');
     });
 });

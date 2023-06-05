@@ -183,17 +183,18 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
     }, [labelContainer, helperTextContainer]);
 
     useEffect(() => {
-        if (!label && !helperText) {
+        if ((!label && !helperText) || hideLabel) {
             return;
         }
         checkOverflowing();
 
+        window.removeEventListener('resize', checkOverflowing);
         window.addEventListener('resize', checkOverflowing);
 
         return () => {
             window.removeEventListener('resize', checkOverflowing);
         };
-    }, [label, helperText, checkOverflowing]);
+    }, [label, helperText, hideLabel, checkOverflowing]);
 
     return (
         <div className="tw-gap-1 tw-transition-colors tw-w-full" data-test-id={dataTestId}>
