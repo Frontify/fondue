@@ -11,6 +11,7 @@ import { DialogHeaderSize, Modality } from '../../types/dialog';
 import { Button, ButtonEmphasis } from '@components/Button';
 import { useDropdownAutoHeight } from '@hooks/useDropdownAutoHeight';
 import { useToggleOverlay } from '@hooks/useToggleOverlay';
+import { PopperPlacement } from '@components/Popper/types';
 
 export default {
     title: 'Experimental/InlineDialog',
@@ -21,6 +22,22 @@ export default {
             options: Object.values(Modality),
             control: { type: 'select' },
         },
+        placement: {
+            options: Object.values(PopperPlacement),
+            control: { type: 'select' },
+        },
+        flip: {
+            control: { type: 'boolean' },
+        },
+        enablePortal: {
+            control: { type: 'boolean' },
+        },
+        'data-test-id': {
+            type: 'string',
+        },
+        role: {
+            type: 'string',
+        },
     },
 } as Meta<InlineDialogProps>;
 
@@ -29,7 +46,15 @@ const Template: StoryFn<InlineDialogProps> = (args) => {
     const [triggerElementRef, setTriggerElementRef] = useState<HTMLButtonElement | null>(null);
     const { maxHeight } = useDropdownAutoHeight({ current: triggerElementRef }, { isOpen, autoResize: true });
     return (
-        <InlineDialog open={isOpen} maxHeight={maxHeight} handleClose={() => setIsOpen(false)} modality={args.modality}>
+        <InlineDialog
+            open={isOpen}
+            maxHeight={maxHeight}
+            handleClose={() => setIsOpen(false)}
+            modality={args.modality}
+            placement={args.placement}
+            flip={args.flip}
+            enablePortal={args.enablePortal}
+        >
             <InlineDialog.Trigger>
                 <Button ref={setTriggerElementRef} onClick={() => setIsOpen(!isOpen)}>
                     Trigger
