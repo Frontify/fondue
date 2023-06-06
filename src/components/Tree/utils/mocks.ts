@@ -174,6 +174,54 @@ export type TreeNodeToMove = {
     sort: number;
     parentType: string | undefined;
 } | null;
+
+const removeNode = (idToMove: string, nodesList: TreeItemMock[], removedNode?: TreeItemMock) => {
+    let foundNode = removedNode;
+    const newNodes: TreeItemMock[] = [];
+
+    for (const item of nodesList) {
+        if (item.id !== idToMove) {
+            const removedChildren = removeNode(idToMove, item.nodes ?? [], foundNode);
+            newNodes.push({
+                ...item,
+                nodes: removedChildren.newNodes,
+            });
+            foundNode = removedChildren.node;
+        } else {
+            foundNode = item;
+        }
+    }
+
+    return { node: removedNode ?? foundNode, newNodes };
+};
+
+const insertAndSortNodes = (
+    nodesList: TreeItemMock[],
+    node: TreeItemMock,
+    parentId: Nullable<string>,
+    sort: number,
+): TreeItemMock[] => {
+    if (parentId === null) {
+        return [...nodesList.slice(0, sort), node, ...nodesList.slice(sort)];
+    }
+
+    return nodesList.map((n) => mapNode(n, node, parentId, sort));
+};
+
+const mapNode = (nodeToMap: TreeItemMock, nodeToAdd: TreeItemMock, parentId: Nullable<string>, sort: number) => {
+    if (nodeToMap.id === parentId) {
+        return {
+            ...nodeToMap,
+            nodes: [...(nodeToMap.nodes ?? []).slice(0, sort), nodeToAdd, ...(nodeToMap.nodes ?? []).slice(sort)],
+        };
+    }
+
+    return {
+        ...nodeToMap,
+        nodes: insertAndSortNodes(nodeToMap.nodes ?? [], nodeToAdd, parentId, sort),
+    };
+};
+
 export const useMoveTreeItem = (nodeToMove: TreeNodeToMove) => {
     const [nodes, setNodes] = useState<TreeItemMock[]>(treeItemsMock);
 
@@ -182,51 +230,6 @@ export const useMoveTreeItem = (nodeToMove: TreeNodeToMove) => {
             return;
         }
         setTimeout(() => {
-            const removeNode = (idToMove: string, nodesList: TreeItemMock[], removedNode?: TreeItemMock) => {
-                let foundNode = removedNode;
-                const newNodes: TreeItemMock[] = [];
-
-                for (const item of nodesList) {
-                    if (item.id !== idToMove) {
-                        const removedChildren = removeNode(idToMove, item.nodes ?? [], foundNode);
-                        newNodes.push({
-                            ...item,
-                            nodes: removedChildren.newNodes,
-                        });
-                        foundNode = removedChildren.node;
-                    } else {
-                        foundNode = item;
-                    }
-                }
-
-                return { node: removedNode ?? foundNode, newNodes };
-            };
-
-            const insertAndSortNodes = (
-                nodesList: TreeItemMock[],
-                node: TreeItemMock,
-                parentId: Nullable<string>,
-                sort: number,
-            ): TreeItemMock[] => {
-                if (parentId === null) {
-                    return [...nodesList.slice(0, sort), node, ...nodesList.slice(sort)];
-                }
-
-                return nodesList.map((n) => {
-                    if (n.id === parentId) {
-                        return {
-                            ...n,
-                            nodes: [...(n.nodes ?? []).slice(0, sort), node, ...(n.nodes ?? []).slice(sort)],
-                        };
-                    }
-
-                    return {
-                        ...n,
-                        nodes: insertAndSortNodes(n.nodes ?? [], node, parentId, sort),
-                    };
-                });
-            };
-
             setNodes((cachedNodes) => {
                 const { newNodes: nodesToSort, node } = removeNode(nodeToMove.id, cachedNodes);
                 const newNodes = insertAndSortNodes(
