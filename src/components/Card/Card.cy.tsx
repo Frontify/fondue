@@ -15,6 +15,16 @@ describe('Card Component', () => {
         cy.get(CARD_ID).contains('child');
     });
 
+    it('should render with correct tokens if hovered and hoverable is true', () => {
+        cy.mount(<Card hoverable={true}>{CARD_CHILDREN}</Card>);
+
+        cy.get(CARD_ID).realHover();
+
+        cy.get(CARD_ID)
+            .should('have.class', 'hover:tw-border-line-xx-strong')
+            .should('have.class', 'tw-cursor-default');
+    });
+
     it('should call onClick', () => {
         const onClickStub = cy.stub();
         cy.mount(<Card onClick={onClickStub}>{CARD_CHILDREN}</Card>);
@@ -22,6 +32,40 @@ describe('Card Component', () => {
         cy.get(CARD_ID).click();
         cy.get(CARD_ID).invoke('attr', 'tabIndex').should('equal', '0');
         cy.wrap(onClickStub).should('have.been.called');
+    });
+
+    it('should render with correct cursor if onClick is defined and card is hovered', () => {
+        cy.mount(
+            <Card
+                onClick={() => {
+                    console.log('clicked');
+                }}
+            >
+                {CARD_CHILDREN}
+            </Card>,
+        );
+
+        cy.get(CARD_ID).realHover();
+
+        cy.get(CARD_ID).should('have.class', 'tw-cursor-pointer');
+    });
+
+    it('should render with correct tokens if card is active and onClick is defined', () => {
+        cy.mount(
+            <Card
+                onClick={() => {
+                    console.log('clicked');
+                }}
+            >
+                {CARD_CHILDREN}
+            </Card>,
+        );
+
+        cy.get(CARD_ID).realMouseDown();
+
+        cy.get(CARD_ID)
+            .should('have.class', 'active:tw-border-line-xx-strong')
+            .should('have.class', 'active:tw-border-2');
     });
 
     it('should be accessible', () => {
