@@ -231,7 +231,6 @@ export const useMoveTreeItem = (nodeToMove: TreeNodeToMove, timeout = 0) => {
         }
         setTimeout(() => {
             setNodes((cachedNodes) => {
-                console.log;
                 const { newNodes: nodesToSort, node } = removeNode(nodeToMove.id, cachedNodes);
                 const newNodes = insertAndSortNodes(
                     nodesToSort,
