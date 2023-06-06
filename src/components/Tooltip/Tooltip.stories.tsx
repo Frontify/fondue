@@ -106,7 +106,7 @@ export default {
 
 export const TooltipComponent: StoryFn<TooltipProps> = (args: TooltipProps) => {
     return (
-        <div className="tw-w-screen tw-h-[1000px] tw-flex tw-justify-center tw-items-center">
+        <div className="tw-w-screen tw-h-screen tw-flex tw-justify-center tw-items-center">
             <Tooltip
                 {...args}
                 triggerElement={
