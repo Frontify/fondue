@@ -25,3 +25,16 @@ export type PopperProps = {
     flip?: boolean;
     enablePortal?: boolean;
 };
+
+export const POPPER_STORY_ARGS = {
+    placement: {
+        options: Object.values(PopperPlacement),
+        control: { type: 'select' },
+    },
+    flip: {
+        control: { type: 'boolean' },
+    },
+    enablePortal: {
+        control: { type: 'boolean' },
+    },
+};

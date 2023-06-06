@@ -11,26 +11,17 @@ import { DialogHeaderSize, Modality } from '../../types/dialog';
 import { Button, ButtonEmphasis } from '@components/Button';
 import { useDropdownAutoHeight } from '@hooks/useDropdownAutoHeight';
 import { useToggleOverlay } from '@hooks/useToggleOverlay';
-import { PopperPlacement } from '@components/Popper/types';
+import { POPPER_STORY_ARGS } from '@components/Popper/types';
 
 export default {
     title: 'Experimental/InlineDialog',
     component: InlineDialog,
     tags: ['autodocs'],
     argTypes: {
+        ...POPPER_STORY_ARGS,
         modality: {
             options: Object.values(Modality),
             control: { type: 'select' },
-        },
-        placement: {
-            options: Object.values(PopperPlacement),
-            control: { type: 'select' },
-        },
-        flip: {
-            control: { type: 'boolean' },
-        },
-        enablePortal: {
-            control: { type: 'boolean' },
         },
         'data-test-id': {
             type: 'string',

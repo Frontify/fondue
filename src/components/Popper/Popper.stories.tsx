@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { Popper } from './Popper';
 import { Button } from '@components/Button';
-import { PopperPlacement, PopperProps } from '@components/Popper/types';
+import { POPPER_STORY_ARGS, PopperProps } from '@components/Popper/types';
 import { Box } from '@components/Box';
 
 export default {
@@ -17,16 +17,7 @@ export default {
         flip: false,
     },
     argTypes: {
-        placement: {
-            options: Object.values(PopperPlacement),
-            control: { type: 'select' },
-        },
-        flip: {
-            control: { type: 'boolean' },
-        },
-        enablePortal: {
-            control: { type: 'boolean' },
-        },
+        ...POPPER_STORY_ARGS,
         open: { control: { type: 'boolean' } },
     },
 } as Meta<PopperProps>;
