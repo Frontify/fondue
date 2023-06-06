@@ -222,7 +222,7 @@ const mapNode = (nodeToMap: TreeItemMock, nodeToAdd: TreeItemMock, parentId: Nul
     };
 };
 
-export const useMoveTreeItem = (nodeToMove: TreeNodeToMove) => {
+export const useMoveTreeItem = (nodeToMove: TreeNodeToMove, timeout = 0) => {
     const [nodes, setNodes] = useState<TreeItemMock[]>(treeItemsMock);
 
     useEffect(() => {
@@ -231,6 +231,7 @@ export const useMoveTreeItem = (nodeToMove: TreeNodeToMove) => {
         }
         setTimeout(() => {
             setNodes((cachedNodes) => {
+                console.log;
                 const { newNodes: nodesToSort, node } = removeNode(nodeToMove.id, cachedNodes);
                 const newNodes = insertAndSortNodes(
                     nodesToSort,
@@ -240,8 +241,8 @@ export const useMoveTreeItem = (nodeToMove: TreeNodeToMove) => {
                 );
                 return newNodes;
             });
-        }, 500);
-    }, [nodeToMove]);
+        }, timeout);
+    }, [nodeToMove, timeout]);
 
     return { nodes, setNodes };
 };
