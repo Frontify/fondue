@@ -6,12 +6,14 @@ import { action } from '@storybook/addon-actions';
 
 import { IconDocument } from '@foundation/Icon';
 
-import type { TreeProps } from '@components/Tree/types';
+import { OnTreeDropCallback, TreeProps } from '@components/Tree/types';
 import { TreeItem, Tree as TreeView, useTreeItem } from '@components/Tree';
 import {
     type TreeItemMock,
+    type TreeNodeToMove,
     treeItemsMock,
     useDynamicNavigationMock,
+    useMoveTreeItem,
     useNavigationWithLazyLoadedItemsMock,
 } from '@components/Tree/utils';
 
@@ -67,7 +69,7 @@ const renderCustomTreeItem = ({ id, onDrop, ...treeItem }: TreeItemMock) => {
 const renderTreeItemLabel = ({ nodes, onDrop, ...treeItem }: TreeItemMock) => {
     return (
         <TreeItem {...treeItem} key={treeItem.id} onDrop={onDrop ?? action('onDrop')}>
-            {nodes?.map((node) => renderTreeItemLabel({ ...node, nodes: node.nodes }))}
+            {nodes?.map((node) => renderTreeItemLabel({ ...node, nodes: node.nodes, onDrop }))}
         </TreeItem>
     );
 };
@@ -285,4 +287,18 @@ LazyLoadingTreeRoot.displayName = 'FondueStoryLazyLoadingTreeRoot';
 
 export const CustomItemsWithLazyLoadedChildren = () => {
     return <LazyLoadingTreeRoot />;
+};
+
+export const TreeWithItemOnDropHandlingAndStaticItems = ({ ...args }: TreeProps) => {
+    const [nodeToMove, setNodeToMove] = useState<TreeNodeToMove>(null);
+    const { nodes } = useMoveTreeItem(nodeToMove);
+    const onDropItem = useCallback<OnTreeDropCallback>(({ id, parentId, sort, parentType }) => {
+        setNodeToMove({ id, parentId, sort, parentType });
+    }, []);
+
+    return (
+        <div style={{ width: 800 }}>
+            <TreeView {...args}>{nodes.map((item) => renderTreeItemLabel({ ...item, onDrop: onDropItem }))}</TreeView>
+        </div>
+    );
 };

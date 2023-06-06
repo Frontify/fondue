@@ -167,3 +167,78 @@ export const useNavigationWithLazyLoadedItemsMock = (id?: string, isExpanded = f
 
     return { nodes, setNodes };
 };
+
+export type TreeNodeToMove = {
+    id: string;
+    parentId: Nullable<string>;
+    sort: number;
+    parentType: string | undefined;
+} | null;
+export const useMoveTreeItem = (nodeToMove: TreeNodeToMove) => {
+    const [nodes, setNodes] = useState<TreeItemMock[]>(treeItemsMock);
+
+    useEffect(() => {
+        if (!nodeToMove) {
+            return;
+        }
+        setTimeout(() => {
+            const removeNode = (idToMove: string, nodesList: TreeItemMock[], removedNode?: TreeItemMock) => {
+                let foundNode = removedNode;
+                const newNodes: TreeItemMock[] = [];
+
+                for (const item of nodesList) {
+                    if (item.id !== idToMove) {
+                        const removedChildren = removeNode(idToMove, item.nodes ?? [], foundNode);
+                        newNodes.push({
+                            ...item,
+                            nodes: removedChildren.newNodes,
+                        });
+                        foundNode = removedChildren.node;
+                    } else {
+                        foundNode = item;
+                    }
+                }
+
+                return { node: removedNode ?? foundNode, newNodes };
+            };
+
+            const insertAndSortNodes = (
+                nodesList: TreeItemMock[],
+                node: TreeItemMock,
+                parentId: Nullable<string>,
+                sort: number,
+            ): TreeItemMock[] => {
+                if (parentId === null) {
+                    return [...nodesList.slice(0, sort), node, ...nodesList.slice(sort)];
+                }
+
+                return nodesList.map((n) => {
+                    if (n.id === parentId) {
+                        return {
+                            ...n,
+                            nodes: [...(n.nodes ?? []).slice(0, sort), node, ...(n.nodes ?? []).slice(sort)],
+                        };
+                    }
+
+                    return {
+                        ...n,
+                        nodes: insertAndSortNodes(n.nodes ?? [], node, parentId, sort),
+                    };
+                });
+            };
+
+            setNodes((cachedNodes) => {
+                const { newNodes: nodesToSort, node } = removeNode(nodeToMove.id, cachedNodes);
+                const newNodes = insertAndSortNodes(
+                    nodesToSort,
+                    node as TreeItemMock,
+                    nodeToMove.parentId,
+                    nodeToMove.sort,
+                );
+                return newNodes;
+            });
+        }, 500);
+    }, [nodeToMove]);
+
+    return { nodes, setNodes };
+};
