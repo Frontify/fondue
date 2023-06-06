@@ -50,6 +50,16 @@ describe('Card Component', () => {
         cy.get(CARD_ID).should('have.class', 'tw-cursor-pointer');
     });
 
+    it('should render with correct tokens if hoverable is true and card is tabbed into', () => {
+        cy.mount(<Card hoverable={true}>{CARD_CHILDREN}</Card>);
+
+        cy.get(CARD_ID).realPress('Tab');
+
+        cy.get(CARD_ID).should('have.class', 'tw-border-line-xx-strong');
+        cy.get(CARD_ID).should('have.class', 'tw-ring-blue');
+        cy.get(CARD_ID).should('have.class', 'tw-ring-4');
+    });
+
     it('should render with correct tokens if card is active and onClick is defined', () => {
         cy.mount(
             <Card
