@@ -23,23 +23,24 @@ export const InlineDialog = ({
     maxWidth = 400,
     modality = Modality.Modal,
     handleClose,
+    'data-test-id': dataTestId = 'fondue-inlineDialog',
 }: InlineDialogProps) => {
     return (
-        <div data-test-id="fondue-inlineDialog">
-            <Overlay
-                open={open}
-                placement={placement}
-                offset={offset}
-                flip={flip}
-                enablePortal={enablePortal}
-                maxWidth={maxWidth}
-                maxHeight={maxHeight}
-                modality={modality}
-                handleClose={handleClose}
-            >
-                {children}
-            </Overlay>
-        </div>
+        <Overlay
+            data-test-id={dataTestId}
+            open={open}
+            placement={placement}
+            offset={offset}
+            flip={flip}
+            enablePortal={enablePortal}
+            maxWidth={maxWidth}
+            maxHeight={maxHeight}
+            modality={modality}
+            handleClose={handleClose}
+            role={modality === Modality.NonModal ? 'region' : 'dialog'}
+        >
+            {children}
+        </Overlay>
     );
 };
 InlineDialog.displayName = 'FondueInlineDialog';

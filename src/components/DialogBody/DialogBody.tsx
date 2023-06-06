@@ -1,37 +1,33 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement, useEffect, useRef, useState } from 'react';
+import React, { ReactElement } from 'react';
 import { DialogBodyProps } from '../../types/dialog';
-import { ScrollWrapper } from '@components/ScrollWrapper';
-import { ScrollWrapperDirection } from '@components/ScrollWrapper/types';
-import { merge } from '@utilities/merge';
+
+const SCROLL_SHADOW_STYLE = {
+    background:
+        'linear-gradient(white 30%,rgba(232, 233, 233, 0)) top,linear-gradient(rgba(232, 233, 233, 0),white 70%) bottom,' +
+        'linear-gradient(180deg,#E8E9E9,rgba(232, 233, 233, 0)) center top,linear-gradient(180deg,rgba(232, 233, 233, 0),#E8E9E9) center bottom',
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: '100% 40px, 100% 40px, 100% 12px, 100% 12px',
+    backgroundAttachment: 'local, local, scroll, scroll',
+};
 
 export const DialogBody = ({
     children,
     maxHeight = 'auto',
+    scrollShadows = true,
     'data-test-id': dataTestId = 'fondue-dialog-body',
 }: DialogBodyProps): ReactElement => {
-    const containerRef = useRef<HTMLDivElement | null>(null);
-    const contentRef = useRef<HTMLDivElement | null>(null);
-    const [isOverflowing, setIsOverflowing] = useState(false);
-
-    useEffect(() => {
-        if (contentRef.current && containerRef.current) {
-            setIsOverflowing(containerRef.current?.clientHeight > contentRef.current?.clientHeight);
-        }
-    }, [contentRef, containerRef]);
-
     return (
         <div
-            ref={containerRef}
             data-test-id={dataTestId}
-            className={merge(['tw-overflow-y-auto tw-overflow-x-hidden', isOverflowing ? 'tw-pr-2' : ''])}
+            className="tw-overflow-auto"
+            style={{
+                maxHeight,
+                ...(scrollShadows ? SCROLL_SHADOW_STYLE : {}),
+            }}
         >
-            <ScrollWrapper direction={ScrollWrapperDirection.Vertical}>
-                <div ref={contentRef} style={{ maxHeight }}>
-                    {children}
-                </div>
-            </ScrollWrapper>
+            {children}
         </div>
     );
 };

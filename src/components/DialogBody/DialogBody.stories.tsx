@@ -13,11 +13,14 @@ export default {
         maxHeight: {
             type: 'number',
         },
+        scrollShadows: {
+            type: 'boolean',
+        },
     },
 } as Meta<DialogBodyProps>;
 
 const Template: StoryFn<DialogBodyProps> = (args) => (
-    <DialogBody maxHeight={args.maxHeight}>
+    <DialogBody maxHeight={args.maxHeight} scrollShadows={args.scrollShadows}>
         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam at, beatae blanditiis cupiditate ducimus,
         excepturi magni mollitia nobis non nulla provident quibusdam veniam! Enim maxime nisi quo reprehenderit tenetur
         ut? Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium aliquam aliquid, blanditiis,

@@ -17,6 +17,11 @@ export default {
     title: 'Experimental/InlineDialog',
     component: InlineDialog,
     tags: ['autodocs'],
+    args: {
+        offset: [0, 8],
+        flip: false,
+        maxWidth: 400,
+    },
     argTypes: {
         ...POPPER_STORY_ARGS,
         modality: {
@@ -40,10 +45,12 @@ const Template: StoryFn<InlineDialogProps> = (args) => {
         <InlineDialog
             open={isOpen}
             maxHeight={maxHeight}
+            maxWidth={args.maxWidth}
             handleClose={() => setIsOpen(false)}
             modality={args.modality}
             placement={args.placement}
             flip={args.flip}
+            offset={args.offset}
             enablePortal={args.enablePortal}
         >
             <InlineDialog.Trigger>
@@ -77,46 +84,6 @@ const Template: StoryFn<InlineDialogProps> = (args) => {
                         />
                         <p className="tw-flex tw-items-center tw-my-2">Label 2</p>
 
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam beatae, labore mollitia
-                            nemo nobis perspiciatis repellendus ullam vero voluptatum. Amet cum dolorem hic molestias
-                            tempora! Aliquam dolor exercitationem placeat veniam!
-                        </p>
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam beatae, labore mollitia
-                            nemo nobis perspiciatis repellendus ullam vero voluptatum. Amet cum dolorem hic molestias
-                            tempora! Aliquam dolor exercitationem placeat veniam!
-                        </p>
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam beatae, labore mollitia
-                            nemo nobis perspiciatis repellendus ullam vero voluptatum. Amet cum dolorem hic molestias
-                            tempora! Aliquam dolor exercitationem placeat veniam!
-                        </p>
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam beatae, labore mollitia
-                            nemo nobis perspiciatis repellendus ullam vero voluptatum. Amet cum dolorem hic molestias
-                            tempora! Aliquam dolor exercitationem placeat veniam!
-                        </p>
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam beatae, labore mollitia
-                            nemo nobis perspiciatis repellendus ullam vero voluptatum. Amet cum dolorem hic molestias
-                            tempora! Aliquam dolor exercitationem placeat veniam!
-                        </p>
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam beatae, labore mollitia
-                            nemo nobis perspiciatis repellendus ullam vero voluptatum. Amet cum dolorem hic molestias
-                            tempora! Aliquam dolor exercitationem placeat veniam!
-                        </p>
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam beatae, labore mollitia
-                            nemo nobis perspiciatis repellendus ullam vero voluptatum. Amet cum dolorem hic molestias
-                            tempora! Aliquam dolor exercitationem placeat veniam!
-                        </p>
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam beatae, labore mollitia
-                            nemo nobis perspiciatis repellendus ullam vero voluptatum. Amet cum dolorem hic molestias
-                            tempora! Aliquam dolor exercitationem placeat veniam!
-                        </p>
                         <p>
                             Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam beatae, labore mollitia
                             nemo nobis perspiciatis repellendus ullam vero voluptatum. Amet cum dolorem hic molestias

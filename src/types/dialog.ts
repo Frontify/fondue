@@ -24,6 +24,7 @@ export type DialogHeaderProps = {
 export type DialogBodyProps = {
     children: ReactNode;
     maxHeight?: number | string;
+    scrollShadows?: boolean;
     'data-test-id'?: string;
 };
 
