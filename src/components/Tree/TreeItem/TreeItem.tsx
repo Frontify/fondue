@@ -24,6 +24,7 @@ import { removeFragmentsAndEnrichChildren, useDeepCompareEffect } from '../utils
 import { DragHandle } from './DragHandle';
 import { Overlay } from './TreeItemOverlay';
 import { ExpandButton } from './ExpandButton';
+import { debounce } from '@utilities/debounce';
 
 const animateLayoutChanges: AnimateLayoutChanges = ({ isSorting, wasDragging }) =>
     isSorting || wasDragging ? false : true;
@@ -70,6 +71,8 @@ export const TreeItem = memo(
         registerNodeChildren,
         unregisterNodeChildren,
         draggable: itemDraggable = true,
+        cancelSelectionOnDoubleClick = false,
+        expandOnSelect = false,
         'data-test-id': dataTestId = 'fondue-tree-item',
     }: InternalTreeItemProps) => {
         const { active, over } = useDndContext();
@@ -142,22 +145,30 @@ export const TreeItem = memo(
             onDragMove: handleItemDragMove,
         });
 
-        const handleSelect = useCallback(
-            (event: MouseEvent<HTMLElement>) => {
-                event.stopPropagation();
-
-                onSelect?.(id);
-            },
-            [id, onSelect],
-        );
-
         const toggleExpand = useCallback(
-            (event: MouseEvent<HTMLButtonElement>) => {
-                event.stopPropagation();
+            (event?: MouseEvent<HTMLButtonElement>) => {
+                event?.stopPropagation();
                 isExpanded ? onShrink?.(id) : onExpand?.(id);
             },
             [id, isExpanded, onExpand, onShrink],
         );
+
+        const handleSelect = useMemo(() => {
+            return debounce(
+                (event: MouseEvent<HTMLElement>) => {
+                    event.stopPropagation();
+                    if (cancelSelectionOnDoubleClick && event.detail >= 2) {
+                        return;
+                    }
+                    onSelect?.(id);
+
+                    if (expandOnSelect) {
+                        !isExpanded && onExpand?.(id);
+                    }
+                },
+                cancelSelectionOnDoubleClick ? 300 : 0,
+            );
+        }, [id, onSelect, cancelSelectionOnDoubleClick, expandOnSelect, isExpanded, onExpand]);
 
         const isParentActive = parentId && active?.id === parentId;
 
