@@ -3,11 +3,11 @@
 import { useRef } from 'react';
 
 export const useDebounce = <T extends unknown[]>(func: (...args: T) => void, timeout = 10) => {
-    const timer = useRef<number | undefined>();
+    const timer = useRef<ReturnType<typeof setTimeout>>();
 
     const debouncedFunc = (...args: T) => {
         clearTimeout(timer.current);
-        timer.current = window.setTimeout(() => func.apply(this, args), timeout);
+        timer.current = setTimeout(() => func.apply(this, args), timeout);
     };
 
     return debouncedFunc;
