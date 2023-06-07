@@ -81,19 +81,27 @@ export const TreeItem = memo(
 
         const isActive = active?.id === id;
 
+        const overAccepts =
+            typeof over?.data?.current?.accepts === 'string' ? over.data.current.accepts?.split(', ') : [];
+
+        const parentAccepts = typeof projection?.accepts === 'string' ? projection.accepts?.split(', ') : [];
+
+        const cleanCurrentType = active?.data.current?.type.replace(/-\d+$/, '') || '';
+
         const isWithin =
             over !== null &&
             projection !== null &&
             projection !== undefined &&
             projection.depth > over.data.current?.level;
 
+        const canDropWithin =
+            (isWithin && active?.data.current && overAccepts.includes(`${cleanCurrentType}-within`)) ||
+            (projection?.isWithinParent && parentAccepts.includes(`${cleanCurrentType}-within`));
+
         const canDrop =
             isActive &&
-            !isWithin &&
-            active.data.current &&
-            (over?.data?.current?.accepts === undefined ||
-                (typeof over?.data?.current?.accepts === 'string' &&
-                    over.data.current.accepts?.split(', ').includes(active.data.current.type)));
+            active?.data.current &&
+            ((overAccepts.includes(cleanCurrentType) && !isWithin) || canDropWithin);
 
         const handleItemDragEnd = useCallback(
             (event: TreeDragEndEvent) => {
@@ -102,7 +110,7 @@ export const TreeItem = memo(
                 if (
                     !isActive ||
                     !projection ||
-                    (active.id === over?.id && projection?.depth === projection?.minDepth)
+                    (active.id === over?.id && projection?.depth === active.data.current?.level)
                 ) {
                     return;
                 }
@@ -233,7 +241,7 @@ export const TreeItem = memo(
             'tw-flex tw-items-center tw-h-10 tw-leading-5 tw-width-full',
             isActive && 'tw-border-box-selected-strong tw-border-dashed tw-border-2 tw-bg-box-selected-hover',
             isActive &&
-                (isWithin || (!isWithin && !canDrop)) &&
+                !canDrop &&
                 'tw-bg-box-negative-hover tw-border-box-negative-strong-hover tw-border-dashed tw-border-2',
         ]);
 

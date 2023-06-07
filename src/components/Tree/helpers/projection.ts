@@ -21,14 +21,11 @@ export type Projection = {
     type?: string;
     accepts?: string;
     parentId: Nullable<string>;
+    isWithinParent: boolean | undefined;
 };
 
-const getMaxDepth = ({ previousNode }: { previousNode: ReactElement }) => {
-    return previousNode ? previousNode.props.level + 1 : 0;
-};
-
-const getMinDepth = ({ nextNode }: { nextNode: ReactElement }) => {
-    return nextNode ? nextNode.props.level : 0;
+const getNodeDepth = (node: ReactElement) => {
+    return node ? node.props.level : 0;
 };
 
 const getDragDepth = (offset: number) => {
@@ -48,9 +45,12 @@ export const getProjection = ({ nodes, activeId, overId, dragOffset }: Projectio
     const dragDepth = getDragDepth(dragOffset);
     const projectedDepth = (activeNode?.props?.level ?? 0) + dragDepth;
 
-    const maxDepth = getMaxDepth({ previousNode });
-    const minDepth = getMinDepth({ nextNode });
-    let depth = projectedDepth;
+    const previousNodeDepth = getNodeDepth(previousNode);
+    const nextNodeDepth = getNodeDepth(nextNode);
+    const maxDepth = Math.max(previousNodeDepth, nextNodeDepth) + 1;
+    const minDepth = Math.min(previousNodeDepth, nextNodeDepth);
+
+    let depth = projectedDepth || nextNodeDepth;
     if (projectedDepth >= maxDepth) {
         depth = maxDepth;
     } else if (projectedDepth < minDepth) {
@@ -88,14 +88,37 @@ export const getProjection = ({ nodes, activeId, overId, dragOffset }: Projectio
     const parentId = getParentId();
     const parent = getParent(parentId);
 
-    const nodesInParent = newNodes.filter(({ props }) => props.parentId === parentId);
-    const activeNewIndex = nodesInParent.findIndex(({ props }) => props.id === activeId);
-    const dropIndexInParent =
-        activeNewIndex >= 0 ? activeNewIndex : nodesInParent.findIndex(({ props }) => props.id === overId);
-
-    // whether we are moving down there is a +1 offset, unless we are in the same document
+    // whether we are moving down there is a +1 offset, unless we are in the same parent
     const correctionDueDragDirection =
         activeNodeIndex < overNodeIndex && activeNode.props.parentId !== parentId ? 1 : 0;
+
+    const nodesInParent = newNodes.filter(({ props }) => props.parentId === parentId);
+
+    /**
+     * To get the position the item is dropped within its parent (first match wins):
+     * - Get the index of the active item among the parent nodes
+     * - Use the 'over' item to get the position
+     * - If the over element is the parent matched set it to the top
+     * - If the item is going out:
+     *   - and up in the tree it goes to the bottom position
+     *   - if going down, to the first
+     * - if we move the item in or same depth and up it goes to the last position
+     */
+    let dropIndexInParent = nodesInParent.findIndex(({ props }) => props.id === activeId);
+    if (dropIndexInParent < 0) {
+        const overNextIndex = nodesInParent.findIndex(({ props }) => props.id === overId);
+        if (overNextIndex >= 0) {
+            dropIndexInParent = overNextIndex;
+        } else if (parentId === overId) {
+            dropIndexInParent = -1;
+        } else if (dragDepth < 0) {
+            dropIndexInParent = activeNodeIndex < overNodeIndex ? nodesInParent.length : -1;
+        } else if (activeNodeIndex >= overNodeIndex) {
+            dropIndexInParent = nodesInParent.length;
+        }
+    }
+
+    dropIndexInParent = dropIndexInParent + correctionDueDragDirection;
 
     return {
         depth,
@@ -104,6 +127,7 @@ export const getProjection = ({ nodes, activeId, overId, dragOffset }: Projectio
         parentId: parentId !== ROOT_ID ? parentId : null,
         type: parent?.type,
         accepts: parent?.accepts,
-        position: (dropIndexInParent >= 0 ? dropIndexInParent : 0) + correctionDueDragDirection,
+        position: dropIndexInParent >= 0 ? dropIndexInParent : 0,
+        isWithinParent: parent?.level ? depth > parent.level : false,
     };
 };
