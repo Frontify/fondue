@@ -4,7 +4,6 @@ import React, {
     Children,
     ReactElement,
     ReactNode,
-    cloneElement,
     createContext,
     isValidElement,
     useContext,
@@ -48,6 +47,7 @@ export const Popper = ({
 }: PopperProps) => {
     const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
     const [popperElement, setPopperElement] = useState<HTMLElement | null>(null);
+
     const popperInstance = usePopper(referenceElement, popperElement, {
         placement,
         modifiers: [
@@ -75,7 +75,7 @@ export const Popper = ({
                     if (name === Reference.name) {
                         return (
                             <div className="tw-w-fit" ref={setReferenceElement}>
-                                {cloneElement(child, { ...child.props })}
+                                {child}
                             </div>
                         );
                     }
@@ -85,23 +85,19 @@ export const Popper = ({
                             <Portal>
                                 <div
                                     ref={setPopperElement}
-                                    style={popperInstance.styles.popper}
+                                    style={{ zIndex: 9999, ...popperInstance.styles.popper }}
                                     {...popperInstance.attributes.popper}
                                 >
-                                    {cloneElement(child, {
-                                        ...child.props,
-                                    })}
+                                    {child}
                                 </div>
                             </Portal>
                         ) : (
                             <div
                                 ref={setPopperElement}
-                                style={popperInstance.styles.popper}
+                                style={{ zIndex: 9999, ...popperInstance.styles.popper }}
                                 {...popperInstance.attributes.popper}
                             >
-                                {cloneElement(child, {
-                                    ...child.props,
-                                })}
+                                {child}
                             </div>
                         );
                     }
