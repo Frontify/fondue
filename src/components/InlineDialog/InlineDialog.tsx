@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BaseDialogProps, Modality, OverlayProps } from '../../types/dialog';
 import { PopperPlacement } from '@components/Popper/types';
 import { Trigger } from '@utilities/dialogs/Trigger';
@@ -22,6 +22,15 @@ export const InlineDialog = ({
     handleClose,
     'data-test-id': dataTestId = 'fondue-inlineDialog',
 }: InlineDialogProps) => {
+    useEffect(() => {
+        if (open && modality !== Modality.NonModal) {
+            document.body.style.pointerEvents = 'none';
+        }
+        if (!open) {
+            document.body.style.pointerEvents = 'auto';
+        }
+    }, [open, modality]);
+
     return (
         <Overlay
             data-test-id={dataTestId}
