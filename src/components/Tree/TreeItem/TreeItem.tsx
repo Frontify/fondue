@@ -153,22 +153,23 @@ export const TreeItem = memo(
             [id, isExpanded, onExpand, onShrink],
         );
 
-        const handleSelect = useMemo(() => {
+        const handleItemClick = useMemo(() => {
             return debounce(
                 (event: MouseEvent<HTMLElement>) => {
                     event.stopPropagation();
                     if (cancelSelectionOnDoubleClick && event.detail >= 2) {
                         return;
                     }
-                    onSelect?.(id);
 
                     if (expandOnSelect) {
-                        !isExpanded && onExpand?.(id);
+                        toggleExpand();
                     }
+
+                    onSelect?.(id);
                 },
                 cancelSelectionOnDoubleClick ? 300 : 0,
             );
-        }, [id, onSelect, cancelSelectionOnDoubleClick, expandOnSelect, isExpanded, onExpand]);
+        }, [id, onSelect, cancelSelectionOnDoubleClick, expandOnSelect, toggleExpand]);
 
         const isParentActive = parentId && active?.id === parentId;
 
@@ -264,7 +265,7 @@ export const TreeItem = memo(
                 onKeyDown={noop}
                 aria-label={label}
                 aria-level={level + 1}
-                onClick={handleSelect}
+                onClick={handleItemClick}
                 className={liClassName}
                 ref={setDroppableNodeRef}
                 data-test-id={dataTestId}
