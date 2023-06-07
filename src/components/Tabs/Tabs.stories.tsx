@@ -124,12 +124,12 @@ export default {
         paddingX: {
             options: Object.values(TabsPaddingX),
             control: { type: 'select' },
-            defaultValue: '8',
+            defaultValue: TabsPaddingX.Small,
         },
         size: {
             options: Object.values(TabSize),
             control: { type: 'select' },
-            defaultValue: 'Small',
+            defaultValue: TabSize.Small,
         },
     },
 } as Meta<TabsProps>;

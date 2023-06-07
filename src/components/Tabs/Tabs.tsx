@@ -22,6 +22,7 @@ import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 
 export enum TabsPaddingX {
+    XSmall = 'XSmall',
     Small = 'Small',
     Medium = 'Medium',
     Large = 'Large',
@@ -41,9 +42,10 @@ export type TabsProps = {
 };
 
 const paddingMap: Record<TabsPaddingX, string> = {
-    Small: 'tw-px-xxs',
-    Medium: 'tw-px-s',
-    Large: 'tw-px-l',
+    [TabsPaddingX.XSmall]: 'tw-pl-xs',
+    [TabsPaddingX.Small]: 'tw-pl-s',
+    [TabsPaddingX.Medium]: 'tw-pl-m',
+    [TabsPaddingX.Large]: 'tw-pl-l',
 };
 
 export const Tabs = ({ paddingX, size, activeItemId, children, onChange }: TabsProps): ReactElement => {
