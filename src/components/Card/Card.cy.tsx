@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { FOCUS_STYLE } from '@utilities/focusStyle';
 import React from 'react';
 import { Card } from './Card';
 
