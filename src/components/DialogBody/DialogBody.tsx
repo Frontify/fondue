@@ -3,6 +3,7 @@
 import React, { ReactElement } from 'react';
 import { DialogBodyProps } from '../../types/dialog';
 
+// To Improve: shadows should ideally not be part of the background styling but on top of content.
 const SCROLL_SHADOW_STYLE = {
     background:
         'linear-gradient(white 30%,rgba(232, 233, 233, 0)) top,linear-gradient(rgba(232, 233, 233, 0),white 70%) bottom,' +
