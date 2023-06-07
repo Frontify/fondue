@@ -2,9 +2,9 @@
 
 import React, {
     AriaAttributes,
-    KeyboardEvent,
-    MouseEvent,
-    TouchEvent,
+    KeyboardEvent as ReactKeyboardEvent,
+    MouseEvent as ReactMouseEvent,
+    TouchEvent as ReactTouchEvent,
     useCallback,
     useEffect,
     useMemo,
@@ -12,11 +12,11 @@ import React, {
 } from 'react';
 
 import { useMemoizedId } from '@hooks/useMemoizedId';
+import { useDebounce } from '@hooks/useDebounce';
 import { merge } from '@utilities/merge';
 import { TextInput, TextInputType } from '@components/TextInput';
 import { Validation } from '@utilities/validation';
 import { clamp } from '@utilities/number';
-import { debounce } from '@utilities/debounce';
 
 type BaseSliderProps = {
     id?: string;
@@ -118,19 +118,18 @@ export const Slider = ({
         [sliderRef, max, min, step, valueSuffix],
     );
 
+    const updateThumbPositionFromEvent = useDebounce((event: TouchEvent | MouseEvent) => {
+        if (disabled) {
+            return;
+        }
+        updateThumbPosition({
+            clientX: (event as MouseEvent).clientX ?? (event as TouchEvent).touches?.[0]?.clientX,
+        });
+    }, DEBOUNCE_INTERVAL);
+
     const onDrag = useMemo(
-        () =>
-            !sliderRef
-                ? () => void 0
-                : debounce((event: Event & { clientX: number; touches: [{ clientX: number }] }) => {
-                      if (disabled) {
-                          return;
-                      }
-                      updateThumbPosition({
-                          clientX: event.clientX ?? event.touches[0].clientX,
-                      });
-                  }, DEBOUNCE_INTERVAL),
-        [updateThumbPosition, sliderRef, disabled],
+        () => (!sliderRef ? () => void 0 : updateThumbPositionFromEvent),
+        [updateThumbPositionFromEvent, sliderRef],
     );
 
     const stopDrag = useCallback(() => {
@@ -144,7 +143,7 @@ export const Slider = ({
         window.removeEventListener('mouseup', stopDrag);
     }, [sliderRef, onDrag]);
 
-    const startDrag = (event: MouseEvent<HTMLButtonElement> | TouchEvent<HTMLButtonElement>) => {
+    const startDrag = (event: ReactMouseEvent<HTMLButtonElement> | ReactTouchEvent<HTMLButtonElement>) => {
         if (!sliderRef || disabled) {
             return;
         }
@@ -152,7 +151,7 @@ export const Slider = ({
         setIsDragging(true);
 
         updateThumbPosition({
-            clientX: (event as MouseEvent).clientX ?? (event as TouchEvent).touches[0].clientX,
+            clientX: (event as ReactMouseEvent).clientX ?? (event as ReactTouchEvent).touches[0].clientX,
         });
 
         sliderRef.addEventListener('touchmove', onDrag);
@@ -160,7 +159,7 @@ export const Slider = ({
         window.addEventListener('mouseup', stopDrag);
     };
 
-    const onKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
+    const onKeyDown = (event: ReactKeyboardEvent<HTMLButtonElement>) => {
         if (
             ![...INCREMENT_KEYS, ...DECREMENT_KEYS, ...LIMITS_KEYS].includes(event.key) ||
             value === undefined ||

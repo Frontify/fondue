@@ -1,16 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useCallback, useRef } from 'react';
+import { useRef } from 'react';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const useDebounce = <T extends (...args: any[]) => void>(func: T, timeout = 10) => {
-    const timer = useRef<number | undefined>();
+export const useDebounce = <T extends unknown[]>(callback: (...args: T) => void, timeout = 10) => {
+    const timer = useRef<ReturnType<typeof setTimeout>>();
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const debouncedFunc = useCallback((...args: any[]) => {
+    const debouncedCallback = (...args: T) => {
         clearTimeout(timer.current);
-        timer.current = window.setTimeout(() => func.apply(this, args), timeout);
-    }, []);
+        timer.current = setTimeout(() => callback.apply(this, args), timeout);
+    };
 
-    return debouncedFunc;
+    return debouncedCallback;
 };
