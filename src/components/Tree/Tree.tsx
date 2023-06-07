@@ -27,7 +27,7 @@ import {
     MeasuringConfiguration,
     MeasuringStrategy,
     PointerSensor,
-    closestCenter,
+    closestCorners,
     useSensor,
     useSensors,
 } from '@dnd-kit/core';
@@ -714,7 +714,7 @@ export const Tree = memo(
                             announcements,
                             container: document.getElementById(id)?.parentElement ?? document.body,
                         }}
-                        collisionDetection={closestCenter}
+                        collisionDetection={closestCorners}
                     >
                         <SortableContext items={items} strategy={verticalListSortingStrategy}>
                             {nodes}
