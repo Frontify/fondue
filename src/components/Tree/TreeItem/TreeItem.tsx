@@ -24,6 +24,7 @@ import { removeFragmentsAndEnrichChildren, useDeepCompareEffect } from '../utils
 import { DragHandle } from './DragHandle';
 import { Overlay } from './TreeItemOverlay';
 import { ExpandButton } from './ExpandButton';
+import { useDebounce } from '@hooks/useDebounce';
 
 const animateLayoutChanges: AnimateLayoutChanges = ({ isSorting, wasDragging }) =>
     isSorting || wasDragging ? false : true;
@@ -70,6 +71,8 @@ export const TreeItem = memo(
         registerNodeChildren,
         unregisterNodeChildren,
         draggable: itemDraggable = true,
+        ignoreItemDoubleClick = false,
+        expandOnSelect = false,
         'data-test-id': dataTestId = 'fondue-tree-item',
     }: InternalTreeItemProps) => {
         const { active, over } = useDndContext();
@@ -150,21 +153,28 @@ export const TreeItem = memo(
             onDragMove: handleItemDragMove,
         });
 
-        const handleSelect = useCallback(
-            (event: MouseEvent<HTMLElement>) => {
-                event.stopPropagation();
-
-                onSelect?.(id);
-            },
-            [id, onSelect],
-        );
-
         const toggleExpand = useCallback(
-            (event: MouseEvent<HTMLButtonElement>) => {
-                event.stopPropagation();
+            (event?: MouseEvent<HTMLButtonElement>) => {
+                event?.stopPropagation();
                 isExpanded ? onShrink?.(id) : onExpand?.(id);
             },
             [id, isExpanded, onExpand, onShrink],
+        );
+
+        const handleItemClick = useDebounce(
+            (event: MouseEvent<HTMLElement>) => {
+                event.stopPropagation();
+                if (ignoreItemDoubleClick && event.detail >= 2) {
+                    return;
+                }
+
+                if (expandOnSelect) {
+                    toggleExpand();
+                }
+
+                onSelect?.(id);
+            },
+            ignoreItemDoubleClick ? 300 : 0,
         );
 
         const isParentActive = parentId && active?.id === parentId;
@@ -261,7 +271,7 @@ export const TreeItem = memo(
                 onKeyDown={noop}
                 aria-label={label}
                 aria-level={level + 1}
-                onClick={handleSelect}
+                onClick={handleItemClick}
                 className={liClassName}
                 ref={setDroppableNodeRef}
                 data-test-id={dataTestId}
