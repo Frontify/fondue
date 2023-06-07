@@ -215,7 +215,7 @@ export const Tabs = ({ paddingX, size, activeItemId, children, onChange }: TabsP
                                     tab.disabled && 'tw-text-text-disabled',
                                     !tab.disabled && 'hover:tw-text-text',
                                     tab.id === activeItemId ? 'tw-font-medium tw-text-text' : 'tw-text-text-weak',
-                                    size === 'Small' ? 'tw-text-sm' : 'tw-text-md',
+                                    size === TabSize.Small ? 'tw-text-sm' : 'tw-text-md',
                                 ])}
                                 key={tab.id}
                                 onClick={() => {
