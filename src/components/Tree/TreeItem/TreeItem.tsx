@@ -24,7 +24,7 @@ import { removeFragmentsAndEnrichChildren, useDeepCompareEffect } from '../utils
 import { DragHandle } from './DragHandle';
 import { Overlay } from './TreeItemOverlay';
 import { ExpandButton } from './ExpandButton';
-import { debounce } from '@utilities/debounce';
+import { useDebounce } from '@hooks/useDebounce';
 
 const animateLayoutChanges: AnimateLayoutChanges = ({ isSorting, wasDragging }) =>
     isSorting || wasDragging ? false : true;
@@ -71,7 +71,7 @@ export const TreeItem = memo(
         registerNodeChildren,
         unregisterNodeChildren,
         draggable: itemDraggable = true,
-        cancelSelectionOnDoubleClick = false,
+        ignoreItemDoubleClick = false,
         expandOnSelect = false,
         'data-test-id': dataTestId = 'fondue-tree-item',
     }: InternalTreeItemProps) => {
@@ -161,23 +161,21 @@ export const TreeItem = memo(
             [id, isExpanded, onExpand, onShrink],
         );
 
-        const handleItemClick = useMemo(() => {
-            return debounce(
-                (event: MouseEvent<HTMLElement>) => {
-                    event.stopPropagation();
-                    if (cancelSelectionOnDoubleClick && event.detail >= 2) {
-                        return;
-                    }
+        const handleItemClick = useDebounce(
+            (event: MouseEvent<HTMLElement>) => {
+                event.stopPropagation();
+                if (ignoreItemDoubleClick && event.detail >= 2) {
+                    return;
+                }
 
-                    if (expandOnSelect) {
-                        toggleExpand();
-                    }
+                if (expandOnSelect) {
+                    toggleExpand();
+                }
 
-                    onSelect?.(id);
-                },
-                cancelSelectionOnDoubleClick ? 300 : 0,
-            );
-        }, [id, onSelect, cancelSelectionOnDoubleClick, expandOnSelect, toggleExpand]);
+                onSelect?.(id);
+            },
+            ignoreItemDoubleClick ? 300 : 0,
+        );
 
         const isParentActive = parentId && active?.id === parentId;
 

@@ -61,7 +61,7 @@ type TreeItemBaseProps = {
 
     showCaret?: boolean;
 
-    cancelSelectionOnDoubleClick?: boolean;
+    ignoreItemDoubleClick?: boolean;
 
     expandOnSelect?: boolean;
 };

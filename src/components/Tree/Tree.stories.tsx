@@ -64,17 +64,11 @@ const renderCustomTreeItem = ({ id, onDrop, ...treeItem }: TreeItemMock) => {
     );
 };
 
-const renderTreeItemLabel = ({
-    nodes,
-    onDrop,
-    cancelSelectionOnDoubleClick,
-    expandOnSelect,
-    ...treeItem
-}: TreeItemMock) => {
+const renderTreeItemLabel = ({ nodes, onDrop, ignoreItemDoubleClick, expandOnSelect, ...treeItem }: TreeItemMock) => {
     return (
         <TreeItem
             {...treeItem}
-            cancelSelectionOnDoubleClick={cancelSelectionOnDoubleClick}
+            ignoreItemDoubleClick={ignoreItemDoubleClick}
             expandOnSelect={expandOnSelect}
             key={treeItem.id}
             onDrop={onDrop ?? action('onDrop')}
@@ -84,7 +78,7 @@ const renderTreeItemLabel = ({
                     ...node,
                     nodes: node.nodes,
                     onDrop,
-                    cancelSelectionOnDoubleClick,
+                    ignoreItemDoubleClick,
                     expandOnSelect,
                 }),
             )}
@@ -313,9 +307,7 @@ export const WithCancelSelectionOnDoubleClick = ({ ...args }: TreeProps) => {
     return (
         <div style={{ width: 800 }}>
             <TreeView {...args}>
-                {treeItemsMock.map((item) =>
-                    renderTreeItemLabel({ ...item, onDrop, cancelSelectionOnDoubleClick: true }),
-                )}
+                {treeItemsMock.map((item) => renderTreeItemLabel({ ...item, onDrop, ignoreItemDoubleClick: true }))}
             </TreeView>
         </div>
     );
