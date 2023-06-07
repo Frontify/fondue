@@ -9,9 +9,6 @@ import { Overlay } from '@utilities/dialogs/Overlay';
 
 export type PopoverComponentProps = OverlayProps;
 
-Trigger.displayName = 'FonduePopoverTrigger';
-Content.displayName = 'FonduePopoverContent';
-
 export const Popover = ({
     children,
     open,

@@ -9,9 +9,6 @@ import { Overlay } from '@utilities/dialogs/Overlay';
 
 export type InlineDialogProps = OverlayProps & BaseDialogProps;
 
-Trigger.displayName = 'FondueInlineDialogTrigger';
-Content.displayName = 'FondueInlineDialogContent';
-
 export const InlineDialog = ({
     children,
     open,

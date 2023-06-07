@@ -46,7 +46,7 @@ export const DialogHeader = ({
                     data-test-id={`${dataTestId}-close`}
                     aria-label={`${dataTestId}-close`}
                     onClick={onClose}
-                    className="tw-absolute tw-right-12"
+                    className="tw-absolute tw-right-5"
                 >
                     <IconCross />
                 </button>
