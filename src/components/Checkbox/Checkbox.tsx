@@ -2,7 +2,16 @@
 
 import { IconCheckMark, IconMinus } from '@foundation/Icon/Generated';
 import { InputLabel, InputLabelTooltipProps } from '@components/InputLabel/InputLabel';
-import React, { ForwardRefRenderFunction, HTMLAttributes, ReactNode, forwardRef, useEffect, useState } from 'react';
+import React, {
+    ForwardRefRenderFunction,
+    HTMLAttributes,
+    ReactNode,
+    forwardRef,
+    useCallback,
+    useEffect,
+    useRef,
+    useState,
+} from 'react';
 
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { IconSize } from '@foundation/Icon';
@@ -99,6 +108,10 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
     });
     const [showFocus, setShowFocus] = useState<Nullable<boolean>>();
     const [listeningForKeyboardEvents, setListeningForKeyboardEvents] = useState<Nullable<boolean>>();
+    const labelContainer = useRef<HTMLSpanElement>(null);
+    const helperTextContainer = useRef<HTMLSpanElement>(null);
+    const [isLabelOverflowing, setIsLabelOverflowing] = useState(false);
+    const [isHelperTextOverflowing, setIsHelperTextOverflowing] = useState(false);
 
     const tabFocusListener = (event: KeyboardEvent) => {
         if (event.key === 'Tab') {
@@ -157,9 +170,35 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                   : 'tw-border tw-border-line-xx-strong',
           ]);
 
+    const checkOverflowing = useCallback(() => {
+        if (labelContainer.current) {
+            setIsLabelOverflowing(labelContainer.current?.scrollWidth > labelContainer.current?.clientWidth);
+        }
+
+        if (helperTextContainer.current) {
+            setIsHelperTextOverflowing(
+                helperTextContainer.current?.scrollWidth > helperTextContainer.current?.clientWidth,
+            );
+        }
+    }, [labelContainer, helperTextContainer]);
+
+    useEffect(() => {
+        if ((!label && !helperText) || hideLabel) {
+            return;
+        }
+        checkOverflowing();
+
+        window.removeEventListener('resize', checkOverflowing);
+        window.addEventListener('resize', checkOverflowing);
+
+        return () => {
+            window.removeEventListener('resize', checkOverflowing);
+        };
+    }, [label, helperText, hideLabel, checkOverflowing]);
+
     return (
-        <div className="tw-gap-1 tw-transition-colors" data-test-id={dataTestId}>
-            <div className={merge(['tw-inline-flex tw-flex-row tw-rounded', showFocus ? FOCUS_STYLE : ''])}>
+        <div className="tw-gap-1 tw-transition-colors tw-w-full" data-test-id={dataTestId}>
+            <div className={merge(['tw-inline-flex tw-flex-row tw-rounded tw-w-full', showFocus ? FOCUS_STYLE : ''])}>
                 <InputLabel
                     disabled={disabled}
                     clickable
@@ -168,7 +207,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                     required={required}
                     bold={checkedOrMixed}
                 >
-                    <span className="tw-flex tw-items-center">
+                    <span className="tw-flex tw-items-center tw-whitespace-nowrap">
                         <span className="tw-inline-flex tw-mr-1.5">
                             <input
                                 {...mergeProps(groupInputProps || inputProps, focusProps)}
@@ -193,25 +232,31 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                                 {stateMap[state]}
                             </span>
                         </span>
-                        <span className="tw-inline-flex tw-flex-col">
+                        <span className="tw-inline-flex tw-flex-col tw-min-w-0">
                             {label && !hideLabel && (
                                 <span
+                                    ref={labelContainer}
                                     data-test-id={`${dataTestId}-label`}
                                     className={merge([
+                                        'tw-text-ellipsis tw-overflow-hidden',
                                         'tw-text-xs tw-select-none hover:tw-cursor-pointer hover:tw-text-black dark:hover:tw-text-white group-hover:tw-text-black dark:group-hover:tw-text-white',
                                         checkedOrMixed && 'tw-font-medium',
                                     ])}
+                                    title={isLabelOverflowing ? label : undefined}
                                 >
                                     {label}
                                 </span>
                             )}
                             {helperText && !hideLabel && (
                                 <span
+                                    ref={helperTextContainer}
                                     data-test-id={`${dataTestId}-helper-text`}
                                     className={merge([
+                                        'tw-text-ellipsis tw-overflow-hidden',
                                         'tw-font-sans tw-text-xs tw-font-normal',
                                         disabled ? 'text-disabled' : 'tw-text-text-weak',
                                     ])}
+                                    title={isHelperTextOverflowing ? helperText : undefined}
                                 >
                                     {helperText}
                                 </span>
