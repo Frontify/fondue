@@ -164,6 +164,7 @@ export const Tooltip = ({
     const [triggerElementRef, setTriggerElementRef] = useState<HTMLElement | HTMLDivElement | HTMLButtonElement | null>(
         null,
     );
+    const [isOpen, setIsOpen] = useState(false);
     const linkRef = useRef<HTMLAnchorElement | null>(null);
 
     const shouldPreventTooltipOpening = hidden || disabled;
@@ -191,6 +192,10 @@ export const Tooltip = ({
                 },
             },
             {
+                name: 'eventListeners',
+                options: { scroll: isOpen, resize: isOpen },
+            },
+            {
                 name: 'offset',
                 options: {
                     offset: [0, tooltipOffset],
@@ -205,7 +210,6 @@ export const Tooltip = ({
 
     const currentPlacement = popperInstance.state?.placement ?? position;
     const arrowStyling = getArrowClasses(currentPlacement, brightHeader, alignment);
-    const [isOpen, setIsOpen] = useState(false);
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const handleHideTooltipOnHover = useCallback(() => {

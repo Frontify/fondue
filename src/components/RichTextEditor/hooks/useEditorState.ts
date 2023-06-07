@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useCallback, useMemo, useRef } from 'react';
-import { debounce } from '@utilities/debounce';
+import { useDebounce } from '@hooks/useDebounce';
 import { ON_SAVE_DELAY_IN_MS, parseRawValue } from '../utils';
 import { GeneratePlugins, PluginComposer } from '../Plugins';
 import { TreeOfNodes } from '../types';
@@ -23,7 +23,7 @@ export const useEditorState = ({
 }: useEditorStateProps) => {
     const localValue = useRef<TreeOfNodes | null>(null);
 
-    const debouncedOnChange = debounce((value: TreeOfNodes) => {
+    const debouncedOnChange = useDebounce((value: TreeOfNodes) => {
         onTextChange && onTextChange(JSON.stringify(value));
     }, ON_SAVE_DELAY_IN_MS);
 
