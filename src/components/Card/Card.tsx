@@ -24,38 +24,18 @@ export const Card = ({
     const ref = useRef<HTMLDivElement | null>(null);
     const [keyDownTrue, setKeyDownTrue] = useState(false);
     const { buttonProps } = useButton(
-        { elementType: 'div', onPress: (event: PressEvent) => onClick && onClick(event) },
+        {
+            elementType: 'div',
+            onPress: (event: PressEvent) => onClick && onClick(event),
+            onPressChange: (isPressed) => {
+                setKeyDownTrue(isPressed);
+            },
+        },
         ref,
     );
     const { isFocusVisible, focusProps } = useFocusRing();
 
     const clickableProps = !!onClick ? mergeProps(buttonProps, focusProps) : {};
-
-    React.useEffect(() => {
-        ref.current?.addEventListener('keydown', (event) => {
-            if (event.key === 'Enter') {
-                setKeyDownTrue(true);
-            }
-        });
-        ref.current?.addEventListener('keyup', (event) => {
-            if (event.key === 'Enter') {
-                setKeyDownTrue(false);
-            }
-        });
-
-        return () => {
-            ref.current?.removeEventListener('keydown', (event) => {
-                if (event.key === 'Enter') {
-                    setKeyDownTrue(true);
-                }
-            });
-            ref.current?.removeEventListener('keyup', (event) => {
-                if (event.key === 'Enter') {
-                    setKeyDownTrue(false);
-                }
-            });
-        };
-    });
 
     return (
         <div
