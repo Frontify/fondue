@@ -139,6 +139,14 @@ export default {
             type: 'string',
             defaultValue: '100px',
         },
+        minHeight: {
+            type: 'string',
+            defaultValue: '50px',
+        },
+        scrollShadows: {
+            control: { type: 'boolean' },
+            default: true,
+        },
     },
 } as Meta<TabsProps>;
 
@@ -160,12 +168,7 @@ Default.storyName = 'Label Only';
 const TabWithMaxHeight: StoryFn<TabsProps> = (args) => {
     const [activeItemId, setActiveItemId] = useState(data[0].id);
     return (
-        <Tabs
-            {...args}
-            contentMaxHeight="100px"
-            activeItemId={activeItemId}
-            onChange={(value) => setActiveItemId(value)}
-        >
+        <Tabs {...args} activeItemId={activeItemId} onChange={(value) => setActiveItemId(value)}>
             {data.map((item) => (
                 <TabItem
                     id={item.id}
@@ -181,6 +184,56 @@ const TabWithMaxHeight: StoryFn<TabsProps> = (args) => {
     );
 };
 export const WithMaxHeight = TabWithMaxHeight.bind({});
+WithMaxHeight.args = {
+    maxHeight: '100px',
+};
+
+const TabWithMinHeight: StoryFn<TabsProps> = (args) => {
+    const [activeItemId, setActiveItemId] = useState(data[0].id);
+    return (
+        <Tabs {...args} activeItemId={activeItemId} onChange={(value) => setActiveItemId(value)}>
+            {data.map((item) => (
+                <TabItem
+                    id={item.id}
+                    key={item.id}
+                    label={item.label}
+                    disabled={item.disabled ?? false}
+                    decorator={item.decorator}
+                >
+                    <div className="tw-p-3">{item.children}</div>
+                </TabItem>
+            ))}
+        </Tabs>
+    );
+};
+export const WithMinHeight = TabWithMinHeight.bind({});
+WithMinHeight.args = {
+    minHeight: '50px',
+};
+
+const TabWithoutScrollShadows: StoryFn<TabsProps> = (args) => {
+    const [activeItemId, setActiveItemId] = useState(data[0].id);
+    return (
+        <Tabs {...args} activeItemId={activeItemId} onChange={(value) => setActiveItemId(value)}>
+            {data.map((item) => (
+                <TabItem
+                    id={item.id}
+                    key={item.id}
+                    label={item.label}
+                    disabled={item.disabled ?? false}
+                    decorator={item.decorator}
+                >
+                    <div className="tw-p-3">{item.children}</div>
+                </TabItem>
+            ))}
+        </Tabs>
+    );
+};
+export const WithoutScrollShadows = TabWithoutScrollShadows.bind({});
+WithoutScrollShadows.args = {
+    scrollShadows: false,
+    maxHeight: '100px',
+};
 
 const dataWithIcon = data.map((item) => Object.assign({}, item, { decorator: <IconIcon size={IconSize.Size16} /> }));
 const TabWithIconTemplate: StoryFn<TabsProps> = (args) => {

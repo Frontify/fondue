@@ -24,8 +24,12 @@ export default {
             defaultValue: ScrollWrapperDirection.Vertical,
         },
         tabindex: {
-            contol: { type: 'number' },
+            control: { type: 'number' },
             defaultValue: 0,
+        },
+        noNegativeMargin: {
+            control: { type: 'boolean' },
+            defaultValue: true,
         },
     },
     args: {
@@ -33,6 +37,7 @@ export default {
         tabindex: 0,
         'data-test-id': 'custom-data-test-id',
         scrollShadows: true,
+        negativeMargin: true,
     },
 } as Meta<ScrollWrapperProps>;
 

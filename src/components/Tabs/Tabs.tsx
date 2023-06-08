@@ -41,7 +41,9 @@ export type TabsProps = {
     children: ReactNode;
     onChange?: (tabId: string) => void;
     scrollbar?: boolean;
-    contentMaxHeight?: `${number}${DimensionUnity}`;
+    scrollShadows?: boolean;
+    maxHeight?: `${number}${DimensionUnity}`;
+    minHeight?: `${number}${DimensionUnity}`;
 };
 
 const TABS_PADDING_MAP: Record<TabsPaddingX, string> = {
@@ -56,8 +58,10 @@ export const Tabs = ({
     activeItemId,
     children,
     onChange,
-    scrollbar,
-    contentMaxHeight,
+    scrollbar = true,
+    maxHeight,
+    minHeight,
+    scrollShadows,
 }: TabsProps): ReactElement => {
     const groupId = useMemoizedId();
     const tabNavRef = useRef<HTMLDivElement | null>(null);
@@ -327,9 +331,13 @@ export const Tabs = ({
             </div>
 
             {scrollbar ? (
-                <div data-test-id="tab-content" className="tw-overflow-auto" style={{ maxHeight: contentMaxHeight }}>
-                    <ScrollWrapper tabIndex={-1}>
-                        <>
+                <div
+                    data-test-id="tab-content"
+                    className="tw-overflow-auto tw-flex tw-flex-col"
+                    style={{ maxHeight, minHeight }}
+                >
+                    <ScrollWrapper tabindex={-1} scrollShadows={scrollShadows} negativeMargin={false}>
+                        <div className="tw-mr-0">
                             {Children.map(children, (child) => {
                                 if (!isValidElement(child)) {
                                     return null;
@@ -337,11 +345,11 @@ export const Tabs = ({
 
                                 return cloneElement(child, { ...child.props, active: child.props.id === activeItemId });
                             })}
-                        </>
+                        </div>
                     </ScrollWrapper>
                 </div>
             ) : (
-                <div data-test-id="tab-content" style={{ maxHeight: contentMaxHeight }}>
+                <div data-test-id="tab-content" style={{ maxHeight, minHeight }}>
                     {Children.map(children, (child) => {
                         if (!isValidElement(child)) {
                             return null;
