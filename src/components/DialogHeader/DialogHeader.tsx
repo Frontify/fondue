@@ -7,6 +7,7 @@ import { Text } from '@typography/Text';
 import { Flex } from '@components/Flex';
 import { Box } from '@components/Box';
 import { DialogHeaderProps, DialogHeaderSize } from '../../types/dialog';
+import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 
 export const DialogHeader = ({
     title,
@@ -46,7 +47,7 @@ export const DialogHeader = ({
                     data-test-id={`${dataTestId}-close`}
                     aria-label={`${dataTestId}-close`}
                     onClick={onClose}
-                    className="tw-absolute tw-right-5"
+                    className={merge([FOCUS_VISIBLE_STYLE, 'tw-rounded tw-absolute tw-right-5'])}
                 >
                     <IconCross />
                 </button>
