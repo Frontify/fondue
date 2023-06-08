@@ -5,7 +5,7 @@ import React, { Children, ReactNode } from 'react';
 import { merge } from '@utilities/merge';
 import { IconGrabHandle12 } from '@foundation/Icon';
 
-import { INDENTATION_WIDTH } from '../Tree';
+import { INDENTATION_WIDTH } from '../helpers';
 
 export type Overlay = {
     id: string;
