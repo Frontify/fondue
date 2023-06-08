@@ -24,6 +24,7 @@ import { removeFragmentsAndEnrichChildren, useDeepCompareEffect } from '../utils
 import { DragHandle } from './DragHandle';
 import { Overlay } from './TreeItemOverlay';
 import { ExpandButton } from './ExpandButton';
+import { useDebounce } from '@hooks/useDebounce';
 
 const animateLayoutChanges: AnimateLayoutChanges = ({ isSorting, wasDragging }) =>
     isSorting || wasDragging ? false : true;
@@ -70,6 +71,8 @@ export const TreeItem = memo(
         registerNodeChildren,
         unregisterNodeChildren,
         draggable: itemDraggable = true,
+        ignoreItemDoubleClick = false,
+        expandOnSelect = false,
         'data-test-id': dataTestId = 'fondue-tree-item',
     }: InternalTreeItemProps) => {
         const { active, over } = useDndContext();
@@ -78,19 +81,27 @@ export const TreeItem = memo(
 
         const isActive = active?.id === id;
 
+        const overAccepts =
+            typeof over?.data?.current?.accepts === 'string' ? over.data.current.accepts?.split(', ') : [];
+
+        const parentAccepts = typeof projection?.accepts === 'string' ? projection.accepts?.split(', ') : [];
+
+        const cleanCurrentType = active?.data.current?.type.replace(/-\d+$/, '') || '';
+
         const isWithin =
             over !== null &&
             projection !== null &&
             projection !== undefined &&
             projection.depth > over.data.current?.level;
 
+        const canDropWithin =
+            (isWithin && active?.data.current && overAccepts.includes(`${cleanCurrentType}-within`)) ||
+            (projection?.isWithinParent && parentAccepts.includes(`${cleanCurrentType}-within`));
+
         const canDrop =
             isActive &&
-            !isWithin &&
-            active.data.current &&
-            (over?.data?.current?.accepts === undefined ||
-                (typeof over?.data?.current?.accepts === 'string' &&
-                    over.data.current.accepts?.split(', ').includes(active.data.current.type)));
+            active?.data.current &&
+            ((overAccepts.includes(cleanCurrentType) && !isWithin) || canDropWithin);
 
         const handleItemDragEnd = useCallback(
             (event: TreeDragEndEvent) => {
@@ -99,7 +110,7 @@ export const TreeItem = memo(
                 if (
                     !isActive ||
                     !projection ||
-                    (active.id === over?.id && projection?.depth === projection?.minDepth)
+                    (active.id === over?.id && projection?.depth === active.data.current?.level)
                 ) {
                     return;
                 }
@@ -142,21 +153,28 @@ export const TreeItem = memo(
             onDragMove: handleItemDragMove,
         });
 
-        const handleSelect = useCallback(
-            (event: MouseEvent<HTMLElement>) => {
-                event.stopPropagation();
-
-                onSelect?.(id);
-            },
-            [id, onSelect],
-        );
-
         const toggleExpand = useCallback(
-            (event: MouseEvent<HTMLButtonElement>) => {
-                event.stopPropagation();
+            (event?: MouseEvent<HTMLButtonElement>) => {
+                event?.stopPropagation();
                 isExpanded ? onShrink?.(id) : onExpand?.(id);
             },
             [id, isExpanded, onExpand, onShrink],
+        );
+
+        const handleItemClick = useDebounce(
+            (event: MouseEvent<HTMLElement>) => {
+                event.stopPropagation();
+                if (ignoreItemDoubleClick && event.detail >= 2) {
+                    return;
+                }
+
+                if (expandOnSelect) {
+                    toggleExpand();
+                }
+
+                onSelect?.(id);
+            },
+            ignoreItemDoubleClick ? 300 : 0,
         );
 
         const isParentActive = parentId && active?.id === parentId;
@@ -221,7 +239,7 @@ export const TreeItem = memo(
             'tw-flex tw-items-center tw-h-10 tw-leading-5 tw-width-full',
             isActive && 'tw-border-box-selected-strong tw-border-dashed tw-border-2 tw-bg-box-selected-hover',
             isActive &&
-                (isWithin || (!isWithin && !canDrop)) &&
+                !canDrop &&
                 'tw-bg-box-negative-hover tw-border-box-negative-strong-hover tw-border-dashed tw-border-2',
         ]);
 
@@ -253,7 +271,7 @@ export const TreeItem = memo(
                 onKeyDown={noop}
                 aria-label={label}
                 aria-level={level + 1}
-                onClick={handleSelect}
+                onClick={handleItemClick}
                 className={liClassName}
                 ref={setDroppableNodeRef}
                 data-test-id={dataTestId}

@@ -64,10 +64,24 @@ const renderCustomTreeItem = ({ id, onDrop, ...treeItem }: TreeItemMock) => {
     );
 };
 
-const renderTreeItemLabel = ({ nodes, onDrop, ...treeItem }: TreeItemMock) => {
+const renderTreeItemLabel = ({ nodes, onDrop, ignoreItemDoubleClick, expandOnSelect, ...treeItem }: TreeItemMock) => {
     return (
-        <TreeItem {...treeItem} key={treeItem.id} onDrop={onDrop ?? action('onDrop')}>
-            {nodes?.map((node) => renderTreeItemLabel({ ...node, nodes: node.nodes }))}
+        <TreeItem
+            {...treeItem}
+            ignoreItemDoubleClick={ignoreItemDoubleClick}
+            expandOnSelect={expandOnSelect}
+            key={treeItem.id}
+            onDrop={onDrop ?? action('onDrop')}
+        >
+            {nodes?.map((node) =>
+                renderTreeItemLabel({
+                    ...node,
+                    nodes: node.nodes,
+                    onDrop,
+                    ignoreItemDoubleClick,
+                    expandOnSelect,
+                }),
+            )}
         </TreeItem>
     );
 };
@@ -84,7 +98,7 @@ const renderTreeItemComponent = ({ nodes, label, numChildNodes, onDrop, ...treeI
     </TreeItem>
 );
 
-export const TreeWithLabel = ({ ...args }: TreeProps) => {
+export const WithLabel = ({ ...args }: TreeProps) => {
     const onDrop = useCallback(() => action('onDrop'), []);
 
     return (
@@ -94,7 +108,7 @@ export const TreeWithLabel = ({ ...args }: TreeProps) => {
     );
 };
 
-export const TreeWithCustomTreeItem = ({ ...args }: TreeProps) => {
+export const WithCustomTreeItem = ({ ...args }: TreeProps) => {
     const onDrop = useCallback(() => action('onDrop'), []);
     return (
         <div style={{ width: 800 }}>
@@ -103,7 +117,7 @@ export const TreeWithCustomTreeItem = ({ ...args }: TreeProps) => {
     );
 };
 
-export const ScrollableTreeWithLabel = ({ ...args }: TreeProps) => {
+export const ScrollableWithLabel = ({ ...args }: TreeProps) => {
     const [expandedIds, setExpandedIds] = useState<string[]>([]);
 
     const handleItemExpand = useCallback((id: string) => {
@@ -125,7 +139,7 @@ export const ScrollableTreeWithLabel = ({ ...args }: TreeProps) => {
     );
 };
 
-export const TreeWithBasicItem = ({ ...args }: TreeProps) => {
+export const WithBasicItem = ({ ...args }: TreeProps) => {
     return (
         <div style={{ maxWidth: '800px' }}>
             <TreeView {...args}>{treeItemsMock.map(renderTreeItemComponent)}</TreeView>
@@ -133,7 +147,7 @@ export const TreeWithBasicItem = ({ ...args }: TreeProps) => {
     );
 };
 
-export const TreeWithAwaitedItem = ({ ...args }: TreeProps) => {
+export const WithAwaitedItem = ({ ...args }: TreeProps) => {
     const [awaitedItems, setAwaitedItems] = useState<TreeItemMock[]>([]);
 
     useEffect(() => {
@@ -285,4 +299,28 @@ LazyLoadingTreeRoot.displayName = 'FondueStoryLazyLoadingTreeRoot';
 
 export const CustomItemsWithLazyLoadedChildren = () => {
     return <LazyLoadingTreeRoot />;
+};
+
+export const WithCancelSelectionOnDoubleClick = ({ ...args }: TreeProps) => {
+    const onDrop = useCallback(() => action('onDrop'), []);
+
+    return (
+        <div style={{ width: 800 }}>
+            <TreeView {...args}>
+                {treeItemsMock.map((item) => renderTreeItemLabel({ ...item, onDrop, ignoreItemDoubleClick: true }))}
+            </TreeView>
+        </div>
+    );
+};
+
+export const WithExpandOnSelect = ({ ...args }: TreeProps) => {
+    const onDrop = useCallback(() => action('onDrop'), []);
+
+    return (
+        <div style={{ width: 800 }}>
+            <TreeView {...args}>
+                {treeItemsMock.map((item) => renderTreeItemLabel({ ...item, onDrop, expandOnSelect: true }))}
+            </TreeView>
+        </div>
+    );
 };

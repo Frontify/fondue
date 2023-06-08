@@ -67,7 +67,7 @@
         "@babel/core": "7.21.4",
         "@cypress/vite-dev-server": "5.0.5",
         "@frontify/eslint-config-react": "0.15.7",
-        "@frontify/fondue-icons": "0.1.36",
+        "@frontify/fondue-icons": "0.1.38",
         "@semantic-release/commit-analyzer": "9.0.2",
         "@semantic-release/exec": "6.0.3",
         "@semantic-release/github": "8.0.7",
