@@ -22,6 +22,7 @@ import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 
 export enum TabsPaddingX {
+    None = 'None',
     XSmall = 'XSmall',
     Small = 'Small',
     Medium = 'Medium',
@@ -42,6 +43,7 @@ export type TabsProps = {
 };
 
 const paddingMap: Record<TabsPaddingX, string> = {
+    [TabsPaddingX.None]: 'tw-pl-0',
     [TabsPaddingX.XSmall]: 'tw-pl-xs',
     [TabsPaddingX.Small]: 'tw-pl-s',
     [TabsPaddingX.Medium]: 'tw-pl-m',

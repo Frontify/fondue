@@ -208,18 +208,26 @@ describe('Tabs Component', () => {
         cy.get('#tab-2-btn[data-test-id=tab-item]').should('not.have.class', 'hover:tw-text-text');
     });
 
+    it('tabs should render with paddingX of "None"', () => {
+        cy.mount(<TabComponent paddingX={TabsPaddingX.None} />);
+        cy.get(`${TABS_DATA_TEST_ID} > div`).should('have.class', 'tw-pl-0');
+    });
+
     it('tabs should render with paddingX of "XSmall"', () => {
         cy.mount(<TabComponent paddingX={TabsPaddingX.XSmall} />);
         cy.get(`${TABS_DATA_TEST_ID} > div`).should('have.class', 'tw-pl-xs');
     });
+
     it('tabs should render with paddingX of "Small"', () => {
         cy.mount(<TabComponent paddingX={TabsPaddingX.Small} />);
         cy.get(`${TABS_DATA_TEST_ID} > div`).should('have.class', 'tw-pl-s');
     });
+
     it('tabs should render with paddingX of "Medium"', () => {
         cy.mount(<TabComponent paddingX={TabsPaddingX.Medium} />);
         cy.get(`${TABS_DATA_TEST_ID} > div`).should('have.class', 'tw-pl-m');
     });
+
     it('tabs should render with paddingX of "Large"', () => {
         cy.mount(<TabComponent paddingX={TabsPaddingX.Large} />);
         cy.get(`${TABS_DATA_TEST_ID} > div`).should('have.class', 'tw-pl-l');
