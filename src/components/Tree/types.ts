@@ -60,6 +60,10 @@ type TreeItemBaseProps = {
     draggable?: boolean;
 
     showCaret?: boolean;
+
+    ignoreItemDoubleClick?: boolean;
+
+    expandOnSelect?: boolean;
 };
 
 export type TreeItemWithLabelProps = {

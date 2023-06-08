@@ -10,7 +10,6 @@ export * from './focusStyle';
 export * from './generateRandomId';
 export * from './merge';
 export * from './number';
-export * from './useDebounce';
 export * from './useForwardedRef';
 export * from './validation';
 export * from './dimensions';

@@ -8,18 +8,13 @@ import { useButton } from '@react-aria/button';
 import { FocusScope, useFocusRing } from '@react-aria/focus';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
-import { AnimatePresence, motion } from 'framer-motion';
-import React, { ChangeEvent, KeyboardEvent, ReactElement, useEffect, useRef, useState } from 'react';
-import { getInputWidth, getPaddingClasses } from './helpers';
-import { Menu } from '@components/Menu';
-import { MenuItem } from '@components/MenuItem';
+import React, { KeyboardEvent, ReactElement, useEffect, useRef, useState } from 'react';
+import { getPaddingClasses } from './helpers';
 import { useClickOutside } from '@hooks/useClickOutside';
-import { DefaultItem, NoSearchResults, OptionalItems } from './SelectMenuItems';
 import { CheckboxState } from '@components/Checkbox/Checkbox';
-import { createPortal } from 'react-dom';
 import { usePopper } from 'react-popper';
 import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from '@hooks/useDropdownAutoHeight';
-import { DEFAULT_DROPDOWN_MIN_ANIMATION_HEIGHT } from '@components/Dropdown/Dropdown';
+import { Portal } from '@components/Portal';
 
 export enum MultiSelectType {
     Default = 'Default',
@@ -29,11 +24,6 @@ export enum MultiSelectType {
 export enum MultiSelectSize {
     Small = 'Small',
     Medium = 'Medium',
-}
-
-export enum MultiSelectEmphasis {
-    Default = 'Default',
-    Weak = 'Weak',
 }
 
 export type MultiSelectItem = {
@@ -56,14 +46,10 @@ export type MultiSelectProps = {
     type?: MultiSelectType;
     size?: MultiSelectSize;
     validation?: Validation;
-    emphasis?: MultiSelectEmphasis;
-    decorator?: React.ReactNode;
-    filterable?: boolean;
-    filterLabel?: string;
-    noResultsLabel?: string;
     summarizedLabel?: string;
     indeterminateItemKeys?: (string | number)[];
     flip?: boolean;
+    emphasis?: TriggerEmphasis;
 };
 
 export type Item = {
@@ -84,21 +70,16 @@ export const MultiSelect = ({
     disabled = false,
     placeholder,
     label,
-    filterLabel,
-    noResultsLabel,
     type = MultiSelectType.Default,
     size = MultiSelectSize.Medium,
     validation = Validation.Default,
-    emphasis = MultiSelectEmphasis.Default,
-    decorator = null,
-    filterable = false,
     summarizedLabel: summarizedLabelFromProps,
     indeterminateItemKeys,
     flip = false,
+    emphasis = TriggerEmphasis.Default,
 }: MultiSelectProps): ReactElement => {
     const [open, setOpen] = useState(false);
     const [checkboxes, setCheckboxes] = useState<Item[]>([]);
-    const hasResults = !!checkboxes.find((item) => !item.isCategory && !item.isDivider);
     const multiSelectRef = useRef<HTMLDivElement | null>(null);
 
     const [multiSelectMenuRef, setMultiSelectMenuRef] = useState<null | HTMLDivElement>(null);
@@ -111,7 +92,6 @@ export const MultiSelect = ({
 
     const hasSelectedItems = activeItemKeys.length > 0;
     const summarizedLabel = summarizedLabelFromProps ?? [activeItemKeys.length, 'selected'].join(' ');
-    const inputWidth = getInputWidth(hasSelectedItems, filterLabel, placeholder);
 
     const handleClose = () => setOpen(false);
 
@@ -147,38 +127,16 @@ export const MultiSelect = ({
     };
 
     const handleSpacebarToggle = (e: KeyboardEvent<HTMLDivElement>) => {
-        if (e.code === 'Space' && (filterInputRef.current !== document.activeElement || !filterable)) {
+        if (e.code === 'Space') {
             toggleOpen();
         }
     };
 
-    const getDecoratorClasses = () => {
-        if (emphasis === MultiSelectEmphasis.Weak) {
-            return hasSelectedItems ? '' : 'tw-text-text-weak';
-        }
-
-        return '';
-    };
-
     const getTagType = () => {
-        if (emphasis === MultiSelectEmphasis.Weak || !open) {
+        if (!open) {
             return TagType.Selected;
         }
         return TagType.SelectedWithFocus;
-    };
-
-    const handleFilterChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setCheckboxes(
-            items
-                .filter((item) => {
-                    if (item.isCategory || item.isDivider) {
-                        return true;
-                    }
-
-                    return item.value.toLowerCase().includes(e.currentTarget.value.toLowerCase());
-                })
-                .map((item) => ({ ...item, label: item.value })),
-        );
     };
 
     useEffect(() => {
@@ -214,6 +172,7 @@ export const MultiSelect = ({
         if (popperInstance.update) {
             popperInstance.update();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeItemKeys]);
 
     return (
@@ -224,7 +183,7 @@ export const MultiSelect = ({
                 isFocusVisible={isFocusVisible}
                 isOpen={open}
                 validation={validation}
-                emphasis={emphasis === MultiSelectEmphasis.Default ? TriggerEmphasis.Default : TriggerEmphasis.Weak}
+                emphasis={emphasis}
             >
                 <div className={merge(['tw-flex tw-flex-1 tw-gap-2', getPaddingClasses(size)])} ref={setTriggerRef}>
                     <div
@@ -241,7 +200,6 @@ export const MultiSelect = ({
                         onKeyDown={handleSpacebarToggle}
                     >
                         <div className="tw-flex tw-flex-wrap tw-gap-2 tw-outline-none tw-items-center tw-min-h-[28px]">
-                            {decorator && <div className={getDecoratorClasses()}>{decorator}</div>}
                             {label && hasSelectedItems && <Text weight="strong">{label}</Text>}
                             {type === MultiSelectType.Default &&
                                 activeItemKeys.map((key) => (
@@ -265,27 +223,14 @@ export const MultiSelect = ({
                                 />
                             )}
 
-                            {!filterable && activeItemKeys.length === 0 && placeholder && (
-                                <Text color="weak">{placeholder}</Text>
-                            )}
+                            {activeItemKeys.length === 0 && placeholder && <Text color="weak">{placeholder}</Text>}
                         </div>
-                        {filterable && (
-                            <input
-                                ref={filterInputRef}
-                                className="focus:tw-outline-0 tw-text-s tw-bg-transparent"
-                                style={{ maxWidth: inputWidth }}
-                                placeholder={activeItemKeys.length === 0 ? placeholder : filterLabel}
-                                onChange={handleFilterChange}
-                            />
-                        )}
                     </div>
                 </div>
             </Trigger>
 
-            {open &&
-                heightIsReady &&
-                emphasis === MultiSelectEmphasis.Default &&
-                createPortal(
+            {open && heightIsReady && (
+                <Portal>
                     <div
                         ref={setMultiSelectMenuRef}
                         className="tw-absolute tw-left-0 tw-w-full tw-overflow-hidden tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-30 tw-bg-base tw-min-w-[18rem]"
@@ -310,59 +255,9 @@ export const MultiSelect = ({
                                 />
                             </div>
                         </FocusScope>
-                    </div>,
-                    document.body,
-                )}
-            {open &&
-                heightIsReady &&
-                emphasis === MultiSelectEmphasis.Weak &&
-                createPortal(
-                    <AnimatePresence>
-                        <motion.div
-                            ref={setMultiSelectMenuRef}
-                            style={{
-                                ...popperInstance.styles.popper,
-                                width: 'fit-content',
-                                zIndex: 30,
-                            }}
-                            {...popperInstance.attributes.popper}
-                            initial={{ height: DEFAULT_DROPDOWN_MIN_ANIMATION_HEIGHT }}
-                            animate={{ height: 'auto' }}
-                            transition={{ ease: [0.04, 0.62, 0.23, 0.98], duration: 0.5 }}
-                        >
-                            <Menu open={open} onClose={handleClose}>
-                                {checkboxes.length > 0 && hasResults ? (
-                                    checkboxes.map((item, index) => {
-                                        const { label, value, avatar, imgSrc } = item;
-                                        const isChecked = !!activeItemKeys.find((key) => key === value);
-                                        const handleMenuItemClick = () => toggleSelection(label);
-
-                                        if (item.isCategory || item.isDivider) {
-                                            return (
-                                                <OptionalItems
-                                                    key={value + item}
-                                                    {...{
-                                                        checkboxes,
-                                                        index,
-                                                    }}
-                                                />
-                                            );
-                                        }
-
-                                        return (
-                                            <MenuItem checked={isChecked} onClick={handleMenuItemClick} key={value}>
-                                                <DefaultItem {...{ label, value, avatar, imgSrc, isChecked }} />
-                                            </MenuItem>
-                                        );
-                                    })
-                                ) : (
-                                    <NoSearchResults label={noResultsLabel} />
-                                )}
-                            </Menu>
-                        </motion.div>
-                    </AnimatePresence>,
-                    document.body,
-                )}
+                    </div>
+                </Portal>
+            )}
         </div>
     );
 };
