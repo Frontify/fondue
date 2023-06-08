@@ -17,8 +17,7 @@ import type {
     TreeItemProps,
 } from '@components/Tree/types';
 
-import { Projection } from '../helpers';
-import { INDENTATION_WIDTH } from '../Tree';
+import { INDENTATION_WIDTH, Projection } from '../helpers';
 import { removeFragmentsAndEnrichChildren, useDeepCompareEffect } from '../utils';
 
 import { DragHandle } from './DragHandle';

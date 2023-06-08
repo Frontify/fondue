@@ -3,7 +3,7 @@
 import { ReactElement } from 'react';
 import { arrayMove } from '@dnd-kit/sortable';
 
-import { INDENTATION_WIDTH, ROOT_ID } from '../Tree';
+import { INDENTATION_WIDTH, ROOT_ID } from '../helpers';
 import type { InternalTreeItemProps } from '../TreeItem';
 
 export type ProjectionArgs = {

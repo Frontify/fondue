@@ -4,3 +4,4 @@ export * from './getMovementAnnouncements';
 export * from './nodes';
 export * from './projection';
 export * from './reducer';
+export * from './constants';

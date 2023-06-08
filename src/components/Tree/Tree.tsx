@@ -65,9 +65,7 @@ import {
 } from './helpers';
 
 import { TreeContext, TreeContextProps } from './TreeContext';
-
-export const ROOT_ID = '__ROOT__';
-export const INDENTATION_WIDTH = 32;
+import { ROOT_ID } from './helpers';
 
 const measuring: MeasuringConfiguration = {
     droppable: {
