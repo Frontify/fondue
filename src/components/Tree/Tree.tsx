@@ -27,7 +27,7 @@ import {
     MeasuringConfiguration,
     MeasuringStrategy,
     PointerSensor,
-    closestCenter,
+    closestCorners,
     useSensor,
     useSensors,
 } from '@dnd-kit/core';
@@ -79,22 +79,6 @@ enableMapSet();
 
 const reducer = produce((draft: TreeState, action: TreeStateAction) => {
     switch (action.type) {
-        case 'SET_SELECT':
-            {
-                const newSelected = new Set(draft.selectedIds);
-
-                const isSelected = !draft.selectedIds.has(action.payload);
-
-                if (isSelected && draft.selectionMode === 'single') {
-                    newSelected.clear();
-                }
-
-                isSelected ? newSelected.add(action.payload) : newSelected.delete(action.payload);
-
-                draft.selectedIds = newSelected;
-            }
-            break;
-
         case 'EXPAND_NODE':
             {
                 const newExpanded = new Set(draft.expandedIds).add(action.payload);
@@ -209,7 +193,7 @@ export const Tree = memo(
     ({
         id,
         onDrop,
-        onSelect,
+        onSelect = () => void 0,
         onExpand,
         onShrink,
         children,
@@ -286,14 +270,7 @@ export const Tree = memo(
 
         const handleSelect = useCallback(
             (id: string) => {
-                if (onSelect) {
-                    return onSelect(id);
-                }
-
-                updateTreeState({
-                    type: 'SET_SELECT',
-                    payload: id,
-                });
+                onSelect(id);
             },
             [onSelect],
         );
@@ -714,7 +691,7 @@ export const Tree = memo(
                             announcements,
                             container: document.getElementById(id)?.parentElement ?? document.body,
                         }}
-                        collisionDetection={closestCenter}
+                        collisionDetection={closestCorners}
                     >
                         <SortableContext items={items} strategy={verticalListSortingStrategy}>
                             {nodes}

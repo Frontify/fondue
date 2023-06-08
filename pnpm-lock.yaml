@@ -205,8 +205,8 @@ devDependencies:
     specifier: 0.15.7
     version: 0.15.7(eslint@8.37.0)(prettier@2.7.1)(react@18.2.0)(typescript@5.0.4)
   '@frontify/fondue-icons':
-    specifier: 0.1.36
-    version: 0.1.36
+    specifier: 0.1.38
+    version: 0.1.38
   '@semantic-release/commit-analyzer':
     specifier: 9.0.2
     version: 9.0.2(semantic-release@21.0.1)
@@ -2463,8 +2463,8 @@ packages:
       - supports-color
     dev: true
 
-  /@frontify/fondue-icons@0.1.36:
-    resolution: {integrity: sha512-k2t8wNFl6dPHjSRccWCFD+BfIT1CHMk+Z//ECpEipcrGG9IZJlyWWRj41zYqxQCk+vrWu7sY0s61cNeb5FfYXQ==}
+  /@frontify/fondue-icons@0.1.38:
+    resolution: {integrity: sha512-KJz6jyIqnEufwCHrjfE1FpRAKgugbBmAeb9xJA7pCGnIok4yJRETDT2gHbLBCCZk5Y7BDVViuqi0t18VYwkDfg==}
     dependencies:
       axios: 0.24.0
       https: 1.0.0
