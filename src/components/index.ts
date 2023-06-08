@@ -50,6 +50,7 @@ export * from './ScrollWrapper';
 export * from './SegmentedControls';
 export * from './Slider';
 export * from './Switch';
+export * from './Stack';
 export * from './Table';
 export * from './Tabs';
 export * from './Tag';
