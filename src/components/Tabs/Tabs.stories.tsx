@@ -166,8 +166,7 @@ const TabsComponent = (args: TabsProps) => {
 
     return (
         <Tabs {...args} activeItemId={activeItemId} onChange={(value) => setActiveItemId(value)}>
-            {args.children && args.children}
-            {!args.children && defaultChildren}
+            {args.children ? args.children : defaultChildren}
         </Tabs>
     );
 };
