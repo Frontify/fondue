@@ -94,7 +94,7 @@
         "@types/react-dom": "^18.2.1",
         "@types/react-is": "^18.2.0",
         "@types/tinycolor2": "1.4.3",
-        "@udecode/plate": "19.6.0",
+        "@udecode/plate": "19.7.0",
         "@udecode/zustood": "^1.1.3",
         "autoprefixer": "10.4.13",
         "chalk": "5.1.2",
