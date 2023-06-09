@@ -2,7 +2,7 @@
 
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { Popper } from '@components/Popper';
-import React, { Children, isValidElement, useRef } from 'react';
+import React, { Children, isValidElement, useRef, useState } from 'react';
 import { Trigger } from '@utilities/dialogs/Trigger';
 import { Content } from '@utilities/dialogs/Content';
 import { OVERLAY_CONTAINER_CLASSES } from '@utilities/overlayStyle';
@@ -11,6 +11,7 @@ import { merge } from '@utilities/merge';
 import { useFocusTrap } from '@hooks/useFocusTrap';
 import { useClickOutside } from '@hooks/useClickOutside';
 import { Portal } from '@components/Portal';
+import { useDropdownAutoHeight } from '@hooks/useDropdownAutoHeight';
 
 export const Overlay = ({
     open,
@@ -28,9 +29,17 @@ export const Overlay = ({
     handleClose,
     modality = Modality.NonModal,
     darkUnderlay,
+    autoHeight,
 }: OverlayProps & BaseDialogProps) => {
     const id = useMemoizedId();
     const ref = useRef<HTMLDivElement | null>(null);
+    const [triggerElementRef, setTriggerElementRef] = useState<HTMLDivElement | null>(null);
+    const { maxHeight: maxAutoHeight } = useDropdownAutoHeight(
+        { current: triggerElementRef },
+        { isOpen: open, autoResize: true },
+    );
+
+    const maxContentHeight = autoHeight ? maxAutoHeight : maxHeight;
     const handleClosingInteraction = () => {
         if (open && modality !== Modality.BlockingModal) {
             if (handleClose) {
@@ -59,7 +68,7 @@ export const Overlay = ({
                         if (name === Trigger.name) {
                             return (
                                 <Popper.Reference>
-                                    <div id={id} data-test-id={`${dataTestId}-trigger`}>
+                                    <div id={id} ref={setTriggerElementRef} data-test-id={`${dataTestId}-trigger`}>
                                         {child}
                                     </div>
                                 </Popper.Reference>
@@ -80,7 +89,7 @@ export const Overlay = ({
                                         id={id}
                                         aria-hidden={!open}
                                         aria-labelledby={id}
-                                        style={{ minWidth, minHeight, maxWidth, maxHeight }}
+                                        style={{ minWidth, minHeight, maxWidth, maxHeight: maxContentHeight }}
                                     >
                                         {child}
                                     </div>

@@ -47,6 +47,9 @@ export type BaseDialogProps = {
     handleClose?: () => void;
     /** @Info This property enable a full screen gray underlay only for modal and blocking-modal options. */
     darkUnderlay?: boolean;
+    /** @Info If enabled, any value assigned to the maxHeight property won't have any effect.
+     * autoHeight will set the maxHeight of the dialog Component automatically calculating the available space in the viewport. */
+    autoHeight?: boolean;
 };
 
 export type OverlayProps = {

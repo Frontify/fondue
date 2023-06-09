@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { InlineDialog, InlineDialogProps } from './InlineDialog';
 import { DialogHeader } from '@components/DialogHeader';
@@ -9,7 +9,6 @@ import { Dropdown } from '@components/Dropdown';
 import { DialogFooter } from '@components/DialogFooter';
 import { DialogHeaderSize, Modality } from '../../types/dialog';
 import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
-import { useDropdownAutoHeight } from '@hooks/useDropdownAutoHeight';
 import { useToggleOverlay } from '@hooks/useToggleOverlay';
 import { POPPER_STORY_ARGS } from '@components/Popper/types';
 import { action } from '@storybook/addon-actions';
@@ -24,6 +23,8 @@ export default {
         offset: [0, 8],
         flip: true,
         maxWidth: 400,
+        autoHeight: false,
+        maxHeight: 'auto',
     },
     argTypes: {
         ...POPPER_STORY_ARGS,
@@ -40,6 +41,9 @@ export default {
         darkUnderlay: {
             type: 'boolean',
         },
+        autoHeight: {
+            type: 'boolean',
+        },
     },
 } as Meta<InlineDialogProps>;
 
@@ -54,8 +58,6 @@ const TextExample = () => {
 };
 const Template: StoryFn<InlineDialogProps> = (args) => {
     const [isOpen, setIsOpen] = useToggleOverlay(false, { isBlockingModal: args.modality === Modality.BlockingModal });
-    const [triggerElementRef, setTriggerElementRef] = useState<HTMLButtonElement | null>(null);
-    const { maxHeight } = useDropdownAutoHeight({ current: triggerElementRef }, { isOpen, autoResize: true });
     return (
         <div>
             <Flex justify="end">
@@ -64,7 +66,7 @@ const Template: StoryFn<InlineDialogProps> = (args) => {
                 </Button>
                 <InlineDialog
                     open={isOpen}
-                    maxHeight={maxHeight}
+                    maxHeight={args.maxHeight}
                     maxWidth={args.maxWidth}
                     handleClose={() => setIsOpen(false)}
                     modality={args.modality}
@@ -73,11 +75,10 @@ const Template: StoryFn<InlineDialogProps> = (args) => {
                     offset={args.offset}
                     enablePortal={args.enablePortal}
                     darkUnderlay={args.darkUnderlay}
+                    autoHeight={args.autoHeight}
                 >
                     <InlineDialog.Trigger>
-                        <Button ref={setTriggerElementRef} onClick={() => setIsOpen(!isOpen)}>
-                            InlineDialog Trigger
-                        </Button>
+                        <Button onClick={() => setIsOpen(!isOpen)}>InlineDialog Trigger</Button>
                     </InlineDialog.Trigger>
                     <InlineDialog.Content>
                         <DialogHeader
