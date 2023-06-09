@@ -2,13 +2,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { ForwardedRef, forwardRef } from 'react';
-// import { getPreventDefaultHandler } from '@udecode/plate-common';
 import { IconCaretDown12 } from '@foundation/Icon/Generated';
 import { merge } from '@utilities/merge';
 import { DropdownTriggerProps } from './types';
 
 export const DropdownTriggerComponent = (
-    { label, open }: DropdownTriggerProps,
+    { label, open, onClick }: DropdownTriggerProps,
     ref: ForwardedRef<HTMLButtonElement>,
 ) => (
     <button
@@ -16,7 +15,11 @@ export const DropdownTriggerComponent = (
         data-test-id="textstyle-dropdown-trigger"
         type="button"
         className="tw-cursor-pointer tw-h-8 tw-w-full"
-        // onMouseDown={getPreventDefaultHandler(onClick)}
+        onMouseDown={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            onClick();
+        }}
     >
         <div
             className={merge([
