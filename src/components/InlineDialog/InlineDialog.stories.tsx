@@ -10,7 +10,7 @@ import { DialogFooter } from '@components/DialogFooter';
 import { DialogHeaderSize, Modality } from '../../types/dialog';
 import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
 import { useToggleOverlay } from '@hooks/useToggleOverlay';
-import { POPPER_STORY_ARGS } from '@components/Popper/types';
+import { POPPER_STORY_ARGS, PopperPlacement } from '@components/Popper/types';
 import { action } from '@storybook/addon-actions';
 import { Divider } from '@components/Divider';
 import { Flex } from '@components/Flex';
@@ -20,11 +20,16 @@ export default {
     component: InlineDialog,
     tags: ['autodocs'],
     args: {
+        placement: PopperPlacement.BottomStart,
+        modality: Modality.Modal,
         offset: [0, 8],
         flip: true,
+        minWidth: 0,
         maxWidth: 400,
         autoHeight: false,
         maxHeight: 'auto',
+        minHeight: 0,
+        darkUnderlay: false,
     },
     argTypes: {
         ...POPPER_STORY_ARGS,
@@ -66,7 +71,9 @@ const Template: StoryFn<InlineDialogProps> = (args) => {
                 </Button>
                 <InlineDialog
                     open={isOpen}
+                    minHeight={args.minHeight}
                     maxHeight={args.maxHeight}
+                    minWidth={args.minWidth}
                     maxWidth={args.maxWidth}
                     handleClose={() => setIsOpen(false)}
                     modality={args.modality}

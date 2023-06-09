@@ -18,6 +18,8 @@ export const InlineDialog = ({
     enablePortal = false,
     maxHeight = 'auto',
     maxWidth = 400,
+    minHeight = 0,
+    minWidth = 0,
     modality = Modality.Modal,
     handleClose,
     'data-test-id': dataTestId = 'fondue-inlineDialog',
@@ -41,6 +43,8 @@ export const InlineDialog = ({
             offset={offset}
             flip={flip}
             enablePortal={enablePortal}
+            minWidth={minWidth}
+            minHeight={minHeight}
             maxWidth={maxWidth}
             maxHeight={maxHeight}
             modality={modality}
