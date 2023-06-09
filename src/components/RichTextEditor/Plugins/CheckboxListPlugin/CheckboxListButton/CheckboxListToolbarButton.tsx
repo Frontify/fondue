@@ -8,10 +8,10 @@ import {
     ToolbarButtonProps,
     Value,
     focusEditor,
-    getListItemEntry,
     getNode,
     getParentNode,
     setElements,
+    someNode,
     toggleNodeType,
     unwrapList,
     useEventPlateId,
@@ -24,13 +24,12 @@ import { ELEMENT_CHECK_ITEM } from '../id';
 export const CheckboxListToolbarButton = ({
     id,
     type = ELEMENT_CHECK_ITEM,
+    active,
     ...props
 }: ToolbarButtonProps & { type?: string }) => {
     const editor = usePlateEditorState(useEventPlateId(id));
-    const node = editor.selection?.focus.path && getNode(editor, editor?.selection?.focus?.path);
-
-    const res = !!editor?.selection && getListItemEntry(editor);
-    const isActive = !!res && res.list[0].type === type;
+    const node = editor?.selection?.focus.path && getNode(editor, editor?.selection?.focus?.path);
+    const isActive = active ?? (!!editor?.selection && someNode(editor, { match: { type } }));
 
     return (
         <BlockToolbarButton
@@ -53,7 +52,7 @@ export const toggleCheckboxList = <V extends Value>(
     { type, isActive, node }: { type: string; isActive: boolean; node?: NodeOf<PlateEditor<Value>> | null },
 ) =>
     withoutNormalizing(editor, () => {
-        if (!editor || !editor.selection) {
+        if (!editor || !editor?.selection) {
             return;
         }
 
