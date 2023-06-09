@@ -52,7 +52,7 @@ export const toggleCheckboxList = <V extends Value>(
     { type, isActive, node }: { type: string; isActive: boolean; node?: NodeOf<PlateEditor<Value>> | null },
 ) =>
     withoutNormalizing(editor, () => {
-        if (!editor || !editor?.selection) {
+        if (!editor?.selection) {
             return;
         }
 
