@@ -24,6 +24,8 @@ import { ScrollWrapper } from '@components/ScrollWrapper';
 import { DimensionUnity } from '@utilities/dimensions';
 
 export enum TabsPaddingX {
+    None = 'None',
+    XSmall = 'XSmall',
     Small = 'Small',
     Medium = 'Medium',
     Large = 'Large',
@@ -46,10 +48,12 @@ export type TabsProps = {
     minHeight?: `${number}${DimensionUnity}`;
 };
 
-const TABS_PADDING_MAP: Record<TabsPaddingX, string> = {
-    Small: 'tw-px-s',
-    Medium: 'tw-px-m',
-    Large: 'tw-px-l',
+const paddingMap: Record<TabsPaddingX, string> = {
+    [TabsPaddingX.None]: 'tw-pl-0',
+    [TabsPaddingX.XSmall]: 'tw-pl-xs',
+    [TabsPaddingX.Small]: 'tw-pl-s',
+    [TabsPaddingX.Medium]: 'tw-pl-m',
+    [TabsPaddingX.Large]: 'tw-pl-l',
 };
 
 export const Tabs = ({
@@ -211,8 +215,8 @@ export const Tabs = ({
                     role="tablist"
                     className={merge([
                         'tw-overflow-x-hidden tw-flex-shrink-0 tw-h-full tw-w-full tw-flex tw-justify-start',
-                        TABS_PADDING_MAP[paddingX ?? 'Small'],
-                        size === 'Small' ? 'tw-gap-xxs' : 'tw-gap-xs ',
+                        paddingMap[paddingX ?? TabsPaddingX.Small],
+                        size === TabSize.Small ? 'tw-gap-xxs' : 'tw-gap-xs ',
                     ])}
                 >
                     {tabs.map((tab) => {
