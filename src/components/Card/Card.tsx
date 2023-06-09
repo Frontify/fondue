@@ -43,13 +43,13 @@ export const Card = ({
             data-test-id={dataTestId}
             ref={ref}
             className={merge([
-                'tw-w-full tw-outline-none tw-bg-white tw-border tw-border-line tw-rounded tw-overflow-hidden',
-                hoverable ? 'hover:tw-border-line-xx-strong' : '',
-                keyDownTrue && onClick ? 'tw-border-line-xx-strong tw-border-2 tw-ring-blue tw-ring-4' : '',
-                onClick
-                    ? 'tw-cursor-pointer active:tw-border-line-xx-strong active:tw-border-2'
-                    : 'tw-cursor-default active:tw-border-line-xx-strong active:tw-border-2',
-                isFocusVisible && FOCUS_STYLE && 'tw-border-line-xx-strong tw-ring-blue tw-ring-4',
+                'tw-w-full tw-bg-white tw-outline tw-outline-1 tw-outline-line tw-outline-offset--1 tw-rounded tw-overflow-hidden',
+                hoverable || onClick ? 'tw-cursor-pointer hover:tw-outline-line-xx-strong' : 'tw-cursor-default',
+                !hoverable &&
+                    onClick &&
+                    'active:tw-outline-line-xx-strong active:tw-outline-2 active:tw-outline-offset--2',
+                isFocusVisible && FOCUS_STYLE,
+                keyDownTrue && onClick ? 'tw-outline-line-xx-strong tw-outline-2 tw-outline-offset--2' : '',
             ])}
         >
             {children}
