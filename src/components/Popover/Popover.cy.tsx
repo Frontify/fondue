@@ -5,7 +5,7 @@ import { Button } from '@components/Button';
 import { PopperPlacement } from '@components/Popper/types';
 import { Popover, PopoverComponentProps } from '@components/Popover/Popover';
 
-const POPOVER_SELECTOR = '[data-test-id=fondue-popover]';
+const POPOVER_SELECTOR = '[data-test-id=fondue-popover-content]';
 const POPOVER_TRIGGER = '[data-test-id=popover-trigger]';
 const POPOVER_INTERACTIVE_ELEMENT = '[data-test-id=popover-content-button]';
 
