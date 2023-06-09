@@ -18,11 +18,3 @@ export const getPaddingClasses = (size: MultiSelectSize) => {
 
     return merge(classes);
 };
-
-export const getInputWidth = (hasSelectedItems: boolean, filterLabel?: string, placeholder?: string) => {
-    if (hasSelectedItems) {
-        return `${(filterLabel?.length || 1) * 0.5}rem`;
-    } else {
-        return `${(placeholder?.length || 0) * 0.5}rem`;
-    }
-};
