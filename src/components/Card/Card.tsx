@@ -26,7 +26,7 @@ export const Card = ({
     const { buttonProps } = useButton(
         {
             elementType: 'div',
-            onPress: (event: PressEvent) => onClick && onClick(event),
+            onPress: (event: PressEvent) => onClick?.(event),
             onPressChange: (isPressed) => {
                 setKeyDownTrue(isPressed);
             },
