@@ -20,51 +20,52 @@ export const TABBABLE_ELEMENTS = [
 ].join(':not([hidden]):not([tabindex="-1"]),');
 
 export const useFocusTrap = (reference: HTMLElement | null, isOpen: boolean, ignoreFocusTrap = false) => {
-    const activeElement = (document.activeElement ?? reference?.parentElement ?? document.body) as HTMLElement;
-
     const handleFocus = useCallback(
         (event: KeyboardEvent) => {
             if (ignoreFocusTrap) {
                 return;
             }
 
-            if (isOpen) {
-                const focusableElements = reference?.querySelectorAll(TABBABLE_ELEMENTS) ?? [];
-                if (focusableElements.length === 0) {
-                    event.preventDefault();
-                    return;
-                }
-                const firstFocusableElement = focusableElements[0] as HTMLElement,
-                    lastFocusableElement = focusableElements[focusableElements.length - 1] as HTMLElement,
-                    isTabPressed = event.key === 'Tab';
+            const focusableElements = reference?.querySelectorAll(TABBABLE_ELEMENTS) ?? [];
+            if (focusableElements.length === 0) {
+                event.preventDefault();
+                return;
+            }
+            const firstFocusableElement = focusableElements[0] as HTMLElement,
+                lastFocusableElement = focusableElements[focusableElements.length - 1] as HTMLElement,
+                isTabPressed = event.key === 'Tab';
 
-                if (!isTabPressed) {
-                    return;
-                }
+            if (!isTabPressed) {
+                return;
+            }
 
-                if (!event.shiftKey && event.target === lastFocusableElement) {
-                    firstFocusableElement.focus();
-                    event.preventDefault();
-                }
+            if (!event.shiftKey && event.target === lastFocusableElement) {
+                firstFocusableElement.focus();
+                event.preventDefault();
+            }
 
-                if (event.shiftKey && event.target === firstFocusableElement) {
-                    lastFocusableElement.focus();
-                    event.preventDefault();
-                }
-            } else {
-                activeElement?.focus();
+            if (event.shiftKey && event.target === firstFocusableElement) {
+                lastFocusableElement.focus();
+                event.preventDefault();
             }
         },
-        [activeElement, ignoreFocusTrap, isOpen, reference],
+        [ignoreFocusTrap, reference],
     );
 
     useEffect(() => {
-        window.addEventListener('keydown', handleFocus);
+        const parentElement = reference?.parentElement;
+
+        if (isOpen) {
+            window.addEventListener('keydown', handleFocus);
+        }
 
         return () => {
+            if (parentElement) {
+                parentElement.focus();
+            }
             window.removeEventListener('keydown', handleFocus);
         };
-    }, [handleFocus]);
+    }, [handleFocus, isOpen, reference]);
 
     return reference;
 };

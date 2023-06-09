@@ -14,6 +14,7 @@ import { useToggleOverlay } from '@hooks/useToggleOverlay';
 import { POPPER_STORY_ARGS } from '@components/Popper/types';
 import { action } from '@storybook/addon-actions';
 import { Divider } from '@components/Divider';
+import { Flex } from '@components/Flex';
 
 export default {
     title: 'Experimental/InlineDialog',
@@ -21,7 +22,7 @@ export default {
     tags: ['autodocs'],
     args: {
         offset: [0, 8],
-        flip: false,
+        flip: true,
         maxWidth: 400,
     },
     argTypes: {
@@ -57,64 +58,76 @@ const Template: StoryFn<InlineDialogProps> = (args) => {
     const { maxHeight } = useDropdownAutoHeight({ current: triggerElementRef }, { isOpen, autoResize: true });
     return (
         <div>
-            <InlineDialog
-                open={isOpen}
-                maxHeight={maxHeight}
-                maxWidth={args.maxWidth}
-                handleClose={() => setIsOpen(false)}
-                modality={args.modality}
-                placement={args.placement}
-                flip={args.flip}
-                offset={args.offset}
-                enablePortal={args.enablePortal}
-                darkUnderlay={args.darkUnderlay}
-            >
-                <InlineDialog.Trigger>
-                    <Button ref={setTriggerElementRef} onClick={() => setIsOpen(!isOpen)}>
-                        InlineDialog Trigger
-                    </Button>
-                </InlineDialog.Trigger>
-                <InlineDialog.Content>
-                    <DialogHeader
-                        title="Collaborator Settings"
-                        size={DialogHeaderSize.Large}
-                        onClose={() => setIsOpen(false)}
-                    />
-                    <DialogBody>
-                        <div className="tw-p-2">
-                            <Dropdown
-                                onChange={(id) => console.log(id)}
-                                activeItemId={'1'}
-                                menuBlocks={[
-                                    {
-                                        id: 'block1',
-                                        menuItems: [
-                                            { id: '1', title: 'Item 1' },
-                                            { id: '2', title: 'Item 2' },
-                                            { id: '3', title: 'Item 3' },
-                                            { id: '4', title: 'Item 4' },
-                                            { id: '5', title: 'Item 5' },
-                                        ],
-                                    },
-                                ]}
-                            />
-                            <p className="tw-flex tw-items-center tw-my-2">Label 2</p>
+            <Flex justify="end">
+                <Button onClick={action('onClick')} emphasis={ButtonEmphasis.Default} style={ButtonStyle.Default}>
+                    Button
+                </Button>
+                <InlineDialog
+                    open={isOpen}
+                    maxHeight={maxHeight}
+                    maxWidth={args.maxWidth}
+                    handleClose={() => setIsOpen(false)}
+                    modality={args.modality}
+                    placement={args.placement}
+                    flip={args.flip}
+                    offset={args.offset}
+                    enablePortal={args.enablePortal}
+                    darkUnderlay={args.darkUnderlay}
+                >
+                    <InlineDialog.Trigger>
+                        <Button ref={setTriggerElementRef} onClick={() => setIsOpen(!isOpen)}>
+                            InlineDialog Trigger
+                        </Button>
+                    </InlineDialog.Trigger>
+                    <InlineDialog.Content>
+                        <DialogHeader
+                            title="Collaborator Settings"
+                            size={DialogHeaderSize.Large}
+                            onClose={() => setIsOpen(false)}
+                        />
+                        <DialogBody>
+                            <div className="tw-p-2">
+                                <Dropdown
+                                    onChange={(id) => console.log(id)}
+                                    activeItemId={'1'}
+                                    menuBlocks={[
+                                        {
+                                            id: 'block1',
+                                            menuItems: [
+                                                { id: '1', title: 'Item 1' },
+                                                { id: '2', title: 'Item 2' },
+                                                { id: '3', title: 'Item 3' },
+                                                { id: '4', title: 'Item 4' },
+                                                { id: '5', title: 'Item 5' },
+                                            ],
+                                        },
+                                    ]}
+                                />
+                                <p className="tw-flex tw-items-center tw-my-2">Label 2</p>
 
-                            <TextExample />
-                            <TextExample />
-                        </div>
-                    </DialogBody>
-                    <DialogFooter
-                        buttons={[
-                            { children: 'Cancel', emphasis: ButtonEmphasis.Default, onClick: () => setIsOpen(false) },
-                            {
-                                children: 'Confirm',
-                                onClick: () => setIsOpen(false),
-                            },
-                        ]}
-                    ></DialogFooter>
-                </InlineDialog.Content>
-            </InlineDialog>
+                                <TextExample />
+                                <TextExample />
+                            </div>
+                        </DialogBody>
+                        <DialogFooter
+                            buttons={[
+                                {
+                                    children: 'Cancel',
+                                    emphasis: ButtonEmphasis.Default,
+                                    onClick: () => setIsOpen(false),
+                                },
+                                {
+                                    children: 'Confirm',
+                                    onClick: () => setIsOpen(false),
+                                },
+                            ]}
+                        ></DialogFooter>
+                    </InlineDialog.Content>
+                </InlineDialog>
+                <Button onClick={action('onClick')} emphasis={ButtonEmphasis.Strong} style={ButtonStyle.Loud}>
+                    Button
+                </Button>
+            </Flex>
             <Divider />
             <TextExample />
             <TextExample />

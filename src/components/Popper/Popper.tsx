@@ -42,7 +42,7 @@ export const Popper = ({
     open,
     placement = PopperPlacement.BottomStart,
     offset = [0, 8],
-    flip = false,
+    flip = true,
     enablePortal = false,
 }: PopperProps) => {
     const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
@@ -73,11 +73,7 @@ export const Popper = ({
                     const { name } = child.type;
 
                     if (name === Reference.name) {
-                        return (
-                            <div className="tw-w-fit" ref={setReferenceElement}>
-                                {child}
-                            </div>
-                        );
+                        return <div ref={setReferenceElement}>{child}</div>;
                     }
 
                     if (name === Content.name) {

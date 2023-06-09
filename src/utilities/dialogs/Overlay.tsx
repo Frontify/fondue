@@ -23,8 +23,10 @@ export const Overlay = ({
     'data-test-id': dataTestId = 'fondue-overlay',
     maxWidth = 'auto',
     maxHeight = 'auto',
+    minWidth = 'auto',
+    minHeight = 'auto',
     handleClose,
-    modality,
+    modality = Modality.NonModal,
     darkUnderlay,
 }: OverlayProps & BaseDialogProps) => {
     const id = useMemoizedId();
@@ -42,7 +44,14 @@ export const Overlay = ({
 
     return (
         <>
-            <Popper open={open} placement={placement} offset={offset} flip={flip} enablePortal={enablePortal}>
+            <Popper
+                data-test-id={dataTestId}
+                open={open}
+                placement={placement}
+                offset={offset}
+                flip={flip}
+                enablePortal={enablePortal}
+            >
                 {Children.map(children, (child) => {
                     if (isValidElement(child) && typeof child.type === 'function') {
                         const { name } = child.type;
@@ -50,7 +59,9 @@ export const Overlay = ({
                         if (name === Trigger.name) {
                             return (
                                 <Popper.Reference>
-                                    <div id={id}>{child}</div>
+                                    <div id={id} data-test-id={`${dataTestId}-trigger`}>
+                                        {child}
+                                    </div>
                                 </Popper.Reference>
                             );
                         }
@@ -60,7 +71,7 @@ export const Overlay = ({
                                 <Popper.Content>
                                     <div
                                         ref={ref}
-                                        data-test-id={dataTestId}
+                                        data-test-id={`${dataTestId}-content`}
                                         className={merge([
                                             'tw-flex tw-flex-col tw-pointer-events-auto',
                                             OVERLAY_CONTAINER_CLASSES,
@@ -69,7 +80,7 @@ export const Overlay = ({
                                         id={id}
                                         aria-hidden={!open}
                                         aria-labelledby={id}
-                                        style={{ maxWidth, maxHeight }}
+                                        style={{ minWidth, minHeight, maxWidth, maxHeight }}
                                     >
                                         {child}
                                     </div>
@@ -83,6 +94,7 @@ export const Overlay = ({
             {modality !== Modality.NonModal && open && (
                 <Portal>
                     <div
+                        data-test-id={`${dataTestId}-underlay`}
                         className={merge([
                             'tw-absolute tw-w-screen tw-h-screen tw-top-0 tw-left-0 tw-overflow-hidden tw-z-[9990]',
                             darkUnderlay && 'tw-transition-opacity tw-bg-black tw-opacity-50',

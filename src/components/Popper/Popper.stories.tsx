@@ -14,7 +14,7 @@ export default {
     args: {
         placement: PopperPlacement.BottomStart,
         offset: [0, 8],
-        flip: false,
+        flip: true,
     },
     argTypes: {
         ...POPPER_STORY_ARGS,

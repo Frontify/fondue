@@ -42,6 +42,8 @@ export type BaseDialogProps = {
     modality?: Modality;
     maxWidth?: string | number;
     maxHeight?: string | number;
+    minWidth?: string | number;
+    minHeight?: string | number;
     handleClose?: () => void;
     /** @Info This property enable a full screen gray underlay only for modal and blocking-modal options. */
     darkUnderlay?: boolean;
