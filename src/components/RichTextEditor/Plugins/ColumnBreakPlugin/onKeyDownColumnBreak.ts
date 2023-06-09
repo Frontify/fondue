@@ -47,7 +47,7 @@ export const onKeyDownColumnBreak =
             return;
         }
 
-        if (isHotkey('shift+ctrl+enter')) {
+        if (isHotkey('shift+ctrl+enter', e)) {
             const columnBreakPlugin = editor.plugins.find((plugin) => plugin.key === KEY_ELEMENT_BREAK_AFTER_COLUMN);
             const columns = (columnBreakPlugin?.options as { columns: number })?.columns ?? 1;
             toggleColumnBreak(editor, columns, e);
