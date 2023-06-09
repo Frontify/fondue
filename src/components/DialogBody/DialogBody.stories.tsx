@@ -17,14 +17,11 @@ export default {
         maxHeight: {
             type: 'number',
         },
-        scrollShadows: {
-            type: 'boolean',
-        },
     },
 } as Meta<DialogBodyProps>;
 
 const Template: StoryFn<DialogBodyProps> = (args) => (
-    <DialogBody maxHeight={args.maxHeight} scrollShadows={args.scrollShadows}>
+    <DialogBody maxHeight={args.maxHeight}>
         <p>Hello</p>
         <p>
             Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam at, beatae blanditiis cupiditate ducimus,
@@ -48,9 +45,4 @@ const Template: StoryFn<DialogBodyProps> = (args) => (
     </DialogBody>
 );
 
-export const WithShadowScroll = Template.bind({});
-
-export const WithoutShadowScroll = Template.bind({});
-WithoutShadowScroll.args = {
-    scrollShadows: false,
-};
+export const Default = Template.bind({});
