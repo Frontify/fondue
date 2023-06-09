@@ -53,13 +53,15 @@ const data: TabItemProps[] = [
     },
 ];
 
-const TabComponent = () => {
+const TABS_DATA_TEST_ID = '[data-test-id=tabs]';
+
+const TabComponent = ({ paddingX }: { paddingX?: TabsPaddingX }) => {
     const [activeItemId, setActiveItemId] = useState(data[0].id);
     return (
         <Tabs
             activeItemId={activeItemId}
             onChange={(value) => setActiveItemId(value)}
-            paddingX={TabsPaddingX.Small}
+            paddingX={paddingX}
             size={TabSize.Small}
         >
             {data.map((item) => (
@@ -81,7 +83,7 @@ const TabComponent = () => {
 describe('Tabs Component', () => {
     beforeEach('Mount Component', () => {
         cy.mount(<TabComponent />);
-        cy.get('[data-test-id=tabs]').as('Tabs');
+        cy.get(TABS_DATA_TEST_ID).as('Tabs');
     });
 
     it('should render correctly', () => {
@@ -194,5 +196,40 @@ describe('Tabs Component', () => {
         cy.get('[data-test-id=tab-item]').eq(1).should('not.have.class', 'tw-font-medium');
         cy.get('[data-test-id=tab-item]').eq(2).trigger('keydown', { key: 'ArrowLeft' });
         cy.get('[data-test-id=tab-item]').eq(1).should('not.have.class', 'tw-font-medium');
+    });
+
+    it('tab item should have hovered state', () => {
+        cy.get('[data-test-id=tab-item]').realHover();
+        cy.get('[data-test-id=tab-item]').should('have.class', 'hover:tw-text-text');
+    });
+
+    it('disabled tab item should not have hovered state', () => {
+        cy.get('#tab-2-btn[data-test-id=tab-item]').realHover();
+        cy.get('#tab-2-btn[data-test-id=tab-item]').should('not.have.class', 'hover:tw-text-text');
+    });
+
+    it('tabs should render with paddingX of "None"', () => {
+        cy.mount(<TabComponent paddingX={TabsPaddingX.None} />);
+        cy.get(`${TABS_DATA_TEST_ID} > div`).should('have.class', 'tw-pl-0');
+    });
+
+    it('tabs should render with paddingX of "XSmall"', () => {
+        cy.mount(<TabComponent paddingX={TabsPaddingX.XSmall} />);
+        cy.get(`${TABS_DATA_TEST_ID} > div`).should('have.class', 'tw-pl-xs');
+    });
+
+    it('tabs should render with paddingX of "Small"', () => {
+        cy.mount(<TabComponent paddingX={TabsPaddingX.Small} />);
+        cy.get(`${TABS_DATA_TEST_ID} > div`).should('have.class', 'tw-pl-s');
+    });
+
+    it('tabs should render with paddingX of "Medium"', () => {
+        cy.mount(<TabComponent paddingX={TabsPaddingX.Medium} />);
+        cy.get(`${TABS_DATA_TEST_ID} > div`).should('have.class', 'tw-pl-m');
+    });
+
+    it('tabs should render with paddingX of "Large"', () => {
+        cy.mount(<TabComponent paddingX={TabsPaddingX.Large} />);
+        cy.get(`${TABS_DATA_TEST_ID} > div`).should('have.class', 'tw-pl-l');
     });
 });

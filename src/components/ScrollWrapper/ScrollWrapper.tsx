@@ -12,6 +12,7 @@ const GRADIENTS = {
 };
 
 export const ScrollWrapper = ({
+    tabIndex = 0,
     direction = ScrollWrapperDirection.Vertical,
     children,
     'data-test-id': dataTestId = 'scroll-wrapper',
@@ -41,7 +42,7 @@ export const ScrollWrapper = ({
             <div
                 ref={scrollingContainer}
                 // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-                tabIndex={0}
+                tabIndex={tabIndex}
                 role="region"
                 aria-label="Scrollable dialogue content"
                 className={merge([
