@@ -44,10 +44,10 @@ export const Card = ({
             ref={ref}
             className={merge([
                 'tw-w-full tw-bg-white tw-outline tw-outline-1 tw-outline-line tw-outline-offset--1 tw-rounded tw-overflow-hidden',
-                hoverable || onClick ? 'tw-cursor-pointer hover:tw-outline-line-xx-strong' : 'tw-cursor-default',
-                !hoverable &&
-                    onClick &&
-                    'active:tw-outline-line-xx-strong active:tw-outline-2 active:tw-outline-offset--2',
+                (hoverable || onClick) && 'hover:tw-outline-line-xx-strong',
+                onClick
+                    ? 'active:tw-outline-line-xx-strong active:tw-outline-2 active:tw-outline-offset--2 tw-cursor-pointer'
+                    : 'tw-cursor-default',
                 isFocusVisible && FOCUS_STYLE,
                 keyDownTrue && onClick ? 'tw-outline-line-xx-strong tw-outline-2 tw-outline-offset--2' : '',
             ])}

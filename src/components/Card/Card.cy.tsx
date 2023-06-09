@@ -20,7 +20,7 @@ describe('Card Component', () => {
         cy.get(CARD_ID).realHover();
 
         cy.get(CARD_ID)
-            .should('have.class', 'hover:tw-border-line-xx-strong')
+            .should('have.class', 'hover:tw-outline-line-xx-strong')
             .should('have.class', 'tw-cursor-default');
     });
 
@@ -63,7 +63,6 @@ describe('Card Component', () => {
         cy.window().focus();
         cy.get(CARD_ID).realPress('Tab');
 
-        cy.get(CARD_ID).should('have.class', 'tw-border-line-xx-strong');
         cy.get(CARD_ID).should('have.class', 'tw-ring-blue');
         cy.get(CARD_ID).should('have.class', 'tw-ring-4');
     });
@@ -93,8 +92,10 @@ describe('Card Component', () => {
         cy.get(CARD_ID).realMouseDown();
 
         cy.get(CARD_ID)
-            .should('have.class', 'active:tw-border-line-xx-strong')
-            .should('have.class', 'active:tw-border-2');
+            .should('have.class', 'active:tw-outline-line-xx-strong')
+            .should('have.class', 'tw-cursor-pointer')
+            .should('have.class', 'active:tw-outline-2')
+            .should('have.class', 'active:tw-outline-offset--2');
     });
 
     it('should call onClick if user tabs into Card and presses enter', () => {
@@ -103,8 +104,13 @@ describe('Card Component', () => {
 
         cy.window().focus();
         cy.get('body').realPress('Tab');
-        cy.get(CARD_ID).should('have.class', 'tw-border-line-xx-strong');
-        cy.get(CARD_ID).should('have.class', 'tw-ring-blue');
+
+        cy.get(CARD_ID)
+            .should('have.class', 'active:tw-outline-line-xx-strong')
+            .should('have.class', 'tw-cursor-pointer')
+            .should('have.class', 'active:tw-outline-2')
+            .should('have.class', 'active:tw-outline-offset--2')
+            .should('have.class', 'tw-ring-blue');
         cy.get(CARD_ID).should('have.class', 'tw-ring-4');
         cy.get(CARD_ID).realPress('Enter');
         cy.wrap(onClickStub).should('have.been.called');
