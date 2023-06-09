@@ -191,21 +191,21 @@ describe('TextStylePlugin', () => {
         cy.get('ol li').should('not.exist');
     });
 
-    // it('renders a checkbox with custom textStyle', () => {
-    //     cy.mount(<RichTextWithCustomTextStylesDefaultValues />);
-    //     const heading2Styles = 'font-size: 32px; font-weight: 700; font-style: normal;';
+    it('renders a checkbox with custom textStyle', () => {
+        cy.mount(<RichTextWithCustomTextStylesDefaultValues />);
+        const heading2Styles = 'font-size: 32px; font-weight: 700; font-style: normal;';
 
-    //     insertTextAndOpenToolbar();
-    //     cy.get(TOOLBAR_GROUP_2).children().eq(5).click();
-    //     cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
-    //     cy.get(TEXTSTYLE_OPTION).eq(1).click();
-    //     cy.get('[contenteditable=true] > div > span').should('have.attr', 'style', heading2Styles);
+        insertTextAndOpenToolbar();
+        cy.get(TOOLBAR_GROUP_2).children().eq(5).click();
+        cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
+        cy.get(TEXTSTYLE_OPTION).eq(1).click();
+        cy.get('[contenteditable=true] > div > span').should('have.attr', 'style', heading2Styles);
 
-    //     // remove checklist again and textStyle stays
-    //     cy.get('[contenteditable=true]').click({ force: true }).type('{selectall}');
-    //     cy.get(TOOLBAR_GROUP_2).children().eq(5).click();
-    //     cy.get('[contenteditable=true] > h2').should('have.attr', 'style', heading2Styles);
-    // });
+        // remove checklist again and textStyle stays
+        cy.get('[contenteditable=true]').click({ force: true }).type('{selectall}');
+        cy.get(TOOLBAR_GROUP_2).children().eq(5).click();
+        cy.get('[contenteditable=true] > h2').should('have.attr', 'style', heading2Styles);
+    });
 
     it('switches a custom checkbox to list and keeps textStyle', () => {
         cy.mount(<RichTextWithCustomTextStylesDefaultValues />);
@@ -223,21 +223,3 @@ describe('TextStylePlugin', () => {
         cy.get('[contenteditable=true] > ul ').should('include.html', heading1Styles);
     });
 });
-
-// describe.skip('TextStylePlugin', () => {
-//     it('renders a checkbox with custom textStyle', () => {
-//         cy.mount(<RichTextWithCustomTextStylesDefaultValues />);
-//         const heading2Styles = 'font-size: 32px; font-weight: 700; font-style: normal;';
-
-//         insertTextAndOpenToolbar();
-//         cy.get(TOOLBAR_GROUP_2).children().eq(5).click();
-//         cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
-//         cy.get(TEXTSTYLE_OPTION).eq(1).click();
-//         cy.get('[contenteditable=true] > div > span').should('have.attr', 'style', heading2Styles);
-
-//         // remove checklist again and textStyle stays
-//         cy.get('[contenteditable=true]').click({ force: true }).type('{selectall}');
-//         cy.get(TOOLBAR_GROUP_2).children().eq(5).click();
-//         cy.get('[contenteditable=true] > h2').should('have.attr', 'style', heading2Styles);
-//     });
-// });
