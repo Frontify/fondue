@@ -2,12 +2,13 @@
 
 import React, { ReactElement, useState } from 'react';
 import { BreadcrumbsProps } from '.';
-import { Breadcrumbs } from './Breadcrumbs';
+import { BreadcrumbGap, Breadcrumbs, verticalGapClassMap } from './Breadcrumbs';
 
 beforeEach('Getting the seperator', () => {
     cy.intercept('GET', '/img/diagonal-line.svg', '/public/img/diagonal-line.svg');
 });
 
+const BREADCRUMB_ID = '[data-test-id=breadcrumb] > ol';
 const BREADCRUMB_ITEM_ID = '[data-test-id=breadcrumb-item]';
 const BREADCRUMB_ITEMS = [
     { label: 'Some first label', link: '/some-first-link' },
@@ -93,6 +94,16 @@ describe('Breadcrumb component', () => {
         cy.get(BREADCRUMB_ITEM_ID).first().find('span').should('exist');
         cy.get(BREADCRUMB_ITEM_ID).eq(1).find('button').should('exist');
         cy.get(BREADCRUMB_ITEM_ID).eq(2).find('a').should('exist');
+    });
+
+    it('should render gap class appropriately', () => {
+        for (const gap of Object.entries(BreadcrumbGap)) {
+            cy.mount(<Breadcrumbs items={BREADCRUMB_ITEMS_MIXED_ELEMENTS} verticalGap={gap[1]} />);
+            cy.get(BREADCRUMB_ID).should('have.class', verticalGapClassMap[gap[1]]);
+        }
+
+        cy.mount(<Breadcrumbs items={BREADCRUMB_ITEMS_MIXED_ELEMENTS} />);
+        cy.get(BREADCRUMB_ID).should('have.class', verticalGapClassMap.Medium);
     });
 
     it('should be able to handle a changing number of items', () => {
