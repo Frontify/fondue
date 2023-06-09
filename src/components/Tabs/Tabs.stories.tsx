@@ -38,6 +38,18 @@ const CustomCheckbox = () => {
     );
 };
 
+const TextParagraph = () => {
+    return (
+        <Text>
+            <p>
+                Bacon ipsum dolor amet spare ribs swine meatloaf, pastrami cupim tail leberkas frankfurter jowl chislic
+                shoulder. Frankfurter drumstick t-bone bacon ground round. Cupim pork loin shank kielbasa. Short loin
+                shank meatloaf tongue. Chicken sirloin swine ball tip. Turkey pork kevin burgdoggen meatball t-bone.
+            </p>
+        </Text>
+    );
+};
+
 const data: TabItemProps[] = [
     {
         id: 'tab-1',
@@ -45,12 +57,14 @@ const data: TabItemProps[] = [
         children: (
             <>
                 <CustomCheckbox />
-                <Text>
-                    Bacon ipsum dolor amet spare ribs swine meatloaf, pastrami cupim tail leberkas frankfurter jowl
-                    chislic shoulder. Frankfurter drumstick t-bone bacon ground round. Cupim pork loin shank kielbasa.
-                    Short loin shank meatloaf tongue. Chicken sirloin swine ball tip. Turkey pork kevin burgdoggen
-                    meatball t-bone.
-                </Text>
+                <br />
+                <TextParagraph />
+                <br />
+                <TextParagraph />
+                <br />
+                <TextParagraph />
+                <br />
+                <TextParagraph />
             </>
         ),
     },
