@@ -19,6 +19,7 @@ export const Badge = ({
     disabled = false,
     onClick,
     onDismiss,
+    'data-test-id': dataTestId = 'badge',
 }: BadgeProps): Nullable<ReactElement> => {
     if (!children && !icon && !status) {
         return null;
@@ -50,7 +51,7 @@ export const Badge = ({
                     ? 'tw-bg-box-disabled tw-text-box-disabled-inverse'
                     : getStyleClasses(style, !!onClick, emphasis === BadgeEmphasis.Strong),
             ])}
-            data-test-id="badge"
+            data-test-id={dataTestId}
         >
             <Container
                 onClick={() => onClick && onClick()}
@@ -62,13 +63,13 @@ export const Badge = ({
                         : getSizeClasses(children, status, icon, size, !!onDismiss),
                     FOCUS_VISIBLE_STYLE,
                 ])}
-                data-test-id="badge-button"
+                data-test-id={`${dataTestId}-button`}
                 title={badgeTitle}
             >
-                {status && <BadgeStatusIcon status={status} disabled={disabled} />}
+                {status && <BadgeStatusIcon status={status} disabled={disabled} data-test-id={dataTestId} />}
                 {icon && (
                     <span
-                        data-test-id="badge-icon"
+                        data-test-id={`${dataTestId}-icon`}
                         className={merge([
                             'tw-flex-none tw-leading-none',
                             disabled && 'tw-opacity-30',
@@ -87,7 +88,7 @@ export const Badge = ({
             {onDismiss && (
                 <button
                     type="button"
-                    data-test-id="badge-dismiss"
+                    data-test-id={`${dataTestId}-dismiss`}
                     className={merge([
                         'tw-absolute tw-rounded tw-leading-4',
                         FOCUS_VISIBLE_STYLE,

@@ -5,7 +5,6 @@ import { DropdownItem } from './DropdownItem';
 import { DropdownTrigger } from './DropdownTrigger';
 import { TextStyleDropdownProps } from './types';
 import { useTextStyleDropdown } from './useTextStyleDropdown';
-import { getTextStyleCssProperties } from '../../helper';
 import { DEFAULT_TEXT_STYLE_VALUE } from '../types';
 
 export const TextStyleDropdown = ({ editorId, textStyles = [] }: TextStyleDropdownProps) => {
@@ -16,10 +15,6 @@ export const TextStyleDropdown = ({ editorId, textStyles = [] }: TextStyleDropdo
         dropdownRef,
         key,
     } = useTextStyleDropdown(editorId);
-
-    if (textStyles.length === 0) {
-        return null;
-    }
 
     let activeLabel = DEFAULT_TEXT_STYLE_VALUE;
     const textStyle = textStyles.find((style) => style.id === key && style.props?.label);
@@ -36,9 +31,9 @@ export const TextStyleDropdown = ({ editorId, textStyles = [] }: TextStyleDropdo
                     ref={dropdownRef}
                     {...dropdownProps}
                 >
-                    {textStyles.map((style) => (
-                        <DropdownItem editor={editor} type={style} key={style.id}>
-                            <span style={getTextStyleCssProperties(style.id)}>{style.props?.label}</span>
+                    {textStyles.map((stylePlugin) => (
+                        <DropdownItem editor={editor} type={stylePlugin} key={stylePlugin.id}>
+                            <span style={stylePlugin.styles ?? {}}>{stylePlugin.props?.label}</span>
                         </DropdownItem>
                     ))}
                 </div>

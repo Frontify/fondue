@@ -24,6 +24,8 @@ export type TextOrNumberItem = {
     value: string | number;
 };
 
+export type SegmentSize = 'small' | 'medium';
+
 export type SegmentedControlsProps = {
     id?: string;
     items: (TextOrNumberItem | IconItem)[];
@@ -32,6 +34,7 @@ export type SegmentedControlsProps = {
     ariaLabel?: string;
     disabled?: boolean;
     hugWidth?: boolean;
+    size?: SegmentSize;
 };
 
 const isIconItem = (item: TextOrNumberItem | IconItem): item is IconItem => (item as IconItem).icon !== undefined;
@@ -41,10 +44,11 @@ interface SegmentedControlsItemProps {
     item: TextOrNumberItem | IconItem;
     disabled: boolean;
     radioGroupState: RadioGroupState;
+    size?: SegmentSize;
 }
 
 const SegmentedControlsItem = forwardRef<HTMLDivElement, SegmentedControlsItemProps>((props, ref) => {
-    const { id, item, disabled, radioGroupState } = props;
+    const { id, item, disabled, radioGroupState, size } = props;
     const inputRef = useRef<HTMLInputElement | null>(null);
     const isActive = item.id === radioGroupState.selectedValue;
     const { inputProps } = useRadio(
@@ -95,7 +99,8 @@ const SegmentedControlsItem = forwardRef<HTMLDivElement, SegmentedControlsItemPr
                 onClick={handleMockLabelClick}
                 data-test-id={getSegmentedControlsItemTestId()}
                 className={merge([
-                    'tw-relative tw-w-full tw-px-4 tw-py-2 tw-inline-flex tw-justify-center tw-items-center tw-font-sans tw-font-normal tw-h-full tw-text-center',
+                    'tw-relative tw-w-full tw-py-2 tw-inline-flex tw-justify-center tw-items-center tw-font-sans tw-font-normal tw-h-full tw-text-center',
+                    size === 'small' ? 'tw-px-2' : 'tw-px-4',
                     isActive && !disabled ? 'tw-text-text' : 'tw-text-text-weak',
                     !disabled
                         ? 'hover:tw-text-text hover:tw-cursor-pointer'
@@ -133,6 +138,7 @@ export const SegmentedControls = ({
     ariaLabel = 'SegmentedControls',
     disabled = false,
     hugWidth = false,
+    size,
 }: SegmentedControlsProps): ReactElement => {
     const id = useMemoizedId(propId);
     const groupProps = { onChange, value: activeItemId, label: ariaLabel, isDisabled: disabled };
@@ -148,9 +154,10 @@ export const SegmentedControls = ({
                 radioGroupState={radioGroupState}
                 ref={(el) => (itemsRef.current[index] = el)}
                 key={`fondue-segmented-controls-${id}-item-${item.id}`}
+                size={size}
             />
         ));
-    }, [items, id, disabled, radioGroupState]);
+    }, [items, id, disabled, radioGroupState, size]);
     const selectedIndex = items.findIndex((item) => item.id === radioGroupState.selectedValue);
     const width = hugWidth ? '' : 'tw-w-full';
     const alignment = hugWidth ? 'tw-flex' : 'tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly';

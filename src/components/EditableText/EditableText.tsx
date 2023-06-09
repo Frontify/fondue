@@ -58,6 +58,7 @@ export interface EditableTextProps {
     options?: EditableOptionProps;
     /** @deprecated Temporary solution for text with ellipisis in Tree Component */
     isOverflowing?: boolean;
+    'data-test-id'?: string;
 }
 
 /**
@@ -83,6 +84,7 @@ export const EditableText = ({
     children,
     options,
     isOverflowing = false,
+    'data-test-id': dataTestId = 'editable-node-container',
 }: EditableTextProps) => {
     // Read initial text strings from children
     const childrenLabel = EditableTextHelper.getLabel(children);
@@ -153,7 +155,7 @@ export const EditableText = ({
 
     return (
         <div
-            data-test-id="editable-node-container"
+            data-test-id={dataTestId}
             className={merge(['tw-relative tw-h-full', options?.removeBoxPadding === true ? '' : 'tw-p-2'])}
         >
             {editableState === EditableMode.INPUT ? (

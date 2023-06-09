@@ -21,6 +21,7 @@ export const CurrentBreadcrumbItem = ({
     decorator,
     link,
     onClick,
+    'data-test-id': dataTestId = 'breadcrumb',
 }: CurrentBreadcrumbItemProps): ReactElement => {
     const ref = useRef(null);
     const Element = getItemElementType(link, onClick);
@@ -47,7 +48,7 @@ export const CurrentBreadcrumbItem = ({
     return (
         <li
             className="tw-w-full tw-inline-flex tw-align-middle tw-gap-x-1 tw-text-m tw-text-text tw-items-center"
-            data-test-id="breadcrumb-item"
+            data-test-id={`${dataTestId}-item`}
         >
             <Element ref={ref} {...props} className={classNames}>
                 {decorator}

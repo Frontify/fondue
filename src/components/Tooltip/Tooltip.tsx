@@ -51,6 +51,7 @@ export type TooltipProps = {
     /** @deprecated use disabled since the tooltip is always present in the DOM now so hidden has no effect anymore */
     hidden?: boolean;
     enablePortal?: boolean;
+    'data-test-id'?: string;
 };
 
 const paddingsTop = {
@@ -158,10 +159,12 @@ export const Tooltip = ({
     disabled = false,
     enablePortal = false,
     hidden = false,
+    'data-test-id': dataTestId = 'tooltip',
 }: TooltipProps) => {
     const [triggerElementRef, setTriggerElementRef] = useState<HTMLElement | HTMLDivElement | HTMLButtonElement | null>(
         null,
     );
+    const [isOpen, setIsOpen] = useState(false);
     const linkRef = useRef<HTMLAnchorElement | null>(null);
 
     const shouldPreventTooltipOpening = hidden || disabled;
@@ -189,6 +192,10 @@ export const Tooltip = ({
                 },
             },
             {
+                name: 'eventListeners',
+                options: { scroll: isOpen, resize: isOpen },
+            },
+            {
                 name: 'offset',
                 options: {
                     offset: [0, tooltipOffset],
@@ -203,7 +210,6 @@ export const Tooltip = ({
 
     const currentPlacement = popperInstance.state?.placement ?? position;
     const arrowStyling = getArrowClasses(currentPlacement, brightHeader, alignment);
-    const [isOpen, setIsOpen] = useState(false);
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const handleHideTooltipOnHover = useCallback(() => {
@@ -313,7 +319,7 @@ export const Tooltip = ({
                         'tw-popper-container tw-inline-block tw-max-w-[200px] tw-dark tw-bg-base tw-rounded-md tw-shadow-mid tw-text-text tw-z-[120000]',
                         !isOpen && 'tw-opacity-0 tw-h-0 tw-w-0 tw-overflow-hidden',
                     ])}
-                    data-test-id="tooltip"
+                    data-test-id={dataTestId}
                     role="tooltip"
                     id={id}
                     style={popperInstance.styles.popper}
@@ -349,7 +355,7 @@ export const Tooltip = ({
                         {linkUrl && (
                             <a
                                 {...linkProps}
-                                data-test-id="tooltip-link"
+                                data-test-id={`${dataTestId}-link`}
                                 ref={linkRef}
                                 href={linkUrl}
                                 target="_blank"

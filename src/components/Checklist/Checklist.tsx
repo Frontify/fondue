@@ -27,6 +27,7 @@ type ChecklistBase = {
     setActiveValues: (value: string[]) => void;
     activeValues?: string[];
     ariaLabel?: string;
+    'data-test-id'?: string;
 };
 
 type ChecklistVertical = ChecklistBase & {
@@ -85,6 +86,7 @@ export const Checklist = ({
     ariaLabel = 'Checklist',
     activeValues = [],
     direction = ChecklistDirection.Horizontal,
+    'data-test-id': dataTestId = 'checklist',
     ...props
 }: ChecklistProps) => {
     const listContainerRef = useRef<HTMLUListElement | null>(null);
@@ -104,7 +106,7 @@ export const Checklist = ({
     return (
         <ul
             {...groupProps}
-            data-test-id="checklist"
+            data-test-id={dataTestId}
             className={merge([
                 direction === ChecklistDirection.Horizontal
                     ? 'tw-flex tw-flex-row tw-gap-12'

@@ -7,4 +7,5 @@ export type CollapsibleWrapProps = {
     preventInitialAnimation?: boolean;
     animateOpacity?: boolean;
     children?: ReactNode;
+    'data-test-id'?: string;
 };

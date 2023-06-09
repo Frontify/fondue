@@ -21,7 +21,7 @@ import {
     getPluginType,
 } from '@udecode/plate';
 import { PartialOptionType } from './types';
-import { TextStyles } from '@components/RichTextEditor/Plugins/TextStylePlugin/types';
+import { TextStyles } from '@components/RichTextEditor/Plugins';
 
 export const options = (editor: PlateEditor): PartialOptionType => ({
     nodeTypes: {
