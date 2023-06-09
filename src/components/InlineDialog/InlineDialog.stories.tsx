@@ -36,6 +36,9 @@ export default {
         role: {
             type: 'string',
         },
+        darkUnderlay: {
+            type: 'boolean',
+        },
     },
 } as Meta<InlineDialogProps>;
 
@@ -64,6 +67,7 @@ const Template: StoryFn<InlineDialogProps> = (args) => {
                 flip={args.flip}
                 offset={args.offset}
                 enablePortal={args.enablePortal}
+                darkUnderlay={args.darkUnderlay}
             >
                 <InlineDialog.Trigger>
                     <Button ref={setTriggerElementRef} onClick={() => setIsOpen(!isOpen)}>
@@ -96,6 +100,7 @@ const Template: StoryFn<InlineDialogProps> = (args) => {
                             />
                             <p className="tw-flex tw-items-center tw-my-2">Label 2</p>
 
+                            <TextExample />
                             <TextExample />
                         </div>
                     </DialogBody>

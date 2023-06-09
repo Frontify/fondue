@@ -21,6 +21,7 @@ export const InlineDialog = ({
     modality = Modality.Modal,
     handleClose,
     'data-test-id': dataTestId = 'fondue-inlineDialog',
+    darkUnderlay = false,
 }: InlineDialogProps) => {
     useEffect(() => {
         if (open && modality !== Modality.NonModal) {
@@ -44,6 +45,7 @@ export const InlineDialog = ({
             modality={modality}
             handleClose={handleClose}
             role={modality === Modality.NonModal ? 'region' : 'dialog'}
+            darkUnderlay={darkUnderlay}
         >
             {children}
         </Overlay>

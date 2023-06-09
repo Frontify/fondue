@@ -24,7 +24,6 @@ export type DialogHeaderProps = {
 export type DialogBodyProps = {
     children: ReactNode;
     maxHeight?: number | string;
-    scrollShadows?: boolean;
     'data-test-id'?: string;
 };
 
@@ -44,6 +43,8 @@ export type BaseDialogProps = {
     maxWidth?: string | number;
     maxHeight?: string | number;
     handleClose?: () => void;
+    /** @Info This property enable a full screen gray underlay only for modal and blocking-modal options. */
+    darkUnderlay?: boolean;
 };
 
 export type OverlayProps = {

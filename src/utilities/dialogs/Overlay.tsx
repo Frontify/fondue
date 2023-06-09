@@ -25,6 +25,7 @@ export const Overlay = ({
     maxHeight = 'auto',
     handleClose,
     modality,
+    darkUnderlay,
 }: OverlayProps & BaseDialogProps) => {
     const id = useMemoizedId();
     const ref = useRef<HTMLDivElement | null>(null);
@@ -84,7 +85,7 @@ export const Overlay = ({
                     <div
                         className={merge([
                             'tw-absolute tw-w-screen tw-h-screen tw-top-0 tw-left-0 tw-overflow-hidden tw-z-[9990]',
-                            modality === Modality.BlockingModal && 'tw-transition-opacity tw-bg-black tw-opacity-50',
+                            darkUnderlay && 'tw-transition-opacity tw-bg-black tw-opacity-50',
                         ])}
                     />
                 </Portal>
