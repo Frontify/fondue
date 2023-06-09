@@ -1,6 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { KeyboardHandlerReturnType, PlateEditor, getNodeEntries, isBlock, someNode } from '@udecode/plate';
+import {
+    HotkeyPlugin,
+    KeyboardHandlerReturnType,
+    PlateEditor,
+    Value,
+    WithPlatePlugin,
+    getNodeEntries,
+    isBlock,
+    someNode,
+} from '@udecode/plate';
 import isHotkey from 'is-hotkey';
 import { Location } from 'slate';
 import { KEY_ELEMENT_BREAK_AFTER_COLUMN } from './createColumnBreakPlugin';
@@ -8,7 +17,7 @@ import { getColumnBreakCount } from './utils/getColumnBreakCount';
 import { setColumnBreaks } from './utils/setColumnBreaks';
 import { updateColumnBreaks } from './utils/updateColumnBreaks';
 
-export const toggleColumnBreak = (editor: PlateEditor, columns: number, event: React.BaseSyntheticEvent) => {
+export const toggleColumnBreak = (editor: PlateEditor<Value>, columns: number, event: React.BaseSyntheticEvent) => {
     event.preventDefault();
     event.stopPropagation();
 
@@ -41,15 +50,22 @@ export const toggleColumnBreak = (editor: PlateEditor, columns: number, event: R
 };
 
 export const onKeyDownColumnBreak =
-    (editor: PlateEditor): KeyboardHandlerReturnType =>
-    (e) => {
-        if (e.defaultPrevented) {
+    (
+        editor: PlateEditor<Value>,
+        { options: { hotkey } }: WithPlatePlugin<HotkeyPlugin, Value, PlateEditor<Value>>,
+    ): KeyboardHandlerReturnType =>
+    (event) => {
+        if (event.defaultPrevented) {
             return;
         }
 
-        if (isHotkey('shift+ctrl+enter', e)) {
+        if (!hotkey) {
+            return;
+        }
+
+        if (isHotkey(hotkey, event)) {
             const columnBreakPlugin = editor.plugins.find((plugin) => plugin.key === KEY_ELEMENT_BREAK_AFTER_COLUMN);
             const columns = (columnBreakPlugin?.options as { columns: number })?.columns ?? 1;
-            toggleColumnBreak(editor, columns, e);
+            toggleColumnBreak(editor, columns, event);
         }
     };
