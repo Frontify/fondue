@@ -27,17 +27,12 @@ export default {
             control: { type: 'number' },
             defaultValue: 0,
         },
-        noNegativeMargin: {
-            control: { type: 'boolean' },
-            defaultValue: true,
-        },
     },
     args: {
         direction: ScrollWrapperDirection.Vertical,
         tabindex: 0,
         'data-test-id': 'custom-data-test-id',
         scrollShadows: true,
-        negativeMargin: true,
     },
 } as Meta<ScrollWrapperProps>;
 
