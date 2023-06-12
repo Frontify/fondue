@@ -44,7 +44,7 @@ export const AddBlockButton = ({
         >
             <span
                 className={
-                    'tw-text-white tw-bg-violet-60 tw-rounded tw-inline-flex tw-items-center tw-w-7 tw-h-6 tw-relative tw-p-1 tw-transition-colors hover:tw-bg-violet-70 group-active:tw-bg-violet-90'
+                    'tw-text-box-selected-strong-inverse tw-bg-box-selected-strong tw-rounded tw-inline-flex tw-items-center tw-w-7 tw-h-6 tw-relative tw-p-1 tw-transition-colors hover:tw-bg-box-selected-strong-hover hover:tw-text-box-selected-strong-inverse-hover group-active:tw-bg-box-selected-strong-pressed group-active:tw-text-bg-box-selected-strong-inverse-pressed'
                 }
                 style={{
                     clipPath: `path(
