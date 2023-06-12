@@ -20,5 +20,4 @@ export type ScrollWrapperProps = {
     'data-test-id'?: string;
     tabindex?: number;
     scrollShadows?: boolean;
-    negativeMargin?: boolean;
 };
