@@ -135,10 +135,6 @@ export default {
             type: 'string',
             defaultValue: '50px',
         },
-        scrollShadows: {
-            control: { type: 'boolean' },
-            default: true,
-        },
     },
 } as Meta<TabsProps>;
 
