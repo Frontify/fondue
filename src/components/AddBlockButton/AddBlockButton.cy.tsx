@@ -65,4 +65,18 @@ describe('Add Block Button component', () => {
         cy.mount(<AddBlockButton onClick={onClickStub} direction={AddBlockButtonDirection.Top} />);
         cy.get(BUTTON_ID).should('have.class', 'tw-rotate-[270deg]');
     });
+
+    it('renders with custom title', () => {
+        const onClickStub = cy.stub().as('onClickStub');
+
+        cy.mount(<AddBlockButton onClick={onClickStub} title="test" />);
+        cy.get(BUTTON_ID).should('have.attr', 'title', 'test');
+    });
+
+    it('renders with custom data-test-id', () => {
+        const onClickStub = cy.stub().as('onClickStub');
+
+        cy.mount(<AddBlockButton onClick={onClickStub} data-test-id="test" />);
+        cy.get('[data-test-id=test]').should('exist');
+    });
 });
