@@ -1,28 +1,22 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ELEMENT_LI, ELEMENT_LIC, ELEMENT_OL } from '@udecode/plate';
 import React from 'react';
-import { orderedListValue, unorderedListValue } from '../helpers/exampleValues';
-import {
-    OrderedListPlugin,
-    ParagraphPlugin,
-    PluginComposer,
-    SoftBreakPlugin,
-    TextStylePlugin,
-    UnorderedListPlugin,
-} from '../Plugins';
+import { ELEMENT_LI, ELEMENT_LIC, ELEMENT_OL } from '@udecode/plate';
+import { OrderedListPlugin, PluginComposer, UnorderedListPlugin } from '../Plugins';
 import { RichTextEditor } from '../RichTextEditor';
-import { insertTextAndOpenToolbar } from './fixtures/RichTextEditor';
+import {
+    RichTextEditorWithOrderedListStyles,
+    RichTextEditorWithUnorderedListStyles,
+    insertTextAndOpenToolbar,
+    listPlugins,
+} from './fixtures/RichTextEditor';
 import {
     TEXTSTYLE_DROPDOWN_TRIGGER,
     TEXTSTYLE_OPTION,
     TOOLBAR_FLOATING,
+    TOOLBAR_GROUP_1,
     TOOLBAR_PLUGIN_OL,
 } from './fixtures/selectors';
-import { Heading1Plugin } from '../Plugins/TextStylePlugin/TextStyles/heading1Plugin';
-import { Custom1Plugin } from '../Plugins/TextStylePlugin/TextStyles/custom1Plugin';
-import { Custom2Plugin } from '../Plugins/TextStylePlugin/TextStyles/custom2Plugin';
-import { Custom3Plugin } from '../Plugins/TextStylePlugin/TextStyles/custom3Plugin';
 
 const RichTextEditorWithListPluginWithSoftBreak = ({ value }: { value: string }) => {
     const plugins = new PluginComposer().setPlugin([
@@ -33,35 +27,12 @@ const RichTextEditorWithListPluginWithSoftBreak = ({ value }: { value: string })
     return <RichTextEditor border={false} plugins={plugins} value={value} />;
 };
 
-const plugins = new PluginComposer();
-plugins
-    .setPlugin(new SoftBreakPlugin())
-    .setPlugin(
-        new TextStylePlugin({
-            textStyles: [
-                new Heading1Plugin(),
-                new ParagraphPlugin(),
-                new Custom1Plugin(),
-                new Custom2Plugin(),
-                new Custom3Plugin(),
-            ],
-        }),
-    )
-    .setPlugin([new UnorderedListPlugin(), new OrderedListPlugin()]);
-
-const RichTextEditorWithUnorderedListStyles = () => (
-    <RichTextEditor value={JSON.stringify([unorderedListValue])} plugins={plugins} />
-);
-const RichTextEditorWithOrderedListStyles = () => (
-    <RichTextEditor value={JSON.stringify([orderedListValue])} plugins={plugins} />
-);
-
 describe('List Plugin', () => {
     it('applies the selected text style to the list item', () => {
         cy.mount(<RichTextEditorWithOrderedListStyles />);
 
         const firstListItemSelector = '[contenteditable=true] ol:first-child > li:first-child';
-        cy.mount(<RichTextEditor plugins={plugins} />);
+        cy.mount(<RichTextEditor plugins={listPlugins} />);
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR_FLOATING).should('be.visible');
@@ -93,6 +64,15 @@ describe('List Plugin', () => {
             'style',
             'font-size: 14px; font-weight: 600; font-style: normal; counter-increment: count 1;',
         );
+    });
+
+    it('renders ordered list right aligned', () => {
+        cy.mount(<RichTextEditorWithOrderedListStyles />);
+
+        insertTextAndOpenToolbar();
+        cy.get(TOOLBAR_FLOATING).should('be.visible');
+        cy.get(TOOLBAR_GROUP_1).children().eq(2).click();
+        cy.get('[contenteditable=true]').should('include.html', 'tw-justify-end tw-text-right');
     });
 
     it('renders new list item with soft break', () => {

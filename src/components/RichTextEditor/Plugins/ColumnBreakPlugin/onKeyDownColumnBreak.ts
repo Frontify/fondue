@@ -1,10 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import {
+    HotkeyPlugin,
     KeyboardHandlerReturnType,
     PlateEditor,
+    Value,
+    WithPlatePlugin,
     getNodeEntries,
-    getPreventDefaultHandler,
     isBlock,
     someNode,
 } from '@udecode/plate';
@@ -15,7 +17,10 @@ import { getColumnBreakCount } from './utils/getColumnBreakCount';
 import { setColumnBreaks } from './utils/setColumnBreaks';
 import { updateColumnBreaks } from './utils/updateColumnBreaks';
 
-export const toggleColumnBreak = (editor: PlateEditor, columns: number, event: React.BaseSyntheticEvent) => {
+export const toggleColumnBreak = (editor: PlateEditor<Value>, columns: number, event: React.BaseSyntheticEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+
     const isActive = !!editor?.selection && someNode(editor, { match: (node) => !!node.breakAfterColumn });
 
     if (isActive) {
@@ -36,26 +41,31 @@ export const toggleColumnBreak = (editor: PlateEditor, columns: number, event: R
             }),
         ).slice(-toggleRange); // apply column breaks ath the end of the selection
 
-        getPreventDefaultHandler(() => {
-            for (const element of elementsToToggle) {
-                setColumnBreaks(editor, { value: 'active', at: element[1] });
-            }
-        })(event);
+        for (const element of elementsToToggle) {
+            setColumnBreaks(editor, { value: 'active', at: element[1] });
+        }
     }
 
     updateColumnBreaks(editor, columns);
 };
 
 export const onKeyDownColumnBreak =
-    (editor: PlateEditor): KeyboardHandlerReturnType =>
-    (e) => {
-        if (e.defaultPrevented) {
+    (
+        editor: PlateEditor<Value>,
+        { options: { hotkey } }: WithPlatePlugin<HotkeyPlugin, Value, PlateEditor<Value>>,
+    ): KeyboardHandlerReturnType =>
+    (event) => {
+        if (event.defaultPrevented) {
             return;
         }
 
-        if (isHotkey('shift+ctrl+enter', e)) {
+        if (!hotkey) {
+            return;
+        }
+
+        if (isHotkey(hotkey, event)) {
             const columnBreakPlugin = editor.plugins.find((plugin) => plugin.key === KEY_ELEMENT_BREAK_AFTER_COLUMN);
             const columns = (columnBreakPlugin?.options as { columns: number })?.columns ?? 1;
-            toggleColumnBreak(editor, columns, e);
+            toggleColumnBreak(editor, columns, event);
         }
     };

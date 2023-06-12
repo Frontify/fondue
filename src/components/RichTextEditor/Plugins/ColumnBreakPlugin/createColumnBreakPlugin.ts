@@ -37,6 +37,7 @@ export const createColumnBreakPlugin = (columns: number, gap: CSSProperties['gap
         options: {
             columns,
             gap,
+            hotkey: ['shift+ctrl+enter'],
         },
     })();
 };
