@@ -118,13 +118,6 @@ WithOnClick.args = {
                 <Text as="p">I am a card component with a clickable container</Text>
                 <Text as="p">Click anywhere to see the click action</Text>
             </div>
-            <LegacyStack spacing="m" padding="none">
-                <Button>Button 1</Button>
-                <Button style={ButtonStyle.Default} emphasis={ButtonEmphasis.Default}>
-                    Button 2
-                </Button>
-                <Button>Button 3</Button>
-            </LegacyStack>
         </LegacyStack>
     ),
 };
