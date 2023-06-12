@@ -97,13 +97,17 @@ describe('Breadcrumb component', () => {
     });
 
     it('should render gap class appropriately', () => {
-        for (const gap of Object.entries(BreadcrumbGap)) {
-            cy.mount(<Breadcrumbs items={BREADCRUMB_ITEMS_MIXED_ELEMENTS} verticalGap={gap[1]} />);
-            cy.get(BREADCRUMB_ID).should('have.class', verticalGapClassMap[gap[1]]);
-        }
-
         cy.mount(<Breadcrumbs items={BREADCRUMB_ITEMS_MIXED_ELEMENTS} />);
         cy.get(BREADCRUMB_ID).should('have.class', verticalGapClassMap.Medium);
+
+        cy.mount(<Breadcrumbs items={BREADCRUMB_ITEMS_MIXED_ELEMENTS} verticalGap={BreadcrumbGap.None} />);
+        cy.get(BREADCRUMB_ID).should('have.class', verticalGapClassMap[BreadcrumbGap.None]);
+
+        cy.mount(<Breadcrumbs items={BREADCRUMB_ITEMS_MIXED_ELEMENTS} verticalGap={BreadcrumbGap.Small} />);
+        cy.get(BREADCRUMB_ID).should('have.class', verticalGapClassMap[BreadcrumbGap.Small]);
+
+        cy.mount(<Breadcrumbs items={BREADCRUMB_ITEMS_MIXED_ELEMENTS} verticalGap={BreadcrumbGap.Medium} />);
+        cy.get(BREADCRUMB_ID).should('have.class', verticalGapClassMap[BreadcrumbGap.Medium]);
     });
 
     it('should be able to handle a changing number of items', () => {
