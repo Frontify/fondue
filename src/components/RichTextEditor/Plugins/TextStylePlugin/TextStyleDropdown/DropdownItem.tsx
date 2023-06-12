@@ -1,21 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import {
-    ELEMENT_LI,
-    PlateEditor,
-    getAboveNode,
-    getMark,
-    getPreventDefaultHandler,
-    setMarks,
-    someNode,
-    toggleNodeType,
-} from '@udecode/plate';
+import { ELEMENT_LI, PlateEditor, getAboveNode, getMark, setMarks, someNode, toggleNodeType } from '@udecode/plate';
 import React from 'react';
-
 import { ELEMENT_CHECK_ITEM } from '../../CheckboxListPlugin';
 import { MARK_TEXT_STYLE } from '../../ListPlugin/ListPlugin';
 import { merge } from '@utilities/merge';
-
 import { DropdownItemProps } from './types';
 
 const isInList = (editor: PlateEditor) =>
@@ -42,15 +31,18 @@ export const DropdownItem = ({ editor, type, children }: DropdownItemProps) => {
                 isActive ? 'tw-text-box-neutral-inverse tw-bg-box-neutral' : 'tw-text-text',
             ])}
             onMouseDown={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+
                 if (!editor || !editor.selection) {
                     return;
                 }
                 setMarks(editor, { [MARK_TEXT_STYLE]: type.id });
                 if (!isInList(editor)) {
-                    getPreventDefaultHandler(toggleNodeType, editor, {
+                    toggleNodeType(editor, {
                         activeType: type.id,
                         inactiveType: type.id,
-                    })(event);
+                    });
                 }
             }}
         >
