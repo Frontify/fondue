@@ -18,9 +18,7 @@ export const ColumnBreakToolbarButton = ({ id, ...props }: ToolbarButtonProps) =
     const editor = usePlateEditorState(useEventPlateId(id));
     const isActive = !!editor?.selection && someNode(editor, { match: (node) => !!node.breakAfterColumn });
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const breakAfterPlugin = editor.pluginsByKey['breakAfterColumn'] as any;
-    const columns = breakAfterPlugin?.options?.columns;
+    const columns = (editor?.pluginsByKey['breakAfterColumn'] as any)?.options?.columns;
 
     const columnCount = Number(columns) || 1;
     const canBreakAfter = isColumnBreakEnabled(editor, columnCount, isActive);

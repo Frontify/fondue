@@ -172,8 +172,8 @@ describe('Tabs Component', () => {
         cy.get('button#tab-3-btn').should('be.focused');
         cy.get('body').realPress('Tab');
         cy.get('body').realPress('Tab');
-        cy.get('[data-test-id=tab-content]').children().not('.tw-hidden').should('be.focused');
-        cy.get('[data-test-id=tab-content]').children().not('.tw-hidden').should('contain.text', data[2].children);
+        cy.get('[data-test-id=tab-content] :not(.tw-hidden)').should('be.focused');
+        cy.get('[data-test-id=tab-content] :not(.tw-hidden)').should('contain.text', data[2].children);
         cy.get('body').realPress(['Shift', 'Tab']);
         cy.get('body').realPress(['Shift', 'Tab']);
         cy.get('button#tab-3-btn').should('be.focused');

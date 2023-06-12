@@ -20,6 +20,7 @@ import { motion } from 'framer-motion';
 import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { useMemoizedId } from '@hooks/useMemoizedId';
+import { DimensionUnity } from '@utilities/dimensions';
 
 export enum TabsPaddingX {
     None = 'None',
@@ -40,6 +41,8 @@ export type TabsProps = {
     activeItemId: string;
     children: ReactNode;
     onChange?: (tabId: string) => void;
+    maxHeight?: `${number}${DimensionUnity}`;
+    minHeight?: `${number}${DimensionUnity}`;
 };
 
 const paddingMap: Record<TabsPaddingX, string> = {
@@ -50,7 +53,15 @@ const paddingMap: Record<TabsPaddingX, string> = {
     [TabsPaddingX.Large]: 'tw-pl-l',
 };
 
-export const Tabs = ({ paddingX, size, activeItemId, children, onChange }: TabsProps): ReactElement => {
+export const Tabs = ({
+    paddingX,
+    size,
+    activeItemId,
+    children,
+    onChange,
+    maxHeight,
+    minHeight,
+}: TabsProps): ReactElement => {
     const groupId = useMemoizedId();
     const tabNavRef = useRef<HTMLDivElement | null>(null);
     const [isOverflowing, setIsOverflowing] = useState(false);
@@ -318,14 +329,16 @@ export const Tabs = ({ paddingX, size, activeItemId, children, onChange }: TabsP
                 )}
             </div>
 
-            <div data-test-id="tab-content">
-                {Children.map(children, (child) => {
-                    if (!isValidElement(child)) {
-                        return null;
-                    }
+            <div data-test-id="tab-content" className="tw-flex tw-flex-col tw-overflow-y-auto">
+                <div className="tw-mr-0" style={{ maxHeight, minHeight }}>
+                    {Children.map(children, (child) => {
+                        if (!isValidElement(child)) {
+                            return null;
+                        }
 
-                    return cloneElement(child, { ...child.props, active: child.props.id === activeItemId });
-                })}
+                        return cloneElement(child, { ...child.props, active: child.props.id === activeItemId });
+                    })}
+                </div>
             </div>
         </>
     );
