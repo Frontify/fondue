@@ -14,15 +14,15 @@ export default {
     tags: ['autodocs'],
     args: {
         title: 'Add Block Button',
-        orientation: AddBlockButtonDirection.Horizontal,
+        direction: AddBlockButtonDirection.Right,
     },
     argTypes: {
         onClick: {
             action: 'Click',
         },
-        orientation: {
+        direction: {
             options: Object.values(AddBlockButtonDirection),
-            control: 'radio',
+            control: 'select',
         },
     },
 } as Meta<AddBlockButtonProps>;

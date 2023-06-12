@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
-import { AddBlockButton } from './AddBlockButton';
+import { AddBlockButton, AddBlockButtonDirection } from './AddBlockButton';
 
 const BUTTON_ID = '[data-test-id=add-block-button]';
 
@@ -14,5 +14,55 @@ describe('Add Block Button component', () => {
         cy.get('@onClickStub').should('not.be.called');
         cy.get(BUTTON_ID).click();
         cy.get('@onClickStub').should('be.calledOnce');
+    });
+
+    it('renders with correct tokens', () => {
+        const onClickStub = cy.stub().as('onClickStub');
+
+        cy.mount(<AddBlockButton onClick={onClickStub} />);
+
+        cy.get(`${BUTTON_ID} span`)
+            .should('have.class', 'tw-text-box-selected-strong-inverse')
+            .should('have.class', 'tw-bg-box-selected-strong')
+            .should('have.class', 'tw-rounded')
+            .should('have.class', 'tw-inline-flex')
+            .should('have.class', 'tw-items-center')
+            .should('have.class', 'tw-w-7')
+            .should('have.class', 'tw-h-6')
+            .should('have.class', 'tw-relative')
+            .should('have.class', 'tw-p-1')
+            .should('have.class', 'tw-transition-colors')
+            .should('have.class', 'hover:tw-bg-box-selected-strong-hover')
+            .should('have.class', 'hover:tw-text-box-selected-strong-inverse-hover')
+            .should('have.class', 'group-active:tw-bg-box-selected-strong-pressed')
+            .should('have.class', 'group-active:tw-text-bg-box-selected-strong-inverse-pressed');
+    });
+
+    it('renders with direction "Right" by default', () => {
+        const onClickStub = cy.stub().as('onClickStub');
+
+        cy.mount(<AddBlockButton onClick={onClickStub} />);
+        cy.get(BUTTON_ID).should('have.class', 'tw-rotate-0');
+    });
+
+    it('renders with direction "Bottom"', () => {
+        const onClickStub = cy.stub().as('onClickStub');
+
+        cy.mount(<AddBlockButton onClick={onClickStub} direction={AddBlockButtonDirection.Bottom} />);
+        cy.get(BUTTON_ID).should('have.class', 'tw-rotate-90');
+    });
+
+    it('renders with direction "Left"', () => {
+        const onClickStub = cy.stub().as('onClickStub');
+
+        cy.mount(<AddBlockButton onClick={onClickStub} direction={AddBlockButtonDirection.Left} />);
+        cy.get(BUTTON_ID).should('have.class', 'tw-rotate-180');
+    });
+
+    it('renders with direction "Top"', () => {
+        const onClickStub = cy.stub().as('onClickStub');
+
+        cy.mount(<AddBlockButton onClick={onClickStub} direction={AddBlockButtonDirection.Top} />);
+        cy.get(BUTTON_ID).should('have.class', 'tw-rotate-[270deg]');
     });
 });

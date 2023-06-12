@@ -10,21 +10,23 @@ import { merge } from '@utilities/merge';
 import React, { ReactElement, useRef } from 'react';
 
 export enum AddBlockButtonDirection {
-    Horizontal = 'Horizontal',
-    Vertical = 'Vertical',
+    Left = 'Left',
+    Top = 'Top',
+    Bottom = 'Bottom',
+    Right = 'Right',
 }
 
 export type AddBlockButtonProps = {
     onClick: () => void;
     title?: string;
-    orientation?: AddBlockButtonDirection;
+    direction?: AddBlockButtonDirection;
     'data-test-id'?: string;
 };
 
 export const AddBlockButton = ({
     onClick,
     title,
-    orientation = AddBlockButtonDirection.Horizontal,
+    direction = AddBlockButtonDirection.Right,
     'data-test-id': dataTestId = 'add-block-button',
 }: AddBlockButtonProps): ReactElement => {
     const { isFocusVisible, focusProps } = useFocusRing();
@@ -39,7 +41,10 @@ export const AddBlockButton = ({
             className={merge([
                 'tw-group tw-leading-none tw-rounded-sm tw-outline-none',
                 isFocusVisible && FOCUS_STYLE,
-                orientation === AddBlockButtonDirection.Vertical ? 'tw-rotate-90' : '',
+                direction === AddBlockButtonDirection.Right && 'tw-rotate-0',
+                direction === AddBlockButtonDirection.Left && 'tw-rotate-180',
+                direction === AddBlockButtonDirection.Bottom && 'tw-rotate-90',
+                direction === AddBlockButtonDirection.Top && 'tw-rotate-[270deg]',
             ])}
         >
             <span
