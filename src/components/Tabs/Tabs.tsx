@@ -20,7 +20,6 @@ import { motion } from 'framer-motion';
 import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { useMemoizedId } from '@hooks/useMemoizedId';
-import { ScrollWrapper } from '@components/ScrollWrapper';
 import { DimensionUnity } from '@utilities/dimensions';
 
 export enum TabsPaddingX {
@@ -42,8 +41,6 @@ export type TabsProps = {
     activeItemId: string;
     children: ReactNode;
     onChange?: (tabId: string) => void;
-    scrollbar?: boolean;
-    scrollShadows?: boolean;
     maxHeight?: `${number}${DimensionUnity}`;
     minHeight?: `${number}${DimensionUnity}`;
 };
@@ -62,10 +59,8 @@ export const Tabs = ({
     activeItemId,
     children,
     onChange,
-    scrollbar = true,
     maxHeight,
     minHeight,
-    scrollShadows,
 }: TabsProps): ReactElement => {
     const groupId = useMemoizedId();
     const tabNavRef = useRef<HTMLDivElement | null>(null);
@@ -334,26 +329,8 @@ export const Tabs = ({
                 )}
             </div>
 
-            {scrollbar ? (
-                <div
-                    data-test-id="tab-content"
-                    className="tw-overflow-auto tw-flex tw-flex-col"
-                    style={{ maxHeight, minHeight }}
-                >
-                    <ScrollWrapper tabindex={-1} scrollShadows={scrollShadows} negativeMargin={false}>
-                        <div className="tw-mr-0">
-                            {Children.map(children, (child) => {
-                                if (!isValidElement(child)) {
-                                    return null;
-                                }
-
-                                return cloneElement(child, { ...child.props, active: child.props.id === activeItemId });
-                            })}
-                        </div>
-                    </ScrollWrapper>
-                </div>
-            ) : (
-                <div data-test-id="tab-content" style={{ maxHeight, minHeight }}>
+            <div data-test-id="tab-content" className="tw-flex tw-flex-col tw-overflow-y-auto">
+                <div className="tw-mr-0" style={{ maxHeight, minHeight }}>
                     {Children.map(children, (child) => {
                         if (!isValidElement(child)) {
                             return null;
@@ -362,7 +339,7 @@ export const Tabs = ({
                         return cloneElement(child, { ...child.props, active: child.props.id === activeItemId });
                     })}
                 </div>
-            )}
+            </div>
         </>
     );
 };
