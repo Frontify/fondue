@@ -38,6 +38,18 @@ const CustomCheckbox = () => {
     );
 };
 
+const TextParagraph = () => {
+    return (
+        <Text>
+            <p>
+                Bacon ipsum dolor amet spare ribs swine meatloaf, pastrami cupim tail leberkas frankfurter jowl chislic
+                shoulder. Frankfurter drumstick t-bone bacon ground round. Cupim pork loin shank kielbasa. Short loin
+                shank meatloaf tongue. Chicken sirloin swine ball tip. Turkey pork kevin burgdoggen meatball t-bone.
+            </p>
+        </Text>
+    );
+};
+
 const data: TabItemProps[] = [
     {
         id: 'tab-1',
@@ -45,12 +57,14 @@ const data: TabItemProps[] = [
         children: (
             <>
                 <CustomCheckbox />
-                <Text>
-                    Bacon ipsum dolor amet spare ribs swine meatloaf, pastrami cupim tail leberkas frankfurter jowl
-                    chislic shoulder. Frankfurter drumstick t-bone bacon ground round. Cupim pork loin shank kielbasa.
-                    Short loin shank meatloaf tongue. Chicken sirloin swine ball tip. Turkey pork kevin burgdoggen
-                    meatball t-bone.
-                </Text>
+                <br />
+                <TextParagraph />
+                <br />
+                <TextParagraph />
+                <br />
+                <TextParagraph />
+                <br />
+                <TextParagraph />
             </>
         ),
     },
@@ -117,29 +131,60 @@ export default {
             control: { type: 'select' },
             defaultValue: TabSize.Small,
         },
+        minHeight: {
+            type: 'string',
+            defaultValue: '50px',
+        },
     },
 } as Meta<TabsProps>;
 
-const TabTemplate: StoryFn<TabsProps> = (args) => {
+const TabsComponent = (args: TabsProps) => {
     const [activeItemId, setActiveItemId] = useState(data[0].id);
+    const defaultChildren = data.map((item) => (
+        <TabItem
+            id={item.id}
+            key={item.id}
+            label={item.label}
+            disabled={item.disabled ?? false}
+            decorator={item.decorator}
+        >
+            <div className="tw-p-3">{item.children}</div>
+        </TabItem>
+    ));
+
     return (
         <Tabs {...args} activeItemId={activeItemId} onChange={(value) => setActiveItemId(value)}>
-            {data.map((item) => (
-                <TabItem id={item.id} key={item.id} label={item.label} disabled={item.disabled ?? false}>
-                    <div className="tw-p-3">{item.children}</div>
-                </TabItem>
-            ))}
+            {args.children ? args.children : defaultChildren}
         </Tabs>
     );
+};
+
+const TabTemplate: StoryFn<TabsProps> = (args) => {
+    return <TabsComponent {...args} />;
 };
 export const Default = TabTemplate.bind({});
 Default.storyName = 'Label Only';
 
+const TabWithMaxHeight: StoryFn<TabsProps> = (args) => {
+    return <TabsComponent {...args} />;
+};
+export const WithMaxHeight = TabWithMaxHeight.bind({});
+WithMaxHeight.args = {
+    maxHeight: '100px',
+};
+
+const TabWithMinHeight: StoryFn<TabsProps> = (args) => {
+    return <TabsComponent {...args} />;
+};
+export const WithMinHeight = TabWithMinHeight.bind({});
+WithMinHeight.args = {
+    minHeight: '50px',
+};
+
 const dataWithIcon = data.map((item) => Object.assign({}, item, { decorator: <IconIcon size={IconSize.Size16} /> }));
 const TabWithIconTemplate: StoryFn<TabsProps> = (args) => {
-    const [activeItemId, setActiveItemId] = useState(data[0].id);
     return (
-        <Tabs {...args} activeItemId={activeItemId} onChange={(value) => setActiveItemId(value)}>
+        <TabsComponent {...args}>
             {dataWithIcon.map((item) => (
                 <TabItem
                     id={item.id}
@@ -151,7 +196,7 @@ const TabWithIconTemplate: StoryFn<TabsProps> = (args) => {
                     <div className="tw-p-3">{item.children}</div>
                 </TabItem>
             ))}
-        </Tabs>
+        </TabsComponent>
     );
 };
 export const WithIcon = TabWithIconTemplate.bind({});
@@ -166,9 +211,8 @@ const dataWithBadge = data.map((item) =>
     }),
 );
 const TabWithBadgeTemplate: StoryFn<TabsProps> = (args) => {
-    const [activeItemId, setActiveItemId] = useState(data[0].id);
     return (
-        <Tabs {...args} activeItemId={activeItemId} onChange={(value) => setActiveItemId(value)}>
+        <TabsComponent {...args}>
             {dataWithBadge.map((item) => (
                 <TabItem
                     id={item.id}
@@ -180,7 +224,7 @@ const TabWithBadgeTemplate: StoryFn<TabsProps> = (args) => {
                     <div className="tw-p-3">{item.children}</div>
                 </TabItem>
             ))}
-        </Tabs>
+        </TabsComponent>
     );
 };
 export const WithBadge = TabWithBadgeTemplate.bind({});
@@ -190,9 +234,8 @@ const dataWithBadgeAndIcon = dataWithBadge.map((item) =>
     Object.assign({}, item, { decorator: <IconIcon size={IconSize.Size16} /> }),
 );
 const TabWithBadgeAndIconTemplate: StoryFn<TabsProps> = (args) => {
-    const [activeItemId, setActiveItemId] = useState(data[0].id);
     return (
-        <Tabs {...args} activeItemId={activeItemId} onChange={(value) => setActiveItemId(value)}>
+        <TabsComponent {...args}>
             {dataWithBadgeAndIcon.map((item) => (
                 <TabItem
                     id={item.id}
@@ -205,7 +248,7 @@ const TabWithBadgeAndIconTemplate: StoryFn<TabsProps> = (args) => {
                     <div className="tw-p-3">{item.children}</div>
                 </TabItem>
             ))}
-        </Tabs>
+        </TabsComponent>
     );
 };
 export const WithBadgeAndIcon = TabWithBadgeAndIconTemplate.bind({});
