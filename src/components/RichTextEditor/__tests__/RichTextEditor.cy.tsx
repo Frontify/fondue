@@ -1,35 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ELEMENT_LINK, ELEMENT_PARAGRAPH } from '@udecode/plate';
+import { ELEMENT_PARAGRAPH } from '@udecode/plate';
 import React, { ReactElement, useState } from 'react';
 import { orderedListValue } from '../helpers/exampleValues';
 import {
-    AlignCenterPlugin,
-    AlignJustifyPlugin,
-    AlignLeftPlugin,
     AlignRightPlugin,
     BoldPlugin,
     BreakAfterPlugin,
-    CheckboxListPlugin,
-    CodePlugin,
-    Custom1Plugin,
-    Custom2Plugin,
-    Custom3Plugin,
-    EmojiPlugin,
     Heading1Plugin,
-    Heading2Plugin,
-    Heading3Plugin,
-    Heading4Plugin,
-    ImageCaptionPlugin,
-    ImageTitlePlugin,
     ItalicPlugin,
-    LinkPlugin,
     OrderedListPlugin,
     ParagraphPlugin,
     PluginComposer,
-    ResetFormattingPlugin,
     SoftBreakPlugin,
-    StrikethroughPlugin,
     TextStylePlugin,
     UnderlinePlugin,
     UnorderedListPlugin,
@@ -37,19 +20,16 @@ import {
 import { ACTIVE_COLUMN_BREAK_CLASS_NAMES } from '../Plugins/ColumnBreakPlugin/utils/getColumnBreakClasses';
 import { RichTextEditor } from '../RichTextEditor';
 import { ON_SAVE_DELAY_IN_MS } from '../utils';
-import { insertTextAndOpenToolbar } from './fixtures/RichTextEditor';
 import {
-    BUTTON,
+    RichTextWithCustomTextStylesDefaultValues,
+    TextStylePlugins,
+    insertTextAndOpenToolbar,
+} from './fixtures/RichTextEditor';
+import {
     CHECKBOX_INPUT,
-    CHECKBOX_INPUT_ID,
-    EDIT_LINK_BUTTON,
-    FLOATING_LINK_EDIT,
-    FLOATING_LINK_INSERT,
-    REMOVE_LINK_BUTTON,
     RICH_TEXT_EDITOR,
     TEXTSTYLE_DROPDOWN_TRIGGER,
     TEXTSTYLE_OPTION,
-    TOOLBAR_BUTTON,
     TOOLBAR_FLOATING,
     TOOLBAR_GROUP_1,
     TOOLBAR_GROUP_2,
@@ -79,112 +59,10 @@ const selectTextValue = (value: string) => {
     });
 };
 
-const RichTextWithLink = ({ text, link }: { text: string; link: string }): ReactElement => {
-    return (
-        <RichTextEditor
-            value={JSON.stringify([
-                {
-                    type: ELEMENT_PARAGRAPH,
-                    children: [
-                        {
-                            type: ELEMENT_LINK,
-                            url: link,
-                            children: [
-                                {
-                                    text,
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ])}
-        />
-    );
-};
-
-const RichTextWithLegacyLink = ({ text, url }: { text: string; url: string }): ReactElement => {
-    return (
-        <RichTextEditor
-            value={JSON.stringify([
-                {
-                    type: ELEMENT_PARAGRAPH,
-                    children: [
-                        {
-                            type: ELEMENT_LINK,
-                            chosenLink: {
-                                searchResult: {
-                                    link: url,
-                                },
-                                openInNewTab: true,
-                            },
-                            children: [
-                                {
-                                    text,
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ])}
-        />
-    );
-};
-
 const RichTextEditorWithValueSetOutside = ({ value }: { value: string }): ReactElement => {
     const [initialValue, setInitialValue] = useState(value);
 
     return <RichTextEditor onTextChange={(value) => setInitialValue(value)} value={initialValue} />;
-};
-
-const RichTextEditorWithOrderedListStyles = (): ReactElement => (
-    <RichTextEditor value={JSON.stringify([orderedListValue])} />
-);
-
-const TextStylePlugins = [
-    new Heading1Plugin(),
-    new Heading2Plugin(),
-    new Heading3Plugin(),
-    new Heading4Plugin(),
-    new ParagraphPlugin(),
-    new Custom1Plugin(),
-    new Custom2Plugin(),
-    new Custom3Plugin(),
-    new ImageTitlePlugin(),
-    new ImageCaptionPlugin(),
-];
-
-const RichTextWithCustomTextStylesDefaultValues = (): ReactElement => {
-    const plugins = new PluginComposer();
-    plugins
-        .setPlugin(new SoftBreakPlugin())
-        .setPlugin(
-            new TextStylePlugin({
-                textStyles: TextStylePlugins,
-            }),
-        )
-        .setPlugin(
-            [
-                new BoldPlugin(),
-                new ItalicPlugin(),
-                new UnderlinePlugin(),
-                new StrikethroughPlugin(),
-                new LinkPlugin(),
-                new CodePlugin(),
-            ],
-            [
-                new AlignLeftPlugin(),
-                new AlignCenterPlugin(),
-                new AlignRightPlugin(),
-                new AlignJustifyPlugin(),
-                new UnorderedListPlugin(),
-                new CheckboxListPlugin(),
-                new OrderedListPlugin(),
-                new ResetFormattingPlugin(),
-                new EmojiPlugin(),
-            ],
-        );
-
-    return <RichTextEditor plugins={plugins} />;
 };
 
 const activeButtonClassNames = '!tw-bg-box-selected tw-rounded !tw-text-box-selected-inverse';
@@ -287,219 +165,6 @@ describe('RichTextEditor Component', () => {
         });
     });
 
-    describe('Design of text', () => {
-        it('renders a bold text', () => {
-            cy.mount(<RichTextEditor />);
-
-            insertTextAndOpenToolbar();
-            cy.get(TOOLBAR_FLOATING).should('be.visible');
-            cy.get(TOOLBAR_GROUP_1).children().eq(0).click();
-            cy.get('[contenteditable=true]').should('include.html', 'tw-font-bold');
-        });
-
-        it('renders italic', () => {
-            cy.mount(<RichTextEditor />);
-
-            insertTextAndOpenToolbar();
-            cy.get(TOOLBAR_FLOATING).should('be.visible');
-            cy.get(TOOLBAR_GROUP_1).children().eq(1).click();
-            cy.get('[contenteditable=true]').should('include.html', 'tw-italic');
-        });
-
-        it('renders underline', () => {
-            cy.mount(<RichTextEditor />);
-
-            insertTextAndOpenToolbar();
-            cy.get(TOOLBAR_FLOATING).should('be.visible');
-            cy.get(TOOLBAR_GROUP_1).children().eq(2).click();
-            cy.get('[contenteditable=true]').should('include.html', 'tw-underline');
-        });
-
-        it('renders strikethrough', () => {
-            cy.mount(<RichTextEditor />);
-
-            insertTextAndOpenToolbar();
-            cy.get(TOOLBAR_FLOATING).should('be.visible');
-            cy.get(TOOLBAR_GROUP_1).children().eq(3).click();
-            cy.get('[contenteditable=true]').should('include.html', 'tw-line-through');
-        });
-
-        it('renders code', () => {
-            cy.mount(<RichTextEditor />);
-
-            insertTextAndOpenToolbar();
-            cy.get(TOOLBAR_FLOATING).should('be.visible');
-            cy.get(TOOLBAR_GROUP_1).children().eq(5).click();
-            cy.get('[contenteditable=true]').should(
-                'include.html',
-                'tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-[0.2em] tw-font-mono tw-text-[85%]',
-            );
-        });
-
-        it('renders an unordered list', () => {
-            cy.mount(<RichTextEditor />);
-
-            insertTextAndOpenToolbar();
-            cy.get(TOOLBAR_FLOATING).should('be.visible');
-            cy.get(TOOLBAR_GROUP_2).children().eq(4).click();
-            cy.get('[contenteditable=true]').should('include.html', '<ul');
-        });
-
-        it('renders ordered list with correct list style types', () => {
-            cy.mount(<RichTextEditorWithOrderedListStyles />);
-
-            cy.get('[contenteditable=true] ol').should(
-                'have.class',
-                "[&>li>p]:before:tw-content-[counter(count,decimal)_'._']",
-            );
-            cy.get('[contenteditable=true] ol ol').should(
-                'have.class',
-                "[&>li>p]:before:tw-content-[counter(count,_lower-alpha)_'._']",
-            );
-            cy.get('[contenteditable=true] ol ol ol').should(
-                'have.class',
-                "[&>li>p]:before:tw-content-[counter(count,lower-roman)_'._']",
-            );
-            cy.get('[contenteditable=true] ol ol ol ol').should(
-                'have.class',
-                "[&>li>p]:before:tw-content-[counter(count,decimal)_'._']",
-            );
-        });
-
-        it('renders ordered list right aligned', () => {
-            cy.mount(<RichTextEditorWithOrderedListStyles />);
-
-            insertTextAndOpenToolbar();
-            cy.get(TOOLBAR_FLOATING).should('be.visible');
-            cy.get(TOOLBAR_GROUP_2).children().eq(2).click();
-            cy.get('[contenteditable=true]').should('include.html', 'tw-justify-end tw-text-right');
-        });
-
-        it('renders an ordered list', () => {
-            cy.mount(<RichTextEditor />);
-
-            insertTextAndOpenToolbar();
-            cy.get(TOOLBAR_FLOATING).should('be.visible');
-            cy.get(TOOLBAR_GROUP_2).children().eq(6).click();
-            cy.get('[contenteditable=true]').should('include.html', '<ol');
-        });
-
-        it('renders a right aligned text', () => {
-            cy.mount(<RichTextEditor />);
-
-            insertTextAndOpenToolbar();
-            cy.get(TOOLBAR_FLOATING).should('be.visible');
-            cy.get(TOOLBAR_GROUP_2).children().eq(2).click();
-            cy.get('[contenteditable=true]').should('include.html', 'tw-text-right');
-        });
-
-        it('renders a heading', () => {
-            cy.mount(<RichTextWithCustomTextStylesDefaultValues />);
-
-            insertTextAndOpenToolbar();
-            cy.get(TOOLBAR_FLOATING).should('be.visible');
-            cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
-            cy.get(TEXTSTYLE_OPTION).first().click();
-            cy.get('[contenteditable=true]').should('include.html', '<h1');
-        });
-
-        it('renders a custom text style', () => {
-            cy.mount(<RichTextWithCustomTextStylesDefaultValues />);
-
-            insertTextAndOpenToolbar();
-            cy.get(TOOLBAR_FLOATING).should('be.visible');
-            cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
-            cy.get(TEXTSTYLE_OPTION).eq(6).click();
-            cy.get('[contenteditable=true] > p').should(
-                'have.attr',
-                'style',
-                'font-size: 14px; font-weight: 600; font-style: normal;',
-            );
-        });
-
-        it('renders multiple editors', () => {
-            const text1 = 'editor one content';
-            const text2 = 'editor two content';
-            cy.mount(
-                <>
-                    <RichTextEditor id="one" value={text1} />
-                    <RichTextEditor id="two" value={text2} />
-                </>,
-            );
-
-            cy.get('[contenteditable=true]').first().should('contain.text', text1);
-            cy.get('[contenteditable=true]').last().should('contain.text', text2);
-        });
-
-        it('renders a checkbox and checks it', () => {
-            cy.mount(<RichTextEditor />);
-
-            insertTextAndOpenToolbar();
-            cy.get(TOOLBAR_FLOATING).should('be.visible');
-            cy.get(TOOLBAR_GROUP_2).children().eq(5).click();
-            cy.get(CHECKBOX_INPUT).check().should('be.checked');
-        });
-        it('switches between checkbox and lists', () => {
-            cy.mount(<RichTextEditor />);
-
-            insertTextAndOpenToolbar();
-            cy.get(TOOLBAR_GROUP_2).children().eq(5).click();
-
-            cy.get(CHECKBOX_INPUT).should('exist');
-            cy.get('ul li').should('not.exist');
-            cy.get('ol li').should('not.exist');
-
-            cy.get('[contenteditable=true]').click().type('{selectall}');
-            cy.get(TOOLBAR_GROUP_2).children().eq(4).click();
-
-            cy.get(CHECKBOX_INPUT).should('not.exist');
-            cy.get('ul li').should('exist');
-            cy.get('ol li').should('not.exist');
-
-            cy.get('[contenteditable=true]').click().type('{selectall}');
-            cy.get(TOOLBAR_GROUP_2).children().eq(6).click();
-
-            cy.get(CHECKBOX_INPUT).should('not.exist');
-            cy.get('ul li').should('not.exist');
-            cy.get('ol li').should('exist');
-
-            cy.get(TOOLBAR_GROUP_2).children().eq(5).click();
-
-            cy.get(CHECKBOX_INPUT).should('exist');
-            cy.get('ul li').should('not.exist');
-            cy.get('ol li').should('not.exist');
-        });
-        it('renders a checkbox with custom textStyle', () => {
-            cy.mount(<RichTextWithCustomTextStylesDefaultValues />);
-            const heading2Styles = 'font-size: 32px; font-weight: 700; font-style: normal;';
-
-            insertTextAndOpenToolbar();
-            cy.get(TOOLBAR_GROUP_2).children().eq(5).click();
-            cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
-            cy.get(TEXTSTYLE_OPTION).eq(1).click();
-            cy.get('[contenteditable=true] > div > span').should('have.attr', 'style', heading2Styles);
-            //remove checklist again and textStyle stays
-            cy.get('[contenteditable=true]').click().type('{selectall}');
-            cy.get(TOOLBAR_GROUP_2).children().eq(5).click();
-            cy.get('[contenteditable=true] > h2').should('have.attr', 'style', heading2Styles);
-        });
-
-        it('switches a custom checkbox to list and keeps textStyle', () => {
-            cy.mount(<RichTextWithCustomTextStylesDefaultValues />);
-            const heading1Styles = 'font-size: 48px; font-weight: 700; font-style: normal;';
-
-            insertTextAndOpenToolbar();
-            cy.get(TOOLBAR_GROUP_2).children().eq(5).click();
-            cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
-            cy.get(TEXTSTYLE_OPTION).first().click();
-            cy.get('[contenteditable=true] > div ').should('include.html', heading1Styles);
-            //remove checklist again and textStyle stays
-            cy.get('[contenteditable=true]').click().type('{selectall}');
-            cy.get(TOOLBAR_GROUP_2).children().eq(4).click();
-            cy.get('[contenteditable=true] > ul ').should('include.html', heading1Styles);
-        });
-    });
-
     describe('Emits event', () => {
         it('emits onTextChange when choosing an inline style', () => {
             const onTextChange = cy.stub();
@@ -547,131 +212,6 @@ describe('RichTextEditor Component', () => {
                         JSON.stringify([{ type: ELEMENT_PARAGRAPH, children: [{ text: content }] }]),
                     );
                 });
-        });
-    });
-
-    describe('link plugin', () => {
-        it('should render with link', () => {
-            const link = 'https://smartive.ch';
-            const text = 'This is a link';
-            cy.mount(<RichTextWithLink link={link} text={text} />);
-
-            cy.get('[contenteditable=true] a').should('contain.text', text);
-            cy.get('[contenteditable=true] a').should('have.attr', 'href', link);
-            cy.get('[contenteditable=true] a').should('have.attr', 'target', '_blank');
-        });
-
-        it('should open floating link insert', () => {
-            const link = 'https://smartive.ch';
-            cy.mount(<RichTextEditor />);
-            insertTextAndOpenToolbar();
-            cy.get(TOOLBAR_FLOATING).should('be.visible');
-            cy.get(TOOLBAR_GROUP_1).children().eq(4).click();
-            cy.get(FLOATING_LINK_INSERT).should('exist');
-            cy.get(BUTTON).eq(1).should('be.disabled');
-            cy.get('[type=text]').eq(0).should('have.attr', 'value', 'hello');
-            cy.get('[type=text]').eq(1).click().type(link);
-            cy.get(BUTTON).eq(1).should('not.be.disabled');
-            cy.get(CHECKBOX_INPUT_ID).click({ force: true });
-            cy.get(BUTTON).eq(1).click();
-            cy.get('[contenteditable=true] a').should('have.attr', 'target', '_blank');
-            cy.get('[contenteditable=true] a').should('have.attr', 'href', link);
-        });
-
-        it('should open floating link insert and edit', () => {
-            const link = 'https://smartive.ch';
-            const text = 'This is a link';
-            cy.mount(<RichTextWithLink link={link} text={text} />);
-            cy.get(FLOATING_LINK_EDIT).should('not.exist');
-            cy.get(FLOATING_LINK_INSERT).should('not.exist');
-            cy.get(EDIT_LINK_BUTTON).should('not.exist');
-            cy.get(REMOVE_LINK_BUTTON).should('not.exist');
-
-            cy.get('[contenteditable=true] a').realClick();
-            cy.get(FLOATING_LINK_EDIT).should('contain', link);
-            cy.get(EDIT_LINK_BUTTON).should('exist');
-            cy.get(REMOVE_LINK_BUTTON).should('exist');
-            cy.get(EDIT_LINK_BUTTON).click();
-            cy.get(FLOATING_LINK_INSERT).should('exist');
-
-            cy.get('[type=text]').eq(0).should('have.attr', 'value', text);
-            cy.get('[type=text]').eq(1).should('have.attr', 'value', link);
-            cy.get('[type=checkbox]').should('be.checked');
-        });
-
-        it('should edit link', () => {
-            const link = 'https://smartive.ch';
-            const text = 'This is a link';
-            const additionalLink = '/team';
-            cy.mount(<RichTextWithLink link={link} text={text} />);
-            cy.get('[contenteditable=true] a').realClick();
-            cy.get(EDIT_LINK_BUTTON).click();
-
-            cy.get('[type=text]').eq(1).click().type(additionalLink);
-            cy.get(CHECKBOX_INPUT_ID).click({ force: true });
-
-            cy.get(BUTTON).eq(1).click();
-            cy.get('[contenteditable=true] a').should('have.attr', 'href', link + additionalLink);
-            cy.get('[contenteditable=true] a').should('have.attr', 'target', '_self');
-        });
-
-        it('should remove link', () => {
-            const link = 'https://smartive.ch';
-            const text = 'This is a link';
-            cy.mount(<RichTextWithLink link={link} text={text} />);
-            cy.get('[contenteditable=true] a').realClick();
-            cy.get(REMOVE_LINK_BUTTON).click();
-
-            cy.get('[contenteditable=true]').should('contain.text', text);
-            cy.get('[contenteditable=true] a').should('not.exist');
-        });
-
-        it('should render with legacy link', () => {
-            const url = 'https://frontify.ch';
-            const text = 'This is a link';
-            cy.mount(<RichTextWithLegacyLink url={url} text={text} />);
-
-            cy.get('[contenteditable=true] a').should('contain.text', text);
-            cy.get('[contenteditable=true] a').should('have.attr', 'href', url);
-        });
-
-        it('should remove legacy link', () => {
-            const url = 'https://frontify.ch';
-            const text = 'This is a link';
-            cy.mount(<RichTextWithLegacyLink url={url} text={text} />);
-
-            cy.get('[contenteditable=true] a').realClick();
-            cy.get(REMOVE_LINK_BUTTON).click();
-
-            cy.get('[contenteditable=true]').should('contain.text', text);
-            cy.get('[contenteditable=true] a').should('not.exist');
-        });
-
-        it('should edit legacy link', () => {
-            const link = 'https://smartive.ch';
-            const text = 'This is a link';
-            const additionalLink = '/team';
-            cy.mount(<RichTextWithLegacyLink url={link} text={text} />);
-            cy.get('[contenteditable=true] a').realClick();
-            cy.get(EDIT_LINK_BUTTON).click();
-
-            cy.get('[type=text]').eq(1).click().type(additionalLink);
-            cy.get(CHECKBOX_INPUT_ID).click({ force: true });
-
-            cy.get(BUTTON).eq(1).click();
-            cy.get('[contenteditable=true] a').should('have.attr', 'href', link + additionalLink);
-            cy.get('[contenteditable=true] a').should('have.attr', 'target', '_self');
-        });
-
-        it('should disable link-button when multiple blocks are selected', () => {
-            const plugins = new PluginComposer();
-            plugins.setPlugin([new LinkPlugin()]);
-
-            cy.mount(<RichTextEditor plugins={plugins} />);
-
-            cy.get('[contenteditable=true]').click().type('block1{enter}block2{selectall}');
-            cy.get(TOOLBAR_FLOATING).should('be.visible');
-            cy.get(`${TOOLBAR_FLOATING} ${TOOLBAR_BUTTON}`).should('have.class', disabledButtonClassNames);
         });
     });
 

@@ -6,6 +6,7 @@ import { AriaBreadcrumbsProps, useBreadcrumbs } from '@react-aria/breadcrumbs';
 import React, { MouseEvent, ReactElement } from 'react';
 import { BreadcrumbItem } from './BreadcrumbItem';
 import { CurrentBreadcrumbItem } from './CurrentBreadcrumbItem';
+import { merge } from '@utilities/merge';
 
 const mapBreadcrumbsToAriaProps = (items: Breadcrumb[]) => ({
     children: items.map(({ label }, index) => (
@@ -28,15 +29,32 @@ export type Breadcrumb = {
 export type BreadcrumbsProps = {
     items: Breadcrumb[];
     'data-test-id'?: string;
+    verticalGap?: BreadcrumbGap;
 };
 
-export const Breadcrumbs = ({ items, 'data-test-id': dataTestId = 'breadcrumb' }: BreadcrumbsProps): ReactElement => {
+export enum BreadcrumbGap {
+    None = 'None',
+    Small = 'Small',
+    Medium = 'Medium',
+}
+
+export const verticalGapClassMap: Record<BreadcrumbGap, string> = {
+    [BreadcrumbGap.None]: 'tw-gap-y-0',
+    [BreadcrumbGap.Small]: 'tw-gap-y-0.5',
+    [BreadcrumbGap.Medium]: 'tw-gap-y-1',
+};
+
+export const Breadcrumbs = ({
+    items,
+    'data-test-id': dataTestId = 'breadcrumb',
+    verticalGap = BreadcrumbGap.Medium,
+}: BreadcrumbsProps): ReactElement => {
     const props = mapBreadcrumbsToAriaProps(items);
     const { navProps } = useBreadcrumbs(props as AriaBreadcrumbsProps);
 
     return (
         <nav {...navProps} className="tw-font-sans" aria-label="Breadcrumb" data-test-id={dataTestId}>
-            <ol className="tw-list-none tw-flex tw-flex-wrap tw-gap-y-1">
+            <ol className={merge(['tw-list-none tw-flex tw-flex-wrap', verticalGapClassMap[verticalGap]])}>
                 {items.map(({ label, badges, bold, decorator, link, onClick }, index) => {
                     const isCurrent = index === items.length - 1;
                     const key = `breadcrumb-${index}`;
