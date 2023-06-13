@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
-import { AddBlockButton, AddBlockButtonDirection } from './AddBlockButton';
+import { AddBlockButton, AddBlockButtonDirection, ButtonDirection } from './AddBlockButton';
 
 const BUTTON_ID = '[data-test-id=add-block-button]';
 
@@ -48,21 +48,42 @@ describe('Add Block Button component', () => {
     it('renders with direction "Bottom"', () => {
         const onClickStub = cy.stub().as('onClickStub');
 
-        cy.mount(<AddBlockButton onClick={onClickStub} direction={AddBlockButtonDirection.Bottom} />);
+        cy.mount(<AddBlockButton onClick={onClickStub} direction={ButtonDirection.Bottom} />);
         cy.get(BUTTON_ID).should('have.class', 'tw-rotate-90');
     });
 
     it('renders with direction "Left"', () => {
         const onClickStub = cy.stub().as('onClickStub');
 
-        cy.mount(<AddBlockButton onClick={onClickStub} direction={AddBlockButtonDirection.Left} />);
+        cy.mount(<AddBlockButton onClick={onClickStub} direction={ButtonDirection.Left} />);
         cy.get(BUTTON_ID).should('have.class', 'tw-rotate-180');
     });
 
     it('renders with direction "Top"', () => {
         const onClickStub = cy.stub().as('onClickStub');
 
-        cy.mount(<AddBlockButton onClick={onClickStub} direction={AddBlockButtonDirection.Top} />);
+        cy.mount(<AddBlockButton onClick={onClickStub} direction={ButtonDirection.Top} />);
+        cy.get(BUTTON_ID).should('have.class', 'tw-rotate-[270deg]');
+    });
+
+    it('renders with orientation "Horizontal"', () => {
+        const onClickStub = cy.stub().as('onClickStub');
+
+        cy.mount(<AddBlockButton onClick={onClickStub} orientation={AddBlockButtonDirection.Horizontal} />);
+        cy.get(BUTTON_ID).should('have.class', 'tw-rotate-0');
+    });
+
+    it('renders with orientation "Vertical"', () => {
+        const onClickStub = cy.stub().as('onClickStub');
+
+        cy.mount(<AddBlockButton onClick={onClickStub} orientation={AddBlockButtonDirection.Vertical} />);
+        cy.get(BUTTON_ID).should('have.class', 'tw-rotate-90');
+    });
+
+    it('renders with direction "Top"', () => {
+        const onClickStub = cy.stub().as('onClickStub');
+
+        cy.mount(<AddBlockButton onClick={onClickStub} direction={ButtonDirection.Top} />);
         cy.get(BUTTON_ID).should('have.class', 'tw-rotate-[270deg]');
     });
 

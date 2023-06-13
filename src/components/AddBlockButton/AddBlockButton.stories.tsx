@@ -6,6 +6,7 @@ import {
     AddBlockButton as AddBlockButtonComponent,
     AddBlockButtonDirection,
     AddBlockButtonProps,
+    ButtonDirection,
 } from './AddBlockButton';
 
 export default {
@@ -14,15 +15,20 @@ export default {
     tags: ['autodocs'],
     args: {
         title: 'Add Block Button',
-        direction: AddBlockButtonDirection.Right,
+        direction: ButtonDirection.Right,
+        orientation: AddBlockButtonDirection.Horizontal,
     },
     argTypes: {
         onClick: {
             action: 'Click',
         },
         direction: {
-            options: Object.values(AddBlockButtonDirection),
+            options: Object.values(ButtonDirection),
             control: 'select',
+        },
+        orientation: {
+            options: Object.values(AddBlockButtonDirection),
+            control: 'radio',
         },
     },
 } as Meta<AddBlockButtonProps>;

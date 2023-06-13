@@ -10,6 +10,11 @@ import { merge } from '@utilities/merge';
 import React, { ReactElement, useRef } from 'react';
 
 export enum AddBlockButtonDirection {
+    Horizontal = 'Horizontal',
+    Vertical = 'Vertical',
+}
+
+export enum ButtonDirection {
     Left = 'Left',
     Top = 'Top',
     Bottom = 'Bottom',
@@ -19,14 +24,17 @@ export enum AddBlockButtonDirection {
 export type AddBlockButtonProps = {
     onClick: () => void;
     title?: string;
-    direction?: AddBlockButtonDirection;
+    /** @deprecated use direction with ButtonDirection */
+    orientation?: AddBlockButtonDirection;
+    direction?: ButtonDirection;
     'data-test-id'?: string;
 };
 
 export const AddBlockButton = ({
     onClick,
     title,
-    direction = AddBlockButtonDirection.Right,
+    direction = ButtonDirection.Right,
+    orientation = AddBlockButtonDirection.Horizontal,
     'data-test-id': dataTestId = 'add-block-button',
 }: AddBlockButtonProps): ReactElement => {
     const { isFocusVisible, focusProps } = useFocusRing();
@@ -41,10 +49,11 @@ export const AddBlockButton = ({
             className={merge([
                 'tw-group tw-leading-none tw-rounded-sm tw-outline-none',
                 isFocusVisible && FOCUS_STYLE,
-                direction === AddBlockButtonDirection.Right && 'tw-rotate-0',
-                direction === AddBlockButtonDirection.Left && 'tw-rotate-180',
-                direction === AddBlockButtonDirection.Bottom && 'tw-rotate-90',
-                direction === AddBlockButtonDirection.Top && 'tw-rotate-[270deg]',
+                orientation === AddBlockButtonDirection.Vertical ? 'tw-rotate-90' : 'tw-rotate-0',
+                direction === ButtonDirection.Right && 'tw-rotate-0',
+                direction === ButtonDirection.Left && 'tw-rotate-180',
+                direction === ButtonDirection.Bottom && 'tw-rotate-90',
+                direction === ButtonDirection.Top && 'tw-rotate-[270deg]',
             ])}
         >
             <span
