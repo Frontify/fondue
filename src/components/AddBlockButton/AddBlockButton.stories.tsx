@@ -18,6 +18,7 @@ export default {
         direction: ButtonDirection.Right,
         orientation: AddBlockButtonDirection.Horizontal,
     },
+
     argTypes: {
         onClick: {
             action: 'Click',
