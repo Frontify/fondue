@@ -18,5 +18,6 @@ export type ScrollWrapperProps = {
     direction?: ScrollWrapperDirection;
     children?: ReactElement | ReactElement[];
     'data-test-id'?: string;
-    tabIndex?: number;
+    tabindex?: number;
+    scrollShadows?: boolean;
 };

@@ -116,7 +116,7 @@ export const useInsertModal = () => {
         'enter',
         onSave,
         {
-            enableOnTags: ['INPUT'],
+            enableOnFormTags: ['INPUT'],
         },
         [],
     );
