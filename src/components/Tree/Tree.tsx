@@ -11,6 +11,7 @@ import React, {
     useReducer,
     useRef,
     useState,
+    useTransition,
 } from 'react';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
@@ -65,9 +66,7 @@ import {
 } from './helpers';
 
 import { TreeContext, TreeContextProps } from './TreeContext';
-
-export const ROOT_ID = '__ROOT__';
-export const INDENTATION_WIDTH = 32;
+import { ROOT_ID } from './helpers';
 
 const measuring: MeasuringConfiguration = {
     droppable: {
@@ -184,6 +183,7 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
             draft.expandedIds = action.payload.expandedIds;
             draft.selectionMode = action.payload.selectionMode;
             break;
+
         default:
             console.warn(`Updated tree with action "${action.type}" but it has not effect.`);
     }
@@ -218,6 +218,8 @@ export const Tree = memo(
         );
 
         const [treeState, updateTreeState] = useReducer(reducer, initialState);
+        const [, startTransition] = useTransition();
+
         const [offset, setOffset] = useState(0);
         const [overId, setOverId] = useState<Nullable<string>>(null);
         const [activeId, setActiveId] = useState<Nullable<string>>(null);
@@ -584,10 +586,12 @@ export const Tree = memo(
                 }
             }
 
-            updateTreeState({
-                type: 'REGISTER_NODES',
-                payload: nodesToRender.map((n) => n.node),
-            });
+            startTransition(() =>
+                updateTreeState({
+                    type: 'REGISTER_NODES',
+                    payload: nodesToRender.map((n) => n.node),
+                }),
+            );
         }, [treeState.rootNodes, treeState.expandedIds]);
 
         useEffect(() => {
@@ -628,36 +632,37 @@ export const Tree = memo(
             });
         }, [activeId, offset, overId, treeState.nodes]);
 
-        const nodes = useMemo(() => {
-            const newNodes = treeState.nodes.map((node) => {
-                return cloneElement(node, {
-                    projection: node.props.id === activeId ? treeState.projection : null,
-                    treeDraggable: draggable,
-                    isSelected: treeState.selectedIds.has(node.props.id),
-                    isExpanded: treeState.expandedIds.has(node.props.id),
-                    registerOverlay,
-                    onExpand: handleExpand,
-                    onShrink: handleShrink,
-                    onSelect: handleSelect,
-                    registerNodeChildren,
-                    unregisterNodeChildren,
-                });
-            });
-            return newNodes;
-        }, [
-            draggable,
-            handleExpand,
-            handleShrink,
-            handleSelect,
-            activeId,
-            registerOverlay,
-            treeState.expandedIds,
-            treeState.nodes,
-            treeState.projection,
-            treeState.selectedIds,
-            registerNodeChildren,
-            unregisterNodeChildren,
-        ]);
+        const nodes = useMemo(
+            () =>
+                treeState.nodes.map((node) => {
+                    return cloneElement(node, {
+                        projection: node.props.id === activeId ? treeState.projection : null,
+                        treeDraggable: draggable,
+                        isSelected: treeState.selectedIds.has(node.props.id),
+                        isExpanded: treeState.expandedIds.has(node.props.id),
+                        registerOverlay,
+                        onExpand: handleExpand,
+                        onShrink: handleShrink,
+                        onSelect: handleSelect,
+                        registerNodeChildren,
+                        unregisterNodeChildren,
+                    });
+                }),
+            [
+                draggable,
+                handleExpand,
+                handleShrink,
+                handleSelect,
+                activeId,
+                registerOverlay,
+                treeState.expandedIds,
+                treeState.nodes,
+                treeState.projection,
+                treeState.selectedIds,
+                registerNodeChildren,
+                unregisterNodeChildren,
+            ],
+        );
 
         const contextValue: TreeContextProps = useMemo(
             () => ({

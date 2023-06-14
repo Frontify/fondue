@@ -20,8 +20,11 @@ import { motion } from 'framer-motion';
 import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { useMemoizedId } from '@hooks/useMemoizedId';
+import { DimensionUnity } from '@utilities/dimensions';
 
 export enum TabsPaddingX {
+    None = 'None',
+    XSmall = 'XSmall',
     Small = 'Small',
     Medium = 'Medium',
     Large = 'Large',
@@ -38,15 +41,27 @@ export type TabsProps = {
     activeItemId: string;
     children: ReactNode;
     onChange?: (tabId: string) => void;
+    maxHeight?: `${number}${DimensionUnity}`;
+    minHeight?: `${number}${DimensionUnity}`;
 };
 
 const paddingMap: Record<TabsPaddingX, string> = {
+    [TabsPaddingX.None]: 'tw-pl-0',
+    [TabsPaddingX.XSmall]: 'tw-pl-xs',
     [TabsPaddingX.Small]: 'tw-pl-s',
     [TabsPaddingX.Medium]: 'tw-pl-m',
     [TabsPaddingX.Large]: 'tw-pl-l',
 };
 
-export const Tabs = ({ paddingX, size, activeItemId, children, onChange }: TabsProps): ReactElement => {
+export const Tabs = ({
+    paddingX,
+    size,
+    activeItemId,
+    children,
+    onChange,
+    maxHeight,
+    minHeight,
+}: TabsProps): ReactElement => {
     const groupId = useMemoizedId();
     const tabNavRef = useRef<HTMLDivElement | null>(null);
     const [isOverflowing, setIsOverflowing] = useState(false);
@@ -194,7 +209,7 @@ export const Tabs = ({ paddingX, size, activeItemId, children, onChange }: TabsP
                     ref={tabNavRef}
                     role="tablist"
                     className={merge([
-                        'tw-overflow-x-hidden tw-flex-shrink-0 tw-h-full tw-w-full tw-flex tw-justify-start tw-pr-8',
+                        'tw-overflow-x-hidden tw-flex-shrink-0 tw-h-full tw-w-full tw-flex tw-justify-start',
                         paddingMap[paddingX ?? TabsPaddingX.Small],
                         size === TabSize.Small ? 'tw-gap-xxs' : 'tw-gap-xs ',
                     ])}
@@ -213,6 +228,7 @@ export const Tabs = ({ paddingX, size, activeItemId, children, onChange }: TabsP
                                 className={merge([
                                     'tw-group tw-relative tw-mx-0 tw-py-4 tw-px-2 tw-w-max tw-cursor-pointer tw-flex tw-items-center tw-justify-center tw-whitespace-nowrap',
                                     tab.disabled && 'tw-text-text-disabled',
+                                    !tab.disabled && 'hover:tw-text-text',
                                     tab.id === activeItemId ? 'tw-font-medium tw-text-text' : 'tw-text-text-weak',
                                     size === TabSize.Small ? 'tw-text-sm' : 'tw-text-md',
                                 ])}
@@ -230,9 +246,11 @@ export const Tabs = ({ paddingX, size, activeItemId, children, onChange }: TabsP
                                 <span>{tab.label}</span>
 
                                 {tab.badge && (
-                                    <Badge disabled={tab.disabled} style={tab.badge.style}>
-                                        {tab.badge.children}
-                                    </Badge>
+                                    <span className="tw-ml-1.5">
+                                        <Badge disabled={tab.disabled} style={tab.badge.style}>
+                                            {tab.badge.children}
+                                        </Badge>
+                                    </span>
                                 )}
                                 {tab.id === activeItemId && (
                                     <motion.div
@@ -240,11 +258,8 @@ export const Tabs = ({ paddingX, size, activeItemId, children, onChange }: TabsP
                                         layoutDependency={activeItemId}
                                         data-test-id="tab-active-highlight"
                                         layoutId={groupId}
-                                        className="tw-absolute tw-h-[3px] tw-bg-violet-60 tw-rounded-t-x-large tw-w-full tw-bottom-0"
+                                        className="tw-absolute tw-h-[3px] tw-bg-box-selected-strong tw-rounded-t-x-large tw-w-full tw-bottom-0"
                                     />
-                                )}
-                                {tab.id !== activeItemId && !tab.disabled && (
-                                    <div className="group-hover:tw-absolute group-hover:tw-h-[3px] group-hover:tw-bg-box-neutral-hover group-hover:tw-rounded-t-x-large group-hover:tw-w-full group-hover:tw-bottom-0" />
                                 )}
                             </button>
                         );
@@ -253,7 +268,7 @@ export const Tabs = ({ paddingX, size, activeItemId, children, onChange }: TabsP
                 {isOverflowing && (
                     <div
                         data-test-id="tab-overflow"
-                        className="tw-absolute tw-right-3 tw-bottom-0 tw-top-0 tw-flex tw-justify-center tw-items-center"
+                        className="tw-absolute tw-z-50 tw-right-3 tw-bottom-0 tw-top-0 tw-flex tw-justify-center tw-items-center"
                     >
                         <button
                             className={merge([
@@ -314,14 +329,16 @@ export const Tabs = ({ paddingX, size, activeItemId, children, onChange }: TabsP
                 )}
             </div>
 
-            <div data-test-id="tab-content">
-                {Children.map(children, (child) => {
-                    if (!isValidElement(child)) {
-                        return null;
-                    }
+            <div data-test-id="tab-content" className="tw-flex tw-flex-col tw-overflow-y-auto">
+                <div className="tw-mr-0" style={{ maxHeight, minHeight }}>
+                    {Children.map(children, (child) => {
+                        if (!isValidElement(child)) {
+                            return null;
+                        }
 
-                    return cloneElement(child, { ...child.props, active: child.props.id === activeItemId });
-                })}
+                        return cloneElement(child, { ...child.props, active: child.props.id === activeItemId });
+                    })}
+                </div>
             </div>
         </>
     );

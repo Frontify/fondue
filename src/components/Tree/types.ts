@@ -39,11 +39,8 @@ export type TreeProps = {
 
 type TreeItemBaseProps = {
     id: string;
-
     'data-test-id'?: string;
-
     onDrop?: OnTreeDropCallback;
-
     /**
      * The type of item being dragged.
      */
@@ -54,15 +51,10 @@ type TreeItemBaseProps = {
      * if suffix '-within' is appended, then it will allow dropping item inside it
      */
     accepts?: string;
-
     children?: ReactNode;
-
     draggable?: boolean;
-
     showCaret?: boolean;
-
     ignoreItemDoubleClick?: boolean;
-
     expandOnSelect?: boolean;
 };
 
