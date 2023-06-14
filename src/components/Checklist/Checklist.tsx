@@ -103,6 +103,8 @@ export const Checklist = ({
 
     const columns = ('columns' in props && props.columns) || 1;
 
+    console.log(ariaLabel);
+
     return (
         <ul
             {...groupProps}

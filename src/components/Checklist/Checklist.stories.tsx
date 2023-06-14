@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { CheckboxState } from '@components/Checkbox/Checkbox';
-import { Meta, StoryFn } from '@storybook/react';
+import { Meta } from '@storybook/react';
 import React, { useState } from 'react';
 import { Checklist as ChecklistComponent, ChecklistDirection, ChecklistProps } from './Checklist';
 
@@ -19,6 +19,9 @@ export default {
             options: [ChecklistDirection.Horizontal, ChecklistDirection.Vertical],
             control: { type: 'radio' },
         },
+    },
+    args: {
+        ariaLabel: 'checklist',
     },
 } as Meta<ChecklistProps>;
 
@@ -49,17 +52,21 @@ const COLUMN_CHECKBOXES = Array.from({ length: 8 })
         tooltip: { content: `Random Tooltip ${index}` },
     }));
 
-export const Checklist: StoryFn<ChecklistProps> = (args: ChecklistProps) => {
+export const Checklist = (args: ChecklistProps) => {
     const [activeBoxes, setActiveBoxes] = useState<string[]>([]);
 
     return (
         <ChecklistComponent
             {...args}
+            ariaLabel={typeof args.ariaLabel === 'string' ? args.ariaLabel : 'checklist'}
             checkboxes={CHECKBOXES}
             activeValues={activeBoxes}
             setActiveValues={setActiveBoxes}
         />
     );
+};
+Checklist.args = {
+    ariaLabel: 'checklist',
 };
 
 const MultipleColumnsComponent = (args: ChecklistProps) => {
@@ -74,6 +81,7 @@ export const MultipleColumns = (args: ChecklistProps) => {
 MultipleColumns.args = {
     direction: ChecklistDirection.Vertical,
     columns: 2,
+    ariaLabel: 'checklist',
 };
 
 export const MultipleColumnsInContainedSpace = (args: ChecklistProps) => {
@@ -86,10 +94,12 @@ export const MultipleColumnsInContainedSpace = (args: ChecklistProps) => {
 MultipleColumnsInContainedSpace.args = {
     direction: ChecklistDirection.Vertical,
     columns: 2,
+    ariaLabel: 'checklist',
 };
 
 MultipleColumnsInContainedSpace.argTypes = {
     direction: { table: { disable: true } },
+    ariaLabel: { type: 'string' },
 };
 
 export const MultipleColumnsInContainedSpaceAndSpannedColumn = (args: ChecklistProps) => {
@@ -102,8 +112,10 @@ export const MultipleColumnsInContainedSpaceAndSpannedColumn = (args: ChecklistP
 MultipleColumnsInContainedSpaceAndSpannedColumn.args = {
     direction: ChecklistDirection.Vertical,
     columns: 3,
+    ariaLabel: 'checklist',
 };
 
 MultipleColumnsInContainedSpaceAndSpannedColumn.argTypes = {
     direction: { table: { disable: true } },
+    ariaLabel: { type: 'string' },
 };
