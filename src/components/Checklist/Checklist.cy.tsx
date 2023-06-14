@@ -30,26 +30,34 @@ const Component = ({
     direction,
     columns,
     activeValues,
+    setActiveValues,
+    ariaLabel,
+    'data-test-id': dataTestId,
 }: {
     ariaLabel?: string;
     direction?: ChecklistDirection;
     columns?: Columns;
     activeValues?: string[];
     setActiveValues?: () => void;
+    'data-test-id'?: string;
 }): ReactElement => {
     const [activeBoxes, setActiveBoxes] = useState<string[]>(activeValues ? activeValues : []);
 
     return direction === ChecklistDirection.Horizontal ? (
         <Checklist
+            ariaLabel={ariaLabel}
+            data-test-id={dataTestId}
             activeValues={activeBoxes}
-            setActiveValues={setActiveBoxes}
-            direction={direction}
+            setActiveValues={setActiveValues ? setActiveValues : setActiveBoxes}
+            direction={direction ? direction : ChecklistDirection.Horizontal}
             checkboxes={CHECKBOXES}
         />
     ) : (
         <Checklist
+            ariaLabel={ariaLabel}
+            data-test-id={dataTestId}
             activeValues={activeBoxes}
-            setActiveValues={setActiveBoxes}
+            setActiveValues={setActiveValues ? setActiveValues : setActiveBoxes}
             direction={direction ? direction : ChecklistDirection.Vertical}
             checkboxes={CHECKBOXES}
             columns={columns}
@@ -95,15 +103,15 @@ describe('Checklist Component', () => {
     });
 
     it('should render checked boxes specified in activeValues prop', () => {
-        cy.mount(<Component activeValues={['checkbox-3']} />);
+        cy.mount(<Component activeValues={['checkbox-1']} />);
 
         cy.get(CHECKBOX_ID)
-            .eq(2)
+            .eq(0)
             .should('have.class', 'tw-bg-box-selected-strong')
             .and('have.class', 'tw-text-box-selected-strong-inverse')
             .and('have.class', 'hover:tw-bg-box-selected-strong-hover');
 
-        cy.get(CHECKBOX_INPUT_ID).eq(2).should('have.attr', 'aria-checked', 'true');
+        cy.get(CHECKBOX_INPUT_ID).eq(0).should('have.attr', 'aria-checked', 'true');
     });
 
     it('should render with boxes specificied in checkboxes prop', () => {
@@ -154,7 +162,7 @@ describe('Checklist Component', () => {
         cy.get(CHECKBOX_INPUT_ID).eq(2).should('exist');
     });
 
-    it('should render with boxes specificied in checkboxes prop', () => {
+    it('should call setActiveValues when checkbox is checked', () => {
         const onClickStub = cy.stub().as('onClickStub');
 
         cy.mount(<Component setActiveValues={onClickStub} />);
@@ -174,5 +182,15 @@ describe('Checklist Component', () => {
         cy.mount(<Component data-test-id="custom-data-test-id" />);
 
         cy.get(CHECKLIST_ID).should('have.attr', 'data-test-id', 'custom-data-test-id');
+    });
+
+    it('should render disabled checkboxes', () => {
+        cy.mount(<Component />);
+
+        cy.get(CHECKBOX_ID)
+            .eq(2)
+            .should('have.class', 'tw-text-box-disabled-inverse')
+            .and('have.class', 'tw-bg-box-disabled')
+            .and('have.class', 'tw-pointer-events-none');
     });
 });
