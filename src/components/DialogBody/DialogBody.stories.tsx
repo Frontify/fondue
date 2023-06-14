@@ -9,10 +9,6 @@ export default {
     title: 'Experimental/DialogBody',
     component: DialogBody,
     tags: ['autodocs'],
-    args: {
-        maxHeight: 200,
-        scrollShadows: true,
-    },
     argTypes: {
         maxHeight: {
             type: 'number',
@@ -46,3 +42,7 @@ const Template: StoryFn<DialogBodyProps> = (args) => (
 );
 
 export const Default = Template.bind({});
+export const WithMaxHeight = Template.bind({});
+WithMaxHeight.args = {
+    maxHeight: 200,
+};
