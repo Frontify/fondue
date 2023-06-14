@@ -181,7 +181,7 @@ describe('Checklist Component', () => {
     it('should render with custom data-test-id', () => {
         cy.mount(<Component data-test-id="custom-data-test-id" />);
 
-        cy.get(CHECKLIST_ID).should('have.attr', 'data-test-id', 'custom-data-test-id');
+        cy.get('[data-test-id=custom-data-test-id]').should('exist');
     });
 
     it('should render disabled checkboxes', () => {
