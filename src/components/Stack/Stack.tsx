@@ -67,7 +67,7 @@ export const Stack = ({
     children,
     'data-test-id': dataTestId = STACK_TEST_ID,
     direction = 'column',
-    spacing = 4,
+    spacing = 0,
     divider,
     padding = 0,
     margin = 0,
