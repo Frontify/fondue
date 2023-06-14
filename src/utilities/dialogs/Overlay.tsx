@@ -105,7 +105,7 @@ export const Overlay = ({
                     <div
                         data-test-id={`${dataTestId}-underlay`}
                         className={merge([
-                            'tw-absolute tw-w-screen tw-h-screen tw-top-0 tw-left-0 tw-overflow-hidden tw-z-[9990]',
+                            'tw-fixed tw-top-0 tw-left-0 tw-bottom-0 tw-right-0 tw-z-[9990]',
                             darkUnderlay && 'tw-transition-opacity tw-bg-black tw-opacity-50',
                         ])}
                     />

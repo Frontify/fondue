@@ -14,6 +14,8 @@ import { POPPER_STORY_ARGS, PopperPlacement } from '@components/Popper/types';
 import { action } from '@storybook/addon-actions';
 import { Divider } from '@components/Divider';
 import { Flex } from '@components/Flex';
+import { Box } from '@components/Box';
+import IconDotsVertical16 from '@foundation/Icon/Generated/IconDotsVertical16';
 
 export default {
     title: 'Experimental/InlineDialog',
@@ -61,7 +63,64 @@ const TextExample = () => {
         </p>
     );
 };
+
 const Template: StoryFn<InlineDialogProps> = (args) => {
+    const [isOpen, setIsOpen] = useToggleOverlay(false, { isBlockingModal: args.modality === Modality.BlockingModal });
+    return (
+        <InlineDialog
+            open={isOpen}
+            minHeight={args.minHeight}
+            maxHeight={args.maxHeight}
+            minWidth={args.minWidth}
+            maxWidth={args.maxWidth}
+            handleClose={() => setIsOpen(false)}
+            modality={args.modality}
+            placement={args.placement}
+            flip={args.flip}
+            offset={args.offset}
+            enablePortal={args.enablePortal}
+            darkUnderlay={args.darkUnderlay}
+            autoHeight={args.autoHeight}
+        >
+            <InlineDialog.Trigger>
+                <Button
+                    emphasis={ButtonEmphasis.Default}
+                    icon={<IconDotsVertical16 />}
+                    onClick={() => setIsOpen(!isOpen)}
+                ></Button>
+            </InlineDialog.Trigger>
+            <InlineDialog.Content>
+                <DialogBody>
+                    <Box className="tw-p-4">
+                        <Dropdown
+                            onChange={(id) => console.log(id)}
+                            activeItemId={'1'}
+                            menuBlocks={[
+                                {
+                                    id: 'block1',
+                                    menuItems: [
+                                        { id: '1', title: 'Item 1' },
+                                        { id: '2', title: 'Item 2' },
+                                        { id: '3', title: 'Item 3' },
+                                        { id: '4', title: 'Item 4' },
+                                        { id: '5', title: 'Item 5' },
+                                    ],
+                                },
+                            ]}
+                        />
+
+                        <TextExample />
+                        <TextExample />
+                        <TextExample />
+                        <Button onClick={() => setIsOpen(!isOpen)}>Close</Button>
+                    </Box>
+                </DialogBody>
+            </InlineDialog.Content>
+        </InlineDialog>
+    );
+};
+
+const InContext: StoryFn<InlineDialogProps> = (args) => {
     const [isOpen, setIsOpen] = useToggleOverlay(false, { isBlockingModal: args.modality === Modality.BlockingModal });
     return (
         <div>
@@ -150,4 +209,28 @@ const Template: StoryFn<InlineDialogProps> = (args) => {
     );
 };
 
-export const Default = Template.bind({});
+export const WithoutHeaderAndFooter = Template.bind({});
+export const AsANonModal = Template.bind({});
+AsANonModal.args = {
+    modality: Modality.NonModal,
+};
+export const AsAModal = Template.bind({});
+AsAModal.args = {
+    modality: Modality.Modal,
+};
+export const AsABlockingModalWithDarkUnderlay = Template.bind({});
+AsABlockingModalWithDarkUnderlay.args = {
+    modality: Modality.BlockingModal,
+    darkUnderlay: true,
+};
+
+export const WithMaxHeight = Template.bind({});
+WithMaxHeight.args = {
+    maxHeight: 300,
+};
+
+export const WithAutoHeight = Template.bind({});
+WithAutoHeight.args = {
+    autoHeight: true,
+};
+export const InContextWithDialogHeaderAndDialogFooter = InContext.bind({});
