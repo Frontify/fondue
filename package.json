@@ -141,7 +141,7 @@
         "@popperjs/core": "2.11.6",
         "@react-aria/accordion": "3.0.0-alpha.17",
         "@react-aria/aria-modal-polyfill": "3.7.1",
-        "@react-aria/breadcrumbs": "3.4.0",
+        "@react-aria/breadcrumbs": "3.5.2",
         "@react-aria/button": "3.6.3",
         "@react-aria/checkbox": "3.7.0",
         "@react-aria/combobox": "3.4.3",
