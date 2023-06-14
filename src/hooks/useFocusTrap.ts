@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 
 export const TABBABLE_ELEMENTS = [
     'input:not([disabled]):not([type=hidden])',
@@ -20,20 +20,22 @@ export const TABBABLE_ELEMENTS = [
 ].join(':not([hidden]):not([tabindex="-1"]),');
 
 export const useFocusTrap = (reference: HTMLElement | null, isOpen: boolean, ignoreFocusTrap = false) => {
+    const focusableElements = useMemo(() => reference?.querySelectorAll(TABBABLE_ELEMENTS) ?? [], [reference]);
+    const firstFocusableElement = focusableElements[0] as HTMLElement,
+        lastFocusableElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+
     const handleFocus = useCallback(
         (event: KeyboardEvent) => {
             if (ignoreFocusTrap) {
                 return;
             }
 
-            const focusableElements = reference?.querySelectorAll(TABBABLE_ELEMENTS) ?? [];
             if (focusableElements.length === 0) {
                 event.preventDefault();
                 return;
             }
-            const firstFocusableElement = focusableElements[0] as HTMLElement,
-                lastFocusableElement = focusableElements[focusableElements.length - 1] as HTMLElement,
-                isTabPressed = event.key === 'Tab';
+
+            const isTabPressed = event.key === 'Tab';
 
             if (!isTabPressed) {
                 return;
@@ -49,23 +51,22 @@ export const useFocusTrap = (reference: HTMLElement | null, isOpen: boolean, ign
                 event.preventDefault();
             }
         },
-        [ignoreFocusTrap, reference],
+        [firstFocusableElement, focusableElements.length, ignoreFocusTrap, lastFocusableElement],
     );
 
     useEffect(() => {
-        const parentElement = reference?.parentElement;
-
+        const lastFocused = document.activeElement ?? reference?.parentElement ?? document.body;
+        if (isOpen && focusableElements.length > 0 && ![...focusableElements].includes(lastFocused)) {
+            firstFocusableElement.focus();
+        }
         if (isOpen) {
             window.addEventListener('keydown', handleFocus);
         }
 
         return () => {
-            if (parentElement) {
-                parentElement.focus();
-            }
             window.removeEventListener('keydown', handleFocus);
         };
-    }, [handleFocus, isOpen, reference]);
+    }, [firstFocusableElement, focusableElements, handleFocus, isOpen, reference]);
 
     return reference;
 };

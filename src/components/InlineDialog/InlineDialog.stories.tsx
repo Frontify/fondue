@@ -120,6 +120,53 @@ const Template: StoryFn<InlineDialogProps> = (args) => {
     );
 };
 
+const NoFocusableContentTemplate: StoryFn<InlineDialogProps> = (args) => {
+    const [isOpen, setIsOpen] = useToggleOverlay(false, { isBlockingModal: false });
+    return (
+        <Flex justify="start">
+            <Button onClick={action('onClick')} style={ButtonStyle.Default}>
+                Button
+            </Button>
+            <Button onClick={action('onClick')} style={ButtonStyle.Danger}>
+                Button
+            </Button>
+            <InlineDialog
+                open={isOpen}
+                minHeight={args.minHeight}
+                maxHeight={args.maxHeight}
+                minWidth={args.minWidth}
+                maxWidth={args.maxWidth}
+                handleClose={() => setIsOpen(false)}
+                modality={args.modality}
+                placement={args.placement}
+                flip={args.flip}
+                offset={args.offset}
+                enablePortal={args.enablePortal}
+                darkUnderlay={args.darkUnderlay}
+                autoHeight={args.autoHeight}
+            >
+                <InlineDialog.Trigger>
+                    <Button
+                        emphasis={ButtonEmphasis.Default}
+                        icon={<IconDotsVertical16 />}
+                        onClick={() => setIsOpen(!isOpen)}
+                    ></Button>
+                </InlineDialog.Trigger>
+                <InlineDialog.Content>
+                    <DialogBody>
+                        <Box className="tw-p-4">
+                            <TextExample />
+                        </Box>
+                    </DialogBody>
+                </InlineDialog.Content>
+            </InlineDialog>
+            <Button onClick={action('onClick')} style={ButtonStyle.Loud}>
+                Button
+            </Button>
+        </Flex>
+    );
+};
+
 const InContext: StoryFn<InlineDialogProps> = (args) => {
     const [isOpen, setIsOpen] = useToggleOverlay(false, { isBlockingModal: args.modality === Modality.BlockingModal });
     return (
@@ -234,3 +281,4 @@ WithAutoHeight.args = {
     autoHeight: true,
 };
 export const InContextWithDialogHeaderAndDialogFooter = InContext.bind({});
+export const WithNoFocusableContent = NoFocusableContentTemplate.bind({});
