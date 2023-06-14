@@ -63,6 +63,7 @@ export const BrandColorPicker = ({ palettes: defaultPalettes = [], currentColor,
                 </div>
                 <div className="tw-w-[72px]">
                     <SegmentedControls
+                        size="small"
                         items={views}
                         activeItemId={view}
                         onChange={(colorView) => setView(colorView as BrandColorView)}
