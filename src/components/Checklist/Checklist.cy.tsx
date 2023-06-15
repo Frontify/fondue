@@ -43,24 +43,15 @@ const Component = ({
 }): ReactElement => {
     const [activeBoxes, setActiveBoxes] = useState<string[]>(activeValues ? activeValues : []);
 
-    return direction === ChecklistDirection.Horizontal ? (
+    return (
         <Checklist
             ariaLabel={ariaLabel}
             data-test-id={dataTestId}
             activeValues={activeBoxes}
             setActiveValues={setActiveValues ? setActiveValues : setActiveBoxes}
             direction={direction ? direction : ChecklistDirection.Horizontal}
-            checkboxes={CHECKBOXES}
-        />
-    ) : (
-        <Checklist
-            ariaLabel={ariaLabel}
-            data-test-id={dataTestId}
-            activeValues={activeBoxes}
-            setActiveValues={setActiveValues ? setActiveValues : setActiveBoxes}
-            direction={direction ? direction : ChecklistDirection.Vertical}
-            checkboxes={CHECKBOXES}
             columns={columns}
+            checkboxes={CHECKBOXES}
         />
     );
 };
