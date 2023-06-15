@@ -117,42 +117,6 @@ describe('Checklist Component', () => {
         cy.get(CHECKBOX_INPUT_ID).eq(2).should('exist');
     });
 
-    it('should render with boxes specificied in checkboxes prop', () => {
-        cy.mount(<Component />);
-
-        cy.get(CHECKBOX_ID).eq(0).should('exist');
-        cy.get(CHECKBOX_ID).eq(1).should('exist');
-        cy.get(CHECKBOX_ID).eq(2).should('exist');
-
-        cy.get(CHECKBOX_INPUT_ID).eq(0).should('exist');
-        cy.get(CHECKBOX_INPUT_ID).eq(1).should('exist');
-        cy.get(CHECKBOX_INPUT_ID).eq(2).should('exist');
-    });
-
-    it('should call setActiveValues when checkbox is checked', () => {
-        cy.mount(<Component />);
-
-        cy.get(CHECKBOX_ID).eq(0).should('exist');
-        cy.get(CHECKBOX_ID).eq(1).should('exist');
-        cy.get(CHECKBOX_ID).eq(2).should('exist');
-
-        cy.get(CHECKBOX_INPUT_ID).eq(0).should('exist');
-        cy.get(CHECKBOX_INPUT_ID).eq(1).should('exist');
-        cy.get(CHECKBOX_INPUT_ID).eq(2).should('exist');
-    });
-
-    it('should render with boxes specificied in checkboxes prop', () => {
-        cy.mount(<Component />);
-
-        cy.get(CHECKBOX_ID).eq(0).should('exist');
-        cy.get(CHECKBOX_ID).eq(1).should('exist');
-        cy.get(CHECKBOX_ID).eq(2).should('exist');
-
-        cy.get(CHECKBOX_INPUT_ID).eq(0).should('exist');
-        cy.get(CHECKBOX_INPUT_ID).eq(1).should('exist');
-        cy.get(CHECKBOX_INPUT_ID).eq(2).should('exist');
-    });
-
     it('should call setActiveValues when checkbox is checked', () => {
         const onClickStub = cy.stub().as('onClickStub');
 
