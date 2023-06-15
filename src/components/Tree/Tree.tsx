@@ -121,9 +121,7 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
             {
                 const { id: parentId, children } = action.payload;
 
-                const parentNodeIndex = findIndexById(draft.rootNodes, parentId);
-
-                if (parentNodeIndex === -1) {
+                if (findIndexById(draft.rootNodes, parentId) === -1) {
                     // This can happen when this action is triggered before the rootNodes array is updated
                     // It happens if using static data will all nodes and handling expandedIds outside the Tree component
                     // Most of the cases, it will register the children properly afterwards
@@ -143,6 +141,7 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
                     return;
                 }
 
+                const parentNodeIndex = findIndexById(draft.rootNodes, parentId);
                 draft.rootNodes = updateNodeWithNewChildren(draft.rootNodes, parentNodeIndex, children);
             }
             break;
@@ -554,35 +553,15 @@ export const Tree = memo(
                 return;
             }
 
-            const createMap = (
-                nodes: ReactElement[],
-                map: Map<string, { id: string; parentId: string; level: number; node: ReactElement }>,
-            ) => {
-                if (!nodes) {
-                    return map;
-                }
-                for (const node of nodes) {
-                    map.set(node.props.id, {
-                        id: node.props.id,
-                        parentId: node.props.parentId,
-                        level: node.props.level,
-                        node,
-                    });
-                    createMap(node.props.children, map);
-                }
-
-                return map;
-            };
-            const treeMap = createMap(treeState.rootNodes, new Map());
-
             const nodesToRender: { id: string; node: ReactElement }[] = [];
-            for (const [, treeItem] of treeMap) {
+            for (const node of treeState.rootNodes) {
+                const parentId = node.props.parentId;
                 if (
-                    treeItem.parentId === ROOT_ID ||
-                    (treeState.expandedIds.has(treeItem.parentId) &&
-                        nodesToRender.find((n) => n.id === treeItem.parentId))
+                    typeof parentId === 'string' &&
+                    (parentId === ROOT_ID ||
+                        (treeState.expandedIds.has(parentId) && nodesToRender.find((n) => n.id === parentId)))
                 ) {
-                    nodesToRender.push({ id: treeItem.id, node: treeItem.node });
+                    nodesToRender.push({ id: node.props.id, node });
                 }
             }
 
