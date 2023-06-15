@@ -115,22 +115,20 @@ export const withMention = <V extends Value = Value, E extends PlateEditor<V> = 
         return insertText(text);
     };
 
+    const hasInputTrigger = (operation: TOperation, trigger?: string) =>
+        (operation.node as TMentionInputElement)?.trigger === trigger;
+    const isInputNodeMention = (operation: TOperation) => isNodeMentionInput(editor, operation.node as TNode);
+    const hasMentionNodeBeenRemoved = (operation: TOperation, trigger?: string) =>
+        isInputNodeMention(operation) && !hasInputTrigger(operation, trigger);
+    const getPreviousMentionInputPath = (operation: TOperation): Path | undefined =>
+        Range.isRange(operation.properties) ? findMentionInput(editor, { at: operation.properties })?.[1] : undefined;
+    const getCurrentMentionInputPath = (operation: TOperation) =>
+        Range.isRange(operation.newProperties)
+            ? findMentionInput(editor, { at: operation.newProperties })?.[1]
+            : undefined;
+
     editor.apply = (operation) => {
         apply(operation);
-
-        const hasInputTrigger = (operation: TOperation) =>
-            (operation.node as TMentionInputElement)?.trigger === trigger;
-        const isInputNodeMention = (operation: TOperation) => isNodeMentionInput(editor, operation.node as TNode);
-        const hasMentionNodeBeenRemoved = (operation: TOperation) =>
-            isInputNodeMention(operation) && !hasInputTrigger(operation);
-        const getPreviousMentionInputPath = (operation: TOperation): Path | undefined =>
-            Range.isRange(operation.properties)
-                ? findMentionInput(editor, { at: operation.properties })?.[1]
-                : undefined;
-        const getCurrentMentionInputPath = (operation: TOperation) =>
-            Range.isRange(operation.newProperties)
-                ? findMentionInput(editor, { at: operation.newProperties })?.[1]
-                : undefined;
 
         switch (operation.type) {
             case 'insert_text':
@@ -155,7 +153,7 @@ export const withMention = <V extends Value = Value, E extends PlateEditor<V> = 
                 break;
 
             case 'insert_node':
-                if (!isInputNodeMention(operation) || !hasInputTrigger(operation)) {
+                if (!isInputNodeMention(operation) || !hasInputTrigger(operation, trigger)) {
                     break;
                 }
 
@@ -178,7 +176,7 @@ export const withMention = <V extends Value = Value, E extends PlateEditor<V> = 
                 }
                 break;
             case 'remove_node':
-                if (!hasMentionNodeBeenRemoved(operation)) {
+                if (!hasMentionNodeBeenRemoved(operation, trigger)) {
                     comboboxActions.reset();
                 }
                 break;
