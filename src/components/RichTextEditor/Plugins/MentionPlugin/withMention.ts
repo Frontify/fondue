@@ -155,7 +155,7 @@ export const withMention = <V extends Value = Value, E extends PlateEditor<V> = 
                 });
 
                 comboboxActions.open({
-                    activeId: id!,
+                    activeId: id || null,
                     text,
                     targetRange: editor.selection,
                 });
