@@ -127,6 +127,14 @@ export const withMention = <V extends Value = Value, E extends PlateEditor<V> = 
             ? findMentionInput(editor, { at: operation.newProperties })?.[1]
             : undefined;
 
+    const isInsertNode = (operation: TOperation) =>
+        !isInputNodeMention(operation) &&
+        !hasInputTrigger(operation, trigger) &&
+        !(
+            inputCreation === undefined ||
+            (operation.node as TMentionInputElement)[inputCreation.key] === inputCreation.value
+        );
+
     editor.apply = (operation) => {
         apply(operation);
 
@@ -153,27 +161,25 @@ export const withMention = <V extends Value = Value, E extends PlateEditor<V> = 
                 break;
 
             case 'insert_node':
-                if (!isInputNodeMention(operation) || !hasInputTrigger(operation, trigger)) {
+                if (!isInsertNode(operation)) {
                     break;
                 }
 
-                if (inputCreation === undefined || operation.node[inputCreation.key] === inputCreation.value) {
-                    const text = ((operation.node as TMentionInputElement).children as TText[])[0]?.text ?? '';
+                const text = ((operation.node as TMentionInputElement).children as TText[])[0]?.text ?? '';
 
-                    // Needed for undo - after an undo a mention insert we only receive
-                    // an insert_node with the mention input, i.e. nothing indicating that it
-                    // was an undo.
-                    setSelection(editor, {
-                        anchor: { path: operation.path.concat([0]), offset: text.length },
-                        focus: { path: operation.path.concat([0]), offset: text.length },
-                    });
+                // Needed for undo - after an undo a mention insert we only receive
+                // an insert_node with the mention input, i.e. nothing indicating that it
+                // was an undo.
+                setSelection(editor, {
+                    anchor: { path: operation.path.concat([0]), offset: text.length },
+                    focus: { path: operation.path.concat([0]), offset: text.length },
+                });
 
-                    comboboxActions.open({
-                        activeId: id || null,
-                        text,
-                        targetRange: editor.selection,
-                    });
-                }
+                comboboxActions.open({
+                    activeId: id,
+                    text,
+                    targetRange: editor.selection,
+                });
                 break;
             case 'remove_node':
                 if (!hasMentionNodeBeenRemoved(operation, trigger)) {
