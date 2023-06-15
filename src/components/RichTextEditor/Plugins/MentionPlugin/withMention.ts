@@ -6,6 +6,7 @@ import {
     PlateEditor,
     TMentionInputElement,
     TNode,
+    TOperation,
     TText,
     Value,
     WithPlatePlugin,
@@ -21,7 +22,7 @@ import {
     removeMentionInput,
     setSelection,
 } from '@udecode/plate';
-import { Range } from 'slate';
+import { Path, Range } from 'slate';
 
 export const withMention = <V extends Value = Value, E extends PlateEditor<V> = PlateEditor<V>>(
     editor: E,
@@ -117,55 +118,70 @@ export const withMention = <V extends Value = Value, E extends PlateEditor<V> = 
     editor.apply = (operation) => {
         apply(operation);
 
-        if (operation.type === 'insert_text' || operation.type === 'remove_text') {
-            const currentMentionInput = findMentionInput(editor);
-            if (currentMentionInput) {
-                comboboxActions.text(getNodeString(currentMentionInput[0]));
-            }
-        } else if (operation.type === 'set_selection') {
-            const previousMentionInputPath = Range.isRange(operation.properties)
+        const hasInputTrigger = (operation: TOperation) =>
+            (operation.node as TMentionInputElement)?.trigger === trigger;
+        const isInputNodeMention = (operation: TOperation) => isNodeMentionInput(editor, operation.node as TNode);
+        const hasMentionNodeBeenRemoved = (operation: TOperation) =>
+            isInputNodeMention(operation) && !hasInputTrigger(operation);
+        const getPreviousMentionInputPath = (operation: TOperation): Path | undefined =>
+            Range.isRange(operation.properties)
                 ? findMentionInput(editor, { at: operation.properties })?.[1]
                 : undefined;
-
-            const currentMentionInputPath = Range.isRange(operation.newProperties)
+        const getCurrentMentionInputPath = (operation: TOperation) =>
+            Range.isRange(operation.newProperties)
                 ? findMentionInput(editor, { at: operation.newProperties })?.[1]
                 : undefined;
 
-            if (previousMentionInputPath && !currentMentionInputPath) {
-                removeMentionInput(editor, previousMentionInputPath);
-            }
+        switch (operation.type) {
+            case 'insert_text':
+            case 'remove_text':
+                const currentMentionInput = findMentionInput(editor);
+                if (currentMentionInput) {
+                    comboboxActions.text(getNodeString(currentMentionInput[0]));
+                }
+                break;
 
-            if (currentMentionInputPath) {
-                comboboxActions.targetRange(editor.selection);
-            }
-        } else if (operation.type === 'insert_node' && isNodeMentionInput(editor, operation.node as TNode)) {
-            if ((operation.node as TMentionInputElement).trigger !== trigger) {
-                return;
-            }
+            case 'set_selection':
+                const previousMentionInputPath = getPreviousMentionInputPath(operation);
+                const currentMentionInputPath = getCurrentMentionInputPath(operation);
 
-            const text = ((operation.node as TMentionInputElement).children as TText[])[0]?.text ?? '';
+                if (previousMentionInputPath && !currentMentionInputPath) {
+                    removeMentionInput(editor, previousMentionInputPath);
+                }
 
-            if (inputCreation === undefined || operation.node[inputCreation.key] === inputCreation.value) {
-                // Needed for undo - after an undo a mention insert we only receive
-                // an insert_node with the mention input, i.e. nothing indicating that it
-                // was an undo.
-                setSelection(editor, {
-                    anchor: { path: operation.path.concat([0]), offset: text.length },
-                    focus: { path: operation.path.concat([0]), offset: text.length },
-                });
+                if (currentMentionInputPath) {
+                    comboboxActions.targetRange(editor.selection);
+                }
+                break;
 
-                comboboxActions.open({
-                    activeId: id || null,
-                    text,
-                    targetRange: editor.selection,
-                });
-            }
-        } else if (operation.type === 'remove_node' && isNodeMentionInput(editor, operation.node as TNode)) {
-            if ((operation.node as TMentionInputElement).trigger !== trigger) {
-                return;
-            }
+            case 'insert_node':
+                if (!isInputNodeMention(operation) || !hasInputTrigger(operation)) {
+                    break;
+                }
 
-            comboboxActions.reset();
+                if (inputCreation === undefined || operation.node[inputCreation.key] === inputCreation.value) {
+                    const text = ((operation.node as TMentionInputElement).children as TText[])[0]?.text ?? '';
+
+                    // Needed for undo - after an undo a mention insert we only receive
+                    // an insert_node with the mention input, i.e. nothing indicating that it
+                    // was an undo.
+                    setSelection(editor, {
+                        anchor: { path: operation.path.concat([0]), offset: text.length },
+                        focus: { path: operation.path.concat([0]), offset: text.length },
+                    });
+
+                    comboboxActions.open({
+                        activeId: id || null,
+                        text,
+                        targetRange: editor.selection,
+                    });
+                }
+                break;
+            case 'remove_node':
+                if (!hasMentionNodeBeenRemoved(operation)) {
+                    comboboxActions.reset();
+                }
+                break;
         }
     };
 
