@@ -56,7 +56,12 @@ export const useFocusTrap = (reference: HTMLElement | null, isOpen: boolean, ign
 
     useEffect(() => {
         const lastFocused = document.activeElement ?? reference?.parentElement ?? document.body;
-        if (isOpen && focusableElements.length > 0 && ![...focusableElements].includes(lastFocused)) {
+        if (
+            isOpen &&
+            !ignoreFocusTrap &&
+            focusableElements.length > 0 &&
+            ![...focusableElements].includes(lastFocused)
+        ) {
             firstFocusableElement.focus();
         }
         if (isOpen) {

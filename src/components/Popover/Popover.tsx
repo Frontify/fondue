@@ -4,7 +4,7 @@ import React from 'react';
 import { PopperPlacement } from '@components/Popper/types';
 import { Trigger } from '@utilities/dialogs/Trigger';
 import { Content } from '@utilities/dialogs/Content';
-import { OverlayProps } from '../../types/dialog';
+import { Modality, OverlayProps } from '../../types/dialog';
 import { Overlay } from '@utilities/dialogs/Overlay';
 
 export type PopoverComponentProps = OverlayProps;
@@ -28,6 +28,7 @@ export const Popover = ({
             enablePortal={enablePortal}
             role={role}
             data-test-id={dataTestId}
+            modality={Modality.NonModal}
         >
             {children}
         </Overlay>
