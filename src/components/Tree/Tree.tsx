@@ -121,7 +121,9 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
             {
                 const { id: parentId, children } = action.payload;
 
-                if (findIndexById(draft.rootNodes, parentId) === -1) {
+                const parentNodeIndex = findIndexById(draft.rootNodes, parentId);
+
+                if (parentNodeIndex === -1) {
                     // This can happen when this action is triggered before the rootNodes array is updated
                     // It happens if using static data will all nodes and handling expandedIds outside the Tree component
                     // Most of the cases, it will register the children properly afterwards
@@ -141,7 +143,6 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
                     return;
                 }
 
-                const parentNodeIndex = findIndexById(draft.rootNodes, parentId);
                 draft.rootNodes = updateNodeWithNewChildren(draft.rootNodes, parentNodeIndex, children);
             }
             break;
