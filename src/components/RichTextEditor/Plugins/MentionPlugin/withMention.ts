@@ -26,7 +26,7 @@ import { Path, Range } from 'slate';
 
 export const withMention = <V extends Value = Value, E extends PlateEditor<V> = PlateEditor<V>>(
     editor: E,
-    { options: { id, trigger, query, inputCreation } }: WithPlatePlugin<MentionPlugin, V, E>,
+    { options: { id, trigger, query, inputCreation } }: WithPlatePlugin<MentionPlugin, V, PlateEditor<V>>,
 ) => {
     const { type } = getPlugin<object, V>(editor, ELEMENT_MENTION_INPUT);
 
@@ -128,8 +128,8 @@ export const withMention = <V extends Value = Value, E extends PlateEditor<V> = 
             : undefined;
 
     const isInsertNode = (operation: TOperation) =>
-        !isInputNodeMention(operation) &&
-        !hasInputTrigger(operation, trigger) &&
+        !isInputNodeMention(operation) ||
+        !hasInputTrigger(operation, trigger) ||
         !(
             inputCreation === undefined ||
             (operation.node as TMentionInputElement)[inputCreation.key] === inputCreation.value
@@ -161,7 +161,7 @@ export const withMention = <V extends Value = Value, E extends PlateEditor<V> = 
                 break;
 
             case 'insert_node':
-                if (!isInsertNode(operation)) {
+                if (isInsertNode(operation)) {
                     break;
                 }
 
@@ -176,7 +176,7 @@ export const withMention = <V extends Value = Value, E extends PlateEditor<V> = 
                 });
 
                 comboboxActions.open({
-                    activeId: id,
+                    activeId: id || null,
                     text,
                     targetRange: editor.selection,
                 });
