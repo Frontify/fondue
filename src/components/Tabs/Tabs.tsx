@@ -123,6 +123,8 @@ export const Tabs = ({
     };
 
     const handleKeyboardTabChange = (event: KeyboardEvent<HTMLButtonElement>) => {
+        event.stopPropagation();
+
         const overflownTabs = getOverflownTabs();
         const target = event.target as HTMLElement;
         const fromOverflow = target.id.includes('-m');
