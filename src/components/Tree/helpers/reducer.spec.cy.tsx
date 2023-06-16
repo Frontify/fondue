@@ -3,9 +3,15 @@
 import React, { ReactNode } from 'react';
 import { currentNodesChanged, findIndexById, getNodeChildrenIds, updateNodeWithNewChildren } from './reducer';
 
-const Component = ({ id, parentId }: { id?: string; parentId?: string; contentComponent?: ReactNode }) => (
-    <div id={id} data-parent-id={parentId}></div>
-);
+const Component = ({
+    id,
+    parentId,
+}: {
+    id?: string;
+    parentId?: string;
+    props1?: unknown;
+    contentComponent?: ReactNode;
+}) => <div id={id} data-parent-id={parentId}></div>;
 
 const ContentComponent = ({
     id,
@@ -182,6 +188,38 @@ describe('reducer', () => {
                 <Component key="1" id="1" contentComponent={contentComponent} />,
                 <Component key="3" id="3" contentComponent={contentComponent} />,
                 <Component key="4" id="4" contentComponent={contentComponent} />,
+            ];
+
+            expect(currentNodesChanged(['1', '3', '4'], currentNodes, newNodes)).to.be.false;
+        });
+
+        it('should return true if new nodes with no contentComponent but props changed', () => {
+            const currentNodes = [
+                <Component key="1" id="1" props1="1" />,
+                <Component key="3" id="3" />,
+                <Component key="4" id="4" />,
+            ];
+
+            const newNodes = [
+                <Component key="1" id="1" props1="2" />,
+                <Component key="3" id="3" />,
+                <Component key="4" id="4" />,
+            ];
+
+            expect(currentNodesChanged(['1', '3', '4'], currentNodes, newNodes)).to.be.true;
+        });
+
+        it('should return false if new nodes with no contentComponent but no props changed, excluding functions', () => {
+            const currentNodes = [
+                <Component key="1" id="1" props1={() => void 0} />,
+                <Component key="3" id="3" />,
+                <Component key="4" id="4" />,
+            ];
+
+            const newNodes = [
+                <Component key="1" id="1" props1={() => void 0} />,
+                <Component key="3" id="3" />,
+                <Component key="4" id="4" />,
             ];
 
             expect(currentNodesChanged(['1', '3', '4'], currentNodes, newNodes)).to.be.false;
