@@ -107,7 +107,7 @@ export const RichTextEditor = ({
                 plugins={config.create()}
                 initialValue={memoizedValue}
             >
-                {!editableProps.readOnly && config.toolbar(toolbarWidth)}
+                {config.toolbar(readonly, toolbarWidth)}
                 {config.inline()}
                 {updateValueOnChange && <ContentReplacement value={parseRawValue({ editorId, raw: value, plugins })} />}
             </Plate>
