@@ -4,6 +4,7 @@ import { ReactElement } from 'react';
 
 import type { InternalTreeItemProps } from '../TreeItem';
 import isEqual from 'lodash-es/isEqual';
+import isEqualWith from 'lodash-es/isEqualWith';
 
 export const findIndexById = (nodes: ReactElement<InternalTreeItemProps>[], id: string) => {
     return nodes.findIndex((node) => node.props.id === id);
@@ -35,11 +36,24 @@ export const currentNodesChanged = (
         const currentNode = currentNodes.find((n) => n.props.id === nodeId);
         const currentContentComponent = currentNode?.props?.contentComponent as Partial<ReactElement>;
 
+        if (
+            (!currentContentComponent || !newContentComponent) &&
+            !isEqualWith(currentNode?.props, newNode?.props, excludeFunctions)
+        ) {
+            return true;
+        }
+
         if (!isEqual(currentContentComponent?.props, newContentComponent?.props)) {
             return true;
         }
     }
     return false;
+};
+
+const excludeFunctions = (nodeProp: unknown, othernodeProp: unknown): boolean | undefined => {
+    if (typeof nodeProp === 'function' || typeof othernodeProp === 'function') {
+        return true;
+    }
 };
 
 const findLastIndexByParentId = (nodes: ReactElement<InternalTreeItemProps>[], parentId: string) => {
