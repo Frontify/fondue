@@ -49,7 +49,8 @@ export const AddBlockButton = ({
             className={merge([
                 'tw-group tw-leading-none tw-rounded-sm tw-outline-none',
                 isFocusVisible && FOCUS_STYLE,
-                orientation === AddBlockButtonDirection.Vertical ? 'tw-rotate-90' : 'tw-rotate-0',
+                !direction && orientation === AddBlockButtonDirection.Vertical && 'tw-rotate-90',
+                !direction && orientation === AddBlockButtonDirection.Horizontal && 'tw-rotate-0',
                 direction === ButtonDirection.Right && 'tw-rotate-0',
                 direction === ButtonDirection.Left && 'tw-rotate-180',
                 direction === ButtonDirection.Bottom && 'tw-rotate-90',
