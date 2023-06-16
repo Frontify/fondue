@@ -4,7 +4,6 @@ import React, {
     Children,
     ReactElement,
     ReactNode,
-    cloneElement,
     createContext,
     isValidElement,
     useContext,
@@ -73,11 +72,7 @@ export const Popper = ({
                     const { name } = child.type;
 
                     if (name === Reference.name) {
-                        return (
-                            <div className="tw-w-fit" ref={setReferenceElement}>
-                                {cloneElement(child, { ...child.props })}
-                            </div>
-                        );
+                        return <div ref={setReferenceElement}>{child}</div>;
                     }
 
                     if (name === Content.name) {
@@ -88,9 +83,7 @@ export const Popper = ({
                                     style={popperInstance.styles.popper}
                                     {...popperInstance.attributes.popper}
                                 >
-                                    {cloneElement(child, {
-                                        ...child.props,
-                                    })}
+                                    {child}
                                 </div>
                             </Portal>
                         ) : (
@@ -99,9 +92,7 @@ export const Popper = ({
                                 style={popperInstance.styles.popper}
                                 {...popperInstance.attributes.popper}
                             >
-                                {cloneElement(child, {
-                                    ...child.props,
-                                })}
+                                {child}
                             </div>
                         );
                     }
