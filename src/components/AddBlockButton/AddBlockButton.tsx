@@ -33,13 +33,31 @@ export type AddBlockButtonProps = {
 export const AddBlockButton = ({
     onClick,
     title,
-    direction = ButtonDirection.Right,
-    orientation = AddBlockButtonDirection.Horizontal,
+    direction,
+    orientation,
     'data-test-id': dataTestId = 'add-block-button',
 }: AddBlockButtonProps): ReactElement => {
     const { isFocusVisible, focusProps } = useFocusRing();
     const ref = useRef<HTMLButtonElement | null>(null);
     const { buttonProps } = useButton({ onPress: () => onClick() }, ref);
+
+    let rotatePosition;
+
+    if (!direction && !orientation) {
+        rotatePosition = ButtonDirection.Right;
+    }
+
+    if (!direction && orientation) {
+        rotatePosition = orientation;
+    }
+
+    if (direction && orientation) {
+        rotatePosition = direction;
+    }
+
+    if (direction && !orientation) {
+        rotatePosition = direction;
+    }
 
     return (
         <button
@@ -49,12 +67,12 @@ export const AddBlockButton = ({
             className={merge([
                 'tw-group tw-leading-none tw-rounded-sm tw-outline-none',
                 isFocusVisible && FOCUS_STYLE,
-                !direction && orientation === AddBlockButtonDirection.Vertical && 'tw-rotate-90',
-                !direction && orientation === AddBlockButtonDirection.Horizontal && 'tw-rotate-0',
-                direction === ButtonDirection.Right && 'tw-rotate-0',
-                direction === ButtonDirection.Left && 'tw-rotate-180',
-                direction === ButtonDirection.Bottom && 'tw-rotate-90',
-                direction === ButtonDirection.Top && 'tw-rotate-[270deg]',
+                rotatePosition === AddBlockButtonDirection.Vertical && 'tw-rotate-90',
+                rotatePosition === AddBlockButtonDirection.Horizontal && 'tw-rotate-0',
+                rotatePosition === ButtonDirection.Right && 'tw-rotate-0',
+                rotatePosition === ButtonDirection.Left && 'tw-rotate-180',
+                rotatePosition === ButtonDirection.Bottom && 'tw-rotate-90',
+                rotatePosition === ButtonDirection.Top && 'tw-rotate-[270deg]',
             ])}
         >
             <span
