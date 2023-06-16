@@ -160,14 +160,17 @@ export const WithAwaitedItem = ({ ...args }: TreeProps) => {
                         {
                             id: '2-1-1',
                             label: 'Home',
+                            type: 'document-page',
                         },
                         {
                             id: '2-1-2',
                             label: 'Members',
+                            type: 'document-page',
                         },
                         {
                             id: '2-1-3',
                             label: 'About us',
+                            type: 'document-page',
                         },
                     ],
                     type: 'document-category',
