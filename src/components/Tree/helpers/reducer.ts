@@ -3,8 +3,9 @@
 import { ReactElement } from 'react';
 
 import type { InternalTreeItemProps } from '../TreeItem';
-import isEqual from 'lodash-es/isEqual';
 import isEqualWith from 'lodash-es/isEqualWith';
+import { current } from 'immer';
+import { getReactNodeIdsInFlatArray, removeReactNodesFromFlatArray } from './nodes';
 
 export const findIndexById = (nodes: ReactElement<InternalTreeItemProps>[], id: string) => {
     return nodes.findIndex((node) => node.props.id === id);
@@ -16,12 +17,13 @@ export const getNodeChildrenIds = (nodes: ReactElement<InternalTreeItemProps>[],
 
 export const updateNodeWithNewChildren = (
     nodes: ReactElement<InternalTreeItemProps>[],
-    parentIndex: number,
+    parentId: string,
     children: ReactElement[],
 ) => {
-    const offsetIndex = findLastIndexByParentId(nodes, nodes[parentIndex].props.id) + 1;
-    const offset = offsetIndex > 0 ? offsetIndex : parentIndex + 1;
-    return [...nodes.slice(0, parentIndex + 1), ...children, ...nodes.slice(offset)];
+    const nodeIds = getReactNodeIdsInFlatArray(nodes, parentId);
+    const cleanNodes = nodeIds.length > 0 ? removeReactNodesFromFlatArray(nodes, nodeIds) : nodes;
+    const parentIndex = findIndexById(nodes, parentId);
+    return [...cleanNodes.slice(0, parentIndex + 1), ...children, ...cleanNodes.slice(parentIndex + 1)];
 };
 
 export const currentNodesChanged = (
@@ -38,24 +40,27 @@ export const currentNodesChanged = (
 
         if (
             (!currentContentComponent || !newContentComponent) &&
-            !isEqualWith(currentNode?.props, newNode?.props, excludeFunctions)
+            !isEqualWith(currentNode?.props, newNode?.props, isEqualCustomizer)
         ) {
+            console.log('currentNodesChanged - props different', nodeId, current(currentNode)?.props, newNode?.props);
             return true;
         }
 
-        if (!isEqual(currentContentComponent?.props, newContentComponent?.props)) {
+        if (!isEqualWith(currentContentComponent?.props, newContentComponent?.props, isEqualCustomizer)) {
+            console.log(
+                'currentNodesChanged - different',
+                nodeId,
+                current(currentContentComponent)?.props,
+                newContentComponent?.props,
+            );
             return true;
         }
     }
     return false;
 };
 
-const excludeFunctions = (nodeProp: unknown, othernodeProp: unknown): boolean | undefined => {
+const isEqualCustomizer = (nodeProp: unknown, othernodeProp: unknown): boolean | undefined => {
     if (typeof nodeProp === 'function' || typeof othernodeProp === 'function') {
         return true;
     }
-};
-
-const findLastIndexByParentId = (nodes: ReactElement<InternalTreeItemProps>[], parentId: string) => {
-    return nodes.findLastIndex((node) => node.props.parentId === parentId);
 };
