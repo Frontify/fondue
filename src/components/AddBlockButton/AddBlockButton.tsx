@@ -30,6 +30,18 @@ export type AddBlockButtonProps = {
     'data-test-id'?: string;
 };
 
+const orientationMap: Record<AddBlockButtonDirection, string> = {
+    [AddBlockButtonDirection.Horizontal]: 'tw-rotate-0',
+    [AddBlockButtonDirection.Vertical]: 'tw-rotate-90',
+};
+
+const directionMap: Record<ButtonDirection, string> = {
+    [ButtonDirection.Left]: 'tw-rotate-180',
+    [ButtonDirection.Top]: 'tw-rotate-[270deg]',
+    [ButtonDirection.Bottom]: 'tw-rotate-90',
+    [ButtonDirection.Right]: 'tw-rotate-0',
+};
+
 export const AddBlockButton = ({
     onClick,
     title,
@@ -41,24 +53,6 @@ export const AddBlockButton = ({
     const ref = useRef<HTMLButtonElement | null>(null);
     const { buttonProps } = useButton({ onPress: () => onClick() }, ref);
 
-    let rotatePosition;
-
-    if (!direction && !orientation) {
-        rotatePosition = ButtonDirection.Right;
-    }
-
-    if (!direction && orientation) {
-        rotatePosition = orientation;
-    }
-
-    if (direction && orientation) {
-        rotatePosition = direction;
-    }
-
-    if (direction && !orientation) {
-        rotatePosition = direction;
-    }
-
     return (
         <button
             {...mergeProps(buttonProps, focusProps)}
@@ -67,12 +61,9 @@ export const AddBlockButton = ({
             className={merge([
                 'tw-group tw-leading-none tw-rounded-sm tw-outline-none',
                 isFocusVisible && FOCUS_STYLE,
-                rotatePosition === AddBlockButtonDirection.Vertical && 'tw-rotate-90',
-                rotatePosition === AddBlockButtonDirection.Horizontal && 'tw-rotate-0',
-                rotatePosition === ButtonDirection.Right && 'tw-rotate-0',
-                rotatePosition === ButtonDirection.Left && 'tw-rotate-180',
-                rotatePosition === ButtonDirection.Bottom && 'tw-rotate-90',
-                rotatePosition === ButtonDirection.Top && 'tw-rotate-[270deg]',
+                orientation && !direction && orientationMap[orientation],
+                direction && directionMap[direction],
+                !direction && !orientation && directionMap[ButtonDirection.Right],
             ])}
         >
             <span

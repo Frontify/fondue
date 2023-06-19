@@ -2,12 +2,7 @@
 
 import React from 'react';
 import { Meta, StoryFn } from '@storybook/react';
-import {
-    AddBlockButton as AddBlockButtonComponent,
-    AddBlockButtonDirection,
-    AddBlockButtonProps,
-    ButtonDirection,
-} from './AddBlockButton';
+import { AddBlockButton as AddBlockButtonComponent, AddBlockButtonProps, ButtonDirection } from './AddBlockButton';
 
 export default {
     title: 'Components/Add Block Button',
@@ -16,7 +11,6 @@ export default {
     args: {
         title: 'Add Block Button',
         direction: ButtonDirection.Right,
-        orientation: AddBlockButtonDirection.Horizontal,
     },
 
     argTypes: {
@@ -26,10 +20,6 @@ export default {
         direction: {
             options: Object.values(ButtonDirection),
             control: 'select',
-        },
-        orientation: {
-            options: Object.values(AddBlockButtonDirection),
-            control: 'radio',
         },
     },
 } as Meta<AddBlockButtonProps>;
