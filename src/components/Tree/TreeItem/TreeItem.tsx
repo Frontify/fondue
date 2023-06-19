@@ -85,7 +85,7 @@ export const TreeItem = memo(
 
         const parentAccepts = typeof projection?.accepts === 'string' ? projection.accepts?.split(', ') : [];
 
-        const cleanCurrentType = active?.data.current?.type.replace(/-\d+$/, '') || '';
+        const cleanCurrentType = active?.data.current?.type?.replace(/-\d+$/, '') || '';
 
         const isWithin =
             over !== null &&
