@@ -13,7 +13,7 @@ import React, {
 } from 'react';
 import { usePopper } from 'react-popper';
 import { Portal } from '@components/Portal';
-import { PopperPlacement, PopperProps } from '@components/Popper/types';
+import { PopperProps } from '@components/Popper/types';
 
 const PopperContext = createContext<PopperProps>({});
 
@@ -40,7 +40,7 @@ const usePopperContext = () => {
 export const Popper = ({
     children,
     open,
-    placement = PopperPlacement.BottomStart,
+    placement = 'bottom-start',
     offset = [0, 8],
     flip = true,
     enablePortal = false,

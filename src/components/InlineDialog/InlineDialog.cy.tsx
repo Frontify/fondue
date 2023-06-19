@@ -9,7 +9,6 @@ import IconDotsVertical16 from '@foundation/Icon/Generated/IconDotsVertical16';
 import { DialogBody } from '@components/DialogBody';
 import { Box } from '@components/Box';
 import { Dropdown } from '@components/Dropdown';
-import { PopperPlacement } from '@components/Popper/types';
 
 const INLINE_DIALOG_TRIGGER_SELECTOR = '[data-test-id=fondue-inlineDialog-trigger]';
 const INLINE_DIALOG_SELECTOR = '[data-test-id=fondue-inlineDialog-content]';
@@ -94,43 +93,43 @@ describe('InlineDialog Component', () => {
         });
 
         it('should render with Top placement', () => {
-            cy.mount(<InlineDialogComponent placement={PopperPlacement.Top} />);
+            cy.mount(<InlineDialogComponent placement="top" />);
             cy.get(INLINE_DIALOG_TRIGGER_SELECTOR).children().eq(0).click();
             cy.get(INLINE_DIALOG_SELECTOR).parent().should('have.attr', 'data-popper-placement', 'top');
         });
 
         it('should render with start alignment', () => {
-            cy.mount(<InlineDialogComponent placement={PopperPlacement.BottomStart} />);
+            cy.mount(<InlineDialogComponent placement="bottom-start" />);
             cy.get(INLINE_DIALOG_TRIGGER_SELECTOR).children().eq(0).click();
             cy.get(INLINE_DIALOG_SELECTOR).parent().should('have.attr', 'data-popper-placement', 'bottom-start');
         });
 
         it('should render with middle alignment', () => {
-            cy.mount(<InlineDialogComponent placement={PopperPlacement.Bottom} />);
+            cy.mount(<InlineDialogComponent placement="bottom" />);
             cy.get(INLINE_DIALOG_TRIGGER_SELECTOR).children().eq(0).click();
             cy.get(INLINE_DIALOG_SELECTOR).parent().should('have.attr', 'data-popper-placement', 'bottom');
         });
 
         it('should render with end alignment', () => {
-            cy.mount(<InlineDialogComponent placement={PopperPlacement.BottomEnd} />);
+            cy.mount(<InlineDialogComponent placement="bottom-end" />);
             cy.get(INLINE_DIALOG_TRIGGER_SELECTOR).children().eq(0).click();
             cy.get(INLINE_DIALOG_SELECTOR).parent().should('have.attr', 'data-popper-placement', 'bottom-end');
         });
 
         it('should render with Right placement', () => {
-            cy.mount(<InlineDialogComponent placement={PopperPlacement.Right} />);
+            cy.mount(<InlineDialogComponent placement="right" />);
             cy.get(INLINE_DIALOG_TRIGGER_SELECTOR).children().eq(0).click();
             cy.get(INLINE_DIALOG_SELECTOR).parent().should('have.attr', 'data-popper-placement', 'right');
         });
 
         it('should flip if enabled', () => {
-            cy.mount(<InlineDialogComponent placement={PopperPlacement.Top} flip />);
+            cy.mount(<InlineDialogComponent placement="top" flip />);
             cy.get(INLINE_DIALOG_TRIGGER_SELECTOR).children().eq(0).click();
             cy.get(INLINE_DIALOG_SELECTOR).parent().should('have.attr', 'data-popper-placement', 'bottom');
         });
 
         it('should not flip if disabled', () => {
-            cy.mount(<InlineDialogComponent placement={PopperPlacement.Top} flip={false} />);
+            cy.mount(<InlineDialogComponent placement="top" flip={false} />);
             cy.get(INLINE_DIALOG_TRIGGER_SELECTOR).children().eq(0).click();
             cy.get(INLINE_DIALOG_SELECTOR).parent().should('have.attr', 'data-popper-placement', 'top');
         });

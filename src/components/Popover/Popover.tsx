@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
-import { PopperPlacement } from '@components/Popper/types';
 import { Trigger } from '@utilities/dialogs/Trigger';
 import { Content } from '@utilities/dialogs/Content';
 import { Modality, OverlayProps } from '../../types/dialog';
@@ -12,7 +11,7 @@ export type PopoverComponentProps = OverlayProps;
 export const Popover = ({
     children,
     open,
-    placement = PopperPlacement.BottomStart,
+    placement = 'bottom-start',
     offset = [0, 8],
     flip = false,
     enablePortal = false,

@@ -2,20 +2,19 @@
 
 import { ReactNode } from 'react';
 
-export enum PopperPlacement {
-    Top = 'top',
-    Bottom = 'bottom',
-    TopStart = 'top-start',
-    BottomStart = 'bottom-start',
-    TopEnd = 'top-end',
-    BottomEnd = 'bottom-end',
-    Right = 'right',
-    Left = 'left',
-    RightStart = 'right-start',
-    RightEnd = 'right-end',
-    LeftStart = 'left-start',
-    LeftEnd = 'left-end',
-}
+export type PopperPlacement =
+    | 'top'
+    | 'bottom'
+    | 'top-start'
+    | 'bottom-start'
+    | 'top-end'
+    | 'bottom-end'
+    | 'right'
+    | 'left'
+    | 'right-start'
+    | 'right-end'
+    | 'left-start'
+    | 'left-end';
 
 export type PopperProps = {
     children?: ReactNode;
@@ -26,9 +25,23 @@ export type PopperProps = {
     enablePortal?: boolean;
 };
 
+const POPPER_PLACEMENT = [
+    'top',
+    'bottom',
+    'top-start',
+    'bottom-start',
+    'top-end',
+    'bottom-end',
+    'right',
+    'left',
+    'right-start',
+    'right-end',
+    'left-start',
+    'left-end',
+];
 export const POPPER_STORY_ARGS = {
     placement: {
-        options: Object.values(PopperPlacement),
+        options: POPPER_PLACEMENT,
         control: { type: 'select' },
     },
     flip: {

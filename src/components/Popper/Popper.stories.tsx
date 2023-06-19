@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { Popper } from './Popper';
 import { Button } from '@components/Button';
-import { POPPER_STORY_ARGS, PopperPlacement, PopperProps } from '@components/Popper/types';
+import { POPPER_STORY_ARGS, PopperProps } from '@components/Popper/types';
 import { Box } from '@components/Box';
 
 export default {
@@ -12,7 +12,7 @@ export default {
     component: Popper,
     tags: ['autodocs'],
     args: {
-        placement: PopperPlacement.BottomStart,
+        placement: 'bottom-start',
         offset: [0, 8],
         flip: true,
     },

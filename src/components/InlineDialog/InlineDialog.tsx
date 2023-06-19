@@ -2,7 +2,6 @@
 
 import React, { useEffect } from 'react';
 import { BaseDialogProps, Modality, OverlayProps } from '../../types/dialog';
-import { PopperPlacement } from '@components/Popper/types';
 import { Trigger } from '@utilities/dialogs/Trigger';
 import { Content } from '@utilities/dialogs/Content';
 import { Overlay } from '@utilities/dialogs/Overlay';
@@ -12,7 +11,7 @@ export type InlineDialogProps = OverlayProps & BaseDialogProps;
 export const InlineDialog = ({
     children,
     open,
-    placement = PopperPlacement.BottomStart,
+    placement = 'bottom-start',
     offset = [0, 8],
     flip = false,
     enablePortal = false,

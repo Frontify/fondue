@@ -10,7 +10,7 @@ import { DialogFooter } from '@components/DialogFooter';
 import { DialogHeaderSize, Modality } from '../../types/dialog';
 import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
 import { useToggleOverlay } from '@hooks/useToggleOverlay';
-import { POPPER_STORY_ARGS, PopperPlacement } from '@components/Popper/types';
+import { POPPER_STORY_ARGS } from '@components/Popper/types';
 import { action } from '@storybook/addon-actions';
 import { Divider } from '@components/Divider';
 import { Flex } from '@components/Flex';
@@ -22,7 +22,7 @@ export default {
     component: InlineDialog,
     tags: ['autodocs'],
     args: {
-        placement: PopperPlacement.BottomStart,
+        placement: 'bottom-start',
         modality: Modality.Modal,
         offset: [0, 8],
         flip: true,
@@ -67,56 +67,58 @@ const TextExample = () => {
 const Template: StoryFn<InlineDialogProps> = (args) => {
     const [isOpen, setIsOpen] = useToggleOverlay(false, { isBlockingModal: args.modality === Modality.BlockingModal });
     return (
-        <InlineDialog
-            open={isOpen}
-            minHeight={args.minHeight}
-            maxHeight={args.maxHeight}
-            minWidth={args.minWidth}
-            maxWidth={args.maxWidth}
-            handleClose={() => setIsOpen(false)}
-            modality={args.modality}
-            placement={args.placement}
-            flip={args.flip}
-            offset={args.offset}
-            enablePortal={args.enablePortal}
-            darkUnderlay={args.darkUnderlay}
-            autoHeight={args.autoHeight}
-        >
-            <InlineDialog.Trigger>
-                <Button
-                    emphasis={ButtonEmphasis.Default}
-                    icon={<IconDotsVertical16 />}
-                    onClick={() => setIsOpen(!isOpen)}
-                ></Button>
-            </InlineDialog.Trigger>
-            <InlineDialog.Content>
-                <DialogBody>
-                    <Box className="tw-p-4">
-                        <Dropdown
-                            onChange={(id) => console.log(id)}
-                            activeItemId={'1'}
-                            menuBlocks={[
-                                {
-                                    id: 'block1',
-                                    menuItems: [
-                                        { id: '1', title: 'Item 1' },
-                                        { id: '2', title: 'Item 2' },
-                                        { id: '3', title: 'Item 3' },
-                                        { id: '4', title: 'Item 4' },
-                                        { id: '5', title: 'Item 5' },
-                                    ],
-                                },
-                            ]}
-                        />
+        <Box className="tw-w-fit">
+            <InlineDialog
+                open={isOpen}
+                minHeight={args.minHeight}
+                maxHeight={args.maxHeight}
+                minWidth={args.minWidth}
+                maxWidth={args.maxWidth}
+                handleClose={() => setIsOpen(false)}
+                modality={args.modality}
+                placement={args.placement}
+                flip={args.flip}
+                offset={args.offset}
+                enablePortal={args.enablePortal}
+                darkUnderlay={args.darkUnderlay}
+                autoHeight={args.autoHeight}
+            >
+                <InlineDialog.Trigger>
+                    <Button
+                        emphasis={ButtonEmphasis.Default}
+                        icon={<IconDotsVertical16 />}
+                        onClick={() => setIsOpen(!isOpen)}
+                    ></Button>
+                </InlineDialog.Trigger>
+                <InlineDialog.Content>
+                    <DialogBody>
+                        <Box className="tw-p-4">
+                            <Dropdown
+                                onChange={(id) => console.log(id)}
+                                activeItemId={'1'}
+                                menuBlocks={[
+                                    {
+                                        id: 'block1',
+                                        menuItems: [
+                                            { id: '1', title: 'Item 1' },
+                                            { id: '2', title: 'Item 2' },
+                                            { id: '3', title: 'Item 3' },
+                                            { id: '4', title: 'Item 4' },
+                                            { id: '5', title: 'Item 5' },
+                                        ],
+                                    },
+                                ]}
+                            />
 
-                        <TextExample />
-                        <TextExample />
-                        <TextExample />
-                        <Button onClick={() => setIsOpen(!isOpen)}>Close</Button>
-                    </Box>
-                </DialogBody>
-            </InlineDialog.Content>
-        </InlineDialog>
+                            <TextExample />
+                            <TextExample />
+                            <TextExample />
+                            <Button onClick={() => setIsOpen(!isOpen)}>Close</Button>
+                        </Box>
+                    </DialogBody>
+                </InlineDialog.Content>
+            </InlineDialog>
+        </Box>
     );
 };
 

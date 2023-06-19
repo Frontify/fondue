@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { Button } from '@components/Button';
-import { PopperPlacement } from '@components/Popper/types';
 import { Popover, PopoverComponentProps } from '@components/Popover/Popover';
 
 const POPOVER_SELECTOR = '[data-test-id=fondue-popover-content]';
@@ -31,60 +30,60 @@ const PopoverComponent = ({ placement, offset, flip }: Omit<PopoverComponentProp
 
 describe('Popover Component', () => {
     it('should render the trigger', () => {
-        cy.mount(<PopoverComponent placement={PopperPlacement.Bottom} />);
+        cy.mount(<PopoverComponent placement="bottom" />);
         cy.get(POPOVER_TRIGGER).should('exist');
     });
 
     it('should render the popover', () => {
-        cy.mount(<PopoverComponent placement={PopperPlacement.Bottom} />);
+        cy.mount(<PopoverComponent placement="bottom" />);
         cy.get(POPOVER_TRIGGER).click();
         cy.get(POPOVER_SELECTOR).should('exist');
     });
 
     it('should render the popover in its initial Top placement', () => {
-        cy.mount(<PopoverComponent placement={PopperPlacement.Top} />);
+        cy.mount(<PopoverComponent placement="top" />);
         cy.get(POPOVER_TRIGGER).click();
         cy.get(POPOVER_SELECTOR).parent().should('have.attr', 'data-popper-placement', 'top');
     });
 
     it('should render the popover with start alignment', () => {
-        cy.mount(<PopoverComponent placement={PopperPlacement.BottomStart} />);
+        cy.mount(<PopoverComponent placement="bottom-start" />);
         cy.get(POPOVER_TRIGGER).click();
         cy.get(POPOVER_SELECTOR).parent().should('have.attr', 'data-popper-placement', 'bottom-start');
     });
 
     it('should render the popover with middle alignment', () => {
-        cy.mount(<PopoverComponent placement={PopperPlacement.Bottom} />);
+        cy.mount(<PopoverComponent placement="bottom" />);
         cy.get(POPOVER_TRIGGER).click();
         cy.get(POPOVER_SELECTOR).parent().should('have.attr', 'data-popper-placement', 'bottom');
     });
 
     it('should render the popover with end alignment', () => {
-        cy.mount(<PopoverComponent placement={PopperPlacement.BottomEnd} />);
+        cy.mount(<PopoverComponent placement="bottom-end" />);
         cy.get(POPOVER_TRIGGER).click();
         cy.get(POPOVER_SELECTOR).parent().should('have.attr', 'data-popper-placement', 'bottom-end');
     });
 
     it('should render the popover in its initial Right placement', () => {
-        cy.mount(<PopoverComponent placement={PopperPlacement.Right} />);
+        cy.mount(<PopoverComponent placement="right" />);
         cy.get(POPOVER_TRIGGER).click();
         cy.get(POPOVER_SELECTOR).parent().should('have.attr', 'data-popper-placement', 'right');
     });
 
     it('should flip if enabled', () => {
-        cy.mount(<PopoverComponent placement={PopperPlacement.Top} flip />);
+        cy.mount(<PopoverComponent placement="top" flip />);
         cy.get(POPOVER_TRIGGER).click();
         cy.get(POPOVER_SELECTOR).parent().should('have.attr', 'data-popper-placement', 'bottom');
     });
 
     it('should not flip if disabled', () => {
-        cy.mount(<PopoverComponent placement={PopperPlacement.Top} flip={false} />);
+        cy.mount(<PopoverComponent placement="top" flip={false} />);
         cy.get(POPOVER_TRIGGER).click();
         cy.get(POPOVER_SELECTOR).parent().should('have.attr', 'data-popper-placement', 'top');
     });
 
     it('should access interactive element with keyboard', () => {
-        cy.mount(<PopoverComponent placement={PopperPlacement.Bottom} />);
+        cy.mount(<PopoverComponent placement="bottom" />);
         cy.get('body').realPress('Tab');
         cy.get(POPOVER_TRIGGER).should('be.focused');
         cy.get('body').realPress('Enter');
