@@ -75,6 +75,7 @@ export const RichTextEditor = ({
             return <span {...mergedAttributes}>{children}</span>;
         },
         readOnly: readonly,
+        'aria-label': placeholder,
         onBlur: () => onBlur && onBlur(JSON.stringify(localValue.current)),
         className: `${padding}`,
         style: {
