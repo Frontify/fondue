@@ -2,7 +2,7 @@
 
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { Popper } from '@components/Popper';
-import React, { Children, isValidElement, useRef, useState } from 'react';
+import React, { Children, isValidElement, useCallback, useRef, useState } from 'react';
 import { Trigger } from '@utilities/dialogs/Trigger';
 import { Content } from '@utilities/dialogs/Content';
 import { OVERLAY_CONTAINER_CLASSES } from '@utilities/overlayStyle';
@@ -40,13 +40,13 @@ export const Overlay = ({
     );
 
     const maxContentHeight = autoHeight ? maxAutoHeight : maxHeight;
-    const handleClosingInteraction = () => {
+    const handleClosingInteraction = useCallback(() => {
         if (open && modality !== Modality.BlockingModal) {
             if (handleClose) {
                 handleClose();
             }
         }
-    };
+    }, [handleClose, modality, open]);
 
     useFocusTrap(ref.current, open, modality === Modality.NonModal);
     useClickOutside(ref.current, handleClosingInteraction);

@@ -71,7 +71,7 @@ export const useFocusTrap = (reference: HTMLElement | null, isOpen: boolean, ign
         return () => {
             window.removeEventListener('keydown', handleFocus);
         };
-    }, [firstFocusableElement, focusableElements, handleFocus, isOpen, reference]);
+    }, [firstFocusableElement, focusableElements, handleFocus, ignoreFocusTrap, isOpen, reference]);
 
     return reference;
 };
