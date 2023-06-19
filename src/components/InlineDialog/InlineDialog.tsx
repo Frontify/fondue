@@ -5,6 +5,7 @@ import { BaseDialogProps, Modality, OverlayProps } from '../../types/dialog';
 import { Trigger } from '@utilities/dialogs/Trigger';
 import { Content } from '@utilities/dialogs/Content';
 import { Overlay } from '@utilities/dialogs/Overlay';
+import { Z_INDEX_MODAL } from '@utilities/dialogs/constants';
 
 export type InlineDialogProps = OverlayProps & BaseDialogProps;
 
@@ -51,6 +52,7 @@ export const InlineDialog = ({
             role={modality === Modality.NonModal ? 'region' : 'dialog'}
             darkUnderlay={darkUnderlay}
             autoHeight={autoHeight}
+            zIndex={Z_INDEX_MODAL}
         >
             {children}
         </Overlay>

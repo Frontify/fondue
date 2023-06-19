@@ -26,6 +26,7 @@ export default {
         role: {
             type: 'string',
         },
+        zIndex: { table: { disable: true } },
     },
 } as Meta<PopoverComponentProps>;
 

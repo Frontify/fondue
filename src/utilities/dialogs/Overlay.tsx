@@ -12,6 +12,7 @@ import { useFocusTrap } from '@hooks/useFocusTrap';
 import { useClickOutside } from '@hooks/useClickOutside';
 import { Portal } from '@components/Portal';
 import { useDropdownAutoHeight } from '@hooks/useDropdownAutoHeight';
+import { Z_INDEX_MODAL_BACKDROP } from '@utilities/dialogs/constants';
 
 export const Overlay = ({
     open,
@@ -30,6 +31,7 @@ export const Overlay = ({
     modality = Modality.NonModal,
     darkUnderlay,
     autoHeight,
+    zIndex,
 }: OverlayProps & BaseDialogProps) => {
     const id = useMemoizedId();
     const ref = useRef<HTMLDivElement | null>(null);
@@ -60,6 +62,7 @@ export const Overlay = ({
                 offset={offset}
                 flip={flip}
                 enablePortal={enablePortal}
+                zIndex={zIndex}
             >
                 {Children.map(children, (child) => {
                     if (isValidElement(child) && typeof child.type === 'function') {
@@ -105,9 +108,10 @@ export const Overlay = ({
                     <div
                         data-test-id={`${dataTestId}-underlay`}
                         className={merge([
-                            'tw-fixed tw-top-0 tw-left-0 tw-bottom-0 tw-right-0 tw-z-[9990]',
+                            'tw-fixed tw-top-0 tw-left-0 tw-bottom-0 tw-right-0',
                             darkUnderlay && 'tw-transition-opacity tw-bg-black tw-opacity-50',
                         ])}
+                        style={{ zIndex: Z_INDEX_MODAL_BACKDROP }}
                     />
                 </Portal>
             )}

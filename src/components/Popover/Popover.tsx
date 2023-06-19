@@ -5,6 +5,7 @@ import { Trigger } from '@utilities/dialogs/Trigger';
 import { Content } from '@utilities/dialogs/Content';
 import { Modality, OverlayProps } from '../../types/dialog';
 import { Overlay } from '@utilities/dialogs/Overlay';
+import { Z_INDEX_POPOVER } from '@utilities/dialogs/constants';
 
 export type PopoverComponentProps = OverlayProps;
 
@@ -28,6 +29,7 @@ export const Popover = ({
             role={role}
             data-test-id={dataTestId}
             modality={Modality.NonModal}
+            zIndex={Z_INDEX_POPOVER}
         >
             {children}
         </Overlay>

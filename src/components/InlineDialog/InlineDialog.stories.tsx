@@ -51,6 +51,7 @@ export default {
         autoHeight: {
             type: 'boolean',
         },
+        zIndex: { table: { disable: true } },
     },
 } as Meta<InlineDialogProps>;
 

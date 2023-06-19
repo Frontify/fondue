@@ -44,6 +44,7 @@ export const Popper = ({
     offset = [0, 8],
     flip = true,
     enablePortal = false,
+    zIndex = 'auto',
 }: PopperProps) => {
     const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
     const [popperElement, setPopperElement] = useState<HTMLElement | null>(null);
@@ -81,7 +82,7 @@ export const Popper = ({
                             <Portal>
                                 <div
                                     ref={setPopperElement}
-                                    style={{ zIndex: 9999, ...popperInstance.styles.popper }}
+                                    style={{ zIndex, ...popperInstance.styles.popper }}
                                     {...popperInstance.attributes.popper}
                                 >
                                     {child}
@@ -90,7 +91,7 @@ export const Popper = ({
                         ) : (
                             <div
                                 ref={setPopperElement}
-                                style={{ zIndex: 9999, ...popperInstance.styles.popper }}
+                                style={{ zIndex, ...popperInstance.styles.popper }}
                                 {...popperInstance.attributes.popper}
                             >
                                 {child}

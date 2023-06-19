@@ -23,6 +23,7 @@ export type PopperProps = {
     offset?: [number, number];
     flip?: boolean;
     enablePortal?: boolean;
+    zIndex?: number | string;
 };
 
 const POPPER_PLACEMENT = [
