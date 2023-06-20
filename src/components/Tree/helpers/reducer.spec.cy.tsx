@@ -72,7 +72,7 @@ describe('reducer', () => {
     });
 
     describe('updateNodeWithNewChildren', () => {
-        it('should return a new array with the children inserted at the correct index', () => {
+        it('should return a new array with the children inserted at the correct parent', () => {
             const nodes = [
                 <Component key="1" id="foo" parentId="root" />,
                 <Component key="3" id="baz" parentId="foo" />,
@@ -85,11 +85,11 @@ describe('reducer', () => {
                 <Component key="6" id="corge" parentId="baz" />,
             ];
 
-            const updatedNodes = updateNodeWithNewChildren(nodes, 1, newChildren);
+            const updatedNodes = updateNodeWithNewChildren(nodes, 'baz', newChildren);
             expect(updatedNodes).to.deep.equal([nodes[0], nodes[1], ...newChildren, nodes[2], nodes[3]]);
         });
 
-        it('should return a new array with the children added to the end if the index is beyond the end of the array', () => {
+        it("should return the original array with no children added if the parent doesn't exist", () => {
             const nodes = [
                 <Component key="1" id="foo" parentId="root" />,
                 <Component key="3" id="baz" parentId="foo" />,
@@ -102,25 +102,8 @@ describe('reducer', () => {
                 <Component key="6" id="corge" parentId="bar" />,
             ];
 
-            const updatedNodes = updateNodeWithNewChildren(nodes, 3, newChildren);
-            expect(updatedNodes).to.deep.equal([nodes[0], nodes[1], nodes[2], nodes[3], ...newChildren]);
-        });
-
-        it('should return a new array with the children added to the beginning if the index is 0', () => {
-            const nodes = [
-                <Component key="1" id="foo" parentId="root" />,
-                <Component key="3" id="baz" parentId="root" />,
-                <Component key="4" id="qux" parentId="root" />,
-                <Component key="2" id="bar" parentId="root" />,
-            ];
-
-            const newChildren = [
-                <Component key="5" id="quux" parentId="foo" />,
-                <Component key="6" id="corge" parentId="foo" />,
-            ];
-
-            const updatedNodes = updateNodeWithNewChildren(nodes, 0, newChildren);
-            expect(updatedNodes).to.deep.equal([nodes[0], ...newChildren, nodes[1], nodes[2], nodes[3]]);
+            const updatedNodes = updateNodeWithNewChildren(nodes, 'i-do-not-exist', newChildren);
+            expect(updatedNodes).to.deep.equal([nodes[0], nodes[1], nodes[2], nodes[3]]);
         });
 
         it('should return a new array with the children added after an opened item', () => {
@@ -138,13 +121,13 @@ describe('reducer', () => {
                 <Component key="8" id="corge" parentId="baz" />,
             ];
 
-            const updatedNodes = updateNodeWithNewChildren(nodes, 2, newChildren);
+            const updatedNodes = updateNodeWithNewChildren(nodes, 'baz', newChildren);
             expect(updatedNodes).to.deep.equal([
                 nodes[0],
                 nodes[1],
                 nodes[2],
-                ...newChildren,
                 nodes[3],
+                ...newChildren,
                 nodes[4],
                 nodes[5],
             ]);

@@ -4,7 +4,6 @@ import { ReactElement } from 'react';
 
 import type { InternalTreeItemProps } from '../TreeItem';
 import isEqualWith from 'lodash-es/isEqualWith';
-import { current } from 'immer';
 import { getReactNodeIdsInFlatArray, removeReactNodesFromFlatArray } from './nodes';
 
 export const findIndexById = (nodes: ReactElement<InternalTreeItemProps>[], id: string) => {
@@ -23,6 +22,10 @@ export const updateNodeWithNewChildren = (
     const nodeIds = getReactNodeIdsInFlatArray(nodes, parentId);
     const cleanNodes = nodeIds.length > 0 ? removeReactNodesFromFlatArray(nodes, nodeIds) : nodes;
     const parentIndex = findIndexById(nodes, parentId);
+    if (parentIndex === -1) {
+        return nodes;
+    }
+
     return [...cleanNodes.slice(0, parentIndex + 1), ...children, ...cleanNodes.slice(parentIndex + 1)];
 };
 
@@ -42,17 +45,10 @@ export const currentNodesChanged = (
             (!currentContentComponent || !newContentComponent) &&
             !isEqualWith(currentNode?.props, newNode?.props, isEqualCustomizer)
         ) {
-            console.log('currentNodesChanged - props different', nodeId, current(currentNode)?.props, newNode?.props);
             return true;
         }
 
         if (!isEqualWith(currentContentComponent?.props, newContentComponent?.props, isEqualCustomizer)) {
-            console.log(
-                'currentNodesChanged - different',
-                nodeId,
-                current(currentContentComponent)?.props,
-                newContentComponent?.props,
-            );
             return true;
         }
     }
