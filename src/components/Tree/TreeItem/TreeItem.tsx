@@ -93,9 +93,7 @@ export const TreeItem = memo(
 
         const canDropWithin =
             (isWithin && active?.data.current && overAccepts.includes(`${cleanCurrentType}-within`)) ||
-            (activeProjection !== null &&
-                activeProjection?.isWithinParent &&
-                parentAccepts.includes(`${cleanCurrentType}-within`));
+            (activeProjection?.isWithinParent && parentAccepts.includes(`${cleanCurrentType}-within`));
 
         const canDrop =
             isActive &&
