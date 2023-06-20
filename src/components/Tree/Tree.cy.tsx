@@ -79,7 +79,7 @@ describe('Tree and TreeItem components', () => {
         cy.get(TREE_ITEM_ID).first().should('have.attr', 'aria-selected', 'false');
     });
 
-    it('renders the a TreeItem with contentComponent correctly', () => {
+    it('renders the TreeItem with contentComponent correctly', () => {
         cy.mount(
             <Tree key="tree" id="tree">
                 <TreeItem
@@ -97,7 +97,7 @@ describe('Tree and TreeItem components', () => {
         cy.get(TREE_ITEM_ID).find('button').should('exist').contains('Hello');
     });
 
-    it('should trigger onSelect as a controlled component when selecting and item', () => {
+    it('should trigger onSelect as a controlled component when selecting an item', () => {
         const onSelectStub = cy.stub().as('onSelectStub');
 
         cy.mount(<TreeComponent onSelect={onSelectStub} />);
@@ -107,7 +107,7 @@ describe('Tree and TreeItem components', () => {
         cy.get('@onSelectStub').should('have.been.calledOnce');
     });
 
-    it('should trigger onSelect as a controlled component when deselecting and item', () => {
+    it('should trigger onSelect as a controlled component when deselecting an item', () => {
         const onSelectStub = cy.stub().as('onSelectStub');
 
         cy.mount(<TreeComponent onSelect={onSelectStub} selectedIds={['1']} />);
@@ -145,14 +145,14 @@ describe('Tree and TreeItem components', () => {
         cy.get('@onShrinkStub').should('have.been.calledOnce');
     });
 
-    it('does not show then drag handle when not draggable', () => {
+    it('does not show the drag handle when not draggable', () => {
         cy.mount(<TreeComponent />);
 
         cy.get(TREE_ITEM_ID).first().realHover();
         cy.get(TREE_ITEM_DRAG_HANDLE_ID).should('not.be.visible');
     });
 
-    it('shows then drag handle and allows dragging when draggable', () => {
+    it('shows the drag handle and allows dragging when draggable', () => {
         cy.mount(<TreeComponent draggable />);
 
         cy.get(TREE_ITEM_ID).first().realHover();
@@ -161,6 +161,7 @@ describe('Tree and TreeItem components', () => {
         cy.get(TREE_ITEM_DRAG_HANDLE_ID).realMouseDown();
         cy.get(TREE_ITEM_OVERLAY_ID).should('be.visible');
         cy.get(TREE_ITEM_DRAG_HANDLE_ID).first().realMouseUp();
+        cy.get(TREE_ITEM_OVERLAY_ID).should('not.exist');
     });
 
     it('collapses expanded items when dragging', () => {
@@ -221,32 +222,6 @@ describe('Tree and TreeItem components', () => {
         cy.get('@onDropStub').should('not.have.been.called');
     });
 
-    it('allows adding an item dynamically to the Tree', () => {
-        const newNode: TreeItemMock = {
-            id: '4',
-            label: 'New Added Item',
-        };
-        const rootItemsLength = treeItemsMock.length;
-
-        cy.mount(<TreeComponent />).then(({ rerender }) => {
-            cy.get(TREE_ITEM_ID).should('have.length', rootItemsLength);
-            treeItemsMock.push(newNode);
-            rerender(<TreeComponent />);
-            cy.get(TREE_ITEM_ID).should('have.length', rootItemsLength + 1);
-        });
-    });
-
-    it('allows removing an item dynamically to the Tree', () => {
-        const rootItemsLength = treeItemsMock.length;
-
-        cy.mount(<TreeComponent />).then(({ rerender }) => {
-            cy.get(TREE_ITEM_ID).should('have.length', rootItemsLength);
-            treeItemsMock.pop();
-            rerender(<TreeComponent />);
-            cy.get(TREE_ITEM_ID).should('have.length', rootItemsLength - 1);
-        });
-    });
-
     it('navigates correctly with the keyboard', () => {
         cy.mount(<TreeComponent />);
 
@@ -275,15 +250,25 @@ describe('Adding / Removing item dynamically', () => {
         };
         const rootItemsLength = treeItemsMock.length;
 
-        cy.mount(<TreeComponent />).then(({ rerender }) => {
-            cy.get(TREE_ITEM_ID).should('have.length', rootItemsLength);
-            treeItemsMock.push(newNode);
-            rerender(<TreeComponent />);
-            cy.get(TREE_ITEM_ID).should('have.length', rootItemsLength + 1);
-        });
+        cy.mount(<TreeComponent />)
+            .then(({ rerender }) => {
+                cy.get(TREE_ITEM_ID).should('have.length', rootItemsLength);
+                treeItemsMock.push(newNode);
+                rerender(<TreeComponent />);
+                cy.get(TREE_ITEM_ID).should('have.length', rootItemsLength + 1);
+            })
+            .then(() => {
+                // reset mock
+                treeItemsMock.pop();
+            });
     });
 
     it('Allow removing an item dynamically to the Tree', () => {
+        const newNode: TreeItemMock = {
+            id: '4',
+            label: 'New Added Item',
+        };
+        treeItemsMock.push(newNode);
         const rootItemsLength = treeItemsMock.length;
 
         cy.mount(<TreeComponent />).then(({ rerender }) => {
