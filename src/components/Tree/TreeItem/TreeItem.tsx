@@ -61,7 +61,6 @@ export const TreeItem = memo(
         level = 0,
         contentComponent,
         treeDraggable = false,
-        projection,
         onSelect,
         onExpand,
         onShrink,
@@ -74,28 +73,32 @@ export const TreeItem = memo(
         'data-test-id': dataTestId = 'fondue-tree-item',
     }: InternalTreeItemProps) => {
         const { active, over } = useDndContext();
-        const { isSelected, isExpanded } = useTreeItem(id);
+        const { isSelected, isExpanded, projection } = useTreeItem(id);
 
         const draggable = treeDraggable && itemDraggable;
 
         const isActive = active?.id === id;
+        const activeProjection = isActive ? projection : null;
 
         const overAccepts =
             typeof over?.data?.current?.accepts === 'string' ? over.data.current.accepts?.split(', ') : [];
 
-        const parentAccepts = typeof projection?.accepts === 'string' ? projection.accepts?.split(', ') : [];
+        const parentAccepts =
+            typeof activeProjection?.accepts === 'string' ? activeProjection.accepts?.split(', ') : [];
 
         const cleanCurrentType = active?.data.current?.type?.replace(/-\d+$/, '') || '';
 
         const isWithin =
             over !== null &&
-            projection !== null &&
-            projection !== undefined &&
-            projection.depth > over.data.current?.level;
+            activeProjection !== null &&
+            activeProjection !== undefined &&
+            activeProjection.depth > over.data.current?.level;
 
         const canDropWithin =
             (isWithin && active?.data.current && overAccepts.includes(`${cleanCurrentType}-within`)) ||
-            (projection && projection?.isWithinParent && parentAccepts.includes(`${cleanCurrentType}-within`));
+            (activeProjection &&
+                activeProjection?.isWithinParent &&
+                parentAccepts.includes(`${cleanCurrentType}-within`));
 
         const canDrop =
             isActive &&
@@ -103,10 +106,10 @@ export const TreeItem = memo(
             ((overAccepts.includes(cleanCurrentType) && !isWithin) || canDropWithin);
 
         useEffect(() => {
-            if (canDropWithin && projection?.parentId && parentId !== projection?.parentId) {
-                onExpand?.(projection.parentId);
+            if (canDropWithin && activeProjection?.parentId && parentId !== activeProjection?.parentId) {
+                onExpand?.(activeProjection.parentId);
             }
-        }, [canDropWithin, onExpand, parentId, projection?.parentId]);
+        }, [canDropWithin, onExpand, parentId, activeProjection?.parentId]);
 
         const handleItemDragEnd = useCallback(
             (event: TreeDragEndEvent) => {
@@ -114,8 +117,8 @@ export const TreeItem = memo(
 
                 if (
                     !isActive ||
-                    !projection ||
-                    (active.id === over?.id && projection?.depth === active.data.current?.level)
+                    !activeProjection ||
+                    (active.id === over?.id && activeProjection?.depth === active.data.current?.level)
                 ) {
                     return;
                 }
@@ -123,13 +126,13 @@ export const TreeItem = memo(
                 if (isActive && over && canDrop && onDrop) {
                     onDrop({
                         id: active.id,
-                        parentId: projection.parentId,
-                        sort: projection.position,
-                        parentType: projection.type,
+                        parentId: activeProjection.parentId,
+                        sort: activeProjection.position,
+                        parentType: activeProjection.type,
                     });
                 }
             },
-            [canDrop, isActive, onDrop, projection],
+            [canDrop, isActive, onDrop, activeProjection],
         );
 
         const handleItemDragStart = useCallback(
@@ -215,16 +218,13 @@ export const TreeItem = memo(
             }
 
             if (isActive || isParentActive) {
-                console.log('unregisterNodeChildren - 1', id, isActive, isParentActive, isExpanded, enrichedChildren);
                 unregisterNodeChildren?.(id);
                 return;
             }
 
             if (isExpanded) {
-                console.log('registerNodeChildren - 0', id, isActive, isParentActive, isExpanded, enrichedChildren);
                 registerNodeChildren?.({ id, children: enrichedChildren });
             } else {
-                console.log('unregisterNodeChildren - 2', id, isActive, isParentActive, isExpanded, enrichedChildren);
                 unregisterNodeChildren?.(id);
             }
         }, [isActive, isExpanded, isParentActive, enrichedChildren, registerNodeChildren, unregisterNodeChildren, id]);
@@ -251,7 +251,7 @@ export const TreeItem = memo(
                 'tw-bg-box-negative-hover tw-border-box-negative-strong-hover tw-border-dashed tw-border-2',
         ]);
 
-        const depthPadding = projection?.depth ? projection.depth * INDENTATION_WIDTH : undefined;
+        const depthPadding = activeProjection?.depth ? activeProjection.depth * INDENTATION_WIDTH : undefined;
         const levelPadding = isActive ? 0 : level * INDENTATION_WIDTH;
 
         const liStyle = {

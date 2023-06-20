@@ -15,7 +15,7 @@ import React, {
 } from 'react';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
-import { current, enableMapSet, produce } from 'immer';
+import { enableMapSet, produce } from 'immer';
 import { createPortal } from 'react-dom';
 import isEqual from 'lodash-es/isEqual';
 import {
@@ -126,10 +126,7 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
             {
                 const { id: parentId, children } = action.payload;
 
-                console.log('REGISTER_NODE_CHILDREN 1', action.payload);
-
                 if (findIndexById(draft.rootNodes, parentId) === -1) {
-                    console.log('REGISTER_NODE_CHILDREN - no parent', action.payload, current(draft).expandedIds);
                     // This can happen when this action is triggered before the rootNodes array is updated
                     // It happens if using static data will all nodes and handling expandedIds outside the Tree component
                     // Most of the cases, it will register the children properly afterwards
@@ -150,13 +147,6 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
 
                 draft.rootNodes = updateNodeWithNewChildren(draft.rootNodes, parentId, children);
 
-                console.log(
-                    'REGISTER_NODE_CHILDREN',
-                    action.payload,
-                    current(draft).rootNodes,
-                    current(draft).expandedIds,
-                );
-
                 return;
             }
             break;
@@ -166,30 +156,17 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
                 const nodeIds = getReactNodeIdsInFlatArray(draft.rootNodes, action.payload);
 
                 if (nodeIds.length === 0) {
-                    console.log(
-                        'UNREGISTER_NODE_CHILDREN - none',
-                        action.payload,
-                        nodeIds,
-                        current(draft).rootNodes,
-                        current(draft).expandedIds,
-                    );
                     return;
                 }
 
                 draft.rootNodes = removeReactNodesFromFlatArray(draft.rootNodes, nodeIds);
-                console.log(
-                    'UNREGISTER_NODE_CHILDREN',
-                    action.payload,
-                    nodeIds,
-                    current(draft).rootNodes,
-                    current(draft).expandedIds,
-                );
+
+                return;
             }
             break;
 
         case 'REGISTER_NODES':
             {
-                console.log('REGISTER_NODES');
                 draft.nodes = action.payload;
                 return;
             }
@@ -599,7 +576,7 @@ export const Tree = memo(
                     nodesToRender.push({ id: node.props.id, node });
                 }
             }
-            console.log('REGISTER_NODES', isPending, treeState.rootNodes, nodesToRender);
+
             startTransition(() =>
                 updateTreeState({
                     type: 'REGISTER_NODES',
@@ -640,22 +617,15 @@ export const Tree = memo(
                       })
                     : null;
 
-            if (!isPending) {
-                // startTransition(() =>
-                updateTreeState({
-                    type: 'SET_PROJECTION',
-                    payload: projection,
-                });
-                // ,
-                // );
-            }
+            updateTreeState({
+                type: 'SET_PROJECTION',
+                payload: projection,
+            });
         }, [activeId, isPending, offset, overId, treeState.nodes]);
 
         const nodes = useMemo(() => {
-            console.log('nodes', treeState.nodes);
             return treeState.nodes.map((node) => {
                 return cloneElement(node, {
-                    projection: node.props.id === activeId ? treeState.projection : null,
                     treeDraggable: draggable,
                     registerOverlay,
                     onExpand: handleExpand,
@@ -670,10 +640,8 @@ export const Tree = memo(
             handleExpand,
             handleShrink,
             handleSelect,
-            activeId,
             registerOverlay,
             treeState.nodes,
-            treeState.projection,
             registerNodeChildren,
             unregisterNodeChildren,
         ]);
