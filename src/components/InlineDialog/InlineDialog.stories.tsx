@@ -16,6 +16,8 @@ import { Divider } from '@components/Divider';
 import { Flex } from '@components/Flex';
 import { Box } from '@components/Box';
 import IconDotsVertical16 from '@foundation/Icon/Generated/IconDotsVertical16';
+import { IconExclamationMarkCircle16 } from '@foundation/Icon/Generated';
+import { Tooltip } from '@components/Tooltip';
 
 export default {
     title: 'Experimental/InlineDialog',
@@ -94,6 +96,19 @@ const Template: StoryFn<InlineDialogProps> = (args) => {
                 <InlineDialog.Content>
                     <DialogBody>
                         <Box className="tw-p-4">
+                            <Box className="tw-mb-2">
+                                <Flex justify="start">
+                                    <Tooltip
+                                        triggerElement={
+                                            <button aria-label="Exclamation mark circle icon" className="tw-mr-1">
+                                                <IconExclamationMarkCircle16 />
+                                            </button>
+                                        }
+                                        content="Just some Information"
+                                    />
+                                    <p>Information</p>
+                                </Flex>
+                            </Box>
                             <Dropdown
                                 onChange={(id) => console.log(id)}
                                 activeItemId="1"
