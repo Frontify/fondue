@@ -66,7 +66,7 @@ import {
 } from './helpers';
 
 import { TreeContext, TreeContextProps } from './TreeContext';
-import { ROOT_ID } from './helpers';
+import { OFFSET_UPDATE_DELTA, ROOT_ID } from './helpers';
 
 const measuring: MeasuringConfiguration = {
     droppable: {
@@ -101,7 +101,12 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
 
         case 'SET_PROJECTION':
             {
+                if (isEqual(draft.projection, action.payload)) {
+                    return;
+                }
+
                 draft.projection = action.payload;
+                return;
             }
             break;
 
@@ -121,9 +126,7 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
             {
                 const { id: parentId, children } = action.payload;
 
-                const parentNodeIndex = findIndexById(draft.rootNodes, parentId);
-
-                if (parentNodeIndex === -1) {
+                if (findIndexById(draft.rootNodes, parentId) === -1) {
                     // This can happen when this action is triggered before the rootNodes array is updated
                     // It happens if using static data will all nodes and handling expandedIds outside the Tree component
                     // Most of the cases, it will register the children properly afterwards
@@ -133,17 +136,18 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
                 }
 
                 const currentChildrenIds = getNodeChildrenIds(draft.rootNodes, parentId);
-
                 const newChildrenIds = children.map((node) => node.props.id);
 
                 if (
                     isEqual(currentChildrenIds, newChildrenIds) &&
-                    currentNodesChanged(currentChildrenIds, draft.rootNodes, children) === false
+                    !currentNodesChanged(currentChildrenIds, draft.rootNodes, children)
                 ) {
                     return;
                 }
 
-                draft.rootNodes = updateNodeWithNewChildren(draft.rootNodes, parentNodeIndex, children);
+                draft.rootNodes = updateNodeWithNewChildren(draft.rootNodes, parentId, children);
+
+                return;
             }
             break;
 
@@ -151,15 +155,20 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
             {
                 const nodeIds = getReactNodeIdsInFlatArray(draft.rootNodes, action.payload);
 
-                if (nodeIds.length > 0) {
-                    draft.rootNodes = removeReactNodesFromFlatArray(draft.rootNodes, nodeIds);
+                if (nodeIds.length === 0) {
+                    return;
                 }
+
+                draft.rootNodes = removeReactNodesFromFlatArray(draft.rootNodes, nodeIds);
+
+                return;
             }
             break;
 
         case 'REGISTER_NODES':
             {
                 draft.nodes = action.payload;
+                return;
             }
             break;
 
@@ -343,7 +352,9 @@ export const Tree = memo(
         };
 
         const handleDragMove = ({ delta }: DragMoveEvent) => {
-            setOffset(delta.x);
+            if (delta.x % OFFSET_UPDATE_DELTA === 0) {
+                setOffset(delta.x);
+            }
         };
 
         const handleDragCancel = () => {
@@ -554,35 +565,15 @@ export const Tree = memo(
                 return;
             }
 
-            const createMap = (
-                nodes: ReactElement[],
-                map: Map<string, { id: string; parentId: string; level: number; node: ReactElement }>,
-            ) => {
-                if (!nodes) {
-                    return map;
-                }
-                for (const node of nodes) {
-                    map.set(node.props.id, {
-                        id: node.props.id,
-                        parentId: node.props.parentId,
-                        level: node.props.level,
-                        node,
-                    });
-                    createMap(node.props.children, map);
-                }
-
-                return map;
-            };
-            const treeMap = createMap(treeState.rootNodes, new Map());
-
             const nodesToRender: { id: string; node: ReactElement }[] = [];
-            for (const [, treeItem] of treeMap) {
+            for (const node of treeState.rootNodes) {
+                const parentId = node.props.parentId;
                 if (
-                    treeItem.parentId === ROOT_ID ||
-                    (treeState.expandedIds.has(treeItem.parentId) &&
-                        nodesToRender.find((n) => n.id === treeItem.parentId))
+                    typeof parentId === 'string' &&
+                    (parentId === ROOT_ID ||
+                        (treeState.expandedIds.has(parentId) && nodesToRender.find((n) => n.id === parentId)))
                 ) {
-                    nodesToRender.push({ id: treeItem.id, node: treeItem.node });
+                    nodesToRender.push({ id: node.props.id, node });
                 }
             }
 
@@ -632,37 +623,28 @@ export const Tree = memo(
             });
         }, [activeId, offset, overId, treeState.nodes]);
 
-        const nodes = useMemo(
-            () =>
-                treeState.nodes.map((node) => {
-                    return cloneElement(node, {
-                        projection: node.props.id === activeId ? treeState.projection : null,
-                        treeDraggable: draggable,
-                        isSelected: treeState.selectedIds.has(node.props.id),
-                        isExpanded: treeState.expandedIds.has(node.props.id),
-                        registerOverlay,
-                        onExpand: handleExpand,
-                        onShrink: handleShrink,
-                        onSelect: handleSelect,
-                        registerNodeChildren,
-                        unregisterNodeChildren,
-                    });
-                }),
-            [
-                draggable,
-                handleExpand,
-                handleShrink,
-                handleSelect,
-                activeId,
-                registerOverlay,
-                treeState.expandedIds,
-                treeState.nodes,
-                treeState.projection,
-                treeState.selectedIds,
-                registerNodeChildren,
-                unregisterNodeChildren,
-            ],
-        );
+        const nodes = useMemo(() => {
+            return treeState.nodes.map((node) => {
+                return cloneElement(node, {
+                    treeDraggable: draggable,
+                    registerOverlay,
+                    onExpand: handleExpand,
+                    onShrink: handleShrink,
+                    onSelect: handleSelect,
+                    registerNodeChildren,
+                    unregisterNodeChildren,
+                });
+            });
+        }, [
+            draggable,
+            handleExpand,
+            handleShrink,
+            handleSelect,
+            registerOverlay,
+            treeState.nodes,
+            registerNodeChildren,
+            unregisterNodeChildren,
+        ]);
 
         const contextValue: TreeContextProps = useMemo(
             () => ({
