@@ -227,7 +227,7 @@ export const Tree = memo(
         );
 
         const [treeState, updateTreeState] = useReducer(reducer, initialState);
-        const [isPending, startTransition] = useTransition();
+        const [, startTransition] = useTransition();
 
         const [offset, setOffset] = useState(0);
         const [overId, setOverId] = useState<Nullable<string>>(null);
@@ -621,7 +621,7 @@ export const Tree = memo(
                 type: 'SET_PROJECTION',
                 payload: projection,
             });
-        }, [activeId, isPending, offset, overId, treeState.nodes]);
+        }, [activeId, offset, overId, treeState.nodes]);
 
         const nodes = useMemo(() => {
             return treeState.nodes.map((node) => {
