@@ -96,7 +96,7 @@ const Template: StoryFn<InlineDialogProps> = (args) => {
                         <Box className="tw-p-4">
                             <Dropdown
                                 onChange={(id) => console.log(id)}
-                                activeItemId={'1'}
+                                activeItemId="1"
                                 menuBlocks={[
                                     {
                                         id: 'block1',
