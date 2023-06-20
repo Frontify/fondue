@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { AnyObject, PlatePlugin } from '@udecode/plate';
+import { PlatePlugin } from '@udecode/plate';
 import { InlineData, PluginButton } from './types';
 import { Position } from '../EditorPositioningWrapper';
 import type { MarkupElement } from './MarkupElement';
@@ -45,5 +45,5 @@ export abstract class Plugin<P extends PluginProps = PluginProps> {
         return undefined;
     }
 
-    abstract plugins(): PlatePlugin<AnyObject>[];
+    abstract plugins(): PlatePlugin[];
 }
