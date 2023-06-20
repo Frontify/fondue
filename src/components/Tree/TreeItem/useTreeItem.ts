@@ -9,9 +9,11 @@ export const useTreeItem = (id: string) => {
 
     const isSelected = treeState.selectedIds.has(id);
     const isExpanded = treeState.expandedIds.has(id);
+    const projection = treeState.projection;
 
     return {
         isSelected,
         isExpanded,
+        projection,
     };
 };
