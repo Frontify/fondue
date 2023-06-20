@@ -66,8 +66,8 @@ const TreeComponent = ({
 const TREE_ID = '[data-test-id=fondue-tree]';
 const TREE_ITEM_ID = '[data-test-id=fondue-tree-item]';
 const TREE_ITEM_TOGGLE_ID = '[data-test-id=tree-item-toggle]';
-const TREE_ITEM_DRAG_HANDLE_ID = '[data-test-id="tree-item-drag-handle"]';
-const TREE_ITEM_OVERLAY_ID = '[data-test-id="tree-item-overlay"]';
+const TREE_ITEM_DRAG_HANDLE_ID = '[data-test-id="fondue-tree-item-drag-handle"]';
+const TREE_ITEM_OVERLAY_ID = '[data-test-id="fondue-tree-item-overlay"]';
 
 describe('Tree and TreeItem components', () => {
     it('renders the Tree with TreeItem correctly', () => {
