@@ -21,7 +21,7 @@ export const updateNodeWithNewChildren = (
 ) => {
     const nodeIds = getReactNodeIdsInFlatArray(nodes, parentId);
     const cleanNodes = nodeIds.length > 0 ? removeReactNodesFromFlatArray(nodes, nodeIds) : nodes;
-    const parentIndex = findIndexById(nodes, parentId);
+    const parentIndex = findIndexById(cleanNodes, parentId);
     if (parentIndex === -1) {
         return nodes;
     }
