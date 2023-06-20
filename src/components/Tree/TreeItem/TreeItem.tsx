@@ -78,7 +78,7 @@ export const TreeItem = memo(
         const draggable = treeDraggable && itemDraggable;
 
         const isActive = active?.id === id;
-        const activeProjection = isActive ? projection : null;
+        const activeProjection = isActive && projection !== null && projection !== undefined ? projection : null;
 
         const overAccepts =
             typeof over?.data?.current?.accepts === 'string' ? over.data.current.accepts?.split(', ') : [];
@@ -89,14 +89,11 @@ export const TreeItem = memo(
         const cleanCurrentType = active?.data.current?.type?.replace(/-\d+$/, '') || '';
 
         const isWithin =
-            over !== null &&
-            activeProjection !== null &&
-            activeProjection !== undefined &&
-            activeProjection.depth > over.data.current?.level;
+            over !== null && activeProjection !== null && activeProjection.depth > over.data.current?.level;
 
         const canDropWithin =
             (isWithin && active?.data.current && overAccepts.includes(`${cleanCurrentType}-within`)) ||
-            (activeProjection &&
+            (activeProjection !== null &&
                 activeProjection?.isWithinParent &&
                 parentAccepts.includes(`${cleanCurrentType}-within`));
 
