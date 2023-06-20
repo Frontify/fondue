@@ -66,7 +66,7 @@ import {
 } from './helpers';
 
 import { TreeContext, TreeContextProps } from './TreeContext';
-import { ROOT_ID } from './helpers';
+import { OFFSET_UPDATE_DELTA, ROOT_ID } from './helpers';
 
 const measuring: MeasuringConfiguration = {
     droppable: {
@@ -352,7 +352,7 @@ export const Tree = memo(
         };
 
         const handleDragMove = ({ delta }: DragMoveEvent) => {
-            if (delta.x % 10 === 0) {
+            if (delta.x % OFFSET_UPDATE_DELTA === 0) {
                 setOffset(delta.x);
             }
         };
