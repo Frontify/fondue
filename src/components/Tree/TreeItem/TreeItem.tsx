@@ -86,7 +86,8 @@ export const TreeItem = memo(
         const parentAccepts =
             typeof activeProjection?.accepts === 'string' ? activeProjection.accepts?.split(', ') : [];
 
-        const cleanCurrentType = active?.data.current?.type?.replace(/-\d+$/, '') || '';
+        const currentType = active?.data.current?.type || '';
+        const cleanCurrentType = currentType?.replace(/-\d+$/, '') || '';
 
         const isWithin =
             over !== null && activeProjection !== null && activeProjection.depth > over.data.current?.level;
@@ -96,15 +97,13 @@ export const TreeItem = memo(
             (activeProjection?.isWithinParent && parentAccepts.includes(`${cleanCurrentType}-within`));
 
         const canDrop =
-            isActive &&
-            active?.data.current &&
-            ((overAccepts.includes(cleanCurrentType) && !isWithin) || canDropWithin);
+            isActive && active?.data.current && ((overAccepts.includes(currentType) && !isWithin) || canDropWithin);
 
         useEffect(() => {
-            if (canDropWithin && activeProjection?.parentId && parentId !== activeProjection?.parentId) {
+            if (canDropWithin && !isExpanded && activeProjection?.parentId && parentId !== activeProjection?.parentId) {
                 onExpand?.(activeProjection.parentId);
             }
-        }, [canDropWithin, onExpand, parentId, activeProjection?.parentId]);
+        }, [activeProjection?.parentId, canDropWithin, isExpanded, onExpand, parentId]);
 
         const handleItemDragEnd = useCallback(
             (event: TreeDragEndEvent) => {
@@ -240,10 +239,10 @@ export const TreeItem = memo(
 
         const containerClassName = merge([
             'tw-flex tw-items-center tw-h-10 tw-leading-5 tw-width-full',
-            isActive && 'tw-border-box-selected-strong tw-border-dashed tw-border-2 tw-bg-box-selected-hover',
             isActive &&
-                !canDrop &&
-                'tw-bg-box-negative-hover tw-border-box-negative-strong-hover tw-border-dashed tw-border-2',
+                (canDrop
+                    ? 'tw-border-box-selected-strong tw-border-dashed tw-border-2 tw-bg-box-selected-hover'
+                    : 'tw-bg-box-negative-hover tw-border-box-negative-strong-hover tw-border-dashed tw-border-2'),
         ]);
 
         const depthPadding = activeProjection?.depth ? activeProjection.depth * INDENTATION_WIDTH : undefined;
