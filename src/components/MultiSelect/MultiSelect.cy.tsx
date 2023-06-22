@@ -9,6 +9,7 @@ const TRIGGER_ID = '[data-test-id=trigger]';
 const CHECKBOX_ID = '[data-test-id=checkbox]';
 const CHECKBOX_INPUT_ID = '[data-test-id=checkbox-input]';
 const TAG_ID = '[data-test-id=tag]';
+const TAG_CLOSE_BUTTON = '[data-test-id=tag-reject-icon]';
 const CHECKLIST_ID = '[data-test-id=checklist]';
 const EXCLAMATION_MARK_ICON_ID = '[data-test-id=error-state-exclamation-mark-icon]';
 
@@ -39,9 +40,14 @@ const ITEMS = {
 type Props = {
     validation?: Validation;
     emphasis?: TriggerEmphasis;
+    disabled?: boolean;
 };
 
-const Component = ({ validation = Validation.Default, emphasis = TriggerEmphasis.Default }: Props) => {
+const Component = ({
+    validation = Validation.Default,
+    emphasis = TriggerEmphasis.Default,
+    disabled = false,
+}: Props) => {
     const [activeItems, setActiveItems] = useState<(string | number)[]>(ITEMS.activeItemKeys);
     return (
         <MultiSelect
@@ -50,6 +56,7 @@ const Component = ({ validation = Validation.Default, emphasis = TriggerEmphasis
             onSelectionChange={(keys) => setActiveItems(keys)}
             validation={validation}
             emphasis={emphasis}
+            disabled={disabled}
         />
     );
 };
@@ -99,8 +106,13 @@ describe('MultiSelect Component', () => {
         }
     });
 
-    it('should render Trigger Waek emphasis', () => {
+    it('should render Trigger Weak emphasis', () => {
         cy.mount(<Component emphasis={TriggerEmphasis.Weak} />);
         cy.get(TRIGGER_ID).should('have.class', 'tw-border-0');
+    });
+
+    it('when disabled, should hide close buttons from tags', () => {
+        cy.mount(<Component disabled={true} />);
+        cy.get(TAG_CLOSE_BUTTON).should('not.exist');
     });
 });
