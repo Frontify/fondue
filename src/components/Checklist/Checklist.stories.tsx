@@ -58,7 +58,7 @@ export const Checklist: StoryFn<ChecklistProps> = (args: ChecklistProps) => {
     return (
         <ChecklistComponent
             {...args}
-            direction={ChecklistDirection.Horizontal}
+            direction={args.direction}
             checkboxes={CHECKBOXES}
             activeValues={activeBoxes}
             setActiveValues={setActiveBoxes}
