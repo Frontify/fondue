@@ -22,7 +22,7 @@ const columnsStyle: Record<Columns, string> = {
 
 export type CheckboxValue = Omit<CheckboxProps, 'onChange' | 'groupInputProps' | 'value'> & { value: string };
 
-type ChecklistBase = {
+export type ChecklistBase = {
     checkboxes: CheckboxValue[];
     setActiveValues: (value: string[]) => void;
     activeValues?: string[];
@@ -30,16 +30,10 @@ type ChecklistBase = {
     'data-test-id'?: string;
 };
 
-type ChecklistVertical = ChecklistBase & {
-    direction: ChecklistDirection.Vertical;
+export type ChecklistProps = ChecklistBase & {
+    direction: ChecklistDirection.Vertical | ChecklistDirection.Horizontal;
     columns?: Columns;
 };
-
-type ChecklistHorizontal = ChecklistBase & {
-    direction: ChecklistDirection.Horizontal;
-};
-
-export type ChecklistProps = ChecklistVertical | ChecklistHorizontal;
 
 type ChecklistItemProps = { checkbox: CheckboxValue; state: CheckboxGroupState };
 
