@@ -43,7 +43,7 @@ export const Popper = ({
     placement = 'bottom-start',
     offset = [0, 8],
     flip = true,
-    enablePortal = false,
+    enablePortal = true,
     zIndex = 'auto',
 }: PopperProps) => {
     const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
@@ -61,9 +61,13 @@ export const Popper = ({
     });
 
     useEffect(() => {
-        if (popperInstance.update) {
-            popperInstance.update();
-        }
+        const updatePopper = async () => {
+            if (popperInstance.update) {
+                await popperInstance.update();
+            }
+        };
+
+        updatePopper().catch(console.error);
     }, [flip, placement, offset, open]);
 
     const value = useMemo(() => ({ open }), [open]);

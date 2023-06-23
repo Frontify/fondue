@@ -2,7 +2,7 @@
 
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { Popper } from '@components/Popper';
-import React, { Children, isValidElement, useCallback, useRef, useState } from 'react';
+import React, { Children, isValidElement, useCallback, useEffect, useRef, useState } from 'react';
 import { Trigger } from '@utilities/dialogs/Trigger';
 import { Content } from '@utilities/dialogs/Content';
 import { OVERLAY_CONTAINER_CLASSES } from '@utilities/overlayStyle';
@@ -52,6 +52,15 @@ export const Overlay = ({
 
     useFocusTrap(ref.current, open, modality === Modality.NonModal);
     useClickOutside(ref.current, handleClosingInteraction);
+
+    useEffect(() => {
+        if (open && modality !== Modality.NonModal) {
+            document.body.style.pointerEvents = 'none';
+        }
+        if (!open) {
+            document.body.style.pointerEvents = 'auto';
+        }
+    }, [open, modality]);
 
     return (
         <>

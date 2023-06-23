@@ -26,52 +26,43 @@ export const useFocusTrap = (reference: HTMLElement | null, isOpen: boolean, ign
 
     const handleFocus = useCallback(
         (event: KeyboardEvent) => {
-            if (ignoreFocusTrap) {
-                return;
-            }
+            if (isOpen) {
+                if (ignoreFocusTrap) {
+                    return;
+                }
 
-            if (focusableElements.length === 0) {
-                event.preventDefault();
-                return;
-            }
+                if (focusableElements.length === 0) {
+                    event.preventDefault();
+                    return;
+                }
 
-            const isTabPressed = event.key === 'Tab';
+                const isTabPressed = event.key === 'Tab';
 
-            if (!isTabPressed) {
-                return;
-            }
+                if (!isTabPressed) {
+                    return;
+                }
 
-            if (!event.shiftKey && event.target === lastFocusableElement) {
-                firstFocusableElement.focus();
-                event.preventDefault();
-            }
+                if (!event.shiftKey && event.target === lastFocusableElement) {
+                    firstFocusableElement.focus();
+                    event.preventDefault();
+                }
 
-            if (event.shiftKey && event.target === firstFocusableElement) {
-                lastFocusableElement.focus();
-                event.preventDefault();
+                if (event.shiftKey && event.target === firstFocusableElement) {
+                    lastFocusableElement.focus();
+                    event.preventDefault();
+                }
             }
         },
-        [firstFocusableElement, focusableElements.length, ignoreFocusTrap, lastFocusableElement],
+        [firstFocusableElement, focusableElements.length, ignoreFocusTrap, isOpen, lastFocusableElement],
     );
 
     useEffect(() => {
-        const lastFocused = document.activeElement ?? reference?.parentElement ?? document.body;
-        if (
-            isOpen &&
-            !ignoreFocusTrap &&
-            focusableElements.length > 0 &&
-            ![...focusableElements].includes(lastFocused)
-        ) {
-            firstFocusableElement.focus();
-        }
-        if (isOpen) {
-            window.addEventListener('keydown', handleFocus);
-        }
+        window.addEventListener('keydown', handleFocus);
 
         return () => {
             window.removeEventListener('keydown', handleFocus);
         };
-    }, [firstFocusableElement, focusableElements, handleFocus, ignoreFocusTrap, isOpen, reference]);
+    }, [handleFocus]);
 
     return reference;
 };

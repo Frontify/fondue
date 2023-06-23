@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { BaseDialogProps, Modality, OverlayProps } from '../../types/dialog';
 import { Trigger } from '@utilities/dialogs/Trigger';
 import { Content } from '@utilities/dialogs/Content';
@@ -15,7 +15,7 @@ export const InlineDialog = ({
     placement = 'bottom-start',
     offset = [0, 8],
     flip = false,
-    enablePortal = false,
+    enablePortal = true,
     maxHeight = 'auto',
     maxWidth = 400,
     minHeight = 0,
@@ -26,15 +26,6 @@ export const InlineDialog = ({
     darkUnderlay = false,
     autoHeight = false,
 }: InlineDialogProps) => {
-    useEffect(() => {
-        if (open && modality !== Modality.NonModal) {
-            document.body.style.pointerEvents = 'none';
-        }
-        if (!open) {
-            document.body.style.pointerEvents = 'auto';
-        }
-    }, [open, modality]);
-
     return (
         <Overlay
             data-test-id={dataTestId}

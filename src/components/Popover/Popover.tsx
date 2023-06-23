@@ -15,7 +15,7 @@ export const Popover = ({
     placement = 'bottom-start',
     offset = [0, 8],
     flip = false,
-    enablePortal = false,
+    enablePortal = true,
     'data-test-id': dataTestId = 'fondue-popover',
     role,
 }: PopoverComponentProps) => {
