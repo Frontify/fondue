@@ -32,7 +32,6 @@ export const useFocusTrap = (reference: HTMLElement | null, isOpen: boolean, ign
                 }
 
                 if (focusableElements.length === 0) {
-                    event.preventDefault();
                     return;
                 }
 
