@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { Children, MouseEvent, memo, useCallback, useEffect, useMemo } from 'react';
+import React, { Children, MouseEvent, memo, useCallback, useMemo } from 'react';
 import { AnimateLayoutChanges, useSortable } from '@dnd-kit/sortable';
 import { useDndContext, useDndMonitor } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
@@ -98,12 +98,6 @@ export const TreeItem = memo(
 
         const canDrop =
             isActive && active?.data.current && ((overAccepts.includes(currentType) && !isWithin) || canDropWithin);
-
-        useEffect(() => {
-            if (canDropWithin && !isExpanded && activeProjection?.parentId && parentId !== activeProjection?.parentId) {
-                onExpand?.(activeProjection.parentId);
-            }
-        }, [activeProjection?.parentId, canDropWithin, isExpanded, onExpand, parentId]);
 
         const handleItemDragEnd = useCallback(
             (event: TreeDragEndEvent) => {
