@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { Children, ReactElement, ReactNode, cloneElement, isValidElement } from 'react';
+import React, { Children, ReactElement, ReactNode, isValidElement } from 'react';
 import { Popper } from '@components/Popper';
 import { PopperPlacement, PopperProps } from '@components/Popper/types';
 import { OVERLAY_CONTAINER_CLASSES } from '@utilities/overlayStyle';
@@ -40,11 +40,7 @@ export const Popover = ({
                     if (name === Trigger.name) {
                         return (
                             <Popper.Reference>
-                                <div className="tw-w-fit" id={id}>
-                                    {cloneElement(child, {
-                                        ...child.props,
-                                    })}
-                                </div>
+                                <div id={id}>{child}</div>
                             </Popper.Reference>
                         );
                     }
@@ -60,7 +56,7 @@ export const Popover = ({
                                     aria-hidden={!open}
                                     aria-labelledby={id}
                                 >
-                                    {cloneElement(child, { ...child.props })}
+                                    {child}
                                 </div>
                             </Popper.Content>
                         );
