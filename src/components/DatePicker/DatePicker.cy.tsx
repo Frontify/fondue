@@ -39,8 +39,8 @@ describe('DatePicker Component', () => {
         const onChangeStub = cy.stub().as('onChangeStub');
         cy.mount(<DatePicker isClearable={true} value={new Date()} onChange={onChangeStub} />);
 
-        cy.get(OPEN_CLOSE_CLICK_AREA_ID).click();
-        cy.get('.react-datepicker__close-icon').click();
+        cy.get(OPEN_CLOSE_CLICK_AREA_ID).click({ force: true });
+        cy.get('.react-datepicker__close-icon').click({ force: true });
         cy.get('@onChangeStub').should('be.calledOnce');
     });
 
