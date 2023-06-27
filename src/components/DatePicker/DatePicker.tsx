@@ -99,6 +99,7 @@ export const DatePicker = forwardRef<ReactDatePicker<never, boolean>, DatePicker
 
         return (
             <div data-test-id={dataTestId}>
+                <div className={isCalendarOpen ? 'tw-w-full tw-absolute tw-z-20 tw-h-full' : ''}></div>
                 <DatepickerComponent
                     calendarClassName="tw-rounded-sm tw-border tw-border-line-x-strong react-datepicker-wrap"
                     selected={value}
