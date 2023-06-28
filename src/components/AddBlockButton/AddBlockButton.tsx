@@ -14,17 +14,39 @@ export enum AddBlockButtonDirection {
     Vertical = 'Vertical',
 }
 
+export enum ButtonDirection {
+    Left = 'Left',
+    Top = 'Top',
+    Bottom = 'Bottom',
+    Right = 'Right',
+}
+
 export type AddBlockButtonProps = {
     onClick: () => void;
     title?: string;
+    /** @deprecated use direction with ButtonDirection */
     orientation?: AddBlockButtonDirection;
+    direction?: ButtonDirection;
     'data-test-id'?: string;
+};
+
+const orientationMap: Record<AddBlockButtonDirection, string> = {
+    [AddBlockButtonDirection.Horizontal]: 'tw-rotate-0',
+    [AddBlockButtonDirection.Vertical]: 'tw-rotate-90',
+};
+
+const directionMap: Record<ButtonDirection, string> = {
+    [ButtonDirection.Left]: 'tw-rotate-180',
+    [ButtonDirection.Top]: 'tw-rotate-[270deg]',
+    [ButtonDirection.Bottom]: 'tw-rotate-90',
+    [ButtonDirection.Right]: 'tw-rotate-0',
 };
 
 export const AddBlockButton = ({
     onClick,
     title,
-    orientation = AddBlockButtonDirection.Horizontal,
+    direction,
+    orientation,
     'data-test-id': dataTestId = 'add-block-button',
 }: AddBlockButtonProps): ReactElement => {
     const { isFocusVisible, focusProps } = useFocusRing();
@@ -39,12 +61,14 @@ export const AddBlockButton = ({
             className={merge([
                 'tw-group tw-leading-none tw-rounded-sm tw-outline-none',
                 isFocusVisible && FOCUS_STYLE,
-                orientation === AddBlockButtonDirection.Vertical ? 'tw-rotate-90' : '',
+                orientation && !direction && orientationMap[orientation],
+                direction && directionMap[direction],
+                !direction && !orientation && directionMap[ButtonDirection.Right],
             ])}
         >
             <span
                 className={
-                    'tw-text-white tw-bg-violet-60 tw-rounded tw-inline-flex tw-items-center tw-w-7 tw-h-6 tw-relative tw-p-1 tw-transition-colors hover:tw-bg-violet-70 group-active:tw-bg-violet-90'
+                    'tw-text-box-selected-strong-inverse tw-bg-box-selected-strong tw-rounded tw-inline-flex tw-items-center tw-w-7 tw-h-6 tw-relative tw-p-1 tw-transition-colors hover:tw-bg-box-selected-strong-hover hover:tw-text-box-selected-strong-inverse-hover group-active:tw-bg-box-selected-strong-pressed group-active:tw-text-bg-box-selected-strong-inverse-pressed'
                 }
                 style={{
                     clipPath: `path(

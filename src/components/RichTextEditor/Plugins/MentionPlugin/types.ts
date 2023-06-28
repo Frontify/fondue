@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TComboboxItemWithData } from '@udecode/plate';
+import { CreateMentionNode, Data, NoData, TComboboxItemWithData, WithOverride } from '@udecode/plate';
 import { PluginProps } from '../Plugin';
 
 export enum MentionableCategory {
@@ -24,3 +24,11 @@ export type MentionPluginProps = PluginProps & {
 };
 
 export type MappedMentionableItems = Map<string, string>;
+
+export interface MentionPlugin<TData extends Data = NoData> {
+    withOverrides?: WithOverride;
+    options: {
+        trigger: string;
+        createMentionNode?: CreateMentionNode<TData>;
+    };
+}

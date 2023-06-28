@@ -24,6 +24,7 @@ import { DragHandle } from './DragHandle';
 import { Overlay } from './TreeItemOverlay';
 import { ExpandButton } from './ExpandButton';
 import { useDebounce } from '@hooks/useDebounce';
+import { useTreeItem } from './useTreeItem';
 
 const animateLayoutChanges: AnimateLayoutChanges = ({ isSorting, wasDragging }) =>
     isSorting || wasDragging ? false : true;
@@ -59,10 +60,7 @@ export const TreeItem = memo(
         parentId,
         level = 0,
         contentComponent,
-        isSelected = false,
-        isExpanded = false,
         treeDraggable = false,
-        projection,
         onSelect,
         onExpand,
         onShrink,
@@ -75,32 +73,31 @@ export const TreeItem = memo(
         'data-test-id': dataTestId = 'fondue-tree-item',
     }: InternalTreeItemProps) => {
         const { active, over } = useDndContext();
+        const { isSelected, isExpanded, projection } = useTreeItem(id);
 
         const draggable = treeDraggable && itemDraggable;
 
         const isActive = active?.id === id;
+        const activeProjection = isActive && projection !== null && projection !== undefined ? projection : null;
 
         const overAccepts =
             typeof over?.data?.current?.accepts === 'string' ? over.data.current.accepts?.split(', ') : [];
 
-        const parentAccepts = typeof projection?.accepts === 'string' ? projection.accepts?.split(', ') : [];
+        const parentAccepts =
+            typeof activeProjection?.accepts === 'string' ? activeProjection.accepts?.split(', ') : [];
 
-        const cleanCurrentType = active?.data.current?.type.replace(/-\d+$/, '') || '';
+        const currentType = active?.data.current?.type || '';
+        const cleanCurrentType = currentType?.replace(/-\d+$/, '') || '';
 
         const isWithin =
-            over !== null &&
-            projection !== null &&
-            projection !== undefined &&
-            projection.depth > over.data.current?.level;
+            over !== null && activeProjection !== null && activeProjection.depth > over.data.current?.level;
 
         const canDropWithin =
             (isWithin && active?.data.current && overAccepts.includes(`${cleanCurrentType}-within`)) ||
-            (projection?.isWithinParent && parentAccepts.includes(`${cleanCurrentType}-within`));
+            (activeProjection?.isWithinParent && parentAccepts.includes(`${cleanCurrentType}-within`));
 
         const canDrop =
-            isActive &&
-            active?.data.current &&
-            ((overAccepts.includes(cleanCurrentType) && !isWithin) || canDropWithin);
+            isActive && active?.data.current && ((overAccepts.includes(currentType) && !isWithin) || canDropWithin);
 
         const handleItemDragEnd = useCallback(
             (event: TreeDragEndEvent) => {
@@ -108,8 +105,8 @@ export const TreeItem = memo(
 
                 if (
                     !isActive ||
-                    !projection ||
-                    (active.id === over?.id && projection?.depth === active.data.current?.level)
+                    !activeProjection ||
+                    (active.id === over?.id && activeProjection?.depth === active.data.current?.level)
                 ) {
                     return;
                 }
@@ -117,13 +114,13 @@ export const TreeItem = memo(
                 if (isActive && over && canDrop && onDrop) {
                     onDrop({
                         id: active.id,
-                        parentId: projection.parentId,
-                        sort: projection.position,
-                        parentType: projection.type,
+                        parentId: activeProjection.parentId,
+                        sort: activeProjection.position,
+                        parentType: activeProjection.type,
                     });
                 }
             },
-            [canDrop, isActive, onDrop, projection],
+            [canDrop, isActive, onDrop, activeProjection],
         );
 
         const handleItemDragStart = useCallback(
@@ -236,13 +233,13 @@ export const TreeItem = memo(
 
         const containerClassName = merge([
             'tw-flex tw-items-center tw-h-10 tw-leading-5 tw-width-full',
-            isActive && 'tw-border-box-selected-strong tw-border-dashed tw-border-2 tw-bg-box-selected-hover',
             isActive &&
-                !canDrop &&
-                'tw-bg-box-negative-hover tw-border-box-negative-strong-hover tw-border-dashed tw-border-2',
+                (canDrop
+                    ? 'tw-border-box-selected-strong tw-border-dashed tw-border-2 tw-bg-box-selected-hover'
+                    : 'tw-bg-box-negative-hover tw-border-box-negative-strong-hover tw-border-dashed tw-border-2'),
         ]);
 
-        const depthPadding = projection?.depth ? projection.depth * INDENTATION_WIDTH : undefined;
+        const depthPadding = activeProjection?.depth ? activeProjection.depth * INDENTATION_WIDTH : undefined;
         const levelPadding = isActive ? 0 : level * INDENTATION_WIDTH;
 
         const liStyle = {

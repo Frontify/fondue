@@ -1,9 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MentionPlugin, PlatePlugin } from '@udecode/plate';
-import { MentionItemData } from './types';
+import { MentionItemData, MentionPlugin } from './types';
 
-export const mentionPlugin: Partial<PlatePlugin<MentionPlugin<MentionItemData>>> = {
+export const mentionPlugin: MentionPlugin<MentionItemData> = {
     options: {
         trigger: '@',
         createMentionNode: (item) => ({

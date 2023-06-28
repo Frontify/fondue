@@ -20,6 +20,9 @@ export default {
             control: { type: 'radio' },
         },
     },
+    args: {
+        ariaLabel: 'checklist',
+    },
 } as Meta<ChecklistProps>;
 
 const CHECKBOXES = [
@@ -55,6 +58,7 @@ export const Checklist: StoryFn<ChecklistProps> = (args: ChecklistProps) => {
     return (
         <ChecklistComponent
             {...args}
+            direction={args.direction}
             checkboxes={CHECKBOXES}
             activeValues={activeBoxes}
             setActiveValues={setActiveBoxes}
@@ -90,6 +94,7 @@ MultipleColumnsInContainedSpace.args = {
 
 MultipleColumnsInContainedSpace.argTypes = {
     direction: { table: { disable: true } },
+    ariaLabel: { type: 'string' },
 };
 
 export const MultipleColumnsInContainedSpaceAndSpannedColumn = (args: ChecklistProps) => {

@@ -13,14 +13,17 @@ const uncategorizedPagesMock: TreeItemMock[] = [
     {
         id: '1-1-1',
         label: 'Home',
+        type: 'document-page',
     },
     {
         id: '1-1-2',
         label: 'Members',
+        type: 'document-page',
     },
     {
         id: '1-1-3',
         label: 'About us',
+        type: 'document-page',
     },
 ];
 
@@ -28,14 +31,17 @@ const testSubCategoryMock: TreeItemMock[] = [
     {
         id: '1-2-3-1',
         label: 'SubItem 1',
+        type: 'document-page',
     },
     {
         id: '1-2-3-2',
         label: 'SubItem 2',
+        type: 'document-page',
     },
     {
         id: '1-2-3-3',
         label: 'SubItem 3',
+        type: 'document-page',
     },
 ];
 
@@ -43,14 +49,17 @@ const testCategoryMock: TreeItemMock[] = [
     {
         id: '1-2-1',
         label: 'Home Category Test Category',
+        type: 'document-page',
     },
     {
         id: '1-2-2',
         label: 'Members Category',
+        type: 'document-page',
     },
     {
         id: '1-2-3',
         label: 'About us Category',
+        type: 'document-category-category',
         nodes: testSubCategoryMock,
     },
 ];
@@ -94,15 +103,21 @@ export const treeItemsMock: TreeItemMock[] = [
     {
         id: '1',
         label: 'Design System Testing - Deep Nested Items',
+        type: 'document',
+        accepts: 'document',
         nodes: testGroupMock,
     },
     {
         id: '2',
         label: 'Design System Testing - Root Childless',
+        type: 'document',
+        accepts: 'document',
     },
     {
         id: '3',
         label: 'Design System Testing - Not draggable',
+        type: 'document',
+        accepts: 'document',
         draggable: false,
     },
 ];

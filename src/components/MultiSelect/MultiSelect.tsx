@@ -208,7 +208,7 @@ export const MultiSelect = ({
                                         type={getTagType()}
                                         label={key.toString()}
                                         size={size === MultiSelectSize.Small ? TagSize.Small : TagSize.Medium}
-                                        onClick={() => toggleSelection(key)}
+                                        onClick={disabled ? undefined : () => toggleSelection(key)}
                                     />
                                 ))}
 

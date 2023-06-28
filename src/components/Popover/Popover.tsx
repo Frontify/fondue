@@ -17,7 +17,7 @@ export const Popover = ({
     flip = false,
     enablePortal = true,
     'data-test-id': dataTestId = 'fondue-popover',
-    role,
+    role = 'region',
 }: PopoverComponentProps) => {
     return (
         <Overlay
