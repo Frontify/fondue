@@ -26,42 +26,50 @@ export const useFocusTrap = (reference: HTMLElement | null, isOpen: boolean, ign
 
     const handleFocus = useCallback(
         (event: KeyboardEvent) => {
-            if (isOpen) {
-                if (ignoreFocusTrap) {
-                    return;
-                }
+            const lastFocusedElement = (document.activeElement ?? document.body) as HTMLElement;
+            if (ignoreFocusTrap) {
+                return;
+            }
 
-                if (focusableElements.length === 0) {
-                    return;
-                }
+            if (focusableElements.length === 0) {
+                return;
+            }
 
-                const isTabPressed = event.key === 'Tab';
+            const isTabPressed = event.key === 'Tab';
 
-                if (!isTabPressed) {
-                    return;
-                }
+            if (!isTabPressed) {
+                return;
+            }
 
-                if (!event.shiftKey && event.target === lastFocusableElement) {
-                    firstFocusableElement.focus();
-                    event.preventDefault();
-                }
+            if (![...focusableElements].includes(lastFocusedElement)) {
+                firstFocusableElement.focus();
+                event.preventDefault();
+            }
 
-                if (event.shiftKey && event.target === firstFocusableElement) {
-                    lastFocusableElement.focus();
-                    event.preventDefault();
-                }
+            if (!event.shiftKey && event.target === lastFocusableElement) {
+                firstFocusableElement.focus();
+                event.preventDefault();
+            }
+
+            if (event.shiftKey && event.target === firstFocusableElement) {
+                lastFocusableElement.focus();
+                event.preventDefault();
             }
         },
-        [firstFocusableElement, focusableElements.length, ignoreFocusTrap, isOpen, lastFocusableElement],
+        [firstFocusableElement, focusableElements, ignoreFocusTrap, lastFocusableElement],
     );
 
     useEffect(() => {
-        window.addEventListener('keydown', handleFocus);
+        const lastFocusedOutsideBoundaries = (document.activeElement ?? document.body) as HTMLElement;
+        if (isOpen) {
+            window.addEventListener('keydown', handleFocus);
+        }
 
         return () => {
             window.removeEventListener('keydown', handleFocus);
+            lastFocusedOutsideBoundaries.focus();
         };
-    }, [handleFocus]);
+    }, [handleFocus, isOpen]);
 
     return reference;
 };

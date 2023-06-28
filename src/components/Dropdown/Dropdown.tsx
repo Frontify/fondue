@@ -22,7 +22,6 @@ import { useSelectState } from '@react-stately/select';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
 import React, { ReactElement, useEffect, useRef } from 'react';
-import { createPortal } from 'react-dom';
 import { usePopper } from 'react-popper';
 import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from '@hooks/useDropdownAutoHeight';
 
@@ -211,38 +210,34 @@ export const Dropdown = ({
                     />
                 </button>
             </Trigger>
-            {!disabled &&
-                isOpen &&
-                heightIsReady &&
-                createPortal(
-                    <div
-                        ref={dropdownRef}
-                        style={{
-                            ...popperInstance.styles.popper,
-                            width: triggerRef.current?.getBoundingClientRect().width,
-                            minWidth: 'fit-content',
-                        }}
-                        {...popperInstance.attributes.popper}
-                        className="tw-absolute tw-p-0 tw-shadow tw-list-none tw-m-0 tw-z-[120000] tw-min-w-full tw-overflow-hidden"
-                        key="content"
-                    >
-                        <FocusScope restoreFocus>
-                            <div
-                                {...overlayProps}
-                                ref={overlayRef}
-                                style={autoResize ? { maxHeight } : {}}
-                                className="tw-flex tw-flex-col"
-                                data-test-id={`${dataTestId}-menu`}
-                                role="dialog"
-                            >
-                                <DismissButton onDismiss={() => close()} />
-                                <SelectMenu ariaProps={menuProps} state={state} menuBlocks={menuBlocks} scrollable />
-                                <DismissButton onDismiss={() => close()} />
-                            </div>
-                        </FocusScope>
-                    </div>,
-                    document.body,
-                )}
+            {!disabled && isOpen && heightIsReady && (
+                <div
+                    ref={dropdownRef}
+                    style={{
+                        ...popperInstance.styles.popper,
+                        width: triggerRef.current?.getBoundingClientRect().width,
+                        minWidth: 'fit-content',
+                    }}
+                    {...popperInstance.attributes.popper}
+                    className="tw-absolute tw-p-0 tw-shadow tw-list-none tw-m-0 tw-z-[120000] tw-min-w-full tw-overflow-hidden"
+                    key="content"
+                >
+                    <FocusScope restoreFocus>
+                        <div
+                            {...overlayProps}
+                            ref={overlayRef}
+                            style={autoResize ? { maxHeight } : {}}
+                            className="tw-flex tw-flex-col"
+                            data-test-id={`${dataTestId}-menu`}
+                            role="dialog"
+                        >
+                            <DismissButton onDismiss={() => close()} />
+                            <SelectMenu ariaProps={menuProps} state={state} menuBlocks={menuBlocks} scrollable />
+                            <DismissButton onDismiss={() => close()} />
+                        </div>
+                    </FocusScope>
+                </div>
+            )}
             {validation === Validation.Loading && (
                 <span className="tw-absolute tw-top-[-0.55rem] tw-right-[-0.55rem] tw-bg-base tw-rounded-full tw-p-[2px] tw-border tw-border-line-weak">
                     <LoadingCircle size={LoadingCircleSize.ExtraSmall} />
