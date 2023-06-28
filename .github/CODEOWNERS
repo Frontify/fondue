@@ -8,3 +8,4 @@ pnpm-lock.yaml
 /src
 
 # Components
+/src/components/RichTextEditor @Frontify/design-system @Frontify/guidelines-one
