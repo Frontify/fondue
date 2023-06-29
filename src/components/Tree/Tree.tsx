@@ -15,7 +15,7 @@ import React, {
 } from 'react';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
-import { current, enableMapSet, produce } from 'immer';
+import { enableMapSet, produce } from 'immer';
 import { createPortal } from 'react-dom';
 import isEqual from 'lodash-es/isEqual';
 import {
