@@ -7,7 +7,7 @@ import { RenderPlaceholderProps } from 'slate-react';
 import { ContentReplacement } from './ContentReplacement';
 import { RichTextEditorProvider } from './context/RichTextEditorContext';
 import { Position } from './EditorPositioningWrapper';
-import { forceToBlurActiveElement } from './helpers';
+import { forceToFocusNextElement } from './helpers';
 import { useEditorState } from './hooks';
 import { GAP_DEFAULT, KEY_ELEMENT_BREAK_AFTER_COLUMN, PluginComposer, defaultPlugins } from './Plugins';
 import { PaddingSizes, TreeOfNodes } from './types';
@@ -83,8 +83,7 @@ export const RichTextEditor = ({
         },
         onKeyDown: (event) => {
             if (event.code === 'Tab') {
-                // Forcing a blur event because of accessibility
-                forceToBlurActiveElement();
+                forceToFocusNextElement(event, !event.shiftKey);
             }
         },
         scrollSelectionIntoView: () => {
