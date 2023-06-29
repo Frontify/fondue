@@ -20,6 +20,7 @@ export type OnTreeDropCallback = (args: {
     id: string;
     parentId: Nullable<string>;
     sort: number;
+    contentComponent: Nullable<ReactNode>;
     parentType?: string;
 }) => void;
 

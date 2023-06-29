@@ -116,11 +116,12 @@ export const TreeItem = memo(
                         id: active.id,
                         parentId: activeProjection.parentId,
                         sort: activeProjection.position,
+                        contentComponent,
                         parentType: activeProjection.type,
                     });
                 }
             },
-            [canDrop, isActive, onDrop, activeProjection],
+            [isActive, activeProjection, canDrop, onDrop, contentComponent],
         );
 
         const handleItemDragStart = useCallback(
@@ -177,12 +178,13 @@ export const TreeItem = memo(
 
         const hasChildren = Children.count(children) > 0;
 
-        const enrichedChildren = useMemo(
-            () => removeFragmentsAndEnrichChildren(children, { parentId: id, level: level + 1 }),
-            [children, id, level],
-        );
-
-        const childrenIds = useMemo(() => enrichedChildren.map((child) => child.props.id), [enrichedChildren]);
+        const { enrichedChildren, childrenIds } = useMemo(() => {
+            const enrichedChildren = removeFragmentsAndEnrichChildren(children, { parentId: id, level: level + 1 });
+            return {
+                enrichedChildren,
+                childrenIds: enrichedChildren.map((child) => child.props.id),
+            };
+        }, [children, id, level]);
 
         const {
             attributes,
@@ -215,7 +217,7 @@ export const TreeItem = memo(
             } else {
                 unregisterNodeChildren?.(id);
             }
-        }, [isActive, isExpanded, isParentActive, enrichedChildren, registerNodeChildren, unregisterNodeChildren, id]);
+        }, [isActive, isExpanded, isParentActive, enrichedChildren, id]);
 
         const liClassName = useMemo(
             () =>
