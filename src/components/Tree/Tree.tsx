@@ -15,7 +15,7 @@ import React, {
 } from 'react';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
-import { enableMapSet, produce } from 'immer';
+import { current, enableMapSet, produce } from 'immer';
 import { createPortal } from 'react-dom';
 import isEqual from 'lodash-es/isEqual';
 import {
@@ -57,6 +57,7 @@ import {
 import {
     currentNodesChanged,
     findIndexById,
+    getCurrentChildrenForNewNodesIfExpanded,
     getMovementAnnouncement,
     getNodeChildrenIds,
     getProjection,
@@ -104,7 +105,12 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
             return;
 
         case 'REGISTER_ROOT_NODES':
-            draft.rootNodes = action.payload;
+            // reset rootNodes keeping any children when expanded
+            draft.rootNodes = getCurrentChildrenForNewNodesIfExpanded(
+                draft.rootNodes,
+                draft.expandedIds,
+                action.payload,
+            );
             return;
 
         case 'REGISTER_NODE_CHILDREN':
@@ -126,8 +132,15 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
                 !isEqual(currentChildrenIds, newChildrenIds) ||
                 currentNodesChanged(currentChildrenIds, draft.rootNodes, children)
             ) {
-                draft.rootNodes = updateNodeWithNewChildren(draft.rootNodes, parentId, children);
+                // keep any children when parent expanded
+                const newChildren = getCurrentChildrenForNewNodesIfExpanded(
+                    draft.rootNodes,
+                    draft.expandedIds,
+                    children,
+                );
+                draft.rootNodes = updateNodeWithNewChildren(draft.rootNodes, parentId, newChildren);
             }
+
             return;
 
         case 'UNREGISTER_NODE_CHILDREN':
@@ -280,28 +293,25 @@ export const Tree = memo(
             [onShrink],
         );
 
-        const handleDragEnd = useCallback(
-            (event: DragEndEvent) => {
-                resetState();
+        const handleDragEnd = (event: DragEndEvent) => {
+            resetState();
 
-                const { over, active } = event;
+            const { over, active } = event;
 
-                if (!over?.id || !active?.id || !treeState.projection?.parentId) {
-                    return;
-                }
+            if (!over?.id || !active?.id || !treeState.projection?.parentId) {
+                return;
+            }
 
-                const activeNode = treeState.nodes.find((node) => node.props.id === active.id);
-                const contentComponent = activeNode?.props?.contentComponent;
+            const activeNode = treeState.nodes.find((node) => node.props.id === active.id);
+            const contentComponent = activeNode?.props?.contentComponent;
 
-                onDrop?.({
-                    id: active.id.toString(),
-                    parentId: treeState.projection.parentId,
-                    sort: treeState.projection.position,
-                    contentComponent,
-                });
-            },
-            [onDrop, treeState.projection?.parentId, treeState.projection?.position, treeState.nodes],
-        );
+            onDrop?.({
+                id: active.id.toString(),
+                parentId: treeState.projection.parentId,
+                sort: treeState.projection.position,
+                contentComponent,
+            });
+        };
 
         const handleDragStart = ({ active: { id: activeId, data } }: TreeDragStartEvent) => {
             setActiveId(activeId);
@@ -535,24 +545,24 @@ export const Tree = memo(
                 return;
             }
 
-            const nodesToRender: { id: string; node: ReactElement }[] = [];
-            for (const node of treeState.rootNodes) {
-                const parentId = node.props.parentId;
-                if (
-                    typeof parentId === 'string' &&
-                    (parentId === ROOT_ID ||
-                        (treeState.expandedIds.has(parentId) && nodesToRender.find((n) => n.id === parentId)))
-                ) {
-                    nodesToRender.push({ id: node.props.id, node });
+            startTransition(() => {
+                const nodesToRender: { id: string; node: ReactElement }[] = [];
+                for (const node of treeState.rootNodes) {
+                    const parentId = node.props.parentId;
+                    if (
+                        typeof parentId === 'string' &&
+                        (parentId === ROOT_ID ||
+                            (treeState.expandedIds.has(parentId) && nodesToRender.find((n) => n.id === parentId)))
+                    ) {
+                        nodesToRender.push({ id: node.props.id, node });
+                    }
                 }
-            }
 
-            startTransition(() =>
                 updateTreeState({
                     type: 'REGISTER_NODES',
                     payload: nodesToRender.map((n) => n.node),
-                }),
-            );
+                });
+            });
         }, [treeState.rootNodes, treeState.expandedIds]);
 
         useEffect(() => {

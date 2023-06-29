@@ -34,3 +34,28 @@ export const getReactNodeIdsInFlatArray = (tree: ReactElement[], startingNodeId:
 
     return nodeIds;
 };
+
+export const getReactNodesInFlatArray = (tree: ReactElement[], startingNodeId: string): ReactElement[] => {
+    const nodes: ReactElement[] = [];
+
+    // Create a map from node IDs to their corresponding nodes
+    const nodeMap = new Map<string, ReactElement>(tree.map((node) => [node.props.id, node]));
+
+    // Find the node with the given id
+    const startingNode = nodeMap.get(startingNodeId);
+
+    if (startingNode) {
+        // Recursively find all child nodes
+        function findChildNodes(nodeId: number) {
+            const children = tree.filter((child) => child.props.parentId === nodeId);
+            for (const child of children) {
+                nodes.push(child);
+                findChildNodes(child.props.id);
+            }
+        }
+
+        findChildNodes(startingNode.props.id);
+    }
+
+    return nodes;
+};
