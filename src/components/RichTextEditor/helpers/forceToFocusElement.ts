@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 const TABBABLE_ELEMENTS = [
-    'input:not([disabled]):not([type=hidden])',
-    'select:not([disabled])',
-    'textarea:not([disabled])',
-    'button:not([disabled])',
+    'input',
+    'select',
+    'textarea',
+    'button',
     'a[href]',
     'area[href]',
     'summary',
@@ -14,8 +14,8 @@ const TABBABLE_ELEMENTS = [
     'audio[controls]',
     'video[controls]',
     '[contenteditable]',
-    '[tabindex]:not([tabindex="-1"]):not([disabled])',
-].join(':not([hidden]):not([tabindex="-1"]),');
+    '[tabindex]',
+].join(':not([hidden]):not([tabindex="-1"]):not([disabled]),');
 
 export const forceToFocusNextElement = (event: React.KeyboardEvent, forwards: boolean) => {
     if (!document.activeElement) {
