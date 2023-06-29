@@ -22,7 +22,9 @@ export const forceToFocusNextElement = (event: React.KeyboardEvent, forwards: bo
         return;
     }
     event.preventDefault();
-    const focusableElements = Array.from(document.querySelectorAll(TABBABLE_ELEMENTS));
+    const focusableElements = Array.from(document.querySelectorAll(TABBABLE_ELEMENTS)).filter((focusableElement) =>
+        isElementVisible(focusableElement as HTMLElement),
+    );
     const currentIndex = focusableElements.indexOf(document.activeElement);
     const indexOfNextFocus =
         (forwards ? currentIndex + 1 : currentIndex - 1 + focusableElements.length) % focusableElements.length;
@@ -30,4 +32,16 @@ export const forceToFocusNextElement = (event: React.KeyboardEvent, forwards: bo
     if (nextFocusable) {
         nextFocusable.focus();
     }
+};
+
+const isElementVisible = (element: HTMLElement) => {
+    let currentElement: HTMLElement | null = element;
+    while (currentElement) {
+        const style = window.getComputedStyle(currentElement);
+        if (style.display === 'none' || style.visibility === 'hidden') {
+            return false;
+        }
+        currentElement = currentElement.parentElement;
+    }
+    return true;
 };
