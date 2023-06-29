@@ -6,7 +6,7 @@ export const forceToFocusNextElement = (event: React.KeyboardEvent, forwards: bo
     }
     event.preventDefault();
     const focusableElementSelectors =
-        'button, [href], input, select, textarea, [role="textbox"], [tabindex]:not([tabindex="-1"]';
+        'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [contenteditable], iframe, object, embed, [tabindex]:not([tabindex="-1"])';
     const focusableElements = Array.from(document.querySelectorAll(focusableElementSelectors));
     const currentIndex = focusableElements.indexOf(document.activeElement);
     const indexOfNextFocus =
