@@ -17,7 +17,13 @@ export type MenuItemProps = {
     /** @deprecated this prop is not being used anymore */
     type?: string;
     link?: string;
+    onBlur?: <T extends HTMLButtonElement | HTMLAnchorElement>(event: React.FocusEvent<T>) => void;
     onClick?: <T extends HTMLButtonElement | HTMLAnchorElement>(event: MouseEvent<T>) => void;
+    onFocus?: <T extends HTMLButtonElement | HTMLAnchorElement>(event: React.FocusEvent<T>) => void;
+    onMouseEnter?: <T extends HTMLButtonElement | HTMLAnchorElement>(event: MouseEvent<T>) => void;
+    onMouseOut?: <T extends HTMLButtonElement | HTMLAnchorElement>(event: MouseEvent<T>) => void;
+    onMouseOver?: <T extends HTMLButtonElement | HTMLAnchorElement>(event: MouseEvent<T>) => void;
+    onMouseLeave?: <T extends HTMLButtonElement | HTMLAnchorElement>(event: MouseEvent<T>) => void;
     children?: ReactNode;
     'data-test-id'?: string;
 } & Omit<MenuItemContentProps, 'iconSize'>;
@@ -77,7 +83,13 @@ export const MenuItem = ({
     selectionIndicator = SelectionIndicatorIcon.Check,
     children,
     link,
+    onBlur,
     onClick,
+    onFocus,
+    onMouseEnter,
+    onMouseOut,
+    onMouseOver,
+    onMouseLeave,
     'data-test-id': dataTestId = 'menu-item',
 }: MenuItemProps) => {
     const currentIconSize = size === MenuItemContentSize.XSmall ? IconSize.Size16 : IconSize.Size20;
@@ -116,12 +128,33 @@ export const MenuItem = ({
                     ])}
                 >
                     {mainElementType === 'a' && (
-                        <a href={link} className={ITEM_BASE_CLASSES} onClick={onClick}>
+                        <a
+                            href={link}
+                            className={ITEM_BASE_CLASSES}
+                            onBlur={onBlur}
+                            onClick={onClick}
+                            onFocus={onFocus}
+                            onMouseEnter={onMouseEnter}
+                            onMouseLeave={onMouseLeave}
+                            onMouseOut={onMouseOut}
+                            onMouseOver={onMouseOver}
+                        >
                             {children}
                         </a>
                     )}
                     {mainElementType === 'button' && (
-                        <button type="button" disabled={disabled} onClick={onClick} className={ITEM_BASE_CLASSES}>
+                        <button
+                            type="button"
+                            disabled={disabled}
+                            className={ITEM_BASE_CLASSES}
+                            onBlur={onBlur}
+                            onClick={onClick}
+                            onFocus={onFocus}
+                            onMouseEnter={onMouseEnter}
+                            onMouseLeave={onMouseLeave}
+                            onMouseOut={onMouseOut}
+                            onMouseOver={onMouseOver}
+                        >
                             {children}
                         </button>
                     )}
