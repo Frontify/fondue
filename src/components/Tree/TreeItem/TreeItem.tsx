@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { Children, MouseEvent, memo, useCallback, useMemo } from 'react';
+import React, { Children, MouseEvent, memo, useCallback, useEffect, useMemo, useRef } from 'react';
 import { AnimateLayoutChanges, useSortable } from '@dnd-kit/sortable';
 import { useDndContext, useDndMonitor } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
@@ -78,6 +78,7 @@ export const TreeItem = memo(
     }: InternalTreeItemProps) => {
         const { active, over } = useDndContext();
         const { isSelected, isExpanded, projection } = useTreeItem(id);
+        const expandDebounced = useRef<Nullable<string>>(null);
 
         const draggable = treeDraggable && itemDraggable;
 
@@ -94,14 +95,49 @@ export const TreeItem = memo(
         const cleanCurrentType = currentType?.replace(/-\d+$/, '') || '';
 
         const isWithin =
-            over !== null && activeProjection !== null && activeProjection.depth > over.data.current?.level;
+            activeProjection !== null &&
+            activeProjection.previousNode?.depth !== undefined &&
+            activeProjection.depth > activeProjection.previousNode?.depth;
 
         const canDropWithin =
-            (isWithin && active?.data.current && overAccepts.includes(`${cleanCurrentType}-within`)) ||
+            (isWithin &&
+                activeProjection.previousNode?.accepts !== undefined &&
+                activeProjection.previousNode?.accepts.includes(`${cleanCurrentType}-within`)) ||
             (activeProjection?.isWithinParent && parentAccepts.includes(`${cleanCurrentType}-within`));
 
         const canDrop =
             isActive && active?.data.current && ((overAccepts.includes(currentType) && !isWithin) || canDropWithin);
+
+        const expandProjectionParent = useDebounce((toExpandId: string) => {
+            if (expandDebounced.current === toExpandId) {
+                onExpand?.(toExpandId);
+            }
+        }, 350);
+
+        useEffect(() => {
+            if (isActive && expandDebounced.current !== activeProjection?.previousNode?.id) {
+                expandDebounced.current = activeProjection?.previousNode?.id ?? null;
+            }
+
+            if (
+                isActive &&
+                isWithin &&
+                activeProjection?.parentId &&
+                activeProjection.previousNode &&
+                activeProjection.parentId === activeProjection.previousNode.id &&
+                activeProjection.parentId !== active?.data?.current?.parentId
+            ) {
+                expandProjectionParent(activeProjection?.parentId);
+            }
+        }, [
+            active?.data,
+            activeProjection?.parentId,
+            activeProjection?.previousNode,
+            expandProjectionParent,
+            isActive,
+            isWithin,
+            onExpand,
+        ]);
 
         const handleItemDragEnd = useCallback(
             (event: TreeDragEndEvent) => {

@@ -22,6 +22,7 @@ export type Projection = {
     accepts?: string;
     parentId: Nullable<string>;
     isWithinParent: boolean | undefined;
+    previousNode: Nullable<{ id: string; depth: number; accepts?: string }>;
 };
 
 const getNodeDepth = (node: ReactElement) => {
@@ -129,5 +130,12 @@ export const getProjection = ({ nodes, activeId, overId, dragOffset }: Projectio
         accepts: parent?.accepts,
         position: dropIndexInParent >= 0 ? dropIndexInParent : 0,
         isWithinParent: parent?.level ? depth > parent.level : false,
+        previousNode: previousNode
+            ? {
+                  id: previousNode.props.id,
+                  depth: previousNodeDepth,
+                  accepts: previousNode.props.accepts,
+              }
+            : null,
     };
 };
