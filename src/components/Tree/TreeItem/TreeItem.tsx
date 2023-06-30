@@ -306,10 +306,6 @@ export const TreeItem = memo(
             </li>
         );
     },
-    (prevProps, nextProps) => {
-        console.log(prevProps, nextProps);
-        return false;
-    },
 );
 
 TreeItem.displayName = 'FondueTreeItem';
