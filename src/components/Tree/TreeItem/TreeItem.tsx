@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { Children, MouseEvent, memo, useCallback, useMemo } from 'react';
+import React, { Children, MouseEvent, memo, useCallback, useEffect, useMemo } from 'react';
 import { AnimateLayoutChanges, useSortable } from '@dnd-kit/sortable';
 import { useDndContext, useDndMonitor } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
@@ -177,10 +177,15 @@ export const TreeItem = memo(
 
         const hasChildren = Children.count(children) > 0;
 
-        const enrichedChildren = useMemo(
-            () => removeFragmentsAndEnrichChildren(children, { parentId: id, level: level + 1 }),
-            [children, id, level],
-        );
+        const enrichedChildren = useMemo(() => {
+            console.log('Removing fragments');
+            return removeFragmentsAndEnrichChildren(children, { parentId: id, level: level + 1 });
+        }, [children, id, level]);
+
+        useEffect(() => {
+            console.log('Mount TreeItem');
+            return () => console.log('Unmount TreeItem');
+        }, []);
 
         const childrenIds = useMemo(() => enrichedChildren.map((child) => child.props.id), [enrichedChildren]);
 
@@ -221,14 +226,13 @@ export const TreeItem = memo(
             () =>
                 merge([
                     FOCUS_VISIBLE_STYLE,
-                    !isActive && !isSelected && 'focus-within:tw-bg-box-neutral',
                     'tw-outline-none tw-ring-inset tw-group tw-px-2.5 tw-no-underline tw-leading-5 tw-h-10',
                     isSelected && !transform?.y
                         ? 'tw-font-medium tw-bg-box-neutral-strong tw-text-box-neutral-strong-inverse hover:tw-bg-box-neutral-strong-hover'
                         : 'hover:tw-bg-box-neutral tw-text-text',
                     transform?.y ? 'tw-bg-box-neutral-strong-inverse tw-text-text tw-font-normal' : '',
                 ]),
-            [isActive, isSelected, transform?.y],
+            [isSelected, transform?.y],
         );
 
         const containerClassName = merge([
@@ -304,6 +308,10 @@ export const TreeItem = memo(
                 </div>
             </li>
         );
+    },
+    (prevProps, nextProps) => {
+        console.log(prevProps, nextProps);
+        return false;
     },
 );
 
