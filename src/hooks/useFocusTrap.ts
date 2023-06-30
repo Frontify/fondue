@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect } from 'react';
 
 export const TABBABLE_ELEMENTS = [
     'input:not([disabled]):not([type=hidden])',
@@ -20,24 +20,15 @@ export const TABBABLE_ELEMENTS = [
 ].join(':not([hidden]):not([tabindex="-1"]),');
 
 export const useFocusTrap = (reference: HTMLElement | null, isOpen: boolean, ignoreFocusTrap = false) => {
-    const focusableElements = useMemo(() => reference?.querySelectorAll(TABBABLE_ELEMENTS) ?? [], [reference]);
-    const firstFocusableElement = focusableElements[0] as HTMLElement,
-        lastFocusableElement = focusableElements[focusableElements.length - 1] as HTMLElement;
-
     const handleFocus = useCallback(
         (event: KeyboardEvent) => {
-            const lastFocusedElement = (document.activeElement ?? document.body) as HTMLElement;
-            if (ignoreFocusTrap) {
-                return;
-            }
+            const focusableElements = reference?.querySelectorAll(TABBABLE_ELEMENTS) ?? [],
+                firstFocusableElement = focusableElements[0] as HTMLElement,
+                lastFocusableElement = focusableElements[focusableElements.length - 1] as HTMLElement,
+                lastFocusedElement = (document.activeElement ?? document.body) as HTMLElement,
+                isTabPressed = event.key === 'Tab';
 
-            if (focusableElements.length === 0) {
-                return;
-            }
-
-            const isTabPressed = event.key === 'Tab';
-
-            if (!isTabPressed) {
+            if (!reference || focusableElements.length === 0 || !isTabPressed || ignoreFocusTrap) {
                 return;
             }
 
@@ -56,7 +47,7 @@ export const useFocusTrap = (reference: HTMLElement | null, isOpen: boolean, ign
                 event.preventDefault();
             }
         },
-        [firstFocusableElement, focusableElements, ignoreFocusTrap, lastFocusableElement],
+        [ignoreFocusTrap, reference],
     );
 
     useEffect(() => {
@@ -67,9 +58,11 @@ export const useFocusTrap = (reference: HTMLElement | null, isOpen: boolean, ign
 
         return () => {
             window.removeEventListener('keydown', handleFocus);
-            lastFocusedOutsideBoundaries.focus();
+            if (!ignoreFocusTrap) {
+                lastFocusedOutsideBoundaries.focus();
+            }
         };
-    }, [handleFocus, isOpen]);
+    }, [handleFocus, ignoreFocusTrap, isOpen]);
 
     return reference;
 };
