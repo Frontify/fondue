@@ -57,6 +57,7 @@ import {
 import {
     currentNodesChanged,
     findIndexById,
+    getCurrentChildrenForNewNodesIfExpanded,
     getMovementAnnouncement,
     getNodeChildrenIds,
     getProjection,
@@ -79,110 +80,87 @@ enableMapSet();
 const reducer = produce((draft: TreeState, action: TreeStateAction) => {
     switch (action.type) {
         case 'EXPAND_NODE':
-            {
-                const newExpanded = new Set(draft.expandedIds).add(action.payload);
-                draft.expandedIds = newExpanded;
-            }
-            break;
+            draft.expandedIds = new Set(draft.expandedIds).add(action.payload);
+            return;
 
         case 'SHRINK_NODE':
-            {
-                const newExpanded = new Set(draft.expandedIds);
-                newExpanded.delete(action.payload);
-                draft.expandedIds = newExpanded;
-            }
-            break;
+            const newExpanded = new Set(draft.expandedIds);
+            newExpanded.delete(action.payload);
+
+            draft.expandedIds = newExpanded;
+            return;
 
         case 'SET_SELECTION_MODE':
-            {
-                draft.selectionMode = action.payload.selectionMode;
-            }
-            break;
+            draft.selectionMode = action.payload.selectionMode;
+            return;
 
         case 'SET_PROJECTION':
-            {
-                if (isEqual(draft.projection, action.payload)) {
-                    return;
-                }
-
+            if (!isEqual(draft.projection, action.payload)) {
                 draft.projection = action.payload;
-                return;
             }
-            break;
+            return;
 
         case 'REGISTER_OVERLAY_ITEM':
-            {
-                draft.overlay = action.payload;
-            }
-            break;
+            draft.overlay = action.payload;
+            return;
 
         case 'REGISTER_ROOT_NODES':
-            {
-                draft.rootNodes = action.payload;
-            }
-            break;
+            // reset rootNodes keeping any children when expanded
+            draft.rootNodes = getCurrentChildrenForNewNodesIfExpanded(
+                draft.rootNodes,
+                draft.expandedIds,
+                action.payload,
+            );
+            return;
 
         case 'REGISTER_NODE_CHILDREN':
-            {
-                const { id: parentId, children } = action.payload;
+            const { id: parentId, children } = action.payload;
 
-                if (findIndexById(draft.rootNodes, parentId) === -1) {
-                    // This can happen when this action is triggered before the rootNodes array is updated
-                    // It happens if using static data will all nodes and handling expandedIds outside the Tree component
-                    // Most of the cases, it will register the children properly afterwards
-                    // See Scrollable Tree With Label story
-                    console.warn(`Parent element with ID "${parentId}" not found when registering children.`);
-                    return;
-                }
-
-                const currentChildrenIds = getNodeChildrenIds(draft.rootNodes, parentId);
-                const newChildrenIds = children.map((node) => node.props.id);
-
-                if (
-                    isEqual(currentChildrenIds, newChildrenIds) &&
-                    !currentNodesChanged(currentChildrenIds, draft.rootNodes, children)
-                ) {
-                    return;
-                }
-
-                draft.rootNodes = updateNodeWithNewChildren(draft.rootNodes, parentId, children);
-
+            if (findIndexById(draft.rootNodes, parentId) === -1) {
+                // This can happen when this action is triggered before the rootNodes array is updated
+                // It happens if using static data will all nodes and handling expandedIds outside the Tree component
+                // Most of the cases, it will register the children properly afterwards
+                // See Scrollable Tree With Label story
+                console.warn(`Parent element with ID "${parentId}" not found when registering children.`);
                 return;
             }
-            break;
+
+            const currentChildrenIds = getNodeChildrenIds(draft.rootNodes, parentId);
+            const newChildrenIds = children.map((node) => node.props.id);
+
+            if (
+                !isEqual(currentChildrenIds, newChildrenIds) ||
+                currentNodesChanged(currentChildrenIds, draft.rootNodes, children)
+            ) {
+                // keep any children when parent expanded
+                const newChildren = getCurrentChildrenForNewNodesIfExpanded(
+                    draft.rootNodes,
+                    draft.expandedIds,
+                    children,
+                );
+                draft.rootNodes = updateNodeWithNewChildren(draft.rootNodes, parentId, newChildren);
+            }
+
+            return;
 
         case 'UNREGISTER_NODE_CHILDREN':
-            {
-                const nodeIds = getReactNodeIdsInFlatArray(draft.rootNodes, action.payload);
-
-                if (nodeIds.length === 0) {
-                    return;
-                }
-
+            const nodeIds = getReactNodeIdsInFlatArray(draft.rootNodes, action.payload);
+            if (nodeIds.length > 0) {
                 draft.rootNodes = removeReactNodesFromFlatArray(draft.rootNodes, nodeIds);
-
-                return;
             }
-            break;
+            return;
 
         case 'REGISTER_NODES':
-            {
-                draft.nodes = action.payload;
-                return;
-            }
-            break;
+            draft.nodes = action.payload;
+            return;
 
         case 'REPLACE_EXPANDED':
-            {
-                draft.expandedIds = new Set(action.payload);
-            }
-            break;
+            draft.expandedIds = new Set(action.payload);
+            return;
 
         case 'REPLACE_SELECTED':
-            {
-                draft.selectedIds = new Set(action.payload);
-            }
-            break;
+            draft.selectedIds = new Set(action.payload);
+            return;
 
         case 'REPLACE_STATE':
             draft.rootNodes = action.payload.rootNodes;
@@ -191,10 +169,11 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
             draft.selectedIds = action.payload.selectedIds;
             draft.expandedIds = action.payload.expandedIds;
             draft.selectionMode = action.payload.selectionMode;
-            break;
+            return;
 
         default:
             console.warn(`Updated tree with action "${action.type}" but it has not effect.`);
+            return;
     }
 });
 
@@ -229,7 +208,7 @@ export const Tree = memo(
         const [treeState, updateTreeState] = useReducer(reducer, initialState);
         const [, startTransition] = useTransition();
 
-        const [offset, setOffset] = useState(0);
+        const [offset, setOffset] = useState<Nullable<number>>(null);
         const [overId, setOverId] = useState<Nullable<string>>(null);
         const [activeId, setActiveId] = useState<Nullable<string>>(null);
         const [currentPosition, setCurrentPosition] =
@@ -314,24 +293,25 @@ export const Tree = memo(
             [onShrink],
         );
 
-        const handleDragEnd = useCallback(
-            (event: DragEndEvent) => {
-                resetState();
+        const handleDragEnd = (event: DragEndEvent) => {
+            resetState();
 
-                const { over, active } = event;
+            const { over, active } = event;
 
-                if (!over?.id || !active?.id || !treeState.projection?.parentId) {
-                    return;
-                }
+            if (!over?.id || !active?.id || !treeState.projection?.parentId) {
+                return;
+            }
 
-                onDrop?.({
-                    id: active.id.toString(),
-                    parentId: treeState.projection.parentId,
-                    sort: treeState.projection.position,
-                });
-            },
-            [onDrop, treeState.projection?.parentId, treeState.projection?.position],
-        );
+            const activeNode = treeState.nodes.find((node) => node.props.id === active.id);
+            const contentComponent = activeNode?.props?.contentComponent;
+
+            onDrop?.({
+                id: active.id.toString(),
+                parentId: treeState.projection.parentId,
+                sort: treeState.projection.position,
+                contentComponent,
+            });
+        };
 
         const handleDragStart = ({ active: { id: activeId, data } }: TreeDragStartEvent) => {
             setActiveId(activeId);
@@ -466,7 +446,7 @@ export const Tree = memo(
 
         const sensorContext: SensorContext = useRef({
             nodes: treeState.nodes,
-            offset,
+            offset: offset ?? 0,
         });
 
         const [coordinateGetter] = useState(() => sortableTreeKeyboardCoordinates(sensorContext));
@@ -565,24 +545,24 @@ export const Tree = memo(
                 return;
             }
 
-            const nodesToRender: { id: string; node: ReactElement }[] = [];
-            for (const node of treeState.rootNodes) {
-                const parentId = node.props.parentId;
-                if (
-                    typeof parentId === 'string' &&
-                    (parentId === ROOT_ID ||
-                        (treeState.expandedIds.has(parentId) && nodesToRender.find((n) => n.id === parentId)))
-                ) {
-                    nodesToRender.push({ id: node.props.id, node });
+            startTransition(() => {
+                const nodesToRender: { id: string; node: ReactElement }[] = [];
+                for (const node of treeState.rootNodes) {
+                    const parentId = node.props.parentId;
+                    if (
+                        typeof parentId === 'string' &&
+                        (parentId === ROOT_ID ||
+                            (treeState.expandedIds.has(parentId) && nodesToRender.find((n) => n.id === parentId)))
+                    ) {
+                        nodesToRender.push({ id: node.props.id, node });
+                    }
                 }
-            }
 
-            startTransition(() =>
                 updateTreeState({
                     type: 'REGISTER_NODES',
                     payload: nodesToRender.map((n) => n.node),
-                }),
-            );
+                });
+            });
         }, [treeState.rootNodes, treeState.expandedIds]);
 
         useEffect(() => {
@@ -602,7 +582,7 @@ export const Tree = memo(
         useDeepCompareEffect(() => {
             sensorContext.current = {
                 nodes: treeState.nodes,
-                offset,
+                offset: offset ?? 0,
             };
         }, [offset, treeState.nodes]);
 
@@ -613,7 +593,7 @@ export const Tree = memo(
                           nodes: treeState.nodes,
                           activeId,
                           overId,
-                          dragOffset: offset,
+                          dragOffset: offset ?? 0,
                       })
                     : null;
 

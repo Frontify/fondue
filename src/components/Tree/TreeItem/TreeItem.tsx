@@ -116,11 +116,12 @@ export const TreeItem = memo(
                         id: active.id,
                         parentId: activeProjection.parentId,
                         sort: activeProjection.position,
+                        contentComponent,
                         parentType: activeProjection.type,
                     });
                 }
             },
-            [canDrop, isActive, onDrop, activeProjection],
+            [isActive, activeProjection, canDrop, onDrop, contentComponent],
         );
 
         const handleItemDragStart = useCallback(
@@ -177,12 +178,13 @@ export const TreeItem = memo(
 
         const hasChildren = Children.count(children) > 0;
 
-        const enrichedChildren = useMemo(
-            () => removeFragmentsAndEnrichChildren(children, { parentId: id, level: level + 1 }),
-            [children, id, level],
-        );
-
-        const childrenIds = useMemo(() => enrichedChildren.map((child) => child.props.id), [enrichedChildren]);
+        const { enrichedChildren, childrenIds } = useMemo(() => {
+            const enrichedChildren = removeFragmentsAndEnrichChildren(children, { parentId: id, level: level + 1 });
+            return {
+                enrichedChildren,
+                childrenIds: enrichedChildren.map((child) => child.props.id),
+            };
+        }, [children, id, level]);
 
         const {
             attributes,
@@ -215,20 +217,19 @@ export const TreeItem = memo(
             } else {
                 unregisterNodeChildren?.(id);
             }
-        }, [isActive, isExpanded, isParentActive, enrichedChildren, registerNodeChildren, unregisterNodeChildren, id]);
+        }, [isActive, isExpanded, isParentActive, enrichedChildren, id]);
 
         const liClassName = useMemo(
             () =>
                 merge([
                     FOCUS_VISIBLE_STYLE,
-                    !isActive && !isSelected && 'focus-within:tw-bg-box-neutral',
                     'tw-outline-none tw-ring-inset tw-group tw-px-2.5 tw-no-underline tw-leading-5 tw-h-10',
                     isSelected && !transform?.y
                         ? 'tw-font-medium tw-bg-box-neutral-strong tw-text-box-neutral-strong-inverse hover:tw-bg-box-neutral-strong-hover'
                         : 'hover:tw-bg-box-neutral tw-text-text',
                     transform?.y ? 'tw-bg-box-neutral-strong-inverse tw-text-text tw-font-normal' : '',
                 ]),
-            [isActive, isSelected, transform?.y],
+            [isSelected, transform?.y],
         );
 
         const containerClassName = merge([

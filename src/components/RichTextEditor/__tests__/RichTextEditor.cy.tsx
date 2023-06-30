@@ -572,4 +572,22 @@ describe('RichTextEditor Component', () => {
             cy.get('[contenteditable=true]').should('include.html', 'sub');
         });
     });
+
+    describe('Accessbility', () => {
+        it('should be able to tab between multiple rich text editors.', () => {
+            cy.mount(
+                <>
+                    <RichTextEditor value="<p>Mock</p>" />
+                    <RichTextEditor value="<p>Mock2</p>" />
+                </>,
+            );
+
+            cy.get('[contenteditable=true]').eq(0).click();
+            cy.get('[contenteditable=true]').eq(0).should('be.focused');
+            cy.realPress('Tab');
+            cy.get('[contenteditable=true]').eq(1).should('be.focused');
+            cy.realPress(['Shift', 'Tab']);
+            cy.get('[contenteditable=true]').eq(0).should('be.focused');
+        });
+    });
 });
