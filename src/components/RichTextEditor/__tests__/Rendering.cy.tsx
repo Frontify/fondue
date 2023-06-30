@@ -108,17 +108,10 @@ describe('RichTextEditor Rendering', () => {
 });
 
 describe('RichTextEditor Rendering - without proper parent Tag', () => {
-    it('it renders break BR', () => {
-        const text = '<br />';
-
-        cy.mount(<RichTextEditor value={text} />);
+    it('it renders breaks', () => {
+        cy.mount(<RichTextEditor value={'<br />'} />);
         cy.get(RICH_TEXT_EDITOR).should('contain.text', '\n\n');
-    });
-
-    it('it renders multiple BR', () => {
-        const text = '<br /><br /><br />';
-
-        cy.mount(<RichTextEditor value={text} />);
+        cy.mount(<RichTextEditor value={'<br /><br /><br />'} />);
         cy.get(RICH_TEXT_EDITOR).should('contain.text', '\n\n\n\n');
     });
 
