@@ -7,12 +7,12 @@ import { InitPlateEditor } from './InitPlateEditor';
 const wrapChildrenWithoutTypeInParagraph = (children: Value): Value =>
     children[0].hasOwnProperty('type')
         ? children
-        : (children = [
+        : [
               {
                   type: 'p',
                   children,
               },
-          ]);
+          ];
 
 export const EMPTY_RICH_TEXT_VALUE: Value = [{ type: ELEMENT_PARAGRAPH, children: [{ text: '' }] }];
 
