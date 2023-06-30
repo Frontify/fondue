@@ -4,7 +4,7 @@ import { ReactElement } from 'react';
 
 import type { InternalTreeItemProps } from '../TreeItem';
 import isEqualWith from 'lodash-es/isEqualWith';
-import { getReactNodeIdsInFlatArray, removeReactNodesFromFlatArray } from './nodes';
+import { getReactNodeIdsInFlatArray, getReactNodesInFlatArray, removeReactNodesFromFlatArray } from './nodes';
 
 export const findIndexById = (nodes: ReactElement<InternalTreeItemProps>[], id: string) => {
     return nodes.findIndex((node) => node.props.id === id);
@@ -27,6 +27,27 @@ export const updateNodeWithNewChildren = (
     }
 
     return [...cleanNodes.slice(0, parentIndex + 1), ...children, ...cleanNodes.slice(parentIndex + 1)];
+};
+
+export const getCurrentChildrenForNewNodesIfExpanded = (
+    currentNodes: ReactElement[],
+    expandedIds: Set<string>,
+    newNodes: ReactElement[],
+) => {
+    const updatedTreeNode: ReactElement[] = [];
+    for (const node of newNodes) {
+        updatedTreeNode.push(node);
+
+        if (!expandedIds.has(node.props.id)) {
+            continue;
+        }
+
+        for (const child of getReactNodesInFlatArray(currentNodes, node.props.id)) {
+            updatedTreeNode.push(child);
+        }
+    }
+
+    return updatedTreeNode;
 };
 
 export const currentNodesChanged = (

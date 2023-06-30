@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { Children, MouseEvent, memo, useCallback, useEffect, useMemo } from 'react';
+import React, { Children, MouseEvent, memo, useCallback, useMemo } from 'react';
 import { AnimateLayoutChanges, useSortable } from '@dnd-kit/sortable';
 import { useDndContext, useDndMonitor } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
@@ -116,11 +116,12 @@ export const TreeItem = memo(
                         id: active.id,
                         parentId: activeProjection.parentId,
                         sort: activeProjection.position,
+                        contentComponent,
                         parentType: activeProjection.type,
                     });
                 }
             },
-            [canDrop, isActive, onDrop, activeProjection],
+            [isActive, activeProjection, canDrop, onDrop, contentComponent],
         );
 
         const handleItemDragStart = useCallback(
@@ -177,17 +178,13 @@ export const TreeItem = memo(
 
         const hasChildren = Children.count(children) > 0;
 
-        const enrichedChildren = useMemo(() => {
-            console.log('Removing fragments');
-            return removeFragmentsAndEnrichChildren(children, { parentId: id, level: level + 1 });
+        const { enrichedChildren, childrenIds } = useMemo(() => {
+            const enrichedChildren = removeFragmentsAndEnrichChildren(children, { parentId: id, level: level + 1 });
+            return {
+                enrichedChildren,
+                childrenIds: enrichedChildren.map((child) => child.props.id),
+            };
         }, [children, id, level]);
-
-        useEffect(() => {
-            console.log('Mount TreeItem');
-            return () => console.log('Unmount TreeItem');
-        }, []);
-
-        const childrenIds = useMemo(() => enrichedChildren.map((child) => child.props.id), [enrichedChildren]);
 
         const {
             attributes,
@@ -220,7 +217,7 @@ export const TreeItem = memo(
             } else {
                 unregisterNodeChildren?.(id);
             }
-        }, [isActive, isExpanded, isParentActive, enrichedChildren, registerNodeChildren, unregisterNodeChildren, id]);
+        }, [isActive, isExpanded, isParentActive, enrichedChildren, id]);
 
         const liClassName = useMemo(
             () =>
