@@ -13,7 +13,7 @@ import { getPaddingClasses } from './helpers';
 import { useClickOutside } from '@hooks/useClickOutside';
 import { CheckboxState } from '@components/Checkbox/Checkbox';
 import { usePopper } from 'react-popper';
-import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from '@components/Dropdown/useDropdownAutoHeight';
+import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from '@hooks/useDropdownAutoHeight';
 import { Portal } from '@components/Portal';
 
 export enum MultiSelectType {

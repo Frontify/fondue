@@ -2,7 +2,7 @@
 
 import { mapToAriaProps } from '@components/ActionMenu/Aria/helper';
 import { Checkbox, CheckboxState } from '@components/Checkbox/Checkbox';
-import { useDropdownAutoHeight } from '@components/Dropdown/useDropdownAutoHeight';
+import { useDropdownAutoHeight } from '@hooks/useDropdownAutoHeight';
 import {
     IconArrowOutExternal,
     IconBuildingBlock,

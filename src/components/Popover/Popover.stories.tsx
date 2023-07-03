@@ -3,12 +3,12 @@
 import React from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { Popover, PopoverComponentProps } from '@components/Popover/Popover';
-import { PopperPlacement } from '@components/Popper/types';
 import { Button } from '@components/Button';
 import IconExclamationMarkTriangle16 from '@foundation/Icon/Generated/IconExclamationMarkTriangle16';
 import { useToggleOverlay } from '@hooks/useToggleOverlay';
 import { Box } from '@components/Box';
 import { Container } from '@components/Container';
+import { POPPER_STORY_ARGS } from '@components/Popper/types';
 
 export default {
     title: 'Experimental/Popover',
@@ -16,26 +16,17 @@ export default {
     tags: ['autodocs'],
     args: {
         offset: [0, 8],
-        flip: false,
+        flip: true,
     },
     argTypes: {
-        placement: {
-            options: Object.values(PopperPlacement),
-            control: { type: 'select' },
-        },
-        flip: {
-            control: { type: 'boolean' },
-        },
-        enablePortal: {
-            control: { type: 'boolean' },
-        },
-        open: { control: { type: 'boolean' } },
+        ...POPPER_STORY_ARGS,
         'data-test-id': {
             type: 'string',
         },
         role: {
             type: 'string',
         },
+        zIndex: { table: { disable: true } },
     },
 } as Meta<PopoverComponentProps>;
 
@@ -43,7 +34,7 @@ const Template: StoryFn<PopoverComponentProps> = (args) => {
     const [isOpen, setIsOpen] = useToggleOverlay(false);
     return (
         <div className="tw-h-32 tw-flex tw-justify-center tw-items-center">
-            <Popover open={isOpen} {...args}>
+            <Popover {...args} open={isOpen}>
                 <Popover.Trigger>
                     <Button onClick={() => setIsOpen(!isOpen)}>I am the Trigger</Button>
                 </Popover.Trigger>
@@ -61,7 +52,7 @@ const TriggeredOnHoverTemplate: StoryFn<PopoverComponentProps> = (args) => {
     const [isOpen, setIsOpen] = useToggleOverlay(false);
     return (
         <div className="tw-h-32 tw-flex tw-justify-center tw-items-center">
-            <Popover open={isOpen} {...args}>
+            <Popover {...args} open={isOpen}>
                 <Popover.Trigger>
                     <button
                         className="tw-flex tw-items-center"
@@ -87,7 +78,7 @@ const WithInteractiveContentTemplate: StoryFn<PopoverComponentProps> = (args) =>
     const [isOpen, setIsOpen] = useToggleOverlay(false);
     return (
         <div className="tw-h-32 tw-flex tw-justify-center tw-items-center">
-            <Popover open={isOpen} {...args}>
+            <Popover {...args} open={isOpen}>
                 <Popover.Trigger>
                     <Button onClick={() => setIsOpen(!isOpen)}>I am the Trigger</Button>
                 </Popover.Trigger>

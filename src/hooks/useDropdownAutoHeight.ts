@@ -1,15 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MutableRefObject, useEffect, useState } from 'react';
+import { MutableRefObject, useLayoutEffect, useState } from 'react';
 
 export const DEFAULT_DROPDOWN_MAX_HEIGHT = 'auto';
 
 type DropdownAutoHeightProps = {
     isOpen: boolean;
     autoResize?: boolean;
+    isDialog?: boolean;
 };
 
-const getInnerOverlayHeight = (triggerRef: MutableRefObject<HTMLElement | null>) => {
+export const getInnerOverlayHeight = (triggerRef: MutableRefObject<HTMLElement | null>) => {
     let maxHeight = 'auto';
     if (triggerRef.current) {
         const { innerHeight } = window;
@@ -26,7 +27,7 @@ export const useDropdownAutoHeight = (
     { isOpen, autoResize }: DropdownAutoHeightProps,
 ) => {
     const [maxHeight, setMaxHeight] = useState(DEFAULT_DROPDOWN_MAX_HEIGHT);
-    useEffect(() => {
+    useLayoutEffect(() => {
         const updateMaxHeight = () => setMaxHeight(getInnerOverlayHeight(triggerRef));
         if (autoResize && isOpen) {
             updateMaxHeight();

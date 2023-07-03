@@ -13,7 +13,7 @@ import React, {
 } from 'react';
 import { usePopper } from 'react-popper';
 import { Portal } from '@components/Portal';
-import { PopperPlacement, PopperProps } from '@components/Popper/types';
+import { PopperProps } from '@components/Popper/types';
 
 const PopperContext = createContext<PopperProps>({});
 
@@ -40,13 +40,15 @@ const usePopperContext = () => {
 export const Popper = ({
     children,
     open,
-    placement = PopperPlacement.BottomStart,
+    placement = 'bottom-start',
     offset = [0, 8],
-    flip = false,
-    enablePortal = false,
+    flip = true,
+    enablePortal = true,
+    zIndex = 'auto',
 }: PopperProps) => {
     const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
     const [popperElement, setPopperElement] = useState<HTMLElement | null>(null);
+
     const popperInstance = usePopper(referenceElement, popperElement, {
         placement,
         modifiers: [
@@ -59,9 +61,13 @@ export const Popper = ({
     });
 
     useEffect(() => {
-        if (popperInstance.update) {
-            popperInstance.update();
-        }
+        const updatePopper = async () => {
+            if (popperInstance.update) {
+                await popperInstance.update();
+            }
+        };
+
+        updatePopper().catch(console.error);
     }, [flip, placement, offset, open]);
 
     const value = useMemo(() => ({ open }), [open]);
@@ -80,7 +86,7 @@ export const Popper = ({
                             <Portal>
                                 <div
                                     ref={setPopperElement}
-                                    style={popperInstance.styles.popper}
+                                    style={{ zIndex, ...popperInstance.styles.popper }}
                                     {...popperInstance.attributes.popper}
                                 >
                                     {child}
@@ -89,7 +95,7 @@ export const Popper = ({
                         ) : (
                             <div
                                 ref={setPopperElement}
-                                style={popperInstance.styles.popper}
+                                style={{ zIndex, ...popperInstance.styles.popper }}
                                 {...popperInstance.attributes.popper}
                             >
                                 {child}

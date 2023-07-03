@@ -2,10 +2,11 @@
 
 import React from 'react';
 import { Meta, StoryFn } from '@storybook/react';
-import { DialogHeader as DialogHeaderComponent, DialogHeaderProps, DialogHeaderSize } from './DialogHeader';
+import { DialogHeader as DialogHeaderComponent } from './DialogHeader';
 import { Badge, BadgeStyle } from '@components/Badge';
 import { IconIcon } from '@foundation/Icon/Generated';
 import { action } from '@storybook/addon-actions';
+import { DialogHeaderProps, DialogHeaderSize } from '../../types/dialog';
 
 export default {
     title: 'Experimental/DialogHeader',

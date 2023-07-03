@@ -2,10 +2,11 @@
 
 import React from 'react';
 import { Meta, StoryFn } from '@storybook/react';
-import { DialogFooter, DialogFooterProps } from './DialogFooter';
+import { DialogFooter } from './DialogFooter';
 import { ButtonEmphasis, ButtonStyle } from '@components/Button';
 import { IconCheckMark } from '@foundation/Icon/Generated';
 import { action } from '@storybook/addon-actions';
+import { DialogFooterProps } from '../../types/dialog';
 
 export default {
     title: 'Experimental/DialogFooter',
