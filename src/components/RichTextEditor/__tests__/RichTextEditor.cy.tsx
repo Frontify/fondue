@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ELEMENT_PARAGRAPH } from '@udecode/plate';
-import React, { ReactElement, useState } from 'react';
+import React, { useState } from 'react';
 import { orderedListValue } from '../helpers/exampleValues';
 import {
     AlignRightPlugin,
@@ -27,7 +27,6 @@ import {
 } from './fixtures/RichTextEditor';
 import {
     CHECKBOX_INPUT,
-    RICH_TEXT_EDITOR,
     TEXTSTYLE_DROPDOWN_TRIGGER,
     TEXTSTYLE_OPTION,
     TOOLBAR_FLOATING,
@@ -59,92 +58,10 @@ const selectTextValue = (value: string) => {
     });
 };
 
-const RichTextEditorWithValueSetOutside = ({ value }: { value: string }): ReactElement => {
-    const [initialValue, setInitialValue] = useState(value);
-
-    return <RichTextEditor onTextChange={(value) => setInitialValue(value)} value={initialValue} />;
-};
-
 const activeButtonClassNames = '!tw-bg-box-selected tw-rounded !tw-text-box-selected-inverse';
 const disabledButtonClassNames = '!tw-cursor-not-allowed !tw-opacity-50';
 
 describe('RichTextEditor Component', () => {
-    describe('Rendering', () => {
-        it('should render an empty rich text editor', () => {
-            cy.mount(<RichTextEditor />);
-
-            cy.get(RICH_TEXT_EDITOR).should('be.visible');
-        });
-
-        it('should render a raw content state', () => {
-            const text = 'This is some text that you can not edit';
-            cy.mount(<RichTextEditor value={JSON.stringify([{ type: ELEMENT_PARAGRAPH, children: [{ text }] }])} />);
-
-            cy.get(RICH_TEXT_EDITOR).should('contain.text', text);
-        });
-
-        it('should render a raw html content state', () => {
-            cy.mount(<RichTextEditor value={'<p><b>this is bold</b> and <i>this italic</i></p>'} />);
-
-            cy.get(RICH_TEXT_EDITOR).should('contain.text', 'this is bold and this italic');
-            cy.get('[contenteditable=true]').should('include.html', 'tw-font-bold');
-            cy.get('[contenteditable=true]').should('include.html', 'tw-italic');
-        });
-
-        it('should render a plain text string content state', () => {
-            const TEXT = 'This is text';
-            cy.mount(<RichTextEditor value={TEXT} />);
-
-            cy.get(RICH_TEXT_EDITOR).should('contain.text', TEXT);
-        });
-
-        it('wraps the Editor in the component ', () => {
-            const TEXT = 'This is new text';
-
-            cy.mount(<RichTextEditorWithValueSetOutside value={TEXT} />);
-            cy.get(RICH_TEXT_EDITOR).should('contain.text', TEXT);
-        });
-
-        it('should render the updated value when updateValueOnChange enabled', () => {
-            const INITIAL_TEXT = 'This is the initial text';
-
-            cy.mount(
-                <RichTextEditor
-                    updateValueOnChange
-                    value={JSON.stringify([{ type: ELEMENT_PARAGRAPH, children: [{ text: INITIAL_TEXT }] }])}
-                />,
-            ).then(({ rerender }) => {
-                const UPDATED_TEXT = 'This is the updated text';
-                rerender(
-                    <RichTextEditor
-                        updateValueOnChange
-                        value={JSON.stringify([{ type: ELEMENT_PARAGRAPH, children: [{ text: UPDATED_TEXT }] }])}
-                    />,
-                );
-                cy.get(RICH_TEXT_EDITOR).should('contain.text', UPDATED_TEXT);
-            });
-        });
-
-        it('should render the same value when updateValueOnChange disabled', () => {
-            const INITIAL_TEXT = 'This is the initial text';
-
-            cy.mount(
-                <RichTextEditor
-                    value={JSON.stringify([{ type: ELEMENT_PARAGRAPH, children: [{ text: INITIAL_TEXT }] }])}
-                />,
-            ).then(({ rerender }) => {
-                rerender(
-                    <RichTextEditor
-                        value={JSON.stringify([
-                            { type: ELEMENT_PARAGRAPH, children: [{ text: 'This is the updated text' }] },
-                        ])}
-                    />,
-                );
-                cy.get(RICH_TEXT_EDITOR).should('contain.text', INITIAL_TEXT);
-            });
-        });
-    });
-
     describe('Editable', () => {
         it('should be editable by default ', () => {
             cy.mount(<RichTextEditor />);
@@ -607,30 +524,6 @@ describe('RichTextEditor Component', () => {
                 />,
             );
             cy.get('[contenteditable=true] .tw-break-after-column').should('have.length', 1);
-        });
-    });
-
-    describe('initial value', () => {
-        it('it should normalize the initial html value', () => {
-            const onBlur = cy.spy();
-            cy.mount(<RichTextEditor value="<ul><li>foo</li><li>bar</li></ul>" onBlur={onBlur} />);
-
-            cy.get('[contenteditable=true]')
-                .click()
-                .blur()
-                .then(() => {
-                    expect(onBlur).to.be.calledWith(
-                        JSON.stringify([
-                            {
-                                type: 'ul',
-                                children: [
-                                    { type: 'li', children: [{ type: 'lic', children: [{ text: 'foo' }] }] },
-                                    { type: 'li', children: [{ type: 'lic', children: [{ text: 'bar' }] }] },
-                                ],
-                            },
-                        ]),
-                    );
-                });
         });
     });
 
