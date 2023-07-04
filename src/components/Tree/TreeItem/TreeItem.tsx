@@ -36,7 +36,10 @@ type TreeItemPrivateProps = {
     isSelected?: boolean;
     isExpanded?: boolean;
     treeDraggable?: boolean;
+    /** onSelect is passed by the Tree component when cloning the TreeItem */
     onSelect?: (id: string) => void;
+    /** onClick is the user defined callback to run after the onSelect */
+    onClick?: (id: string) => void;
     onExpand?: (id: string) => void;
     onShrink?: (id: string) => void;
     projection?: Nullable<Projection>;
@@ -61,6 +64,7 @@ export const TreeItem = memo(
         level = 0,
         contentComponent,
         treeDraggable = false,
+        onClick,
         onSelect,
         onExpand,
         onShrink,
@@ -170,6 +174,7 @@ export const TreeItem = memo(
                 }
 
                 onSelect?.(id);
+                onClick?.(id);
             },
             ignoreItemDoubleClick ? 300 : 0,
         );
