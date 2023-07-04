@@ -223,21 +223,23 @@ export const TreeItem = memo(
             () =>
                 merge([
                     FOCUS_VISIBLE_STYLE,
+                    !isActive && !isSelected && 'active:tw-bg-box-neutral-pressed',
                     'tw-outline-none tw-ring-inset tw-group tw-px-2.5 tw-no-underline tw-leading-5 tw-h-10',
                     isSelected && !transform?.y
                         ? 'tw-font-medium tw-bg-box-neutral-strong tw-text-box-neutral-strong-inverse hover:tw-bg-box-neutral-strong-hover'
                         : 'hover:tw-bg-box-neutral tw-text-text',
                     transform?.y ? 'tw-bg-box-neutral-strong-inverse tw-text-text tw-font-normal' : '',
                 ]),
-            [isSelected, transform?.y],
+            [isActive, isSelected, transform?.y],
         );
 
         const containerClassName = merge([
-            'tw-flex tw-items-center tw-h-10 tw-leading-5 tw-width-full',
+            'tw-flex tw-items-center tw-leading-5 tw-width-full',
+            isActive ? 'tw-border-dashed tw-rounded-sm tw-border-2 tw-pr-0 tw-h-12' : 'tw-h-10',
             isActive &&
                 (canDrop
-                    ? 'tw-border-box-selected-strong tw-border-dashed tw-border-2 tw-bg-box-selected-hover'
-                    : 'tw-bg-box-negative-hover tw-border-box-negative-strong-hover tw-border-dashed tw-border-2'),
+                    ? 'tw-border-box-selected-strong tw-bg-box-selected-hover'
+                    : 'tw-bg-box-negative-hover tw-border-box-negative-strong-hover'),
         ]);
 
         const depthPadding = activeProjection?.depth ? activeProjection.depth * INDENTATION_WIDTH : undefined;
@@ -251,7 +253,7 @@ export const TreeItem = memo(
         const showChildren = isExpanded && !isActive;
         const showDragHandle = draggable && !isActive;
         const showLabel = label !== undefined && !isActive;
-        const showExpandButton = showCaret === undefined ? hasChildren && !isActive : showCaret;
+        const showExpandButton = !isActive && (showCaret === undefined ? hasChildren : showCaret);
 
         const style = {
             transform: CSS.Transform.toString(transform),
