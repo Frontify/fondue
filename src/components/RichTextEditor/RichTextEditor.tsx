@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useMemoizedId } from '@hooks/useMemoizedId';
-import { Plate, TEditableProps } from '@udecode/plate';
-import React from 'react';
+import { Plate, PlateEditor, TEditableProps, Value } from '@udecode/plate';
+import React, { useState } from 'react';
 import { RenderPlaceholderProps } from 'slate-react';
 import { ContentReplacement } from './ContentReplacement';
 import { RichTextEditorProvider } from './context/RichTextEditorContext';
@@ -12,6 +12,7 @@ import { useEditorState } from './hooks';
 import { GAP_DEFAULT, KEY_ELEMENT_BREAK_AFTER_COLUMN, PluginComposer, defaultPlugins } from './Plugins';
 import { PaddingSizes, TreeOfNodes } from './types';
 import { parseRawValue } from './utils';
+import { EditorInitializer } from '@components/RichTextEditor/EditorInitializer';
 
 const PLACEHOLDER_STYLES: RenderPlaceholderProps['attributes']['style'] = {
     position: 'relative',
@@ -50,6 +51,7 @@ export const RichTextEditor = ({
     toolbarWidth,
 }: RichTextEditorProps) => {
     const editorId = useMemoizedId(id);
+    const [editorRef, setEditorRef] = useState<PlateEditor<Value>>();
     const { localValue, onChange, memoizedValue, config } = useEditorState({
         editorId,
         initialValue: value,
@@ -61,7 +63,6 @@ export const RichTextEditor = ({
     const breakAfterPlugin = plugins.plugins.find((plugin) => plugin.key === KEY_ELEMENT_BREAK_AFTER_COLUMN);
     const columns = breakAfterPlugin?.options?.columns ?? 1;
     const columnGap = breakAfterPlugin?.options?.gap ?? GAP_DEFAULT;
-
     const editableProps: TEditableProps = {
         placeholder,
         renderPlaceholder: ({ children, attributes }) => {
@@ -75,11 +76,19 @@ export const RichTextEditor = ({
             return <span {...mergedAttributes}>{children}</span>;
         },
         readOnly: readonly,
-        onBlur: () => onBlur && onBlur(JSON.stringify(localValue.current)),
+        onBlur: () => {
+            if (editorRef) {
+                editorRef.deselect();
+            }
+            if (onBlur) {
+                onBlur(JSON.stringify(localValue.current));
+            }
+        },
         className: `${padding}`,
         style: {
             columns,
             columnGap,
+            outline: 'none',
         },
         onKeyDown: (event) => {
             if (event.code === 'Tab') {
@@ -109,6 +118,7 @@ export const RichTextEditor = ({
                 {!editableProps.readOnly && config.toolbar(toolbarWidth)}
                 {config.inline()}
                 {updateValueOnChange && <ContentReplacement value={parseRawValue({ editorId, raw: value, plugins })} />}
+                <EditorInitializer onInitialized={setEditorRef} />
             </Plate>
         </RichTextEditorProvider>
     );
