@@ -228,8 +228,8 @@ export const TreeItem = memo(
             () =>
                 merge([
                     FOCUS_VISIBLE_STYLE,
+                    'tw-transition-colors tw-outline-none tw-ring-inset tw-group tw-px-2.5 tw-no-underline tw-leading-5 tw-h-10',
                     !isActive && !isSelected && 'active:tw-bg-box-neutral-pressed',
-                    'tw-outline-none tw-ring-inset tw-group tw-px-2.5 tw-no-underline tw-leading-5 tw-h-10',
                     isSelected && !transform?.y
                         ? 'tw-font-medium tw-bg-box-neutral-strong tw-text-box-neutral-strong-inverse hover:tw-bg-box-neutral-strong-hover'
                         : 'hover:tw-bg-box-neutral tw-text-text',
@@ -239,7 +239,7 @@ export const TreeItem = memo(
         );
 
         const containerClassName = merge([
-            'tw-flex tw-items-center tw-leading-5 tw-width-full',
+            'tw-transition-colors tw-flex tw-items-center tw-leading-5 tw-width-full',
             isActive ? 'tw-border-dashed tw-rounded-sm tw-border-2 tw-pr-0 tw-h-12' : 'tw-h-10',
             isActive &&
                 (canDrop
