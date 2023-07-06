@@ -11,6 +11,14 @@ export enum DialogHeaderSize {
     Large = 'Large',
 }
 
+export type DialogPadding = 'small' | 'medium' | 'large';
+
+export const dialogPaddingMap: Record<DialogPadding, string> = {
+    small: 'tw-p-4',
+    medium: 'tw-p-6',
+    large: 'tw-p-10',
+};
+
 export type DialogHeaderProps = {
     title: string;
     size?: DialogHeaderSize;
@@ -28,7 +36,10 @@ export type DialogBodyProps = {
 };
 
 export type DialogFooterProps = {
-    buttons: ButtonProps[];
+    children?: ReactNode;
+    actionButtons: [ButtonProps, ButtonProps];
+    backButton?: Omit<ButtonProps, 'emphasis' | 'icon' | 'size'>;
+    padding?: DialogPadding;
     'data-test-id'?: string;
 };
 
