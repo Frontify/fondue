@@ -78,7 +78,7 @@ export const RichTextEditor = ({
         readOnly: readonly,
         onBlur: () => {
             if (editorRef) {
-                editorRef.deselect();
+                editorRef.collapse();
             }
             if (onBlur) {
                 onBlur(JSON.stringify(localValue.current));
