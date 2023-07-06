@@ -6,13 +6,10 @@ import { BadgeProps } from '@components/Badge';
 import { ButtonProps } from '@components/Button';
 import { PopperProps } from '@components/Popper/types';
 
-export enum DialogHeaderSize {
-    Default = 'Default',
-    Large = 'Large',
-}
-
-export type DialogPadding = 'small' | 'medium' | 'large';
-export const DIALOG_PADDING = ['small', 'medium', 'large']; // To be used in Stories
+type DialogSize = 'small' | 'medium' | 'large';
+export type DialogHeaderSize = DialogSize;
+export type DialogPadding = DialogSize;
+export const DIALOG_SIZE = ['small', 'medium', 'large']; // To be used in Stories
 
 export const dialogPaddingMap: Record<DialogPadding, string> = {
     small: 'tw-p-4',

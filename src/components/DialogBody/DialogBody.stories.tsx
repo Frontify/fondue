@@ -3,7 +3,7 @@
 import React from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { DialogBody } from './DialogBody';
-import { DIALOG_PADDING, DialogBodyProps } from '../../types/dialog';
+import { DIALOG_SIZE, DialogBodyProps } from '../../types/dialog';
 import { Box } from '@components/Box';
 
 export default {
@@ -15,7 +15,7 @@ export default {
             type: 'number',
         },
         padding: {
-            options: DIALOG_PADDING,
+            options: DIALOG_SIZE,
             control: { type: 'select' },
         },
     },

@@ -6,7 +6,7 @@ import { DialogFooter } from './DialogFooter';
 import { ButtonEmphasis, ButtonStyle } from '@components/Button';
 import { IconCheckMark } from '@foundation/Icon/Generated';
 import { action } from '@storybook/addon-actions';
-import { DIALOG_PADDING, DialogFooterProps } from '../../types/dialog';
+import { DIALOG_SIZE, DialogFooterProps } from '../../types/dialog';
 import { Flex } from '@components/Flex';
 
 export default {
@@ -33,7 +33,7 @@ export default {
     },
     argTypes: {
         padding: {
-            options: DIALOG_PADDING,
+            options: DIALOG_SIZE,
             control: { type: 'select' },
         },
         'data-test-id': {

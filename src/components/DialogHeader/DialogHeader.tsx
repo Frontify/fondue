@@ -6,13 +6,13 @@ import { IconCross } from '@foundation/Icon/Generated';
 import { Text } from '@typography/Text';
 import { Flex } from '@components/Flex';
 import { Box } from '@components/Box';
-import { DialogHeaderProps, DialogHeaderSize } from '../../types/dialog';
+import { DialogHeaderProps, dialogPaddingMap } from '../../types/dialog';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 
 export const DialogHeader = ({
     title,
     collapseBottom = false,
-    size = DialogHeaderSize.Default,
+    size = 'medium',
     onClose,
     icon,
     badge,
@@ -23,7 +23,7 @@ export const DialogHeader = ({
             data-test-id={dataTestId}
             className={merge([
                 'tw-px-6 tw-flex tw-items-center tw-border-b tw-border-b-line',
-                size === DialogHeaderSize.Large ? 'tw-py-6' : 'tw-py-4',
+                dialogPaddingMap[size],
                 collapseBottom && 'tw-pb-0 tw-border-none',
             ])}
         >
@@ -33,7 +33,7 @@ export const DialogHeader = ({
                         {icon}
                     </span>
                 )}
-                <Text weight="x-strong" size={size === DialogHeaderSize.Large ? 'large' : 'medium'}>
+                <Text weight="x-strong" size={size}>
                     {title}
                 </Text>
                 {badge && (
