@@ -17,7 +17,7 @@ import type {
     TreeItemProps,
 } from '@components/Tree/types';
 
-import { INDENTATION_WIDTH, Projection } from '../helpers';
+import { EXPAND_ONHOVER_DELAY, INDENTATION_WIDTH, Projection } from '../helpers';
 import { removeFragmentsAndEnrichChildren, useDeepCompareEffect } from '../utils';
 
 import { DragHandle } from './DragHandle';
@@ -112,7 +112,7 @@ export const TreeItem = memo(
             if (expandDebounced.current === toExpandId) {
                 onExpand?.(toExpandId);
             }
-        }, 350);
+        }, EXPAND_ONHOVER_DELAY);
 
         useEffect(() => {
             if (isActive && expandDebounced.current !== activeProjection?.previousNode?.id) {

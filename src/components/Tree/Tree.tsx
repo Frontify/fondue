@@ -214,8 +214,6 @@ export const Tree = memo(
         const [currentPosition, setCurrentPosition] =
             useState<Nullable<{ overId: string; parentId: Nullable<string> }>>(null);
 
-        const items = useMemo(() => treeState.nodes.map((node) => node.props.id), [treeState.nodes]);
-
         useEffect(() => {
             const keyDownHandler = (event: globalThis.KeyboardEvent) => {
                 if (multiselect && (event.key === 'Meta' || event.ctrlKey)) {
@@ -611,18 +609,21 @@ export const Tree = memo(
             });
         }, [activeId, offset, overId, treeState.nodes]);
 
-        const nodes = useMemo(() => {
-            return treeState.nodes.map((node) => {
-                return cloneElement(node, {
-                    treeDraggable: draggable,
-                    registerOverlay,
-                    onExpand: handleExpand,
-                    onShrink: handleShrink,
-                    onSelect: handleSelect,
-                    registerNodeChildren,
-                    unregisterNodeChildren,
-                });
-            });
+        const { nodes, items } = useMemo(() => {
+            return {
+                items: treeState.nodes.map((node) => node.props.id),
+                nodes: treeState.nodes.map((node) =>
+                    cloneElement(node, {
+                        treeDraggable: draggable,
+                        registerOverlay,
+                        onExpand: handleExpand,
+                        onShrink: handleShrink,
+                        onSelect: handleSelect,
+                        registerNodeChildren,
+                        unregisterNodeChildren,
+                    }),
+                ),
+            };
         }, [
             draggable,
             handleExpand,
