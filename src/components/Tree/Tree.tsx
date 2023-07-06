@@ -343,7 +343,7 @@ export const Tree = memo(
             setOffset(0);
             setCurrentPosition(null);
 
-            document.body.style.setProperty('cursor', '');
+            document.body.style.setProperty('cursor', 'default');
         };
 
         const handleKeyDown = useCallback(

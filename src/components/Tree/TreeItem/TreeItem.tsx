@@ -265,7 +265,7 @@ export const TreeItem = memo(
             () =>
                 merge([
                     FOCUS_VISIBLE_STYLE,
-                    'tw-transition-colors tw-outline-none tw-ring-inset tw-group tw-px-2.5 tw-no-underline tw-leading-5 tw-h-10',
+                    'tw-cursor-default tw-transition-colors tw-outline-none tw-ring-inset tw-group tw-px-2.5 tw-no-underline tw-leading-5 tw-h-10',
                     !isActive && !isSelected && 'active:tw-bg-box-neutral-pressed',
                     isSelected && !transform?.y
                         ? 'tw-font-medium tw-bg-box-neutral-strong tw-text-box-neutral-strong-inverse hover:tw-bg-box-neutral-strong-hover'
