@@ -15,7 +15,7 @@ export default {
             type: 'number',
         },
         padding: {
-            options: DIALOG_SIZE,
+            options: ['none', ...DIALOG_SIZE],
             control: { type: 'select' },
         },
     },
