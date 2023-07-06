@@ -353,10 +353,9 @@ export const Tree = memo(
                 const activeElement = document.activeElement;
 
                 if (
-                    !activeElement ||
-                    !activeElement.parentElement ||
-                    !(activeElement instanceof HTMLLIElement) ||
-                    activeElement.getAttribute('role') !== 'treeitem'
+                    !activeElement?.parentElement ||
+                    activeElement.getAttribute('role') !== 'treeitem' ||
+                    !(activeElement instanceof HTMLLIElement)
                 ) {
                     return;
                 }
