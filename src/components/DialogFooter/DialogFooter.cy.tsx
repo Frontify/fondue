@@ -12,7 +12,9 @@ describe('DialogHeader Component', () => {
     it('should render with one button', () => {
         cy.mount(
             <DialogFooter
-                buttons={[{ children: 'Confirm', onClick: () => console.log('confirm'), 'data-test-id': 'confirm' }]}
+                actionButtons={[
+                    { children: 'Confirm', onClick: () => console.log('confirm'), 'data-test-id': 'confirm' },
+                ]}
             />,
         );
 
@@ -23,7 +25,7 @@ describe('DialogHeader Component', () => {
     it('should render two buttons', () => {
         cy.mount(
             <DialogFooter
-                buttons={[
+                actionButtons={[
                     { children: 'Cancel', 'data-test-id': 'cancel', emphasis: ButtonEmphasis.Default },
                     { children: 'Confirm', 'data-test-id': 'confirm' },
                 ]}
@@ -36,7 +38,9 @@ describe('DialogHeader Component', () => {
     it('should call button action', () => {
         const onActionStub = cy.stub();
         cy.mount(
-            <DialogFooter buttons={[{ children: 'Confirm', onClick: onActionStub, 'data-test-id': 'confirm' }]} />,
+            <DialogFooter
+                actionButtons={[{ children: 'Confirm', onClick: onActionStub, 'data-test-id': 'confirm' }]}
+            />,
         );
 
         cy.get(CONFIRM_BUTTON).click();

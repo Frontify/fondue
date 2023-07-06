@@ -242,7 +242,7 @@ const InContext: StoryFn<InlineDialogProps> = (args) => {
                             </div>
                         </DialogBody>
                         <DialogFooter
-                            buttons={[
+                            actionButtons={[
                                 {
                                     children: 'Cancel',
                                     emphasis: ButtonEmphasis.Default,
