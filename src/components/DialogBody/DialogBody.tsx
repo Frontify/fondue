@@ -1,15 +1,21 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { ReactElement } from 'react';
-import { DialogBodyProps } from '../../types/dialog';
+import { DialogBodyProps, dialogPaddingMap } from '../../types/dialog';
+import { merge } from '@utilities/merge';
 
 export const DialogBody = ({
     children,
     maxHeight = 'auto',
+    padding,
     'data-test-id': dataTestId = 'fondue-dialog-body',
 }: DialogBodyProps): ReactElement => {
     return (
-        <div data-test-id={dataTestId} className="tw-overflow-auto" style={{ maxHeight }}>
+        <div
+            data-test-id={dataTestId}
+            className={merge(['tw-overflow-auto', padding ? dialogPaddingMap[padding] : 'tw-p-0'])}
+            style={{ maxHeight }}
+        >
             {children}
         </div>
     );

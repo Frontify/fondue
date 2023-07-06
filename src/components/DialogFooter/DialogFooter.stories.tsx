@@ -6,10 +6,8 @@ import { DialogFooter } from './DialogFooter';
 import { ButtonEmphasis, ButtonStyle } from '@components/Button';
 import { IconCheckMark } from '@foundation/Icon/Generated';
 import { action } from '@storybook/addon-actions';
-import { DialogFooterProps } from '../../types/dialog';
+import { DIALOG_PADDING, DialogFooterProps } from '../../types/dialog';
 import { Flex } from '@components/Flex';
-
-const DIALOG_PADDING = ['small', 'medium', 'large'];
 
 export default {
     title: 'Experimental/DialogFooter',

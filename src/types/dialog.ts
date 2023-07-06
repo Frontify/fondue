@@ -12,6 +12,7 @@ export enum DialogHeaderSize {
 }
 
 export type DialogPadding = 'small' | 'medium' | 'large';
+export const DIALOG_PADDING = ['small', 'medium', 'large']; // To be used in Stories
 
 export const dialogPaddingMap: Record<DialogPadding, string> = {
     small: 'tw-p-4',
@@ -32,6 +33,7 @@ export type DialogHeaderProps = {
 export type DialogBodyProps = {
     children: ReactNode;
     maxHeight?: number | string;
+    padding?: DialogPadding;
     'data-test-id'?: string;
 };
 
