@@ -209,6 +209,7 @@ export const TreeItem = memo(
 
         useDeepCompareEffect(() => {
             if (Children.count(enrichedChildren) === 0) {
+                unregisterNodeChildren?.(id);
                 return;
             }
 
