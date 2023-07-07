@@ -352,7 +352,11 @@ export const Tree = memo(
             (event: React.KeyboardEvent<HTMLUListElement>) => {
                 const activeElement = document.activeElement;
 
-                if (!activeElement || !activeElement.parentElement || !(activeElement instanceof HTMLLIElement)) {
+                if (
+                    !activeElement?.parentElement ||
+                    activeElement.getAttribute('role') !== 'treeitem' ||
+                    !(activeElement instanceof HTMLLIElement)
+                ) {
                     return;
                 }
 
