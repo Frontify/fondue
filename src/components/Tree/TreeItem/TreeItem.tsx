@@ -135,7 +135,6 @@ export const TreeItem = memo(
             expandProjectionParent,
             isActive,
             isWithin,
-            onExpand,
         ]);
 
         const handleItemDragEnd = useCallback(
