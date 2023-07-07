@@ -24,6 +24,7 @@ export type PopperProps = {
     flip?: boolean;
     enablePortal?: boolean;
     zIndex?: number | string;
+    isDetached?: boolean;
 };
 
 const POPPER_PLACEMENT = [

@@ -45,11 +45,13 @@ export const Popper = ({
     flip = true,
     enablePortal = true,
     zIndex = 'auto',
+    isDetached = false,
 }: PopperProps) => {
     const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
     const [popperElement, setPopperElement] = useState<HTMLElement | null>(null);
+    const [popperWidth, setPopperWidth] = useState(200);
 
-    const popperInstance = usePopper(referenceElement, popperElement, {
+    const popperInstance = usePopper(isDetached ? document.body : referenceElement, popperElement, {
         placement,
         modifiers: [
             { name: 'offset', options: { offset } },
@@ -64,11 +66,22 @@ export const Popper = ({
         const updatePopper = async () => {
             if (popperInstance.update) {
                 await popperInstance.update();
+                if (popperInstance && popperInstance.state) {
+                    setPopperWidth(popperInstance.state.rects.popper.width);
+                }
             }
         };
 
         updatePopper().catch(console.error);
     }, [flip, placement, offset, open]);
+
+    const detachedElementStyles = isDetached
+        ? {
+              left: `${(window.innerWidth - popperWidth) / 2}px`,
+              top: '100px',
+              transform: 'none',
+          }
+        : {};
 
     const value = useMemo(() => ({ open }), [open]);
     return (
@@ -86,7 +99,11 @@ export const Popper = ({
                             <Portal>
                                 <div
                                     ref={setPopperElement}
-                                    style={{ zIndex, ...popperInstance.styles.popper }}
+                                    style={{
+                                        zIndex,
+                                        ...popperInstance.styles.popper,
+                                        ...detachedElementStyles,
+                                    }}
                                     {...popperInstance.attributes.popper}
                                 >
                                     {child}
@@ -95,7 +112,7 @@ export const Popper = ({
                         ) : (
                             <div
                                 ref={setPopperElement}
-                                style={{ zIndex, ...popperInstance.styles.popper }}
+                                style={{ zIndex, ...popperInstance.styles.popper, ...detachedElementStyles }}
                                 {...popperInstance.attributes.popper}
                             >
                                 {child}
