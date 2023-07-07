@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useMemoizedId } from '@hooks/useMemoizedId';
-import { Plate, PlateEditor, TEditableProps, Value } from '@udecode/plate';
-import React, { useState } from 'react';
+import React from 'react';
+import { Plate, TEditableProps } from '@udecode/plate';
 import { RenderPlaceholderProps } from 'slate-react';
 import { ContentReplacement } from './ContentReplacement';
 import { RichTextEditorProvider } from './context/RichTextEditorContext';
@@ -12,7 +12,7 @@ import { useEditorState } from './hooks';
 import { GAP_DEFAULT, KEY_ELEMENT_BREAK_AFTER_COLUMN, PluginComposer, defaultPlugins } from './Plugins';
 import { PaddingSizes, TreeOfNodes } from './types';
 import { parseRawValue } from './utils';
-import { EditorInitializer } from '@components/RichTextEditor/EditorInitializer';
+import { BlurObserver } from '@components/RichTextEditor/BlurObserver';
 
 const PLACEHOLDER_STYLES: RenderPlaceholderProps['attributes']['style'] = {
     position: 'relative',
@@ -51,7 +51,6 @@ export const RichTextEditor = ({
     toolbarWidth,
 }: RichTextEditorProps) => {
     const editorId = useMemoizedId(id);
-    const [editorRef, setEditorRef] = useState<PlateEditor<Value>>();
     const { localValue, onChange, memoizedValue, config } = useEditorState({
         editorId,
         initialValue: value,
@@ -77,14 +76,7 @@ export const RichTextEditor = ({
             return <span {...mergedAttributes}>{children}</span>;
         },
         readOnly: readonly,
-        onBlur: () => {
-            if (editorRef) {
-                editorRef.collapse();
-            }
-            if (onBlur) {
-                onBlur(JSON.stringify(localValue.current));
-            }
-        },
+        onBlur: () => onBlur && onBlur(JSON.stringify(localValue.current)),
         className: `${padding}`,
         style: {
             columns,
@@ -107,6 +99,7 @@ export const RichTextEditor = ({
                 styles: config.styles(),
                 position,
                 border,
+                editorId,
             }}
         >
             <Plate
@@ -119,7 +112,7 @@ export const RichTextEditor = ({
                 {!editableProps.readOnly && config.toolbar(toolbarWidth)}
                 {config.inline()}
                 {updateValueOnChange && <ContentReplacement value={parseRawValue({ editorId, raw: value, plugins })} />}
-                <EditorInitializer onInitialized={setEditorRef} />
+                {position === Position.FLOATING && <BlurObserver />}
             </Plate>
         </RichTextEditorProvider>
     );
