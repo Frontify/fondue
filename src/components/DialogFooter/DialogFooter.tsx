@@ -22,10 +22,19 @@ export const DialogFooter = ({
                 dialogPaddingMap[padding],
             ])}
         >
-            {backButton && <Button {...backButton} emphasis={ButtonEmphasis.Default} icon={<IconArrowLeft />} />}
-            <Box className="tw-grow">{children}</Box>
+            {backButton && (
+                <Button
+                    data-test-id={`${dataTestId}-back-button`}
+                    {...backButton}
+                    emphasis={ButtonEmphasis.Default}
+                    icon={<IconArrowLeft />}
+                />
+            )}
+            <Box className="tw-grow" data-test-id={`${dataTestId}-content`}>
+                {children}
+            </Box>
 
-            <Box className="tw-flex tw-gap-x-3">
+            <Box className="tw-flex tw-gap-x-3" data-test-id={`${dataTestId}-action-buttons`}>
                 {actionButtons.map((button) => (
                     <Button key={`${dataTestId}-button-${button.children}`} {...button} size={ButtonSize.Medium} />
                 ))}
