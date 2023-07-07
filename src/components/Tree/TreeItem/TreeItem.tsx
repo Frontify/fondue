@@ -275,6 +275,23 @@ export const TreeItem = memo(
             [isActive, isSelected, transform?.y],
         );
 
+        const showContent = !isActive;
+        const showChildren = isExpanded && !isActive;
+        const showDragHandle = draggable && !isActive;
+        const showLabel = label !== undefined && !isActive;
+        const showExpandButton = !isActive && (showCaret === undefined ? hasChildren : showCaret);
+
+        let previousItemToBeExpandedFeedback = '';
+        if (
+            !isActive &&
+            !isExpanded &&
+            showExpandButton &&
+            projection?.previousNode?.id === id &&
+            projection?.depth > projection?.previousNode?.depth
+        ) {
+            previousItemToBeExpandedFeedback = 'tw-border-solid tw-rounded tw-border-2 tw-border-box-selected-strong';
+        }
+
         const containerClassName = merge([
             'tw-transition-colors tw-flex tw-items-center tw-leading-5 tw-width-full',
             isActive ? 'tw-border-dashed tw-rounded-sm tw-border-2 tw-pr-0 tw-h-12' : 'tw-h-10',
@@ -282,6 +299,7 @@ export const TreeItem = memo(
                 (canDrop
                     ? 'tw-border-box-selected-strong tw-bg-box-selected-hover'
                     : 'tw-bg-box-negative-hover tw-border-box-negative-strong-hover'),
+            previousItemToBeExpandedFeedback,
         ]);
 
         const depthPadding = activeProjection?.depth ? activeProjection.depth * INDENTATION_WIDTH : undefined;
@@ -290,12 +308,6 @@ export const TreeItem = memo(
         const liStyle = {
             paddingLeft: depthPadding ?? levelPadding,
         };
-
-        const showContent = !isActive;
-        const showChildren = isExpanded && !isActive;
-        const showDragHandle = draggable && !isActive;
-        const showLabel = label !== undefined && !isActive;
-        const showExpandButton = !isActive && (showCaret === undefined ? hasChildren : showCaret);
 
         const style = {
             transform: CSS.Transform.toString(transform),
