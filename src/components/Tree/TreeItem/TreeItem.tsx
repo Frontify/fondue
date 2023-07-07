@@ -78,7 +78,7 @@ export const TreeItem = memo(
     }: InternalTreeItemProps) => {
         const { active, over } = useDndContext();
         const { isSelected, isExpanded, projection } = useTreeItem(id);
-        const expandDebounced = useRef<Nullable<string>>(null);
+        const expandDebounced = useRef<Nullable<string> | undefined>();
 
         const draggable = treeDraggable && itemDraggable;
 
@@ -115,8 +115,8 @@ export const TreeItem = memo(
         }, EXPAND_ONHOVER_DELAY);
 
         useEffect(() => {
-            if (isActive && expandDebounced.current !== activeProjection?.previousNode?.id) {
-                expandDebounced.current = activeProjection?.previousNode?.id ?? null;
+            if (isActive) {
+                expandDebounced.current = isWithin ? activeProjection?.previousNode?.id : null;
             }
 
             if (
