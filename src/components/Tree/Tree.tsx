@@ -381,10 +381,16 @@ export const Tree = memo(
                     handleSelect(id);
                 };
 
-                const toggleExpand = () => {
+                const expandItem = () => {
                     event.preventDefault();
 
                     handleExpand(id);
+                };
+
+                const shrinkItem = () => {
+                    event.preventDefault();
+
+                    handleShrink(id);
                 };
 
                 const focusPrevious = () => {
@@ -404,7 +410,7 @@ export const Tree = memo(
                         break;
 
                     case KeyboardCode.Space:
-                        hasChildren ? toggleExpand() : toggleSelect();
+                        hasChildren ? expandItem() : toggleSelect();
 
                         break;
 
@@ -413,13 +419,13 @@ export const Tree = memo(
                             break;
                         }
 
-                        isExpanded ? focusNext() : toggleExpand();
+                        isExpanded ? focusNext() : expandItem();
 
                         break;
 
                     case KeyboardCode.Left:
                         if (hasChildren && isExpanded) {
-                            toggleExpand();
+                            shrinkItem();
                         } else if (parentId && parentId !== ROOT_ID) {
                             const parentIndex = treeState.nodes.findIndex((node) => node.props.id === parentId);
 
@@ -443,7 +449,7 @@ export const Tree = memo(
                         break;
                 }
             },
-            [handleExpand, handleSelect, treeState.expandedIds, treeState.nodes],
+            [handleExpand, handleShrink, handleSelect, treeState.expandedIds, treeState.nodes],
         );
 
         const sensorContext: SensorContext = useRef({
