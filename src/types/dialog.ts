@@ -6,12 +6,10 @@ import { BadgeProps } from '@components/Badge';
 import { ButtonProps } from '@components/Button';
 import { PopperProps } from '@components/Popper/types';
 
-type DialogSize = 'small' | 'medium' | 'large';
-export type DialogHeaderSize = DialogSize;
-export type DialogPadding = DialogSize;
+export type DialogSize = 'small' | 'medium' | 'large';
 export const DIALOG_SIZE = ['small', 'medium', 'large']; // To be used in Stories
 
-export const dialogPaddingMap: Record<DialogPadding, string> = {
+export const dialogPaddingMap: Record<DialogSize, string> = {
     small: 'tw-p-4',
     medium: 'tw-p-6',
     large: 'tw-p-10',
@@ -19,7 +17,7 @@ export const dialogPaddingMap: Record<DialogPadding, string> = {
 
 export type DialogHeaderProps = {
     title: string;
-    size?: DialogHeaderSize;
+    size?: DialogSize;
     collapseBottom?: boolean;
     onClose?: () => void;
     icon?: ReactElement<IconProps>;
@@ -30,7 +28,7 @@ export type DialogHeaderProps = {
 export type DialogBodyProps = {
     children: ReactNode;
     maxHeight?: number | string;
-    padding?: DialogPadding;
+    padding?: DialogSize;
     'data-test-id'?: string;
 };
 
@@ -38,7 +36,7 @@ export type DialogFooterProps = {
     children?: ReactNode;
     actionButtons: [ButtonProps] | [ButtonProps, ButtonProps];
     backButton?: Omit<ButtonProps, 'emphasis' | 'icon' | 'size'>;
-    padding?: DialogPadding;
+    padding?: DialogSize;
     'data-test-id'?: string;
 };
 
