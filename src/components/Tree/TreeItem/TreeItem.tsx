@@ -95,14 +95,13 @@ export const TreeItem = memo(
         const cleanCurrentType = currentType?.replace(/-\d+$/, '') || '';
 
         const isWithin =
-            activeProjection !== null &&
-            activeProjection.previousNode?.depth !== undefined &&
-            activeProjection.depth > activeProjection.previousNode?.depth;
+            activeProjection?.previousNode?.depth !== undefined &&
+            activeProjection?.depth > activeProjection?.previousNode?.depth;
 
         const canDropWithin =
             (isWithin &&
-                activeProjection.previousNode?.accepts !== undefined &&
-                activeProjection.previousNode?.accepts.includes(`${cleanCurrentType}-within`)) ||
+                activeProjection?.previousNode?.accepts !== undefined &&
+                activeProjection?.previousNode?.accepts.includes(`${cleanCurrentType}-within`)) ||
             (activeProjection?.isWithinParent && parentAccepts.includes(`${cleanCurrentType}-within`));
 
         const canDrop =
