@@ -95,11 +95,17 @@ export const TreeItem = memo(
         const cleanCurrentType = currentType?.replace(/-\d+$/, '') || '';
 
         const isWithin =
-            activeProjection?.previousNode?.depth !== undefined &&
-            activeProjection?.depth > activeProjection?.previousNode?.depth;
+            projection?.previousNode?.depth !== undefined && projection?.depth > projection?.previousNode?.depth;
+
+        const canDropWithinAndDeeper =
+            isWithin &&
+            projection?.previousNode?.accepts !== undefined &&
+            (projection?.previousNode?.accepts.includes(`${cleanCurrentType}-deeper`) ||
+                projection?.previousNode?.accepts.includes(`${cleanCurrentType}-within`));
 
         const canDropWithin =
-            (isWithin &&
+            (isActive &&
+                isWithin &&
                 activeProjection?.previousNode?.accepts !== undefined &&
                 activeProjection?.previousNode?.accepts.includes(`${cleanCurrentType}-within`)) ||
             (activeProjection?.isWithinParent && parentAccepts.includes(`${cleanCurrentType}-within`));
@@ -120,7 +126,7 @@ export const TreeItem = memo(
 
             if (
                 isActive &&
-                isWithin &&
+                canDropWithinAndDeeper &&
                 activeProjection?.parentId &&
                 activeProjection.previousNode &&
                 activeProjection.parentId === activeProjection.previousNode.id &&
@@ -134,6 +140,7 @@ export const TreeItem = memo(
             activeProjection?.previousNode,
             expandProjectionParent,
             isActive,
+            canDropWithinAndDeeper,
             isWithin,
         ]);
 
@@ -284,6 +291,7 @@ export const TreeItem = memo(
             !isActive &&
             !isExpanded &&
             showExpandButton &&
+            canDropWithinAndDeeper &&
             projection?.previousNode?.id === id &&
             projection?.depth > projection?.previousNode?.depth
         ) {
