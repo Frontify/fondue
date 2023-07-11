@@ -26,7 +26,7 @@ export const ToolbarWrapperPositioningFloating = ({
     }, [editorWidth, toolbarWidth, toolbarButtonGroups]);
 
     useEffect(() => {
-        document.addEventListener('selectionchange', () => {
+        const handleSelectionChange = () => {
             const selection = window.getSelection();
             const selectionFrom = selection?.getRangeAt(0).startOffset;
             const selectionTo = selection?.getRangeAt(0).endOffset;
@@ -35,7 +35,10 @@ export const ToolbarWrapperPositioningFloating = ({
             if (!hasActiveSelection && cleanupFunction.current) {
                 cleanupFunction.current();
             }
-        });
+        };
+
+        document.addEventListener('selectionchange', handleSelectionChange);
+        return () => document.removeEventListener('selectionchange', handleSelectionChange);
     }, []);
 
     const autoUpdateWithCleanup = (reference: ReferenceType, floating: HTMLElement, update: () => void) => {
