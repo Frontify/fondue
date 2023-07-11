@@ -246,7 +246,7 @@ describe('Tree and TreeItem components', () => {
 
         cy.get(TREE_ITEM_TOGGLE_ID).first().click();
         cy.get(TREE_ITEM_ID).should('have.length', 8);
-        cy.get(TREE_ITEM_DRAG_HANDLE_ID).eq(4).realMouseDown().realMouseMove(40, -80);
+        cy.get(TREE_ITEM_DRAG_HANDLE_ID).eq(4).realMouseDown().realMouseMove(0, -80).realMouseMove(40, 0);
         cy.wait(300);
         cy.get(TREE_ITEM_ID).should('have.length', 11);
     });
