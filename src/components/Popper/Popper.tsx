@@ -66,7 +66,7 @@ export const Popper = ({
         const updatePopper = async () => {
             if (popperInstance.update) {
                 await popperInstance.update();
-                if (popperInstance && popperInstance.state) {
+                if (popperInstance.state) {
                     setPopperWidth(popperInstance.state.rects.popper.width);
                 }
             }
