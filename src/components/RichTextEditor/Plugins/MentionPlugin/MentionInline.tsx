@@ -1,10 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React from 'react';
-import { MentionCombobox, autoUpdate } from '@udecode/plate';
+import { ELEMENT_MENTION, MentionCombobox, autoUpdate } from '@udecode/plate';
 import { MentionComboboxItem, MentionComboboxStyles } from './MentionCombobox';
 import { MentionableItems } from './types';
 import { filterItems } from './helpers';
+import { getMentionOnSelectItem } from './getMentionOnSelectItem';
 
 // eslint-disable-next-line react/display-name
 export const MentionInline = (items: MentionableItems) => () => {
@@ -23,6 +24,9 @@ export const MentionInline = (items: MentionableItems) => () => {
                     return autoUpdate(...args, { animationFrame: true });
                 },
             }}
+            onSelectItem={getMentionOnSelectItem({
+                key: ELEMENT_MENTION,
+            })}
         />
     );
 };
