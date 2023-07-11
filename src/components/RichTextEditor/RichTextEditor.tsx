@@ -33,6 +33,7 @@ export type RichTextEditorProps = {
     border?: boolean;
     updateValueOnChange?: boolean; // Only set to true when you are sure that performance isn't an issue
     toolbarWidth?: number;
+    hideExternalFloatingModals?: (editorId: string) => void;
 };
 
 export const RichTextEditor = ({
@@ -49,6 +50,7 @@ export const RichTextEditor = ({
     onValueChanged,
     border = true,
     toolbarWidth,
+    hideExternalFloatingModals,
 }: RichTextEditorProps) => {
     const editorId = useMemoizedId(id);
     const { localValue, onChange, memoizedValue, config } = useEditorState({
@@ -112,7 +114,9 @@ export const RichTextEditor = ({
                 {!editableProps.readOnly && config.toolbar(toolbarWidth)}
                 {config.inline()}
                 {updateValueOnChange && <ContentReplacement value={parseRawValue({ editorId, raw: value, plugins })} />}
-                {position === Position.FLOATING && <BlurObserver />}
+                {position === Position.FLOATING && (
+                    <BlurObserver hideExternalFloatingModals={hideExternalFloatingModals} />
+                )}
             </Plate>
         </RichTextEditorProvider>
     );

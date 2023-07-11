@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useEffect, useState } from 'react';
-import { BalloonToolbar, flip, shift } from '@udecode/plate';
+import React, { useEffect, useRef, useState } from 'react';
+import { BalloonToolbar, ReferenceType, autoUpdate, flip, shift } from '@udecode/plate';
 import { OFFSET_IN_PX, calculateToolbarWidth } from '@components/RichTextEditor/utils';
 import { ToolbarWrapperProps } from './types';
 
@@ -12,6 +12,7 @@ export const ToolbarWrapperPositioningFloating = ({
     toolbarWidth,
 }: ToolbarWrapperProps) => {
     const [width, setWidth] = useState<number | undefined>();
+    const cleanupFunction = useRef<() => void | undefined>();
 
     useEffect(() => {
         if (toolbarWidth) {
@@ -24,10 +25,28 @@ export const ToolbarWrapperPositioningFloating = ({
         }
     }, [editorWidth, toolbarWidth, toolbarButtonGroups]);
 
+    useEffect(() => {
+        document.addEventListener('selectionchange', () => {
+            const selection = window.getSelection();
+            const selectionFrom = selection?.getRangeAt(0).startOffset;
+            const selectionTo = selection?.getRangeAt(0).endOffset;
+            const hasActiveSelection = !!selection && selectionFrom !== selectionTo;
+
+            if (!hasActiveSelection && cleanupFunction.current) {
+                cleanupFunction.current();
+            }
+        });
+    }, []);
+
+    const autoUpdateWithCleanup = (reference: ReferenceType, floating: HTMLElement, update: () => void) => {
+        cleanupFunction.current = autoUpdate(reference, floating, update);
+    };
+
     return (
         <BalloonToolbar
             floatingOptions={{
                 middleware: [flip(), shift()],
+                whileElementsMounted: autoUpdateWithCleanup,
             }}
             styles={{ root: { border: 'none', background: '#ffffff', width } }}
         >
