@@ -5,6 +5,7 @@ import { MentionItemData, MentionPlugin } from './types';
 export const mentionPlugin: MentionPlugin<MentionItemData> = {
     options: {
         trigger: '@',
+        insertSpaceAfterMention: true,
         createMentionNode: (item) => ({
             value: item.text,
             category: item.data.category,
