@@ -22,6 +22,7 @@ export const Dialog = ({
     'data-test-id': dataTestId = 'fondue-dialog',
     darkUnderlay = false,
     autoHeight = false,
+    verticalAlignment = 'centered',
 }: DialogProps) => {
     return (
         <Overlay
@@ -39,11 +40,12 @@ export const Dialog = ({
             autoHeight={autoHeight}
             zIndex={Z_INDEX_MODAL}
             isDetached={true}
+            verticalAlignment={verticalAlignment}
         >
             {children}
         </Overlay>
     );
 };
-Dialog.displayName = 'FondueInlineDialog';
+Dialog.displayName = 'FondueDialog';
 Dialog.Trigger = Trigger;
 Dialog.Content = Content;

@@ -24,6 +24,7 @@ export default {
         maxHeight: 'auto',
         minHeight: 200,
         darkUnderlay: false,
+        verticalAlignment: 'centered',
     },
     argTypes: {
         enablePortal: {
@@ -45,98 +46,134 @@ export default {
         autoHeight: {
             type: 'boolean',
         },
+        verticalAlignment: {
+            options: ['top', 'centered'],
+            control: { type: 'radio' },
+        },
         zIndex: { table: { disable: true } },
     },
 } as Meta<DialogProps>;
 
 const Template: StoryFn<DialogProps> = (args) => {
     const [isOpen, setIsOpen] = useToggleOverlay(false, { isBlockingModal: args.modality === Modality.BlockingModal });
+
+    return (
+        <Dialog {...args} open={isOpen} handleClose={() => setIsOpen(false)}>
+            <Dialog.Trigger>
+                <Button onClick={() => setIsOpen(!isOpen)}>Open Dialog</Button>
+            </Dialog.Trigger>
+            <Dialog.Content>
+                <DialogHeader title="Heading" size={DialogHeaderSize.Large} onClose={() => setIsOpen(false)} />
+                <DialogBody>
+                    <Box className="tw-p-10">
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad illum impedit iure numquam
+                            praesentium vel. Distinctio perferendis, suscipit! Dolor doloremque et ex, modi nobis
+                            officiis perspiciatis quis tempora temporibus voluptates?
+                        </p>
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laudantium magni pariatur possimus
+                            praesentium! Blanditiis cupiditate distinctio dolore facere numquam quibusdam reiciendis
+                            suscipit. Aperiam impedit nobis rem! Ab consequatur sequi suscipit.
+                        </p>
+                    </Box>
+                </DialogBody>
+                <DialogFooter
+                    buttons={[
+                        {
+                            children: 'Cancel',
+                            emphasis: ButtonEmphasis.Default,
+                            onClick: () => setIsOpen(false),
+                        },
+                        {
+                            children: 'Confirm',
+                            onClick: () => setIsOpen(false),
+                        },
+                    ]}
+                ></DialogFooter>
+            </Dialog.Content>
+        </Dialog>
+    );
+};
+
+const WithTabsTemplate: StoryFn<DialogProps> = (args) => {
+    const [isOpen, setIsOpen] = useToggleOverlay(false, { isBlockingModal: args.modality === Modality.BlockingModal });
     const [activeItemId, setActiveItemId] = useState('1');
 
     return (
-        <div>
-            <p>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolores eligendi illo nulla pariatur repellat,
-                repudiandae! Animi asperiores at consequuntur cupiditate eligendi, iure officiis possimus quis quod
-                repellat sed, sint suscipit.
-            </p>
-            <p>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolores eligendi illo nulla pariatur repellat,
-                repudiandae! Animi asperiores at consequuntur cupiditate eligendi, iure officiis possimus quis quod
-                repellat sed, sint suscipit.
-            </p>
-            <p>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolores eligendi illo nulla pariatur repellat,
-                repudiandae! Animi asperiores at consequuntur cupiditate eligendi, iure officiis possimus quis quod
-                repellat sed, sint suscipit.
-            </p>
-            <Dialog {...args} open={isOpen} handleClose={() => setIsOpen(false)}>
-                <Dialog.Trigger>
-                    <Button onClick={() => setIsOpen(!isOpen)}>Open Dialog</Button>
-                </Dialog.Trigger>
-                <Dialog.Content>
-                    <DialogHeader
-                        title="Heading"
-                        size={DialogHeaderSize.Large}
-                        onClose={() => setIsOpen(false)}
-                        collapseBottom
-                    />
-                    <DialogBody>
-                        <Tabs
-                            activeItemId={activeItemId}
-                            paddingX={TabsPaddingX.None}
-                            onChange={(value) => setActiveItemId(value)}
-                        >
-                            <TabItem id="1" label="Tab 1">
-                                <p className="tw-p-6">
+        <Dialog {...args} open={isOpen} handleClose={() => setIsOpen(false)}>
+            <Dialog.Trigger>
+                <Button onClick={() => setIsOpen(!isOpen)}>Open Dialog</Button>
+            </Dialog.Trigger>
+            <Dialog.Content>
+                <DialogHeader
+                    title="Heading"
+                    size={DialogHeaderSize.Large}
+                    onClose={() => setIsOpen(false)}
+                    collapseBottom
+                />
+                <DialogBody>
+                    <Tabs
+                        activeItemId={activeItemId}
+                        paddingX={TabsPaddingX.None}
+                        onChange={(value) => setActiveItemId(value)}
+                    >
+                        <TabItem id="1" label="Tab 1">
+                            <p className="tw-p-6">
+                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laudantium magni pariatur
+                                possimus praesentium! Blanditiis cupiditate distinctio dolore facere numquam quibusdam
+                                reiciendis suscipit. Aperiam impedit nobis rem! Ab consequatur sequi suscipit.
+                            </p>
+                        </TabItem>
+
+                        <TabItem id="2" label="Tab 2">
+                            <Box className="tw-p-6">
+                                <p>
                                     Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laudantium magni pariatur
                                     possimus praesentium! Blanditiis cupiditate distinctio dolore facere numquam
                                     quibusdam reiciendis suscipit. Aperiam impedit nobis rem! Ab consequatur sequi
                                     suscipit.
                                 </p>
-                            </TabItem>
-
-                            <TabItem id="2" label="Tab 2">
-                                <Box className="tw-p-6">
-                                    <p>
-                                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laudantium magni
-                                        pariatur possimus praesentium! Blanditiis cupiditate distinctio dolore facere
-                                        numquam quibusdam reiciendis suscipit. Aperiam impedit nobis rem! Ab consequatur
-                                        sequi suscipit.
-                                    </p>
-                                    <p>
-                                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laudantium magni
-                                        pariatur possimus praesentium! Blanditiis cupiditate distinctio dolore facere
-                                        numquam quibusdam reiciendis suscipit. Aperiam impedit nobis rem! Ab consequatur
-                                        sequi suscipit.
-                                    </p>
-                                    <p>
-                                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laudantium magni
-                                        pariatur possimus praesentium! Blanditiis cupiditate distinctio dolore facere
-                                        numquam quibusdam reiciendis suscipit. Aperiam impedit nobis rem! Ab consequatur
-                                        sequi suscipit.
-                                    </p>
-                                </Box>
-                            </TabItem>
-                        </Tabs>
-                    </DialogBody>
-                    <DialogFooter
-                        buttons={[
-                            {
-                                children: 'Cancel',
-                                emphasis: ButtonEmphasis.Default,
-                                onClick: () => setIsOpen(false),
-                            },
-                            {
-                                children: 'Confirm',
-                                onClick: () => setIsOpen(false),
-                            },
-                        ]}
-                    ></DialogFooter>
-                </Dialog.Content>
-            </Dialog>
-        </div>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laudantium magni pariatur
+                                    possimus praesentium! Blanditiis cupiditate distinctio dolore facere numquam
+                                    quibusdam reiciendis suscipit. Aperiam impedit nobis rem! Ab consequatur sequi
+                                    suscipit.
+                                </p>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laudantium magni pariatur
+                                    possimus praesentium! Blanditiis cupiditate distinctio dolore facere numquam
+                                    quibusdam reiciendis suscipit. Aperiam impedit nobis rem! Ab consequatur sequi
+                                    suscipit.
+                                </p>
+                            </Box>
+                        </TabItem>
+                    </Tabs>
+                </DialogBody>
+                <DialogFooter
+                    buttons={[
+                        {
+                            children: 'Cancel',
+                            emphasis: ButtonEmphasis.Default,
+                            onClick: () => setIsOpen(false),
+                        },
+                        {
+                            children: 'Confirm',
+                            onClick: () => setIsOpen(false),
+                        },
+                    ]}
+                ></DialogFooter>
+            </Dialog.Content>
+        </Dialog>
     );
 };
 
 export const Default = Template.bind({});
+export const WithDarkUnderlay = Template.bind({});
+WithDarkUnderlay.args = {
+    darkUnderlay: true,
+};
+export const WithTabsAndTopAlignment = WithTabsTemplate.bind({});
+WithTabsAndTopAlignment.args = {
+    verticalAlignment: 'top',
+};

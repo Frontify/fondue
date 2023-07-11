@@ -33,6 +33,7 @@ export const Overlay = ({
     autoHeight,
     zIndex,
     isDetached,
+    verticalAlignment,
 }: OverlayProps & BaseDialogProps) => {
     const id = useMemoizedId();
     const ref = useRef<HTMLDivElement | null>(null);
@@ -74,6 +75,7 @@ export const Overlay = ({
                 enablePortal={enablePortal}
                 zIndex={zIndex}
                 isDetached={isDetached}
+                verticalAlignment={verticalAlignment}
             >
                 {Children.map(children, (child) => {
                     if (isValidElement(child) && typeof child.type === 'function') {

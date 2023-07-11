@@ -15,6 +15,10 @@ import { usePopper } from 'react-popper';
 import { Portal } from '@components/Portal';
 import { PopperProps } from '@components/Popper/types';
 
+const DEFAULT_POPPER_WIDTH = 200;
+const DEFAULT_POPPER_HEIGHT = 400;
+const DEFAULT_DIALOG_TOP_POSITION = '100px';
+
 const PopperContext = createContext<PopperProps>({});
 
 const Reference = ({ children }: { children: ReactElement }) => {
@@ -46,10 +50,14 @@ export const Popper = ({
     enablePortal = true,
     zIndex = 'auto',
     isDetached = false,
+    verticalAlignment,
 }: PopperProps) => {
     const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
     const [popperElement, setPopperElement] = useState<HTMLElement | null>(null);
-    const [popperWidth, setPopperWidth] = useState(200);
+    const [popperDimensions, setPopperDimensions] = useState({
+        width: DEFAULT_POPPER_WIDTH,
+        height: DEFAULT_POPPER_HEIGHT,
+    });
 
     const popperInstance = usePopper(isDetached ? document.body : referenceElement, popperElement, {
         placement,
@@ -67,7 +75,10 @@ export const Popper = ({
             if (popperInstance.update) {
                 await popperInstance.update();
                 if (popperInstance.state) {
-                    setPopperWidth(popperInstance.state.rects.popper.width);
+                    setPopperDimensions({
+                        width: popperInstance.state.rects.popper.width,
+                        height: popperInstance.state.rects.popper.height,
+                    });
                 }
             }
         };
@@ -77,8 +88,11 @@ export const Popper = ({
 
     const detachedElementStyles = isDetached
         ? {
-              left: `${(window.innerWidth - popperWidth) / 2}px`,
-              top: '100px',
+              left: `${(window.innerWidth - popperDimensions.width) / 2}px`,
+              top:
+                  verticalAlignment === 'top'
+                      ? DEFAULT_DIALOG_TOP_POSITION
+                      : `${(window.innerHeight - popperDimensions.height) / 2}px`,
               transform: 'none',
           }
         : {};
