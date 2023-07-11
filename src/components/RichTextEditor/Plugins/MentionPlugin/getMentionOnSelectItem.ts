@@ -6,10 +6,12 @@ import {
     ELEMENT_MENTION,
     MentionPlugin,
     NoData,
+    PlateEditor,
     PlatePluginKey,
     TComboboxItem,
     TMentionElement,
     TNodeProps,
+    Value,
     comboboxActions,
     comboboxSelectors,
     getPlugin,
@@ -42,7 +44,7 @@ export const getMentionOnSelectItem =
         const {
             type,
             options: { insertSpaceAfterMention, createMentionNode },
-        } = getPlugin<MentionPlugin>(editor as any, key);
+        } = getPlugin<MentionPlugin>(editor as PlateEditor<Value>, key);
 
         withoutNormalizing(editor, () => {
             // Selectors are sensitive to operations, it's better to create everything
