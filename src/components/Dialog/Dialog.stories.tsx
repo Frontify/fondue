@@ -13,7 +13,7 @@ import { TabItem, Tabs, TabsPaddingX } from '@components/Tabs';
 import { Box } from '@components/Box';
 
 export default {
-    title: 'Experimental/Work In Progress/Dialog',
+    title: 'Experimental/Dialog',
     component: Dialog,
     tags: ['autodocs'],
     args: {

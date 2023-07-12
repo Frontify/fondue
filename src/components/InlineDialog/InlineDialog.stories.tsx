@@ -20,7 +20,7 @@ import { IconExclamationMarkCircle16 } from '@foundation/Icon/Generated';
 import { Tooltip } from '@components/Tooltip';
 
 export default {
-    title: 'Experimental/Work In Progress/InlineDialog',
+    title: 'Experimental/InlineDialog',
     component: InlineDialog,
     tags: ['autodocs'],
     args: {
