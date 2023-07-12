@@ -28,9 +28,11 @@ export const ToolbarWrapperPositioningFloating = ({
     useEffect(() => {
         const handleSelectionChange = () => {
             const selection = window.getSelection();
-            const selectionFrom = selection?.getRangeAt(0).startOffset;
-            const selectionTo = selection?.getRangeAt(0).endOffset;
-            const hasActiveSelection = !!selection && selectionFrom !== selectionTo;
+            const rangeCount = selection?.rangeCount ?? 0;
+
+            const selectionFrom = rangeCount > 0 && selection?.getRangeAt(0).startOffset;
+            const selectionTo = rangeCount > 0 && selection?.getRangeAt(0).endOffset;
+            const hasActiveSelection = !!selection && selectionFrom !== selectionTo && rangeCount > 0;
 
             if (!hasActiveSelection && cleanupFunction.current) {
                 cleanupFunction.current();
