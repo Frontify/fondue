@@ -164,7 +164,6 @@ describe('InlineDialog Component', () => {
             cy.get(INLINE_DIALOG_SELECTOR).realPress('Tab');
             cy.get(INLINE_DIALOG_SELECTOR).realPress('Tab');
             cy.get(INLINE_DIALOG_SELECTOR).realPress('Tab');
-            cy.get(INLINE_DIALOG_SELECTOR).realPress('Tab');
             cy.get(OUTSIDE_DIALOG_BUTTON).should('be.focused');
             cy.get(OUTSIDE_DIALOG_BUTTON).realPress('Enter');
             cy.get('@onClickStub').should('be.calledOnce');
@@ -201,9 +200,7 @@ describe('InlineDialog Component', () => {
             cy.get(INLINE_DIALOG_SELECTOR).should('exist');
             cy.get('body').realPress('Tab');
             cy.get(INLINE_DIALOG_SELECTOR).realPress('Tab');
-            cy.get(INLINE_DIALOG_SELECTOR).realPress('Tab');
             cy.get(INLINE_DIALOG_SELECTOR).find('[data-test-id=button]').should('be.focused');
-            cy.get(INLINE_DIALOG_SELECTOR).realPress('Tab');
             cy.get(INLINE_DIALOG_SELECTOR).realPress('Tab');
             cy.get(INLINE_DIALOG_SELECTOR).realPress('Tab');
             cy.get(INLINE_DIALOG_SELECTOR).find('[data-test-id=button]').should('be.focused');
@@ -236,9 +233,7 @@ describe('InlineDialog Component', () => {
             cy.get(INLINE_DIALOG_SELECTOR).should('exist');
             cy.get('body').realPress('Tab');
             cy.get(INLINE_DIALOG_SELECTOR).realPress('Tab');
-            cy.get(INLINE_DIALOG_SELECTOR).realPress('Tab');
             cy.get(INLINE_DIALOG_SELECTOR).find('[data-test-id=button]').should('be.focused');
-            cy.get(INLINE_DIALOG_SELECTOR).realPress('Tab');
             cy.get(INLINE_DIALOG_SELECTOR).realPress('Tab');
             cy.get(INLINE_DIALOG_SELECTOR).realPress('Tab');
             cy.get(INLINE_DIALOG_SELECTOR).find('[data-test-id=button]').should('be.focused');
