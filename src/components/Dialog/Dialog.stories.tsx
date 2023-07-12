@@ -51,6 +51,7 @@ export default {
             control: { type: 'radio' },
         },
         zIndex: { table: { disable: true } },
+        isDetached: { table: { disable: true } },
     },
 } as Meta<DialogProps>;
 

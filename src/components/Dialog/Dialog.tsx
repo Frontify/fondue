@@ -7,7 +7,7 @@ import { Z_INDEX_MODAL } from '@utilities/dialogs/constants';
 import { Trigger } from '@utilities/dialogs/Trigger';
 import { Content } from '@utilities/dialogs/Content';
 
-export type DialogProps = Omit<OverlayProps, 'placement, flip, offset'> & BaseDialogProps;
+export type DialogProps = Omit<OverlayProps, 'placement' | 'flip' | 'offset'> & BaseDialogProps;
 
 export const Dialog = ({
     children,
