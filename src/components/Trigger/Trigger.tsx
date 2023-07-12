@@ -115,8 +115,9 @@ export const Trigger = ({
                 )}
                 <button
                     {...buttonProps}
-                    aria-hidden="true"
                     type="button"
+                    aria-hidden={true}
+                    tabIndex={-1}
                     disabled={disabled}
                     className={merge([
                         'tw-rounded',
