@@ -35,9 +35,9 @@ export const BlurObserver = ({
             const modalWrapper = document.querySelector<HTMLDivElement>(modalSelector);
             const targetElement = event.target as HTMLElement;
 
-            const isTargetInsideModal = modalWrapper && modalWrapper.contains(targetElement);
-            const isTargetInsideRichTextEditor = richTextEditorWrapper && richTextEditorWrapper.contains(targetElement);
-            const isTargetInsideRichTextEditorToolbar = toolbarWrapper && toolbarWrapper.contains(targetElement);
+            const isTargetInsideModal = modalWrapper?.contains(targetElement);
+            const isTargetInsideRichTextEditor = richTextEditorWrapper?.contains(targetElement);
+            const isTargetInsideRichTextEditorToolbar = toolbarWrapper?.contains(targetElement);
 
             if (isTargetInsideRichTextEditorToolbar) {
                 collapseFloatingModals();

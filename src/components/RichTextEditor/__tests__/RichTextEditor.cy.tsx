@@ -697,4 +697,39 @@ describe('RichTextEditor Component', () => {
             cy.get('[contenteditable=true]').eq(0).should('be.focused');
         });
     });
+
+    describe('Blur behavior', () => {
+        it('should be able to collapse toolbar on outside click', () => {
+            cy.mount(
+                <>
+                    <RichTextEditor value="<p>Mock</p>" />
+                    <div id="outside">Not part of the RTE</div>
+                </>,
+            );
+            cy.get('[contenteditable=true]').eq(0).click();
+            cy.get('[contenteditable=true]').eq(0).should('be.focused');
+            cy.get('[contenteditable=true]').eq(0).type('{selectall}');
+            cy.get(TOOLBAR_FLOATING).should('be.visible');
+            cy.get('#outside').click({ force: true });
+            cy.get('[contenteditable=true]').eq(0).should('not.be.focused');
+            cy.get(TOOLBAR_FLOATING).should('not.exist');
+        });
+
+        it('should be able to collapse floating modal on outside click', () => {
+            cy.mount(
+                <>
+                    <RichTextEditor value="<p>Mock</p>" />
+                    <div id="outside">Not part of the RTE</div>
+                </>,
+            );
+            cy.get('[contenteditable=true]').eq(0).click();
+            cy.get('[contenteditable=true]').eq(0).should('be.focused');
+            cy.get('[contenteditable=true]').eq(0).type('{selectall}');
+            cy.get('[data-plugin-id="a"]').click();
+            cy.get('[data-test-id="floating-link-insert"]').should('be.visible');
+            cy.get('#outside').click({ force: true });
+            cy.get('[data-test-id="floating-link-insert"]').should('not.exist');
+            cy.get(TOOLBAR_FLOATING).should('not.exist');
+        });
+    });
 });
