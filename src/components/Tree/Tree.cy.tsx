@@ -240,6 +240,16 @@ describe('Tree and TreeItem components', () => {
         cy.get(TREE_ITEM_ID).should('have.length', 14);
         cy.get(TREE_ITEM_ID).eq(4).should('have.focus');
     });
+
+    it('should expand a deeper group when item is dragged one step depth in and it is allowed to be dropped', () => {
+        cy.mount(<TreeComponent draggable />);
+
+        cy.get(TREE_ITEM_TOGGLE_ID).first().click();
+        cy.get(TREE_ITEM_ID).should('have.length', 8);
+        cy.get(TREE_ITEM_DRAG_HANDLE_ID).eq(4).realMouseDown().realMouseMove(0, -80).realMouseMove(40, 0);
+        cy.wait(300);
+        cy.get(TREE_ITEM_ID).should('have.length', 11);
+    });
 });
 
 describe('Adding / Removing item dynamically', () => {

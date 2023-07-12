@@ -29,6 +29,7 @@ export interface MentionPlugin<TData extends Data = NoData> {
     withOverrides?: WithOverride;
     options: {
         trigger: string;
+        insertSpaceAfterMention: boolean;
         createMentionNode?: CreateMentionNode<TData>;
     };
 }

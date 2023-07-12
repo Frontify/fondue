@@ -67,7 +67,7 @@ import {
 } from './helpers';
 
 import { TreeContext, TreeContextProps } from './TreeContext';
-import { OFFSET_UPDATE_DELTA, ROOT_ID } from './helpers';
+import { ROOT_ID } from './helpers';
 
 const measuring: MeasuringConfiguration = {
     droppable: {
@@ -214,8 +214,6 @@ export const Tree = memo(
         const [currentPosition, setCurrentPosition] =
             useState<Nullable<{ overId: string; parentId: Nullable<string> }>>(null);
 
-        const items = useMemo(() => treeState.nodes.map((node) => node.props.id), [treeState.nodes]);
-
         useEffect(() => {
             const keyDownHandler = (event: globalThis.KeyboardEvent) => {
                 if (multiselect && (event.key === 'Meta' || event.ctrlKey)) {
@@ -332,9 +330,7 @@ export const Tree = memo(
         };
 
         const handleDragMove = ({ delta }: DragMoveEvent) => {
-            if (delta.x % OFFSET_UPDATE_DELTA === 0) {
-                setOffset(delta.x);
-            }
+            setOffset(delta.x);
         };
 
         const handleDragCancel = () => {
@@ -347,14 +343,18 @@ export const Tree = memo(
             setOffset(0);
             setCurrentPosition(null);
 
-            document.body.style.setProperty('cursor', '');
+            document.body.style.setProperty('cursor', 'default');
         };
 
         const handleKeyDown = useCallback(
             (event: React.KeyboardEvent<HTMLUListElement>) => {
                 const activeElement = document.activeElement;
 
-                if (!activeElement || !activeElement.parentElement || !(activeElement instanceof HTMLLIElement)) {
+                if (
+                    !activeElement?.parentElement ||
+                    activeElement.getAttribute('role') !== 'treeitem' ||
+                    !(activeElement instanceof HTMLLIElement)
+                ) {
                     return;
                 }
 
@@ -379,10 +379,16 @@ export const Tree = memo(
                     handleSelect(id);
                 };
 
-                const toggleExpand = () => {
+                const expandItem = () => {
                     event.preventDefault();
 
                     handleExpand(id);
+                };
+
+                const shrinkItem = () => {
+                    event.preventDefault();
+
+                    handleShrink(id);
                 };
 
                 const focusPrevious = () => {
@@ -402,7 +408,7 @@ export const Tree = memo(
                         break;
 
                     case KeyboardCode.Space:
-                        hasChildren ? toggleExpand() : toggleSelect();
+                        hasChildren ? expandItem() : toggleSelect();
 
                         break;
 
@@ -411,13 +417,13 @@ export const Tree = memo(
                             break;
                         }
 
-                        isExpanded ? focusNext() : toggleExpand();
+                        isExpanded ? focusNext() : expandItem();
 
                         break;
 
                     case KeyboardCode.Left:
                         if (hasChildren && isExpanded) {
-                            toggleExpand();
+                            shrinkItem();
                         } else if (parentId && parentId !== ROOT_ID) {
                             const parentIndex = treeState.nodes.findIndex((node) => node.props.id === parentId);
 
@@ -441,7 +447,7 @@ export const Tree = memo(
                         break;
                 }
             },
-            [handleExpand, handleSelect, treeState.expandedIds, treeState.nodes],
+            [handleExpand, handleShrink, handleSelect, treeState.expandedIds, treeState.nodes],
         );
 
         const sensorContext: SensorContext = useRef({
@@ -603,18 +609,21 @@ export const Tree = memo(
             });
         }, [activeId, offset, overId, treeState.nodes]);
 
-        const nodes = useMemo(() => {
-            return treeState.nodes.map((node) => {
-                return cloneElement(node, {
-                    treeDraggable: draggable,
-                    registerOverlay,
-                    onExpand: handleExpand,
-                    onShrink: handleShrink,
-                    onSelect: handleSelect,
-                    registerNodeChildren,
-                    unregisterNodeChildren,
-                });
-            });
+        const { nodes, items } = useMemo(() => {
+            return {
+                items: treeState.nodes.map((node) => node.props.id),
+                nodes: treeState.nodes.map((node) =>
+                    cloneElement(node, {
+                        treeDraggable: draggable,
+                        registerOverlay,
+                        onExpand: handleExpand,
+                        onShrink: handleShrink,
+                        onSelect: handleSelect,
+                        registerNodeChildren,
+                        unregisterNodeChildren,
+                    }),
+                ),
+            };
         }, [
             draggable,
             handleExpand,

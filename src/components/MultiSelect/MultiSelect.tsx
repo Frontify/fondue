@@ -13,7 +13,7 @@ import { getPaddingClasses } from './helpers';
 import { useClickOutside } from '@hooks/useClickOutside';
 import { CheckboxState } from '@components/Checkbox/Checkbox';
 import { usePopper } from 'react-popper';
-import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from '@components/Dropdown/useDropdownAutoHeight';
+import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from '@hooks/useDropdownAutoHeight';
 import { Portal } from '@components/Portal';
 
 export enum MultiSelectType {
@@ -233,7 +233,7 @@ export const MultiSelect = ({
                 <Portal>
                     <div
                         ref={setMultiSelectMenuRef}
-                        className="tw-absolute tw-left-0 tw-w-full tw-overflow-hidden tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-30 tw-bg-base tw-min-w-[18rem]"
+                        className="tw-absolute tw-left-0 tw-w-full tw-overflow-hidden tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-[120000] tw-bg-base tw-min-w-[18rem]"
                         key="content"
                         style={{
                             ...popperInstance.styles.popper,

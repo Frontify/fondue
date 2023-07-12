@@ -1,69 +1,38 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { Children, ReactElement, ReactNode, isValidElement } from 'react';
-import { Popper } from '@components/Popper';
-import { PopperPlacement, PopperProps } from '@components/Popper/types';
-import { OVERLAY_CONTAINER_CLASSES } from '@utilities/overlayStyle';
-import { useMemoizedId } from '@hooks/useMemoizedId';
+import React from 'react';
+import { Trigger } from '@utilities/dialogs/Trigger';
+import { Content } from '@utilities/dialogs/Content';
+import { Modality, OverlayProps } from '../../types/dialog';
+import { Overlay } from '@utilities/dialogs/Overlay';
+import { Z_INDEX_POPOVER } from '@utilities/dialogs/constants';
 
-export type PopoverComponentProps = {
-    'data-test-id'?: string;
-    role?: string;
-} & PopperProps;
-
-const Trigger = ({ children }: { children: ReactElement }) => {
-    return children;
-};
-Trigger.displayName = 'FonduePopoverTrigger';
-
-// eslint-disable-next-line react/jsx-no-useless-fragment
-const Content = ({ children }: { children?: ReactNode }): ReactElement => <>{children}</>;
-Content.displayName = 'FonduePopoverContent';
+export type PopoverComponentProps = OverlayProps;
 
 export const Popover = ({
     children,
     open,
-    placement = PopperPlacement.BottomStart,
+    placement = 'bottom-start',
     offset = [0, 8],
     flip = false,
-    enablePortal = false,
+    enablePortal = true,
     'data-test-id': dataTestId = 'fondue-popover',
     role = 'region',
 }: PopoverComponentProps) => {
-    const id = useMemoizedId();
     return (
-        <Popper open={open} placement={placement} offset={offset} flip={flip} enablePortal={enablePortal}>
-            {Children.map(children, (child) => {
-                if (isValidElement(child) && typeof child.type === 'function') {
-                    const { name } = child.type;
-
-                    if (name === Trigger.name) {
-                        return (
-                            <Popper.Reference>
-                                <div id={id}>{child}</div>
-                            </Popper.Reference>
-                        );
-                    }
-
-                    if (name === Content.name) {
-                        return (
-                            <Popper.Content>
-                                <div
-                                    data-test-id={dataTestId}
-                                    className={OVERLAY_CONTAINER_CLASSES}
-                                    role={role}
-                                    id={id}
-                                    aria-hidden={!open}
-                                    aria-labelledby={id}
-                                >
-                                    {child}
-                                </div>
-                            </Popper.Content>
-                        );
-                    }
-                }
-            })}
-        </Popper>
+        <Overlay
+            open={open}
+            placement={placement}
+            offset={offset}
+            flip={flip}
+            enablePortal={enablePortal}
+            role={role}
+            data-test-id={dataTestId}
+            modality={Modality.NonModal}
+            zIndex={Z_INDEX_POPOVER}
+        >
+            {children}
+        </Overlay>
     );
 };
 Popover.displayName = 'FonduePopover';

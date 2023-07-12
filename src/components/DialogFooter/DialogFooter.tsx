@@ -1,13 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { ReactElement } from 'react';
-import { Button, ButtonProps, ButtonSize } from '@components/Button';
+import { Button, ButtonSize } from '@components/Button';
 import { Box } from '@components/Box';
-
-export type DialogFooterProps = {
-    buttons: ButtonProps[];
-    'data-test-id'?: string;
-};
+import { DialogFooterProps } from '../../types/dialog';
 
 export const DialogFooter = ({
     buttons,
