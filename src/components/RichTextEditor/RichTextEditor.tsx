@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useMemoizedId } from '@hooks/useMemoizedId';
-import { Plate, TEditableProps } from '@udecode/plate';
 import React from 'react';
+import { Plate, TEditableProps } from '@udecode/plate';
 import { RenderPlaceholderProps } from 'slate-react';
 import { ContentReplacement } from './ContentReplacement';
 import { RichTextEditorProvider } from './context/RichTextEditorContext';
@@ -12,6 +12,7 @@ import { useEditorState } from './hooks';
 import { GAP_DEFAULT, KEY_ELEMENT_BREAK_AFTER_COLUMN, PluginComposer, defaultPlugins } from './Plugins';
 import { PaddingSizes, TreeOfNodes } from './types';
 import { parseRawValue } from './utils';
+import { BlurObserver } from '@components/RichTextEditor/BlurObserver';
 
 const PLACEHOLDER_STYLES: RenderPlaceholderProps['attributes']['style'] = {
     position: 'relative',
@@ -32,6 +33,7 @@ export type RichTextEditorProps = {
     border?: boolean;
     updateValueOnChange?: boolean; // Only set to true when you are sure that performance isn't an issue
     toolbarWidth?: number;
+    hideExternalFloatingModals?: (editorId: string) => void;
 };
 
 export const RichTextEditor = ({
@@ -48,6 +50,7 @@ export const RichTextEditor = ({
     onValueChanged,
     border = true,
     toolbarWidth,
+    hideExternalFloatingModals,
 }: RichTextEditorProps) => {
     const editorId = useMemoizedId(id);
     const { localValue, onChange, memoizedValue, config } = useEditorState({
@@ -80,6 +83,7 @@ export const RichTextEditor = ({
         style: {
             columns,
             columnGap,
+            outline: 'none',
         },
         onKeyDown: (event) => {
             if (event.code === 'Tab') {
@@ -97,6 +101,7 @@ export const RichTextEditor = ({
                 styles: config.styles(),
                 position,
                 border,
+                editorId,
             }}
         >
             <Plate
@@ -109,6 +114,9 @@ export const RichTextEditor = ({
                 {!editableProps.readOnly && config.toolbar(toolbarWidth)}
                 {config.inline()}
                 {updateValueOnChange && <ContentReplacement value={parseRawValue({ editorId, raw: value, plugins })} />}
+                {position === Position.FLOATING && (
+                    <BlurObserver hideExternalFloatingModals={hideExternalFloatingModals} />
+                )}
             </Plate>
         </RichTextEditorProvider>
     );
