@@ -110,6 +110,7 @@ const Template: StoryFn<InlineDialogProps> = (args) => {
                                 </Flex>
                             </Box>
                             <Dropdown
+                                enablePortal={false}
                                 onChange={(id) => console.log(id)}
                                 activeItemId="1"
                                 menuBlocks={[
@@ -220,6 +221,7 @@ const InContext: StoryFn<InlineDialogProps> = (args) => {
                         <DialogBody>
                             <div className="tw-p-2">
                                 <Dropdown
+                                    enablePortal={false}
                                     onChange={(id) => console.log(id)}
                                     activeItemId={'1'}
                                     menuBlocks={[

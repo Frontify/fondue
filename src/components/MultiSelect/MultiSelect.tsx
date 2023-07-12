@@ -14,7 +14,7 @@ import { useClickOutside } from '@hooks/useClickOutside';
 import { CheckboxState } from '@components/Checkbox/Checkbox';
 import { usePopper } from 'react-popper';
 import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from '@hooks/useDropdownAutoHeight';
-import { Portal } from '@components/Portal';
+import { EnablePortalWrapper } from '@utilities/dialogs/EnablePortalWrapper';
 
 export enum MultiSelectType {
     Default = 'Default',
@@ -50,6 +50,7 @@ export type MultiSelectProps = {
     indeterminateItemKeys?: (string | number)[];
     flip?: boolean;
     emphasis?: TriggerEmphasis;
+    enablePortal?: boolean;
 };
 
 export type Item = {
@@ -77,6 +78,7 @@ export const MultiSelect = ({
     indeterminateItemKeys,
     flip = false,
     emphasis = TriggerEmphasis.Default,
+    enablePortal = true,
 }: MultiSelectProps): ReactElement => {
     const [open, setOpen] = useState(false);
     const [checkboxes, setCheckboxes] = useState<Item[]>([]);
@@ -169,9 +171,13 @@ export const MultiSelect = ({
     });
 
     useEffect(() => {
-        if (popperInstance.update) {
-            popperInstance.update();
-        }
+        const updatePopper = async () => {
+            if (popperInstance.update) {
+                await popperInstance.update();
+            }
+        };
+
+        updatePopper().catch(console.error);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeItemKeys]);
 
@@ -230,7 +236,7 @@ export const MultiSelect = ({
             </Trigger>
 
             {open && heightIsReady && (
-                <Portal>
+                <EnablePortalWrapper enablePortal={enablePortal}>
                     <div
                         ref={setMultiSelectMenuRef}
                         className="tw-absolute tw-left-0 tw-w-full tw-overflow-hidden tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-[120000] tw-bg-base tw-min-w-[18rem]"
@@ -256,7 +262,7 @@ export const MultiSelect = ({
                             </div>
                         </FocusScope>
                     </div>
-                </Portal>
+                </EnablePortalWrapper>
             )}
         </div>
     );
