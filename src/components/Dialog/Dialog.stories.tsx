@@ -168,9 +168,17 @@ const WithTabsTemplate: StoryFn<DialogProps> = (args) => {
     );
 };
 
-export const Default = Template.bind({});
-export const WithDarkUnderlay = Template.bind({});
-WithDarkUnderlay.args = {
+export const AsANonModal = Template.bind({});
+AsANonModal.args = {
+    modality: Modality.NonModal,
+};
+export const AsAModal = Template.bind({});
+AsAModal.args = {
+    modality: Modality.Modal,
+};
+export const AsABlockingModalWithDarkUnderlay = Template.bind({});
+AsABlockingModalWithDarkUnderlay.args = {
+    modality: Modality.BlockingModal,
     darkUnderlay: true,
 };
 export const WithTabsAndTopAlignment = WithTabsTemplate.bind({});
