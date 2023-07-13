@@ -113,26 +113,29 @@ export const Trigger = ({
                         <IconTrashBin size={IconSize.Size12} />
                     </button>
                 )}
-                <button
-                    {...buttonProps}
-                    aria-hidden="true"
-                    type="button"
-                    disabled={disabled}
-                    className={merge([
-                        'tw-rounded',
-                        disabled
-                            ? 'tw-pointer-events-none tw-text-black-40'
-                            : merge([
-                                  'group-hover:tw-text-black ',
-                                  isOpen ? 'tw-text-black-100' : 'tw-text-black-80',
-                                  FOCUS_VISIBLE_STYLE,
-                              ]),
-                    ])}
-                >
-                    <div className={merge(['tw-transition-transform', isOpen && 'tw-rotate-180'])}>
-                        <IconCaretDown size={IconSize.Size16} />
-                    </div>
-                </button>
+                <div aria-hidden={true}>
+                    <button
+                        {...buttonProps}
+                        type="button"
+                        tabIndex={-1}
+                        disabled={disabled}
+                        className={merge([
+                            'tw-rounded',
+                            disabled
+                                ? 'tw-pointer-events-none tw-text-black-40'
+                                : merge([
+                                      'group-hover:tw-text-black ',
+                                      isOpen ? 'tw-text-black-100' : 'tw-text-black-80',
+                                      FOCUS_VISIBLE_STYLE,
+                                  ]),
+                        ])}
+                    >
+                        <div className={merge(['tw-transition-transform', isOpen && 'tw-rotate-180'])}>
+                            <IconCaretDown size={IconSize.Size16} />
+                        </div>
+                    </button>
+                </div>
+
                 {(validation === Validation.Error || validation === Validation.Warning) && (
                     <span
                         className={merge([
