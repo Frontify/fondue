@@ -116,7 +116,6 @@ export const Trigger = ({
                 <button
                     {...buttonProps}
                     type="button"
-                    aria-hidden={true}
                     tabIndex={-1}
                     disabled={disabled}
                     className={merge([
@@ -130,7 +129,7 @@ export const Trigger = ({
                               ]),
                     ])}
                 >
-                    <div className={merge(['tw-transition-transform', isOpen && 'tw-rotate-180'])}>
+                    <div aria-hidden={true} className={merge(['tw-transition-transform', isOpen && 'tw-rotate-180'])}>
                         <IconCaretDown size={IconSize.Size16} />
                     </div>
                 </button>
