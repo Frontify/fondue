@@ -129,8 +129,10 @@ export const Trigger = ({
                               ]),
                     ])}
                 >
-                    <div aria-hidden={true} className={merge(['tw-transition-transform', isOpen && 'tw-rotate-180'])}>
-                        <IconCaretDown size={IconSize.Size16} />
+                    <div className={merge(['tw-transition-transform', isOpen && 'tw-rotate-180'])}>
+                        <span aria-hidden={true}>
+                            <IconCaretDown size={IconSize.Size16} />
+                        </span>
                     </div>
                 </button>
                 {(validation === Validation.Error || validation === Validation.Warning) && (
