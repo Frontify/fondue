@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Tooltip, TooltipAlignment, TooltipPosition } from '@components/Tooltip';
+import { LegacyTooltip, TooltipAlignment, TooltipPosition } from '@components/LegacyTooltip';
 import IconQuestionMarkCircle from '@foundation/Icon/Generated/IconQuestionMarkCircle';
 import { IconSize } from '@foundation/Icon';
 import { generateRandomId } from '@utilities/generateRandomId';
@@ -103,7 +103,7 @@ export const RadioList = ({
                             </label>
                         )}
                         {radio.tooltip && (
-                            <Tooltip
+                            <LegacyTooltip
                                 alignment={TooltipAlignment.Middle}
                                 content={radio.tooltip}
                                 hoverDelay={75}

@@ -17,7 +17,7 @@ import { Flex } from '@components/Flex';
 import { Box } from '@components/Box';
 import IconDotsVertical16 from '@foundation/Icon/Generated/IconDotsVertical16';
 import { IconExclamationMarkCircle16 } from '@foundation/Icon/Generated';
-import { Tooltip } from '@components/Tooltip';
+import { LegacyTooltip } from '@components/LegacyTooltip';
 
 export default {
     title: 'Experimental/Work In Progress/InlineDialog',
@@ -98,7 +98,7 @@ const Template: StoryFn<InlineDialogProps> = (args) => {
                         <Box className="tw-p-4">
                             <Box className="tw-mb-2">
                                 <Flex justify="start">
-                                    <Tooltip
+                                    <LegacyTooltip
                                         triggerElement={
                                             <button aria-label="Exclamation mark circle icon" className="tw-mr-1">
                                                 <IconExclamationMarkCircle16 />
