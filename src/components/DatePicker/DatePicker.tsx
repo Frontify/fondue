@@ -37,6 +37,7 @@ export type DatePickerProps = {
     maxDate?: Date;
     validation?: Validation;
     customTrigger?: React.ReactNode;
+    customHeader?: React.ReactNode;
     children?: React.ReactNode;
     hasPopperArrow?: boolean;
     preventOpenOnFocus?: boolean;
@@ -76,6 +77,7 @@ export const DatePicker = forwardRef<ReactDatePicker<never, boolean>, DatePicker
             maxDate,
             validation = Validation.Default,
             customTrigger,
+            customHeader,
             children,
             hasPopperArrow = true,
             preventOpenOnFocus = false,
@@ -137,38 +139,41 @@ export const DatePicker = forwardRef<ReactDatePicker<never, boolean>, DatePicker
                         strategy: 'fixed',
                     }}
                     renderCustomHeader={({ date, decreaseMonth, increaseMonth, increaseYear, decreaseYear }) => (
-                        <div className="tw-flex tw-justify-between tw-pb-4 tw-px-0">
-                            <Button
-                                style={ButtonStyle.Default}
-                                size={ButtonSize.Medium}
-                                onClick={decreaseYear}
-                                emphasis={ButtonEmphasis.Weak}
-                                icon={<IconCaretLeftDouble size={IconSize.Size20} />}
-                            />
-                            <Button
-                                style={ButtonStyle.Default}
-                                size={ButtonSize.Medium}
-                                onClick={decreaseMonth}
-                                emphasis={ButtonEmphasis.Weak}
-                                icon={<IconCaretLeft size={IconSize.Size20} />}
-                            />
-                            <p className="tw-font-sans tw-font-semibold tw-grow tw-self-center">
-                                {format(date, 'MMMM')} {getYear(date)}
-                            </p>
-                            <Button
-                                style={ButtonStyle.Default}
-                                size={ButtonSize.Medium}
-                                onClick={increaseMonth}
-                                emphasis={ButtonEmphasis.Weak}
-                                icon={<IconCaretRight size={IconSize.Size20} />}
-                            />
-                            <Button
-                                style={ButtonStyle.Default}
-                                size={ButtonSize.Medium}
-                                onClick={increaseYear}
-                                emphasis={ButtonEmphasis.Weak}
-                                icon={<IconCaretRightDouble size={IconSize.Size20} />}
-                            />
+                        <div className="tw-flex tw-flex-col tw-gap-3">
+                            {customHeader}
+                            <div className="tw-flex tw-justify-between tw-pb-4 tw-px-0">
+                                <Button
+                                    style={ButtonStyle.Default}
+                                    size={ButtonSize.Medium}
+                                    onClick={decreaseYear}
+                                    emphasis={ButtonEmphasis.Weak}
+                                    icon={<IconCaretLeftDouble size={IconSize.Size20} />}
+                                />
+                                <Button
+                                    style={ButtonStyle.Default}
+                                    size={ButtonSize.Medium}
+                                    onClick={decreaseMonth}
+                                    emphasis={ButtonEmphasis.Weak}
+                                    icon={<IconCaretLeft size={IconSize.Size20} />}
+                                />
+                                <p className="tw-font-sans tw-font-semibold tw-grow tw-self-center">
+                                    {format(date, 'MMMM')} {getYear(date)}
+                                </p>
+                                <Button
+                                    style={ButtonStyle.Default}
+                                    size={ButtonSize.Medium}
+                                    onClick={increaseMonth}
+                                    emphasis={ButtonEmphasis.Weak}
+                                    icon={<IconCaretRight size={IconSize.Size20} />}
+                                />
+                                <Button
+                                    style={ButtonStyle.Default}
+                                    size={ButtonSize.Medium}
+                                    onClick={increaseYear}
+                                    emphasis={ButtonEmphasis.Weak}
+                                    icon={<IconCaretRightDouble size={IconSize.Size20} />}
+                                />
+                            </div>
                         </div>
                     )}
                     popperModifiers={[
