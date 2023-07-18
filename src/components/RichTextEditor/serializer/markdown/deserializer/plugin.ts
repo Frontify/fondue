@@ -15,7 +15,6 @@ export default function plugin(options?: PartialOptionType, config?: Deserialize
             ...defaultDeserializerConfig,
             ...config,
         };
-        console.log('configMerged', mergedConfig);
         return node.children.map((c) => deserialize(c, getSelectedOptions(options), mergedConfig));
     };
 
