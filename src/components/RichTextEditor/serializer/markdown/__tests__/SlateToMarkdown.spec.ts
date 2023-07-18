@@ -115,8 +115,8 @@ describe('Slate To Markdown transformer', () => {
     });
 
     it('should transform image', () => {
-        const result = transformer.process(imageTree);
-        expect(result).to.deep.equal(imageMarkdown);
+        const result = transformer.process(imageTree[0]);
+        expect(result).to.deep.equal(imageMarkdown[0]);
     });
 
     it('should transform block quote', () => {

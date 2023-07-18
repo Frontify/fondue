@@ -26,6 +26,17 @@ export const createLink = (text: string, url?: string, target?: TargetValue): Bl
     };
 };
 
+export const createImage = (caption: string, url?: string) => ({
+    type: 'img',
+    link: url,
+    caption,
+    children: [
+        {
+            text: '',
+        },
+    ],
+});
+
 export const createText = (text: string) => createLeafElement({ text });
 export const createBoldText = (text: string) => createLeafElement({ bold: true, text });
 export const createItalicText = (text: string) => createLeafElement({ italic: true, text });

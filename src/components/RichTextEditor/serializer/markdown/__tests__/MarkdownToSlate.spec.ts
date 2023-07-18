@@ -107,9 +107,21 @@ describe('Markdown to slate Transformer', () => {
         });
     });
 
-    it('should transform image', () => {
-        const result = transformer.process(imageMarkdown);
-        expect(result).to.deep.equal(imageTree);
+    describe('Image transformation', () => {
+        it('should transform image', () => {
+            const result = transformer.process(imageMarkdown[0]);
+            expect(imageTree[0]).to.deep.equal(result);
+        });
+
+        it('should correctly transform the unsafe image source', () => {
+            const result = transformer.process(imageMarkdown[1]);
+            expect(imageTree[1]).to.deep.equal(result);
+        });
+
+        it('should create text for not standard image source', () => {
+            const result = transformer.process(imageMarkdown[2]);
+            expect(imageTree[2]).to.deep.equal(result);
+        });
     });
 
     it('should transform block quote', () => {

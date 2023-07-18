@@ -81,7 +81,7 @@ export default function deserialize<T extends InputNodeTypes>(
             return {
                 type: types.image,
                 children: [{ text: '' }],
-                [imageSourceKey]: node.url,
+                [imageSourceKey]: allowUnsafeLink(node.url, config?.allowUnsafeLink),
                 [imageCaptionKey]: node.alt,
             } as ImageNode<T>;
         case 'blockquote':
