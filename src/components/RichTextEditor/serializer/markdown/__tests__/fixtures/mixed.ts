@@ -52,10 +52,6 @@ Lorem ipsum dolor sit amet, consetetur @[group:1111111111] sadipscing elitr, sed
 
 1. Ordered list item number three.
 
-Unsafe link: [xss ca-30JS](javascript:alert("XSS-Vulnerability"))
-
-Unsafe link not markdown standard: [xss ca-30JS](javascript:alert("With the spaces as link"))
-
 `;
 
 export const mixedTree = [
@@ -191,8 +187,38 @@ export const mixedTree = [
 
     ...unorderedListTree[0],
     ...orderedListTree[0],
+];
 
-    createP([createText('Unsafe link: '), createLink('xss ca-30JS')]),
+export const mixedMarkdownWithUnsafeLink1 = `${mixedMarkdown}
+
+Unsafe link: [xss ca-30JS](javascript:alert("XSS-Vulnerability")){:target="_self"}
+
+Unsafe link not markdown standard: [xss ca-30JS](javascript:alert("With the spaces as link"))
+
+`;
+
+export const mixedTreeWithUnsafeLink1 = [
+    ...mixedTree,
+    createP([createText('Unsafe link: '), createLink('xss ca-30JS', undefined, '_self'), createText('')]),
+    createP([
+        createText('Unsafe link not markdown standard: [xss ca-30JS](javascript:alert("With the spaces as link"))'),
+    ]),
+];
+
+export const mixedMarkdownWithUnsafeLink2 = `${mixedMarkdown}
+Unsafe link: [xss ca-30JS](javascript:alert("XSS-Vulnerability")){:target="_self"}
+
+Unsafe link not markdown standard: [xss ca-30JS](javascript:alert("With the spaces as link"))
+
+`;
+
+export const mixedTreeWithUnsafeLink2 = [
+    ...mixedTree,
+    createP([
+        createText('\n'),
+        createText('Unsafe link: '),
+        createLink('xss ca-30JS', 'javascript:alert("XSS-Vulnerability")', '_self'),
+    ]),
     createP([
         createText('Unsafe link not markdown standard: [xss ca-30JS](javascript:alert("With the spaces as link"))'),
     ]),

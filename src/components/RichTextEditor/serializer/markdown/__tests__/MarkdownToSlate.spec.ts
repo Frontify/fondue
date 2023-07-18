@@ -20,7 +20,9 @@ import {
     mentionsMarkdown,
     mentionsTree,
     mixedMarkdown,
+    mixedMarkdownWithUnsafeLink1,
     mixedTree,
+    mixedTreeWithUnsafeLink1,
     orderedListMarkdown,
     orderedListTree,
     paragraphMarkdown,
@@ -132,9 +134,16 @@ describe('Markdown to slate Transformer', () => {
         expect(result).to.deep.equal(blockQuoteTree[1]);
     });
 
-    it('should transform mixed text', () => {
-        const result = transformer.process(mixedMarkdown);
-        expect(result).to.deep.equal(mixedTree);
+    describe('Mixed text transformation', () => {
+        it('should transform mixed text', () => {
+            const result = transformer.process(mixedMarkdown);
+            expect(result).to.deep.equal(mixedTree);
+        });
+
+        it('should transform mixed text with unsafe link', () => {
+            const result = transformer.process(mixedMarkdownWithUnsafeLink1);
+            expect(result).to.deep.equal(mixedTreeWithUnsafeLink1);
+        });
     });
 
     it('should transform mentions text', () => {
