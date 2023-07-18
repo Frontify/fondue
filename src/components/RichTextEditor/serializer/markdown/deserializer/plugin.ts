@@ -3,10 +3,20 @@
 import { MarkdownAstNode, PartialOptionType } from '../types';
 import { getSelectedOptions } from '../utils';
 import deserialize from './deserialize';
+import { DeserializerConfig } from './types';
 
-export default function plugin(options?: PartialOptionType) {
+const defaultDeserializerConfig: DeserializerConfig = {
+    allowUnsafeLink: false,
+};
+
+export default function plugin(options?: PartialOptionType, config?: DeserializerConfig) {
     const compiler = (node: { children: Array<MarkdownAstNode> }) => {
-        return node.children.map((c) => deserialize(c, getSelectedOptions(options)));
+        const mergedConfig = {
+            ...defaultDeserializerConfig,
+            ...config,
+        };
+        console.log('configMerged', mergedConfig);
+        return node.children.map((c) => deserialize(c, getSelectedOptions(options), mergedConfig));
     };
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
