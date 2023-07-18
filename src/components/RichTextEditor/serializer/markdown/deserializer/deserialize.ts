@@ -18,7 +18,7 @@ import {
     TextNode,
     ThematicBreakNode,
 } from '../types';
-import { MENTION_DESERIALIZE_REGEX } from '../utils';
+import { MENTION_DESERIALIZE_REGEX, isMaliciousLink } from '../utils';
 import { DeserializerConfig } from './types';
 
 export default function deserialize<T extends InputNodeTypes>(
@@ -172,4 +172,4 @@ const getOptions = (options: OptionType) => {
 };
 
 const allowUnsafeLink = (link?: string, allow = false): string | undefined =>
-    !allow && link && /^(https?|ftp):\/\//i.test(link) ? link : undefined;
+    !allow && link && !isMaliciousLink(link) ? link : undefined;

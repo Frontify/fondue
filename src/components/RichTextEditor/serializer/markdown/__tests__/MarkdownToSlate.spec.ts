@@ -107,6 +107,11 @@ describe('Markdown to slate Transformer', () => {
             const result = transformer.process(linkMarkdown[4]);
             expect(linkTree[4]).to.deep.equal(result);
         });
+
+        it('should create mailto link', () => {
+            const result = transformer.process(linkMarkdown[5]);
+            expect(result).to.deep.equal(linkTree[5]);
+        });
     });
 
     describe('Image transformation', () => {

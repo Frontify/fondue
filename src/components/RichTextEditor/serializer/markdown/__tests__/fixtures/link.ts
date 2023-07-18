@@ -34,12 +34,16 @@ const unsafeLinkTreeNotMarkdownStandard = [
     createP([createText('[xss ca-30JS](javascript:alert("XSS Vulnerability"))')]),
 ];
 
+const linkMarkdownMailto = '[Email link](mailto:max@muster.com){:target="_blank"}\n\n';
+const linkTreeMailto = [createP([createLink('Email link', 'mailto:max@muster.com'), createText('')])];
+
 export const linkMarkdown = [
     linkMarkdownTargetSelf,
     linkMarkdownTargetBlank,
     unsafeLinkMarkdown,
     unsafeLinkMarkdownWithTarget,
     unsafeLinkNotMarkdownStandard,
+    linkMarkdownMailto,
 ];
 export const linkTree = [
     linkTreeTargetSelf,
@@ -47,4 +51,5 @@ export const linkTree = [
     unsafeLinkTree,
     unsafeLinkTreeWithTarget,
     unsafeLinkTreeNotMarkdownStandard,
+    linkTreeMailto,
 ];

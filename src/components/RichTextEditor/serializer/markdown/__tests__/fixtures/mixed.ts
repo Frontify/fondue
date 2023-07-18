@@ -206,7 +206,7 @@ export const mixedTreeWithUnsafeLink1 = [
 ];
 
 export const mixedMarkdownWithUnsafeLink2 = `${mixedMarkdown}
-Unsafe link: [xss ca-30JS](javascript:alert("XSS-Vulnerability")){:target="_self"}
+Unsafe link: [xss ca-30JS](){:target="_self"}
 
 Unsafe link not markdown standard: [xss ca-30JS](javascript:alert("With the spaces as link"))
 
