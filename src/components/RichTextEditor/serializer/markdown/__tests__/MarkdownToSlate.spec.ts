@@ -92,6 +92,19 @@ describe('Markdown to slate Transformer', () => {
             const result = transformer.process(linkMarkdown[1]);
             expect(result).to.deep.equal(linkTree[1]);
         });
+
+        it('should correctly transform the Unsafe links', () => {
+            let result = transformer.process(linkMarkdown[2]);
+            expect(linkTree[2]).to.deep.equal(result);
+
+            result = transformer.process(linkMarkdown[3]);
+            expect(linkTree[3]).to.deep.equal(result);
+        });
+
+        it('should create text for not standard markdown link', () => {
+            const result = transformer.process(linkMarkdown[4]);
+            expect(linkTree[4]).to.deep.equal(result);
+        });
     });
 
     it('should transform image', () => {

@@ -126,13 +126,13 @@ export const mixedTree = [
             {
                 text: '\nThis is ',
             },
-            createLink('https://www.frontify.com/', 'link to frontify.com', Targets.Self),
+            createLink('link to frontify.com', 'https://www.frontify.com/', Targets.Self),
             createText('.'),
         ],
     },
     createP([
         createText('This is second link '),
-        createLink('https://www.frontify.com/', 'link to www.frontify.com'),
+        createLink('link to www.frontify.com', 'https://www.frontify.com/'),
         createText(' with target blank.'),
     ]),
     createP([createText('I am normal Paragraph')]),
