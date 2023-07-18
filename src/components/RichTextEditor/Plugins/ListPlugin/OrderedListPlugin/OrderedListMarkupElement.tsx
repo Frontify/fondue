@@ -30,7 +30,9 @@ const getNestingLevel = (editor: PlateEditor, element: TElement) => {
 };
 
 export const getOrderedListClasses = (nestingLevel: number) =>
-    `tw-list-none tw-pl-[10px] tw-mb-[10px] tw-ml-[15px] [&>li>p]:before:tw-pr-1 ${LIST_TYPES[nestingLevel % 3]}`;
+    `tw-list-none tw-pl-[10px] tw-mb-[10px] tw-ml-[15px] [&>li>p]:before:tw-pr-1 [&>li>p]:before:tw-tabular-nums ${
+        LIST_TYPES[nestingLevel % 3]
+    }`;
 export const OL_STYLES = { counterReset: 'count' };
 
 export const OrderedListMarkupElementNode = ({
