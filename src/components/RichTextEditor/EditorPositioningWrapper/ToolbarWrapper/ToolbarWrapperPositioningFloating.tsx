@@ -53,7 +53,7 @@ export const ToolbarWrapperPositioningFloating = ({
                 middleware: [flip(), shift()],
                 whileElementsMounted: autoUpdateWithCleanup,
             }}
-            styles={{ root: { border: 'none', background: '#ffffff', width } }}
+            styles={{ root: { border: 'none', background: '#ffffff', width, transitionDuration: '0s' } }}
         >
             <div
                 data-selector="toolbar-floating"
