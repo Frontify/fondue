@@ -13,7 +13,7 @@ const createLeafElement = (children: LeafType): LeafType => {
     return children;
 };
 
-export const createLink = (url: string, text: string, target?: TargetValue): BlockType => {
+export const createLink = (text: string, url?: string, target?: TargetValue): BlockType => {
     return {
         type: 'a',
         url,
@@ -25,6 +25,17 @@ export const createLink = (url: string, text: string, target?: TargetValue): Blo
         ],
     };
 };
+
+export const createImage = (caption: string, url?: string) => ({
+    type: 'img',
+    link: url,
+    caption,
+    children: [
+        {
+            text: '',
+        },
+    ],
+});
 
 export const createText = (text: string) => createLeafElement({ text });
 export const createBoldText = (text: string) => createLeafElement({ bold: true, text });

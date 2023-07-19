@@ -20,7 +20,9 @@ import {
     mentionsMarkdown,
     mentionsTree,
     mixedMarkdown,
+    mixedMarkdownWithUnsafeLink2,
     mixedTree,
+    mixedTreeWithUnsafeLink2,
     orderedListMarkdown,
     orderedListTree,
     paragraphMarkdown,
@@ -112,11 +114,16 @@ describe('Slate To Markdown transformer', () => {
             const result = transformer.process(linkTree[1]);
             expect(result).to.deep.equal(linkMarkdown[1]);
         });
+
+        it('should create mailto link', () => {
+            const result = transformer.process(linkTree[5]);
+            expect(result).to.deep.equal(linkMarkdown[5]);
+        });
     });
 
     it('should transform image', () => {
-        const result = transformer.process(imageTree);
-        expect(result).to.deep.equal(imageMarkdown);
+        const result = transformer.process(imageTree[0]);
+        expect(result).to.deep.equal(imageMarkdown[0]);
     });
 
     it('should transform block quote', () => {
@@ -127,9 +134,16 @@ describe('Slate To Markdown transformer', () => {
         expect(result).to.deep.equal(blockQuoteMarkdown[1]);
     });
 
-    it('should transform mixed text', () => {
-        const result = transformer.process(mixedTree);
-        expect(result).to.deep.equal(mixedMarkdown);
+    describe('Mixed text transformation', () => {
+        it('should transform mixed text', () => {
+            const result = transformer.process(mixedTree);
+            expect(result).to.deep.equal(mixedMarkdown);
+        });
+
+        it('should transform mixed text with unsafe link', () => {
+            const result = transformer.process(mixedTreeWithUnsafeLink2);
+            expect(result).to.deep.equal(mixedMarkdownWithUnsafeLink2);
+        });
     });
 
     it('should transform mentions text', () => {

@@ -18,9 +18,14 @@ import {
     TextNode,
     ThematicBreakNode,
 } from '../types';
-import { MENTION_DESERIALIZE_REGEX } from '../utils';
+import { MENTION_DESERIALIZE_REGEX, isMaliciousLink } from '../utils';
+import { DeserializerConfig } from './types';
 
-export default function deserialize<T extends InputNodeTypes>(node: MarkdownAstNode, options: OptionType) {
+export default function deserialize<T extends InputNodeTypes>(
+    node: MarkdownAstNode,
+    options: OptionType,
+    config?: DeserializerConfig,
+) {
     const types = options?.nodeTypes as InputNodeTypes;
     const { linkDestinationKey, imageSourceKey, imageCaptionKey } = getOptions(options);
 
@@ -34,6 +39,7 @@ export default function deserialize<T extends InputNodeTypes>(node: MarkdownAstN
                     ordered: node.ordered || false,
                 },
                 options,
+                config,
             ),
         );
     }
@@ -67,7 +73,7 @@ export default function deserialize<T extends InputNodeTypes>(node: MarkdownAstN
         case 'link':
             return {
                 type: types.link,
-                [linkDestinationKey]: node.url,
+                [linkDestinationKey]: allowUnsafeLink(node.url, config?.allowUnsafeLink),
                 target: node.target,
                 children,
             } as LinkNode<T>;
@@ -75,7 +81,7 @@ export default function deserialize<T extends InputNodeTypes>(node: MarkdownAstN
             return {
                 type: types.image,
                 children: [{ text: '' }],
-                [imageSourceKey]: node.url,
+                [imageSourceKey]: allowUnsafeLink(node.url, config?.allowUnsafeLink),
                 [imageCaptionKey]: node.alt,
             } as ImageNode<T>;
         case 'blockquote':
@@ -164,3 +170,6 @@ const getOptions = (options: OptionType) => {
 
     return { linkDestinationKey, imageSourceKey, imageCaptionKey };
 };
+
+const allowUnsafeLink = (link?: string, allow = false): string | undefined =>
+    !allow && link && !isMaliciousLink(link) ? link : undefined;

@@ -3,6 +3,7 @@
 import escapeHtml from 'escape-html';
 import { BlockType, InputNodeTypes, NodeType, OptionType, Targets } from '../types';
 import { isLeafNode } from './isLeafNode';
+import { isMaliciousLink } from '../utils';
 
 const processMentionNode = (chunk: BlockType) => `@[${chunk.category}:${chunk.id}]`;
 
@@ -75,12 +76,14 @@ export const applyFormattingToBlockNode = (
             return `\`\`\`${(chunk as BlockType).language || ''}\n${children}\n\`\`\`\n`;
 
         case nodeTypes.link:
-            const linkUrl = (chunk as BlockType).url ?? '';
+            let linkUrl = (chunk as BlockType).url ?? '';
+            linkUrl = isMaliciousLink(linkUrl) ? '' : linkUrl;
             const target = (chunk as BlockType).target ?? Targets.Blank;
             return `[${children}](${linkUrl}){:target="${target}"}`;
 
         case nodeTypes.image:
-            const imageUrl = (chunk as BlockType).link ?? '';
+            let imageUrl = (chunk as BlockType).link ?? '';
+            imageUrl = isMaliciousLink(imageUrl) ? '' : imageUrl;
             return `![${(chunk as BlockType).caption}](${imageUrl})`;
 
         case nodeTypes.ulList:
