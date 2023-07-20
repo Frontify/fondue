@@ -3,6 +3,7 @@
 import { mentionable, orderedListValue, unorderedListValue } from '@components/RichTextEditor/helpers/exampleValues';
 import { ELEMENT_CHECK_ITEM, mapMentionable } from '@components/RichTextEditor/Plugins';
 import {
+    ELEMENT_IMAGE,
     ELEMENT_LI,
     ELEMENT_LIC,
     ELEMENT_LINK,
@@ -370,6 +371,39 @@ describe('serializeNodeToHtmlRecursive()', () => {
 
         expect(result).to.be.equal(
             '<p class="tw-break-words" style="font-size: 14px; font-style: normal; font-weight: normal;"><a class="tw-break-words" style="font-size: 14px; font-style: normal; color: rgb(113, 89, 215); text-decoration: underline; cursor: pointer;" target="_blank" href="https://frontify.com">This is a Link.</a></p>',
+        );
+    });
+
+    it("serializes and don't break if MapNode does not exist", () => {
+        const node = {
+            type: ELEMENT_PARAGRAPH,
+            children: [
+                {
+                    type: ELEMENT_IMAGE,
+                    children: [
+                        {
+                            text: 'This is ',
+                        },
+                        {
+                            type: 'img',
+                            children: [
+                                {
+                                    text: '',
+                                },
+                            ],
+                            caption: 'Image without source',
+                        },
+                        {
+                            text: '.',
+                        },
+                    ],
+                },
+            ],
+        };
+        const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
+
+        expect(result).to.be.equal(
+            '<p class="tw-break-words" style="font-size: 14px; font-style: normal; font-weight: normal;">This is .</p>',
         );
     });
 });

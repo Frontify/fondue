@@ -75,16 +75,24 @@ export const serializeNodeToHtmlRecursive = (
     }
 
     const htmlMapper = MapNodeTypesToHtml[node.type];
-    return (
-        htmlMapper({
-            classNames: getClassNames(node.breakAfterColumn as string | undefined, node.align as string | undefined),
-            children,
-            rootNestingCount,
-            node,
-            mappedMentionable,
-            styles,
-        }) ?? children
-    );
+    try {
+        return (
+            htmlMapper({
+                classNames: getClassNames(
+                    node.breakAfterColumn as string | undefined,
+                    node.align as string | undefined,
+                ),
+                children,
+                rootNestingCount,
+                node,
+                mappedMentionable,
+                styles,
+            }) ?? children
+        );
+    } catch (error) {
+        console.warn(`The htmlMapper for node type: '${node.type}' does not exist.`);
+        return children;
+    }
 };
 
 type Arguments = {
