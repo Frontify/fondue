@@ -22,6 +22,7 @@ import {
     TDescendant,
     TElement,
     isText,
+    // ELEMENT_IMAGE,
 } from '@udecode/plate';
 import { merge } from '@utilities/merge';
 import { buttonNode } from '../nodes/button';
@@ -75,16 +76,24 @@ export const serializeNodeToHtmlRecursive = (
     }
 
     const htmlMapper = MapNodeTypesToHtml[node.type];
-    return (
-        htmlMapper({
-            classNames: getClassNames(node.breakAfterColumn as string | undefined, node.align as string | undefined),
-            children,
-            rootNestingCount,
-            node,
-            mappedMentionable,
-            styles,
-        }) ?? children
-    );
+    try {
+        return (
+            htmlMapper({
+                classNames: getClassNames(
+                    node.breakAfterColumn as string | undefined,
+                    node.align as string | undefined,
+                ),
+                children,
+                rootNestingCount,
+                node,
+                mappedMentionable,
+                styles,
+            }) ?? children
+        );
+    } catch (error) {
+        console.warn(`The htmlMapper for node type: '${node.type}' does not exist.`);
+        return children;
+    }
 };
 
 type Arguments = {
@@ -125,6 +134,7 @@ const MapNodeTypesToHtml: { [key: string]: ({ ...args }: Arguments) => string } 
     [ELEMENT_BUTTON]: ({ node, children, classNames, styles }) => buttonNode(node, children, classNames, styles),
     [ELEMENT_CHECK_ITEM]: ({ node, children, classNames, styles }) => checkItemNode(node, children, classNames, styles),
     [ELEMENT_MENTION]: ({ node, mappedMentionable }) => mentionHtmlNode(node, { mentionable: mappedMentionable }),
+    // [ELEMENT_IMAGE]: ({ node, mappedMentionable }) => mentionHtmlNode(node, { mentionable: mappedMentionable }),
 };
 
 const getTextStyleHtml = (
