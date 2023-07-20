@@ -22,7 +22,6 @@ import {
     TDescendant,
     TElement,
     isText,
-    // ELEMENT_IMAGE,
 } from '@udecode/plate';
 import { merge } from '@utilities/merge';
 import { buttonNode } from '../nodes/button';
