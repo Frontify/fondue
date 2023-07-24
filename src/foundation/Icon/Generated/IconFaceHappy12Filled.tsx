@@ -12,7 +12,7 @@ function IconFaceHappy12Filled(props: GeneratedIconProps): React.ReactElement<Ge
             {...props}
         >
             <g fill="none">
-                <g clipPath="url(#prefix__a)">
+                <g clipPath="url(#FaceHappy12Filled)">
                     <path
                         fill="currentColor"
                         fillRule="evenodd"
@@ -21,7 +21,7 @@ function IconFaceHappy12Filled(props: GeneratedIconProps): React.ReactElement<Ge
                     />
                 </g>
                 <defs>
-                    <clipPath id="prefix__a">
+                    <clipPath id="FaceHappy12Filled">
                         <path fill="#fff" d="M0 0h12v12H0z" />
                     </clipPath>
                 </defs>

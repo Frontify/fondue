@@ -12,7 +12,7 @@ function IconArrowCircleUp12(props: GeneratedIconProps): React.ReactElement<Gene
             {...props}
         >
             <g fill="none">
-                <g clipPath="url(#prefix__a)">
+                <g clipPath="url(#ArrowCircleUp12)">
                     <path
                         fill="currentColor"
                         fillRule="evenodd"
@@ -21,7 +21,7 @@ function IconArrowCircleUp12(props: GeneratedIconProps): React.ReactElement<Gene
                     />
                 </g>
                 <defs>
-                    <clipPath id="prefix__a">
+                    <clipPath id="ArrowCircleUp12">
                         <path fill="#fff" d="M0 0h12v12H0z" />
                     </clipPath>
                 </defs>

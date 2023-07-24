@@ -12,7 +12,7 @@ function IconSkip5SecondsBackward12(props: GeneratedIconProps): React.ReactEleme
             {...props}
         >
             <g fill="none">
-                <g clipPath="url(#prefix__a)">
+                <g clipPath="url(#Skip5SecondsBackward12)">
                     <path
                         fill="currentColor"
                         fillRule="evenodd"
@@ -21,7 +21,7 @@ function IconSkip5SecondsBackward12(props: GeneratedIconProps): React.ReactEleme
                     />
                 </g>
                 <defs>
-                    <clipPath id="prefix__a">
+                    <clipPath id="Skip5SecondsBackward12">
                         <path fill="#fff" d="M0 0h12v12H0z" />
                     </clipPath>
                 </defs>

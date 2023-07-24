@@ -12,7 +12,7 @@ function IconCountry12(props: GeneratedIconProps): React.ReactElement<GeneratedI
             {...props}
         >
             <g fill="none">
-                <g clipPath="url(#prefix__a)">
+                <g clipPath="url(#Country12)">
                     <path
                         fill="currentColor"
                         fillRule="evenodd"
@@ -21,7 +21,7 @@ function IconCountry12(props: GeneratedIconProps): React.ReactElement<GeneratedI
                     />
                 </g>
                 <defs>
-                    <clipPath id="prefix__a">
+                    <clipPath id="Country12">
                         <path fill="#fff" d="M0 0h12v12H0z" />
                     </clipPath>
                 </defs>

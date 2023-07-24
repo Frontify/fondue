@@ -12,7 +12,7 @@ function IconLightning12(props: GeneratedIconProps): React.ReactElement<Generate
             {...props}
         >
             <g fill="none">
-                <g clipPath="url(#prefix__a)">
+                <g clipPath="url(#Lightning12)">
                     <path
                         fill="currentColor"
                         fillRule="evenodd"
@@ -21,7 +21,7 @@ function IconLightning12(props: GeneratedIconProps): React.ReactElement<Generate
                     />
                 </g>
                 <defs>
-                    <clipPath id="prefix__a">
+                    <clipPath id="Lightning12">
                         <path fill="#fff" d="M0 0h12v12H0z" />
                     </clipPath>
                 </defs>

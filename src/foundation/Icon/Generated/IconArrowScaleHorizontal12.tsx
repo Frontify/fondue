@@ -12,7 +12,7 @@ function IconArrowScaleHorizontal12(props: GeneratedIconProps): React.ReactEleme
             {...props}
         >
             <g fill="none">
-                <g clipPath="url(#prefix__a)">
+                <g clipPath="url(#ArrowScaleHorizontal12)">
                     <path
                         fill="currentColor"
                         fillRule="evenodd"
@@ -21,7 +21,7 @@ function IconArrowScaleHorizontal12(props: GeneratedIconProps): React.ReactEleme
                     />
                 </g>
                 <defs>
-                    <clipPath id="prefix__a">
+                    <clipPath id="ArrowScaleHorizontal12">
                         <path fill="#fff" d="M0 0h12v12H0z" />
                     </clipPath>
                 </defs>

@@ -12,7 +12,7 @@ function IconCheckMarkCircle12(props: GeneratedIconProps): React.ReactElement<Ge
             {...props}
         >
             <g fill="none">
-                <g clipPath="url(#prefix__a)">
+                <g clipPath="url(#CheckMarkCircle12)">
                     <path
                         fill="currentColor"
                         fillRule="evenodd"
@@ -21,7 +21,7 @@ function IconCheckMarkCircle12(props: GeneratedIconProps): React.ReactElement<Ge
                     />
                 </g>
                 <defs>
-                    <clipPath id="prefix__a">
+                    <clipPath id="CheckMarkCircle12">
                         <path fill="#fff" d="M0 0h12v12H0z" />
                     </clipPath>
                 </defs>

@@ -12,7 +12,7 @@ function IconMagnifierPlus12(props: GeneratedIconProps): React.ReactElement<Gene
             {...props}
         >
             <g fill="none">
-                <g clipPath="url(#prefix__a)">
+                <g clipPath="url(#MagnifierPlus12)">
                     <path
                         fill="currentColor"
                         fillRule="evenodd"
@@ -21,7 +21,7 @@ function IconMagnifierPlus12(props: GeneratedIconProps): React.ReactElement<Gene
                     />
                 </g>
                 <defs>
-                    <clipPath id="prefix__a">
+                    <clipPath id="MagnifierPlus12">
                         <path fill="#fff" d="M0 0h12v12H0z" />
                     </clipPath>
                 </defs>
