@@ -13,7 +13,7 @@ const TABBABLE_ELEMENTS = [
     'embed',
     'audio[controls]',
     'video[controls]',
-    '[contenteditable="true"]',
+    '[contenteditable]',
     '[tabindex]',
 ].join(':not([hidden]):not([tabindex="-1"]):not([disabled]),');
 
