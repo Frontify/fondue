@@ -12,7 +12,7 @@ function IconLockOpen12Filled(props: GeneratedIconProps): React.ReactElement<Gen
             {...props}
         >
             <g fill="none">
-                <g clipPath="url(#prefix__a)">
+                <g clipPath="url(#LockOpen12Filled)">
                     <path
                         fill="currentColor"
                         fillRule="evenodd"
@@ -21,7 +21,7 @@ function IconLockOpen12Filled(props: GeneratedIconProps): React.ReactElement<Gen
                     />
                 </g>
                 <defs>
-                    <clipPath id="prefix__a">
+                    <clipPath id="LockOpen12Filled">
                         <path fill="#fff" d="M0 0h12v12H0z" />
                     </clipPath>
                 </defs>

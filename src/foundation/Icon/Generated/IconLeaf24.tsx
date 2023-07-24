@@ -12,7 +12,7 @@ function IconLeaf24(props: GeneratedIconProps): React.ReactElement<GeneratedIcon
             {...props}
         >
             <g fill="none">
-                <g clipPath="url(#prefix__a)">
+                <g clipPath="url(#Leaf24)">
                     <path
                         fill="currentColor"
                         fillRule="evenodd"
@@ -21,7 +21,7 @@ function IconLeaf24(props: GeneratedIconProps): React.ReactElement<GeneratedIcon
                     />
                 </g>
                 <defs>
-                    <clipPath id="prefix__a">
+                    <clipPath id="Leaf24">
                         <path fill="#fff" d="M0 0h24v24H0z" />
                     </clipPath>
                 </defs>

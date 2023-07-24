@@ -12,7 +12,7 @@ function IconLabel12(props: GeneratedIconProps): React.ReactElement<GeneratedIco
             {...props}
         >
             <g fill="none">
-                <g clipPath="url(#prefix__a)">
+                <g clipPath="url(#Label12)">
                     <path
                         fill="currentColor"
                         fillRule="evenodd"
@@ -21,7 +21,7 @@ function IconLabel12(props: GeneratedIconProps): React.ReactElement<GeneratedIco
                     />
                 </g>
                 <defs>
-                    <clipPath id="prefix__a">
+                    <clipPath id="Label12">
                         <path fill="#fff" d="M0 0h12v12H0z" />
                     </clipPath>
                 </defs>

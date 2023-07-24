@@ -12,7 +12,7 @@ function IconCog12(props: GeneratedIconProps): React.ReactElement<GeneratedIconP
             {...props}
         >
             <g fill="none">
-                <g clipPath="url(#prefix__a)">
+                <g clipPath="url(#Cog12)">
                     <path
                         fill="currentColor"
                         fillRule="evenodd"
@@ -21,7 +21,7 @@ function IconCog12(props: GeneratedIconProps): React.ReactElement<GeneratedIconP
                     />
                 </g>
                 <defs>
-                    <clipPath id="prefix__a">
+                    <clipPath id="Cog12">
                         <path fill="#fff" d="M0 0h12v12H0z" />
                     </clipPath>
                 </defs>

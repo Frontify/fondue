@@ -12,7 +12,7 @@ function IconImageWithText12(props: GeneratedIconProps): React.ReactElement<Gene
             {...props}
         >
             <g fill="none">
-                <g clipPath="url(#prefix__a)">
+                <g clipPath="url(#ImageWithText12)">
                     <path
                         fill="currentColor"
                         fillRule="evenodd"
@@ -21,7 +21,7 @@ function IconImageWithText12(props: GeneratedIconProps): React.ReactElement<Gene
                     />
                 </g>
                 <defs>
-                    <clipPath id="prefix__a">
+                    <clipPath id="ImageWithText12">
                         <path fill="#fff" d="M0 0h12v12H0z" />
                     </clipPath>
                 </defs>

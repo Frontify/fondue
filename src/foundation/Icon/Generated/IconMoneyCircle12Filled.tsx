@@ -12,7 +12,7 @@ function IconMoneyCircle12Filled(props: GeneratedIconProps): React.ReactElement<
             {...props}
         >
             <g fill="none">
-                <g clipPath="url(#prefix__a)">
+                <g clipPath="url(#MoneyCircle12Filled)">
                     <path
                         fill="currentColor"
                         fillRule="evenodd"
@@ -21,7 +21,7 @@ function IconMoneyCircle12Filled(props: GeneratedIconProps): React.ReactElement<
                     />
                 </g>
                 <defs>
-                    <clipPath id="prefix__a">
+                    <clipPath id="MoneyCircle12Filled">
                         <path fill="#fff" d="M0 0h12v12H0z" />
                     </clipPath>
                 </defs>
