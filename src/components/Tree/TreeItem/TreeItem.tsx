@@ -96,6 +96,7 @@ export const TreeItem = memo(
 
         const isWithin =
             projection?.previousNode?.depth !== undefined && projection?.depth > projection?.previousNode?.depth;
+        const isWithinOneLevel = isWithin && projection.depth - 1 === projection?.previousNode?.depth;
 
         const canDropWithinAndDeeper =
             isWithin &&
@@ -105,7 +106,7 @@ export const TreeItem = memo(
 
         const canDropWithin =
             (isActive &&
-                isWithin &&
+                isWithinOneLevel &&
                 activeProjection?.previousNode?.accepts !== undefined &&
                 activeProjection?.previousNode?.accepts.includes(`${cleanCurrentType}-within`)) ||
             (activeProjection?.isWithinParent && parentAccepts.includes(`${cleanCurrentType}-within`));
