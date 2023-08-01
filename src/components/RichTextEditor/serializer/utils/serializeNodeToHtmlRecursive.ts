@@ -116,19 +116,19 @@ const MapNodeTypesToHtml: { [key: string]: ({ ...args }: Arguments) => string } 
     [TextStyles.quote]: (args) => getTextStyleHtml(TextStyles.quote, args, 'p'),
     [TextStyles.imageTitle]: (args) => getTextStyleHtml(TextStyles.imageTitle, args, 'p'),
     [TextStyles.imageCaption]: (args) => getTextStyleHtml(TextStyles.imageCaption, args, 'p'),
-    [ELEMENT_UL]: (args) => `<ul class="${UL_CLASSES} ${args.classNames}">${args.children}</ul>`,
+    [ELEMENT_UL]: (args) => `<ul dir="auto" class="${UL_CLASSES} ${args.classNames}">${args.children}</ul>`,
     [ELEMENT_OL]: ({ classNames, children, node, rootNestingCount }) => {
         const nestingLevel = Math.max(rootNestingCount - countNodesOfType([node], ELEMENT_OL), 0);
-        return `<ol class="${getOrderedListClasses(nestingLevel)} ${classNames}" style="${reactCssPropsToCss(
+        return `<ol dir="auto" class="${getOrderedListClasses(nestingLevel)} ${classNames}" style="${reactCssPropsToCss(
             OL_STYLES,
         )}">${children}</ol>`;
     },
     [ELEMENT_LI]: ({ classNames, children, node, styles }) =>
-        `<li class="${classNames} ${LI_CLASSNAMES}" style="${reactCssPropsToCss(
+        `<li dir="auto" class="${classNames} ${LI_CLASSNAMES}" style="${reactCssPropsToCss(
             getLiStyles(node, styles),
         )}">${children}</li>`,
     [ELEMENT_LIC]: ({ classNames, children, node }) =>
-        `<p class="${classNames} ${getLicElementClassNames(node)}"><span>${children}</span></p>`,
+        `<p dir="auto" class="${classNames} ${getLicElementClassNames(node)}"><span>${children}</span></p>`,
     [ELEMENT_LINK]: ({ node, children, classNames, styles }) => linkNode(node, children, classNames, styles),
     [ELEMENT_BUTTON]: ({ node, children, classNames, styles }) => buttonNode(node, children, classNames, styles),
     [ELEMENT_CHECK_ITEM]: ({ node, children, classNames, styles }) => checkItemNode(node, children, classNames, styles),
@@ -139,7 +139,7 @@ const getTextStyleHtml = (
     tag: TextStyles,
     { classNames, styles, children }: Arguments,
     htmlTag: 'p' | 'h1' | 'h2' | 'h3' | 'h4',
-) => `<${htmlTag} class="${classNames}" style="${reactCssPropsToCss(styles[tag])}">${children}</${htmlTag}>`;
+) => `<${htmlTag} dir="auto" class="${classNames}" style="${reactCssPropsToCss(styles[tag])}">${children}</${htmlTag}>`;
 
 const getClassNames = (breakAfterColumn?: string, align?: string) => {
     const breakWordsClass = 'tw-break-words';

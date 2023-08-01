@@ -15,11 +15,11 @@ export const linkNode = (
 ) => {
     if (node.chosenLink) {
         const { chosenLink } = node as TLinkElement;
-        return `<a class="${defaultClassNames}" style="${reactCssPropsToCss(styles[LINK_PLUGIN])}" target=${
+        return `<a dir="auto" class="${defaultClassNames}" style="${reactCssPropsToCss(styles[LINK_PLUGIN])}" target=${
             chosenLink?.openInNewTab ? '_blank' : '_self'
         } href="${escapeHtml(chosenLink?.searchResult?.link)}">${children}</a>`;
     }
-    return `<a class="${defaultClassNames}" style="${reactCssPropsToCss(styles[LINK_PLUGIN])}" target="${
+    return `<a dir="auto" class="${defaultClassNames}" style="${reactCssPropsToCss(styles[LINK_PLUGIN])}" target="${
         node?.target ?? '_blank'
     }" href="${escapeHtml(node.url as string)}">${children}</a>`;
 };

@@ -8,6 +8,7 @@ import { MarkupElementNodeComponentType, MarkupElementNodeType, MarkupElementPro
 const MarkupElementNode = ({ attributes, element, nodeProps, children }: MarkupElementProps) => (
     <span
         {...attributes}
+        dir="auto"
         data-slate-value={element?.value}
         data-slate-key={element?.key}
         data-slate-category={element?.category}
