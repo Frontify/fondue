@@ -33,6 +33,27 @@ const getDragDepth = (offset: number) => {
     return Math.round(offset / INDENTATION_WIDTH);
 };
 
+const calculateMaxDepth = (previousNode: ReactElement, nextNode: ReactElement) => {
+    const previousNodeDepth = getNodeDepth(previousNode);
+
+    if (previousNode?.props.accepts) {
+        const nextNodeDepth = getNodeDepth(nextNode);
+        return previousNodeDepth >= nextNodeDepth ? previousNodeDepth + 1 : nextNodeDepth;
+    } else {
+        return previousNodeDepth;
+    }
+};
+
+const calculateMinDepth = (previousNode: ReactElement, nextNode: ReactElement) => {
+    const nextNodeDepth = getNodeDepth(nextNode);
+
+    if (previousNode?.props.accepts) {
+        return nextNodeDepth;
+    } else {
+        return Math.min(getNodeDepth(previousNode), nextNodeDepth);
+    }
+};
+
 export const getProjection = ({ nodes, activeId, overId, dragOffset }: ProjectionArgs): Projection => {
     const overNodeIndex = nodes.findIndex(({ props }) => props.id === overId);
     const activeNodeIndex = nodes.findIndex(({ props }) => props.id === activeId);
@@ -46,12 +67,10 @@ export const getProjection = ({ nodes, activeId, overId, dragOffset }: Projectio
     const dragDepth = getDragDepth(dragOffset);
     const projectedDepth = (activeNode?.props?.level ?? 0) + dragDepth;
 
-    const previousNodeDepth = getNodeDepth(previousNode);
-    const nextNodeDepth = getNodeDepth(nextNode);
-    const maxDepth = Math.max(previousNodeDepth, nextNodeDepth) + 1;
-    const minDepth = Math.min(previousNodeDepth, nextNodeDepth);
+    const maxDepth = calculateMaxDepth(previousNode, nextNode);
+    const minDepth = calculateMinDepth(previousNode, nextNode);
 
-    let depth = projectedDepth || nextNodeDepth;
+    let depth = projectedDepth || getNodeDepth(nextNode);
     if (projectedDepth >= maxDepth) {
         depth = maxDepth;
     } else if (projectedDepth < minDepth) {
@@ -68,7 +87,9 @@ export const getProjection = ({ nodes, activeId, overId, dragOffset }: Projectio
         }
 
         if (previousNode.props.level !== undefined && depth > previousNode.props.level) {
-            return previousNode.props.id;
+            return previousNode.props.accepts
+                ? previousNode.props.id
+                : previousNode.props.parentId ?? previousNode.props.id;
         }
 
         const newParent = newNodes
@@ -120,20 +141,21 @@ export const getProjection = ({ nodes, activeId, overId, dragOffset }: Projectio
     }
 
     dropIndexInParent = dropIndexInParent + correctionDueDragDirection;
+    const parentDepth = parent?.level ?? 0;
 
     return {
         depth,
         maxDepth,
         minDepth,
-        parentId: parentId !== ROOT_ID ? parentId : null,
+        parentId: parentId ?? null,
         type: parent?.type,
         accepts: parent?.accepts,
         position: dropIndexInParent >= 0 ? dropIndexInParent : 0,
-        isWithinParent: parent?.level ? depth > parent.level : false,
+        isWithinParent: parentDepth ? depth > parentDepth : false,
         previousNode: previousNode
             ? {
                   id: previousNode.props.id,
-                  depth: previousNodeDepth,
+                  depth: getNodeDepth(previousNode),
                   accepts: previousNode.props.accepts,
               }
             : null,
