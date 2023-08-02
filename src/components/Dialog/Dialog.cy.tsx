@@ -4,7 +4,6 @@ import React from 'react';
 import { Dialog } from './Dialog';
 import { Button } from '@components/Button';
 import { DialogHeader } from '@components/DialogHeader';
-import { DialogHeaderSize } from '../../types/dialog';
 import { DialogBody } from '@components/DialogBody';
 
 const DIALOG_SELECTOR = '[data-test-id=fondue-dialog-content]';
@@ -16,7 +15,7 @@ describe('Dialog Component', () => {
                     <Button>Open Dialog</Button>
                 </Dialog.Trigger>
                 <Dialog.Content>
-                    <DialogHeader title="Heading" size={DialogHeaderSize.Large} />
+                    <DialogHeader title="Heading" size="large" />
                     <DialogBody>Some Content</DialogBody>
                 </Dialog.Content>
             </Dialog>,
@@ -32,7 +31,7 @@ describe('Dialog Component', () => {
                     <Button>Open Dialog</Button>
                 </Dialog.Trigger>
                 <Dialog.Content>
-                    <DialogHeader title="Heading" size={DialogHeaderSize.Large} />
+                    <DialogHeader title="Heading" size="large" />
                     <DialogBody>Some Content</DialogBody>
                 </Dialog.Content>
             </Dialog>,

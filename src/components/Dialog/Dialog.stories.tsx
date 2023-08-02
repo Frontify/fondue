@@ -5,7 +5,7 @@ import { Meta, StoryFn } from '@storybook/react';
 import { Dialog, DialogProps } from './Dialog';
 import { Button, ButtonEmphasis } from '@components/Button';
 import { useToggleOverlay } from '@hooks/useToggleOverlay';
-import { DialogHeaderSize, Modality } from '../../types/dialog';
+import { Modality } from '../../types/dialog';
 import { DialogHeader } from '@components/DialogHeader';
 import { DialogBody } from '@components/DialogBody';
 import { DialogFooter } from '@components/DialogFooter';
@@ -64,7 +64,7 @@ const Template: StoryFn<DialogProps> = (args) => {
                 <Button onClick={() => setIsOpen(!isOpen)}>Open Dialog</Button>
             </Dialog.Trigger>
             <Dialog.Content>
-                <DialogHeader title="Heading" size={DialogHeaderSize.Large} onClose={() => setIsOpen(false)} />
+                <DialogHeader title="Heading" size="large" onClose={() => setIsOpen(false)} />
                 <DialogBody>
                     <Box className="tw-p-10">
                         <p>
@@ -80,7 +80,7 @@ const Template: StoryFn<DialogProps> = (args) => {
                     </Box>
                 </DialogBody>
                 <DialogFooter
-                    buttons={[
+                    actionButtons={[
                         {
                             children: 'Cancel',
                             emphasis: ButtonEmphasis.Default,
@@ -107,12 +107,7 @@ const WithTabsTemplate: StoryFn<DialogProps> = (args) => {
                 <Button onClick={() => setIsOpen(!isOpen)}>Open Dialog</Button>
             </Dialog.Trigger>
             <Dialog.Content>
-                <DialogHeader
-                    title="Heading"
-                    size={DialogHeaderSize.Large}
-                    onClose={() => setIsOpen(false)}
-                    collapseBottom
-                />
+                <DialogHeader title="Heading" size="large" onClose={() => setIsOpen(false)} collapseBottom />
                 <DialogBody>
                     <Tabs
                         activeItemId={activeItemId}
@@ -152,7 +147,7 @@ const WithTabsTemplate: StoryFn<DialogProps> = (args) => {
                     </Tabs>
                 </DialogBody>
                 <DialogFooter
-                    buttons={[
+                    actionButtons={[
                         {
                             children: 'Cancel',
                             emphasis: ButtonEmphasis.Default,
