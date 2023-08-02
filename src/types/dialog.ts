@@ -6,14 +6,18 @@ import { BadgeProps } from '@components/Badge';
 import { ButtonProps } from '@components/Button';
 import { PopperProps } from '@components/Popper/types';
 
-export enum DialogHeaderSize {
-    Default = 'Default',
-    Large = 'Large',
-}
+export type DialogSize = 'small' | 'medium' | 'large';
+export const DIALOG_SIZE = ['small', 'medium', 'large']; // To be used in Stories
+
+export const dialogPaddingMap: Record<DialogSize, string> = {
+    small: 'tw-p-4',
+    medium: 'tw-p-6',
+    large: 'tw-p-10',
+};
 
 export type DialogHeaderProps = {
     title: string;
-    size?: DialogHeaderSize;
+    size?: DialogSize;
     collapseBottom?: boolean;
     onClose?: () => void;
     icon?: ReactElement<IconProps>;
@@ -24,11 +28,15 @@ export type DialogHeaderProps = {
 export type DialogBodyProps = {
     children: ReactNode;
     maxHeight?: number | string;
+    padding?: DialogSize;
     'data-test-id'?: string;
 };
 
 export type DialogFooterProps = {
-    buttons: ButtonProps[];
+    children?: ReactNode;
+    actionButtons: ButtonProps[];
+    backButton?: Omit<ButtonProps, 'emphasis' | 'icon' | 'size'>;
+    padding?: DialogSize;
     'data-test-id'?: string;
 };
 
