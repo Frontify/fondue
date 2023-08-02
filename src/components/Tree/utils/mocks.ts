@@ -120,6 +120,13 @@ export const treeItemsMock: TreeItemMock[] = [
         accepts: 'document',
         draggable: false,
     },
+    {
+        id: '4',
+        label: 'Design System Testing - level 0 constraint',
+        type: 'document',
+        accepts: 'document',
+        levelConstraint: 0,
+    },
 ];
 
 const reducer = (nodes: TreeItemMock[], expandedIds: string[] = []): TreeItemMock[] => {
