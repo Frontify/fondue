@@ -96,6 +96,7 @@ export const TreeItem = memo(
 
         const isWithin =
             projection?.previousNode?.depth !== undefined && projection?.depth > projection?.previousNode?.depth;
+        const isWithinOneLevel = isWithin && projection.depth - 1 === projection?.previousNode?.depth;
 
         const canDropWithinAndDeeper =
             isWithin &&
@@ -105,7 +106,7 @@ export const TreeItem = memo(
 
         const canDropWithin =
             (isActive &&
-                isWithin &&
+                isWithinOneLevel &&
                 activeProjection?.previousNode?.accepts !== undefined &&
                 activeProjection?.previousNode?.accepts.includes(`${cleanCurrentType}-within`)) ||
             (activeProjection?.isWithinParent && parentAccepts.includes(`${cleanCurrentType}-within`));
@@ -272,7 +273,7 @@ export const TreeItem = memo(
                     FOCUS_VISIBLE_STYLE,
                     'tw-cursor-default tw-transition-colors tw-outline-none tw-ring-inset tw-group tw-px-2.5 tw-no-underline tw-leading-5 tw-h-10',
                     !isActive && !isSelected && 'active:tw-bg-box-neutral-pressed',
-                    isSelected && !transform?.y
+                    !isActive && isSelected
                         ? 'tw-font-medium tw-bg-box-neutral-strong tw-text-box-neutral-strong-inverse hover:tw-bg-box-neutral-strong-hover'
                         : 'hover:tw-bg-box-neutral tw-text-text',
                     transform?.y ? 'tw-bg-box-neutral-strong-inverse tw-text-text tw-font-normal' : '',
