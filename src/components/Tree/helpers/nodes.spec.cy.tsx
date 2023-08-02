@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { ReactNode } from 'react';
-import { getReactNodeIdsInFlatArray, removeReactNodesFromFlatArray } from './nodes';
+import { getReactNodeIdsInFlatArray, getReactNodesInFlatArray, removeReactNodesFromFlatArray } from './nodes';
 
 const Node = (props: { id: string; parentId?: string; children?: ReactNode }) => <div {...props} />;
 
@@ -55,7 +55,7 @@ describe('nodes', () => {
         });
     });
 
-    describe('getNodeIdsInFlatArray', () => {
+    describe('getReactNodeIdsInFlatArray', () => {
         it('should return the IDs of all nodes in the branch of the specified node', () => {
             const result = getReactNodeIdsInFlatArray(FLAT_ARRAY_OF_NODES, '4');
 
@@ -70,6 +70,30 @@ describe('nodes', () => {
 
         it('should return an empty array when the specified node is not found in the tree', () => {
             const result = getReactNodeIdsInFlatArray(FLAT_ARRAY_OF_NODES, '-1');
+
+            cy.wrap(result).should('deep.equal', []);
+        });
+    });
+
+    describe('getReactNodesInFlatArray', () => {
+        it('should return all nodes in the branch of the specified node', () => {
+            const result = getReactNodesInFlatArray(FLAT_ARRAY_OF_NODES, '4');
+
+            cy.wrap(result).should('deep.equal', [
+                <Node key="5" id="5" parentId="4" />,
+                <Node key="6" id="6" parentId="5" />,
+                <Node key="8" id="8" parentId="4" />,
+            ]);
+        });
+
+        it('should return an empty array if the node has no child', () => {
+            const result = getReactNodesInFlatArray(FLAT_ARRAY_OF_NODES, '7');
+
+            cy.wrap(result).should('deep.equal', []);
+        });
+
+        it('should return an empty array when the specified node is not found in the tree', () => {
+            const result = getReactNodesInFlatArray(FLAT_ARRAY_OF_NODES, '-1');
 
             cy.wrap(result).should('deep.equal', []);
         });

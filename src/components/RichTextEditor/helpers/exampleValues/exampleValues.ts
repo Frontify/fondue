@@ -18,7 +18,7 @@ import {
 } from '@udecode/plate';
 import { ELEMENT_BUTTON } from '../../Plugins';
 import { ELEMENT_CHECK_ITEM } from '../../Plugins/CheckboxListPlugin/id';
-import { mixedMarkdown } from '../../serializer/markdown/__tests__/fixtures';
+import { mixedMarkdownWithUnsafeLink1 } from '../../serializer/markdown/__tests__/fixtures';
 import { MARK_TEXT_STYLE } from '../../Plugins/ListPlugin/ListPlugin';
 import { TextStyles } from '../../Plugins/TextStylePlugin/types';
 
@@ -28,7 +28,7 @@ type CreateElementProps = {
     mark?: string;
 };
 
-export const markdownText = mixedMarkdown;
+export const markdownText = mixedMarkdownWithUnsafeLink1;
 
 const createElement = ({ text, element = ELEMENT_PARAGRAPH, mark }: CreateElementProps) => {
     const leaf: TDescendant = { text, [MARK_TEXT_STYLE]: element };

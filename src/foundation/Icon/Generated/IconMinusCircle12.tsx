@@ -12,7 +12,7 @@ function IconMinusCircle12(props: GeneratedIconProps): React.ReactElement<Genera
             {...props}
         >
             <g fill="none">
-                <g clipPath="url(#prefix__a)">
+                <g clipPath="url(#MinusCircle12)">
                     <path
                         fill="currentColor"
                         fillRule="evenodd"
@@ -21,7 +21,7 @@ function IconMinusCircle12(props: GeneratedIconProps): React.ReactElement<Genera
                     />
                 </g>
                 <defs>
-                    <clipPath id="prefix__a">
+                    <clipPath id="MinusCircle12">
                         <path fill="#fff" d="M0 0h12v12H0z" />
                     </clipPath>
                 </defs>

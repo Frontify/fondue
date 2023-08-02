@@ -74,7 +74,7 @@ describe('Tree and TreeItem components', () => {
         cy.mount(<TreeComponent />);
 
         cy.get(TREE_ID).should('be.visible');
-        cy.get(TREE_ITEM_ID).should('be.visible').should('have.length', 3);
+        cy.get(TREE_ITEM_ID).should('be.visible').should('have.length', 4);
         cy.get(TREE_ITEM_TOGGLE_ID).first().should('be.visible');
         cy.get(TREE_ITEM_ID).first().should('have.attr', 'aria-selected', 'false');
     });
@@ -121,10 +121,10 @@ describe('Tree and TreeItem components', () => {
         cy.mount(<TreeComponent />);
 
         cy.get(TREE_ITEM_TOGGLE_ID).first().click();
-        cy.get(TREE_ITEM_ID).should('have.length', 8);
+        cy.get(TREE_ITEM_ID).should('have.length', 9);
 
         cy.get(TREE_ITEM_TOGGLE_ID).first().click();
-        cy.get(TREE_ITEM_ID).should('have.length', 3);
+        cy.get(TREE_ITEM_ID).should('have.length', 4);
     });
 
     it('should trigger onExpand as a controlled component', () => {
@@ -168,9 +168,9 @@ describe('Tree and TreeItem components', () => {
         cy.mount(<TreeComponent draggable />);
 
         cy.get(TREE_ITEM_TOGGLE_ID).first().click();
-        cy.get(TREE_ITEM_ID).should('have.length', 8);
+        cy.get(TREE_ITEM_ID).should('have.length', 9);
         cy.get(TREE_ITEM_DRAG_HANDLE_ID).first().realMouseDown();
-        cy.get(TREE_ITEM_ID).should('have.length', 3);
+        cy.get(TREE_ITEM_ID).should('have.length', 4);
         cy.get(TREE_ITEM_DRAG_HANDLE_ID).first().realMouseUp();
     });
 
@@ -237,8 +237,28 @@ describe('Tree and TreeItem components', () => {
             .realPress('ArrowDown')
             .realPress('ArrowRight')
             .realPress('ArrowUp');
-        cy.get(TREE_ITEM_ID).should('have.length', 14);
+        cy.get(TREE_ITEM_ID).should('have.length', 15);
         cy.get(TREE_ITEM_ID).eq(4).should('have.focus');
+    });
+
+    it('should expand a deeper group when item is dragged one step depth in and it is allowed to be dropped', () => {
+        cy.mount(<TreeComponent draggable />);
+
+        cy.get(TREE_ITEM_TOGGLE_ID).first().click();
+        cy.get(TREE_ITEM_ID).should('have.length', 9);
+        cy.get(TREE_ITEM_DRAG_HANDLE_ID).eq(4).realMouseDown().realMouseMove(0, -80).realMouseMove(40, 0);
+        cy.wait(300);
+        cy.get(TREE_ITEM_ID).should('have.length', 12);
+    });
+
+    it('should not allow to go deeper with levelConstraint 0', () => {
+        cy.mount(<TreeComponent draggable />);
+
+        cy.get(TREE_ITEM_DRAG_HANDLE_ID).eq(3).realMouseDown().realMouseMove(40, 0);
+        cy.get(TREE_ITEM_OVERLAY_ID)
+            .should('be.visible')
+            .should('have.attr', 'style')
+            .and('include', 'margin-left: 0px');
     });
 });
 

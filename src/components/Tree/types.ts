@@ -48,8 +48,9 @@ type TreeItemBaseProps = {
     type?: string;
     /**
      * The kinds of dragItems this dropTarget accepts
-     *  @example 'itemA, itemA-within'
+     *  @example 'itemA, itemA-within, itemA-deeper'
      * if suffix '-within' is appended, then it will allow dropping item inside it
+     * if suffix '-deeper' is appended, then it will allow expand because it will allow dropping in levels deeper
      */
     accepts?: string;
     children?: ReactNode;
@@ -57,6 +58,7 @@ type TreeItemBaseProps = {
     showCaret?: boolean;
     ignoreItemDoubleClick?: boolean;
     expandOnSelect?: boolean;
+    levelConstraint?: Nullable<number>;
 };
 
 export type TreeItemWithLabelProps = {

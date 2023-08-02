@@ -6,7 +6,7 @@ import { DialogHeader as DialogHeaderComponent } from './DialogHeader';
 import { Badge, BadgeStyle } from '@components/Badge';
 import { IconIcon } from '@foundation/Icon/Generated';
 import { action } from '@storybook/addon-actions';
-import { DialogHeaderProps, DialogHeaderSize } from '../../types/dialog';
+import { DIALOG_SIZE, DialogHeaderProps } from '../../types/dialog';
 
 export default {
     title: 'Experimental/DialogHeader',
@@ -14,13 +14,13 @@ export default {
     tags: ['autodocs'],
     args: {
         title: 'Collaborator Settings',
-        size: DialogHeaderSize.Large,
+        size: 'medium',
         collapseBottom: false,
         onClose: action('click'),
     },
     argTypes: {
         size: {
-            options: Object.values(DialogHeaderSize),
+            options: DIALOG_SIZE,
             control: { type: 'select' },
         },
         collapseBottom: {

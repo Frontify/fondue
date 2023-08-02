@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { Children, MouseEvent, memo, useCallback, useMemo } from 'react';
+import React, { Children, MouseEvent, memo, useCallback, useEffect, useMemo, useRef } from 'react';
 import { AnimateLayoutChanges, useSortable } from '@dnd-kit/sortable';
 import { useDndContext, useDndMonitor } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
@@ -17,7 +17,7 @@ import type {
     TreeItemProps,
 } from '@components/Tree/types';
 
-import { INDENTATION_WIDTH, Projection } from '../helpers';
+import { EXPAND_ONHOVER_DELAY, INDENTATION_WIDTH, Projection } from '../helpers';
 import { removeFragmentsAndEnrichChildren, useDeepCompareEffect } from '../utils';
 
 import { DragHandle } from './DragHandle';
@@ -32,6 +32,7 @@ const animateLayoutChanges: AnimateLayoutChanges = ({ isSorting, wasDragging }) 
 /** @private */
 type TreeItemPrivateProps = {
     level?: number;
+    levelConstraint?: Nullable<number>;
     parentId?: string;
     isSelected?: boolean;
     isExpanded?: boolean;
@@ -78,6 +79,7 @@ export const TreeItem = memo(
     }: InternalTreeItemProps) => {
         const { active, over } = useDndContext();
         const { isSelected, isExpanded, projection } = useTreeItem(id);
+        const expandDebounced = useRef<Nullable<string> | undefined>();
 
         const draggable = treeDraggable && itemDraggable;
 
@@ -94,14 +96,55 @@ export const TreeItem = memo(
         const cleanCurrentType = currentType?.replace(/-\d+$/, '') || '';
 
         const isWithin =
-            over !== null && activeProjection !== null && activeProjection.depth > over.data.current?.level;
+            projection?.previousNode?.depth !== undefined && projection?.depth > projection?.previousNode?.depth;
+        const isWithinOneLevel = isWithin && projection.depth - 1 === projection?.previousNode?.depth;
+
+        const canDropWithinAndDeeper =
+            isWithin &&
+            projection?.previousNode?.accepts !== undefined &&
+            (projection?.previousNode?.accepts.includes(`${cleanCurrentType}-deeper`) ||
+                projection?.previousNode?.accepts.includes(`${cleanCurrentType}-within`));
 
         const canDropWithin =
-            (isWithin && active?.data.current && overAccepts.includes(`${cleanCurrentType}-within`)) ||
+            (isActive &&
+                isWithinOneLevel &&
+                activeProjection?.previousNode?.accepts !== undefined &&
+                activeProjection?.previousNode?.accepts.includes(`${cleanCurrentType}-within`)) ||
             (activeProjection?.isWithinParent && parentAccepts.includes(`${cleanCurrentType}-within`));
 
         const canDrop =
             isActive && active?.data.current && ((overAccepts.includes(currentType) && !isWithin) || canDropWithin);
+
+        const expandProjectionParent = useDebounce((toExpandId: string) => {
+            if (expandDebounced.current === toExpandId) {
+                onExpand?.(toExpandId);
+            }
+        }, EXPAND_ONHOVER_DELAY);
+
+        useEffect(() => {
+            if (isActive) {
+                expandDebounced.current = isWithin ? activeProjection?.previousNode?.id : null;
+            }
+
+            if (
+                isActive &&
+                canDropWithinAndDeeper &&
+                activeProjection?.parentId &&
+                activeProjection.previousNode &&
+                activeProjection.parentId === activeProjection.previousNode.id &&
+                activeProjection.parentId !== active?.data?.current?.parentId
+            ) {
+                expandProjectionParent(activeProjection?.parentId);
+            }
+        }, [
+            active?.data,
+            activeProjection?.parentId,
+            activeProjection?.previousNode,
+            expandProjectionParent,
+            isActive,
+            canDropWithinAndDeeper,
+            isWithin,
+        ]);
 
         const handleItemDragEnd = useCallback(
             (event: TreeDragEndEvent) => {
@@ -229,15 +272,33 @@ export const TreeItem = memo(
             () =>
                 merge([
                     FOCUS_VISIBLE_STYLE,
-                    'tw-transition-colors tw-outline-none tw-ring-inset tw-group tw-px-2.5 tw-no-underline tw-leading-5 tw-h-10',
+                    'tw-cursor-default tw-transition-colors tw-outline-none tw-ring-inset tw-group tw-px-2.5 tw-no-underline tw-leading-5 tw-h-10',
                     !isActive && !isSelected && 'active:tw-bg-box-neutral-pressed',
-                    isSelected && !transform?.y
+                    !isActive && isSelected
                         ? 'tw-font-medium tw-bg-box-neutral-strong tw-text-box-neutral-strong-inverse hover:tw-bg-box-neutral-strong-hover'
                         : 'hover:tw-bg-box-neutral tw-text-text',
                     transform?.y ? 'tw-bg-box-neutral-strong-inverse tw-text-text tw-font-normal' : '',
                 ]),
             [isActive, isSelected, transform?.y],
         );
+
+        const showContent = !isActive;
+        const showChildren = isExpanded && !isActive;
+        const showDragHandle = draggable && !isActive;
+        const showLabel = label !== undefined && !isActive;
+        const showExpandButton = !isActive && (showCaret === undefined ? hasChildren : showCaret);
+
+        let previousItemToBeExpandedFeedback = '';
+        if (
+            !isActive &&
+            !isExpanded &&
+            showExpandButton &&
+            canDropWithinAndDeeper &&
+            projection?.previousNode?.id === id &&
+            projection?.depth > projection?.previousNode?.depth
+        ) {
+            previousItemToBeExpandedFeedback = 'tw-border-solid tw-rounded tw-border-2 tw-border-box-selected-strong';
+        }
 
         const containerClassName = merge([
             'tw-transition-colors tw-flex tw-items-center tw-leading-5 tw-width-full',
@@ -246,6 +307,7 @@ export const TreeItem = memo(
                 (canDrop
                     ? 'tw-border-box-selected-strong tw-bg-box-selected-hover'
                     : 'tw-bg-box-negative-hover tw-border-box-negative-strong-hover'),
+            previousItemToBeExpandedFeedback,
         ]);
 
         const depthPadding = activeProjection?.depth ? activeProjection.depth * INDENTATION_WIDTH : undefined;
@@ -254,12 +316,6 @@ export const TreeItem = memo(
         const liStyle = {
             paddingLeft: depthPadding ?? levelPadding,
         };
-
-        const showContent = !isActive;
-        const showChildren = isExpanded && !isActive;
-        const showDragHandle = draggable && !isActive;
-        const showLabel = label !== undefined && !isActive;
-        const showExpandButton = !isActive && (showCaret === undefined ? hasChildren : showCaret);
 
         const style = {
             transform: CSS.Transform.toString(transform),

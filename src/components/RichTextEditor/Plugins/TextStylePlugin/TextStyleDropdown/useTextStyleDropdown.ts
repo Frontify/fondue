@@ -67,9 +67,9 @@ export const useTextStyleDropdown = <T extends HTMLElement, P extends HTMLElemen
                 setIsOpen(false);
             }
         };
-        document.addEventListener('mousedown', listener);
+        document.addEventListener('pointerdown', listener);
         return () => {
-            document.removeEventListener('mousedown', listener);
+            document.removeEventListener('pointerdown', listener);
         };
     }, [isOpen, popperElement, setIsOpen, triggerElement]);
 

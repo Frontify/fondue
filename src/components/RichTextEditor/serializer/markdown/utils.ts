@@ -32,3 +32,5 @@ export const getSelectedOptions = (options?: PartialOptionType): OptionType => (
         },
     },
 });
+
+export const isMaliciousLink = (link: string) => /^(javascript:|data:text\/).+/.test(link);

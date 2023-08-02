@@ -12,7 +12,7 @@ function IconStar12Filled(props: GeneratedIconProps): React.ReactElement<Generat
             {...props}
         >
             <g fill="none">
-                <g clipPath="url(#prefix__a)">
+                <g clipPath="url(#Star12Filled)">
                     <path
                         fill="currentColor"
                         stroke="currentColor"
@@ -20,7 +20,7 @@ function IconStar12Filled(props: GeneratedIconProps): React.ReactElement<Generat
                     />
                 </g>
                 <defs>
-                    <clipPath id="prefix__a">
+                    <clipPath id="Star12Filled">
                         <path fill="#fff" d="M0 0h12v12H0z" />
                     </clipPath>
                 </defs>

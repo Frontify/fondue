@@ -1,7 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { ReactNode } from 'react';
-import { currentNodesChanged, findIndexById, getNodeChildrenIds, updateNodeWithNewChildren } from './reducer';
+import {
+    currentNodesChanged,
+    findIndexById,
+    getCurrentChildrenForNewNodesIfExpanded,
+    getNodeChildrenIds,
+    updateNodeWithNewChildren,
+} from './reducer';
 
 const Component = ({
     id,
@@ -130,6 +136,32 @@ describe('reducer', () => {
                 ...newChildren,
                 nodes[4],
                 nodes[5],
+            ]);
+        });
+    });
+
+    describe('getCurrentChildrenForNewNodesIfExpanded', () => {
+        it('should return the new nodes with old children of the expanded id', () => {
+            const children = [
+                <Component key="5" id="var" parentId="foo" />,
+                <Component key="6" id="tar" parentId="foo" />,
+            ];
+
+            const nodes = [
+                <Component key="1" id="foo" parentId="root" />,
+                <Component key="3" id="baz" parentId="root" />,
+                <Component key="4" id="qux" parentId="root" />,
+                <Component key="2" id="bar" parentId="root" />,
+            ];
+
+            const oldNodes = [nodes[0], ...children, nodes[1], nodes[2]];
+
+            expect(getCurrentChildrenForNewNodesIfExpanded(oldNodes, new Set(['foo']), nodes)).to.deep.equal([
+                nodes[0],
+                ...children,
+                nodes[1],
+                nodes[2],
+                nodes[3],
             ]);
         });
     });

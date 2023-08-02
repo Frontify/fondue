@@ -12,7 +12,7 @@ function IconArrowMove20(props: GeneratedIconProps): React.ReactElement<Generate
             {...props}
         >
             <g fill="none">
-                <g clipPath="url(#prefix__a)">
+                <g clipPath="url(#ArrowMove20)">
                     <path
                         fill="currentColor"
                         fillRule="evenodd"
@@ -21,7 +21,7 @@ function IconArrowMove20(props: GeneratedIconProps): React.ReactElement<Generate
                     />
                 </g>
                 <defs>
-                    <clipPath id="prefix__a">
+                    <clipPath id="ArrowMove20">
                         <path fill="#fff" d="M0 0h20v20H0z" />
                     </clipPath>
                 </defs>

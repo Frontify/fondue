@@ -12,7 +12,7 @@ function IconArrowAlignHorizontalCentre12(props: GeneratedIconProps): React.Reac
             {...props}
         >
             <g fill="none">
-                <g clipPath="url(#prefix__a)">
+                <g clipPath="url(#ArrowAlignHorizontalCentre12)">
                     <path
                         fill="currentColor"
                         fillRule="evenodd"
@@ -21,7 +21,7 @@ function IconArrowAlignHorizontalCentre12(props: GeneratedIconProps): React.Reac
                     />
                 </g>
                 <defs>
-                    <clipPath id="prefix__a">
+                    <clipPath id="ArrowAlignHorizontalCentre12">
                         <path fill="#fff" d="M0 0h12v12H0z" />
                     </clipPath>
                 </defs>

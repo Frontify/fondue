@@ -7,7 +7,7 @@ import { DialogHeader } from '@components/DialogHeader';
 import { DialogBody } from '@components/DialogBody/DialogBody';
 import { Dropdown } from '@components/Dropdown';
 import { DialogFooter } from '@components/DialogFooter';
-import { DialogHeaderSize, Modality } from '../../types/dialog';
+import { Modality } from '../../types/dialog';
 import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
 import { useToggleOverlay } from '@hooks/useToggleOverlay';
 import { POPPER_STORY_ARGS } from '@components/Popper/types';
@@ -96,6 +96,7 @@ const Template: StoryFn<InlineDialogProps> = (args) => {
                                 </Flex>
                             </Box>
                             <Dropdown
+                                enablePortal={false}
                                 onChange={(id) => console.log(id)}
                                 activeItemId="1"
                                 menuBlocks={[
@@ -170,14 +171,11 @@ const InContext: StoryFn<InlineDialogProps> = (args) => {
                         <Button onClick={() => setIsOpen(!isOpen)}>InlineDialog Trigger</Button>
                     </InlineDialog.Trigger>
                     <InlineDialog.Content>
-                        <DialogHeader
-                            title="Collaborator Settings"
-                            size={DialogHeaderSize.Large}
-                            onClose={() => setIsOpen(false)}
-                        />
+                        <DialogHeader title="Collaborator Settings" size="large" onClose={() => setIsOpen(false)} />
                         <DialogBody>
                             <div className="tw-p-2">
                                 <Dropdown
+                                    enablePortal={false}
                                     onChange={(id) => console.log(id)}
                                     activeItemId={'1'}
                                     menuBlocks={[
@@ -200,7 +198,7 @@ const InContext: StoryFn<InlineDialogProps> = (args) => {
                             </div>
                         </DialogBody>
                         <DialogFooter
-                            buttons={[
+                            actionButtons={[
                                 {
                                     children: 'Cancel',
                                     emphasis: ButtonEmphasis.Default,

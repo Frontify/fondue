@@ -12,7 +12,7 @@ function IconExclamationMarkCircle12Filled(props: GeneratedIconProps): React.Rea
             {...props}
         >
             <g fill="none">
-                <g clipPath="url(#prefix__a)">
+                <g clipPath="url(#ExclamationMarkCircle12Filled)">
                     <path
                         fill="currentColor"
                         fillRule="evenodd"
@@ -21,7 +21,7 @@ function IconExclamationMarkCircle12Filled(props: GeneratedIconProps): React.Rea
                     />
                 </g>
                 <defs>
-                    <clipPath id="prefix__a">
+                    <clipPath id="ExclamationMarkCircle12Filled">
                         <path fill="#fff" d="M0 0h12v12H0z" />
                     </clipPath>
                 </defs>

@@ -126,13 +126,13 @@ export const mixedTree = [
             {
                 text: '\nThis is ',
             },
-            createLink('https://www.frontify.com/', 'link to frontify.com', Targets.Self),
+            createLink('link to frontify.com', 'https://www.frontify.com/', Targets.Self),
             createText('.'),
         ],
     },
     createP([
         createText('This is second link '),
-        createLink('https://www.frontify.com/', 'link to www.frontify.com'),
+        createLink('link to www.frontify.com', 'https://www.frontify.com/'),
         createText(' with target blank.'),
     ]),
     createP([createText('I am normal Paragraph')]),
@@ -187,4 +187,39 @@ export const mixedTree = [
 
     ...unorderedListTree[0],
     ...orderedListTree[0],
+];
+
+export const mixedMarkdownWithUnsafeLink1 = `${mixedMarkdown}
+
+Unsafe link: [xss ca-30JS](javascript:alert("XSS-Vulnerability")){:target="_self"}
+
+Unsafe link not markdown standard: [xss ca-30JS](javascript:alert("With the spaces as link"))
+
+`;
+
+export const mixedTreeWithUnsafeLink1 = [
+    ...mixedTree,
+    createP([createText('Unsafe link: '), createLink('xss ca-30JS', undefined, '_self'), createText('')]),
+    createP([
+        createText('Unsafe link not markdown standard: [xss ca-30JS](javascript:alert("With the spaces as link"))'),
+    ]),
+];
+
+export const mixedMarkdownWithUnsafeLink2 = `${mixedMarkdown}
+Unsafe link: [xss ca-30JS](){:target="_self"}
+
+Unsafe link not markdown standard: [xss ca-30JS](javascript:alert("With the spaces as link"))
+
+`;
+
+export const mixedTreeWithUnsafeLink2 = [
+    ...mixedTree,
+    createP([
+        createText('\n'),
+        createText('Unsafe link: '),
+        createLink('xss ca-30JS', 'javascript:alert("XSS-Vulnerability")', '_self'),
+    ]),
+    createP([
+        createText('Unsafe link not markdown standard: [xss ca-30JS](javascript:alert("With the spaces as link"))'),
+    ]),
 ];

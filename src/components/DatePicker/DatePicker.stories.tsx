@@ -8,7 +8,7 @@ import { SegmentedControls } from '@components/SegmentedControls';
 import { Validation } from '@utilities/validation';
 import { addDays, intlFormat, subDays } from 'date-fns';
 import { IconCalendar16 } from '@foundation/Icon/Generated';
-import { Badge, BadgeEmphasis, BadgeStyle } from '..';
+import { Badge, BadgeEmphasis, BadgeStyle, Button } from '..';
 
 export default {
     title: 'Components/DatePicker',
@@ -94,6 +94,23 @@ Default.args = {
 };
 
 Default.storyName = 'Date Picker';
+
+export const DatePickerWithCustomHeader = Template.bind({});
+DatePickerWithCustomHeader.args = {
+    placeHolder: 'Select a date',
+    isClearable: true,
+    shouldCloseOnSelect: true,
+    dateFormat: 'dd MMM yyyy',
+    customHeader: (
+        <div className="tw-flex tw-gap-2 tw-grow">
+            <Button hugWidth={false}>30d</Button>
+            <Button hugWidth={false}>90d</Button>
+            <Button hugWidth={false}>365d</Button>
+        </div>
+    ),
+};
+
+DatePickerWithCustomHeader.storyName = 'Date Picker with custom header';
 
 export const DatePickerWithMinAndMaxDates = Template.bind({});
 DatePickerWithMinAndMaxDates.args = {

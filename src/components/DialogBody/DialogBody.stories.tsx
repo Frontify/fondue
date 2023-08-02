@@ -3,7 +3,7 @@
 import React from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { DialogBody } from './DialogBody';
-import { DialogBodyProps } from '../../types/dialog';
+import { DIALOG_SIZE, DialogBodyProps } from '../../types/dialog';
 
 export default {
     title: 'Experimental/DialogBody',
@@ -13,11 +13,15 @@ export default {
         maxHeight: {
             type: 'number',
         },
+        padding: {
+            options: ['none', ...DIALOG_SIZE],
+            control: { type: 'select' },
+        },
     },
 } as Meta<DialogBodyProps>;
 
 const Template: StoryFn<DialogBodyProps> = (args) => (
-    <DialogBody maxHeight={args.maxHeight}>
+    <DialogBody {...args}>
         <p>Hello</p>
         <p>
             Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam at, beatae blanditiis cupiditate ducimus,
