@@ -34,7 +34,7 @@ export type DialogBodyProps = {
 
 export type DialogFooterProps = {
     children?: ReactNode;
-    actionButtons: ButtonProps[]
+    actionButtons: ButtonProps[];
     backButton?: Omit<ButtonProps, 'emphasis' | 'icon' | 'size'>;
     padding?: DialogSize;
     'data-test-id'?: string;
