@@ -58,6 +58,7 @@ type TreeItemBaseProps = {
     showCaret?: boolean;
     ignoreItemDoubleClick?: boolean;
     expandOnSelect?: boolean;
+    levelConstraint?: Nullable<number>;
 };
 
 export type TreeItemWithLabelProps = {

@@ -33,6 +33,10 @@ const getDragDepth = (offset: number) => {
     return Math.round(offset / INDENTATION_WIDTH);
 };
 
+const getNodeDepthConstraint = (node: ReactElement) => {
+    return (node?.props.levelConstraint ?? null) !== null ? node.props.levelConstraint : false;
+};
+
 const calculateMaxDepth = (previousNode: ReactElement, nextNode: ReactElement) => {
     const previousNodeDepth = getNodeDepth(previousNode);
 
@@ -64,11 +68,14 @@ export const getProjection = ({ nodes, activeId, overId, dragOffset }: Projectio
     const previousNode = newNodes[overNodeIndex - 1];
     const nextNode = newNodes[overNodeIndex + 1];
 
+    const activeNodeDepthConstraint = getNodeDepthConstraint(activeNode);
     const dragDepth = getDragDepth(dragOffset);
     const projectedDepth = (activeNode?.props?.level ?? 0) + dragDepth;
 
-    const maxDepth = calculateMaxDepth(previousNode, nextNode);
-    const minDepth = calculateMinDepth(previousNode, nextNode);
+    const maxDepth =
+        activeNodeDepthConstraint !== false ? activeNodeDepthConstraint : calculateMaxDepth(previousNode, nextNode);
+    const minDepth =
+        activeNodeDepthConstraint !== false ? activeNodeDepthConstraint : calculateMinDepth(previousNode, nextNode);
 
     let depth = projectedDepth || getNodeDepth(nextNode);
     if (projectedDepth >= maxDepth) {
