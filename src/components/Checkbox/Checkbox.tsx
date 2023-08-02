@@ -224,7 +224,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                                 data-test-id={`${dataTestId}-icon-box`}
                                 aria-hidden="true"
                                 className={merge([
-                                    'tw-leading-3 tw-p-2 tw-relative tw-flex tw-items-center tw-justify-center tw-rounded tw-shrink-0 tw-flex-none',
+                                    'tw-leading-3 tw-relative tw-flex tw-items-center tw-justify-center tw-rounded tw-shrink-0 tw-flex-none',
                                     sizeClassesMap[size],
                                     disabled ? disabledClasses : enabledClasses,
                                 ])}
