@@ -4,7 +4,6 @@ import React from 'react';
 import { DialogHeader } from './DialogHeader';
 import { IconIcon } from '@foundation/Icon/Generated';
 import { Badge, BadgeStyle } from '@components/Badge';
-import { DialogHeaderSize } from '../../types/dialog';
 
 const DIALOG_HEADER_SELECTOR = '[data-test-id=fondue-dialog-header]';
 const DIALOG_HEADER_TITLE = '[data-test-id=fondue-dialog-header-title]';
@@ -20,15 +19,21 @@ describe('DialogHeader Component', () => {
         cy.get(DIALOG_HEADER_SELECTOR).should('have.class', 'tw-border-b tw-border-b-line');
     });
 
-    it('should render in Default size', () => {
+    it('should render in Medium size', () => {
         cy.mount(<DialogHeader title="Hello" />);
-        cy.get(DIALOG_HEADER_SELECTOR).should('have.class', 'tw-py-4');
+        cy.get(DIALOG_HEADER_SELECTOR).should('have.class', 'tw-p-6');
         cy.get(DIALOG_HEADER_TITLE).find('span').should('have.class', 'tw-text-body-medium');
     });
 
+    it('should render in Small size', () => {
+        cy.mount(<DialogHeader title="Hello" size="small" />);
+        cy.get(DIALOG_HEADER_SELECTOR).should('have.class', 'tw-p-4');
+        cy.get(DIALOG_HEADER_TITLE).find('span').should('have.class', 'tw-text-body-small');
+    });
+
     it('should render in Large size', () => {
-        cy.mount(<DialogHeader title="Hello" size={DialogHeaderSize.Large} />);
-        cy.get(DIALOG_HEADER_SELECTOR).should('have.class', 'tw-py-6');
+        cy.mount(<DialogHeader title="Hello" size="large" />);
+        cy.get(DIALOG_HEADER_SELECTOR).should('have.class', 'tw-p-10');
         cy.get(DIALOG_HEADER_TITLE).find('span').should('have.class', 'tw-text-body-large');
     });
 

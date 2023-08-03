@@ -53,4 +53,55 @@ describe('DialogBody Component', () => {
         cy.get(DIALOG_BODY_SELECTOR).should('have.css', 'max-height', '200px');
         cy.get(DIALOG_BODY_SELECTOR).should('have.css', 'height', '200px');
     });
+
+    describe('Padding', () => {
+        it('should render with no padding by default', () => {
+            cy.mount(
+                <DialogBody>
+                    <p>Hello</p>
+                    <p>
+                        Bacon ipsum dolor amet picanha ham porchetta doner meatball sausage. T-bone chuck shankle pig
+                        spare ribs prosciutto. Leberkas buffalo chicken ball tip, beef ribs capicola turducken picanha.
+                        Turkey kielbasa flank turducken ham fatback. Hamburger venison short ribs bacon pastrami.
+                    </p>
+                </DialogBody>,
+            );
+
+            cy.get(DIALOG_BODY_SELECTOR).should('exist');
+            cy.get(DIALOG_BODY_SELECTOR).should('have.css', 'padding', '0px');
+        });
+
+        it('should render with small padding', () => {
+            cy.mount(
+                <DialogBody padding="small">
+                    <p>Hello</p>
+                </DialogBody>,
+            );
+
+            cy.get(DIALOG_BODY_SELECTOR).should('exist');
+            cy.get(DIALOG_BODY_SELECTOR).should('have.class', 'tw-p-4');
+        });
+
+        it('should render with medium padding', () => {
+            cy.mount(
+                <DialogBody padding="medium">
+                    <p>Hello</p>
+                </DialogBody>,
+            );
+
+            cy.get(DIALOG_BODY_SELECTOR).should('exist');
+            cy.get(DIALOG_BODY_SELECTOR).should('have.class', 'tw-p-6');
+        });
+
+        it('should render with large padding', () => {
+            cy.mount(
+                <DialogBody padding="large">
+                    <p>Hello</p>
+                </DialogBody>,
+            );
+
+            cy.get(DIALOG_BODY_SELECTOR).should('exist');
+            cy.get(DIALOG_BODY_SELECTOR).should('have.class', 'tw-p-10');
+        });
+    });
 });

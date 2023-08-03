@@ -32,6 +32,7 @@ const animateLayoutChanges: AnimateLayoutChanges = ({ isSorting, wasDragging }) 
 /** @private */
 type TreeItemPrivateProps = {
     level?: number;
+    levelConstraint?: Nullable<number>;
     parentId?: string;
     isSelected?: boolean;
     isExpanded?: boolean;
