@@ -20,7 +20,7 @@ export const Badge = ({
     onClick,
     onDismiss,
     'data-test-id': dataTestId = 'badge',
-    withTitle = true,
+    withTitleAttribute = true,
 }: BadgeProps): Nullable<ReactElement> => {
     if (!children && !icon && !status) {
         return null;
@@ -65,7 +65,7 @@ export const Badge = ({
                     FOCUS_VISIBLE_STYLE,
                 ])}
                 data-test-id={`${dataTestId}-button`}
-                title={withTitle ? badgeTitle : undefined}
+                title={withTitleAttribute ? badgeTitle : undefined}
             >
                 {status && <BadgeStatusIcon status={status} disabled={disabled} data-test-id={dataTestId} />}
                 {icon && (

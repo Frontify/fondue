@@ -23,6 +23,7 @@ export default {
             options: ['small', 'medium'],
             control: { type: 'select' },
         },
+        withTitleAttribute: { control: { type: 'boolean' } },
         onClick: { table: { disable: false } },
         onDismiss: { table: { disable: false } },
     },
@@ -32,6 +33,7 @@ export default {
         size: 'medium',
         emphasis: BadgeEmphasis.Strong,
         disabled: false,
+        withTitleAttribute: true,
     },
 } as Meta<BadgeProps>;
 
