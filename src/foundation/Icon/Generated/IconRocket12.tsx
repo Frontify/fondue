@@ -12,7 +12,7 @@ function IconRocket12(props: GeneratedIconProps): React.ReactElement<GeneratedIc
             {...props}
         >
             <g fill="none">
-                <g clipPath="url(#prefix__a)">
+                <g clipPath="url(#Rocket12)">
                     <path
                         fill="currentColor"
                         fillRule="evenodd"
@@ -21,7 +21,7 @@ function IconRocket12(props: GeneratedIconProps): React.ReactElement<GeneratedIc
                     />
                 </g>
                 <defs>
-                    <clipPath id="prefix__a">
+                    <clipPath id="Rocket12">
                         <path fill="#fff" d="M0 0h12v12H0z" />
                     </clipPath>
                 </defs>

@@ -17,6 +17,8 @@ export type BadgeProps = {
     size?: BadgeSize;
     children?: ReactNode;
     'data-test-id'?: string;
+    /** @description withTitle could be disabled only in the case another overlay is present, ex Tooltip */
+    withTitleAttribute?: boolean;
 };
 
 export type BadgeStatusIconProps = { status: BadgeStatus | Color | string; disabled: boolean; 'data-test-id'?: string };

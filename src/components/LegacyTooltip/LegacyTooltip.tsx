@@ -307,7 +307,7 @@ export const LegacyTooltip = ({
                 {triggerElement &&
                     cloneElement(triggerElement, {
                         ref: setTriggerElementRef,
-                        'aria-describedby': id,
+                        'aria-labelledby': id,
                         'aria-disabled': shouldPreventTooltipOpening,
                     })}
             </div>

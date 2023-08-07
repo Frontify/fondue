@@ -18,8 +18,8 @@ dependencies:
     specifier: 3.2.1
     version: 3.2.1(react@18.2.0)
   '@frontify/fondue-tokens':
-    specifier: 3.3.0
-    version: 3.3.0(postcss@8.4.21)(ts-node@10.9.1)
+    specifier: 3.3.0-next.5
+    version: 3.3.0-next.5(postcss@8.4.21)(ts-node@10.9.1)
   '@popperjs/core':
     specifier: 2.11.6
     version: 2.11.6
@@ -1856,6 +1856,7 @@ packages:
 
   /@emotion/memoize@0.7.4:
     resolution: {integrity: sha512-Ja/Vfqe3HpuzRsG1oBtWTHk2PGZ7GR+2Vz5iYGelAw8dx32K0y7PjVuxK6z1nMpZOqAFsRUPCkK1YjJ56qJlgw==}
+    requiresBuild: true
     dev: true
     optional: true
 
@@ -2487,8 +2488,8 @@ packages:
       - debug
     dev: true
 
-  /@frontify/fondue-tokens@3.3.0(postcss@8.4.21)(ts-node@10.9.1):
-    resolution: {integrity: sha512-UbuAa5Z8C8k+xz0YpeAUIGXWYkrA4JRhYMF/C88ESNHEXWJ5YXaqkkmINT43lAZH1n3CpliRg9o7Jdew3nhtkg==}
+  /@frontify/fondue-tokens@3.3.0-next.5(postcss@8.4.21)(ts-node@10.9.1):
+    resolution: {integrity: sha512-6M919jnfqZnSW1GFSJ3jDiUx3Ml4L6FjA+IJR19LSVWK7de/xiXOiNDa4Rh1UAzZmA1NgzPAJKyu2FI3RZza/Q==}
     dependencies:
       tailwindcss: 3.3.1(postcss@8.4.21)(ts-node@10.9.1)
     transitivePeerDependencies:

@@ -61,6 +61,10 @@ const generateSvgComponent = async (svgPath: Entry) => {
             template: IconTemplate,
             dimensions: true,
             typescript: true,
+            replaceAttrValues: {
+                prefix__a: svgFileName,
+                'url(#prefix__a)': `url(#${svgFileName})`,
+            },
             svgProps: {
                 className: '{customClassName}',
                 name: `${ICON_COMPONENT_PREFIX}${svgFileName}`,

@@ -7,7 +7,7 @@ import { useRichTextEditorContext } from '@components/RichTextEditor/context';
 import { TextStyles } from '../TextStylePlugin';
 
 export const LI_CLASSNAMES =
-    '[&>p]:before:tw-flex [&>p]:before:tw-justify-end [&>p]:before:tw-w-[1.2em] !tw-no-underline';
+    '[&>p]:before:tw-flex [&>p]:before:tw-justify-end [&>p]:before:tw-w-[1.2em] !tw-no-underline !tw-list-item';
 
 export const ListItemMarkupElementNode = ({ attributes, children, element }: PlateRenderElementProps) => {
     const { styles } = useRichTextEditorContext();

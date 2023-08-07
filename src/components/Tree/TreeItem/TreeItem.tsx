@@ -32,6 +32,7 @@ const animateLayoutChanges: AnimateLayoutChanges = ({ isSorting, wasDragging }) 
 /** @private */
 type TreeItemPrivateProps = {
     level?: number;
+    levelConstraint?: Nullable<number>;
     parentId?: string;
     isSelected?: boolean;
     isExpanded?: boolean;
@@ -92,23 +93,23 @@ export const TreeItem = memo(
             typeof activeProjection?.accepts === 'string' ? activeProjection.accepts?.split(', ') : [];
 
         const currentType = active?.data.current?.type || '';
-        const cleanCurrentType = currentType?.replace(/-\d+$/, '') || '';
 
         const isWithin =
             projection?.previousNode?.depth !== undefined && projection?.depth > projection?.previousNode?.depth;
+        const isWithinOneLevel = isWithin && projection.depth - 1 === projection?.previousNode?.depth;
 
         const canDropWithinAndDeeper =
             isWithin &&
             projection?.previousNode?.accepts !== undefined &&
-            (projection?.previousNode?.accepts.includes(`${cleanCurrentType}-deeper`) ||
-                projection?.previousNode?.accepts.includes(`${cleanCurrentType}-within`));
+            (projection?.previousNode?.accepts.includes(`${currentType}-deeper`) ||
+                projection?.previousNode?.accepts.includes(`${currentType}-within`));
 
         const canDropWithin =
             (isActive &&
-                isWithin &&
+                isWithinOneLevel &&
                 activeProjection?.previousNode?.accepts !== undefined &&
-                activeProjection?.previousNode?.accepts.includes(`${cleanCurrentType}-within`)) ||
-            (activeProjection?.isWithinParent && parentAccepts.includes(`${cleanCurrentType}-within`));
+                activeProjection?.previousNode?.accepts.includes(`${currentType}-within`)) ||
+            (activeProjection?.isWithinParent && parentAccepts.includes(`${currentType}-within`));
 
         const canDrop =
             isActive && active?.data.current && ((overAccepts.includes(currentType) && !isWithin) || canDropWithin);
@@ -266,19 +267,22 @@ export const TreeItem = memo(
             }
         }, [isActive, isExpanded, isParentActive, enrichedChildren, id]);
 
-        const liClassName = useMemo(
-            () =>
-                merge([
+        const { liClassName, backgroundClassName } = useMemo(() => {
+            return {
+                liClassName: merge([
                     FOCUS_VISIBLE_STYLE,
-                    'tw-cursor-default tw-transition-colors tw-outline-none tw-ring-inset tw-group tw-px-2.5 tw-no-underline tw-leading-5 tw-h-10',
-                    !isActive && !isSelected && 'active:tw-bg-box-neutral-pressed',
-                    isSelected && !transform?.y
-                        ? 'tw-font-medium tw-bg-box-neutral-strong tw-text-box-neutral-strong-inverse hover:tw-bg-box-neutral-strong-hover'
-                        : 'hover:tw-bg-box-neutral tw-text-text',
-                    transform?.y ? 'tw-bg-box-neutral-strong-inverse tw-text-text tw-font-normal' : '',
+                    'tw-relative tw-cursor-default tw-transition-colors tw-outline-none tw-ring-inset tw-group tw-px-2.5 tw-no-underline tw-leading-5 tw-h-10',
+                    !isActive && isSelected ? 'tw-font-medium tw-text-box-neutral-strong-inverse' : 'tw-text-text',
                 ]),
-            [isActive, isSelected, transform?.y],
-        );
+                backgroundClassName: merge([
+                    'tw-block tw-absolute tw-inset-0 tw-transition-colors -tw-z-10 -tw-mx-2.5',
+                    !isActive && !isSelected && 'group-active:tw-bg-box-neutral-pressed',
+                    !isActive && isSelected
+                        ? 'tw-bg-box-neutral-strong hover:tw-bg-box-neutral-strong-hover'
+                        : 'group-hover:tw-bg-box-neutral',
+                ]),
+            };
+        }, [isActive, isSelected]);
 
         const showContent = !isActive;
         const showChildren = isExpanded && !isActive;
@@ -315,6 +319,10 @@ export const TreeItem = memo(
             paddingLeft: depthPadding ?? levelPadding,
         };
 
+        const backgroundStyle = {
+            marginLeft: -1 * (depthPadding ?? levelPadding),
+        };
+
         const style = {
             transform: CSS.Transform.toString(transform),
             transition,
@@ -340,6 +348,7 @@ export const TreeItem = memo(
                 aria-owns={childrenIds.join(' ')}
             >
                 <div ref={setDraggableNodeRef} className={containerClassName} style={style}>
+                    <span className={backgroundClassName} style={backgroundStyle} aria-hidden={true} />
                     <DragHandle
                         {...listeners}
                         {...attributes}

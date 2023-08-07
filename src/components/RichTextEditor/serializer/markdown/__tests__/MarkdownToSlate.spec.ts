@@ -20,7 +20,9 @@ import {
     mentionsMarkdown,
     mentionsTree,
     mixedMarkdown,
+    mixedMarkdownWithUnsafeLink1,
     mixedTree,
+    mixedTreeWithUnsafeLink1,
     orderedListMarkdown,
     orderedListTree,
     paragraphMarkdown,
@@ -92,11 +94,41 @@ describe('Markdown to slate Transformer', () => {
             const result = transformer.process(linkMarkdown[1]);
             expect(result).to.deep.equal(linkTree[1]);
         });
+
+        it('should correctly transform the Unsafe links', () => {
+            let result = transformer.process(linkMarkdown[2]);
+            expect(linkTree[2]).to.deep.equal(result);
+
+            result = transformer.process(linkMarkdown[3]);
+            expect(linkTree[3]).to.deep.equal(result);
+        });
+
+        it('should create text for not standard markdown link', () => {
+            const result = transformer.process(linkMarkdown[4]);
+            expect(linkTree[4]).to.deep.equal(result);
+        });
+
+        it('should create mailto link', () => {
+            const result = transformer.process(linkMarkdown[5]);
+            expect(result).to.deep.equal(linkTree[5]);
+        });
     });
 
-    it('should transform image', () => {
-        const result = transformer.process(imageMarkdown);
-        expect(result).to.deep.equal(imageTree);
+    describe('Image transformation', () => {
+        it('should transform image', () => {
+            const result = transformer.process(imageMarkdown[0]);
+            expect(imageTree[0]).to.deep.equal(result);
+        });
+
+        it('should correctly transform the unsafe image source', () => {
+            const result = transformer.process(imageMarkdown[1]);
+            expect(imageTree[1]).to.deep.equal(result);
+        });
+
+        it('should create text for not standard image source', () => {
+            const result = transformer.process(imageMarkdown[2]);
+            expect(imageTree[2]).to.deep.equal(result);
+        });
     });
 
     it('should transform block quote', () => {
@@ -107,9 +139,16 @@ describe('Markdown to slate Transformer', () => {
         expect(result).to.deep.equal(blockQuoteTree[1]);
     });
 
-    it('should transform mixed text', () => {
-        const result = transformer.process(mixedMarkdown);
-        expect(result).to.deep.equal(mixedTree);
+    describe('Mixed text transformation', () => {
+        it('should transform mixed text', () => {
+            const result = transformer.process(mixedMarkdown);
+            expect(result).to.deep.equal(mixedTree);
+        });
+
+        it('should transform mixed text with unsafe link', () => {
+            const result = transformer.process(mixedMarkdownWithUnsafeLink1);
+            expect(result).to.deep.equal(mixedTreeWithUnsafeLink1);
+        });
     });
 
     it('should transform mentions text', () => {

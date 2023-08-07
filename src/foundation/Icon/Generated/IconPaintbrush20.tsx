@@ -12,7 +12,7 @@ function IconPaintbrush20(props: GeneratedIconProps): React.ReactElement<Generat
             {...props}
         >
             <g fill="none">
-                <g clipPath="url(#prefix__a)">
+                <g clipPath="url(#Paintbrush20)">
                     <path
                         fill="currentColor"
                         fillRule="evenodd"
@@ -21,7 +21,7 @@ function IconPaintbrush20(props: GeneratedIconProps): React.ReactElement<Generat
                     />
                 </g>
                 <defs>
-                    <clipPath id="prefix__a">
+                    <clipPath id="Paintbrush20">
                         <path fill="#fff" d="M0 0h20v20H0z" />
                     </clipPath>
                 </defs>
