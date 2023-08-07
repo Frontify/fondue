@@ -93,7 +93,6 @@ export const TreeItem = memo(
             typeof activeProjection?.accepts === 'string' ? activeProjection.accepts?.split(', ') : [];
 
         const currentType = active?.data.current?.type || '';
-        const cleanCurrentType = currentType?.replace(/-\d+$/, '') || '';
 
         const isWithin =
             projection?.previousNode?.depth !== undefined && projection?.depth > projection?.previousNode?.depth;
@@ -102,15 +101,15 @@ export const TreeItem = memo(
         const canDropWithinAndDeeper =
             isWithin &&
             projection?.previousNode?.accepts !== undefined &&
-            (projection?.previousNode?.accepts.includes(`${cleanCurrentType}-deeper`) ||
-                projection?.previousNode?.accepts.includes(`${cleanCurrentType}-within`));
+            (projection?.previousNode?.accepts.includes(`${currentType}-deeper`) ||
+                projection?.previousNode?.accepts.includes(`${currentType}-within`));
 
         const canDropWithin =
             (isActive &&
                 isWithinOneLevel &&
                 activeProjection?.previousNode?.accepts !== undefined &&
-                activeProjection?.previousNode?.accepts.includes(`${cleanCurrentType}-within`)) ||
-            (activeProjection?.isWithinParent && parentAccepts.includes(`${cleanCurrentType}-within`));
+                activeProjection?.previousNode?.accepts.includes(`${currentType}-within`)) ||
+            (activeProjection?.isWithinParent && parentAccepts.includes(`${currentType}-within`));
 
         const canDrop =
             isActive && active?.data.current && ((overAccepts.includes(currentType) && !isWithin) || canDropWithin);
