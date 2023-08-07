@@ -129,11 +129,12 @@ export const getProjection = ({ nodes, activeId, overId, dragOffset }: Projectio
      * - Use the 'over' item to get the position
      * - If the over element is the parent matched set it to the top
      * - If the item is going out:
-     *   - and up in the tree it goes to the bottom position
-     *   - if going down, to the first
+     *   - try to figure the position by the parent from the next element
+     *   - Or go to the first (going down) or last position (going up)
      * - if we move the item in or same depth and up it goes to the last position
      */
     let dropIndexInParent = nodesInParent.findIndex(({ props }) => props.id === activeId);
+
     if (dropIndexInParent < 0) {
         const overNextIndex = nodesInParent.findIndex(({ props }) => props.id === overId);
         if (overNextIndex >= 0) {
@@ -141,7 +142,15 @@ export const getProjection = ({ nodes, activeId, overId, dragOffset }: Projectio
         } else if (parentId === overId) {
             dropIndexInParent = -1;
         } else if (dragDepth < 0) {
-            dropIndexInParent = activeNodeIndex < overNodeIndex ? nodesInParent.length : -1;
+            const nextNodeNodesInParent = nextNode.props.parentId
+                ? newNodes.filter(({ props }) => props.parentId === nextNode.props.parentId)
+                : [];
+            const nextNodePosition = nextNodeNodesInParent.findIndex(({ props }) => props.id === nextNode.props.id);
+            if (nextNodePosition >= 0) {
+                dropIndexInParent = nextNodePosition + (activeNodeIndex < overNodeIndex ? -1 : 0);
+            } else {
+                dropIndexInParent = activeNodeIndex < overNodeIndex ? nodesInParent.length : -1;
+            }
         } else if (activeNodeIndex >= overNodeIndex) {
             dropIndexInParent = nodesInParent.length;
         }
