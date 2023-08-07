@@ -418,4 +418,4 @@ export const LegacyTooltip = ({
         </>
     );
 };
-LegacyTooltip.displayName = 'FondueTooltip';
+LegacyTooltip.displayName = 'FondueLegacyTooltip';
