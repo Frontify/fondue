@@ -7,7 +7,11 @@ export type FormProps = {
     'data-test-id'?: string;
 } & FormHTMLAttributes<HTMLFormElement>;
 
-export const Form = ({ children, 'data-test-id': dataTestId = 'fondue-form' }: FormProps) => {
-    return <form data-test-id={dataTestId}>{children}</form>;
+export const Form = ({ children, 'data-test-id': dataTestId = 'fondue-form', ...attributes }: FormProps) => {
+    return (
+        <form data-test-id={dataTestId} {...attributes}>
+            {children}
+        </form>
+    );
 };
 Form.displayName = 'FondueForm';
