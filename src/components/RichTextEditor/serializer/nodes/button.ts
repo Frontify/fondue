@@ -17,6 +17,7 @@ export const buttonNode = (
     const defaultStyles = reactCssPropsToCss(buttonStyle);
     return `<a href="${node.url}"
                 target="${node.target ?? '_blank'}"
+                dir="auto"
                 style="${defaultStyles}"
                 class="${defaultClassNames}"
                 onmouseenter="this.setAttribute('style', '${defaultStyles} ${reactCssPropsToCss(buttonStyle.hover)}');"
