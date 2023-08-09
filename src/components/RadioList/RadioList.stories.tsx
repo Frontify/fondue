@@ -23,13 +23,16 @@ export default {
         ariaLabel: {
             control: { type: 'text' },
         },
+        name: {
+            control: { type: 'text' },
+        },
         onChange: action('change'),
     },
 } as Meta<RadioListProps>;
 
 const DefaultTemplate: StoryFn<RadioListProps> = (args: RadioListProps) => {
     return (
-        <RadioList direction={args.direction} defaultValue={args.defaultValue}>
+        <RadioList name={args.name} direction={args.direction} defaultValue={args.defaultValue}>
             <RadioButton value="Rib Eye" />
             <RadioButton value="T-Bone" />
             <RadioButton value="NY Strip" />
@@ -41,7 +44,7 @@ export const Default = DefaultTemplate.bind({});
 
 const WeakEmphasisRadioButtons: StoryFn<RadioListProps> = (args: RadioListProps) => {
     return (
-        <RadioList direction={args.direction} defaultValue="Rib Eye">
+        <RadioList name="radio-list-1" direction={args.direction} defaultValue="Rib Eye">
             <RadioButton value="Rib Eye" emphasis={RadioButtonEmphasis.Weak} />
             <RadioButton value="T-Bone" emphasis={RadioButtonEmphasis.Weak} />
             <RadioButton value="NY Strip" emphasis={RadioButtonEmphasis.Weak} />
@@ -53,7 +56,7 @@ WithWeakEmphasisRadioButtons.storyName = 'Weak emphasis radio buttons';
 
 const DisabledRadioButton: StoryFn<RadioListProps> = (args: RadioListProps) => {
     return (
-        <RadioList direction={args.direction} defaultValue="T-Bone">
+        <RadioList name="radio-list-2" direction={args.direction} defaultValue="T-Bone">
             <RadioButton value="Rib Eye" disabled />
             <RadioButton value="T-Bone" />
             <RadioButton value="NY Strip" />
@@ -65,7 +68,7 @@ WithDisabledRadioButton.storyName = 'Disabled radio button';
 
 const HelperTextRadioButton: StoryFn<RadioListProps> = (args: RadioListProps) => {
     return (
-        <RadioList direction={args.direction} defaultValue="Rib Eye">
+        <RadioList name="radio-list-3" direction={args.direction} defaultValue="Rib Eye">
             <RadioButton value="Rib Eye" helperText="Best steak ever" />
             <RadioButton value="T-Bone" />
             <RadioButton value="NY Strip" />
@@ -77,7 +80,7 @@ WithHelperTextRadioButton.storyName = 'With helper text';
 
 const TooltipRadioButton: StoryFn<RadioListProps> = (args: RadioListProps) => {
     return (
-        <RadioList direction={args.direction} defaultValue="Rib Eye">
+        <RadioList name="radio-list-4" direction={args.direction} defaultValue="Rib Eye">
             <RadioButton value="Rib Eye" tooltip="Might choose this one" />
             <RadioButton value="T-Bone" tooltip="Or this one" />
             <RadioButton value="NY Strip" tooltip="Or maybe this one" />
