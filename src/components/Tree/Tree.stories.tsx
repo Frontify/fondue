@@ -14,6 +14,7 @@ import {
     useDynamicNavigationMock,
     useNavigationWithLazyLoadedItemsMock,
 } from '@components/Tree/utils';
+import { Flyout } from '@components/Flyout';
 
 export default {
     title: 'Components/Tree',
@@ -324,6 +325,23 @@ export const WithExpandOnSelect = ({ ...args }: TreeProps) => {
             <TreeView {...args}>
                 {treeItemsMock.map((item) => renderTreeItemLabel({ ...item, onDrop, expandOnSelect: true }))}
             </TreeView>
+        </div>
+    );
+};
+
+export const InsideFlyout = ({ ...args }: TreeProps) => {
+    const [isOpen, setIsOpen] = useState(false);
+
+    return (
+        <div style={{ width: 800 }}>
+            <Flyout
+                trigger={<button type={'button'}>{'Open Tree'}</button>}
+                onOpenChange={setIsOpen}
+                isOpen={isOpen}
+                hug={false}
+            >
+                <TreeView {...args}>{treeItemsMock.map((item) => renderTreeItemLabel({ ...item }))}</TreeView>
+            </Flyout>
         </div>
     );
 };
