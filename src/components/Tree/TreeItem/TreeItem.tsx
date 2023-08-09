@@ -303,7 +303,7 @@ export const TreeItem = memo(
         }
 
         const containerClassName = merge([
-            'tw-transition-colors tw-flex tw-items-center tw-leading-5 tw-width-full',
+            'tw-relative tw-z-0 tw-transition-colors tw-flex tw-items-center tw-leading-5 tw-width-full',
             isActive ? 'tw-border-dashed tw-rounded-sm tw-border-2 tw-pr-0 tw-h-12' : 'tw-h-10',
             isActive &&
                 (canDrop
