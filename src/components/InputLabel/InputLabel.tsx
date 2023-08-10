@@ -1,14 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TooltipProps } from '@components/Tooltip/Tooltip';
+import { LegacyTooltipProps } from '@components/LegacyTooltip/LegacyTooltip';
 import { TooltipIcon, TooltipIconProps } from '@components/TooltipIcon/TooltipIcon';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { merge } from '@utilities/merge';
 import React, { ReactElement, ReactNode } from 'react';
 
 export type InputLabelTooltipProps =
-    | (TooltipProps & Pick<TooltipIconProps, 'triggerStyle' | 'triggerIcon'>)
-    | (TooltipProps & Pick<TooltipIconProps, 'triggerStyle' | 'triggerIcon'>)[];
+    | (LegacyTooltipProps & Pick<TooltipIconProps, 'triggerStyle' | 'triggerIcon'>)
+    | (LegacyTooltipProps & Pick<TooltipIconProps, 'triggerStyle' | 'triggerIcon'>)[];
 
 export type InputLabelProps = {
     htmlFor: string;

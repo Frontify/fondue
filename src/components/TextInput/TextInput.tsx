@@ -28,7 +28,7 @@ import {
     IconEye,
     IconEyeOff,
 } from '@foundation/Icon/Generated';
-import { Tooltip, TooltipProps } from '../Tooltip';
+import { LegacyTooltip, LegacyTooltipProps } from '../LegacyTooltip';
 import { FocusableElement } from '@react-types/shared';
 
 export enum TextInputType {
@@ -41,7 +41,7 @@ export type TextInputExtraAction = {
     onClick: () => void;
     icon: ReactElement;
     title: string;
-    tooltip?: Omit<TooltipProps, 'triggerElement'>;
+    tooltip?: Omit<LegacyTooltipProps, 'triggerElement'>;
     disabled?: boolean;
 };
 
@@ -261,7 +261,7 @@ export const TextInput = ({
                     const key = `text-input-extra-action-${index}`;
                     if (extraAction.tooltip) {
                         return (
-                            <Tooltip
+                            <LegacyTooltip
                                 key={key}
                                 {...extraAction.tooltip}
                                 triggerElement={
