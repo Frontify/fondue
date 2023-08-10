@@ -374,7 +374,7 @@ export const InsideInlineDialog = ({ ...args }: TreeProps) => {
                         >
                             {treeItemsMock.map(renderTreeItemLabel)}
                         </TreeView>
-                    </DialogBody>{' '}
+                    </DialogBody>
                 </InlineDialog.Content>
             </InlineDialog>
         </Container>
