@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { MutableRefObject, memo, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { Meta } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 
@@ -14,9 +14,11 @@ import {
     useDynamicNavigationMock,
     useNavigationWithLazyLoadedItemsMock,
 } from '@components/Tree/utils';
-import { Flyout } from '@components/Flyout';
 import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
 import { Container } from '@components/Container';
+import { InlineDialog } from '@components/InlineDialog';
+import { DialogBody } from '@components/DialogBody';
+import { Modality } from '../../types/dialog';
 
 export default {
     title: 'Components/Tree',
@@ -332,7 +334,7 @@ export const WithExpandOnSelect = ({ ...args }: TreeProps) => {
     );
 };
 
-export const InsideFlyout = ({ ...args }: TreeProps) => {
+export const InsideInlineDialog = ({ ...args }: TreeProps) => {
     const [expandedIds, setExpandedIds] = useState<string[]>([]);
 
     const handleItemExpand = useCallback((id: string) => {
@@ -347,26 +349,34 @@ export const InsideFlyout = ({ ...args }: TreeProps) => {
 
     return (
         <Container maxWidth={'800px'}>
-            <Flyout
-                trigger={({ 'aria-label': ariaLabel }, ref) => (
+            <InlineDialog
+                open={isOpen}
+                modality={Modality.NonModal}
+                enablePortal={true}
+                handleClose={() => setIsOpen(false)}
+            >
+                <InlineDialog.Trigger>
                     <Button
                         style={ButtonStyle.Default}
                         emphasis={ButtonEmphasis.Strong}
                         onClick={() => setIsOpen(!isOpen)}
-                        ref={ref as MutableRefObject<HTMLButtonElement>}
-                        aria-label={ariaLabel}
                     >
                         Click me
                     </Button>
-                )}
-                onOpenChange={setIsOpen}
-                isOpen={isOpen}
-                hug={false}
-            >
-                <TreeView {...args} expandedIds={expandedIds} onExpand={handleItemExpand} onShrink={handleItemShrink}>
-                    {treeItemsMock.map(renderTreeItemLabel)}
-                </TreeView>
-            </Flyout>
+                </InlineDialog.Trigger>
+                <InlineDialog.Content>
+                    <DialogBody>
+                        <TreeView
+                            {...args}
+                            expandedIds={expandedIds}
+                            onExpand={handleItemExpand}
+                            onShrink={handleItemShrink}
+                        >
+                            {treeItemsMock.map(renderTreeItemLabel)}
+                        </TreeView>
+                    </DialogBody>{' '}
+                </InlineDialog.Content>
+            </InlineDialog>
         </Container>
     );
 };
