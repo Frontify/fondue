@@ -59,7 +59,7 @@ export * from './Tag';
 export * from './TextInput';
 export * from './Textarea';
 export * from './Toast';
-export * from './Tooltip';
+export * from './LegacyTooltip';
 export * from './TooltipIcon';
 export * from './Tree';
 export * from './Trigger';
