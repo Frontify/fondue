@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { MutableRefObject, memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { Meta } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 
@@ -15,6 +15,8 @@ import {
     useNavigationWithLazyLoadedItemsMock,
 } from '@components/Tree/utils';
 import { Flyout } from '@components/Flyout';
+import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
+import { Container } from '@components/Container';
 
 export default {
     title: 'Components/Tree',
@@ -23,6 +25,7 @@ export default {
     args: {
         id: 'storybook-tree',
         draggable: true,
+        selectedIds: ['2'],
     },
     argTypes: {
         draggable: {
@@ -330,18 +333,40 @@ export const WithExpandOnSelect = ({ ...args }: TreeProps) => {
 };
 
 export const InsideFlyout = ({ ...args }: TreeProps) => {
+    const [expandedIds, setExpandedIds] = useState<string[]>([]);
+
+    const handleItemExpand = useCallback((id: string) => {
+        setExpandedIds((ids) => [...ids, id]);
+    }, []);
+
+    const handleItemShrink = useCallback((id: string) => {
+        setExpandedIds((ids) => ids.filter((itemId: string) => itemId !== id));
+    }, []);
+
     const [isOpen, setIsOpen] = useState(false);
 
     return (
-        <div style={{ width: 800 }}>
+        <Container maxWidth={'800px'}>
             <Flyout
-                trigger={<button type={'button'}>{'Open Tree'}</button>}
+                trigger={({ 'aria-label': ariaLabel }, ref) => (
+                    <Button
+                        style={ButtonStyle.Default}
+                        emphasis={ButtonEmphasis.Strong}
+                        onClick={() => setIsOpen(!isOpen)}
+                        ref={ref as MutableRefObject<HTMLButtonElement>}
+                        aria-label={ariaLabel}
+                    >
+                        Click me
+                    </Button>
+                )}
                 onOpenChange={setIsOpen}
                 isOpen={isOpen}
                 hug={false}
             >
-                <TreeView {...args}>{treeItemsMock.map((item) => renderTreeItemLabel({ ...item }))}</TreeView>
+                <TreeView {...args} expandedIds={expandedIds} onExpand={handleItemExpand} onShrink={handleItemShrink}>
+                    {treeItemsMock.map(renderTreeItemLabel)}
+                </TreeView>
             </Flyout>
-        </div>
+        </Container>
     );
 };

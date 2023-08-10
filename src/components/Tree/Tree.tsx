@@ -16,7 +16,6 @@ import React, {
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import { enableMapSet, produce } from 'immer';
-import { createPortal } from 'react-dom';
 import isEqual from 'lodash-es/isEqual';
 import {
     DndContext,
@@ -673,17 +672,14 @@ export const Tree = memo(
                             {nodes}
                         </SortableContext>
 
-                        {createPortal(
-                            <DragOverlay wrapperElement="ul" dropAnimation={null} modifiers={[restrictToWindowEdges]}>
-                                {treeState.overlay && (
-                                    <TreeItemOverlay
-                                        {...treeState.overlay}
-                                        isSelected={treeState.selectedIds.has(treeState.overlay.id)}
-                                    />
-                                )}
-                            </DragOverlay>,
-                            document.body,
-                        )}
+                        <DragOverlay wrapperElement="ul" dropAnimation={null} modifiers={[restrictToWindowEdges]}>
+                            {treeState.overlay && (
+                                <TreeItemOverlay
+                                    {...treeState.overlay}
+                                    isSelected={treeState.selectedIds.has(treeState.overlay.id)}
+                                />
+                            )}
+                        </DragOverlay>
                     </DndContext>
                 </ul>
             </TreeContext.Provider>
