@@ -46,14 +46,9 @@ export const serializeNodesToHtml = (
 
     let html = '';
     for (let i = 0, len = nodes.length; i < len; i++) {
-        const node = nodes[i];
-        if (isEmptyNode(node)) {
-            html += '<br />';
-        } else {
-            html += serializeNodeToHtmlRecursive(node, styles, {
-                mappedMentionable,
-            });
-        }
+        html += serializeNodeToHtmlRecursive(nodes[i], styles, {
+            mappedMentionable,
+        });
     }
 
     if (columns > 1) {
@@ -61,11 +56,4 @@ export const serializeNodesToHtml = (
     }
 
     return html;
-};
-
-const isEmptyNode = (node: TDescendant): boolean => {
-    if (!Array.isArray(node?.children)) {
-        return false;
-    }
-    return node?.children?.every((child) => child.text === '');
 };
