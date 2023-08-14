@@ -62,6 +62,7 @@ import {
 import { PaddingSizes } from './types';
 import { SubscriptPlugin } from '@components/RichTextEditor/Plugins/SubscriptPlugin';
 import { SuperscriptPlugin } from '@components/RichTextEditor/Plugins/SuperscriptPlugin';
+import { AiCopywriterPlugin } from '@components/RichTextEditor/Plugins/AiCopyWriterPlugin';
 
 export default {
     title: 'Components/Rich Text Editor',
@@ -297,6 +298,26 @@ export const WithCustomControls = RichTextEditorTemplate.bind({});
 WithCustomControls.args = {
     value: JSON.stringify(customControlValues),
     plugins: customPlugins,
+};
+
+const aiCustomPlugins = new PluginComposer();
+aiCustomPlugins
+    .setPlugin([new SoftBreakPlugin(), allTextStylesPlugin])
+    .setPlugin([new LinkPlugin()])
+    .setPlugin([
+        new ItalicPlugin(),
+        new BoldPlugin(),
+        new UnderlinePlugin(),
+        new SubscriptPlugin(),
+        new SuperscriptPlugin(),
+        new OrderedListPlugin(),
+        new UnorderedListPlugin(),
+        new AiCopywriterPlugin(),
+    ]);
+export const WithAiCopyWriter = RichTextEditorTemplate.bind({});
+WithAiCopyWriter.args = {
+    value: JSON.stringify(customControlValues),
+    plugins: aiCustomPlugins,
 };
 
 export const WithToolbarTopAndSmallPadding = RichTextEditorTemplate.bind({});
