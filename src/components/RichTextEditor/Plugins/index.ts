@@ -42,6 +42,7 @@ defaultPlugins
     );
 
 export * from './Plugin';
+export * from './AiCopyWriterPlugin';
 export * from './AlignPlugin';
 export * from './BoldPlugin';
 export * from './ColumnBreakPlugin';
