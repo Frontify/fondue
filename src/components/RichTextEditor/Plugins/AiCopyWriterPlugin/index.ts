@@ -16,7 +16,6 @@ export const createAiCopyWriterPlugin = createPluginFactory({
 export class AiCopywriterPlugin extends Plugin {
     public aiCopywriters: AiCopywriter[];
     constructor({ ...pluginProps }) {
-        console.log(pluginProps);
         super(AI_COPYWRITER_PLUGIN, {
             button: withAiCopywriterFunctions(AiCopywriterButton, pluginProps.aiCopywriters),
             ...pluginProps,

@@ -5,7 +5,8 @@ import { PlateEditor } from '@udecode/plate';
 import { AiCopywriter, PluginButtonProps } from '../../types';
 
 export type AiCopywriterDropdownProps = {
-    editorId?: string;
+    id: string;
+    editor: PlateEditor;
     aiCopywriters?: AiCopywriter[];
 };
 

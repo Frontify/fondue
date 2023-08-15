@@ -63,6 +63,7 @@ import { PaddingSizes } from './types';
 import { SubscriptPlugin } from '@components/RichTextEditor/Plugins/SubscriptPlugin';
 import { SuperscriptPlugin } from '@components/RichTextEditor/Plugins/SuperscriptPlugin';
 import { AiCopywriterPlugin } from '@components/RichTextEditor/Plugins/AiCopyWriterPlugin';
+import { PlateEditor, getSelectionText } from '@udecode/plate';
 
 export default {
     title: 'Components/Rich Text Editor',
@@ -316,15 +317,15 @@ aiCustomPlugins
             aiCopywriters: [
                 {
                     label: 'Rephrase',
-                    function: () => console.log('Rephrase'),
+                    function: (editor: PlateEditor) => console.log(getSelectionText(editor), 'Rephrase'),
                 },
                 {
                     label: 'Summarize',
-                    function: () => console.log('Summarize'),
+                    function: (editor: PlateEditor) => console.log(getSelectionText(editor), 'Summarize'),
                 },
                 {
                     label: 'Simplify',
-                    function: () => console.log('Simplify'),
+                    function: (editor: PlateEditor) => console.log(getSelectionText(editor), 'Simplify'),
                 },
             ],
         }),

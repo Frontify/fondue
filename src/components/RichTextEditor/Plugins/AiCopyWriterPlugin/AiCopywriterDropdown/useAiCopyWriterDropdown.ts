@@ -1,21 +1,30 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { PlateEditor, usePlateEditorState } from '@udecode/plate';
-import { Dispatch, HTMLAttributes, SetStateAction, useState } from 'react';
+import { Dispatch, HTMLAttributes, SetStateAction, useCallback, useEffect, useState } from 'react';
 import { usePopper } from 'react-popper';
 import { verticalPositionModifier } from './verticalPositionModifier';
 
-type UseAiCopyWriterDropdownReturn<P> = {
-    editor: PlateEditor;
+type UseAiCopyWriterDropdownReturn<T, P> = {
+    state: { isOpen: boolean; toggle: () => void; editor: PlateEditor };
     dropdownProps: HTMLAttributes<P>;
+    triggerRef: Dispatch<SetStateAction<T | null>>;
     dropdownRef: Dispatch<SetStateAction<P | null>>;
 };
 
-export const useAiCopyWriterDropdown = <P extends HTMLElement>(editorId?: string): UseAiCopyWriterDropdownReturn<P> => {
+export const useAiCopyWriterDropdown = <T extends HTMLElement, P extends HTMLElement>(
+    editorId?: string,
+): UseAiCopyWriterDropdownReturn<T, P> => {
+    const [isOpen, setIsOpen] = useState(false);
+    const [triggerElement, setTriggerElement] = useState<T | null>(null);
     const [popperElement, setPopperElement] = useState<P | null>(null);
     const editor = usePlateEditorState(editorId);
 
-    const popperInstance = usePopper<'offset' | 'flip' | 'vertical-positioning'>(null, popperElement, {
+    const toggle = useCallback(() => {
+        setIsOpen((open) => !open);
+    }, [setIsOpen]);
+
+    const popperInstance = usePopper<'offset' | 'flip' | 'vertical-positioning'>(triggerElement, popperElement, {
         placement: 'bottom-start',
         strategy: 'fixed',
         modifiers: [
@@ -33,12 +42,33 @@ export const useAiCopyWriterDropdown = <P extends HTMLElement>(editorId?: string
         ],
     });
 
+    useEffect(() => {
+        const listener = (event: Event) => {
+            if (isOpen) {
+                const target = event.target as HTMLElement;
+                if (popperElement && popperElement.contains(target)) {
+                    return;
+                }
+                if (triggerElement && triggerElement.contains(target)) {
+                    return;
+                }
+
+                setIsOpen(false);
+            }
+        };
+        document.addEventListener('pointerdown', listener);
+        return () => {
+            document.removeEventListener('pointerdown', listener);
+        };
+    }, [isOpen, popperElement, setIsOpen, triggerElement]);
+
     return {
-        editor,
+        state: { isOpen, toggle, editor },
         dropdownProps: {
             ...popperInstance.attributes.popper,
             style: popperInstance.styles.popper,
         },
         dropdownRef: setPopperElement,
+        triggerRef: setTriggerElement,
     };
 };
