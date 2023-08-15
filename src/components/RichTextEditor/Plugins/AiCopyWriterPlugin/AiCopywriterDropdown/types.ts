@@ -2,12 +2,11 @@
 
 import { ReactNode } from 'react';
 import { PlateEditor } from '@udecode/plate';
-import { PluginButtonProps } from '../../types';
-import { Plugin } from '../../Plugin';
+import { AiCopywriter, PluginButtonProps } from '../../types';
 
-export type TextStyleDropdownProps = {
+export type AiCopywriterDropdownProps = {
     editorId?: string;
-    textStyles?: Plugin[];
+    aiCopywriters?: AiCopywriter[];
 };
 
 export type DropdownTriggerProps = {
@@ -18,10 +17,10 @@ export type DropdownTriggerProps = {
 
 export type DropdownItemProps = {
     editor: PlateEditor;
-    type: Plugin;
     children: ReactNode;
+    onClick?: (editor: PlateEditor) => void;
 };
 
-export type TextStyleButtonProps = PluginButtonProps & {
-    textStyles?: Plugin[];
+export type AiCopywriterButtonProps = PluginButtonProps & {
+    aiCopywriters?: AiCopywriter[];
 };

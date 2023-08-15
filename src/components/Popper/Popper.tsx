@@ -68,7 +68,7 @@ export const Popper = ({
         };
 
         updatePopper().catch(console.error);
-    }, [flip, placement, offset, open]);
+    }, [flip, placement, offset, open, popperInstance]);
 
     const value = useMemo(() => ({ open }), [open]);
     return (

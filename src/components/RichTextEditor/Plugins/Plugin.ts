@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { PlatePlugin } from '@udecode/plate';
-import { InlineData, PluginButton } from './types';
+import { AiCopywriter, InlineData, PluginButton } from './types';
 import { Position } from '../EditorPositioningWrapper';
 import type { MarkupElement } from './MarkupElement';
 import { CSSProperties } from 'react';
@@ -18,6 +18,7 @@ export type PluginProps = {
     label?: string;
     textStyles?: Plugin<PluginProps>[];
     styles?: CSSProperties;
+    aiCopywriter?: AiCopywriter[];
 };
 
 export abstract class Plugin<P extends PluginProps = PluginProps> {

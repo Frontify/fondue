@@ -312,7 +312,22 @@ aiCustomPlugins
         new SuperscriptPlugin(),
         new OrderedListPlugin(),
         new UnorderedListPlugin(),
-        new AiCopywriterPlugin(),
+        new AiCopywriterPlugin({
+            aiCopywriters: [
+                {
+                    label: 'Rephrase',
+                    function: () => console.log('Rephrase'),
+                },
+                {
+                    label: 'Summarize',
+                    function: () => console.log('Summarize'),
+                },
+                {
+                    label: 'Simplify',
+                    function: () => console.log('Simplify'),
+                },
+            ],
+        }),
     ]);
 export const WithAiCopyWriter = RichTextEditorTemplate.bind({});
 WithAiCopyWriter.args = {

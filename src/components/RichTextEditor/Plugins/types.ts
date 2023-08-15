@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ReactElement, ReactNode } from 'react';
-import { AnyObject, PlateEditor, PlatePlugin } from '@udecode/plate';
+import { AnyObject, PlateEditor, PlatePlugin, TEditor } from '@udecode/plate';
 import type { Plugin } from './Plugin';
 import { Position } from '../EditorPositioningWrapper';
 
@@ -44,3 +44,8 @@ export interface ToolbarButtons {
     createGroupOfButtons: (plugins: Plugin[]) => void;
     at(position: Position): Buttons;
 }
+
+export type AiCopywriter = {
+    label: string;
+    function: (editor: TEditor) => void;
+};
