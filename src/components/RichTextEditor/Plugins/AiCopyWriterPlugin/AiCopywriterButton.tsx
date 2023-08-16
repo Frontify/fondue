@@ -5,10 +5,10 @@ import { ButtonWrapper } from '../helper';
 import { AiCopywriterDropdown } from './AiCopywriterDropdown';
 import { AiCopywriterButtonProps } from './AiCopywriterDropdown/types';
 
-export const AiCopywriterButton = ({ editor, id, aiCopywriters }: AiCopywriterButtonProps) => {
+export const AiCopywriterButton = ({ editor, id, aiCopywriters, isLoading }: AiCopywriterButtonProps) => {
     return (
         <ButtonWrapper id={id}>
-            <AiCopywriterDropdown id={id} editor={editor} aiCopywriters={aiCopywriters} />
+            <AiCopywriterDropdown id={id} editor={editor} aiCopywriters={aiCopywriters} isLoading={isLoading} />
         </ButtonWrapper>
     );
 };

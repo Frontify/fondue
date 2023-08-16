@@ -6,6 +6,10 @@ import React, { ComponentType } from 'react';
 import { AiCopywriter } from '../../types';
 
 export const withAiCopywriterFunctions =
-    <T extends Record<string, unknown>>(Component: ComponentType<T>, aiCopywriters: AiCopywriter[]) =>
+    <T extends Record<string, unknown>>(
+        Component: ComponentType<T>,
+        aiCopywriters: AiCopywriter[],
+        isLoading: boolean,
+    ) =>
     (props: T) =>
-        <Component {...props} aiCopywriters={aiCopywriters} />;
+        <Component {...props} aiCopywriters={aiCopywriters} isLoading={isLoading} />;

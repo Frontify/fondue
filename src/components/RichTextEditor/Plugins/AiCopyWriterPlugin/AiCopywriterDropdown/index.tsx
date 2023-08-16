@@ -4,11 +4,12 @@ import React from 'react';
 import { DropdownItem } from './DropdownItem';
 import { AiCopywriterDropdownProps } from './types';
 import { useAiCopyWriterDropdown } from './useAiCopyWriterDropdown';
-import { MarkToolbarButton, getPluginType } from '@udecode/plate';
-import { IconStylingWrapper, buttonStyles, getButtonClassNames } from '../../helper';
+import { getPluginType, MarkToolbarButton } from '@udecode/plate';
+import { buttonStyles, getButtonClassNames, IconStylingWrapper } from '../../helper';
 import { IconLightning16 } from '@foundation/Icon';
+import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle';
 
-export const AiCopywriterDropdown = ({ id, editor, aiCopywriters = [] }: AiCopywriterDropdownProps) => {
+export const AiCopywriterDropdown = ({ id, editor, aiCopywriters = [], isLoading }: AiCopywriterDropdownProps) => {
     const {
         state: { toggle, isOpen },
         dropdownProps,
@@ -21,7 +22,11 @@ export const AiCopywriterDropdown = ({ id, editor, aiCopywriters = [] }: AiCopyw
             <MarkToolbarButton
                 key={id}
                 type={getPluginType(editor, id)}
-                icon={<IconStylingWrapper icon={<IconLightning16 />} />}
+                icon={
+                    <IconStylingWrapper
+                        icon={isLoading ? <LoadingCircle size={LoadingCircleSize.ExtraSmall} /> : <IconLightning16 />}
+                    />
+                }
                 classNames={getButtonClassNames()}
                 styles={buttonStyles}
                 onClick={toggle}

@@ -8,6 +8,7 @@ export type AiCopywriterDropdownProps = {
     id: string;
     editor: PlateEditor;
     aiCopywriters?: AiCopywriter[];
+    isLoading: boolean;
 };
 
 export type DropdownTriggerProps = {
@@ -24,4 +25,5 @@ export type DropdownItemProps = {
 
 export type AiCopywriterButtonProps = PluginButtonProps & {
     aiCopywriters?: AiCopywriter[];
+    isLoading: boolean;
 };
