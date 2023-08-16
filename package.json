@@ -29,7 +29,7 @@
         "./dist/*": "./dist/*"
     },
     "scripts": {
-        "build": "pnpm clean && pnpm generate:icons && pnpm build:library && pnpm build:extractedThirdPartyStyles",
+        "build": "pnpm clean && pnpm generate:icons && pnpm generate:componentsEnum && pnpm build:library && pnpm build:extractedThirdPartyStyles",
         "build:extractedThirdPartyStyles": "concat src/components/**/*.css | postcss > dist/extractedThirdPartyStyles.css",
         "build:library": "vite build",
         "build:storybook": "storybook build",
@@ -39,6 +39,7 @@
         "component:create": "esno scripts/createNewComponent.ts",
         "generate:icons": "pnpm generate:reactIcons && pnpm generate:iconsEnum",
         "generate:iconsEnum": "esno ./scripts/generateIconEnum.ts && eslint --fix ./src/foundation/Icon/IconEnum.ts",
+        "generate:componentsEnum": "esno ./scripts/generateComponentEnum.ts && eslint --fix ./src/components/ComponentEnum.ts",
         "generate:reactIcons": "esno ./scripts/generateReactIcons.ts && eslint --fix ./src/foundation/Icon/Generated/index.ts",
         "lint": "eslint .",
         "lint:fix": "eslint --fix .",
