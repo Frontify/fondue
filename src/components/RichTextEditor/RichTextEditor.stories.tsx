@@ -18,6 +18,7 @@ import {
     value,
 } from './helpers/exampleValues';
 import {
+    AiCopywriterPlugin,
     AlignCenterPlugin,
     AlignJustifyPlugin,
     AlignLeftPlugin,
@@ -62,7 +63,6 @@ import {
 import { PaddingSizes } from './types';
 import { SubscriptPlugin } from '@components/RichTextEditor/Plugins/SubscriptPlugin';
 import { SuperscriptPlugin } from '@components/RichTextEditor/Plugins/SuperscriptPlugin';
-import { AiCopywriterPlugin } from '@components/RichTextEditor/Plugins/AiCopyWriterPlugin';
 import { PlateEditor, getSelectionText } from '@udecode/plate';
 
 export default {
