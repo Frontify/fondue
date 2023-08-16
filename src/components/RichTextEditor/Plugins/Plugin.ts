@@ -19,7 +19,7 @@ export type PluginProps = {
     textStyles?: Plugin<PluginProps>[];
     styles?: CSSProperties;
     aiCopywriter?: AiCopywriter[];
-    isLoading: boolean;
+    isLoading?: boolean;
 };
 
 export abstract class Plugin<P extends PluginProps = PluginProps> {
