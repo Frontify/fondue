@@ -6,7 +6,7 @@ import { AiCopywriterDropdownProps } from './types';
 import { useAiCopyWriterDropdown } from './useAiCopyWriterDropdown';
 import { MarkToolbarButton, getPluginType } from '@udecode/plate';
 import { IconStylingWrapper, buttonStyles, getButtonClassNames } from '../../helper';
-import { IconRocket16 } from '@foundation/Icon';
+import { IconLightning16 } from '@foundation/Icon';
 
 export const AiCopywriterDropdown = ({ id, editor, aiCopywriters = [] }: AiCopywriterDropdownProps) => {
     const {
@@ -21,7 +21,7 @@ export const AiCopywriterDropdown = ({ id, editor, aiCopywriters = [] }: AiCopyw
             <MarkToolbarButton
                 key={id}
                 type={getPluginType(editor, id)}
-                icon={<IconStylingWrapper icon={<IconRocket16 />} />}
+                icon={<IconStylingWrapper icon={<IconLightning16 />} />}
                 classNames={getButtonClassNames()}
                 styles={buttonStyles}
                 onClick={toggle}
