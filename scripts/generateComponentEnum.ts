@@ -7,13 +7,17 @@ const COMPONENT_ENUM_OUTPUT_PATH = './src/components/ComponentEnum.ts';
 
 (async () => {
     const componentFilePath = await fastGlob('./src/components/*/*.tsx', { objectMode: true });
-    const componentNames = componentFilePath
+    const componentNames: any = componentFilePath
         .filter((path) => !path.name.includes('.cy') && !path.name.includes('.stories') && !path.name.includes('-'))
         .map((path) => path.name.replaceAll(/(\.tsx$)/g, ''));
 
+    const componentListWithoutDuplicates = componentNames.filter(
+        (item: string, index: number) => componentNames.indexOf(item) === index,
+    );
+
     const componentsEnumString = `
         export enum ComponentEnum {
-            ${componentNames.map((name) => `"Fondue - ${name}" = "${name}"`).join(',\n')}
+            ${componentListWithoutDuplicates.map((name: string) => `"Fondue - ${name}" = "${name}"`).join(',\n')}
         };
     `;
 
