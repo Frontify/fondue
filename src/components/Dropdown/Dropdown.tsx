@@ -200,7 +200,7 @@ export const Dropdown = ({
                         size === DropdownSize.Small
                             ? 'tw-py-2 tw-pl-3 tw-min-h-[34px]'
                             : 'tw-pl-5 tw-py-4 tw-min-h-[60px]',
-                        showClear ? 'tw-pr-11' : 'tw-pr-7',
+                        showClear ? 'tw-pr-12' : 'tw-pr-8',
                         textColorClass,
                     ])}
                 >
