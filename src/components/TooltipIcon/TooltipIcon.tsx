@@ -52,7 +52,7 @@ export const TooltipIcon = ({
                                 aria-label="More info"
                                 data-test-id={`${dataTestId}-trigger`}
                                 className={merge([
-                                    'tw-inline-flex tw-justify-center tw-items-center tw-cursor-default tw-outline-none tw-rounded-full',
+                                    'tw-inline-flex tw-justify-center tw-items-center tw-cursor-default tw-outline-none tw-rounded-full tw-transition-colors',
                                     FOCUS_VISIBLE_STYLE,
                                     tooltipTriggerStyleClass[triggerStyle],
                                     tooltipHoverClasses[triggerStyle],

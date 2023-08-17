@@ -197,7 +197,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
     }, [label, helperText, hideLabel, checkOverflowing]);
 
     return (
-        <div className="tw-gap-1 tw-transition-colors tw-w-full" data-test-id={dataTestId}>
+        <div className="tw-gap-1 tw-w-full" data-test-id={dataTestId}>
             <div className={merge(['tw-inline-flex tw-flex-row tw-rounded tw-w-full', showFocus ? FOCUS_STYLE : ''])}>
                 <InputLabel
                     disabled={disabled}
@@ -224,7 +224,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                                 data-test-id={`${dataTestId}-icon-box`}
                                 aria-hidden="true"
                                 className={merge([
-                                    'tw-leading-3 tw-relative tw-flex tw-items-center tw-justify-center tw-rounded tw-shrink-0 tw-flex-none',
+                                    'tw-leading-3 tw-relative tw-flex tw-items-center tw-justify-center tw-rounded tw-shrink-0 tw-flex-none tw-transition-colors',
                                     sizeClassesMap[size],
                                     disabled ? disabledClasses : enabledClasses,
                                 ])}
@@ -239,7 +239,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                                     data-test-id={`${dataTestId}-label`}
                                     className={merge([
                                         'tw-text-ellipsis tw-overflow-hidden',
-                                        'tw-text-xs tw-select-none hover:tw-cursor-pointer hover:tw-text-black dark:hover:tw-text-white group-hover:tw-text-black dark:group-hover:tw-text-white',
+                                        'tw-text-xs tw-select-none hover:tw-cursor-pointer hover:tw-text-black dark:hover:tw-text-white group-hover:tw-text-black dark:group-hover:tw-text-white tw-transition-colors',
                                         checkedOrMixed && 'tw-font-medium',
                                     ])}
                                     title={isLabelOverflowing ? label : undefined}
@@ -252,7 +252,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                                     ref={helperTextContainer}
                                     data-test-id={`${dataTestId}-helper-text`}
                                     className={merge([
-                                        'tw-text-ellipsis tw-overflow-hidden',
+                                        'tw-text-ellipsis tw-overflow-hidden tw-transition-colors',
                                         'tw-font-sans tw-text-xs tw-font-normal',
                                         disabled ? 'text-disabled' : 'tw-text-text-weak',
                                     ])}
