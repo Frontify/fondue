@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+/** @type {import('tailwindcss').Config} */
+
 module.exports = {
     presets: [require('@frontify/fondue-tokens/tailwind')],
     content: ['./src/**/*.{js,ts,tsx}'],
@@ -9,6 +11,13 @@ module.exports = {
         }),
     ],
     theme: {
+        transitionTimingFunction: {
+            DEFAULT: 'cubic-bezier(0.33, 1, 0.68, 1)',
+            linear: 'linear',
+            in: 'cubic-bezier(0.32, 0, 0.67, 0)',
+            out: 'cubic-bezier(0.33, 1, 0.68, 1)',
+            'in-out': 'cubic-bezier(0.4, 0, 0.2, 1)',
+        },
         extend: {
             outline: {
                 violet: '1px solid #825fff',

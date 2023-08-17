@@ -68,7 +68,7 @@ export const Switch = ({
     // The track on which the dot moves
     const trackClasses = useMemo(() => {
         const baseClasses =
-            'tw-group tw-border tw-inline-flex tw-rounded-full tw-shrink-0 tw-p-0 tw-transition-colors tw-duration-75';
+            'tw-group tw-border tw-inline-flex tw-rounded-full tw-shrink-0 tw-p-0 tw-transition-colors tw-duration-75 tw-ease-out';
 
         const trueOrFalseValueClasses =
             mode === 'on'
@@ -94,7 +94,7 @@ export const Switch = ({
 
     // Responsible for the left-right translation
     const dotWrapperClasses = useMemo(() => {
-        const baseClasses = 'tw-relative tw-self-center tw-transition-transform tw-duration-75';
+        const baseClasses = 'tw-relative tw-self-center tw-transition-transform tw-duration-75 tw-ease-out';
 
         const trueOrFalseValueClasses = mode === 'on' ? dotSizeClasses[size].activeTranslation : '';
 
@@ -112,7 +112,7 @@ export const Switch = ({
     // Responsible for dot styling and width animation on hover
     const dotClasses = useMemo(() => {
         const baseClasses =
-            'tw-border tw-bg-base tw-rounded-full tw-absolute tw-block tw-self-center tw-transition-width tw-duration-75';
+            'tw-border tw-bg-base tw-rounded-full tw-absolute tw-block tw-self-center tw-transition-width tw-duration-75 tw-ease-out';
 
         const trueOrFalseValueClasses = mode === 'on' ? 'tw-right-0  tw-translate-x-px' : 'tw-left-0';
 
