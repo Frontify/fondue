@@ -21,7 +21,7 @@ export const CollapsibleWrap = ({
                     open: { height: 'auto', overflow: 'hidden', opacity: 1 },
                     collapsed: { height: 0, overflow: 'hidden', opacity: animateOpacity ? 0 : 1 },
                 }}
-                transition={{ type: 'tween', duration: 0.25 }}
+                transition={{ type: 'tween', duration: 0.2 }}
                 data-test-id={dataTestId}
             >
                 {children}
