@@ -67,7 +67,8 @@ export const Switch = ({
 
     // The track on which the dot moves
     const trackClasses = useMemo(() => {
-        const baseClasses = 'tw-group tw-border tw-inline-flex tw-rounded-full tw-shrink-0 tw-p-0 tw-transition-colors';
+        const baseClasses =
+            'tw-group tw-border tw-inline-flex tw-rounded-full tw-shrink-0 tw-p-0 tw-transition-colors tw-duration-75';
 
         const trueOrFalseValueClasses =
             mode === 'on'
@@ -93,7 +94,7 @@ export const Switch = ({
 
     // Responsible for the left-right translation
     const dotWrapperClasses = useMemo(() => {
-        const baseClasses = 'tw-relative tw-self-center tw-transition-transform';
+        const baseClasses = 'tw-relative tw-self-center tw-transition-transform tw-duration-75';
 
         const trueOrFalseValueClasses = mode === 'on' ? dotSizeClasses[size].activeTranslation : '';
 
