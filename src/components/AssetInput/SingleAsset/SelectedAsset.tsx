@@ -145,9 +145,8 @@ export const SelectedAsset = ({
                         data-test-id="asset-single-input-flyout"
                         key={`asset-input-menu-${menuId}`}
                         initial={{ height: 0 }}
-                        animate={{ height: 'auto' }}
-                        exit={{ height: 0 }}
-                        transition={{ ease: [0.04, 0.62, 0.23, 0.98], duration: 0.5 }}
+                        animate={{ height: 'auto', transition: { ease: 'easeOut', duration: 0.2 } }}
+                        exit={{ height: 0, transition: { ease: 'easeIn', duration: 0.2 } }}
                     >
                         <FocusScope restoreFocus>
                             <div {...overlayProps} ref={overlayRef}>
