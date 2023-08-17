@@ -24,9 +24,9 @@ import {
 } from './ButtonClasses';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { buttonIconSizeMap, buttonTypeMap } from '@components/Button/mappings';
+import { BetaLoadingCircle, BetaLoadingCircleSize } from '@components/BetaLoadingCircle';
 import { useFocusRing } from '@react-aria/focus';
 import { AnimatePresence, motion } from 'framer-motion';
-import { LoadingCircle, LoadingCircleSize } from '..';
 import { useButtonLoadingAnimation } from './useButtonLoadingAnimation';
 
 // To be NON-Breaking but import should be done through index.ts
@@ -133,7 +133,7 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
             <AnimatePresence mode="wait">
                 {loading ? (
                     <motion.div {...loadingProps} className="w-w-full tw-flex tw-items-center tw-justify-center">
-                        <LoadingCircle size={LoadingCircleSize.Small} />
+                        <BetaLoadingCircle size={BetaLoadingCircleSize.Small} />
                     </motion.div>
                 ) : (
                     <motion.div

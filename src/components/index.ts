@@ -5,6 +5,7 @@ export * from './ActionMenu';
 export * from './AddBlockButton';
 export * from './AssetInput';
 export * from './Badge';
+export * from './BetaLoadingCircle';
 export * from './Box';
 export * from './Breadcrumbs';
 export * from './Button';
