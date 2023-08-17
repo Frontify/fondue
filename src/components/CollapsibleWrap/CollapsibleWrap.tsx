@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { ReactElement } from 'react';
 import { CollapsibleWrapProps } from './types';
+import { CUBIC_BEZIER_EASE_IN, CUBIC_BEZIER_EASE_OUT } from '@utilities/animations';
 
 export const CollapsibleWrap = ({
     children,
@@ -14,14 +15,23 @@ export const CollapsibleWrap = ({
     <AnimatePresence initial={preventInitialAnimation ? false : undefined}>
         {isOpen && children && (
             <motion.div
-                initial={'collapsed'}
-                animate={'open'}
-                exit={'collapsed'}
+                initial="collapsed"
+                animate="open"
+                exit="collapsed"
                 variants={{
-                    open: { height: 'auto', overflow: 'hidden', opacity: 1 },
-                    collapsed: { height: 0, overflow: 'hidden', opacity: animateOpacity ? 0 : 1 },
+                    open: {
+                        height: 'auto',
+                        overflow: 'hidden',
+                        opacity: 1,
+                        transition: { duration: 0.2, ease: CUBIC_BEZIER_EASE_OUT },
+                    },
+                    collapsed: {
+                        height: 0,
+                        overflow: 'hidden',
+                        opacity: animateOpacity ? 0 : 1,
+                        transition: { duration: 0.2, ease: CUBIC_BEZIER_EASE_IN },
+                    },
                 }}
-                transition={{ type: 'tween', duration: 0.2 }}
                 data-test-id={dataTestId}
             >
                 {children}

@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+export * from './animations';
 export * from './borderStyle';
 export * from './colors';
 export * from './compose';
