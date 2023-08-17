@@ -133,7 +133,7 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
             <AnimatePresence mode="wait">
                 {loading ? (
                     <motion.div {...loadingProps} className="w-w-full tw-flex tw-items-center tw-justify-center">
-                        <LoadingCircle size={LoadingCircleSize.ExtraSmall} />
+                        <LoadingCircle size={LoadingCircleSize.Small} />
                     </motion.div>
                 ) : (
                     <motion.div

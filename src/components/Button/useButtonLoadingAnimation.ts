@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { CUBIC_BEZIER_EASE_OUT } from '@utilities/animations';
+import { CUBIC_BEZIER_EASE_IN, CUBIC_BEZIER_EASE_OUT } from '@utilities/animations';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ButtonProps } from './Button';
 
@@ -25,10 +25,9 @@ export const useButtonLoadingAnimation = (children: ButtonProps['children'], ico
     }, [children, icon, updateContentWidth]);
 
     const sharedProps = {
-        initial: isInitialRenderComplete ? { translateY: -50, opacity: 0 } : false,
-        animate: { translateY: 0, opacity: 1, mode: 'wait' },
-        exit: { translateY: 50, opacity: 0 },
-        transition: { ease: CUBIC_BEZIER_EASE_OUT, duration: 0.2 },
+        initial: isInitialRenderComplete ? { translateY: -10, opacity: 0 } : false,
+        animate: { translateY: 0, opacity: 1, transition: { ease: CUBIC_BEZIER_EASE_OUT, duration: 0.125 } },
+        exit: { translateY: 10, opacity: 0, transition: { ease: CUBIC_BEZIER_EASE_IN, duration: 0.125 } },
     };
 
     return {
