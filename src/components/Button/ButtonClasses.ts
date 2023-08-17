@@ -13,7 +13,7 @@ export const ButtonCommonClasses =
     'tw-group ' +
     'tw-border ' +
     'tw-box-box tw-relative tw-flex tw-items-center tw-justify-center ' +
-    'tw-cursor-pointer tw-outline-none tw-font-body tw-font-medium ';
+    'tw-cursor-pointer tw-outline-none tw-font-body tw-font-medium tw-transition-colors';
 
 export const ButtonDisabledClasses =
     'tw-not-allowed tw-pointer-events-none tw-border-transparent tw-text-box-disabled-inverse tw-bg-box-disabled ';
