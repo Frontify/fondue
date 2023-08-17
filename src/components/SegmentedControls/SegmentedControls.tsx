@@ -7,6 +7,7 @@ import { setInteractionModality } from '@react-aria/interactions';
 import { useRadio, useRadioGroup } from '@react-aria/radio';
 import { VisuallyHidden } from '@react-aria/visually-hidden';
 import { RadioGroupState, useRadioGroupState } from '@react-stately/radio';
+import { CUBIC_BEZIER_EASE_OUT } from '@utilities/animations';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { motion } from 'framer-motion';
@@ -189,7 +190,7 @@ export const SegmentedControls = ({
                     // div border is not included in width so it must be subtracted from translation.
                     animate={{ x: sliderTranslation, width: sliderWidth }}
                     initial={false}
-                    transition={{ type: 'tween', duration: 0.2 }}
+                    transition={{ duration: 0.2, ease: CUBIC_BEZIER_EASE_OUT }}
                     hidden={!activeItemId}
                     className={merge([
                         'tw-absolute tw--inset-px tw-h-full tw-box-content tw-border tw-rounded tw-pointer-events-none',
