@@ -21,6 +21,7 @@ import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { DimensionUnity } from '@utilities/dimensions';
+import { CUBIC_BEZIER_EASE_OUT } from '@utilities/animations';
 
 export enum TabsPaddingX {
     None = 'None',
@@ -260,6 +261,7 @@ export const Tabs = ({
                                         layoutDependency={activeItemId}
                                         data-test-id="tab-active-highlight"
                                         layoutId={groupId}
+                                        transition={{ duration: 0.2, ease: CUBIC_BEZIER_EASE_OUT }}
                                         className="tw-absolute tw-h-[3px] tw-bg-box-selected-strong tw-rounded-t-x-large tw-w-full tw-bottom-0"
                                     />
                                 )}
