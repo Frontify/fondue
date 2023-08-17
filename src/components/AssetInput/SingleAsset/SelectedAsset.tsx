@@ -18,6 +18,7 @@ import { AssetInputProps, AssetInputSize, AssetType } from '../AssetInput';
 import { AssetThumbnail } from '../AssetThumbnail';
 import { AssetSubline } from './AssetSubline';
 import { SpinningCircle } from './SpinningCircle';
+import { CUBIC_BEZIER_EASE_IN, CUBIC_BEZIER_EASE_OUT } from '@utilities/animations';
 
 export type SelectedAssetProps = Pick<
     AssetInputProps,
@@ -145,8 +146,8 @@ export const SelectedAsset = ({
                         data-test-id="asset-single-input-flyout"
                         key={`asset-input-menu-${menuId}`}
                         initial={{ height: 0 }}
-                        animate={{ height: 'auto', transition: { ease: 'easeOut', duration: 0.2 } }}
-                        exit={{ height: 0, transition: { ease: 'easeIn', duration: 0.2 } }}
+                        animate={{ height: 'auto', transition: { ease: CUBIC_BEZIER_EASE_OUT, duration: 0.15 } }}
+                        exit={{ height: 0, transition: { ease: CUBIC_BEZIER_EASE_IN, duration: 0.15 } }}
                     >
                         <FocusScope restoreFocus>
                             <div {...overlayProps} ref={overlayRef}>
