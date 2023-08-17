@@ -16,6 +16,7 @@ const defaultArgs = {
     disabled: false,
     hugWidth: true,
     children: 'Button Text',
+    loading: false,
 };
 
 export default {
@@ -52,6 +53,9 @@ export default {
         type: {
             options: Object.values(ButtonType),
             control: { type: 'radio' },
+        },
+        loading: {
+            type: 'boolean',
         },
         onClick: { action: 'onClick' },
     },

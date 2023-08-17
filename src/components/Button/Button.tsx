@@ -25,6 +25,9 @@ import {
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { buttonIconSizeMap, buttonTypeMap } from '@components/Button/mappings';
 import { useFocusRing } from '@react-aria/focus';
+import { AnimatePresence, motion } from 'framer-motion';
+import { LoadingCircle, LoadingCircleSize } from '..';
+import { useButtonLoadingAnimation } from './useButtonLoadingAnimation';
 
 // To be NON-Breaking but import should be done through index.ts
 export * from './ButtonClasses';
@@ -42,6 +45,7 @@ export type ButtonProps = {
     children?: ReactNode;
     onClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
     hugWidth?: boolean;
+    loading?: boolean;
     'aria-label'?: string;
     'aria-describedby'?: string;
     formId?: string;
@@ -65,6 +69,7 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
         children,
         onClick,
         hugWidth = true,
+        loading = false,
         'aria-label': ariaLabel,
         'aria-describedby': ariaDescribedBy,
         formId,
@@ -89,7 +94,8 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
         emphasis = ButtonEmphasis.Weak;
     }
 
-    const ref = useForwardedRef<HTMLButtonElement | null>(externalRef);
+    const ref = useForwardedRef<HTMLButtonElement>(externalRef);
+
     const { buttonProps } = useButton(
         { onPress: () => onClick && onClick(), isDisabled: disabled, type: buttonTypeMap[type] },
         ref,
@@ -109,6 +115,8 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
         !hugWidth && 'tw-w-full',
     ]);
 
+    const { loadingProps, contentProps } = useButtonLoadingAnimation(children, icon);
+
     return (
         <button
             data-test-id={dataTestId}
@@ -122,22 +130,38 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
             {...buttonProps}
             {...focusProps}
         >
-            {icon && (
-                <span
-                    data-test-id={`${dataTestId}-icon`}
-                    className={merge([children && !hideLabel ? IconSpacingClasses[size] : '', getStyles('icon')])}
-                >
-                    {cloneElement(icon, { size: buttonIconSizeMap[size] })}
-                </span>
-            )}
-            {children && (
-                <span
-                    data-test-id={`${dataTestId}-text`}
-                    className={merge([getStyles('text'), hideLabel && 'tw-sr-only'])}
-                >
-                    {children}
-                </span>
-            )}
+            <AnimatePresence mode="wait">
+                {loading ? (
+                    <motion.div {...loadingProps} className="w-w-full tw-flex tw-items-center tw-justify-center">
+                        <LoadingCircle size={LoadingCircleSize.ExtraSmall} />
+                    </motion.div>
+                ) : (
+                    <motion.div
+                        {...contentProps}
+                        className="tw-w-full tw-flex tw-items-center tw-relative tw-justify-center"
+                    >
+                        {icon && (
+                            <span
+                                data-test-id={`${dataTestId}-icon`}
+                                className={merge([
+                                    children && !hideLabel ? IconSpacingClasses[size] : '',
+                                    getStyles('icon'),
+                                ])}
+                            >
+                                {cloneElement(icon, { size: buttonIconSizeMap[size] })}
+                            </span>
+                        )}
+                        {children && (
+                            <span
+                                data-test-id={`${dataTestId}-text`}
+                                className={merge([getStyles('text'), hideLabel && 'tw-sr-only'])}
+                            >
+                                {children}
+                            </span>
+                        )}
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </button>
     );
 };
