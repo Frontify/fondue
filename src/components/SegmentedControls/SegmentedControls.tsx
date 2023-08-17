@@ -189,7 +189,7 @@ export const SegmentedControls = ({
                     // div border is not included in width so it must be subtracted from translation.
                     animate={{ x: sliderTranslation, width: sliderWidth }}
                     initial={false}
-                    transition={{ type: 'tween', duration: 0.3 }}
+                    transition={{ type: 'tween', duration: 0.25 }}
                     hidden={!activeItemId}
                     className={merge([
                         'tw-absolute tw--inset-px tw-h-full tw-box-content tw-border tw-rounded tw-pointer-events-none',
