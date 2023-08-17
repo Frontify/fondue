@@ -47,7 +47,7 @@ export const Badge = ({
     return (
         <div
             className={merge([
-                'tw-relative tw-rounded-full tw-inline-flex tw-items-center tw-align-top tw-min-w-0 tw-flex-initial tw-transition-color',
+                'tw-relative tw-rounded-full tw-inline-flex tw-items-center tw-align-top tw-min-w-0 tw-flex-initial tw-transition-colors',
                 disabled
                     ? 'tw-bg-box-disabled tw-text-box-disabled-inverse'
                     : getStyleClasses(style, !!onClick, emphasis === BadgeEmphasis.Strong),
