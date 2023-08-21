@@ -13,7 +13,7 @@ import escapeHtml from 'escape-html';
 export const serializeLeafToHtml = (node: TText): string => {
     let string = escapeHtml(node.text);
     if (string === '') {
-        string = '&#xFEFF;'
+        string = '&#xFEFF;';
     }
     string = string.replaceAll('\n', '<br />&#xFEFF;');
     const { bold, italic, underline, strikethrough, code, subscript, superscript } = node;
