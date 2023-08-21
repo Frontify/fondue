@@ -63,3 +63,4 @@ export * from './LegacyTooltip';
 export * from './TooltipIcon';
 export * from './Tree';
 export * from './Trigger';
+export * from './ComponentEnum';
