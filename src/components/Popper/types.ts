@@ -24,6 +24,10 @@ export type PopperProps = {
     flip?: boolean;
     enablePortal?: boolean;
     zIndex?: number | string;
+    /** @description This property will detach the overlay from its trigger and will be relatively position to the body. example: Dialog compoennt. */
+    isDetached?: boolean;
+    /** @description This property will take effect only if isDetached is enabled. */
+    verticalAlignment?: 'top' | 'centered';
 };
 
 const POPPER_PLACEMENT = [

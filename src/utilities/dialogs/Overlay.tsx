@@ -16,9 +16,9 @@ import { Z_INDEX_MODAL_BACKDROP } from '@utilities/dialogs/constants';
 
 export const Overlay = ({
     open,
-    placement,
-    offset,
-    flip,
+    placement = 'bottom-start',
+    offset = [0, 8],
+    flip = true,
     enablePortal,
     children,
     role = 'region',
@@ -32,6 +32,8 @@ export const Overlay = ({
     darkUnderlay,
     autoHeight,
     zIndex,
+    isDetached,
+    verticalAlignment,
 }: OverlayProps & BaseDialogProps) => {
     const id = useMemoizedId();
     const ref = useRef<HTMLDivElement | null>(null);
@@ -72,6 +74,8 @@ export const Overlay = ({
                 flip={flip}
                 enablePortal={enablePortal}
                 zIndex={zIndex}
+                isDetached={isDetached}
+                verticalAlignment={verticalAlignment}
             >
                 {Children.map(children, (child) => {
                     if (isValidElement(child) && typeof child.type === 'function') {

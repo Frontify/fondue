@@ -15,6 +15,10 @@ import { usePopper } from 'react-popper';
 import { Portal } from '@components/Portal';
 import { PopperProps } from '@components/Popper/types';
 
+const DEFAULT_POPPER_WIDTH = 200;
+const DEFAULT_POPPER_HEIGHT = 400;
+const DEFAULT_DIALOG_TOP_POSITION = '100px';
+
 const PopperContext = createContext<PopperProps>({});
 
 const Reference = ({ children }: { children: ReactElement }) => {
@@ -45,11 +49,17 @@ export const Popper = ({
     flip = true,
     enablePortal = true,
     zIndex = 'auto',
+    isDetached = false,
+    verticalAlignment,
 }: PopperProps) => {
     const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
     const [popperElement, setPopperElement] = useState<HTMLElement | null>(null);
+    const [popperDimensions, setPopperDimensions] = useState({
+        width: DEFAULT_POPPER_WIDTH,
+        height: DEFAULT_POPPER_HEIGHT,
+    });
 
-    const popperInstance = usePopper(referenceElement, popperElement, {
+    const popperInstance = usePopper(isDetached ? document.body : referenceElement, popperElement, {
         placement,
         modifiers: [
             { name: 'offset', options: { offset } },
@@ -64,11 +74,28 @@ export const Popper = ({
         const updatePopper = async () => {
             if (popperInstance.update) {
                 await popperInstance.update();
+                if (popperInstance.state) {
+                    setPopperDimensions({
+                        width: popperInstance.state.rects.popper.width,
+                        height: popperInstance.state.rects.popper.height,
+                    });
+                }
             }
         };
 
         updatePopper().catch(console.error);
     }, [flip, placement, offset, open]);
+
+    const detachedElementStyles = isDetached
+        ? {
+              left: `${(window.innerWidth - popperDimensions.width) / 2}px`,
+              top:
+                  verticalAlignment === 'top'
+                      ? DEFAULT_DIALOG_TOP_POSITION
+                      : `${(window.innerHeight - popperDimensions.height) / 2}px`,
+              transform: 'none',
+          }
+        : {};
 
     const value = useMemo(() => ({ open }), [open]);
     return (
@@ -86,7 +113,11 @@ export const Popper = ({
                             <Portal>
                                 <div
                                     ref={setPopperElement}
-                                    style={{ zIndex, ...popperInstance.styles.popper }}
+                                    style={{
+                                        zIndex,
+                                        ...popperInstance.styles.popper,
+                                        ...detachedElementStyles,
+                                    }}
                                     {...popperInstance.attributes.popper}
                                 >
                                     {child}
@@ -95,7 +126,7 @@ export const Popper = ({
                         ) : (
                             <div
                                 ref={setPopperElement}
-                                style={{ zIndex, ...popperInstance.styles.popper }}
+                                style={{ zIndex, ...popperInstance.styles.popper, ...detachedElementStyles }}
                                 {...popperInstance.attributes.popper}
                             >
                                 {child}
