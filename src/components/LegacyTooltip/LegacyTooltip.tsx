@@ -304,12 +304,9 @@ export const LegacyTooltip = ({
     return (
         <>
             <div {...openingEvents} ref={setTriggerElementContainerRef}>
-                {triggerElement &&
-                    cloneElement(triggerElement, {
-                        ref: setTriggerElementRef,
-                        'aria-labelledby': id,
-                        'aria-disabled': shouldPreventTooltipOpening,
-                    })}
+                <div ref={setTriggerElementRef} aria-labelledby={id} aria-disabled={shouldPreventTooltipOpening}>
+                    {triggerElement}
+                </div>
             </div>
             <TooltipWrapper enablePortal={enablePortal}>
                 <div
