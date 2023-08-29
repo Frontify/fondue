@@ -15,9 +15,8 @@ export default {
     tags: ['autodocs'],
     args: {
         method: 'post',
-        autocomplete: true,
+        autoComplete: 'on',
         'data-test-id': 'fondue-form',
-        acceptCharset: '',
         action: '',
         encType: '',
         name: '',
