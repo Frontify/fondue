@@ -49,7 +49,7 @@ describe('serializeNodesToHtml()', () => {
         expect(serialized).to.contain('&lt;img src=x onerror=&#39;alert(123)&#39;/&gt;\\n');
     });
 
-    it('serializes an empty line to a linebreak', () => {
+    it('serializes an empty p node to a paragraph with an zero width space', () => {
         const node = [
             {
                 type: 'p',
@@ -58,6 +58,8 @@ describe('serializeNodesToHtml()', () => {
         ];
 
         const result = serializeNodesToHtml(node);
-        expect(result).to.equal('<br />');
+        expect(result).to.equal(
+            '<p dir="auto" class="tw-break-words" style="font-size: 14px; font-style: normal; font-weight: normal;">&#xFEFF;</p>',
+        );
     });
 });
