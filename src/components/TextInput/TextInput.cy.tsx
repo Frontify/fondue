@@ -118,8 +118,8 @@ describe('Text Input component', () => {
             />,
         );
         cy.get(EXTRA_ACTION_ID).should('be.visible');
-        cy.get(EXTRA_ACTION_ID).parent().next().should('have.attr', 'data-test-id', 'tooltip');
-        cy.get(EXTRA_ACTION_ID).parent().next().find('span').first().should('have.text', TOOLTIP_CONTENT);
+        cy.get(EXTRA_ACTION_ID).parent().parent().next().should('have.attr', 'data-test-id', 'tooltip');
+        cy.get(EXTRA_ACTION_ID).parent().parent().next().find('span').first().should('have.text', TOOLTIP_CONTENT);
     });
 
     it('calls extra action onClick event', () => {

@@ -29,7 +29,7 @@ export type TooltipButton = {
     action: () => void;
 };
 
-export type TooltipProps = {
+export type LegacyTooltipProps = {
     triggerElement?: ReactElement;
     content: ReactNode;
     tooltipIcon?: ReactElement;
@@ -138,7 +138,7 @@ const TooltipWrapper = ({
     return children as JSX.Element;
 };
 
-export const Tooltip = ({
+export const LegacyTooltip = ({
     content,
     tooltipIcon,
     heading,
@@ -160,7 +160,7 @@ export const Tooltip = ({
     enablePortal = false,
     hidden = false,
     'data-test-id': dataTestId = 'tooltip',
-}: TooltipProps) => {
+}: LegacyTooltipProps) => {
     const [triggerElementRef, setTriggerElementRef] = useState<HTMLElement | HTMLDivElement | HTMLButtonElement | null>(
         null,
     );
@@ -304,12 +304,9 @@ export const Tooltip = ({
     return (
         <>
             <div {...openingEvents} ref={setTriggerElementContainerRef}>
-                {triggerElement &&
-                    cloneElement(triggerElement, {
-                        ref: setTriggerElementRef,
-                        'aria-labelledby': id,
-                        'aria-disabled': shouldPreventTooltipOpening,
-                    })}
+                <div ref={setTriggerElementRef} aria-labelledby={id} aria-disabled={shouldPreventTooltipOpening}>
+                    {triggerElement}
+                </div>
             </div>
             <TooltipWrapper enablePortal={enablePortal}>
                 <div
@@ -418,4 +415,4 @@ export const Tooltip = ({
         </>
     );
 };
-Tooltip.displayName = 'FondueTooltip';
+LegacyTooltip.displayName = 'FondueLegacyTooltip';

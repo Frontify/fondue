@@ -674,7 +674,12 @@ export const Tree = memo(
                         </SortableContext>
 
                         {createPortal(
-                            <DragOverlay wrapperElement="ul" dropAnimation={null} modifiers={[restrictToWindowEdges]}>
+                            <DragOverlay
+                                zIndex={1500}
+                                wrapperElement="ul"
+                                dropAnimation={null}
+                                modifiers={[restrictToWindowEdges]}
+                            >
                                 {treeState.overlay && (
                                     <TreeItemOverlay
                                         {...treeState.overlay}

@@ -2,14 +2,14 @@
 
 import React, { ReactElement, cloneElement } from 'react';
 import { IconSize } from '@foundation/Icon/IconSize';
-import { Tooltip, TooltipProps } from '@components/Tooltip/Tooltip';
+import { LegacyTooltip, LegacyTooltipProps } from '@components/LegacyTooltip/LegacyTooltip';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { IconProps } from '@foundation/Icon/IconProps';
 import { IconQuestionMarkCircle } from '@foundation/Icon/Generated';
 
 export type TooltipIconProps = {
-    tooltip?: TooltipProps;
+    tooltip?: LegacyTooltipProps;
     iconSize?: IconSize;
     triggerIcon?: ReactElement<IconProps>;
     triggerStyle?: TooltipIconTriggerStyle;
@@ -45,7 +45,7 @@ export const TooltipIcon = ({
         <div data-test-id={dataTestId}>
             {tooltip && (
                 <div>
-                    <Tooltip
+                    <LegacyTooltip
                         triggerElement={
                             <button
                                 type="button"

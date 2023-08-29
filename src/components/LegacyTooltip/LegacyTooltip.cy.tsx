@@ -4,7 +4,7 @@ import { IconSize } from '@foundation/Icon/IconSize';
 import { IconExclamationMarkCircle, IconIcon } from '@foundation/Icon/Generated';
 import React from 'react';
 import { BrightHeaderStyle, brightHeaderBackgroundColors } from './BrightHeader';
-import { Tooltip, TooltipAlignment, TooltipPosition, TooltipProps } from './Tooltip';
+import { LegacyTooltip, LegacyTooltipProps, TooltipAlignment, TooltipPosition } from './LegacyTooltip';
 
 const TOOLTIP_TEXT = 'This is a tooltip';
 const TOOLTIP_ID = '[data-test-id=tooltip]';
@@ -19,14 +19,14 @@ const ENTER_DELAY = 1000;
 const DEFAULT_HOVER_DELAY = 200;
 const CUSTOM_HOVER_DELAY = 1000;
 
-type TooltipTestProps = TooltipProps & { testFlip?: boolean };
+type TooltipTestProps = LegacyTooltipProps & { testFlip?: boolean };
 
 export const TooltipComponent = (args: TooltipTestProps) => {
     return (
         <div
             className={`tw-w-screen tw-h-screen tw-flex tw-justify-center tw-items-${args.testFlip ? 'end' : 'center'}`}
         >
-            <Tooltip
+            <LegacyTooltip
                 {...args}
                 triggerElement={
                     <div data-test-id="tooltip-trigger" className="tw-flex tw-justify-center tw-items-center">
@@ -44,7 +44,7 @@ export const TooltipComponentWithoutTrigger = (args: TooltipTestProps) => {
             className={`tw-w-screen tw-h-screen tw-flex tw-justify-center tw-items-${args.testFlip ? 'end' : 'center'}`}
             data-test-id="tooltip-wrapper"
         >
-            <Tooltip {...args} />
+            <LegacyTooltip {...args} />
         </div>
     );
 };

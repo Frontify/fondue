@@ -17,10 +17,10 @@ import { Flex } from '@components/Flex';
 import { Box } from '@components/Box';
 import IconDotsVertical16 from '@foundation/Icon/Generated/IconDotsVertical16';
 import { IconExclamationMarkCircle16 } from '@foundation/Icon/Generated';
-import { Tooltip } from '@components/Tooltip';
+import { LegacyTooltip } from '@components/LegacyTooltip';
 
 export default {
-    title: 'Experimental/Work In Progress/InlineDialog',
+    title: 'Experimental/InlineDialog',
     component: InlineDialog,
     tags: ['autodocs'],
     args: {
@@ -71,21 +71,7 @@ const Template: StoryFn<InlineDialogProps> = (args) => {
     const [isOpen, setIsOpen] = useToggleOverlay(false, { isBlockingModal: args.modality === Modality.BlockingModal });
     return (
         <Box className="tw-w-fit">
-            <InlineDialog
-                open={isOpen}
-                minHeight={args.minHeight}
-                maxHeight={args.maxHeight}
-                minWidth={args.minWidth}
-                maxWidth={args.maxWidth}
-                handleClose={() => setIsOpen(false)}
-                modality={args.modality}
-                placement={args.placement}
-                flip={args.flip}
-                offset={args.offset}
-                enablePortal={args.enablePortal}
-                darkUnderlay={args.darkUnderlay}
-                autoHeight={args.autoHeight}
-            >
+            <InlineDialog {...args} open={isOpen} handleClose={() => setIsOpen(false)}>
                 <InlineDialog.Trigger>
                     <Button
                         emphasis={ButtonEmphasis.Default}
@@ -98,7 +84,7 @@ const Template: StoryFn<InlineDialogProps> = (args) => {
                         <Box className="tw-p-4">
                             <Box className="tw-mb-2">
                                 <Flex justify="start">
-                                    <Tooltip
+                                    <LegacyTooltip
                                         triggerElement={
                                             <button aria-label="Exclamation mark circle icon" className="tw-mr-1">
                                                 <IconExclamationMarkCircle16 />
@@ -149,21 +135,7 @@ const NoFocusableContentTemplate: StoryFn<InlineDialogProps> = (args) => {
             <Button onClick={action('onClick')} style={ButtonStyle.Danger}>
                 Button
             </Button>
-            <InlineDialog
-                open={isOpen}
-                minHeight={args.minHeight}
-                maxHeight={args.maxHeight}
-                minWidth={args.minWidth}
-                maxWidth={args.maxWidth}
-                handleClose={() => setIsOpen(false)}
-                modality={args.modality}
-                placement={args.placement}
-                flip={args.flip}
-                offset={args.offset}
-                enablePortal={args.enablePortal}
-                darkUnderlay={args.darkUnderlay}
-                autoHeight={args.autoHeight}
-            >
+            <InlineDialog {...args} open={isOpen} handleClose={() => setIsOpen(false)}>
                 <InlineDialog.Trigger>
                     <Button
                         emphasis={ButtonEmphasis.Default}
@@ -194,21 +166,7 @@ const InContext: StoryFn<InlineDialogProps> = (args) => {
                 <Button onClick={action('onClick')} emphasis={ButtonEmphasis.Default} style={ButtonStyle.Default}>
                     Button
                 </Button>
-                <InlineDialog
-                    open={isOpen}
-                    minHeight={args.minHeight}
-                    maxHeight={args.maxHeight}
-                    minWidth={args.minWidth}
-                    maxWidth={args.maxWidth}
-                    handleClose={() => setIsOpen(false)}
-                    modality={args.modality}
-                    placement={args.placement}
-                    flip={args.flip}
-                    offset={args.offset}
-                    enablePortal={args.enablePortal}
-                    darkUnderlay={args.darkUnderlay}
-                    autoHeight={args.autoHeight}
-                >
+                <InlineDialog {...args} open={isOpen} handleClose={() => setIsOpen(false)}>
                     <InlineDialog.Trigger>
                         <Button onClick={() => setIsOpen(!isOpen)}>InlineDialog Trigger</Button>
                     </InlineDialog.Trigger>

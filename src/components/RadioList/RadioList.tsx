@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Tooltip, TooltipAlignment, TooltipPosition } from '@components/Tooltip';
+import { LegacyTooltip, TooltipAlignment, TooltipPosition } from '@components/LegacyTooltip';
 import IconQuestionMarkCircle from '@foundation/Icon/Generated/IconQuestionMarkCircle';
 import { IconSize } from '@foundation/Icon';
 import { generateRandomId } from '@utilities/generateRandomId';
@@ -18,6 +18,7 @@ export type RadioListProps = {
     onChange?: (value: string) => void;
     direction?: RadioListDirection;
     defaultValue?: string;
+    name?: string;
     ariaLabel?: string;
 };
 
@@ -26,6 +27,7 @@ export const RadioList = ({
     defaultValue,
     direction = RadioListDirection.Horizontal,
     onChange,
+    name = 'default-radio',
     ariaLabel,
 }: RadioListProps) => {
     const radioGroupRef = useRef<HTMLDivElement | null>(null);
@@ -70,7 +72,7 @@ export const RadioList = ({
                             disabled={radio.disabled}
                             id={id}
                             type="radio"
-                            name="default-radio"
+                            name={name}
                             value={radio.value}
                             aria-label="radio"
                             aria-checked={radio.value === activeValue}
@@ -103,7 +105,7 @@ export const RadioList = ({
                             </label>
                         )}
                         {radio.tooltip && (
-                            <Tooltip
+                            <LegacyTooltip
                                 alignment={TooltipAlignment.Middle}
                                 content={radio.tooltip}
                                 hoverDelay={75}

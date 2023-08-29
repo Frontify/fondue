@@ -14,6 +14,11 @@ import {
     useDynamicNavigationMock,
     useNavigationWithLazyLoadedItemsMock,
 } from '@components/Tree/utils';
+import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
+import { Container } from '@components/Container';
+import { InlineDialog } from '@components/InlineDialog';
+import { DialogBody } from '@components/DialogBody';
+import { Modality } from '../../types/dialog';
 
 export default {
     title: 'Components/Tree',
@@ -22,6 +27,7 @@ export default {
     args: {
         id: 'storybook-tree',
         draggable: true,
+        selectedIds: ['2'],
     },
     argTypes: {
         draggable: {
@@ -325,5 +331,52 @@ export const WithExpandOnSelect = ({ ...args }: TreeProps) => {
                 {treeItemsMock.map((item) => renderTreeItemLabel({ ...item, onDrop, expandOnSelect: true }))}
             </TreeView>
         </div>
+    );
+};
+
+export const InsideInlineDialog = ({ ...args }: TreeProps) => {
+    const [expandedIds, setExpandedIds] = useState<string[]>([]);
+
+    const handleItemExpand = useCallback((id: string) => {
+        setExpandedIds((ids) => [...ids, id]);
+    }, []);
+
+    const handleItemShrink = useCallback((id: string) => {
+        setExpandedIds((ids) => ids.filter((itemId: string) => itemId !== id));
+    }, []);
+
+    const [isOpen, setIsOpen] = useState(false);
+
+    return (
+        <Container maxWidth={'800px'}>
+            <InlineDialog
+                open={isOpen}
+                modality={Modality.NonModal}
+                enablePortal={true}
+                handleClose={() => setIsOpen(false)}
+            >
+                <InlineDialog.Trigger>
+                    <Button
+                        style={ButtonStyle.Default}
+                        emphasis={ButtonEmphasis.Strong}
+                        onClick={() => setIsOpen(!isOpen)}
+                    >
+                        Click me
+                    </Button>
+                </InlineDialog.Trigger>
+                <InlineDialog.Content>
+                    <DialogBody>
+                        <TreeView
+                            {...args}
+                            expandedIds={expandedIds}
+                            onExpand={handleItemExpand}
+                            onShrink={handleItemShrink}
+                        >
+                            {treeItemsMock.map(renderTreeItemLabel)}
+                        </TreeView>
+                    </DialogBody>
+                </InlineDialog.Content>
+            </InlineDialog>
+        </Container>
     );
 };

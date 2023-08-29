@@ -3,7 +3,7 @@
 import { Meta, StoryFn } from '@storybook/react';
 import React, { useState } from 'react';
 import { BrightHeaderStyle } from './BrightHeader';
-import { Tooltip, TooltipAlignment, TooltipPosition, TooltipProps } from './Tooltip';
+import { LegacyTooltip, LegacyTooltipProps, TooltipAlignment, TooltipPosition } from './LegacyTooltip';
 import { IconExclamationMarkCircle16Filled, IconExclamationMarkTriangle16, IconIcon } from '@foundation/Icon/Generated';
 import { useOverlayTriggerState } from '@react-stately/overlays';
 import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
@@ -15,12 +15,20 @@ import { Dropdown } from '@components/Dropdown';
 import { FormControl } from '..';
 
 export default {
-    title: 'Components/Tooltip',
-    component: Tooltip,
+    title: 'Deprecated/LegacyTooltip',
+    component: LegacyTooltip,
     tags: ['autodocs'],
     args: {
         content: 'Cupcake ipsum dolor sit amet ice cream. (https://Cupcakeipsumdolorsitameticecream.com)',
         heading: '',
+        triggerElement: (
+            <button className="tw-flex tw-justify-center tw-items-center">
+                <span className="tw-flex tw-leading-3">
+                    <IconExclamationMarkCircle16Filled />
+                </span>
+                <span>Tooltip trigger</span>
+            </button>
+        ),
     },
     argTypes: {
         triggerElement: { table: { disable: true } },
@@ -102,31 +110,21 @@ export default {
             defaultValue: false,
         },
     },
-} as Meta<TooltipProps>;
+} as Meta<LegacyTooltipProps>;
 
-export const TooltipComponent: StoryFn<TooltipProps> = (args: TooltipProps) => {
+export const TooltipComponent: StoryFn<LegacyTooltipProps> = (args: LegacyTooltipProps) => {
     return (
         <div className="tw-w-screen tw-h-screen tw-flex tw-justify-center tw-items-center">
-            <Tooltip
-                {...args}
-                triggerElement={
-                    <button className="tw-flex tw-justify-center tw-items-center">
-                        <span className="tw-flex tw-leading-3">
-                            <IconExclamationMarkCircle16Filled />
-                        </span>
-                        <span>Tooltip trigger</span>
-                    </button>
-                }
-            />
+            <LegacyTooltip {...args} />
         </div>
     );
 };
 
-export const MultipleTooltipsComponent: StoryFn<TooltipProps> = (args: TooltipProps) => {
+export const MultipleTooltipsComponent: StoryFn<LegacyTooltipProps> = (args: LegacyTooltipProps) => {
     return (
         <div className="tw-w-screen tw-h-screen tw-flex tw-justify-center tw-items-center">
             <p className="tw-mr-2">Label</p>
-            <Tooltip
+            <LegacyTooltip
                 {...args}
                 triggerElement={
                     <button aria-label="Exclamation mark circle icon" className="tw-mr-1">
@@ -134,7 +132,7 @@ export const MultipleTooltipsComponent: StoryFn<TooltipProps> = (args: TooltipPr
                     </button>
                 }
             />
-            <Tooltip
+            <LegacyTooltip
                 {...args}
                 content="Second tooltip"
                 triggerElement={
@@ -200,6 +198,11 @@ WithHeadingAndIcon.args = {
 export const TooltipWithIcon = TooltipComponent.bind({});
 TooltipWithIcon.args = {
     tooltipIcon: <IconIcon />,
+};
+
+export const TooltipWithIconAsTriggerElement = TooltipComponent.bind({});
+TooltipWithIconAsTriggerElement.args = {
+    triggerElement: <IconIcon />,
 };
 
 export const WithLinkWithDefaultLabel = TooltipComponent.bind({});
@@ -268,7 +271,7 @@ HiddenTooltip.decorators = [
     ),
 ];
 
-const TooltipWithinOverflownContainer: StoryFn<TooltipProps> = (args: TooltipProps) => {
+const TooltipWithinOverflownContainer: StoryFn<LegacyTooltipProps> = (args: LegacyTooltipProps) => {
     return (
         <div className="tw-overflow-y-auto tw-shadow tw-h-[100px] tw-my-6">
             <p className="tw-p2">Title</p>
@@ -277,7 +280,7 @@ const TooltipWithinOverflownContainer: StoryFn<TooltipProps> = (args: TooltipPro
                 vestibulum lacus gravida ultrices eget sed velit. Donec id interdum nibh.
             </p>
             <div className="tw-w-4">
-                <Tooltip
+                <LegacyTooltip
                     {...args}
                     triggerElement={
                         <button aria-label="Exclamation mark circle icon" className="tw-mr-1">
@@ -373,13 +376,13 @@ const DropdownComponent = () => {
     );
 };
 
-const WithModalWithTooltipAndDropdown: StoryFn<TooltipProps> = (args: TooltipProps) => {
+const WithModalWithTooltipAndDropdown: StoryFn<LegacyTooltipProps> = (args: LegacyTooltipProps) => {
     return (
         <ModalComponent isOpen={false}>
             <div>
                 <div className="tw-flex">
                     <DropdownComponent />
-                    <Tooltip
+                    <LegacyTooltip
                         {...args}
                         triggerElement={
                             <button aria-label="Exclamation mark circle icon" className="tw-mr-1">
