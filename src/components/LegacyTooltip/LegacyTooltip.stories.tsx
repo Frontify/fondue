@@ -21,6 +21,14 @@ export default {
     args: {
         content: 'Cupcake ipsum dolor sit amet ice cream. (https://Cupcakeipsumdolorsitameticecream.com)',
         heading: '',
+        triggerElement: (
+            <button className="tw-flex tw-justify-center tw-items-center">
+                <span className="tw-flex tw-leading-3">
+                    <IconExclamationMarkCircle16Filled />
+                </span>
+                <span>Tooltip trigger</span>
+            </button>
+        ),
     },
     argTypes: {
         triggerElement: { table: { disable: true } },
@@ -107,17 +115,7 @@ export default {
 export const TooltipComponent: StoryFn<LegacyTooltipProps> = (args: LegacyTooltipProps) => {
     return (
         <div className="tw-w-screen tw-h-screen tw-flex tw-justify-center tw-items-center">
-            <LegacyTooltip
-                {...args}
-                triggerElement={
-                    <button className="tw-flex tw-justify-center tw-items-center">
-                        <span className="tw-flex tw-leading-3">
-                            <IconExclamationMarkCircle16Filled />
-                        </span>
-                        <span>Tooltip trigger</span>
-                    </button>
-                }
-            />
+            <LegacyTooltip {...args} />
         </div>
     );
 };
@@ -200,6 +198,11 @@ WithHeadingAndIcon.args = {
 export const TooltipWithIcon = TooltipComponent.bind({});
 TooltipWithIcon.args = {
     tooltipIcon: <IconIcon />,
+};
+
+export const TooltipWithIconAsTriggerElement = TooltipComponent.bind({});
+TooltipWithIconAsTriggerElement.args = {
+    triggerElement: <IconIcon />,
 };
 
 export const WithLinkWithDefaultLabel = TooltipComponent.bind({});
