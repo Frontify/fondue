@@ -34,6 +34,7 @@ export const Overlay = ({
     zIndex,
     isDetached,
     verticalAlignment,
+    theme = 'light',
 }: OverlayProps & BaseDialogProps) => {
     const id = useMemoizedId();
     const ref = useRef<HTMLDivElement | null>(null);
@@ -100,6 +101,7 @@ export const Overlay = ({
                                         className={merge([
                                             'tw-flex tw-flex-col tw-pointer-events-auto',
                                             OVERLAY_CONTAINER_CLASSES,
+                                            theme === 'dark' && 'tw-dark',
                                         ])}
                                         role={role}
                                         id={id}
