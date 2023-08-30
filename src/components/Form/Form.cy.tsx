@@ -2,13 +2,18 @@
 
 import React from 'react';
 import { Form } from '@components/Form/Form';
-import { Button } from '@components/Button';
+import { Button, ButtonType } from '@components/Button';
+import { TextInput } from '@components/TextInput';
 
 const FORM_ID = '[data-test-id=fondue-form]';
 const BUTTON_ID = '[data-test-id=button]';
 describe('Form', () => {
-    it('should render', () => {
-        cy.mount(<Form />);
+    it('should render correctly', () => {
+        cy.mount(
+            <Form>
+                <TextInput id="label" value="some value" />
+            </Form>,
+        );
 
         cy.get(FORM_ID).should('exist');
     });
@@ -22,7 +27,9 @@ describe('Form', () => {
                 autoComplete="on"
                 encType="text/plain"
                 noValidate={true}
-            />,
+            >
+                <TextInput id="label" value="some value" />
+            </Form>,
         );
 
         cy.get(FORM_ID).should('have.attr', 'method', 'post');
@@ -33,14 +40,23 @@ describe('Form', () => {
         cy.get(FORM_ID).should('have.attr', 'novalidate');
     });
 
-    it('should render with children', () => {
+    it('should submit the form', () => {
+        const onSubmitStub = cy.stub().as('onSubmitStub');
+
         cy.mount(
-            <Form>
-                <Button>Submit</Button>
+            <Form
+                onSubmit={(event) => {
+                    event.preventDefault();
+                    onSubmitStub();
+                }}
+            >
+                <Button type={ButtonType.Submit}>Submit</Button>
             </Form>,
         );
 
         cy.get(BUTTON_ID).should('exist');
-        cy.get(BUTTON_ID).parent().should('have.attr', 'data-test-id', 'fondue-form');
+        cy.get(FORM_ID).should('exist');
+        cy.get(BUTTON_ID).click();
+        cy.wrap(onSubmitStub).should('have.been.calledOnce');
     });
 });

@@ -13,23 +13,12 @@ export default {
     title: 'Components/Form',
     component: Form,
     tags: ['autodocs'],
-    args: {
-        method: 'post',
-        autoComplete: 'on',
-        'data-test-id': 'fondue-form',
-        action: '',
-        encType: '',
-        name: '',
-        noValidate: false,
-        target: '',
-        rel: '',
-    },
 } as Meta<FormProps>;
 
 export const Default: StoryFn<FormProps> = (args: FormProps) => (
     <Form {...args}>
         <FormControl
-            clickable={true}
+            clickable
             label={{
                 children: 'Input Label',
                 required: false,

@@ -1,17 +1,20 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FormHTMLAttributes, ReactNode } from 'react';
+import React, { forwardRef } from 'react';
+import type { FormHTMLAttributes, ReactNode } from 'react';
 
 export type FormProps = {
-    children?: ReactNode;
+    children: ReactNode;
     'data-test-id'?: string;
 } & FormHTMLAttributes<HTMLFormElement>;
 
-export const Form = ({ children, 'data-test-id': dataTestId = 'fondue-form', ...attributes }: FormProps) => {
-    return (
-        <form data-test-id={dataTestId} {...attributes}>
-            {children}
-        </form>
-    );
-};
+export const Form = forwardRef<HTMLFormElement, FormProps>(
+    ({ children, 'data-test-id': dataTestId = 'fondue-form', ...props }, ref) => {
+        return (
+            <form data-test-id={dataTestId} ref={ref} {...props}>
+                {children}
+            </form>
+        );
+    },
+);
 Form.displayName = 'FondueForm';
