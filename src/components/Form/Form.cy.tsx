@@ -7,6 +7,7 @@ import { TextInput } from '@components/TextInput';
 
 const FORM_ID = '[data-test-id=fondue-form]';
 const BUTTON_ID = '[data-test-id=button]';
+
 describe('Form', () => {
     it('should render correctly', () => {
         cy.mount(
@@ -50,6 +51,7 @@ describe('Form', () => {
                     onSubmitStub();
                 }}
             >
+                <TextInput id="label" value="some value" />
                 <Button type={ButtonType.Submit}>Submit</Button>
             </Form>,
         );
