@@ -1,18 +1,14 @@
 titleOnly: true
 types:
-  - feat
-  - fix
-  - docs
-  - dx
-  - refactor
-  - perf
-  - test
-  - workflow
-  - build
-  - ci
-  - chore
-  - types
-  - wip
-  - release
-  - deps
-  - style
+    - feat
+    - fix
+    - docs
+    - refactor
+    - perf
+    - test
+    - ci
+    - chore
+    - release
+    - deps
+    - style
+    - ci
