@@ -8,7 +8,5 @@ types:
     - test
     - ci
     - chore
-    - release
-    - deps
     - style
     - ci
