@@ -1,15 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-// import { LegacyTooltipProps } from '@components/LegacyTooltip';
 import { InputHTMLAttributes, ReactElement } from 'react';
-
-// export type InputExtraAction = {
-//     onClick: () => void;
-//     icon: ReactElement;
-//     title: string;
-//     tooltip?: Omit<LegacyTooltipProps, 'triggerElement'>;
-//     disabled?: boolean;
-// };
 
 export type InputBaseProps = {
     decorator?: ReactElement;

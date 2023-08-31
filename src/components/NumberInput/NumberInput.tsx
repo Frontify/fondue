@@ -27,13 +27,13 @@ export const NumberInput = ({
     ...props
 }: NumberInputProps) => {
     const inputEl = useRef<HTMLInputElement | null>(null);
-    const dataTestId = !!propId ? propId : 'fondue-number-input';
+    const dataTestId = propId ? propId : 'fondue-number-input';
     const { isFocusVisible, focusProps } = useFocusRing({ within: true, isTextInput: true });
 
-    const handleOnChange = (value: string) => onChange && onChange(value);
+    const handleOnChange = (value: string) => (onChange ? onChange(value) : null);
 
     const handleCount = (value: string, type?: NumberInputIncrement) => {
-        let newValue = !!value ? +value : 0;
+        let newValue = value ? +value : 0;
         switch (type) {
             case NumberInputIncrement.DECREMENT:
                 newValue -= 1;
@@ -44,7 +44,7 @@ export const NumberInput = ({
             default:
                 newValue = +value;
         }
-        if (!!inputEl.current) {
+        if (inputEl.current) {
             inputEl.current.value = newValue.toString();
             handleOnChange(inputEl.current.value);
         }
@@ -91,7 +91,7 @@ export const NumberInput = ({
                     required={required}
                     readOnly={readOnly}
                     disabled={disabled}
-                    onFocus={(e) => onFocus && onFocus(e)}
+                    onFocus={(e) => (onFocus ? onFocus(e) : null)}
                     size={size}
                 />
                 {!!incrementable && (
