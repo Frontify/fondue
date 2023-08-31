@@ -42,15 +42,8 @@ describe('Form', () => {
     });
 
     it('should submit the form', () => {
-        const onSubmitStub = cy.stub().as('onSubmitStub');
-
         cy.mount(
-            <Form
-                onSubmit={(event) => {
-                    event.preventDefault();
-                    onSubmitStub();
-                }}
-            >
+            <Form method="POST" action="/form">
                 <TextInput id="label" value="some value" />
                 <Button type={ButtonType.Submit}>Submit</Button>
             </Form>,
@@ -58,7 +51,13 @@ describe('Form', () => {
 
         cy.get(BUTTON_ID).should('exist');
         cy.get(FORM_ID).should('exist');
-        cy.get(BUTTON_ID).click();
-        cy.wrap(onSubmitStub).should('have.been.calledOnce');
+        cy.intercept('POST', '/form', {
+            statusCode: 200,
+            body: {
+                foo: 'bar',
+            },
+        }).as('formSuccess');
+        cy.get(FORM_ID).submit();
+        cy.get('@formSuccess').its('response').its('body').should('deep.equal', { foo: 'bar' });
     });
 });
