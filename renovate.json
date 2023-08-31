@@ -6,13 +6,11 @@
         "labels": ["security"]
     },
     "dependencyDashboard": false,
-    "automerge": true,
     "lockFileMaintenance": { "enabled": true },
     "timezone": "Europe/Zurich",
     "packageRules": [
         {
             "updateTypes": ["major"],
-            "automerge": false,
             "labels": ["dependencies", "dependencies-major"]
         }
     ]

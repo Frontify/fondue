@@ -26,6 +26,6 @@ jobs:
                       refactor
                       perf
                       test
-                      automation
+                      ci
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
