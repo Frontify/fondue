@@ -2,9 +2,9 @@
 
 import React from 'react';
 import { NumberInput } from './NumberInput';
-import { IconLeaf } from '@foundation/Icon';
+import { IconNook16 } from '@foundation/Icon';
 
-const NUMBER_INPUT_COMPONENT = '[data-test-id=fondue-number-input-component]';
+const NUMBER_INPUT_COMPONENT = '[data-test-id=fondue-number-input]';
 const NUMBER_INPUT_ELEMENT = '[data-test-id=fondue-number-input-input]';
 const NUMBER_INPUT_DECORATOR = '[data-test-id=fondue-number-input-decorator]';
 const NUMBER_INPUT_INCREMENT = '[data-test-id=fondue-number-input-increment]';
@@ -22,8 +22,8 @@ describe('Number Input Component', () => {
         cy.get(NUMBER_INPUT_ELEMENT).should('have.value', '2');
     });
 
-    it('shoud render decorator', () => {
-        cy.mount(<NumberInput decorator={<IconLeaf />} />);
+    it('should render decorator', () => {
+        cy.mount(<NumberInput decorator={<IconNook16 />} />);
         cy.get(NUMBER_INPUT_DECORATOR).should('be.visible');
     });
 
@@ -39,10 +39,22 @@ describe('Number Input Component', () => {
         cy.get(NUMBER_INPUT_ELEMENT).should('have.value', '1');
     });
 
+    it('should increase value by 10', () => {
+        cy.mount(<NumberInput incrementable />);
+        cy.get(NUMBER_INPUT_INCREMENT).click({ shiftKey: true });
+        cy.get(NUMBER_INPUT_ELEMENT).should('have.value', '10');
+    });
+
     it('should decrease value by 1', () => {
         cy.mount(<NumberInput incrementable />);
         cy.get(NUMBER_INPUT_DECREMENT).click();
         cy.get(NUMBER_INPUT_ELEMENT).should('have.value', '-1');
+    });
+
+    it('should decrease value by 10', () => {
+        cy.mount(<NumberInput incrementable />);
+        cy.get(NUMBER_INPUT_DECREMENT).click({ shiftKey: true });
+        cy.get(NUMBER_INPUT_ELEMENT).should('have.value', '-10');
     });
 
     it('should render error icon and text', () => {
