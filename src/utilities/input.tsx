@@ -3,13 +3,18 @@
 import React, { ReactElement } from 'react';
 import { Validation, validationClassMap } from './validation';
 
-type HelperTextProps = { text: string; disabled: boolean; 'data-test-id': string; style?: Validation };
+type HelperTextProps = {
+    text: string;
+    disabled: boolean;
+    'data-test-id': string;
+    validationStyle?: Validation;
+};
 
 export const HelperText = ({
     text,
     disabled,
-    style,
-    'data-test-id': dataTestId = 'fondue-number-input',
+    validationStyle = Validation.Default,
+    'data-test-id': dataTestId = 'fondue-helper-text',
 }: HelperTextProps): ReactElement => {
     let textColorClass;
 
@@ -17,19 +22,13 @@ export const HelperText = ({
         case disabled:
             textColorClass = 'tw-text-black-40';
             break;
-        case style === Validation.Error:
-            textColorClass = validationClassMap.Error;
-            break;
-        case style === Validation.Success:
-            textColorClass = validationClassMap.Success;
-            break;
         default:
-            textColorClass = validationClassMap.Default;
+            textColorClass = validationClassMap[validationStyle];
             break;
     }
 
     return (
-        <span data-test-id={`${dataTestId}-helper-text`} className={`tw-text-s tw-font-sans ${textColorClass}`}>
+        <span data-test-id={dataTestId} className={`tw-text-s tw-font-sans ${textColorClass}`}>
             {text}
         </span>
     );

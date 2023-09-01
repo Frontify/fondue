@@ -5,6 +5,7 @@ import { NumberInput } from './NumberInput';
 import { NumberInputProps } from './types';
 import React, { useState } from 'react';
 import { IconNook16 } from '@foundation/Icon';
+import { Validation } from '@utilities/validation';
 
 export default {
     title: 'Components/Number Input',
@@ -42,6 +43,7 @@ export const WithErrorLessThanZero: StoryFn<NumberInputProps> = (args) => {
             incrementable
             error={error}
             errorText={errorText}
+            validation={Validation.Error}
         />
     );
 };

@@ -3,6 +3,7 @@
 import React from 'react';
 import { NumberInput } from './NumberInput';
 import { IconNook16 } from '@foundation/Icon';
+import { Validation, validationClassMap } from '@utilities/validation';
 
 const NUMBER_INPUT_COMPONENT = '[data-test-id=fondue-number-input]';
 const NUMBER_INPUT_ELEMENT = '[data-test-id=fondue-number-input-input]';
@@ -58,8 +59,15 @@ describe('Number Input Component', () => {
     });
 
     it('should render error icon and text', () => {
-        cy.mount(<NumberInput error errorText="Test Error Text" />);
-        cy.get(NUMBER_INPUT_ERROR_ICON).should('be.visible');
-        cy.get(NUMBER_INPUT_COMPONENT).children().last().contains('Test Error Text');
+        cy.mount(<NumberInput error errorText="Test Error Text" validation={Validation.Error} />);
+        cy.get(NUMBER_INPUT_ERROR_ICON)
+            .should('be.visible')
+            .parent()
+            .should('have.class', validationClassMap[Validation.Error]);
+        cy.get(NUMBER_INPUT_COMPONENT)
+            .children()
+            .last()
+            .contains('Test Error Text')
+            .should('have.class', validationClassMap[Validation.Error]);
     });
 });

@@ -7,7 +7,7 @@ import { IconExclamationMarkTriangle16, IconMinus16, IconPlus16 } from '@foundat
 import { HelperText } from '@utilities/input';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { FOCUS_WITHIN_STYLE } from '@utilities/focusStyle';
-import { Validation } from '@utilities/validation';
+import { Validation, validationClassMap } from '@utilities/validation';
 
 export const NumberInput = ({
     id: propId,
@@ -19,6 +19,7 @@ export const NumberInput = ({
     errorText,
     decorator,
     incrementable,
+    validation = Validation.Default,
     onChange,
     onKeyDown,
     onBlur,
@@ -128,7 +129,7 @@ export const NumberInput = ({
                 ) : null}
 
                 {error ? (
-                    <span className="tw-text-red-60">
+                    <span className={validationClassMap[validation]}>
                         <IconExclamationMarkTriangle16 data-test-id={`${dataTestId}-error-icon`} />
                     </span>
                 ) : null}
@@ -136,7 +137,7 @@ export const NumberInput = ({
             {error && errorText ? (
                 <HelperText
                     text={errorText}
-                    style={Validation.Error}
+                    validationStyle={validation}
                     disabled={disabled}
                     data-test-id={`${dataTestId}-error-text`}
                 />
