@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { InputBaseProps } from 'src/types/inupt';
+import type { InputBaseProps } from 'src/types/input';
 
 export type NumberInputProps = { incrementable?: boolean } & InputBaseProps;
 

@@ -18,7 +18,7 @@ describe('Number Input Component', () => {
     });
 
     it('should render input with default value', () => {
-        cy.mount(<NumberInput value={'2'} />);
+        cy.mount(<NumberInput value="2" />);
         cy.get(NUMBER_INPUT_ELEMENT).should('have.value', '2');
     });
 

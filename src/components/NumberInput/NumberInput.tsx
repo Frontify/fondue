@@ -5,10 +5,34 @@ import { NumberInputIncrement, NumberInputProps } from './types';
 import { merge } from '@utilities/merge';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { useFocusRing } from '@react-aria/focus';
-import { InputTypes } from '../../types/inupt';
 import { IconExclamationMarkTriangle16, IconMinus16, IconPlus16 } from '@foundation/Icon';
 import { HelperText, HelperTextStyle } from '@utilities/input';
 import { useMemoizedId } from '@hooks/useMemoizedId';
+
+enum InputTypes {
+    Button = 'button',
+    Checkbox = 'checkbox',
+    Color = 'color',
+    Date = 'date',
+    Datetime_Local = 'datetime-local',
+    Email = 'email',
+    File = 'file',
+    Hidden = 'hidden',
+    Image = 'image',
+    Month = 'month',
+    Number = 'number',
+    Password = 'password',
+    Radio = 'radio',
+    Range = 'range',
+    Reset = 'reset',
+    Search = 'search',
+    Submit = 'submit',
+    Tel = 'tel',
+    Text = 'text',
+    Time = 'time',
+    URL = 'url',
+    Week = 'week',
+}
 
 export const NumberInput = ({
     id: propId,
@@ -24,16 +48,18 @@ export const NumberInput = ({
     onKeyDown,
     onBlur,
     onFocus,
+    'data-test-id': dataTestId = 'fondue-number-input',
     ...props
 }: NumberInputProps) => {
-    const inputEl = useRef<HTMLInputElement | null>(null);
-    const dataTestId = propId ? propId : 'fondue-number-input';
+    const inputElement = useRef<HTMLInputElement | null>(null);
     const { isFocusVisible, focusProps } = useFocusRing({ within: true, isTextInput: true });
 
-    const handleOnChange = (value: string) => (onChange ? onChange(value) : null);
+    const handleOnChange = (value: string) => {
+        onChange?.(value);
+    };
 
     const handleCount = (value: string, type?: NumberInputIncrement) => {
-        let newValue = value ? +value : 0;
+        let newValue = Number(value) || 0;
         switch (type) {
             case NumberInputIncrement.DECREMENT:
                 newValue -= 1;
@@ -42,11 +68,11 @@ export const NumberInput = ({
                 newValue += 1;
                 break;
             default:
-                newValue = +value;
+                newValue = Number(value);
         }
-        if (inputEl.current) {
-            inputEl.current.value = newValue.toString();
-            handleOnChange(inputEl.current.value);
+        if (inputElement.current) {
+            inputElement.current.value = newValue.toString();
+            handleOnChange(inputElement.current.value);
         }
     };
 
@@ -57,10 +83,11 @@ export const NumberInput = ({
                 className={merge([
                     'tw-flex tw-items-center tw-h-9 tw-gap-2 tw-px-3 tw-border tw-transition tw-rounded tw-text-s tw-font-sans tw-relative tw-bg-white dark:tw-bg-transparent',
                     'tw-border-solid',
-                    merge(['focus-within:tw-border-black-90 hover:tw-border-black-90', isFocusVisible && FOCUS_STYLE]),
+                    'focus-within:tw-border-black-90 hover:tw-border-black-90',
+                    isFocusVisible && FOCUS_STYLE,
                 ])}
             >
-                {!!decorator && (
+                {!!decorator ? (
                     <div
                         className={merge([
                             'tw-flex tw-items-center tw-justify-center tw-pl-1',
@@ -70,12 +97,12 @@ export const NumberInput = ({
                     >
                         {decorator}
                     </div>
-                )}
+                ) : null}
                 <input
                     {...props}
                     id={useMemoizedId(propId)}
-                    ref={inputEl}
-                    name={'numberInput'}
+                    ref={inputElement}
+                    name="fondue-number-input"
                     type={InputTypes.Number}
                     className={merge([
                         'tw-w-full tw-grow tw-border-none tw-outline-none tw-bg-transparent tw-hide-input-arrows',
@@ -83,23 +110,24 @@ export const NumberInput = ({
                             ? 'tw-text-black-40 tw-placeholder-black-30 dark:tw-text-black-30 dark:tw-placeholder-black-40'
                             : 'tw-text-black tw-placeholder-black-60 dark:tw-text-white',
                     ])}
-                    onClick={() => inputEl.current?.focus()}
-                    onChange={(e) => handleOnChange(e.currentTarget.value)}
+                    onClick={() => inputElement.current?.focus()}
+                    onChange={(event) => handleOnChange(event.currentTarget.value)}
                     data-test-id={`${dataTestId}-input`}
                     onBlur={onBlur}
                     onKeyDown={onKeyDown}
                     required={required}
                     readOnly={readOnly}
                     disabled={disabled}
-                    onFocus={(e) => (onFocus ? onFocus(e) : null)}
+                    onFocus={(event) => (onFocus ? onFocus(event) : null)}
                     size={size}
                 />
-                {!!incrementable && (
+                {!!incrementable ? (
                     <>
                         <button
                             type={InputTypes.Button}
                             onClick={() => {
-                                !!inputEl.current && handleCount(inputEl.current.value, NumberInputIncrement.DECREMENT);
+                                !!inputElement.current &&
+                                    handleCount(inputElement.current.value, NumberInputIncrement.DECREMENT);
                             }}
                             data-test-id={`${dataTestId}-decrement`}
                         >
@@ -108,29 +136,30 @@ export const NumberInput = ({
                         <button
                             type={InputTypes.Button}
                             onClick={() => {
-                                !!inputEl.current && handleCount(inputEl.current.value, NumberInputIncrement.INCREMENT);
+                                !!inputElement.current &&
+                                    handleCount(inputElement.current.value, NumberInputIncrement.INCREMENT);
                             }}
                             data-test-id={`${dataTestId}-increment`}
                         >
                             <IconPlus16 />
                         </button>
                     </>
-                )}
+                ) : null}
 
-                {error && (
+                {error ? (
                     <span className="tw-text-red-60">
                         <IconExclamationMarkTriangle16 data-test-id={`${dataTestId}-error-icon`} />
                     </span>
-                )}
+                ) : null}
             </div>
-            {!!(error && !!errorText) && (
+            {error && errorText ? (
                 <HelperText
                     text={errorText}
                     style={HelperTextStyle.Danger}
                     disabled={disabled}
                     data-test-id={`${dataTestId}-error-text`}
                 />
-            )}
+            ) : null}
         </div>
     );
 };
