@@ -9,28 +9,4 @@ export type InputBaseProps = {
     helperText?: string;
     onChange?: (value: string) => void;
     'data-test-id'?: string;
-} & Omit<InputHTMLAttributes<HTMLInputElement>, 'className' | 'onChange'>;
-
-export type InputType =
-    | 'button'
-    | 'checkbox'
-    | 'color'
-    | 'date'
-    | 'datetime-local'
-    | 'email'
-    | 'file'
-    | 'hidden'
-    | 'image'
-    | 'month'
-    | 'number'
-    | 'password'
-    | 'radio'
-    | 'range'
-    | 'reset'
-    | 'search'
-    | 'submit'
-    | 'tel'
-    | 'text'
-    | 'time'
-    | 'url'
-    | 'week';
+} & Omit<InputHTMLAttributes<HTMLInputElement>, 'className' | 'style' | 'onChange'>;

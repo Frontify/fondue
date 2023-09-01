@@ -3,12 +3,11 @@
 import React, { useRef } from 'react';
 import { NumberInputIncrement, NumberInputProps } from './types';
 import { merge } from '@utilities/merge';
-import { FOCUS_STYLE } from '@utilities/focusStyle';
-import { useFocusRing } from '@react-aria/focus';
 import { IconExclamationMarkTriangle16, IconMinus16, IconPlus16 } from '@foundation/Icon';
 import { HelperText } from '@utilities/input';
 import { useMemoizedId } from '@hooks/useMemoizedId';
-import { InputType } from 'src/types/input';
+import { FOCUS_WITHIN_STYLE } from '@utilities/focusStyle';
+import { Validation } from '@utilities/validation';
 
 export const NumberInput = ({
     id: propId,
@@ -28,44 +27,40 @@ export const NumberInput = ({
     ...props
 }: NumberInputProps) => {
     const inputElement = useRef<HTMLInputElement | null>(null);
-    const numberInputType: InputType = 'number';
-    const buttonInputType: InputType = 'button';
-    const { isFocusVisible, focusProps } = useFocusRing({ within: true, isTextInput: true });
 
     const handleOnChange = (value: string) => {
         onChange?.(value);
     };
 
-    const handleCount = (value: string, type?: NumberInputIncrement) => {
-        let newValue = Number(value) || 0;
-        switch (type) {
-            case NumberInputIncrement.DECREMENT:
-                newValue -= 1;
-                break;
-            case NumberInputIncrement.INCREMENT:
-                newValue += 1;
-                break;
-            default:
-                newValue = Number(value);
-        }
+    const handleCount = (value: string, type?: NumberInputIncrement, isShift?: boolean) => {
+        const getNewInputValue = () => {
+            const currentValue = Number(value) || 0;
+            const changeValue = isShift ? 10 : 1;
+            switch (type) {
+                case NumberInputIncrement.DECREMENT:
+                    return currentValue - changeValue;
+                case NumberInputIncrement.INCREMENT:
+                    return currentValue + changeValue;
+                default:
+                    return currentValue;
+            }
+        };
         if (inputElement.current) {
+            const newValue = getNewInputValue();
             inputElement.current.value = newValue.toString();
             handleOnChange(inputElement.current.value);
         }
     };
 
     return (
-        <div data-test-id={`${dataTestId}-component`}>
+        <div data-test-id={dataTestId}>
             <div
-                {...focusProps}
                 className={merge([
-                    'tw-flex tw-items-center tw-h-9 tw-gap-2 tw-px-3 tw-border tw-transition tw-rounded tw-text-s tw-font-sans tw-relative tw-bg-white dark:tw-bg-transparent',
-                    'tw-border-solid',
-                    'focus-within:tw-border-black-90 hover:tw-border-black-90',
-                    isFocusVisible && FOCUS_STYLE,
+                    'tw-flex tw-items-center tw-h-9 tw-gap-2 tw-px-3 tw-transition tw-text-s tw-font-sans tw-relative tw-bg-white dark:tw-bg-transparent tw-border tw-rounded tw-line-strong hover:tw-line-x-strong focus-within:tw-line-xx-strong',
+                    FOCUS_WITHIN_STYLE,
                 ])}
             >
-                {!!decorator ? (
+                {decorator ? (
                     <div
                         className={merge([
                             'tw-flex tw-items-center tw-justify-center tw-pl-1',
@@ -80,8 +75,8 @@ export const NumberInput = ({
                     {...props}
                     id={useMemoizedId(propId)}
                     ref={inputElement}
-                    name="fondue-number-input"
-                    type={numberInputType}
+                    name={dataTestId}
+                    type="number"
                     className={merge([
                         'tw-w-full tw-grow tw-border-none tw-outline-none tw-bg-transparent tw-hide-input-arrows',
                         disabled || readOnly
@@ -99,23 +94,31 @@ export const NumberInput = ({
                     onFocus={(event) => (onFocus ? onFocus(event) : null)}
                     size={size}
                 />
-                {!!incrementable ? (
+                {incrementable ? (
                     <>
                         <button
-                            type={buttonInputType}
-                            onClick={() => {
-                                !!inputElement.current &&
-                                    handleCount(inputElement.current.value, NumberInputIncrement.DECREMENT);
+                            type="button"
+                            onClick={(event) => {
+                                inputElement.current &&
+                                    handleCount(
+                                        inputElement.current.value,
+                                        NumberInputIncrement.DECREMENT,
+                                        event.shiftKey,
+                                    );
                             }}
                             data-test-id={`${dataTestId}-decrement`}
                         >
                             <IconMinus16 />
                         </button>
                         <button
-                            type={buttonInputType}
-                            onClick={() => {
-                                !!inputElement.current &&
-                                    handleCount(inputElement.current.value, NumberInputIncrement.INCREMENT);
+                            type="button"
+                            onClick={(event) => {
+                                inputElement.current &&
+                                    handleCount(
+                                        inputElement.current.value,
+                                        NumberInputIncrement.INCREMENT,
+                                        event.shiftKey,
+                                    );
                             }}
                             data-test-id={`${dataTestId}-increment`}
                         >
@@ -133,7 +136,7 @@ export const NumberInput = ({
             {error && errorText ? (
                 <HelperText
                     text={errorText}
-                    style="Danger"
+                    style={Validation.Error}
                     disabled={disabled}
                     data-test-id={`${dataTestId}-error-text`}
                 />
