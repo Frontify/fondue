@@ -8,31 +8,7 @@ import { useFocusRing } from '@react-aria/focus';
 import { IconExclamationMarkTriangle16, IconMinus16, IconPlus16 } from '@foundation/Icon';
 import { HelperText, HelperTextStyle } from '@utilities/input';
 import { useMemoizedId } from '@hooks/useMemoizedId';
-
-enum InputTypes {
-    Button = 'button',
-    Checkbox = 'checkbox',
-    Color = 'color',
-    Date = 'date',
-    Datetime_Local = 'datetime-local',
-    Email = 'email',
-    File = 'file',
-    Hidden = 'hidden',
-    Image = 'image',
-    Month = 'month',
-    Number = 'number',
-    Password = 'password',
-    Radio = 'radio',
-    Range = 'range',
-    Reset = 'reset',
-    Search = 'search',
-    Submit = 'submit',
-    Tel = 'tel',
-    Text = 'text',
-    Time = 'time',
-    URL = 'url',
-    Week = 'week',
-}
+import { InputTypes } from 'src/types/input';
 
 export const NumberInput = ({
     id: propId,
@@ -52,6 +28,8 @@ export const NumberInput = ({
     ...props
 }: NumberInputProps) => {
     const inputElement = useRef<HTMLInputElement | null>(null);
+    const numberInputType: InputTypes = 'number';
+    const buttonInputType: InputTypes = 'button';
     const { isFocusVisible, focusProps } = useFocusRing({ within: true, isTextInput: true });
 
     const handleOnChange = (value: string) => {
@@ -103,7 +81,7 @@ export const NumberInput = ({
                     id={useMemoizedId(propId)}
                     ref={inputElement}
                     name="fondue-number-input"
-                    type={InputTypes.Number}
+                    type={numberInputType}
                     className={merge([
                         'tw-w-full tw-grow tw-border-none tw-outline-none tw-bg-transparent tw-hide-input-arrows',
                         disabled || readOnly
@@ -124,7 +102,7 @@ export const NumberInput = ({
                 {!!incrementable ? (
                     <>
                         <button
-                            type={InputTypes.Button}
+                            type={buttonInputType}
                             onClick={() => {
                                 !!inputElement.current &&
                                     handleCount(inputElement.current.value, NumberInputIncrement.DECREMENT);
@@ -134,7 +112,7 @@ export const NumberInput = ({
                             <IconMinus16 />
                         </button>
                         <button
-                            type={InputTypes.Button}
+                            type={buttonInputType}
                             onClick={() => {
                                 !!inputElement.current &&
                                     handleCount(inputElement.current.value, NumberInputIncrement.INCREMENT);
