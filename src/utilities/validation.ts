@@ -9,9 +9,9 @@ export enum Validation {
 }
 
 export const validationClassMap: Record<Validation, string> = {
-    [Validation.Default]: 'tw-border-line-strong',
+    [Validation.Default]: 'tw-border-line-strong tw-text-black-80',
     [Validation.Loading]: 'tw-border-line',
-    [Validation.Success]: 'tw-border-text-positive',
-    [Validation.Error]: 'tw-border-text-negative',
+    [Validation.Success]: 'tw-border-text-positive tw-text-green-60',
+    [Validation.Error]: 'tw-border-text-negative tw-text-red-60',
     [Validation.Warning]: 'tw-border-text-warning',
 };

@@ -1,10 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { ReactElement } from 'react';
+import { Validation, validationClassMap } from './validation';
 
-export type HelperTextStyle = 'Danger' | 'Positive';
-
-type HelperTextProps = { text: string; disabled: boolean; 'data-test-id': string; style?: HelperTextStyle };
+type HelperTextProps = { text: string; disabled: boolean; 'data-test-id': string; style?: Validation };
 
 export const HelperText = ({
     text,
@@ -13,21 +12,19 @@ export const HelperText = ({
     'data-test-id': dataTestId = 'fondue-number-input',
 }: HelperTextProps): ReactElement => {
     let textColorClass;
-    const dangerStyle: HelperTextStyle = 'Danger';
-    const positiveStyle: HelperTextStyle = 'Positive';
 
     switch (true) {
         case disabled:
             textColorClass = 'tw-text-black-40';
             break;
-        case style === dangerStyle:
-            textColorClass = 'tw-text-red-60';
+        case style === Validation.Error:
+            textColorClass = validationClassMap.Error;
             break;
-        case style === positiveStyle:
-            textColorClass = 'tw-text-green-60';
+        case style === Validation.Success:
+            textColorClass = validationClassMap.Success;
             break;
         default:
-            textColorClass = 'tw-text-black-80';
+            textColorClass = validationClassMap.Default;
             break;
     }
 
