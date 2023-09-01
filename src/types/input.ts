@@ -11,7 +11,7 @@ export type InputBaseProps = {
     'data-test-id'?: string;
 } & Omit<InputHTMLAttributes<HTMLInputElement>, 'className' | 'onChange'>;
 
-export type InputTypes =
+export type InputType =
     | 'button'
     | 'checkbox'
     | 'color'

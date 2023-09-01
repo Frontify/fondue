@@ -2,10 +2,7 @@
 
 import React, { ReactElement } from 'react';
 
-export enum HelperTextStyle {
-    Danger = 'Danger',
-    Positive = 'Positive',
-}
+export type HelperTextStyle = 'Danger' | 'Positive';
 
 type HelperTextProps = { text: string; disabled: boolean; 'data-test-id': string; style?: HelperTextStyle };
 
@@ -16,19 +13,22 @@ export const HelperText = ({
     'data-test-id': dataTestId = 'fondue-number-input',
 }: HelperTextProps): ReactElement => {
     let textColorClass;
+    const dangerStyle: HelperTextStyle = 'Danger';
+    const positiveStyle: HelperTextStyle = 'Positive';
 
     switch (true) {
         case disabled:
             textColorClass = 'tw-text-black-40';
             break;
-        case style === HelperTextStyle.Danger:
+        case style === dangerStyle:
             textColorClass = 'tw-text-red-60';
             break;
-        case style === HelperTextStyle.Positive:
+        case style === positiveStyle:
             textColorClass = 'tw-text-green-60';
             break;
         default:
             textColorClass = 'tw-text-black-80';
+            break;
     }
 
     return (
