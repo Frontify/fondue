@@ -6,9 +6,9 @@ import { merge } from '@utilities/merge';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { useFocusRing } from '@react-aria/focus';
 import { IconExclamationMarkTriangle16, IconMinus16, IconPlus16 } from '@foundation/Icon';
-import { HelperText, HelperTextStyle } from '@utilities/input';
+import { HelperText } from '@utilities/input';
 import { useMemoizedId } from '@hooks/useMemoizedId';
-import { InputTypes } from 'src/types/input';
+import { InputType } from 'src/types/input';
 
 export const NumberInput = ({
     id: propId,
@@ -28,8 +28,8 @@ export const NumberInput = ({
     ...props
 }: NumberInputProps) => {
     const inputElement = useRef<HTMLInputElement | null>(null);
-    const numberInputType: InputTypes = 'number';
-    const buttonInputType: InputTypes = 'button';
+    const numberInputType: InputType = 'number';
+    const buttonInputType: InputType = 'button';
     const { isFocusVisible, focusProps } = useFocusRing({ within: true, isTextInput: true });
 
     const handleOnChange = (value: string) => {
@@ -133,7 +133,7 @@ export const NumberInput = ({
             {error && errorText ? (
                 <HelperText
                     text={errorText}
-                    style={HelperTextStyle.Danger}
+                    style="Danger"
                     disabled={disabled}
                     data-test-id={`${dataTestId}-error-text`}
                 />
