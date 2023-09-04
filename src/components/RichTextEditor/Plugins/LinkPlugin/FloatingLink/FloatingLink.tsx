@@ -39,7 +39,8 @@ const FloatingLinkEditRoot = createComponentAs<FloatingLinkProps>((props) => {
     return createElementAs('div', htmlProps);
 });
 
-PlateFloatingLink.EditRoot = FloatingLinkEditRoot;
-PlateFloatingLink.InsertRoot = FloatingLinkInsertRoot;
-
-export const FloatingLink = PlateFloatingLink;
+export const FloatingLink = {
+    ...PlateFloatingLink,
+    EditRoot: FloatingLinkEditRoot,
+    InsertRoot: FloatingLinkInsertRoot,
+};
