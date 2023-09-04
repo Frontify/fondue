@@ -66,7 +66,7 @@
         "url": "https://github.com/frontify/fondue/issues"
     },
     "devDependencies": {
-        "@babel/core": "7.21.4",
+        "@babel/core": "7.22.15",
         "@cypress/vite-dev-server": "5.0.5",
         "@frontify/eslint-config-react": "0.15.7",
         "@frontify/fondue-icons": "0.1.42",
