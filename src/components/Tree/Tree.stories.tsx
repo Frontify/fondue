@@ -379,17 +379,11 @@ export const InsideInlineDialog = ({ ...args }: TreeProps) => {
     );
 };
 
-const WithTreeItemsStyledContainer: StoryFn<TreeProps> = (args) => {
-    const onDrop = useCallback(() => action('onDrop'), []);
-
-    return (
-        <Container maxWidth={'800px'}>
-            <TreeView {...args}>{treeItemsMock.map((item) => renderTreeItemLabel({ ...item, onDrop }))}</TreeView>
-        </Container>
-    );
+const WithTreeItemsStyledContent: StoryFn<TreeProps> = (args) => {
+    return WithLabel(args);
 };
-export const WithTreeItemsStyledContent = WithTreeItemsStyledContainer.bind({});
-WithTreeItemsStyledContent.args = {
+export const WithTreeItemsStyled = WithTreeItemsStyledContent.bind({});
+WithTreeItemsStyled.args = {
     id: 'storybook-tree',
     draggable: true,
     selectedIds: ['2'],
