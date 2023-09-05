@@ -33,6 +33,10 @@ export type TreeProps = {
     expandedIds?: string[];
     dragHandlerPosition?: 'LEFT' | 'RIGHT';
     showDragHandlerOnHoverOnly?: boolean;
+    itemStyle?: {
+        spacingY?: number | string; // tw-my-# value: 'px', 0, 1, 2, ....
+        containerClassNames?: string; // Classes to add to the item container (border, shadow, etc...), for example: tw-rounded-md tw-border-2 tw-border-black tw-shadow
+    };
     'data-test-id'?: string;
     onSelect?: OnSelectCallback;
     onExpand?: OnExpandCallback;
@@ -59,6 +63,10 @@ type TreeItemBaseProps = {
     draggable?: boolean;
     showDragHandlerOnHoverOnly?: boolean;
     dragHandlerPosition?: 'LEFT' | 'RIGHT';
+    itemStyle?: {
+        spacingY?: number | string; // tw-my-# value: 'px', 0, 1, 2, ....
+        containerClassNames?: string; // Classes to add to the item container, for example: tw-rounded-md tw-border-2 tw-border-black tw-shadow
+    };
     showCaret?: boolean;
     ignoreItemDoubleClick?: boolean;
     expandOnSelect?: boolean;

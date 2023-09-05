@@ -191,6 +191,10 @@ export const Tree = memo(
         multiselect = false,
         dragHandlerPosition = 'LEFT',
         showDragHandlerOnHoverOnly = true,
+        itemStyle = {
+            spacingY: 0,
+            containerClassNames: '',
+        },
         'data-test-id': dataTestId = 'fondue-tree',
     }: TreeProps) => {
         const initialState: TreeState = useMemo(
@@ -623,6 +627,7 @@ export const Tree = memo(
                         showDragHandlerOnHoverOnly: node.props.showDragHandlerOnHoverOnly
                             ? node.props.showDragHandlerOnHoverOnly
                             : showDragHandlerOnHoverOnly,
+                        itemStyle: { ...itemStyle, ...node.props.itemStyle },
                         registerOverlay,
                         onExpand: handleExpand,
                         onShrink: handleShrink,
@@ -636,6 +641,7 @@ export const Tree = memo(
             draggable,
             dragHandlerPosition,
             showDragHandlerOnHoverOnly,
+            itemStyle,
             handleExpand,
             handleShrink,
             handleSelect,

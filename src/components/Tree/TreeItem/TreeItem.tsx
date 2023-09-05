@@ -75,6 +75,10 @@ export const TreeItem = memo(
         draggable: itemDraggable = true,
         showDragHandlerOnHoverOnly = true,
         dragHandlerPosition = 'LEFT',
+        itemStyle = {
+            spacingY: 0,
+            containerClassNames: '',
+        },
         ignoreItemDoubleClick = false,
         expandOnSelect = false,
         'data-test-id': dataTestId = 'fondue-tree-item',
@@ -273,18 +277,20 @@ export const TreeItem = memo(
             return {
                 liClassName: merge([
                     FOCUS_VISIBLE_STYLE,
-                    'tw-relative tw-cursor-default tw-transition-colors tw-outline-none tw-ring-inset tw-group tw-px-2.5 tw-no-underline tw-leading-5 tw-h-10',
+                    'tw-box-content tw-relative tw-cursor-default tw-transition-colors tw-outline-none tw-ring-inset tw-group tw-px-2.5 tw-no-underline tw-leading-5 tw-h-10',
                     !isActive && isSelected ? 'tw-font-medium tw-text-box-neutral-strong-inverse' : 'tw-text-text',
+                    itemStyle?.spacingY ? `tw-my-${itemStyle?.spacingY}` : 'tw-my-0',
                 ]),
                 backgroundClassName: merge([
-                    'tw-block tw-absolute tw-inset-0 tw-transition-colors -tw-z-10 -tw-mx-2.5',
+                    'tw-block tw-absolute tw-inset-0 tw-transition-colors -tw-z-10',
+                    itemStyle?.containerClassNames ? '' : '-tw-mx-2.5',
                     !isActive && !isSelected && 'group-active:tw-bg-box-neutral-pressed',
                     !isActive && isSelected
-                        ? 'tw-bg-box-neutral-strong hover:tw-bg-box-neutral-strong-hover'
+                        ? 'tw-bg-box-neutral-strong group-hover:tw-bg-box-neutral-strong-hover'
                         : 'group-hover:tw-bg-box-neutral',
                 ]),
             };
-        }, [isActive, isSelected]);
+        }, [isActive, isSelected, itemStyle]);
 
         const showContent = !isActive;
         const showChildren = isExpanded && !isActive;
@@ -311,6 +317,7 @@ export const TreeItem = memo(
                 (canDrop
                     ? 'tw-border-box-selected-strong tw-bg-box-selected-hover'
                     : 'tw-bg-box-negative-hover tw-border-box-negative-strong-hover'),
+            itemStyle?.containerClassNames ?? '',
             previousItemToBeExpandedFeedback,
         ]);
 
@@ -321,9 +328,11 @@ export const TreeItem = memo(
             paddingLeft: depthPadding ?? levelPadding,
         };
 
-        const backgroundStyle = {
-            marginLeft: -1 * (depthPadding ?? levelPadding),
-        };
+        const backgroundStyle = itemStyle?.containerClassNames
+            ? {}
+            : {
+                  marginLeft: -1 * (depthPadding ?? levelPadding),
+              };
 
         const style = {
             transform: CSS.Transform.toString(transform),

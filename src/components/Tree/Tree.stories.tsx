@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
-import { Meta } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 
 import { IconDocument } from '@foundation/Icon';
@@ -41,6 +41,9 @@ export default {
         dragHandlerPosition: {
             options: ['LEFT', 'RIGHT'],
             control: { type: 'inline-radio' },
+        },
+        itemStyle: {
+            control: { type: 'object' },
         },
         selectedIds: {
             control: { type: 'object' },
@@ -115,18 +118,18 @@ export const WithLabel = ({ ...args }: TreeProps) => {
     const onDrop = useCallback(() => action('onDrop'), []);
 
     return (
-        <div style={{ width: 800 }}>
+        <Container maxWidth={'800px'}>
             <TreeView {...args}>{treeItemsMock.map((item) => renderTreeItemLabel({ ...item, onDrop }))}</TreeView>
-        </div>
+        </Container>
     );
 };
 
 export const WithCustomTreeItem = ({ ...args }: TreeProps) => {
     const onDrop = useCallback(() => action('onDrop'), []);
     return (
-        <div style={{ width: 800 }}>
+        <Container maxWidth={'800px'}>
             <TreeView {...args}>{treeItemsMock.map((item) => renderCustomTreeItem({ ...item, onDrop }))}</TreeView>
-        </div>
+        </Container>
     );
 };
 
@@ -154,9 +157,9 @@ export const ScrollableWithLabel = ({ ...args }: TreeProps) => {
 
 export const WithBasicItem = ({ ...args }: TreeProps) => {
     return (
-        <div style={{ maxWidth: '800px' }}>
+        <Container maxWidth={'800px'}>
             <TreeView {...args}>{treeItemsMock.map(renderTreeItemComponent)}</TreeView>
-        </div>
+        </Container>
     );
 };
 
@@ -194,12 +197,12 @@ export const WithAwaitedItem = ({ ...args }: TreeProps) => {
     }, []);
 
     return (
-        <div style={{ maxWidth: '800px' }}>
+        <Container maxWidth={'800px'}>
             <TreeView {...args}>
                 {treeItemsMock.map(renderTreeItemComponent)}
                 {awaitedItems.map(renderTreeItemComponent)}
             </TreeView>
-        </div>
+        </Container>
     );
 };
 
@@ -226,9 +229,9 @@ const DynamicNavigation = ({ ...args }: TreeProps) => {
 
 export const WithDynamicNavigation = ({ ...args }: TreeProps) => {
     return (
-        <div>
+        <Container maxWidth={'800px'}>
             <DynamicNavigation {...args} id="dynamic-navigation" />
-        </div>
+        </Container>
     );
 };
 
@@ -309,11 +312,11 @@ export const WithCancelSelectionOnDoubleClick = ({ ...args }: TreeProps) => {
     const onDrop = useCallback(() => action('onDrop'), []);
 
     return (
-        <div style={{ width: 800 }}>
+        <Container maxWidth={'800px'}>
             <TreeView {...args}>
                 {treeItemsMock.map((item) => renderTreeItemLabel({ ...item, onDrop, ignoreItemDoubleClick: true }))}
             </TreeView>
-        </div>
+        </Container>
     );
 };
 
@@ -321,11 +324,11 @@ export const WithExpandOnSelect = ({ ...args }: TreeProps) => {
     const onDrop = useCallback(() => action('onDrop'), []);
 
     return (
-        <div style={{ width: 800 }}>
+        <Container maxWidth={'800px'}>
             <TreeView {...args}>
                 {treeItemsMock.map((item) => renderTreeItemLabel({ ...item, onDrop, expandOnSelect: true }))}
             </TreeView>
-        </div>
+        </Container>
     );
 };
 
@@ -374,4 +377,23 @@ export const InsideInlineDialog = ({ ...args }: TreeProps) => {
             </InlineDialog>
         </Container>
     );
+};
+
+const WithTreeItemsStyledContainer: StoryFn<TreeProps> = (args) => {
+    const onDrop = useCallback(() => action('onDrop'), []);
+
+    return (
+        <Container maxWidth={'800px'}>
+            <TreeView {...args}>{treeItemsMock.map((item) => renderTreeItemLabel({ ...item, onDrop }))}</TreeView>
+        </Container>
+    );
+};
+export const WithTreeItemsStyledContent = WithTreeItemsStyledContainer.bind({});
+WithTreeItemsStyledContent.args = {
+    id: 'storybook-tree',
+    draggable: true,
+    selectedIds: ['2'],
+    dragHandlerPosition: 'LEFT',
+    showDragHandlerOnHoverOnly: true,
+    itemStyle: { spacingY: 2, containerClassNames: 'tw-rounded-md tw-border-2 tw-border-text tw-shadow' },
 };
