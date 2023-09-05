@@ -128,7 +128,7 @@ describe('Link Plugin', () => {
 
         cy.get(BUTTON).eq(1).click();
         cy.get('[contenteditable=true] a').should('have.attr', 'href', link + additionalLink);
-        cy.get('[contenteditable=true] a').should('have.attr', 'target', '_blank');
+        cy.get('[contenteditable=true] a').should('have.attr', 'target', '_self');
     });
 
     it('should remove link', () => {

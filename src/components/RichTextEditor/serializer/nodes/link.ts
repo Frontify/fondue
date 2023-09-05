@@ -20,6 +20,6 @@ export const linkNode = (
         } href="${escapeHtml(chosenLink?.searchResult?.link)}">${children}</a>`;
     }
     return `<a dir="auto" class="${defaultClassNames}" style="${reactCssPropsToCss(styles[LINK_PLUGIN])}" target="${
-        node?.target ?? '_blank'
+        node?.target ?? '_self'
     }" href="${escapeHtml(node.url as string)}">${children}</a>`;
 };
