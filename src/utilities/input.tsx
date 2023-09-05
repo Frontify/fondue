@@ -2,6 +2,7 @@
 
 import React, { ReactElement } from 'react';
 import { Validation, validationClassMap } from './validation';
+import { merge } from './merge';
 
 type HelperTextProps = {
     text: string;
@@ -16,19 +17,14 @@ export const HelperText = ({
     validationStyle = Validation.Default,
     'data-test-id': dataTestId = 'fondue-helper-text',
 }: HelperTextProps): ReactElement => {
-    let textColorClass;
-
-    switch (true) {
-        case disabled:
-            textColorClass = 'tw-text-black-40';
-            break;
-        default:
-            textColorClass = validationClassMap[validationStyle];
-            break;
-    }
-
     return (
-        <span data-test-id={dataTestId} className={`tw-text-s tw-font-sans ${textColorClass}`}>
+        <span
+            data-test-id={dataTestId}
+            className={merge([
+                'tw-text-s tw-font-sans',
+                disabled ? 'tw-text-black-40' : validationClassMap[validationStyle],
+            ])}
+        >
             {text}
         </span>
     );
