@@ -1,25 +1,28 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useRef } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { NumberInputIncrement, NumberInputProps } from './types';
 import { merge } from '@utilities/merge';
-import { IconExclamationMarkTriangle16, IconMinus16, IconPlus16 } from '@foundation/Icon';
-import { HelperText } from '@utilities/input';
+import { IconCheckMark16, IconExclamationMarkTriangle16, IconMinus16, IconPlus16 } from '@foundation/Icon';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { FOCUS_WITHIN_STYLE } from '@utilities/focusStyle';
 import { Validation, validationClassMap } from '@utilities/validation';
+import { KeyboardEvent } from '@react-types/shared';
+
+const INCREMENT_KEYS = ['ArrowUp', 'ArrowRight'];
+const DECREMENT_KEYS = ['ArrowDown', 'ArrowLeft'];
 
 export const NumberInput = ({
     id: propId,
     size,
-    error,
     disabled = false,
     required,
     readOnly,
-    errorText,
+    status = Validation.Default,
     decorator,
     incrementable,
-    validation = Validation.Default,
+    placeholder,
+    stepInterval = 10,
     onChange,
     onKeyDown,
     onBlur,
@@ -28,15 +31,20 @@ export const NumberInput = ({
     ...props
 }: NumberInputProps) => {
     const inputElement = useRef<HTMLInputElement | null>(null);
+    const timer = useRef<number>(0);
 
-    const handleOnChange = (value: string) => {
-        onChange?.(value);
-    };
+    const handleOnChange = useCallback(
+        (value: string) => {
+            onChange?.(value);
+        },
+        [onChange],
+    );
 
-    const handleCount = (value: string, type?: NumberInputIncrement, isShift?: boolean) => {
+    const handleCount = (type: NumberInputIncrement, changeValue = 1, isShift?: boolean, toParent?: boolean) => {
+        const value = inputElement.current?.value;
         const getNewInputValue = () => {
             const currentValue = Number(value) || 0;
-            const changeValue = isShift ? 10 : 1;
+            changeValue = isShift ? stepInterval : changeValue;
             switch (type) {
                 case NumberInputIncrement.DECREMENT:
                     return currentValue - changeValue;
@@ -49,99 +57,182 @@ export const NumberInput = ({
         if (inputElement.current) {
             const newValue = getNewInputValue();
             inputElement.current.value = newValue.toString();
+            if (toParent) {
+                handleOnChange(inputElement.current.value);
+            }
+        }
+    };
+
+    const onHoldCount = (type: NumberInputIncrement) => {
+        const getNewInputValue = () => {
+            let elapsedSeconds = 0;
+            let changeValue = 0;
+            timer.current = window.setInterval(() => {
+                switch (true) {
+                    case elapsedSeconds > 2000:
+                        changeValue += 5;
+                        break;
+                    case elapsedSeconds > 5000:
+                        changeValue += 10;
+                        break;
+                    default:
+                        changeValue = 1;
+                }
+
+                handleCount(type, changeValue, false, true);
+                elapsedSeconds += 250;
+            }, 250);
+        };
+        getNewInputValue();
+    };
+
+    const startIncrement = (type: NumberInputIncrement) => {
+        if (inputElement.current && !disabled) {
+            onHoldCount(type);
+        }
+    };
+
+    const stopIncrement = () => {
+        clearInterval(timer.current);
+        if (inputElement.current && !disabled) {
             handleOnChange(inputElement.current.value);
         }
     };
 
-    return (
-        <div data-test-id={dataTestId}>
-            <div
-                className={merge([
-                    'tw-flex tw-items-center tw-h-9 tw-gap-2 tw-px-3 tw-transition tw-text-s tw-font-sans tw-relative tw-bg-white dark:tw-bg-transparent tw-border tw-rounded tw-line-strong hover:tw-line-x-strong focus-within:tw-line-xx-strong',
-                    FOCUS_WITHIN_STYLE,
-                ])}
-            >
-                {decorator ? (
-                    <div
-                        className={merge([
-                            'tw-flex tw-items-center tw-justify-center tw-pl-1',
-                            disabled || readOnly ? 'tw-text-black-60' : 'tw-text-black-80',
-                        ])}
-                        data-test-id={`${dataTestId}-decorator`}
-                    >
-                        {decorator}
-                    </div>
-                ) : null}
-                <input
-                    {...props}
-                    id={useMemoizedId(propId)}
-                    ref={inputElement}
-                    name={dataTestId}
-                    type="number"
-                    className={merge([
-                        'tw-w-full tw-grow tw-border-none tw-outline-none tw-bg-transparent tw-hide-input-arrows',
-                        disabled || readOnly
-                            ? 'tw-text-black-40 tw-placeholder-black-30 dark:tw-text-black-30 dark:tw-placeholder-black-40'
-                            : 'tw-text-black tw-placeholder-black-60 dark:tw-text-white',
-                    ])}
-                    onClick={() => inputElement.current?.focus()}
-                    onChange={(event) => handleOnChange(event.currentTarget.value)}
-                    data-test-id={`${dataTestId}-input`}
-                    onBlur={onBlur}
-                    onKeyDown={onKeyDown}
-                    required={required}
-                    readOnly={readOnly}
-                    disabled={disabled}
-                    onFocus={(event) => (onFocus ? onFocus(event) : null)}
-                    size={size}
-                />
-                {incrementable ? (
-                    <>
-                        <button
-                            type="button"
-                            onClick={(event) => {
-                                inputElement.current &&
-                                    handleCount(
-                                        inputElement.current.value,
-                                        NumberInputIncrement.DECREMENT,
-                                        event.shiftKey,
-                                    );
-                            }}
-                            data-test-id={`${dataTestId}-decrement`}
-                        >
-                            <IconMinus16 />
-                        </button>
-                        <button
-                            type="button"
-                            onClick={(event) => {
-                                inputElement.current &&
-                                    handleCount(
-                                        inputElement.current.value,
-                                        NumberInputIncrement.INCREMENT,
-                                        event.shiftKey,
-                                    );
-                            }}
-                            data-test-id={`${dataTestId}-increment`}
-                        >
-                            <IconPlus16 />
-                        </button>
-                    </>
-                ) : null}
-
-                {error ? (
-                    <span className={validationClassMap[validation]}>
-                        <IconExclamationMarkTriangle16 data-test-id={`${dataTestId}-error-icon`} />
+    const getStatusIcon = (status: Validation) => {
+        switch (status) {
+            case Validation.Success:
+                return (
+                    <span className={validationClassMap[status]} data-test-id={`${dataTestId}-status-icon`}>
+                        <IconCheckMark16 />
                     </span>
-                ) : null}
-            </div>
-            {error && errorText ? (
-                <HelperText
-                    text={errorText}
-                    validationStyle={validation}
-                    disabled={disabled}
-                    data-test-id={`${dataTestId}-error-text`}
-                />
+                );
+            case Validation.Error:
+                return (
+                    <span className={validationClassMap[status]} data-test-id={`${dataTestId}-status-icon`}>
+                        <IconExclamationMarkTriangle16 />
+                    </span>
+                );
+            default:
+                return null;
+        }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+        const { key, shiftKey } = event;
+        if (key === 'Backspace' || !isNaN(Number(key))) {
+            return;
+        }
+
+        event.preventDefault();
+
+        switch (true) {
+            case DECREMENT_KEYS.includes(key):
+                handleCount(NumberInputIncrement.DECREMENT, 1, shiftKey, true);
+                break;
+
+            case INCREMENT_KEYS.includes(key):
+                handleCount(NumberInputIncrement.INCREMENT, 1, shiftKey, true);
+                break;
+            default:
+                break;
+        }
+
+        if (onKeyDown) {
+            onKeyDown(event);
+        }
+    };
+
+    return (
+        <div
+            className={merge([
+                'tw-flex tw-items-center tw-h-9 tw-gap-2 tw-px-3 tw-transition tw-text-s tw-font-sans tw-relative tw-bg-white dark:tw-bg-transparent tw-border tw-rounded tw-line-strong hover:tw-line-x-strong focus-within:tw-line-xx-strong',
+                FOCUS_WITHIN_STYLE,
+                status ? validationClassMap[status] : '',
+            ])}
+            data-test-id={dataTestId}
+        >
+            {decorator ? (
+                <div
+                    className={merge([
+                        'tw-flex tw-items-center tw-justify-center tw-pl-1',
+                        disabled || readOnly ? 'tw-text-black-60' : 'tw-text-black-80',
+                    ])}
+                    data-test-id={`${dataTestId}-decorator`}
+                >
+                    {decorator}
+                </div>
             ) : null}
+            <input
+                {...props}
+                id={useMemoizedId(propId)}
+                ref={inputElement}
+                name={dataTestId}
+                type="number"
+                placeholder={placeholder}
+                className={merge([
+                    'tw-w-full tw-grow tw-border-none tw-outline-none tw-bg-transparent tw-hide-input-arrows',
+                    disabled || readOnly
+                        ? 'tw-text-black-40 tw-placeholder-black-30 dark:tw-text-black-30 dark:tw-placeholder-black-40'
+                        : 'tw-text-black tw-placeholder-black-60 dark:tw-text-white',
+                ])}
+                onClick={() => inputElement.current?.focus()}
+                onChange={(event) => handleOnChange(event.currentTarget.value)}
+                onBlur={onBlur}
+                onKeyDown={handleKeyDown}
+                required={required}
+                readOnly={readOnly}
+                disabled={disabled}
+                onFocus={(event) => (onFocus ? onFocus(event) : null)}
+                size={size}
+                aria-label={`${dataTestId}-input`}
+                title={`${dataTestId}-input`}
+                data-test-id={`${dataTestId}-input`}
+            />
+            {incrementable ? (
+                <>
+                    <button
+                        type="button"
+                        onClick={(event) => {
+                            handleCount(NumberInputIncrement.DECREMENT, 1, event.shiftKey, true);
+                        }}
+                        onMouseDown={(event) =>
+                            event.shiftKey ? null : startIncrement(NumberInputIncrement.DECREMENT)
+                        }
+                        onMouseUp={stopIncrement}
+                        onTouchStart={(event) =>
+                            event.shiftKey ? null : startIncrement(NumberInputIncrement.DECREMENT)
+                        }
+                        onTouchEnd={stopIncrement}
+                        aria-label={`${dataTestId}-decrement`}
+                        title={`${dataTestId}-decrement`}
+                        data-test-id={`${dataTestId}-decrement`}
+                    >
+                        <IconMinus16 />
+                    </button>
+                    <button
+                        type="button"
+                        onClick={(event) => {
+                            handleCount(NumberInputIncrement.INCREMENT, 1, event.shiftKey, true);
+                        }}
+                        onMouseDown={(event) =>
+                            event.shiftKey ? null : startIncrement(NumberInputIncrement.INCREMENT)
+                        }
+                        onMouseUp={stopIncrement}
+                        onTouchStart={(event) =>
+                            event.shiftKey ? null : startIncrement(NumberInputIncrement.INCREMENT)
+                        }
+                        onTouchEnd={stopIncrement}
+                        aria-label={`${dataTestId}-increment`}
+                        title={`${dataTestId}-increment`}
+                        data-test-id={`${dataTestId}-increment`}
+                    >
+                        <IconPlus16 />
+                    </button>
+                </>
+            ) : null}
+
+            {status ? getStatusIcon(status) : null}
         </div>
     );
 };
