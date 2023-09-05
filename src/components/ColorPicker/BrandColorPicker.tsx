@@ -7,7 +7,7 @@ import { IconSize } from '@foundation/Icon/IconSize';
 import { isColorLight, toShortRgb } from '@utilities/colors';
 import { merge } from '@utilities/merge';
 import React, { ReactElement, useEffect, useState } from 'react';
-import tinycolor from 'tinycolor2';
+import { TinyColor } from '@ctrl/tinycolor';
 import { ColorPickerProps } from './ColorPicker';
 
 const find = (haystack?: string, needle = '') =>
@@ -93,7 +93,7 @@ export const BrandColorPicker = ({ palettes: defaultPalettes = [], currentColor,
                                                       'tw-h-6 tw-w-6 tw-mr-2 tw-rounded tw-flex tw-items-center tw-justify-center tw-ring-1 tw-ring-black-10 tw-ring-offset-1',
                                                       isColorLight(color) ? 'tw-text-black' : 'tw-text-white',
                                                   ])}
-                                                  style={{ background: tinycolor(toShortRgb(color)).toRgbString() }}
+                                                  style={{ background: new TinyColor(toShortRgb(color)).toRgbString() }}
                                               >
                                                   {color.red === currentColor.red &&
                                                       color.green === currentColor.green &&

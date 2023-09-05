@@ -31,9 +31,12 @@ export default {
 
 const getGlobalByQueryMock = (query: string): Promise<SearchResult[]> =>
     new Promise((resolve) =>
-        setTimeout(() => {
-            resolve(data.filter((item) => doesContainSubstring(item.title, query, extraSections)));
-        }, Math.floor(Math.random() * 2000)),
+        setTimeout(
+            () => {
+                resolve(data.filter((item) => doesContainSubstring(item.title, query, extraSections)));
+            },
+            Math.floor(Math.random() * 2000),
+        ),
     );
 
 export const LinkChooser: StoryFn<LinkChooserProps> = (args: LinkChooserProps) => {

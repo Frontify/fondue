@@ -6,9 +6,12 @@ import { filterItems } from '../utils/helpers';
 
 const getGuidelinesByQueryMock = (query: string): Promise<SearchResult[]> =>
     new Promise((resolve) =>
-        setTimeout(() => {
-            resolve(filterItems(query, GUIDELINE_ITEMS, [guidelineSection]) || []);
-        }, Math.floor(Math.random() * 2000)),
+        setTimeout(
+            () => {
+                resolve(filterItems(query, GUIDELINE_ITEMS, [guidelineSection]) || []);
+            },
+            Math.floor(Math.random() * 2000),
+        ),
     );
 
 export const guidelineSection: ExtraSection = {

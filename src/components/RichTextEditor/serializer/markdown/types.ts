@@ -138,7 +138,7 @@ export const Targets = {
     Self: '_self',
 } as const;
 
-export type TargetValue = typeof Targets[keyof typeof Targets];
+export type TargetValue = (typeof Targets)[keyof typeof Targets];
 
 export type TextNode = { text?: string };
 

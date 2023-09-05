@@ -7,5 +7,4 @@ import { Plugin } from '../../Plugin';
 
 export const withTextStyles =
     <T extends Record<string, unknown>>(Component: ComponentType<T>, textStyles: Plugin[]) =>
-    (props: T) =>
-        <Component {...props} textStyles={textStyles} />;
+    (props: T) => <Component {...props} textStyles={textStyles} />;

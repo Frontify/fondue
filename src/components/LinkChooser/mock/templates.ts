@@ -8,9 +8,12 @@ const defaultTemplateProps = { link: '#', icon: IconName.Template };
 
 const getTemplatesByQueryMock = (query: string): Promise<SearchResult[]> =>
     new Promise((resolve) =>
-        setTimeout(() => {
-            resolve(filterItems(query, TEMPLATE_ITEMS, [templateSection]) || []);
-        }, Math.floor(Math.random() * 2000)),
+        setTimeout(
+            () => {
+                resolve(filterItems(query, TEMPLATE_ITEMS, [templateSection]) || []);
+            },
+            Math.floor(Math.random() * 2000),
+        ),
     );
 
 export const templateSection: ExtraSection = {

@@ -13,5 +13,6 @@
             "updateTypes": ["major"],
             "labels": ["dependencies", "dependencies-major"]
         }
-    ]
+    ],
+    "reviewers": ["team:design-system"]
 }
