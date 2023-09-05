@@ -21,19 +21,17 @@ export default {
 } as Meta<NumberInputProps>;
 
 export const BaseUsage: StoryFn<NumberInputProps> = (args) => {
-    return <NumberInput {...args} />;
+    return <NumberInput {...args} placeholder="Enter a number..." />;
 };
 
 export const WithDecoratorAndIncrementable: StoryFn<NumberInputProps> = (args) => {
-    return <NumberInput {...args} incrementable decorator={<IconNook16 />} />;
+    return <NumberInput {...args} incrementable decorator={<IconNook16 />} stepInterval={20} />;
 };
 
 export const WithErrorLessThanZero: StoryFn<NumberInputProps> = (args) => {
-    const [error, setError] = useState<boolean>(false);
-    const errorText = 'Value must be above 0.';
+    const [status, setStatus] = useState<Validation>(Validation.Success);
     const handleValidation = (value: string) => {
-        +value < 0 && !error && setError(!error);
-        +value >= 0 && error && setError(!error);
+        +value < 0 ? setStatus(Validation.Error) : setStatus(Validation.Success);
     };
 
     return (
@@ -41,9 +39,8 @@ export const WithErrorLessThanZero: StoryFn<NumberInputProps> = (args) => {
             {...args}
             onChange={(event) => handleValidation(event)}
             incrementable
-            error={error}
-            errorText={errorText}
-            validation={Validation.Error}
+            status={status}
+            defaultValue={3}
         />
     );
 };
