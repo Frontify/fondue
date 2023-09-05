@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import tinycolor from 'tinycolor2';
+import { TinyColor } from '@ctrl/tinycolor';
 import { Color, ColorFormat, ColorRgb } from '../types/colors';
 
 export const getColorDisplayValue = (color: Color, format: ColorFormat, showAlpha = true): string => {
-    const parsedColor = tinycolor(toShortRgb(color));
+    const parsedColor = new TinyColor(toShortRgb(color));
 
     switch (format) {
         case ColorFormat.Rgba:
@@ -20,7 +20,7 @@ export const getColorDisplayValue = (color: Color, format: ColorFormat, showAlph
 };
 
 export const isColorLight = (color: Color): boolean => {
-    const parsedColor = tinycolor(toShortRgb(color));
+    const parsedColor = new TinyColor(toShortRgb(color));
     return parsedColor.isLight() || parsedColor.getAlpha() < 0.25;
 };
 

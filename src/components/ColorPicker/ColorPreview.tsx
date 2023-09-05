@@ -2,7 +2,7 @@
 
 import { toShortRgb } from '@utilities/colors';
 import React, { ReactElement } from 'react';
-import tinycolor from 'tinycolor2';
+import { TinyColor } from '@ctrl/tinycolor';
 import { Color } from '../../types/colors';
 
 type ColorPreviewProps = {
@@ -10,7 +10,7 @@ type ColorPreviewProps = {
 };
 
 export const ColorPreview = ({ color }: ColorPreviewProps): ReactElement => {
-    const parsedColor = tinycolor(toShortRgb(color));
+    const parsedColor = new TinyColor(toShortRgb(color));
     const backgroundColor = parsedColor.toRgbString();
 
     return (
