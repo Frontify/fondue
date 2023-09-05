@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { NumberInputIncrement, NumberInputProps } from './types';
 import { merge } from '@utilities/merge';
 import { IconCheckMark16, IconExclamationMarkTriangle16, IconMinus16, IconPlus16 } from '@foundation/Icon';
@@ -23,12 +23,12 @@ export const NumberInput = ({
     incrementable,
     placeholder,
     stepInterval = 10,
-    title = 'Fondue Number Input',
+    title,
     onChange,
     onKeyDown,
     onBlur,
     onFocus,
-    'aria-label': ariaLabel = 'fondue-number-input',
+    'aria-label': ariaLabel,
     'data-test-id': dataTestId = 'fondue-number-input',
     ...props
 }: NumberInputProps) => {
@@ -145,6 +145,10 @@ export const NumberInput = ({
         }
     };
 
+    useEffect(() => {
+        clearInterval(timer.current);
+    }, []);
+
     return (
         <div
             className={merge([
@@ -187,7 +191,7 @@ export const NumberInput = ({
                 disabled={disabled}
                 onFocus={onFocus}
                 size={size}
-                aria-label={ariaLabel}
+                aria-label={ariaLabel ? ariaLabel : 'Number input'}
                 title={title}
                 data-test-id={`${dataTestId}-input`}
             />
@@ -206,8 +210,8 @@ export const NumberInput = ({
                             event.shiftKey ? null : startIncrement(NumberInputIncrement.DECREMENT)
                         }
                         onTouchEnd={stopIncrement}
-                        aria-label={`${ariaLabel}-decrement`}
-                        title={`${dataTestId}-decrement`}
+                        aria-label="Decrement value"
+                        title="Decrement value"
                         data-test-id={`${dataTestId}-decrement`}
                     >
                         <IconMinus16 />
@@ -225,8 +229,8 @@ export const NumberInput = ({
                             event.shiftKey ? null : startIncrement(NumberInputIncrement.INCREMENT)
                         }
                         onTouchEnd={stopIncrement}
-                        aria-label={`${ariaLabel}-increment`}
-                        title={`${dataTestId}-increment`}
+                        aria-label="Increment value"
+                        title="Increment value"
                         data-test-id={`${dataTestId}-increment`}
                     >
                         <IconPlus16 />
