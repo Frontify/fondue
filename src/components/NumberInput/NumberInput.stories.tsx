@@ -13,8 +13,6 @@ export default {
     tags: ['autodocs'],
     args: {},
     argTypes: {
-        error: { type: 'boolean' },
-        errorText: { type: 'string' },
         decorator: { table: { disable: false } },
         incrementable: { type: 'boolean' },
     },

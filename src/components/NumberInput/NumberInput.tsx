@@ -23,10 +23,12 @@ export const NumberInput = ({
     incrementable,
     placeholder,
     stepInterval = 10,
+    title = 'Fondue Number Input',
     onChange,
     onKeyDown,
     onBlur,
     onFocus,
+    'aria-label': ariaLabel = 'fondue-number-input',
     'data-test-id': dataTestId = 'fondue-number-input',
     ...props
 }: NumberInputProps) => {
@@ -185,8 +187,8 @@ export const NumberInput = ({
                 disabled={disabled}
                 onFocus={(event) => (onFocus ? onFocus(event) : null)}
                 size={size}
-                aria-label={`${dataTestId}-input`}
-                title={`${dataTestId}-input`}
+                aria-label={ariaLabel}
+                title={title}
                 data-test-id={`${dataTestId}-input`}
             />
             {incrementable ? (
@@ -204,7 +206,7 @@ export const NumberInput = ({
                             event.shiftKey ? null : startIncrement(NumberInputIncrement.DECREMENT)
                         }
                         onTouchEnd={stopIncrement}
-                        aria-label={`${dataTestId}-decrement`}
+                        aria-label={`${ariaLabel}-decrement`}
                         title={`${dataTestId}-decrement`}
                         data-test-id={`${dataTestId}-decrement`}
                     >
@@ -223,7 +225,7 @@ export const NumberInput = ({
                             event.shiftKey ? null : startIncrement(NumberInputIncrement.INCREMENT)
                         }
                         onTouchEnd={stopIncrement}
-                        aria-label={`${dataTestId}-increment`}
+                        aria-label={`${ariaLabel}-increment`}
                         title={`${dataTestId}-increment`}
                         data-test-id={`${dataTestId}-increment`}
                     >
