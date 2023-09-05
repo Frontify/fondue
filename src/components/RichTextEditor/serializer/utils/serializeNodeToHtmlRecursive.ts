@@ -24,7 +24,7 @@ import {
     isText,
 } from '@udecode/plate';
 import { merge } from '@utilities/merge';
-import { buttonNode } from '../nodes/button';
+import { ButtonStylesType, buttonNode } from '../nodes/button';
 import { checkItemNode } from '../nodes/checkItem';
 import { linkNode } from '../nodes/link';
 import { mentionHtmlNode } from '../nodes/mentionHtmlNode';
@@ -55,7 +55,7 @@ type SerializeNodeToHtmlRecursiveOptions = {
 
 export const serializeNodeToHtmlRecursive = (
     node: TDescendant,
-    styles: Record<string, CSSPropertiesHover>,
+    styles: Record<string, CSSPropertiesHover> | ButtonStylesType,
     { mappedMentionable, nestingCount = {} }: SerializeNodeToHtmlRecursiveOptions,
 ): string => {
     if (isText(node)) {
@@ -130,7 +130,8 @@ const MapNodeTypesToHtml: { [key: string]: ({ ...args }: Arguments) => string } 
     [ELEMENT_LIC]: ({ classNames, children, node }) =>
         `<p dir="auto" class="${classNames} ${getLicElementClassNames(node)}"><span>${children}</span></p>`,
     [ELEMENT_LINK]: ({ node, children, classNames, styles }) => linkNode(node, children, classNames, styles),
-    [ELEMENT_BUTTON]: ({ node, children, classNames, styles }) => buttonNode(node, children, classNames, styles),
+    [ELEMENT_BUTTON]: ({ node, children, classNames, styles }) =>
+        buttonNode(node, children, classNames, styles as ButtonStylesType),
     [ELEMENT_CHECK_ITEM]: ({ node, children, classNames, styles }) => checkItemNode(node, children, classNames, styles),
     [ELEMENT_MENTION]: ({ node, mappedMentionable }) => mentionHtmlNode(node, { mentionable: mappedMentionable }),
 };

@@ -269,6 +269,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
             children: [
                 {
                     type: 'button',
+                    target: '_self',
                     url: 'https://frontify.com',
                     buttonStyle: 'primary',
                     children: [{ text: 'button' }],
@@ -280,7 +281,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
 
         expect(result).to.contain('button');
         expect(result).to.contain('href="https://frontify.com"');
-        expect(result).to.contain('target="_blank"');
+        expect(result).to.contain('target="_self"');
     });
 
     it('serializes a button with target _blank to html', () => {
