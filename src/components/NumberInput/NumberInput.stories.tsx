@@ -15,6 +15,7 @@ export default {
     argTypes: {
         decorator: { table: { disable: false } },
         incrementable: { type: 'boolean' },
+        onChange: { action: 'onChange' },
     },
 } as Meta<NumberInputProps>;
 
@@ -29,16 +30,7 @@ export const WithDecoratorAndIncrementable: StoryFn<NumberInputProps> = (args) =
 export const WithErrorLessThanZero: StoryFn<NumberInputProps> = (args) => {
     const [status, setStatus] = useState<Validation>(Validation.Success);
     const handleValidation = (value: number) => {
-        +value < 0 ? setStatus(Validation.Error) : setStatus(Validation.Success);
+        setStatus(value < 0 ? Validation.Error : Validation.Success);
     };
-
-    return (
-        <NumberInput
-            {...args}
-            onChange={(event) => handleValidation(event)}
-            incrementable
-            status={status}
-            defaultValue={3}
-        />
-    );
+    return <NumberInput {...args} onChange={handleValidation} incrementable status={status} defaultValue={3} />;
 };
