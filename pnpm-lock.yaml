@@ -132,11 +132,11 @@ dependencies:
     specifier: ^0.5.3
     version: 0.5.3(tailwindcss@3.3.3)
   '@xstate/immer':
-    specifier: ^0.3.3
-    version: 0.3.3(immer@9.0.12)(xstate@4.38.2)
+    specifier: 0.3.1
+    version: 0.3.1(immer@9.0.12)(xstate@4.28.1)
   '@xstate/react':
-    specifier: ^1.6.3
-    version: 1.6.3(@types/react@18.2.21)(react@18.2.0)(xstate@4.38.2)
+    specifier: 1.6.3
+    version: 1.6.3(@types/react@18.2.21)(react@18.2.0)(xstate@4.28.1)
   date-fns:
     specifier: ^2.30.0
     version: 2.30.0
@@ -144,7 +144,7 @@ dependencies:
     specifier: ^1.0.3
     version: 1.0.3
   immer:
-    specifier: ^9.0.12
+    specifier: 9.0.12
     version: 9.0.12
   is-hotkey:
     specifier: ^0.2.0
@@ -192,8 +192,8 @@ dependencies:
     specifier: ^4.1.2
     version: 4.1.2
   xstate:
-    specifier: ^4.38.2
-    version: 4.38.2
+    specifier: 4.28.1
+    version: 4.28.1
 
 devDependencies:
   '@babel/core':
@@ -9537,17 +9537,17 @@ packages:
     resolution: {integrity: sha512-N8tkAACJx2ww8vFMneJmaAgmjAG1tnVBZJRLRcx061tmsLRZHSEZSLuGWnwPtunsSLvSqXQ2wfp7Mgqg1I+2dQ==}
     dev: true
 
-  /@xstate/immer@0.3.3(immer@9.0.12)(xstate@4.38.2):
-    resolution: {integrity: sha512-6AcNYkWdQrU+BKRg0MVjC2HBRZrZWADHJXcUL9uXem4BFpw9qy9NlbLPWkvnDayvmUq2sbYrzWTfxBMaiOhe5A==}
+  /@xstate/immer@0.3.1(immer@9.0.12)(xstate@4.28.1):
+    resolution: {integrity: sha512-YE+KY08IjEEmXo6XKKpeSGW4j9LfcXw+5JVixLLUO3fWQ3M95joWJ40VtGzx0w0zQSzoCNk8NgfvwWBGSbIaTA==}
     peerDependencies:
-      immer: ^9.0.6 || ^10
-      xstate: ^4.37.2
+      immer: ^9.0.6
+      xstate: ^4.29.0
     dependencies:
       immer: 9.0.12
-      xstate: 4.38.2
+      xstate: 4.28.1
     dev: false
 
-  /@xstate/react@1.6.3(@types/react@18.2.21)(react@18.2.0)(xstate@4.38.2):
+  /@xstate/react@1.6.3(@types/react@18.2.21)(react@18.2.0)(xstate@4.28.1):
     resolution: {integrity: sha512-NCUReRHPGvvCvj2yLZUTfR0qVp6+apc8G83oXSjN4rl89ZjyujiKrTff55bze/HrsvCsP/sUJASf2n0nzMF1KQ==}
     peerDependencies:
       '@xstate/fsm': ^1.0.0
@@ -9562,7 +9562,7 @@ packages:
       react: 18.2.0
       use-isomorphic-layout-effect: 1.1.2(@types/react@18.2.21)(react@18.2.0)
       use-subscription: 1.8.0(react@18.2.0)
-      xstate: 4.38.2
+      xstate: 4.28.1
     transitivePeerDependencies:
       - '@types/react'
     dev: false
@@ -18305,8 +18305,8 @@ packages:
         optional: true
     dev: true
 
-  /xstate@4.38.2:
-    resolution: {integrity: sha512-Fba/DwEPDLneHT3tbJ9F3zafbQXszOlyCJyQqqdzmtlY/cwE2th462KK48yaANf98jHlP6lJvxfNtN0LFKXPQg==}
+  /xstate@4.28.1:
+    resolution: {integrity: sha512-0xvaegeZNeHJAJvpjznyNr91qB1xy1PqeYMDyknh5S23TBPQJUHS81hk8W3UcvnB9uNs0YmOU2daoqb3WegzYQ==}
     dev: false
 
   /xtend@4.0.2:

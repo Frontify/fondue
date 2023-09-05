@@ -174,11 +174,11 @@
         "@react-types/dialog": "3.4.5",
         "@react-types/shared": "3.16.0",
         "@tailwindcss/forms": "^0.5.3",
-        "@xstate/immer": "^0.3.3",
-        "@xstate/react": "^1.6.3",
+        "@xstate/immer": "0.3.1",
+        "@xstate/react": "1.6.3",
         "date-fns": "^2.30.0",
         "escape-html": "^1.0.3",
-        "immer": "^9.0.12",
+        "immer": "9.0.12",
         "is-hotkey": "^0.2.0",
         "react-colorful": "^5.6.1",
         "react-datepicker": "^4.16.0",
@@ -194,7 +194,7 @@
         "slate-react": "^0.98.3",
         "unified": "^10.1.2",
         "unist-util-visit": "^4.1.2",
-        "xstate": "^4.38.2"
+        "xstate": "4.28.1"
     },
     "peerDependencies": {
         "react": "^17 || ^18",
