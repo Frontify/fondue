@@ -12,7 +12,7 @@ const useLink = (props: LinkRootProps): HTMLPropsAs<'a'> => {
         ...props,
         elementToAttributes: (element) => ({
             href: getUrlFromLinkOrLegacyLink(element),
-            target: element.target || '_blank',
+            target: element.target || '_self',
         }),
     });
 
