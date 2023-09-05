@@ -73,6 +73,8 @@ export const TreeItem = memo(
         registerNodeChildren,
         unregisterNodeChildren,
         draggable: itemDraggable = true,
+        showDragHandlerOnHoverOnly = true,
+        dragHandlerPosition = 'LEFT',
         ignoreItemDoubleClick = false,
         expandOnSelect = false,
         'data-test-id': dataTestId = 'fondue-tree-item',
@@ -176,9 +178,9 @@ export const TreeItem = memo(
                     return;
                 }
 
-                registerOverlay?.({ contentComponent, children, id, label, level });
+                registerOverlay?.({ contentComponent, children, id, label, level, dragHandlerPosition });
             },
-            [children, contentComponent, id, label, level, registerOverlay],
+            [children, contentComponent, dragHandlerPosition, id, label, level, registerOverlay],
         );
 
         const handleItemDragMove = useCallback(
@@ -328,6 +330,21 @@ export const TreeItem = memo(
             transition,
         };
 
+        const dragHandler = (
+            <DragHandle
+                {...listeners}
+                {...attributes}
+                active={isSelected}
+                ref={setActivatorNodeRef}
+                disabled={!showDragHandle}
+                aria-hidden={!showDragHandle}
+                className={merge([
+                    showDragHandle ? 'tw-visible' : 'tw-invisible tw-pointer-events-none',
+                    showDragHandlerOnHoverOnly ? !isSelected && 'tw-opacity-0' : 'tw-opacity-100',
+                ])}
+            />
+        );
+
         return (
             <li
                 id={id}
@@ -349,15 +366,7 @@ export const TreeItem = memo(
             >
                 <div ref={setDraggableNodeRef} className={containerClassName} style={style}>
                     <span className={backgroundClassName} style={backgroundStyle} aria-hidden={true} />
-                    <DragHandle
-                        {...listeners}
-                        {...attributes}
-                        active={isSelected}
-                        ref={setActivatorNodeRef}
-                        disabled={!showDragHandle}
-                        aria-hidden={!showDragHandle}
-                        className={showDragHandle ? 'tw-visible' : 'tw-invisible tw-pointer-events-none'}
-                    />
+                    {dragHandlerPosition === 'LEFT' && dragHandler}
 
                     <ExpandButton
                         active={transform?.y ? false : isSelected}
@@ -373,6 +382,8 @@ export const TreeItem = memo(
                     )}
 
                     {showContent && contentComponent}
+
+                    {dragHandlerPosition === 'RIGHT' && dragHandler}
                 </div>
             </li>
         );

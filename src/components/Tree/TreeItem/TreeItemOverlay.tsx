@@ -14,14 +14,29 @@ export type Overlay = {
     children: ReactNode;
     contentComponent?: ReactNode;
     isSelected?: boolean;
+    dragHandlerPosition?: 'LEFT' | 'RIGHT';
 };
 
-export const TreeItemOverlay = ({ id, label, level = 0, children, contentComponent, isSelected }: Overlay) => {
+export const TreeItemOverlay = ({
+    id,
+    label,
+    level = 0,
+    children,
+    contentComponent,
+    isSelected,
+    dragHandlerPosition = 'LEFT',
+}: Overlay) => {
     const hasChildren = Children.count(children) > 0;
 
     const indentation = level * INDENTATION_WIDTH;
 
     const liStyle = { marginLeft: indentation };
+
+    const dragHandler = (
+        <button tabIndex={-1} className="tw-p-1 tw-ml-2">
+            <IconGrabHandle12 />
+        </button>
+    );
 
     return (
         <li
@@ -34,9 +49,8 @@ export const TreeItemOverlay = ({ id, label, level = 0, children, contentCompone
             data-test-id="fondue-tree-item-overlay"
             className="tw-pointer-events-none tw-bg-white tw-flex tw-items-center tw-gap-x-1 tw-py-2 tw-px-2.5 tw-no-underline tw-leading-5 tw-h-10 tw-box-border tw-w-fit tw-drop-shadow-xl tw-rounded"
         >
-            <button tabIndex={-1} className="tw-p-1 tw-ml-2">
-                <IconGrabHandle12 />
-            </button>
+            {dragHandlerPosition === 'LEFT' && dragHandler}
+
             {hasChildren && (
                 <button tabIndex={-1} data-test-id="tree-item-toggle" className="tw-p-1">
                     <div
@@ -51,6 +65,8 @@ export const TreeItemOverlay = ({ id, label, level = 0, children, contentCompone
             {label !== undefined && <span>{label}</span>}
 
             {contentComponent}
+
+            {dragHandlerPosition === 'RIGHT' && dragHandler}
         </li>
     );
 };

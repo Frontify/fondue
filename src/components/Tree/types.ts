@@ -31,6 +31,8 @@ export type TreeProps = {
     multiselect?: boolean;
     selectedIds?: string[];
     expandedIds?: string[];
+    dragHandlerPosition?: 'LEFT' | 'RIGHT';
+    showDragHandlerOnHoverOnly?: boolean;
     'data-test-id'?: string;
     onSelect?: OnSelectCallback;
     onExpand?: OnExpandCallback;
@@ -55,6 +57,8 @@ type TreeItemBaseProps = {
     accepts?: string;
     children?: ReactNode;
     draggable?: boolean;
+    showDragHandlerOnHoverOnly?: boolean;
+    dragHandlerPosition?: 'LEFT' | 'RIGHT';
     showCaret?: boolean;
     ignoreItemDoubleClick?: boolean;
     expandOnSelect?: boolean;

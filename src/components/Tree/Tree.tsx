@@ -189,6 +189,8 @@ export const Tree = memo(
         expandedIds,
         draggable = false,
         multiselect = false,
+        dragHandlerPosition = 'LEFT',
+        showDragHandlerOnHoverOnly = true,
         'data-test-id': dataTestId = 'fondue-tree',
     }: TreeProps) => {
         const initialState: TreeState = useMemo(
@@ -615,6 +617,12 @@ export const Tree = memo(
                 nodes: treeState.nodes.map((node) =>
                     cloneElement(node, {
                         treeDraggable: draggable,
+                        dragHandlerPosition: node.props.dragHandlerPosition
+                            ? node.props.dragHandlerPosition
+                            : dragHandlerPosition,
+                        showDragHandlerOnHoverOnly: node.props.showDragHandlerOnHoverOnly
+                            ? node.props.showDragHandlerOnHoverOnly
+                            : showDragHandlerOnHoverOnly,
                         registerOverlay,
                         onExpand: handleExpand,
                         onShrink: handleShrink,
@@ -626,6 +634,8 @@ export const Tree = memo(
             };
         }, [
             draggable,
+            dragHandlerPosition,
+            showDragHandlerOnHoverOnly,
             handleExpand,
             handleShrink,
             handleSelect,

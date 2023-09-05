@@ -28,10 +28,19 @@ export default {
         id: 'storybook-tree',
         draggable: true,
         selectedIds: ['2'],
+        dragHandlerPosition: 'LEFT',
+        showDragHandlerOnHoverOnly: true,
     },
     argTypes: {
         draggable: {
             control: { type: 'boolean' },
+        },
+        showDragHandlerOnHoverOnly: {
+            control: { type: 'boolean' },
+        },
+        dragHandlerPosition: {
+            options: ['LEFT', 'RIGHT'],
+            control: { type: 'inline-radio' },
         },
         selectedIds: {
             control: { type: 'object' },
@@ -65,9 +74,7 @@ const CustomTreeItem = ({ label, contentComponent, nodes, ...otherProps }: TreeI
 };
 
 const renderCustomTreeItem = ({ id, onDrop, ...treeItem }: TreeItemMock) => {
-    return (
-        <CustomTreeItem key={`${id}-custom`} id={`${id}-custom`} onDrop={onDrop ?? action('onDrop')} {...treeItem} />
-    );
+    return <CustomTreeItem key={`${id}-custom`} id={id} onDrop={onDrop ?? action('onDrop')} {...treeItem} />;
 };
 
 const renderTreeItemLabel = ({ nodes, onDrop, ignoreItemDoubleClick, expandOnSelect, ...treeItem }: TreeItemMock) => {
@@ -196,7 +203,7 @@ export const WithAwaitedItem = ({ ...args }: TreeProps) => {
     );
 };
 
-const DynamicNavigation = () => {
+const DynamicNavigation = ({ ...args }: TreeProps) => {
     const [expandedIds, setExpandedIds] = useState<string[]>(['1']);
     const [nodes] = useDynamicNavigationMock(expandedIds);
 
@@ -209,13 +216,7 @@ const DynamicNavigation = () => {
     };
 
     return (
-        <TreeView
-            id="dynamic-navigation"
-            draggable
-            expandedIds={expandedIds}
-            onExpand={handleItemExpand}
-            onShrink={handleItemShrink}
-        >
+        <TreeView {...args} draggable expandedIds={expandedIds} onExpand={handleItemExpand} onShrink={handleItemShrink}>
             {renderTreeItemComponent({ id: 'first-fixed-tree-item', draggable: false, label: 'First Fixed TreeItem' })}
             {nodes.length > 0 && (nodes as TreeItemMock[]).map(renderTreeItemComponent)}
             {renderTreeItemComponent({ id: 'last-fixed-tree-item', draggable: false, label: 'Last Fixed TreeItem' })}
@@ -223,10 +224,10 @@ const DynamicNavigation = () => {
     );
 };
 
-export const WithDynamicNavigation = () => {
+export const WithDynamicNavigation = ({ ...args }: TreeProps) => {
     return (
         <div>
-            <DynamicNavigation />
+            <DynamicNavigation {...args} id="dynamic-navigation" />
         </div>
     );
 };
@@ -256,10 +257,10 @@ const LazyLoadingTreeItem = memo(({ label, numChildNodes, onDrop, ...otherProps 
 LazyLoadingTreeItem.displayName = 'FondueStoryLazyLoadingTreeItem';
 
 const renderLazyLoadingTreeItem = ({ id, ...treeItem }: TreeItemMock) => {
-    return <LazyLoadingTreeItem key={`${id}-lazyloaded`} id={`${id}-lazyloaded`} {...treeItem} />;
+    return <LazyLoadingTreeItem key={`${id}-lazyloaded`} id={id} {...treeItem} />;
 };
 
-const LazyLoadingTreeRoot = memo(() => {
+const LazyLoadingTreeRoot = memo(({ ...args }: TreeProps) => {
     const [expandedIds, setExpandedIds] = useState<string[]>([]);
 
     const { nodes: rootNodesData } = useNavigationWithLazyLoadedItemsMock(undefined, true, true);
@@ -281,13 +282,7 @@ const LazyLoadingTreeRoot = memo(() => {
     const onRootDrop = useCallback(() => action('onDrop'), []);
 
     return (
-        <TreeView
-            id="dynamic-navigation"
-            draggable
-            expandedIds={expandedIds}
-            onExpand={handleItemExpand}
-            onShrink={handleItemShrink}
-        >
+        <TreeView {...args} draggable expandedIds={expandedIds} onExpand={handleItemExpand} onShrink={handleItemShrink}>
             {renderTreeItemComponent({
                 id: 'first-fixed-tree-item',
                 draggable: false,
@@ -306,8 +301,8 @@ const LazyLoadingTreeRoot = memo(() => {
 });
 LazyLoadingTreeRoot.displayName = 'FondueStoryLazyLoadingTreeRoot';
 
-export const CustomItemsWithLazyLoadedChildren = () => {
-    return <LazyLoadingTreeRoot />;
+export const CustomItemsWithLazyLoadedChildren = ({ ...args }: TreeProps) => {
+    return <LazyLoadingTreeRoot {...args} id="dynamic-navigation" />;
 };
 
 export const WithCancelSelectionOnDoubleClick = ({ ...args }: TreeProps) => {
