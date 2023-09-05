@@ -7,7 +7,7 @@ export type NumberInputProps = {
     incrementable?: boolean;
     status?: Validation;
     stepInterval?: number;
-} & InputBaseProps;
+} & InputBaseProps<number>;
 
 export enum NumberInputIncrement {
     DECREMENT,

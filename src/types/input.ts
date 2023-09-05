@@ -3,12 +3,12 @@
 import { Validation } from '@utilities/validation';
 import type { InputHTMLAttributes, ReactElement } from 'react';
 
-export type InputBaseProps = {
+export type InputBaseProps<T> = {
     decorator?: ReactElement;
     error?: boolean;
     errorText?: string;
     helperText?: string;
     validation?: Validation;
-    onChange?: (value: string) => void;
+    onChange?: (value: T) => void;
     'data-test-id'?: string;
 } & Omit<InputHTMLAttributes<HTMLInputElement>, 'className' | 'style' | 'onChange'>;

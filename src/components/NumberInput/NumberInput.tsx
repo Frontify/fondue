@@ -37,7 +37,7 @@ export const NumberInput = ({
 
     const handleOnChange = useCallback(
         (value: string) => {
-            onChange?.(value);
+            onChange?.(Number(value));
         },
         [onChange],
     );
@@ -185,7 +185,7 @@ export const NumberInput = ({
                 required={required}
                 readOnly={readOnly}
                 disabled={disabled}
-                onFocus={(event) => (onFocus ? onFocus(event) : null)}
+                onFocus={onFocus}
                 size={size}
                 aria-label={ariaLabel}
                 title={title}

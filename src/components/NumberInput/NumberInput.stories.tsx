@@ -28,7 +28,7 @@ export const WithDecoratorAndIncrementable: StoryFn<NumberInputProps> = (args) =
 
 export const WithErrorLessThanZero: StoryFn<NumberInputProps> = (args) => {
     const [status, setStatus] = useState<Validation>(Validation.Success);
-    const handleValidation = (value: string) => {
+    const handleValidation = (value: number) => {
         +value < 0 ? setStatus(Validation.Error) : setStatus(Validation.Success);
     };
 
