@@ -195,7 +195,7 @@ export const NumberInput = ({
                 disabled={disabled}
                 onFocus={onFocus}
                 size={size}
-                aria-label={ariaLabel ? ariaLabel : 'Number input'}
+                aria-label={ariaLabel}
                 title={title}
                 data-test-id={`${dataTestId}-input`}
             />
@@ -203,16 +203,14 @@ export const NumberInput = ({
                 <>
                     <button
                         type="button"
-                        onClick={(event) => {
-                            handleCount(NumberInputIncrement.DECREMENT, 1, event.shiftKey, true);
-                        }}
-                        onMouseDown={(event) => {
-                            event.shiftKey ? null : startIncrement(NumberInputIncrement.DECREMENT);
-                        }}
+                        onClick={(event) => handleCount(NumberInputIncrement.DECREMENT, 1, event.shiftKey, true)}
+                        onMouseDown={(event) =>
+                            event.shiftKey ? null : startIncrement(NumberInputIncrement.DECREMENT)
+                        }
                         onMouseUp={stopIncrement}
-                        onTouchStart={(event) => {
-                            event.shiftKey ? null : startIncrement(NumberInputIncrement.DECREMENT);
-                        }}
+                        onTouchStart={(event) =>
+                            event.shiftKey ? null : startIncrement(NumberInputIncrement.DECREMENT)
+                        }
                         onTouchEnd={stopIncrement}
                         aria-label="Decrement value"
                         title="Decrement value"
@@ -222,16 +220,14 @@ export const NumberInput = ({
                     </button>
                     <button
                         type="button"
-                        onClick={(event) => {
-                            handleCount(NumberInputIncrement.INCREMENT, 1, event.shiftKey, true);
-                        }}
-                        onMouseDown={(event) => {
-                            event.shiftKey ? null : startIncrement(NumberInputIncrement.INCREMENT);
-                        }}
+                        onClick={(event) => handleCount(NumberInputIncrement.INCREMENT, 1, event.shiftKey, true)}
+                        onMouseDown={(event) =>
+                            event.shiftKey ? null : startIncrement(NumberInputIncrement.INCREMENT)
+                        }
                         onMouseUp={stopIncrement}
-                        onTouchStart={(event) => {
-                            event.shiftKey ? null : startIncrement(NumberInputIncrement.INCREMENT);
-                        }}
+                        onTouchStart={(event) =>
+                            event.shiftKey ? null : startIncrement(NumberInputIncrement.INCREMENT)
+                        }
                         onTouchEnd={stopIncrement}
                         aria-label="Increment value"
                         title="Increment value"
