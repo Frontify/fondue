@@ -81,7 +81,7 @@ export const NumberInput = ({
                         changeValue = 1;
                 }
 
-                handleCount(type, changeValue, false, true);
+                handleCount(type, changeValue);
                 elapsedSeconds += 250;
             }, 250);
         };
@@ -96,7 +96,35 @@ export const NumberInput = ({
 
     const stopIncrement = () => {
         clearInterval(timer.current);
-        if (inputElement.current && !disabled) {
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+        const { key, shiftKey } = event;
+        if (key === 'Backspace' || !isNaN(Number(key))) {
+            return;
+        }
+
+        event.preventDefault();
+
+        switch (true) {
+            case DECREMENT_KEYS.includes(key):
+                handleCount(NumberInputIncrement.DECREMENT, 1, shiftKey);
+                break;
+
+            case INCREMENT_KEYS.includes(key):
+                handleCount(NumberInputIncrement.INCREMENT, 1, shiftKey);
+                break;
+            default:
+                break;
+        }
+
+        if (onKeyDown) {
+            onKeyDown(event);
+        }
+    };
+
+    const handleKeyUp = () => {
+        if (inputElement.current) {
             handleOnChange(inputElement.current.value);
         }
     };
@@ -117,31 +145,6 @@ export const NumberInput = ({
                 );
             default:
                 return null;
-        }
-    };
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-        const { key, shiftKey } = event;
-        if (key === 'Backspace' || !isNaN(Number(key))) {
-            return;
-        }
-
-        event.preventDefault();
-
-        switch (true) {
-            case DECREMENT_KEYS.includes(key):
-                handleCount(NumberInputIncrement.DECREMENT, 1, shiftKey, true);
-                break;
-
-            case INCREMENT_KEYS.includes(key):
-                handleCount(NumberInputIncrement.INCREMENT, 1, shiftKey, true);
-                break;
-            default:
-                break;
-        }
-
-        if (onKeyDown) {
-            onKeyDown(event);
         }
     };
 
@@ -186,6 +189,7 @@ export const NumberInput = ({
                 onChange={(event) => handleOnChange(event.currentTarget.value)}
                 onBlur={onBlur}
                 onKeyDown={handleKeyDown}
+                onKeyUp={handleKeyUp}
                 required={required}
                 readOnly={readOnly}
                 disabled={disabled}
@@ -202,13 +206,13 @@ export const NumberInput = ({
                         onClick={(event) => {
                             handleCount(NumberInputIncrement.DECREMENT, 1, event.shiftKey, true);
                         }}
-                        onMouseDown={(event) =>
-                            event.shiftKey ? null : startIncrement(NumberInputIncrement.DECREMENT)
-                        }
+                        onMouseDown={(event) => {
+                            event.shiftKey ? null : startIncrement(NumberInputIncrement.DECREMENT);
+                        }}
                         onMouseUp={stopIncrement}
-                        onTouchStart={(event) =>
-                            event.shiftKey ? null : startIncrement(NumberInputIncrement.DECREMENT)
-                        }
+                        onTouchStart={(event) => {
+                            event.shiftKey ? null : startIncrement(NumberInputIncrement.DECREMENT);
+                        }}
                         onTouchEnd={stopIncrement}
                         aria-label="Decrement value"
                         title="Decrement value"
@@ -221,13 +225,13 @@ export const NumberInput = ({
                         onClick={(event) => {
                             handleCount(NumberInputIncrement.INCREMENT, 1, event.shiftKey, true);
                         }}
-                        onMouseDown={(event) =>
-                            event.shiftKey ? null : startIncrement(NumberInputIncrement.INCREMENT)
-                        }
+                        onMouseDown={(event) => {
+                            event.shiftKey ? null : startIncrement(NumberInputIncrement.INCREMENT);
+                        }}
                         onMouseUp={stopIncrement}
-                        onTouchStart={(event) =>
-                            event.shiftKey ? null : startIncrement(NumberInputIncrement.INCREMENT)
-                        }
+                        onTouchStart={(event) => {
+                            event.shiftKey ? null : startIncrement(NumberInputIncrement.INCREMENT);
+                        }}
                         onTouchEnd={stopIncrement}
                         aria-label="Increment value"
                         title="Increment value"
