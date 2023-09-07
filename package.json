@@ -194,7 +194,8 @@
         "slate-react": "^0.98.3",
         "unified": "^10.1.2",
         "unist-util-visit": "^4.1.2",
-        "xstate": "4.28.1"
+        "xstate": "4.28.1",
+        "yaml": "^2.3.2"
     },
     "peerDependencies": {
         "react": "^17 || ^18",
