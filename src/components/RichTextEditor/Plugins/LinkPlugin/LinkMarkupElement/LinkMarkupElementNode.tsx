@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { MouseEvent } from 'react';
+import { MouseEvent } from 'react';
 import { HTMLPropsAs, LinkRootProps, useElementProps } from '@udecode/plate';
 import { getUrlFromLinkOrLegacyLink } from '../utils';
 import { TLinkElement } from '../types';

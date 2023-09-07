@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Meta, StoryFn } from '@storybook/react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { OrderableList as OrderableListComponent } from './OrderableList';
 import { OrderableListItem } from './types';
 import { OrderableListProps } from '.';

@@ -9,7 +9,7 @@ import {
     SpacingValue,
 } from '@utilities/dimensions';
 import { merge } from '@utilities/merge';
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { ContainerHTMLElement } from 'src/types/elements';
 
 export type ContainerProps = {

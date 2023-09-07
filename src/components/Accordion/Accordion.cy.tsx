@@ -2,7 +2,7 @@
 
 import { TextInput } from '@components/TextInput/TextInput';
 import { IconIcon } from '@foundation/Icon/Generated';
-import React, { ReactElement, useState } from 'react';
+import { ReactElement, useState } from 'react';
 import { AccordionHeaderProps } from '.';
 import { Accordion, AccordionItem } from './Accordion';
 

@@ -10,7 +10,7 @@ import { mergeProps } from '@react-aria/utils';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { useActor } from '@xstate/react';
-import React, { MouseEvent, ReactElement, forwardRef } from 'react';
+import { MouseEvent, ReactElement, forwardRef } from 'react';
 import { IconButtonProps, SearchInputProps } from './types';
 import { IconArrowOutExternal, IconClipboard, IconCross } from '@foundation/Icon/Generated';
 

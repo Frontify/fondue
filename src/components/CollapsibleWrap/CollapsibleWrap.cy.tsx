@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Button } from '@components/Button';
-import React, { ReactElement, useState } from 'react';
+import { ReactElement, useState } from 'react';
 import { CollapsibleWrap as CollapsibleWrapComponent } from './CollapsibleWrap';
 import { CollapsibleWrapProps } from './types';
 

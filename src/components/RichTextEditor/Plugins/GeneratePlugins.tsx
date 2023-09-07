@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { CSSProperties, ReactNode } from 'react';
+import { CSSProperties, ReactNode } from 'react';
 import { AnyObject, PlatePlugin, createPlateUI, createPlugins } from '@udecode/plate';
 import { Toolbar } from '../Toolbar';
 import type { PluginComposer } from './PluginComposer';

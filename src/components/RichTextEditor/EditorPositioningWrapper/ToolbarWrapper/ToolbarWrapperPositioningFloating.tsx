@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { BalloonToolbar, ReferenceType, autoUpdate, flip, shift } from '@udecode/plate';
 import { OFFSET_IN_PX, calculateToolbarWidth } from '@components/RichTextEditor/utils';
 import { ToolbarWrapperProps } from './types';

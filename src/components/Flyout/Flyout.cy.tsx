@@ -2,7 +2,7 @@
 
 import { ButtonEmphasis, ButtonStyle } from '@components/Button';
 import { TextInput } from '@components/TextInput/TextInput';
-import React, { ReactElement, useState } from 'react';
+import { ReactElement, useState } from 'react';
 import { Flyout, FlyoutProps } from './Flyout';
 import { FlyoutFooter } from './FlyoutFooter';
 

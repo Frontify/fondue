@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ELEMENT_LI, PlateEditor, getAboveNode, getMark, setMarks, someNode, toggleNodeType } from '@udecode/plate';
-import React from 'react';
 import { ELEMENT_CHECK_ITEM } from '../../CheckboxListPlugin';
 import { MARK_TEXT_STYLE } from '../../ListPlugin/ListPlugin';
 import { merge } from '@utilities/merge';

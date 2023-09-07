@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement, ReactNode } from 'react';
+import { Children, ReactElement, ReactNode } from 'react';
 import { Box } from '@components/Box';
 import { MARGIN_VALUES_MAP, PADDING_VALUES_MAP, SPACING_VALUES, SpacingValue } from '@utilities/dimensions';
 import { merge } from '@utilities/merge';
@@ -80,7 +80,7 @@ export const Stack = ({
     const paddingClassName = SPACING_VALUES.includes(padding) ? PADDING_VALUES_MAP[padding] : PADDING_VALUES_MAP[0];
     const marginClassName = SPACING_VALUES.includes(padding) ? MARGIN_VALUES_MAP[margin] : MARGIN_VALUES_MAP[0];
 
-    const renderedChildren = React.Children.map(children, (child) => {
+    const renderedChildren = Children.map(children, (child) => {
         return (
             <>
                 {child}

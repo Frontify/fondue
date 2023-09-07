@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Validation } from '@utilities/validation';
-import React from 'react';
 import { Textarea } from './Textarea';
 
 const DEFAULT_TEXT = 'A new text area';

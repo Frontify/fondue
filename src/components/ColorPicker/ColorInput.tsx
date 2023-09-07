@@ -5,7 +5,7 @@ import { useMemoizedId } from '@hooks/useMemoizedId';
 import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import React, { KeyboardEvent, ReactElement, useRef } from 'react';
+import { KeyboardEvent, ReactElement, useRef } from 'react';
 
 export type ColorInputProps = { min?: number; max?: number; decoratorPosition?: DecoratorPosition } & Pick<
     TextInputBaseProps,

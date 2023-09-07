@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { Textarea as TextareaComponent, TextareaProps } from './Textarea';
 import { Validation } from '@utilities/validation';

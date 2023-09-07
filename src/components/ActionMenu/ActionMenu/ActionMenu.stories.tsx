@@ -3,7 +3,6 @@
 import { MenuItemContentSize, MenuItemStyle, SelectionIndicatorIcon } from '@components/MenuItem';
 import { action } from '@storybook/addon-actions';
 import { Meta, StoryFn } from '@storybook/react';
-import React from 'react';
 import { ActionMenu as ActionMenuComponent, ActionMenuProps } from './ActionMenu';
 import { IconMusicNote } from '@foundation/Icon/Generated';
 

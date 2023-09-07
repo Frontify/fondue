@@ -3,7 +3,6 @@
 import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
 import { IconTextAlignmentLeft16 } from '@foundation/Icon/Generated';
 import { AlignToolbarButton, someNode, useEventPlateId, usePlateEditorState } from '@udecode/plate';
-import React from 'react';
 import { ButtonWrapper, IconStylingWrapper, buttonStyles, getButtonClassNames } from '../../helper';
 import { PluginButtonProps } from '../../types';
 

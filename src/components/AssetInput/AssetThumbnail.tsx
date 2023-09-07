@@ -2,7 +2,7 @@
 
 import { IconSize } from '@foundation/Icon/IconSize';
 import { merge } from '@utilities/merge';
-import React, { ReactElement, cloneElement } from 'react';
+import { ReactElement, cloneElement } from 'react';
 import { AssetInputProps, AssetInputSize } from './AssetInput';
 import { SelectedAssetProps } from './SingleAsset/SelectedAsset';
 import { IconMusicNote } from '@foundation/Icon/Generated';

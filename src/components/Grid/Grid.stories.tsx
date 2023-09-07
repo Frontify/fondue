@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { Grid, GridProps } from './Grid';
 import { SPACING_VALUES } from '@utilities/dimensions';
 import { Meta, StoryFn } from '@storybook/react';

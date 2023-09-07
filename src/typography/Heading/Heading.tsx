@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { merge } from '@utilities/merge';
-import React, { ReactElement, ReactNode } from 'react';
+import { ReactElement, ReactNode } from 'react';
 import { decorationMap, displayMap, overflowMap, whitespaceMap, wordBreakMap } from '../shared/records';
 import { SharedTypographyProps } from '../shared/types';
 

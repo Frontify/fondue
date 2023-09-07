@@ -21,7 +21,7 @@ import { mergeProps } from '@react-aria/utils';
 import { useSelectState } from '@react-stately/select';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
-import React, { ReactElement, useEffect, useRef } from 'react';
+import { ReactElement, useEffect, useRef } from 'react';
 import { usePopper } from 'react-popper';
 import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from '@hooks/useDropdownAutoHeight';
 import { EnablePortalWrapper } from '@utilities/dialogs/EnablePortalWrapper';

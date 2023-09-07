@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import {
     currentNodesChanged,
     findIndexById,

@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconSize } from '@foundation/Icon/IconSize';
-import React from 'react';
 import { TooltipIcon } from './TooltipIcon';
 
 const TOOLTIP_PROPS = {

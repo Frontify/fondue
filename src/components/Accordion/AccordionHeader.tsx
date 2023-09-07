@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement, cloneElement, isValidElement, useState } from 'react';
+import { ReactElement, cloneElement, isValidElement, useState } from 'react';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { IconProps } from '@foundation/Icon/IconProps';
 import { merge } from '@utilities/merge';

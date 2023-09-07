@@ -3,7 +3,7 @@
 import { getKeyItemRecord, getMenuItems } from '@components/ActionMenu/Aria/helper';
 import { useListBox } from '@react-aria/listbox';
 import { useActor } from '@xstate/react';
-import React, { ReactElement, useMemo, useRef } from 'react';
+import { ReactElement, useMemo, useRef } from 'react';
 import BackgroundIcon from './assets/background.svg';
 import NoResultsIcon from './assets/no-results.svg';
 import FetchingIcon from './assets/nook-animated.png';

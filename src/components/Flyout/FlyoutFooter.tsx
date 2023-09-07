@@ -3,7 +3,7 @@
 import { Button, ButtonEmphasis, ButtonProps, ButtonSize, ButtonStyle } from '@components/Button';
 import { IconCheckMark } from '@foundation/Icon/Generated';
 import { merge } from '@utilities/merge';
-import React, { ReactElement, ReactNode } from 'react';
+import { ReactElement, ReactNode } from 'react';
 
 export type FlyoutFooterProps = {
     buttons: [ButtonProps, ButtonProps] | [ButtonProps];

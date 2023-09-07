@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { ToolbarWrapperProps } from './types';
 
 export const ToolbarWrapperPositioningTop = ({ children }: ToolbarWrapperProps) => {

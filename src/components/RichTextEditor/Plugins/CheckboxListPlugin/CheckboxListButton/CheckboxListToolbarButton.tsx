@@ -18,7 +18,6 @@ import {
     usePlateEditorState,
     withoutNormalizing,
 } from '@udecode/plate';
-import React from 'react';
 import { ELEMENT_CHECK_ITEM } from '../id';
 
 export const CheckboxListToolbarButton = ({

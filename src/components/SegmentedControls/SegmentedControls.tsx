@@ -10,7 +10,7 @@ import { RadioGroupState, useRadioGroupState } from '@react-stately/radio';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { motion } from 'framer-motion';
-import React, { ReactElement, forwardRef, useMemo, useRef } from 'react';
+import { ReactElement, forwardRef, useMemo, useRef } from 'react';
 
 export type IconItem = {
     id: string;

@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { RadioButton } from './RadioButton';
 import { RadioList, RadioListDirection } from './RadioList';
 

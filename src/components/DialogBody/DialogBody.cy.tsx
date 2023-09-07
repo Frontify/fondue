@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { DialogBody } from './DialogBody';
 
 const DIALOG_BODY_SELECTOR = '[data-test-id=fondue-dialog-body]';

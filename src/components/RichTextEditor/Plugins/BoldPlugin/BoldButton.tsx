@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { MarkToolbarButton, getPluginType } from '@udecode/plate';
 import { IconTextFormatBold16 } from '@foundation/Icon/Generated';
 import { ButtonWrapper, IconStylingWrapper, buttonStyles, getButtonClassNames } from '../helper';

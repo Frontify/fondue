@@ -2,7 +2,7 @@
 
 import { OrderableListItem } from '@components/OrderableList';
 import { HighlightColor, HighlightProps, StoryListItem } from '@components/OrderableList/utils/types';
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import { merge } from '@utilities/merge';
 
 const HighlightClasses: Record<HighlightColor, string> = {

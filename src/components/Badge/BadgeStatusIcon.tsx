@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { getColorDisplayValue } from '@utilities/colors';
 import { merge } from '@utilities/merge';
 import { ColorFormat } from '../../types';

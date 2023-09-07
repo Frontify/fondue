@@ -12,7 +12,7 @@ import { action } from '@storybook/addon-actions';
 import { Meta, StoryFn } from '@storybook/react';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import React, { MutableRefObject, useState } from 'react';
+import { MutableRefObject, useState } from 'react';
 import { FLYOUT_DIVIDER_COLOR, FLYOUT_DIVIDER_HEIGHT, Flyout, FlyoutPlacement, FlyoutProps } from './Flyout';
 import { FlyoutFooter } from './FlyoutFooter';
 import { Dropdown } from '@components/Dropdown';

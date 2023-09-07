@@ -4,7 +4,6 @@ import { BadgeStatus, BadgeStyle } from '@components/Badge';
 import { IconIcon } from '@foundation/Icon/Generated';
 import { action } from '@storybook/addon-actions';
 import { Meta, StoryFn } from '@storybook/react';
-import React from 'react';
 import { BreadcrumbGap, Breadcrumbs, BreadcrumbsProps } from './Breadcrumbs';
 
 const link = document.referrer;

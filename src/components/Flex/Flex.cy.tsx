@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Box } from '@components/Box';
-import React from 'react';
 import { Flex, FlexProps } from './Flex';
 
 const FLEX_ID = '[data-test-id=fondue-flex]';

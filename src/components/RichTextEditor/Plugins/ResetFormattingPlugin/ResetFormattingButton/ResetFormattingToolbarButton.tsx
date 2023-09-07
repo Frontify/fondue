@@ -9,7 +9,6 @@ import {
     usePlateEditorState,
     withPlateProvider,
 } from '@udecode/plate';
-import React from 'react';
 
 export const ResetFormattingToolbarButton = withPlateProvider(({ id, ...props }: ToolbarButtonProps) => {
     const editor = usePlateEditorState(useEventPlateId(id));
