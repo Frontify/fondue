@@ -9,12 +9,17 @@ import noop from 'lodash-es/noop';
 import { merge } from '@utilities/merge';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 
-import type {
-    RegisterNodeChildrenPayload,
-    TreeDragEndEvent,
-    TreeDragMoveEvent,
-    TreeDragStartEvent,
-    TreeItemProps,
+import {
+    type RegisterNodeChildrenPayload,
+    type TreeDragEndEvent,
+    type TreeDragMoveEvent,
+    type TreeDragStartEvent,
+    TreeItemBorderClassMap,
+    TreeItemBorderRadiousClassMap,
+    TreeItemBorderStyleClassMap,
+    type TreeItemProps,
+    TreeItemShadowClassMap,
+    TreeItemSpacingClassMap,
 } from '@components/Tree/types';
 
 import { EXPAND_ONHOVER_DELAY, INDENTATION_WIDTH, Projection } from '../helpers';
@@ -73,11 +78,16 @@ export const TreeItem = memo(
         registerNodeChildren,
         unregisterNodeChildren,
         draggable: itemDraggable = true,
+        expandable = true,
         showDragHandlerOnHoverOnly = true,
-        dragHandlerPosition = 'LEFT',
+        dragHandlerPosition = 'left',
         itemStyle = {
-            spacingY: 0,
-            containerClassNames: '',
+            spacingY: 'none',
+            contentHight: 'single-line',
+            shadow: 'none',
+            borderRadious: 'small',
+            borderWidth: 'none',
+            borderStyle: 'none',
         },
         ignoreItemDoubleClick = false,
         expandOnSelect = false,
@@ -277,26 +287,28 @@ export const TreeItem = memo(
             return {
                 liClassName: merge([
                     FOCUS_VISIBLE_STYLE,
-                    'tw-box-content tw-relative tw-cursor-default tw-transition-colors tw-outline-none tw-ring-inset tw-group tw-px-2.5 tw-no-underline tw-leading-5 tw-h-10',
+                    'tw-box-content tw-relative tw-cursor-default tw-transition-colors tw-outline-none tw-ring-inset tw-group tw-px-2.5 tw-no-underline tw-leading-5',
                     !isActive && isSelected ? 'tw-font-medium tw-text-box-neutral-strong-inverse' : 'tw-text-text',
-                    itemStyle?.spacingY ? `tw-my-${itemStyle?.spacingY}` : 'tw-my-0',
+                    TreeItemSpacingClassMap[itemStyle?.spacingY ?? 'none'],
                 ]),
                 backgroundClassName: merge([
                     'tw-block tw-absolute tw-inset-0 tw-transition-colors -tw-z-10',
-                    itemStyle?.containerClassNames ? '' : '-tw-mx-2.5',
+                    itemStyle?.borderWidth !== 'none'
+                        ? TreeItemBorderRadiousClassMap[itemStyle?.borderRadious ?? 'small']
+                        : '-tw-mx-2.5',
                     !isActive && !isSelected && 'group-active:tw-bg-box-neutral-pressed',
                     !isActive && isSelected
                         ? 'tw-bg-box-neutral-strong group-hover:tw-bg-box-neutral-strong-hover'
                         : 'group-hover:tw-bg-box-neutral',
                 ]),
             };
-        }, [isActive, isSelected, itemStyle]);
+        }, [isActive, isSelected, itemStyle?.borderRadious, itemStyle?.borderWidth, itemStyle?.spacingY]);
 
         const showContent = !isActive;
         const showChildren = isExpanded && !isActive;
         const showDragHandle = draggable && !isActive;
         const showLabel = label !== undefined && !isActive;
-        const showExpandButton = !isActive && (showCaret === undefined ? hasChildren : showCaret);
+        const showExpandButton = !isActive && expandable && (showCaret === undefined ? hasChildren : showCaret);
 
         let previousItemToBeExpandedFeedback = '';
         if (
@@ -310,52 +322,63 @@ export const TreeItem = memo(
             previousItemToBeExpandedFeedback = 'tw-border-solid tw-rounded tw-border-2 tw-border-box-selected-strong';
         }
 
+        const containerBorder = itemStyle?.borderWidth
+            ? merge([
+                  TreeItemBorderClassMap[itemStyle?.borderWidth ?? 'none'],
+                  TreeItemBorderRadiousClassMap[itemStyle?.borderRadious ?? 'small'],
+                  TreeItemBorderStyleClassMap[itemStyle?.borderStyle ?? 'none'],
+              ])
+            : '';
+        const containerHeight = itemStyle.contentHight === 'single-line' ? 'tw-h-10' : 'tw-h-fit';
+        const containerActiveHeight = itemStyle.contentHight === 'single-line' ? 'tw-h-12' : 'tw-h-fit';
+
         const containerClassName = merge([
             'tw-relative tw-z-0 tw-transition-colors tw-flex tw-items-center tw-leading-5 tw-width-full',
-            isActive ? 'tw-border-dashed tw-rounded-sm tw-border-2 tw-pr-0 tw-h-12' : 'tw-h-10',
+            TreeItemShadowClassMap[itemStyle.shadow ?? 'none'],
+            isActive ? 'tw-border-dashed tw-border-2 tw-pr-0' : containerBorder,
+            isActive && TreeItemBorderRadiousClassMap[itemStyle?.borderRadious ?? 'small'],
+            isActive ? containerActiveHeight : containerHeight,
             isActive &&
                 (canDrop
                     ? 'tw-border-box-selected-strong tw-bg-box-selected-hover'
                     : 'tw-bg-box-negative-hover tw-border-box-negative-strong-hover'),
-            itemStyle?.containerClassNames ?? '',
             previousItemToBeExpandedFeedback,
         ]);
 
         const depthPadding = activeProjection?.depth ? activeProjection.depth * INDENTATION_WIDTH : undefined;
         const levelPadding = isActive ? 0 : level * INDENTATION_WIDTH;
 
-        const liStyle = {
-            paddingLeft: depthPadding ?? levelPadding,
-        };
-
-        const backgroundStyle = itemStyle?.containerClassNames
-            ? {}
-            : {
-                  marginLeft: -1 * (depthPadding ?? levelPadding),
-              };
+        const liStyle = { paddingLeft: depthPadding ?? levelPadding };
+        const backgroundStyle =
+            itemStyle?.borderWidth !== 'none' ? {} : { marginLeft: -1 * (depthPadding ?? levelPadding) };
 
         const style = {
             transform: CSS.Transform.toString(transform),
             transition,
         };
 
-        const dragHandler = (
-            <DragHandle
-                {...listeners}
-                {...attributes}
-                active={isSelected}
-                ref={setActivatorNodeRef}
-                disabled={!showDragHandle}
-                aria-hidden={!showDragHandle}
-                className={merge([
-                    showDragHandle ? 'tw-visible' : 'tw-invisible tw-pointer-events-none',
-                    showDragHandlerOnHoverOnly ? !isSelected && 'tw-opacity-0' : 'tw-opacity-100',
-                ])}
-            />
-        );
+        const handlerProps = { ...listeners, ...attributes };
+        const dragHandlerProps = dragHandlerPosition !== 'none' ? handlerProps : {};
+        const dragHandler =
+            dragHandlerPosition !== 'none' ? (
+                <DragHandle
+                    {...dragHandlerProps}
+                    active={isSelected}
+                    ref={setActivatorNodeRef}
+                    disabled={!showDragHandle}
+                    aria-hidden={!showDragHandle}
+                    className={merge([
+                        showDragHandle ? 'tw-visible' : 'tw-invisible tw-pointer-events-none',
+                        showDragHandlerOnHoverOnly ? !isSelected && 'tw-opacity-0' : 'tw-opacity-100',
+                    ])}
+                />
+            ) : null;
+
+        const itemHandlerProps = dragHandlerPosition === 'none' ? { ...handlerProps } : {};
 
         return (
             <li
+                {...itemHandlerProps}
                 id={id}
                 key={id}
                 tabIndex={0}
@@ -375,16 +398,18 @@ export const TreeItem = memo(
             >
                 <div ref={setDraggableNodeRef} className={containerClassName} style={style}>
                     <span className={backgroundClassName} style={backgroundStyle} aria-hidden={true} />
-                    {dragHandlerPosition === 'LEFT' && dragHandler}
+                    {dragHandlerPosition === 'left' && dragHandler}
 
-                    <ExpandButton
-                        active={transform?.y ? false : isSelected}
-                        onClick={toggleExpand}
-                        expanded={showChildren}
-                        disabled={!showExpandButton}
-                        aria-hidden={!showExpandButton}
-                        className={showExpandButton ? 'tw-visible' : 'tw-invisible tw-pointer-events-none'}
-                    />
+                    {expandable && (
+                        <ExpandButton
+                            active={transform?.y ? false : isSelected}
+                            onClick={toggleExpand}
+                            expanded={showChildren}
+                            disabled={!showExpandButton}
+                            aria-hidden={!showExpandButton}
+                            className={showExpandButton ? 'tw-visible' : 'tw-invisible tw-pointer-events-none'}
+                        />
+                    )}
 
                     {showLabel && (
                         <span className="first:tw-ml-3.5 tw-w-full tw-h-full tw-flex tw-items-center">{label}</span>
@@ -392,7 +417,7 @@ export const TreeItem = memo(
 
                     {showContent && contentComponent}
 
-                    {dragHandlerPosition === 'RIGHT' && dragHandler}
+                    {dragHandlerPosition === 'right' && dragHandler}
                 </div>
             </li>
         );

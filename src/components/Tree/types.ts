@@ -24,6 +24,61 @@ export type OnTreeDropCallback = (args: {
     parentType?: string;
 }) => void;
 
+type TreeItemPropsSizing = 'none' | 'x-small' | 'small' | 'medium' | 'large' | 'x-large';
+type TreeItemContentFit = 'content-fit' | 'single-line';
+type TreeItemBorderStyle = 'solid' | 'dashed' | 'dotted' | 'none';
+
+export const TreeItemSpacingClassMap: Record<TreeItemPropsSizing, string> = {
+    none: 'tw-my-0',
+    'x-small': 'tw-my-0.5',
+    small: 'tw-my-1',
+    medium: 'tw-my-1.5',
+    large: 'tw-my-2',
+    'x-large': 'tw-my-2.5',
+};
+
+export const TreeItemShadowClassMap: Record<TreeItemPropsSizing, string> = {
+    none: 'tw-shadow-none',
+    'x-small': 'tw-shadow-sm',
+    small: 'tw-shadow',
+    medium: 'tw-shadow-md',
+    large: 'tw-shadow-lg',
+    'x-large': 'tw-shadow-xl',
+};
+
+export const TreeItemBorderRadiousClassMap: Record<TreeItemPropsSizing, string> = {
+    none: 'tw-rounded-none',
+    'x-small': 'tw-rounded-sm',
+    small: 'tw-rounded',
+    medium: 'tw-rounded-md',
+    large: 'tw-rounded-lg',
+    'x-large': 'tw-rounded-xl',
+};
+
+export const TreeItemBorderClassMap: Record<Exclude<TreeItemPropsSizing, 'x-large'>, string> = {
+    none: 'tw-border-0',
+    'x-small': 'tw-border',
+    small: 'tw-border-2',
+    medium: 'tw-border-4',
+    large: 'tw-border-8',
+};
+
+export const TreeItemBorderStyleClassMap: Record<TreeItemBorderStyle, string> = {
+    none: 'tw-border-none',
+    solid: 'tw-border-solid',
+    dotted: 'tw-border-dotted',
+    dashed: 'tw-border-dashed',
+};
+
+export type TreeItemStyling = {
+    spacingY?: TreeItemPropsSizing;
+    contentHight?: TreeItemContentFit;
+    shadow?: TreeItemPropsSizing;
+    borderRadious?: TreeItemPropsSizing;
+    borderWidth?: Exclude<TreeItemPropsSizing, 'x-large'>;
+    borderStyle?: TreeItemBorderStyle;
+};
+
 export type TreeProps = {
     id: string;
     draggable?: boolean;
@@ -31,12 +86,9 @@ export type TreeProps = {
     multiselect?: boolean;
     selectedIds?: string[];
     expandedIds?: string[];
-    dragHandlerPosition?: 'LEFT' | 'RIGHT';
+    dragHandlerPosition?: 'left' | 'right' | 'none';
     showDragHandlerOnHoverOnly?: boolean;
-    itemStyle?: {
-        spacingY?: number | string; // tw-my-# value: 'px', 0, 1, 2, ....
-        containerClassNames?: string; // Classes to add to the item container (border, shadow, etc...), for example: tw-rounded-md tw-border-2 tw-border-black tw-shadow
-    };
+    itemStyle?: TreeItemStyling;
     'data-test-id'?: string;
     onSelect?: OnSelectCallback;
     onExpand?: OnExpandCallback;
@@ -61,12 +113,14 @@ type TreeItemBaseProps = {
     accepts?: string;
     children?: ReactNode;
     draggable?: boolean;
+    /** Removes the expand caret, recovering the space ignoring if there are children */
+    expandable?: boolean;
     showDragHandlerOnHoverOnly?: boolean;
-    dragHandlerPosition?: 'LEFT' | 'RIGHT';
-    itemStyle?: {
-        spacingY?: number | string; // tw-my-# value: 'px', 0, 1, 2, ....
-        containerClassNames?: string; // Classes to add to the item container, for example: tw-rounded-md tw-border-2 tw-border-black tw-shadow
-    };
+    /**
+     * dragHandlerPosition = 'none' makes the whole item draggble rather than only the dragHandler
+     */
+    dragHandlerPosition?: 'left' | 'right' | 'none';
+    itemStyle?: TreeItemStyling;
     showCaret?: boolean;
     ignoreItemDoubleClick?: boolean;
     expandOnSelect?: boolean;

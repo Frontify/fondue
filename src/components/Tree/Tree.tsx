@@ -189,11 +189,15 @@ export const Tree = memo(
         expandedIds,
         draggable = false,
         multiselect = false,
-        dragHandlerPosition = 'LEFT',
+        dragHandlerPosition = 'left',
         showDragHandlerOnHoverOnly = true,
         itemStyle = {
-            spacingY: 0,
-            containerClassNames: '',
+            spacingY: 'none',
+            contentHight: 'single-line',
+            shadow: 'none',
+            borderRadious: 'small',
+            borderWidth: 'none',
+            borderStyle: 'none',
         },
         'data-test-id': dataTestId = 'fondue-tree',
     }: TreeProps) => {

@@ -6,8 +6,17 @@ import { action } from '@storybook/addon-actions';
 
 import { IconDocument } from '@foundation/Icon';
 
-import type { TreeProps } from '@components/Tree/types';
-import { TreeItem, Tree as TreeView, useTreeItem } from '@components/Tree';
+import type { TreeItemStyling, TreeProps } from '@components/Tree/types';
+import {
+    TreeItem,
+    TreeItemBorderClassMap,
+    TreeItemBorderRadiousClassMap,
+    TreeItemBorderStyleClassMap,
+    TreeItemShadowClassMap,
+    TreeItemSpacingClassMap,
+    Tree as TreeView,
+    useTreeItem,
+} from '@components/Tree';
 import {
     type TreeItemMock,
     treeItemsMock,
@@ -28,22 +37,68 @@ export default {
         id: 'storybook-tree',
         draggable: true,
         selectedIds: ['2'],
-        dragHandlerPosition: 'LEFT',
+        dragHandlerPosition: 'left',
         showDragHandlerOnHoverOnly: true,
+        spacingY: 'none',
+        contentHight: 'single-line',
+        shadow: 'none',
+        borderRadious: 'small',
+        borderWidth: 'none',
+        borderStyle: 'none',
     },
     argTypes: {
         draggable: {
             control: { type: 'boolean' },
         },
         showDragHandlerOnHoverOnly: {
+            table: { category: 'Item Options' },
             control: { type: 'boolean' },
         },
         dragHandlerPosition: {
-            options: ['LEFT', 'RIGHT'],
+            table: { category: 'Item Options' },
+            options: ['left', 'right', 'none'],
             control: { type: 'inline-radio' },
         },
-        itemStyle: {
-            control: { type: 'object' },
+        spacingY: {
+            table: { category: 'Item Style' },
+            name: 'itemStyle.spacingY',
+            options: [...Object.keys(TreeItemSpacingClassMap)],
+            mapping: [...Object.values(TreeItemSpacingClassMap)],
+            control: { type: 'inline-radio' },
+        },
+        contentHight: {
+            table: { category: 'Item Style' },
+            name: 'itemStyle.contentHight',
+            options: ['content-fit', 'single-line'],
+            control: { type: 'inline-radio' },
+        },
+        shadow: {
+            table: { category: 'Item Style' },
+            name: 'itemStyle.shadow',
+            options: [...Object.keys(TreeItemShadowClassMap)],
+            mapping: [...Object.values(TreeItemShadowClassMap)],
+            control: { type: 'select' },
+        },
+        borderRadious: {
+            table: { category: 'Item Style' },
+            name: 'itemStyle.borderRadious',
+            options: [...Object.keys(TreeItemBorderRadiousClassMap)],
+            mapping: [...Object.values(TreeItemBorderRadiousClassMap)],
+            control: { type: 'select' },
+        },
+        borderWidth: {
+            table: { category: 'Item Style' },
+            name: 'itemStyle.borderWidth',
+            options: [...Object.keys(TreeItemBorderClassMap)],
+            mapping: [...Object.values(TreeItemBorderClassMap)],
+            control: { type: 'select' },
+        },
+        borderStyle: {
+            table: { category: 'Item Style' },
+            name: 'itemStyle.borderStyle',
+            options: [...Object.keys(TreeItemBorderStyleClassMap)],
+            mapping: [...Object.values(TreeItemBorderStyleClassMap)],
+            control: { type: 'select' },
         },
         selectedIds: {
             control: { type: 'object' },
@@ -52,7 +107,7 @@ export default {
             control: { type: 'object' },
         },
     },
-} as Meta<TreeProps>;
+} as Meta<TreeProps & TreeItemStyling>;
 
 const TreeItemContentComponent = ({ title }: { title: string }) => {
     return (
@@ -102,33 +157,64 @@ const renderTreeItemLabel = ({ nodes, onDrop, ignoreItemDoubleClick, expandOnSel
     );
 };
 
-const renderTreeItemComponent = ({ nodes, label, numChildNodes, onDrop, ...treeItem }: TreeItemMock) => (
-    <TreeItem
-        {...treeItem}
-        key={treeItem.id}
-        contentComponent={<TreeItemContentComponent title={label || 'NO TITLE'} />}
-        onDrop={onDrop ?? action('onDrop')}
-        showCaret={!!numChildNodes}
-    >
-        {nodes?.map(renderTreeItemComponent)}
-    </TreeItem>
-);
+const renderTreeItemComponent = ({ nodes, label, numChildNodes, onDrop, ...treeItem }: TreeItemMock) => {
+    const nodesLength = nodes?.length ?? 0;
+    const showCaret = numChildNodes !== undefined ? !!numChildNodes : nodesLength > 0;
+    return (
+        <TreeItem
+            {...treeItem}
+            key={treeItem.id}
+            contentComponent={<TreeItemContentComponent title={label || 'NO TITLE'} />}
+            onDrop={onDrop ?? action('onDrop')}
+            showCaret={showCaret}
+        >
+            {nodes?.map(renderTreeItemComponent)}
+        </TreeItem>
+    );
+};
 
-export const WithLabel = ({ ...args }: TreeProps) => {
+const cleanProps = ({ ...args }) => {
+    const itemStyle = {
+        ...{
+            spacingY: args.spacingY,
+            contentHight: args.contentHight,
+            shadow: args.shadow,
+            borderRadious: args.borderRadious,
+            borderWidth: args.borderWidth,
+            borderStyle: args.borderStyle,
+        },
+        ...args.itemStyle,
+    };
+    delete args.spacingY;
+    delete args.contentHight;
+    delete args.shadow;
+    delete args.borderRadious;
+    delete args.borderWidth;
+    delete args.borderStyle;
+
+    return { ...args, itemStyle };
+};
+
+export const WithLabel = ({ ...args }) => {
     const onDrop = useCallback(() => action('onDrop'), []);
 
     return (
-        <Container maxWidth={'800px'}>
-            <TreeView {...args}>{treeItemsMock.map((item) => renderTreeItemLabel({ ...item, onDrop }))}</TreeView>
+        <Container maxWidth={'400px'}>
+            <TreeView id={args.id} {...cleanProps(args)}>
+                {treeItemsMock.map((item) => renderTreeItemLabel({ ...item, onDrop }))}
+            </TreeView>
         </Container>
     );
 };
 
 export const WithCustomTreeItem = ({ ...args }: TreeProps) => {
     const onDrop = useCallback(() => action('onDrop'), []);
+
     return (
-        <Container maxWidth={'800px'}>
-            <TreeView {...args}>{treeItemsMock.map((item) => renderCustomTreeItem({ ...item, onDrop }))}</TreeView>
+        <Container maxWidth={'400px'}>
+            <TreeView id={args.id} {...cleanProps(args)}>
+                {treeItemsMock.map((item) => renderCustomTreeItem({ ...item, onDrop }))}
+            </TreeView>
         </Container>
     );
 };
@@ -147,7 +233,13 @@ export const ScrollableWithLabel = ({ ...args }: TreeProps) => {
     return (
         <div style={{ position: 'fixed', height: '800px', width: '800px', backgroundColor: 'white' }}>
             <div style={{ width: '800px', height: '300px', overflow: 'auto', position: 'absolute' }}>
-                <TreeView {...args} expandedIds={expandedIds} onExpand={handleItemExpand} onShrink={handleItemShrink}>
+                <TreeView
+                    id={args.id}
+                    {...cleanProps(args)}
+                    expandedIds={expandedIds}
+                    onExpand={handleItemExpand}
+                    onShrink={handleItemShrink}
+                >
                     {treeItemsMock.map(renderTreeItemLabel)}
                 </TreeView>
             </div>
@@ -157,14 +249,17 @@ export const ScrollableWithLabel = ({ ...args }: TreeProps) => {
 
 export const WithBasicItem = ({ ...args }: TreeProps) => {
     return (
-        <Container maxWidth={'800px'}>
-            <TreeView {...args}>{treeItemsMock.map(renderTreeItemComponent)}</TreeView>
+        <Container maxWidth={'400px'}>
+            <TreeView id={args.id} {...cleanProps(args)}>
+                {treeItemsMock.map(renderTreeItemComponent)}
+            </TreeView>
         </Container>
     );
 };
 
 export const WithAwaitedItem = ({ ...args }: TreeProps) => {
     const [awaitedItems, setAwaitedItems] = useState<TreeItemMock[]>([]);
+    const cleanArgs = cleanProps(args);
 
     useEffect(() => {
         setTimeout(() => {
@@ -197,8 +292,8 @@ export const WithAwaitedItem = ({ ...args }: TreeProps) => {
     }, []);
 
     return (
-        <Container maxWidth={'800px'}>
-            <TreeView {...args}>
+        <Container maxWidth={'400px'}>
+            <TreeView id={args.id} {...cleanArgs}>
                 {treeItemsMock.map(renderTreeItemComponent)}
                 {awaitedItems.map(renderTreeItemComponent)}
             </TreeView>
@@ -207,9 +302,9 @@ export const WithAwaitedItem = ({ ...args }: TreeProps) => {
 };
 
 const DynamicNavigation = ({ ...args }: TreeProps) => {
-    const [expandedIds, setExpandedIds] = useState<string[]>(['1']);
+    const [expandedIds, setExpandedIds] = useState<string[]>([]);
     const [nodes] = useDynamicNavigationMock(expandedIds);
-
+    console.log(expandedIds);
     const handleItemExpand = (id: string) => {
         setExpandedIds([...expandedIds, id]);
     };
@@ -217,9 +312,16 @@ const DynamicNavigation = ({ ...args }: TreeProps) => {
     const handleItemShrink = (id: string) => {
         setExpandedIds(expandedIds.filter((itemId) => itemId !== id));
     };
-
+    console.log(nodes);
     return (
-        <TreeView {...args} draggable expandedIds={expandedIds} onExpand={handleItemExpand} onShrink={handleItemShrink}>
+        <TreeView
+            id={args.id}
+            {...cleanProps(args)}
+            draggable
+            expandedIds={expandedIds}
+            onExpand={handleItemExpand}
+            onShrink={handleItemShrink}
+        >
             {renderTreeItemComponent({ id: 'first-fixed-tree-item', draggable: false, label: 'First Fixed TreeItem' })}
             {nodes.length > 0 && (nodes as TreeItemMock[]).map(renderTreeItemComponent)}
             {renderTreeItemComponent({ id: 'last-fixed-tree-item', draggable: false, label: 'Last Fixed TreeItem' })}
@@ -229,7 +331,7 @@ const DynamicNavigation = ({ ...args }: TreeProps) => {
 
 export const WithDynamicNavigation = ({ ...args }: TreeProps) => {
     return (
-        <Container maxWidth={'800px'}>
+        <Container maxWidth={'400px'}>
             <DynamicNavigation {...args} id="dynamic-navigation" />
         </Container>
     );
@@ -260,7 +362,7 @@ const LazyLoadingTreeItem = memo(({ label, numChildNodes, onDrop, ...otherProps 
 LazyLoadingTreeItem.displayName = 'FondueStoryLazyLoadingTreeItem';
 
 const renderLazyLoadingTreeItem = ({ id, ...treeItem }: TreeItemMock) => {
-    return <LazyLoadingTreeItem key={`${id}-lazyloaded`} id={id} {...treeItem} />;
+    return <LazyLoadingTreeItem key={`${id}-lazyloaded`} id={`${id}-lazyloaded`} {...treeItem} />;
 };
 
 const LazyLoadingTreeRoot = memo(({ ...args }: TreeProps) => {
@@ -305,15 +407,19 @@ const LazyLoadingTreeRoot = memo(({ ...args }: TreeProps) => {
 LazyLoadingTreeRoot.displayName = 'FondueStoryLazyLoadingTreeRoot';
 
 export const CustomItemsWithLazyLoadedChildren = ({ ...args }: TreeProps) => {
-    return <LazyLoadingTreeRoot {...args} id="dynamic-navigation" />;
+    return (
+        <LazyLoadingTreeRoot {...cleanProps(args)} id="dynamic-navigation">
+            {null}
+        </LazyLoadingTreeRoot>
+    );
 };
 
 export const WithCancelSelectionOnDoubleClick = ({ ...args }: TreeProps) => {
     const onDrop = useCallback(() => action('onDrop'), []);
 
     return (
-        <Container maxWidth={'800px'}>
-            <TreeView {...args}>
+        <Container maxWidth={'400px'}>
+            <TreeView id={args.id} {...cleanProps(args)}>
                 {treeItemsMock.map((item) => renderTreeItemLabel({ ...item, onDrop, ignoreItemDoubleClick: true }))}
             </TreeView>
         </Container>
@@ -324,8 +430,8 @@ export const WithExpandOnSelect = ({ ...args }: TreeProps) => {
     const onDrop = useCallback(() => action('onDrop'), []);
 
     return (
-        <Container maxWidth={'800px'}>
-            <TreeView {...args}>
+        <Container maxWidth={'400px'}>
+            <TreeView id={args.id} {...cleanProps(args)}>
                 {treeItemsMock.map((item) => renderTreeItemLabel({ ...item, onDrop, expandOnSelect: true }))}
             </TreeView>
         </Container>
@@ -365,7 +471,8 @@ export const InsideInlineDialog = ({ ...args }: TreeProps) => {
                 <InlineDialog.Content>
                     <DialogBody>
                         <TreeView
-                            {...args}
+                            id={args.id}
+                            {...cleanProps(args)}
                             expandedIds={expandedIds}
                             onExpand={handleItemExpand}
                             onShrink={handleItemShrink}
@@ -379,7 +486,7 @@ export const InsideInlineDialog = ({ ...args }: TreeProps) => {
     );
 };
 
-const WithTreeItemsStyledContent: StoryFn<TreeProps> = (args) => {
+const WithTreeItemsStyledContent: StoryFn<TreeProps & TreeItemStyling> = (args) => {
     return WithLabel(args);
 };
 export const WithTreeItemsStyled = WithTreeItemsStyledContent.bind({});
@@ -387,7 +494,12 @@ WithTreeItemsStyled.args = {
     id: 'storybook-tree',
     draggable: true,
     selectedIds: ['2'],
-    dragHandlerPosition: 'LEFT',
+    dragHandlerPosition: 'left',
     showDragHandlerOnHoverOnly: true,
-    itemStyle: { spacingY: 2, containerClassNames: 'tw-rounded-md tw-border-2 tw-border-text tw-shadow' },
+    spacingY: 'large',
+    contentHight: 'content-fit',
+    shadow: 'small',
+    borderRadious: 'large',
+    borderWidth: 'x-small',
+    borderStyle: 'solid',
 };
