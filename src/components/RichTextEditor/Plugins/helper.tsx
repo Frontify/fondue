@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { IconStylingWrapperProps } from './types';
 
 export const IconStylingWrapper = ({ icon }: IconStylingWrapperProps) => (

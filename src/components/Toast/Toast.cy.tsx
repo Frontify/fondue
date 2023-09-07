@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconLinkBox24 } from '@foundation/Icon';
-import React from 'react';
 import { Button } from '..';
 import { Toast } from './Toast';
 import { ToastStyle, toastStylesBackgroundColorsMap } from './types';

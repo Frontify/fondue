@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { ScrollWrapper } from './ScrollWrapper';
 import { ScrollWrapperDirection, ScrollWrapperProps } from './types';
 

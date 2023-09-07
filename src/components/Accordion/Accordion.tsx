@@ -8,7 +8,7 @@ import { Item as StatelyItem } from '@react-stately/collections';
 import { useTreeState } from '@react-stately/tree';
 import { FOCUS_STYLE_INSET } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import React, { Children, Key, KeyboardEvent, ReactElement, ReactNode, isValidElement, useEffect, useRef } from 'react';
+import { Children, Key, KeyboardEvent, ReactElement, ReactNode, isValidElement, useEffect, useRef } from 'react';
 import { AccordionHeader } from './AccordionHeader';
 import { AccordionItemProps, AccordionProps, AriaAccordionItemProps } from './types';
 
@@ -106,7 +106,7 @@ const filterValidChildren = ({ children }: AccordionProps): ReactElement<Accordi
 export const AccordionItem = ({ children }: AccordionItemProps): ReactElement => <>{children}</>;
 AccordionItem.displayName = 'FondueAccordionItem';
 
-const lastChildrenActive = (children: React.ReactNode | undefined): boolean | undefined => {
+const lastChildrenActive = (children: ReactNode | undefined): boolean | undefined => {
     const childrenArray = Children.toArray(children) as { key: string; props?: { header?: { active?: boolean } } }[];
     return childrenArray[childrenArray.length - 1]?.props?.header?.active === true;
 };

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { chain } from '@react-aria/utils';
 import { Meta, StoryFn } from '@storybook/react';
 

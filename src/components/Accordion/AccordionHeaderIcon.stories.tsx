@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { AccordionHeaderIcon as AccordionHeaderIconComponent } from './AccordionHeaderIcon';
 import { AccordionHeaderIconProps } from './types';

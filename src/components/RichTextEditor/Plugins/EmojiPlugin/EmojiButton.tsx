@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { EmojiToolbarDropdown, KEY_EMOJI } from '@udecode/plate';
 import { IconFaceHappy16 } from '@foundation/Icon/Generated';
 import { ButtonWrapper, IconStylingWrapper, buttonStyles, getButtonClassNames } from '../helper';

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { CSSProperties, createContext, useContext } from 'react';
+import { CSSProperties, ReactNode, createContext, useContext } from 'react';
 import { Position, getEditorWrapperClassNames } from '../EditorPositioningWrapper';
 import { EditorResizeContextProvider } from './EditorResizeContext';
 import { defaultStyles } from '../utils';
@@ -21,7 +21,7 @@ export const RichTextEditorContext = createContext<RichTextEditorContextProps>({
 export const useRichTextEditorContext = () => useContext(RichTextEditorContext);
 
 type RichTextEditorProviderProps = {
-    children: React.ReactNode;
+    children: ReactNode;
     value: {
         styles: Record<string, CSSProperties>;
         position: Position;

@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { usePlateEditorRef } from '@udecode/plate';
-import React from 'react';
 import { useEditorResizeContext } from '../context/EditorResizeContext';
 import { useRichTextEditorContext } from '../context/RichTextEditorContext';
 import { EditorPositioningWrapper } from '../EditorPositioningWrapper';

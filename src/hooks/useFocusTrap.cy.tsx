@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactNode, useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { useFocusTrap } from '@hooks/useFocusTrap';
 import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
 import { Box } from '@components/Box';

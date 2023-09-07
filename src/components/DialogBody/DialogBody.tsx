@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import { DialogBodyProps, dialogPaddingMap } from '../../types/dialog';
 import { merge } from '@utilities/merge';
 

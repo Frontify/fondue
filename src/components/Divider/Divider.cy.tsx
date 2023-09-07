@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { Divider, DividerHeight, DividerStyle } from './Divider';
 
 const DEFAULT_COLOR = 'rgb(204, 204, 204)';

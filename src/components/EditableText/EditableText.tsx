@@ -1,12 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, {
+import {
     ChangeEvent,
     FocusEvent,
     FocusEventHandler,
     KeyboardEvent,
     KeyboardEventHandler,
     ReactElement,
+    cloneElement,
     useEffect,
     useRef,
     useState,
@@ -149,7 +150,7 @@ export const EditableText = ({
     // Clone Child and add ref to Children
     const ChildrenWithRef =
         children &&
-        React.cloneElement(children, {
+        cloneElement(children, {
             ref: childRef,
         });
 

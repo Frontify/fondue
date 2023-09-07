@@ -3,7 +3,7 @@
 import { ColorPreview } from '@components/ColorPicker';
 import { ColorPicker, ColorPickerProps } from '@components/ColorPicker/ColorPicker';
 import { Flyout } from '@components/Flyout/Flyout';
-import React, { ReactElement, useState } from 'react';
+import { ReactElement, useState } from 'react';
 import { Color, ColorFormat } from '../../types/colors';
 import { ColorInputTrigger } from './ColorPickerTrigger';
 

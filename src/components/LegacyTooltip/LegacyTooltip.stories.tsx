@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Meta, StoryFn } from '@storybook/react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { BrightHeaderStyle } from './BrightHeader';
 import { LegacyTooltip, LegacyTooltipProps, TooltipAlignment, TooltipPosition } from './LegacyTooltip';
 import { IconExclamationMarkCircle16Filled, IconExclamationMarkTriangle16, IconIcon } from '@foundation/Icon/Generated';

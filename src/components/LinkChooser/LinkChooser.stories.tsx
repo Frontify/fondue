@@ -2,7 +2,7 @@
 
 import { Validation } from '@utilities/validation';
 import { Meta, StoryFn } from '@storybook/react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { LinkChooser as LinkChooserComponent } from './LinkChooser';
 import { data } from './mock/data';
 import { extraSections } from './sections';

@@ -1,7 +1,7 @@
 /* eslint-disable react/display-name */
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ForwardedRef, forwardRef } from 'react';
+import { ForwardedRef, forwardRef } from 'react';
 import { IconCaretDown12 } from '@foundation/Icon/Generated';
 import { merge } from '@utilities/merge';
 import { DropdownTriggerProps } from './types';

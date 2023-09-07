@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { MARK_SUPERSCRIPT, PlateRenderLeafProps } from '@udecode/plate';
 import { MarkupElement } from '../MarkupElement';
 

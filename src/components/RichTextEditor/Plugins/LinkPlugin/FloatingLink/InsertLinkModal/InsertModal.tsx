@@ -6,7 +6,7 @@ import { Checkbox } from '@components/Checkbox';
 import { FormControl } from '@components/FormControl';
 import { TextInput } from '@components/TextInput';
 import { IconCheckMark20 } from '@foundation/Icon/Generated';
-import React, { ReactElement } from 'react';
+import { MouseEvent, ReactElement, ReactNode } from 'react';
 import { InsertModalStateProps } from './types';
 
 type Props = {
@@ -15,11 +15,11 @@ type Props = {
     onUrlChange: (value: string) => void;
     onToggleTab: (checked: boolean) => void;
     onCancel: () => void;
-    onSave: (e: React.MouseEvent<HTMLButtonElement, MouseEvent> | KeyboardEvent | undefined) => void;
+    onSave: (event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent> | KeyboardEvent | undefined) => void;
     hasValues: boolean;
     isValidUrlOrEmpty: () => boolean | undefined;
     testId?: string;
-    children?: React.ReactNode;
+    children?: ReactNode;
 };
 
 export const InsertModal = ({

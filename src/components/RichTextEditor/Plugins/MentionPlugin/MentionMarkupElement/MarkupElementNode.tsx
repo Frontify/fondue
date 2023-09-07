@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { IconPeople12 } from '@foundation/Icon/Generated';
 import { MentionableCategory } from '../types';
 import { MarkupElementNodeComponentType, MarkupElementNodeType, MarkupElementProps } from './types';

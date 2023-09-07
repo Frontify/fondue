@@ -3,7 +3,7 @@
 import { InputLabel, InputLabelProps } from '@components/InputLabel/InputLabel';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
-import React, { ReactElement, ReactNode, cloneElement, isValidElement } from 'react';
+import { ReactElement, ReactNode, cloneElement, isValidElement } from 'react';
 
 export enum FormControlStyle {
     Primary = 'Primary',

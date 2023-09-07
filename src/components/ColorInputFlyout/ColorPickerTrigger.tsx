@@ -8,7 +8,7 @@ import { useMemoizedId } from '@hooks/useMemoizedId';
 import { useFocusRing } from '@react-aria/focus';
 import { toShortRgb } from '@utilities/colors';
 import { merge } from '@utilities/merge';
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import { TinyColor } from '@ctrl/tinycolor';
 import { ColorFormat } from '../../types/colors';
 import { ColorInputTitle } from './ColorInputTitle';

@@ -9,7 +9,7 @@ import {
     TableStateProps,
     useTableState,
 } from '@react-stately/table';
-import React, { Key, ReactNode, useRef, useState } from 'react';
+import { Key, ReactNode, useRef, useState } from 'react';
 import { TableCell, TableCellType } from './TableCell';
 import { TableColumnHeader, TableColumnHeaderType } from './TableColumnHeader';
 import { TableHeaderRow } from './TableHeaderRow';

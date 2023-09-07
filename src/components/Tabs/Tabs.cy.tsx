@@ -5,7 +5,7 @@ import { TabItem, TabItemProps } from '@components/Tabs/TabItem';
 import { TabSize, Tabs, TabsPaddingX } from '@components/Tabs/Tabs';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { IconIcon } from '@foundation/Icon/Generated';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const data: TabItemProps[] = [
     {

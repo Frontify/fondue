@@ -7,7 +7,7 @@ import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import React, { ReactElement, useRef } from 'react';
+import { ReactElement, useRef } from 'react';
 
 export enum AddBlockButtonDirection {
     Horizontal = 'Horizontal',

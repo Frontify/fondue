@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { DialogHeader } from './DialogHeader';
 import { IconIcon } from '@foundation/Icon/Generated';
 import { Badge, BadgeStyle } from '@components/Badge';

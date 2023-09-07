@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { createContext, useContext } from 'react';
+import { ReactNode, createContext, useContext } from 'react';
 import { useEditorResize } from '../hooks';
 import { PlateWrapper } from '../EditorPositioningWrapper/PlateWrapper';
 
@@ -15,7 +15,7 @@ const EditorResizeContext = createContext<EditorResizeContextProps>({
 export const useEditorResizeContext = () => useContext(EditorResizeContext);
 
 type EditorResizeContextProviderProps = {
-    children: React.ReactNode;
+    children: ReactNode;
 };
 
 export const EditorResizeContextProvider = ({ children }: EditorResizeContextProviderProps) => {

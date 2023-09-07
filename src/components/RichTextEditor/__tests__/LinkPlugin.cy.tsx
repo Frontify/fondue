@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ELEMENT_LINK, ELEMENT_PARAGRAPH } from '@udecode/plate';
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import { LinkPlugin, PluginComposer } from '../Plugins';
 import { RichTextEditor } from '../RichTextEditor';
 import { insertTextAndOpenToolbar } from './fixtures/RichTextEditor';

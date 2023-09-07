@@ -6,7 +6,7 @@ import { IconCheckMark, IconGridRegular, IconMagnifier, IconStackVertical } from
 import { IconSize } from '@foundation/Icon/IconSize';
 import { isColorLight, toShortRgb } from '@utilities/colors';
 import { merge } from '@utilities/merge';
-import React, { ReactElement, useEffect, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import { TinyColor } from '@ctrl/tinycolor';
 import { ColorPickerProps } from './ColorPicker';
 

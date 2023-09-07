@@ -6,7 +6,7 @@ import { useDialog } from '@react-aria/dialog';
 import { DismissButton, useModal, useOverlay } from '@react-aria/overlays';
 import { mergeProps } from '@react-aria/utils';
 import { merge } from '@utilities/merge';
-import React, { Children, ForwardRefRenderFunction, HTMLAttributes, RefObject, forwardRef } from 'react';
+import { Children, ForwardRefRenderFunction, HTMLAttributes, RefObject, forwardRef } from 'react';
 import { FlyoutProps } from '.';
 
 type OverlayProps = Omit<FlyoutProps, 'trigger' | 'onOpenChange' | 'onConfirm' | 'legacyFooter' | 'onCancel'> & {

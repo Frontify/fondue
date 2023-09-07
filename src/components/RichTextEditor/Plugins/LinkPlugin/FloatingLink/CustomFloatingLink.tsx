@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { TEditableProps, useFloatingLinkSelectors } from '@udecode/plate';
-import React from 'react';
 import { EditModal } from './EditLinkModal';
 import { FloatingLink } from './FloatingLink';
 import { InsertLinkModal } from './InsertLinkModal/InsertLinkModal';

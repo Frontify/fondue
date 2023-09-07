@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Modal } from './Modal';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
 import { Meta, StoryFn } from '@storybook/react';
 import { TextInput } from '@components/TextInput';

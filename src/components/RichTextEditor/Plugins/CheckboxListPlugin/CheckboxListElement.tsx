@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { CSSProperties } from 'react';
+import { CSSProperties } from 'react';
 import { ReactEditor } from 'slate-react';
 import { PlateRenderElementProps, TElement, TTodoListItemElement, getRootProps, setNodes } from '@udecode/plate';
 import { merge } from '@utilities/merge';

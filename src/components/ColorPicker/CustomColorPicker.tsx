@@ -3,7 +3,7 @@
 import { Dropdown } from '@components/Dropdown/Dropdown';
 import { TextInputType } from '@components/TextInput/TextInput';
 import { toLongRgb, toShortRgb } from '@utilities/colors';
-import React, { ReactElement, useEffect, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import { RgbaColorPicker } from 'react-colorful';
 import { TinyColor } from '@ctrl/tinycolor';
 import { Color, ColorFormat } from '../../types';

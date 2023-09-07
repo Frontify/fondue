@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { getColorDisplayValue, toShortRgb } from '@utilities/colors';
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import { TinyColor } from '@ctrl/tinycolor';
 import { Color, ColorFormat } from '../../types/colors';
 

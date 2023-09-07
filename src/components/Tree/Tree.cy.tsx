@@ -1,7 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
-
 import { OnTreeDropCallback, Tree, TreeItem } from '@components/Tree';
 import { TreeItemMock, treeItemsMock } from '@components/Tree/utils';
 

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { HTMLAttributes } from 'react';
+import { HTMLAttributes } from 'react';
 import { ContainerHTMLElement } from 'src/types/elements';
 
 export type BoxProps = {
