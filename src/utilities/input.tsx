@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import { Validation, validationClassMap } from './validation';
 import { merge } from './merge';
 
