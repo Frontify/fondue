@@ -2,7 +2,6 @@
 
 import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
 import { MARK_SUBSCRIPT, MarkToolbarButton, getPluginType } from '@udecode/plate';
-import React from 'react';
 import { ButtonWrapper, IconStylingWrapper, buttonStyles, getButtonClassNames } from '../helper';
 import { PluginButtonProps } from '../types';
 import IconSuperscript16 from '@foundation/Icon/Generated/IconSuperscript16';

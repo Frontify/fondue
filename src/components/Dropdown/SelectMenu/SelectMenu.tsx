@@ -7,7 +7,7 @@ import { MenuItemProps } from '@components/MenuItem/MenuItem';
 import { AriaListBoxOptions, useListBox } from '@react-aria/listbox';
 import { ListState } from '@react-stately/list';
 import { merge } from '@utilities/merge';
-import React, { ReactElement, useRef } from 'react';
+import { ReactElement, useRef } from 'react';
 import { SelectMenuItem } from './SelectMenuItem';
 import { SelectMenuSection } from './SelectMenuSection';
 

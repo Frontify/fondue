@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { ELEMENT_LI, ELEMENT_LIC, ELEMENT_OL } from '@udecode/plate';
 import { OrderedListPlugin, PluginComposer, UnorderedListPlugin } from '../Plugins';
 import { RichTextEditor } from '../RichTextEditor';

@@ -5,7 +5,7 @@ import { IconCalendar } from '@foundation/Icon/Generated';
 import { IconCaretDown, IconCaretUp, IconSize } from '@foundation/Icon/index';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
-import React, { ReactNode, forwardRef } from 'react';
+import { ReactNode, forwardRef } from 'react';
 
 type DatePickerTriggerProps = {
     placeHolder?: string;

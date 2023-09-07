@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { Card, CardProps } from './Card';
 import { SegmentedControls } from '@components/SegmentedControls/SegmentedControls';

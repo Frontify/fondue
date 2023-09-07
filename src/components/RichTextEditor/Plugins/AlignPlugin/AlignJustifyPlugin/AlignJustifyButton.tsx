@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { AlignToolbarButton, someNode, useEventPlateId, usePlateEditorState } from '@udecode/plate';
 import { IconTextAlignmentJustify16 } from '@foundation/Icon/Generated';
 import { PluginButtonProps } from '../../types';

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { EditableMode, EditableText, EditableTextProps } from '@components/EditableText/EditableText';
 import { StoryFn } from '@storybook/react';
 import { IconSize } from '@foundation/Icon/IconSize';

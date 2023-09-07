@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement, cloneElement } from 'react';
+import { ReactElement, cloneElement } from 'react';
 import { merge } from '@utilities/merge';
 import {
     IconCheckMark,

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import { ComboboxItemProps } from '@udecode/plate';
 import { MentionItemData, MentionableCategory } from '../types';
 import { IconPeople12, IconPerson12, IconTarget12 } from '@foundation/Icon/Generated';

@@ -7,7 +7,7 @@ import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/But
 import { IconSize } from '@foundation/Icon/IconSize';
 import { action } from '@storybook/addon-actions';
 import { Meta, StoryFn } from '@storybook/react';
-import React, { ReactElement, useEffect, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import { Column, Row, SelectionMode, SortDirection, Table, TableProps } from './Table';
 import { IconDotsVertical, IconFaceHappy } from '@foundation/Icon/Generated';
 

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
+import { Children, ReactNode } from 'react';
 import {
     DimensionUnity,
     GAP_X_MAPPING,
@@ -18,7 +18,7 @@ export type GridProps = {
     column?: number;
     spacingX?: SpacingValue;
     spacingY?: SpacingValue;
-    children?: React.ReactNode;
+    children?: ReactNode;
     width?: `${number}${DimensionUnity}`;
     rowHeight?: `${number}${DimensionUnity}` | 'auto';
     padding?: SpacingValue;
@@ -51,7 +51,7 @@ export const Grid = ({
     const marginClassName = SPACING_VALUES.includes(padding) ? MARGIN_VALUES_MAP[margin] : MARGIN_VALUES_MAP[0];
     let childrenLength = 0;
 
-    React.Children.map(children, (child) => {
+    Children.map(children, (child) => {
         childrenLength++;
         return child;
     });

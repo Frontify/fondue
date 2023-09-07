@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Menu, MenuProps } from '../Menu';
 import { MenuItem } from '@components/MenuItem';
 import { Button } from '@components/Button';

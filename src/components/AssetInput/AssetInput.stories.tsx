@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Meta, StoryFn } from '@storybook/react';
-import React from 'react';
 import { assetInputActions } from './asset-input-actions';
 import { AssetInput, AssetInputProps, AssetInputSize } from './AssetInput';
 import { EXAMPLE_IMAGES, MIXED_ASSETS } from './example-assets';

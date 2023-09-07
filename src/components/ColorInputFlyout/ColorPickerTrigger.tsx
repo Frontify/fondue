@@ -8,8 +8,8 @@ import { useMemoizedId } from '@hooks/useMemoizedId';
 import { useFocusRing } from '@react-aria/focus';
 import { toShortRgb } from '@utilities/colors';
 import { merge } from '@utilities/merge';
-import React, { ReactElement } from 'react';
-import tinycolor from 'tinycolor2';
+import { ReactElement } from 'react';
+import { TinyColor } from '@ctrl/tinycolor';
 import { ColorFormat } from '../../types/colors';
 import { ColorInputTitle } from './ColorInputTitle';
 import { ColorPickerFlyoutProps } from './ColorPickerFlyout';
@@ -33,7 +33,7 @@ export const ColorInputTrigger = ({
     onDelete,
 }: ColorInputTriggerProps): ReactElement => {
     const { isFocusVisible, focusProps } = useFocusRing();
-    const backgroundColor = currentColor ? tinycolor(toShortRgb(currentColor)).toRgbString() : '';
+    const backgroundColor = currentColor ? new TinyColor(toShortRgb(currentColor)).toRgbString() : '';
 
     return (
         <Trigger

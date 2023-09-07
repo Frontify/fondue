@@ -10,7 +10,6 @@ import {
     getNodeAncestors,
     usePlateEditorRef,
 } from '@udecode/plate';
-import React from 'react';
 import { MarkupElement } from '../../MarkupElement';
 
 const LIST_TYPES = [

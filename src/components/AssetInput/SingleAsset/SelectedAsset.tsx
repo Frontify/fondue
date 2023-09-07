@@ -13,7 +13,7 @@ import { useMenuTriggerState } from '@react-stately/menu';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { AnimatePresence, motion } from 'framer-motion';
-import React, { ReactElement, useEffect, useRef, useState } from 'react';
+import { ReactElement, useEffect, useRef, useState } from 'react';
 import { AssetInputProps, AssetInputSize, AssetType } from '../AssetInput';
 import { AssetThumbnail } from '../AssetThumbnail';
 import { AssetSubline } from './AssetSubline';

@@ -4,7 +4,6 @@ import { getHotkeyByPlatform } from '@components/RichTextEditor/helpers/getHotke
 import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
 import { IconTextFormatItalic16 } from '@foundation/Icon/Generated';
 import { MarkToolbarButton, getPluginType } from '@udecode/plate';
-import React from 'react';
 import { ButtonWrapper, IconStylingWrapper, buttonStyles, getButtonClassNames } from '../helper';
 import { PluginButtonProps } from '../types';
 

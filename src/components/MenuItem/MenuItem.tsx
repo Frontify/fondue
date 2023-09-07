@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { MouseEvent, ReactNode } from 'react';
+import { FocusEvent, MouseEvent, ReactNode } from 'react';
 import { merge } from '@utilities/merge';
 import { IconCaretRight, IconCheckMark } from '@foundation/Icon/Generated';
 import { IconSize } from '@foundation/Icon/IconSize';
@@ -17,9 +17,9 @@ export type MenuItemProps = {
     /** @deprecated this prop is not being used anymore */
     type?: string;
     link?: string;
-    onBlur?: <T extends HTMLButtonElement | HTMLAnchorElement>(event: React.FocusEvent<T>) => void;
+    onBlur?: <T extends HTMLButtonElement | HTMLAnchorElement>(event: FocusEvent<T>) => void;
     onClick?: <T extends HTMLButtonElement | HTMLAnchorElement>(event: MouseEvent<T>) => void;
-    onFocus?: <T extends HTMLButtonElement | HTMLAnchorElement>(event: React.FocusEvent<T>) => void;
+    onFocus?: <T extends HTMLButtonElement | HTMLAnchorElement>(event: FocusEvent<T>) => void;
     onMouseEnter?: <T extends HTMLButtonElement | HTMLAnchorElement>(event: MouseEvent<T>) => void;
     onMouseOut?: <T extends HTMLButtonElement | HTMLAnchorElement>(event: MouseEvent<T>) => void;
     onMouseOver?: <T extends HTMLButtonElement | HTMLAnchorElement>(event: MouseEvent<T>) => void;

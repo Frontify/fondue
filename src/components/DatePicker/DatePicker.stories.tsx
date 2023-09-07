@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { DatePicker, DatePickerProps, ReactDatePickerRef } from './DatePicker';
 import { FormControl } from '@components/FormControl';

@@ -6,7 +6,7 @@ import { getInteractionModality } from '@react-aria/interactions';
 import { useOption } from '@react-aria/listbox';
 import { merge } from '@utilities/merge';
 import { useActor } from '@xstate/react';
-import React, { ReactElement, useRef } from 'react';
+import { ReactElement, useRef } from 'react';
 import { IconOptions } from './LinkChooser';
 import { DropdownState, LinkChooserState, SectionState } from './state/types';
 import { ImageMenuItemProps, SearchResult, SearchResultOptionProps } from './types';

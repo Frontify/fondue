@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { Children, ReactElement, ReactNode, cloneElement, isValidElement } from 'react';
+import { Children, ReactElement, ReactNode, cloneElement, isValidElement } from 'react';
 import { ButtonProps, ButtonSize } from '@components/Button';
 import { merge } from '@utilities/merge';
 

@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { Heading } from './Heading';
 
 const classRecord = {
@@ -14,10 +13,13 @@ const classRecord = {
     weight: ['strong', 'tw-font-bold'],
 };
 
-const headingProps = Object.entries(classRecord).reduce((acc, [key, [value]]) => {
-    acc[key] = value;
-    return acc;
-}, {} as Record<string, string>);
+const headingProps = Object.entries(classRecord).reduce(
+    (acc, [key, [value]]) => {
+        acc[key] = value;
+        return acc;
+    },
+    {} as Record<string, string>,
+);
 
 describe('Heading', () => {
     it('should render headings as span by default', () => {

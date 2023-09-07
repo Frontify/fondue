@@ -6,7 +6,7 @@ import { IconArrowCircleUp, IconImageStack } from '@foundation/Icon/';
 import { IconProps } from '@foundation/Icon/IconProps';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { merge } from '@utilities/merge';
-import React, { ChangeEvent, ReactElement, useRef } from 'react';
+import { ChangeEvent, ReactElement, useRef } from 'react';
 import { MultiAssetPreview } from './MultiAssetPreview';
 import { SelectedAsset } from './SingleAsset/SelectedAsset';
 

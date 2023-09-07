@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { removeFragmentsAndEnrichChildren } from './removeFragmentsAndEnrichChildren';
 
 const Child1 = ({ id }: { id?: string }) => <div id={id}>Child 1</div>;

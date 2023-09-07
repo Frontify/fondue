@@ -3,14 +3,14 @@
 import { Dropdown } from '@components/Dropdown/Dropdown';
 import { TextInputType } from '@components/TextInput/TextInput';
 import { toLongRgb, toShortRgb } from '@utilities/colors';
-import React, { ReactElement, useEffect, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import { RgbaColorPicker } from 'react-colorful';
-import tinycolor from 'tinycolor2';
+import { TinyColor } from '@ctrl/tinycolor';
 import { Color, ColorFormat } from '../../types';
 import { ColorInput, DecoratorPosition } from './ColorInput';
 import { ColorPickerProps } from './ColorPicker';
 
-const convertToHex = (color: Color) => tinycolor(toShortRgb(color)).toHex();
+const convertToHex = (color: Color) => new TinyColor(toShortRgb(color)).toHex();
 
 export const CustomColorPicker = ({
     currentColor,
@@ -29,8 +29,8 @@ export const CustomColorPicker = ({
     const [alphaValue, setAlphaValue] = useState(alpha);
 
     const handleHexChange = () => {
-        const parsedHex = tinycolor(hexInput);
-        if (parsedHex.isValid()) {
+        const parsedHex = new TinyColor(hexInput);
+        if (parsedHex.isValid) {
             onSelect(toLongRgb(parsedHex.toRgb()));
         }
     };

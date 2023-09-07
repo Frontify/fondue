@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ELEMENT_LINK, ELEMENT_PARAGRAPH } from '@udecode/plate';
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import { LinkPlugin, PluginComposer } from '../Plugins';
 import { RichTextEditor } from '../RichTextEditor';
 import { insertTextAndOpenToolbar } from './fixtures/RichTextEditor';
@@ -128,7 +128,7 @@ describe('Link Plugin', () => {
 
         cy.get(BUTTON).eq(1).click();
         cy.get('[contenteditable=true] a').should('have.attr', 'href', link + additionalLink);
-        cy.get('[contenteditable=true] a').should('have.attr', 'target', '_blank');
+        cy.get('[contenteditable=true] a').should('have.attr', 'target', '_self');
     });
 
     it('should remove link', () => {

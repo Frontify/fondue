@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { IconEraser16 } from '@foundation/Icon/Generated';
 import { ResetFormattingToolbarButton } from './ResetFormattingToolbarButton';
 import { ButtonWrapper, IconStylingWrapper, buttonStyles, getButtonClassNames } from '../../helper';

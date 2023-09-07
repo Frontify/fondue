@@ -8,7 +8,7 @@ import { MenuItemType } from '@components/Dropdown/SelectMenu/SelectMenu';
 import { useMenu } from '@react-aria/menu';
 import { useTreeState } from '@react-stately/tree';
 import { FocusStrategy } from '@react-types/shared';
-import React, { ReactElement, useRef } from 'react';
+import { ReactElement, useRef } from 'react';
 
 export type ActionMenuItemType = MenuItemType & { onClick: () => void };
 export type ActionMenuSwitchItemType = MenuItemType & {

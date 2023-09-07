@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { useFloatingLinkUrlInput } from '@udecode/plate';
 import { IconPen16, IconTrashBin16 } from '@foundation/Icon/Generated';
 import { FloatingLink } from '../FloatingLink';

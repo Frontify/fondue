@@ -4,19 +4,17 @@ import { TElement } from '@udecode/plate';
 import { reactCssPropsToCss } from '../utils/reactCssPropsToCss';
 import { CSSPropertiesHover } from '../types';
 
-export const buttonNode = (
-    node: TElement,
-    children: string,
-    defaultClassNames: string,
-    styles: Record<string, CSSPropertiesHover>,
-) => {
-    const buttonTypeString = (node.buttonType as string) ?? 'primary';
+export type ButtonStylesType = Record<string, Record<string, CSSPropertiesHover>>;
+
+export const buttonNode = (node: TElement, children: string, defaultClassNames: string, styles: ButtonStylesType) => {
+    const buttonStyles = styles['button-plugin'];
+    const buttonTypeString = (node.buttonStyle as string) ?? 'primary';
     const buttonType = `button${buttonTypeString.charAt(0).toUpperCase()}${buttonTypeString.slice(1)}`;
-    const buttonStyle = styles[buttonType];
+    const buttonStyle = buttonStyles[buttonType];
 
     const defaultStyles = reactCssPropsToCss(buttonStyle);
     return `<a href="${node.url}"
-                target="${node.target ?? '_blank'}"
+                target="${node.target ?? '_self'}"
                 dir="auto"
                 style="${defaultStyles}"
                 class="${defaultClassNames}"

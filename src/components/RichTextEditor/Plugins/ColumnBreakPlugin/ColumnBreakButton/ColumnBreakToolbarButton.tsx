@@ -9,7 +9,6 @@ import {
     useEventPlateId,
     usePlateEditorState,
 } from '@udecode/plate';
-import React from 'react';
 import { getButtonClassNames } from '../../helper';
 import { toggleColumnBreak } from '../onKeyDownColumnBreak';
 import { getColumnBreakCount } from '../utils/getColumnBreakCount';

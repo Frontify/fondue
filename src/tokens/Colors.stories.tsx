@@ -7,7 +7,6 @@
 import tokens from '@frontify/fondue-tokens';
 
 import { Meta, StoryFn } from '@storybook/react';
-import React from 'react';
 
 export default {
     title: 'Tokens',

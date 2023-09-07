@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement, ReactNode, useRef, useState } from 'react';
+import { ReactElement, ReactNode, useRef, useState } from 'react';
 import { useButton } from '@react-aria/button';
 import { merge } from '@utilities/merge';
 import { PressEvent } from '@react-types/shared';

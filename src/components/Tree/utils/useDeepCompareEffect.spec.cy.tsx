@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { mount } from 'cypress/react18';
 import { useDeepCompareEffect } from './useDeepCompareEffect';
 

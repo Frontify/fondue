@@ -2,7 +2,6 @@
 
 import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
 import { IconCross } from '@foundation/Icon/Generated';
-import React from 'react';
 import { ButtonGroup } from './ButtonGroup';
 
 describe('ButtonGroup Composition', () => {

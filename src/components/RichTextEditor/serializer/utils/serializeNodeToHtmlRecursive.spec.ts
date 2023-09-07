@@ -269,6 +269,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
             children: [
                 {
                     type: 'button',
+                    target: '_self',
                     url: 'https://frontify.com',
                     buttonStyle: 'primary',
                     children: [{ text: 'button' }],
@@ -280,7 +281,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
 
         expect(result).to.contain('button');
         expect(result).to.contain('href="https://frontify.com"');
-        expect(result).to.contain('target="_blank"');
+        expect(result).to.contain('target="_self"');
     });
 
     it('serializes a button with target _blank to html', () => {
@@ -370,7 +371,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
         const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
 
         expect(result).to.be.equal(
-            '<p dir="auto" class="tw-break-words" style="font-size: 14px; font-style: normal; font-weight: normal;"><a dir="auto" class="tw-break-words" style="font-size: 14px; font-style: normal; color: rgb(113, 89, 215); text-decoration: underline; cursor: pointer;" target="_blank" href="https://frontify.com">This is a Link.</a></p>',
+            '<p dir="auto" class="tw-break-words" style="font-size: 14px; font-style: normal; font-weight: normal;"><a dir="auto" class="tw-break-words" style="font-size: 14px; font-style: normal; color: rgb(113, 89, 215); text-decoration: underline; cursor: pointer;" target="_self" href="https://frontify.com">This is a Link.</a></p>',
         );
     });
 

@@ -2,7 +2,6 @@
 
 import { action } from '@storybook/addon-actions';
 import { Meta, StoryFn } from '@storybook/react';
-import React from 'react';
 import { RadioButton, RadioButtonEmphasis } from './RadioButton';
 import { RadioList, RadioListDirection, RadioListProps } from './RadioList';
 

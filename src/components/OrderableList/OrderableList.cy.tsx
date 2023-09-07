@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { DragProperties, ItemDragState, OrderableList, OrderableListItem, OrderableListProps } from '.';
 
 const LIST_ID = '[data-test-id=orderable-list]';

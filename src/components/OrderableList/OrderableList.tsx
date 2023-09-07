@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 
 import { CollectionItem } from './CollectionItem';
 import { OrderableListItem, OrderableListProps } from './types';
@@ -55,7 +55,7 @@ export const OrderableList = <T extends object>({
         <DndProvider backend={HTML5Backend}>
             <div className="tw-outline-none" data-test-id={dataTestId}>
                 {itemsState.map((item, index) => (
-                    <React.Fragment key={`dropzone-orderable-list-key-${index}`}>
+                    <Fragment key={`dropzone-orderable-list-key-${index}`}>
                         <DropZone
                             key={`orderable-list-item-${index}-before`}
                             data={{
@@ -83,7 +83,7 @@ export const OrderableList = <T extends object>({
                                 accept={listId}
                             />
                         )}
-                    </React.Fragment>
+                    </Fragment>
                 ))}
             </div>
         </DndProvider>

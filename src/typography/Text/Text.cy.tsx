@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { Text } from './Text';
 
 const classRecord = {
@@ -14,10 +13,13 @@ const classRecord = {
     weight: ['strong', 'tw-font-medium'],
 };
 
-const textProps = Object.entries(classRecord).reduce((acc, [key, [value]]) => {
-    acc[key] = value;
-    return acc;
-}, {} as Record<string, string>);
+const textProps = Object.entries(classRecord).reduce(
+    (acc, [key, [value]]) => {
+        acc[key] = value;
+        return acc;
+    },
+    {} as Record<string, string>,
+);
 
 describe('Text', () => {
     it('should render text as span by default', () => {

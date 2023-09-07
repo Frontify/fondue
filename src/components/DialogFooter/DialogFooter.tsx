@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import { Button, ButtonEmphasis, ButtonSize } from '@components/Button';
 import { Box } from '@components/Box';
 import { DialogFooterProps, dialogPaddingMap } from '../../types/dialog';

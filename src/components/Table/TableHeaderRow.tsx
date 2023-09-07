@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactNode, useRef } from 'react';
+import { ReactNode, useRef } from 'react';
 
 type TableHeaderRowProps = {
     children: ReactNode;

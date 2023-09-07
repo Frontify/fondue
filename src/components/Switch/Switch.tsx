@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { MouseEvent, ReactElement, useMemo } from 'react';
+import { MouseEvent, ReactElement, useMemo } from 'react';
 import { merge } from '@utilities/merge';
 import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';

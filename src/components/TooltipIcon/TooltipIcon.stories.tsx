@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { TooltipIcon, TooltipIconProps, TooltipIconTriggerStyle } from './TooltipIcon';
 import { IconSize } from '@foundation/Icon/IconSize';

@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { Popover, PopoverComponentProps } from '@components/Popover/Popover';
 import { Button } from '@components/Button';
