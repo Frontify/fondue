@@ -17,25 +17,26 @@ export default {
             description: 'Add decorator element to start of the input',
             name: 'decorator',
             defaultValue: undefined,
-            control: { type: 'React Element' },
+            control: 'React Element',
         },
-        incrementable: {
+        controls: {
             description: 'Enable increment buttons',
-            name: 'incrementable',
+            name: 'controls',
             defaultValue: false,
-            control: { type: 'boolean' },
+            control: 'boolean',
         },
         status: {
             description: 'Set the current status of the input',
             name: 'status',
+            options: Object.values(Validation),
+            control: { type: 'select' },
             defaultValue: Validation.Default,
-            control: { type: Validation },
         },
         stepInterval: {
             description: 'Set the incremental value',
             name: 'stepInterval',
             defaultValue: 10,
-            control: { type: 'number' },
+            control: 'number',
         },
         onChange: {
             description: 'onChange callback',
@@ -55,7 +56,7 @@ export const BaseUsage: StoryFn<NumberInputProps> = (args) => {
 };
 
 export const WithDecoratorAndIncrementable: StoryFn<NumberInputProps> = (args) => {
-    return <NumberInput {...args} incrementable decorator={<IconNook16 />} stepInterval={20} />;
+    return <NumberInput {...args} controls decorator={<IconNook16 />} stepInterval={20} />;
 };
 
 export const WithErrorLessThanZero: StoryFn<NumberInputProps> = (args) => {
@@ -63,5 +64,5 @@ export const WithErrorLessThanZero: StoryFn<NumberInputProps> = (args) => {
     const handleValidation = (value: number) => {
         setStatus(value < 0 ? Validation.Error : Validation.Success);
     };
-    return <NumberInput {...args} onChange={handleValidation} incrementable status={status} defaultValue={3} />;
+    return <NumberInput {...args} onChange={handleValidation} controls status={status} defaultValue={3} />;
 };

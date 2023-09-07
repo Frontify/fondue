@@ -5,9 +5,9 @@ import { NumberInputIncrement, NumberInputProps } from './types';
 import { merge } from '@utilities/merge';
 import { IconCheckMark16, IconExclamationMarkTriangle16, IconMinus16, IconPlus16 } from '@foundation/Icon';
 import { useMemoizedId } from '@hooks/useMemoizedId';
-import { FOCUS_WITHIN_STYLE } from '@utilities/focusStyle';
 import { Validation, validationClassMap } from '@utilities/validation';
 import { KeyboardEvent } from '@react-types/shared';
+import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle';
 
 const INCREMENT_KEYS = ['ArrowUp', 'ArrowRight'];
 const DECREMENT_KEYS = ['ArrowDown', 'ArrowLeft'];
@@ -20,7 +20,7 @@ export const NumberInput = ({
     readOnly,
     status = Validation.Default,
     decorator,
-    incrementable,
+    controls,
     placeholder,
     stepInterval = 10,
     title,
@@ -138,9 +138,16 @@ export const NumberInput = ({
                     </span>
                 );
             case Validation.Error:
+            case Validation.Warning:
                 return (
                     <span className={validationClassMap[status]} data-test-id={`${dataTestId}-status-icon`}>
                         <IconExclamationMarkTriangle16 />
+                    </span>
+                );
+            case Validation.Loading:
+                return (
+                    <span className={validationClassMap[status]} data-test-id={`${dataTestId}-status-icon`}>
+                        <LoadingCircle size={LoadingCircleSize.Small} />
                     </span>
                 );
             default:
@@ -156,7 +163,6 @@ export const NumberInput = ({
         <div
             className={merge([
                 'tw-flex tw-items-center tw-h-9 tw-gap-2 tw-px-3 tw-transition tw-text-s tw-font-sans tw-relative tw-bg-white dark:tw-bg-transparent tw-border tw-rounded tw-line-strong hover:tw-line-x-strong focus-within:tw-line-xx-strong',
-                FOCUS_WITHIN_STYLE,
                 status ? validationClassMap[status] : '',
             ])}
             data-test-id={dataTestId}
@@ -199,9 +205,10 @@ export const NumberInput = ({
                 title={title}
                 data-test-id={`${dataTestId}-input`}
             />
-            {incrementable ? (
+            {controls ? (
                 <>
                     <button
+                        className={'tw-p-1 hover:tw-bg-box-neutral hover:tw-text-box-selected-inverse'}
                         type="button"
                         onClick={(event) => handleCount(NumberInputIncrement.DECREMENT, 1, event.shiftKey, true)}
                         onMouseDown={(event) =>
@@ -219,6 +226,7 @@ export const NumberInput = ({
                         <IconMinus16 />
                     </button>
                     <button
+                        className={'tw-p-1 hover:tw-bg-box-neutral hover:tw-text-box-selected-inverse'}
                         type="button"
                         onClick={(event) => handleCount(NumberInputIncrement.INCREMENT, 1, event.shiftKey, true)}
                         onMouseDown={(event) =>
