@@ -31,7 +31,7 @@
         "build": "pnpm clean && pnpm generate:icons && pnpm generate:componentsEnum && pnpm build:library && pnpm build:extractedThirdPartyStyles",
         "build:extractedThirdPartyStyles": "concat src/components/**/*.css | postcss > dist/extractedThirdPartyStyles.css",
         "build:library": "vite build",
-        "build:storybook": "storybook build",
+        "build:storybook": "pnpm generate:icons && pnpm generate:componentsEnum && storybook build",
         "dev": "cross-env NODE_ENV=development pnpm dev:library",
         "dev:library": "vite build --emptyOutDir false --watch",
         "clean": "rimraf dist",
