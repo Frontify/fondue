@@ -46,7 +46,7 @@ export const TreeItemShadowClassMap: Record<TreeItemPropsSizing, string> = {
     'x-large': 'tw-shadow-xl',
 };
 
-export const TreeItemBorderRadiousClassMap: Record<TreeItemPropsSizing, string> = {
+export const TreeItemBorderRadiusClassMap: Record<TreeItemPropsSizing, string> = {
     none: 'tw-rounded-none',
     'x-small': 'tw-rounded-sm',
     small: 'tw-rounded',
@@ -74,7 +74,7 @@ export type TreeItemStyling = {
     spacingY?: TreeItemPropsSizing;
     contentHight?: TreeItemContentFit;
     shadow?: TreeItemPropsSizing;
-    borderRadious?: TreeItemPropsSizing;
+    borderRadius?: TreeItemPropsSizing;
     borderWidth?: Exclude<TreeItemPropsSizing, 'x-large'>;
     borderStyle?: TreeItemBorderStyle;
 };

@@ -10,7 +10,7 @@ import type { TreeItemStyling, TreeProps } from '@components/Tree/types';
 import {
     TreeItem,
     TreeItemBorderClassMap,
-    TreeItemBorderRadiousClassMap,
+    TreeItemBorderRadiusClassMap,
     TreeItemBorderStyleClassMap,
     TreeItemShadowClassMap,
     TreeItemSpacingClassMap,
@@ -42,7 +42,7 @@ export default {
         spacingY: 'none',
         contentHight: 'single-line',
         shadow: 'none',
-        borderRadious: 'small',
+        borderRadius: 'small',
         borderWidth: 'none',
         borderStyle: 'none',
     },
@@ -79,11 +79,11 @@ export default {
             mapping: [...Object.values(TreeItemShadowClassMap)],
             control: { type: 'select' },
         },
-        borderRadious: {
+        borderRadius: {
             table: { category: 'Item Style' },
-            name: 'itemStyle.borderRadious',
-            options: [...Object.keys(TreeItemBorderRadiousClassMap)],
-            mapping: [...Object.values(TreeItemBorderRadiousClassMap)],
+            name: 'itemStyle.borderRadius',
+            options: [...Object.keys(TreeItemBorderRadiusClassMap)],
+            mapping: [...Object.values(TreeItemBorderRadiusClassMap)],
             control: { type: 'select' },
         },
         borderWidth: {
@@ -179,7 +179,7 @@ const cleanProps = ({ ...args }) => {
             spacingY: args.spacingY,
             contentHight: args.contentHight,
             shadow: args.shadow,
-            borderRadious: args.borderRadious,
+            borderRadius: args.borderRadius,
             borderWidth: args.borderWidth,
             borderStyle: args.borderStyle,
         },
@@ -188,7 +188,7 @@ const cleanProps = ({ ...args }) => {
     delete args.spacingY;
     delete args.contentHight;
     delete args.shadow;
-    delete args.borderRadious;
+    delete args.borderRadius;
     delete args.borderWidth;
     delete args.borderStyle;
 
@@ -499,7 +499,7 @@ WithTreeItemsStyled.args = {
     spacingY: 'large',
     contentHight: 'content-fit',
     shadow: 'small',
-    borderRadious: 'large',
+    borderRadius: 'large',
     borderWidth: 'x-small',
     borderStyle: 'solid',
 };

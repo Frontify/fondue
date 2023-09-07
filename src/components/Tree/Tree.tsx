@@ -195,7 +195,7 @@ export const Tree = memo(
             spacingY: 'none',
             contentHight: 'single-line',
             shadow: 'none',
-            borderRadious: 'small',
+            borderRadius: 'small',
             borderWidth: 'none',
             borderStyle: 'none',
         },

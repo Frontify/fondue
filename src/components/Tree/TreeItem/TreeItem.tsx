@@ -15,7 +15,7 @@ import {
     type TreeDragMoveEvent,
     type TreeDragStartEvent,
     TreeItemBorderClassMap,
-    TreeItemBorderRadiousClassMap,
+    TreeItemBorderRadiusClassMap,
     TreeItemBorderStyleClassMap,
     type TreeItemProps,
     TreeItemShadowClassMap,
@@ -85,7 +85,7 @@ export const TreeItem = memo(
             spacingY: 'none',
             contentHight: 'single-line',
             shadow: 'none',
-            borderRadious: 'small',
+            borderRadius: 'small',
             borderWidth: 'none',
             borderStyle: 'none',
         },
@@ -294,7 +294,7 @@ export const TreeItem = memo(
                 backgroundClassName: merge([
                     'tw-block tw-absolute tw-inset-0 tw-transition-colors -tw-z-10',
                     itemStyle?.borderWidth !== 'none'
-                        ? TreeItemBorderRadiousClassMap[itemStyle?.borderRadious ?? 'small']
+                        ? TreeItemBorderRadiusClassMap[itemStyle?.borderRadius ?? 'small']
                         : '-tw-mx-2.5',
                     !isActive && !isSelected && 'group-active:tw-bg-box-neutral-pressed',
                     !isActive && isSelected
@@ -302,7 +302,7 @@ export const TreeItem = memo(
                         : 'group-hover:tw-bg-box-neutral',
                 ]),
             };
-        }, [isActive, isSelected, itemStyle?.borderRadious, itemStyle?.borderWidth, itemStyle?.spacingY]);
+        }, [isActive, isSelected, itemStyle?.borderRadius, itemStyle?.borderWidth, itemStyle?.spacingY]);
 
         const showContent = !isActive;
         const showChildren = isExpanded && !isActive;
@@ -325,7 +325,7 @@ export const TreeItem = memo(
         const containerBorder = itemStyle?.borderWidth
             ? merge([
                   TreeItemBorderClassMap[itemStyle?.borderWidth ?? 'none'],
-                  TreeItemBorderRadiousClassMap[itemStyle?.borderRadious ?? 'small'],
+                  TreeItemBorderRadiusClassMap[itemStyle?.borderRadius ?? 'small'],
                   TreeItemBorderStyleClassMap[itemStyle?.borderStyle ?? 'none'],
               ])
             : '';
@@ -336,7 +336,7 @@ export const TreeItem = memo(
             'tw-relative tw-z-0 tw-transition-colors tw-flex tw-items-center tw-leading-5 tw-width-full',
             TreeItemShadowClassMap[itemStyle.shadow ?? 'none'],
             isActive ? 'tw-border-dashed tw-border-2 tw-pr-0' : containerBorder,
-            isActive && TreeItemBorderRadiousClassMap[itemStyle?.borderRadious ?? 'small'],
+            isActive && TreeItemBorderRadiusClassMap[itemStyle?.borderRadius ?? 'small'],
             isActive ? containerActiveHeight : containerHeight,
             isActive &&
                 (canDrop
