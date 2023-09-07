@@ -3,7 +3,7 @@
 import { Meta, StoryFn } from '@storybook/react';
 import { NumberInput } from './NumberInput';
 import { NumberInputProps } from './types';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { IconNook16 } from '@foundation/Icon';
 import { Validation } from '@utilities/validation';
 

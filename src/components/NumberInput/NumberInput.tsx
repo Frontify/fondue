@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { NumberInputIncrement, NumberInputProps } from './types';
 import { merge } from '@utilities/merge';
 import { IconCheckMark16, IconExclamationMarkTriangle16, IconMinus16, IconPlus16 } from '@foundation/Icon';

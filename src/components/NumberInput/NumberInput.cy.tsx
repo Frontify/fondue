@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { NumberInput } from './NumberInput';
 import { IconNook16 } from '@foundation/Icon';
 import { Validation, validationClassMap } from '@utilities/validation';
@@ -77,37 +76,37 @@ describe('Number Input Component', () => {
     });
 
     it('should render increment buttons', () => {
-        cy.mount(<NumberInput incrementable />);
+        cy.mount(<NumberInput controls />);
         cy.get(NUMBER_INPUT_DECREMENT).should('be.visible');
         cy.get(NUMBER_INPUT_INCREMENT).should('be.visible');
     });
 
     it('should increase value by 1 on increment button click', () => {
-        cy.mount(<NumberInput incrementable />);
+        cy.mount(<NumberInput controls />);
         cy.get(NUMBER_INPUT_INCREMENT).click();
         cy.get(NUMBER_INPUT_ELEMENT).should('have.value', 1);
     });
 
     it('should increase value by 10 on increment button shift + click', () => {
-        cy.mount(<NumberInput incrementable />);
+        cy.mount(<NumberInput controls />);
         cy.get(NUMBER_INPUT_INCREMENT).click({ shiftKey: true });
         cy.get(NUMBER_INPUT_ELEMENT).should('have.value', 10);
     });
 
     it('should decrease value by 1 on decrement button click', () => {
-        cy.mount(<NumberInput incrementable />);
+        cy.mount(<NumberInput controls />);
         cy.get(NUMBER_INPUT_DECREMENT).click();
         cy.get(NUMBER_INPUT_ELEMENT).should('have.value', -1);
     });
 
     it('should decrease value by 10 on decrement button shift + click', () => {
-        cy.mount(<NumberInput incrementable />);
+        cy.mount(<NumberInput controls />);
         cy.get(NUMBER_INPUT_DECREMENT).click({ shiftKey: true });
         cy.get(NUMBER_INPUT_ELEMENT).should('have.value', -10);
     });
 
     it('should sequential increase value on shift + increment button hold', () => {
-        cy.mount(<NumberInput incrementable />);
+        cy.mount(<NumberInput controls />);
         cy.get(NUMBER_INPUT_INCREMENT).trigger('keydown', { keyCode: 16, release: false });
         cy.get(NUMBER_INPUT_INCREMENT).trigger('mousedown', { release: false });
         cy.wait(2000);
@@ -126,7 +125,7 @@ describe('Number Input Component', () => {
     });
 
     it('should sequential decrease value on shift + decrement button hold', () => {
-        cy.mount(<NumberInput incrementable />);
+        cy.mount(<NumberInput controls />);
         cy.get(NUMBER_INPUT_DECREMENT).trigger('keydown', { keyCode: 16, release: false });
         cy.get(NUMBER_INPUT_DECREMENT).trigger('mousedown', { release: false });
         cy.wait(2000);
