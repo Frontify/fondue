@@ -98,6 +98,9 @@ export default defineConfig({
         'process.env.SC_ATTR': JSON.stringify(process.env.SC_ATTR),
     },
     plugins: [react(), dts({ insertTypesEntry: true, rollupTypes: true }), bundleIconsInDevPlugin()],
+    optimizeDeps: {
+        include: ['react/jsx-runtime'],
+    },
     build: {
         lib: {
             entry: resolve(__dirname, 'src/index.ts'),
