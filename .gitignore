@@ -1,11 +1,14 @@
 **/.DS_Store
 node_modules
-dist
-storybook-static
+.idea
 
+# Build
+src/components/ComponentEnum.ts
+src/foundation/Icon/Generated
 !.src/foundation/Icon/Generated/.gitkeep
+storybook-static
+dist
 
+# Testing
 cypress/videos
 cypress/screenshots
-
-.idea
