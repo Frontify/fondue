@@ -2,8 +2,6 @@ name: Continuous Deployment
 
 on:
     workflow_dispatch:
-        branches:
-            - 'main'
     push:
         branches:
             - 'beta'
@@ -49,6 +47,9 @@ jobs:
             - name: Install dependencies
               run: pnpm install --frozen-lockfile
 
+            - name: Generate icons
+              run: pnpm generate:icons && pnpm generate:componentsEnum
+
             - name: Lint files
               run: pnpm run lint
 
@@ -86,6 +87,9 @@ jobs:
 
             - name: Install dependencies
               run: pnpm install --frozen-lockfile
+
+            - name: Generate icons
+              run: pnpm generate:icons && pnpm generate:componentsEnum
 
             - name: Typecheck files
               run: pnpm typecheck
@@ -130,6 +134,9 @@ jobs:
             - name: Install dependencies
               if: steps.npm_cache.outputs.cache-hit != 'true'
               run: pnpm install --frozen-lockfile
+
+            - name: Generate icons
+              run: pnpm generate:icons && pnpm generate:componentsEnum
 
             - name: Component Tests
               run: pnpm run test --spec $(node ./.github/lib/cypress-matrix.js ${{ env.NUMBER_OF_RUNNERS }} ${{ matrix.containers }})
