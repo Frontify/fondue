@@ -1,10 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { resolve } from 'path';
-import { PreRenderedAsset } from 'rollup';
+import type { PreRenderedAsset } from 'rollup';
 import { build } from 'esbuild';
 import { Plugin, defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
+import react from '@vitejs/plugin-react';
+
 import { dependencies as dependenciesMap, peerDependencies as peerDependenciesMap } from './package.json';
 
 const peerDependencies = Object.keys(peerDependenciesMap);
@@ -22,6 +24,7 @@ export const alias = {
 export const globals = {
     react: 'React',
     'react-dom': 'ReactDOM',
+    'react-dom/client': 'ReactDOMClient',
 };
 
 const assetFileNames = (chunkInfo: PreRenderedAsset): string => {
@@ -94,7 +97,7 @@ export default defineConfig({
         'process.env.REACT_APP_SC_ATTR': JSON.stringify(process.env.REACT_APP_SC_ATTR),
         'process.env.SC_ATTR': JSON.stringify(process.env.SC_ATTR),
     },
-    plugins: [dts({ insertTypesEntry: true }), bundleIconsInDevPlugin()],
+    plugins: [react(), dts({ insertTypesEntry: true, rollupTypes: true }), bundleIconsInDevPlugin()],
     build: {
         lib: {
             entry: resolve(__dirname, 'src/index.ts'),
@@ -103,7 +106,7 @@ export default defineConfig({
         sourcemap: true,
         minify: true,
         rollupOptions: {
-            external: [...dependencies, ...peerDependencies],
+            external: [...dependencies, ...peerDependencies, 'react-dom/client', 'react/jsx-runtime'],
             output: [
                 {
                     name: 'Fondue',
