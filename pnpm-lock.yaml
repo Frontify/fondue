@@ -194,6 +194,9 @@ dependencies:
   xstate:
     specifier: 4.28.1
     version: 4.28.1
+  yaml:
+    specifier: ^2.3.2
+    version: 2.3.2
 
 devDependencies:
   '@babel/core':
@@ -15470,7 +15473,7 @@ packages:
       lilconfig: 2.0.6
       postcss: 8.4.29
       ts-node: 10.9.1(@types/node@18.17.14)(typescript@5.2.2)
-      yaml: 2.2.1
+      yaml: 2.3.2
 
   /postcss-nested@6.0.1(postcss@8.4.29):
     resolution: {integrity: sha512-mEp4xPMi5bSWiMbsgoPfcP74lsWLHkQbZc3sY+jWYd65CUwXrUaTp0fmNpa01ZcETKlIgUdFN/MpS2xZtqL9dQ==}
@@ -18333,7 +18336,7 @@ packages:
     dependencies:
       eslint-visitor-keys: 3.4.3
       lodash: 4.17.21
-      yaml: 2.2.1
+      yaml: 2.3.2
     dev: true
 
   /yaml@1.10.2:
@@ -18341,8 +18344,8 @@ packages:
     engines: {node: '>= 6'}
     dev: true
 
-  /yaml@2.2.1:
-    resolution: {integrity: sha512-e0WHiYql7+9wr4cWMx3TVQrNwejKaEe7/rHNmQmqRjazfOP5W8PB6Jpebb5o6fIapbz9o9+2ipcaTM2ZwDI6lw==}
+  /yaml@2.3.2:
+    resolution: {integrity: sha512-N/lyzTPaJasoDmfV7YTrYCI0G/3ivm/9wdG0aHuheKowWQwGTsK0Eoiw6utmzAnI6pkJa0DUVygvp3spqqEKXg==}
     engines: {node: '>= 14'}
 
   /yargs-parser@20.2.9:
