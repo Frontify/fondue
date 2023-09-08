@@ -2,7 +2,7 @@
 
 import { Button } from '@components/Button/Button';
 import { TextInput } from '@components/TextInput/TextInput';
-import React, { Key, useEffect, useState } from 'react';
+import { Key, useEffect, useState } from 'react';
 import { Column, Row, SelectionMode, SortDirection, Table } from './Table';
 
 const TABLE_COLUMNS: Column[] = [

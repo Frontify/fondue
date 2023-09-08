@@ -12,7 +12,7 @@
         "noEmit": true,
         "strict": true,
         "target": "esnext",
-        "jsx": "react",
+        "jsx": "react-jsx",
         "skipLibCheck": true,
         "resolveJsonModule": true,
         "paths": {
@@ -21,9 +21,7 @@
             "@hooks/*": ["./src/hooks/*"],
             "@layout/*": ["./src/layout/*"],
             "@typography/*": ["./src/typography/*"],
-            "@utilities/*": ["./src/utilities/*"],
-
-            "slate-react": ["node_modules/slate-react"]
+            "@utilities/*": ["./src/utilities/*"]
         },
         "types": ["cypress", "cypress-real-events", "vite/client", "node"]
     },

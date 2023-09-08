@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { PatternDesign, PatternScale, PatternTheme, patternScales, patternThemes } from '@foundation/Pattern';
-import React from 'react';
 import { FrontifyPattern } from './FrontifyPattern';
 
 const FRONTIFY_PATTERN = '[data-test-id=frontify-pattern]';

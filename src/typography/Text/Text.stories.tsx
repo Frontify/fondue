@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Meta, StoryFn } from '@storybook/react';
-import React from 'react';
 import { sharedTypographyArgTypes, sharedTypographyArgs } from '../shared/Shared';
 import { Text as TextComponent, TextProps } from './Text';
 

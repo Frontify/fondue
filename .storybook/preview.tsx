@@ -3,7 +3,6 @@
 import '../src/styles.css';
 import { dark, light } from './frontifyTheme';
 import { DecoratorFn } from '@storybook/react';
-import React from 'react';
 
 export const withTheme: DecoratorFn = (Story, context) => {
     // Get values from story parameter first, else fallback to globals

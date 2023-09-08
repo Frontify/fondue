@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { EditableMode, EditableText } from '@components/EditableText/EditableText';
 
 const EDITABLE_CONTAINER = '[data-test-id=editable-node-container]';

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement, useContext } from 'react';
+import { ReactElement, useContext } from 'react';
 import { ModalBodyProps } from './types';
 import { ScrollWrapper } from '@components/ScrollWrapper/ScrollWrapper';
 import { ModalLayout } from './context/ModalLayout';

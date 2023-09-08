@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement, memo, useRef } from 'react';
+import { ReactElement, memo, useRef } from 'react';
 import { merge } from '@utilities/merge';
 import { ModalProps, ModalWidth } from './types';
 import { ModalVisual } from './ModalVisual';

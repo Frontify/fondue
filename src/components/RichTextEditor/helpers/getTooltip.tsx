@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Placement, ToolbarButtonProps } from '@udecode/plate';
-import React from 'react';
 
 type GetToolip = (content: string, placement?: Placement) => ToolbarButtonProps['tooltip'];
 

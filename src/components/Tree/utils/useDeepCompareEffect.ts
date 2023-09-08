@@ -8,14 +8,12 @@ const isPrimitive = (val: unknown): boolean => val !== Object(val);
 export const useDeepCompareEffect = (effect: EffectCallback, deps: unknown[]): void => {
     if (process.env.NODE_ENV !== 'production') {
         if (!deps || deps.length === 0) {
-            console.warn(
-                '`useDeepCompareEffect` should not be used with no dependencies. Use React.useEffect instead.',
-            );
+            console.warn('`useDeepCompareEffect` should not be used with no dependencies. Use `useEffect` instead.');
         }
 
         if (deps.every(isPrimitive)) {
             console.warn(
-                '`useDeepCompareEffect` should not be used with dependencies that are all primitive values. Use React.useEffect instead.',
+                '`useDeepCompareEffect` should not be used with dependencies that are all primitive values. Use `useEffect` instead.',
             );
         }
     }

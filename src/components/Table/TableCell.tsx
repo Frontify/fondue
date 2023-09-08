@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Checkbox as CheckboxComponent, CheckboxState } from '@components/Checkbox/Checkbox';
 import { merge } from '@utilities/merge';
-import React, { Key, useRef } from 'react';
+import { Key, useRef } from 'react';
 import { SelectionMode } from '..';
 
 export enum TableCellType {

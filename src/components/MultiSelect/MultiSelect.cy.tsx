@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Validation } from '@utilities/validation';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { MultiSelect } from './MultiSelect';
 import { TriggerEmphasis } from '@components/Trigger';
 

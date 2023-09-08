@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { MAX_DEFAULT_VALUE, MIN_DEFAULT_VALUE, Slider, SliderError, SliderProps, SliderValue } from './Slider';
 
 const SLIDER_ID = '[data-test-id=fondue-slider]';

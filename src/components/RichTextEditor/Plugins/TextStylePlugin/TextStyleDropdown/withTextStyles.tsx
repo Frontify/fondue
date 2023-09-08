@@ -2,7 +2,7 @@
 
 /* eslint-disable react/display-name */
 
-import React, { ComponentType } from 'react';
+import { ComponentType } from 'react';
 import { Plugin } from '../../Plugin';
 
 export const withTextStyles =

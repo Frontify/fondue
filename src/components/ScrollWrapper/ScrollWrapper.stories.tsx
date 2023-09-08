@@ -5,7 +5,7 @@ import { FormControl, FormControlDirection, FormControlStyle } from '@components
 import { TextInput } from '@components/TextInput';
 import { useId } from '@react-aria/utils';
 import { Meta, StoryFn } from '@storybook/react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ScrollWrapper } from './ScrollWrapper';
 import { ScrollWrapperDirection, ScrollWrapperProps } from './types';
 

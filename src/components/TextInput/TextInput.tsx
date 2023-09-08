@@ -7,7 +7,7 @@ import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
-import React, {
+import {
     DOMAttributes,
     FocusEvent,
     ForwardRefRenderFunction,

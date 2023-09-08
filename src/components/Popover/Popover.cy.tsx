@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Button } from '@components/Button';
 import { Popover, PopoverComponentProps } from '@components/Popover/Popover';
 

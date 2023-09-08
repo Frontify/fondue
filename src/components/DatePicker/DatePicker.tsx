@@ -3,7 +3,7 @@
 import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { format, getYear } from 'date-fns';
-import React, { forwardRef, useState } from 'react';
+import { KeyboardEvent, ReactNode, forwardRef, useState } from 'react';
 import DatepickerComponent, { ReactDatePicker } from 'react-datepicker';
 import './DatePicker.css';
 import { DatePickerTrigger } from './DatePickerTrigger';
@@ -36,16 +36,16 @@ export type DatePickerProps = {
     minDate?: Date;
     maxDate?: Date;
     validation?: Validation;
-    customTrigger?: React.ReactNode;
-    customHeader?: React.ReactNode;
-    children?: React.ReactNode;
+    customTrigger?: ReactNode;
+    customHeader?: ReactNode;
+    children?: ReactNode;
     hasPopperArrow?: boolean;
     preventOpenOnFocus?: boolean;
     filterDate?: (date: Date) => boolean;
     onOpen?: () => void;
     onClose?: () => void;
     onBlur?: () => void;
-    onKeyDown?: (event: React.KeyboardEvent<HTMLDivElement>) => void;
+    onKeyDown?: (event: KeyboardEvent<HTMLDivElement>) => void;
     'data-test-id'?: string;
 } & (SingleDatePickerProps | RangeDatePickerProps);
 

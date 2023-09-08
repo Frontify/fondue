@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { Stack } from './Stack';
 
 const STACK_ID = '[data-test-id=fondue-stack]';

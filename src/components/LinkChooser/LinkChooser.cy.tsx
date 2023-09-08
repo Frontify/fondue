@@ -2,7 +2,6 @@
 
 import { MenuItemContentSize, SelectionIndicatorIcon } from '@components/MenuItem';
 import { Validation, validationClassMap } from '@utilities/validation';
-import React from 'react';
 import { LinkChooser, QUERIES_STORAGE_KEY } from './LinkChooser';
 import { data } from './mock/data';
 import { GUIDELINE_ITEMS, guidelineSection } from './mock/guidelines';

@@ -2,7 +2,6 @@
 
 import { DragProperties, ItemDragState, OrderableListItem } from '@components/OrderableList';
 import { merge } from '@utilities/merge';
-import React from 'react';
 import { StoryListItem } from '@components/OrderableList/utils/types';
 
 const dragStoryStyles: Record<ItemDragState, string> = {

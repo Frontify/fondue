@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { forwardRef } from 'react';
+import { forwardRef } from 'react';
 import type { FormHTMLAttributes, ReactNode } from 'react';
 
 export type FormProps = {

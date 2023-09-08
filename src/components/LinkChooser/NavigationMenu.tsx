@@ -7,7 +7,7 @@ import { getInteractionModality } from '@react-aria/interactions';
 import { useOption } from '@react-aria/listbox';
 import { merge } from '@utilities/merge';
 import { useActor } from '@xstate/react';
-import React, { ReactElement, useMemo, useRef } from 'react';
+import { ReactElement, useMemo, useRef } from 'react';
 import { defaultSection } from './sections';
 import { DropdownState, LinkChooserState } from './state/types';
 import { NavigationMenuItemProps, NavigationMenuProps } from './types';

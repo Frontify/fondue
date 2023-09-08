@@ -6,7 +6,6 @@ import { toKebabCase } from '../transforms';
 export const setup = (componentName: string): ComponentFileBuilderResponse => ({
     content: `/* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from "react";
 import { ${componentName} } from "./${componentName}";
 
 const ${componentName}_FOO = "bar";

@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { Box } from './Box';
 
 const BOX_ID = '[data-test-id=fondue-box]';

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement, cloneElement } from 'react';
+import { ReactElement, cloneElement } from 'react';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { LegacyTooltip, LegacyTooltipProps } from '@components/LegacyTooltip/LegacyTooltip';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';

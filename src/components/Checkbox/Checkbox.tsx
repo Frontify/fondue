@@ -2,7 +2,7 @@
 
 import { IconCheckMark, IconMinus } from '@foundation/Icon/Generated';
 import { InputLabel, InputLabelTooltipProps } from '@components/InputLabel/InputLabel';
-import React, {
+import {
     ForwardRefRenderFunction,
     HTMLAttributes,
     ReactNode,

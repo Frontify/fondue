@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { AddBlockButton, AddBlockButtonDirection, ButtonDirection } from './AddBlockButton';
 
 const BUTTON_ID = '[data-test-id=add-block-button]';

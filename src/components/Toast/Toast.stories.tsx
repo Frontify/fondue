@@ -2,7 +2,6 @@
 
 import { IconExclamationMarkCircle24, IconExclamationMarkTriangle24, IconTrashBin24 } from '@foundation/Icon';
 import { Meta, StoryFn } from '@storybook/react';
-import React from 'react';
 import { Button, ButtonGroup, ButtonSize, ButtonStyle } from '..';
 import { Toast as ToastComponent } from './Toast';
 import { ToastAnimationDirection, ToastProps, ToastStyle } from './types';

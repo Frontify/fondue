@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Validation } from '@utilities/validation';
-import React from 'react';
 import { DatePicker } from './DatePicker';
 
 export const TEXT_INPUT_ID = '[data-test-id=text-input]';

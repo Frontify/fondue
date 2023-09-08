@@ -4,7 +4,7 @@ import { Checkbox, CheckboxProps, CheckboxState } from '@components/Checkbox/Che
 import { useCheckboxGroup, useCheckboxGroupItem } from '@react-aria/checkbox';
 import { CheckboxGroupState, useCheckboxGroupState } from '@react-stately/checkbox';
 import { merge } from '@utilities/merge';
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export enum ChecklistDirection {
     Horizontal = 'Horizontal',

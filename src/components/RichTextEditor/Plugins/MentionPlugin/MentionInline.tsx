@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { ELEMENT_MENTION, MentionCombobox, autoUpdate } from '@udecode/plate';
 import { MentionComboboxItem, MentionComboboxStyles } from './MentionCombobox';
 import { MentionableItems } from './types';

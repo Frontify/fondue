@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, {
+import {
+    KeyboardEvent,
     ReactElement,
     cloneElement,
     isValidElement,
@@ -358,7 +359,7 @@ export const Tree = memo(
         };
 
         const handleKeyDown = useCallback(
-            (event: React.KeyboardEvent<HTMLUListElement>) => {
+            (event: KeyboardEvent<HTMLUListElement>) => {
                 const activeElement = document.activeElement;
 
                 if (

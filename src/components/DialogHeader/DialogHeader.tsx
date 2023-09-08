@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { merge } from '@utilities/merge';
 import { IconCross } from '@foundation/Icon/Generated';
 import { Text } from '@typography/Text';

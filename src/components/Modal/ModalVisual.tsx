@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import { merge } from '@utilities/merge';
 import { ModalVisualProps } from './types';
 import { FrontifyPattern } from '@components/FrontifyPattern/FrontifyPattern';

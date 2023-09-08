@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { merge } from '@utilities/merge';
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import { AssetInputProps, AssetInputSize } from '..';
 
 export const SpinningCircle = ({ size }: Pick<AssetInputProps, 'size'>): ReactElement => (

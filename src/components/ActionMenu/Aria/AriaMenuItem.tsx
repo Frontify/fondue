@@ -9,7 +9,7 @@ import { TreeState } from '@react-stately/tree';
 import { Node } from '@react-types/shared';
 import { FOCUS_STYLE_INSET } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import React, { ReactElement, useEffect, useRef, useState } from 'react';
+import { ReactElement, useEffect, useRef, useState } from 'react';
 import { MenuItemType } from '@components/Dropdown';
 import { ActionMenuItemType, ActionMenuSwitchItemType } from '@components/ActionMenu';
 

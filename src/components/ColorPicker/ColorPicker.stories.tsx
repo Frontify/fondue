@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Meta, StoryFn } from '@storybook/react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ColorFormat } from '../../types/colors';
 import { ColorPicker, ColorPickerProps } from './ColorPicker';
 import { EXAMPLE_PALETTES } from './example-palettes';

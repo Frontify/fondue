@@ -7,7 +7,6 @@ import type { ComponentFileBuilderResponse } from '../types';
 export const setup = (componentName: string, componentType: string): ComponentFileBuilderResponse => ({
     content: `/* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from "react";
 import { Meta, StoryFn } from "@storybook/react";
 import { ${componentName}, ${componentName}Props } from "./${componentName}";
 

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ELEMENT_PARAGRAPH } from '@udecode/plate';
-import React, { ReactElement, useState } from 'react';
+import { ReactElement, useState } from 'react';
 import { RichTextEditor } from '../RichTextEditor';
 import { RICH_TEXT_EDITOR } from './fixtures/selectors';
 

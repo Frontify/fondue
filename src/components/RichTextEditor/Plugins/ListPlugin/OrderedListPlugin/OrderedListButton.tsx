@@ -3,7 +3,6 @@
 import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
 import { IconListNumbers16 } from '@foundation/Icon/Generated';
 import { ListToolbarButton, getPluginType } from '@udecode/plate';
-import React from 'react';
 import { ButtonWrapper, IconStylingWrapper, buttonStyles, getButtonClassNames } from '../../helper';
 import { PluginButtonProps } from '../../types';
 

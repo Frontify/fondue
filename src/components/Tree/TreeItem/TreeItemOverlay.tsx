@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { Children, ReactNode } from 'react';
+import { Children, ReactNode } from 'react';
 
 import { merge } from '@utilities/merge';
 import { IconGrabHandle12 } from '@foundation/Icon';

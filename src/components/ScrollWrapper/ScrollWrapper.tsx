@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useFocusRing } from '@react-aria/focus';
-import React, { ReactElement, useRef } from 'react';
+import { ReactElement, useRef } from 'react';
 import { FOCUS_STYLE, merge } from '../..';
 import { useScrollWrapper } from './hooks/useScrollWrapper';
 import { ScrollWrapperDirection, ScrollWrapperProps, scrollWrapperDirections } from './types';

@@ -2,7 +2,6 @@
 
 import { DropZone, DropZoneData, DropZoneProps } from '@components/DropZone/DropZone';
 import { DraggableItem as DraggableItemProp } from '@utilities/dnd';
-import React from 'react';
 import { DndProvider, useDrag } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 

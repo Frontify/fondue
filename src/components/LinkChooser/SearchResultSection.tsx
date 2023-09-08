@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useListBoxSection } from '@react-aria/listbox';
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import { SearchResultSectionProps } from './types';
 import { SearchResultOption } from './SearchResultOption';
 

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Meta, StoryFn } from '@storybook/react';
-import React, { ComponentProps } from 'react';
+import { ComponentProps } from 'react';
 import { Position } from './EditorPositioningWrapper';
 import {
     IPSUM,

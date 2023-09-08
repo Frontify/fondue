@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import PatternSound from '@foundation/Pattern/PatternSound';
 import PatternImagery from '@foundation/Pattern/PatternImagery';
 import PatternTypography from '@foundation/Pattern/PatternTypography';

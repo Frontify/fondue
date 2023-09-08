@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement, ReactNode } from 'react';
+import { ReactElement, ReactNode } from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { Container as ContainerComponent, ContainerProps } from './Container';
 import { SPACING_VALUES } from '@utilities/dimensions';

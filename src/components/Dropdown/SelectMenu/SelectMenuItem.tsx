@@ -7,7 +7,7 @@ import { ListState } from '@react-stately/list';
 import { Node } from '@react-types/shared';
 import { FOCUS_STYLE_INSET } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import React, { ReactElement, useRef } from 'react';
+import { ReactElement, useRef } from 'react';
 import { MenuItem } from '../../MenuItem';
 import { MenuItemType } from './SelectMenu';
 

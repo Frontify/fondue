@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement, ReactNode } from 'react';
+import { Children, ReactElement, ReactNode } from 'react';
 
 export const EditableTextHelper = {
     /**
@@ -11,7 +11,7 @@ export const EditableTextHelper = {
     getLabel: (children?: ReactNode | string) => {
         let label = '';
         const iteratorStep = (children?: ReactNode | string) => {
-            React.Children.map(children, (child) => {
+            Children.map(children, (child) => {
                 if (typeof child === 'string') {
                     label += child;
                 } else {

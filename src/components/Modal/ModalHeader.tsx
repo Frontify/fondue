@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement, cloneElement, useContext } from 'react';
+import { ReactElement, cloneElement, useContext } from 'react';
 import { merge } from '@utilities/merge';
 import { ModalHeaderProps, ModalHeaderVariant, modalHeaderVariants } from './types';
 import { IconSize } from '@foundation/Icon/IconSize';
