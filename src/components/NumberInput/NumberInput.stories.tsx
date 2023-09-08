@@ -42,7 +42,6 @@ export default {
             description: 'onChange callback',
             name: 'onChange',
             defaultValue: undefined,
-            control: { type: '(value: number) => void' },
             action: 'onChange',
         },
         'data-test-id': {

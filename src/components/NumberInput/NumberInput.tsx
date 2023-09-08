@@ -210,9 +210,13 @@ export const NumberInput = ({
                     <button
                         className={'tw-p-1 hover:tw-bg-box-neutral hover:tw-text-box-selected-inverse'}
                         type="button"
-                        onClick={(event) => handleCount(NumberInputIncrement.DECREMENT, 1, event.shiftKey, true)}
+                        onClick={(event) =>
+                            event.button > 0
+                                ? null
+                                : handleCount(NumberInputIncrement.DECREMENT, 1, event.shiftKey, true)
+                        }
                         onMouseDown={(event) =>
-                            event.shiftKey ? null : startIncrement(NumberInputIncrement.DECREMENT)
+                            event.shiftKey || event.button > 0 ? null : startIncrement(NumberInputIncrement.DECREMENT)
                         }
                         onMouseUp={stopIncrement}
                         onTouchStart={(event) =>
@@ -228,9 +232,13 @@ export const NumberInput = ({
                     <button
                         className={'tw-p-1 hover:tw-bg-box-neutral hover:tw-text-box-selected-inverse'}
                         type="button"
-                        onClick={(event) => handleCount(NumberInputIncrement.INCREMENT, 1, event.shiftKey, true)}
+                        onClick={(event) =>
+                            event.button > 0
+                                ? null
+                                : handleCount(NumberInputIncrement.INCREMENT, 1, event.shiftKey, true)
+                        }
                         onMouseDown={(event) =>
-                            event.shiftKey ? null : startIncrement(NumberInputIncrement.INCREMENT)
+                            event.shiftKey || event.button > 0 ? null : startIncrement(NumberInputIncrement.INCREMENT)
                         }
                         onMouseUp={stopIncrement}
                         onTouchStart={(event) =>
