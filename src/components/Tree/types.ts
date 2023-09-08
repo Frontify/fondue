@@ -77,6 +77,7 @@ export type TreeItemStyling = {
     borderRadius?: TreeItemPropsSizing;
     borderWidth?: Exclude<TreeItemPropsSizing, 'x-large'>;
     borderStyle?: TreeItemBorderStyle;
+    showContentWhileDragging: boolean;
 };
 
 export type TreeProps = {

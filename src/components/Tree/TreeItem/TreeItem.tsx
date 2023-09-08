@@ -88,6 +88,7 @@ export const TreeItem = memo(
             borderRadius: 'small',
             borderWidth: 'none',
             borderStyle: 'none',
+            showContentWhileDragging: true,
         },
         ignoreItemDoubleClick = false,
         expandOnSelect = false,
@@ -304,7 +305,9 @@ export const TreeItem = memo(
             };
         }, [isActive, isSelected, itemStyle?.borderRadius, itemStyle?.borderWidth, itemStyle?.spacingY]);
 
-        const showContent = !isActive;
+        const showContent = itemStyle?.showContentWhileDragging ? true : !isActive;
+        const wrapperContentClassName =
+            isActive && itemStyle?.showContentWhileDragging ? 'tw-opacity-75 tw-blur-sm tw-grow' : 'tw-grow';
         const showChildren = isExpanded && !isActive;
         const showDragHandle = draggable && !isActive;
         const showLabel = label !== undefined && !isActive;
@@ -333,7 +336,7 @@ export const TreeItem = memo(
         const containerActiveHeight = itemStyle.contentHight === 'single-line' ? 'tw-h-12' : 'tw-h-fit';
 
         const containerClassName = merge([
-            'tw-relative tw-z-0 tw-transition-colors tw-flex tw-items-center tw-leading-5 tw-width-full',
+            'tw-relative tw-z-0 tw-transition-colors tw-flex tw-items-center tw-leading-5 tw-width-full tw-justify-between',
             TreeItemShadowClassMap[itemStyle.shadow ?? 'none'],
             isActive ? 'tw-border-dashed tw-border-2 tw-pr-0' : containerBorder,
             isActive && TreeItemBorderRadiusClassMap[itemStyle?.borderRadius ?? 'small'],
@@ -415,7 +418,7 @@ export const TreeItem = memo(
                         <span className="first:tw-ml-3.5 tw-w-full tw-h-full tw-flex tw-items-center">{label}</span>
                     )}
 
-                    {showContent && contentComponent}
+                    {showContent && <div className={wrapperContentClassName}>{contentComponent}</div>}
 
                     {dragHandlerPosition === 'right' && dragHandler}
                 </div>

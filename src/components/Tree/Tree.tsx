@@ -198,6 +198,7 @@ export const Tree = memo(
             borderRadius: 'small',
             borderWidth: 'none',
             borderStyle: 'none',
+            showContentWhileDragging: false,
         },
         'data-test-id': dataTestId = 'fondue-tree',
     }: TreeProps) => {
