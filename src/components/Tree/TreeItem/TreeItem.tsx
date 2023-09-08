@@ -322,16 +322,21 @@ export const TreeItem = memo(
             projection?.previousNode?.id === id &&
             projection?.depth > projection?.previousNode?.depth
         ) {
-            previousItemToBeExpandedFeedback = 'tw-border-solid tw-rounded tw-border-2 tw-border-box-selected-strong';
+            previousItemToBeExpandedFeedback = merge([
+                'tw-border-solid tw-border-box-selected-strong',
+                TreeItemBorderRadiusClassMap[itemStyle?.borderRadius ?? 'small'],
+                TreeItemBorderClassMap['small'],
+            ]);
         }
 
-        const containerBorder = itemStyle?.borderWidth
-            ? merge([
-                  TreeItemBorderClassMap[itemStyle?.borderWidth ?? 'none'],
-                  TreeItemBorderRadiusClassMap[itemStyle?.borderRadius ?? 'small'],
-                  TreeItemBorderStyleClassMap[itemStyle?.borderStyle ?? 'none'],
-              ])
-            : '';
+        const containerBorder =
+            itemStyle?.borderWidth && previousItemToBeExpandedFeedback === ''
+                ? merge([
+                      TreeItemBorderClassMap[itemStyle?.borderWidth ?? 'none'],
+                      TreeItemBorderRadiusClassMap[itemStyle?.borderRadius ?? 'small'],
+                      TreeItemBorderStyleClassMap[itemStyle?.borderStyle ?? 'none'],
+                  ])
+                : '';
         const containerHeight = itemStyle.contentHight === 'single-line' ? 'tw-h-10' : 'tw-h-fit';
         const containerActiveHeight = itemStyle.contentHight === 'single-line' ? 'tw-h-12' : 'tw-h-fit';
 
