@@ -39,6 +39,7 @@ export default {
         selectedIds: ['2'],
         dragHandlerPosition: 'left',
         showDragHandlerOnHoverOnly: true,
+        showContentWhileDragging: false,
         spacingY: 'none',
         contentHight: 'single-line',
         shadow: 'none',
@@ -51,6 +52,10 @@ export default {
             control: { type: 'boolean' },
         },
         showDragHandlerOnHoverOnly: {
+            table: { category: 'Item Options' },
+            control: { type: 'boolean' },
+        },
+        showContentWhileDragging: {
             table: { category: 'Item Options' },
             control: { type: 'boolean' },
         },
@@ -496,6 +501,7 @@ WithTreeItemsStyled.args = {
     selectedIds: ['2'],
     dragHandlerPosition: 'left',
     showDragHandlerOnHoverOnly: true,
+    showContentWhileDragging: true,
     spacingY: 'large',
     contentHight: 'content-fit',
     shadow: 'small',

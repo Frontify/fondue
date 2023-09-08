@@ -192,6 +192,7 @@ export const Tree = memo(
         multiselect = false,
         dragHandlerPosition = 'left',
         showDragHandlerOnHoverOnly = true,
+        showContentWhileDragging = false,
         itemStyle = {
             spacingY: 'none',
             contentHight: 'single-line',
@@ -199,7 +200,6 @@ export const Tree = memo(
             borderRadius: 'small',
             borderWidth: 'none',
             borderStyle: 'none',
-            showContentWhileDragging: false,
         },
         'data-test-id': dataTestId = 'fondue-tree',
     }: TreeProps) => {
@@ -633,6 +633,9 @@ export const Tree = memo(
                         showDragHandlerOnHoverOnly: node.props.showDragHandlerOnHoverOnly
                             ? node.props.showDragHandlerOnHoverOnly
                             : showDragHandlerOnHoverOnly,
+                        showContentWhileDragging: node.props.showContentWhileDragging
+                            ? node.props.showContentWhileDragging
+                            : showContentWhileDragging,
                         itemStyle: { ...itemStyle, ...node.props.itemStyle },
                         registerOverlay,
                         onExpand: handleExpand,
@@ -644,15 +647,16 @@ export const Tree = memo(
                 ),
             };
         }, [
+            treeState.nodes,
             draggable,
             dragHandlerPosition,
             showDragHandlerOnHoverOnly,
+            showContentWhileDragging,
             itemStyle,
+            registerOverlay,
             handleExpand,
             handleShrink,
             handleSelect,
-            registerOverlay,
-            treeState.nodes,
             registerNodeChildren,
             unregisterNodeChildren,
         ]);

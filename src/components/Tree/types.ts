@@ -77,7 +77,6 @@ export type TreeItemStyling = {
     borderRadius?: TreeItemPropsSizing;
     borderWidth?: Exclude<TreeItemPropsSizing, 'x-large'>;
     borderStyle?: TreeItemBorderStyle;
-    showContentWhileDragging: boolean;
 };
 
 export type TreeProps = {
@@ -89,6 +88,7 @@ export type TreeProps = {
     expandedIds?: string[];
     dragHandlerPosition?: 'left' | 'right' | 'none';
     showDragHandlerOnHoverOnly?: boolean;
+    showContentWhileDragging?: boolean;
     itemStyle?: TreeItemStyling;
     'data-test-id'?: string;
     onSelect?: OnSelectCallback;
@@ -121,6 +121,7 @@ type TreeItemBaseProps = {
      * dragHandlerPosition = 'none' makes the whole item draggble rather than only the dragHandler
      */
     dragHandlerPosition?: 'left' | 'right' | 'none';
+    showContentWhileDragging?: boolean;
     itemStyle?: TreeItemStyling;
     showCaret?: boolean;
     ignoreItemDoubleClick?: boolean;

@@ -15,6 +15,7 @@ export type Overlay = {
     contentComponent?: ReactNode;
     isSelected?: boolean;
     dragHandlerPosition?: 'left' | 'right' | 'none';
+    showContentWhileDragging: boolean;
 };
 
 export const TreeItemOverlay = ({
@@ -25,6 +26,7 @@ export const TreeItemOverlay = ({
     contentComponent,
     isSelected,
     dragHandlerPosition = 'left',
+    showContentWhileDragging = false,
 }: Overlay) => {
     const hasChildren = Children.count(children) > 0;
 
@@ -47,7 +49,10 @@ export const TreeItemOverlay = ({
             aria-level={level + 1}
             aria-selected={isSelected}
             data-test-id="fondue-tree-item-overlay"
-            className="tw-pointer-events-none tw-bg-white tw-flex tw-items-center tw-gap-x-1 tw-py-2 tw-px-2.5 tw-no-underline tw-leading-5 tw-box-border tw-w-fit tw-drop-shadow-xl tw-rounded"
+            className={merge([
+                'tw-pointer-events-none tw-bg-white tw-flex tw-items-center tw-gap-x-1 tw-py-2 tw-px-2.5 tw-no-underline tw-leading-5 tw-box-border tw-w-fit tw-drop-shadow-xl tw-rounded',
+                showContentWhileDragging ? 'tw-opacity-90' : '',
+            ])}
         >
             {dragHandlerPosition === 'left' && dragHandler}
 

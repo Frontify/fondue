@@ -81,6 +81,7 @@ export const TreeItem = memo(
         expandable = true,
         showDragHandlerOnHoverOnly = true,
         dragHandlerPosition = 'left',
+        showContentWhileDragging = true,
         itemStyle = {
             spacingY: 'none',
             contentHight: 'single-line',
@@ -88,7 +89,6 @@ export const TreeItem = memo(
             borderRadius: 'small',
             borderWidth: 'none',
             borderStyle: 'none',
-            showContentWhileDragging: true,
         },
         ignoreItemDoubleClick = false,
         expandOnSelect = false,
@@ -193,9 +193,26 @@ export const TreeItem = memo(
                     return;
                 }
 
-                registerOverlay?.({ contentComponent, children, id, label, level, dragHandlerPosition });
+                registerOverlay?.({
+                    contentComponent,
+                    children,
+                    id,
+                    label,
+                    level,
+                    dragHandlerPosition,
+                    showContentWhileDragging,
+                });
             },
-            [children, contentComponent, dragHandlerPosition, id, label, level, registerOverlay],
+            [
+                children,
+                contentComponent,
+                dragHandlerPosition,
+                id,
+                label,
+                level,
+                registerOverlay,
+                showContentWhileDragging,
+            ],
         );
 
         const handleItemDragMove = useCallback(
@@ -305,9 +322,9 @@ export const TreeItem = memo(
             };
         }, [isActive, isSelected, itemStyle?.borderRadius, itemStyle?.borderWidth, itemStyle?.spacingY]);
 
-        const showContent = itemStyle?.showContentWhileDragging ? true : !isActive;
+        const showContent = showContentWhileDragging ? true : !isActive;
         const wrapperContentClassName =
-            isActive && itemStyle?.showContentWhileDragging ? 'tw-opacity-75 tw-blur-sm tw-grow' : 'tw-grow';
+            isActive && showContentWhileDragging ? 'tw-opacity-75 tw-blur-sm tw-grayscale tw-grow' : 'tw-grow';
         const showChildren = isExpanded && !isActive;
         const showDragHandle = draggable && !isActive;
         const showLabel = label !== undefined && !isActive;
