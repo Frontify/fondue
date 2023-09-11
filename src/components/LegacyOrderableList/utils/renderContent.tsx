@@ -1,13 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ItemDragState, LegacyDragProperties, LegacyOrderableListItem } from '@components/LegacyOrderableList';
+import { LegacyDragProperties, LegacyItemDragState, LegacyOrderableListItem } from '@components/LegacyOrderableList';
 import { merge } from '@utilities/merge';
 import { StoryListItem } from '@components/LegacyOrderableList/utils/types';
 
-const dragStoryStyles: Record<ItemDragState, string> = {
-    [ItemDragState.Dragging]: 'tw-bg-black-10 tw-border-black-20 tw-opacity-75',
-    [ItemDragState.Idle]: 'tw-border-black-20',
-    [ItemDragState.Preview]: 'tw-bg-white tw-border-violet-70 tw-border-2',
+const dragStoryStyles: Record<LegacyItemDragState, string> = {
+    [LegacyItemDragState.Dragging]: 'tw-bg-black-10 tw-border-black-20 tw-opacity-75',
+    [LegacyItemDragState.Idle]: 'tw-border-black-20',
+    [LegacyItemDragState.Preview]: 'tw-bg-white tw-border-violet-70 tw-border-2',
 };
 
 export const renderContent = (

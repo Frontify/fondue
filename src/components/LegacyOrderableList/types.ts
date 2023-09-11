@@ -20,7 +20,7 @@ export type LegacyOrderableListItem<T = Record<string, unknown>> = DraggableItem
 };
 
 export type LegacyDragProperties = {
-    componentDragState: ItemDragState;
+    componentDragState: LegacyItemDragState;
     isFocusVisible: boolean;
 };
 
@@ -32,7 +32,7 @@ export type LegacyOrderableListProps<T> = {
     'data-test-id'?: string;
 };
 
-export enum ItemDragState {
+export enum LegacyItemDragState {
     Dragging = 'Dragging',
     Idle = 'Idle',
     Preview = 'Preview',

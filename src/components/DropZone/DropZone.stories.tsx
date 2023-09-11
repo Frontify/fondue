@@ -4,9 +4,9 @@ import { useState } from 'react';
 import { chain } from '@react-aria/utils';
 import { Meta, StoryFn } from '@storybook/react';
 
-import { OrderableList as DropZoneComponent, OrderableListProps } from '@components/OrderableList';
-import { StoryListItem, renderContent, storyItems } from '@components/OrderableList/utils';
-import type { OrderableListItem } from '@components/OrderableList/types';
+import { LegacyOrderableList as DropZoneComponent, LegacyOrderableListProps } from '@components/LegacyOrderableList';
+import { StoryListItem, renderContent, storyItems } from '@components/LegacyOrderableList/utils';
+import type { LegacyOrderableListItem } from '@components/LegacyOrderableList/types';
 
 export default {
     title: 'Components/Drop Zone',
@@ -18,12 +18,15 @@ export default {
     argTypes: {
         onMove: { action: 'onMove' },
     },
-} as Meta<OrderableListProps<StoryListItem>>;
+} as Meta<LegacyOrderableListProps<StoryListItem>>;
 
-export const DropZoneWithOrderableList: StoryFn<OrderableListProps<StoryListItem>> = ({ onMove, dragDisabled }) => {
+export const DropZoneWithOrderableList: StoryFn<LegacyOrderableListProps<StoryListItem>> = ({
+    onMove,
+    dragDisabled,
+}) => {
     const [items, setItems] = useState(storyItems);
 
-    const handleMove = (modifiedItems: OrderableListItem<StoryListItem>[]) => {
+    const handleMove = (modifiedItems: LegacyOrderableListItem<StoryListItem>[]) => {
         const modifiedArray = items.map((item) => {
             const matchingModifiedItem = modifiedItems.find((modifiedItem) => modifiedItem.id === item.id);
             if (matchingModifiedItem) {

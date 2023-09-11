@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import {
-    ItemDragState,
     LegacyDragProperties,
+    LegacyItemDragState,
     LegacyOrderableList,
     LegacyOrderableListItem,
     LegacyOrderableListProps,
@@ -121,13 +121,16 @@ describe('OrderableList Component', () => {
 
         cy.get(DRAGGABLE_ITEM).each(($el) => {
             const dataTransfer = new DataTransfer();
-            cy.wrap($el).should('have.text', ItemDragState.Idle).trigger('dragstart', { dataTransfer }).trigger('drag');
-            cy.wrap($el).should('have.text', ItemDragState.Dragging);
+            cy.wrap($el)
+                .should('have.text', LegacyLegacyItemDragState.Idle)
+                .trigger('dragstart', { dataTransfer })
+                .trigger('drag');
+            cy.wrap($el).should('have.text', LegacyItemDragState.Dragging);
             cy.get(LIST_ID).trigger('dragenter', { dataTransfer }).trigger('dragover', { dataTransfer });
             cy.get(DROP_ZONE).should('exist').and('have.length', 7);
             cy.get(LIST_ID).trigger('drop', { dataTransfer, force: true });
             cy.wrap($el).trigger('dragend', { dataTransfer, force: true });
-            cy.wrap($el).should('have.text', ItemDragState.Idle);
+            cy.wrap($el).should('have.text', LegacyItemDragState.Idle);
         });
     });
 
