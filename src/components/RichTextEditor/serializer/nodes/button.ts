@@ -12,8 +12,6 @@ export const buttonNode = (node: TElement, children: string, defaultClassNames: 
     const buttonType = `button${buttonTypeString.charAt(0).toUpperCase()}${buttonTypeString.slice(1)}`;
     const buttonStyle = buttonStyles[buttonType];
 
-    console.error('buttonNode');
-
     const defaultStyles = reactCssPropsToCss(buttonStyle);
     return `<a href="${node.url}"
                 target="${node.target ?? '_blank'}"
