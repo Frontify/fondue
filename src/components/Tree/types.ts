@@ -24,7 +24,7 @@ export type OnTreeDropCallback = (args: {
     parentType?: string;
 }) => void;
 
-type TreeItemPropsSizing = 'none' | 'x-small' | 'small' | 'medium' | 'large' | 'x-large';
+export type TreeItemPropsSizing = 'none' | 'x-small' | 'small' | 'medium' | 'large' | 'x-large';
 type TreeItemContentFit = 'content-fit' | 'single-line';
 type TreeItemBorderStyle = 'solid' | 'dashed' | 'dotted' | 'none';
 
