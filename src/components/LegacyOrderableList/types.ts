@@ -5,7 +5,7 @@ import { DraggableItem } from '@utilities/dnd';
 
 export type LegacyRenderListItem<T> = (
     items: LegacyOrderableListItem<T>,
-    dragProps?: LegacyDragProperties,
+    dragProps: LegacyDragProperties,
 ) => ReactElement;
 
 export type LegacyCollectionItemProps<T> = {
