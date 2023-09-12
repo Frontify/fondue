@@ -17,9 +17,11 @@ import {
     TreeItemBorderClassMap,
     TreeItemBorderRadiusClassMap,
     TreeItemBorderStyleClassMap,
+    TreeItemColorsClassMap,
     type TreeItemProps,
     TreeItemShadowClassMap,
     TreeItemSpacingClassMap,
+    TreeItemStyling,
 } from '@components/Tree/types';
 
 import { EXPAND_ONHOVER_DELAY, INDENTATION_WIDTH, Projection } from '../helpers';
@@ -82,14 +84,7 @@ export const TreeItem = memo(
         showDragHandlerOnHoverOnly = true,
         dragHandlerPosition = 'left',
         showContentWhileDragging = true,
-        itemStyle = {
-            spacingY: 'none',
-            contentHight: 'single-line',
-            shadow: 'none',
-            borderRadius: 'small',
-            borderWidth: 'none',
-            borderStyle: 'none',
-        },
+        itemStyle,
         ignoreItemDoubleClick = false,
         expandOnSelect = false,
         'data-test-id': dataTestId = 'fondue-tree-item',
@@ -301,26 +296,41 @@ export const TreeItem = memo(
             }
         }, [isActive, isExpanded, isParentActive, enrichedChildren, id]);
 
+        const itemStyleProps = useMemo(() => {
+            return {
+                spacingY: 'none',
+                contentHight: 'single-line',
+                shadow: 'none',
+                borderRadius: 'small',
+                borderWidth: 'none',
+                borderStyle: 'none',
+                activeColorStyle: 'neutral',
+                ...itemStyle,
+            } as TreeItemStyling;
+        }, [itemStyle]);
+
+        const styling = TreeItemColorsClassMap[itemStyleProps.activeColorStyle ?? 'neutral'];
+
         const { liClassName, backgroundClassName } = useMemo(() => {
             return {
                 liClassName: merge([
                     FOCUS_VISIBLE_STYLE,
                     'tw-box-content tw-relative tw-cursor-default tw-transition-colors tw-outline-none tw-ring-inset tw-group tw-px-2.5 tw-no-underline tw-leading-5',
-                    !isActive && isSelected ? 'tw-font-medium tw-text-box-neutral-strong-inverse' : 'tw-text-text',
-                    TreeItemSpacingClassMap[itemStyle?.spacingY ?? 'none'],
+                    !isActive && isSelected ? styling.selectedTextColor : styling.textColor,
+                    TreeItemSpacingClassMap[itemStyleProps.spacingY ?? 'none'],
                 ]),
                 backgroundClassName: merge([
                     'tw-block tw-absolute tw-inset-0 tw-transition-colors -tw-z-10',
-                    itemStyle?.borderWidth !== 'none'
-                        ? TreeItemBorderRadiusClassMap[itemStyle?.borderRadius ?? 'small']
+                    itemStyleProps.borderWidth !== 'none'
+                        ? TreeItemBorderRadiusClassMap[itemStyleProps.borderRadius ?? 'small']
                         : '-tw-mx-2.5',
-                    !isActive && !isSelected && 'group-active:tw-bg-box-neutral-pressed',
-                    !isActive && isSelected
-                        ? 'tw-bg-box-neutral-strong group-hover:tw-bg-box-neutral-strong-hover'
-                        : 'group-hover:tw-bg-box-neutral',
+                    !isActive &&
+                        (!isSelected || itemStyleProps.activeColorStyle !== 'neutral') &&
+                        styling.pressedBackgroundColor,
+                    !isActive && isSelected ? styling.selectedBackgroundColor : styling.backgroundColor,
                 ]),
             };
-        }, [isActive, isSelected, itemStyle?.borderRadius, itemStyle?.borderWidth, itemStyle?.spacingY]);
+        }, [isActive, isSelected, itemStyleProps, styling]);
 
         const showContent = showContentWhileDragging ? true : !isActive;
         const wrapperContentClassName =
@@ -341,27 +351,27 @@ export const TreeItem = memo(
         ) {
             previousItemToBeExpandedFeedback = merge([
                 'tw-border-solid tw-border-box-selected-strong',
-                TreeItemBorderRadiusClassMap[itemStyle?.borderRadius ?? 'small'],
+                TreeItemBorderRadiusClassMap[itemStyleProps.borderRadius ?? 'small'],
                 TreeItemBorderClassMap['small'],
             ]);
         }
 
         const containerBorder =
-            itemStyle?.borderWidth && previousItemToBeExpandedFeedback === ''
+            itemStyleProps.borderWidth !== 'none' && previousItemToBeExpandedFeedback === ''
                 ? merge([
-                      TreeItemBorderClassMap[itemStyle?.borderWidth ?? 'none'],
-                      TreeItemBorderRadiusClassMap[itemStyle?.borderRadius ?? 'small'],
-                      TreeItemBorderStyleClassMap[itemStyle?.borderStyle ?? 'none'],
+                      TreeItemBorderClassMap[itemStyleProps.borderWidth ?? 'none'],
+                      TreeItemBorderRadiusClassMap[itemStyleProps.borderRadius ?? 'small'],
+                      TreeItemBorderStyleClassMap[itemStyleProps.borderStyle ?? 'none'],
                   ])
                 : '';
-        const containerHeight = itemStyle.contentHight === 'single-line' ? 'tw-h-10' : 'tw-h-fit';
-        const containerActiveHeight = itemStyle.contentHight === 'single-line' ? 'tw-h-12' : 'tw-h-fit';
+        const containerHeight = itemStyleProps.contentHight === 'single-line' ? 'tw-h-10' : 'tw-h-fit';
+        const containerActiveHeight = itemStyleProps.contentHight === 'single-line' ? 'tw-h-12' : 'tw-h-fit';
 
         const containerClassName = merge([
             'tw-relative tw-z-0 tw-transition-colors tw-flex tw-items-center tw-leading-5 tw-width-full tw-justify-between',
-            TreeItemShadowClassMap[itemStyle.shadow ?? 'none'],
+            TreeItemShadowClassMap[itemStyleProps.shadow ?? 'none'],
             isActive ? 'tw-border-dashed tw-border-2 tw-pr-0' : containerBorder,
-            isActive && TreeItemBorderRadiusClassMap[itemStyle?.borderRadius ?? 'small'],
+            isActive && TreeItemBorderRadiusClassMap[itemStyleProps.borderRadius ?? 'small'],
             isActive ? containerActiveHeight : containerHeight,
             isActive &&
                 (canDrop
@@ -375,7 +385,7 @@ export const TreeItem = memo(
 
         const liStyle = { paddingLeft: depthPadding ?? levelPadding };
         const backgroundStyle =
-            itemStyle?.borderWidth !== 'none' ? {} : { marginLeft: -1 * (depthPadding ?? levelPadding) };
+            itemStyleProps.borderWidth !== 'none' ? {} : { marginLeft: -1 * (depthPadding ?? levelPadding) };
 
         const style = {
             transform: CSS.Transform.toString(transform),
@@ -395,6 +405,7 @@ export const TreeItem = memo(
                     className={merge([
                         showDragHandle ? 'tw-visible' : 'tw-invisible tw-pointer-events-none',
                         showDragHandlerOnHoverOnly ? !isSelected && 'tw-opacity-0' : 'tw-opacity-100',
+                        isSelected ? styling.selectedDragHanlderTextColor : styling.dragHanlderTextColor,
                     ])}
                 />
             ) : null;

@@ -20,7 +20,7 @@ export const DragHandle = forwardRef<HTMLButtonElement, DragHandleProps>(({ acti
             className={merge([
                 FOCUS_VISIBLE_STYLE,
                 'tw-p-1 first:tw-ml-2 tw-rounded-sm hover:tw-cursor-grab group-hover:tw-opacity-100 group-focus-within:tw-opacity-100',
-                active ? 'tw-opacity-100 tw-text-box-neutral-strong-inverse' : 'tw-text-text',
+                active ? 'tw-opacity-100' : '',
                 className,
             ])}
             data-test-id="fondue-tree-item-drag-handle"

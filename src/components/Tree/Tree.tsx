@@ -41,6 +41,7 @@ import type {
     TreeAnnouncements,
     TreeDragOverEvent,
     TreeDragStartEvent,
+    TreeItemStyling,
     TreeOver,
     TreeProps,
     TreeState,
@@ -193,14 +194,7 @@ export const Tree = memo(
         dragHandlerPosition = 'left',
         showDragHandlerOnHoverOnly = true,
         showContentWhileDragging = false,
-        itemStyle = {
-            spacingY: 'none',
-            contentHight: 'single-line',
-            shadow: 'none',
-            borderRadius: 'small',
-            borderWidth: 'none',
-            borderStyle: 'none',
-        },
+        itemStyle,
         'data-test-id': dataTestId = 'fondue-tree',
     }: TreeProps) => {
         const initialState: TreeState = useMemo(
@@ -622,6 +616,17 @@ export const Tree = memo(
         }, [activeId, offset, overId, treeState.nodes]);
 
         const { nodes, items } = useMemo(() => {
+            const treeItemStyle = {
+                spacingY: 'none',
+                contentHight: 'single-line',
+                shadow: 'none',
+                borderRadius: 'small',
+                borderWidth: 'none',
+                borderStyle: 'none',
+                activeColorStyle: 'neutral',
+                ...itemStyle,
+            } as TreeItemStyling;
+
             return {
                 items: treeState.nodes.map((node) => node.props.id),
                 nodes: treeState.nodes.map((node) =>
@@ -636,7 +641,7 @@ export const Tree = memo(
                         showContentWhileDragging: node.props.showContentWhileDragging
                             ? node.props.showContentWhileDragging
                             : showContentWhileDragging,
-                        itemStyle: { ...itemStyle, ...node.props.itemStyle },
+                        itemStyle: { ...treeItemStyle, ...node.props.itemStyle },
                         registerOverlay,
                         onExpand: handleExpand,
                         onShrink: handleShrink,

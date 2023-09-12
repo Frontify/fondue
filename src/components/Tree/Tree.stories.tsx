@@ -12,6 +12,7 @@ import {
     TreeItemBorderClassMap,
     TreeItemBorderRadiusClassMap,
     TreeItemBorderStyleClassMap,
+    TreeItemColorsClassMap,
     TreeItemShadowClassMap,
     TreeItemSpacingClassMap,
     Tree as TreeView,
@@ -46,6 +47,7 @@ export default {
         borderRadius: 'small',
         borderWidth: 'none',
         borderStyle: 'none',
+        activeColorStyle: 'neutral',
     },
     argTypes: {
         draggable: {
@@ -104,6 +106,13 @@ export default {
             options: [...Object.keys(TreeItemBorderStyleClassMap)],
             mapping: [...Object.values(TreeItemBorderStyleClassMap)],
             control: { type: 'select' },
+        },
+        activeColorStyle: {
+            table: { category: 'Item Style' },
+            name: 'itemStyle.activeColorStyle',
+            options: [...Object.keys(TreeItemColorsClassMap)],
+            mapping: [...Object.values(TreeItemColorsClassMap)],
+            control: { type: 'inline-radio' },
         },
         selectedIds: {
             control: { type: 'object' },
@@ -180,22 +189,23 @@ const renderTreeItemComponent = ({ nodes, label, numChildNodes, onDrop, ...treeI
 
 const cleanProps = ({ ...args }) => {
     const itemStyle = {
-        ...{
-            spacingY: args.spacingY,
-            contentHight: args.contentHight,
-            shadow: args.shadow,
-            borderRadius: args.borderRadius,
-            borderWidth: args.borderWidth,
-            borderStyle: args.borderStyle,
-        },
+        spacingY: args.spacingY,
+        contentHight: args.contentHight,
+        shadow: args.shadow,
+        borderRadius: args.borderRadius,
+        borderWidth: args.borderWidth,
+        borderStyle: args.borderStyle,
+        activeColorStyle: args.activeColorStyle,
         ...args.itemStyle,
     };
+
     delete args.spacingY;
     delete args.contentHight;
     delete args.shadow;
     delete args.borderRadius;
     delete args.borderWidth;
     delete args.borderStyle;
+    delete args.activeColorStyle;
 
     return { ...args, itemStyle };
 };
@@ -508,4 +518,5 @@ WithTreeItemsStyled.args = {
     borderRadius: 'large',
     borderWidth: 'x-small',
     borderStyle: 'solid',
+    activeColorStyle: 'soft',
 };

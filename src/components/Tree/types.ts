@@ -27,6 +27,16 @@ export type OnTreeDropCallback = (args: {
 export type TreeItemPropsSizing = 'none' | 'x-small' | 'small' | 'medium' | 'large' | 'x-large';
 type TreeItemContentFit = 'content-fit' | 'single-line';
 type TreeItemBorderStyle = 'solid' | 'dashed' | 'dotted' | 'none';
+export type TreeItemColors = 'neutral' | 'soft' | 'none';
+type TreeItemColorStyles = {
+    textColor: string;
+    selectedTextColor: string;
+    backgroundColor: string;
+    selectedBackgroundColor: string;
+    pressedBackgroundColor: string;
+    dragHanlderTextColor: string;
+    selectedDragHanlderTextColor: string;
+};
 
 export const TreeItemSpacingClassMap: Record<TreeItemPropsSizing, string> = {
     none: 'tw-my-0',
@@ -70,6 +80,36 @@ export const TreeItemBorderStyleClassMap: Record<TreeItemBorderStyle, string> = 
     dashed: 'tw-border-dashed',
 };
 
+export const TreeItemColorsClassMap: Record<TreeItemColors, TreeItemColorStyles> = {
+    none: {
+        textColor: '',
+        selectedTextColor: '',
+        backgroundColor: '',
+        selectedBackgroundColor: '',
+        pressedBackgroundColor: 'group-active:tw-bg-box-neutral-pressed',
+        dragHanlderTextColor: '',
+        selectedDragHanlderTextColor: '',
+    },
+    neutral: {
+        textColor: 'tw-text-text',
+        selectedTextColor: 'tw-font-medium tw-text-box-neutral-strong-inverse',
+        backgroundColor: 'group-hover:tw-bg-box-neutral',
+        selectedBackgroundColor: 'tw-bg-box-neutral-strong group-hover:tw-bg-box-neutral-strong-hover',
+        pressedBackgroundColor: 'group-active:tw-bg-box-neutral-pressed',
+        dragHanlderTextColor: 'tw-text-text',
+        selectedDragHanlderTextColor: 'tw-text-box-neutral-strong-inverse',
+    },
+    soft: {
+        textColor: 'tw-text-text',
+        selectedTextColor: 'tw-font-medium tw-text-box-neutral-strong',
+        backgroundColor: 'group-hover:tw-bg-box-neutral-hover',
+        selectedBackgroundColor: 'tw-bg-box-neutral-pressed group-hover:tw-bg-box-strog-neutral-strong-inverse-hover',
+        pressedBackgroundColor: 'group-active:tw-bg-box-neutral-strong-inverse-pressed',
+        dragHanlderTextColor: 'tw-text-text',
+        selectedDragHanlderTextColor: 'tw-text-box-neutral-strong',
+    },
+};
+
 export type TreeItemStyling = {
     spacingY?: TreeItemPropsSizing;
     contentHight?: TreeItemContentFit;
@@ -77,6 +117,7 @@ export type TreeItemStyling = {
     borderRadius?: TreeItemPropsSizing;
     borderWidth?: Exclude<TreeItemPropsSizing, 'x-large'>;
     borderStyle?: TreeItemBorderStyle;
+    activeColorStyle?: TreeItemColors;
 };
 
 export type TreeProps = {
