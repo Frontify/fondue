@@ -14,7 +14,7 @@ export const buttonNode = (node: TElement, children: string, defaultClassNames: 
 
     const defaultStyles = reactCssPropsToCss(buttonStyle);
     return `<a href="${node.url}"
-                target="${node.target ?? '_self'}"
+                target="${node.target ?? '_blank'}"
                 dir="auto"
                 style="${defaultStyles}"
                 class="${defaultClassNames}"
