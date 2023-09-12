@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { merge } from '@utilities/merge';
-import { ReactElement, ReactNode } from 'react';
+import { AriaAttributes, ReactElement, ReactNode } from 'react';
 import { decorationMap, displayMap, overflowMap, whitespaceMap, wordBreakMap } from '../shared/records';
 import { SharedTypographyProps } from '../shared/types';
 
@@ -9,13 +9,14 @@ type TextWeight = 'default' | 'strong' | 'x-strong';
 type TextSize = 'x-small' | 'small' | 'medium' | 'large';
 type TextColor = 'default' | 'weak' | 'x-weak' | 'disabled' | 'negative' | 'positive' | 'warning' | 'interactive';
 
-export type TextProps = SharedTypographyProps & {
-    size?: TextSize;
-    weight?: TextWeight;
-    as?: 'a' | 'abbr' | 'address' | 'em' | 'label' | 'li' | 'span' | 'strong' | 'time' | 'p';
-    color?: TextColor;
-    children?: ReactNode;
-};
+export type TextProps = SharedTypographyProps &
+    AriaAttributes & {
+        size?: TextSize;
+        weight?: TextWeight;
+        as?: 'a' | 'abbr' | 'address' | 'em' | 'label' | 'li' | 'span' | 'strong' | 'time' | 'p';
+        color?: TextColor;
+        children?: ReactNode;
+    };
 
 const weightMap: Record<TextWeight, string> = {
     default: 'tw-font-regular',
@@ -52,6 +53,7 @@ export const Text = ({
     whitespace = 'normal',
     overflow = 'visible',
     display,
+    ...props
 }: TextProps): ReactElement => (
     <Tag
         data-test-id="text"
@@ -66,6 +68,7 @@ export const Text = ({
             overflowMap[overflow],
             display && displayMap[display],
         ])}
+        {...props}
     >
         {children}
     </Tag>
