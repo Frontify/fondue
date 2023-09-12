@@ -402,11 +402,8 @@ export const TreeItem = memo(
                     ref={setActivatorNodeRef}
                     disabled={!showDragHandle}
                     aria-hidden={!showDragHandle}
-                    className={merge([
-                        showDragHandle ? 'tw-visible' : 'tw-invisible tw-pointer-events-none',
-                        showDragHandlerOnHoverOnly ? !isSelected && 'tw-opacity-0' : 'tw-opacity-100',
-                        isSelected ? styling.selectedDragHanlderTextColor : styling.dragHanlderTextColor,
-                    ])}
+                    showDragHandlerOnHoverOnly={showDragHandlerOnHoverOnly}
+                    activeColorStyle={itemStyleProps.activeColorStyle ?? 'neutral'}
                 />
             ) : null;
 
