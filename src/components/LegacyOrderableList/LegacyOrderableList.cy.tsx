@@ -122,7 +122,7 @@ describe('OrderableList Component', () => {
         cy.get(DRAGGABLE_ITEM).each(($el) => {
             const dataTransfer = new DataTransfer();
             cy.wrap($el)
-                .should('have.text', LegacyLegacyItemDragState.Idle)
+                .should('have.text', LegacyItemDragState.Idle)
                 .trigger('dragstart', { dataTransfer })
                 .trigger('drag');
             cy.wrap($el).should('have.text', LegacyItemDragState.Dragging);

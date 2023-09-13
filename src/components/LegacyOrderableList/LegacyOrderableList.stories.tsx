@@ -9,7 +9,7 @@ import { chain } from '@react-aria/utils';
 import { renderContent, storyItems } from '@components/LegacyOrderableList/utils';
 
 export default {
-    title: 'Components/Legacy Orderable List',
+    title: 'Deprecated/Legacy Orderable List',
     component: OrderableListComponent,
     tags: ['autodocs'],
     args: {
