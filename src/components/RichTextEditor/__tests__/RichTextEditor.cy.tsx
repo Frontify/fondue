@@ -189,13 +189,13 @@ describe('RichTextEditor Component', () => {
             cy.get(TOOLBAR_GROUP_1).children().eq(5).click();
             cy.get('[contenteditable=true]').should(
                 'include.html',
-                'tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-[0.2em] tw-font-mono tw-text-[85%]',
+                'tw-rounded tw-bg-box-neutral tw-text-violet-90 tw-m-0 tw-px-[0.2em] tw-font-mono tw-text-[85%]',
             );
 
             cy.get(TOOLBAR_GROUP_2).children().last().click();
             cy.get('[contenteditable=true]').should(
                 'not.include.html',
-                'tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-[0.2em] tw-font-mono tw-text-[85%]',
+                'tw-rounded tw-bg-box-neutral tw-text-violet-90 tw-m-0 tw-px-[0.2em] tw-font-mono tw-text-[85%]',
             );
         });
 
@@ -211,7 +211,7 @@ describe('RichTextEditor Component', () => {
             cy.get(TOOLBAR_GROUP_1).children().eq(5).click();
             cy.get('[contenteditable=true]').should(
                 'include.html',
-                'tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-[0.2em] tw-font-mono tw-text-[85%]',
+                'tw-rounded tw-bg-box-neutral tw-text-violet-90 tw-m-0 tw-px-[0.2em] tw-font-mono tw-text-[85%]',
             );
             cy.get('[contenteditable=true]').should('include.html', 'tw-font-bold');
             cy.get('[contenteditable=true]').should('include.html', 'tw-italic');
@@ -221,7 +221,7 @@ describe('RichTextEditor Component', () => {
             cy.get(TOOLBAR_GROUP_2).children().last().click();
             cy.get('[contenteditable=true]').should(
                 'not.include.html',
-                'tw-rounded tw-bg-box-neutral tw-text-box-neutral-inverse tw-m-0 tw-px-[0.2em] tw-font-mono tw-text-[85%]',
+                'tw-rounded tw-bg-box-neutral tw-text-violet-90 tw-m-0 tw-px-[0.2em] tw-font-mono tw-text-[85%]',
             );
             cy.get('[contenteditable=true]').should('not.include.html', 'tw-font-bold');
             cy.get('[contenteditable=true]').should('not.include.html', 'tw-italic');
