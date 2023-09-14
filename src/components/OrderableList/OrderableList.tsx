@@ -56,6 +56,7 @@ export const OrderableList = <T extends object>({
     dragDisabled,
     items,
     dragHandlerPosition = 'none',
+    spacingY = 'medium',
     renderContent,
     'data-test-id': dataTestId = 'orderable-list',
 }: OrderableListProps<T>) => {
@@ -82,15 +83,15 @@ export const OrderableList = <T extends object>({
             onDrop={handleDrop}
             data-test-id={dataTestId}
             itemStyle={{
-                spacingY: 'medium',
+                spacingY,
                 contentHight: 'content-fit',
                 shadow: 'small',
                 borderRadius: 'medium',
                 borderWidth: 'x-small',
-                borderStyle: 'none',
+                borderStyle: 'solid',
             }}
             showDragHandlerOnHoverOnly={!isDraggable}
-            dragHandlerPosition={dragHandlerPosition}
+            dragHandlerPosition={!isDraggable ? 'none' : dragHandlerPosition}
             showContentWhileDragging={true}
         >
             {itemsState.map((item) => {
