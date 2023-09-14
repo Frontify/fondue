@@ -37,6 +37,7 @@ export const OrderableList = <T extends object>({
     items,
     dragHandlerPosition = 'none',
     spacingY = 'medium',
+    selectedId,
     renderContent,
     'data-test-id': dataTestId = 'orderable-list',
 }: OrderableListProps<T>) => {
@@ -61,6 +62,7 @@ export const OrderableList = <T extends object>({
             id={listId}
             onDrop={handleDrop}
             data-test-id={dataTestId}
+            selectedIds={selectedId ? [selectedId] : []}
             itemStyle={{
                 spacingY,
                 contentHight: 'content-fit',

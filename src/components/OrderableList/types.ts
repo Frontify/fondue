@@ -22,6 +22,7 @@ export type OrderableListProps<T> = {
     dragDisabled: boolean;
     dragHandlerPosition?: 'left' | 'right' | 'none';
     spacingY?: TreeItemPropsSizing;
+    selectedId?: string;
     onMove: (modifiedItems: DraggableItem<T>[]) => void;
     renderContent: RenderListItem<T>;
     'data-test-id'?: string;
