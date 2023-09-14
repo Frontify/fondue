@@ -6,6 +6,7 @@ import { merge } from '@utilities/merge';
 import { IconGrabHandle12 } from '@foundation/Icon';
 
 import { INDENTATION_WIDTH } from '../helpers';
+import { DragHandlerPosition } from '../types';
 
 export type Overlay = {
     id: string;
@@ -14,7 +15,7 @@ export type Overlay = {
     children: ReactNode;
     contentComponent?: ReactNode;
     isSelected?: boolean;
-    dragHandlerPosition?: 'left' | 'right' | 'none';
+    dragHandlerPosition?: DragHandlerPosition;
     showContentWhileDragging: boolean;
 };
 

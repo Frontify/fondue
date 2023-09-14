@@ -1,6 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ReactElement } from 'react';
+import { ROOT_ID } from './constants';
+import { TreeState } from '../types';
 
 export const removeReactNodesFromFlatArray = (tree: ReactElement[], nodeIds: string[]): ReactElement[] => {
     // Create a set of the node IDs to remove for faster lookup
@@ -58,4 +60,19 @@ export const getReactNodesInFlatArray = (tree: ReactElement[], startingNodeId: s
     }
 
     return nodes;
+};
+
+export const getNodesToRender = (rootNodes: TreeState['rootNodes'], expandedIds: TreeState['expandedIds']) => {
+    const nodesToRender: { id: string; node: ReactElement }[] = [];
+    for (const node of rootNodes) {
+        const parentId = node.props.parentId;
+        if (
+            typeof parentId === 'string' &&
+            (parentId === ROOT_ID || (expandedIds.has(parentId) && nodesToRender.find((n) => n.id === parentId)))
+        ) {
+            nodesToRender.push({ id: node.props.id, node });
+        }
+    }
+
+    return nodesToRender.map((n) => n.node);
 };
