@@ -315,7 +315,7 @@ export const TreeItem = memo(
             return {
                 liClassName: merge([
                     FOCUS_VISIBLE_STYLE,
-                    'tw-box-content tw-relative tw-cursor-default tw-transition-colors tw-outline-none tw-ring-inset tw-group tw-px-2.5 tw-no-underline tw-leading-5',
+                    'tw-box-content tw-relative tw-cursor-default tw-transition-colors tw-outline-none tw-ring-inset tw-group tw-no-underline tw-leading-5',
                     !isActive && isSelected ? styling.selectedTextColor : styling.textColor,
                     TreeItemSpacingClassMap[itemStyleProps.spacingY ?? 'none'],
                 ]),
@@ -323,7 +323,7 @@ export const TreeItem = memo(
                     'tw-block tw-absolute tw-inset-0 tw-transition-colors -tw-z-10',
                     itemStyleProps.borderWidth !== 'none'
                         ? TreeItemBorderRadiusClassMap[itemStyleProps.borderRadius ?? 'small']
-                        : '-tw-mx-2.5',
+                        : '',
                     !isActive &&
                         (!isSelected || itemStyleProps.activeColorStyle !== 'neutral') &&
                         styling.pressedBackgroundColor,
@@ -333,8 +333,10 @@ export const TreeItem = memo(
         }, [isActive, isSelected, itemStyleProps, styling]);
 
         const showContent = showContentWhileDragging ? true : !isActive;
-        const wrapperContentClassName =
-            isActive && showContentWhileDragging ? 'tw-opacity-75 tw-blur-sm tw-grayscale tw-grow' : 'tw-grow';
+        const wrapperContentClassName = merge([
+            'tw-max-w-full	tw-grow',
+            isActive && showContentWhileDragging ? 'tw-opacity-75 tw-blur-sm tw-grayscale' : '',
+        ]);
         const showChildren = isExpanded && !isActive;
         const showDragHandle = draggable && !isActive;
         const showLabel = label !== undefined && !isActive;
@@ -368,7 +370,7 @@ export const TreeItem = memo(
         const containerActiveHeight = itemStyleProps.contentHight === 'single-line' ? 'tw-h-12' : 'tw-h-fit';
 
         const containerClassName = merge([
-            'tw-relative tw-z-0 tw-transition-colors tw-flex tw-items-center tw-leading-5 tw-width-full tw-justify-between',
+            'tw-relative tw-z-0 tw-transition-colors tw-flex tw-items-center tw-leading-5 tw-width-fit tw-justify-between',
             TreeItemShadowClassMap[itemStyleProps.shadow ?? 'none'],
             isActive ? 'tw-border-dashed tw-border-2 tw-pr-0' : containerBorder,
             isActive && TreeItemBorderRadiusClassMap[itemStyleProps.borderRadius ?? 'small'],

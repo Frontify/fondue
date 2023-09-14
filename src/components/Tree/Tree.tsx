@@ -463,7 +463,12 @@ export const Tree = memo(
 
         const [coordinateGetter] = useState(() => sortableTreeKeyboardCoordinates(sensorContext));
 
-        const sensors = useSensors(useSensor(PointerSensor), useSensor(KeyboardSensor, { coordinateGetter }));
+        const activationConstraint =
+            dragHandlerPosition === 'none' ? { delay: 150, tolerance: 2 } : { delay: 0, tolerance: 0 };
+        const sensors = useSensors(
+            useSensor(PointerSensor, { activationConstraint }),
+            useSensor(KeyboardSensor, { coordinateGetter }),
+        );
 
         const announcements: TreeAnnouncements = useMemo(() => {
             const getActiveTitle = (active: TreeActive) => {
