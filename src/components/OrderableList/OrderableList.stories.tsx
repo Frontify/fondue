@@ -15,11 +15,13 @@ export default {
     tags: ['autodocs'],
     args: {
         dragDisabled: false,
-        dragHandlerPosition: 'none',
+        dragHandlerPosition: 'right',
         spacingY: 'medium',
+        selectedId: '3',
     },
     argTypes: {
         onMove: { action: 'onMove' },
+        selectedId: { type: 'string' },
         dragHandlerPosition: {
             table: { category: 'Item Options' },
             options: ['left', 'right', 'none'],
@@ -43,6 +45,7 @@ export const OrderableList: StoryFn<OrderableListProps<StoryListItem>> = ({
     dragDisabled,
     dragHandlerPosition,
     spacingY,
+    selectedId,
 }) => {
     const [items, setItems] = useState(storyItems);
 
@@ -68,6 +71,7 @@ export const OrderableList: StoryFn<OrderableListProps<StoryListItem>> = ({
                     dragDisabled={dragDisabled}
                     dragHandlerPosition={dragHandlerPosition}
                     spacingY={spacingY}
+                    selectedId={selectedId}
                     renderContent={(...args) => renderContent(...args)}
                 />
             </div>
@@ -79,6 +83,7 @@ export const OrderableList: StoryFn<OrderableListProps<StoryListItem>> = ({
                     dragDisabled={dragDisabled}
                     dragHandlerPosition={dragHandlerPosition}
                     spacingY={spacingY}
+                    selectedId={selectedId}
                     renderContent={(...args) => renderContent(...args)}
                 />
             </div>
