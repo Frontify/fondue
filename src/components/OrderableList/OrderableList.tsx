@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
-import { OrderableListItem, OrderableListProps } from './types';
+import { OrderableListItem, OrderableListItemStyle, OrderableListProps } from './types';
 import { useId } from '@react-aria/utils';
 import { OnTreeDropCallback, Tree, TreeItem } from '..';
 import { DraggableItem } from '@utilities/dnd/types';
@@ -36,8 +36,7 @@ export const OrderableList = <T extends object>({
     dragDisabled,
     items,
     dragHandlerPosition = 'none',
-    spacingY = 'medium',
-    activeColorStyle = 'soft',
+    itemStyle,
     selectedId,
     renderContent,
     'data-test-id': dataTestId = 'orderable-list',
@@ -57,6 +56,19 @@ export const OrderableList = <T extends object>({
         onMove(moveItem(dropArgs.id, dropArgs.sort, itemsState));
     };
 
+    const treeItemStyle = useMemo(() => {
+        return {
+            spacingY: 'small',
+            contentHight: 'content-fit',
+            shadow: 'small',
+            borderRadius: 'medium',
+            borderWidth: 'x-small',
+            borderStyle: 'solid',
+            activeColorStyle: 'soft',
+            ...itemStyle,
+        } as OrderableListItemStyle;
+    }, [itemStyle]);
+
     return (
         <Tree
             draggable={isDraggable}
@@ -64,15 +76,7 @@ export const OrderableList = <T extends object>({
             onDrop={handleDrop}
             data-test-id={dataTestId}
             selectedIds={selectedId ? [selectedId] : []}
-            itemStyle={{
-                spacingY,
-                contentHight: 'content-fit',
-                shadow: 'small',
-                borderRadius: 'medium',
-                borderWidth: 'x-small',
-                borderStyle: 'solid',
-                activeColorStyle,
-            }}
+            itemStyle={treeItemStyle}
             showDragHandlerOnHoverOnly={!isDraggable}
             dragHandlerPosition={!isDraggable ? 'none' : dragHandlerPosition}
             showContentWhileDragging={true}
@@ -81,6 +85,7 @@ export const OrderableList = <T extends object>({
                 const identifier = `collection-item-${item.id}`;
                 return (
                     <TreeItem
+                        data-test-id={`${dataTestId}-item`}
                         id={item.id}
                         key={identifier}
                         type="collection-item"

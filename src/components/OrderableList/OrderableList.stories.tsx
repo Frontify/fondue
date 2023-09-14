@@ -3,11 +3,18 @@
 import { Meta, StoryFn } from '@storybook/react';
 import { useState } from 'react';
 import { OrderableList as OrderableListComponent } from './OrderableList';
-import { OrderableListItem } from './types';
+import { OrderableListItem, OrderableListItemStyle } from './types';
 import { OrderableListProps } from '.';
 import { chain } from '@react-aria/utils';
 import { renderContent, storyItems } from '@components/OrderableList/utils';
-import { TreeItemColorsClassMap, TreeItemSpacingClassMap } from '..';
+import {
+    TreeItemBorderClassMap,
+    TreeItemBorderRadiusClassMap,
+    TreeItemBorderStyleClassMap,
+    TreeItemColorsClassMap,
+    TreeItemShadowClassMap,
+    TreeItemSpacingClassMap,
+} from '..';
 
 export default {
     title: 'Components/Orderable List',
@@ -16,9 +23,14 @@ export default {
     args: {
         dragDisabled: false,
         dragHandlerPosition: 'right',
-        spacingY: 'medium',
-        selectedId: '3',
+        spacingY: 'small',
+        contentHight: 'content-fit',
+        shadow: 'small',
+        borderRadius: 'medium',
+        borderWidth: 'x-small',
+        borderStyle: 'solid',
         activeColorStyle: 'soft',
+        selectedId: '3',
     },
     argTypes: {
         onMove: { action: 'onMove' },
@@ -29,10 +41,45 @@ export default {
             control: { type: 'inline-radio' },
         },
         spacingY: {
-            table: { category: 'Item Options' },
+            table: { category: 'Item Style' },
+            name: 'itemStyle.spacingY',
             options: [...Object.keys(TreeItemSpacingClassMap)],
             mapping: [...Object.values(TreeItemSpacingClassMap)],
-            control: { type: 'select' },
+            control: { type: 'inline-radio' },
+        },
+        contentHight: {
+            table: { category: 'Item Style' },
+            name: 'itemStyle.contentHight',
+            options: ['content-fit', 'single-line'],
+            control: { type: 'inline-radio' },
+        },
+        shadow: {
+            table: { category: 'Item Style' },
+            name: 'itemStyle.shadow',
+            options: [...Object.keys(TreeItemShadowClassMap)],
+            mapping: [...Object.values(TreeItemShadowClassMap)],
+            control: { type: 'inline-radio' },
+        },
+        borderRadius: {
+            table: { category: 'Item Style' },
+            name: 'itemStyle.borderRadius',
+            options: [...Object.keys(TreeItemBorderRadiusClassMap)],
+            mapping: [...Object.values(TreeItemBorderRadiusClassMap)],
+            control: { type: 'inline-radio' },
+        },
+        borderWidth: {
+            table: { category: 'Item Style' },
+            name: 'itemStyle.borderWidth',
+            options: [...Object.keys(TreeItemBorderClassMap)],
+            mapping: [...Object.values(TreeItemBorderClassMap)],
+            control: { type: 'inline-radio' },
+        },
+        borderStyle: {
+            table: { category: 'Item Style' },
+            name: 'itemStyle.borderStyle',
+            options: [...Object.keys(TreeItemBorderStyleClassMap)],
+            mapping: [...Object.values(TreeItemBorderStyleClassMap)],
+            control: { type: 'inline-radio' },
         },
         activeColorStyle: {
             table: { category: 'Item Style' },
@@ -48,12 +95,17 @@ type StoryListItem = {
     textContent: JSX.Element;
 };
 
-export const OrderableList: StoryFn<OrderableListProps<StoryListItem>> = ({
+export const OrderableList: StoryFn<OrderableListProps<StoryListItem> & OrderableListItemStyle> = ({
     onMove,
+    selectedId,
     dragDisabled,
     dragHandlerPosition,
     spacingY,
-    selectedId,
+    contentHight,
+    shadow,
+    borderRadius,
+    borderWidth,
+    borderStyle,
     activeColorStyle,
 }) => {
     const [items, setItems] = useState(storyItems);
@@ -92,32 +144,24 @@ export const OrderableList: StoryFn<OrderableListProps<StoryListItem>> = ({
     };
 
     return (
-        <>
-            <div className="tw-m-auto tw-w-[600px] tw-pb-6">
-                <OrderableListComponent
-                    items={items}
-                    onMove={chain(handleMove, onMove)}
-                    dragDisabled={dragDisabled}
-                    dragHandlerPosition={dragHandlerPosition}
-                    spacingY={spacingY}
-                    selectedId={selectedId}
-                    activeColorStyle={activeColorStyle}
-                    renderContent={(...args) => renderContent(...args)}
-                />
-            </div>
-
-            <div className="tw-m-auto tw-w-[600px]">
-                <OrderableListComponent
-                    items={items}
-                    onMove={chain(handleMove, onMove)}
-                    dragDisabled={dragDisabled}
-                    dragHandlerPosition={dragHandlerPosition}
-                    spacingY={spacingY}
-                    selectedId={selectedId}
-                    activeColorStyle={activeColorStyle}
-                    renderContent={(...args) => renderContent(...args)}
-                />
-            </div>
-        </>
+        <div className="tw-m-auto tw-w-[600px] tw-pb-6">
+            <OrderableListComponent
+                items={items}
+                onMove={chain(handleMove, onMove)}
+                dragDisabled={dragDisabled}
+                dragHandlerPosition={dragHandlerPosition}
+                selectedId={selectedId}
+                itemStyle={{
+                    spacingY,
+                    contentHight,
+                    shadow,
+                    borderRadius,
+                    borderWidth,
+                    borderStyle,
+                    activeColorStyle,
+                }}
+                renderContent={(...args) => renderContent(...args)}
+            />
+        </div>
     );
 };
