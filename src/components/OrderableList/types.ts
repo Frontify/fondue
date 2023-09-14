@@ -2,6 +2,7 @@
 
 import { ReactElement } from 'react';
 import { DraggableItem } from '@utilities/dnd';
+import { TreeItemPropsSizing } from '..';
 
 export type RenderListItem<T> = (items: OrderableListItem<T>) => ReactElement;
 
@@ -20,6 +21,7 @@ export type OrderableListProps<T> = {
     items: OrderableListItem<T>[];
     dragDisabled: boolean;
     dragHandlerPosition?: 'left' | 'right' | 'none';
+    spacingY?: TreeItemPropsSizing;
     onMove: (modifiedItems: OrderableListItem<T>[]) => void;
     renderContent: RenderListItem<T>;
     'data-test-id'?: string;

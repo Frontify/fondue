@@ -7,6 +7,7 @@ import { OrderableListItem } from './types';
 import { OrderableListProps } from '.';
 import { chain } from '@react-aria/utils';
 import { renderContent, storyItems } from '@components/OrderableList/utils';
+import { TreeItemSpacingClassMap } from '..';
 
 export default {
     title: 'Components/Orderable List',
@@ -15,6 +16,7 @@ export default {
     args: {
         dragDisabled: false,
         dragHandlerPosition: 'none',
+        spacingY: 'medium',
     },
     argTypes: {
         onMove: { action: 'onMove' },
@@ -22,6 +24,12 @@ export default {
             table: { category: 'Item Options' },
             options: ['left', 'right', 'none'],
             control: { type: 'inline-radio' },
+        },
+        spacingY: {
+            table: { category: 'Item Options' },
+            options: [...Object.keys(TreeItemSpacingClassMap)],
+            mapping: [...Object.values(TreeItemSpacingClassMap)],
+            control: { type: 'select' },
         },
     },
 } as Meta<OrderableListProps<StoryListItem>>;
@@ -34,6 +42,7 @@ export const OrderableList: StoryFn<OrderableListProps<StoryListItem>> = ({
     onMove,
     dragDisabled,
     dragHandlerPosition,
+    spacingY,
 }) => {
     const [items, setItems] = useState(storyItems);
 
@@ -58,6 +67,7 @@ export const OrderableList: StoryFn<OrderableListProps<StoryListItem>> = ({
                     onMove={chain(handleMove, onMove)}
                     dragDisabled={dragDisabled}
                     dragHandlerPosition={dragHandlerPosition}
+                    spacingY={spacingY}
                     renderContent={(...args) => renderContent(...args)}
                 />
             </div>
@@ -68,6 +78,7 @@ export const OrderableList: StoryFn<OrderableListProps<StoryListItem>> = ({
                     onMove={chain(handleMove, onMove)}
                     dragDisabled={dragDisabled}
                     dragHandlerPosition={dragHandlerPosition}
+                    spacingY={spacingY}
                     renderContent={(...args) => renderContent(...args)}
                 />
             </div>
