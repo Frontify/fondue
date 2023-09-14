@@ -1,16 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useState } from 'react';
-import { chain } from '@react-aria/utils';
 import { Meta, StoryFn } from '@storybook/react';
-
-import { LegacyOrderableList as DropZoneComponent, LegacyOrderableListProps } from '@components/LegacyOrderableList';
-import { StoryListItem, renderContent, storyItems } from '@components/LegacyOrderableList/utils';
-import type { LegacyOrderableListItem } from '@components/LegacyOrderableList/types';
+import { useState } from 'react';
+import { LegacyOrderableList as OrderableListComponent } from './LegacyOrderableList';
+import { LegacyOrderableListItem } from './types';
+import { LegacyOrderableListProps } from '.';
+import { chain } from '@react-aria/utils';
+import { renderContent, storyItems } from '@components/LegacyOrderableList/utils';
 
 export default {
-    title: 'Components/Drop Zone',
-    component: DropZoneComponent,
+    title: 'Deprecated/Legacy Orderable List',
+    component: OrderableListComponent,
     tags: ['autodocs'],
     args: {
         dragDisabled: false,
@@ -20,10 +20,11 @@ export default {
     },
 } as Meta<LegacyOrderableListProps<StoryListItem>>;
 
-export const DropZoneWithOrderableList: StoryFn<LegacyOrderableListProps<StoryListItem>> = ({
-    onMove,
-    dragDisabled,
-}) => {
+type StoryListItem = {
+    textContent: JSX.Element;
+};
+
+export const LegacyOrderableList: StoryFn<LegacyOrderableListProps<StoryListItem>> = ({ onMove, dragDisabled }) => {
     const [items, setItems] = useState(storyItems);
 
     const handleMove = (modifiedItems: LegacyOrderableListItem<StoryListItem>[]) => {
@@ -42,7 +43,7 @@ export const DropZoneWithOrderableList: StoryFn<LegacyOrderableListProps<StoryLi
     return (
         <>
             <div className="tw-m-auto tw-w-[600px] tw-pb-6">
-                <DropZoneComponent
+                <OrderableListComponent
                     items={items}
                     onMove={chain(handleMove, onMove)}
                     dragDisabled={dragDisabled}
@@ -50,7 +51,7 @@ export const DropZoneWithOrderableList: StoryFn<LegacyOrderableListProps<StoryLi
                 />
             </div>
             <div className="tw-m-auto tw-w-[600px]">
-                <DropZoneComponent
+                <OrderableListComponent
                     items={items}
                     onMove={chain(handleMove, onMove)}
                     dragDisabled={dragDisabled}
