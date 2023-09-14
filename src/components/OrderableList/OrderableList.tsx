@@ -21,33 +21,14 @@ const listItemsCompareFn = <T extends object>(itemA: OrderableListItem<T>, itemB
     return itemA.sort - itemB.sort;
 };
 
-const moveItems = (id: string, newPosition: number | null, items: DraggableItem[]) => {
-    const newItems = new Map();
+const moveItem = <T extends object>(
+    id: string,
+    newPosition: number | null,
+    items: DraggableItem<T>[],
+): DraggableItem<T>[] => {
+    const theItem = items.find((item) => item.id === id) as DraggableItem<T>;
 
-    const theItem = items.find((item) => item.id === id);
-
-    let isPageOnLastPosition = true;
-    let sort = 1;
-
-    for (const currentItem of items) {
-        if (currentItem.id === id) {
-            continue;
-        }
-        if (newItems.size === (newPosition ?? 0)) {
-            newItems.set(id, { ...theItem, sort });
-            sort++;
-            isPageOnLastPosition = false;
-        }
-
-        newItems.set(currentItem.id, { ...currentItem, sort });
-        sort++;
-    }
-
-    if (isPageOnLastPosition) {
-        newItems.set(id, { ...theItem, sort });
-    }
-
-    return Array.from(newItems.values());
+    return theItem ? [{ ...theItem, sort: newPosition }] : [];
 };
 
 export const OrderableList = <T extends object>({
@@ -71,8 +52,7 @@ export const OrderableList = <T extends object>({
     }, [items]);
 
     const handleDrop: OnTreeDropCallback = (dropArgs) => {
-        const modifiedItems = moveItems(dropArgs.id, dropArgs.sort, itemsState);
-        onMove(modifiedItems);
+        onMove(moveItem(dropArgs.id, dropArgs.sort, itemsState));
     };
 
     return (
