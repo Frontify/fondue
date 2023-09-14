@@ -14,9 +14,15 @@ export default {
     tags: ['autodocs'],
     args: {
         dragDisabled: false,
+        dragHandlerPosition: 'none',
     },
     argTypes: {
         onMove: { action: 'onMove' },
+        dragHandlerPosition: {
+            table: { category: 'Item Options' },
+            options: ['left', 'right', 'none'],
+            control: { type: 'inline-radio' },
+        },
     },
 } as Meta<OrderableListProps<StoryListItem>>;
 
@@ -24,7 +30,11 @@ type StoryListItem = {
     textContent: JSX.Element;
 };
 
-export const OrderableList: StoryFn<OrderableListProps<StoryListItem>> = ({ onMove, dragDisabled }) => {
+export const OrderableList: StoryFn<OrderableListProps<StoryListItem>> = ({
+    onMove,
+    dragDisabled,
+    dragHandlerPosition,
+}) => {
     const [items, setItems] = useState(storyItems);
 
     const handleMove = (modifiedItems: OrderableListItem<StoryListItem>[]) => {
@@ -47,14 +57,17 @@ export const OrderableList: StoryFn<OrderableListProps<StoryListItem>> = ({ onMo
                     items={items}
                     onMove={chain(handleMove, onMove)}
                     dragDisabled={dragDisabled}
+                    dragHandlerPosition={dragHandlerPosition}
                     renderContent={(...args) => renderContent(...args)}
                 />
             </div>
+
             <div className="tw-m-auto tw-w-[600px]">
                 <OrderableListComponent
                     items={items}
                     onMove={chain(handleMove, onMove)}
                     dragDisabled={dragDisabled}
+                    dragHandlerPosition={dragHandlerPosition}
                     renderContent={(...args) => renderContent(...args)}
                 />
             </div>
