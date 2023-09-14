@@ -41,7 +41,7 @@ export const getAnnouncements = (
 
         if (activeNode && isValidElement(activeNode.props.contentComponent)) {
             title = activeNode.props.contentComponent.props.title;
-        } else if (activeNode && activeNode.props.label) {
+        } else if (activeNode?.props?.label) {
             title = activeNode.props.label;
         }
 
@@ -55,7 +55,7 @@ export const getAnnouncements = (
 
         if (overNode && isValidElement(overNode.props.contentComponent)) {
             title = overNode.props.contentComponent.props.title;
-        } else if (overNode && overNode.props.label) {
+        } else if (overNode?.props?.label) {
             title = overNode.props.label;
         }
 

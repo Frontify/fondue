@@ -450,7 +450,7 @@ export const Tree = memo(
         const getPropToUse = (
             nodeProp: TreeItemProps['dragHandlerPosition' | 'showContentWhileDragging' | 'showDragHandlerOnHoverOnly'],
             treeProp: TreeProps['dragHandlerPosition' | 'showContentWhileDragging' | 'showDragHandlerOnHoverOnly'],
-        ) => (nodeProp ? nodeProp : treeProp);
+        ) => nodeProp || treeProp;
 
         const { nodes, items } = useMemo(() => {
             const treeItemStyle = {
