@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { DragProperties, ItemDragState, OrderableList, OrderableListItem, OrderableListProps } from '.';
+import { ItemDragState, OrderableList, OrderableListItem, OrderableListProps } from '.';
 
 const LIST_ID = '[data-test-id=orderable-list]';
 const DRAGGABLE_ITEM = '[data-test-id=draggable-item]';
@@ -25,12 +25,8 @@ const renderDefaultTestItems = ({ text }: OrderableListItem<TestItem>) => (
     <div style={{ height: `${ITEM_HEIGHT}px` }}>{text}</div>
 );
 
-const renderWithFocusableItems = (_item: OrderableListItem<TestItem>, { isFocusVisible }: DragProperties) => (
-    <div
-        style={{ height: `${ITEM_HEIGHT}px` }}
-        className="tw-flex tw-justify-around"
-        data-focus-visible={isFocusVisible}
-    >
+const renderWithFocusableItems = () => (
+    <div style={{ height: `${ITEM_HEIGHT}px` }} className="tw-flex tw-justify-around">
         <button data-test-id="focusable-item">Button</button>
         <input data-test-id="focusable-item" value="Input"></input>
         <textarea data-test-id="focusable-item">Textarea</textarea>
@@ -104,9 +100,7 @@ describe('OrderableList Component', () => {
     });
 
     it('Passes on correct drag state to each item', () => {
-        const renderWithDragState = (_item: TestItem, { componentDragState }: DragProperties) => (
-            <div style={{ height: `${ITEM_HEIGHT}px` }}>{componentDragState}</div>
-        );
+        const renderWithDragState = () => <div style={{ height: `${ITEM_HEIGHT}px` }}>{'TODO'}</div>;
 
         cy.mount(<OrderableListWithDefaultProps renderContent={renderWithDragState} />);
 
