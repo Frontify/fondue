@@ -37,6 +37,7 @@ export const OrderableList = <T extends object>({
     items,
     dragHandlerPosition = 'none',
     spacingY = 'medium',
+    activeColorStyle = 'soft',
     selectedId,
     renderContent,
     'data-test-id': dataTestId = 'orderable-list',
@@ -70,6 +71,7 @@ export const OrderableList = <T extends object>({
                 borderRadius: 'medium',
                 borderWidth: 'x-small',
                 borderStyle: 'solid',
+                activeColorStyle,
             }}
             showDragHandlerOnHoverOnly={!isDraggable}
             dragHandlerPosition={!isDraggable ? 'none' : dragHandlerPosition}

@@ -7,7 +7,7 @@ import { OrderableListItem } from './types';
 import { OrderableListProps } from '.';
 import { chain } from '@react-aria/utils';
 import { renderContent, storyItems } from '@components/OrderableList/utils';
-import { TreeItemSpacingClassMap } from '..';
+import { TreeItemColorsClassMap, TreeItemSpacingClassMap } from '..';
 
 export default {
     title: 'Components/Orderable List',
@@ -18,6 +18,7 @@ export default {
         dragHandlerPosition: 'right',
         spacingY: 'medium',
         selectedId: '3',
+        activeColorStyle: 'soft',
     },
     argTypes: {
         onMove: { action: 'onMove' },
@@ -33,6 +34,13 @@ export default {
             mapping: [...Object.values(TreeItemSpacingClassMap)],
             control: { type: 'select' },
         },
+        activeColorStyle: {
+            table: { category: 'Item Style' },
+            name: 'itemStyle.activeColorStyle',
+            options: [...Object.keys(TreeItemColorsClassMap)],
+            mapping: [...Object.values(TreeItemColorsClassMap)],
+            control: { type: 'inline-radio' },
+        },
     },
 } as Meta<OrderableListProps<StoryListItem>>;
 
@@ -46,18 +54,39 @@ export const OrderableList: StoryFn<OrderableListProps<StoryListItem>> = ({
     dragHandlerPosition,
     spacingY,
     selectedId,
+    activeColorStyle,
 }) => {
     const [items, setItems] = useState(storyItems);
 
     const handleMove = (modifiedItems: OrderableListItem<StoryListItem>[]) => {
-        const modifiedArray = items.map((item) => {
-            const matchingModifiedItem = modifiedItems.find((modifiedItem) => modifiedItem.id === item.id);
-            if (matchingModifiedItem) {
-                return { ...matchingModifiedItem };
+        if (modifiedItems.length === 0) {
+            return;
+        }
+
+        const modifiedItem = modifiedItems[0];
+        const modifiedArray: OrderableListItem<StoryListItem>[] = [];
+
+        let sort = 1;
+        let isPageOnLastPosition = true;
+
+        for (const item of items) {
+            if (item.id === modifiedItem.id) {
+                continue;
             }
 
-            return { ...item };
-        });
+            if (modifiedArray.length - 1 === modifiedItem.sort) {
+                modifiedArray.push(modifiedItem);
+                sort++;
+                isPageOnLastPosition = false;
+            }
+
+            modifiedArray.push({ ...item, sort });
+            sort++;
+        }
+
+        if (isPageOnLastPosition) {
+            modifiedArray.push(modifiedItem);
+        }
 
         setItems(modifiedArray);
     };
@@ -72,6 +101,7 @@ export const OrderableList: StoryFn<OrderableListProps<StoryListItem>> = ({
                     dragHandlerPosition={dragHandlerPosition}
                     spacingY={spacingY}
                     selectedId={selectedId}
+                    activeColorStyle={activeColorStyle}
                     renderContent={(...args) => renderContent(...args)}
                 />
             </div>
@@ -84,6 +114,7 @@ export const OrderableList: StoryFn<OrderableListProps<StoryListItem>> = ({
                     dragHandlerPosition={dragHandlerPosition}
                     spacingY={spacingY}
                     selectedId={selectedId}
+                    activeColorStyle={activeColorStyle}
                     renderContent={(...args) => renderContent(...args)}
                 />
             </div>
