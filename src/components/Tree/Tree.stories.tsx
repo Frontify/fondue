@@ -214,7 +214,7 @@ export const WithLabel = ({ ...args }) => {
     const onDrop = useCallback(() => action('onDrop'), []);
 
     return (
-        <Container maxWidth={'400px'}>
+        <Container maxWidth="400px">
             <TreeView id={args.id} {...cleanProps(args)}>
                 {treeItemsMock.map((item) => renderTreeItemLabel({ ...item, onDrop }))}
             </TreeView>
@@ -226,7 +226,7 @@ export const WithCustomTreeItem = ({ ...args }: TreeProps) => {
     const onDrop = useCallback(() => action('onDrop'), []);
 
     return (
-        <Container maxWidth={'400px'}>
+        <Container maxWidth="400px">
             <TreeView id={args.id} {...cleanProps(args)}>
                 {treeItemsMock.map((item) => renderCustomTreeItem({ ...item, onDrop }))}
             </TreeView>
@@ -264,7 +264,7 @@ export const ScrollableWithLabel = ({ ...args }: TreeProps) => {
 
 export const WithBasicItem = ({ ...args }: TreeProps) => {
     return (
-        <Container maxWidth={'400px'}>
+        <Container maxWidth="400px">
             <TreeView id={args.id} {...cleanProps(args)}>
                 {treeItemsMock.map(renderTreeItemComponent)}
             </TreeView>
@@ -307,7 +307,7 @@ export const WithAwaitedItem = ({ ...args }: TreeProps) => {
     }, []);
 
     return (
-        <Container maxWidth={'400px'}>
+        <Container maxWidth="400px">
             <TreeView id={args.id} {...cleanArgs}>
                 {treeItemsMock.map(renderTreeItemComponent)}
                 {awaitedItems.map(renderTreeItemComponent)}
@@ -346,7 +346,7 @@ const DynamicNavigation = ({ ...args }: TreeProps) => {
 
 export const WithDynamicNavigation = ({ ...args }: TreeProps) => {
     return (
-        <Container maxWidth={'400px'}>
+        <Container maxWidth="400px">
             <DynamicNavigation {...args} id="dynamic-navigation" />
         </Container>
     );
@@ -433,7 +433,7 @@ export const WithCancelSelectionOnDoubleClick = ({ ...args }: TreeProps) => {
     const onDrop = useCallback(() => action('onDrop'), []);
 
     return (
-        <Container maxWidth={'400px'}>
+        <Container maxWidth="400px">
             <TreeView id={args.id} {...cleanProps(args)}>
                 {treeItemsMock.map((item) => renderTreeItemLabel({ ...item, onDrop, ignoreItemDoubleClick: true }))}
             </TreeView>
@@ -445,7 +445,7 @@ export const WithExpandOnSelect = ({ ...args }: TreeProps) => {
     const onDrop = useCallback(() => action('onDrop'), []);
 
     return (
-        <Container maxWidth={'400px'}>
+        <Container maxWidth="400px">
             <TreeView id={args.id} {...cleanProps(args)}>
                 {treeItemsMock.map((item) => renderTreeItemLabel({ ...item, onDrop, expandOnSelect: true }))}
             </TreeView>
@@ -467,7 +467,7 @@ export const InsideInlineDialog = ({ ...args }: TreeProps) => {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
-        <Container maxWidth={'800px'}>
+        <Container maxWidth="800px">
             <InlineDialog
                 open={isOpen}
                 modality={Modality.NonModal}
