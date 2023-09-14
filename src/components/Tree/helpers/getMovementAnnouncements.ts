@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, isValidElement } from 'react';
 import { arrayMove } from '@dnd-kit/sortable';
 
-import { TreeState } from '../types';
+import { TreeActive, TreeAnnouncements, TreeOver, TreeState } from '../types';
 
 type AnnouncementItem = {
     level: number;
@@ -29,7 +29,88 @@ type AnnouncementArgs = {
     >;
 };
 
-export const getMovementAnnouncement = ({
+export const getAnnouncements = (
+    treeState: TreeState,
+    currentPosition: AnnouncementArgs['currentPosition'],
+    setCurrentPosition: AnnouncementArgs['setCurrentPosition'],
+): TreeAnnouncements => {
+    const getActiveTitle = (active: TreeActive) => {
+        let title: string = active.id;
+
+        const activeNode = treeState.nodes.find((node) => node.props.id === active.id);
+
+        if (activeNode && isValidElement(activeNode.props.contentComponent)) {
+            title = activeNode.props.contentComponent.props.title;
+        } else if (activeNode && activeNode.props.label) {
+            title = activeNode.props.label;
+        }
+
+        return title;
+    };
+
+    const getOverTitle = (over: TreeOver | null) => {
+        let title = over?.id;
+
+        const overNode = treeState.nodes.find((node) => node.props.id === over?.id);
+
+        if (overNode && isValidElement(overNode.props.contentComponent)) {
+            title = overNode.props.contentComponent.props.title;
+        } else if (overNode && overNode.props.label) {
+            title = overNode.props.label;
+        }
+
+        return title;
+    };
+
+    return {
+        onDragStart({ active }) {
+            return `Picked up ${getActiveTitle(active) || active.id}.`;
+        },
+        onDragMove({ active, over }) {
+            return getMovementAnnouncement({
+                eventName: 'onDragMove',
+                activeId: active.id,
+                activeTitle: getActiveTitle(active),
+                overId: over?.id,
+                overTitle: getOverTitle(over),
+                treeState,
+                setCurrentPosition,
+                currentPosition,
+            });
+        },
+        onDragOver({ active, over }) {
+            return getMovementAnnouncement({
+                eventName: 'onDragOver',
+                activeId: active.id,
+                activeTitle: getActiveTitle(active),
+                overId: over?.id,
+                overTitle: getOverTitle(over),
+                treeState,
+                setCurrentPosition,
+                currentPosition,
+            });
+        },
+        onDragEnd({ active, over }) {
+            return getMovementAnnouncement({
+                eventName: 'onDragEnd',
+                activeId: active.id,
+                activeTitle: getActiveTitle(active),
+                overId: over?.id,
+                overTitle: getOverTitle(over),
+                treeState,
+                setCurrentPosition,
+                currentPosition,
+            });
+        },
+        onDragCancel({ active }) {
+            const title = getActiveTitle(active);
+
+            return `Moving was cancelled. ${title} was dropped in its original position.`;
+        },
+    };
+};
+
+const getMovementAnnouncement = ({
     eventName,
     activeId,
     activeTitle,

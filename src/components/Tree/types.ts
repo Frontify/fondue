@@ -24,6 +24,7 @@ export type OnTreeDropCallback = (args: {
     parentType?: string;
 }) => void;
 
+export type DragHandlerPosition = 'left' | 'right' | 'none';
 export type TreeItemPropsSizing = 'none' | 'x-small' | 'small' | 'medium' | 'large' | 'x-large';
 type TreeItemContentFit = 'content-fit' | 'single-line';
 type TreeItemBorderStyle = 'solid' | 'dashed' | 'dotted' | 'none';
@@ -128,7 +129,7 @@ export type TreeProps = {
     multiselect?: boolean;
     selectedIds?: string[];
     expandedIds?: string[];
-    dragHandlerPosition?: 'left' | 'right' | 'none';
+    dragHandlerPosition?: DragHandlerPosition;
     showDragHandlerOnHoverOnly?: boolean;
     showContentWhileDragging?: boolean;
     itemStyle?: TreeItemStyling;
@@ -162,7 +163,7 @@ type TreeItemBaseProps = {
     /**
      * dragHandlerPosition = 'none' makes the whole item draggble rather than only the dragHandler
      */
-    dragHandlerPosition?: 'left' | 'right' | 'none';
+    dragHandlerPosition?: DragHandlerPosition;
     showContentWhileDragging?: boolean;
     itemStyle?: TreeItemStyling;
     showCaret?: boolean;
