@@ -6,7 +6,6 @@ import { OrderableListItem, OrderableListProps } from './types';
 import { useId } from '@react-aria/utils';
 import { OnTreeDropCallback, Tree, TreeItem } from '..';
 import { DraggableItem } from '@utilities/dnd/types';
-import { merge } from '@utilities/merge';
 
 const listItemsCompareFn = <T extends object>(itemA: OrderableListItem<T>, itemB: OrderableListItem<T>): number => {
     if (itemA.sort === null && itemB.sort === null) {
@@ -104,7 +103,7 @@ export const OrderableList = <T extends object>({
                         accepts="collection-item"
                         expandable={false}
                         levelConstraint={0}
-                        contentComponent={<div className={merge(['tw-outline-none'])}>{renderContent(item)}</div>}
+                        contentComponent={renderContent(item)}
                     />
                 );
             })}
