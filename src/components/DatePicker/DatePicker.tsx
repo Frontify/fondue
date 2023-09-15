@@ -69,7 +69,7 @@ export const DatePicker = forwardRef<ReactDatePicker<never, boolean>, DatePicker
             onClose,
             onBlur,
             onKeyDown,
-            dateFormat = 'dd MMM yyyy',
+            dateFormat = 'MMM dd, yyyy',
             value,
             startDate,
             endDate,
