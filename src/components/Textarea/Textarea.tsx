@@ -64,7 +64,7 @@ export const Textarea = ({
 
     const onKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
         if (event.key === 'Enter') {
-            onEnterPressed && onEnterPressed(event);
+            onEnterPressed?.(event);
         }
     };
 
