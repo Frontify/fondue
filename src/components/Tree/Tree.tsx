@@ -41,6 +41,7 @@ import type {
     TreeAnnouncements,
     TreeDragOverEvent,
     TreeDragStartEvent,
+    TreeItemStyling,
     TreeOver,
     TreeProps,
     TreeState,
@@ -190,6 +191,10 @@ export const Tree = memo(
         expandedIds,
         draggable = false,
         multiselect = false,
+        dragHandlerPosition = 'left',
+        showDragHandlerOnHoverOnly = true,
+        showContentWhileDragging = false,
+        itemStyle,
         'data-test-id': dataTestId = 'fondue-tree',
     }: TreeProps) => {
         const initialState: TreeState = useMemo(
@@ -458,7 +463,12 @@ export const Tree = memo(
 
         const [coordinateGetter] = useState(() => sortableTreeKeyboardCoordinates(sensorContext));
 
-        const sensors = useSensors(useSensor(PointerSensor), useSensor(KeyboardSensor, { coordinateGetter }));
+        const activationConstraint =
+            dragHandlerPosition === 'none' ? { delay: 150, tolerance: 2 } : { delay: 0, tolerance: 0 };
+        const sensors = useSensors(
+            useSensor(PointerSensor, { activationConstraint }),
+            useSensor(KeyboardSensor, { coordinateGetter }),
+        );
 
         const announcements: TreeAnnouncements = useMemo(() => {
             const getActiveTitle = (active: TreeActive) => {
@@ -611,11 +621,32 @@ export const Tree = memo(
         }, [activeId, offset, overId, treeState.nodes]);
 
         const { nodes, items } = useMemo(() => {
+            const treeItemStyle = {
+                spacingY: 'none',
+                contentHight: 'single-line',
+                shadow: 'none',
+                borderRadius: 'small',
+                borderWidth: 'none',
+                borderStyle: 'none',
+                activeColorStyle: 'neutral',
+                ...itemStyle,
+            } as TreeItemStyling;
+
             return {
                 items: treeState.nodes.map((node) => node.props.id),
                 nodes: treeState.nodes.map((node) =>
                     cloneElement(node, {
                         treeDraggable: draggable,
+                        dragHandlerPosition: node.props.dragHandlerPosition
+                            ? node.props.dragHandlerPosition
+                            : dragHandlerPosition,
+                        showDragHandlerOnHoverOnly: node.props.showDragHandlerOnHoverOnly
+                            ? node.props.showDragHandlerOnHoverOnly
+                            : showDragHandlerOnHoverOnly,
+                        showContentWhileDragging: node.props.showContentWhileDragging
+                            ? node.props.showContentWhileDragging
+                            : showContentWhileDragging,
+                        itemStyle: { ...treeItemStyle, ...node.props.itemStyle },
                         registerOverlay,
                         onExpand: handleExpand,
                         onShrink: handleShrink,
@@ -626,12 +657,16 @@ export const Tree = memo(
                 ),
             };
         }, [
+            treeState.nodes,
             draggable,
+            dragHandlerPosition,
+            showDragHandlerOnHoverOnly,
+            showContentWhileDragging,
+            itemStyle,
+            registerOverlay,
             handleExpand,
             handleShrink,
             handleSelect,
-            registerOverlay,
-            treeState.nodes,
             registerNodeChildren,
             unregisterNodeChildren,
         ]);

@@ -14,14 +14,31 @@ export type Overlay = {
     children: ReactNode;
     contentComponent?: ReactNode;
     isSelected?: boolean;
+    dragHandlerPosition?: 'left' | 'right' | 'none';
+    showContentWhileDragging: boolean;
 };
 
-export const TreeItemOverlay = ({ id, label, level = 0, children, contentComponent, isSelected }: Overlay) => {
+export const TreeItemOverlay = ({
+    id,
+    label,
+    level = 0,
+    children,
+    contentComponent,
+    isSelected,
+    dragHandlerPosition = 'left',
+    showContentWhileDragging = false,
+}: Overlay) => {
     const hasChildren = Children.count(children) > 0;
 
     const indentation = level * INDENTATION_WIDTH;
 
     const liStyle = { marginLeft: indentation };
+
+    const dragHandler = (
+        <button tabIndex={-1} className="tw-p-1">
+            <IconGrabHandle12 />
+        </button>
+    );
 
     return (
         <li
@@ -32,11 +49,13 @@ export const TreeItemOverlay = ({ id, label, level = 0, children, contentCompone
             aria-level={level + 1}
             aria-selected={isSelected}
             data-test-id="fondue-tree-item-overlay"
-            className="tw-pointer-events-none tw-bg-white tw-flex tw-items-center tw-gap-x-1 tw-py-2 tw-px-2.5 tw-no-underline tw-leading-5 tw-h-10 tw-box-border tw-w-fit tw-drop-shadow-xl tw-rounded"
+            className={merge([
+                'tw-pointer-events-none tw-bg-white tw-flex tw-items-center tw-gap-x-1 tw-p-2 tw-no-underline tw-leading-5 tw-box-border tw-w-fit tw-drop-shadow-xl tw-rounded',
+                showContentWhileDragging ? 'tw-opacity-90' : '',
+            ])}
         >
-            <button tabIndex={-1} className="tw-p-1 tw-ml-2">
-                <IconGrabHandle12 />
-            </button>
+            {dragHandlerPosition === 'left' && dragHandler}
+
             {hasChildren && (
                 <button tabIndex={-1} data-test-id="tree-item-toggle" className="tw-p-1">
                     <div
@@ -51,6 +70,8 @@ export const TreeItemOverlay = ({ id, label, level = 0, children, contentCompone
             {label !== undefined && <span>{label}</span>}
 
             {contentComponent}
+
+            {dragHandlerPosition === 'right' && dragHandler}
         </li>
     );
 };
