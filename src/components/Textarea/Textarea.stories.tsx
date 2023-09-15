@@ -16,6 +16,7 @@ export default {
         resizeable: true,
         selectable: false,
         validation: Validation.Default,
+        focusOnMount: false,
     },
     argTypes: {
         value: { type: 'string' },
@@ -31,6 +32,8 @@ export default {
         },
         minRows: { type: 'number' },
         maxRows: { type: 'number' },
+        onEnterPressed: { action: 'onEnterPressed', table: { disable: true } },
+        focusOnMount: { type: 'boolean' },
     },
 } as Meta<TextareaProps>;
 
@@ -39,4 +42,9 @@ export const Textarea: StoryFn<TextareaProps> = (args: TextareaProps) => {
     useEffect(() => setInput(`${args.value || ''}`), [args.value]);
 
     return <TextareaComponent {...args} value={input} onInput={setInput} />;
+};
+
+export const FocusOnMount = Textarea.bind({});
+FocusOnMount.args = {
+    focusOnMount: true,
 };
