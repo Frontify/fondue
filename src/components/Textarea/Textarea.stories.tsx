@@ -43,10 +43,6 @@ export const Textarea: StoryFn<TextareaProps> = (args: TextareaProps) => {
 
     return <TextareaComponent {...args} value={input} onInput={setInput} />;
 };
-export const OnEnterPressed = Textarea.bind({});
-OnEnterPressed.args = {
-    onEnterPressed: () => console.log('Enter pressed'),
-};
 
 export const FocusOnMount = Textarea.bind({});
 FocusOnMount.args = {
