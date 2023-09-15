@@ -9,7 +9,10 @@ import {
     BOLD_CLASSES,
     BoldPlugin,
     BreakAfterPlugin,
+    CHECKBOX_DIV_CLASSES,
+    CHECKBOX_SPAN_CLASSES,
     CODE_CLASSES,
+    CheckboxListPlugin,
     CodePlugin,
     Heading1Plugin,
     Heading2Plugin,
@@ -639,7 +642,7 @@ describe('RichTextEditor Component', () => {
         });
     });
 
-    describe('Autoformat', () => {
+    describe.only('Autoformat', () => {
         beforeEach(() => {
             const plugins = new PluginComposer();
             plugins
@@ -662,6 +665,7 @@ describe('RichTextEditor Component', () => {
                     new CodePlugin(),
                     new UnorderedListPlugin(),
                     new OrderedListPlugin(),
+                    new CheckboxListPlugin(),
                     new AutoformatPlugin(),
                 ]);
 
@@ -725,6 +729,14 @@ describe('RichTextEditor Component', () => {
             cy.get('[contenteditable=true]').should('include.html', '<ol');
             cy.get('[contenteditable=true]').should('include.html', '<li');
             cy.get('[contenteditable=true]').get('ol').should('have.class', getOrderedListClasses(0));
+        });
+
+        it('should autoformat [] to checkbox list', () => {
+            cy.get('[contenteditable=true]').click().type('[] hello');
+            cy.get('[contenteditable=true]').should('include.html', '<div');
+            cy.get('[contenteditable=true]').get('div').should('have.class', CHECKBOX_DIV_CLASSES);
+            cy.get('[contenteditable=true]').should('include.html', '<input');
+            cy.get('[contenteditable=true]').get('span').should('have.class', CHECKBOX_SPAN_CLASSES);
         });
     });
 });

@@ -15,6 +15,7 @@ import {
     unwrapList,
 } from '@udecode/plate';
 import { TextStyles } from '../TextStylePlugin';
+import { ELEMENT_CHECK_ITEM } from '../CheckboxListPlugin';
 
 export class AutoformatPlugin extends Plugin {
     constructor(props?: PluginProps) {
@@ -83,14 +84,19 @@ export class AutoformatPlugin extends Plugin {
                             type: ELEMENT_UL,
                             match: ['- '],
                             preFormat: unwrapList,
-                            format: (editor) => toggleList(editor, { type: ELEMENT_UL, pluginKey: 'list-plugin' }),
+                            format: (editor) => toggleList(editor, { type: ELEMENT_UL }),
                         },
                         {
                             mode: 'block',
                             type: ELEMENT_OL,
                             match: ['1. '],
                             preFormat: unwrapList,
-                            format: (editor) => toggleList(editor, { type: ELEMENT_OL, pluginKey: 'list-plugin' }),
+                            format: (editor) => toggleList(editor, { type: ELEMENT_OL }),
+                        },
+                        {
+                            mode: 'block',
+                            type: ELEMENT_CHECK_ITEM,
+                            match: ['[] '],
                         },
                     ],
                 },
