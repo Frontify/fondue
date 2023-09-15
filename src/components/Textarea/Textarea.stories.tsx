@@ -16,6 +16,7 @@ export default {
         resizeable: true,
         selectable: false,
         validation: Validation.Default,
+        focusOnMount: false,
     },
     argTypes: {
         value: { type: 'string' },
@@ -31,6 +32,8 @@ export default {
         },
         minRows: { type: 'number' },
         maxRows: { type: 'number' },
+        onEnterPressed: { action: 'onEnterPressed' },
+        focusOnMount: { type: 'boolean' },
     },
 } as Meta<TextareaProps>;
 

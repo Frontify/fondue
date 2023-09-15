@@ -58,6 +58,11 @@ describe('Textarea component', () => {
         cy.get('[data-test-id="decorator"]').should('be.visible').contains(DECORATOR_TEXT);
     });
 
+    it('focuses on mount', () => {
+        cy.mount(<Textarea focusOnMount />);
+        cy.get(TEXTAREA_ID).should('have.focus');
+    });
+
     it('calls the onInput event', () => {
         const onInputStub = cy.stub().as('onInputStub');
         cy.mount(<Textarea onInput={onInputStub}></Textarea>);
@@ -70,6 +75,13 @@ describe('Textarea component', () => {
         cy.mount(<Textarea onBlur={onBlurStub}></Textarea>);
         cy.get(TEXTAREA_ID).type(INPUT_TEXT).blur();
         cy.get('@onBlurStub').should('be.calledOnce');
+    });
+
+    it('calls the onEnterPressed event', () => {
+        const onEnterPressedStub = cy.stub().as('onEnterPressedStub');
+        cy.mount(<Textarea onEnterPressed={onEnterPressedStub}></Textarea>);
+        cy.get(TEXTAREA_ID).type('{enter}');
+        cy.get('@onEnterPressedStub').should('to.have.always.been.callCount', 1);
     });
 
     it('starts with the minimum number of rows', () => {
