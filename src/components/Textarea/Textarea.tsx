@@ -57,9 +57,7 @@ export const Textarea = ({
     const textareaElement = useRef<HTMLTextAreaElement | null>(null);
 
     useEffect(() => {
-        setTimeout(() => {
-            focusOnMount && textareaElement.current?.focus();
-        }, 0);
+        focusOnMount && textareaElement.current?.focus();
     }, [focusOnMount]);
 
     const onKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {

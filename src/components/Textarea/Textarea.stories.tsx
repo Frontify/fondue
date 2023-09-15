@@ -32,7 +32,7 @@ export default {
         },
         minRows: { type: 'number' },
         maxRows: { type: 'number' },
-        onEnterPressed: { action: 'onEnterPressed' },
+        onEnterPressed: { action: 'onEnterPressed', table: { disable: true } },
         focusOnMount: { type: 'boolean' },
     },
 } as Meta<TextareaProps>;
@@ -42,4 +42,13 @@ export const Textarea: StoryFn<TextareaProps> = (args: TextareaProps) => {
     useEffect(() => setInput(`${args.value || ''}`), [args.value]);
 
     return <TextareaComponent {...args} value={input} onInput={setInput} />;
+};
+export const OnEnterPressed = Textarea.bind({});
+OnEnterPressed.args = {
+    onEnterPressed: () => console.log('Enter pressed'),
+};
+
+export const FocusOnMount = Textarea.bind({});
+FocusOnMount.args = {
+    focusOnMount: true,
 };
