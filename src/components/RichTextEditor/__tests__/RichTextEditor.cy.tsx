@@ -642,7 +642,7 @@ describe('RichTextEditor Component', () => {
         });
     });
 
-    describe.only('Autoformat', () => {
+    describe('Autoformat', () => {
         beforeEach(() => {
             const plugins = new PluginComposer();
             plugins
