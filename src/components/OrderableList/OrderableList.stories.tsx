@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Meta, StoryFn } from '@storybook/react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { OrderableList as OrderableListComponent } from './OrderableList';
 import { OrderableListItem, OrderableListItemStyle } from './types';
 import { OrderableListProps } from '.';
@@ -109,6 +109,15 @@ export const OrderableList: StoryFn<OrderableListProps<StoryListItem> & Orderabl
     activeColorStyle,
 }) => {
     const [items, setItems] = useState(storyItems);
+    const prevSelectedId = useRef(selectedId);
+    const [currentSelectedId, setCurrentSelectedId] = useState(selectedId);
+
+    useEffect(() => {
+        if (prevSelectedId.current !== selectedId) {
+            prevSelectedId.current = selectedId;
+            setCurrentSelectedId(selectedId);
+        }
+    }, [selectedId, prevSelectedId]);
 
     const handleMove = (modifiedItems: OrderableListItem<StoryListItem>[]) => {
         if (modifiedItems.length === 0) {
@@ -143,6 +152,10 @@ export const OrderableList: StoryFn<OrderableListProps<StoryListItem> & Orderabl
         setItems(modifiedArray);
     };
 
+    const handleSelect = (id: string) => {
+        setCurrentSelectedId(id);
+    };
+
     return (
         <div className="tw-m-auto tw-w-[600px] tw-pb-6">
             <OrderableListComponent
@@ -150,7 +163,7 @@ export const OrderableList: StoryFn<OrderableListProps<StoryListItem> & Orderabl
                 onMove={chain(handleMove, onMove)}
                 dragDisabled={dragDisabled}
                 dragHandlerPosition={dragHandlerPosition}
-                selectedId={selectedId}
+                selectedId={currentSelectedId}
                 itemStyle={{
                     spacingY,
                     contentHight,
@@ -160,7 +173,9 @@ export const OrderableList: StoryFn<OrderableListProps<StoryListItem> & Orderabl
                     borderStyle,
                     activeColorStyle,
                 }}
-                renderContent={(...args) => renderContent(...args)}
+                renderContent={(...args) =>
+                    renderContent({ textContent: args[0].textContent, id: args[0].id, onSelect: handleSelect })
+                }
             />
         </div>
     );
