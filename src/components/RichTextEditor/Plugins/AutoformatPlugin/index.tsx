@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createAutoformatPlugin } from '@udecode/plate-autoformat';
+import { createAutoformatPlugin } from '@udecode/plate';
 import { Plugin, PluginProps } from '../Plugin';
 import { AUTOFORMAT_PLUGIN } from './id';
 import {
