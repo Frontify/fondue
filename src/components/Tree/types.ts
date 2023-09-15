@@ -24,6 +24,103 @@ export type OnTreeDropCallback = (args: {
     parentType?: string;
 }) => void;
 
+export type TreeItemPropsSizing = 'none' | 'x-small' | 'small' | 'medium' | 'large' | 'x-large';
+type TreeItemContentFit = 'content-fit' | 'single-line';
+type TreeItemBorderStyle = 'solid' | 'dashed' | 'dotted' | 'none';
+export type TreeItemColors = 'neutral' | 'soft' | 'none';
+type TreeItemColorStyles = {
+    textColor: string;
+    selectedTextColor: string;
+    backgroundColor: string;
+    selectedBackgroundColor: string;
+    pressedBackgroundColor: string;
+    dragHanlderTextColor: string;
+    selectedDragHanlderTextColor: string;
+};
+
+export const TreeItemSpacingClassMap: Record<TreeItemPropsSizing, string> = {
+    none: 'tw-my-0',
+    'x-small': 'tw-my-0.5',
+    small: 'tw-my-1',
+    medium: 'tw-my-1.5',
+    large: 'tw-my-2',
+    'x-large': 'tw-my-2.5',
+};
+
+export const TreeItemShadowClassMap: Record<TreeItemPropsSizing, string> = {
+    none: 'tw-shadow-none',
+    'x-small': 'tw-shadow-sm',
+    small: 'tw-shadow',
+    medium: 'tw-shadow-md',
+    large: 'tw-shadow-lg',
+    'x-large': 'tw-shadow-xl',
+};
+
+export const TreeItemBorderRadiusClassMap: Record<TreeItemPropsSizing, string> = {
+    none: 'tw-rounded-none',
+    'x-small': 'tw-rounded-sm',
+    small: 'tw-rounded',
+    medium: 'tw-rounded-md',
+    large: 'tw-rounded-lg',
+    'x-large': 'tw-rounded-xl',
+};
+
+export const TreeItemBorderClassMap: Record<Exclude<TreeItemPropsSizing, 'x-large'>, string> = {
+    none: 'tw-border-0',
+    'x-small': 'tw-border',
+    small: 'tw-border-2',
+    medium: 'tw-border-4',
+    large: 'tw-border-8',
+};
+
+export const TreeItemBorderStyleClassMap: Record<TreeItemBorderStyle, string> = {
+    none: 'tw-border-none',
+    solid: 'tw-border-solid',
+    dotted: 'tw-border-dotted',
+    dashed: 'tw-border-dashed',
+};
+
+export const TreeItemColorsClassMap: Record<TreeItemColors, TreeItemColorStyles> = {
+    none: {
+        textColor: '',
+        selectedTextColor: '',
+        backgroundColor: '',
+        selectedBackgroundColor: '',
+        pressedBackgroundColor: '',
+        dragHanlderTextColor: '',
+        selectedDragHanlderTextColor: '',
+    },
+    neutral: {
+        textColor: 'tw-text-text',
+        selectedTextColor: 'tw-font-medium tw-text-box-neutral-strong-inverse',
+        backgroundColor: 'group-hover:tw-bg-box-neutral',
+        selectedBackgroundColor: 'tw-bg-box-neutral-strong group-hover:tw-bg-box-neutral-strong-hover',
+        pressedBackgroundColor: 'group-active:tw-bg-box-neutral-pressed',
+        dragHanlderTextColor: 'tw-text-text',
+        selectedDragHanlderTextColor: 'tw-text-box-neutral-strong-inverse',
+    },
+    soft: {
+        textColor: 'tw-text-text',
+        selectedTextColor: 'tw-font-medium tw-text-box-neutral-strong',
+        backgroundColor: 'group-hover:tw-bg-box-neutral-hover',
+        selectedBackgroundColor:
+            'tw-bg-box-neutral-strong-inverse-hover group-hover:tw-bg-box-neutral-strong-inverse-hover',
+        pressedBackgroundColor: 'group-active:tw-bg-box-neutral-pressed',
+        dragHanlderTextColor: 'tw-text-text',
+        selectedDragHanlderTextColor: 'tw-text-box-neutral-strong',
+    },
+};
+
+export type TreeItemStyling = {
+    spacingY?: TreeItemPropsSizing;
+    contentHight?: TreeItemContentFit;
+    shadow?: TreeItemPropsSizing;
+    borderRadius?: TreeItemPropsSizing;
+    borderWidth?: Exclude<TreeItemPropsSizing, 'x-large'>;
+    borderStyle?: TreeItemBorderStyle;
+    activeColorStyle?: TreeItemColors;
+};
+
 export type TreeProps = {
     id: string;
     draggable?: boolean;
@@ -31,6 +128,10 @@ export type TreeProps = {
     multiselect?: boolean;
     selectedIds?: string[];
     expandedIds?: string[];
+    dragHandlerPosition?: 'left' | 'right' | 'none';
+    showDragHandlerOnHoverOnly?: boolean;
+    showContentWhileDragging?: boolean;
+    itemStyle?: TreeItemStyling;
     'data-test-id'?: string;
     onSelect?: OnSelectCallback;
     onExpand?: OnExpandCallback;
@@ -55,6 +156,15 @@ type TreeItemBaseProps = {
     accepts?: string;
     children?: ReactNode;
     draggable?: boolean;
+    /** Removes the expand caret, recovering the space ignoring if there are children */
+    expandable?: boolean;
+    showDragHandlerOnHoverOnly?: boolean;
+    /**
+     * dragHandlerPosition = 'none' makes the whole item draggble rather than only the dragHandler
+     */
+    dragHandlerPosition?: 'left' | 'right' | 'none';
+    showContentWhileDragging?: boolean;
+    itemStyle?: TreeItemStyling;
     showCaret?: boolean;
     ignoreItemDoubleClick?: boolean;
     expandOnSelect?: boolean;
