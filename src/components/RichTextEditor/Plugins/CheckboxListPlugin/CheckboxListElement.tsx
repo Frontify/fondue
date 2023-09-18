@@ -39,7 +39,7 @@ export const CheckboxListElementNode = (props: PlateRenderElementProps) => {
             </div>
             <span
                 style={getCheckboxListStyles(styles, element)}
-                className={merge(['focus:tw-outline-none tw-w-auto tw-min-w-[10px]', checked && '!tw-line-through'])}
+                className={merge([CHECKBOX_SPAN_CLASSES, checked && '!tw-line-through'])}
             >
                 {children}
             </span>
