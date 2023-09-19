@@ -1,10 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { DragProperties, ItemDragState, OrderableList, OrderableListItem, OrderableListProps } from '.';
+import { OrderableList, OrderableListItem, OrderableListProps } from '.';
 
 const LIST_ID = '[data-test-id=orderable-list]';
-const DRAGGABLE_ITEM = '[data-test-id=draggable-item]';
-const DROP_ZONE = '[data-test-id=drop-zone]';
+const DRAGGABLE_ITEM = '[data-test-id=orderable-list-item]';
 
 const ITEM_HEIGHT = 20;
 
@@ -25,12 +24,8 @@ const renderDefaultTestItems = ({ text }: OrderableListItem<TestItem>) => (
     <div style={{ height: `${ITEM_HEIGHT}px` }}>{text}</div>
 );
 
-const renderWithFocusableItems = (_item: OrderableListItem<TestItem>, { isFocusVisible }: DragProperties) => (
-    <div
-        style={{ height: `${ITEM_HEIGHT}px` }}
-        className="tw-flex tw-justify-around"
-        data-focus-visible={isFocusVisible}
-    >
+const renderWithFocusableItems = () => (
+    <div style={{ height: `${ITEM_HEIGHT}px` }} className="tw-flex tw-justify-around">
         <button data-test-id="focusable-item">Button</button>
         <input data-test-id="focusable-item" value="Input"></input>
         <textarea data-test-id="focusable-item">Textarea</textarea>
@@ -64,62 +59,9 @@ describe('OrderableList Component', () => {
 
     it('Fires a move event when item is dropped over an insertion indicator', () => {
         const stubbedOnMove = cy.stub().as('onMove');
-        const dataTransfer = new DataTransfer();
-        const targetDropZone = 4;
-        const dragAnimationDelay = 50;
-
         cy.mount(<OrderableListWithDefaultProps onMove={stubbedOnMove} />);
-
-        cy.get(DRAGGABLE_ITEM).first().trigger('dragstart', { dataTransfer }).trigger('drag');
-        cy.get(DROP_ZONE).eq(targetDropZone).as('fourthDropZone');
-        cy.get('@fourthDropZone')
-            .trigger('dragenter', { dataTransfer, force: true })
-            .trigger('dragover', { dataTransfer, force: true })
-            .wait(dragAnimationDelay);
-        cy.get(DROP_ZONE).each(($el, i) => {
-            if (i === targetDropZone) {
-                expect($el).to.have.class('tw-border-violet-60');
-            } else {
-                expect($el).not.to.have.class('tw-border-violet-60');
-            }
-        });
-        cy.get('@fourthDropZone').trigger('drop', { dataTransfer, force: true });
+        cy.get(DRAGGABLE_ITEM).first().realMouseDown().realMouseMove(40, 40).realMouseUp();
         cy.get('@onMove').should('have.been.called');
-    });
-
-    it('Hides insertion indicator if position change is original index', () => {
-        cy.mount(<OrderableListWithDefaultProps />);
-
-        cy.get(DRAGGABLE_ITEM).each(($el, index) => {
-            const dataTransfer = new DataTransfer();
-            cy.wrap($el).trigger('dragstart', { dataTransfer }).trigger('drag');
-            cy.get(DROP_ZONE)
-                .eq(index)
-                .as('targetDropZone')
-                .trigger('dragenter', { dataTransfer })
-                .trigger('dragover', { dataTransfer });
-            cy.get('@targetDropZone').should('not.have.class', 'tw-border-violet-60');
-            cy.get('@targetDropZone').should('have.attr', 'aria-hidden').and('equal', 'true');
-        });
-    });
-
-    it('Passes on correct drag state to each item', () => {
-        const renderWithDragState = (_item: TestItem, { componentDragState }: DragProperties) => (
-            <div style={{ height: `${ITEM_HEIGHT}px` }}>{componentDragState}</div>
-        );
-
-        cy.mount(<OrderableListWithDefaultProps renderContent={renderWithDragState} />);
-
-        cy.get(DRAGGABLE_ITEM).each(($el) => {
-            const dataTransfer = new DataTransfer();
-            cy.wrap($el).should('have.text', ItemDragState.Idle).trigger('dragstart', { dataTransfer }).trigger('drag');
-            cy.wrap($el).should('have.text', ItemDragState.Dragging);
-            cy.get(LIST_ID).trigger('dragenter', { dataTransfer }).trigger('dragover', { dataTransfer });
-            cy.get(DROP_ZONE).should('exist').and('have.length', 7);
-            cy.get(LIST_ID).trigger('drop', { dataTransfer, force: true });
-            cy.wrap($el).trigger('dragend', { dataTransfer, force: true });
-            cy.wrap($el).should('have.text', ItemDragState.Idle);
-        });
     });
 
     it('Should disable drag events if dragDisabled prop is true, but maintain focus for navigation', () => {
@@ -131,25 +73,19 @@ describe('OrderableList Component', () => {
     });
 
     it('Should not allow drag into other orderable list', () => {
-        const dataTransfer = new DataTransfer();
+        const stubbedOnMove = cy.stub().as('onMove');
+        const stubbedOnMove2 = cy.stub().as('onMove2');
 
         cy.mount(
             <>
-                <OrderableListWithDefaultProps />
-                <OrderableListWithDefaultProps />
+                <OrderableListWithDefaultProps onMove={stubbedOnMove} />
+                <OrderableListWithDefaultProps onMove={stubbedOnMove2} />
             </>,
         );
 
         cy.get(LIST_ID).should('have.length', 2);
-        cy.get(LIST_ID).eq(1).find(DRAGGABLE_ITEM).first().trigger('dragstart', { dataTransfer }).trigger('drag');
-        cy.get(LIST_ID)
-            .first()
-            .get(DROP_ZONE)
-            .as('targetDropZone')
-            .first()
-            .trigger('dragenter', { dataTransfer })
-            .trigger('dragover', { dataTransfer });
-        cy.get('@targetDropZone').should('not.have.class', 'tw-border-violet-60');
-        cy.get('@targetDropZone').should('have.attr', 'aria-hidden').and('equal', 'true');
+        cy.get(LIST_ID).eq(1).find(DRAGGABLE_ITEM).first().realMouseDown().realMouseMove(40, -80).realMouseUp();
+        cy.get('@onMove').should('not.have.been.called');
+        cy.get('@onMove2').should('have.been.called');
     });
 });
