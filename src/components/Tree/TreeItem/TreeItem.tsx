@@ -334,7 +334,7 @@ export const TreeItem = memo(
 
         const showContent = showContentWhileDragging ? true : !isActive;
         const wrapperContentClassName = merge([
-            'tw-max-w-full	tw-grow',
+            'tw-max-w-full tw-grow tw-overflow-hidden',
             isActive && showContentWhileDragging ? 'tw-opacity-75 tw-blur-sm tw-grayscale' : '',
         ]);
         const showChildren = isExpanded && !isActive;
