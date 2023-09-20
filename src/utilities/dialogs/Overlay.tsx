@@ -82,8 +82,8 @@ export const Overlay = ({
                         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                         // @ts-ignore Property 'displayName' does not exist on type 'JSXElementConstructor<any>'.ts(2339)
                         const { displayName } = child.type;
-
-                        if (displayName === Trigger.name) {
+                        console.log(displayName);
+                        if (displayName === Trigger.displayName) {
                             return (
                                 <Popper.Reference>
                                     <div id={id} ref={setTriggerElementRef} data-test-id={`${dataTestId}-trigger`}>
@@ -93,7 +93,7 @@ export const Overlay = ({
                             );
                         }
 
-                        if (displayName === Content.name) {
+                        if (displayName === Content.displayName) {
                             return (
                                 <Popper.Content>
                                     <div
