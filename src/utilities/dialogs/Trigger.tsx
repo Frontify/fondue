@@ -2,8 +2,6 @@
 
 import { ReactElement } from 'react';
 
-export const Trigger = ({ children }: { children: ReactElement }) => {
-    return children;
-};
+export const Trigger = ({ children }: { children: ReactElement }) => children;
 
 Trigger.displayName = 'FondueDialogTrigger';
