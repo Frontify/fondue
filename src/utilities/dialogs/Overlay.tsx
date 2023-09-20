@@ -82,7 +82,7 @@ export const Overlay = ({
                         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                         // @ts-ignore Property 'displayName' does not exist on type 'JSXElementConstructor<any>'.ts(2339)
                         const { displayName } = child.type;
-                        console.log(displayName);
+
                         if (displayName === Trigger.displayName) {
                             return (
                                 <Popper.Reference>
