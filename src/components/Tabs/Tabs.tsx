@@ -229,9 +229,8 @@ export const Tabs = ({
                                 id={`${tab.id}-btn`}
                                 className={merge([
                                     'tw-group tw-relative tw-mx-0 tw-py-4 tw-px-2 tw-w-max tw-cursor-pointer tw-flex tw-items-center tw-justify-center tw-whitespace-nowrap',
-                                    tab.disabled && 'tw-text-text-disabled',
-                                    !tab.disabled && 'hover:tw-text-text',
-                                    tab.id === activeItemId ? 'tw-font-medium tw-text-text' : 'tw-text-text-weak',
+                                    tab.id === activeItemId && 'tw-font-medium tw-text-text',
+                                    tab.disabled ? 'tw-text-text-disabled' : 'tw-text-text-weak hover:tw-text-text',
                                     size === TabSize.Small ? 'tw-text-sm' : 'tw-text-md',
                                 ])}
                                 key={tab.id}
