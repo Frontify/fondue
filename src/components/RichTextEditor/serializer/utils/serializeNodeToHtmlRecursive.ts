@@ -32,16 +32,22 @@ import { reactCssPropsToCss } from './reactCssPropsToCss';
 import { serializeLeafToHtml } from './serializeLeafToHtml';
 import { CSSPropertiesHover } from '../types';
 
-const countNodesOfType = (nodes: TDescendant[], type: string): number => {
-    return nodes.reduce((acc, node) => {
-        if (node.type === type) {
-            acc++;
-        }
+const getNestingLevels = (nodes: TDescendant[], type: string): number => {
+    if (!nodes || !Array.isArray(nodes)) {
+        return 0;
+    }
+    let maxDepth = 0;
+    for (const node of nodes) {
+        let currentDepth = node.type === type ? 1 : 0;
         if (node.children) {
-            return acc + countNodesOfType(node.children as TDescendant[], type);
+            const childDepth = getNestingLevels(node.children as TDescendant[], type);
+            if (childDepth > 0) {
+                currentDepth += childDepth;
+            }
         }
-        return acc;
-    }, 0);
+        maxDepth = Math.max(maxDepth, currentDepth);
+    }
+    return maxDepth;
 };
 
 type NestingCount = {
@@ -62,7 +68,8 @@ export const serializeNodeToHtmlRecursive = (
         return serializeLeafToHtml(node);
     }
 
-    const rootNestingCount = nestingCount[node.type] || countNodesOfType([node], node.type);
+    const rootNestingCount = nestingCount[node.type] || getNestingLevels([node], node.type);
+    console.log('rootNestingCount', rootNestingCount);
     let children = '';
     for (const element of node.children) {
         children += serializeNodeToHtmlRecursive(element, styles, {
@@ -118,7 +125,7 @@ const MapNodeTypesToHtml: { [key: string]: ({ ...args }: Arguments) => string } 
     [TextStyles.imageCaption]: (args) => getTextStyleHtml(TextStyles.imageCaption, args, 'p'),
     [ELEMENT_UL]: (args) => `<ul dir="auto" class="${UL_CLASSES} ${args.classNames}">${args.children}</ul>`,
     [ELEMENT_OL]: ({ classNames, children, node, rootNestingCount }) => {
-        const nestingLevel = Math.max(rootNestingCount - countNodesOfType([node], ELEMENT_OL), 0);
+        const nestingLevel = Math.max(rootNestingCount - getNestingLevels([node], ELEMENT_OL), 0);
         return `<ol dir="auto" class="${getOrderedListClasses(nestingLevel)} ${classNames}" style="${reactCssPropsToCss(
             OL_STYLES,
         )}">${children}</ol>`;

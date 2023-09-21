@@ -183,6 +183,75 @@ export const orderedListValue = {
     ],
 };
 
+export const multipleOrderedListsValue = {
+    type: ELEMENT_OL,
+    children: [
+        {
+            type: ELEMENT_LI,
+            children: [
+                createLicElement({ text: 'First Item Ordered List' }),
+                {
+                    type: ELEMENT_OL,
+                    children: [
+                        {
+                            type: ELEMENT_LI,
+                            children: [createLicElement({ text: 'First First SubItem' })],
+                        },
+                        {
+                            type: ELEMENT_LI,
+                            children: [
+                                createLicElement({ text: 'First Second SubItem' }),
+                                {
+                                    type: ELEMENT_OL,
+                                    children: [
+                                        {
+                                            type: ELEMENT_LI,
+                                            children: [createLicElement({ text: 'First Second SubSubItem' })],
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        },
+        {
+            type: ELEMENT_LI,
+            children: [
+                {
+                    type: 'lic',
+                    children: [createLicElement({ text: 'Second Item Ordered List' })],
+                },
+                {
+                    type: ELEMENT_OL,
+                    children: [
+                        {
+                            type: ELEMENT_LI,
+                            children: [createLicElement({ text: 'Second First SubItem' })],
+                        },
+                        {
+                            type: ELEMENT_LI,
+                            children: [
+                                createLicElement({ text: 'Second Second SubItem' }),
+                                {
+                                    type: ELEMENT_OL,
+                                    children: [
+                                        {
+                                            type: ELEMENT_LI,
+                                            children: [createLicElement({ text: 'Second Second SubSubItem' })],
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        },
+    ],
+};
+
 export const defaultValue = [
     createElement({ text: 'This text is bold.', mark: MARK_BOLD }),
     createElement({ text: 'This text is italic.', mark: MARK_ITALIC }),

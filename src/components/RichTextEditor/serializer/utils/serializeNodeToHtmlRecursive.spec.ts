@@ -1,6 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { mentionable, orderedListValue, unorderedListValue } from '@components/RichTextEditor/helpers/exampleValues';
+import {
+    mentionable,
+    multipleOrderedListsValue,
+    orderedListValue,
+    unorderedListValue,
+} from '@components/RichTextEditor/helpers/exampleValues';
 import { ELEMENT_CHECK_ITEM, mapMentionable } from '@components/RichTextEditor/Plugins';
 import {
     ELEMENT_IMAGE,
@@ -104,6 +109,18 @@ describe('serializeNodeToHtmlRecursive()', () => {
         const parser = new DOMParser();
         const htmlDoc = parser.parseFromString(result, 'text/html');
         const orderedLists = htmlDoc.getElementsByTagName('ol');
+        expect(orderedLists[0]?.className).to.include('decimal');
+        expect(orderedLists[1]?.className).to.include('alpha');
+        expect(orderedLists[2]?.className).to.include('roman');
+    });
+
+    it('serializes multiple ordered lists with multiple levels to with correct list style types to html', () => {
+        const result = serializeNodeToHtmlRecursive(multipleOrderedListsValue, defaultStyles, {});
+
+        const parser = new DOMParser();
+        const htmlDoc = parser.parseFromString(result, 'text/html');
+        const orderedLists = htmlDoc.getElementsByTagName('ol');
+        console.log(orderedLists);
         expect(orderedLists[0]?.className).to.include('decimal');
         expect(orderedLists[1]?.className).to.include('alpha');
         expect(orderedLists[2]?.className).to.include('roman');
