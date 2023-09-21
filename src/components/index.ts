@@ -17,6 +17,7 @@ export * from './ColorInputFlyout';
 export * from './ColorPicker';
 export * from './Container';
 export * from './DatePicker';
+export * from './Dialog';
 export * from './DialogBody';
 export * from './DialogFooter';
 export * from './DialogHeader';

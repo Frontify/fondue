@@ -12,6 +12,9 @@ import { useRichTextEditorContext } from '@components/RichTextEditor/context';
 const getCheckboxListStyles = (styles: Record<string, CSSProperties>, element: TElement): CSSProperties =>
     styles[element.children[0].textStyle as string];
 
+export const CHECKBOX_DIV_CLASSES = 'tw-flex tw-flex-row tw-pb-2 tw-gap-1.5 tw-items-center';
+export const CHECKBOX_SPAN_CLASSES = 'focus:tw-outline-none tw-w-auto tw-min-w-[10px]';
+
 export const CheckboxListElementNode = (props: PlateRenderElementProps) => {
     const { attributes, children, nodeProps, element, editor } = props;
     const rootProps = getRootProps(props);
@@ -20,11 +23,7 @@ export const CheckboxListElementNode = (props: PlateRenderElementProps) => {
     const { styles } = useRichTextEditorContext();
 
     return (
-        <div
-            {...attributes}
-            {...rootProps}
-            className={merge(['tw-flex tw-flex-row tw-pb-2 tw-gap-1.5 tw-items-center', justifyClassNames[align]])}
-        >
+        <div {...attributes} {...rootProps} className={merge([CHECKBOX_DIV_CLASSES, justifyClassNames[align]])}>
             <div contentEditable={false} className="tw-select-none">
                 <input
                     data-test-id="checkbox-input"
@@ -40,7 +39,7 @@ export const CheckboxListElementNode = (props: PlateRenderElementProps) => {
             </div>
             <span
                 style={getCheckboxListStyles(styles, element)}
-                className={merge(['focus:tw-outline-none tw-w-auto tw-min-w-[10px]', checked && '!tw-line-through'])}
+                className={merge([CHECKBOX_SPAN_CLASSES, checked && '!tw-line-through'])}
             >
                 {children}
             </span>
