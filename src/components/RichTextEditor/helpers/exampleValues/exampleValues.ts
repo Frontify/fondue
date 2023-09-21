@@ -219,10 +219,7 @@ export const multipleOrderedListsValue = {
         {
             type: ELEMENT_LI,
             children: [
-                {
-                    type: 'lic',
-                    children: [createLicElement({ text: 'Second Item Ordered List' })],
-                },
+                createLicElement({ text: 'Second Item Ordered List' }),
                 {
                     type: ELEMENT_OL,
                     children: [
