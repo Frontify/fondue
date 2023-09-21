@@ -69,7 +69,6 @@ export const serializeNodeToHtmlRecursive = (
     }
 
     const rootNestingCount = nestingCount[node.type] || getNestingLevels([node], node.type);
-    console.log('rootNestingCount', rootNestingCount);
     let children = '';
     for (const element of node.children) {
         children += serializeNodeToHtmlRecursive(element, styles, {

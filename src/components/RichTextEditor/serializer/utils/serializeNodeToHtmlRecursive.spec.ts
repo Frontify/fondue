@@ -120,7 +120,6 @@ describe('serializeNodeToHtmlRecursive()', () => {
         const parser = new DOMParser();
         const htmlDoc = parser.parseFromString(result, 'text/html');
         const orderedLists = htmlDoc.getElementsByTagName('ol');
-        console.log(orderedLists);
         expect(orderedLists[0]?.className).to.include('decimal');
         expect(orderedLists[1]?.className).to.include('alpha');
         expect(orderedLists[2]?.className).to.include('roman');
