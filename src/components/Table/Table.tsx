@@ -162,7 +162,7 @@ export const Table = ({
                         </TableHeaderRow>
                     ))}
                 </thead>
-                <tbody>
+                <tbody className="tw-relative tw-z-[-1] sm:tw-z-auto">
                     {[...collection.body.childNodes].map((ariaRow) => {
                         const row = getRowFromId(rows, ariaRow.key);
 
