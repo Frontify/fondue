@@ -186,6 +186,22 @@ export type SortableProps = Partial<ReturnType<typeof useSortable>>;
 
 export type TreeItemProps = SortableProps & (TreeItemWithLabelProps | TreeItemWithContentComponentProps);
 
+export type TreeItemMultiselectProps = Omit<
+    TreeItemProps,
+    | 'type'
+    | 'onDrop'
+    | 'accepts'
+    | 'registerOverlay'
+    | 'draggable'
+    | 'showContentWhileDragging'
+    | 'ignoreItemDoubleClick'
+    | 'showDragHandlerOnHoverOnly'
+    | 'dragHandlerPosition'
+> & {
+    isDisabled?: boolean;
+    checkBoxPosition?: DragHandlerPosition;
+};
+
 export type SortableTreeItemProps = TreeItemProps;
 
 export type TreeItemState = {
