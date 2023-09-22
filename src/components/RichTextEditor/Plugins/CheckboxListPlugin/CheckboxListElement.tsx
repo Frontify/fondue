@@ -24,7 +24,7 @@ export const CheckboxListElementNode = (props: PlateRenderElementProps) => {
 
     return (
         <div {...attributes} {...rootProps} className={merge([CHECKBOX_DIV_CLASSES, justifyClassNames[align]])}>
-            <div contentEditable={false} className="tw-select-none">
+            <div contentEditable={false} className="tw-flex tw-items-center tw-justify-center tw-select-none">
                 <input
                     data-test-id="checkbox-input"
                     className="tw-w-4 tw-h-4 tw-m-0"
