@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Children, MouseEvent, memo, useCallback, useEffect, useMemo, useRef } from 'react';
+import { Children, MouseEvent, memo, useCallback, useMemo, useRef } from 'react';
 import noop from 'lodash-es/noop';
 
 import { merge } from '@utilities/merge';
@@ -24,13 +24,12 @@ import { removeFragmentsAndEnrichChildren, useDeepCompareEffect } from '../utils
 import { ExpandButton } from './ExpandButton';
 import { Checkbox, CheckboxEmphasis, CheckboxSize, CheckboxState } from '@components/Checkbox/Checkbox';
 import { Container } from '@components/Container';
-import { useTreeItemMultiselect } from './useTreeItemMultiselect';
+import { useTreeItem } from './useTreeItem';
 
 /** @private */
 type TreeItemPrivateProps = {
     parentId?: string;
     level?: number;
-    checkBoxState?: CheckboxState;
     isExpanded?: boolean;
     /** onSelect is passed by the Tree component when cloning the TreeItem */
     onSelect: (id: string) => void;
@@ -47,7 +46,6 @@ export type InternalTreeItemMultiSelectProps = TreeItemMultiselectProps & TreeIt
 export const TreeItemMultiselect = memo(
     ({
         id,
-        parentId,
         label,
         showCaret,
         children,
@@ -58,7 +56,6 @@ export const TreeItemMultiselect = memo(
         onShrink,
         registerNodeChildren,
         unregisterNodeChildren,
-        checkBoxState = CheckboxState.Unchecked,
         isDisabled = false,
         expandable = true,
         checkBoxPosition = 'left',
@@ -66,9 +63,8 @@ export const TreeItemMultiselect = memo(
         'data-test-id': dataTestId = 'fondue-tree-item',
     }: InternalTreeItemMultiSelectProps) => {
         const setActiveNodeRef = useRef<HTMLInputElement | null>(null);
-        const { isSelected, isExpanded } = useTreeItemMultiselect(id);
-
-        console.log(id, 'Selected:', isSelected, checkBoxState);
+        const { isSelected, isExpanded } = useTreeItem(id);
+        const { isSelected: isPartialSelected } = useTreeItem(`*${id}`);
 
         const toggleExpand = useCallback(
             (event?: MouseEvent<HTMLButtonElement>) => {
@@ -134,21 +130,20 @@ export const TreeItemMultiselect = memo(
                     itemStyleProps.borderWidth !== 'none'
                         ? TreeItemBorderRadiusClassMap[itemStyleProps.borderRadius ?? 'small']
                         : '',
-                    (checkBoxState === CheckboxState.Unchecked || itemStyleProps.activeColorStyle !== 'neutral') &&
-                        styling.pressedBackgroundColor,
+                    (!isSelected || itemStyleProps.activeColorStyle !== 'neutral') && styling.pressedBackgroundColor,
                     styling.backgroundColor,
                 ]),
             };
         }, [
-            isDisabled,
-            checkBoxState,
-            itemStyleProps.activeColorStyle,
-            itemStyleProps.borderRadius,
-            itemStyleProps.borderWidth,
-            itemStyleProps.spacingY,
-            styling.backgroundColor,
-            styling.pressedBackgroundColor,
             styling.textColor,
+            styling.pressedBackgroundColor,
+            styling.backgroundColor,
+            itemStyleProps.spacingY,
+            itemStyleProps.borderWidth,
+            itemStyleProps.borderRadius,
+            itemStyleProps.activeColorStyle,
+            isDisabled,
+            isSelected,
         ]);
 
         const wrapperContentClassName = 'tw-max-w-full	tw-grow';
@@ -178,8 +173,12 @@ export const TreeItemMultiselect = memo(
         const backgroundStyle = itemStyleProps.borderWidth !== 'none' ? {} : { marginLeft: -1 * levelPadding };
 
         const style = {};
-        const theCheckboxState =
-            isSelected && checkBoxState === CheckboxState.Unchecked ? CheckboxState.Checked : checkBoxState;
+        let theCheckboxState = CheckboxState.Unchecked;
+        if (isSelected) {
+            theCheckboxState = CheckboxState.Checked;
+        } else if (isPartialSelected) {
+            theCheckboxState = CheckboxState.Mixed;
+        }
 
         const checkBox =
             checkBoxPosition !== 'none' ? (
@@ -214,7 +213,7 @@ export const TreeItemMultiselect = memo(
                 aria-level={level + 1}
                 className={liClassName}
                 data-test-id={dataTestId}
-                aria-selected={checkBoxState !== CheckboxState.Unchecked}
+                aria-selected={isSelected}
                 aria-expanded={isExpanded}
                 data-has-children={hasChildren}
                 aria-owns={childrenIds.join(' ')}

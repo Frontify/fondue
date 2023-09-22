@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Meta } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 
@@ -116,7 +116,10 @@ const TreeItemContentComponent = ({ title }: { title: string }) => {
     );
 };
 
-const renderTreeItemComponent = ({ nodes, label, numChildNodes, onSelect, ...treeItem }: TreeItemMockMultiselect) => {
+const renderTreeItemComponent = (
+    { nodes, label, numChildNodes, onSelect, ...treeItem }: TreeItemMockMultiselect,
+    selectedIds: string[],
+) => {
     const nodesLength = nodes?.length ?? 0;
     const showCaret = numChildNodes !== undefined ? !!numChildNodes : nodesLength > 0;
 
@@ -128,14 +131,13 @@ const renderTreeItemComponent = ({ nodes, label, numChildNodes, onSelect, ...tre
             onSelect={onSelect ?? action('onSelect')}
             showCaret={showCaret}
         >
-            {nodes?.map(renderTreeItemComponent)}
+            {nodes?.map((node) => renderTreeItemComponent(node, selectedIds))}
         </TreeItemMultiselect>
     );
 };
 
 const getSelectedChildrenItems = (tree: TreeItemMockMultiselect[], selectedIds: string[]) => {
-    const selectedItems = tree.filter((item) => selectedIds.includes(item.id)).map((item) => item.id);
-    console.log('selectedItems', selectedItems);
+    return tree.filter((item) => selectedIds.includes(item.id)).map((item) => item.id);
 };
 
 const getSelectedTreeItem = (tree: TreeItemMockMultiselect[], id: string): TreeItemMockMultiselect | null => {
@@ -144,10 +146,44 @@ const getSelectedTreeItem = (tree: TreeItemMockMultiselect[], id: string): TreeI
             return item;
         }
         if (item.nodes && item.nodes?.length > 0) {
-            return getSelectedTreeItem(item.nodes, id);
+            const deepItem = getSelectedTreeItem(item.nodes, id);
+            if (deepItem) {
+                return deepItem;
+            }
+        }
+    }
+
+    return null;
+};
+
+const getParentSelectedTreeItem = (
+    tree: TreeItemMockMultiselect[],
+    id: string,
+    parent: TreeItemMockMultiselect | null,
+): TreeItemMockMultiselect | null => {
+    for (const item of tree) {
+        if (parent !== null && item.id === id) {
+            return parent;
+        }
+        if (item.nodes && item.nodes?.length > 0) {
+            const deepItem = getParentSelectedTreeItem(item.nodes, id, item);
+            if (deepItem) {
+                return deepItem;
+            }
         }
     }
     return null;
+};
+
+const convertToPartialSelectedId = (ids: string[]) => ids.map((id) => `*${id}`);
+
+const removeSelectedIds = (ids: string[], idsToRemove: string[], partial: boolean): string[] => {
+    idsToRemove = partial ? convertToPartialSelectedId(idsToRemove) : idsToRemove;
+    return [...new Set(idsToRemove.length > 0 ? ids.filter((itemId: string) => !idsToRemove.includes(itemId)) : ids)];
+};
+const addSelectedIds = (ids: string[], idsToAdd: string[], partial: boolean) => {
+    idsToAdd = (partial ? convertToPartialSelectedId(idsToAdd) : idsToAdd).filter((id) => id !== '');
+    return [...new Set(idsToAdd.length > 0 ? [...ids, ...idsToAdd] : ids)];
 };
 
 export const MultiselectWithBasicItem = ({ ...args }: TreeProps) => {
@@ -159,27 +195,65 @@ export const MultiselectWithBasicItem = ({ ...args }: TreeProps) => {
     }, []);
 
     const handleItemSelected = (id: string) => {
-        console.log('SELECT ', id, selectedIds);
-
-        const itemChecked = getSelectedTreeItem(treeItems, id);
-
-        let ids = [id];
-        if (selectedIds.includes(id)) {
-            getSelectedChildrenItems(itemChecked?.nodes ?? [], selectedIds);
-            getSelectedChildrenItems(itemChecked?.nodes ?? [], selectedIds);
-
-            setSelectedIds(selectedIds.filter((itemId: string) => itemId !== id));
-        } else {
-            getSelectedChildrenItems(itemChecked?.nodes ?? [], selectedIds);
-            setSelectedIds([...selectedIds, id]);
-        }
+        setSelectedIds(getNewSelectedItems(id));
     };
 
-    console.log('render', selectedIds, treeItems);
+    // TODO: needs to be recursive going up in tree for the partial selection
+    const getNewSelectedItems = (id: string) => {
+        let newSelectedItems = [];
+
+        if (selectedIds.includes(id)) {
+            newSelectedItems = removeSelectedIds(selectedIds, [id], false);
+        } else {
+            newSelectedItems = addSelectedIds(selectedIds, [id], false);
+        }
+
+        const itemChecked = getSelectedTreeItem(treeItems, id);
+        const parentItemChecked = getParentSelectedTreeItem(treeItems, id, null);
+        const isParentSelected = selectedIds.includes(parentItemChecked?.id ?? '');
+        const childrenSelectedItems = getSelectedChildrenItems(itemChecked?.nodes ?? [], newSelectedItems);
+        const siblingsSelectedItems = getSelectedChildrenItems(parentItemChecked?.nodes ?? [], newSelectedItems);
+        const childrenCount = itemChecked?.nodes?.length ?? 0;
+        const siblingsCount = parentItemChecked?.nodes?.length ?? 0;
+
+        // Select/unselect children
+        if (siblingsSelectedItems.length === 0) {
+            newSelectedItems = isParentSelected
+                ? removeSelectedIds(newSelectedItems, [parentItemChecked?.id ?? ''], false)
+                : newSelectedItems;
+            newSelectedItems = removeSelectedIds(newSelectedItems, [parentItemChecked?.id ?? ''], true);
+        } else if (siblingsSelectedItems.length === siblingsCount) {
+            newSelectedItems = !isParentSelected
+                ? addSelectedIds(newSelectedItems, [parentItemChecked?.id ?? ''], false)
+                : newSelectedItems;
+
+            newSelectedItems = removeSelectedIds(newSelectedItems, [parentItemChecked?.id ?? ''], true);
+        } else if (parentItemChecked?.id) {
+            // flag parent as partial checked and unselect it
+            newSelectedItems = addSelectedIds(newSelectedItems, [parentItemChecked?.id ?? ''], true);
+            newSelectedItems = removeSelectedIds(newSelectedItems, [parentItemChecked?.id ?? ''], false);
+        }
+
+        // Select/unselect parent
+        if (childrenCount) {
+            const childrenIds = itemChecked?.nodes?.map((item) => item.id) ?? [];
+
+            newSelectedItems = newSelectedItems.includes(id)
+                ? addSelectedIds(newSelectedItems, childrenIds, false)
+                : removeSelectedIds(newSelectedItems, childrenIds, false);
+
+            if (childrenSelectedItems.length === 0) {
+                newSelectedItems = removeSelectedIds(newSelectedItems, [id], true);
+            }
+        }
+
+        return newSelectedItems;
+    };
+
     return (
         <Container maxWidth="400px">
             <TreeView id={args.id} {...cleanProps(args)} selectedIds={selectedIds} onSelect={handleItemSelected}>
-                {treeItems.map(renderTreeItemComponent)}
+                {treeItems.map((treeItem) => renderTreeItemComponent(treeItem, selectedIds))}
             </TreeView>
         </Container>
     );
