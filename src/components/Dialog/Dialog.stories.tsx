@@ -336,4 +336,5 @@ WithTabsAndTopAlignment.args = {
 export const WithInceptionOfInlineDialog = WithInlineDialog.bind({});
 WithInceptionOfInlineDialog.args = {
     modality: Modality.BlockingModal,
+    darkUnderlay: true,
 };
