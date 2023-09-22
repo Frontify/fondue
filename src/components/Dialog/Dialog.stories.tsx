@@ -256,6 +256,7 @@ const WithInlineDialog: StoryFn<DialogProps> = (args) => {
                                 modality={Modality.NonModal}
                                 offset={[0, 8]}
                                 placement="bottom-start"
+                                enablePortal={false}
                             >
                                 <InlineDialog.Trigger>
                                     <button
