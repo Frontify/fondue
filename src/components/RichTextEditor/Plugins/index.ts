@@ -43,6 +43,7 @@ defaultPlugins
 
 export * from './Plugin';
 export * from './AlignPlugin';
+export * from './AutoformatPlugin';
 export * from './BoldPlugin';
 export * from './ColumnBreakPlugin';
 export * from './CheckboxListPlugin';

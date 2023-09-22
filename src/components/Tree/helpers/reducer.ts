@@ -6,6 +6,10 @@ import type { InternalTreeItemProps } from '../TreeItem';
 import isEqualWith from 'lodash-es/isEqualWith';
 import { getReactNodeIdsInFlatArray, getReactNodesInFlatArray, removeReactNodesFromFlatArray } from './nodes';
 
+export const shouldUpdateTreeState = (event: globalThis.KeyboardEvent, multiselect: boolean) => {
+    return multiselect && (event.key === 'Meta' || event.ctrlKey);
+};
+
 export const findIndexById = (nodes: ReactElement<InternalTreeItemProps>[], id: string) => {
     return nodes.findIndex((node) => node.props.id === id);
 };

@@ -5,3 +5,5 @@ export * from './nodes';
 export * from './projection';
 export * from './reducer';
 export * from './constants';
+export * from './treeHandleKeyDown';
+export * from './sensorsActivationConstraint';

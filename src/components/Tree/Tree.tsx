@@ -2,9 +2,7 @@
 
 import {
     KeyboardEvent,
-    ReactElement,
     cloneElement,
-    isValidElement,
     memo,
     useCallback,
     useEffect,
@@ -24,7 +22,6 @@ import {
     DragEndEvent,
     DragMoveEvent,
     DragOverlay,
-    KeyboardCode,
     KeyboardSensor,
     MeasuringConfiguration,
     MeasuringStrategy,
@@ -37,12 +34,11 @@ import {
 import type {
     RegisterNodeChildrenPayload,
     SensorContext,
-    TreeActive,
     TreeAnnouncements,
     TreeDragOverEvent,
     TreeDragStartEvent,
+    TreeItemProps,
     TreeItemStyling,
-    TreeOver,
     TreeProps,
     TreeState,
     TreeStateAction,
@@ -59,12 +55,16 @@ import {
 import {
     currentNodesChanged,
     findIndexById,
+    getAnnouncements,
     getCurrentChildrenForNewNodesIfExpanded,
-    getMovementAnnouncement,
     getNodeChildrenIds,
+    getNodesToRender,
     getProjection,
     getReactNodeIdsInFlatArray,
+    handleKeyDownEvent,
     removeReactNodesFromFlatArray,
+    sensorsActivationConstraint,
+    shouldUpdateTreeState,
     updateNodeWithNewChildren,
 } from './helpers';
 
@@ -222,7 +222,7 @@ export const Tree = memo(
 
         useEffect(() => {
             const keyDownHandler = (event: globalThis.KeyboardEvent) => {
-                if (multiselect && (event.key === 'Meta' || event.ctrlKey)) {
+                if (shouldUpdateTreeState(event, multiselect)) {
                     updateTreeState({
                         type: 'SET_SELECTION_MODE',
                         payload: { selectionMode: 'multiselect' },
@@ -231,7 +231,7 @@ export const Tree = memo(
             };
 
             const keyUpHandler = (event: globalThis.KeyboardEvent) => {
-                if (multiselect && (event.key === 'Meta' || event.ctrlKey)) {
+                if (shouldUpdateTreeState(event, multiselect)) {
                     updateTreeState({
                         type: 'SET_SELECTION_MODE',
                         payload: { selectionMode: 'single' },
@@ -354,104 +354,14 @@ export const Tree = memo(
 
         const handleKeyDown = useCallback(
             (event: KeyboardEvent<HTMLUListElement>) => {
-                const activeElement = document.activeElement;
-
-                if (
-                    !activeElement?.parentElement ||
-                    activeElement.getAttribute('role') !== 'treeitem' ||
-                    !(activeElement instanceof HTMLLIElement)
-                ) {
-                    return;
-                }
-
-                const items = Array.from(activeElement.parentElement.children).filter(
-                    (child) => child.nodeName === 'LI',
-                ) as HTMLLIElement[];
-
-                const currentIndex = items.indexOf(activeElement);
-
-                const node = treeState.nodes[currentIndex];
-
-                const id: string = node.props.id;
-                const isExpanded = treeState.expandedIds.has(id);
-                const parentId: string | undefined = node.props.parentId;
-                const hasChildren = activeElement.getAttribute('data-has-children') === 'true';
-
-                const { code } = event;
-
-                const toggleSelect = () => {
-                    event.preventDefault();
-
-                    handleSelect(id);
-                };
-
-                const expandItem = () => {
-                    event.preventDefault();
-
-                    handleExpand(id);
-                };
-
-                const shrinkItem = () => {
-                    event.preventDefault();
-
-                    handleShrink(id);
-                };
-
-                const focusPrevious = () => {
-                    const previousIndex = (currentIndex + items.length - 1) % items.length;
-                    items[previousIndex].focus();
-                };
-
-                const focusNext = () => {
-                    const nextIndex = (currentIndex + 1) % items.length;
-                    items[nextIndex].focus();
-                };
-
-                switch (code) {
-                    case KeyboardCode.Enter:
-                        toggleSelect();
-
-                        break;
-
-                    case KeyboardCode.Space:
-                        hasChildren ? expandItem() : toggleSelect();
-
-                        break;
-
-                    case KeyboardCode.Right:
-                        if (!hasChildren) {
-                            break;
-                        }
-
-                        isExpanded ? focusNext() : expandItem();
-
-                        break;
-
-                    case KeyboardCode.Left:
-                        if (hasChildren && isExpanded) {
-                            shrinkItem();
-                        } else if (parentId && parentId !== ROOT_ID) {
-                            const parentIndex = treeState.nodes.findIndex((node) => node.props.id === parentId);
-
-                            items[parentIndex].focus();
-                        }
-                        break;
-
-                    case KeyboardCode.Up:
-                        event.preventDefault();
-                        focusPrevious();
-
-                        break;
-
-                    case KeyboardCode.Down:
-                        event.preventDefault();
-                        focusNext();
-
-                        break;
-
-                    default:
-                        break;
-                }
+                return handleKeyDownEvent(
+                    event,
+                    treeState.expandedIds,
+                    treeState.nodes,
+                    handleSelect,
+                    handleShrink,
+                    handleExpand,
+                );
             },
             [handleExpand, handleShrink, handleSelect, treeState.expandedIds, treeState.nodes],
         );
@@ -462,88 +372,15 @@ export const Tree = memo(
         });
 
         const [coordinateGetter] = useState(() => sortableTreeKeyboardCoordinates(sensorContext));
+        const activationConstraint = sensorsActivationConstraint(dragHandlerPosition);
 
-        const activationConstraint =
-            dragHandlerPosition === 'none' ? { delay: 150, tolerance: 2 } : { delay: 0, tolerance: 0 };
         const sensors = useSensors(
             useSensor(PointerSensor, { activationConstraint }),
             useSensor(KeyboardSensor, { coordinateGetter }),
         );
 
         const announcements: TreeAnnouncements = useMemo(() => {
-            const getActiveTitle = (active: TreeActive) => {
-                let title: string = active.id;
-
-                const activeNode = treeState.nodes.find((node) => node.props.id === active.id);
-
-                if (activeNode && isValidElement(activeNode.props.contentComponent)) {
-                    title = activeNode.props.contentComponent.props.title;
-                } else if (activeNode && activeNode.props.label) {
-                    title = activeNode.props.label;
-                }
-
-                return title;
-            };
-            const getOverTitle = (over: TreeOver | null) => {
-                let title = over?.id;
-
-                const overNode = treeState.nodes.find((node) => node.props.id === over?.id);
-
-                if (overNode && isValidElement(overNode.props.contentComponent)) {
-                    title = overNode.props.contentComponent.props.title;
-                } else if (overNode && overNode.props.label) {
-                    title = overNode.props.label;
-                }
-
-                return title;
-            };
-
-            return {
-                onDragStart({ active }) {
-                    return `Picked up ${getActiveTitle(active) || active.id}.`;
-                },
-                onDragMove({ active, over }) {
-                    return getMovementAnnouncement({
-                        eventName: 'onDragMove',
-                        activeId: active.id,
-                        activeTitle: getActiveTitle(active),
-                        overId: over?.id,
-                        overTitle: getOverTitle(over),
-                        treeState,
-                        setCurrentPosition,
-                        currentPosition,
-                    });
-                },
-                onDragOver({ active, over }) {
-                    return getMovementAnnouncement({
-                        eventName: 'onDragOver',
-                        activeId: active.id,
-                        activeTitle: getActiveTitle(active),
-                        overId: over?.id,
-                        overTitle: getOverTitle(over),
-                        treeState,
-                        setCurrentPosition,
-                        currentPosition,
-                    });
-                },
-                onDragEnd({ active, over }) {
-                    return getMovementAnnouncement({
-                        eventName: 'onDragEnd',
-                        activeId: active.id,
-                        activeTitle: getActiveTitle(active),
-                        overId: over?.id,
-                        overTitle: getOverTitle(over),
-                        treeState,
-                        setCurrentPosition,
-                        currentPosition,
-                    });
-                },
-                onDragCancel({ active }) {
-                    const title = getActiveTitle(active);
-
-                    return `Moving was cancelled. ${title} was dropped in its original position.`;
-                },
-            };
+            return getAnnouncements(treeState, currentPosition, setCurrentPosition);
         }, [currentPosition, treeState]);
 
         useDeepCompareEffect(() => {
@@ -563,21 +400,11 @@ export const Tree = memo(
             }
 
             startTransition(() => {
-                const nodesToRender: { id: string; node: ReactElement }[] = [];
-                for (const node of treeState.rootNodes) {
-                    const parentId = node.props.parentId;
-                    if (
-                        typeof parentId === 'string' &&
-                        (parentId === ROOT_ID ||
-                            (treeState.expandedIds.has(parentId) && nodesToRender.find((n) => n.id === parentId)))
-                    ) {
-                        nodesToRender.push({ id: node.props.id, node });
-                    }
-                }
+                const nodesToRender = getNodesToRender(treeState.rootNodes, treeState.expandedIds);
 
                 updateTreeState({
                     type: 'REGISTER_NODES',
-                    payload: nodesToRender.map((n) => n.node),
+                    payload: nodesToRender,
                 });
             });
         }, [treeState.rootNodes, treeState.expandedIds]);
@@ -620,6 +447,11 @@ export const Tree = memo(
             });
         }, [activeId, offset, overId, treeState.nodes]);
 
+        const getPropToUse = (
+            nodeProp: TreeItemProps['dragHandlerPosition' | 'showContentWhileDragging' | 'showDragHandlerOnHoverOnly'],
+            treeProp: TreeProps['dragHandlerPosition' | 'showContentWhileDragging' | 'showDragHandlerOnHoverOnly'],
+        ) => nodeProp || treeProp;
+
         const { nodes, items } = useMemo(() => {
             const treeItemStyle = {
                 spacingY: 'none',
@@ -637,15 +469,18 @@ export const Tree = memo(
                 nodes: treeState.nodes.map((node) =>
                     cloneElement(node, {
                         treeDraggable: draggable,
-                        dragHandlerPosition: node.props.dragHandlerPosition
-                            ? node.props.dragHandlerPosition
-                            : dragHandlerPosition,
-                        showDragHandlerOnHoverOnly: node.props.showDragHandlerOnHoverOnly
-                            ? node.props.showDragHandlerOnHoverOnly
-                            : showDragHandlerOnHoverOnly,
-                        showContentWhileDragging: node.props.showContentWhileDragging
-                            ? node.props.showContentWhileDragging
-                            : showContentWhileDragging,
+                        dragHandlerPosition: getPropToUse(
+                            node.props.dragHandlerPosition,
+                            dragHandlerPosition,
+                        ) as TreeProps['dragHandlerPosition'],
+                        showDragHandlerOnHoverOnly: getPropToUse(
+                            node.props.showDragHandlerOnHoverOnly,
+                            showDragHandlerOnHoverOnly,
+                        ) as TreeProps['showDragHandlerOnHoverOnly'],
+                        showContentWhileDragging: getPropToUse(
+                            node.props.showContentWhileDragging,
+                            showContentWhileDragging,
+                        ) as TreeProps['showContentWhileDragging'],
                         itemStyle: { ...treeItemStyle, ...node.props.itemStyle },
                         registerOverlay,
                         onExpand: handleExpand,
