@@ -33,20 +33,19 @@ import { serializeLeafToHtml } from './serializeLeafToHtml';
 import { CSSPropertiesHover } from '../types';
 
 const getNestingLevels = (nodes: TDescendant[], type: string): number => {
-    if (!nodes || !Array.isArray(nodes)) {
-        return 0;
-    }
     let maxDepth = 0;
+
     for (const node of nodes) {
-        let currentDepth = node.type === type ? 1 : 0;
+        let currentDepth = 0;
+        if (node.type === type) {
+            currentDepth = 1;
+        }
         if (node.children) {
-            const childDepth = getNestingLevels(node.children as TDescendant[], type);
-            if (childDepth > 0) {
-                currentDepth += childDepth;
-            }
+            currentDepth += getNestingLevels(node.children as TDescendant[], type);
         }
         maxDepth = Math.max(maxDepth, currentDepth);
     }
+
     return maxDepth;
 };
 
