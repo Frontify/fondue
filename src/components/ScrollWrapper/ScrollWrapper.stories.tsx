@@ -33,6 +33,7 @@ export default {
         tabindex: 0,
         'data-test-id': 'custom-data-test-id',
         scrollShadows: true,
+        disableNegativeMargin: false,
     },
 } as Meta<ScrollWrapperProps>;
 

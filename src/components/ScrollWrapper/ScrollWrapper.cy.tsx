@@ -92,4 +92,10 @@ describe('ScrollWrapper Component', () => {
             .should('have.class', 'tw-h-full')
             .should('have.class', 'tw-overflow-auto');
     });
+
+    it('should render without negative margin', () => {
+        cy.mount(<ScrollWrapperComponent disableNegativeMargin={true} />);
+
+        cy.get(SCROLL_WRAPPER_CONTENT_ID).should('not.have.class', 'tw-px-2').should('not.have.class', 'tw--mx-2');
+    });
 });

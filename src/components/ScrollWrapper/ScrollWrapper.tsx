@@ -16,6 +16,7 @@ export const ScrollWrapper = ({
     direction = ScrollWrapperDirection.Vertical,
     children,
     scrollShadows = true,
+    disableNegativeMargin = false,
     'data-test-id': dataTestId = 'scroll-wrapper',
 }: ScrollWrapperProps): ReactElement => {
     const scrollingContainer = useRef<HTMLDivElement>(null);
@@ -50,8 +51,9 @@ export const ScrollWrapper = ({
                 aria-label="Scrollable dialogue content"
                 className={merge([
                     scrollWrapperDirections[direction],
-                    'tw-flex-auto tw-min-h-0 tw-outline-none tw-pt-px tw-pb-2 tw-px-2 tw--mx-2',
+                    'tw-flex-auto tw-min-h-0 tw-outline-none tw-pt-px tw-pb-2',
                     isFocusVisible && FOCUS_STYLE,
+                    !disableNegativeMargin && 'tw-px-2 tw--mx-2',
                 ])}
                 {...scrollDivProps}
                 {...focusProps}
