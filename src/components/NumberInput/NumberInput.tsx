@@ -72,21 +72,16 @@ export const NumberInput = ({
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
+        event.preventDefault();
         const { key, shiftKey } = event;
         if (key === 'Backspace' || !isNaN(Number(key))) {
             return;
         }
-        event.preventDefault();
         isShift.current = shiftKey;
-        switch (true) {
-            case DECREMENT_KEYS.includes(key):
-                handleCount(NumberInputIncrement.DECREMENT);
-                break;
-            case INCREMENT_KEYS.includes(key):
-                handleCount(NumberInputIncrement.INCREMENT);
-                break;
-            default:
-                break;
+        if (DECREMENT_KEYS.includes(key)) {
+            handleCount(NumberInputIncrement.DECREMENT);
+        } else if (INCREMENT_KEYS.includes(key)) {
+            handleCount(NumberInputIncrement.INCREMENT);
         }
         if (onKeyDown) {
             onKeyDown(event);
@@ -94,6 +89,7 @@ export const NumberInput = ({
     };
 
     const handleKeyUp = (event: KeyboardEvent) => {
+        event.preventDefault();
         isShift.current = event.shiftKey;
         if (inputElement.current) {
             handleOnChange(inputElement.current.value);
