@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { OrderableListItem } from '@components/OrderableList';
-import { HighlightColor, HighlightProps, StoryListItem } from '@components/OrderableList/utils/types';
+import { LegacyOrderableListItem } from '@components/LegacyOrderableList';
+import { HighlightColor, HighlightProps, StoryListItem } from '@components/LegacyOrderableList/utils/types';
 import { ReactElement } from 'react';
 import { merge } from '@utilities/merge';
 
@@ -15,15 +15,13 @@ const Highlight = ({ color, children }: HighlightProps): ReactElement => (
     <span className={merge(['tw-font-medium', HighlightClasses[color]])}>{children}</span>
 );
 
-export const storyItems: OrderableListItem<StoryListItem>[] = [
+export const storyItems: LegacyOrderableListItem<StoryListItem>[] = [
     {
         id: '1',
         textContent: (
             <p>
                 The list rendering is completely customizable through the &nbsp;
-                <Highlight color={HighlightColor.Green}>renderContent</Highlight> callback prop, but also{' '}
-                <Highlight color={HighlightColor.Violet}>Tree</Highlight> component functionality can be used for
-                styling.
+                <Highlight color={HighlightColor.Green}>renderContent</Highlight> callback prop.
             </p>
         ),
         alt: 'one',
@@ -51,11 +49,10 @@ export const storyItems: OrderableListItem<StoryListItem>[] = [
         id: '7',
         textContent: (
             <p>
-                The dragHandler can be positioned to the <Highlight color={HighlightColor.Green}>left</Highlight>,{' '}
-                <Highlight color={HighlightColor.Green}>right</Highlight>, or{' '}
-                <Highlight color={HighlightColor.Green}>hide (none)</Highlight>. When the setting is drag handler is set
-                to <Highlight color={HighlightColor.Green}>none</Highlight> means that the whole lit item is draggable,
-                otherwise only dragging from the handler will do the job.
+                The drag-preview is created as a new element, using the
+                <Highlight color={HighlightColor.Green}>renderContent</Highlight> callback with the dragged item key to
+                render its content. The state of any interactive items must be managed outside of the list to achieve
+                consistent rendering in the drag preview.
             </p>
         ),
         alt: 'seven',

@@ -4,20 +4,20 @@ import { useFocusRing } from '@react-aria/focus';
 import { useId } from '@react-aria/utils';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import { CollectionItemProps, ItemDragState } from './types';
+import { LegacyCollectionItemProps, LegacyItemDragState } from './types';
 import { useDrag } from 'react-dnd';
 
-export const CollectionItem = <T extends object>({
+export const LegacyCollectionItem = <T extends object>({
     item,
     renderContent,
     dragDisabled,
     listId,
-}: CollectionItemProps<T>) => {
+}: LegacyCollectionItemProps<T>) => {
     const { isFocusVisible } = useFocusRing();
     const [{ componentDragState }, drag] = useDrag({
         item: { ...item },
         collect: (monitor) => ({
-            componentDragState: monitor.isDragging() ? ItemDragState.Dragging : ItemDragState.Idle,
+            componentDragState: monitor.isDragging() ? LegacyItemDragState.Dragging : LegacyItemDragState.Idle,
         }),
         type: listId,
         canDrag: !dragDisabled,
@@ -38,4 +38,4 @@ export const CollectionItem = <T extends object>({
         </div>
     );
 };
-CollectionItem.displayName = 'FondueCollectionItem';
+LegacyCollectionItem.displayName = 'FondueLegacyCollectionItem';

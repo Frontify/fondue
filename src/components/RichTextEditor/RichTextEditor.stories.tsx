@@ -22,6 +22,7 @@ import {
     AlignJustifyPlugin,
     AlignLeftPlugin,
     AlignRightPlugin,
+    AutoformatPlugin,
     BoldPlugin,
     BreakAfterPlugin,
     CheckboxListPlugin,
@@ -156,6 +157,7 @@ allPlugins
             new OrderedListPlugin(),
             new EmojiPlugin(),
             new ResetFormattingPlugin(),
+            new AutoformatPlugin(),
         ],
     );
 
