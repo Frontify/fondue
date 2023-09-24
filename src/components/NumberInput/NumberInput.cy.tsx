@@ -89,7 +89,8 @@ describe('Number Input Component', () => {
 
     it('should increase value by 10 on increment button shift + click', () => {
         cy.mount(<NumberInput controls />);
-        cy.get(NUMBER_INPUT_INCREMENT).click({ shiftKey: true });
+        cy.get(NUMBER_INPUT_COMPONENT).type('{shift}', { release: false });
+        cy.get(NUMBER_INPUT_INCREMENT).click();
         cy.get(NUMBER_INPUT_ELEMENT).should('have.value', 10);
     });
 
@@ -101,7 +102,8 @@ describe('Number Input Component', () => {
 
     it('should decrease value by 10 on decrement button shift + click', () => {
         cy.mount(<NumberInput controls />);
-        cy.get(NUMBER_INPUT_DECREMENT).click({ shiftKey: true });
+        cy.get(NUMBER_INPUT_COMPONENT).type('{shift}', { release: false });
+        cy.get(NUMBER_INPUT_DECREMENT).click();
         cy.get(NUMBER_INPUT_ELEMENT).should('have.value', -10);
     });
 
