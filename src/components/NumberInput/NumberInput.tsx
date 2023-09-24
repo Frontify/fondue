@@ -3,11 +3,11 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { NumberInputIncrement, NumberInputProps } from './types';
 import { merge } from '@utilities/merge';
-import { IconCheckMark16, IconExclamationMarkTriangle16, IconMinus16, IconPlus16 } from '@foundation/Icon';
+import { IconMinus16, IconPlus16 } from '@foundation/Icon';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { Validation, validationClassMap } from '@utilities/validation';
 import { KeyboardEvent } from '@react-types/shared';
-import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle';
+import { GetStatusIcon } from '@utilities/input';
 
 const INCREMENT_KEYS = ['ArrowUp', 'ArrowRight'];
 const DECREMENT_KEYS = ['ArrowDown', 'ArrowLeft'];
@@ -34,34 +34,18 @@ export const NumberInput = ({
 }: NumberInputProps) => {
     const inputElement = useRef<HTMLInputElement | null>(null);
     const timer = useRef<number>(0);
+    const isShift = useRef<boolean>(false);
+    const isMouseHold = useRef<boolean>(false);
 
-    const handleOnChange = useCallback(
-        (value: string) => {
-            onChange?.(Number(value));
-        },
-        [onChange],
-    );
+    const stopIncrement = () => {
+        clearInterval(timer.current);
+        isMouseHold.current = false;
+    };
 
-    const handleCount = (type: NumberInputIncrement, changeValue = 1, isShift?: boolean, toParent?: boolean) => {
-        const value = inputElement.current?.value;
-        const getNewInputValue = () => {
-            const currentValue = Number(value) || 0;
-            changeValue = isShift ? stepInterval : changeValue;
-            switch (type) {
-                case NumberInputIncrement.DECREMENT:
-                    return currentValue - changeValue;
-                case NumberInputIncrement.INCREMENT:
-                    return currentValue + changeValue;
-                default:
-                    return currentValue;
-            }
-        };
-        if (inputElement.current) {
-            const newValue = getNewInputValue();
-            inputElement.current.value = newValue.toString();
-            if (toParent) {
-                handleOnChange(inputElement.current.value);
-            }
+    const startIncrement = (type: NumberInputIncrement) => {
+        if (inputElement.current && !disabled) {
+            isMouseHold.current = true;
+            onHoldCount(type);
         }
     };
 
@@ -80,7 +64,6 @@ export const NumberInput = ({
                     default:
                         changeValue = 1;
                 }
-
                 handleCount(type, changeValue);
                 elapsedSeconds += 250;
             }, 250);
@@ -88,72 +71,65 @@ export const NumberInput = ({
         getNewInputValue();
     };
 
-    const startIncrement = (type: NumberInputIncrement) => {
-        if (inputElement.current && !disabled) {
-            onHoldCount(type);
-        }
-    };
-
-    const stopIncrement = () => {
-        clearInterval(timer.current);
-    };
-
     const handleKeyDown = (event: KeyboardEvent) => {
         const { key, shiftKey } = event;
         if (key === 'Backspace' || !isNaN(Number(key))) {
             return;
         }
-
         event.preventDefault();
-
+        isShift.current = shiftKey;
         switch (true) {
             case DECREMENT_KEYS.includes(key):
-                handleCount(NumberInputIncrement.DECREMENT, 1, shiftKey);
+                handleCount(NumberInputIncrement.DECREMENT);
                 break;
-
             case INCREMENT_KEYS.includes(key):
-                handleCount(NumberInputIncrement.INCREMENT, 1, shiftKey);
+                handleCount(NumberInputIncrement.INCREMENT);
                 break;
             default:
                 break;
         }
-
         if (onKeyDown) {
             onKeyDown(event);
         }
     };
 
-    const handleKeyUp = () => {
+    const handleKeyUp = (event: KeyboardEvent) => {
+        isShift.current = event.shiftKey;
         if (inputElement.current) {
             handleOnChange(inputElement.current.value);
         }
     };
 
-    const getStatusIcon = (status: Validation) => {
-        switch (status) {
-            case Validation.Success:
-                return (
-                    <span className={validationClassMap[status]} data-test-id={`${dataTestId}-status-icon`}>
-                        <IconCheckMark16 />
-                    </span>
-                );
-            case Validation.Error:
-            case Validation.Warning:
-                return (
-                    <span className={validationClassMap[status]} data-test-id={`${dataTestId}-status-icon`}>
-                        <IconExclamationMarkTriangle16 />
-                    </span>
-                );
-            case Validation.Loading:
-                return (
-                    <span className={validationClassMap[status]} data-test-id={`${dataTestId}-status-icon`}>
-                        <LoadingCircle size={LoadingCircleSize.Small} />
-                    </span>
-                );
-            default:
-                return null;
+    const handleCount = (type: NumberInputIncrement, changeValue = 1) => {
+        const value = inputElement.current?.value;
+        const getNewInputValue = () => {
+            const currentValue = Number(value) || 0;
+            changeValue = isShift.current ? stepInterval : changeValue;
+            switch (type) {
+                case NumberInputIncrement.DECREMENT:
+                    return currentValue - changeValue;
+                case NumberInputIncrement.INCREMENT:
+                    return currentValue + changeValue;
+                default:
+                    return currentValue;
+            }
+        };
+        if (inputElement.current) {
+            const newValue = getNewInputValue();
+            inputElement.current.value = newValue.toString();
+            if (isMouseHold.current) {
+                return;
+            }
+            handleOnChange(inputElement.current.value);
         }
     };
+
+    const handleOnChange = useCallback(
+        (value: string) => {
+            onChange?.(Number(value));
+        },
+        [onChange],
+    );
 
     useEffect(() => {
         clearInterval(timer.current);
@@ -210,11 +186,7 @@ export const NumberInput = ({
                     <button
                         className={'tw-p-1 hover:tw-bg-box-neutral hover:tw-text-box-selected-inverse'}
                         type="button"
-                        onClick={(event) =>
-                            event.button > 0
-                                ? null
-                                : handleCount(NumberInputIncrement.DECREMENT, 1, event.shiftKey, true)
-                        }
+                        onClick={(event) => (event.button > 0 ? null : handleCount(NumberInputIncrement.DECREMENT))}
                         onMouseDown={(event) =>
                             event.shiftKey || event.button > 0 ? null : startIncrement(NumberInputIncrement.DECREMENT)
                         }
@@ -226,17 +198,15 @@ export const NumberInput = ({
                         aria-label="Decrement value"
                         title="Decrement value"
                         data-test-id={`${dataTestId}-decrement`}
+                        onKeyDown={handleKeyDown}
+                        onKeyUp={handleKeyUp}
                     >
                         <IconMinus16 />
                     </button>
                     <button
                         className={'tw-p-1 hover:tw-bg-box-neutral hover:tw-text-box-selected-inverse'}
                         type="button"
-                        onClick={(event) =>
-                            event.button > 0
-                                ? null
-                                : handleCount(NumberInputIncrement.INCREMENT, 1, event.shiftKey, true)
-                        }
+                        onClick={(event) => (event.button > 0 ? null : handleCount(NumberInputIncrement.INCREMENT))}
                         onMouseDown={(event) =>
                             event.shiftKey || event.button > 0 ? null : startIncrement(NumberInputIncrement.INCREMENT)
                         }
@@ -248,13 +218,15 @@ export const NumberInput = ({
                         aria-label="Increment value"
                         title="Increment value"
                         data-test-id={`${dataTestId}-increment`}
+                        onKeyDown={handleKeyDown}
+                        onKeyUp={handleKeyUp}
                     >
                         <IconPlus16 />
                     </button>
                 </>
             ) : null}
 
-            {status ? getStatusIcon(status) : null}
+            {status ? GetStatusIcon(status, dataTestId) : null}
         </div>
     );
 };
