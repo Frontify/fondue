@@ -72,11 +72,11 @@ export const NumberInput = ({
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
-        event.preventDefault();
         const { key, shiftKey } = event;
         if (key === 'Backspace' || !isNaN(Number(key))) {
             return;
         }
+        event.preventDefault();
         isShift.current = shiftKey;
         if (DECREMENT_KEYS.includes(key)) {
             handleCount(NumberInputIncrement.DECREMENT);
@@ -97,8 +97,8 @@ export const NumberInput = ({
     };
 
     const handleCount = (type: NumberInputIncrement, changeValue = 1) => {
-        const value = inputElement.current?.value;
         const getNewInputValue = () => {
+            const value = inputElement.current?.value;
             const currentValue = Number(value) || 0;
             changeValue = isShift.current ? stepInterval : changeValue;
             switch (type) {
@@ -110,8 +110,13 @@ export const NumberInput = ({
                     return currentValue;
             }
         };
+
+        const newValue = getNewInputValue();
+        setValue(newValue);
+    };
+
+    const setValue = (newValue: number) => {
         if (inputElement.current) {
-            const newValue = getNewInputValue();
             inputElement.current.value = newValue.toString();
             if (isMouseHold.current) {
                 return;
