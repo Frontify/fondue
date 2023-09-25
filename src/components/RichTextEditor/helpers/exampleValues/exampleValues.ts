@@ -183,62 +183,27 @@ export const orderedListValue = {
     ],
 };
 
-export const multipleOrderedListsValue = {
-    type: ELEMENT_OL,
+const nestedListValue = {
+    type: ELEMENT_LI,
     children: [
+        createLicElement({ text: 'This comes first' }),
         {
-            type: ELEMENT_LI,
+            type: ELEMENT_OL,
             children: [
-                createLicElement({ text: 'First Item Ordered List' }),
                 {
-                    type: ELEMENT_OL,
-                    children: [
-                        {
-                            type: ELEMENT_LI,
-                            children: [createLicElement({ text: 'First First SubItem' })],
-                        },
-                        {
-                            type: ELEMENT_LI,
-                            children: [
-                                createLicElement({ text: 'First Second SubItem' }),
-                                {
-                                    type: ELEMENT_OL,
-                                    children: [
-                                        {
-                                            type: ELEMENT_LI,
-                                            children: [createLicElement({ text: 'First Second SubSubItem' })],
-                                        },
-                                    ],
-                                },
-                            ],
-                        },
-                    ],
+                    type: ELEMENT_LI,
+                    children: [createLicElement({ text: 'First Child Item' })],
                 },
-            ],
-        },
-        {
-            type: ELEMENT_LI,
-            children: [
-                createLicElement({ text: 'Second Item Ordered List' }),
                 {
-                    type: ELEMENT_OL,
+                    type: ELEMENT_LI,
                     children: [
+                        createLicElement({ text: 'Second Child Item' }),
                         {
-                            type: ELEMENT_LI,
-                            children: [createLicElement({ text: 'Second First SubItem' })],
-                        },
-                        {
-                            type: ELEMENT_LI,
+                            type: ELEMENT_OL,
                             children: [
-                                createLicElement({ text: 'Second Second SubItem' }),
                                 {
-                                    type: ELEMENT_OL,
-                                    children: [
-                                        {
-                                            type: ELEMENT_LI,
-                                            children: [createLicElement({ text: 'Second Second SubSubItem' })],
-                                        },
-                                    ],
+                                    type: ELEMENT_LI,
+                                    children: [createLicElement({ text: 'Nested Child Item number one' })],
                                 },
                             ],
                         },
@@ -247,6 +212,11 @@ export const multipleOrderedListsValue = {
             ],
         },
     ],
+};
+
+export const multipleOrderedListsValue = {
+    type: ELEMENT_OL,
+    children: [nestedListValue, nestedListValue],
 };
 
 export const defaultValue = [
