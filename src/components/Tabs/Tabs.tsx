@@ -53,6 +53,18 @@ const paddingMap: Record<TabsPaddingX, string> = {
     [TabsPaddingX.Large]: 'tw-pl-l',
 };
 
+const getTabButtonTextStyle = (tab: TabItemProps, activeItemId: string) => {
+    if (tab.disabled) {
+        return 'tw-text-text-disabled';
+    }
+
+    if (tab.id === activeItemId) {
+        return 'tw-font-medium tw-text-text';
+    }
+
+    return 'tw-text-text-weak hover:tw-text-text';
+};
+
 export const Tabs = ({
     paddingX,
     size,
@@ -229,9 +241,7 @@ export const Tabs = ({
                                 id={`${tab.id}-btn`}
                                 className={merge([
                                     'tw-group tw-relative tw-mx-0 tw-py-4 tw-px-2 tw-w-max tw-cursor-pointer tw-flex tw-items-center tw-justify-center tw-whitespace-nowrap',
-                                    tab.disabled ? 'tw-text-text-disabled' : 'tw-text-text-weak hover:tw-text-text',
-                                    tab.id === activeItemId && 'tw-font-medium tw-text-text',
-                                    size === TabSize.Small ? 'tw-text-sm' : 'tw-text-md',
+                                    getTabButtonTextStyle(tab, activeItemId),
                                 ])}
                                 key={tab.id}
                                 onClick={() => {
