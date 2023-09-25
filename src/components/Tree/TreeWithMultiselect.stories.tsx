@@ -136,8 +136,14 @@ const renderTreeItemComponent = (
     );
 };
 
-const getSelectedChildrenItems = (tree: TreeItemMockMultiselect[], selectedIds: string[]) => {
-    return tree.filter((item) => selectedIds.includes(item.id)).map((item) => item.id);
+const getSelectedChildrenItems = (tree: TreeItemMockMultiselect[], selectedIds: string[], onlyPartial = false) => {
+    return tree
+        .filter(
+            (item) =>
+                (onlyPartial ? false : selectedIds.includes(item.id)) ||
+                selectedIds.includes(convertToPartialSelectedId([item.id])[0]),
+        )
+        .map((item) => item.id);
 };
 
 const getSelectedTreeItem = (tree: TreeItemMockMultiselect[], id: string): TreeItemMockMultiselect | null => {
@@ -175,6 +181,79 @@ const getParentSelectedTreeItem = (
     return null;
 };
 
+const addSelectedItemsFromSelection = (
+    treeItems: TreeItemMockMultiselect[],
+    id: string,
+    newSelectedItems: string[],
+) => {
+    const parentItemChecked = getParentSelectedTreeItem(treeItems, id, null);
+    newSelectedItems = parentItemChecked?.id
+        ? fixParentSelectionState(parentItemChecked, newSelectedItems)
+        : newSelectedItems;
+
+    const itemChecked = getSelectedTreeItem(treeItems, id);
+    const childrenSelectedItems = getSelectedChildrenItems(itemChecked?.nodes ?? [], newSelectedItems);
+    const childrenCount = itemChecked?.nodes?.length ?? 0;
+
+    // Select/unselect children
+    if (childrenCount) {
+        const childrenIds = itemChecked?.nodes?.map((item) => item.id) ?? [];
+
+        newSelectedItems = newSelectedItems.includes(id)
+            ? addSelectedIds(newSelectedItems, childrenIds, false)
+            : removeSelectedIds(newSelectedItems, childrenIds, false);
+
+        if (childrenSelectedItems.length === 0) {
+            newSelectedItems = removeSelectedIds(newSelectedItems, [id], true);
+        }
+    }
+
+    // tree down
+    for (const child of itemChecked?.nodes ?? []) {
+        newSelectedItems = addSelectedItemsFromSelection(treeItems, child.id, newSelectedItems);
+    }
+
+    // tree up
+    let parent = parentItemChecked;
+    const treeBranch: TreeItemMockMultiselect[] = [];
+    while (parent !== null) {
+        treeBranch.push(parent);
+        parent = getParentSelectedTreeItem(treeItems, parent.id, null);
+    }
+    for (const item of treeBranch) {
+        newSelectedItems = fixParentSelectionState(item, newSelectedItems);
+    }
+
+    return newSelectedItems;
+};
+
+const fixParentSelectionState = (parent: TreeItemMockMultiselect, newSelectedItems: string[]) => {
+    const isParentSelected = newSelectedItems.includes(parent?.id ?? '');
+    const siblingsSelectedItems = getSelectedChildrenItems(parent?.nodes ?? [], newSelectedItems);
+    const siblingsPartiallySelectedItems = getSelectedChildrenItems(parent?.nodes ?? [], newSelectedItems, true);
+    const siblingsCount = parent?.nodes?.length ?? 0;
+
+    // Select/unselect parent
+    if (siblingsSelectedItems.length === 0) {
+        newSelectedItems = isParentSelected
+            ? removeSelectedIds(newSelectedItems, [parent?.id ?? ''], false)
+            : newSelectedItems;
+        newSelectedItems = removeSelectedIds(newSelectedItems, [parent?.id ?? ''], true);
+    } else if (siblingsSelectedItems.length === siblingsCount && siblingsPartiallySelectedItems.length === 0) {
+        newSelectedItems = !isParentSelected
+            ? addSelectedIds(newSelectedItems, [parent?.id ?? ''], false)
+            : newSelectedItems;
+
+        newSelectedItems = removeSelectedIds(newSelectedItems, [parent?.id ?? ''], true);
+    } else if (parent?.id) {
+        // flag parent as partial checked and unselect it
+        newSelectedItems = addSelectedIds(newSelectedItems, [parent?.id ?? ''], true);
+        newSelectedItems = removeSelectedIds(newSelectedItems, [parent?.id ?? ''], false);
+    }
+
+    return newSelectedItems;
+};
+
 const convertToPartialSelectedId = (ids: string[]) => ids.map((id) => `*${id}`);
 
 const removeSelectedIds = (ids: string[], idsToRemove: string[], partial: boolean): string[] => {
@@ -198,7 +277,6 @@ export const MultiselectWithBasicItem = ({ ...args }: TreeProps) => {
         setSelectedIds(getNewSelectedItems(id));
     };
 
-    // TODO: needs to be recursive going up in tree for the partial selection
     const getNewSelectedItems = (id: string) => {
         let newSelectedItems = [];
 
@@ -208,44 +286,7 @@ export const MultiselectWithBasicItem = ({ ...args }: TreeProps) => {
             newSelectedItems = addSelectedIds(selectedIds, [id], false);
         }
 
-        const itemChecked = getSelectedTreeItem(treeItems, id);
-        const parentItemChecked = getParentSelectedTreeItem(treeItems, id, null);
-        const isParentSelected = selectedIds.includes(parentItemChecked?.id ?? '');
-        const childrenSelectedItems = getSelectedChildrenItems(itemChecked?.nodes ?? [], newSelectedItems);
-        const siblingsSelectedItems = getSelectedChildrenItems(parentItemChecked?.nodes ?? [], newSelectedItems);
-        const childrenCount = itemChecked?.nodes?.length ?? 0;
-        const siblingsCount = parentItemChecked?.nodes?.length ?? 0;
-
-        // Select/unselect children
-        if (siblingsSelectedItems.length === 0) {
-            newSelectedItems = isParentSelected
-                ? removeSelectedIds(newSelectedItems, [parentItemChecked?.id ?? ''], false)
-                : newSelectedItems;
-            newSelectedItems = removeSelectedIds(newSelectedItems, [parentItemChecked?.id ?? ''], true);
-        } else if (siblingsSelectedItems.length === siblingsCount) {
-            newSelectedItems = !isParentSelected
-                ? addSelectedIds(newSelectedItems, [parentItemChecked?.id ?? ''], false)
-                : newSelectedItems;
-
-            newSelectedItems = removeSelectedIds(newSelectedItems, [parentItemChecked?.id ?? ''], true);
-        } else if (parentItemChecked?.id) {
-            // flag parent as partial checked and unselect it
-            newSelectedItems = addSelectedIds(newSelectedItems, [parentItemChecked?.id ?? ''], true);
-            newSelectedItems = removeSelectedIds(newSelectedItems, [parentItemChecked?.id ?? ''], false);
-        }
-
-        // Select/unselect parent
-        if (childrenCount) {
-            const childrenIds = itemChecked?.nodes?.map((item) => item.id) ?? [];
-
-            newSelectedItems = newSelectedItems.includes(id)
-                ? addSelectedIds(newSelectedItems, childrenIds, false)
-                : removeSelectedIds(newSelectedItems, childrenIds, false);
-
-            if (childrenSelectedItems.length === 0) {
-                newSelectedItems = removeSelectedIds(newSelectedItems, [id], true);
-            }
-        }
+        newSelectedItems = addSelectedItemsFromSelection(treeItems, id, newSelectedItems);
 
         return newSelectedItems;
     };
