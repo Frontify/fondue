@@ -97,7 +97,7 @@ export const Textarea = ({
                     !!decorator && 'tw-pl-7 ',
                     disabled
                         ? 'tw-border-black-5 tw-bg-black-5 tw-text-black-40'
-                        : 'tw-text-black tw-border-black-20 hover:tw-border-black-90',
+                        : 'tw-text-black tw-border-black-20 hover:tw-border-line-x-strong',
                     isFocusVisible && FOCUS_STYLE,
                     validationClassMap[validation],
                     !resizeable && 'tw-resize-none',
