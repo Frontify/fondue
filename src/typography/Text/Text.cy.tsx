@@ -4,7 +4,7 @@ import { Text } from './Text';
 
 const classRecord = {
     color: ['weak', 'tw-text-text-weak'],
-    boxColor: ['base', 'tw-bg-base'],
+    boxColor: ['neutral', 'tw-text-box-neutral'],
     overflow: ['ellipsis', 'tw-text-ellipsis'],
     whitespace: ['nowrap', 'tw-whitespace-nowrap'],
     display: ['block', 'tw-block'],

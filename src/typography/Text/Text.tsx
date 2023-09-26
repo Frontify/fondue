@@ -8,22 +8,7 @@ import { SharedTypographyProps } from '../shared/types';
 type TextWeight = 'default' | 'strong' | 'x-strong';
 type TextSize = 'x-small' | 'small' | 'medium' | 'large';
 type TextColor = 'default' | 'weak' | 'x-weak' | 'disabled' | 'negative' | 'positive' | 'warning' | 'interactive';
-type BoxColor =
-    | 'default'
-    | 'base'
-    | 'baseAlt'
-    | 'neutral'
-    | 'neutralInverse'
-    | 'selected'
-    | 'selectedInverse'
-    | 'disabled'
-    | 'disabledInverse'
-    | 'positive'
-    | 'positiveInverse'
-    | 'negative'
-    | 'negativeInverse'
-    | 'warning'
-    | 'warningInverse';
+type BoxColor = 'neutral' | 'selected' | 'disabled' | 'positive' | 'negative' | 'warning';
 
 export type TextProps = SharedTypographyProps &
     AriaAttributes & {
@@ -59,23 +44,14 @@ const colorMap: Record<TextColor, string> = {
     interactive: 'tw-text-text-interactive',
 };
 
-/** @description optional background box color used when accessibility contrast is needed */
+/** @description optional color prop that uses the inverse box color when accessibility contrast is needed */
 const boxColorMap: Record<BoxColor, string> = {
-    default: '',
-    base: 'tw-bg-base',
-    baseAlt: 'tw-bg-base-alt',
-    neutral: 'tw-bg-box-neutral',
-    neutralInverse: 'tw-bg-box-neutral-inverse',
-    selected: 'tx-bg-box-selected',
-    selectedInverse: 'tx-bg-box-selected-inverse',
-    disabled: 'tw-bg-box-disabled',
-    disabledInverse: 'tw-bg-box-disabled-inverse',
-    positive: 'tw-bg-box-positive',
-    positiveInverse: 'tw-bg-box-positive-inverse',
-    negative: 'tw-bg-box-negative',
-    negativeInverse: 'tw-bg-box-negative-inverse',
-    warning: 'tw-bg-box-warning',
-    warningInverse: 'tw-bg-box-warning-inverse',
+    neutral: 'tw-text-box-neutral-inverse',
+    selected: 'tw-text-box-selected-inverse',
+    disabled: 'tw-text-box-disabled-inverse',
+    positive: 'tw-text-box-positive-inverse',
+    negative: 'tw-text-box-negative-inverse',
+    warning: 'tw-text-box-warning-inverse',
 };
 
 export const Text = ({
@@ -84,11 +60,11 @@ export const Text = ({
     weight = 'default',
     size = 'medium',
     color = 'default',
-    boxColor = 'default',
     decoration = 'none',
     wordBreak = 'normal',
     whitespace = 'normal',
     overflow = 'visible',
+    boxColor,
     display,
     ...props
 }: TextProps): ReactElement => (
@@ -98,9 +74,8 @@ export const Text = ({
             'tw-font-body tw-max-w-full',
             weightMap[weight],
             sizeMap[size],
-            colorMap[color],
-            boxColorMap[boxColor],
             decorationMap[decoration],
+            boxColor ? boxColorMap[boxColor] : colorMap[color],
             wordBreakMap[wordBreak],
             overflow !== 'truncate' && whitespaceMap[whitespace],
             overflowMap[overflow],
