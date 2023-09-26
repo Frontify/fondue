@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { BaseDialogProps, Modality, OverlayProps } from '../../types/dialog';
 import { Overlay } from '@utilities/dialogs/Overlay';
 import { Z_INDEX_MODAL } from '@utilities/dialogs/constants';

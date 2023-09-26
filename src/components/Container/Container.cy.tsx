@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { Container } from './Container';
 
 const CONTAINER_ID = '[data-test-id=fondue-container]';

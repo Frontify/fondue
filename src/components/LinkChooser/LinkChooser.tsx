@@ -18,7 +18,7 @@ import { useComboBoxState } from '@react-stately/combobox';
 import { Validation } from '@utilities/validation';
 import { useMachine } from '@xstate/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import React, { Key, MouseEvent, ReactElement, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Key, MouseEvent, ReactElement, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { NavigationMenu } from './NavigationMenu';
 import { Popover } from './Popover';
 import { SearchInput } from './SearchInput';

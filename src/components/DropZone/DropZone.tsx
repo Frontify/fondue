@@ -1,9 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { useDrop } from 'react-dnd';
 import { merge } from '@utilities/merge';
-import { OrderableListItem } from '@components/OrderableList/types';
+import { LegacyOrderableListItem } from '@components/LegacyOrderableList/types';
 import { DraggableItem } from '@utilities/dnd';
 
 import { CollisionPosition } from '..';
@@ -37,10 +36,10 @@ export const DropZone = <T extends object>({
 }: DropZoneProps<T>) => {
     const [{ isOver, canDrop }, drop] = useDrop({
         accept: accept || '',
-        drop: (item: OrderableListItem<T>) => {
+        drop: (item: LegacyOrderableListItem<T>) => {
             onDrop?.(data.targetItem, item, data.position);
         },
-        canDrop: (item: OrderableListItem<T>) => {
+        canDrop: (item: LegacyOrderableListItem<T>) => {
             // can't drop an item on itself
             if (item.id === data.targetItem.id) {
                 return false;

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { MouseEvent } from 'react';
+import { MouseEvent } from 'react';
 import { HTMLPropsAs, LinkRootProps, useElementProps } from '@udecode/plate';
 import { getUrlFromLinkOrLegacyLink } from '../utils';
 import { TLinkElement } from '../types';
@@ -12,7 +12,7 @@ const useLink = (props: LinkRootProps): HTMLPropsAs<'a'> => {
         ...props,
         elementToAttributes: (element) => ({
             href: getUrlFromLinkOrLegacyLink(element),
-            target: element.target || '_blank',
+            target: element.target || '_self',
         }),
     });
 

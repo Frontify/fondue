@@ -7,7 +7,7 @@ import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
 import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle';
-import React, { FocusEvent, FormEvent, ReactElement, ReactNode } from 'react';
+import { FocusEvent, FormEvent, KeyboardEvent, ReactElement, ReactNode, useEffect, useRef } from 'react';
 import TextareaAutosize, { TextareaAutosizeProps } from 'react-textarea-autosize';
 import { IconExclamationMarkTriangle } from '@foundation/Icon/Generated';
 
@@ -29,6 +29,8 @@ export type TextareaProps = {
     autosize?: boolean;
     resizeable?: boolean;
     selectable?: boolean;
+    focusOnMount?: boolean;
+    onEnterPressed?: (event: KeyboardEvent<HTMLTextAreaElement>) => void;
 };
 
 export const Textarea = ({
@@ -47,8 +49,22 @@ export const Textarea = ({
     resizeable = true,
     onFocus,
     selectable = false,
+    focusOnMount,
+    onEnterPressed,
 }: TextareaProps): ReactElement => {
     const Component = autosize ? TextareaAutosize : 'textarea';
+
+    const textareaElement = useRef<HTMLTextAreaElement | null>(null);
+
+    useEffect(() => {
+        focusOnMount && textareaElement.current?.focus();
+    }, [focusOnMount]);
+
+    const onKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+        if (event.key === 'Enter') {
+            onEnterPressed?.(event);
+        }
+    };
 
     const { isFocusVisible, focusProps } = useFocusRing({ isTextInput: true });
 
@@ -72,6 +88,7 @@ export const Textarea = ({
                 }) as TextareaAutosizeProps)}
                 {...(autosize ? autosizeProps : { rows: minRows })}
                 id={useMemoizedId(propId)}
+                ref={textareaElement}
                 value={value}
                 placeholder={placeholder}
                 required={required}
@@ -80,7 +97,7 @@ export const Textarea = ({
                     !!decorator && 'tw-pl-7 ',
                     disabled
                         ? 'tw-border-black-5 tw-bg-black-5 tw-text-black-40'
-                        : 'tw-text-black tw-border-black-20 hover:tw-border-black-90',
+                        : 'tw-text-black tw-border-black-20 hover:tw-border-line-x-strong',
                     isFocusVisible && FOCUS_STYLE,
                     validationClassMap[validation],
                     !resizeable && 'tw-resize-none',
@@ -95,6 +112,7 @@ export const Textarea = ({
                         onFocus(e);
                     }
                 }}
+                onKeyDown={onKeyDown}
                 data-test-id="textarea"
             />
             {validation === Validation.Loading && (

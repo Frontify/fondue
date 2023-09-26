@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { Dialog } from './Dialog';
 import { Button } from '@components/Button';
 import { DialogHeader } from '@components/DialogHeader';

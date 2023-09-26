@@ -8,7 +8,7 @@ import { useButton } from '@react-aria/button';
 import { FocusScope, useFocusRing } from '@react-aria/focus';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
-import React, { KeyboardEvent, ReactElement, useEffect, useRef, useState } from 'react';
+import { KeyboardEvent, ReactElement, ReactNode, useEffect, useRef, useState } from 'react';
 import { getPaddingClasses } from './helpers';
 import { useClickOutside } from '@hooks/useClickOutside';
 import { CheckboxState } from '@components/Checkbox/Checkbox';
@@ -30,7 +30,7 @@ export type MultiSelectItem = {
     value: string;
     isCategory?: boolean;
     isDivider?: boolean;
-    avatar?: React.ReactNode;
+    avatar?: ReactNode;
     imgSrc?: string;
     ariaLabel?: string;
 };
@@ -56,7 +56,7 @@ export type MultiSelectProps = {
 export type Item = {
     label: string;
     value: string;
-    avatar?: React.ReactNode;
+    avatar?: ReactNode;
     isCategory?: boolean;
     isDivider?: boolean;
     imgSrc?: string;

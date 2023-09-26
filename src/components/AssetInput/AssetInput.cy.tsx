@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { assetInputActions } from './asset-input-actions';
 import { AssetInput, AssetInputSize } from './AssetInput';
 import { EXAMPLE_IMAGES, MIXED_ASSETS } from './example-assets';

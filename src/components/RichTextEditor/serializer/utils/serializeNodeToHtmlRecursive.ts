@@ -24,7 +24,7 @@ import {
     isText,
 } from '@udecode/plate';
 import { merge } from '@utilities/merge';
-import { buttonNode } from '../nodes/button';
+import { ButtonStylesType, buttonNode } from '../nodes/button';
 import { checkItemNode } from '../nodes/checkItem';
 import { linkNode } from '../nodes/link';
 import { mentionHtmlNode } from '../nodes/mentionHtmlNode';
@@ -32,16 +32,21 @@ import { reactCssPropsToCss } from './reactCssPropsToCss';
 import { serializeLeafToHtml } from './serializeLeafToHtml';
 import { CSSPropertiesHover } from '../types';
 
-const countNodesOfType = (nodes: TDescendant[], type: string): number => {
-    return nodes.reduce((acc, node) => {
+const getNestingLevels = (nodes: TDescendant[], type: string): number => {
+    let maxDepth = 0;
+
+    for (const node of nodes) {
+        let currentDepth = 0;
         if (node.type === type) {
-            acc++;
+            currentDepth = 1;
         }
         if (node.children) {
-            return acc + countNodesOfType(node.children as TDescendant[], type);
+            currentDepth += getNestingLevels(node.children as TDescendant[], type);
         }
-        return acc;
-    }, 0);
+        maxDepth = Math.max(maxDepth, currentDepth);
+    }
+
+    return maxDepth;
 };
 
 type NestingCount = {
@@ -55,14 +60,14 @@ type SerializeNodeToHtmlRecursiveOptions = {
 
 export const serializeNodeToHtmlRecursive = (
     node: TDescendant,
-    styles: Record<string, CSSPropertiesHover>,
+    styles: Record<string, CSSPropertiesHover> | ButtonStylesType,
     { mappedMentionable, nestingCount = {} }: SerializeNodeToHtmlRecursiveOptions,
 ): string => {
     if (isText(node)) {
         return serializeLeafToHtml(node);
     }
 
-    const rootNestingCount = nestingCount[node.type] || countNodesOfType([node], node.type);
+    const rootNestingCount = nestingCount[node.type] || getNestingLevels([node], node.type);
     let children = '';
     for (const element of node.children) {
         children += serializeNodeToHtmlRecursive(element, styles, {
@@ -118,7 +123,7 @@ const MapNodeTypesToHtml: { [key: string]: ({ ...args }: Arguments) => string } 
     [TextStyles.imageCaption]: (args) => getTextStyleHtml(TextStyles.imageCaption, args, 'p'),
     [ELEMENT_UL]: (args) => `<ul dir="auto" class="${UL_CLASSES} ${args.classNames}">${args.children}</ul>`,
     [ELEMENT_OL]: ({ classNames, children, node, rootNestingCount }) => {
-        const nestingLevel = Math.max(rootNestingCount - countNodesOfType([node], ELEMENT_OL), 0);
+        const nestingLevel = Math.max(rootNestingCount - getNestingLevels([node], ELEMENT_OL), 0);
         return `<ol dir="auto" class="${getOrderedListClasses(nestingLevel)} ${classNames}" style="${reactCssPropsToCss(
             OL_STYLES,
         )}">${children}</ol>`;
@@ -130,7 +135,8 @@ const MapNodeTypesToHtml: { [key: string]: ({ ...args }: Arguments) => string } 
     [ELEMENT_LIC]: ({ classNames, children, node }) =>
         `<p dir="auto" class="${classNames} ${getLicElementClassNames(node)}"><span>${children}</span></p>`,
     [ELEMENT_LINK]: ({ node, children, classNames, styles }) => linkNode(node, children, classNames, styles),
-    [ELEMENT_BUTTON]: ({ node, children, classNames, styles }) => buttonNode(node, children, classNames, styles),
+    [ELEMENT_BUTTON]: ({ node, children, classNames, styles }) =>
+        buttonNode(node, children, classNames, styles as ButtonStylesType),
     [ELEMENT_CHECK_ITEM]: ({ node, children, classNames, styles }) => checkItemNode(node, children, classNames, styles),
     [ELEMENT_MENTION]: ({ node, mappedMentionable }) => mentionHtmlNode(node, { mentionable: mappedMentionable }),
 };

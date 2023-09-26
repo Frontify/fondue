@@ -3,7 +3,7 @@
 import { BadgeProps } from '@components/Badge';
 import { IconProps } from '@foundation/Icon/IconProps';
 import { AriaBreadcrumbsProps, useBreadcrumbs } from '@react-aria/breadcrumbs';
-import React, { MouseEvent, ReactElement } from 'react';
+import { MouseEvent, ReactElement } from 'react';
 import { BreadcrumbItem } from './BreadcrumbItem';
 import { CurrentBreadcrumbItem } from './CurrentBreadcrumbItem';
 import { merge } from '@utilities/merge';

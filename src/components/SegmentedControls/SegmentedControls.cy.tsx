@@ -2,7 +2,7 @@
 
 import { IconTextAlignmentCentre, IconTextAlignmentLeft, IconTextAlignmentRight } from '@foundation/Icon/Generated';
 import { IconSize } from '@foundation/Icon/IconSize';
-import React, { ReactElement, useState } from 'react';
+import { ReactElement, useState } from 'react';
 import { IconItem, SegmentSize, SegmentedControls, TextOrNumberItem } from './SegmentedControls';
 
 const SEGMENTED_CONTROLS_ID = '[data-test-id=fondue-segmented-controls]';

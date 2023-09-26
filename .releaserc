@@ -32,6 +32,11 @@
                         "release": false
                     },
                     {
+                        "type": "ci",
+                        "scope": "release-skip",
+                        "release": false
+                    },
+                    {
                         "type": "chore",
                         "release": "patch"
                     },

@@ -35,3 +35,4 @@ export class CheckboxListPlugin extends Plugin {
 }
 
 export * from './id';
+export * from './CheckboxListElement';

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Meta, StoryFn } from '@storybook/react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { FormControl } from '@components/FormControl';
 import { Validation } from '@utilities/validation';
 import { MultiSelect as MultiSelectComponent, MultiSelectProps, MultiSelectSize, MultiSelectType } from './MultiSelect';

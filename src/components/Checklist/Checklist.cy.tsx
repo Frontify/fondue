@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { CheckboxState } from '@components/Checkbox/Checkbox';
-import React, { ReactElement, useState } from 'react';
+import { ReactElement, useState } from 'react';
 import { Checklist, ChecklistDirection, Columns } from './Checklist';
 
 const CHECKBOXES = [

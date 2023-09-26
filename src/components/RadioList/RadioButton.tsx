@@ -2,7 +2,7 @@
 
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { checkIfContainInteractiveElements } from '@utilities/elements';
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 
 export enum RadioButtonEmphasis {
     Default = 'Default',

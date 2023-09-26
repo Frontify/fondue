@@ -1,6 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { mentionable, orderedListValue, unorderedListValue } from '@components/RichTextEditor/helpers/exampleValues';
+import {
+    mentionable,
+    multipleOrderedListsValue,
+    orderedListValue,
+    unorderedListValue,
+} from '@components/RichTextEditor/helpers/exampleValues';
 import { ELEMENT_CHECK_ITEM, mapMentionable } from '@components/RichTextEditor/Plugins';
 import {
     ELEMENT_IMAGE,
@@ -100,6 +105,17 @@ describe('serializeNodeToHtmlRecursive()', () => {
 
     it('serializes ordered list with correct list style types to html', () => {
         const result = serializeNodeToHtmlRecursive(orderedListValue, defaultStyles, {});
+
+        const parser = new DOMParser();
+        const htmlDoc = parser.parseFromString(result, 'text/html');
+        const orderedLists = htmlDoc.getElementsByTagName('ol');
+        expect(orderedLists[0]?.className).to.include('decimal');
+        expect(orderedLists[1]?.className).to.include('alpha');
+        expect(orderedLists[2]?.className).to.include('roman');
+    });
+
+    it('serializes multiple ordered lists with multiple levels to with correct list style types to html', () => {
+        const result = serializeNodeToHtmlRecursive(multipleOrderedListsValue, defaultStyles, {});
 
         const parser = new DOMParser();
         const htmlDoc = parser.parseFromString(result, 'text/html');
@@ -269,6 +285,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
             children: [
                 {
                     type: 'button',
+                    target: '_self',
                     url: 'https://frontify.com',
                     buttonStyle: 'primary',
                     children: [{ text: 'button' }],
@@ -280,7 +297,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
 
         expect(result).to.contain('button');
         expect(result).to.contain('href="https://frontify.com"');
-        expect(result).to.contain('target="_blank"');
+        expect(result).to.contain('target="_self"');
     });
 
     it('serializes a button with target _blank to html', () => {
@@ -370,7 +387,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
         const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
 
         expect(result).to.be.equal(
-            '<p dir="auto" class="tw-break-words" style="font-size: 14px; font-style: normal; font-weight: normal;"><a dir="auto" class="tw-break-words" style="font-size: 14px; font-style: normal; color: rgb(113, 89, 215); text-decoration: underline; cursor: pointer;" target="_blank" href="https://frontify.com">This is a Link.</a></p>',
+            '<p dir="auto" class="tw-break-words" style="font-size: 14px; font-style: normal; font-weight: normal;"><a dir="auto" class="tw-break-words" style="font-size: 14px; font-style: normal; color: rgb(113, 89, 215); text-decoration: underline; cursor: pointer;" target="_self" href="https://frontify.com">This is a Link.</a></p>',
         );
     });
 

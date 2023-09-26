@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { DialogBody } from './DialogBody';
 import { DIALOG_SIZE, DialogBodyProps } from '../../types/dialog';

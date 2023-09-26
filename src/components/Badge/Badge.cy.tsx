@@ -2,7 +2,6 @@
 
 import { IconDocumentText } from '@foundation/Icon/Generated';
 import { IconSize } from '@foundation/Icon/IconSize';
-import React from 'react';
 import { BadgeStyle } from '.';
 import { Badge } from './Badge';
 import { BadgeEmphasis, BadgeStatus } from './types';

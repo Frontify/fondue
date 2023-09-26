@@ -2,7 +2,6 @@
 
 import { IconSize } from '@foundation/Icon/IconSize';
 import { IconExclamationMarkCircle, IconIcon } from '@foundation/Icon/Generated';
-import React from 'react';
 import { BrightHeaderStyle, brightHeaderBackgroundColors } from './BrightHeader';
 import { LegacyTooltip, LegacyTooltipProps, TooltipAlignment, TooltipPosition } from './LegacyTooltip';
 

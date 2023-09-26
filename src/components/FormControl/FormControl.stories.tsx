@@ -7,7 +7,7 @@ import { SegmentedControls } from '@components/SegmentedControls/SegmentedContro
 import { TextInput } from '@components/TextInput/TextInput';
 import { Meta, StoryFn } from '@storybook/react';
 import { generateRandomId } from '@utilities/generateRandomId';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { FormControl, FormControlDirection, FormControlProps, FormControlStyle, HelperPosition } from './FormControl';
 
 export default {

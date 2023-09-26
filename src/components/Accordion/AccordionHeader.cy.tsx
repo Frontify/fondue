@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { ACCORDION_HEADER_TEST_ID, AccordionHeader } from './AccordionHeader';
 import { IconIcon12 } from '@foundation/Icon/Generated';
 

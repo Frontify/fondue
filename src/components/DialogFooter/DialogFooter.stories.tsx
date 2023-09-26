@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { DialogFooter } from './DialogFooter';
 import { ButtonEmphasis, ButtonStyle } from '@components/Button';

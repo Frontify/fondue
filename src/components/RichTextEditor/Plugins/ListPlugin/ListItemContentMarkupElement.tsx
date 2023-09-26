@@ -2,7 +2,6 @@
 
 import { ELEMENT_LIC, PlateRenderElementProps, TElement } from '@udecode/plate';
 import { merge } from '@utilities/merge';
-import React from 'react';
 import { getColumnBreakClasses } from '../ColumnBreakPlugin/utils/getColumnBreakClasses';
 import { MarkupElement } from '../MarkupElement';
 import { justifyClassNames } from '../helper';

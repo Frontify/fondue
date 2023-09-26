@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { Tag, TagSize, TagType } from './Tag';
 
 const TAG_ID = '[data-test-id=tag]';

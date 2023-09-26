@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import { merge } from '@utilities/merge';
 import { IconCaretDown } from '@foundation/Icon/Generated';
 import { IconSize } from '@foundation/Icon/IconSize';

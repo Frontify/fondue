@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Meta, StoryFn } from '@storybook/react';
-import React from 'react';
 import { BOX_TEST_ID, Box as BoxComponent } from './Box';
 
 type Props = JSX.IntrinsicElements['div'] | JSX.IntrinsicElements['span'];

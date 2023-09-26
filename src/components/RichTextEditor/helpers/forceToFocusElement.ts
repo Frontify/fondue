@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import type { KeyboardEvent } from 'react';
+
 const TABBABLE_ELEMENTS = [
     'input',
     'select',
@@ -17,7 +19,7 @@ const TABBABLE_ELEMENTS = [
     '[tabindex]',
 ].join(':not([hidden]):not([tabindex="-1"]):not([disabled]),');
 
-export const forceToFocusNextElement = (event: React.KeyboardEvent, forwards: boolean) => {
+export const forceToFocusNextElement = (event: KeyboardEvent, forwards: boolean) => {
     if (!document.activeElement) {
         return;
     }

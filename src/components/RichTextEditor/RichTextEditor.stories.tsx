@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Meta, StoryFn } from '@storybook/react';
-import React, { ComponentProps } from 'react';
+import { ComponentProps } from 'react';
 import { Position } from './EditorPositioningWrapper';
 import {
     IPSUM,
@@ -22,6 +22,7 @@ import {
     AlignJustifyPlugin,
     AlignLeftPlugin,
     AlignRightPlugin,
+    AutoformatPlugin,
     BoldPlugin,
     BreakAfterPlugin,
     CheckboxListPlugin,
@@ -156,6 +157,7 @@ allPlugins
             new OrderedListPlugin(),
             new EmojiPlugin(),
             new ResetFormattingPlugin(),
+            new AutoformatPlugin(),
         ],
     );
 

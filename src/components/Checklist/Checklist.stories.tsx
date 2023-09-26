@@ -2,7 +2,7 @@
 
 import { CheckboxState } from '@components/Checkbox/Checkbox';
 import { Meta, StoryFn } from '@storybook/react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Checklist as ChecklistComponent, ChecklistDirection, ChecklistProps } from './Checklist';
 
 export default {

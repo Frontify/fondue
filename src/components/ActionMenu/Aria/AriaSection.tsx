@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useMenuSection } from '@react-aria/menu';
-import React, { ReactElement, ReactNode } from 'react';
+import { ReactElement, ReactNode } from 'react';
 
 export type AriaSectionProps = {
     ariaLabel?: string;

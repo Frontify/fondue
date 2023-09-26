@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, {
+import {
     Children,
     ReactElement,
     ReactNode,

@@ -2,7 +2,7 @@
 
 import { Meta, StoryFn } from '@storybook/react';
 import { merge } from '@utilities/merge';
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import { LegacyStack, LegacyStackProps } from './LegacyStack';
 
 const Placeholder = ({

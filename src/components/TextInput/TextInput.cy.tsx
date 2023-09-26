@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Validation } from '@utilities/validation';
-import React, { ReactElement, useEffect, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import { TextInput, TextInputProps, TextInputType } from './TextInput';
 import { IconIcon } from '@foundation/Icon';
 

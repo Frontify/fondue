@@ -6,7 +6,7 @@ import { toKebabCase } from '../transforms';
 export const setup = (componentName: string): ComponentFileBuilderResponse => ({
     content: `/* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 
 export type ${componentName}Props = { children?: ReactNode; };
 

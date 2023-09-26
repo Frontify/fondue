@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { SegmentedControls } from '@components/SegmentedControls/SegmentedControls';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Color, ColorFormat, Palette } from '../../types/colors';
 import { BrandColorPicker } from './BrandColorPicker';
 import './ColorPicker.css';

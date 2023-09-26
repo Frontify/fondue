@@ -1,7 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
-
 import { OnTreeDropCallback, Tree, TreeItem } from '@components/Tree';
 import { TreeItemMock, treeItemsMock } from '@components/Tree/utils';
 
@@ -247,7 +245,7 @@ describe('Tree and TreeItem components', () => {
         cy.get(TREE_ITEM_TOGGLE_ID).first().click();
         cy.get(TREE_ITEM_ID).should('have.length', 9);
         cy.get(TREE_ITEM_DRAG_HANDLE_ID).eq(4).realMouseDown().realMouseMove(0, -80).realMouseMove(40, 0);
-        cy.wait(300);
+        cy.wait(400);
         cy.get(TREE_ITEM_ID).should('have.length', 12);
     });
 

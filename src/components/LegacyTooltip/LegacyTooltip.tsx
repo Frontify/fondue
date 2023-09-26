@@ -5,7 +5,7 @@ import { IconSize } from '@foundation/Icon/IconSize';
 import { useLink } from '@react-aria/link';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import React, {
+import {
     FocusEvent,
     HTMLAttributes,
     ReactElement,

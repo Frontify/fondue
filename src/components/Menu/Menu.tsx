@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactNode, RefObject, useCallback, useEffect, useState } from 'react';
+import { ReactNode, RefObject, useCallback, useEffect, useState } from 'react';
 import { usePopper } from 'react-popper';
 import { merge } from '@utilities/merge';
 import { useMenuKeyboardNavigation } from '@components/Menu/useMenuKeyboardNavigation';

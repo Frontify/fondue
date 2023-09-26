@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import { ComboboxItemProps, EmojiItemData } from '@udecode/plate';
 
 export const EmojiComboboxItem = ({ item }: ComboboxItemProps<EmojiItemData>): ReactElement => {

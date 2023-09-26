@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { DatePicker, DatePickerProps, ReactDatePickerRef } from './DatePicker';
 import { FormControl } from '@components/FormControl';
 import { SegmentedControls } from '@components/SegmentedControls';
 import { Validation } from '@utilities/validation';
-import { addDays, intlFormat, subDays } from 'date-fns';
+import { addDays, subDays } from 'date-fns';
 import { IconCalendar16 } from '@foundation/Icon/Generated';
 import { Badge, BadgeEmphasis, BadgeStyle, Button } from '..';
 
@@ -14,6 +14,9 @@ export default {
     title: 'Components/DatePicker',
     component: DatePicker,
     tags: ['autodocs'],
+    args: {
+        dateFormat: 'MMM dd, yyyy',
+    },
     argTypes: {
         validation: {
             options: Object.values(Validation),
@@ -90,7 +93,6 @@ Default.args = {
     placeHolder: 'Select a date',
     isClearable: true,
     shouldCloseOnSelect: true,
-    dateFormat: 'dd MMM yyyy',
 };
 
 Default.storyName = 'Date Picker';
@@ -100,7 +102,6 @@ DatePickerWithCustomHeader.args = {
     placeHolder: 'Select a date',
     isClearable: true,
     shouldCloseOnSelect: true,
-    dateFormat: 'dd MMM yyyy',
     customHeader: (
         <div className="tw-flex tw-gap-2 tw-grow">
             <Button hugWidth={false}>30d</Button>
@@ -117,7 +118,6 @@ DatePickerWithMinAndMaxDates.args = {
     placeHolder: 'Select a date',
     isClearable: true,
     shouldCloseOnSelect: true,
-    dateFormat: 'dd MMM yyyy',
     minDate: subDays(new Date(), 5),
     maxDate: addDays(new Date(), 5),
 };
@@ -127,7 +127,6 @@ InsideFormControlAndOverSegmentedControls.args = {
     placeHolder: 'Select a date',
     isClearable: true,
     shouldCloseOnSelect: true,
-    dateFormat: 'dd MMM yyyy',
 };
 
 const formatOptions = { day: 'numeric', month: 'short', year: 'numeric' } as const;
@@ -171,8 +170,8 @@ const TemplateDateRange: StoryFn<DatePickerProps> = () => {
                     <IconCalendar16 />
                     Date:
                     <Badge style={BadgeStyle.Progress} emphasis={BadgeEmphasis.Strong} size="small">
-                        {intlFormat(startDate || new Date(), formatOptions)} -{' '}
-                        {intlFormat(endDate || new Date(), formatOptions)}
+                        {new Intl.DateTimeFormat('en-US', formatOptions).format(startDate || new Date())} -{' '}
+                        {new Intl.DateTimeFormat('en-US', formatOptions).format(endDate || new Date())}
                     </Badge>
                 </button>
             }

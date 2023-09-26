@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { LoadingCircle, LoadingCircleSize, LoadingCircleStyle, sizeClasses, statusClasses } from './LoadingCircle';
 
 const LOADING_CIRCLE_ID = '[data-test-id=loading-circle]';

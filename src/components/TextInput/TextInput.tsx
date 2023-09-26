@@ -7,7 +7,7 @@ import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
-import React, {
+import {
     DOMAttributes,
     FocusEvent,
     ForwardRefRenderFunction,
@@ -201,7 +201,7 @@ export const TextInput = ({
                 disabled || readonly
                     ? 'tw-border-black-5 tw-bg-black-5 dark:tw-bg-black-90 dark:tw-border-black-90'
                     : merge([
-                          'focus-within:tw-border-black-90 hover:tw-border-black-90',
+                          'focus-within:tw-border-black-90 hover:tw-border-line-x-strong',
                           validationClassMap[validation],
                           isFocusVisible &&
                               !clearButtonIsFocusVisible &&

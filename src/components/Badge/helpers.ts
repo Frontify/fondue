@@ -59,7 +59,7 @@ export const getCircularSizeClasses = (size: BadgeSize) =>
     ({
         small: 'tw-h-5 tw-w-5',
         medium: 'tw-h-6 tw-w-6',
-    }[size]);
+    })[size];
 
 export const getSizeClasses = (
     children: ReactNode,

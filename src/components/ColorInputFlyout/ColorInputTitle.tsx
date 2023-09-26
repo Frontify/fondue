@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { getColorDisplayValue, toShortRgb } from '@utilities/colors';
-import React, { ReactElement } from 'react';
-import tinycolor from 'tinycolor2';
+import { ReactElement } from 'react';
+import { TinyColor } from '@ctrl/tinycolor';
 import { Color, ColorFormat } from '../../types/colors';
 
 type Props = {
@@ -12,7 +12,7 @@ type Props = {
 
 export const ColorInputTitle = ({ currentColor, format }: Props): ReactElement => {
     const { name, alpha } = currentColor;
-    const parsedColor = tinycolor(toShortRgb(currentColor));
+    const parsedColor = new TinyColor(toShortRgb(currentColor));
     const colorValue = getColorDisplayValue(currentColor, format, false);
 
     return (

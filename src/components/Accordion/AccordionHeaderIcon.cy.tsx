@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { ACCORDION_HEADER_ICON_ID, AccordionHeaderIcon } from './AccordionHeaderIcon';
 
 const ACCORDION_HEADER_ICON_TEST_ID = `[data-test-id="${ACCORDION_HEADER_ICON_ID}"]`;

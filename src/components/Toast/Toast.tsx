@@ -3,7 +3,7 @@
 import { INSET_BORDER } from '@utilities/borderStyle';
 import { merge } from '@utilities/merge';
 import { AnimatePresence, motion } from 'framer-motion';
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import { ToastAnimationDirection, ToastProps, toastStylesBackgroundColorsMap } from './types';
 
 const CONTAINER_BASE_CLASSES = 'tw-min-h-[4.25rem] tw-bg-base tw-rounded-lg tw-shadow-mid tw-z-[120000]';

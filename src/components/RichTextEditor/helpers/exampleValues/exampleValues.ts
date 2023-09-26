@@ -183,6 +183,42 @@ export const orderedListValue = {
     ],
 };
 
+const nestedListValue = {
+    type: ELEMENT_LI,
+    children: [
+        createLicElement({ text: 'This comes first' }),
+        {
+            type: ELEMENT_OL,
+            children: [
+                {
+                    type: ELEMENT_LI,
+                    children: [createLicElement({ text: 'First Child Item' })],
+                },
+                {
+                    type: ELEMENT_LI,
+                    children: [
+                        createLicElement({ text: 'Second Child Item' }),
+                        {
+                            type: ELEMENT_OL,
+                            children: [
+                                {
+                                    type: ELEMENT_LI,
+                                    children: [createLicElement({ text: 'Nested Child Item number one' })],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        },
+    ],
+};
+
+export const multipleOrderedListsValue = {
+    type: ELEMENT_OL,
+    children: [nestedListValue, nestedListValue],
+};
+
 export const defaultValue = [
     createElement({ text: 'This text is bold.', mark: MARK_BOLD }),
     createElement({ text: 'This text is italic.', mark: MARK_ITALIC }),
