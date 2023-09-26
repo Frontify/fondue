@@ -201,7 +201,7 @@ export const TextInput = ({
                 disabled || readonly
                     ? 'tw-border-black-5 tw-bg-black-5 dark:tw-bg-black-90 dark:tw-border-black-90'
                     : merge([
-                          'focus-within:tw-border-black-90 hover:tw-border-black-90',
+                          'focus-within:tw-border-black-90 hover:tw-border-line-x-strong',
                           validationClassMap[validation],
                           isFocusVisible &&
                               !clearButtonIsFocusVisible &&
