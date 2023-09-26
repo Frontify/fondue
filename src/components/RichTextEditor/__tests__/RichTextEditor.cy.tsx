@@ -692,8 +692,28 @@ describe('RichTextEditor Component', () => {
             cy.get('[contenteditable=true]').should('include.html', STRIKETHROUGH_CLASSES);
         });
 
-        it('should autoformat - to code block', () => {
-            cy.get('[contenteditable=true]').click().type('`hello`');
+        it('should autoformat ~1 to ₁', () => {
+            cy.get('[contenteditable=true]').click().type('~1');
+            cy.get('[contenteditable=true]').should('include.html', '₁');
+        });
+
+        it('should autoformat ~+ to ₊', () => {
+            cy.get('[contenteditable=true]').click().type('~+');
+            cy.get('[contenteditable=true]').should('include.html', '₊');
+        });
+
+        it('should autoformat ^1 to ¹', () => {
+            cy.get('[contenteditable=true]').click().type('^1');
+            cy.get('[contenteditable=true]').should('include.html', '¹');
+        });
+
+        it('should autoformat ^+ to ⁺', () => {
+            cy.get('[contenteditable=true]').click().type('^+');
+            cy.get('[contenteditable=true]').should('include.html', '⁺');
+        });
+
+        it('should autoformat `code` to code block', () => {
+            cy.get('[contenteditable=true]').click().type('`code`');
             cy.get('[contenteditable=true]').should('include.html', CODE_CLASSES);
         });
 
@@ -731,12 +751,89 @@ describe('RichTextEditor Component', () => {
             cy.get('[contenteditable=true]').get('ol').should('have.class', getOrderedListClasses(0));
         });
 
+        it('should autoformat 1) to ordered list', () => {
+            cy.get('[contenteditable=true]').click().type('1. hello');
+            cy.get('[contenteditable=true]').should('include.html', '<ol');
+            cy.get('[contenteditable=true]').should('include.html', '<li');
+            cy.get('[contenteditable=true]').get('ol').should('have.class', getOrderedListClasses(0));
+        });
+
         it('should autoformat [] to checkbox list', () => {
             cy.get('[contenteditable=true]').click().type('[] hello');
             cy.get('[contenteditable=true]').should('include.html', '<div');
             cy.get('[contenteditable=true]').get('div').should('have.class', CHECKBOX_DIV_CLASSES);
             cy.get('[contenteditable=true]').should('include.html', '<input');
             cy.get('[contenteditable=true]').get('span').should('have.class', CHECKBOX_SPAN_CLASSES);
+        });
+
+        it('should autoformat -- to —', () => {
+            cy.get('[contenteditable=true]').click().type('--');
+            cy.get('[contenteditable=true]').should('include.html', '—');
+        });
+
+        it('should autoformat ... to …', () => {
+            cy.get('[contenteditable=true]').click().type('...');
+            cy.get('[contenteditable=true]').should('include.html', '…');
+        });
+
+        it('should autoformat >> to »', () => {
+            cy.get('[contenteditable=true]').click().type('>>');
+            cy.get('[contenteditable=true]').should('include.html', '»');
+        });
+
+        it('should autoformat << to «', () => {
+            cy.get('[contenteditable=true]').click().type('<<');
+            cy.get('[contenteditable=true]').should('include.html', '«');
+        });
+
+        it('should autoformat -> to →', () => {
+            cy.get('[contenteditable=true]').click().type('->');
+            cy.get('[contenteditable=true]').should('include.html', '→');
+        });
+
+        it('should autoformat <- to ←', () => {
+            cy.get('[contenteditable=true]').click().type('<-');
+            cy.get('[contenteditable=true]').should('include.html', '←');
+        });
+
+        it('should autoformat => to ⇒', () => {
+            cy.get('[contenteditable=true]').click().type('=>');
+            cy.get('[contenteditable=true]').should('include.html', '⇒');
+        });
+
+        it('should autoformat <= to ⇐', () => {
+            cy.get('[contenteditable=true]').click().type('<=');
+            cy.get('[contenteditable=true]').should('include.html', '⇐');
+        });
+
+        it('should autoformat (c) to ©', () => {
+            cy.get('[contenteditable=true]').click().type('(c)');
+            cy.get('[contenteditable=true]').should('include.html', '©');
+        });
+
+        it('should autoformat (C) to ©', () => {
+            cy.get('[contenteditable=true]').click().type('(C)');
+            cy.get('[contenteditable=true]').should('include.html', '©');
+        });
+
+        it('should autoformat (r) to ®', () => {
+            cy.get('[contenteditable=true]').click().type('(r)');
+            cy.get('[contenteditable=true]').should('include.html', '®');
+        });
+
+        it('should autoformat (R) to ®', () => {
+            cy.get('[contenteditable=true]').click().type('(R)');
+            cy.get('[contenteditable=true]').should('include.html', '®');
+        });
+
+        it('should autoformat (tm) to ™', () => {
+            cy.get('[contenteditable=true]').click().type('(tm)');
+            cy.get('[contenteditable=true]').should('include.html', '™');
+        });
+
+        it('should autoformat (TM) to ™', () => {
+            cy.get('[contenteditable=true]').click().type('(TM)');
+            cy.get('[contenteditable=true]').should('include.html', '™');
         });
     });
 });
