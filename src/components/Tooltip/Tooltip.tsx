@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
-import { Modality, OverlayProps } from '../../types/dialog';
+import { Modality, OverlayProps } from '../../types';
 import { Z_INDEX_TOOLTIP } from '@utilities/dialogs/constants';
 import { Overlay } from '@utilities/dialogs/Overlay';
 import { Trigger } from '@utilities/dialogs/Trigger';
