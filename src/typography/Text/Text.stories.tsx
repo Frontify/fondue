@@ -25,7 +25,7 @@ export default {
             control: { type: 'select' },
         },
         boxColor: {
-            options: [undefined, 'neutral', 'selected', 'disabled', 'positive', 'negative', 'warning'],
+            options: ['', 'neutral', 'selected', 'disabled', 'positive', 'negative', 'warning'],
             control: { type: 'select' },
         },
         ...sharedTypographyArgTypes,

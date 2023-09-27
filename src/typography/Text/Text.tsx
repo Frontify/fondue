@@ -16,6 +16,7 @@ export type TextProps = SharedTypographyProps &
         weight?: TextWeight;
         as?: 'a' | 'abbr' | 'address' | 'em' | 'label' | 'li' | 'span' | 'strong' | 'time' | 'p';
         color?: TextColor;
+        /** @description optional color prop that uses the inverse box color when accessibility contrast is needed */
         boxColor?: BoxColor;
         children?: ReactNode;
     };
@@ -44,7 +45,6 @@ const colorMap: Record<TextColor, string> = {
     interactive: 'tw-text-text-interactive',
 };
 
-/** @description optional color prop that uses the inverse box color when accessibility contrast is needed */
 const boxColorMap: Record<BoxColor, string> = {
     neutral: 'tw-text-box-neutral-inverse',
     selected: 'tw-text-box-selected-inverse',
