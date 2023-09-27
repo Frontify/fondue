@@ -22,7 +22,7 @@ export const NumberInput = ({
     readOnly,
     status = Validation.Default,
     decorator,
-    suffix,
+    suffix = '',
     controls,
     clearable,
     placeholder,
@@ -134,7 +134,7 @@ export const NumberInput = ({
     const setValue = (value: number) => {
         if (inputElement.current) {
             const newValue = value.toString();
-            inputElement.current.value = `${newValue}${suffix ? suffix : ''}`;
+            inputElement.current.value = `${newValue}${suffix}`;
             if (isMouseHold.current) {
                 return;
             }
@@ -153,21 +153,21 @@ export const NumberInput = ({
         }
     };
 
-    const handleFocus = () => {
+    const handleFocus = (event: React.FocusEvent<HTMLInputElement, Element>) => {
         if (!isFocused) {
             setIsFocused(true);
         }
         if (onFocus) {
-            onFocus;
+            onFocus(event);
         }
     };
 
-    const handleBlur = () => {
+    const handleBlur = (event: React.FocusEvent<HTMLInputElement, Element>) => {
         if (isFocused) {
             setIsFocused(false);
         }
         if (onBlur) {
-            onBlur;
+            onBlur(event);
         }
     };
 
