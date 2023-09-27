@@ -57,11 +57,15 @@ export const LongTextWithNewLines: StoryFn<TextProps> = (args) => (
 export const TextChildOfBoxToken: StoryFn<TextProps> = (args) => {
     return (
         <Container color="tw-bg-box-negative" padding={SPACING_VALUES[2]}>
-            <TextComponent {...args} boxColor="negative">
+            <TextComponent {...args}>
                 {
                     'Example of the negative box alias token applied on the parent and the corresponding inverse token applied to the text content.'
                 }
             </TextComponent>
         </Container>
     );
+};
+
+TextChildOfBoxToken.args = {
+    boxColor: 'negative',
 };
