@@ -2,7 +2,7 @@
 
 import { ReactElement } from 'react';
 import { ROOT_ID } from './constants';
-import { TreeState } from '../types';
+import { TreeNodeWithoutElements, TreeState } from '../types';
 
 export const removeReactNodesFromFlatArray = (tree: ReactElement[], nodeIds: string[]): ReactElement[] => {
     // Create a set of the node IDs to remove for faster lookup
@@ -75,4 +75,18 @@ export const getNodesToRender = (rootNodes: TreeState['rootNodes'], expandedIds:
     }
 
     return nodesToRender.map((n) => n.node);
+};
+
+export const getTreeNodesWithoutElements = (nodes: ReactElement[]): TreeNodeWithoutElements[] => {
+    const parsedNodes = [];
+    for (const node of nodes) {
+        parsedNodes.push({
+            id: node.props.id,
+            level: node.props.level,
+            parentId: node.props.parentId,
+            nodes: getTreeNodesWithoutElements(node.props.children),
+        });
+    }
+
+    return parsedNodes;
 };

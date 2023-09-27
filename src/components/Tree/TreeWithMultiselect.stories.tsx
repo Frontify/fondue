@@ -6,7 +6,7 @@ import { action } from '@storybook/addon-actions';
 
 import { IconDocument } from '@foundation/Icon';
 
-import type { TreeItemStyling, TreeProps } from '@components/Tree/types';
+import type { TreeItemStyling, TreeNodeWithoutElements, TreeProps } from '@components/Tree/types';
 import {
     TreeItemBorderClassMap,
     TreeItemBorderRadiusClassMap,
@@ -19,6 +19,7 @@ import {
 import { TreeItemMockMultiselect, treeItemsMockMultiseclect } from '@components/Tree/utils';
 import { Container } from '@components/Container';
 import { TreeItemMultiselect } from './TreeItem/TreeItemMultiselect';
+import { getNewSelectedItems } from './helpers';
 
 export default {
     title: 'Components/Tree',
@@ -28,7 +29,7 @@ export default {
         id: 'storybook-tree',
         multiselect: true,
         draggable: true,
-        selectedIds: ['2'],
+        selectedIds: ['1'],
         dragHandlerPosition: 'left',
         spacingY: 'none',
         contentHight: 'single-line',
@@ -136,135 +137,6 @@ const renderTreeItemComponent = (
     );
 };
 
-const getSelectedChildrenItems = (tree: TreeItemMockMultiselect[], selectedIds: string[], onlyPartial = false) => {
-    return tree
-        .filter(
-            (item) =>
-                (onlyPartial ? false : selectedIds.includes(item.id)) ||
-                selectedIds.includes(convertToPartialSelectedId([item.id])[0]),
-        )
-        .map((item) => item.id);
-};
-
-const getSelectedTreeItem = (tree: TreeItemMockMultiselect[], id: string): TreeItemMockMultiselect | null => {
-    for (const item of tree) {
-        if (item.id === id) {
-            return item;
-        }
-        if (item.nodes && item.nodes?.length > 0) {
-            const deepItem = getSelectedTreeItem(item.nodes, id);
-            if (deepItem) {
-                return deepItem;
-            }
-        }
-    }
-
-    return null;
-};
-
-const getParentSelectedTreeItem = (
-    tree: TreeItemMockMultiselect[],
-    id: string,
-    parent: TreeItemMockMultiselect | null,
-): TreeItemMockMultiselect | null => {
-    for (const item of tree) {
-        if (parent !== null && item.id === id) {
-            return parent;
-        }
-        if (item.nodes && item.nodes?.length > 0) {
-            const deepItem = getParentSelectedTreeItem(item.nodes, id, item);
-            if (deepItem) {
-                return deepItem;
-            }
-        }
-    }
-    return null;
-};
-
-const addSelectedItemsFromSelection = (
-    treeItems: TreeItemMockMultiselect[],
-    id: string,
-    newSelectedItems: string[],
-) => {
-    const parentItemChecked = getParentSelectedTreeItem(treeItems, id, null);
-    newSelectedItems = parentItemChecked?.id
-        ? fixParentSelectionState(parentItemChecked, newSelectedItems)
-        : newSelectedItems;
-
-    const itemChecked = getSelectedTreeItem(treeItems, id);
-    const childrenSelectedItems = getSelectedChildrenItems(itemChecked?.nodes ?? [], newSelectedItems);
-    const childrenCount = itemChecked?.nodes?.length ?? 0;
-
-    // Select/unselect children
-    if (childrenCount) {
-        const childrenIds = itemChecked?.nodes?.map((item) => item.id) ?? [];
-
-        newSelectedItems = newSelectedItems.includes(id)
-            ? addSelectedIds(newSelectedItems, childrenIds, false)
-            : removeSelectedIds(newSelectedItems, childrenIds, false);
-
-        if (childrenSelectedItems.length === 0) {
-            newSelectedItems = removeSelectedIds(newSelectedItems, [id], true);
-        }
-    }
-
-    // tree down
-    for (const child of itemChecked?.nodes ?? []) {
-        newSelectedItems = addSelectedItemsFromSelection(treeItems, child.id, newSelectedItems);
-    }
-
-    // tree up
-    let parent = parentItemChecked;
-    const treeBranch: TreeItemMockMultiselect[] = [];
-    while (parent !== null) {
-        treeBranch.push(parent);
-        parent = getParentSelectedTreeItem(treeItems, parent.id, null);
-    }
-    for (const item of treeBranch) {
-        newSelectedItems = fixParentSelectionState(item, newSelectedItems);
-    }
-
-    return newSelectedItems;
-};
-
-const fixParentSelectionState = (parent: TreeItemMockMultiselect, newSelectedItems: string[]) => {
-    const isParentSelected = newSelectedItems.includes(parent?.id ?? '');
-    const siblingsSelectedItems = getSelectedChildrenItems(parent?.nodes ?? [], newSelectedItems);
-    const siblingsPartiallySelectedItems = getSelectedChildrenItems(parent?.nodes ?? [], newSelectedItems, true);
-    const siblingsCount = parent?.nodes?.length ?? 0;
-
-    // Select/unselect parent
-    if (siblingsSelectedItems.length === 0) {
-        newSelectedItems = isParentSelected
-            ? removeSelectedIds(newSelectedItems, [parent?.id ?? ''], false)
-            : newSelectedItems;
-        newSelectedItems = removeSelectedIds(newSelectedItems, [parent?.id ?? ''], true);
-    } else if (siblingsSelectedItems.length === siblingsCount && siblingsPartiallySelectedItems.length === 0) {
-        newSelectedItems = !isParentSelected
-            ? addSelectedIds(newSelectedItems, [parent?.id ?? ''], false)
-            : newSelectedItems;
-
-        newSelectedItems = removeSelectedIds(newSelectedItems, [parent?.id ?? ''], true);
-    } else if (parent?.id) {
-        // flag parent as partial checked and unselect it
-        newSelectedItems = addSelectedIds(newSelectedItems, [parent?.id ?? ''], true);
-        newSelectedItems = removeSelectedIds(newSelectedItems, [parent?.id ?? ''], false);
-    }
-
-    return newSelectedItems;
-};
-
-const convertToPartialSelectedId = (ids: string[]) => ids.map((id) => `*${id}`);
-
-const removeSelectedIds = (ids: string[], idsToRemove: string[], partial: boolean): string[] => {
-    idsToRemove = partial ? convertToPartialSelectedId(idsToRemove) : idsToRemove;
-    return [...new Set(idsToRemove.length > 0 ? ids.filter((itemId: string) => !idsToRemove.includes(itemId)) : ids)];
-};
-const addSelectedIds = (ids: string[], idsToAdd: string[], partial: boolean) => {
-    idsToAdd = (partial ? convertToPartialSelectedId(idsToAdd) : idsToAdd).filter((id) => id !== '');
-    return [...new Set(idsToAdd.length > 0 ? [...ids, ...idsToAdd] : ids)];
-};
-
 export const MultiselectWithBasicItem = ({ ...args }: TreeProps) => {
     const [selectedIds, setSelectedIds] = useState<string[]>(args.selectedIds ?? []);
     const [treeItems, setTreeItems] = useState<TreeItemMockMultiselect[]>([]);
@@ -273,22 +145,14 @@ export const MultiselectWithBasicItem = ({ ...args }: TreeProps) => {
         setTreeItems(treeItemsMockMultiseclect);
     }, []);
 
-    const handleItemSelected = (id: string) => {
-        setSelectedIds(getNewSelectedItems(id));
-    };
-
-    const getNewSelectedItems = (id: string) => {
-        let newSelectedItems = [];
-
-        if (selectedIds.includes(id)) {
-            newSelectedItems = removeSelectedIds(selectedIds, [id], false);
-        } else {
-            newSelectedItems = addSelectedIds(selectedIds, [id], false);
+    const handleItemSelected = (id: string, ignoreRemoveSelected = false, nodes: TreeNodeWithoutElements[]) => {
+        if (nodes.length === 0) {
+            return;
         }
 
-        newSelectedItems = addSelectedItemsFromSelection(treeItems, id, newSelectedItems);
-
-        return newSelectedItems;
+        setSelectedIds((currentSelectedIds) =>
+            getNewSelectedItems(id, currentSelectedIds, nodes, ignoreRemoveSelected),
+        );
     };
 
     return (

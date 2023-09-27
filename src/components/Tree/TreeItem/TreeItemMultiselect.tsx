@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Children, MouseEvent, memo, useCallback, useMemo, useRef } from 'react';
+import { Children, MouseEvent, memo, useCallback, useEffect, useMemo, useRef } from 'react';
 import noop from 'lodash-es/noop';
 
 import { merge } from '@utilities/merge';
@@ -32,7 +32,7 @@ type TreeItemPrivateProps = {
     level?: number;
     isExpanded?: boolean;
     /** onSelect is passed by the Tree component when cloning the TreeItem */
-    onSelect: (id: string) => void;
+    onSelect: (id: string, ignoreRemoveSelected: boolean) => void;
     onExpand?: (id: string) => void;
     onShrink?: (id: string) => void;
     projection?: Nullable<Projection>;
@@ -51,6 +51,7 @@ export const TreeItemMultiselect = memo(
         children,
         level = 0,
         contentComponent,
+        parentId,
         onSelect,
         onExpand,
         onShrink,
@@ -65,6 +66,7 @@ export const TreeItemMultiselect = memo(
         const setActiveNodeRef = useRef<HTMLInputElement | null>(null);
         const { isSelected, isExpanded } = useTreeItem(id);
         const { isSelected: isPartialSelected } = useTreeItem(`*${id}`);
+        const { isSelected: isParentSelected } = useTreeItem(parentId ?? '');
 
         const toggleExpand = useCallback(
             (event?: MouseEvent<HTMLButtonElement>) => {
@@ -73,6 +75,12 @@ export const TreeItemMultiselect = memo(
             },
             [id, isExpanded, onExpand, onShrink],
         );
+
+        useEffect(() => {
+            if (isParentSelected && !isSelected) {
+                onSelect(id, true);
+            }
+        }, [id, onSelect, isParentSelected, isSelected]);
 
         const hasChildren = Children.count(children) > 0;
 
@@ -192,7 +200,7 @@ export const TreeItemMultiselect = memo(
                         helperText=""
                         hideLabel
                         label=""
-                        onChange={() => (isDisabled ? void 0 : onSelect(id))}
+                        onChange={() => (isDisabled ? void 0 : onSelect(id, false))}
                         size={CheckboxSize.Default}
                         state={theCheckboxState}
                         tooltip={[]}

@@ -62,6 +62,7 @@ import {
     getNodesToRender,
     getProjection,
     getReactNodeIdsInFlatArray,
+    getTreeNodesWithoutElements,
     handleKeyDownEvent,
     removeReactNodesFromFlatArray,
     sensorsActivationConstraint,
@@ -265,10 +266,10 @@ export const Tree = memo(
         }, []);
 
         const handleSelect = useCallback(
-            (id: string) => {
-                onSelect(id);
+            (id: string, ignoreRemoveSelected = false) => {
+                onSelect(id, ignoreRemoveSelected, getTreeNodesWithoutElements(treeState.nodes));
             },
-            [onSelect],
+            [onSelect, treeState.nodes],
         );
 
         const handleExpand = useCallback(

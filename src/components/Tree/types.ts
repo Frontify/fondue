@@ -12,7 +12,15 @@ export type SensorContext = MutableRefObject<{
     offset: number;
 }>;
 
-export type OnSelectCallback = (id: string) => void;
+export type TreeNodeWithoutElements = {
+    id: string;
+    level: number;
+    parentId: string;
+    nodes: TreeNodeWithoutElements[];
+};
+
+export type OnSelectCallback = (id: string, ignoreRemoveSelected: boolean, nodes: TreeNodeWithoutElements[]) => void;
+export type OnSelectInternalCallback = (id: string, ignoreRemoveSelected: boolean) => void;
 export type OnExpandCallback = (id: string) => void;
 
 export type OnShrinkCallback = (id: string) => void;
