@@ -9,6 +9,9 @@ export const useToggleOverlay = (
     const [open, setOpen] = useState<boolean>(initialState);
     const checkKeyboardEvent = useCallback(
         (event: KeyboardEvent) => {
+            if (open) {
+                event.stopPropagation();
+            }
             if (open && !isBlockingModal && event.key === 'Escape') {
                 setOpen(false);
             }
