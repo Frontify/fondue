@@ -3,6 +3,9 @@
 import { Meta, StoryFn } from '@storybook/react';
 import { sharedTypographyArgTypes, sharedTypographyArgs } from '../shared/Shared';
 import { Text as TextComponent, TextProps } from './Text';
+import { Box } from '@components/Box';
+import { Container } from '@components/Container';
+import { SPACING_VALUES } from '@utilities/dimensions';
 
 export default {
     title: 'Typography/Text',
@@ -50,4 +53,14 @@ export const LongTextWithNewLines: StoryFn<TextProps> = (args) => (
             the different types of overflow control available.`}
         </TextComponent>
     </div>
+);
+
+export const TextComponentChildOfBoxToken: StoryFn<TextProps> = (args) => (
+    <Container color="tw-bg-box-negative" padding={SPACING_VALUES[2]}>
+        <TextComponent {...args} boxColor={'negative'}>
+            {
+                'A example of when a box alias token is used on the parent and the corresponding inverse token is applied to the text content.'
+            }
+        </TextComponent>
+    </Container>
 );
