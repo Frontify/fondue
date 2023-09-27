@@ -2,7 +2,7 @@
 
 import { NumberInput } from './NumberInput';
 import { IconNook16 } from '@foundation/Icon';
-import { Validation, validationClassMap } from '@utilities/validation';
+import { Validation, validationClassMap, validationTextClassMap } from '@utilities/validation';
 
 const NUMBER_INPUT_COMPONENT = '[data-test-id=fondue-number-input]';
 const NUMBER_INPUT_ELEMENT = '[data-test-id=fondue-number-input-input]';
@@ -147,13 +147,15 @@ describe('Number Input Component', () => {
 
     it('should render success icon', () => {
         cy.mount(<NumberInput status={Validation.Success} />);
+        cy.get(NUMBER_INPUT_COMPONENT).should('have.class', validationClassMap[Validation.Success]);
         cy.get(NUMBER_INPUT_STATUS_ICON).should('be.visible');
-        cy.get(NUMBER_INPUT_STATUS_ICON).parent().should('have.class', validationClassMap[Validation.Success]);
+        cy.get(NUMBER_INPUT_STATUS_ICON).should('have.class', validationTextClassMap[Validation.Success]);
     });
 
     it('should render error icon', () => {
         cy.mount(<NumberInput status={Validation.Error} />);
+        cy.get(NUMBER_INPUT_COMPONENT).should('have.class', validationClassMap[Validation.Error]);
         cy.get(NUMBER_INPUT_STATUS_ICON).should('be.visible');
-        cy.get(NUMBER_INPUT_STATUS_ICON).parent().should('have.class', validationClassMap[Validation.Error]);
+        cy.get(NUMBER_INPUT_STATUS_ICON).should('have.class', validationTextClassMap[Validation.Error]);
     });
 });

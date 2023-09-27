@@ -17,13 +17,25 @@ export default {
             description: 'Add decorator element to start of the input',
             name: 'decorator',
             defaultValue: undefined,
-            control: 'React Element',
+            control: { type: 'React Element' },
+        },
+        suffix: {
+            description: 'String to append to the input value.',
+            name: 'suffix',
+            defaultValue: undefined,
+            control: { type: 'text' },
         },
         controls: {
             description: 'Enable increment buttons',
             name: 'controls',
             defaultValue: false,
-            control: 'boolean',
+            control: { type: 'boolean' },
+        },
+        clearable: {
+            description: 'Enable clear button',
+            name: 'clearable',
+            defaultValue: false,
+            control: { type: 'boolean' },
         },
         status: {
             description: 'Set the current status of the input',
@@ -36,7 +48,7 @@ export default {
             description: 'Set the incremental value',
             name: 'stepInterval',
             defaultValue: 10,
-            control: 'number',
+            control: { type: 'number' },
         },
         onChange: {
             description: 'onChange callback',
@@ -51,11 +63,11 @@ export default {
 } as Meta<NumberInputProps>;
 
 export const BaseUsage: StoryFn<NumberInputProps> = (args) => {
-    return <NumberInput {...args} placeholder="Enter a number..." />;
+    return <NumberInput {...args} placeholder="Enter a number..." clearable />;
 };
 
 export const WithDecoratorAndIncrementable: StoryFn<NumberInputProps> = (args) => {
-    return <NumberInput {...args} controls decorator={<IconNook16 />} stepInterval={20} />;
+    return <NumberInput {...args} controls decorator={<IconNook16 />} />;
 };
 
 export const WithErrorLessThanZero: StoryFn<NumberInputProps> = (args) => {
