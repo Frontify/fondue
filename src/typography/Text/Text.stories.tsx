@@ -3,7 +3,6 @@
 import { Meta, StoryFn } from '@storybook/react';
 import { sharedTypographyArgTypes, sharedTypographyArgs } from '../shared/Shared';
 import { Text as TextComponent, TextProps } from './Text';
-import { Box } from '@components/Box';
 import { Container } from '@components/Container';
 import { SPACING_VALUES } from '@utilities/dimensions';
 
