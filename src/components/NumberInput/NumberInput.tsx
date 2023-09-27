@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { NumberInputIncrement, NumberInputProps } from './types';
 import { merge } from '@utilities/merge';
 import { IconCross16, IconMinus16, IconPlus16 } from '@foundation/Icon';
@@ -8,6 +8,7 @@ import { useMemoizedId } from '@hooks/useMemoizedId';
 import { Validation, validationClassMap } from '@utilities/validation';
 import { KeyboardEvent } from '@react-types/shared';
 import { GetStatusIcon } from '@utilities/input';
+import { FOCUS_WITHIN_STYLE } from '@utilities/focusStyle';
 
 const INCREMENT_KEYS = ['ArrowUp', 'ArrowRight'];
 const DECREMENT_KEYS = ['ArrowDown', 'ArrowLeft'];
@@ -39,6 +40,7 @@ export const NumberInput = ({
     const isShift = useRef<boolean>(false);
     const isMouseHold = useRef<boolean>(false);
     const inputElement = useRef<HTMLInputElement | null>(null);
+    const [isFocused, setIsFocused] = useState<boolean>(false);
 
     const getCurrentValueWithoutSuffix = useCallback(() => {
         if (suffix) {
@@ -151,6 +153,24 @@ export const NumberInput = ({
         }
     };
 
+    const handleFocus = () => {
+        if (!isFocused) {
+            setIsFocused(true);
+        }
+        if (onFocus) {
+            onFocus;
+        }
+    };
+
+    const handleBlur = () => {
+        if (isFocused) {
+            setIsFocused(false);
+        }
+        if (onBlur) {
+            onBlur;
+        }
+    };
+
     useEffect(() => {
         clearInterval(timer.current);
     }, []);
@@ -159,6 +179,7 @@ export const NumberInput = ({
         <div
             className={merge([
                 'tw-w-full tw-flex tw-items-center tw-justify-between tw-h-9 tw-gap-2 tw-px-3 tw-transition tw-text-s tw-font-sans tw-relative tw-bg-white dark:tw-bg-transparent tw-border tw-rounded tw-line-strong hover:tw-border-line-x-strong focus-within:tw-border-line-xx-strong',
+                isFocused ? FOCUS_WITHIN_STYLE : '',
                 status ? validationClassMap[status] : '',
             ])}
             data-test-id={dataTestId}
@@ -174,35 +195,33 @@ export const NumberInput = ({
                     {decorator}
                 </div>
             ) : null}
-            <div className={'tw-w-full tw-flex tw-justify-start'}>
-                <input
-                    {...props}
-                    id={useMemoizedId(propId)}
-                    ref={inputElement}
-                    name={dataTestId}
-                    type={suffix ? 'text' : 'number'}
-                    placeholder={placeholder}
-                    className={merge([
-                        'tw-w-full tw-border-none tw-outline-none tw-bg-transparent tw-hide-input-arrows',
-                        disabled || readOnly
-                            ? 'tw-text-black-40 tw-placeholder-black-30 dark:tw-text-black-30 dark:tw-placeholder-black-40'
-                            : 'tw-text-black tw-placeholder-black-60 dark:tw-text-white',
-                    ])}
-                    onClick={() => inputElement.current?.focus()}
-                    onChange={() => setValue(Number(getCurrentValueWithoutSuffix()))}
-                    onBlur={onBlur}
-                    onKeyDown={handleKeyDown}
-                    onKeyUp={handleKeyUp}
-                    required={required}
-                    readOnly={readOnly}
-                    disabled={disabled}
-                    onFocus={onFocus}
-                    size={size}
-                    aria-label={ariaLabel}
-                    title={title}
-                    data-test-id={`${dataTestId}-input`}
-                />
-            </div>
+            <input
+                {...props}
+                id={useMemoizedId(propId)}
+                ref={inputElement}
+                name={dataTestId}
+                type={suffix ? 'text' : 'number'}
+                placeholder={placeholder}
+                className={merge([
+                    'tw-w-full tw-border-none tw-outline-none tw-bg-transparent tw-hide-input-arrows',
+                    disabled || readOnly
+                        ? 'tw-text-black-40 tw-placeholder-black-30 dark:tw-text-black-30 dark:tw-placeholder-black-40'
+                        : 'tw-text-black tw-placeholder-black-60 dark:tw-text-white',
+                ])}
+                onClick={() => inputElement.current?.focus()}
+                onChange={() => setValue(Number(getCurrentValueWithoutSuffix()))}
+                onKeyDown={handleKeyDown}
+                onKeyUp={handleKeyUp}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
+                size={size}
+                title={title}
+                aria-label={ariaLabel}
+                required={required}
+                readOnly={readOnly}
+                disabled={disabled}
+                data-test-id={`${dataTestId}-input`}
+            />
             <span className={'tw-flex tw-items-center'}>
                 {controls ? (
                     <>
