@@ -29,6 +29,7 @@ export default {
         boxColor: {
             options: ['', 'neutral', 'selected', 'disabled', 'positive', 'negative', 'warning'],
             control: { type: 'select' },
+            defaultValue: '',
         },
         ...sharedTypographyArgTypes,
     },
@@ -38,7 +39,6 @@ export default {
         weight: 'default',
         as: 'span',
         color: 'default',
-        boxColor: undefined,
         ...sharedTypographyArgs,
     },
 } as Meta<TextProps>;
@@ -54,12 +54,14 @@ export const LongTextWithNewLines: StoryFn<TextProps> = (args) => (
     </div>
 );
 
-export const TextComponentChildOfBoxToken: StoryFn<TextProps> = (args) => (
-    <Container color="tw-bg-box-negative" padding={SPACING_VALUES[2]}>
-        <TextComponent {...args} boxColor={'negative'}>
-            {
-                'A example of when a box alias token is used on the parent and the corresponding inverse token is applied to the text content.'
-            }
-        </TextComponent>
-    </Container>
-);
+export const TextChildOfBoxToken: StoryFn<TextProps> = (args) => {
+    return (
+        <Container color="tw-bg-box-negative" padding={SPACING_VALUES[2]}>
+            <TextComponent {...args} boxColor="negative">
+                {
+                    'Example of the negative box alias token applied on the parent and the corresponding inverse token applied to the text content.'
+                }
+            </TextComponent>
+        </Container>
+    );
+};
