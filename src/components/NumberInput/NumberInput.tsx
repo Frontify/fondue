@@ -40,6 +40,7 @@ export const NumberInput = ({
     const isShift = useRef<boolean>(false);
     const isMouseHold = useRef<boolean>(false);
     const inputElement = useRef<HTMLInputElement | null>(null);
+    const [isClicked, setIsClicked] = useState<boolean>(false);
     const [isFocused, setIsFocused] = useState<boolean>(false);
 
     const getCurrentValueWithoutSuffix = useCallback(() => {
@@ -154,7 +155,7 @@ export const NumberInput = ({
     };
 
     const handleFocus = (event: React.FocusEvent<HTMLInputElement, Element>) => {
-        if (!isFocused) {
+        if (!isClicked && !isFocused) {
             setIsFocused(true);
         }
         if (onFocus) {
@@ -163,6 +164,9 @@ export const NumberInput = ({
     };
 
     const handleBlur = (event: React.FocusEvent<HTMLInputElement, Element>) => {
+        if (isClicked) {
+            setIsClicked(false);
+        }
         if (isFocused) {
             setIsFocused(false);
         }
@@ -208,7 +212,7 @@ export const NumberInput = ({
                         ? 'tw-text-black-40 tw-placeholder-black-30 dark:tw-text-black-30 dark:tw-placeholder-black-40'
                         : 'tw-text-black tw-placeholder-black-60 dark:tw-text-white',
                 ])}
-                onClick={() => inputElement.current?.focus()}
+                onMouseDown={() => setIsClicked(true)}
                 onChange={() => setValue(Number(getCurrentValueWithoutSuffix()))}
                 onKeyDown={handleKeyDown}
                 onKeyUp={handleKeyUp}
