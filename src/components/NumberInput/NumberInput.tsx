@@ -13,6 +13,10 @@ import { FOCUS_WITHIN_STYLE } from '@utilities/focusStyle';
 const INCREMENT_KEYS = ['ArrowUp', 'ArrowRight'];
 const DECREMENT_KEYS = ['ArrowDown', 'ArrowLeft'];
 const SPECIAL_KEYS = ['Backspace', 'Tab'];
+type FocusedState = {
+    isFocused: boolean;
+    isClick: boolean;
+};
 
 export const NumberInput = ({
     id: propId,
@@ -40,8 +44,7 @@ export const NumberInput = ({
     const isShift = useRef<boolean>(false);
     const isMouseHold = useRef<boolean>(false);
     const inputElement = useRef<HTMLInputElement | null>(null);
-    const [isClicked, setIsClicked] = useState<boolean>(false);
-    const [isFocused, setIsFocused] = useState<boolean>(false);
+    const [focusState, setFocusState] = useState<FocusedState>({ isFocused: false, isClick: false });
 
     const getCurrentValueWithoutSuffix = useCallback(() => {
         if (suffix) {
@@ -155,8 +158,8 @@ export const NumberInput = ({
     };
 
     const handleFocus = (event: React.FocusEvent<HTMLInputElement, Element>) => {
-        if (!isClicked && !isFocused) {
-            setIsFocused(true);
+        if (!focusState.isClick && !focusState.isFocused) {
+            setFocusState({ isFocused: true, isClick: false });
         }
         if (onFocus) {
             onFocus(event);
@@ -164,11 +167,8 @@ export const NumberInput = ({
     };
 
     const handleBlur = (event: React.FocusEvent<HTMLInputElement, Element>) => {
-        if (isClicked) {
-            setIsClicked(false);
-        }
-        if (isFocused) {
-            setIsFocused(false);
+        if (focusState.isClick || focusState.isFocused) {
+            setFocusState({ isFocused: false, isClick: false });
         }
         if (onBlur) {
             onBlur(event);
@@ -183,7 +183,7 @@ export const NumberInput = ({
         <div
             className={merge([
                 'tw-w-full tw-flex tw-items-center tw-justify-between tw-h-9 tw-gap-2 tw-px-3 tw-transition tw-text-s tw-font-sans tw-relative tw-bg-white dark:tw-bg-transparent tw-border tw-rounded tw-line-strong hover:tw-border-line-x-strong focus-within:tw-border-line-xx-strong',
-                isFocused ? FOCUS_WITHIN_STYLE : '',
+                focusState.isFocused ? FOCUS_WITHIN_STYLE : '',
                 status ? validationClassMap[status] : '',
             ])}
             data-test-id={dataTestId}
@@ -212,7 +212,7 @@ export const NumberInput = ({
                         ? 'tw-text-black-40 tw-placeholder-black-30 dark:tw-text-black-30 dark:tw-placeholder-black-40'
                         : 'tw-text-black tw-placeholder-black-60 dark:tw-text-white',
                 ])}
-                onMouseDown={() => setIsClicked(true)}
+                onMouseDown={() => setFocusState({ isFocused: false, isClick: true })}
                 onChange={() => setValue(Number(getCurrentValueWithoutSuffix()))}
                 onKeyDown={handleKeyDown}
                 onKeyUp={handleKeyUp}
