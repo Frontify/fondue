@@ -1,10 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { Box } from '@components/index';
 import { Text } from './Text';
+import { BOX_BG_ALIAS_TOKENS_CLASSES, BOX_TEXT_ALIAS_TOKENS_CLASSES } from '@utilities/tokens';
 
 const classRecord = {
     color: ['weak', 'tw-text-text-weak'],
-    boxColor: ['neutral', 'tw-text-box-neutral'],
     overflow: ['ellipsis', 'tw-text-ellipsis'],
     whitespace: ['nowrap', 'tw-whitespace-nowrap'],
     display: ['block', 'tw-block'],
@@ -47,5 +48,24 @@ describe('Text', () => {
                 expect(el).to.have.class(value[1]);
             }
         });
+    });
+
+    it('should render parent wrapper with box token and overwrite text color class with box token inverse', () => {
+        cy.mount(
+            <Box className={BOX_BG_ALIAS_TOKENS_CLASSES[0]} data-test-id="box-token-parent">
+                <Text as="p" {...textProps} boxColor="neutral">
+                    The fox jumps over the lazy dog
+                </Text>
+            </Box>,
+        );
+
+        cy.get('[data-test-id=box-token-parent]').should((el) => {
+            expect(el).to.have.class(BOX_BG_ALIAS_TOKENS_CLASSES[0]);
+        });
+        cy.get('[data-test-id=box-token-parent]')
+            .children()
+            .should((el) => {
+                expect(el).to.have.class(BOX_TEXT_ALIAS_TOKENS_CLASSES[0]);
+            });
     });
 });
