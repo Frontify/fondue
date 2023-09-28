@@ -8,6 +8,7 @@ import { SharedTypographyProps } from '../shared/types';
 type TextWeight = 'default' | 'strong' | 'x-strong';
 type TextSize = 'x-small' | 'small' | 'medium' | 'large';
 type TextColor = 'default' | 'weak' | 'x-weak' | 'disabled' | 'negative' | 'positive' | 'warning' | 'interactive';
+type BoxColor = 'neutral' | 'selected' | 'disabled' | 'positive' | 'negative' | 'warning';
 
 export type TextProps = SharedTypographyProps &
     AriaAttributes & {
@@ -15,6 +16,8 @@ export type TextProps = SharedTypographyProps &
         weight?: TextWeight;
         as?: 'a' | 'abbr' | 'address' | 'em' | 'label' | 'li' | 'span' | 'strong' | 'time' | 'p';
         color?: TextColor;
+        /** @description optional color prop that uses the inverse box color when accessibility contrast is needed */
+        boxColor?: BoxColor;
         children?: ReactNode;
     };
 
@@ -42,6 +45,15 @@ const colorMap: Record<TextColor, string> = {
     interactive: 'tw-text-text-interactive',
 };
 
+const boxColorMap: Record<BoxColor, string> = {
+    neutral: 'tw-text-box-neutral-inverse',
+    selected: 'tw-text-box-selected-inverse',
+    disabled: 'tw-text-box-disabled-inverse',
+    positive: 'tw-text-box-positive-inverse',
+    negative: 'tw-text-box-negative-inverse',
+    warning: 'tw-text-box-warning-inverse',
+};
+
 export const Text = ({
     children,
     as: Tag = 'span',
@@ -52,6 +64,7 @@ export const Text = ({
     wordBreak = 'normal',
     whitespace = 'normal',
     overflow = 'visible',
+    boxColor,
     display,
     ...props
 }: TextProps): ReactElement => (
@@ -61,8 +74,8 @@ export const Text = ({
             'tw-font-body tw-max-w-full',
             weightMap[weight],
             sizeMap[size],
-            colorMap[color],
             decorationMap[decoration],
+            boxColor ? boxColorMap[boxColor] : colorMap[color],
             wordBreakMap[wordBreak],
             overflow !== 'truncate' && whitespaceMap[whitespace],
             overflowMap[overflow],
