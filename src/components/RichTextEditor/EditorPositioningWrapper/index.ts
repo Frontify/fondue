@@ -27,5 +27,8 @@ export const EditorPositioningWrapper: EditorPositioningWrapperProps = {
 export const getEditorWrapperClassNames = (position: Position, border: boolean) => {
     const toolbarPositioningClasses = EditorPositioningWrapper[position].PlateWrapperClassNames;
 
-    return merge([toolbarPositioningClasses, border && 'tw-border tw-border-line-strong tw-rounded']);
+    return merge([
+        toolbarPositioningClasses,
+        border && 'tw-transition-[border] tw-border tw-border-line-strong hover:tw-border-line-xx-strong tw-rounded',
+    ]);
 };
