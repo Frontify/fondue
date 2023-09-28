@@ -11,6 +11,7 @@ import {
     MARK_STRIKETHROUGH,
     MARK_UNDERLINE,
     autoformatArrow,
+    autoformatFraction,
     autoformatLegal,
     autoformatPunctuation,
     autoformatSubscriptNumbers,
@@ -43,6 +44,7 @@ export class AutoformatPlugin extends Plugin {
                         ...autoformatSubscriptSymbols,
                         ...autoformatSuperscriptNumbers,
                         ...autoformatSuperscriptSymbols,
+                        ...autoformatFraction,
                         {
                             mode: 'mark',
                             type: [MARK_UNDERLINE],
