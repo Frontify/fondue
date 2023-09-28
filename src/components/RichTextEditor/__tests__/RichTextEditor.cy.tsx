@@ -835,5 +835,15 @@ describe('RichTextEditor Component', () => {
             cy.get('[contenteditable=true]').click().type('(TM)');
             cy.get('[contenteditable=true]').should('include.html', '™');
         });
+
+        it('should autoformat 1/2 to ½', () => {
+            cy.get('[contenteditable=true]').click().type('1/2');
+            cy.get('[contenteditable=true]').should('include.html', '½');
+        });
+
+        it('should autoformat 2/3 to ⅔', () => {
+            cy.get('[contenteditable=true]').click().type('2/3');
+            cy.get('[contenteditable=true]').should('include.html', '⅔');
+        });
     });
 });
