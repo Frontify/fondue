@@ -8,6 +8,7 @@ import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
 import {
+    AriaAttributes,
     DOMAttributes,
     FocusEvent,
     ForwardRefRenderFunction,
@@ -69,7 +70,7 @@ export type TextInputBaseProps = {
     focusOnMount?: boolean;
     selectable?: boolean;
     extraActions?: TextInputExtraAction[];
-};
+} & AriaAttributes;
 
 export type TextInputProps =
     | ({
@@ -151,6 +152,7 @@ export const TextInput = ({
     focusOnMount,
     selectable = false,
     extraActions,
+    ...props
 }: TextInputProps): ReactElement => {
     const { isFocusVisible, focusProps } = useFocusRing({ within: true, isTextInput: true });
     const { isFocusVisible: clearButtonIsFocusVisible, focusProps: clearButtonFocusProps } = useFocusRing();
@@ -195,6 +197,7 @@ export const TextInput = ({
     return (
         <div
             {...focusProps}
+            {...props}
             className={merge([
                 'tw-flex tw-items-center tw-h-9 tw-gap-2 tw-px-3 tw-border tw-transition tw-rounded tw-text-s tw-font-sans tw-relative tw-bg-white dark:tw-bg-transparent',
                 dotted ? 'tw-border-dashed' : 'tw-border-solid',
