@@ -1,13 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Box } from '@components/Box';
-import {
-    DimensionUnity,
-    MARGIN_VALUES_MAP,
-    PADDING_VALUES_MAP,
-    SPACING_VALUES,
-    SpacingValue,
-} from '@utilities/dimensions';
+import { DimensionUnity, GetMarginClassNames, GetPaddingClassNames, SpacingValue } from '@utilities/dimensions';
 import { merge } from '@utilities/merge';
 import { ReactNode } from 'react';
 import { ContainerHTMLElement } from 'src/types/elements';
@@ -19,7 +13,11 @@ export type ContainerProps = {
     minHeight?: `${number}${DimensionUnity}`;
     maxHeight?: `${number}${DimensionUnity}`;
     padding?: SpacingValue;
+    paddingX?: SpacingValue;
+    paddingY?: SpacingValue;
     margin?: SpacingValue;
+    marginX?: SpacingValue;
+    marginY?: SpacingValue;
     bg?: string;
     color?: string;
     'data-test-id'?: string;
@@ -38,16 +36,22 @@ export const Container = ({
     bg,
     color,
     margin = 0,
+    marginX = 0,
+    marginY = 0,
     padding = 0,
+    paddingX = 0,
+    paddingY = 0,
     as: ContainerElement = 'div',
 }: ContainerProps) => {
-    const paddingClassName = SPACING_VALUES.includes(padding) ? PADDING_VALUES_MAP[padding] : PADDING_VALUES_MAP[0];
-    const marginClassName = SPACING_VALUES.includes(padding) ? MARGIN_VALUES_MAP[margin] : MARGIN_VALUES_MAP[0];
-
     return (
         <Box
             data-test-id={dataTestId}
-            className={merge([paddingClassName, marginClassName, bg, color])}
+            className={merge([
+                GetPaddingClassNames(padding, paddingX, paddingY),
+                GetMarginClassNames(margin, marginX, marginY),
+                bg,
+                color,
+            ])}
             style={{
                 maxWidth,
                 minWidth,

@@ -6,9 +6,10 @@ import { ContainerHTMLElement } from 'src/types/elements';
 import { Box } from '@components/Box';
 import {
     DimensionUnity,
-    MARGIN_VALUES_MAP,
-    PADDING_VALUES_MAP,
-    SPACING_VALUES,
+    GAP_DIRECTIONS,
+    GetGapClassName,
+    GetMarginClassNames,
+    GetPaddingClassNames,
     SpacingValue,
 } from '@utilities/dimensions';
 
@@ -30,6 +31,10 @@ export type FlexAlignContent =
 export type FlexProps = {
     direction?: FlexDirection;
     wrap?: FlexWrap;
+    gap?: SpacingValue;
+    spacing?: SpacingValue;
+    spacingX?: SpacingValue;
+    spacingY?: SpacingValue;
     justify?: FlexJustify;
     alignItems?: FlexAlignItems;
     alignContent?: FlexAlignContent;
@@ -39,7 +44,11 @@ export type FlexProps = {
     color?: string;
     as?: ContainerHTMLElement;
     padding?: SpacingValue;
+    paddingX?: SpacingValue;
+    paddingY?: SpacingValue;
     margin?: SpacingValue;
+    marginX?: SpacingValue;
+    marginY?: SpacingValue;
     minWidth?: `${number}${DimensionUnity}`;
     maxWidth?: `${number}${DimensionUnity}`;
     minHeight?: `${number}${DimensionUnity}`;
@@ -100,15 +109,19 @@ export const Flex = ({
     color,
     as: ContainerElement = 'div',
     margin = 0,
+    marginX = 0,
+    marginY = 0,
     padding = 0,
+    paddingX = 0,
+    paddingY = 0,
     minWidth,
     maxWidth,
     maxHeight,
     minHeight,
+    spacing = 0,
+    spacingX = 0,
+    spacingY = 0,
 }: FlexProps) => {
-    const paddingClassName = SPACING_VALUES.includes(padding) ? PADDING_VALUES_MAP[padding] : PADDING_VALUES_MAP[0];
-    const marginClassName = SPACING_VALUES.includes(padding) ? MARGIN_VALUES_MAP[margin] : MARGIN_VALUES_MAP[0];
-
     return (
         <Box
             data-test-id={dataTestId}
@@ -122,8 +135,11 @@ export const Flex = ({
                 alignContentMapping[alignContent],
                 bg,
                 color,
-                paddingClassName,
-                marginClassName,
+                GetPaddingClassNames(padding, paddingX, paddingY),
+                GetMarginClassNames(margin, marginX, marginY),
+                GetGapClassName(spacingX, GAP_DIRECTIONS.GAP_X),
+                GetGapClassName(spacingY, GAP_DIRECTIONS.GAP_Y),
+                GetGapClassName(spacing, GAP_DIRECTIONS.GAP),
             ])}
             style={{
                 maxWidth,

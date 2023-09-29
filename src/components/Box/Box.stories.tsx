@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Meta, StoryFn } from '@storybook/react';
-import { BOX_TEST_ID, Box as BoxComponent } from './Box';
+import { BOX_TEST_ID, Box as BoxComponent, BoxProps } from './Box';
 
-type Props = JSX.IntrinsicElements['div'] | JSX.IntrinsicElements['span'];
+type Props = JSX.IntrinsicElements['div'] | JSX.IntrinsicElements['span'] | BoxProps;
 
 export default {
     title: 'Layout/Box',
@@ -56,8 +56,9 @@ BoxWithNestedBoxAsSpan.args = {
     className:
         'tw-flex tw-bg-box-positive hover:tw-bg-box-positive-hover tw-text-box-positive-inverse hover:tw-text-box-positive-inverse-hover',
     children: (
-        <BoxComponent as="span" className="tw-p-4">
+        <BoxComponent as="span">
             I am a Box component rendered as a span element inside another Box with display: flex.
         </BoxComponent>
     ),
+    padding: 16,
 };
