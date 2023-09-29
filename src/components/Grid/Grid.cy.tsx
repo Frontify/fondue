@@ -41,10 +41,52 @@ describe('Grid Component', () => {
         cy.get(GRID_ID).should('have.css', 'margin', '4px');
     });
 
+    it('should render with specified X margins', () => {
+        cy.mount(<GridComponent marginX={4} />);
+
+        cy.get(GRID_ID).should('have.css', 'margin', '0px 4px');
+    });
+
+    it('should render with specified Y margins', () => {
+        cy.mount(<GridComponent marginY={4} />);
+
+        cy.get(GRID_ID).should('have.css', 'margin', '4px 0px');
+    });
+
+    it('should render with specified X & Y margins', () => {
+        cy.mount(<GridComponent marginX={4} marginY={8} />);
+
+        cy.get(GRID_ID).should('have.css', 'margin', '8px 4px');
+    });
+
     it('should render with specified padding', () => {
         cy.mount(<GridComponent padding={4} />);
 
         cy.get(GRID_ID).should('have.css', 'padding', '4px');
+    });
+
+    it('should render with specified X padding', () => {
+        cy.mount(<GridComponent paddingX={4} />);
+
+        cy.get(GRID_ID).should('have.css', 'padding', '0px 4px');
+    });
+
+    it('should render with specified Y padding', () => {
+        cy.mount(<GridComponent paddingY={4} />);
+
+        cy.get(GRID_ID).should('have.css', 'padding', '4px 0px');
+    });
+
+    it('should render with specified X & Y padding', () => {
+        cy.mount(<GridComponent paddingX={4} paddingY={8} />);
+
+        cy.get(GRID_ID).should('have.css', 'padding', '8px 4px');
+    });
+
+    it('should render with specified spacing', () => {
+        cy.mount(<GridComponent spacing={8} />);
+
+        cy.get(GRID_ID).should('have.class', 'tw-gap-2');
     });
 
     it('should render with specified horizontal spacing', () => {
@@ -57,6 +99,12 @@ describe('Grid Component', () => {
         cy.mount(<GridComponent spacingY={8} />);
 
         cy.get(GRID_ID).should('have.class', 'tw-gap-y-2');
+    });
+
+    it('should render with specified horizontal & vertical spacing', () => {
+        cy.mount(<GridComponent spacingX={8} spacingY={8} />);
+
+        cy.get(GRID_ID).should('have.class', 'tw-gap-x-2 tw-gap-y-2');
     });
 
     it('should render rows with specified height', () => {

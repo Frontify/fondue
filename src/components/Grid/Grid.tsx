@@ -37,21 +37,21 @@ export const GRID_TEST_ID = 'fondue-grid';
 
 export const Grid = ({
     column = 2,
-    spacing = 0,
-    spacingX = 4,
-    spacingY = 4,
+    spacing = 4,
+    spacingX,
+    spacingY,
     children,
     'data-test-id': dataTestId = GRID_TEST_ID,
     width = '100%',
     rowHeight = 'auto',
     bg,
     color,
-    margin = 0,
-    marginX = 0,
-    marginY = 0,
-    padding = 0,
-    paddingX = 0,
-    paddingY = 0,
+    margin,
+    marginX,
+    marginY,
+    padding,
+    paddingX,
+    paddingY,
     as: ContainerElement = 'div',
 }: GridProps) => {
     let childrenLength = 0;
@@ -70,9 +70,9 @@ export const Grid = ({
                 color,
                 GetPaddingClassNames(padding, paddingX, paddingY),
                 GetMarginClassNames(margin, marginX, marginY),
-                GetGapClassName(spacingX, GAP_DIRECTIONS.GAP_X),
-                GetGapClassName(spacingY, GAP_DIRECTIONS.GAP_Y),
-                GetGapClassName(spacing, GAP_DIRECTIONS.GAP),
+                GetGapClassName(GAP_DIRECTIONS.GAP_X, spacingX),
+                GetGapClassName(GAP_DIRECTIONS.GAP_Y, spacingY),
+                GetGapClassName(GAP_DIRECTIONS.GAP, spacing),
             ])}
             style={{
                 width,

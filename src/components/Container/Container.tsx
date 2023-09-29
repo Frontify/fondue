@@ -35,12 +35,12 @@ export const Container = ({
     minHeight,
     bg,
     color,
-    margin = 0,
-    marginX = 0,
-    marginY = 0,
-    padding = 0,
-    paddingX = 0,
-    paddingY = 0,
+    margin,
+    marginX,
+    marginY,
+    padding,
+    paddingX,
+    paddingY,
     as: ContainerElement = 'div',
 }: ContainerProps) => {
     return (

@@ -19,12 +19,12 @@ export type BoxProps = {
 export const BOX_TEST_ID = 'fondue-box';
 
 export const Box = ({
-    padding = 0,
-    paddingX = 0,
-    paddingY = 0,
-    margin = 0,
-    marginX = 0,
-    marginY = 0,
+    padding,
+    paddingX,
+    paddingY,
+    margin,
+    marginX,
+    marginY,
     children,
     'data-test-id': dataTestId = BOX_TEST_ID,
     as: ContainerElement = 'div',

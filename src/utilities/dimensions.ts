@@ -173,27 +173,35 @@ const getMappedSpacingValue = (map: SpacingMapType, spacingValue: SpacingValue) 
     return SPACING_VALUES.includes(spacingValue) ? map[spacingValue] : map[0];
 };
 
-export const GetPaddingClassNames = (p: SpacingValue, px: SpacingValue, py: SpacingValue): string => {
+export const GetPaddingClassNames = (
+    padding?: SpacingValue,
+    paddingX?: SpacingValue,
+    paddingY?: SpacingValue,
+): string => {
     const classes = [];
-    if (px > SPACING_VALUES[0]) {
-        classes.push(getMappedSpacingValue(PADDING_X_VALUES_MAP, px));
+    if (paddingX) {
+        classes.push(getMappedSpacingValue(PADDING_X_VALUES_MAP, paddingX));
     }
-    if (py > SPACING_VALUES[0]) {
-        classes.push(getMappedSpacingValue(PADDING_Y_VALUES_MAP, py));
+    if (paddingY) {
+        classes.push(getMappedSpacingValue(PADDING_Y_VALUES_MAP, paddingY));
     }
-    classes.push(getMappedSpacingValue(PADDING_VALUES_MAP, p));
+    if (padding) {
+        classes.push(getMappedSpacingValue(PADDING_VALUES_MAP, padding));
+    }
     return classes.join(' ');
 };
 
-export const GetMarginClassNames = (m: SpacingValue, mx: SpacingValue, my: SpacingValue): string => {
+export const GetMarginClassNames = (margin?: SpacingValue, marginX?: SpacingValue, marginY?: SpacingValue): string => {
     const classes = [];
-    if (mx > SPACING_VALUES[0]) {
-        classes.push(getMappedSpacingValue(MARGIN_X_VALUES_MAP, mx));
+    if (marginX) {
+        classes.push(getMappedSpacingValue(MARGIN_X_VALUES_MAP, marginX));
     }
-    if (my > SPACING_VALUES[0]) {
-        classes.push(getMappedSpacingValue(MARGIN_Y_VALUES_MAP, my));
+    if (marginY) {
+        classes.push(getMappedSpacingValue(MARGIN_Y_VALUES_MAP, marginY));
     }
-    classes.push(getMappedSpacingValue(MARGIN_VALUES_MAP, m));
+    if (margin) {
+        classes.push(getMappedSpacingValue(MARGIN_VALUES_MAP, margin));
+    }
     return classes.join(' ');
 };
 
@@ -202,13 +210,16 @@ export const GAP_DIRECTIONS: Record<GapSpacingDirectionKey, GapSpacingDirection>
     GAP_X: 'gap-x',
     GAP_Y: 'gap-y',
 };
-export const GetGapClassName = (g: SpacingValue, direction: GapSpacingDirection) => {
-    switch (direction) {
-        case 'gap-x':
-            return g > 0 ? getMappedSpacingValue(GAP_X_MAPPING, g) : '';
-        case 'gap-y':
-            return g > 0 ? getMappedSpacingValue(GAP_Y_MAPPING, g) : '';
-        default:
-            return getMappedSpacingValue(GAP_MAPPING, g);
+export const GetGapClassName = (direction: GapSpacingDirection, g?: SpacingValue): string => {
+    if (g) {
+        switch (direction) {
+            case 'gap-x':
+                return g >= SPACING_VALUES[0] ? getMappedSpacingValue(GAP_X_MAPPING, g) : '';
+            case 'gap-y':
+                return g >= SPACING_VALUES[0] ? getMappedSpacingValue(GAP_Y_MAPPING, g) : '';
+            default:
+                return getMappedSpacingValue(GAP_MAPPING, g);
+        }
     }
+    return '';
 };
