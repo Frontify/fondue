@@ -2,6 +2,7 @@
 
 import { Meta, StoryFn } from '@storybook/react';
 import { BOX_TEST_ID, Box as BoxComponent, BoxProps } from './Box';
+import { SPACING_VALUES } from '@utilities/dimensions';
 
 type Props = JSX.IntrinsicElements['div'] | JSX.IntrinsicElements['span'] | BoxProps;
 
@@ -12,6 +13,36 @@ export default {
     argTypes: {
         className: {
             type: 'string',
+        },
+        padding: {
+            options: Object.values(SPACING_VALUES),
+            control: 'select',
+            defaultValue: '',
+        },
+        paddingX: {
+            options: Object.values(SPACING_VALUES),
+            control: 'select',
+            defaultValue: '',
+        },
+        paddingY: {
+            options: Object.values(SPACING_VALUES),
+            control: 'select',
+            defaultValue: '',
+        },
+        margin: {
+            options: Object.values(SPACING_VALUES),
+            control: 'select',
+            defaultValue: '',
+        },
+        marginX: {
+            options: Object.values(SPACING_VALUES),
+            control: 'select',
+            defaultValue: '',
+        },
+        marginY: {
+            options: Object.values(SPACING_VALUES),
+            control: 'select',
+            defaultValue: '',
         },
         'data-test-id': {
             type: 'string',

@@ -4,16 +4,7 @@ import { ReactNode } from 'react';
 import { merge } from '@utilities/merge';
 import { ContainerHTMLElement } from 'src/types/elements';
 import { Box } from '@components/Box';
-import {
-    DimensionUnity,
-    GAP_DIRECTIONS,
-    GetGapClassName,
-    GetMarginClassNames,
-    GetPaddingClassNames,
-    MARGIN_DIRECTIONS,
-    PADDING_DIRECTIONS,
-    SpacingValue,
-} from '@utilities/dimensions';
+import { DimensionUnity, GAP_DIRECTIONS, GetGapClassName, SpacingValue } from '@utilities/dimensions';
 
 export type FlexDirection = 'row' | 'column' | 'row-reverse' | 'column-reverse';
 export type FlexWrap = 'nowrap' | 'wrap' | 'wrap-reverse';
@@ -119,7 +110,7 @@ export const Flex = ({
     maxWidth,
     maxHeight,
     minHeight,
-    spacing,
+    spacing = 4,
     spacingX,
     spacingY,
 }: FlexProps) => {
@@ -128,7 +119,9 @@ export const Flex = ({
             data-test-id={dataTestId}
             className={merge([
                 'tw-flex',
-                'tw-gap-1',
+                GetGapClassName(GAP_DIRECTIONS.GAP_X, spacingX),
+                GetGapClassName(GAP_DIRECTIONS.GAP_Y, spacingY),
+                GetGapClassName(GAP_DIRECTIONS.GAP, spacing),
                 directionMapping[direction],
                 wrapMapping[wrap],
                 justifyMapping[justify],
@@ -136,15 +129,6 @@ export const Flex = ({
                 alignContentMapping[alignContent],
                 bg,
                 color,
-                GetPaddingClassNames(PADDING_DIRECTIONS.PADDING_X, paddingX),
-                GetPaddingClassNames(PADDING_DIRECTIONS.PADDING_Y, paddingY),
-                GetPaddingClassNames(PADDING_DIRECTIONS.PADDING, padding),
-                GetMarginClassNames(MARGIN_DIRECTIONS.MARGIN_X, marginX),
-                GetMarginClassNames(MARGIN_DIRECTIONS.MARGIN_Y, marginY),
-                GetMarginClassNames(MARGIN_DIRECTIONS.MARGIN, margin),
-                GetGapClassName(GAP_DIRECTIONS.GAP_X, spacingX),
-                GetGapClassName(GAP_DIRECTIONS.GAP_Y, spacingY),
-                GetGapClassName(GAP_DIRECTIONS.GAP, spacing),
             ])}
             style={{
                 maxWidth,
@@ -152,6 +136,12 @@ export const Flex = ({
                 maxHeight,
                 minHeight,
             }}
+            margin={margin}
+            marginX={marginX}
+            marginY={marginY}
+            padding={padding}
+            paddingX={paddingX}
+            paddingY={paddingY}
             as={ContainerElement}
         >
             {children}

@@ -13,21 +13,50 @@ export default {
     component: Grid,
     tags: ['autodocs'],
     argTypes: {
-        spacingX: {
-            options: SPACING_VALUES,
-            control: { type: 'select' },
-        },
-        spacingY: {
-            options: SPACING_VALUES,
-            control: { type: 'select' },
-        },
         padding: {
-            options: SPACING_VALUES,
-            control: { type: 'select' },
+            options: Object.values(SPACING_VALUES),
+            control: 'select',
+            defaultValue: '',
+        },
+        paddingX: {
+            options: Object.values(SPACING_VALUES),
+            control: 'select',
+            defaultValue: '',
+        },
+        paddingY: {
+            options: Object.values(SPACING_VALUES),
+            control: 'select',
+            defaultValue: '',
         },
         margin: {
-            options: SPACING_VALUES,
-            control: { type: 'select' },
+            options: Object.values(SPACING_VALUES),
+            control: 'select',
+            defaultValue: '',
+        },
+        marginX: {
+            options: Object.values(SPACING_VALUES),
+            control: 'select',
+            defaultValue: '',
+        },
+        marginY: {
+            options: Object.values(SPACING_VALUES),
+            control: 'select',
+            defaultValue: '',
+        },
+        spacing: {
+            options: Object.values(SPACING_VALUES),
+            control: 'select',
+            defaultValue: '',
+        },
+        spacingX: {
+            options: Object.values(SPACING_VALUES),
+            control: 'select',
+            defaultValue: '',
+        },
+        spacingY: {
+            options: Object.values(SPACING_VALUES),
+            control: 'select',
+            defaultValue: '',
         },
         as: {
             options: ['div', 'span'],
@@ -40,8 +69,7 @@ export default {
         },
     },
     args: {
-        spacingX: 4,
-        spacingY: 4,
+        spacing: 4,
         column: 4,
         'data-test-id': 'custom-test-id',
         padding: 4,

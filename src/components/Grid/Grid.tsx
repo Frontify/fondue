@@ -1,16 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Children, ReactNode } from 'react';
-import {
-    DimensionUnity,
-    GAP_DIRECTIONS,
-    GetGapClassName,
-    GetMarginClassNames,
-    GetPaddingClassNames,
-    MARGIN_DIRECTIONS,
-    PADDING_DIRECTIONS,
-    SpacingValue,
-} from '@utilities/dimensions';
+import { DimensionUnity, GAP_DIRECTIONS, GetGapClassName, SpacingValue } from '@utilities/dimensions';
 import { ContainerHTMLElement } from 'src/types/elements';
 import { merge } from '@utilities/merge';
 import { Box } from '@components/Box';
@@ -70,12 +61,6 @@ export const Grid = ({
                 'tw-grid',
                 bg,
                 color,
-                GetPaddingClassNames(PADDING_DIRECTIONS.PADDING_X, paddingX),
-                GetPaddingClassNames(PADDING_DIRECTIONS.PADDING_Y, paddingY),
-                GetPaddingClassNames(PADDING_DIRECTIONS.PADDING, padding),
-                GetMarginClassNames(MARGIN_DIRECTIONS.MARGIN_X, marginX),
-                GetMarginClassNames(MARGIN_DIRECTIONS.MARGIN_Y, marginY),
-                GetMarginClassNames(MARGIN_DIRECTIONS.MARGIN, margin),
                 GetGapClassName(GAP_DIRECTIONS.GAP_X, spacingX),
                 GetGapClassName(GAP_DIRECTIONS.GAP_Y, spacingY),
                 GetGapClassName(GAP_DIRECTIONS.GAP, spacing),
@@ -85,6 +70,12 @@ export const Grid = ({
                 gridTemplateColumns: `repeat(${column}, 1fr)`,
                 gridTemplateRows: `repeat(${Math.ceil(childrenLength / column)}, ${rowHeight})`,
             }}
+            margin={margin}
+            marginX={marginX}
+            marginY={marginY}
+            padding={padding}
+            paddingX={paddingX}
+            paddingY={paddingY}
             as={ContainerElement}
         >
             {children}

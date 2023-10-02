@@ -30,13 +30,35 @@ export default {
                 type: 'select',
             },
         },
-        margin: {
-            options: Object.values(SPACING_VALUES),
-            control: { type: 'select' },
-        },
         padding: {
             options: Object.values(SPACING_VALUES),
-            control: { type: 'select' },
+            control: 'select',
+            defaultValue: '',
+        },
+        paddingX: {
+            options: Object.values(SPACING_VALUES),
+            control: 'select',
+            defaultValue: '',
+        },
+        paddingY: {
+            options: Object.values(SPACING_VALUES),
+            control: 'select',
+            defaultValue: '',
+        },
+        margin: {
+            options: Object.values(SPACING_VALUES),
+            control: 'select',
+            defaultValue: '',
+        },
+        marginX: {
+            options: Object.values(SPACING_VALUES),
+            control: 'select',
+            defaultValue: '',
+        },
+        marginY: {
+            options: Object.values(SPACING_VALUES),
+            control: 'select',
+            defaultValue: '',
         },
         minWidth: {
             type: 'string',

@@ -2,15 +2,7 @@
 
 import { Children, ReactElement, ReactNode } from 'react';
 import { Box } from '@components/Box';
-import {
-    GAP_DIRECTIONS,
-    GetGapClassName,
-    GetMarginClassNames,
-    GetPaddingClassNames,
-    MARGIN_DIRECTIONS,
-    PADDING_DIRECTIONS,
-    SpacingValue,
-} from '@utilities/dimensions';
+import { GAP_DIRECTIONS, GetGapClassName, SpacingValue } from '@utilities/dimensions';
 import { merge } from '@utilities/merge';
 import { ContainerHTMLElement } from 'src/types/elements';
 
@@ -114,18 +106,18 @@ export const Stack = ({
                 STACK_JUSTIFY_MAPPING[justify],
                 STACK_ALIGN_ITEMS_MAPPING[alignItems],
                 STACK_DIRECTION_MAPPING[direction],
-                GetPaddingClassNames(PADDING_DIRECTIONS.PADDING_X, paddingX),
-                GetPaddingClassNames(PADDING_DIRECTIONS.PADDING_Y, paddingY),
-                GetPaddingClassNames(PADDING_DIRECTIONS.PADDING, padding),
-                GetMarginClassNames(MARGIN_DIRECTIONS.MARGIN_X, marginX),
-                GetMarginClassNames(MARGIN_DIRECTIONS.MARGIN_Y, marginY),
-                GetMarginClassNames(MARGIN_DIRECTIONS.MARGIN, margin),
                 GetGapClassName(GAP_DIRECTIONS.GAP_X, spacingX),
                 GetGapClassName(GAP_DIRECTIONS.GAP_Y, spacingY),
                 GetGapClassName(GAP_DIRECTIONS.GAP, spacing),
                 bg,
                 color,
             ])}
+            margin={margin}
+            marginX={marginX}
+            marginY={marginY}
+            padding={padding}
+            paddingX={paddingX}
+            paddingY={paddingY}
             as={ContainerElement}
         >
             {renderedChildren}
