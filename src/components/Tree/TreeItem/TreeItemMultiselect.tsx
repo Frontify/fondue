@@ -3,26 +3,18 @@
 import { Children, MouseEvent, memo, useCallback, useEffect, useMemo, useRef } from 'react';
 import noop from 'lodash-es/noop';
 
-import { merge } from '@utilities/merge';
-import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
+import { type RegisterNodeChildrenPayload, TreeItemMultiselectProps, TreeItemStyling } from '@components/Tree/types';
 
-import {
-    type RegisterNodeChildrenPayload,
-    TreeItemBorderClassMap,
-    TreeItemBorderRadiusClassMap,
-    TreeItemBorderStyleClassMap,
-    TreeItemColorsClassMap,
-    TreeItemMultiselectProps,
-    TreeItemShadowClassMap,
-    TreeItemSpacingClassMap,
-    TreeItemStyling,
-} from '@components/Tree/types';
-
-import { INDENTATION_WIDTH, Projection } from '../helpers';
+import { INDENTATION_WIDTH, Projection, getMultiselectCheckBoxState } from '../helpers';
 import { removeFragmentsAndEnrichChildren, useDeepCompareEffect } from '../utils';
+import {
+    getMultiselectBackgroundClassName,
+    getMultiselectContainerClassName,
+    getMultiselectLiClassName,
+} from '../helpers/multiselectTreeItemstyling';
 
 import { ExpandButton } from './ExpandButton';
-import { Checkbox, CheckboxEmphasis, CheckboxSize, CheckboxState } from '@components/Checkbox/Checkbox';
+import { Checkbox, CheckboxEmphasis, CheckboxSize } from '@components/Checkbox/Checkbox';
 import { Container } from '@components/Container';
 import { useTreeItem } from './useTreeItem';
 
@@ -97,16 +89,12 @@ export const TreeItemMultiselect = memo(
         }, [children, id, level]);
 
         useDeepCompareEffect(() => {
-            if (Children.count(enrichedChildren) === 0) {
+            if (Children.count(enrichedChildren) === 0 || !isExpanded) {
                 unregisterNodeChildren?.(id);
                 return;
             }
 
-            if (isExpanded) {
-                registerNodeChildren?.({ id, children: enrichedChildren });
-            } else {
-                unregisterNodeChildren?.(id);
-            }
+            registerNodeChildren?.({ id, children: enrichedChildren });
         }, [isExpanded, enrichedChildren, id]);
 
         const itemStyleProps = useMemo(() => {
@@ -122,72 +110,26 @@ export const TreeItemMultiselect = memo(
             } as TreeItemStyling;
         }, [itemStyle]);
 
-        const styling = TreeItemColorsClassMap[itemStyleProps.activeColorStyle ?? 'neutral'];
-
         const { liClassName, backgroundClassName } = useMemo(() => {
             return {
-                liClassName: merge([
-                    FOCUS_VISIBLE_STYLE,
-                    'tw-box-content tw-relative tw-cursor-default tw-transition-colors tw-outline-none tw-ring-inset tw-group tw-no-underline tw-leading-5',
-                    styling.textColor,
-                    TreeItemSpacingClassMap[itemStyleProps.spacingY ?? 'none'],
-                    isDisabled ? 'tw-text-text-disabled' : '',
-                ]),
-                backgroundClassName: merge([
-                    'tw-block tw-absolute tw-inset-0 tw-transition-colors -tw-z-10',
-                    itemStyleProps.borderWidth !== 'none'
-                        ? TreeItemBorderRadiusClassMap[itemStyleProps.borderRadius ?? 'small']
-                        : '',
-                    (!isSelected || itemStyleProps.activeColorStyle !== 'neutral') && styling.pressedBackgroundColor,
-                    styling.backgroundColor,
-                ]),
+                liClassName: getMultiselectLiClassName(itemStyleProps, isDisabled),
+                backgroundClassName: getMultiselectBackgroundClassName(itemStyleProps, isSelected),
             };
-        }, [
-            styling.textColor,
-            styling.pressedBackgroundColor,
-            styling.backgroundColor,
-            itemStyleProps.spacingY,
-            itemStyleProps.borderWidth,
-            itemStyleProps.borderRadius,
-            itemStyleProps.activeColorStyle,
-            isDisabled,
-            isSelected,
-        ]);
+        }, [itemStyleProps, isDisabled, isSelected]);
 
         const wrapperContentClassName = 'tw-max-w-full	tw-grow';
         const showChildren = isExpanded;
         const showLabel = label !== undefined;
-        const showExpandButton = expandable && (showCaret === undefined ? hasChildren : showCaret);
+        const showExpandButton = expandable && (showCaret ?? hasChildren);
 
-        const containerBorder =
-            itemStyleProps.borderWidth !== 'none'
-                ? merge([
-                      TreeItemBorderClassMap[itemStyleProps.borderWidth ?? 'none'],
-                      TreeItemBorderRadiusClassMap[itemStyleProps.borderRadius ?? 'small'],
-                      TreeItemBorderStyleClassMap[itemStyleProps.borderStyle ?? 'none'],
-                  ])
-                : '';
-
-        const containerClassName = merge([
-            'tw-relative tw-z-0 tw-transition-colors tw-flex tw-items-center tw-content-center tw-leading-5 tw-width-fit tw-justify-start tw-pl-2',
-            TreeItemShadowClassMap[itemStyleProps.shadow ?? 'none'],
-            containerBorder,
-            TreeItemBorderRadiusClassMap[itemStyleProps.borderRadius ?? 'small'],
-            itemStyleProps.contentHight === 'single-line' ? 'tw-h-10' : 'tw-h-fit',
-        ]);
+        const containerClassName = getMultiselectContainerClassName(itemStyleProps);
 
         const levelPadding = level * INDENTATION_WIDTH;
         const liStyle = { paddingLeft: levelPadding };
         const backgroundStyle = itemStyleProps.borderWidth !== 'none' ? {} : { marginLeft: -1 * levelPadding };
-
         const style = {};
-        let theCheckboxState = CheckboxState.Unchecked;
-        if (isSelected) {
-            theCheckboxState = CheckboxState.Checked;
-        } else if (isPartialSelected) {
-            theCheckboxState = CheckboxState.Mixed;
-        }
 
+        const checkBoxOnSelect = isDisabled ? () => void 0 : () => onSelect?.(id, false);
         const checkBox =
             checkBoxPosition !== 'none' ? (
                 <Container maxWidth="16px" maxHeight="16px">
@@ -200,9 +142,9 @@ export const TreeItemMultiselect = memo(
                         helperText=""
                         hideLabel
                         label=""
-                        onChange={() => (isDisabled ? void 0 : onSelect?.(id, false))}
+                        onChange={checkBoxOnSelect}
                         size={CheckboxSize.Default}
-                        state={theCheckboxState}
+                        state={getMultiselectCheckBoxState(isSelected, isPartialSelected)}
                         tooltip={[]}
                         value={id}
                     />

@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { CheckboxState } from '@components/Checkbox';
 import { TreeItemMultiselectProps } from '../types';
 
 export type TreeItemMultiselectWithNodes = TreeItemMultiselectProps & {
@@ -7,6 +8,17 @@ export type TreeItemMultiselectWithNodes = TreeItemMultiselectProps & {
     nodes?: TreeItemMultiselectWithNodes[];
     numChildNodes?: number;
     onSelect?: (id: string) => void;
+};
+
+export const getMultiselectCheckBoxState = (isSelected: boolean, isPartialSelected: boolean) => {
+    let theCheckboxState = CheckboxState.Unchecked;
+    if (isSelected) {
+        theCheckboxState = CheckboxState.Checked;
+    } else if (isPartialSelected) {
+        theCheckboxState = CheckboxState.Mixed;
+    }
+
+    return theCheckboxState;
 };
 
 export const getSelectedChildrenItems = (
@@ -108,27 +120,24 @@ export const addSelectedItemsFromSelection = (
 };
 
 export const fixParentSelectionState = (parent: TreeItemMultiselectWithNodes, newSelectedItems: string[]) => {
-    const isParentSelected = newSelectedItems.includes(parent?.id ?? '');
+    const parentId = parent?.id ?? '';
+    const isParentSelected = newSelectedItems.includes(parentId);
     const siblingsSelectedItems = getSelectedChildrenItems(parent?.nodes ?? [], newSelectedItems);
     const siblingsPartiallySelectedItems = getSelectedChildrenItems(parent?.nodes ?? [], newSelectedItems, true);
     const siblingsCount = parent?.nodes?.length ?? 0;
 
     // Select/unselect parent
     if (siblingsSelectedItems.length === 0) {
-        newSelectedItems = isParentSelected
-            ? removeSelectedIds(newSelectedItems, [parent?.id ?? ''], false)
-            : newSelectedItems;
-        newSelectedItems = removeSelectedIds(newSelectedItems, [parent?.id ?? ''], true);
+        newSelectedItems = isParentSelected ? removeSelectedIds(newSelectedItems, [parentId], false) : newSelectedItems;
+        newSelectedItems = removeSelectedIds(newSelectedItems, [parentId], true);
     } else if (siblingsSelectedItems.length === siblingsCount && siblingsPartiallySelectedItems.length === 0) {
-        newSelectedItems = !isParentSelected
-            ? addSelectedIds(newSelectedItems, [parent?.id ?? ''], false)
-            : newSelectedItems;
+        newSelectedItems = !isParentSelected ? addSelectedIds(newSelectedItems, [parentId], false) : newSelectedItems;
 
-        newSelectedItems = removeSelectedIds(newSelectedItems, [parent?.id ?? ''], true);
+        newSelectedItems = removeSelectedIds(newSelectedItems, [parentId], true);
     } else if (parent?.id) {
         // flag parent as partial checked and unselect it
-        newSelectedItems = addSelectedIds(newSelectedItems, [parent?.id ?? ''], true);
-        newSelectedItems = removeSelectedIds(newSelectedItems, [parent?.id ?? ''], false);
+        newSelectedItems = addSelectedIds(newSelectedItems, [parentId], true);
+        newSelectedItems = removeSelectedIds(newSelectedItems, [parentId], false);
     }
 
     return newSelectedItems;
