@@ -8,55 +8,29 @@ import { merge } from '@utilities/merge';
 
 const EXAMPLE_CONTENT = 'Lorem ipsum dolor sit amet';
 
+const spacingSelect = {
+    options: Object.values(SPACING_VALUES),
+    control: { type: 'select' },
+    defaultValue: '',
+};
+
 export default {
     title: 'Layout/Grid',
     component: Grid,
     tags: ['autodocs'],
     argTypes: {
-        padding: {
-            options: Object.values(SPACING_VALUES),
-            control: 'select',
-            defaultValue: '',
-        },
-        paddingX: {
-            options: Object.values(SPACING_VALUES),
-            control: 'select',
-            defaultValue: '',
-        },
-        paddingY: {
-            options: Object.values(SPACING_VALUES),
-            control: 'select',
-            defaultValue: '',
-        },
-        margin: {
-            options: Object.values(SPACING_VALUES),
-            control: 'select',
-            defaultValue: '',
-        },
-        marginX: {
-            options: Object.values(SPACING_VALUES),
-            control: 'select',
-            defaultValue: '',
-        },
-        marginY: {
-            options: Object.values(SPACING_VALUES),
-            control: 'select',
-            defaultValue: '',
-        },
+        paddingX: spacingSelect,
+        paddingY: spacingSelect,
+        padding: spacingSelect,
+        marginX: spacingSelect,
+        marginY: spacingSelect,
+        margin: spacingSelect,
+        spacingX: spacingSelect,
+        spacingY: spacingSelect,
         spacing: {
             options: Object.values(SPACING_VALUES),
-            control: 'select',
-            defaultValue: '',
-        },
-        spacingX: {
-            options: Object.values(SPACING_VALUES),
-            control: 'select',
-            defaultValue: '',
-        },
-        spacingY: {
-            options: Object.values(SPACING_VALUES),
-            control: 'select',
-            defaultValue: '',
+            control: { type: 'select' },
+            defaultValue: 4,
         },
         as: {
             options: ['div', 'span'],

@@ -6,6 +6,12 @@ import { SPACING_VALUES } from '@utilities/dimensions';
 
 type Props = JSX.IntrinsicElements['div'] | JSX.IntrinsicElements['span'] | BoxProps;
 
+const spacingSelect = {
+    options: Object.values(SPACING_VALUES),
+    control: { type: 'select' },
+    defaultValue: '',
+};
+
 export default {
     title: 'Layout/Box',
     component: BoxComponent,
@@ -14,36 +20,12 @@ export default {
         className: {
             type: 'string',
         },
-        padding: {
-            options: Object.values(SPACING_VALUES),
-            control: 'select',
-            defaultValue: '',
-        },
-        paddingX: {
-            options: Object.values(SPACING_VALUES),
-            control: 'select',
-            defaultValue: '',
-        },
-        paddingY: {
-            options: Object.values(SPACING_VALUES),
-            control: 'select',
-            defaultValue: '',
-        },
-        margin: {
-            options: Object.values(SPACING_VALUES),
-            control: 'select',
-            defaultValue: '',
-        },
-        marginX: {
-            options: Object.values(SPACING_VALUES),
-            control: 'select',
-            defaultValue: '',
-        },
-        marginY: {
-            options: Object.values(SPACING_VALUES),
-            control: 'select',
-            defaultValue: '',
-        },
+        paddingX: spacingSelect,
+        paddingY: spacingSelect,
+        padding: spacingSelect,
+        marginX: spacingSelect,
+        marginY: spacingSelect,
+        margin: spacingSelect,
         'data-test-id': {
             type: 'string',
         },
