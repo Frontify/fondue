@@ -9,7 +9,6 @@ import {
     GetPaddingClassNames,
     MARGIN_DIRECTIONS,
     PADDING_DIRECTIONS,
-    SPACING_VALUES,
     SpacingValue,
 } from '@utilities/dimensions';
 import { merge } from '@utilities/merge';
