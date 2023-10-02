@@ -84,15 +84,16 @@ export const extractNodeFromElement = (node: ReactElement): TreeNodeWithoutEleme
     nodes: [],
 });
 
-export const getTreeNodesWithoutElements = (nodes: ReactElement[] = []): TreeNodeWithoutElements[] => {
-    const parsedNodes = [];
-
-    for (const node of nodes) {
-        parsedNodes.push({
+export const getTreeNodesWithoutElements = (
+    nodes: ReactElement[] = [],
+    parentId = '__ROOT__',
+): TreeNodeWithoutElements[] => {
+    const parsedNodes = nodes
+        .filter((n) => n.props.parentId === parentId)
+        .map((node, index) => ({
             ...extractNodeFromElement(node),
-            nodes: nodes.filter((n) => n.props.parentId === node.props.id).map(extractNodeFromElement),
-        });
-    }
+            nodes: getTreeNodesWithoutElements(nodes.slice(index + 1), node.props.id),
+        }));
 
     return parsedNodes;
 };
