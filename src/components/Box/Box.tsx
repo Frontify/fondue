@@ -1,6 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { GetMarginClassNames, GetPaddingClassNames, SpacingValue } from '@utilities/dimensions';
+import {
+    GetMarginClassNames,
+    GetPaddingClassNames,
+    MARGIN_DIRECTIONS,
+    PADDING_DIRECTIONS,
+    SpacingValue,
+} from '@utilities/dimensions';
 import { merge } from '@utilities/index';
 import { HTMLAttributes } from 'react';
 import { ContainerHTMLElement } from 'src/types/elements';
@@ -35,8 +41,12 @@ export const Box = ({
             {...props}
             className={merge([
                 props.className,
-                GetPaddingClassNames(padding, paddingX, paddingY),
-                GetMarginClassNames(margin, marginX, marginY),
+                GetPaddingClassNames(PADDING_DIRECTIONS.PADDING_X, paddingX),
+                GetPaddingClassNames(PADDING_DIRECTIONS.PADDING_Y, paddingY),
+                GetPaddingClassNames(PADDING_DIRECTIONS.PADDING, padding),
+                GetMarginClassNames(MARGIN_DIRECTIONS.MARGIN_X, marginX),
+                GetMarginClassNames(MARGIN_DIRECTIONS.MARGIN_Y, marginY),
+                GetMarginClassNames(MARGIN_DIRECTIONS.MARGIN, margin),
             ])}
             data-test-id={dataTestId}
         >

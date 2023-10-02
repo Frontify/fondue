@@ -7,6 +7,8 @@ import {
     GetGapClassName,
     GetMarginClassNames,
     GetPaddingClassNames,
+    MARGIN_DIRECTIONS,
+    PADDING_DIRECTIONS,
     SpacingValue,
 } from '@utilities/dimensions';
 import { ContainerHTMLElement } from 'src/types/elements';
@@ -68,8 +70,12 @@ export const Grid = ({
                 'tw-grid',
                 bg,
                 color,
-                GetPaddingClassNames(padding, paddingX, paddingY),
-                GetMarginClassNames(margin, marginX, marginY),
+                GetPaddingClassNames(PADDING_DIRECTIONS.PADDING_X, paddingX),
+                GetPaddingClassNames(PADDING_DIRECTIONS.PADDING_Y, paddingY),
+                GetPaddingClassNames(PADDING_DIRECTIONS.PADDING, padding),
+                GetMarginClassNames(MARGIN_DIRECTIONS.MARGIN_X, marginX),
+                GetMarginClassNames(MARGIN_DIRECTIONS.MARGIN_Y, marginY),
+                GetMarginClassNames(MARGIN_DIRECTIONS.MARGIN, margin),
                 GetGapClassName(GAP_DIRECTIONS.GAP_X, spacingX),
                 GetGapClassName(GAP_DIRECTIONS.GAP_Y, spacingY),
                 GetGapClassName(GAP_DIRECTIONS.GAP, spacing),
