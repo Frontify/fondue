@@ -145,7 +145,7 @@ export const MultiselectWithBasicItem = ({ ...args }: TreeProps) => {
         setTreeItems(treeItemsMockMultiseclect);
     }, []);
 
-    const handleItemSelected = (id: string, ignoreRemoveSelected = false, nodes: TreeNodeWithoutElements[]) => {
+    const handleItemSelected = (id: string, ignoreRemoveSelected = false, nodes: TreeNodeWithoutElements[] = []) => {
         if (nodes.length === 0) {
             return;
         }

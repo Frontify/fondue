@@ -77,14 +77,20 @@ export const getNodesToRender = (rootNodes: TreeState['rootNodes'], expandedIds:
     return nodesToRender.map((n) => n.node);
 };
 
-export const getTreeNodesWithoutElements = (nodes: ReactElement[]): TreeNodeWithoutElements[] => {
+export const extractNodeFromElement = (node: ReactElement): TreeNodeWithoutElements => ({
+    id: node.props.id,
+    level: node.props.level,
+    parentId: node.props.parentId,
+    nodes: [],
+});
+
+export const getTreeNodesWithoutElements = (nodes: ReactElement[] = []): TreeNodeWithoutElements[] => {
     const parsedNodes = [];
+
     for (const node of nodes) {
         parsedNodes.push({
-            id: node.props.id,
-            level: node.props.level,
-            parentId: node.props.parentId,
-            nodes: getTreeNodesWithoutElements(node.props.children),
+            ...extractNodeFromElement(node),
+            nodes: nodes.filter((n) => n.props.parentId === node.props.id).map(extractNodeFromElement),
         });
     }
 

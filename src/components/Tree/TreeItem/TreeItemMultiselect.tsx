@@ -32,7 +32,7 @@ type TreeItemPrivateProps = {
     level?: number;
     isExpanded?: boolean;
     /** onSelect is passed by the Tree component when cloning the TreeItem */
-    onSelect: (id: string, ignoreRemoveSelected: boolean) => void;
+    onSelect?: (id: string, ignoreRemoveSelected: boolean) => void;
     onExpand?: (id: string) => void;
     onShrink?: (id: string) => void;
     projection?: Nullable<Projection>;
@@ -77,7 +77,7 @@ export const TreeItemMultiselect = memo(
         );
 
         useEffect(() => {
-            if (isParentSelected && !isSelected) {
+            if (isParentSelected && !isSelected && onSelect) {
                 onSelect(id, true);
             }
         }, [id, onSelect, isParentSelected, isSelected]);
@@ -200,7 +200,7 @@ export const TreeItemMultiselect = memo(
                         helperText=""
                         hideLabel
                         label=""
-                        onChange={() => (isDisabled ? void 0 : onSelect(id, false))}
+                        onChange={() => (isDisabled ? void 0 : onSelect?.(id, false))}
                         size={CheckboxSize.Default}
                         state={theCheckboxState}
                         tooltip={[]}

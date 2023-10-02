@@ -19,8 +19,8 @@ export type TreeNodeWithoutElements = {
     nodes: TreeNodeWithoutElements[];
 };
 
-export type OnSelectCallback = (id: string, ignoreRemoveSelected: boolean, nodes: TreeNodeWithoutElements[]) => void;
-export type OnSelectInternalCallback = (id: string, ignoreRemoveSelected: boolean) => void;
+export type OnSelectCallback = (id: string, ignoreRemoveSelected?: boolean, nodes?: TreeNodeWithoutElements[]) => void;
+export type OnSelectInternalCallback = (id: string, ignoreRemoveSelected?: boolean) => void;
 export type OnExpandCallback = (id: string) => void;
 
 export type OnShrinkCallback = (id: string) => void;
