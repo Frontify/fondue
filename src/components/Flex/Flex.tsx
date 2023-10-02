@@ -33,7 +33,6 @@ export type FlexAlignContent =
 export type FlexProps = {
     direction?: FlexDirection;
     wrap?: FlexWrap;
-    gap?: SpacingValue;
     spacing?: SpacingValue;
     spacingX?: SpacingValue;
     spacingY?: SpacingValue;
