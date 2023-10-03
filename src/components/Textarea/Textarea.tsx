@@ -7,7 +7,16 @@ import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
 import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle';
-import { FocusEvent, FormEvent, KeyboardEvent, ReactElement, ReactNode, useEffect, useRef } from 'react';
+import {
+    AriaAttributes,
+    FocusEvent,
+    FormEvent,
+    KeyboardEvent,
+    ReactElement,
+    ReactNode,
+    useEffect,
+    useRef,
+} from 'react';
 import TextareaAutosize, { TextareaAutosizeProps } from 'react-textarea-autosize';
 import { IconExclamationMarkTriangle } from '@foundation/Icon/Generated';
 
@@ -31,7 +40,7 @@ export type TextareaProps = {
     selectable?: boolean;
     focusOnMount?: boolean;
     onEnterPressed?: (event: KeyboardEvent<HTMLTextAreaElement>) => void;
-};
+} & AriaAttributes;
 
 export const Textarea = ({
     id: propId,
@@ -51,6 +60,7 @@ export const Textarea = ({
     selectable = false,
     focusOnMount,
     onEnterPressed,
+    ...props
 }: TextareaProps): ReactElement => {
     const Component = autosize ? TextareaAutosize : 'textarea';
 
@@ -114,6 +124,7 @@ export const Textarea = ({
                 }}
                 onKeyDown={onKeyDown}
                 data-test-id="textarea"
+                {...props}
             />
             {validation === Validation.Loading && (
                 <span className="tw-absolute tw-top-[-0.55rem] tw-right-[-0.55rem] tw-bg-white tw-rounded-full tw-p-[2px] tw-border tw-border-black-10">
