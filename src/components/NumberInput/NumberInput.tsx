@@ -231,7 +231,7 @@ export const NumberInput = ({
                     <>
                         <button
                             className={
-                                'tw-text-text-weak tw-p-1 hover:tw-bg-box-neutral hover:tw-text-box-neutral-inverse focus:tw-ring-line-xx-strong focus:tw-bg-box-neutral'
+                                'tw-text-text-weak tw-p-1 hover:tw-rounded-sm hover:tw-bg-box-neutral hover:tw-text-box-neutral-inverse focus:tw-ring-line-xx-strong focus:tw-bg-box-neutral'
                             }
                             type="button"
                             onClick={(event) => {
@@ -258,7 +258,7 @@ export const NumberInput = ({
                         </button>
                         <button
                             className={
-                                'tw-text-text-weak tw-p-1 hover:tw-bg-box-neutral hover:tw-text-box-neutral-inverse focus:tw-ring-line-xx-strong focus:tw-bg-box-neutral'
+                                'tw-text-text-weak tw-p-1 hover:tw-rounded-sm hover:tw-bg-box-neutral hover:tw-text-box-neutral-inverse focus:tw-ring-line-xx-strong focus:tw-bg-box-neutral'
                             }
                             type="button"
                             onClick={(event) => {
@@ -290,7 +290,7 @@ export const NumberInput = ({
                         type="button"
                         onClick={handleClear}
                         className={
-                            'tw-text-text-weak tw-p-1 hover:tw-bg-box-neutral hover:tw-text-box-neutral-inverse focus:tw-ring-line-xx-strong focus:tw-bg-box-neutral'
+                            'tw-text-text-weak tw-p-1 hover:tw-rounded-sm hover:tw-bg-box-neutral hover:tw-text-box-neutral-inverse focus:tw-ring-line-xx-strong focus:tw-bg-box-neutral'
                         }
                         aria-label="Clear value"
                     >
