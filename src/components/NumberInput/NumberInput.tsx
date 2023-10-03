@@ -27,6 +27,7 @@ export const NumberInput = ({
     placeholder,
     stepInterval = 10,
     title,
+    defaultValue,
     onChange,
     onKeyDown,
     onBlur,
@@ -40,11 +41,15 @@ export const NumberInput = ({
     const isMouseHold = useRef<boolean>(false);
     const inputElement = useRef<HTMLInputElement | null>(null);
 
-    const getCurrentValueWithoutSuffix = useCallback(() => {
-        if (suffix) {
-            return inputElement.current?.value.replace(`${suffix}`, '');
+    const getCurrentValueWithoutSuffix = useCallback((): string => {
+        if (inputElement.current) {
+            const { value } = inputElement.current;
+            if (suffix) {
+                return value.replace(`${suffix}`, '').trim();
+            }
+            return value;
         }
-        return inputElement.current?.value;
+        return '';
     }, [inputElement, suffix]);
 
     const stopIncrement = () => {
@@ -83,13 +88,16 @@ export const NumberInput = ({
 
     const handleKeyDown = (event: KeyboardEvent) => {
         const { key, shiftKey } = event;
-        if (SPECIAL_KEYS.includes(key) || !isNaN(Number(key))) {
+        if (SPECIAL_KEYS.includes(key)) {
             const currentValue = getCurrentValueWithoutSuffix();
             if (currentValue?.length === 0) {
                 handleClear();
             }
             return;
+        } else if (!isNaN(Number(key))) {
+            return;
         }
+
         event.preventDefault();
         isShift.current = shiftKey;
         if (DECREMENT_KEYS.includes(key)) {
@@ -132,7 +140,7 @@ export const NumberInput = ({
     const setValue = (value: number) => {
         if (inputElement.current) {
             const newValue = value.toString();
-            inputElement.current.value = `${newValue}${suffix}`;
+            inputElement.current.value = suffix ? `${newValue}${' '}${suffix}` : newValue;
             if (isMouseHold.current) {
                 return;
             }
@@ -141,13 +149,18 @@ export const NumberInput = ({
     };
 
     const handleOnChange = useCallback(() => {
+        if (suffix && inputElement.current) {
+            const caretPos: number = inputElement.current.value.length - suffix.length - 1;
+            inputElement.current.selectionStart = caretPos;
+            inputElement.current.selectionEnd = caretPos;
+        }
         const valueWithoutSuffix = getCurrentValueWithoutSuffix();
         onChange?.(Number(valueWithoutSuffix));
-    }, [onChange, getCurrentValueWithoutSuffix]);
+    }, [onChange, getCurrentValueWithoutSuffix, inputElement, suffix]);
 
     const handleClear = () => {
         if (inputElement.current) {
-            inputElement.current.value = '';
+            inputElement.current.value = defaultValue ? defaultValue.toString() : '';
         }
     };
 
@@ -170,7 +183,7 @@ export const NumberInput = ({
     return (
         <div
             className={merge([
-                'tw-w-full tw-flex tw-items-center tw-justify-between tw-h-9 tw-gap-2 tw-px-3 tw-transition tw-text-s tw-font-sans tw-relative tw-bg-white dark:tw-bg-transparent tw-border tw-rounded tw-line-strong hover:tw-border-line-x-strong focus-within:tw-border-line-xx-strong',
+                'tw-w-full tw-flex tw-items-center tw-justify-between tw-h-9 tw-gap-2 tw-px-3 tw-transition tw-text-s tw-font-sans tw-relative tw-bg-white dark:tw-bg-transparent tw-border tw-rounded tw-line-strong hover:tw-border-line-x-strong focus-within:tw-border-line-xx-strong focus-within:hover:tw-border-line-xx-strong',
                 status ? validationClassMap[status] : '',
             ])}
             data-test-id={dataTestId}
@@ -188,6 +201,7 @@ export const NumberInput = ({
             ) : null}
             <input
                 {...props}
+                defaultValue={defaultValue}
                 id={useMemoizedId(propId)}
                 ref={inputElement}
                 name={dataTestId}
@@ -217,7 +231,7 @@ export const NumberInput = ({
                     <>
                         <button
                             className={
-                                'tw-p-1 hover:tw-bg-box-neutral hover:tw-text-box-selected-inverse focus:tw-ring-line-xx-strong focus:tw-bg-box-neutral'
+                                'tw-text-text-weak tw-p-1 hover:tw-bg-box-neutral hover:tw-text-box-neutral-inverse focus:tw-ring-line-xx-strong focus:tw-bg-box-neutral'
                             }
                             type="button"
                             onClick={(event) => {
@@ -244,7 +258,7 @@ export const NumberInput = ({
                         </button>
                         <button
                             className={
-                                'tw-p-1 hover:tw-bg-box-neutral hover:tw-text-box-selected-inverse focus:tw-ring-line-xx-strong focus:tw-bg-box-neutral'
+                                'tw-text-text-weak tw-p-1 hover:tw-bg-box-neutral hover:tw-text-box-neutral-inverse focus:tw-ring-line-xx-strong focus:tw-bg-box-neutral'
                             }
                             type="button"
                             onClick={(event) => {
@@ -276,7 +290,7 @@ export const NumberInput = ({
                         type="button"
                         onClick={handleClear}
                         className={
-                            'tw-p-1 hover:tw-bg-box-neutral hover:tw-text-box-selected-inverse focus:tw-ring-line-xx-strong focus:tw-bg-box-neutral'
+                            'tw-text-text-weak tw-p-1 hover:tw-bg-box-neutral hover:tw-text-box-neutral-inverse focus:tw-ring-line-xx-strong focus:tw-bg-box-neutral'
                         }
                         aria-label="Clear value"
                     >
