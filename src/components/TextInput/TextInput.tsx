@@ -194,18 +194,6 @@ export const TextInput = ({
 
     const spellcheckProp = typeof spellcheck === 'boolean' ? { spellCheck: spellcheck } : null;
 
-    const setStylePrecedence = () => {
-        if (
-            isFocusVisible &&
-            !clearButtonIsFocusVisible &&
-            !passwordButtonIsFocusVisible &&
-            !copyButtonIsFocusVisible
-        ) {
-            return FOCUS_STYLE;
-        }
-        return 'hover:tw-border-line-x-strong';
-    };
-
     return (
         <div
             {...focusProps}
@@ -215,7 +203,15 @@ export const TextInput = ({
                 dotted ? 'tw-border-dashed' : 'tw-border-solid',
                 disabled || readonly
                     ? 'tw-border-black-5 tw-bg-black-5 dark:tw-bg-black-90 dark:tw-border-black-90'
-                    : merge(['focus-within:tw-border-black-90', validationClassMap[validation], setStylePrecedence()]),
+                    : merge([
+                          'focus-within:tw-border-line-xx-strong focus-within:hover:tw-border-line-xx-strong hover:tw-border-line-x-strong',
+                          validationClassMap[validation],
+                          isFocusVisible &&
+                              !clearButtonIsFocusVisible &&
+                              !passwordButtonIsFocusVisible &&
+                              !copyButtonIsFocusVisible &&
+                              FOCUS_STYLE,
+                      ]),
             ])}
             data-test-id="fondue-text-input-component"
         >
