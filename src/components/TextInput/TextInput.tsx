@@ -180,8 +180,8 @@ export const TextInput = ({
     }, [obfuscated]);
 
     const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === 'Enter') {
-            onEnterPressed && onEnterPressed(event);
+        if (event.key === 'Enter' && onEnterPressed) {
+            onEnterPressed(event);
         }
     };
 
@@ -204,7 +204,7 @@ export const TextInput = ({
                 disabled || readonly
                     ? 'tw-border-black-5 tw-bg-black-5 dark:tw-bg-black-90 dark:tw-border-black-90'
                     : merge([
-                          'focus-within:tw-border-black-90 hover:tw-border-line-x-strong',
+                          'focus-within:tw-border-line-xx-strong focus-within:hover:tw-border-line-xx-strong hover:tw-border-line-x-strong',
                           validationClassMap[validation],
                           isFocusVisible &&
                               !clearButtonIsFocusVisible &&
