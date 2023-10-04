@@ -4,10 +4,11 @@ import { Validation } from '@utilities/validation';
 import type { InputHTMLAttributes, ReactElement } from 'react';
 
 export type InputBaseProps<TValue> = {
+    clearable?: boolean;
     decorator?: ReactElement;
     suffix?: string;
     status?: Validation;
-    clearable?: boolean;
+    valueSelect?: boolean;
     onChange?: (value: TValue) => void;
     'data-test-id'?: string;
 } & Omit<InputHTMLAttributes<HTMLInputElement>, 'className' | 'style' | 'onChange'>;

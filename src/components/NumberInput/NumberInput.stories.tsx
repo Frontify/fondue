@@ -50,6 +50,12 @@ export default {
             defaultValue: 10,
             control: { type: 'number' },
         },
+        valueSelect: {
+            description: 'Highlight current input value.',
+            name: 'valueSelect',
+            defaultValue: false,
+            control: { type: 'boolean' },
+        },
         onChange: {
             description: 'onChange callback',
             name: 'onChange',
@@ -72,8 +78,19 @@ export const WithDecoratorAndIncrementable: StoryFn<NumberInputProps> = (args) =
 
 export const WithErrorLessThanZero: StoryFn<NumberInputProps> = (args) => {
     const [status, setStatus] = useState<Validation>(Validation.Success);
+    const [valueSelect, setValueSelect] = useState<boolean>(false);
     const handleValidation = (value: number) => {
         setStatus(value < 0 ? Validation.Error : Validation.Success);
+        setValueSelect(value < 0);
     };
-    return <NumberInput {...args} onChange={handleValidation} controls status={status} defaultValue={3} />;
+    return (
+        <NumberInput
+            {...args}
+            onChange={handleValidation}
+            controls
+            status={status}
+            valueSelect={valueSelect}
+            defaultValue={3}
+        />
+    );
 };

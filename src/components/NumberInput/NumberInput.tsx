@@ -28,6 +28,8 @@ export const NumberInput = ({
     stepInterval = 10,
     title,
     defaultValue,
+    value,
+    valueSelect,
     onChange,
     onKeyDown,
     onBlur,
@@ -148,15 +150,31 @@ export const NumberInput = ({
         }
     };
 
-    const handleOnChange = useCallback(() => {
+    const handleValueSelect = useCallback(() => {
+        if (valueSelect && inputElement.current) {
+            const inputLength: number = inputElement.current.value.length;
+            const caretPos: number = suffix ? inputLength - suffix.length - 1 : inputLength;
+            inputElement.current.setSelectionRange(0, caretPos);
+        }
+    }, [suffix, valueSelect]);
+
+    const handleCaretPosition = useCallback(() => {
         if (suffix && inputElement.current) {
             const caretPos: number = inputElement.current.value.length - suffix.length - 1;
-            inputElement.current.selectionStart = caretPos;
-            inputElement.current.selectionEnd = caretPos;
+            inputElement.current.setSelectionRange(caretPos, caretPos);
         }
+    }, [suffix, inputElement]);
+
+    const handleOnChange = useCallback(() => {
         const valueWithoutSuffix = getCurrentValueWithoutSuffix();
         onChange?.(Number(valueWithoutSuffix));
-    }, [onChange, getCurrentValueWithoutSuffix, inputElement, suffix]);
+        if (suffix) {
+            handleCaretPosition();
+        }
+        if (valueSelect) {
+            handleValueSelect();
+        }
+    }, [suffix, valueSelect, onChange, getCurrentValueWithoutSuffix, handleCaretPosition, handleValueSelect]);
 
     const handleClear = () => {
         if (inputElement.current) {
@@ -202,10 +220,11 @@ export const NumberInput = ({
             <input
                 {...props}
                 defaultValue={defaultValue}
+                value={value}
                 id={useMemoizedId(propId)}
                 ref={inputElement}
                 name={dataTestId}
-                type={suffix ? 'text' : 'number'}
+                type={suffix || valueSelect ? 'text' : 'number'}
                 placeholder={placeholder}
                 className={merge([
                     'tw-w-full tw-border-none tw-outline-none tw-bg-transparent tw-hide-input-arrows',
@@ -213,6 +232,7 @@ export const NumberInput = ({
                         ? 'tw-text-black-40 tw-placeholder-black-30 dark:tw-text-black-30 dark:tw-placeholder-black-40'
                         : 'tw-text-black tw-placeholder-black-60 dark:tw-text-white',
                 ])}
+                onClick={suffix ? handleCaretPosition : undefined}
                 onChange={() => setValue(Number(getCurrentValueWithoutSuffix()))}
                 onKeyDown={handleKeyDown}
                 onKeyUp={handleKeyUp}
