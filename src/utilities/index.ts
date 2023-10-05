@@ -14,3 +14,4 @@ export * from './useForwardedRef';
 export * from './validation';
 export * from './dimensions';
 export * from './tokens';
+export * from './input';
