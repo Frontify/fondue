@@ -113,7 +113,7 @@ export const TreeItemMultiselect = memo(
         const { liClassName, backgroundClassName } = useMemo(() => {
             return {
                 liClassName: getMultiselectLiClassName(itemStyleProps, isDisabled),
-                backgroundClassName: getMultiselectBackgroundClassName(itemStyleProps, isSelected),
+                backgroundClassName: getMultiselectBackgroundClassName(itemStyleProps, isSelected, isDisabled),
             };
         }, [itemStyleProps, isDisabled, isSelected]);
 

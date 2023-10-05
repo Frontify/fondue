@@ -40,7 +40,11 @@ export const getMultiselectLiClassName = (itemStyleProps: TreeItemStyling, isDis
     ]);
 };
 
-export const getMultiselectBackgroundClassName = (itemStyleProps: TreeItemStyling, isSelected: boolean) => {
+export const getMultiselectBackgroundClassName = (
+    itemStyleProps: TreeItemStyling,
+    isSelected: boolean,
+    isDisabled: boolean,
+) => {
     const styling = TreeItemColorsClassMap[itemStyleProps.activeColorStyle ?? 'neutral'];
     return merge([
         'tw-block tw-absolute tw-inset-0 tw-transition-colors -tw-z-10',
@@ -48,7 +52,7 @@ export const getMultiselectBackgroundClassName = (itemStyleProps: TreeItemStylin
             ? TreeItemBorderRadiusClassMap[itemStyleProps.borderRadius ?? 'small']
             : '',
         (!isSelected || itemStyleProps.activeColorStyle !== 'neutral') && styling.pressedBackgroundColor,
-        styling.backgroundColor,
+        isDisabled ? TreeItemColorsClassMap['none'].backgroundColor : styling.backgroundColor,
     ]);
 };
 
