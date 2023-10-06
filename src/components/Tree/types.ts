@@ -208,6 +208,7 @@ export type TreeItemMultiselectProps = Omit<
 > & {
     isDisabled?: boolean;
     checkBoxPosition?: DragHandlerPosition;
+    onBeforeUnregisterChildren?: (id: string, nodes: TreeNodeWithoutElements[]) => void;
 };
 
 export type SortableTreeItemProps = TreeItemProps;
