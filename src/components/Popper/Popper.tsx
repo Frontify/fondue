@@ -1,16 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import {
-    Children,
-    ReactElement,
-    ReactNode,
-    createContext,
-    isValidElement,
-    useContext,
-    useEffect,
-    useMemo,
-    useState,
-} from 'react';
+import { Children, isValidElement, useEffect, useState } from 'react';
+import { Trigger } from '@utilities/dialogs/Trigger';
+import { Content } from '@utilities/dialogs/Content';
 import { usePopper } from 'react-popper';
 import { Portal } from '@components/Portal';
 import { PopperProps } from '@components/Popper/types';
@@ -18,28 +10,6 @@ import { PopperProps } from '@components/Popper/types';
 const DEFAULT_POPPER_WIDTH = 200;
 const DEFAULT_POPPER_HEIGHT = 400;
 const DEFAULT_DIALOG_TOP_POSITION = '100px';
-
-const PopperContext = createContext<PopperProps>({});
-
-const Reference = ({ children }: { children: ReactElement }) => {
-    return children;
-};
-Reference.displayName = 'FonduePopperReference';
-
-const Content = ({ children }: { children?: ReactNode }): Nullable<ReactElement> => {
-    const { open } = usePopperContext();
-    // eslint-disable-next-line react/jsx-no-useless-fragment
-    return open ? <>{children}</> : null;
-};
-Content.displayName = 'FonduePopperContent';
-
-const usePopperContext = () => {
-    const context = useContext(PopperContext);
-    if (!context) {
-        throw new Error('Popper compound components cannot be rendered outside the Popper component');
-    }
-    return context;
-};
 
 export const Popper = ({
     children,
@@ -97,18 +67,19 @@ export const Popper = ({
           }
         : {};
 
-    const value = useMemo(() => ({ open }), [open]);
     return (
-        <PopperContext.Provider value={value}>
+        <>
             {Children.map(children, (child) => {
                 if (isValidElement(child) && typeof child.type === 'function') {
-                    const { name } = child.type;
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore Property 'displayName' does not exist on type 'JSXElementConstructor<any>'.ts(2339)
+                    const { displayName } = child.type;
 
-                    if (name === Reference.name) {
+                    if (displayName === Trigger.displayName) {
                         return <div ref={setReferenceElement}>{child}</div>;
                     }
 
-                    if (name === Content.name) {
+                    if (displayName === Content.displayName && open) {
                         return enablePortal ? (
                             <Portal>
                                 <div
@@ -135,9 +106,9 @@ export const Popper = ({
                     }
                 }
             })}
-        </PopperContext.Provider>
+        </>
     );
 };
 Popper.displayName = 'FonduePopper';
-Popper.Reference = Reference;
+Popper.Trigger = Trigger;
 Popper.Content = Content;

@@ -85,11 +85,11 @@ export const Overlay = ({
 
                         if (displayName === Trigger.displayName) {
                             return (
-                                <Popper.Reference>
+                                <Popper.Trigger>
                                     <div id={id} ref={setTriggerElementRef} data-test-id={`${dataTestId}-trigger`}>
                                         {child}
                                     </div>
-                                </Popper.Reference>
+                                </Popper.Trigger>
                             );
                         }
 
