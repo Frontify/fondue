@@ -8,26 +8,29 @@ import { merge } from '@utilities/merge';
 
 const EXAMPLE_CONTENT = 'Lorem ipsum dolor sit amet';
 
+const spacingSelect = {
+    options: Object.values(SPACING_VALUES),
+    control: { type: 'select' },
+    defaultValue: '',
+};
+
 export default {
     title: 'Layout/Grid',
     component: Grid,
     tags: ['autodocs'],
     argTypes: {
-        spacingX: {
-            options: SPACING_VALUES,
+        paddingX: spacingSelect,
+        paddingY: spacingSelect,
+        padding: spacingSelect,
+        marginX: spacingSelect,
+        marginY: spacingSelect,
+        margin: spacingSelect,
+        spacingX: spacingSelect,
+        spacingY: spacingSelect,
+        spacing: {
+            options: Object.values(SPACING_VALUES),
             control: { type: 'select' },
-        },
-        spacingY: {
-            options: SPACING_VALUES,
-            control: { type: 'select' },
-        },
-        padding: {
-            options: SPACING_VALUES,
-            control: { type: 'select' },
-        },
-        margin: {
-            options: SPACING_VALUES,
-            control: { type: 'select' },
+            defaultValue: 4,
         },
         as: {
             options: ['div', 'span'],
@@ -40,8 +43,7 @@ export default {
         },
     },
     args: {
-        spacingX: 4,
-        spacingY: 4,
+        spacing: 4,
         column: 4,
         'data-test-id': 'custom-test-id',
         padding: 4,

@@ -2,7 +2,7 @@
 
 import { Children, ReactElement, ReactNode } from 'react';
 import { Box } from '@components/Box';
-import { MARGIN_VALUES_MAP, PADDING_VALUES_MAP, SPACING_VALUES, SpacingValue } from '@utilities/dimensions';
+import { GAP_DIRECTIONS, GetGapClassName, SpacingValue } from '@utilities/dimensions';
 import { merge } from '@utilities/merge';
 import { ContainerHTMLElement } from 'src/types/elements';
 
@@ -25,9 +25,15 @@ export type STACK_PROPS = {
     children?: ReactNode | ReactNode[] | JSX.Element;
     direction?: STACK_DIRECTION;
     spacing?: SpacingValue;
+    spacingX?: SpacingValue;
+    spacingY?: SpacingValue;
     divider?: ReactElement;
     margin?: SpacingValue;
+    marginX?: SpacingValue;
+    marginY?: SpacingValue;
     padding?: SpacingValue;
+    paddingX?: SpacingValue;
+    paddingY?: SpacingValue;
     bg?: string;
     color?: string;
     'data-test-id'?: string;
@@ -67,19 +73,22 @@ export const Stack = ({
     children,
     'data-test-id': dataTestId = STACK_TEST_ID,
     direction = 'column',
-    spacing = 0,
+    spacing,
+    spacingX,
+    spacingY,
     divider,
-    padding = 0,
-    margin = 0,
+    padding,
+    paddingX,
+    paddingY,
+    margin,
+    marginX,
+    marginY,
     justify = 'start',
     alignItems = 'start',
     bg,
     color,
     as: ContainerElement = 'div',
 }: STACK_PROPS) => {
-    const paddingClassName = SPACING_VALUES.includes(padding) ? PADDING_VALUES_MAP[padding] : PADDING_VALUES_MAP[0];
-    const marginClassName = SPACING_VALUES.includes(padding) ? MARGIN_VALUES_MAP[margin] : MARGIN_VALUES_MAP[0];
-
     const renderedChildren = Children.map(children, (child) => {
         return (
             <>
@@ -97,14 +106,18 @@ export const Stack = ({
                 STACK_JUSTIFY_MAPPING[justify],
                 STACK_ALIGN_ITEMS_MAPPING[alignItems],
                 STACK_DIRECTION_MAPPING[direction],
-                paddingClassName,
-                marginClassName,
+                GetGapClassName(GAP_DIRECTIONS.GAP_X, spacingX),
+                GetGapClassName(GAP_DIRECTIONS.GAP_Y, spacingY),
+                GetGapClassName(GAP_DIRECTIONS.GAP, spacing),
                 bg,
                 color,
             ])}
-            style={{
-                gap: spacing,
-            }}
+            margin={margin}
+            marginX={marginX}
+            marginY={marginY}
+            padding={padding}
+            paddingX={paddingX}
+            paddingY={paddingY}
             as={ContainerElement}
         >
             {renderedChildren}

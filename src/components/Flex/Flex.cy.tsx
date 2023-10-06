@@ -315,4 +315,184 @@ describe('Flex Component', () => {
         cy.get(FLEX_CHILD_ID).as('FlexChild');
         cy.get('@FlexChild').should('have.length', 4);
     });
+
+    it('should render with padding className', () => {
+        cy.mount(
+            <FlexComponent padding={8}>
+                <div>{CONTENT_STRING_LONG}</div>
+            </FlexComponent>,
+        );
+        cy.get(FLEX_ID).should('have.class', 'tw-p-2');
+    });
+
+    it('should render with paddingX className', () => {
+        cy.mount(
+            <FlexComponent paddingX={8}>
+                <div>{CONTENT_STRING_LONG}</div>
+            </FlexComponent>,
+        );
+        cy.get(FLEX_ID).should('have.class', 'tw-px-2');
+    });
+
+    it('should render with paddingY className', () => {
+        cy.mount(
+            <FlexComponent paddingY={8}>
+                <div>{CONTENT_STRING_LONG}</div>
+            </FlexComponent>,
+        );
+        cy.get(FLEX_ID).should('have.class', 'tw-py-2');
+    });
+
+    it('should render with paddingX & paddingY classNames', () => {
+        cy.mount(
+            <FlexComponent paddingX={8} paddingY={8}>
+                <div>{CONTENT_STRING_LONG}</div>
+            </FlexComponent>,
+        );
+        cy.get(FLEX_ID).should('have.class', 'tw-px-2 tw-py-2');
+    });
+
+    it('should render with padding styling', () => {
+        cy.mount(
+            <FlexComponent padding={8}>
+                <div>{CONTENT_STRING_LONG}</div>
+            </FlexComponent>,
+        );
+        cy.get(FLEX_ID).should('have.css', 'padding', '8px');
+    });
+
+    it('should render with paddingX styling', () => {
+        cy.mount(
+            <FlexComponent paddingX={8}>
+                <div>{CONTENT_STRING_LONG}</div>
+            </FlexComponent>,
+        );
+        cy.get(FLEX_ID).should('have.css', 'padding', '0px 8px');
+    });
+
+    it('should render with paddingY styling', () => {
+        cy.mount(
+            <FlexComponent paddingY={8}>
+                <div>{CONTENT_STRING_LONG}</div>
+            </FlexComponent>,
+        );
+        cy.get(FLEX_ID).should('have.css', 'padding', '8px 0px');
+    });
+
+    it('should render with paddingX & paddingY styling', () => {
+        cy.mount(
+            <FlexComponent paddingX={12} paddingY={8}>
+                <div>{CONTENT_STRING_LONG}</div>
+            </FlexComponent>,
+        );
+        cy.get(FLEX_ID).should('have.css', 'padding', '8px 12px');
+    });
+
+    it('should render with margin className', () => {
+        cy.mount(
+            <FlexComponent margin={8}>
+                <div>{CONTENT_STRING_LONG}</div>
+            </FlexComponent>,
+        );
+        cy.get(FLEX_ID).should('have.class', 'tw-m-2');
+    });
+
+    it('should render with marginX className', () => {
+        cy.mount(
+            <FlexComponent marginX={8}>
+                <div>{CONTENT_STRING_LONG}</div>
+            </FlexComponent>,
+        );
+        cy.get(FLEX_ID).should('have.class', 'tw-mx-2');
+    });
+
+    it('should render with marginY className', () => {
+        cy.mount(
+            <FlexComponent marginY={8}>
+                <div>{CONTENT_STRING_LONG}</div>
+            </FlexComponent>,
+        );
+        cy.get(FLEX_ID).should('have.class', 'tw-my-2');
+    });
+
+    it('should render with marginX & marginY classNames', () => {
+        cy.mount(
+            <FlexComponent marginX={8} marginY={8}>
+                <div>{CONTENT_STRING_LONG}</div>
+            </FlexComponent>,
+        );
+        cy.get(FLEX_ID).should('have.class', 'tw-mx-2 tw-my-2');
+    });
+
+    it('should render with margin styling', () => {
+        cy.mount(
+            <FlexComponent margin={8}>
+                <div>{CONTENT_STRING_LONG}</div>
+            </FlexComponent>,
+        );
+        cy.get(FLEX_ID).should('have.css', 'margin', '8px');
+    });
+
+    it('should render with marginX styling', () => {
+        cy.mount(
+            <FlexComponent marginX={8}>
+                <div>{CONTENT_STRING_LONG}</div>
+            </FlexComponent>,
+        );
+        cy.get(FLEX_ID).should('have.css', 'margin', '0px 8px');
+    });
+
+    it('should render with marginY styling', () => {
+        cy.mount(
+            <FlexComponent marginY={8}>
+                <div>{CONTENT_STRING_LONG}</div>
+            </FlexComponent>,
+        );
+        cy.get(FLEX_ID).should('have.css', 'margin', '8px 0px');
+    });
+
+    it('should render with marginX & marginY styling', () => {
+        cy.mount(
+            <FlexComponent marginX={12} marginY={8}>
+                <div>{CONTENT_STRING_LONG}</div>
+            </FlexComponent>,
+        );
+        cy.get(FLEX_ID).should('have.css', 'margin', '8px 12px');
+    });
+
+    it('should render with gap className', () => {
+        cy.mount(
+            <FlexComponent spacing={8}>
+                <div>{CONTENT_STRING_LONG}</div>
+            </FlexComponent>,
+        );
+        cy.get(FLEX_ID).should('have.class', 'tw-gap-2');
+    });
+
+    it('should render with gapX className', () => {
+        cy.mount(
+            <FlexComponent spacingX={8}>
+                <div>{CONTENT_STRING_LONG}</div>
+            </FlexComponent>,
+        );
+        cy.get(FLEX_ID).should('have.class', 'tw-gap-x-2');
+    });
+
+    it('should render with gapY className', () => {
+        cy.mount(
+            <FlexComponent spacingY={8}>
+                <div>{CONTENT_STRING_LONG}</div>
+            </FlexComponent>,
+        );
+        cy.get(FLEX_ID).should('have.class', 'tw-gap-y-2');
+    });
+
+    it('should render with gapX and gapY className', () => {
+        cy.mount(
+            <FlexComponent spacingX={8} spacingY={16}>
+                <div>{CONTENT_STRING_LONG}</div>
+            </FlexComponent>,
+        );
+        cy.get(FLEX_ID).should('have.class', 'tw-gap-x-2 tw-gap-y-4');
+    });
 });
