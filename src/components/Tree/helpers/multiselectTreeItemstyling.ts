@@ -34,9 +34,8 @@ export const getMultiselectLiClassName = (itemStyleProps: TreeItemStyling, isDis
     return merge([
         FOCUS_VISIBLE_STYLE,
         'tw-box-content tw-relative tw-cursor-default tw-transition-colors tw-outline-none tw-ring-inset tw-group tw-no-underline tw-leading-5',
-        styling.textColor,
         TreeItemSpacingClassMap[itemStyleProps.spacingY ?? 'none'],
-        isDisabled ? 'tw-text-text-disabled' : '',
+        isDisabled ? 'tw-text-text-disabled' : styling.textColor,
     ]);
 };
 
