@@ -15,3 +15,11 @@ export const validationClassMap: Record<Validation, string> = {
     [Validation.Error]: 'tw-border-text-negative',
     [Validation.Warning]: 'tw-border-text-warning',
 };
+
+export const validationTextClassMap: Record<Validation, string> = {
+    [Validation.Default]: 'tw-text-text',
+    [Validation.Loading]: 'tw-text-text-disabled',
+    [Validation.Success]: 'tw-text-text-positive',
+    [Validation.Error]: 'tw-text-text-negative',
+    [Validation.Warning]: 'tw-text-text-warning',
+};
