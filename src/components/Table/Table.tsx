@@ -79,8 +79,11 @@ const mapToTableAriaProps = (columns: Column[], rows: Row[], hasSort = false): T
                 {(item) => (
                     <AriaRow>
                         {(columnKey) => (
-                            <AriaCell key={`${item.key}-${columnKey}`} aria-label={item.cells[columnKey].ariaLabel}>
-                                {item.cells[columnKey].value}
+                            <AriaCell
+                                key={`${item.key}-${columnKey}`}
+                                aria-label={item.cells[columnKey as string].ariaLabel}
+                            >
+                                {item.cells[columnKey as string].value}
                             </AriaCell>
                         )}
                     </AriaRow>

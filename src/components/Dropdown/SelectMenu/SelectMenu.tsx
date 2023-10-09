@@ -63,7 +63,7 @@ export const SelectMenu = ({
                                 key={item.key}
                                 state={state}
                                 node={item}
-                                menuItem={keyItemRecord[item.key]}
+                                menuItem={keyItemRecord[item.key as string]}
                             />
                         ))}
                     </SelectMenuSection>

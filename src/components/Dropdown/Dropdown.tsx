@@ -103,7 +103,7 @@ export const Dropdown = ({
     const state = useSelectState({
         ...props,
         defaultSelectedKey: activeItemId,
-        onSelectionChange: (key) => onChange(key),
+        onSelectionChange: (key) => onChange(key as string),
         disabledKeys: getDisabledItemIds(getMenuItems(menuBlocks)),
     });
     const triggerRef = useRef<HTMLButtonElement | null>(null);
