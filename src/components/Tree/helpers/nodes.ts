@@ -90,9 +90,9 @@ export const getTreeNodesWithoutElements = (
 ): TreeNodeWithoutElements[] => {
     const parsedNodes = nodes
         .filter((n) => n.props.parentId === parentId)
-        .map((node, index) => ({
+        .map((node) => ({
             ...extractNodeFromElement(node),
-            nodes: getTreeNodesWithoutElements(nodes.slice(index + 1), node.props.id),
+            nodes: getTreeNodesWithoutElements(node.props.children ?? [], node.props.id),
         }));
 
     return parsedNodes;

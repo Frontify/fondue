@@ -21,9 +21,27 @@ export type TreeNodeWithoutElements = {
 
 export type OnSelectCallback = (id: string, ignoreRemoveSelected?: boolean, nodes?: TreeNodeWithoutElements[]) => void;
 export type OnSelectInternalCallback = (id: string, ignoreRemoveSelected?: boolean) => void;
-export type OnExpandCallback = (id: string) => void;
+/**
+ * node contains information about the parent and children excluding the React Elements
+ * useDefaultTreeStateUpdate will execute the internal state update even if a onExpand callback is passed to the Tree component
+ *   this will avoid having to handle the expandedIds everytime we want to use the component prop
+ */
+export type OnExpandCallback = (
+    id: string,
+    node?: TreeNodeWithoutElements,
+    useDefaultTreeStateUpdate?: boolean,
+) => void;
 
-export type OnShrinkCallback = (id: string) => void;
+/**
+ * node contains information about the parent and children excluding the React Elements
+ * useDefaultTreeStateUpdate will execute the internal state update even if a onShrink callback is passed to the Tree component
+ *   this will avoid having to handle the expandedIds everytime we want to use the component prop
+ */
+export type OnShrinkCallback = (
+    id: string,
+    node?: TreeNodeWithoutElements,
+    useDefaultTreeStateUpdate?: boolean,
+) => void;
 export type OnTreeDropCallback = (args: {
     id: string;
     parentId: Nullable<string>;
@@ -140,6 +158,8 @@ export type TreeProps = {
     dragHandlerPosition?: DragHandlerPosition;
     showDragHandlerOnHoverOnly?: boolean;
     showContentWhileDragging?: boolean;
+    ignoreInternalStateUpdateIfOnExpand?: boolean;
+    ignoreInternalStateUpdateIfOnShrink?: boolean;
     itemStyle?: TreeItemStyling;
     'data-test-id'?: string;
     onSelect?: OnSelectCallback;
@@ -208,7 +228,7 @@ export type TreeItemMultiselectProps = Omit<
 > & {
     isDisabled?: boolean;
     checkBoxPosition?: DragHandlerPosition;
-    onBeforeUnregisterChildren?: (id: string, nodes: TreeNodeWithoutElements[]) => void;
+    onBeforeUnregisterChildren?: (node: TreeNodeWithoutElements, enrichedChildren?: ReactElement[]) => void;
 };
 
 export type SortableTreeItemProps = TreeItemProps;

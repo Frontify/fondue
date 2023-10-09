@@ -40,6 +40,7 @@ import type {
     TreeDragStartEvent,
     TreeItemProps,
     TreeItemStyling,
+    TreeNodeWithoutElements,
     TreeProps,
     TreeState,
     TreeStateAction,
@@ -197,6 +198,8 @@ export const Tree = memo(
         dragHandlerPosition = 'left',
         showDragHandlerOnHoverOnly = true,
         showContentWhileDragging = false,
+        ignoreInternalStateUpdateIfOnExpand = true,
+        ignoreInternalStateUpdateIfOnShrink = true,
         itemStyle,
         'data-test-id': dataTestId = 'fondue-tree',
     }: TreeProps) => {
@@ -273,9 +276,15 @@ export const Tree = memo(
         );
 
         const handleExpand = useCallback(
-            (id: string) => {
+            (id: string, node?: TreeNodeWithoutElements) => {
                 if (onExpand) {
-                    return onExpand(id);
+                    onExpand(id, node);
+                }
+
+                // Consider the boolean prop only if we have a callback passed to the component
+                // to keep Tree default behavior if no callback
+                if (onExpand && ignoreInternalStateUpdateIfOnExpand) {
+                    return;
                 }
 
                 updateTreeState({
@@ -283,13 +292,19 @@ export const Tree = memo(
                     payload: id,
                 });
             },
-            [onExpand],
+            [onExpand, ignoreInternalStateUpdateIfOnExpand],
         );
 
         const handleShrink = useCallback(
-            (id: string) => {
+            (id: string, node?: TreeNodeWithoutElements) => {
                 if (onShrink) {
-                    return onShrink(id);
+                    onShrink(id, node);
+                }
+
+                // Consider the boolean prop only if we have a callback passed to the component
+                // to keep Tree default behavior if no callback
+                if (onShrink && ignoreInternalStateUpdateIfOnShrink) {
+                    return;
                 }
 
                 updateTreeState({
@@ -297,7 +312,7 @@ export const Tree = memo(
                     payload: id,
                 });
             },
-            [onShrink],
+            [onShrink, ignoreInternalStateUpdateIfOnShrink],
         );
 
         const handleDragEnd = (event: DragEndEvent) => {

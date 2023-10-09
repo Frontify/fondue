@@ -3,7 +3,12 @@
 import { Children, MouseEvent, memo, useCallback, useEffect, useMemo, useRef } from 'react';
 import noop from 'lodash-es/noop';
 
-import { type RegisterNodeChildrenPayload, TreeItemMultiselectProps, TreeItemStyling } from '@components/Tree/types';
+import {
+    type RegisterNodeChildrenPayload,
+    TreeItemMultiselectProps,
+    TreeItemStyling,
+    TreeNodeWithoutElements,
+} from '@components/Tree/types';
 
 import { INDENTATION_WIDTH, Projection, getMultiselectCheckBoxState, getTreeNodesWithoutElements } from '../helpers';
 import { removeFragmentsAndEnrichChildren, useDeepCompareEffect } from '../utils';
@@ -25,8 +30,8 @@ type TreeItemPrivateProps = {
     isExpanded?: boolean;
     /** onSelect is passed by the Tree component when cloning the TreeItem */
     onSelect?: (id: string, ignoreRemoveSelected: boolean, isRemoveOnly?: boolean) => void;
-    onExpand?: (id: string) => void;
-    onShrink?: (id: string) => void;
+    onExpand?: (id: string, node?: TreeNodeWithoutElements) => void;
+    onShrink?: (id: string, node?: TreeNodeWithoutElements) => void;
     projection?: Nullable<Projection>;
     unregisterNodeChildren?: (payload: string) => void;
     registerNodeChildren?: (payload: RegisterNodeChildrenPayload) => void;
@@ -62,23 +67,10 @@ export const TreeItemMultiselect = memo(
         const { isSelected: isParentSelected } = useTreeItem(parentId ?? '');
         const { isSelected: isParentPartialSelected } = useTreeItem(`*${parentId}`);
 
-        const toggleExpand = useCallback(
-            (event?: MouseEvent<HTMLButtonElement>) => {
-                event?.stopPropagation();
-                isExpanded ? onShrink?.(id) : onExpand?.(id);
-            },
-            [id, isExpanded, onExpand, onShrink],
-        );
-
         useEffect(() => {
             if (isParentSelected && !isSelected && onSelect) {
                 onSelect(id, true);
             }
-
-            // if (!isParentSelected && !isParentPartialSelected && isSelected && onSelect && parentId !== '__ROOT__') {
-            //     console.log('Mount', parentId, isParentSelected, isParentPartialSelected, isSelected);
-            //     onSelect(id, false);
-            // }
         }, [id, onSelect, isParentSelected, isParentPartialSelected, isSelected, parentId]);
 
         const hasChildren = Children.count(children) > 0;
@@ -95,10 +87,23 @@ export const TreeItemMultiselect = memo(
             };
         }, [children, id, level]);
 
+        const toggleExpand = useCallback(
+            (event?: MouseEvent<HTMLButtonElement>) => {
+                event?.stopPropagation();
+                const nodesWithoutElements = getTreeNodesWithoutElements(enrichedChildren, id);
+                const node = { id, parentId: parentId ?? '', level, nodes: nodesWithoutElements };
+                isExpanded ? onShrink?.(id, node) : onExpand?.(id, node);
+            },
+            [id, isExpanded, onExpand, onShrink, enrichedChildren, level, parentId],
+        );
+
         useDeepCompareEffect(() => {
             if (Children.count(enrichedChildren) === 0 || !isExpanded) {
-                const childNodes = getTreeNodesWithoutElements(enrichedChildren, id);
-                onBeforeUnregisterChildren?.(id, childNodes);
+                const nodesWithoutElements = getTreeNodesWithoutElements(enrichedChildren, id);
+                onBeforeUnregisterChildren?.(
+                    { id, parentId: parentId ?? '', level, nodes: nodesWithoutElements },
+                    enrichedChildren,
+                );
                 unregisterNodeChildren?.(id);
                 return;
             }

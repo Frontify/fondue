@@ -156,19 +156,76 @@ export const MultiselectWithBasicItem = ({ ...args }: TreeProps) => {
         );
     };
 
-    const handleItemBeforeUnregisterChildren = (id: string, nodes: TreeNodeWithoutElements[]) => {
-        console.log({ id, nodes });
+    // // TODO - move to helpers file
+    const getSelectedIdsToRemoveFromNodes = (nodes: TreeNodeWithoutElements[] = []): string[] => {
+        if (nodes.length === 0) {
+            return [];
+        }
+        // const ids = nodes.filter(({ id }) => selectedIds.includes(id)).map(({ id }) => id);
+        let ids = nodes.map(({ id }) => id);
+
+        for (const node of nodes) {
+            ids = [...ids, ...getSelectedIdsToRemoveFromNodes(node.nodes)];
+        }
+
+        return ids;
+    };
+
+    const handleItemShrink = (id: string, node?: TreeNodeWithoutElements) => {
+        if (!selectedIds.includes(id) && !selectedIds.includes(`*${id}`) && node && node.nodes.length > 0) {
+            // const idsToRemove = node.nodes.map(({ id }) => id);
+            const idsToRemove = getSelectedIdsToRemoveFromNodes(node.nodes);
+            console.log('SelectedIds when shrinking', selectedIds);
+            console.log('Ids to remove', idsToRemove);
+            if (selectedIds.find((selectedId) => idsToRemove.includes(selectedId))) {
+                console.log('-----------------------------');
+                console.log('Should remove children from selected ids', {
+                    id,
+                    idsToRemove,
+                    selectedIds,
+                });
+                console.log('-----------------------------');
+                setSelectedIds((currentSelected) =>
+                    currentSelected.filter((selectedId) => !idsToRemove.includes(selectedId)),
+                );
+            }
+        }
+    };
+
+    const handleItemExpand = (id: string, node?: TreeNodeWithoutElements) => {
+        console.log('When expanding', { id, selectedIds, node });
+        // if (!selectedIds.includes(id) && !selectedIds.includes(`*${id}`) && node && node.nodes.length > 0) {
+        //     // const idsToRemove = node.nodes.map(({ id }) => id);
+        //     const idsToRemove = getSelectedIdsToRemoveFromNodes(node.nodes);
+        //     if (selectedIds.find((selectedId) => idsToRemove.includes(selectedId))) {
+        //         console.log('-----------------------------');
+        //         console.log('Should remove children from selected ids', {
+        //             id,
+        //             idsToRemove,
+        //             selectedIds,
+        //             node,
+        //         });
+        //         console.log('-----------------------------');
+        //         setSelectedIds((currentSelected) =>
+        //             currentSelected.filter((selectedId) => !idsToRemove.includes(selectedId)),
+        //         );
+        //     }
+        // }
     };
 
     return (
         <Container maxWidth="400px">
-            <TreeView id={args.id} {...cleanProps(args)} selectedIds={selectedIds} onSelect={handleItemSelected}>
-                {treeItems.map((treeItem) =>
-                    renderTreeItemComponent(
-                        { ...treeItem, onBeforeUnregisterChildren: handleItemBeforeUnregisterChildren },
-                        selectedIds,
-                    ),
-                )}
+            <TreeView
+                id={args.id}
+                {...cleanProps(args)}
+                selectedIds={selectedIds}
+                onSelect={handleItemSelected}
+                onShrink={handleItemShrink}
+                onExpand={handleItemExpand}
+                ignoreInternalStateUpdateIfOnShrink={false}
+                ignoreInternalStateUpdateIfOnExpand={false}
+            >
+                {treeItems.map((treeItem) => renderTreeItemComponent({ ...treeItem }, selectedIds))}
             </TreeView>
         </Container>
     );
