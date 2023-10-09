@@ -54,6 +54,7 @@ import {
 } from './utils';
 
 import {
+    ROOT_ID,
     currentNodesChanged,
     findIndexById,
     getAnnouncements,
@@ -71,7 +72,6 @@ import {
 } from './helpers';
 
 import { TreeContext, TreeContextProps } from './TreeContext';
-import { ROOT_ID } from './helpers';
 import { InternalTreeItemMultiSelectProps } from './TreeItem/TreeItemMultiselect';
 
 const measuring: MeasuringConfiguration = {

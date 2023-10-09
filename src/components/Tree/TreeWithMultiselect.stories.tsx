@@ -29,7 +29,7 @@ export default {
         id: 'storybook-tree',
         multiselect: true,
         draggable: true,
-        selectedIds: ['1'],
+        selectedIds: ['__ROOT__/2'],
         dragHandlerPosition: 'left',
         spacingY: 'none',
         contentHight: 'single-line',
@@ -101,6 +101,8 @@ export default {
         },
         selectedIds: {
             control: { type: 'object' },
+            description:
+                "Pre-selected Ids must be in the format '<parent_id>/<slected_id>' ('__ROOT__' is the root id)",
         },
         expandedIds: {
             control: { type: 'object' },
@@ -118,7 +120,7 @@ const TreeItemContentComponent = ({ title }: { title: string }) => {
 };
 
 const renderTreeItemComponent = (
-    { nodes, label, numChildNodes, onSelect, onBeforeUnregisterChildren, ...treeItem }: TreeItemMockMultiselect,
+    { nodes, label, numChildNodes, onSelect, ...treeItem }: TreeItemMockMultiselect,
     selectedIds: string[],
 ) => {
     const nodesLength = nodes?.length ?? 0;
@@ -130,10 +132,9 @@ const renderTreeItemComponent = (
             key={treeItem.id}
             contentComponent={<TreeItemContentComponent title={label || 'NO TITLE'} />}
             onSelect={onSelect ?? action('onSelect')}
-            onBeforeUnregisterChildren={onBeforeUnregisterChildren ?? action('onBeforeUnregisterChildren')}
             showCaret={showCaret}
         >
-            {nodes?.map((node) => renderTreeItemComponent({ ...node, onBeforeUnregisterChildren }, selectedIds))}
+            {nodes?.map((node) => renderTreeItemComponent(node, selectedIds))}
         </TreeItemMultiselect>
     );
 };
@@ -156,19 +157,10 @@ export const MultiselectWithBasicItem = ({ ...args }: TreeProps) => {
         );
     };
 
-    const handleItemBeforeUnregisterChildren = (id: string, nodes: TreeNodeWithoutElements[]) => {
-        console.log({ id, nodes });
-    };
-
     return (
         <Container maxWidth="400px">
             <TreeView id={args.id} {...cleanProps(args)} selectedIds={selectedIds} onSelect={handleItemSelected}>
-                {treeItems.map((treeItem) =>
-                    renderTreeItemComponent(
-                        { ...treeItem, onBeforeUnregisterChildren: handleItemBeforeUnregisterChildren },
-                        selectedIds,
-                    ),
-                )}
+                {treeItems.map((treeItem) => renderTreeItemComponent(treeItem, selectedIds))}
             </TreeView>
         </Container>
     );
