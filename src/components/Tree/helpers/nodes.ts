@@ -81,6 +81,7 @@ export const extractNodeFromElement = (node: ReactElement): TreeNodeWithoutEleme
     id: node.props.id,
     level: node.props.level,
     parentId: node.props.parentId,
+    extendedId: `${node.props.parentId}/${node.props.id}`,
     nodes: [],
 });
 

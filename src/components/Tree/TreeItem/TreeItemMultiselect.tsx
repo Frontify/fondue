@@ -5,7 +5,7 @@ import noop from 'lodash-es/noop';
 
 import { type RegisterNodeChildrenPayload, TreeItemMultiselectProps, TreeItemStyling } from '@components/Tree/types';
 
-import { INDENTATION_WIDTH, Projection, getMultiselectCheckBoxState, getTreeNodesWithoutElements } from '../helpers';
+import { INDENTATION_WIDTH, Projection, getMultiselectCheckBoxState } from '../helpers';
 import { removeFragmentsAndEnrichChildren, useDeepCompareEffect } from '../utils';
 import {
     getMultiselectBackgroundClassName,
@@ -16,7 +16,7 @@ import {
 import { ExpandButton } from './ExpandButton';
 import { Checkbox, CheckboxEmphasis, CheckboxSize } from '@components/Checkbox/Checkbox';
 import { Container } from '@components/Container';
-import { useTreeItem } from './useTreeItem';
+import { useMultiselectTreeItem } from './useMultiselectTreeItem';
 
 /** @private */
 type TreeItemPrivateProps = {
@@ -24,7 +24,7 @@ type TreeItemPrivateProps = {
     level?: number;
     isExpanded?: boolean;
     /** onSelect is passed by the Tree component when cloning the TreeItem */
-    onSelect?: (id: string, ignoreRemoveSelected: boolean, isRemoveOnly?: boolean) => void;
+    onSelect?: (id: string, ignoreRemoveSelected: boolean) => void;
     onExpand?: (id: string) => void;
     onShrink?: (id: string) => void;
     projection?: Nullable<Projection>;
@@ -47,7 +47,6 @@ export const TreeItemMultiselect = memo(
         onSelect,
         onExpand,
         onShrink,
-        onBeforeUnregisterChildren,
         registerNodeChildren,
         unregisterNodeChildren,
         isDisabled = false,
@@ -57,10 +56,7 @@ export const TreeItemMultiselect = memo(
         'data-test-id': dataTestId = 'fondue-tree-item',
     }: InternalTreeItemMultiSelectProps) => {
         const setActiveNodeRef = useRef<HTMLInputElement | null>(null);
-        const { isSelected, isExpanded } = useTreeItem(id);
-        const { isSelected: isPartialSelected } = useTreeItem(`*${id}`);
-        const { isSelected: isParentSelected } = useTreeItem(parentId ?? '');
-        const { isSelected: isParentPartialSelected } = useTreeItem(`*${parentId}`);
+        const { isSelected, isExpanded, isPartialSelected, isParentSelected } = useMultiselectTreeItem(id);
 
         const toggleExpand = useCallback(
             (event?: MouseEvent<HTMLButtonElement>) => {
@@ -74,12 +70,7 @@ export const TreeItemMultiselect = memo(
             if (isParentSelected && !isSelected && onSelect) {
                 onSelect(id, true);
             }
-
-            // if (!isParentSelected && !isParentPartialSelected && isSelected && onSelect && parentId !== '__ROOT__') {
-            //     console.log('Mount', parentId, isParentSelected, isParentPartialSelected, isSelected);
-            //     onSelect(id, false);
-            // }
-        }, [id, onSelect, isParentSelected, isParentPartialSelected, isSelected, parentId]);
+        }, [id, onSelect, isParentSelected, isSelected, parentId]);
 
         const hasChildren = Children.count(children) > 0;
 
@@ -97,14 +88,12 @@ export const TreeItemMultiselect = memo(
 
         useDeepCompareEffect(() => {
             if (Children.count(enrichedChildren) === 0 || !isExpanded) {
-                const childNodes = getTreeNodesWithoutElements(enrichedChildren, id);
-                onBeforeUnregisterChildren?.(id, childNodes);
                 unregisterNodeChildren?.(id);
                 return;
             }
 
             registerNodeChildren?.({ id, children: enrichedChildren });
-        }, [isExpanded, enrichedChildren, id, onSelect]);
+        }, [isExpanded, enrichedChildren, id]);
 
         const itemStyleProps = useMemo(() => {
             return {
@@ -146,7 +135,7 @@ export const TreeItemMultiselect = memo(
                         id={`checkbox-${id}`}
                         ref={setActiveNodeRef}
                         disabled={isDisabled}
-                        aria-label="TODO: some label here..."
+                        aria-label={label ?? ''}
                         emphasis={CheckboxEmphasis.Weak}
                         helperText=""
                         hideLabel

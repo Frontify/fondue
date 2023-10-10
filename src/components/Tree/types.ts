@@ -16,6 +16,7 @@ export type TreeNodeWithoutElements = {
     id: string;
     level: number;
     parentId: string;
+    extendedId: string;
     nodes: TreeNodeWithoutElements[];
 };
 
