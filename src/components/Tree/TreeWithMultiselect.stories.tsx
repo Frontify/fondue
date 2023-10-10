@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { Meta } from '@storybook/react';
-import { action } from '@storybook/addon-actions';
 
 import { IconDocument } from '@foundation/Icon';
 
@@ -134,7 +133,7 @@ const renderTreeItemComponent = (
             {...treeItem}
             key={treeItem.id}
             contentComponent={<TreeItemContentComponent title={label || 'NO TITLE'} />}
-            onSelect={onSelect ?? action('onSelect')}
+            onSelect={onSelect}
             showCaret={showCaret}
         >
             {nodes?.map((node) => renderTreeItemComponent(node, selectedIds))}
