@@ -61,7 +61,7 @@ export type TextInputBaseProps = {
     copyable?: boolean;
     value?: string;
     onChange?: (value: string) => void;
-    onEnterPressed?: (event: KeyboardEvent<HTMLInputElement>) => void;
+    onEnterPressed?: (value: string) => void;
     onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
     onFocus?: (event: FocusEvent<HTMLInputElement>) => void;
     onClear?: () => void;
@@ -181,7 +181,7 @@ export const TextInput = ({
 
     const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Enter' && onEnterPressed) {
-            onEnterPressed(event);
+            onEnterPressed(inputElement.current ? inputElement.current.value : '');
         }
     };
 
@@ -236,7 +236,7 @@ export const TextInput = ({
                         : 'tw-text-black tw-placeholder-black-60 dark:tw-text-white',
                 ])}
                 onClick={() => inputElement.current?.focus()}
-                onChange={(event) => onChange && onChange(event.currentTarget.value)}
+                onChange={(event) => onChange?.(event.currentTarget.value)}
                 onBlur={onBlur}
                 onKeyDown={onKeyDown}
                 placeholder={placeholder}
@@ -299,8 +299,8 @@ export const TextInput = ({
                         inputElement.current?.focus();
                         inputElement.current?.setAttribute('value', '');
 
-                        onChange && onChange('');
-                        onClear && onClear();
+                        onChange?.('');
+                        onClear?.();
                     }}
                     data-test-id="clear-icon"
                     title="Clear text input"
