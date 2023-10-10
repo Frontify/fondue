@@ -240,7 +240,7 @@ const Template: StoryFn<TableProps> = (args) => {
             columns={columns}
             rows={sortedRows}
             selectedRowIds={selectedRows}
-            onSelectionChange={(ids) => setSelectedRows(ids || [])}
+            onSelectionChange={(ids) => setSelectedRows((ids as (string | number)[]) || [])}
             onSortChange={onSortChange}
         />
     );
@@ -294,7 +294,7 @@ const TemplateWithSearch: StoryFn<TableProps> = (args) => {
                 columns={columns}
                 rows={filteredRows}
                 selectedRowIds={selectedRows}
-                onSelectionChange={(ids) => setSelectedRows(ids || [])}
+                onSelectionChange={(ids) => setSelectedRows((ids as (string | number)[]) || [])}
                 onSortChange={onSortChange}
             />
         </>
