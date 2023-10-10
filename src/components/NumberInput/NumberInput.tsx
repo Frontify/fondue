@@ -92,7 +92,8 @@ export const NumberInput = ({
         const { key, shiftKey } = event;
         if (SPECIAL_KEYS.includes(key)) {
             const currentValue = getCurrentValueWithoutSuffix();
-            if (currentValue?.length === 0) {
+            const isNegativeSymbol: boolean = currentValue.length === 2 && currentValue.includes('-');
+            if (currentValue?.length === 0 || isNegativeSymbol) {
                 handleClear();
             }
             return;
@@ -167,7 +168,7 @@ export const NumberInput = ({
 
     const handleOnChange = useCallback(() => {
         const valueWithoutSuffix = getCurrentValueWithoutSuffix();
-        onChange?.(Number(valueWithoutSuffix));
+        onChange?.(valueWithoutSuffix ? Number(valueWithoutSuffix) : undefined);
         if (suffix) {
             handleCaretPosition();
         }
@@ -180,6 +181,7 @@ export const NumberInput = ({
         if (inputElement.current) {
             inputElement.current.value = defaultValue ? defaultValue.toString() : '';
         }
+        handleOnChange();
     };
 
     const handleFocus = (event: React.FocusEvent<HTMLInputElement, Element>) => {
