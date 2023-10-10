@@ -1,21 +1,21 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ReactElement } from 'react';
-import { Validation, validationClassMap, validationTextClassMap } from './validation';
+import { Validation, validationTextClassMap } from './validation';
 import { merge } from './merge';
 import { IconCheckMark16, IconExclamationMarkTriangle16 } from '@foundation/Icon';
 import { LoadingCircle, LoadingCircleSize } from '@components/index';
 
 type HelperTextProps = {
     text: string;
-    disabled: boolean;
-    'data-test-id': string;
+    disabled?: boolean;
+    'data-test-id'?: string;
     validationStyle?: Validation;
 };
 
 export const HelperText = ({
     text,
-    disabled,
+    disabled = false,
     validationStyle = Validation.Default,
     'data-test-id': dataTestId = 'fondue-helper-text',
 }: HelperTextProps): ReactElement => {
@@ -24,7 +24,7 @@ export const HelperText = ({
             data-test-id={dataTestId}
             className={merge([
                 'tw-text-s tw-font-sans',
-                disabled ? 'tw-text-black-40' : validationClassMap[validationStyle],
+                disabled ? 'tw-text-black-40' : validationTextClassMap[validationStyle],
             ])}
         >
             {text}
