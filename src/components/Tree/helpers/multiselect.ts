@@ -24,7 +24,11 @@ export const getMultiselectCheckBoxState = (isSelected: boolean, isPartialSelect
     return theCheckboxState;
 };
 
-const getSelectedChildrenItems = (tree: TreeItemMultiselectWithNodes[], selectedIds: string[], onlyPartial = false) => {
+export const getSelectedChildrenItems = (
+    tree: TreeItemMultiselectWithNodes[],
+    selectedIds: string[],
+    onlyPartial = false,
+) => {
     return tree
         .filter(
             (item) =>
@@ -34,7 +38,10 @@ const getSelectedChildrenItems = (tree: TreeItemMultiselectWithNodes[], selected
         .map((item) => item.id);
 };
 
-const getSelectedTreeItem = (tree: TreeItemMultiselectWithNodes[], id: string): TreeItemMultiselectWithNodes | null => {
+export const getSelectedTreeItem = (
+    tree: TreeItemMultiselectWithNodes[],
+    id: string,
+): TreeItemMultiselectWithNodes | null => {
     for (const item of tree) {
         if (item.id === id) {
             return item;
@@ -50,7 +57,7 @@ const getSelectedTreeItem = (tree: TreeItemMultiselectWithNodes[], id: string): 
     return null;
 };
 
-const getParentSelectedTreeItem = (
+export const getParentSelectedTreeItem = (
     tree: TreeItemMultiselectWithNodes[],
     id: string,
     parent: TreeItemMultiselectWithNodes | null,
@@ -69,7 +76,7 @@ const getParentSelectedTreeItem = (
     return null;
 };
 
-const addSelectedItemsFromSelection = (
+export const addSelectedItemsFromSelection = (
     treeItems: TreeItemMultiselectWithNodes[],
     id: string,
     newSelectedItems: string[],
@@ -120,7 +127,7 @@ const addSelectedItemsFromSelection = (
     return newSelectedItems;
 };
 
-const fixParentSelectionState = (parent: TreeItemMultiselectWithNodes, newSelectedItems: string[]) => {
+export const fixParentSelectionState = (parent: TreeItemMultiselectWithNodes, newSelectedItems: string[]) => {
     const parentExtendedId = getExtendedId(parent);
     const isParentSelected = newSelectedItems.includes(parentExtendedId);
     const siblingsSelectedItems = getSelectedChildrenItems(parent?.nodes ?? [], newSelectedItems);
@@ -148,7 +155,7 @@ const fixParentSelectionState = (parent: TreeItemMultiselectWithNodes, newSelect
     return newSelectedItems;
 };
 
-const cleanOrphanSelectedIds = (selectIds: string[]) => {
+export const cleanOrphanSelectedIds = (selectIds: string[]) => {
     const orphans: string[] = [];
     let newSelectedIds: string[] = selectIds;
 
@@ -179,11 +186,11 @@ export const convertToPartialSelectedId = (ids: string[]) => ids.map((id) => `*$
 export const removePartialFlagSelectedId = (ids: string[]) => ids.map((id) => id.replace(/^\*/, ''));
 export const getExtendedId = (item: TreeItemMultiselectWithNodes) => item.extendedId ?? `${item.parentId}/${item.id}`;
 
-const removeSelectedIds = (ids: string[], idsToRemove: string[], partial: boolean): string[] => {
+export const removeSelectedIds = (ids: string[], idsToRemove: string[], partial: boolean): string[] => {
     idsToRemove = partial ? convertToPartialSelectedId(idsToRemove) : idsToRemove;
     return [...new Set(idsToRemove.length > 0 ? ids.filter((itemId: string) => !idsToRemove.includes(itemId)) : ids)];
 };
-const addSelectedIds = (ids: string[], idsToAdd: string[], partial: boolean) => {
+export const addSelectedIds = (ids: string[], idsToAdd: string[], partial: boolean) => {
     idsToAdd = (partial ? convertToPartialSelectedId(idsToAdd) : idsToAdd).filter((id) => id !== '');
     return [...new Set(idsToAdd.length > 0 ? [...ids, ...idsToAdd] : ids)];
 };
