@@ -7,10 +7,12 @@ import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { KeyboardEvent, ReactElement, useRef } from 'react';
 
-export type ColorInputProps = { min?: number; max?: number; decoratorPosition?: DecoratorPosition } & Pick<
-    TextInputBaseProps,
-    'decorator' | 'value' | 'onChange' | 'type' | 'size' | 'onBlur' | 'onEnterPressed'
->;
+export type ColorInputProps = {
+    min?: number;
+    max?: number;
+    decoratorPosition?: DecoratorPosition;
+    onEnterPressed?: (event: KeyboardEvent<HTMLInputElement>) => void;
+} & Pick<TextInputBaseProps, 'decorator' | 'value' | 'onChange' | 'type' | 'size' | 'onBlur'>;
 
 export enum DecoratorPosition {
     Left = 'Left',
@@ -34,7 +36,7 @@ export const ColorInput = ({
     const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
         const { key, shiftKey } = event;
         if (key === 'Enter' && !shiftKey) {
-            onEnterPressed && onEnterPressed(event);
+            onEnterPressed?.(event);
         }
     };
 
@@ -65,7 +67,7 @@ export const ColorInput = ({
                     ])}
                     onClick={() => inputElement.current?.focus()}
                     onKeyDown={handleKeyDown}
-                    onChange={(event) => onChange && onChange(event.currentTarget.value)}
+                    onChange={(event) => onChange?.(event.currentTarget.value)}
                     onBlur={onBlur}
                     value={value}
                     type={type}
