@@ -123,12 +123,11 @@ export const TreeItemMultiselect = memo(
         const levelPadding = level * INDENTATION_WIDTH;
         const liStyle = { paddingLeft: levelPadding };
         const backgroundStyle = itemStyleProps.borderWidth !== 'none' ? {} : { marginLeft: -1 * levelPadding };
-        const style = {};
 
         const checkBoxOnSelect = isDisabled ? () => void 0 : () => onSelect?.(id, false);
         const checkBox =
             checkBoxPosition !== 'none' ? (
-                <Container maxWidth="16px" maxHeight="16px">
+                <Container maxWidth="16px">
                     <Checkbox
                         id={`checkbox-${id}`}
                         ref={setActiveNodeRef}
@@ -164,7 +163,7 @@ export const TreeItemMultiselect = memo(
                 data-has-children={hasChildren}
                 aria-owns={childrenIds.join(' ')}
             >
-                <div className={containerClassName} style={style}>
+                <div className={containerClassName}>
                     <span className={backgroundClassName} style={backgroundStyle} aria-hidden={true} />
                     {checkBoxPosition === 'left' && checkBox}
 
