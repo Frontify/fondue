@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { PositioningStrategy } from '@popperjs/core/lib/types';
 import { ReactNode } from 'react';
 
 export type PopperPlacement =
@@ -28,8 +29,8 @@ export type PopperProps = {
     isDetached?: boolean;
     /** @description This property will take effect only if isDetached is enabled. */
     verticalAlignment?: 'top' | 'centered';
-    /** @description It affects strategy of popper */
-    isStrategyFixed?: boolean;
+    /** @description The property sets the way the modal is positioned on the view */
+    strategy?: PositioningStrategy;
 };
 
 const POPPER_PLACEMENT = [

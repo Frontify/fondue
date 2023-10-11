@@ -34,6 +34,7 @@ export const Overlay = ({
     zIndex,
     isDetached,
     verticalAlignment,
+    strategy,
 }: OverlayProps & BaseDialogProps) => {
     const id = useMemoizedId();
     const ref = useRef<HTMLDivElement | null>(null);
@@ -78,7 +79,7 @@ export const Overlay = ({
                 zIndex={zIndex}
                 isDetached={isDetached}
                 verticalAlignment={verticalAlignment}
-                isStrategyFixed={modality !== Modality.NonModal}
+                strategy={strategy}
             >
                 {Children.map(children, (child) => {
                     if (isValidElement(child) && typeof child.type === 'function') {
