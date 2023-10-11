@@ -24,6 +24,12 @@ const FlexItemTestContent = () => {
     return <Box className="tw-bg-box-positive-strong">This is some test content</Box>;
 };
 
+const spacingSelect = {
+    options: Object.values(SPACING_VALUES),
+    control: { type: 'select' },
+    defaultValue: '',
+};
+
 export default {
     title: 'Layout/Flex',
     component: Flex,
@@ -67,14 +73,6 @@ export default {
                 type: 'select',
             },
         },
-        margin: {
-            options: Object.values(SPACING_VALUES),
-            control: { type: 'select' },
-        },
-        padding: {
-            options: Object.values(SPACING_VALUES),
-            control: { type: 'select' },
-        },
         minWidth: {
             type: 'string',
         },
@@ -86,6 +84,19 @@ export default {
         },
         maxHeight: {
             type: 'string',
+        },
+        paddingX: spacingSelect,
+        paddingY: spacingSelect,
+        padding: spacingSelect,
+        marginX: spacingSelect,
+        marginY: spacingSelect,
+        margin: spacingSelect,
+        spacingX: spacingSelect,
+        spacingY: spacingSelect,
+        spacing: {
+            options: Object.values(SPACING_VALUES),
+            control: { type: 'select' },
+            defaultValue: 4,
         },
     },
     args: {

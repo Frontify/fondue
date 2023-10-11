@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createAutoformatPlugin } from '@udecode/plate';
 import { Plugin, PluginProps } from '../Plugin';
 import { AUTOFORMAT_PLUGIN } from './id';
 import {
@@ -11,6 +10,15 @@ import {
     MARK_ITALIC,
     MARK_STRIKETHROUGH,
     MARK_UNDERLINE,
+    autoformatArrow,
+    autoformatFraction,
+    autoformatLegal,
+    autoformatPunctuation,
+    autoformatSubscriptNumbers,
+    autoformatSubscriptSymbols,
+    autoformatSuperscriptNumbers,
+    autoformatSuperscriptSymbols,
+    createAutoformatPlugin,
     toggleList,
     unwrapList,
 } from '@udecode/plate';
@@ -29,6 +37,14 @@ export class AutoformatPlugin extends Plugin {
             createAutoformatPlugin({
                 options: {
                     rules: [
+                        ...autoformatPunctuation,
+                        ...autoformatArrow,
+                        ...autoformatLegal,
+                        ...autoformatSubscriptNumbers,
+                        ...autoformatSubscriptSymbols,
+                        ...autoformatSuperscriptNumbers,
+                        ...autoformatSuperscriptSymbols,
+                        ...autoformatFraction,
                         {
                             mode: 'mark',
                             type: [MARK_UNDERLINE],
@@ -89,7 +105,7 @@ export class AutoformatPlugin extends Plugin {
                         {
                             mode: 'block',
                             type: ELEMENT_OL,
-                            match: ['1. '],
+                            match: ['1. ', '1) '],
                             preFormat: unwrapList,
                             format: (editor) => toggleList(editor, { type: ELEMENT_OL }),
                         },

@@ -61,7 +61,7 @@ export const ActionMenu = ({
                         {[...section.childNodes].map((item) => (
                             <AriaMenuItem
                                 key={item.key}
-                                menuItem={keyItemRecord[item.key]}
+                                menuItem={keyItemRecord[item.key as string]}
                                 state={state}
                                 node={item}
                                 onClick={onClick}

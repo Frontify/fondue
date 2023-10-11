@@ -188,7 +188,7 @@ describe('Table Component', () => {
                         columns={TABLE_COLUMNS}
                         rows={filteredRows}
                         selectedRowIds={selectedRows}
-                        onSelectionChange={(ids) => setSelectedRows(ids || [])}
+                        onSelectionChange={(ids) => setSelectedRows((ids as (string | number)[]) || [])}
                     />
                 </>
             );

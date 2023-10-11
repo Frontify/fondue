@@ -43,4 +43,132 @@ describe('Box Box', () => {
         cy.get('@Box').should('exist');
         cy.get('@Box').should('contain', BOX_CONTENT);
     });
+
+    it('should render with padding classNames', () => {
+        cy.mount(<Box padding={8}>{BOX_CONTENT}</Box>);
+
+        cy.get(BOX_ID).as('Box');
+        cy.get('@Box').should('have.attr', 'class', 'tw-p-2');
+    });
+
+    it('should render with paddingX classNames', () => {
+        cy.mount(<Box paddingX={8}>{BOX_CONTENT}</Box>);
+
+        cy.get(BOX_ID).as('Box');
+        cy.get('@Box').should('have.attr', 'class', 'tw-px-2');
+    });
+
+    it('should render with paddingY classNames', () => {
+        cy.mount(<Box paddingY={8}>{BOX_CONTENT}</Box>);
+
+        cy.get(BOX_ID).as('Box');
+        cy.get('@Box').should('have.attr', 'class', 'tw-py-2');
+    });
+
+    it('should render with paddingX & paddingY classNames', () => {
+        cy.mount(
+            <Box paddingX={16} paddingY={8}>
+                {BOX_CONTENT}
+            </Box>,
+        );
+
+        cy.get(BOX_ID).as('Box');
+        cy.get('@Box').should('have.attr', 'class', 'tw-px-4 tw-py-2');
+    });
+
+    it('should render with specified padding css', () => {
+        cy.mount(<Box padding={8}>{BOX_CONTENT}</Box>);
+
+        cy.get(BOX_ID).as('Box');
+        cy.get('@Box').should('have.css', 'padding', '8px');
+    });
+
+    it('should render with specified X padding css', () => {
+        cy.mount(<Box paddingX={8}>{BOX_CONTENT}</Box>);
+
+        cy.get(BOX_ID).as('Box');
+        cy.get('@Box').should('have.css', 'padding', '0px 8px');
+    });
+
+    it('should render with specified Y padding css', () => {
+        cy.mount(<Box paddingY={8}>{BOX_CONTENT}</Box>);
+
+        cy.get(BOX_ID).as('Box');
+        cy.get('@Box').should('have.css', 'padding', '8px 0px');
+    });
+
+    it('should render with specified X & Y padding css', () => {
+        cy.mount(
+            <Box paddingY={8} paddingX={12}>
+                {BOX_CONTENT}
+            </Box>,
+        );
+
+        cy.get(BOX_ID).as('Box');
+        cy.get('@Box').should('have.css', 'padding', '8px 12px');
+    });
+
+    it('should render with margin classNames', () => {
+        cy.mount(<Box margin={8}>{BOX_CONTENT}</Box>);
+
+        cy.get(BOX_ID).as('Box');
+        cy.get('@Box').should('have.attr', 'class', 'tw-m-2');
+    });
+
+    it('should render with specified marginX classNames', () => {
+        cy.mount(<Box marginX={8}>{BOX_CONTENT}</Box>);
+
+        cy.get(BOX_ID).as('Box');
+        cy.get('@Box').should('have.attr', 'class', 'tw-mx-2');
+    });
+
+    it('should render with specified marginY classNames', () => {
+        cy.mount(<Box marginY={8}>{BOX_CONTENT}</Box>);
+
+        cy.get(BOX_ID).as('Box');
+        cy.get('@Box').should('have.attr', 'class', 'tw-my-2');
+    });
+
+    it('should render with specified marginX & marginY classNames', () => {
+        cy.mount(
+            <Box marginX={16} marginY={8}>
+                {BOX_CONTENT}
+            </Box>,
+        );
+
+        cy.get(BOX_ID).as('Box');
+        cy.get('@Box').should('have.attr', 'class', 'tw-mx-4 tw-my-2');
+    });
+
+    it('should render with specified margin css', () => {
+        cy.mount(<Box margin={8}>{BOX_CONTENT}</Box>);
+
+        cy.get(BOX_ID).as('Box');
+        cy.get('@Box').should('have.css', 'margin', '8px');
+    });
+
+    it('should render with specified X margin css', () => {
+        cy.mount(<Box marginX={8}>{BOX_CONTENT}</Box>);
+
+        cy.get(BOX_ID).as('Box');
+        cy.get('@Box').should('have.css', 'margin', '0px 8px');
+    });
+
+    it('should render with specified Y margin css', () => {
+        cy.mount(<Box marginY={8}>{BOX_CONTENT}</Box>);
+
+        cy.get(BOX_ID).as('Box');
+        cy.get('@Box').should('have.css', 'margin', '8px 0px');
+    });
+
+    it('should render with specified X & Y margin css', () => {
+        cy.mount(
+            <Box marginY={8} marginX={12}>
+                {BOX_CONTENT}
+            </Box>,
+        );
+
+        cy.get(BOX_ID).as('Box');
+        cy.get('@Box').should('have.css', 'margin', '8px 12px');
+    });
 });

@@ -15,6 +15,7 @@ const STACK_ALIGN_ITEMS_TYPES = ['start', 'end', 'center', 'baseline', 'stretch'
 const spacingSelect = {
     options: Object.values(SPACING_VALUES),
     control: { type: 'select' },
+    defaultValue: '',
 };
 
 export default {
@@ -40,14 +41,8 @@ export default {
                 type: 'select',
             },
         },
-        margin: spacingSelect,
-        padding: spacingSelect,
         direction: {
             options: STACK_DIRECTIONS,
-            control: { type: 'select' },
-        },
-        spacing: {
-            options: SPACING_VALUES,
             control: { type: 'select' },
         },
         justify: {
@@ -57,6 +52,19 @@ export default {
         alignItems: {
             options: STACK_ALIGN_ITEMS_TYPES,
             control: { type: 'select' },
+        },
+        paddingX: spacingSelect,
+        paddingY: spacingSelect,
+        padding: spacingSelect,
+        marginX: spacingSelect,
+        marginY: spacingSelect,
+        margin: spacingSelect,
+        spacingX: spacingSelect,
+        spacingY: spacingSelect,
+        spacing: {
+            options: Object.values(SPACING_VALUES),
+            control: { type: 'select' },
+            defaultValue: 4,
         },
         children: { table: { disable: true } },
     },
@@ -76,7 +84,7 @@ export default {
 
 export const Stack: StoryFn<STACK_PROPS> = (args: STACK_PROPS) => {
     const STACK_ITEM_CLASS_NAMES =
-        'tw-bg-box-positive-strong tw-text-box-positive-strong-inverse tw-rounded-md tw-px-3 tw-py-1';
+        'tw-bg-box-positive-strong tw-text-box-positive-strong-inverse tw-rounded-md tw-px-4 tw-py-1';
     return (
         <StackComponent {...args}>
             <div className={STACK_ITEM_CLASS_NAMES}>Test content.</div>
