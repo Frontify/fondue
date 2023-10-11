@@ -104,7 +104,7 @@ export default {
         selectedIds: {
             control: { type: 'object' },
             description:
-                'Pre-selected Ids must be in the format `<parent_id>/<slected_id>` (`__ROOT__` is the root id)',
+                'Pre-selected Ids must be in the format `<parent_id>/<selected_id>` (`__ROOT__` is the root id)',
         },
         expandedIds: {
             control: { type: 'object' },
