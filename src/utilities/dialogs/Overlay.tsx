@@ -58,9 +58,11 @@ export const Overlay = ({
     useEffect(() => {
         if (open && modality !== Modality.NonModal) {
             document.body.style.pointerEvents = 'none';
+            document.body.style.overflow = 'hidden';
         }
         if (!open) {
             document.body.style.pointerEvents = 'auto';
+            document.body.style.overflow = 'auto';
         }
     }, [open, modality]);
 
@@ -76,6 +78,7 @@ export const Overlay = ({
                 zIndex={zIndex}
                 isDetached={isDetached}
                 verticalAlignment={verticalAlignment}
+                isStrategyFixed={modality !== Modality.NonModal}
             >
                 {Children.map(children, (child) => {
                     if (isValidElement(child) && typeof child.type === 'function') {

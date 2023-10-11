@@ -28,6 +28,8 @@ export type PopperProps = {
     isDetached?: boolean;
     /** @description This property will take effect only if isDetached is enabled. */
     verticalAlignment?: 'top' | 'centered';
+    /** @description It affects strategy of popper */
+    isStrategyFixed?: boolean;
 };
 
 const POPPER_PLACEMENT = [
