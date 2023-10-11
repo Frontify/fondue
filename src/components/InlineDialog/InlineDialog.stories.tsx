@@ -29,7 +29,7 @@ export default {
         flip: true,
         minWidth: 0,
         maxWidth: 400,
-        autoHeight: true,
+        autoHeight: false,
         maxHeight: 'auto',
         minHeight: 0,
         darkUnderlay: false,

@@ -23,7 +23,7 @@ export const InlineDialog = ({
     handleClose,
     'data-test-id': dataTestId = 'fondue-inlineDialog',
     darkUnderlay = false,
-    autoHeight = true,
+    autoHeight = false,
 }: InlineDialogProps) => {
     return (
         <Overlay
