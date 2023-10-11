@@ -43,7 +43,6 @@ type TreeItemPrivateProps = {
     parentId?: string;
     isSelected?: boolean;
     isExpanded?: boolean;
-    treeDraggable?: boolean;
     /** onSelect is passed by the Tree component when cloning the TreeItem */
     onSelect?: (id: string) => void;
     /** onClick is the user defined callback to run after the onSelect */
@@ -71,7 +70,6 @@ export const TreeItem = memo(
         parentId,
         level = 0,
         contentComponent,
-        treeDraggable = false,
         onClick,
         onSelect,
         onExpand,
@@ -79,7 +77,7 @@ export const TreeItem = memo(
         registerOverlay,
         registerNodeChildren,
         unregisterNodeChildren,
-        draggable: itemDraggable = true,
+        draggable = true,
         expandable = true,
         showDragHandlerOnHoverOnly = true,
         dragHandlerPosition = 'left',
@@ -92,8 +90,6 @@ export const TreeItem = memo(
         const { active, over } = useDndContext();
         const { isSelected, isExpanded, projection } = useTreeItem(id);
         const expandDebounced = useRef<Nullable<string> | undefined>();
-
-        const draggable = treeDraggable && itemDraggable;
 
         const isActive = active?.id === id;
         const activeProjection = isActive && projection !== null && projection !== undefined ? projection : null;
