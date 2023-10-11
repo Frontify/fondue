@@ -1,19 +1,55 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ReactNode } from 'react';
-import { getReactNodeIdsInFlatArray, getReactNodesInFlatArray, removeReactNodesFromFlatArray } from './nodes';
+import {
+    extractNodeFromElement,
+    getReactNodeIdsInFlatArray,
+    getReactNodesInFlatArray,
+    getTreeNodesWithoutElements,
+    removeReactNodesFromFlatArray,
+} from './nodes';
 
-const Node = (props: { id: string; parentId?: string; children?: ReactNode }) => <div {...props} />;
+const Node = (props: { id: string; parentId?: string; level?: number; extendedId?: string; children?: ReactNode }) => (
+    <div {...props} />
+);
 
 const FLAT_ARRAY_OF_NODES = [
-    <Node key="1" id="1" />,
-    <Node key="2" id="2" />,
-    <Node key="3" id="3" parentId="2" />,
-    <Node key="4" id="4" />,
-    <Node key="5" id="5" parentId="4" />,
-    <Node key="6" id="6" parentId="5" />,
-    <Node key="7" id="7" />,
-    <Node key="8" id="8" parentId="4" />,
+    <Node key="1" id="1" parentId="__ROOT__" level={0} extendedId="__ROOT__/1" />,
+    <Node key="2" id="2" parentId="__ROOT__" level={0} extendedId="__ROOT__/2" />,
+    <Node key="3" id="3" parentId="2" level={1} extendedId="2/3" />,
+    <Node key="4" id="4" parentId="__ROOT__" level={0} extendedId="__ROOT__/4" />,
+    <Node key="5" id="5" parentId="4" level={1} extendedId="4/5" />,
+    <Node key="6" id="6" parentId="5" level={2} extendedId="5/6" />,
+    <Node key="7" id="7" parentId="__ROOT__" level={0} extendedId="__ROOT__/7" />,
+    <Node key="8" id="8" parentId="4" level={1} extendedId="4/8" />,
+];
+
+const NODES_WITHOUT_ELEMENTS = [
+    { id: '1', parentId: '__ROOT__', level: 0, extendedId: '__ROOT__/1', nodes: [] },
+    {
+        id: '2',
+        parentId: '__ROOT__',
+        level: 0,
+        extendedId: '__ROOT__/2',
+        nodes: [{ id: '3', parentId: '2', level: 1, extendedId: '2/3', nodes: [] }],
+    },
+    {
+        id: '4',
+        parentId: '__ROOT__',
+        level: 0,
+        extendedId: '__ROOT__/4',
+        nodes: [
+            {
+                id: '5',
+                parentId: '4',
+                level: 1,
+                extendedId: '4/6',
+                nodes: [{ id: '6', parentId: '5', level: 2, extendedId: '5/6', nodes: [] }],
+            },
+            { id: '8', parentId: '4', level: 1, extendedId: '4/8', nodes: [] },
+        ],
+    },
+    { id: '7', parentId: '__ROOT__', level: 0, extendedId: '__ROOT__/7', nodes: [] },
 ];
 
 describe('nodes', () => {
@@ -36,11 +72,11 @@ describe('nodes', () => {
         it('removes nodes from tree', () => {
             const nodeIdsToRemove: string[] = ['1', '2', '5'];
             const expectedTree = [
-                <Node key="3" id="3" parentId="2" />,
-                <Node key="4" id="4" />,
-                <Node key="6" id="6" parentId="5" />,
-                <Node key="7" id="7" />,
-                <Node key="8" id="8" parentId="4" />,
+                <Node key="3" id="3" parentId="2" level={1} extendedId="2/3" />,
+                <Node key="4" id="4" parentId="__ROOT__" level={0} extendedId="__ROOT__/4" />,
+                <Node key="6" id="6" parentId="5" level={1} extendedId="5/6" />,
+                <Node key="7" id="7" parentId="__ROOT__" level={0} extendedId="__ROOT__/7" />,
+                <Node key="8" id="8" parentId="4" level={1} extendedId="4/8" />,
             ];
 
             const result = removeReactNodesFromFlatArray(FLAT_ARRAY_OF_NODES, nodeIdsToRemove);
@@ -80,9 +116,9 @@ describe('nodes', () => {
             const result = getReactNodesInFlatArray(FLAT_ARRAY_OF_NODES, '4');
 
             cy.wrap(result).should('deep.equal', [
-                <Node key="5" id="5" parentId="4" />,
-                <Node key="6" id="6" parentId="5" />,
-                <Node key="8" id="8" parentId="4" />,
+                <Node key="5" id="5" parentId="4" level={1} extendedId="4/5" />,
+                <Node key="6" id="6" parentId="5" level={1} extendedId="5/6" />,
+                <Node key="8" id="8" parentId="4" level={1} extendedId="4/8" />,
             ]);
         });
 
@@ -96,6 +132,28 @@ describe('nodes', () => {
             const result = getReactNodesInFlatArray(FLAT_ARRAY_OF_NODES, '-1');
 
             cy.wrap(result).should('deep.equal', []);
+        });
+    });
+
+    describe('extractNodeFromElement', () => {
+        it('should return an array of objects with the node props', () => {
+            const result = extractNodeFromElement(FLAT_ARRAY_OF_NODES[5]);
+
+            cy.wrap(result).should('deep.equal', {
+                id: '6',
+                level: 2,
+                parentId: '5',
+                extendedId: '5/6',
+                nodes: [],
+            });
+        });
+    });
+
+    describe('getTreeNodesWithoutElements', () => {
+        it.only('should return a tree like array of objects from a flat array of react elements starting with the __ROOT__ level', () => {
+            const result = getTreeNodesWithoutElements(FLAT_ARRAY_OF_NODES);
+
+            cy.wrap(result).should('deep.equal', NODES_WITHOUT_ELEMENTS);
         });
     });
 });
