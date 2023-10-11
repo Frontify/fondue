@@ -19,6 +19,10 @@ export default {
     },
     argTypes: {
         ...POPPER_STORY_ARGS,
+        strategy: {
+            options: ['absolute', 'fixed'],
+            control: { type: 'radio' },
+        },
         open: { control: { type: 'boolean' } },
     },
 } as Meta<PopperProps>;

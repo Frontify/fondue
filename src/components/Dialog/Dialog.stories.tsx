@@ -41,6 +41,10 @@ export default {
             options: Object.values(Modality),
             control: { type: 'select' },
         },
+        strategy: {
+            options: ['absolute', 'fixed'],
+            control: { type: 'radio' },
+        },
         'data-test-id': {
             type: 'string',
         },
