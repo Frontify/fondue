@@ -25,6 +25,7 @@ export default {
     tags: ['autodocs'],
     args: {
         modality: Modality.Modal,
+        strategy: 'absolute',
         minWidth: 600,
         maxWidth: 0,
         autoHeight: false,
