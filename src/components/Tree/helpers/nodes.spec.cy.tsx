@@ -43,7 +43,7 @@ const NODES_WITHOUT_ELEMENTS = [
                 id: '5',
                 parentId: '4',
                 level: 1,
-                extendedId: '4/6',
+                extendedId: '4/5',
                 nodes: [{ id: '6', parentId: '5', level: 2, extendedId: '5/6', nodes: [] }],
             },
             { id: '8', parentId: '4', level: 1, extendedId: '4/8', nodes: [] },
@@ -74,7 +74,7 @@ describe('nodes', () => {
             const expectedTree = [
                 <Node key="3" id="3" parentId="2" level={1} extendedId="2/3" />,
                 <Node key="4" id="4" parentId="__ROOT__" level={0} extendedId="__ROOT__/4" />,
-                <Node key="6" id="6" parentId="5" level={1} extendedId="5/6" />,
+                <Node key="6" id="6" parentId="5" level={2} extendedId="5/6" />,
                 <Node key="7" id="7" parentId="__ROOT__" level={0} extendedId="__ROOT__/7" />,
                 <Node key="8" id="8" parentId="4" level={1} extendedId="4/8" />,
             ];
@@ -117,7 +117,7 @@ describe('nodes', () => {
 
             cy.wrap(result).should('deep.equal', [
                 <Node key="5" id="5" parentId="4" level={1} extendedId="4/5" />,
-                <Node key="6" id="6" parentId="5" level={1} extendedId="5/6" />,
+                <Node key="6" id="6" parentId="5" level={2} extendedId="5/6" />,
                 <Node key="8" id="8" parentId="4" level={1} extendedId="4/8" />,
             ]);
         });
@@ -150,7 +150,7 @@ describe('nodes', () => {
     });
 
     describe('getTreeNodesWithoutElements', () => {
-        it.only('should return a tree like array of objects from a flat array of react elements starting with the __ROOT__ level', () => {
+        it('should return a tree like array of objects from a flat array of react elements starting with the __ROOT__ level', () => {
             const result = getTreeNodesWithoutElements(FLAT_ARRAY_OF_NODES);
 
             cy.wrap(result).should('deep.equal', NODES_WITHOUT_ELEMENTS);
