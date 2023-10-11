@@ -5,7 +5,7 @@ import noop from 'lodash-es/noop';
 
 import { type RegisterNodeChildrenPayload, TreeItemMultiselectProps, TreeItemStyling } from '@components/Tree/types';
 
-import { INDENTATION_WIDTH, Projection, getMultiselectCheckBoxState } from '../helpers';
+import { INDENTATION_WIDTH, getMultiselectCheckBoxState } from '../helpers';
 import { removeFragmentsAndEnrichChildren, useDeepCompareEffect } from '../utils';
 import {
     getMultiselectBackgroundClassName,
@@ -22,12 +22,10 @@ import { useMultiselectTreeItem } from './useMultiselectTreeItem';
 type TreeItemPrivateProps = {
     parentId?: string;
     level?: number;
-    isExpanded?: boolean;
     /** onSelect is passed by the Tree component when cloning the TreeItem */
     onSelect?: (id: string, ignoreRemoveSelected: boolean) => void;
     onExpand?: (id: string) => void;
     onShrink?: (id: string) => void;
-    projection?: Nullable<Projection>;
     unregisterNodeChildren?: (payload: string) => void;
     registerNodeChildren?: (payload: RegisterNodeChildrenPayload) => void;
 };
