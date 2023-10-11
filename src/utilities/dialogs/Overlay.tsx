@@ -59,13 +59,15 @@ export const Overlay = ({
     useEffect(() => {
         if (open && modality !== Modality.NonModal) {
             document.body.style.pointerEvents = 'none';
-            document.body.style.overflow = 'hidden';
+            if (strategy === 'fixed') {
+                document.body.style.overflow = 'hidden';
+            }
         }
         if (!open) {
             document.body.style.pointerEvents = 'auto';
             document.body.style.overflow = 'auto';
         }
-    }, [open, modality]);
+    }, [open, modality, strategy]);
 
     return (
         <>
