@@ -15,6 +15,7 @@ export default {
         placement: 'bottom-start',
         offset: [0, 8],
         flip: true,
+        strategy: 'absolute',
     },
     argTypes: {
         ...POPPER_STORY_ARGS,
@@ -33,6 +34,7 @@ const Template: StoryFn<PopperProps> = (args) => {
                 offset={args.offset}
                 flip={args.flip}
                 enablePortal={args.enablePortal}
+                strategy={args.strategy}
             >
                 <Popper.Reference>
                     <Button onClick={() => setOpen(!open)}>Hello</Button>

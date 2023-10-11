@@ -58,4 +58,8 @@ export const POPPER_STORY_ARGS = {
     enablePortal: {
         control: { type: 'boolean' },
     },
+    strategy: {
+        options: ['absolute', 'fixed'],
+        control: { type: 'radio' },
+    },
 };
