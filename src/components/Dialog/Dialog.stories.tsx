@@ -25,6 +25,7 @@ export default {
     tags: ['autodocs'],
     args: {
         modality: Modality.Modal,
+        strategy: 'absolute',
         minWidth: 600,
         maxWidth: 0,
         autoHeight: false,
@@ -40,6 +41,10 @@ export default {
         modality: {
             options: Object.values(Modality),
             control: { type: 'select' },
+        },
+        strategy: {
+            options: ['absolute', 'fixed'],
+            control: { type: 'radio' },
         },
         'data-test-id': {
             type: 'string',
