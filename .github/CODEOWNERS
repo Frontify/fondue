@@ -1,5 +1,6 @@
 # The Design System will be the default owners for everything in
 # the repository except for package.json and src directory.
+# Some very complex components will be co-owned with other teams.
 
 # Core
 * @Frontify/design-system
@@ -9,3 +10,4 @@ pnpm-lock.yaml
 
 # Components
 /src/components/RichTextEditor @Frontify/design-system @Frontify/guidelines-one
+/src/components/Tree @Frontify/design-system @Frontify/guidelines-navigation-themes
