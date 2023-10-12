@@ -144,7 +144,7 @@ export const Tooltip = ({
                     >
                         <p className="tw-whitespace-pre-line">{formatTooltipText(content)}</p>
                         <div
-                            data-test-id="popover-arrow"
+                            data-test-id={`${dataTestId}-arrow`}
                             data-popper-arrow={withArrow}
                             aria-hidden="true"
                             ref={setArrowElement}
