@@ -6,7 +6,7 @@ import { Content } from '@utilities/dialogs/Content';
 import { Overlay } from '@utilities/dialogs/Overlay';
 import { Z_INDEX_MODAL } from '@utilities/dialogs/constants';
 
-export type InlineDialogProps = OverlayProps & BaseDialogProps;
+export type InlineDialogProps = Omit<OverlayProps, 'strategy'> & BaseDialogProps;
 
 export const InlineDialog = ({
     children,

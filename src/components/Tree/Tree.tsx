@@ -32,6 +32,7 @@ import {
 } from '@dnd-kit/core';
 
 import type {
+    DragHandlerPosition,
     RegisterNodeChildrenPayload,
     SensorContext,
     TreeAnnouncements,
@@ -44,7 +45,7 @@ import type {
     TreeStateAction,
 } from '@components/Tree/types';
 
-import { type Overlay, TreeItemOverlay } from './TreeItem';
+import { InternalTreeItemProps, type Overlay, TreeItemOverlay } from './TreeItem';
 
 import {
     recursivelyRemoveFragmentsAndEnrichChildren,
@@ -53,6 +54,7 @@ import {
 } from './utils';
 
 import {
+    ROOT_ID,
     currentNodesChanged,
     findIndexById,
     getAnnouncements,
@@ -61,6 +63,7 @@ import {
     getNodesToRender,
     getProjection,
     getReactNodeIdsInFlatArray,
+    getTreeNodesWithoutElements,
     handleKeyDownEvent,
     removeReactNodesFromFlatArray,
     sensorsActivationConstraint,
@@ -69,7 +72,7 @@ import {
 } from './helpers';
 
 import { TreeContext, TreeContextProps } from './TreeContext';
-import { ROOT_ID } from './helpers';
+import { InternalTreeItemMultiSelectProps } from './TreeItem/TreeItemMultiselect';
 
 const measuring: MeasuringConfiguration = {
     droppable: {
@@ -199,7 +202,7 @@ export const Tree = memo(
     }: TreeProps) => {
         const initialState: TreeState = useMemo(
             () => ({
-                selectionMode: 'single',
+                selectionMode: multiselect ? 'multiselect' : 'single',
                 selectedIds: new Set(selectedIds ?? []),
                 expandedIds: new Set(expandedIds ?? []),
                 rootNodes: [],
@@ -208,7 +211,7 @@ export const Tree = memo(
                 nodesReady: false,
                 projection: null,
             }),
-            [expandedIds, selectedIds],
+            [expandedIds, multiselect, selectedIds],
         );
 
         const [treeState, updateTreeState] = useReducer(reducer, initialState);
@@ -263,10 +266,10 @@ export const Tree = memo(
         }, []);
 
         const handleSelect = useCallback(
-            (id: string) => {
-                onSelect(id);
+            (id: string, ignoreRemoveSelected = false) => {
+                onSelect(id, ignoreRemoveSelected, getTreeNodesWithoutElements(treeState.nodes));
             },
-            [onSelect],
+            [onSelect, treeState.nodes],
         );
 
         const handleExpand = useCallback(
@@ -464,23 +467,36 @@ export const Tree = memo(
                 ...itemStyle,
             } as TreeItemStyling;
 
+            const getTreeItemProps = (nodeProps: InternalTreeItemProps | InternalTreeItemMultiSelectProps) => {
+                return multiselect
+                    ? {
+                          checkBoxPosition: getPropToUse(
+                              (nodeProps as InternalTreeItemMultiSelectProps).checkBoxPosition,
+                              dragHandlerPosition,
+                          ) as DragHandlerPosition,
+                      }
+                    : {
+                          draggable: (nodeProps as InternalTreeItemProps).draggable ? true : draggable,
+                          dragHandlerPosition: getPropToUse(
+                              (nodeProps as InternalTreeItemProps).dragHandlerPosition,
+                              dragHandlerPosition,
+                          ) as TreeProps['dragHandlerPosition'],
+                          showDragHandlerOnHoverOnly: getPropToUse(
+                              (nodeProps as InternalTreeItemProps).showDragHandlerOnHoverOnly,
+                              showDragHandlerOnHoverOnly,
+                          ) as TreeProps['showDragHandlerOnHoverOnly'],
+                          showContentWhileDragging: getPropToUse(
+                              (nodeProps as InternalTreeItemProps).showContentWhileDragging,
+                              showContentWhileDragging,
+                          ) as TreeProps['showContentWhileDragging'],
+                      };
+            };
+
             return {
                 items: treeState.nodes.map((node) => node.props.id),
                 nodes: treeState.nodes.map((node) =>
                     cloneElement(node, {
-                        treeDraggable: draggable,
-                        dragHandlerPosition: getPropToUse(
-                            node.props.dragHandlerPosition,
-                            dragHandlerPosition,
-                        ) as TreeProps['dragHandlerPosition'],
-                        showDragHandlerOnHoverOnly: getPropToUse(
-                            node.props.showDragHandlerOnHoverOnly,
-                            showDragHandlerOnHoverOnly,
-                        ) as TreeProps['showDragHandlerOnHoverOnly'],
-                        showContentWhileDragging: getPropToUse(
-                            node.props.showContentWhileDragging,
-                            showContentWhileDragging,
-                        ) as TreeProps['showContentWhileDragging'],
+                        ...getTreeItemProps(node.props),
                         itemStyle: { ...treeItemStyle, ...node.props.itemStyle },
                         registerOverlay,
                         onExpand: handleExpand,
@@ -492,12 +508,13 @@ export const Tree = memo(
                 ),
             };
         }, [
+            itemStyle,
             treeState.nodes,
             draggable,
+            multiselect,
             dragHandlerPosition,
             showDragHandlerOnHoverOnly,
             showContentWhileDragging,
-            itemStyle,
             registerOverlay,
             handleExpand,
             handleShrink,

@@ -12,7 +12,16 @@ export type SensorContext = MutableRefObject<{
     offset: number;
 }>;
 
-export type OnSelectCallback = (id: string) => void;
+export type TreeNodeWithoutElements = {
+    id: string;
+    level: number;
+    parentId: string;
+    extendedId: string;
+    nodes: TreeNodeWithoutElements[];
+};
+
+export type OnSelectCallback = (id: string, ignoreRemoveSelected?: boolean, nodes?: TreeNodeWithoutElements[]) => void;
+export type OnSelectInternalCallback = (id: string, ignoreRemoveSelected?: boolean) => void;
 export type OnExpandCallback = (id: string) => void;
 
 export type OnShrinkCallback = (id: string) => void;
@@ -185,6 +194,23 @@ export type TreeItemWithContentComponentProps = {
 export type SortableProps = Partial<ReturnType<typeof useSortable>>;
 
 export type TreeItemProps = SortableProps & (TreeItemWithLabelProps | TreeItemWithContentComponentProps);
+
+export type TreeItemMultiselectProps = Omit<
+    TreeItemProps,
+    | 'type'
+    | 'onDrop'
+    | 'accepts'
+    | 'registerOverlay'
+    | 'draggable'
+    | 'showContentWhileDragging'
+    | 'ignoreItemDoubleClick'
+    | 'showDragHandlerOnHoverOnly'
+    | 'dragHandlerPosition'
+> & {
+    isDisabled?: boolean;
+    checkBoxPosition?: DragHandlerPosition;
+    onBeforeUnregisterChildren?: (id: string, nodes: TreeNodeWithoutElements[]) => void;
+};
 
 export type SortableTreeItemProps = TreeItemProps;
 

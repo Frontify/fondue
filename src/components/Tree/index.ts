@@ -3,3 +3,4 @@
 export * from './Tree';
 export * from './TreeItem';
 export * from './types';
+export * from './helpers';

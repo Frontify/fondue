@@ -1,12 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useEffect, useState } from 'react';
-import { TreeItemProps } from '../types';
+import { TreeItemMultiselectProps, TreeItemProps } from '../types';
 
 export type TreeItemMock = TreeItemProps & {
     id: string;
     nodes?: TreeItemMock[];
     numChildNodes?: number;
+};
+
+export type TreeItemMockMultiselect = TreeItemMultiselectProps & {
+    id: string;
+    nodes?: TreeItemMockMultiselect[];
+    numChildNodes?: number;
+    onSelect?: (id: string) => void;
 };
 
 const uncategorizedPagesMock: TreeItemMock[] = [
@@ -125,6 +132,28 @@ export const treeItemsMock: TreeItemMock[] = [
         label: 'Design System Testing - level 0 constraint',
         type: 'document',
         accepts: 'document',
+        levelConstraint: 0,
+    },
+];
+
+export const treeItemsMockMultiseclect: TreeItemMockMultiselect[] = [
+    {
+        id: '1',
+        label: 'Design System Testing - Deep Nested Items',
+        nodes: testGroupMock,
+    },
+    {
+        id: '2',
+        label: 'Design System Testing - Root Childless',
+    },
+    {
+        id: '3',
+        label: 'Design System Testing - Not Selectable',
+        isDisabled: true,
+    },
+    {
+        id: '4',
+        label: 'Design System Testing - level 0 constraint',
         levelConstraint: 0,
     },
 ];
