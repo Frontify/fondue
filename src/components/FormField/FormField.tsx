@@ -3,16 +3,18 @@
 import type { ReactElement } from 'react';
 import { TooltipIcon, TooltipIconProps } from '..';
 import { merge } from '@utilities/merge';
-import { IconSize } from '@foundation/Icon';
 import { HelperText } from '@utilities/input';
 import { Validation } from '@utilities/validation';
+import { cloneElement } from 'react';
+import { generateRandomId } from '@utilities/generateRandomId';
+import { IconSize } from '@foundation/Icon';
 
 export type LabelProps = {
     text: string;
     hugWidth?: boolean;
     required?: boolean;
     secondaryLabel?: string;
-    tooltipIcon?: TooltipIconProps;
+    tooltips?: TooltipIconProps[];
     toolTipSize?: IconSize;
 };
 
@@ -27,6 +29,7 @@ export type FormFieldProps = {
     helperTextColor?: Validation;
     hiddenLabel?: boolean;
     readOnly?: boolean;
+    status?: Validation;
     'data-test-id'?: string;
 };
 
@@ -41,10 +44,11 @@ export const FormField = ({
     hiddenLabel = false,
     label,
     readOnly = false,
+    status = Validation.Default,
     'data-test-id': dataTestId = 'fondue-form-field',
 }: FormFieldProps): ReactElement => {
-    const getFormattedLabel = (): ReactElement | string => {
-        const { text, required, secondaryLabel, hugWidth, tooltipIcon } = label;
+    const getFormattedLabel = (): ReactElement => {
+        const { text, required, secondaryLabel, hugWidth, tooltips } = label;
         const elements: ReactElement[] = [];
         const secondaryLabelStyle = 'tw-w-full tw-flex tw-flex-nowrap tw-justify-between';
         const applySecondaryLabel = !hugWidth && secondaryLabel;
@@ -53,15 +57,21 @@ export const FormField = ({
         if (required) {
             formattedLabel += ' *';
         }
-
-        if (tooltipIcon) {
-            const tooltipElement: ReactElement = (
+        if (tooltips?.length) {
+            const tooltipElements: ReactElement[] = tooltips.map((tip: TooltipIconProps) => (
+                <TooltipIcon
+                    key={`form-field-tooltip-${generateRandomId()}`}
+                    triggerIcon={tip.triggerIcon}
+                    tooltip={tip.tooltip}
+                    iconSize={tip.iconSize}
+                />
+            ));
+            elements.push(
                 <span className={'tw-flex tw-gap-2'}>
                     {formattedLabel}
-                    <TooltipIcon tooltip={tooltipIcon.tooltip} iconSize={tooltipIcon.iconSize ?? IconSize.Size16} />
-                </span>
+                    {...tooltipElements}
+                </span>,
             );
-            elements.push(tooltipElement);
         } else {
             elements.push(<span>{formattedLabel}</span>);
         }
@@ -73,8 +83,8 @@ export const FormField = ({
             <span
                 className={merge([
                     'tw-whitespace-nowrap',
-                    hugWidth ? 'tw-pt-2' : '',
-                    applySecondaryLabel ? secondaryLabelStyle : '',
+                    hugWidth && 'tw-pt-2',
+                    applySecondaryLabel && secondaryLabelStyle,
                 ])}
             >
                 {...elements}
@@ -96,7 +106,13 @@ export const FormField = ({
         >
             {hiddenLabel ? null : getFormattedLabel()}
             <div className={'tw-w-full tw-flex tw-flex-col tw-gap-2'}>
-                {children}
+                {cloneElement(children, {
+                    hugWidth: label.hugWidth,
+                    required: label.required,
+                    status,
+                    disabled,
+                    readOnly,
+                })}
                 {error && (
                     <HelperText
                         text={errorText ?? 'Something went wrong'}
