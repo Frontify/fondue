@@ -15,9 +15,14 @@ export default {
         placement: 'bottom-start',
         offset: [0, 8],
         flip: true,
+        strategy: 'absolute',
     },
     argTypes: {
         ...POPPER_STORY_ARGS,
+        strategy: {
+            options: ['absolute', 'fixed'],
+            control: { type: 'radio' },
+        },
         open: { control: { type: 'boolean' } },
     },
 } as Meta<PopperProps>;
@@ -33,6 +38,7 @@ const Template: StoryFn<PopperProps> = (args) => {
                 offset={args.offset}
                 flip={args.flip}
                 enablePortal={args.enablePortal}
+                strategy={args.strategy}
             >
                 <Popper.Reference>
                     <Button onClick={() => setOpen(!open)}>Hello</Button>

@@ -34,6 +34,7 @@ export const Overlay = ({
     zIndex,
     isDetached,
     verticalAlignment,
+    strategy,
 }: OverlayProps & BaseDialogProps) => {
     const id = useMemoizedId();
     const ref = useRef<HTMLDivElement | null>(null);
@@ -58,11 +59,15 @@ export const Overlay = ({
     useEffect(() => {
         if (open && modality !== Modality.NonModal) {
             document.body.style.pointerEvents = 'none';
+            if (strategy === 'fixed') {
+                document.body.style.overflow = 'hidden';
+            }
         }
         if (!open) {
             document.body.style.pointerEvents = 'auto';
+            document.body.style.overflow = 'auto';
         }
-    }, [open, modality]);
+    }, [open, modality, strategy]);
 
     return (
         <>
@@ -76,6 +81,7 @@ export const Overlay = ({
                 zIndex={zIndex}
                 isDetached={isDetached}
                 verticalAlignment={verticalAlignment}
+                strategy={strategy}
             >
                 {Children.map(children, (child) => {
                     if (isValidElement(child) && typeof child.type === 'function') {

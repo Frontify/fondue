@@ -110,7 +110,7 @@ export const DatePicker = forwardRef<ReactDatePicker<never, boolean>, DatePicker
                     maxDate={maxDate}
                     calendarStartDay={1}
                     onChange={onChange}
-                    onKeyDown={onKeyDown}
+                    onKeyDown={isCalendarOpen ? undefined : onKeyDown}
                     onBlur={onBlur}
                     selectsRange={variant === 'range'}
                     showPopperArrow={hasPopperArrow}
