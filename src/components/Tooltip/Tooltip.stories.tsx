@@ -22,6 +22,8 @@ export default {
         maxHeight: 'auto',
         'data-test-id': 'fondue-tooltip',
         disabled: false,
+        enterDelay: 0,
+        leaveDelay: 200,
     },
     argTypes: {
         ...POPPER_STORY_ARGS,
@@ -33,6 +35,9 @@ export default {
             control: { type: 'boolean' },
         },
         openOnMount: {
+            control: { type: 'boolean' },
+        },
+        disabled: {
             control: { type: 'boolean' },
         },
     },
@@ -52,4 +57,8 @@ OpenByDefault.args = {
 export const WithLineBreak = Template.bind({});
 WithLineBreak.args = {
     content: 'This is a<br>sample text<br />with line breaks\nin it',
+};
+export const Disabled = Template.bind({});
+Disabled.args = {
+    disabled: true,
 };

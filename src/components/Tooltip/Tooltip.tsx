@@ -1,13 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { AriaAttributes, ReactElement, useState } from 'react';
+import { ReactElement, useCallback, useRef, useState } from 'react';
 import { PopperPlacement } from '@components/Popper';
 import { usePopper } from 'react-popper';
 import { merge } from '@utilities/merge';
 import { useToggleOverlay } from '@hooks/useToggleOverlay';
 import { Z_INDEX_TOOLTIP } from '@utilities/dialogs/constants';
-
-// TODO still pending... Add mighty tokens, add enterDelay and leaveDelay, add enablePortal logic. Trigger should be a button (What about Dialog Triggers with Tooltip)
+import { EnablePortalWrapper } from '@utilities/dialogs/EnablePortalWrapper';
+import { useMemoizedId } from '@hooks/useMemoizedId';
 
 export type TooltipSize = 'spacious' | 'compact';
 export type TooltipProps = {
@@ -28,7 +28,8 @@ export type TooltipProps = {
     'data-test-id'?: string;
     zIndex?: number;
     disabled?: boolean;
-} & AriaAttributes;
+    'aria-label'?: string;
+};
 
 const getArrowClasses = (currentPlacement: string) => {
     switch (true) {
@@ -51,7 +52,7 @@ const formatTooltipText = (text: string) => {
 };
 
 export const Tooltip = ({
-    id,
+    id: customId,
     children,
     offset = [0, 8],
     flip = true,
@@ -62,12 +63,15 @@ export const Tooltip = ({
     openOnMount = false,
     maxWidth = 200,
     maxHeight = 'auto',
+    enablePortal = true,
     enterDelay = 0,
     leaveDelay = 200,
     disabled = false,
     zIndex = Z_INDEX_TOOLTIP,
     'data-test-id': dataTestId = 'fondue-tooltip',
+    'aria-label': ariaLabel = 'fondue-tooltip-trigger',
 }: TooltipProps) => {
+    const id = useMemoizedId(customId);
     const [open, setOpen] = useToggleOverlay(openOnMount);
     const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
     const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -85,48 +89,74 @@ export const Tooltip = ({
     });
     const currentPlacement = state?.placement ?? placement;
     const arrowStyling = getArrowClasses(currentPlacement);
+    const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    const handleHideTooltip = useCallback(() => {
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+        }
+        timeoutRef.current = setTimeout(() => setOpen(false), leaveDelay);
+    }, [leaveDelay, setOpen]);
+
+    const handleShowTooltip = useCallback(() => {
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+        }
+
+        if (enterDelay) {
+            timeoutRef.current = setTimeout(() => setOpen(true), enterDelay);
+            return;
+        }
+
+        setOpen(true);
+    }, [enterDelay, setOpen]);
 
     return (
         <>
             <button
                 ref={setReferenceElement}
-                onMouseEnter={() => setOpen(true)}
-                onFocus={() => setOpen(true)}
-                onMouseLeave={() => setOpen(false)}
-                onBlur={() => setOpen(false)}
+                onMouseEnter={handleShowTooltip}
+                onFocus={handleShowTooltip}
+                onMouseLeave={handleHideTooltip}
+                onBlur={handleHideTooltip}
+                aria-label={ariaLabel}
+                aria-disabled={disabled}
                 aria-labelledby={id}
                 disabled={disabled}
+                className={disabled ? 'tw-text-text-disabled' : ''}
             >
                 {children}
             </button>
             {open && (
-                <div
-                    data-test-id={dataTestId}
-                    role="tooltip"
-                    id={id}
-                    aria-hidden={!open}
-                    ref={setPopperElement}
-                    className={merge([
-                        'tw-popper-container tw-dark tw-inline-block tw-bg-box-neutral tw-rounded-md tw-shadow-mid tw-text-box-neutral-inverse tw-border tw-border-line-strong',
-                        size === 'spacious' ? 'tw-pt-2 tw-px-3 tw-pb-2.5' : 'tw-pt-1 tw-px-2 tw-pb-1.5',
-                    ])}
-                    style={{ ...styles.popper, maxWidth, maxHeight, zIndex }}
-                    {...attributes.popper}
-                >
-                    <p className="tw-whitespace-pre-line">{formatTooltipText(content)}</p>
+                <EnablePortalWrapper enablePortal={enablePortal}>
                     <div
-                        data-test-id="popover-arrow"
-                        data-popper-arrow={withArrow}
-                        aria-hidden="true"
-                        ref={setArrowElement}
-                        style={styles.arrow}
+                        data-test-id={dataTestId}
+                        role="tooltip"
+                        id={id}
+                        aria-hidden={!open}
+                        ref={setPopperElement}
                         className={merge([
-                            withArrow &&
-                                'tw-absolute tw-w-3 tw-h-3 tw-pointer-events-none before:tw-absolute before:tw-w-3 before:tw-h-3 before:tw-rotate-45 before:tw-dark before:tw-border before:tw-border-line-strong before:tw-bg-box-neutral',
-                            withArrow && arrowStyling,
+                            'tw-popper-container tw-inline-block tw-bg-box-neutral-mighty tw-rounded-md tw-shadow-mid tw-text-box-neutral-mighty-inverse tw-border tw-border-line-mighty',
+                            size === 'spacious' ? 'tw-pt-2 tw-px-3 tw-pb-2.5' : 'tw-pt-1 tw-px-2 tw-pb-1.5',
                         ])}
-                    />
-                </div>
+                        style={{ ...styles.popper, maxWidth, maxHeight, zIndex }}
+                        {...attributes.popper}
+                    >
+                        <p className="tw-whitespace-pre-line">{formatTooltipText(content)}</p>
+                        <div
+                            data-test-id="popover-arrow"
+                            data-popper-arrow={withArrow}
+                            aria-hidden="true"
+                            ref={setArrowElement}
+                            style={styles.arrow}
+                            className={merge([
+                                withArrow &&
+                                    'tw-absolute tw-w-3 tw-h-3 tw-pointer-events-none before:tw-absolute before:tw-w-3 before:tw-h-3 before:tw-rotate-45 before:tw-border before:tw-border-line-mighty before:tw-bg-box-neutral-mighty',
+                                withArrow && arrowStyling,
+                            ])}
+                        />
+                    </div>
+                </EnablePortalWrapper>
             )}
         </>
     );
