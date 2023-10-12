@@ -18,7 +18,7 @@ describe('Stack component', () => {
         cy.get(STACK_ID).should('contain', CONTENT_STRING);
     });
 
-    it('renders with padding', () => {
+    it('renders with specified padding', () => {
         cy.mount(
             <Stack padding={12}>
                 <div>{CONTENT_STRING_LONG}</div>
@@ -27,13 +27,67 @@ describe('Stack component', () => {
         cy.get(STACK_ID).should('have.css', 'padding', '12px');
     });
 
-    it('renders with margin', () => {
+    it('renders with specified horizontal padding', () => {
+        cy.mount(
+            <Stack paddingX={12}>
+                <div>{CONTENT_STRING_LONG}</div>
+            </Stack>,
+        );
+        cy.get(STACK_ID).should('have.css', 'padding', '0px 12px');
+    });
+
+    it('renders with specified vertical padding', () => {
+        cy.mount(
+            <Stack paddingY={12}>
+                <div>{CONTENT_STRING_LONG}</div>
+            </Stack>,
+        );
+        cy.get(STACK_ID).should('have.css', 'padding', '12px 0px');
+    });
+
+    it('renders with specified horizontal & vertical padding', () => {
+        cy.mount(
+            <Stack paddingX={8} paddingY={12}>
+                <div>{CONTENT_STRING_LONG}</div>
+            </Stack>,
+        );
+        cy.get(STACK_ID).should('have.css', 'padding', '12px 8px');
+    });
+
+    it('renders with specified margin', () => {
         cy.mount(
             <Stack margin={12}>
                 <div>{CONTENT_STRING_LONG}</div>
             </Stack>,
         );
         cy.get(STACK_ID).should('have.css', 'margin', '12px');
+    });
+
+    it('renders with specified horizontal margin', () => {
+        cy.mount(
+            <Stack marginX={12}>
+                <div>{CONTENT_STRING_LONG}</div>
+            </Stack>,
+        );
+        cy.get(STACK_ID).should('have.css', 'margin', '0px 12px');
+    });
+
+    it('renders with specified vertical margin', () => {
+        cy.mount(
+            <Stack marginY={12}>
+                <div>{CONTENT_STRING_LONG}</div>
+            </Stack>,
+        );
+        cy.get(STACK_ID).should('have.css', 'margin', '12px 0px');
+    });
+
+    it('renders with specified horizontal & vertical margin', () => {
+        cy.mount(
+            <Stack marginX={8} marginY={12}>
+                <div>{CONTENT_STRING_LONG}</div>
+            </Stack>,
+        );
+        cy.get(STACK_ID).should('have.css', 'margin', '12px 8px');
     });
 
     it('renders with specified spacing', () => {
@@ -43,6 +97,33 @@ describe('Stack component', () => {
             </Stack>,
         );
         cy.get(STACK_ID).should('have.css', 'gap', '4px');
+    });
+
+    it('renders with specified horizontal spacing', () => {
+        cy.mount(
+            <Stack spacingX={4}>
+                <div>{CONTENT_STRING_LONG}</div>
+            </Stack>,
+        );
+        cy.get(STACK_ID).should('have.css', 'gap', 'normal 4px');
+    });
+
+    it('renders with specified vertical spacing', () => {
+        cy.mount(
+            <Stack spacingY={4}>
+                <div>{CONTENT_STRING_LONG}</div>
+            </Stack>,
+        );
+        cy.get(STACK_ID).should('have.css', 'gap', '4px normal');
+    });
+
+    it('renders with specified horizontal & vertical spacing', () => {
+        cy.mount(
+            <Stack spacingX={8} spacingY={4}>
+                <div>{CONTENT_STRING_LONG}</div>
+            </Stack>,
+        );
+        cy.get(STACK_ID).should('have.css', 'gap', '4px 8px');
     });
 
     it('renders with "row" direction', () => {

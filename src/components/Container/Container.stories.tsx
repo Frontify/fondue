@@ -7,6 +7,12 @@ import { SPACING_VALUES } from '@utilities/dimensions';
 import { BOX_BG_ALIAS_TOKENS_CLASSES, BOX_TEXT_ALIAS_TOKENS_CLASSES } from '@utilities/tokens';
 import { Box } from '@components/Box';
 
+const spacingSelect = {
+    options: Object.values(SPACING_VALUES),
+    control: { type: 'select' },
+    defaultValue: '',
+};
+
 export default {
     title: 'Layout/Container',
     component: ContainerComponent,
@@ -30,14 +36,6 @@ export default {
                 type: 'select',
             },
         },
-        margin: {
-            options: Object.values(SPACING_VALUES),
-            control: { type: 'select' },
-        },
-        padding: {
-            options: Object.values(SPACING_VALUES),
-            control: { type: 'select' },
-        },
         minWidth: {
             type: 'string',
         },
@@ -50,6 +48,12 @@ export default {
         maxHeight: {
             type: 'string',
         },
+        paddingX: spacingSelect,
+        paddingY: spacingSelect,
+        padding: spacingSelect,
+        marginX: spacingSelect,
+        marginY: spacingSelect,
+        margin: spacingSelect,
         children: { table: { disable: true } },
     },
     args: {

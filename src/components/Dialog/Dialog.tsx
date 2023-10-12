@@ -40,6 +40,7 @@ export const Dialog = ({
             zIndex={Z_INDEX_MODAL}
             isDetached={true}
             verticalAlignment={verticalAlignment}
+            strategy={modality === Modality.NonModal ? 'absolute' : 'fixed'}
         >
             {children}
         </Overlay>

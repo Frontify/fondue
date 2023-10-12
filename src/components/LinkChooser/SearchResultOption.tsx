@@ -34,7 +34,7 @@ export const SearchResultOption = ({
         },
     ] = useActor(machineService);
 
-    const menuItem = keyItemRecord[item.key];
+    const menuItem = keyItemRecord[item.key as string];
     const decorator = menuItem.icon ? IconOptions[menuItem.icon] : undefined;
     const currentSection = findSection(extraSections, currentSectionId);
     const isLoaded = (currentState: DropdownState) =>

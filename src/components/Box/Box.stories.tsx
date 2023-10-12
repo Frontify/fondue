@@ -1,9 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Meta, StoryFn } from '@storybook/react';
-import { BOX_TEST_ID, Box as BoxComponent } from './Box';
+import { BOX_TEST_ID, Box as BoxComponent, BoxProps } from './Box';
+import { SPACING_VALUES } from '@utilities/dimensions';
 
-type Props = JSX.IntrinsicElements['div'] | JSX.IntrinsicElements['span'];
+type Props = JSX.IntrinsicElements['div'] | JSX.IntrinsicElements['span'] | BoxProps;
+
+const spacingSelect = {
+    options: Object.values(SPACING_VALUES),
+    control: { type: 'select' },
+    defaultValue: '',
+};
 
 export default {
     title: 'Layout/Box',
@@ -13,6 +20,12 @@ export default {
         className: {
             type: 'string',
         },
+        paddingX: spacingSelect,
+        paddingY: spacingSelect,
+        padding: spacingSelect,
+        marginX: spacingSelect,
+        marginY: spacingSelect,
+        margin: spacingSelect,
         'data-test-id': {
             type: 'string',
         },
@@ -56,8 +69,9 @@ BoxWithNestedBoxAsSpan.args = {
     className:
         'tw-flex tw-bg-box-positive hover:tw-bg-box-positive-hover tw-text-box-positive-inverse hover:tw-text-box-positive-inverse-hover',
     children: (
-        <BoxComponent as="span" className="tw-p-4">
+        <BoxComponent as="span">
             I am a Box component rendered as a span element inside another Box with display: flex.
         </BoxComponent>
     ),
+    padding: 16,
 };

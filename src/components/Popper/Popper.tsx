@@ -21,6 +21,7 @@ export const Popper = ({
     zIndex = 'auto',
     isDetached = false,
     verticalAlignment,
+    strategy = 'absolute',
 }: PopperProps) => {
     const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
     const [popperElement, setPopperElement] = useState<HTMLElement | null>(null);
@@ -38,6 +39,7 @@ export const Popper = ({
                 enabled: flip,
             },
         ],
+        strategy,
     });
 
     useEffect(() => {
