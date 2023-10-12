@@ -3,20 +3,53 @@
 import { Validation, validationTextClassMap } from '@utilities/validation';
 import { TextInput } from '..';
 import { FormField, FormFieldProps } from './FormField';
+import { IconInfo } from '@foundation/Icon';
 
 const FORM_FIELD_LABEL = '[data-test-id=fondue-form-field-label]';
+const FORM_FIELD_LABEL_TEXT = '[data-test-id=fondue-form-field-label-text]';
 const FORM_FIELD_ERROR_TEXT = '[data-test-id=fondue-form-field-error-text]';
 const FORM_FIELD_HELPER_TEXT = '[data-test-id=fondue-form-field-helper-text]';
+const FORM_FIELD_TOOLTIP = '[data-test-id=tooltip-icon]';
+
 const FORM_FIELD_TEXT_INPUT = "input[type='text']";
 
 const defaultLabel: FormFieldProps['label'] = {
     text: 'I am a test label',
+};
+const labelWithTooltips: FormFieldProps['label'] = {
+    text: 'I am a test label',
+    tooltips: [
+        {
+            tooltip: {
+                content: 'I am a tooltip',
+                triggerElement: <IconInfo />,
+            },
+        },
+        {
+            tooltip: {
+                content: 'I am a tooltip number 2',
+                triggerElement: <IconInfo />,
+            },
+        },
+    ],
 };
 const helperText = 'This is a test of the helper text.';
 const errorText = 'This is a test of the error text.';
 
 const COMPONENT_BASE = (
     <FormField label={defaultLabel}>
+        <TextInput />
+    </FormField>
+);
+
+const COMPONENT_BASE_HIDDEN_LABEL = (
+    <FormField label={defaultLabel} hiddenLabel>
+        <TextInput />
+    </FormField>
+);
+
+const COMPONENT_BASE_WITH_TOOLTIPS = (
+    <FormField label={labelWithTooltips}>
         <TextInput />
     </FormField>
 );
@@ -44,6 +77,13 @@ describe('Form Field Component', () => {
         cy.get(FORM_FIELD_LABEL).first().should('have.text', defaultLabel.text);
     });
 
+    it('should render without label text', () => {
+        cy.mount(COMPONENT_BASE_HIDDEN_LABEL);
+        cy.get(FORM_FIELD_LABEL).should('exist');
+        cy.get(FORM_FIELD_LABEL).should('have.length', 1);
+        cy.get(FORM_FIELD_LABEL_TEXT).should('not.exist');
+    });
+
     it('should render child input element', () => {
         cy.mount(COMPONENT_BASE);
         cy.get(FORM_FIELD_TEXT_INPUT).should('exist');
@@ -67,5 +107,21 @@ describe('Form Field Component', () => {
     it('should render error text with correct color class', () => {
         cy.mount(COMPONENT_WITH_ERROR);
         cy.get(FORM_FIELD_ERROR_TEXT).should('have.class', validationTextClassMap[Validation.Error]);
+    });
+
+    it('should focus input when label is clicked', () => {
+        cy.mount(COMPONENT_BASE);
+        cy.get(FORM_FIELD_LABEL).click();
+        cy.get(FORM_FIELD_TEXT_INPUT).focused();
+    });
+
+    it('should render tooltips', () => {
+        cy.mount(COMPONENT_BASE_WITH_TOOLTIPS);
+        cy.get(FORM_FIELD_TOOLTIP).should('exist');
+    });
+
+    it('should render multiple tooltips', () => {
+        cy.mount(COMPONENT_BASE_WITH_TOOLTIPS);
+        cy.get(FORM_FIELD_LABEL).children().should('have.length', 2);
     });
 });

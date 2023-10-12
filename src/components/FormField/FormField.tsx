@@ -86,6 +86,8 @@ export const FormField = ({
                     hugWidth && 'tw-pt-2',
                     applySecondaryLabel && secondaryLabelStyle,
                 ])}
+                data-test-id={`${dataTestId}-label-text`}
+                aria-label={formattedLabel}
             >
                 {...elements}
             </span>
@@ -105,7 +107,7 @@ export const FormField = ({
             aria-label={label.text}
         >
             {hiddenLabel ? null : getFormattedLabel()}
-            <div className={'tw-w-full tw-flex tw-flex-col tw-gap-2'}>
+            <div className={'tw-w-full tw-flex tw-flex-col tw-gap-2'} data-test-id={`${dataTestId}-input`}>
                 {cloneElement(children, {
                     hugWidth: label.hugWidth,
                     required: label.required,
