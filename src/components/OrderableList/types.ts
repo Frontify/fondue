@@ -16,6 +16,8 @@ export type OrderableListProps<T> = {
     items: OrderableListItem<T>[];
     dragDisabled: boolean;
     dragHandlerPosition?: DragHandlerPosition;
+    /**@description Flag to disable the default drag sensor delay */
+    disableDragDelay?: boolean;
     itemStyle?: OrderableListItemStyle;
     selectedId?: string;
     onMove: (modifiedItems: DraggableItem<T>[]) => void;

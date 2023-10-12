@@ -36,6 +36,7 @@ export const OrderableList = <T extends object>({
     dragDisabled,
     items,
     dragHandlerPosition = 'none',
+    disableDragDelay = false,
     itemStyle,
     selectedId,
     renderContent,
@@ -80,6 +81,7 @@ export const OrderableList = <T extends object>({
             showDragHandlerOnHoverOnly={!isDraggable}
             dragHandlerPosition={!isDraggable ? 'none' : dragHandlerPosition}
             showContentWhileDragging={true}
+            disableDragDelay={disableDragDelay}
         >
             {itemsState.map((item) => {
                 const identifier = `collection-item-${item.id}`;

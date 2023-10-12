@@ -23,6 +23,7 @@ export default {
     args: {
         dragDisabled: false,
         dragHandlerPosition: 'right',
+        disableDragDelay: false,
         spacingY: 'small',
         contentHight: 'content-fit',
         shadow: 'small',
@@ -39,6 +40,11 @@ export default {
             table: { category: 'Item Options' },
             options: ['left', 'right', 'none'],
             control: { type: 'inline-radio' },
+        },
+        disableDragDelay: {
+            table: { category: 'Item Options' },
+            defaultValue: false,
+            control: { type: 'boolean' },
         },
         spacingY: {
             table: { category: 'Item Style' },
@@ -100,6 +106,7 @@ export const OrderableList: StoryFn<OrderableListProps<StoryListItem> & Orderabl
     selectedId,
     dragDisabled,
     dragHandlerPosition,
+    disableDragDelay,
     spacingY,
     contentHight,
     shadow,
@@ -163,6 +170,7 @@ export const OrderableList: StoryFn<OrderableListProps<StoryListItem> & Orderabl
                 onMove={chain(handleMove, onMove)}
                 dragDisabled={dragDisabled}
                 dragHandlerPosition={dragHandlerPosition}
+                disableDragDelay={disableDragDelay}
                 selectedId={currentSelectedId}
                 itemStyle={{
                     spacingY,

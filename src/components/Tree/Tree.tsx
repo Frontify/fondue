@@ -195,6 +195,7 @@ export const Tree = memo(
         draggable = false,
         multiselect = false,
         dragHandlerPosition = 'left',
+        disableDragDelay = false,
         showDragHandlerOnHoverOnly = true,
         showContentWhileDragging = false,
         itemStyle,
@@ -375,7 +376,9 @@ export const Tree = memo(
         });
 
         const [coordinateGetter] = useState(() => sortableTreeKeyboardCoordinates(sensorContext));
-        const activationConstraint = sensorsActivationConstraint(dragHandlerPosition);
+        const activationConstraint = disableDragDelay
+            ? sensorsActivationConstraint(undefined)
+            : sensorsActivationConstraint(dragHandlerPosition);
 
         const sensors = useSensors(
             useSensor(PointerSensor, { activationConstraint }),
