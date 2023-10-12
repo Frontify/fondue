@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { NumberInputProps } from '@components/NumberInput/types';
 import { Validation } from '@utilities/validation';
 import { NumberInput, TooltipPosition } from '..';
-import { IconNook16, IconSize } from '@foundation/Icon';
+import { IconInfo, IconNook16, IconQuestionMark, IconSize } from '@foundation/Icon';
 
 export default {
     title: 'Components/FormField',
@@ -38,6 +38,16 @@ export const Default: StoryFn<FormFieldProps> = (args) => {
         text: 'Number Greater than 0',
         secondaryLabel: '1/10',
         required: true,
+        tooltips: [
+            {
+                tooltip: {
+                    content: 'I am a tooltip',
+                    triggerElement: <IconQuestionMark />,
+                    position: TooltipPosition.Right,
+                },
+                iconSize: IconSize.Size16,
+            },
+        ],
     };
     const [currentValue, setCurrentValue] = useState<number | string | undefined>();
     const [error, setError] = useState<boolean>(false);
@@ -54,11 +64,16 @@ export const Default: StoryFn<FormFieldProps> = (args) => {
         suffix: 'px',
         decorator: <IconNook16 />,
         placeholder: 'Enter a number...',
-        status: isNaN(Number(currentValue)) ? Validation.Default : currentValidation,
     };
 
     return (
-        <FormField {...args} label={defaultLabel} error={error} errorText={'Value must be greater and 0.'}>
+        <FormField
+            {...args}
+            label={defaultLabel}
+            error={error}
+            errorText={'Value must be greater and 0.'}
+            status={isNaN(Number(currentValue)) ? Validation.Default : currentValidation}
+        >
             <NumberInput {...inputProps} />
         </FormField>
     );
@@ -102,13 +117,24 @@ export const WithError: StoryFn<FormFieldProps> = (args) => {
     const onlyALabel: FormFieldProps['label'] = {
         text: "Only a's",
         hugWidth: true,
-        tooltipIcon: {
-            tooltip: {
-                content: "Only enter lowercase a's",
-                position: TooltipPosition.Right,
+        tooltips: [
+            {
+                tooltip: {
+                    content: "Only enter lowercase a's",
+                    position: TooltipPosition.Left,
+                    triggerElement: <IconQuestionMark />,
+                },
+                iconSize: IconSize.Size16,
             },
-            iconSize: IconSize.Size16,
-        },
+            {
+                tooltip: {
+                    content: 'I am tooltip number 1',
+                    triggerElement: <IconInfo />,
+                    position: TooltipPosition.Right,
+                },
+                iconSize: IconSize.Size16,
+            },
+        ],
     };
     return (
         <FormField
