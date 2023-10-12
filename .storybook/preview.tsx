@@ -66,7 +66,6 @@ export const parameters = {
     docs: {
         canvas: {
             sourceState: 'shown',
-        },
-        source: { type: 'code' },
+        }
     },
 };

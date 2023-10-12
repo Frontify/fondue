@@ -85,6 +85,7 @@ export const FormField = ({
                     'tw-whitespace-nowrap',
                     hugWidth && 'tw-pt-2',
                     applySecondaryLabel && secondaryLabelStyle,
+                    disabled || readOnly ? 'tw-text-black-60' : 'tw-text-black-80',
                 ])}
                 data-test-id={`${dataTestId}-label-text`}
                 aria-label={formattedLabel}
