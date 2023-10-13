@@ -127,7 +127,7 @@ export const TreeItemMultiselect = memo(
         const checkBoxOnSelect = isDisabled ? () => void 0 : () => onSelect?.(id, false);
         const checkBox =
             checkBoxPosition !== 'none' ? (
-                <Container maxWidth="16px">
+                <Container maxWidth="16px" maxHeight="16px">
                     <Checkbox
                         id={`checkbox-${id}`}
                         ref={setActiveNodeRef}
