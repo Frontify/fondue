@@ -1,0 +1,12 @@
+## Definition of Done
+- [ ] User interface and experience have been verified by a designer
+- [ ] I have added thorough Cypress tests (All properties and interactions have been tested).
+- [ ] Cross-browser compatibility - The component look consistent in the latest version of Chrome, Safari, Firefox and Edge.
+- [ ] I've added documentation in Storybook. all properties are reflected in table and controls.
+- [ ] User interface is compliant with WCAG 2.1 AA. Ensure these items are fulfilled:
+    - [ ] Keyboard operability: All functionality can be accessed using only the keyboard
+    - [ ] Logical tab order: Interactive elements follow a consistent and logical tab order
+    - [ ] Visual indication of focus: Focused elements are visually highlighted for keyboard navigation
+    - [ ] Color contrast: Sufficient contrast is used between text and background, as well as form fields and background
+    - [ ] Alternative visual cues: Information is not solely reliant on color and includes alternative visual indicators
+    - [ ] Semantic markup: Headings, lists, and form elements are marked up with appropriate semantic tags
