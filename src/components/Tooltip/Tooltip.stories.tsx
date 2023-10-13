@@ -106,6 +106,7 @@ const InContextTemplate: StoryFn<TooltipProps> = (args) => {
 };
 
 export const Default = Template.bind({});
+
 export const OpenByDefault = Template.bind({});
 OpenByDefault.args = {
     openOnMount: true,
