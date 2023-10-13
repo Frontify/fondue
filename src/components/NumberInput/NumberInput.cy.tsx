@@ -166,7 +166,7 @@ describe('Number Input Component', () => {
         cy.get(NUMBER_INPUT_ELEMENT).should('have.value', '');
     });
 
-    it('should not revert to previous state on clear is suffix present', () => {
+    it('should not revert to previous state on clear if suffix present', () => {
         cy.mount(<NumberInput suffix="px" value="-10" clearable />);
         cy.get(NUMBER_INPUT_CLEAR_BTN).click();
         cy.get(NUMBER_INPUT_ELEMENT).should('have.value', '');
