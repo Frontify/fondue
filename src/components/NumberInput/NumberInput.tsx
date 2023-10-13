@@ -315,6 +315,7 @@ export const NumberInput = ({
                             'tw-text-text-weak tw-p-1 hover:tw-rounded-sm hover:tw-bg-box-neutral hover:tw-text-box-neutral-inverse focus:tw-ring-line-xx-strong focus:tw-bg-box-neutral'
                         }
                         aria-label="Clear value"
+                        data-test-id={`${dataTestId}-clear`}
                     >
                         <IconCross16 />
                     </button>

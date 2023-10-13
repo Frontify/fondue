@@ -10,6 +10,7 @@ const NUMBER_INPUT_DECORATOR = '[data-test-id=fondue-number-input-decorator]';
 const NUMBER_INPUT_INCREMENT = '[data-test-id=fondue-number-input-increment]';
 const NUMBER_INPUT_DECREMENT = '[data-test-id=fondue-number-input-decrement]';
 const NUMBER_INPUT_STATUS_ICON = '[data-test-id=fondue-number-input-status-icon]';
+const NUMBER_INPUT_CLEAR_BTN = '[data-test-id=fondue-number-input-clear]';
 
 describe('Number Input Component', () => {
     it('should mount', () => {
@@ -157,5 +158,17 @@ describe('Number Input Component', () => {
         cy.get(NUMBER_INPUT_COMPONENT).should('have.class', validationClassMap[Validation.Error]);
         cy.get(NUMBER_INPUT_STATUS_ICON).should('be.visible');
         cy.get(NUMBER_INPUT_STATUS_ICON).should('have.class', validationTextClassMap[Validation.Error]);
+    });
+
+    it('should not revert to previous state on clear', () => {
+        cy.mount(<NumberInput value={-10} clearable />);
+        cy.get(NUMBER_INPUT_CLEAR_BTN).click();
+        cy.get(NUMBER_INPUT_ELEMENT).should('have.value', '');
+    });
+
+    it('should not revert to previous state on clear is suffix present', () => {
+        cy.mount(<NumberInput suffix="px" value="-10" clearable />);
+        cy.get(NUMBER_INPUT_CLEAR_BTN).click();
+        cy.get(NUMBER_INPUT_ELEMENT).should('have.value', '');
     });
 });
