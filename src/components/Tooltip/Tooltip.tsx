@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement, useCallback, useRef, useState } from 'react';
+import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 import { PopperPlacement } from '@components/Popper';
 import { usePopper } from 'react-popper';
 import { merge } from '@utilities/merge';
@@ -110,6 +110,12 @@ export const Tooltip = ({
 
         setOpen(true);
     }, [enterDelay, setOpen]);
+
+    useEffect(() => {
+        if (timeoutRef.current && !open) {
+            clearTimeout(timeoutRef.current);
+        }
+    }, [open]);
 
     return (
         <>
