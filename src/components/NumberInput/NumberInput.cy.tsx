@@ -160,15 +160,47 @@ describe('Number Input Component', () => {
         cy.get(NUMBER_INPUT_STATUS_ICON).should('have.class', validationTextClassMap[Validation.Error]);
     });
 
-    it('should not revert to previous state on clear', () => {
-        cy.mount(<NumberInput value={-10} clearable />);
+    it('should not revert to previous state when clear method used on negative value', () => {
+        cy.mount(<NumberInput controls clearable />);
+        cy.get(NUMBER_INPUT_DECREMENT).trigger('keydown', { keyCode: 16, release: false });
+        cy.get(NUMBER_INPUT_DECREMENT).trigger('mousedown', { release: false });
+        cy.wait(2000);
+        cy.get(NUMBER_INPUT_DECREMENT).trigger('mouseup');
+        cy.get(NUMBER_INPUT_DECREMENT).trigger('keyup', { keyCode: 16 });
         cy.get(NUMBER_INPUT_CLEAR_BTN).click();
         cy.get(NUMBER_INPUT_ELEMENT).should('have.value', '');
     });
 
-    it('should not revert to previous state on clear if suffix present', () => {
-        cy.mount(<NumberInput suffix="px" value="-10" clearable />);
+    it('should not revert to previous state when backspace used on negative value', () => {
+        cy.mount(<NumberInput suffix="px" clearable controls />);
+        cy.get(NUMBER_INPUT_DECREMENT).trigger('keydown', { keyCode: 16, release: false });
+        cy.get(NUMBER_INPUT_DECREMENT).trigger('mousedown', { release: false });
+        cy.wait(2000);
+        cy.get(NUMBER_INPUT_DECREMENT).trigger('mouseup');
+        cy.get(NUMBER_INPUT_DECREMENT).trigger('keyup', { keyCode: 16 });
+        cy.get(NUMBER_INPUT_ELEMENT).trigger('keydown', { keyCode: 8, repeat: true });
+        cy.get(NUMBER_INPUT_ELEMENT).should('have.value', '');
+    });
+
+    it('should not revert to previous state when clear method used on negative value and suffix present', () => {
+        cy.mount(<NumberInput suffix="px" clearable controls />);
+        cy.get(NUMBER_INPUT_DECREMENT).trigger('keydown', { keyCode: 16, release: false });
+        cy.get(NUMBER_INPUT_DECREMENT).trigger('mousedown', { release: false });
+        cy.wait(2000);
+        cy.get(NUMBER_INPUT_DECREMENT).trigger('mouseup');
+        cy.get(NUMBER_INPUT_DECREMENT).trigger('keyup', { keyCode: 16 });
         cy.get(NUMBER_INPUT_CLEAR_BTN).click();
+        cy.get(NUMBER_INPUT_ELEMENT).should('have.value', '');
+    });
+
+    it('should not revert to previous state when backspace used on negative value and suffix present', () => {
+        cy.mount(<NumberInput suffix="px" clearable controls />);
+        cy.get(NUMBER_INPUT_DECREMENT).trigger('keydown', { keyCode: 16, release: false });
+        cy.get(NUMBER_INPUT_DECREMENT).trigger('mousedown', { release: false });
+        cy.wait(2000);
+        cy.get(NUMBER_INPUT_DECREMENT).trigger('mouseup');
+        cy.get(NUMBER_INPUT_DECREMENT).trigger('keyup', { keyCode: 16 });
+        cy.get(NUMBER_INPUT_ELEMENT).trigger('keydown', { keyCode: 8, repeat: true });
         cy.get(NUMBER_INPUT_ELEMENT).should('have.value', '');
     });
 });
