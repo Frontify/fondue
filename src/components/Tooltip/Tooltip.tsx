@@ -149,18 +149,19 @@ export const Tooltip = ({
                         {...attributes.popper}
                     >
                         <p className="tw-whitespace-pre-line">{formatTooltipText(content)}</p>
-                        <div
-                            data-test-id={`${dataTestId}-arrow`}
-                            data-popper-arrow={withArrow}
-                            aria-hidden="true"
-                            ref={setArrowElement}
-                            style={styles.arrow}
-                            className={merge([
-                                withArrow &&
+                        {withArrow && (
+                            <div
+                                data-test-id={`${dataTestId}-arrow`}
+                                data-popper-arrow={withArrow}
+                                aria-hidden="true"
+                                ref={setArrowElement}
+                                style={styles.arrow}
+                                className={merge([
                                     'tw-absolute tw-w-3 tw-h-3 tw-pointer-events-none before:tw-absolute before:tw-w-3 before:tw-h-3 before:tw-rotate-45 before:tw-border before:tw-border-line-mighty before:tw-bg-box-neutral-mighty',
-                                withArrow && arrowStyling,
-                            ])}
-                        />
+                                    arrowStyling,
+                                ])}
+                            />
+                        )}
                     </div>
                 </EnablePortalWrapper>
             )}

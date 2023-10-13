@@ -97,7 +97,7 @@ const InContextTemplate: StoryFn<TooltipProps> = (args) => {
                             Asperiores cumque minima nemo officia rerum!
                         </p>
 
-                        <Button onClick={() => setIsDialogOpen(!isDialogOpen)}>Close</Button>
+                        <Button onClick={() => setIsDialogOpen(false)}>Close</Button>
                     </Box>
                 </DialogBody>
             </InlineDialog.Content>
