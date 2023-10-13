@@ -9,7 +9,6 @@ import { Z_INDEX_TOOLTIP } from '@utilities/dialogs/constants';
 import { EnablePortalWrapper } from '@utilities/dialogs/EnablePortalWrapper';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 
-export type TooltipSize = 'spacious' | 'compact';
 export type TooltipProps = {
     id?: string;
     children?: ReactElement;
@@ -20,7 +19,7 @@ export type TooltipProps = {
     enablePortal?: boolean;
     content: string;
     withArrow?: boolean;
-    size?: TooltipSize;
+    size?: 'spacious' | 'compact';
     maxWidth?: string | number;
     maxHeight?: string | number;
     enterDelay?: number;
@@ -87,6 +86,7 @@ export const Tooltip = ({
             },
         ],
     });
+
     const currentPlacement = state?.placement ?? placement;
     const arrowStyling = getArrowClasses(currentPlacement);
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -123,7 +123,7 @@ export const Tooltip = ({
                 aria-disabled={disabled}
                 aria-labelledby={id}
                 disabled={disabled}
-                className={disabled ? 'tw-text-text-disabled' : ''}
+                className="disabled:tw-text-text-disabled"
             >
                 {children}
             </button>

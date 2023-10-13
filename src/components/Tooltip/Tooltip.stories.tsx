@@ -110,10 +110,12 @@ export const OpenByDefault = Template.bind({});
 OpenByDefault.args = {
     openOnMount: true,
 };
+
 export const WithLineBreak = Template.bind({});
 WithLineBreak.args = {
     content: 'This is a<br>sample text<br />with line breaks\nin it',
 };
+
 export const Disabled = Template.bind({});
 Disabled.args = {
     disabled: true,
