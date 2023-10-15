@@ -24,7 +24,7 @@ export const Popper = ({
     strategy = 'absolute',
 }: PopperProps) => {
     const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
-    const [popperElement, setPopperElement] = useState<HTMLElement | null>(null);
+    const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
     const [popperDimensions, setPopperDimensions] = useState({
         width: DEFAULT_POPPER_WIDTH,
         height: DEFAULT_POPPER_HEIGHT,
@@ -73,15 +73,13 @@ export const Popper = ({
         <>
             {Children.map(children, (child) => {
                 if (isValidElement(child) && typeof child.type === 'function') {
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore Property 'displayName' does not exist on type 'JSXElementConstructor<any>'.ts(2339)
-                    const { displayName } = child.type;
+                    const { name } = child.type;
 
-                    if (displayName === Trigger.displayName) {
+                    if (name === Trigger.name) {
                         return <div ref={setReferenceElement}>{child}</div>;
                     }
 
-                    if (displayName === Content.displayName && open) {
+                    if (name === Content.name && open) {
                         return enablePortal ? (
                             <Portal>
                                 <div
