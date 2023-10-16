@@ -40,9 +40,9 @@ const Template: StoryFn<PopperProps> = (args) => {
                 enablePortal={args.enablePortal}
                 strategy={args.strategy}
             >
-                <Popper.Reference>
+                <Popper.Trigger>
                     <Button onClick={() => setOpen(!open)}>Hello</Button>
-                </Popper.Reference>
+                </Popper.Trigger>
                 <Popper.Content>
                     <Box className="tw-bg-base tw-border tw-border-black tw-w-[400px]">
                         <p>Some content</p>

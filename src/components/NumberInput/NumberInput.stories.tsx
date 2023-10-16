@@ -79,7 +79,7 @@ export const WithDecoratorAndIncrementable: StoryFn<NumberInputProps> = (args) =
 export const WithErrorLessThanZero: StoryFn<NumberInputProps> = (args) => {
     const [status, setStatus] = useState<Validation>(Validation.Success);
     const [valueSelect, setValueSelect] = useState<boolean>(false);
-    const handleValidation = (value: number) => {
+    const handleValidation = (value: number = 0) => {
         setStatus(value < 0 ? Validation.Error : Validation.Success);
         setValueSelect(value < 0);
     };
