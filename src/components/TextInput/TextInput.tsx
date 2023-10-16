@@ -181,7 +181,7 @@ export const TextInput = ({
 
     const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Enter' && onEnterPressed) {
-            onEnterPressed(inputElement.current ? inputElement.current.value : '');
+            onEnterPressed(inputElement.current?.value ?? '');
         }
     };
 
