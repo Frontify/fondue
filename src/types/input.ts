@@ -9,6 +9,6 @@ export type InputBaseProps<TValue> = {
     suffix?: string;
     status?: Validation;
     valueSelect?: boolean;
-    onChange?: (value: TValue) => void;
+    onChange?: (value?: TValue) => void;
     'data-test-id'?: string;
 } & Omit<InputHTMLAttributes<HTMLInputElement>, 'className' | 'style' | 'onChange'>;
