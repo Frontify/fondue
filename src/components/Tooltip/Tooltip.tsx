@@ -127,6 +127,7 @@ export const Tooltip = ({
                 aria-labelledby={id}
                 disabled={disabled}
                 className="disabled:tw-text-text-disabled"
+                data-test-id={`${dataTestId}-button`}
             >
                 {children}
             </button>
