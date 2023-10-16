@@ -21,4 +21,4 @@ export type OrderableListProps<T> = {
     onMove: (modifiedItems: DraggableItem<T>[]) => void;
     renderContent: RenderListItem<T>;
     'data-test-id'?: string;
-} & Pick<TreeProps, 'disableDragDelay'>;
+} & Pick<TreeProps, 'enableDragDelay'>;

@@ -2,9 +2,20 @@
 
 import { TreeProps } from '../types';
 
-export const sensorsActivationConstraint: (dragHandlerPosition: TreeProps['dragHandlerPosition']) => {
+type SensorsActivationConstraintProps = {
+    dragHandlerPosition: TreeProps['dragHandlerPosition'];
+    enableDragDelay: TreeProps['enableDragDelay'];
+};
+
+type SensorsActivationConstraint = {
     delay: number;
     tolerance: number;
-} = (dragHandlerPosition) => {
-    return dragHandlerPosition === 'none' ? { delay: 150, tolerance: 2 } : { delay: 0, tolerance: 0 };
+};
+
+export const sensorsActivationConstraint = ({
+    dragHandlerPosition,
+    enableDragDelay,
+}: SensorsActivationConstraintProps): SensorsActivationConstraint => {
+    const delay: number = enableDragDelay ? 150 : 0;
+    return dragHandlerPosition === 'none' ? { delay, tolerance: 2 } : { delay: 0, tolerance: 0 };
 };
