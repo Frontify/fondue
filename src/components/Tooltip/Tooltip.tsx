@@ -80,10 +80,7 @@ export const Tooltip = ({
         modifiers: [
             { name: 'arrow', options: { element: arrowElement } },
             { name: 'offset', options: { offset } },
-            {
-                name: 'flip',
-                enabled: flip,
-            },
+            { name: 'flip', enabled: flip },
         ],
     });
 
