@@ -1,20 +1,20 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import type { ReactElement } from 'react';
-import { TooltipIcon, TooltipIconProps } from '..';
+import { cloneElement } from 'react';
 import { merge } from '@utilities/merge';
+import { IconSize } from '@foundation/Icon';
 import { HelperText } from '@utilities/input';
 import { Validation } from '@utilities/validation';
-import { cloneElement } from 'react';
 import { generateRandomId } from '@utilities/generateRandomId';
-import { IconSize } from '@foundation/Icon';
+import { Tooltip, TooltipProps } from '@components/Tooltip/Tooltip';
 
 export type LabelProps = {
     text: string;
     hugWidth?: boolean;
     required?: boolean;
     secondaryLabel?: string;
-    tooltips?: TooltipIconProps[];
+    tooltips?: TooltipProps[];
     toolTipSize?: IconSize;
 };
 
@@ -58,13 +58,15 @@ export const FormField = ({
             formattedLabel += ' *';
         }
         if (tooltips?.length) {
-            const tooltipElements: ReactElement[] = tooltips.map((tip: TooltipIconProps) => (
-                <TooltipIcon
+            const tooltipElements: ReactElement[] = tooltips.map((tip: TooltipProps) => (
+                <Tooltip
                     key={`form-field-tooltip-${generateRandomId()}`}
-                    triggerIcon={tip.triggerIcon}
-                    tooltip={tip.tooltip}
-                    iconSize={tip.iconSize}
-                />
+                    content={tip.content}
+                    size={tip.size}
+                    data-test-id={tip['data-test-id']}
+                >
+                    {tip.children}
+                </Tooltip>
             ));
             elements.push(
                 <span className={'tw-flex tw-gap-2'}>

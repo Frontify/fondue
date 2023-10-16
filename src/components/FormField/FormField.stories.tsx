@@ -5,8 +5,8 @@ import { TextInput, TextInputType } from '@components/TextInput';
 import { FormField, FormFieldProps } from './FormField';
 import { useState } from 'react';
 import { Validation } from '@utilities/validation';
-import { NumberInput, TooltipPosition } from '..';
-import { IconInfo, IconNook16, IconQuestionMark, IconSize } from '@foundation/Icon';
+import { NumberInput } from '..';
+import { IconInfo, IconNook16, IconQuestionMark } from '@foundation/Icon';
 
 export default {
     title: 'Components/FormField',
@@ -147,20 +147,14 @@ export const WithError: StoryFn<FormFieldProps> = (args) => {
                 hugWidth: true,
                 tooltips: [
                     {
-                        tooltip: {
-                            content: "Only enter lowercase a's",
-                            position: TooltipPosition.Left,
-                            triggerElement: <IconQuestionMark />,
-                        },
-                        iconSize: IconSize.Size16,
+                        content: "Only enter lowercase a's",
+                        children: <IconQuestionMark />,
+                        size: 'compact',
                     },
                     {
-                        tooltip: {
-                            content: 'I am tooltip number 1',
-                            triggerElement: <IconInfo />,
-                            position: TooltipPosition.Right,
-                        },
-                        iconSize: IconSize.Size16,
+                        content: 'I am tooltip number 1',
+                        children: <IconInfo />,
+                        size: 'compact',
                     },
                 ],
             }}

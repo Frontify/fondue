@@ -3,13 +3,16 @@
 import { Validation, validationTextClassMap } from '@utilities/validation';
 import { TextInput } from '..';
 import { FormField, FormFieldProps } from './FormField';
-import { IconInfo } from '@foundation/Icon';
+import { IconInfo, IconQuestionMark } from '@foundation/Icon';
 
 const FORM_FIELD_LABEL = '[data-test-id=fondue-form-field-label]';
 const FORM_FIELD_LABEL_TEXT = '[data-test-id=fondue-form-field-label-text]';
 const FORM_FIELD_ERROR_TEXT = '[data-test-id=fondue-form-field-error-text]';
 const FORM_FIELD_HELPER_TEXT = '[data-test-id=fondue-form-field-helper-text]';
-const FORM_FIELD_TOOLTIP = '[data-test-id=tooltip-icon]';
+const FORM_FIELD_TOOLTIP_ONE = '[data-test-id=fondue-form-field-tooltip-1]';
+const FORM_FIELD_TOOLTIP_ONE_ICON = '[data-test-id=fondue-form-field-tooltip-1-button]';
+const FORM_FIELD_TOOLTIP_TWO = '[data-test-id=fondue-form-field-tooltip-2]';
+const FORM_FIELD_TOOLTIP_TWO_ICON = '[data-test-id=fondue-form-field-tooltip-2-button]';
 
 const FORM_FIELD_TEXT_INPUT = "input[type='text']";
 
@@ -20,16 +23,14 @@ const labelWithTooltips: FormFieldProps['label'] = {
     text: 'I am a test label',
     tooltips: [
         {
-            tooltip: {
-                content: 'I am a tooltip',
-                triggerElement: <IconInfo />,
-            },
+            content: 'I am a tooltip',
+            children: <IconInfo />,
+            'data-test-id': 'fondue-form-field-tooltip-1',
         },
         {
-            tooltip: {
-                content: 'I am a tooltip number 2',
-                triggerElement: <IconInfo />,
-            },
+            content: 'I am a tooltip number 2',
+            children: <IconQuestionMark />,
+            'data-test-id': 'fondue-form-field-tooltip-2',
         },
     ],
 };
@@ -115,13 +116,27 @@ describe('Form Field Component', () => {
         cy.get(FORM_FIELD_TEXT_INPUT).focused();
     });
 
-    it('should render tooltips', () => {
+    it('should render tooltip', () => {
         cy.mount(COMPONENT_BASE_WITH_TOOLTIPS);
-        cy.get(FORM_FIELD_TOOLTIP).should('exist');
+        cy.get(FORM_FIELD_TOOLTIP_ONE_ICON).should('exist');
     });
 
     it('should render multiple tooltips', () => {
         cy.mount(COMPONENT_BASE_WITH_TOOLTIPS);
         cy.get(FORM_FIELD_LABEL).children().should('have.length', 2);
+        cy.get(FORM_FIELD_TOOLTIP_ONE_ICON).should('exist');
+        cy.get(FORM_FIELD_TOOLTIP_TWO_ICON).should('exist');
+    });
+
+    it('should open 1st tooltip dialog on hover', () => {
+        cy.mount(COMPONENT_BASE_WITH_TOOLTIPS);
+        cy.get(FORM_FIELD_TOOLTIP_ONE_ICON).trigger('mouseover');
+        cy.get(FORM_FIELD_TOOLTIP_ONE).should('exist');
+    });
+
+    it('should open 2nd tooltip dialog on hover', () => {
+        cy.mount(COMPONENT_BASE_WITH_TOOLTIPS);
+        cy.get(FORM_FIELD_TOOLTIP_TWO_ICON).trigger('mouseover');
+        cy.get(FORM_FIELD_TOOLTIP_TWO).should('exist');
     });
 });
