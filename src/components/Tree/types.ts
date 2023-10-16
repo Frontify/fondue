@@ -139,7 +139,6 @@ export type TreeProps = {
     selectedIds?: string[];
     expandedIds?: string[];
     dragHandlerPosition?: DragHandlerPosition;
-    /**@description Flag to disable the default sensor delay */
     enableDragDelay?: boolean;
     showDragHandlerOnHoverOnly?: boolean;
     showContentWhileDragging?: boolean;

@@ -36,7 +36,7 @@ export const OrderableList = <T extends object>({
     dragDisabled,
     items,
     dragHandlerPosition = 'none',
-    enableDragDelay = false,
+    enableDragDelay = true,
     itemStyle,
     selectedId,
     renderContent,
