@@ -16,6 +16,6 @@ export const sensorsActivationConstraint = ({
     dragHandlerPosition,
     enableDragDelay,
 }: SensorsActivationConstraintProps): SensorsActivationConstraint => {
-    const delay: number = enableDragDelay ? 150 : 0;
+    const delay = enableDragDelay ? 150 : 0;
     return dragHandlerPosition === 'none' ? { delay, tolerance: 2 } : { delay: 0, tolerance: 0 };
 };
