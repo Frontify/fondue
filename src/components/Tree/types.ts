@@ -139,6 +139,7 @@ export type TreeProps = {
     selectedIds?: string[];
     expandedIds?: string[];
     dragHandlerPosition?: DragHandlerPosition;
+    enableDragDelay?: boolean;
     showDragHandlerOnHoverOnly?: boolean;
     showContentWhileDragging?: boolean;
     itemStyle?: TreeItemStyling;
