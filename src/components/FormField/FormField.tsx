@@ -48,6 +48,55 @@ const FormatTooltips = ({ tooltips }: FormatTooltipsProps): ReactElement[] => {
     ));
 };
 
+type FormattedLabelProps = {
+    label: FormFieldProps['label'];
+    disabled: FormFieldProps['disabled'];
+    readOnly: FormFieldProps['readOnly'];
+    dataTestId: FormFieldProps['data-test-id'];
+};
+
+const FormattedLabel = ({ label, disabled, readOnly, dataTestId }: FormattedLabelProps): ReactElement => {
+    const { text, required, secondaryLabel, hugWidth, tooltips } = label;
+    const elements: ReactElement[] = [];
+    const secondaryLabelStyle = 'tw-w-full tw-flex tw-flex-nowrap tw-justify-between';
+    const applySecondaryLabel = !hugWidth && secondaryLabel;
+    let formattedLabel = text;
+
+    if (required) {
+        formattedLabel += ' *';
+    }
+
+    if (tooltips?.length) {
+        elements.push(
+            <span className={'tw-flex tw-gap-2'}>
+                {formattedLabel}
+                <FormatTooltips tooltips={tooltips} />
+            </span>,
+        );
+    } else {
+        elements.push(<span>{formattedLabel}</span>);
+    }
+
+    if (applySecondaryLabel) {
+        elements.push(<span>{secondaryLabel}</span>);
+    }
+
+    return (
+        <span
+            className={merge([
+                'tw-whitespace-nowrap',
+                hugWidth && 'tw-pt-2',
+                applySecondaryLabel && secondaryLabelStyle,
+                disabled || readOnly ? 'tw-text-black-60' : 'tw-text-black-80',
+            ])}
+            data-test-id={`${dataTestId}-label-text`}
+            aria-label={formattedLabel}
+        >
+            {...elements}
+        </span>
+    );
+};
+
 export const FormField = ({
     children,
     disabled = false,
@@ -62,48 +111,6 @@ export const FormField = ({
     status = Validation.Default,
     'data-test-id': dataTestId = 'fondue-form-field',
 }: FormFieldProps): ReactElement => {
-    const formattedLabel = (): ReactElement => {
-        const { text, required, secondaryLabel, hugWidth, tooltips } = label;
-        const elements: ReactElement[] = [];
-        const secondaryLabelStyle = 'tw-w-full tw-flex tw-flex-nowrap tw-justify-between';
-        const applySecondaryLabel = !hugWidth && secondaryLabel;
-        let formattedLabel = text;
-
-        if (required) {
-            formattedLabel += ' *';
-        }
-
-        if (tooltips?.length) {
-            elements.push(
-                <span className={'tw-flex tw-gap-2'}>
-                    {formattedLabel}
-                    <FormatTooltips tooltips={tooltips} />
-                </span>,
-            );
-        } else {
-            elements.push(<span>{formattedLabel}</span>);
-        }
-
-        if (applySecondaryLabel) {
-            elements.push(<span>{secondaryLabel}</span>);
-        }
-
-        return (
-            <span
-                className={merge([
-                    'tw-whitespace-nowrap',
-                    hugWidth && 'tw-pt-2',
-                    applySecondaryLabel && secondaryLabelStyle,
-                    disabled || readOnly ? 'tw-text-black-60' : 'tw-text-black-80',
-                ])}
-                data-test-id={`${dataTestId}-label-text`}
-                aria-label={formattedLabel}
-            >
-                {...elements}
-            </span>
-        );
-    };
-
     return (
         <label
             className={merge([
@@ -116,7 +123,9 @@ export const FormField = ({
             data-test-id={`${dataTestId}-label`}
             aria-label={label.text}
         >
-            {hiddenLabel ? null : formattedLabel()}
+            {hiddenLabel ? null : (
+                <FormattedLabel label={label} dataTestId={dataTestId} disabled={disabled} readOnly={readOnly} />
+            )}
             <div className={'tw-w-full tw-flex tw-flex-col tw-gap-2'} data-test-id={`${dataTestId}-input`}>
                 {cloneElement(children, {
                     hugWidth: label.hugWidth,

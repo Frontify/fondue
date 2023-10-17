@@ -92,7 +92,6 @@ export const Default: StoryFn<FormFieldProps> = (args) => {
                 secondaryLabel: '1/10',
                 required: true,
             }}
-            // error={error}
             errorText={'Value must be greater and 0.'}
             status={isNaN(Number(currentValue)) ? Validation.Default : currentValidation}
         >
