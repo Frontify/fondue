@@ -163,7 +163,7 @@ export const SegmentedControls = ({
     const alignment = hugWidth ? 'tw-flex' : 'tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly';
 
     const getSliderX = () => {
-        let translateX = -1;
+        let translateX = 0;
         for (let i = 0; i < selectedIndex; i++) {
             translateX += itemsRef.current[i]?.clientWidth ?? 0;
         }
@@ -171,7 +171,7 @@ export const SegmentedControls = ({
     };
 
     const sliderWidth = hugWidth ? `${itemsRef.current[selectedIndex]?.clientWidth}px` : `${100 / items.length}%`;
-    const sliderTranslation = hugWidth ? getSliderX() : `calc(${100 * selectedIndex}% - ${1.2 * selectedIndex}px)`;
+    const sliderTranslation = hugWidth ? getSliderX() : `calc(${100 * selectedIndex}% - ${selectedIndex}px)`;
 
     return (
         <div className="tw-flex">
