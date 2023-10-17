@@ -33,6 +33,21 @@ export type FormFieldProps = {
     'data-test-id'?: string;
 };
 
+type FormatTooltipsProps = { tooltips: TooltipProps[] };
+
+const FormatTooltips = ({ tooltips }: FormatTooltipsProps): ReactElement[] => {
+    return tooltips.map((tip: TooltipProps) => (
+        <Tooltip
+            key={`form-field-tooltip-${generateRandomId()}`}
+            content={tip.content}
+            size={tip.size}
+            data-test-id={tip['data-test-id']}
+        >
+            {tip.children}
+        </Tooltip>
+    ));
+};
+
 export const FormField = ({
     children,
     disabled = false,
@@ -47,7 +62,7 @@ export const FormField = ({
     status = Validation.Default,
     'data-test-id': dataTestId = 'fondue-form-field',
 }: FormFieldProps): ReactElement => {
-    const getFormattedLabel = (): ReactElement => {
+    const formattedLabel = (): ReactElement => {
         const { text, required, secondaryLabel, hugWidth, tooltips } = label;
         const elements: ReactElement[] = [];
         const secondaryLabelStyle = 'tw-w-full tw-flex tw-flex-nowrap tw-justify-between';
@@ -57,21 +72,12 @@ export const FormField = ({
         if (required) {
             formattedLabel += ' *';
         }
+
         if (tooltips?.length) {
-            const tooltipElements: ReactElement[] = tooltips.map((tip: TooltipProps) => (
-                <Tooltip
-                    key={`form-field-tooltip-${generateRandomId()}`}
-                    content={tip.content}
-                    size={tip.size}
-                    data-test-id={tip['data-test-id']}
-                >
-                    {tip.children}
-                </Tooltip>
-            ));
             elements.push(
                 <span className={'tw-flex tw-gap-2'}>
                     {formattedLabel}
-                    {...tooltipElements}
+                    <FormatTooltips tooltips={tooltips} />
                 </span>,
             );
         } else {
@@ -81,6 +87,7 @@ export const FormField = ({
         if (applySecondaryLabel) {
             elements.push(<span>{secondaryLabel}</span>);
         }
+
         return (
             <span
                 className={merge([
@@ -109,7 +116,7 @@ export const FormField = ({
             data-test-id={`${dataTestId}-label`}
             aria-label={label.text}
         >
-            {hiddenLabel ? null : getFormattedLabel()}
+            {hiddenLabel ? null : formattedLabel()}
             <div className={'tw-w-full tw-flex tw-flex-col tw-gap-2'} data-test-id={`${dataTestId}-input`}>
                 {cloneElement(children, {
                     hugWidth: label.hugWidth,
