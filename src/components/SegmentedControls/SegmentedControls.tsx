@@ -165,13 +165,13 @@ export const SegmentedControls = ({
     const getSliderX = () => {
         let translateX = -1;
         for (let i = 0; i < selectedIndex; i++) {
-            translateX += itemsRef.current[i]?.clientWidth || 0;
+            translateX += itemsRef.current[i]?.clientWidth ?? 0;
         }
         return `${translateX}px`;
     };
 
     const sliderWidth = hugWidth ? `${itemsRef.current[selectedIndex]?.clientWidth}px` : `${100 / items.length}%`;
-    const sliderTranslation = hugWidth ? getSliderX() : `calc(${100 * selectedIndex}% - ${2 * selectedIndex}px)`;
+    const sliderTranslation = hugWidth ? getSliderX() : `calc(${100 * selectedIndex}% - ${1.2 * selectedIndex}px)`;
 
     return (
         <div className="tw-flex">
