@@ -6,7 +6,7 @@ import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
 import { Item as StatelyItem } from '@react-stately/collections';
 import { useTreeState } from '@react-stately/tree';
-import { FOCUS_STYLE_INSET } from '@utilities/focusStyle';
+import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { Children, Key, KeyboardEvent, ReactElement, ReactNode, isValidElement, useEffect, useRef } from 'react';
 import { AccordionHeader } from './AccordionHeader';
@@ -33,7 +33,10 @@ const AriaAccordionItem = ({
     return (
         <div
             key={item.key}
-            className={merge([isFocusVisible ? FOCUS_STYLE_INSET : '', divider && 'tw-divide-y tw-divide-black-10'])}
+            className={merge([
+                isFocusVisible ? `${FOCUS_STYLE} tw-relative` : '',
+                divider && 'tw-divide-y tw-divide-black-10',
+            ])}
         >
             <button
                 {...mergeProps(buttonProps, focusProps)}
@@ -154,7 +157,7 @@ export const Accordion = (props: AccordionProps): ReactElement => {
         const key = (event.target as HTMLButtonElement).dataset.key;
         const isFocused = state.selectionManager.focusedKey === key;
         if (key && isFocused) {
-            onKeyDown && onKeyDown(event);
+            onKeyDown?.(event);
         }
     };
 
