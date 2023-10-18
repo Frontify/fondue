@@ -44,7 +44,7 @@ export const Overlay = ({
         { isOpen: open, autoResize: true },
     );
 
-    const maxContentHeight = autoHeight ? maxAutoHeight : maxHeight;
+    const maxContentHeight = autoHeight ? maxAutoHeight.toBottom : maxHeight;
     const handleClosingInteraction = useCallback(() => {
         if (open && modality !== Modality.BlockingModal) {
             if (handleClose) {

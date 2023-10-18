@@ -13,7 +13,7 @@ import { getPaddingClasses } from './helpers';
 import { useClickOutside } from '@hooks/useClickOutside';
 import { CheckboxState } from '@components/Checkbox/Checkbox';
 import { usePopper } from 'react-popper';
-import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from '@hooks/useDropdownAutoHeight';
+import { useDropdownAutoHeight } from '@hooks/useDropdownAutoHeight';
 import { EnablePortalWrapper } from '@utilities/dialogs/EnablePortalWrapper';
 
 export enum MultiSelectType {
@@ -99,7 +99,7 @@ export const MultiSelect = ({
 
     useClickOutside(null, handleClose, [multiSelectRef?.current as HTMLElement, multiSelectMenuRef as HTMLElement]);
 
-    const heightIsReady = maxHeight !== DEFAULT_DROPDOWN_MAX_HEIGHT;
+    const heightIsReady = maxHeight.toBottom !== undefined;
 
     const toggleOpen = () => setOpen((open) => !open);
 
@@ -250,7 +250,7 @@ export const MultiSelect = ({
                         <FocusScope restoreFocus>
                             <div
                                 className="tw-p-4 tw-overflow-y-auto tw-overflow-x-hidden tw-w-full tw-relative"
-                                style={{ maxHeight }}
+                                style={{ maxHeight: maxHeight.toBottom }}
                             >
                                 <Checklist
                                     activeValues={activeItemKeys.map((key) => key.toString())}

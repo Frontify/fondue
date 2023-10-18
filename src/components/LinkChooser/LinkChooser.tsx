@@ -298,7 +298,7 @@ export const LinkChooser = ({
                             popoverRef={popoverRef}
                             isOpen={matches(LinkChooserState.Focused)}
                             onClose={handleDropdownClose}
-                            maxHeight={maxHeight}
+                            maxHeight={`${maxHeight.toBottom}px`}
                         >
                             <SearchResultsList
                                 {...listBoxProps}

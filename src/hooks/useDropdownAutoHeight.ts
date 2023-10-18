@@ -2,8 +2,6 @@
 
 import { MutableRefObject, useLayoutEffect, useState } from 'react';
 
-export const DEFAULT_DROPDOWN_MAX_HEIGHT = 'auto';
-
 type DropdownAutoHeightProps = {
     isOpen: boolean;
     autoResize?: boolean;
@@ -11,13 +9,14 @@ type DropdownAutoHeightProps = {
 };
 
 export const getInnerOverlayHeight = (triggerRef: MutableRefObject<HTMLElement | null>) => {
-    let maxHeight = 'auto';
+    const maxHeight: { toTop?: number; toBottom?: number } = {};
     if (triggerRef.current) {
         const { innerHeight } = window;
-        const { bottom } = triggerRef.current.getBoundingClientRect();
+        const { bottom, top } = triggerRef.current.getBoundingClientRect();
         const viewportPadding = 33;
         const triggerMargin = 8;
-        maxHeight = `${Math.max(innerHeight - (bottom + viewportPadding + triggerMargin), 130)}px`;
+        maxHeight.toBottom = innerHeight - (bottom + viewportPadding + triggerMargin);
+        maxHeight.toTop = top - (viewportPadding + triggerMargin);
     }
     return maxHeight;
 };
@@ -26,14 +25,14 @@ export const useDropdownAutoHeight = (
     triggerRef: MutableRefObject<HTMLElement | null>,
     { isOpen, autoResize }: DropdownAutoHeightProps,
 ) => {
-    const [maxHeight, setMaxHeight] = useState(DEFAULT_DROPDOWN_MAX_HEIGHT);
+    const [maxHeight, setMaxHeight] = useState<{ toTop?: number; toBottom?: number }>({});
     useLayoutEffect(() => {
         const updateMaxHeight = () => setMaxHeight(getInnerOverlayHeight(triggerRef));
         if (autoResize && isOpen) {
             updateMaxHeight();
             window.addEventListener('resize', updateMaxHeight);
         } else if (autoResize && !isOpen) {
-            setMaxHeight(DEFAULT_DROPDOWN_MAX_HEIGHT);
+            setMaxHeight({});
         }
 
         return () => {
@@ -41,7 +40,7 @@ export const useDropdownAutoHeight = (
                 window.removeEventListener('resize', updateMaxHeight);
             }
         };
-    }, [isOpen, autoResize, triggerRef]);
+    }, [isOpen, autoResize]);
 
     return { maxHeight };
 };

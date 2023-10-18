@@ -23,7 +23,7 @@ import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
 import { ReactElement, useEffect, useRef } from 'react';
 import { usePopper } from 'react-popper';
-import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from '@hooks/useDropdownAutoHeight';
+import { useDropdownAutoHeight } from '@hooks/useDropdownAutoHeight';
 import { EnablePortalWrapper } from '@utilities/dialogs/EnablePortalWrapper';
 
 export const DEFAULT_DROPDOWN_MIN_ANIMATION_HEIGHT = 36; //Small Input height as default
@@ -131,7 +131,35 @@ export const Dropdown = ({
 
     const { maxHeight } = useDropdownAutoHeight(triggerRef, { isOpen, autoResize });
 
-    const heightIsReady = !autoResize || maxHeight !== DEFAULT_DROPDOWN_MAX_HEIGHT;
+    const minimumSpaceNeededToOpen = 130;
+
+    const spaceAvailableToTop = maxHeight.toTop ?? 0;
+    const spaceAvailableToBottom = maxHeight.toBottom ?? 0;
+
+    const hasTopMoreSpaceThanBottom = spaceAvailableToTop > spaceAvailableToBottom;
+    const hasBottomMoreSpaceThanTop = !hasTopMoreSpaceThanBottom;
+
+    const canOpenToBottom = spaceAvailableToBottom >= minimumSpaceNeededToOpen || hasBottomMoreSpaceThanTop;
+    const canOpenToTop = maxHeight.toTop && (maxHeight.toTop >= minimumSpaceNeededToOpen || hasTopMoreSpaceThanBottom);
+
+    const adjustedPosition = (() => {
+        if (position === DropdownPosition.Bottom) {
+            if (canOpenToBottom || !canOpenToTop) {
+                return DropdownPosition.Bottom;
+            } else {
+                return DropdownPosition.Top;
+            }
+        } else {
+            if (canOpenToTop || !canOpenToBottom) {
+                return DropdownPosition.Top;
+            } else {
+                return DropdownPosition.Bottom;
+            }
+        }
+    })();
+    const adjustedMaxHeight = adjustedPosition === DropdownPosition.Top ? maxHeight.toTop : maxHeight.toBottom;
+
+    const heightIsReady = !autoResize || maxHeight.toBottom || maxHeight.toTop;
 
     const enabledTextColorState = activeItem ? MenuItemTextColorState.Active : MenuItemTextColorState.Default;
     const textState = disabled ? MenuItemTextColorState.Disabled : enabledTextColorState;
@@ -160,7 +188,7 @@ export const Dropdown = ({
         ['Bottom-End']: 'bottom-end',
     };
     const popperInstance = usePopper(triggerRef?.current, dropdownRef.current, {
-        placement: placementMap[`${position}-${alignment}`],
+        placement: placementMap[`${adjustedPosition}-${alignment}`],
         strategy: 'fixed',
         modifiers: [
             {
@@ -230,7 +258,7 @@ export const Dropdown = ({
                             <div
                                 {...overlayProps}
                                 ref={overlayRef}
-                                style={autoResize ? { maxHeight } : {}}
+                                style={autoResize ? { maxHeight: adjustedMaxHeight } : {}}
                                 className="tw-flex tw-flex-col"
                                 data-test-id={`${dataTestId}-menu`}
                                 role="dialog"
