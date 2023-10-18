@@ -34,7 +34,7 @@ const AriaAccordionItem = ({
         <div
             key={item.key}
             className={merge([
-                isFocusVisible ? `${FOCUS_STYLE_NO_OFFSET} tw-relative` : '',
+                isFocusVisible ? `${FOCUS_STYLE_NO_OFFSET} tw-relative tw-rounded` : '',
                 divider && 'tw-divide-y tw-divide-black-10',
             ])}
         >
@@ -65,7 +65,7 @@ const AriaAccordionItem = ({
                 <HeaderComponent isOpen={isOpen} {...headerProps} />
             </button>
             <CollapsibleWrap isOpen={isOpen} preventInitialAnimation={active}>
-                <div {...regionProps} className={merge([padding && 'tw-px-8 tw-pb-6', 'tw-mt-1'])}>
+                <div {...regionProps} className={merge([padding && 'tw-px-8 tw-pb-6', 'tw-mt-2'])}>
                     {item.props.children?.()}
                 </div>
             </CollapsibleWrap>
