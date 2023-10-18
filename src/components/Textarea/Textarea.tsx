@@ -97,6 +97,7 @@ export const Textarea = ({
                         onInput && onInput((event.target as HTMLTextAreaElement).value),
                 }) as TextareaAutosizeProps)}
                 {...(autosize ? autosizeProps : { rows: minRows })}
+                onClick={() => textareaElement.current?.focus()}
                 id={useMemoizedId(propId)}
                 ref={textareaElement}
                 value={value}
