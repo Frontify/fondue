@@ -164,7 +164,7 @@ export const SegmentedControls = ({
 
     const getSliderX = () => {
         const isLastElement = selectedIndex === itemsRef.current.length - 1;
-        let translateX = isLastElement ? 0 : -1;
+        let translateX = isLastElement && !hugWidth ? 0 : -1;
         for (let i = 0; i < selectedIndex; i++) {
             translateX += itemsRef.current[i]?.clientWidth ?? 0;
         }
