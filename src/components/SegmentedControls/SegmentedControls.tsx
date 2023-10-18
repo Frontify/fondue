@@ -163,7 +163,8 @@ export const SegmentedControls = ({
     const alignment = hugWidth ? 'tw-flex' : 'tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly';
 
     const getSliderX = () => {
-        let translateX = size === 'small' ? -1 : 0;
+        const isLastElement = selectedIndex === itemsRef.current.length - 1;
+        let translateX = isLastElement ? 0 : -1;
         for (let i = 0; i < selectedIndex; i++) {
             translateX += itemsRef.current[i]?.clientWidth ?? 0;
         }
