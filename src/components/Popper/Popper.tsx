@@ -61,8 +61,6 @@ export const Popper = ({
         ? prepareElementStyle({ dimension: popperDimensions, isVerticalAlignedToTop: verticalAlignment === 'top' })
         : {};
 
-    console.log(popperInstance);
-
     return (
         <>
             {Children.map(children, (child) => {
