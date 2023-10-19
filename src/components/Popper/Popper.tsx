@@ -23,7 +23,6 @@ export const Popper = ({
     verticalAlignment,
     strategy = 'absolute',
 }: PopperProps) => {
-    const arrayChildren = Children.toArray(children);
     const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
     const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
     const [popperDimensions, setPopperDimensions] = useState({
@@ -43,7 +42,6 @@ export const Popper = ({
         strategy,
     });
 
-    console.log(arrayChildren);
     useEffect(() => {
         const updatePopper = async () => {
             if (popperInstance.update) {
