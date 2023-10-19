@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Children, isValidElement, useEffect, useState } from 'react';
+import { Children, isValidElement, useLayoutEffect, useRef, useState } from 'react';
 import { Trigger } from '@utilities/dialogs/Trigger';
 import { Content } from '@utilities/dialogs/Content';
 import { usePopper } from 'react-popper';
@@ -23,40 +23,37 @@ export const Popper = ({
     verticalAlignment,
     strategy = 'absolute',
 }: PopperProps) => {
-    const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
-    const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+    const referenceElementRef = useRef(null);
+    const popperElementRef = useRef(null);
     const [popperDimensions, setPopperDimensions] = useState({
         width: DEFAULT_POPPER_WIDTH,
         height: DEFAULT_POPPER_HEIGHT,
     });
 
-    const popperInstance = usePopper(isDetached ? document.body : referenceElement, popperElement, {
-        placement,
-        modifiers: [
-            { name: 'offset', options: { offset } },
-            {
-                name: 'flip',
-                enabled: flip,
-            },
-        ],
-        strategy,
-    });
+    const popperInstance = usePopper(
+        isDetached ? document.body : referenceElementRef.current,
+        popperElementRef.current,
+        {
+            placement,
+            modifiers: [
+                { name: 'offset', options: { offset } },
+                {
+                    name: 'flip',
+                    enabled: flip,
+                },
+            ],
+            strategy,
+        },
+    );
 
-    useEffect(() => {
-        const updatePopper = async () => {
-            if (popperInstance.update) {
-                await popperInstance.update();
-                if (popperInstance.state) {
-                    setPopperDimensions({
-                        width: popperInstance.state.rects.popper.width,
-                        height: popperInstance.state.rects.popper.height,
-                    });
-                }
-            }
-        };
-
-        updatePopper().catch(console.error);
-    }, [flip, placement, offset, open]);
+    useLayoutEffect(() => {
+        if (popperInstance.state && open) {
+            setPopperDimensions({
+                width: popperInstance.state.rects.popper.width,
+                height: popperInstance.state.rects.popper.height,
+            });
+        }
+    }, [open, popperInstance.state]);
 
     const detachedElementStyles = isDetached
         ? {
@@ -78,14 +75,14 @@ export const Popper = ({
                     const { displayName } = child.type;
 
                     if (displayName === Trigger.displayName) {
-                        return <div ref={setReferenceElement}>{child}</div>;
+                        return <div ref={referenceElementRef}>{child}</div>;
                     }
 
                     if (displayName === Content.displayName && open) {
                         return enablePortal ? (
                             <Portal>
                                 <div
-                                    ref={setPopperElement}
+                                    ref={popperElementRef}
                                     style={{
                                         zIndex,
                                         ...popperInstance.styles.popper,
@@ -98,7 +95,7 @@ export const Popper = ({
                             </Portal>
                         ) : (
                             <div
-                                ref={setPopperElement}
+                                ref={popperElementRef}
                                 style={{ zIndex, ...popperInstance.styles.popper, ...detachedElementStyles }}
                                 {...popperInstance.attributes.popper}
                             >
