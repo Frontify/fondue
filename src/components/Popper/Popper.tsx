@@ -5,11 +5,17 @@ import { Trigger } from '@utilities/dialogs/Trigger';
 import { Content } from '@utilities/dialogs/Content';
 import { usePopper } from 'react-popper';
 import { Portal } from '@components/Portal';
-import { PopperProps } from '@components/Popper/types';
+import { PopperDimension, PopperProps, PrepareElementStyleProps } from '@components/Popper/types';
 
 const DEFAULT_POPPER_WIDTH = 200;
 const DEFAULT_POPPER_HEIGHT = 400;
 const DEFAULT_DIALOG_TOP_POSITION = '100px';
+
+const prepareElementStyle = ({ dimension, isVerticalAlignedToTop }: PrepareElementStyleProps) => ({
+    left: `${(window.innerWidth - dimension.width) / 2}px`,
+    top: isVerticalAlignedToTop ? DEFAULT_DIALOG_TOP_POSITION : `${(window.innerHeight - dimension.height) / 2}px`,
+    transform: 'none',
+});
 
 export const Popper = ({
     children,
@@ -25,7 +31,7 @@ export const Popper = ({
 }: PopperProps) => {
     const referenceElementRef = useRef(null);
     const popperElementRef = useRef(null);
-    const [popperDimensions, setPopperDimensions] = useState({
+    const [popperDimensions, setPopperDimensions] = useState<PopperDimension>({
         width: DEFAULT_POPPER_WIDTH,
         height: DEFAULT_POPPER_HEIGHT,
     });
@@ -49,21 +55,14 @@ export const Popper = ({
     useLayoutEffect(() => {
         if (popperInstance.state && open) {
             setPopperDimensions({
-                width: popperInstance.state.rects.popper.width,
-                height: popperInstance.state.rects.popper.height,
+                width: popperInstance.state.rects?.popper?.width,
+                height: popperInstance.state.rects?.popper?.height,
             });
         }
     }, [open, popperInstance.state]);
 
     const detachedElementStyles = isDetached
-        ? {
-              left: `${(window.innerWidth - popperDimensions.width) / 2}px`,
-              top:
-                  verticalAlignment === 'top'
-                      ? DEFAULT_DIALOG_TOP_POSITION
-                      : `${(window.innerHeight - popperDimensions.height) / 2}px`,
-              transform: 'none',
-          }
+        ? prepareElementStyle({ dimension: popperDimensions, isVerticalAlignedToTop: verticalAlignment === 'top' })
         : {};
 
     return (
