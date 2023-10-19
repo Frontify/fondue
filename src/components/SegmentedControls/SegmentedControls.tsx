@@ -164,17 +164,24 @@ export const SegmentedControls = ({
     const width = hugWidth ? '' : 'tw-w-full';
     const alignment = hugWidth ? 'tw-flex' : 'tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly';
 
+    const isSmallOrHugWidth = size === 'small' || hugWidth;
     const getSliderX = () => {
-        const isLastElement = selectedIndex === itemsRef.current.length - 1;
-        let translateX = isLastElement && !hugWidth ? 1 : 0;
+        let translateX = isSmallOrHugWidth ? -1 : 0;
         for (let i = 0; i < selectedIndex; i++) {
             translateX += itemsRef.current[i]?.clientWidth ?? 0;
         }
         return `${translateX}px`;
     };
 
+    const getSliderWidth = () => {
+        const isLastElement = selectedIndex === itemsRef.current.length - 1;
+        const baseValue = isSmallOrHugWidth ? 1 : 2;
+        const width = isLastElement ? baseValue + 1 : baseValue;
+
+        return `${(itemsRef.current[selectedIndex]?.clientWidth ?? 0) + width}px`;
+    };
     const sliderTranslation = getSliderX();
-    const sliderWidth = `${itemsRef.current[selectedIndex]?.clientWidth ?? 0}px`;
+    const sliderWidth = getSliderWidth();
 
     return (
         <div className="tw-flex">
