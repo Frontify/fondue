@@ -79,11 +79,11 @@ export const Popper = ({
                     // @ts-ignore Property 'displayName' does not exist on type 'JSXElementConstructor<any>'.ts(2339)
                     const { displayName } = child.type;
 
-                    if (displayName === Trigger.name) {
+                    if (displayName === Trigger.displayName) {
                         return <div ref={setReferenceElement}>{child}</div>;
                     }
 
-                    if (displayName === Content.name && open) {
+                    if (displayName === Content.displayName && open) {
                         return enablePortal ? (
                             <Portal>
                                 <div
