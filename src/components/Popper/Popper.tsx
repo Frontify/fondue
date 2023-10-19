@@ -73,13 +73,15 @@ export const Popper = ({
         <>
             {Children.map(children, (child) => {
                 if (isValidElement(child) && typeof child.type === 'function') {
-                    const { name } = child.type;
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore Property 'displayName' does not exist on type 'JSXElementConstructor<any>'.ts(2339)
+                    const { displayName } = child.type;
 
-                    if (name === Trigger.name) {
+                    if (displayName === Trigger.displayName) {
                         return <div ref={setReferenceElement}>{child}</div>;
                     }
 
-                    if (name === Content.name && open) {
+                    if (displayName === Content.displayName && open) {
                         return enablePortal ? (
                             <Portal>
                                 <div
