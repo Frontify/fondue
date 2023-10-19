@@ -23,6 +23,7 @@ export const Popper = ({
     verticalAlignment,
     strategy = 'absolute',
 }: PopperProps) => {
+    const arrayChildren = Children.toArray(children);
     const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
     const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
     const [popperDimensions, setPopperDimensions] = useState({
@@ -42,6 +43,7 @@ export const Popper = ({
         strategy,
     });
 
+    console.log(arrayChildren);
     useEffect(() => {
         const updatePopper = async () => {
             if (popperInstance.update) {
@@ -73,13 +75,15 @@ export const Popper = ({
         <>
             {Children.map(children, (child) => {
                 if (isValidElement(child) && typeof child.type === 'function') {
-                    const { name } = child.type;
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore Property 'displayName' does not exist on type 'JSXElementConstructor<any>'.ts(2339)
+                    const { displayName } = child.type;
 
-                    if (name === Trigger.name) {
+                    if (displayName === Trigger.name) {
                         return <div ref={setReferenceElement}>{child}</div>;
                     }
 
-                    if (name === Content.name && open) {
+                    if (displayName === Content.name && open) {
                         return enablePortal ? (
                             <Portal>
                                 <div
