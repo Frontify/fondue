@@ -59,3 +59,13 @@ export const POPPER_STORY_ARGS = {
         control: { type: 'boolean' },
     },
 };
+
+export type PopperDimension = {
+    width: number;
+    height: number;
+};
+
+export type PrepareElementStyleProps = {
+    dimension: PopperDimension;
+    isVerticalAlignedToTop: boolean;
+};
