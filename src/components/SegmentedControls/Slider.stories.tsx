@@ -13,6 +13,10 @@ export default {
     argTypes: {
         id: { type: 'string' },
         hugWidth: { type: 'boolean' },
+        disabled: {
+            control: { type: 'boolean' },
+        },
+        size: { control: { type: 'select' }, options: ['small', 'medium'] },
     },
     args: {
         disabled: false,
