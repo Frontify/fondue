@@ -103,10 +103,10 @@ const SegmentedControlsItem = forwardRef<HTMLDivElement, SegmentedControlsItemPr
                     size === 'small' ? 'tw-px-2' : 'tw-px-4',
                     isActive && !disabled
                         ? 'tw-text-text tw-bg-base tw-ease-in tw-duration-300'
-                        : 'tw-text-text-weak tw-ease-out tw-duration-100',
-                    !disabled
-                        ? 'hover:tw-text-text hover:tw-cursor-pointer'
-                        : 'tw-text-box-disabled-inverse hover:tw-cursor-not-allowed',
+                        : 'tw-bg-box-disabled tw-text-box-disabled-inverse tw-ease-out tw-duration-100',
+                    disabled
+                        ? 'tw-text-box-disabled-inverse hover:tw-cursor-not-allowed'
+                        : 'hover:tw-text-text hover:tw-cursor-pointer',
                 ])}
             >
                 <VisuallyHidden>
@@ -194,7 +194,7 @@ export const SegmentedControls = ({
                 hidden={!activeItemId}
                 className={merge([
                     'tw-absolute tw-h-9 tw-border tw-rounded tw-pointer-events-none tw-z-10',
-                    disabled ? 'tw-border-line-x-strong tw-bg-box-disabled' : 'tw-border-line-xx-strong',
+                    disabled ? 'tw-border-line-x-strong hover:tw-cursor-not-allowed' : 'tw-border-line-xx-strong',
                 ])}
             />
             <fieldset
