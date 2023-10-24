@@ -11,16 +11,27 @@ const ITEMS = [
     { label: 'Item 1', link },
     { label: 'Item 2', link },
     { label: 'Item 3', link },
+    { label: 'Item 4', link },
+    { label: 'Item 5', link },
 ];
 
 export default {
     title: 'Components/Breadcrumbs',
     component: Breadcrumbs,
     tags: ['autodocs'],
+    args: {
+        keepRoot: true,
+    },
     argTypes: {
         verticalGap: {
             options: Object.values(BreadcrumbGap),
             control: { type: 'radio' },
+        },
+        keepRoot: {
+            name: 'keepRoot',
+            description: 'If true the first item in the list will remain, else it is will truncated',
+            defaultValue: true,
+            control: { type: 'boolean' },
         },
         onBlur: { action: 'onBlur' },
     },
@@ -35,10 +46,11 @@ WithoutLinkOrAction.args = {
     items: [...ITEMS, { bold: true, label: 'Active' }],
 };
 
-export const WithDecoratorAndAction = Template.bind({});
+export const WithDecoratorAndActionAndTruncation = Template.bind({});
 
-WithDecoratorAndAction.args = {
+WithDecoratorAndActionAndTruncation.args = {
     verticalGap: BreadcrumbGap.Medium,
+    keepRoot: false,
     items: [...ITEMS, { onClick: action('click'), bold: true, decorator: <IconIcon />, label: 'Active' }],
 };
 

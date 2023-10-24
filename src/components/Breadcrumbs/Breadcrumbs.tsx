@@ -28,6 +28,7 @@ export type Breadcrumb = {
 
 export type BreadcrumbsProps = {
     items: Breadcrumb[];
+    keepRoot?: boolean;
     'data-test-id'?: string;
     verticalGap?: BreadcrumbGap;
 };
@@ -44,8 +45,67 @@ export const verticalGapClassMap: Record<BreadcrumbGap, string> = {
     [BreadcrumbGap.Medium]: 'tw-gap-y-1',
 };
 
+const FormattedBreadcrumbs = ({ items, keepRoot, 'data-test-id': dataTestId }: BreadcrumbsProps): ReactElement[] => {
+    let renderTruncation = true;
+    const elements = items.map(({ label, badges, bold, decorator, link, onClick }, index) => {
+        const isCurrent = index === items.length - 1;
+        const key = `breadcrumb-${index}`;
+        const isRoot = index === 0;
+        const isLastTwoItems = index >= items.length - 3;
+        const isLastItemsToRender = !keepRoot ? index >= items.length - 4 : isLastTwoItems;
+        const isRootKept = keepRoot && isRoot;
+        const isTruncatedItem = !isRootKept && !isLastTwoItems;
+
+        switch (true) {
+            case isCurrent:
+                return (
+                    <CurrentBreadcrumbItem
+                        key={key}
+                        label={label}
+                        badges={badges}
+                        bold={bold}
+                        decorator={decorator}
+                        link={link}
+                        onClick={onClick}
+                        data-test-id={dataTestId}
+                    />
+                );
+
+            case isTruncatedItem && renderTruncation:
+                renderTruncation = false;
+                return (
+                    <BreadcrumbItem
+                        key={key}
+                        label={'...'}
+                        link={link}
+                        onClick={onClick}
+                        showSeparator={index < items.length - 2}
+                        data-test-id={dataTestId}
+                    />
+                );
+
+            case isRootKept:
+            case isLastItemsToRender:
+                return (
+                    <BreadcrumbItem
+                        key={key}
+                        label={label}
+                        link={link}
+                        onClick={onClick}
+                        showSeparator={index < items.length - 2}
+                        data-test-id={dataTestId}
+                    />
+                );
+            default:
+                return <span />;
+        }
+    });
+    return [...elements];
+};
+
 export const Breadcrumbs = ({
     items,
+    keepRoot = true,
     'data-test-id': dataTestId = 'breadcrumb',
     verticalGap = BreadcrumbGap.Medium,
 }: BreadcrumbsProps): ReactElement => {
@@ -55,36 +115,7 @@ export const Breadcrumbs = ({
     return (
         <nav {...navProps} className="tw-font-sans" aria-label="Breadcrumb" data-test-id={dataTestId}>
             <ol className={merge(['tw-list-none tw-flex tw-flex-wrap', verticalGapClassMap[verticalGap]])}>
-                {items.map(({ label, badges, bold, decorator, link, onClick }, index) => {
-                    const isCurrent = index === items.length - 1;
-                    const key = `breadcrumb-${index}`;
-
-                    if (isCurrent) {
-                        return (
-                            <CurrentBreadcrumbItem
-                                key={key}
-                                label={label}
-                                badges={badges}
-                                bold={bold}
-                                decorator={decorator}
-                                link={link}
-                                onClick={onClick}
-                                data-test-id={dataTestId}
-                            />
-                        );
-                    }
-
-                    return (
-                        <BreadcrumbItem
-                            key={key}
-                            label={label}
-                            link={link}
-                            onClick={onClick}
-                            showSeparator={index < items.length - 2}
-                            data-test-id={dataTestId}
-                        />
-                    );
-                })}
+                <FormattedBreadcrumbs items={items} keepRoot={keepRoot} data-test-id={dataTestId} />
             </ol>
         </nav>
     );
