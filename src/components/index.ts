@@ -29,6 +29,7 @@ export * from './FieldsetHeader';
 export * from './Flex';
 export * from './Flyout';
 export * from './FormControl';
+export * from './FormField';
 export * from './FrontifyPattern';
 export * from './Grid';
 export * from './InlineDialog';
