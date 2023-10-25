@@ -103,9 +103,9 @@ const SegmentedControlsItem = forwardRef<HTMLDivElement, SegmentedControlsItemPr
                     size === 'small' ? 'tw-px-2' : 'tw-px-4',
                     isActive && !disabled
                         ? 'tw-text-text tw-bg-base tw-ease-in tw-duration-300'
-                        : 'tw-bg-box-disabled tw-text-box-disabled-inverse tw-ease-out tw-duration-100',
+                        : 'tw-ease-out tw-duration-100',
                     disabled
-                        ? 'tw-text-box-disabled-inverse hover:tw-cursor-not-allowed'
+                        ? 'tw-text-box-disabled-inverse tw-bg-box-disabled hover:tw-cursor-not-allowed'
                         : 'hover:tw-text-text hover:tw-cursor-pointer',
                 ])}
             >
