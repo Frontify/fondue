@@ -9,7 +9,7 @@ beforeEach('Getting the seperator', () => {
 });
 
 const BREADCRUMB_ID = '[data-test-id=breadcrumb] > ol';
-const BREADCRUMB_TRUNCATION_ID = '[data-test-id=breadcrumb-truncation]';
+const BREADCRUMB_TRUNCATION_ID = '[data-test-id=breadcrumb-truncation-item]';
 const BREADCRUMB_ITEM_ID = '[data-test-id=breadcrumb-item]';
 const BREADCRUMB_ITEMS = [
     { label: 'Some first label', link: '/some-first-link' },
@@ -21,7 +21,7 @@ const BREADCRUMB_ITEMS_MIXED_ELEMENTS = [
     { label: 'item with onclick', onClick: () => 'test' },
     { label: 'item with link', link: '/some-third-link' },
 ];
-const BREADCRUMB_TRUNCATED_ITEMS = [
+const BREADCRUMB_ITEMS_LONG = [
     { label: 'Some first label', link: '/some-first-link' },
     { label: 'Some second label', link: '/some-second-link' },
     { label: 'Some third label', link: '/some-third-link' },
@@ -127,7 +127,15 @@ describe('Breadcrumb component', () => {
     });
 
     it('should render with root item truncated', () => {
-        cy.mount(<Breadcrumbs items={BREADCRUMB_TRUNCATED_ITEMS} keepRoot />);
+        cy.mount(<Breadcrumbs items={BREADCRUMB_ITEMS_LONG} keepRoot={false} />);
+        cy.get(BREADCRUMB_TRUNCATION_ID).should('exist');
         cy.get(BREADCRUMB_TRUNCATION_ID).should('have.text', '...');
+    });
+
+    it('should render root with label and second item truncated', () => {
+        cy.mount(<Breadcrumbs items={BREADCRUMB_ITEMS_LONG} />);
+        cy.get(BREADCRUMB_ID).children('li').first().should('have.text', BREADCRUMB_ITEMS_LONG[0].label);
+        cy.get(BREADCRUMB_ID).children(BREADCRUMB_TRUNCATION_ID).should('exist');
+        cy.get(BREADCRUMB_ID).children(BREADCRUMB_TRUNCATION_ID).should('have.text', '...');
     });
 });
