@@ -8,7 +8,7 @@ import { BreadcrumbGap, Breadcrumbs, BreadcrumbsProps } from './Breadcrumbs';
 
 const link = document.referrer;
 const ITEMS = [
-    { label: 'Item 1', link },
+    { label: 'Item 1 has a long label', link },
     { label: 'Item 2', link },
     { label: 'Item 3', link },
     { label: 'Item 4', link },

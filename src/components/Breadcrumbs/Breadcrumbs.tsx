@@ -48,13 +48,12 @@ export const verticalGapClassMap: Record<BreadcrumbGap, string> = {
 const FormattedBreadcrumbs = ({ items, keepRoot, 'data-test-id': dataTestId }: BreadcrumbsProps): ReactElement[] => {
     let renderTruncation = true;
     const elements = items.map(({ label, badges, bold, decorator, link, onClick }, index) => {
-        const isCurrent = index === items.length - 1;
         const key = `breadcrumb-${index}`;
-        const isRoot = index === 0;
-        const isLastTwoItems = index >= items.length - 3;
-        const isLastItemsToRender = !keepRoot ? index >= items.length - 4 : isLastTwoItems;
-        const isRootKept = keepRoot && isRoot;
-        const isTruncatedItem = !isRootKept && !isLastTwoItems;
+        const isRootKept = keepRoot && index === 0;
+        const isCurrent = index === items.length - 1;
+        const isLastItems = index >= items.length - 3;
+        const isTruncatedItem = !isRootKept && !isLastItems;
+        const isLastItemsToRender = keepRoot ? isLastItems : index >= items.length - 4;
 
         switch (true) {
             case isCurrent:
@@ -80,7 +79,7 @@ const FormattedBreadcrumbs = ({ items, keepRoot, 'data-test-id': dataTestId }: B
                         link={link}
                         onClick={onClick}
                         showSeparator={index < items.length - 2}
-                        data-test-id={dataTestId}
+                        data-test-id={`${dataTestId}-truncation`}
                     />
                 );
 

@@ -9,6 +9,7 @@ beforeEach('Getting the seperator', () => {
 });
 
 const BREADCRUMB_ID = '[data-test-id=breadcrumb] > ol';
+const BREADCRUMB_TRUNCATION_ID = '[data-test-id=breadcrumb-truncation]';
 const BREADCRUMB_ITEM_ID = '[data-test-id=breadcrumb-item]';
 const BREADCRUMB_ITEMS = [
     { label: 'Some first label', link: '/some-first-link' },
@@ -19,6 +20,13 @@ const BREADCRUMB_ITEMS_MIXED_ELEMENTS = [
     { label: 'text only item' },
     { label: 'item with onclick', onClick: () => 'test' },
     { label: 'item with link', link: '/some-third-link' },
+];
+const BREADCRUMB_TRUNCATED_ITEMS = [
+    { label: 'Some first label', link: '/some-first-link' },
+    { label: 'Some second label', link: '/some-second-link' },
+    { label: 'Some third label', link: '/some-third-link' },
+    { label: 'Some fourth label', link: '/some-fourth-link' },
+    { label: 'Some fifth label', link: '/some-fifth-link' },
 ];
 
 const ChangingBreadcrumbs = ({ items }: BreadcrumbsProps): ReactElement => {
@@ -116,5 +124,10 @@ describe('Breadcrumb component', () => {
         cy.get(BREADCRUMB_ITEM_ID).should('have.length', 3);
         cy.get('[data-test-id="add-item-button"]').first().click();
         cy.get(BREADCRUMB_ITEM_ID).should('have.length', 4);
+    });
+
+    it('should render with root item truncated', () => {
+        cy.mount(<Breadcrumbs items={BREADCRUMB_TRUNCATED_ITEMS} keepRoot />);
+        cy.get(BREADCRUMB_TRUNCATION_ID).should('have.text', '...');
     });
 });
