@@ -101,12 +101,10 @@ const SegmentedControlsItem = forwardRef<HTMLDivElement, SegmentedControlsItemPr
                 className={merge([
                     'tw-relative tw-w-full tw-py-2 tw-inline-flex tw-justify-center tw-items-center tw-font-sans tw-font-normal tw-h-full tw-text-center',
                     size === 'small' ? 'tw-px-2' : 'tw-px-4',
-                    isActive && !disabled
-                        ? 'tw-text-text tw-bg-base tw-ease-in tw-duration-300'
-                        : 'tw-text-text-weak tw-ease-out tw-duration-100',
-                    !disabled
-                        ? 'hover:tw-text-text hover:tw-cursor-pointer'
-                        : 'tw-text-box-disabled-inverse hover:tw-cursor-not-allowed',
+                    isActive && !disabled ? 'tw-text-text' : 'tw-text-text-weak',
+                    disabled
+                        ? 'tw-text-box-disabled-inverse tw-bg-box-disabled hover:tw-cursor-not-allowed'
+                        : 'hover:tw-text-text hover:tw-cursor-pointer',
                 ])}
             >
                 <VisuallyHidden>
@@ -164,19 +162,19 @@ export const SegmentedControls = ({
     const width = hugWidth ? '' : 'tw-w-full';
     const alignment = hugWidth ? 'tw-flex' : 'tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly';
 
-    const isSmallOrHugWidth = size === 'small' || hugWidth;
     const getSliderX = () => {
+        const isSmallOrHugWidth = size === 'small' || hugWidth;
         let translateX = isSmallOrHugWidth ? -1 : 0;
         for (let i = 0; i < selectedIndex; i++) {
             translateX += itemsRef.current[i]?.clientWidth ?? 0;
         }
+
         return `${translateX}px`;
     };
 
     const getSliderWidth = () => {
         const isLastElement = selectedIndex === itemsRef.current.length - 1;
-        const baseValue = isSmallOrHugWidth ? 1 : 2;
-        const width = isLastElement ? baseValue + 1 : baseValue;
+        const width = isLastElement ? 1 : -1;
 
         return `${(itemsRef.current[selectedIndex]?.clientWidth ?? 0) + width}px`;
     };
@@ -185,18 +183,6 @@ export const SegmentedControls = ({
 
     return (
         <div className="tw-flex">
-            <motion.div
-                aria-hidden="true"
-                // div border is not included in width so it must be subtracted from translation.
-                animate={{ x: sliderTranslation, width: sliderWidth }}
-                initial={false}
-                transition={{ type: 'tween', duration: 0.3 }}
-                hidden={!activeItemId}
-                className={merge([
-                    'tw-absolute tw-h-9 tw-border tw-rounded tw-pointer-events-none tw-z-10',
-                    disabled ? 'tw-border-line-x-strong tw-bg-box-disabled' : 'tw-border-line-xx-strong',
-                ])}
-            />
             <fieldset
                 {...radioGroupProps}
                 data-test-id="fondue-segmented-controls"
@@ -206,6 +192,20 @@ export const SegmentedControls = ({
                     alignment,
                 ])}
             >
+                <motion.div
+                    aria-hidden="true"
+                    // div border is not included in width so it must be subtracted from translation.
+                    animate={{ x: sliderTranslation, width: sliderWidth }}
+                    initial={false}
+                    transition={{ type: 'tween', duration: 0.3 }}
+                    hidden={!activeItemId}
+                    className={merge([
+                        'tw-absolute tw--inset-px tw-h-full tw-box-content tw-border tw-rounded tw-pointer-events-none',
+                        disabled
+                            ? 'tw-border-line-x-strong hover:tw-cursor-not-allowed'
+                            : 'tw-border-line-xx-strong tw-bg-base',
+                    ])}
+                />
                 {itemElements}
             </fieldset>
         </div>
