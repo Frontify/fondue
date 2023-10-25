@@ -147,10 +147,7 @@ export const SegmentedControls = ({
     const radioGroupState = useRadioGroupState(groupProps);
     const { radioGroupProps } = useRadioGroup(groupProps, radioGroupState);
     const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
-    const [activeBorderDimensions, setActiveBorderDimensions] = useState<{ x: string; width: string }>({
-        x: '0px',
-        width: '0px',
-    });
+    const [activeBorderDimensions, setActiveBorderDimensions] = useState<{ x: string; width: string } | null>(null);
     const itemElements = useMemo(() => {
         return items.map((item, index) => (
             <SegmentedControlsItem
@@ -186,22 +183,27 @@ export const SegmentedControls = ({
     }, [isSmallOrHugWidth, selectedIndex]);
 
     useEffect(() => {
-        setActiveBorderDimensions({ x: getSliderX(), width: getSliderWidth() });
         function handleResize() {
             setActiveBorderDimensions({ x: getSliderX(), width: getSliderWidth() });
         }
+
+        if (!activeBorderDimensions) {
+            handleResize();
+        }
+
         window.addEventListener('resize', handleResize);
+
         return () => {
             window.removeEventListener('resize', handleResize);
         };
-    }, [setActiveBorderDimensions, getSliderWidth, getSliderX]);
+    }, [activeBorderDimensions, setActiveBorderDimensions, getSliderWidth, getSliderX]);
 
     return (
         <div className="tw-flex">
             <motion.div
                 aria-hidden="true"
                 // div border is not included in width so it must be subtracted from translation.
-                animate={activeBorderDimensions}
+                animate={activeBorderDimensions ?? { x: '0px', width: '0px' }}
                 initial={false}
                 transition={{ type: 'tween', duration: 0.3 }}
                 hidden={!activeItemId}
