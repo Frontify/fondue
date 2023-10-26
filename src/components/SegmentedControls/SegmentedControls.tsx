@@ -181,10 +181,8 @@ export const SegmentedControls = ({
     }, [selectedIndex]);
 
     const setSliderDimensions = useCallback(() => {
-        if (itemsRef.current) {
-            return setActiveBorderDimensions({ x: getSliderX(), width: getSliderWidth() });
-        }
-        setActiveBorderDimensions({ x: '0px', width: '0px' });
+        const dimensions = itemsRef.current ? { x: getSliderX(), width: getSliderWidth() } : { x: '0px', width: '0px' };
+        setActiveBorderDimensions(dimensions);
     }, [getSliderWidth, getSliderX]);
 
     useEffect(() => {
