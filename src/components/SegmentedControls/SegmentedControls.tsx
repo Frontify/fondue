@@ -181,17 +181,22 @@ export const SegmentedControls = ({
     }, [selectedIndex]);
 
     const setSliderDimensions = useCallback(() => {
-        setActiveBorderDimensions({ x: getSliderX(), width: getSliderWidth() });
-    }, [getSliderX, getSliderWidth]);
+        if (itemsRef.current) {
+            return setActiveBorderDimensions({ x: getSliderX(), width: getSliderWidth() });
+        }
+        setActiveBorderDimensions({ x: '0px', width: '0px' });
+    }, [getSliderWidth, getSliderX]);
 
     useEffect(() => {
-        setSliderDimensions();
+        if (selectedIndex >= 0) {
+            setSliderDimensions();
+        }
         window.addEventListener('resize', setSliderDimensions);
 
         return () => {
             window.removeEventListener('resize', setSliderDimensions);
         };
-    }, [activeBorderDimensions, setSliderDimensions]);
+    }, [selectedIndex, setSliderDimensions]);
 
     return (
         <div className="tw-flex">
