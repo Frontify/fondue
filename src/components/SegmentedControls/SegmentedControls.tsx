@@ -180,9 +180,9 @@ export const SegmentedControls = ({
         return `${(itemsRef.current[selectedIndex]?.clientWidth ?? 0) + width}px`;
     }, [selectedIndex]);
 
-    const setSliderDimensions = () => {
+    const setSliderDimensions = useCallback(() => {
         setActiveBorderDimensions({ x: getSliderX(), width: getSliderWidth() });
-    };
+    }, [getSliderX, getSliderWidth]);
 
     useEffect(() => {
         setSliderDimensions();
@@ -191,7 +191,7 @@ export const SegmentedControls = ({
         return () => {
             window.removeEventListener('resize', setSliderDimensions);
         };
-    });
+    }, [activeBorderDimensions, setSliderDimensions]);
 
     return (
         <div className="tw-flex">
