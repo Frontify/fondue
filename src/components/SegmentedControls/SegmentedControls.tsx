@@ -10,7 +10,7 @@ import { RadioGroupState, useRadioGroupState } from '@react-stately/radio';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { motion } from 'framer-motion';
-import { ReactElement, forwardRef, useMemo, useRef } from 'react';
+import { ReactElement, forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 export type IconItem = {
     id: string;
@@ -145,6 +145,7 @@ export const SegmentedControls = ({
     const radioGroupState = useRadioGroupState(groupProps);
     const { radioGroupProps } = useRadioGroup(groupProps, radioGroupState);
     const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
+    const [activeBorderDimensions, setActiveBorderDimensions] = useState<{ x: string; width: string } | null>(null);
     const itemElements = useMemo(() => {
         return items.map((item, index) => (
             <SegmentedControlsItem
@@ -162,7 +163,7 @@ export const SegmentedControls = ({
     const width = hugWidth ? '' : 'tw-w-full';
     const alignment = hugWidth ? 'tw-flex' : 'tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly';
 
-    const getSliderX = () => {
+    const getSliderX = useCallback(() => {
         const isSmallOrHugWidth = size === 'small' || hugWidth;
         let translateX = isSmallOrHugWidth ? -1 : 0;
         for (let i = 0; i < selectedIndex; i++) {
@@ -170,16 +171,27 @@ export const SegmentedControls = ({
         }
 
         return `${translateX}px`;
-    };
+    }, [hugWidth, selectedIndex, size]);
 
-    const getSliderWidth = () => {
+    const getSliderWidth = useCallback(() => {
         const isLastElement = selectedIndex === itemsRef.current.length - 1;
         const width = isLastElement ? 1 : -1;
 
         return `${(itemsRef.current[selectedIndex]?.clientWidth ?? 0) + width}px`;
+    }, [selectedIndex]);
+
+    const setSliderDimensions = () => {
+        setActiveBorderDimensions({ x: getSliderX(), width: getSliderWidth() });
     };
-    const sliderTranslation = getSliderX();
-    const sliderWidth = getSliderWidth();
+
+    useEffect(() => {
+        setSliderDimensions();
+        window.addEventListener('resize', setSliderDimensions);
+
+        return () => {
+            window.removeEventListener('resize', setSliderDimensions);
+        };
+    });
 
     return (
         <div className="tw-flex">
@@ -195,7 +207,7 @@ export const SegmentedControls = ({
                 <motion.div
                     aria-hidden="true"
                     // div border is not included in width so it must be subtracted from translation.
-                    animate={{ x: sliderTranslation, width: sliderWidth }}
+                    animate={activeBorderDimensions ?? { x: '0px', width: '0px' }}
                     initial={false}
                     transition={{ type: 'tween', duration: 0.3 }}
                     hidden={!activeItemId}
