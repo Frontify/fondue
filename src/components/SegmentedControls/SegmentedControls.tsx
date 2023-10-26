@@ -180,18 +180,21 @@ export const SegmentedControls = ({
         return `${(itemsRef.current[selectedIndex]?.clientWidth ?? 0) + width}px`;
     }, [selectedIndex]);
 
-    const setSliderDimensions = () => {
-        setActiveBorderDimensions({ x: getSliderX(), width: getSliderWidth() });
-    };
+    const setSliderDimensions = useCallback(() => {
+        const dimensions = itemsRef.current ? { x: getSliderX(), width: getSliderWidth() } : { x: '0px', width: '0px' };
+        setActiveBorderDimensions(dimensions);
+    }, [getSliderWidth, getSliderX]);
 
     useEffect(() => {
-        setSliderDimensions();
+        if (selectedIndex >= 0) {
+            setSliderDimensions();
+        }
         window.addEventListener('resize', setSliderDimensions);
 
         return () => {
             window.removeEventListener('resize', setSliderDimensions);
         };
-    });
+    }, [selectedIndex, setSliderDimensions]);
 
     return (
         <div className="tw-flex">
