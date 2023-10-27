@@ -10,6 +10,10 @@ export default {
     component: PasswordInput,
     tags: ['autodocs'],
     argTypes: {
+        autocomplete: {
+            control: { type: 'boolean' },
+            defaultValue: false,
+        },
         disabled: {
             control: { type: 'boolean' },
             description: 'Flag to disable input',
@@ -34,6 +38,12 @@ export default {
             control: { type: 'select' },
             options: Object.values(Validation),
             defaultValue: Validation.Default,
+        },
+        id: {
+            table: { disable: true },
+        },
+        size: {
+            table: { disable: true },
         },
         onChange: {
             control: { type: 'callback' },

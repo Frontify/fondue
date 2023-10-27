@@ -22,21 +22,13 @@ describe('Password Input Component', () => {
 
     it('should render visibility icon as open eye', () => {
         cy.mount(<PasswordInput />);
-        cy.get(PASSWORD_INPUT_VISIBILITY_ICON)
-            .children('span')
-            .children('svg')
-            .invoke('attr', 'name')
-            .should('contain', 'IconEye16');
+        cy.get(PASSWORD_INPUT_VISIBILITY_ICON).find('svg').invoke('attr', 'name').should('contain', 'IconEye16');
     });
 
     it('should render visibility icon as closed eye', () => {
         cy.mount(<PasswordInput />);
         cy.get(PASSWORD_INPUT_VISIBILITY_ICON).realClick();
-        cy.get(PASSWORD_INPUT_VISIBILITY_ICON)
-            .children('span')
-            .children('svg')
-            .invoke('attr', 'name')
-            .should('contain', 'IconEyeOff16');
+        cy.get(PASSWORD_INPUT_VISIBILITY_ICON).find('svg').invoke('attr', 'name').should('contain', 'IconEyeOff16');
     });
 
     it('should render input as type password (obfuscated)', () => {
@@ -66,14 +58,14 @@ describe('Password Input Component', () => {
     it('should render success status icon', () => {
         cy.mount(<PasswordInput status={Validation.Success} />);
         cy.get(PASSWORD_INPUT_STATUS_ICON).should('be.visible');
-        cy.get(PASSWORD_INPUT_STATUS_ICON).children('svg').invoke('attr', 'name').should('contain', 'IconCheckMark16');
+        cy.get(PASSWORD_INPUT_STATUS_ICON).find('svg').invoke('attr', 'name').should('contain', 'IconCheckMark16');
     });
 
     it('should render error status icon', () => {
         cy.mount(<PasswordInput status={Validation.Error} />);
         cy.get(PASSWORD_INPUT_STATUS_ICON).should('be.visible');
         cy.get(PASSWORD_INPUT_STATUS_ICON)
-            .children('svg')
+            .find('svg')
             .invoke('attr', 'name')
             .should('contain', 'IconExclamationMarkTriangle16');
     });
