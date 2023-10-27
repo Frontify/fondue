@@ -138,4 +138,14 @@ describe('Breadcrumb component', () => {
         cy.get(BREADCRUMB_TRUNCATION_ID).should('exist');
         cy.get(BREADCRUMB_TRUNCATION_ID).find('svg').invoke('attr', 'name').should('contain', 'IconDotsHorizontal16');
     });
+
+    it('should append active item to trail', () => {
+        cy.mount(<Breadcrumbs items={BREADCRUMB_ITEMS} includesCurrent />);
+        cy.get(BREADCRUMB_ID).children().last().should('have.class', 'tw-flex tw-items-center');
+    });
+
+    it('should not append active item to trail', () => {
+        cy.mount(<Breadcrumbs items={BREADCRUMB_ITEMS} />);
+        cy.get(BREADCRUMB_ID).children().last().should('have.class', 'tw-w-full tw-inline-flex');
+    });
 });
