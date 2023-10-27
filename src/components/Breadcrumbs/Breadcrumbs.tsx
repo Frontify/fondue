@@ -82,18 +82,6 @@ const FormattedBreadcrumbs = ({
                 );
 
             case !truncate:
-                return (
-                    <BreadcrumbItem
-                        key={key}
-                        label={label}
-                        decorator={decorator}
-                        link={link}
-                        onClick={onClick}
-                        showSeparator={showSeparator}
-                        data-test-id={dataTestId}
-                    />
-                );
-
             case isRootKept:
             case isLastItemsToRender:
                 return (
