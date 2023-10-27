@@ -25,12 +25,13 @@ const Separator = () => (
     </svg>
 );
 
-type BreadcrumbItemProps = Pick<Breadcrumb, 'label' | 'link' | 'onClick'> & {
+type BreadcrumbItemProps = Pick<Breadcrumb, 'label' | 'link' | 'onClick' | 'decorator'> & {
     showSeparator: boolean;
     'data-test-id'?: string;
 };
 
 export const BreadcrumbItem = ({
+    decorator,
     label,
     link,
     onClick,
@@ -55,12 +56,18 @@ export const BreadcrumbItem = ({
     const elementTypeProps = { a: { href: link }, button: { onClick, type: 'button' as const }, span: {} };
     const props = mergeProps(itemProps, focusProps, elementTypeProps[Element]);
 
+    const classNames = merge([
+        'tw-flex tw-gap-x-1 tw-items-center tw-leading-4 tw-h-6 tw-max-w-[100px] tw-whitespace-pre-wrap',
+        isFocusVisible && FOCUS_STYLE,
+    ]);
+
     return (
         <li
             className="tw-flex tw-items-center tw-text-text-weak hover:tw-text-text tw-text-xs tw-transition-colors tw-whitespace-pre-wrap tw-max-w-[100px]"
             data-test-id={`${dataTestId}-item`}
         >
-            <Element ref={ref} {...props} className={merge(['tw-outline-none', isFocusVisible && FOCUS_STYLE])}>
+            <Element ref={ref} {...props} className={classNames}>
+                {decorator}
                 {label}
             </Element>
             {showSeparator && <Separator />}

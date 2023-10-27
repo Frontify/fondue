@@ -127,15 +127,15 @@ describe('Breadcrumb component', () => {
     });
 
     it('should render with root item truncated', () => {
-        cy.mount(<Breadcrumbs items={BREADCRUMB_ITEMS_LONG} keepRoot={false} />);
+        cy.mount(<Breadcrumbs items={BREADCRUMB_ITEMS_LONG} keepRoot={false} truncate />);
         cy.get(BREADCRUMB_TRUNCATION_ID).should('exist');
-        cy.get(BREADCRUMB_TRUNCATION_ID).should('have.text', '...');
+        cy.get(BREADCRUMB_TRUNCATION_ID).find('svg').invoke('attr', 'name').should('contain', 'IconDotsHorizontal16');
     });
 
     it('should render root with label and second item truncated', () => {
-        cy.mount(<Breadcrumbs items={BREADCRUMB_ITEMS_LONG} />);
+        cy.mount(<Breadcrumbs items={BREADCRUMB_ITEMS_LONG} truncate />);
         cy.get(BREADCRUMB_ID).children('li').first().should('have.text', BREADCRUMB_ITEMS_LONG[0].label);
-        cy.get(BREADCRUMB_ID).children(BREADCRUMB_TRUNCATION_ID).should('exist');
-        cy.get(BREADCRUMB_ID).children(BREADCRUMB_TRUNCATION_ID).should('have.text', '...');
+        cy.get(BREADCRUMB_TRUNCATION_ID).should('exist');
+        cy.get(BREADCRUMB_TRUNCATION_ID).find('svg').invoke('attr', 'name').should('contain', 'IconDotsHorizontal16');
     });
 });

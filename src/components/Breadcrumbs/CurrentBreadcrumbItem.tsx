@@ -21,6 +21,7 @@ export const CurrentBreadcrumbItem = ({
     decorator,
     link,
     onClick,
+    includesCurrent,
     'data-test-id': dataTestId = 'breadcrumb',
 }: CurrentBreadcrumbItemProps): ReactElement => {
     const ref = useRef(null);
@@ -40,14 +41,18 @@ export const CurrentBreadcrumbItem = ({
     const props = mergeProps(itemProps, focusProps, elementTypeProps[Element]);
 
     const classNames = merge([
-        'tw-flex tw-gap-x-1 tw-items-center tw-leading-4 tw-h-6 tw-max-w-[100px] tw-whitespace-pre-wrap',
+        'tw-flex tw-gap-x-1 tw-items-center tw-leading-4 tw-h-6 tw-max-w-[100px] tw-whitespace-pre-wrap tw-font-medium',
         bold && 'tw-font-bold',
+        includesCurrent && 'tw-text-xs',
         isFocusVisible && FOCUS_STYLE,
     ]);
 
     return (
         <li
-            className="tw-w-full tw-inline-flex tw-align-middle tw-gap-x-1 tw-text-m tw-text-text tw-items-center"
+            className={merge([
+                'tw-align-middle tw-gap-x-1 tw-text-m tw-text-text tw-items-center',
+                includesCurrent ? 'tw-flex tw-items-center' : 'tw-w-full tw-inline-flex',
+            ])}
             data-test-id={`${dataTestId}-item`}
         >
             <Element ref={ref} {...props} className={classNames}>

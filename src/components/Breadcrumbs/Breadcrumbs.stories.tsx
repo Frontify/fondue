@@ -8,7 +8,7 @@ import { BreadcrumbGap, Breadcrumbs, BreadcrumbsProps } from './Breadcrumbs';
 
 const link = document.referrer;
 const ITEMS = [
-    { label: 'Item 1 has a long label', link },
+    { label: 'Item 1', link },
     { label: 'Item 2', link },
     { label: 'Item 3', link },
     { label: 'Item 4', link },
@@ -27,10 +27,19 @@ export default {
             options: Object.values(BreadcrumbGap),
             control: { type: 'radio' },
         },
+        truncate: {
+            description: 'If true, truncation will be applied to the trail.',
+            defaultValue: false,
+            control: { type: 'boolean' },
+        },
         keepRoot: {
-            name: 'keepRoot',
-            description: 'If true the first item in the list will remain, else it is will truncated',
+            description: 'If true, the first item in the list will remain, else it is will truncated.',
             defaultValue: true,
+            control: { type: 'boolean' },
+        },
+        includesCurrent: {
+            description: 'If true, the current item wil be appended to the trail.',
+            defaultValue: false,
             control: { type: 'boolean' },
         },
         onBlur: { action: 'onBlur' },
@@ -43,21 +52,24 @@ export const WithoutLinkOrAction = Template.bind({});
 
 WithoutLinkOrAction.args = {
     verticalGap: BreadcrumbGap.Medium,
-    items: [...ITEMS, { bold: true, label: 'Active' }],
+    items: [...ITEMS, { bold: true, label: 'Active Item' }],
 };
 
-export const WithDecoratorAndActionAndTruncation = Template.bind({});
+export const WithDecoratorAndActionAndRootTruncation = Template.bind({});
 
-WithDecoratorAndActionAndTruncation.args = {
+WithDecoratorAndActionAndRootTruncation.args = {
     verticalGap: BreadcrumbGap.Medium,
     keepRoot: false,
+    truncate: true,
     items: [...ITEMS, { onClick: action('click'), bold: true, decorator: <IconIcon />, label: 'Active' }],
 };
 
-export const WithDecoratorAndLink = Template.bind({});
+export const WithDecoratorAndLinkAndCurrentInline = Template.bind({});
 
-WithDecoratorAndLink.args = {
+WithDecoratorAndLinkAndCurrentInline.args = {
     verticalGap: BreadcrumbGap.Medium,
+    includesCurrent: true,
+    truncate: true,
     items: [...ITEMS, { link, bold: true, decorator: <IconIcon />, label: 'Active' }],
 };
 

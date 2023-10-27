@@ -7,6 +7,7 @@ import { MouseEvent, ReactElement } from 'react';
 import { BreadcrumbItem } from './BreadcrumbItem';
 import { CurrentBreadcrumbItem } from './CurrentBreadcrumbItem';
 import { merge } from '@utilities/merge';
+import { IconDotsHorizontal16 } from '@foundation/Icon';
 
 const mapBreadcrumbsToAriaProps = (items: Breadcrumb[]) => ({
     children: items.map(({ label }, index) => (
@@ -24,11 +25,13 @@ export type Breadcrumb = {
     bold?: boolean;
     badges?: BadgeProps[];
     'data-test-id'?: string;
-};
+} & Pick<BreadcrumbsProps, 'includesCurrent'>;
 
 export type BreadcrumbsProps = {
     items: Breadcrumb[];
     keepRoot?: boolean;
+    includesCurrent?: boolean;
+    truncate?: boolean;
     'data-test-id'?: string;
     verticalGap?: BreadcrumbGap;
 };
@@ -45,15 +48,22 @@ export const verticalGapClassMap: Record<BreadcrumbGap, string> = {
     [BreadcrumbGap.Medium]: 'tw-gap-y-1',
 };
 
-const FormattedBreadcrumbs = ({ items, keepRoot, 'data-test-id': dataTestId }: BreadcrumbsProps): ReactElement[] => {
+const FormattedBreadcrumbs = ({
+    items,
+    keepRoot,
+    includesCurrent = false,
+    truncate = false,
+    'data-test-id': dataTestId,
+}: BreadcrumbsProps): ReactElement[] => {
     let renderTruncation = true;
     const elements = items.map(({ label, badges, bold, decorator, link, onClick }, index) => {
         const key = `breadcrumb-${index}`;
         const isRootKept = keepRoot && index === 0;
         const isCurrent = index === items.length - 1;
-        const isLastItems = index >= items.length - 3;
-        const isTruncatedItem = !isRootKept && !isLastItems;
-        const isLastItemsToRender = keepRoot ? isLastItems : index >= items.length - 4;
+        const isLastItems = index >= items.length - 2;
+        const isTruncatedItem = truncate && !isRootKept && !isLastItems;
+        const isLastItemsToRender = keepRoot ? isLastItems : index >= items.length - 3;
+        const showSeparator = index < items.length - 2 || (includesCurrent && index === items.length - 2);
 
         switch (true) {
             case isCurrent:
@@ -66,20 +76,21 @@ const FormattedBreadcrumbs = ({ items, keepRoot, 'data-test-id': dataTestId }: B
                         decorator={decorator}
                         link={link}
                         onClick={onClick}
+                        includesCurrent={includesCurrent}
                         data-test-id={dataTestId}
                     />
                 );
 
-            case isTruncatedItem && renderTruncation:
-                renderTruncation = false;
+            case !truncate:
                 return (
                     <BreadcrumbItem
                         key={key}
-                        label={'...'}
+                        label={label}
+                        decorator={decorator}
                         link={link}
                         onClick={onClick}
-                        showSeparator={index < items.length - 2}
-                        data-test-id={`${dataTestId}-truncation`}
+                        showSeparator={showSeparator}
+                        data-test-id={dataTestId}
                     />
                 );
 
@@ -89,14 +100,30 @@ const FormattedBreadcrumbs = ({ items, keepRoot, 'data-test-id': dataTestId }: B
                     <BreadcrumbItem
                         key={key}
                         label={label}
+                        decorator={decorator}
                         link={link}
                         onClick={onClick}
-                        showSeparator={index < items.length - 2}
+                        showSeparator={showSeparator}
                         data-test-id={dataTestId}
                     />
                 );
+
+            case isTruncatedItem && renderTruncation:
+                renderTruncation = false;
+                return (
+                    <BreadcrumbItem
+                        key={key}
+                        label={''}
+                        decorator={<IconDotsHorizontal16 />}
+                        link={link}
+                        onClick={onClick}
+                        showSeparator={showSeparator}
+                        data-test-id={`${dataTestId}-truncation`}
+                    />
+                );
+
             default:
-                return <span />;
+                return <span key={key} />;
         }
     });
     return [...elements];
@@ -105,6 +132,8 @@ const FormattedBreadcrumbs = ({ items, keepRoot, 'data-test-id': dataTestId }: B
 export const Breadcrumbs = ({
     items,
     keepRoot = true,
+    truncate = false,
+    includesCurrent = false,
     'data-test-id': dataTestId = 'breadcrumb',
     verticalGap = BreadcrumbGap.Medium,
 }: BreadcrumbsProps): ReactElement => {
@@ -114,7 +143,13 @@ export const Breadcrumbs = ({
     return (
         <nav {...navProps} className="tw-font-sans" aria-label="Breadcrumb" data-test-id={dataTestId}>
             <ol className={merge(['tw-list-none tw-flex tw-flex-wrap', verticalGapClassMap[verticalGap]])}>
-                <FormattedBreadcrumbs items={items} keepRoot={keepRoot} data-test-id={dataTestId} />
+                <FormattedBreadcrumbs
+                    items={items}
+                    keepRoot={keepRoot}
+                    truncate={truncate}
+                    includesCurrent={includesCurrent}
+                    data-test-id={dataTestId}
+                />
             </ol>
         </nav>
     );
