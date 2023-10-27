@@ -2,7 +2,6 @@
 
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { useFocusRing } from '@react-aria/focus';
-import { mergeProps } from '@react-aria/utils';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
@@ -17,7 +16,7 @@ import {
     useEffect,
     useRef,
 } from 'react';
-import TextareaAutosize, { TextareaAutosizeProps } from 'react-textarea-autosize';
+import TextareaAutosize from 'react-textarea-autosize';
 import { IconExclamationMarkTriangle } from '@foundation/Icon/Generated';
 
 export type TextareaProps = {
@@ -76,12 +75,23 @@ export const Textarea = ({
         }
     };
 
-    const { isFocusVisible, focusProps } = useFocusRing({ isTextInput: true });
+    const onBlurHandler = (event: FocusEvent<HTMLTextAreaElement>) => {
+        if (onBlur) {
+            onBlur(event.target.value);
+        }
+    };
 
+    const onInputHandler = (event: FormEvent<HTMLTextAreaElement>) => {
+        if (onInput) {
+            onInput((event.target as HTMLTextAreaElement).value);
+        }
+    };
+
+    const { isFocusVisible, focusProps } = useFocusRing({ isTextInput: true, within: true });
     const autosizeProps = { maxRows, minRows };
 
     return (
-        <div className="tw-relative">
+        <div className="tw-relative" {...focusProps}>
             {decorator && (
                 <div
                     className="tw-absolute tw-top-2 tw-left-2 tw-inline-flex tw-items-end tw-text-black-80"
@@ -91,11 +101,6 @@ export const Textarea = ({
                 </div>
             )}
             <Component
-                {...(mergeProps(focusProps, {
-                    onBlur: (event: FocusEvent<HTMLTextAreaElement>) => onBlur && onBlur(event.target.value),
-                    onInput: (event: FormEvent<HTMLTextAreaElement>) =>
-                        onInput && onInput((event.target as HTMLTextAreaElement).value),
-                }) as TextareaAutosizeProps)}
                 {...(autosize ? autosizeProps : { rows: minRows })}
                 onClick={() => textareaElement.current?.focus()}
                 id={useMemoizedId(propId)}
@@ -115,6 +120,7 @@ export const Textarea = ({
                     validation === Validation.Error && 'tw-pr-8',
                 ])}
                 disabled={disabled}
+                onBlur={onBlurHandler}
                 onFocus={(e) => {
                     if (selectable) {
                         e.target.select();
@@ -123,6 +129,7 @@ export const Textarea = ({
                         onFocus(e);
                     }
                 }}
+                onInput={onInputHandler}
                 onKeyDown={onKeyDown}
                 data-test-id="textarea"
                 {...props}

@@ -104,7 +104,7 @@ export const Slider = ({
                 percentage = positionInPixels / trackSize;
             } else {
                 // if raw value, update thumb position independently of steps
-                percentage = ((rawValue || min) - min) / range;
+                percentage = ((rawValue ?? min) - min) / range;
                 setPercentagePosition(clamp(percentage, 0, 1) * 100);
                 return;
             }
@@ -139,8 +139,8 @@ export const Slider = ({
         }
 
         setIsDragging(false);
-        sliderRef.removeEventListener('mousemove', onDrag);
-        sliderRef.addEventListener('touchmove', onDrag);
+        window.removeEventListener('mousemove', onDrag);
+        window.removeEventListener('touchmove', onDrag);
         window.removeEventListener('mouseup', stopDrag);
     }, [sliderRef, onDrag]);
 
@@ -155,8 +155,8 @@ export const Slider = ({
             clientX: (event as MouseEvent).clientX ?? (event as TouchEvent).touches[0].clientX,
         });
 
-        sliderRef.addEventListener('touchmove', onDrag);
-        sliderRef.addEventListener('mousemove', onDrag);
+        window.addEventListener('mousemove', onDrag);
+        window.addEventListener('touchmove', onDrag);
         window.addEventListener('mouseup', stopDrag);
     };
 
@@ -234,7 +234,7 @@ export const Slider = ({
             return;
         }
 
-        const raw = propValue || min;
+        const raw = propValue ?? min;
 
         setValue(raw);
         setValueWithSuffix(`${raw}${valueSuffix}`);
