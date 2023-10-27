@@ -4,19 +4,23 @@ import { useCallback, useEffect, useState } from 'react';
 
 export const useToggleOverlay = (
     initialState = false,
-    { isBlockingModal }: { isBlockingModal?: boolean } = { isBlockingModal: false },
+    { isBlockingModal, callback }: { isBlockingModal?: boolean; callback?: () => void } = { isBlockingModal: false },
 ): [boolean, (value: boolean) => void] => {
     const [open, setOpen] = useState<boolean>(initialState);
+
     const checkKeyboardEvent = useCallback(
         (event: KeyboardEvent) => {
+            const callbackFnc = typeof callback === 'function' ? callback : () => ({});
+
             if (open) {
                 event.stopPropagation();
             }
             if (open && !isBlockingModal && event.key === 'Escape') {
                 setOpen(false);
+                callbackFnc();
             }
         },
-        [isBlockingModal, open],
+        [callback, isBlockingModal, open],
     );
 
     useEffect(() => {
@@ -27,6 +31,5 @@ export const useToggleOverlay = (
         };
     }, [checkKeyboardEvent, isBlockingModal]);
 
-    const handler = useCallback((value: boolean): void => setOpen(value), []);
-    return [open, handler];
+    return [open, setOpen];
 };
