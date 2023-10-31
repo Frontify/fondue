@@ -151,7 +151,7 @@ export const LegacyTooltip = ({
     children,
     position = TooltipPosition.Bottom,
     alignment = TooltipAlignment.Middle,
-    withStrongBorder,
+    withStrongBorder = false,
     withArrow,
     flip = true,
     triggerElement,
