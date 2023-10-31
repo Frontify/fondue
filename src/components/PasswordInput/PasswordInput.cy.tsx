@@ -69,4 +69,43 @@ describe('Password Input Component', () => {
             .invoke('attr', 'name')
             .should('contain', 'IconExclamationMarkTriangle16');
     });
+
+    it('should render focus ring on input when tab focused', () => {
+        cy.mount(<PasswordInput />);
+        cy.get(PASSWORD_INPUT).realPress('Tab');
+        cy.get(PASSWORD_INPUT).should(
+            'have.class',
+            'tw-ring-4 tw-ring-blue tw-ring-offset-2 dark:tw-ring-offset-black tw-outline-none',
+        );
+    });
+
+    it('should render focus ring only on obfuscated button when tab focused', () => {
+        cy.mount(<PasswordInput />);
+        cy.get(PASSWORD_INPUT).realPress('Tab').realPress('Tab');
+        cy.get(PASSWORD_INPUT).should(
+            'not.have.class',
+            'tw-ring-4 tw-ring-blue tw-ring-offset-2 dark:tw-ring-offset-black tw-outline-none',
+        );
+        cy.get(PASSWORD_INPUT_VISIBILITY_ICON).should(
+            'have.class',
+            'tw-ring-4 tw-ring-blue tw-ring-offset-2 dark:tw-ring-offset-black tw-outline-none',
+        );
+    });
+
+    it('should render focus ring only on clear button when tab focused', () => {
+        cy.mount(<PasswordInput clearable />);
+        cy.get(PASSWORD_INPUT).realPress('Tab').realPress('Tab').realPress('Tab');
+        cy.get(PASSWORD_INPUT).should(
+            'not.have.class',
+            'tw-ring-4 tw-ring-blue tw-ring-offset-2 dark:tw-ring-offset-black tw-outline-none',
+        );
+        cy.get(PASSWORD_INPUT_VISIBILITY_ICON).should(
+            'not.have.class',
+            'tw-ring-4 tw-ring-blue tw-ring-offset-2 dark:tw-ring-offset-black tw-outline-none',
+        );
+        cy.get(PASSWORD_INPUT_CLEAR_ICON).should(
+            'have.class',
+            'tw-ring-4 tw-ring-blue tw-ring-offset-2 dark:tw-ring-offset-black tw-outline-none',
+        );
+    });
 });
