@@ -36,8 +36,9 @@ export const PasswordInput = ({
     const inputElementRef = useRef<HTMLInputElement | null>(null);
     const [isObfuscated, setIsObfuscated] = useState<boolean>(obfuscated);
 
-    const { isFocusVisible, focusProps } = useFocusRing();
+    const { isFocusVisible, focusProps } = useFocusRing({ within: true, isTextInput: true });
     const { isFocusVisible: passwordButtonIsFocusVisible, focusProps: passwordButtonFocusProps } = useFocusRing();
+    const { isFocusVisible: clearButtonIsFocusVisible, focusProps: clearButtonFocusProps } = useFocusRing();
 
     const handleOnChange = useCallback(() => {
         onChange?.(inputElementRef.current?.value);
@@ -46,7 +47,7 @@ export const PasswordInput = ({
     const handleClear = () => {
         if (inputElementRef.current) {
             inputElementRef.current.value = '';
-            onChange?.(inputElementRef.current.value);
+            handleOnChange();
         }
     };
 
@@ -59,8 +60,8 @@ export const PasswordInput = ({
                 disabled
                     ? 'tw-border-line-x-strong'
                     : 'hover:tw-border-line-x-strong focus-within:tw-border-line-xx-strong focus-within:hover:tw-border-line-xx-strong',
+                isFocusVisible && !passwordButtonIsFocusVisible && !clearButtonIsFocusVisible && FOCUS_STYLE,
                 status ? validationClassMap[status] : '',
-                isFocusVisible && FOCUS_STYLE,
             ])}
             data-test-id={dataTestId}
         >
@@ -83,7 +84,7 @@ export const PasswordInput = ({
                 type={isObfuscated ? InputTypes.Password : InputTypes.Text}
                 value={value}
                 className={merge([
-                    'tw-w-full tw-border-none tw-outline-none tw-bg-transparent tw-hide-input-arrows tw-text-[16px]',
+                    'tw-w-full tw-border-none tw-outline-none tw-bg-transparent tw-hide-input-arrows tw-text-sm',
                     disabled || readOnly
                         ? 'tw-text-black-40 tw-placeholder-black-30 dark:tw-text-black-30 dark:tw-placeholder-black-40 hover:tw-cursor-not-allowed'
                         : 'tw-text-black tw-placeholder-black-60 dark:tw-text-white',
@@ -91,6 +92,7 @@ export const PasswordInput = ({
             />
             <span className="tw-flex tw-justify-between tw-items-center t-max-w-sm">
                 <button
+                    {...passwordButtonFocusProps}
                     aria-label={`${isObfuscated ? 'show' : 'hide'} text input`}
                     onClick={() => setIsObfuscated(!isObfuscated)}
                     data-test-id={`${dataTestId}-visibility-icon`}
@@ -101,25 +103,26 @@ export const PasswordInput = ({
                         'tw-flex tw-items-center tw-justify-center tw-transition-colors tw-rounded tw-text-text-weak tw-p-1',
                         disabled
                             ? 'tw-cursor-default tw-text-black-40 hover:tw-cursor-not-allowed'
-                            : 'tw-text-black-60 hover:tw-text-black-100 hover:tw-rounded-sm hover:tw-bg-box-neutral hover:tw-text-box-neutral-inverse focus:tw-ring-line-xx-strong focus:tw-bg-box-neutral',
+                            : 'tw-text-black-60 hover:tw-text-black-100 hover:tw-rounded-sm hover:tw-bg-box-neutral hover:tw-text-box-neutral-inverse',
                         passwordButtonIsFocusVisible && FOCUS_STYLE,
                     ])}
-                    {...passwordButtonFocusProps}
                 >
                     {isObfuscated ? <IconEye /> : <IconEyeOff />}
                 </button>
                 {clearable ? (
                     <button
+                        {...clearButtonFocusProps}
                         aria-label="Clear value"
                         onClick={handleClear}
                         data-test-id={`${dataTestId}-clear`}
                         title="Clear value"
                         type="button"
                         className={merge([
-                            'tw-text-text-weak tw-p-1',
+                            'tw-flex tw-items-center tw-justify-center tw-transition-colors tw-rounded tw-text-text-weak tw-p-1',
                             disabled
                                 ? 'tw-cursor-default tw-text-black-40 hover:tw-cursor-not-allowed'
-                                : 'tw-text-black-60 hover:tw-text-black-100 hover:tw-rounded-sm hover:tw-bg-box-neutral hover:tw-text-box-neutral-inverse focus:tw-ring-line-xx-strong focus:tw-bg-box-neutral',
+                                : 'tw-text-black-60 hover:tw-text-black-100 hover:tw-rounded-sm hover:tw-bg-box-neutral hover:tw-text-box-neutral-inverse',
+                            clearButtonIsFocusVisible && FOCUS_STYLE,
                         ])}
                     >
                         <IconCross16 />
