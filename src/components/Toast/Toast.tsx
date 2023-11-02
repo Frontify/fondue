@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { INSET_BORDER } from '@utilities/borderStyle';
+import { INSET_BORDER, MIGHTY_INSET_BORDER } from '@utilities/borderStyle';
 import { merge } from '@utilities/merge';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ReactElement } from 'react';
@@ -13,11 +13,7 @@ const getToastStartPosition = (animationDirection: ToastAnimationDirection) =>
     animationDirection === ToastAnimationDirection.BottomToTop ? '150%' : '-150%';
 
 const getContainerClasses = (borderStyle: BorderStyle) => {
-    return merge([
-        CONTAINER_BASE_CLASSES,
-        INSET_BORDER,
-        borderStyle === BorderStyle.Mighty && 'before:!tw-shadow-inset-mighty',
-    ]);
+    return merge([CONTAINER_BASE_CLASSES, borderStyle === BorderStyle.Mighty ? MIGHTY_INSET_BORDER : INSET_BORDER]);
 };
 
 export const Toast = ({
