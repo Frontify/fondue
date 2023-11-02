@@ -155,7 +155,14 @@ export const Dropdown = ({
             return DropdownPosition.Bottom;
         }
     })();
-    const adjustedMaxHeight = adjustedPosition === DropdownPosition.Top ? maxHeight.toTop : maxHeight.toBottom;
+
+    const adjustedMaxHeight = (() => {
+        if (flip) {
+            return adjustedPosition === DropdownPosition.Top ? maxHeight.toTop : maxHeight.toBottom;
+        } else {
+            return position === DropdownPosition.Top ? maxHeight.toTop : maxHeight.toBottom;
+        }
+    })();
 
     const heightIsReady = !autoResize || maxHeight.toBottom || maxHeight.toTop;
 
