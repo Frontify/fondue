@@ -42,7 +42,7 @@ const renderWithFocusableItems = (
     >
         <button data-test-id="focusable-item">Button</button>
         <input data-test-id="focusable-item" value="Input"></input>
-        <textarea data-test-id="focusable-item">textarea</textarea>
+        <textarea data-test-id="focusable-item">Textarea</textarea>
     </div>
 );
 
