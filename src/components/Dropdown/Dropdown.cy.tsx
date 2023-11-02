@@ -18,6 +18,7 @@ const MENU_ITEM_ID = '[data-test-id=menu-item]';
 const MENU_ITEM_ACTIVE_ID = '[data-test-id=menu-item-active]';
 const MENU_ITEM_TITLE_ID = '[data-test-id=menu-item-title]';
 const EXCLAMATION_MARK_ICON_ID = '[data-test-id=error-state-exclamation-mark-icon]';
+const TOP_DROPDOWN_ID = '[data-popper-placement=top-start]';
 
 const ITEMS = [
     {
@@ -63,6 +64,7 @@ type Props = {
     decorator?: ReactElement;
     autoResize?: boolean;
     validation?: Validation;
+    flip?: boolean;
 };
 
 const Component = ({
@@ -74,6 +76,7 @@ const Component = ({
     decorator,
     autoResize = true,
     validation = Validation.Default,
+    flip = false,
 }: Props): ReactElement => {
     const [activeItemId, setActiveItemId] = useState(initialActiveId);
     return (
@@ -87,6 +90,7 @@ const Component = ({
             decorator={decorator}
             autoResize={autoResize}
             validation={validation}
+            flip={flip}
         />
     );
 };
@@ -187,14 +191,29 @@ describe('Dropdown Component', () => {
         });
     });
 
-    it('should have a minimum height of 130px', () => {
+    it('should shrink height so it does not overflow', () => {
         cy.viewport(550, 160);
         cy.mount(<Component menuBlocks={ITEMS} decorator={<IconIcon />} />);
         cy.get(DROPDOWN_TRIGGER_ID).click();
         cy.get(DROPDOWN_MENU_ID).then(($el) => {
             const height = $el[0].clientHeight;
-            expect(height).to.equal(130);
+            expect(height).to.equal(84);
         });
+    });
+
+    it('should open to top and shrink so it does not overflow', () => {
+        cy.viewport(550, 160);
+        cy.mount(
+            <div style={{ height: 160, display: 'flex', alignItems: 'flex-end' }}>
+                <Component flip menuBlocks={ITEMS} decorator={<IconIcon />} />
+            </div>,
+        );
+        cy.get(DROPDOWN_TRIGGER_ID).click();
+        cy.get(DROPDOWN_MENU_ID).then(($el) => {
+            const height = $el[0].clientHeight;
+            expect(height).to.equal(84);
+        });
+        cy.get(TOP_DROPDOWN_ID).should('exist');
     });
 
     it('should open dropdown on click next to the caret icon', () => {
