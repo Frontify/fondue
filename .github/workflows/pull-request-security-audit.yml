@@ -5,6 +5,11 @@ on:
         branches:
             - beta
             - main
+        types:
+            - opened
+            - synchronize
+            - reopened
+            - ready_for_review
         paths:
             - 'package.json'
             - 'pnpm-lock.yaml'

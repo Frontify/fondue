@@ -10,6 +10,11 @@ on:
         branches:
             - 'main'
             - 'beta'
+        types:
+            - opened
+            - synchronize
+            - reopened
+            - ready_for_review
 
 env:
     NODE_VERSION: 18
