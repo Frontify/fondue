@@ -41,7 +41,7 @@ export type TextareaProps = {
     onEnterPressed?: (event: KeyboardEvent<HTMLTextAreaElement>) => void;
 } & AriaAttributes;
 
-export const Textarea = ({
+export const LegacyTextarea = ({
     id: propId,
     value,
     required = false,
@@ -154,4 +154,4 @@ export const Textarea = ({
         </div>
     );
 };
-Textarea.displayName = 'FondueTextarea';
+LegacyTextarea.displayName = 'FondueTextarea';

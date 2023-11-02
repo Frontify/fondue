@@ -5,7 +5,7 @@ import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
 import { Divider } from '@components/Divider/Divider';
 import { FormControl } from '@components/FormControl/FormControl';
 import { SegmentedControls } from '@components/SegmentedControls/SegmentedControls';
-import { Textarea } from '@components/Textarea/Textarea';
+import { LegacyTextarea } from '@components/LegacyTextarea/LegacyTextarea';
 import { TextInput } from '@components/TextInput/TextInput';
 import { chain } from '@react-aria/utils';
 import { action } from '@storybook/addon-actions';
@@ -99,11 +99,11 @@ const FlyoutTemplate: (addScrollingContent: boolean, inputFocus: boolean) => Sto
                         <div className="tw-p-8">
                             <FormControl
                                 label={{
-                                    children: 'Textarea Label',
+                                    children: 'LegacyTextarea Label',
                                     htmlFor: 'textarea-id',
                                 }}
                             >
-                                <Textarea placeholder="This is a placeholder" />
+                                <LegacyTextarea placeholder="This is a placeholder" />
                             </FormControl>
                         </div>
                     </Flyout>
