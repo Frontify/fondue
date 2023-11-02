@@ -188,7 +188,7 @@ export const Dropdown = ({
         ['Bottom-End']: 'bottom-end',
     };
     const popperInstance = usePopper(triggerRef?.current, dropdownRef.current, {
-        placement: placementMap[`${adjustedPosition}-${alignment}`],
+        placement: placementMap[`${position}-${alignment}`],
         strategy: 'fixed',
         modifiers: [
             {
