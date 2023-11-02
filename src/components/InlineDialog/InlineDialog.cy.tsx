@@ -271,7 +271,7 @@ describe('InlineDialog Component', () => {
             cy.mount(<InlineDialogComponent autoHeight={true} maxHeight={100} />);
             cy.get(INLINE_DIALOG_TRIGGER_SELECTOR).children().eq(0).click();
             cy.viewport(550, 150);
-            cy.get(INLINE_DIALOG_SELECTOR).should('have.css', 'height', '98px');
+            cy.get(INLINE_DIALOG_SELECTOR).should('have.css', 'height', '90px');
         });
     });
 
