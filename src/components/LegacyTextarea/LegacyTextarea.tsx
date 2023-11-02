@@ -154,4 +154,4 @@ export const LegacyTextarea = ({
         </div>
     );
 };
-LegacyTextarea.displayName = 'FondueTextarea';
+LegacyTextarea.displayName = 'FondueLegacyTextarea';

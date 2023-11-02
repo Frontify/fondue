@@ -28,7 +28,7 @@ const renderWithFocusableItems = () => (
     <div style={{ height: `${ITEM_HEIGHT}px` }} className="tw-flex tw-justify-around">
         <button data-test-id="focusable-item">Button</button>
         <input data-test-id="focusable-item" value="Input"></input>
-        <textarea data-test-id="focusable-item">LegacyTextarea</textarea>
+        <textarea data-test-id="focusable-item">textarea</textarea>
     </div>
 );
 
