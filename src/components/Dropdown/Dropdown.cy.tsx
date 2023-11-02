@@ -173,7 +173,7 @@ describe('Dropdown Component', () => {
         cy.get(DROPDOWN_TRIGGER_ID).click();
         cy.get(DROPDOWN_MENU_ID).then(($el) => {
             const { bottom } = $el[0].getBoundingClientRect();
-            expect(Number(bottom.toFixed(0))).to.equal(220 - 33);
+            expect(Number(bottom.toFixed(0))).to.equal(220 - 8);
         });
     });
 
@@ -197,7 +197,7 @@ describe('Dropdown Component', () => {
         cy.get(DROPDOWN_TRIGGER_ID).click();
         cy.get(DROPDOWN_MENU_ID).then(($el) => {
             const height = $el[0].clientHeight;
-            expect(height).to.equal(84);
+            expect(height).to.equal(109);
         });
     });
 
@@ -211,7 +211,7 @@ describe('Dropdown Component', () => {
         cy.get(DROPDOWN_TRIGGER_ID).click();
         cy.get(DROPDOWN_MENU_ID).then(($el) => {
             const height = $el[0].clientHeight;
-            expect(height).to.equal(84);
+            expect(height).to.equal(109);
         });
         cy.get(TOP_DROPDOWN_ID).should('exist');
     });

@@ -18,7 +18,7 @@ export const getInnerOverlayHeight = (triggerRef: MutableRefObject<HTMLElement |
     if (triggerRef.current) {
         const { innerHeight } = window;
         const { bottom, top } = triggerRef.current.getBoundingClientRect();
-        const viewportPadding = 33;
+        const viewportPadding = 8;
         const triggerMargin = 8;
         maxHeight.toBottom = innerHeight - (bottom + viewportPadding + triggerMargin);
         maxHeight.toTop = top - (viewportPadding + triggerMargin);
