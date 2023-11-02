@@ -44,6 +44,7 @@ export type LegacyTooltipProps = {
     alignment?: TooltipAlignment;
     flip?: boolean;
     withArrow?: boolean;
+    withStrongBorder?: boolean;
     hoverDelay?: number;
     enterDelay?: number;
     open?: boolean;
@@ -150,6 +151,7 @@ export const LegacyTooltip = ({
     children,
     position = TooltipPosition.Bottom,
     alignment = TooltipAlignment.Middle,
+    withStrongBorder = false,
     withArrow,
     flip = true,
     triggerElement,
@@ -315,6 +317,7 @@ export const LegacyTooltip = ({
                     className={merge([
                         'tw-popper-container tw-inline-block tw-max-w-[200px] tw-dark tw-bg-base tw-rounded-md tw-shadow-mid tw-text-text tw-z-[120000]',
                         !isOpen && 'tw-opacity-0 tw-h-0 tw-w-0 tw-overflow-hidden',
+                        withStrongBorder && 'tw-border tw-border-line-strong',
                     ])}
                     data-test-id={dataTestId}
                     role="tooltip"
@@ -404,8 +407,11 @@ export const LegacyTooltip = ({
                             style={popperInstance.styles.arrow}
                             className={merge([
                                 withArrow &&
-                                    'tw-popper-arrow tw-z-[110000] tw-absolute tw-w-3 tw-h-3 tw-pointer-events-none before:tw-absolute before:tw-w-3 before:tw-h-3 before:tw-rotate-45 before:tw-border before:tw-border-line',
+                                    'tw-popper-arrow tw-z-[110000] tw-absolute tw-w-3 tw-h-3 tw-pointer-events-none before:tw-absolute before:tw-w-3 before:tw-h-3 before:tw-rotate-45 before:tw-border',
                                 withArrow && arrowStyling,
+                                withStrongBorder
+                                    ? 'before:tw-border-line-strong'
+                                    : withArrow && 'before:tw-border-line',
                             ])}
                         />
                     </div>
