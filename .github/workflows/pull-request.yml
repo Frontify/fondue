@@ -18,6 +18,7 @@ env:
 
 jobs:
     linting:
+        if: github.event.pull_request.draft == false
         runs-on: ubuntu-latest
         timeout-minutes: 10
 
@@ -59,6 +60,7 @@ jobs:
               run: pnpm run lint
 
     typecheck:
+        if: github.event.pull_request.draft == false
         runs-on: ubuntu-latest
         timeout-minutes: 10
 
@@ -100,6 +102,7 @@ jobs:
               run: pnpm typecheck
 
     component-tests:
+        if: github.event.pull_request.draft == false
         runs-on: ubuntu-latest
         timeout-minutes: 10
 
