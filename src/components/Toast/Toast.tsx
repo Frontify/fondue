@@ -13,7 +13,7 @@ const getToastStartPosition = (animationDirection: ToastAnimationDirection) =>
     animationDirection === ToastAnimationDirection.BottomToTop ? '150%' : '-150%';
 
 const getContainerClasses = (borderStyle: BorderStyle) => {
-    return merge([CONTAINER_BASE_CLASSES, borderStyle === BorderStyle.Mighty ? MIGHTY_INSET_BORDER : INSET_BORDER]);
+    return merge([CONTAINER_BASE_CLASSES, borderStyle === 'mighty' ? MIGHTY_INSET_BORDER : INSET_BORDER]);
 };
 
 export const Toast = ({
@@ -22,7 +22,7 @@ export const Toast = ({
     icon,
     animationDirection = ToastAnimationDirection.BottomToTop,
     children,
-    borderStyle = BorderStyle.Default,
+    borderStyle = 'default',
     'data-test-id': dataTestId = 'toast',
 }: ToastProps): ReactElement => (
     <AnimatePresence>

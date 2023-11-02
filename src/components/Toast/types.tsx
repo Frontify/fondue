@@ -31,7 +31,4 @@ export const toastStylesBackgroundColorsMap: Record<ToastStyle, string> = {
     [ToastStyle.Warning]: 'tw-bg-box-warning-strong',
 };
 
-export enum BorderStyle {
-    Default = 'Default',
-    Mighty = 'Mighty',
-}
+export type BorderStyle = 'default' | 'mighty';
