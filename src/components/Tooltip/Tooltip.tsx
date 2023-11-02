@@ -140,7 +140,7 @@ export const Tooltip = ({
                         aria-hidden={!open}
                         ref={setPopperElement}
                         className={merge([
-                            'tw-popper-container tw-inline-block tw-bg-box-neutral-mighty tw-rounded-md tw-shadow-mid tw-text-box-neutral-mighty-inverse tw-border tw-border-line-mighty',
+                            'tw-popper-container tw-inline-block tw-bg-box-neutral-mighty tw-rounded-md tw-shadow tw-text-heading-medium tw-text-box-neutral-mighty-inverse tw-border tw-border-line-mighty',
                             size === 'spacious' ? 'tw-pt-2 tw-px-3 tw-pb-2.5' : 'tw-pt-1 tw-px-2 tw-pb-1.5',
                         ])}
                         style={{ ...styles.popper, maxWidth, maxHeight, zIndex }}
