@@ -5,6 +5,11 @@ on:
         branches:
             - beta
             - main
+        types:
+            - opened
+            - synchronize
+            - reopened
+            - ready_for_review
         paths:
             - 'package.json'
             - 'pnpm-lock.yaml'
@@ -15,6 +20,7 @@ env:
 jobs:
     audit:
         name: NPM packages
+        if: github.event.pull_request.draft == false
         runs-on: ubuntu-22.04
         timeout-minutes: 10
 
