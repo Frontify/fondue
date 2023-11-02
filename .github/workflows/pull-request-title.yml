@@ -7,12 +7,14 @@ on:
             - edited
             - reopened
             - synchronize
+            - ready_for_review
         branches:
             - 'main'
             - 'beta'
 
 jobs:
     pr-title-validation:
+        if: github.event.pull_request.draft == false
         runs-on: ubuntu-latest
         steps:
             - uses: amannn/action-semantic-pull-request@v5
