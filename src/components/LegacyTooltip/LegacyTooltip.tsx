@@ -409,7 +409,9 @@ export const LegacyTooltip = ({
                                 withArrow &&
                                     'tw-popper-arrow tw-z-[110000] tw-absolute tw-w-3 tw-h-3 tw-pointer-events-none before:tw-absolute before:tw-w-3 before:tw-h-3 before:tw-rotate-45 before:tw-border',
                                 withArrow && arrowStyling,
-                                withStrongBorder ? 'before:tw-border-line-strong' : 'before:tw-border-line',
+                                withStrongBorder
+                                    ? 'before:tw-border-line-strong'
+                                    : withArrow && 'before:tw-border-line',
                             ])}
                         />
                     </div>
