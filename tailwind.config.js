@@ -18,6 +18,7 @@ module.exports = {
                 mid: '0 3px 10px 0 rgba(8, 8, 8, 0.15)',
                 'mid-top': '0 -10px 10px -5px rgba(45, 50, 50, 0.1)',
                 'mid-bottom': '0 10px 10px -5px rgba(45, 50, 50, 0.1)',
+                'inset-mighty': 'inset 0 0 0 var(--line-width) var(--line-color-mighty)',
                 none: 'none',
             },
             ringColor: {

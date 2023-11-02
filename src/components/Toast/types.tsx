@@ -8,6 +8,7 @@ export type ToastProps = {
     icon: ReactNode;
     animationDirection?: ToastAnimationDirection;
     children?: ReactNode;
+    borderStyle?: BorderStyle;
     'data-test-id'?: string;
 };
 
@@ -29,3 +30,8 @@ export const toastStylesBackgroundColorsMap: Record<ToastStyle, string> = {
     [ToastStyle.Success]: 'tw-bg-box-positive-strong-pressed',
     [ToastStyle.Warning]: 'tw-bg-box-warning-strong',
 };
+
+export enum BorderStyle {
+    Default = 'Default',
+    Mighty = 'Mighty',
+}

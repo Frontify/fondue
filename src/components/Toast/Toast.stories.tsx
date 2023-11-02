@@ -4,7 +4,7 @@ import { IconExclamationMarkCircle24, IconExclamationMarkTriangle24, IconTrashBi
 import { Meta, StoryFn } from '@storybook/react';
 import { Button, ButtonGroup, ButtonSize, ButtonStyle } from '..';
 import { Toast as ToastComponent } from './Toast';
-import { ToastAnimationDirection, ToastProps, ToastStyle } from './types';
+import { BorderStyle, ToastAnimationDirection, ToastProps, ToastStyle } from './types';
 
 export default {
     title: 'Components/Toast',
@@ -20,6 +20,11 @@ export default {
             options: Object.values(ToastAnimationDirection),
             control: { type: 'select' },
             defaultValue: ToastAnimationDirection.BottomToTop,
+        },
+        borderStyle: {
+            options: Object.values(BorderStyle),
+            control: { type: 'select' },
+            defaultValue: BorderStyle.Default,
         },
         icon: { table: { disable: true } },
         children: { table: { disable: true } },

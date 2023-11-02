@@ -4,14 +4,21 @@ import { INSET_BORDER } from '@utilities/borderStyle';
 import { merge } from '@utilities/merge';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ReactElement } from 'react';
-import { ToastAnimationDirection, ToastProps, toastStylesBackgroundColorsMap } from './types';
+import { BorderStyle, ToastAnimationDirection, ToastProps, toastStylesBackgroundColorsMap } from './types';
 
 const CONTAINER_BASE_CLASSES =
     'tw-min-h-[2rem] tw-bg-base tw-rounded-lg tw-shadow-mid tw-z-[120000] before:!tw-rounded-lg';
-const CONTAINER_CLASSES = merge([CONTAINER_BASE_CLASSES, INSET_BORDER]);
 
 const getToastStartPosition = (animationDirection: ToastAnimationDirection) =>
     animationDirection === ToastAnimationDirection.BottomToTop ? '150%' : '-150%';
+
+const getContainerClasses = (borderStyle: BorderStyle) => {
+    return merge([
+        CONTAINER_BASE_CLASSES,
+        INSET_BORDER,
+        borderStyle === BorderStyle.Mighty && 'before:!tw-shadow-inset-mighty',
+    ]);
+};
 
 export const Toast = ({
     isOpen,
@@ -19,12 +26,13 @@ export const Toast = ({
     icon,
     animationDirection = ToastAnimationDirection.BottomToTop,
     children,
+    borderStyle = BorderStyle.Default,
     'data-test-id': dataTestId = 'toast',
 }: ToastProps): ReactElement => (
     <AnimatePresence>
         {isOpen && (
             <motion.div
-                className={CONTAINER_CLASSES}
+                className={getContainerClasses(borderStyle)}
                 initial={{
                     opacity: 0,
                     y: getToastStartPosition(animationDirection),
