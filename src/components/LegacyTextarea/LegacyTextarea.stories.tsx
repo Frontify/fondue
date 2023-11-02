@@ -6,7 +6,7 @@ import { LegacyTextarea as TextareaComponent, TextareaProps } from './LegacyText
 import { Validation } from '@utilities/validation';
 
 export default {
-    title: 'Components/LegacyTextarea',
+    title: 'Deprecated/LegacyTextarea',
     component: TextareaComponent,
     tags: ['autodocs'],
     args: {
@@ -39,7 +39,7 @@ export default {
 
 export const LegacyTextarea: StoryFn<TextareaProps> = (args: TextareaProps) => {
     const [input, setInput] = useState('');
-    useEffect(() => setInput(`${args.value || ''}`), [args.value]);
+    useEffect(() => setInput(`${args.value ?? ''}`), [args.value]);
 
     return <TextareaComponent {...args} value={input} onInput={setInput} />;
 };
