@@ -136,11 +136,11 @@ export const Dropdown = ({
     const spaceAvailableToTop = maxHeight.toTop ?? 0;
     const spaceAvailableToBottom = maxHeight.toBottom ?? 0;
 
-    const hasTopMoreSpaceThanBottom = spaceAvailableToTop > spaceAvailableToBottom;
-    const hasBottomMoreSpaceThanTop = !hasTopMoreSpaceThanBottom;
+    const isTopSpaceLarger = spaceAvailableToTop > spaceAvailableToBottom;
+    const isBottomSpaceLarger = !isTopSpaceLarger;
 
-    const canOpenToBottom = spaceAvailableToBottom >= minimumSpaceNeededToOpen || hasBottomMoreSpaceThanTop;
-    const canOpenToTop = maxHeight.toTop && (maxHeight.toTop >= minimumSpaceNeededToOpen || hasTopMoreSpaceThanBottom);
+    const canOpenToBottom = spaceAvailableToBottom >= minimumSpaceNeededToOpen || isBottomSpaceLarger;
+    const canOpenToTop = maxHeight.toTop && (maxHeight.toTop >= minimumSpaceNeededToOpen || isTopSpaceLarger);
 
     const adjustedPosition = (() => {
         if (position === DropdownPosition.Bottom) {
@@ -149,12 +149,10 @@ export const Dropdown = ({
             } else {
                 return DropdownPosition.Top;
             }
+        } else if (canOpenToTop || !canOpenToBottom) {
+            return DropdownPosition.Top;
         } else {
-            if (canOpenToTop || !canOpenToBottom) {
-                return DropdownPosition.Top;
-            } else {
-                return DropdownPosition.Bottom;
-            }
+            return DropdownPosition.Bottom;
         }
     })();
     const adjustedMaxHeight = adjustedPosition === DropdownPosition.Top ? maxHeight.toTop : maxHeight.toBottom;

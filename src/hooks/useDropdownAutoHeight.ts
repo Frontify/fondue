@@ -8,8 +8,13 @@ type DropdownAutoHeightProps = {
     isDialog?: boolean;
 };
 
+type AvailableSpace = {
+    toTop?: number;
+    toBottom?: number;
+};
+
 export const getInnerOverlayHeight = (triggerRef: MutableRefObject<HTMLElement | null>) => {
-    const maxHeight: { toTop?: number; toBottom?: number } = {};
+    const maxHeight: AvailableSpace = {};
     if (triggerRef.current) {
         const { innerHeight } = window;
         const { bottom, top } = triggerRef.current.getBoundingClientRect();
@@ -25,7 +30,7 @@ export const useDropdownAutoHeight = (
     triggerRef: MutableRefObject<HTMLElement | null>,
     { isOpen, autoResize }: DropdownAutoHeightProps,
 ) => {
-    const [maxHeight, setMaxHeight] = useState<{ toTop?: number; toBottom?: number }>({});
+    const [maxHeight, setMaxHeight] = useState<AvailableSpace>({});
     useLayoutEffect(() => {
         const updateMaxHeight = () => setMaxHeight(getInnerOverlayHeight(triggerRef));
         if (autoResize && isOpen) {
