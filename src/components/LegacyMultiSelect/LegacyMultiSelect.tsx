@@ -16,17 +16,17 @@ import { usePopper } from 'react-popper';
 import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from '@hooks/useDropdownAutoHeight';
 import { EnablePortalWrapper } from '@utilities/dialogs/EnablePortalWrapper';
 
-export enum MultiSelectType {
+export enum LegacyMultiSelectType {
     Default = 'Default',
     Summarized = 'Summarized',
 }
 
-export enum MultiSelectSize {
+export enum LegacyMultiSelectSize {
     Small = 'Small',
     Medium = 'Medium',
 }
 
-export type MultiSelectItem = {
+export type LegacyMultiSelectItem = {
     value: string;
     isCategory?: boolean;
     isDivider?: boolean;
@@ -35,16 +35,16 @@ export type MultiSelectItem = {
     ariaLabel?: string;
 };
 
-export type MultiSelectProps = {
-    items: MultiSelectItem[];
+export type LegacyMultiSelectProps = {
+    items: LegacyMultiSelectItem[];
     activeItemKeys: (string | number)[];
     disabled?: boolean;
     onSelectionChange: (keys: (string | number)[]) => void;
     ariaLabel?: string;
     label?: string;
     placeholder?: string;
-    type?: MultiSelectType;
-    size?: MultiSelectSize;
+    type?: LegacyMultiSelectType;
+    size?: LegacyMultiSelectSize;
     validation?: Validation;
     summarizedLabel?: string;
     indeterminateItemKeys?: (string | number)[];
@@ -63,7 +63,7 @@ export type Item = {
     ariaLabel?: string;
 };
 
-export const MultiSelect = ({
+export const LegacyMultiSelect = ({
     items,
     activeItemKeys,
     onSelectionChange,
@@ -71,20 +71,20 @@ export const MultiSelect = ({
     disabled = false,
     placeholder,
     label,
-    type = MultiSelectType.Default,
-    size = MultiSelectSize.Medium,
+    type = LegacyMultiSelectType.Default,
+    size = LegacyMultiSelectSize.Medium,
     validation = Validation.Default,
     summarizedLabel: summarizedLabelFromProps,
     indeterminateItemKeys,
     flip = false,
     emphasis = TriggerEmphasis.Default,
     enablePortal = true,
-}: MultiSelectProps): ReactElement => {
+}: LegacyMultiSelectProps): ReactElement => {
     const [open, setOpen] = useState(false);
     const [checkboxes, setCheckboxes] = useState<Item[]>([]);
     const multiSelectRef = useRef<HTMLDivElement | null>(null);
 
-    const [multiSelectMenuRef, setMultiSelectMenuRef] = useState<null | HTMLDivElement>(null);
+    const [multiSelectMenuRef, setLegacyMultiSelectMenuRef] = useState<null | HTMLDivElement>(null);
     const [triggerRef, setTriggerRef] = useState<HTMLDivElement | null>(null);
 
     const filterInputRef = useRef<HTMLInputElement | null>(null);
@@ -207,27 +207,30 @@ export const MultiSelect = ({
                     >
                         <div className="tw-flex tw-flex-wrap tw-gap-2 tw-outline-none tw-items-center tw-min-h-[28px]">
                             {label && hasSelectedItems && <Text weight="strong">{label}</Text>}
-                            {type === MultiSelectType.Default &&
+                            {type === LegacyMultiSelectType.Default &&
                                 activeItemKeys.map((key) => (
                                     <Tag
                                         key={key}
                                         type={getTagType()}
                                         label={key.toString()}
-                                        size={size === MultiSelectSize.Small ? TagSize.Small : TagSize.Medium}
+                                        size={size === LegacyMultiSelectSize.Small ? TagSize.Small : TagSize.Medium}
                                         onClick={disabled ? undefined : () => toggleSelection(key)}
                                     />
                                 ))}
 
-                            {type === MultiSelectType.Summarized && (hasSelectedItems || summarizedLabelFromProps) && (
-                                <Tag
-                                    type={getTagType()}
-                                    label={summarizedLabel}
-                                    size={size === MultiSelectSize.Small ? TagSize.Small : TagSize.Medium}
-                                    onClick={
-                                        indeterminateItemKeys?.length === 0 ? () => onSelectionChange([]) : undefined
-                                    }
-                                />
-                            )}
+                            {type === LegacyMultiSelectType.Summarized &&
+                                (hasSelectedItems || summarizedLabelFromProps) && (
+                                    <Tag
+                                        type={getTagType()}
+                                        label={summarizedLabel}
+                                        size={size === LegacyMultiSelectSize.Small ? TagSize.Small : TagSize.Medium}
+                                        onClick={
+                                            indeterminateItemKeys?.length === 0
+                                                ? () => onSelectionChange([])
+                                                : undefined
+                                        }
+                                    />
+                                )}
 
                             {activeItemKeys.length === 0 && placeholder && <Text color="weak">{placeholder}</Text>}
                         </div>
@@ -238,7 +241,7 @@ export const MultiSelect = ({
             {open && heightIsReady && (
                 <EnablePortalWrapper enablePortal={enablePortal}>
                     <div
-                        ref={setMultiSelectMenuRef}
+                        ref={setLegacyMultiSelectMenuRef}
                         className="tw-absolute tw-left-0 tw-w-full tw-overflow-hidden tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-[120000] tw-bg-base tw-min-w-[18rem]"
                         key="content"
                         style={{
@@ -267,4 +270,4 @@ export const MultiSelect = ({
         </div>
     );
 };
-MultiSelect.displayName = 'FondueMultiSelect';
+LegacyMultiSelect.displayName = 'FondueLegacyMultiSelect';

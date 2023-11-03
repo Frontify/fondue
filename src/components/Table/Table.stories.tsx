@@ -308,9 +308,9 @@ SingleSelect.args = {
     selectionMode: SelectionMode.SingleSelect,
 };
 
-export const MultiSelect = Template.bind({});
-MultiSelect.args = {
-    selectionMode: SelectionMode.MultiSelect,
+export const LegacyMultiSelect = Template.bind({});
+LegacyMultiSelect.args = {
+    selectionMode: SelectionMode.LegacyMultiSelect,
 };
 
 export const FilterRows = TemplateWithSearch.bind({});

@@ -18,7 +18,7 @@ import { TableRow } from './TableRow';
 export enum SelectionMode {
     NoSelect = 'none',
     SingleSelect = 'single',
-    MultiSelect = 'multiple',
+    LegacyMultiSelect = 'multiple',
 }
 
 export type Cell = {
@@ -106,7 +106,8 @@ export const Table = ({
     selectedRowIds = [],
     ariaLabel = 'Table',
 }: TableProps) => {
-    const isSelectTable = selectionMode === SelectionMode.SingleSelect || selectionMode === SelectionMode.MultiSelect;
+    const isSelectTable =
+        selectionMode === SelectionMode.SingleSelect || selectionMode === SelectionMode.LegacyMultiSelect;
     const [{ sortedColumnKey, sortOrder }, setSortedColumn] = useState<SortType>({
         sortedColumnKey: undefined,
         sortOrder: undefined,

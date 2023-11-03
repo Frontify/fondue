@@ -42,7 +42,7 @@ export * from './Menu';
 export * from './MenuItem';
 export * from './Modal';
 export * from './MultiInput';
-export * from './MultiSelect';
+export * from './LegacyMultiSelect';
 export * from './NumberInput';
 export * from './OrderableList';
 export * from './OverflowMenu';

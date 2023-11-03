@@ -126,7 +126,7 @@ describe('Table Component', () => {
     });
 
     it('should render multi-select table', () => {
-        cy.mount(<Table columns={TABLE_COLUMNS} rows={TABLE_ROWS} selectionMode={SelectionMode.MultiSelect} />);
+        cy.mount(<Table columns={TABLE_COLUMNS} rows={TABLE_ROWS} selectionMode={SelectionMode.LegacyMultiSelect} />);
         cy.get(CHECKBOX_INPUT_ID).first().as('headerCheckbox');
 
         cy.get(TABLE_SELECT_CELL_ID).children(CHECKBOX_ID).should('have.length', 4);

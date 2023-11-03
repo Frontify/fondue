@@ -4,7 +4,12 @@ import { Meta, StoryFn } from '@storybook/react';
 import { useState } from 'react';
 import { FormControl } from '@components/FormControl';
 import { Validation } from '@utilities/validation';
-import { MultiSelect as MultiSelectComponent, MultiSelectProps, MultiSelectSize, MultiSelectType } from './MultiSelect';
+import {
+    LegacyMultiSelect as MultiSelectComponent,
+    MultiSelectProps,
+    MultiSelectSize,
+    MultiSelectType,
+} from './LegacyMultiSelect.cy';
 import { TriggerEmphasis } from '@components/Trigger';
 
 export default {
@@ -116,7 +121,7 @@ const MultiSelectRightAlignedContainerTemplate: StoryFn<MultiSelectProps> = (arg
     );
 };
 
-export const MultiSelect = MultiSelectTemplate.bind({});
+export const LegacyMultiSelect = MultiSelectTemplate.bind({});
 
 export const WithPlaceholder = MultiSelectTemplate.bind({});
 

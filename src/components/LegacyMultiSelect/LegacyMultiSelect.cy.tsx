@@ -2,7 +2,7 @@
 
 import { Validation } from '@utilities/validation';
 import { useState } from 'react';
-import { MultiSelect } from './MultiSelect';
+import { LegacyMultiSelect } from './LegacyMultiSelect';
 import { TriggerEmphasis } from '@components/Trigger';
 
 const TRIGGER_ID = '[data-test-id=trigger]';
@@ -50,7 +50,7 @@ const Component = ({
 }: Props) => {
     const [activeItems, setActiveItems] = useState<(string | number)[]>(ITEMS.activeItemKeys);
     return (
-        <MultiSelect
+        <LegacyMultiSelect
             items={ITEMS.items}
             activeItemKeys={activeItems}
             onSelectionChange={(keys) => setActiveItems(keys)}
@@ -61,7 +61,7 @@ const Component = ({
     );
 };
 
-describe('MultiSelect Component', () => {
+describe('LegacyMultiSelect Component', () => {
     it('renders with initial active items', () => {
         cy.mount(<Component />);
 
