@@ -78,7 +78,7 @@ export const Tooltip = ({
     const { styles, attributes, state } = usePopper(referenceElement, popperElement, {
         placement,
         modifiers: [
-            { name: 'arrow', options: { element: arrowElement } },
+            { name: 'arrow', options: { element: arrowElement, padding: 8 } },
             { name: 'offset', options: { offset } },
             { name: 'flip', enabled: flip },
         ],
