@@ -14,9 +14,11 @@ const useMobileDetection = () => {
 
         handleDeviceDetection();
         window.addEventListener('resize', handleDeviceDetection);
+        window.addEventListener('load', handleDeviceDetection);
 
         return () => {
             window.removeEventListener('resize', handleDeviceDetection);
+            window.removeEventListener('load', handleDeviceDetection);
         };
     }, []);
 
