@@ -82,9 +82,9 @@ export const LegacyMultiSelect = ({
 }: LegacyMultiSelectProps): ReactElement => {
     const [open, setOpen] = useState(false);
     const [checkboxes, setCheckboxes] = useState<Item[]>([]);
-    const multiSelectRef = useRef<HTMLDivElement | null>(null);
+    const legacyMultiSelectRef = useRef<HTMLDivElement | null>(null);
 
-    const [multiSelectMenuRef, setLegacyMultiSelectMenuRef] = useState<null | HTMLDivElement>(null);
+    const [legacyMultiSelectMenuRef, setLegacyMultiSelectMenuRef] = useState<null | HTMLDivElement>(null);
     const [triggerRef, setTriggerRef] = useState<HTMLDivElement | null>(null);
 
     const filterInputRef = useRef<HTMLInputElement | null>(null);
@@ -97,7 +97,10 @@ export const LegacyMultiSelect = ({
 
     const handleClose = () => setOpen(false);
 
-    useClickOutside(null, handleClose, [multiSelectRef?.current as HTMLElement, multiSelectMenuRef as HTMLElement]);
+    useClickOutside(null, handleClose, [
+        legacyMultiSelectRef?.current as HTMLElement,
+        legacyMultiSelectMenuRef as HTMLElement,
+    ]);
 
     const heightIsReady = maxHeight !== DEFAULT_DROPDOWN_MAX_HEIGHT;
 
@@ -153,7 +156,7 @@ export const LegacyMultiSelect = ({
         );
     }, [items, indeterminateItemKeys]);
 
-    const popperInstance = usePopper(triggerRef, multiSelectMenuRef, {
+    const popperInstance = usePopper(triggerRef, legacyMultiSelectMenuRef, {
         placement: 'bottom-start',
         strategy: 'fixed',
         modifiers: [
@@ -182,7 +185,7 @@ export const LegacyMultiSelect = ({
     }, [activeItemKeys]);
 
     return (
-        <div className="tw-relative" ref={multiSelectRef}>
+        <div className="tw-relative" ref={legacyMultiSelectRef}>
             <Trigger
                 disabled={disabled}
                 buttonProps={buttonProps}
