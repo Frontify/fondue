@@ -39,4 +39,26 @@ describe('Dialog Component', () => {
         cy.get(DIALOG_SELECTOR).should('exist');
         cy.get(DIALOG_SELECTOR).parent().should('have.css', 'top', '100px');
     });
+
+    it('should be responsive', () => {
+        cy.mount(
+            <Dialog open={true}>
+                <Dialog.Trigger>
+                    <Button>Open Dialog</Button>
+                </Dialog.Trigger>
+                <Dialog.Content>
+                    <DialogHeader title="Heading" size="large" />
+                    <DialogBody>Some Content</DialogBody>
+                </Dialog.Content>
+            </Dialog>,
+        );
+
+        cy.viewport(700, 900);
+        cy.get(DIALOG_SELECTOR).should('exist');
+        cy.get(DIALOG_SELECTOR).should('have.css', 'min-width', '600px'); // 600px default on larger screen
+        cy.viewport(400, 745);
+        cy.get(DIALOG_SELECTOR).should('have.css', 'min-width', '320px'); // 80vw on mobile view.
+        cy.viewport(1200, 900);
+        cy.get(DIALOG_SELECTOR).should('have.css', 'min-width', '600px'); // 600px default on larger screen
+    });
 });
