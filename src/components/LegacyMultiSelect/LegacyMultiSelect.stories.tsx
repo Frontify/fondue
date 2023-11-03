@@ -5,20 +5,20 @@ import { useState } from 'react';
 import { FormControl } from '@components/FormControl';
 import { Validation } from '@utilities/validation';
 import {
-    LegacyMultiSelect as MultiSelectComponent,
-    MultiSelectProps,
-    MultiSelectSize,
-    MultiSelectType,
-} from './LegacyMultiSelect.cy';
+    LegacyMultiSelect as LegacyMultiSelectComponent,
+    LegacyMultiSelectProps,
+    LegacyMultiSelectSize,
+    LegacyMultiSelectType,
+} from './LegacyMultiSelect';
 import { TriggerEmphasis } from '@components/Trigger';
 
 export default {
     title: 'Components/Multi Select',
-    component: MultiSelectComponent,
+    component: LegacyMultiSelectComponent,
     tags: ['autodocs'],
     args: {
-        type: MultiSelectType.Default,
-        size: MultiSelectSize.Medium,
+        type: LegacyMultiSelectType.Default,
+        size: LegacyMultiSelectSize.Medium,
         placeholder: 'Labels',
         label: 'Labels',
         activeItemKeys: ['Short tag', 'Tag 74'],
@@ -45,7 +45,7 @@ export default {
     },
     argTypes: {
         type: {
-            options: Object.keys(MultiSelectType),
+            options: Object.keys(LegacyMultiSelectType),
             control: { type: 'select' },
         },
         emphasis: {
@@ -53,7 +53,7 @@ export default {
             control: { type: 'select' },
         },
         size: {
-            options: Object.keys(MultiSelectSize),
+            options: Object.keys(LegacyMultiSelectSize),
             control: { type: 'select' },
         },
         validation: {
@@ -81,11 +81,11 @@ export default {
     },
 } as Meta;
 
-const MultiSelectTemplate: StoryFn<MultiSelectProps> = (args) => {
+const LegacyMultiSelectTemplate: StoryFn<LegacyMultiSelectProps> = (args) => {
     const [activeItemKeys, setActiveItemKeys] = useState<(string | number)[]>(args.activeItemKeys);
 
     return (
-        <MultiSelectComponent
+        <LegacyMultiSelectComponent
             {...args}
             activeItemKeys={activeItemKeys}
             onSelectionChange={(keys) => setActiveItemKeys(keys)}
@@ -93,12 +93,12 @@ const MultiSelectTemplate: StoryFn<MultiSelectProps> = (args) => {
     );
 };
 
-const MultiSelectFormControlTemplate: StoryFn<MultiSelectProps> = (args) => {
+const LegacyMultiSelectFormControlTemplate: StoryFn<LegacyMultiSelectProps> = (args) => {
     const [activeItemKeys, setActiveItemKeys] = useState<(string | number)[]>(args.activeItemKeys);
 
     return (
         <FormControl helper={{ text: 'Helper Text' }} label={{ children: 'Multi-Select', htmlFor: '' }}>
-            <MultiSelectComponent
+            <LegacyMultiSelectComponent
                 {...args}
                 activeItemKeys={activeItemKeys}
                 onSelectionChange={(keys) => setActiveItemKeys(keys)}
@@ -107,12 +107,12 @@ const MultiSelectFormControlTemplate: StoryFn<MultiSelectProps> = (args) => {
     );
 };
 
-const MultiSelectRightAlignedContainerTemplate: StoryFn<MultiSelectProps> = (args) => {
+const LegacyMultiSelectRightAlignedContainerTemplate: StoryFn<LegacyMultiSelectProps> = (args) => {
     const [activeItemKeys, setActiveItemKeys] = useState<(string | number)[]>(args.activeItemKeys);
 
     return (
         <div className="tw-absolute tw-right-0 tw-p-6 tw-w-96">
-            <MultiSelectComponent
+            <LegacyMultiSelectComponent
                 {...args}
                 activeItemKeys={activeItemKeys}
                 onSelectionChange={(keys) => setActiveItemKeys(keys)}
@@ -121,32 +121,32 @@ const MultiSelectRightAlignedContainerTemplate: StoryFn<MultiSelectProps> = (arg
     );
 };
 
-export const LegacyMultiSelect = MultiSelectTemplate.bind({});
+export const LegacyMultiSelect = LegacyMultiSelectTemplate.bind({});
 
-export const WithPlaceholder = MultiSelectTemplate.bind({});
+export const WithPlaceholder = LegacyMultiSelectTemplate.bind({});
 
 WithPlaceholder.args = {
     activeItemKeys: [],
     placeholder: 'Placeholder text',
 };
 
-export const WithOptionsSummarized = MultiSelectTemplate.bind({});
+export const WithOptionsSummarized = LegacyMultiSelectTemplate.bind({});
 
 WithOptionsSummarized.args = {
-    type: MultiSelectType.Summarized,
+    type: LegacyMultiSelectType.Summarized,
 };
 
-export const WithFormControl = MultiSelectFormControlTemplate.bind({});
+export const WithFormControl = LegacyMultiSelectFormControlTemplate.bind({});
 
-export const WithMixedValues = MultiSelectTemplate.bind({});
+export const WithMixedValues = LegacyMultiSelectTemplate.bind({});
 
 WithMixedValues.args = {
-    type: MultiSelectType.Summarized,
+    type: LegacyMultiSelectType.Summarized,
     summarizedLabel: 'Mixed values',
     indeterminateItemKeys: ['This is a long tag'],
 };
 
-export const WithRightAlignedContainer = MultiSelectRightAlignedContainerTemplate.bind({});
+export const WithRightAlignedContainer = LegacyMultiSelectRightAlignedContainerTemplate.bind({});
 
 WithRightAlignedContainer.args = {
     items: [
@@ -172,7 +172,7 @@ WithRightAlignedContainer.args = {
     flip: true,
 };
 
-export const WithWeakTriggerEmphasis = MultiSelectTemplate.bind({});
+export const WithWeakTriggerEmphasis = LegacyMultiSelectTemplate.bind({});
 
 WithWeakTriggerEmphasis.args = {
     activeItemKeys: [],
