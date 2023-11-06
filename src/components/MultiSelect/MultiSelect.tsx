@@ -14,6 +14,7 @@ import { CheckboxState } from '@components/Checkbox/Checkbox';
 import { usePopper } from 'react-popper';
 import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from '@hooks/useDropdownAutoHeight';
 import { EnablePortalWrapper } from '@utilities/dialogs/EnablePortalWrapper';
+import { useButton } from '@react-aria/button';
 
 export enum MultiSelectType {
     Default = 'Default',
@@ -102,6 +103,19 @@ export const MultiSelect = ({
 
     const toggleOpen = () => setOpen((open) => !open);
 
+    const { buttonProps } = useButton(
+        {
+            onPress: toggleOpen,
+            onKeyDown: (e) => {
+                if (e.key === 'Escape') {
+                    setOpen(false);
+                }
+            },
+            elementType: 'div',
+        },
+        { current: triggerRef },
+    );
+
     const toggleSelection = (key: string | number) => {
         const keySet = new Set(activeItemKeys);
 
@@ -171,6 +185,7 @@ export const MultiSelect = ({
         <div className="tw-relative" ref={multiSelectRef}>
             <Trigger
                 disabled={disabled}
+                buttonProps={buttonProps}
                 isFocusVisible={isFocusVisible}
                 isOpen={open}
                 validation={validation}
