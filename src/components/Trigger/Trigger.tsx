@@ -113,14 +113,14 @@ export const Trigger = ({
                         <IconTrashBin size={IconSize.Size12} />
                     </button>
                 )}
-                <button
+                <div
                     {...buttonProps}
-                    type="button"
                     tabIndex={-1}
-                    disabled={disabled}
+                    role="button"
                     aria-hidden={true}
                     className={merge([
-                        'tw-rounded',
+                        'tw-rounded tw-transition-transform',
+                        isOpen && 'tw-rotate-180',
                         disabled
                             ? 'tw-pointer-events-none tw-text-black-40'
                             : merge([
@@ -130,10 +130,8 @@ export const Trigger = ({
                               ]),
                     ])}
                 >
-                    <div className={merge(['tw-transition-transform', isOpen && 'tw-rotate-180'])}>
-                        <IconCaretDown size={IconSize.Size16} />
-                    </div>
-                </button>
+                    <IconCaretDown size={IconSize.Size16} />
+                </div>
 
                 {(validation === Validation.Error || validation === Validation.Warning) && (
                     <span
