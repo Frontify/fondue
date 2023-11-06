@@ -21,10 +21,10 @@ export default {
             control: { type: 'select' },
             defaultValue: ToastAnimationDirection.BottomToTop,
         },
-        borderStyle: {
-            options: ['default', 'mighty'],
+        variant: {
+            options: ['light', 'dark'],
             control: { type: 'select' },
-            defaultValue: 'default',
+            defaultValue: 'light',
         },
         icon: { table: { disable: true } },
         children: { table: { disable: true } },
@@ -86,5 +86,16 @@ WithInteractiveContent.args = {
                 </ButtonGroup>
             </div>
         </>
+    ),
+};
+
+export const DarkVariant = WithLeftBottomContainer.bind({});
+DarkVariant.args = {
+    isOpen: true,
+    style: ToastStyle.Loud,
+    variant: 'dark',
+    icon: <IconExclamationMarkCircle24 />,
+    children: (
+        <div className="tw-p-4 tw-flex tw-items-center tw-text-box-neutral-mighty-inverse">Item successfully added</div>
     ),
 };
