@@ -88,7 +88,7 @@ describe('Password Input Component', () => {
         );
         cy.get(PASSWORD_INPUT_VISIBILITY_ICON).should(
             'have.class',
-            'tw-ring-4 tw-ring-blue tw-ring-offset-2 dark:tw-ring-offset-black tw-outline-none',
+            'focus-visible:tw-ring-4 focus-visible:tw-ring-blue focus-visible:tw-ring-offset-2 focus-visible:dark:tw-ring-offset-black focus-visible:tw-outline-none',
         );
     });
 
@@ -101,11 +101,11 @@ describe('Password Input Component', () => {
         );
         cy.get(PASSWORD_INPUT_VISIBILITY_ICON).should(
             'not.have.class',
-            'tw-ring-4 tw-ring-blue tw-ring-offset-2 dark:tw-ring-offset-black tw-outline-none',
+            'focus-visible:tw-ring-4 focus-visible:tw-ring-blue focus-visible:tw-ring-offset-2 focus-visible:dark:tw-ring-offset-black focus-visible:tw-outline-none',
         );
         cy.get(PASSWORD_INPUT_CLEAR_ICON).should(
             'have.class',
-            'tw-ring-4 tw-ring-blue tw-ring-offset-2 dark:tw-ring-offset-black tw-outline-none',
+            'focus-visible:tw-ring-4 focus-visible:tw-ring-blue focus-visible:tw-ring-offset-2 focus-visible:dark:tw-ring-offset-black focus-visible:tw-outline-none',
         );
     });
 });
