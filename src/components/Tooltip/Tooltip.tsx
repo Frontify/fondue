@@ -9,6 +9,9 @@ import { Z_INDEX_TOOLTIP } from '@utilities/dialogs/constants';
 import { EnablePortalWrapper } from '@utilities/dialogs/EnablePortalWrapper';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 
+const ARROW_DISTANCE_FROM_CORNER_VALUE = 12;
+const TOOLTIP_EXTRA_OFFSET_VALUE = 7; // As the arrow is set 12px away from tooltip corner, extra offset should be added to still point to Trigger.
+
 export type TooltipProps = {
     id?: string;
     children?: ReactElement;
@@ -50,6 +53,17 @@ const formatTooltipText = (text: string) => {
     return text.split(lineBreakRegex).join('\n');
 };
 
+const getNewOffsetBasedOnArrowPosition = (currentPlacement: string, offset: [number, number]): [number, number] => {
+    switch (true) {
+        case currentPlacement.includes('end'):
+            return [offset[0] + TOOLTIP_EXTRA_OFFSET_VALUE, offset[1]];
+        case currentPlacement.includes('start'):
+            return [offset[0] - TOOLTIP_EXTRA_OFFSET_VALUE, offset[1]];
+        default:
+            return offset;
+    }
+};
+
 export const Tooltip = ({
     id: customId,
     children,
@@ -75,11 +89,13 @@ export const Tooltip = ({
     const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
     const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
     const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
+    const [tooltipOffset, setTooltipOffset] = useState<[number, number]>(offset);
+
     const { styles, attributes, state } = usePopper(referenceElement, popperElement, {
         placement,
         modifiers: [
-            { name: 'arrow', options: { element: arrowElement, padding: 8 } },
-            { name: 'offset', options: { offset } },
+            { name: 'arrow', options: { element: arrowElement, padding: ARROW_DISTANCE_FROM_CORNER_VALUE } },
+            { name: 'offset', options: { offset: tooltipOffset } },
             { name: 'flip', enabled: flip },
         ],
     });
@@ -87,6 +103,11 @@ export const Tooltip = ({
     const currentPlacement = state?.placement ?? placement;
     const arrowStyling = getArrowClasses(currentPlacement);
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    useEffect(() => {
+        const newOffset = getNewOffsetBasedOnArrowPosition(currentPlacement, offset);
+        setTooltipOffset(newOffset);
+    }, [currentPlacement, offset]);
 
     const handleHideTooltip = useCallback(() => {
         if (timeoutRef.current) {
