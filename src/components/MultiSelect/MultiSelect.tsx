@@ -4,7 +4,6 @@ import { Checklist, ChecklistDirection } from '@components/Checklist/Checklist';
 import { Tag, TagSize, TagType } from '@components/Tag';
 import { Trigger, TriggerEmphasis } from '@components/Trigger';
 import { Text } from '@typography/Text';
-import { useButton } from '@react-aria/button';
 import { FocusScope, useFocusRing } from '@react-aria/focus';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
@@ -103,19 +102,6 @@ export const MultiSelect = ({
 
     const toggleOpen = () => setOpen((open) => !open);
 
-    const { buttonProps } = useButton(
-        {
-            onPress: toggleOpen,
-            onKeyDown: (e) => {
-                if (e.key === 'Escape') {
-                    setOpen(false);
-                }
-            },
-            elementType: 'div',
-        },
-        { current: triggerRef },
-    );
-
     const toggleSelection = (key: string | number) => {
         const keySet = new Set(activeItemKeys);
 
@@ -185,7 +171,6 @@ export const MultiSelect = ({
         <div className="tw-relative" ref={multiSelectRef}>
             <Trigger
                 disabled={disabled}
-                buttonProps={buttonProps}
                 isFocusVisible={isFocusVisible}
                 isOpen={open}
                 validation={validation}

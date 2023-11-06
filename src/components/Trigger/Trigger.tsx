@@ -6,7 +6,7 @@ import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE, FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
-import { HTMLAttributes, ReactElement, ReactNode } from 'react';
+import { ReactElement, ReactNode } from 'react';
 
 export enum TriggerSize {
     Small = 'Small',
@@ -24,7 +24,6 @@ export type TriggerProps = {
     isOpen?: boolean;
     onClear?: () => void;
     onDelete?: () => void;
-    buttonProps?: HTMLAttributes<HTMLElement>;
     isFocusVisible?: boolean;
     size?: TriggerSize;
     showClear?: boolean;
@@ -55,7 +54,6 @@ const getTriggerClassNames = (
     ]);
 
 export const Trigger = ({
-    buttonProps,
     onClear,
     onDelete,
     children,
@@ -114,7 +112,6 @@ export const Trigger = ({
                     </button>
                 )}
                 <div
-                    {...buttonProps}
                     tabIndex={-1}
                     aria-hidden={true}
                     className={merge([

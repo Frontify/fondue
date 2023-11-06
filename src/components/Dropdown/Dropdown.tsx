@@ -180,7 +180,6 @@ export const Dropdown = ({
         <div className="tw-relative tw-w-full tw-font-sans tw-text-s" data-test-id={dataTestId}>
             <Trigger
                 disabled={disabled}
-                buttonProps={buttonProps}
                 isFocusVisible={!disabled && isFocusVisible}
                 isOpen={isOpen}
                 size={size === DropdownSize.Large ? TriggerSize.Large : TriggerSize.Small}
