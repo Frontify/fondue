@@ -116,7 +116,6 @@ export const Trigger = ({
                 <div
                     {...buttonProps}
                     tabIndex={-1}
-                    role="button"
                     aria-hidden={true}
                     className={merge([
                         'tw-rounded tw-transition-transform',
