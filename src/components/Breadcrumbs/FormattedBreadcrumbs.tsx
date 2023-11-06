@@ -9,7 +9,7 @@ import { OverflowMenu, OverflowMenuItemProps } from '..';
 export const FormattedBreadcrumbs = ({
     items,
     keepRoot,
-    includesCurrent = false,
+    activeInline = false,
     truncate = false,
     'data-test-id': dataTestId,
 }: BreadcrumbsProps): ReactElement[] => {
@@ -36,7 +36,7 @@ export const FormattedBreadcrumbs = ({
                         decorator={decorator}
                         link={link}
                         onClick={onClick}
-                        includesCurrent={includesCurrent}
+                        activeInline={activeInline}
                         data-test-id={dataTestId}
                     />
                 );
@@ -75,10 +75,12 @@ export const FormattedBreadcrumbs = ({
                     <BreadcrumbItem
                         key={key}
                         label={''}
-                        decorator={<OverflowMenu items={overFlowItems} data-test-id={`${dataTestId}-overflow-menu`} />}
+                        decorator={decorator}
                         showSeparator={showSeparator}
                         data-test-id={`${dataTestId}-truncation`}
-                    />
+                    >
+                        <OverflowMenu items={overFlowItems} data-test-id={`${dataTestId}-overflow-menu`} />
+                    </BreadcrumbItem>
                 );
 
             default:

@@ -157,7 +157,7 @@ describe('Breadcrumb component', () => {
     });
 
     it('should append active item to trail', () => {
-        cy.mount(<Breadcrumbs items={BREADCRUMB_ITEMS} includesCurrent />);
+        cy.mount(<Breadcrumbs items={BREADCRUMB_ITEMS} activeInline />);
         cy.get(BREADCRUMB_ID).children().last().should('have.class', 'tw-flex tw-items-center');
     });
 

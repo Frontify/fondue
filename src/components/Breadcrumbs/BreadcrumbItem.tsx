@@ -27,6 +27,7 @@ const Separator = () => (
 
 type BreadcrumbItemProps = Pick<Breadcrumb, 'label' | 'link' | 'onClick' | 'decorator'> & {
     showSeparator: boolean;
+    children?: ReactElement;
     'data-test-id'?: string;
 };
 
@@ -36,6 +37,7 @@ export const BreadcrumbItem = ({
     link,
     onClick,
     showSeparator,
+    children,
     'data-test-id': dataTestId = 'breadcrumb',
 }: BreadcrumbItemProps): ReactElement => {
     const ref = useRef(null);
@@ -57,7 +59,7 @@ export const BreadcrumbItem = ({
     const props = mergeProps(itemProps, focusProps, elementTypeProps[Element]);
 
     const classNames = merge([
-        'tw-flex tw-gap-x-1 tw-items-center tw-leading-4 tw-h-6 tw-max-w-[100px] tw-whitespace-pre-wrap',
+        'tw-flex tw-gap-x-1 tw-items-center tw-leading-4 tw-h-6 tw-max-w-[100px] tw-whitespace-pre-wrap tw-rounded',
         isFocusVisible && FOCUS_STYLE,
     ]);
 
@@ -66,10 +68,12 @@ export const BreadcrumbItem = ({
             className="tw-flex tw-items-center tw-text-text-weak hover:tw-text-text tw-text-xs tw-transition-colors"
             data-test-id={`${dataTestId}-item`}
         >
-            <Element ref={ref} {...props} className={classNames}>
-                {decorator}
-                {label}
-            </Element>
+            {children ?? (
+                <Element ref={ref} {...props} className={classNames}>
+                    {decorator}
+                    {label}
+                </Element>
+            )}
             {showSeparator && <Separator />}
         </li>
     );

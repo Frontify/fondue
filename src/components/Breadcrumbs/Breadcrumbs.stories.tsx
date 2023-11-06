@@ -37,7 +37,7 @@ export default {
             defaultValue: true,
             control: { type: 'boolean' },
         },
-        includesCurrent: {
+        activeInline: {
             description: 'If true, the current item wil be appended to the trail.',
             defaultValue: false,
             control: { type: 'boolean' },
@@ -68,7 +68,7 @@ export const WithDecoratorAndLinkAndCurrentInline = Template.bind({});
 
 WithDecoratorAndLinkAndCurrentInline.args = {
     verticalGap: BreadcrumbGap.Medium,
-    includesCurrent: true,
+    activeInline: true,
     truncate: true,
     items: [...ITEMS, { link, bold: true, decorator: <IconIcon />, label: 'Active' }],
 };

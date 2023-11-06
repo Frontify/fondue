@@ -25,7 +25,7 @@ export const OverflowMenu = ({ items, 'data-test-id': dataTestId = 'overflow-men
     const menuOpenerRef = useRef<HTMLButtonElement>(null);
 
     return (
-        <div data-test-id={dataTestId} className="tw-relative tw-bottom-0 tw-top-0 tw-flex">
+        <div data-test-id={dataTestId} className="tw-relative tw-bottom-0 tw-top-0 tw-flex" tabIndex={-1}>
             <button
                 aria-haspopup="true"
                 aria-expanded={isMenuOpen}

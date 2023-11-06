@@ -23,12 +23,12 @@ export type Breadcrumb = {
     bold?: boolean;
     badges?: BadgeProps[];
     'data-test-id'?: string;
-} & Pick<BreadcrumbsProps, 'includesCurrent'>;
+} & Pick<BreadcrumbsProps, 'activeInline'>;
 
 export type BreadcrumbsProps = {
     items: Breadcrumb[];
     keepRoot?: boolean;
-    includesCurrent?: boolean;
+    activeInline?: boolean;
     truncate?: boolean;
     'data-test-id'?: string;
     verticalGap?: BreadcrumbGap;
@@ -50,7 +50,7 @@ export const Breadcrumbs = ({
     items,
     keepRoot = true,
     truncate = false,
-    includesCurrent = false,
+    activeInline = false,
     'data-test-id': dataTestId = 'breadcrumb',
     verticalGap = BreadcrumbGap.Medium,
 }: BreadcrumbsProps): ReactElement => {
@@ -64,7 +64,7 @@ export const Breadcrumbs = ({
                     items={items}
                     keepRoot={keepRoot}
                     truncate={truncate}
-                    includesCurrent={includesCurrent}
+                    activeInline={activeInline}
                     data-test-id={dataTestId}
                 />
             </ol>
