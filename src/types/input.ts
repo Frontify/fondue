@@ -16,7 +16,8 @@ export type InputBaseProps<TValue> = {
     'data-test-id'?: string;
 } & Omit<InputHTMLAttributes<HTMLInputElement>, 'className' | 'style' | 'onChange'>;
 
-export const InputTypes = {
+type InputType = 'Text' | 'Password' | 'Number';
+export const InputTypes: Record<InputType, string> = {
     Text: 'text',
     Password: 'password',
     Number: 'number',

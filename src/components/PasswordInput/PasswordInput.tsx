@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconCross16, IconEye, IconEyeOff } from '@foundation/Icon';
+import { IconCross16, IconEye16, IconEyeOff16 } from '@foundation/Icon';
 import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { GetStatusIcon } from '@utilities/input';
@@ -9,6 +9,7 @@ import { Validation, validationClassMap } from '@utilities/validation';
 import { useCallback, useRef, useState } from 'react';
 import { InputBaseProps, InputTypes } from '../../types/input';
 import { useMemoizedId } from '@hooks/useMemoizedId';
+import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '..';
 
 export type PasswordInputProps = { obfuscated?: boolean } & Omit<
     InputBaseProps<string>,
@@ -36,9 +37,7 @@ export const PasswordInput = ({
     const inputElementRef = useRef<HTMLInputElement | null>(null);
     const [isObfuscated, setIsObfuscated] = useState<boolean>(obfuscated);
 
-    const { isFocusVisible, focusProps } = useFocusRing({ within: true, isTextInput: true });
-    const { isFocusVisible: passwordButtonIsFocusVisible, focusProps: passwordButtonFocusProps } = useFocusRing();
-    const { isFocusVisible: clearButtonIsFocusVisible, focusProps: clearButtonFocusProps } = useFocusRing();
+    const { isFocusVisible, focusProps } = useFocusRing({ isTextInput: true });
 
     const handleOnChange = useCallback(() => {
         onChange?.(inputElementRef.current?.value);
@@ -53,80 +52,65 @@ export const PasswordInput = ({
 
     return (
         <div
-            {...focusProps}
             className={merge([
-                'tw-flex tw-items-center tw-justify-between tw-h-9 tw-gap-2 tw-px-3 tw-py-3 tw-transition tw-text-s tw-font-sans tw-relative tw-bg-white dark:tw-bg-transparent tw-border tw-rounded tw-line-strong',
+                'tw-flex tw-items-center tw-justify-between tw-h-9 tw-gap-2 tw-px-3 tw-py-3 tw-transition tw-text-s tw-font-sans tw-relative dark:tw-bg-transparent tw-border tw-rounded',
                 size ? '' : 'tw-w-full',
                 disabled
-                    ? 'tw-border-line-x-strong'
-                    : 'hover:tw-border-line-x-strong focus-within:tw-border-line-xx-strong focus-within:hover:tw-border-line-xx-strong',
-                isFocusVisible && !passwordButtonIsFocusVisible && !clearButtonIsFocusVisible && FOCUS_STYLE,
+                    ? 'tw-bg-box-disabled hover:tw-cursor-not-allowed tw-border-line-weak'
+                    : 'tw-bg-base tw-border-line-strong hover:tw-border-line-x-strong focus-within:tw-border-line-xx-strong focus-within:hover:tw-border-line-xx-strong',
+                isFocusVisible && FOCUS_STYLE,
                 status ? validationClassMap[status] : '',
             ])}
             data-test-id={dataTestId}
         >
             <input
-                aria-label="Password Input"
-                autoComplete={autocomplete ? 'on' : 'off'}
-                data-test-id={`${dataTestId}-input`}
-                disabled={disabled}
-                id={useMemoizedId(propId)}
+                size={size}
+                value={value}
                 onBlur={onBlur}
                 onFocus={onFocus}
+                disabled={disabled}
+                readOnly={readOnly}
+                required={required}
+                ref={inputElementRef}
                 onKeyDown={onKeyDown}
                 onChange={handleOnChange}
-                onClick={() => inputElementRef.current?.focus()}
                 placeholder={placeholder}
-                readOnly={readOnly}
-                ref={inputElementRef}
-                required={required}
-                size={size}
+                id={useMemoizedId(propId)}
+                aria-label="Password Input"
+                autoComplete={autocomplete ? 'on' : 'off'}
+                onClick={() => inputElementRef.current?.focus()}
                 type={isObfuscated ? InputTypes.Password : InputTypes.Text}
-                value={value}
                 className={merge([
                     'tw-w-full tw-border-none tw-outline-none tw-bg-transparent tw-hide-input-arrows tw-text-sm',
                     disabled || readOnly
-                        ? 'tw-text-black-40 tw-placeholder-black-30 dark:tw-text-black-30 dark:tw-placeholder-black-40 hover:tw-cursor-not-allowed'
-                        : 'tw-text-black tw-placeholder-black-60 dark:tw-text-white',
+                        ? 'tw-text-text-disabled tw-placeholder-text-disabled dark:tw-text-black-30 dark:tw-placeholder-black-40 hover:tw-cursor-not-allowed'
+                        : 'tw-text-text tw-placeholder-text-x-weak dark:tw-text-box-neutral-strong-inverse',
                 ])}
+                data-test-id={`${dataTestId}-input`}
+                {...focusProps}
             />
             <span className="tw-flex tw-justify-between tw-items-center t-max-w-sm">
-                <button
-                    {...passwordButtonFocusProps}
-                    aria-label={`${isObfuscated ? 'show' : 'hide'} text input`}
-                    onClick={() => setIsObfuscated(!isObfuscated)}
-                    data-test-id={`${dataTestId}-visibility-icon`}
+                <Button
                     disabled={disabled}
-                    title="Toggle text visibility"
-                    type="button"
-                    className={merge([
-                        'tw-flex tw-items-center tw-justify-center tw-transition-colors tw-rounded tw-text-text-weak tw-p-1',
-                        disabled
-                            ? 'tw-cursor-default tw-text-black-40 hover:tw-cursor-not-allowed'
-                            : 'tw-text-black-60 hover:tw-text-black-100 hover:tw-rounded-sm hover:tw-bg-box-neutral hover:tw-text-box-neutral-inverse',
-                        passwordButtonIsFocusVisible && FOCUS_STYLE,
-                    ])}
-                >
-                    {isObfuscated ? <IconEye /> : <IconEyeOff />}
-                </button>
+                    size={ButtonSize.Small}
+                    style={ButtonStyle.Default}
+                    emphasis={ButtonEmphasis.Weak}
+                    onClick={() => setIsObfuscated(!isObfuscated)}
+                    aria-label={`${isObfuscated ? 'show' : 'hide'} text input`}
+                    icon={isObfuscated ? <IconEye16 /> : <IconEyeOff16 />}
+                    data-test-id={`${dataTestId}-visibility-icon`}
+                />
                 {clearable ? (
-                    <button
-                        {...clearButtonFocusProps}
-                        aria-label="Clear value"
+                    <Button
+                        disabled={disabled}
                         onClick={handleClear}
+                        icon={<IconCross16 />}
+                        size={ButtonSize.Small}
+                        aria-label="Clear value"
+                        style={ButtonStyle.Default}
+                        emphasis={ButtonEmphasis.Weak}
                         data-test-id={`${dataTestId}-clear`}
-                        title="Clear value"
-                        type="button"
-                        className={merge([
-                            'tw-flex tw-items-center tw-justify-center tw-transition-colors tw-rounded tw-text-text-weak tw-p-1',
-                            disabled
-                                ? 'tw-cursor-default tw-text-black-40 hover:tw-cursor-not-allowed'
-                                : 'tw-text-black-60 hover:tw-text-black-100 hover:tw-rounded-sm hover:tw-bg-box-neutral hover:tw-text-box-neutral-inverse',
-                            clearButtonIsFocusVisible && FOCUS_STYLE,
-                        ])}
-                    >
-                        <IconCross16 />
-                    </button>
+                    />
                 ) : null}
                 {status ? GetStatusIcon(status, dataTestId) : null}
             </span>
