@@ -6,13 +6,14 @@ import { Children, isValidElement, useCallback, useEffect, useRef, useState } fr
 import { Trigger } from '@utilities/dialogs/Trigger';
 import { Content } from '@utilities/dialogs/Content';
 import { OVERLAY_CONTAINER_CLASSES } from '@utilities/overlayStyle';
-import { BaseDialogProps, Modality, OverlayProps } from '../../types/dialog';
+import { BaseDialogProps, Modality, OverlayProps } from '../../types';
 import { merge } from '@utilities/merge';
 import { useFocusTrap } from '@hooks/useFocusTrap';
 import { useClickOutside } from '@hooks/useClickOutside';
 import { Portal } from '@components/Portal';
 import { useDropdownAutoHeight } from '@hooks/useDropdownAutoHeight';
 import { Z_INDEX_MODAL_BACKDROP } from '@utilities/dialogs/constants';
+import useMobileDetection from '@hooks/useMobileDetection';
 
 export const Overlay = ({
     open,
@@ -69,6 +70,8 @@ export const Overlay = ({
         }
     }, [open, modality, strategy]);
 
+    const isMobile = useMobileDetection();
+
     return (
         <>
             <Popper
@@ -113,7 +116,12 @@ export const Overlay = ({
                                         id={id}
                                         aria-hidden={!open}
                                         aria-labelledby={id}
-                                        style={{ minWidth, minHeight, maxWidth, maxHeight: maxContentHeight }}
+                                        style={{
+                                            minWidth: isMobile ? '80vw' : minWidth,
+                                            minHeight,
+                                            maxWidth,
+                                            maxHeight: maxContentHeight,
+                                        }}
                                     >
                                         {child}
                                     </div>

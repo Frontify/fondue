@@ -10,6 +10,11 @@ on:
         branches:
             - 'main'
             - 'beta'
+        types:
+            - opened
+            - synchronize
+            - reopened
+            - ready_for_review
 
 env:
     NODE_VERSION: 18
@@ -18,6 +23,7 @@ env:
 
 jobs:
     linting:
+        if: github.event.pull_request.draft == false
         runs-on: ubuntu-latest
         timeout-minutes: 10
 
@@ -59,6 +65,7 @@ jobs:
               run: pnpm run lint
 
     typecheck:
+        if: github.event.pull_request.draft == false
         runs-on: ubuntu-latest
         timeout-minutes: 10
 
@@ -100,6 +107,7 @@ jobs:
               run: pnpm typecheck
 
     component-tests:
+        if: github.event.pull_request.draft == false
         runs-on: ubuntu-latest
         timeout-minutes: 10
 

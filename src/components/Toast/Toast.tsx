@@ -6,7 +6,8 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ReactElement } from 'react';
 import { ToastAnimationDirection, ToastProps, toastStylesBackgroundColorsMap } from './types';
 
-const CONTAINER_BASE_CLASSES = 'tw-min-h-[4.25rem] tw-bg-base tw-rounded-lg tw-shadow-mid tw-z-[120000]';
+const CONTAINER_BASE_CLASSES =
+    'tw-min-h-[2rem] tw-bg-base tw-rounded-lg tw-shadow-mid tw-z-[120000] before:!tw-rounded-lg';
 const CONTAINER_CLASSES = merge([CONTAINER_BASE_CLASSES, INSET_BORDER]);
 
 const getToastStartPosition = (animationDirection: ToastAnimationDirection) =>
@@ -28,6 +29,9 @@ export const Toast = ({
                     opacity: 0,
                     y: getToastStartPosition(animationDirection),
                 }}
+                transition={{
+                    ease: 'easeOut',
+                }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: getToastStartPosition(animationDirection) }}
                 data-test-id={dataTestId}
@@ -37,7 +41,7 @@ export const Toast = ({
                 <div className="tw-flex">
                     <div
                         className={merge([
-                            'tw-flex tw-items-center tw-justify-center tw-min-h-[4.25rem] tw-min-w-[3rem] tw-rounded-l-lg tw-text-white',
+                            'tw-flex tw-items-center tw-justify-center tw-min-h-[2rem] tw-min-w-[3rem] tw-rounded-l-lg tw-text-white',
                             toastStylesBackgroundColorsMap[style],
                         ])}
                     >

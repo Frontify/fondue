@@ -73,6 +73,10 @@ export default {
             control: { type: 'boolean' },
             defaultValue: false,
         },
+        withStrongBorder: {
+            control: { type: 'boolean' },
+            defaultValue: false,
+        },
         open: {
             control: { type: 'boolean' },
             defaultValue: false,
@@ -169,6 +173,11 @@ WithTipBrightHeader.args = {
 export const WithNoteBrightHeader = TooltipComponent.bind({});
 WithNoteBrightHeader.args = {
     brightHeader: BrightHeaderStyle.Note,
+};
+
+export const WithStrongBorder = TooltipComponent.bind({});
+WithStrongBorder.args = {
+    withStrongBorder: true,
 };
 
 export const WithOneButton = TooltipComponent.bind({});
