@@ -106,7 +106,7 @@ const ExtraActionButton: ForwardRefRenderFunction<HTMLButtonElement | null, Extr
     return (
         <button
             className={merge([
-                'tw-flex tw-items-center tw-justify-center tw-transition-colors tw-rounded tw-p-1 -tw-mr-2',
+                'tw-flex tw-items-center tw-justify-center tw-transition-colors tw-rounded tw-p-1',
                 isDisabled
                     ? 'tw-cursor-default tw-text-text-disabled'
                     : 'tw-text-text-weak hover:tw-bg-box-neutral-hover hover:tw-text-box-neutral-inverse-hover',
