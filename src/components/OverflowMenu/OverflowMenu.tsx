@@ -6,6 +6,7 @@ import { merge } from '@utilities/merge';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { Menu } from '@components/Menu';
 import { MenuItem } from '@components/MenuItem';
+import { useFocusRing } from '@react-aria/focus';
 
 export interface OverflowMenuItemProps {
     id?: string;
@@ -23,7 +24,12 @@ export interface OverflowMenuProps {
 export const OverflowMenu = ({ items, 'data-test-id': dataTestId = 'overflow-menu' }: OverflowMenuProps) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const menuOpenerRef = useRef<HTMLButtonElement>(null);
+    const { isFocusVisible, focusProps } = useFocusRing();
 
+    const handleClose = () => {
+        menuOpenerRef.current?.focus();
+        setIsMenuOpen(false);
+    };
     return (
         <div data-test-id={dataTestId} className="tw-relative tw-bottom-0 tw-top-0 tw-flex" tabIndex={-1}>
             <button
@@ -34,16 +40,17 @@ export const OverflowMenu = ({ items, 'data-test-id': dataTestId = 'overflow-men
                 className={merge([
                     'tw-w-6 tw-h-6 hover:tw-bg-box-neutral-strong-inverse-hover tw-rounded tw-flex tw-justify-center tw-items-center',
                     isMenuOpen ? 'tw-bg-box-neutral-strong-inverse-pressed' : 'tw-bg-box-neutral-strong-inverse',
-                    FOCUS_VISIBLE_STYLE,
+                    isFocusVisible && FOCUS_VISIBLE_STYLE,
                 ])}
                 type="button"
                 onClick={() => {
                     setIsMenuOpen(!isMenuOpen);
                 }}
+                {...focusProps}
             >
                 <IconDotsHorizontal />
             </button>
-            <Menu triggerRef={menuOpenerRef} onClose={() => setIsMenuOpen(false)} open={isMenuOpen}>
+            <Menu triggerRef={menuOpenerRef} onClose={handleClose} open={isMenuOpen}>
                 {items.map((item, index) => (
                     <MenuItem link={item.link} onClick={item.onClick} key={`overflow-menu-item-${index}`}>
                         {item.label}
