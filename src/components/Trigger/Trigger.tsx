@@ -3,7 +3,7 @@
 import { IconCaretDown, IconCross, IconExclamationMarkTriangle, IconTrashBin } from '@foundation/Icon/Generated';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { useFocusRing } from '@react-aria/focus';
-import { FOCUS_STYLE, FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
+import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
 import { HTMLAttributes, ReactElement, ReactNode } from 'react';
@@ -118,15 +118,11 @@ export const Trigger = ({
                     tabIndex={-1}
                     aria-hidden={true}
                     className={merge([
-                        'tw-rounded tw-transition-transform',
+                        'tw-rounded tw-transition-transform tw-outline-none',
                         isOpen && 'tw-rotate-180',
                         disabled
                             ? 'tw-pointer-events-none tw-text-black-40'
-                            : merge([
-                                  'group-hover:tw-text-black ',
-                                  isOpen ? 'tw-text-black-100' : 'tw-text-black-80',
-                                  FOCUS_VISIBLE_STYLE,
-                              ]),
+                            : merge(['group-hover:tw-text-black ', isOpen ? 'tw-text-black-100' : 'tw-text-black-80']),
                     ])}
                 >
                     <IconCaretDown size={IconSize.Size16} />
