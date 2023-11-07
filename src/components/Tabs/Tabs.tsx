@@ -240,8 +240,11 @@ export const Tabs = ({
                                 tabIndex={tab.id === activeItemId ? 0 : -1}
                                 id={`${tab.id}-btn`}
                                 className={merge([
-                                    'tw-group tw-relative tw-mx-0 tw-py-4 tw-px-2 tw-w-max tw-cursor-pointer tw-flex tw-items-center tw-justify-center tw-whitespace-nowrap',
+                                    'tw-group tw-relative tw-mx-0 tw-px-2 tw-w-max tw-cursor-pointer tw-flex tw-items-center tw-justify-center tw-whitespace-nowrap',
                                     getTabButtonTextStyle(tab, activeItemId),
+                                    size === TabSize.Small
+                                        ? 'tw-h-12 tw-text-body-medium'
+                                        : 'tw-h-14 tw-text-body-large',
                                 ])}
                                 key={tab.id}
                                 onClick={() => {

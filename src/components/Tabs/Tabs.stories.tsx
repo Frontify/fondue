@@ -181,6 +181,16 @@ WithMinHeight.args = {
     minHeight: '50px',
 };
 
+export const WithSmallSize = TabTemplate.bind({});
+WithSmallSize.args = {
+    size: TabSize.Small,
+};
+
+export const WithLargeSize = TabTemplate.bind({});
+WithLargeSize.args = {
+    size: TabSize.Large,
+};
+
 const dataWithIcon = data.map((item) => Object.assign({}, item, { decorator: <IconIcon size={IconSize.Size16} /> }));
 const TabWithIconTemplate: StoryFn<TabsProps> = (args) => {
     return (
