@@ -55,15 +55,10 @@ const data: TabItemProps[] = [
 
 const TABS_DATA_TEST_ID = '[data-test-id=tabs]';
 
-const TabComponent = ({ paddingX }: { paddingX?: TabsPaddingX }) => {
+const TabComponent = ({ paddingX, size = TabSize.Small }: { paddingX?: TabsPaddingX; size?: TabSize }) => {
     const [activeItemId, setActiveItemId] = useState(data[0].id);
     return (
-        <Tabs
-            activeItemId={activeItemId}
-            onChange={(value) => setActiveItemId(value)}
-            paddingX={paddingX}
-            size={TabSize.Small}
-        >
+        <Tabs activeItemId={activeItemId} onChange={(value) => setActiveItemId(value)} paddingX={paddingX} size={size}>
             {data.map((item) => (
                 <TabItem
                     id={item.id}
@@ -231,5 +226,15 @@ describe('Tabs Component', () => {
     it('tabs should render with paddingX of "Large"', () => {
         cy.mount(<TabComponent paddingX={TabsPaddingX.Large} />);
         cy.get(`${TABS_DATA_TEST_ID} > div`).should('have.class', 'tw-pl-l');
+    });
+
+    it('tabs items should render with a small height and font-size by default', () => {
+        cy.mount(<TabComponent />);
+        cy.get('[data-test-id=tab-item]').first().should('have.class', 'tw-h-12 tw-text-body-medium');
+    });
+
+    it('tabs items should render with a large height and font-size', () => {
+        cy.mount(<TabComponent size={TabSize.Large} />);
+        cy.get('[data-test-id=tab-item]').first().should('have.class', 'tw-h-14 tw-text-body-large');
     });
 });
