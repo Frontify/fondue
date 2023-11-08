@@ -21,7 +21,7 @@ export default {
             control: { type: 'select' },
             defaultValue: ToastAnimationDirection.BottomToTop,
         },
-        variant: {
+        theme: {
             options: ['light', 'dark'],
             control: { type: 'select' },
             defaultValue: 'light',
@@ -89,11 +89,11 @@ WithInteractiveContent.args = {
     ),
 };
 
-export const DarkVariant = WithLeftBottomContainer.bind({});
-DarkVariant.args = {
+export const DarkTheme = WithLeftBottomContainer.bind({});
+DarkTheme.args = {
     isOpen: true,
     style: ToastStyle.Loud,
-    variant: 'dark',
+    theme: 'dark',
     icon: <IconExclamationMarkCircle24 />,
     children: (
         <div className="tw-p-4 tw-flex tw-items-center tw-text-box-neutral-mighty-inverse">Item successfully added</div>

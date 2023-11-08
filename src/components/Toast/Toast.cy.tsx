@@ -47,9 +47,9 @@ describe('Toast Rendering', () => {
             .should('have.class', toastStylesBackgroundColorsMap[style]);
     });
 
-    it('should render a dark variant of the toast', () => {
+    it('should render a dark themed version of the toast', () => {
         const style = ToastStyle.Loud;
-        cy.mount(<Toast isOpen={true} variant="dark" style={style} icon={<IconLinkBox24 />} />);
+        cy.mount(<Toast isOpen={true} theme="dark" style={style} icon={<IconLinkBox24 />} />);
         cy.get(TOAST_ID).should('have.class', 'tw-bg-box-neutral-mighty');
     });
 
