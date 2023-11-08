@@ -106,7 +106,7 @@ const ExtraActionButton: ForwardRefRenderFunction<HTMLButtonElement | null, Extr
     return (
         <button
             className={merge([
-                'tw-flex tw-items-center tw-justify-center tw-transition-colors tw-rounded tw-p-1 -tw-mr-2',
+                'tw-flex tw-items-center tw-justify-center tw-transition-colors tw-rounded tw-p-1',
                 isDisabled
                     ? 'tw-cursor-default tw-text-text-disabled'
                     : 'tw-text-text-weak hover:tw-bg-box-neutral-hover hover:tw-text-box-neutral-inverse-hover',
@@ -199,7 +199,7 @@ export const TextInput = ({
             {...focusProps}
             {...props}
             className={merge([
-                'tw-flex tw-items-center tw-h-9 tw-gap-2 tw-px-3 tw-border tw-transition tw-rounded tw-text-s tw-font-sans tw-relative tw-bg-white dark:tw-bg-transparent',
+                'tw-flex tw-items-center tw-h-9 tw-gap-2 tw-px-3 tw-border tw-transition tw-rounded tw-text-body-small tw-font-sans tw-relative tw-bg-white dark:tw-bg-transparent',
                 dotted ? 'tw-border-dashed' : 'tw-border-solid',
                 disabled || readonly
                     ? 'tw-border-black-5 tw-bg-black-5 dark:tw-bg-black-90 dark:tw-border-black-90'
@@ -236,7 +236,7 @@ export const TextInput = ({
                         : 'tw-text-black tw-placeholder-black-60 dark:tw-text-white',
                 ])}
                 onClick={() => inputElement.current?.focus()}
-                onChange={(event) => onChange && onChange(event.currentTarget.value)}
+                onChange={(event) => onChange?.(event.currentTarget.value)}
                 onBlur={onBlur}
                 onKeyDown={onKeyDown}
                 placeholder={placeholder}
