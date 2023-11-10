@@ -162,23 +162,24 @@ export const SegmentedControls = ({
     const selectedIndex = items.findIndex((item) => item.id === radioGroupState.selectedValue);
     const width = hugWidth ? '' : 'tw-w-full';
     const alignment = hugWidth ? 'tw-flex' : 'tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly';
+    const isSmallOrHugWidth = size === 'small' || hugWidth;
 
     const getSliderX = useCallback(() => {
-        const isSmallOrHugWidth = size === 'small' || hugWidth;
-        let translateX = isSmallOrHugWidth ? -1 : 0;
+        let translateX = isSmallOrHugWidth ? -2 : 0;
+
         for (let i = 0; i < selectedIndex; i++) {
             translateX += itemsRef.current[i]?.clientWidth ?? 0;
         }
 
         return `${translateX}px`;
-    }, [hugWidth, selectedIndex, size]);
+    }, [selectedIndex, isSmallOrHugWidth]);
 
     const getSliderWidth = useCallback(() => {
         const isLastElement = selectedIndex === itemsRef.current.length - 1;
-        const width = isLastElement ? 1 : -1;
+        const width = isLastElement && !isSmallOrHugWidth ? 1 : -1;
 
         return `${(itemsRef.current[selectedIndex]?.clientWidth ?? 0) + width}px`;
-    }, [selectedIndex]);
+    }, [selectedIndex, isSmallOrHugWidth]);
 
     const setSliderDimensions = useCallback(() => {
         const dimensions = itemsRef.current ? { x: getSliderX(), width: getSliderWidth() } : { x: '0px', width: '0px' };
@@ -215,7 +216,7 @@ export const SegmentedControls = ({
                     transition={{ type: 'tween', duration: 0.3 }}
                     hidden={!activeItemId}
                     className={merge([
-                        'tw-absolute tw--inset-px tw-h-full tw-box-content tw-border tw-rounded tw-pointer-events-none',
+                        'tw-absolute tw--inset-y-px tw-h-full tw-box-content tw-border tw-rounded tw-pointer-events-none',
                         disabled
                             ? 'tw-border-line-x-strong hover:tw-cursor-not-allowed'
                             : 'tw-border-line-xx-strong tw-bg-base',
