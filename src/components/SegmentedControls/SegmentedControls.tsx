@@ -162,24 +162,25 @@ export const SegmentedControls = ({
     const selectedIndex = items.findIndex((item) => item.id === radioGroupState.selectedValue);
     const width = hugWidth ? '' : 'tw-w-full';
     const alignment = hugWidth ? 'tw-flex' : 'tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly';
-    const isSmallOrHugWidth = size === 'small' || hugWidth;
+    const isSmall = size === 'small';
+    const isLastElement = selectedIndex === itemsRef.current.length - 1;
 
     const getSliderX = useCallback(() => {
-        let translateX = isSmallOrHugWidth ? -2 : 0;
-
+        let translateX = hugWidth ? -1 : 0;
+        translateX -= isSmall && isLastElement ? 1 : 0;
         for (let i = 0; i < selectedIndex; i++) {
             translateX += itemsRef.current[i]?.clientWidth ?? 0;
         }
 
+        translateX -= isLastElement || hugWidth ? 0 : 1;
         return `${translateX}px`;
-    }, [selectedIndex, isSmallOrHugWidth]);
+    }, [selectedIndex, isSmall, isLastElement, hugWidth]);
 
     const getSliderWidth = useCallback(() => {
-        const isLastElement = selectedIndex === itemsRef.current.length - 1;
-        const width = isLastElement && !isSmallOrHugWidth ? 1 : -1;
+        const width = isSmall || hugWidth ? -1 : 0;
 
         return `${(itemsRef.current[selectedIndex]?.clientWidth ?? 0) + width}px`;
-    }, [selectedIndex, isSmallOrHugWidth]);
+    }, [selectedIndex, isSmall, hugWidth]);
 
     const setSliderDimensions = useCallback(() => {
         const dimensions = itemsRef.current ? { x: getSliderX(), width: getSliderWidth() } : { x: '0px', width: '0px' };
