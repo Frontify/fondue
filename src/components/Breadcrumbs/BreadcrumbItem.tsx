@@ -6,7 +6,7 @@ import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
 
 import { getItemElementType } from '@utilities/elements';
-import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { FOCUS_STYLE_NO_OFFSET } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 
 import { Breadcrumb } from './Breadcrumbs';
@@ -60,7 +60,7 @@ export const BreadcrumbItem = ({
 
     const classNames = merge([
         'tw-flex tw-gap-x-1 tw-items-center tw-leading-4 tw-h-6 tw-max-w-[100px] tw-whitespace-pre-wrap tw-rounded',
-        isFocusVisible && FOCUS_STYLE,
+        isFocusVisible && FOCUS_STYLE_NO_OFFSET,
     ]);
 
     return (

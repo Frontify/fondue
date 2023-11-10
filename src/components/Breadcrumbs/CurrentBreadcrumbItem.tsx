@@ -6,7 +6,7 @@ import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
 
 import { Badge } from '@components/Badge';
-import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { FOCUS_STYLE_NO_OFFSET } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { getItemElementType } from '@utilities/elements';
 
@@ -44,7 +44,7 @@ export const CurrentBreadcrumbItem = ({
         'tw-flex tw-gap-x-1 tw-items-center tw-leading-4 tw-h-6 tw-max-w-[100px] tw-whitespace-pre-wrap tw-font-medium tw-rounded',
         bold && 'tw-font-bold',
         activeInline && 'tw-text-xs',
-        isFocusVisible && FOCUS_STYLE,
+        isFocusVisible && FOCUS_STYLE_NO_OFFSET,
     ]);
 
     return (
