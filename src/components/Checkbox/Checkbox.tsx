@@ -208,7 +208,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                     bold={checkedOrMixed}
                 >
                     <span className="tw-flex tw-items-center tw-whitespace-nowrap">
-                        <span className="tw-inline-flex tw-mr-1.5">
+                        <span className="tw-inline-flex">
                             <input
                                 {...mergeProps(groupInputProps || inputProps, focusProps)}
                                 id={id}
@@ -232,7 +232,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                                 {stateMap[state]}
                             </span>
                         </span>
-                        <span className="tw-inline-flex tw-flex-col tw-min-w-0">
+                        <span className="tw-inline-flex tw-flex-col tw-min-w-0 tw-ml-1.5">
                             {label && !hideLabel && (
                                 <span
                                     ref={labelContainer}
