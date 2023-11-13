@@ -208,7 +208,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                     bold={checkedOrMixed}
                 >
                     <span className="tw-flex tw-items-center tw-whitespace-nowrap">
-                        <span className="tw-inline-flex tw-mr-1.5">
+                        <span className="tw-inline-flex">
                             <input
                                 {...mergeProps(groupInputProps || inputProps, focusProps)}
                                 id={id}
@@ -232,36 +232,38 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                                 {stateMap[state]}
                             </span>
                         </span>
-                        <span className="tw-inline-flex tw-flex-col tw-min-w-0">
-                            {label && !hideLabel && (
-                                <span
-                                    ref={labelContainer}
-                                    data-test-id={`${dataTestId}-label`}
-                                    className={merge([
-                                        'tw-text-ellipsis tw-overflow-hidden',
-                                        'tw-text-xs tw-select-none hover:tw-cursor-pointer hover:tw-text-black dark:hover:tw-text-white group-hover:tw-text-black dark:group-hover:tw-text-white',
-                                        checkedOrMixed && 'tw-font-medium',
-                                    ])}
-                                    title={isLabelOverflowing ? label : undefined}
-                                >
-                                    {label}
-                                </span>
-                            )}
-                            {helperText && !hideLabel && (
-                                <span
-                                    ref={helperTextContainer}
-                                    data-test-id={`${dataTestId}-helper-text`}
-                                    className={merge([
-                                        'tw-text-ellipsis tw-overflow-hidden',
-                                        'tw-font-sans tw-text-xs tw-font-normal',
-                                        disabled ? 'text-disabled' : 'tw-text-text-weak',
-                                    ])}
-                                    title={isHelperTextOverflowing ? helperText : undefined}
-                                >
-                                    {helperText}
-                                </span>
-                            )}
-                        </span>
+                        {!hideLabel && (
+                            <span className="tw-inline-flex tw-flex-col tw-min-w-0 tw-ml-1.5">
+                                {label && (
+                                    <span
+                                        ref={labelContainer}
+                                        data-test-id={`${dataTestId}-label`}
+                                        className={merge([
+                                            'tw-text-ellipsis tw-overflow-hidden',
+                                            'tw-text-xs tw-select-none hover:tw-cursor-pointer hover:tw-text-black dark:hover:tw-text-white group-hover:tw-text-black dark:group-hover:tw-text-white',
+                                            checkedOrMixed && 'tw-font-medium',
+                                        ])}
+                                        title={isLabelOverflowing ? label : undefined}
+                                    >
+                                        {label}
+                                    </span>
+                                )}
+                                {helperText && (
+                                    <span
+                                        ref={helperTextContainer}
+                                        data-test-id={`${dataTestId}-helper-text`}
+                                        className={merge([
+                                            'tw-text-ellipsis tw-overflow-hidden',
+                                            'tw-font-sans tw-text-xs tw-font-normal',
+                                            disabled ? 'text-disabled' : 'tw-text-text-weak',
+                                        ])}
+                                        title={isHelperTextOverflowing ? helperText : undefined}
+                                    >
+                                        {helperText}
+                                    </span>
+                                )}
+                            </span>
+                        )}
                     </span>
                 </InputLabel>
             </div>

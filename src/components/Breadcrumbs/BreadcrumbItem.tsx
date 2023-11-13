@@ -6,7 +6,7 @@ import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
 
 import { getItemElementType } from '@utilities/elements';
-import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { FOCUS_STYLE_NO_OFFSET } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 
 import { Breadcrumb } from './Breadcrumbs';
@@ -25,16 +25,19 @@ const Separator = () => (
     </svg>
 );
 
-type BreadcrumbItemProps = Pick<Breadcrumb, 'label' | 'link' | 'onClick'> & {
+type BreadcrumbItemProps = Pick<Breadcrumb, 'label' | 'link' | 'onClick' | 'decorator'> & {
     showSeparator: boolean;
+    children?: ReactElement;
     'data-test-id'?: string;
 };
 
 export const BreadcrumbItem = ({
+    decorator,
     label,
     link,
     onClick,
     showSeparator,
+    children,
     'data-test-id': dataTestId = 'breadcrumb',
 }: BreadcrumbItemProps): ReactElement => {
     const ref = useRef(null);
@@ -55,14 +58,22 @@ export const BreadcrumbItem = ({
     const elementTypeProps = { a: { href: link }, button: { onClick, type: 'button' as const }, span: {} };
     const props = mergeProps(itemProps, focusProps, elementTypeProps[Element]);
 
+    const classNames = merge([
+        'tw-flex tw-gap-x-1 tw-items-center tw-leading-4 tw-h-6 tw-max-w-[100px] tw-whitespace-pre-wrap tw-rounded',
+        isFocusVisible && FOCUS_STYLE_NO_OFFSET,
+    ]);
+
     return (
         <li
             className="tw-flex tw-items-center tw-text-text-weak hover:tw-text-text tw-text-xs tw-transition-colors"
             data-test-id={`${dataTestId}-item`}
         >
-            <Element ref={ref} {...props} className={merge(['tw-outline-none', isFocusVisible && FOCUS_STYLE])}>
-                {label}
-            </Element>
+            {children ?? (
+                <Element ref={ref} {...props} className={classNames}>
+                    {decorator}
+                    {label}
+                </Element>
+            )}
             {showSeparator && <Separator />}
         </li>
     );
