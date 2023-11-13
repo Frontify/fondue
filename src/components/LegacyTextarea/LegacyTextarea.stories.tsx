@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import { Meta, StoryFn } from '@storybook/react';
-import { Textarea as TextareaComponent, TextareaProps } from './Textarea';
+import { LegacyTextarea as TextareaComponent, TextareaProps } from './LegacyTextarea';
 import { Validation } from '@utilities/validation';
 
 export default {
-    title: 'Components/Textarea',
+    title: 'Deprecated/LegacyTextarea',
     component: TextareaComponent,
     tags: ['autodocs'],
     args: {
@@ -37,14 +37,14 @@ export default {
     },
 } as Meta<TextareaProps>;
 
-export const Textarea: StoryFn<TextareaProps> = (args: TextareaProps) => {
+export const LegacyTextarea: StoryFn<TextareaProps> = (args: TextareaProps) => {
     const [input, setInput] = useState('');
-    useEffect(() => setInput(`${args.value || ''}`), [args.value]);
+    useEffect(() => setInput(`${args.value ?? ''}`), [args.value]);
 
     return <TextareaComponent {...args} value={input} onInput={setInput} />;
 };
 
-export const FocusOnMount = Textarea.bind({});
+export const FocusOnMount = LegacyTextarea.bind({});
 FocusOnMount.args = {
     focusOnMount: true,
 };

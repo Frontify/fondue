@@ -61,7 +61,7 @@ export * from './Table';
 export * from './Tabs';
 export * from './Tag';
 export * from './TextInput';
-export * from './Textarea';
+export * from './LegacyTextarea';
 export * from './Toast';
 export * from './LegacyTooltip';
 export * from './TooltipIcon';

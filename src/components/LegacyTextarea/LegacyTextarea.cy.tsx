@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Validation } from '@utilities/validation';
-import { Textarea } from './Textarea';
+import { LegacyTextarea } from './LegacyTextarea';
 
 const DEFAULT_TEXT = 'A new text area';
 const PLACEHOLDER = 'This is the placeholder';
@@ -12,9 +12,9 @@ const ROW_HEIGHT = 16;
 const TEXTAREA_ID = '[data-test-id=textarea]';
 const EXCLAMATION_MARK_ICON_ID = '[data-test-id=error-state-exclamation-mark-icon]';
 
-describe('Textarea component', () => {
+describe('LegacyTextarea component', () => {
     it('renders', () => {
-        cy.mount(<Textarea></Textarea>);
+        cy.mount(<LegacyTextarea></LegacyTextarea>);
         cy.get(TEXTAREA_ID).should('not.have.attr', 'value');
         cy.get(TEXTAREA_ID).should('not.have.attr', 'required');
         cy.get(TEXTAREA_ID).should('not.have.attr', 'placeholder');
@@ -24,68 +24,68 @@ describe('Textarea component', () => {
     });
 
     it('sets and gets the value', () => {
-        cy.mount(<Textarea value={DEFAULT_TEXT}></Textarea>);
+        cy.mount(<LegacyTextarea value={DEFAULT_TEXT}></LegacyTextarea>);
         cy.get(TEXTAREA_ID).should('have.value', DEFAULT_TEXT);
     });
 
     it('has the required attribute', () => {
-        cy.mount(<Textarea required={true}></Textarea>);
+        cy.mount(<LegacyTextarea required={true}></LegacyTextarea>);
         cy.get(TEXTAREA_ID).should('have.attr', 'required');
     });
 
     it('does not have the required attribute', () => {
-        cy.mount(<Textarea required={false}></Textarea>);
+        cy.mount(<LegacyTextarea required={false}></LegacyTextarea>);
         cy.get(TEXTAREA_ID).should('not.have.attr', 'required');
     });
 
     it('has the disabled attribute', () => {
-        cy.mount(<Textarea disabled={true}></Textarea>);
+        cy.mount(<LegacyTextarea disabled={true}></LegacyTextarea>);
         cy.get(TEXTAREA_ID).should('have.attr', 'disabled');
     });
 
     it('does not have the disabled attribute', () => {
-        cy.mount(<Textarea disabled={false}></Textarea>);
+        cy.mount(<LegacyTextarea disabled={false}></LegacyTextarea>);
         cy.get(TEXTAREA_ID).should('not.have.attr', 'disabled');
     });
 
     it('renders the placeholder', () => {
-        cy.mount(<Textarea placeholder={PLACEHOLDER}></Textarea>);
+        cy.mount(<LegacyTextarea placeholder={PLACEHOLDER}></LegacyTextarea>);
         cy.get(TEXTAREA_ID).should('have.attr', 'placeholder').and('eq', PLACEHOLDER);
     });
 
     it('renders the decorator', () => {
-        cy.mount(<Textarea decorator={DECORATOR}></Textarea>);
+        cy.mount(<LegacyTextarea decorator={DECORATOR}></LegacyTextarea>);
         cy.get('[data-test-id="decorator"]').should('be.visible').contains(DECORATOR_TEXT);
     });
 
     it('focuses on mount', () => {
-        cy.mount(<Textarea focusOnMount />);
+        cy.mount(<LegacyTextarea focusOnMount />);
         cy.get(TEXTAREA_ID).should('have.focus');
     });
 
     it('calls the onInput event', () => {
         const onInputStub = cy.stub().as('onInputStub');
-        cy.mount(<Textarea onInput={onInputStub}></Textarea>);
+        cy.mount(<LegacyTextarea onInput={onInputStub}></LegacyTextarea>);
         cy.get(TEXTAREA_ID).type(INPUT_TEXT);
         cy.get('@onInputStub').should('to.have.always.been.callCount', INPUT_TEXT.length);
     });
 
     it('calls the onBlur event', () => {
         const onBlurStub = cy.stub().as('onBlurStub');
-        cy.mount(<Textarea onBlur={onBlurStub}></Textarea>);
+        cy.mount(<LegacyTextarea onBlur={onBlurStub}></LegacyTextarea>);
         cy.get(TEXTAREA_ID).type(INPUT_TEXT).blur();
         cy.get('@onBlurStub').should('be.calledOnce');
     });
 
     it('calls the onEnterPressed event', () => {
         const onEnterPressedStub = cy.stub().as('onEnterPressedStub');
-        cy.mount(<Textarea onEnterPressed={onEnterPressedStub}></Textarea>);
+        cy.mount(<LegacyTextarea onEnterPressed={onEnterPressedStub}></LegacyTextarea>);
         cy.get(TEXTAREA_ID).type('{enter}');
         cy.get('@onEnterPressedStub').should('to.have.always.been.callCount', 1);
     });
 
     it('starts with the minimum number of rows', () => {
-        cy.mount(<Textarea minRows={4} autosize />);
+        cy.mount(<LegacyTextarea minRows={4} autosize />);
         cy.get(TEXTAREA_ID).should(($textarea) => {
             const height = $textarea.height() ?? 0;
             expect(Math.round(height)).to.equal(ROW_HEIGHT * 4);
@@ -93,7 +93,7 @@ describe('Textarea component', () => {
     });
 
     it('automatically grows in height', () => {
-        cy.mount(<Textarea minRows={1} autosize />);
+        cy.mount(<LegacyTextarea minRows={1} autosize />);
         cy.get(TEXTAREA_ID).should(($textarea) => {
             const height = $textarea.height() ?? 0;
             expect(Math.round(height)).to.equal(ROW_HEIGHT);
@@ -106,7 +106,7 @@ describe('Textarea component', () => {
     });
 
     it('does not grow more than max height', () => {
-        cy.mount(<Textarea minRows={1} maxRows={2} autosize />);
+        cy.mount(<LegacyTextarea minRows={1} maxRows={2} autosize />);
         cy.get(TEXTAREA_ID).should(($textarea) => {
             const height = $textarea.height() ?? 0;
             expect(Math.round(height)).to.equal(ROW_HEIGHT);
@@ -119,7 +119,7 @@ describe('Textarea component', () => {
     });
 
     it('uses min-rows as rows if autosize is false', () => {
-        cy.mount(<Textarea minRows={10} />);
+        cy.mount(<LegacyTextarea minRows={10} />);
         cy.get(TEXTAREA_ID).should(($textarea) => {
             const height = $textarea.height() ?? 0;
             expect(Math.round(height)).to.equal(ROW_HEIGHT * 10);
@@ -127,17 +127,17 @@ describe('Textarea component', () => {
     });
 
     it('removes resize handler', () => {
-        cy.mount(<Textarea resizeable={false} />);
+        cy.mount(<LegacyTextarea resizeable={false} />);
         cy.get(TEXTAREA_ID).should('have.css', 'resize', 'none');
     });
 
     it('shows error validation triangle icon in case of error validation state', () => {
-        cy.mount(<Textarea validation={Validation.Error} />);
+        cy.mount(<LegacyTextarea validation={Validation.Error} />);
         cy.get(EXCLAMATION_MARK_ICON_ID).should('have.class', 'tw-text-text-negative');
     });
 
     it('shows warning validation triangle icon in case of warning validation state', () => {
-        cy.mount(<Textarea validation={Validation.Warning} />);
+        cy.mount(<LegacyTextarea validation={Validation.Warning} />);
         cy.get(EXCLAMATION_MARK_ICON_ID).should('have.class', 'tw-text-text-warning');
     });
 });
