@@ -53,11 +53,11 @@ export const PasswordInput = ({
     return (
         <div
             className={merge([
-                'tw-flex tw-items-center tw-justify-between tw-h-9 tw-gap-2 tw-px-3 tw-py-3 tw-transition tw-text-s tw-font-sans tw-relative dark:tw-bg-transparent tw-border tw-rounded',
+                'tw-flex tw-items-center tw-justify-between tw-h-9 tw-gap-2 tw-px-3 tw-py-3 tw-transition tw-text-s tw-font-sans tw-relative tw-border tw-rounded',
                 size ? '' : 'tw-w-full',
                 disabled
-                    ? 'tw-bg-box-disabled hover:tw-cursor-not-allowed tw-border-line-weak'
-                    : 'tw-bg-base tw-border-line-strong hover:tw-border-line-x-strong focus-within:tw-border-line-xx-strong focus-within:hover:tw-border-line-xx-strong',
+                    ? 'tw-bg-box-disabled dark:tw-bg-box-disabled hover:tw-cursor-not-allowed tw-border-line-weak dark:tw-border-line-weak'
+                    : 'tw-bg-base dark:tw-bg-base tw-border-line-strong dark:tw-border-line-strong hover:tw-border-line-x-strong dark:hover:tw-border-line-x-strong focus-within:tw-border-line-xx-strong dark:focus-within:tw-border-line-xx-strong focus-within:hover:tw-border-line-xx-strong dark:focus-within:hover:tw-border-line-xx-strong',
                 isFocusVisible && FOCUS_STYLE,
                 status ? validationClassMap[status] : '',
             ])}
@@ -84,7 +84,7 @@ export const PasswordInput = ({
                     'tw-w-full tw-border-none tw-outline-none tw-bg-transparent tw-hide-input-arrows tw-text-sm',
                     disabled || readOnly
                         ? 'tw-text-text-disabled tw-placeholder-text-disabled dark:tw-text-black-30 dark:tw-placeholder-black-40 hover:tw-cursor-not-allowed'
-                        : 'tw-text-text tw-placeholder-text-x-weak dark:tw-text-box-neutral-strong-inverse',
+                        : 'tw-text-text dark:tw-text-weak tw-placeholder-text-x-weak dark:tw-placeholder-text-x-weak ',
                 ])}
                 data-test-id={`${dataTestId}-input`}
                 {...focusProps}
