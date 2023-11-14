@@ -64,6 +64,7 @@ export * from './TextInput';
 export * from './LegacyTextarea';
 export * from './Toast';
 export * from './LegacyTooltip';
+export * from './Tooltip';
 export * from './TooltipIcon';
 export * from './Tree';
 export * from './Trigger';
