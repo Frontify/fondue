@@ -7,9 +7,9 @@ const useMobileDetection = () => {
 
     useEffect(() => {
         const handleDeviceDetection = () => {
-            const isMobileScreen = window.matchMedia('only screen and (max-width: 480px)').matches;
+            const isSmallScreen = window.matchMedia('only screen and (max-width: 640px)').matches;
 
-            setIsMobile(isMobileScreen);
+            setIsMobile(isSmallScreen);
         };
 
         handleDeviceDetection();
