@@ -86,7 +86,7 @@ export const Tooltip = ({
 }: TooltipProps) => {
     const id = useMemoizedId(customId);
     const [open, setOpen] = useToggleOverlay(openOnMount);
-    const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
+    const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
     const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
     const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
     const [tooltipOffset, setTooltipOffset] = useState<[number, number]>(offset);
@@ -137,7 +137,7 @@ export const Tooltip = ({
 
     return (
         <>
-            <div
+            <button
                 ref={setReferenceElement}
                 onMouseEnter={handleShowTooltip}
                 onFocus={handleShowTooltip}
@@ -145,13 +145,13 @@ export const Tooltip = ({
                 onBlur={handleHideTooltip}
                 aria-label={ariaLabel}
                 aria-disabled={disabled}
-                aria-labelledby={id}
-                className={merge([disabled && 'tw-text-text-disabled', 'tw-w-fit'])}
+                aria-describedby={id}
+                className="disabled:tw-text-text-disabled"
                 data-test-id={`${dataTestId}-button`}
             >
                 {children}
-            </div>
-            {open && !disabled && (
+            </button>
+            {open && (
                 <EnablePortalWrapper enablePortal={enablePortal}>
                     <div
                         data-test-id={dataTestId}

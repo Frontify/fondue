@@ -11,7 +11,6 @@ import { Box } from '@components/Box';
 import { Flex } from '@components/Flex';
 import { Dropdown } from '@components/Dropdown';
 import { DialogBody } from '@components/DialogBody';
-import { action } from '@storybook/addon-actions';
 
 export default {
     title: 'Components/Tooltip',
@@ -54,12 +53,6 @@ export default {
 const Template: StoryFn<TooltipProps> = (args) => (
     <Tooltip {...args}>
         <IconIcon24 />
-    </Tooltip>
-);
-
-const WithButtonTriggerTemplate: StoryFn<TooltipProps> = (args) => (
-    <Tooltip {...args}>
-        <Button icon={<IconIcon24 />} onClick={action('onClick')} />
     </Tooltip>
 );
 
@@ -130,7 +123,5 @@ export const Disabled = Template.bind({});
 Disabled.args = {
     disabled: true,
 };
-
-export const WithFondueButtonTrigger = WithButtonTriggerTemplate.bind({});
 
 export const InContext = InContextTemplate.bind({});
