@@ -27,6 +27,8 @@ export default {
             defaultValue: 'light',
         },
         shouldAnimateExit: { control: { type: 'boolean' }, defaultValue: true },
+        duration: { control: { type: 'number' }, defaultValue: 0.3 },
+        delay: { control: { type: 'number' }, defaultValue: 0 },
         icon: { table: { disable: true } },
         children: { table: { disable: true } },
     },

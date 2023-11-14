@@ -11,6 +11,8 @@ export type ToastProps = {
     theme?: ToastTheme;
     shouldAnimateExit?: boolean;
     'data-test-id'?: string;
+    duration?: number;
+    delay?: number;
 };
 
 export enum ToastAnimationDirection {

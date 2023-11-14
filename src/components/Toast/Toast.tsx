@@ -26,6 +26,8 @@ export const Toast = ({
     children,
     theme = 'light',
     shouldAnimateExit = true,
+    delay = 0,
+    duration = 0.3,
     'data-test-id': dataTestId = 'toast',
 }: ToastProps): ReactElement => (
     <AnimatePresence>
@@ -38,6 +40,8 @@ export const Toast = ({
                 }}
                 transition={{
                     ease: 'easeOut',
+                    duration,
+                    delay,
                 }}
                 animate={{ opacity: 1, y: 0 }}
                 {...(shouldAnimateExit ? { exit: { opacity: 0, y: getToastStartPosition(animationDirection) } } : {})}
