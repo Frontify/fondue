@@ -29,6 +29,7 @@ export default {
         shouldAnimateExit: { control: { type: 'boolean' }, defaultValue: true },
         duration: { control: { type: 'number' }, defaultValue: 0.3 },
         delay: { control: { type: 'number' }, defaultValue: 0 },
+        ease: { control: { type: 'text' }, defaultValue: '[0, 0, 0.58, 1]' },
         icon: { table: { disable: true } },
         children: { table: { disable: true } },
     },
@@ -101,4 +102,5 @@ DarkTheme.args = {
     children: (
         <div className="tw-p-4 tw-flex tw-items-center tw-text-box-neutral-mighty-inverse">Item successfully added</div>
     ),
+    ease: '[0, 0, 0.58, 1]',
 };

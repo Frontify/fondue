@@ -18,6 +18,14 @@ const getContainerClasses = (theme: ToastTheme) => {
     return merge([CONTAINER_BASE_CLASSES, theme === 'dark' ? DARK_VARIANT_CLASSES : LIGHT_VARIANT_CLASSES]);
 };
 
+const getEase = (easeString: string) => {
+    try {
+        return JSON.parse(easeString);
+    } catch {
+        return [0, 0, 0.58, 1];
+    }
+};
+
 export const Toast = ({
     isOpen,
     style,
@@ -28,6 +36,7 @@ export const Toast = ({
     shouldAnimateExit = true,
     delay = 0,
     duration = 0.3,
+    ease = '[0, 0, 0.58, 1]',
     'data-test-id': dataTestId = 'toast',
 }: ToastProps): ReactElement => (
     <AnimatePresence>
@@ -39,7 +48,7 @@ export const Toast = ({
                     y: getToastStartPosition(animationDirection),
                 }}
                 transition={{
-                    ease: 'easeOut',
+                    ease: getEase(ease),
                     duration,
                     delay,
                 }}

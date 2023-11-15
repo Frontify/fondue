@@ -13,6 +13,7 @@ export type ToastProps = {
     'data-test-id'?: string;
     duration?: number;
     delay?: number;
+    ease?: string;
 };
 
 export enum ToastAnimationDirection {
