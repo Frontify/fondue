@@ -52,7 +52,6 @@ export type BaseDialogProps = {
     maxHeight?: string | number;
     minWidth?: string | number;
     minHeight?: string | number;
-    handleClose?: () => void;
     /** @description This property enable a full screen gray underlay only for modal and blocking-modal options. */
     darkUnderlay?: boolean;
     /** @description If enabled, any value assigned to the maxHeight property won't have any effect.
@@ -65,4 +64,5 @@ export type OverlayProps = PopperProps & {
     'data-test-id'?: string;
     role?: string;
     theme?: 'light' | 'dark';
+    handleClose: () => void;
 };

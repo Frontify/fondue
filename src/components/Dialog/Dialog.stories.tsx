@@ -4,7 +4,6 @@ import { useCallback, useRef, useState } from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { Dialog, DialogProps } from './Dialog';
 import { Button, ButtonEmphasis } from '@components/Button';
-import { useToggleOverlay } from '@hooks/useToggleOverlay';
 import { Modality } from '../../types';
 import { DialogHeader } from '@components/DialogHeader';
 import { DialogBody } from '@components/DialogBody';
@@ -12,12 +11,14 @@ import { DialogFooter } from '@components/DialogFooter';
 import { TabItem, Tabs, TabsPaddingX } from '@components/Tabs';
 import { Box } from '@components/Box';
 import { LegacyTooltip, TooltipPosition } from '@components/LegacyTooltip';
-import { IconCaretDown, IconCaretUp, IconMagnifier, IconSize } from '@foundation/Icon';
+import { IconCaretDown, IconCaretUp, IconExclamationMarkCircle16, IconMagnifier, IconSize } from '@foundation/Icon';
 import { InlineDialog } from '@components/InlineDialog';
 import { Text } from '@typography/Text';
 import { MenuItem } from '@components/MenuItem';
 import { Menu } from '@components/Menu';
 import { TextInput } from '@components/TextInput';
+import { Tooltip } from '@components/Tooltip';
+import { Flex } from '@components/Flex';
 
 export default {
     title: 'Experimental/Dialog',
@@ -68,7 +69,7 @@ export default {
 } as Meta<DialogProps>;
 
 const Template: StoryFn<DialogProps> = (args) => {
-    const [isOpen, setIsOpen] = useToggleOverlay(false, { isBlockingModal: args.modality === Modality.BlockingModal });
+    const [isOpen, setIsOpen] = useState(false);
     const triggerRef = useRef<HTMLButtonElement | null>(null);
 
     return (
@@ -111,7 +112,7 @@ const Template: StoryFn<DialogProps> = (args) => {
 };
 
 const WithTabsTemplate: StoryFn<DialogProps> = (args) => {
-    const [isOpen, setIsOpen] = useToggleOverlay(false, { isBlockingModal: args.modality === Modality.BlockingModal });
+    const [isOpen, setIsOpen] = useState(false);
     const [activeItemId, setActiveItemId] = useState('1');
     const triggerRef = useRef<HTMLButtonElement | null>(null);
 
@@ -190,9 +191,9 @@ const optionList = [
 ];
 
 const WithInlineDialog: StoryFn<DialogProps> = (args) => {
-    const [isOpen, setIsOpen] = useToggleOverlay(false, { isBlockingModal: args.modality === Modality.BlockingModal });
+    const [isOpen, setIsOpen] = useState(false);
     const [filteredOptionList, setFilteredOptionList] = useState<OptionListItem[]>(optionList);
-    const [isOptionListOpen, setOptionListOpen] = useToggleOverlay(false);
+    const [isOptionListOpen, setOptionListOpen] = useState(false);
     const [optionItemChosen, setOptionItemChosen] = useState<Nullable<OptionListItem>>(null);
     const [inputPhrase, setInputPhrase] = useState('');
     const dialogTriggerRef = useRef<HTMLButtonElement | null>(null);
@@ -256,6 +257,12 @@ const WithInlineDialog: StoryFn<DialogProps> = (args) => {
                 <DialogHeader onClose={() => setIsOpen(false)} size="large" title="Dialog content header" />
                 <DialogBody>
                     <Box className="tw-p-10">
+                        <Flex justify="start" alignContent="center">
+                            <Tooltip content="Just some Information">
+                                <IconExclamationMarkCircle16 />
+                            </Tooltip>
+                            <p>Information</p>
+                        </Flex>
                         <button
                             onClick={() => setOptionListOpen(true)}
                             ref={inlineDialogTriggerRef}

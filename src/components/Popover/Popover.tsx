@@ -17,6 +17,7 @@ export const Popover = ({
     role = 'region',
     withArrow = false,
     theme,
+    handleClose,
 }: Omit<OverlayProps, 'isDetached' | 'arrowCustomColors' | 'verticalAlignment'>) => {
     const arrowTheme = theme === 'dark' ? ARROW_DARK_THEME : ARROW_LIGHT_THEME;
     return (
@@ -34,6 +35,7 @@ export const Popover = ({
             data-test-id={dataTestId}
             modality={Modality.NonModal}
             zIndex={Z_INDEX_POPOVER}
+            handleClose={handleClose}
         >
             {children}
         </Overlay>

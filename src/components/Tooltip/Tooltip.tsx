@@ -1,12 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement, useCallback, useEffect, useRef } from 'react';
-import { Popper, PopperPlacement } from '@components/Popper';
+import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
+import { PopperPlacement } from '@components/Popper';
 import { merge } from '@utilities/merge';
-import { useToggleOverlay } from '@hooks/useToggleOverlay';
 import { Z_INDEX_TOOLTIP } from '@utilities/dialogs/constants';
 import { useMemoizedId } from '@hooks/useMemoizedId';
-import { ARROW_DARK_THEME, OVERLAY_CONTAINER_DARK_THEME_STYLING } from '@utilities/overlayStyle';
+import { ARROW_DARK_THEME } from '@utilities/overlayStyle';
+import { Overlay } from '@utilities/dialogs/Overlay';
+import { Modality } from '../../types';
 
 export type TooltipProps = {
     id?: string;
@@ -55,7 +56,7 @@ export const Tooltip = ({
     'aria-label': ariaLabel = 'fondue-tooltip-trigger',
 }: TooltipProps) => {
     const id = useMemoizedId(customId);
-    const [open, setOpen] = useToggleOverlay(openOnMount);
+    const [open, setOpen] = useState(openOnMount);
     const triggerRef = useRef<HTMLButtonElement | null>(null);
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -102,32 +103,33 @@ export const Tooltip = ({
             >
                 {children}
             </button>
-            <Popper
+            <Overlay
                 open={open}
+                theme="dark"
+                withArrow={withArrow}
+                arrowCustomColors={ARROW_DARK_THEME}
                 anchor={triggerRef}
                 placement={placement}
                 offset={offset}
                 flip={flip}
-                withArrow={withArrow}
-                arrowCustomColors={ARROW_DARK_THEME}
                 enablePortal={enablePortal}
-                zIndex={Z_INDEX_TOOLTIP}
+                role="tooltip"
+                data-test-id={dataTestId}
+                modality={Modality.NonModal}
+                maxWidth={maxWidth}
+                maxHeight={maxHeight}
+                zIndex={zIndex}
+                handleClose={() => setOpen(false)}
             >
-                <div
-                    data-test-id={dataTestId}
-                    role="tooltip"
-                    id={id}
-                    aria-hidden={!open}
+                <p
                     className={merge([
-                        OVERLAY_CONTAINER_DARK_THEME_STYLING,
-                        'tw-popper-container tw-inline-block tw-text-heading-medium',
                         size === 'spacious' ? 'tw-pt-2 tw-px-3 tw-pb-2.5' : 'tw-pt-1 tw-px-2 tw-pb-1.5',
+                        'tw-text-heading-medium tw-whitespace-pre-line',
                     ])}
-                    style={{ maxWidth, maxHeight, zIndex }}
                 >
-                    <p className="tw-whitespace-pre-line">{formatTooltipText(content)}</p>
-                </div>
-            </Popper>
+                    {formatTooltipText(content)}
+                </p>
+            </Overlay>
         </>
     );
 };

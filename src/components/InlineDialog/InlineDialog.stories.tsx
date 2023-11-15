@@ -8,7 +8,6 @@ import { Dropdown } from '@components/Dropdown';
 import { DialogFooter } from '@components/DialogFooter';
 import { Modality } from '../../types';
 import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
-import { useToggleOverlay } from '@hooks/useToggleOverlay';
 import { POPPER_STORY_ARGS } from '@components/Popper/types';
 import { action } from '@storybook/addon-actions';
 import { Divider } from '@components/Divider';
@@ -16,7 +15,7 @@ import { Flex } from '@components/Flex';
 import { Box } from '@components/Box';
 import IconDotsVertical16 from '@foundation/Icon/Generated/IconDotsVertical16';
 import { IconExclamationMarkCircle16 } from '@foundation/Icon/Generated';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { Tooltip } from '@components/Tooltip';
 
 export default {
@@ -68,7 +67,7 @@ const TextExample = () => {
 };
 
 const Template: StoryFn<InlineDialogProps> = (args) => {
-    const [isOpen, setIsOpen] = useToggleOverlay(false, { isBlockingModal: args.modality === Modality.BlockingModal });
+    const [isOpen, setIsOpen] = useState(false);
     const triggerRef = useRef<HTMLButtonElement | null>(null);
 
     return (
@@ -82,14 +81,12 @@ const Template: StoryFn<InlineDialogProps> = (args) => {
             <InlineDialog {...args} anchor={triggerRef} open={isOpen} handleClose={() => setIsOpen(false)}>
                 <DialogBody>
                     <Box className="tw-p-4">
-                        <Box className="tw-mb-2">
-                            <Flex justify="start" alignContent="center">
-                                <Tooltip content="Just some Information">
-                                    <IconExclamationMarkCircle16 />
-                                </Tooltip>
-                                <p>Information</p>
-                            </Flex>
-                        </Box>
+                        <Flex justify="start" alignContent="center">
+                            <Tooltip content="Just some Information">
+                                <IconExclamationMarkCircle16 />
+                            </Tooltip>
+                            <p>Information</p>
+                        </Flex>
                         <Dropdown
                             enablePortal={false}
                             onChange={(id) => console.log(id)}
@@ -120,7 +117,7 @@ const Template: StoryFn<InlineDialogProps> = (args) => {
 };
 
 const NoFocusableContentTemplate: StoryFn<InlineDialogProps> = (args) => {
-    const [isOpen, setIsOpen] = useToggleOverlay(false, { isBlockingModal: false });
+    const [isOpen, setIsOpen] = useState(false);
     const triggerRef = useRef<HTMLButtonElement | null>(null);
 
     return (
@@ -152,7 +149,7 @@ const NoFocusableContentTemplate: StoryFn<InlineDialogProps> = (args) => {
 };
 
 const InContext: StoryFn<InlineDialogProps> = (args) => {
-    const [isOpen, setIsOpen] = useToggleOverlay(false, { isBlockingModal: args.modality === Modality.BlockingModal });
+    const [isOpen, setIsOpen] = useState(false);
     const triggerRef = useRef<HTMLButtonElement | null>(null);
 
     return (

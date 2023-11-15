@@ -12,6 +12,7 @@ import { Portal } from '@components/Portal';
 import { useDropdownAutoHeight } from '@hooks/useDropdownAutoHeight';
 import { Z_INDEX_MODAL_BACKDROP } from '@utilities/dialogs/constants';
 import useMobileDetection from '@hooks/useMobileDetection';
+import { useHandleCloseOnEscape } from '@hooks/useHandleCloseOnEscape';
 
 export const Overlay = ({
     open,
@@ -61,12 +62,17 @@ export const Overlay = ({
         if (open && modality !== Modality.BlockingModal) {
             if (handleClose) {
                 handleClose();
+                triggerElementRef?.focus();
             }
         }
-    }, [handleClose, modality, open]);
+    }, [handleClose, modality, open, triggerElementRef]);
 
     useFocusTrap(ref.current, open, modality === Modality.NonModal);
     useClickOutside(ref.current, handleClosingInteraction);
+    useHandleCloseOnEscape(open, {
+        isBlockingModal: modality === Modality.BlockingModal,
+        callback: handleClosingInteraction,
+    });
 
     useEffect(() => {
         if (open && modality !== Modality.NonModal) {

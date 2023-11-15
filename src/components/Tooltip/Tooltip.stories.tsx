@@ -6,12 +6,11 @@ import { Tooltip, TooltipProps } from '@components/Tooltip/Tooltip';
 import IconIcon24 from '@foundation/Icon/Generated/IconIcon24';
 import { InlineDialog } from '@components/InlineDialog';
 import { Button } from '@components/Button';
-import { useToggleOverlay } from '@hooks/useToggleOverlay';
 import { Box } from '@components/Box';
 import { Flex } from '@components/Flex';
 import { Dropdown } from '@components/Dropdown';
 import { DialogBody } from '@components/DialogBody';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 
 export default {
     title: 'Components/Tooltip',
@@ -58,7 +57,7 @@ const Template: StoryFn<TooltipProps> = (args) => (
 );
 
 const InContextTemplate: StoryFn<TooltipProps> = (args) => {
-    const [isDialogOpen, setIsDialogOpen] = useToggleOverlay(false);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
     const triggerRef = useRef<HTMLButtonElement | null>(null);
 
     return (
@@ -66,7 +65,7 @@ const InContextTemplate: StoryFn<TooltipProps> = (args) => {
             <Button ref={triggerRef} onClick={() => setIsDialogOpen(!isDialogOpen)}>
                 Hello
             </Button>
-            <InlineDialog anchor={triggerRef} open={isDialogOpen}>
+            <InlineDialog handleClose={() => setIsDialogOpen(false)} anchor={triggerRef} open={isDialogOpen}>
                 <DialogBody>
                     <Box className="tw-p-4">
                         <Box className="tw-mb-2">

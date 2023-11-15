@@ -4,12 +4,11 @@ import { Meta, StoryFn } from '@storybook/react';
 import { Popover } from '@components/Popover/Popover';
 import { Button } from '@components/Button';
 import IconExclamationMarkTriangle16 from '@foundation/Icon/Generated/IconExclamationMarkTriangle16';
-import { useToggleOverlay } from '@hooks/useToggleOverlay';
 import { Box } from '@components/Box';
 import { Container } from '@components/Container';
 import { POPPER_STORY_ARGS } from '@components/Popper/types';
 import { OverlayProps } from '../../types';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 
 export default {
     title: 'Experimental/Popover',
@@ -39,14 +38,14 @@ export default {
 } as Meta<OverlayProps>;
 
 const Template: StoryFn<OverlayProps> = (args) => {
-    const [isOpen, setIsOpen] = useToggleOverlay(false);
+    const [isOpen, setIsOpen] = useState(false);
     const triggerRef = useRef<HTMLButtonElement | null>(null);
     return (
         <div className="tw-h-32 tw-flex tw-justify-center tw-items-center">
             <Button onClick={() => setIsOpen(!isOpen)} ref={triggerRef}>
                 I am the Trigger
             </Button>
-            <Popover {...args} anchor={triggerRef} open={isOpen}>
+            <Popover {...args} anchor={triggerRef} open={isOpen} handleClose={() => setIsOpen(false)}>
                 <Container padding={8}>
                     <p>Some Content</p>
                 </Container>
@@ -56,7 +55,7 @@ const Template: StoryFn<OverlayProps> = (args) => {
 };
 
 const TriggeredOnHoverTemplate: StoryFn<OverlayProps> = (args) => {
-    const [isOpen, setIsOpen] = useToggleOverlay(false);
+    const [isOpen, setIsOpen] = useState(false);
     const triggerRef = useRef<HTMLButtonElement | null>(null);
 
     return (
@@ -71,7 +70,7 @@ const TriggeredOnHoverTemplate: StoryFn<OverlayProps> = (args) => {
             >
                 <span>Information</span> <IconExclamationMarkTriangle16 />
             </button>
-            <Popover {...args} anchor={triggerRef} open={isOpen}>
+            <Popover {...args} anchor={triggerRef} open={isOpen} handleClose={() => setIsOpen(false)}>
                 <Container padding={8}>
                     <p>Some Content</p>
                 </Container>
@@ -81,7 +80,7 @@ const TriggeredOnHoverTemplate: StoryFn<OverlayProps> = (args) => {
 };
 
 const WithInteractiveContentTemplate: StoryFn<OverlayProps> = (args) => {
-    const [isOpen, setIsOpen] = useToggleOverlay(false);
+    const [isOpen, setIsOpen] = useState(false);
     const triggerRef = useRef<HTMLButtonElement | null>(null);
 
     return (
@@ -89,7 +88,7 @@ const WithInteractiveContentTemplate: StoryFn<OverlayProps> = (args) => {
             <Button onClick={() => setIsOpen(!isOpen)} ref={triggerRef}>
                 I am the Trigger
             </Button>
-            <Popover {...args} anchor={triggerRef} open={isOpen}>
+            <Popover {...args} anchor={triggerRef} open={isOpen} handleClose={() => setIsOpen(false)}>
                 <Box className="tw-p-2 tw-w-[400px]">
                     <p>
                         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eos explicabo iure placeat quae quidem

@@ -1,14 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { InlineDialog, InlineDialogProps } from './InlineDialog';
-import { useToggleOverlay } from '@hooks/useToggleOverlay';
 import { Modality } from '../../types';
 import { Button, ButtonEmphasis } from '@components/Button';
 import IconDotsVertical16 from '@foundation/Icon/Generated/IconDotsVertical16';
 import { DialogBody } from '@components/DialogBody';
 import { Box } from '@components/Box';
 import { Dropdown } from '@components/Dropdown';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 
 const INLINE_DIALOG_TRIGGER_SELECTOR = '[data-test-id=fondue-inlineDialog-trigger]';
 const INLINE_DIALOG_SELECTOR = '[data-test-id=fondue-inlineDialog-content]';
@@ -28,7 +27,7 @@ const InlineDialogComponent = ({
     darkUnderlay,
     autoHeight,
 }: Omit<InlineDialogProps, 'open' | 'anchor'>) => {
-    const [isOpen, setIsOpen] = useToggleOverlay(false, { isBlockingModal: modality === Modality.BlockingModal });
+    const [isOpen, setIsOpen] = useState(false);
     const triggerRef = useRef<HTMLButtonElement | null>(null);
 
     return (
