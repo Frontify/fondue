@@ -16,8 +16,8 @@ import { Flex } from '@components/Flex';
 import { Box } from '@components/Box';
 import IconDotsVertical16 from '@foundation/Icon/Generated/IconDotsVertical16';
 import { IconExclamationMarkCircle16 } from '@foundation/Icon/Generated';
-import { LegacyTooltip } from '@components/LegacyTooltip';
 import { useRef } from 'react';
+import { Tooltip } from '@components/Tooltip';
 
 export default {
     title: 'Experimental/InlineDialog',
@@ -83,15 +83,10 @@ const Template: StoryFn<InlineDialogProps> = (args) => {
                 <DialogBody>
                     <Box className="tw-p-4">
                         <Box className="tw-mb-2">
-                            <Flex justify="start">
-                                <LegacyTooltip
-                                    triggerElement={
-                                        <button aria-label="Exclamation mark circle icon" className="tw-mr-1">
-                                            <IconExclamationMarkCircle16 />
-                                        </button>
-                                    }
-                                    content="Just some Information"
-                                />
+                            <Flex justify="start" alignContent="center">
+                                <Tooltip content="Just some Information">
+                                    <IconExclamationMarkCircle16 />
+                                </Tooltip>
                                 <p>Information</p>
                             </Flex>
                         </Box>
