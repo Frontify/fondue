@@ -5,7 +5,7 @@ import IconIcon24 from '@foundation/Icon/Generated/IconIcon24';
 
 const TOOLTIP_SELECTOR = '[data-test-id=fondue-tooltip]';
 const TOOLTIP_TRIGGER = '[data-test-id=tooltip-trigger]';
-const TOOLTIP_ARROW = '[data-test-id=fondue-tooltip-arrow]';
+const TOOLTIP_ARROW = '[data-test-id=popper-arrow]';
 
 describe('Tooltip Component', () => {
     it('should render the tooltip', () => {
@@ -33,7 +33,7 @@ describe('Tooltip Component', () => {
             );
             cy.get(TOOLTIP_TRIGGER).should('exist');
             cy.get(TOOLTIP_TRIGGER).trigger('mouseover');
-            cy.get(TOOLTIP_SELECTOR).should('have.attr', 'data-popper-placement', 'top');
+            cy.get(TOOLTIP_SELECTOR).parent().should('have.attr', 'data-popper-placement', 'top');
         });
 
         it('should render the tooltip in an initial Bottom placement', () => {
@@ -46,7 +46,7 @@ describe('Tooltip Component', () => {
             );
             cy.get(TOOLTIP_TRIGGER).should('exist');
             cy.get(TOOLTIP_TRIGGER).trigger('mouseover');
-            cy.get(TOOLTIP_SELECTOR).should('have.attr', 'data-popper-placement', 'bottom');
+            cy.get(TOOLTIP_SELECTOR).parent().should('have.attr', 'data-popper-placement', 'bottom');
         });
 
         it('should render the tooltip in an initial Right placement', () => {
@@ -59,7 +59,7 @@ describe('Tooltip Component', () => {
             );
             cy.get(TOOLTIP_TRIGGER).should('exist');
             cy.get(TOOLTIP_TRIGGER).trigger('mouseover');
-            cy.get(TOOLTIP_SELECTOR).should('have.attr', 'data-popper-placement', 'right');
+            cy.get(TOOLTIP_SELECTOR).parent().should('have.attr', 'data-popper-placement', 'right');
         });
 
         it('should render the tooltip in an initial Left placement', () => {
@@ -72,7 +72,7 @@ describe('Tooltip Component', () => {
             );
             cy.get(TOOLTIP_TRIGGER).should('exist');
             cy.get(TOOLTIP_TRIGGER).trigger('mouseover');
-            cy.get(TOOLTIP_SELECTOR).should('have.attr', 'data-popper-placement', 'left');
+            cy.get(TOOLTIP_SELECTOR).parent().should('have.attr', 'data-popper-placement', 'left');
         });
 
         it('should render the tooltip with start alignment', () => {
@@ -85,7 +85,7 @@ describe('Tooltip Component', () => {
             );
             cy.get(TOOLTIP_TRIGGER).should('exist');
             cy.get(TOOLTIP_TRIGGER).trigger('mouseover');
-            cy.get(TOOLTIP_SELECTOR).should('have.attr', 'data-popper-placement', 'bottom-start');
+            cy.get(TOOLTIP_SELECTOR).parent().should('have.attr', 'data-popper-placement', 'bottom-start');
         });
 
         it('should render the tooltip with start alignment', () => {
@@ -98,7 +98,7 @@ describe('Tooltip Component', () => {
             );
             cy.get(TOOLTIP_TRIGGER).should('exist');
             cy.get(TOOLTIP_TRIGGER).trigger('mouseover');
-            cy.get(TOOLTIP_SELECTOR).should('have.attr', 'data-popper-placement', 'bottom-end');
+            cy.get(TOOLTIP_SELECTOR).parent().should('have.attr', 'data-popper-placement', 'bottom-end');
         });
     });
 
@@ -113,7 +113,7 @@ describe('Tooltip Component', () => {
             );
             cy.get(TOOLTIP_TRIGGER).should('exist');
             cy.get(TOOLTIP_TRIGGER).trigger('mouseover');
-            cy.get(TOOLTIP_SELECTOR).should('have.attr', 'data-popper-placement', 'bottom');
+            cy.get(TOOLTIP_SELECTOR).parent().should('have.attr', 'data-popper-placement', 'bottom');
         });
 
         it('should not flip if disabled', () => {
@@ -126,7 +126,7 @@ describe('Tooltip Component', () => {
             );
             cy.get(TOOLTIP_TRIGGER).should('exist');
             cy.get(TOOLTIP_TRIGGER).trigger('mouseover');
-            cy.get(TOOLTIP_SELECTOR).should('have.attr', 'data-popper-placement', 'top');
+            cy.get(TOOLTIP_SELECTOR).parent().should('have.attr', 'data-popper-placement', 'top');
         });
     });
 
