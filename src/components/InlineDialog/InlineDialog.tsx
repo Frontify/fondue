@@ -1,8 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { BaseDialogProps, Modality, OverlayProps } from '../../types/dialog';
-import { Trigger } from '@utilities/dialogs/Trigger';
-import { Content } from '@utilities/dialogs/Content';
 import { Overlay } from '@utilities/dialogs/Overlay';
 import { Z_INDEX_MODAL } from '@utilities/dialogs/constants';
 
@@ -11,6 +9,7 @@ export type InlineDialogProps = Omit<OverlayProps, 'strategy'> & BaseDialogProps
 export const InlineDialog = ({
     children,
     open,
+    anchor,
     placement = 'bottom-start',
     offset = [0, 8],
     flip = false,
@@ -29,6 +28,7 @@ export const InlineDialog = ({
         <Overlay
             data-test-id={dataTestId}
             open={open}
+            anchor={anchor}
             placement={placement}
             offset={offset}
             flip={flip}
@@ -49,5 +49,3 @@ export const InlineDialog = ({
     );
 };
 InlineDialog.displayName = 'FondueInlineDialog';
-InlineDialog.Trigger = Trigger;
-InlineDialog.Content = Content;

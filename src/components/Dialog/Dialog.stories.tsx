@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { Dialog, DialogProps } from './Dialog';
 import { Button, ButtonEmphasis } from '@components/Button';
 import { useToggleOverlay } from '@hooks/useToggleOverlay';
-import { Modality } from '../../types/dialog';
+import { Modality } from '../../types';
 import { DialogHeader } from '@components/DialogHeader';
 import { DialogBody } from '@components/DialogBody';
 import { DialogFooter } from '@components/DialogFooter';
@@ -69,13 +69,14 @@ export default {
 
 const Template: StoryFn<DialogProps> = (args) => {
     const [isOpen, setIsOpen] = useToggleOverlay(false, { isBlockingModal: args.modality === Modality.BlockingModal });
+    const triggerRef = useRef<HTMLButtonElement | null>(null);
 
     return (
-        <Dialog {...args} open={isOpen} handleClose={() => setIsOpen(false)}>
-            <Dialog.Trigger>
-                <Button onClick={() => setIsOpen(!isOpen)}>Open Dialog</Button>
-            </Dialog.Trigger>
-            <Dialog.Content>
+        <>
+            <Button ref={triggerRef} onClick={() => setIsOpen(!isOpen)}>
+                Open Dialog
+            </Button>
+            <Dialog {...args} anchor={triggerRef} open={isOpen} handleClose={() => setIsOpen(false)}>
                 <DialogHeader title="Heading" size="large" onClose={() => setIsOpen(false)} />
                 <DialogBody>
                     <Box className="tw-p-10">
@@ -104,21 +105,23 @@ const Template: StoryFn<DialogProps> = (args) => {
                         },
                     ]}
                 ></DialogFooter>
-            </Dialog.Content>
-        </Dialog>
+            </Dialog>
+        </>
     );
 };
 
 const WithTabsTemplate: StoryFn<DialogProps> = (args) => {
     const [isOpen, setIsOpen] = useToggleOverlay(false, { isBlockingModal: args.modality === Modality.BlockingModal });
     const [activeItemId, setActiveItemId] = useState('1');
+    const triggerRef = useRef<HTMLButtonElement | null>(null);
 
     return (
-        <Dialog {...args} open={isOpen} handleClose={() => setIsOpen(false)}>
-            <Dialog.Trigger>
-                <Button onClick={() => setIsOpen(!isOpen)}>Open Dialog</Button>
-            </Dialog.Trigger>
-            <Dialog.Content>
+        <>
+            <Button ref={triggerRef} onClick={() => setIsOpen(!isOpen)}>
+                Open Dialog
+            </Button>
+
+            <Dialog {...args} anchor={triggerRef} open={isOpen} handleClose={() => setIsOpen(false)}>
                 <DialogHeader title="Heading" size="large" onClose={() => setIsOpen(false)} collapseBottom />
                 <DialogBody>
                     <Tabs
@@ -171,8 +174,8 @@ const WithTabsTemplate: StoryFn<DialogProps> = (args) => {
                         },
                     ]}
                 ></DialogFooter>
-            </Dialog.Content>
-        </Dialog>
+            </Dialog>
+        </>
     );
 };
 
@@ -189,9 +192,11 @@ const optionList = [
 const WithInlineDialog: StoryFn<DialogProps> = (args) => {
     const [isOpen, setIsOpen] = useToggleOverlay(false, { isBlockingModal: args.modality === Modality.BlockingModal });
     const [filteredOptionList, setFilteredOptionList] = useState<OptionListItem[]>(optionList);
-    const [isOptionListOpen, setOptionListOpen] = useState(false);
+    const [isOptionListOpen, setOptionListOpen] = useToggleOverlay(false);
     const [optionItemChosen, setOptionItemChosen] = useState<Nullable<OptionListItem>>(null);
     const [inputPhrase, setInputPhrase] = useState('');
+    const dialogTriggerRef = useRef<HTMLButtonElement | null>(null);
+    const inlineDialogTriggerRef = useRef<HTMLButtonElement | null>(null);
 
     const RenderButtonIcon = useCallback(
         () => (isOptionListOpen ? <IconCaretUp /> : <IconCaretDown />),
@@ -234,88 +239,86 @@ const WithInlineDialog: StoryFn<DialogProps> = (args) => {
 
     return (
         <div className="tw-inline-flex">
-            <Dialog {...args} open={isOpen} handleClose={handleClose}>
-                <Dialog.Trigger>
-                    <LegacyTooltip
-                        content="Triggering button"
-                        position={TooltipPosition.Right}
-                        enablePortal
-                        hoverDelay={50}
-                        enterDelay={300}
-                        triggerElement={<Button onClick={() => setIsOpen(!isOpen)}>Open Dialog</Button>}
-                        withArrow
-                    />
-                </Dialog.Trigger>
-                <Dialog.Content>
-                    <DialogHeader onClose={() => setIsOpen(false)} size="large" title="Dialog content header" />
-                    <DialogBody>
-                        <Box className="tw-p-10">
-                            <InlineDialog
-                                open={isOptionListOpen}
-                                flip
-                                handleClose={() => setOptionListOpen(false)}
-                                maxWidth={600}
-                                minHeight={0}
-                                minWidth={0}
-                                autoHeight
-                                modality={Modality.NonModal}
-                                offset={[0, 8]}
-                                placement="bottom-start"
-                                enablePortal={false}
-                            >
-                                <InlineDialog.Trigger>
-                                    <button
-                                        onClick={() => setOptionListOpen(true)}
-                                        className="tw-text-ellipsis tw-flex tw-items-center tw-h-9 tw-px-3 tw-border tw-transition tw-rounded tw-text-s tw-font-sans tw-bg-white dark:tw-bg-transparent tw-border-solid focus-within:tw-border-black-90 hover:tw-border-black-90 tw-border-black-20 tw-justify-between tw-gap-x-3 tw-w-full"
-                                    >
-                                        {optionItemChosen ? (
-                                            <SelectField label={optionItemChosen.label} />
-                                        ) : (
-                                            <span>
-                                                <span>Select option</span>
-                                            </span>
-                                        )}
-                                        <RenderButtonIcon />
-                                    </button>
-                                </InlineDialog.Trigger>
-                                <InlineDialog.Content>
-                                    <div>
-                                        <Menu open={isOptionListOpen}>
-                                            <div className="tw-w-[486px] tw-px-4 tw-py-2">
-                                                <TextInput
-                                                    focusOnMount={true}
-                                                    decorator={<IconMagnifier size={IconSize.Size16} />}
-                                                    id="name"
-                                                    placeholder="Search"
-                                                    value={inputPhrase}
-                                                    onChange={(value) => handleInput(value)}
-                                                />
-                                            </div>
-                                            {filteredOptionList.map((option) => (
-                                                <MenuItem key={option.code} onClick={() => chooseOption(option.code)}>
-                                                    <SelectField label={option.label} />
-                                                </MenuItem>
-                                            ))}
-                                        </Menu>
+            <LegacyTooltip
+                content="Triggering button"
+                position={TooltipPosition.Right}
+                enablePortal
+                hoverDelay={50}
+                enterDelay={300}
+                triggerElement={
+                    <Button ref={dialogTriggerRef} onClick={() => setIsOpen(!isOpen)}>
+                        Open Dialog
+                    </Button>
+                }
+                withArrow
+            />
+            <Dialog {...args} anchor={dialogTriggerRef} open={isOpen} handleClose={handleClose}>
+                <DialogHeader onClose={() => setIsOpen(false)} size="large" title="Dialog content header" />
+                <DialogBody>
+                    <Box className="tw-p-10">
+                        <button
+                            onClick={() => setOptionListOpen(true)}
+                            ref={inlineDialogTriggerRef}
+                            className="tw-text-ellipsis tw-flex tw-items-center tw-h-9 tw-px-3 tw-border tw-transition tw-rounded tw-text-s tw-font-sans tw-bg-white dark:tw-bg-transparent tw-border-solid focus-within:tw-border-black-90 hover:tw-border-black-90 tw-border-black-20 tw-justify-between tw-gap-x-3 tw-w-full"
+                        >
+                            {optionItemChosen ? (
+                                <SelectField label={optionItemChosen.label} />
+                            ) : (
+                                <span>
+                                    <span>Select option</span>
+                                </span>
+                            )}
+                            <RenderButtonIcon />
+                        </button>
+                        <InlineDialog
+                            anchor={inlineDialogTriggerRef}
+                            open={isOptionListOpen}
+                            flip
+                            handleClose={() => setOptionListOpen(false)}
+                            maxWidth={600}
+                            minHeight={0}
+                            minWidth={0}
+                            autoHeight
+                            modality={Modality.NonModal}
+                            offset={[0, 8]}
+                            placement="bottom-start"
+                            enablePortal={false}
+                        >
+                            <div>
+                                <Menu open={isOptionListOpen}>
+                                    <div className="tw-w-[486px] tw-px-4 tw-py-2">
+                                        <TextInput
+                                            focusOnMount={true}
+                                            decorator={<IconMagnifier size={IconSize.Size16} />}
+                                            id="name"
+                                            placeholder="Search"
+                                            value={inputPhrase}
+                                            onChange={(value) => handleInput(value)}
+                                        />
                                     </div>
-                                </InlineDialog.Content>
-                            </InlineDialog>
-                        </Box>
-                    </DialogBody>
-                    <DialogFooter
-                        actionButtons={[
-                            {
-                                children: 'Cancel',
-                                emphasis: ButtonEmphasis.Default,
-                                onClick: handleClose,
-                            },
-                            {
-                                children: 'Confirm',
-                                onClick: handleClose,
-                            },
-                        ]}
-                    />
-                </Dialog.Content>
+                                    {filteredOptionList.map((option) => (
+                                        <MenuItem key={option.code} onClick={() => chooseOption(option.code)}>
+                                            <SelectField label={option.label} />
+                                        </MenuItem>
+                                    ))}
+                                </Menu>
+                            </div>
+                        </InlineDialog>
+                    </Box>
+                </DialogBody>
+                <DialogFooter
+                    actionButtons={[
+                        {
+                            children: 'Cancel',
+                            emphasis: ButtonEmphasis.Default,
+                            onClick: handleClose,
+                        },
+                        {
+                            children: 'Confirm',
+                            onClick: handleClose,
+                        },
+                    ]}
+                />
             </Dialog>
         </div>
     );

@@ -2,12 +2,13 @@
 
 import { InlineDialog, InlineDialogProps } from './InlineDialog';
 import { useToggleOverlay } from '@hooks/useToggleOverlay';
-import { Modality } from '../../types/dialog';
+import { Modality } from '../../types';
 import { Button, ButtonEmphasis } from '@components/Button';
 import IconDotsVertical16 from '@foundation/Icon/Generated/IconDotsVertical16';
 import { DialogBody } from '@components/DialogBody';
 import { Box } from '@components/Box';
 import { Dropdown } from '@components/Dropdown';
+import { useRef } from 'react';
 
 const INLINE_DIALOG_TRIGGER_SELECTOR = '[data-test-id=fondue-inlineDialog-trigger]';
 const INLINE_DIALOG_SELECTOR = '[data-test-id=fondue-inlineDialog-content]';
@@ -26,32 +27,35 @@ const InlineDialogComponent = ({
     enablePortal,
     darkUnderlay,
     autoHeight,
-}: Omit<InlineDialogProps, 'open'>) => {
+}: Omit<InlineDialogProps, 'open' | 'anchor'>) => {
     const [isOpen, setIsOpen] = useToggleOverlay(false, { isBlockingModal: modality === Modality.BlockingModal });
+    const triggerRef = useRef<HTMLButtonElement | null>(null);
+
     return (
-        <InlineDialog
-            open={isOpen}
-            minHeight={minHeight}
-            maxHeight={maxHeight}
-            minWidth={minWidth}
-            maxWidth={maxWidth}
-            handleClose={() => setIsOpen(false)}
-            modality={modality}
-            placement={placement}
-            flip={flip}
-            offset={offset}
-            enablePortal={enablePortal}
-            darkUnderlay={darkUnderlay}
-            autoHeight={autoHeight}
-        >
-            <InlineDialog.Trigger>
-                <Button
-                    emphasis={ButtonEmphasis.Default}
-                    icon={<IconDotsVertical16 />}
-                    onClick={() => setIsOpen(!isOpen)}
-                ></Button>
-            </InlineDialog.Trigger>
-            <InlineDialog.Content>
+        <>
+            <Button
+                ref={triggerRef}
+                emphasis={ButtonEmphasis.Default}
+                icon={<IconDotsVertical16 />}
+                onClick={() => setIsOpen(!isOpen)}
+                data-test-id="fondue-inlineDialog-trigger"
+            ></Button>
+            <InlineDialog
+                anchor={triggerRef}
+                open={isOpen}
+                minHeight={minHeight}
+                maxHeight={maxHeight}
+                minWidth={minWidth}
+                maxWidth={maxWidth}
+                handleClose={() => setIsOpen(false)}
+                modality={modality}
+                placement={placement}
+                flip={flip}
+                offset={offset}
+                enablePortal={enablePortal}
+                darkUnderlay={darkUnderlay}
+                autoHeight={autoHeight}
+            >
                 <DialogBody>
                     <Box className="tw-p-4">
                         <Dropdown
@@ -78,8 +82,8 @@ const InlineDialogComponent = ({
                         <Button onClick={() => setIsOpen(!isOpen)}>Close</Button>
                     </Box>
                 </DialogBody>
-            </InlineDialog.Content>
-        </InlineDialog>
+            </InlineDialog>
+        </>
     );
 };
 describe('InlineDialog Component', () => {

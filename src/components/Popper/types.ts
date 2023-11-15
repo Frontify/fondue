@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { PositioningStrategy } from '@popperjs/core/lib/types';
-import { ReactNode } from 'react';
+import { ReactNode, RefObject } from 'react';
 
 export type PopperPlacement =
     | 'top'
@@ -19,6 +19,7 @@ export type PopperPlacement =
 
 export type PopperProps = {
     children?: ReactNode;
+    anchor: RefObject<Element>;
     open?: boolean;
     placement?: PopperPlacement;
     offset?: [number, number];

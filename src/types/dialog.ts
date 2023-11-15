@@ -60,8 +60,8 @@ export type BaseDialogProps = {
     autoHeight?: boolean;
 };
 
-export type OverlayProps = {
+export type OverlayProps = PopperProps & {
     open: boolean;
     'data-test-id'?: string;
     role?: string;
-} & PopperProps;
+};

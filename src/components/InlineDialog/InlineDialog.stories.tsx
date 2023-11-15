@@ -6,7 +6,7 @@ import { DialogHeader } from '@components/DialogHeader';
 import { DialogBody } from '@components/DialogBody/DialogBody';
 import { Dropdown } from '@components/Dropdown';
 import { DialogFooter } from '@components/DialogFooter';
-import { Modality } from '../../types/dialog';
+import { Modality } from '../../types';
 import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
 import { useToggleOverlay } from '@hooks/useToggleOverlay';
 import { POPPER_STORY_ARGS } from '@components/Popper/types';
@@ -17,6 +17,7 @@ import { Box } from '@components/Box';
 import IconDotsVertical16 from '@foundation/Icon/Generated/IconDotsVertical16';
 import { IconExclamationMarkCircle16 } from '@foundation/Icon/Generated';
 import { LegacyTooltip } from '@components/LegacyTooltip';
+import { useRef } from 'react';
 
 export default {
     title: 'Experimental/InlineDialog',
@@ -68,36 +69,114 @@ const TextExample = () => {
 
 const Template: StoryFn<InlineDialogProps> = (args) => {
     const [isOpen, setIsOpen] = useToggleOverlay(false, { isBlockingModal: args.modality === Modality.BlockingModal });
+    const triggerRef = useRef<HTMLButtonElement | null>(null);
+
     return (
         <Box className="tw-w-fit">
-            <InlineDialog {...args} open={isOpen} handleClose={() => setIsOpen(false)}>
-                <InlineDialog.Trigger>
-                    <Button
-                        emphasis={ButtonEmphasis.Default}
-                        icon={<IconDotsVertical16 />}
-                        onClick={() => setIsOpen(!isOpen)}
-                    ></Button>
-                </InlineDialog.Trigger>
-                <InlineDialog.Content>
+            <Button
+                emphasis={ButtonEmphasis.Default}
+                icon={<IconDotsVertical16 />}
+                onClick={() => setIsOpen(!isOpen)}
+                ref={triggerRef}
+            ></Button>
+            <InlineDialog {...args} anchor={triggerRef} open={isOpen} handleClose={() => setIsOpen(false)}>
+                <DialogBody>
+                    <Box className="tw-p-4">
+                        <Box className="tw-mb-2">
+                            <Flex justify="start">
+                                <LegacyTooltip
+                                    triggerElement={
+                                        <button aria-label="Exclamation mark circle icon" className="tw-mr-1">
+                                            <IconExclamationMarkCircle16 />
+                                        </button>
+                                    }
+                                    content="Just some Information"
+                                />
+                                <p>Information</p>
+                            </Flex>
+                        </Box>
+                        <Dropdown
+                            enablePortal={false}
+                            onChange={(id) => console.log(id)}
+                            activeItemId="1"
+                            menuBlocks={[
+                                {
+                                    id: 'block1',
+                                    menuItems: [
+                                        { id: '1', title: 'Item 1' },
+                                        { id: '2', title: 'Item 2' },
+                                        { id: '3', title: 'Item 3' },
+                                        { id: '4', title: 'Item 4' },
+                                        { id: '5', title: 'Item 5' },
+                                    ],
+                                },
+                            ]}
+                        />
+
+                        <TextExample />
+                        <TextExample />
+                        <TextExample />
+                        <Button onClick={() => setIsOpen(!isOpen)}>Close</Button>
+                    </Box>
+                </DialogBody>
+            </InlineDialog>
+        </Box>
+    );
+};
+
+const NoFocusableContentTemplate: StoryFn<InlineDialogProps> = (args) => {
+    const [isOpen, setIsOpen] = useToggleOverlay(false, { isBlockingModal: false });
+    const triggerRef = useRef<HTMLButtonElement | null>(null);
+
+    return (
+        <Flex justify="start">
+            <Button onClick={action('onClick')} style={ButtonStyle.Default}>
+                Button
+            </Button>
+            <Button onClick={action('onClick')} style={ButtonStyle.Danger}>
+                Button
+            </Button>
+            <Button
+                ref={triggerRef}
+                emphasis={ButtonEmphasis.Default}
+                icon={<IconDotsVertical16 />}
+                onClick={() => setIsOpen(!isOpen)}
+            ></Button>
+            <InlineDialog {...args} anchor={triggerRef} open={isOpen} handleClose={() => setIsOpen(false)}>
+                <DialogBody>
+                    <Box className="tw-p-4">
+                        <TextExample />
+                    </Box>
+                </DialogBody>
+            </InlineDialog>
+            <Button onClick={action('onClick')} style={ButtonStyle.Loud}>
+                Button
+            </Button>
+        </Flex>
+    );
+};
+
+const InContext: StoryFn<InlineDialogProps> = (args) => {
+    const [isOpen, setIsOpen] = useToggleOverlay(false, { isBlockingModal: args.modality === Modality.BlockingModal });
+    const triggerRef = useRef<HTMLButtonElement | null>(null);
+
+    return (
+        <div>
+            <Flex justify="end">
+                <Button onClick={action('onClick')} emphasis={ButtonEmphasis.Default} style={ButtonStyle.Default}>
+                    Button
+                </Button>
+                <Button ref={triggerRef} onClick={() => setIsOpen(!isOpen)}>
+                    InlineDialog Trigger
+                </Button>
+                <InlineDialog {...args} anchor={triggerRef} open={isOpen} handleClose={() => setIsOpen(false)}>
+                    <DialogHeader title="Collaborator Settings" size="large" onClose={() => setIsOpen(false)} />
                     <DialogBody>
-                        <Box className="tw-p-4">
-                            <Box className="tw-mb-2">
-                                <Flex justify="start">
-                                    <LegacyTooltip
-                                        triggerElement={
-                                            <button aria-label="Exclamation mark circle icon" className="tw-mr-1">
-                                                <IconExclamationMarkCircle16 />
-                                            </button>
-                                        }
-                                        content="Just some Information"
-                                    />
-                                    <p>Information</p>
-                                </Flex>
-                            </Box>
+                        <div className="tw-p-2">
                             <Dropdown
                                 enablePortal={false}
                                 onChange={(id) => console.log(id)}
-                                activeItemId="1"
+                                activeItemId={'1'}
                                 menuBlocks={[
                                     {
                                         id: 'block1',
@@ -111,105 +190,25 @@ const Template: StoryFn<InlineDialogProps> = (args) => {
                                     },
                                 ]}
                             />
+                            <p className="tw-flex tw-items-center tw-my-2">Label 2</p>
 
                             <TextExample />
                             <TextExample />
-                            <TextExample />
-                            <Button onClick={() => setIsOpen(!isOpen)}>Close</Button>
-                        </Box>
+                        </div>
                     </DialogBody>
-                </InlineDialog.Content>
-            </InlineDialog>
-        </Box>
-    );
-};
-
-const NoFocusableContentTemplate: StoryFn<InlineDialogProps> = (args) => {
-    const [isOpen, setIsOpen] = useToggleOverlay(false, { isBlockingModal: false });
-    return (
-        <Flex justify="start">
-            <Button onClick={action('onClick')} style={ButtonStyle.Default}>
-                Button
-            </Button>
-            <Button onClick={action('onClick')} style={ButtonStyle.Danger}>
-                Button
-            </Button>
-            <InlineDialog {...args} open={isOpen} handleClose={() => setIsOpen(false)}>
-                <InlineDialog.Trigger>
-                    <Button
-                        emphasis={ButtonEmphasis.Default}
-                        icon={<IconDotsVertical16 />}
-                        onClick={() => setIsOpen(!isOpen)}
-                    ></Button>
-                </InlineDialog.Trigger>
-                <InlineDialog.Content>
-                    <DialogBody>
-                        <Box className="tw-p-4">
-                            <TextExample />
-                        </Box>
-                    </DialogBody>
-                </InlineDialog.Content>
-            </InlineDialog>
-            <Button onClick={action('onClick')} style={ButtonStyle.Loud}>
-                Button
-            </Button>
-        </Flex>
-    );
-};
-
-const InContext: StoryFn<InlineDialogProps> = (args) => {
-    const [isOpen, setIsOpen] = useToggleOverlay(false, { isBlockingModal: args.modality === Modality.BlockingModal });
-    return (
-        <div>
-            <Flex justify="end">
-                <Button onClick={action('onClick')} emphasis={ButtonEmphasis.Default} style={ButtonStyle.Default}>
-                    Button
-                </Button>
-                <InlineDialog {...args} open={isOpen} handleClose={() => setIsOpen(false)}>
-                    <InlineDialog.Trigger>
-                        <Button onClick={() => setIsOpen(!isOpen)}>InlineDialog Trigger</Button>
-                    </InlineDialog.Trigger>
-                    <InlineDialog.Content>
-                        <DialogHeader title="Collaborator Settings" size="large" onClose={() => setIsOpen(false)} />
-                        <DialogBody>
-                            <div className="tw-p-2">
-                                <Dropdown
-                                    enablePortal={false}
-                                    onChange={(id) => console.log(id)}
-                                    activeItemId={'1'}
-                                    menuBlocks={[
-                                        {
-                                            id: 'block1',
-                                            menuItems: [
-                                                { id: '1', title: 'Item 1' },
-                                                { id: '2', title: 'Item 2' },
-                                                { id: '3', title: 'Item 3' },
-                                                { id: '4', title: 'Item 4' },
-                                                { id: '5', title: 'Item 5' },
-                                            ],
-                                        },
-                                    ]}
-                                />
-                                <p className="tw-flex tw-items-center tw-my-2">Label 2</p>
-
-                                <TextExample />
-                                <TextExample />
-                            </div>
-                        </DialogBody>
-                        <DialogFooter
-                            actionButtons={[
-                                {
-                                    children: 'Cancel',
-                                    emphasis: ButtonEmphasis.Default,
-                                    onClick: () => setIsOpen(false),
-                                },
-                                {
-                                    children: 'Confirm',
-                                    onClick: () => setIsOpen(false),
-                                },
-                            ]}
-                        ></DialogFooter>
-                    </InlineDialog.Content>
+                    <DialogFooter
+                        actionButtons={[
+                            {
+                                children: 'Cancel',
+                                emphasis: ButtonEmphasis.Default,
+                                onClick: () => setIsOpen(false),
+                            },
+                            {
+                                children: 'Confirm',
+                                onClick: () => setIsOpen(false),
+                            },
+                        ]}
+                    ></DialogFooter>
                 </InlineDialog>
                 <Button onClick={action('onClick')} emphasis={ButtonEmphasis.Strong} style={ButtonStyle.Loud}>
                     Button

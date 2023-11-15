@@ -1,26 +1,24 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Trigger } from '@utilities/dialogs/Trigger';
-import { Content } from '@utilities/dialogs/Content';
-import { Modality, OverlayProps } from '../../types/dialog';
+import { Modality, OverlayProps } from '../../types';
 import { Overlay } from '@utilities/dialogs/Overlay';
 import { Z_INDEX_POPOVER } from '@utilities/dialogs/constants';
-
-export type PopoverComponentProps = OverlayProps;
 
 export const Popover = ({
     children,
     open,
+    anchor,
     placement = 'bottom-start',
     offset = [0, 8],
     flip = false,
     enablePortal = true,
     'data-test-id': dataTestId = 'fondue-popover',
     role = 'region',
-}: PopoverComponentProps) => {
+}: OverlayProps) => {
     return (
         <Overlay
             open={open}
+            anchor={anchor}
             placement={placement}
             offset={offset}
             flip={flip}
@@ -35,5 +33,3 @@ export const Popover = ({
     );
 };
 Popover.displayName = 'FonduePopover';
-Popover.Trigger = Trigger;
-Popover.Content = Content;

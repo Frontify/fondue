@@ -2,9 +2,7 @@
 
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { Popper } from '@components/Popper';
-import { Children, isValidElement, useCallback, useEffect, useRef, useState } from 'react';
-import { Trigger } from '@utilities/dialogs/Trigger';
-import { Content } from '@utilities/dialogs/Content';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { OVERLAY_CONTAINER_CLASSES } from '@utilities/overlayStyle';
 import { BaseDialogProps, Modality, OverlayProps } from '../../types';
 import { merge } from '@utilities/merge';
@@ -17,6 +15,7 @@ import useMobileDetection from '@hooks/useMobileDetection';
 
 export const Overlay = ({
     open,
+    anchor,
     placement = 'bottom-start',
     offset = [0, 8],
     flip = true,
@@ -39,7 +38,16 @@ export const Overlay = ({
 }: OverlayProps & BaseDialogProps) => {
     const id = useMemoizedId();
     const ref = useRef<HTMLDivElement | null>(null);
-    const [triggerElementRef, setTriggerElementRef] = useState<HTMLDivElement | null>(null);
+    const [triggerElementRef, setTriggerElementRef] = useState<HTMLElement | null>(null);
+
+    useEffect(() => {
+        const trigger = anchor?.current;
+
+        if (trigger) {
+            setTriggerElementRef(trigger as HTMLElement);
+        }
+    }, [anchor]);
+
     const { maxHeight: maxAutoHeight } = useDropdownAutoHeight(
         { current: triggerElementRef },
         { isOpen: open, autoResize: true },
@@ -75,6 +83,7 @@ export const Overlay = ({
     return (
         <>
             <Popper
+                anchor={anchor}
                 data-test-id={dataTestId}
                 open={open}
                 placement={placement}
@@ -86,50 +95,23 @@ export const Overlay = ({
                 verticalAlignment={verticalAlignment}
                 strategy={strategy}
             >
-                {Children.map(children, (child) => {
-                    if (isValidElement(child) && typeof child.type === 'function') {
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-ignore Property 'displayName' does not exist on type 'JSXElementConstructor<any>'.ts(2339)
-                        const { displayName } = child.type;
-
-                        if (displayName === Trigger.displayName) {
-                            return (
-                                <Popper.Trigger>
-                                    <div id={id} ref={setTriggerElementRef} data-test-id={`${dataTestId}-trigger`}>
-                                        {child}
-                                    </div>
-                                </Popper.Trigger>
-                            );
-                        }
-
-                        if (displayName === Content.displayName) {
-                            return (
-                                <Popper.Content>
-                                    <div
-                                        ref={ref}
-                                        data-test-id={`${dataTestId}-content`}
-                                        className={merge([
-                                            'tw-flex tw-flex-col tw-pointer-events-auto',
-                                            OVERLAY_CONTAINER_CLASSES,
-                                        ])}
-                                        role={role}
-                                        id={id}
-                                        aria-hidden={!open}
-                                        aria-labelledby={id}
-                                        style={{
-                                            minWidth: isMobile ? '80vw' : minWidth,
-                                            minHeight,
-                                            maxWidth,
-                                            maxHeight: maxContentHeight,
-                                        }}
-                                    >
-                                        {child}
-                                    </div>
-                                </Popper.Content>
-                            );
-                        }
-                    }
-                })}
+                <div
+                    ref={ref}
+                    data-test-id={`${dataTestId}-content`}
+                    className={merge(['tw-flex tw-flex-col tw-pointer-events-auto', OVERLAY_CONTAINER_CLASSES])}
+                    role={role}
+                    id={id}
+                    aria-hidden={!open}
+                    aria-labelledby={id}
+                    style={{
+                        minWidth: isMobile ? '90vw' : minWidth,
+                        minHeight,
+                        maxWidth,
+                        maxHeight: maxContentHeight,
+                    }}
+                >
+                    {children}
+                </div>
             </Popper>
 
             {modality !== Modality.NonModal && open && (

@@ -1,11 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Children, isValidElement, useLayoutEffect, useState } from 'react';
-import { Trigger } from '@utilities/dialogs/Trigger';
-import { Content } from '@utilities/dialogs/Content';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { usePopper } from 'react-popper';
-import { Portal } from '@components/Portal';
 import { PopperDimension, PopperProps, PrepareElementStyleProps } from '@components/Popper/types';
+import { EnablePortalWrapper } from '@utilities/dialogs/EnablePortalWrapper';
 
 const DEFAULT_POPPER_WIDTH = 200;
 const DEFAULT_POPPER_HEIGHT = 400;
@@ -28,13 +26,22 @@ export const Popper = ({
     isDetached = false,
     verticalAlignment,
     strategy = 'absolute',
+    anchor,
 }: PopperProps) => {
-    const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
+    const [referenceElement, setReferenceElement] = useState<HTMLElement | null>(null);
     const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
     const [popperDimensions, setPopperDimensions] = useState<PopperDimension>({
         width: DEFAULT_POPPER_WIDTH,
         height: DEFAULT_POPPER_HEIGHT,
     });
+
+    useEffect(() => {
+        const trigger = anchor?.current;
+
+        if (trigger) {
+            setReferenceElement(trigger as HTMLElement);
+        }
+    }, [anchor]);
 
     const popperInstance = usePopper(isDetached ? document.body : referenceElement, popperElement, {
         placement,
@@ -71,51 +78,21 @@ export const Popper = ({
         : {};
 
     return (
-        <>
-            {Children.map(children, (child) => {
-                if (isValidElement(child) && typeof child.type === 'function') {
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore Property 'displayName' does not exist on type 'JSXElementConstructor<any>'.ts(2339)
-                    const { displayName } = child.type;
-
-                    if (displayName === Trigger.displayName) {
-                        return <div ref={setReferenceElement}>{child}</div>;
-                    }
-
-                    if (displayName === Content.displayName && open) {
-                        return enablePortal ? (
-                            <Portal>
-                                <div
-                                    ref={setPopperElement}
-                                    style={{
-                                        zIndex,
-                                        ...popperInstance.styles.popper,
-                                        ...detachedElementStyles,
-                                    }}
-                                    {...popperInstance.attributes.popper}
-                                >
-                                    {child}
-                                </div>
-                            </Portal>
-                        ) : (
-                            <div
-                                ref={setPopperElement}
-                                style={{
-                                    zIndex,
-                                    ...popperInstance.styles.popper,
-                                    ...detachedElementStyles,
-                                }}
-                                {...popperInstance.attributes.popper}
-                            >
-                                {child}
-                            </div>
-                        );
-                    }
-                }
-            })}
-        </>
+        open && (
+            <EnablePortalWrapper enablePortal={enablePortal}>
+                <div
+                    ref={setPopperElement}
+                    style={{
+                        zIndex,
+                        ...popperInstance.styles.popper,
+                        ...detachedElementStyles,
+                    }}
+                    {...popperInstance.attributes.popper}
+                >
+                    {children}
+                </div>
+            </EnablePortalWrapper>
+        )
     );
 };
 Popper.displayName = 'FonduePopper';
-Popper.Trigger = Trigger;
-Popper.Content = Content;

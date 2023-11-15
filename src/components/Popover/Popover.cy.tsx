@@ -1,30 +1,30 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Button } from '@components/Button';
-import { Popover, PopoverComponentProps } from '@components/Popover/Popover';
+import { Popover } from '@components/Popover/Popover';
+import { OverlayProps } from '../../types';
 
 const POPOVER_SELECTOR = '[data-test-id=fondue-popover-content]';
 const POPOVER_TRIGGER = '[data-test-id=popover-trigger]';
 const POPOVER_INTERACTIVE_ELEMENT = '[data-test-id=popover-content-button]';
 
-const PopoverComponent = ({ placement, offset, flip }: Omit<PopoverComponentProps, 'open'>) => {
+const PopoverComponent = ({ placement, offset, flip }: Omit<OverlayProps, 'open' | 'anchor'>) => {
     const [open, setOpen] = useState(false);
+    const triggerRef = useRef<HTMLButtonElement | null>(null);
 
     return (
-        <Popover open={open} placement={placement} offset={offset} flip={flip}>
-            <Popover.Trigger>
-                <Button data-test-id="popover-trigger" onClick={() => setOpen(!open)}>
-                    Hello
-                </Button>
-            </Popover.Trigger>
-            <Popover.Content>
+        <>
+            <Button ref={triggerRef} data-test-id="popover-trigger" onClick={() => setOpen(!open)}>
+                Hello
+            </Button>
+            <Popover anchor={triggerRef} open={open} placement={placement} offset={offset} flip={flip}>
                 <div className="tw-p-3">
                     <p>Some content</p>
                     <Button data-test-id="popover-content-button">Confirm</Button>
                 </div>
-            </Popover.Content>
-        </Popover>
+            </Popover>
+        </>
     );
 };
 

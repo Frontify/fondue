@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { Popper } from './Popper';
 import { Button } from '@components/Button';
@@ -29,10 +29,15 @@ export default {
 
 const Template: StoryFn<PopperProps> = (args) => {
     const [open, setOpen] = useState(false);
+    const anchorRef = useRef<HTMLButtonElement | null>(null);
 
     return (
         <div className="tw-flex tw-justify-center">
+            <Button ref={anchorRef} onClick={() => setOpen(!open)}>
+                Hello
+            </Button>
             <Popper
+                anchor={anchorRef}
                 open={open}
                 placement={args.placement}
                 offset={args.offset}
@@ -40,14 +45,9 @@ const Template: StoryFn<PopperProps> = (args) => {
                 enablePortal={args.enablePortal}
                 strategy={args.strategy}
             >
-                <Popper.Trigger>
-                    <Button onClick={() => setOpen(!open)}>Hello</Button>
-                </Popper.Trigger>
-                <Popper.Content>
-                    <Box className="tw-bg-base tw-border tw-border-black tw-w-[400px]">
-                        <p>Some content</p>
-                    </Box>
-                </Popper.Content>
+                <Box className="tw-bg-base tw-border tw-border-black tw-w-[400px]">
+                    <p>Some content</p>
+                </Box>
             </Popper>
         </div>
     );
