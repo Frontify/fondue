@@ -1,17 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
-import { PopperPlacement } from '@components/Popper';
-import { usePopper } from 'react-popper';
+import { ReactElement, useCallback, useEffect, useRef } from 'react';
+import { Popper, PopperPlacement } from '@components/Popper';
 import { merge } from '@utilities/merge';
 import { useToggleOverlay } from '@hooks/useToggleOverlay';
 import { Z_INDEX_TOOLTIP } from '@utilities/dialogs/constants';
-import { EnablePortalWrapper } from '@utilities/dialogs/EnablePortalWrapper';
 import { useMemoizedId } from '@hooks/useMemoizedId';
-import { OVERLAY_CONTAINER_DARK_THEME_STYLING } from '@utilities/overlayStyle';
-
-const ARROW_DISTANCE_FROM_CORNER_VALUE = 12;
-const TOOLTIP_EXTRA_OFFSET_VALUE = 7; // As the arrow is set 12px away from tooltip corner, extra offset should be added to still point to Trigger.
+import { ARROW_DARK_THEME, OVERLAY_CONTAINER_DARK_THEME_STYLING } from '@utilities/overlayStyle';
 
 export type TooltipProps = {
     id?: string;
@@ -34,35 +29,9 @@ export type TooltipProps = {
     'aria-label'?: string;
 };
 
-const getArrowClasses = (currentPlacement: string) => {
-    switch (true) {
-        case currentPlacement.includes('top'):
-            return 'before:tw-border-t-0 before:tw-border-l-0 tw-bottom-[-6px]';
-        case currentPlacement.includes('right'):
-            return 'before:tw-border-t-0 before:tw-border-r-0 tw-left-[-6px]';
-        case currentPlacement.includes('bottom'):
-            return 'before:tw-border-b-0 before:tw-border-r-0 tw-top-[-6px]';
-        case currentPlacement.includes('left'):
-            return 'before:tw-border-b-0 before:tw-border-l-0 tw-right-[-6px]';
-        default:
-            return 'before:tw-border-b-0 before:tw-border-r-0 tw-top-[-6px]';
-    }
-};
-
 const formatTooltipText = (text: string) => {
     const lineBreakRegex = /<br\s*\/?>/;
     return text.split(lineBreakRegex).join('\n');
-};
-
-const getNewOffsetBasedOnArrowPosition = (currentPlacement: string, offset: [number, number]): [number, number] => {
-    switch (true) {
-        case currentPlacement.includes('end'):
-            return [offset[0] + TOOLTIP_EXTRA_OFFSET_VALUE, offset[1]];
-        case currentPlacement.includes('start'):
-            return [offset[0] - TOOLTIP_EXTRA_OFFSET_VALUE, offset[1]];
-        default:
-            return offset;
-    }
 };
 
 export const Tooltip = ({
@@ -87,28 +56,8 @@ export const Tooltip = ({
 }: TooltipProps) => {
     const id = useMemoizedId(customId);
     const [open, setOpen] = useToggleOverlay(openOnMount);
-    const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
-    const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
-    const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
-    const [tooltipOffset, setTooltipOffset] = useState<[number, number]>(offset);
-
-    const { styles, attributes, state } = usePopper(referenceElement, popperElement, {
-        placement,
-        modifiers: [
-            { name: 'arrow', options: { element: arrowElement, padding: ARROW_DISTANCE_FROM_CORNER_VALUE } },
-            { name: 'offset', options: { offset: tooltipOffset } },
-            { name: 'flip', enabled: flip },
-        ],
-    });
-
-    const currentPlacement = state?.placement ?? placement;
-    const arrowStyling = getArrowClasses(currentPlacement);
+    const triggerRef = useRef<HTMLButtonElement | null>(null);
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-    useEffect(() => {
-        const newOffset = getNewOffsetBasedOnArrowPosition(currentPlacement, offset);
-        setTooltipOffset(newOffset);
-    }, [currentPlacement, offset]);
 
     const handleHideTooltip = useCallback(() => {
         if (timeoutRef.current) {
@@ -139,7 +88,7 @@ export const Tooltip = ({
     return (
         <>
             <button
-                ref={setReferenceElement}
+                ref={triggerRef}
                 onMouseEnter={handleShowTooltip}
                 onFocus={handleShowTooltip}
                 onMouseLeave={handleHideTooltip}
@@ -153,39 +102,32 @@ export const Tooltip = ({
             >
                 {children}
             </button>
-            {open && (
-                <EnablePortalWrapper enablePortal={enablePortal}>
-                    <div
-                        data-test-id={dataTestId}
-                        role="tooltip"
-                        id={id}
-                        aria-hidden={!open}
-                        ref={setPopperElement}
-                        className={merge([
-                            OVERLAY_CONTAINER_DARK_THEME_STYLING,
-                            'tw-popper-container tw-inline-block tw-text-heading-medium',
-                            size === 'spacious' ? 'tw-pt-2 tw-px-3 tw-pb-2.5' : 'tw-pt-1 tw-px-2 tw-pb-1.5',
-                        ])}
-                        style={{ ...styles.popper, maxWidth, maxHeight, zIndex }}
-                        {...attributes.popper}
-                    >
-                        <p className="tw-whitespace-pre-line">{formatTooltipText(content)}</p>
-                        {withArrow && (
-                            <div
-                                data-test-id={`${dataTestId}-arrow`}
-                                data-popper-arrow={withArrow}
-                                aria-hidden="true"
-                                ref={setArrowElement}
-                                style={styles.arrow}
-                                className={merge([
-                                    'tw-absolute tw-w-3 tw-h-3 tw-pointer-events-none before:tw-absolute before:tw-w-3 before:tw-h-3 before:tw-rotate-45 before:tw-border before:tw-border-line-mighty before:tw-bg-box-neutral-mighty',
-                                    arrowStyling,
-                                ])}
-                            />
-                        )}
-                    </div>
-                </EnablePortalWrapper>
-            )}
+            <Popper
+                open={open}
+                anchor={triggerRef}
+                placement={placement}
+                offset={offset}
+                flip={flip}
+                withArrow={withArrow}
+                arrowCustomColors={ARROW_DARK_THEME}
+                enablePortal={enablePortal}
+                zIndex={Z_INDEX_TOOLTIP}
+            >
+                <div
+                    data-test-id={dataTestId}
+                    role="tooltip"
+                    id={id}
+                    aria-hidden={!open}
+                    className={merge([
+                        OVERLAY_CONTAINER_DARK_THEME_STYLING,
+                        'tw-popper-container tw-inline-block tw-text-heading-medium',
+                        size === 'spacious' ? 'tw-pt-2 tw-px-3 tw-pb-2.5' : 'tw-pt-1 tw-px-2 tw-pb-1.5',
+                    ])}
+                    style={{ maxWidth, maxHeight, zIndex }}
+                >
+                    <p className="tw-whitespace-pre-line">{formatTooltipText(content)}</p>
+                </div>
+            </Popper>
         </>
     );
 };

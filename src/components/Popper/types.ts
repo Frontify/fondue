@@ -32,6 +32,8 @@ export type PopperProps = {
     verticalAlignment?: 'top' | 'centered';
     /** @description The property sets the way the modal is positioned on the view */
     strategy?: PositioningStrategy;
+    withArrow?: boolean;
+    arrowCustomColors?: string;
 };
 
 const POPPER_PLACEMENT = [

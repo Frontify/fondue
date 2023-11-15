@@ -18,7 +18,7 @@ export default {
     args: {
         offset: [0, 8],
         flip: true,
-        theme: 'light',
+        placement: 'bottom-start',
     },
     argTypes: {
         ...POPPER_STORY_ARGS,
@@ -34,6 +34,7 @@ export default {
             control: { type: 'select' },
             defaultValue: 'light',
         },
+        withArrow: { control: { type: 'boolean' }, defaultValue: false },
     },
 } as Meta<OverlayProps>;
 
@@ -113,4 +114,11 @@ WithInteractiveContent.args = {};
 export const DarkTheme = Template.bind({});
 DarkTheme.args = {
     theme: 'dark',
+};
+
+export const WithArrowAndDarkTheme = Template.bind({});
+WithArrowAndDarkTheme.args = {
+    theme: 'dark',
+    withArrow: true,
+    offset: [0, 12],
 };

@@ -36,6 +36,8 @@ export const Overlay = ({
     verticalAlignment,
     strategy,
     theme = 'light',
+    withArrow,
+    arrowCustomColors,
 }: OverlayProps & BaseDialogProps) => {
     const id = useMemoizedId();
     const ref = useRef<HTMLDivElement | null>(null);
@@ -95,6 +97,8 @@ export const Overlay = ({
                 isDetached={isDetached}
                 verticalAlignment={verticalAlignment}
                 strategy={strategy}
+                withArrow={withArrow}
+                arrowCustomColors={arrowCustomColors}
             >
                 <div
                     ref={ref}
