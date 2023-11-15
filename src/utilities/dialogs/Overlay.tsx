@@ -3,7 +3,7 @@
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { Popper } from '@components/Popper';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { OVERLAY_CONTAINER_CLASSES } from '@utilities/overlayStyle';
+import { OVERLAY_CONTAINER_DARK_THEME_STYLING, OVERLAY_CONTAINER_LIGHT_THEME_STYLING } from '@utilities/overlayStyle';
 import { BaseDialogProps, Modality, OverlayProps } from '../../types';
 import { merge } from '@utilities/merge';
 import { useFocusTrap } from '@hooks/useFocusTrap';
@@ -35,6 +35,7 @@ export const Overlay = ({
     isDetached,
     verticalAlignment,
     strategy,
+    theme = 'light',
 }: OverlayProps & BaseDialogProps) => {
     const id = useMemoizedId();
     const ref = useRef<HTMLDivElement | null>(null);
@@ -98,7 +99,12 @@ export const Overlay = ({
                 <div
                     ref={ref}
                     data-test-id={`${dataTestId}-content`}
-                    className={merge(['tw-flex tw-flex-col tw-pointer-events-auto', OVERLAY_CONTAINER_CLASSES])}
+                    className={merge([
+                        'tw-flex tw-flex-col tw-pointer-events-auto',
+                        theme === 'light'
+                            ? OVERLAY_CONTAINER_LIGHT_THEME_STYLING
+                            : OVERLAY_CONTAINER_DARK_THEME_STYLING,
+                    ])}
                     role={role}
                     id={id}
                     aria-hidden={!open}

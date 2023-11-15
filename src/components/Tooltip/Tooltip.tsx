@@ -8,6 +8,7 @@ import { useToggleOverlay } from '@hooks/useToggleOverlay';
 import { Z_INDEX_TOOLTIP } from '@utilities/dialogs/constants';
 import { EnablePortalWrapper } from '@utilities/dialogs/EnablePortalWrapper';
 import { useMemoizedId } from '@hooks/useMemoizedId';
+import { OVERLAY_CONTAINER_DARK_THEME_STYLING } from '@utilities/overlayStyle';
 
 const ARROW_DISTANCE_FROM_CORNER_VALUE = 12;
 const TOOLTIP_EXTRA_OFFSET_VALUE = 7; // As the arrow is set 12px away from tooltip corner, extra offset should be added to still point to Trigger.
@@ -161,7 +162,8 @@ export const Tooltip = ({
                         aria-hidden={!open}
                         ref={setPopperElement}
                         className={merge([
-                            'tw-popper-container tw-inline-block tw-bg-box-neutral-mighty tw-rounded-md tw-shadow tw-text-heading-medium tw-text-box-neutral-mighty-inverse tw-border tw-border-line-mighty',
+                            OVERLAY_CONTAINER_DARK_THEME_STYLING,
+                            'tw-popper-container tw-inline-block tw-text-heading-medium',
                             size === 'spacious' ? 'tw-pt-2 tw-px-3 tw-pb-2.5' : 'tw-pt-1 tw-px-2 tw-pb-1.5',
                         ])}
                         style={{ ...styles.popper, maxWidth, maxHeight, zIndex }}

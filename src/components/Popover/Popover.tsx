@@ -14,10 +14,12 @@ export const Popover = ({
     enablePortal = true,
     'data-test-id': dataTestId = 'fondue-popover',
     role = 'region',
+    theme,
 }: OverlayProps) => {
     return (
         <Overlay
             open={open}
+            theme={theme}
             anchor={anchor}
             placement={placement}
             offset={offset}

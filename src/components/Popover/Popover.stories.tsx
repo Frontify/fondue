@@ -18,6 +18,7 @@ export default {
     args: {
         offset: [0, 8],
         flip: true,
+        theme: 'light',
     },
     argTypes: {
         ...POPPER_STORY_ARGS,
@@ -28,6 +29,11 @@ export default {
             type: 'string',
         },
         zIndex: { table: { disable: true } },
+        theme: {
+            options: ['light', 'dark'],
+            control: { type: 'select' },
+            defaultValue: 'light',
+        },
     },
 } as Meta<OverlayProps>;
 
@@ -103,3 +109,8 @@ TriggeredOnHover.args = {};
 
 export const WithInteractiveContent = WithInteractiveContentTemplate.bind({});
 WithInteractiveContent.args = {};
+
+export const DarkTheme = Template.bind({});
+DarkTheme.args = {
+    theme: 'dark',
+};

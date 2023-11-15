@@ -64,4 +64,5 @@ export type OverlayProps = PopperProps & {
     open: boolean;
     'data-test-id'?: string;
     role?: string;
+    theme?: 'light' | 'dark';
 };
