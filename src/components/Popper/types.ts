@@ -51,6 +51,10 @@ const POPPER_PLACEMENT = [
     'left-end',
 ];
 export const POPPER_STORY_ARGS = {
+    anchor: {
+        description:
+            'The anchor serves as the point of reference to which the popper container positions itself relatively.',
+    },
     placement: {
         options: POPPER_PLACEMENT,
         control: { type: 'select' },
@@ -61,6 +65,11 @@ export const POPPER_STORY_ARGS = {
     enablePortal: {
         control: { type: 'boolean' },
     },
+    strategy: {
+        options: ['absolute', 'fixed'],
+        control: { type: 'radio' },
+    },
+    open: { control: { type: 'boolean' } },
 };
 
 export type PopperDimension = {

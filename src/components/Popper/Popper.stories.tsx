@@ -22,11 +22,24 @@ export default {
     },
     argTypes: {
         ...POPPER_STORY_ARGS,
-        strategy: {
-            options: ['absolute', 'fixed'],
+        withArrow: {
+            control: { type: 'boolean' },
+        },
+        arrowCustomColors: {
+            description:
+                'Color Styling for the popper arrow using tailwind classes and before prefix, example: "before:tw-border before:tw-border-line-x-strong before:tw-bg-base"',
+            control: { type: 'string' },
+        },
+        isDetached: {
+            description: 'if true, the popper container will detach from the Trigger position and act as a Dialog',
+            control: { type: 'boolean' },
+        },
+        verticalAlignment: {
+            description:
+                'if isDetached is set to true, verticalAlignment will position the Dialog either in the center of the viewport or on Top of the screen.',
+            options: ['top', 'centered'],
             control: { type: 'radio' },
         },
-        open: { control: { type: 'boolean' } },
     },
 } as Meta<PopperProps>;
 

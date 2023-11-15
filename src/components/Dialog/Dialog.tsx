@@ -4,7 +4,11 @@ import { BaseDialogProps, Modality, OverlayProps } from '../../types';
 import { Overlay } from '@utilities/dialogs/Overlay';
 import { Z_INDEX_MODAL } from '@utilities/dialogs/constants';
 
-export type DialogProps = Omit<OverlayProps, 'placement' | 'flip' | 'offset'> & BaseDialogProps;
+export type DialogProps = Omit<
+    OverlayProps,
+    'placement' | 'flip' | 'offset' | 'theme' | 'withArrow' | 'arrowCustomColors'
+> &
+    BaseDialogProps;
 
 export const Dialog = ({
     children,

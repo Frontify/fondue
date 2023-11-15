@@ -1,10 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { BaseDialogProps, Modality, OverlayProps } from '../../types/dialog';
+import { BaseDialogProps, Modality, OverlayProps } from '../../types';
 import { Overlay } from '@utilities/dialogs/Overlay';
 import { Z_INDEX_MODAL } from '@utilities/dialogs/constants';
 
-export type InlineDialogProps = Omit<OverlayProps, 'strategy'> & BaseDialogProps;
+export type InlineDialogProps = Omit<
+    OverlayProps,
+    'theme' | 'isDetached' | 'verticalAlignment' | 'withArrow' | 'arrowCustomColors'
+> &
+    BaseDialogProps;
 
 export const InlineDialog = ({
     children,
