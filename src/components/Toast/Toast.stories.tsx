@@ -26,7 +26,7 @@ export default {
             control: { type: 'select' },
             defaultValue: 'light',
         },
-        shouldAnimateExit: { control: { type: 'boolean' }, defaultValue: true },
+        enableExitAnimation: { control: { type: 'boolean' }, defaultValue: false },
         icon: { table: { disable: true } },
         children: { table: { disable: true } },
     },
