@@ -49,12 +49,21 @@ export const Popper = ({
     });
 
     useLayoutEffect(() => {
-        if (isDetached && popperInstance.state && open) {
-            setPopperDimensions({
-                width: popperInstance.state.rects?.popper?.width,
-                height: popperInstance.state.rects?.popper?.height,
-            });
-        }
+        const adjustPopperDimensions = () => {
+            if (isDetached && popperInstance.state && open) {
+                setPopperDimensions({
+                    width: popperInstance.state.rects?.popper?.width,
+                    height: popperInstance.state.rects?.popper?.height,
+                });
+            }
+        };
+
+        adjustPopperDimensions();
+        window.addEventListener('resize', adjustPopperDimensions);
+
+        return () => {
+            window.removeEventListener('resize', adjustPopperDimensions);
+        };
     }, [isDetached, open, popperInstance.state]);
 
     const detachedElementStyles = isDetached
