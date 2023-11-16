@@ -1,20 +1,26 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Validation } from '@utilities/validation';
-import type { InputHTMLAttributes, ReactElement } from 'react';
+import type { AriaAttributes, InputHTMLAttributes, ReactElement } from 'react';
 
-export type InputBaseProps<TValue> = {
+export type InputSharedBaseProps = {
     autocomplete?: boolean;
-    id?: string;
     clearable?: boolean;
     decorator?: ReactElement;
-    suffix?: string;
+    hugWidth?: boolean;
+    id?: string;
     status?: Validation;
+    'data-test-id'?: string;
+} & AriaAttributes;
+
+export type InputBaseProps<TValue> = {
     size?: number;
+    suffix?: string;
+    value?: TValue;
     valueSelect?: boolean;
     onChange?: (value?: TValue) => void;
-    'data-test-id'?: string;
-} & Omit<InputHTMLAttributes<HTMLInputElement>, 'className' | 'style' | 'onChange'>;
+} & InputSharedBaseProps &
+    Omit<InputHTMLAttributes<HTMLInputElement>, 'className' | 'style' | 'onChange' | 'value'>;
 
 type InputType = 'Text' | 'Password' | 'Number';
 export const InputTypes: Record<InputType, string> = {
