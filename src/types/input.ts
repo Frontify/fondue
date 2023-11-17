@@ -22,9 +22,30 @@ export type InputBaseProps<TValue> = {
 } & InputSharedBaseProps &
     Omit<InputHTMLAttributes<HTMLInputElement>, 'className' | 'style' | 'onChange' | 'value'>;
 
-type InputType = 'Text' | 'Password' | 'Number';
+export type InputType = 'Text' | 'Textarea' | 'Password' | 'Number';
+
 export const InputTypes: Record<InputType, string> = {
     Text: 'text',
+    Textarea: 'textarea',
     Password: 'password',
     Number: 'number',
+};
+
+export type InputActionCallbacks = {
+    text?: () => void;
+    textarea?: () => void;
+    password?: () => void;
+    increment?: () => void;
+    clearable?: () => void;
+};
+
+export type InputActionsProps = {
+    clearable?: boolean;
+    obfuscated?: boolean;
+    isObfuscated?: boolean;
+    increment?: boolean;
+    status?: Validation;
+    disabled?: boolean;
+    callbacks: InputActionCallbacks;
+    dataTestId?: string;
 };
