@@ -1,10 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MouseEvent, ReactElement } from 'react';
+import { ReactElement } from 'react';
 import { Validation, validationTextClassMap } from './validation';
 import { merge } from './merge';
-import { IconCheckMark16, IconCross16, IconExclamationMarkTriangle16 } from '@foundation/Icon';
+import { IconCheckMark16, IconCross16, IconExclamationMarkTriangle16, IconEye16, IconEyeOff16 } from '@foundation/Icon';
 import { Button, ButtonEmphasis, ButtonSize, ButtonStyle, LoadingCircle, LoadingCircleSize } from '@components/index';
+import { InputActionsProps } from 'src/types/input';
 
 type HelperTextProps = {
     text: string;
@@ -101,24 +102,44 @@ export const GetStatusIcon = (status: Validation, dataTestId: string): ReactElem
 
 GetStatusIcon.displayName = 'FondueGetStatusIcon';
 
-type ClearableCallbackProps = {
-    callback: (event?: MouseEvent<HTMLButtonElement>) => void;
-    dataTestId: string;
-};
-
-export const ClearableButton = ({ callback, dataTestId }: ClearableCallbackProps) => {
+export const InputActions = ({
+    clearable,
+    disabled,
+    obfuscated,
+    isObfuscated,
+    status,
+    callbacks,
+    dataTestId = 'fondue-input-actions',
+}: InputActionsProps): ReactElement => {
     return (
-        <Button
-            style={ButtonStyle.Default}
-            onClick={callback}
-            emphasis={ButtonEmphasis.Weak}
-            icon={<IconCross16 />}
-            size={ButtonSize.Small}
-            aria-describedby="Clear Input Value"
-            aria-label="Clear value"
-            data-test-id={`${dataTestId}-clear`}
-        />
+        <span className="tw-flex tw-items-center tw-justify-between tw-w-auto">
+            {obfuscated && (
+                <Button
+                    disabled={disabled}
+                    size={ButtonSize.Small}
+                    style={ButtonStyle.Default}
+                    emphasis={ButtonEmphasis.Weak}
+                    onClick={callbacks.password}
+                    aria-label={`${isObfuscated ? 'show' : 'hide'} text input`}
+                    icon={isObfuscated ? <IconEye16 /> : <IconEyeOff16 />}
+                    data-test-id={`${dataTestId}-visibility-icon`}
+                />
+            )}
+            {clearable && (
+                <Button
+                    style={ButtonStyle.Default}
+                    onClick={callbacks.clearable}
+                    emphasis={ButtonEmphasis.Weak}
+                    icon={<IconCross16 />}
+                    size={ButtonSize.Small}
+                    aria-describedby="Clear Input Value"
+                    aria-label="Clear value"
+                    data-test-id={`${dataTestId}-clear`}
+                />
+            )}
+            {status && GetStatusIcon(status, dataTestId)}
+        </span>
     );
 };
 
-ClearableButton.displayName = 'FondueClearableButton';
+InputActions.displayName = 'FondueInputActionButtons';
