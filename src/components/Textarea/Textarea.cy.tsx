@@ -13,16 +13,18 @@ const INPUT_TEXT = 'I am some input text';
 const ROW_HEIGHT = 20;
 
 describe('Textarea Unit tests', () => {
-    it('renders', () => {
+    it('renders default textarea', () => {
         cy.mount(<Textarea />);
         cy.get(TEXTAREA_ID).should('exist');
         cy.get(TEXTAREA_ID).should('be.visible');
+        cy.get(TEXTAREA_ID).should('not.have.attr', 'defaultValue');
         cy.get(TEXTAREA_ID).should('not.have.attr', 'value');
         cy.get(TEXTAREA_ID).should('not.have.attr', 'required');
         cy.get(TEXTAREA_ID).should('not.have.attr', 'placeholder');
         cy.get(TEXTAREA_ID).should('not.have.attr', 'disabled');
-        cy.get(TEXTAREA_ID).find(TEXTAREA_DECORATOR_ID).should('have.length', 0);
-        cy.get(TEXTAREA_ID).find(TEXTAREA_STATUS_ICON_ID).should('have.length', 0);
+        cy.get(TEXTAREA_ID).should('not.have.attr', 'readOnly');
+        cy.get(TEXTAREA_ID).find(TEXTAREA_DECORATOR_ID).should('not.exist');
+        cy.get(TEXTAREA_ID).find(TEXTAREA_STATUS_ICON_ID).should('not.exist');
     });
 
     it('sets and gets the value', () => {
