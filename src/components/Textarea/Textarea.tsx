@@ -25,7 +25,6 @@ export type TextareaProps = {
     debounceTime?: number;
     defaultValue?: string;
     onChange?: (value?: string) => void;
-    onInput?: (value?: string) => void;
     onEnterPressed?: (value?: string) => void;
     onKeyDown?: (event: KeyboardEvent<HTMLTextAreaElement>) => void;
 } & Omit<InputSharedBaseProps, 'hugWidth'> &
@@ -56,7 +55,6 @@ export const Textarea = ({
     onEnterPressed,
     onKeyDown,
     onFocus,
-    onInput,
     'data-test-id': dataTestId = 'fondue-textarea',
     ...props
 }: TextareaProps): ReactElement => {
@@ -66,13 +64,13 @@ export const Textarea = ({
 
     const { isFocusVisible, focusProps }: TextareaFocusWithChildren = useFocusRing({
         isTextInput: true,
+        within: true,
     });
 
     const handleOnChange = useDebounce(() => {
         if (textareaRef.current) {
             const { value } = textareaRef.current;
             onChange?.(value);
-            onInput?.(value);
         }
     }, debounceTime);
 
@@ -125,59 +123,64 @@ export const Textarea = ({
                     {decorator}
                 </div>
             ) : null}
-            <Component
-                {...(autosize ? autosizeProps : { rows: minRows })}
-                autoComplete={autocomplete ? 'on' : 'off'}
-                defaultValue={defaultValue}
-                disabled={disabled}
-                id={useMemoizedId(propId)}
-                placeholder={placeholder}
-                readOnly={readOnly}
-                ref={textareaRef}
-                required={required}
-                value={value}
-                onBlur={onBlur}
-                onChange={handleOnChange}
-                onClick={() => textareaRef.current?.focus()}
-                onFocus={(e) => {
-                    if (selectable) {
-                        e.target.select();
-                    }
-                    if (onFocus) {
-                        onFocus(e);
-                    }
-                }}
-                onKeyDown={handleOnKeyDown}
-                onInput={handleOnChange}
-                aria-label={dataTestId}
-                data-test-id={dataTestId}
-                className={merge([
-                    InputStylesLightTheme.base,
-                    InputStylesLightTheme.width,
-                    InputStylesLightTheme.disabled,
-                    InputStylesLightTheme.readOnly,
-                    InputStylesLightTheme.element,
-                    InputStylesLightTheme.focus,
-                    InputStylesLightTheme.hover,
-                    InputStylesDarkTheme.base,
-                    InputStylesDarkTheme.width,
-                    InputStylesDarkTheme.element,
-                    InputStylesDarkTheme.disabled,
-                    InputStylesDarkTheme.readOnly,
-                    InputStylesDarkTheme.focus,
-                    InputStylesDarkTheme.hover,
-                    isFocusVisible && FOCUS_STYLE,
-                    validationClassMap[status],
-                    resizable ? 'tw-resize' : 'tw-resize-none',
-                    decorator ? 'tw-pl-[2rem]' : 'tw-pl-[1rem]',
-                    getPaddingRight(),
-                ])}
-                {...props}
-                {...focusProps}
-            />
+            <span {...focusProps}>
+                <Component
+                    {...(autosize ? autosizeProps : { rows: minRows })}
+                    autoComplete={autocomplete ? 'on' : 'off'}
+                    defaultValue={defaultValue}
+                    disabled={disabled}
+                    id={useMemoizedId(propId)}
+                    placeholder={placeholder}
+                    readOnly={readOnly}
+                    ref={textareaRef}
+                    required={required}
+                    value={value}
+                    onBlur={onBlur}
+                    onChange={handleOnChange}
+                    onClick={() => textareaRef.current?.focus()}
+                    onFocus={(e) => {
+                        if (selectable) {
+                            e.target.select();
+                        }
+                        if (onFocus) {
+                            onFocus(e);
+                        }
+                    }}
+                    onKeyDown={handleOnKeyDown}
+                    aria-label={dataTestId}
+                    data-test-id={dataTestId}
+                    className={merge([
+                        InputStylesLightTheme.base,
+                        InputStylesLightTheme.width,
+                        InputStylesLightTheme.disabled,
+                        InputStylesLightTheme.readOnly,
+                        InputStylesLightTheme.element,
+                        InputStylesLightTheme.focus,
+                        InputStylesLightTheme.hover,
+                        InputStylesDarkTheme.base,
+                        InputStylesDarkTheme.width,
+                        InputStylesDarkTheme.element,
+                        InputStylesDarkTheme.disabled,
+                        InputStylesDarkTheme.readOnly,
+                        InputStylesDarkTheme.focus,
+                        InputStylesDarkTheme.hover,
+                        isFocusVisible && FOCUS_STYLE,
+                        validationClassMap[status],
+                        resizable ? 'tw-resize' : 'tw-resize-none',
+                        decorator ? 'tw-pl-[2rem]' : 'tw-pl-[1rem]',
+                        getPaddingRight(),
+                    ])}
+                    {...props}
+                />
+            </span>
 
             <span className="tw-absolute tw-top-[0.5rem] tw-pr-3 tw-right-[0rem]">
-                <InputActions clearable={clearable} status={status} callbacks={{ clearable: handleClear }} />
+                <InputActions
+                    clearable={clearable}
+                    status={status}
+                    callbacks={{ clearable: handleClear }}
+                    dataTestId={dataTestId}
+                />
             </span>
         </div>
     );
