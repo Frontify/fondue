@@ -11,69 +11,174 @@ export default {
     component: Textarea,
     tags: ['autodocs'],
     argTypes: {
-        autosize: { type: 'boolean' },
-        autocomplete: { type: 'boolean' },
-        decorator: { type: 'string' },
-        disabled: { type: 'boolean' },
-        readOnly: { type: 'boolean' },
-        focusOnMount: { type: 'boolean' },
+        autosize: {
+            type: 'boolean',
+            description: 'If `true`, component rendered is a auto sizing Textarea',
+            table: {
+                type: { summary: 'boolean | undefined' },
+                defaultValue: { summary: false },
+            },
+        },
+        autocomplete: {
+            type: 'boolean',
+            description: 'If `true`, Textarea will have `autoComplete` functionality',
+            table: {
+                type: { summary: 'boolean | undefined' },
+                defaultValue: { summary: false },
+            },
+        },
+        decorator: {
+            type: 'string',
+            description: 'A `ReactElement` that will be rendered at the start of the `Textarea`',
+            table: {
+                type: { summary: 'ReactElement | undefined' },
+                defaultValue: { summary: undefined },
+            },
+        },
+        debounceTime: {
+            type: 'number',
+            description:
+                'Time in `milliseconds` that the `onChange` & `onInput` methods will use for the `useDebounce` method',
+            table: {
+                type: { summary: 'number | undefined' },
+                defaultValue: { summary: 500 },
+            },
+        },
+        defaultValue: {
+            type: 'string',
+            description: 'Initial value',
+            table: {
+                type: { summary: 'string | undefined' },
+                defaultValue: { summary: undefined },
+            },
+        },
+        disabled: {
+            type: 'boolean',
+            table: {
+                type: { summary: 'boolean | undefined' },
+                defaultValue: { summary: false },
+            },
+        },
+        focusOnMount: {
+            type: 'boolean',
+            description: 'If `true`, Textarea will be focused on mount',
+            table: {
+                type: { summary: 'boolean | undefined' },
+                defaultValue: { summary: false },
+            },
+        },
         minRows: {
             type: 'number',
-            defaultValue: undefined,
             description: 'If `autosize` is false, this is used as `rows` property for default textarea',
+            table: {
+                type: { summary: 'number | undefined' },
+                defaultValue: { summary: undefined },
+            },
         },
         maxRows: {
             type: 'number',
             defaultValue: undefined,
             description: 'If `autosize` is false, this property is ignored',
+            table: {
+                type: { summary: 'number | undefined' },
+                defaultValue: { summary: undefined },
+            },
         },
-        resizable: { type: 'boolean' },
-        selectable: { type: 'boolean' },
-        status: { control: { type: 'select' }, options: Object.values(Validation), defaultValue: Validation.Default },
-        defaultValue: {
-            type: 'string',
-            defaultValue: undefined,
-            description: 'Initial value. \n\n `sting` `undefined`',
+        readOnly: {
+            type: 'boolean',
+            table: {
+                type: { summary: 'boolean | undefined' },
+                defaultValue: { summary: false },
+            },
         },
-        value: {
-            type: 'string',
-            defaultValue: undefined,
-            description: 'Current value. \n\n `sting` `undefined`',
+        resizable: {
+            type: 'boolean',
+            table: {
+                type: { summary: 'boolean | undefined' },
+                defaultValue: { summary: false },
+            },
+        },
+        selectable: {
+            type: 'boolean',
+            table: {
+                type: { summary: 'boolean | undefined' },
+                defaultValue: { summary: false },
+            },
+        },
+        status: {
+            control: { type: 'select' },
+            options: Object.values(Validation),
+            defaultValue: Validation.Default,
+            description:
+                'The current `Validation` status of the input and will trigger the corresponding `icon` to be appended to the `Textarea`',
+            table: {
+                type: { summary: 'Validation | undefined' },
+                defaultValue: { summary: 'Validation.Default' },
+            },
         },
         onChange: {
-            type: 'function',
             action: 'onChange',
-            defaultValue: undefined,
+            type: 'function',
+            description: 'Callback function to return current value on the `Textarea` (uses a `debounce` method)',
+            table: {
+                defaultValue: { summary: undefined },
+            },
         },
         onInput: {
             action: 'onInput',
-            description: '`((value: string) => void) | undefined`',
+            type: 'function',
+            description: 'Callback function to return current value on the `Textarea` (uses a `debounce` method)',
+            table: {
+                type: { summary: '((value: string) => void) | undefined' },
+                defaultValue: { summary: undefined },
+            },
         },
         onEnterPressed: {
-            type: 'function',
-            description: '`((event: KeyboardEvent<HTMLTextAreaElement>) => void) | undefined`',
             action: 'onEnterPressed',
-            defaultValue: undefined,
+            description: 'Callback function to return current value on the `Textarea` when `enter` key id pressed',
+            type: 'function',
+            table: {
+                type: { summary: '((value: string) => void) | undefined' },
+                defaultValue: { summary: undefined },
+            },
+        },
+        onKeyDown: {
+            action: 'onKeyDown',
+            description: 'Callback function that is called on every `keydown` event',
+            type: 'function',
+            table: {
+                type: { summary: '((event: KeyboardEvent<HTMLTextAreaElement>) => void) | undefined' },
+                defaultValue: { summary: undefined },
+            },
         },
         onBlur: {
             action: 'onBlur',
-            description: '`((event: FocusEvent<HTMLTextAreaElement, Element>) => void) | undefined`',
+            description: 'Callback function that is called when `Textarea` is unfocused',
+            type: 'function',
+            table: {
+                type: { summary: '((event: FocusEvent<HTMLTextAreaElement, Element>) => void) | undefined' },
+                defaultValue: { summary: undefined },
+            },
         },
         onFocus: {
             action: 'onFocus',
-            defaultValue: undefined,
-            description: '`((event: FocusEvent<HTMLTextAreaElement, Element>) => void) | undefined`',
+            description: 'Callback function that is called when `Textarea` is focused',
+            type: 'function',
+            table: {
+                type: { summary: '((event: FocusEvent<HTMLTextAreaElement, Element>) => void) | undefined' },
+                defaultValue: { summary: undefined },
+            },
         },
     },
     args: {
-        status: Validation.Default,
         autosize: false,
-        resizable: false,
         autocomplete: false,
         disabled: false,
-        readOnly: false,
-        selectable: false,
         focusOnMount: false,
+        readOnly: false,
+        resizable: false,
+        selectable: false,
+        status: Validation.Default,
     },
 } as Meta<TextareaProps>;
 
@@ -86,7 +191,6 @@ const TextareaTemplate: StoryFn<TextareaProps> = (args) => {
 };
 
 export const Default = TextareaTemplate.bind({});
-Default.args = {};
 
 export const WithDecoratorAndAutosize = TextareaTemplate.bind({});
 WithDecoratorAndAutosize.args = {
