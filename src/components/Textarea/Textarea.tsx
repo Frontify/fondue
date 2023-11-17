@@ -2,7 +2,7 @@
 
 import { useDebounce } from '@hooks/useDebounce';
 import { useMemoizedId } from '@hooks/useMemoizedId';
-import { FocusRingAria, useFocusRing } from '@react-aria/focus';
+import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { InputActions, InputStylesDarkTheme, InputStylesLightTheme } from '@utilities/input';
 import { merge } from '@utilities/merge';
@@ -10,12 +10,6 @@ import { Validation, validationClassMap } from '@utilities/validation';
 import { KeyboardEvent, ReactElement, TextareaHTMLAttributes, useEffect, useRef } from 'react';
 import TextareaAutosize, { TextareaAutosizeProps } from 'react-textarea-autosize';
 import { InputSharedBaseProps } from 'src/types/input';
-
-/** Custom type required as 'style' prop from useFocusRing is not compatible with react-textarea-autosize 'style' prop */
-type TextareaFocusWithChildren = {
-    isFocusVisible: boolean;
-    focusProps: Omit<FocusRingAria['focusProps'], 'style'>;
-};
 
 export type TextareaProps = {
     autosize?: boolean;
@@ -62,7 +56,7 @@ export const Textarea = ({
 
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
-    const { isFocusVisible, focusProps }: TextareaFocusWithChildren = useFocusRing({
+    const { isFocusVisible, focusProps } = useFocusRing({
         isTextInput: true,
         within: true,
     });
