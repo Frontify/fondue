@@ -2,14 +2,20 @@
 
 import { useDebounce } from '@hooks/useDebounce';
 import { useMemoizedId } from '@hooks/useMemoizedId';
-import { useFocusRing } from '@react-aria/focus';
+import { FocusRingAria, useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
-import { GetStatusIcon, InputStylesDarkTheme, InputStylesLightTheme } from '@utilities/input';
+import { ClearableButton, GetStatusIcon, InputStylesDarkTheme, InputStylesLightTheme } from '@utilities/input';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
 import { KeyboardEvent, ReactElement, TextareaHTMLAttributes, useEffect, useRef } from 'react';
 import TextareaAutosize, { TextareaAutosizeProps } from 'react-textarea-autosize';
 import { InputSharedBaseProps } from 'src/types/input';
+
+/** Custom type required as 'style' prop from useFocusRIng is not compatible with react-textarea-autosize 'style' prop */
+type TextareaFocusWithChildren = {
+    isFocusVisible: boolean;
+    focusProps: Omit<FocusRingAria['focusProps'], 'style'>;
+};
 
 export type TextareaProps = {
     autosize?: boolean;
@@ -29,6 +35,7 @@ export type TextareaProps = {
 export const Textarea = ({
     autocomplete,
     autosize = false,
+    clearable = false,
     decorator,
     debounceTime = 500,
     defaultValue,
@@ -57,7 +64,9 @@ export const Textarea = ({
 
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
-    const { isFocusVisible, focusProps } = useFocusRing({ isTextInput: true, within: true });
+    const { isFocusVisible, focusProps }: TextareaFocusWithChildren = useFocusRing({
+        isTextInput: true,
+    });
 
     const handleOnChange = useDebounce(() => {
         if (textareaRef.current) {
@@ -75,6 +84,12 @@ export const Textarea = ({
         }
     };
 
+    const handleClear = () => {
+        if (textareaRef.current) {
+            textareaRef.current.value = '';
+        }
+    };
+
     useEffect(() => {
         focusOnMount && textareaRef.current?.focus();
     }, [focusOnMount]);
@@ -82,7 +97,7 @@ export const Textarea = ({
     const autosizeProps = { minRows, maxRows };
 
     return (
-        <div className={'tw-relative'} {...focusProps}>
+        <div className={'tw-relative'}>
             {decorator ? (
                 <div
                     className={merge([
@@ -143,17 +158,21 @@ export const Textarea = ({
                     status !== Validation.Default ? 'tw-pr-[2.5rem]' : 'tw-pr-[1rem]',
                 ])}
                 {...props}
+                {...focusProps}
             />
-            {status && (
-                <span
-                    className={merge([
-                        'tw-absolute tw-top-[0.5rem] tw-pr-4',
-                        autosize ? 'tw-right-[0rem]' : 'tw-right-[0.7rem]',
-                    ])}
-                >
-                    {GetStatusIcon(status, dataTestId)}
-                </span>
-            )}
+
+            <span className="tw-absolute tw-top-[0.5rem] tw-pr-4 tw-right-[0rem] tw-flex tw-items-center tw-justify-between tw-w-auto">
+                {clearable && (
+                    <span className={merge([''])}>
+                        <ClearableButton callback={handleClear} dataTestId={dataTestId} />
+                    </span>
+                )}
+                {status && (
+                    <span className={merge([autosize ? 'tw-right-[0rem]' : 'tw-right-[0.7rem]'])}>
+                        {GetStatusIcon(status, dataTestId)}
+                    </span>
+                )}
+            </span>
         </div>
     );
 };
