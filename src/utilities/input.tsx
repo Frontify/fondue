@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement } from 'react';
+import { MouseEvent, ReactElement } from 'react';
 import { Validation, validationTextClassMap } from './validation';
 import { merge } from './merge';
-import { IconCheckMark16, IconExclamationMarkTriangle16 } from '@foundation/Icon';
-import { LoadingCircle, LoadingCircleSize } from '@components/index';
+import { IconCheckMark16, IconCross16, IconExclamationMarkTriangle16 } from '@foundation/Icon';
+import { Button, ButtonEmphasis, ButtonSize, ButtonStyle, LoadingCircle, LoadingCircleSize } from '@components/index';
 
 type HelperTextProps = {
     text: string;
@@ -98,4 +98,27 @@ export const GetStatusIcon = (status: Validation, dataTestId: string): ReactElem
     }
     return null;
 };
+
 GetStatusIcon.displayName = 'FondueGetStatusIcon';
+
+type ClearableCallbackProps = {
+    callback: (event?: MouseEvent<HTMLButtonElement>) => void;
+    dataTestId: string;
+};
+
+export const ClearableButton = ({ callback, dataTestId }: ClearableCallbackProps) => {
+    return (
+        <Button
+            style={ButtonStyle.Default}
+            onClick={callback}
+            emphasis={ButtonEmphasis.Weak}
+            icon={<IconCross16 />}
+            size={ButtonSize.Small}
+            aria-describedby="Clear Input Value"
+            aria-label="Clear value"
+            data-test-id={`${dataTestId}-clear`}
+        />
+    );
+};
+
+ClearableButton.displayName = 'FondueClearableButton';
