@@ -132,15 +132,6 @@ export default {
                 defaultValue: { summary: undefined },
             },
         },
-        onInput: {
-            action: 'onInput',
-            type: 'function',
-            description: 'Callback function to return current value on the `Textarea` (uses a `debounce` method)',
-            table: {
-                type: { summary: '((value: string) => void) | undefined' },
-                defaultValue: { summary: undefined },
-            },
-        },
         onEnterPressed: {
             action: 'onEnterPressed',
             description: 'Callback function to return current value on the `Textarea` when `enter` key id pressed',

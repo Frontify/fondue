@@ -119,16 +119,6 @@ describe('Textarea Unit tests', () => {
         cy.get('@onChangeStub').should('be.calledOnce');
     });
 
-    it('calls the onInput event (debounce event)', () => {
-        const onInputStub = cy.stub().as('onInputStub');
-        cy.mount(<Textarea onInput={onInputStub} />);
-        cy.get(TEXTAREA_ID).type(INPUT_TEXT);
-        cy.get(TEXTAREA_ID).type(INPUT_TEXT);
-        cy.get(TEXTAREA_ID).type(INPUT_TEXT);
-        cy.wait(500);
-        cy.get('@onInputStub').should('be.calledOnce');
-    });
-
     it('calls the onBlur event', () => {
         const onBlurStub = cy.stub().as('onBlurStub');
         cy.mount(<Textarea onBlur={onBlurStub} />);
