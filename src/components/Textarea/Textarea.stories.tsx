@@ -27,6 +27,14 @@ export default {
                 defaultValue: { summary: false },
             },
         },
+        clearable: {
+            type: 'boolean',
+            description: 'Render `clear` button to clear input on click',
+            table: {
+                type: { summary: 'boolean | undefined' },
+                defaultValue: { summary: false },
+            },
+        },
         decorator: {
             type: 'string',
             description: 'A `ReactElement` that will be rendered at the start of the `Textarea`',
@@ -173,6 +181,7 @@ export default {
     args: {
         autosize: false,
         autocomplete: false,
+        clearable: false,
         disabled: false,
         focusOnMount: false,
         readOnly: false,
