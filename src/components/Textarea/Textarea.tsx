@@ -4,14 +4,14 @@ import { useDebounce } from '@hooks/useDebounce';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { FocusRingAria, useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
-import { ClearableButton, GetStatusIcon, InputStylesDarkTheme, InputStylesLightTheme } from '@utilities/input';
+import { InputActions, InputStylesDarkTheme, InputStylesLightTheme } from '@utilities/input';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
 import { KeyboardEvent, ReactElement, TextareaHTMLAttributes, useEffect, useRef } from 'react';
 import TextareaAutosize, { TextareaAutosizeProps } from 'react-textarea-autosize';
 import { InputSharedBaseProps } from 'src/types/input';
 
-/** Custom type required as 'style' prop from useFocusRIng is not compatible with react-textarea-autosize 'style' prop */
+/** Custom type required as 'style' prop from useFocusRing is not compatible with react-textarea-autosize 'style' prop */
 type TextareaFocusWithChildren = {
     isFocusVisible: boolean;
     focusProps: Omit<FocusRingAria['focusProps'], 'style'>;
@@ -96,6 +96,21 @@ export const Textarea = ({
 
     const autosizeProps = { minRows, maxRows };
 
+    const getPaddingRight = () => {
+        let paddingClass;
+        switch (true) {
+            case clearable && status !== Validation.Default:
+                paddingClass = 'tw-pr-[3.5rem]';
+                break;
+            case status !== Validation.Default || clearable:
+                paddingClass = 'tw-pr-[2.5rem]';
+                break;
+            default:
+                paddingClass = '-tw-pr-[1rem]';
+        }
+        return paddingClass;
+    };
+
     return (
         <div className={'tw-relative'}>
             {decorator ? (
@@ -155,23 +170,14 @@ export const Textarea = ({
                     validationClassMap[status],
                     resizable ? 'tw-resize' : 'tw-resize-none',
                     decorator ? 'tw-pl-[2rem]' : 'tw-pl-[1rem]',
-                    status !== Validation.Default ? 'tw-pr-[2.5rem]' : 'tw-pr-[1rem]',
+                    getPaddingRight(),
                 ])}
                 {...props}
                 {...focusProps}
             />
 
-            <span className="tw-absolute tw-top-[0.5rem] tw-pr-4 tw-right-[0rem] tw-flex tw-items-center tw-justify-between tw-w-auto">
-                {clearable && (
-                    <span className={merge([''])}>
-                        <ClearableButton callback={handleClear} dataTestId={dataTestId} />
-                    </span>
-                )}
-                {status && (
-                    <span className={merge([autosize ? 'tw-right-[0rem]' : 'tw-right-[0.7rem]'])}>
-                        {GetStatusIcon(status, dataTestId)}
-                    </span>
-                )}
+            <span className="tw-absolute tw-top-[0.5rem] tw-pr-3 tw-right-[0rem]">
+                <InputActions clearable={clearable} status={status} callbacks={{ clearable: handleClear }} />
             </span>
         </div>
     );
