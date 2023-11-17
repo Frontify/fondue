@@ -98,7 +98,7 @@ export const Textarea = ({
                 paddingClass = 'tw-pr-[2.5rem]';
                 break;
             default:
-                paddingClass = '-tw-pr-[1rem]';
+                paddingClass = 'tw-pr-[1rem]';
         }
         return paddingClass;
     };

@@ -6,6 +6,7 @@ import { Validation } from '@utilities/validation';
 
 const TEXTAREA_ID = '[data-test-id=fondue-textarea]';
 const TEXTAREA_DECORATOR_ID = '[data-test-id=fondue-textarea-decorator]';
+const TEXTAREA_CLEARABLE_ID = '[data-test-id=fondue-textarea-clear]';
 const TEXTAREA_STATUS_ICON_ID = '[data-test-id=fondue-textarea-status-icon]';
 const DEFAULT_TEXT = 'I am some text text.';
 const PLACEHOLDER = 'Enter some text in the textarea';
@@ -173,5 +174,13 @@ describe('Textarea Unit tests', () => {
             const height = $textarea.height() ?? 0;
             expect(Math.round(height)).to.equal(ROW_HEIGHT * 10);
         });
+    });
+
+    it('should clear the textarea when clearable button clicked', () => {
+        cy.mount(<Textarea clearable />);
+        cy.get(TEXTAREA_ID).type(INPUT_TEXT);
+        cy.get(TEXTAREA_ID).should('have.value', INPUT_TEXT);
+        cy.get(TEXTAREA_CLEARABLE_ID).realClick();
+        cy.get(TEXTAREA_ID).should('not.have.value');
     });
 });
