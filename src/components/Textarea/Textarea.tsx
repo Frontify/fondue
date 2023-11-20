@@ -15,7 +15,6 @@ export type TextareaProps = {
     focusOnMount?: boolean;
     resizable?: boolean;
     selectable?: boolean;
-    debounceTime?: number;
     defaultValue?: string;
     value?: string;
     onChange?: (value?: string) => void;

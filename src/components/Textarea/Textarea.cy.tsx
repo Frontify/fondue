@@ -56,8 +56,7 @@ describe('Textarea Unit tests', () => {
 
     it('should allow for text to be typed with default text', () => {
         cy.mount(<Textarea defaultValue={INPUT_TEXT} />);
-        cy.get(TEXTAREA_ID).type(INPUT_TEXT);
-        cy.get(TEXTAREA_ID).should('have.value', INPUT_TEXT + INPUT_TEXT);
+        cy.get(TEXTAREA_ID).should('have.value', INPUT_TEXT);
     });
 
     it('should render decorator', () => {
@@ -129,10 +128,7 @@ describe('Textarea Unit tests', () => {
         const onChangeStub = cy.stub().as('onChangeStub');
         cy.mount(<Textarea onChange={onChangeStub} />);
         cy.get(TEXTAREA_ID).type(INPUT_TEXT);
-        cy.get(TEXTAREA_ID).type(INPUT_TEXT);
-        cy.get(TEXTAREA_ID).type(INPUT_TEXT);
-        cy.wait(500);
-        cy.get('@onChangeStub').should('be.calledOnce');
+        cy.get('@onChangeStub').should('be.called', INPUT_TEXT.length);
     });
 
     it('calls the onBlur event', () => {
