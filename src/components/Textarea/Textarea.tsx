@@ -4,7 +4,7 @@ import { useDebounce } from '@hooks/useDebounce';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
-import { InputActions, InputExtraActions, InputStylesDarkTheme, InputStylesLightTheme } from '@utilities/input';
+import { GetStatusIcon, InputActions, InputExtraActions, InputStyles } from '@utilities/input';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
 import { KeyboardEvent, ReactElement, TextareaHTMLAttributes, useEffect, useRef } from 'react';
@@ -110,8 +110,8 @@ export const Textarea = ({
                 <div
                     className={merge([
                         'tw-absolute tw-top-[0.7rem] tw-left-[0.7rem] tw-z-10',
-                        disabled ? `${InputStylesLightTheme.disabled} ${InputStylesDarkTheme.disabled}` : '',
-                        readOnly ? `${InputStylesLightTheme.readOnly} + ${InputStylesDarkTheme.readOnly}` : '',
+                        disabled ? InputStyles.disabled : '',
+                        readOnly ? InputStyles.readOnly : '',
                     ])}
                     data-test-id={`${dataTestId}-decorator`}
                 >
@@ -145,20 +145,13 @@ export const Textarea = ({
                     aria-label={dataTestId}
                     data-test-id={dataTestId}
                     className={merge([
-                        InputStylesLightTheme.base,
-                        InputStylesLightTheme.width,
-                        InputStylesLightTheme.disabled,
-                        InputStylesLightTheme.readOnly,
-                        InputStylesLightTheme.element,
-                        InputStylesLightTheme.focus,
-                        InputStylesLightTheme.hover,
-                        InputStylesDarkTheme.base,
-                        InputStylesDarkTheme.width,
-                        InputStylesDarkTheme.element,
-                        InputStylesDarkTheme.disabled,
-                        InputStylesDarkTheme.readOnly,
-                        InputStylesDarkTheme.focus,
-                        InputStylesDarkTheme.hover,
+                        InputStyles.base,
+                        InputStyles.width,
+                        InputStyles.disabled,
+                        InputStyles.readOnly,
+                        InputStyles.element,
+                        InputStyles.focus,
+                        InputStyles.hover,
                         isFocusVisible && FOCUS_STYLE,
                         validationClassMap[status],
                         resizable ? 'tw-resize' : 'tw-resize-none',
@@ -169,14 +162,12 @@ export const Textarea = ({
                 />
             </span>
 
-            <span className="tw-absolute tw-top-[0.5rem] tw-pr-3 tw-right-[0rem]">
-                <InputActions
-                    clearable={clearable}
-                    status={status}
-                    callbacks={{ clearable: handleClear }}
-                    dataTestId={dataTestId}
-                />
-                {extraActions && <InputExtraActions actions={extraActions} dataTestId={dataTestId} />}
+            <span className="tw-absolute tw-top-[0.5rem] tw-pr-3 tw-right-[0rem] tw-flex tw-items-center tw-justify-between tw-w-auto">
+                <InputActions clearable={clearable} callbacks={{ clearable: handleClear }} dataTestId={dataTestId} />
+
+                {extraActions ? <InputExtraActions actions={extraActions} dataTestId={dataTestId} /> : null}
+
+                {status ? GetStatusIcon(status, dataTestId) : null}
             </span>
         </div>
     );

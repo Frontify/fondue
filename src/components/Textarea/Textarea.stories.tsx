@@ -234,4 +234,5 @@ WithExtraActions.args = {
         },
     ],
     placeholder: 'Enter some long form text here',
+    clearable: true,
 };
