@@ -92,6 +92,14 @@ export default {
                 defaultValue: { summary: undefined },
             },
         },
+        placeholder: {
+            type: 'string',
+            description: 'Placeholder text',
+            table: {
+                type: { summary: 'string | undefined' },
+                defaultValue: { summary: undefined },
+            },
+        },
         readOnly: {
             type: 'boolean',
             table: {
