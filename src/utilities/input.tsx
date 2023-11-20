@@ -4,7 +4,16 @@ import { ReactElement } from 'react';
 import { Validation, validationTextClassMap } from './validation';
 import { merge } from './merge';
 import { IconCheckMark16, IconCross16, IconExclamationMarkTriangle16, IconEye16, IconEyeOff16 } from '@foundation/Icon';
-import { Button, ButtonEmphasis, ButtonSize, ButtonStyle, LoadingCircle, LoadingCircleSize } from '@components/index';
+import {
+    Button,
+    ButtonEmphasis,
+    ButtonSize,
+    ButtonStyle,
+    LoadingCircle,
+    LoadingCircleSize,
+    Tooltip,
+    TooltipProps,
+} from '@components/index';
 import { InputActionsProps } from 'src/types/input';
 
 type HelperTextProps = {
@@ -143,3 +152,36 @@ export const InputActions = ({
 };
 
 InputActions.displayName = 'FondueInputActionButtons';
+
+export type ExtraAction = {
+    icon: ReactElement;
+    tooltip: TooltipProps;
+    callback: () => void;
+};
+
+type InputExtraActionsProps = {
+    actions: ExtraAction[];
+    dataTestId: string;
+};
+
+export const InputExtraActions = ({ actions, dataTestId }: InputExtraActionsProps) => {
+    return actions.map((action, i) => {
+        return (
+            <Tooltip key={`extra-action-${i}`} content={action.tooltip.content} data-test-id={`${dataTestId}-tooltip`}>
+                <Button
+                    key={`extra-action-${i}`}
+                    style={ButtonStyle.Default}
+                    onClick={action.callback}
+                    emphasis={ButtonEmphasis.Weak}
+                    icon={action.icon}
+                    size={ButtonSize.Small}
+                    aria-describedby="Extra Action Button"
+                    aria-label={action.tooltip['aria-label']}
+                    data-test-id={`${dataTestId}-extra-action-${i}`}
+                />
+            </Tooltip>
+        );
+    });
+};
+
+InputExtraActions.displayName = 'FondueInputExtraActions';
