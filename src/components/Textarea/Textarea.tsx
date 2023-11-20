@@ -100,11 +100,11 @@ export const Textarea = ({
             case actionCount > 0 && (clearable || status !== Validation.Default):
                 numOfRem = actionCount + 3;
                 return `${numOfRem}rem`;
-            case clearable && status !== Validation.Default:
-                return '3.5rem';
             case actionCount > 0:
                 numOfRem += actionCount * 1.5;
                 return `${numOfRem}rem`;
+            case clearable && status !== Validation.Default:
+                return '3.5rem';
             case status !== Validation.Default || clearable:
                 return '2.5rem';
             default:
@@ -113,7 +113,7 @@ export const Textarea = ({
     };
 
     return (
-        <div className={'tw-relative'}>
+        <div className="tw-relative">
             {decorator ? (
                 <div
                     className={merge([

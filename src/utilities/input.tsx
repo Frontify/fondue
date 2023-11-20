@@ -3,7 +3,6 @@
 import { ReactElement } from 'react';
 import { Validation, validationTextClassMap } from './validation';
 import { merge } from './merge';
-import { IconCheckMark16, IconCross16, IconExclamationMarkTriangle16, IconEye16, IconEyeOff16 } from '@foundation/Icon';
 import {
     Button,
     ButtonEmphasis,
@@ -15,6 +14,13 @@ import {
 } from '@components/index';
 import { InputActionsProps, InputExtraActionsProps } from 'src/types/input';
 import { generateRandomId } from './generateRandomId';
+import {
+    IconCheckMark16,
+    IconCross16,
+    IconExclamationMarkTriangle16,
+    IconEye16,
+    IconEyeOff16,
+} from '@foundation/Icon/Generated';
 
 type HelperTextProps = {
     text: string;
