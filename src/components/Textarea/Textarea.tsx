@@ -4,7 +4,7 @@ import { useDebounce } from '@hooks/useDebounce';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
-import { InputActions, InputStylesDarkTheme, InputStylesLightTheme } from '@utilities/input';
+import { InputActions, InputExtraActions, InputStylesDarkTheme, InputStylesLightTheme } from '@utilities/input';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
 import { KeyboardEvent, ReactElement, TextareaHTMLAttributes, useEffect, useRef } from 'react';
@@ -22,8 +22,8 @@ export type TextareaProps = {
     onEnterPressed?: (value?: string) => void;
     onKeyDown?: (event: KeyboardEvent<HTMLTextAreaElement>) => void;
 } & Omit<InputSharedBaseProps, 'hugWidth'> &
-    TextareaHTMLAttributes<HTMLTextAreaElement> &
-    TextareaAutosizeProps;
+    Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'onChange'> &
+    Omit<TextareaAutosizeProps, 'onChange'>;
 
 export const Textarea = ({
     autocomplete,
@@ -33,6 +33,7 @@ export const Textarea = ({
     debounceTime = 500,
     defaultValue,
     disabled = false,
+    extraActions = undefined,
     focusOnMount = false,
     id: propId,
     minRows,
@@ -175,6 +176,7 @@ export const Textarea = ({
                     callbacks={{ clearable: handleClear }}
                     dataTestId={dataTestId}
                 />
+                {extraActions && <InputExtraActions actions={extraActions} dataTestId={dataTestId} />}
             </span>
         </div>
     );

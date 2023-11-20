@@ -3,7 +3,7 @@
 import { Meta, StoryFn } from '@storybook/react';
 import { Textarea, TextareaProps } from '.';
 import { Validation } from '@utilities/validation';
-import { IconNook16 } from '@foundation/Icon';
+import { IconClipboard16, IconNook16, IconQuestionMark16 } from '@foundation/Icon';
 import { Box } from '@components/Box';
 
 export default {
@@ -36,7 +36,6 @@ export default {
             },
         },
         decorator: {
-            type: 'string',
             description: 'A `ReactElement` that will be rendered at the start of the `Textarea`',
             table: {
                 type: { summary: 'ReactElement | undefined' },
@@ -65,6 +64,13 @@ export default {
             table: {
                 type: { summary: 'boolean | undefined' },
                 defaultValue: { summary: false },
+            },
+        },
+        extraActions: {
+            description: 'Collection of extra actions the input can preform',
+            table: {
+                type: { summary: 'ExtraAction[] | undefined' },
+                defaultValue: { summary: undefined },
             },
         },
         focusOnMount: {
@@ -209,4 +215,23 @@ WithDecoratorAndAutosize.args = {
 export const WithDefaultText = TextareaTemplate.bind({});
 WithDefaultText.args = {
     defaultValue: 'I am some initialized texts to start the input.',
+};
+
+export const WithExtraActions = TextareaTemplate.bind({});
+WithExtraActions.args = {
+    extraActions: [
+        {
+            icon: <IconClipboard16 />,
+            tooltip: { content: 'Save to Clipboard' },
+            callback: () => {
+                alert('Mock Copied to Clipboard');
+            },
+        },
+        {
+            icon: <IconQuestionMark16 />,
+            tooltip: { content: 'Help Desk' },
+            callback: () => alert('Here to Help'),
+        },
+    ],
+    placeholder: 'Enter some long form text here',
 };

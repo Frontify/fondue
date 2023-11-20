@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconNook16 } from '@foundation/Icon';
+import { IconClipboard16, IconNook16, IconQuestionMark16 } from '@foundation/Icon';
 import { Textarea } from './Textarea';
 import { Validation } from '@utilities/validation';
 
@@ -8,10 +8,25 @@ const TEXTAREA_ID = '[data-test-id=fondue-textarea]';
 const TEXTAREA_DECORATOR_ID = '[data-test-id=fondue-textarea-decorator]';
 const TEXTAREA_CLEARABLE_ID = '[data-test-id=fondue-textarea-clear]';
 const TEXTAREA_STATUS_ICON_ID = '[data-test-id=fondue-textarea-status-icon]';
+const TEXTAREA_EXTRA_ACTION_ID = '[data-test-id=fondue-textarea-tooltip-button]';
 const DEFAULT_TEXT = 'I am some text text.';
 const PLACEHOLDER = 'Enter some text in the textarea';
 const INPUT_TEXT = 'I am some input text';
 const ROW_HEIGHT = 20;
+const EXTRA_ACTIONS = [
+    {
+        icon: <IconClipboard16 />,
+        tooltip: { content: 'Save to Clipboard' },
+        callback: () => {
+            alert('Mock Copied to Clipboard');
+        },
+    },
+    {
+        icon: <IconQuestionMark16 />,
+        tooltip: { content: 'Help Desk' },
+        callback: () => alert('Here to Help'),
+    },
+];
 
 describe('Textarea Unit tests', () => {
     it('renders default textarea', () => {
@@ -182,5 +197,10 @@ describe('Textarea Unit tests', () => {
         cy.get(TEXTAREA_ID).should('have.value', INPUT_TEXT);
         cy.get(TEXTAREA_CLEARABLE_ID).realClick();
         cy.get(TEXTAREA_ID).should('not.have.value');
+    });
+
+    it('should render extra actions', () => {
+        cy.mount(<Textarea extraActions={EXTRA_ACTIONS} />);
+        cy.get(TEXTAREA_EXTRA_ACTION_ID).should('be.visible');
     });
 });
