@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ExtraAction } from '@utilities/input';
+import { TooltipProps } from '@components/Tooltip';
 import { Validation } from '@utilities/validation';
 import type { AriaAttributes, InputHTMLAttributes, ReactElement } from 'react';
 
@@ -46,8 +46,18 @@ export type InputActionsProps = {
     obfuscated?: boolean;
     isObfuscated?: boolean;
     increment?: boolean;
-    status?: Validation;
     disabled?: boolean;
     callbacks: InputActionCallbacks;
     dataTestId?: string;
+};
+
+export type ExtraAction = {
+    icon: ReactElement;
+    tooltip: TooltipProps;
+    callback: () => void;
+};
+
+export type InputExtraActionsProps = {
+    actions: ExtraAction[];
+    dataTestId: string;
 };
