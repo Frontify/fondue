@@ -5,6 +5,7 @@ import { Textarea, TextareaProps } from '.';
 import { Validation } from '@utilities/validation';
 import { IconClipboard16, IconNook16, IconQuestionMark16 } from '@foundation/Icon';
 import { Box } from '@components/Box';
+import { useState } from 'react';
 
 const ExtraActions = [
     {
@@ -212,9 +213,11 @@ export default {
 } as Meta<TextareaProps>;
 
 const TextareaTemplate: StoryFn<TextareaProps> = (args) => {
+    const [input, setInput] = useState<string | undefined>(undefined);
+
     return (
         <Box className="tw-w-[80%] tw-ml-auto tw-mr-auto">
-            <Textarea {...args} />
+            <Textarea {...args} onChange={setInput} value={input} />
         </Box>
     );
 };
@@ -237,4 +240,9 @@ WithExtraActions.args = {
     extraActions: ExtraActions,
     placeholder: 'Enter some long form text here',
     clearable: true,
+};
+
+export const WithFocusOnMount = TextareaTemplate.bind({});
+WithFocusOnMount.args = {
+    focusOnMount: true,
 };

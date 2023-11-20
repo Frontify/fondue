@@ -47,6 +47,7 @@ export type InputActionsProps = {
     isObfuscated?: boolean;
     increment?: boolean;
     disabled?: boolean;
+    readOnly?: boolean;
     callbacks: InputActionCallbacks;
     dataTestId?: string;
 };
@@ -59,5 +60,7 @@ export type ExtraAction = {
 
 export type InputExtraActionsProps = {
     actions: ExtraAction[];
-    dataTestId: string;
+    disabled?: boolean;
+    readOnly?: boolean;
+    dataTestId?: string;
 };

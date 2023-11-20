@@ -107,6 +107,7 @@ GetStatusIcon.displayName = 'FondueGetStatusIcon';
 export const InputActions = ({
     clearable,
     disabled,
+    readOnly,
     obfuscated,
     isObfuscated,
     callbacks,
@@ -116,9 +117,9 @@ export const InputActions = ({
         <span className="tw-flex tw-items-center tw-justify-between tw-w-auto">
             {obfuscated && (
                 <Button
-                    disabled={disabled}
                     size={ButtonSize.Small}
                     style={ButtonStyle.Default}
+                    disabled={disabled ?? readOnly}
                     emphasis={ButtonEmphasis.Weak}
                     onClick={callbacks.password}
                     aria-label={`${isObfuscated ? 'show' : 'hide'} text input`}
@@ -130,6 +131,7 @@ export const InputActions = ({
                 <Button
                     style={ButtonStyle.Default}
                     onClick={callbacks.clearable}
+                    disabled={disabled ?? readOnly}
                     emphasis={ButtonEmphasis.Weak}
                     icon={<IconCross16 />}
                     size={ButtonSize.Small}
@@ -144,15 +146,16 @@ export const InputActions = ({
 
 InputActions.displayName = 'FondueInputActionButtons';
 
-export const InputExtraActions = ({ actions, dataTestId }: InputExtraActionsProps) => {
+export const InputExtraActions = ({ actions, disabled, readOnly, dataTestId }: InputExtraActionsProps) => {
     return actions.map((action, i) => {
         const id = generateRandomId();
         return (
-            <Tooltip key={`extra-action-${id}`} content={action.tooltip.content} data-test-id={`${dataTestId}-tooltip`}>
+            <Tooltip key={`extra-action-${id}`} data-test-id={`${dataTestId}-tooltip`} {...action.tooltip}>
                 <Button
                     key={`extra-action-${id}`}
                     style={ButtonStyle.Default}
                     onClick={action.callback}
+                    disabled={disabled ?? readOnly}
                     emphasis={ButtonEmphasis.Weak}
                     icon={action.icon}
                     size={ButtonSize.Small}

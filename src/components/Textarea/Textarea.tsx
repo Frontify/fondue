@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useDebounce } from '@hooks/useDebounce';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
@@ -18,19 +17,19 @@ export type TextareaProps = {
     selectable?: boolean;
     debounceTime?: number;
     defaultValue?: string;
+    value?: string;
     onChange?: (value?: string) => void;
     onEnterPressed?: (value?: string) => void;
     onKeyDown?: (event: KeyboardEvent<HTMLTextAreaElement>) => void;
-} & Omit<InputSharedBaseProps, 'hugWidth'> &
+} & Omit<InputSharedBaseProps, 'hugWidth' | 'value'> &
     Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'onChange'> &
-    Omit<TextareaAutosizeProps, 'onChange'>;
+    Omit<TextareaAutosizeProps, 'onChange' | 'defaultValue' | 'value'>;
 
 export const Textarea = ({
     autocomplete,
     autosize = false,
     clearable = false,
     decorator,
-    debounceTime = 500,
     defaultValue,
     disabled = false,
     extraActions = undefined,
@@ -62,12 +61,12 @@ export const Textarea = ({
         within: true,
     });
 
-    const handleOnChange = useDebounce(() => {
+    const handleOnChange = () => {
         if (textareaRef.current) {
             const { value } = textareaRef.current;
             onChange?.(value);
         }
-    }, debounceTime);
+    };
 
     const handleOnKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
         if (onEnterPressed && event.key === 'Enter') {
@@ -130,14 +129,13 @@ export const Textarea = ({
                 <Component
                     {...(autosize ? autosizeProps : { rows: minRows })}
                     autoComplete={autocomplete ? 'on' : 'off'}
-                    defaultValue={defaultValue}
                     disabled={disabled}
                     id={useMemoizedId(propId)}
-                    placeholder={placeholder}
                     readOnly={readOnly}
                     ref={textareaRef}
                     required={required}
-                    value={value}
+                    value={defaultValue ?? value}
+                    placeholder={placeholder}
                     onBlur={onBlur}
                     onChange={handleOnChange}
                     onClick={() => textareaRef.current?.focus()}
@@ -162,7 +160,7 @@ export const Textarea = ({
                         InputStyles.hover,
                         isFocusVisible && FOCUS_STYLE,
                         validationClassMap[status],
-                        resizable ? 'tw-resize' : 'tw-resize-none',
+                        resizable ? '' : 'tw-resize-none',
                         decorator ? 'tw-pl-[2rem]' : 'tw-pl-[1rem]',
                     ])}
                     style={{ paddingRight: getPaddingRight() }}
@@ -171,9 +169,22 @@ export const Textarea = ({
             </span>
 
             <span className="tw-absolute tw-top-[0.5rem] tw-pr-3 tw-right-[0rem] tw-flex tw-items-center tw-justify-between tw-w-auto">
-                <InputActions clearable={clearable} callbacks={{ clearable: handleClear }} dataTestId={dataTestId} />
+                <InputActions
+                    clearable={clearable}
+                    disabled={disabled}
+                    readOnly={readOnly}
+                    callbacks={{ clearable: handleClear }}
+                    dataTestId={dataTestId}
+                />
 
-                {extraActions ? <InputExtraActions actions={extraActions} dataTestId={dataTestId} /> : null}
+                {extraActions ? (
+                    <InputExtraActions
+                        actions={extraActions}
+                        disabled={disabled}
+                        readOnly={readOnly}
+                        dataTestId={dataTestId}
+                    />
+                ) : null}
 
                 {status ? GetStatusIcon(status, dataTestId) : null}
             </span>
