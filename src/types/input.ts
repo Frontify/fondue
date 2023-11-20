@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { ExtraAction } from '@utilities/input';
 import { Validation } from '@utilities/validation';
 import type { AriaAttributes, InputHTMLAttributes, ReactElement } from 'react';
 
@@ -7,6 +8,7 @@ export type InputSharedBaseProps = {
     autocomplete?: boolean;
     clearable?: boolean;
     decorator?: ReactElement;
+    extraActions?: ExtraAction[];
     hugWidth?: boolean;
     id?: string;
     status?: Validation;
