@@ -6,6 +6,21 @@ import { Validation } from '@utilities/validation';
 import { IconClipboard16, IconNook16, IconQuestionMark16 } from '@foundation/Icon';
 import { Box } from '@components/Box';
 
+const ExtraActions = [
+    {
+        icon: <IconClipboard16 />,
+        tooltip: { content: 'Save to Clipboard' },
+        callback: () => {
+            alert('Mock Copied to Clipboard');
+        },
+    },
+    {
+        icon: <IconQuestionMark16 />,
+        tooltip: { content: 'Help Desk' },
+        callback: () => alert('Here to Help'),
+    },
+];
+
 export default {
     title: 'Components/Textarea',
     component: Textarea,
@@ -219,20 +234,7 @@ WithDefaultText.args = {
 
 export const WithExtraActions = TextareaTemplate.bind({});
 WithExtraActions.args = {
-    extraActions: [
-        {
-            icon: <IconClipboard16 />,
-            tooltip: { content: 'Save to Clipboard' },
-            callback: () => {
-                alert('Mock Copied to Clipboard');
-            },
-        },
-        {
-            icon: <IconQuestionMark16 />,
-            tooltip: { content: 'Help Desk' },
-            callback: () => alert('Here to Help'),
-        },
-    ],
+    extraActions: ExtraActions,
     placeholder: 'Enter some long form text here',
     clearable: true,
 };

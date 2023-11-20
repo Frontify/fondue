@@ -90,18 +90,26 @@ export const Textarea = ({
     const autosizeProps = { minRows, maxRows };
 
     const getPaddingRight = () => {
-        let paddingClass;
+        let numOfRem = 1;
+        const actionCount = extraActions ? extraActions.length : 0;
+
         switch (true) {
+            case actionCount > 0 && clearable && status !== Validation.Default:
+                numOfRem = actionCount + 4.5;
+                return `${numOfRem}rem`;
+            case actionCount > 0 && (clearable || status !== Validation.Default):
+                numOfRem = actionCount + 3;
+                return `${numOfRem}rem`;
             case clearable && status !== Validation.Default:
-                paddingClass = 'tw-pr-[3.5rem]';
-                break;
+                return '3.5rem';
+            case actionCount > 0:
+                numOfRem += actionCount * 1.5;
+                return `${numOfRem}rem`;
             case status !== Validation.Default || clearable:
-                paddingClass = 'tw-pr-[2.5rem]';
-                break;
+                return '2.5rem';
             default:
-                paddingClass = 'tw-pr-[1rem]';
+                return numOfRem;
         }
-        return paddingClass;
     };
 
     return (
@@ -156,8 +164,8 @@ export const Textarea = ({
                         validationClassMap[status],
                         resizable ? 'tw-resize' : 'tw-resize-none',
                         decorator ? 'tw-pl-[2rem]' : 'tw-pl-[1rem]',
-                        getPaddingRight(),
                     ])}
+                    style={{ paddingRight: getPaddingRight() }}
                     {...props}
                 />
             </span>
