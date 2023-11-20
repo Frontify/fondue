@@ -34,9 +34,9 @@ export const InputStylesLightTheme: Record<InputStyleGroup, string> = {
     focusWithin: 'focus-within:tw-border-line-xx-strong focus-within:hover:tw-border-line-xx-strong',
     hover: 'hover:tw-border-line-x-strong',
     disabled:
-        'disabled:tw-bg-box-disabled disabled:tw-border-line-weak disabled:hover:tw-cursor-not-allowed disabled:hover:tw-border-line-weak',
+        'disabled:tw-bg-box-disabled disabled:tw-border-line-weak disabled:tw-text-text-disabled disabled:hover:tw-cursor-not-allowed disabled:hover:tw-border-line-weak',
     readOnly:
-        'read-only:tw-bg-box-disabled read-only:tw-border-line-weak read-only:hover:tw-cursor-not-allowed read-only:hover:tw-border-line-weak',
+        'read-only:tw-bg-box-disabled read-only:tw-border-none read-only:tw-text-text-weak read-only:hover:tw-cursor-not-allowed read-only:hover:tw-border-line-weak',
 };
 
 export const InputStylesDarkTheme: Record<InputStyleGroup, string> = {
@@ -49,9 +49,9 @@ export const InputStylesDarkTheme: Record<InputStyleGroup, string> = {
     focusWithin: 'dark:focus-within:tw-border-line-xx-strong dark:focus-within:hover:tw-border-line-xx-strong',
     hover: 'dark:hover:tw-border-line-x-strong',
     disabled:
-        'dark:disabled:tw-bg-box-disabled dark:disabled:tw-border-line-weak dark:disabled:hover:tw-cursor-not-allowed dark:disabled:hover:tw-border-line-weak',
+        'dark:disabled:tw-bg-box-disabled dark:disabled:tw-border-line-weak dark:disabled:tw-text-text-disabled dark:disabled:hover:tw-cursor-not-allowed dark:disabled:hover:tw-border-line-weak',
     readOnly:
-        'dark:read-only:tw-bg-box-disabled dark:read-only:tw-border-line-weak dark:read-only:hover:tw-cursor-not-allowed dark:read-only:hover:tw-border-line-weak',
+        'dark:read-only:tw-bg-box-disabled dark:read-only:tw-border-none dark:read-only:tw-text-text-weak dark:read-only:hover:tw-cursor-not-allowed',
 };
 
 export const HelperText = ({
