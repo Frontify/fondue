@@ -14,6 +14,7 @@ import {
     Tooltip,
 } from '@components/index';
 import { InputActionsProps, InputExtraActionsProps } from 'src/types/input';
+import { generateRandomId } from './generateRandomId';
 
 type HelperTextProps = {
     text: string;
@@ -139,10 +140,11 @@ InputActions.displayName = 'FondueInputActionButtons';
 
 export const InputExtraActions = ({ actions, dataTestId }: InputExtraActionsProps) => {
     return actions.map((action, i) => {
+        const id = generateRandomId();
         return (
-            <Tooltip key={`extra-action-${i}`} content={action.tooltip.content} data-test-id={`${dataTestId}-tooltip`}>
+            <Tooltip key={`extra-action-${id}`} content={action.tooltip.content} data-test-id={`${dataTestId}-tooltip`}>
                 <Button
-                    key={`extra-action-${i}`}
+                    key={`extra-action-${id}`}
                     style={ButtonStyle.Default}
                     onClick={action.callback}
                     emphasis={ButtonEmphasis.Weak}
