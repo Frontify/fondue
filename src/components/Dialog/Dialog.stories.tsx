@@ -71,7 +71,7 @@ const Template: StoryFn<DialogProps> = (args) => {
     const [isOpen, setIsOpen] = useToggleOverlay(false, { isBlockingModal: args.modality === Modality.BlockingModal });
 
     return (
-        <Dialog open={isOpen} handleClose={() => setIsOpen(false)}>
+        <Dialog {...args} open={isOpen} handleClose={() => setIsOpen(false)}>
             <Dialog.Trigger>
                 <Button onClick={() => setIsOpen(!isOpen)}>Open Dialog</Button>
             </Dialog.Trigger>
