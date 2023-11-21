@@ -5,7 +5,7 @@ import { Meta, StoryFn } from '@storybook/react';
 import { Dialog, DialogProps } from './Dialog';
 import { Button, ButtonEmphasis } from '@components/Button';
 import { useToggleOverlay } from '@hooks/useToggleOverlay';
-import { Modality } from '../../types/dialog';
+import { Modality } from '../../types';
 import { DialogHeader } from '@components/DialogHeader';
 import { DialogBody } from '@components/DialogBody';
 import { DialogFooter } from '@components/DialogFooter';
@@ -104,6 +104,42 @@ const Template: StoryFn<DialogProps> = (args) => {
                         },
                     ]}
                 ></DialogFooter>
+            </Dialog.Content>
+        </Dialog>
+    );
+};
+
+const WithChangingContentTemplate: StoryFn<DialogProps> = (args) => {
+    const [isOpen, setIsOpen] = useToggleOverlay(false, { isBlockingModal: false });
+    const [showContent, setShowContent] = useState(false);
+
+    return (
+        <Dialog {...args} open={isOpen} handleClose={() => setIsOpen(false)}>
+            <Dialog.Trigger>
+                <Button onClick={() => setIsOpen(!isOpen)}>Open Dialog</Button>
+            </Dialog.Trigger>
+            <Dialog.Content>
+                <DialogHeader title="Heading" size="large" onClose={() => setIsOpen(false)} />
+                <DialogBody>
+                    <Box className="tw-p-10">
+                        <Button onClick={() => setShowContent(!showContent)}>Show</Button>
+                        {showContent && (
+                            <Box className="tw-mt-3">
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad illum impedit iure
+                                    numquam praesentium vel. Distinctio perferendis, suscipit! Dolor doloremque et ex,
+                                    modi nobis officiis perspiciatis quis tempora temporibus voluptates?
+                                </p>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laudantium magni pariatur
+                                    possimus praesentium! Blanditiis cupiditate distinctio dolore facere numquam
+                                    quibusdam reiciendis suscipit. Aperiam impedit nobis rem! Ab consequatur sequi
+                                    suscipit.
+                                </p>
+                            </Box>
+                        )}
+                    </Box>
+                </DialogBody>
             </Dialog.Content>
         </Dialog>
     );
@@ -343,4 +379,9 @@ export const WithInceptionOfInlineDialog = WithInlineDialog.bind({});
 WithInceptionOfInlineDialog.args = {
     modality: Modality.BlockingModal,
     darkUnderlay: true,
+};
+
+export const WithChangingContent = WithChangingContentTemplate.bind({});
+WithChangingContent.args = {
+    verticalAlignment: 'top',
 };
