@@ -41,7 +41,7 @@ export const CurrentBreadcrumbItem = ({
     const props = mergeProps(itemProps, focusProps, elementTypeProps[Element]);
 
     const classNames = merge([
-        'tw-flex tw-gap-x-1 tw-items-center tw-leading-4 tw-h-6 tw-max-w-[100px] tw-whitespace-pre-wrap tw-font-medium tw-rounded',
+        'tw-flex tw-gap-x-1 tw-items-center tw-leading-4 tw-h-6 tw-whitespace-pre-wrap tw-font-medium tw-rounded',
         bold && 'tw-font-bold',
         activeInline && 'tw-text-xs',
         isFocusVisible && FOCUS_STYLE_NO_OFFSET,

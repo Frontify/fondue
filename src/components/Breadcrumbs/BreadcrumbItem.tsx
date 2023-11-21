@@ -59,7 +59,7 @@ export const BreadcrumbItem = ({
     const props = mergeProps(itemProps, focusProps, elementTypeProps[Element]);
 
     const classNames = merge([
-        'tw-flex tw-gap-x-1 tw-items-center tw-leading-4 tw-h-6 tw-max-w-[100px] tw-whitespace-pre-wrap tw-rounded',
+        'tw-flex tw-gap-x-1 tw-items-center tw-leading-4 tw-h-6 tw-whitespace-pre-wrap tw-rounded',
         isFocusVisible && FOCUS_STYLE_NO_OFFSET,
     ]);
 
