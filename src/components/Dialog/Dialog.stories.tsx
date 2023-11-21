@@ -5,7 +5,7 @@ import { Meta, StoryFn } from '@storybook/react';
 import { Dialog, DialogProps } from './Dialog';
 import { Button, ButtonEmphasis } from '@components/Button';
 import { useToggleOverlay } from '@hooks/useToggleOverlay';
-import { Modality } from '../../types/dialog';
+import { Modality } from '../../types';
 import { DialogHeader } from '@components/DialogHeader';
 import { DialogBody } from '@components/DialogBody';
 import { DialogFooter } from '@components/DialogFooter';
@@ -69,7 +69,6 @@ export default {
 
 const Template: StoryFn<DialogProps> = (args) => {
     const [isOpen, setIsOpen] = useToggleOverlay(false, { isBlockingModal: args.modality === Modality.BlockingModal });
-    const [showContent, setShowcontent] = useState(false);
 
     return (
         <Dialog open={isOpen} handleClose={() => setIsOpen(false)}>
@@ -79,21 +78,18 @@ const Template: StoryFn<DialogProps> = (args) => {
             <Dialog.Content>
                 <DialogHeader title="Heading" size="large" onClose={() => setIsOpen(false)} />
                 <DialogBody>
-                    <Button onClick={() => setShowcontent(!showContent)}>Show</Button>
-                    {showContent && (
-                        <Box className="tw-p-10">
-                            <p>
-                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad illum impedit iure numquam
-                                praesentium vel. Distinctio perferendis, suscipit! Dolor doloremque et ex, modi nobis
-                                officiis perspiciatis quis tempora temporibus voluptates?
-                            </p>
-                            <p>
-                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laudantium magni pariatur
-                                possimus praesentium! Blanditiis cupiditate distinctio dolore facere numquam quibusdam
-                                reiciendis suscipit. Aperiam impedit nobis rem! Ab consequatur sequi suscipit.
-                            </p>
-                        </Box>
-                    )}
+                    <Box className="tw-p-10">
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad illum impedit iure numquam
+                            praesentium vel. Distinctio perferendis, suscipit! Dolor doloremque et ex, modi nobis
+                            officiis perspiciatis quis tempora temporibus voluptates?
+                        </p>
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laudantium magni pariatur possimus
+                            praesentium! Blanditiis cupiditate distinctio dolore facere numquam quibusdam reiciendis
+                            suscipit. Aperiam impedit nobis rem! Ab consequatur sequi suscipit.
+                        </p>
+                    </Box>
                 </DialogBody>
                 <DialogFooter
                     actionButtons={[
@@ -115,7 +111,7 @@ const Template: StoryFn<DialogProps> = (args) => {
 
 const WithChangingContentTemplate: StoryFn<DialogProps> = (args) => {
     const [isOpen, setIsOpen] = useToggleOverlay(false, { isBlockingModal: false });
-    const [showContent, setShowcontent] = useState(false);
+    const [showContent, setShowContent] = useState(false);
 
     return (
         <Dialog {...args} open={isOpen} handleClose={() => setIsOpen(false)}>
@@ -126,7 +122,7 @@ const WithChangingContentTemplate: StoryFn<DialogProps> = (args) => {
                 <DialogHeader title="Heading" size="large" onClose={() => setIsOpen(false)} />
                 <DialogBody>
                     <Box className="tw-p-10">
-                        <Button onClick={() => setShowcontent(!showContent)}>Show</Button>
+                        <Button onClick={() => setShowContent(!showContent)}>Show</Button>
                         {showContent && (
                             <Box className="tw-mt-3">
                                 <p>
