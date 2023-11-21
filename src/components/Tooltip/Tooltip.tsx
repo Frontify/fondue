@@ -106,8 +106,11 @@ export const Tooltip = ({
 
     useEffect(() => {
         const newOffset = getNewOffsetBasedOnArrowPosition(currentPlacement, offset);
-        setTooltipOffset(newOffset);
-    }, [currentPlacement, offset]);
+
+        if (newOffset[0] !== tooltipOffset[0] || newOffset[1] !== tooltipOffset[1]) {
+            setTooltipOffset(newOffset);
+        }
+    }, [offset, tooltipOffset, currentPlacement]);
 
     const handleHideTooltip = useCallback(() => {
         if (timeoutRef.current) {
