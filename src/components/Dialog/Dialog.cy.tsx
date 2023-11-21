@@ -57,7 +57,7 @@ describe('Dialog Component', () => {
         cy.get(DIALOG_SELECTOR).should('exist');
         cy.get(DIALOG_SELECTOR).should('have.css', 'min-width', '600px'); // 600px default on larger screen
         cy.viewport(400, 745);
-        cy.get(DIALOG_SELECTOR).should('have.css', 'min-width', '320px'); // 80vw on mobile view.
+        cy.get(DIALOG_SELECTOR).should('have.css', 'min-width', '360px'); // 90vw on mobile view.
         cy.viewport(1200, 900);
         cy.get(DIALOG_SELECTOR).should('have.css', 'min-width', '600px'); // 600px default on larger screen
     });
