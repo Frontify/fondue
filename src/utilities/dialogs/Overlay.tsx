@@ -117,9 +117,9 @@ export const Overlay = ({
                                         aria-hidden={!open}
                                         aria-labelledby={id}
                                         style={{
-                                            minWidth: isMobile ? '80vw' : minWidth,
+                                            minWidth: isMobile ? '90vw' : minWidth,
                                             minHeight,
-                                            maxWidth,
+                                            maxWidth: isMobile ? '90vw' : maxWidth,
                                             maxHeight: maxContentHeight,
                                         }}
                                     >
