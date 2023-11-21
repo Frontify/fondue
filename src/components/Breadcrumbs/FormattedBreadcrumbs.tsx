@@ -24,6 +24,8 @@ export const FormattedBreadcrumbs = ({
         const isLastItems = index >= lastItemsIndex;
         const isTruncatedItem = truncate && !isRootKept && !isLastItems;
         const showSeparator = index < items.length - 1;
+        const overFlowItems: OverflowMenuItemProps[] = [];
+        let count = -1;
 
         switch (true) {
             case isCurrent:
@@ -58,8 +60,6 @@ export const FormattedBreadcrumbs = ({
 
             case isTruncatedItem && renderTruncationRef.current:
                 renderTruncationRef.current = false;
-                const overFlowItems: OverflowMenuItemProps[] = [];
-                let count = -1;
                 for (const element of items) {
                     count++;
                     if (count >= lastItemsIndex) {
