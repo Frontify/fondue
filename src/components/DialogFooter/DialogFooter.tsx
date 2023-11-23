@@ -29,7 +29,10 @@ export const DialogFooter = ({
             ])}
         >
             {isMobile && (
-                <Box className="tw-w-full tw-pb-2" data-test-id={`${dataTestId}-content`}>
+                <Box
+                    className={merge(['tw-w-full', backButton || actionButtons.length > 0 ? 'tw-pb-2' : ''])}
+                    data-test-id={`${dataTestId}-content`}
+                >
                     {children}
                 </Box>
             )}
@@ -48,11 +51,17 @@ export const DialogFooter = ({
                     </Box>
                 )}
 
-                <Box className="tw-flex tw-gap-x-3" data-test-id={`${dataTestId}-action-buttons`}>
-                    {actionButtons.map((button) => (
-                        <Button key={`${dataTestId}-button-${button.children}`} {...button} size={ButtonSize.Medium} />
-                    ))}
-                </Box>
+                {actionButtons.length > 0 ? (
+                    <Box className="tw-flex tw-gap-x-3" data-test-id={`${dataTestId}-action-buttons`}>
+                        {actionButtons.map((button) => (
+                            <Button
+                                key={`${dataTestId}-button-${button.children}`}
+                                {...button}
+                                size={ButtonSize.Medium}
+                            />
+                        ))}
+                    </Box>
+                ) : null}
             </Flex>
         </Box>
     );

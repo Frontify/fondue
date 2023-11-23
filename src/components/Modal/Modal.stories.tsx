@@ -25,7 +25,7 @@ import { Divider } from '..';
 import { MODAL_PADDING } from './context/ModalLayout';
 
 export default {
-    title: 'Components/Modal',
+    title: 'Deprecated/Modal',
     component: Modal,
     tags: ['autodocs'],
     argTypes: {

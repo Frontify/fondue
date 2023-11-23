@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { usePopper } from 'react-popper';
 import { PopperDimension, PopperProps, PrepareElementStyleProps } from '@components/Popper/types';
 import { EnablePortalWrapper } from '@utilities/dialogs/EnablePortalWrapper';
@@ -90,16 +90,18 @@ export const Popper = ({
     });
 
     const currentPlacement = popperInstance.state?.placement ?? placement;
-    const arrowStyling = getArrowClasses(currentPlacement);
+    const arrowStyling = useMemo(() => getArrowClasses(currentPlacement), [currentPlacement]);
 
     useEffect(() => {
         const newOffset = withArrow ? getNewOffsetBasedOnArrowPosition(currentPlacement, offset) : offset;
-        setPopperOffset(newOffset);
 
-        if (newOffset[0] !== popperOffset[0] || newOffset[1] !== popperOffset[1]) {
-            setPopperOffset(newOffset);
-        }
-    }, [currentPlacement, offset, popperOffset, withArrow]);
+        setPopperOffset((prevOffset) => {
+            if (newOffset[0] !== prevOffset[0] || newOffset[1] !== prevOffset[1]) {
+                return newOffset;
+            }
+            return prevOffset;
+        });
+    }, [currentPlacement, offset, withArrow]);
 
     useLayoutEffect(() => {
         const adjustPopperDimensions = () => {

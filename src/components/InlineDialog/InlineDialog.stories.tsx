@@ -164,7 +164,7 @@ const InContext: StoryFn<InlineDialogProps> = (args) => {
                     InlineDialog Trigger
                 </Button>
                 <InlineDialog {...args} anchor={triggerRef} open={isOpen} handleClose={() => setIsOpen(false)}>
-                    <DialogHeader title="Collaborator Settings" padding="spacious" onClose={() => setIsOpen(false)} />
+                    <DialogHeader title="Collaborator Settings" padding="compact" onClose={() => setIsOpen(false)} />
                     <DialogBody>
                         <div className="tw-p-2 tw-text-text">
                             <Dropdown
