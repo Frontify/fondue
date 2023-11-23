@@ -8,7 +8,7 @@ export type InlineDialogProps = Omit<
     OverlayProps,
     'theme' | 'isDetached' | 'verticalAlignment' | 'withArrow' | 'arrowCustomColors'
 > &
-    BaseDialogProps;
+    Omit<BaseDialogProps, 'darkUnderlay'>;
 
 export const InlineDialog = ({
     children,
@@ -19,14 +19,14 @@ export const InlineDialog = ({
     flip = false,
     enablePortal = true,
     maxHeight = 'auto',
-    maxWidth = 400,
+    maxWidth = 360,
     minHeight = 0,
-    minWidth = 0,
+    minWidth = 360,
     modality = Modality.Modal,
     handleClose,
     'data-test-id': dataTestId = 'fondue-inlineDialog',
-    darkUnderlay = false,
     autoHeight = false,
+    roundedCorners,
 }: InlineDialogProps) => {
     return (
         <Overlay
@@ -44,9 +44,9 @@ export const InlineDialog = ({
             modality={modality}
             handleClose={handleClose}
             role={modality === Modality.NonModal ? 'region' : 'dialog'}
-            darkUnderlay={darkUnderlay}
             autoHeight={autoHeight}
             zIndex={Z_INDEX_MODAL}
+            roundedCorners={roundedCorners}
         >
             {children}
         </Overlay>

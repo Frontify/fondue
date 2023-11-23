@@ -39,6 +39,7 @@ export const Overlay = ({
     theme = 'light',
     withArrow,
     arrowCustomColors,
+    roundedCorners = true,
 }: OverlayProps & BaseDialogProps) => {
     const id = useMemoizedId();
     const ref = useRef<HTMLDivElement | null>(null);
@@ -114,6 +115,7 @@ export const Overlay = ({
                         theme === 'light'
                             ? OVERLAY_CONTAINER_LIGHT_THEME_STYLING
                             : OVERLAY_CONTAINER_DARK_THEME_STYLING,
+                        roundedCorners && 'tw-rounded',
                     ])}
                     role={role}
                     id={id}
@@ -136,7 +138,8 @@ export const Overlay = ({
                         data-test-id={`${dataTestId}-underlay`}
                         className={merge([
                             'tw-fixed tw-top-0 tw-left-0 tw-bottom-0 tw-right-0',
-                            darkUnderlay && 'tw-transition-opacity tw-bg-black tw-opacity-50',
+                            (darkUnderlay || isMobile) &&
+                                'tw-transition-opacity tw-bg-box-neutral-mighty tw-opacity-50',
                         ])}
                         style={{ zIndex: Z_INDEX_MODAL_BACKDROP }}
                     />

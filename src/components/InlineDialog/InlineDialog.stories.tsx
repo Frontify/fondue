@@ -27,12 +27,14 @@ export default {
         modality: Modality.Modal,
         offset: [0, 8],
         flip: true,
-        minWidth: 0,
-        maxWidth: 400,
+        minWidth: 360,
+        maxWidth: 360,
         autoHeight: false,
         maxHeight: 'auto',
         minHeight: 0,
-        darkUnderlay: false,
+        roundedCorners: true,
+        strategy: 'absolute',
+        enablePortal: false,
     },
     argTypes: {
         ...POPPER_STORY_ARGS,
@@ -46,10 +48,10 @@ export default {
         role: {
             type: 'string',
         },
-        darkUnderlay: {
+        autoHeight: {
             type: 'boolean',
         },
-        autoHeight: {
+        roundedCorners: {
             type: 'boolean',
         },
         zIndex: { table: { disable: true } },
@@ -58,7 +60,7 @@ export default {
 
 const TextExample = () => {
     return (
-        <p className="tw-my-2">
+        <p className="tw-my-2 tw-text-text">
             Lorem ipsum dolor sit amet, consectetur adipisicing elit. Distinctio fugiat hic incidunt, inventore odio
             praesentium qui quisquam! Dignissimos nemo quisquam unde voluptatem. Animi ea iusto numquam odio omnis.
             Dicta, voluptatum.
@@ -80,7 +82,7 @@ const Template: StoryFn<InlineDialogProps> = (args) => {
             ></Button>
             <InlineDialog {...args} anchor={triggerRef} open={isOpen} handleClose={() => setIsOpen(false)}>
                 <DialogBody>
-                    <Box className="tw-p-4">
+                    <Box className="tw-p-4 tw-text-text">
                         <Flex justify="start" alignContent="center">
                             <Tooltip content="Just some Information">
                                 <IconExclamationMarkCircle16 />
@@ -164,7 +166,7 @@ const InContext: StoryFn<InlineDialogProps> = (args) => {
                 <InlineDialog {...args} anchor={triggerRef} open={isOpen} handleClose={() => setIsOpen(false)}>
                     <DialogHeader title="Collaborator Settings" size="large" onClose={() => setIsOpen(false)} />
                     <DialogBody>
-                        <div className="tw-p-2">
+                        <div className="tw-p-2 tw-text-text">
                             <Dropdown
                                 enablePortal={false}
                                 onChange={(id) => console.log(id)}
@@ -229,10 +231,9 @@ export const AsAModal = Template.bind({});
 AsAModal.args = {
     modality: Modality.Modal,
 };
-export const AsABlockingModalWithDarkUnderlay = Template.bind({});
-AsABlockingModalWithDarkUnderlay.args = {
+export const AsABlockingModal = Template.bind({});
+AsABlockingModal.args = {
     modality: Modality.BlockingModal,
-    darkUnderlay: true,
 };
 
 export const WithMaxHeight = Template.bind({});
@@ -246,3 +247,7 @@ WithAutoHeight.args = {
 };
 export const InContextWithDialogHeaderAndDialogFooter = InContext.bind({});
 export const WithNoFocusableContent = NoFocusableContentTemplate.bind({});
+export const WithNoRoundedCorners = Template.bind({});
+WithNoRoundedCorners.args = {
+    roundedCorners: false,
+};
