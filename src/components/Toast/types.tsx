@@ -9,6 +9,7 @@ export type ToastProps = {
     animationDirection?: ToastAnimationDirection;
     children?: ReactNode;
     theme?: ToastTheme;
+    enableExitAnimation?: boolean;
     'data-test-id'?: string;
 };
 

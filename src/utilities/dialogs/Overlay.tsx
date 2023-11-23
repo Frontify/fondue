@@ -122,7 +122,7 @@ export const Overlay = ({
                     style={{
                         minWidth: isMobile ? '90vw' : minWidth,
                         minHeight,
-                        maxWidth,
+                        maxWidth: isMobile ? '90vw' : maxWidth,
                         maxHeight: maxContentHeight,
                     }}
                 >

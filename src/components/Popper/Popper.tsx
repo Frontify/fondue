@@ -95,7 +95,11 @@ export const Popper = ({
     useEffect(() => {
         const newOffset = withArrow ? getNewOffsetBasedOnArrowPosition(currentPlacement, offset) : offset;
         setPopperOffset(newOffset);
-    }, [currentPlacement, offset, withArrow]);
+
+        if (newOffset[0] !== popperOffset[0] || newOffset[1] !== popperOffset[1]) {
+            setPopperOffset(newOffset);
+        }
+    }, [currentPlacement, offset, popperOffset, withArrow]);
 
     useLayoutEffect(() => {
         const adjustPopperDimensions = () => {
