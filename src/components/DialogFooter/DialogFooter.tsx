@@ -3,42 +3,57 @@
 import { ReactElement } from 'react';
 import { Button, ButtonEmphasis, ButtonSize } from '@components/Button';
 import { Box } from '@components/Box';
-import { DialogFooterProps, dialogPaddingMap } from '../../types/dialog';
+import { DialogFooterProps, dialogPaddingMap } from '../../types';
 import IconArrowLeft from '@foundation/Icon/Generated/IconArrowLeft';
 import { merge } from '@utilities/merge';
+import { Flex } from '@components/Flex';
+import useMobileDetection from '@hooks/useMobileDetection';
 
 export const DialogFooter = ({
     actionButtons,
     children,
     backButton,
-    padding = 'compact',
+    padding = 'comfortable',
+    separator = true,
     'data-test-id': dataTestId = 'fondue-dialog-footer',
 }: DialogFooterProps): ReactElement => {
+    const isMobile = useMobileDetection();
+
     return (
         <Box
             data-test-id={dataTestId}
             className={merge([
-                'tw-border-t tw-border-t-line tw-flex tw-items-center tw-justify-between tw-gap-x-3',
+                'tw-border-t tw-border-t-line',
                 dialogPaddingMap[padding],
+                !separator && 'tw-pt-0 tw-border-none',
             ])}
         >
-            {backButton && (
-                <Button
-                    data-test-id={`${dataTestId}-back-button`}
-                    {...backButton}
-                    emphasis={ButtonEmphasis.Default}
-                    icon={<IconArrowLeft />}
-                />
+            {isMobile && (
+                <Box className="tw-w-full tw-pb-2" data-test-id={`${dataTestId}-content`}>
+                    {children}
+                </Box>
             )}
-            <Box className="tw-grow" data-test-id={`${dataTestId}-content`}>
-                {children}
-            </Box>
+            <Flex justify="between" alignItems="center" spacingX={12}>
+                {backButton && (
+                    <Button
+                        data-test-id={`${dataTestId}-back-button`}
+                        {...backButton}
+                        emphasis={ButtonEmphasis.Default}
+                        icon={<IconArrowLeft />}
+                    />
+                )}
+                {!isMobile && (
+                    <Box className="tw-grow" data-test-id={`${dataTestId}-content`}>
+                        {children}
+                    </Box>
+                )}
 
-            <Box className="tw-flex tw-gap-x-3" data-test-id={`${dataTestId}-action-buttons`}>
-                {actionButtons.map((button) => (
-                    <Button key={`${dataTestId}-button-${button.children}`} {...button} size={ButtonSize.Medium} />
-                ))}
-            </Box>
+                <Box className="tw-flex tw-gap-x-3" data-test-id={`${dataTestId}-action-buttons`}>
+                    {actionButtons.map((button) => (
+                        <Button key={`${dataTestId}-button-${button.children}`} {...button} size={ButtonSize.Medium} />
+                    ))}
+                </Box>
+            </Flex>
         </Box>
     );
 };

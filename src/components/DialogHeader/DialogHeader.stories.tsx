@@ -49,6 +49,11 @@ export const WithNoSeparator: StoryFn<DialogHeaderProps> = (args) => <DialogHead
 WithNoSeparator.args = {
     separator: false,
 };
+export const WithNoCloseButton: StoryFn<DialogHeaderProps> = (args) => <DialogHeaderComponent {...args} />;
+
+WithNoCloseButton.args = {
+    onClose: undefined,
+};
 
 WithIconAndBadgeAndCustomContent.args = {
     badge: <Badge style={BadgeStyle.Positive}>Badge</Badge>,

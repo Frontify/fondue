@@ -14,6 +14,7 @@ export default {
     tags: ['autodocs'],
     args: {
         padding: 'compact',
+        separator: true,
         actionButtons: [
             {
                 children: 'Cancel',
@@ -37,6 +38,9 @@ export default {
         },
         'data-test-id': {
             type: 'string',
+        },
+        separator: {
+            type: 'boolean',
         },
     },
 } as Meta<DialogFooterProps>;

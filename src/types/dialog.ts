@@ -46,6 +46,7 @@ export type DialogFooterProps = {
     actionButtons: ButtonProps[];
     backButton?: Omit<ButtonProps, 'emphasis' | 'icon' | 'size'>;
     padding?: DialogPadding;
+    separator?: boolean;
     'data-test-id'?: string;
 };
 
