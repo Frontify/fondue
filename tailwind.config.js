@@ -29,7 +29,7 @@ module.exports = {
                 current: 'currentColor',
                 white: '#ffffff',
                 black: {
-                    DEFAULT: '#1a1c1c',
+                    DEFAULT: '#2d3232',
 
                     // Solids
                     superdark: '#1a1d1d',
