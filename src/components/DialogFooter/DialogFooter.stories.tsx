@@ -5,7 +5,7 @@ import { DialogFooter } from './DialogFooter';
 import { ButtonEmphasis, ButtonStyle } from '@components/Button';
 import { IconCheckMark } from '@foundation/Icon/Generated';
 import { action } from '@storybook/addon-actions';
-import { DIALOG_SIZE, DialogFooterProps } from '../../types/dialog';
+import { DIALOG_PADDING, DialogFooterProps } from '../../types';
 import { Flex } from '@components/Flex';
 
 export default {
@@ -13,7 +13,7 @@ export default {
     component: DialogFooter,
     tags: ['autodocs'],
     args: {
-        padding: 'small',
+        padding: 'compact',
         actionButtons: [
             {
                 children: 'Cancel',
@@ -32,7 +32,7 @@ export default {
     },
     argTypes: {
         padding: {
-            options: DIALOG_SIZE,
+            options: DIALOG_PADDING,
             control: { type: 'select' },
         },
         'data-test-id': {

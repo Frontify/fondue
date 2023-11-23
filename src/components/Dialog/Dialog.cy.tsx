@@ -1,22 +1,27 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Dialog } from './Dialog';
+import { Dialog, DialogProps } from './Dialog';
 import { Button } from '@components/Button';
 import { DialogHeader } from '@components/DialogHeader';
 import { DialogBody } from '@components/DialogBody';
-import { InlineDialogProps } from '@components/InlineDialog';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 
 const DIALOG_SELECTOR = '[data-test-id=fondue-dialog-content]';
 
-const DialogComponent = ({ verticalAlignment }: Omit<InlineDialogProps, 'open' | 'anchor'>) => {
+const DialogComponent = ({ verticalAlignment }: Omit<DialogProps, 'open' | 'anchor' | 'handleClose'>) => {
     const triggerRef = useRef<HTMLButtonElement | null>(null);
+    const [open, setOpen] = useState(true);
 
     return (
         <>
             <Button ref={triggerRef}>Open Dialog</Button>
-            <Dialog anchor={triggerRef} verticalAlignment={verticalAlignment} open={true}>
-                <DialogHeader title="Heading" size="large" />
+            <Dialog
+                anchor={triggerRef}
+                verticalAlignment={verticalAlignment}
+                open={open}
+                handleClose={() => setOpen(false)}
+            >
+                <DialogHeader title="Heading" padding="comfortable" />
                 <DialogBody>Some Content</DialogBody>
             </Dialog>
         </>

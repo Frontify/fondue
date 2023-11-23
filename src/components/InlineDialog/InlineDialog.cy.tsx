@@ -12,7 +12,6 @@ import { useRef, useState } from 'react';
 const INLINE_DIALOG_TRIGGER_SELECTOR = '[data-test-id=fondue-inlineDialog-trigger]';
 const INLINE_DIALOG_SELECTOR = '[data-test-id=fondue-inlineDialog-content]';
 const OUTSIDE_DIALOG_BUTTON = '[data-test-id=outside-button]';
-const DARK_UNDERLAY = '[data-test-id=fondue-inlineDialog-underlay]';
 
 const InlineDialogComponent = ({
     minHeight,
@@ -24,9 +23,8 @@ const InlineDialogComponent = ({
     flip,
     offset,
     enablePortal,
-    darkUnderlay,
     autoHeight,
-}: Omit<InlineDialogProps, 'open' | 'anchor'>) => {
+}: Omit<InlineDialogProps, 'open' | 'anchor' | 'handleClose'>) => {
     const [isOpen, setIsOpen] = useState(false);
     const triggerRef = useRef<HTMLButtonElement | null>(null);
 
@@ -52,7 +50,6 @@ const InlineDialogComponent = ({
                 flip={flip}
                 offset={offset}
                 enablePortal={enablePortal}
-                darkUnderlay={darkUnderlay}
                 autoHeight={autoHeight}
             >
                 <DialogBody>
@@ -275,25 +272,6 @@ describe('InlineDialog Component', () => {
             cy.get(INLINE_DIALOG_TRIGGER_SELECTOR).children().eq(0).click();
             cy.viewport(550, 150);
             cy.get(INLINE_DIALOG_SELECTOR).should('have.css', 'height', '130px');
-        });
-    });
-
-    describe('Dark Underlay', () => {
-        it('should not render a dark underlay as a non-modal', () => {
-            cy.mount(<InlineDialogComponent modality={Modality.NonModal} darkUnderlay={true} />);
-            cy.get(INLINE_DIALOG_TRIGGER_SELECTOR).children().eq(0).click();
-            cy.get(DARK_UNDERLAY).should('not.exist');
-        });
-
-        it('should render a dark underlay as a modal', () => {
-            cy.mount(<InlineDialogComponent modality={Modality.Modal} darkUnderlay={true} />);
-            cy.get(INLINE_DIALOG_TRIGGER_SELECTOR).children().eq(0).click();
-            cy.get(DARK_UNDERLAY).should('exist');
-        });
-        it('should render a dark underlay as a blocking-modal', () => {
-            cy.mount(<InlineDialogComponent modality={Modality.BlockingModal} darkUnderlay={true} />);
-            cy.get(INLINE_DIALOG_TRIGGER_SELECTOR).children().eq(0).click();
-            cy.get(DARK_UNDERLAY).should('exist');
         });
     });
 });

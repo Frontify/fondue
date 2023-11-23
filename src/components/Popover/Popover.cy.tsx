@@ -9,7 +9,7 @@ const POPOVER_SELECTOR = '[data-test-id=fondue-popover-content]';
 const POPOVER_TRIGGER = '[data-test-id=popover-trigger]';
 const POPOVER_INTERACTIVE_ELEMENT = '[data-test-id=popover-content-button]';
 
-const PopoverComponent = ({ placement, offset, flip }: Omit<OverlayProps, 'open' | 'anchor'>) => {
+const PopoverComponent = ({ placement, offset, flip }: Omit<OverlayProps, 'open' | 'anchor' | 'handleClose'>) => {
     const [open, setOpen] = useState(false);
     const triggerRef = useRef<HTMLButtonElement | null>(null);
 
@@ -18,7 +18,14 @@ const PopoverComponent = ({ placement, offset, flip }: Omit<OverlayProps, 'open'
             <Button ref={triggerRef} data-test-id="popover-trigger" onClick={() => setOpen(!open)}>
                 Hello
             </Button>
-            <Popover anchor={triggerRef} open={open} placement={placement} offset={offset} flip={flip}>
+            <Popover
+                handleClose={() => setOpen(false)}
+                anchor={triggerRef}
+                open={open}
+                placement={placement}
+                offset={offset}
+                flip={flip}
+            >
                 <div className="tw-p-3">
                     <p>Some content</p>
                     <Button data-test-id="popover-content-button">Confirm</Button>

@@ -3,7 +3,7 @@
 import { Tooltip } from '@components/Tooltip/Tooltip';
 import IconIcon24 from '@foundation/Icon/Generated/IconIcon24';
 
-const TOOLTIP_SELECTOR = '[data-test-id=fondue-tooltip]';
+const TOOLTIP_SELECTOR = '[data-test-id=fondue-tooltip-content]';
 const TOOLTIP_TRIGGER = '[data-test-id=tooltip-trigger]';
 const TOOLTIP_ARROW = '[data-test-id=popper-arrow]';
 
@@ -226,7 +226,7 @@ describe('Tooltip Component', () => {
             );
             cy.get(TOOLTIP_TRIGGER).should('exist');
             cy.get(TOOLTIP_TRIGGER).trigger('mouseover');
-            cy.get(TOOLTIP_SELECTOR).should('have.css', 'padding', '8px 12px 10px');
+            cy.get(TOOLTIP_SELECTOR).find('p').should('have.css', 'padding', '8px 12px 10px');
         });
 
         it('should render in a compact size', () => {
@@ -239,7 +239,7 @@ describe('Tooltip Component', () => {
             );
             cy.get(TOOLTIP_TRIGGER).should('exist');
             cy.get(TOOLTIP_TRIGGER).trigger('mouseover');
-            cy.get(TOOLTIP_SELECTOR).should('have.css', 'padding', '4px 8px 6px');
+            cy.get(TOOLTIP_SELECTOR).find('p').should('have.css', 'padding', '4px 8px 6px');
         });
 
         it('should render with a default max width of 200px', () => {

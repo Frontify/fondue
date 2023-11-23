@@ -78,7 +78,7 @@ const Template: StoryFn<DialogProps> = (args) => {
                 Open Dialog
             </Button>
             <Dialog {...args} anchor={triggerRef} open={isOpen} handleClose={() => setIsOpen(false)}>
-                <DialogHeader title="Heading" size="large" onClose={() => setIsOpen(false)} />
+                <DialogHeader title="Heading" padding="comfortable" onClose={() => setIsOpen(false)} />
                 <DialogBody>
                     <Box className="tw-p-10">
                         <p>
@@ -123,7 +123,12 @@ const WithTabsTemplate: StoryFn<DialogProps> = (args) => {
             </Button>
 
             <Dialog {...args} anchor={triggerRef} open={isOpen} handleClose={() => setIsOpen(false)}>
-                <DialogHeader title="Heading" size="large" onClose={() => setIsOpen(false)} collapseBottom />
+                <DialogHeader
+                    title="Heading"
+                    padding="comfortable"
+                    onClose={() => setIsOpen(false)}
+                    separator={false}
+                />
                 <DialogBody>
                     <Tabs
                         activeItemId={activeItemId}
@@ -254,7 +259,7 @@ const WithInlineDialog: StoryFn<DialogProps> = (args) => {
                 withArrow
             />
             <Dialog {...args} anchor={dialogTriggerRef} open={isOpen} handleClose={handleClose}>
-                <DialogHeader onClose={() => setIsOpen(false)} size="large" title="Dialog content header" />
+                <DialogHeader onClose={() => setIsOpen(false)} padding="comfortable" title="Dialog content header" />
                 <DialogBody>
                     <Box className="tw-p-10">
                         <Flex justify="start" alignContent="center">

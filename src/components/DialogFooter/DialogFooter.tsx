@@ -11,7 +11,7 @@ export const DialogFooter = ({
     actionButtons,
     children,
     backButton,
-    padding = 'small',
+    padding = 'compact',
     'data-test-id': dataTestId = 'fondue-dialog-footer',
 }: DialogFooterProps): ReactElement => {
     return (

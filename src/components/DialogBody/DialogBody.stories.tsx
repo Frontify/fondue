@@ -2,7 +2,7 @@
 
 import { Meta, StoryFn } from '@storybook/react';
 import { DialogBody } from './DialogBody';
-import { DIALOG_SIZE, DialogBodyProps } from '../../types/dialog';
+import { DIALOG_PADDING, DialogBodyProps } from '../../types/dialog';
 
 export default {
     title: 'Experimental/DialogBody',
@@ -13,7 +13,7 @@ export default {
             type: 'number',
         },
         padding: {
-            options: ['none', ...DIALOG_SIZE],
+            options: DIALOG_PADDING,
             control: { type: 'select' },
         },
     },

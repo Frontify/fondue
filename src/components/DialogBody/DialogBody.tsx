@@ -7,13 +7,13 @@ import { merge } from '@utilities/merge';
 export const DialogBody = ({
     children,
     maxHeight = 'auto',
-    padding,
+    padding = 'none',
     'data-test-id': dataTestId = 'fondue-dialog-body',
 }: DialogBodyProps): ReactElement => {
     return (
         <div
             data-test-id={dataTestId}
-            className={merge(['tw-overflow-auto', padding ? dialogPaddingMap[padding] : 'tw-p-0'])}
+            className={merge(['tw-overflow-auto', dialogPaddingMap[padding]])}
             style={{ maxHeight }}
         >
             {children}
