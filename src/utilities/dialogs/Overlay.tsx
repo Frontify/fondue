@@ -40,6 +40,8 @@ export const Overlay = ({
     withArrow,
     arrowCustomColors,
     roundedCorners = true,
+    shadow = 'large',
+    isDialog = true,
 }: OverlayProps & BaseDialogProps) => {
     const id = useMemoizedId();
     const ref = useRef<HTMLDivElement | null>(null);
@@ -116,15 +118,16 @@ export const Overlay = ({
                             ? OVERLAY_CONTAINER_LIGHT_THEME_STYLING
                             : OVERLAY_CONTAINER_DARK_THEME_STYLING,
                         roundedCorners && 'tw-rounded',
+                        shadow === 'large' ? 'tw-shadow-large' : 'tw-shadow',
                     ])}
                     role={role}
                     id={id}
                     aria-hidden={!open}
                     aria-labelledby={id}
                     style={{
-                        minWidth: isMobile ? '90vw' : minWidth,
+                        minWidth: isMobile && isDialog ? '90vw' : minWidth,
                         minHeight,
-                        maxWidth: isMobile ? '90vw' : maxWidth,
+                        maxWidth: isMobile && isDialog ? '90vw' : maxWidth,
                         maxHeight: maxContentHeight,
                     }}
                 >

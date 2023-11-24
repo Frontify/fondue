@@ -36,6 +36,8 @@ export const Popover = ({
             modality={Modality.NonModal}
             zIndex={Z_INDEX_POPOVER}
             handleClose={handleClose}
+            shadow="small"
+            isDialog={false}
         >
             {children}
         </Overlay>

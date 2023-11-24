@@ -75,5 +75,7 @@ export type OverlayProps = PopperProps & {
     'data-test-id'?: string;
     role?: string;
     theme?: 'light' | 'dark';
+    shadow?: 'small' | 'large';
+    isDialog?: boolean;
     handleClose: () => void;
 };

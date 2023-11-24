@@ -120,6 +120,8 @@ export const Tooltip = ({
                 maxHeight={maxHeight}
                 zIndex={zIndex}
                 handleClose={() => setOpen(false)}
+                shadow="small"
+                isDialog={false}
             >
                 <p
                     className={merge([
