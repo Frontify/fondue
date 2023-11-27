@@ -43,7 +43,7 @@ type InputStyleGroup =
 export const InputStyles: Record<InputStyleGroup, string> = {
     base: 'tw-flex tw-items-center tw-justify-between tw-gap-2 tw-px-3 tw-transition tw-text-sm tw-font-sans tw-relative tw-bg-base tw-border tw-rounded tw-line-strong dark:tw-w-full dark:tw-flex dark:tw-items-center dark:tw-justify-between dark:tw-gap-2 dark:tw-px-3 dark:tw-transition dark:tw-text-sm dark:tw-font-sans dark:tw-relative dark:tw-bg-base dark:tw-border dark:tw-rounded dark:tw-line-strong',
     width: 'tw-w-full dark:tw-w-full',
-    height: 'tw-h-9 dark:tw-h-9',
+    height: 'tw-h-9 tw-min-h-[2.25rem] dark:tw-h-9 dark:tw-min-h-[2.25rem]',
     element:
         'tw-border-line-strong tw-text-text tw-placeholder-text-x-weak tw-outline-none tw-p-2 dark:tw-border-line-strong dark:tw-text-weak dark:tw-placeholder-text-x-weak dark:tw-outline-none dark:tw-p-2',
     focus: 'focus:tw-border-line-xx-strong dark:focus:tw-border-line-xx-strong',
@@ -107,7 +107,6 @@ GetStatusIcon.displayName = 'FondueGetStatusIcon';
 export const InputActions = ({
     clearable,
     disabled,
-    readOnly,
     obfuscated,
     isObfuscated,
     callbacks,
@@ -119,7 +118,7 @@ export const InputActions = ({
                 <Button
                     size={ButtonSize.Small}
                     style={ButtonStyle.Default}
-                    disabled={disabled ?? readOnly}
+                    disabled={disabled}
                     emphasis={ButtonEmphasis.Weak}
                     onClick={callbacks.password}
                     aria-label={`${isObfuscated ? 'show' : 'hide'} text input`}
@@ -131,7 +130,7 @@ export const InputActions = ({
                 <Button
                     style={ButtonStyle.Default}
                     onClick={callbacks.clearable}
-                    disabled={disabled ?? readOnly}
+                    disabled={disabled}
                     emphasis={ButtonEmphasis.Weak}
                     icon={<IconCross16 />}
                     size={ButtonSize.Small}
@@ -146,7 +145,7 @@ export const InputActions = ({
 
 InputActions.displayName = 'FondueInputActionButtons';
 
-export const InputExtraActions = ({ actions, disabled, readOnly, dataTestId }: InputExtraActionsProps) => {
+export const InputExtraActions = ({ actions, disabled, dataTestId }: InputExtraActionsProps) => {
     return actions.map((action, i) => {
         const id = generateRandomId();
         return (
@@ -155,7 +154,7 @@ export const InputExtraActions = ({ actions, disabled, readOnly, dataTestId }: I
                     key={`extra-action-${id}`}
                     style={ButtonStyle.Default}
                     onClick={action.callback}
-                    disabled={disabled ?? readOnly}
+                    disabled={disabled}
                     emphasis={ButtonEmphasis.Weak}
                     icon={action.icon}
                     size={ButtonSize.Small}
