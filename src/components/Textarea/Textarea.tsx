@@ -54,6 +54,7 @@ export const Textarea = ({
     const Component = autosize ? TextareaAutosize : 'textarea';
 
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+    const isDisabled = disabled || readOnly;
 
     const { isFocusVisible, focusProps } = useFocusRing({
         isTextInput: true,
@@ -78,6 +79,7 @@ export const Textarea = ({
     const handleClear = () => {
         if (textareaRef.current) {
             textareaRef.current.value = '';
+            handleOnChange();
         }
     };
 
@@ -107,6 +109,14 @@ export const Textarea = ({
                 return '2.5rem';
             default:
                 return numOfRem;
+        }
+    };
+
+    const getResizableClass = () => {
+        if (!isDisabled && resizable) {
+            return 'tw-resize-y';
+        } else {
+            return 'tw-resize-none';
         }
     };
 
@@ -152,6 +162,7 @@ export const Textarea = ({
                     className={merge([
                         InputStyles.base,
                         InputStyles.width,
+                        minRows ? '' : InputStyles.height,
                         InputStyles.disabled,
                         InputStyles.readOnly,
                         InputStyles.element,
@@ -159,8 +170,8 @@ export const Textarea = ({
                         InputStyles.hover,
                         isFocusVisible && FOCUS_STYLE,
                         validationClassMap[status],
-                        resizable ? '' : 'tw-resize-none',
-                        decorator ? 'tw-pl-[2rem]' : 'tw-pl-[1rem]',
+                        decorator ? 'tw-pl-[2rem]' : '',
+                        getResizableClass(),
                     ])}
                     style={{ paddingRight: getPaddingRight() }}
                     {...props}
@@ -170,19 +181,13 @@ export const Textarea = ({
             <span className="tw-absolute tw-top-[0.5rem] tw-pr-3 tw-right-[0rem] tw-flex tw-items-center tw-justify-between tw-w-auto">
                 <InputActions
                     clearable={clearable}
-                    disabled={disabled}
-                    readOnly={readOnly}
+                    disabled={isDisabled}
                     callbacks={{ clearable: handleClear }}
                     dataTestId={dataTestId}
                 />
 
                 {extraActions ? (
-                    <InputExtraActions
-                        actions={extraActions}
-                        disabled={disabled}
-                        readOnly={readOnly}
-                        dataTestId={dataTestId}
-                    />
+                    <InputExtraActions actions={extraActions} disabled={isDisabled} dataTestId={dataTestId} />
                 ) : null}
 
                 {status ? GetStatusIcon(status, dataTestId) : null}
