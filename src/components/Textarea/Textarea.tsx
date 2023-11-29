@@ -5,8 +5,9 @@ import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { GetStatusIcon, InputActions, InputExtraActions, InputStyles } from '@utilities/input';
 import { merge } from '@utilities/merge';
+import { useForwardedRef } from '@utilities/useForwardedRef';
 import { Validation, validationClassMap } from '@utilities/validation';
-import { KeyboardEvent, ReactElement, TextareaHTMLAttributes, useEffect, useRef } from 'react';
+import { KeyboardEvent, ReactElement, TextareaHTMLAttributes, useEffect } from 'react';
 import TextareaAutosize, { TextareaAutosizeProps } from 'react-textarea-autosize';
 import { InputSharedBaseProps } from 'src/types/input';
 
@@ -53,7 +54,7 @@ export const Textarea = ({
 }: TextareaProps): ReactElement => {
     const Component = autosize ? TextareaAutosize : 'textarea';
 
-    const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+    const textareaRef = useForwardedRef<HTMLTextAreaElement | null>(null);
     const isDisabled = disabled || readOnly;
 
     const { isFocusVisible, focusProps } = useFocusRing({
