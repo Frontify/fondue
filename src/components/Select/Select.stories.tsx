@@ -4,12 +4,22 @@ import { Meta, StoryFn } from '@storybook/react';
 import { Select, SelectProps } from './Select';
 import { Box } from '..';
 import { Validation } from '@utilities/validation';
+import { SelectGroupItems } from '@components/SelectGroupItems/SelectGroupItems';
+import { SelectItem } from '@components/SelectItem/SelectItem';
+import { IconNook16 } from '@foundation/Icon';
 
-const BASIC_ITEMS = [
-    { id: '1', title: 'Test 1', value: 'I am the value of test 1' },
-    { id: '2', title: 'Test 2', value: 'I am the value of test 2' },
-    { id: '3', title: 'Test 3', value: 'I am the value of test 3' },
-    { id: '4', title: 'Test 4', value: 'I am the value of test 4' },
+const ITEM_GROUPS_1 = [
+    { id: '1', title: 'title prop of Test 1', value: 'value prop of Test 1', decoration: <IconNook16 /> },
+    { id: '2', value: 'value prop of Test 2' },
+    { id: '3', title: 'title prop of Test 3', value: 'value prop of Test 3' },
+    { id: '4', title: 'title prop of Test 4', value: 'value prop of Test 4' },
+];
+
+const ITEM_GROUPS_2 = [
+    { id: '5', title: 'title prop of Test 5', value: 'value prop of Test 5' },
+    { id: '6', value: 'value prop of Test 6' },
+    { id: '7', title: 'title prop of Test 7', value: 'value prop of Test 7' },
+    { id: '8', title: 'title prop of Test 8', value: 'value prop of Test 8' },
 ];
 
 export default {
@@ -49,13 +59,23 @@ export default {
     args: {
         label: 'Test Select Menu',
         listGroupTitle: 'Select a option',
-        items: [...BASIC_ITEMS],
     },
 } as Meta<SelectProps>;
 
 const Template: StoryFn<SelectProps> = (args) => (
     <Box className="tw-min-h-[200px]">
-        <Select {...args} />
+        <Select {...args}>
+            <SelectGroupItems>
+                {...ITEM_GROUPS_1.map((item, index) => (
+                    <SelectItem key={item.id} value={item.value} title={item.title} id={item.id} index={index} />
+                ))}
+            </SelectGroupItems>
+            <SelectGroupItems>
+                {...ITEM_GROUPS_2.map((item, index) => (
+                    <SelectItem key={item.id} value={item.value} title={item.title} id={item.id} index={index + 4} />
+                ))}
+            </SelectGroupItems>
+        </Select>
     </Box>
 );
 
