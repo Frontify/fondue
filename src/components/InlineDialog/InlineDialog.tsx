@@ -47,6 +47,7 @@ export const InlineDialog = ({
             autoHeight={autoHeight}
             zIndex={Z_INDEX_MODAL}
             roundedCorners={roundedCorners}
+            shadow="medium"
         >
             {children}
         </Overlay>

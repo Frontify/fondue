@@ -16,6 +16,13 @@ export const dialogPaddingMap: Record<DialogPadding, string> = {
     spacious: 'tw-p-10',
 };
 
+export const overlayShadowMap: Record<string, string> = {
+    none: 'tw-shadow-none',
+    small: 'tw-shadow',
+    medium: 'tw-shadow-mid',
+    large: 'tw-shadow-big',
+};
+
 export const dialogHeadingMap: Record<DialogPadding, string> = {
     none: 'tw-text-heading-large',
     compact: 'tw-text-heading-large',
@@ -75,7 +82,7 @@ export type OverlayProps = PopperProps & {
     'data-test-id'?: string;
     role?: string;
     theme?: 'light' | 'dark';
-    shadow?: 'small' | 'large';
+    shadow?: 'none' | 'small' | 'medium' | 'large';
     isDialog?: boolean;
     handleClose: () => void;
 };

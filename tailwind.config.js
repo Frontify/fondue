@@ -15,10 +15,11 @@ module.exports = {
             },
             boxShadow: {
                 large: '0 25px 80px 0 rgba(45, 50, 50, 0.4)',
-                mid: '0 3px 10px 0 rgba(8, 8, 8, 0.15)',
+                mid: '0px 4px 24px 0px rgba(80, 80, 80, 0.20)',
                 'mid-top': '0 -10px 10px -5px rgba(45, 50, 50, 0.1)',
                 'mid-bottom': '0 10px 10px -5px rgba(45, 50, 50, 0.1)',
                 'inner-mighty': 'inset 0 0 0 var(--line-width) var(--line-color-mighty)',
+                big: '0px 25px 80px 0px rgba(80, 80, 80, 0.20)',
                 none: 'none',
             },
             ringColor: {

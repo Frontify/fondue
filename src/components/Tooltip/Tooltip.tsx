@@ -120,7 +120,7 @@ export const Tooltip = ({
                 maxHeight={maxHeight}
                 zIndex={zIndex}
                 handleClose={() => setOpen(false)}
-                shadow="small"
+                shadow="none"
                 isDialog={false}
             >
                 <p
