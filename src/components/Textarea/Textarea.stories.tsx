@@ -257,16 +257,17 @@ export const WithFormFieldCombination: StoryFn<TextareaProps> = (args) => {
         setInput(value);
         handleValidation();
     };
+
     return (
         <Box className="tw-w-[80%] tw-ml-auto tw-mr-auto">
             <FormField
                 label={{
                     text: 'Label from the FormField',
-                    secondaryLabel: `${input?.length}/${maxChars}`,
+                    secondaryLabel: `${currentChars}/${maxChars}`,
                     tooltips: [{ content: 'Just a tooltip', children: <IconQuestionMark16 /> }],
                 }}
                 error={currentStatus === Validation.Error}
-                errorText={`Text can not be more than${maxChars} long.`}
+                errorText={`Text can not be more than ${maxChars} long.`}
                 helperText="Please enter a short description of your favorite Fondue component!"
             >
                 <Textarea {...args} onChange={handleOnChange} value={input} status={currentStatus} />

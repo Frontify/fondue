@@ -63,6 +63,10 @@ export const Textarea = ({
     });
 
     const handleOnChange = () => {
+        if (status === Validation.Error) {
+            return;
+        }
+
         if (textareaRef.current) {
             const { value } = textareaRef.current;
             onChange?.(value);
