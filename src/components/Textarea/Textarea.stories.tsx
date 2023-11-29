@@ -246,9 +246,15 @@ export const WithFormFieldCombination: StoryFn<TextareaProps> = (args) => {
     const currentChars = input ? input.length : 0;
 
     const handleValidation = () => {
-        if (currentChars > maxChars) {
+        if (currentChars === 0) {
+            setCurrentStatus(undefined);
+        } else if (currentChars > maxChars) {
             setCurrentStatus(Validation.Error);
-        } else if (!currentStatus && currentChars > 0 && currentChars < maxChars) {
+        } else if (
+            (!currentStatus || currentStatus === Validation.Error) &&
+            currentChars > 0 &&
+            currentChars <= maxChars
+        ) {
             setCurrentStatus(Validation.Success);
         }
     };
