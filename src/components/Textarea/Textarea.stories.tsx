@@ -240,18 +240,36 @@ WithFocusOnMount.args = {
 };
 
 export const WithFormFieldCombination: StoryFn<TextareaProps> = (args) => {
+    const [currentStatus, setCurrentStatus] = useState<Validation | undefined>(undefined);
     const [input, setInput] = useState<string | undefined>(undefined);
+    const maxChars = 160;
+    const currentChars = input ? input.length : 0;
 
+    const handleValidation = () => {
+        if (currentChars > maxChars) {
+            setCurrentStatus(Validation.Error);
+        } else if (!currentStatus && currentChars > 0 && currentChars < maxChars) {
+            setCurrentStatus(Validation.Success);
+        }
+    };
+
+    const handleOnChange = (value?: string) => {
+        setInput(value);
+        handleValidation();
+    };
     return (
         <Box className="tw-w-[80%] tw-ml-auto tw-mr-auto">
             <FormField
                 label={{
                     text: 'Label from the FormField',
-                    secondaryLabel: '0/640',
+                    secondaryLabel: `${input?.length}/${maxChars}`,
                     tooltips: [{ content: 'Just a tooltip', children: <IconQuestionMark16 /> }],
                 }}
+                error={currentStatus === Validation.Error}
+                errorText={`Text can not be more than${maxChars} long.`}
+                helperText="Please enter a short description of your favorite Fondue component!"
             >
-                <Textarea {...args} onChange={setInput} value={input} />
+                <Textarea {...args} onChange={handleOnChange} value={input} status={currentStatus} />
             </FormField>
         </Box>
     );
