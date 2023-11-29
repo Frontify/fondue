@@ -244,7 +244,13 @@ export const WithFormFieldCombination: StoryFn<TextareaProps> = (args) => {
 
     return (
         <Box className="tw-w-[80%] tw-ml-auto tw-mr-auto">
-            <FormField label={{ text: 'Label from the FormField' }}>
+            <FormField
+                label={{
+                    text: 'Label from the FormField',
+                    secondaryLabel: '0/640',
+                    tooltips: [{ content: 'Just a tooltip', children: <IconQuestionMark16 /> }],
+                }}
+            >
                 <Textarea {...args} onChange={setInput} value={input} />
             </FormField>
         </Box>
