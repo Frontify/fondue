@@ -5,7 +5,7 @@ import { Box } from '@components/Box';
 import { Textarea, TextareaProps } from '.';
 import { IconClipboard16, IconNook16, IconQuestionMark16 } from '@foundation/Icon';
 import { Validation } from '@utilities/validation';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { FormField } from '@components/FormField';
 
 const ExtraActions = [
@@ -245,24 +245,23 @@ export const WithFormFieldCombination: StoryFn<TextareaProps> = (args) => {
     const maxChars = 160;
     const currentChars = input ? input.length : 0;
 
-    const handleValidation = () => {
+    const handleValidation = useCallback(() => {
         if (currentChars === 0) {
             setCurrentStatus(undefined);
         } else if (currentChars > maxChars) {
             setCurrentStatus(Validation.Error);
-        } else if (
-            (!currentStatus || currentStatus === Validation.Error) &&
-            currentChars > 0 &&
-            currentChars <= maxChars
-        ) {
+        } else if (!currentStatus || currentStatus === Validation.Error) {
             setCurrentStatus(Validation.Success);
         }
-    };
+    }, [currentChars, currentStatus]);
 
     const handleOnChange = (value?: string) => {
         setInput(value);
-        handleValidation();
     };
+
+    useEffect(() => {
+        handleValidation();
+    }, [input, handleValidation]);
 
     return (
         <Box className="tw-w-[80%] tw-ml-auto tw-mr-auto">
@@ -276,7 +275,7 @@ export const WithFormFieldCombination: StoryFn<TextareaProps> = (args) => {
                 errorText={`Text can not be more than ${maxChars} long.`}
                 helperText="Please enter a short description of your favorite Fondue component!"
             >
-                <Textarea {...args} onChange={handleOnChange} value={input} status={currentStatus} />
+                <Textarea {...args} onChange={handleOnChange} value={input} status={currentStatus} autosize />
             </FormField>
         </Box>
     );
