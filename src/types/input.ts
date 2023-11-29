@@ -14,7 +14,7 @@ export type InputBaseProps<TValue> = {
     valueSelect?: boolean;
     onChange?: (value?: TValue) => void;
     'data-test-id'?: string;
-} & Omit<InputHTMLAttributes<HTMLInputElement>, 'className' | 'style' | 'onChange'>;
+} & Omit<InputHTMLAttributes<HTMLInputElement>, 'className' | 'style' | 'onChange' | 'children'>;
 
 type InputType = 'Text' | 'Password' | 'Number';
 export const InputTypes: Record<InputType, string> = {
