@@ -1,11 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Meta, StoryFn } from '@storybook/react';
-import { Textarea, TextareaProps } from '.';
-import { Validation } from '@utilities/validation';
-import { IconClipboard16, IconNook16, IconQuestionMark16 } from '@foundation/Icon';
 import { Box } from '@components/Box';
+import { Textarea, TextareaProps } from '.';
+import { IconClipboard16, IconNook16, IconQuestionMark16 } from '@foundation/Icon';
+import { Validation } from '@utilities/validation';
 import { useState } from 'react';
+import { FormField } from '@components/FormField';
 
 const ExtraActions = [
     {
@@ -56,15 +57,6 @@ export default {
             table: {
                 type: { summary: 'ReactElement | undefined' },
                 defaultValue: { summary: undefined },
-            },
-        },
-        debounceTime: {
-            type: 'number',
-            description:
-                'Time in `milliseconds` that the `onChange` & `onInput` methods will use for the `useDebounce` method',
-            table: {
-                type: { summary: 'number | undefined' },
-                defaultValue: { summary: 500 },
             },
         },
         defaultValue: {
@@ -157,7 +149,7 @@ export default {
         onChange: {
             action: 'onChange',
             type: 'function',
-            description: 'Callback function to return current value on the `Textarea` (uses a `debounce` method)',
+            description: 'Callback function to return current value on the `Textarea`',
             table: {
                 defaultValue: { summary: undefined },
             },
@@ -245,4 +237,16 @@ WithExtraActions.args = {
 export const WithFocusOnMount = TextareaTemplate.bind({});
 WithFocusOnMount.args = {
     focusOnMount: true,
+};
+
+export const WithFormFieldCombination: StoryFn<TextareaProps> = (args) => {
+    const [input, setInput] = useState<string | undefined>(undefined);
+
+    return (
+        <Box className="tw-w-[80%] tw-ml-auto tw-mr-auto">
+            <FormField label={{ text: 'Label from the FormField' }}>
+                <Textarea {...args} onChange={setInput} value={input} />
+            </FormField>
+        </Box>
+    );
 };
