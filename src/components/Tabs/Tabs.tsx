@@ -18,7 +18,7 @@ import { IconDotsHorizontal } from '@foundation/Icon/Generated';
 import { Badge } from '@components/Badge';
 import { motion } from 'framer-motion';
 import { useFocusRing } from '@react-aria/focus';
-import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { FOCUS_STYLE, FOCUS_VISIBLE_STYLE, FOCUS_VISIBLE_STYLE_INSET } from '@utilities/focusStyle';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { DimensionUnity } from '@utilities/dimensions';
 
@@ -135,7 +135,9 @@ export const Tabs = ({
     };
 
     const handleKeyboardTabChange = (event: KeyboardEvent<HTMLButtonElement>) => {
-        event.stopPropagation();
+        if (['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp'].includes(event.key)) {
+            event.stopPropagation();
+        }
 
         const overflownTabs = getOverflownTabs();
         const target = event.target as HTMLElement;
@@ -223,7 +225,7 @@ export const Tabs = ({
                     ref={tabNavRef}
                     role="tablist"
                     className={merge([
-                        'tw-overflow-x-hidden tw-flex-shrink-0 tw-h-full tw-w-full tw-flex tw-justify-start',
+                        'tw-overflow-x-hidden tw-h-full tw-w-full tw-flex tw-justify-start',
                         paddingMap[paddingX ?? TabsPaddingX.Small],
                         size === TabSize.Small ? 'tw-gap-xxs' : 'tw-gap-xs ',
                     ])}
@@ -242,6 +244,7 @@ export const Tabs = ({
                                 className={merge([
                                     'tw-group tw-relative tw-mx-0 tw-px-2 tw-w-max tw-cursor-pointer tw-flex tw-items-center tw-justify-center tw-whitespace-nowrap',
                                     getTabButtonTextStyle(tab, activeItemId),
+                                    FOCUS_VISIBLE_STYLE_INSET,
                                     size === TabSize.Small
                                         ? 'tw-h-12 tw-text-body-medium'
                                         : 'tw-h-14 tw-text-body-large',
@@ -282,7 +285,7 @@ export const Tabs = ({
                 {isOverflowing && (
                     <div
                         data-test-id="tab-overflow"
-                        className="tw-absolute tw-z-50 tw-right-3 tw-bottom-0 tw-top-0 tw-flex tw-justify-center tw-items-center"
+                        className="tw-z-50 tw-flex-grow tw-pl-3 tw-flex tw-justify-center tw-items-center"
                     >
                         <button
                             className={merge([
@@ -310,6 +313,7 @@ export const Tabs = ({
                                             className={merge([
                                                 'tw-flex tw-items-center tw-w-full tw-mb-3 tw-text-left tw-text-text-weak',
                                                 tab.disabled && 'tw-text-text-disabled',
+                                                FOCUS_VISIBLE_STYLE,
                                             ])}
                                             key={tab.id}
                                             onClick={() => {

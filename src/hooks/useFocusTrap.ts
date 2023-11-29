@@ -1,23 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useCallback, useEffect } from 'react';
-
-export const TABBABLE_ELEMENTS = [
-    'input:not([disabled]):not([type=hidden])',
-    'select:not([disabled])',
-    'textarea:not([disabled])',
-    'button:not([disabled])',
-    'a[href]',
-    'area[href]',
-    'summary',
-    'iframe',
-    'object',
-    'embed',
-    'audio[controls]',
-    'video[controls]',
-    '[contenteditable]',
-    '[tabindex]:not([tabindex="-1"]):not([disabled])',
-].join(':not([hidden]):not([tabindex="-1"]),');
+import { TABBABLE_ELEMENTS } from '@utilities/elements';
 
 export const useFocusTrap = (reference: HTMLElement | null, isOpen: boolean, ignoreFocusTrap = false) => {
     const handleFocus = useCallback(
