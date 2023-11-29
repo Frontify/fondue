@@ -19,7 +19,7 @@ export type TooltipProps = {
     enablePortal?: boolean;
     content: string;
     withArrow?: boolean;
-    size?: 'spacious' | 'compact';
+    padding?: 'spacious' | 'compact';
     maxWidth?: string | number;
     maxHeight?: string | number;
     enterDelay?: number;
@@ -43,7 +43,7 @@ export const Tooltip = ({
     content,
     placement = 'bottom',
     withArrow = true,
-    size = 'spacious',
+    padding = 'spacious',
     openOnMount = false,
     maxWidth = 200,
     maxHeight = 'auto',
@@ -125,7 +125,7 @@ export const Tooltip = ({
             >
                 <p
                     className={merge([
-                        size === 'spacious' ? 'tw-pt-2 tw-px-3 tw-pb-2.5' : 'tw-pt-1 tw-px-2 tw-pb-1.5',
+                        padding === 'spacious' ? 'tw-pt-2 tw-px-3 tw-pb-2.5' : 'tw-pt-1 tw-px-2 tw-pb-1.5',
                         'tw-text-heading-medium tw-whitespace-pre-line',
                     ])}
                 >

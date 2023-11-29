@@ -42,6 +42,7 @@ export const Overlay = ({
     roundedCorners = true,
     shadow = 'large',
     isDialog = true,
+    width,
 }: OverlayProps & BaseDialogProps) => {
     const id = useMemoizedId();
     const ref = useRef<HTMLDivElement | null>(null);
@@ -125,6 +126,7 @@ export const Overlay = ({
                     aria-hidden={!open}
                     aria-labelledby={id}
                     style={{
+                        width,
                         minWidth: isMobile && isDialog ? '90vw' : minWidth,
                         minHeight,
                         maxWidth: isMobile && isDialog ? '90vw' : maxWidth,

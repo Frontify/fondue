@@ -75,6 +75,7 @@ export type BaseDialogProps = {
      * autoHeight will set the maxHeight of the dialog Component automatically calculating the available space in the viewport. */
     autoHeight?: boolean;
     roundedCorners?: boolean;
+    width?: string | number;
 };
 
 export type OverlayProps = PopperProps & {

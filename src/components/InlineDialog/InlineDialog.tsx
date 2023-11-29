@@ -6,7 +6,7 @@ import { Z_INDEX_MODAL } from '@utilities/dialogs/constants';
 
 export type InlineDialogProps = Omit<
     OverlayProps,
-    'theme' | 'isDetached' | 'verticalAlignment' | 'withArrow' | 'arrowCustomColors'
+    'theme' | 'isDetached' | 'verticalAlignment' | 'withArrow' | 'arrowCustomColors' | 'shadow'
 > &
     Omit<BaseDialogProps, 'darkUnderlay'>;
 
@@ -27,6 +27,7 @@ export const InlineDialog = ({
     'data-test-id': dataTestId = 'fondue-inlineDialog',
     autoHeight = false,
     roundedCorners,
+    width = 360,
 }: InlineDialogProps) => {
     return (
         <Overlay
@@ -48,6 +49,7 @@ export const InlineDialog = ({
             zIndex={Z_INDEX_MODAL}
             roundedCorners={roundedCorners}
             shadow="medium"
+            width={width}
         >
             {children}
         </Overlay>

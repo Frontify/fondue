@@ -6,9 +6,9 @@ import { Z_INDEX_MODAL } from '@utilities/dialogs/constants';
 
 export type DialogProps = Omit<
     OverlayProps,
-    'placement' | 'flip' | 'offset' | 'theme' | 'withArrow' | 'arrowCustomColors'
+    'placement' | 'flip' | 'offset' | 'theme' | 'withArrow' | 'arrowCustomColors' | 'shadow'
 > &
-    BaseDialogProps;
+    Omit<BaseDialogProps, 'width'>;
 
 export const Dialog = ({
     children,

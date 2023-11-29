@@ -18,7 +18,7 @@ export const Popover = ({
     withArrow = false,
     theme,
     handleClose,
-}: Omit<OverlayProps, 'isDetached' | 'arrowCustomColors' | 'verticalAlignment'>) => {
+}: Omit<OverlayProps, 'isDetached' | 'arrowCustomColors' | 'verticalAlignment' | 'shadow'>) => {
     const arrowTheme = theme === 'dark' ? ARROW_DARK_THEME : ARROW_LIGHT_THEME;
     return (
         <Overlay
