@@ -86,7 +86,7 @@ export const Textarea = ({
 
     useEffect(() => {
         focusOnMount && textareaRef.current?.focus();
-    }, [focusOnMount]);
+    }, [focusOnMount, textareaRef]);
 
     const autosizeProps = { minRows, maxRows };
 
