@@ -3,11 +3,12 @@
 import { SelectItemProps } from '@components/SelectItem/SelectItem';
 import { IconCaretDown16, IconCaretUp16 } from '@foundation/Icon';
 import { childrenToArray, itemToString } from '@hooks/useDownshift';
+import { FOCUS_STYLE_NO_OFFSET } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { useForwardedRef } from '@utilities/useForwardedRef';
 import { Validation, validationClassMap, validationTextClassMap } from '@utilities/validation';
 import { UseSelectPropGetters, useSelect } from 'downshift';
-import { ReactElement, cloneElement, createContext, useCallback, useEffect, useRef, useState } from 'react';
+import { FocusEvent, ReactElement, cloneElement, createContext, useCallback, useEffect, useRef, useState } from 'react';
 import { InputBaseProps } from 'src/types/input';
 
 export type SelectContextProps = {
@@ -31,6 +32,8 @@ export type SelectProps = {
     listPlaceholder?: string;
     initialIsOpen?: boolean;
     onChange?: (value: SelectItemProps) => void;
+    onFocus?: (event: FocusEvent<HTMLInputElement, Element>) => void;
+    onBlur?: (event: FocusEvent<HTMLInputElement, Element>) => void;
 } & Omit<InputBaseProps<string>, 'autocomplete' | 'clearable' | 'decorator' | 'suffix'>;
 
 const GetSelectedText = ({ placeholder, item }: { placeholder: string; item?: SelectItemProps }) => {
@@ -60,6 +63,8 @@ export const Select = ({
     const clonedElementsRef = useForwardedRef<ReactElement[] | null>(null);
     const childrenArrayRef = useRef<SelectItemProps[]>(childrenToArray(children));
     const [selectedItem, setSelectedItem] = useState<SelectItemProps | undefined>(defaultItem ?? undefined);
+    const [isToggleMenuFocused, setIsToggleMenuFocused] = useState<boolean>(false);
+
     const isMultipleGroups = Array.isArray(children);
 
     const handleOnChange = useCallback(
@@ -128,12 +133,15 @@ export const Select = ({
             <div
                 className={merge([
                     'tw-p-2 tw-bg-base tw-flex tw-justify-between tw-cursor-pointer tw-border tw-rounded tw-border-line-strong tw-text-text-weak',
+                    isToggleMenuFocused && FOCUS_STYLE_NO_OFFSET,
                     status === Validation.Default
                         ? ''
                         : `${validationClassMap[status]} ${validationTextClassMap[status]}`,
                 ])}
                 {...getToggleButtonProps({ disabled, ref: toggleElementsRef })}
                 data-test-id={dataTestId}
+                onFocus={() => setIsToggleMenuFocused(true)}
+                onBlur={() => setIsToggleMenuFocused(false)}
             >
                 <GetSelectedText item={selectedItem} placeholder={listPlaceholder} />
                 <span className="tw-p-1">{isOpen ? <IconCaretUp16 /> : <IconCaretDown16 />}</span>
