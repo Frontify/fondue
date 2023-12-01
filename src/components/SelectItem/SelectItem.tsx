@@ -33,7 +33,7 @@ export const SelectItem = ({
         };
     }, [value, id]);
 
-    const index = itemsArray.findIndex((item: SelectItemProps) => item.id === id);
+    const index = useMemo(() => itemsArray.findIndex((item: SelectItemProps) => item.id === id), [id, itemsArray]);
 
     return (
         <li
