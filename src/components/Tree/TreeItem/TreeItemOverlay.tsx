@@ -36,7 +36,7 @@ export const TreeItemOverlay = ({
     const liStyle = { marginLeft: indentation };
 
     const dragHandler = (
-        <button tabIndex={-1} className="tw-p-1">
+        <button tabIndex={-1} className="tw-p-1 tw-touch-none">
             <IconGrabHandle12 />
         </button>
     );
