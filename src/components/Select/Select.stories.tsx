@@ -6,20 +6,20 @@ import { Box } from '..';
 import { Validation } from '@utilities/validation';
 import { SelectGroupItems } from '@components/SelectGroupItems/SelectGroupItems';
 import { SelectItem } from '@components/SelectItem/SelectItem';
-import { IconNook16 } from '@foundation/Icon';
+import { IconClock16, IconFaceSad16, IconFocalPoint16, IconNook16 } from '@foundation/Icon';
 
 const ITEM_GROUPS_1 = [
-    { id: '1', title: 'title prop of Test 1', value: 'value prop of Test 1', decoration: <IconNook16 /> },
-    { id: '2', value: 'value prop of Test 2' },
-    { id: '3', title: 'title prop of Test 3', value: 'value prop of Test 3' },
-    { id: '4', title: 'title prop of Test 4', value: 'value prop of Test 4' },
+    { id: '1', title: 'title prop of Apple', value: 'value prop of Apple', decorator: <IconNook16 /> },
+    { id: '2', value: 'value prop of Orange', decorator: <IconClock16 /> },
+    { id: '3', title: 'title prop of Pear', value: 'value prop of Pear' },
+    { id: '4', title: 'title prop of Kiwi', value: 'value prop of Kiwi', disabled: true },
 ];
 
 const ITEM_GROUPS_2 = [
-    { id: '5', title: 'title prop of Test 5', value: 'value prop of Test 5' },
-    { id: '6', value: 'value prop of Test 6' },
-    { id: '7', title: 'title prop of Test 7', value: 'value prop of Test 7' },
-    { id: '8', title: 'title prop of Test 8', value: 'value prop of Test 8' },
+    { id: '5', title: 'title prop of Cabbage', value: 'value prop of Cabbage', decorator: <IconFocalPoint16 /> },
+    { id: '6', value: 'value prop of Carrot' },
+    { id: '7', title: 'title prop of Potato', value: 'value prop of Potato' },
+    { id: '8', value: 'value prop of Squash', decorator: <IconFaceSad16 /> },
 ];
 
 export default {
@@ -32,7 +32,7 @@ export default {
             control: { type: 'boolean' },
             defaultValue: false,
         },
-        listGroupTitle: {
+        listPlaceholder: {
             type: 'string',
             description: 'String value that will be initially displayed as the option group title',
             defaultValue: 'Select a option',
@@ -58,21 +58,34 @@ export default {
     },
     args: {
         label: 'Test Select Menu',
-        listGroupTitle: 'Select a option',
+        listPlaceholder: 'Select a fruit/veggie',
     },
 } as Meta<SelectProps>;
 
 const Template: StoryFn<SelectProps> = (args) => (
-    <Box className="tw-min-h-[200px]">
+    <Box className="tw-min-h-[800px]">
         <Select {...args}>
-            <SelectGroupItems>
-                {...ITEM_GROUPS_1.map((item, index) => (
-                    <SelectItem key={item.id} value={item.value} title={item.title} id={item.id} index={index} />
+            <SelectGroupItems key="group-one">
+                {...ITEM_GROUPS_1.map((item) => (
+                    <SelectItem
+                        key={item.id}
+                        value={item.value}
+                        title={item.title}
+                        id={item.id}
+                        decorator={item.decorator}
+                        disabled={item.disabled}
+                    />
                 ))}
             </SelectGroupItems>
-            <SelectGroupItems>
-                {...ITEM_GROUPS_2.map((item, index) => (
-                    <SelectItem key={item.id} value={item.value} title={item.title} id={item.id} index={index + 4} />
+            <SelectGroupItems groupTitle="Veggies" key="group-two">
+                {...ITEM_GROUPS_2.map((item) => (
+                    <SelectItem
+                        key={item.id}
+                        value={item.value}
+                        title={item.title}
+                        id={item.id}
+                        decorator={item.decorator}
+                    />
                 ))}
             </SelectGroupItems>
         </Select>
