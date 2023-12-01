@@ -15,7 +15,7 @@ export type SelectContextProps = {
     highlightedIndex: number;
     getMenuProps?: UseSelectPropGetters<SelectItemProps>['getMenuProps'];
     getItemProps?: UseSelectPropGetters<SelectItemProps>['getItemProps'];
-    selectedItem?: SelectItemProps;
+    selectedItem?: SelectItemProps | null;
     itemsArray: SelectItemProps[];
     parentWidth?: number;
 };
@@ -31,12 +31,13 @@ export type SelectProps = {
     disabled?: boolean;
     listPlaceholder?: string;
     initialIsOpen?: boolean;
+    focusOnMount?: boolean;
     onChange?: (value: SelectItemProps) => void;
     onFocus?: (event: FocusEvent<HTMLInputElement, Element>) => void;
     onBlur?: (event: FocusEvent<HTMLInputElement, Element>) => void;
 } & Omit<InputBaseProps<string>, 'autocomplete' | 'clearable' | 'decorator' | 'suffix'>;
 
-const GetSelectedText = ({ placeholder, item }: { placeholder: string; item?: SelectItemProps }) => {
+const GetSelectedText = ({ placeholder, item }: { placeholder: string; item?: SelectItemProps | null }) => {
     if (item) {
         const { title, value, decorator } = item;
         return (
@@ -54,6 +55,7 @@ export const Select = ({
     defaultItem,
     disabled = false,
     initialIsOpen = false,
+    focusOnMount = false,
     listPlaceholder = 'Select a option',
     status = Validation.Default,
     onChange,
@@ -61,29 +63,34 @@ export const Select = ({
 }: SelectProps) => {
     const toggleElementsRef = useForwardedRef<HTMLDivElement | null>(null);
     const childrenArrayRef = useRef<SelectItemProps[]>(childrenToArray(children));
-    const [selectedItem, setSelectedItem] = useState<SelectItemProps | undefined>(defaultItem ?? undefined);
-    const [isToggleButtonFocused, setIsToggleButtonFocused] = useState<boolean>(false);
+    const [isToggleButtonFocused, setIsToggleButtonFocused] = useState<boolean>(focusOnMount);
 
     const isMultipleGroups = Array.isArray(children);
 
-    const handleOnChange = useCallback(
-        (newSelectedItem?: SelectItemProps | null) => {
-            setSelectedItem(newSelectedItem ?? defaultItem);
-        },
-        [defaultItem],
-    );
+    const handleOnChange = (selectedItem?: SelectItemProps | null) => onChange?.(selectedItem?.value);
 
-    const { isOpen, highlightedIndex, getToggleButtonProps, getMenuProps, getItemProps } = useSelect<SelectItemProps>({
-        items: childrenArrayRef.current,
-        itemToString: itemToString<SelectItemProps>,
-        selectedItem,
-        onSelectedItemChange: ({ selectedItem: newSelectItem }) => {
-            newSelectItem?.disabled ? null : handleOnChange(newSelectItem);
-        },
-        isItemDisabled: (item) => !!item.disabled,
-        initialSelectedItem: defaultItem,
-        initialIsOpen,
-    });
+    const { isOpen, highlightedIndex, getToggleButtonProps, getMenuProps, getItemProps, selectedItem } =
+        useSelect<SelectItemProps>({
+            initialIsOpen,
+            items: childrenArrayRef.current,
+            initialSelectedItem: defaultItem,
+            isItemDisabled: (item) => !!item.disabled,
+            itemToString: itemToString<SelectItemProps>,
+            onSelectedItemChange: ({ selectedItem: newSelectItem }) => handleOnChange(newSelectItem),
+            stateReducer: (state, actionAndChanges) => {
+                const { type, changes } = actionAndChanges;
+                switch (type) {
+                    case useSelect.stateChangeTypes.ToggleButtonKeyDownEnter:
+                    case useSelect.stateChangeTypes.ToggleButtonBlur:
+                    case useSelect.stateChangeTypes.ItemClick:
+                        if (changes.selectedItem?.disabled) {
+                            return state;
+                        }
+                    default:
+                        return changes;
+                }
+            },
+        });
 
     const renderChildren = useCallback(() => {
         const allElements = [];
@@ -114,10 +121,10 @@ export const Select = ({
     return (
         <SelectContext.Provider
             value={{
-                highlightedIndex,
                 getMenuProps,
                 getItemProps,
                 selectedItem,
+                highlightedIndex,
                 itemsArray: childrenArrayRef.current,
                 parentWidth: toggleElementsRef.current?.clientWidth,
             }}
@@ -125,7 +132,7 @@ export const Select = ({
             <div
                 className={merge([
                     'tw-p-2 tw-bg-base tw-flex tw-justify-between tw-cursor-pointer tw-border tw-rounded tw-border-line-strong tw-text-text-weak',
-                    isToggleButtonFocused && FOCUS_STYLE_NO_OFFSET,
+                    (isToggleButtonFocused || isOpen) && FOCUS_STYLE_NO_OFFSET,
                     status === Validation.Default
                         ? ''
                         : `${validationClassMap[status]} ${validationTextClassMap[status]}`,

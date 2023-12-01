@@ -39,7 +39,7 @@ export const SelectItem = ({
         <li
             className={merge([
                 'tw-p-2 tw-shadow-sm tw-flex tw-justify-start tw-items-center tw-rounded tw-cursor-pointer',
-                selectedItem && selectedItem.id === item.id && 'tw-font-bold',
+                selectedItem?.id === item.id && 'tw-font-bold tw-bg-box-selected tw-text-box-selected-inverse',
                 !disabled && highlightedIndex === index ? FOCUS_STYLE_INSET_NO_OFFSET : '',
                 disabled
                     ? 'tw-cursor-not-allowed tw-bg-box-disabled tw-text-bog-disabled-inverse'
