@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import type { ReactElement } from 'react';
+import type { SelectContextProps } from '@components/Select/Select';
 import { merge } from '@utilities/merge';
-import { ReactElement, useContext, useMemo, useRef } from 'react';
+import { SelectContext } from '@components/Select/Select';
+import { useContext, useMemo, useRef } from 'react';
 import { FOCUS_STYLE_INSET_NO_OFFSET } from '@utilities/focusStyle';
-import { SelectContext, SelectContextProps } from '@components/Select/Select';
 
 export type SelectItemProps = {
     id: string;

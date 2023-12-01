@@ -1,8 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { SelectContext, SelectContextProps } from '@components/Select/Select';
+import type { ReactElement } from 'react';
+import type { SelectContextProps } from '@components/Select/Select';
 import { merge } from '@utilities/merge';
-import { ReactElement, cloneElement, useContext, useMemo, useRef } from 'react';
+import { SelectContext } from '@components/Select/Select';
+import { cloneElement, useContext, useMemo, useRef } from 'react';
 
 export type SelectGroupItemProps = {
     children: ReactElement[];

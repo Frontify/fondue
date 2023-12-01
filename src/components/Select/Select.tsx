@@ -1,15 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { SelectItemProps } from '@components/SelectItem/SelectItem';
+import type { SelectItemProps } from '@components/SelectItem/SelectItem';
+import type { UseSelectPropGetters } from 'downshift';
+import type { FocusEvent, ReactElement } from 'react';
+import { useSelect } from 'downshift';
+import { merge } from '@utilities/merge';
+import { InputBaseProps } from 'src/types/input';
+import { useForwardedRef } from '@utilities/useForwardedRef';
+import { FOCUS_STYLE_NO_OFFSET } from '@utilities/focusStyle';
 import { IconCaretDown16, IconCaretUp16 } from '@foundation/Icon';
 import { childrenToArray, itemToString } from '@hooks/useDownshift';
-import { FOCUS_STYLE_NO_OFFSET } from '@utilities/focusStyle';
-import { merge } from '@utilities/merge';
-import { useForwardedRef } from '@utilities/useForwardedRef';
+import { cloneElement, createContext, useMemo, useRef, useState } from 'react';
 import { Validation, validationClassMap, validationTextClassMap } from '@utilities/validation';
-import { UseSelectPropGetters, useSelect } from 'downshift';
-import { FocusEvent, ReactElement, cloneElement, createContext, useMemo, useRef, useState } from 'react';
-import { InputBaseProps } from 'src/types/input';
 
 export type SelectContextProps = {
     highlightedIndex: number;

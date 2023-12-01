@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement } from 'react';
+import type { ReactElement } from 'react';
 
 /** loop to extract child props as required by Downshift hook. If children is a array, then it is multiple groups and we must loop thru the nested children, else it is a single group and can be accessed one level down */
 export const childrenToArray = (children: ReactElement | ReactElement[]) => {
