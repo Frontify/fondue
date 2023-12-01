@@ -1,61 +1,56 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { merge } from '@utilities/merge';
-import { UseSelectPropGetters } from 'downshift';
-import { ReactElement, useMemo } from 'react';
-
+import { ReactElement, useContext, useMemo, useRef } from 'react';
 import { FOCUS_STYLE_INSET_NO_OFFSET } from '@utilities/focusStyle';
+import { SelectContext, SelectContextProps } from '@components/Select/Select';
 
 export type SelectItemProps = {
     id: string;
     value: string;
-    index: number;
-    decoration?: ReactElement;
-    selectedItemId?: string;
-    highlightedIndex?: number;
+    decorator?: ReactElement;
     title?: string;
-    getItemProps?: (
-        item: SelectItemProps,
-        index: number,
-    ) => Pick<UseSelectPropGetters<SelectItemProps>, 'getItemProps'>;
-    onClick?: (item: SelectItemProps) => void;
+    disabled?: boolean;
     'data-test-id'?: string;
 };
 
 export const SelectItem = ({
+    id,
+    disabled = false,
+    decorator,
     value,
     title,
-    id,
-    index,
-    decoration,
-    selectedItemId,
-    highlightedIndex,
-    getItemProps,
     'data-test-id': dataTestId = 'fondue-select-item',
 }: SelectItemProps) => {
+    const { getItemProps, itemsArray, selectedItem, highlightedIndex, parentWidth } =
+        useContext<SelectContextProps>(SelectContext);
+    const itemElementRef = useRef<HTMLLIElement | null>(null);
+
     const item: SelectItemProps = useMemo(() => {
         return {
-            value,
-            title,
             id,
-            index,
+            value,
         };
-    }, [value, title, id, index]);
+    }, [value, id]);
+
+    const index = itemsArray.findIndex((item: SelectItemProps) => item.id === id);
 
     return (
         <li
             className={merge([
-                'tw-p-3 tw-shadow-sm tw-flex tw-rounded tw-cursor-pointer',
-                selectedItemId === item.id && 'tw-font-bold',
-                highlightedIndex === index ? FOCUS_STYLE_INSET_NO_OFFSET : '',
+                'tw-p-2 tw-shadow-sm tw-flex tw-justify-start tw-items-center tw-rounded tw-cursor-pointer',
+                selectedItem && selectedItem.id === item.id && 'tw-font-bold',
+                !disabled && highlightedIndex === index ? FOCUS_STYLE_INSET_NO_OFFSET : '',
+                disabled ? 'tw-cursor-not-allowed tw-bg-box-disabled tw-text-text-disabled' : 'tw-text-text-weak',
             ])}
+            style={{ width: `${parentWidth}px` }}
             key={id}
-            id={`select-item-${id}`}
-            {...getItemProps?.(item, index)}
-            data-test-id={`${dataTestId}-list-item`}
+            title={title ?? value}
+            data-test-id={dataTestId}
+            {...getItemProps?.({ item, index, ref: itemElementRef })}
         >
-            {decoration ? <span className="tw-text-text-weak">{decoration}</span> : null}
-            <span className="tw-text-text-weak">{title ?? value}</span>
+            {decorator ? <span className="tw-pr-1">{decorator}</span> : null}
+            <span>{title ?? value}</span>
         </li>
     );
 };

@@ -1,39 +1,37 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { SelectItemProps } from '@components/SelectItem/SelectItem';
-import { UseSelectPropGetters } from 'downshift';
-import { ReactElement, cloneElement } from 'react';
+import { SelectContext, SelectContextProps } from '@components/Select/Select';
+import { merge } from '@utilities/merge';
+import { ReactElement, cloneElement, useContext, useRef } from 'react';
 
 export type SelectGroupItemsProps = {
     children: ReactElement[];
-    getMenuProps?: Pick<UseSelectPropGetters<SelectItemProps>, 'getMenuProps'>;
-    getItemProps?: Pick<UseSelectPropGetters<SelectItemProps>, 'getItemProps'>;
-    selectedItemId?: string;
-    highlightedIndex?: number;
-    onChange?: (item: SelectItemProps) => void;
+    groupTitle?: string;
     'data-test-id'?: string;
 };
 
 export const SelectGroupItems = ({
     children,
-    getMenuProps,
-    getItemProps,
-    selectedItemId,
-    highlightedIndex,
-    onChange,
+    groupTitle,
     'data-test-id': dataTestId = 'fondue-select-group',
 }: SelectGroupItemsProps) => {
-    const handleOnClick = (item: SelectItemProps) => {
-        onChange?.(item);
-    };
+    const { getMenuProps, parentWidth } = useContext<SelectContextProps>(SelectContext);
+    const selectMenuRef = useRef<HTMLUListElement | null>(null);
 
-    const renderChildren = () =>
-        children.map((child) =>
-            cloneElement(child, { onClick: handleOnClick, getItemProps, highlightedIndex, selectedItemId }),
-        );
+    const renderChildren = () => children.map((child) => cloneElement(child));
 
     return (
-        <ul {...getMenuProps} data-test-id={dataTestId}>
+        <ul
+            title={groupTitle}
+            className={merge([
+                '[&[title]]:before:tw-p-4 [&[title]]:before:tw-block before:tw-content-[attr(title)]',
+                groupTitle ? '[&>li]:tw-pl-8' : '',
+            ])}
+            style={{ width: `${parentWidth}px` }}
+            data-test-id={dataTestId}
+            aria-label={`${groupTitle} menu group`}
+            {...getMenuProps?.({ ref: selectMenuRef }, { suppressRefError: true })}
+        >
             {renderChildren()}
         </ul>
     );

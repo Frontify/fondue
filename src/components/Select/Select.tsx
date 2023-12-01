@@ -2,122 +2,151 @@
 
 import { SelectItemProps } from '@components/SelectItem/SelectItem';
 import { IconCaretDown16, IconCaretUp16 } from '@foundation/Icon';
+import { childrenToArray, itemToString } from '@hooks/useDownshift';
 import { merge } from '@utilities/merge';
+import { useForwardedRef } from '@utilities/useForwardedRef';
 import { Validation, validationClassMap, validationTextClassMap } from '@utilities/validation';
-import { useSelect } from 'downshift';
-import { ReactElement, cloneElement, useEffect, useState } from 'react';
+import { UseSelectPropGetters, useSelect } from 'downshift';
+import { ReactElement, cloneElement, createContext, useCallback, useEffect, useRef, useState } from 'react';
 import { InputBaseProps } from 'src/types/input';
+
+export type SelectContextProps = {
+    highlightedIndex: number;
+    getMenuProps?: UseSelectPropGetters<SelectItemProps>['getMenuProps'];
+    getItemProps?: UseSelectPropGetters<SelectItemProps>['getItemProps'];
+    selectedItem?: SelectItemProps;
+    itemsArray: SelectItemProps[];
+    parentWidth?: number;
+};
+
+export const SelectContext = createContext<SelectContextProps>({
+    highlightedIndex: -1,
+    itemsArray: [],
+});
 
 export type SelectProps = {
     children: ReactElement | ReactElement[];
-    label: string;
-    hiddenLabel?: boolean;
-    listGroupTitle?: string;
+    defaultItem?: SelectItemProps;
+    disabled?: boolean;
+    listPlaceholder?: string;
+    initialIsOpen?: boolean;
     onChange?: (value: SelectItemProps) => void;
 } & Omit<InputBaseProps<string>, 'autocomplete' | 'clearable' | 'decorator' | 'suffix'>;
 
+const GetSelectedText = ({ placeholder, item }: { placeholder: string; item?: SelectItemProps }) => {
+    if (item) {
+        const { title, value, decorator } = item;
+        return (
+            <span className="tw-flex tw-justify-start tw-items-center tw-px-1">
+                {decorator ? <span className="tw-text-text-weak tw-pr-1">{decorator}</span> : null}
+                <span className="tw-text-text-weak">{title ?? value}</span>
+            </span>
+        );
+    }
+    return <span className="tw-text-text-weak">{placeholder}</span>;
+};
+
 export const Select = ({
     children,
-    label,
-    hiddenLabel = false,
-    listGroupTitle = 'Select a option',
+    defaultItem,
+    disabled = false,
+    initialIsOpen = false,
+    listPlaceholder = 'Select a option',
     status = Validation.Default,
     onChange,
     'data-test-id': dataTestId = 'fondue-select',
 }: SelectProps) => {
-    const [selectedItem, setSelectedItem] = useState<SelectItemProps | null | undefined>(undefined);
+    const toggleElementsRef = useForwardedRef<HTMLDivElement | null>(null);
+    const clonedElementsRef = useForwardedRef<ReactElement[] | null>(null);
+    const childrenArrayRef = useRef<SelectItemProps[]>(childrenToArray(children));
+    const [selectedItem, setSelectedItem] = useState<SelectItemProps | undefined>(defaultItem ?? undefined);
+    const isMultipleGroups = Array.isArray(children);
 
-    const handleOnChange = (newSelectedItem: SelectItemProps) => {
-        setSelectedItem(newSelectedItem);
-    };
+    const handleOnChange = useCallback(
+        (newSelectedItem?: SelectItemProps | null) => {
+            setSelectedItem(newSelectedItem ?? defaultItem);
+        },
+        [defaultItem],
+    );
 
-    const childrenToArray = (): Pick<SelectItemProps, 'id' | 'value' | 'title' | 'index'>[] => {
-        const childrenPropArray = [];
-        if (Array.isArray(children)) {
-            for (const element of children) {
-                for (const child of element.props.children) {
-                    const { id, value, title, index } = child.props;
-                    childrenPropArray.push({ id, value, title, index });
-                }
-            }
-        } else {
-            for (const child of children.props.children) {
-                const { id, value, title, index } = child.props;
-                childrenPropArray.push({ id, value, title, index });
-            }
-        }
-        return childrenPropArray;
-    };
+    const { isOpen, highlightedIndex, getToggleButtonProps, getMenuProps, getItemProps } = useSelect<SelectItemProps>({
+        items: childrenArrayRef.current,
+        itemToString: itemToString<SelectItemProps>,
+        selectedItem,
+        onSelectedItemChange: ({ selectedItem: newSelectItem }) => {
+            newSelectItem?.disabled ? null : handleOnChange(newSelectItem);
+        },
+        isItemDisabled: (item) => !!item.disabled,
+        initialSelectedItem: defaultItem,
+        initialIsOpen,
+    });
 
-    const { isOpen, highlightedIndex, getToggleButtonProps, getLabelProps, getMenuProps, getItemProps } =
-        useSelect<SelectItemProps>({
-            items: childrenToArray(),
-            selectedItem,
-            onSelectedItemChange: ({ selectedItem: newSelectedItem }) => setSelectedItem(newSelectedItem),
-        });
-
-    useEffect(() => {
-        if (selectedItem) {
-            onChange?.(selectedItem);
-        }
-    }, [selectedItem, onChange]);
-
-    const getSelectedText = () => {
-        if (selectedItem) {
-            return selectedItem.title ? selectedItem.title : selectedItem.value;
-        }
-        return listGroupTitle;
-    };
-
-    const renderChildren = () => {
-        if (Array.isArray(children)) {
-            const allGroups = [];
+    const renderChildren = useCallback(() => {
+        const allElements = [];
+        if (isMultipleGroups) {
             for (const child of children) {
-                allGroups.push(
+                allElements.push(
                     cloneElement(child, {
-                        getMenuProps: { ...getMenuProps() },
-                        getItemProps: (item: SelectItemProps, index: number) => getItemProps({ item, index }),
-                        selectedItemId: selectedItem?.id,
-                        highlightedIndex,
-                        onChange: handleOnChange,
+                        key: child.props.id,
                     }),
                 );
             }
-            return allGroups;
         } else {
-            return cloneElement(children, {
-                getMenuProps: { ...getMenuProps() },
-                getItemProps: (item: SelectItemProps, index: number) => getItemProps({ item, index }),
-                selectedItemId: selectedItem?.id,
-                highlightedIndex,
-                onChange: handleOnChange,
-            });
+            allElements.push(
+                cloneElement(children, {
+                    key: children.props.id,
+                }),
+            );
         }
-    };
+        return allElements;
+    }, [children, isMultipleGroups]);
+
+    useEffect(() => {
+        if (selectedItem) {
+            onChange?.(selectedItem.value);
+        }
+    }, [selectedItem, onChange]);
+
+    useEffect(() => {
+        const newElements = renderChildren();
+        if (clonedElementsRef.current !== newElements) {
+            clonedElementsRef.current = newElements;
+        }
+    }, [renderChildren, clonedElementsRef]);
 
     return (
-        <div data-test-id={dataTestId}>
-            <div className="tw-flex tw-flex-col tw-gap-1">
-                {hiddenLabel ? null : <label {...getLabelProps()}>{label}</label>}
-                <div
-                    className={merge([
-                        'tw-p-2 tw-bg-base tw-flex tw-justify-between tw-cursor-pointer tw-border tw-rounded tw-border-line-strong',
-                        status === Validation.Default
-                            ? ''
-                            : `${validationClassMap[status]} ${validationTextClassMap[status]}`,
-                    ])}
-                    {...getToggleButtonProps()}
-                >
-                    <span className="tw-text-text">{getSelectedText()}</span>
-                    <span className="tw-p-1">{isOpen ? <IconCaretUp16 /> : <IconCaretDown16 />}</span>
-                </div>
+        <SelectContext.Provider
+            value={{
+                highlightedIndex,
+                getMenuProps,
+                getItemProps,
+                selectedItem,
+                itemsArray: childrenArrayRef.current,
+                parentWidth: toggleElementsRef.current?.clientWidth,
+            }}
+        >
+            <div
+                className={merge([
+                    'tw-p-2 tw-bg-base tw-flex tw-justify-between tw-cursor-pointer tw-border tw-rounded tw-border-line-strong tw-text-text-weak',
+                    status === Validation.Default
+                        ? ''
+                        : `${validationClassMap[status]} ${validationTextClassMap[status]}`,
+                ])}
+                {...getToggleButtonProps({ disabled, ref: toggleElementsRef })}
+                data-test-id={dataTestId}
+            >
+                <GetSelectedText item={selectedItem} placeholder={listPlaceholder} />
+                <span className="tw-p-1">{isOpen ? <IconCaretUp16 /> : <IconCaretDown16 />}</span>
             </div>
             {isOpen && (
-                <div className={'tw-absolute tw-w-full tw-bg-base tw-mt-1 tw-shadow-md tw-h-auto tw-p-0 tw-z-10'}>
+                <div
+                    className={'tw-w-full tw-absolute tw-bg-base tw-mt-1 tw-shadow-md tw-h-auto tw-p-0 tw-z-10'}
+                    style={{ width: `${toggleElementsRef.current?.clientWidth}px` }}
+                >
                     {renderChildren()}
                 </div>
             )}
-        </div>
+        </SelectContext.Provider>
     );
 };
 Select.displayName = 'FondueSelect';
