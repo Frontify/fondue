@@ -8,6 +8,7 @@ import { useToggleOverlay } from '@hooks/useToggleOverlay';
 import { Z_INDEX_TOOLTIP } from '@utilities/dialogs/constants';
 import { EnablePortalWrapper } from '@utilities/dialogs/EnablePortalWrapper';
 import { useMemoizedId } from '@hooks/useMemoizedId';
+import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 
 const ARROW_DISTANCE_FROM_CORNER_VALUE = 12;
 const TOOLTIP_EXTRA_OFFSET_VALUE = 7; // As the arrow is set 12px away from tooltip corner, extra offset should be added to still point to Trigger.
@@ -86,7 +87,7 @@ export const Tooltip = ({
 }: TooltipProps) => {
     const id = useMemoizedId(customId);
     const [open, setOpen] = useToggleOverlay(openOnMount);
-    const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
+    const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
     const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
     const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
     const [tooltipOffset, setTooltipOffset] = useState<[number, number]>(offset);
@@ -105,32 +106,39 @@ export const Tooltip = ({
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     useEffect(() => {
-        const newOffset = getNewOffsetBasedOnArrowPosition(currentPlacement, offset);
+        const newOffset = withArrow ? getNewOffsetBasedOnArrowPosition(currentPlacement, offset) : offset;
 
-        if (newOffset[0] !== tooltipOffset[0] || newOffset[1] !== tooltipOffset[1]) {
-            setTooltipOffset(newOffset);
-        }
-    }, [offset, tooltipOffset, currentPlacement]);
+        setTooltipOffset((prevOffset) => {
+            if (newOffset[0] !== prevOffset[0] || newOffset[1] !== prevOffset[1]) {
+                return newOffset;
+            }
+            return prevOffset;
+        });
+    }, [currentPlacement, offset, withArrow]);
 
     const handleHideTooltip = useCallback(() => {
-        if (timeoutRef.current) {
-            clearTimeout(timeoutRef.current);
+        if (!disabled) {
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
+            timeoutRef.current = setTimeout(() => setOpen(false), leaveDelay);
         }
-        timeoutRef.current = setTimeout(() => setOpen(false), leaveDelay);
-    }, [leaveDelay, setOpen]);
+    }, [disabled, leaveDelay, setOpen]);
 
     const handleShowTooltip = useCallback(() => {
-        if (timeoutRef.current) {
-            clearTimeout(timeoutRef.current);
-        }
+        if (!disabled) {
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
 
-        if (enterDelay) {
-            timeoutRef.current = setTimeout(() => setOpen(true), enterDelay);
-            return;
-        }
+            if (enterDelay) {
+                timeoutRef.current = setTimeout(() => setOpen(true), enterDelay);
+                return;
+            }
 
-        setOpen(true);
-    }, [enterDelay, setOpen]);
+            setOpen(true);
+        }
+    }, [disabled, enterDelay, setOpen]);
 
     useEffect(() => {
         if (timeoutRef.current && !open) {
@@ -140,8 +148,10 @@ export const Tooltip = ({
 
     return (
         <>
-            <button
+            <div
                 ref={setReferenceElement}
+                role="button"
+                tabIndex={disabled ? -1 : 0}
                 onMouseEnter={handleShowTooltip}
                 onFocus={handleShowTooltip}
                 onMouseLeave={handleHideTooltip}
@@ -149,12 +159,16 @@ export const Tooltip = ({
                 aria-label={ariaLabel}
                 aria-disabled={disabled}
                 aria-describedby={id}
-                disabled={disabled}
-                className="disabled:tw-text-text-disabled"
+                className={merge([
+                    'tw-inline-block tw-rounded tw-max-w-[100%]',
+                    disabled && 'tw-text-text-disabled tw-cursor-not-allowed',
+                    FOCUS_VISIBLE_STYLE,
+                ])}
                 data-test-id={`${dataTestId}-button`}
             >
                 {children}
-            </button>
+            </div>
+
             {open && (
                 <EnablePortalWrapper enablePortal={enablePortal}>
                     <div
