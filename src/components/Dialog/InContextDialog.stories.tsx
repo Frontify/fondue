@@ -155,7 +155,7 @@ const optionList = [
 const WithInlineDialog: StoryFn<DialogProps> = (args) => {
     const [isOpen, setIsOpen] = useState(false);
     const [filteredOptionList, setFilteredOptionList] = useState<OptionListItem[]>(optionList);
-    const [isOptionListOpen, setOptionListOpen] = useState(false);
+    const [isOptionListOpen, setIsOptionListOpen] = useState(false);
     const [optionItemChosen, setOptionItemChosen] = useState<Nullable<OptionListItem>>(null);
     const [inputPhrase, setInputPhrase] = useState('');
     const dialogTriggerRef = useRef<HTMLButtonElement | null>(null);
@@ -176,7 +176,7 @@ const WithInlineDialog: StoryFn<DialogProps> = (args) => {
     const chooseOption = (code: string) => {
         setOptionItemChosen(optionList.find((option) => option.code === code) ?? null);
 
-        setOptionListOpen(false);
+        setIsOptionListOpen(false);
     };
 
     const handleInput = (value: string) => {
@@ -226,7 +226,7 @@ const WithInlineDialog: StoryFn<DialogProps> = (args) => {
                             <p>Information</p>
                         </Flex>
                         <button
-                            onClick={() => setOptionListOpen(true)}
+                            onClick={() => setIsOptionListOpen(true)}
                             ref={inlineDialogTriggerRef}
                             className="tw-text-ellipsis tw-flex tw-items-center tw-h-9 tw-px-3 tw-border tw-transition tw-rounded tw-text-s tw-font-sans tw-bg-white dark:tw-bg-transparent tw-border-solid focus-within:tw-border-black-90 hover:tw-border-black-90 tw-border-black-20 tw-justify-between tw-gap-x-3 tw-w-full"
                         >
@@ -243,7 +243,7 @@ const WithInlineDialog: StoryFn<DialogProps> = (args) => {
                             anchor={inlineDialogTriggerRef}
                             open={isOptionListOpen}
                             flip
-                            handleClose={() => setOptionListOpen(false)}
+                            handleClose={() => setIsOptionListOpen(false)}
                             maxWidth={600}
                             minHeight={0}
                             minWidth={0}
