@@ -4,7 +4,7 @@ import { Meta, StoryFn } from '@storybook/react';
 import { Select, SelectProps } from './Select';
 import { Box } from '..';
 import { Validation } from '@utilities/validation';
-import { SelectGroupItems } from '@components/SelectGroupItems/SelectGroupItems';
+import { SelectGroupItem } from '@components/SelectGroupItem/SelectGroupItem';
 import { SelectItem } from '@components/SelectItem/SelectItem';
 import { IconClock16, IconFaceSad16, IconFocalPoint16, IconNook16 } from '@foundation/Icon';
 
@@ -65,7 +65,7 @@ export default {
 const Template: StoryFn<SelectProps> = (args) => (
     <Box className="tw-min-h-[800px]">
         <Select {...args}>
-            <SelectGroupItems key="group-one">
+            <SelectGroupItem key="group-one">
                 {...ITEM_GROUPS_1.map((item) => (
                     <SelectItem
                         key={item.id}
@@ -76,8 +76,8 @@ const Template: StoryFn<SelectProps> = (args) => (
                         disabled={item.disabled}
                     />
                 ))}
-            </SelectGroupItems>
-            <SelectGroupItems groupTitle="Veggies" key="group-two">
+            </SelectGroupItem>
+            <SelectGroupItem groupTitle="Veggies" key="group-two">
                 {...ITEM_GROUPS_2.map((item) => (
                     <SelectItem
                         key={item.id}
@@ -87,7 +87,7 @@ const Template: StoryFn<SelectProps> = (args) => (
                         decorator={item.decorator}
                     />
                 ))}
-            </SelectGroupItems>
+            </SelectGroupItem>
         </Select>
     </Box>
 );

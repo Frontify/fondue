@@ -41,7 +41,9 @@ export const SelectItem = ({
                 'tw-p-2 tw-shadow-sm tw-flex tw-justify-start tw-items-center tw-rounded tw-cursor-pointer',
                 selectedItem && selectedItem.id === item.id && 'tw-font-bold',
                 !disabled && highlightedIndex === index ? FOCUS_STYLE_INSET_NO_OFFSET : '',
-                disabled ? 'tw-cursor-not-allowed tw-bg-box-disabled tw-text-text-disabled' : 'tw-text-text-weak',
+                disabled
+                    ? 'tw-cursor-not-allowed tw-bg-box-disabled tw-text-bog-disabled-inverse'
+                    : 'tw-text-text-weak',
             ])}
             style={{ width: `${parentWidth}px` }}
             key={id}

@@ -60,10 +60,9 @@ export const Select = ({
     'data-test-id': dataTestId = 'fondue-select',
 }: SelectProps) => {
     const toggleElementsRef = useForwardedRef<HTMLDivElement | null>(null);
-    const clonedElementsRef = useForwardedRef<ReactElement[] | null>(null);
     const childrenArrayRef = useRef<SelectItemProps[]>(childrenToArray(children));
     const [selectedItem, setSelectedItem] = useState<SelectItemProps | undefined>(defaultItem ?? undefined);
-    const [isToggleMenuFocused, setIsToggleMenuFocused] = useState<boolean>(false);
+    const [isToggleButtonFocused, setIsToggleButtonFocused] = useState<boolean>(false);
 
     const isMultipleGroups = Array.isArray(children);
 
@@ -112,13 +111,6 @@ export const Select = ({
         }
     }, [selectedItem, onChange]);
 
-    useEffect(() => {
-        const newElements = renderChildren();
-        if (clonedElementsRef.current !== newElements) {
-            clonedElementsRef.current = newElements;
-        }
-    }, [renderChildren, clonedElementsRef]);
-
     return (
         <SelectContext.Provider
             value={{
@@ -133,15 +125,16 @@ export const Select = ({
             <div
                 className={merge([
                     'tw-p-2 tw-bg-base tw-flex tw-justify-between tw-cursor-pointer tw-border tw-rounded tw-border-line-strong tw-text-text-weak',
-                    isToggleMenuFocused && FOCUS_STYLE_NO_OFFSET,
+                    isToggleButtonFocused && FOCUS_STYLE_NO_OFFSET,
                     status === Validation.Default
                         ? ''
                         : `${validationClassMap[status]} ${validationTextClassMap[status]}`,
                 ])}
                 {...getToggleButtonProps({ disabled, ref: toggleElementsRef })}
+                onFocus={() => setIsToggleButtonFocused(true)}
+                onBlur={() => setIsToggleButtonFocused(false)}
+                aria-label="Select Toggle Button"
                 data-test-id={dataTestId}
-                onFocus={() => setIsToggleMenuFocused(true)}
-                onBlur={() => setIsToggleMenuFocused(false)}
             >
                 <GetSelectedText item={selectedItem} placeholder={listPlaceholder} />
                 <span className="tw-p-1">{isOpen ? <IconCaretUp16 /> : <IconCaretDown16 />}</span>
