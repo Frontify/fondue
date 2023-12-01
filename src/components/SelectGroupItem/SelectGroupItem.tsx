@@ -4,17 +4,17 @@ import { SelectContext, SelectContextProps } from '@components/Select/Select';
 import { merge } from '@utilities/merge';
 import { ReactElement, cloneElement, useContext, useRef } from 'react';
 
-export type SelectGroupItemsProps = {
+export type SelectGroupItemProps = {
     children: ReactElement[];
     groupTitle?: string;
     'data-test-id'?: string;
 };
 
-export const SelectGroupItems = ({
+export const SelectGroupItem = ({
     children,
     groupTitle,
     'data-test-id': dataTestId = 'fondue-select-group',
-}: SelectGroupItemsProps) => {
+}: SelectGroupItemProps) => {
     const { getMenuProps, parentWidth } = useContext<SelectContextProps>(SelectContext);
     const selectMenuRef = useRef<HTMLUListElement | null>(null);
 
@@ -36,4 +36,4 @@ export const SelectGroupItems = ({
         </ul>
     );
 };
-SelectGroupItems.displayName = 'FondueSelectGroupItems';
+SelectGroupItem.displayName = 'FondueSelectGroupItem';
