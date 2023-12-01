@@ -2,7 +2,7 @@
 
 import { SelectContext, SelectContextProps } from '@components/Select/Select';
 import { merge } from '@utilities/merge';
-import { ReactElement, cloneElement, useContext, useRef } from 'react';
+import { ReactElement, cloneElement, useContext, useMemo, useRef } from 'react';
 
 export type SelectGroupItemProps = {
     children: ReactElement[];
@@ -18,7 +18,7 @@ export const SelectGroupItem = ({
     const { getMenuProps, parentWidth } = useContext<SelectContextProps>(SelectContext);
     const selectMenuRef = useRef<HTMLUListElement | null>(null);
 
-    const renderChildren = () => children.map((child) => cloneElement(child));
+    const renderChildren = useMemo(() => children.map((child) => cloneElement(child)), [children]);
 
     return (
         <ul
@@ -32,7 +32,7 @@ export const SelectGroupItem = ({
             aria-label={`${groupTitle} menu group`}
             {...getMenuProps?.({ ref: selectMenuRef }, { suppressRefError: true })}
         >
-            {renderChildren()}
+            {renderChildren}
         </ul>
     );
 };

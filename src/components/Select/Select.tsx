@@ -8,16 +8,16 @@ import { merge } from '@utilities/merge';
 import { useForwardedRef } from '@utilities/useForwardedRef';
 import { Validation, validationClassMap, validationTextClassMap } from '@utilities/validation';
 import { UseSelectPropGetters, useSelect } from 'downshift';
-import { FocusEvent, ReactElement, cloneElement, createContext, useCallback, useEffect, useRef, useState } from 'react';
+import { FocusEvent, ReactElement, cloneElement, createContext, useMemo, useRef, useState } from 'react';
 import { InputBaseProps } from 'src/types/input';
 
 export type SelectContextProps = {
     highlightedIndex: number;
-    getMenuProps?: UseSelectPropGetters<SelectItemProps>['getMenuProps'];
-    getItemProps?: UseSelectPropGetters<SelectItemProps>['getItemProps'];
-    selectedItem?: SelectItemProps | null;
     itemsArray: SelectItemProps[];
     parentWidth?: number;
+    selectedItem?: SelectItemProps | null;
+    getMenuProps?: UseSelectPropGetters<SelectItemProps>['getMenuProps'];
+    getItemProps?: UseSelectPropGetters<SelectItemProps>['getItemProps'];
 };
 
 export const SelectContext = createContext<SelectContextProps>({
@@ -29,12 +29,12 @@ export type SelectProps = {
     children: ReactElement | ReactElement[];
     defaultItem?: SelectItemProps;
     disabled?: boolean;
-    listPlaceholder?: string;
-    initialIsOpen?: boolean;
     focusOnMount?: boolean;
+    initialIsOpen?: boolean;
+    listPlaceholder?: string;
     onChange?: (value: SelectItemProps) => void;
-    onFocus?: (event: FocusEvent<HTMLInputElement, Element>) => void;
-    onBlur?: (event: FocusEvent<HTMLInputElement, Element>) => void;
+    onFocus?: (event: FocusEvent<HTMLDivElement, Element>) => void;
+    onBlur?: (event: FocusEvent<HTMLDivElement, Element>) => void;
 } & Omit<InputBaseProps<string>, 'autocomplete' | 'clearable' | 'decorator' | 'suffix'>;
 
 const GetSelectedText = ({ placeholder, item }: { placeholder: string; item?: SelectItemProps | null }) => {
@@ -59,6 +59,8 @@ export const Select = ({
     listPlaceholder = 'Select a option',
     status = Validation.Default,
     onChange,
+    onFocus,
+    onBlur,
     'data-test-id': dataTestId = 'fondue-select',
 }: SelectProps) => {
     const toggleElementsRef = useForwardedRef<HTMLDivElement | null>(null);
@@ -79,10 +81,14 @@ export const Select = ({
             onSelectedItemChange: ({ selectedItem: newSelectItem }) => handleOnChange(newSelectItem),
             stateReducer: (state, actionAndChanges) => {
                 const { type, changes } = actionAndChanges;
+                const { ToggleButtonKeyDownEnter, ToggleButtonBlur, ItemClick, ToggleButtonKeyDownSpaceButton } =
+                    useSelect.stateChangeTypes;
+
                 switch (type) {
-                    case useSelect.stateChangeTypes.ToggleButtonKeyDownEnter:
-                    case useSelect.stateChangeTypes.ToggleButtonBlur:
-                    case useSelect.stateChangeTypes.ItemClick:
+                    case ItemClick:
+                    case ToggleButtonBlur:
+                    case ToggleButtonKeyDownEnter:
+                    case ToggleButtonKeyDownSpaceButton:
                         if (changes.selectedItem?.disabled) {
                             return state;
                         }
@@ -92,7 +98,7 @@ export const Select = ({
             },
         });
 
-    const renderChildren = useCallback(() => {
+    const renderChildren = useMemo(() => {
         const allElements = [];
         if (isMultipleGroups) {
             for (const child of children) {
@@ -111,12 +117,6 @@ export const Select = ({
         }
         return allElements;
     }, [children, isMultipleGroups]);
-
-    useEffect(() => {
-        if (selectedItem) {
-            onChange?.(selectedItem.value);
-        }
-    }, [selectedItem, onChange]);
 
     return (
         <SelectContext.Provider
@@ -138,8 +138,14 @@ export const Select = ({
                         : `${validationClassMap[status]} ${validationTextClassMap[status]}`,
                 ])}
                 {...getToggleButtonProps({ disabled, ref: toggleElementsRef })}
-                onFocus={() => setIsToggleButtonFocused(true)}
-                onBlur={() => setIsToggleButtonFocused(false)}
+                onFocus={(event) => {
+                    setIsToggleButtonFocused(true);
+                    onFocus?.(event);
+                }}
+                onBlur={(event) => {
+                    setIsToggleButtonFocused(false);
+                    onBlur?.(event);
+                }}
                 aria-label="Select Toggle Button"
                 data-test-id={dataTestId}
             >
@@ -151,7 +157,7 @@ export const Select = ({
                     className={'tw-w-full tw-absolute tw-bg-base tw-mt-1 tw-shadow-md tw-h-auto tw-p-0 tw-z-10'}
                     style={{ width: `${toggleElementsRef.current?.clientWidth}px` }}
                 >
-                    {renderChildren()}
+                    {renderChildren}
                 </div>
             )}
         </SelectContext.Provider>
