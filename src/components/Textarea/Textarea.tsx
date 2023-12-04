@@ -163,7 +163,6 @@ export const Textarea = ({
                     className={merge([
                         InputStyles.base,
                         InputStyles.width,
-                        InputStyles.height,
                         minRows ? '' : InputStyles.height,
                         InputStyles.disabled,
                         InputStyles.readOnly,
