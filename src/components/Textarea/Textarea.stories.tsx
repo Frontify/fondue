@@ -2,11 +2,11 @@
 
 import { Meta, StoryFn } from '@storybook/react';
 import { Box } from '@components/Box';
+import { FormField } from '@components/FormField';
 import { Textarea, TextareaProps } from '.';
 import { IconClipboard16, IconNook16, IconQuestionMark16 } from '@foundation/Icon';
 import { Validation } from '@utilities/validation';
 import { useCallback, useEffect, useState } from 'react';
-import { FormField } from '@components/FormField';
 
 const ExtraActions = [
     {
@@ -234,6 +234,14 @@ WithExtraActions.args = {
     clearable: true,
 };
 
+export const WithExtraActionsAndAutosize = TextareaTemplate.bind({});
+WithExtraActionsAndAutosize.args = {
+    extraActions: ExtraActions,
+    placeholder: 'Enter some long form text here',
+    clearable: true,
+    autosize: true,
+};
+
 export const WithFocusOnMount = TextareaTemplate.bind({});
 WithFocusOnMount.args = {
     focusOnMount: true,
@@ -269,11 +277,10 @@ export const WithFormFieldCombination: StoryFn<TextareaProps> = (args) => {
                 label={{
                     text: 'Label from the FormField',
                     secondaryLabel: `${currentChars}/${maxChars}`,
-                    tooltips: [{ content: 'Just a tooltip', children: <IconQuestionMark16 /> }],
                 }}
                 error={currentStatus === Validation.Error}
                 errorText={`Text can not be more than ${maxChars} long.`}
-                helperText="Please enter a short description of your favorite Fondue component!"
+                helperText="Please enter a short description of your favorite Fondue component"
             >
                 <Textarea {...args} onChange={handleOnChange} value={input} status={currentStatus} autosize />
             </FormField>

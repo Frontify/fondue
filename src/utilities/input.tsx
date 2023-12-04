@@ -43,7 +43,7 @@ type InputStyleGroup =
 export const InputStyles: Record<InputStyleGroup, string> = {
     base: 'tw-flex tw-items-center tw-justify-between tw-gap-2 tw-px-3 tw-transition tw-text-sm tw-font-sans tw-relative tw-bg-base tw-border tw-rounded tw-line-strong dark:tw-w-full dark:tw-flex dark:tw-items-center dark:tw-justify-between dark:tw-gap-2 dark:tw-px-3 dark:tw-transition dark:tw-text-sm dark:tw-font-sans dark:tw-relative dark:tw-bg-base dark:tw-border dark:tw-rounded dark:tw-line-strong',
     width: 'tw-w-full dark:tw-w-full',
-    height: 'tw-h-9 tw-min-h-[2.25rem] dark:tw-h-9 dark:tw-min-h-[2.25rem]',
+    height: 'tw-h-9 tw-min-h-[2.35rem] dark:tw-h-9 dark:tw-min-h-[2.35rem]',
     element:
         'tw-border-line-strong tw-text-text tw-placeholder-text-x-weak tw-outline-none tw-p-2 dark:tw-border-line-strong dark:tw-text-weak dark:tw-placeholder-text-x-weak dark:tw-outline-none dark:tw-p-2',
     focus: 'focus:tw-border-line-xx-strong dark:focus:tw-border-line-xx-strong',

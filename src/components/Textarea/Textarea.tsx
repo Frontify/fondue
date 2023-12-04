@@ -163,6 +163,7 @@ export const Textarea = ({
                     className={merge([
                         InputStyles.base,
                         InputStyles.width,
+                        InputStyles.height,
                         minRows ? '' : InputStyles.height,
                         InputStyles.disabled,
                         InputStyles.readOnly,
@@ -179,7 +180,12 @@ export const Textarea = ({
                 />
             </span>
 
-            <span className="tw-absolute tw-top-[0.5rem] tw-pr-3 tw-right-[0rem] tw-flex tw-items-center tw-justify-between tw-w-auto">
+            <span
+                className={merge([
+                    'tw-absolute tw-top-[0.5rem] tw-right-[0rem] tw-flex tw-items-center tw-justify-between tw-w-auto',
+                    autosize ? 'tw-pr-2' : 'tw-pr-5',
+                ])}
+            >
                 <InputActions
                     clearable={clearable}
                     disabled={isDisabled}
