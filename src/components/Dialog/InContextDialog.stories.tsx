@@ -15,7 +15,6 @@ import { IconCaretDown, IconCaretUp, IconExclamationMarkCircle16, IconMagnifier,
 import { InlineDialog } from '@components/InlineDialog';
 import { Text } from '@typography/Text';
 import { MenuItem } from '@components/MenuItem';
-import { Menu } from '@components/Menu';
 import { TextInput } from '@components/TextInput';
 import { Tooltip } from '@components/Tooltip';
 import { Flex } from '@components/Flex';
@@ -150,6 +149,8 @@ type OptionListItem = {
 const optionList = [
     { code: 'en', label: 'English' },
     { code: 'de', label: 'German' },
+    { code: 'fr', label: 'French' },
+    { code: 'es', label: 'Spanish' },
 ];
 
 const WithInlineDialog: StoryFn<DialogProps> = (args) => {
@@ -247,6 +248,7 @@ const WithInlineDialog: StoryFn<DialogProps> = (args) => {
                             maxWidth={600}
                             minHeight={0}
                             minWidth={0}
+                            width="100%"
                             autoHeight
                             modality={Modality.NonModal}
                             offset={[0, 8]}
@@ -254,23 +256,23 @@ const WithInlineDialog: StoryFn<DialogProps> = (args) => {
                             enablePortal={false}
                         >
                             <div>
-                                <Menu open={isOptionListOpen}>
-                                    <div className="tw-w-[486px] tw-px-4 tw-py-2">
-                                        <TextInput
-                                            focusOnMount={true}
-                                            decorator={<IconMagnifier size={IconSize.Size16} />}
-                                            id="name"
-                                            placeholder="Search"
-                                            value={inputPhrase}
-                                            onChange={(value) => handleInput(value)}
-                                        />
-                                    </div>
-                                    {filteredOptionList.map((option) => (
+                                <div className="tw-w-[486px] tw-px-4 tw-py-2">
+                                    <TextInput
+                                        focusOnMount={true}
+                                        decorator={<IconMagnifier size={IconSize.Size16} />}
+                                        id="name"
+                                        placeholder="Search"
+                                        value={inputPhrase}
+                                        onChange={(value) => handleInput(value)}
+                                    />
+                                </div>
+
+                                {isOptionListOpen &&
+                                    filteredOptionList.map((option) => (
                                         <MenuItem key={option.code} onClick={() => chooseOption(option.code)}>
                                             <SelectField label={option.label} />
                                         </MenuItem>
                                     ))}
-                                </Menu>
                             </div>
                         </InlineDialog>
                     </Box>

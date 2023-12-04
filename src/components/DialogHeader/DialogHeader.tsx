@@ -27,20 +27,13 @@ export const DialogHeader = ({
             ])}
         >
             <Flex alignItems="center" data-test-id={`${dataTestId}-title`}>
-                <Box className="tw-flex tw-items-center">
+                <Box className="tw-flex tw-items-center tw-text-box-neutral-mighty">
                     {icon && (
-                        <span data-test-id={`${dataTestId}-icon`} className="tw-text-text tw-mr-1.5">
+                        <span data-test-id={`${dataTestId}-icon`} className="tw-mr-1.5">
                             {icon}
                         </span>
                     )}
-                    <p
-                        className={merge([
-                            dialogHeadingMap[padding],
-                            'tw-text-text tw-font-medium tw-whitespace-nowrap',
-                        ])}
-                    >
-                        {title}
-                    </p>
+                    <p className={merge([dialogHeadingMap[padding], 'tw-font-medium tw-whitespace-nowrap'])}>{title}</p>
                     {badge && (
                         <div data-test-id={`${dataTestId}-badge`} className="tw-ml-1.5">
                             {badge}
