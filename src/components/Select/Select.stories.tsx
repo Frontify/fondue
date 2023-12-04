@@ -37,6 +37,12 @@ export default {
             description: 'Collection of item objects to render as options',
             defaultValue: undefined,
         },
+        disabled: {
+            control: { type: 'boolean' },
+        },
+        readOnly: {
+            control: { type: 'boolean' },
+        },
         status: {
             control: { type: 'select' },
             options: Object.values(Validation),
@@ -54,6 +60,8 @@ export default {
     args: {
         label: 'Test Select Menu',
         listPlaceholder: 'Select a fruit/veggie',
+        disabled: false,
+        readOnly: false,
     },
 } as Meta<SelectProps>;
 
@@ -137,39 +145,26 @@ export const WithDefaultItem: StoryFn<SelectProps> = (args) => (
 );
 
 export const WithFormField: StoryFn<SelectProps> = (args) => (
-    <Box className="tw-min-h-[300px]">
-        <FormField
-            label={{ text: 'Select a Produce' }}
-            helperText="Select your favorite produce"
-            helperTextColor={Validation.Success}
-        >
-            <Select {...args} defaultItem={{ ...ITEM_GROUPS_1[1] }}>
-                <SelectGroupItem key="group-one">
-                    {...ITEM_GROUPS_1.map((item) => (
-                        <SelectItem
-                            key={item.id}
-                            value={item.value}
-                            title={item.title}
-                            id={item.id}
-                            decorator={item.decorator}
-                            disabled={item.disabled}
-                        />
-                    ))}
-                </SelectGroupItem>
-                <SelectGroupItem groupTitle="Veggies" key="group-two">
-                    {...ITEM_GROUPS_2.map((item) => (
-                        <SelectItem
-                            key={item.id}
-                            value={item.value}
-                            title={item.title}
-                            id={item.id}
-                            decorator={item.decorator}
-                        />
-                    ))}
-                </SelectGroupItem>
-            </Select>
-        </FormField>
-    </Box>
+    <FormField
+        label={{ text: 'Select a Produce', required: true }}
+        helperText="Select your favorite produce"
+        helperTextColor={Validation.Success}
+    >
+        <Select {...args}>
+            <SelectGroupItem groupTitle="Fruits" key="group-one">
+                {...ITEM_GROUPS_1.map((item) => (
+                    <SelectItem
+                        key={item.id}
+                        value={item.value}
+                        title={item.title}
+                        id={item.id}
+                        decorator={item.decorator}
+                        disabled={item.disabled}
+                    />
+                ))}
+            </SelectGroupItem>
+        </Select>
+    </FormField>
 );
 
 export const FocusOnMount = Default.bind({});
