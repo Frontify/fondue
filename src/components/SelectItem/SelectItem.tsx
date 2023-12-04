@@ -11,29 +11,22 @@ export type SelectItemProps = {
     id: string;
     value: string;
     decorator?: ReactElement;
-    title?: string;
     disabled?: boolean;
+    title?: string;
     'data-test-id'?: string;
 };
 
 export const SelectItem = ({
     id,
-    disabled = false,
-    decorator,
     value,
+    decorator,
+    disabled = false,
     title,
     'data-test-id': dataTestId = 'fondue-select-item',
 }: SelectItemProps) => {
+    const itemElementRef = useRef<HTMLLIElement | null>(null);
     const { getItemProps, itemsArray, selectedItem, highlightedIndex, parentWidth } =
         useContext<SelectContextProps>(SelectContext);
-    const itemElementRef = useRef<HTMLLIElement | null>(null);
-
-    const item: SelectItemProps = useMemo(() => {
-        return {
-            id,
-            value,
-        };
-    }, [value, id]);
 
     const index = useMemo(() => itemsArray.findIndex((item: SelectItemProps) => item.id === id), [id, itemsArray]);
 
@@ -41,7 +34,7 @@ export const SelectItem = ({
         <li
             className={merge([
                 'tw-p-2 tw-shadow-sm tw-flex tw-justify-start tw-items-center tw-rounded tw-cursor-pointer',
-                selectedItem?.id === item.id && 'tw-font-bold tw-bg-box-selected tw-text-box-selected-inverse',
+                selectedItem?.id === id && 'tw-font-bold tw-bg-box-selected tw-text-box-selected-inverse',
                 !disabled && highlightedIndex === index ? FOCUS_STYLE_INSET_NO_OFFSET : '',
                 disabled
                     ? 'tw-cursor-not-allowed tw-bg-box-disabled tw-text-bog-disabled-inverse'
@@ -49,9 +42,9 @@ export const SelectItem = ({
             ])}
             style={{ width: `${parentWidth}px` }}
             key={id}
-            title={title ?? value}
+            title={disabled ? undefined : title ?? value}
             data-test-id={dataTestId}
-            {...getItemProps?.({ item, index, ref: itemElementRef })}
+            {...getItemProps?.({ item: { id, value }, index, ref: itemElementRef })}
         >
             {decorator ? <span className="tw-pr-1">{decorator}</span> : null}
             <span>{title ?? value}</span>

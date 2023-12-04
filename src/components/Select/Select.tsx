@@ -29,11 +29,11 @@ export const SelectContext = createContext<SelectContextProps>({
 
 export type SelectProps = {
     children: ReactElement | ReactElement[];
-    defaultItem?: SelectItemProps;
     disabled?: boolean;
     focusOnMount?: boolean;
     initialIsOpen?: boolean;
     listPlaceholder?: string;
+    defaultItem?: SelectItemProps;
     onChange?: (value: SelectItemProps) => void;
     onFocus?: (event: FocusEvent<HTMLDivElement, Element>) => void;
     onBlur?: (event: FocusEvent<HTMLDivElement, Element>) => void;

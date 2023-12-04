@@ -17,22 +17,22 @@ export const SelectGroupItem = ({
     groupTitle,
     'data-test-id': dataTestId = 'fondue-select-group',
 }: SelectGroupItemProps) => {
-    const { getMenuProps, parentWidth } = useContext<SelectContextProps>(SelectContext);
     const selectMenuRef = useRef<HTMLUListElement | null>(null);
+    const { getMenuProps, parentWidth } = useContext<SelectContextProps>(SelectContext);
 
     const renderChildren = useMemo(() => children.map((child) => cloneElement(child)), [children]);
 
     return (
         <ul
             title={groupTitle}
+            style={{ width: `${parentWidth}px` }}
             className={merge([
                 '[&[title]]:before:tw-p-4 [&[title]]:before:tw-block before:tw-content-[attr(title)]',
                 groupTitle ? '[&>li]:tw-pl-8' : '',
             ])}
-            style={{ width: `${parentWidth}px` }}
-            data-test-id={dataTestId}
             aria-label={`${groupTitle} menu group`}
             {...getMenuProps?.({ ref: selectMenuRef }, { suppressRefError: true })}
+            data-test-id={dataTestId}
         >
             {renderChildren}
         </ul>
