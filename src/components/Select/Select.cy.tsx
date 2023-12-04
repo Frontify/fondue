@@ -4,8 +4,9 @@ import { SelectGroupItem } from '@components/SelectGroupItem/SelectGroupItem';
 import { Select } from './Select';
 import { SelectItem, SelectItemProps } from '@components/SelectItem/SelectItem';
 
-const SELECT_ID = '[data-test-id=fondue-select]';
-// const SELECT_GROUP_ID = '[data-test-id=fondue-select-group]';
+const SELECT_ID = '[data-test-id="fondue-select"]';
+const SELECT_MENU_ID = '[data-test-id="fondue-select-menu"]';
+const SELECT_GROUP_ID = '[data-test-id="fondue-select-group"]';
 // const SELECT_ITEM_ID = '[data-test-id=fondue-select-item]';
 const ITEMS: SelectItemProps[] = [
     { id: '1', value: 'value1' },
@@ -35,5 +36,17 @@ describe('Select Component', () => {
         cy.mount(BASE_COMPONENT);
         cy.get(SELECT_ID).as('Select');
         cy.get('@Select').should('be.visible');
+    });
+
+    it('menu should be visible', () => {
+        cy.mount(BASE_COMPONENT);
+        cy.get(SELECT_ID).realClick();
+        cy.get(SELECT_MENU_ID).should('be.visible');
+    });
+
+    it('menu should have correct number of children', () => {
+        cy.mount(BASE_COMPONENT);
+        cy.get(SELECT_ID).realClick();
+        cy.get(SELECT_GROUP_ID, { withinSubject: null }).should('have.length', ITEMS.length);
     });
 });
