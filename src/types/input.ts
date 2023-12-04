@@ -8,6 +8,7 @@ export type InputBaseProps<TValue> = {
     id?: string;
     clearable?: boolean;
     decorator?: ReactElement;
+    hugWidth?: boolean;
     suffix?: string;
     status?: Validation;
     size?: number;

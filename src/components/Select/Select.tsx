@@ -20,6 +20,9 @@ export type SelectContextProps = {
     selectedItem?: SelectItemProps | null;
     getMenuProps?: UseSelectPropGetters<SelectItemProps>['getMenuProps'];
     getItemProps?: UseSelectPropGetters<SelectItemProps>['getItemProps'];
+    disabled?: boolean;
+    readOnly?: boolean;
+    hugWidth?: boolean;
 };
 
 export const SelectContext = createContext<SelectContextProps>({
@@ -39,7 +42,15 @@ export type SelectProps = {
     onBlur?: (event: FocusEvent<HTMLDivElement, Element>) => void;
 } & Omit<InputBaseProps<string>, 'autocomplete' | 'clearable' | 'decorator' | 'suffix'>;
 
-const GetSelectedText = ({ placeholder, item }: { placeholder: string; item?: SelectItemProps | null }) => {
+const GetSelectedText = ({
+    placeholder,
+    item,
+    required = false,
+}: {
+    placeholder: string;
+    item?: SelectItemProps | null;
+    required?: boolean;
+}) => {
     if (item) {
         const { title, value, decorator } = item;
         return (
@@ -49,12 +60,20 @@ const GetSelectedText = ({ placeholder, item }: { placeholder: string; item?: Se
             </span>
         );
     }
-    return <span className="tw-text-text-weak">{placeholder}</span>;
+    return (
+        <span className="tw-text-text-weak">
+            {placeholder}
+            {required ? '*' : ''}
+        </span>
+    );
 };
 
 export const Select = ({
     children,
     defaultItem,
+    hugWidth,
+    required,
+    readOnly,
     disabled = false,
     initialIsOpen = false,
     focusOnMount = false,
@@ -70,6 +89,7 @@ export const Select = ({
     const [isToggleButtonFocused, setIsToggleButtonFocused] = useState<boolean>(focusOnMount);
 
     const isMultipleGroups = Array.isArray(children);
+    const isDisabledOrReadOnly = disabled || readOnly;
 
     const handleOnChange = (selectedItem?: SelectItemProps | null) => onChange?.(selectedItem?.value);
 
@@ -129,19 +149,24 @@ export const Select = ({
                 highlightedIndex,
                 itemsArray: childrenArrayRef.current,
                 parentWidth: toggleElementsRef.current?.clientWidth,
+                disabled,
+                readOnly,
+                hugWidth,
             }}
         >
             <div
                 className={merge([
-                    'tw-p-2 tw-bg-base tw-flex tw-justify-between tw-cursor-pointer tw-border tw-rounded tw-border-line-strong tw-text-text-weak',
-                    (isToggleButtonFocused || isOpen) && FOCUS_STYLE_NO_OFFSET,
+                    'tw-p-2 tw-bg-base tw-flex tw-justify-between tw-border tw-rounded tw-border-line-strong tw-text-text-weak',
+                    hugWidth ? 'tw-w-auto' : 'tw-w-full',
+                    isToggleButtonFocused && FOCUS_STYLE_NO_OFFSET,
+                    isDisabledOrReadOnly ? 'tw-cursor-not-allowed' : 'tw-cursor-pointer',
                     status === Validation.Default
                         ? ''
                         : `${validationClassMap[status]} ${validationTextClassMap[status]}`,
                 ])}
-                {...getToggleButtonProps({ disabled, ref: toggleElementsRef })}
+                {...getToggleButtonProps({ disabled: isDisabledOrReadOnly, ref: toggleElementsRef })}
                 onFocus={(event) => {
-                    setIsToggleButtonFocused(true);
+                    setIsToggleButtonFocused(!isDisabledOrReadOnly);
                     onFocus?.(event);
                 }}
                 onBlur={(event) => {
@@ -151,13 +176,17 @@ export const Select = ({
                 aria-label="Select Toggle Button"
                 data-test-id={dataTestId}
             >
-                <GetSelectedText item={selectedItem} placeholder={listPlaceholder} />
+                <GetSelectedText item={selectedItem} placeholder={listPlaceholder} required={required} />
                 <span className="tw-p-1">{isOpen ? <IconCaretUp16 /> : <IconCaretDown16 />}</span>
             </div>
             {isOpen && (
                 <div
-                    className={'tw-w-full tw-absolute tw-bg-base tw-mt-1 tw-shadow-md tw-h-auto tw-p-0 tw-z-10'}
+                    className={merge([
+                        hugWidth ? 'tw-w-auto' : 'tw-w-full',
+                        'tw-relative tw-bg-base tw-mt-1 tw-shadow-md',
+                    ])}
                     style={{ width: `${toggleElementsRef.current?.clientWidth}px` }}
+                    data-test-id={`${dataTestId}-menu`}
                 >
                     {renderChildren}
                 </div>
