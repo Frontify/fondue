@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TooltipProps } from '@components/Tooltip';
 import { Validation } from '@utilities/validation';
 import type { AriaAttributes, InputHTMLAttributes, ReactElement } from 'react';
 
@@ -53,7 +52,7 @@ export type InputActionsProps = {
 
 export type ExtraAction = {
     icon: ReactElement;
-    tooltip: TooltipProps;
+    title: string;
     callback: () => void;
 };
 

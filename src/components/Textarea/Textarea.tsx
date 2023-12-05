@@ -21,7 +21,7 @@ export type TextareaProps = {
     onChange?: (value?: string) => void;
     onEnterPressed?: (value?: string) => void;
     onKeyDown?: (event: KeyboardEvent<HTMLTextAreaElement>) => void;
-} & Omit<InputSharedBaseProps, 'hugWidth' | 'value'> &
+} & Omit<InputSharedBaseProps, 'value'> &
     Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'onChange'> &
     Omit<TextareaAutosizeProps, 'onChange' | 'defaultValue' | 'value'>;
 
@@ -34,6 +34,7 @@ export const Textarea = ({
     disabled = false,
     extraActions = undefined,
     focusOnMount = false,
+    hugWidth,
     id: propId,
     minRows,
     maxRows,
@@ -162,7 +163,7 @@ export const Textarea = ({
                     data-test-id={dataTestId}
                     className={merge([
                         InputStyles.base,
-                        InputStyles.width,
+                        hugWidth ? '' : InputStyles.width,
                         minRows ? '' : InputStyles.height,
                         InputStyles.disabled,
                         InputStyles.readOnly,
@@ -170,7 +171,7 @@ export const Textarea = ({
                         InputStyles.focus,
                         InputStyles.hover,
                         isFocusVisible && FOCUS_STYLE,
-                        validationClassMap[status],
+                        status !== Validation.Default && validationClassMap[status],
                         decorator ? 'tw-pl-[2rem]' : '',
                         getResizableClass(),
                     ])}

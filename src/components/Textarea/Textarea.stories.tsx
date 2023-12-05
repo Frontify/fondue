@@ -7,18 +7,19 @@ import { Textarea, TextareaProps } from '.';
 import { IconClipboard16, IconNook16, IconQuestionMark16 } from '@foundation/Icon';
 import { Validation } from '@utilities/validation';
 import { useCallback, useEffect, useState } from 'react';
+import { ExtraAction } from 'src/types/input';
 
-const ExtraActions = [
+const ExtraActions: ExtraAction[] = [
     {
         icon: <IconClipboard16 />,
-        tooltip: { content: 'Save to Clipboard' },
+        title: 'Save to Clipboard',
         callback: () => {
             alert('Mock Copied to Clipboard');
         },
     },
     {
         icon: <IconQuestionMark16 />,
-        tooltip: { content: 'Help Desk' },
+        title: 'Help Desk',
         callback: () => alert('Here to Help'),
     },
 ];
