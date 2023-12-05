@@ -3,15 +3,7 @@
 import { ReactElement } from 'react';
 import { Validation, validationTextClassMap } from './validation';
 import { merge } from './merge';
-import {
-    Button,
-    ButtonEmphasis,
-    ButtonSize,
-    ButtonStyle,
-    LoadingCircle,
-    LoadingCircleSize,
-    Tooltip,
-} from '@components/index';
+import { Button, ButtonEmphasis, ButtonSize, ButtonStyle, LoadingCircle, LoadingCircleSize } from '@components/index';
 import { InputActionsProps, InputExtraActionsProps } from 'src/types/input';
 import { generateRandomId } from './generateRandomId';
 import {
@@ -41,19 +33,17 @@ type InputStyleGroup =
     | 'readOnly';
 
 export const InputStyles: Record<InputStyleGroup, string> = {
-    base: 'tw-flex tw-items-center tw-justify-between tw-gap-2 tw-px-3 tw-transition tw-text-sm tw-font-sans tw-relative tw-bg-base tw-border tw-rounded tw-line-strong dark:tw-w-full dark:tw-flex dark:tw-items-center dark:tw-justify-between dark:tw-gap-2 dark:tw-px-3 dark:tw-transition dark:tw-text-sm dark:tw-font-sans dark:tw-relative dark:tw-bg-base dark:tw-border dark:tw-rounded dark:tw-line-strong',
-    width: 'tw-w-full dark:tw-w-full',
-    height: 'tw-h-9 tw-min-h-[2.35rem] dark:tw-h-9 dark:tw-min-h-[2.35rem]',
-    element:
-        'tw-border-line-strong tw-text-text tw-placeholder-text-x-weak tw-outline-none tw-p-2 dark:tw-border-line-strong dark:tw-text-weak dark:tw-placeholder-text-x-weak dark:tw-outline-none dark:tw-p-2',
-    focus: 'focus:tw-border-line-xx-strong dark:focus:tw-border-line-xx-strong',
-    focusWithin:
-        'focus-within:tw-border-line-xx-strong focus-within:hover:tw-border-line-xx-strong dark:focus-within:tw-border-line-xx-strong dark:focus-within:hover:tw-border-line-xx-strong',
-    hover: 'hover:tw-border-line-x-strong dark:hover:tw-border-line-x-strong',
+    base: 'tw-flex tw-items-center tw-justify-between tw-gap-2 tw-px-3 tw-transition tw-text-sm tw-font-sans tw-relative tw-bg-base tw-border tw-rounded tw-line-strong',
+    width: 'tw-w-full',
+    height: 'tw-h-9 tw-min-h-[2.35rem]',
+    element: 'tw-bg-base tw-border-line-strong tw-text-text tw-placeholder-text-x-weak tw-outline-none tw-p-2',
+    focus: 'focus:tw-border-line-xx-strong',
+    focusWithin: 'focus-within:tw-border-line-xx-strong focus-within:hover:tw-border-line-xx-strong',
+    hover: 'hover:tw-border-line-x-strong',
     disabled:
-        'disabled:tw-bg-box-disabled disabled:tw-border-line-weak disabled:tw-text-text-disabled disabled:hover:tw-cursor-not-allowed disabled:hover:tw-border-line-weak dark:disabled:tw-bg-box-disabled dark:disabled:tw-border-line-weak dark:disabled:tw-text-text-disabled dark:disabled:hover:tw-cursor-not-allowed dark:disabled:hover:tw-border-line-weak',
+        'disabled:tw-bg-box-disabled disabled:tw-border-line-weak disabled:tw-text-text-disabled disabled:hover:tw-cursor-not-allowed disabled:hover:tw-border-line-weak',
     readOnly:
-        'read-only:tw-bg-box-disabled read-only:tw-border-none read-only:tw-text-text-weak read-only:hover:tw-cursor-not-allowed read-only:hover:tw-border-line-weak dark:read-only:tw-bg-box-disabled dark:read-only:tw-border-none dark:read-only:tw-text-text-weak dark:read-only:hover:tw-cursor-not-allowed',
+        'read-only:tw-bg-box-disabled read-only:tw-border-none read-only:tw-text-text-weak read-only:hover:tw-cursor-not-allowed read-only:hover:tw-border-line-weak',
 };
 
 export const HelperText = ({
@@ -121,6 +111,7 @@ export const InputActions = ({
                     disabled={disabled}
                     emphasis={ButtonEmphasis.Weak}
                     onClick={callbacks.password}
+                    title={`${isObfuscated ? 'show' : 'hide'} text input`}
                     aria-label={`${isObfuscated ? 'show' : 'hide'} text input`}
                     icon={isObfuscated ? <IconEye16 /> : <IconEyeOff16 />}
                     data-test-id={`${dataTestId}-visibility-icon`}
@@ -133,6 +124,7 @@ export const InputActions = ({
                     disabled={disabled}
                     emphasis={ButtonEmphasis.Weak}
                     icon={<IconCross16 />}
+                    title="Clear Input"
                     size={ButtonSize.Small}
                     aria-describedby="Clear Input Value"
                     aria-label="Clear value"
@@ -146,23 +138,22 @@ export const InputActions = ({
 InputActions.displayName = 'FondueInputActionButtons';
 
 export const InputExtraActions = ({ actions, disabled, dataTestId }: InputExtraActionsProps) => {
-    return actions.map((action, i) => {
+    return actions.map((action) => {
         const id = generateRandomId();
         return (
-            <Tooltip key={`extra-action-${id}`} data-test-id={`${dataTestId}-tooltip`} {...action.tooltip}>
-                <Button
-                    key={`extra-action-${id}`}
-                    style={ButtonStyle.Default}
-                    onClick={action.callback}
-                    disabled={disabled}
-                    emphasis={ButtonEmphasis.Weak}
-                    icon={action.icon}
-                    size={ButtonSize.Small}
-                    aria-describedby="Extra Action Button"
-                    aria-label={action.tooltip['aria-label']}
-                    data-test-id={`${dataTestId}-extra-action-${i}`}
-                />
-            </Tooltip>
+            <Button
+                key={`extra-action-${id}`}
+                style={ButtonStyle.Default}
+                onClick={action.callback}
+                disabled={disabled}
+                emphasis={ButtonEmphasis.Weak}
+                icon={action.icon}
+                size={ButtonSize.Small}
+                aria-describedby="Clear Input Value"
+                aria-label="Clear value"
+                title={action.title}
+                data-test-id={`${dataTestId}-clear`}
+            />
         );
     });
 };
