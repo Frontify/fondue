@@ -152,7 +152,7 @@ export const InputExtraActions = ({ actions, disabled, dataTestId }: InputExtraA
                 aria-describedby="Clear Input Value"
                 aria-label="Clear value"
                 title={action.title}
-                data-test-id={`${dataTestId}-clear`}
+                data-test-id={`${dataTestId}-extra-action`}
             />
         );
     });

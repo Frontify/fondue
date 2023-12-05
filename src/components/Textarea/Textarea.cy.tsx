@@ -8,7 +8,7 @@ const TEXTAREA_ID = '[data-test-id=fondue-textarea]';
 const TEXTAREA_DECORATOR_ID = '[data-test-id=fondue-textarea-decorator]';
 const TEXTAREA_CLEARABLE_ID = '[data-test-id=fondue-textarea-clear]';
 const TEXTAREA_STATUS_ICON_ID = '[data-test-id=fondue-textarea-status-icon]';
-const TEXTAREA_EXTRA_ACTION_ID = '[data-test-id=fondue-textarea-tooltip-button]';
+const TEXTAREA_EXTRA_ACTION_ID = '[data-test-id=fondue-textarea-extra-action]';
 const DEFAULT_TEXT = 'I am some text text.';
 const PLACEHOLDER = 'Enter some text in the textarea';
 const INPUT_TEXT = 'I am some input text';
@@ -16,14 +16,14 @@ const ROW_HEIGHT = 20;
 const EXTRA_ACTIONS = [
     {
         icon: <IconClipboard16 />,
-        tooltip: { content: 'Save to Clipboard' },
+        title: 'Save to Clipboard',
         callback: () => {
             alert('Mock Copied to Clipboard');
         },
     },
     {
         icon: <IconQuestionMark16 />,
-        tooltip: { content: 'Help Desk' },
+        title: 'Help Desk',
         callback: () => alert('Here to Help'),
     },
 ];
