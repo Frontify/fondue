@@ -68,18 +68,16 @@ export default {
 export const Default: StoryFn<SelectProps> = (args) => (
     <Box className="tw-min-h-[200px]">
         <Select {...args}>
-            <SelectGroupItem key="group-one">
-                {...ITEM_GROUPS_1.map((item) => (
-                    <SelectItem
-                        key={item.id}
-                        value={item.value}
-                        title={item.title}
-                        id={item.id}
-                        decorator={item.decorator}
-                        disabled={item.disabled}
-                    />
-                ))}
-            </SelectGroupItem>
+            {...ITEM_GROUPS_1.map((item) => (
+                <SelectItem
+                    key={item.id}
+                    value={item.value}
+                    title={item.title}
+                    id={item.id}
+                    decorator={item.decorator}
+                    disabled={item.disabled}
+                />
+            ))}
         </Select>
     </Box>
 );
@@ -117,29 +115,16 @@ export const WithTwoGroups: StoryFn<SelectProps> = (args) => (
 export const WithDefaultItem: StoryFn<SelectProps> = (args) => (
     <Box className="tw-min-h-[300px]">
         <Select {...args} defaultItem={{ ...ITEM_GROUPS_1[1] }}>
-            <SelectGroupItem key="group-one">
-                {...ITEM_GROUPS_1.map((item) => (
-                    <SelectItem
-                        key={item.id}
-                        value={item.value}
-                        title={item.title}
-                        id={item.id}
-                        decorator={item.decorator}
-                        disabled={item.disabled}
-                    />
-                ))}
-            </SelectGroupItem>
-            <SelectGroupItem groupTitle="Veggies" key="group-two">
-                {...ITEM_GROUPS_2.map((item) => (
-                    <SelectItem
-                        key={item.id}
-                        value={item.value}
-                        title={item.title}
-                        id={item.id}
-                        decorator={item.decorator}
-                    />
-                ))}
-            </SelectGroupItem>
+            {...ITEM_GROUPS_1.map((item) => (
+                <SelectItem
+                    key={item.id}
+                    value={item.value}
+                    title={item.title}
+                    id={item.id}
+                    decorator={item.decorator}
+                    disabled={item.disabled}
+                />
+            ))}
         </Select>
     </Box>
 );
