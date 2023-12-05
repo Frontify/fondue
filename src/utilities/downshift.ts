@@ -3,16 +3,17 @@
 import type { ReactElement } from 'react';
 
 /** loop to extract child props as required by Downshift hook. If children is a array, then it is multiple groups and we must loop thru the nested children, else it is a single group and can be accessed one level down */
-export const childrenToArray = (children: ReactElement | ReactElement[]) => {
+export const childrenToArray = (children: ReactElement[]) => {
     const childrenPropArray = [];
-    if (Array.isArray(children)) {
+
+    if (children.length > 0 && Array.isArray(children[0].props.children)) {
         for (const element of children) {
             for (const child of element.props.children) {
                 childrenPropArray.push({ ...child.props });
             }
         }
     } else {
-        for (const child of children.props.children) {
+        for (const child of children) {
             childrenPropArray.push({ ...child.props });
         }
     }
