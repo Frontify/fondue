@@ -158,11 +158,11 @@ export const Select = ({
 
     const renderChildren = useCallback(() => {
         const allElements = [];
-        const currentItems: SelectItemProps[] = [];
 
         if (isChildrenArray) {
             for (const child of children) {
                 if (isGroupElement) {
+                    const currentItems: SelectItemProps[] = [];
                     for (const item of child.props.children) {
                         const itemPresent = isInCurrentList(item.props.id);
                         if (itemPresent) {
@@ -187,6 +187,7 @@ export const Select = ({
                 }
             }
         } else if (isGroupElement) {
+            const currentItems: SelectItemProps[] = [];
             for (const child of children.props.children) {
                 const item = isInCurrentList(child.props.id);
                 if (item) {
