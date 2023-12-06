@@ -120,6 +120,14 @@ const WithinATextTemplate: StoryFn<TooltipProps> = () => {
     );
 };
 
+const WrappingFondueButtonTemplate: StoryFn<TooltipProps> = () => {
+    return (
+        <Tooltip content="Some Information">
+            <Button onClick={action('click')}>Hello</Button>
+        </Tooltip>
+    );
+};
+
 export const WithinInlineDialog = WithinInlineDialogTemplate.bind({});
 
 export const WithinInteractiveCard = WithinInteractiveCardTemplate.bind({});
@@ -127,3 +135,5 @@ export const WithinInteractiveCard = WithinInteractiveCardTemplate.bind({});
 export const MultipleTooltips = MultipleTooltipsTemplate.bind({});
 
 export const WithinAText = WithinATextTemplate.bind({});
+
+export const WrappingFondueButton = WrappingFondueButtonTemplate.bind({});

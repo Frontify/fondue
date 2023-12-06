@@ -9,13 +9,14 @@ import { Z_INDEX_TOOLTIP } from '@utilities/dialogs/constants';
 import { EnablePortalWrapper } from '@utilities/dialogs/EnablePortalWrapper';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
+import { checkIfContainInteractiveElements } from '@utilities/elements';
 
 const ARROW_DISTANCE_FROM_CORNER_VALUE = 12;
 const TOOLTIP_EXTRA_OFFSET_VALUE = 7; // As the arrow is set 12px away from tooltip corner, extra offset should be added to still point to Trigger.
 
 export type TooltipProps = {
     id?: string;
-    children?: ReactElement;
+    children: ReactElement;
     openOnMount?: boolean;
     placement?: PopperPlacement;
     offset?: [number, number];
@@ -106,6 +107,11 @@ export const Tooltip = ({
     const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
     const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
     const [tooltipOffset, setTooltipOffset] = useState<[number, number]>(offset);
+    const [hasInteractiveElements, setHasInteractiveElements] = useState(false);
+
+    useEffect(() => {
+        setHasInteractiveElements(checkIfContainInteractiveElements(referenceElement));
+    }, [children, referenceElement]);
 
     const { styles, attributes, state } = usePopper(referenceElement, popperElement, {
         placement,
@@ -149,19 +155,23 @@ export const Tooltip = ({
         }
     }, [open]);
 
+    const focusAndMouseAttributes = {
+        onBlur: handleHideTooltip,
+        onFocus: handleShowTooltip,
+        onMouseEnter: handleShowTooltip,
+        onMouseLeave: handleHideTooltip,
+    };
+
     return (
         <>
             <div
                 ref={setReferenceElement}
-                tabIndex={disabled ? -1 : 0}
-                onMouseEnter={handleShowTooltip}
-                onFocus={handleShowTooltip}
-                onMouseLeave={handleHideTooltip}
-                onBlur={handleHideTooltip}
-                aria-disabled={disabled}
+                tabIndex={hasInteractiveElements || disabled ? undefined : 0}
                 aria-describedby={id}
-                className={merge(['tw-inline-block tw-rounded tw-max-w-[100%]', FOCUS_VISIBLE_STYLE])}
+                aria-disabled={disabled}
                 data-test-id={`${dataTestId}-button`}
+                className={merge(['tw-inline-block tw-rounded tw-max-w-[100%] tw-outline-none', FOCUS_VISIBLE_STYLE])}
+                {...focusAndMouseAttributes}
             >
                 {children}
             </div>

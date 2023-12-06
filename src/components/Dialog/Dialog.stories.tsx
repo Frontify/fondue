@@ -11,13 +11,13 @@ import { DialogBody } from '@components/DialogBody';
 import { DialogFooter } from '@components/DialogFooter';
 import { TabItem, Tabs, TabsPaddingX } from '@components/Tabs';
 import { Box } from '@components/Box';
-import { LegacyTooltip, TooltipPosition } from '@components/LegacyTooltip';
 import { IconCaretDown, IconCaretUp, IconMagnifier, IconSize } from '@foundation/Icon';
 import { InlineDialog } from '@components/InlineDialog';
 import { Text } from '@typography/Text';
 import { MenuItem } from '@components/MenuItem';
 import { Menu } from '@components/Menu';
 import { TextInput } from '@components/TextInput';
+import { Tooltip } from '@components/Tooltip';
 
 export default {
     title: 'Experimental/Dialog',
@@ -225,7 +225,7 @@ const optionList = [
 const WithInlineDialog: StoryFn<DialogProps> = (args) => {
     const [isOpen, setIsOpen] = useToggleOverlay(false, { isBlockingModal: args.modality === Modality.BlockingModal });
     const [filteredOptionList, setFilteredOptionList] = useState<OptionListItem[]>(optionList);
-    const [isOptionListOpen, setOptionListOpen] = useState(false);
+    const [isOptionListOpen, setIsOptionListOpen] = useState(false);
     const [optionItemChosen, setOptionItemChosen] = useState<Nullable<OptionListItem>>(null);
     const [inputPhrase, setInputPhrase] = useState('');
 
@@ -244,7 +244,7 @@ const WithInlineDialog: StoryFn<DialogProps> = (args) => {
     const chooseOption = (code: string) => {
         setOptionItemChosen(optionList.find((option) => option.code === code) ?? null);
 
-        setOptionListOpen(false);
+        setIsOptionListOpen(false);
     };
 
     const handleInput = (value: string) => {
@@ -272,15 +272,16 @@ const WithInlineDialog: StoryFn<DialogProps> = (args) => {
         <div className="tw-inline-flex">
             <Dialog {...args} open={isOpen} handleClose={handleClose}>
                 <Dialog.Trigger>
-                    <LegacyTooltip
+                    <Tooltip
                         content="Triggering button"
-                        position={TooltipPosition.Right}
+                        placement="right"
                         enablePortal
-                        hoverDelay={50}
+                        leaveDelay={50}
                         enterDelay={300}
-                        triggerElement={<Button onClick={() => setIsOpen(!isOpen)}>Open Dialog</Button>}
                         withArrow
-                    />
+                    >
+                        <Button onClick={() => setIsOpen(!isOpen)}>Open Dialog</Button>
+                    </Tooltip>
                 </Dialog.Trigger>
                 <Dialog.Content>
                     <DialogHeader onClose={() => setIsOpen(false)} size="large" title="Dialog content header" />
@@ -289,7 +290,7 @@ const WithInlineDialog: StoryFn<DialogProps> = (args) => {
                             <InlineDialog
                                 open={isOptionListOpen}
                                 flip
-                                handleClose={() => setOptionListOpen(false)}
+                                handleClose={() => setIsOptionListOpen(false)}
                                 maxWidth={600}
                                 minHeight={0}
                                 minWidth={0}
@@ -301,7 +302,7 @@ const WithInlineDialog: StoryFn<DialogProps> = (args) => {
                             >
                                 <InlineDialog.Trigger>
                                     <button
-                                        onClick={() => setOptionListOpen(true)}
+                                        onClick={() => setIsOptionListOpen(true)}
                                         className="tw-text-ellipsis tw-flex tw-items-center tw-h-9 tw-px-3 tw-border tw-transition tw-rounded tw-text-s tw-font-sans tw-bg-white dark:tw-bg-transparent tw-border-solid focus-within:tw-border-black-90 hover:tw-border-black-90 tw-border-black-20 tw-justify-between tw-gap-x-3 tw-w-full"
                                     >
                                         {optionItemChosen ? (
