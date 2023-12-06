@@ -2,11 +2,12 @@
 
 import { Meta, StoryFn } from '@storybook/react';
 import { Select, SelectProps } from './Select';
-import { FormField } from '..';
+import { Box, FormField, TextInput, TextInputType } from '..';
 import { Validation } from '@utilities/validation';
 import { SelectGroupItem } from '@components/SelectGroupItem/SelectGroupItem';
 import { SelectItem, SelectItemProps } from '@components/SelectItem/SelectItem';
 import { IconClock16, IconFaceSad16, IconFocalPoint16, IconNook16 } from '@foundation/Icon';
+import { useState } from 'react';
 
 const ITEM_GROUPS_1: SelectItemProps[] = [
     { id: '1', title: 'title prop of Apple', value: 'value prop of Apple', decorator: <IconNook16 /> },
@@ -48,6 +49,11 @@ export default {
             options: Object.values(Validation),
             defaultValue: Validation.Default,
         },
+        filterTerm: {
+            control: { type: 'string' },
+            defaultValue: '',
+            description: 'String value that is used to filter the list items on.',
+        },
         onChange: {
             action: 'onChange',
             type: 'function',
@@ -62,6 +68,7 @@ export default {
         listPlaceholder: 'Select a fruit/veggie',
         disabled: false,
         readOnly: false,
+        filterTerm: '',
     },
 } as Meta<SelectProps>;
 
@@ -81,7 +88,7 @@ export const Default: StoryFn<SelectProps> = (args) => (
 );
 
 export const WithTwoGroups: StoryFn<SelectProps> = (args) => (
-    <Select {...args}>
+    <Select {...args} filterTerm="ar">
         <SelectGroupItem groupTitle="Fruits" key="group-one">
             {...ITEM_GROUPS_1.map((item) => (
                 <SelectItem
@@ -129,7 +136,7 @@ export const WithFormField: StoryFn<SelectProps> = (args) => (
         helperText="Select your favorite produce"
         helperTextColor={Validation.Success}
     >
-        <Select {...args}>
+        <Select {...args} filterTerm="apple">
             <SelectGroupItem groupTitle="Fruits" key="group-one">
                 {...ITEM_GROUPS_1.map((item) => (
                     <SelectItem
@@ -145,6 +152,28 @@ export const WithFormField: StoryFn<SelectProps> = (args) => (
         </Select>
     </FormField>
 );
+
+export const WithFilterTerm: StoryFn<SelectProps> = (args) => {
+    const [term, setTerm] = useState<string>();
+
+    return (
+        <Box>
+            <TextInput type={TextInputType.Text} onChange={(value) => setTerm(value)} value={term} />
+            <Select {...args} filterTerm={term}>
+                {...ITEM_GROUPS_1.map((item) => (
+                    <SelectItem
+                        key={item.id}
+                        value={item.value}
+                        title={item.title}
+                        id={item.id}
+                        decorator={item.decorator}
+                        disabled={item.disabled}
+                    />
+                ))}
+            </Select>
+        </Box>
+    );
+};
 
 export const FocusOnMount = Default.bind({});
 FocusOnMount.args = {
