@@ -2,7 +2,7 @@
 
 import { Meta, StoryFn } from '@storybook/react';
 import { Select, SelectProps } from './Select';
-import { Box, FormField } from '..';
+import { FormField } from '..';
 import { Validation } from '@utilities/validation';
 import { SelectGroupItem } from '@components/SelectGroupItem/SelectGroupItem';
 import { SelectItem, SelectItemProps } from '@components/SelectItem/SelectItem';
@@ -66,55 +66,23 @@ export default {
 } as Meta<SelectProps>;
 
 export const Default: StoryFn<SelectProps> = (args) => (
-    <Box className="tw-min-h-[200px]">
-        <Select {...args}>
-            {...ITEM_GROUPS_1.map((item) => (
-                <SelectItem
-                    key={item.id}
-                    value={item.value}
-                    title={item.title}
-                    id={item.id}
-                    decorator={item.decorator}
-                    disabled={item.disabled}
-                />
-            ))}
-        </Select>
-    </Box>
+    <Select {...args}>
+        {...ITEM_GROUPS_1.map((item) => (
+            <SelectItem
+                key={item.id}
+                value={item.value}
+                title={item.title}
+                id={item.id}
+                decorator={item.decorator}
+                disabled={item.disabled}
+            />
+        ))}
+    </Select>
 );
 
 export const WithTwoGroups: StoryFn<SelectProps> = (args) => (
-    <Box className="tw-min-h-[500px]">
-        <Select {...args}>
-            <SelectGroupItem groupTitle="Fruits" key="group-one">
-                {...ITEM_GROUPS_1.map((item) => (
-                    <SelectItem
-                        key={item.id}
-                        value={item.value}
-                        title={item.title}
-                        id={item.id}
-                        decorator={item.decorator}
-                        disabled={item.disabled}
-                    />
-                ))}
-            </SelectGroupItem>
-            <SelectGroupItem groupTitle="Veggies" key="group-two">
-                {...ITEM_GROUPS_2.map((item) => (
-                    <SelectItem
-                        key={item.id}
-                        value={item.value}
-                        title={item.title}
-                        id={item.id}
-                        decorator={item.decorator}
-                    />
-                ))}
-            </SelectGroupItem>
-        </Select>
-    </Box>
-);
-
-export const WithDefaultItem: StoryFn<SelectProps> = (args) => (
-    <Box className="tw-min-h-[300px]">
-        <Select {...args} defaultItem={{ ...ITEM_GROUPS_1[1] }}>
+    <Select {...args}>
+        <SelectGroupItem groupTitle="Fruits" key="group-one">
             {...ITEM_GROUPS_1.map((item) => (
                 <SelectItem
                     key={item.id}
@@ -125,8 +93,34 @@ export const WithDefaultItem: StoryFn<SelectProps> = (args) => (
                     disabled={item.disabled}
                 />
             ))}
-        </Select>
-    </Box>
+        </SelectGroupItem>
+        <SelectGroupItem groupTitle="Veggies" key="group-two">
+            {...ITEM_GROUPS_2.map((item) => (
+                <SelectItem
+                    key={item.id}
+                    value={item.value}
+                    title={item.title}
+                    id={item.id}
+                    decorator={item.decorator}
+                />
+            ))}
+        </SelectGroupItem>
+    </Select>
+);
+
+export const WithDefaultItem: StoryFn<SelectProps> = (args) => (
+    <Select {...args} defaultItem={{ ...ITEM_GROUPS_1[1] }}>
+        {...ITEM_GROUPS_1.map((item) => (
+            <SelectItem
+                key={item.id}
+                value={item.value}
+                title={item.title}
+                id={item.id}
+                decorator={item.decorator}
+                disabled={item.disabled}
+            />
+        ))}
+    </Select>
 );
 
 export const WithFormField: StoryFn<SelectProps> = (args) => (
@@ -155,4 +149,9 @@ export const WithFormField: StoryFn<SelectProps> = (args) => (
 export const FocusOnMount = Default.bind({});
 FocusOnMount.args = {
     focusOnMount: true,
+};
+
+export const OpenOnMount = Default.bind({});
+OpenOnMount.args = {
+    open: true,
 };
