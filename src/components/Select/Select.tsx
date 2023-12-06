@@ -10,9 +10,10 @@ import { useForwardedRef } from '@utilities/useForwardedRef';
 import { FOCUS_STYLE_NO_OFFSET } from '@utilities/focusStyle';
 import { IconCaretDown16, IconCaretUp16 } from '@foundation/Icon';
 import { childrenToArray, itemToString } from '@utilities/downshift';
-import { cloneElement, createContext, useMemo, useRef, useState } from 'react';
+import { cloneElement, createContext, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Validation, validationClassMap, validationTextClassMap } from '@utilities/validation';
 import { SelectGroupItem } from '@components/SelectGroupItem/SelectGroupItem';
+import { useFilter } from '@hooks/useFilter';
 
 export type SelectContextProps = {
     highlightedIndex: number;
@@ -35,6 +36,8 @@ export type SelectProps = {
     children: ReactElement | ReactElement[];
     disabled?: boolean;
     focusOnMount?: boolean;
+    filterTerm?: string;
+    filterKey?: 'value' | 'title';
     open?: boolean;
     placeholder?: string;
     defaultItem?: SelectItemProps;
@@ -77,6 +80,8 @@ export const Select = ({
     readOnly,
     disabled = false,
     open = false,
+    filterTerm,
+    filterKey = 'value',
     focusOnMount = false,
     placeholder = 'Select a option',
     status = Validation.Default,
@@ -92,12 +97,30 @@ export const Select = ({
         : (children.type as typeof SelectGroupItem);
     const isGroupElement = displayName === SelectGroupItem.displayName;
 
+    const [childrenReady, setChildrenReady] = useState<boolean>(false);
     const toggleElementsRef = useForwardedRef<HTMLDivElement | null>(null);
-    const selectItemElements = childrenToArray(isChildrenArray ? children : children.props.children);
+
+    const selectItemElements = useMemo(
+        () => childrenToArray(isChildrenArray ? children : children.props.children),
+        [children, isChildrenArray],
+    );
+    console.log(selectItemElements);
+
     const childrenArrayRef = useRef<SelectItemProps[]>(selectItemElements);
     const [isToggleButtonFocused, setIsToggleButtonFocused] = useState<boolean>(focusOnMount);
 
     const isDisabledOrReadOnly = disabled || readOnly;
+
+    useEffect(() => {
+        setChildrenReady(false);
+        const { results } = useFilter<SelectItemProps>({
+            items: selectItemElements,
+            itemKey: filterKey,
+            term: filterTerm ?? '',
+        });
+        childrenArrayRef.current = results;
+        setChildrenReady(true);
+    }, [filterTerm, selectItemElements, filterKey]);
 
     const handleOnChange = (selectedItem?: SelectItemProps | null) => onChange?.(selectedItem?.value);
 
@@ -129,29 +152,64 @@ export const Select = ({
             },
         });
 
-    const renderChildren = useMemo(() => {
+    const isInCurrentList = (id: string): SelectItemProps | undefined => {
+        return childrenArrayRef.current.find((current) => current.id === id);
+    };
+
+    const renderChildren = useCallback(() => {
         const allElements = [];
+        const currentItems: SelectItemProps[] = [];
+
         if (isChildrenArray) {
             for (const child of children) {
-                allElements.push(
-                    cloneElement(child, {
-                        key: child.props.id,
-                    }),
-                );
+                if (isGroupElement) {
+                    for (const item of child.props.children) {
+                        const itemPresent = isInCurrentList(item.props.id);
+                        if (itemPresent) {
+                            currentItems.push(item);
+                        }
+                    }
+                    allElements.push(
+                        cloneElement(child, {
+                            key: child.props.id,
+                            children: currentItems,
+                        }),
+                    );
+                } else {
+                    const item = isInCurrentList(child.props.id);
+                    if (item) {
+                        allElements.push(
+                            cloneElement(child, {
+                                key: child.props.id,
+                            }),
+                        );
+                    }
+                }
             }
-        } else if (!isChildrenArray && isGroupElement) {
+        } else if (isGroupElement) {
+            for (const child of children.props.children) {
+                const item = isInCurrentList(child.props.id);
+                if (item) {
+                    currentItems.push(child);
+                }
+            }
             allElements.push(
                 cloneElement(children, {
                     key: children.props.id,
+                    children: currentItems,
                 }),
             );
         } else {
             for (const child of children.props.children) {
-                allElements.push(
-                    cloneElement(child, {
-                        key: child.props.id,
-                    }),
-                );
+                const item = isInCurrentList(child.id);
+
+                if (item) {
+                    allElements.push(
+                        cloneElement(child, {
+                            key: child.props.id,
+                        }),
+                    );
+                }
             }
         }
 
@@ -214,7 +272,7 @@ export const Select = ({
                     style={{ width: `${parentWidth}px` }}
                     data-test-id={`${dataTestId}-menu`}
                 >
-                    {renderChildren}
+                    {childrenReady && renderChildren()}
                 </div>
             )}
         </SelectContext.Provider>
