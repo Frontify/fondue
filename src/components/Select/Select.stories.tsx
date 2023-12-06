@@ -88,7 +88,7 @@ export const Default: StoryFn<SelectProps> = (args) => (
 );
 
 export const WithTwoGroups: StoryFn<SelectProps> = (args) => (
-    <Select {...args} filterTerm="ar">
+    <Select {...args}>
         <SelectGroupItem groupTitle="Fruits" key="group-one">
             {...ITEM_GROUPS_1.map((item) => (
                 <SelectItem
@@ -136,7 +136,7 @@ export const WithFormField: StoryFn<SelectProps> = (args) => (
         helperText="Select your favorite produce"
         helperTextColor={Validation.Success}
     >
-        <Select {...args} filterTerm="apple">
+        <Select {...args}>
             <SelectGroupItem groupTitle="Fruits" key="group-one">
                 {...ITEM_GROUPS_1.map((item) => (
                     <SelectItem
@@ -157,20 +157,27 @@ export const WithFilterTerm: StoryFn<SelectProps> = (args) => {
     const [term, setTerm] = useState<string>();
 
     return (
-        <Box>
-            <TextInput type={TextInputType.Text} onChange={(value) => setTerm(value)} value={term} />
-            <Select {...args} filterTerm={term}>
-                {...ITEM_GROUPS_1.map((item) => (
-                    <SelectItem
-                        key={item.id}
-                        value={item.value}
-                        title={item.title}
-                        id={item.id}
-                        decorator={item.decorator}
-                        disabled={item.disabled}
-                    />
-                ))}
-            </Select>
+        <Box className="tw-h-[350px]">
+            <Box className="tw-flex tw-flex-col tw-justify-between tw-h-[100px]">
+                <TextInput
+                    type={TextInputType.Text}
+                    onChange={(value) => setTerm(value)}
+                    value={term}
+                    placeholder="Enter a filter term"
+                />
+                <Select {...args} filterTerm={term}>
+                    {...ITEM_GROUPS_1.map((item) => (
+                        <SelectItem
+                            key={item.id}
+                            value={item.value}
+                            title={item.title}
+                            id={item.id}
+                            decorator={item.decorator}
+                            disabled={item.disabled}
+                        />
+                    ))}
+                </Select>
+            </Box>
         </Box>
     );
 };
