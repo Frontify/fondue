@@ -45,7 +45,7 @@ export default {
 
 const Template: StoryFn<TooltipProps> = (args) => (
     <Tooltip {...args}>
-        <IconIcon24></IconIcon24>
+        <IconIcon24 />
     </Tooltip>
 );
 

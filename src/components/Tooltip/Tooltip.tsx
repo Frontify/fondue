@@ -65,6 +65,22 @@ const getNewOffsetBasedOnArrowPosition = (currentPlacement: string, offset: [num
     }
 };
 
+type TimeoutRef = {
+    current: NodeJS.Timeout | null;
+};
+
+const handleTimeout = (callback: () => void, delay: number, timeoutRef: TimeoutRef) => {
+    if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+    }
+
+    if (delay) {
+        timeoutRef.current = setTimeout(callback, delay);
+    } else {
+        callback();
+    }
+};
+
 export const Tooltip = ({
     id: customId,
     children,
@@ -83,7 +99,6 @@ export const Tooltip = ({
     disabled = false,
     zIndex = Z_INDEX_TOOLTIP,
     'data-test-id': dataTestId = 'fondue-tooltip',
-    'aria-label': ariaLabel = 'fondue-tooltip-trigger',
 }: TooltipProps) => {
     const id = useMemoizedId(customId);
     const [open, setOpen] = useToggleOverlay(openOnMount);
@@ -118,25 +133,13 @@ export const Tooltip = ({
 
     const handleHideTooltip = useCallback(() => {
         if (!disabled) {
-            if (timeoutRef.current) {
-                clearTimeout(timeoutRef.current);
-            }
-            timeoutRef.current = setTimeout(() => setOpen(false), leaveDelay);
+            handleTimeout(() => setOpen(false), leaveDelay, timeoutRef);
         }
     }, [disabled, leaveDelay, setOpen]);
 
     const handleShowTooltip = useCallback(() => {
         if (!disabled) {
-            if (timeoutRef.current) {
-                clearTimeout(timeoutRef.current);
-            }
-
-            if (enterDelay) {
-                timeoutRef.current = setTimeout(() => setOpen(true), enterDelay);
-                return;
-            }
-
-            setOpen(true);
+            handleTimeout(() => setOpen(true), enterDelay, timeoutRef);
         }
     }, [disabled, enterDelay, setOpen]);
 
@@ -150,20 +153,14 @@ export const Tooltip = ({
         <>
             <div
                 ref={setReferenceElement}
-                role="button"
                 tabIndex={disabled ? -1 : 0}
                 onMouseEnter={handleShowTooltip}
                 onFocus={handleShowTooltip}
                 onMouseLeave={handleHideTooltip}
                 onBlur={handleHideTooltip}
-                aria-label={ariaLabel}
                 aria-disabled={disabled}
                 aria-describedby={id}
-                className={merge([
-                    'tw-inline-block tw-rounded tw-max-w-[100%]',
-                    disabled && 'tw-text-text-disabled tw-cursor-not-allowed',
-                    FOCUS_VISIBLE_STYLE,
-                ])}
+                className={merge(['tw-inline-block tw-rounded tw-max-w-[100%]', FOCUS_VISIBLE_STYLE])}
                 data-test-id={`${dataTestId}-button`}
             >
                 {children}
@@ -184,7 +181,7 @@ export const Tooltip = ({
                         style={{ ...styles.popper, maxWidth, maxHeight, zIndex }}
                         {...attributes.popper}
                     >
-                        <p className="tw-whitespace-pre-line">{formatTooltipText(content)}</p>
+                        <p className="tw-whitespace-pre-line tw-break-words">{formatTooltipText(content)}</p>
                         {withArrow && (
                             <div
                                 data-test-id={`${dataTestId}-arrow`}
