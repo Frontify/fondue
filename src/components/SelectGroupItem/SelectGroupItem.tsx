@@ -31,8 +31,8 @@ export const SelectGroupItem = ({
                 groupTitle ? '[&>li]:tw-pl-8' : '',
             ])}
             aria-label={`${groupTitle} menu group`}
-            {...getMenuProps?.({ ref: selectMenuRef }, { suppressRefError: true })}
             data-test-id={dataTestId}
+            {...getMenuProps?.({ ref: selectMenuRef }, { suppressRefError: true })}
         >
             {renderChildren}
         </ul>
