@@ -12,6 +12,7 @@ import {
     IconExclamationMarkTriangle16,
     IconEye16,
     IconEyeOff16,
+    IconMinus16,
 } from '@foundation/Icon/Generated';
 
 type HelperTextProps = {
@@ -159,3 +160,30 @@ export const InputExtraActions = ({ actions, disabled, dataTestId }: InputExtraA
 };
 
 InputExtraActions.displayName = 'FondueInputExtraActions';
+
+export const Checkmark = ({ checked = false, mixed = false }): ReactElement => {
+    const getIcon = () => {
+        switch (true) {
+            case checked:
+                return <IconCheckMark16 />;
+            case mixed:
+                return <IconMinus16 />;
+            default:
+                break;
+        }
+    };
+    return (
+        <span
+            className={merge([
+                'tw-rounded tw-mr-2 tw-w-4 tw-h-4 tw-flex tw-justify-center tw-items-center',
+                checked || mixed
+                    ? 'tw-bg-box-selected-strong tw-text-box-selected-strong-inverse'
+                    : 'tw-bg-box-neutral tw-border tw-border-box-neutral-strong',
+            ])}
+        >
+            {getIcon()}
+        </span>
+    );
+};
+
+Checkmark.displayName = 'FondueCheckmark';
