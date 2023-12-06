@@ -32,6 +32,7 @@ export * from './ButtonTypes';
 
 export type ButtonProps = {
     type?: ButtonType;
+    title?: string;
     style?: ButtonStyle;
     emphasis?: ButtonEmphasis;
     hideLabel?: boolean;
@@ -55,6 +56,7 @@ export type ButtonProps = {
 const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, ButtonProps> = (
     {
         type = ButtonType.Button,
+        title = '',
         style = ButtonStyle.Default,
         size = ButtonSize.Medium,
         rounding = ButtonRounding.Medium,
@@ -119,6 +121,7 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
             className={merge([buttonClassName, inverted && 'tw-dark', isFocusVisible && FOCUS_VISIBLE_STYLE])}
             disabled={disabled}
             form={formId}
+            title={title}
             {...buttonProps}
             {...focusProps}
         >

@@ -90,7 +90,6 @@ const FormattedLabel = ({ label, disabled, readOnly, dataTestId }: FormattedLabe
                 disabled || readOnly ? 'tw-text-black-60' : 'tw-text-black-80',
             ])}
             data-test-id={`${dataTestId}-label-text`}
-            aria-label={formattedLabel}
         >
             {...elements}
         </span>
@@ -121,7 +120,6 @@ export const FormField = ({
                     : 'hover:tw-cursor-pointer hover:tw-text-text group-hover:tw-text-text',
             ])}
             data-test-id={`${dataTestId}-label`}
-            aria-label={label.text}
         >
             {hiddenLabel ? null : (
                 <FormattedLabel label={label} dataTestId={dataTestId} disabled={disabled} readOnly={readOnly} />

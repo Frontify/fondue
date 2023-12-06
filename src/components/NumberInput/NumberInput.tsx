@@ -34,7 +34,7 @@ export const NumberInput = ({
     onKeyDown,
     onBlur,
     onFocus,
-    'aria-label': ariaLabel,
+    'aria-label': ariaLabel = 'Number Input',
     'data-test-id': dataTestId = 'fondue-number-input',
     ...props
 }: NumberInputProps) => {
