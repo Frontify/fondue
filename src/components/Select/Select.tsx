@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import type { SelectItemProps } from '@components/SelectItem/SelectItem';
+import { SelectItem, type SelectItemProps } from '@components/SelectItem/SelectItem';
 import type { UseSelectPropGetters } from 'downshift';
 import type { FocusEvent, ReactElement } from 'react';
 import { useSelect } from 'downshift';
@@ -10,17 +10,15 @@ import { useForwardedRef } from '@utilities/useForwardedRef';
 import { FOCUS_STYLE_NO_OFFSET } from '@utilities/focusStyle';
 import { IconCaretDown16, IconCaretUp16 } from '@foundation/Icon';
 import { childrenToArray, itemToString } from '@utilities/downshift';
-import { cloneElement, createContext, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Children, createContext, isValidElement, useMemo, useRef, useState } from 'react';
 import { Validation, validationClassMap, validationTextClassMap } from '@utilities/validation';
-import { SelectGroupItem } from '@components/SelectGroupItem/SelectGroupItem';
-import { useFilter } from '@hooks/useFilter';
+import { SelectGroupItem, SelectGroupItemProps } from '@components/SelectGroupItem/SelectGroupItem';
 
 export type SelectContextProps = {
     highlightedIndex: number;
     itemsArray: SelectItemProps[];
     parentWidth?: number;
     selectedItem?: SelectItemProps | null;
-    getMenuProps?: UseSelectPropGetters<SelectItemProps>['getMenuProps'];
     getItemProps?: UseSelectPropGetters<SelectItemProps>['getItemProps'];
     disabled?: boolean;
     readOnly?: boolean;
@@ -36,8 +34,6 @@ export type SelectProps = {
     children: ReactElement | ReactElement[];
     disabled?: boolean;
     focusOnMount?: boolean;
-    filterTerm?: string;
-    filterKey?: 'value' | 'title';
     open?: boolean;
     placeholder?: string;
     defaultItem?: SelectItemProps;
@@ -80,8 +76,6 @@ export const Select = ({
     readOnly,
     disabled = false,
     open = false,
-    filterTerm,
-    filterKey = 'value',
     focusOnMount = false,
     placeholder = 'Select a option',
     status = Validation.Default,
@@ -90,44 +84,34 @@ export const Select = ({
     onBlur,
     'data-test-id': dataTestId = 'fondue-select',
 }: SelectProps) => {
-    /** required to allow SelectGroupItem nested component to be optional */
-    const isChildrenArray = Array.isArray(children);
-    const { displayName } = isChildrenArray
-        ? (children[0].type as typeof SelectGroupItem)
-        : (children.type as typeof SelectGroupItem);
-    const isGroupElement = displayName === SelectGroupItem.displayName;
+    const isSelectGroupItem = (item: SelectGroupItemProps | SelectItemProps): boolean =>
+        typeof item === 'object' && 'groupTitle' in item;
 
-    const [childrenReady, setChildrenReady] = useState<boolean>(false);
-    const toggleElementsRef = useForwardedRef<HTMLDivElement | null>(null);
-
-    const selectItemElements = useMemo(
-        () => childrenToArray(isChildrenArray ? children : children.props.children),
-        [children, isChildrenArray],
+    const allSelectItems: SelectItemProps[] = useMemo(
+        () => childrenToArray(Array.isArray(children) ? children : children.props.children),
+        [children],
     );
-    console.log(selectItemElements);
 
-    const childrenArrayRef = useRef<SelectItemProps[]>(selectItemElements);
+    const childrenArrayRef = useRef<SelectItemProps[]>(allSelectItems);
+    const toggleElementsRef = useForwardedRef<HTMLDivElement | null>(null);
     const [isToggleButtonFocused, setIsToggleButtonFocused] = useState<boolean>(focusOnMount);
 
-    const isDisabledOrReadOnly = disabled || readOnly;
+    const allItems: SelectItemProps[] | SelectGroupItemProps[] | (SelectItemProps | SelectGroupItemProps)[] =
+        Children.map(children, (child) => {
+            if (isValidElement<SelectItemProps>(child)) {
+                return child.props;
+            }
+            return null;
+        }) ?? [];
 
-    useEffect(() => {
-        setChildrenReady(false);
-        const { results } = useFilter<SelectItemProps>({
-            items: selectItemElements,
-            itemKey: filterKey,
-            term: filterTerm ?? '',
-        });
-        childrenArrayRef.current = results;
-        setChildrenReady(true);
-    }, [filterTerm, selectItemElements, filterKey]);
+    const isDisabledOrReadOnly = disabled || readOnly;
 
     const handleOnChange = (selectedItem?: SelectItemProps | null) => onChange?.(selectedItem?.value);
 
     const { isOpen, highlightedIndex, getToggleButtonProps, getMenuProps, getItemProps, selectedItem } =
         useSelect<SelectItemProps>({
             initialIsOpen: open,
-            items: childrenArrayRef.current,
+            items: allSelectItems,
             initialSelectedItem: defaultItem,
             isItemDisabled: (item: SelectItemProps) => !!item.disabled,
             itemToString: itemToString<SelectItemProps>,
@@ -152,80 +136,10 @@ export const Select = ({
             },
         });
 
-    const isInCurrentList = (id: string): SelectItemProps | undefined => {
-        return childrenArrayRef.current.find((current) => current.id === id);
-    };
-
-    const renderChildren = useCallback(() => {
-        const allElements = [];
-
-        if (isChildrenArray) {
-            for (const child of children) {
-                if (isGroupElement) {
-                    const currentItems: SelectItemProps[] = [];
-                    for (const item of child.props.children) {
-                        const itemPresent = isInCurrentList(item.props.id);
-                        if (itemPresent) {
-                            currentItems.push(item);
-                        }
-                    }
-                    allElements.push(
-                        cloneElement(child, {
-                            key: child.props.id,
-                            children: currentItems,
-                        }),
-                    );
-                } else {
-                    const item = isInCurrentList(child.props.id);
-                    if (item) {
-                        allElements.push(
-                            cloneElement(child, {
-                                key: child.props.id,
-                            }),
-                        );
-                    }
-                }
-            }
-        } else if (isGroupElement) {
-            const currentItems: SelectItemProps[] = [];
-            for (const child of children.props.children) {
-                const item = isInCurrentList(child.props.id);
-                if (item) {
-                    currentItems.push(child);
-                }
-            }
-            allElements.push(
-                cloneElement(children, {
-                    key: children.props.id,
-                    children: currentItems,
-                }),
-            );
-        } else {
-            for (const child of children.props.children) {
-                const item = isInCurrentList(child.id);
-
-                if (item) {
-                    allElements.push(
-                        cloneElement(child, {
-                            key: child.props.id,
-                        }),
-                    );
-                }
-            }
-        }
-
-        if (isGroupElement) {
-            return allElements;
-        } else {
-            return <SelectGroupItem>{...allElements}</SelectGroupItem>;
-        }
-    }, [children, isChildrenArray, isGroupElement]);
-
     const parentWidth = toggleElementsRef.current?.clientWidth;
 
     const currentContext = useMemo(() => {
         return {
-            getMenuProps,
             getItemProps,
             selectedItem,
             highlightedIndex,
@@ -235,7 +149,7 @@ export const Select = ({
             readOnly,
             hugWidth,
         };
-    }, [disabled, parentWidth, getItemProps, getMenuProps, highlightedIndex, hugWidth, readOnly, selectedItem]);
+    }, [disabled, parentWidth, getItemProps, highlightedIndex, hugWidth, readOnly, selectedItem]);
 
     return (
         <SelectContext.Provider value={currentContext}>
@@ -264,18 +178,34 @@ export const Select = ({
                 <GetSelectedText item={selectedItem} placeholder={placeholder} required={required} />
                 <span className="tw-p-1">{isOpen ? <IconCaretUp16 /> : <IconCaretDown16 />}</span>
             </div>
-            {isOpen && (
-                <div
-                    className={merge([
-                        hugWidth ? 'tw-w-auto' : 'tw-w-full',
-                        'tw-relative tw-bg-base tw-mt-1 tw-shadow-md',
-                    ])}
-                    style={{ width: `${parentWidth}px` }}
-                    data-test-id={`${dataTestId}-menu`}
-                >
-                    {childrenReady && renderChildren()}
-                </div>
-            )}
+            <ul
+                className={merge([
+                    'tw-relative tw-bg-base tw-mt-1 tw-shadow-md',
+                    hugWidth ? 'tw-w-auto' : 'tw-w-full',
+                    isOpen && allItems.length > 0 ? '' : 'hidden',
+                ])}
+                style={{ width: `${parentWidth}px` }}
+                data-test-id={`${dataTestId}-menu`}
+                {...getMenuProps()}
+            >
+                {isOpen &&
+                    allItems.map((item, index: number) =>
+                        isSelectGroupItem(item) ? (
+                            <li key={`group-${index + 1}`}>
+                                <SelectGroupItem
+                                    key={`group-element-${index}`}
+                                    groupTitle={(item as SelectGroupItemProps).groupTitle}
+                                >
+                                    {(item as SelectGroupItemProps).children.map((options) => (
+                                        <SelectItem key={options.props.id} {...options.props} />
+                                    ))}
+                                </SelectGroupItem>
+                            </li>
+                        ) : (
+                            <SelectItem key={(item as SelectItemProps).id} {...(item as SelectItemProps)} />
+                        ),
+                    )}
+            </ul>
         </SelectContext.Provider>
     );
 };
