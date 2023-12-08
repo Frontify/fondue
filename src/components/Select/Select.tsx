@@ -43,7 +43,10 @@ export type SelectProps = {
     onChange?: (value: SelectItemProps) => void;
     onFocus?: (event: FocusEvent<HTMLElement, Element>) => void;
     onBlur?: (event: FocusEvent<HTMLElement, Element>) => void;
-} & Omit<InputBaseProps<string>, 'autocomplete' | 'clearable' | 'decorator' | 'suffix'>;
+} & Omit<
+    InputBaseProps<string>,
+    'autocomplete' | 'clearable' | 'decorator' | 'suffix' | 'extraActions' | 'size' | 'valueSelect' | 'value'
+>;
 
 const GetSelectedText = ({
     placeholder,
@@ -217,6 +220,7 @@ export const Select = ({
                 style={{ width: `${parentWidth}px` }}
                 data-test-id={`${dataTestId}-menu`}
                 {...getMenuProps({
+                    disabled: isDisabledOrReadOnly,
                     onMouseLeave() {
                         autoClose && closeMenu();
                     },

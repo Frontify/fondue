@@ -31,6 +31,10 @@ export const SelectItem = ({
     const { getItemProps, itemsArray, selectedItem, highlightedIndex, parentWidth } =
         useContext<SelectContextProps>(SelectContext);
 
+    const item = useMemo(() => {
+        return { id, value, title, children };
+    }, [id, value, title, children]);
+
     const index = useMemo(() => itemsArray.findIndex((item: SelectItemProps) => item.id === id), [id, itemsArray]);
     const isSelected = selectedItem?.id === id;
 
@@ -45,9 +49,9 @@ export const SelectItem = ({
             ])}
             style={{ width: `${parentWidth}px` }}
             key={id}
-            title={disabled ? undefined : title ?? value}
+            title={disabled ? undefined : children ?? title ?? value}
             data-test-id={dataTestId}
-            {...getItemProps?.({ item: { id, value, title, children }, index, ref: itemElementRef })}
+            {...getItemProps?.({ item, index, ref: itemElementRef, 'aria-disabled': disabled })}
         >
             <Checkmark checked={isSelected} />
             {decorator ? <span className="tw-pr-1">{decorator}</span> : null}
