@@ -13,6 +13,7 @@ import { childrenToArray, itemToString } from '@utilities/downshift';
 import { Children, createContext, isValidElement, useMemo, useRef, useState } from 'react';
 import { Validation, validationClassMap, validationTextClassMap } from '@utilities/validation';
 import { SelectGroupItem, SelectGroupItemProps } from '@components/SelectGroupItem/SelectGroupItem';
+import { InputStyles } from '@utilities/input';
 
 export type SelectContextProps = {
     highlightedIndex: number;
@@ -35,11 +36,13 @@ export type SelectProps = {
     disabled?: boolean;
     focusOnMount?: boolean;
     open?: boolean;
+    autoOpen?: boolean;
+    autoClose?: boolean;
     placeholder?: string;
     defaultItem?: SelectItemProps;
     onChange?: (value: SelectItemProps) => void;
-    onFocus?: (event: FocusEvent<HTMLDivElement, Element>) => void;
-    onBlur?: (event: FocusEvent<HTMLDivElement, Element>) => void;
+    onFocus?: (event: FocusEvent<HTMLElement, Element>) => void;
+    onBlur?: (event: FocusEvent<HTMLElement, Element>) => void;
 } & Omit<InputBaseProps<string>, 'autocomplete' | 'clearable' | 'decorator' | 'suffix'>;
 
 const GetSelectedText = ({
@@ -69,6 +72,8 @@ const GetSelectedText = ({
 };
 
 export const Select = ({
+    autoOpen = false,
+    autoClose = false,
     children,
     defaultItem,
     hugWidth,
@@ -108,33 +113,41 @@ export const Select = ({
 
     const handleOnChange = (selectedItem?: SelectItemProps | null) => onChange?.(selectedItem?.value);
 
-    const { isOpen, highlightedIndex, getToggleButtonProps, getMenuProps, getItemProps, selectedItem } =
-        useSelect<SelectItemProps>({
-            initialIsOpen: open,
-            items: allSelectItems,
-            initialSelectedItem: defaultItem,
-            isItemDisabled: (item: SelectItemProps) => !!item.disabled,
-            itemToString: itemToString<SelectItemProps>,
-            onSelectedItemChange: ({ selectedItem: newSelectedItem }) => handleOnChange(newSelectedItem),
-            stateReducer: (state, actionAndChanges) => {
-                const { type, changes } = actionAndChanges;
-                const { ToggleButtonKeyDownEnter, ToggleButtonBlur, ItemClick, ToggleButtonKeyDownSpaceButton } =
-                    useSelect.stateChangeTypes;
+    const {
+        isOpen,
+        highlightedIndex,
+        getToggleButtonProps,
+        getMenuProps,
+        getItemProps,
+        selectedItem,
+        openMenu,
+        closeMenu,
+    } = useSelect<SelectItemProps>({
+        initialIsOpen: open,
+        items: allSelectItems,
+        initialSelectedItem: defaultItem,
+        isItemDisabled: (item: SelectItemProps) => !!item.disabled,
+        itemToString: itemToString<SelectItemProps>,
+        onSelectedItemChange: ({ selectedItem: newSelectedItem }) => handleOnChange(newSelectedItem),
+        stateReducer: (state, actionAndChanges) => {
+            const { type, changes } = actionAndChanges;
+            const { ToggleButtonKeyDownEnter, ToggleButtonBlur, ItemClick, ToggleButtonKeyDownSpaceButton } =
+                useSelect.stateChangeTypes;
 
-                switch (type) {
-                    case ItemClick:
-                    case ToggleButtonBlur:
-                    case ToggleButtonKeyDownEnter:
-                    case ToggleButtonKeyDownSpaceButton:
-                        if (changes.selectedItem?.disabled) {
-                            return state;
-                        }
-                        return changes;
-                    default:
-                        return changes;
-                }
-            },
-        });
+            switch (type) {
+                case ItemClick:
+                case ToggleButtonBlur:
+                case ToggleButtonKeyDownEnter:
+                case ToggleButtonKeyDownSpaceButton:
+                    if (changes.selectedItem?.disabled) {
+                        return state;
+                    }
+                    return changes;
+                default:
+                    return changes;
+            }
+        },
+    });
 
     const parentWidth = toggleElementsRef.current?.clientWidth;
 
@@ -155,23 +168,40 @@ export const Select = ({
         <SelectContext.Provider value={currentContext}>
             <div
                 className={merge([
-                    'tw-p-2 tw-bg-base tw-flex tw-justify-between tw-border tw-rounded tw-border-line-strong tw-text-text-weak',
-                    hugWidth ? 'tw-w-auto' : 'tw-w-full',
+                    InputStyles.base,
+                    InputStyles.element,
+                    InputStyles.height,
+                    InputStyles.hover,
+                    InputStyles.focus,
+                    hugWidth ? 'tw-w-auto' : InputStyles.width,
                     isToggleButtonFocused && FOCUS_STYLE_NO_OFFSET,
-                    isDisabledOrReadOnly ? 'tw-cursor-not-allowed' : 'tw-cursor-pointer',
+                    isDisabledOrReadOnly ? `${InputStyles.disabled} ${InputStyles.readOnly}` : 'tw-cursor-pointer',
                     status === Validation.Default
                         ? ''
                         : `${validationClassMap[status]} ${validationTextClassMap[status]}`,
                 ])}
-                {...getToggleButtonProps({ disabled: isDisabledOrReadOnly, ref: toggleElementsRef })}
-                onFocus={(event) => {
-                    setIsToggleButtonFocused(!isDisabledOrReadOnly);
-                    onFocus?.(event);
-                }}
-                onBlur={(event) => {
-                    setIsToggleButtonFocused(false);
-                    onBlur?.(event);
-                }}
+                {...getToggleButtonProps({
+                    disabled: isDisabledOrReadOnly,
+                    ref: toggleElementsRef,
+                    onKeyDown: (event) => {
+                        if (Number(event.code) === 9) {
+                            setIsToggleButtonFocused(!isDisabledOrReadOnly);
+                        }
+                    },
+                    onBlur: (event) => {
+                        setIsToggleButtonFocused(false);
+                        onBlur?.(event);
+                    },
+                    onFocus: (event) => {
+                        if (!isOpen) {
+                            setIsToggleButtonFocused(!isDisabledOrReadOnly);
+                        }
+                        onFocus?.(event);
+                    },
+                    onMouseEnter() {
+                        autoOpen && openMenu();
+                    },
+                })}
                 aria-label="Select Toggle Button"
                 data-test-id={dataTestId}
             >
@@ -186,14 +216,18 @@ export const Select = ({
                 ])}
                 style={{ width: `${parentWidth}px` }}
                 data-test-id={`${dataTestId}-menu`}
-                {...getMenuProps()}
+                {...getMenuProps({
+                    onMouseLeave() {
+                        autoClose && closeMenu();
+                    },
+                })}
             >
                 {isOpen &&
                     allItems.map((item, index: number) =>
                         isSelectGroupItem(item) ? (
                             <li key={`group-${index + 1}`}>
                                 <SelectGroupItem
-                                    key={`group-element-${index}`}
+                                    key={`group-element-${index + 1}`}
                                     groupTitle={(item as SelectGroupItemProps).groupTitle}
                                 >
                                     {(item as SelectGroupItemProps).children.map((options) => (
