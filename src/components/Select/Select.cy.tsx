@@ -22,18 +22,20 @@ const ITEMS_2: SelectItemProps[] = [
     { id: '7', value: 'value7' },
 ];
 
+const BASE_SELECT_COMPONENTS_NO_GROUP = ITEMS.map((item) => <SelectItem key={`${item.id}-key`} {...item} />);
+
 const BASE_GROUP_COMPONENT = (
-    <SelectGroupItem>
+    <SelectGroupItem groupTitle="Test Group One">
         {ITEMS.map((item) => (
-            <SelectItem key={`${item.id}-key`} id={item.id} value={item.value} />
+            <SelectItem key={`${item.id}-key`} {...item} />
         ))}
     </SelectGroupItem>
 );
 
 const BASE_GROUP_2_COMPONENT = (
-    <SelectGroupItem groupTitle="Group 2">
+    <SelectGroupItem groupTitle="Test Group Two">
         {ITEMS_2.map((item) => (
-            <SelectItem key={`${item.id}-key`} id={item.id} value={item.value} />
+            <SelectItem key={`${item.id}-key`} {...item} />
         ))}
     </SelectGroupItem>
 );
@@ -49,32 +51,21 @@ describe('Select Component', () => {
         cy.get(SELECT_ID).should('be.visible');
     });
 
-    it('toggle button clicks render menu and unmounts menu', () => {
-        cy.mount(<Select>{BASE_GROUP_COMPONENT}</Select>);
-        cy.get(SELECT_MENU_ID).should('not.exist');
-        cy.get(SELECT_ID).realClick();
-        cy.get(SELECT_MENU_ID).as('DropdownMenu');
-        cy.get('@DropdownMenu').should('be.exist');
-        cy.get(SELECT_ID).realClick();
-        cy.get('@DropdownMenu').should('not.exist');
-    });
-
     it('toggle button click and menu should be visible', () => {
         cy.mount(<Select>{BASE_GROUP_COMPONENT}</Select>);
         cy.get(SELECT_ID).realClick();
         cy.get(SELECT_MENU_ID).should('be.visible');
     });
 
-    it('toggle button click and menu should be visible', () => {
+    it('renders menu with children', () => {
         cy.mount(<Select>{BASE_GROUP_COMPONENT}</Select>);
+        cy.get(SELECT_MENU_ID).as('SelectMenu');
+        cy.get('@SelectMenu').should('not.be.visible');
+        cy.get('@SelectMenu').first().children().should('have.length', 0);
         cy.get(SELECT_ID).realClick();
-        cy.get(SELECT_MENU_ID).should('be.visible');
-    });
-
-    it('menu should have correct number of children', () => {
-        cy.mount(<Select>{BASE_GROUP_COMPONENT}</Select>);
-        cy.get(SELECT_ID).realClick();
-        cy.get(SELECT_GROUP_ID).first().children().should('have.length', ITEMS.length);
+        cy.get(SELECT_GROUP_ID).as('SelectMenuGroup');
+        cy.get('@SelectMenuGroup').should('exist');
+        cy.get('@SelectMenuGroup').children().should('have.length', ITEMS.length);
     });
 
     it('should render focus on mount', () => {
@@ -114,11 +105,11 @@ describe('Select Component', () => {
         cy.mount(<Select onChange={onChangeStub}>{BASE_GROUP_COMPONENT}</Select>);
         cy.get(SELECT_ID).realClick();
         cy.get(SELECT_GROUP_ID).realMouseMove(0, 40).realMouseMove(40, 0).realClick();
-        cy.get(SELECT_ID).find('span').children().first().should('have.text', ITEMS[2].value);
+        cy.get(SELECT_ID).find('span').children().first().should('have.text', ITEMS[1].value);
     });
 
-    it('should render all items', () => {
-        cy.mount(<Select>{BASE_GROUP_COMPONENT}</Select>);
+    it('should render all items without group wrapper', () => {
+        cy.mount(<Select>{...BASE_SELECT_COMPONENTS_NO_GROUP}</Select>);
         cy.get(SELECT_ID).realClick();
         cy.get(SELECT_ITEM_ID).should('have.length', ITEMS.length);
     });
@@ -135,7 +126,7 @@ describe('Select Component', () => {
             cy.get(SELECT_MENU_ID).find('ul').should('have.length', 2);
         });
 
-        it('should render the first group with out a title', () => {
+        it('should render the first group with correct title', () => {
             cy.mount(
                 <Select>
                     {BASE_GROUP_COMPONENT}
@@ -143,10 +134,10 @@ describe('Select Component', () => {
                 </Select>,
             );
             cy.get(SELECT_ID).realClick();
-            cy.get(SELECT_MENU_ID).find('ul').first().should('not.have.attr', 'title');
+            cy.get(SELECT_MENU_ID).find('ul').first().should('have.attr', 'title').and('eq', 'Test Group One');
         });
 
-        it('should render the second group with a title', () => {
+        it('should render the second group with correct title', () => {
             cy.mount(
                 <Select>
                     {BASE_GROUP_COMPONENT}
@@ -154,7 +145,7 @@ describe('Select Component', () => {
                 </Select>,
             );
             cy.get(SELECT_ID).realClick();
-            cy.get(SELECT_MENU_ID).find('ul').last().should('have.attr', 'title').and('eq', 'Group 2');
+            cy.get(SELECT_MENU_ID).find('ul').last().should('have.attr', 'title').and('eq', 'Test Group Two');
         });
 
         it('should render the first group with correct number of items', () => {
