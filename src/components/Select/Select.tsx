@@ -55,11 +55,11 @@ const GetSelectedText = ({
     required?: boolean;
 }) => {
     if (item) {
-        const { title, value, decorator } = item;
+        const { title, value, children, decorator } = item;
         return (
             <span className="tw-flex tw-justify-start tw-items-center tw-px-1">
                 {decorator ? <span className="tw-text-text-weak tw-pr-1">{decorator}</span> : null}
-                <span className="tw-text-text-weak">{title ?? value}</span>
+                <span className="tw-text-text-weak">{children ?? title ?? value}</span>
             </span>
         );
     }

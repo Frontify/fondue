@@ -14,6 +14,7 @@ export type SelectItemProps = {
     decorator?: ReactElement;
     disabled?: boolean;
     title?: string;
+    children?: string;
     'data-test-id'?: string;
 };
 
@@ -22,6 +23,7 @@ export const SelectItem = ({
     value,
     decorator,
     disabled = false,
+    children,
     title,
     'data-test-id': dataTestId = 'fondue-select-item',
 }: SelectItemProps) => {
@@ -45,11 +47,11 @@ export const SelectItem = ({
             key={id}
             title={disabled ? undefined : title ?? value}
             data-test-id={dataTestId}
-            {...getItemProps?.({ item: { id, value }, index, ref: itemElementRef })}
+            {...getItemProps?.({ item: { id, value, title, children }, index, ref: itemElementRef })}
         >
             <Checkmark checked={isSelected} />
             {decorator ? <span className="tw-pr-1">{decorator}</span> : null}
-            <span>{title ?? value}</span>
+            {<span>{children ?? title ?? value}</span>}
         </li>
     );
 };
