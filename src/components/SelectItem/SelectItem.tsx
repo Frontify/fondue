@@ -36,7 +36,6 @@ export const SelectItem = ({
         <li
             className={merge([
                 'tw-p-2 tw-shadow-sm tw-flex tw-justify-start tw-items-center tw-rounded tw-cursor-pointer',
-                // isSelected && 'tw-font-bold tw-bg-box-selected tw-text-box-selected-inverse',
                 !disabled && highlightedIndex === index ? FOCUS_STYLE_INSET_NO_OFFSET : '',
                 disabled
                     ? 'tw-cursor-not-allowed tw-bg-box-disabled tw-text-bog-disabled-inverse'
@@ -48,7 +47,7 @@ export const SelectItem = ({
             data-test-id={dataTestId}
             {...getItemProps?.({ item: { id, value }, index, ref: itemElementRef })}
         >
-            {isSelected ? <Checkmark checked /> : null}
+            <Checkmark checked={isSelected} />
             {decorator ? <span className="tw-pr-1">{decorator}</span> : null}
             <span>{title ?? value}</span>
         </li>
