@@ -8,7 +8,7 @@ import { cloneElement, useContext, useMemo } from 'react';
 
 export type SelectGroupItemProps = {
     children: ReactElement[];
-    groupTitle?: string;
+    groupTitle: string;
     'data-test-id'?: string;
 };
 
