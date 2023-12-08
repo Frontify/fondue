@@ -55,6 +55,14 @@ export default {
             options: Object.values(Validation),
             defaultValue: Validation.Default,
         },
+        autoOpen: {
+            control: { type: 'boolean' },
+            description: 'When `true` menu will open `onMouseEnter` on the toggle button',
+        },
+        autoClose: {
+            control: { type: 'boolean' },
+            description: 'When `true` menu will close `onMouseLeave` on the menu',
+        },
         onChange: {
             action: 'onChange',
             type: 'function',
@@ -69,77 +77,32 @@ export default {
         listPlaceholder: 'Select a fruit/veggie',
         disabled: false,
         readOnly: false,
+        autoOpen: false,
+        autoClose: false,
     },
 } as Meta<SelectProps>;
 
 export const Default: StoryFn<SelectProps> = (args) => (
-    <Select {...args}>
-        {...ITEM_GROUPS_1.map((item) => (
-            <SelectItem
-                key={item.id}
-                value={item.value}
-                title={item.title}
-                id={item.id}
-                decorator={item.decorator}
-                disabled={item.disabled}
-            />
-        ))}
-    </Select>
+    <Select {...args}>{...ITEM_GROUPS_1.map((item) => <SelectItem {...item} key={item.id} />)}</Select>
 );
 
 export const WithMultipleGroups: StoryFn<SelectProps> = (args) => (
     <Select {...args}>
-        <SelectGroupItem groupTitle="Fruits" key="group-one">
-            {...ITEM_GROUPS_1.map((item) => (
-                <SelectItem
-                    key={item.id}
-                    value={item.value}
-                    title={item.title}
-                    id={item.id}
-                    decorator={item.decorator}
-                    disabled={item.disabled}
-                />
-            ))}
+        <SelectGroupItem groupTitle="Fruits">
+            {...ITEM_GROUPS_1.map((item) => <SelectItem {...item} key={item.id} />)}
         </SelectGroupItem>
-        <SelectGroupItem groupTitle="Veggies" key="group-two">
-            {...ITEM_GROUPS_2.map((item) => (
-                <SelectItem
-                    key={item.id}
-                    value={item.value}
-                    title={item.title}
-                    id={item.id}
-                    decorator={item.decorator}
-                    disabled={item.disabled}
-                />
-            ))}
+        <SelectGroupItem groupTitle="Veggies">
+            {...ITEM_GROUPS_2.map((item) => <SelectItem {...item} key={item.id} />)}
         </SelectGroupItem>
-        <SelectGroupItem groupTitle="Animals" key="group-three">
-            {...ITEM_GROUPS_3.map((item) => (
-                <SelectItem
-                    key={item.id}
-                    value={item.value}
-                    title={item.title}
-                    id={item.id}
-                    decorator={item.decorator}
-                    disabled={item.disabled}
-                />
-            ))}
+        <SelectGroupItem groupTitle="Animals">
+            {...ITEM_GROUPS_3.map((item) => <SelectItem {...item} key={item.id} />)}
         </SelectGroupItem>
     </Select>
 );
 
 export const WithDefaultItem: StoryFn<SelectProps> = (args) => (
     <Select {...args} defaultItem={{ ...ITEM_GROUPS_1[1] }}>
-        {...ITEM_GROUPS_1.map((item) => (
-            <SelectItem
-                key={item.id}
-                value={item.value}
-                title={item.title}
-                id={item.id}
-                decorator={item.decorator}
-                disabled={item.disabled}
-            />
-        ))}
+        {...ITEM_GROUPS_1.map((item) => <SelectItem {...item} key={item.id} />)}
     </Select>
 );
 
@@ -151,27 +114,24 @@ export const WithFormField: StoryFn<SelectProps> = (args) => (
     >
         <Select {...args}>
             <SelectGroupItem groupTitle="Fruits" key="group-one">
-                {...ITEM_GROUPS_1.map((item) => (
-                    <SelectItem
-                        key={item.id}
-                        value={item.value}
-                        title={item.title}
-                        id={item.id}
-                        decorator={item.decorator}
-                        disabled={item.disabled}
-                    />
-                ))}
+                {...ITEM_GROUPS_1.map((item) => <SelectItem {...item} key={item.id} />)}
             </SelectGroupItem>
         </Select>
     </FormField>
 );
 
-export const FocusOnMount = Default.bind({});
-FocusOnMount.args = {
-    focusOnMount: true,
+export const WithAutoOpenAndClose = Default.bind({});
+WithAutoOpenAndClose.args = {
+    autoOpen: true,
+    autoClose: true,
 };
 
 export const OpenOnMount = Default.bind({});
 OpenOnMount.args = {
     open: true,
+};
+
+export const FocusOnMount = Default.bind({});
+FocusOnMount.args = {
+    focusOnMount: true,
 };
