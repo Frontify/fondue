@@ -2,25 +2,31 @@
 
 import { Meta, StoryFn } from '@storybook/react';
 import { Select, SelectProps } from './Select';
-import { Box, FormField, TextInput, TextInputType } from '..';
+import { FormField } from '..';
 import { Validation } from '@utilities/validation';
 import { SelectGroupItem } from '@components/SelectGroupItem/SelectGroupItem';
 import { SelectItem, SelectItemProps } from '@components/SelectItem/SelectItem';
 import { IconClock16, IconFaceSad16, IconFocalPoint16, IconNook16 } from '@foundation/Icon';
-import { useState } from 'react';
 
 const ITEM_GROUPS_1: SelectItemProps[] = [
-    { id: '1', title: 'title prop of Apple', value: 'value prop of Apple', decorator: <IconNook16 /> },
-    { id: '2', value: 'value prop of Orange', decorator: <IconClock16 /> },
-    { id: '3', title: 'title prop of Pear', value: 'value prop of Pear' },
-    { id: '4', title: 'title prop of Kiwi (disabled)', value: 'value prop of Kiwi', disabled: true },
+    { id: '1', title: 'Apple', value: 'Apple', decorator: <IconNook16 /> },
+    { id: '2', value: 'Orange', decorator: <IconClock16 /> },
+    { id: '3', title: 'Pear', value: 'Pear' },
+    { id: '4', title: 'Kiwi (disabled)', value: 'Kiwi', disabled: true },
 ];
 
 const ITEM_GROUPS_2: SelectItemProps[] = [
-    { id: '5', title: 'title prop of Cabbage', value: 'value prop of Cabbage', decorator: <IconFocalPoint16 /> },
-    { id: '6', value: 'value prop of Carrot' },
-    { id: '7', title: 'title prop of Potato', value: 'value prop of Potato' },
-    { id: '8', value: 'value prop of Squash', decorator: <IconFaceSad16 /> },
+    { id: '5', title: 'Cabbage', value: 'Cabbage', decorator: <IconFocalPoint16 /> },
+    { id: '6', value: 'Carrot', disabled: true },
+    { id: '7', title: 'Potato', value: 'Potato' },
+    { id: '8', value: 'Squash', decorator: <IconFaceSad16 /> },
+];
+
+const ITEM_GROUPS_3: SelectItemProps[] = [
+    { id: '9', title: 'Monkey', value: 'monkey', decorator: <IconFocalPoint16 /> },
+    { id: '10', value: 'fish', title: 'Fish' },
+    { id: '11', title: 'Dog', value: 'dog' },
+    { id: '12', value: 'horse', title: 'Horse', decorator: <IconFaceSad16 /> },
 ];
 
 export default {
@@ -49,11 +55,6 @@ export default {
             options: Object.values(Validation),
             defaultValue: Validation.Default,
         },
-        filterTerm: {
-            control: { type: 'string' },
-            defaultValue: '',
-            description: 'String value that is used to filter the list items on.',
-        },
         onChange: {
             action: 'onChange',
             type: 'function',
@@ -68,7 +69,6 @@ export default {
         listPlaceholder: 'Select a fruit/veggie',
         disabled: false,
         readOnly: false,
-        filterTerm: '',
     },
 } as Meta<SelectProps>;
 
@@ -87,7 +87,7 @@ export const Default: StoryFn<SelectProps> = (args) => (
     </Select>
 );
 
-export const WithTwoGroups: StoryFn<SelectProps> = (args) => (
+export const WithMultipleGroups: StoryFn<SelectProps> = (args) => (
     <Select {...args}>
         <SelectGroupItem groupTitle="Fruits" key="group-one">
             {...ITEM_GROUPS_1.map((item) => (
@@ -109,6 +109,19 @@ export const WithTwoGroups: StoryFn<SelectProps> = (args) => (
                     title={item.title}
                     id={item.id}
                     decorator={item.decorator}
+                    disabled={item.disabled}
+                />
+            ))}
+        </SelectGroupItem>
+        <SelectGroupItem groupTitle="Animals" key="group-three">
+            {...ITEM_GROUPS_3.map((item) => (
+                <SelectItem
+                    key={item.id}
+                    value={item.value}
+                    title={item.title}
+                    id={item.id}
+                    decorator={item.decorator}
+                    disabled={item.disabled}
                 />
             ))}
         </SelectGroupItem>
@@ -152,35 +165,6 @@ export const WithFormField: StoryFn<SelectProps> = (args) => (
         </Select>
     </FormField>
 );
-
-export const WithFilterTerm: StoryFn<SelectProps> = (args) => {
-    const [term, setTerm] = useState<string>();
-
-    return (
-        <Box className="tw-h-[350px]">
-            <Box className="tw-flex tw-flex-col tw-justify-between tw-h-[100px]">
-                <TextInput
-                    type={TextInputType.Text}
-                    onChange={(value) => setTerm(value)}
-                    value={term}
-                    placeholder="Enter a filter term"
-                />
-                <Select {...args} filterTerm={term}>
-                    {...ITEM_GROUPS_1.map((item) => (
-                        <SelectItem
-                            key={item.id}
-                            value={item.value}
-                            title={item.title}
-                            id={item.id}
-                            decorator={item.decorator}
-                            disabled={item.disabled}
-                        />
-                    ))}
-                </Select>
-            </Box>
-        </Box>
-    );
-};
 
 export const FocusOnMount = Default.bind({});
 FocusOnMount.args = {
