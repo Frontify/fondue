@@ -9,23 +9,23 @@ import { SelectItem, SelectItemProps } from '@components/SelectItem/SelectItem';
 import { IconClock16, IconFaceSad16, IconFocalPoint16, IconNook16 } from '@foundation/Icon';
 
 const ITEM_GROUPS_1: SelectItemProps[] = [
-    { id: '1', title: 'Apple', value: 'Apple', decorator: <IconNook16 /> },
+    { id: '1', value: 'apple', title: 'Apple', decorator: <IconNook16 /> },
     { id: '2', value: 'Orange', decorator: <IconClock16 /> },
-    { id: '3', title: 'Pear', value: 'Pear' },
-    { id: '4', title: 'Kiwi (disabled)', value: 'Kiwi', disabled: true },
+    { id: '3', value: 'pear', title: 'Pear' },
+    { id: '4', value: 'kiwi', title: 'Kiwi (disabled)', disabled: true },
 ];
 
 const ITEM_GROUPS_2: SelectItemProps[] = [
-    { id: '5', title: 'Cabbage', value: 'Cabbage', decorator: <IconFocalPoint16 /> },
+    { id: '5', value: 'cabbage', title: 'Cabbage', decorator: <IconFocalPoint16 /> },
     { id: '6', value: 'Carrot', disabled: true },
-    { id: '7', title: 'Potato', value: 'Potato' },
+    { id: '7', value: 'potato', title: 'Potato' },
     { id: '8', value: 'Squash', decorator: <IconFaceSad16 /> },
 ];
 
 const ITEM_GROUPS_3: SelectItemProps[] = [
-    { id: '9', title: 'Monkey', value: 'monkey', decorator: <IconFocalPoint16 /> },
+    { id: '9', value: 'monkey', title: 'Monkey', decorator: <IconFocalPoint16 /> },
     { id: '10', value: 'fish', title: 'Fish' },
-    { id: '11', title: 'Dog', value: 'dog' },
+    { id: '11', value: 'dog', title: 'Dog' },
     { id: '12', value: 'horse', title: 'Horse', decorator: <IconFaceSad16 /> },
 ];
 
@@ -96,6 +96,17 @@ export const WithMultipleGroups: StoryFn<SelectProps> = (args) => (
         </SelectGroupItem>
         <SelectGroupItem groupTitle="Animals">
             {...ITEM_GROUPS_3.map((item) => <SelectItem {...item} key={item.id} />)}
+        </SelectGroupItem>
+        <SelectGroupItem groupTitle="Items with children props">
+            <SelectItem id={'item-with-child-1'} value="child-1">
+                Title text passed as child 1
+            </SelectItem>
+            <SelectItem id={'item-with-child-2'} value="child-2">
+                Title text passed as child 2
+            </SelectItem>
+            <SelectItem id={'item-with-child-3'} value="child-3">
+                Title text passed as child 3
+            </SelectItem>
         </SelectGroupItem>
     </Select>
 );
