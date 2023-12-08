@@ -8,13 +8,15 @@ import { useToggleOverlay } from '@hooks/useToggleOverlay';
 import { Z_INDEX_TOOLTIP } from '@utilities/dialogs/constants';
 import { EnablePortalWrapper } from '@utilities/dialogs/EnablePortalWrapper';
 import { useMemoizedId } from '@hooks/useMemoizedId';
+import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
+import { checkIfContainInteractiveElements } from '@utilities/elements';
 
 const ARROW_DISTANCE_FROM_CORNER_VALUE = 12;
 const TOOLTIP_EXTRA_OFFSET_VALUE = 7; // As the arrow is set 12px away from tooltip corner, extra offset should be added to still point to Trigger.
 
 export type TooltipProps = {
     id?: string;
-    children?: ReactElement;
+    children: ReactElement;
     openOnMount?: boolean;
     placement?: PopperPlacement;
     offset?: [number, number];
@@ -64,6 +66,22 @@ const getNewOffsetBasedOnArrowPosition = (currentPlacement: string, offset: [num
     }
 };
 
+type TimeoutRef = {
+    current: NodeJS.Timeout | null;
+};
+
+const handleTimeout = (callback: () => void, delay: number, timeoutRef: TimeoutRef) => {
+    if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+    }
+
+    if (delay) {
+        timeoutRef.current = setTimeout(callback, delay);
+    } else {
+        callback();
+    }
+};
+
 export const Tooltip = ({
     id: customId,
     children,
@@ -82,14 +100,18 @@ export const Tooltip = ({
     disabled = false,
     zIndex = Z_INDEX_TOOLTIP,
     'data-test-id': dataTestId = 'fondue-tooltip',
-    'aria-label': ariaLabel = 'fondue-tooltip-trigger',
 }: TooltipProps) => {
     const id = useMemoizedId(customId);
     const [open, setOpen] = useToggleOverlay(openOnMount);
-    const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
+    const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
     const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
     const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
     const [tooltipOffset, setTooltipOffset] = useState<[number, number]>(offset);
+    const [hasInteractiveElements, setHasInteractiveElements] = useState(false);
+
+    useEffect(() => {
+        setHasInteractiveElements(checkIfContainInteractiveElements(referenceElement));
+    }, [children, referenceElement]);
 
     const { styles, attributes, state } = usePopper(referenceElement, popperElement, {
         placement,
@@ -105,32 +127,27 @@ export const Tooltip = ({
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     useEffect(() => {
-        const newOffset = getNewOffsetBasedOnArrowPosition(currentPlacement, offset);
+        const newOffset = withArrow ? getNewOffsetBasedOnArrowPosition(currentPlacement, offset) : offset;
 
-        if (newOffset[0] !== tooltipOffset[0] || newOffset[1] !== tooltipOffset[1]) {
-            setTooltipOffset(newOffset);
-        }
-    }, [offset, tooltipOffset, currentPlacement]);
+        setTooltipOffset((prevOffset) => {
+            if (newOffset[0] !== prevOffset[0] || newOffset[1] !== prevOffset[1]) {
+                return newOffset;
+            }
+            return prevOffset;
+        });
+    }, [currentPlacement, offset, withArrow]);
 
     const handleHideTooltip = useCallback(() => {
-        if (timeoutRef.current) {
-            clearTimeout(timeoutRef.current);
+        if (!disabled) {
+            handleTimeout(() => setOpen(false), leaveDelay, timeoutRef);
         }
-        timeoutRef.current = setTimeout(() => setOpen(false), leaveDelay);
-    }, [leaveDelay, setOpen]);
+    }, [disabled, leaveDelay, setOpen]);
 
     const handleShowTooltip = useCallback(() => {
-        if (timeoutRef.current) {
-            clearTimeout(timeoutRef.current);
+        if (!disabled) {
+            handleTimeout(() => setOpen(true), enterDelay, timeoutRef);
         }
-
-        if (enterDelay) {
-            timeoutRef.current = setTimeout(() => setOpen(true), enterDelay);
-            return;
-        }
-
-        setOpen(true);
-    }, [enterDelay, setOpen]);
+    }, [disabled, enterDelay, setOpen]);
 
     useEffect(() => {
         if (timeoutRef.current && !open) {
@@ -138,23 +155,27 @@ export const Tooltip = ({
         }
     }, [open]);
 
+    const focusAndMouseAttributes = {
+        onBlur: handleHideTooltip,
+        onFocus: handleShowTooltip,
+        onMouseEnter: handleShowTooltip,
+        onMouseLeave: handleHideTooltip,
+    };
+
     return (
         <>
-            <button
+            <div
                 ref={setReferenceElement}
-                onMouseEnter={handleShowTooltip}
-                onFocus={handleShowTooltip}
-                onMouseLeave={handleHideTooltip}
-                onBlur={handleHideTooltip}
-                aria-label={ariaLabel}
-                aria-disabled={disabled}
+                tabIndex={hasInteractiveElements || disabled ? undefined : 0}
                 aria-describedby={id}
-                disabled={disabled}
-                className="disabled:tw-text-text-disabled"
+                aria-disabled={disabled}
                 data-test-id={`${dataTestId}-button`}
+                className={merge(['tw-inline-block tw-rounded tw-max-w-[100%] tw-outline-none', FOCUS_VISIBLE_STYLE])}
+                {...focusAndMouseAttributes}
             >
                 {children}
-            </button>
+            </div>
+
             {open && (
                 <EnablePortalWrapper enablePortal={enablePortal}>
                     <div
@@ -170,7 +191,7 @@ export const Tooltip = ({
                         style={{ ...styles.popper, maxWidth, maxHeight, zIndex }}
                         {...attributes.popper}
                     >
-                        <p className="tw-whitespace-pre-line">{formatTooltipText(content)}</p>
+                        <p className="tw-whitespace-pre-line tw-break-words">{formatTooltipText(content)}</p>
                         {withArrow && (
                             <div
                                 data-test-id={`${dataTestId}-arrow`}
