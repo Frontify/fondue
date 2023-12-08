@@ -34,7 +34,7 @@ export default {
     component: Select,
     tags: ['autodocs'],
     argTypes: {
-        listPlaceholder: {
+        placeholder: {
             type: 'string',
             description: 'String value that will be initially displayed as the option group title',
             defaultValue: 'Select a option',
@@ -46,22 +46,41 @@ export default {
         },
         disabled: {
             control: { type: 'boolean' },
+            defaultValue: false,
         },
         readOnly: {
             control: { type: 'boolean' },
+            defaultValue: false,
         },
         status: {
             control: { type: 'select' },
             options: Object.values(Validation),
             defaultValue: Validation.Default,
         },
+        open: {
+            control: { type: 'boolean' },
+            description: 'When `true` the menu will render open',
+            defaultValue: false,
+        },
+        focusOnMount: {
+            control: { type: 'boolean' },
+            description: 'When `true` the toggle button will render focused on initial render',
+            defaultValue: false,
+        },
+        openOnMount: {
+            control: { type: 'boolean' },
+            description: 'When `true` the menu will render open on initial render',
+            defaultValue: false,
+        },
         autoOpen: {
             control: { type: 'boolean' },
             description: 'When `true` menu will open `onMouseEnter` on the toggle button',
+            defaultValue: false,
         },
         autoClose: {
             control: { type: 'boolean' },
             description: 'When `true` menu will close `onMouseLeave` on the menu',
+            defaultValue: false,
         },
         onChange: {
             action: 'onChange',
@@ -73,8 +92,6 @@ export default {
         },
     },
     args: {
-        label: 'Test Select Menu',
-        listPlaceholder: 'Select a fruit/veggie',
         disabled: false,
         readOnly: false,
         autoOpen: false,
