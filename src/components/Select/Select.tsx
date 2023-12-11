@@ -127,6 +127,7 @@ export const Select = ({
         closeMenu,
     } = useSelect<SelectItemProps>({
         initialIsOpen: open,
+        defaultIsOpen: open,
         items: allSelectItems,
         initialSelectedItem: defaultItem,
         isItemDisabled: (item: SelectItemProps) => !!item.disabled,

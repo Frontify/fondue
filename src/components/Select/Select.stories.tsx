@@ -6,18 +6,25 @@ import { FormField } from '..';
 import { Validation } from '@utilities/validation';
 import { SelectGroupItem } from '@components/SelectGroupItem/SelectGroupItem';
 import { SelectItem, SelectItemProps } from '@components/SelectItem/SelectItem';
-import { IconClock16, IconFaceSad16, IconFocalPoint16, IconNook16 } from '@foundation/Icon';
+import {
+    IconFaceSad16,
+    IconFocalPoint16,
+    IconHeartCircle16,
+    IconHome16,
+    IconMoneyCircle16Filled,
+    IconNook16,
+} from '@foundation/Icon';
 
 const ITEM_GROUPS_1: SelectItemProps[] = [
     { id: '1', value: 'apple', title: 'Apple', decorator: <IconNook16 /> },
-    { id: '2', value: 'Orange', decorator: <IconClock16 /> },
-    { id: '3', value: 'pear', title: 'Pear' },
+    { id: '2', value: 'Orange' },
+    { id: '3', value: 'pear', title: 'Pear', decorator: <IconHeartCircle16 /> },
     { id: '4', value: 'kiwi', title: 'Kiwi (disabled)', disabled: true },
 ];
 
 const ITEM_GROUPS_2: SelectItemProps[] = [
-    { id: '5', value: 'cabbage', title: 'Cabbage', decorator: <IconFocalPoint16 /> },
-    { id: '6', value: 'Carrot', disabled: true },
+    { id: '5', value: 'cabbage', title: 'Cabbage' },
+    { id: '6', value: 'Carrot', disabled: true, decorator: <IconMoneyCircle16Filled /> },
     { id: '7', value: 'potato', title: 'Potato' },
     { id: '8', value: 'Squash', decorator: <IconFaceSad16 /> },
 ];
@@ -26,7 +33,7 @@ const ITEM_GROUPS_3: SelectItemProps[] = [
     { id: '9', value: 'monkey', title: 'Monkey', decorator: <IconFocalPoint16 /> },
     { id: '10', value: 'fish', title: 'Fish' },
     { id: '11', value: 'dog', title: 'Dog' },
-    { id: '12', value: 'horse', title: 'Horse', decorator: <IconFaceSad16 /> },
+    { id: '12', value: 'horse', title: 'Horse', decorator: <IconHome16 /> },
 ];
 
 export default {
@@ -59,17 +66,12 @@ export default {
         },
         open: {
             control: { type: 'boolean' },
-            description: 'When `true` the menu will render open',
+            description: 'When `true` the menu will render open and stay open when making a selection',
             defaultValue: false,
         },
         focusOnMount: {
             control: { type: 'boolean' },
             description: 'When `true` the toggle button will render focused on initial render',
-            defaultValue: false,
-        },
-        openOnMount: {
-            control: { type: 'boolean' },
-            description: 'When `true` the menu will render open on initial render',
             defaultValue: false,
         },
         autoOpen: {
