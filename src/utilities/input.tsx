@@ -3,7 +3,15 @@
 import { ReactElement } from 'react';
 import { Validation, validationTextClassMap } from './validation';
 import { merge } from './merge';
-import { Button, ButtonEmphasis, ButtonSize, ButtonStyle, LoadingCircle, LoadingCircleSize } from '@components/index';
+import {
+    Button,
+    ButtonEmphasis,
+    ButtonSize,
+    ButtonStyle,
+    LoadingCircle,
+    LoadingCircleSize,
+    Tooltip,
+} from '@components/index';
 import { InputActionsProps, InputExtraActionsProps } from 'src/types/input';
 import { generateRandomId } from './generateRandomId';
 import {
@@ -141,19 +149,14 @@ export const InputExtraActions = ({ actions, disabled, dataTestId }: InputExtraA
     return actions.map((action) => {
         const id = generateRandomId();
         return (
-            <Button
-                key={`extra-action-${id}`}
-                style={ButtonStyle.Default}
-                onClick={action.callback}
+            <Tooltip
+                content={action.tooltip.content}
+                key={`extra-action-tooltip-${id}`}
                 disabled={disabled}
-                emphasis={ButtonEmphasis.Weak}
-                icon={action.icon}
-                size={ButtonSize.Small}
-                aria-describedby="Clear Input Value"
-                aria-label="Clear value"
-                title={action.title}
-                data-test-id={`${dataTestId}-extra-action`}
-            />
+                data-test-id={dataTestId}
+            >
+                {action.tooltip.children}
+            </Tooltip>
         );
     });
 };

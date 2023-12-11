@@ -8,19 +8,39 @@ import { IconClipboard16, IconNook16, IconQuestionMark16 } from '@foundation/Ico
 import { Validation } from '@utilities/validation';
 import { useCallback, useEffect, useState } from 'react';
 import { ExtraAction } from 'src/types/input';
+import { ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button/ButtonTypes';
+import { Button } from '@components/Button';
 
 const ExtraActions: ExtraAction[] = [
     {
-        icon: <IconClipboard16 />,
-        title: 'Save to Clipboard',
-        callback: () => {
-            alert('Mock Copied to Clipboard');
+        tooltip: {
+            content: 'Save to clipboard',
+            children: (
+                <Button
+                    style={ButtonStyle.Default}
+                    onClick={() => alert('Mock Copied to clipboard!')}
+                    disabled={false}
+                    emphasis={ButtonEmphasis.Weak}
+                    icon={<IconClipboard16 />}
+                    size={ButtonSize.Small}
+                />
+            ),
         },
     },
     {
-        icon: <IconQuestionMark16 />,
-        title: 'Help Desk',
-        callback: () => alert('Here to Help'),
+        tooltip: {
+            content: 'Help Desk',
+            children: (
+                <Button
+                    style={ButtonStyle.Default}
+                    onClick={() => alert('Here to Help')}
+                    disabled={false}
+                    emphasis={ButtonEmphasis.Weak}
+                    icon={<IconQuestionMark16 />}
+                    size={ButtonSize.Small}
+                />
+            ),
+        },
     },
 ];
 
