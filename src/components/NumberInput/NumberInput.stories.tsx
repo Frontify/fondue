@@ -12,7 +12,7 @@ export default {
     title: 'Components/Number Input',
     component: NumberInput,
     tags: ['autodocs'],
-    args: {},
+    args: { clearable: false },
     argTypes: {
         decorator: {
             description: 'Add decorator element to start of the input',
@@ -89,7 +89,11 @@ export default {
 } as Meta<NumberInputProps>;
 
 export const BaseUsage: StoryFn<NumberInputProps> = (args) => {
-    return <NumberInput {...args} placeholder="Enter a number..." clearable />;
+    return <NumberInput {...args} placeholder="Enter a number..." />;
+};
+
+BaseUsage.args = {
+    clearable: true,
 };
 
 export const WithDecoratorAndIncrementable: StoryFn<NumberInputProps> = (args) => {
