@@ -6,12 +6,13 @@ import { NumberInputProps } from './types';
 import { useState } from 'react';
 import { IconNook16 } from '@foundation/Icon';
 import { Validation } from '@utilities/validation';
+import { Box } from '..';
 
 export default {
     title: 'Components/Number Input',
     component: NumberInput,
     tags: ['autodocs'],
-    args: {},
+    args: { clearable: false },
     argTypes: {
         decorator: {
             description: 'Add decorator element to start of the input',
@@ -25,6 +26,20 @@ export default {
             defaultValue: undefined,
             control: { type: 'text' },
         },
+        disabled: {
+            type: 'boolean',
+            table: {
+                type: { summary: 'boolean | undefined' },
+                defaultValue: { summary: false },
+            },
+        },
+        readOnly: {
+            type: 'boolean',
+            table: {
+                type: { summary: 'boolean | undefined' },
+                defaultValue: { summary: false },
+            },
+        },
         controls: {
             description: 'Enable increment buttons',
             name: 'controls',
@@ -34,6 +49,11 @@ export default {
         clearable: {
             description: 'Enable clear button',
             name: 'clearable',
+            defaultValue: false,
+            control: { type: 'boolean' },
+        },
+        hugWidth: {
+            description: 'If `true` element will have a `auto` width, else `full` width',
             defaultValue: false,
             control: { type: 'boolean' },
         },
@@ -69,7 +89,11 @@ export default {
 } as Meta<NumberInputProps>;
 
 export const BaseUsage: StoryFn<NumberInputProps> = (args) => {
-    return <NumberInput {...args} placeholder="Enter a number..." clearable />;
+    return <NumberInput {...args} placeholder="Enter a number..." />;
+};
+
+BaseUsage.args = {
+    clearable: true,
 };
 
 export const WithDecoratorAndIncrementable: StoryFn<NumberInputProps> = (args) => {
@@ -92,5 +116,13 @@ export const WithErrorLessThanZero: StoryFn<NumberInputProps> = (args) => {
             valueSelect={valueSelect}
             defaultValue={3}
         />
+    );
+};
+
+export const WithHugWidth: StoryFn<NumberInputProps> = (args) => {
+    return (
+        <Box className="tw-w-[400px]">
+            <NumberInput {...args} controls hugWidth placeholder="Input has a width of `auto`" />
+        </Box>
     );
 };

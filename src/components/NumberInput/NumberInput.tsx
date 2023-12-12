@@ -3,11 +3,11 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { NumberInputIncrement, NumberInputProps } from './types';
 import { merge } from '@utilities/merge';
-import { IconCross16, IconMinus16, IconPlus16 } from '@foundation/Icon';
+import { IconMinus16, IconPlus16 } from '@foundation/Icon';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { Validation, validationClassMap } from '@utilities/validation';
 import { KeyboardEvent } from '@react-types/shared';
-import { GetStatusIcon } from '@utilities/input';
+import { GetStatusIcon, InputActions, InputStyles } from '@utilities/input';
 
 const INCREMENT_KEYS = ['ArrowUp', 'ArrowRight'];
 const DECREMENT_KEYS = ['ArrowDown', 'ArrowLeft'];
@@ -28,6 +28,7 @@ export const NumberInput = ({
     stepInterval = 10,
     title,
     defaultValue,
+    hugWidth,
     value,
     valueSelect,
     onChange,
@@ -42,6 +43,7 @@ export const NumberInput = ({
     const isShift = useRef<boolean>(false);
     const isMouseHold = useRef<boolean>(false);
     const inputElement = useRef<HTMLInputElement | null>(null);
+    const isDisabledOrReadOnly = disabled || readOnly;
 
     const getCurrentValueWithoutSuffix = useCallback((): string => {
         if (inputElement.current) {
@@ -203,7 +205,12 @@ export const NumberInput = ({
     return (
         <div
             className={merge([
-                'tw-w-full tw-flex tw-items-center tw-justify-between tw-h-9 tw-gap-2 tw-px-3 tw-transition tw-text-s tw-font-sans tw-relative tw-bg-white dark:tw-bg-transparent tw-border tw-rounded tw-line-strong hover:tw-border-line-x-strong focus-within:tw-border-line-xx-strong focus-within:hover:tw-border-line-xx-strong',
+                InputStyles.base,
+                InputStyles.height,
+                InputStyles.hover,
+                InputStyles.focusWithin,
+                hugWidth ? 'tw-w-auto' : InputStyles.width,
+                disabled || readOnly ? InputStyles.readOnly : '',
                 status ? validationClassMap[status] : '',
             ])}
             data-test-id={dataTestId}
@@ -212,7 +219,7 @@ export const NumberInput = ({
                 <div
                     className={merge([
                         'tw-flex tw-items-center tw-justify-center tw-pl-1',
-                        disabled || readOnly ? 'tw-text-black-60' : 'tw-text-black-80',
+                        isDisabledOrReadOnly ? 'tw-text-text-disabled' : 'tw-text-text',
                     ])}
                     data-test-id={`${dataTestId}-decorator`}
                 >
@@ -229,10 +236,11 @@ export const NumberInput = ({
                 type={suffix || valueSelect ? 'text' : 'number'}
                 placeholder={placeholder}
                 className={merge([
-                    'tw-w-full tw-border-none tw-outline-none tw-bg-transparent tw-hide-input-arrows',
-                    disabled || readOnly
-                        ? 'tw-text-black-40 tw-placeholder-black-30 dark:tw-text-black-30 dark:tw-placeholder-black-40'
-                        : 'tw-text-black tw-placeholder-black-60 dark:tw-text-white',
+                    'tw-hide-input-arrows',
+                    InputStyles.width,
+                    InputStyles.element,
+                    disabled ? InputStyles.disabled : '',
+                    readOnly ? InputStyles.readOnly : '',
                 ])}
                 onClick={suffix ? handleCaretPosition : undefined}
                 onChange={() => setValue(Number(getCurrentValueWithoutSuffix()))}
@@ -252,9 +260,11 @@ export const NumberInput = ({
                 {controls ? (
                     <>
                         <button
-                            className={
-                                'tw-text-text-weak tw-p-1 hover:tw-rounded-sm hover:tw-bg-box-neutral hover:tw-text-box-neutral-inverse focus:tw-ring-line-xx-strong focus:tw-bg-box-neutral'
-                            }
+                            className={merge([
+                                'tw-text-text-weak tw-p-1 hover:tw-rounded-sm hover:tw-bg-box-neutral hover:tw-text-box-neutral-inverse focus:tw-ring-line-xx-strong focus:tw-bg-box-neutral',
+                                disabled ? InputStyles.disabled : '',
+                                readOnly ? InputStyles.readOnly : '',
+                            ])}
                             type="button"
                             onClick={(event) => {
                                 if (event.button === 0) {
@@ -272,6 +282,7 @@ export const NumberInput = ({
                                 event.shiftKey ? null : startIncrement(NumberInputIncrement.DECREMENT)
                             }
                             onTouchEnd={stopIncrement}
+                            disabled={isDisabledOrReadOnly}
                             aria-label="Decrement value"
                             title="Decrement value"
                             data-test-id={`${dataTestId}-decrement`}
@@ -279,9 +290,11 @@ export const NumberInput = ({
                             <IconMinus16 />
                         </button>
                         <button
-                            className={
-                                'tw-text-text-weak tw-p-1 hover:tw-rounded-sm hover:tw-bg-box-neutral hover:tw-text-box-neutral-inverse focus:tw-ring-line-xx-strong focus:tw-bg-box-neutral'
-                            }
+                            className={merge([
+                                'tw-text-text-weak tw-p-1 hover:tw-rounded-sm hover:tw-bg-box-neutral hover:tw-text-box-neutral-inverse focus:tw-ring-line-xx-strong focus:tw-bg-box-neutral',
+                                disabled ? InputStyles.disabled : '',
+                                readOnly ? InputStyles.readOnly : '',
+                            ])}
                             type="button"
                             onClick={(event) => {
                                 if (event.button === 0) {
@@ -299,6 +312,7 @@ export const NumberInput = ({
                                 event.shiftKey ? null : startIncrement(NumberInputIncrement.INCREMENT)
                             }
                             onTouchEnd={stopIncrement}
+                            disabled={isDisabledOrReadOnly}
                             aria-label="Increment value"
                             title="Increment value"
                             data-test-id={`${dataTestId}-increment`}
@@ -307,19 +321,12 @@ export const NumberInput = ({
                         </button>
                     </>
                 ) : null}
-                {clearable ? (
-                    <button
-                        type="button"
-                        onClick={handleClear}
-                        className={
-                            'tw-text-text-weak tw-p-1 hover:tw-rounded-sm hover:tw-bg-box-neutral hover:tw-text-box-neutral-inverse focus:tw-ring-line-xx-strong focus:tw-bg-box-neutral'
-                        }
-                        aria-label="Clear value"
-                        data-test-id={`${dataTestId}-clear`}
-                    >
-                        <IconCross16 />
-                    </button>
-                ) : null}
+                <InputActions
+                    disabled={isDisabledOrReadOnly}
+                    clearable={clearable}
+                    callbacks={{ clearable: handleClear }}
+                    dataTestId={dataTestId}
+                />
                 {status ? GetStatusIcon(status, dataTestId) : null}
             </span>
         </div>
