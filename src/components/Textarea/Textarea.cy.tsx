@@ -3,28 +3,47 @@
 import { IconClipboard16, IconNook16, IconQuestionMark16 } from '@foundation/Icon';
 import { Textarea } from './Textarea';
 import { Validation } from '@utilities/validation';
+import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
 
 const TEXTAREA_ID = '[data-test-id=fondue-textarea]';
 const TEXTAREA_DECORATOR_ID = '[data-test-id=fondue-textarea-decorator]';
 const TEXTAREA_CLEARABLE_ID = '[data-test-id=fondue-textarea-clear]';
 const TEXTAREA_STATUS_ICON_ID = '[data-test-id=fondue-textarea-status-icon]';
-const TEXTAREA_EXTRA_ACTION_ID = '[data-test-id=fondue-textarea-extra-action]';
+const TEXTAREA_EXTRA_ACTION_ID = '[data-test-id=fondue-textarea-extra-action-button]';
 const DEFAULT_TEXT = 'I am some text text.';
 const PLACEHOLDER = 'Enter some text in the textarea';
 const INPUT_TEXT = 'I am some input text';
 const ROW_HEIGHT = 20;
 const EXTRA_ACTIONS = [
     {
-        icon: <IconClipboard16 />,
-        title: 'Save to Clipboard',
-        callback: () => {
-            alert('Mock Copied to Clipboard');
+        tooltip: {
+            content: 'Save to clipboard',
+            children: (
+                <Button
+                    style={ButtonStyle.Default}
+                    onClick={() => alert('Mock Copied to clipboard!')}
+                    disabled={false}
+                    emphasis={ButtonEmphasis.Weak}
+                    icon={<IconClipboard16 />}
+                    size={ButtonSize.Small}
+                />
+            ),
         },
     },
     {
-        icon: <IconQuestionMark16 />,
-        title: 'Help Desk',
-        callback: () => alert('Here to Help'),
+        tooltip: {
+            content: 'Help Desk',
+            children: (
+                <Button
+                    style={ButtonStyle.Default}
+                    onClick={() => alert('Here to Help')}
+                    disabled={false}
+                    emphasis={ButtonEmphasis.Weak}
+                    icon={<IconQuestionMark16 />}
+                    size={ButtonSize.Small}
+                />
+            ),
+        },
     },
 ];
 
@@ -198,5 +217,10 @@ describe('Textarea Unit tests', () => {
     it('should render extra actions', () => {
         cy.mount(<Textarea extraActions={EXTRA_ACTIONS} />);
         cy.get(TEXTAREA_EXTRA_ACTION_ID).should('be.visible');
+    });
+
+    it('should render correct number of extra actions', () => {
+        cy.mount(<Textarea extraActions={EXTRA_ACTIONS} />);
+        cy.get(TEXTAREA_EXTRA_ACTION_ID).should('have.length', EXTRA_ACTIONS.length);
     });
 });

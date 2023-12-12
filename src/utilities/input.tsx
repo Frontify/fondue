@@ -153,7 +153,7 @@ export const InputExtraActions = ({ actions, disabled, dataTestId }: InputExtraA
                 content={action.tooltip.content}
                 key={`extra-action-tooltip-${id}`}
                 disabled={disabled}
-                data-test-id={dataTestId}
+                data-test-id={`${dataTestId}-extra-action`}
             >
                 {action.tooltip.children}
             </Tooltip>
