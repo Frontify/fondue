@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement, ReactNode, useEffect, useRef, useState } from 'react';
+import { ReactElement, ReactNode, useEffect, useState } from 'react';
 import { BadgeProps } from '@components/Badge';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
@@ -18,17 +18,17 @@ export type TabItemProps = {
 };
 
 export const TabItem = ({ active, disabled, children, id }: TabItemProps): Nullable<ReactElement> => {
-    const ref = useRef<HTMLDivElement | null>(null);
+    const [ref, setRef] = useState<HTMLDivElement | null>(null);
     const [hasInteractiveElements, setHasInteractiveElements] = useState(false);
 
     useEffect(() => {
-        setHasInteractiveElements(checkIfContainInteractiveElements(ref.current));
-    }, [children]);
+        setHasInteractiveElements(checkIfContainInteractiveElements(ref));
+    }, [ref]);
 
     return active ? (
         <div
             role="tabpanel"
-            ref={ref}
+            ref={setRef}
             id={`${id}-content`}
             aria-labelledby={id}
             className={merge([!active || disabled ? 'tw-hidden' : '', !hasInteractiveElements && FOCUS_VISIBLE_STYLE])}
