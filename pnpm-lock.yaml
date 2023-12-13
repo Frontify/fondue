@@ -27,8 +27,8 @@ dependencies:
     specifier: ^3.2.1
     version: 3.2.1(react@18.2.0)
   '@frontify/fondue-tokens':
-    specifier: 3.3.0-next.7
-    version: 3.3.0-next.7(ts-node@10.9.1)
+    specifier: 3.3.0-next.8
+    version: 3.3.0-next.8(ts-node@10.9.1)
   '@popperjs/core':
     specifier: ^2.11.8
     version: 2.11.8
@@ -2553,8 +2553,8 @@ packages:
       - debug
     dev: true
 
-  /@frontify/fondue-tokens@3.3.0-next.7(ts-node@10.9.1):
-    resolution: {integrity: sha512-uMZqCxfQNEe6kwKJtk4/YaHzJvxIz6wb9Znb4xJ6/b4Qn67ZHnwTL3qd+zgIkjNXMv4IlUKMCdOHpS2Li58O8Q==}
+  /@frontify/fondue-tokens@3.3.0-next.8(ts-node@10.9.1):
+    resolution: {integrity: sha512-jVSWvrO2KQ0+enLksjLrvQ512j5LUgycLVzbDiwgIEhEkfne5RuJBjLOa1cWiGpzIj1458Br7cVzCykYFLeJ4g==}
     dependencies:
       tailwindcss: 3.3.3(ts-node@10.9.1)
     transitivePeerDependencies:
