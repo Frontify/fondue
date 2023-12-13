@@ -19,9 +19,8 @@ const FocusableComponent = ({
     children?: ReactNode;
     ignoreFocusTrap?: boolean;
 }) => {
-    const [ref, setRef] = useState<HTMLDivElement | null>(null);
     const [isOpen, setIsOpen] = useState(false);
-    useFocusTrap(ref, isOpen, ignoreFocusTrap);
+    const { elementRef } = useFocusTrap<HTMLDivElement>(isOpen, ignoreFocusTrap);
     return (
         <div data-test-id="container">
             <Button data-test-id="toggle-button" onClick={() => setIsOpen(!isOpen)} style={ButtonStyle.Loud}>
@@ -29,7 +28,7 @@ const FocusableComponent = ({
             </Button>
             {isOpen && (
                 <Box className="tw-my-6 tw-border tw-p-4">
-                    <div ref={setRef} data-test-id="focus-trap-container">
+                    <div ref={elementRef} data-test-id="focus-trap-container">
                         {children}
                     </div>
                 </Box>
