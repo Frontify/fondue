@@ -124,3 +124,12 @@ IconAndText.args = {
         },
     ],
 };
+
+export const TextWithOneItemDisabled = SegmentedControlsTemplate.bind({});
+TextWithOneItemDisabled.args = {
+    items: [
+        { id: 'a', value: 'abc', disabled: true },
+        { id: 'b', value: 'def' },
+        { id: 'c', value: 'ghi' },
+    ],
+};

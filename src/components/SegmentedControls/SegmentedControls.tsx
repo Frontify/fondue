@@ -17,11 +17,13 @@ export type IconItem = {
     icon: ReactElement<IconProps>;
     value?: string;
     ariaLabel: string;
+    disabled?: boolean;
 };
 
 export type TextOrNumberItem = {
     id: string;
     value: string | number;
+    disabled?: boolean;
 };
 
 export type SegmentSize = 'small' | 'medium';
@@ -103,7 +105,7 @@ const SegmentedControlsItem = forwardRef<HTMLDivElement, SegmentedControlsItemPr
                     size === 'small' ? 'tw-px-2' : 'tw-px-4',
                     isActive && !disabled ? 'tw-text-text' : 'tw-text-text-weak',
                     disabled
-                        ? 'tw-text-box-disabled-inverse tw-bg-box-disabled hover:tw-cursor-not-allowed'
+                        ? 'tw-text-box-disabled-inverse tw-bg-box-disabled hover:tw-cursor-not-allowed tw-w-[99.5%]'
                         : 'hover:tw-text-text hover:tw-cursor-pointer',
                 ])}
             >
@@ -151,7 +153,7 @@ export const SegmentedControls = ({
             <SegmentedControlsItem
                 id={id}
                 item={item}
-                disabled={disabled}
+                disabled={item.disabled ?? disabled}
                 radioGroupState={radioGroupState}
                 ref={(el) => (itemsRef.current[index] = el)}
                 key={`fondue-segmented-controls-${id}-item-${item.id}`}
@@ -159,7 +161,16 @@ export const SegmentedControls = ({
             />
         ));
     }, [items, id, disabled, radioGroupState, size]);
-    const selectedIndex = items.findIndex((item) => item.id === radioGroupState.selectedValue);
+
+    const selectedIndex = items.findIndex((item, index) => {
+        const isActiveItem = item.id === radioGroupState.selectedValue;
+        if (item.disabled && isActiveItem) {
+            const nextIndex = index + 1;
+            radioGroupState.setSelectedValue(items[nextIndex].id);
+        }
+        return isActiveItem;
+    });
+
     const width = hugWidth ? '' : 'tw-w-full';
     const alignment = hugWidth ? 'tw-flex' : 'tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly';
     const isSmall = size === 'small';
@@ -188,6 +199,7 @@ export const SegmentedControls = ({
     }, [getSliderWidth, getSliderX]);
 
     useEffect(() => {
+        console.log(selectedIndex);
         if (selectedIndex >= 0) {
             setSliderDimensions();
         }
