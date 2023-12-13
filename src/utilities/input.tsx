@@ -195,7 +195,7 @@ export const Checkmark = ({
     mixed = false,
     emphasis = 'default',
     size = 'small',
-    disabled = true,
+    disabled = false,
 }: CheckmarkProps): ReactElement => {
     const groupedClasses = () => {
         switch (true) {

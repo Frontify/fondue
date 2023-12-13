@@ -84,6 +84,18 @@ export default {
             description: 'When `true` menu will close `onMouseLeave` on the menu',
             defaultValue: false,
         },
+        emphasis: {
+            control: { type: 'select' },
+            options: Object.values(['default', 'weak']),
+            description: 'Desired styling to the checkbox element',
+            defaultValue: 'default',
+        },
+        size: {
+            control: { type: 'select' },
+            options: Object.values(['small', 'large']),
+            description: 'Desired size to the checkbox element',
+            defaultValue: 'small',
+        },
         onChange: {
             action: 'onChange',
             type: 'function',
