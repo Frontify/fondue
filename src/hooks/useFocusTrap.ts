@@ -32,13 +32,15 @@ export const useFocusTrap = <T extends HTMLElement = HTMLElement>(isOpen: boolea
             return;
         }
 
+        const element = elementRef.current;
         const lastFocusedOutsideBoundaries = (document.activeElement ?? document.body) as T;
+
         if (isOpen) {
-            window.addEventListener('keydown', handleFocus);
+            element?.addEventListener('keydown', handleFocus);
         }
 
         return () => {
-            window.removeEventListener('keydown', handleFocus);
+            element?.removeEventListener('keydown', handleFocus);
             lastFocusedOutsideBoundaries.focus();
         };
     }, [handleFocus, ignoreFocusTrap, isOpen]);
