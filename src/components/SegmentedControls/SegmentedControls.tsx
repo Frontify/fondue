@@ -103,9 +103,11 @@ const SegmentedControlsItem = forwardRef<HTMLDivElement, SegmentedControlsItemPr
                 className={merge([
                     'tw-relative tw-w-full tw-py-2 tw-inline-flex tw-justify-center tw-items-center tw-font-sans tw-font-normal tw-h-full tw-text-center',
                     size === 'small' ? 'tw-px-2' : 'tw-px-4',
-                    isActive && !disabled ? 'tw-text-text' : 'tw-text-text-weak',
+                    isActive && !disabled
+                        ? 'tw-transition tw-ease-in-out tw-delay-300 tw-text-text tw-bg-base'
+                        : 'tw-text-text-weak',
                     disabled
-                        ? 'tw-text-box-disabled-inverse tw-bg-box-disabled hover:tw-cursor-not-allowed tw-w-[99.5%]'
+                        ? 'tw-text-box-disabled-inverse tw-bg-box-disabled hover:tw-cursor-not-allowed'
                         : 'hover:tw-text-text hover:tw-cursor-pointer',
                 ])}
             >
@@ -199,7 +201,6 @@ export const SegmentedControls = ({
     }, [getSliderWidth, getSliderX]);
 
     useEffect(() => {
-        console.log(selectedIndex);
         if (selectedIndex >= 0) {
             setSliderDimensions();
         }
@@ -216,27 +217,27 @@ export const SegmentedControls = ({
                 {...radioGroupProps}
                 data-test-id="fondue-segmented-controls"
                 className={merge([
-                    'tw-relative tw-h-9 tw-p-0 tw-border tw-border-solid tw-border-line-strong tw-m-0 tw-bg-base-alt tw-rounded tw-font-sans tw-text-s tw-select-none',
+                    'tw-relative tw-h-9 tw-p-0 tw-border tw-border-solid tw-border-line-strong tw-m-0 tw-bg-base-alt tw-rounded tw-font-sans tw-text-sm tw-select-none',
                     width,
                     alignment,
                 ])}
             >
-                <motion.div
-                    aria-hidden="true"
-                    // div border is not included in width so it must be subtracted from translation.
-                    animate={activeBorderDimensions ?? { x: '0px', width: '0px' }}
-                    initial={false}
-                    transition={{ type: 'tween', duration: 0.3 }}
-                    hidden={!activeItemId}
-                    className={merge([
-                        'tw-absolute tw--inset-y-px tw-h-full tw-box-content tw-border tw-rounded tw-pointer-events-none',
-                        disabled
-                            ? 'tw-border-line-x-strong hover:tw-cursor-not-allowed'
-                            : 'tw-border-line-xx-strong tw-bg-base',
-                    ])}
-                />
                 {itemElements}
             </fieldset>
+            <motion.div
+                aria-hidden="true"
+                // div border is not included in width so it must be subtracted from translation.
+                animate={activeBorderDimensions ?? { x: '0px', width: '0px' }}
+                initial={false}
+                transition={{ type: 'tween', duration: 0.3 }}
+                hidden={!activeItemId}
+                className={merge([
+                    'tw-absolute tw-h-9 tw--inset-y-px tw-box-content tw-border tw-rounded tw-pointer-events-none tw-top-[0.96rem]',
+                    disabled
+                        ? 'tw-border-line-x-strong hover:tw-cursor-not-allowed'
+                        : 'tw-border-line-xx-strong tw-bg-transparent',
+                ])}
+            />
         </div>
     );
 };
