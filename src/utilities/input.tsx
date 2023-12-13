@@ -4,7 +4,14 @@ import { ReactElement } from 'react';
 import { Validation, validationTextClassMap } from './validation';
 import { merge } from './merge';
 import { Button, ButtonEmphasis, ButtonSize, ButtonStyle, LoadingCircle, LoadingCircleSize } from '@components/index';
-import { InputActionsProps, InputExtraActionsProps } from 'src/types/input';
+import {
+    CheckmarkElements,
+    CheckmarkEmphasis,
+    CheckmarkProps,
+    CheckmarkSize,
+    InputActionsProps,
+    InputExtraActionsProps,
+} from 'src/types/input';
 import { generateRandomId } from './generateRandomId';
 import {
     IconCheckMark16,
@@ -161,18 +168,47 @@ export const InputExtraActions = ({ actions, disabled, dataTestId }: InputExtraA
 
 InputExtraActions.displayName = 'FondueInputExtraActions';
 
-type CheckboxElements = 'base' | 'border' | 'text' | 'hover' | 'selected' | 'mixed' | 'unselected';
-const CheckboxStyles: Record<CheckboxElements, string> = {
-    base: 'tw-tw-bg-box-neutral tw-border tw-border-box-neutral-strong',
-    border: 'tw-border tw-border-box-selected',
-    text: 'tw-text-box-selected-inverse',
-    hover: 'tw-bg-box-selected-weak',
-    selected: 'tw-bg-box-selected-strong tw-text-box-selected-strong-inverse',
-    mixed: 'tw-bg-box-selected-strong tw-text-box-selected-strong-inverse',
-    unselected: 'tw-bg-box-selected tw-text-box-selected-inverse',
+const CheckboxStyles: Record<CheckmarkEmphasis, Record<CheckmarkElements, string>> = {
+    default: {
+        base: 'tw-bg-base tw-border tw-border-line-x-strong hover:tw-bg-box-selected-weak hover:tw-border-line-xx-strong',
+        selected:
+            'tw-bg-box-selected-strong tw-text-box-selected-strong-inverse tw-border-box-selected-strong hover:tw-bg-box-selected-strong-hover',
+        disabled:
+            'tw-bg-box-disabled-strong tw-text-box-disabled-strong-inverse tw-cursor-not-allowed tw-border-line-strong',
+    },
+    weak: {
+        base: 'tw-bg-base tw-border tw-border-line-x-strong hover:tw-bg-box-selected-weak hover:tw-border-line-xx-strong',
+        selected:
+            'tw-bg-box-neutral-strong tw-text-box-neutral-strong-inverse tw-border-box-neutral-strong hover:tw-bg-box-neutral-strong-hover',
+        disabled:
+            'tw-bg-box-disabled-strong tw-text-box-disabled-strong-inverse tw-cursor-not-allowed tw-border-line-strong',
+    },
 };
 
-export const Checkmark = ({ checked = false, mixed = false }): ReactElement => {
+const checkmarkSizeMap: Record<CheckmarkSize, string> = {
+    small: 'tw-w-4 tw-h-4 tw-mr-1',
+    large: 'tw-w-5 tw-h-5 tw-mr-2',
+};
+
+export const Checkmark = ({
+    checked = false,
+    mixed = false,
+    emphasis = 'default',
+    size = 'small',
+    disabled = true,
+}: CheckmarkProps): ReactElement => {
+    const groupedClasses = () => {
+        switch (true) {
+            case disabled:
+                return CheckboxStyles[emphasis].disabled;
+            case checked:
+            case mixed:
+                return CheckboxStyles[emphasis].selected;
+            default:
+                return CheckboxStyles[emphasis].base;
+        }
+    };
+
     const getIcon = () => {
         switch (true) {
             case checked:
@@ -183,11 +219,13 @@ export const Checkmark = ({ checked = false, mixed = false }): ReactElement => {
                 break;
         }
     };
+
     return (
         <span
             className={merge([
-                'tw-rounded tw-mr-2 tw-w-4 tw-h-4 tw-flex tw-justify-center tw-items-center',
-                checked || mixed ? CheckboxStyles.selected : CheckboxStyles.base,
+                'tw-rounded tw-flex tw-justify-center tw-items-center',
+                checkmarkSizeMap[size],
+                groupedClasses(),
             ])}
         >
             {getIcon()}
