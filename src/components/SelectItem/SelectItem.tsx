@@ -28,7 +28,7 @@ export const SelectItem = ({
     'data-test-id': dataTestId = 'fondue-select-item',
 }: SelectItemProps) => {
     const itemElementRef = useRef<HTMLLIElement | null>(null);
-    const { getItemProps, itemsArray, selectedItem, highlightedIndex, parentWidth } =
+    const { getItemProps, itemsArray, selectedItem, highlightedIndex, parentWidth, emphasis, size } =
         useContext<SelectContextProps>(SelectContext);
 
     const item = useMemo(() => {
@@ -53,7 +53,7 @@ export const SelectItem = ({
             data-test-id={dataTestId}
             {...getItemProps?.({ item, index, ref: itemElementRef, 'aria-disabled': disabled })}
         >
-            <Checkmark checked={isSelected} />
+            <Checkmark checked={isSelected} emphasis={emphasis} size={size} />
             {decorator ? <span className="tw-pr-1">{decorator}</span> : null}
             {<span>{children ?? title ?? value}</span>}
         </li>

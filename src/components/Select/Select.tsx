@@ -5,7 +5,7 @@ import type { UseSelectPropGetters } from 'downshift';
 import type { FocusEvent, ReactElement } from 'react';
 import { useSelect } from 'downshift';
 import { merge } from '@utilities/merge';
-import { InputBaseProps } from 'src/types/input';
+import { CheckmarkEmphasis, CheckmarkSize, InputBaseProps } from 'src/types/input';
 import { useForwardedRef } from '@utilities/useForwardedRef';
 import { FOCUS_STYLE_NO_OFFSET } from '@utilities/focusStyle';
 import { IconCaretDown16, IconCaretUp16 } from '@foundation/Icon';
@@ -24,6 +24,8 @@ export type SelectContextProps = {
     disabled?: boolean;
     readOnly?: boolean;
     hugWidth?: boolean;
+    emphasis?: CheckmarkEmphasis;
+    size?: CheckmarkSize;
 };
 
 export const SelectContext = createContext<SelectContextProps>({
@@ -38,6 +40,8 @@ export type SelectProps = {
     open?: boolean;
     autoOpen?: boolean;
     autoClose?: boolean;
+    emphasis?: CheckmarkEmphasis;
+    size?: CheckmarkSize;
     placeholder?: string;
     defaultItem?: SelectItemProps;
     onChange?: (value: SelectItemProps) => void;
@@ -74,6 +78,8 @@ export const Select = ({
     autoClose = false,
     children,
     defaultItem,
+    emphasis = 'default',
+    size = 'small',
     hugWidth,
     readOnly,
     disabled = false,
@@ -159,8 +165,10 @@ export const Select = ({
             disabled,
             readOnly,
             hugWidth,
+            emphasis,
+            size,
         };
-    }, [disabled, parentWidth, getItemProps, highlightedIndex, hugWidth, readOnly, selectedItem]);
+    }, [disabled, emphasis, size, parentWidth, getItemProps, highlightedIndex, hugWidth, readOnly, selectedItem]);
 
     return (
         <SelectContext.Provider value={currentContext}>
