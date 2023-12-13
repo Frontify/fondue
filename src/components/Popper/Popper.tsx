@@ -71,12 +71,12 @@ export const Popper = ({
     useEffect(() => {
         const trigger = anchor?.current;
 
-        if (trigger) {
-            setReferenceElement(trigger as HTMLElement);
-        }
+        setReferenceElement(trigger as HTMLElement);
     }, [anchor]);
 
-    const popperInstance = usePopper(isDetached ? document.body : referenceElement, popperElement, {
+    const popperReferenceElement = isDetached ? document.body : referenceElement;
+
+    const popperInstance = usePopper(popperReferenceElement, popperElement, {
         placement,
         modifiers: [
             { name: 'offset', options: { offset: popperOffset } },
@@ -89,7 +89,7 @@ export const Popper = ({
         strategy,
     });
 
-    const currentPlacement = popperInstance.state?.placement ?? placement;
+    const currentPlacement = popperInstance.state ? popperInstance.state.placement : placement;
     const arrowStyling = useMemo(() => getArrowClasses(currentPlacement), [currentPlacement]);
 
     useEffect(() => {
