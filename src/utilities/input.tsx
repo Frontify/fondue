@@ -161,6 +161,17 @@ export const InputExtraActions = ({ actions, disabled, dataTestId }: InputExtraA
 
 InputExtraActions.displayName = 'FondueInputExtraActions';
 
+type CheckboxElements = 'base' | 'border' | 'text' | 'hover' | 'selected' | 'mixed' | 'unselected';
+const CheckboxStyles: Record<CheckboxElements, string> = {
+    base: 'tw-tw-bg-box-neutral tw-border tw-border-box-neutral-strong',
+    border: 'tw-border tw-border-box-selected',
+    text: 'tw-text-box-selected-inverse',
+    hover: 'tw-bg-box-selected-weak',
+    selected: 'tw-bg-box-selected-strong tw-text-box-selected-strong-inverse',
+    mixed: 'tw-bg-box-selected-strong tw-text-box-selected-strong-inverse',
+    unselected: 'tw-bg-box-selected tw-text-box-selected-inverse',
+};
+
 export const Checkmark = ({ checked = false, mixed = false }): ReactElement => {
     const getIcon = () => {
         switch (true) {
@@ -176,9 +187,7 @@ export const Checkmark = ({ checked = false, mixed = false }): ReactElement => {
         <span
             className={merge([
                 'tw-rounded tw-mr-2 tw-w-4 tw-h-4 tw-flex tw-justify-center tw-items-center',
-                checked || mixed
-                    ? 'tw-bg-box-selected-strong tw-text-box-selected-strong-inverse'
-                    : 'tw-bg-box-neutral tw-border tw-border-box-neutral-strong',
+                checked || mixed ? CheckboxStyles.selected : CheckboxStyles.base,
             ])}
         >
             {getIcon()}

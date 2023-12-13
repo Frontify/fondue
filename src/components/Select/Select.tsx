@@ -13,7 +13,7 @@ import { childrenToArray, itemToString } from '@utilities/downshift';
 import { Children, createContext, isValidElement, useMemo, useRef, useState } from 'react';
 import { Validation, validationClassMap, validationTextClassMap } from '@utilities/validation';
 import { SelectGroupItem, SelectGroupItemProps } from '@components/SelectGroupItem/SelectGroupItem';
-import { InputStyles } from '@utilities/input';
+import { GetStatusIcon, InputStyles } from '@utilities/input';
 
 export type SelectContextProps = {
     highlightedIndex: number;
@@ -45,18 +45,18 @@ export type SelectProps = {
     onBlur?: (event: FocusEvent<HTMLElement, Element>) => void;
 } & Omit<
     InputBaseProps<string>,
-    'autocomplete' | 'clearable' | 'decorator' | 'suffix' | 'extraActions' | 'size' | 'valueSelect' | 'value'
+    | 'autocomplete'
+    | 'clearable'
+    | 'decorator'
+    | 'suffix'
+    | 'extraActions'
+    | 'size'
+    | 'valueSelect'
+    | 'value'
+    | 'required'
 >;
 
-const GetSelectedText = ({
-    placeholder,
-    item,
-    required = false,
-}: {
-    placeholder: string;
-    item?: SelectItemProps | null;
-    required?: boolean;
-}) => {
+const GetSelectedText = ({ placeholder, item }: { placeholder: string; item?: SelectItemProps | null }) => {
     if (item) {
         const { title, value, children, decorator } = item;
         return (
@@ -66,12 +66,7 @@ const GetSelectedText = ({
             </span>
         );
     }
-    return (
-        <span className="tw-text-text-weak">
-            {placeholder}
-            {required ? '*' : ''}
-        </span>
-    );
+    return <span className="tw-text-text-weak">{placeholder}</span>;
 };
 
 export const Select = ({
@@ -80,7 +75,6 @@ export const Select = ({
     children,
     defaultItem,
     hugWidth,
-    required,
     readOnly,
     disabled = false,
     open = false,
@@ -209,8 +203,11 @@ export const Select = ({
                 aria-label="Select Toggle Button"
                 data-test-id={dataTestId}
             >
-                <GetSelectedText item={selectedItem} placeholder={placeholder} required={required} />
-                <span className="tw-p-1">{isOpen ? <IconCaretUp16 /> : <IconCaretDown16 />}</span>
+                <GetSelectedText item={selectedItem} placeholder={placeholder} />
+                <span className="tw-flex tw-justify-center tw-items-center">
+                    <span className="tw-p-1">{isOpen ? <IconCaretUp16 /> : <IconCaretDown16 />}</span>
+                    {status !== Validation.Default ? GetStatusIcon(status, dataTestId) : null}
+                </span>
             </div>
             <ul
                 className={merge([
