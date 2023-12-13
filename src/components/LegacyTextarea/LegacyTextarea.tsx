@@ -19,7 +19,7 @@ import {
 import TextareaAutosize from 'react-textarea-autosize';
 import { IconExclamationMarkTriangle } from '@foundation/Icon/Generated';
 
-export type TextareaProps = {
+export type LegacyTextareaProps = {
     id?: string;
     value?: string;
     required?: boolean;
@@ -60,7 +60,7 @@ export const LegacyTextarea = ({
     focusOnMount,
     onEnterPressed,
     ...props
-}: TextareaProps): ReactElement => {
+}: LegacyTextareaProps): ReactElement => {
     const Component = autosize ? TextareaAutosize : 'textarea';
 
     const textareaElement = useRef<HTMLTextAreaElement | null>(null);
