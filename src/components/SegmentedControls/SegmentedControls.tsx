@@ -90,7 +90,7 @@ const SegmentedControlsItem = forwardRef<HTMLDivElement, SegmentedControlsItemPr
             ref={ref}
             className={merge([
                 'tw-relative',
-                "after:tw-content-[''] after:tw-border-r after:tw-border-solid after:tw-border-line-strong after:tw-absolute after:tw-right-0 after:tw-h-full last:after:tw-hidden",
+                "after:tw-content-[''] after:tw-border-r after:tw-border-solid after:tw-border-line-x-strong after:tw-absolute after:tw-right-0 after:tw-h-[2.2rem] last:after:tw-hidden",
                 isFocusVisible && FOCUS_STYLE,
             ])}
         >
@@ -107,7 +107,7 @@ const SegmentedControlsItem = forwardRef<HTMLDivElement, SegmentedControlsItemPr
                         ? 'tw-transition tw-ease-in-out tw-delay-300 tw-text-text tw-bg-base'
                         : 'tw-text-text-weak',
                     disabled
-                        ? 'tw-text-box-disabled-inverse tw-bg-box-disabled hover:tw-cursor-not-allowed'
+                        ? 'tw-text-box-disabled-inverse tw-bg-box-disabled tw-h-[2.15rem] tw-rounded hover:tw-cursor-not-allowed tw-border-line-x-strong'
                         : 'hover:tw-text-text hover:tw-cursor-pointer',
                 ])}
             >
@@ -232,7 +232,7 @@ export const SegmentedControls = ({
                 transition={{ type: 'tween', duration: 0.3 }}
                 hidden={!activeItemId}
                 className={merge([
-                    'tw-absolute tw-h-9 tw--inset-y-px tw-box-content tw-border tw-rounded tw-pointer-events-none tw-top-[0.96rem]',
+                    'tw-absolute tw-h-9 tw-box-content tw-border tw-rounded tw-pointer-events-none tw-top-[0.96rem]',
                     disabled
                         ? 'tw-border-line-x-strong hover:tw-cursor-not-allowed'
                         : 'tw-border-line-xx-strong tw-bg-transparent',
