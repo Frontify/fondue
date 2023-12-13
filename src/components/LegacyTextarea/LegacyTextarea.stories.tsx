@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Meta, StoryFn } from '@storybook/react';
-import { LegacyTextarea as TextareaComponent, TextareaProps } from './LegacyTextarea';
+import { LegacyTextareaProps, LegacyTextarea as TextareaComponent } from './LegacyTextarea';
 import { Validation } from '@utilities/validation';
 
 export default {
@@ -35,9 +35,9 @@ export default {
         onEnterPressed: { action: 'onEnterPressed', table: { disable: true } },
         focusOnMount: { type: 'boolean' },
     },
-} as Meta<TextareaProps>;
+} as Meta<LegacyTextareaProps>;
 
-export const LegacyTextarea: StoryFn<TextareaProps> = (args: TextareaProps) => {
+export const LegacyTextarea: StoryFn<LegacyTextareaProps> = (args: LegacyTextareaProps) => {
     const [input, setInput] = useState('');
     useEffect(() => setInput(`${args.value ?? ''}`), [args.value]);
 
