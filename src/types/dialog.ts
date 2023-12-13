@@ -84,6 +84,7 @@ export type BaseDialogProps = {
 };
 
 export type OverlayProps = PopperProps & {
+    id?: string;
     open: boolean;
     'data-test-id'?: string;
     role?: string;

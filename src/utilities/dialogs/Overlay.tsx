@@ -15,6 +15,7 @@ import useMobileDetection from '@hooks/useMobileDetection';
 import { useHandleCloseOnEscape } from '@hooks/useHandleCloseOnEscape';
 
 export const Overlay = ({
+    id: customId,
     open,
     anchor,
     placement = 'bottom-start',
@@ -45,7 +46,7 @@ export const Overlay = ({
     width,
     borderRadius = 'small',
 }: OverlayProps & BaseDialogProps & { borderRadius?: 'small' | 'large' }) => {
-    const id = useMemoizedId();
+    const id = useMemoizedId(customId);
     const ref = useRef<HTMLDivElement | null>(null);
     const [triggerElementRef, setTriggerElementRef] = useState<HTMLElement | null>(null);
 

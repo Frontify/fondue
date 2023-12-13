@@ -11,13 +11,16 @@ import { Dropdown } from '@components/Dropdown';
 import { DialogBody } from '@components/DialogBody';
 import { useRef, useState } from 'react';
 import IconJohanna from '@foundation/Icon/Generated/IconJohanna';
+import { Card } from '@components/Card';
+import { action } from '@storybook/addon-actions';
+import IconJohanna24 from '@foundation/Icon/Generated/IconJohanna24';
 
 export default {
     title: 'Components/Tooltip/In Context',
     tags: ['autodocs'],
 } as Meta<TooltipProps>;
 
-const InContextTemplate: StoryFn<TooltipProps> = () => {
+const WithinInlineDialogTemplate: StoryFn<TooltipProps> = () => {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const triggerRef = useRef<HTMLButtonElement | null>(null);
 
@@ -66,4 +69,69 @@ const InContextTemplate: StoryFn<TooltipProps> = () => {
     );
 };
 
-export const WithinInlineDialog = InContextTemplate.bind({});
+const WithinInteractiveCardTemplate: StoryFn<TooltipProps> = () => {
+    return (
+        <Box className="tw-w-[200px]">
+            <Card onClick={() => action('click')}>
+                <Box className="tw-w-[200px] tw-h-[200px] tw-bg-box-neutral-mighty" />
+                <Box className="tw-p-4">
+                    <Tooltip content="Some Information">
+                        <h5
+                            data-test-id="heading"
+                            className="tw-font-heading tw-max-w-full tw-font-medium tw-text-heading-large tw-text-text tw-no-underline tw-break-normal tw-whitespace-nowrap tw-text-ellipsis tw-overflow-hidden"
+                        >
+                            <span>Lorem ipsum dolor sit amet</span>
+                        </h5>
+                    </Tooltip>
+                </Box>
+            </Card>
+        </Box>
+    );
+};
+
+const MultipleTooltipsTemplate: StoryFn<TooltipProps> = () => {
+    return (
+        <>
+            <Tooltip leaveDelay={0} content="Some Information">
+                <IconIcon24 />
+            </Tooltip>
+            <Tooltip leaveDelay={0} content="Something else">
+                <IconJohanna24 />
+            </Tooltip>
+        </>
+    );
+};
+
+const WithinATextTemplate: StoryFn<TooltipProps> = () => {
+    return (
+        <div>
+            <span>
+                Hover over the text to see the tooltip:{' '}
+                {
+                    <Tooltip content="Some Information">
+                        <span className="tw-text-text-negative">Hover Me</span>
+                    </Tooltip>
+                }
+                ...This is a tooltip
+            </span>
+        </div>
+    );
+};
+
+const WrappingFondueButtonTemplate: StoryFn<TooltipProps> = () => {
+    return (
+        <Tooltip content="Some Information">
+            <Button onClick={action('click')}>Hello</Button>
+        </Tooltip>
+    );
+};
+
+export const WithinInlineDialog = WithinInlineDialogTemplate.bind({});
+
+export const WithinInteractiveCard = WithinInteractiveCardTemplate.bind({});
+
+export const MultipleTooltips = MultipleTooltipsTemplate.bind({});
+
+export const WithinAText = WithinATextTemplate.bind({});
+
+export const WrappingFondueButton = WrappingFondueButtonTemplate.bind({});

@@ -2,7 +2,6 @@
 
 import { ReactElement, ReactNode, useEffect, useRef, useState } from 'react';
 import { BadgeProps } from '@components/Badge';
-import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { checkIfContainInteractiveElements } from '@utilities/elements';
 
@@ -30,7 +29,7 @@ export const TabItem = ({ active, disabled, children, id }: TabItemProps & { act
             ref={ref}
             id={`${id}-content`}
             aria-labelledby={id}
-            className={merge([!active || disabled ? 'tw-hidden' : '', !hasInteractiveElements && FOCUS_VISIBLE_STYLE])}
+            className={merge([!active || disabled ? 'tw-hidden' : '', 'focus:tw-ring-4 focus:tw-ring-blue'])}
             tabIndex={hasInteractiveElements ? -1 : 0}
         >
             {children}
