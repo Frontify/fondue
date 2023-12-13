@@ -45,6 +45,7 @@ export const Dialog = ({
             isDetached={true}
             verticalAlignment={verticalAlignment}
             strategy={modality === Modality.NonModal ? 'absolute' : 'fixed'}
+            borderRadius="large"
         >
             {children}
         </Overlay>

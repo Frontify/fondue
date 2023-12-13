@@ -23,6 +23,11 @@ export const overlayShadowMap: Record<string, string> = {
     large: 'tw-shadow-big',
 };
 
+export const overlayBorderRadius: Record<string, string> = {
+    small: 'tw-rounded',
+    large: 'tw-rounded-lg',
+};
+
 export const dialogHeadingMap: Record<DialogPadding, string> = {
     none: 'tw-text-heading-large',
     compact: 'tw-text-heading-large',

@@ -4,7 +4,7 @@ import { useMemoizedId } from '@hooks/useMemoizedId';
 import { Popper } from '@components/Popper';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { OVERLAY_CONTAINER_DARK_THEME_STYLING, OVERLAY_CONTAINER_LIGHT_THEME_STYLING } from '@utilities/overlayStyle';
-import { BaseDialogProps, Modality, OverlayProps, overlayShadowMap } from '../../types';
+import { BaseDialogProps, Modality, OverlayProps, overlayBorderRadius, overlayShadowMap } from '../../types';
 import { merge } from '@utilities/merge';
 import { useFocusTrap } from '@hooks/useFocusTrap';
 import { useClickOutside } from '@hooks/useClickOutside';
@@ -43,7 +43,8 @@ export const Overlay = ({
     shadow = 'large',
     isDialog = true,
     width,
-}: OverlayProps & BaseDialogProps) => {
+    borderRadius = 'small',
+}: OverlayProps & BaseDialogProps & { borderRadius?: 'small' | 'large' }) => {
     const id = useMemoizedId();
     const ref = useRef<HTMLDivElement | null>(null);
     const [triggerElementRef, setTriggerElementRef] = useState<HTMLElement | null>(null);
@@ -118,7 +119,7 @@ export const Overlay = ({
                         theme === 'light'
                             ? OVERLAY_CONTAINER_LIGHT_THEME_STYLING
                             : OVERLAY_CONTAINER_DARK_THEME_STYLING,
-                        roundedCorners && 'tw-rounded',
+                        roundedCorners && overlayBorderRadius[borderRadius],
                         overlayShadowMap[shadow],
                     ])}
                     role={role}
