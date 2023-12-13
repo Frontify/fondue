@@ -62,3 +62,14 @@ export type InputExtraActionsProps = {
     disabled?: boolean;
     dataTestId?: string;
 };
+
+export type CheckmarkEmphasis = 'default' | 'weak';
+export type CheckmarkElements = 'base' | 'selected' | 'disabled';
+export type CheckmarkSize = 'small' | 'large';
+export type CheckmarkProps = {
+    checked: boolean;
+    mixed?: boolean;
+    emphasis?: CheckmarkEmphasis;
+    size?: CheckmarkSize;
+    disabled?: boolean;
+};
