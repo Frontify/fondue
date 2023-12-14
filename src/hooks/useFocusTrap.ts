@@ -10,10 +10,16 @@ export const useFocusTrap = <T extends HTMLElement = HTMLElement>(isOpen: boolea
         const focusableElements = [...(elementRef.current?.querySelectorAll(TABBABLE_ELEMENTS) ?? [])];
         const firstFocusableElement = focusableElements[0] as T;
         const lastFocusableElement = focusableElements[focusableElements.length - 1] as T;
+        const lastFocusedElement = (document.activeElement ?? document.body) as HTMLElement;
         const isTabPressed = event.key === 'Tab';
 
         if (focusableElements.length === 0 || !isTabPressed) {
             return;
+        }
+
+        if (![...focusableElements].includes(lastFocusedElement)) {
+            firstFocusableElement.focus();
+            event.preventDefault();
         }
 
         if (!event.shiftKey && event.target === lastFocusableElement) {
@@ -32,15 +38,14 @@ export const useFocusTrap = <T extends HTMLElement = HTMLElement>(isOpen: boolea
             return;
         }
 
-        const element = elementRef.current;
         const lastFocusedOutsideBoundaries = (document.activeElement ?? document.body) as T;
 
         if (isOpen) {
-            element?.addEventListener('keydown', handleFocus);
+            window.addEventListener('keydown', handleFocus);
         }
 
         return () => {
-            element?.removeEventListener('keydown', handleFocus);
+            window.removeEventListener('keydown', handleFocus);
             lastFocusedOutsideBoundaries.focus();
         };
     }, [handleFocus, ignoreFocusTrap, isOpen]);
