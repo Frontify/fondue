@@ -2,7 +2,7 @@
 
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { Popper } from '@components/Popper';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { OVERLAY_CONTAINER_DARK_THEME_STYLING, OVERLAY_CONTAINER_LIGHT_THEME_STYLING } from '@utilities/overlayStyle';
 import { BaseDialogProps, Modality, OverlayProps, overlayBorderRadius, overlayShadowMap } from '../../types';
 import { merge } from '@utilities/merge';
@@ -47,7 +47,6 @@ export const Overlay = ({
     borderRadius = 'small',
 }: OverlayProps & BaseDialogProps & { borderRadius?: 'small' | 'large' }) => {
     const id = useMemoizedId(customId);
-    const ref = useRef<HTMLDivElement | null>(null);
     const [triggerElementRef, setTriggerElementRef] = useState<HTMLElement | null>(null);
 
     useEffect(() => {
@@ -73,8 +72,8 @@ export const Overlay = ({
         }
     }, [handleClose, modality, open, triggerElementRef]);
 
-    useFocusTrap(ref.current, open, modality === Modality.NonModal);
-    useClickOutside(ref.current, handleClosingInteraction);
+    const { elementRef } = useFocusTrap<HTMLDivElement>(open, modality === Modality.NonModal, triggerElementRef);
+    useClickOutside(elementRef.current, handleClosingInteraction);
     useHandleCloseOnEscape(open, {
         isBlockingModal: modality === Modality.BlockingModal,
         callback: handleClosingInteraction,
@@ -113,7 +112,7 @@ export const Overlay = ({
                 arrowCustomColors={arrowCustomColors}
             >
                 <div
-                    ref={ref}
+                    ref={elementRef}
                     data-test-id={`${dataTestId}-content`}
                     className={merge([
                         'tw-flex tw-flex-col tw-pointer-events-auto',
