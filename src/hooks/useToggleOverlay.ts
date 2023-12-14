@@ -25,11 +25,9 @@ export const useToggleOverlay = (
 
     useEffect(() => {
         window.addEventListener('keydown', checkKeyboardEvent);
-        window.addEventListener('blur', () => setOpen(false));
 
         return () => {
             window.removeEventListener('keydown', checkKeyboardEvent);
-            window.removeEventListener('blur', () => setOpen(false));
         };
     }, [checkKeyboardEvent, isBlockingModal]);
 
