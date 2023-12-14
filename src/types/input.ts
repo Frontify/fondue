@@ -52,7 +52,8 @@ export type InputActionsProps = {
 };
 
 export type ExtraAction = {
-    tooltip: TooltipProps;
+    element?: ReactElement;
+    tooltip?: TooltipProps;
 };
 
 export type InputExtraActionsProps = {

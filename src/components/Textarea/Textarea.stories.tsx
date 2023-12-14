@@ -14,12 +14,11 @@ import { Button } from '@components/Button';
 const ExtraActions: ExtraAction[] = [
     {
         tooltip: {
-            content: 'Save to clipboard',
+            content: 'Extra Action with Tooltip',
             children: (
                 <Button
                     style={ButtonStyle.Default}
                     onClick={() => alert('Mock Copied to clipboard!')}
-                    disabled={false}
                     emphasis={ButtonEmphasis.Weak}
                     icon={<IconClipboard16 />}
                     size={ButtonSize.Small}
@@ -28,19 +27,15 @@ const ExtraActions: ExtraAction[] = [
         },
     },
     {
-        tooltip: {
-            content: 'Help Desk',
-            children: (
-                <Button
-                    style={ButtonStyle.Default}
-                    onClick={() => alert('Here to Help')}
-                    disabled={false}
-                    emphasis={ButtonEmphasis.Weak}
-                    icon={<IconQuestionMark16 />}
-                    size={ButtonSize.Small}
-                />
-            ),
-        },
+        element: (
+            <Button
+                style={ButtonStyle.Default}
+                onClick={() => alert('Here to Help')}
+                emphasis={ButtonEmphasis.Weak}
+                icon={<IconQuestionMark16 />}
+                size={ButtonSize.Small}
+            />
+        ),
     },
 ];
 
@@ -253,14 +248,6 @@ WithExtraActions.args = {
     extraActions: ExtraActions,
     placeholder: 'Enter some long form text here',
     clearable: true,
-};
-
-export const WithExtraActionsAndAutosize = TextareaTemplate.bind({});
-WithExtraActionsAndAutosize.args = {
-    extraActions: ExtraActions,
-    placeholder: 'Enter some long form text here',
-    clearable: true,
-    autosize: true,
 };
 
 export const WithFocusOnMount = TextareaTemplate.bind({});

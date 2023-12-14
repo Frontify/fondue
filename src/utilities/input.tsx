@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement } from 'react';
+import { ReactElement, cloneElement } from 'react';
 import { Validation, validationTextClassMap } from './validation';
 import { merge } from './merge';
 import {
@@ -145,19 +145,28 @@ export const InputActions = ({
 
 InputActions.displayName = 'FondueInputActionButtons';
 
-export const InputExtraActions = ({ actions, disabled, dataTestId }: InputExtraActionsProps) => {
+export const InputExtraActions = ({
+    actions,
+    disabled,
+    dataTestId,
+}: InputExtraActionsProps): (ReactElement | null)[] => {
     return actions.map((action) => {
+        const { element, tooltip } = action;
         const id = generateRandomId();
-        return (
-            <Tooltip
-                content={action.tooltip.content}
-                key={`extra-action-tooltip-${id}`}
-                disabled={disabled}
-                data-test-id={`${dataTestId}-extra-action`}
-            >
-                {action.tooltip.children}
-            </Tooltip>
-        );
+        if (tooltip) {
+            return (
+                <Tooltip
+                    content={tooltip.content}
+                    key={`extra-action-tooltip-${id}`}
+                    disabled={tooltip.disabled ?? disabled}
+                    data-test-id={`${dataTestId}-extra-action`}
+                >
+                    {cloneElement(tooltip.children, { disabled: tooltip.disabled ?? disabled })}
+                </Tooltip>
+            );
+        }
+
+        return element ? cloneElement(element, { id, disabled, key: `extra-action-${id}` }) : null;
     });
 };
 
