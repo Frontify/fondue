@@ -2,7 +2,7 @@
 
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { Popper } from '@components/Popper';
-import { Children, isValidElement, useCallback, useEffect, useRef, useState } from 'react';
+import { Children, isValidElement, useCallback, useEffect, useState } from 'react';
 import { Trigger } from '@utilities/dialogs/Trigger';
 import { Content } from '@utilities/dialogs/Content';
 import { OVERLAY_CONTAINER_CLASSES } from '@utilities/overlayStyle';
@@ -38,7 +38,6 @@ export const Overlay = ({
     strategy,
 }: OverlayProps & BaseDialogProps) => {
     const id = useMemoizedId();
-    const ref = useRef<HTMLDivElement | null>(null);
     const [triggerElementRef, setTriggerElementRef] = useState<HTMLDivElement | null>(null);
     const { maxHeight: maxAutoHeight } = useDropdownAutoHeight(
         { current: triggerElementRef },
@@ -54,8 +53,8 @@ export const Overlay = ({
         }
     }, [handleClose, modality, open]);
 
-    useFocusTrap(ref.current, open, modality === Modality.NonModal);
-    useClickOutside(ref.current, handleClosingInteraction);
+    const { elementRef } = useFocusTrap<HTMLDivElement>(open, modality === Modality.NonModal);
+    useClickOutside(elementRef.current, handleClosingInteraction);
 
     useEffect(() => {
         if (open && modality !== Modality.NonModal) {
@@ -106,7 +105,7 @@ export const Overlay = ({
                             return (
                                 <Popper.Content>
                                     <div
-                                        ref={ref}
+                                        ref={elementRef}
                                         data-test-id={`${dataTestId}-content`}
                                         className={merge([
                                             'tw-flex tw-flex-col tw-pointer-events-auto',
