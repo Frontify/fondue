@@ -31,19 +31,16 @@ const EXTRA_ACTIONS = [
         },
     },
     {
-        tooltip: {
-            content: 'Help Desk',
-            children: (
-                <Button
-                    style={ButtonStyle.Default}
-                    onClick={() => alert('Here to Help')}
-                    disabled={false}
-                    emphasis={ButtonEmphasis.Weak}
-                    icon={<IconQuestionMark16 />}
-                    size={ButtonSize.Small}
-                />
-            ),
-        },
+        element: (
+            <Button
+                style={ButtonStyle.Default}
+                onClick={() => alert('Here to Help')}
+                disabled={false}
+                emphasis={ButtonEmphasis.Weak}
+                icon={<IconQuestionMark16 />}
+                size={ButtonSize.Small}
+            />
+        ),
     },
 ];
 

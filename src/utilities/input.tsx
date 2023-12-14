@@ -166,7 +166,14 @@ export const InputExtraActions = ({
             );
         }
 
-        return element ? cloneElement(element, { id, disabled, key: `extra-action-${id}` }) : null;
+        return element
+            ? cloneElement(element, {
+                  id,
+                  disabled,
+                  key: `extra-action-${id}`,
+                  'data-test-id': `${dataTestId}-extra-action-button`,
+              })
+            : null;
     });
 };
 
