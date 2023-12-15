@@ -68,6 +68,14 @@ export default {
                 defaultValue: { summary: undefined },
             },
         },
+        value: {
+            type: 'string',
+            description: 'Value set by parent',
+            table: {
+                type: { summary: 'string | undefined' },
+                defaultValue: { summary: undefined },
+            },
+        },
         disabled: {
             type: 'boolean',
             table: {
@@ -152,6 +160,7 @@ export default {
             type: 'function',
             description: 'Callback function to return current value on the `Textarea`',
             table: {
+                type: { summary: '((value: string) => void) | undefined' },
                 defaultValue: { summary: undefined },
             },
         },
@@ -206,7 +215,13 @@ export default {
 } as Meta<TextareaProps>;
 
 const TextareaTemplate: StoryFn<TextareaProps> = (args) => {
-    const [input, setInput] = useState<string | undefined>(undefined);
+    const { value } = args;
+    const [input, setInput] = useState<string | undefined>(value ?? undefined);
+    useEffect(() => {
+        if (value) {
+            setInput(value);
+        }
+    }, [value, setInput]);
 
     return (
         <Box className="tw-w-[80%] tw-ml-auto tw-mr-auto">

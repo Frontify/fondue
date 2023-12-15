@@ -2,7 +2,8 @@
 
 import { IconClipboard16, IconNook16, IconQuestionMark16 } from '@foundation/Icon';
 import { Textarea } from './Textarea';
-import { Validation } from '@utilities/validation';
+import { Validation, validationClassMap } from '@utilities/validation';
+import { ExtraAction } from 'src/types/input';
 
 const TEXTAREA_ID = '[data-test-id=fondue-textarea]';
 const TEXTAREA_DECORATOR_ID = '[data-test-id=fondue-textarea-decorator]';
@@ -13,7 +14,7 @@ const DEFAULT_TEXT = 'I am some text text.';
 const PLACEHOLDER = 'Enter some text in the textarea';
 const INPUT_TEXT = 'I am some input text';
 const ROW_HEIGHT = 20;
-const EXTRA_ACTIONS = [
+const EXTRA_ACTIONS: ExtraAction[] = [
     {
         icon: <IconClipboard16 />,
         title: 'Save to Clipboard',
@@ -48,6 +49,11 @@ describe('Textarea Unit tests', () => {
         cy.get(TEXTAREA_ID).should('have.value', DEFAULT_TEXT);
     });
 
+    it('sets and gets the value', () => {
+        cy.mount(<Textarea id="12345" />);
+        cy.get(TEXTAREA_ID).should('have.attr', 'id', '12345');
+    });
+
     it('should allow for text to be typed', () => {
         cy.mount(<Textarea />);
         cy.get(TEXTAREA_ID).type(INPUT_TEXT);
@@ -62,11 +68,6 @@ describe('Textarea Unit tests', () => {
     it('should render decorator', () => {
         cy.mount(<Textarea decorator={<IconNook16 />} />);
         cy.get(TEXTAREA_DECORATOR_ID).should('be.visible');
-    });
-
-    it('should render status icon', () => {
-        cy.mount(<Textarea status={Validation.Error} />);
-        cy.get(TEXTAREA_STATUS_ICON_ID).should('be.visible');
     });
 
     it('has the required attribute', () => {
@@ -198,5 +199,15 @@ describe('Textarea Unit tests', () => {
     it('should render extra actions', () => {
         cy.mount(<Textarea extraActions={EXTRA_ACTIONS} />);
         cy.get(TEXTAREA_EXTRA_ACTION_ID).should('be.visible');
+    });
+
+    it('should render the correct validation styling', () => {
+        cy.mount(<Textarea status={Validation.Error} />);
+        cy.get(TEXTAREA_ID).should('have.class', validationClassMap[Validation.Error]);
+    });
+
+    it('should render status icon', () => {
+        cy.mount(<Textarea status={Validation.Error} />);
+        cy.get(TEXTAREA_STATUS_ICON_ID).should('be.visible');
     });
 });
