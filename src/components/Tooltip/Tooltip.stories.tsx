@@ -27,6 +27,9 @@ export default {
     },
     argTypes: {
         ...POPPER_STORY_ARGS,
+        anchor: {
+            table: { disable: true },
+        },
         size: {
             options: ['spacious', 'compact'],
             control: { type: 'select' },

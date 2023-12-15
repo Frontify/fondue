@@ -6,7 +6,7 @@ import { Z_INDEX_MODAL } from '@utilities/dialogs/constants';
 
 export type InlineDialogProps = Omit<
     OverlayProps,
-    'theme' | 'isDetached' | 'verticalAlignment' | 'withArrow' | 'arrowCustomColors' | 'shadow'
+    'theme' | 'isDetached' | 'verticalAlignment' | 'withArrow' | 'arrowCustomColors' | 'shadow' | 'isDialog'
 > &
     Omit<BaseDialogProps, 'darkUnderlay'>;
 
