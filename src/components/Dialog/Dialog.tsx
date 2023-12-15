@@ -25,6 +25,7 @@ export const Dialog = ({
     darkUnderlay = false,
     autoHeight = false,
     verticalAlignment = 'centered',
+    roundedCorners = true,
 }: DialogProps) => {
     return (
         <Overlay
@@ -45,6 +46,7 @@ export const Dialog = ({
             isDetached={true}
             verticalAlignment={verticalAlignment}
             strategy={modality === Modality.NonModal ? 'absolute' : 'fixed'}
+            roundedCorners={roundedCorners}
             borderRadius="large"
         >
             {children}

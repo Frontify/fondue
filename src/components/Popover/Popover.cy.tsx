@@ -8,8 +8,9 @@ import { OverlayProps } from '../../types';
 const POPOVER_SELECTOR = '[data-test-id=fondue-popover-content]';
 const POPOVER_TRIGGER = '[data-test-id=popover-trigger]';
 const POPOVER_INTERACTIVE_ELEMENT = '[data-test-id=popover-content-button]';
+const POPOVER_ARROW = '[data-test-id=popper-arrow]';
 
-const PopoverComponent = ({ placement, offset, flip }: Omit<OverlayProps, 'open' | 'anchor' | 'handleClose'>) => {
+const PopoverComponent = (props: Omit<OverlayProps, 'open' | 'anchor' | 'handleClose'>) => {
     const [open, setOpen] = useState(false);
     const triggerRef = useRef<HTMLButtonElement | null>(null);
 
@@ -18,14 +19,7 @@ const PopoverComponent = ({ placement, offset, flip }: Omit<OverlayProps, 'open'
             <Button ref={triggerRef} data-test-id="popover-trigger" onClick={() => setOpen(!open)}>
                 Hello
             </Button>
-            <Popover
-                handleClose={() => setOpen(false)}
-                anchor={triggerRef}
-                open={open}
-                placement={placement}
-                offset={offset}
-                flip={flip}
-            >
+            <Popover handleClose={() => setOpen(false)} anchor={triggerRef} open={open} {...props}>
                 <div className="tw-p-3">
                     <p>Some content</p>
                     <Button data-test-id="popover-content-button">Confirm</Button>
@@ -97,5 +91,34 @@ describe('Popover Component', () => {
         cy.get(POPOVER_SELECTOR).should('exist');
         cy.get('body').realPress('Tab');
         cy.get(POPOVER_INTERACTIVE_ELEMENT).should('be.focused');
+    });
+
+    it('should close popover with Escape key', () => {
+        cy.mount(<PopoverComponent placement="bottom" />);
+        cy.get(POPOVER_TRIGGER).click();
+        cy.get(POPOVER_SELECTOR).should('exist');
+        cy.get('body').realPress('Escape');
+        cy.get(POPOVER_SELECTOR).should('not.exist');
+    });
+
+    it('should render the popover with arrow', () => {
+        cy.mount(<PopoverComponent withArrow={true} />);
+        cy.get(POPOVER_TRIGGER).click();
+        cy.get(POPOVER_ARROW).should('exist');
+    });
+
+    it('should render in light theme', () => {
+        cy.mount(<PopoverComponent />);
+        cy.get(POPOVER_TRIGGER).click();
+        cy.get(POPOVER_SELECTOR).should('have.class', 'tw-bg-base');
+    });
+
+    it('should render in dark theme', () => {
+        cy.mount(<PopoverComponent theme="dark" />);
+        cy.get(POPOVER_TRIGGER).click();
+        cy.get(POPOVER_SELECTOR).should(
+            'have.class',
+            'tw-dark tw-bg-box-neutral-mighty-inverse tw-text-box-neutral-mighty',
+        );
     });
 });

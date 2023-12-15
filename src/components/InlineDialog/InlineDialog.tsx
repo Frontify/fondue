@@ -26,7 +26,7 @@ export const InlineDialog = ({
     handleClose,
     'data-test-id': dataTestId = 'fondue-inlineDialog',
     autoHeight = false,
-    roundedCorners,
+    roundedCorners = true,
     width = 360,
 }: InlineDialogProps) => {
     return (
@@ -48,6 +48,7 @@ export const InlineDialog = ({
             autoHeight={autoHeight}
             zIndex={Z_INDEX_MODAL}
             roundedCorners={roundedCorners}
+            borderRadius="small"
             shadow="medium"
             width={width}
         >

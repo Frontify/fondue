@@ -12,19 +12,9 @@ import { useRef, useState } from 'react';
 const INLINE_DIALOG_TRIGGER_SELECTOR = '[data-test-id=fondue-inlineDialog-trigger]';
 const INLINE_DIALOG_SELECTOR = '[data-test-id=fondue-inlineDialog-content]';
 const OUTSIDE_DIALOG_BUTTON = '[data-test-id=outside-button]';
+const INLINE_DIALOG_UNDERLAY = '[data-test-id=fondue-inlineDialog-underlay]';
 
-const InlineDialogComponent = ({
-    minHeight,
-    maxHeight,
-    minWidth,
-    maxWidth,
-    modality,
-    placement,
-    flip,
-    offset,
-    enablePortal,
-    autoHeight,
-}: Omit<InlineDialogProps, 'open' | 'anchor' | 'handleClose'>) => {
+const InlineDialogComponent = (props: Omit<InlineDialogProps, 'open' | 'anchor' | 'handleClose'>) => {
     const [isOpen, setIsOpen] = useState(false);
     const triggerRef = useRef<HTMLButtonElement | null>(null);
 
@@ -37,21 +27,7 @@ const InlineDialogComponent = ({
                 onClick={() => setIsOpen(!isOpen)}
                 data-test-id="fondue-inlineDialog-trigger"
             ></Button>
-            <InlineDialog
-                anchor={triggerRef}
-                open={isOpen}
-                minHeight={minHeight}
-                maxHeight={maxHeight}
-                minWidth={minWidth}
-                maxWidth={maxWidth}
-                handleClose={() => setIsOpen(false)}
-                modality={modality}
-                placement={placement}
-                flip={flip}
-                offset={offset}
-                enablePortal={enablePortal}
-                autoHeight={autoHeight}
-            >
+            <InlineDialog anchor={triggerRef} open={isOpen} handleClose={() => setIsOpen(false)} {...props}>
                 <DialogBody>
                     <Box className="tw-p-4">
                         <Dropdown
@@ -272,6 +248,38 @@ describe('InlineDialog Component', () => {
             cy.get(INLINE_DIALOG_TRIGGER_SELECTOR).children().eq(0).click();
             cy.viewport(550, 150);
             cy.get(INLINE_DIALOG_SELECTOR).should('have.css', 'height', '130px');
+        });
+    });
+
+    describe('Styling', () => {
+        it('renders with rounded corners by default', () => {
+            cy.mount(<InlineDialogComponent />);
+            cy.get(INLINE_DIALOG_TRIGGER_SELECTOR).children().eq(0).click();
+            cy.get(INLINE_DIALOG_SELECTOR).should('have.css', 'border-radius', '4px');
+        });
+
+        it('should render without rounded corners', () => {
+            cy.mount(<InlineDialogComponent roundedCorners={false} />);
+            cy.get(INLINE_DIALOG_TRIGGER_SELECTOR).children().eq(0).click();
+            cy.get(INLINE_DIALOG_SELECTOR).should('have.css', 'border-radius', '0px');
+        });
+
+        it('should be responsive', () => {
+            cy.mount(<InlineDialogComponent />);
+            cy.viewport(700, 900);
+            cy.get(INLINE_DIALOG_TRIGGER_SELECTOR).children().eq(0).click();
+            cy.get(INLINE_DIALOG_SELECTOR).should('have.css', 'min-width', '360px'); // 360px default on larger screen
+            cy.viewport(360, 745);
+            cy.get(INLINE_DIALOG_SELECTOR).should('have.css', 'min-width', '324px'); // 90vw on mobile view.
+            cy.viewport(1200, 900);
+            cy.get(INLINE_DIALOG_SELECTOR).should('have.css', 'min-width', '360px'); // 360px default on larger screen
+        });
+
+        it('should render with darkUnderlay on mobile view', () => {
+            cy.mount(<InlineDialogComponent />);
+            cy.viewport(360, 745);
+            cy.get(INLINE_DIALOG_TRIGGER_SELECTOR).children().eq(0).click();
+            cy.get(INLINE_DIALOG_UNDERLAY).should('exist');
         });
     });
 });
