@@ -2,7 +2,6 @@
 
 import { IconClipboard16, IconNook16, IconQuestionMark16 } from '@foundation/Icon';
 import { Textarea } from './Textarea';
-import { Validation } from '@utilities/validation';
 import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
 import { Tooltip } from '@components/Tooltip';
 import { ReactElement } from 'react';
