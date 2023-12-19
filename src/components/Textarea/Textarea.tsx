@@ -3,7 +3,7 @@
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
-import { GetStatusIcon, InputActions, InputExtraActions, InputStyles } from '@utilities/input';
+import { GetStatusIcon, InputActions, InputStyles } from '@utilities/input';
 import { merge } from '@utilities/merge';
 import { useForwardedRef } from '@utilities/useForwardedRef';
 import { Validation, validationClassMap } from '@utilities/validation';
@@ -193,9 +193,7 @@ export const Textarea = ({
                     dataTestId={dataTestId}
                 />
 
-                {extraActions ? (
-                    <InputExtraActions actions={extraActions} disabled={isDisabled} dataTestId={dataTestId} />
-                ) : null}
+                {extraActions && extraActions.length > 0 ? extraActions.map((action: ReactElement) => action) : null}
 
                 {status ? GetStatusIcon(status, dataTestId) : null}
             </span>

@@ -6,37 +6,31 @@ import { FormField } from '@components/FormField';
 import { Textarea, TextareaProps } from '.';
 import { IconClipboard16, IconNook16, IconQuestionMark16 } from '@foundation/Icon';
 import { Validation } from '@utilities/validation';
-import { useCallback, useEffect, useState } from 'react';
-import { ExtraAction } from 'src/types/input';
+import { ReactElement, useCallback, useEffect, useState } from 'react';
 import { ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button/ButtonTypes';
 import { Button } from '@components/Button';
+import { Tooltip } from '@components/Tooltip';
 
-const ExtraActions: ExtraAction[] = [
-    {
-        tooltip: {
-            content: 'Extra Action with Tooltip',
-            children: (
-                <Button
-                    style={ButtonStyle.Default}
-                    onClick={() => alert('Mock Copied to clipboard!')}
-                    emphasis={ButtonEmphasis.Weak}
-                    icon={<IconClipboard16 />}
-                    size={ButtonSize.Small}
-                />
-            ),
-        },
-    },
-    {
-        element: (
-            <Button
-                style={ButtonStyle.Default}
-                onClick={() => alert('Here to Help')}
-                emphasis={ButtonEmphasis.Weak}
-                icon={<IconQuestionMark16 />}
-                size={ButtonSize.Small}
-            />
-        ),
-    },
+const ExtraActions: ReactElement[] = [
+    <Tooltip content="I am a tooltip" key={'extra-action-1'} data-test-id="fondue-textarea-extra-action">
+        <Button
+            style={ButtonStyle.Default}
+            onClick={() => alert('Mock Copied to clipboard!')}
+            emphasis={ButtonEmphasis.Weak}
+            icon={<IconClipboard16 />}
+            size={ButtonSize.Small}
+            data-test-id="fondue-textarea-extra-action-button"
+        />
+    </Tooltip>,
+    <Button
+        key={'extra-action-2'}
+        style={ButtonStyle.Default}
+        onClick={() => alert('Here to Help')}
+        emphasis={ButtonEmphasis.Weak}
+        icon={<IconQuestionMark16 />}
+        size={ButtonSize.Small}
+        data-test-id="fondue-textarea-extra-action-button"
+    />,
 ];
 
 export default {

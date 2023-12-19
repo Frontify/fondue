@@ -4,6 +4,8 @@ import { IconClipboard16, IconNook16, IconQuestionMark16 } from '@foundation/Ico
 import { Textarea } from './Textarea';
 import { Validation } from '@utilities/validation';
 import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
+import { Tooltip } from '@components/Tooltip';
+import { ReactElement } from 'react';
 
 const TEXTAREA_ID = '[data-test-id=fondue-textarea]';
 const TEXTAREA_DECORATOR_ID = '[data-test-id=fondue-textarea-decorator]';
@@ -14,34 +16,26 @@ const DEFAULT_TEXT = 'I am some text text.';
 const PLACEHOLDER = 'Enter some text in the textarea';
 const INPUT_TEXT = 'I am some input text';
 const ROW_HEIGHT = 20;
-const EXTRA_ACTIONS = [
-    {
-        tooltip: {
-            content: 'Save to clipboard',
-            children: (
-                <Button
-                    style={ButtonStyle.Default}
-                    onClick={() => alert('Mock Copied to clipboard!')}
-                    disabled={false}
-                    emphasis={ButtonEmphasis.Weak}
-                    icon={<IconClipboard16 />}
-                    size={ButtonSize.Small}
-                />
-            ),
-        },
-    },
-    {
-        element: (
-            <Button
-                style={ButtonStyle.Default}
-                onClick={() => alert('Here to Help')}
-                disabled={false}
-                emphasis={ButtonEmphasis.Weak}
-                icon={<IconQuestionMark16 />}
-                size={ButtonSize.Small}
-            />
-        ),
-    },
+const EXTRA_ACTIONS: ReactElement[] = [
+    <Tooltip content="I am a tooltip" key={'extra-action-1'} data-test-id="fondue-textarea-extra-action-button">
+        <Button
+            style={ButtonStyle.Default}
+            onClick={() => alert('Mock Copied to clipboard!')}
+            emphasis={ButtonEmphasis.Weak}
+            icon={<IconClipboard16 />}
+            size={ButtonSize.Small}
+            data-test-id="fondue-textarea-extra-action-button"
+        />
+    </Tooltip>,
+    <Button
+        key={'extra-action-2'}
+        style={ButtonStyle.Default}
+        onClick={() => alert('Here to Help')}
+        emphasis={ButtonEmphasis.Weak}
+        icon={<IconQuestionMark16 />}
+        size={ButtonSize.Small}
+        data-test-id="fondue-textarea-extra-action-button"
+    />,
 ];
 
 describe('Textarea Unit tests', () => {

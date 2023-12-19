@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TooltipProps } from '@components/Tooltip';
 import { Validation } from '@utilities/validation';
 import type { AriaAttributes, InputHTMLAttributes, ReactElement } from 'react';
 
@@ -8,7 +7,7 @@ export type InputSharedBaseProps = {
     autocomplete?: boolean;
     clearable?: boolean;
     decorator?: ReactElement;
-    extraActions?: ExtraAction[];
+    extraActions?: ReactElement[];
     hugWidth?: boolean;
     id?: string;
     status?: Validation;
@@ -48,16 +47,5 @@ export type InputActionsProps = {
     increment?: boolean;
     disabled?: boolean;
     callbacks: InputActionCallbacks;
-    dataTestId?: string;
-};
-
-export type ExtraAction = {
-    element?: ReactElement;
-    tooltip?: TooltipProps;
-};
-
-export type InputExtraActionsProps = {
-    actions: ExtraAction[];
-    disabled?: boolean;
     dataTestId?: string;
 };

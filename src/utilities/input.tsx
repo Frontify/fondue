@@ -1,19 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement, cloneElement } from 'react';
+import { ReactElement } from 'react';
 import { Validation, validationTextClassMap } from './validation';
 import { merge } from './merge';
-import {
-    Button,
-    ButtonEmphasis,
-    ButtonSize,
-    ButtonStyle,
-    LoadingCircle,
-    LoadingCircleSize,
-    Tooltip,
-} from '@components/index';
-import { InputActionsProps, InputExtraActionsProps } from 'src/types/input';
-import { generateRandomId } from './generateRandomId';
+import { Button, ButtonEmphasis, ButtonSize, ButtonStyle, LoadingCircle, LoadingCircleSize } from '@components/index';
+import { InputActionsProps } from 'src/types/input';
 import {
     IconCheckMark16,
     IconCross16,
@@ -144,37 +135,3 @@ export const InputActions = ({
 };
 
 InputActions.displayName = 'FondueInputActionButtons';
-
-export const InputExtraActions = ({
-    actions,
-    disabled,
-    dataTestId,
-}: InputExtraActionsProps): (ReactElement | null)[] => {
-    return actions.map((action) => {
-        const { element, tooltip } = action;
-        const id = generateRandomId();
-        if (tooltip) {
-            return (
-                <Tooltip
-                    content={tooltip.content}
-                    key={`extra-action-tooltip-${id}`}
-                    disabled={tooltip.disabled ?? disabled}
-                    data-test-id={`${dataTestId}-extra-action`}
-                >
-                    {cloneElement(tooltip.children, { disabled: tooltip.disabled ?? disabled })}
-                </Tooltip>
-            );
-        }
-
-        return element
-            ? cloneElement(element, {
-                  id,
-                  disabled,
-                  key: `extra-action-${id}`,
-                  'data-test-id': `${dataTestId}-extra-action-button`,
-              })
-            : null;
-    });
-};
-
-InputExtraActions.displayName = 'FondueInputExtraActions';
