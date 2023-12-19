@@ -89,6 +89,13 @@ export const Textarea = ({
         focusOnMount && textareaRef.current?.focus();
     }, [focusOnMount, textareaRef]);
 
+    useEffect(() => {
+        const isValueSet = value !== textareaRef.current?.value;
+        if (textareaRef.current && value && !isValueSet) {
+            textareaRef.current.value = value;
+        }
+    }, [value, textareaRef]);
+
     const autosizeProps = { minRows, maxRows };
 
     const getPaddingRight = () => {
@@ -145,7 +152,8 @@ export const Textarea = ({
                     readOnly={readOnly}
                     ref={textareaRef}
                     required={required}
-                    value={defaultValue ?? value}
+                    defaultValue={defaultValue}
+                    value={value}
                     placeholder={placeholder}
                     onBlur={onBlur}
                     onChange={handleOnChange}
@@ -162,12 +170,12 @@ export const Textarea = ({
                     aria-label={dataTestId}
                     data-test-id={dataTestId}
                     className={merge([
-                        InputStyles.base,
                         hugWidth ? '' : InputStyles.width,
                         minRows ? '' : InputStyles.height,
                         InputStyles.disabled,
                         InputStyles.readOnly,
                         InputStyles.element,
+                        InputStyles.base,
                         InputStyles.focus,
                         InputStyles.hover,
                         isFocusVisible && FOCUS_STYLE,

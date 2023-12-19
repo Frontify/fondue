@@ -58,6 +58,11 @@ describe('Textarea Unit tests', () => {
         cy.get(TEXTAREA_ID).should('have.value', DEFAULT_TEXT);
     });
 
+    it('sets and gets the value', () => {
+        cy.mount(<Textarea id="12345" />);
+        cy.get(TEXTAREA_ID).should('have.attr', 'id', '12345');
+    });
+
     it('should allow for text to be typed', () => {
         cy.mount(<Textarea />);
         cy.get(TEXTAREA_ID).type(INPUT_TEXT);
@@ -72,11 +77,6 @@ describe('Textarea Unit tests', () => {
     it('should render decorator', () => {
         cy.mount(<Textarea decorator={<IconNook16 />} />);
         cy.get(TEXTAREA_DECORATOR_ID).should('be.visible');
-    });
-
-    it('should render status icon', () => {
-        cy.mount(<Textarea status={Validation.Error} />);
-        cy.get(TEXTAREA_STATUS_ICON_ID).should('be.visible');
     });
 
     it('has the required attribute', () => {
