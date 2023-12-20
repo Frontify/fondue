@@ -106,7 +106,7 @@ export const Menu = ({
             {...(menuOpenerRef ? popperInstance.attributes.popper : {})}
             data-test-id={dataTestId}
         >
-            <ol ref={dismissibleElementRef} className="tw-list-none" role="menu">
+            <ol ref={dismissibleElementRef} className="tw-list-none">
                 {children}
             </ol>
         </nav>
