@@ -5,7 +5,7 @@ import { Popper } from '@components/Popper';
 import { useCallback, useEffect, useState } from 'react';
 import { OVERLAY_CONTAINER_DARK_THEME_STYLING, OVERLAY_CONTAINER_LIGHT_THEME_STYLING } from '@utilities/overlayStyle';
 import { BaseDialogProps, Modality, OverlayProps, overlayBorderRadius, overlayShadowMap } from '../../types';
-import { merge } from '@utilities/merge';
+import { merge, mergeRefs } from '@utilities/merge';
 import { useFocusTrap } from '@hooks/useFocusTrap';
 import { useClickOutside } from '@hooks/useClickOutside';
 import { Portal } from '@components/Portal';
@@ -73,7 +73,7 @@ export const Overlay = ({
     }, [handleClose, modality, open, triggerElementRef]);
 
     const { elementRef } = useFocusTrap<HTMLDivElement>(open, modality === Modality.NonModal, triggerElementRef);
-    useClickOutside(elementRef.current, handleClosingInteraction);
+    const { dismissibleElementRef } = useClickOutside<HTMLDivElement>(handleClosingInteraction);
     useHandleCloseOnEscape(open, {
         isBlockingModal: modality === Modality.BlockingModal,
         callback: handleClosingInteraction,
@@ -112,7 +112,7 @@ export const Overlay = ({
                 arrowCustomColors={arrowCustomColors}
             >
                 <div
-                    ref={elementRef}
+                    ref={mergeRefs(dismissibleElementRef, elementRef)}
                     data-test-id={`${dataTestId}-content`}
                     className={merge([
                         'tw-flex tw-flex-col tw-pointer-events-auto',

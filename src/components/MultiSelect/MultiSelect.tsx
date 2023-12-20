@@ -9,8 +9,7 @@ import { FocusScope, useFocusRing } from '@react-aria/focus';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
 import { KeyboardEvent, ReactElement, ReactNode, useEffect, useRef, useState } from 'react';
-import { getPaddingClasses } from './helpers';
-import { useClickOutside } from '@hooks/useClickOutside';
+import { getPaddingClasses, useClickOutside } from './helpers';
 import { CheckboxState } from '@components/Checkbox/Checkbox';
 import { usePopper } from 'react-popper';
 import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from '@hooks/useDropdownAutoHeight';
@@ -140,6 +139,10 @@ export const MultiSelect = ({
         }
         return TagType.SelectedWithFocus;
     };
+
+    useEffect(() => {
+        setMultiSelectMenuRef(multiSelectRef?.current as HTMLDivElement);
+    }, []);
 
     useEffect(() => {
         setCheckboxes(

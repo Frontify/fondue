@@ -30,14 +30,7 @@ export const Menu = ({
     'data-test-id': dataTestId = 'menu',
 }: MenuProps) => {
     const [isMenuOpen, setIsMenuOpen] = useState(open);
-    const [menuContainerRef, setMenuContainerRef] = useState<HTMLElement | null>(null);
     const [menuOpenerRef, setMenuOpenerRef] = useState<HTMLElement | null>(null);
-
-    const menuKeyboardNavigationAction = useMenuKeyboardNavigation(
-        isMenuOpen,
-        menuContainerRef,
-        'li > a, li > button:not(:disabled)',
-    );
 
     const handleClickOutside = useCallback(() => {
         if (menuOpenerRef && isMenuOpen) {
@@ -48,9 +41,15 @@ export const Menu = ({
         }
     }, [menuOpenerRef, isMenuOpen, onClose]);
 
-    useClickOutside(menuContainerRef, handleClickOutside, [menuOpenerRef as HTMLElement]);
+    const { dismissibleElementRef } = useClickOutside<HTMLElement>(handleClickOutside, [menuOpenerRef as HTMLElement]);
 
-    const popperInstance = usePopper(menuOpenerRef, menuContainerRef, {
+    const menuKeyboardNavigationAction = useMenuKeyboardNavigation(
+        isMenuOpen,
+        dismissibleElementRef.current,
+        'li > a, li > button:not(:disabled)',
+    );
+
+    const popperInstance = usePopper(menuOpenerRef, dismissibleElementRef.current, {
         placement: 'bottom-start',
         strategy: 'fixed',
         modifiers: [
@@ -98,8 +97,8 @@ export const Menu = ({
     return (
         <nav
             className={merge([CONTAINER_CLASSES, isMenuOpen ? 'tw-block' : 'tw-hidden'])}
-            role={isMenuOpen ? 'dialog' : ''}
-            ref={setMenuContainerRef}
+            role={isMenuOpen ? 'menu' : ''}
+            ref={dismissibleElementRef}
             style={menuOpenerRef ? popperInstance.styles.popper : {}}
             {...(menuOpenerRef ? popperInstance.attributes.popper : {})}
             data-test-id={dataTestId}
