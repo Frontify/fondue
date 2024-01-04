@@ -29,6 +29,8 @@ import {
     paragraphTree,
     unorderedListMarkdown,
     unorderedListTree,
+    unsafeLinkMarkdown,
+    unsafeLinkTree,
 } from './fixtures';
 
 describe('Markdown to slate Transformer', () => {
@@ -95,22 +97,23 @@ describe('Markdown to slate Transformer', () => {
             expect(result).to.deep.equal(linkTree[1]);
         });
 
-        it('should correctly transform the Unsafe links', () => {
-            let result = transformer.process(linkMarkdown[2]);
-            expect(linkTree[2]).to.deep.equal(result);
+        it('should correctly transform unsafe links', () => {
+            let result = transformer.process(unsafeLinkMarkdown[0]);
+            expect(unsafeLinkTree[0]).to.deep.equal(result);
 
-            result = transformer.process(linkMarkdown[3]);
-            expect(linkTree[3]).to.deep.equal(result);
-        });
+            result = transformer.process(unsafeLinkMarkdown[1]);
+            expect(unsafeLinkTree[1]).to.deep.equal(result);
 
-        it('should create text for not standard markdown link', () => {
-            const result = transformer.process(linkMarkdown[4]);
-            expect(linkTree[4]).to.deep.equal(result);
+            result = transformer.process(unsafeLinkMarkdown[2]);
+            expect(unsafeLinkTree[2]).to.deep.equal(result);
+
+            result = transformer.process(unsafeLinkMarkdown[3]);
+            expect(unsafeLinkTree[3]).to.deep.equal(result);
         });
 
         it('should create mailto link', () => {
-            const result = transformer.process(linkMarkdown[5]);
-            expect(result).to.deep.equal(linkTree[5]);
+            const result = transformer.process(linkMarkdown[2]);
+            expect(result).to.deep.equal(linkTree[2]);
         });
     });
 
