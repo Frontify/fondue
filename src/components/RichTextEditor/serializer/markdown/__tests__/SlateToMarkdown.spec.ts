@@ -116,8 +116,8 @@ describe('Slate To Markdown transformer', () => {
         });
 
         it('should create mailto link', () => {
-            const result = transformer.process(linkTree[5]);
-            expect(result).to.deep.equal(linkMarkdown[5]);
+            const result = transformer.process(linkTree[2]);
+            expect(result).to.deep.equal(linkMarkdown[2]);
         });
     });
 

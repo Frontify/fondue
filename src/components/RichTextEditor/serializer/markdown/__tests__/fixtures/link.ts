@@ -23,33 +23,21 @@ export const linkTreeTargetBlank = [
     ]),
 ];
 
-const unsafeLinkMarkdown = '[xss ca-30JS](javascript:alert("XSS-Vulnerability"))';
-const unsafeLinkTree = [createP([createLink('xss ca-30JS')])];
-
-const unsafeLinkMarkdownWithTarget = '[xss ca-30JS](javascript:alert("XSS-Vulnerability")){:target="_self"}';
-const unsafeLinkTreeWithTarget = [createP([createLink('xss ca-30JS', undefined, '_self'), createText('')])];
-
-const unsafeLinkNotMarkdownStandard = '[xss ca-30JS](javascript:alert("XSS Vulnerability"))';
-const unsafeLinkTreeNotMarkdownStandard = [
-    createP([createText('[xss ca-30JS](javascript:alert("XSS Vulnerability"))')]),
-];
-
 const linkMarkdownMailto = '[Email link](mailto:max@muster.com){:target="_blank"}\n\n';
 const linkTreeMailto = [createP([createLink('Email link', 'mailto:max@muster.com'), createText('')])];
 
-export const linkMarkdown = [
-    linkMarkdownTargetSelf,
-    linkMarkdownTargetBlank,
-    unsafeLinkMarkdown,
-    unsafeLinkMarkdownWithTarget,
-    unsafeLinkNotMarkdownStandard,
-    linkMarkdownMailto,
+export const linkMarkdown = [linkMarkdownTargetSelf, linkMarkdownTargetBlank, linkMarkdownMailto];
+export const linkTree = [linkTreeTargetSelf, linkTreeTargetBlank, linkTreeMailto];
+
+export const unsafeLinkMarkdown = [
+    '[xss ca-30JS](javascript:alert("XSS-Vulnerability"))',
+    '[xss ca-30JS](javascript:alert("XSS-Vulnerability")){:target="_self"}',
+    '[xss ca-30JS](javascript:alert("XSS Vulnerability"))',
+    '[click me](JaVaScRiPt:alert(2024))',
 ];
-export const linkTree = [
-    linkTreeTargetSelf,
-    linkTreeTargetBlank,
-    unsafeLinkTree,
-    unsafeLinkTreeWithTarget,
-    unsafeLinkTreeNotMarkdownStandard,
-    linkTreeMailto,
+export const unsafeLinkTree = [
+    [createP([createLink('xss ca-30JS')])],
+    [createP([createLink('xss ca-30JS', undefined, '_self'), createText('')])],
+    [createP([createText('[xss ca-30JS](javascript:alert("XSS Vulnerability"))')])],
+    [createP([createLink('click me')])],
 ];
