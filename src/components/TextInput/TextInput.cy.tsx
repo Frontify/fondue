@@ -28,7 +28,7 @@ const StatefulInput = (props: TextInputProps): ReactElement => {
     const [input, setInput] = useState<string>('');
 
     useEffect(() => {
-        setInput(props.value || '');
+        setInput(props.value ?? '');
     }, [props.value]);
 
     return <TextInput {...props} value={input} onChange={setInput} />;

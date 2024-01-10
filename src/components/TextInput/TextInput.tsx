@@ -224,6 +224,7 @@ export const TextInput = ({
                 </div>
             )}
             <input
+                {...inputFocusProps}
                 id={useMemoizedId(propId)}
                 ref={inputElement}
                 className={merge([
@@ -254,7 +255,6 @@ export const TextInput = ({
                 size={size}
                 data-test-id="text-input"
                 {...spellcheckProp}
-                {...inputFocusProps}
             />
             {extraActions &&
                 extraActions.length > 0 &&
