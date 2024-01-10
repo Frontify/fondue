@@ -235,7 +235,10 @@ export const TextInput = ({
                 ])}
                 onClick={() => inputElement.current?.focus()}
                 onChange={(event) => onChange?.(event.currentTarget.value)}
-                onBlur={onBlur}
+                onBlur={(e) => {
+                    inputFocusProps.onBlur?.(e);
+                    onBlur?.(e);
+                }}
                 onKeyDown={onKeyDown}
                 placeholder={placeholder}
                 value={value}
@@ -244,6 +247,7 @@ export const TextInput = ({
                 readOnly={readonly}
                 disabled={disabled}
                 onFocus={(e) => {
+                    inputFocusProps.onFocus?.(e);
                     if (selectable) {
                         e.target.select();
                     }
