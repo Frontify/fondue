@@ -47,7 +47,7 @@ export default {
 
 const TextInputTemplate: StoryFn<TextInputProps> = (args: TextInputProps) => {
     const [input, setInput] = useState('');
-    useEffect(() => setInput(`${args.value || ''}`), [args.value]);
+    useEffect(() => setInput(`${args.value ?? ''}`), [args.value]);
 
     return <TextInput {...args} value={input} onChange={setInput} />;
 };
@@ -174,11 +174,20 @@ WithExtraActionWithTooltip.args = {
     value: 'Value text',
     extraActions: [
         {
-            title: 'Extra action',
-            onClick: action('extraAction'),
+            title: 'First extra action',
+            onClick: action('extraAction1'),
             icon: <IconIcon />,
             tooltip: {
-                content: 'Tooltip content',
+                content: 'First extra action tooltip content',
+                withArrow: true,
+            },
+        },
+        {
+            title: 'Second extra action',
+            onClick: action('extraAction2'),
+            icon: <IconIcon />,
+            tooltip: {
+                content: 'Second extra action tooltip content',
                 withArrow: true,
             },
         },

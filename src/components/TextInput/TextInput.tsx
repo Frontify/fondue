@@ -9,7 +9,6 @@ import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
 import {
     AriaAttributes,
-    DOMAttributes,
     FocusEvent,
     ForwardRefRenderFunction,
     KeyboardEvent,
@@ -30,7 +29,6 @@ import {
     IconEyeOff,
 } from '@foundation/Icon/Generated';
 import { LegacyTooltip, LegacyTooltipProps } from '../LegacyTooltip';
-import { FocusableElement } from '@react-types/shared';
 
 export enum TextInputType {
     Text = 'text',
@@ -91,17 +89,18 @@ export type TextInputProps =
 type ExtraActionButtonProps = {
     extraAction: TextInputExtraAction;
     disabled: boolean;
-    isFocusVisible: boolean;
-    focusProps: DOMAttributes<FocusableElement>;
 };
 
 const ExtraActionButton: ForwardRefRenderFunction<HTMLButtonElement | null, ExtraActionButtonProps> = (
-    { extraAction, disabled, isFocusVisible, focusProps },
+    { extraAction, disabled },
     ref,
 ): ReactElement | null => {
+    const { isFocusVisible: extraActionButtonIsFocusVisible, focusProps: extraActionButtonFocusProps } = useFocusRing();
+
     if (!extraAction) {
         return null;
     }
+
     const isDisabled = disabled || extraAction.disabled;
     return (
         <button
@@ -110,7 +109,7 @@ const ExtraActionButton: ForwardRefRenderFunction<HTMLButtonElement | null, Extr
                 isDisabled
                     ? 'tw-cursor-default tw-text-text-disabled'
                     : 'tw-text-text-weak hover:tw-bg-box-neutral-hover hover:tw-text-box-neutral-inverse-hover',
-                isFocusVisible && FOCUS_STYLE,
+                extraActionButtonIsFocusVisible && FOCUS_STYLE,
             ])}
             onClick={extraAction.onClick}
             data-test-id="fondue-extra-action-icon"
@@ -119,7 +118,7 @@ const ExtraActionButton: ForwardRefRenderFunction<HTMLButtonElement | null, Extr
             aria-disabled={isDisabled}
             type="button"
             ref={ref}
-            {...focusProps}
+            {...extraActionButtonFocusProps}
         >
             {extraAction.icon}
         </button>
@@ -154,11 +153,10 @@ export const TextInput = ({
     extraActions,
     ...props
 }: TextInputProps): ReactElement => {
-    const { isFocusVisible, focusProps } = useFocusRing({ within: true, isTextInput: true });
+    const { isFocusVisible: inputIsFocusVisible, focusProps: inputFocusProps } = useFocusRing();
     const { isFocusVisible: clearButtonIsFocusVisible, focusProps: clearButtonFocusProps } = useFocusRing();
     const { isFocusVisible: passwordButtonIsFocusVisible, focusProps: passwordButtonFocusProps } = useFocusRing();
     const { isFocusVisible: copyButtonIsFocusVisible, focusProps: copyButtonFocusProps } = useFocusRing();
-    const { isFocusVisible: extraActionButtonIsFocusVisible, focusProps: extraActionButtonFocusProps } = useFocusRing();
 
     const { copy, status } = useCopy();
 
@@ -196,7 +194,6 @@ export const TextInput = ({
 
     return (
         <div
-            {...focusProps}
             {...props}
             className={merge([
                 'tw-flex tw-items-center tw-h-9 tw-gap-2 tw-px-3 tw-border tw-transition tw-rounded tw-text-body-small tw-font-sans tw-relative tw-bg-white dark:tw-bg-transparent',
@@ -206,7 +203,7 @@ export const TextInput = ({
                     : merge([
                           'focus-within:tw-border-line-xx-strong focus-within:hover:tw-border-line-xx-strong hover:tw-border-line-x-strong',
                           validationClassMap[validation],
-                          isFocusVisible &&
+                          inputIsFocusVisible &&
                               !clearButtonIsFocusVisible &&
                               !passwordButtonIsFocusVisible &&
                               !copyButtonIsFocusVisible &&
@@ -227,6 +224,7 @@ export const TextInput = ({
                 </div>
             )}
             <input
+                {...inputFocusProps}
                 id={useMemoizedId(propId)}
                 ref={inputElement}
                 className={merge([
@@ -237,7 +235,10 @@ export const TextInput = ({
                 ])}
                 onClick={() => inputElement.current?.focus()}
                 onChange={(event) => onChange?.(event.currentTarget.value)}
-                onBlur={onBlur}
+                onBlur={(e) => {
+                    inputFocusProps.onBlur?.(e);
+                    onBlur?.(e);
+                }}
                 onKeyDown={onKeyDown}
                 placeholder={placeholder}
                 value={value}
@@ -246,6 +247,7 @@ export const TextInput = ({
                 readOnly={readonly}
                 disabled={disabled}
                 onFocus={(e) => {
+                    inputFocusProps.onFocus?.(e);
                     if (selectable) {
                         e.target.select();
                     }
@@ -268,25 +270,12 @@ export const TextInput = ({
                                 key={key}
                                 {...extraAction.tooltip}
                                 triggerElement={
-                                    <ExtraActionButtonWithRef
-                                        extraAction={extraAction}
-                                        disabled={disabled}
-                                        isFocusVisible={extraActionButtonIsFocusVisible}
-                                        focusProps={extraActionButtonFocusProps}
-                                    />
+                                    <ExtraActionButtonWithRef extraAction={extraAction} disabled={disabled} />
                                 }
                             />
                         );
                     }
-                    return (
-                        <ExtraActionButtonWithRef
-                            key={key}
-                            extraAction={extraAction}
-                            disabled={disabled}
-                            isFocusVisible={extraActionButtonIsFocusVisible}
-                            focusProps={extraActionButtonFocusProps}
-                        />
-                    );
+                    return <ExtraActionButtonWithRef key={key} extraAction={extraAction} disabled={disabled} />;
                 })}
             {`${value}`.length > 0 && clearable && (
                 <button
@@ -299,8 +288,8 @@ export const TextInput = ({
                         inputElement.current?.focus();
                         inputElement.current?.setAttribute('value', '');
 
-                        onChange && onChange('');
-                        onClear && onClear();
+                        onChange?.('');
+                        onClear?.();
                     }}
                     data-test-id="clear-icon"
                     title="Clear text input"

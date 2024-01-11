@@ -28,7 +28,7 @@ const StatefulInput = (props: TextInputProps): ReactElement => {
     const [input, setInput] = useState<string>('');
 
     useEffect(() => {
-        setInput(props.value || '');
+        setInput(props.value ?? '');
     }, [props.value]);
 
     return <TextInput {...props} value={input} onChange={setInput} />;
@@ -274,7 +274,7 @@ describe('Text Input component', () => {
 
         cy.get('body').realPress('Tab');
 
-        cy.get(TEXT_INPUT_ID).parent().should('have.class', 'tw-ring-blue');
+        cy.get(TEXT_INPUT_COMPONENT).should('have.class', 'tw-ring-blue');
     });
 
     it('shows an outline around the clear button after the user has typed text and pressed the tab key', () => {
