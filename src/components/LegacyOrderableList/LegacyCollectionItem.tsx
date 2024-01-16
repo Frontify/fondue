@@ -22,13 +22,11 @@ export const LegacyCollectionItem = <T extends object>({
         type: listId,
         canDrag: !dragDisabled,
     });
-    const id = useId();
 
     return (
         <div
             ref={drag}
             className={merge(['tw-relative tw-outline-none', isFocusVisible ? 'tw-z-30' : 'tw-z-0'])}
-            aria-labelledby={id}
             data-test-id="draggable-item"
             aria-disabled={dragDisabled}
         >
