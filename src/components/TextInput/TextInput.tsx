@@ -153,7 +153,7 @@ export const TextInput = ({
     extraActions,
     ...props
 }: TextInputProps): ReactElement => {
-    const { isFocusVisible: inputIsFocusVisible, focusProps: inputFocusProps } = useFocusRing();
+    const { isFocusVisible: inputIsFocusVisible, focusProps: inputFocusProps } = useFocusRing({ isTextInput: true });
     const { isFocusVisible: clearButtonIsFocusVisible, focusProps: clearButtonFocusProps } = useFocusRing();
     const { isFocusVisible: passwordButtonIsFocusVisible, focusProps: passwordButtonFocusProps } = useFocusRing();
     const { isFocusVisible: copyButtonIsFocusVisible, focusProps: copyButtonFocusProps } = useFocusRing();
