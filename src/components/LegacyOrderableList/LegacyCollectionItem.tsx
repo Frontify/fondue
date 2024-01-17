@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useFocusRing } from '@react-aria/focus';
-import { useId } from '@react-aria/utils';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { LegacyCollectionItemProps, LegacyItemDragState } from './types';
