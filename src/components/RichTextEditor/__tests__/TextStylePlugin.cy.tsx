@@ -161,7 +161,7 @@ describe('TextStylePlugin', () => {
     });
 
     it('switches between checkbox and lists', () => {
-        cy.mount(<RichTextEditor position={Position.TOP} />);
+        cy.mount(<RichTextEditor />);
 
         insertTextAndOpenToolbar();
         cy.get(TOOLBAR_GROUP_2).children().eq(5).click();
