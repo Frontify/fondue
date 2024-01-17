@@ -483,7 +483,6 @@ export const checkboxValue = [
         indent: 2,
         children: [{ text: "And I'm checked! Followed by an empty one!" }],
     },
-    { type: ELEMENT_CHECK_ITEM, children: [{ text: '' }] },
 ];
 
 export const buttonValues = [

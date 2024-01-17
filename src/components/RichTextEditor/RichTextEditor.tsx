@@ -79,6 +79,7 @@ export const RichTextEditor = ({
         readOnly: readonly,
         onBlur: () => onBlur && onBlur(JSON.stringify(localValue.current)),
         className: `${padding}`,
+        'aria-label': 'Rich Text Editor',
         style: {
             columns,
             columnGap,

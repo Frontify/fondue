@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { CSSProperties } from 'react';
+import { CSSProperties, useId } from 'react';
 import { ReactEditor } from 'slate-react';
 import { PlateRenderElementProps, TElement, TTodoListItemElement, getRootProps, setNodes } from '@udecode/plate';
 import { merge } from '@utilities/merge';
@@ -21,6 +21,7 @@ export const CheckboxListElementNode = (props: PlateRenderElementProps) => {
     const checked = element.checked as boolean;
     const align = (element.align as string) ?? 'left';
     const { styles } = useRichTextEditorContext();
+    const id = useId();
 
     return (
         <div {...attributes} {...rootProps} className={merge([CHECKBOX_DIV_CLASSES, justifyClassNames[align]])}>
@@ -30,19 +31,22 @@ export const CheckboxListElementNode = (props: PlateRenderElementProps) => {
                     className="tw-w-4 tw-h-4 tw-m-0"
                     type="checkbox"
                     checked={!!checked}
+                    title="Checklist item"
+                    aria-labelledby={id}
                     onChange={(e) => {
                         const path = ReactEditor.findPath(editor as ReactEditor, element);
                         setNodes<TTodoListItemElement>(editor, { checked: e.target.checked }, { at: path });
                     }}
                     {...nodeProps}
                 />
+                <span
+                    style={getCheckboxListStyles(styles, element)}
+                    id={id}
+                    className={merge([CHECKBOX_SPAN_CLASSES, checked && '!tw-line-through'])}
+                >
+                    {children}
+                </span>
             </div>
-            <span
-                style={getCheckboxListStyles(styles, element)}
-                className={merge([CHECKBOX_SPAN_CLASSES, checked && '!tw-line-through'])}
-            >
-                {children}
-            </span>
         </div>
     );
 };
