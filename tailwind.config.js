@@ -8,6 +8,7 @@ module.exports = {
             strategy: 'class',
         }),
     ],
+    prefix: 'tw-',
     theme: {
         extend: {
             outline: {

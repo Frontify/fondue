@@ -2,7 +2,7 @@
 
 import { TEditableProps, useFloatingLinkSelectors } from '@udecode/plate';
 import { EditModal } from './EditLinkModal';
-import { FloatingLink } from './FloatingLink';
+// import { FloatingLink } from './FloatingLink';
 import { InsertLinkModal } from './InsertLinkModal/InsertLinkModal';
 
 export const CustomFloatingLink = ({ readOnly }: TEditableProps) => {
@@ -15,11 +15,5 @@ export const CustomFloatingLink = ({ readOnly }: TEditableProps) => {
     const input = <InsertLinkModal />;
     const editContent = isEditing ? input : <EditModal />;
 
-    return (
-        <>
-            <FloatingLink.InsertRoot>{input}</FloatingLink.InsertRoot>
-
-            <FloatingLink.EditRoot>{editContent}</FloatingLink.EditRoot>
-        </>
-    );
+    return <div />;
 };

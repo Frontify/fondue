@@ -3,12 +3,12 @@
 import { getHotkeyByPlatform } from '@components/RichTextEditor/helpers/getHotkeyByPlatform';
 import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
 import { IconLink16 } from '@foundation/Icon/Generated';
-import { LinkToolbarButton, isRangeInSameBlock, useEventPlateId, usePlateEditorState } from '@udecode/plate';
+import { isRangeInSameBlock, useEventPlateId, useEditorState } from '@udecode/plate';
 import { ButtonWrapper, IconStylingWrapper, buttonStyles, getButtonClassNames } from '../helper';
 import { PluginButtonProps } from '../types';
 
 export const LinkButton = ({ id, editorId }: PluginButtonProps) => {
-    const editor = usePlateEditorState(useEventPlateId(editorId));
+    const editor = useEditorState(useEventPlateId(editorId));
     const isEnabled = !!isRangeInSameBlock(editor, {
         at: editor.selection,
     });
@@ -16,7 +16,7 @@ export const LinkButton = ({ id, editorId }: PluginButtonProps) => {
 
     return (
         <ButtonWrapper id={id}>
-            <LinkToolbarButton
+            {/* <LinkToolbarButton
                 tooltip={getTooltip(
                     isEnabled
                         ? `Link\n${getHotkeyByPlatform('Ctrl+K')}`
@@ -26,7 +26,8 @@ export const LinkButton = ({ id, editorId }: PluginButtonProps) => {
                 classNames={buttonClassNames}
                 styles={buttonStyles}
                 actionHandler="onMouseDown"
-            />
+            /> */}
+            <IconStylingWrapper icon={<IconLink16 />} />
         </ButtonWrapper>
     );
 };

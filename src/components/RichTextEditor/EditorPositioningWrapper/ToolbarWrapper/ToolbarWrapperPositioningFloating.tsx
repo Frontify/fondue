@@ -1,29 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useEffect, useRef, useState } from 'react';
-import { BalloonToolbar, ReferenceType, autoUpdate, flip, shift } from '@udecode/plate';
-import { OFFSET_IN_PX, calculateToolbarWidth } from '@components/RichTextEditor/utils';
+import { useEffect, useRef } from 'react';
+import { ReferenceType, autoUpdate, flip, shift } from '@udecode/plate';
 import { ToolbarWrapperProps } from './types';
+import { FloatingToolbar } from '@components/RichTextEditor/components/Toolbar';
 
-export const ToolbarWrapperPositioningFloating = ({
-    children,
-    editorWidth,
-    toolbarButtonGroups = [],
-    toolbarWidth,
-}: ToolbarWrapperProps) => {
-    const [width, setWidth] = useState<number | undefined>();
+export const ToolbarWrapperPositioningFloating = ({ children }: ToolbarWrapperProps) => {
     const cleanupFunction = useRef<() => void | undefined>();
-
-    useEffect(() => {
-        if (toolbarWidth) {
-            setWidth(toolbarWidth);
-        } else {
-            const toolbarWidthSum = calculateToolbarWidth(toolbarButtonGroups);
-            if (toolbarWidthSum > 0) {
-                setWidth(toolbarWidthSum + toolbarButtonGroups.length + OFFSET_IN_PX);
-            }
-        }
-    }, [editorWidth, toolbarWidth, toolbarButtonGroups]);
 
     useEffect(() => {
         const handleSelectionChange = () => {
@@ -48,20 +31,18 @@ export const ToolbarWrapperPositioningFloating = ({
     };
 
     return (
-        <BalloonToolbar
-            floatingOptions={{
-                middleware: [flip(), shift()],
-                whileElementsMounted: autoUpdateWithCleanup,
+        <FloatingToolbar
+            className="tw-rounded tw-whitespace-nowrap tw-min-h-12 tw-border tw-border-line tw-shadow-lg tw-bg-base tw-divide-y tw-divide-line tw-flex tw-flex-wrap tw-z-50"
+            state={{
+                floatingOptions: {
+                    middleware: [flip(), shift()],
+                    whileElementsMounted: autoUpdateWithCleanup,
+                },
             }}
-            styles={{ root: { border: 'none', background: '#ffffff', width, transitionDuration: '0s' } }}
         >
-            <div
-                data-selector="toolbar-floating"
-                data-test-id="toolbar-floating"
-                className="tw-rounded tw-min-h-12 tw-border tw-border-line tw-shadow-lg tw-bg-base tw-divide-y tw-divide-line tw-flex tw-flex-wrap"
-            >
+            <div data-selector="toolbar-floating" data-test-id="toolbar-floating">
                 {children}
             </div>
-        </BalloonToolbar>
+        </FloatingToolbar>
     );
 };

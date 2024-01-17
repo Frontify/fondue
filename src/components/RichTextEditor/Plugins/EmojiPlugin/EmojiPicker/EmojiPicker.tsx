@@ -1,13 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import {
-    EmojiPickerContent,
-    EmojiPickerNavigation,
-    EmojiPickerPreview,
-    EmojiPickerSearchAndClear,
-    EmojiPickerSearchBar,
-    UseEmojiPickerType,
-} from '@udecode/plate';
+import { UseEmojiPickerType } from '@udecode/plate-emoji';
 import { EmojiPickerSearchAndClearStyle, EmojiPickerSearchBarStyle } from './EmojiPickerStyles';
 
 export const EmojiPicker = ({
@@ -31,7 +24,7 @@ export const EmojiPicker = ({
 }: UseEmojiPickerType) => {
     return (
         <div className="tw-w-[316px] tw-h-[350px] tw-flex tw-flex-col tw-bg-base tw-shadow-md tw-rounded tw-border tw-border-line">
-            <EmojiPickerNavigation
+            {/* <EmojiPickerNavigation
                 i18n={i18n}
                 emojiLibrary={emojiLibrary}
                 icons={icons}
@@ -62,7 +55,8 @@ export const EmojiPicker = ({
                 onMouseOver={onMouseOver}
                 refs={refs}
             />
-            <EmojiPickerPreview i18n={i18n} emoji={emoji} hasFound={hasFound} isSearching={isSearching} />
+            <EmojiPickerPreview i18n={i18n} emoji={emoji} hasFound={hasFound} isSearching={isSearching} /> */}
+            emoji
         </div>
     );
 };

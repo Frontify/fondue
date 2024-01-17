@@ -2,19 +2,15 @@
 
 import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
 import { IconTextFormatStrikethrough } from '@foundation/Icon/Generated';
-import { MarkToolbarButton, getPluginType } from '@udecode/plate';
-import { ButtonWrapper, IconStylingWrapper, buttonStyles, getButtonClassNames } from '../helper';
+import { getPluginType } from '@udecode/plate';
+import { ButtonWrapper, IconStylingWrapper } from '../helper';
 import { PluginButtonProps } from '../types';
+import { MarkToolbarButton } from '@components/RichTextEditor/components/Toolbar';
 
 export const StrikethroughButton = ({ editor, id }: PluginButtonProps) => (
     <ButtonWrapper id={id}>
-        <MarkToolbarButton
-            tooltip={getTooltip('Strikethrough')}
-            type={getPluginType(editor, id)}
-            icon={<IconStylingWrapper icon={<IconTextFormatStrikethrough />} />}
-            classNames={getButtonClassNames()}
-            styles={buttonStyles}
-            actionHandler="onMouseDown"
-        />
+        <MarkToolbarButton tooltip={getTooltip('Strikethrough')} key={id} nodeType={getPluginType(editor, id)}>
+            <IconStylingWrapper icon={<IconTextFormatStrikethrough />} />
+        </MarkToolbarButton>
     </ButtonWrapper>
 );

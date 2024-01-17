@@ -1,20 +1,22 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
-import { IconListNumbers16 } from '@foundation/Icon/Generated';
-import { ListToolbarButton, getPluginType } from '@udecode/plate';
+// import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
+// import { IconListNumbers16 } from '@foundation/Icon/Generated';
+// import { ListToolbarButton, getPluginType } from '@udecode/plate';
+import { IconListNumbers16 } from '@foundation/Icon';
 import { ButtonWrapper, IconStylingWrapper, buttonStyles, getButtonClassNames } from '../../helper';
 import { PluginButtonProps } from '../../types';
 
 export const OrderedListButton = ({ editor, id }: PluginButtonProps) => (
     <ButtonWrapper id={id}>
-        <ListToolbarButton
+        {/* <ListToolbarButton
             tooltip={getTooltip('Ordered list')}
             type={getPluginType(editor, id)}
             icon={<IconStylingWrapper icon={<IconListNumbers16 />} />}
             classNames={getButtonClassNames()}
             styles={buttonStyles}
             actionHandler="onMouseDown"
-        />
+        /> */}
+        <IconStylingWrapper icon={<IconListNumbers16 />} />
     </ButtonWrapper>
 );

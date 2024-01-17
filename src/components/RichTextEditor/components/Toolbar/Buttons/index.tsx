@@ -1,3 +1,3 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export const FloatingLink = <div />;
+export * from './MarkToolbarButton';

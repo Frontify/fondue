@@ -2,7 +2,7 @@
 
 import { CSSProperties } from 'react';
 import { ReactEditor } from 'slate-react';
-import { PlateRenderElementProps, TElement, TTodoListItemElement, getRootProps, setNodes } from '@udecode/plate';
+import { PlateRenderElementProps, TElement, TTodoListItemElement, setNodes } from '@udecode/plate';
 import { merge } from '@utilities/merge';
 import { MarkupElement } from '../MarkupElement';
 import { ELEMENT_CHECK_ITEM } from './id';
@@ -17,13 +17,12 @@ export const CHECKBOX_SPAN_CLASSES = 'focus:tw-outline-none tw-w-auto tw-min-w-[
 
 export const CheckboxListElementNode = (props: PlateRenderElementProps) => {
     const { attributes, children, nodeProps, element, editor } = props;
-    const rootProps = getRootProps(props);
     const checked = element.checked as boolean;
     const align = (element.align as string) ?? 'left';
     const { styles } = useRichTextEditorContext();
 
     return (
-        <div {...attributes} {...rootProps} className={merge([CHECKBOX_DIV_CLASSES, justifyClassNames[align]])}>
+        <div {...attributes} className={merge([CHECKBOX_DIV_CLASSES, justifyClassNames[align]])}>
             <div contentEditable={false} className="tw-flex tw-items-center tw-justify-center tw-select-none">
                 <input
                     data-test-id="checkbox-input"

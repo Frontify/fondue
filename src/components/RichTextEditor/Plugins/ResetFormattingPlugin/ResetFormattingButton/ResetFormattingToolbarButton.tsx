@@ -1,25 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
-import { resetFormatting } from '@components/RichTextEditor/utils/resetFormatting';
-import {
-    ToolbarButton,
-    ToolbarButtonProps,
-    useEventPlateId,
-    usePlateEditorState,
-    withPlateProvider,
-} from '@udecode/plate';
+import { IconStylingWrapper } from '@components/RichTextEditor/Plugins/helper';
+import { IconEraser16 } from '@foundation/Icon';
 
-export const ResetFormattingToolbarButton = withPlateProvider(({ id, ...props }: ToolbarButtonProps) => {
-    const editor = usePlateEditorState(useEventPlateId(id));
+// import { ToolbarButton, ToolbarButtonProps, useEventPlateId, useEditorState, withPlateProvider } from '@udecode/plate';
 
-    return (
-        <ToolbarButton
-            tooltip={getTooltip('Clear formatting')}
-            onMouseDown={() => {
-                resetFormatting(editor);
-            }}
-            {...props}
-        />
-    );
-});
+export const ResetFormattingToolbarButton = ({ id, ...props }: any) => {
+    return <IconStylingWrapper icon={<IconEraser16 />} />;
+};

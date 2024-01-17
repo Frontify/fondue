@@ -8,7 +8,7 @@ import {
     TElement,
     findNodePath,
     getNodeAncestors,
-    usePlateEditorRef,
+    useEditorRef,
 } from '@udecode/plate';
 import { MarkupElement } from '../../MarkupElement';
 
@@ -39,7 +39,7 @@ export const OrderedListMarkupElementNode = ({
     children,
     element,
 }: PlateRenderLeafProps & { element: TElement }) => {
-    const editor = usePlateEditorRef();
+    const editor = useEditorRef();
     const nestingLevel = getNestingLevel(editor, element);
 
     return (
