@@ -72,14 +72,13 @@ export const SelectedAsset = ({
     return (
         <div
             className="tw-font-sans tw-w-full tw-text-s tw-bg-transparent tw-font-normal tw-min-w-0"
-            aria-labelledby={labelId}
             title={title}
             data-test-id="asset-single-input"
-            role="group"
         >
             <button
                 {...mergeProps(buttonProps, focusProps)}
                 ref={buttonRef}
+                aria-labelledby={labelId}
                 className={merge([
                     'tw-w-full tw-flex tw-border tw-rounded tw-overflow-hidden hover:tw-border-black-90 dark:hover:tw-border-black-40 focus-visible:tw-outline-none',
                     isFocusVisible && FOCUS_STYLE,
