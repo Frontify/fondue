@@ -75,6 +75,7 @@ export const SelectedAsset = ({
             aria-labelledby={labelId}
             title={title}
             data-test-id="asset-single-input"
+            role="group"
         >
             <button
                 {...mergeProps(buttonProps, focusProps)}

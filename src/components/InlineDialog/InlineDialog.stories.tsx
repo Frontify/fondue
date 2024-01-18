@@ -76,6 +76,7 @@ const Template: StoryFn<InlineDialogProps> = (args) => {
                         emphasis={ButtonEmphasis.Default}
                         icon={<IconDotsVertical16 />}
                         onClick={() => setIsOpen(!isOpen)}
+                        aria-label="Dialog Trigger"
                     ></Button>
                 </InlineDialog.Trigger>
                 <InlineDialog.Content>

@@ -98,7 +98,6 @@ export const Menu = ({
     return (
         <nav
             className={merge([CONTAINER_CLASSES, isMenuOpen ? 'tw-block' : 'tw-hidden'])}
-            role={isMenuOpen ? 'dialog' : ''}
             ref={setMenuContainerRef}
             style={menuOpenerRef ? popperInstance.styles.popper : {}}
             {...(menuOpenerRef ? popperInstance.attributes.popper : {})}
