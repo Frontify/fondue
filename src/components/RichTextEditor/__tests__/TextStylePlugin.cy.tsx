@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Position } from '../EditorPositioningWrapper';
 import { RichTextEditor } from '../RichTextEditor';
 import {
     RichTextEditorWithOrderedListStyles,
