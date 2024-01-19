@@ -68,6 +68,7 @@ export type TextInputBaseProps = {
     focusOnMount?: boolean;
     selectable?: boolean;
     extraActions?: TextInputExtraAction[];
+    ariaLabel?: string;
 } & AriaAttributes;
 
 export type TextInputProps =
@@ -151,6 +152,7 @@ export const TextInput = ({
     focusOnMount,
     selectable = false,
     extraActions,
+    'aria-label': ariaLabel,
     ...props
 }: TextInputProps): ReactElement => {
     const { isFocusVisible: inputIsFocusVisible, focusProps: inputFocusProps } = useFocusRing({ isTextInput: true });
@@ -223,6 +225,7 @@ export const TextInput = ({
                     {decorator}
                 </div>
             )}
+            <label htmlFor={useMemoizedId(propId)}>gzufd</label>
             <input
                 {...inputFocusProps}
                 id={useMemoizedId(propId)}

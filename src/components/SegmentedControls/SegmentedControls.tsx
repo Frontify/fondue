@@ -143,7 +143,7 @@ export const SegmentedControls = ({
     const id = useMemoizedId(propId);
     const groupProps = { onChange, value: activeItemId, label: ariaLabel, isDisabled: disabled };
     const radioGroupState = useRadioGroupState(groupProps);
-    const { radioGroupProps } = useRadioGroup(groupProps, radioGroupState);
+    const { radioGroupProps, labelProps } = useRadioGroup(groupProps, radioGroupState);
     const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
     const [activeBorderDimensions, setActiveBorderDimensions] = useState<{ x: string; width: string } | null>(null);
     const itemElements = useMemo(() => {
@@ -198,6 +198,8 @@ export const SegmentedControls = ({
         };
     }, [selectedIndex, setSliderDimensions]);
 
+    console.log(radioGroupProps);
+
     return (
         <div className="tw-flex">
             <fieldset
@@ -209,6 +211,9 @@ export const SegmentedControls = ({
                     alignment,
                 ])}
             >
+                <VisuallyHidden>
+                    <span {...labelProps}>{ariaLabel}</span>
+                </VisuallyHidden>
                 <motion.div
                     aria-hidden="true"
                     // div border is not included in width so it must be subtracted from translation.
