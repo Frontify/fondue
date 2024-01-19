@@ -102,7 +102,7 @@ export const Menu = ({
             style={menuOpenerRef ? popperInstance.styles.popper : {}}
             {...(menuOpenerRef ? popperInstance.attributes.popper : {})}
             data-test-id={dataTestId}
-            role={isMenuOpen ? 'dialog' : ''}
+            role={isMenuOpen ? 'navigation' : ''}
         >
             <ol className="tw-list-none" role="menu">
                 {children}
