@@ -8,7 +8,7 @@ import { useButton } from '@react-aria/button';
 import { FocusScope, useFocusRing } from '@react-aria/focus';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
-import { KeyboardEvent, ReactElement, ReactNode, useEffect, useRef, useState } from 'react';
+import { KeyboardEvent, ReactElement, ReactNode, useEffect, useId, useRef, useState } from 'react';
 import { getPaddingClasses } from './helpers';
 import { useClickOutside } from '@hooks/useClickOutside';
 import { CheckboxState } from '@components/Checkbox/Checkbox';
@@ -100,6 +100,8 @@ export const MultiSelect = ({
     useClickOutside(null, handleClose, [multiSelectRef?.current as HTMLElement, multiSelectMenuRef as HTMLElement]);
 
     const heightIsReady = maxHeight !== DEFAULT_DROPDOWN_MAX_HEIGHT;
+
+    const muliSelectContentId = useId();
 
     const toggleOpen = () => setOpen((open) => !open);
 
@@ -200,7 +202,10 @@ export const MultiSelect = ({
                             }
                             toggleOpen();
                         }}
-                        role="button"
+                        role="combobox"
+                        aria-expanded={open}
+                        aria-controls={muliSelectContentId}
+                        aria-label={ariaLabel}
                         {...focusProps}
                         tabIndex={0}
                         onKeyDown={handleSpacebarToggle}
@@ -238,6 +243,7 @@ export const MultiSelect = ({
             {open && heightIsReady && (
                 <EnablePortalWrapper enablePortal={enablePortal}>
                     <div
+                        id={muliSelectContentId}
                         ref={setMultiSelectMenuRef}
                         className="tw-absolute tw-left-0 tw-w-full tw-overflow-hidden tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-[120000] tw-bg-base tw-min-w-[18rem]"
                         key="content"

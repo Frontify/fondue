@@ -6,7 +6,6 @@ import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { InputLabel, InputLabelTooltipProps } from '@components/InputLabel/InputLabel';
-
 export const SWITCH_ID = 'switch-container';
 
 export type SwitchSize = 'small' | 'medium';
@@ -45,6 +44,7 @@ export type SwitchProps = {
     size?: SwitchSize;
     hug?: boolean;
     tooltip?: InputLabelTooltipProps;
+    ariaLabel?: string;
     onChange?: (e: MouseEvent) => void;
     'data-test-id'?: string;
 };
@@ -58,6 +58,7 @@ export const Switch = ({
     size = 'medium',
     mode = 'off',
     labelStyle = 'default',
+    ariaLabel = 'Switch',
     hug = false,
     tooltip,
     'data-test-id': dataTestId = 'switch',
@@ -158,6 +159,7 @@ export const Switch = ({
                 value={mode}
                 onClick={onChange}
                 type="button"
+                aria-label={ariaLabel}
             >
                 <div className={dotWrapperClasses}>
                     <div className={dotClasses} />
