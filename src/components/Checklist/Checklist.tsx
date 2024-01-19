@@ -83,7 +83,7 @@ export const Checklist = ({
     'data-test-id': dataTestId = 'checklist',
     ...props
 }: ChecklistProps) => {
-    const listContainerRef = useRef<HTMLUListElement | null>(null);
+    const listContainerRef = useRef<HTMLDivElement | null>(null);
     const state = useCheckboxGroupState({
         value: activeValues,
         onChange: setActiveValues,
@@ -98,7 +98,7 @@ export const Checklist = ({
     const columns = ('columns' in props && props.columns) || 1;
 
     return (
-        <ul
+        <div
             {...groupProps}
             data-test-id={dataTestId}
             className={merge([
@@ -110,7 +110,7 @@ export const Checklist = ({
         >
             {checkboxes.map((checkbox, index) => {
                 return (
-                    <li
+                    <div
                         key={checkbox.value}
                         style={{
                             maxWidth: listContainerRef?.current?.getBoundingClientRect().width,
@@ -121,10 +121,10 @@ export const Checklist = ({
                         }}
                     >
                         <ChecklistItem checkbox={checkbox} state={state} />
-                    </li>
+                    </div>
                 );
             })}
-        </ul>
+        </div>
     );
 };
 Checklist.displayName = 'FondueChecklist';

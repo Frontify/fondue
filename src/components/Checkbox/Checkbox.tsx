@@ -215,7 +215,6 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                                 ref={inputRef}
                                 className="tw-sr-only"
                                 data-test-id={`${dataTestId}-input`}
-                                aria-label={ariaLabel}
                                 role="checkbox"
                                 aria-checked={state === CheckboxState.Checked}
                                 required={required}
