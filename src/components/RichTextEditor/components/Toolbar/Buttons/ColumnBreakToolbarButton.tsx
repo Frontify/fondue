@@ -20,11 +20,15 @@ export const ColumnBreakToolbarButton = ({ id, ...props }: ComponentProps<typeof
 
     return (
         <ToolbarButton
-            // disabled={!isActive}
+            disabled={!canBreakAfter}
+            pressed={!isActive}
             tooltip={getTooltip(
                 canBreakAfter ? 'Column Break\nShift+Ctrl+Return' : 'Already at maximum numbers of columns',
             )}
-            onMouseDown={(event) => toggleColumnBreak(editor, columnCount, event)}
+            onPointerDown={(e) => e.preventDefault()}
+            onClick={(event) => {
+                toggleColumnBreak(editor, columnCount, event);
+            }}
             {...props}
         >
             <IconStylingWrapper icon={<IconTextColumnBreak16 />} />

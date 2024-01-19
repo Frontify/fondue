@@ -62,8 +62,9 @@ const ToolbarButton = withTooltip(
                 <ToolbarToggleItem
                     ref={ref}
                     className={merge([
-                        '!tw-w-6 !tw-h-6 tw-ml-0.5 !tw-text-text-weak tw-rounded hover:!tw-bg-box-selected hover:!tw-text-box-selected-inverse',
-                        pressed ? '!tw-bg-box-selected' : '',
+                        '!tw-w-6 !tw-h-6 !tw-items-center !tw-px-2 tw-ml-0.5 !tw-text-text-weak !tw-rounded-[6px] !tw-flex !tw-justify-center  disabled:!tw-cursor-not-allowed disabled:!tw-opacity-50 disabled:!tw-pointer-events-auto',
+                        pressed && !props.disabled ? '!tw-bg-box-selected' : '',
+                        !props.disabled ? 'hover:!tw-bg-box-selected hover:!tw-text-box-selected-inverse' : '',
                     ])}
                     value={pressed ? 'single' : ''}
                     {...props}
@@ -85,8 +86,9 @@ const ToolbarButton = withTooltip(
                 <ToolbarPrimitive.Button
                     ref={ref}
                     className={merge([
-                        '!tw-w-6 !tw-h-6 !tw-items-center !tw-px-2 tw-ml-0.5 !tw-text-text-weak !tw-rounded-[6px] !tw-flex !tw-justify-center hover:!tw-bg-box-selected hover:!tw-text-box-selected-inverse',
-                        pressed ? '!tw-bg-box-selected' : '',
+                        '!tw-w-6 !tw-h-6 !tw-items-center !tw-px-2 tw-ml-0.5 !tw-text-text-weak !tw-rounded-[6px] !tw-flex !tw-justify-center  disabled:!tw-cursor-not-allowed disabled:!tw-opacity-50 disabled:!tw-pointer-events-auto',
+                        pressed && !props.disabled ? '!tw-bg-box-selected' : '',
+                        !props.disabled ? 'hover:!tw-bg-box-selected hover:!tw-text-box-selected-inverse' : '',
                     ])}
                     {...props}
                 >
