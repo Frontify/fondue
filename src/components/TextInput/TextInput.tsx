@@ -16,6 +16,7 @@ import {
     ReactNode,
     forwardRef,
     useEffect,
+    useId,
     useRef,
     useState,
 } from 'react';
@@ -29,6 +30,7 @@ import {
     IconEyeOff,
 } from '@foundation/Icon/Generated';
 import { LegacyTooltip, LegacyTooltipProps } from '../LegacyTooltip';
+import { VisuallyHidden } from '@react-aria/visually-hidden';
 
 export enum TextInputType {
     Text = 'text',
@@ -152,7 +154,7 @@ export const TextInput = ({
     focusOnMount,
     selectable = false,
     extraActions,
-    'aria-label': ariaLabel,
+    'aria-label': ariaLabel = 'Text Input',
     ...props
 }: TextInputProps): ReactElement => {
     const { isFocusVisible: inputIsFocusVisible, focusProps: inputFocusProps } = useFocusRing({ isTextInput: true });
@@ -166,6 +168,7 @@ export const TextInput = ({
     const [isObfuscated, setIsObfuscated] = useState(
         typeof obfuscated === 'boolean' ? obfuscated : type === TextInputType.Password,
     );
+    const labelId = useId();
 
     useEffect(() => {
         setTimeout(() => {
@@ -225,8 +228,11 @@ export const TextInput = ({
                     {decorator}
                 </div>
             )}
-            <label htmlFor={useMemoizedId(propId)}>gzufd</label>
+            <VisuallyHidden>
+                <span id={labelId}>{ariaLabel}</span>
+            </VisuallyHidden>
             <input
+                aria-labelledby={labelId}
                 {...inputFocusProps}
                 id={useMemoizedId(propId)}
                 ref={inputElement}
