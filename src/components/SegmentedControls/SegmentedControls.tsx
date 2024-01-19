@@ -198,7 +198,6 @@ export const SegmentedControls = ({
         };
     }, [selectedIndex, setSliderDimensions]);
 
-    console.log(radioGroupProps);
 
     return (
         <div className="tw-flex">
