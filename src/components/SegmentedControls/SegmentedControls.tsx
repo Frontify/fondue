@@ -198,7 +198,6 @@ export const SegmentedControls = ({
         };
     }, [selectedIndex, setSliderDimensions]);
 
-
     return (
         <div className="tw-flex">
             <fieldset
