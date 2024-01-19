@@ -7,6 +7,7 @@ import { TextInput, TextInputProps, TextInputType } from './TextInput';
 import { Validation } from '@utilities/validation';
 import { IconIcon } from '@foundation/Icon/Generated';
 import { action } from '@storybook/addon-actions';
+import { FormField } from '..';
 
 export default {
     title: 'Components/Text Input',
@@ -49,7 +50,11 @@ const TextInputTemplate: StoryFn<TextInputProps> = (args: TextInputProps) => {
     const [input, setInput] = useState('');
     useEffect(() => setInput(`${args.value ?? ''}`), [args.value]);
 
-    return <TextInput {...args} value={input} onChange={setInput} />;
+    return (
+        <FormField label={{ text: 'sample' }} hiddenLabel>
+            <TextInput {...args} value={input} onChange={setInput} />
+        </FormField>
+    );
 };
 
 export const Text = TextInputTemplate.bind({});

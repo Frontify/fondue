@@ -7,7 +7,7 @@ import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
-import {
+import React, {
     AriaAttributes,
     FocusEvent,
     ForwardRefRenderFunction,
@@ -154,7 +154,6 @@ export const TextInput = ({
     focusOnMount,
     selectable = false,
     extraActions,
-    'aria-label': ariaLabel = 'Text Input',
     ...props
 }: TextInputProps): ReactElement => {
     const { isFocusVisible: inputIsFocusVisible, focusProps: inputFocusProps } = useFocusRing({ isTextInput: true });
@@ -168,7 +167,6 @@ export const TextInput = ({
     const [isObfuscated, setIsObfuscated] = useState(
         typeof obfuscated === 'boolean' ? obfuscated : type === TextInputType.Password,
     );
-    const labelId = useId();
 
     useEffect(() => {
         setTimeout(() => {
@@ -228,11 +226,7 @@ export const TextInput = ({
                     {decorator}
                 </div>
             )}
-            <VisuallyHidden>
-                <span id={labelId}>{ariaLabel}</span>
-            </VisuallyHidden>
             <input
-                aria-labelledby={labelId}
                 {...inputFocusProps}
                 id={useMemoizedId(propId)}
                 ref={inputElement}
