@@ -7,7 +7,7 @@ import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
-import React, {
+import {
     AriaAttributes,
     FocusEvent,
     ForwardRefRenderFunction,
@@ -16,7 +16,6 @@ import React, {
     ReactNode,
     forwardRef,
     useEffect,
-    useId,
     useRef,
     useState,
 } from 'react';
@@ -30,8 +29,6 @@ import {
     IconEyeOff,
 } from '@foundation/Icon/Generated';
 import { LegacyTooltip, LegacyTooltipProps } from '../LegacyTooltip';
-import { VisuallyHidden } from '@react-aria/visually-hidden';
-
 export enum TextInputType {
     Text = 'text',
     Password = 'password',
