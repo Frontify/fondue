@@ -81,18 +81,18 @@ const ToolbarButton = withTooltip(
                 </ToolbarToggleItem>
             </ToolbarToggleGroup>
         ) : (
-            <ToolbarPrimitive.Button
-                ref={ref}
-                className={merge([
-                    'w-6 h-6 tw-ml-0.5  hover:!tw-bg-box-selected hover:!tw-text-box-selected-inverse hover:tw-rounded',
-                    pressed
-                        ? '!tw-hidden !tw-bg-box-selected tw-rounded !tw-text-box-selected-inverse'
-                        : '!tw-text-text-weak',
-                ])}
-                {...props}
-            >
-                {children}
-            </ToolbarPrimitive.Button>
+            <div className="tw-flex tw-items-center">
+                <ToolbarPrimitive.Button
+                    ref={ref}
+                    className={merge([
+                        '!tw-w-6 !tw-h-6 !tw-items-center !tw-px-2 tw-ml-0.5 !tw-text-text-weak !tw-rounded-[6px] !tw-flex !tw-justify-center hover:!tw-bg-box-selected hover:!tw-text-box-selected-inverse',
+                        pressed ? '!tw-bg-box-selected' : '',
+                    ])}
+                    {...props}
+                >
+                    {children}
+                </ToolbarPrimitive.Button>
+            </div>
         );
     }),
 );
