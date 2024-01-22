@@ -7,6 +7,7 @@ import { TextInput, TextInputProps, TextInputType } from './TextInput';
 import { Validation } from '@utilities/validation';
 import { IconIcon } from '@foundation/Icon/Generated';
 import { action } from '@storybook/addon-actions';
+import { FormField } from '../FormField';
 
 export default {
     title: 'Components/Text Input',
