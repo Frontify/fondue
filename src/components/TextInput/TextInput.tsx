@@ -29,7 +29,6 @@ import {
     IconEyeOff,
 } from '@foundation/Icon/Generated';
 import { LegacyTooltip, LegacyTooltipProps } from '../LegacyTooltip';
-
 export enum TextInputType {
     Text = 'text',
     Password = 'password',
@@ -68,6 +67,7 @@ export type TextInputBaseProps = {
     focusOnMount?: boolean;
     selectable?: boolean;
     extraActions?: TextInputExtraAction[];
+    ariaLabel?: string;
 } & AriaAttributes;
 
 export type TextInputProps =

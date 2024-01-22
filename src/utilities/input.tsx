@@ -126,7 +126,6 @@ export const InputActions = ({
                     icon={<IconCross16 />}
                     title="Clear Input"
                     size={ButtonSize.Small}
-                    aria-describedby="Clear Input Value"
                     aria-label="Clear value"
                     data-test-id={`${dataTestId}-clear`}
                 />
