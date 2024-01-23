@@ -59,6 +59,7 @@ export const CustomColorPicker = ({
                             onChange={setHexInput}
                             onEnterPressed={handleHexChange}
                             onBlur={handleHexChange}
+                            aria-label="Color HEX Value"
                         />
                     </div>
                 ) : (
@@ -71,6 +72,7 @@ export const CustomColorPicker = ({
                                 type={TextInputType.Number}
                                 value={red.toString()}
                                 onChange={(value) => onSelect({ ...currentColor, red: parseInt(value) })}
+                                aria-label="Color Code Type"
                             />
                         </div>
                         <div className="tw-flex-1">
@@ -81,6 +83,7 @@ export const CustomColorPicker = ({
                                 type={TextInputType.Number}
                                 value={green.toString()}
                                 onChange={(value) => onSelect({ ...currentColor, green: parseInt(value) })}
+                                aria-label="Color Value"
                             />
                         </div>
                         <div className="tw-flex-1">
@@ -91,6 +94,7 @@ export const CustomColorPicker = ({
                                 type={TextInputType.Number}
                                 value={blue.toString()}
                                 onChange={(value) => onSelect({ ...currentColor, blue: parseInt(value) })}
+                                aria-label="Color Opacity"
                             />
                         </div>
                     </>

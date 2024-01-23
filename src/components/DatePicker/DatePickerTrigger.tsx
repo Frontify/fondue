@@ -50,7 +50,7 @@ export const DatePickerTrigger = forwardRef<HTMLDivElement, DatePickerTriggerPro
 
         /* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
         return (
-            <div ref={ref} aria-hidden="true">
+            <div ref={ref}>
                 <div
                     className={merge([
                         'tw-absolute tw-top-2 tw-text-black-60 tw-z-[1]',
