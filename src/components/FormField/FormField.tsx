@@ -8,6 +8,7 @@ import { HelperText } from '@utilities/input';
 import { Validation } from '@utilities/validation';
 import { generateRandomId } from '@utilities/generateRandomId';
 import { Tooltip, TooltipProps } from '@components/Tooltip/Tooltip';
+import { VisuallyHidden } from '@react-aria/visually-hidden';
 
 export type LabelProps = {
     text: string;
@@ -121,9 +122,14 @@ export const FormField = ({
             ])}
             data-test-id={`${dataTestId}-label`}
         >
-            {hiddenLabel ? null : (
+            {hiddenLabel ? (
+                <VisuallyHidden>
+                    <span>{label.text}</span>
+                </VisuallyHidden>
+            ) : (
                 <FormattedLabel label={label} dataTestId={dataTestId} disabled={disabled} readOnly={readOnly} />
             )}
+
             <div className={'tw-w-full tw-flex tw-flex-col tw-gap-2'} data-test-id={`${dataTestId}-input`}>
                 {cloneElement(children, {
                     hugWidth: label.hugWidth,

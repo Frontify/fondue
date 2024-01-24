@@ -7,6 +7,7 @@ import { TextInput, TextInputProps, TextInputType } from './TextInput';
 import { Validation } from '@utilities/validation';
 import { IconIcon } from '@foundation/Icon/Generated';
 import { action } from '@storybook/addon-actions';
+import { FormField } from '../FormField';
 
 export default {
     title: 'Components/Text Input',
@@ -47,9 +48,13 @@ export default {
 
 const TextInputTemplate: StoryFn<TextInputProps> = (args: TextInputProps) => {
     const [input, setInput] = useState('');
-    useEffect(() => setInput(`${args.value || ''}`), [args.value]);
+    useEffect(() => setInput(`${args.value ?? ''}`), [args.value]);
 
-    return <TextInput {...args} value={input} onChange={setInput} />;
+    return (
+        <FormField label={{ text: 'sample' }} hiddenLabel>
+            <TextInput {...args} value={input} onChange={setInput} />
+        </FormField>
+    );
 };
 
 export const Text = TextInputTemplate.bind({});
@@ -174,11 +179,20 @@ WithExtraActionWithTooltip.args = {
     value: 'Value text',
     extraActions: [
         {
-            title: 'Extra action',
-            onClick: action('extraAction'),
+            title: 'First extra action',
+            onClick: action('extraAction1'),
             icon: <IconIcon />,
             tooltip: {
-                content: 'Tooltip content',
+                content: 'First extra action tooltip content',
+                withArrow: true,
+            },
+        },
+        {
+            title: 'Second extra action',
+            onClick: action('extraAction2'),
+            icon: <IconIcon />,
+            tooltip: {
+                content: 'Second extra action tooltip content',
                 withArrow: true,
             },
         },

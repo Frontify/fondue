@@ -84,7 +84,7 @@ export const FormattedBreadcrumbs = ({
                 );
 
             default:
-                return <span key={key} />;
+                return <li key={key} />;
         }
     });
     return [...elements];

@@ -306,7 +306,7 @@ export const LegacyTooltip = ({
     return (
         <>
             <div {...openingEvents} ref={setTriggerElementContainerRef}>
-                <div ref={setTriggerElementRef} aria-labelledby={id} aria-disabled={shouldPreventTooltipOpening}>
+                <div ref={setTriggerElementRef} aria-describedby={id} role="tooltip">
                     {triggerElement}
                 </div>
             </div>

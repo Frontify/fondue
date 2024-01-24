@@ -100,11 +100,11 @@ export const Menu = ({
     return (
         <nav
             className={merge([CONTAINER_CLASSES, isMenuOpen ? 'tw-block' : 'tw-hidden'])}
-            role={isMenuOpen ? 'menu' : ''}
             ref={setMenuContainerRef}
             style={menuOpenerRef ? popperInstance.styles.popper : {}}
             {...(menuOpenerRef ? popperInstance.attributes.popper : {})}
             data-test-id={dataTestId}
+            role={isMenuOpen ? 'navigation' : ''}
         >
             <ol ref={dismissibleElementRef} className="tw-list-none">
                 {children}
