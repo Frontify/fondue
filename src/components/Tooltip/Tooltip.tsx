@@ -2,17 +2,13 @@
 
 import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 import { PopperPlacement } from '@components/Popper';
-import { usePopper } from 'react-popper';
 import { merge } from '@utilities/merge';
-import { useToggleOverlay } from '@hooks/useToggleOverlay';
 import { Z_INDEX_TOOLTIP } from '@utilities/dialogs/constants';
-import { EnablePortalWrapper } from '@utilities/dialogs/EnablePortalWrapper';
-import { useMemoizedId } from '@hooks/useMemoizedId';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
+import { ARROW_DARK_THEME } from '@utilities/overlayStyle';
+import { Overlay } from '@utilities/dialogs/Overlay';
+import { Modality } from '../../types';
 import { checkIfContainInteractiveElements } from '@utilities/elements';
-
-const ARROW_DISTANCE_FROM_CORNER_VALUE = 12;
-const TOOLTIP_EXTRA_OFFSET_VALUE = 7; // As the arrow is set 12px away from tooltip corner, extra offset should be added to still point to Trigger.
 
 export type TooltipProps = {
     id?: string;
@@ -32,38 +28,11 @@ export type TooltipProps = {
     'data-test-id'?: string;
     zIndex?: number;
     disabled?: boolean;
-    'aria-label'?: string;
-};
-
-const getArrowClasses = (currentPlacement: string) => {
-    switch (true) {
-        case currentPlacement.includes('top'):
-            return 'before:tw-border-t-0 before:tw-border-l-0 tw-bottom-[-6px]';
-        case currentPlacement.includes('right'):
-            return 'before:tw-border-t-0 before:tw-border-r-0 tw-left-[-6px]';
-        case currentPlacement.includes('bottom'):
-            return 'before:tw-border-b-0 before:tw-border-r-0 tw-top-[-6px]';
-        case currentPlacement.includes('left'):
-            return 'before:tw-border-b-0 before:tw-border-l-0 tw-right-[-6px]';
-        default:
-            return 'before:tw-border-b-0 before:tw-border-r-0 tw-top-[-6px]';
-    }
 };
 
 const formatTooltipText = (text: string) => {
     const lineBreakRegex = /<br\s*\/?>/;
     return text.split(lineBreakRegex).join('\n');
-};
-
-const getNewOffsetBasedOnArrowPosition = (currentPlacement: string, offset: [number, number]): [number, number] => {
-    switch (true) {
-        case currentPlacement.includes('end'):
-            return [offset[0] + TOOLTIP_EXTRA_OFFSET_VALUE, offset[1]];
-        case currentPlacement.includes('start'):
-            return [offset[0] - TOOLTIP_EXTRA_OFFSET_VALUE, offset[1]];
-        default:
-            return offset;
-    }
 };
 
 type TimeoutRef = {
@@ -83,7 +52,7 @@ const handleTimeout = (callback: () => void, delay: number, timeoutRef: TimeoutR
 };
 
 export const Tooltip = ({
-    id: customId,
+    id,
     children,
     offset = [0, 8],
     flip = true,
@@ -101,41 +70,14 @@ export const Tooltip = ({
     zIndex = Z_INDEX_TOOLTIP,
     'data-test-id': dataTestId = 'fondue-tooltip',
 }: TooltipProps) => {
-    const id = useMemoizedId(customId);
-    const [open, setOpen] = useToggleOverlay(openOnMount);
-    const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
-    const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
-    const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
-    const [tooltipOffset, setTooltipOffset] = useState<[number, number]>(offset);
+    const [open, setOpen] = useState(openOnMount);
+    const triggerRef = useRef<HTMLDivElement | null>(null);
+    const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const [hasInteractiveElements, setHasInteractiveElements] = useState(false);
 
     useEffect(() => {
-        setHasInteractiveElements(checkIfContainInteractiveElements(referenceElement));
-    }, [children, referenceElement]);
-
-    const { styles, attributes, state } = usePopper(referenceElement, popperElement, {
-        placement,
-        modifiers: [
-            { name: 'arrow', options: { element: arrowElement, padding: ARROW_DISTANCE_FROM_CORNER_VALUE } },
-            { name: 'offset', options: { offset: tooltipOffset } },
-            { name: 'flip', enabled: flip },
-        ],
-    });
-
-    const currentPlacement = state?.placement ?? placement;
-    const arrowStyling = getArrowClasses(currentPlacement);
-    const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-    useEffect(() => {
-        const newOffset = withArrow ? getNewOffsetBasedOnArrowPosition(currentPlacement, offset) : offset;
-
-        setTooltipOffset((prevOffset) => {
-            if (newOffset[0] !== prevOffset[0] || newOffset[1] !== prevOffset[1]) {
-                return newOffset;
-            }
-            return prevOffset;
-        });
-    }, [currentPlacement, offset, withArrow]);
+        setHasInteractiveElements(checkIfContainInteractiveElements(triggerRef.current));
+    }, [children, triggerRef]);
 
     const handleHideTooltip = useCallback(() => {
         if (!disabled) {
@@ -165,7 +107,7 @@ export const Tooltip = ({
     return (
         <>
             <div
-                ref={setReferenceElement}
+                ref={triggerRef}
                 tabIndex={hasInteractiveElements || disabled ? undefined : 0}
                 aria-describedby={id}
                 aria-disabled={disabled}
@@ -175,39 +117,37 @@ export const Tooltip = ({
             >
                 {children}
             </div>
-
-            {open && (
-                <EnablePortalWrapper enablePortal={enablePortal}>
-                    <div
-                        data-test-id={dataTestId}
-                        role="tooltip"
-                        id={id}
-                        aria-hidden={!open}
-                        ref={setPopperElement}
-                        className={merge([
-                            'tw-popper-container tw-inline-block tw-bg-box-neutral-mighty tw-rounded-md tw-shadow tw-text-heading-medium tw-text-box-neutral-mighty-inverse tw-border tw-border-line-mighty',
-                            size === 'spacious' ? 'tw-pt-2 tw-px-3 tw-pb-2.5' : 'tw-pt-1 tw-px-2 tw-pb-1.5',
-                        ])}
-                        style={{ ...styles.popper, maxWidth, maxHeight, zIndex }}
-                        {...attributes.popper}
-                    >
-                        <p className="tw-whitespace-pre-line tw-break-words">{formatTooltipText(content)}</p>
-                        {withArrow && (
-                            <div
-                                data-test-id={`${dataTestId}-arrow`}
-                                data-popper-arrow={withArrow}
-                                aria-hidden="true"
-                                ref={setArrowElement}
-                                style={styles.arrow}
-                                className={merge([
-                                    'tw-absolute tw-w-3 tw-h-3 tw-pointer-events-none before:tw-absolute before:tw-w-3 before:tw-h-3 before:tw-rotate-45 before:tw-border before:tw-border-line-mighty before:tw-bg-box-neutral-mighty',
-                                    arrowStyling,
-                                ])}
-                            />
-                        )}
-                    </div>
-                </EnablePortalWrapper>
-            )}
+            <Overlay
+                id={id}
+                aria-hidden={!open}
+                open={open}
+                theme="dark"
+                withArrow={withArrow}
+                arrowCustomColors={ARROW_DARK_THEME}
+                anchor={triggerRef}
+                placement={placement}
+                offset={offset}
+                flip={flip}
+                enablePortal={enablePortal}
+                role="tooltip"
+                data-test-id={dataTestId}
+                modality={Modality.NonModal}
+                maxWidth={maxWidth}
+                maxHeight={maxHeight}
+                zIndex={zIndex}
+                handleClose={() => setOpen(false)}
+                shadow="none"
+                isDialog={false}
+            >
+                <p
+                    className={merge([
+                        size === 'spacious' ? 'tw-pt-2 tw-px-3 tw-pb-2.5' : 'tw-pt-1 tw-px-2 tw-pb-1.5',
+                        'tw-text-heading-medium tw-whitespace-pre-line tw-break-words',
+                    ])}
+                >
+                    {formatTooltipText(content)}
+                </p>
+            </Overlay>
         </>
     );
 };

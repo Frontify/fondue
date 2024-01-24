@@ -1,57 +1,33 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { InlineDialog, InlineDialogProps } from './InlineDialog';
-import { useToggleOverlay } from '@hooks/useToggleOverlay';
-import { Modality } from '../../types/dialog';
+import { Modality } from '../../types';
 import { Button, ButtonEmphasis } from '@components/Button';
 import IconDotsVertical16 from '@foundation/Icon/Generated/IconDotsVertical16';
 import { DialogBody } from '@components/DialogBody';
 import { Box } from '@components/Box';
 import { Dropdown } from '@components/Dropdown';
+import { useRef, useState } from 'react';
 
 const INLINE_DIALOG_TRIGGER_SELECTOR = '[data-test-id=fondue-inlineDialog-trigger]';
 const INLINE_DIALOG_SELECTOR = '[data-test-id=fondue-inlineDialog-content]';
 const OUTSIDE_DIALOG_BUTTON = '[data-test-id=outside-button]';
-const DARK_UNDERLAY = '[data-test-id=fondue-inlineDialog-underlay]';
+const INLINE_DIALOG_UNDERLAY = '[data-test-id=fondue-inlineDialog-underlay]';
 
-const InlineDialogComponent = ({
-    minHeight,
-    maxHeight,
-    minWidth,
-    maxWidth,
-    modality,
-    placement,
-    flip,
-    offset,
-    enablePortal,
-    darkUnderlay,
-    autoHeight,
-}: Omit<InlineDialogProps, 'open'>) => {
-    const [isOpen, setIsOpen] = useToggleOverlay(false, { isBlockingModal: modality === Modality.BlockingModal });
+const InlineDialogComponent = (props: Omit<InlineDialogProps, 'open' | 'anchor' | 'handleClose'>) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const triggerRef = useRef<HTMLButtonElement | null>(null);
+
     return (
-        <InlineDialog
-            open={isOpen}
-            minHeight={minHeight}
-            maxHeight={maxHeight}
-            minWidth={minWidth}
-            maxWidth={maxWidth}
-            handleClose={() => setIsOpen(false)}
-            modality={modality}
-            placement={placement}
-            flip={flip}
-            offset={offset}
-            enablePortal={enablePortal}
-            darkUnderlay={darkUnderlay}
-            autoHeight={autoHeight}
-        >
-            <InlineDialog.Trigger>
-                <Button
-                    emphasis={ButtonEmphasis.Default}
-                    icon={<IconDotsVertical16 />}
-                    onClick={() => setIsOpen(!isOpen)}
-                ></Button>
-            </InlineDialog.Trigger>
-            <InlineDialog.Content>
+        <>
+            <Button
+                ref={triggerRef}
+                emphasis={ButtonEmphasis.Default}
+                icon={<IconDotsVertical16 />}
+                onClick={() => setIsOpen(!isOpen)}
+                data-test-id="fondue-inlineDialog-trigger"
+            ></Button>
+            <InlineDialog anchor={triggerRef} open={isOpen} handleClose={() => setIsOpen(false)} {...props}>
                 <DialogBody>
                     <Box className="tw-p-4">
                         <Dropdown
@@ -78,8 +54,8 @@ const InlineDialogComponent = ({
                         <Button onClick={() => setIsOpen(!isOpen)}>Close</Button>
                     </Box>
                 </DialogBody>
-            </InlineDialog.Content>
-        </InlineDialog>
+            </InlineDialog>
+        </>
     );
 };
 describe('InlineDialog Component', () => {
@@ -275,22 +251,35 @@ describe('InlineDialog Component', () => {
         });
     });
 
-    describe('Dark Underlay', () => {
-        it('should not render a dark underlay as a non-modal', () => {
-            cy.mount(<InlineDialogComponent modality={Modality.NonModal} darkUnderlay={true} />);
+    describe('Styling', () => {
+        it('renders with rounded corners by default', () => {
+            cy.mount(<InlineDialogComponent />);
             cy.get(INLINE_DIALOG_TRIGGER_SELECTOR).children().eq(0).click();
-            cy.get(DARK_UNDERLAY).should('not.exist');
+            cy.get(INLINE_DIALOG_SELECTOR).should('have.css', 'border-radius', '4px');
         });
 
-        it('should render a dark underlay as a modal', () => {
-            cy.mount(<InlineDialogComponent modality={Modality.Modal} darkUnderlay={true} />);
+        it('should render without rounded corners', () => {
+            cy.mount(<InlineDialogComponent roundedCorners={false} />);
             cy.get(INLINE_DIALOG_TRIGGER_SELECTOR).children().eq(0).click();
-            cy.get(DARK_UNDERLAY).should('exist');
+            cy.get(INLINE_DIALOG_SELECTOR).should('have.css', 'border-radius', '0px');
         });
-        it('should render a dark underlay as a blocking-modal', () => {
-            cy.mount(<InlineDialogComponent modality={Modality.BlockingModal} darkUnderlay={true} />);
+
+        it('should be responsive', () => {
+            cy.mount(<InlineDialogComponent />);
+            cy.viewport(700, 900);
             cy.get(INLINE_DIALOG_TRIGGER_SELECTOR).children().eq(0).click();
-            cy.get(DARK_UNDERLAY).should('exist');
+            cy.get(INLINE_DIALOG_SELECTOR).should('have.css', 'min-width', '360px'); // 360px default on larger screen
+            cy.viewport(360, 745);
+            cy.get(INLINE_DIALOG_SELECTOR).should('have.css', 'min-width', '324px'); // 90vw on mobile view.
+            cy.viewport(1200, 900);
+            cy.get(INLINE_DIALOG_SELECTOR).should('have.css', 'min-width', '360px'); // 360px default on larger screen
+        });
+
+        it('should render with darkUnderlay on mobile view', () => {
+            cy.mount(<InlineDialogComponent />);
+            cy.viewport(360, 745);
+            cy.get(INLINE_DIALOG_TRIGGER_SELECTOR).children().eq(0).click();
+            cy.get(INLINE_DIALOG_UNDERLAY).should('exist');
         });
     });
 });

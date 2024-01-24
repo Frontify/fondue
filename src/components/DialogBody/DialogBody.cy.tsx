@@ -70,9 +70,20 @@ describe('DialogBody Component', () => {
             cy.get(DIALOG_BODY_SELECTOR).should('have.css', 'padding', '0px');
         });
 
-        it('should render with small padding', () => {
+        it('should render with no padding', () => {
             cy.mount(
-                <DialogBody padding="small">
+                <DialogBody>
+                    <p>Hello</p>
+                </DialogBody>,
+            );
+
+            cy.get(DIALOG_BODY_SELECTOR).should('exist');
+            cy.get(DIALOG_BODY_SELECTOR).should('have.class', 'tw-p-0');
+        });
+
+        it('should render with compact padding', () => {
+            cy.mount(
+                <DialogBody padding="compact">
                     <p>Hello</p>
                 </DialogBody>,
             );
@@ -81,9 +92,9 @@ describe('DialogBody Component', () => {
             cy.get(DIALOG_BODY_SELECTOR).should('have.class', 'tw-p-4');
         });
 
-        it('should render with medium padding', () => {
+        it('should render with comfortable padding', () => {
             cy.mount(
-                <DialogBody padding="medium">
+                <DialogBody padding="comfortable">
                     <p>Hello</p>
                 </DialogBody>,
             );
@@ -92,9 +103,9 @@ describe('DialogBody Component', () => {
             cy.get(DIALOG_BODY_SELECTOR).should('have.class', 'tw-p-6');
         });
 
-        it('should render with large padding', () => {
+        it('should render with spacious padding', () => {
             cy.mount(
-                <DialogBody padding="large">
+                <DialogBody padding="spacious">
                     <p>Hello</p>
                 </DialogBody>,
             );

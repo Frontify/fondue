@@ -1,13 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 
-export const useToggleOverlay = (
-    initialState = false,
+export const useHandleCloseOnEscape = (
+    open: boolean,
     { isBlockingModal, callback }: { isBlockingModal?: boolean; callback?: () => void } = { isBlockingModal: false },
-): [boolean, (value: boolean) => void] => {
-    const [open, setOpen] = useState<boolean>(initialState);
-
+): void => {
     const checkKeyboardEvent = useCallback(
         (event: KeyboardEvent) => {
             const callbackFnc = typeof callback === 'function' ? callback : () => ({});
@@ -16,7 +14,6 @@ export const useToggleOverlay = (
                 event.stopPropagation();
             }
             if (open && !isBlockingModal && event.key === 'Escape') {
-                setOpen(false);
                 callbackFnc();
             }
         },
@@ -30,6 +27,4 @@ export const useToggleOverlay = (
             window.removeEventListener('keydown', checkKeyboardEvent);
         };
     }, [checkKeyboardEvent, isBlockingModal]);
-
-    return [open, setOpen];
 };

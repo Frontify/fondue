@@ -1,16 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { BaseDialogProps, Modality, OverlayProps } from '../../types/dialog';
+import { BaseDialogProps, Modality, OverlayProps } from '../../types';
 import { Overlay } from '@utilities/dialogs/Overlay';
 import { Z_INDEX_MODAL } from '@utilities/dialogs/constants';
-import { Trigger } from '@utilities/dialogs/Trigger';
-import { Content } from '@utilities/dialogs/Content';
 
-export type DialogProps = Omit<OverlayProps, 'placement' | 'flip' | 'offset'> & BaseDialogProps;
+export type DialogProps = Omit<
+    OverlayProps,
+    'placement' | 'flip' | 'offset' | 'theme' | 'withArrow' | 'arrowCustomColors' | 'shadow' | 'isDialog'
+> &
+    Omit<BaseDialogProps, 'width'>;
 
 export const Dialog = ({
     children,
     open,
+    anchor,
     enablePortal = true,
     maxHeight = 'auto',
     maxWidth,
@@ -22,11 +25,13 @@ export const Dialog = ({
     darkUnderlay = false,
     autoHeight = false,
     verticalAlignment = 'centered',
+    roundedCorners = true,
 }: DialogProps) => {
     return (
         <Overlay
             data-test-id={dataTestId}
             open={open}
+            anchor={anchor}
             enablePortal={enablePortal}
             minWidth={minWidth}
             minHeight={minHeight}
@@ -41,11 +46,11 @@ export const Dialog = ({
             isDetached={true}
             verticalAlignment={verticalAlignment}
             strategy={modality === Modality.NonModal ? 'absolute' : 'fixed'}
+            roundedCorners={roundedCorners}
+            borderRadius="large"
         >
             {children}
         </Overlay>
     );
 };
 Dialog.displayName = 'FondueDialog';
-Dialog.Trigger = Trigger;
-Dialog.Content = Content;

@@ -1,34 +1,39 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { BaseDialogProps, Modality, OverlayProps } from '../../types/dialog';
-import { Trigger } from '@utilities/dialogs/Trigger';
-import { Content } from '@utilities/dialogs/Content';
+import { BaseDialogProps, Modality, OverlayProps } from '../../types';
 import { Overlay } from '@utilities/dialogs/Overlay';
 import { Z_INDEX_MODAL } from '@utilities/dialogs/constants';
 
-export type InlineDialogProps = Omit<OverlayProps, 'strategy'> & BaseDialogProps;
+export type InlineDialogProps = Omit<
+    OverlayProps,
+    'theme' | 'isDetached' | 'verticalAlignment' | 'withArrow' | 'arrowCustomColors' | 'shadow' | 'isDialog'
+> &
+    Omit<BaseDialogProps, 'darkUnderlay'>;
 
 export const InlineDialog = ({
     children,
     open,
+    anchor,
     placement = 'bottom-start',
     offset = [0, 8],
     flip = false,
     enablePortal = true,
     maxHeight = 'auto',
-    maxWidth = 400,
+    maxWidth = 360,
     minHeight = 0,
-    minWidth = 0,
+    minWidth = 360,
     modality = Modality.Modal,
     handleClose,
     'data-test-id': dataTestId = 'fondue-inlineDialog',
-    darkUnderlay = false,
     autoHeight = false,
+    roundedCorners = true,
+    width = 360,
 }: InlineDialogProps) => {
     return (
         <Overlay
             data-test-id={dataTestId}
             open={open}
+            anchor={anchor}
             placement={placement}
             offset={offset}
             flip={flip}
@@ -40,14 +45,15 @@ export const InlineDialog = ({
             modality={modality}
             handleClose={handleClose}
             role={modality === Modality.NonModal ? 'region' : 'dialog'}
-            darkUnderlay={darkUnderlay}
             autoHeight={autoHeight}
             zIndex={Z_INDEX_MODAL}
+            roundedCorners={roundedCorners}
+            borderRadius="small"
+            shadow="medium"
+            width={width}
         >
             {children}
         </Overlay>
     );
 };
 InlineDialog.displayName = 'FondueInlineDialog';
-InlineDialog.Trigger = Trigger;
-InlineDialog.Content = Content;

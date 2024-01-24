@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 
@@ -28,7 +28,7 @@ import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
 import { Container } from '@components/Container';
 import { InlineDialog } from '@components/InlineDialog';
 import { DialogBody } from '@components/DialogBody';
-import { Modality } from '../../types/dialog';
+import { Modality } from '../../types';
 
 export default {
     title: 'Components/Tree',
@@ -455,6 +455,7 @@ export const WithExpandOnSelect = ({ ...args }: TreeProps) => {
 
 export const InsideInlineDialog = ({ ...args }: TreeProps) => {
     const [expandedIds, setExpandedIds] = useState<string[]>([]);
+    const dialogTriggerRef = useRef<HTMLButtonElement | null>(null);
 
     const handleItemExpand = useCallback((id: string) => {
         setExpandedIds((ids) => [...ids, id]);
@@ -468,34 +469,32 @@ export const InsideInlineDialog = ({ ...args }: TreeProps) => {
 
     return (
         <Container maxWidth="800px">
+            <Button
+                ref={dialogTriggerRef}
+                style={ButtonStyle.Default}
+                emphasis={ButtonEmphasis.Strong}
+                onClick={() => setIsOpen(!isOpen)}
+            >
+                Click me
+            </Button>
             <InlineDialog
+                anchor={dialogTriggerRef}
                 open={isOpen}
                 modality={Modality.NonModal}
                 enablePortal={true}
                 handleClose={() => setIsOpen(false)}
             >
-                <InlineDialog.Trigger>
-                    <Button
-                        style={ButtonStyle.Default}
-                        emphasis={ButtonEmphasis.Strong}
-                        onClick={() => setIsOpen(!isOpen)}
+                <DialogBody>
+                    <TreeView
+                        id={args.id}
+                        {...cleanProps(args)}
+                        expandedIds={expandedIds}
+                        onExpand={handleItemExpand}
+                        onShrink={handleItemShrink}
                     >
-                        Click me
-                    </Button>
-                </InlineDialog.Trigger>
-                <InlineDialog.Content>
-                    <DialogBody>
-                        <TreeView
-                            id={args.id}
-                            {...cleanProps(args)}
-                            expandedIds={expandedIds}
-                            onExpand={handleItemExpand}
-                            onShrink={handleItemShrink}
-                        >
-                            {treeItemsMock.map(renderTreeItemLabel)}
-                        </TreeView>
-                    </DialogBody>
-                </InlineDialog.Content>
+                        {treeItemsMock.map(renderTreeItemLabel)}
+                    </TreeView>
+                </DialogBody>
             </InlineDialog>
         </Container>
     );

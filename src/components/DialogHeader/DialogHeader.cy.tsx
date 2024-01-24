@@ -18,26 +18,26 @@ describe('DialogHeader Component', () => {
         cy.get(DIALOG_HEADER_SELECTOR).should('have.class', 'tw-border-b tw-border-b-line');
     });
 
-    it('should render in Medium size', () => {
-        cy.mount(<DialogHeader title="Hello" />);
+    it('should render in Comfortable size', () => {
+        cy.mount(<DialogHeader title="Hello" padding="comfortable" />);
         cy.get(DIALOG_HEADER_SELECTOR).should('have.class', 'tw-p-6');
-        cy.get(DIALOG_HEADER_TITLE).find('span').should('have.class', 'tw-text-body-medium');
+        cy.get(DIALOG_HEADER_TITLE).find('p').should('have.class', 'tw-text-heading-x-large');
     });
 
-    it('should render in Small size', () => {
-        cy.mount(<DialogHeader title="Hello" size="small" />);
+    it('should render in Compact size', () => {
+        cy.mount(<DialogHeader title="Hello" padding="compact" />);
         cy.get(DIALOG_HEADER_SELECTOR).should('have.class', 'tw-p-4');
-        cy.get(DIALOG_HEADER_TITLE).find('span').should('have.class', 'tw-text-body-small');
+        cy.get(DIALOG_HEADER_TITLE).find('p').should('have.class', 'tw-text-heading-large');
     });
 
-    it('should render in Large size', () => {
-        cy.mount(<DialogHeader title="Hello" size="large" />);
+    it('should render in Spacious size', () => {
+        cy.mount(<DialogHeader title="Hello" padding="spacious" />);
         cy.get(DIALOG_HEADER_SELECTOR).should('have.class', 'tw-p-10');
-        cy.get(DIALOG_HEADER_TITLE).find('span').should('have.class', 'tw-text-body-large');
+        cy.get(DIALOG_HEADER_TITLE).find('p').should('have.class', 'tw-text-heading-xx-large');
     });
 
-    it('should collapseBottom', () => {
-        cy.mount(<DialogHeader title="Hello" collapseBottom />);
+    it('should render without separator and padding at the bottom', () => {
+        cy.mount(<DialogHeader title="Hello" separator={false} />);
 
         cy.get(DIALOG_HEADER_SELECTOR).should('have.class', 'tw-pb-0 tw-border-none');
     });

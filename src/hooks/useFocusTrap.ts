@@ -3,52 +3,61 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { TABBABLE_ELEMENTS } from '@utilities/elements';
 
-export const useFocusTrap = <T extends HTMLElement = HTMLElement>(isOpen: boolean, ignoreFocusTrap = false) => {
+export const useFocusTrap = <T extends HTMLElement = HTMLElement>(
+    isOpen: boolean,
+    ignoreFocusTrap = false,
+    anchor: HTMLElement | null = null,
+) => {
     const elementRef = useRef<T>(null);
 
-    const handleFocus = useCallback((event: KeyboardEvent) => {
-        const focusableElements = [...(elementRef.current?.querySelectorAll(TABBABLE_ELEMENTS) ?? [])];
-        const firstFocusableElement = focusableElements[0] as T;
-        const lastFocusableElement = focusableElements[focusableElements.length - 1] as T;
-        const lastFocusedElement = (document.activeElement ?? document.body) as HTMLElement;
-        const isTabPressed = event.key === 'Tab';
+    const handleFocus = useCallback(
+        (event: KeyboardEvent) => {
+            const focusableElements = [...(elementRef.current?.querySelectorAll(TABBABLE_ELEMENTS) ?? [])];
+            const firstFocusableElement = focusableElements[0] as T;
+            const lastFocusableElement = focusableElements[focusableElements.length - 1] as T;
+            const isTabPressed = event.key === 'Tab';
 
-        if (focusableElements.length === 0 || !isTabPressed) {
-            return;
-        }
+            if (focusableElements.length === 0 || !isTabPressed) {
+                return;
+            }
 
-        if (![...focusableElements].includes(lastFocusedElement)) {
-            firstFocusableElement.focus();
-            event.preventDefault();
-        }
+            if (anchor === event.target) {
+                firstFocusableElement.focus();
+                event.preventDefault();
+            }
 
-        if (!event.shiftKey && event.target === lastFocusableElement) {
-            firstFocusableElement.focus();
-            event.preventDefault();
-        }
+            if (!event.shiftKey && event.target === lastFocusableElement) {
+                firstFocusableElement.focus();
+                event.preventDefault();
+            }
 
-        if (event.shiftKey && event.target === firstFocusableElement) {
-            lastFocusableElement.focus();
-            event.preventDefault();
-        }
-    }, []);
+            if (event.shiftKey && event.target === firstFocusableElement) {
+                lastFocusableElement.focus();
+                event.preventDefault();
+            }
+        },
+        [anchor],
+    );
 
     useEffect(() => {
         if (ignoreFocusTrap) {
             return;
         }
 
+        const element = elementRef.current;
         const lastFocusedOutsideBoundaries = (document.activeElement ?? document.body) as T;
 
         if (isOpen) {
-            window.addEventListener('keydown', handleFocus);
+            anchor?.addEventListener('keydown', handleFocus);
+            element?.addEventListener('keydown', handleFocus);
         }
 
         return () => {
-            window.removeEventListener('keydown', handleFocus);
+            anchor?.removeEventListener('keydown', handleFocus);
+            element?.removeEventListener('keydown', handleFocus);
             lastFocusedOutsideBoundaries.focus();
         };
-    }, [handleFocus, ignoreFocusTrap, isOpen]);
+    }, [handleFocus, ignoreFocusTrap, isOpen, anchor]);
 
     return { elementRef };
 };

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactNode, useState } from 'react';
+import { ReactNode, useRef, useState } from 'react';
 import { useFocusTrap } from '@hooks/useFocusTrap';
 import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
 import { Box } from '@components/Box';
@@ -19,11 +19,17 @@ const FocusableComponent = ({
     children?: ReactNode;
     ignoreFocusTrap?: boolean;
 }) => {
+    const triggerRef = useRef<HTMLButtonElement | null>(null);
     const [isOpen, setIsOpen] = useState(false);
-    const { elementRef } = useFocusTrap<HTMLDivElement>(isOpen, ignoreFocusTrap);
+    const { elementRef } = useFocusTrap<HTMLDivElement>(isOpen, ignoreFocusTrap, triggerRef.current);
     return (
         <div data-test-id="container">
-            <Button data-test-id="toggle-button" onClick={() => setIsOpen(!isOpen)} style={ButtonStyle.Loud}>
+            <Button
+                ref={triggerRef}
+                data-test-id="toggle-button"
+                onClick={() => setIsOpen(!isOpen)}
+                style={ButtonStyle.Loud}
+            >
                 Toggle
             </Button>
             {isOpen && (
@@ -33,7 +39,6 @@ const FocusableComponent = ({
                     </div>
                 </Box>
             )}
-            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
             <Box className="tw-mt-4" data-test-id="outside-input">
                 <TextInput />
             </Box>

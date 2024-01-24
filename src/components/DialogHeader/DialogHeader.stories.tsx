@@ -3,9 +3,9 @@
 import { Meta, StoryFn } from '@storybook/react';
 import { DialogHeader as DialogHeaderComponent } from './DialogHeader';
 import { Badge, BadgeStyle } from '@components/Badge';
-import { IconIcon } from '@foundation/Icon/Generated';
 import { action } from '@storybook/addon-actions';
-import { DIALOG_SIZE, DialogHeaderProps } from '../../types/dialog';
+import { DIALOG_PADDING, DialogHeaderProps } from '../../types';
+import IconIcon24 from '@foundation/Icon/Generated/IconIcon24';
 
 export default {
     title: 'Experimental/DialogHeader',
@@ -13,16 +13,16 @@ export default {
     tags: ['autodocs'],
     args: {
         title: 'Collaborator Settings',
-        size: 'medium',
-        collapseBottom: false,
+        padding: 'comfortable',
+        separator: true,
         onClose: action('click'),
     },
     argTypes: {
-        size: {
-            options: DIALOG_SIZE,
+        padding: {
+            options: DIALOG_PADDING,
             control: { type: 'select' },
         },
-        collapseBottom: {
+        separator: {
             control: { type: 'boolean' },
         },
         'data-test-id': {
@@ -37,5 +37,30 @@ export const WithIconAndBadge: StoryFn<DialogHeaderProps> = (args) => <DialogHea
 
 WithIconAndBadge.args = {
     badge: <Badge style={BadgeStyle.Positive}>Badge</Badge>,
-    icon: <IconIcon />,
+    icon: <IconIcon24 />,
+};
+
+export const WithIconAndBadgeAndCustomContent: StoryFn<DialogHeaderProps> = (args) => (
+    <DialogHeaderComponent {...args} />
+);
+
+export const WithNoSeparator: StoryFn<DialogHeaderProps> = (args) => <DialogHeaderComponent {...args} />;
+
+WithNoSeparator.args = {
+    separator: false,
+};
+export const WithNoCloseButton: StoryFn<DialogHeaderProps> = (args) => <DialogHeaderComponent {...args} />;
+
+WithNoCloseButton.args = {
+    onClose: undefined,
+};
+
+WithIconAndBadgeAndCustomContent.args = {
+    badge: <Badge style={BadgeStyle.Positive}>Badge</Badge>,
+    icon: <IconIcon24 />,
+    children: (
+        <div className="tw-flex tw-justify-end">
+            <p className="tw-text-box-negative-strong">Some extra content, feel free to add what you wish</p>
+        </div>
+    ),
 };

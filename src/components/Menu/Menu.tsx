@@ -30,14 +30,8 @@ export const Menu = ({
     'data-test-id': dataTestId = 'menu',
 }: MenuProps) => {
     const [isMenuOpen, setIsMenuOpen] = useState(open);
-    const [menuContainerRef, setMenuContainerRef] = useState<HTMLElement | null>(null);
     const [menuOpenerRef, setMenuOpenerRef] = useState<HTMLElement | null>(null);
-
-    const menuKeyboardNavigationAction = useMenuKeyboardNavigation(
-        isMenuOpen,
-        menuContainerRef,
-        'li > a, li > button:not(:disabled)',
-    );
+    const [menuContainerRef, setMenuContainerRef] = useState<HTMLElement | null>(null);
 
     const handleClickOutside = useCallback(() => {
         if (menuOpenerRef && isMenuOpen) {
@@ -48,7 +42,15 @@ export const Menu = ({
         }
     }, [menuOpenerRef, isMenuOpen, onClose]);
 
-    useClickOutside(menuContainerRef, handleClickOutside, [menuOpenerRef as HTMLElement]);
+    const { dismissibleElementRef } = useClickOutside<HTMLOListElement>(handleClickOutside, [
+        menuOpenerRef as HTMLElement,
+    ]);
+
+    const menuKeyboardNavigationAction = useMenuKeyboardNavigation(
+        isMenuOpen,
+        menuContainerRef,
+        'li > a, li > button:not(:disabled)',
+    );
 
     const popperInstance = usePopper(menuOpenerRef, menuContainerRef, {
         placement: 'bottom-start',
@@ -104,7 +106,7 @@ export const Menu = ({
             data-test-id={dataTestId}
             role={isMenuOpen ? 'navigation' : ''}
         >
-            <ol className="tw-list-none" role="menu">
+            <ol ref={dismissibleElementRef} className="tw-list-none">
                 {children}
             </ol>
         </nav>

@@ -9,9 +9,9 @@ const FORM_FIELD_LABEL = '[data-test-id=fondue-form-field-label]';
 const FORM_FIELD_LABEL_TEXT = '[data-test-id=fondue-form-field-label-text]';
 const FORM_FIELD_ERROR_TEXT = '[data-test-id=fondue-form-field-error-text]';
 const FORM_FIELD_HELPER_TEXT = '[data-test-id=fondue-form-field-helper-text]';
-const FORM_FIELD_TOOLTIP_ONE = '[data-test-id=fondue-form-field-tooltip-1]';
+const FORM_FIELD_TOOLTIP_ONE = '[data-test-id=fondue-form-field-tooltip-1-content]';
 const FORM_FIELD_TOOLTIP_ONE_ICON = '[data-test-id=fondue-form-field-tooltip-1-button]';
-const FORM_FIELD_TOOLTIP_TWO = '[data-test-id=fondue-form-field-tooltip-2]';
+const FORM_FIELD_TOOLTIP_TWO = '[data-test-id=fondue-form-field-tooltip-2-content]';
 const FORM_FIELD_TOOLTIP_TWO_ICON = '[data-test-id=fondue-form-field-tooltip-2-button]';
 
 const FORM_FIELD_TEXT_INPUT = "input[type='text']";

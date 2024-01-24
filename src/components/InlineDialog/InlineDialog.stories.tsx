@@ -2,21 +2,13 @@
 
 import { Meta, StoryFn } from '@storybook/react';
 import { InlineDialog, InlineDialogProps } from './InlineDialog';
-import { DialogHeader } from '@components/DialogHeader';
 import { DialogBody } from '@components/DialogBody/DialogBody';
-import { Dropdown } from '@components/Dropdown';
-import { DialogFooter } from '@components/DialogFooter';
-import { Modality } from '../../types/dialog';
-import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
-import { useToggleOverlay } from '@hooks/useToggleOverlay';
+import { Modality } from '../../types';
+import { Button } from '@components/Button';
 import { POPPER_STORY_ARGS } from '@components/Popper/types';
-import { action } from '@storybook/addon-actions';
-import { Divider } from '@components/Divider';
-import { Flex } from '@components/Flex';
 import { Box } from '@components/Box';
-import IconDotsVertical16 from '@foundation/Icon/Generated/IconDotsVertical16';
-import { IconExclamationMarkCircle16 } from '@foundation/Icon/Generated';
-import { LegacyTooltip } from '@components/LegacyTooltip';
+import { useRef, useState } from 'react';
+import IconJohanna from '@foundation/Icon/Generated/IconJohanna';
 
 export default {
     title: 'Experimental/InlineDialog',
@@ -27,12 +19,15 @@ export default {
         modality: Modality.Modal,
         offset: [0, 8],
         flip: true,
-        minWidth: 0,
-        maxWidth: 400,
+        width: 360,
+        minWidth: 360,
+        maxWidth: 360,
         autoHeight: false,
         maxHeight: 'auto',
         minHeight: 0,
-        darkUnderlay: false,
+        roundedCorners: true,
+        strategy: 'absolute',
+        enablePortal: false,
     },
     argTypes: {
         ...POPPER_STORY_ARGS,
@@ -46,10 +41,10 @@ export default {
         role: {
             type: 'string',
         },
-        darkUnderlay: {
+        autoHeight: {
             type: 'boolean',
         },
-        autoHeight: {
+        roundedCorners: {
             type: 'boolean',
         },
         zIndex: { table: { disable: true } },
@@ -58,7 +53,7 @@ export default {
 
 const TextExample = () => {
     return (
-        <p className="tw-my-2">
+        <p className="tw-my-2 tw-text-text">
             Lorem ipsum dolor sit amet, consectetur adipisicing elit. Distinctio fugiat hic incidunt, inventore odio
             praesentium qui quisquam! Dignissimos nemo quisquam unde voluptatem. Animi ea iusto numquam odio omnis.
             Dicta, voluptatum.
@@ -67,170 +62,29 @@ const TextExample = () => {
 };
 
 const Template: StoryFn<InlineDialogProps> = (args) => {
-    const [isOpen, setIsOpen] = useToggleOverlay(false, { isBlockingModal: args.modality === Modality.BlockingModal });
+    const [isOpen, setIsOpen] = useState(false);
+    const triggerRef = useRef<HTMLButtonElement | null>(null);
+
     return (
         <Box className="tw-w-fit">
-            <InlineDialog {...args} open={isOpen} handleClose={() => setIsOpen(false)}>
-                <InlineDialog.Trigger>
-                    <Button
-                        emphasis={ButtonEmphasis.Default}
-                        icon={<IconDotsVertical16 />}
-                        onClick={() => setIsOpen(!isOpen)}
-                        aria-label="Dialog Trigger"
-                    ></Button>
-                </InlineDialog.Trigger>
-                <InlineDialog.Content>
-                    <DialogBody>
-                        <Box className="tw-p-4">
-                            <Box className="tw-mb-2">
-                                <Flex justify="start">
-                                    <LegacyTooltip
-                                        triggerElement={
-                                            <button aria-label="Exclamation mark circle icon" className="tw-mr-1">
-                                                <IconExclamationMarkCircle16 />
-                                            </button>
-                                        }
-                                        content="Just some Information"
-                                    />
-                                    <p>Information</p>
-                                </Flex>
-                            </Box>
-                            <Dropdown
-                                enablePortal={false}
-                                onChange={(id) => console.log(id)}
-                                activeItemId="1"
-                                menuBlocks={[
-                                    {
-                                        id: 'block1',
-                                        menuItems: [
-                                            { id: '1', title: 'Item 1' },
-                                            { id: '2', title: 'Item 2' },
-                                            { id: '3', title: 'Item 3' },
-                                            { id: '4', title: 'Item 4' },
-                                            { id: '5', title: 'Item 5' },
-                                        ],
-                                    },
-                                ]}
-                            />
-
-                            <TextExample />
-                            <TextExample />
-                            <TextExample />
-                            <Button onClick={() => setIsOpen(!isOpen)}>Close</Button>
-                        </Box>
-                    </DialogBody>
-                </InlineDialog.Content>
+            <Button icon={<IconJohanna />} onClick={() => setIsOpen(!isOpen)} ref={triggerRef}>
+                Trigger
+            </Button>
+            <InlineDialog {...args} anchor={triggerRef} open={isOpen} handleClose={() => setIsOpen(false)}>
+                <DialogBody padding="comfortable">
+                    <Box className="tw-text-text">
+                        <TextExample />
+                        <TextExample />
+                        <TextExample />
+                        <Button onClick={() => setIsOpen(!isOpen)}>Close</Button>
+                    </Box>
+                </DialogBody>
             </InlineDialog>
         </Box>
     );
 };
 
-const NoFocusableContentTemplate: StoryFn<InlineDialogProps> = (args) => {
-    const [isOpen, setIsOpen] = useToggleOverlay(false, { isBlockingModal: false });
-    return (
-        <Flex justify="start">
-            <Button onClick={action('onClick')} style={ButtonStyle.Default}>
-                Button
-            </Button>
-            <Button onClick={action('onClick')} style={ButtonStyle.Danger}>
-                Button
-            </Button>
-            <InlineDialog {...args} open={isOpen} handleClose={() => setIsOpen(false)}>
-                <InlineDialog.Trigger>
-                    <Button
-                        emphasis={ButtonEmphasis.Default}
-                        icon={<IconDotsVertical16 />}
-                        onClick={() => setIsOpen(!isOpen)}
-                    ></Button>
-                </InlineDialog.Trigger>
-                <InlineDialog.Content>
-                    <DialogBody>
-                        <Box className="tw-p-4">
-                            <TextExample />
-                        </Box>
-                    </DialogBody>
-                </InlineDialog.Content>
-            </InlineDialog>
-            <Button onClick={action('onClick')} style={ButtonStyle.Loud}>
-                Button
-            </Button>
-        </Flex>
-    );
-};
-
-const InContext: StoryFn<InlineDialogProps> = (args) => {
-    const [isOpen, setIsOpen] = useToggleOverlay(false, { isBlockingModal: args.modality === Modality.BlockingModal });
-    return (
-        <div>
-            <Flex justify="end">
-                <Button onClick={action('onClick')} emphasis={ButtonEmphasis.Default} style={ButtonStyle.Default}>
-                    Button
-                </Button>
-                <InlineDialog {...args} open={isOpen} handleClose={() => setIsOpen(false)}>
-                    <InlineDialog.Trigger>
-                        <Button onClick={() => setIsOpen(!isOpen)}>InlineDialog Trigger</Button>
-                    </InlineDialog.Trigger>
-                    <InlineDialog.Content>
-                        <DialogHeader title="Collaborator Settings" size="large" onClose={() => setIsOpen(false)} />
-                        <DialogBody>
-                            <div className="tw-p-2">
-                                <Dropdown
-                                    enablePortal={false}
-                                    onChange={(id) => console.log(id)}
-                                    activeItemId={'1'}
-                                    menuBlocks={[
-                                        {
-                                            id: 'block1',
-                                            menuItems: [
-                                                { id: '1', title: 'Item 1' },
-                                                { id: '2', title: 'Item 2' },
-                                                { id: '3', title: 'Item 3' },
-                                                { id: '4', title: 'Item 4' },
-                                                { id: '5', title: 'Item 5' },
-                                            ],
-                                        },
-                                    ]}
-                                />
-                                <p className="tw-flex tw-items-center tw-my-2">Label 2</p>
-
-                                <TextExample />
-                                <TextExample />
-                            </div>
-                        </DialogBody>
-                        <DialogFooter
-                            actionButtons={[
-                                {
-                                    children: 'Cancel',
-                                    emphasis: ButtonEmphasis.Default,
-                                    onClick: () => setIsOpen(false),
-                                },
-                                {
-                                    children: 'Confirm',
-                                    onClick: () => setIsOpen(false),
-                                },
-                            ]}
-                        ></DialogFooter>
-                    </InlineDialog.Content>
-                </InlineDialog>
-                <Button onClick={action('onClick')} emphasis={ButtonEmphasis.Strong} style={ButtonStyle.Loud}>
-                    Button
-                </Button>
-            </Flex>
-            <Divider />
-            <TextExample />
-            <TextExample />
-            <TextExample />
-            <TextExample />
-            <TextExample />
-            <TextExample />
-            <Button emphasis={ButtonEmphasis.Default} style={ButtonStyle.Default} onClick={action('onClick')}>
-                Focusable and Clickable Button
-            </Button>
-        </div>
-    );
-};
-
-export const WithoutHeaderAndFooter = Template.bind({});
+export const Default = Template.bind({});
 export const AsANonModal = Template.bind({});
 AsANonModal.args = {
     modality: Modality.NonModal,
@@ -239,10 +93,9 @@ export const AsAModal = Template.bind({});
 AsAModal.args = {
     modality: Modality.Modal,
 };
-export const AsABlockingModalWithDarkUnderlay = Template.bind({});
-AsABlockingModalWithDarkUnderlay.args = {
+export const AsABlockingModal = Template.bind({});
+AsABlockingModal.args = {
     modality: Modality.BlockingModal,
-    darkUnderlay: true,
 };
 
 export const WithMaxHeight = Template.bind({});
@@ -254,5 +107,8 @@ export const WithAutoHeight = Template.bind({});
 WithAutoHeight.args = {
     autoHeight: true,
 };
-export const InContextWithDialogHeaderAndDialogFooter = InContext.bind({});
-export const WithNoFocusableContent = NoFocusableContentTemplate.bind({});
+
+export const WithNoRoundedCorners = Template.bind({});
+WithNoRoundedCorners.args = {
+    roundedCorners: false,
+};
