@@ -62,6 +62,7 @@ export type TextInputBaseProps = {
     onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
     onFocus?: (event: FocusEvent<HTMLInputElement>) => void;
     onClear?: () => void;
+    maxLength?: number;
     size?: number;
     spellcheck?: boolean;
     focusOnMount?: boolean;
@@ -151,6 +152,7 @@ export const TextInput = ({
     focusOnMount,
     selectable = false,
     extraActions,
+    maxLength,
     ...props
 }: TextInputProps): ReactElement => {
     const { isFocusVisible: inputIsFocusVisible, focusProps: inputFocusProps } = useFocusRing({ isTextInput: true });
@@ -256,6 +258,7 @@ export const TextInput = ({
                     }
                 }}
                 autoComplete={autocomplete ? 'on' : 'off'}
+                maxLength={maxLength}
                 size={size}
                 data-test-id="text-input"
                 {...spellcheckProp}

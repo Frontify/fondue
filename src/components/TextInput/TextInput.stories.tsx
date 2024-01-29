@@ -35,6 +35,7 @@ export default {
             control: { type: 'select' },
         },
         placeholder: { type: 'string' },
+        maxLength: { type: 'number' },
         value: { table: { disable: true } },
         obfuscated: { table: { disable: true } },
         type: { table: { disable: true } },
@@ -80,6 +81,12 @@ export const WithIconDecorator = TextInputTemplate.bind({});
 WithIconDecorator.args = {
     value: 'Value text',
     decorator: <IconIcon size={IconSize.Size16} />,
+};
+
+export const WithMaxLength = TextInputTemplate.bind({});
+
+WithMaxLength.args = {
+    maxLength: 10,
 };
 
 export const WithCharacterDecorator = TextInputTemplate.bind({});
