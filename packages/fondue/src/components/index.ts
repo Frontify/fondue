@@ -69,4 +69,3 @@ export * from './Tooltip';
 export * from './TooltipIcon';
 export * from './Tree';
 export * from './Trigger';
-export * from './ComponentEnum';

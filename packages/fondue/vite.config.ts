@@ -7,7 +7,7 @@ import { Plugin, defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import react from '@vitejs/plugin-react';
 
-import { dependencies as dependenciesMap, peerDependencies as peerDependenciesMap } from './package.json';
+import { dependencies as dependenciesMap, peerDependencies as peerDependenciesMap } from '../../packages/fondue/package.json';
 
 const peerDependencies = Object.keys(peerDependenciesMap);
 const dependencies = Object.keys(dependenciesMap);

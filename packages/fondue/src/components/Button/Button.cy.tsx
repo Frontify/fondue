@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconIcon } from '@foundation/Icon/Generated';
-import { Button, ButtonRounding, ButtonSize, ButtonStyle } from './';
+import { Button, ButtonRounding, ButtonSize, ButtonStyle } from '.';
 
 const BUTTON_TEXT = 'Frontify';
 const BUTTON_ID = '[data-test-id=button]';

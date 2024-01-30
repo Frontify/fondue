@@ -1,0 +1,90 @@
+name: Release Notes Preview
+
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - reopened
+      - synchronize
+    branches:
+      - "main"
+
+env:
+  NODE_VERSION: 18
+  CI: true
+  NUMBER_OF_RUNNERS: 8
+
+jobs:
+  notes-preview:
+    name: Notes Preview
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout current commit
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Create release-preview branch
+        uses: peterjgrainger/action-create-branch@v2.2.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          branch: "release-preview"
+
+      - name: Checkout release-preview branch
+        uses: actions/checkout@v3
+        with:
+          ref: release-preview
+          fetch-depth: 0
+
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Use pnpm
+        uses: pnpm/action-setup@v2.2.4
+        with:
+          version: latest
+          run_install: false
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        run: echo "pnpm_cache_dir=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
+            ~/.cache/Cypress
+          key: pnpm-with-cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: pnpm-with-cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+
+      - name: Install dependencies
+        working-directory: ./packages/fondue
+        run: pnpm install --frozen-lockfile
+
+      - name: Save release preview to job Summary
+        working-directory: ./packages/fondue
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          unset GITHUB_ACTIONS && pnpm exec semantic-release --debug --dry-run --no-ci --branches main,release-preview
+
+      - name: Checkout PR commit
+        uses: actions/checkout@v3
+
+      - name: Delete release-preview branch
+        uses: dawidd6/action-delete-branch@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branches: release-preview

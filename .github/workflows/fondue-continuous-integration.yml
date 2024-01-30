@@ -1,20 +1,9 @@
-name: Pull Request
-
-# Ensures that only one workflow per branch will run at a time.
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+name: Continuous Integration
 
 on:
-  pull_request:
+  push:
     branches:
       - "main"
-      - "beta"
-    types:
-      - opened
-      - synchronize
-      - reopened
-      - ready_for_review
 
 env:
   NODE_VERSION: 18
@@ -23,7 +12,6 @@ env:
 
 jobs:
   linting:
-    if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -68,7 +56,6 @@ jobs:
         run: pnpm run lint
 
   typecheck:
-    if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -113,7 +100,6 @@ jobs:
         run: pnpm typecheck
 
   component-tests:
-    if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     timeout-minutes: 10
 

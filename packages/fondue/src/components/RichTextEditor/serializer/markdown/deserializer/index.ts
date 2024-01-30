@@ -4,7 +4,7 @@
  * The main source
  * https://github.com/hanford/remark-slate
  */
-import deserialize from '../deserializer/deserialize';
+import deserialize from './deserialize';
 import plugin from './plugin';
 
 export { deserialize };
