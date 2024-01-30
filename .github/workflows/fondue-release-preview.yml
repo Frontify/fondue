@@ -1,6 +1,7 @@
 name: Release Notes Preview
 
 on:
+  workflow_dispatch:
   pull_request:
     types:
       - opened
