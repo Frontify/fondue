@@ -1,10 +1,10 @@
 name: Comment PR lead time on merge
 
 on:
+    workflow_dispatch:
     pull_request:
         branches:
             - main
-            - beta
         types:
             - closed
 

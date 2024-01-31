@@ -1,21 +1,10 @@
 name: Security Audit
 
 on:
+    workflow_dispatch:
     pull_request:
-        branches:
-            - beta
-            - main
-        types:
-            - opened
-            - synchronize
-            - reopened
-            - ready_for_review
         paths:
-            - 'package.json'
             - 'pnpm-lock.yaml'
-
-env:
-    NODE_VERSION: 18
 
 jobs:
     audit:
@@ -28,10 +17,10 @@ jobs:
             - name: Checkout current commit
               uses: actions/checkout@v4
 
-            - name: Use Node.js ${{ env.NODE_VERSION }}
+            - name: Use Node.js
               uses: actions/setup-node@v3
               with:
-                  node-version: ${{ env.NODE_VERSION }}
+                  node-version-file: '.nvmrc'
 
             - name: Use pnpm
               uses: pnpm/action-setup@v2.2.4

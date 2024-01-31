@@ -1,0 +1,8 @@
+{
+  "mode": "pre",
+  "tag": "beta",
+  "initialVersions": {
+    "@frontify/fondue": "12.0.0-beta.400"
+  },
+  "changesets": []
+}

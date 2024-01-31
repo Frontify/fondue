@@ -4,6 +4,7 @@ const { once } = require('node:events');
 const { createReadStream } = require('node:fs');
 const { createInterface } = require('node:readline');
 const { globSync } = require('glob');
+const { join } = require('node:path');
 
 /**
  * Build Matrix that contains cypress spec files for GitHub action
@@ -20,7 +21,8 @@ const { globSync } = require('glob');
  * Returns (logs) the array with the currentIndex (currentRunner)
  */
 
-const CYPRESS_CONFIG_FILE_NAME = 'cypress.config.ts';
+const FONDUE_PACKAGE_DIR_PATH = './packages/fondue';
+const CYPRESS_CONFIG_FILE_PATH = join(FONDUE_PACKAGE_DIR_PATH, 'cypress.config.ts');
 const SECTION = 'component';
 const SPEC_PATTERN = 'specPattern';
 
@@ -44,7 +46,7 @@ const getSectionSpecPattern = async () =>
     new Promise(async (resolve) => {
         try {
             const rl = createInterface({
-                input: createReadStream(CYPRESS_CONFIG_FILE_NAME),
+                input: createReadStream(CYPRESS_CONFIG_FILE_PATH),
                 crlfDelay: Infinity,
             });
 
@@ -93,7 +95,7 @@ const splitIntoChunkedSlices = (slices, inputArray) => {
 };
 
 getSectionSpecPattern().then((pattern) => {
-    const files = globSync(pattern);
+    const files = globSync(pattern, { cwd: FONDUE_PACKAGE_DIR_PATH });
     const output = splitIntoChunkedSlices(Number(totalRunners), files);
 
     // console.log to print to github action Console

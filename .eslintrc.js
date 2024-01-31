@@ -1,13 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 module.exports = {
-    extends: ['@frontify/eslint-config-react', 'plugin:jsx-a11y/recommended', 'plugin:storybook/recommended'],
-    plugins: ['jsx-a11y', 'notice'],
-    settings: {
-        react: {
-            version: 'detect',
-        },
-    },
+    root: true,
+    extends: ['@frontify/eslint-config-typescript'],
+    plugins: ['notice'],
     overrides: [
         {
             files: ['*.js', '*.ts', '*.tsx'],

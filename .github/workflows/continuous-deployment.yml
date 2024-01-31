@@ -1,100 +1,76 @@
 name: Continuous Deployment
 
 on:
-    workflow_dispatch:
     push:
         branches:
-            - 'beta'
+            - main
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 env:
-    NODE_VERSION: 18
-    CI: true
     NUMBER_OF_RUNNERS: 8
 
 jobs:
-    linting:
+    lint:
+        name: Lint
         runs-on: ubuntu-latest
         timeout-minutes: 10
 
         steps:
-            - name: Checkout current commit
-              uses: actions/checkout@v3
-
-            - name: Use Node.js ${{ env.NODE_VERSION }}
-              uses: actions/setup-node@v3
-              with:
-                  node-version: ${{ env.NODE_VERSION }}
+            - name: Checkout default branch
+              uses: actions/checkout@v4
 
             - name: Use pnpm
-              uses: pnpm/action-setup@v2.2.4
+              uses: pnpm/action-setup@v2
               with:
                   version: latest
-                  run_install: false
 
-            - name: Get pnpm store directory
-              id: pnpm-cache
-              run: echo "pnpm_cache_dir=$(pnpm store path)" >> $GITHUB_OUTPUT
-
-            - name: Setup pnpm cache
-              uses: actions/cache@v3
+            - name: Use Node.js
+              uses: actions/setup-node@v4
               with:
-                  path: |
-                      ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
-                      ~/.cache/Cypress
-                  key: pnpm-with-cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-                  restore-keys: pnpm-with-cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+                  node-version-file: '.nvmrc'
+                  cache: 'pnpm'
 
-            - name: Install dependencies
-              run: pnpm install --frozen-lockfile
+            - name: Install npm dependencies
+              run: pnpm i --frozen-lockfile
 
-            - name: Generate icons
-              run: pnpm generate:icons && pnpm generate:componentsEnum
+            - name: Build the packages
+              run: pnpm build
 
-            - name: Lint files
-              run: pnpm run lint
+            - name: Lint code
+              run: pnpm lint
 
     typecheck:
+        name: Typecheck
         runs-on: ubuntu-latest
         timeout-minutes: 10
 
         steps:
-            - name: Checkout current commit
-              uses: actions/checkout@v3
-
-            - name: Use Node.js ${{ env.NODE_VERSION }}
-              uses: actions/setup-node@v3
-              with:
-                  node-version: ${{ env.NODE_VERSION }}
+            - name: Checkout default branch
+              uses: actions/checkout@v4
 
             - name: Use pnpm
-              uses: pnpm/action-setup@v2.2.4
+              uses: pnpm/action-setup@v2
               with:
                   version: latest
-                  run_install: false
 
-            - name: Get pnpm store directory
-              id: pnpm-cache
-              run: echo "pnpm_cache_dir=$(pnpm store path)" >> $GITHUB_OUTPUT
-
-            - name: Setup pnpm cache
-              uses: actions/cache@v3
+            - name: Use Node.js
+              uses: actions/setup-node@v4
               with:
-                  path: |
-                      ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
-                      ~/.cache/Cypress
-                  key: pnpm-with-cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-                  restore-keys: pnpm-with-cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+                  node-version-file: '.nvmrc'
+                  cache: 'pnpm'
 
-            - name: Install dependencies
-              run: pnpm install --frozen-lockfile
+            - name: Install npm dependencies
+              run: pnpm i --frozen-lockfile
 
-            - name: Generate icons
-              run: pnpm generate:icons && pnpm generate:componentsEnum
+            - name: Build the packages
+              run: pnpm build
 
-            - name: Typecheck files
+            - name: Typecheck code
               run: pnpm typecheck
 
     component-tests:
+        name: Component Tests
         runs-on: ubuntu-latest
         timeout-minutes: 10
 
@@ -107,10 +83,10 @@ jobs:
             - name: Checkout current commit
               uses: actions/checkout@v3
 
-            - name: Use Node.js ${{ env.NODE_VERSION }}
+            - name: Use Node.js
               uses: actions/setup-node@v3
               with:
-                  node-version: ${{ env.NODE_VERSION }}
+                  node-version-file: '.nvmrc'
 
             - name: Use pnpm
               uses: pnpm/action-setup@v2.2.4
@@ -124,6 +100,7 @@ jobs:
 
             - name: Setup pnpm cache
               uses: actions/cache@v3
+              id: npm_cache
               with:
                   path: |
                       ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
@@ -132,65 +109,50 @@ jobs:
                   restore-keys: pnpm-with-cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
 
             - name: Install dependencies
-              if: steps.npm_cache.outputs.cache-hit != 'true'
               run: pnpm install --frozen-lockfile
 
             - name: Generate icons
-              run: pnpm generate:icons && pnpm generate:componentsEnum
+              run: pnpm --stream --filter {packages/fondue} generate:icons && pnpm --stream --filter {packages/fondue} generate:componentsEnum
 
             - name: Component Tests
-              run: pnpm run test --spec $(node ./.github/lib/cypress-matrix.js ${{ env.NUMBER_OF_RUNNERS }} ${{ matrix.containers }})
+              run: pnpm run --stream --filter {packages/fondue} test --spec $(node ./.github/lib/cypress-matrix.js ${{ env.NUMBER_OF_RUNNERS }} ${{ matrix.containers }})
 
     publish:
         runs-on: ubuntu-latest
         timeout-minutes: 10
 
-        needs: [linting, typecheck, component-tests]
+        needs: [lint, typecheck, component-tests]
 
         permissions:
-            packages: write
-            contents: write
-            pull-requests: write
+            contents: write # to create release (changesets/action)
+            pull-requests: write # to create pull request (changesets/action)
 
         steps:
             - name: Checkout default branch
-              uses: actions/checkout@v3
-
-            - name: Use Node.js ${{ env.NODE_VERSION }}
-              uses: actions/setup-node@v3
-              with:
-                  node-version: ${{ env.NODE_VERSION }}
+              uses: actions/checkout@v4
 
             - name: Use pnpm
-              uses: pnpm/action-setup@v2.2.4
+              uses: pnpm/action-setup@v2
               with:
                   version: latest
-                  run_install: false
 
-            - name: Get pnpm store directory
-              id: pnpm-cache
-              run: echo "pnpm_cache_dir=$(pnpm store path)" >> $GITHUB_OUTPUT
-
-            - name: Setup pnpm cache
-              uses: actions/cache@v3
+            - name: Use Node.js
+              uses: actions/setup-node@v4
               with:
-                  path: |
-                      ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
-                      ~/.cache/Cypress
-                  key: pnpm-with-cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-                  restore-keys: pnpm-with-cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+                  node-version-file: '.nvmrc'
+                  cache: 'pnpm'
 
-            - name: Install dependencies
-              if: steps.npm_cache.outputs.cache-hit != 'true'
-              run: pnpm install --frozen-lockfile
+            - name: Install npm dependencies
+              run: pnpm i --frozen-lockfile
 
-            - name: Build Fondue
-              run: pnpm build
-
-            - name: Release Fondue
-              if: ${{ !contains(github.event.head_commit.message, format('chore(release-skip){0}', ':')) }}
-              run: pnpm exec semantic-release
+            - name: Create release PR or publish to npm
+              id: changesets
+              uses: changesets/action@v1
+              with:
+                  commit: 'chore: release packages'
+                  title: 'chore: release packages'
+                  version: pnpm ci:version
+                  publish: pnpm ci:publish
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
