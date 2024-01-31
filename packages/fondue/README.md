@@ -1,4 +1,4 @@
-# Fondue Design System by Frontify
+# Fondue Design System by Frontify (test)
 
 <a href="https://github.com/Frontify/fondue/actions/workflows/continuous-integration.yml">
     <img src="https://github.com/Frontify/react-components/actions/workflows/continuous-integration.yml/badge.svg" alt="CI Status" />
