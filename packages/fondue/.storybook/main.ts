@@ -16,4 +16,10 @@ export default <StorybookConfig>{
             componentNameResolver: (expression: ts.Symbol) => expression.getName(),
         },
     },
+    viteFinal(config) {
+        // @ts-expect-error untyped name property
+        config.plugins = (config.plugins ?? []).filter((plugin) => plugin?.name !== 'vite:dts');
+
+        return config;
+    },
 };
