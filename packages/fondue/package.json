@@ -12,7 +12,7 @@
         "url": "https://github.com/frontify/fondue/issues"
     },
     "engines": {
-        "node": ">=16"
+        "node": ">=18"
     },
     "packageManager": "pnpm@8.6.0",
     "main": "dist/index.umd.js",
