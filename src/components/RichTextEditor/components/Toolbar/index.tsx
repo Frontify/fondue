@@ -4,3 +4,4 @@ export * from './Buttons';
 export * from './FloatingToolbar';
 export * from './Separator';
 export * from './Tooltip';
+export * from './types';
