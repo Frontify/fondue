@@ -1,151 +1,126 @@
-name: Continuous Integration
+name: Fondue CI
 
 on:
-  workflow_dispatch:
-  push:
-    branches:
-      - "main"
+    pull_request:
+        paths:
+            - packages/fondue/**
+
+# Ensures that only one workflow per branch will run at a time.
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
 
 env:
-  NODE_VERSION: 18
-  CI: true
-  NUMBER_OF_RUNNERS: 8
+    NUMBER_OF_RUNNERS: 8
 
 jobs:
-  linting:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
+    typecheck:
+        name: Typecheck
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
 
-    steps:
-      - name: Checkout current commit
-        uses: actions/checkout@v3
+        steps:
+            - name: Checkout default branch
+              uses: actions/checkout@v4
 
-      - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NODE_VERSION }}
+            - name: Use pnpm
+              uses: pnpm/action-setup@v2
+              with:
+                  version: latest
+                  run_install: false
 
-      - name: Use pnpm
-        uses: pnpm/action-setup@v2.2.4
-        with:
-          version: latest
-          run_install: false
+            - name: Use Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version-file: '.nvmrc'
+                  cache: 'pnpm'
 
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        run: echo "pnpm_cache_dir=$(pnpm store path)" >> $GITHUB_OUTPUT
+            - name: Install npm dependencies
+              run: pnpm i --frozen-lockfile
 
-      - name: Setup pnpm cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
-            ~/.cache/Cypress
-          key: pnpm-with-cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: pnpm-with-cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+            - name: Generate icons
+              working-directory: ./packages/fondue
+              run: pnpm --stream --filter {packages/fondue} generate:icons && pnpm --stream --filter {packages/fondue} generate:componentsEnum
 
-      - name: Install dependencies
-        working-directory: ./packages/fondue
-        run: pnpm install --frozen-lockfile
+            - name: Typecheck code
+              run: pnpm --stream --filter {packages/fondue} typecheck
 
-      - name: Generate icons
-        working-directory: ./packages/fondue
-        run: pnpm generate:icons && pnpm generate:componentsEnum
+    lint:
+        name: Lint
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
 
-      - name: Lint files
-        working-directory: ./packages/fondue
-        run: pnpm run lint
+        steps:
+            - name: Checkout default branch
+              uses: actions/checkout@v4
 
-  typecheck:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
+            - name: Use pnpm
+              uses: pnpm/action-setup@v2
+              with:
+                  version: latest
+                  run_install: false
 
-    steps:
-      - name: Checkout current commit
-        uses: actions/checkout@v3
+            - name: Use Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version-file: '.nvmrc'
+                  cache: 'pnpm'
 
-      - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NODE_VERSION }}
+            - name: Install npm dependencies
+              run: pnpm i --frozen-lockfile
 
-      - name: Use pnpm
-        uses: pnpm/action-setup@v2.2.4
-        with:
-          version: latest
-          run_install: false
+            - name: Generate icons
+              working-directory: ./packages/fondue
+              run: pnpm --stream --filter {packages/fondue} generate:icons && pnpm --stream --filter {packages/fondue} generate:componentsEnum
 
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        run: echo "pnpm_cache_dir=$(pnpm store path)" >> $GITHUB_OUTPUT
+            - name: Typecheck code
+              run: pnpm --stream --filter {packages/fondue} lint
 
-      - name: Setup pnpm cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
-            ~/.cache/Cypress
-          key: pnpm-with-cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: pnpm-with-cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+    component-tests:
+        name: Component Tests
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
 
-      - name: Install dependencies
-        working-directory: ./packages/fondue
-        run: pnpm install --frozen-lockfile
+        strategy:
+            fail-fast: false
+            matrix:
+                containers: [0, 1, 2, 3, 4, 5, 6, 7]
 
-      - name: Generate icons
-        working-directory: ./packages/fondue
-        run: pnpm generate:icons && pnpm generate:componentsEnum
+        steps:
+            - name: Checkout current commit
+              uses: actions/checkout@v3
 
-      - name: Typecheck files
-        working-directory: ./packages/fondue
-        run: pnpm typecheck
+            - name: Use Node.js
+              uses: actions/setup-node@v3
+              with:
+                  node-version-file: '.nvmrc'
 
-  component-tests:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
+            - name: Use pnpm
+              uses: pnpm/action-setup@v2.2.4
+              with:
+                  version: latest
+                  run_install: false
 
-    strategy:
-      fail-fast: false
-      matrix:
-        containers: [0, 1, 2, 3, 4, 5, 6, 7]
+            - name: Get pnpm store directory
+              id: pnpm-cache
+              run: echo "pnpm_cache_dir=$(pnpm store path)" >> $GITHUB_OUTPUT
 
-    steps:
-      - name: Checkout current commit
-        uses: actions/checkout@v3
+            - name: Setup pnpm cache
+              uses: actions/cache@v3
+              id: npm_cache
+              with:
+                  path: |
+                      ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
+                      ~/.cache/Cypress
+                  key: pnpm-with-cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+                  restore-keys: pnpm-with-cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
 
-      - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NODE_VERSION }}
+            - name: Install dependencies
+              if: steps.npm_cache.outputs.cache-hit != 'true'
+              run: pnpm install --frozen-lockfile
 
-      - name: Use pnpm
-        uses: pnpm/action-setup@v2.2.4
-        with:
-          version: latest
-          run_install: false
+            - name: Generate icons
+              run: pnpm --stream --filter {packages/fondue} generate:icons && pnpm --stream --filter {packages/fondue} generate:componentsEnum
 
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        run: echo "pnpm_cache_dir=$(pnpm store path)" >> $GITHUB_OUTPUT
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
-            ~/.cache/Cypress
-          key: pnpm-with-cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: pnpm-with-cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-
-      - name: Install dependencies
-        working-directory: ./packages/fondue
-        if: steps.npm_cache.outputs.cache-hit != 'true'
-        run: pnpm install --frozen-lockfile
-
-      - name: Generate icons
-        working-directory: ./packages/fondue
-        run: pnpm generate:icons && pnpm generate:componentsEnum
-
-      - name: Component Tests
-        working-directory: ./packages/fondue
-        run: pnpm run test --spec $(node ./.github/lib/cypress-matrix.js ${{ env.NUMBER_OF_RUNNERS }} ${{ matrix.containers }})
+            - name: Component Tests
+              run: pnpm --stream --filter {packages/fondue} test --spec $(node ./.github/lib/cypress-matrix.js ${{ env.NUMBER_OF_RUNNERS }} ${{ matrix.containers }})

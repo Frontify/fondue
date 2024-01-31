@@ -1,7 +1,16 @@
 {
     "name": "@frontify/fondue",
-    "version": "12.0.0-beta.38",
+    "author": "Frontify Developers <developers@frontify.com>",
+    "version": "12.0.0-beta.400",
     "description": "Design system of Frontify",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Frontify/fondue",
+        "directory": "packages/fondue"
+    },
+    "bugs": {
+        "url": "https://github.com/frontify/fondue/issues"
+    },
     "engines": {
         "node": ">=16"
     },
@@ -56,13 +65,6 @@
         "components",
         "design system"
     ],
-    "author": "Frontify Developers <developers@frontify.com>",
-    "repository": {
-        "url": "https://github.com/frontify/fondue"
-    },
-    "bugs": {
-        "url": "https://github.com/frontify/fondue/issues"
-    },
     "devDependencies": {
         "@babel/core": "^7.22.15",
         "@cypress/vite-dev-server": "^5.0.6",

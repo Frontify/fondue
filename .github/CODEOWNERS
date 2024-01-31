@@ -3,5 +3,5 @@
 # Some very complex components will be co-owned with other teams.
 
 # Components
-/src/components/RichTextEditor @Frontify/guidelines-one
-/src/components/Tree @Frontify/guidelines-navigation-themes
+packages/fondue/src/components/RichTextEditor @Frontify/guidelines-one
+packages/fondue/src/components/Tree @Frontify/guidelines-navigation-themes
