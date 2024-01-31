@@ -1,0 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+.react-colorful__interactive:focus .react-colorful__pointer {
+    border-color: #5e9ed6;
+}

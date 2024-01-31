@@ -1,0 +1,30 @@
+{
+    "ts-node": {
+        "files": true
+    },
+    "compilerOptions": {
+        "baseUrl": ".",
+        "esModuleInterop": true,
+        "lib": ["dom", "dom.iterable", "esnext"],
+        "module": "ESNext",
+        "moduleResolution": "node",
+        "noUnusedLocals": true,
+        "noEmit": true,
+        "strict": true,
+        "target": "esnext",
+        "jsx": "react-jsx",
+        "skipLibCheck": true,
+        "resolveJsonModule": true,
+        "paths": {
+            "@components/*": ["./src/components/*"],
+            "@foundation/*": ["./src/foundation/*"],
+            "@hooks/*": ["./src/hooks/*"],
+            "@layout/*": ["./src/layout/*"],
+            "@typography/*": ["./src/typography/*"],
+            "@utilities/*": ["./src/utilities/*"]
+        },
+        "types": ["cypress", "cypress-real-events", "vite/client", "node"]
+    },
+    "include": ["src/types", "src/**/*", "cypress/support/component.ts", "scripts/**/*"],
+    "exclude": ["node_modules", "dist"]
+}

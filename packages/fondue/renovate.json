@@ -1,0 +1,18 @@
+{
+    "$schema": "http://docs.renovatebot.com/renovate-schema.json",
+    "extends": ["config:base", "schedule:weekly"],
+    "labels": ["dependencies"],
+    "vulnerabilityAlerts": {
+        "labels": ["security"]
+    },
+    "dependencyDashboard": false,
+    "lockFileMaintenance": { "enabled": true },
+    "timezone": "Europe/Zurich",
+    "packageRules": [
+        {
+            "updateTypes": ["major"],
+            "labels": ["dependencies", "dependencies-major"]
+        }
+    ],
+    "reviewers": ["team:design-system"]
+}
