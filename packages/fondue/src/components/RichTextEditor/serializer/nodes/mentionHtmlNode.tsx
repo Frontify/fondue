@@ -13,6 +13,7 @@ export const mentionHtmlNode = (node: TElement, { mentionable }: MentionHtmlNode
     }
 
     const div = document.createElement('div');
+    // eslint-disable-next-line react/no-deprecated
     ReactDOM.render(MentionMarkupElementNode(mentionable)({ element: node as TMentionElement }), div);
     return div.innerHTML;
 };

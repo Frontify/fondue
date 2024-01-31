@@ -7,4 +7,13 @@ module.exports = {
     trailingComma: 'all',
     arrowParens: 'always',
     endOfLine: 'lf',
+    overrides: [
+        {
+            files: ['tsconfig.json', 'tsconfig.*.json'],
+            options: {
+                parser: 'json',
+                trailingComma: 'none',
+            },
+        },
+    ],
 };

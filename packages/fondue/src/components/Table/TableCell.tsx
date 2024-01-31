@@ -50,6 +50,7 @@ export const TableCell = ({
 
         return (
             <td
+                // eslint-disable-next-line jsx-a11y/no-interactive-element-to-noninteractive-role
                 role="cell"
                 ref={ref}
                 className={merge([
@@ -70,6 +71,7 @@ export const TableCell = ({
 
     return (
         <td
+            // eslint-disable-next-line jsx-a11y/no-interactive-element-to-noninteractive-role
             role="cell"
             ref={ref}
             className={merge([
