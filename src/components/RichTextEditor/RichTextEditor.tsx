@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { CSSProperties } from 'react';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { Plate, PlateContent, TEditableProps } from '@udecode/plate';
-import { RenderPlaceholderProps } from 'slate-react';
 import { ContentReplacement } from './ContentReplacement';
 import { RichTextEditorProvider } from './context/RichTextEditorContext';
 import { Position } from './EditorPositioningWrapper';
@@ -13,7 +13,7 @@ import { PaddingSizes, TreeOfNodes } from './types';
 import { parseRawValue } from './utils';
 import { BlurObserver } from '@components/RichTextEditor/BlurObserver';
 
-const PLACEHOLDER_STYLES: RenderPlaceholderProps['attributes']['style'] = {
+const PLACEHOLDER_STYLES: CSSProperties = {
     position: 'relative',
     height: '0',
 };

@@ -19,32 +19,27 @@ import {
 import { ELEMENT_CHECK_ITEM } from '../id';
 import { IconListCheck16 } from '@foundation/Icon';
 import { IconStylingWrapper } from '@components/RichTextEditor/Plugins/helper';
+import { ToolbarButton } from '@components/RichTextEditor/components/Toolbar/Toolbar';
 
-export const CheckboxListToolbarButton = ({
-    id,
-    type = ELEMENT_CHECK_ITEM,
-    active,
-    ...props
-}: any & { type?: string }) => {
+export const CheckboxListToolbarButton = ({ id, type = ELEMENT_CHECK_ITEM, active }: any & { type?: string }) => {
     const editor = useEditorState(useEventPlateId(id));
     const node = editor?.selection?.focus.path && getNode(editor, editor?.selection?.focus?.path);
     const isActive = active ?? (!!editor?.selection && someNode(editor, { match: { type } }));
 
-    return <IconStylingWrapper icon={<IconListCheck16 />} />;
-    // return (
-    //     <BlockToolbarButton
-    //         active={isActive}
-    //         type={type}
-    //         onClick={(e) => {
-    //             e.preventDefault();
-    //             e.stopPropagation();
+    return (
+        <ToolbarButton
+            pressed={isActive}
+            onPointerDown={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
 
-    //             toggleCheckboxList(editor, { type, isActive, node });
-    //             focusEditor(editor);
-    //         }}
-    //         {...props}
-    //     />
-    // );
+                toggleCheckboxList(editor, { type, isActive, node });
+                focusEditor(editor);
+            }}
+        >
+            <IconStylingWrapper icon={<IconListCheck16 />} />
+        </ToolbarButton>
+    );
 };
 
 export const toggleCheckboxList = <V extends Value>(
