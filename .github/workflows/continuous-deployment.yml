@@ -12,6 +12,7 @@ env:
 
 jobs:
     lint:
+        name: Lint
         runs-on: ubuntu-latest
         timeout-minutes: 10
 
@@ -40,6 +41,7 @@ jobs:
               run: pnpm lint
 
     typecheck:
+        name: Typecheck
         runs-on: ubuntu-latest
         timeout-minutes: 10
 

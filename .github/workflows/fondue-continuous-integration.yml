@@ -14,37 +14,6 @@ env:
     NUMBER_OF_RUNNERS: 8
 
 jobs:
-    typecheck:
-        name: Typecheck
-        runs-on: ubuntu-latest
-        timeout-minutes: 10
-
-        steps:
-            - name: Checkout default branch
-              uses: actions/checkout@v4
-
-            - name: Use pnpm
-              uses: pnpm/action-setup@v2
-              with:
-                  version: latest
-                  run_install: false
-
-            - name: Use Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version-file: '.nvmrc'
-                  cache: 'pnpm'
-
-            - name: Install npm dependencies
-              run: pnpm i --frozen-lockfile
-
-            - name: Generate icons
-              working-directory: ./packages/fondue
-              run: pnpm --stream --filter {packages/fondue} generate:icons && pnpm --stream --filter {packages/fondue} generate:componentsEnum
-
-            - name: Typecheck code
-              run: pnpm --stream --filter {packages/fondue} typecheck
-
     lint:
         name: Lint
         runs-on: ubuntu-latest
@@ -75,6 +44,37 @@ jobs:
 
             - name: Typecheck code
               run: pnpm --stream --filter {packages/fondue} lint
+
+    typecheck:
+        name: Typecheck
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+
+        steps:
+            - name: Checkout default branch
+              uses: actions/checkout@v4
+
+            - name: Use pnpm
+              uses: pnpm/action-setup@v2
+              with:
+                  version: latest
+                  run_install: false
+
+            - name: Use Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version-file: '.nvmrc'
+                  cache: 'pnpm'
+
+            - name: Install npm dependencies
+              run: pnpm i --frozen-lockfile
+
+            - name: Generate icons
+              working-directory: ./packages/fondue
+              run: pnpm --stream --filter {packages/fondue} generate:icons && pnpm --stream --filter {packages/fondue} generate:componentsEnum
+
+            - name: Typecheck code
+              run: pnpm --stream --filter {packages/fondue} typecheck
 
     component-tests:
         name: Component Tests

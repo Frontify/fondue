@@ -3,16 +3,7 @@ name: Security Audit
 on:
     workflow_dispatch:
     pull_request:
-        branches:
-            - beta
-            - main
-        types:
-            - opened
-            - synchronize
-            - reopened
-            - ready_for_review
         paths:
-            - 'package.json'
             - 'pnpm-lock.yaml'
 
 jobs:
