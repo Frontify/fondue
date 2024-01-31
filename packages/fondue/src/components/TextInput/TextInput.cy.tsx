@@ -61,6 +61,12 @@ describe('Text Input component', () => {
         cy.get(TEXT_INPUT_ID).should('have.attr', 'type', 'text');
     });
 
+    it('limits entry to the maxLength', () => {
+        cy.mount(<StatefulInput maxLength={5} />);
+        cy.get(TEXT_INPUT_ID).type(INPUT_TEXT);
+        cy.get(TEXT_INPUT_ID).should('have.value', INPUT_TEXT.substring(0, 5));
+    });
+
     it('renders the placeholder', () => {
         cy.mount(<StatefulInput placeholder={PLACEHOLDER} />);
         cy.get('input').should('have.attr', 'placeholder').and('eq', PLACEHOLDER);

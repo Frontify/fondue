@@ -1,19 +1,9 @@
 {
-  "name": "fondue",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "root",
+  "private": true,
   "scripts": {
-    "dev": "pnpm --parallel storybook"
-  },
-  "workspaces": [
-    "packages/fondue"
-  ],
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "semantic-release": "^21.0.1",
-    "semantic-release-monorepo": "^8.0.1"
+    "build": "pnpm run --filter {packages/fondue} build",
+    "ci:version": "pnpm build && changeset version",
+    "ci:publish": "pnpm build && changeset publish"
   }
 }
