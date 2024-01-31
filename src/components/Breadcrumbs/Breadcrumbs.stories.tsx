@@ -1,50 +1,84 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { BadgeStatus, BadgeStyle } from '@components/Badge';
-import IconIcon from '@foundation/Icon/Generated/IconIcon';
+import { IconIcon } from '@foundation/Icon/Generated';
 import { action } from '@storybook/addon-actions';
 import { Meta, StoryFn } from '@storybook/react';
-import React from 'react';
-import { Breadcrumbs, BreadcrumbsProps } from './Breadcrumbs';
+import { BreadcrumbGap, Breadcrumbs, BreadcrumbsProps } from './Breadcrumbs';
 
 const link = document.referrer;
 const ITEMS = [
     { label: 'Item 1', link },
     { label: 'Item 2', link },
     { label: 'Item 3', link },
+    { label: 'Item 4', link },
+    { label: 'Item 5', link },
 ];
 
 export default {
     title: 'Components/Breadcrumbs',
     component: Breadcrumbs,
+    tags: ['autodocs'],
+    args: {
+        keepRoot: true,
+    },
     argTypes: {
+        verticalGap: {
+            options: Object.values(BreadcrumbGap),
+            control: { type: 'radio' },
+        },
+        truncate: {
+            description: 'If true, truncation will be applied to the trail.',
+            defaultValue: false,
+            control: { type: 'boolean' },
+        },
+        keepRoot: {
+            description: 'If true, the first item in the list will remain, else it is will truncated.',
+            defaultValue: true,
+            control: { type: 'boolean' },
+        },
+        activeInline: {
+            description: 'If true, the current item wil be appended to the trail.',
+            defaultValue: false,
+            control: { type: 'boolean' },
+        },
         onBlur: { action: 'onBlur' },
     },
 } as Meta<BreadcrumbsProps>;
 
-const Template: StoryFn<BreadcrumbsProps> = (args: BreadcrumbsProps) => <Breadcrumbs {...args} />;
+const Template: StoryFn<BreadcrumbsProps> = (args: BreadcrumbsProps) => (
+    <Breadcrumbs {...args} key={JSON.stringify(args)} />
+);
 
 export const WithoutLinkOrAction = Template.bind({});
 
 WithoutLinkOrAction.args = {
-    items: [...ITEMS, { bold: true, label: 'Active' }],
+    verticalGap: BreadcrumbGap.Medium,
+    items: [...ITEMS, { bold: true, label: 'Active Item' }],
 };
 
-export const WithDecoratorAndAction = Template.bind({});
+export const WithDecoratorAndActionAndRootTruncation = Template.bind({});
 
-WithDecoratorAndAction.args = {
+WithDecoratorAndActionAndRootTruncation.args = {
+    verticalGap: BreadcrumbGap.Medium,
+    keepRoot: false,
+    truncate: true,
     items: [...ITEMS, { onClick: action('click'), bold: true, decorator: <IconIcon />, label: 'Active' }],
 };
 
-export const WithDecoratorAndLink = Template.bind({});
+export const WithDecoratorAndLinkAndCurrentInline = Template.bind({});
 
-WithDecoratorAndLink.args = {
+WithDecoratorAndLinkAndCurrentInline.args = {
+    verticalGap: BreadcrumbGap.Medium,
+    activeInline: true,
+    truncate: true,
     items: [...ITEMS, { link, bold: true, decorator: <IconIcon />, label: 'Active' }],
 };
 
 export const WithBadges = Template.bind({});
 
 WithBadges.args = {
+    verticalGap: BreadcrumbGap.Medium,
     items: [
         ...ITEMS,
         {
@@ -63,6 +97,7 @@ WithBadges.args = {
 export const WithDecoratorAndBadge: StoryFn<BreadcrumbsProps> = (args: BreadcrumbsProps) => <Breadcrumbs {...args} />;
 
 WithDecoratorAndBadge.args = {
+    verticalGap: BreadcrumbGap.Medium,
     items: [
         ...ITEMS,
         {

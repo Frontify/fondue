@@ -1,9 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconIcon } from '@foundation/Icon';
+import { IconIcon } from '@foundation/Icon/Generated';
 import { PatternDesign, PatternTheme } from '@foundation/Pattern';
 import { OverlayProvider } from '@react-aria/overlays';
-import React from 'react';
 import { Modal } from './Modal';
 import { ModalHeader } from './ModalHeader';
 import { ModalHeaderVariant } from './types';

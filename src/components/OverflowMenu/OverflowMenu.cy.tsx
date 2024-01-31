@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { OverflowMenu } from './OverflowMenu';
 
 const COMPONENT_TEST_ID = '[data-test-id=overflow-menu]';

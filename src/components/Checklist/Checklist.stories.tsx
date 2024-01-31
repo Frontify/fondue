@@ -2,12 +2,13 @@
 
 import { CheckboxState } from '@components/Checkbox/Checkbox';
 import { Meta, StoryFn } from '@storybook/react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Checklist as ChecklistComponent, ChecklistDirection, ChecklistProps } from './Checklist';
 
 export default {
     title: 'Components/Checklist',
     component: ChecklistComponent,
+    tags: ['autodocs'],
     argTypes: {
         columns: {
             options: [1, 2, 3, 4],
@@ -18,6 +19,9 @@ export default {
             options: [ChecklistDirection.Horizontal, ChecklistDirection.Vertical],
             control: { type: 'radio' },
         },
+    },
+    args: {
+        ariaLabel: 'checklist',
     },
 } as Meta<ChecklistProps>;
 
@@ -54,6 +58,7 @@ export const Checklist: StoryFn<ChecklistProps> = (args: ChecklistProps) => {
     return (
         <ChecklistComponent
             {...args}
+            direction={args.direction}
             checkboxes={CHECKBOXES}
             activeValues={activeBoxes}
             setActiveValues={setActiveBoxes}
@@ -61,17 +66,14 @@ export const Checklist: StoryFn<ChecklistProps> = (args: ChecklistProps) => {
     );
 };
 
-export const MultipleColumns = (args: ChecklistProps) => {
+const MultipleColumnsComponent = (args: ChecklistProps) => {
     const [activeBoxes, setActiveBoxes] = useState<string[]>([]);
 
-    return (
-        <ChecklistComponent
-            {...args}
-            checkboxes={COLUMN_CHECKBOXES}
-            activeValues={activeBoxes}
-            setActiveValues={setActiveBoxes}
-        />
-    );
+    return <ChecklistComponent {...args} activeValues={activeBoxes} setActiveValues={setActiveBoxes} />;
+};
+
+export const MultipleColumns = (args: ChecklistProps) => {
+    return <MultipleColumnsComponent {...args} checkboxes={COLUMN_CHECKBOXES} />;
 };
 MultipleColumns.args = {
     direction: ChecklistDirection.Vertical,
@@ -79,16 +81,9 @@ MultipleColumns.args = {
 };
 
 export const MultipleColumnsInContainedSpace = (args: ChecklistProps) => {
-    const [activeBoxes, setActiveBoxes] = useState<string[]>([]);
-
     return (
         <div className="tw-w-[300px] tw-p-2 tw-border- tw-border tw-rounded tw-border-line">
-            <ChecklistComponent
-                {...args}
-                checkboxes={COLUMN_CHECKBOXES}
-                activeValues={activeBoxes}
-                setActiveValues={setActiveBoxes}
-            />
+            <MultipleColumnsComponent {...args} checkboxes={COLUMN_CHECKBOXES} />
         </div>
     );
 };
@@ -98,5 +93,22 @@ MultipleColumnsInContainedSpace.args = {
 };
 
 MultipleColumnsInContainedSpace.argTypes = {
+    direction: { table: { disable: true } },
+    ariaLabel: { type: 'string' },
+};
+
+export const MultipleColumnsInContainedSpaceAndSpannedColumn = (args: ChecklistProps) => {
+    return (
+        <div className="tw-w-[300px] tw-p-2 tw-border- tw-border tw-rounded tw-border-line">
+            <MultipleColumnsComponent {...args} checkboxes={COLUMN_CHECKBOXES.slice(0, -1)} />
+        </div>
+    );
+};
+MultipleColumnsInContainedSpaceAndSpannedColumn.args = {
+    direction: ChecklistDirection.Vertical,
+    columns: 3,
+};
+
+MultipleColumnsInContainedSpaceAndSpannedColumn.argTypes = {
     direction: { table: { disable: true } },
 };

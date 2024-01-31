@@ -1,18 +1,21 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
+import { getHotkeyByPlatform } from '@components/RichTextEditor/helpers/getHotkeyByPlatform';
+import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
+import { IconTextFormatItalic16 } from '@foundation/Icon/Generated';
 import { MarkToolbarButton, getPluginType } from '@udecode/plate';
-import { IconSize, IconTextFormatItalic } from '@foundation/Icon';
-import { ButtonWrapper, IconStylingWrapper, buttonClassNames, buttonStyles } from '../helper';
+import { ButtonWrapper, IconStylingWrapper, buttonStyles, getButtonClassNames } from '../helper';
 import { PluginButtonProps } from '../types';
 
 export const ItalicButton = ({ editor, id }: PluginButtonProps) => (
     <ButtonWrapper id={id}>
         <MarkToolbarButton
+            tooltip={getTooltip(`Italic\n${getHotkeyByPlatform('Ctrl+I')}`)}
             type={getPluginType(editor, id)}
-            icon={<IconStylingWrapper icon={<IconTextFormatItalic size={IconSize.Size16} />} />}
-            classNames={buttonClassNames}
+            icon={<IconStylingWrapper icon={<IconTextFormatItalic16 />} />}
+            classNames={getButtonClassNames()}
             styles={buttonStyles}
+            actionHandler="onMouseDown"
         />
     </ButtonWrapper>
 );

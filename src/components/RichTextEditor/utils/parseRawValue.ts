@@ -4,12 +4,15 @@ import { ELEMENT_PARAGRAPH, Value, deserializeHtml, normalizeEditor } from '@ude
 import { PluginComposer } from '../Plugins';
 import { InitPlateEditor } from './InitPlateEditor';
 
-const isHtmlString = (string: string): boolean => {
-    const fragment = new DOMParser().parseFromString(string, 'text/html');
-    return fragment.body.children.length > 0;
-};
-
-const wrapTextInHtml = (text: string) => (isHtmlString(text) ? text : `<p>${text}</p>`);
+const wrapChildrenWithoutTypeInParagraph = (children: Value): Value =>
+    children[0].hasOwnProperty('type')
+        ? children
+        : [
+              {
+                  type: 'p',
+                  children,
+              },
+          ];
 
 export const EMPTY_RICH_TEXT_VALUE: Value = [{ type: ELEMENT_PARAGRAPH, children: [{ text: '' }] }];
 
@@ -30,15 +33,11 @@ export const parseRawValue = ({ editorId = 'parseRawValue', raw, plugins }: Pars
     try {
         parsedValue = JSON.parse(raw);
     } catch {
-        const trimmed = raw.trim().replace(/>\s+</g, '><');
-        const htmlDocumentString = wrapTextInHtml(trimmed);
+        const trimmedText = raw.trim().replaceAll(/>\s+</g, '><');
         const parsedHtml = deserializeHtml(editor, {
-            element: htmlDocumentString,
-            stripWhitespace: true,
+            element: trimmedText,
         }) as Value;
-        if (parsedHtml) {
-            parsedValue = parsedHtml;
-        }
+        parsedValue = wrapChildrenWithoutTypeInParagraph(parsedHtml);
     }
 
     editor.children = parsedValue;

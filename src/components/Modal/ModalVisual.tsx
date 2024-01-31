@@ -1,12 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC } from 'react';
+import { ReactElement } from 'react';
 import { merge } from '@utilities/merge';
 import { ModalVisualProps } from './types';
 import { FrontifyPattern } from '@components/FrontifyPattern/FrontifyPattern';
 import { PatternDesign, PatternScale, patternThemes } from '@foundation/Pattern';
 
-export const ModalVisual: FC<ModalVisualProps> = ({ pattern = PatternDesign.DigitalAssets, foregroundColor }) => {
+export const ModalVisual = ({
+    pattern = PatternDesign.DigitalAssets,
+    foregroundColor,
+}: ModalVisualProps): ReactElement => {
     return (
         <div
             data-test-id="modal-visual"
@@ -30,3 +33,4 @@ export const ModalVisual: FC<ModalVisualProps> = ({ pattern = PatternDesign.Digi
         </div>
     );
 };
+ModalVisual.displayName = 'FondueModalVisual';

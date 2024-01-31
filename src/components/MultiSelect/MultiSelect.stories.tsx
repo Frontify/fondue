@@ -1,24 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Meta, StoryFn } from '@storybook/react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { FormControl } from '@components/FormControl';
 import { Validation } from '@utilities/validation';
-import {
-    MultiSelect as MultiSelectComponent,
-    MultiSelectEmphasis,
-    MultiSelectProps,
-    MultiSelectSize,
-    MultiSelectType,
-} from './MultiSelect';
-import { IconPerson16 } from '@foundation/Icon';
+import { MultiSelect as MultiSelectComponent, MultiSelectProps, MultiSelectSize, MultiSelectType } from './MultiSelect';
+import { TriggerEmphasis } from '@components/Trigger';
 
 export default {
     title: 'Components/Multi Select',
     component: MultiSelectComponent,
+    tags: ['autodocs'],
     args: {
         type: MultiSelectType.Default,
-        emphasis: MultiSelectEmphasis.Default,
         size: MultiSelectSize.Medium,
         placeholder: 'Labels',
         label: 'Labels',
@@ -50,7 +44,7 @@ export default {
             control: { type: 'select' },
         },
         emphasis: {
-            options: Object.keys(MultiSelectEmphasis),
+            options: Object.keys(TriggerEmphasis),
             control: { type: 'select' },
         },
         size: {
@@ -60,6 +54,24 @@ export default {
         validation: {
             options: Object.values(Validation),
             control: { type: 'select' },
+        },
+        disabled: {
+            type: 'boolean',
+        },
+        flip: {
+            type: 'boolean',
+        },
+        ariaLabel: {
+            type: 'string',
+        },
+        summarizedLabel: {
+            type: 'string',
+        },
+        activeItemKeys: {
+            table: { disable: true },
+        },
+        indeterminateItemKeys: {
+            table: { disable: true },
         },
     },
 } as Meta;
@@ -90,6 +102,20 @@ const MultiSelectFormControlTemplate: StoryFn<MultiSelectProps> = (args) => {
     );
 };
 
+const MultiSelectRightAlignedContainerTemplate: StoryFn<MultiSelectProps> = (args) => {
+    const [activeItemKeys, setActiveItemKeys] = useState<(string | number)[]>(args.activeItemKeys);
+
+    return (
+        <div className="tw-absolute tw-right-0 tw-p-6 tw-w-96">
+            <MultiSelectComponent
+                {...args}
+                activeItemKeys={activeItemKeys}
+                onSelectionChange={(keys) => setActiveItemKeys(keys)}
+            />
+        </div>
+    );
+};
+
 export const MultiSelect = MultiSelectTemplate.bind({});
 
 export const WithPlaceholder = MultiSelectTemplate.bind({});
@@ -97,13 +123,6 @@ export const WithPlaceholder = MultiSelectTemplate.bind({});
 WithPlaceholder.args = {
     activeItemKeys: [],
     placeholder: 'Placeholder text',
-};
-
-export const WithDecorator = MultiSelectTemplate.bind({});
-
-WithDecorator.args = {
-    activeItemKeys: [],
-    decorator: <IconPerson16 />,
 };
 
 export const WithOptionsSummarized = MultiSelectTemplate.bind({});
@@ -114,67 +133,44 @@ WithOptionsSummarized.args = {
 
 export const WithFormControl = MultiSelectFormControlTemplate.bind({});
 
-export const WithFilter = MultiSelectTemplate.bind({});
+export const WithMixedValues = MultiSelectTemplate.bind({});
 
-WithFilter.args = {
-    filterable: true,
-    filterLabel: 'Filter..',
-    noResultsLabel: 'No results match the search',
-    decorator: <IconPerson16 />,
-    placeholder: 'Users',
-    label: 'Users',
+WithMixedValues.args = {
+    type: MultiSelectType.Summarized,
+    summarizedLabel: 'Mixed values',
+    indeterminateItemKeys: ['This is a long tag'],
+};
+
+export const WithRightAlignedContainer = MultiSelectRightAlignedContainerTemplate.bind({});
+
+WithRightAlignedContainer.args = {
     items: [
         {
-            value: 'Consumption',
-            isCategory: true,
+            value: 'Bacon ipsum dolor amet beef tri-tip rump, porchetta meatball andouille bacon shankle pancetta',
         },
         {
-            imgSrc: 'https://images.unsplash.com/photo-1669255034440-7d293acdd207?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=927&q=80',
-            value: 'Checkbox label 1',
-        },
-        {
-            imgSrc: 'https://images.unsplash.com/photo-1669255034440-7d293acdd207?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=927&q=80',
             value: 'Short tag',
         },
         {
-            imgSrc: 'https://images.unsplash.com/photo-1669255034440-7d293acdd207?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=927&q=80',
             value: 'Checkbox label 2',
         },
         {
-            value: '',
-            isDivider: true,
-        },
-        {
-            imgSrc: 'https://images.unsplash.com/photo-1669255034440-7d293acdd207?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=927&q=80',
             value: 'Checkbox label 3',
         },
         {
-            imgSrc: 'https://images.unsplash.com/photo-1669255034440-7d293acdd207?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=927&q=80',
             value: 'Tag 74',
         },
         {
-            imgSrc: 'https://images.unsplash.com/photo-1669255034440-7d293acdd207?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=927&q=80',
             value: 'This is a long tag',
         },
-        {
-            value: '',
-            isDivider: true,
-        },
-        {
-            imgSrc: 'https://images.unsplash.com/photo-1669255034440-7d293acdd207?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=927&q=80',
-            value: 'Checkbox label 33',
-        },
-        {
-            imgSrc: 'https://images.unsplash.com/photo-1669255034440-7d293acdd207?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=927&q=80',
-            value: 'Tag 83',
-        },
-        {
-            imgSrc: 'https://images.unsplash.com/photo-1669255034440-7d293acdd207?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=927&q=80',
-            value: 'This is a long tag 74',
-        },
     ],
+    flip: true,
 };
 
-export const WithCustomMenu = MultiSelectTemplate.bind({});
+export const WithWeakTriggerEmphasis = MultiSelectTemplate.bind({});
 
-WithCustomMenu.args = WithFilter.args;
+WithWeakTriggerEmphasis.args = {
+    activeItemKeys: [],
+    placeholder: 'Weak emphasis placeholder text',
+    emphasis: TriggerEmphasis.Weak,
+};

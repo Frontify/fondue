@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Meta, StoryFn } from '@storybook/react';
-import React from 'react';
 import { sharedTypographyArgTypes, sharedTypographyArgs } from '../shared/Shared';
 import { Text as TextComponent, TextProps } from './Text';
+import { Container } from '@components/Container';
+import { SPACING_VALUES } from '@utilities/dimensions';
 
 export default {
     title: 'Typography/Text',
@@ -24,6 +25,11 @@ export default {
         color: {
             options: ['default', 'weak', 'x-weak', 'disabled', 'negative', 'positive', 'warning', 'interactive'],
             control: { type: 'select' },
+        },
+        boxColor: {
+            options: ['', 'neutral', 'selected', 'disabled', 'positive', 'negative', 'warning'],
+            control: { type: 'select' },
+            defaultValue: '',
         },
         ...sharedTypographyArgTypes,
     },
@@ -47,3 +53,19 @@ export const LongTextWithNewLines: StoryFn<TextProps> = (args) => (
         </TextComponent>
     </div>
 );
+
+export const TextChildOfBoxToken: StoryFn<TextProps> = (args) => {
+    return (
+        <Container color="tw-bg-box-negative" padding={SPACING_VALUES[2]}>
+            <TextComponent {...args}>
+                {
+                    'Example of the negative box alias token applied on the parent and the corresponding inverse token applied to the text content.'
+                }
+            </TextComponent>
+        </Container>
+    );
+};
+
+TextChildOfBoxToken.args = {
+    boxColor: 'negative',
+};

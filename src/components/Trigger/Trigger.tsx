@@ -1,13 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconCaretDown from '@foundation/Icon/Generated/IconCaretDown';
+import { IconCaretDown, IconCross, IconExclamationMarkTriangle, IconTrashBin } from '@foundation/Icon/Generated';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { useFocusRing } from '@react-aria/focus';
-import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { FOCUS_STYLE, FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
-import React, { FC, HTMLAttributes } from 'react';
-import { IconCross, IconExclamationMarkTriangle, IconTrashBin } from '@foundation/Icon';
+import { HTMLAttributes, ReactElement, ReactNode } from 'react';
 
 export enum TriggerSize {
     Small = 'Small',
@@ -21,6 +20,7 @@ export enum TriggerEmphasis {
 
 export type TriggerProps = {
     disabled?: boolean;
+    children?: ReactNode;
     isOpen?: boolean;
     onClear?: () => void;
     onDelete?: () => void;
@@ -54,7 +54,7 @@ const getTriggerClassNames = (
               ]),
     ]);
 
-export const Trigger: FC<TriggerProps> = ({
+export const Trigger = ({
     buttonProps,
     onClear,
     onDelete,
@@ -66,7 +66,7 @@ export const Trigger: FC<TriggerProps> = ({
     showClear = false,
     validation = Validation.Default,
     emphasis = TriggerEmphasis.Default,
-}) => {
+}: TriggerProps): ReactElement => {
     const { focusProps: clearableFocusProps, isFocusVisible: isClearFocusVisible } = useFocusRing();
     const { focusProps: onDeleteFocusProps, isFocusVisible: isOnDeleteFocusVisible } = useFocusRing();
 
@@ -104,6 +104,7 @@ export const Trigger: FC<TriggerProps> = ({
                         aria-label="Delete selection"
                         type="button"
                         className={merge([
+                            'tw-rounded',
                             isOnDeleteFocusVisible && FOCUS_STYLE,
                             disabled ? 'tw-pointer-events-none tw-text-black-40' : 'tw-text-black-80',
                         ])}
@@ -114,21 +115,33 @@ export const Trigger: FC<TriggerProps> = ({
                 )}
                 <button
                     {...buttonProps}
-                    aria-hidden="true"
                     type="button"
+                    tabIndex={-1}
+                    disabled={disabled}
+                    aria-hidden={true}
                     className={merge([
+                        'tw-rounded',
                         disabled
                             ? 'tw-pointer-events-none tw-text-black-40'
-                            : merge(['group-hover:tw-text-black', isOpen ? 'tw-text-black-100' : 'tw-text-black-80']),
+                            : merge([
+                                  'group-hover:tw-text-black ',
+                                  isOpen ? 'tw-text-black-100' : 'tw-text-black-80',
+                                  FOCUS_VISIBLE_STYLE,
+                              ]),
                     ])}
                 >
                     <div className={merge(['tw-transition-transform', isOpen && 'tw-rotate-180'])}>
                         <IconCaretDown size={IconSize.Size16} />
                     </div>
                 </button>
-                {validation === Validation.Error && (
+
+                {(validation === Validation.Error || validation === Validation.Warning) && (
                     <span
-                        className="tw-flex tw-items-center tw-justify-center tw-text-red-60"
+                        className={merge([
+                            'tw-flex tw-items-center tw-justify-center',
+                            validation === Validation.Error && 'tw-text-text-negative',
+                            validation === Validation.Warning && 'tw-text-text-warning',
+                        ])}
                         data-test-id="error-state-exclamation-mark-icon"
                     >
                         <IconExclamationMarkTriangle />
@@ -138,3 +151,4 @@ export const Trigger: FC<TriggerProps> = ({
         </div>
     );
 };
+Trigger.displayName = 'FondueTrigger';

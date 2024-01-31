@@ -1,12 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, {
+import {
     ChangeEvent,
     FocusEvent,
     FocusEventHandler,
     KeyboardEvent,
     KeyboardEventHandler,
     ReactElement,
+    cloneElement,
     useEffect,
     useRef,
     useState,
@@ -58,6 +59,7 @@ export interface EditableTextProps {
     options?: EditableOptionProps;
     /** @deprecated Temporary solution for text with ellipisis in Tree Component */
     isOverflowing?: boolean;
+    'data-test-id'?: string;
 }
 
 /**
@@ -83,6 +85,7 @@ export const EditableText = ({
     children,
     options,
     isOverflowing = false,
+    'data-test-id': dataTestId = 'editable-node-container',
 }: EditableTextProps) => {
     // Read initial text strings from children
     const childrenLabel = EditableTextHelper.getLabel(children);
@@ -147,13 +150,13 @@ export const EditableText = ({
     // Clone Child and add ref to Children
     const ChildrenWithRef =
         children &&
-        React.cloneElement(children, {
+        cloneElement(children, {
             ref: childRef,
         });
 
     return (
         <div
-            data-test-id="editable-node-container"
+            data-test-id={dataTestId}
             className={merge(['tw-relative tw-h-full', options?.removeBoxPadding === true ? '' : 'tw-p-2'])}
         >
             {editableState === EditableMode.INPUT ? (
@@ -198,9 +201,7 @@ export const EditableText = ({
                         </span>
                     </div>
                 </div>
-            ) : (
-                <></>
-            )}
+            ) : null}
             <button
                 style={{ display: editableState === EditableMode.INPUT ? 'none' : 'flex' }}
                 className={merge([isOverflowing && 'tw-w-full', 'tw-h-full tw-items-center', FOCUS_VISIBLE_STYLE])}
@@ -213,3 +214,4 @@ export const EditableText = ({
         </div>
     );
 };
+EditableText.displayName = 'FondueEditableText';

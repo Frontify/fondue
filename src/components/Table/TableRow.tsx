@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactNode, useRef } from 'react';
+import { ReactNode, useRef } from 'react';
 
 export type TableRowProps = {
     isSelected?: boolean;
@@ -26,3 +26,4 @@ export const TableRow = ({ isSelected = false, children }: TableRowProps) => {
         </tr>
     );
 };
+TableRow.displayName = 'FondueTableRow';

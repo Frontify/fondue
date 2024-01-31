@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { merge } from '@utilities/merge';
-import React, { FC, PropsWithChildren } from 'react';
+import { ReactElement, ReactNode } from 'react';
 import { decorationMap, displayMap, overflowMap, whitespaceMap, wordBreakMap } from '../shared/records';
 import { SharedTypographyProps } from '../shared/types';
 
@@ -9,14 +9,13 @@ type HeadingWeight = 'default' | 'strong';
 type HeadingSize = 'medium' | 'large' | 'x-large' | 'xx-large';
 type HeadingColor = 'default' | 'weak' | 'x-weak' | 'disabled' | 'negative' | 'positive' | 'warning' | 'interactive';
 
-export type HeadingProps = PropsWithChildren<
-    SharedTypographyProps & {
-        size?: HeadingSize;
-        weight?: HeadingWeight;
-        as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'span' | 'p';
-        color?: HeadingColor;
-    }
->;
+export type HeadingProps = SharedTypographyProps & {
+    size?: HeadingSize;
+    weight?: HeadingWeight;
+    as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'span' | 'p';
+    color?: HeadingColor;
+    children?: ReactNode;
+};
 
 const weightMap: Record<HeadingWeight, string> = {
     default: 'tw-font-medium',
@@ -41,7 +40,7 @@ const colorMap: Record<HeadingColor, string> = {
     interactive: 'tw-text-text-interactive',
 };
 
-export const Heading: FC<HeadingProps> = ({
+export const Heading = ({
     children,
     as: Tag = 'span',
     weight = 'default',
@@ -52,7 +51,7 @@ export const Heading: FC<HeadingProps> = ({
     wordBreak = 'normal',
     whitespace = 'normal',
     display,
-}) => (
+}: HeadingProps): ReactElement => (
     <Tag
         data-test-id="heading"
         className={merge([
@@ -70,3 +69,4 @@ export const Heading: FC<HeadingProps> = ({
         {children}
     </Tag>
 );
+Heading.displayName = 'FondueHeading';

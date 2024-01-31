@@ -1,8 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { ActionMenuBlock, MenuItemStyle } from '..';
-import { IconArrowCircleUp, IconArrowOutExternal, IconCrop, IconCross, IconImageStack } from '@foundation/Icon';
+import {
+    IconArrowCircleUp,
+    IconArrowOutExternal,
+    IconCrop,
+    IconCross,
+    IconImageStack,
+} from '@foundation/Icon/Generated';
 
 export const assetInputActions = [
     {

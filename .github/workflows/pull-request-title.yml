@@ -2,30 +2,32 @@ name: Pull Request Title
 
 on:
     pull_request:
-        types: 
+        types:
             - opened
             - edited
             - reopened
             - synchronize
+            - ready_for_review
         branches:
             - 'main'
             - 'beta'
 
 jobs:
     pr-title-validation:
+        if: github.event.pull_request.draft == false
         runs-on: ubuntu-latest
         steps:
-            -   uses: amannn/action-semantic-pull-request@v5
-                with: 
-                    types: |
-                        feat
-                        fix
-                        chore
-                        docs
-                        style
-                        refactor
-                        perf
-                        test
-                        automation
-                env: 
-                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            - uses: amannn/action-semantic-pull-request@v5
+              with:
+                  types: |
+                      feat
+                      fix
+                      chore
+                      docs
+                      style
+                      refactor
+                      perf
+                      test
+                      ci
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

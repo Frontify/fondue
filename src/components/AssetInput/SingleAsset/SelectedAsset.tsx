@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ActionMenu } from '@components/ActionMenu/ActionMenu/ActionMenu';
-import IconCaretDown from '@foundation/Icon/Generated/IconCaretDown';
+import { IconCaretDown } from '@foundation/Icon/Generated';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { useButton } from '@react-aria/button';
@@ -13,7 +13,7 @@ import { useMenuTriggerState } from '@react-stately/menu';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { AnimatePresence, motion } from 'framer-motion';
-import React, { FC, useEffect, useRef, useState } from 'react';
+import { ReactElement, useEffect, useRef, useState } from 'react';
 import { AssetInputProps, AssetInputSize, AssetType } from '../AssetInput';
 import { AssetThumbnail } from '../AssetThumbnail';
 import { AssetSubline } from './AssetSubline';
@@ -26,10 +26,15 @@ export type SelectedAssetProps = Pick<
     asset: AssetType;
 };
 
-export const SelectedAsset: FC<
-    Required<Omit<SelectedAssetProps, 'hideSize' | 'hideExtension'>> &
-        Pick<SelectedAssetProps, 'hideSize' | 'hideExtension'>
-> = ({ asset, size, actions, isLoading, hideSize = false, hideExtension = false }) => {
+export const SelectedAsset = ({
+    asset,
+    size,
+    actions,
+    isLoading,
+    hideSize = false,
+    hideExtension = false,
+}: Required<Omit<SelectedAssetProps, 'hideSize' | 'hideExtension'>> &
+    Pick<SelectedAssetProps, 'hideSize' | 'hideExtension'>): ReactElement => {
     const menuId = useMemoizedId();
     const labelId = useMemoizedId();
     const buttonRef = useRef<HTMLButtonElement | null>(null);
@@ -67,13 +72,13 @@ export const SelectedAsset: FC<
     return (
         <div
             className="tw-font-sans tw-w-full tw-text-s tw-bg-transparent tw-font-normal tw-min-w-0"
-            aria-labelledby={labelId}
             title={title}
             data-test-id="asset-single-input"
         >
             <button
                 {...mergeProps(buttonProps, focusProps)}
                 ref={buttonRef}
+                aria-labelledby={labelId}
                 className={merge([
                     'tw-w-full tw-flex tw-border tw-rounded tw-overflow-hidden hover:tw-border-black-90 dark:hover:tw-border-black-40 focus-visible:tw-outline-none',
                     isFocusVisible && FOCUS_STYLE,
@@ -161,3 +166,4 @@ export const SelectedAsset: FC<
         </div>
     );
 };
+SelectedAsset.displayName = 'FondueSelectedAsset';

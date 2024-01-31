@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TComboboxItemWithData } from '@udecode/plate';
+import { CreateMentionNode, Data, NoData, TComboboxItemWithData, WithOverride } from '@udecode/plate';
 import { PluginProps } from '../Plugin';
 
 export enum MentionableCategory {
@@ -10,7 +10,9 @@ export enum MentionableCategory {
 }
 
 export type MentionItemData = {
+    id: string;
     category: MentionableCategory;
+    image?: string;
 };
 
 export type MentionableItem = TComboboxItemWithData<MentionItemData>;
@@ -20,3 +22,14 @@ export type MentionableItems = MentionableItem[];
 export type MentionPluginProps = PluginProps & {
     mentionableItems: MentionableItems;
 };
+
+export type MappedMentionableItems = Map<string, string>;
+
+export interface MentionPlugin<TData extends Data = NoData> {
+    withOverrides?: WithOverride;
+    options: {
+        trigger: string;
+        insertSpaceAfterMention: boolean;
+        createMentionNode?: CreateMentionNode<TData>;
+    };
+}

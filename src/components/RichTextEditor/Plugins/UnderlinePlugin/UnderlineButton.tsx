@@ -1,18 +1,21 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
+import { getHotkeyByPlatform } from '@components/RichTextEditor/helpers/getHotkeyByPlatform';
+import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
+import { IconTextFormatUnderline16 } from '@foundation/Icon/Generated';
 import { MarkToolbarButton, getPluginType } from '@udecode/plate';
-import { IconSize, IconTextFormatUnderline } from '@foundation/Icon';
-import { ButtonWrapper, IconStylingWrapper, buttonClassNames, buttonStyles } from '../helper';
+import { ButtonWrapper, IconStylingWrapper, buttonStyles, getButtonClassNames } from '../helper';
 import { PluginButtonProps } from '../types';
 
 export const UnderlineButton = ({ editor, id }: PluginButtonProps) => (
     <ButtonWrapper id={id}>
         <MarkToolbarButton
+            tooltip={getTooltip(`Underline\n${getHotkeyByPlatform('Ctrl+U')}`)}
             type={getPluginType(editor, id)}
-            icon={<IconStylingWrapper icon={<IconTextFormatUnderline size={IconSize.Size16} />} />}
-            classNames={buttonClassNames}
+            icon={<IconStylingWrapper icon={<IconTextFormatUnderline16 />} />}
+            classNames={getButtonClassNames()}
             styles={buttonStyles}
+            actionHandler="onMouseDown"
         />
     </ButtonWrapper>
 );

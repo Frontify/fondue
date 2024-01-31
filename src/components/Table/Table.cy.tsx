@@ -2,7 +2,7 @@
 
 import { Button } from '@components/Button/Button';
 import { TextInput } from '@components/TextInput/TextInput';
-import React, { Key, useEffect, useState } from 'react';
+import { Key, useEffect, useState } from 'react';
 import { Column, Row, SelectionMode, SortDirection, Table } from './Table';
 
 const TABLE_COLUMNS: Column[] = [
@@ -188,7 +188,7 @@ describe('Table Component', () => {
                         columns={TABLE_COLUMNS}
                         rows={filteredRows}
                         selectedRowIds={selectedRows}
-                        onSelectionChange={(ids) => setSelectedRows(ids || [])}
+                        onSelectionChange={(ids) => setSelectedRows((ids as (string | number)[]) || [])}
                     />
                 </>
             );

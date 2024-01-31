@@ -1,36 +1,45 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { useDrop } from 'react-dnd';
 import { merge } from '@utilities/merge';
-import { OrderableListItem } from '@components/OrderableList/types';
-import { DraggableItem, DropZonePosition } from '@utilities/dnd';
+import { LegacyOrderableListItem } from '@components/LegacyOrderableList/types';
+import { DraggableItem } from '@utilities/dnd';
+
+import { CollisionPosition } from '..';
 
 export type OnDropCallback<T> = (
     targetItem: DraggableItem<T>,
     sourceItem: DraggableItem<T>,
-    position: DropZonePosition,
+    position: CollisionPosition,
+    direction?: 'up' | 'down',
 ) => void;
 
-type DropZoneData<T> = {
+export type DropZoneData<T> = {
     targetItem: DraggableItem<T>;
-    position: DropZonePosition;
+    position: CollisionPosition;
 };
 
 export type DropZoneProps<T> = {
     data: DropZoneData<T>;
     onDrop?: OnDropCallback<T>;
-    treeId: string;
+    accept: string | string[];
     children?: JSX.Element;
+    'data-test-id'?: string;
 };
 
-export const DropZone = <T extends object>({ data, onDrop, children, treeId }: DropZoneProps<T>) => {
+export const DropZone = <T extends object>({
+    data,
+    onDrop,
+    accept,
+    children,
+    'data-test-id': dataTestId = 'drop-zone',
+}: DropZoneProps<T>) => {
     const [{ isOver, canDrop }, drop] = useDrop({
-        accept: treeId,
-        drop: (item: OrderableListItem<T>) => {
+        accept: accept || '',
+        drop: (item: LegacyOrderableListItem<T>) => {
             onDrop?.(data.targetItem, item, data.position);
         },
-        canDrop: (item: OrderableListItem<T>) => {
+        canDrop: (item: LegacyOrderableListItem<T>) => {
             // can't drop an item on itself
             if (item.id === data.targetItem.id) {
                 return false;
@@ -45,20 +54,20 @@ export const DropZone = <T extends object>({ data, onDrop, children, treeId }: D
     });
 
     const isActive = isOver && canDrop;
+    const bgColorClassName = 'tw-bg-violet-20';
     const outerDropZoneClassNames = 'tw-my-[-4px] tw-h-[10px] tw-py-1 tw-outline-none tw-relative tw-z-20';
     const activeOuterDropZoneClassNames = 'tw-border-violet-60 tw-border-2 tw-h-7 tw-bg-clip-content';
-    const bgColorClassName = 'tw-bg-violet-20';
 
     return (
         <div
             role="row"
             aria-hidden={!isActive}
-            data-test-id="drop-zone"
+            data-test-id={dataTestId}
             className={merge([
                 'tw-w-full tw-transition-height',
-                data.position !== DropZonePosition.Within ? outerDropZoneClassNames : 'tw-h-auto',
-                isActive && data.position !== DropZonePosition.Within ? activeOuterDropZoneClassNames : '',
-                isActive && data.position === DropZonePosition.Within ? bgColorClassName : '',
+                data.position !== 'within' ? outerDropZoneClassNames : 'tw-h-auto',
+                isActive && data.position !== 'within' ? activeOuterDropZoneClassNames : '',
+                isActive && data.position === 'within' ? bgColorClassName : '',
             ])}
             ref={drop}
         >
@@ -66,3 +75,5 @@ export const DropZone = <T extends object>({ data, onDrop, children, treeId }: D
         </div>
     );
 };
+
+DropZone.displayName = 'FondueDropZone';

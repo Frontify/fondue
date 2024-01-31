@@ -3,16 +3,16 @@
         "files": true
     },
     "compilerOptions": {
-        "baseUrl": "./",
+        "baseUrl": ".",
         "esModuleInterop": true,
         "lib": ["dom", "dom.iterable", "esnext"],
-        "module": "commonjs",
+        "module": "ESNext",
         "moduleResolution": "node",
         "noUnusedLocals": true,
         "noEmit": true,
         "strict": true,
         "target": "esnext",
-        "jsx": "react",
+        "jsx": "react-jsx",
         "skipLibCheck": true,
         "resolveJsonModule": true,
         "paths": {
@@ -23,7 +23,7 @@
             "@typography/*": ["./src/typography/*"],
             "@utilities/*": ["./src/utilities/*"]
         },
-        "types": ["cypress", "cypress-real-events", "vite/client"]
+        "types": ["cypress", "cypress-real-events", "vite/client", "node"]
     },
     "include": ["src/types", "src/**/*", "cypress/support/component.ts", "scripts/**/*"],
     "exclude": ["node_modules", "dist"]

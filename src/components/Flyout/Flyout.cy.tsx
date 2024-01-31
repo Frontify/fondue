@@ -2,7 +2,7 @@
 
 import { ButtonEmphasis, ButtonStyle } from '@components/Button';
 import { TextInput } from '@components/TextInput/TextInput';
-import React, { FC, useState } from 'react';
+import { ReactElement, useState } from 'react';
 import { Flyout, FlyoutProps } from './Flyout';
 import { FlyoutFooter } from './FlyoutFooter';
 
@@ -12,12 +12,12 @@ const BUTTON_ID = '[data-test-id=button]';
 const FIELDSET_HEADER_ID = '[data-test-id=fieldset-header]';
 const TEXT_INPUT_ID = '[data-test-id=text-input]';
 
-const Component: FC<Pick<FlyoutProps, 'onConfirm' | 'onCancel' | 'badges' | 'legacyFooter'>> = ({
+const Component = ({
     onConfirm,
     onCancel,
     badges,
     legacyFooter,
-}) => {
+}: Pick<FlyoutProps, 'onConfirm' | 'onCancel' | 'badges' | 'legacyFooter'>): ReactElement => {
     const [open, setOpen] = useState(false);
     return (
         <Flyout

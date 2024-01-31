@@ -7,7 +7,7 @@ import { ListState } from '@react-stately/list';
 import { Node } from '@react-types/shared';
 import { FOCUS_STYLE_INSET } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import React, { FC, useRef } from 'react';
+import { ReactElement, useRef } from 'react';
 import { MenuItem } from '../../MenuItem';
 import { MenuItemType } from './SelectMenu';
 
@@ -17,7 +17,7 @@ type SelectMenuItemProps = {
     node: Node<object>;
 };
 
-export const SelectMenuItem: FC<SelectMenuItemProps> = ({ state, menuItem, node }) => {
+export const SelectMenuItem = ({ state, menuItem, node }: SelectMenuItemProps): ReactElement => {
     const ref = useRef<HTMLLIElement | null>(null);
     const { optionProps, isSelected } = useOption(
         {
@@ -55,3 +55,4 @@ export const SelectMenuItem: FC<SelectMenuItemProps> = ({ state, menuItem, node 
         </li>
     );
 };
+SelectMenuItem.displayName = 'FondueSelectMenuItem';

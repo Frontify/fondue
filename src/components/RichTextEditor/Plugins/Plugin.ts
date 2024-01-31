@@ -1,35 +1,49 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { AnyObject, PlatePlugin } from '@udecode/plate';
+import { PlatePlugin } from '@udecode/plate';
 import { InlineData, PluginButton } from './types';
+import { Position } from '../EditorPositioningWrapper';
 import type { MarkupElement } from './MarkupElement';
+import { CSSProperties } from 'react';
 
 export type PluginProps = {
     id?: string;
     button?: PluginButton;
     markupElement?: MarkupElement;
+    markupInputElement?: MarkupElement;
     leafMarkupElements?: MarkupElement | MarkupElement[];
-    noButton?: boolean;
+    showIn?: Position[];
+    columns?: number;
+    gap?: string | number;
+    label?: string;
+    textStyles?: Plugin<PluginProps>[];
+    styles?: CSSProperties;
 };
 
 export abstract class Plugin<P extends PluginProps = PluginProps> {
     readonly id: string;
     readonly button?: PluginButton;
     readonly markupElement?: MarkupElement;
+    readonly markupInputElement?: MarkupElement;
     readonly leafMarkupElements?: MarkupElement | MarkupElement[];
+    readonly showIn: Position[];
     readonly props?: P;
+    readonly textStyles?: Plugin<PluginProps>[];
+    readonly styles?: CSSProperties;
 
-    constructor(id: string, protected rest: P) {
-        this.id = this.rest.id || id;
-        this.button = this.rest?.button;
-        this.markupElement = this.rest?.markupElement;
-        this.leafMarkupElements = this.rest?.leafMarkupElements;
-        this.props = this.rest;
+    constructor(id: string, rest?: P) {
+        this.id = rest?.id || id;
+        this.button = rest?.button;
+        this.markupElement = rest?.markupElement;
+        this.markupInputElement = rest?.markupInputElement;
+        this.leafMarkupElements = rest?.leafMarkupElements;
+        this.showIn = rest?.showIn ?? [Position.BOTTOM, Position.TOP, Position.FLOATING];
+        this.props = rest;
     }
 
     inline(): InlineData | undefined {
         return undefined;
     }
 
-    abstract plugins(): PlatePlugin<AnyObject>[];
+    abstract plugins(): PlatePlugin[];
 }

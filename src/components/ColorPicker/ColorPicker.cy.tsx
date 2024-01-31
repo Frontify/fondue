@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Color, ColorFormat, Palette } from '../../types/colors';
 import { ColorPicker } from './ColorPicker';
 import { EXAMPLE_PALETTES } from './example-palettes';
@@ -13,8 +13,8 @@ const COLOR_INPUT_ID = '[data-test-id=color-input]';
 const TEXT_INPUT_ID = '[data-test-id=text-input]';
 const DROPDOWN_TRIGGER_ID = '[data-test-id=dropdown-trigger]';
 const MENU_ITEM_ID = '[data-test-id=menu-item]';
-const ICON_ITEM_ID = '[data-test-id=slider-item-icon]';
-const TEXT_ITEM_ID = '[data-test-id=slider-item-text]';
+const ICON_ITEM_ID = '[data-test-id=fondue-segmented-controls-item-icon]';
+const TEXT_ITEM_ID = '[data-test-id=fondue-segmented-controls-item-text]';
 
 type Props = {
     palettes?: Palette[];

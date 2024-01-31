@@ -31,7 +31,7 @@ export const getStyleClasses = (style: BadgeStyle, hasHover: boolean, strong: bo
           }
         : {
               [BadgeStyle.Primary]: merge([
-                  'tw-bg-box-neutral tw-text-text-weak',
+                  'tw-bg-box-neutral tw-text-box-neutral-inverse',
                   hasHover && 'hover:tw-bg-box-neutral-hover hover:tw-text-box-neutral-inverse-hover',
               ]),
               [BadgeStyle.Positive]: merge([
@@ -59,21 +59,22 @@ export const getCircularSizeClasses = (size: BadgeSize) =>
     ({
         small: 'tw-h-5 tw-w-5',
         medium: 'tw-h-6 tw-w-6',
-    }[size]);
+    })[size];
 
 export const getSizeClasses = (
     children: ReactNode,
     status: BadgeProps['status'],
     icon: BadgeProps['icon'],
     size: BadgeSize,
+    isDismissable: boolean,
 ) => {
     const isSmall = size === 'small';
 
     if (isSmall) {
-        return 'tw-h-5 tw-px-1.5';
+        return merge(['tw-h-5 tw-px-1.5', isDismissable && 'tw-pr-5']);
     } else {
         const hasMaximumTwoComponents = !Boolean(children && status && icon);
-        return merge(['tw-h-6', 'tw-px-2', hasMaximumTwoComponents && 'tw-gap-x-0.5']);
+        return merge(['tw-h-6', 'tw-px-2', hasMaximumTwoComponents && 'tw-gap-x-0.5', isDismissable && 'tw-pr-6']);
     }
 };
 

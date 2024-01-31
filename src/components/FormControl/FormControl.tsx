@@ -3,7 +3,7 @@
 import { InputLabel, InputLabelProps } from '@components/InputLabel/InputLabel';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
-import React, { FC, PropsWithChildren, ReactElement, ReactNode, cloneElement, isValidElement } from 'react';
+import { ReactElement, ReactNode, cloneElement, isValidElement } from 'react';
 
 export enum FormControlStyle {
     Primary = 'Primary',
@@ -16,6 +16,7 @@ type HelperTextProps = {
     style: FormControlStyle;
     disabled?: boolean;
     fullWidth?: boolean;
+    'data-test-id'?: string;
 };
 
 const inputValidation: Record<FormControlStyle, Validation> = {
@@ -24,7 +25,13 @@ const inputValidation: Record<FormControlStyle, Validation> = {
     [FormControlStyle.Danger]: Validation.Error,
 };
 
-const HelperText: FC<HelperTextProps> = ({ text, disabled, style, fullWidth = false }) => {
+const HelperText = ({
+    text,
+    disabled,
+    style,
+    fullWidth = false,
+    'data-test-id': dataTestId = 'form-control',
+}: HelperTextProps): ReactElement => {
     let textColorClass;
 
     switch (true) {
@@ -44,13 +51,14 @@ const HelperText: FC<HelperTextProps> = ({ text, disabled, style, fullWidth = fa
 
     return (
         <span
-            data-test-id="form-control-helper-text"
+            data-test-id={`${dataTestId}-helper-text`}
             className={`tw-text-s tw-font-sans ${fullWidth ? 'tw-w-full' : ''} ${textColorClass}`}
         >
             {text}
         </span>
     );
 };
+HelperText.displayName = 'FondueHelperText';
 
 export enum HelperPosition {
     Before = 'Before',
@@ -62,7 +70,7 @@ export enum FormControlDirection {
     Vertical = 'Vertical',
 }
 
-export type FormControlProps = PropsWithChildren<{
+export type FormControlProps = {
     direction?: FormControlDirection;
     disabled?: boolean;
     clickable?: boolean;
@@ -71,9 +79,11 @@ export type FormControlProps = PropsWithChildren<{
     helper?: Omit<HelperTextProps, 'disabled' | 'style'> & { position?: HelperPosition };
     style?: FormControlStyle;
     name?: string;
-}>;
+    children?: ReactNode;
+    'data-test-id'?: string;
+};
 
-export const FormControl: FC<FormControlProps> = ({
+export const FormControl = ({
     label,
     children,
     extra,
@@ -83,12 +93,13 @@ export const FormControl: FC<FormControlProps> = ({
     clickable,
     direction = FormControlDirection.Vertical,
     style = FormControlStyle.Primary,
-}) => {
+    'data-test-id': dataTestId = 'form-control',
+}: FormControlProps): ReactElement => {
     const isHelperBefore = helper?.position === HelperPosition.Before;
 
     return (
         <div
-            data-test-id="form-control"
+            data-test-id={dataTestId}
             data-name={name}
             className={merge([
                 'tw-flex tw-items-center tw-gap-2',
@@ -105,7 +116,7 @@ export const FormControl: FC<FormControlProps> = ({
                     {label?.children && <InputLabel {...label} disabled={disabled} clickable={clickable} />}
                     {extra && (
                         <span
-                            data-test-id="form-control-extra"
+                            data-test-id={`${dataTestId}-extra`}
                             className="tw-pl-2 tw-text-black-80 tw-font-sans tw-text-s tw-whitespace-nowrap"
                         >
                             {extra}
@@ -119,6 +130,7 @@ export const FormControl: FC<FormControlProps> = ({
                     fullWidth={direction === FormControlDirection.Vertical}
                     text={helper.text}
                     disabled={disabled}
+                    data-test-id={dataTestId}
                 />
             )}
             {children && (
@@ -142,8 +154,10 @@ export const FormControl: FC<FormControlProps> = ({
                     text={helper.text}
                     disabled={disabled}
                     style={style}
+                    data-test-id={dataTestId}
                 />
             )}
         </div>
     );
 };
+FormControl.displayName = 'FondueFormControl';

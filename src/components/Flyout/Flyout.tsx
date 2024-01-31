@@ -9,16 +9,7 @@ import { mergeProps } from '@react-aria/utils';
 import { useOverlayTriggerState } from '@react-stately/overlays';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import React, {
-    FC,
-    HTMLAttributes,
-    MouseEvent,
-    MutableRefObject,
-    PropsWithChildren,
-    ReactNode,
-    useEffect,
-    useRef,
-} from 'react';
+import { HTMLAttributes, MouseEvent, MutableRefObject, ReactElement, ReactNode, useEffect, useRef } from 'react';
 import { LegacyFlyoutFooter } from '.';
 import { useContainScroll } from './hooks/useContainScroll';
 import { useOverlayPositionWithBottomMargin } from './hooks/useOverlayPositionWithBottomMargin';
@@ -38,7 +29,7 @@ export enum FlyoutPlacement {
     Left = 'left',
 }
 
-export type FlyoutProps = PropsWithChildren<{
+export type FlyoutProps = {
     trigger:
         | ReactNode
         | ((
@@ -66,10 +57,13 @@ export type FlyoutProps = PropsWithChildren<{
     placement?: FlyoutPlacement;
     offset?: number;
     updatePositionOnContentChange?: boolean;
-}>;
+    isTriggerDisabled?: boolean;
+    children?: ReactNode;
+};
 
-export const Flyout: FC<FlyoutProps> = ({
+export const Flyout = ({
     trigger,
+    isTriggerDisabled = false,
     decorator,
     onConfirm,
     onCancel,
@@ -87,7 +81,7 @@ export const Flyout: FC<FlyoutProps> = ({
     placement = FlyoutPlacement.BottomLeft,
     offset,
     updatePositionOnContentChange = false,
-}) => {
+}: FlyoutProps): ReactElement => {
     const state = useOverlayTriggerState({ isOpen, onOpenChange });
     const { toggle, close } = state;
     const triggerRef = useRef<HTMLDivElement | null>(null);
@@ -111,7 +105,11 @@ export const Flyout: FC<FlyoutProps> = ({
         updatePositionOnContentChange,
     });
 
-    const { buttonProps, isPressed } = useButton({ onPress: () => toggle(), elementType: 'div' }, triggerRef);
+    const { buttonProps, isPressed } = useButton(
+        // @ts-expect-error preventFocusOnPress is an undocumented property in react-aria
+        { onPress: () => toggle(), elementType: 'div', isDisabled: isTriggerDisabled, preventFocusOnPress: true },
+        triggerRef,
+    );
 
     useEffect(() => {
         const revert = watchModals();
@@ -178,3 +176,4 @@ export const Flyout: FC<FlyoutProps> = ({
         </>
     );
 };
+Flyout.displayName = 'FondueFlyout';

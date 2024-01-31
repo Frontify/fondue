@@ -1,74 +1,51 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconSize } from '@foundation/Icon/IconSize';
 import { Meta, StoryFn } from '@storybook/react';
-import React, { useState } from 'react';
 import { Slider, SliderProps } from './Slider';
-import { IconTextAlignmentCentre, IconTextAlignmentLeft, IconTextAlignmentRight } from '@foundation/Icon';
 
 export default {
     title: 'Components/Slider',
     component: Slider,
+    tags: ['autodocs'],
     argTypes: {
         id: { type: 'string' },
+        value: { type: 'number' },
+        min: { type: 'number' },
+        max: { type: 'number' },
+        step: { type: 'number' },
+        stepMultiplier: { type: 'number' },
+        label: { type: 'string' },
+        ['aria-label']: { type: 'string' },
+        valueSuffix: { type: 'string' },
+        showMinMax: { type: 'boolean' },
+        disabled: { type: 'boolean' },
+        onChange: { action: 'Value change' },
+        onError: { action: 'Slider error' },
     },
     args: {
-        disabled: false,
+        min: 0,
+        max: 100,
+        stepMultiplier: 5,
     },
 } as Meta<SliderProps>;
 
 const SliderTemplate: StoryFn<SliderProps> = (args: SliderProps) => {
-    const [activeItemId, setActiveItemId] = useState(args.items[0].id);
-    return <Slider {...args} activeItemId={activeItemId} onChange={setActiveItemId} />;
+    return <Slider {...args} />;
 };
 
-export const Text = SliderTemplate.bind({});
-Text.args = {
-    items: [
-        { id: 'a', value: 'abc' },
-        { id: 'b', value: 'def' },
-        { id: 'c', value: 'ghi' },
-    ],
+export const BasicUsage = SliderTemplate.bind({});
+BasicUsage.args = {
+    min: 0,
+    max: 100,
+    value: 30,
+    step: 1,
+    valueSuffix: '%',
+    ['aria-label']: 'Percentage slider',
 };
 
-export const Number = SliderTemplate.bind({});
-Number.args = {
-    items: [
-        { id: 'a', value: 10 },
-        { id: 'b', value: 20 },
-        { id: 'c', value: 30 },
-    ],
-};
-
-export const Icon = SliderTemplate.bind({});
-Icon.args = {
-    items: [
-        { id: 'a', icon: <IconTextAlignmentLeft size={IconSize.Size16} />, ariaLabel: 'Text Align Left' },
-        { id: 'b', icon: <IconTextAlignmentCentre size={IconSize.Size16} />, ariaLabel: 'Text Align Center' },
-        { id: 'c', icon: <IconTextAlignmentRight size={IconSize.Size16} />, ariaLabel: 'Text Align Right' },
-    ],
-};
-
-export const IconAndText = SliderTemplate.bind({});
-IconAndText.args = {
-    items: [
-        {
-            id: 'a',
-            icon: <IconTextAlignmentLeft size={IconSize.Size16} />,
-            ariaLabel: 'Text Align Left',
-            value: 'Title 1',
-        },
-        {
-            id: 'b',
-            icon: <IconTextAlignmentCentre size={IconSize.Size16} />,
-            ariaLabel: 'Text Align Center',
-            value: 'Title 2',
-        },
-        {
-            id: 'c',
-            icon: <IconTextAlignmentRight size={IconSize.Size16} />,
-            ariaLabel: 'Text Align Right',
-            value: 'Title 3',
-        },
-    ],
+export const DisabledState = SliderTemplate.bind({});
+DisabledState.args = {
+    value: 20,
+    ['aria-label']: 'Percentage slider',
+    disabled: true,
 };

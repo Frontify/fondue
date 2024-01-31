@@ -2,7 +2,7 @@
 
 import { Validation } from '@utilities/validation';
 import { Meta, StoryFn } from '@storybook/react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { LinkChooser as LinkChooserComponent } from './LinkChooser';
 import { data } from './mock/data';
 import { extraSections } from './sections';
@@ -12,6 +12,7 @@ import { doesContainSubstring } from './utils/helpers';
 export default {
     title: 'Components/Link Chooser',
     component: LinkChooserComponent,
+    tags: ['autodocs'],
     args: {
         placeholder: 'https://example.com',
         disabled: false,
@@ -30,9 +31,12 @@ export default {
 
 const getGlobalByQueryMock = (query: string): Promise<SearchResult[]> =>
     new Promise((resolve) =>
-        setTimeout(() => {
-            resolve(data.filter((item) => doesContainSubstring(item.title, query, extraSections)));
-        }, Math.floor(Math.random() * 2000)),
+        setTimeout(
+            () => {
+                resolve(data.filter((item) => doesContainSubstring(item.title, query, extraSections)));
+            },
+            Math.floor(Math.random() * 2000),
+        ),
     );
 
 export const LinkChooser: StoryFn<LinkChooserProps> = (args: LinkChooserProps) => {

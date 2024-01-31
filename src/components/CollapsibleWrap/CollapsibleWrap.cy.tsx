@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Button } from '@components/Button';
-import React, { FC, useState } from 'react';
+import { ReactElement, useState } from 'react';
 import { CollapsibleWrap as CollapsibleWrapComponent } from './CollapsibleWrap';
 import { CollapsibleWrapProps } from './types';
 
@@ -9,11 +9,11 @@ const CONTENT_ID = '[data-test-id="collapsible-wrap-content"]';
 const WRAP_ID = '[data-test-id="collapsible-wrap"]';
 const BUTTON_ID = '[data-test-id="button"]';
 
-const CollapsibleWrap: FC<Partial<CollapsibleWrapProps>> = ({
+const CollapsibleWrap = ({
     preventInitialAnimation = false,
     isOpen: externalIsOpen = false,
     animateOpacity = true,
-}) => {
+}: Partial<CollapsibleWrapProps>): ReactElement => {
     const [isOpen, setIsOpen] = useState(externalIsOpen);
     return (
         <>

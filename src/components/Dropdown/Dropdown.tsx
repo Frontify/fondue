@@ -21,11 +21,10 @@ import { mergeProps } from '@react-aria/utils';
 import { useSelectState } from '@react-stately/select';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
-import { AnimatePresence, motion } from 'framer-motion';
-import React, { FC, ReactElement, useEffect, useRef } from 'react';
-import { createPortal } from 'react-dom';
+import { ReactElement, useEffect, useRef } from 'react';
 import { usePopper } from 'react-popper';
-import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from './useDropdownAutoHeight';
+import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from '@hooks/useDropdownAutoHeight';
+import { EnablePortalWrapper } from '@utilities/dialogs/EnablePortalWrapper';
 
 export const DEFAULT_DROPDOWN_MIN_ANIMATION_HEIGHT = 36; //Small Input height as default
 
@@ -61,6 +60,8 @@ export type DropdownProps = {
     position?: DropdownPosition;
     emphasis?: TriggerEmphasis;
     flip?: boolean;
+    'data-test-id'?: string;
+    enablePortal?: boolean;
 };
 
 const getActiveItem = (blocks: MenuBlock[], activeId: string | number): MenuItemType | null => {
@@ -77,7 +78,7 @@ const getActiveItem = (blocks: MenuBlock[], activeId: string | number): MenuItem
     );
 };
 
-export const Dropdown: FC<DropdownProps> = ({
+export const Dropdown = ({
     id: propId,
     menuBlocks,
     onChange,
@@ -94,13 +95,15 @@ export const Dropdown: FC<DropdownProps> = ({
     position = DropdownPosition.Bottom,
     emphasis = TriggerEmphasis.Default,
     flip = false,
-}) => {
+    'data-test-id': dataTestId = 'dropdown',
+    enablePortal = true,
+}: DropdownProps): ReactElement => {
     const activeItem = !!activeItemId ? getActiveItem(menuBlocks, activeItemId) : null;
     const props = mapToAriaProps(ariaLabel, menuBlocks);
     const state = useSelectState({
         ...props,
         defaultSelectedKey: activeItemId,
-        onSelectionChange: (key) => onChange(key),
+        onSelectionChange: (key) => onChange(key as string),
         disabledKeys: getDisabledItemIds(getMenuItems(menuBlocks)),
     });
     const triggerRef = useRef<HTMLButtonElement | null>(null);
@@ -174,7 +177,7 @@ export const Dropdown: FC<DropdownProps> = ({
     });
 
     return (
-        <div className="tw-relative tw-w-full tw-font-sans tw-text-s">
+        <div className="tw-relative tw-w-full tw-font-sans tw-text-s" data-test-id={dataTestId}>
             <Trigger
                 disabled={disabled}
                 buttonProps={buttonProps}
@@ -191,13 +194,13 @@ export const Dropdown: FC<DropdownProps> = ({
                     {...mergeProps(buttonProps, focusProps)}
                     id={useMemoizedId(propId)}
                     ref={triggerRef}
-                    data-test-id="dropdown-trigger"
+                    data-test-id={`${dataTestId}-trigger`}
                     className={merge([
                         'tw-overflow-hidden tw-flex-auto tw-h-full tw-rounded tw-text-left tw-outline-none',
                         size === DropdownSize.Small
                             ? 'tw-py-2 tw-pl-3 tw-min-h-[34px]'
                             : 'tw-pl-5 tw-py-4 tw-min-h-[60px]',
-                        showClear ? 'tw-pr-11' : 'tw-pr-7',
+                        showClear ? 'tw-pr-12' : 'tw-pr-8',
                         textColorClass,
                     ])}
                 >
@@ -210,48 +213,36 @@ export const Dropdown: FC<DropdownProps> = ({
                     />
                 </button>
             </Trigger>
-            {!disabled &&
-                isOpen &&
-                heightIsReady &&
-                createPortal(
-                    <AnimatePresence>
-                        <motion.div
-                            ref={dropdownRef}
-                            style={{
-                                ...popperInstance.styles.popper,
-                                width: triggerRef.current?.getBoundingClientRect().width,
-                                minWidth: 'fit-content',
-                            }}
-                            {...popperInstance.attributes.popper}
-                            className="tw-absolute tw-p-0 tw-shadow tw-list-none tw-m-0 tw-z-[120000] tw-min-w-full tw-overflow-hidden"
-                            key="content"
-                            initial={{ height: DEFAULT_DROPDOWN_MIN_ANIMATION_HEIGHT }}
-                            animate={{ height: 'auto' }}
-                            transition={{ ease: [0.04, 0.62, 0.23, 0.98], duration: 0.5 }}
-                        >
-                            <FocusScope restoreFocus>
-                                <div
-                                    {...overlayProps}
-                                    ref={overlayRef}
-                                    style={autoResize ? { maxHeight } : {}}
-                                    className="tw-flex tw-flex-col"
-                                    data-test-id="dropdown-menu"
-                                    role="dialog"
-                                >
-                                    <DismissButton onDismiss={() => close()} />
-                                    <SelectMenu
-                                        ariaProps={menuProps}
-                                        state={state}
-                                        menuBlocks={menuBlocks}
-                                        scrollable
-                                    />
-                                    <DismissButton onDismiss={() => close()} />
-                                </div>
-                            </FocusScope>
-                        </motion.div>
-                    </AnimatePresence>,
-                    document.body,
-                )}
+            {!disabled && isOpen && heightIsReady && (
+                <EnablePortalWrapper enablePortal={enablePortal}>
+                    <div
+                        ref={dropdownRef}
+                        style={{
+                            ...popperInstance.styles.popper,
+                            width: triggerRef.current?.getBoundingClientRect().width,
+                            minWidth: 'fit-content',
+                        }}
+                        {...popperInstance.attributes.popper}
+                        className="tw-absolute tw-p-0 tw-shadow tw-list-none tw-m-0 tw-z-[120000] tw-min-w-full tw-overflow-hidden"
+                        key="content"
+                    >
+                        <FocusScope restoreFocus>
+                            <div
+                                {...overlayProps}
+                                ref={overlayRef}
+                                style={autoResize ? { maxHeight } : {}}
+                                className="tw-flex tw-flex-col"
+                                data-test-id={`${dataTestId}-menu`}
+                                role="dialog"
+                            >
+                                <DismissButton onDismiss={() => close()} />
+                                <SelectMenu ariaProps={menuProps} state={state} menuBlocks={menuBlocks} scrollable />
+                                <DismissButton onDismiss={() => close()} />
+                            </div>
+                        </FocusScope>
+                    </div>
+                </EnablePortalWrapper>
+            )}
             {validation === Validation.Loading && (
                 <span className="tw-absolute tw-top-[-0.55rem] tw-right-[-0.55rem] tw-bg-base tw-rounded-full tw-p-[2px] tw-border tw-border-line-weak">
                     <LoadingCircle size={LoadingCircleSize.ExtraSmall} />
@@ -260,3 +251,4 @@ export const Dropdown: FC<DropdownProps> = ({
         </div>
     );
 };
+Dropdown.displayName = 'FonduesDropdown';

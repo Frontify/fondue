@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { Dispatch, Reducer, useEffect, useReducer } from 'react';
+import { Dispatch, MouseEvent, Reducer, useEffect, useReducer } from 'react';
 import {
     ELEMENT_LINK,
     LinkPlugin,
@@ -91,7 +91,7 @@ export const useInsertModal = () => {
         floatingLinkActions.hide();
     };
 
-    const onSave = (e: React.MouseEvent<HTMLButtonElement, MouseEvent> | KeyboardEvent | undefined) => {
+    const onSave = (event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent> | KeyboardEvent | undefined) => {
         if (!isValidUrlOrEmpty() || !hasValues) {
             return;
         }
@@ -101,7 +101,7 @@ export const useInsertModal = () => {
         floatingLinkActions.newTab(state.newTab === CheckboxState.Checked);
 
         if (submitFloatingLink(editor)) {
-            e?.preventDefault();
+            event?.preventDefault();
         }
     };
 
@@ -116,7 +116,7 @@ export const useInsertModal = () => {
         'enter',
         onSave,
         {
-            enableOnTags: ['INPUT'],
+            enableOnFormTags: ['INPUT'],
         },
         [],
     );

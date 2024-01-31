@@ -3,7 +3,8 @@
 import fastGlob from 'fast-glob';
 import { join } from 'path';
 import { readFile, writeFile } from 'fs/promises';
-import { camelCase, toUpper } from 'lodash';
+import camelCase from 'lodash-es/camelCase';
+import toUpper from 'lodash-es/toUpper';
 import { transform } from '@svgr/core';
 import { Entry } from 'fast-glob/out/types';
 import { IconTemplate } from '@foundation/Icon/IconTemplate';
@@ -60,6 +61,10 @@ const generateSvgComponent = async (svgPath: Entry) => {
             template: IconTemplate,
             dimensions: true,
             typescript: true,
+            replaceAttrValues: {
+                prefix__a: svgFileName,
+                'url(#prefix__a)': `url(#${svgFileName})`,
+            },
             svgProps: {
                 className: '{customClassName}',
                 name: `${ICON_COMPONENT_PREFIX}${svgFileName}`,

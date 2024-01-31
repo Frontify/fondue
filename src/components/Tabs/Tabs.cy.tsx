@@ -3,8 +3,9 @@
 import { BadgeStyle } from '@components/Badge';
 import { TabItem, TabItemProps } from '@components/Tabs/TabItem';
 import { TabSize, Tabs, TabsPaddingX } from '@components/Tabs/Tabs';
-import { IconIcon, IconSize } from '@foundation/Icon';
-import React, { useState } from 'react';
+import { IconSize } from '@foundation/Icon/IconSize';
+import { IconIcon } from '@foundation/Icon/Generated';
+import { useState } from 'react';
 
 const data: TabItemProps[] = [
     {
@@ -52,15 +53,12 @@ const data: TabItemProps[] = [
     },
 ];
 
-const TabComponent = () => {
+const TABS_DATA_TEST_ID = '[data-test-id=tabs]';
+
+const TabComponent = ({ paddingX, size = TabSize.Small }: { paddingX?: TabsPaddingX; size?: TabSize }) => {
     const [activeItemId, setActiveItemId] = useState(data[0].id);
     return (
-        <Tabs
-            activeItemId={activeItemId}
-            onChange={(value) => setActiveItemId(value)}
-            paddingX={TabsPaddingX.Small}
-            size={TabSize.Small}
-        >
+        <Tabs activeItemId={activeItemId} onChange={(value) => setActiveItemId(value)} paddingX={paddingX} size={size}>
             {data.map((item) => (
                 <TabItem
                     id={item.id}
@@ -80,7 +78,7 @@ const TabComponent = () => {
 describe('Tabs Component', () => {
     beforeEach('Mount Component', () => {
         cy.mount(<TabComponent />);
-        cy.get('[data-test-id=tabs]').as('Tabs');
+        cy.get(TABS_DATA_TEST_ID).as('Tabs');
     });
 
     it('should render correctly', () => {
@@ -169,8 +167,8 @@ describe('Tabs Component', () => {
         cy.get('button#tab-3-btn').should('be.focused');
         cy.get('body').realPress('Tab');
         cy.get('body').realPress('Tab');
-        cy.get('[data-test-id=tab-content]').children().not('.tw-hidden').should('be.focused');
-        cy.get('[data-test-id=tab-content]').children().not('.tw-hidden').should('contain.text', data[2].children);
+        cy.get('[data-test-id=tab-content] :not(.tw-hidden)').should('be.focused');
+        cy.get('[data-test-id=tab-content] :not(.tw-hidden)').should('contain.text', data[2].children);
         cy.get('body').realPress(['Shift', 'Tab']);
         cy.get('body').realPress(['Shift', 'Tab']);
         cy.get('button#tab-3-btn').should('be.focused');
@@ -193,5 +191,50 @@ describe('Tabs Component', () => {
         cy.get('[data-test-id=tab-item]').eq(1).should('not.have.class', 'tw-font-medium');
         cy.get('[data-test-id=tab-item]').eq(2).trigger('keydown', { key: 'ArrowLeft' });
         cy.get('[data-test-id=tab-item]').eq(1).should('not.have.class', 'tw-font-medium');
+    });
+
+    it('tab item should have hovered state', () => {
+        cy.get('[data-test-id=tab-item]').realHover();
+        cy.get('[data-test-id=tab-item]').should('have.class', 'hover:tw-text-text');
+    });
+
+    it('disabled tab item should not have hovered state', () => {
+        cy.get('#tab-2-btn[data-test-id=tab-item]').realHover();
+        cy.get('#tab-2-btn[data-test-id=tab-item]').should('not.have.class', 'hover:tw-text-text');
+    });
+
+    it('tabs should render with paddingX of "None"', () => {
+        cy.mount(<TabComponent paddingX={TabsPaddingX.None} />);
+        cy.get(`${TABS_DATA_TEST_ID} > div`).should('have.class', 'tw-pl-0');
+    });
+
+    it('tabs should render with paddingX of "XSmall"', () => {
+        cy.mount(<TabComponent paddingX={TabsPaddingX.XSmall} />);
+        cy.get(`${TABS_DATA_TEST_ID} > div`).should('have.class', 'tw-pl-xs');
+    });
+
+    it('tabs should render with paddingX of "Small"', () => {
+        cy.mount(<TabComponent paddingX={TabsPaddingX.Small} />);
+        cy.get(`${TABS_DATA_TEST_ID} > div`).should('have.class', 'tw-pl-s');
+    });
+
+    it('tabs should render with paddingX of "Medium"', () => {
+        cy.mount(<TabComponent paddingX={TabsPaddingX.Medium} />);
+        cy.get(`${TABS_DATA_TEST_ID} > div`).should('have.class', 'tw-pl-m');
+    });
+
+    it('tabs should render with paddingX of "Large"', () => {
+        cy.mount(<TabComponent paddingX={TabsPaddingX.Large} />);
+        cy.get(`${TABS_DATA_TEST_ID} > div`).should('have.class', 'tw-pl-l');
+    });
+
+    it('tabs items should render with a small height and font-size by default', () => {
+        cy.mount(<TabComponent />);
+        cy.get('[data-test-id=tab-item]').first().should('have.class', 'tw-h-12 tw-text-body-medium');
+    });
+
+    it('tabs items should render with a large height and font-size', () => {
+        cy.mount(<TabComponent size={TabSize.Large} />);
+        cy.get('[data-test-id=tab-item]').first().should('have.class', 'tw-h-14 tw-text-body-large');
     });
 });

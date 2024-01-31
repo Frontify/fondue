@@ -2,4 +2,5 @@
 
 export * from './Tree';
 export * from './TreeItem';
-export * from './TreeContentLegacyComponent';
+export * from './types';
+export * from './helpers';

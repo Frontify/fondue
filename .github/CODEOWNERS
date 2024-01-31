@@ -1,0 +1,7 @@
+# The Design System will be the default owners for everything in
+# the repository except for package.json and src directory.
+# Some very complex components will be co-owned with other teams.
+
+# Components
+/src/components/RichTextEditor @Frontify/guidelines-one
+/src/components/Tree @Frontify/guidelines-navigation-themes

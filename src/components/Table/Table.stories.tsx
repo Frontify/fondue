@@ -7,13 +7,14 @@ import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/But
 import { IconSize } from '@foundation/Icon/IconSize';
 import { action } from '@storybook/addon-actions';
 import { Meta, StoryFn } from '@storybook/react';
-import React, { FC, useEffect, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import { Column, Row, SelectionMode, SortDirection, Table, TableProps } from './Table';
-import { IconDotsVertical, IconFaceHappy } from '@foundation/Icon';
+import { IconDotsVertical, IconFaceHappy } from '@foundation/Icon/Generated';
 
 export default {
     title: 'Components/Table',
     component: Table,
+    tags: ['autodocs'],
     args: {
         selectionMode: SelectionMode.NoSelect,
     },
@@ -25,7 +26,7 @@ export default {
     },
 } as Meta<TableProps>;
 
-const User: FC<{ name: string }> = ({ name }) => (
+const User = ({ name }: { name: string }): ReactElement => (
     <div className="tw-flex tw-gap-x-2 tw-items-center">
         <IconFaceHappy size={IconSize.Size32} />
         <div>
@@ -35,7 +36,7 @@ const User: FC<{ name: string }> = ({ name }) => (
     </div>
 );
 
-const ActionButton: FC = () => (
+const ActionButton = (): ReactElement => (
     <Button
         style={ButtonStyle.Default}
         emphasis={ButtonEmphasis.Default}
@@ -239,7 +240,7 @@ const Template: StoryFn<TableProps> = (args) => {
             columns={columns}
             rows={sortedRows}
             selectedRowIds={selectedRows}
-            onSelectionChange={(ids) => setSelectedRows(ids || [])}
+            onSelectionChange={(ids) => setSelectedRows((ids as (string | number)[]) || [])}
             onSortChange={onSortChange}
         />
     );
@@ -293,7 +294,7 @@ const TemplateWithSearch: StoryFn<TableProps> = (args) => {
                 columns={columns}
                 rows={filteredRows}
                 selectedRowIds={selectedRows}
-                onSelectionChange={(ids) => setSelectedRows(ids || [])}
+                onSelectionChange={(ids) => setSelectedRows((ids as (string | number)[]) || [])}
                 onSortChange={onSortChange}
             />
         </>

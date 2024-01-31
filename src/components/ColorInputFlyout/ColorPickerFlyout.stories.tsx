@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Meta, StoryFn } from '@storybook/react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Color } from '../../types/colors';
 import { EXAMPLE_PALETTES } from '../ColorPicker/example-palettes';
 import { ColorPickerFlyout as ColorPickerFlyoutComponent, ColorPickerFlyoutProps } from './ColorPickerFlyout';
@@ -9,6 +9,7 @@ import { ColorPickerFlyout as ColorPickerFlyoutComponent, ColorPickerFlyoutProps
 export default {
     title: 'Components/Color Picker/Flyout',
     component: ColorPickerFlyoutComponent,
+    tags: ['autodocs'],
     args: {
         disabled: false,
         currentColor: null,

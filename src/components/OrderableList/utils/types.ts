@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactChild } from 'react';
+import { ReactNode } from 'react';
 
 export type StoryListItem = {
     textContent: JSX.Element;
@@ -14,5 +14,5 @@ export enum HighlightColor {
 
 export type HighlightProps = {
     color: HighlightColor;
-    children: ReactChild;
+    children: ReactNode;
 };

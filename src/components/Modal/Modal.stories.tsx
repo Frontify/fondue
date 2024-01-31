@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Modal } from './Modal';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
 import { Meta, StoryFn } from '@storybook/react';
 import { TextInput } from '@components/TextInput';
@@ -9,7 +9,7 @@ import { action } from '@storybook/addon-actions';
 import { generateRandomId } from '@utilities/generateRandomId';
 import { useOverlayTriggerState } from '@react-stately/overlays';
 import { PatternDesign, PatternTheme } from '@foundation/Pattern';
-import { IconCap, IconIcon, IconMusicNote } from '@foundation/Icon';
+import { IconCap, IconIcon, IconMusicNote } from '@foundation/Icon/Generated';
 import { ScrollWrapperDirection } from '@components/ScrollWrapper/types';
 import { OverlayContainer, OverlayProvider } from '@react-aria/overlays';
 import {
@@ -25,8 +25,9 @@ import { Divider } from '..';
 import { MODAL_PADDING } from './context/ModalLayout';
 
 export default {
-    title: 'Components/Modal',
+    title: 'Deprecated/Modal',
     component: Modal,
+    tags: ['autodocs'],
     argTypes: {
         pattern: {
             table: {

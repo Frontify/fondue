@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { HTMLAttributes, PropsWithChildren, ReactElement, ReactNode, cloneElement } from 'react';
+import { HTMLAttributes, ReactElement, ReactNode, cloneElement } from 'react';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { merge } from '@utilities/merge';
 import { MenuItemContentSize } from './types';
@@ -12,6 +12,7 @@ export type MenuItemContentProps = {
     subtitle?: string;
     size?: MenuItemContentSize;
     ariaProps?: HTMLAttributes<HTMLElement>;
+    children?: ReactNode;
 };
 
 /**
@@ -31,7 +32,7 @@ export const MenuItemContent = ({
     ariaProps,
     size = MenuItemContentSize.Small,
     children,
-}: PropsWithChildren<MenuItemContentProps>) => (
+}: MenuItemContentProps) => (
     <div
         {...ariaProps}
         data-test-id="menu-item-content"
@@ -65,3 +66,4 @@ export const MenuItemContent = ({
         )}
     </div>
 );
+MenuItemContent.displayName = 'FondueMenuItemContent';

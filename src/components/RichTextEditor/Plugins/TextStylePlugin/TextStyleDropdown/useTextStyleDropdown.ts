@@ -3,13 +3,13 @@
 import { PlateEditor, usePlateEditorState } from '@udecode/plate';
 import { Dispatch, HTMLAttributes, SetStateAction, useCallback, useEffect, useState } from 'react';
 import { usePopper } from 'react-popper';
-import { AVAILABLE_STYLE_TITLES, DEFAULT_TEXT_STYLE_VALUE } from '../TextStyles';
 import { useSelectedTextStyles } from './useSelectedTextStyles';
 import { verticalPositionModifier } from './verticalPositionModifier';
+import { DEFAULT_TEXT_STYLE_VALUE } from '../types';
 
 type UseTextStyleDropdownReturn<T, P> = {
     state: { isOpen: boolean; toggle: () => void; editor: PlateEditor };
-    label: string;
+    key: string;
     dropdownProps: HTMLAttributes<P>;
     triggerRef: Dispatch<SetStateAction<T | null>>;
     dropdownRef: Dispatch<SetStateAction<P | null>>;
@@ -23,8 +23,13 @@ export const useTextStyleDropdown = <T extends HTMLElement, P extends HTMLElemen
     const [popperElement, setPopperElement] = useState<P | null>(null);
     const editor = usePlateEditorState(editorId);
     const selectedTextStyles = useSelectedTextStyles(editor);
-    const label =
-        selectedTextStyles.length === 1 ? AVAILABLE_STYLE_TITLES[selectedTextStyles[0]] : DEFAULT_TEXT_STYLE_VALUE;
+
+    let key = DEFAULT_TEXT_STYLE_VALUE;
+    if (selectedTextStyles.length === 1) {
+        key = selectedTextStyles[0];
+    } else if (selectedTextStyles.length === 0) {
+        key = 'p';
+    }
 
     const toggle = useCallback(() => {
         setIsOpen((open) => !open);
@@ -62,9 +67,9 @@ export const useTextStyleDropdown = <T extends HTMLElement, P extends HTMLElemen
                 setIsOpen(false);
             }
         };
-        document.addEventListener('mousedown', listener);
+        document.addEventListener('pointerdown', listener);
         return () => {
-            document.removeEventListener('mousedown', listener);
+            document.removeEventListener('pointerdown', listener);
         };
     }, [isOpen, popperElement, setIsOpen, triggerElement]);
 
@@ -74,7 +79,7 @@ export const useTextStyleDropdown = <T extends HTMLElement, P extends HTMLElemen
             ...popperInstance.attributes.popper,
             style: popperInstance.styles.popper,
         },
-        label,
+        key,
         dropdownRef: setPopperElement,
         triggerRef: setTriggerElement,
     };

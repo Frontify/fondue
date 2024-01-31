@@ -4,21 +4,28 @@ import { IconSize } from '@foundation/Icon/IconSize';
 import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import React, { FC, MouseEvent, cloneElement } from 'react';
+import { MouseEvent, ReactElement, cloneElement } from 'react';
 
 export type RadioPillProps = {
     label: string;
     active: boolean;
     onClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
-    icon?: React.ReactElement;
+    icon?: ReactElement;
+    'data-test-id'?: string;
 };
 
-export const RadioPill: FC<RadioPillProps> = ({ label, active, icon, onClick }) => {
+export const RadioPill = ({
+    label,
+    active,
+    icon,
+    onClick,
+    'data-test-id': dataTestId = 'radio-pill',
+}: RadioPillProps): ReactElement => {
     const { isFocusVisible, focusProps } = useFocusRing();
 
     return (
         <button
-            data-test-id="radio-pill"
+            data-test-id={dataTestId}
             type="button"
             className={merge([
                 'tw-inline-flex tw-items-center tw-rounded-full tw-text-xs tw-px-2 tw-py-1',
@@ -36,3 +43,4 @@ export const RadioPill: FC<RadioPillProps> = ({ label, active, icon, onClick }) 
         </button>
     );
 };
+RadioPill.displayName = 'FondueRadioPill';

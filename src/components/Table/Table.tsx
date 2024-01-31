@@ -9,7 +9,7 @@ import {
     TableStateProps,
     useTableState,
 } from '@react-stately/table';
-import React, { Key, PropsWithChildren, ReactNode, useRef, useState } from 'react';
+import { Key, ReactNode, useRef, useState } from 'react';
 import { TableCell, TableCellType } from './TableCell';
 import { TableColumnHeader, TableColumnHeaderType } from './TableColumnHeader';
 import { TableHeaderRow } from './TableHeaderRow';
@@ -41,7 +41,7 @@ export type Row = {
     actionElements?: ReactNode;
 };
 
-export type TableProps = PropsWithChildren<{
+export type TableProps = {
     columns: Column[];
     rows: Row[];
     onSelectionChange?: (ids?: Key[]) => void;
@@ -49,7 +49,8 @@ export type TableProps = PropsWithChildren<{
     selectionMode?: SelectionMode;
     selectedRowIds?: Key[];
     ariaLabel?: string;
-}>;
+    children?: ReactNode;
+};
 
 export enum SortDirection {
     Ascending = 'ascending',
@@ -78,8 +79,11 @@ const mapToTableAriaProps = (columns: Column[], rows: Row[], hasSort = false): T
                 {(item) => (
                     <AriaRow>
                         {(columnKey) => (
-                            <AriaCell key={`${item.key}-${columnKey}`} aria-label={item.cells[columnKey].ariaLabel}>
-                                {item.cells[columnKey].value}
+                            <AriaCell
+                                key={`${item.key}-${columnKey}`}
+                                aria-label={item.cells[columnKey as string].ariaLabel}
+                            >
+                                {item.cells[columnKey as string].value}
                             </AriaCell>
                         )}
                     </AriaRow>
@@ -161,7 +165,7 @@ export const Table = ({
                         </TableHeaderRow>
                     ))}
                 </thead>
-                <tbody>
+                <tbody className="tw-relative tw-z-[-1] sm:tw-z-auto">
                     {[...collection.body.childNodes].map((ariaRow) => {
                         const row = getRowFromId(rows, ariaRow.key);
 
@@ -184,7 +188,7 @@ export const Table = ({
                                     );
                                 })}
                                 {row?.actionElements && (
-                                    <td className="tw-sticky tw-right-0" data-test-id="table-actions">
+                                    <td className="tw-sticky tw-right-0 tw-z-10" data-test-id="table-actions">
                                         <div className="tw-float-right hover:tw-bg-gradient-to-r hover:tw-from-transparent hover:tw-to-black-0 dark:hover:tw-to-black-95 tw-py-4 tw-pr-8 tw-pl-4">
                                             {row.actionElements}
                                         </div>
@@ -198,3 +202,4 @@ export const Table = ({
         </div>
     );
 };
+Table.displayName = 'FondueTable';

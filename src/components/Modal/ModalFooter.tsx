@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement, useContext } from 'react';
+import { ReactElement, useContext } from 'react';
 import { ModalFooterProps } from './types';
 import { Button, ButtonSize } from '@components/Button';
 import { ModalLayout } from './context/ModalLayout';
@@ -20,3 +20,4 @@ export const ModalFooter = ({ buttons }: ModalFooterProps): ReactElement => {
         </div>
     );
 };
+ModalFooter.displayName = 'FondueModalFooter';

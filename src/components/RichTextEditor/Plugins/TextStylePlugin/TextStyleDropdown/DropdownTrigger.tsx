@@ -1,9 +1,8 @@
 /* eslint-disable react/display-name */
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ForwardedRef, forwardRef } from 'react';
-import { getPreventDefaultHandler } from '@udecode/plate';
-import { IconCaretDown, IconSize } from '@foundation/Icon';
+import { ForwardedRef, forwardRef } from 'react';
+import { IconCaretDown12 } from '@foundation/Icon/Generated';
 import { merge } from '@utilities/merge';
 import { DropdownTriggerProps } from './types';
 
@@ -16,7 +15,11 @@ export const DropdownTriggerComponent = (
         data-test-id="textstyle-dropdown-trigger"
         type="button"
         className="tw-cursor-pointer tw-h-8 tw-w-full"
-        onMouseDown={getPreventDefaultHandler(onClick)}
+        onMouseDown={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            onClick();
+        }}
     >
         <div
             className={merge([
@@ -26,7 +29,7 @@ export const DropdownTriggerComponent = (
         >
             <span className="tw-text-xs tw-truncate">{label}</span>
             <div className={merge(['tw-transition-transform', open && 'tw-rotate-180'])}>
-                <IconCaretDown size={IconSize.Size12} />
+                <IconCaretDown12 />
             </div>
         </div>
     </button>

@@ -1,10 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { AccordionHeader as AccordionHeaderComponent } from './AccordionHeader';
 import { AccordionHeaderProps } from './types';
-import { IconExclamationMarkTriangle, IconHome, IconIcon } from '@foundation/Icon';
+import { IconExclamationMarkTriangle, IconHome, IconIcon } from '@foundation/Icon/Generated';
 
 const decorators = {
     IconNone: null,
@@ -16,6 +15,7 @@ const decorators = {
 export default {
     title: 'Components/Accordion/Accordion Header',
     component: AccordionHeaderComponent,
+    tags: ['autodocs'],
     argTypes: {
         decorator: {
             options: Object.keys(decorators),
@@ -30,11 +30,11 @@ export default {
                 },
             },
         },
+        disabled: { type: 'boolean' },
     },
     args: {
         isOpen: false,
         disabled: false,
-        bold: true,
         children: 'I am the Default Accordion Header',
     },
 } as Meta<AccordionHeaderProps>;

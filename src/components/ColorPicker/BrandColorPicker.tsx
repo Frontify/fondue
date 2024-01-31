@@ -1,13 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Slider } from '@components/Slider/Slider';
+import { SegmentedControls } from '@components/SegmentedControls/SegmentedControls';
 import { TextInput } from '@components/TextInput/TextInput';
 import { IconCheckMark, IconGridRegular, IconMagnifier, IconStackVertical } from '@foundation/Icon/Generated';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { isColorLight, toShortRgb } from '@utilities/colors';
 import { merge } from '@utilities/merge';
-import React, { FC, useEffect, useState } from 'react';
-import tinycolor from 'tinycolor2';
+import { ReactElement, useEffect, useState } from 'react';
+import { TinyColor } from '@ctrl/tinycolor';
 import { ColorPickerProps } from './ColorPicker';
 
 const find = (haystack?: string, needle = '') =>
@@ -20,7 +20,7 @@ enum BrandColorView {
 
 type Props = Omit<ColorPickerProps, 'currentFormat' | 'setFormat'>;
 
-export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], currentColor, onSelect }) => {
+export const BrandColorPicker = ({ palettes: defaultPalettes = [], currentColor, onSelect }: Props): ReactElement => {
     const views = [
         { id: BrandColorView.Grid, icon: <IconGridRegular />, ariaLabel: 'Grid' },
         { id: BrandColorView.List, icon: <IconStackVertical />, ariaLabel: 'List' },
@@ -62,7 +62,8 @@ export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], cu
                     />
                 </div>
                 <div className="tw-w-[72px]">
-                    <Slider
+                    <SegmentedControls
+                        size="small"
                         items={views}
                         activeItemId={view}
                         onChange={(colorView) => setView(colorView as BrandColorView)}
@@ -92,7 +93,7 @@ export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], cu
                                                       'tw-h-6 tw-w-6 tw-mr-2 tw-rounded tw-flex tw-items-center tw-justify-center tw-ring-1 tw-ring-black-10 tw-ring-offset-1',
                                                       isColorLight(color) ? 'tw-text-black' : 'tw-text-white',
                                                   ])}
-                                                  style={{ background: tinycolor(toShortRgb(color)).toRgbString() }}
+                                                  style={{ background: new TinyColor(toShortRgb(color)).toRgbString() }}
                                               >
                                                   {color.red === currentColor.red &&
                                                       color.green === currentColor.green &&
@@ -117,3 +118,4 @@ export const BrandColorPicker: FC<Props> = ({ palettes: defaultPalettes = [], cu
         </div>
     );
 };
+BrandColorPicker.displayName = 'FondueBrandColorPicker';

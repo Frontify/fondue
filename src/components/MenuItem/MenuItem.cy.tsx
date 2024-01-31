@@ -1,8 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconMusicNote } from '@foundation/Icon';
+import { IconMusicNote } from '@foundation/Icon/Generated';
 import { IconSize } from '@foundation/Icon/IconSize';
-import React from 'react';
 import { MenuItem, MenuItemContentSize, MenuItemProps, SelectionIndicatorIcon } from '@components/MenuItem';
 
 const MENU_ITEM_ACTIVE_ID = '[data-test-id=menu-item-active]';

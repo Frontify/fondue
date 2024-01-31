@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Meta, StoryFn } from '@storybook/react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ColorFormat } from '../../types/colors';
 import { ColorPicker, ColorPickerProps } from './ColorPicker';
 import { EXAMPLE_PALETTES } from './example-palettes';
@@ -9,6 +9,7 @@ import { EXAMPLE_PALETTES } from './example-palettes';
 export default {
     title: 'Components/Color Picker',
     component: ColorPicker,
+    tags: ['autodocs'],
     args: {
         currentColor: { red: 85, green: 102, blue: 255 },
     },

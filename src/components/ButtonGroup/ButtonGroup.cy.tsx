@@ -1,8 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
-import IconCross from '@foundation/Icon/Generated/IconCross';
-import React from 'react';
+import { IconCross } from '@foundation/Icon/Generated';
 import { ButtonGroup } from './ButtonGroup';
 
 describe('ButtonGroup Composition', () => {

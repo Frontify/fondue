@@ -1,31 +1,39 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useCallback, useMemo, useRef } from 'react';
-import { TNode } from '@udecode/plate';
-import { debounce } from '@utilities/debounce';
+import { useDebounce } from '@hooks/useDebounce';
 import { ON_SAVE_DELAY_IN_MS, parseRawValue } from '../utils';
-import { PluginComposer } from '../Plugins';
+import { GeneratePlugins, PluginComposer } from '../Plugins';
+import { TreeOfNodes } from '../types';
 
 type useEditorStateProps = {
     editorId: string;
-    onTextChange: ((value: string) => void) | undefined;
-    plugins?: PluginComposer;
+    plugins: PluginComposer;
     initialValue?: string;
+    onTextChange?: (value: string) => void;
+    onValueChanged?: (value: TreeOfNodes | null) => void;
 };
 
-export const useEditorState = ({ editorId, onTextChange, initialValue, plugins }: useEditorStateProps) => {
-    const localValue = useRef<TNode[] | null>(null);
+export const useEditorState = ({
+    editorId,
+    initialValue,
+    plugins,
+    onTextChange,
+    onValueChanged,
+}: useEditorStateProps) => {
+    const localValue = useRef<TreeOfNodes | null>(null);
 
-    const debouncedOnChange = debounce((value: TNode[]) => {
+    const debouncedOnChange = useDebounce((value: TreeOfNodes) => {
         onTextChange && onTextChange(JSON.stringify(value));
     }, ON_SAVE_DELAY_IN_MS);
 
     const onChange = useCallback(
-        (value) => {
+        (value: TreeOfNodes) => {
             debouncedOnChange(value);
             localValue.current = value;
+            onValueChanged && onValueChanged(value);
         },
-        [debouncedOnChange, localValue],
+        [debouncedOnChange, localValue, onValueChanged],
     );
 
     const memoizedValue = useMemo(
@@ -34,5 +42,7 @@ export const useEditorState = ({ editorId, onTextChange, initialValue, plugins }
         [editorId],
     );
 
-    return { localValue, onChange, memoizedValue };
+    const config = GeneratePlugins(editorId, plugins);
+
+    return { localValue, onChange, memoizedValue, config };
 };

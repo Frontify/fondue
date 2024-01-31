@@ -20,7 +20,9 @@ import {
     mentionsMarkdown,
     mentionsTree,
     mixedMarkdown,
+    mixedMarkdownWithUnsafeLink2,
     mixedTree,
+    mixedTreeWithUnsafeLink2,
     orderedListMarkdown,
     orderedListTree,
     paragraphMarkdown,
@@ -32,9 +34,21 @@ import {
 describe('Slate To Markdown transformer', () => {
     const transformer = Transform.use(new SlateToMarkdown());
 
-    it('should transform basic marks', () => {
-        const result = transformer.process(basicMarksTree[0]);
-        expect(result).to.deep.equal(basicMarksMarkdown[0]);
+    describe('Basic markdown transformation', () => {
+        it('should transform basic marks in single line', () => {
+            const result = transformer.process(basicMarksTree[0]);
+            expect(result).to.deep.equal(basicMarksMarkdown[0]);
+        });
+
+        it('should transform basic marks in multiple lines', () => {
+            const result = transformer.process(basicMarksTree[1]);
+            expect(result).to.deep.equal(basicMarksMarkdown[1]);
+        });
+
+        it('should transform basic marks with line breaks', () => {
+            const result = transformer.process(basicMarksTree[2]);
+            expect(result).to.deep.equal(basicMarksMarkdown[2]);
+        });
     });
 
     it('should transform headings', () => {
@@ -59,13 +73,30 @@ describe('Slate To Markdown transformer', () => {
     });
 
     it('should transform unordered list', () => {
-        const result = transformer.process(unorderedListTree);
-        expect(result).to.deep.equal(unorderedListMarkdown);
+        const result = transformer.process(unorderedListTree[0]);
+        expect(result).to.deep.equal(unorderedListMarkdown[0]);
+    });
+
+    it('should transform unordered list with child LIC', () => {
+        let result = transformer.process(unorderedListTree[1]);
+        expect(result).to.deep.equal(unorderedListMarkdown[1]);
+
+        result = transformer.process(unorderedListTree[2]);
+        expect(result).to.deep.equal(unorderedListMarkdown[2]);
+
+        result = transformer.process(unorderedListTree[3]);
+        expect(result).to.deep.equal(unorderedListMarkdown[3]);
     });
 
     it('should transform ordered list', () => {
-        const result = transformer.process(orderedListTree);
-        expect(result).to.deep.equal(orderedListMarkdown);
+        let result = transformer.process(orderedListTree[0]);
+        expect(result).to.deep.equal(orderedListMarkdown[0]);
+
+        result = transformer.process(orderedListTree[1]);
+        expect(result).to.deep.equal(orderedListMarkdown[1]);
+
+        result = transformer.process(orderedListTree[2]);
+        expect(result).to.deep.equal(orderedListMarkdown[2]);
     });
 
     it('should transform hr', () => {
@@ -73,14 +104,26 @@ describe('Slate To Markdown transformer', () => {
         expect(result).to.deep.equal(hrMarkdown);
     });
 
-    it('should transform link', () => {
-        const result = transformer.process(linkTree);
-        expect(result).to.deep.equal(linkMarkdown);
+    describe('Link transformation', () => {
+        it('should transform link - target self', () => {
+            const result = transformer.process(linkTree[0]);
+            expect(result).to.deep.equal(linkMarkdown[0]);
+        });
+
+        it('should transform link - target blank', () => {
+            const result = transformer.process(linkTree[1]);
+            expect(result).to.deep.equal(linkMarkdown[1]);
+        });
+
+        it('should create mailto link', () => {
+            const result = transformer.process(linkTree[2]);
+            expect(result).to.deep.equal(linkMarkdown[2]);
+        });
     });
 
     it('should transform image', () => {
-        const result = transformer.process(imageTree);
-        expect(result).to.deep.equal(imageMarkdown);
+        const result = transformer.process(imageTree[0]);
+        expect(result).to.deep.equal(imageMarkdown[0]);
     });
 
     it('should transform block quote', () => {
@@ -91,9 +134,16 @@ describe('Slate To Markdown transformer', () => {
         expect(result).to.deep.equal(blockQuoteMarkdown[1]);
     });
 
-    it('should transform mixed text', () => {
-        const result = transformer.process(mixedTree);
-        expect(result).to.deep.equal(mixedMarkdown);
+    describe('Mixed text transformation', () => {
+        it('should transform mixed text', () => {
+            const result = transformer.process(mixedTree);
+            expect(result).to.deep.equal(mixedMarkdown);
+        });
+
+        it('should transform mixed text with unsafe link', () => {
+            const result = transformer.process(mixedTreeWithUnsafeLink2);
+            expect(result).to.deep.equal(mixedMarkdownWithUnsafeLink2);
+        });
     });
 
     it('should transform mentions text', () => {
@@ -102,5 +152,11 @@ describe('Slate To Markdown transformer', () => {
 
         result = transformer.process(mentionsTree[1]);
         expect(result).to.deep.equal(mentionsMarkdown[1]);
+
+        result = transformer.process(mentionsTree[2]);
+        expect(result).to.deep.equal(mentionsMarkdown[2]);
+
+        result = transformer.process(mentionsTree[3]);
+        expect(result).to.deep.equal(mentionsMarkdown[3]);
     });
 });

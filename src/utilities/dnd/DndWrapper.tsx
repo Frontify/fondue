@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactNode, memo, useEffect, useState } from 'react';
+import { ReactNode, memo, useEffect, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
@@ -24,8 +24,6 @@ export const DndWrapper = memo(({ id, children }: DndWrapperProps) => {
         <DndProvider backend={HTML5Backend} options={{ rootElement: context }}>
             {children}
         </DndProvider>
-    ) : (
-        <></>
-    );
+    ) : null;
 });
-DndWrapper.displayName = 'DndWrapper';
+DndWrapper.displayName = 'FondueDndWrapper';

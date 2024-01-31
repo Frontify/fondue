@@ -4,12 +4,12 @@ import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/But
 import { IconCheckMark, IconCross, IconPlus } from '@foundation/Icon/Generated';
 import { action } from '@storybook/addon-actions';
 import { Meta, StoryFn } from '@storybook/react';
-import React from 'react';
 import { ButtonGroup as ButtonGroupComponent, ButtonGroupProps } from './ButtonGroup';
 
 export default {
     title: 'Components/Button Group',
     component: ButtonGroupComponent,
+    tags: ['autodocs'],
     argTypes: {
         size: {
             options: ButtonSize,

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ForwardRefRenderFunction, MouseEvent, ReactElement, ReactNode, cloneElement, forwardRef } from 'react';
+import { ForwardRefRenderFunction, MouseEvent, ReactElement, ReactNode, cloneElement, forwardRef } from 'react';
 
 import { useButton } from '@react-aria/button';
 import { merge } from '@utilities/merge';
@@ -32,6 +32,7 @@ export * from './ButtonTypes';
 
 export type ButtonProps = {
     type?: ButtonType;
+    title?: string;
     style?: ButtonStyle;
     emphasis?: ButtonEmphasis;
     hideLabel?: boolean;
@@ -43,16 +44,19 @@ export type ButtonProps = {
     onClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
     hugWidth?: boolean;
     'aria-label'?: string;
+    'aria-describedby'?: string;
     formId?: string;
     /** @deprecated use emphasis with ButtonEmphasis.Weak */
     solid?: boolean;
     /** @deprecated inverted can be done by wrapping the component in a className="tw-dark" */
     inverted?: boolean;
+    'data-test-id'?: string;
 };
 
 const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, ButtonProps> = (
     {
         type = ButtonType.Button,
+        title = '',
         style = ButtonStyle.Default,
         size = ButtonSize.Medium,
         rounding = ButtonRounding.Medium,
@@ -64,9 +68,11 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
         onClick,
         hugWidth = true,
         'aria-label': ariaLabel,
+        'aria-describedby': ariaDescribedBy,
         formId,
         solid,
         inverted,
+        'data-test-id': dataTestId = 'button',
     },
     externalRef,
 ) => {
@@ -107,26 +113,31 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
 
     return (
         <button
+            data-test-id={dataTestId}
             aria-label={ariaLabel}
             aria-disabled={disabled}
+            aria-describedby={ariaDescribedBy}
             ref={ref}
             className={merge([buttonClassName, inverted && 'tw-dark', isFocusVisible && FOCUS_VISIBLE_STYLE])}
             disabled={disabled}
-            data-test-id="button"
             form={formId}
+            title={title}
             {...buttonProps}
             {...focusProps}
         >
             {icon && (
                 <span
-                    data-test-id="button-icon"
+                    data-test-id={`${dataTestId}-icon`}
                     className={merge([children && !hideLabel ? IconSpacingClasses[size] : '', getStyles('icon')])}
                 >
                     {cloneElement(icon, { size: buttonIconSizeMap[size] })}
                 </span>
             )}
             {children && (
-                <span data-test-id="button-text" className={merge([getStyles('text'), hideLabel && 'tw-sr-only'])}>
+                <span
+                    data-test-id={`${dataTestId}-text`}
+                    className={merge([getStyles('text'), hideLabel && 'tw-sr-only'])}
+                >
                     {children}
                 </span>
             )}
@@ -135,3 +146,4 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
 };
 
 export const Button = forwardRef(ButtonComponent);
+Button.displayName = 'FondueButton';

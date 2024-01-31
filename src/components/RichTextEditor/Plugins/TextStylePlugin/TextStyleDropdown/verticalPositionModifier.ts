@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { getVerticalPositioning } from '@components/Flyout/helpers/getVerticalPositioning';
+import { getVerticalPositioning } from '@components/Flyout';
 import { Modifier } from 'react-popper';
 
 const OFFSET = 6;

@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { OverflowMenu, OverflowMenuProps } from './OverflowMenu';
 import { BreadcrumbItem } from '@components/Breadcrumbs';
@@ -29,6 +28,7 @@ const MIXED_ITEMS = [
 export default {
     title: 'Components/OverflowMenu',
     component: OverflowMenu,
+    tags: ['autodocs'],
     decorators: [
         (StoryElement) => (
             <div className="tw-h-48">

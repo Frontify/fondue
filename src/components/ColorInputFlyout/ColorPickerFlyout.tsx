@@ -3,7 +3,7 @@
 import { ColorPreview } from '@components/ColorPicker';
 import { ColorPicker, ColorPickerProps } from '@components/ColorPicker/ColorPicker';
 import { Flyout } from '@components/Flyout/Flyout';
-import React, { FC, useState } from 'react';
+import { ReactElement, useState } from 'react';
 import { Color, ColorFormat } from '../../types/colors';
 import { ColorInputTrigger } from './ColorPickerTrigger';
 
@@ -18,7 +18,7 @@ export type ColorPickerFlyoutProps = Pick<ColorPickerProps, 'palettes' | 'onSele
     onDelete?: () => void;
 };
 
-export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
+export const ColorPickerFlyout = ({
     id,
     onClick,
     onClose,
@@ -29,7 +29,7 @@ export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
     clearable = false,
     onClear,
     onDelete,
-}) => {
+}: ColorPickerFlyoutProps): ReactElement => {
     const [open, setOpen] = useState(false);
     const [currentFormat, setCurrentFormat] = useState(ColorFormat.Hex);
 
@@ -51,9 +51,10 @@ export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
             onConfirm={handleClick}
             isOpen={open}
             onCancel={() => handleOpenChange(false)}
-            contentMinHeight={300}
+            contentMinHeight={150}
             fixedHeader={<ColorPreview color={currentColor || { red: 255, green: 255, blue: 255 }} />}
             onOpenChange={handleOpenChange}
+            isTriggerDisabled={disabled}
             trigger={
                 <ColorInputTrigger
                     isOpen={open}
@@ -88,3 +89,4 @@ export const ColorPickerFlyout: FC<ColorPickerFlyoutProps> = ({
         </Flyout>
     );
 };
+ColorPickerFlyout.displayName = 'FondueColorPickerFlyout';

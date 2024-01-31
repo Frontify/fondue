@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { Targets } from '../../types';
+import { createLink, createP, createText } from './helpers';
 import { orderedListTree } from './orderedList';
 import { unorderedListTree } from './unorderedList';
 
@@ -13,13 +15,18 @@ I am inline basic mark**bold**_italic_~~delete~~\`inline code\`
 tell application "Foo";
     beep
 end tell\`
-This is [link to frontify.com](https://www.frontify.com/).
+This is [link to frontify.com](https://www.frontify.com/){:target="_self"}.
+
+This is second link [link to www.frontify.com](https://www.frontify.com/){:target="_blank"} with target blank.
+
 I am normal Paragraph
+
 > Presenting the Quote
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna @[user: 10] aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna @[user:aaaaaaaa06] aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
 
 Presenting the Paragraph
-Lorem ipsum dolor sit amet, consetetur @[group: 2] sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+Lorem ipsum dolor sit amet, consetetur @[group:1111111111] sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. @[user:aaaaaaaa13]
+
 
 - list
 
@@ -32,18 +39,18 @@ Lorem ipsum dolor sit amet, consetetur @[group: 2] sadipscing elitr, sed diam no
 
 
 
-1. Ordered list
-1. Ordered list
+1. Ordered list item number one.
+1. Ordered list item number two.
 
-   1. aaa
-   1. aaa
+   1. Ordered list child item number one.
+   1. Ordered list child item number two.
 
-      1. eeeee
-      1. eeeee
+      1. Another ordered list child item number one.
+      1. Another ordered list child item number two.
 
-   1. aaa
+   1. Ordered list child item number three.
 
-1. Ordered list
+1. Ordered list item number three.
 
 `;
 
@@ -119,20 +126,16 @@ export const mixedTree = [
             {
                 text: '\nThis is ',
             },
-            {
-                type: 'a',
-                url: 'https://www.frontify.com/',
-                children: [
-                    {
-                        text: 'link to frontify.com',
-                    },
-                ],
-            },
-            {
-                text: '.\nI am normal Paragraph',
-            },
+            createLink('link to frontify.com', 'https://www.frontify.com/', Targets.Self),
+            createText('.'),
         ],
     },
+    createP([
+        createText('This is second link '),
+        createLink('link to www.frontify.com', 'https://www.frontify.com/'),
+        createText(' with target blank.'),
+    ]),
+    createP([createText('I am normal Paragraph')]),
     {
         type: 'quote',
         children: [
@@ -145,7 +148,7 @@ export const mixedTree = [
                     {
                         type: 'mention',
                         category: 'user',
-                        key: '10',
+                        id: 'aaaaaaaa06',
                         children: [{ text: '' }],
                     },
                     {
@@ -164,15 +167,59 @@ export const mixedTree = [
             {
                 type: 'mention',
                 category: 'group',
-                key: '2',
+                id: '1111111111',
                 children: [{ text: '' }],
             },
             {
-                text: ' sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.',
+                text: ' sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. ',
+            },
+            {
+                type: 'mention',
+                category: 'user',
+                id: 'aaaaaaaa13',
+                children: [{ text: '' }],
+            },
+            {
+                text: '',
             },
         ],
     },
 
-    ...unorderedListTree,
-    ...orderedListTree,
+    ...unorderedListTree[0],
+    ...orderedListTree[0],
+];
+
+export const mixedMarkdownWithUnsafeLink1 = `${mixedMarkdown}
+
+Unsafe link: [xss ca-30JS](javascript:alert("XSS-Vulnerability")){:target="_self"}
+
+Unsafe link not markdown standard: [xss ca-30JS](javascript:alert("With the spaces as link"))
+
+`;
+
+export const mixedTreeWithUnsafeLink1 = [
+    ...mixedTree,
+    createP([createText('Unsafe link: '), createLink('xss ca-30JS', undefined, '_self'), createText('')]),
+    createP([
+        createText('Unsafe link not markdown standard: [xss ca-30JS](javascript:alert("With the spaces as link"))'),
+    ]),
+];
+
+export const mixedMarkdownWithUnsafeLink2 = `${mixedMarkdown}
+Unsafe link: [xss ca-30JS](){:target="_self"}
+
+Unsafe link not markdown standard: [xss ca-30JS](javascript:alert("With the spaces as link"))
+
+`;
+
+export const mixedTreeWithUnsafeLink2 = [
+    ...mixedTree,
+    createP([
+        createText('\n'),
+        createText('Unsafe link: '),
+        createLink('xss ca-30JS', 'javascript:alert("XSS-Vulnerability")', '_self'),
+    ]),
+    createP([
+        createText('Unsafe link not markdown standard: [xss ca-30JS](javascript:alert("With the spaces as link"))'),
+    ]),
 ];

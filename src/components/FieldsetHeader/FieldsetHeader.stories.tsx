@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import {
     FieldsetHeader as FieldsetHeaderComponent,
@@ -8,11 +8,12 @@ import {
     FieldsetHeaderSize,
     FieldsetHeaderType,
 } from './FieldsetHeader';
-import { IconIcon } from '@foundation/Icon';
+import { IconIcon } from '@foundation/Icon/Generated';
 
 export default {
-    title: 'Components/Fieldset Header',
+    title: 'Deprecated/Fieldset Header',
     component: FieldsetHeaderComponent,
+    tags: ['autodocs'],
     argTypes: {
         size: {
             options: [FieldsetHeaderSize.Small, FieldsetHeaderSize.Medium, FieldsetHeaderSize.Large],

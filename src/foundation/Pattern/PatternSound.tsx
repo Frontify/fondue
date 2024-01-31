@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement, memo } from 'react';
+import { ReactElement, memo } from 'react';
 
 function PatternSound(): ReactElement {
     return (
@@ -546,6 +546,8 @@ function PatternSound(): ReactElement {
         </svg>
     );
 }
+
+PatternSound.displayName = 'FonduePatternSound';
 
 const Memo = memo(PatternSound);
 

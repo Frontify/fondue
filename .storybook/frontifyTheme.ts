@@ -43,7 +43,7 @@ export const dark = create({
     colorSecondary: '#825fff',
 
     // UI
-    appBg: '#2d3232',
+    appBg: '#1a1c1c',
     appBorderColor: '#424747',
     appBorderRadius: 4,
 
@@ -61,7 +61,7 @@ export const dark = create({
     barBg: '#1a1d1d',
 
     // Form colors
-    inputBg: '#2d3232',
+    inputBg: '#1a1c1c',
     inputBorder: '#424747',
     inputTextColor: '#fafafa',
     inputBorderRadius: 4,

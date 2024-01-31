@@ -7,7 +7,18 @@ import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
-import React, { FC, FocusEvent, KeyboardEvent, ReactNode, useEffect, useRef, useState } from 'react';
+import {
+    AriaAttributes,
+    FocusEvent,
+    ForwardRefRenderFunction,
+    KeyboardEvent,
+    ReactElement,
+    ReactNode,
+    forwardRef,
+    useEffect,
+    useRef,
+    useState,
+} from 'react';
 import {
     IconCheckMark,
     IconClipboard,
@@ -16,13 +27,21 @@ import {
     IconExclamationMarkTriangle,
     IconEye,
     IconEyeOff,
-} from '@foundation/Icon';
-
+} from '@foundation/Icon/Generated';
+import { LegacyTooltip, LegacyTooltipProps } from '../LegacyTooltip';
 export enum TextInputType {
     Text = 'text',
     Password = 'password',
     Number = 'number',
 }
+
+export type TextInputExtraAction = {
+    onClick: () => void;
+    icon: ReactElement;
+    title: string;
+    tooltip?: Omit<LegacyTooltipProps, 'triggerElement'>;
+    disabled?: boolean;
+};
 
 export type TextInputBaseProps = {
     id?: string;
@@ -41,11 +60,16 @@ export type TextInputBaseProps = {
     onChange?: (value: string) => void;
     onEnterPressed?: (event: KeyboardEvent<HTMLInputElement>) => void;
     onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
+    onFocus?: (event: FocusEvent<HTMLInputElement>) => void;
     onClear?: () => void;
+    maxLength?: number;
     size?: number;
     spellcheck?: boolean;
     focusOnMount?: boolean;
-};
+    selectable?: boolean;
+    extraActions?: TextInputExtraAction[];
+    ariaLabel?: string;
+} & AriaAttributes;
 
 export type TextInputProps =
     | ({
@@ -63,7 +87,47 @@ export type TextInputProps =
           obfuscated?: boolean;
       } & TextInputBaseProps);
 
-export const TextInput: FC<TextInputProps> = ({
+type ExtraActionButtonProps = {
+    extraAction: TextInputExtraAction;
+    disabled: boolean;
+};
+
+const ExtraActionButton: ForwardRefRenderFunction<HTMLButtonElement | null, ExtraActionButtonProps> = (
+    { extraAction, disabled },
+    ref,
+): ReactElement | null => {
+    const { isFocusVisible: extraActionButtonIsFocusVisible, focusProps: extraActionButtonFocusProps } = useFocusRing();
+
+    if (!extraAction) {
+        return null;
+    }
+
+    const isDisabled = disabled || extraAction.disabled;
+    return (
+        <button
+            className={merge([
+                'tw-flex tw-items-center tw-justify-center tw-transition-colors tw-rounded tw-p-1',
+                isDisabled
+                    ? 'tw-cursor-default tw-text-text-disabled'
+                    : 'tw-text-text-weak hover:tw-bg-box-neutral-hover hover:tw-text-box-neutral-inverse-hover',
+                extraActionButtonIsFocusVisible && FOCUS_STYLE,
+            ])}
+            onClick={extraAction.onClick}
+            data-test-id="fondue-extra-action-icon"
+            aria-label={extraAction.title.toLowerCase()}
+            disabled={isDisabled}
+            aria-disabled={isDisabled}
+            type="button"
+            ref={ref}
+            {...extraActionButtonFocusProps}
+        >
+            {extraAction.icon}
+        </button>
+    );
+};
+const ExtraActionButtonWithRef = forwardRef(ExtraActionButton);
+
+export const TextInput = ({
     id: propId,
     type = TextInputType.Text,
     decorator,
@@ -81,12 +145,17 @@ export const TextInput: FC<TextInputProps> = ({
     onEnterPressed,
     onBlur,
     onClear,
+    onFocus,
     size,
     spellcheck,
     readonly,
     focusOnMount,
-}) => {
-    const { isFocusVisible, focusProps } = useFocusRing({ within: true, isTextInput: true });
+    selectable = false,
+    extraActions,
+    maxLength,
+    ...props
+}: TextInputProps): ReactElement => {
+    const { isFocusVisible: inputIsFocusVisible, focusProps: inputFocusProps } = useFocusRing({ isTextInput: true });
     const { isFocusVisible: clearButtonIsFocusVisible, focusProps: clearButtonFocusProps } = useFocusRing();
     const { isFocusVisible: passwordButtonIsFocusVisible, focusProps: passwordButtonFocusProps } = useFocusRing();
     const { isFocusVisible: copyButtonIsFocusVisible, focusProps: copyButtonFocusProps } = useFocusRing();
@@ -111,8 +180,8 @@ export const TextInput: FC<TextInputProps> = ({
     }, [obfuscated]);
 
     const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === 'Enter') {
-            onEnterPressed && onEnterPressed(event);
+        if (event.key === 'Enter' && onEnterPressed) {
+            onEnterPressed(event);
         }
     };
 
@@ -127,22 +196,23 @@ export const TextInput: FC<TextInputProps> = ({
 
     return (
         <div
-            {...focusProps}
+            {...props}
             className={merge([
-                'tw-flex tw-items-center tw-h-9 tw-gap-2 tw-px-3 tw-border tw-transition tw-rounded tw-text-s tw-font-sans tw-relative tw-bg-white dark:tw-bg-transparent',
+                'tw-flex tw-items-center tw-h-9 tw-gap-2 tw-px-3 tw-border tw-transition tw-rounded tw-text-body-small tw-font-sans tw-relative tw-bg-white dark:tw-bg-transparent',
                 dotted ? 'tw-border-dashed' : 'tw-border-solid',
                 disabled || readonly
                     ? 'tw-border-black-5 tw-bg-black-5 dark:tw-bg-black-90 dark:tw-border-black-90'
                     : merge([
-                          'focus-within:tw-border-black-90 hover:tw-border-black-90',
+                          'focus-within:tw-border-line-xx-strong focus-within:hover:tw-border-line-xx-strong hover:tw-border-line-x-strong',
                           validationClassMap[validation],
-                          isFocusVisible &&
+                          inputIsFocusVisible &&
                               !clearButtonIsFocusVisible &&
                               !passwordButtonIsFocusVisible &&
                               !copyButtonIsFocusVisible &&
                               FOCUS_STYLE,
                       ]),
             ])}
+            data-test-id="fondue-text-input-component"
         >
             {decorator && (
                 <div
@@ -156,6 +226,7 @@ export const TextInput: FC<TextInputProps> = ({
                 </div>
             )}
             <input
+                {...inputFocusProps}
                 id={useMemoizedId(propId)}
                 ref={inputElement}
                 className={merge([
@@ -165,8 +236,11 @@ export const TextInput: FC<TextInputProps> = ({
                         : 'tw-text-black tw-placeholder-black-60 dark:tw-text-white',
                 ])}
                 onClick={() => inputElement.current?.focus()}
-                onChange={(event) => onChange && onChange(event.currentTarget.value)}
-                onBlur={onBlur}
+                onChange={(event) => onChange?.(event.currentTarget.value)}
+                onBlur={(e) => {
+                    inputFocusProps.onBlur?.(e);
+                    onBlur?.(e);
+                }}
                 onKeyDown={onKeyDown}
                 placeholder={placeholder}
                 value={value}
@@ -174,11 +248,38 @@ export const TextInput: FC<TextInputProps> = ({
                 required={required}
                 readOnly={readonly}
                 disabled={disabled}
+                onFocus={(e) => {
+                    inputFocusProps.onFocus?.(e);
+                    if (selectable) {
+                        e.target.select();
+                    }
+                    if (onFocus) {
+                        onFocus(e);
+                    }
+                }}
                 autoComplete={autocomplete ? 'on' : 'off'}
+                maxLength={maxLength}
                 size={size}
                 data-test-id="text-input"
                 {...spellcheckProp}
             />
+            {extraActions &&
+                extraActions.length > 0 &&
+                extraActions.map((extraAction: TextInputExtraAction, index: number) => {
+                    const key = `text-input-extra-action-${index}`;
+                    if (extraAction.tooltip) {
+                        return (
+                            <LegacyTooltip
+                                key={key}
+                                {...extraAction.tooltip}
+                                triggerElement={
+                                    <ExtraActionButtonWithRef extraAction={extraAction} disabled={disabled} />
+                                }
+                            />
+                        );
+                    }
+                    return <ExtraActionButtonWithRef key={key} extraAction={extraAction} disabled={disabled} />;
+                })}
             {`${value}`.length > 0 && clearable && (
                 <button
                     className={merge([
@@ -190,8 +291,8 @@ export const TextInput: FC<TextInputProps> = ({
                         inputElement.current?.focus();
                         inputElement.current?.setAttribute('value', '');
 
-                        onChange && onChange('');
-                        onClear && onClear();
+                        onChange?.('');
+                        onClear?.();
                     }}
                     data-test-id="clear-icon"
                     title="Clear text input"
@@ -226,9 +327,13 @@ export const TextInput: FC<TextInputProps> = ({
                     <LoadingCircle size={LoadingCircleSize.ExtraSmall} />
                 </span>
             )}
-            {validation === Validation.Error && (
+            {(validation === Validation.Error || validation === Validation.Warning) && (
                 <span
-                    className="tw-flex tw-items-center tw-justify-center tw-text-red-60"
+                    className={merge([
+                        'tw-flex tw-items-center tw-justify-center',
+                        validation === Validation.Error && 'tw-text-text-negative',
+                        validation === Validation.Warning && 'tw-text-text-warning',
+                    ])}
                     data-test-id="error-state-exclamation-mark-icon"
                 >
                     <IconExclamationMarkTriangle />
@@ -264,3 +369,4 @@ export const TextInput: FC<TextInputProps> = ({
         </div>
     );
 };
+TextInput.displayName = 'FondueTextInput';

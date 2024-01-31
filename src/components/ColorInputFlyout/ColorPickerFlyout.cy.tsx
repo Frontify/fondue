@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { FC, useState } from 'react';
+import { ReactElement, useState } from 'react';
 import type { Color, Palette } from '../../types/colors';
 import { EXAMPLE_PALETTES } from '../ColorPicker/example-palettes';
 import { ColorPickerFlyout } from './ColorPickerFlyout';
@@ -17,11 +17,11 @@ const CLEAR_BUTTON_ID = '[data-test-id=dropdown-clear-button]';
 
 type Props = {
     palettes?: Palette[];
-    currentColor?: Color;
+    currentColor?: Nullable<Color>;
     clearable?: boolean;
 };
 
-const Component: FC<Props> = ({ palettes, currentColor = null, clearable = false }) => {
+const Component = ({ palettes, currentColor = null, clearable = false }: Props): ReactElement => {
     const [temporaryColor, setTemporaryColor] = useState<Color | null>(null);
     const [selectedColor, setSelectedColor] = useState<Color | null>(currentColor);
 

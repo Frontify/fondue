@@ -2,14 +2,14 @@
 
 import { MenuItemContent } from '@components/MenuItem/MenuItemContent';
 import { Trigger } from '@components/Trigger/Trigger';
-import IconDroplet from '@foundation/Icon/Generated/IconDroplet';
+import { IconDroplet } from '@foundation/Icon/Generated';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { useFocusRing } from '@react-aria/focus';
 import { toShortRgb } from '@utilities/colors';
 import { merge } from '@utilities/merge';
-import React, { FC } from 'react';
-import tinycolor from 'tinycolor2';
+import { ReactElement } from 'react';
+import { TinyColor } from '@ctrl/tinycolor';
 import { ColorFormat } from '../../types/colors';
 import { ColorInputTitle } from './ColorInputTitle';
 import { ColorPickerFlyoutProps } from './ColorPickerFlyout';
@@ -22,7 +22,7 @@ type ColorInputTriggerProps = Pick<ColorPickerFlyoutProps, 'id' | 'currentColor'
     onDelete?: () => void;
 };
 
-export const ColorInputTrigger: FC<ColorInputTriggerProps> = ({
+export const ColorInputTrigger = ({
     id,
     currentColor,
     format,
@@ -31,9 +31,9 @@ export const ColorInputTrigger: FC<ColorInputTriggerProps> = ({
     clearable = false,
     onClear,
     onDelete,
-}) => {
+}: ColorInputTriggerProps): ReactElement => {
     const { isFocusVisible, focusProps } = useFocusRing();
-    const backgroundColor = currentColor ? tinycolor(toShortRgb(currentColor)).toRgbString() : '';
+    const backgroundColor = currentColor ? new TinyColor(toShortRgb(currentColor)).toRgbString() : '';
 
     return (
         <Trigger
@@ -48,8 +48,9 @@ export const ColorInputTrigger: FC<ColorInputTriggerProps> = ({
                 {...focusProps}
                 type="button"
                 id={useMemoizedId(id)}
+                disabled={disabled}
                 className={merge([
-                    'tw-overflow-hidden tw-flex-auto tw-h-full tw-rounded tw-text-left tw-outline-none tw-py-2 tw-pl-3 tw-min-h-[34px] tw-pr-7',
+                    'tw-overflow-hidden tw-flex-auto tw-h-full tw-rounded tw-text-left tw-outline-none tw-py-2 tw-pl-3 tw-min-h-[34px] tw-pr-8',
                     !currentColor && 'tw-text-black-60',
                     disabled && 'tw-text-black-40',
                 ])}
@@ -78,3 +79,4 @@ export const ColorInputTrigger: FC<ColorInputTriggerProps> = ({
         </Trigger>
     );
 };
+ColorInputTrigger.displayName = 'FondueColorInputTrigger';

@@ -14,7 +14,7 @@ export const createCustomLink = (query: string): SearchResult =>
         icon: DEFAULT_ICON,
         size: MenuItemContentSize.Large,
         selectionIndicator: SelectionIndicatorIcon.Check,
-    } as SearchResult);
+    }) as SearchResult;
 
 export const retrieveRecentQueries = (): SearchResult[] => {
     const recentQueries = JSON.parse(localStorage.getItem(QUERIES_STORAGE_KEY) || 'null');

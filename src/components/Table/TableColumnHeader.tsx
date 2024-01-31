@@ -5,8 +5,8 @@ import { Checkbox, CheckboxState } from '@components/Checkbox/Checkbox';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import React, { Key, cloneElement, useEffect, useRef, useState } from 'react';
-import { IconArrowBidirectional, IconArrowDown, IconArrowUp } from '@foundation/Icon';
+import { Key, cloneElement, useEffect, useRef, useState } from 'react';
+import { IconArrowBidirectional, IconArrowDown, IconArrowUp } from '@foundation/Icon/Generated';
 import { SelectionMode, SortDirection } from '..';
 
 export enum TableColumnHeaderType {
@@ -85,7 +85,7 @@ export const TableColumnHeader = ({
                 {selectionMode === SelectionMode.SingleSelect ? (
                     <span className="tw-sr-only">{ariaProps['aria-label']}</span>
                 ) : (
-                    <Checkbox value={key} ariaLabel={key} state={checkboxState} onChange={handleChange} />
+                    <Checkbox value={key} aria-label={key} state={checkboxState} onChange={handleChange} />
                 )}
             </th>
         );
@@ -126,3 +126,4 @@ export const TableColumnHeader = ({
         </th>
     );
 };
+TableColumnHeader.displayName = 'FondueTableColumnHeader';

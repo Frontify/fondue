@@ -1,15 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { Meta, StoryFn } from '@storybook/react';
 import { TextInput, TextInputProps, TextInputType } from './TextInput';
 import { Validation } from '@utilities/validation';
-import { IconIcon } from '@foundation/Icon';
+import { IconIcon } from '@foundation/Icon/Generated';
+import { action } from '@storybook/addon-actions';
+import { FormField } from '../FormField';
 
 export default {
     title: 'Components/Text Input',
     component: TextInput,
+    tags: ['autodocs'],
     args: {
         clearable: false,
         disabled: false,
@@ -32,6 +35,7 @@ export default {
             control: { type: 'select' },
         },
         placeholder: { type: 'string' },
+        maxLength: { type: 'number' },
         value: { table: { disable: true } },
         obfuscated: { table: { disable: true } },
         type: { table: { disable: true } },
@@ -39,14 +43,19 @@ export default {
         onInput: { table: { disable: true }, action: 'onInput' },
         onBlur: { table: { disable: true }, action: 'onBlur' },
         onClear: { table: { disable: true }, action: 'onClear' },
+        onFocus: { table: { disable: true }, action: 'onFocus' },
     },
 } as Meta<TextInputProps>;
 
 const TextInputTemplate: StoryFn<TextInputProps> = (args: TextInputProps) => {
     const [input, setInput] = useState('');
-    useEffect(() => setInput(`${args.value || ''}`), [args.value]);
+    useEffect(() => setInput(`${args.value ?? ''}`), [args.value]);
 
-    return <TextInput {...args} value={input} onChange={setInput} />;
+    return (
+        <FormField label={{ text: 'sample' }} hiddenLabel>
+            <TextInput {...args} value={input} onChange={setInput} />
+        </FormField>
+    );
 };
 
 export const Text = TextInputTemplate.bind({});
@@ -72,6 +81,12 @@ export const WithIconDecorator = TextInputTemplate.bind({});
 WithIconDecorator.args = {
     value: 'Value text',
     decorator: <IconIcon size={IconSize.Size16} />,
+};
+
+export const WithMaxLength = TextInputTemplate.bind({});
+
+WithMaxLength.args = {
+    maxLength: 10,
 };
 
 export const WithCharacterDecorator = TextInputTemplate.bind({});
@@ -138,4 +153,55 @@ export const FocusOnMount = TextInputTemplate.bind({});
 FocusOnMount.args = {
     value: 'Value text',
     focusOnMount: true,
+};
+
+export const SelectableInput = TextInputTemplate.bind({});
+
+SelectableInput.args = {
+    value: 'Value text',
+    selectable: true,
+};
+
+export const WithExtraActions = TextInputTemplate.bind({});
+
+WithExtraActions.args = {
+    value: 'Value text',
+    extraActions: [
+        {
+            title: 'Extra action A',
+            onClick: action('extraActionA'),
+            icon: <IconIcon />,
+        },
+        {
+            title: 'Extra action B',
+            onClick: action('extraActionB'),
+            icon: <IconIcon />,
+        },
+    ],
+};
+
+export const WithExtraActionWithTooltip = TextInputTemplate.bind({});
+
+WithExtraActionWithTooltip.args = {
+    value: 'Value text',
+    extraActions: [
+        {
+            title: 'First extra action',
+            onClick: action('extraAction1'),
+            icon: <IconIcon />,
+            tooltip: {
+                content: 'First extra action tooltip content',
+                withArrow: true,
+            },
+        },
+        {
+            title: 'Second extra action',
+            onClick: action('extraAction2'),
+            icon: <IconIcon />,
+            tooltip: {
+                content: 'Second extra action tooltip content',
+                withArrow: true,
+            },
+        },
+    ],
 };

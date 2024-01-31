@@ -7,7 +7,7 @@ import { MenuItemProps } from '@components/MenuItem/MenuItem';
 import { AriaListBoxOptions, useListBox } from '@react-aria/listbox';
 import { ListState } from '@react-stately/list';
 import { merge } from '@utilities/merge';
-import React, { ReactElement, useRef } from 'react';
+import { ReactElement, useRef } from 'react';
 import { SelectMenuItem } from './SelectMenuItem';
 import { SelectMenuSection } from './SelectMenuSection';
 
@@ -63,7 +63,7 @@ export const SelectMenu = ({
                                 key={item.key}
                                 state={state}
                                 node={item}
-                                menuItem={keyItemRecord[item.key]}
+                                menuItem={keyItemRecord[item.key as string]}
                             />
                         ))}
                     </SelectMenuSection>
@@ -72,3 +72,4 @@ export const SelectMenu = ({
         </ul>
     );
 };
+SelectMenu.displayName = 'FondueSelectMenu';

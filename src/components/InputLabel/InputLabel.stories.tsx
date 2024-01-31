@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Meta, StoryFn } from '@storybook/react';
-import React from 'react';
 import { IconExclamationMarkCircle, IconInfo, IconQuestionMarkCircle } from '@foundation/Icon/Generated';
 import { InputLabel as InputLabelComponent, InputLabelProps } from './InputLabel';
 import { TooltipIconTriggerStyle } from '@components/TooltipIcon';
@@ -9,6 +8,7 @@ import { TooltipIconTriggerStyle } from '@components/TooltipIcon';
 export default {
     title: 'Components/Input Label',
     component: InputLabelComponent,
+    tags: ['autodocs'],
     args: {
         children: 'Input Label',
         disabled: false,

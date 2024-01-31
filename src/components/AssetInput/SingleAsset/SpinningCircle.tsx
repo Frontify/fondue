@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { merge } from '@utilities/merge';
-import React, { FC } from 'react';
+import { ReactElement } from 'react';
 import { AssetInputProps, AssetInputSize } from '..';
 
-export const SpinningCircle: FC<Pick<AssetInputProps, 'size'>> = ({ size }) => (
+export const SpinningCircle = ({ size }: Pick<AssetInputProps, 'size'>): ReactElement => (
     <svg
         className={merge(['tw-animate-spin', size === AssetInputSize.Large ? 'tw-w-16 tw-h-16' : 'tw-w-5 tw-h-5'])}
         width="100%"
@@ -16,3 +16,4 @@ export const SpinningCircle: FC<Pick<AssetInputProps, 'size'>> = ({ size }) => (
         <path fill="none" stroke="#7159d7" strokeWidth="2" d="M2,22 a20,20 0 1,0 20,-20" />
     </svg>
 );
+SpinningCircle.displayName = 'FondueSpinningCircle';

@@ -6,8 +6,8 @@ import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import React, { MouseEvent, useRef } from 'react';
-import { IconCross } from '@foundation/Icon';
+import { MouseEvent, useRef } from 'react';
+import { IconCross } from '@foundation/Icon/Generated';
 
 export enum TagType {
     Suggested = 'Suggested',
@@ -23,16 +23,16 @@ export enum TagSize {
 
 export const tagStyles: Record<TagType, string> = {
     [TagType.Suggested]:
-        'tw-bg-white dark:tw-bg-black-100 hover:tw-bg-black-0 dark:hover:tw-bg-black-superdark tw-border-black-20 dark:tw-border-white hover:tw-border-black-40 dark:hover:tw-border-black-20 tw-text-black-80 dark:tw-text-white dark:hover:tw-text-black-20',
+        'tw-border tw-bg-base tw-text-text-weak tw-border-line hover:tw-text-text hover:tw-border-line-strong',
     [TagType.Selected]:
-        'tw-bg-black-5 hover:tw-bg-black-10 dark:hover:tw-bg-black-20 tw-border-black-5 hover:tw-border-black-10 dark:hover:tw-border-black-20 tw-text-black-80 hover:tw-text-black-100',
+        'tw-bg-box-neutral hover:tw-bg-box-neutral-hover tw-text-text-weak hover:tw-text-box-neutral-inverse-hover',
     [TagType.SelectedWithFocus]:
-        'tw-bg-violet-60 dark:tw-bg-violet-50 hover:tw-bg-violet-70 dark:hover:tw-bg-violet-60 tw-border-violet-60 dark:tw-border-violet-50 hover:tw-border-violet-70 dark:hover:tw-border-violet-60 tw-text-white',
+        'tw-bg-box-selected-strong hover:tw-bg-box-selected-strong-hover tw-text-box-selected-strong-inverse',
     [TagType.PreviouslySelected]:
-        'tw-bg-white dark:tw-bg-black-100 hover:tw-bg-black-0 dark:hover:tw-bg-black-superdark tw-text-violet-60 dark:tw-text-violet-50 hover:tw-text-violet-70 dark:hover:tw-text-violet-60',
+        'tw-bg-base tw-border tw-text-box-selected-strong tw-border-box-selected-strong hover:tw-bg-box-neutral hover:tw-text-box-selected-inverse hover:tw-border-box-selected-inverse',
 };
 
-export type TagProps = TagPropsUnselected | TagPropsSelected;
+export type TagProps = { 'data-test-id'?: string } & (TagPropsUnselected | TagPropsSelected);
 
 type TagPropsSelected = {
     type: TagType.Selected | TagType.SelectedWithFocus;
@@ -48,7 +48,7 @@ type TagPropsUnselected = {
     size?: TagSize;
 };
 
-export const Tag = ({ type, label, onClick, size = TagSize.Medium }: TagProps) => {
+export const Tag = ({ type, label, onClick, size = TagSize.Medium, 'data-test-id': dataTestId = 'tag' }: TagProps) => {
     const ref = useRef<HTMLButtonElement | null>(null);
     const { isFocusVisible, focusProps } = useFocusRing();
     const isClickable = (type === TagType.Selected || type === TagType.SelectedWithFocus) && onClick;
@@ -61,10 +61,10 @@ export const Tag = ({ type, label, onClick, size = TagSize.Medium }: TagProps) =
 
     return (
         <button
-            data-test-id="tag"
+            data-test-id={dataTestId}
             className={merge([
-                'tw-inline-flex tw-items-center tw-border tw-border-solid tw-rounded-full tw-text-xs tw-transition-colors tw-group  tw-break-word',
-                size === TagSize.Small ? 'tw-px-[6px] tw-py-[2px]' : 'tw-px-2.5 tw-py-1',
+                'tw-inline-flex tw-items-center tw-rounded-full tw-text-xs tw-transition-colors tw-group tw-outline-none tw-break-word',
+                size === TagSize.Small ? 'tw-px-1.5 tw-py-0.5' : 'tw-px-2.5 tw-py-1',
                 tagStyles[type],
                 isClickable ? 'tw-cursor-pointer' : 'tw-cursor-default',
                 isFocusVisible && FOCUS_STYLE,
@@ -74,8 +74,8 @@ export const Tag = ({ type, label, onClick, size = TagSize.Medium }: TagProps) =
             {label}
             {isClickable && (
                 <span
-                    data-test-id="tag-reject-icon"
-                    className="tw-opacity-80 group-hover:tw-opacity-100 tw-transition-opacity tw-ml-1"
+                    data-test-id={`${dataTestId}-reject-icon`}
+                    className="tw-opacity-80 group-hover:tw-opacity-100 tw-transition-opacity tw-ml-1 tw-leading-[0]"
                 >
                     <IconCross size={IconSize.Size12} />
                 </span>
@@ -83,3 +83,4 @@ export const Tag = ({ type, label, onClick, size = TagSize.Medium }: TagProps) =
         </button>
     );
 };
+Tag.displayName = 'FondueTag';

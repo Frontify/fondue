@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactElement, memo } from 'react';
+import { ReactElement, memo } from 'react';
 
 function PatternImagery(): ReactElement {
     return (
@@ -498,6 +498,8 @@ function PatternImagery(): ReactElement {
         </svg>
     );
 }
+
+PatternImagery.displayName = 'FonduePatternImagery';
 
 const Memo = memo(PatternImagery);
 

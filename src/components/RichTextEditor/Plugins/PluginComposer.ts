@@ -1,14 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { AnyObject, PlatePlugin, PlatePluginComponent } from '@udecode/plate';
+import { PlatePluginComponent } from '@udecode/plate';
+import { ToolbarPositionWithButtons } from '../Toolbar/ToolbarPositionWithButtons';
 import { MarkupElement } from './MarkupElement';
-import { Button, Buttons, InlineData, ObjectType, Plugin, PluginComposerProps, Plugins } from './types';
+import { InlineData, ObjectType, PlatePluginList, Plugin, PluginComposerProps, Plugins, ToolbarButtons } from './types';
+import { CSSProperties } from 'react';
+import { PluginProps } from './Plugin';
 
 export class PluginComposer {
-    private platePlugins: Map<string, PlatePlugin<AnyObject>[]> = new Map();
+    private platePlugins: PlatePluginList = new Map();
     private markupElements: ObjectType<PlatePluginComponent> = {};
-    private toolbarButtons: Buttons = [];
     private inlineElements: InlineData[] = [];
+    private toolbarButtons: ToolbarButtons = new ToolbarPositionWithButtons();
+    private styles: Record<string, CSSProperties> = {};
 
     constructor(protected props?: PluginComposerProps) {}
 
@@ -18,17 +22,34 @@ export class PluginComposer {
 
             for (const plugin of groupOfPlugins) {
                 this.addElement(plugin.markupElement);
+                this.addElement(plugin.markupInputElement);
                 this.addLeafElements(plugin.leafMarkupElements);
                 this.addPlugin(plugin);
                 this.addInline(plugin.inline());
+
+                if (plugin.styles) {
+                    this.addStyles(plugin.styles, plugin.id);
+                }
+
+                if (plugin.textStyles) {
+                    this.addTextStylesOfSubPlugins(plugin.textStyles);
+                }
             }
 
             if (this.hasToolbar) {
-                this.addButtons(groupOfPlugins);
+                this.toolbarButtons.createGroupOfButtons(groupOfPlugins);
             }
         }
 
         return this;
+    }
+
+    private addTextStylesOfSubPlugins(textStyles: Plugin<PluginProps>[]) {
+        for (const textStylePlugins of textStyles) {
+            if (textStylePlugins.styles) {
+                this.addStyles(textStylePlugins.styles, textStylePlugins.id);
+            }
+        }
     }
 
     private addLeafElements(leafMarkupElement: MarkupElement | MarkupElement[] | undefined) {
@@ -67,29 +88,8 @@ export class PluginComposer {
         }
     }
 
-    private addButtons(plugins: Plugin[]) {
-        const groupOfButtons = this.createGroupOfButtons(plugins);
-
-        if (groupOfButtons.length > 0) {
-            this.toolbarButtons.push(groupOfButtons);
-        }
-    }
-
-    private createGroupOfButtons(plugins: Plugin[]): Button[] {
-        const groupOfButtons: Button[] = [];
-
-        for (const { markupElement, button, id, props } of plugins) {
-            if (!button || props?.noButton) {
-                continue;
-            }
-
-            groupOfButtons.push({
-                id: markupElement?.getId() || id,
-                button,
-            });
-        }
-
-        return groupOfButtons;
+    private addStyles(styles: CSSProperties, id: string) {
+        this.styles[id] = styles;
     }
 
     get elements() {
@@ -118,7 +118,7 @@ export class PluginComposer {
         return platePlugins;
     }
 
-    get buttons(): Buttons {
+    get buttons(): ToolbarButtons {
         return this.toolbarButtons;
     }
 
@@ -128,5 +128,9 @@ export class PluginComposer {
 
     get hasToolbar(): boolean {
         return !this.props?.noToolbar;
+    }
+
+    get getStyles(): Record<string, CSSProperties> {
+        return this.styles;
     }
 }

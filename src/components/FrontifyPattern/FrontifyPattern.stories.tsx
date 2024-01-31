@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { PatternDesign, PatternScale, PatternTheme } from '@foundation/Pattern';
 import { FrontifyPattern, FrontifyPatternProps } from './FrontifyPattern';
@@ -8,6 +7,7 @@ import { FrontifyPattern, FrontifyPatternProps } from './FrontifyPattern';
 export default {
     title: 'Components/FrontifyPattern',
     component: FrontifyPattern,
+    tags: ['autodocs'],
     argTypes: {
         pattern: {
             options: Object.keys(PatternDesign),

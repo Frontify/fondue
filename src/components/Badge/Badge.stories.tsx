@@ -1,14 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { Badge } from './Badge';
-import IconIcon from '@foundation/Icon/Generated/IconIcon';
+import { IconIcon } from '@foundation/Icon/Generated';
 import { BadgeEmphasis, BadgeProps, BadgeStatus, BadgeStyle } from './types';
 
 export default {
     title: 'Components/Badge',
     component: Badge,
+    tags: ['autodocs'],
     argTypes: {
         style: {
             options: Object.values(BadgeStyle),
@@ -22,8 +22,9 @@ export default {
             options: ['small', 'medium'],
             control: { type: 'select' },
         },
-        onClick: { table: { disable: true } },
-        onDismiss: { table: { disable: true } },
+        withTitleAttribute: { control: { type: 'boolean' } },
+        onClick: { table: { disable: false } },
+        onDismiss: { table: { disable: false } },
     },
     args: {
         style: BadgeStyle.Primary,
@@ -31,6 +32,7 @@ export default {
         size: 'medium',
         emphasis: BadgeEmphasis.Strong,
         disabled: false,
+        withTitleAttribute: true,
     },
 } as Meta<BadgeProps>;
 

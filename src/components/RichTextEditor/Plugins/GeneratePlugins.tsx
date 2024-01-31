@@ -1,14 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { ReactNode } from 'react';
+import { CSSProperties, ReactNode } from 'react';
 import { AnyObject, PlatePlugin, createPlateUI, createPlugins } from '@udecode/plate';
 import { Toolbar } from '../Toolbar';
 import type { PluginComposer } from './PluginComposer';
 
 type GeneratePluginsReturn = {
     create: () => PlatePlugin<AnyObject>[];
-    toolbar: () => ReactNode;
+    toolbar: (toolbarWidth: number | undefined) => ReactNode;
     inline: () => ReactNode;
+    styles: () => Record<string, CSSProperties>;
 };
 
 export const createPlatePlugins = (pluginComposer: PluginComposer) =>
@@ -19,8 +20,10 @@ export const createPlatePlugins = (pluginComposer: PluginComposer) =>
 export const GeneratePlugins = (editorId: string, pluginComposer: PluginComposer): GeneratePluginsReturn => {
     return {
         create: () => createPlatePlugins(pluginComposer),
-        toolbar: () =>
-            pluginComposer.hasToolbar ? <Toolbar buttons={pluginComposer.buttons} editorId={editorId} /> : null,
+        toolbar: (toolbarWidth) =>
+            pluginComposer.hasToolbar ? (
+                <Toolbar toolbarButtons={pluginComposer.buttons} editorId={editorId} toolbarWidth={toolbarWidth} />
+            ) : null,
         inline: () => (
             <>
                 {pluginComposer.inline.map((Inline, index) => (
@@ -28,5 +31,6 @@ export const GeneratePlugins = (editorId: string, pluginComposer: PluginComposer
                 ))}
             </>
         ),
+        styles: () => pluginComposer.getStyles,
     };
 };

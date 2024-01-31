@@ -2,102 +2,213 @@
 
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { useFocusRing } from '@react-aria/focus';
-import { mergeProps } from '@react-aria/utils';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { GetStatusIcon, InputActions, InputExtraActions, InputStyles } from '@utilities/input';
 import { merge } from '@utilities/merge';
+import { useForwardedRef } from '@utilities/useForwardedRef';
 import { Validation, validationClassMap } from '@utilities/validation';
-import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle';
-import React, { FC, FocusEvent, FormEvent, ReactNode } from 'react';
+import { KeyboardEvent, ReactElement, TextareaHTMLAttributes, useEffect } from 'react';
 import TextareaAutosize, { TextareaAutosizeProps } from 'react-textarea-autosize';
-import { IconExclamationMarkTriangle } from '@foundation/Icon';
+import { InputSharedBaseProps } from 'src/types/input';
 
 export type TextareaProps = {
-    id?: string;
-    value?: string;
-    required?: boolean;
-    decorator?: ReactNode;
-    placeholder?: string;
-    disabled?: boolean;
-    onInput?: (value: string) => void;
-    onBlur?: (value: string) => void;
-    validation?: Validation;
-    /** When autosize if false, this is used as 'rows' property for standard textarea */
-    minRows?: number;
-    /** When autosize if false, this property is ignored */
-    maxRows?: number;
     autosize?: boolean;
-    resizeable?: boolean;
-};
+    focusOnMount?: boolean;
+    resizable?: boolean;
+    selectable?: boolean;
+    defaultValue?: string;
+    value?: string;
+    onChange?: (value?: string) => void;
+    onEnterPressed?: (value?: string) => void;
+    onKeyDown?: (event: KeyboardEvent<HTMLTextAreaElement>) => void;
+} & Omit<InputSharedBaseProps, 'value'> &
+    Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'onChange'> &
+    Omit<TextareaAutosizeProps, 'onChange' | 'defaultValue' | 'value'>;
 
-export const Textarea: FC<TextareaProps> = ({
-    id: propId,
-    value,
-    required = false,
+export const Textarea = ({
+    autocomplete,
+    autosize = false,
+    clearable = false,
     decorator,
-    placeholder,
+    defaultValue,
     disabled = false,
-    onInput,
-    onBlur,
-    validation = Validation.Default,
+    extraActions = undefined,
+    focusOnMount = false,
+    hugWidth,
+    id: propId,
     minRows,
     maxRows,
-    autosize = false,
-    resizeable = true,
-}) => {
+    placeholder,
+    readOnly,
+    resizable = false,
+    required,
+    selectable = false,
+    status = Validation.Default,
+    value,
+    onBlur,
+    onChange,
+    onEnterPressed,
+    onKeyDown,
+    onFocus,
+    'data-test-id': dataTestId = 'fondue-textarea',
+    ...props
+}: TextareaProps): ReactElement => {
     const Component = autosize ? TextareaAutosize : 'textarea';
 
-    const { isFocusVisible, focusProps } = useFocusRing({ isTextInput: true });
+    const textareaRef = useForwardedRef<HTMLTextAreaElement | null>(null);
+    const isDisabled = disabled || readOnly;
 
-    const autosizeProps = { maxRows, minRows };
+    const { isFocusVisible, focusProps } = useFocusRing({
+        isTextInput: true,
+        within: true,
+    });
+
+    const handleOnChange = () => {
+        if (textareaRef.current) {
+            const { value } = textareaRef.current;
+            onChange?.(value);
+        }
+    };
+
+    const handleOnKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+        if (onEnterPressed && event.key === 'Enter') {
+            onEnterPressed(textareaRef.current?.value);
+        } else {
+            onKeyDown?.(event);
+        }
+    };
+
+    const handleClear = () => {
+        if (textareaRef.current) {
+            textareaRef.current.value = '';
+            handleOnChange();
+        }
+    };
+
+    useEffect(() => {
+        focusOnMount && textareaRef.current?.focus();
+    }, [focusOnMount, textareaRef]);
+
+    useEffect(() => {
+        const isValueSet = value !== textareaRef.current?.value;
+        if (textareaRef.current && value && !isValueSet) {
+            textareaRef.current.value = value;
+        }
+    }, [value, textareaRef]);
+
+    const autosizeProps = { minRows, maxRows };
+
+    const getPaddingRight = () => {
+        let numOfRem = 1;
+        const actionCount = extraActions ? extraActions.length : 0;
+
+        switch (true) {
+            case actionCount > 0 && clearable && status !== Validation.Default:
+                numOfRem = actionCount + 4.5;
+                return `${numOfRem}rem`;
+            case actionCount > 0 && (clearable || status !== Validation.Default):
+                numOfRem = actionCount + 3;
+                return `${numOfRem}rem`;
+            case actionCount > 0:
+                numOfRem += actionCount * 1.5;
+                return `${numOfRem}rem`;
+            case clearable && status !== Validation.Default:
+                return '3.5rem';
+            case status !== Validation.Default || clearable:
+                return '2.5rem';
+            default:
+                return numOfRem;
+        }
+    };
+
+    const getResizableClass = () => {
+        if (!isDisabled && resizable) {
+            return 'tw-resize-y';
+        } else {
+            return 'tw-resize-none';
+        }
+    };
 
     return (
         <div className="tw-relative">
-            {decorator && (
+            {decorator ? (
                 <div
-                    className="tw-absolute tw-top-2 tw-left-2 tw-inline-flex tw-items-end tw-text-black-80"
-                    data-test-id="decorator"
+                    className={merge([
+                        'tw-absolute tw-top-[0.7rem] tw-left-[0.7rem] tw-z-10',
+                        disabled ? InputStyles.disabled : '',
+                        readOnly ? InputStyles.readOnly : '',
+                    ])}
+                    data-test-id={`${dataTestId}-decorator`}
                 >
                     {decorator}
                 </div>
-            )}
-            <Component
-                {...(mergeProps(focusProps, {
-                    onBlur: (event: FocusEvent<HTMLTextAreaElement>) => onBlur && onBlur(event.target.value),
-                    onInput: (event: FormEvent<HTMLTextAreaElement>) =>
-                        onInput && onInput((event.target as HTMLTextAreaElement).value),
-                }) as TextareaAutosizeProps)}
-                {...(autosize ? autosizeProps : { rows: minRows })}
-                id={useMemoizedId(propId)}
-                value={value}
-                placeholder={placeholder}
-                required={required}
+            ) : null}
+            <span {...focusProps}>
+                <Component
+                    {...(autosize ? autosizeProps : { rows: minRows })}
+                    autoComplete={autocomplete ? 'on' : 'off'}
+                    disabled={disabled}
+                    id={useMemoizedId(propId)}
+                    readOnly={readOnly}
+                    ref={textareaRef}
+                    required={required}
+                    defaultValue={defaultValue}
+                    value={value}
+                    placeholder={placeholder}
+                    onBlur={onBlur}
+                    onChange={handleOnChange}
+                    onClick={() => textareaRef.current?.focus()}
+                    onFocus={(e) => {
+                        if (selectable) {
+                            e.target.select();
+                        }
+                        if (onFocus) {
+                            onFocus(e);
+                        }
+                    }}
+                    onKeyDown={handleOnKeyDown}
+                    aria-label={dataTestId}
+                    data-test-id={dataTestId}
+                    className={merge([
+                        hugWidth ? '' : InputStyles.width,
+                        minRows ? '' : InputStyles.height,
+                        InputStyles.disabled,
+                        InputStyles.readOnly,
+                        InputStyles.element,
+                        InputStyles.base,
+                        InputStyles.focus,
+                        InputStyles.hover,
+                        isFocusVisible && FOCUS_STYLE,
+                        status !== Validation.Default && validationClassMap[status],
+                        decorator ? 'tw-pl-[2rem]' : '',
+                        getResizableClass(),
+                    ])}
+                    style={{ paddingRight: getPaddingRight() }}
+                    {...props}
+                />
+            </span>
+
+            <span
                 className={merge([
-                    'tw-w-full tw-p-2 tw-border tw-rounded tw-text-s tw-outline-none tw-transition tw-placeholder-black-60',
-                    !!decorator && 'tw-pl-7 ',
-                    disabled
-                        ? 'tw-border-black-5 tw-bg-black-5 tw-text-black-40'
-                        : 'tw-text-black tw-border-black-20 hover:tw-border-black-90',
-                    isFocusVisible && FOCUS_STYLE,
-                    validationClassMap[validation],
-                    !resizeable && 'tw-resize-none',
-                    validation === Validation.Error && 'tw-pr-8',
+                    'tw-absolute tw-top-[0.5rem] tw-right-[0rem] tw-flex tw-items-center tw-justify-between tw-w-auto',
+                    autosize ? 'tw-pr-2' : 'tw-pr-5',
                 ])}
-                disabled={disabled}
-                data-test-id="textarea"
-            />
-            {validation === Validation.Loading && (
-                <span className="tw-absolute tw-top-[-0.55rem] tw-right-[-0.55rem] tw-bg-white tw-rounded-full tw-p-[2px] tw-border tw-border-black-10">
-                    <LoadingCircle size={LoadingCircleSize.ExtraSmall} />
-                </span>
-            )}
-            {validation === Validation.Error && (
-                <span
-                    className="tw-absolute tw-top-[0.6rem] tw-right-[0.6rem] tw-text-red-60"
-                    data-test-id="error-state-exclamation-mark-icon"
-                >
-                    <IconExclamationMarkTriangle />
-                </span>
-            )}
+            >
+                <InputActions
+                    clearable={clearable}
+                    disabled={isDisabled}
+                    callbacks={{ clearable: handleClear }}
+                    dataTestId={dataTestId}
+                />
+
+                {extraActions ? (
+                    <InputExtraActions actions={extraActions} disabled={isDisabled} dataTestId={dataTestId} />
+                ) : null}
+
+                {status ? GetStatusIcon(status, dataTestId) : null}
+            </span>
         </div>
     );
 };
+
+Textarea.displayName = 'FondueTextarea';

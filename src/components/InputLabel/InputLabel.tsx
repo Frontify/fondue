@@ -1,25 +1,27 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TooltipProps } from '@components/Tooltip/Tooltip';
+import { LegacyTooltipProps } from '@components/LegacyTooltip/LegacyTooltip';
 import { TooltipIcon, TooltipIconProps } from '@components/TooltipIcon/TooltipIcon';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { merge } from '@utilities/merge';
-import React, { FC, PropsWithChildren } from 'react';
+import { ReactElement, ReactNode } from 'react';
 
 export type InputLabelTooltipProps =
-    | (TooltipProps & Pick<TooltipIconProps, 'triggerStyle' | 'triggerIcon'>)
-    | (TooltipProps & Pick<TooltipIconProps, 'triggerStyle' | 'triggerIcon'>)[];
+    | (LegacyTooltipProps & Pick<TooltipIconProps, 'triggerStyle' | 'triggerIcon'>)
+    | (LegacyTooltipProps & Pick<TooltipIconProps, 'triggerStyle' | 'triggerIcon'>)[];
 
-export type InputLabelProps = PropsWithChildren<{
+export type InputLabelProps = {
     htmlFor: string;
     required?: boolean;
     disabled?: boolean;
     clickable?: boolean;
     tooltip?: InputLabelTooltipProps;
     bold?: boolean;
-}>;
+    children?: ReactNode;
+    'data-test-id'?: string;
+};
 
-export const InputLabel: FC<InputLabelProps> = ({
+export const InputLabel = ({
     children,
     htmlFor,
     required = false,
@@ -27,52 +29,56 @@ export const InputLabel: FC<InputLabelProps> = ({
     clickable = false,
     tooltip = [],
     bold,
-}) => {
+    'data-test-id': dataTestId = 'input-label',
+}: InputLabelProps): ReactElement => {
     const tooltips = Array.isArray(tooltip) ? tooltip : [tooltip];
+
+    const tooltipsWithKeys = tooltips.map((tooltip, index) => ({
+        key: index,
+        ...tooltip,
+    }));
 
     return (
         <div
             className={merge([
-                'tw-inline-flex tw-items-center tw-gap-1 tw-font-sans tw-text-s tw-max-w-full tw-min-w-0 tw-flex-initial',
-                disabled
-                    ? 'tw-text-black-40 hover:tw-text-black-40 dark:tw-text-black-60 dark:hover:tw-text-black-60'
-                    : 'tw-text-black-90 dark:tw-text-white',
+                'tw-inline-flex tw-leading-4 tw-items-center tw-gap-1 tw-font-sans tw-text-s tw-max-w-full tw-min-w-0 tw-flex-initial',
+                disabled ? 'tw-text-text-disabled' : 'tw-text-text-weak',
             ])}
-            data-test-id="input-label-container"
+            data-test-id={`${dataTestId}-container`}
         >
             <div className="tw-flex-1 tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap">
                 <label
                     htmlFor={htmlFor}
                     className={merge([
-                        'tw-select-none',
+                        'tw-select-none tw-max-w-full',
                         bold && 'tw-font-medium',
                         disabled || !clickable
                             ? 'hover:tw-cursor-not-allowed tw-pointer-events-none'
-                            : 'hover:tw-cursor-pointer hover:tw-text-black dark:hover:tw-text-white group-hover:tw-text-black dark:group-hover:tw-text-white',
+                            : 'hover:tw-cursor-pointer hover:tw-text-text group-hover:tw-text-text',
                     ])}
-                    data-test-id="input-label"
+                    data-test-id={dataTestId}
+                    title={typeof children === 'string' ? children : ''}
                 >
                     {children}
                 </label>
             </div>
 
             {required && (
-                <span
-                    data-test-id="input-label-required"
-                    className="tw-h-4 tw-text-m tw-text-red-60 dark:tw-text-red-50"
-                >
+                <span data-test-id={`${dataTestId}-required`} className="tw-h-4 tw-text-m tw-text-text-negative">
                     *
                 </span>
             )}
-            {tooltips.map(({ triggerIcon, triggerStyle, hoverDelay = 100, ...tooltipProps }, index) => (
-                <TooltipIcon
-                    tooltip={{ ...tooltipProps, hoverDelay }}
-                    key={index}
-                    iconSize={IconSize.Size16}
-                    triggerIcon={triggerIcon}
-                    triggerStyle={triggerStyle}
-                />
+            {tooltipsWithKeys.map(({ key, triggerIcon, triggerStyle, hoverDelay = 100, ...tooltipProps }) => (
+                <div key={key} className="tw-leading-3">
+                    <TooltipIcon
+                        tooltip={{ ...tooltipProps, hoverDelay }}
+                        iconSize={IconSize.Size16}
+                        triggerIcon={triggerIcon}
+                        triggerStyle={triggerStyle}
+                    />
+                </div>
             ))}
         </div>
     );
 };
+InputLabel.displayName = 'FondueInputLabel';

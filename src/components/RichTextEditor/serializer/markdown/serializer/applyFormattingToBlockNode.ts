@@ -1,10 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import escapeHtml from 'escape-html';
-import { BlockType, InputNodeTypes, NodeType, OptionType } from '../types';
+import { BlockType, InputNodeTypes, NodeType, OptionType, Targets } from '../types';
 import { isLeafNode } from './isLeafNode';
+import { isMaliciousLink } from '../utils';
 
-const processMentionNode = (chunk: BlockType) => `@[${chunk.category}: ${chunk.key}]`;
+const processMentionNode = (chunk: BlockType) => `@[${chunk.category}:${chunk.id}]`;
+
+const processListItemChildNode = (children: string) => `${children}\n`;
 
 const processListItemNode = (
     nodeTypes: InputNodeTypes,
@@ -67,17 +70,20 @@ export const applyFormattingToBlockNode = (
              * continued blockquote, so adding two new lines ensures that doesn't
              * happen
              */
-            return `> ${children}\n`;
+            return `> ${children}`;
 
         case nodeTypes.codeBlock:
             return `\`\`\`${(chunk as BlockType).language || ''}\n${children}\n\`\`\`\n`;
 
         case nodeTypes.link:
-            const linkUrl = (chunk as BlockType).url ?? '';
-            return `[${children}](${linkUrl})`;
+            let linkUrl = (chunk as BlockType).url ?? '';
+            linkUrl = isMaliciousLink(linkUrl) ? '' : linkUrl;
+            const target = (chunk as BlockType).target ?? Targets.Blank;
+            return `[${children}](${linkUrl}){:target="${target}"}`;
 
         case nodeTypes.image:
-            const imageUrl = (chunk as BlockType).link ?? '';
+            let imageUrl = (chunk as BlockType).link ?? '';
+            imageUrl = isMaliciousLink(imageUrl) ? '' : imageUrl;
             return `![${(chunk as BlockType).caption}](${imageUrl})`;
 
         case nodeTypes.ulList:
@@ -87,8 +93,11 @@ export const applyFormattingToBlockNode = (
         case nodeTypes.listItem:
             return processListItemNode(nodeTypes, children, chunk, listDepth);
 
+        case nodeTypes.listItemChild:
+            return processListItemChildNode(children);
+
         case nodeTypes.paragraph:
-            return `${children}\n`;
+            return `${children}\n\n`;
 
         case nodeTypes.thematicBreak:
             return `\n---${children}\n\n`;

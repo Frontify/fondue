@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Checkbox as CheckboxComponent, CheckboxState } from '@components/Checkbox/Checkbox';
 import { merge } from '@utilities/merge';
-import React, { Key, useRef } from 'react';
+import { Key, useRef } from 'react';
 import { SelectionMode } from '..';
 
 export enum TableCellType {
@@ -60,7 +60,7 @@ export const TableCell = ({
             >
                 <CheckboxComponent
                     value={key}
-                    ariaLabel={cell['aria-label'] || key}
+                    aria-label={cell['aria-label'] || key}
                     state={isChecked ? CheckboxState.Checked : CheckboxState.Unchecked}
                     onChange={handleChange}
                 />
@@ -81,3 +81,4 @@ export const TableCell = ({
         </td>
     );
 };
+TableCell.displayName = 'FondueTableCell';

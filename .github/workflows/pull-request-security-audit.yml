@@ -1,0 +1,43 @@
+name: Security Audit
+
+on:
+    pull_request:
+        branches:
+            - beta
+            - main
+        types:
+            - opened
+            - synchronize
+            - reopened
+            - ready_for_review
+        paths:
+            - 'package.json'
+            - 'pnpm-lock.yaml'
+
+env:
+    NODE_VERSION: 18
+
+jobs:
+    audit:
+        name: NPM packages
+        if: github.event.pull_request.draft == false
+        runs-on: ubuntu-22.04
+        timeout-minutes: 10
+
+        steps:
+            - name: Checkout current commit
+              uses: actions/checkout@v4
+
+            - name: Use Node.js ${{ env.NODE_VERSION }}
+              uses: actions/setup-node@v3
+              with:
+                  node-version: ${{ env.NODE_VERSION }}
+
+            - name: Use pnpm
+              uses: pnpm/action-setup@v2.2.4
+              with:
+                  version: latest
+                  run_install: false
+
+            - name: Audit NPM packages
+              run: 'pnpm audit --audit-level low | tee $GITHUB_STEP_SUMMARY'

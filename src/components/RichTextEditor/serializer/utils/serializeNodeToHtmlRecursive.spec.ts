@@ -1,12 +1,43 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { orderedListValue, unorderedListValue } from '@components/RichTextEditor/helpers/exampleValues';
-import { UL_CLASSES, getOrderedListClasses } from '@components/RichTextEditor/Plugins';
-import { TextStyles } from '@components/RichTextEditor/Plugins/TextStylePlugin/TextStyles';
-import { breakAfterClassNames } from '@components/RichTextEditor/utils/constants';
-import { defaultDesignTokens } from '@components/RichTextEditor/utils/defaultDesignTokens';
-import { ELEMENT_LI, ELEMENT_LIC, ELEMENT_LINK, ELEMENT_OL, ELEMENT_PARAGRAPH, ELEMENT_UL } from '@udecode/plate';
+import {
+    mentionable,
+    multipleOrderedListsValue,
+    orderedListValue,
+    unorderedListValue,
+} from '@components/RichTextEditor/helpers/exampleValues';
+import { ELEMENT_CHECK_ITEM, mapMentionable } from '@components/RichTextEditor/Plugins';
+import {
+    ELEMENT_IMAGE,
+    ELEMENT_LI,
+    ELEMENT_LIC,
+    ELEMENT_LINK,
+    ELEMENT_MENTION,
+    ELEMENT_OL,
+    ELEMENT_PARAGRAPH,
+    ELEMENT_UL,
+} from '@udecode/plate';
 import { serializeNodeToHtmlRecursive } from './serializeNodeToHtmlRecursive';
+import { TextStyles } from '@components/RichTextEditor/Plugins/TextStylePlugin/types';
+import { defaultStyles } from '@components/RichTextEditor/utils';
+
+type ChildElement = {
+    type: string;
+    children: {
+        text: string;
+    }[];
+};
+
+const createChildElement = (type: string, text: string): ChildElement => {
+    return {
+        type,
+        children: [
+            {
+                text,
+            },
+        ],
+    };
+};
 
 describe('serializeNodeToHtmlRecursive()', () => {
     it('serializes ordered list to html', () => {
@@ -18,7 +49,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
                     children: [
                         {
                             type: ELEMENT_LIC,
-                            children: [{ text: 'This comes first.' }],
+                            children: [{ text: 'First item' }],
                         },
                     ],
                 },
@@ -27,51 +58,75 @@ describe('serializeNodeToHtmlRecursive()', () => {
                     children: [
                         {
                             type: ELEMENT_LIC,
-                            children: [{ text: 'This comes second.' }],
+                            children: [{ text: 'Second item' }],
                         },
                     ],
                 },
             ],
         };
-        const result = serializeNodeToHtmlRecursive(node, defaultDesignTokens);
+        const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
 
-        expect(result).to.equal(
-            `<ol class="${getOrderedListClasses(
-                0,
-            )}"><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><p style="">This comes first.</p></li><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><p style="">This comes second.</p></li></ol>`,
+        expect(result).to.be.equal(
+            '<ol dir="auto" class="tw-list-none tw-pl-[10px] tw-mb-[10px] tw-ml-[15px] [&>li>p]:before:tw-pr-1 [&>li>p]:before:tw-tabular-nums [&>li>p]:before:tw-content-[counter(count,decimal)_\'._\'] tw-break-words" style="counter-reset: count;"><li dir="auto" class="tw-break-words [&>p]:before:tw-flex [&>p]:before:tw-justify-end [&>p]:before:tw-w-[1.2em] !tw-no-underline !tw-list-item" style="font-size: 14px; font-style: normal; font-weight: normal; counter-increment: count;"><p dir="auto" class="tw-break-words tw-justify-start tw-grid tw-grid-cols-[min-content_repeat(3,_auto)]"><span>First item</span></p></li><li dir="auto" class="tw-break-words [&>p]:before:tw-flex [&>p]:before:tw-justify-end [&>p]:before:tw-w-[1.2em] !tw-no-underline !tw-list-item" style="font-size: 14px; font-style: normal; font-weight: normal; counter-increment: count;"><p dir="auto" class="tw-break-words tw-justify-start tw-grid tw-grid-cols-[min-content_repeat(3,_auto)]"><span>Second item</span></p></li></ol>',
         );
     });
 
-    it('serializes break after column element to html', () => {
+    it('serializes active break after column element to html', () => {
         const node = {
             type: ELEMENT_PARAGRAPH,
-            breakAfterColumn: true,
+            breakAfterColumn: 'active',
             children: [
                 {
                     text: 'This is a paragraph.',
                 },
             ],
         };
-        const result = serializeNodeToHtmlRecursive(node, defaultDesignTokens);
+        const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
 
-        expect(result).to.equal(
-            `<p class="${breakAfterClassNames}" style="font-size: 14px; font-style: normal; font-weight: normal;">This is a paragraph.</p>`,
-        );
+        expect(result).to.include('tw-break-after-column');
+        expect(result).to.include('tw-break-inside-avoid-column');
+    });
+
+    it('does not serialize inactive break after column element to html', () => {
+        const node = {
+            type: ELEMENT_PARAGRAPH,
+            breakAfterColumn: 'inactive',
+            children: [
+                {
+                    text: 'This is a paragraph.',
+                },
+            ],
+        };
+        const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
+
+        expect(result).to.not.include('tw-break-after-column');
+        expect(result).to.not.include('tw-break-inside-avoid-column');
     });
 
     it('serializes ordered list with correct list style types to html', () => {
-        const result = serializeNodeToHtmlRecursive(orderedListValue, defaultDesignTokens);
+        const result = serializeNodeToHtmlRecursive(orderedListValue, defaultStyles, {});
 
         const parser = new DOMParser();
         const htmlDoc = parser.parseFromString(result, 'text/html');
         const orderedLists = htmlDoc.getElementsByTagName('ol');
-        expect(orderedLists[0]?.className).to.include('tw-list-[decimal]');
-        expect(orderedLists[1]?.className).to.include('tw-list-[lower-alpha]');
-        expect(orderedLists[2]?.className).to.include('tw-list-[lower-roman]');
+        expect(orderedLists[0]?.className).to.include('decimal');
+        expect(orderedLists[1]?.className).to.include('alpha');
+        expect(orderedLists[2]?.className).to.include('roman');
+    });
+
+    it('serializes multiple ordered lists with multiple levels to with correct list style types to html', () => {
+        const result = serializeNodeToHtmlRecursive(multipleOrderedListsValue, defaultStyles, {});
+
+        const parser = new DOMParser();
+        const htmlDoc = parser.parseFromString(result, 'text/html');
+        const orderedLists = htmlDoc.getElementsByTagName('ol');
+        expect(orderedLists[0]?.className).to.include('decimal');
+        expect(orderedLists[1]?.className).to.include('alpha');
+        expect(orderedLists[2]?.className).to.include('roman');
     });
 
     it('serializes list item with custom styles to html', () => {
-        const result = serializeNodeToHtmlRecursive(unorderedListValue, defaultDesignTokens);
+        const result = serializeNodeToHtmlRecursive(unorderedListValue, defaultStyles, {});
 
         const parser = new DOMParser();
         const htmlDoc = parser.parseFromString(result, 'text/html');
@@ -101,21 +156,12 @@ describe('serializeNodeToHtmlRecursive()', () => {
                         },
                     ],
                 },
-                {
-                    type: ELEMENT_LI,
-                    children: [
-                        {
-                            type: ELEMENT_LIC,
-                            children: [{ text: 'This comes second.' }],
-                        },
-                    ],
-                },
             ],
         };
-        const result = serializeNodeToHtmlRecursive(node, defaultDesignTokens);
+        const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
 
-        expect(result).to.equal(
-            `<ul class="${UL_CLASSES}"><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><p style="">This comes first.</p></li><li style="font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none;"><p style="">This comes second.</p></li></ul>`,
+        expect(result).to.be.equal(
+            '<ul dir="auto" class="[&>li>p]:before:tw-content-[\'•\'] [&>li>p]:before:tw-px-2 tw-list-none tw-pl-[10px] tw-mb-[10px] tw-ml-[15px] tw-break-words"><li dir="auto" class="tw-break-words [&>p]:before:tw-flex [&>p]:before:tw-justify-end [&>p]:before:tw-w-[1.2em] !tw-no-underline !tw-list-item" style="font-size: 14px; font-style: normal; font-weight: normal; counter-increment: count;"><p dir="auto" class="tw-break-words tw-justify-start tw-grid tw-grid-cols-[min-content_repeat(3,_auto)]"><span>This comes first.</span></p></li></ul>',
         );
     });
 
@@ -130,11 +176,8 @@ describe('serializeNodeToHtmlRecursive()', () => {
                 },
             ],
         };
-        const result = serializeNodeToHtmlRecursive(node, defaultDesignTokens);
-
-        expect(result).to.equal(
-            '<p style="font-size: 14px; font-style: normal; font-weight: normal;"><a style="font-size: 14px; font-style: normal; color: rgb(113, 89, 215); text-decoration: underline; cursor: pointer;" href="https://frontify.com">This is a Link.</a></p>',
-        );
+        const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
+        expect(result).to.match(/<p.*><a.*href="https:\/\/frontify.com".*>This is a Link\.<\/a><\/p>/);
     });
 
     it('serializes legacy link format to html', () => {
@@ -157,88 +200,227 @@ describe('serializeNodeToHtmlRecursive()', () => {
                 },
             ],
         };
-        const result = serializeNodeToHtmlRecursive(node, defaultDesignTokens);
+        const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
 
-        expect(result).to.equal(
-            '<p style="font-size: 14px; font-style: normal; font-weight: normal;"><a style="font-size: 14px; font-style: normal; color: rgb(113, 89, 215); text-decoration: underline; cursor: pointer;" target=_blank href="https://smartive.ch">This is also a Link.</a></p>',
-        );
+        expect(result).to.match(/<p.*><a.*href="https:\/\/smartive.ch".*>This is also a Link\.<\/a><\/p>/);
+    });
+
+    it('serializes link with target blank to html', () => {
+        const node = {
+            type: ELEMENT_PARAGRAPH,
+            children: [
+                {
+                    type: ELEMENT_LINK,
+                    children: [{ text: 'This is a Link.' }],
+                    target: '_blank',
+                    url: 'https://frontify.com',
+                },
+            ],
+        };
+        const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
+
+        expect(result).to.match(/<p.*><a.*target="_blank".*href="https:\/\/frontify.com".*>This is a Link\.<\/a><\/p>/);
     });
 
     it('serializes headings and customs html', () => {
         const node = {
             type: ELEMENT_PARAGRAPH,
             children: [
+                createChildElement(TextStyles.heading1, 'This is a h1.'),
+                createChildElement(TextStyles.heading2, 'This is a h2.'),
+                createChildElement(TextStyles.heading3, 'This is a h3.'),
+                createChildElement(TextStyles.heading4, 'This is a h4.'),
+                createChildElement(TextStyles.custom1, 'This is a custom1.'),
+                createChildElement(TextStyles.custom2, 'This is a custom2.'),
+                createChildElement(TextStyles.custom3, 'This is a custom3.'),
+                createChildElement(TextStyles.quote, 'This is a quote.'),
+            ],
+        };
+
+        const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
+
+        expect(result).to.match(/<h1.*>This is a h1.<\/h1>/);
+        expect(result).to.match(/<h2.*>This is a h2.<\/h2>/);
+        expect(result).to.match(/<h3.*>This is a h3.<\/h3>/);
+        expect(result).to.match(/<h4.*>This is a h4.<\/h4>/);
+        expect(result).to.match(/<p.*>This is a custom1.<\/p>/);
+        expect(result).to.match(/<p.*>This is a custom2.<\/p>/);
+        expect(result).to.match(/<p.*>This is a custom3.<\/p>/);
+        expect(result).to.match(/<p.*>This is a quote.<\/p>/);
+    });
+
+    it('serializes Mentions to html', () => {
+        const node = {
+            type: ELEMENT_PARAGRAPH,
+            children: [
                 {
-                    type: TextStyles.ELEMENT_HEADING1,
+                    text: 'new annotation ',
+                },
+                {
+                    type: ELEMENT_MENTION,
+                    category: 'user',
+                    id: '3333333333',
                     children: [
                         {
-                            text: 'This is a h1.',
+                            text: '',
                         },
                     ],
                 },
                 {
-                    type: TextStyles.ELEMENT_HEADING2,
-                    children: [
-                        {
-                            text: 'This is a h2.',
-                        },
-                    ],
+                    text: ' adding changes :)',
                 },
+            ],
+        };
+
+        const result = serializeNodeToHtmlRecursive(node, defaultStyles, {
+            mappedMentionable: mapMentionable(mentionable),
+        });
+
+        expect(result).to.match(/<p.*>new annotation <span.*>Admiral Gial Ackbar<\/span> adding changes :\)<\/p>/);
+    });
+
+    it('serializes a button to html', () => {
+        const node = {
+            type: ELEMENT_PARAGRAPH,
+            children: [
                 {
-                    type: TextStyles.ELEMENT_HEADING3,
-                    children: [
-                        {
-                            text: 'This is a h3.',
-                        },
-                    ],
+                    type: 'button',
+                    target: '_self',
+                    url: 'https://frontify.com',
+                    buttonStyle: 'primary',
+                    children: [{ text: 'button' }],
                 },
+            ],
+        };
+
+        const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
+
+        expect(result).to.contain('button');
+        expect(result).to.contain('href="https://frontify.com"');
+        expect(result).to.contain('target="_self"');
+    });
+
+    it('serializes a button with target _blank to html', () => {
+        const node = {
+            type: ELEMENT_PARAGRAPH,
+            children: [
                 {
-                    type: TextStyles.ELEMENT_HEADING4,
-                    children: [
-                        {
-                            text: 'This is a h4.',
-                        },
-                    ],
+                    type: 'button',
+                    target: '_blank',
+                    url: 'https://frontify.com',
+                    buttonStyle: 'primary',
+                    children: [{ text: 'button' }],
                 },
+            ],
+        };
+
+        const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
+        expect(result).to.contain('button');
+        expect(result).to.contain('target="_blank"');
+    });
+
+    it('serializes a checked checklist item to html', () => {
+        const node = {
+            type: ELEMENT_CHECK_ITEM,
+            checked: true,
+            children: [{ text: 'item' }],
+        };
+
+        const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
+        expect(result).to.contain('item');
+        expect(result).to.contain('checked');
+    });
+
+    it('serializes an unchecked checklist item to html', () => {
+        const node = {
+            type: ELEMENT_CHECK_ITEM,
+            checked: false,
+            children: [{ text: 'item' }],
+        };
+
+        const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
+        expect(result).to.include('item');
+        expect(result).to.not.include('checked');
+    });
+
+    it('serializes a checklist item without an indent to html', () => {
+        const node = {
+            type: ELEMENT_CHECK_ITEM,
+            checked: false,
+            children: [{ text: 'item' }],
+        };
+
+        const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
+        expect(result).to.include('item');
+        expect(result).to.include('margin-left:0px;');
+    });
+
+    for (const entry of [
+        { indent: 0, outcome: '0px' },
+        { indent: 1, outcome: '24px' },
+        { indent: 2, outcome: '48px' },
+    ]) {
+        it(`serializes a checklist item with an indent of ${entry.indent} to html`, () => {
+            const node = {
+                type: ELEMENT_CHECK_ITEM,
+                indent: entry.indent,
+                children: [{ text: 'item' }],
+            };
+
+            const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
+            expect(result).to.include('item');
+            expect(result).to.include(`margin-left:${entry.outcome};`);
+        });
+    }
+
+    it('serializes with quotes in them correctly', () => {
+        const node = {
+            type: ELEMENT_PARAGRAPH,
+            children: [
                 {
-                    type: TextStyles.ELEMENT_CUSTOM1,
-                    children: [
-                        {
-                            text: 'This is a custom1.',
-                        },
-                    ],
+                    type: ELEMENT_LINK,
+                    children: [{ text: 'This is a Link.' }],
+                    url: 'https://frontify.com',
                 },
+            ],
+        };
+        const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
+
+        expect(result).to.be.equal(
+            '<p dir="auto" class="tw-break-words" style="font-size: 14px; font-style: normal; font-weight: normal;"><a dir="auto" class="tw-break-words" style="font-size: 14px; font-style: normal; color: rgb(113, 89, 215); text-decoration: underline; cursor: pointer;" target="_self" href="https://frontify.com">This is a Link.</a></p>',
+        );
+    });
+
+    it("serializes and don't break if MapNode does not exist", () => {
+        const node = {
+            type: ELEMENT_PARAGRAPH,
+            children: [
                 {
-                    type: TextStyles.ELEMENT_CUSTOM2,
+                    type: ELEMENT_IMAGE,
                     children: [
                         {
-                            text: 'This is a custom2.',
+                            text: 'This is ',
                         },
-                    ],
-                },
-                {
-                    type: TextStyles.ELEMENT_CUSTOM3,
-                    children: [
                         {
-                            text: 'This is a custom3.',
+                            type: 'img',
+                            children: [
+                                {
+                                    text: '',
+                                },
+                            ],
+                            caption: 'Image without source',
                         },
-                    ],
-                },
-                {
-                    type: TextStyles.ELEMENT_QUOTE,
-                    children: [
                         {
-                            text: 'This is a quote.',
+                            text: '.',
                         },
                     ],
                 },
             ],
         };
+        const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
 
-        const result = serializeNodeToHtmlRecursive(node, defaultDesignTokens);
-
-        expect(result).to.equal(
-            '<p style="font-size: 14px; font-style: normal; font-weight: normal;"><h1 style="font-size: 48px; font-weight: 700; font-style: normal;">This is a h1.</h1><h2 style="font-size: 32px; font-weight: 700; font-style: normal;">This is a h2.</h2><h3 style="font-size: 24px; font-weight: normal; font-style: normal;">This is a h3.</h3><h4 style="font-size: 18px; font-weight: normal; font-style: normal;">This is a h4.</h4><p style="font-size: 14px; font-weight: normal; font-style: normal;">This is a custom1.</p><p style="font-size: 14px; font-weight: 600; font-style: normal;">This is a custom2.</p><p style="font-size: 14px; font-weight: normal; font-style: normal; text-decoration: underline;">This is a custom3.</p><p style="font-size: 16px; font-weight: normal; font-style: italic;">This is a quote.</p></p>',
+        expect(result).to.be.equal(
+            '<p dir="auto" class="tw-break-words" style="font-size: 14px; font-style: normal; font-weight: normal;">This is &#xFEFF;.</p>',
         );
     });
 });

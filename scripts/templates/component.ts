@@ -6,18 +6,18 @@ import { toKebabCase } from '../transforms';
 export const setup = (componentName: string): ComponentFileBuilderResponse => ({
     content: `/* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { PropsWithChildren } from "react";
+import { ReactNode } from "react";
 
-export type ${componentName}Props = PropsWithChildren<{ foo: string }>;
+export type ${componentName}Props = { children?: ReactNode; };
 
-export const ${componentName} = ({ foo, children }: ${componentName}Props) => {
+export const ${componentName} = ({ children }: ${componentName}Props) => {
     return (
         <div data-test-id="${toKebabCase(componentName)}">
-            <div>{foo}</div>
             {children}
         </div>
     );
 };
+${componentName}.displayName = "Fondue${componentName}";
 `,
     extension: '.tsx',
 });

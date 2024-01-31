@@ -2,6 +2,7 @@
 
 import { merge } from '@utilities/merge';
 import { MultiSelectSize } from './MultiSelect';
+import { useEffect } from 'react';
 
 export const getPaddingClasses = (size: MultiSelectSize) => {
     const classes = ['tw-pr-9'];
@@ -19,10 +20,31 @@ export const getPaddingClasses = (size: MultiSelectSize) => {
     return merge(classes);
 };
 
-export const getInputWidth = (hasSelectedItems: boolean, filterLabel?: string, placeholder?: string) => {
-    if (hasSelectedItems) {
-        return `${(filterLabel?.length || 1) * 0.5}rem`;
-    } else {
-        return `${(placeholder?.length || 0) * 0.5}rem`;
-    }
+/*
+This function should live here temporarily and removed once the new MultiSelect implementation is done.
+The new Hook update works well in any overlay component but doesn't work in the current MultiSelect component.
+It messes with the Popper positioning which should be also fixed in another PR using the combo -> Popper component, overlayStyles, and downshift.
+*/
+export const useClickOutside = (
+    reference: HTMLElement | null,
+    callback: () => void,
+    ignoredElements?: HTMLElement[],
+): void => {
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (
+                !reference?.contains(event.target as Node) &&
+                !ignoredElements?.find(
+                    (element) => element && (event.target === element || element.contains(event.target as Node)),
+                )
+            ) {
+                callback();
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [callback, reference, ignoredElements]);
 };

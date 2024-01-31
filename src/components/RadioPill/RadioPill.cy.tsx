@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconIcon } from '@foundation/Icon';
-import React from 'react';
+import { IconIcon } from '@foundation/Icon/Generated';
 import { RadioPill } from './RadioPill';
 
 const RADIOPILL_TEST_ID = '[data-test-id=radio-pill]';

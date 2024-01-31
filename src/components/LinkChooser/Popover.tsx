@@ -2,10 +2,10 @@
 
 import { DismissButton, useOverlay } from '@react-aria/overlays';
 import { mergeProps } from '@react-aria/utils';
-import React, { FC, MouseEvent, TouchEvent, useRef } from 'react';
+import { MouseEvent, ReactElement, TouchEvent, useRef } from 'react';
 import { PopoverProps } from './types';
 
-export const Popover: FC<PopoverProps> = (props) => {
+export const Popover = (props: PopoverProps): ReactElement => {
     const ref = useRef<HTMLDivElement>(null);
     const { popoverRef = ref, isOpen, onClose, children, maxHeight } = props;
 
@@ -20,7 +20,7 @@ export const Popover: FC<PopoverProps> = (props) => {
     );
 
     /* Focus must not be shifted to the popover when any buttons are pressed since this will close the input.
-    There is a blur event fired on the input when clicking inside the popover which gets fired twice *sometimes*, 
+    There is a blur event fired on the input when clicking inside the popover which gets fired twice *sometimes*,
     (once with a relatedTarget and once without). This way all blur events are prevented */
 
     const bubblingEventProps = {

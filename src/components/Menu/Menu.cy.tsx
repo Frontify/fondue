@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React from 'react';
 import {
     BasicMenuComponent,
     ITEMS,
@@ -10,7 +9,7 @@ import {
     NoTriggerMenuComponent,
 } from './utils/componentMocks';
 
-const COMPONENT_TEST_ID = '[data-test-id=menu]';
+const COMPONENT_TEST_ID = '[data-test-id=menu-container]';
 const ITEM_TEST_ID = '[data-test-id=menu-item]';
 const COMPONENT_NAME = 'Menu';
 const MENU_SELECTOR = `@${COMPONENT_NAME}`;

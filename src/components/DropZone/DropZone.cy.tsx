@@ -1,15 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { DropZone, DropZoneProps } from '@components/DropZone/DropZone';
-import { DraggableItem as DraggableItemProp, DropZonePosition } from '@utilities/dnd';
-import React from 'react';
+import { DropZone, DropZoneData, DropZoneProps } from '@components/DropZone/DropZone';
+import { DraggableItem as DraggableItemProp } from '@utilities/dnd';
 import { DndProvider, useDrag } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
 const LIST_ID = 'list-id';
-const DROP_ZONE_DATA = {
+const DROP_ZONE_DATA: DropZoneData<{ id: string; sort: Nullable<number> }> = {
     targetItem: { id: '1', sort: null },
-    position: DropZonePosition.After,
+    position: 'after',
 };
 const SOURCE_ITEM = { id: '2', sort: null };
 const DRAGGABLE_ITEM_ID = '[data-test-id=draggable-item]';
@@ -30,7 +29,7 @@ const DraggableItem = ({ id, sort }: DraggableItemProp<unknown>) => {
 };
 
 const DropZoneWithDefaultProps = ({ onDrop }: Partial<DropZoneProps<unknown>>) => {
-    return <DropZone data={DROP_ZONE_DATA} treeId={LIST_ID} onDrop={onDrop} />;
+    return <DropZone data={DROP_ZONE_DATA} accept={LIST_ID} onDrop={onDrop} />;
 };
 describe('DropZone', () => {
     it('can receive item', () => {

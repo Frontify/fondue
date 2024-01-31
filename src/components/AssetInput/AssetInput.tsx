@@ -4,10 +4,9 @@ import { ActionMenuProps } from '@components/ActionMenu/ActionMenu/ActionMenu';
 import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
 import { IconArrowCircleUp, IconImageStack } from '@foundation/Icon/';
 import { IconProps } from '@foundation/Icon/IconProps';
-import { IconSize } from '@foundation/Icon/IconSize';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { merge } from '@utilities/merge';
-import React, { ChangeEvent, FC, ReactElement } from 'react';
+import { ChangeEvent, ReactElement, useRef } from 'react';
 import { MultiAssetPreview } from './MultiAssetPreview';
 import { SelectedAsset } from './SingleAsset/SelectedAsset';
 
@@ -73,7 +72,7 @@ export type AssetInputProps = {
     acceptFileType?: string;
 };
 
-export const AssetInput: FC<AssetInputProps> = ({
+export const AssetInput = ({
     assets = [],
     numberOfLocations = 1,
     actions = [],
@@ -85,8 +84,9 @@ export const AssetInput: FC<AssetInputProps> = ({
     onUploadClick,
     onMultiAssetClick,
     acceptFileType,
-}) => {
+}: AssetInputProps): ReactElement => {
     const assetsLength = assets.length;
+    const inputFile = useRef<HTMLInputElement | null>(null);
     const id = useMemoizedId();
 
     const onFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -94,6 +94,12 @@ export const AssetInput: FC<AssetInputProps> = ({
 
         if (files && onUploadClick) {
             onUploadClick(files);
+        }
+    };
+
+    const onOpenFileUpload = () => {
+        if (inputFile.current) {
+            inputFile.current.click();
         }
     };
 
@@ -127,17 +133,17 @@ export const AssetInput: FC<AssetInputProps> = ({
                     className={merge(['tw-flex tw-flex-col tw-h-8', onLibraryClick && 'tw-pr-3'])}
                     data-test-id="asset-input-upload"
                 >
-                    <label
-                        className="tw-relative tw-cursor-pointer tw-rounded tw-flex tw-items-center tw-justify-center tw-px-4 tw-h-9 tw-text-s  tw-bg-transparent hover:tw-bg-black-10 hover:tw-text-black active:tw-bg-black-20 active:tw-text-black dark:tw-text-white dark:hover:tw-bg-black-superdark dark:active:tw-bg-black-superdark dark:hover:tw-text-white tw-font-medium tw-text-black"
-                        htmlFor={id}
+                    <Button
+                        style={ButtonStyle.Default}
+                        onClick={onOpenFileUpload}
+                        emphasis={ButtonEmphasis.Weak}
+                        icon={<IconArrowCircleUp />}
                     >
-                        <span className="tw--ml-1 tw-mr-1.5">
-                            <IconArrowCircleUp size={IconSize.Size20} />
-                        </span>
                         Upload
-                    </label>
+                    </Button>
                     <input
                         id={id}
+                        ref={inputFile}
                         className="tw-hidden"
                         type="file"
                         accept={acceptFileType}
@@ -164,3 +170,4 @@ export const AssetInput: FC<AssetInputProps> = ({
         </div>
     );
 };
+AssetInput.displayName = 'FondueAssetInput';

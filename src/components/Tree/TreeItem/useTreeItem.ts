@@ -1,0 +1,19 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+import { useContext } from 'react';
+
+import { TreeContext } from '../TreeContext';
+
+export const useTreeItem = (id: string) => {
+    const { treeState } = useContext(TreeContext);
+
+    const isSelected = treeState.selectedIds.has(id);
+    const isExpanded = treeState.expandedIds.has(id);
+    const projection = treeState.projection;
+
+    return {
+        isSelected,
+        isExpanded,
+        projection,
+    };
+};

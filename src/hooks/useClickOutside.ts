@@ -1,16 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
-export const useClickOutside = (
-    reference: HTMLElement | null,
+export const useClickOutside = <T extends HTMLElement = HTMLElement>(
     callback: () => void,
     ignoredElements?: HTMLElement[],
-): void => {
+) => {
+    const dismissibleElementRef = useRef<T>(null);
+
     useEffect(() => {
-        function handleClickOutside(event: MouseEvent) {
+        function handleClickOutside(event: MouseEvent): void {
             if (
-                !reference?.contains(event.target as Node) &&
+                !dismissibleElementRef.current?.contains(event.target as Node) &&
                 !ignoredElements?.find(
                     (element) => element && (event.target === element || element.contains(event.target as Node)),
                 )
@@ -23,5 +24,7 @@ export const useClickOutside = (
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, [callback, reference, ignoredElements]);
+    }, [callback, ignoredElements]);
+
+    return { dismissibleElementRef };
 };

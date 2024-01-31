@@ -2,10 +2,9 @@
 
 /* eslint-disable react/display-name */
 
-import React, { ComponentType } from 'react';
-import { SelectableTextStyles } from '../TextStyles';
+import { ComponentType } from 'react';
+import { Plugin } from '../../Plugin';
 
 export const withTextStyles =
-    <T extends Record<string, unknown>>(Component: ComponentType<T>, textStyles: SelectableTextStyles[]) =>
-    (props: T) =>
-        <Component {...props} textStyles={textStyles} />;
+    <T extends Record<string, unknown>>(Component: ComponentType<T>, textStyles: Plugin[]) =>
+    (props: T) => <Component {...props} textStyles={textStyles} />;
