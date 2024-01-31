@@ -122,7 +122,8 @@
         "tsx": "^4.7.0",
         "typescript": "^5.3.3",
         "vite": "^5.0.12",
-        "vite-plugin-dts": "^3.7.2"
+        "vite-plugin-dts": "^3.7.2",
+        "vite-tsconfig-paths": "^4.3.1"
     },
     "dependencies": {
         "@ctrl/tinycolor": "^4.0.2",

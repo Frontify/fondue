@@ -119,4 +119,4 @@ jobs:
               run: pnpm --stream --filter {packages/fondue} generate:icons && pnpm --stream --filter {packages/fondue} generate:componentsEnum
 
             - name: Component Tests
-              run: pnpm run --stream --filter {packages/fondue} test --spec $(node ./.github/lib/cypress-matrix.js ${{ env.NUMBER_OF_RUNNERS }} ${{ matrix.containers }})
+              run: pnpm run --stream --filter {packages/fondue} test --spec $(node ./.github/lib/cypress-matrix.mjs ${{ env.NUMBER_OF_RUNNERS }} ${{ matrix.containers }})
