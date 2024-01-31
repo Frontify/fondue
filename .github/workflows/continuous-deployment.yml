@@ -1,0 +1,157 @@
+name: Continuous Deployment
+
+on:
+    push:
+        branches:
+            - main
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+env:
+    NUMBER_OF_RUNNERS: 8
+
+jobs:
+    lint:
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+
+        steps:
+            - name: Checkout default branch
+              uses: actions/checkout@v4
+
+            - name: Use pnpm
+              uses: pnpm/action-setup@v2
+              with:
+                  version: latest
+
+            - name: Use Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version-file: '.nvmrc'
+                  cache: 'pnpm'
+
+            - name: Install npm dependencies
+              run: pnpm i --frozen-lockfile
+
+            - name: Build the packages
+              run: pnpm build
+
+            - name: Lint code
+              run: pnpm lint
+
+    typecheck:
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+
+        steps:
+            - name: Checkout default branch
+              uses: actions/checkout@v4
+
+            - name: Use pnpm
+              uses: pnpm/action-setup@v2
+              with:
+                  version: latest
+
+            - name: Use Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version-file: '.nvmrc'
+                  cache: 'pnpm'
+
+            - name: Install npm dependencies
+              run: pnpm i --frozen-lockfile
+
+            - name: Build the packages
+              run: pnpm build
+
+            - name: Typecheck code
+              run: pnpm typecheck
+
+    component-tests:
+        name: Component Tests
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+
+        strategy:
+            fail-fast: false
+            matrix:
+                containers: [0, 1, 2, 3, 4, 5, 6, 7]
+
+        steps:
+            - name: Checkout current commit
+              uses: actions/checkout@v3
+
+            - name: Use Node.js
+              uses: actions/setup-node@v3
+              with:
+                  node-version-file: '.nvmrc'
+
+            - name: Use pnpm
+              uses: pnpm/action-setup@v2.2.4
+              with:
+                  version: latest
+                  run_install: false
+
+            - name: Get pnpm store directory
+              id: pnpm-cache
+              run: echo "pnpm_cache_dir=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+            - name: Setup pnpm cache
+              uses: actions/cache@v3
+              id: npm_cache
+              with:
+                  path: |
+                      ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
+                      ~/.cache/Cypress
+                  key: pnpm-with-cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+                  restore-keys: pnpm-with-cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+
+            - name: Install dependencies
+              if: steps.npm_cache.outputs.cache-hit != 'true'
+              run: pnpm install --frozen-lockfile
+
+            - name: Generate icons
+              run: pnpm --stream --filter {packages/fondue} generate:icons && pnpm --stream --filter {packages/fondue} generate:componentsEnum
+
+            - name: Component Tests
+              run: pnpm --stream --filter {packages/fondue} test --spec $(node ./.github/lib/cypress-matrix.js ${{ env.NUMBER_OF_RUNNERS }} ${{ matrix.containers }})
+
+    publish:
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+
+        needs: [lint, typecheck, component-tests]
+
+        permissions:
+            contents: write # to create release (changesets/action)
+            pull-requests: write # to create pull request (changesets/action)
+
+        steps:
+            - name: Checkout default branch
+              uses: actions/checkout@v4
+
+            - name: Use pnpm
+              uses: pnpm/action-setup@v2
+              with:
+                  version: latest
+
+            - name: Use Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version-file: '.nvmrc'
+                  cache: 'pnpm'
+
+            - name: Install npm dependencies
+              run: pnpm i --frozen-lockfile
+
+            - name: Create release PR or publish to npm
+              id: changesets
+              uses: changesets/action@v1
+              with:
+                  commit: 'chore: release packages'
+                  title: 'chore: release packages'
+                  version: pnpm ci:version
+                  publish: pnpm ci:publish
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
