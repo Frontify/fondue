@@ -2,13 +2,14 @@
 
 import fastGlob from 'fast-glob';
 import { join } from 'path';
-import { readFile, writeFile } from 'fs/promises';
+import { mkdir, readFile, writeFile } from 'fs/promises';
 import camelCase from 'lodash-es/camelCase';
 import toUpper from 'lodash-es/toUpper';
 import { transform } from '@svgr/core';
 import { Entry } from 'fast-glob/out/types';
 import { IconTemplate } from '@foundation/Icon/IconTemplate';
 import { IconComponent, IconTemplateDynamic } from '@foundation/Icon/IconTemplateDynamic';
+import { existsSync } from 'fs';
 
 const ICON_SOURCE_DIRECTORY = 'node_modules/@frontify/fondue-icons/icons/';
 const GENERATED_ICONS_DIRECTORY = 'src/foundation/Icon/Generated/';
@@ -74,6 +75,7 @@ const generateSvgComponent = async (svgPath: Entry) => {
     );
 
     const generatedTsxFilePath = join(ICON_BUILD_DIRECTORY, `${ICON_COMPONENT_PREFIX}${svgFileName}.tsx`);
+
     await writeFile(generatedTsxFilePath, tsxCode);
 };
 
@@ -131,6 +133,10 @@ const generateIndex = async () => {
     const iconSvgPaths = await getSvgFilePaths();
     const iconShapeFolderPaths = await getShapeFolderPaths();
 
+    const generatedDirectoryExists = existsSync(ICON_BUILD_DIRECTORY);
+    if (!generatedDirectoryExists) {
+        await mkdir(ICON_BUILD_DIRECTORY);
+    }
     for (const svgPath of iconSvgPaths) {
         await generateSvgComponent(svgPath);
     }
