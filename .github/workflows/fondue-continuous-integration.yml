@@ -107,7 +107,6 @@ jobs:
 
             - name: Setup pnpm cache
               uses: actions/cache@v3
-              id: npm_cache
               with:
                   path: |
                       ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
@@ -116,7 +115,6 @@ jobs:
                   restore-keys: pnpm-with-cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
 
             - name: Install dependencies
-              if: steps.npm_cache.outputs.cache-hit != 'true'
               run: pnpm install --frozen-lockfile
 
             - name: Generate icons

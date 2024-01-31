@@ -109,7 +109,6 @@ jobs:
                   restore-keys: pnpm-with-cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
 
             - name: Install dependencies
-              if: steps.npm_cache.outputs.cache-hit != 'true'
               run: pnpm install --frozen-lockfile
 
             - name: Generate icons
