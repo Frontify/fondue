@@ -41,7 +41,7 @@ jobs:
             - name: Generate icons
               run: pnpm --stream --filter {packages/fondue} generate:icons && pnpm --stream --filter {packages/fondue} generate:componentsEnum
 
-            - name: Typecheck code
+            - name: Lint code
               run: pnpm --stream --filter {packages/fondue} lint
 
     typecheck:
