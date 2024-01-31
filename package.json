@@ -1,9 +1,13 @@
 {
-  "name": "root",
-  "private": true,
-  "scripts": {
-    "build": "pnpm run --filter {packages/fondue} build",
-    "ci:version": "pnpm build && changeset version",
-    "ci:publish": "pnpm build && changeset publish"
-  }
+    "name": "root",
+    "private": true,
+    "devDependencies": {
+        "@changesets/cli": "^2.27.1",
+        "@frontify/eslint-config-typescript": "^0.16.2",
+        "eslint": "^8.48.0",
+        "eslint-plugin-notice": "^0.9.10",
+        "glob": "^10.3.4",
+        "prettier": "^3.0.3",
+        "typescript": "^5.2.2"
+    }
 }
