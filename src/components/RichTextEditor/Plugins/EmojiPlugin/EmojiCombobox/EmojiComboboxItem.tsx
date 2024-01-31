@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ReactElement } from 'react';
-import { ComboboxItemProps, EmojiItemData } from '@udecode/plate';
+import { ComboboxItemProps } from '@udecode/plate';
+import { EmojiItemData } from '@udecode/plate-emoji';
 
 export const EmojiComboboxItem = ({ item }: ComboboxItemProps<EmojiItemData>): ReactElement => {
     const {
@@ -9,7 +10,7 @@ export const EmojiComboboxItem = ({ item }: ComboboxItemProps<EmojiItemData>): R
     } = item;
 
     return (
-        <div className="tw-whitespace-nowrap tw-overflow-hidden tw-text-ellipsis">
+        <div className="tw-whitespace-nowrap  tw-overflow-hidden tw-text-ellipsis">
             {emoji} :{id}:
         </div>
     );

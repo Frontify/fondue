@@ -1,11 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createComboboxPlugin } from '@udecode/plate';
 import { EMOJI_PLUGIN } from './id';
 import { Plugin, PluginProps } from '../Plugin';
 import { EmojiButton } from './EmojiButton';
 import { emojiPlugin } from './config';
 import { Position } from '@components/RichTextEditor/EditorPositioningWrapper';
+import { createComboboxPlugin } from '@udecode/plate-combobox';
+import { createEmojiPlugin } from '@udecode/plate-emoji';
 
 export class EmojiPlugin extends Plugin {
     constructor(props?: PluginProps) {
@@ -17,10 +18,6 @@ export class EmojiPlugin extends Plugin {
     }
 
     plugins() {
-        return [
-            createComboboxPlugin(),
-
-            // , createEmojiPlugin(emojiPlugin)
-        ];
+        return [createComboboxPlugin(), createEmojiPlugin(emojiPlugin)];
     }
 }
