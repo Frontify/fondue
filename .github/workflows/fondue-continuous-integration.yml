@@ -39,7 +39,6 @@ jobs:
               run: pnpm i --frozen-lockfile
 
             - name: Generate icons
-              working-directory: ./packages/fondue
               run: pnpm --stream --filter {packages/fondue} generate:icons && pnpm --stream --filter {packages/fondue} generate:componentsEnum
 
             - name: Typecheck code
@@ -70,7 +69,6 @@ jobs:
               run: pnpm i --frozen-lockfile
 
             - name: Generate icons
-              working-directory: ./packages/fondue
               run: pnpm --stream --filter {packages/fondue} generate:icons && pnpm --stream --filter {packages/fondue} generate:componentsEnum
 
             - name: Typecheck code
