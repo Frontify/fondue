@@ -13,7 +13,6 @@ import { existsSync } from 'fs';
 
 const ICON_SOURCE_DIRECTORY = 'node_modules/@frontify/fondue-icons/icons/';
 const GENERATED_ICONS_DIRECTORY = 'src/foundation/Icon/Generated/';
-const ICON_BUILD_DIRECTORY = join(__dirname, '..', 'src', 'foundation', 'Icon', 'Generated');
 const ICON_COMPONENT_PREFIX = 'Icon';
 const ICON_SIZES = ['12', '16', '20', '24', '32'];
 
@@ -74,7 +73,7 @@ const generateSvgComponent = async (svgPath: Entry) => {
         { componentName: `${ICON_COMPONENT_PREFIX}${svgFileName}` },
     );
 
-    const generatedTsxFilePath = join(ICON_BUILD_DIRECTORY, `${ICON_COMPONENT_PREFIX}${svgFileName}.tsx`);
+    const generatedTsxFilePath = join(GENERATED_ICONS_DIRECTORY, `${ICON_COMPONENT_PREFIX}${svgFileName}.tsx`);
 
     await writeFile(generatedTsxFilePath, tsxCode);
 };
@@ -99,7 +98,7 @@ const generateDynamicIcon = async (shapeFolderPath: Entry) => {
         };
     });
 
-    const filePath = join(ICON_BUILD_DIRECTORY, `${ICON_COMPONENT_PREFIX}${shapeName}.tsx`);
+    const filePath = join(GENERATED_ICONS_DIRECTORY, `${ICON_COMPONENT_PREFIX}${shapeName}.tsx`);
     const tpl = IconTemplateDynamic({ components, name: `${ICON_COMPONENT_PREFIX}${shapeName}` });
 
     await writeFile(filePath, tpl);
@@ -123,7 +122,7 @@ const generateIndex = async () => {
     const iconComponentNameToExport = (name: string) => `export { default as ${name} } from "./${name}";`;
     const fileContent = `${iconComponents.map((c) => iconComponentNameToExport(c.name)).join('\n')}\n`;
 
-    await writeFile(join(__dirname, '..', GENERATED_ICONS_INDEX_PATH), fileContent, { encoding: 'utf8' });
+    await writeFile(join(GENERATED_ICONS_INDEX_PATH), fileContent, { encoding: 'utf8' });
 };
 
 /**
@@ -133,9 +132,9 @@ const generateIndex = async () => {
     const iconSvgPaths = await getSvgFilePaths();
     const iconShapeFolderPaths = await getShapeFolderPaths();
 
-    const generatedDirectoryExists = existsSync(ICON_BUILD_DIRECTORY);
+    const generatedDirectoryExists = existsSync(GENERATED_ICONS_DIRECTORY);
     if (!generatedDirectoryExists) {
-        await mkdir(ICON_BUILD_DIRECTORY);
+        await mkdir(GENERATED_ICONS_DIRECTORY);
     }
     for (const svgPath of iconSvgPaths) {
         await generateSvgComponent(svgPath);

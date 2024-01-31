@@ -8,7 +8,7 @@ import { Dropdown } from '@components/Dropdown';
 import { DialogFooter } from '@components/DialogFooter';
 import { Modality } from '../../types';
 import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
-import { POPPER_STORY_ARGS } from '@components/Popper/types';
+import { POPPER_STORY_ARGS } from '@components/Popper/constantStories';
 import { action } from '@storybook/addon-actions';
 import { Divider } from '@components/Divider';
 import { Flex } from '@components/Flex';
