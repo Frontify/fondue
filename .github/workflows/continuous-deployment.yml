@@ -34,8 +34,8 @@ jobs:
             - name: Install npm dependencies
               run: pnpm i --frozen-lockfile
 
-            - name: Build the packages
-              run: pnpm build
+            - name: Generate icons
+              run: pnpm --stream --filter {packages/fondue} generate:icons && pnpm --stream --filter {packages/fondue} generate:componentsEnum
 
             - name: Lint code
               run: pnpm lint
@@ -63,8 +63,8 @@ jobs:
             - name: Install npm dependencies
               run: pnpm i --frozen-lockfile
 
-            - name: Build the packages
-              run: pnpm build
+            - name: Generate icons
+              run: pnpm --stream --filter {packages/fondue} generate:icons && pnpm --stream --filter {packages/fondue} generate:componentsEnum
 
             - name: Typecheck code
               run: pnpm typecheck
