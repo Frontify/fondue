@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { resolve } from 'path';
 import { build } from 'esbuild';
 import { Plugin, defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
@@ -12,19 +11,11 @@ import { dependencies as dependenciesMap, peerDependencies as peerDependenciesMa
 const peerDependencies = Object.keys(peerDependenciesMap);
 const dependencies = Object.keys(dependenciesMap);
 
-export const alias = {
-    '@components': resolve(__dirname, './src/components'),
-    '@foundation': resolve(__dirname, './src/foundation'),
-    '@hooks': resolve(__dirname, './src/hooks'),
-    '@layout': resolve(__dirname, './src/layout'),
-    '@typography': resolve(__dirname, './src/typography'),
-    '@utilities': resolve(__dirname, './src/utilities'),
-};
-
 export const globals = {
     react: 'React',
     'react-dom': 'ReactDOM',
     'react-dom/client': 'ReactDOMClient',
+    'react/jsx-runtime': 'react/jsx-runtime',
 };
 
 export const bundleIconsInDevPlugin = (): Plugin => {
@@ -91,19 +82,31 @@ export default defineConfig({
     build: {
         lib: {
             entry: './src/index.ts',
-            name: 'fondue',
+            fileName: (format: string) => `[name].${format}.js`,
         },
         sourcemap: true,
         minify: true,
         rollupOptions: {
-            external: [...dependencies, ...peerDependencies, 'react/jsx-runtime'],
-            output: {
-                globals: {
-                    react: 'React',
-                    'react-dom': 'ReactDOM',
-                    'react/jsx-runtime': 'react/jsx-runtime',
+            external: [...dependencies, ...peerDependencies, 'react-dom/client', 'react/jsx-runtime'],
+            output: [
+                {
+                    name: 'Fondue',
+                    format: 'es',
+                    preserveModules: true,
+                    preserveModulesRoot: 'src',
+                    globals,
                 },
-            },
+                {
+                    name: 'Fondue',
+                    format: 'umd',
+                    globals,
+                },
+                {
+                    name: 'Fondue',
+                    format: 'cjs',
+                    globals,
+                },
+            ],
         },
     },
 });

@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import tailwindForm from '@tailwindcss/forms';
-import { type Config } from 'tailwindcss';
 
+/** @type {import('tailwindcss').Config} */
 export default {
     presets: [require('@frontify/fondue-tokens/tailwind')],
     content: ['./src/**/*.{js,ts,tsx}'],
@@ -131,4 +131,4 @@ export default {
             },
         },
     },
-} satisfies Config;
+};
