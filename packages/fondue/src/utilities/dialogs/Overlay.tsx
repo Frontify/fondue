@@ -92,6 +92,12 @@ export const Overlay = ({
                 document.body.style.overflow = 'auto';
             }
         }
+
+        return () => {
+            if (modality !== Modality.NonModal) {
+                document.body.style.pointerEvents = 'auto';
+            }
+        };
     }, [open, modality, strategy]);
 
     const isMobile = useMobileDetection();
