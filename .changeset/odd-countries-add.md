@@ -2,4 +2,4 @@
 '@frontify/fondue': patch
 ---
 
-Fix error when scrolling in modal
+Fixed: Body is not scrollable when modal is open
