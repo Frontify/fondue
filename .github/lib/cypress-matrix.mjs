@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-const { once } = require('node:events');
-const { createReadStream } = require('node:fs');
-const { createInterface } = require('node:readline');
-const { globSync } = require('glob');
-const { join } = require('node:path');
+import { once } from 'node:events';
+import { createReadStream } from 'node:fs';
+import { createInterface } from 'node:readline';
+import { join } from 'node:path';
+import { globSync } from 'glob';
 
 /**
  * Build Matrix that contains cypress spec files for GitHub action

@@ -3,6 +3,7 @@
     "author": "Frontify Developers <developers@frontify.com>",
     "version": "12.0.0-beta.400",
     "description": "Design system of Frontify",
+    "type": "module",
     "repository": {
         "type": "git",
         "url": "https://github.com/Frontify/fondue",
@@ -15,24 +16,24 @@
         "node": ">=18"
     },
     "packageManager": "pnpm@8.6.0",
-    "main": "dist/index.umd.js",
-    "unpkg": "dist/index.umd.js",
-    "jsdelivr": "dist/index.umd.js",
-    "module": "dist/index.es.js",
+    "main": "dist/index.umd.cjs",
+    "unpkg": "dist/index.umd.cjs",
+    "jsdelivr": "dist/index.umd.cjs",
+    "module": "dist/index.js",
     "types": "dist/index.d.ts",
     "sideEffects": false,
     "files": [
         "dist",
-        "tailwind.config.js"
+        "tailwind.config.ts"
     ],
     "exports": {
         ".": {
             "types": "./dist/index.d.ts",
-            "import": "./dist/index.es.js",
-            "require": "./dist/index.umd.js"
+            "import": "./dist/index.js",
+            "require": "./dist/index.umd.cjs"
         },
-        "./tailwind": "./tailwind.config.js",
-        "./style": "./dist/styles.css",
+        "./tailwind": "./tailwind.config.ts",
+        "./style": "./dist/style.css",
         "./extractedThirdPartyStyles": "./dist/extractedThirdPartyStyles.css",
         "./dist/*": "./dist/*"
     },
@@ -97,7 +98,7 @@
         "cross-env": "^7.0.3",
         "cypress": "^13.6.4",
         "cypress-real-events": "^1.11.0",
-        "esbuild": "^0.19.12",
+        "esbuild": "^0.20.0",
         "eslint": "^8.56.0",
         "eslint-plugin-jsx-a11y": "^6.8.0",
         "eslint-plugin-notice": "^0.9.10",
@@ -113,16 +114,16 @@
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "rimraf": "^5.0.5",
-        "rollup": "^3.29.4",
+        "rollup": "^4.9.6",
         "storybook": "^7.6.12",
         "storybook-dark-mode": "^3.0.3",
         "tailwindcss": "^3.4.1",
         "ts-node": "^10.9.2",
         "tsx": "^4.7.0",
         "typescript": "^5.3.3",
-        "vite": "^4.5.2",
+        "vite": "^5.0.12",
         "vite-plugin-dts": "^3.7.2",
-        "vite-plugin-eslint": "^1.8.1"
+        "vite-tsconfig-paths": "^4.3.1"
     },
     "dependencies": {
         "@ctrl/tinycolor": "^4.0.2",

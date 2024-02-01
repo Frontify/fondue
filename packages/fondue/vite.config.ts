@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { resolve } from 'path';
-import type { PreRenderedAsset } from 'rollup';
 import { build } from 'esbuild';
 import { Plugin, defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
+import tsConfigPaths from 'vite-tsconfig-paths';
 import react from '@vitejs/plugin-react';
 
 import { dependencies as dependenciesMap, peerDependencies as peerDependenciesMap } from './package.json';
@@ -25,13 +25,6 @@ export const globals = {
     react: 'React',
     'react-dom': 'ReactDOM',
     'react-dom/client': 'ReactDOMClient',
-};
-
-const assetFileNames = (chunkInfo: PreRenderedAsset): string => {
-    if (chunkInfo.name === 'style.css') {
-        return 'styles.css';
-    }
-    return chunkInfo.name ?? 'UnknownFileName';
 };
 
 export const bundleIconsInDevPlugin = (): Plugin => {
@@ -89,49 +82,28 @@ export const bundleIconsInDevPlugin = (): Plugin => {
 };
 
 export default defineConfig({
-    resolve: {
-        alias,
-    },
     // needs to be defined here, such that it is not undefined in the tests.
     define: {
         'process.env.REACT_APP_SC_ATTR': JSON.stringify(process.env.REACT_APP_SC_ATTR),
         'process.env.SC_ATTR': JSON.stringify(process.env.SC_ATTR),
     },
-    plugins: [react(), dts({ insertTypesEntry: true, rollupTypes: true }), bundleIconsInDevPlugin()],
-    optimizeDeps: {
-        include: ['react/jsx-runtime'],
-    },
+    plugins: [react(), tsConfigPaths(), dts({ insertTypesEntry: true, rollupTypes: true }), bundleIconsInDevPlugin()],
     build: {
         lib: {
-            entry: resolve(__dirname, 'src/index.ts'),
-            fileName: (format: string) => `[name].${format}.js`,
+            entry: './src/index.ts',
+            name: 'fondue',
         },
         sourcemap: true,
         minify: true,
         rollupOptions: {
-            external: [...dependencies, ...peerDependencies, 'react-dom/client', 'react/jsx-runtime'],
-            output: [
-                {
-                    name: 'Fondue',
-                    format: 'es',
-                    preserveModules: true,
-                    preserveModulesRoot: 'src',
-                    assetFileNames,
-                    globals,
+            external: [...dependencies, ...peerDependencies, 'react/jsx-runtime'],
+            output: {
+                globals: {
+                    react: 'React',
+                    'react-dom': 'ReactDOM',
+                    'react/jsx-runtime': 'react/jsx-runtime',
                 },
-                {
-                    name: 'Fondue',
-                    format: 'umd',
-                    assetFileNames,
-                    globals,
-                },
-                {
-                    name: 'Fondue',
-                    format: 'cjs',
-                    assetFileNames,
-                    globals,
-                },
-            ],
+            },
         },
     },
 });
