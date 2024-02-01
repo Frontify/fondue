@@ -184,6 +184,7 @@
         "@udecode/plate-emoji": "^30.1.2",
         "@udecode/plate-floating": "^30.1.2",
         "@udecode/plate-list": "^30.1.2",
+        "@udecode/plate-mention": "^30.1.2",
         "@udecode/slate": "^25.0.0",
         "@udecode/slate-react": "^29.0.1",
         "@udecode/zustood": "^1.1.3",

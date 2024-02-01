@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement } from 'react';
-// import { MentionInputElement, MentionInputElementProps, Value } from '@udecode/plate';
-// import { MentionInputMarkupElementStyles } from './MentionInputMarkupElementStyles';
+import { ComponentProps, ReactElement } from 'react';
+import { MentionInputElement } from '@components/RichTextEditor/Plugins/MentionPlugin/MentionInputMarkupElement/MentionInputElement';
 
-export const MentionInputMarkupElementNode = (props: any): ReactElement => <div>{props.children}</div>;
+export const MentionInputMarkupElementNode = (props: ComponentProps<typeof MentionInputElement>): ReactElement => (
+    <MentionInputElement {...props} />
+);

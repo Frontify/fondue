@@ -21,7 +21,6 @@ import { createVirtualRef } from '@udecode/plate-floating';
 export const ComboboxItem = withRef<'div', ComboboxContentItemProps>(
     ({ combobox, index, item, onRenderItem, className, ...rest }, ref) => {
         const { props } = useComboboxItem({ item, index, combobox, onRenderItem });
-
         return (
             <div
                 ref={ref}
@@ -46,7 +45,6 @@ export function ComboboxContent(props: ComboboxContentProps) {
     const activeComboboxStore = useActiveComboboxStore()!;
     const state = useComboboxContentState({ items, combobox });
     const { menuProps, targetRange } = useComboboxContent(state);
-
     return (
         <Popover.Root open>
             <Popover.PopoverAnchor virtualRef={createVirtualRef(editor, targetRange ?? undefined)} />
@@ -93,7 +91,6 @@ export function Combobox({
 }: ComboboxProps) {
     const storeItems = useComboboxSelectors.items();
     const disabled = _disabled ?? (storeItems.length === 0 && !props.items?.length);
-
     const focusedEditorId = useEventEditorSelectors.focus?.();
     const combobox = useComboboxControls();
     const activeId = useComboboxSelectors.activeId();
@@ -116,6 +113,5 @@ export function Combobox({
     if (!combobox || !selectionDefined || focusedEditorId !== editorId || activeId !== id || disabled) {
         return null;
     }
-
     return <ComboboxContent combobox={combobox} {...props} />;
 }

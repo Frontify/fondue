@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MentionPlugin as MentionPluginPlate, createComboboxPlugin, createMentionPlugin } from '@udecode/plate';
+import { MentionPlugin as MentionPluginPlate, createMentionPlugin } from '@udecode/plate-mention';
+import { createComboboxPlugin } from '@udecode/plate-combobox';
 import { MENTION_PLUGIN } from './id';
 import { MentionMarkupElement } from './MentionMarkupElement';
 import { Plugin } from '../Plugin';

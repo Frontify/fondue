@@ -3,8 +3,8 @@
 import { KEY_EMOJI, TEmojiCombobox, useEmojiComboboxState } from '@udecode/plate-emoji';
 
 import { EmojiComboboxItem } from '@components/RichTextEditor/Plugins/EmojiPlugin/EmojiCombobox/EmojiComboboxItem';
-import { Combobox } from '@components/RichTextEditor/components/combobox';
 import { useEmojiSelect } from '@components/RichTextEditor/Plugins/EmojiPlugin/useEmojiSelect';
+import { Combobox } from '@components/RichTextEditor/components/Combobox';
 
 export function EmojiCombobox({ pluginKey = KEY_EMOJI, id = pluginKey, ...props }: TEmojiCombobox) {
     const { trigger } = useEmojiComboboxState({ pluginKey });
