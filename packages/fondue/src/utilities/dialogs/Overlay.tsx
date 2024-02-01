@@ -80,15 +80,17 @@ export const Overlay = ({
     });
 
     useEffect(() => {
-        if (open && modality !== Modality.NonModal) {
-            document.body.style.pointerEvents = 'none';
-            if (strategy === 'fixed') {
-                document.body.style.overflow = 'hidden';
+        if (modality !== Modality.NonModal) {
+            if (open) {
+                document.body.style.pointerEvents = 'none';
+                if (strategy === 'fixed') {
+                    document.body.style.overflow = 'hidden';
+                }
             }
-        }
-        if (!open) {
-            document.body.style.pointerEvents = 'auto';
-            document.body.style.overflow = 'auto';
+            if (!open) {
+                document.body.style.pointerEvents = 'auto';
+                document.body.style.overflow = 'auto';
+            }
         }
     }, [open, modality, strategy]);
 
