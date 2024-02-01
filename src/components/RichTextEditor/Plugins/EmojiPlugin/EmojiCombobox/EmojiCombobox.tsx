@@ -4,16 +4,18 @@ import { KEY_EMOJI, TEmojiCombobox, useEmojiComboboxState } from '@udecode/plate
 
 import { EmojiComboboxItem } from '@components/RichTextEditor/Plugins/EmojiPlugin/EmojiCombobox/EmojiComboboxItem';
 import { Combobox } from '@components/RichTextEditor/components/combobox';
+import { useEmojiSelect } from '@components/RichTextEditor/Plugins/EmojiPlugin/useEmojiSelect';
 
 export function EmojiCombobox({ pluginKey = KEY_EMOJI, id = pluginKey, ...props }: TEmojiCombobox) {
-    const { trigger, onSelectItem } = useEmojiComboboxState({ pluginKey });
+    const { trigger } = useEmojiComboboxState({ pluginKey });
+    const { selectEmojiFromCombobox } = useEmojiSelect();
 
     return (
         <Combobox
             id={id}
             trigger={trigger}
             controlled
-            onSelectItem={onSelectItem as any}
+            onSelectItem={(_, item) => selectEmojiFromCombobox(item)}
             onRenderItem={EmojiComboboxItem}
             {...props}
         />

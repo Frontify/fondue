@@ -2,15 +2,15 @@
 
 import { cn } from '@udecode/cn';
 import { EmojiSettings, UseEmojiPickerType } from '@udecode/plate-emoji';
-import { EmojiPickerContent } from './emoji-picker-content';
-import { EmojiPickerNavigation } from './emoji-picker-navigation';
-import { EmojiPickerPreview } from './emoji-picker-preview';
-import { EmojiPickerSearchAndClear } from './emoji-picker-search-and-clear';
-import { EmojiPickerSearchBar } from './emoji-picker-search-bar';
+import { EmojiPickerContent } from './EmojiPickerContent';
+import { EmojiPickerNavigation } from './EmojiPickerNavigation';
+import { EmojiPickerPreview } from './EmojiPickerPreview';
+import { EmojiPickerSearchAndClear } from './EmojiPickerSearchAndClear';
+import { EmojiPickerSearchBar } from './EmojiPickerSearchBar';
 import {
     emojiCategoryIcons,
     emojiSearchIcons,
-} from '@components/RichTextEditor/Plugins/EmojiPlugin/EmojiPicker/emoji-icons';
+} from '@components/RichTextEditor/Plugins/EmojiPlugin/EmojiPicker/EmojiIcons';
 
 export function EmojiPicker({
     settings = EmojiSettings,
@@ -33,8 +33,7 @@ export function EmojiPicker({
     return (
         <div
             className={cn(
-                'tw-flex tw-flex-col tw-rounded tw-bg-white dark:tw-bg-slate-950',
-                'tw-h-[350px] tw-w-[316px] tw-shadow-[rgb(15_15_15_/_5%)_0_0_0_1px,_rgb(15_15_15_)]',
+                'tw-flex tw-flex-col tw-rounded tw-bg-base tw-shadow-md tw-h-[350px] tw-border-line tw-border tw-w-[316px]',
             )}
         >
             <EmojiPickerNavigation

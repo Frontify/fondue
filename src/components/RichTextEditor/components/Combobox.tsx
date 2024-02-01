@@ -27,7 +27,7 @@ export const ComboboxItem = withRef<'div', ComboboxContentItemProps>(
                 ref={ref}
                 className={cn(
                     'tw-relative tw-flex tw-h-9 tw-cursor-pointer tw-select-none tw-items-center tw-rounded-sm tw-px-2 tw-py-1.5 tw-text-sm tw-outline-none tw-transition-colors',
-                    'hover:tw-bg-box-neutral hover:tw-text-box-neutral-inverse-hover data-[highlighted=true]:tw-text-box-neutral-inverse-hover data-[highlighted=true]:tw-bg-box-neutral',
+                    'tw-text-text-weak tw-text-body-medium tw-px-5 hover:tw-bg-box-neutral hover:tw-text-box-neutral-inverse-hover data-[highlighted=true]:tw-text-box-neutral-inverse-hover data-[highlighted=true]:tw-bg-box-neutral data-[highlighted=true]:hover:tw-bg-box-neutral-hover',
                     className,
                 )}
                 {...props}
@@ -58,7 +58,7 @@ export function ComboboxContent(props: ComboboxContentProps) {
                     side="bottom"
                     align="start"
                     className={cn(
-                        'tw-z-[500] tw-m-0 tw-max-h-[288px] tw-w-[300px] tw-overflow-scroll tw-rounded-md tw-bg-white tw-p-0 tw-shadow-md dark:tw-bg-slate-950',
+                        'tw-z-[500] tw-m-0 tw-max-h-[288px] tw-w-[270px] tw-overflow-scroll tw-rounded-md tw-bg-base tw-py-2 tw-shadow-md tw-border tw-border-line-strong',
                     )}
                     onOpenAutoFocus={(event) => event.preventDefault()}
                 >

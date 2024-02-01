@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import React, { memo, useCallback } from 'react';
+import { memo, useCallback } from 'react';
 import { cn } from '@udecode/cn';
-import { Emoji, EmojiSettings, GridRow, UseEmojiPickerType } from '@udecode/plate-emoji';
+import { Emoji, EmojiCategoryList, EmojiSettings, GridRow, UseEmojiPickerType } from '@udecode/plate-emoji';
 
 export type EmojiPickerContentProps = Pick<
     UseEmojiPickerType,
@@ -32,7 +32,7 @@ const Button = memo(({ index, emoji, onSelect, onMouseOver }: EmojiButtonProps) 
     return (
         <button
             type="button"
-            aria-label={emoji.skins[0].native}
+            aria-label={emoji?.skins[0]?.native}
             tabIndex={-1}
             data-index={index}
             onClick={() => onSelect(emoji)}
@@ -45,7 +45,7 @@ const Button = memo(({ index, emoji, onSelect, onMouseOver }: EmojiButtonProps) 
                 className="tw-absolute tw-inset-0 tw-rounded-full tw-bg-[rgba(0,0,0,0.05)] tw-opacity-0 group-hover:tw-opacity-100"
             />
             <span data-emoji-set="native" style={{ position: 'relative' }}>
-                {emoji.skins[0].native}
+                {emoji?.skins[0]?.native}
             </span>
         </button>
     );
@@ -81,7 +81,7 @@ export function EmojiPickerContent({
     const getRowWidth = settings.perLine.value * settings.buttonSize.value;
 
     const isCategoryVisible = useCallback(
-        (categoryId: any) => {
+        (categoryId: EmojiCategoryList) => {
             return visibleCategories.has(categoryId) ? visibleCategories.get(categoryId) : false;
         },
         [visibleCategories],
@@ -97,7 +97,7 @@ export function EmojiPickerContent({
 
                 return (
                     <div key={categoryId} data-id={categoryId} ref={section.root} style={{ width: getRowWidth }}>
-                        <div className="tw-sticky tw--top-px tw-z-[1] tw-bg-white/90 tw-p-1 tw-backdrop-blur-[4px] dark:tw-bg-slate-950/90">
+                        <div className="tw-sticky tw--top-px tw-z-[1] tw-bg-white/90 tw-p-1 tw-backdrop-blur-[4px]">
                             {i18n.categories[categoryId]}
                         </div>
                         <div
@@ -125,7 +125,7 @@ export function EmojiPickerContent({
     const SearchList = useCallback(() => {
         return (
             <div data-id="search" style={{ width: getRowWidth }}>
-                <div className="tw-sticky tw--top-px tw-z-[1] tw-bg-white/90 tw-p-1 tw-backdrop-blur-[4px] dark:tw-bg-slate-950/90">
+                <div className="tw-sticky tw--top-px tw-z-[1] tw-bg-white/90 tw-p-1 tw-backdrop-blur-[4px]">
                     {i18n.searchResult}
                 </div>
                 <div className="tw-relative tw-flex tw-flex-wrap">
@@ -149,8 +149,8 @@ export function EmojiPickerContent({
                 'tw-h-full tw-min-h-[50%] tw-overflow-y-auto tw-overflow-x-hidden tw-px-3',
                 '[&::-webkit-scrollbar]:tw-w-4',
                 '[&::-webkit-scrollbar-button]:tw-hidden [&::-webkit-scrollbar-button]:tw-h-0 [&::-webkit-scrollbar-button]:tw-w-0',
-                ':hover:[&::-webkit-scrollbar-thumb]:tw-bg-[#f3f4f6]',
-                '[&::-webkit-scrollbar-thumb]:tw-min-h-[65px] [&::-webkit-scrollbar-thumb]:tw-rounded-2xl [&::-webkit-scrollbar-thumb]:tw-border-4 [&::-webkit-scrollbar-thumb]:tw-border-white',
+                '[&::-webkit-scrollbar-thumb]:hover:tw-bg-[#f3f4f6]',
+                '[&::-webkit-scrollbar-thumb]:tw-min-h-[65px] [&::-webkit-scrollbar-thumb]:tw-rounded-2xl [&::-webkit-scrollbar-thumb]:tw-border-solid [&::-webkit-scrollbar-thumb]:tw-border-4 [&::-webkit-scrollbar-thumb]:tw-border-white',
                 '[&::-webkit-scrollbar-track]:tw-border-0',
             )}
             data-id="scroll"

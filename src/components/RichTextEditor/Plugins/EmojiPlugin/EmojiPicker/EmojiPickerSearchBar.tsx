@@ -16,7 +16,7 @@ export function EmojiPickerSearchBar({ i18n, searchValue, setSearch, children }:
                     placeholder={i18n.search}
                     autoComplete="off"
                     aria-label="Search"
-                    className="tw-block tw-w-full tw-appearance-none tw-rounded-lg tw-border-0 tw-bg-gray-100 tw-px-8 tw-py-2 tw-outline-none"
+                    className="tw-block tw-w-full tw-leading-4 tw-appearance-none tw-rounded-lg tw-border-0 tw-bg-[rgb(243,244,246)] tw-px-8 tw-py-2 tw-outline-none"
                     onChange={(event) => setSearch(event.target.value)}
                     value={searchValue}
                 />
