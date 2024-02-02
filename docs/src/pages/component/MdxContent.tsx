@@ -7,9 +7,14 @@ export const MdxContent = ({ data }: { data: any }) => {
     const Component = useMemo(() => getMDXComponent(data), [data]);
 
     return (
-        <>
-            <h2>Data</h2>
-            <Component />
-        </>
+        <Component
+            components={{
+                h1: (props) => (
+                    <h1 className="tw-text-3xl" {...props}>
+                        {props.children}
+                    </h1>
+                ),
+            }}
+        />
     );
 };
