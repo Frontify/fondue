@@ -109,11 +109,14 @@ describe('Slate To Markdown transformer', () => {
 
         return describe(key, () => {
             cases.map(
-                ({ info, markdown, expectedTree }: { info?: string; markdown: string; expectedTree: NodeType[] }) =>
-                    it(`should transform${info ? `: ${info}` : ''}`, () => {
+                ({ info, markdown, expectedTree }: { info?: string; markdown: string; expectedTree: NodeType[] }) => {
+                    const information = info ? `: ${info}` : '';
+
+                    return it(`should transform${information}`, () => {
                         const result = transformer.process(expectedTree);
                         expect(result).to.deep.equal(markdown);
-                    }),
+                    });
+                },
             );
         });
     });
