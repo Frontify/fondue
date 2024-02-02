@@ -3,6 +3,7 @@
     "private": true,
     "type": "module",
     "scripts": {
+        "dev": "pnpm --filter {packages/components} --filter {docs} --parallel dev",
         "build": "pnpm build:fondue",
         "build:fondue": "pnpm --stream --filter {packages/fondue} build",
         "lint": "pnpm --stream --filter {packages/**} lint",

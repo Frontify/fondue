@@ -1,3 +1,4 @@
+import { Tag } from 'components';
 export { Page };
 
 console.log('all');
@@ -11,6 +12,7 @@ function Page() {
                 <li>Rendered to HTML.</li>
                 <li>Interactive.</li>
             </ul>
+            <Tag />
         </>
     );
 }
