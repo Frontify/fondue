@@ -35,7 +35,7 @@ const AriaAccordionItem = ({
             key={item.key}
             className={merge([
                 isFocusVisible ? `${FOCUS_STYLE_NO_OFFSET} tw-relative tw-rounded` : '',
-                divider && 'tw-divide-y tw-divide-black-10 tw',
+                divider && 'tw-divide-y tw-divide-black-10',
             ])}
         >
             <button
