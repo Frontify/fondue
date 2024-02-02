@@ -8,21 +8,18 @@ function Page() {
     return (
         <>
             <h1 className="tw-font-bold">Welcome</h1>
-            This page is:
-            <ul>
-                <li>Rendered to HTML.</li>
-                <li>Interactive.</li>
-            </ul>
+
+            <h2>All Components:</h2>
+
             <ul>
                 {allComponents.map((component) => {
                     return (
-                        <li key={component._id}>
+                        <li className="tw-list-disc" key={component._id}>
                             <a href={`component/${component.url}`}>{component.title}</a>
                         </li>
                     );
                 })}
             </ul>
-            <Tag />
         </>
     );
 }

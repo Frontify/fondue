@@ -1,9 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-module.export = {
+module.exports = {
     plugins: {
         tailwindcss: {},
         autoprefixer: {},
-        'postcss-import': {},
     },
 };
