@@ -1,7 +1,6 @@
 import { Tag } from 'components';
+import { allComponents } from 'components/content';
 export { Page };
-
-console.log('all');
 
 function Page() {
     return (
@@ -11,6 +10,15 @@ function Page() {
             <ul>
                 <li>Rendered to HTML.</li>
                 <li>Interactive.</li>
+            </ul>
+            <ul>
+                {allComponents.map((component) => {
+                    return (
+                        <li key={component._id}>
+                            <a href={`component/${component.url}`}>{component.title}</a>
+                        </li>
+                    );
+                })}
             </ul>
             <Tag />
         </>
