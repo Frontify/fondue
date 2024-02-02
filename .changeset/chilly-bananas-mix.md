@@ -2,4 +2,4 @@
 '@frontify/fondue': patch
 ---
 
-fixed Richtext editor: disappearing line break made with shortcut Shift-Enter
+fix(RichTextEditor): disappearing line break made with shortcut Shift-Enter
