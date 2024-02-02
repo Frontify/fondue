@@ -32,145 +32,91 @@ import {
     unsafeLinkMarkdown,
     unsafeLinkTree,
 } from './fixtures';
+import { NodeType } from '../types';
+
+const testCases = {
+    'Basic marks': [
+        { markdown: basicMarksMarkdown[0], expectedTree: basicMarksTree[0] },
+        { markdown: basicMarksMarkdown[1], expectedTree: basicMarksTree[1] },
+    ],
+
+    Headings: [{ info: 'Headings', markdown: headingsMarkdown, expectedTree: headingsTree }],
+
+    'Code block': [
+        { markdown: codeBlockMarkdown[0], expectedTree: codeBlockTree[0] },
+        { markdown: codeBlockMarkdown[1], expectedTree: codeBlockTree[1] },
+        { markdown: codeBlockMarkdown[2], expectedTree: codeBlockTree[2] },
+    ],
+
+    Paragraph: [
+        { markdown: paragraphMarkdown[0], expectedTree: paragraphTree[0] },
+        { markdown: paragraphMarkdown[1], expectedTree: paragraphTree[1] },
+        { markdown: paragraphMarkdown[2], expectedTree: paragraphTree[2] },
+    ],
+
+    'Unordered list': [{ markdown: unorderedListMarkdown[0], expectedTree: unorderedListTree[0] }],
+
+    'Ordered list': [
+        { markdown: orderedListMarkdown[0], expectedTree: orderedListTree[0] },
+        { markdown: orderedListMarkdown[1], expectedTree: orderedListTree[1] },
+        { markdown: orderedListMarkdown[2], expectedTree: orderedListTree[2] },
+    ],
+
+    Hr: [{ markdown: hrMarkdown, expectedTree: hrTree }],
+
+    Link: [
+        { info: 'target self', markdown: linkMarkdown[0], expectedTree: linkTree[0] },
+        { info: 'target blank', markdown: linkMarkdown[1], expectedTree: linkTree[1] },
+        { info: 'mailto link', markdown: linkMarkdown[2], expectedTree: linkTree[2] },
+
+        { info: 'unsafe link', markdown: unsafeLinkMarkdown[0], expectedTree: unsafeLinkTree[0] },
+        { info: 'unsafe link', markdown: unsafeLinkMarkdown[1], expectedTree: unsafeLinkTree[1] },
+        { info: 'unsafe link', markdown: unsafeLinkMarkdown[2], expectedTree: unsafeLinkTree[2] },
+        { info: 'unsafe link', markdown: unsafeLinkMarkdown[3], expectedTree: unsafeLinkTree[3] },
+    ],
+
+    Image: [
+        { info: 'image', markdown: imageMarkdown[0], expectedTree: imageTree[0] },
+        { info: 'the unsafe image source', markdown: imageMarkdown[1], expectedTree: imageTree[1] },
+        { info: 'create text for not standard image source', markdown: imageMarkdown[2], expectedTree: imageTree[2] },
+    ],
+
+    'Block quote': [
+        { markdown: blockQuoteMarkdown[0], expectedTree: blockQuoteTree[0] },
+        { markdown: blockQuoteMarkdown[1], expectedTree: blockQuoteTree[1] },
+    ],
+
+    'Mixed text': [
+        { markdown: mixedMarkdown, expectedTree: mixedTree },
+        {
+            info: 'mixed text with unsafe link',
+            markdown: mixedMarkdownWithUnsafeLink1,
+            expectedTree: mixedTreeWithUnsafeLink1,
+        },
+    ],
+
+    Mentions: [
+        { markdown: mentionsMarkdown[0], expectedTree: mentionsTree[0] },
+        { markdown: mentionsMarkdown[1], expectedTree: mentionsTree[1] },
+        { markdown: mentionsMarkdown[2], expectedTree: mentionsTree[2] },
+        { markdown: mentionsMarkdown[3], expectedTree: mentionsTree[3] },
+    ],
+};
 
 describe('Markdown to slate Transformer', () => {
     const transformer = Transform.use(new MarkdownToSlate());
 
-    it('should transform basic marks', () => {
-        let result = transformer.process(basicMarksMarkdown[0]);
-        expect(result).to.deep.equal(basicMarksTree[0]);
+    Object.keys(testCases).map((key) => {
+        const cases = testCases[key as keyof typeof testCases];
 
-        result = transformer.process(basicMarksMarkdown[1]);
-        expect(result).to.deep.equal(basicMarksTree[1]);
-    });
-
-    it('should transform headings', () => {
-        const result = transformer.process(headingsMarkdown);
-        expect(result).to.deep.equal(headingsTree);
-    });
-
-    it('should transform code block', () => {
-        let result = transformer.process(codeBlockMarkdown[0]);
-        expect(result).to.deep.equal(codeBlockTree[0]);
-
-        result = transformer.process(codeBlockMarkdown[1]);
-        expect(result).to.deep.equal(codeBlockTree[1]);
-
-        result = transformer.process(codeBlockMarkdown[2]);
-        expect(result).to.deep.equal(codeBlockTree[2]);
-    });
-
-    it('should transform paragraph', () => {
-        let result = transformer.process(paragraphMarkdown[0]);
-        expect(result).to.deep.equal(paragraphTree[0]);
-
-        result = transformer.process(paragraphMarkdown[1]);
-        expect(result).to.deep.equal(paragraphTree[1]);
-
-        result = transformer.process(paragraphMarkdown[2]);
-        expect(result).to.deep.equal(paragraphTree[2]);
-    });
-
-    it('should transform unordered list', () => {
-        const result = transformer.process(unorderedListMarkdown[0]);
-        expect(result).to.deep.equal(unorderedListTree[0]);
-    });
-
-    it('should transform ordered list', () => {
-        let result = transformer.process(orderedListMarkdown[0]);
-        expect(result).to.deep.equal(orderedListTree[0]);
-
-        result = transformer.process(orderedListMarkdown[1]);
-        expect(result).to.deep.equal(orderedListTree[1]);
-
-        result = transformer.process(orderedListMarkdown[2]);
-        expect(result).to.deep.equal(orderedListTree[2]);
-    });
-
-    it('should transform hr', () => {
-        const result = transformer.process(hrMarkdown);
-        expect(result).to.deep.equal(hrTree);
-    });
-
-    describe('Link transformation', () => {
-        it('should transform link - target self', () => {
-            const result = transformer.process(linkMarkdown[0]);
-            expect(result).to.deep.equal(linkTree[0]);
+        return describe(key, () => {
+            cases.map(
+                ({ info, markdown, expectedTree }: { info?: string; markdown: string; expectedTree: NodeType[] }) =>
+                    it(`should transform${info ? `: ${info}` : ''}`, () => {
+                        const result = transformer.process(markdown);
+                        expect(result).to.deep.equal(expectedTree);
+                    }),
+            );
         });
-
-        it('should transform link - target blank', () => {
-            const result = transformer.process(linkMarkdown[1]);
-            expect(result).to.deep.equal(linkTree[1]);
-        });
-
-        it('should correctly transform unsafe links', () => {
-            let result = transformer.process(unsafeLinkMarkdown[0]);
-            expect(unsafeLinkTree[0]).to.deep.equal(result);
-
-            result = transformer.process(unsafeLinkMarkdown[1]);
-            expect(unsafeLinkTree[1]).to.deep.equal(result);
-
-            result = transformer.process(unsafeLinkMarkdown[2]);
-            expect(unsafeLinkTree[2]).to.deep.equal(result);
-
-            result = transformer.process(unsafeLinkMarkdown[3]);
-            expect(unsafeLinkTree[3]).to.deep.equal(result);
-        });
-
-        it('should create mailto link', () => {
-            const result = transformer.process(linkMarkdown[2]);
-            expect(result).to.deep.equal(linkTree[2]);
-        });
-    });
-
-    describe('Image transformation', () => {
-        it('should transform image', () => {
-            const result = transformer.process(imageMarkdown[0]);
-            expect(imageTree[0]).to.deep.equal(result);
-        });
-
-        it('should correctly transform the unsafe image source', () => {
-            const result = transformer.process(imageMarkdown[1]);
-            expect(imageTree[1]).to.deep.equal(result);
-        });
-
-        it('should create text for not standard image source', () => {
-            const result = transformer.process(imageMarkdown[2]);
-            expect(imageTree[2]).to.deep.equal(result);
-        });
-    });
-
-    it('should transform block quote', () => {
-        let result = transformer.process(blockQuoteMarkdown[0]);
-        expect(result).to.deep.equal(blockQuoteTree[0]);
-
-        result = transformer.process(blockQuoteMarkdown[1]);
-        expect(result).to.deep.equal(blockQuoteTree[1]);
-    });
-
-    describe('Mixed text transformation', () => {
-        it('should transform mixed text', () => {
-            const result = transformer.process(mixedMarkdown);
-            expect(result).to.deep.equal(mixedTree);
-        });
-
-        it('should transform mixed text with unsafe link', () => {
-            const result = transformer.process(mixedMarkdownWithUnsafeLink1);
-            expect(result).to.deep.equal(mixedTreeWithUnsafeLink1);
-        });
-    });
-
-    it('should transform mentions text', () => {
-        let result = transformer.process(mentionsMarkdown[0]);
-        expect(result).to.deep.equal(mentionsTree[0]);
-
-        result = transformer.process(mentionsMarkdown[1]);
-        expect(result).to.deep.equal(mentionsTree[1]);
-
-        result = transformer.process(mentionsMarkdown[2]);
-        expect(result).to.deep.equal(mentionsTree[2]);
-
-        result = transformer.process(mentionsMarkdown[3]);
-        expect(result).to.deep.equal(mentionsTree[3]);
     });
 });
