@@ -9,6 +9,7 @@ import { dangerouslySkipEscape, escapeInject } from 'vike/server';
 import type { OnRenderHtmlAsync } from 'vike/types';
 import { getPageTitle } from './getPageTitle';
 import 'components/styles';
+import './index.css';
 
 const onRenderHtml: OnRenderHtmlAsync = async (pageContext): ReturnType<OnRenderHtmlAsync> => {
     const { Page } = pageContext;

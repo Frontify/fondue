@@ -4,7 +4,8 @@
     "version": "0.0.0",
     "type": "module",
     "files": [
-        "dist"
+        "dist",
+        "tailwind.config.js"
     ],
     "main": "./dist/component-library.cjs",
     "module": "./dist/component-library.js",
@@ -17,7 +18,8 @@
             "import": "./dist/lib/component-lib.js",
             "types": "./dist/lib/component-lib.d.ts"
         },
-        "./styles": "./dist/lib/index.css"
+        "./styles": "./dist/lib/index.css",
+        "./tailwind": "./tailwind.config.js"
     },
     "scripts": {
         "dev": "tsc && concurrently 'vite build --watch' 'contentlayer dev'",
@@ -36,6 +38,7 @@
     },
     "dependencies": {
         "@frontify/fondue-tokens": "3.4.0",
+        "@tailwindcss/forms": "^0.5.3",
         "concurrently": "^8.2.2",
         "contentlayer": "^0.3.4",
         "postcss": "^8.4.33",

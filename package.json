@@ -6,7 +6,7 @@
         "dev": "pnpm --filter {packages/components} --filter {docs} --parallel dev",
         "build": "pnpm build:fondue",
         "build:fondue": "pnpm --stream --filter {packages/fondue} build",
-        "lint": "pnpm --stream --filter {packages/**} lint",
+        "lint": "pnpm --stream --filter {packages/**} --filter {docs} lint",
         "typecheck": "pnpm --stream --filter {packages/**} --parallel typecheck",
         "ci:version": "pnpm build && changeset version",
         "ci:publish": "pnpm build && changeset publish"
