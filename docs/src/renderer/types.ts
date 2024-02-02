@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-namespace */
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 // https://vike.dev/pageContext#typescript
 declare global {
     namespace Vike {

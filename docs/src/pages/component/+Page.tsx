@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { usePageContext } from '../../renderer/usePageContext';
 
 export { Page };
@@ -9,9 +11,5 @@ function Page() {
         return null;
     }
 
-    return (
-        <>
-            <h1>{data.component.title}</h1>
-        </>
-    );
+    return <h1>{data.component.title}</h1>;
 }

@@ -14,6 +14,8 @@ If you are developing a production application, we recommend updating the config
 - Configure the top-level `parserOptions` property like this:
 
 ```js
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 export default {
   // other rules...
   parserOptions: {
@@ -22,7 +24,7 @@ export default {
     project: ['./tsconfig.json', './tsconfig.node.json'],
     tsconfigRootDir: __dirname,
   },
-}
+};
 ```
 
 - Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`

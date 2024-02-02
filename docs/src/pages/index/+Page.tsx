@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { Tag } from 'components';
 import { allComponents } from 'components/content';
 export { Page };

@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 export { route };
 
 import { render } from 'vike/abort';

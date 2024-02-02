@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { usePageContext } from '../../renderer/usePageContext';
 
 export const Page = () => {
