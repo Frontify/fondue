@@ -49,7 +49,7 @@ describe('serializeNodesToHtml()', () => {
         expect(serialized).to.contain('&lt;img src=x onerror=&#39;alert(123)&#39;/&gt;\\n');
     });
 
-    describe('paragraf', () => {
+    describe('paragraph', () => {
         it('serializes an empty p node to a paragraph with an zero width space', () => {
             const node = [
                 {
