@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { allComponents } from 'components/content';
+
 export { onBeforePrerenderStart };
 
 async function onBeforePrerenderStart() {
-    console.log('TEST');
-
-    return ['/component/ggg', '/component/aaaa', '/component/bbb'];
+    return allComponents.map((component) => `/component/${component.url}`);
 }

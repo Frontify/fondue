@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MdxContent } from './MdxContent';
+import { MdxContent } from '../../components/MdxContent';
 import { usePageContext } from '../../renderer/usePageContext';
 
 export { Page };
@@ -11,10 +11,6 @@ function Page() {
     if (!data) {
         return null;
     }
-
-    console.log('CODE');
-
-    console.log(data.component.body);
 
     return (
         <>

@@ -18,8 +18,6 @@ const data = async (pageContext: PageContextServer) => {
         throw render(404, "This Component Doesn't exist");
     }
 
-    console.log(component);
-
     return {
         component,
     };
