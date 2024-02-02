@@ -68,8 +68,11 @@ describe('Slate To Markdown transformer', () => {
     });
 
     it('should transform paragraph', () => {
-        const result = transformer.process(paragraphTree);
-        expect(result).to.deep.equal(paragraphMarkdown);
+        let result = transformer.process(paragraphTree[0]);
+        expect(result).to.deep.equal(paragraphMarkdown[0]);
+
+        result = transformer.process(paragraphTree[1]);
+        expect(result).to.deep.equal(paragraphMarkdown[1]);
     });
 
     it('should transform unordered list', () => {
@@ -158,5 +161,17 @@ describe('Slate To Markdown transformer', () => {
 
         result = transformer.process(mentionsTree[3]);
         expect(result).to.deep.equal(mentionsMarkdown[3]);
+    });
+});
+
+describe('Slate To Markdown transformer', () => {
+    const transformer = Transform.use(new SlateToMarkdown());
+
+    it('should transform paragraph', () => {
+        let result = transformer.process(paragraphTree[1]);
+        expect(result).to.deep.equal(paragraphMarkdown[1]);
+
+        result = transformer.process(paragraphTree[2]);
+        expect(result).to.deep.equal(paragraphMarkdown[2]);
     });
 });
