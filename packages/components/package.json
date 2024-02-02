@@ -16,7 +16,8 @@
         ".": {
             "import": "./dist/lib/component-lib.js",
             "types": "./dist/lib/component-lib.d.ts"
-        }
+        },
+        "./styles": "./dist/lib/index.css"
     },
     "scripts": {
         "dev": "tsc && concurrently 'vite build --watch' 'contentlayer dev'",

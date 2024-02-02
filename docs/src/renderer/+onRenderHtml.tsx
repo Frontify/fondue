@@ -1,39 +1,32 @@
 // https://vike.dev/onRenderHtml
 export { onRenderHtml };
 
-import ReactDOMServer from "react-dom/server";
-import { PageShell } from "./PageShell";
-import { escapeInject, dangerouslySkipEscape } from "vike/server";
-import type { OnRenderHtmlAsync } from "vike/types";
-import { getPageTitle } from "./getPageTitle";
+import ReactDOMServer from 'react-dom/server';
+import { PageShell } from './PageShell';
+import { escapeInject, dangerouslySkipEscape } from 'vike/server';
+import type { OnRenderHtmlAsync } from 'vike/types';
+import { getPageTitle } from './getPageTitle';
+import 'components/styles';
 
-const onRenderHtml: OnRenderHtmlAsync = async (
-  pageContext
-): ReturnType<OnRenderHtmlAsync> => {
-  const { Page } = pageContext;
+const onRenderHtml: OnRenderHtmlAsync = async (pageContext): ReturnType<OnRenderHtmlAsync> => {
+    const { Page } = pageContext;
 
-  // This onRenderHtml() hook only supports SSR, see https://vike.dev/render-modes for how to modify
-  // onRenderHtml() to support SPA
-  if (!Page)
-    throw new Error(
-      "My onRenderHtml() hook expects pageContext.Page to be defined"
+    // This onRenderHtml() hook only supports SSR, see https://vike.dev/render-modes for how to modify
+    // onRenderHtml() to support SPA
+    if (!Page) throw new Error('My onRenderHtml() hook expects pageContext.Page to be defined');
+
+    // Alternativly, we can use an HTML stream, see https://vike.dev/streaming
+    const pageHtml = ReactDOMServer.renderToString(
+        <PageShell pageContext={pageContext}>
+            <Page />
+        </PageShell>,
     );
 
-  // Alternativly, we can use an HTML stream, see https://vike.dev/streaming
-  const pageHtml = ReactDOMServer.renderToString(
-    <PageShell pageContext={pageContext}>
-      <Page />
-    </PageShell>
-  );
+    // See https://vike.dev/head
+    const title = getPageTitle(pageContext);
+    const desc = pageContext.data?.description || pageContext.config.description || 'Demo of using Vike';
 
-  // See https://vike.dev/head
-  const title = getPageTitle(pageContext);
-  const desc =
-    pageContext.data?.description ||
-    pageContext.config.description ||
-    "Demo of using Vike";
-
-  const documentHtml = escapeInject`<!DOCTYPE html>
+    const documentHtml = escapeInject`<!DOCTYPE html>
     <html lang="en">
       <head>
         <meta charset="UTF-8" />
@@ -46,10 +39,10 @@ const onRenderHtml: OnRenderHtmlAsync = async (
       </body>
     </html>`;
 
-  return {
-    documentHtml,
-    pageContext: {
-      // We can add custom pageContext properties here, see https://vike.dev/pageContext#custom
-    },
-  };
+    return {
+        documentHtml,
+        pageContext: {
+            // We can add custom pageContext properties here, see https://vike.dev/pageContext#custom
+        },
+    };
 };
