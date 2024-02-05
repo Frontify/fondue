@@ -134,6 +134,9 @@ export default function deserialize<T extends InputNodeTypes>(
             } as ThematicBreakNode<T>;
 
         case 'text':
+            // Unicode Character 'NO-BREAK SPACE' (U+00A0)
+            return { text: node.value?.replace(/\u00A0/g, '').length === 0 ? '' : node.value };
+
         default:
             return { text: node.value ?? '' };
     }
