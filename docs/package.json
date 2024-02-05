@@ -16,14 +16,14 @@
     },
     "dependencies": {
         "@frontify/fondue": "workspace:*",
-        "@tailwindcss/forms": "^0.5.3",
         "@frontify/fondue-components": "workspace:*",
+        "@frontify/fondue-tokens": "^3.4.0",
+        "@tailwindcss/forms": "^0.5.3",
         "mdx-bundler": "^10.0.1",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "vike": "^0.4.160",
-        "vike-react": "^0.4.4",
-        "@frontify/fondue-tokens": "^3.4.0"
+        "vike-react": "^0.4.4"
     },
     "devDependencies": {
         "@types/react": "^18.2.43",
@@ -32,10 +32,11 @@
         "@typescript-eslint/parser": "^6.14.0",
         "@vitejs/plugin-react": "^4.2.1",
         "autoprefixer": "^10.4.17",
-        "eslint": "^8.55.0",
+        "eslint": "^8.56.0",
         "eslint-plugin-react-hooks": "^4.6.0",
         "eslint-plugin-react-refresh": "^0.4.5",
         "postcss": "^8.4.33",
+        "prettier": "^3.2.5",
         "tailwindcss": "^3.4.1",
         "typescript": "^5.2.2",
         "vite": "^5.0.8"

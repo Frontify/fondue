@@ -25,6 +25,8 @@
         "dev": "tsc && concurrently 'vite build --watch' 'contentlayer dev'",
         "build": "tsc && pnpm build:lib && contentlayer build ",
         "build:lib": "vite build",
+        "lint": "eslint .",
+        "lint:fix": "eslint --fix .",
         "preview": "vite preview"
     },
     "dependencies": {
@@ -43,6 +45,8 @@
     },
     "devDependencies": {
         "@types/react": "^18.2.51",
+        "eslint": "^8.56.0",
+        "prettier": "^3.2.5",
         "typescript": "^5.2.2",
         "vite": "^5.0.8",
         "vite-plugin-lib-inject-css": "^1.3.0"
