@@ -4,6 +4,8 @@ on:
     pull_request:
         paths:
             - packages/fondue/**
+            - packages/components/**
+            - packages/docs/**
 
 # Ensures that only one workflow per branch will run at a time.
 concurrency:
