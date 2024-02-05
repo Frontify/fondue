@@ -19,7 +19,7 @@ import {
 import { ELEMENT_CHECK_ITEM } from '../id';
 import { IconListCheck16 } from '@foundation/Icon';
 import { IconStylingWrapper } from '@components/RichTextEditor/Plugins/helper';
-import { ToolbarButton } from '@components/RichTextEditor/components/Toolbar/Toolbar';
+import { ToolbarButton } from '@components/RichTextEditor/components/Toolbar/ToolbarButton';
 
 export const CheckboxListToolbarButton = ({ id, type = ELEMENT_CHECK_ITEM, active }: any & { type?: string }) => {
     const editor = useEditorState(useEventPlateId(id));

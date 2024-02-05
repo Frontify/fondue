@@ -3,7 +3,7 @@
 import { ReactElement, ReactNode } from 'react';
 import { AnyObject, PlateEditor, PlatePlugin } from '@udecode/plate';
 import type { Plugin } from './Plugin';
-import { Position } from '../EditorPositioningWrapper';
+import { Position } from '../components/EditorPositioningWrapper';
 
 export type Unknown = unknown;
 export type ObjectType<T extends Unknown> = Record<string, T>;

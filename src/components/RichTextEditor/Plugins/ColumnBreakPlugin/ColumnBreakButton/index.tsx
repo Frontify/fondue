@@ -3,7 +3,7 @@
 import { IconTextColumnBreak16 } from '@foundation/Icon/Generated';
 import { ButtonWrapper, IconStylingWrapper } from '../../helper';
 import { PluginButtonProps } from '../../types';
-import { ColumnBreakToolbarButton } from '../../../components/Toolbar/Buttons/ColumnBreakToolbarButton';
+import { ColumnBreakToolbarButton } from '../ColumnBreakToolbarButton';
 
 export const ColumnBreakButton = ({ id }: PluginButtonProps) => {
     return (

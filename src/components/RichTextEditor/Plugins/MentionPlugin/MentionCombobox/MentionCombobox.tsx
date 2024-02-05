@@ -2,7 +2,7 @@
 
 import { MentionComboboxItem } from '@components/RichTextEditor/Plugins/MentionPlugin/MentionCombobox/MentionComboboxItem';
 // import { getMentionOnSelectItem } from '@components/RichTextEditor/Plugins/MentionPlugin/getMentionOnSelectItem';
-import { Combobox } from '@components/RichTextEditor/components/Combobox';
+import { Combobox } from '@components/RichTextEditor/components/ComboBox/Combobox';
 import { ComboboxProps } from '@udecode/plate-combobox';
 import { getPluginOptions, useEditorRef } from '@udecode/plate-common';
 import { ELEMENT_MENTION, MentionPlugin, getMentionOnSelectItem } from '@udecode/plate-mention';

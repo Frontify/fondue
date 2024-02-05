@@ -5,7 +5,7 @@ import { useMemoizedId } from '@hooks/useMemoizedId';
 import { Plate, PlateContent, TEditableProps } from '@udecode/plate';
 import { ContentReplacement } from './ContentReplacement';
 import { RichTextEditorProvider } from './context/RichTextEditorContext';
-import { Position } from './EditorPositioningWrapper';
+import { Position } from './components/EditorPositioningWrapper';
 import { forceToFocusNextElement } from './helpers';
 import { useEditorState } from './hooks';
 import { GAP_DEFAULT, KEY_ELEMENT_BREAK_AFTER_COLUMN, PluginComposer, defaultPlugins } from './Plugins';

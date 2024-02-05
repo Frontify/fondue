@@ -2,7 +2,7 @@
 
 import { ReactNode, createContext, useContext } from 'react';
 import { useEditorResize } from '../hooks';
-import { PlateWrapper } from '../EditorPositioningWrapper/PlateWrapper';
+import { PlateWrapper } from '../components/EditorPositioningWrapper/PlateWrapper';
 
 type EditorResizeContextProps = {
     editorWidth: number | undefined;

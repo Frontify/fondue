@@ -2,7 +2,7 @@
 
 import { CSSProperties, ReactNode } from 'react';
 import { AnyObject, PlatePlugin, createPlugins } from '@udecode/plate';
-import { Toolbar } from '../Toolbar';
+import { Toolbar } from '../components/Toolbar';
 import type { PluginComposer } from './PluginComposer';
 
 type GeneratePluginsReturn = {

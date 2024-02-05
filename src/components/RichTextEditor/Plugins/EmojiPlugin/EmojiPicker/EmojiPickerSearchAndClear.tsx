@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { Icons } from '@components/RichTextEditor/components/Toolbar/Icons';
 import { cn } from '@udecode/cn';
 import { UseEmojiPickerType } from '@udecode/plate-emoji';
-import { Icons } from '@components/RichTextEditor/components/Icons';
 
 export type EmojiPickerSearchAndClearProps = Pick<UseEmojiPickerType, 'i18n' | 'searchValue' | 'clearSearch'>;
 

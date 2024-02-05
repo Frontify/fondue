@@ -49,8 +49,8 @@ import {
     TOOLBAR_GROUP_1,
     TOOLBAR_GROUP_2,
 } from './fixtures/selectors';
-import { SubscriptPlugin } from '@components/RichTextEditor/Plugins/SubscriptPlugin';
-import { SuperscriptPlugin } from '@components/RichTextEditor/Plugins/SuperscriptPlugin';
+import { SubscriptPlugin } from '@components/RichTextEditor/Plugins/MarkPlugin/SubscriptPlugin';
+import { SuperscriptPlugin } from '@components/RichTextEditor/Plugins/MarkPlugin/SuperscriptPlugin';
 
 const checkPosition = (chainers: string, value: number, text: string) => {
     cy.window().then(() => {

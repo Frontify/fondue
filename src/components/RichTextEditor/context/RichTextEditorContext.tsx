@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { CSSProperties, ReactNode, createContext, useContext } from 'react';
-import { Position, getEditorWrapperClassNames } from '../EditorPositioningWrapper';
+import { Position, getEditorWrapperClassNames } from '../components/EditorPositioningWrapper';
 import { EditorResizeContextProvider } from './EditorResizeContext';
 import { defaultStyles } from '../utils';
 

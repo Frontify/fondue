@@ -4,10 +4,10 @@ import { cn, withRef } from '@udecode/cn';
 import { PortalBody, useComposedRef } from '@udecode/plate-common';
 import { FloatingToolbarState, useFloatingToolbar, useFloatingToolbarState } from '@udecode/plate-floating';
 
-import { Toolbar } from './Toolbar';
+import { ToolbarWrapper } from './ToolbarWrapper';
 
 export const FloatingToolbar = withRef<
-    typeof Toolbar,
+    typeof ToolbarWrapper,
     {
         state?: FloatingToolbarState;
         className: string;
@@ -31,9 +31,9 @@ export const FloatingToolbar = withRef<
 
     return (
         <PortalBody>
-            <Toolbar ref={ref} className={cn(className)} {...rootProps} {...props}>
+            <ToolbarWrapper ref={ref} className={cn(className)} {...rootProps} {...props}>
                 {children}
-            </Toolbar>
+            </ToolbarWrapper>
         </PortalBody>
     );
 });

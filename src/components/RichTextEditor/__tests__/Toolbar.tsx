@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { RichTextEditor } from '../RichTextEditor';
-import { Position } from '../EditorPositioningWrapper';
+import { Position } from '../components/EditorPositioningWrapper';
 import { BoldPlugin, ItalicPlugin, LinkPlugin, PluginComposer, UnorderedListPlugin } from '../Plugins';
 import { insertTextAndOpenToolbar } from './fixtures/RichTextEditor';
 

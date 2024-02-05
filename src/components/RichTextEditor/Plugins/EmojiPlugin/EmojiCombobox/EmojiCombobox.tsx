@@ -4,7 +4,7 @@ import { KEY_EMOJI, TEmojiCombobox, useEmojiComboboxState } from '@udecode/plate
 
 import { EmojiComboboxItem } from '@components/RichTextEditor/Plugins/EmojiPlugin/EmojiCombobox/EmojiComboboxItem';
 import { useEmojiSelect } from '@components/RichTextEditor/Plugins/EmojiPlugin/useEmojiSelect';
-import { Combobox } from '@components/RichTextEditor/components/Combobox';
+import { Combobox } from '@components/RichTextEditor/components/ComboBox/Combobox';
 
 export function EmojiCombobox({ pluginKey = KEY_EMOJI, id = pluginKey, ...props }: TEmojiCombobox) {
     const { trigger } = useEmojiComboboxState({ pluginKey });

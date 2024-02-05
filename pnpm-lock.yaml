@@ -38,6 +38,9 @@ dependencies:
   '@radix-ui/react-separator':
     specifier: ^1.0.3
     version: 1.0.3(@types/react-dom@18.2.10)(@types/react@18.2.25)(react-dom@18.2.0)(react@18.2.0)
+  '@radix-ui/react-slot':
+    specifier: ^1.0.2
+    version: 1.0.2(@types/react@18.2.25)(react@18.2.0)
   '@radix-ui/react-toolbar':
     specifier: ^1.0.4
     version: 1.0.4(@types/react-dom@18.2.10)(@types/react@18.2.25)(react-dom@18.2.0)(react@18.2.0)
@@ -168,6 +171,9 @@ dependencies:
     specifier: ^30.1.2
     version: 30.1.2(@types/react@18.2.25)(immer@9.0.12)(react-dom@18.2.0)(react@18.2.0)(scheduler@0.23.0)(slate-history@0.93.0)(slate-hyperscript@0.77.0)(slate-react@0.101.6)(slate@0.94.1)
   '@udecode/plate-floating':
+    specifier: ^30.1.2
+    version: 30.1.2(@types/react@18.2.25)(immer@9.0.12)(react-dom@18.2.0)(react@18.2.0)(scheduler@0.23.0)(slate-history@0.93.0)(slate-hyperscript@0.77.0)(slate-react@0.101.6)(slate@0.94.1)
+  '@udecode/plate-link':
     specifier: ^30.1.2
     version: 30.1.2(@types/react@18.2.25)(immer@9.0.12)(react-dom@18.2.0)(react@18.2.0)(scheduler@0.23.0)(slate-history@0.93.0)(slate-hyperscript@0.77.0)(slate-react@0.101.6)(slate@0.94.1)
   '@udecode/plate-list':

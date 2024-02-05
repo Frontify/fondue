@@ -58,12 +58,12 @@ export const useInsertModal = () => {
     useEffect(() => {
         const legacyUrl = getLegacyUrl(editor);
         const url = getUrl(editor);
-
+        const isNewTab = floatingLinkSelectors.newTab();
         dispatch({
             type: 'INIT',
             payload: {
                 text: floatingLinkSelectors.text(),
-                newTab: floatingLinkSelectors.newTab() ? CheckboxState.Checked : CheckboxState.Unchecked,
+                newTab: isNewTab ? CheckboxState.Checked : CheckboxState.Unchecked,
                 url: legacyUrl && url === '' ? legacyUrl : floatingLinkSelectors.url(),
             },
         });
@@ -88,7 +88,7 @@ export const useInsertModal = () => {
     };
 
     const onCancel = () => {
-        floatingLinkActions.hide();
+        floatingLinkActions.reset();
     };
 
     const onSave = (event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent> | KeyboardEvent | undefined) => {

@@ -7,7 +7,7 @@ import { EmojiPicker } from './EmojiPicker/EmojiPicker';
 import { EmojiToolbarDropdown } from '@components/RichTextEditor/Plugins/EmojiPlugin/EmojiToolbarDropdown';
 import { useEmojiDropdownMenuState } from '@udecode/plate-emoji';
 
-import { ToolbarButton } from '@components/RichTextEditor/components/Toolbar/Toolbar';
+import { ToolbarButton } from '@components/RichTextEditor/components/Toolbar/ToolbarButton';
 import { useEmojiSelect } from '@components/RichTextEditor/Plugins/EmojiPlugin/useEmojiSelect';
 
 export const EmojiButton = ({ id }: PluginButtonProps) => {
