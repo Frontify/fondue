@@ -56,6 +56,9 @@ importers:
       vike:
         specifier: ^0.4.160
         version: 0.4.160(vite@5.0.12)
+      vike-react:
+        specifier: ^0.4.4
+        version: 0.4.4(react-dom@18.2.0)(react@18.2.0)(vike@0.4.160)(vite@5.0.12)
     devDependencies:
       '@frontify/fondue-tokens':
         specifier: ^3.4.0
@@ -14700,6 +14703,11 @@ packages:
     resolution: {integrity: sha512-xHjhDr3cNBK0BzdUJSPXZntQUx/mwMS5Rw4A7lPJ90XGAO6ISP/ePDNuo0vhqOZU+UD5JoodwCAAoZQd3FeAKw==}
     dev: true
 
+  /isbot-fast@1.2.0:
+    resolution: {integrity: sha512-twjuQzy2gKMDVfKGQyQqrx6Uy4opu/fiVUTTpdqtFsd7OQijIp5oXvb27n5EemYXaijh5fomndJt/SPRLsEdSg==}
+    engines: {node: '>=6.0.0'}
+    dev: false
+
   /isexe@2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
     dev: true
@@ -17724,6 +17732,19 @@ packages:
       use-callback-ref: 1.3.0(@types/react@18.2.48)(react@18.2.0)
       use-sidecar: 1.1.2(@types/react@18.2.48)(react@18.2.0)
 
+  /react-streaming@0.3.20(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-+OQzuLLxhpoFRp5DEO0/eXNbBMDfqLrUdPD0uJ66N7LX4ypYHpXUfmPBjzthrI077Q76VtXEXpaTbgUPs2nPfg==}
+    peerDependencies:
+      react: '>=18'
+      react-dom: '>=18'
+    dependencies:
+      '@brillout/import': 0.2.3
+      '@brillout/json-serializer': 0.5.8
+      isbot-fast: 1.2.0
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    dev: false
+
   /react-style-singleton@2.2.1(@types/react@18.2.48)(react@18.2.0):
     resolution: {integrity: sha512-ZWj0fHEMyWkHzKYUr2Bs/4zU6XLmq9HsgBURm7g5pAVfyn49DgUiNgY2d4lXRlYSiCif9YBGpQleewkcqddc7g==}
     engines: {node: '>=10'}
@@ -20100,6 +20121,21 @@ packages:
       '@types/unist': 3.0.0
       unist-util-stringify-position: 4.0.0
       vfile-message: 4.0.2
+    dev: false
+
+  /vike-react@0.4.4(react-dom@18.2.0)(react@18.2.0)(vike@0.4.160)(vite@5.0.12):
+    resolution: {integrity: sha512-d5+dgs7sWfTZ/L1co3SIReFSNrJYHcfxBTtjDtk5MPHVfpkZFtfIRufslWjK5NN/tJYxsDFwqZjLeWmA/s6V1A==}
+    peerDependencies:
+      react: 18.x.x
+      react-dom: 18.x.x
+      vike: ^0.4.160
+      vite: ^4.3.8 || ^5.0.10
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      react-streaming: 0.3.20(react-dom@18.2.0)(react@18.2.0)
+      vike: 0.4.160(vite@5.0.12)
+      vite: 5.0.12(@types/node@18.19.11)
     dev: false
 
   /vike@0.4.160(vite@5.0.12):

@@ -1,12 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { usePageContext } from '../../renderer/usePageContext';
+import { usePageContext } from 'vike-react/usePageContext';
 
 export const Page = () => {
-    const pageContext = usePageContext();
-
     let msg: string; // Message shown to the user
-    const { abortReason, abortStatusCode } = pageContext;
+    const { abortReason, abortStatusCode, is404 } = usePageContext();
     if (typeof abortReason === 'string') {
         // Handle `throw render(abortStatusCode, `You cannot access ${someCustomMessage}`)`
         msg = abortReason;
@@ -18,9 +16,7 @@ export const Page = () => {
         msg = "You cannot access this page because you aren't logged in. Please log in.";
     } else {
         // Fallback error message
-        msg = pageContext.is404
-            ? "This page doesn't exist."
-            : 'Something went wrong. Sincere apologies. Try again (later).';
+        msg = is404 ? "This page doesn't exist." : 'Something went wrong. Sincere apologies. Try again (later).';
     }
 
     return <p>{msg}</p>;
