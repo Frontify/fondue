@@ -1,11 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-/** @type {import('tailwindcss').Config} */
-module.exports = {
-    presets: [require('@Frontify/fondue-tokens/tailwind')],
-    content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+import tailwindForms from '@tailwindcss/forms';
+import type { Config } from 'tailwindcss';
+
+export default {
+    presets: [require('@frontify/fondue-tokens/tailwind')],
+    content: ['./src/**/*.{js,ts,tsx}'],
     plugins: [
-        require('@tailwindcss/forms')({
+        tailwindForms({
             strategy: 'class',
         }),
     ],
@@ -128,4 +130,4 @@ module.exports = {
             },
         },
     },
-};
+} satisfies Config;

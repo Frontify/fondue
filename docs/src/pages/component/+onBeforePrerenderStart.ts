@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { allComponents } from 'components/content';
+import { allComponents } from '@frontify/fondue-components/content';
 
 export { onBeforePrerenderStart };
 

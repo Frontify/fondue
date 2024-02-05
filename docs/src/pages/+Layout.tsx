@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 export { Layout };
-import 'components/styles';
+import '@frontify/fondue-components/styles';
 import '../renderer/index.css';
-import { allComponents } from 'components/content';
+import { allComponents } from '@frontify/fondue-components/content';
 
 const Layout = ({ children }: { children: any }) => {
     return (

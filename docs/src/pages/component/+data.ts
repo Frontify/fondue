@@ -3,7 +3,7 @@
 // https://vike.dev/data
 export { data };
 export type Data = Awaited<ReturnType<typeof data>>;
-import { allComponents } from 'components/content';
+import { allComponents } from '@frontify/fondue-components/content';
 import { render } from 'vike/abort';
 import type { PageContextServer } from 'vike/types';
 
