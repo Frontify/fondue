@@ -12,11 +12,6 @@ export const MdxContent = ({ data }: { data: string }) => {
     return (
         <Component
             components={{
-                h1: (props) => (
-                    <h1 className="tw-text-3xl" {...props}>
-                        {props.children}
-                    </h1>
-                ),
                 ...customComponents,
             }}
         />
