@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 /** @type {import('tailwindcss').Config} */
-
 module.exports = {
     presets: [require('@Frontify/fondue-tokens/tailwind')],
     content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],

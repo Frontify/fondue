@@ -3,9 +3,7 @@
 import { MdxContent } from '../../components/MdxContent';
 import { usePageContext } from 'vike-react/usePageContext';
 
-export { Page };
-
-function Page() {
+export const Page = () => {
     const { data } = usePageContext();
 
     if (!data) {
@@ -18,4 +16,4 @@ function Page() {
             <MdxContent data={data.component.body.code} />
         </>
     );
-}
+};

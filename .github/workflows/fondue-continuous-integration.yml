@@ -5,7 +5,7 @@ on:
         paths:
             - packages/fondue/**
             - packages/components/**
-            - packages/docs/**
+            - docs/**
 
 # Ensures that only one workflow per branch will run at a time.
 concurrency:

@@ -7,8 +7,6 @@ import * as customComponents from 'components';
 export const MdxContent = ({ data }: { data: string }) => {
     const Component = useMemo(() => getMDXComponent(data), [data]);
 
-    console.log({ ...customComponents });
-
     return (
         <Component
             components={{
