@@ -30,6 +30,7 @@
     "dependencies": {
         "@frontify/fondue-tokens": "3.4.0",
         "@tailwindcss/forms": "^0.5.3",
+        "@vitejs/plugin-react": "^4.2.1",
         "concurrently": "^8.2.2",
         "contentlayer": "^0.3.4",
         "postcss": "^8.4.33",
