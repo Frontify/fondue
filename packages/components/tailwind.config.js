@@ -2,7 +2,6 @@
 
 /** @type {import('tailwindcss').Config} */
 
-import tokens from '@frontify/fondue-tokens';
 module.exports = {
     presets: [require('@Frontify/fondue-tokens/tailwind')],
     content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
