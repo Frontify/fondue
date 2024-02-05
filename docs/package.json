@@ -12,6 +12,7 @@
         "build": "tsc && vite build",
         "lint": "eslint .",
         "lint:fix": "eslint --fix .",
+        "lint:prettier": "prettier --check .",
         "preview": "vite preview"
     },
     "dependencies": {
