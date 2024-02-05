@@ -17,7 +17,7 @@
     "dependencies": {
         "@frontify/fondue": "workspace:*",
         "@tailwindcss/forms": "^0.5.3",
-        "components": "workspace:*",
+        "@frontify/fondue-components": "workspace:*",
         "mdx-bundler": "^10.0.1",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
