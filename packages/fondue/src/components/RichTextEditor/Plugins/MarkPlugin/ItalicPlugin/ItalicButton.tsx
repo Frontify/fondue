@@ -3,19 +3,19 @@
 import { getHotkeyByPlatform } from '@components/RichTextEditor/helpers/getHotkeyByPlatform';
 import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
 import { IconTextFormatItalic16 } from '@foundation/Icon/Generated';
-import { MarkToolbarButton, getPluginType } from '@udecode/plate';
-import { ButtonWrapper, IconStylingWrapper, buttonStyles, getButtonClassNames } from '../helper';
-import { PluginButtonProps } from '../types';
+import { getPluginType } from '@udecode/plate';
+import { ButtonWrapper, IconStylingWrapper } from '../../helper';
+import { PluginButtonProps } from '../../types';
+import { MarkToolbarButton } from '@components/RichTextEditor/Plugins/MarkPlugin/MarkToolbarButton';
 
 export const ItalicButton = ({ editor, id }: PluginButtonProps) => (
     <ButtonWrapper id={id}>
         <MarkToolbarButton
+            key={id}
             tooltip={getTooltip(`Italic\n${getHotkeyByPlatform('Ctrl+I')}`)}
-            type={getPluginType(editor, id)}
-            icon={<IconStylingWrapper icon={<IconTextFormatItalic16 />} />}
-            classNames={getButtonClassNames()}
-            styles={buttonStyles}
-            actionHandler="onMouseDown"
-        />
+            nodeType={getPluginType(editor, id)}
+        >
+            <IconStylingWrapper icon={<IconTextFormatItalic16 />} />
+        </MarkToolbarButton>
     </ButtonWrapper>
 );

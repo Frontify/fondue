@@ -3,7 +3,7 @@
 import { createItalicPlugin } from '@udecode/plate';
 import { ITALIC_PLUGIN } from './id';
 import { ITALIC_CLASSES, ItalicMarkupElement } from './ItalicMarkupElement';
-import { Plugin, PluginProps } from '../Plugin';
+import { Plugin, PluginProps } from '../../Plugin';
 import { ItalicButton } from './ItalicButton';
 
 const PLATE_ITALIC_RULES = [

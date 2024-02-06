@@ -1,22 +1,21 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MarkToolbarButton, getPluginType } from '@udecode/plate';
+import { getPluginType } from '@udecode/plate';
 import { IconTextFormatBold16 } from '@foundation/Icon/Generated';
-import { ButtonWrapper, IconStylingWrapper, buttonStyles, getButtonClassNames } from '../helper';
-import { PluginButtonProps } from '../types';
+import { ButtonWrapper, IconStylingWrapper } from '../../helper';
+import { PluginButtonProps } from '../../types';
 import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
 import { getHotkeyByPlatform } from '@components/RichTextEditor/helpers/getHotkeyByPlatform';
+import { MarkToolbarButton } from '@components/RichTextEditor/Plugins/MarkPlugin/MarkToolbarButton';
 
 export const BoldButton = ({ editor, id }: PluginButtonProps) => (
     <ButtonWrapper id={id}>
         <MarkToolbarButton
             tooltip={getTooltip(`Bold\n${getHotkeyByPlatform('Ctrl+B')}`)}
             key={id}
-            type={getPluginType(editor, id)}
-            icon={<IconStylingWrapper icon={<IconTextFormatBold16 />} />}
-            classNames={getButtonClassNames()}
-            styles={buttonStyles}
-            actionHandler="onMouseDown"
-        />
+            nodeType={getPluginType(editor, id)}
+        >
+            <IconStylingWrapper icon={<IconTextFormatBold16 />} />
+        </MarkToolbarButton>
     </ButtonWrapper>
 );

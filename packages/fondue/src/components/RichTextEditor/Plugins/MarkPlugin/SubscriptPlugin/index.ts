@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { createSubscriptPlugin } from '@udecode/plate';
-import { Plugin, PluginProps } from '../Plugin';
-import { SubscriptButton } from '@components/RichTextEditor/Plugins/SubscriptPlugin/SubscriptButton';
-import { SubscriptMarkupElement } from '@components/RichTextEditor/Plugins/SubscriptPlugin/SubscriptMarkupElement';
-import { SUBSCRIPT_PLUGIN } from '@components/RichTextEditor/Plugins/SubscriptPlugin/id';
+import { Plugin, PluginProps } from '../../Plugin';
+import { SubscriptButton } from '@components/RichTextEditor/Plugins/MarkPlugin/SubscriptPlugin/SubscriptButton';
+import { SubscriptMarkupElement } from '@components/RichTextEditor/Plugins/MarkPlugin/SubscriptPlugin/SubscriptMarkupElement';
+import { SUBSCRIPT_PLUGIN } from '@components/RichTextEditor/Plugins/MarkPlugin/SubscriptPlugin/id';
 
 export class SubscriptPlugin extends Plugin {
     constructor(props?: PluginProps) {

@@ -4,7 +4,7 @@ import { createBoldPlugin } from '@udecode/plate';
 import { BOLD_PLUGIN } from './id';
 import { BOLD_CLASSES, BoldMarkupElement } from './BoldMarkupElement';
 import { BoldButton } from './BoldButton';
-import { Plugin, PluginProps } from '../Plugin';
+import { Plugin, PluginProps } from '../../Plugin';
 
 const PLATE_BOLD_RULES = [
     { validNodeName: ['STRONG', 'B'] },

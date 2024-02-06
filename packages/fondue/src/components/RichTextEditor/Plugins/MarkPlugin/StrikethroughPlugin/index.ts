@@ -4,7 +4,7 @@ import { createStrikethroughPlugin } from '@udecode/plate';
 import { STRIKETHROUGH_PLUGIN } from './id';
 import { StrikethroughMarkupElement } from './StrikethroughMarkupElement';
 import { StrikethroughButton } from './StrikethroughButton';
-import { Plugin, PluginProps } from '../Plugin';
+import { Plugin, PluginProps } from '../../Plugin';
 
 export class StrikethroughPlugin extends Plugin {
     constructor(props?: PluginProps) {

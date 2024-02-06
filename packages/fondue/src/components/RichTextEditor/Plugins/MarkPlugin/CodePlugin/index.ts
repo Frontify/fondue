@@ -4,7 +4,7 @@ import { createCodePlugin } from '@udecode/plate';
 import { CODE_PLUGIN } from './id';
 import { CodeMarkupElement } from './CodeMarkupElement';
 import { CodeButton } from './CodeButton';
-import { Plugin, PluginProps } from '../Plugin';
+import { Plugin, PluginProps } from '../../Plugin';
 
 export class CodePlugin extends Plugin {
     constructor(props?: PluginProps) {

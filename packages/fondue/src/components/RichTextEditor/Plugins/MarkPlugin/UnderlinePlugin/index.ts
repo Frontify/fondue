@@ -4,7 +4,7 @@ import { createUnderlinePlugin } from '@udecode/plate';
 import { UNDERLINE_PLUGIN } from './id';
 import { UNDERLINE_CLASSES, UnderlineMarkupElement } from './UnderlineMarkupElement';
 import { UnderlineButton } from './UnderlineButton';
-import { Plugin, PluginProps } from '../Plugin';
+import { Plugin, PluginProps } from '../../Plugin';
 
 const PLATE_UNDERLINE_RULES = [
     {

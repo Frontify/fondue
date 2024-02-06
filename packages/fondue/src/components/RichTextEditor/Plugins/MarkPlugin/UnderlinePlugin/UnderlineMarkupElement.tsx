@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { MARK_UNDERLINE, PlateRenderLeafProps } from '@udecode/plate';
-import { MarkupElement } from '../MarkupElement';
+import { MarkupElement } from '../../MarkupElement';
 
 export const UNDERLINE_CLASSES = 'tw-underline';
 
