@@ -1,19 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { AlignCenterPlugin, AlignJustifyPlugin, AlignLeftPlugin, AlignRightPlugin } from './AlignPlugin';
-import { BoldPlugin } from './MarkPlugin/BoldPlugin';
 import { CheckboxListPlugin } from './CheckboxListPlugin';
-import { CodePlugin } from './MarkPlugin/CodePlugin';
 import { EmojiPlugin } from './EmojiPlugin';
 import { SoftBreakPlugin } from './SoftBreakPlugin';
-import { ItalicPlugin } from './MarkPlugin/ItalicPlugin';
+import { BoldPlugin, CodePlugin, ItalicPlugin, StrikethroughPlugin, UnderlinePlugin } from './MarkPlugin';
 import { LinkPlugin } from './LinkPlugin';
 import { OrderedListPlugin, UnorderedListPlugin } from './ListPlugin';
 import { PluginComposer } from './PluginComposer';
 import { ResetFormattingPlugin } from './ResetFormattingPlugin';
-import { StrikethroughPlugin } from './MarkPlugin/StrikethroughPlugin';
 import { ParagraphPlugin, TextStylePlugin } from './TextStylePlugin';
-import { UnderlinePlugin } from './MarkPlugin/UnderlinePlugin';
 
 export const defaultPlugins = new PluginComposer();
 defaultPlugins
