@@ -2,9 +2,10 @@
 
 import { IconPeople12 } from '@foundation/Icon/Generated';
 import { MentionableCategory } from '../types';
-import { MarkupElementNodeComponentType, MarkupElementNodeType, MarkupElementProps } from './types';
+import { PlateRenderElementProps } from '@udecode/plate';
+import { MarkupElementNodeComponentType, MarkupElementNodeType } from './types';
 
-const MarkupElementNode = ({ attributes, element, nodeProps, children }: MarkupElementProps) => (
+const MarkupElementNode = ({ attributes, element, nodeProps, children }: PlateRenderElementProps) => (
     <span
         {...attributes}
         dir="auto"

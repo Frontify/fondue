@@ -46,7 +46,7 @@ export const withList = <V extends Value = Value, E extends PlateEditor<V> = Pla
     };
 
     editor.deleteForward = (unit) => {
-        if (deleteForwardList(editor)) {
+        if (deleteForwardList(editor, () => {}, unit)) {
             return;
         }
 
