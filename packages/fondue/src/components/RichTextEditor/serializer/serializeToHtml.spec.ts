@@ -49,17 +49,41 @@ describe('serializeNodesToHtml()', () => {
         expect(serialized).to.contain('&lt;img src=x onerror=&#39;alert(123)&#39;/&gt;\\n');
     });
 
-    it('serializes an empty p node to a paragraph with an zero width space', () => {
-        const node = [
-            {
-                type: 'p',
-                children: [{ text: '' }],
-            },
-        ];
+    describe('paragraph', () => {
+        it('serializes an empty p node to a paragraph with an zero width space', () => {
+            const node = [
+                {
+                    type: 'p',
+                    children: [{ text: '' }],
+                },
+            ];
 
-        const result = serializeNodesToHtml(node);
-        expect(result).to.equal(
-            '<p dir="auto" class="tw-break-words" style="font-size: 14px; font-style: normal; font-weight: normal;">&#xFEFF;</p>',
-        );
+            const result = serializeNodesToHtml(node);
+            expect(result).to.equal(
+                '<p dir="auto" class="tw-break-words" style="font-size: 14px; font-style: normal; font-weight: normal;">&#xFEFF;</p>',
+            );
+        });
+
+        it('serializes an empty p node to a paragraph e', () => {
+            const node = [
+                {
+                    type: 'p',
+                    children: [{ text: 'First paragraph' }],
+                },
+                {
+                    type: 'p',
+                    children: [{ text: '' }],
+                },
+                {
+                    type: 'p',
+                    children: [{ text: 'Third paragraph' }],
+                },
+            ];
+
+            const result = serializeNodesToHtml(node);
+            expect(result).to.equal(
+                '<p dir="auto" class="tw-break-words" style="font-size: 14px; font-style: normal; font-weight: normal;">First paragraph</p><p dir="auto" class="tw-break-words" style="font-size: 14px; font-style: normal; font-weight: normal;">&#xFEFF;</p><p dir="auto" class="tw-break-words" style="font-size: 14px; font-style: normal; font-weight: normal;">Third paragraph</p>',
+            );
+        });
     });
 });

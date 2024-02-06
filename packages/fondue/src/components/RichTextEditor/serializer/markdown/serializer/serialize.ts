@@ -92,8 +92,12 @@ const process = (chunk: NodeType, options: OptionType) => {
         children = BREAK_TAG;
     }
 
+    if (children === '' && nodeTypes.paragraph === type) {
+        children = '&nbsp;';
+    }
+
     if (children === '' && !IGNORE_ELEMENTS.find((k) => nodeTypes[k] === type)) {
-        return;
+        return '';
     }
 
     if (children !== BREAK_TAG && isLeafNode(chunk)) {
