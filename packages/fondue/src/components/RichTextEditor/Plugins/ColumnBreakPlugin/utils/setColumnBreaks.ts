@@ -11,7 +11,7 @@ import {
     setElements,
     unsetNodes,
 } from '@udecode/plate';
-import { Location } from 'slate';
+import { TLocation } from '@udecode/slate';
 import { KEY_ELEMENT_BREAK_AFTER_COLUMN } from '../createColumnBreakPlugin';
 
 export type ColumnBreakValue = 'active' | 'inactive' | undefined;
@@ -23,7 +23,7 @@ export const setColumnBreaks = <V extends Value>(
         key = KEY_ELEMENT_BREAK_AFTER_COLUMN,
         value,
         at,
-    }: { at?: Location; value?: string; setNodesOptions?: SetNodesOptions<V> } & PlatePluginKey,
+    }: { at?: TLocation; value?: string; setNodesOptions?: SetNodesOptions<V> } & PlatePluginKey,
 ) => {
     const match: TNodeMatch<ENode<Value>> = (n) => isBlock(editor, n);
 

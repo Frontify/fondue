@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { PlateEditor, Value, getNodeEntries } from '@udecode/plate';
-import { Location } from 'slate';
+import { TLocation } from '@udecode/slate';
 import { ColumnBreakValue, setColumnBreaks } from './setColumnBreaks';
 
-export const updateColumnBreak = (editor: PlateEditor<Value>, at: Location, value: ColumnBreakValue) => {
+export const updateColumnBreak = (editor: PlateEditor<Value>, at: TLocation, value: ColumnBreakValue) => {
     setColumnBreaks<Value>(editor, { at, value });
 };
 
