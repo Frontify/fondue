@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { CSSProperties, ReactNode } from 'react';
-import { AnyObject, PlatePlugin, createPlateUI, createPlugins } from '@udecode/plate';
-import { Toolbar } from '../Toolbar';
+import { AnyObject, PlatePlugin, createPlugins } from '@udecode/plate';
+import { Toolbar } from '../components/Toolbar';
 import type { PluginComposer } from './PluginComposer';
 
 type GeneratePluginsReturn = {
@@ -14,7 +14,7 @@ type GeneratePluginsReturn = {
 
 export const createPlatePlugins = (pluginComposer: PluginComposer) =>
     createPlugins(pluginComposer.plugins, {
-        components: createPlateUI(pluginComposer.elements),
+        components: pluginComposer.elements,
     });
 
 export const GeneratePlugins = (editorId: string, pluginComposer: PluginComposer): GeneratePluginsReturn => {
