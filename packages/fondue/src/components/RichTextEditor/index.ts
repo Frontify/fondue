@@ -2,7 +2,7 @@
 
 export { PaddingSizes } from './types';
 export type { TreeOfNodes } from './types';
-export { Position } from './EditorPositioningWrapper';
+export { Position } from './components/EditorPositioningWrapper';
 export { EMPTY_RICH_TEXT_VALUE } from './utils/parseRawValue';
 export * from './helpers';
 export * from './RichTextEditor';

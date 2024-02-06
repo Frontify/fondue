@@ -2,7 +2,7 @@
 
 import { forwardRef } from 'react';
 import { WrapperProps } from './types';
-import { useRichTextEditorContext } from '../context/RichTextEditorContext';
+import { useRichTextEditorContext } from '../../context/RichTextEditorContext';
 
 export const PlateWrapper = forwardRef<HTMLDivElement, WrapperProps>(({ children }, ref) => {
     const { wrapperClassNames, editorId } = useRichTextEditorContext();

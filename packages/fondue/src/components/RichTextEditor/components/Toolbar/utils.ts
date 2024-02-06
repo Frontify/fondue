@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TEXT_STYLE_PLUGIN } from '../Plugins/TextStylePlugin/id';
-import { Button, Buttons } from '../Plugins/types';
+import { TEXT_STYLE_PLUGIN } from '../../Plugins/TextStylePlugin/id';
+import { Button, Buttons } from '../../Plugins/types';
 import { ButtonGroupWidths, ButtonGroupsPerRow } from './types';
 
 const BUTTON_GROUP_PADDING_PX = 12;

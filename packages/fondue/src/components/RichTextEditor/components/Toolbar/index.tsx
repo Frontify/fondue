@@ -1,15 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { usePlateEditorRef } from '@udecode/plate';
-import { useEditorResizeContext } from '../context/EditorResizeContext';
-import { useRichTextEditorContext } from '../context/RichTextEditorContext';
+import { useEditorRef } from '@udecode/plate';
+import { useEditorResizeContext } from '../../context/EditorResizeContext';
+import { useRichTextEditorContext } from '../../context/RichTextEditorContext';
 import { EditorPositioningWrapper } from '../EditorPositioningWrapper';
 import { ToolbarProps } from './types';
 import { getButtonGroupWidths, getButtonGroupsPerRow } from './utils';
 import { ButtonGroupWrapper } from './ButtonGroupWrapper';
 
 export const Toolbar = ({ toolbarButtons, editorId, toolbarWidth }: ToolbarProps) => {
-    const editor = usePlateEditorRef(editorId);
+    const editor = useEditorRef(editorId);
     const { editorWidth } = useEditorResizeContext();
     const { position } = useRichTextEditorContext();
 
@@ -18,7 +18,6 @@ export const Toolbar = ({ toolbarButtons, editorId, toolbarWidth }: ToolbarProps
     const buttonGroupsPerRow = getButtonGroupsPerRow(calculationToolbarWidth, buttonGroupWidths);
 
     const PositioningWrapper = EditorPositioningWrapper[position];
-
     return (
         <PositioningWrapper.ToolbarWrapper
             editorWidth={editorWidth}

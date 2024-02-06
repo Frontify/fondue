@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactNode } from 'react';
+import { ComponentProps, ReactNode } from 'react';
 import { Position } from '../EditorPositioningWrapper';
-import { Button, Buttons, ToolbarButtons } from '../Plugins/types';
+import { Button, Buttons, ToolbarButtons } from '../../Plugins/types';
+import { ToolbarButton } from '@components/RichTextEditor/components/Toolbar/ToolbarButton';
 
 export type ToolbarButtonsPosition = Record<Position, Buttons>;
 
@@ -19,3 +20,5 @@ export type ButtonGroupProps = {
     index: number;
     children?: ReactNode;
 };
+
+export type ToolbarButtonProps = ComponentProps<typeof ToolbarButton>;

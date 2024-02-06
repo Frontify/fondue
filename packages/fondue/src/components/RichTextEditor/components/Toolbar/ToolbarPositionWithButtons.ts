@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Position } from '../EditorPositioningWrapper';
-import { Button, Buttons, Plugin, ToolbarButtons } from '../Plugins/types';
+import { Button, Buttons, Plugin, ToolbarButtons } from '../../Plugins/types';
 import { ToolbarButtonsPosition } from './types';
 
 export class ToolbarPositionWithButtons implements ToolbarButtons {
