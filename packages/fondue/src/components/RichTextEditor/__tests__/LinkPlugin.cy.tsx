@@ -72,8 +72,6 @@ const RichTextWithLegacyLink = ({ text, url }: { text: string; url: string }): R
     );
 };
 
-const disabledButtonClassNames = '!tw-cursor-not-allowed !tw-opacity-50';
-
 describe('Link Plugin', () => {
     it('should render with link', () => {
         cy.mount(<RichTextWithLink link={link} text={text} />);
@@ -111,7 +109,6 @@ describe('Link Plugin', () => {
         cy.get(REMOVE_LINK_BUTTON).should('exist');
         cy.get(EDIT_LINK_BUTTON).click();
         cy.get(FLOATING_LINK_INSERT).should('exist');
-
         cy.get('[type=text]').eq(0).should('have.attr', 'value', text);
         cy.get('[type=text]').eq(1).should('have.attr', 'value', link);
         cy.get('[type=checkbox]').should('be.checked');
@@ -179,6 +176,7 @@ describe('Link Plugin', () => {
 
         cy.get('[contenteditable=true]').click().type('block1{enter}block2{selectall}');
         cy.get(TOOLBAR_FLOATING).should('be.visible');
-        cy.get(`${TOOLBAR_FLOATING} ${TOOLBAR_BUTTON}`).should('have.class', disabledButtonClassNames);
+        cy.get(`${TOOLBAR_FLOATING} ${TOOLBAR_BUTTON}`).should('be.disabled');
+        cy.get(`${TOOLBAR_FLOATING} ${TOOLBAR_BUTTON}`).should('have.css', 'cursor', 'not-allowed');
     });
 });

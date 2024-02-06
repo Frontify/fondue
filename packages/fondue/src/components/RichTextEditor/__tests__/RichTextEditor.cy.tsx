@@ -49,8 +49,10 @@ import {
     TOOLBAR_GROUP_1,
     TOOLBAR_GROUP_2,
 } from './fixtures/selectors';
-import { SubscriptPlugin } from '@components/RichTextEditor/Plugins/SubscriptPlugin';
-import { SuperscriptPlugin } from '@components/RichTextEditor/Plugins/SuperscriptPlugin';
+import { SubscriptPlugin } from '@components/RichTextEditor/Plugins/MarkPlugin/SubscriptPlugin';
+import { SuperscriptPlugin } from '@components/RichTextEditor/Plugins/MarkPlugin/SuperscriptPlugin';
+
+const BREAK_AFTER_PLUGIN_TOOLBAR_BUTTON = '[data-plugin-id="break-after-plugin"] button';
 
 const checkPosition = (chainers: string, value: number, text: string) => {
     cy.window().then(() => {
@@ -75,7 +77,6 @@ const selectTextValue = (value: string) => {
 };
 
 const activeButtonClassNames = '!tw-bg-box-selected tw-rounded !tw-text-box-selected-inverse';
-const disabledButtonClassNames = '!tw-cursor-not-allowed !tw-opacity-50';
 
 describe('RichTextEditor Component', () => {
     describe('Editable', () => {
@@ -446,18 +447,19 @@ describe('RichTextEditor Component', () => {
             const content = 'hello{enter} World {enter} another newline{enter} last newline{selectAll}';
 
             cy.get('[contenteditable=true]').click().type(content);
+            cy.get(BREAK_AFTER_PLUGIN_TOOLBAR_BUTTON).should('not.be.disabled');
             cy.get(TOOLBAR_GROUP_1).children().eq(-1).click();
 
             // break after should not be enabled
             cy.get('[contenteditable=true]').click();
             selectTextValue('hello');
-            cy.get(TOOLBAR_GROUP_1).children().eq(-1).realHover().should('not.include.html', activeButtonClassNames);
+            cy.get(BREAK_AFTER_PLUGIN_TOOLBAR_BUTTON).should('be.disabled');
             checkPosition('be.lessThan', 100, 'hello');
 
             // toolbar button should be active
             cy.get('[contenteditable=true]').click();
             selectTextValue('last newline');
-            cy.get(TOOLBAR_GROUP_1).children().eq(-1).realHover().should('include.html', activeButtonClassNames);
+            cy.get(BREAK_AFTER_PLUGIN_TOOLBAR_BUTTON).should('not.be.disabled');
             checkPosition('be.lessThan', 500, 'last newline');
             checkPosition('be.lessThan', 500, 'World');
         });
@@ -470,7 +472,8 @@ describe('RichTextEditor Component', () => {
             cy.get('[contenteditable=true]').click().type('{enter}content');
 
             selectTextValue('content');
-            cy.get(TOOLBAR_GROUP_1).children().eq(-1).realHover().should('include.html', disabledButtonClassNames);
+            cy.get(BREAK_AFTER_PLUGIN_TOOLBAR_BUTTON).should('be.disabled');
+            cy.get(BREAK_AFTER_PLUGIN_TOOLBAR_BUTTON).should('have.css', 'cursor', 'not-allowed');
         });
 
         it('should set column break with hotkeys', () => {
@@ -479,10 +482,10 @@ describe('RichTextEditor Component', () => {
             insertTextAndOpenToolbar();
             cy.get('[contenteditable=true]').type('content{shift+ctrl+enter}{enter}newline');
             selectTextValue('content');
-            cy.get(TOOLBAR_GROUP_1).children().eq(-1).realHover().should('include.html', activeButtonClassNames);
+            cy.get(BREAK_AFTER_PLUGIN_TOOLBAR_BUTTON).should('not.be.disabled');
             cy.get('[contenteditable=true]').click();
             selectTextValue('newline');
-            cy.get(TOOLBAR_GROUP_1).children().eq(-1).realHover().should('not.include.html', activeButtonClassNames);
+            cy.get(BREAK_AFTER_PLUGIN_TOOLBAR_BUTTON).should('be.disabled');
         });
 
         it('should delete a column break with backspace key', () => {
@@ -511,10 +514,10 @@ describe('RichTextEditor Component', () => {
             cy.get('[contenteditable=true]').click().type(content);
 
             selectTextValue('hello');
-            cy.get(TOOLBAR_GROUP_1).children().eq(-1).realHover().should('include.html', disabledButtonClassNames);
+            cy.get(BREAK_AFTER_PLUGIN_TOOLBAR_BUTTON).should('be.disabled');
             cy.get('[contenteditable=true]').click();
             selectTextValue('last newline');
-            cy.get(TOOLBAR_GROUP_1).children().eq(-1).realHover().should('include.html', activeButtonClassNames);
+            cy.get(BREAK_AFTER_PLUGIN_TOOLBAR_BUTTON).should('not.be.disabled');
         });
 
         it('should set column breaks inactive when initialized with more column breaks than allowed', () => {
@@ -637,7 +640,7 @@ describe('RichTextEditor Component', () => {
             cy.get('[data-plugin-id="a"]').click();
             cy.get('[data-test-id="floating-link-insert"]').should('be.visible');
             cy.get('#outside').click({ force: true });
-            cy.get('[data-test-id="floating-link-insert"]').should('not.exist');
+            cy.get('[data-test-id="floating-link-insert"]').should('not.be.visible');
             cy.get(TOOLBAR_FLOATING).should('not.exist');
         });
     });
