@@ -21,6 +21,7 @@ export const createLinkPlugin = createPluginFactory({
             afterMatch: true,
         },
         triggerFloatingLinkHotkeys: 'command+k, ctrl+k',
+        keepSelectedTextOnPaste: true,
     },
 });
 

@@ -1,25 +1,68 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TEditableProps, useFloatingLinkSelectors } from '@udecode/plate';
+import { UseVirtualFloatingOptions, flip, offset } from '@udecode/plate';
+import {
+    LinkFloatingToolbarState,
+    useFloatingLinkEdit,
+    useFloatingLinkEditState,
+    useFloatingLinkInsert,
+    useFloatingLinkInsertState,
+} from '@udecode/plate';
 import { EditModal } from './EditLinkModal';
-import { FloatingLink } from './FloatingLink';
 import { InsertLinkModal } from './InsertLinkModal/InsertLinkModal';
 
-export const CustomFloatingLink = ({ readOnly }: TEditableProps) => {
-    const isEditing = useFloatingLinkSelectors().isEditing();
+const floatingOptions: UseVirtualFloatingOptions = {
+    placement: 'bottom-start',
+    strategy: 'fixed',
+    middleware: [
+        offset(12),
+        flip({
+            padding: 12,
+            fallbackPlacements: ['bottom-end', 'top-start', 'top-end'],
+        }),
+    ],
+};
 
-    if (readOnly) {
+export interface LinkFloatingToolbarProps {
+    state?: LinkFloatingToolbarState;
+}
+
+export function CustomFloatingLink() {
+    const insertState = useFloatingLinkInsertState({
+        floatingOptions,
+    });
+    const { props: insertProps, ref: insertRef, hidden } = useFloatingLinkInsert(insertState);
+
+    const editState = useFloatingLinkEditState({
+        floatingOptions,
+    });
+
+    const { props: editProps, ref: editRef, editButtonProps, unlinkButtonProps } = useFloatingLinkEdit(editState);
+
+    if (hidden) {
         return null;
     }
 
     const input = <InsertLinkModal />;
-    const editContent = isEditing ? input : <EditModal />;
+    const editContent = editState.isEditing ? (
+        input
+    ) : (
+        <EditModal editButtonProps={editButtonProps} unlinkButtonProps={unlinkButtonProps} />
+    );
 
     return (
         <>
-            <FloatingLink.InsertRoot>{input}</FloatingLink.InsertRoot>
+            {insertState.isOpen && !editState.isOpen && (
+                <div ref={insertRef} {...insertProps}>
+                    {input}
+                </div>
+            )}
 
-            <FloatingLink.EditRoot>{editContent}</FloatingLink.EditRoot>
+            {editState.isOpen && (
+                <div ref={editRef} {...editProps}>
+                    {editContent}
+                </div>
+            )}
         </>
     );
-};
+}
