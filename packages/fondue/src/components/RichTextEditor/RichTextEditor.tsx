@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { CSSProperties } from 'react';
 import { useMemoizedId } from '@hooks/useMemoizedId';
-import { Plate, TEditableProps } from '@udecode/plate';
-import { RenderPlaceholderProps } from 'slate-react';
+import { Plate, PlateContent, TEditableProps } from '@udecode/plate';
 import { ContentReplacement } from './ContentReplacement';
 import { RichTextEditorProvider } from './context/RichTextEditorContext';
-import { Position } from './EditorPositioningWrapper';
+import { Position } from './components/EditorPositioningWrapper';
 import { forceToFocusNextElement } from './helpers';
 import { useEditorState } from './hooks';
 import { GAP_DEFAULT, KEY_ELEMENT_BREAK_AFTER_COLUMN, PluginComposer, defaultPlugins } from './Plugins';
@@ -13,7 +13,7 @@ import { PaddingSizes, TreeOfNodes } from './types';
 import { parseRawValue } from './utils';
 import { BlurObserver } from '@components/RichTextEditor/BlurObserver';
 
-const PLACEHOLDER_STYLES: RenderPlaceholderProps['attributes']['style'] = {
+const PLACEHOLDER_STYLES: CSSProperties = {
     position: 'relative',
     height: '0',
 };
@@ -59,7 +59,6 @@ export const RichTextEditor = ({
         plugins,
         onValueChanged,
     });
-
     const breakAfterPlugin = plugins.plugins.find((plugin) => plugin.key === KEY_ELEMENT_BREAK_AFTER_COLUMN);
     const columns = breakAfterPlugin?.options?.columns ?? 1;
     const columnGap = breakAfterPlugin?.options?.gap ?? GAP_DEFAULT;
@@ -79,7 +78,6 @@ export const RichTextEditor = ({
         readOnly: readonly,
         onBlur: () => onBlur && onBlur(JSON.stringify(localValue.current)),
         className: `${padding}`,
-        'aria-label': 'Rich Text Editor',
         style: {
             columns,
             columnGap,
@@ -104,13 +102,8 @@ export const RichTextEditor = ({
                 editorId,
             }}
         >
-            <Plate
-                id={editorId}
-                onChange={onChange}
-                editableProps={editableProps}
-                plugins={config.create()}
-                initialValue={memoizedValue}
-            >
+            <Plate id={editorId} onChange={onChange} plugins={config.create()} initialValue={memoizedValue}>
+                <PlateContent {...editableProps} />
                 {!editableProps.readOnly && config.toolbar(toolbarWidth)}
                 {config.inline()}
                 {updateValueOnChange && <ContentReplacement value={parseRawValue({ editorId, raw: value, plugins })} />}
