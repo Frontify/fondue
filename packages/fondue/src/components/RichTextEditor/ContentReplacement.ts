@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlateEditor, Value, insertNodes, usePlateEditorRef } from '@udecode/plate';
+import { PlateEditor, Value, insertNodes, useEditorRef } from '@udecode/plate';
 import { useEffect } from 'react';
 
 const clearEditor = ({ children, apply }: PlateEditor): void => {
@@ -10,7 +10,7 @@ const clearEditor = ({ children, apply }: PlateEditor): void => {
 };
 
 export const ContentReplacement = ({ value }: { value: Value }) => {
-    const editorRef = usePlateEditorRef();
+    const editorRef = useEditorRef();
 
     useEffect(() => {
         if (value) {
