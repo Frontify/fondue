@@ -2,7 +2,8 @@
 
 import { FocusEvent, MouseEvent, ReactNode } from 'react';
 import { merge } from '@utilities/merge';
-import { IconCaretRight, IconCheckMark } from '@foundation/Icon/Generated';
+import IconCaretRight from '@foundation/Icon/Generated/IconCaretRight';
+import IconCheckMark from '@foundation/Icon/Generated/IconCheckMark';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { MenuItemContent, MenuItemContentProps } from '@components/MenuItem/MenuItemContent';
 import { MenuItemContentSize, MenuItemStyle, SelectionIndicatorIcon } from './types';

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
-import { IconTextAlignmentCentre16 } from '@foundation/Icon/Generated';
+import IconTextAlignmentCentre16 from '@foundation/Icon/Generated/IconTextAlignmentCentre16';
 import { AlignToolbarButton, someNode, useEventPlateId, usePlateEditorState } from '@udecode/plate';
 import { ButtonWrapper, IconStylingWrapper, buttonStyles, getButtonClassNames } from '../../helper';
 import { PluginButtonProps } from '../../types';

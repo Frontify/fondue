@@ -2,7 +2,7 @@
 
 import { getHotkeyByPlatform } from '@components/RichTextEditor/helpers/getHotkeyByPlatform';
 import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
-import { IconLink16 } from '@foundation/Icon/Generated';
+import IconLink16 from '@foundation/Icon/Generated/IconLink16';
 import { LinkToolbarButton, isRangeInSameBlock, useEventPlateId, usePlateEditorState } from '@udecode/plate';
 import { ButtonWrapper, IconStylingWrapper, buttonStyles, getButtonClassNames } from '../helper';
 import { PluginButtonProps } from '../types';

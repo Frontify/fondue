@@ -2,7 +2,7 @@
 
 import { ReactElement } from 'react';
 import { merge } from '@utilities/merge';
-import { IconCaretDown } from '@foundation/Icon/Generated';
+import IconCaretDown from '@foundation/Icon/Generated/IconCaretDown';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { AccordionHeaderIconProps, AccordionHeaderIconSize } from './types';
 

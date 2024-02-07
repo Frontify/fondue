@@ -9,7 +9,7 @@ import { useForwardedRef } from '@utilities/useForwardedRef';
 import { Validation, validationClassMap } from '@utilities/validation';
 import { KeyboardEvent, ReactElement, TextareaHTMLAttributes, useEffect } from 'react';
 import TextareaAutosize, { TextareaAutosizeProps } from 'react-textarea-autosize';
-import { InputSharedBaseProps } from 'src/types/input';
+import { InputSharedBaseProps } from '../../types/input';
 
 export type TextareaProps = {
     autosize?: boolean;

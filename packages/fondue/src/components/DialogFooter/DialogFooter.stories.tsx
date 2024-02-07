@@ -3,7 +3,7 @@
 import { Meta, StoryFn } from '@storybook/react';
 import { DialogFooter } from './DialogFooter';
 import { ButtonEmphasis, ButtonStyle } from '@components/Button';
-import { IconCheckMark } from '@foundation/Icon/Generated';
+import IconCheckMark from '@foundation/Icon/Generated/IconCheckMark';
 import { action } from '@storybook/addon-actions';
 import { DIALOG_PADDING, DialogFooterProps } from '../../types';
 import { Flex } from '@components/Flex';

@@ -9,8 +9,8 @@ import {
     MenuItemStyle,
     SelectionIndicatorIcon,
 } from '@components/MenuItem';
-import { Switch } from '@components/Switch';
-import { IconMusicNote } from '@foundation/Icon/Generated';
+import { Switch } from '@components/Switch/Switch';
+import IconMusicNote from '@foundation/Icon/Generated/IconMusicNote';
 
 const SwitchComponent = () => {
     const [switchValue, setSwitchValue] = useState<boolean>(false);

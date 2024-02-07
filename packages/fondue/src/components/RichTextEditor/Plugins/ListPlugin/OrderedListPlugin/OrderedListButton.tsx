@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
-import { IconListNumbers16 } from '@foundation/Icon/Generated';
+import IconListNumbers16 from '@foundation/Icon/Generated/IconListNumbers16';
 import { ListToolbarButton, getPluginType } from '@udecode/plate';
 import { ButtonWrapper, IconStylingWrapper, buttonStyles, getButtonClassNames } from '../../helper';
 import { PluginButtonProps } from '../../types';

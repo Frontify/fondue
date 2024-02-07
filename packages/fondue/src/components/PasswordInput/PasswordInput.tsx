@@ -1,6 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconCross16, IconEye16, IconEyeOff16 } from '@foundation/Icon';
+import IconCross16 from '@foundation/Icon/Generated/IconCross16';
+import IconEye16 from '@foundation/Icon/Generated/IconEye16';
+import IconEyeOff16 from '@foundation/Icon/Generated/IconEyeOff16';
 import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { GetStatusIcon } from '@utilities/input';
@@ -9,7 +11,7 @@ import { Validation, validationClassMap } from '@utilities/validation';
 import { useCallback, useRef, useState } from 'react';
 import { InputBaseProps, InputTypes } from '../../types/input';
 import { useMemoizedId } from '@hooks/useMemoizedId';
-import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '..';
+import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button/Button';
 
 export type PasswordInputProps = { obfuscated?: boolean } & Omit<
     InputBaseProps<string>,

@@ -2,9 +2,12 @@
 
 import { Meta, StoryFn } from '@storybook/react';
 import { Button, ButtonProps } from './Button';
-import { IconAnchor16, IconColorFan16, IconDotsVertical16, IconIcon16 } from '@foundation/Icon/Generated';
 import { ButtonEmphasis, ButtonRounding, ButtonSize, ButtonStyle, ButtonType } from './ButtonTypes';
 import { IconEnum } from '@foundation/Icon/IconEnum';
+import IconIcon16 from '@foundation/Icon/Generated/IconIcon16';
+import IconDotsVertical16 from '@foundation/Icon/Generated/IconDotsVertical16';
+import IconColorFan16 from '@foundation/Icon/Generated/IconColorFan16';
+import IconAnchor16 from '@foundation/Icon/Generated/IconAnchor16';
 
 const defaultArgs = {
     type: ButtonType.Button,

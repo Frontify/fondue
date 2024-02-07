@@ -4,8 +4,10 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { OrderableListItem, OrderableListItemStyle, OrderableListProps } from './types';
 import { useId } from '@react-aria/utils';
-import { OnTreeDropCallback, Tree, TreeItem } from '..';
 import { DraggableItem } from '@utilities/dnd/types';
+import { TreeItem } from '@components/Tree/TreeItem/TreeItem';
+import { Tree } from '@components/Tree/Tree';
+import { OnTreeDropCallback } from '@components/Tree/types';
 
 const listItemsCompareFn = <T extends object>(itemA: OrderableListItem<T>, itemB: OrderableListItem<T>): number => {
     if (itemA.sort === null && itemB.sort === null) {

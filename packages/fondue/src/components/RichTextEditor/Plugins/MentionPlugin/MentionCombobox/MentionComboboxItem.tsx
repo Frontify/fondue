@@ -3,7 +3,9 @@
 import { ReactElement } from 'react';
 import { ComboboxItemProps } from '@udecode/plate';
 import { MentionItemData, MentionableCategory } from '../types';
-import { IconPeople12, IconPerson12, IconTarget12 } from '@foundation/Icon/Generated';
+import IconPeople12 from '@foundation/Icon/Generated/IconPeople12';
+import IconPerson12 from '@foundation/Icon/Generated/IconPerson12';
+import IconTarget12 from '@foundation/Icon/Generated/IconTarget12';
 
 type RenderAvatarProps = {
     category: MentionableCategory;

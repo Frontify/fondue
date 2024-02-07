@@ -2,7 +2,7 @@
 
 import { Children, ReactNode } from 'react';
 import { DimensionUnity, GAP_DIRECTIONS, GetGapClassName, SpacingValue } from '@utilities/dimensions';
-import { ContainerHTMLElement } from 'src/types/elements';
+import { ContainerHTMLElement } from '../../types/elements';
 import { merge } from '@utilities/merge';
 import { Box } from '@components/Box';
 

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconLinkBox24 } from '@foundation/Icon';
-import { Button } from '..';
+import IconLinkBox24 from '@foundation/Icon/Generated/IconLinkBox24';
+import { Button } from '../Button';
 import { Toast } from './Toast';
 import { ToastStyle, toastStylesBackgroundColorsMap } from './types';
 
