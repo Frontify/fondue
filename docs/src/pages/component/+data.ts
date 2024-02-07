@@ -14,7 +14,7 @@ export const data = async (pageContext: PageContextServer) => {
     });
 
     if (!component) {
-        throw render(404, "This Component Doesn't exist");
+        throw render(404, "This component Doesn't exist");
     }
 
     return {
