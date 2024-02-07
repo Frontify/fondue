@@ -87,10 +87,10 @@ jobs:
 
         steps:
             - name: Checkout current commit
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
 
             - name: Use Node.js
-              uses: actions/setup-node@v3
+              uses: actions/setup-node@v4
               with:
                   node-version-file: ".nvmrc"
 
@@ -121,3 +121,30 @@ jobs:
 
             - name: Component Tests
               run: pnpm run --stream --filter {packages/fondue} test --spec $(node ./.github/lib/cypress-matrix.mjs ${{ env.NUMBER_OF_RUNNERS }} ${{ matrix.containers }})
+
+    component-tests:
+        name: Component Tests
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+
+        steps:
+            - name: Checkout current commit
+              uses: actions/checkout@v4
+
+            - name: Use pnpm
+              uses: pnpm/action-setup@v2
+              with:
+                  version: latest
+                  run_install: false
+
+            - name: Use Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version-file: ".nvmrc"
+                  cache: "pnpm"
+
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
+
+            - name: Test code
+              run: pnpm --stream --filter {packages/components} test
