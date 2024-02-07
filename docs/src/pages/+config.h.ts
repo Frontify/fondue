@@ -3,6 +3,6 @@
 import vikeReact from 'vike-react/config';
 
 export default {
-    title: 'Frontify Fondue',
+    title: 'Documentation — Fondue',
     extends: vikeReact,
 };

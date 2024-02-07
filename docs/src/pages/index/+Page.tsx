@@ -3,8 +3,7 @@
 export const Page = () => {
     return (
         <>
-            <h1 className="tw-font-bold">Welcome</h1>
-            Content Stuff
+            <h1 className="tw-font-bold">Welcome to Fondue</h1>
         </>
     );
 };

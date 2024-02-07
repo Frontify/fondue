@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MdxContent } from '../../components/MdxContent';
 import { usePageContext } from 'vike-react/usePageContext';
+
+import { MdxContent } from '../../components/MdxContent';
 
 export const Page = () => {
     const { data } = usePageContext();

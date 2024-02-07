@@ -1,11 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import tailwindForms from '@tailwindcss/forms';
-import type { Config } from 'tailwindcss';
+import { type Config } from 'tailwindcss';
 
 export default {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     presets: [require('@frontify/fondue-tokens/tailwind')],
-    content: ['./src/**/*.{js,ts,tsx}'],
+    content: ['./src/**/*.{js,ts,tsx}', './node_modules/@frontify/fondue-components/src/**/*.{js,ts,tsx}'],
     plugins: [
         tailwindForms({
             strategy: 'class',

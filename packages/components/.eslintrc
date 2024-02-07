@@ -7,6 +7,9 @@
             "version": "detect",
         },
     },
+    "parserOptions": {
+        "project": ["./tsconfig.json", "./tsconfig.node.json"],
+    },
     "overrides": [
         {
             "files": ["*.js", "*.ts", "*.tsx"],

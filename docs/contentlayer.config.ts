@@ -16,12 +16,12 @@ export const Component = defineDocumentType(() => ({
         },
         route: {
             type: 'string',
-            resolve: (doc) => doc._raw.sourceFileDir.toLocaleLowerCase().split('/'),
+            resolve: (doc) => doc._raw.sourceFileDir.toLocaleLowerCase().split('/').at(-1),
         },
     },
 }));
 
 export default makeSource({
-    contentDirPath: 'src/components',
+    contentDirPath: 'node_modules/@frontify/fondue-components',
     documentTypes: [Component],
 });
