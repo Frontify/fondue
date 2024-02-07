@@ -28,14 +28,17 @@ jobs:
             - name: Use Node.js
               uses: actions/setup-node@v4
               with:
-                  node-version-file: '.nvmrc'
-                  cache: 'pnpm'
+                  node-version-file: ".nvmrc"
+                  cache: "pnpm"
 
             - name: Install npm dependencies
               run: pnpm i --frozen-lockfile
 
             - name: Generate icons
               run: pnpm --stream --filter {packages/fondue} generate:icons && pnpm --stream --filter {packages/fondue} generate:componentsEnum
+
+            - name: Contentlayer build
+              run: pnpm --stream --filter {docs} build:contentlayer
 
             - name: Lint code
               run: pnpm lint
@@ -57,8 +60,8 @@ jobs:
             - name: Use Node.js
               uses: actions/setup-node@v4
               with:
-                  node-version-file: '.nvmrc'
-                  cache: 'pnpm'
+                  node-version-file: ".nvmrc"
+                  cache: "pnpm"
 
             - name: Install npm dependencies
               run: pnpm i --frozen-lockfile
@@ -66,11 +69,14 @@ jobs:
             - name: Generate icons
               run: pnpm --stream --filter {packages/fondue} generate:icons && pnpm --stream --filter {packages/fondue} generate:componentsEnum
 
+            - name: Contentlayer build
+              run: pnpm --stream --filter {docs} build:contentlayer
+
             - name: Typecheck code
               run: pnpm typecheck
 
-    component-tests:
-        name: Component Tests
+    old-component-tests:
+        name: Old Component Tests
         runs-on: ubuntu-latest
         timeout-minutes: 10
 
@@ -86,7 +92,7 @@ jobs:
             - name: Use Node.js
               uses: actions/setup-node@v3
               with:
-                  node-version-file: '.nvmrc'
+                  node-version-file: ".nvmrc"
 
             - name: Use pnpm
               uses: pnpm/action-setup@v2.2.4
@@ -117,11 +123,39 @@ jobs:
             - name: Component Tests
               run: pnpm run --stream --filter {packages/fondue} test --spec $(node ./.github/lib/cypress-matrix.mjs ${{ env.NUMBER_OF_RUNNERS }} ${{ matrix.containers }})
 
-    publish:
+    component-tests:
+        name: Component Tests
         runs-on: ubuntu-latest
         timeout-minutes: 10
 
-        needs: [lint, typecheck, component-tests]
+        steps:
+            - name: Checkout current commit
+              uses: actions/checkout@v4
+
+            - name: Use pnpm
+              uses: pnpm/action-setup@v2
+              with:
+                  version: latest
+                  run_install: false
+
+            - name: Use Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version-file: ".nvmrc"
+                  cache: "pnpm"
+
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
+
+            - name: Test code
+              run: pnpm --stream --filter {packages/components} test
+
+    publish:
+        name: Publish
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+
+        needs: [lint, typecheck, old-component-tests, component-tests]
 
         permissions:
             contents: write # to create release (changesets/action)
@@ -139,8 +173,8 @@ jobs:
             - name: Use Node.js
               uses: actions/setup-node@v4
               with:
-                  node-version-file: '.nvmrc'
-                  cache: 'pnpm'
+                  node-version-file: ".nvmrc"
+                  cache: "pnpm"
 
             - name: Install npm dependencies
               run: pnpm i --frozen-lockfile
@@ -149,8 +183,8 @@ jobs:
               id: changesets
               uses: changesets/action@v1
               with:
-                  commit: 'chore: release packages'
-                  title: 'chore: release packages'
+                  commit: "chore: release packages"
+                  title: "chore: release packages"
                   version: pnpm ci:version
                   publish: pnpm ci:publish
               env:
