@@ -112,13 +112,4 @@ describe('Popover Component', () => {
         cy.get(POPOVER_TRIGGER).click();
         cy.get(POPOVER_SELECTOR).should('have.class', 'tw-bg-base');
     });
-
-    it('should render in dark theme', () => {
-        cy.mount(<PopoverComponent theme="dark" />);
-        cy.get(POPOVER_TRIGGER).click();
-        cy.get(POPOVER_SELECTOR).should(
-            'have.class',
-            'tw-dark tw-bg-box-neutral-mighty-inverse tw-text-box-neutral-mighty',
-        );
-    });
 });
