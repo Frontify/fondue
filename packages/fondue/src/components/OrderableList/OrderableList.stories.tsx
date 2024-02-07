@@ -3,8 +3,7 @@
 import { Meta, StoryFn } from '@storybook/react';
 import { useEffect, useRef, useState } from 'react';
 import { OrderableList as OrderableListComponent } from './OrderableList';
-import { OrderableListItem, OrderableListItemStyle } from './types';
-import { OrderableListProps } from '.';
+import { OrderableListItem, OrderableListItemStyle, OrderableListProps } from './types';
 import { chain } from '@react-aria/utils';
 import { renderContent, storyItems } from '@components/OrderableList/utils';
 import {
@@ -14,7 +13,7 @@ import {
     TreeItemColorsClassMap,
     TreeItemShadowClassMap,
     TreeItemSpacingClassMap,
-} from '..';
+} from '@components/Tree/types';
 
 export default {
     title: 'Components/Orderable List',

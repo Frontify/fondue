@@ -18,7 +18,9 @@ import { FlyoutFooter } from './FlyoutFooter';
 import { Dropdown } from '@components/Dropdown';
 import { DatePicker } from '@components/DatePicker';
 import { TooltipIcon } from '@components/TooltipIcon';
-import { IconDotsVertical, IconExclamationMarkCircle, IconIcon } from '@foundation/Icon/Generated';
+import IconDotsVertical from '@foundation/Icon/Generated/IconDotsVertical';
+import IconIcon from '@foundation/Icon/Generated/IconIcon';
+import IconExclamationMarkCircle from '@foundation/Icon/Generated/IconExclamationMarkCircle';
 
 export default {
     title: 'Deprecated/Flyout',

@@ -5,8 +5,10 @@ import { TextInput, TextInputType } from '@components/TextInput';
 import { FormField, FormFieldProps } from './FormField';
 import { useState } from 'react';
 import { Validation } from '@utilities/validation';
-import { NumberInput } from '..';
-import { IconInfo, IconNook16, IconQuestionMark } from '@foundation/Icon';
+import { NumberInput } from '../NumberInput';
+import IconInfo from '@foundation/Icon/Generated/IconInfo';
+import IconNook16 from '@foundation/Icon/Generated/IconNook16';
+import IconQuestionMark from '@foundation/Icon/Generated/IconQuestionMark';
 
 export default {
     title: 'Components/FormField',

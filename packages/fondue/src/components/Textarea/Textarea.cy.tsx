@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconClipboard16, IconNook16, IconQuestionMark16 } from '@foundation/Icon';
+import IconClipboard16 from '@foundation/Icon/Generated/IconClipboard16';
+import IconNook16 from '@foundation/Icon/Generated/IconNook16';
+import IconQuestionMark16 from '@foundation/Icon/Generated/IconQuestionMark16';
 import { Textarea } from './Textarea';
 import { Validation, validationClassMap } from '@utilities/validation';
-import { ExtraAction } from 'src/types/input';
+import { ExtraAction } from '../../types/input';
 
 const TEXTAREA_ID = '[data-test-id=fondue-textarea]';
 const TEXTAREA_DECORATOR_ID = '[data-test-id=fondue-textarea-decorator]';

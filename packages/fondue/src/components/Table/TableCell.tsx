@@ -4,7 +4,7 @@
 import { Checkbox as CheckboxComponent, CheckboxState } from '@components/Checkbox/Checkbox';
 import { merge } from '@utilities/merge';
 import { Key, useRef } from 'react';
-import { SelectionMode } from '..';
+import { SelectionMode } from './Table';
 
 export enum TableCellType {
     Default = 'Default',

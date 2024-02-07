@@ -1,10 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconDocumentText } from '@foundation/Icon/Generated';
+import IconDocumentText from '@foundation/Icon/Generated/IconDocumentText';
 import { IconSize } from '@foundation/Icon/IconSize';
-import { BadgeStyle } from '.';
 import { Badge } from './Badge';
-import { BadgeEmphasis, BadgeStatus } from './types';
+import { BadgeEmphasis, BadgeStatus, BadgeStyle } from './types';
 
 const BADGE_TEXT = 'Frontify';
 const BADGE_ID = '[data-test-id=badge]';

@@ -4,9 +4,9 @@ import { Meta, StoryFn } from '@storybook/react';
 import { NumberInput } from './NumberInput';
 import { NumberInputProps } from './types';
 import { useState } from 'react';
-import { IconNook16 } from '@foundation/Icon';
+import IconNook16 from '@foundation/Icon/Generated/IconNook16';
 import { Validation } from '@utilities/validation';
-import { Box } from '..';
+import { Box } from '../Box/Box';
 
 export default {
     title: 'Components/Number Input',

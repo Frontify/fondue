@@ -4,8 +4,7 @@ import { useDrop } from 'react-dnd';
 import { merge } from '@utilities/merge';
 import { LegacyOrderableListItem } from '@components/LegacyOrderableList/types';
 import { DraggableItem } from '@utilities/dnd';
-
-import { CollisionPosition } from '..';
+import { CollisionPosition } from '@components/Tree/types';
 
 export type OnDropCallback<T> = (
     targetItem: DraggableItem<T>,

@@ -7,7 +7,7 @@ import { DismissButton, useModal, useOverlay } from '@react-aria/overlays';
 import { mergeProps } from '@react-aria/utils';
 import { merge } from '@utilities/merge';
 import { Children, ForwardRefRenderFunction, HTMLAttributes, RefObject, forwardRef } from 'react';
-import { FlyoutProps } from '.';
+import { FlyoutProps } from './Flyout';
 
 type OverlayProps = Omit<FlyoutProps, 'trigger' | 'onOpenChange' | 'onConfirm' | 'legacyFooter' | 'onCancel'> & {
     positionProps: HTMLAttributes<Element>;

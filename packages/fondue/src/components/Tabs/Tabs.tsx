@@ -14,7 +14,7 @@ import {
 } from 'react';
 import { TabItemProps } from '@components/Tabs/TabItem';
 import { merge } from '@utilities/merge';
-import { IconDotsHorizontal } from '@foundation/Icon/Generated';
+import IconDotsHorizontal from '@foundation/Icon/Generated/IconDotsHorizontal';
 import { Badge } from '@components/Badge';
 import { motion } from 'framer-motion';
 import { useFocusRing } from '@react-aria/focus';

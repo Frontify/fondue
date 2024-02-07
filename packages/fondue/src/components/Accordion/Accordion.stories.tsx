@@ -11,12 +11,6 @@ import { LinkChooser } from '@components/LinkChooser/LinkChooser.stories';
 import { SegmentedControls } from '@components/SegmentedControls/SegmentedControls';
 import { Switch } from '@components/Switch/Switch';
 import { TextInput, TextInputType } from '@components/TextInput/TextInput';
-import {
-    IconIcon,
-    IconTextAlignmentCentre,
-    IconTextAlignmentLeft,
-    IconTextAlignmentRight,
-} from '@foundation/Icon/Generated';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { action } from '@storybook/addon-actions';
 import { Meta, StoryFn } from '@storybook/react';
@@ -30,6 +24,10 @@ import { AccordionHeaderProps, AccordionProps } from './types';
 import { LegacyStack } from '@layout/LegacyStack';
 import { DatePicker } from '@components/DatePicker';
 import { ScrollWrapper } from '@components/ScrollWrapper';
+import IconIcon from '@foundation/Icon/Generated/IconIcon';
+import IconTextAlignmentLeft from '@foundation/Icon/Generated/IconTextAlignmentLeft';
+import IconTextAlignmentCentre from '@foundation/Icon/Generated/IconTextAlignmentCentre';
+import IconTextAlignmentRight from '@foundation/Icon/Generated/IconTextAlignmentRight';
 
 export default {
     title: 'Components/Accordion',

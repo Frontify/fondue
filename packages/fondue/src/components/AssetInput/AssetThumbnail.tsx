@@ -5,7 +5,7 @@ import { merge } from '@utilities/merge';
 import { ReactElement, cloneElement } from 'react';
 import { AssetInputProps, AssetInputSize } from './AssetInput';
 import { SelectedAssetProps } from './SingleAsset/SelectedAsset';
-import { IconMusicNote } from '@foundation/Icon/Generated';
+import IconMusicNote from '@foundation/Icon/Generated/IconMusicNote';
 
 type AssetThumbnailProps = {
     asset: SelectedAssetProps['asset'];

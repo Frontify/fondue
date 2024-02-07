@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { EditableTextHelper } from '@components/EditableText/lib/helper';
-import { IconPen } from '@foundation/Icon/Generated';
+import IconPen from '@foundation/Icon/Generated/IconPen';
 
 describe('Test Children Nesting', () => {
     it('Output correct Text insdie div', () => {

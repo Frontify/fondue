@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { OrderableList, OrderableListItem, OrderableListProps } from '.';
+import { OrderableList } from './OrderableList';
+import { OrderableListItem, OrderableListProps } from './types';
 
 const LIST_ID = '[data-test-id=orderable-list]';
 const DRAGGABLE_ITEM = '[data-test-id=orderable-list-item]';

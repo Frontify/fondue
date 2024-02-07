@@ -2,7 +2,6 @@
 
 import { Meta, StoryFn } from '@storybook/react';
 import { useEffect, useState } from 'react';
-import { IconExclamationMarkCircle, IconInfo, IconQuestionMarkCircle } from '@foundation/Icon/Generated';
 import {
     Checkbox as CheckboxComponent,
     CheckboxEmphasis,
@@ -11,6 +10,9 @@ import {
     CheckboxState,
 } from './Checkbox';
 import { TooltipIconTriggerStyle } from '@components/TooltipIcon';
+import IconExclamationMarkCircle from '@foundation/Icon/Generated/IconExclamationMarkCircle';
+import IconQuestionMarkCircle from '@foundation/Icon/Generated/IconQuestionMarkCircle';
+import IconInfo from '@foundation/Icon/Generated/IconInfo';
 
 export default {
     title: 'Components/Checkbox',

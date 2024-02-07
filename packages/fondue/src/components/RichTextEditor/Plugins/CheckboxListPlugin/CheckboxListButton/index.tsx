@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { getPluginType } from '@udecode/plate';
-import { IconListCheck16 } from '@foundation/Icon/Generated';
+import IconListCheck16 from '@foundation/Icon/Generated/IconListCheck16';
 import { CheckboxListToolbarButton } from './CheckboxListToolbarButton';
 import { ButtonWrapper, IconStylingWrapper, buttonStyles, getButtonClassNames } from '../../helper';
 import { PluginButtonProps } from '../../types';

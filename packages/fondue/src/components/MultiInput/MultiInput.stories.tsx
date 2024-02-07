@@ -7,7 +7,7 @@ import { IconSize } from '@foundation/Icon/IconSize';
 import { Meta, StoryFn } from '@storybook/react';
 import { useState } from 'react';
 import { MultiInput as MultiInputComponent, MultiInputLayout, MultiInputProps } from './MultiInput';
-import { IconIcon } from '@foundation/Icon/Generated';
+import IconIcon from '@foundation/Icon/Generated/IconIcon';
 
 export default {
     title: 'Components/Multi Input',

@@ -9,7 +9,6 @@ import { action } from '@storybook/addon-actions';
 import { generateRandomId } from '@utilities/generateRandomId';
 import { useOverlayTriggerState } from '@react-stately/overlays';
 import { PatternDesign, PatternTheme } from '@foundation/Pattern';
-import { IconCap, IconIcon, IconMusicNote } from '@foundation/Icon/Generated';
 import { ScrollWrapperDirection } from '@components/ScrollWrapper/types';
 import { OverlayContainer, OverlayProvider } from '@react-aria/overlays';
 import {
@@ -21,8 +20,11 @@ import {
     ModalWidth,
 } from './types';
 import { FormControl, FormControlDirection, FormControlStyle } from '@components/FormControl';
-import { Divider } from '..';
+import { Divider } from '../Divider/Divider';
 import { MODAL_PADDING } from './context/ModalLayout';
+import IconCap from '@foundation/Icon/Generated/IconCap';
+import IconIcon from '@foundation/Icon/Generated/IconIcon';
+import IconMusicNote from '@foundation/Icon/Generated/IconMusicNote';
 
 export default {
     title: 'Deprecated/Modal',
