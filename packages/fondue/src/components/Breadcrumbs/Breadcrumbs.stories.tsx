@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { BadgeStatus, BadgeStyle } from '@components/Badge';
-import { IconIcon } from '@foundation/Icon/Generated';
+import IconIcon from '@foundation/Icon/Generated/IconIcon';
 import { action } from '@storybook/addon-actions';
 import { Meta, StoryFn } from '@storybook/react';
 import { BreadcrumbGap, Breadcrumbs, BreadcrumbsProps } from './Breadcrumbs';

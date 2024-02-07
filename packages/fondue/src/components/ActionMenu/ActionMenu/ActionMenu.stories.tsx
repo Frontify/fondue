@@ -4,7 +4,7 @@ import { MenuItemContentSize, MenuItemStyle, SelectionIndicatorIcon } from '@com
 import { action } from '@storybook/addon-actions';
 import { Meta, StoryFn } from '@storybook/react';
 import { ActionMenu as ActionMenuComponent, ActionMenuProps } from './ActionMenu';
-import { IconMusicNote } from '@foundation/Icon/Generated';
+import IconMusicNote from '@foundation/Icon/Generated/IconMusicNote';
 
 export default {
     title: 'Components/Action Menu',

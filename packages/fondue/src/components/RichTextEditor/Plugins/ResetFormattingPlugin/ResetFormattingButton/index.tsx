@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconEraser16 } from '@foundation/Icon/Generated';
+import IconEraser16 from '@foundation/Icon/Generated/IconEraser16';
 import { ResetFormattingToolbarButton } from './ResetFormattingToolbarButton';
 import { ButtonWrapper, IconStylingWrapper, buttonStyles, getButtonClassNames } from '../../helper';
 import { PluginButtonProps } from '../../types';

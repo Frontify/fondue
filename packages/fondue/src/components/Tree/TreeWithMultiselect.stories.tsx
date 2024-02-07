@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Meta } from '@storybook/react';
 
-import { IconDocument } from '@foundation/Icon';
+import IconDocument from '@foundation/Icon/Generated/IconDocument';
 
 import type { TreeItemStyling, TreeNodeWithoutElements, TreeProps } from '@components/Tree/types';
 import {

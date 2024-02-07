@@ -2,7 +2,7 @@
 
 import { MenuBlock } from '@components/Dropdown/SelectMenu/SelectMenu';
 import { MenuItemContentSize } from '@components/MenuItem';
-import { IconIcon } from '@foundation/Icon/Generated';
+import IconIcon from '@foundation/Icon/Generated/IconIcon';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { Validation } from '@utilities/validation';
 import { ReactElement, useState } from 'react';

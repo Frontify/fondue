@@ -10,7 +10,7 @@ import { useOverlayTriggerState } from '@react-stately/overlays';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { HTMLAttributes, MouseEvent, MutableRefObject, ReactElement, ReactNode, useEffect, useRef } from 'react';
-import { LegacyFlyoutFooter } from '.';
+import { LegacyFlyoutFooter } from './FlyoutFooter';
 import { useContainScroll } from './hooks/useContainScroll';
 import { useOverlayPositionWithBottomMargin } from './hooks/useOverlayPositionWithBottomMargin';
 import { Overlay } from './Overlay';

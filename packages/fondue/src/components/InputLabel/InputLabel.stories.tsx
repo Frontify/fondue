@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Meta, StoryFn } from '@storybook/react';
-import { IconExclamationMarkCircle, IconInfo, IconQuestionMarkCircle } from '@foundation/Icon/Generated';
 import { InputLabel as InputLabelComponent, InputLabelProps } from './InputLabel';
 import { TooltipIconTriggerStyle } from '@components/TooltipIcon';
+import IconInfo from '@foundation/Icon/Generated/IconInfo';
+import IconQuestionMarkCircle from '@foundation/Icon/Generated/IconQuestionMarkCircle';
+import IconExclamationMarkCircle from '@foundation/Icon/Generated/IconExclamationMarkCircle';
 
 export default {
     title: 'Components/Input Label',

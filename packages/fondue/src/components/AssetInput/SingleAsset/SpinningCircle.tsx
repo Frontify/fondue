@@ -2,7 +2,7 @@
 
 import { merge } from '@utilities/merge';
 import { ReactElement } from 'react';
-import { AssetInputProps, AssetInputSize } from '..';
+import { AssetInputProps, AssetInputSize } from '../AssetInput';
 
 export const SpinningCircle = ({ size }: Pick<AssetInputProps, 'size'>): ReactElement => (
     <svg

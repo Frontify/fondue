@@ -4,7 +4,7 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 
-import { IconDocument } from '@foundation/Icon';
+import IconDocument from '@foundation/Icon/Generated/IconDocument';
 
 import type { TreeItemStyling, TreeProps } from '@components/Tree/types';
 import {

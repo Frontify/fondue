@@ -2,12 +2,16 @@
 
 import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
 import { IconSize } from '@foundation/Icon/IconSize';
-import { format, getYear } from 'date-fns';
+import format from 'date-fns/format';
+import getYear from 'date-fns/getYear';
 import { KeyboardEvent, ReactNode, forwardRef, useState } from 'react';
 import DatepickerComponent, { ReactDatePicker } from 'react-datepicker';
 import './DatePicker.css';
 import { DatePickerTrigger } from './DatePickerTrigger';
-import { IconCaretLeft, IconCaretLeftDouble, IconCaretRight, IconCaretRightDouble } from '@foundation/Icon/Generated';
+import IconCaretLeft from '@foundation/Icon/Generated/IconCaretLeft';
+import IconCaretRightDouble from '@foundation/Icon/Generated/IconCaretRightDouble';
+import IconCaretRight from '@foundation/Icon/Generated/IconCaretRight';
+import IconCaretLeftDouble from '@foundation/Icon/Generated/IconCaretLeftDouble';
 import { Validation } from '@utilities/validation';
 
 const ARROW_PADDING_CORRECTION = 40;

@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconTextAlignmentCentre, IconTextAlignmentLeft, IconTextAlignmentRight } from '@foundation/Icon/Generated';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { ReactElement, useState } from 'react';
 import { IconItem, SegmentSize, SegmentedControls, TextOrNumberItem } from './SegmentedControls';
+import IconTextAlignmentLeft from '@foundation/Icon/Generated/IconTextAlignmentLeft';
+import IconTextAlignmentCentre from '@foundation/Icon/Generated/IconTextAlignmentCentre';
+import IconTextAlignmentRight from '@foundation/Icon/Generated/IconTextAlignmentRight';
 
 const SEGMENTED_CONTROLS_ID = '[data-test-id=fondue-segmented-controls]';
 const ICON_ITEM_ID = '[data-test-id=fondue-segmented-controls-item-icon]';

@@ -3,7 +3,7 @@
 import type { ReactElement } from 'react';
 import { cloneElement } from 'react';
 import { merge } from '@utilities/merge';
-import { IconSize } from '@foundation/Icon';
+import { IconSize } from '@foundation/Icon/IconSize';
 import { HelperText } from '@utilities/input';
 import { Validation } from '@utilities/validation';
 import { generateRandomId } from '@utilities/generateRandomId';

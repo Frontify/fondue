@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { DialogHeader } from './DialogHeader';
-import { IconIcon } from '@foundation/Icon/Generated';
+import IconIcon from '@foundation/Icon/Generated/IconIcon';
 import { Badge, BadgeStyle } from '@components/Badge';
 
 const DIALOG_HEADER_SELECTOR = '[data-test-id=fondue-dialog-header]';

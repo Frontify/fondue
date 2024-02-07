@@ -2,7 +2,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { MenuItem, MenuItemContentSize, SelectionIndicatorIcon } from '@components/MenuItem';
-import { IconArrowLeft } from '@foundation/Icon/Generated';
+import IconArrowLeft from '@foundation/Icon/Generated/IconArrowLeft';
 import { getInteractionModality } from '@react-aria/interactions';
 import { useOption } from '@react-aria/listbox';
 import { merge } from '@utilities/merge';

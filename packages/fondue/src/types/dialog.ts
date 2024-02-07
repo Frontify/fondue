@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ReactElement, ReactNode } from 'react';
-import { IconProps } from '@foundation/Icon';
+import { IconProps } from '@foundation/Icon/IconProps';
 import { BadgeProps } from '@components/Badge';
 import { ButtonProps } from '@components/Button';
 import { PopperProps } from '@components/Popper/types';

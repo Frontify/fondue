@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { TextInput } from '@components/TextInput/TextInput';
-import { IconIcon } from '@foundation/Icon/Generated';
+import IconIcon from '@foundation/Icon/Generated/IconIcon';
 import { ReactElement, useState } from 'react';
-import { AccordionHeaderProps } from '.';
 import { Accordion, AccordionItem } from './Accordion';
+import { AccordionHeaderProps } from './types';
 
 const ACCORDION_ID = '[data-test-id=fondue-accordion]';
 const ACCORDION_ITEM_ID = '[data-test-id=fondue-accordion-item]';

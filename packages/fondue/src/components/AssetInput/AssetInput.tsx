@@ -2,13 +2,14 @@
 
 import { ActionMenuProps } from '@components/ActionMenu/ActionMenu/ActionMenu';
 import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
-import { IconArrowCircleUp, IconImageStack } from '@foundation/Icon/';
 import { IconProps } from '@foundation/Icon/IconProps';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { merge } from '@utilities/merge';
 import { ChangeEvent, ReactElement, useRef } from 'react';
 import { MultiAssetPreview } from './MultiAssetPreview';
 import { SelectedAsset } from './SingleAsset/SelectedAsset';
+import IconArrowCircleUp from '@foundation/Icon/Generated/IconArrowCircleUp';
+import IconImageStack from '@foundation/Icon/Generated/IconImageStack';
 
 type BaseAsset = {
     name: string;

@@ -2,12 +2,14 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Checkbox, CheckboxState } from '@components/Checkbox/Checkbox';
+import IconArrowBidirectional from '@foundation/Icon/Generated/IconArrowBidirectional';
+import IconArrowDown from '@foundation/Icon/Generated/IconArrowDown';
+import IconArrowUp from '@foundation/Icon/Generated/IconArrowUp';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { Key, cloneElement, useEffect, useRef, useState } from 'react';
-import { IconArrowBidirectional, IconArrowDown, IconArrowUp } from '@foundation/Icon/Generated';
-import { SelectionMode, SortDirection } from '..';
+import { SelectionMode, SortDirection } from './Table';
 
 export enum TableColumnHeaderType {
     Default = 'Default',

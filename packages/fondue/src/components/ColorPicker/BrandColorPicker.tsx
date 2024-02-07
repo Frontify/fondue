@@ -2,13 +2,16 @@
 
 import { SegmentedControls } from '@components/SegmentedControls/SegmentedControls';
 import { TextInput } from '@components/TextInput/TextInput';
-import { IconCheckMark, IconGridRegular, IconMagnifier, IconStackVertical } from '@foundation/Icon/Generated';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { isColorLight, toShortRgb } from '@utilities/colors';
 import { merge } from '@utilities/merge';
 import { ReactElement, useEffect, useState } from 'react';
 import { TinyColor } from '@ctrl/tinycolor';
 import { ColorPickerProps } from './ColorPicker';
+import IconGridRegular from '@foundation/Icon/Generated/IconGridRegular';
+import IconStackVertical from '@foundation/Icon/Generated/IconStackVertical';
+import IconMagnifier from '@foundation/Icon/Generated/IconMagnifier';
+import IconCheckMark from '@foundation/Icon/Generated/IconCheckMark';
 
 const find = (haystack?: string, needle = '') =>
     haystack?.toLocaleLowerCase().includes(needle.toLocaleLowerCase().trim());

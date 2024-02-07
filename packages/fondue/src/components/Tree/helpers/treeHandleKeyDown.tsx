@@ -3,7 +3,7 @@
 import { KeyboardEvent } from 'react';
 import { KeyboardCode } from '@dnd-kit/core';
 import { TreeState } from '../types';
-import { ROOT_ID } from '.';
+import { ROOT_ID } from './constants';
 
 export const handleKeyDownEvent = (
     event: KeyboardEvent<HTMLUListElement>,
