@@ -7,11 +7,10 @@ export const route: RouteSync = (pageContext): ReturnType<RouteSync> => {
     const pageUrl = pageContext.urlPathname.toLocaleLowerCase().split('/component/').pop();
 
     if (!pageUrl) {
-        throw render(404, "This Component Doesn't exist");
+        throw render(404, "This Component doesn't exist");
     }
 
     return {
-        // Make `id` available as pageContext.routeParams.id
         routeParams: {
             pageUrl,
         },

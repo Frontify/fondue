@@ -1,11 +1,11 @@
 {
     "root": true,
-    "extends": ["@frontify/eslint-config-react", "plugin:jsx-a11y/recommended", "plugin:storybook/recommended"],
+    "extends": ["@frontify/eslint-config-react", "plugin:jsx-a11y/recommended"],
     "plugins": ["jsx-a11y", "notice"],
     "settings": {
         "react": {
-            "version": "detect"
-        }
+            "version": "detect",
+        },
     },
     "overrides": [
         {
@@ -16,11 +16,11 @@
                     {
                         "template": "/* (c) Copyright Frontify Ltd., all rights reserved. */\n\n",
                         "messages": {
-                            "whenFailedToMatch": "No Frontify copyright header set."
-                        }
-                    }
-                ]
-            }
-        }
-    ]
+                            "whenFailedToMatch": "No Frontify copyright header set.",
+                        },
+                    },
+                ],
+            },
+        },
+    ],
 }

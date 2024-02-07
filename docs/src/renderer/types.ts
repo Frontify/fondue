@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Component } from 'components/content';
+import { Component } from '@frontify/fondue-components/content';
 
 // https://vike.dev/pageContext#typescript
 declare global {
@@ -9,14 +9,14 @@ declare global {
         interface PageContext {
             Page: () => React.ReactElement;
             data?: {
-                /** Value for <title> defined dynmically by by /pages/some-page/+data.js */
+                /** Value for <title> defined dynamically by by /pages/some-page/+data.ts */
                 title?: string;
-                /** Value for <meta name="description"> defined dynmically */
+                /** Value for <meta name="description"> defined dynamically */
                 description?: string;
                 component: Component;
             };
             config: {
-                /** Value for <title> defined statically by /pages/some-page/+title.js (or by `export default { title }` in /pages/some-page/+config.js) */
+                /** Value for <title> defined statically by /pages/some-page/+title.ts (or by `export default { title }` in /pages/some-page/+config.ts) */
                 title?: string;
                 /** Value for <meta name="description"> defined statically */
                 description?: string;
@@ -27,5 +27,4 @@ declare global {
     }
 }
 
-// Tell TypeScript this file isn't an ambient module
 export {};

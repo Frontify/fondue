@@ -5,7 +5,7 @@
     "type": "module",
     "files": [
         "dist",
-        "tailwind.config.js"
+        "tailwind.config.ts"
     ],
     "main": "./dist/component-library.cjs",
     "module": "./dist/component-library.js",
@@ -15,15 +15,15 @@
             "import": "./.contentlayer/generated/index.mjs"
         },
         ".": {
-            "types": "./dist/lib/component-lib.d.ts",
-            "import": "./dist/lib/component-lib.js"
+            "types": "./dist/component-lib.d.ts",
+            "import": "./dist/component-lib.js"
         },
-        "./styles": "./dist/lib/index.css",
+        "./styles": "./dist/index.css",
         "./tailwind": "./tailwind.config.js"
     },
     "scripts": {
-        "dev": "tsc && concurrently 'vite build --watch' 'contentlayer dev'",
-        "build": "tsc && pnpm build:lib && contentlayer build ",
+        "dev": "concurrently 'vite build --watch' 'contentlayer dev'",
+        "build": "tsc && pnpm build:lib && contentlayer build",
         "build:lib": "vite build",
         "lint": "eslint .",
         "lint:fix": "eslint --fix .",

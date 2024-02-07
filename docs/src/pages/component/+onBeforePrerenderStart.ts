@@ -2,8 +2,6 @@
 
 import { allComponents } from '@frontify/fondue-components/content';
 
-export { onBeforePrerenderStart };
-
-async function onBeforePrerenderStart() {
+export const onBeforePrerenderStart = () => {
     return allComponents.map((component) => `/component/${component.url}`);
-}
+};

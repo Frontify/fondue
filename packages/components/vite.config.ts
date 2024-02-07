@@ -9,7 +9,7 @@ export default defineConfig({
     plugins: [react(), dts({ insertTypesEntry: true, rollupTypes: true })],
     build: {
         cssCodeSplit: true,
-        outDir: './dist/lib',
+        outDir: './dist',
         lib: {
             entry: resolve(__dirname, 'src/index.ts'),
             formats: ['es'],

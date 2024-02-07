@@ -1,11 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export { Layout };
 import '@frontify/fondue-components/styles';
 import '../renderer/index.css';
 import { allComponents } from '@frontify/fondue-components/content';
 
-const Layout = ({ children }: { children: React.ReactNode }) => {
+export const Layout = ({ children }: { children: React.ReactNode }) => {
     return (
         <main className="tw-grid tw-grid-cols-[auto_1fr] tw-grid-rows-[auto_1fr] tw-h-screen">
             <header className="tw-col-start-1 tw-col-span-2 tw-bg-box-neutral tw-border-line tw-border-b-2 tw-px-8 tw-py-4">
