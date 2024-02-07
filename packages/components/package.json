@@ -45,6 +45,9 @@
     },
     "devDependencies": {
         "@types/react": "^18.2.51",
+        "@frontify/eslint-config-react": "0.16.1",
+        "eslint-plugin-jsx-a11y": "^6.8.0",
+        "eslint-plugin-notice": "^0.9.10",
         "eslint": "^8.56.0",
         "prettier": "^3.2.5",
         "typescript": "^5.2.2",
