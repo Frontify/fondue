@@ -8,6 +8,7 @@ import {
     ComboboxContentProps,
     ComboboxProps,
     comboboxActions,
+    comboboxSelectors,
     createVirtualRef,
     useActiveComboboxStore,
     useComboboxContent,
@@ -99,8 +100,10 @@ export function Combobox({
     const activeId = useComboboxSelectors.activeId();
     const selectionDefined = useEditorSelector((editor) => !!editor.selection, []);
     const editorId = usePlateSelectors().id();
-
     useEffect(() => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { [id]: _deleted, ...comboBoxesToKeep } = comboboxSelectors.state().byId;
+        comboboxActions.byId(comboBoxesToKeep);
         comboboxActions.setComboboxById({
             id,
             trigger,
