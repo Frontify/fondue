@@ -2,7 +2,7 @@
 
 import { ButtonHTMLAttributes, DetailedHTMLProps, forwardRef } from 'react';
 
-import { IconGrabHandle12 } from '@foundation/Icon';
+import IconGrabHandle12 from '@foundation/Icon/Generated/IconGrabHandle12';
 
 import { merge } from '@utilities/merge';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
