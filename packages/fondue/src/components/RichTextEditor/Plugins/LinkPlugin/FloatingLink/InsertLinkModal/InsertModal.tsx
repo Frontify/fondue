@@ -5,7 +5,7 @@ import { Button } from '@components/Button/Button';
 import { Checkbox } from '@components/Checkbox';
 import { FormControl } from '@components/FormControl';
 import { TextInput } from '@components/TextInput';
-import { IconCheckMark20 } from '@foundation/Icon/Generated';
+import IconCheckMark20 from '@foundation/Icon/Generated/IconCheckMark20';
 import { MouseEvent, ReactElement, ReactNode } from 'react';
 import { InsertModalStateProps } from './types';
 

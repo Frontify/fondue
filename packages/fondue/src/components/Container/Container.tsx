@@ -4,7 +4,7 @@ import { Box } from '@components/Box';
 import { DimensionUnity, SpacingValue } from '@utilities/dimensions';
 import { merge } from '@utilities/merge';
 import { ReactNode } from 'react';
-import { ContainerHTMLElement } from 'src/types/elements';
+import { ContainerHTMLElement } from '../../types/elements';
 
 export type ContainerProps = {
     children?: ReactNode | ReactNode[];

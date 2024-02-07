@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconFaceHappy16 } from '@foundation/Icon/Generated';
+import IconFaceHappy16 from '@foundation/Icon/Generated/IconFaceHappy16';
 import { ButtonWrapper, IconStylingWrapper } from '../helper';
 import { PluginButtonProps } from '../types';
 import { EmojiPicker } from './EmojiPicker/EmojiPicker';

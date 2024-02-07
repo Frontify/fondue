@@ -3,8 +3,7 @@
 import { Meta, StoryFn } from '@storybook/react';
 import { useState } from 'react';
 import { LegacyOrderableList as OrderableListComponent } from './LegacyOrderableList';
-import { LegacyOrderableListItem } from './types';
-import { LegacyOrderableListProps } from '.';
+import { LegacyOrderableListItem, LegacyOrderableListProps } from './types';
 import { chain } from '@react-aria/utils';
 import { renderContent, storyItems } from '@components/LegacyOrderableList/utils';
 

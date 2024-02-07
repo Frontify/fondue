@@ -3,11 +3,13 @@
 import { Meta, StoryFn } from '@storybook/react';
 import { Box } from '@components/Box';
 import { FormField } from '@components/FormField';
-import { Textarea, TextareaProps } from '.';
-import { IconClipboard16, IconNook16, IconQuestionMark16 } from '@foundation/Icon';
+import { Textarea, TextareaProps } from './Textarea';
+import IconClipboard16 from '@foundation/Icon/Generated/IconClipboard16';
+import IconNook16 from '@foundation/Icon/Generated/IconNook16';
+import IconQuestionMark16 from '@foundation/Icon/Generated/IconQuestionMark16';
 import { Validation } from '@utilities/validation';
 import { useCallback, useEffect, useState } from 'react';
-import { ExtraAction } from 'src/types/input';
+import { ExtraAction } from '../../types/input';
 
 const ExtraActions: ExtraAction[] = [
     {

@@ -51,8 +51,3 @@ const WithInteractiveContentTemplate: StoryFn<OverlayProps> = (args) => {
 
 export const WithHeaderAndFooter = WithInteractiveContentTemplate.bind({});
 WithHeaderAndFooter.args = {};
-
-export const WithHeaderAndFooterAndDarkTheme = WithInteractiveContentTemplate.bind({});
-WithHeaderAndFooterAndDarkTheme.args = {
-    theme: 'dark',
-};

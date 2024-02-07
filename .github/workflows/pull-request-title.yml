@@ -24,7 +24,7 @@ jobs:
                       fix
                       chore
                       docs
-                      style
+                      build
                       refactor
                       perf
                       test

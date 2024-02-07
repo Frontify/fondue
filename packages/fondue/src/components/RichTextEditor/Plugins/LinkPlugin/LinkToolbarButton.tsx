@@ -4,7 +4,7 @@ import { withRef } from '@udecode/cn';
 import { useLinkToolbarButton, useLinkToolbarButtonState } from '@udecode/plate';
 
 import { IconStylingWrapper } from '@components/RichTextEditor/Plugins';
-import { IconLink16 } from '@foundation/Icon';
+import IconLink16 from '@foundation/Icon/Generated/IconLink16';
 import { ToolbarButton } from '@components/RichTextEditor/components/Toolbar/ToolbarButton';
 
 export const LinkToolbarButton = withRef<typeof ToolbarButton>((rest, ref) => {

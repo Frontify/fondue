@@ -3,7 +3,8 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { NumberInputIncrement, NumberInputProps } from './types';
 import { merge } from '@utilities/merge';
-import { IconMinus16, IconPlus16 } from '@foundation/Icon';
+import IconMinus16 from '@foundation/Icon/Generated/IconMinus16';
+import IconPlus16 from '@foundation/Icon/Generated/IconPlus16';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { Validation, validationClassMap } from '@utilities/validation';
 import { KeyboardEvent } from '@react-types/shared';

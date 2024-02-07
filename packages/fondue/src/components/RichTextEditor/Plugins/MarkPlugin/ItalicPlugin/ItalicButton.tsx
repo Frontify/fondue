@@ -2,7 +2,7 @@
 
 import { getHotkeyByPlatform } from '@components/RichTextEditor/helpers/getHotkeyByPlatform';
 import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
-import { IconTextFormatItalic16 } from '@foundation/Icon/Generated';
+import IconTextFormatItalic16 from '@foundation/Icon/Generated/IconTextFormatItalic16';
 import { getPluginType } from '@udecode/plate';
 import { ButtonWrapper, IconStylingWrapper } from '../../helper';
 import { PluginButtonProps } from '../../types';

@@ -7,7 +7,7 @@ import { getColumnBreakCount } from './utils/getColumnBreakCount';
 import { ToolbarButton } from '@components/RichTextEditor/components/Toolbar/ToolbarButton';
 import { ComponentProps } from 'react';
 import { IconStylingWrapper } from '@components/RichTextEditor/Plugins/helper';
-import { IconTextColumnBreak16 } from '@foundation/Icon';
+import IconTextColumnBreak16 from '@foundation/Icon/Generated/IconTextColumnBreak16';
 
 export const ColumnBreakToolbarButton = ({ id, ...props }: ComponentProps<typeof ToolbarButton>) => {
     const editor = useEditorState(useEventPlateId(id));

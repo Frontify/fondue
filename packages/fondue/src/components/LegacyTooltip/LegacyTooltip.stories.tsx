@@ -4,7 +4,7 @@ import { Meta, StoryFn } from '@storybook/react';
 import { useState } from 'react';
 import { BrightHeaderStyle } from './BrightHeader';
 import { LegacyTooltip, LegacyTooltipProps, TooltipAlignment, TooltipPosition } from './LegacyTooltip';
-import { IconExclamationMarkCircle16Filled, IconExclamationMarkTriangle16, IconIcon } from '@foundation/Icon/Generated';
+import IconExclamationMarkCircle16Filled from '@foundation/Icon/Generated/IconExclamationMarkCircle16Filled';
 import { useOverlayTriggerState } from '@react-stately/overlays';
 import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
 import { Modal } from '@components/Modal';
@@ -12,7 +12,9 @@ import { ModalProps } from '@components/Modal/types';
 import { ScrollWrapperDirection } from '@components/ScrollWrapper/types';
 import { action } from '@storybook/addon-actions';
 import { Dropdown } from '@components/Dropdown';
-import { FormControl } from '..';
+import { FormControl } from '../FormControl/FormControl';
+import IconIcon from '@foundation/Icon/Generated/IconIcon';
+import IconExclamationMarkTriangle16 from '@foundation/Icon/Generated/IconExclamationMarkTriangle16';
 
 export default {
     title: 'Deprecated/LegacyTooltip',

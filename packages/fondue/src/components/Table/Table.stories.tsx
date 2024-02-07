@@ -9,7 +9,8 @@ import { action } from '@storybook/addon-actions';
 import { Meta, StoryFn } from '@storybook/react';
 import { ReactElement, useEffect, useState } from 'react';
 import { Column, Row, SelectionMode, SortDirection, Table, TableProps } from './Table';
-import { IconDotsVertical, IconFaceHappy } from '@foundation/Icon/Generated';
+import IconFaceHappy from '@foundation/Icon/Generated/IconFaceHappy';
+import IconDotsVertical from '@foundation/Icon/Generated/IconDotsVertical';
 
 export default {
     title: 'Components/Table',

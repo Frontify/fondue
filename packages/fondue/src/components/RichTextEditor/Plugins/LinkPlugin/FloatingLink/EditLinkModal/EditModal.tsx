@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 // import { useFloatingLinkUrlInput } from '@udecode/plate';
-import { IconPen16, IconTrashBin16 } from '@foundation/Icon/Generated';
+import IconPen16 from '@foundation/Icon/Generated/IconPen16';
+import IconTrashBin16 from '@foundation/Icon/Generated/IconTrashBin16';
 import { useRichTextEditorContext } from '@components/RichTextEditor/context';
 import { LINK_PLUGIN } from '../../id';
 import { useLinkOpenButtonState } from '@udecode/plate';

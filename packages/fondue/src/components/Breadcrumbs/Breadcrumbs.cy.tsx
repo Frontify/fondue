@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ReactElement, useState } from 'react';
-import { BreadcrumbsProps } from '.';
+import { BreadcrumbsProps } from './Breadcrumbs';
 import { BreadcrumbGap, Breadcrumbs, verticalGapClassMap } from './Breadcrumbs';
 
 beforeEach('Getting the seperator', () => {

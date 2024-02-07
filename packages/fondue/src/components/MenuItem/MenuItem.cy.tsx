@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconMusicNote } from '@foundation/Icon/Generated';
+import IconMusicNote from '@foundation/Icon/Generated/IconMusicNote';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { MenuItem, MenuItemContentSize, MenuItemProps, SelectionIndicatorIcon } from '@components/MenuItem';
 

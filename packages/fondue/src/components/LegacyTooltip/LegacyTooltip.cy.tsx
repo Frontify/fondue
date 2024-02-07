@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconSize } from '@foundation/Icon/IconSize';
-import { IconExclamationMarkCircle, IconIcon } from '@foundation/Icon/Generated';
 import { BrightHeaderStyle, brightHeaderBackgroundColors } from './BrightHeader';
 import { LegacyTooltip, LegacyTooltipProps, TooltipAlignment, TooltipPosition } from './LegacyTooltip';
+import IconExclamationMarkCircle from '@foundation/Icon/Generated/IconExclamationMarkCircle';
+import IconIcon from '@foundation/Icon/Generated/IconIcon';
 
 const TOOLTIP_TEXT = 'This is a tooltip';
 const TOOLTIP_ID = '[data-test-id=tooltip]';

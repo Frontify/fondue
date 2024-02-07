@@ -17,7 +17,7 @@ import {
     withoutNormalizing,
 } from '@udecode/plate';
 import { ELEMENT_CHECK_ITEM } from '../id';
-import { IconListCheck16 } from '@foundation/Icon';
+import IconListCheck16 from '@foundation/Icon/Generated/IconListCheck16';
 import { IconStylingWrapper } from '@components/RichTextEditor/Plugins/helper';
 import { ToolbarButton } from '@components/RichTextEditor/components/Toolbar/ToolbarButton';
 

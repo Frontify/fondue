@@ -2,7 +2,7 @@
 
 import { CheckboxState } from '@components/Checkbox';
 import { TreeItemMultiselectProps } from '../types';
-import { ROOT_ID } from './';
+import { ROOT_ID } from './constants';
 
 export type TreeItemMultiselectWithNodes = TreeItemMultiselectProps & {
     id: string;

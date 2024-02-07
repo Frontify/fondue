@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { getPluginType } from '@udecode/plate';
-import { IconTextFormatBold16 } from '@foundation/Icon/Generated';
+import IconTextFormatBold16 from '@foundation/Icon/Generated/IconTextFormatBold16';
 import { ButtonWrapper, IconStylingWrapper } from '../../helper';
 import { PluginButtonProps } from '../../types';
 import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';

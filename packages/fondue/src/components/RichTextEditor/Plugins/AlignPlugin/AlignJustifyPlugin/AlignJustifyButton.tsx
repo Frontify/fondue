@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconTextAlignmentJustify16 } from '@foundation/Icon';
+import IconTextAlignmentJustify16 from '@foundation/Icon/Generated/IconTextAlignmentJustify16';
 import { getTooltip } from '@components/RichTextEditor/helpers';
 import { AlignmentToolbarButton } from '@components/RichTextEditor/Plugins/AlignPlugin/AlignmentToolbarbutton';
 import { ButtonWrapper, IconStylingWrapper } from '../../helper';

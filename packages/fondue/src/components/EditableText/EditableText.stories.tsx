@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { EditableMode, EditableText, EditableTextProps } from '@components/EditableText/EditableText';
 import { StoryFn } from '@storybook/react';
 import { IconSize } from '@foundation/Icon/IconSize';
-import { IconPen } from '@foundation/Icon/Generated';
+import IconPen from '@foundation/Icon/Generated/IconPen';
 
 export default {
     title: 'Components/Editable Text',

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconSize } from '@foundation/Icon/IconSize';
-import { IconCaretRight } from '@foundation/Icon/Generated';
+import IconCaretRight from '@foundation/Icon/Generated/IconCaretRight';
 import { useButton } from '@react-aria/button';
 import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';

@@ -3,7 +3,7 @@
 import { Validation } from '@utilities/validation';
 import { ReactElement, useEffect, useState } from 'react';
 import { TextInput, TextInputProps, TextInputType } from './TextInput';
-import { IconIcon } from '@foundation/Icon';
+import IconIcon from '@foundation/Icon/Generated/IconIcon';
 
 const TEXT_INPUT_COMPONENT = '[data-test-id=fondue-text-input-component]';
 const TEXT_INPUT_ID = '[data-test-id=text-input]';

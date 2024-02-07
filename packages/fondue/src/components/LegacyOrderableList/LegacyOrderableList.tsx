@@ -9,7 +9,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider } from 'react-dnd';
 import { moveItems } from '@utilities/dnd';
 import { useId } from '@react-aria/utils';
-import { CollisionPosition } from '..';
+import { CollisionPosition } from '../Tree/types';
 
 const listItemsCompareFn = <T extends object>(
     itemA: LegacyOrderableListItem<T>,
