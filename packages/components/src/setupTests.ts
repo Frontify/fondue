@@ -2,8 +2,8 @@
 
 import '@testing-library/jest-dom/vitest';
 
-import { afterEach, beforeAll } from 'vitest';
 import { cleanup, configure } from '@testing-library/react';
+import { afterEach, beforeAll } from 'vitest';
 
 beforeAll(() => {
     configure({ testIdAttribute: 'data-test-id' });
