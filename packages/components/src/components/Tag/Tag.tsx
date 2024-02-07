@@ -7,5 +7,5 @@ type TagProps = {
 };
 
 export const Tag = ({ children }: TagProps) => {
-    return <div className="bg-dark-red tw-bg-black-5 tw-bg-box-disabled">{children}</div>;
+    return <div className="tw-text-text tw-underline">{children}</div>;
 };
