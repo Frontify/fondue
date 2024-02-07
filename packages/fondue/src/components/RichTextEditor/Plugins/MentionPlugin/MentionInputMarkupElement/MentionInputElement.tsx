@@ -2,8 +2,11 @@
 
 import { cn, withRef } from '@udecode/cn';
 import { PlateElement, getHandler } from '@udecode/plate';
+import { ComponentProps } from 'react';
 
-export const MentionInputElement = withRef<
+export const MentionInputElement: React.FC<
+    ComponentProps<typeof PlateElement> & { onClick?: (mentionNode: unknown) => void }
+> = withRef<
     typeof PlateElement,
     {
         onClick?: (mentionNode: unknown) => void;

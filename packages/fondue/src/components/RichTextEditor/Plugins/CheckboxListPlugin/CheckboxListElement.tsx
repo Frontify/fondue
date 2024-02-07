@@ -47,7 +47,10 @@ export const CheckboxListElementNode = (props: PlateRenderElementProps & { style
 };
 
 export class CheckboxListElement extends MarkupElement {
-    constructor(id = ELEMENT_CHECK_ITEM, node = CheckboxListElementNode) {
+    constructor(
+        id = ELEMENT_CHECK_ITEM,
+        node: React.FC<PlateRenderElementProps & { style: CSSProperties }> = CheckboxListElementNode,
+    ) {
         super(id, node);
     }
 }

@@ -12,7 +12,7 @@ type GeneratePluginsReturn = {
     styles: () => Record<string, CSSProperties>;
 };
 
-export const createPlatePlugins = (pluginComposer: PluginComposer) =>
+export const createPlatePlugins = (pluginComposer: PluginComposer): PlatePlugin[] =>
     createPlugins(pluginComposer.plugins, {
         components: pluginComposer.elements,
     });

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createPluginFactory } from '@udecode/plate';
+import { PlatePlugin, createPluginFactory } from '@udecode/plate';
 import { CSSProperties } from 'react';
 import { MarkupElement, Plugin, PluginProps, defaultStyles, getColumnBreakClasses } from '../../..';
 import { alignmentClassnames } from '../../helper';
@@ -20,7 +20,7 @@ export class Heading2Plugin extends Plugin {
         this.styles = styles;
     }
 
-    plugins() {
+    plugins(): PlatePlugin[] {
         return [createHeading2Plugin(this.styles)];
     }
 }
@@ -44,7 +44,7 @@ const Heading2MarkupElementNode = ({ element, attributes, children, styles }: Te
     );
 };
 
-const createHeading2Plugin = (styles: CSSProperties) =>
+const createHeading2Plugin = (styles: CSSProperties): PlatePlugin =>
     createPluginFactory({
         key: TextStyles.heading2,
         isElement: true,

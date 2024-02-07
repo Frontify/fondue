@@ -16,8 +16,13 @@ import { KEY_ELEMENT_BREAK_AFTER_COLUMN } from '../createColumnBreakPlugin';
 
 export type ColumnBreakValue = 'active' | 'inactive' | undefined;
 
+type SetColumnBreaksType = <V extends Value>(
+    editor: PlateEditor<V>,
+    { key, value, at }: { at?: TLocation; value?: string; setNodesOptions?: SetNodesOptions<V> } & PlatePluginKey,
+) => void;
+
 // This is adapted from src/components/RichTextEditor/Plugins/AlignPlugin/AlignPlugin.ts
-export const setColumnBreaks = <V extends Value>(
+export const setColumnBreaks: SetColumnBreaksType = <V extends Value>(
     editor: PlateEditor<V>,
     {
         key = KEY_ELEMENT_BREAK_AFTER_COLUMN,

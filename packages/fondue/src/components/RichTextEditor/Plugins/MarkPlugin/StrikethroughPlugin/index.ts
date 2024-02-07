@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createStrikethroughPlugin } from '@udecode/plate';
+import { PlatePlugin, createStrikethroughPlugin } from '@udecode/plate';
 import { STRIKETHROUGH_PLUGIN } from './id';
 import { StrikethroughMarkupElement } from './StrikethroughMarkupElement';
 import { StrikethroughButton } from './StrikethroughButton';
@@ -15,7 +15,7 @@ export class StrikethroughPlugin extends Plugin {
         });
     }
 
-    plugins() {
+    plugins(): PlatePlugin[] {
         return [createStrikethroughPlugin()];
     }
 }

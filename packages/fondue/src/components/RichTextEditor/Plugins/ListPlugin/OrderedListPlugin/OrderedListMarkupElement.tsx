@@ -34,7 +34,7 @@ export const getOrderedListClasses = (nestingLevel: number) =>
     }`;
 export const OL_STYLES = { counterReset: 'count' };
 
-export const OrderedListMarkupElementNode = ({
+export const OrderedListMarkupElementNode: (props: PlateRenderLeafProps & { element: TElement }) => JSX.Element = ({
     attributes,
     children,
     element,
@@ -50,7 +50,10 @@ export const OrderedListMarkupElementNode = ({
 };
 
 export class OrderedListMarkupElement extends MarkupElement {
-    constructor(id = ELEMENT_OL, node = OrderedListMarkupElementNode) {
+    constructor(
+        id = ELEMENT_OL,
+        node: React.FC<PlateRenderLeafProps & { element: TElement }> = OrderedListMarkupElementNode,
+    ) {
         super(id, node);
     }
 }

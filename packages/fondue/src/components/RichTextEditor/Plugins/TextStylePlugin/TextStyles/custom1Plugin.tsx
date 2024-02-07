@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createPluginFactory } from '@udecode/plate';
+import { PlatePlugin, createPluginFactory } from '@udecode/plate';
 import { CSSProperties } from 'react';
 import { MarkupElement, Plugin, PluginProps, defaultStyles, getColumnBreakClasses } from '../../..';
 import { alignmentClassnames } from '../../helper';
@@ -20,7 +20,7 @@ export class Custom1Plugin extends Plugin {
         this.styles = styles;
     }
 
-    plugins() {
+    plugins(): PlatePlugin[] {
         return [createCustom1Plugin(this.styles)];
     }
 }
@@ -44,7 +44,7 @@ const Custom1MarkupElementNode = ({ element, attributes, children, styles }: Tex
     );
 };
 
-const createCustom1Plugin = (styles: CSSProperties) =>
+const createCustom1Plugin = (styles: CSSProperties): PlatePlugin =>
     createPluginFactory({
         key: TextStyles.custom1,
         isElement: true,

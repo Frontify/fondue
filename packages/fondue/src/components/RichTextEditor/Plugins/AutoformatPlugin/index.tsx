@@ -10,6 +10,7 @@ import {
     MARK_ITALIC,
     MARK_STRIKETHROUGH,
     MARK_UNDERLINE,
+    PlatePlugin,
     autoformatArrow,
     autoformatFraction,
     autoformatLegal,
@@ -32,7 +33,7 @@ export class AutoformatPlugin extends Plugin {
         });
     }
 
-    plugins() {
+    plugins(): PlatePlugin[] {
         return [
             createAutoformatPlugin({
                 options: {

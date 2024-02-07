@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createSuperscriptPlugin } from '@udecode/plate';
+import { PlatePlugin, createSuperscriptPlugin } from '@udecode/plate';
 import { Plugin, PluginProps } from '../../Plugin';
 import { SuperscriptButton } from '@components/RichTextEditor/Plugins/MarkPlugin/SuperscriptPlugin/SupercriptButton';
 import { SUPERSCRIPT_PLUGIN } from '@components/RichTextEditor/Plugins/MarkPlugin/SuperscriptPlugin/id';
@@ -15,7 +15,7 @@ export class SuperscriptPlugin extends Plugin {
         });
     }
 
-    plugins() {
+    plugins(): PlatePlugin[] {
         return [
             createSuperscriptPlugin({
                 options: {

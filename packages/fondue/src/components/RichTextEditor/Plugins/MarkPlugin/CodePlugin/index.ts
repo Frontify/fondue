@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createCodePlugin } from '@udecode/plate';
+import { PlatePlugin, createCodePlugin } from '@udecode/plate';
 import { CODE_PLUGIN } from './id';
 import { CodeMarkupElement } from './CodeMarkupElement';
 import { CodeButton } from './CodeButton';
@@ -15,7 +15,7 @@ export class CodePlugin extends Plugin {
         });
     }
 
-    plugins() {
+    plugins(): PlatePlugin[] {
         return [createCodePlugin()];
     }
 }

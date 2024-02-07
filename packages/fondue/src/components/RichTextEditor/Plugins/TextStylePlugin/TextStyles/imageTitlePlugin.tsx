@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createPluginFactory } from '@udecode/plate';
+import { PlatePlugin, createPluginFactory } from '@udecode/plate';
 import { CSSProperties } from 'react';
 import { MarkupElement, Plugin, PluginProps, defaultStyles, getColumnBreakClasses } from '../../..';
 import { alignmentClassnames } from '../../helper';
@@ -20,7 +20,7 @@ export class ImageTitlePlugin extends Plugin {
         this.styles = styles;
     }
 
-    plugins() {
+    plugins(): PlatePlugin[] {
         return [createImageTitlePlugin(this.styles)];
     }
 }
@@ -43,7 +43,7 @@ const ImageTitleMarkupElementNode = ({ element, attributes, children, styles }: 
     );
 };
 
-const createImageTitlePlugin = (styles: CSSProperties) =>
+const createImageTitlePlugin = (styles: CSSProperties): PlatePlugin =>
     createPluginFactory({
         key: TextStyles.imageTitle,
         isElement: true,

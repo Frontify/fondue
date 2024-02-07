@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createItalicPlugin } from '@udecode/plate';
+import { PlatePlugin, createItalicPlugin } from '@udecode/plate';
 import { ITALIC_PLUGIN } from './id';
 import { ITALIC_CLASSES, ItalicMarkupElement } from './ItalicMarkupElement';
 import { Plugin, PluginProps } from '../../Plugin';
@@ -24,7 +24,7 @@ export class ItalicPlugin extends Plugin {
         });
     }
 
-    plugins() {
+    plugins(): PlatePlugin[] {
         return [
             createItalicPlugin({
                 deserializeHtml: {

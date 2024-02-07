@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createBoldPlugin } from '@udecode/plate';
+import { PlatePlugin, createBoldPlugin } from '@udecode/plate';
 import { BOLD_PLUGIN } from './id';
 import { BOLD_CLASSES, BoldMarkupElement } from './BoldMarkupElement';
 import { BoldButton } from './BoldButton';
@@ -24,7 +24,7 @@ export class BoldPlugin extends Plugin {
         });
     }
 
-    plugins() {
+    plugins(): PlatePlugin[] {
         return [
             createBoldPlugin({
                 deserializeHtml: {

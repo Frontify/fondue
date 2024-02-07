@@ -6,9 +6,10 @@ import { BlurOnBreakPlatePlugin } from './types';
 
 export const KEY_BLUR_ON_BREAK = 'blurOnBreak';
 
-export const createBlurOnBreakPlugin = createPluginFactory<BlurOnBreakPlatePlugin>({
-    key: KEY_BLUR_ON_BREAK,
-    handlers: {
-        onKeyDown: onKeyDownBlurOnBreak,
-    },
-});
+export const createBlurOnBreakPlugin: ReturnType<typeof createPluginFactory> =
+    createPluginFactory<BlurOnBreakPlatePlugin>({
+        key: KEY_BLUR_ON_BREAK,
+        handlers: {
+            onKeyDown: onKeyDownBlurOnBreak,
+        },
+    });

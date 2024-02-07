@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createUnderlinePlugin } from '@udecode/plate';
+import { PlatePlugin, createUnderlinePlugin } from '@udecode/plate';
 import { UNDERLINE_PLUGIN } from './id';
 import { UNDERLINE_CLASSES, UnderlineMarkupElement } from './UnderlineMarkupElement';
 import { UnderlineButton } from './UnderlineButton';
@@ -26,7 +26,7 @@ export class UnderlinePlugin extends Plugin {
         });
     }
 
-    plugins() {
+    plugins(): PlatePlugin[] {
         return [
             createUnderlinePlugin({
                 deserializeHtml: {

@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createIndentPlugin, createPluginFactory } from '@udecode/plate';
+import { PlatePlugin, createIndentPlugin, createPluginFactory } from '@udecode/plate';
 import { CHECKBOX_LIST_PLUGIN, ELEMENT_CHECK_ITEM } from './id';
 import { CheckboxListElement } from './CheckboxListElement';
 import { CheckboxListButton } from './CheckboxListButton';
 import { Plugin, PluginProps } from '../Plugin';
 
-export const createCheckboxListPlugin = createPluginFactory({
+export const createCheckboxListPlugin: ReturnType<typeof createPluginFactory> = createPluginFactory({
     key: ELEMENT_CHECK_ITEM,
     isElement: true,
 });
@@ -20,9 +20,9 @@ export class CheckboxListPlugin extends Plugin {
         });
     }
 
-    plugins() {
+    plugins(): PlatePlugin[] {
         return [
-            createCheckboxListPlugin(),
+            createCheckboxListPlugin() as PlatePlugin,
             createIndentPlugin({
                 inject: {
                     props: {

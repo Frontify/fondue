@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { isValidUrl } from '@components/RichTextEditor/utils/isValidUrl';
-import { createLinkPlugin as createPlateLinkPlugin, createPluginFactory } from '@udecode/plate';
+import { PlatePlugin, createLinkPlugin as createPlateLinkPlugin, createPluginFactory } from '@udecode/plate';
 import { Plugin, PluginProps } from '../Plugin';
 import { CustomFloatingLink } from './FloatingLink/CustomFloatingLink';
 import { LINK_PLUGIN } from './id';
@@ -10,7 +10,7 @@ import { LinkMarkupElement } from './LinkMarkupElement';
 import { CSSProperties } from 'react';
 import { defaultStyles } from '@components/RichTextEditor/utils';
 
-export const createLinkPlugin = createPluginFactory({
+export const createLinkPlugin: ReturnType<typeof createPluginFactory> = createPluginFactory({
     ...createPlateLinkPlugin(),
     renderAfterEditable: CustomFloatingLink,
     options: {
@@ -36,7 +36,7 @@ export class LinkPlugin extends Plugin {
         this.styles = styles;
     }
 
-    plugins() {
-        return [createLinkPlugin()];
+    plugins(): PlatePlugin[] {
+        return [createLinkPlugin() as PlatePlugin];
     }
 }

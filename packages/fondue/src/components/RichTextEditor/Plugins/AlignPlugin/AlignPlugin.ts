@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ELEMENT_LIC, ELEMENT_PARAGRAPH, createAlignPlugin } from '@udecode/plate';
+import { ELEMENT_LIC, ELEMENT_PARAGRAPH, PlatePlugin, createAlignPlugin } from '@udecode/plate';
 import { ELEMENT_CHECK_ITEM } from '../CheckboxListPlugin';
 import { Plugin } from '../Plugin';
 import { AlignPluginProps } from './types';
@@ -15,7 +15,7 @@ export class AlignPlugin extends Plugin<AlignPluginProps> {
         });
         this.validTypes = validTypes;
     }
-    plugins() {
+    plugins(): PlatePlugin[] {
         return [
             createAlignPlugin({
                 inject: {
