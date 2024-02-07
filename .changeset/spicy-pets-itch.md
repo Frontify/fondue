@@ -2,4 +2,4 @@
 '@frontify/fondue': minor
 ---
 
-Move to ESM
+refactor: move to ESM

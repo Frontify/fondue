@@ -2,4 +2,4 @@
 '@frontify/fondue': patch
 ---
 
-Update dependencies
+build: update dependencies
