@@ -3,16 +3,11 @@
     "private": true,
     "version": "0.0.0",
     "type": "module",
-    "files": [
-        "dist",
-        "tailwind.config.js"
-    ],
     "scripts": {
         "dev": "vite",
         "build": "tsc && vite build",
         "lint": "eslint .",
         "lint:fix": "eslint --fix .",
-        "lint:prettier": "prettier --check .",
         "preview": "vite preview"
     },
     "dependencies": {
