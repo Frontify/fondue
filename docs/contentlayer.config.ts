@@ -26,7 +26,7 @@ const Component = defineDocumentType(() => ({
 
 const Icon = defineDocumentType(() => ({
     name: 'Icon',
-    filePathPattern: `**/*.mdx`, // To be changed with the package path
+    filePathPattern: '**/*.mdx', // To be changed with the package path
     contentType: 'mdx',
     fields: {
         title: { type: 'string', required: true },
@@ -45,7 +45,7 @@ const Icon = defineDocumentType(() => ({
 
 const Token = defineDocumentType(() => ({
     name: 'Token',
-    filePathPattern: `**/*.mdx`, // To be changed with the package path
+    filePathPattern: '**/*.mdx', // To be changed with the package path
     contentType: 'mdx',
     fields: {
         title: { type: 'string', required: true },
