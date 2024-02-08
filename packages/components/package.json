@@ -3,8 +3,7 @@
     "type": "module",
     "version": "0.0.1",
     "private": true,
-    "main": "src/index.ts",
-    "types": "src/index.ts",
+    "homepage": "https://github.com/Frontify/fondue",
     "repository": {
         "type": "git",
         "url": "https://github.com/Frontify/fondue",
@@ -13,10 +12,11 @@
     "bugs": {
         "url": "https://github.com/frontify/fondue/issues"
     },
+    "main": "src/index.ts",
+    "types": "src/index.ts",
     "engines": {
         "node": ">=18"
     },
-    "homepage": "https://github.com/Frontify/fondue",
     "scripts": {
         "lint": "eslint .",
         "lint:fix": "eslint --fix .",

@@ -3,8 +3,7 @@ name: Fondue CI
 on:
     pull_request:
         paths:
-            - packages/fondue/**
-            - packages/components/**
+            - packages/**
 
 # Ensures that only one workflow per branch will run at a time.
 concurrency:
@@ -43,7 +42,7 @@ jobs:
               run: pnpm --stream --filter {packages/fondue} generate:icons && pnpm --stream --filter {packages/fondue} generate:componentsEnum
 
             - name: Lint code
-              run: pnpm --stream --filter {packages/fondue} --filter {packages/components} lint
+              run: pnpm --stream --filter {packages/fondue} --filter {packages/components} --filter {packages/icons} lint
 
     typecheck:
         name: Typecheck
@@ -73,7 +72,7 @@ jobs:
               run: pnpm --stream --filter {packages/fondue} generate:icons && pnpm --stream --filter {packages/fondue} generate:componentsEnum
 
             - name: Typecheck code
-              run: pnpm --stream --filter {packages/fondue} --filter {packages/components} typecheck
+              run: pnpm --stream --filter {packages/fondue} --filter {packages/components} --filter {packages/icons} typecheck
 
     old-component-tests:
         name: Old Component Tests

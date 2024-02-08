@@ -1,0 +1,40 @@
+{
+    "name": "@frontify/fondue-icons",
+    "type": "module",
+    "version": "0.1.43",
+    "description": "Frontify's icon SVGs",
+    "homepage": "https://github.com/Frontify/fondue",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Frontify/fondue",
+        "directory": "packages/icons"
+    },
+    "bugs": {
+        "url": "https://github.com/frontify/fondue/issues"
+    },
+    "files": [
+        "icons"
+    ],
+    "engines": {
+        "node": ">=18"
+    },
+    "scripts": {
+        "start": "dotenv tsx src/index.ts",
+        "lint": "eslint .",
+        "lint:fix": "eslint --fix .",
+        "typecheck": "tsc --noEmit"
+    },
+    "devDependencies": {
+        "@frontify/eslint-config-basic": "^0.19.0",
+        "@iconify/tools": "^4.0.0",
+        "@types/lodash": "^4.14.202",
+        "@types/node": "^18.19.14",
+        "dotenv-cli": "^7.3.0",
+        "eslint": "^8.56.0",
+        "figma-api": "^1.11.0",
+        "lodash": "^4.17.21",
+        "prettier": "^3.2.5",
+        "tsx": "^4.7.0",
+        "typescript": "^5.3.3"
+    }
+}
