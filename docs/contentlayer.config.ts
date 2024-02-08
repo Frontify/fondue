@@ -62,9 +62,11 @@ const Token = defineDocumentType(() => ({
     },
 }));
 
-export default makeSource({
+const sources: ReturnType<typeof makeSource> = makeSource({
     contentDirPath: '.',
     contentDirInclude: [FONDUE_COMPONENTS_PATH],
     contentDirExclude: [...EXCLUDES, ...EXCLUDES.map((path) => `${FONDUE_COMPONENTS_PATH}/${path}`)],
     documentTypes: [Component, Icon, Token],
 });
+
+export default sources;
