@@ -19,7 +19,7 @@
         "node": ">=18"
     },
     "scripts": {
-        "start": "dotenv tsx src/index.ts",
+        "build": "dotenv tsx src/index.ts",
         "lint": "eslint .",
         "lint:fix": "eslint --fix .",
         "typecheck": "tsc --noEmit"
