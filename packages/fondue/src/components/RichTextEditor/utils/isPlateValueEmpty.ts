@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TNode } from '@udecode/plate';
+import { TNode } from '@udecode/slate';
 import { TreeOfNodes } from '../types';
 
 type TextNode = { [key: string]: string };

@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlateEditor, Value, getNodeEntries } from '@udecode/plate';
+import { Value, getNodeEntries } from '@udecode/slate';
+import { PlateEditor } from '@udecode/plate-core';
 import { TLocation } from '@udecode/slate';
 import { ColumnBreakValue, setColumnBreaks } from './setColumnBreaks';
 

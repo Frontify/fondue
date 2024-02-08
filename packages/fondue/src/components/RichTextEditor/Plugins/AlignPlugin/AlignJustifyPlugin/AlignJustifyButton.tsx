@@ -9,9 +9,9 @@ import { PluginButtonProps } from '../../types';
 export const AlignJustifyButton = ({ id, editorId }: PluginButtonProps) => {
     return (
         <ButtonWrapper id={id}>
-            <AlignmentToolbarButton editorId={editorId} value="justify" tooltip={getTooltip('Justify')} key={id}>
-                <IconStylingWrapper icon={<IconTextAlignmentJustify16 />} />{' '}
-            </AlignmentToolbarButton>{' '}
+            <AlignmentToolbarButton editorId={editorId} value="justify" tooltip={getTooltip('Justify')}>
+                <IconStylingWrapper icon={<IconTextAlignmentJustify16 />} />
+            </AlignmentToolbarButton>
         </ButtonWrapper>
     );
 };

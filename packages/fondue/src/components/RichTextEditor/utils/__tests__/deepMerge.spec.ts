@@ -1,9 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { AnyObject } from '@udecode/plate';
 import { deepMerge } from '../deepMerge';
 
-const defaultObject: AnyObject = {
+const defaultObject: Record<string, any> = {
     option1: {
         id: 1,
         type: 'text',
@@ -14,13 +13,13 @@ const defaultObject: AnyObject = {
     },
 };
 
-const customObject1: AnyObject = {
+const customObject1: Record<string, any> = {
     option1: {
         text: 'right',
     },
 };
 
-const customObject2: AnyObject = {
+const customObject2: Record<string, any> = {
     option3: {
         id: 3,
     },

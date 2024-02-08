@@ -9,7 +9,7 @@ import { PluginButtonProps } from '../../types';
 export const AlignRightButton = ({ id, editorId }: PluginButtonProps) => {
     return (
         <ButtonWrapper id={id}>
-            <AlignmentToolbarButton editorId={editorId} value="right" tooltip={getTooltip('Align right')} key={id}>
+            <AlignmentToolbarButton editorId={editorId} value="right" tooltip={getTooltip('Align right')}>
                 <IconStylingWrapper icon={<IconTextAlignmentRight16 />} />
             </AlignmentToolbarButton>
         </ButtonWrapper>

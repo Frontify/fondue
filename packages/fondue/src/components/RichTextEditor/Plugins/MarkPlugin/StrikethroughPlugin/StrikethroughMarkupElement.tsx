@@ -1,6 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MARK_STRIKETHROUGH, PlateRenderLeafProps } from '@udecode/plate';
+import { MARK_STRIKETHROUGH } from '@udecode/plate-basic-marks';
+import { PlateRenderLeafProps } from '@udecode/plate-core';
+
 import { MarkupElement } from '../../MarkupElement';
 
 export const STRIKETHROUGH_CLASSES = '!tw-line-through';

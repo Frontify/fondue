@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
-import { PlateEditor, someNode, useEditorState, useEventPlateId } from '@udecode/plate';
+import { PlateEditor, PlatePlugin, useEditorState, useEventPlateId } from '@udecode/plate-core';
+import { someNode } from '@udecode/slate';
 import { toggleColumnBreak } from './onKeyDownColumnBreak';
 import { getColumnBreakCount } from './utils/getColumnBreakCount';
 import { ToolbarButton } from '@components/RichTextEditor/components/Toolbar/ToolbarButton';
@@ -13,7 +14,7 @@ export const ColumnBreakToolbarButton = ({ id, ...props }: ComponentProps<typeof
     const editor = useEditorState(useEventPlateId(id));
     const isActive = !!editor?.selection && someNode(editor, { match: (node) => !!node.breakAfterColumn });
 
-    const columns = (editor?.pluginsByKey['breakAfterColumn'] as any)?.options?.columns;
+    const columns = (editor?.pluginsByKey['breakAfterColumn'] as PlatePlugin)?.options?.columns;
 
     const columnCount = Number(columns) || 1;
     const canBreakAfter = isColumnBreakEnabled(editor, columnCount, isActive);

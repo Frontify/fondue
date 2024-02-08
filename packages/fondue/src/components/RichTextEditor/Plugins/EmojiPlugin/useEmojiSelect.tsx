@@ -1,15 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TComboboxItemBase } from '@udecode/plate';
-import {
-    deleteText,
-    focusEditor,
-    getPlugin,
-    insertText,
-    useEditorRef,
-    withoutMergingHistory,
-    withoutNormalizing,
-} from '@udecode/plate';
+import { TComboboxItemBase } from '@udecode/plate-combobox';
+import { deleteText, insertText, withoutMergingHistory, withoutNormalizing } from '@udecode/slate';
+import { focusEditor } from '@udecode/slate-react';
+import { getPlugin, useEditorRef } from '@udecode/plate-core';
 import { Emoji, KEY_EMOJI, useEmojiDropdownMenuState } from '@udecode/plate-emoji';
 
 export const useEmojiSelect = () => {

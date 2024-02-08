@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ReactNode } from 'react';
-import { PlateEditor } from '@udecode/plate';
+import { PlateEditor } from '@udecode/plate-core';
 import { PluginButtonProps } from '../../types';
 import { Plugin } from '../../Plugin';
 

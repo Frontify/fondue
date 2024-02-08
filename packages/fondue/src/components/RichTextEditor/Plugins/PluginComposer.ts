@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlatePlugin, PlatePluginComponent } from '@udecode/plate';
+import { PlatePlugin, PlatePluginComponent } from '@udecode/plate-core';
 import { ToolbarPositionWithButtons } from '../components/Toolbar/ToolbarPositionWithButtons';
 import { MarkupElement } from './MarkupElement';
 import { InlineData, ObjectType, PlatePluginList, Plugin, PluginComposerProps, Plugins, ToolbarButtons } from './types';

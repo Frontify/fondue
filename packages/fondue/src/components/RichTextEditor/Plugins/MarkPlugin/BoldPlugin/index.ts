@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlatePlugin, createBoldPlugin } from '@udecode/plate';
+import { PlatePlugin } from '@udecode/plate-core';
+import { createBoldPlugin } from '@udecode/plate-basic-marks';
 import { BOLD_PLUGIN } from './id';
 import { BOLD_CLASSES, BoldMarkupElement } from './BoldMarkupElement';
 import { BoldButton } from './BoldButton';

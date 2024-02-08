@@ -1,15 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import {
-    HotkeyPlugin,
-    KeyboardHandlerReturnType,
-    PlateEditor,
-    Value,
-    WithPlatePlugin,
-    getNodeEntries,
-    isBlock,
-    someNode,
-} from '@udecode/plate';
+import { Value, getNodeEntries, isBlock, someNode } from '@udecode/slate';
+import { HotkeyPlugin, KeyboardHandlerReturnType, PlateEditor, WithPlatePlugin } from '@udecode/plate-core';
+
 import isHotkey from 'is-hotkey';
 import { TLocation } from '@udecode/slate';
 import { KEY_ELEMENT_BREAK_AFTER_COLUMN } from './createColumnBreakPlugin';

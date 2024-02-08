@@ -1,19 +1,23 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { withRef } from '@udecode/cn';
-import { useMarkToolbarButton, useMarkToolbarButtonState } from '@udecode/plate';
+import { useMarkToolbarButton, useMarkToolbarButtonState } from '@udecode/plate-utils';
 
 import { ToolbarButton } from '../../components/Toolbar/ToolbarButton';
+import { ReactNode, forwardRef } from 'react';
 
-export const MarkToolbarButton = withRef<
-    typeof ToolbarButton,
+export const MarkToolbarButton = forwardRef<
+    HTMLButtonElement,
     {
         nodeType: string;
         clear?: string | string[];
+        children: ReactNode;
+        tooltip: ReactNode;
     }
->(({ clear, nodeType, ...rest }, ref) => {
+>(({ clear, nodeType, ...rootProps }, ref) => {
     const state = useMarkToolbarButtonState({ clear, nodeType });
     const { props } = useMarkToolbarButton(state);
 
-    return <ToolbarButton ref={ref} {...props} {...rest} />;
+    return <ToolbarButton ref={ref} {...props} {...rootProps} />;
 });
+
+MarkToolbarButton.displayName = 'MarkToolbarButton';

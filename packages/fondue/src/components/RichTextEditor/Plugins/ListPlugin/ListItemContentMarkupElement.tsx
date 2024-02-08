@@ -1,6 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ELEMENT_LIC, PlateRenderElementProps, TElement } from '@udecode/plate';
+import { ELEMENT_LIC } from '@udecode/plate-list';
+import { TElement } from '@udecode/slate';
+import { PlateRenderElementProps } from '@udecode/plate-core';
 import { merge } from '@utilities/merge';
 import { getColumnBreakClasses } from '../ColumnBreakPlugin/utils/getColumnBreakClasses';
 import { MarkupElement } from '../MarkupElement';

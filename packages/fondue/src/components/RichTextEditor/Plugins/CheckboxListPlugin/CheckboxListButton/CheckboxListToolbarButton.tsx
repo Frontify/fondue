@@ -1,21 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import {
-    ELEMENT_PARAGRAPH,
-    NodeOf,
-    PlateEditor,
-    Value,
-    focusEditor,
-    getNode,
-    getParentNode,
-    setElements,
-    someNode,
-    toggleNodeType,
-    unwrapList,
-    useEditorState,
-    useEventPlateId,
-    withoutNormalizing,
-} from '@udecode/plate';
+import { PlateEditor, toggleNodeType, useEditorState, useEventPlateId } from '@udecode/plate-core';
+import { ELEMENT_PARAGRAPH } from '@udecode/plate-paragraph';
+import { unwrapList } from '@udecode/plate-list';
+import { NodeOf, Value, getNode, getParentNode, setElements, someNode, withoutNormalizing } from '@udecode/slate';
+import { focusEditor } from '@udecode/slate-react';
 import { ELEMENT_CHECK_ITEM } from '../id';
 import IconListCheck16 from '@foundation/Icon/Generated/IconListCheck16';
 import { IconStylingWrapper } from '@components/RichTextEditor/Plugins/helper';
@@ -29,9 +18,9 @@ export const CheckboxListToolbarButton = ({ id, type = ELEMENT_CHECK_ITEM }: { i
     return (
         <ToolbarButton
             pressed={isActive}
-            onPointerDown={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
+            onPointerDown={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
 
                 toggleCheckboxList(editor, { type, isActive, node });
                 focusEditor(editor);

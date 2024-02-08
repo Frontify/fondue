@@ -5,7 +5,7 @@ import { ButtonWrapper, IconStylingWrapper } from '../../helper';
 import { PluginButtonProps } from '../../types';
 import { ListToolbarButton } from '@components/RichTextEditor/Plugins/ListPlugin/ListToolbarButton';
 import { getTooltip } from '@components/RichTextEditor/helpers';
-import { getPluginType } from '@udecode/plate';
+import { getPluginType } from '@udecode/plate-core';
 
 export const UnorderedListButton = ({ editor, id }: PluginButtonProps) => (
     <ButtonWrapper id={id}>

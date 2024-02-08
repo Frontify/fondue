@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlatePlugin, PlateRenderElementProps, createPluginFactory } from '@udecode/plate';
+import { PlatePlugin, PlateRenderElementProps, createPluginFactory } from '@udecode/plate-core';
 import { CSSProperties } from 'react';
 import { MarkupElement, Plugin, PluginProps, defaultStyles, getColumnBreakClasses } from '../../..';
 import { alignmentClassnames } from '../../helper';

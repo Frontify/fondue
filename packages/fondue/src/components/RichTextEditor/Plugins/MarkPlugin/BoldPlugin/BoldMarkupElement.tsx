@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MARK_BOLD, PlateRenderLeafProps } from '@udecode/plate';
+import { PlateRenderLeafProps } from '@udecode/plate-core';
+import { MARK_BOLD } from '@udecode/plate-basic-marks';
 import { MarkupElement } from '../../MarkupElement';
 
 export const BOLD_CLASSES = 'tw-font-bold';

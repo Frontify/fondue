@@ -1,25 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import {
-    ELEMENT_CODE_BLOCK,
-    ELEMENT_H5,
-    ELEMENT_H6,
-    ELEMENT_HR,
-    ELEMENT_IMAGE,
-    ELEMENT_LI,
-    ELEMENT_LIC,
-    ELEMENT_LINK,
-    ELEMENT_MENTION,
-    ELEMENT_OL,
-    ELEMENT_PARAGRAPH,
-    ELEMENT_UL,
-    MARK_BOLD,
-    MARK_CODE,
-    MARK_ITALIC,
-    MARK_STRIKETHROUGH,
-    PlateEditor,
-    getPluginType,
-} from '@udecode/plate';
+import { PlateEditor, getPluginType } from '@udecode/plate-core';
+import { MARK_BOLD, MARK_CODE, MARK_ITALIC, MARK_STRIKETHROUGH } from '@udecode/plate-basic-marks';
+import { ELEMENT_LI, ELEMENT_LIC, ELEMENT_OL, ELEMENT_UL } from '@udecode/plate-list';
+import { ELEMENT_PARAGRAPH } from '@udecode/plate-paragraph';
+import { ELEMENT_MENTION } from '@udecode/plate-mention';
+import { ELEMENT_LINK } from '@udecode/plate-link';
+import { ELEMENT_IMAGE } from '@udecode/plate-media';
+import { ELEMENT_H5, ELEMENT_H6 } from '@udecode/plate-heading';
+import { ELEMENT_HR } from '@udecode/plate-horizontal-rule';
+import { ELEMENT_CODE_BLOCK } from '@udecode/plate-code-block';
 import { PartialOptionType } from './types';
 import { TextStyles } from '@components/RichTextEditor/Plugins';
 

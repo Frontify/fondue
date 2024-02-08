@@ -1,6 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlatePlugin, createItalicPlugin } from '@udecode/plate';
+import { createItalicPlugin } from '@udecode/plate-basic-marks';
+import { PlatePlugin } from '@udecode/plate-core';
+
 import { ITALIC_PLUGIN } from './id';
 import { ITALIC_CLASSES, ItalicMarkupElement } from './ItalicMarkupElement';
 import { Plugin, PluginProps } from '../../Plugin';

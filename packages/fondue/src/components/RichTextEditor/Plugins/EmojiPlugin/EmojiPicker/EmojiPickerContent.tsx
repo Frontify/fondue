@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { memo, useCallback } from 'react';
-import { cn } from '@udecode/cn';
 import { Emoji, EmojiCategoryList, EmojiSettings, GridRow, UseEmojiPickerType } from '@udecode/plate-emoji';
 
 export type EmojiPickerContentProps = Pick<
@@ -38,13 +37,13 @@ const Button = memo(({ index, emoji, onSelect, onMouseOver }: EmojiButtonProps) 
             onClick={() => onSelect(emoji)}
             onMouseEnter={() => onMouseOver(emoji)}
             onMouseLeave={() => onMouseOver()}
-            className="tw-group tw-relative tw-flex tw-h-[36px] tw-w-[36px] tw-cursor-pointer tw-items-center tw-justify-center tw-border-none tw-bg-transparent tw-text-2xl tw-leading-none"
+            className="tw-group/emojibutton tw-relative tw-flex tw-h-9 tw-w-9 tw-cursor-pointer tw-items-center tw-justify-center tw-border-none tw-bg-transparent tw-text-2xl tw-leading-none"
         >
             <div
                 aria-hidden="true"
-                className="tw-absolute tw-inset-0 tw-rounded-full tw-bg-[rgba(0,0,0,0.05)] tw-opacity-0 group-hover:tw-opacity-100"
+                className="tw-absolute tw-inset-0 tw-rounded-full tw-bg-[rgba(0,0,0,0.05)] tw-opacity-0 group-hover/emojibutton:tw-opacity-100"
             />
-            <span data-emoji-set="native" style={{ position: 'relative' }}>
+            <span data-emoji-set="native" className="tw-relative">
                 {emoji?.skins[0]?.native}
             </span>
         </button>
@@ -78,7 +77,7 @@ export function EmojiPickerContent({
     refs,
     settings = EmojiSettings,
 }: EmojiPickerContentProps) {
-    const getRowWidth = settings.perLine.value * settings.buttonSize.value;
+    const rowWidth = settings.perLine.value * settings.buttonSize.value;
 
     const isCategoryVisible = useCallback(
         (categoryId: EmojiCategoryList) => {
@@ -96,7 +95,7 @@ export function EmojiPickerContent({
                 const { buttonSize } = settings;
 
                 return (
-                    <div key={categoryId} data-id={categoryId} ref={section.root} style={{ width: getRowWidth }}>
+                    <div key={categoryId} data-id={categoryId} ref={section.root} style={{ width: rowWidth }}>
                         <div className="tw-sticky tw--top-px tw-z-[1] tw-bg-white/90 tw-p-1 tw-backdrop-blur-[4px]">
                             {i18n.categories[categoryId]}
                         </div>
@@ -120,11 +119,11 @@ export function EmojiPickerContent({
                     </div>
                 );
             });
-    }, [emojiLibrary, getRowWidth, i18n.categories, isCategoryVisible, onSelectEmoji, onMouseOver, settings]);
+    }, [emojiLibrary, rowWidth, i18n.categories, isCategoryVisible, onSelectEmoji, onMouseOver, settings]);
 
     const SearchList = useCallback(() => {
         return (
-            <div data-id="search" style={{ width: getRowWidth }}>
+            <div data-id="search" style={{ width: rowWidth }}>
                 <div className="tw-sticky tw--top-px tw-z-[1] tw-bg-white/90 tw-p-1 tw-backdrop-blur-[4px]">
                     {i18n.searchResult}
                 </div>
@@ -141,18 +140,13 @@ export function EmojiPickerContent({
                 </div>
             </div>
         );
-    }, [emojiLibrary, getRowWidth, i18n.searchResult, searchResult, onSelectEmoji, onMouseOver]);
+    }, [emojiLibrary, rowWidth, i18n.searchResult, searchResult, onSelectEmoji, onMouseOver]);
 
     return (
         <div
-            className={cn(
-                'tw-h-full tw-min-h-[50%] tw-overflow-y-auto tw-overflow-x-hidden tw-px-3',
-                '[&::-webkit-scrollbar]:tw-w-4',
-                '[&::-webkit-scrollbar-button]:tw-hidden [&::-webkit-scrollbar-button]:tw-h-0 [&::-webkit-scrollbar-button]:tw-w-0',
-                '[&::-webkit-scrollbar-thumb]:hover:tw-bg-[#f3f4f6]',
-                '[&::-webkit-scrollbar-thumb]:tw-min-h-[65px] [&::-webkit-scrollbar-thumb]:tw-rounded-2xl [&::-webkit-scrollbar-thumb]:tw-border-solid [&::-webkit-scrollbar-thumb]:tw-border-4 [&::-webkit-scrollbar-thumb]:tw-border-white',
-                '[&::-webkit-scrollbar-track]:tw-border-0',
-            )}
+            className={
+                'tw-h-full tw-min-h-[50%] tw-overflow-y-auto tw-overflow-x-hidden tw-px-3 [&::-webkit-scrollbar]:tw-w-4 [&::-webkit-scrollbar-button]:tw-hidden [&::-webkit-scrollbar-button]:tw-h-0 [&::-webkit-scrollbar-button]:tw-w-0 [&::-webkit-scrollbar-thumb]:hover:tw-bg-[#f3f4f6] [&::-webkit-scrollbar-thumb]:tw-min-h-[65px] [&::-webkit-scrollbar-thumb]:tw-rounded-2xl [&::-webkit-scrollbar-thumb]:tw-border-solid [&::-webkit-scrollbar-thumb]:tw-border-4 [&::-webkit-scrollbar-thumb]:tw-border-white [&::-webkit-scrollbar-track]:tw-border-0'
+            }
             data-id="scroll"
             ref={refs.current.contentRoot}
         >

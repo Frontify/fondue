@@ -1,6 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MARK_SUPERSCRIPT, PlateRenderLeafProps } from '@udecode/plate';
+import { MARK_SUPERSCRIPT } from '@udecode/plate-basic-marks';
+import { PlateRenderLeafProps } from '@udecode/plate-core';
+
 import { MarkupElement } from '../../MarkupElement';
 
 export const SuperscriptMarkupElementNode = ({ attributes, children }: PlateRenderLeafProps) => (

@@ -8,7 +8,7 @@ import { ColumnBreakToolbarButton } from '../ColumnBreakToolbarButton';
 export const ColumnBreakButton = ({ id }: PluginButtonProps) => {
     return (
         <ButtonWrapper id={id}>
-            <ColumnBreakToolbarButton key={id}>
+            <ColumnBreakToolbarButton>
                 <IconStylingWrapper icon={<IconTextColumnBreak16 />} />
             </ColumnBreakToolbarButton>
         </ButtonWrapper>

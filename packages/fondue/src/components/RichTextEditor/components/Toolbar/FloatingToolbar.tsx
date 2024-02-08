@@ -1,21 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { cn, withRef } from '@udecode/cn';
-import {
-    FloatingToolbarState,
-    PortalBody,
-    useComposedRef,
-    useFloatingToolbar,
-    useFloatingToolbarState,
-} from '@udecode/plate';
-
+import { FloatingToolbarState, useFloatingToolbar, useFloatingToolbarState } from '@udecode/plate-floating';
+import { PortalBody, useComposedRef } from '@udecode/react-utils';
 import { ToolbarWrapper } from './ToolbarWrapper';
+import { merge } from '@utilities/merge';
+import { ReactNode, forwardRef } from 'react';
+import { zIndexLayers } from '@components/RichTextEditor/helpers/zIndexLayers';
 
-export const FloatingToolbar = withRef<
-    typeof ToolbarWrapper,
+export const FloatingToolbar = forwardRef<
+    HTMLDivElement,
     {
         state?: FloatingToolbarState;
         className: string;
+        children: ReactNode;
     }
 >(({ state, children, className, ...props }, componentRef) => {
     const floatingToolbarState = useFloatingToolbarState({
@@ -36,9 +33,19 @@ export const FloatingToolbar = withRef<
 
     return (
         <PortalBody>
-            <ToolbarWrapper ref={ref} className={cn(className)} {...rootProps} {...props}>
+            <ToolbarWrapper
+                ref={ref}
+                style={{
+                    ...rootProps.style,
+                    zIndex: zIndexLayers.floatingToolbar,
+                }}
+                className={merge([className, 'tw-relative tw-flex tw-select-none tw-items-center tw-gap-1'])}
+                {...props}
+            >
                 {children}
             </ToolbarWrapper>
         </PortalBody>
     );
 });
+
+FloatingToolbar.displayName = 'FloatingToolbar';

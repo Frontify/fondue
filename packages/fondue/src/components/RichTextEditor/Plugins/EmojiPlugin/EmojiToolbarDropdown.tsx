@@ -2,6 +2,7 @@
 
 import { ReactNode } from 'react';
 import * as Popover from '@radix-ui/react-popover';
+import { zIndexLayers } from '@components/RichTextEditor/helpers/zIndexLayers';
 
 type EmojiToolbarDropdownProps = {
     control: ReactNode;
@@ -16,7 +17,7 @@ export function EmojiToolbarDropdown({ control, isOpen, setIsOpen, children }: E
             <Popover.Trigger asChild>{control}</Popover.Trigger>
 
             <Popover.Portal>
-                <Popover.Content className="tw-z-[100]">{children}</Popover.Content>
+                <Popover.Content style={{ zIndex: zIndexLayers.emojiPopover }}>{children}</Popover.Content>
             </Popover.Portal>
         </Popover.Root>
     );

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { cn } from '@udecode/cn';
 import { EmojiCategoryList, IEmojiFloatingLibrary, UseEmojiPickerType } from '@udecode/plate-emoji';
+import { merge } from '@utilities/merge';
 
 export type EmojiPickerNavigationProps = Pick<
     UseEmojiPickerType,
@@ -45,12 +45,12 @@ export function EmojiPickerNavigation({
                             aria-label={i18n.categories[id]}
                             title={i18n.categories[id]}
                             type="button"
-                            className={cn(
+                            className={merge([
                                 'tw-flex tw-grow tw-cursor-pointer tw-items-center tw-justify-center tw-border-none tw-bg-transparent tw-fill-current tw-text-sm ',
                                 id === focusedCategory
                                     ? 'tw-pointer-events-none tw-fill-current tw-text-[rgb(37,99,235)]'
                                     : 'tw-text-[rgb(107,114,128)] hover:tw-text-[rgb(31,41,55)]',
-                            )}
+                            ])}
                             onClick={() => onClick(id)}
                         >
                             <span style={{ width: '20px', height: '20px' }}>{icons.categories[id].outline}</span>

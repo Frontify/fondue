@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useEditorRef } from '@udecode/plate';
+import { useEditorRef } from '@udecode/plate-core';
 import { useEditorResizeContext } from '../../context/EditorResizeContext';
 import { useRichTextEditorContext } from '../../context/RichTextEditorContext';
 import { EditorPositioningWrapper } from '../EditorPositioningWrapper';
@@ -25,7 +25,7 @@ export const Toolbar = ({ toolbarButtons, editorId, toolbarWidth }: ToolbarProps
             toolbarButtonGroups={buttonGroupsPerRow}
         >
             {buttonGroupsPerRow.map((row, index) => (
-                <div className="tw-divide-x tw-divide-line tw-flex tw-w-full tw-flex-wrap" key={index}>
+                <div className="tw-divide-x tw-divide-line tw-flex tw-w-full" key={index}>
                     {row.map(({ group, index }) => (
                         <ButtonGroupWrapper index={index} key={index}>
                             {group.map((ToolbarButton, idx) => (

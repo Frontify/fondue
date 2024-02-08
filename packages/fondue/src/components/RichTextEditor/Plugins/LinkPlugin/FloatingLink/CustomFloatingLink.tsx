@@ -1,13 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { UseVirtualFloatingOptions, flip, offset } from '@udecode/plate';
+import { UseVirtualFloatingOptions, flip, offset } from '@udecode/plate-floating';
 import {
     LinkFloatingToolbarState,
     useFloatingLinkEdit,
     useFloatingLinkEditState,
     useFloatingLinkInsert,
     useFloatingLinkInsertState,
-} from '@udecode/plate';
+} from '@udecode/plate-link';
 import { EditModal } from './EditLinkModal';
 import { InsertLinkModal } from './InsertLinkModal/InsertLinkModal';
 
@@ -23,11 +23,11 @@ const floatingOptions: UseVirtualFloatingOptions = {
     ],
 };
 
-export interface LinkFloatingToolbarProps {
+export type LinkFloatingToolbarProps = {
     state?: LinkFloatingToolbarState;
-}
+};
 
-export function CustomFloatingLink() {
+export const CustomFloatingLink = () => {
     const insertState = useFloatingLinkInsertState({
         floatingOptions,
     });
@@ -65,4 +65,4 @@ export function CustomFloatingLink() {
             )}
         </>
     );
-}
+};

@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { cn } from '@udecode/cn';
 import { EmojiSettings, UseEmojiPickerType } from '@udecode/plate-emoji';
 import { EmojiPickerContent } from './EmojiPickerContent';
 import { EmojiPickerNavigation } from './EmojiPickerNavigation';
@@ -31,11 +30,7 @@ export function EmojiPicker({
     refs,
 }: Omit<UseEmojiPickerType, 'icons'>) {
     return (
-        <div
-            className={cn(
-                'tw-flex tw-flex-col tw-rounded tw-bg-base tw-shadow-md tw-h-[350px] tw-border-line tw-border tw-w-[316px]',
-            )}
-        >
+        <div className="tw-flex tw-flex-col tw-rounded tw-bg-base tw-shadow-md tw-h-[350px] tw-border-line tw-border tw-w-[316px]">
             <EmojiPickerNavigation
                 i18n={i18n}
                 emojiLibrary={emojiLibrary}

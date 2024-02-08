@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ELEMENT_MENTION } from '@udecode/plate';
+import { ELEMENT_MENTION } from '@udecode/plate-mention';
 import { MarkupElement } from '../../MarkupElement';
 import { mapMentionable } from '../helpers';
 import { MentionableItems } from '../types';

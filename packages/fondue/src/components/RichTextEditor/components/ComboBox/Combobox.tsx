@@ -1,44 +1,44 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useEffect } from 'react';
+import { forwardRef, useEffect } from 'react';
 import * as Popover from '@radix-ui/react-popover';
-import { cn, withRef } from '@udecode/cn';
+import { useEditorRef, useEditorSelector, useEventEditorSelectors, usePlateSelectors } from '@udecode/plate-core';
+import { createVirtualRef } from '@udecode/plate-floating';
 import {
     ComboboxContentItemProps,
     ComboboxContentProps,
     ComboboxProps,
     comboboxActions,
     comboboxSelectors,
-    createVirtualRef,
     useActiveComboboxStore,
     useComboboxContent,
     useComboboxContentState,
     useComboboxControls,
     useComboboxItem,
     useComboboxSelectors,
-    useEditorRef,
-    useEditorSelector,
-    useEventEditorSelectors,
-    usePlateSelectors,
-} from '@udecode/plate';
+} from '@udecode/plate-combobox';
+import { merge } from '@utilities/merge';
+import { zIndexLayers } from '@components/RichTextEditor/helpers/zIndexLayers';
 
-export const ComboboxItem = withRef<'div', ComboboxContentItemProps>(
-    ({ combobox, index, item, onRenderItem, className, ...rest }, ref) => {
+export const ComboboxItem = forwardRef<'div', ComboboxContentItemProps & { className?: string }>(
+    ({ combobox, index, item, onRenderItem, className, ...externalProps }, ref) => {
         const { props } = useComboboxItem({ item, index, combobox, onRenderItem });
         return (
             <div
                 ref={ref}
-                className={cn(
+                className={merge([
                     'tw-relative tw-flex tw-h-9 tw-cursor-pointer tw-select-none tw-items-center tw-rounded-sm tw-px-2 tw-py-1.5 tw-text-sm tw-outline-none tw-transition-colors',
                     'tw-text-text-weak tw-text-body-medium tw-px-5 hover:tw-bg-box-neutral hover:tw-text-box-neutral-inverse-hover data-[highlighted=true]:tw-text-box-neutral-inverse-hover data-[highlighted=true]:tw-bg-box-neutral data-[highlighted=true]:hover:tw-bg-box-neutral-hover',
                     className,
-                )}
+                ])}
                 {...props}
-                {...rest}
+                {...externalProps}
             />
         );
     },
 );
+
+ComboboxItem.displayName = 'ComboboxItem';
 
 export function ComboboxContent(props: ComboboxContentProps) {
     const { component: Component, items, portalElement, combobox, onRenderItem } = props;
@@ -49,6 +49,7 @@ export function ComboboxContent(props: ComboboxContentProps) {
     const activeComboboxStore = useActiveComboboxStore()!;
     const state = useComboboxContentState({ items, combobox });
     const { menuProps, targetRange } = useComboboxContent(state);
+
     return (
         <Popover.Root open>
             <Popover.PopoverAnchor virtualRef={createVirtualRef(editor, targetRange ?? undefined)} />
@@ -57,11 +58,10 @@ export function ComboboxContent(props: ComboboxContentProps) {
                 <Popover.Content
                     {...menuProps}
                     sideOffset={5}
+                    style={{ zIndex: zIndexLayers.combobox }}
                     side="bottom"
                     align="start"
-                    className={cn(
-                        'tw-z-[500] tw-m-0 tw-max-h-[288px] tw-w-[270px] tw-overflow-scroll tw-rounded-md tw-bg-base tw-py-2 tw-shadow-md tw-border tw-border-line-strong',
-                    )}
+                    className="tw-m-0 tw-max-h-[288px] tw-w-[270px] tw-overflow-scroll tw-rounded-md tw-bg-base tw-py-2 tw-shadow-md tw-border tw-border-line-strong"
                     onOpenAutoFocus={(event) => event.preventDefault()}
                 >
                     {Component ? Component({ store: activeComboboxStore }) : null}
@@ -100,6 +100,7 @@ export function Combobox({
     const activeId = useComboboxSelectors.activeId();
     const selectionDefined = useEditorSelector((editor) => !!editor.selection, []);
     const editorId = usePlateSelectors().id();
+
     useEffect(() => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { [id]: _deleted, ...comboBoxesToKeep } = comboboxSelectors.state().byId;

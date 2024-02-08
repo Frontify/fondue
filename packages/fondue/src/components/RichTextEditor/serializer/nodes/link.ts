@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { TLinkElement } from '@components/RichTextEditor/Plugins/LinkPlugin/types';
-import { TElement } from '@udecode/plate';
+import { TElement } from '@udecode/slate';
 import escapeHtml from 'escape-html';
 import { reactCssPropsToCss } from '../utils/reactCssPropsToCss';
 import { CSSPropertiesHover } from '../types';

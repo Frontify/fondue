@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TDescendant, isDescendant } from '@udecode/plate';
+import { TDescendant, isDescendant } from '@udecode/slate';
 import { getNodeString } from '@udecode/slate';
 
 export const toPlaintext = (nodes: TDescendant[] | string): string => {

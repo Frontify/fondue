@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useEffect, useRef } from 'react';
-import { ReferenceType, autoUpdate, flip, shift } from '@udecode/plate';
+import { ReferenceType, autoUpdate, flip, shift } from '@udecode/plate-floating';
 import { ToolbarWrapperProps } from './types';
 import { FloatingToolbar } from '@components/RichTextEditor/components/Toolbar/FloatingToolbar';
 
@@ -11,11 +11,11 @@ export const ToolbarWrapperPositioningFloating = ({ children }: ToolbarWrapperPr
     useEffect(() => {
         const handleSelectionChange = () => {
             const selection = window.getSelection();
-            const rangeCount = selection?.rangeCount ?? 0;
+            const hasSelectionRange = (selection?.rangeCount ?? 0) > 0;
 
-            const selectionFrom = rangeCount > 0 && selection?.getRangeAt(0).startOffset;
-            const selectionTo = rangeCount > 0 && selection?.getRangeAt(0).endOffset;
-            const hasActiveSelection = !!selection && selectionFrom !== selectionTo && rangeCount > 0;
+            const selectionFrom = hasSelectionRange ? selection?.getRangeAt(0).startOffset : undefined;
+            const selectionTo = hasSelectionRange ? selection?.getRangeAt(0).endOffset : undefined;
+            const hasActiveSelection = !!selection && selectionFrom !== selectionTo && hasSelectionRange;
 
             if (!hasActiveSelection && cleanupFunction.current) {
                 cleanupFunction.current();
@@ -32,7 +32,7 @@ export const ToolbarWrapperPositioningFloating = ({ children }: ToolbarWrapperPr
 
     return (
         <FloatingToolbar
-            className="tw-rounded tw-whitespace-nowrap tw-border tw-border-line tw-shadow-lg tw-bg-base tw-divide-y tw-divide-line tw-flex tw-flex-wrap tw-z-50"
+            className="tw-rounded tw-whitespace-nowrap tw-border tw-border-line tw-shadow-lg tw-bg-base tw-flex tw-flex-wrap"
             state={{
                 floatingOptions: {
                     middleware: [flip(), shift()],
@@ -40,7 +40,11 @@ export const ToolbarWrapperPositioningFloating = ({ children }: ToolbarWrapperPr
                 },
             }}
         >
-            <div data-selector="toolbar-floating" data-test-id="toolbar-floating">
+            <div
+                className="tw-divide-y tw-divide-line"
+                data-selector="toolbar-floating"
+                data-test-id="toolbar-floating"
+            >
                 {children}
             </div>
         </FloatingToolbar>

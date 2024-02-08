@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlatePlugin, createPluginFactory } from '@udecode/plate';
+import { PlatePlugin, createPluginFactory } from '@udecode/plate-core';
 import { Plugin, PluginProps } from '../Plugin';
 import { ColumnBreakButton } from './ColumnBreakButton';
 import { onKeyDownColumnBreak } from './onKeyDownColumnBreak';

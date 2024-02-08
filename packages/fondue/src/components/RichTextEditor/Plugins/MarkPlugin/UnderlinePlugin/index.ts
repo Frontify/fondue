@@ -1,6 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlatePlugin, createUnderlinePlugin } from '@udecode/plate';
+import { createUnderlinePlugin } from '@udecode/plate-basic-marks';
+import { PlatePlugin } from '@udecode/plate-core';
+
 import { UNDERLINE_PLUGIN } from './id';
 import { UNDERLINE_CLASSES, UnderlineMarkupElement } from './UnderlineMarkupElement';
 import { UnderlineButton } from './UnderlineButton';

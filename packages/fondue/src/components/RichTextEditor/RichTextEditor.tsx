@@ -2,7 +2,7 @@
 
 import { CSSProperties } from 'react';
 import { useMemoizedId } from '@hooks/useMemoizedId';
-import { Plate, PlateContent, TEditableProps } from '@udecode/plate';
+import { Plate, PlateContent, TEditableProps } from '@udecode/plate-core';
 import { ContentReplacement } from './ContentReplacement';
 import { RichTextEditorProvider } from './context/RichTextEditorContext';
 import { Position } from './components/EditorPositioningWrapper';

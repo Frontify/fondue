@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlateEditor, useEditorState } from '@udecode/plate';
+import { PlateEditor, useEditorState } from '@udecode/plate-core';
 import { Dispatch, HTMLAttributes, SetStateAction, useCallback, useEffect, useState } from 'react';
 import { usePopper } from 'react-popper';
 import { useSelectedTextStyles } from './useSelectedTextStyles';

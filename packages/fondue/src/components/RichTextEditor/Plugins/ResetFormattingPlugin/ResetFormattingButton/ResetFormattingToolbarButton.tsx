@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useEditorState, useEventPlateId } from '@udecode/plate';
+import { useEditorState, useEventPlateId } from '@udecode/plate-core';
 
 import { IconStylingWrapper } from '@components/RichTextEditor/Plugins/helper';
 import { ToolbarButton } from '@components/RichTextEditor/components/Toolbar/ToolbarButton';
@@ -15,8 +15,8 @@ export const ResetFormattingToolbarButton = ({ id, ...props }: ToolbarButtonProp
     return (
         <ToolbarButton
             tooltip={getTooltip('Clear formatting')}
-            onPointerDown={(e) => {
-                e.preventDefault();
+            onPointerDown={(event) => {
+                event.preventDefault();
                 resetFormatting(editor);
             }}
             {...props}

@@ -2,7 +2,7 @@
 
 import IconPeople12 from '@foundation/Icon/Generated/IconPeople12';
 import { MentionableCategory } from '../types';
-import { PlateRenderElementProps } from '@udecode/plate';
+import { PlateRenderElementProps } from '@udecode/plate-core';
 import { MarkupElementNodeComponentType, MarkupElementNodeType } from './types';
 
 const MarkupElementNode = ({ attributes, element, nodeProps, children }: PlateRenderElementProps) => (

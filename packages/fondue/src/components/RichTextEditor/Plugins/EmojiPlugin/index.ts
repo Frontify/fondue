@@ -5,7 +5,8 @@ import { Plugin, PluginProps } from '../Plugin';
 import { EmojiButton } from './EmojiButton';
 import { emojiPlugin } from './config';
 import { Position } from '@components/RichTextEditor/components/EditorPositioningWrapper';
-import { PlatePlugin, createComboboxPlugin } from '@udecode/plate';
+import { createComboboxPlugin } from '@udecode/plate-combobox';
+import { PlatePlugin } from '@udecode/plate-core';
 import { createEmojiPlugin } from '@udecode/plate-emoji';
 
 export class EmojiPlugin extends Plugin {

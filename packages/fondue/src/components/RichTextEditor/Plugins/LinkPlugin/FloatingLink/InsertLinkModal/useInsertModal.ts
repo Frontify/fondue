@@ -6,11 +6,10 @@ import {
     LinkPlugin,
     floatingLinkActions,
     floatingLinkSelectors,
-    getPluginOptions,
     submitFloatingLink,
-    useEditorRef,
-    useHotkeys,
-} from '@udecode/plate';
+} from '@udecode/plate-link';
+import { getPluginOptions, useEditorRef, useHotkeys } from '@udecode/plate-core';
+
 import { getLegacyUrl, getUrl } from '../../utils';
 import { CheckboxState } from '@components/Checkbox';
 import { InsertModalDispatchType, InsertModalStateProps } from './types';

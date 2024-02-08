@@ -1,7 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { CSSProperties } from 'react';
-import { PlateRenderElementProps, TElement, TTodoListItemElement, setNodes } from '@udecode/plate';
+import { TElement, setNodes } from '@udecode/slate';
+import { TTodoListItemElement } from '@udecode/plate-list';
+import { PlateRenderElementProps } from '@udecode/plate-core';
 import { merge } from '@utilities/merge';
 import { MarkupElement } from '../MarkupElement';
 import { ELEMENT_CHECK_ITEM } from './id';
@@ -29,9 +31,9 @@ export const CheckboxListElementNode = (props: PlateRenderElementProps & { style
                     className="tw-w-4 tw-h-4 tw-m-0"
                     type="checkbox"
                     checked={!!checked}
-                    onChange={(e) => {
+                    onChange={(event) => {
                         const path = findNodePath(editor as TReactEditor, element);
-                        setNodes<TTodoListItemElement>(editor, { checked: e.target.checked }, { at: path });
+                        setNodes<TTodoListItemElement>(editor, { checked: event.target.checked }, { at: path });
                     }}
                     {...nodeProps}
                 />
@@ -49,7 +51,7 @@ export const CheckboxListElementNode = (props: PlateRenderElementProps & { style
 export class CheckboxListElement extends MarkupElement {
     constructor(
         id = ELEMENT_CHECK_ITEM,
-        node: React.FC<PlateRenderElementProps & { style: CSSProperties }> = CheckboxListElementNode,
+        node: (props: PlateRenderElementProps & { style: CSSProperties }) => JSX.Element = CheckboxListElementNode,
     ) {
         super(id, node);
     }

@@ -1,6 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MARK_ITALIC, PlateRenderLeafProps } from '@udecode/plate';
+import { MARK_ITALIC } from '@udecode/plate-basic-marks';
+import { PlateRenderLeafProps } from '@udecode/plate-core';
+
 import { MarkupElement } from '../../MarkupElement';
 
 export const ITALIC_CLASSES = 'tw-italic';

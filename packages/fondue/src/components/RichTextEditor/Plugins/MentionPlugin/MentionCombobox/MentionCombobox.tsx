@@ -2,14 +2,9 @@
 
 import { MentionComboboxItem } from '@components/RichTextEditor/Plugins/MentionPlugin/MentionCombobox/MentionComboboxItem';
 import { Combobox } from '@components/RichTextEditor/components/ComboBox/Combobox';
-import {
-    ComboboxProps,
-    ELEMENT_MENTION,
-    MentionPlugin,
-    getMentionOnSelectItem,
-    getPluginOptions,
-    useEditorRef,
-} from '@udecode/plate';
+import { ELEMENT_MENTION, MentionPlugin, getMentionOnSelectItem } from '@udecode/plate-mention';
+import { ComboboxProps } from '@udecode/plate-combobox';
+import { getPluginOptions, useEditorRef } from '@udecode/plate-core';
 
 export function MentionCombobox({
     pluginKey = ELEMENT_MENTION,
@@ -21,6 +16,7 @@ export function MentionCombobox({
     const editor = useEditorRef();
 
     const { trigger } = getPluginOptions<MentionPlugin>(editor, pluginKey);
+
     return (
         <Combobox
             id={id}

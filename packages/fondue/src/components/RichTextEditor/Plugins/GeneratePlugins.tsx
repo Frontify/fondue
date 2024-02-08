@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { CSSProperties, ReactNode } from 'react';
-import { AnyObject, PlatePlugin, createPlugins } from '@udecode/plate';
+import { PlatePlugin, createPlugins } from '@udecode/plate-core';
 import { Toolbar } from '../components/Toolbar';
 import type { PluginComposer } from './PluginComposer';
 
 type GeneratePluginsReturn = {
-    create: () => PlatePlugin<AnyObject>[];
+    create: () => PlatePlugin<Record<string, any>>[];
     toolbar: (toolbarWidth: number | undefined) => ReactNode;
     inline: () => ReactNode;
     styles: () => Record<string, CSSProperties>;

@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-// import { useFloatingLinkUrlInput } from '@udecode/plate';
+import { MouseEvent } from 'React';
 import IconPen16 from '@foundation/Icon/Generated/IconPen16';
 import IconTrashBin16 from '@foundation/Icon/Generated/IconTrashBin16';
 import { useRichTextEditorContext } from '@components/RichTextEditor/context';
 import { LINK_PLUGIN } from '../../id';
-import { useLinkOpenButtonState } from '@udecode/plate';
+import { useLinkOpenButtonState } from '@udecode/plate-link';
 import { getUrlFromLinkOrLegacyLink } from '@components/RichTextEditor/Plugins/LinkPlugin/utils';
 
 type EditModalProps = {
@@ -13,7 +13,7 @@ type EditModalProps = {
         onClick: () => void;
     };
     unlinkButtonProps: {
-        onMouseDown: (e: React.MouseEvent<HTMLButtonElement>) => void;
+        onMouseDown: (e: MouseEvent<HTMLButtonElement>) => void;
         onClick: () => void;
     };
 };
@@ -22,6 +22,7 @@ export const EditModal = ({ editButtonProps, unlinkButtonProps }: EditModalProps
     const { element } = useLinkOpenButtonState();
     const { styles } = useRichTextEditorContext();
     const url = element ? getUrlFromLinkOrLegacyLink(element) : '';
+
     return (
         <div data-test-id="floating-link-edit" className="tw-bg-white tw-rounded tw-shadow tw-p-4 tw-min-w-[400px]">
             <span data-test-id={'preview-link-flyout'} className="tw-flex tw-justify-between">

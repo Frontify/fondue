@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlateEditor, getParentNode, getPointBefore, getStartPoint, select } from '@udecode/plate';
+import { getParentNode, getPointBefore, getStartPoint, select } from '@udecode/slate';
+import { PlateEditor } from '@udecode/plate-core';
 import { TPath } from '@udecode/slate';
 import { KEY_ELEMENT_BREAK_AFTER_COLUMN } from './createColumnBreakPlugin';
 import { setColumnBreaks } from './utils/setColumnBreaks';

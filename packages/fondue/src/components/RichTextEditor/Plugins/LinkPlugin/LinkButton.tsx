@@ -2,7 +2,8 @@
 
 import { getHotkeyByPlatform } from '@components/RichTextEditor/helpers/getHotkeyByPlatform';
 import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
-import { isRangeInSameBlock, useEditorState, useEventPlateId } from '@udecode/plate';
+import { useEditorState, useEventPlateId } from '@udecode/plate-core';
+import { isRangeInSameBlock } from '@udecode/slate-utils';
 import { ButtonWrapper } from '../helper';
 import { PluginButtonProps } from '../types';
 import { LinkToolbarButton } from '@components/RichTextEditor/Plugins/LinkPlugin/LinkToolbarButton';

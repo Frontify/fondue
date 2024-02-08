@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Hotkeys, KeyboardHandlerReturnType, PlateEditor, Value, WithPlatePlugin } from '@udecode/plate';
+import { Hotkeys, KeyboardHandlerReturnType, PlateEditor, WithPlatePlugin } from '@udecode/plate-core';
+import { Value } from '@udecode/slate';
 import { forceToBlurActiveElement } from '@components/RichTextEditor/helpers';
 import { BlurOnBreakPlatePlugin } from './types';
 

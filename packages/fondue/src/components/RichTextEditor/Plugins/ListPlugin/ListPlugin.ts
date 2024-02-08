@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlatePlugin, ToggleMarkPlugin, createListPlugin, createPluginFactory } from '@udecode/plate';
+import { PlatePlugin, ToggleMarkPlugin, createPluginFactory } from '@udecode/plate-core';
+import { createListPlugin } from '@udecode/plate-list';
 import { Plugin } from '../Plugin';
 import { LIST_PLUGIN } from './id';
 import { ListItemContentMarkupElement } from './ListItemContentMarkupElement';
@@ -10,10 +11,11 @@ import { withList } from './withList';
 
 export const MARK_TEXT_STYLE = 'textStyle';
 
-export const createLicStylePlugin: ReturnType<typeof createPluginFactory> = createPluginFactory<ToggleMarkPlugin>({
-    key: MARK_TEXT_STYLE,
-    isLeaf: true,
-});
+export const createLicStylePlugin: ReturnType<typeof createPluginFactory<ToggleMarkPlugin>> =
+    createPluginFactory<ToggleMarkPlugin>({
+        key: MARK_TEXT_STYLE,
+        isLeaf: true,
+    });
 
 export class ListPlugin extends Plugin {
     protected isSoftBreak;
@@ -35,7 +37,7 @@ export class ListPlugin extends Plugin {
                     isSoftBreak: this.isSoftBreak,
                 },
             }),
-            createLicStylePlugin() as PlatePlugin,
+            createLicStylePlugin(),
         ];
     }
 }

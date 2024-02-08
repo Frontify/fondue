@@ -2,15 +2,10 @@
 
 import { Plugin, PluginProps } from '../Plugin';
 import { AUTOFORMAT_PLUGIN } from './id';
+import { ELEMENT_OL, ELEMENT_UL, toggleList, unwrapList } from '@udecode/plate-list';
+import { MARK_BOLD, MARK_CODE, MARK_ITALIC, MARK_STRIKETHROUGH, MARK_UNDERLINE } from '@udecode/plate-basic-marks';
+import { PlatePlugin } from '@udecode/plate-core';
 import {
-    ELEMENT_OL,
-    ELEMENT_UL,
-    MARK_BOLD,
-    MARK_CODE,
-    MARK_ITALIC,
-    MARK_STRIKETHROUGH,
-    MARK_UNDERLINE,
-    PlatePlugin,
     autoformatArrow,
     autoformatFraction,
     autoformatLegal,
@@ -20,9 +15,7 @@ import {
     autoformatSuperscriptNumbers,
     autoformatSuperscriptSymbols,
     createAutoformatPlugin,
-    toggleList,
-    unwrapList,
-} from '@udecode/plate';
+} from '@udecode/plate-autoformat';
 import { TextStyles } from '../TextStylePlugin';
 import { ELEMENT_CHECK_ITEM } from '../CheckboxListPlugin';
 

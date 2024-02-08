@@ -2,7 +2,7 @@
 
 import { useRichTextEditorContext } from '@components/RichTextEditor/context';
 import { LINK_PLUGIN } from '../id';
-import { PlateRenderElementProps } from '@udecode/plate';
+import { PlateRenderElementProps } from '@udecode/plate-core';
 import { TLinkElement } from '@components/RichTextEditor/Plugins/LinkPlugin/types';
 
 export const LinkMarkupElementNode = (props: PlateRenderElementProps & { element: TLinkElement }) => {

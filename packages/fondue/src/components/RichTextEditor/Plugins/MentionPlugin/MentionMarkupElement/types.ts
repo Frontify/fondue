@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ReactElement } from 'react';
-import { PlateRenderElementProps } from '@udecode/plate';
+import { PlateRenderElementProps } from '@udecode/plate-core';
 import { MentionableCategory } from '../types';
 
 export type MarkupElementProps = PlateRenderElementProps;

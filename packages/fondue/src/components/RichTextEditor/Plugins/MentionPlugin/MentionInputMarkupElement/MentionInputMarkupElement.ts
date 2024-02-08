@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ELEMENT_MENTION_INPUT } from '@udecode/plate';
+import { ELEMENT_MENTION_INPUT } from '@udecode/plate-mention';
 import { MarkupElement } from '../../MarkupElement';
 import { MentionInputMarkupElementNode } from './MentionInputMarkupElementNode';
 import { ComponentProps } from 'react';
@@ -9,7 +9,7 @@ import { MentionInputElement } from '@components/RichTextEditor/Plugins/MentionP
 export class MentionInputMarkupElement extends MarkupElement {
     constructor(
         id = ELEMENT_MENTION_INPUT,
-        node: React.FC<ComponentProps<typeof MentionInputElement>> = MentionInputMarkupElementNode,
+        node: (props: ComponentProps<typeof MentionInputElement>) => JSX.Element = MentionInputMarkupElementNode,
     ) {
         super(id, node);
     }

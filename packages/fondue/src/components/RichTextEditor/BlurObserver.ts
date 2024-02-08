@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { floatingLinkActions, useEditorRef, useFloatingLinkSelectors } from '@udecode/plate';
+import { useEditorRef } from '@udecode/plate-core';
+import { floatingLinkActions, useFloatingLinkSelectors } from '@udecode/plate-link';
 import { useCallback, useEffect } from 'react';
 
 export const BlurObserver = ({

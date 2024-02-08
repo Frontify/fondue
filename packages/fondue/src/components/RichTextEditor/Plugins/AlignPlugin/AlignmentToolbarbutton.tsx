@@ -1,31 +1,27 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { withRef } from '@udecode/cn';
-
 import { ToolbarButton } from '../../components/Toolbar/ToolbarButton';
-import {
-    KEY_ALIGN,
-    findNode,
-    isDefined,
-    setAlign,
-    useEditorSelector,
-    useEditorState,
-    useEventPlateId,
-} from '@udecode/plate';
+import { useEditorSelector, useEditorState, useEventPlateId } from '@udecode/plate-core';
+import { KEY_ALIGN, setAlign } from '@udecode/plate-alignment';
+import { findNode } from '@udecode/slate';
+import { isDefined } from '@udecode/utils';
+import { ReactNode, forwardRef } from 'react';
 
-export const AlignmentToolbarButton = withRef<
-    typeof ToolbarButton,
+export const AlignmentToolbarButton = forwardRef<
+    HTMLButtonElement,
     {
         value: 'left' | 'right' | 'center' | 'justify';
         editorId: string;
+        children: ReactNode;
+        tooltip: ReactNode;
     }
->(({ value, editorId, ...rest }, ref) => {
+>(({ value, editorId, ...rootProps }, ref) => {
     const editor = useEditorState(useEventPlateId(editorId));
     const currentAlignment = useEditorSelector((editor) => {
         const entry = findNode(editor, {
             match: (n) => isDefined(n[KEY_ALIGN]),
         });
-        if (entry) {
+        if (entry && entry.length > 0) {
             const nodeValue = entry[0][KEY_ALIGN] as string;
             if (nodeValue === 'right') {
                 return 'right';
@@ -44,10 +40,12 @@ export const AlignmentToolbarButton = withRef<
     return (
         <ToolbarButton
             pressed={currentAlignment === value}
-            onMouseDown={(e) => e.preventDefault()}
+            onMouseDown={(event) => event.preventDefault()}
             onClick={() => setAlign(editor, { value })}
             ref={ref}
-            {...rest}
+            {...rootProps}
         />
     );
 });
+
+AlignmentToolbarButton.displayName = 'AlignmentToolbarButton';

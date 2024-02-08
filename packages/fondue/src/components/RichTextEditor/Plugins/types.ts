@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ReactElement, ReactNode } from 'react';
-import { AnyObject, PlateEditor, PlatePlugin } from '@udecode/plate';
+import { PlateEditor, PlatePlugin } from '@udecode/plate-core';
 import type { Plugin } from './Plugin';
 import { Position } from '../components/EditorPositioningWrapper';
 
@@ -38,7 +38,7 @@ export type PluginComposerProps = {
     noToolbar?: boolean;
 };
 
-export type PlatePluginList = Map<string, PlatePlugin<AnyObject>[]>;
+export type PlatePluginList = Map<string, PlatePlugin<Record<string, any>>[]>;
 
 export interface ToolbarButtons {
     createGroupOfButtons: (plugins: Plugin[]) => void;

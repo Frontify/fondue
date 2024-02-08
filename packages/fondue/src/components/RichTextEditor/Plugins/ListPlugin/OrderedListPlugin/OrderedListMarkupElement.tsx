@@ -1,15 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import {
-    ELEMENT_LI,
-    ELEMENT_OL,
-    PlateEditor,
-    PlateRenderLeafProps,
-    TElement,
-    findNodePath,
-    getNodeAncestors,
-    useEditorRef,
-} from '@udecode/plate';
+import { ELEMENT_LI, ELEMENT_OL } from '@udecode/plate-list';
+import { PlateEditor, PlateRenderLeafProps, useEditorRef } from '@udecode/plate-core';
+import { TElement, getNodeAncestors } from '@udecode/slate';
+import { findNodePath } from '@udecode/slate-react';
 import { MarkupElement } from '../../MarkupElement';
 
 const LIST_TYPES = [
@@ -52,7 +46,7 @@ export const OrderedListMarkupElementNode: (props: PlateRenderLeafProps & { elem
 export class OrderedListMarkupElement extends MarkupElement {
     constructor(
         id = ELEMENT_OL,
-        node: React.FC<PlateRenderLeafProps & { element: TElement }> = OrderedListMarkupElementNode,
+        node: (props: PlateRenderLeafProps & { element: TElement }) => JSX.Element = OrderedListMarkupElementNode,
     ) {
         super(id, node);
     }

@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ComponentProps, ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { Position } from '../EditorPositioningWrapper';
 import { Button, Buttons, ToolbarButtons } from '../../Plugins/types';
-import { ToolbarButton } from '@components/RichTextEditor/components/Toolbar/ToolbarButton';
+import * as ToolbarPrimitive from '@radix-ui/react-toolbar';
 
 export type ToolbarButtonsPosition = Record<Position, Buttons>;
 
@@ -21,4 +21,7 @@ export type ButtonGroupProps = {
     children?: ReactNode;
 };
 
-export type ToolbarButtonProps = ComponentProps<typeof ToolbarButton>;
+export type ToolbarButtonProps = Omit<ToolbarPrimitive.ToolbarToggleItemProps, 'asChild' | 'value'> & {
+    pressed?: boolean;
+    isDropdown?: boolean;
+};
