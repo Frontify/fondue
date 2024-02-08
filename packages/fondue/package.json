@@ -15,6 +15,7 @@
     "engines": {
         "node": ">=18"
     },
+    "homepage": "https://github.com/Frontify/fondue",
     "packageManager": "pnpm@8.6.0",
     "main": "dist/index.umd.js",
     "unpkg": "dist/index.umd.js",
@@ -34,6 +35,7 @@
         },
         "./tailwind": "./tailwind.config.js",
         "./style": "./dist/style.css",
+        "./styles": "./dist/style.css",
         "./extractedThirdPartyStyles": "./dist/extractedThirdPartyStyles.css",
         "./dist/*": "./dist/*"
     },
@@ -52,7 +54,6 @@
         "generate:reactIcons": "tsx ./scripts/generateReactIcons.ts",
         "lint": "eslint .",
         "lint:fix": "eslint --fix .",
-        "lint:prettier": "prettier --check .",
         "test": "cypress run --component",
         "test:browser": "cypress open --component",
         "test:file": "cypress run --component --spec",

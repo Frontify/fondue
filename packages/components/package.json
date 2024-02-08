@@ -5,6 +5,18 @@
     "private": true,
     "main": "src/index.ts",
     "types": "src/index.ts",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Frontify/fondue",
+        "directory": "packages/components"
+    },
+    "bugs": {
+        "url": "https://github.com/frontify/fondue/issues"
+    },
+    "engines": {
+        "node": ">=18"
+    },
+    "homepage": "https://github.com/Frontify/fondue",
     "scripts": {
         "lint": "eslint .",
         "lint:fix": "eslint --fix .",
