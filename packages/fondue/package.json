@@ -71,7 +71,7 @@
         "@babel/core": "^7.23.9",
         "@cypress/vite-dev-server": "^5.0.7",
         "@frontify/eslint-config-react": "0.16.1",
-        "@frontify/fondue-icons": "^0.1.42",
+        "@frontify/fondue-icons": "workspace:^",
         "@storybook/addon-a11y": "^7.6.13",
         "@storybook/addon-actions": "^7.6.13",
         "@storybook/addon-essentials": "^7.6.13",

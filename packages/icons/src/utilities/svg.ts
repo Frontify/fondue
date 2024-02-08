@@ -2,7 +2,7 @@
 
 import { readFileSync, writeFileSync } from 'node:fs';
 
-import { SVG as svgClass, cleanupSVG, parseColors, runSVGO, isEmptyColor } from '@iconify/tools';
+import { cleanupSVG, isEmptyColor, parseColors, runSVGO, SVG as svgClass } from '@iconify/tools';
 
 export const optimizeSvg = (filePath: string) => {
     console.log(`Optimizing SVG in "${filePath}"...`);
@@ -16,7 +16,11 @@ export const optimizeSvg = (filePath: string) => {
     parseColors(svg, {
         defaultColor: 'currentColor',
         callback: (_attr, colorStr, color) => {
-            return !color ? colorStr : isEmptyColor(color) ? color : 'currentColor';
+            if (!color) {
+                return colorStr;
+            }
+
+            return isEmptyColor(color) ? color : 'currentColor';
         },
     });
 

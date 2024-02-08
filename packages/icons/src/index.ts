@@ -2,7 +2,7 @@
 
 import * as Figma from 'figma-api';
 
-import { FIGMA_ICON_FILE_ID, FIGMA_ICON_FRAME_ID, FIGMA_ACCESS_TOKEN } from './config';
+import { FIGMA_ACCESS_TOKEN, FIGMA_ICON_FILE_ID, FIGMA_ICON_FRAME_ID } from './config';
 import { downloadIcons } from './figma/downloadIcons';
 import { getNewIconsFromFigma } from './figma/getNewIconsFromFigma';
 

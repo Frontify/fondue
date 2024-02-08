@@ -15,5 +15,5 @@
         "noEmit": true,
         "skipLibCheck": true
     },
-    "include": ["src", "tailwind.config.ts", "vite.config.ts", "postcss.config.cjs", "package.json"]
+    "include": ["src"]
 }

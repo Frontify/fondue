@@ -383,7 +383,7 @@ importers:
         specifier: 0.16.1
         version: 0.16.1(eslint@8.56.0)(prettier@3.2.5)(react@18.2.0)(typescript@5.3.3)
       '@frontify/fondue-icons':
-        specifier: ^0.1.42
+        specifier: workspace:^
         version: link:../icons
       '@storybook/addon-a11y':
         specifier: ^7.6.13
@@ -547,9 +547,9 @@ importers:
 
   packages/icons:
     devDependencies:
-      '@frontify/eslint-config-typescript':
-        specifier: ^0.16.2
-        version: 0.16.2(eslint@8.56.0)(prettier@3.2.5)(typescript@5.3.3)
+      '@frontify/eslint-config-basic':
+        specifier: ^0.19.0
+        version: 0.19.0(eslint@8.56.0)(prettier@3.2.5)(typescript@5.3.3)
       '@iconify/tools':
         specifier: ^4.0.0
         version: 4.0.0
@@ -3230,31 +3230,6 @@ packages:
       - supports-color
     dev: true
 
-  /@frontify/eslint-config-basic@0.18.1(eslint@8.56.0)(prettier@3.2.5):
-    resolution: {integrity: sha512-73WYg+V/vuEkwXwy3Z/yaOtfoLAO8cAkdVPXq30IM+TMR+uNt0TWqT2iDcEg+b90pvpmSnW10gJXoey/ZlKbPw==}
-    peerDependencies:
-      eslint: '>=8.27.0'
-      prettier: '>=3.0.0'
-    dependencies:
-      eslint: 8.56.0
-      eslint-config-prettier: 9.1.0(eslint@8.56.0)
-      eslint-plugin-html: 7.1.0
-      eslint-plugin-jsonc: 2.13.0(eslint@8.56.0)
-      eslint-plugin-lodash: 7.4.0(eslint@8.56.0)
-      eslint-plugin-markdown: 3.0.1(eslint@8.56.0)
-      eslint-plugin-no-only-tests: 3.1.0
-      eslint-plugin-node: 11.1.0(eslint@8.56.0)
-      eslint-plugin-prettier: 5.1.3(eslint-config-prettier@9.1.0)(eslint@8.56.0)(prettier@3.2.5)
-      eslint-plugin-promise: 6.1.1(eslint@8.56.0)
-      eslint-plugin-unicorn: 48.0.1(eslint@8.56.0)
-      eslint-plugin-yml: 1.12.2(eslint@8.56.0)
-      prettier: 3.2.5
-      yaml-eslint-parser: 1.2.2
-    transitivePeerDependencies:
-      - '@types/eslint'
-      - supports-color
-    dev: true
-
   /@frontify/eslint-config-basic@0.19.0(eslint@8.56.0)(prettier@3.2.5)(typescript@5.3.3):
     resolution: {integrity: sha512-YZHuxztz85L0VDHN3pL0AZJIkv8NxmJEgI8JJIl57OSB6w7tsFn0Mjb/degiQrKnXmX6L/gqUx+Gi9U8RbbabQ==}
     peerDependencies:
@@ -3337,24 +3312,6 @@ packages:
       '@frontify/eslint-config-basic': 0.18.0(eslint@8.56.0)(prettier@3.2.5)
       '@typescript-eslint/eslint-plugin': 6.6.0(@typescript-eslint/parser@6.6.0)(eslint@8.56.0)(typescript@5.3.3)
       '@typescript-eslint/parser': 6.6.0(eslint@8.56.0)(typescript@5.3.3)
-      eslint: 8.56.0
-      prettier: 3.2.5
-      typescript: 5.3.3
-    transitivePeerDependencies:
-      - '@types/eslint'
-      - supports-color
-    dev: true
-
-  /@frontify/eslint-config-typescript@0.16.2(eslint@8.56.0)(prettier@3.2.5)(typescript@5.3.3):
-    resolution: {integrity: sha512-hdMu2q15KIOtSU390cJB7pTlUDnXGbT4Djd1x9YZ0Y0FUJHoY5B5rYqSpEmRKNCVQEqrE875mFqDBxbwIveoUQ==}
-    peerDependencies:
-      eslint: '>=8.27.0'
-      prettier: '>=3.0.0'
-      typescript: '>=5.0.0'
-    dependencies:
-      '@frontify/eslint-config-basic': 0.18.1(eslint@8.56.0)(prettier@3.2.5)
-      '@typescript-eslint/eslint-plugin': 6.21.0(@typescript-eslint/parser@6.21.0)(eslint@8.56.0)(typescript@5.3.3)
-      '@typescript-eslint/parser': 6.21.0(eslint@8.56.0)(typescript@5.3.3)
       eslint: 8.56.0
       prettier: 3.2.5
       typescript: 5.3.3
@@ -10797,10 +10754,10 @@ packages:
     resolution: {integrity: sha512-djYB+Zx2vLewY8RWlNCUdHjDXs2XOgm602S9E7P/UpHgfeHL00cRiIF+IN/G/aUJ7kGPb6yO/ErDI5V2s8iycA==}
     engines: {node: '>= 0.4'}
     dependencies:
-      call-bind: 1.0.2
+      call-bind: 1.0.5
       define-properties: 1.2.1
       es-abstract: 1.22.3
-      es-shim-unscopables: 1.0.0
+      es-shim-unscopables: 1.0.2
     dev: true
 
   /array.prototype.flatmap@1.3.2:
@@ -10810,7 +10767,7 @@ packages:
       call-bind: 1.0.5
       define-properties: 1.2.1
       es-abstract: 1.22.3
-      es-shim-unscopables: 1.0.0
+      es-shim-unscopables: 1.0.2
     dev: true
 
   /array.prototype.tosorted@1.1.1:
@@ -12606,12 +12563,6 @@ packages:
       get-intrinsic: 1.2.2
       has: 1.0.3
       has-tostringtag: 1.0.0
-    dev: true
-
-  /es-shim-unscopables@1.0.0:
-    resolution: {integrity: sha512-Jm6GPcCdC30eMLbZ2x8z2WuRwAws3zTBBKuusffYVUrNj/GVSUAZ+xKMaUpfNDR5IbyNA5LJbaecoUVbmUcB1w==}
-    dependencies:
-      has: 1.0.3
     dev: true
 
   /es-shim-unscopables@1.0.2:

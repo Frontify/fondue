@@ -6,11 +6,11 @@ import * as Figma from 'figma-api';
 import kebabCase from 'lodash/fp/kebabCase';
 
 import {
-    FIGMA_SIZE_PROPERTY_NAME,
     FIGMA_FILLED_PROPERTY_NAME,
     FIGMA_ICON_FRAME_ID,
-    ICONS_DIRECTORY,
     FIGMA_ICON_LAYER_NAME,
+    FIGMA_SIZE_PROPERTY_NAME,
+    ICONS_DIRECTORY,
 } from '../config';
 import { didComponentChange, saveSnapshot } from '../utilities/snapshot';
 
