@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { render } from 'vike/abort';
 import { type PageContextServer } from 'vike/types';
 
 import { allComponents } from '#contentlayer/generated';
@@ -15,7 +14,7 @@ export const data = (pageContext: PageContextServer) => {
     });
 
     if (!component) {
-        throw render(404, "This component doesn't exist");
+        return null;
     }
 
     return { component };

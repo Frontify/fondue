@@ -3,5 +3,5 @@
 import { allComponents } from '#contentlayer/generated';
 
 export const onBeforePrerenderStart = () => {
-    return allComponents.map((component) => `/component/${component.route}`);
+    return ['/components', ...allComponents.map((component) => `/components/${component.route}`)];
 };

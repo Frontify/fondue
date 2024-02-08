@@ -8,7 +8,7 @@ export const Page = () => {
     const { data } = usePageContext();
 
     if (!data) {
-        return null;
+        return <h1 className="tw-text-3xl tw-font-bold tw-mb-8">Components</h1>;
     }
 
     return (

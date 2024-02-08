@@ -3,31 +3,35 @@
 import '../renderer/index.css';
 import { type ReactNode } from 'react';
 
-import { allComponents } from '#contentlayer/generated';
+import fondueLogo from '../assets/images/fondue_logo.png';
 
 export const Layout = ({ children }: { children: ReactNode }) => {
     return (
-        <main className="tw-grid tw-grid-cols-[auto_1fr] tw-grid-rows-[auto_1fr] tw-h-screen">
-            <header className="tw-col-start-1 tw-col-span-2 tw-bg-box-neutral tw-border-line tw-border-b-2 tw-px-8 tw-py-4">
-                <a className="tw-font-bold tw-text-xl" href="/">
-                    Fondue
+        <main className="tw-h-dvh tw-flex tw-flex-col">
+            <header className="tw-px-4 tw-flex tw-items-center tw-h-16">
+                <a className="tw-p-1 tw-h-8" href="/">
+                    <img className="tw-h-full tw-object-contain" src={fondueLogo} alt="Fondue Logo" />
                 </a>
+
+                <nav className="tw-w-full">
+                    <ul className="tw-w-full tw-items-center tw-justify-center tw-flex tw-gap-4">
+                        <li>
+                            <a href="/getting-started">Getting Started</a>
+                        </li>
+                        <li>
+                            <a href="/tokens">Tokens</a>
+                        </li>
+                        <li>
+                            <a href="/components">Components</a>
+                        </li>
+                        <li>
+                            <a href="/icons">Icons</a>
+                        </li>
+                    </ul>
+                </nav>
             </header>
 
-            <nav className="tw-col-start-1 tw-bg-box-neutral tw-p-8 tw-border-line tw-border-r-2">
-                <span className="tw-text-lg tw-font-bold">Components</span>
-                <ul className="tw-mt-4 tw-list-disc">
-                    {allComponents.map((component) => {
-                        return (
-                            <li key={component._id}>
-                                <a href={`/component/${component.route}`}>{component.title}</a>
-                            </li>
-                        );
-                    })}
-                </ul>
-            </nav>
-
-            <div className="tw-col-start-2 tw-p-8">{children}</div>
+            <div className="tw-h-full tw-flex">{children}</div>
         </main>
     );
 };
