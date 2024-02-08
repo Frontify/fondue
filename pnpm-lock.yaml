@@ -1,4 +1,4 @@
-lockfileVersion: '6.1'
+lockfileVersion: '6.0'
 
 settings:
   autoInstallPeers: true
@@ -313,8 +313,8 @@ importers:
         specifier: 1.6.3
         version: 1.6.3(@types/react@18.2.55)(react@18.2.0)(xstate@4.28.1)
       date-fns:
-        specifier: ^2.3.0
-        version: 2.30.0
+        specifier: ^3.3.1
+        version: 3.3.1
       escape-html:
         specifier: ^1.0.3
         version: 1.0.3
@@ -331,7 +331,7 @@ importers:
         specifier: ^5.6.1
         version: 5.6.1(react-dom@18.2.0)(react@18.2.0)
       react-datepicker:
-        specifier: ^4.16.0
+        specifier: ^4.25.0
         version: 4.25.0(react-dom@18.2.0)(react@18.2.0)
       react-dnd:
         specifier: ^16.0.1
@@ -11781,6 +11781,10 @@ packages:
     engines: {node: '>=0.11'}
     dependencies:
       '@babel/runtime': 7.23.9
+
+  /date-fns@3.3.1:
+    resolution: {integrity: sha512-y8e109LYGgoQDveiEBD3DYXKba1jWf5BA8YU1FL5Tvm0BTdEfy54WLCwnuYWZNnzzvALy/QQ4Hov+Q9RVRv+Zw==}
+    dev: false
 
   /dayjs@1.11.7:
     resolution: {integrity: sha512-+Yw9U6YO5TQohxLcIkrXBeY73WP3ejHWVvx8XCk3gxvQDCTEmS48ZrSZCKciI7Bhl/uCMyxYtE9UqRILmFphkQ==}
