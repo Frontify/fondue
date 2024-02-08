@@ -1,5 +1,11 @@
 # @frontify/fondue
 
+## 12.0.0-beta.402
+
+### Patch Changes
+
+- [`f91e3b4`](https://github.com/Frontify/fondue/commit/f91e3b44df4ee51f17b77d4032ba78b430b6dcae) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - Revert update of `date-fns` and `react-datepicker`
+
 ## 12.0.0-beta.401
 
 ### Minor Changes
