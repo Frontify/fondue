@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import nookFaviconUrl from '../assets/images/nook.svg';
 
 export const Head = () => {
