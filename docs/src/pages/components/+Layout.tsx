@@ -2,9 +2,9 @@
 
 import { type ReactNode } from 'react';
 
-import { Layout as RootLayout } from '../+Layout';
-
 import { allComponents } from '#contentlayer/generated';
+
+import { Layout as RootLayout } from '../+Layout';
 
 export const Layout = ({ children }: { children: ReactNode }) => {
     return (
@@ -20,7 +20,6 @@ export const Layout = ({ children }: { children: ReactNode }) => {
                         ))}
                     </ul>
                 </nav>
-
 
                 {children}
             </div>

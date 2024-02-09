@@ -11,7 +11,7 @@ export const Page = () => {
 
             <div className="tw-mt-8 tw-gap-8 tw-grid tw-grid-cols-[repeat(auto-fill,minmax(56px,1fr))]">
                 {Object.keys(icons).map((icon) => {
-                    const IconComponent = icons[icon];
+                    const IconComponent = icons[icon as keyof typeof icons];
 
                     const iconPath = kebabCase(icon).replace(/^icon-/, '');
 
