@@ -14,6 +14,9 @@
     },
     "main": "src/index.ts",
     "types": "src/index.ts",
+    "files": [
+        "icons"
+    ],
     "engines": {
         "node": ">=18"
     },
