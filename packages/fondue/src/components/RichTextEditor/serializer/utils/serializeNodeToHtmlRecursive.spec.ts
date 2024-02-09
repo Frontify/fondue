@@ -7,7 +7,6 @@ import {
     unorderedListValue,
 } from '@components/RichTextEditor/helpers/exampleValues';
 import { ELEMENT_CHECK_ITEM, mapMentionable } from '@components/RichTextEditor/Plugins';
-import { ELEMENT_IMAGE } from '@udecode/plate-media';
 import { ELEMENT_LI, ELEMENT_LIC, ELEMENT_OL, ELEMENT_UL } from '@udecode/plate-list';
 import { ELEMENT_PARAGRAPH } from '@udecode/plate-paragraph';
 import { ELEMENT_MENTION } from '@udecode/plate-mention';
@@ -391,7 +390,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
             type: ELEMENT_PARAGRAPH,
             children: [
                 {
-                    type: ELEMENT_IMAGE,
+                    type: 'img',
                     children: [
                         {
                             text: 'This is ',

@@ -6,9 +6,6 @@ import { ELEMENT_LI, ELEMENT_LIC, ELEMENT_OL, ELEMENT_UL } from '@udecode/plate-
 import { ELEMENT_PARAGRAPH } from '@udecode/plate-paragraph';
 import { ELEMENT_MENTION } from '@udecode/plate-mention';
 import { ELEMENT_LINK } from '@udecode/plate-link';
-import { ELEMENT_IMAGE } from '@udecode/plate-media';
-import { ELEMENT_H5, ELEMENT_H6 } from '@udecode/plate-heading';
-import { ELEMENT_HR } from '@udecode/plate-horizontal-rule';
 import { ELEMENT_CODE_BLOCK } from '@udecode/plate-code-block';
 import { PartialOptionType } from './types';
 import { TextStyles } from '@components/RichTextEditor/Plugins';
@@ -22,9 +19,9 @@ export const options = (editor: PlateEditor): PartialOptionType => ({
         strongMark: getPluginType(editor, MARK_BOLD),
         emphasisMark: getPluginType(editor, MARK_ITALIC),
         deleteMark: getPluginType(editor, MARK_STRIKETHROUGH),
-        image: getPluginType(editor, ELEMENT_IMAGE),
+        image: getPluginType(editor, 'img'),
         codeBlock: getPluginType(editor, ELEMENT_CODE_BLOCK),
-        thematicBreak: getPluginType(editor, ELEMENT_HR),
+        thematicBreak: getPluginType(editor, 'hr'),
         ulList: getPluginType(editor, ELEMENT_UL),
         olList: getPluginType(editor, ELEMENT_OL),
         listItem: getPluginType(editor, ELEMENT_LI),
@@ -34,8 +31,8 @@ export const options = (editor: PlateEditor): PartialOptionType => ({
             2: getPluginType(editor, TextStyles.heading2),
             3: getPluginType(editor, TextStyles.heading3),
             4: getPluginType(editor, TextStyles.heading4),
-            5: getPluginType(editor, ELEMENT_H5),
-            6: getPluginType(editor, ELEMENT_H6),
+            5: getPluginType(editor, 'h5'),
+            6: getPluginType(editor, 'h6'),
         },
         mention: getPluginType(editor, ELEMENT_MENTION),
     },
