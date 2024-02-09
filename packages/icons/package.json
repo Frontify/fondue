@@ -19,7 +19,7 @@
         "node": ">=18"
     },
     "scripts": {
-        "build": "dotenv tsx src/index.ts",
+        "build": "dotenv tsx scripts/download_new_icons.ts",
         "lint": "eslint .",
         "lint:fix": "eslint --fix .",
         "typecheck": "tsc --noEmit"
