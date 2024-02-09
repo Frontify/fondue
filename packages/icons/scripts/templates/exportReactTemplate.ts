@@ -10,10 +10,8 @@ type TemplateProps = {
 };
 
 const base64SVG = (svgContents: string) => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
     const svg: string = svgContents
         .replaceAll('\n', '')
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         .replaceAll('stroke="currentColor"', 'stroke="#000" style="background-color: #fff; border-radius: 2px"');
 
     return Buffer.from(svg).toString('base64');

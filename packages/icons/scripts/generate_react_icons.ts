@@ -38,7 +38,6 @@ const OUTPUT_DIR = resolve(currentDir, '../src/icons');
 
     // Generate the React components
     for (const iconPath of Object.keys(iconsObject)) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
         const pathWithoutSize: string = iconPath.replaceAll(/-24(-filled)?\.svg/g, '$1');
         const iconName = basename(pathWithoutSize, '.svg');
         const componentName = upperFirst(camelCase(iconName));
@@ -56,7 +55,6 @@ const OUTPUT_DIR = resolve(currentDir, '../src/icons');
     // Generate the barrel file
     const barrelFile = Object.keys(iconsObject)
         .map((iconPath: string) => {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
             const pathWithoutSize: string = iconPath.replaceAll(/-24(-filled)?\.svg/g, '$1');
             const iconName = basename(pathWithoutSize, '.svg');
             const componentName = upperFirst(camelCase(iconName));
