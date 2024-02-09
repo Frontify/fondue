@@ -1,7 +1,12 @@
 {
     "root": true,
-    "extends": ["@frontify/eslint-config-basic"],
+    "extends": ["@frontify/eslint-config-react"],
     "plugins": ["notice"],
+    "settings": {
+        "react": {
+            "version": "detect",
+        },
+    },
     "parserOptions": {
         "project": ["./tsconfig.json", "./tsconfig.node.json"],
     },
