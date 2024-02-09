@@ -1,9 +1,14 @@
 {
     "root": true,
-    "extends": ["@frontify/eslint-config-basic", "plugin:jsx-a11y/recommended"],
-    "plugins": ["jsx-a11y", "notice"],
+    "extends": ["@frontify/eslint-config-react"],
+    "plugins": ["notice"],
+    "settings": {
+        "react": {
+            "version": "detect",
+        },
+    },
     "parserOptions": {
-        "project": ["./tsconfig.json"],
+        "project": ["./tsconfig.json", "./tsconfig.node.json"],
     },
     "overrides": [
         {

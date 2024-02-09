@@ -2,7 +2,7 @@
 
 import { icons } from '@frontify/fondue-icons';
 
-import { kebabCase } from '../../utilities/kebabCase';
+import { kebabCase } from '../../../utilities/kebabCase';
 
 export const Page = () => {
     return (

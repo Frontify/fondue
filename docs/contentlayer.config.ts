@@ -24,49 +24,11 @@ const Component = defineDocumentType(() => ({
     },
 }));
 
-const Icon = defineDocumentType(() => ({
-    name: 'Icon',
-    filePathPattern: '**/*.mdx', // To be changed with the package path
-    contentType: 'mdx',
-    fields: {
-        title: { type: 'string', required: true },
-    },
-    computedFields: {
-        url: {
-            type: 'string',
-            resolve: (doc) => doc._raw.sourceFileDir.toLocaleLowerCase(),
-        },
-        route: {
-            type: 'string',
-            resolve: (doc) => doc._raw.sourceFileDir.toLocaleLowerCase().split('/').at(-1),
-        },
-    },
-}));
-
-const Token = defineDocumentType(() => ({
-    name: 'Token',
-    filePathPattern: '**/*.mdx', // To be changed with the package path
-    contentType: 'mdx',
-    fields: {
-        title: { type: 'string', required: true },
-    },
-    computedFields: {
-        url: {
-            type: 'string',
-            resolve: (doc) => doc._raw.sourceFileDir.toLocaleLowerCase(),
-        },
-        route: {
-            type: 'string',
-            resolve: (doc) => doc._raw.sourceFileDir.toLocaleLowerCase().split('/').at(-1),
-        },
-    },
-}));
-
 const sources: ReturnType<typeof makeSource> = makeSource({
     contentDirPath: '.',
     contentDirInclude: [FONDUE_COMPONENTS_PATH],
     contentDirExclude: [...EXCLUDES, ...EXCLUDES.map((path) => `${FONDUE_COMPONENTS_PATH}/${path}`)],
-    documentTypes: [Component, Icon, Token],
+    documentTypes: [Component],
 });
 
 export default sources;

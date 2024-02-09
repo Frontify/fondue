@@ -1,7 +1,7 @@
 {
     "root": true,
-    "extends": ["@frontify/eslint-config-react", "plugin:jsx-a11y/recommended"],
-    "plugins": ["jsx-a11y", "notice"],
+    "extends": ["@frontify/eslint-config-react"],
+    "plugins": ["notice"],
     "settings": {
         "react": {
             "version": "detect",

@@ -4,7 +4,7 @@ import { resolve } from 'node:path';
 
 export const ICONS_DIRECTORY = resolve('./icons');
 export const DATA_DIRECTORY = resolve('./data');
-export const SNAPSHOT_FILE_PATH = resolve(DATA_DIRECTORY, 'snapshot.json');
+export const SNAPSHOT_FILE_PATH = resolve(ICONS_DIRECTORY, 'snapshot.json');
 
 export const FIGMA_ACCESS_TOKEN = process.env.FIGMA_ACCESS_TOKEN;
 export const FIGMA_ICON_FILE_ID = '65fA3Pxqc0USAY9YRoSXDL';

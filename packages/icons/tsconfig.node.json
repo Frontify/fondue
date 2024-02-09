@@ -4,6 +4,9 @@
         "module": "ESNext",
         "moduleResolution": "Node",
         "allowSyntheticDefaultImports": true,
-        "resolveJsonModule": true
-    }
+        "resolveJsonModule": true,
+        "lib": ["ESNext"],
+        "target": "ESNext"
+    },
+    "include": ["scripts"]
 }
