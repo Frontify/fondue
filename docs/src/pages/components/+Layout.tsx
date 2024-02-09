@@ -2,9 +2,9 @@
 
 import { type ReactNode } from 'react';
 
-import { allComponents } from '#contentlayer/generated';
-
 import { Layout as RootLayout } from '../+Layout';
+
+import { allComponents } from '#contentlayer/generated';
 
 export const Layout = ({ children }: { children: ReactNode }) => {
     return (
@@ -21,13 +21,8 @@ export const Layout = ({ children }: { children: ReactNode }) => {
                     </ul>
                 </nav>
 
-                <div className="tw-p-8 tw-w-full tw-flex tw-justify-center">
-                    <div className="tw-max-w-[856px] tw-w-full">{children}</div>
-                </div>
 
-                <aside className="tw-p-8 2xl:tw-flex tw-hidden tw-flex-col tw-w-72 tw-shrink-0">
-                    <span className="tw-text-lg tw-font-bold">Table of content</span>
-                </aside>
+                {children}
             </div>
         </RootLayout>
     );

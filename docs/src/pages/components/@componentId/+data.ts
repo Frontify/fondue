@@ -9,9 +9,7 @@ export type Data = Awaited<ReturnType<typeof data>>;
 export const data = (pageContext: PageContextServer) => {
     const { routeParams } = pageContext;
 
-    const component = allComponents.find((component) => {
-        return component.route === routeParams.pageUrl;
-    });
+    const component = allComponents.find((component) => component.route === routeParams.componentId);
 
     if (!component) {
         return null;

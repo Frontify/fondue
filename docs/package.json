@@ -18,6 +18,7 @@
     "dependencies": {
         "@frontify/fondue": "workspace:^",
         "@frontify/fondue-components": "workspace:^",
+        "@frontify/fondue-icons": "workspace:^",
         "@frontify/fondue-tokens": "^3.4.0",
         "@tailwindcss/forms": "^0.5.7",
         "mdx-bundler": "^10.0.1",

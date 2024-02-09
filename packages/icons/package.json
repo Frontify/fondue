@@ -12,28 +12,35 @@
     "bugs": {
         "url": "https://github.com/frontify/fondue/issues"
     },
-    "files": [
-        "icons"
-    ],
+    "main": "src/index.ts",
+    "types": "src/index.ts",
     "engines": {
         "node": ">=18"
     },
     "scripts": {
-        "build": "dotenv tsx scripts/download_new_icons.ts",
+        "build": "pnpm build:download-new-icons && pnpm build:generate-react-icons",
+        "build:download-new-icons": "dotenv tsx scripts/download_new_icons.ts",
+        "build:generate-react-icons": "tsx scripts/generate_react_icons.ts",
         "lint": "eslint .",
         "lint:fix": "eslint --fix .",
         "typecheck": "tsc --noEmit"
+    },
+    "peerDependencies": {
+        "react": "^18"
     },
     "devDependencies": {
         "@frontify/eslint-config-basic": "^0.19.0",
         "@iconify/tools": "^4.0.0",
         "@types/lodash": "^4.14.202",
         "@types/node": "^18.19.14",
+        "@types/react": "^18.2.55",
         "dotenv-cli": "^7.3.0",
         "eslint": "^8.56.0",
         "figma-api": "^1.11.0",
         "lodash": "^4.17.21",
         "prettier": "^3.2.5",
+        "react": "^18.2.0",
+        "svgson": "^5.3.1",
         "tsx": "^4.7.0",
         "typescript": "^5.3.3"
     }
