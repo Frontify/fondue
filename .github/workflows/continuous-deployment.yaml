@@ -66,8 +66,11 @@ jobs:
             - name: Install npm dependencies
               run: pnpm i --frozen-lockfile
 
-            - name: Generate icons
+            - name: Generate (old) icons
               run: pnpm --stream --filter {packages/fondue} generate:icons && pnpm --stream --filter {packages/fondue} generate:componentsEnum
+
+            - name: Generate React icons
+              run: pnpm --stream --filter {packages/icons} build:generate-react-icons
 
             - name: Contentlayer build
               run: pnpm --stream --filter {docs} build:contentlayer
