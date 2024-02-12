@@ -24,20 +24,20 @@ export const Page = () => {
             style={{ '--transparent-background-url': `url(${transparent})` } as CSSProperties}
         >
             <div className="tw-flex lg:tw-flex-col tw-gap-8">
-                <div className="tw-size-64 tw-flex tw-items-center tw-justify-center tw-bg-[image:var(--transparent-background-url)]">
+                <div className="tw-size-64 tw-flex tw-items-center tw-justify-center tw-rounded tw-bg-[image:var(--transparent-background-url)]">
                     <IconComponent className="tw-size-full" />
                 </div>
 
                 <div className="tw-grid tw-template tw-grid-cols-3 tw-gap-8">
-                    <div className="tw-size-16 tw-inline-flex tw-items-center tw-justify-center tw-bg-[image:var(--transparent-background-url)]">
+                    <div className="tw-size-16 tw-inline-flex tw-items-center tw-justify-center tw-rounded tw-bg-[image:var(--transparent-background-url)]">
                         <IconComponent className="tw-size-full" />
                     </div>
 
-                    <div className="tw-size-16 tw-inline-flex tw-items-center tw-justify-center tw-bg-[image:var(--transparent-background-url)]">
+                    <div className="tw-size-16 tw-inline-flex tw-items-center tw-justify-center tw-rounded tw-bg-[image:var(--transparent-background-url)]">
                         <IconComponent className="tw-size-12" />
                     </div>
 
-                    <div className="tw-size-16 tw-inline-flex tw-items-center tw-justify-center tw-bg-[image:var(--transparent-background-url)]">
+                    <div className="tw-size-16 tw-inline-flex tw-items-center tw-justify-center tw-rounded tw-bg-[image:var(--transparent-background-url)]">
                         <IconComponent className="tw-size-8" />
                     </div>
                 </div>
