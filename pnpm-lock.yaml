@@ -43,6 +43,9 @@ importers:
       '@tailwindcss/forms':
         specifier: ^0.5.7
         version: 0.5.7(tailwindcss@3.4.1)
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
       mdx-bundler:
         specifier: ^10.0.1
         version: 10.0.1(esbuild@0.20.0)
@@ -62,6 +65,9 @@ importers:
       '@frontify/eslint-config-react':
         specifier: 0.17.0
         version: 0.17.0(eslint@8.56.0)(prettier@3.2.5)(react@18.2.0)(typescript@5.3.3)
+      '@types/lodash':
+        specifier: ^4.14.202
+        version: 4.14.202
       '@types/node':
         specifier: ^18.19.15
         version: 18.19.15
@@ -7358,11 +7364,7 @@ packages:
   /@types/lodash-es@4.17.12:
     resolution: {integrity: sha512-0NgftHUcV4v34VhXm8QBSftKVXtbkBG3ViCjs6+eJ5a6y6Mi/jiFGPc1sC7QK+9BFhWrURE3EOggmWaSxL9OzQ==}
     dependencies:
-      '@types/lodash': 4.14.191
-    dev: true
-
-  /@types/lodash@4.14.191:
-    resolution: {integrity: sha512-BdZ5BCCvho3EIXw6wUCXHe7rS53AIDPLE+JzwgT+OsJk53oBfbSmZZ7CX4VaRoN78N+TJpFi9QPlfIVNmJYWxQ==}
+      '@types/lodash': 4.14.202
     dev: true
 
   /@types/lodash@4.14.202:
