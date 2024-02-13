@@ -2,7 +2,17 @@
   "mode": "pre",
   "tag": "beta",
   "initialVersions": {
-    "@frontify/fondue": "12.0.0-beta.400"
+    "@frontify/fondue": "12.0.0-beta.400",
+    "@fondue/docs": "0.0.1",
+    "@frontify/fondue-components": "0.0.1"
   },
-  "changesets": []
+  "changesets": [
+    "chilly-bananas-mix",
+    "clever-wolves-guess",
+    "green-horses-scream",
+    "nasty-bottles-tie",
+    "odd-countries-add",
+    "spicy-pets-itch",
+    "swift-bees-greet"
+  ]
 }
