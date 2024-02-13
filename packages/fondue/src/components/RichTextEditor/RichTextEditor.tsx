@@ -62,7 +62,6 @@ export const RichTextEditor = ({
     const breakAfterPlugin = plugins.plugins.find((plugin) => plugin.key === KEY_ELEMENT_BREAK_AFTER_COLUMN);
     const columns = breakAfterPlugin?.options?.columns ?? 1;
     const columnGap = breakAfterPlugin?.options?.gap ?? GAP_DEFAULT;
-
     const editableProps: TEditableProps = {
         placeholder,
         renderPlaceholder: ({ children, attributes }) => {
@@ -85,6 +84,8 @@ export const RichTextEditor = ({
         },
         onKeyDown: (event) => {
             if (event.code === 'Tab') {
+                console.log('Helo');
+                console.log(document.activeElement);
                 forceToFocusNextElement(event, !event.shiftKey);
             }
         },

@@ -31,6 +31,7 @@ const ToolbarButtonComponent = forwardRef<
                 ])}
                 value={pressed ? 'single' : ''}
                 {...props}
+                tabIndex={0}
             >
                 {isDropdown ? (
                     <>
@@ -55,6 +56,7 @@ const ToolbarButtonComponent = forwardRef<
                     !props.disabled ? 'hover:!tw-bg-box-selected hover:!tw-text-box-selected-inverse' : '',
                 ])}
                 {...props}
+                tabIndex={0}
             >
                 {children}
             </ToolbarPrimitive.Button>

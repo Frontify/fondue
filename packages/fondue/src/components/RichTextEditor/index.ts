@@ -10,3 +10,4 @@ export * from './utils';
 export * from './Plugins';
 export * from './serializer';
 export * from './context';
+export * from './components';

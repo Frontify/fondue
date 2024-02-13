@@ -43,3 +43,5 @@ export const Toolbar = ({ toolbarButtons, editorId, toolbarWidth }: ToolbarProps
         </PositioningWrapper.ToolbarWrapper>
     );
 };
+
+export { ToolbarButton } from './ToolbarButton';

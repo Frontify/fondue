@@ -13,7 +13,7 @@ import { InsertLinkModal } from './InsertLinkModal/InsertLinkModal';
 
 const floatingOptions: UseVirtualFloatingOptions = {
     placement: 'bottom-start',
-    strategy: 'fixed',
+    strategy: 'absolute',
     middleware: [
         offset(12),
         flip({
