@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MouseEvent } from 'React';
+import { MouseEvent } from 'react';
 import IconPen16 from '@foundation/Icon/Generated/IconPen16';
 import IconTrashBin16 from '@foundation/Icon/Generated/IconTrashBin16';
 import { useRichTextEditorContext } from '@components/RichTextEditor/context';
