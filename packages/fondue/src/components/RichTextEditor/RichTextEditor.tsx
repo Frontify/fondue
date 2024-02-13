@@ -84,8 +84,6 @@ export const RichTextEditor = ({
         },
         onKeyDown: (event) => {
             if (event.code === 'Tab') {
-                console.log('Helo');
-                console.log(document.activeElement);
                 forceToFocusNextElement(event, !event.shiftKey);
             }
         },
