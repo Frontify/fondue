@@ -31,7 +31,7 @@ export const Overlay = ({
     minHeight = 0,
     handleClose,
     modality = Modality.NonModal,
-    darkUnderlay,
+    darkUnderlay = true,
     autoHeight,
     zIndex,
     isDetached,
@@ -146,7 +146,7 @@ export const Overlay = ({
                 </div>
             </Popper>
 
-            {(isMobile || modality !== Modality.NonModal) && open && (
+            {darkUnderlay && (isMobile || modality !== Modality.NonModal) && open && (
                 <Portal>
                     <div
                         data-test-id={`${dataTestId}-underlay`}

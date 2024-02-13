@@ -9,6 +9,7 @@ import { ARROW_DARK_THEME } from '@utilities/overlayStyle';
 import { Overlay } from '@utilities/dialogs/Overlay';
 import { Modality } from '../../types';
 import { checkIfContainInteractiveElements } from '@utilities/elements';
+import { useClickOutside } from '@hooks/useClickOutside';
 
 export type TooltipProps = {
     id?: string;
@@ -71,13 +72,8 @@ export const Tooltip = ({
     'data-test-id': dataTestId = 'fondue-tooltip',
 }: TooltipProps) => {
     const [open, setOpen] = useState(openOnMount);
-    const triggerRef = useRef<HTMLDivElement | null>(null);
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const [hasInteractiveElements, setHasInteractiveElements] = useState(false);
-
-    useEffect(() => {
-        setHasInteractiveElements(checkIfContainInteractiveElements(triggerRef.current));
-    }, [children, triggerRef]);
 
     const handleHideTooltip = useCallback(() => {
         if (!disabled) {
@@ -91,11 +87,7 @@ export const Tooltip = ({
         }
     }, [disabled, enterDelay, setOpen]);
 
-    useEffect(() => {
-        if (timeoutRef.current && !open) {
-            clearTimeout(timeoutRef.current);
-        }
-    }, [open]);
+    const { dismissibleElementRef } = useClickOutside<HTMLDivElement>(handleHideTooltip, []);
 
     const focusAndMouseAttributes = {
         onBlur: handleHideTooltip,
@@ -104,10 +96,20 @@ export const Tooltip = ({
         onMouseLeave: handleHideTooltip,
     };
 
+    useEffect(() => {
+        setHasInteractiveElements(checkIfContainInteractiveElements(dismissibleElementRef.current));
+    }, [dismissibleElementRef]);
+
+    useEffect(() => {
+        if (timeoutRef.current && !open) {
+            clearTimeout(timeoutRef.current);
+        }
+    }, [open]);
+
     return (
         <>
             <div
-                ref={triggerRef}
+                ref={dismissibleElementRef}
                 tabIndex={hasInteractiveElements || disabled ? undefined : 0}
                 aria-describedby={id}
                 aria-disabled={disabled}
@@ -124,7 +126,7 @@ export const Tooltip = ({
                 theme="dark"
                 withArrow={withArrow}
                 arrowCustomColors={ARROW_DARK_THEME}
-                anchor={triggerRef}
+                anchor={dismissibleElementRef}
                 placement={placement}
                 offset={offset}
                 flip={flip}
@@ -135,9 +137,10 @@ export const Tooltip = ({
                 maxWidth={maxWidth}
                 maxHeight={maxHeight}
                 zIndex={zIndex}
-                handleClose={() => setOpen(false)}
+                handleClose={() => console.log('closed by Overlay')}
                 shadow="none"
                 isDialog={false}
+                darkUnderlay={false}
             >
                 <p
                     className={merge([
