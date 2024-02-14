@@ -11,5 +11,6 @@ export const Link = (props: AnchorProps) => {
     const { href } = props;
     const isActive = !href || href === '/' ? urlPathname === href : urlPathname.startsWith(href);
     const className = [props.className, isActive && 'is-active'].filter(Boolean).join(' ');
+    // eslint-disable-next-line jsx-a11y/anchor-has-content
     return <a {...props} className={className} data-route-active={isActive} />;
 };
