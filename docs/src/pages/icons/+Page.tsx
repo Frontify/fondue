@@ -10,7 +10,7 @@ export const Page = () => {
         <div className="tw-p-8">
             <h1 className="tw-text-2xl tw-font-bold">Icons</h1>
 
-            <div className="tw-mt-8 tw-gap-8 tw-grid tw-grid-cols-[repeat(auto-fill,minmax(56px,1fr))]">
+            <div className="tw-mt-8 tw-gap-4 tw-grid tw-grid-cols-[repeat(auto-fill,minmax(56px,1fr))]">
                 {Object.keys(icons)
                     .toSorted()
                     .map((icon) => {
