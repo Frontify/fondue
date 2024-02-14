@@ -137,7 +137,6 @@ export const Tooltip = ({
                 maxWidth={maxWidth}
                 maxHeight={maxHeight}
                 zIndex={zIndex}
-                handleClose={() => console.log('closed by Overlay')}
                 shadow="none"
                 isDialog={false}
                 darkUnderlay={false}
