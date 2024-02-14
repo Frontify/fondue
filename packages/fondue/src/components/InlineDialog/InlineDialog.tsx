@@ -51,6 +51,7 @@ export const InlineDialog = ({
             borderRadius="small"
             shadow="medium"
             width={width}
+            isDialog={true}
         >
             {children}
         </Overlay>
