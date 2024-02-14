@@ -3,6 +3,7 @@
 import { BaseDialogProps, Modality, OverlayProps } from '../../types';
 import { Overlay } from '@utilities/dialogs/Overlay';
 import { Z_INDEX_MODAL } from '@utilities/dialogs/constants';
+import { WithRequired } from 'src/types/withRequired';
 
 export type DialogProps = Omit<
     OverlayProps,
@@ -26,7 +27,7 @@ export const Dialog = ({
     autoHeight = false,
     verticalAlignment = 'centered',
     roundedCorners = true,
-}: DialogProps) => {
+}: WithRequired<DialogProps, 'handleClose'>) => {
     return (
         <Overlay
             data-test-id={dataTestId}
