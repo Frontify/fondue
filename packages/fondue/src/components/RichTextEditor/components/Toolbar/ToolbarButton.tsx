@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ComponentPropsWithoutRef, ElementRef, forwardRef } from 'react';
+import { ElementRef, forwardRef } from 'react';
 import * as ToolbarPrimitive from '@radix-ui/react-toolbar';
 
 import { withTooltip } from './Tooltip';
@@ -9,7 +9,7 @@ import { IconCaretDown16 } from '@foundation/Icon';
 
 const ToolbarButtonComponent = forwardRef<
     ElementRef<typeof ToolbarPrimitive.ToggleItem>,
-    Omit<ComponentPropsWithoutRef<typeof ToolbarPrimitive.ToggleItem>, 'asChild' | 'value'> & {
+    Omit<ToolbarPrimitive.ToolbarToggleItemProps, 'asChild' | 'value'> & {
         pressed?: boolean;
         isDropdown?: boolean;
     }

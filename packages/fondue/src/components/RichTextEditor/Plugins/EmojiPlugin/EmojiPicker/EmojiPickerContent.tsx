@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { memo, useCallback } from 'react';
+import { useCallback } from 'react';
 import { Emoji, EmojiCategoryList, EmojiSettings, GridRow, UseEmojiPickerType } from '@udecode/plate-emoji';
 
 export type EmojiPickerContentProps = Pick<
@@ -27,7 +27,7 @@ export type RowOfButtonsProps = Pick<UseEmojiPickerType, 'onMouseOver' | 'onSele
     row: GridRow;
 };
 
-const Button = memo(({ index, emoji, onSelect, onMouseOver }: EmojiButtonProps) => {
+const Button = ({ index, emoji, onSelect, onMouseOver }: EmojiButtonProps) => {
     return (
         <button
             type="button"
@@ -48,10 +48,9 @@ const Button = memo(({ index, emoji, onSelect, onMouseOver }: EmojiButtonProps) 
             </span>
         </button>
     );
-});
-Button.displayName = 'Button';
+};
 
-const RowOfButtons = memo(({ row, emojiLibrary, onSelectEmoji, onMouseOver }: RowOfButtonsProps) => (
+const RowOfButtons = ({ row, emojiLibrary, onSelectEmoji, onMouseOver }: RowOfButtonsProps) => (
     <div key={row.id} data-index={row.id} className="tw-flex">
         {row.elements.map((emojiId, index) => (
             <Button
@@ -63,8 +62,7 @@ const RowOfButtons = memo(({ row, emojiLibrary, onSelectEmoji, onMouseOver }: Ro
             />
         ))}
     </div>
-));
-RowOfButtons.displayName = 'RowOfButtons';
+);
 
 export function EmojiPickerContent({
     i18n,

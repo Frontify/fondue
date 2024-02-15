@@ -42,7 +42,7 @@ export class ParagraphMarkupElement extends MarkupElement {
     }
 }
 
-export const createParagraphPlugin = (styles: CSSProperties): PlatePlugin =>
+const createParagraphPlugin = (styles: CSSProperties): PlatePlugin =>
     createPluginFactory({
         ...createPlateParagraphPlugin(),
         key: TextStyles.p,

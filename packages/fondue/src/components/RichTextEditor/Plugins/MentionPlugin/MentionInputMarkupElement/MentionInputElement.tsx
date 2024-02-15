@@ -1,17 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlateElement } from '@udecode/plate-utils';
+import { PlateElement, PlateElementProps } from '@udecode/plate-utils';
 import { getHandler } from '@udecode/utils';
 import { merge } from '@utilities/merge';
-import { ComponentProps, ForwardedRef, forwardRef } from 'react';
+import { ForwardedRef, forwardRef } from 'react';
 
 export const MentionInputElement = forwardRef(
     (
-        {
-            className,
-            onClick,
-            ...props
-        }: ComponentProps<typeof PlateElement> & { onClick?: (mentionNode: unknown) => void },
+        { className, onClick, ...props }: PlateElementProps & { onClick?: (mentionNode: unknown) => void },
         ref: ForwardedRef<HTMLDivElement>,
     ) => {
         const { children, element } = props;

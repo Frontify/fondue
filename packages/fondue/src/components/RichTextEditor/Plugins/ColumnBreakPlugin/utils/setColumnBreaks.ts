@@ -12,14 +12,7 @@ type SetColumnBreaksType = <V extends Value>(
 ) => void;
 
 // This is adapted from src/components/RichTextEditor/Plugins/AlignPlugin/AlignPlugin.ts
-export const setColumnBreaks: SetColumnBreaksType = <V extends Value>(
-    editor: PlateEditor<V>,
-    {
-        key = KEY_ELEMENT_BREAK_AFTER_COLUMN,
-        value,
-        at,
-    }: { at?: TLocation; value?: string; setNodesOptions?: SetNodesOptions<V> } & PlatePluginKey,
-) => {
+export const setColumnBreaks: SetColumnBreaksType = (editor, { key = KEY_ELEMENT_BREAK_AFTER_COLUMN, value, at }) => {
     const match: TNodeMatch<ENode<Value>> = (n) => isBlock(editor, n);
 
     if (!value) {

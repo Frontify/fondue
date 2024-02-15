@@ -11,7 +11,7 @@ import { LinkMarkupElement } from './LinkMarkupElement';
 import { CSSProperties } from 'react';
 import { defaultStyles } from '@components/RichTextEditor/utils';
 
-export const createLinkPlugin: ReturnType<typeof createPluginFactory<NonNullable<unknown>>> = createPluginFactory({
+const createLinkPlugin: ReturnType<typeof createPluginFactory<NonNullable<unknown>>> = createPluginFactory({
     ...createPlateLinkPlugin(),
     renderAfterEditable: CustomFloatingLink,
     options: {

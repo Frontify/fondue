@@ -32,7 +32,7 @@ export const OrderedListMarkupElementNode: (props: PlateRenderLeafProps & { elem
     attributes,
     children,
     element,
-}: PlateRenderLeafProps & { element: TElement }) => {
+}) => {
     const editor = useEditorRef();
     const nestingLevel = getNestingLevel(editor, element);
 

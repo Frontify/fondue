@@ -6,11 +6,11 @@ import { someNode } from '@udecode/slate';
 import { toggleColumnBreak } from './onKeyDownColumnBreak';
 import { getColumnBreakCount } from './utils/getColumnBreakCount';
 import { ToolbarButton } from '@components/RichTextEditor/components/Toolbar/ToolbarButton';
-import { ComponentProps } from 'react';
 import { IconStylingWrapper } from '@components/RichTextEditor/Plugins/helper';
 import IconTextColumnBreak16 from '@foundation/Icon/Generated/IconTextColumnBreak16';
+import { ToolbarButtonProps } from '@components/RichTextEditor/components/Toolbar/types';
 
-export const ColumnBreakToolbarButton = ({ id, ...props }: ComponentProps<typeof ToolbarButton>) => {
+export const ColumnBreakToolbarButton = ({ id, ...props }: ToolbarButtonProps) => {
     const editor = useEditorState(useEventPlateId(id));
     const isActive = !!editor?.selection && someNode(editor, { match: (node) => !!node.breakAfterColumn });
 
