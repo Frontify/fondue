@@ -10,6 +10,7 @@ import {
 } from '@udecode/plate-link';
 import { EditModal } from './EditLinkModal';
 import { InsertLinkModal } from './InsertLinkModal/InsertLinkModal';
+import { zIndexLayers } from '@components/RichTextEditor/helpers/zIndexLayers';
 
 const floatingOptions: UseVirtualFloatingOptions = {
     placement: 'bottom-start',
@@ -53,13 +54,17 @@ export const CustomFloatingLink = () => {
     return (
         <>
             {insertState.isOpen && !editState.isOpen && (
-                <div ref={insertRef} {...insertProps}>
+                <div
+                    ref={insertRef}
+                    {...insertProps}
+                    style={{ ...insertProps.style, zIndex: zIndexLayers.floatingModal }}
+                >
                     {input}
                 </div>
             )}
 
             {editState.isOpen && (
-                <div ref={editRef} {...editProps}>
+                <div ref={editRef} {...editProps} style={{ ...editProps.style, zIndex: zIndexLayers.floatingModal }}>
                     {editContent}
                 </div>
             )}
