@@ -1,5 +1,11 @@
 # @frontify/fondue
 
+## 12.0.0-beta.404
+
+### Patch Changes
+
+- [`c338f2a`](https://github.com/Frontify/fondue/commit/c338f2a18a3ed38483a0511930ddb9c24482fe3f) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - Fix date picker component since we went ESM
+
 ## 12.0.0-beta.403
 
 ### Patch Changes
