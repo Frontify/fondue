@@ -4,7 +4,8 @@
   "initialVersions": {
     "@frontify/fondue": "12.0.0-beta.400",
     "@fondue/docs": "0.0.1",
-    "@frontify/fondue-components": "0.0.1"
+    "@frontify/fondue-components": "0.0.1",
+    "@frontify/fondue-icons": "0.1.43"
   },
   "changesets": [
     "chilly-bananas-mix",
@@ -12,6 +13,7 @@
     "green-horses-scream",
     "nasty-bottles-tie",
     "odd-countries-add",
+    "slow-onions-build",
     "spicy-pets-itch",
     "swift-bees-greet"
   ]
