@@ -16,6 +16,10 @@ import { Validation } from '@utilities/validation';
 
 const ARROW_PADDING_CORRECTION = 40;
 
+// Needed because of https://github.com/Hacker0x01/react-datepicker/issues/3834
+const ReactDatePickerComponent =
+    (DatepickerComponent as unknown as { default: typeof DatepickerComponent }).default ?? DatepickerComponent;
+
 type SingleDatePickerProps = {
     variant?: 'single';
     onChange: (date: Date | null) => void;
@@ -105,7 +109,7 @@ export const DatePicker = forwardRef<ReactDatePicker<never, boolean>, DatePicker
 
         return (
             <div data-test-id={dataTestId}>
-                <DatepickerComponent
+                <ReactDatePickerComponent
                     calendarClassName="tw-rounded-sm tw-border tw-border-line-x-strong react-datepicker-wrap"
                     selected={value}
                     startDate={startDate}
@@ -199,7 +203,7 @@ export const DatePicker = forwardRef<ReactDatePicker<never, boolean>, DatePicker
                     ]}
                 >
                     {children}
-                </DatepickerComponent>
+                </ReactDatePickerComponent>
             </div>
         );
     },
