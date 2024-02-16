@@ -6,5 +6,12 @@
         "allowSyntheticDefaultImports": true,
         "resolveJsonModule": true
     },
-    "include": ["vite.config.ts", "tailwind.config.ts", "contentlayer.config.ts", "postcss.config.cjs", "package.json"]
+    "include": [
+        ".eslintrc.cjs",
+        "vite.config.ts",
+        "tailwind.config.ts",
+        "contentlayer.config.ts",
+        "postcss.config.cjs",
+        "package.json"
+    ]
 }

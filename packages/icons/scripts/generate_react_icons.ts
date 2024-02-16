@@ -15,11 +15,15 @@ const currentDir = getCurrentDirPath(import.meta.url);
 const ICONS_DIR = resolve(currentDir, '../icons');
 const OUTPUT_DIR = resolve(currentDir, '../src/icons');
 
-const generateJsonPath = (children: INode) => {
+const generateJsonPath = (children: INode): INode => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return (
         // @ts-expect-error - children is iterable
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         children?.map(({ name, attributes, children }) => {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             const childrenJsonPath = generateJsonPath(children);
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return [
                 name,
                 attributes,
