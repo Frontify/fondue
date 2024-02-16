@@ -1,5 +1,11 @@
 # @frontify/fondue
 
+## 12.0.0-beta.403
+
+### Patch Changes
+
+- [`88b3be6`](https://github.com/Frontify/fondue/commit/88b3be6a214803a1ac65ed2e3e2439ffb825aedc) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - Update dependencies
+
 ## 12.0.0-beta.402
 
 ### Patch Changes
