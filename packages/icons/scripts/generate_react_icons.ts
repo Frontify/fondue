@@ -5,7 +5,7 @@ import { resolve, basename } from 'node:path';
 
 import camelCase from 'lodash/fp/camelCase';
 import upperFirst from 'lodash/fp/upperFirst';
-import { parseSync } from 'svgson';
+import { type INode, parseSync } from 'svgson';
 
 import { template as reactComponentTemplate } from './templates/exportReactTemplate';
 import { getCurrentDirPath, getFileInDirectoryByExtension } from './utilities/file';
@@ -14,6 +14,20 @@ const currentDir = getCurrentDirPath(import.meta.url);
 
 const ICONS_DIR = resolve(currentDir, '../icons');
 const OUTPUT_DIR = resolve(currentDir, '../src/icons');
+
+const generateJsonPath = (children: INode) => {
+    return (
+        // @ts-expect-error - children is iterable
+        children?.map(({ name, attributes, children }) => {
+            const childrenJsonPath = generateJsonPath(children);
+            return [
+                name,
+                attributes,
+                ...(Array.isArray(childrenJsonPath) && childrenJsonPath.length === 0 ? [] : [childrenJsonPath]),
+            ];
+        })
+    );
+};
 
 (() => {
     const svgFilePaths = getFileInDirectoryByExtension(ICONS_DIR, '.svg').filter(
@@ -43,9 +57,7 @@ const OUTPUT_DIR = resolve(currentDir, '../src/icons');
         const componentName = upperFirst(camelCase(iconName));
 
         let { children } = iconsObject[iconPath];
-        // @ts-expect-error - children is iterable
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return
-        children = children.map(({ name, attributes }) => [name, attributes]);
+        children = generateJsonPath(children);
 
         const getSvg = () => readFileSync(resolve(ICONS_DIR, iconPath), 'utf-8');
         const reactElementTemplate = reactComponentTemplate({ componentName, iconName, children, getSvg });

@@ -6,4 +6,8 @@ export const defaultAttributes = {
     height: 24,
     viewBox: '0 0 24 24',
     fill: 'none',
+    stroke: 'currentColor',
+    strokeWidth: 0.1,
+    strokeLinecap: 'round',
+    strokeLinejoin: 'round',
 };
