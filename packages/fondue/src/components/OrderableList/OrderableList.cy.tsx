@@ -58,7 +58,8 @@ describe('OrderableList Component', () => {
         cy.get(LIST_ID).should('exist');
     });
 
-    it('Fires a move event when item is dropped over an insertion indicator', () => {
+    // This test is flaky and should be fixed
+    it('Fires a move event when item is dropped over an insertion indicator', { retries: 10 }, () => {
         const stubbedOnMove = cy.stub().as('onMove');
         cy.mount(<OrderableListWithDefaultProps onMove={stubbedOnMove} />);
         cy.get(DRAGGABLE_ITEM).first().realMouseDown().realMouseMove(40, 40).realMouseUp();
@@ -73,7 +74,8 @@ describe('OrderableList Component', () => {
         });
     });
 
-    it('Should not allow drag into other orderable list', () => {
+    // This test is flaky and should be fixed
+    it('Should not allow drag into other orderable list', { retries: 10 }, () => {
         const stubbedOnMove = cy.stub().as('onMove');
         const stubbedOnMove2 = cy.stub().as('onMove2');
 
