@@ -2,7 +2,9 @@
 
 import * as fondueComponents from '@frontify/fondue-components';
 import { getMDXComponent } from 'mdx-bundler/client';
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
+
+import { EditableComponent } from './EditableComponent/EditableComponent';
 
 export const MdxContent = ({ data }: { data: string }) => {
     const Component = useMemo(() => getMDXComponent(data), [data]);
@@ -11,6 +13,18 @@ export const MdxContent = ({ data }: { data: string }) => {
         <Component
             components={{
                 ...fondueComponents,
+                code: (props) => {
+                    if (props.children) {
+                        return (
+                            <EditableComponent
+                                language={props.className?.split('language-')[1]}
+                                code={props.children as string}
+                            />
+                        );
+                    } else {
+                        throw new Error('Invalid Code Content');
+                    }
+                },
             }}
         />
     );

@@ -18,7 +18,8 @@
         "noFallthroughCasesInSwitch": true,
         "baseUrl": ".",
         "paths": {
-            "#contentlayer/generated": ["./.contentlayer/generated"]
+            "#contentlayer/generated": ["./.contentlayer/generated"],
+            "@/*": ["./src/*"]
         }
     },
     "include": ["src/**/*", ".contentlayer/generated"],
