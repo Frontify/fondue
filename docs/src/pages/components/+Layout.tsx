@@ -15,8 +15,6 @@ export const Layout = ({ children }: { children: ReactNode }) => {
         return accumulator;
     }, {});
 
-    console.log(componentTree);
-
     return (
         <RootLayout>
             <div className="tw-h-full tw-flex tw-w-full">
