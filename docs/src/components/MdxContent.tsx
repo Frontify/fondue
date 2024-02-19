@@ -2,7 +2,7 @@
 
 import * as fondueComponents from '@frontify/fondue-components';
 import { getMDXComponent } from 'mdx-bundler/client';
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { EditableComponent } from './EditableComponent/EditableComponent';
 
