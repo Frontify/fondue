@@ -7,6 +7,16 @@ import { Layout as RootLayout } from '../+Layout';
 import { allComponents } from '#contentlayer/generated';
 
 export const Layout = ({ children }: { children: ReactNode }) => {
+    const componentTree = allComponents.reduce((accumulator, current) => {
+        if (!accumulator[current.parentFolder]) {
+            accumulator[current.parentFolder] = [];
+        }
+        accumulator[current.parentFolder].push(current);
+        return accumulator;
+    }, {});
+
+    console.log(componentTree);
+
     return (
         <RootLayout>
             <div className="tw-h-full tw-flex tw-w-full">
