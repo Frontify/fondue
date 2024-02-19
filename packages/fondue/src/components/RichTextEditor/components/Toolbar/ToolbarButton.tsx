@@ -25,7 +25,7 @@ const ToolbarButtonComponent = forwardRef<
                 ref={ref}
                 data-testid="ToolbarButton"
                 className={merge([
-                    '!tw-w-6 !tw-h-6 !tw-items-center !tw-px-2 tw-ml-0.5 !tw-text-text-weak !tw-rounded-[6px] !tw-flex !tw-justify-center  disabled:!tw-cursor-not-allowed disabled:!tw-opacity-50 disabled:!tw-pointer-events-auto',
+                    '!tw-w-6 !tw-h-6 !tw-items-center !tw-px-2 tw-ml-0.5 !tw-text-text-weak !tw-rounded-md !tw-flex !tw-justify-center  disabled:!tw-cursor-not-allowed disabled:!tw-opacity-50 disabled:!tw-pointer-events-auto',
                     pressed && !props.disabled ? '!tw-bg-box-selected' : '',
                     !props.disabled ? 'hover:!tw-bg-box-selected hover:!tw-text-box-selected-inverse' : '',
                 ])}
@@ -51,7 +51,7 @@ const ToolbarButtonComponent = forwardRef<
                 ref={ref}
                 data-testid="ToolbarButton"
                 className={merge([
-                    '!tw-w-6 !tw-h-6 !tw-items-center !tw-px-2 tw-ml-0.5 !tw-text-text-weak !tw-rounded-[6px] !tw-flex !tw-justify-center  disabled:!tw-cursor-not-allowed disabled:!tw-opacity-50 disabled:!tw-pointer-events-auto',
+                    '!tw-w-6 !tw-h-6 !tw-items-center !tw-px-2 tw-ml-0.5 !tw-text-text-weak !tw-rounded-md !tw-flex !tw-justify-center  disabled:!tw-cursor-not-allowed disabled:!tw-opacity-50 disabled:!tw-pointer-events-auto',
                     pressed && !props.disabled ? '!tw-bg-box-selected' : '',
                     !props.disabled ? 'hover:!tw-bg-box-selected hover:!tw-text-box-selected-inverse' : '',
                 ])}
