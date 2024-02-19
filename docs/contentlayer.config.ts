@@ -19,6 +19,17 @@ const Component = defineDocumentType(() => ({
         },
         route: {
             type: 'string',
+            resolve: (doc) => {
+                const pathArray = doc._raw.flattenedPath.toLocaleLowerCase().split('/');
+                if (pathArray.at(-1) === pathArray.at(-2)) {
+                    return pathArray.at(-2);
+                } else {
+                    return pathArray.slice(-2).join('/');
+                }
+            },
+        },
+        parentFolder: {
+            type: 'string',
             resolve: (doc) => doc._raw.sourceFileDir.toLocaleLowerCase().split('/').at(-1),
         },
     },
