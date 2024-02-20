@@ -53,6 +53,9 @@ const Template: StoryFn<TooltipProps> = (args) => (
 );
 
 export const Default = Template.bind({});
+Default.args = {
+    leaveDelay: 0,
+};
 
 export const OpenByDefault = Template.bind({});
 OpenByDefault.args = {

@@ -12,10 +12,17 @@
     "bugs": {
         "url": "https://github.com/frontify/fondue/issues"
     },
+    "keywords": [
+        "frontify",
+        "react",
+        "icons",
+        "design system"
+    ],
     "main": "src/index.ts",
     "types": "src/index.ts",
     "files": [
-        "icons"
+        "icons",
+        "dist"
     ],
     "engines": {
         "node": ">=18"
@@ -35,7 +42,7 @@
         "@frontify/eslint-config-react": "^0.17.0",
         "@iconify/tools": "^4.0.2",
         "@types/lodash": "^4.14.202",
-        "@types/node": "^20.11.17",
+        "@types/node": "^20.11.19",
         "@types/react": "^18.2.55",
         "dotenv-cli": "^7.3.0",
         "eslint": "^8.56.0",

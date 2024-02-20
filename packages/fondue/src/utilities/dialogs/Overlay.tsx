@@ -146,7 +146,7 @@ export const Overlay = ({
                 </div>
             </Popper>
 
-            {(isMobile || modality !== Modality.NonModal) && open && (
+            {isDialog && modality !== Modality.NonModal && open && (
                 <Portal>
                     <div
                         data-test-id={`${dataTestId}-underlay`}

@@ -12,7 +12,7 @@ import {
 import { defaultAttributes } from './constants';
 import { kebabCase } from './utilities/kebabCase';
 
-export type IconNode = [elementName: keyof ReactSVG, attrs: Record<string, string>][];
+export type IconNode = [elementName: keyof ReactSVG, attrs: Record<string, string>, children?: IconNode][];
 
 export type SVGAttributes = Partial<SVGProps<SVGSVGElement>>;
 type ComponentAttributes = RefAttributes<SVGSVGElement> & SVGAttributes;
@@ -49,6 +49,16 @@ const iconSizeToNumber: Record<Exclude<FondueIconProps['size'], undefined>, Icon
     32: 32,
 };
 
+const renderIconNode = (iconNode: IconNode): ReturnType<typeof createElement>[] => {
+    return iconNode.map(([tagName, attributes, children]) =>
+        createElement(
+            tagName,
+            attributes,
+            Array.isArray(children) && children.length > 0 ? children.map((item) => renderIconNode([item])) : [],
+        ),
+    );
+};
+
 export const createFondueIcon = (iconName: string, iconNode: IconNode): FondueIcon => {
     const Component = forwardRef<SVGSVGElement, FondueIconProps>(
         ({ color = 'currentColor', size = 24, className = '', children, ...rest }, ref) => {
@@ -65,7 +75,7 @@ export const createFondueIcon = (iconName: string, iconNode: IconNode): FondueIc
                     ...rest,
                 },
                 [
-                    ...iconNode.map(([tag, attrs]) => createElement(tag, attrs)),
+                    ...renderIconNode(iconNode),
                     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                     ...(Array.isArray(children) ? children : [children]),
                 ],

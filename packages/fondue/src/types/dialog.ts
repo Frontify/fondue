@@ -91,5 +91,5 @@ export type OverlayProps = PopperProps & {
     theme?: 'light' | 'dark';
     shadow?: 'none' | 'small' | 'medium' | 'large';
     isDialog?: boolean;
-    handleClose: () => void;
+    handleClose?: () => void;
 };

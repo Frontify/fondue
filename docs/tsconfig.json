@@ -21,6 +21,6 @@
             "#contentlayer/generated": ["./.contentlayer/generated"]
         }
     },
-    "include": ["src", ".contentlayer/generated"],
+    "include": ["src/**/*", ".contentlayer/generated"],
     "references": [{ "path": "./tsconfig.node.json" }]
 }

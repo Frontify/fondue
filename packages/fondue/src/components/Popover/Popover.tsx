@@ -4,6 +4,12 @@ import { Modality, OverlayProps } from '../../types';
 import { Overlay } from '@utilities/dialogs/Overlay';
 import { Z_INDEX_POPOVER } from '@utilities/dialogs/constants';
 import { ARROW_DARK_THEME, ARROW_LIGHT_THEME } from '@utilities/overlayStyle';
+import { WithRequired } from 'src/types/withRequired';
+
+type PopoverProps = Omit<
+    OverlayProps,
+    'isDetached' | 'arrowCustomColors' | 'verticalAlignment' | 'shadow' | 'isDialog'
+>;
 
 export const Popover = ({
     children,
@@ -18,7 +24,7 @@ export const Popover = ({
     withArrow = false,
     theme,
     handleClose,
-}: Omit<OverlayProps, 'isDetached' | 'arrowCustomColors' | 'verticalAlignment' | 'shadow' | 'isDialog'>) => {
+}: WithRequired<PopoverProps, 'handleClose'>) => {
     const arrowTheme = theme === 'dark' ? ARROW_DARK_THEME : ARROW_LIGHT_THEME;
     return (
         <Overlay

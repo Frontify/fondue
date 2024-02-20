@@ -8,5 +8,5 @@
         "lib": ["ESNext"],
         "target": "ESNext"
     },
-    "include": ["scripts"]
+    "include": ["scripts", ".eslintrc.cjs"]
 }
