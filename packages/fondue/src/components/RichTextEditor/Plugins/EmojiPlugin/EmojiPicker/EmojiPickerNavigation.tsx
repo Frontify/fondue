@@ -59,7 +59,7 @@ export function EmojiPickerNavigation({
                 <div
                     className="tw-absolute tw--bottom-3 tw-left-0 tw-h-[3px] tw-w-full tw-rounded-t tw-bg-[rgb(37,99,235)] tw-opacity-100 tw-transition-transform tw-duration-200"
                     style={{
-                        visibility: `${focusedCategory ? 'visible' : 'hidden'}`,
+                        visibility: focusedCategory ? 'visible' : 'hidden',
                         width: `${width}%`,
                         transform: `translateX(${position}%)`,
                     }}
