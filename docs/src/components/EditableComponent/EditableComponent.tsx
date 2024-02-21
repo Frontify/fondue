@@ -10,6 +10,7 @@ type EditableContentProps = {
 
 export const EditableComponent = ({ code, language }: EditableContentProps) => {
     const languagesWithPreview = ['tsx', 'ts'];
+
     return (
         <LiveProvider code={code} scope={{ ...fondueComponents }} language={language}>
             <div className="tw-border-black-60 tw-border-2 tw-rounded-lg tw-overflow-hidden tw-my-8">
