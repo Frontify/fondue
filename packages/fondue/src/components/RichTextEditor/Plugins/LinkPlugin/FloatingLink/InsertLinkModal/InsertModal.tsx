@@ -44,7 +44,6 @@ export const InsertModal = ({
         >
             <TextInput id="linkText" value={state.text} placeholder="Link Text" onChange={onTextChange} />
         </FormControl>
-
         {children}
 
         <div className="tw-pt-5">

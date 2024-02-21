@@ -12,17 +12,10 @@ import {
 } from '@components/RichTextEditor/Plugins';
 import { getLicElementClassNames } from '@components/RichTextEditor/Plugins/ListPlugin/ListItemContentMarkupElement';
 import { LI_CLASSNAMES, getLiStyles } from '@components/RichTextEditor/Plugins/ListPlugin/ListItemMarkupElement';
-import {
-    ELEMENT_LI,
-    ELEMENT_LIC,
-    ELEMENT_LINK,
-    ELEMENT_MENTION,
-    ELEMENT_OL,
-    ELEMENT_UL,
-    TDescendant,
-    TElement,
-    isText,
-} from '@udecode/plate';
+import { ELEMENT_LI, ELEMENT_LIC, ELEMENT_OL, ELEMENT_UL } from '@udecode/plate-list';
+import { ELEMENT_LINK } from '@udecode/plate-link';
+import { ELEMENT_MENTION } from '@udecode/plate-mention';
+import { TDescendant, TElement, isText } from '@udecode/slate';
 import { merge } from '@utilities/merge';
 import { ButtonStylesType, buttonNode } from '../nodes/button';
 import { checkItemNode } from '../nodes/checkItem';

@@ -15,7 +15,7 @@ export const DropdownTriggerComponent = (
         data-test-id="textstyle-dropdown-trigger"
         type="button"
         className="tw-cursor-pointer tw-h-8 tw-w-full"
-        onMouseDown={(event) => {
+        onClick={(event) => {
             event.preventDefault();
             event.stopPropagation();
             onClick();

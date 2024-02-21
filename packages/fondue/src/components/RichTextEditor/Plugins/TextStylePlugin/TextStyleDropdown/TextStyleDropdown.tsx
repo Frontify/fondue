@@ -5,6 +5,7 @@ import { DropdownTrigger } from './DropdownTrigger';
 import { TextStyleDropdownProps } from './types';
 import { useTextStyleDropdown } from './useTextStyleDropdown';
 import { DEFAULT_TEXT_STYLE_VALUE } from '../types';
+import { zIndexLayers } from '@components/RichTextEditor/helpers/zIndexLayers';
 
 export const TextStyleDropdown = ({ editorId, textStyles = [] }: TextStyleDropdownProps) => {
     const {
@@ -26,7 +27,8 @@ export const TextStyleDropdown = ({ editorId, textStyles = [] }: TextStyleDropdo
             <DropdownTrigger label={activeLabel} open={isOpen} onClick={toggle} ref={triggerRef} />
             {isOpen && (
                 <div
-                    className="tw-divide-y tw-divide-line tw-bg-base tw-shadow-md tw-border tw-border-line tw-z-[1000] tw-overflow-auto tw-min-h-[40px]"
+                    style={{ zIndex: zIndexLayers.textStyleDropdown }}
+                    className="tw-divide-y tw-divide-line tw-bg-base tw-shadow-md tw-border tw-border-line tw-overflow-auto tw-min-h-[40px]"
                     ref={dropdownRef}
                     {...dropdownProps}
                 >

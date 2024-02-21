@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TDescendant, isDescendant } from '@udecode/plate';
-import { Node } from 'slate';
+import { TDescendant, isDescendant } from '@udecode/slate';
+import { getNodeString } from '@udecode/slate';
 
 export const toPlaintext = (nodes: TDescendant[] | string): string => {
     const nodesArray = Array.isArray(nodes) ? nodes : JSON.parse(nodes);
@@ -11,7 +11,7 @@ export const toPlaintext = (nodes: TDescendant[] | string): string => {
                 return '';
             }
 
-            return Array.isArray(node.children) ? toPlaintext(node.children) : Node.string(node);
+            return Array.isArray(node.children) ? toPlaintext(node.children) : getNodeString(node);
         })
         .join('\n');
 };

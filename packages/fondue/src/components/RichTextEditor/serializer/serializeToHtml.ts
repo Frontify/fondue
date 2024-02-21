@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TDescendant } from '@udecode/plate';
+import { TDescendant } from '@udecode/slate';
 import { CSSProperties } from 'react';
 import { mapMentionable } from '../Plugins/MentionPlugin/helpers';
 import { parseRawValue } from '../utils/parseRawValue';

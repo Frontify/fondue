@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ELEMENT_LINK, ELEMENT_PARAGRAPH } from '@udecode/plate';
+import { ELEMENT_LINK } from '@udecode/plate-link';
+import { ELEMENT_PARAGRAPH } from '@udecode/plate-paragraph';
 import { ReactElement } from 'react';
 import { LinkPlugin, PluginComposer } from '../Plugins';
 import { RichTextEditor } from '../RichTextEditor';
@@ -72,8 +73,6 @@ const RichTextWithLegacyLink = ({ text, url }: { text: string; url: string }): R
     );
 };
 
-const disabledButtonClassNames = '!tw-cursor-not-allowed !tw-opacity-50';
-
 describe('Link Plugin', () => {
     it('should render with link', () => {
         cy.mount(<RichTextWithLink link={link} text={text} />);
@@ -111,7 +110,6 @@ describe('Link Plugin', () => {
         cy.get(REMOVE_LINK_BUTTON).should('exist');
         cy.get(EDIT_LINK_BUTTON).click();
         cy.get(FLOATING_LINK_INSERT).should('exist');
-
         cy.get('[type=text]').eq(0).should('have.attr', 'value', text);
         cy.get('[type=text]').eq(1).should('have.attr', 'value', link);
         cy.get('[type=checkbox]').should('be.checked');
@@ -179,6 +177,35 @@ describe('Link Plugin', () => {
 
         cy.get('[contenteditable=true]').click().type('block1{enter}block2{selectall}');
         cy.get(TOOLBAR_FLOATING).should('be.visible');
-        cy.get(`${TOOLBAR_FLOATING} ${TOOLBAR_BUTTON}`).should('have.class', disabledButtonClassNames);
+        cy.get(`${TOOLBAR_FLOATING} ${TOOLBAR_BUTTON}`).should('be.disabled');
+        cy.get(`${TOOLBAR_FLOATING} ${TOOLBAR_BUTTON}`).should('have.css', 'cursor', 'not-allowed');
+    });
+
+    it('should keep text on link paste', () => {
+        cy.mount(<RichTextEditor />);
+
+        cy.get('[contenteditable=true]').eq(0).click();
+        cy.get('[contenteditable=true]').eq(0).should('be.focused');
+        cy.get('[contenteditable=true]').eq(0).type('Frontify{selectall}');
+
+        // Need to wait because otherwise the {selectall} is not applied
+        cy.wait(100);
+        cy.get('[contenteditable=true] p').then(($input) => {
+            const inputElement = $input[0];
+            const pastePayload = 'https://frontify.com';
+            const pasteType = 'text/plain';
+            const data = pastePayload;
+            const clipboardData = new DataTransfer();
+            clipboardData.setData(pasteType, data);
+            const pasteEvent = new ClipboardEvent('paste', {
+                bubbles: true,
+                cancelable: true,
+                clipboardData,
+            });
+            inputElement.dispatchEvent(pasteEvent);
+        });
+        cy.get('[contenteditable=true] a').should('contain.text', 'Frontify');
+        cy.get('[contenteditable=true] a').should('not.contain.text', 'https://');
+        cy.get('[contenteditable=true] a').should('have.attr', 'href', 'https://frontify.com');
     });
 });

@@ -4,6 +4,7 @@ import { BLUR_ON_BREAK_PLUGIN } from './id';
 import { Plugin, PluginProps } from '../Plugin';
 import { createBlurOnBreakPlugin } from './createBlurOnBreakPlugin';
 import { BlurOnBreakPlatePlugin } from './types';
+import { PlatePlugin } from '@udecode/plate-core';
 
 export type BlurOnBreakPluginProps = PluginProps & BlurOnBreakPlatePlugin;
 
@@ -18,7 +19,7 @@ export class BlurOnBreakPlugin extends Plugin {
         this.onBreak = props?.onBreak;
     }
 
-    plugins() {
+    plugins(): PlatePlugin[] {
         return [
             createBlurOnBreakPlugin({
                 options: {

@@ -1,6 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ELEMENT_LI, PlateRenderElementProps, TElement } from '@udecode/plate';
+import { TElement } from '@udecode/slate';
+import { ELEMENT_LI } from '@udecode/plate-list';
+import { PlateRenderElementProps } from '@udecode/plate-core';
 import { CSSProperties } from 'react';
 import { MarkupElement } from '../MarkupElement';
 import { useRichTextEditorContext } from '@components/RichTextEditor/context';

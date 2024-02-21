@@ -2,7 +2,7 @@
 
 import { Meta, StoryFn } from '@storybook/react';
 import { ComponentProps } from 'react';
-import { Position } from './EditorPositioningWrapper';
+import { Position } from './components/EditorPositioningWrapper';
 import {
     IPSUM,
     checkboxValue,
@@ -61,8 +61,7 @@ import {
     serializeNodesToHtml,
 } from './serializer';
 import { PaddingSizes } from './types';
-import { SubscriptPlugin } from '@components/RichTextEditor/Plugins/SubscriptPlugin';
-import { SuperscriptPlugin } from '@components/RichTextEditor/Plugins/SuperscriptPlugin';
+import { SubscriptPlugin, SuperscriptPlugin } from '@components/RichTextEditor/Plugins/MarkPlugin';
 
 export default {
     title: 'Components/Rich Text Editor',

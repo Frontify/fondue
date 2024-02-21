@@ -7,10 +7,12 @@ import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { KeyboardEvent, ReactElement, useRef } from 'react';
 
-export type ColorInputProps = { min?: number; max?: number; decoratorPosition?: DecoratorPosition } & Pick<
-    TextInputBaseProps,
-    'decorator' | 'value' | 'onChange' | 'type' | 'size' | 'onBlur' | 'onEnterPressed'
->;
+export type ColorInputProps = {
+    min?: number;
+    max?: number;
+    decoratorPosition?: DecoratorPosition;
+    'aria-label'?: string;
+} & Pick<TextInputBaseProps, 'decorator' | 'value' | 'onChange' | 'type' | 'size' | 'onBlur' | 'onEnterPressed'>;
 
 export enum DecoratorPosition {
     Left = 'Left',
@@ -28,6 +30,7 @@ export const ColorInput = ({
     value = '',
     decoratorPosition = DecoratorPosition.Left,
     type = TextInputType.Text,
+    'aria-label': ariaLabel = 'Color Input',
 }: ColorInputProps): ReactElement => {
     const { isFocusVisible, focusProps } = useFocusRing({ within: true, isTextInput: true });
     const inputElement = useRef<HTMLInputElement | null>(null);
@@ -72,6 +75,7 @@ export const ColorInput = ({
                     min={min}
                     max={max}
                     size={size}
+                    aria-label={ariaLabel}
                 />
             </div>
         </div>

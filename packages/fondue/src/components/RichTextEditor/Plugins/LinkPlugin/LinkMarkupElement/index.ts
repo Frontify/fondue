@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ELEMENT_LINK } from '@udecode/plate';
+import { ELEMENT_LINK } from '@udecode/plate-link';
 import { MarkupElement } from '../../MarkupElement';
 import { LinkMarkupElementNode } from './LinkMarkupElementNode';
 

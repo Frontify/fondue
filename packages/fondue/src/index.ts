@@ -9,3 +9,4 @@ export * from './layout';
 export * from './types';
 export * from './typography';
 export * from './utilities';
+export * from './plate';

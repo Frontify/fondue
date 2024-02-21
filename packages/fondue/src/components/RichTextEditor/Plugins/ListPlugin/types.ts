@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ListPlugin } from '@udecode/plate';
+import { ListPlugin } from '@udecode/plate-list';
 import { PluginProps } from '../Plugin';
 
 export type ListPluginProps = PluginProps & {

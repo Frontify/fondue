@@ -1,6 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MentionPlugin as MentionPluginPlate, createComboboxPlugin, createMentionPlugin } from '@udecode/plate';
+import { MentionPlugin as MentionPluginPlate, createMentionPlugin } from '@udecode/plate-mention';
+import { PlatePlugin } from '@udecode/plate-core';
+import { createComboboxPlugin } from '@udecode/plate-combobox';
 import { MENTION_PLUGIN } from './id';
 import { MentionMarkupElement } from './MentionMarkupElement';
 import { Plugin } from '../Plugin';
@@ -22,7 +24,7 @@ export class MentionPlugin extends Plugin<MentionPluginProps> {
         return MentionInline(this.props?.mentionableItems || []);
     }
 
-    plugins() {
+    plugins(): PlatePlugin[] {
         return [createComboboxPlugin(), createMentionPlugin<MentionPluginPlate<MentionItemData>>(mentionPlugin)];
     }
 }

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ReactElement } from 'react';
-import { ComboboxItemProps } from '@udecode/plate';
+import { ComboboxItemProps } from '@udecode/plate-combobox';
 import { MentionItemData, MentionableCategory } from '../types';
 import IconPeople12 from '@foundation/Icon/Generated/IconPeople12';
 import IconPerson12 from '@foundation/Icon/Generated/IconPerson12';

@@ -4,6 +4,7 @@ import { TEXT_STYLE_PLUGIN } from './id';
 import { TextStyleButton } from './TextStyleDropdown/TextStyleButton';
 import { Plugin } from '../Plugin';
 import { withTextStyles } from './TextStyleDropdown/withTextStyles';
+import { PlatePlugin } from '@udecode/plate-core';
 
 export class TextStylePlugin extends Plugin {
     public textStyles: Plugin[];
@@ -15,7 +16,7 @@ export class TextStylePlugin extends Plugin {
         this.textStyles = pluginProps.textStyles;
     }
 
-    plugins() {
+    plugins(): PlatePlugin[] {
         return this.textStyles.map((textStyle) => textStyle.plugins()).flat();
     }
 }

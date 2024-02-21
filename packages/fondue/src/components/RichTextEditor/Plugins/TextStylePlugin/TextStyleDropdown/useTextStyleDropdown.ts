@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlateEditor, usePlateEditorState } from '@udecode/plate';
+import { PlateEditor, useEditorState } from '@udecode/plate-core';
 import { Dispatch, HTMLAttributes, SetStateAction, useCallback, useEffect, useState } from 'react';
 import { usePopper } from 'react-popper';
 import { useSelectedTextStyles } from './useSelectedTextStyles';
@@ -21,7 +21,7 @@ export const useTextStyleDropdown = <T extends HTMLElement, P extends HTMLElemen
     const [isOpen, setIsOpen] = useState(false);
     const [triggerElement, setTriggerElement] = useState<T | null>(null);
     const [popperElement, setPopperElement] = useState<P | null>(null);
-    const editor = usePlateEditorState(editorId);
+    const editor = useEditorState(editorId);
     const selectedTextStyles = useSelectedTextStyles(editor);
 
     let key = DEFAULT_TEXT_STYLE_VALUE;

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlatePluginComponent } from '@udecode/plate';
+import { PlatePluginComponent } from '@udecode/plate-core';
 
 export class MarkupElement {
     constructor(

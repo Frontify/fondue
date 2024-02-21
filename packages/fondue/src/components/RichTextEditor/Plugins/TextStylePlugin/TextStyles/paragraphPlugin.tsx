@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createParagraphPlugin as createPlateParagraphPlugin, createPluginFactory } from '@udecode/plate';
+import { PlatePlugin, createPluginFactory } from '@udecode/plate-core';
+import { createParagraphPlugin as createPlateParagraphPlugin } from '@udecode/plate-paragraph';
 import { CSSProperties } from 'react';
 import { MarkupElement, Plugin, PluginProps, defaultStyles, getColumnBreakClasses } from '../../..';
 import { alignmentClassnames } from '../../helper';
@@ -18,7 +19,7 @@ export class ParagraphPlugin extends Plugin {
         this.styles = styles;
     }
 
-    plugins() {
+    plugins(): PlatePlugin[] {
         return [createParagraphPlugin(this.styles)];
     }
 }
@@ -41,7 +42,7 @@ export class ParagraphMarkupElement extends MarkupElement {
     }
 }
 
-export const createParagraphPlugin = (styles: CSSProperties) =>
+const createParagraphPlugin = (styles: CSSProperties): PlatePlugin =>
     createPluginFactory({
         ...createPlateParagraphPlugin(),
         key: TextStyles.p,

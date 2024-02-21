@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { isValidUrl } from '@components/RichTextEditor/utils/isValidUrl';
-import { createLinkPlugin as createPlateLinkPlugin, createPluginFactory } from '@udecode/plate';
+import { createLinkPlugin as createPlateLinkPlugin } from '@udecode/plate-link';
+import { PlatePlugin, createPluginFactory } from '@udecode/plate-core';
 import { Plugin, PluginProps } from '../Plugin';
 import { CustomFloatingLink } from './FloatingLink/CustomFloatingLink';
 import { LINK_PLUGIN } from './id';
@@ -10,7 +11,7 @@ import { LinkMarkupElement } from './LinkMarkupElement';
 import { CSSProperties } from 'react';
 import { defaultStyles } from '@components/RichTextEditor/utils';
 
-export const createLinkPlugin = createPluginFactory({
+const createLinkPlugin: ReturnType<typeof createPluginFactory<NonNullable<unknown>>> = createPluginFactory({
     ...createPlateLinkPlugin(),
     renderAfterEditable: CustomFloatingLink,
     options: {
@@ -20,7 +21,8 @@ export const createLinkPlugin = createPluginFactory({
             skipInvalid: true,
             afterMatch: true,
         },
-        triggerFloatingLinkHotkeys: 'command+k, ctrl+k',
+        triggerFloatingLinkHotkeys: 'meta+k, ctrl+k',
+        keepSelectedTextOnPaste: true,
     },
 });
 
@@ -35,7 +37,7 @@ export class LinkPlugin extends Plugin {
         this.styles = styles;
     }
 
-    plugins() {
+    plugins(): PlatePlugin[] {
         return [createLinkPlugin()];
     }
 }

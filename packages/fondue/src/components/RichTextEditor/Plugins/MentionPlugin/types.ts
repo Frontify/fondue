@@ -1,6 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { CreateMentionNode, Data, NoData, TComboboxItemWithData, WithOverride } from '@udecode/plate';
+import { WithOverride } from '@udecode/plate-core';
+import { CreateMentionNode } from '@udecode/plate-mention';
+import { Data, NoData, TComboboxItemWithData } from '@udecode/plate-combobox';
 import { PluginProps } from '../Plugin';
 
 export enum MentionableCategory {

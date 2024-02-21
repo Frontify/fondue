@@ -1,6 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ELEMENT_PARAGRAPH, Value, deserializeHtml, normalizeEditor } from '@udecode/plate';
+import { Value, normalizeEditor } from '@udecode/slate';
+import { deserializeHtml } from '@udecode/plate-core';
+import { ELEMENT_PARAGRAPH } from '@udecode/plate-paragraph';
 import { PluginComposer } from '../Plugins';
 import { InitPlateEditor } from './InitPlateEditor';
 

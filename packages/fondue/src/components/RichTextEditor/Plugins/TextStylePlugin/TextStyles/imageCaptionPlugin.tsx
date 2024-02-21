@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createPluginFactory } from '@udecode/plate';
+import { PlatePlugin, createPluginFactory } from '@udecode/plate-core';
 import { CSSProperties } from 'react';
 import { MarkupElement, Plugin, PluginProps, defaultStyles, getColumnBreakClasses } from '../../..';
 import { alignmentClassnames } from '../../helper';
@@ -20,7 +20,7 @@ export class ImageCaptionPlugin extends Plugin {
         this.styles = styles;
     }
 
-    plugins() {
+    plugins(): PlatePlugin[] {
         return [createImageCaptionPlugin(this.styles)];
     }
 }
@@ -43,7 +43,7 @@ const ImageCaptionMarkupElementNode = ({ element, attributes, children, styles }
     );
 };
 
-const createImageCaptionPlugin = (styles: CSSProperties) =>
+const createImageCaptionPlugin = (styles: CSSProperties): PlatePlugin =>
     createPluginFactory({
         key: TextStyles.imageCaption,
         isElement: true,

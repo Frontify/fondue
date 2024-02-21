@@ -90,6 +90,7 @@ export const BrandColorPicker = ({ palettes: defaultPalettes = [], currentColor,
                                               className="tw-flex tw-w-full"
                                               onClick={() => onSelect(color)}
                                               type="button"
+                                              aria-label={`color value: ${color.name}`}
                                           >
                                               <span
                                                   className={merge([
