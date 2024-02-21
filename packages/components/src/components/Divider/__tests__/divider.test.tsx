@@ -74,24 +74,4 @@ describe('Divider component', () => {
         const divider = await screen.findByTestId('custom-divider-test-id');
         expect(divider);
     });
-
-    /*
-
-
-
-
-    it('allows the divider to be vertical', () => {
-        cy.mount(<Divider vertical={true} />);
-
-        cy.get(`div${DIVIDER_SELECTOR}`).should('exist');
-        cy.get(DIVIDER_LINE_SELECTOR).should('exist').and('have.class', 'tw-border-r');
-    });
-
-    it('should render with custom data-test-id', () => {
-        cy.mount(<Divider data-test-id="custom-divider-test-id" />);
-
-        cy.get('[data-test-id=custom-divider-test-id]').as('Divider');
-        cy.get('@Divider').should('exist');
-    });
-    */
 });
