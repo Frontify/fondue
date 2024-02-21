@@ -2,13 +2,11 @@
 
 import { ReactElement, cloneElement } from 'react';
 import { merge } from '@utilities/merge';
-import {
-    IconCheckMark,
-    IconDocument,
-    IconExclamationMarkCircle,
-    IconExclamationMarkTriangle,
-} from '@foundation/Icon/Generated';
 import { IconSize } from '@foundation/Icon/IconSize';
+import IconExclamationMarkCircle from '@foundation/Icon/Generated/IconExclamationMarkCircle';
+import IconExclamationMarkTriangle from '@foundation/Icon/Generated/IconExclamationMarkTriangle';
+import IconCheckMark from '@foundation/Icon/Generated/IconCheckMark';
+import IconDocument from '@foundation/Icon/Generated/IconDocument';
 
 export enum BrightHeaderStyle {
     Information = 'Information',

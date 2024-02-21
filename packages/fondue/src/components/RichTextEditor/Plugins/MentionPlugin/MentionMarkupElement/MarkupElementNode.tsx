@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconPeople12 } from '@foundation/Icon/Generated';
+import IconPeople12 from '@foundation/Icon/Generated/IconPeople12';
 import { MentionableCategory } from '../types';
 import { MarkupElementNodeComponentType, MarkupElementNodeType, MarkupElementProps } from './types';
 

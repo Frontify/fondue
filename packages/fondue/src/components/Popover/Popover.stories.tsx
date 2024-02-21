@@ -5,7 +5,7 @@ import { Popover } from '@components/Popover/Popover';
 import { Button } from '@components/Button';
 import IconExclamationMarkTriangle16 from '@foundation/Icon/Generated/IconExclamationMarkTriangle16';
 import { Container } from '@components/Container';
-import { POPPER_STORY_ARGS } from '@components/Popper/types';
+import { POPPER_STORY_ARGS } from '@components/Popper/constantStories';
 import { OverlayProps } from '../../types';
 import { useRef, useState } from 'react';
 import IconJohanna from '@foundation/Icon/Generated/IconJohanna';

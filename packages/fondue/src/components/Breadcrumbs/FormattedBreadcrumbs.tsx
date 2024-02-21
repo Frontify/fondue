@@ -4,7 +4,7 @@ import { ReactElement, useRef } from 'react';
 import { BreadcrumbsProps } from './Breadcrumbs';
 import { CurrentBreadcrumbItem } from './CurrentBreadcrumbItem';
 import { BreadcrumbItem } from './BreadcrumbItem';
-import { OverflowMenu, OverflowMenuItemProps } from '..';
+import { OverflowMenu, OverflowMenuItemProps } from '../OverflowMenu';
 
 export const FormattedBreadcrumbs = ({
     items,

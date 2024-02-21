@@ -36,42 +36,6 @@ export type PopperProps = {
     arrowCustomColors?: string;
 };
 
-const POPPER_PLACEMENT = [
-    'top',
-    'bottom',
-    'top-start',
-    'bottom-start',
-    'top-end',
-    'bottom-end',
-    'right',
-    'left',
-    'right-start',
-    'right-end',
-    'left-start',
-    'left-end',
-];
-export const POPPER_STORY_ARGS = {
-    anchor: {
-        description:
-            'The anchor serves as the point of reference to which the popper container positions itself relatively.',
-    },
-    placement: {
-        options: POPPER_PLACEMENT,
-        control: { type: 'select' },
-    },
-    flip: {
-        control: { type: 'boolean' },
-    },
-    enablePortal: {
-        control: { type: 'boolean' },
-    },
-    strategy: {
-        options: ['absolute', 'fixed'],
-        control: { type: 'radio' },
-    },
-    open: { control: { type: 'boolean' } },
-};
-
 export type PopperDimension = {
     width: number;
     height: number;

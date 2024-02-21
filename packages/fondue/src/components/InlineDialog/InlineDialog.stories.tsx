@@ -5,7 +5,7 @@ import { InlineDialog, InlineDialogProps } from './InlineDialog';
 import { DialogBody } from '@components/DialogBody/DialogBody';
 import { Modality } from '../../types';
 import { Button } from '@components/Button';
-import { POPPER_STORY_ARGS } from '@components/Popper/types';
+import { POPPER_STORY_ARGS } from '@components/Popper/constantStories';
 import { Box } from '@components/Box';
 import { useRef, useState } from 'react';
 import IconJohanna from '@foundation/Icon/Generated/IconJohanna';

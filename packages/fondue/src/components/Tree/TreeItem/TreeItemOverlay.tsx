@@ -3,7 +3,7 @@
 import { Children, ReactNode } from 'react';
 
 import { merge } from '@utilities/merge';
-import { IconGrabHandle12 } from '@foundation/Icon';
+import IconGrabHandle12 from '@foundation/Icon/Generated/IconGrabHandle12';
 
 import { INDENTATION_WIDTH } from '../helpers';
 import { DragHandlerPosition } from '../types';

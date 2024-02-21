@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { merge } from '@utilities/merge';
-import { IconCross } from '@foundation/Icon/Generated';
+import IconCross from '@foundation/Icon/Generated/IconCross';
 import { Flex } from '@components/Flex';
 import { Box } from '@components/Box';
 import { DialogHeaderProps, dialogHeadingMap, dialogPaddingMap } from '../../types';

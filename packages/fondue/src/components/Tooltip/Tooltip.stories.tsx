@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Meta, StoryFn } from '@storybook/react';
-import { POPPER_STORY_ARGS } from '@components/Popper/types';
+import { POPPER_STORY_ARGS } from '@components/Popper/constantStories';
 import { Tooltip, TooltipProps } from '@components/Tooltip/Tooltip';
 import IconIcon24 from '@foundation/Icon/Generated/IconIcon24';
 
@@ -53,6 +53,9 @@ const Template: StoryFn<TooltipProps> = (args) => (
 );
 
 export const Default = Template.bind({});
+Default.args = {
+    leaveDelay: 0,
+};
 
 export const OpenByDefault = Template.bind({});
 OpenByDefault.args = {

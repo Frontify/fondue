@@ -1,13 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ActionMenuBlock, MenuItemStyle } from '..';
-import {
-    IconArrowCircleUp,
-    IconArrowOutExternal,
-    IconCrop,
-    IconCross,
-    IconImageStack,
-} from '@foundation/Icon/Generated';
+import { MenuItemStyle } from '@components/MenuItem/types';
+import { ActionMenuBlock } from '@components/ActionMenu/ActionMenu';
+import IconArrowCircleUp from '@foundation/Icon/Generated/IconArrowCircleUp';
+import IconImageStack from '@foundation/Icon/Generated/IconImageStack';
+import IconCrop from '@foundation/Icon/Generated/IconCrop';
+import IconCross from '@foundation/Icon/Generated/IconCross';
+import IconArrowOutExternal from '@foundation/Icon/Generated/IconArrowOutExternal';
 
 export const assetInputActions = [
     {

@@ -19,16 +19,14 @@ import {
     useRef,
     useState,
 } from 'react';
-import {
-    IconCheckMark,
-    IconClipboard,
-    IconCross,
-    IconCrossCircle,
-    IconExclamationMarkTriangle,
-    IconEye,
-    IconEyeOff,
-} from '@foundation/Icon/Generated';
 import { LegacyTooltip, LegacyTooltipProps } from '../LegacyTooltip';
+import IconEye from '@foundation/Icon/Generated/IconEye';
+import IconEyeOff from '@foundation/Icon/Generated/IconEyeOff';
+import IconCross from '@foundation/Icon/Generated/IconCross';
+import IconExclamationMarkTriangle from '@foundation/Icon/Generated/IconExclamationMarkTriangle';
+import IconCrossCircle from '@foundation/Icon/Generated/IconCrossCircle';
+import IconCheckMark from '@foundation/Icon/Generated/IconCheckMark';
+import IconClipboard from '@foundation/Icon/Generated/IconClipboard';
 export enum TextInputType {
     Text = 'text',
     Password = 'password',

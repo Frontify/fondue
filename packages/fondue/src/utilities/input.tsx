@@ -4,15 +4,13 @@ import { ReactElement } from 'react';
 import { Validation, validationTextClassMap } from './validation';
 import { merge } from './merge';
 import { Button, ButtonEmphasis, ButtonSize, ButtonStyle, LoadingCircle, LoadingCircleSize } from '@components/index';
-import { InputActionsProps, InputExtraActionsProps } from 'src/types/input';
+import { InputActionsProps, InputExtraActionsProps } from '../types/input';
 import { generateRandomId } from './generateRandomId';
-import {
-    IconCheckMark16,
-    IconCross16,
-    IconExclamationMarkTriangle16,
-    IconEye16,
-    IconEyeOff16,
-} from '@foundation/Icon/Generated';
+import IconCheckMark16 from '@foundation/Icon/Generated/IconCheckMark16';
+import IconCross16 from '@foundation/Icon/Generated/IconCross16';
+import IconExclamationMarkTriangle16 from '@foundation/Icon/Generated/IconExclamationMarkTriangle16';
+import IconEye16 from '@foundation/Icon/Generated/IconEye16';
+import IconEyeOff16 from '@foundation/Icon/Generated/IconEyeOff16';
 
 type HelperTextProps = {
     text: string;

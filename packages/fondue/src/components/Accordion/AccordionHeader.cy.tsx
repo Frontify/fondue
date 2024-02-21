@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ACCORDION_HEADER_TEST_ID, AccordionHeader } from './AccordionHeader';
-import { IconIcon12 } from '@foundation/Icon/Generated';
+import IconIcon12 from '@foundation/Icon/Generated/IconIcon12';
 
 const HEADER_ID = `[data-test-id="${ACCORDION_HEADER_TEST_ID}"]`;
 const HEADER_CONTAINER_ID = `[data-test-id="${ACCORDION_HEADER_TEST_ID}-container"]`;

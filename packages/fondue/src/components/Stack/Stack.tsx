@@ -4,7 +4,7 @@ import { Children, ReactElement, ReactNode } from 'react';
 import { Box } from '@components/Box';
 import { GAP_DIRECTIONS, GetGapClassName, SpacingValue } from '@utilities/dimensions';
 import { merge } from '@utilities/merge';
-import { ContainerHTMLElement } from 'src/types/elements';
+import { ContainerHTMLElement } from '../../types/elements';
 
 export type STACK_DIRECTION = 'row' | 'column' | 'row-reverse' | 'column-reverse';
 

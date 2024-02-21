@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ExtraSection, SearchResult } from '..';
-import { IconName } from '../types';
+import { ExtraSection, IconName, SearchResult } from '../types';
 import { filterItems } from '../utils/helpers';
 
 const getGuidelinesByQueryMock = (query: string): Promise<SearchResult[]> =>

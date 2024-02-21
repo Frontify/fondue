@@ -5,7 +5,7 @@ import { AriaDialogProps } from '@react-types/dialog';
 import { PatternDesign, PatternTheme } from '@foundation/Pattern';
 import { ScrollWrapperDirection } from '@components/ScrollWrapper/types';
 import { ReactElement, ReactNode } from 'react';
-import { ButtonProps } from '..';
+import { ButtonProps } from '../Button/Button';
 
 export type ModalButton = Omit<ButtonProps, 'size'>;
 

@@ -2,9 +2,9 @@
 
 import { Meta, StoryFn } from '@storybook/react';
 import { MouseEvent, useEffect, useState } from 'react';
-import { IconExclamationMarkCircle } from '@foundation/Icon/Generated';
 import { Switch, SwitchLabelStyle, SwitchMode, SwitchProps, SwitchSize } from './Switch';
 import { TooltipIconTriggerStyle } from '@components/TooltipIcon';
+import IconExclamationMarkCircle from '@foundation/Icon/Generated/IconExclamationMarkCircle';
 
 const SwitchSizeTypes: SwitchSize[] = ['small', 'medium'];
 

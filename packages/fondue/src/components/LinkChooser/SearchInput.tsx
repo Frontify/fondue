@@ -12,7 +12,9 @@ import { merge } from '@utilities/merge';
 import { useActor } from '@xstate/react';
 import { MouseEvent, ReactElement, forwardRef } from 'react';
 import { IconButtonProps, SearchInputProps } from './types';
-import { IconArrowOutExternal, IconClipboard, IconCross } from '@foundation/Icon/Generated';
+import IconArrowOutExternal from '@foundation/Icon/Generated/IconArrowOutExternal';
+import IconClipboard from '@foundation/Icon/Generated/IconClipboard';
+import IconCross from '@foundation/Icon/Generated/IconCross';
 
 export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>(
     (

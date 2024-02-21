@@ -1,21 +1,24 @@
 {
     "name": "root",
     "private": true,
+    "type": "module",
     "scripts": {
-        "build": "pnpm build:fondue",
+        "dev": "pnpm --stream --filter {docs} dev",
         "build:fondue": "pnpm --stream --filter {packages/fondue} build",
-        "lint": "pnpm --stream --filter {packages/**} lint",
-        "typecheck": "pnpm --stream --filter {packages/**} --parallel typecheck",
-        "ci:version": "pnpm build && changeset version",
-        "ci:publish": "pnpm build && changeset publish"
+        "build:docs": "pnpm --stream --filter {docs} build",
+        "lint": "pnpm --stream --filter {packages/**} --filter {docs} lint",
+        "typecheck": "pnpm --stream --filter {packages/**} --filter {docs} typecheck",
+        "ci:version": "pnpm build:fondue && changeset version",
+        "ci:publish": "pnpm build:fondue && changeset publish"
     },
     "devDependencies": {
+        "@changesets/changelog-github": "^0.5.0",
         "@changesets/cli": "^2.27.1",
-        "@frontify/eslint-config-typescript": "^0.16.2",
-        "eslint": "^8.48.0",
-        "eslint-plugin-notice": "^0.9.10",
-        "glob": "^10.3.4",
-        "prettier": "^3.0.3",
-        "typescript": "^5.2.2"
+        "glob": "^10.3.10"
+    },
+    "pnpm": {
+        "patchedDependencies": {
+            "@contentlayer/cli@0.3.4": "patches/@contentlayer__cli@0.3.4.patch"
+        }
     }
 }

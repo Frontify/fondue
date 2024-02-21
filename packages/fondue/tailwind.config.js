@@ -1,10 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-module.exports = {
+import tailwindForm from '@tailwindcss/forms';
+
+/** @type {import('tailwindcss').Config} */
+export default {
     presets: [require('@frontify/fondue-tokens/tailwind')],
     content: ['./src/**/*.{js,ts,tsx}'],
     plugins: [
-        require('@tailwindcss/forms')({
+        tailwindForm({
             strategy: 'class',
         }),
     ],

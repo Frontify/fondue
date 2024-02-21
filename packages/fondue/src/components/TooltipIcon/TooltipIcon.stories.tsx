@@ -3,7 +3,7 @@
 import { Meta, StoryFn } from '@storybook/react';
 import { TooltipIcon, TooltipIconProps, TooltipIconTriggerStyle } from './TooltipIcon';
 import { IconSize } from '@foundation/Icon/IconSize';
-import { IconExclamationMarkCircle } from '@foundation/Icon/Generated';
+import IconExclamationMarkCircle from '@foundation/Icon/Generated/IconExclamationMarkCircle';
 
 export default {
     title: 'Deprecated/TooltipIcon',

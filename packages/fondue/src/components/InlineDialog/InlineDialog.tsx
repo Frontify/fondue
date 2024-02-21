@@ -3,6 +3,7 @@
 import { BaseDialogProps, Modality, OverlayProps } from '../../types';
 import { Overlay } from '@utilities/dialogs/Overlay';
 import { Z_INDEX_MODAL } from '@utilities/dialogs/constants';
+import { WithRequired } from 'src/types/withRequired';
 
 export type InlineDialogProps = Omit<
     OverlayProps,
@@ -28,7 +29,7 @@ export const InlineDialog = ({
     autoHeight = false,
     roundedCorners = true,
     width = 360,
-}: InlineDialogProps) => {
+}: WithRequired<InlineDialogProps, 'handleClose'>) => {
     return (
         <Overlay
             data-test-id={dataTestId}
@@ -51,6 +52,7 @@ export const InlineDialog = ({
             borderRadius="small"
             shadow="medium"
             width={width}
+            isDialog={true}
         >
             {children}
         </Overlay>

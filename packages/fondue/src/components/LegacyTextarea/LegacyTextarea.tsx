@@ -17,7 +17,7 @@ import {
     useRef,
 } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
-import { IconExclamationMarkTriangle } from '@foundation/Icon/Generated';
+import IconExclamationMarkTriangle from '@foundation/Icon/Generated/IconExclamationMarkTriangle';
 
 export type LegacyTextareaProps = {
     id?: string;

@@ -2,15 +2,23 @@
 
 import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
 import { IconSize } from '@foundation/Icon/IconSize';
-import { format, getYear } from 'date-fns';
+import format from 'date-fns/format';
+import getYear from 'date-fns/getYear';
 import { KeyboardEvent, ReactNode, forwardRef, useState } from 'react';
 import DatepickerComponent, { ReactDatePicker } from 'react-datepicker';
 import './DatePicker.css';
 import { DatePickerTrigger } from './DatePickerTrigger';
-import { IconCaretLeft, IconCaretLeftDouble, IconCaretRight, IconCaretRightDouble } from '@foundation/Icon/Generated';
+import IconCaretLeft from '@foundation/Icon/Generated/IconCaretLeft';
+import IconCaretRightDouble from '@foundation/Icon/Generated/IconCaretRightDouble';
+import IconCaretRight from '@foundation/Icon/Generated/IconCaretRight';
+import IconCaretLeftDouble from '@foundation/Icon/Generated/IconCaretLeftDouble';
 import { Validation } from '@utilities/validation';
 
 const ARROW_PADDING_CORRECTION = 40;
+
+// Needed because of https://github.com/Hacker0x01/react-datepicker/issues/3834
+const ReactDatePickerComponent =
+    (DatepickerComponent as unknown as { default: typeof DatepickerComponent }).default ?? DatepickerComponent;
 
 type SingleDatePickerProps = {
     variant?: 'single';
@@ -101,7 +109,7 @@ export const DatePicker = forwardRef<ReactDatePicker<never, boolean>, DatePicker
 
         return (
             <div data-test-id={dataTestId}>
-                <DatepickerComponent
+                <ReactDatePickerComponent
                     calendarClassName="tw-rounded-sm tw-border tw-border-line-x-strong react-datepicker-wrap"
                     selected={value}
                     startDate={startDate}
@@ -195,7 +203,7 @@ export const DatePicker = forwardRef<ReactDatePicker<never, boolean>, DatePicker
                     ]}
                 >
                     {children}
-                </DatepickerComponent>
+                </ReactDatePickerComponent>
             </div>
         );
     },

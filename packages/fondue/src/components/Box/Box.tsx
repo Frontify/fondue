@@ -9,7 +9,7 @@ import {
 } from '@utilities/dimensions';
 import { merge } from '@utilities/index';
 import { HTMLAttributes } from 'react';
-import { ContainerHTMLElement } from 'src/types/elements';
+import { ContainerHTMLElement } from '../../types/elements';
 
 export type BoxProps = {
     'data-test-id'?: string;

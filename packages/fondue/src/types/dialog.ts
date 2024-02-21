@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ReactElement, ReactNode } from 'react';
-import { IconProps } from '@foundation/Icon';
+import { IconProps } from '@foundation/Icon/IconProps';
 import { BadgeProps } from '@components/Badge';
 import { ButtonProps } from '@components/Button';
 import { PopperProps } from '@components/Popper/types';
@@ -91,5 +91,5 @@ export type OverlayProps = PopperProps & {
     theme?: 'light' | 'dark';
     shadow?: 'none' | 'small' | 'medium' | 'large';
     isDialog?: boolean;
-    handleClose: () => void;
+    handleClose?: () => void;
 };

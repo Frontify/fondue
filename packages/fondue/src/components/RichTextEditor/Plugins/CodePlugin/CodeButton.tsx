@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
-import { IconTextBrackets16 } from '@foundation/Icon/Generated';
+import IconTextBrackets16 from '@foundation/Icon/Generated/IconTextBrackets16';
 import { MarkToolbarButton, getPluginType } from '@udecode/plate';
 import { ButtonWrapper, IconStylingWrapper, buttonStyles, getButtonClassNames } from '../helper';
 import { PluginButtonProps } from '../types';
