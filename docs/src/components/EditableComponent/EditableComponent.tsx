@@ -7,6 +7,7 @@ type EditableContentProps = {
     code: string;
     language?: string;
 };
+
 export const EditableComponent = ({ code, language }: EditableContentProps) => {
     const languagesWithPreview = ['tsx', 'ts'];
     return (
