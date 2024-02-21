@@ -2,7 +2,7 @@
 
 import { useData } from 'vike-react/useData';
 
-import { MdxContent } from '../../../components/MdxContent';
+import { MdxContent } from '../../../components/MdxContent/MdxContent';
 
 import { type Data } from './+data';
 
@@ -17,7 +17,7 @@ export const Page = () => {
         <>
             <div className="tw-p-8 tw-w-full tw-flex tw-justify-center">
                 <div className="tw-max-w-[856px] tw-w-full">
-                    <h1 className="tw-text-2xl tw-font-bold tw-mb-8">{data.component.title}</h1>
+                    <h1 className="tw-text-xl tw-font-bold tw-mb-8">{data.component.title}</h1>
                     <MdxContent data={data.component.body.code} />
                 </div>
             </div>
