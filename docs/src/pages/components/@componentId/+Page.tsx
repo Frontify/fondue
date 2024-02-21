@@ -2,7 +2,7 @@
 
 import { useData } from 'vike-react/useData';
 
-import { MdxContent } from '../../../components/MdxContent';
+import { MdxContent } from '../../../components/MdxContent/MdxContent';
 
 import { type Data } from './+data';
 
