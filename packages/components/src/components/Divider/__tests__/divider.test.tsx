@@ -18,67 +18,69 @@ describe('Divider component', () => {
         const divider = await screen.findByTestId(DIVIDER_LINE_SELECTOR);
         expect(divider).toHaveStyle({ borderTopColor: DEFAULT_COLOR_HEX });
     });
+    test('has correct color', async () => {
+        render(<Divider color={COLOR_HEX} />);
+        const divider = await screen.findByTestId(DIVIDER_LINE_SELECTOR);
+        expect(divider).toHaveStyle({ borderTopColor: COLOR_HEX });
+    });
+    test('allows the height to be set to Small', async () => {
+        render(<Divider height={DividerHeight.Small} />);
+        const divider = await screen.findByTestId(DIVIDER_SELECTOR);
+        expect(divider).toHaveStyle({ height: DividerHeight.Small });
+    });
+
+    test('allows the height to be set to Medium', async () => {
+        render(<Divider height={DividerHeight.Medium} />);
+        const divider = await screen.findByTestId(DIVIDER_SELECTOR);
+        expect(divider).toHaveStyle({ height: DividerHeight.Medium });
+    });
+
+    test('allows the height to be set to Large', async () => {
+        render(<Divider height={DividerHeight.Large} />);
+        const divider = await screen.findByTestId(DIVIDER_SELECTOR);
+        expect(divider).toHaveStyle({ height: DividerHeight.Large });
+    });
+
+    test('allows the divider border style to be dashed', async () => {
+        render(<Divider style={DividerStyle.Dashed} />);
+        const divider = await screen.findByTestId(DIVIDER_LINE_SELECTOR);
+        expect(divider).toHaveClass('tw-border-dashed');
+    });
+
+    test('allows the divider to have no border', async () => {
+        render(<Divider style={DividerStyle.NoLine} />);
+        const divider = await screen.findByTestId(DIVIDER_LINE_SELECTOR);
+        expect(divider).toHaveClass('tw-border-none');
+    });
+
+    test('allows the divider to have solid border', async () => {
+        render(<Divider style={DividerStyle.Solid} />);
+        const divider = await screen.findByTestId(DIVIDER_LINE_SELECTOR);
+        expect(divider).toHaveClass('tw-border-solid');
+    });
+
+    test('allows the divider to have dotted border', async () => {
+        render(<Divider style={DividerStyle.Dotted} />);
+        const divider = await screen.findByTestId(DIVIDER_LINE_SELECTOR);
+        expect(divider).toHaveClass('tw-border-dotted');
+    });
+
+    test('allows the divider to be vertical', async () => {
+        render(<Divider vertical={true} />);
+        const divider = await screen.findByTestId(DIVIDER_LINE_SELECTOR);
+        expect(divider).toHaveClass('tw-border-r');
+    });
+
+    test('allows the divider to have a custom test-id', async () => {
+        render(<Divider data-test-id="custom-divider-test-id" />);
+        const divider = await screen.findByTestId('custom-divider-test-id');
+        expect(divider);
+    });
+
     /*
-    it('renders', () => {
-        cy.mount(<Divider />);
 
-        cy.get(DIVIDER_SELECTOR).should('exist');
-        cy.get(DIVIDER_LINE_SELECTOR).should('exist').and('have.css', 'border-top-color', DEFAULT_COLOR);
-    });
 
-    it('has the correct color code', () => {
-        cy.mount(<Divider color={COLOR_HEX} />);
 
-        cy.get(DIVIDER_LINE_SELECTOR).should('exist').and('have.css', 'border-top-color', COLOR_RGB);
-    });
-
-    it("allows the height to be set to 'Small'", () => {
-        cy.mount(<Divider height={DividerHeight.Small} />);
-
-        cy.get(DIVIDER_SELECTOR).should('exist').and('have.css', 'height', DividerHeight.Small);
-    });
-
-    it("allows the height to be set to 'Medium'", () => {
-        cy.mount(<Divider height={DividerHeight.Medium} />);
-
-        cy.get(DIVIDER_SELECTOR).should('exist').and('have.css', 'height', DividerHeight.Medium);
-    });
-
-    it("allows the height to be set to 'Large'", () => {
-        cy.mount(<Divider height={DividerHeight.Large} />);
-
-        cy.get(DIVIDER_SELECTOR).should('exist').and('have.css', 'height', DividerHeight.Large);
-    });
-
-    it('allows the divider border style to be dashed', () => {
-        cy.mount(<Divider style={DividerStyle.Dashed} />);
-
-        cy.get(DIVIDER_LINE_SELECTOR).should('exist').and('have.class', 'tw-border-dashed');
-    });
-
-    it('allows the divider to have no border', () => {
-        cy.mount(<Divider style={DividerStyle.NoLine} />);
-
-        cy.get(DIVIDER_LINE_SELECTOR).should('exist').and('have.class', 'tw-border-none');
-    });
-
-    it('allows the divider border style to be solid', () => {
-        cy.mount(<Divider style={DividerStyle.Solid} />);
-
-        cy.get(DIVIDER_LINE_SELECTOR).should('exist').and('have.class', 'tw-border-solid');
-    });
-
-    it('allows the divider border style to be dotted', () => {
-        cy.mount(<Divider style={DividerStyle.Dotted} />);
-
-        cy.get(DIVIDER_LINE_SELECTOR).should('exist').and('have.class', 'tw-border-dotted');
-    });
-
-    it('allows the divider border style to be dotted', () => {
-        cy.mount(<Divider style={DividerStyle.Dotted} />);
-
-        cy.get(DIVIDER_LINE_SELECTOR).should('exist').and('have.class', 'tw-border-dotted');
-    });
 
     it('allows the divider to be vertical', () => {
         cy.mount(<Divider vertical={true} />);
