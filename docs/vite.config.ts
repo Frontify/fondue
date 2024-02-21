@@ -9,7 +9,7 @@ import { defineConfig } from 'vite';
 export default defineConfig({
     resolve: {
         alias: {
-            '#contentlayer/generated': join(__dirname, '.contentlayer/generated'),
+            '#contentlayer/generated': resolve(__dirname, '.contentlayer/generated'),
             '#': resolve(__dirname, './src'),
         },
     },
