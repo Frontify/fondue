@@ -92,11 +92,14 @@ const SegmentedControlsItem = forwardRef<HTMLDivElement, SegmentedControlsItemPr
                 isFocusVisible && FOCUS_STYLE,
             ])}
         >
+            <VisuallyHidden>
+                <input {...inputProps} {...focusProps} data-test-id="fondue-segmented-controls-input" ref={inputRef} />
+            </VisuallyHidden>
             <div
                 // TODO: Change element back to label when bug #2380 from @react-aria is fixed
                 // https://github.com/adobe/react-spectrum/issues/2380
-                role="none"
                 onClick={handleMockLabelClick}
+                role="none"
                 data-test-id={getSegmentedControlsItemTestId()}
                 className={merge([
                     'tw-relative tw-w-full tw-py-2 tw-inline-flex tw-justify-center tw-items-center tw-font-sans tw-font-normal tw-h-full tw-text-center',
@@ -107,20 +110,8 @@ const SegmentedControlsItem = forwardRef<HTMLDivElement, SegmentedControlsItemPr
                         : 'hover:tw-text-text hover:tw-cursor-pointer',
                 ])}
             >
-                <VisuallyHidden>
-                    <input
-                        {...inputProps}
-                        {...focusProps}
-                        data-test-id="fondue-segmented-controls-input"
-                        ref={inputRef}
-                    />
-                </VisuallyHidden>
                 <span className="tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap tw-flex">
-                    {isIconItem(item) && (
-                        <span className="tw-leading-3" aria-label={item.ariaLabel}>
-                            {item.icon}
-                        </span>
-                    )}
+                    {isIconItem(item) && <span className="tw-leading-3">{item.icon}</span>}
                     {item.value && <span className={isIconItem(item) ? 'tw-ml-2' : ''}>{item.value.toString()}</span>}
                 </span>
             </div>
