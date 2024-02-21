@@ -2,7 +2,9 @@
 
 import { type DetailedHTMLProps, type HTMLAttributes } from 'react';
 
-export const Heading2 = (props: DetailedHTMLProps<HTMLAttributes<HTMLHeadingElement>, HTMLHeadingElement>) => {
+type HeadingProps = DetailedHTMLProps<HTMLAttributes<HTMLHeadingElement>, HTMLHeadingElement>;
+
+export const Heading2 = (props: HeadingProps) => {
     if (!props.children) {
         throw new Error('Invalid Code Content');
     }
