@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { join, resolve } from 'node:path';
+import { resolve } from 'node:path';
 
 import react from '@vitejs/plugin-react';
 import vike from 'vike/plugin';
