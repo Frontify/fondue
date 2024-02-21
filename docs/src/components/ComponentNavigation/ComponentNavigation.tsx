@@ -7,7 +7,7 @@ export const ComponentNavigation = () => {
         [key: string]: Component[];
     };
     const componentTree = allComponents.reduce((accumulator: ComponentTree, current: Component) => {
-        const key: string = current.parentFolder as string;
+        const key: string = current.parentFolder;
         if (!accumulator[key]) {
             accumulator[key] = [];
         }
