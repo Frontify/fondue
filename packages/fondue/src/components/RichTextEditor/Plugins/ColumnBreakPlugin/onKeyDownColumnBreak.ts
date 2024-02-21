@@ -1,17 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import {
-    HotkeyPlugin,
-    KeyboardHandlerReturnType,
-    PlateEditor,
-    Value,
-    WithPlatePlugin,
-    getNodeEntries,
-    isBlock,
-    someNode,
-} from '@udecode/plate';
+import { Value, getNodeEntries, isBlock, someNode } from '@udecode/slate';
+import { HotkeyPlugin, KeyboardHandlerReturnType, PlateEditor, WithPlatePlugin } from '@udecode/plate-core';
+
 import isHotkey from 'is-hotkey';
-import { Location } from 'slate';
+import { TLocation } from '@udecode/slate';
 import { KEY_ELEMENT_BREAK_AFTER_COLUMN } from './createColumnBreakPlugin';
 import { getColumnBreakCount } from './utils/getColumnBreakCount';
 import { setColumnBreaks } from './utils/setColumnBreaks';
@@ -36,7 +29,7 @@ export const toggleColumnBreak = (editor: PlateEditor<Value>, columns: number, e
 
         const elementsToToggle = Array.from(
             getNodeEntries(editor, {
-                at: editor.selection as Location,
+                at: editor.selection as TLocation,
                 match: (node) => isBlock(editor, node),
                 mode: 'lowest',
             }),

@@ -1,16 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { EmojiSettings, UseEmojiPickerType } from '@udecode/plate-emoji';
+import { EmojiPickerContent } from './EmojiPickerContent';
+import { EmojiPickerNavigation } from './EmojiPickerNavigation';
+import { EmojiPickerPreview } from './EmojiPickerPreview';
+import { EmojiPickerSearchAndClear } from './EmojiPickerSearchAndClear';
+import { EmojiPickerSearchBar } from './EmojiPickerSearchBar';
 import {
-    EmojiPickerContent,
-    EmojiPickerNavigation,
-    EmojiPickerPreview,
-    EmojiPickerSearchAndClear,
-    EmojiPickerSearchBar,
-    UseEmojiPickerType,
-} from '@udecode/plate';
-import { EmojiPickerSearchAndClearStyle, EmojiPickerSearchBarStyle } from './EmojiPickerStyles';
+    emojiCategoryIcons,
+    emojiSearchIcons,
+} from '@components/RichTextEditor/Plugins/EmojiPlugin/EmojiPicker/EmojiIcons';
 
-export const EmojiPicker = ({
+export function EmojiPicker({
+    settings = EmojiSettings,
     i18n,
     searchValue,
     setSearch,
@@ -22,34 +24,25 @@ export const EmojiPicker = ({
     onSelectEmoji,
     onMouseOver,
     emojiLibrary,
-    icons,
     handleCategoryClick,
     focusedCategory,
     visibleCategories,
     refs,
-    settings,
-}: UseEmojiPickerType) => {
+}: Omit<UseEmojiPickerType, 'icons'>) {
     return (
-        <div className="tw-w-[316px] tw-h-[350px] tw-flex tw-flex-col tw-bg-base tw-shadow-md tw-rounded tw-border tw-border-line">
+        <div className="tw-flex tw-flex-col tw-rounded tw-bg-base tw-shadow-md tw-h-[350px] tw-border-line tw-border tw-w-[316px]">
             <EmojiPickerNavigation
                 i18n={i18n}
                 emojiLibrary={emojiLibrary}
-                icons={icons}
+                icons={{
+                    categories: emojiCategoryIcons,
+                    search: emojiSearchIcons,
+                }}
                 focusedCategory={focusedCategory}
                 onClick={handleCategoryClick}
             />
-            <EmojiPickerSearchBar
-                i18n={i18n}
-                setSearch={setSearch}
-                searchValue={searchValue}
-                styles={EmojiPickerSearchBarStyle}
-            >
-                <EmojiPickerSearchAndClear
-                    i18n={i18n}
-                    clearSearch={clearSearch}
-                    searchValue={searchValue}
-                    styles={EmojiPickerSearchAndClearStyle}
-                />
+            <EmojiPickerSearchBar i18n={i18n} setSearch={setSearch} searchValue={searchValue}>
+                <EmojiPickerSearchAndClear i18n={i18n} clearSearch={clearSearch} searchValue={searchValue} />
             </EmojiPickerSearchBar>
             <EmojiPickerContent
                 i18n={i18n}
@@ -65,4 +58,4 @@ export const EmojiPicker = ({
             <EmojiPickerPreview i18n={i18n} emoji={emoji} hasFound={hasFound} isSearching={isSearching} />
         </div>
     );
-};
+}

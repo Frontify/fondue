@@ -1,30 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import {
-    ENode,
-    PlateEditor,
-    PlatePluginKey,
-    SetNodesOptions,
-    TNodeMatch,
-    Value,
-    isBlock,
-    setElements,
-    unsetNodes,
-} from '@udecode/plate';
-import { Location } from 'slate';
+import { ENode, SetNodesOptions, TLocation, TNodeMatch, Value, isBlock, setElements, unsetNodes } from '@udecode/slate';
+import { PlateEditor, PlatePluginKey } from '@udecode/plate-core';
 import { KEY_ELEMENT_BREAK_AFTER_COLUMN } from '../createColumnBreakPlugin';
 
 export type ColumnBreakValue = 'active' | 'inactive' | undefined;
 
-// This is adapted from src/components/RichTextEditor/Plugins/AlignPlugin/AlignPlugin.ts
-export const setColumnBreaks = <V extends Value>(
+type SetColumnBreaksType = <V extends Value>(
     editor: PlateEditor<V>,
-    {
-        key = KEY_ELEMENT_BREAK_AFTER_COLUMN,
-        value,
-        at,
-    }: { at?: Location; value?: string; setNodesOptions?: SetNodesOptions<V> } & PlatePluginKey,
-) => {
+    { key, value, at }: { at?: TLocation; value?: string; setNodesOptions?: SetNodesOptions<V> } & PlatePluginKey,
+) => void;
+
+// This is adapted from src/components/RichTextEditor/Plugins/AlignPlugin/AlignPlugin.ts
+export const setColumnBreaks: SetColumnBreaksType = (editor, { key = KEY_ELEMENT_BREAK_AFTER_COLUMN, value, at }) => {
     const match: TNodeMatch<ENode<Value>> = (n) => isBlock(editor, n);
 
     if (!value) {

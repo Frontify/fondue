@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TElement } from '@udecode/plate';
+import { TElement } from '@udecode/slate';
 import { merge } from '@utilities/merge';
 
 export const INACTIVE_COLUMN_BREAK_CLASS_NAMES = 'tw-border-b tw-border-dashed tw-border-line-x-strong tw-pb-5';

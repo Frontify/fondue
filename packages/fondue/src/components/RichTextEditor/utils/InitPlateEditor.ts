@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlateEditor, createPlateEditor } from '@udecode/plate';
+import { PlateEditor, createPlateEditor } from '@udecode/plate-core';
 import { generateRandomId } from '@utilities/generateRandomId';
 import { GeneratePlugins, PluginComposer, defaultPlugins } from '../Plugins';
 

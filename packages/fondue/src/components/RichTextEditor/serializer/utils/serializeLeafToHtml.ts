@@ -7,7 +7,7 @@ import {
     STRIKETHROUGH_CLASSES,
     UNDERLINE_CLASSES,
 } from '@components/RichTextEditor/Plugins';
-import { TText } from '@udecode/plate';
+import { TText } from '@udecode/slate';
 import escapeHtml from 'escape-html';
 
 export const serializeLeafToHtml = (node: TText): string => {

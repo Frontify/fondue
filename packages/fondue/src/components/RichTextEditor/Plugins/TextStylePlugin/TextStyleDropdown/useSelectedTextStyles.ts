@@ -1,18 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import {
-    ELEMENT_LI,
-    ELEMENT_LIC,
-    ELEMENT_OL,
-    ELEMENT_PARAGRAPH,
-    ELEMENT_UL,
-    ENode,
-    PlateEditor,
-    Value,
-    getNodeEntries,
-    isNode,
-    isText,
-} from '@udecode/plate';
+import { ENode, Value, getNodeEntries, isNode, isText } from '@udecode/slate';
+import { ELEMENT_LI, ELEMENT_LIC, ELEMENT_OL, ELEMENT_UL } from '@udecode/plate-list';
+import { ELEMENT_PARAGRAPH } from '@udecode/plate-paragraph';
+import { PlateEditor } from '@udecode/plate-core';
 import { ELEMENT_CHECK_ITEM } from '../../CheckboxListPlugin';
 import { MARK_TEXT_STYLE } from '../../ListPlugin';
 

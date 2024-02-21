@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TElement } from '@udecode/plate';
+import { TElement } from '@udecode/slate';
 import { merge } from '@utilities/merge';
 import { reactCssPropsToCss } from '../utils/reactCssPropsToCss';
 import { CSSPropertiesHover } from '../types';

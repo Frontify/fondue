@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createPluginFactory } from '@udecode/plate';
+import { PlatePlugin, createPluginFactory } from '@udecode/plate-core';
 import { Plugin, PluginProps } from '../Plugin';
 import { ColumnBreakButton } from './ColumnBreakButton';
 import { onKeyDownColumnBreak } from './onKeyDownColumnBreak';
@@ -22,12 +22,12 @@ export class BreakAfterPlugin extends Plugin {
         this.gap = props?.gap ?? GAP_DEFAULT;
     }
 
-    plugins() {
+    plugins(): PlatePlugin[] {
         return [createColumnBreakPlugin(this.columns, this.gap)];
     }
 }
 
-export const createColumnBreakPlugin = (columns: number, gap: CSSProperties['gap']) => {
+export const createColumnBreakPlugin = (columns: number, gap: CSSProperties['gap']): PlatePlugin => {
     return createPluginFactory({
         key: KEY_ELEMENT_BREAK_AFTER_COLUMN,
         handlers: {

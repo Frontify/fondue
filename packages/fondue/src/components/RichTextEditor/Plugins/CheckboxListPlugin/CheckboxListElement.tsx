@@ -1,13 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { CSSProperties, useId } from 'react';
-import { ReactEditor } from 'slate-react';
-import { PlateRenderElementProps, TElement, TTodoListItemElement, getRootProps, setNodes } from '@udecode/plate';
+import { CSSProperties } from 'react';
+import { TElement, setNodes } from '@udecode/slate';
+import { TTodoListItemElement } from '@udecode/plate-list';
+import { PlateRenderElementProps } from '@udecode/plate-core';
 import { merge } from '@utilities/merge';
 import { MarkupElement } from '../MarkupElement';
 import { ELEMENT_CHECK_ITEM } from './id';
 import { justifyClassNames } from '../helper';
 import { useRichTextEditorContext } from '@components/RichTextEditor/context';
+import { type TReactEditor, findNodePath } from '@udecode/slate-react';
 
 const getCheckboxListStyles = (styles: Record<string, CSSProperties>, element: TElement): CSSProperties =>
     styles[element.children[0].textStyle as string];
@@ -15,32 +17,29 @@ const getCheckboxListStyles = (styles: Record<string, CSSProperties>, element: T
 export const CHECKBOX_DIV_CLASSES = 'tw-flex tw-flex-row tw-pb-2 tw-gap-1.5 tw-items-center';
 export const CHECKBOX_SPAN_CLASSES = 'focus:tw-outline-none tw-w-auto tw-min-w-[10px]';
 
-export const CheckboxListElementNode = (props: PlateRenderElementProps) => {
-    const { attributes, children, nodeProps, element, editor } = props;
-    const rootProps = getRootProps(props);
+export const CheckboxListElementNode = (props: PlateRenderElementProps & { style: CSSProperties }) => {
+    const { attributes, children, nodeProps, element, editor, style } = props;
     const checked = element.checked as boolean;
     const align = (element.align as string) ?? 'left';
     const { styles } = useRichTextEditorContext();
-    const id = useId();
 
     return (
-        <div {...attributes} {...rootProps} className={merge([CHECKBOX_DIV_CLASSES, justifyClassNames[align]])}>
-            <input
-                data-test-id="checkbox-input"
-                className="tw-w-4 tw-h-4 tw-m-0"
-                type="checkbox"
-                checked={!!checked}
-                title="Checklist item"
-                aria-labelledby={id}
-                onChange={(e) => {
-                    const path = ReactEditor.findPath(editor as ReactEditor, element);
-                    setNodes<TTodoListItemElement>(editor, { checked: e.target.checked }, { at: path });
-                }}
-                {...nodeProps}
-            />
+        <div {...attributes} style={style} className={merge([CHECKBOX_DIV_CLASSES, justifyClassNames[align]])}>
+            <div contentEditable={false} className="tw-flex tw-items-center tw-justify-center tw-select-none">
+                <input
+                    data-test-id="checkbox-input"
+                    className="tw-w-4 tw-h-4 tw-m-0"
+                    type="checkbox"
+                    checked={!!checked}
+                    onChange={(event) => {
+                        const path = findNodePath(editor as TReactEditor, element);
+                        setNodes<TTodoListItemElement>(editor, { checked: event.target.checked }, { at: path });
+                    }}
+                    {...nodeProps}
+                />
+            </div>
             <span
                 style={getCheckboxListStyles(styles, element)}
-                id={id}
                 className={merge([CHECKBOX_SPAN_CLASSES, checked && '!tw-line-through'])}
             >
                 {children}
@@ -50,7 +49,10 @@ export const CheckboxListElementNode = (props: PlateRenderElementProps) => {
 };
 
 export class CheckboxListElement extends MarkupElement {
-    constructor(id = ELEMENT_CHECK_ITEM, node = CheckboxListElementNode) {
+    constructor(
+        id = ELEMENT_CHECK_ITEM,
+        node: (props: PlateRenderElementProps & { style: CSSProperties }) => JSX.Element = CheckboxListElementNode,
+    ) {
         super(id, node);
     }
 }

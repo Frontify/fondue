@@ -7,16 +7,10 @@ import {
     unorderedListValue,
 } from '@components/RichTextEditor/helpers/exampleValues';
 import { ELEMENT_CHECK_ITEM, mapMentionable } from '@components/RichTextEditor/Plugins';
-import {
-    ELEMENT_IMAGE,
-    ELEMENT_LI,
-    ELEMENT_LIC,
-    ELEMENT_LINK,
-    ELEMENT_MENTION,
-    ELEMENT_OL,
-    ELEMENT_PARAGRAPH,
-    ELEMENT_UL,
-} from '@udecode/plate';
+import { ELEMENT_LI, ELEMENT_LIC, ELEMENT_OL, ELEMENT_UL } from '@udecode/plate-list';
+import { ELEMENT_PARAGRAPH } from '@udecode/plate-paragraph';
+import { ELEMENT_MENTION } from '@udecode/plate-mention';
+import { ELEMENT_LINK } from '@udecode/plate-link';
 import { serializeNodeToHtmlRecursive } from './serializeNodeToHtmlRecursive';
 import { TextStyles } from '@components/RichTextEditor/Plugins/TextStylePlugin/types';
 import { defaultStyles } from '@components/RichTextEditor/utils';
@@ -396,7 +390,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
             type: ELEMENT_PARAGRAPH,
             children: [
                 {
-                    type: ELEMENT_IMAGE,
+                    type: 'img',
                     children: [
                         {
                             text: 'This is ',

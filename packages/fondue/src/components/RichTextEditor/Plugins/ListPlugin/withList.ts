@@ -1,16 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import {
-    PlateEditor,
-    Value,
-    WithPlatePlugin,
     deleteBackwardList,
     deleteForwardList,
     deleteFragmentList,
     insertBreakList,
     insertFragmentList,
     normalizeList,
-} from '@udecode/plate';
+} from '@udecode/plate-list';
+import { PlateEditor, WithPlatePlugin } from '@udecode/plate-core';
+import { Value } from '@udecode/slate';
 import { WithListPlugin } from './types';
 
 export const withList = <V extends Value = Value, E extends PlateEditor<V> = PlateEditor<V>>(
@@ -46,7 +45,7 @@ export const withList = <V extends Value = Value, E extends PlateEditor<V> = Pla
     };
 
     editor.deleteForward = (unit) => {
-        if (deleteForwardList(editor)) {
+        if (deleteForwardList(editor, () => {}, unit)) {
             return;
         }
 

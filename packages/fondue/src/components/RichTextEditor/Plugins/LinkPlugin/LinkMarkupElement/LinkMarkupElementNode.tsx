@@ -1,37 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MouseEvent } from 'react';
-import { HTMLPropsAs, LinkRootProps, useElementProps } from '@udecode/plate';
-import { getUrlFromLinkOrLegacyLink } from '../utils';
-import { TLinkElement } from '../types';
 import { useRichTextEditorContext } from '@components/RichTextEditor/context';
 import { LINK_PLUGIN } from '../id';
+import { PlateRenderElementProps } from '@udecode/plate-core';
+import { TLinkElement } from '@components/RichTextEditor/Plugins/LinkPlugin/types';
 
-const useLink = (props: LinkRootProps): HTMLPropsAs<'a'> => {
-    const _props = useElementProps<TLinkElement, 'a'>({
-        ...props,
-        elementToAttributes: (element) => ({
-            href: getUrlFromLinkOrLegacyLink(element),
-            target: element.target || '_self',
-        }),
-    });
-
-    return {
-        ..._props,
-        // quick fix: hovering <a> with href loses the editor focus
-        onMouseOver: (e: MouseEvent) => {
-            e.stopPropagation();
-        },
-    };
-};
-
-export const LinkMarkupElementNode = (props: LinkRootProps) => {
-    const htmlProps = useLink(props);
+export const LinkMarkupElementNode = (props: PlateRenderElementProps & { element: TLinkElement }) => {
     const { attributes, children } = props;
+
     const { styles } = useRichTextEditorContext();
+    const href = props.element.url || props.element.chosenLink?.searchResult?.link || '';
+    const target = props.element.target || '_self';
 
     return (
-        <a {...attributes} href={htmlProps.href} target={htmlProps.target} style={styles[LINK_PLUGIN]}>
+        <a {...attributes} href={href} target={target} style={styles[LINK_PLUGIN]}>
             {children}
         </a>
     );

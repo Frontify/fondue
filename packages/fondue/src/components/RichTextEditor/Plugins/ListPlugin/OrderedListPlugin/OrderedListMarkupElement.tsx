@@ -1,15 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import {
-    ELEMENT_LI,
-    ELEMENT_OL,
-    PlateEditor,
-    PlateRenderLeafProps,
-    TElement,
-    findNodePath,
-    getNodeAncestors,
-    usePlateEditorRef,
-} from '@udecode/plate';
+import { ELEMENT_LI, ELEMENT_OL } from '@udecode/plate-list';
+import { PlateEditor, PlateRenderLeafProps, useEditorRef } from '@udecode/plate-core';
+import { TElement, getNodeAncestors } from '@udecode/slate';
+import { findNodePath } from '@udecode/slate-react';
 import { MarkupElement } from '../../MarkupElement';
 
 const LIST_TYPES = [
@@ -34,12 +28,12 @@ export const getOrderedListClasses = (nestingLevel: number) =>
     }`;
 export const OL_STYLES = { counterReset: 'count' };
 
-export const OrderedListMarkupElementNode = ({
+export const OrderedListMarkupElementNode: (props: PlateRenderLeafProps & { element: TElement }) => JSX.Element = ({
     attributes,
     children,
     element,
-}: PlateRenderLeafProps & { element: TElement }) => {
-    const editor = usePlateEditorRef();
+}) => {
+    const editor = useEditorRef();
     const nestingLevel = getNestingLevel(editor, element);
 
     return (
@@ -50,7 +44,10 @@ export const OrderedListMarkupElementNode = ({
 };
 
 export class OrderedListMarkupElement extends MarkupElement {
-    constructor(id = ELEMENT_OL, node = OrderedListMarkupElementNode) {
+    constructor(
+        id = ELEMENT_OL,
+        node: (props: PlateRenderLeafProps & { element: TElement }) => JSX.Element = OrderedListMarkupElementNode,
+    ) {
         super(id, node);
     }
 }

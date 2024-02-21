@@ -2,4 +2,3 @@
 
 export * from './EmojiCombobox';
 export * from './EmojiComboboxItem';
-export * from './EmojiComboboxStyles';

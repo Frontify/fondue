@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createSoftBreakPlugin } from '@udecode/plate';
+import { PlatePlugin } from '@udecode/plate-core';
+import { createSoftBreakPlugin } from '@udecode/plate-break';
 import { Plugin, PluginProps } from '../Plugin';
 import { SOFT_BREAK_PLUGIN } from './id';
 
@@ -11,7 +12,7 @@ export class SoftBreakPlugin extends Plugin {
         });
     }
 
-    plugins() {
+    plugins(): PlatePlugin[] {
         return [createSoftBreakPlugin()];
     }
 }

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlatePluginComponent } from '@udecode/plate';
-import { ToolbarPositionWithButtons } from '../Toolbar/ToolbarPositionWithButtons';
+import { PlatePlugin, PlatePluginComponent } from '@udecode/plate-core';
+import { ToolbarPositionWithButtons } from '../components/Toolbar/ToolbarPositionWithButtons';
 import { MarkupElement } from './MarkupElement';
 import { InlineData, ObjectType, PlatePluginList, Plugin, PluginComposerProps, Plugins, ToolbarButtons } from './types';
 import { CSSProperties } from 'react';
@@ -109,7 +109,7 @@ export class PluginComposer {
         return defaultElements;
     }
 
-    get plugins() {
+    get plugins(): PlatePlugin[] {
         const platePlugins = [];
         for (const value of this.platePlugins.values()) {
             platePlugins.push(...value);

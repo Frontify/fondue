@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ELEMENT_UL, PlateRenderLeafProps } from '@udecode/plate';
+import { PlateRenderLeafProps } from '@udecode/plate-core';
+import { ELEMENT_UL } from '@udecode/plate-list';
 import { MarkupElement } from '../../MarkupElement';
 
 export const UL_CLASSES =
@@ -13,7 +14,7 @@ export const UnorderedListMarkupElementNode = ({ attributes, children }: PlateRe
 );
 
 export class UnorderedListMarkupElement extends MarkupElement {
-    constructor(id = ELEMENT_UL, node = UnorderedListMarkupElementNode) {
+    constructor(id = ELEMENT_UL, node: (props: PlateRenderLeafProps) => JSX.Element = UnorderedListMarkupElementNode) {
         super(id, node);
     }
 }

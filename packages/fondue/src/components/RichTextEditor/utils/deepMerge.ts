@@ -1,9 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { AnyObject } from '@udecode/plate';
-
 type NestedObject = {
-    [key: string | number]: AnyObject;
+    [key: string | number]: Record<string, any>;
 };
 
 export const isObject = <T = object>(obj: T) => obj && typeof obj === 'object' && !Array.isArray(obj);
