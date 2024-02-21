@@ -19,7 +19,7 @@
         "baseUrl": ".",
         "paths": {
             "#contentlayer/generated": ["./.contentlayer/generated"],
-            "@/*": ["./src/*"]
+            "#/*": ["./src/*"]
         }
     },
     "include": ["src/**/*", ".contentlayer/generated"],
