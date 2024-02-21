@@ -1,13 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { describe, expect, test } from 'vitest';
 
 import { Divider, DividerHeight, DividerStyle } from '../Divider';
 
-const DEFAULT_COLOR = 'rgb(204, 204, 204)';
 const DEFAULT_COLOR_HEX = '#CCC';
-const COLOR_RGB = 'rgb(64, 101, 174)';
 const COLOR_HEX = '#4065AE';
 const DIVIDER_SELECTOR = 'fondue-divider';
 const DIVIDER_LINE_SELECTOR = 'fondue-divider-line';
