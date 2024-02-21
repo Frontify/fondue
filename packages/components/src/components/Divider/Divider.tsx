@@ -56,7 +56,7 @@ export const Divider = ({
                         className={verticalClassNames}
                         style={{ borderRightColor: color }}
                         data-test-id="fondue-divider-line"
-                    ></div>
+                    />
                 </div>
             )}
             {!vertical && (
