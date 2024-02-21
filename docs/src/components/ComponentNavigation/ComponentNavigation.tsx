@@ -2,10 +2,11 @@
 
 import { type Component, allComponents } from '#contentlayer/generated';
 
+type ComponentTree = {
+    [key: string]: Component[];
+};
+
 export const ComponentNavigation = () => {
-    type ComponentTree = {
-        [key: string]: Component[];
-    };
     const componentTree = allComponents.reduce((accumulator: ComponentTree, current: Component) => {
         const key: string = current.parentFolder;
         if (!accumulator[key]) {
