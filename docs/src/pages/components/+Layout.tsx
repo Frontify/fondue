@@ -2,9 +2,9 @@
 
 import { type ReactNode } from 'react';
 
-import { Layout as RootLayout } from '../+Layout';
-
 import { type Component, allComponents } from '#contentlayer/generated';
+
+import { Layout as RootLayout } from '../+Layout';
 
 export const Layout = ({ children }: { children: ReactNode }) => {
     type ComponentTree = {
