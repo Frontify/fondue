@@ -1,5 +1,15 @@
 # @frontify/fondue
 
+## 12.0.0-beta.405
+
+### Patch Changes
+
+- [#1705](https://github.com/Frontify/fondue/pull/1705) [`154368e`](https://github.com/Frontify/fondue/commit/154368edeb7f9ee3bb75d025d2795b9b09931f61) Thanks [@fulopdaniel](https://github.com/fulopdaniel)! - chore: update plate to v30
+
+  Fondue will now be exposing parts of @udecode/plate that is necessary for creating custom plugins. This means that @udecode/plate only needs to be installed in Fondue.
+
+- [#1690](https://github.com/Frontify/fondue/pull/1690) [`7c20259`](https://github.com/Frontify/fondue/commit/7c20259673409bde59f698b62e3f5bfe2edf68ab) Thanks [@noahwaldner](https://github.com/noahwaldner)! - Fix a11y in Color and Date pickers
+
 ## 12.0.0-beta.404
 
 ### Patch Changes
