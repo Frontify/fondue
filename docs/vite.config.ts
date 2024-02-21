@@ -10,7 +10,7 @@ export default defineConfig({
     resolve: {
         alias: {
             '#contentlayer/generated': join(__dirname, '.contentlayer/generated'),
-            '@': resolve(__dirname, './src'),
+            '#': resolve(__dirname, './src'),
         },
     },
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
