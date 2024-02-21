@@ -215,6 +215,9 @@ export const SegmentedControls = ({
             >
                 {itemElements}
             </fieldset>
+            <VisuallyHidden>
+                <span {...labelProps}>{ariaLabel}</span>
+            </VisuallyHidden>
             <motion.div
                 aria-hidden="true"
                 // div border is not included in width so it must be subtracted from translation.
