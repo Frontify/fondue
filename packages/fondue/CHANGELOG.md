@@ -1,5 +1,11 @@
 # @frontify/fondue
 
+## 12.0.0-beta.406
+
+### Patch Changes
+
+- [#1718](https://github.com/Frontify/fondue/pull/1718) [`5531d4e`](https://github.com/Frontify/fondue/commit/5531d4e1072f1070e492df95fccb8e31220f628c) Thanks [@fulopdaniel](https://github.com/fulopdaniel)! - fix(RTE): wrong import for hotkey
+
 ## 12.0.0-beta.405
 
 ### Patch Changes
