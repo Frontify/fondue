@@ -29,7 +29,7 @@ export function withTooltip<T extends ComponentType<any> | keyof HTMLElementTagN
                                 style={{
                                     zIndex: zIndexLayers.toolbarTooltip,
                                 }}
-                                className="!tw-bg-text !tw-border !tw-border-line-strong !tw-text-box-neutral-strong-inverse !tw-py-2 !tw-px-3 !tw-rounded !tw-shadow-lg !tw-text-xs"
+                                className="tw-bg-text tw-border tw-border-line-strong tw-text-box-neutral-strong-inverse tw-py-2 tw-px-3 tw-rounded tw-shadow-lg tw-text-xs"
                             >
                                 {tooltip}
                             </TooltipContent>
