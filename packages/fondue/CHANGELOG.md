@@ -1,5 +1,11 @@
 # @frontify/fondue
 
+## 12.0.0-beta.407
+
+### Patch Changes
+
+- [#1720](https://github.com/Frontify/fondue/pull/1720) [`02f9a35`](https://github.com/Frontify/fondue/commit/02f9a35a36cb2cd18bb9271e832c110ac350bbcf) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: add missing `id` props on `Dialog`
+
 ## 12.0.0-beta.406
 
 ### Patch Changes

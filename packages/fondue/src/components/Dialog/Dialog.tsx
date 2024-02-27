@@ -12,6 +12,7 @@ export type DialogProps = Omit<
     Omit<BaseDialogProps, 'width'>;
 
 export const Dialog = ({
+    id,
     children,
     open,
     anchor,
@@ -30,6 +31,7 @@ export const Dialog = ({
 }: WithRequired<DialogProps, 'handleClose'>) => {
     return (
         <Overlay
+            id={id}
             data-test-id={dataTestId}
             open={open}
             anchor={anchor}
