@@ -1,5 +1,11 @@
 # @frontify/fondue
 
+## 12.0.0-beta.408
+
+### Patch Changes
+
+- [#1722](https://github.com/Frontify/fondue/pull/1722) [`c0b0a91`](https://github.com/Frontify/fondue/commit/c0b0a9142dc56af3e47fc434f820d705cea192c1) Thanks [@fulopdaniel](https://github.com/fulopdaniel)! - fix(RTE): remove important classes
+
 ## 12.0.0-beta.407
 
 ### Patch Changes
