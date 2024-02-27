@@ -126,7 +126,7 @@ const MapNodeTypesToHtml: { [key: string]: ({ ...args }: Arguments) => string } 
             getLiStyles(node, styles),
         )}">${children}</li>`,
     [ELEMENT_LIC]: ({ classNames, children, node }) =>
-        `<p dir="auto" class="${classNames} ${getLicElementClassNames(node)}"><span>${children}</span></p>`,
+        `<p dir="auto" class="${classNames} ${getLicElementClassNames(node)}"><span class="tw-min-w-0">${children}</span></p>`,
     [ELEMENT_LINK]: ({ node, children, classNames, styles }) => linkNode(node, children, classNames, styles),
     [ELEMENT_BUTTON]: ({ node, children, classNames, styles }) =>
         buttonNode(node, children, classNames, styles as ButtonStylesType),
