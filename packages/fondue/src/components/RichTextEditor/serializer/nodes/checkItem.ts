@@ -2,6 +2,7 @@
 
 import { TElement } from '@udecode/slate';
 import { merge } from '@utilities/merge';
+import { CHECKBOX_SPAN_CLASSES } from '@components/RichTextEditor/Plugins';
 import { reactCssPropsToCss } from '../utils/reactCssPropsToCss';
 import { CSSPropertiesHover } from '../types';
 
@@ -22,8 +23,9 @@ export const checkItemNode = (
             onclick="return false;" />
     </div>
     <span dir="auto" class="${merge([
-        'tw-flex-1 tw-focus:outline-none',
+        'tw-flex-1',
         node.checked ? '!tw-line-through' : '',
+        CHECKBOX_SPAN_CLASSES,
     ])}" style="${reactCssPropsToCss(styles[node.children[0].textStyle as string])}">${children}</span>
 </div>`;
 };
