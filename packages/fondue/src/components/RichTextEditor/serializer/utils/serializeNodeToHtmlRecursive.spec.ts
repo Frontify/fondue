@@ -6,7 +6,7 @@ import {
     orderedListValue,
     unorderedListValue,
 } from '@components/RichTextEditor/helpers/exampleValues';
-import { ELEMENT_CHECK_ITEM, mapMentionable } from '@components/RichTextEditor/Plugins';
+import { ELEMENT_CHECK_ITEM, LIST_ITEM_SPAN_CLASSES, mapMentionable } from '@components/RichTextEditor/Plugins';
 import { ELEMENT_LI, ELEMENT_LIC, ELEMENT_OL, ELEMENT_UL } from '@udecode/plate-list';
 import { ELEMENT_PARAGRAPH } from '@udecode/plate-paragraph';
 import { ELEMENT_MENTION } from '@udecode/plate-mention';
@@ -61,7 +61,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
         const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
 
         expect(result).to.be.equal(
-            '<ol dir="auto" class="tw-list-none tw-pl-[10px] tw-mb-[10px] tw-ml-[15px] [&>li>p]:before:tw-pr-1 [&>li>p]:before:tw-tabular-nums [&>li>p]:before:tw-content-[counter(count,decimal)_\'._\'] tw-break-words" style="counter-reset: count;"><li dir="auto" class="tw-break-words [&>p]:before:tw-flex [&>p]:before:tw-justify-end [&>p]:before:tw-w-[1.2em] !tw-no-underline !tw-list-item" style="font-size: 14px; font-style: normal; font-weight: normal; counter-increment: count;"><p dir="auto" class="tw-break-words tw-justify-start tw-grid tw-grid-cols-[min-content_repeat(3,_auto)]"><span class="tw-min-w-0">First item</span></p></li><li dir="auto" class="tw-break-words [&>p]:before:tw-flex [&>p]:before:tw-justify-end [&>p]:before:tw-w-[1.2em] !tw-no-underline !tw-list-item" style="font-size: 14px; font-style: normal; font-weight: normal; counter-increment: count;"><p dir="auto" class="tw-break-words tw-justify-start tw-grid tw-grid-cols-[min-content_repeat(3,_auto)]"><span class="tw-min-w-0">Second item</span></p></li></ol>',
+            `<ol dir="auto" class="tw-list-none tw-pl-[10px] tw-mb-[10px] tw-ml-[15px] [&>li>p]:before:tw-pr-1 [&>li>p]:before:tw-tabular-nums [&>li>p]:before:tw-content-[counter(count,decimal)_\'._\'] tw-break-words" style="counter-reset: count;"><li dir="auto" class="tw-break-words [&>p]:before:tw-flex [&>p]:before:tw-justify-end [&>p]:before:tw-w-[1.2em] !tw-no-underline !tw-list-item" style="font-size: 14px; font-style: normal; font-weight: normal; counter-increment: count;"><p dir="auto" class="tw-break-words tw-justify-start tw-grid tw-grid-cols-[min-content_repeat(3,_auto)]"><span class="${LIST_ITEM_SPAN_CLASSES}">First item</span></p></li><li dir="auto" class="tw-break-words [&>p]:before:tw-flex [&>p]:before:tw-justify-end [&>p]:before:tw-w-[1.2em] !tw-no-underline !tw-list-item" style="font-size: 14px; font-style: normal; font-weight: normal; counter-increment: count;"><p dir="auto" class="tw-break-words tw-justify-start tw-grid tw-grid-cols-[min-content_repeat(3,_auto)]"><span class="${LIST_ITEM_SPAN_CLASSES}">Second item</span></p></li></ol>`,
         );
     });
 
@@ -155,7 +155,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
         const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
 
         expect(result).to.be.equal(
-            '<ul dir="auto" class="[&>li>p]:before:tw-content-[\'•\'] [&>li>p]:before:tw-px-2 tw-list-none tw-pl-[10px] tw-mb-[10px] tw-ml-[15px] tw-break-words"><li dir="auto" class="tw-break-words [&>p]:before:tw-flex [&>p]:before:tw-justify-end [&>p]:before:tw-w-[1.2em] !tw-no-underline !tw-list-item" style="font-size: 14px; font-style: normal; font-weight: normal; counter-increment: count;"><p dir="auto" class="tw-break-words tw-justify-start tw-grid tw-grid-cols-[min-content_repeat(3,_auto)]"><span class="tw-min-w-0">This comes first.</span></p></li></ul>',
+            `<ul dir="auto" class="[&>li>p]:before:tw-content-[\'•\'] [&>li>p]:before:tw-px-2 tw-list-none tw-pl-[10px] tw-mb-[10px] tw-ml-[15px] tw-break-words"><li dir="auto" class="tw-break-words [&>p]:before:tw-flex [&>p]:before:tw-justify-end [&>p]:before:tw-w-[1.2em] !tw-no-underline !tw-list-item" style="font-size: 14px; font-style: normal; font-weight: normal; counter-increment: count;"><p dir="auto" class="tw-break-words tw-justify-start tw-grid tw-grid-cols-[min-content_repeat(3,_auto)]"><span class="${LIST_ITEM_SPAN_CLASSES}">This comes first.</span></p></li></ul>`,
         );
     });
 

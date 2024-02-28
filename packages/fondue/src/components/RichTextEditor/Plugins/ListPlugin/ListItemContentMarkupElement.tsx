@@ -8,6 +8,8 @@ import { getColumnBreakClasses } from '../ColumnBreakPlugin/utils/getColumnBreak
 import { MarkupElement } from '../MarkupElement';
 import { justifyClassNames } from '../helper';
 
+export const LIST_ITEM_SPAN_CLASSES = 'tw-w-auto tw-min-w-[10px]';
+
 export const getLicElementClassNames = (element: TElement) =>
     merge([
         getColumnBreakClasses(element),
@@ -18,7 +20,7 @@ export const getLicElementClassNames = (element: TElement) =>
 export const ListItemContentMarkupElementNode = ({ attributes, children, element }: PlateRenderElementProps) => {
     return (
         <p className={getLicElementClassNames(element)} {...attributes}>
-            <span className="tw-w-auto tw-min-w-[10px]">{children}</span>
+            <span className={LIST_ITEM_SPAN_CLASSES}>{children}</span>
         </p>
     );
 };

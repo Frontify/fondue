@@ -10,7 +10,10 @@ import {
     alignmentClassnames,
     getOrderedListClasses,
 } from '@components/RichTextEditor/Plugins';
-import { getLicElementClassNames } from '@components/RichTextEditor/Plugins/ListPlugin/ListItemContentMarkupElement';
+import {
+    LIST_ITEM_SPAN_CLASSES,
+    getLicElementClassNames,
+} from '@components/RichTextEditor/Plugins/ListPlugin/ListItemContentMarkupElement';
 import { LI_CLASSNAMES, getLiStyles } from '@components/RichTextEditor/Plugins/ListPlugin/ListItemMarkupElement';
 import { ELEMENT_LI, ELEMENT_LIC, ELEMENT_OL, ELEMENT_UL } from '@udecode/plate-list';
 import { ELEMENT_LINK } from '@udecode/plate-link';
@@ -126,7 +129,7 @@ const MapNodeTypesToHtml: { [key: string]: ({ ...args }: Arguments) => string } 
             getLiStyles(node, styles),
         )}">${children}</li>`,
     [ELEMENT_LIC]: ({ classNames, children, node }) =>
-        `<p dir="auto" class="${classNames} ${getLicElementClassNames(node)}"><span class="tw-min-w-0">${children}</span></p>`,
+        `<p dir="auto" class="${classNames} ${getLicElementClassNames(node)}"><span class="${LIST_ITEM_SPAN_CLASSES}">${children}</span></p>`,
     [ELEMENT_LINK]: ({ node, children, classNames, styles }) => linkNode(node, children, classNames, styles),
     [ELEMENT_BUTTON]: ({ node, children, classNames, styles }) =>
         buttonNode(node, children, classNames, styles as ButtonStylesType),
