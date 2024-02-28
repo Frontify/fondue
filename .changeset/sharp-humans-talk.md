@@ -2,4 +2,4 @@
 "@frontify/fondue": patch
 ---
 
-fix(RTE): lic serialization is wrong
+fix(RTE): lic and checkbox item serialization
