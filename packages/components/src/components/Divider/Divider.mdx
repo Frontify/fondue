@@ -1,0 +1,54 @@
+---
+title: Divider
+type: Component
+exportedName: Divider
+---
+
+## API
+
+| Name     | Type                                          | Description              |
+| -------- | --------------------------------------------- | ------------------------ |
+| `color`  | `color`                                       | hex value or color token |
+| `style`  | `"solid" \| "dashed" \| "dotted" \| "noLine"` | union type for height    |
+| `height` | `"small" \| "medium" \| "large"`              | union type for height    |
+
+## Examples
+
+### Simple
+
+```tsx
+<Divider />
+```
+
+### Fully Featured
+
+```tsx
+<Divider color="#FF0000" style={DividerStyle.Dashed} height={DividerHeight.Medium} />
+```
+
+### Custom Color
+
+```tsx
+<Divider color="#FF0000" />
+```
+
+### Custom Style
+
+```tsx
+<>
+    <Divider style={DividerStyle.Solid} />
+    <Divider style={DividerStyle.Dashed} />
+    <Divider style={DividerStyle.Dotted} />
+    <Divider style={DividerStyle.NoLine} />
+</>
+```
+
+### Custom Height
+
+```tsx
+<>
+    <Divider height={DividerHeight.Small} />
+    <Divider height={DividerHeight.Medium} />
+    <Divider height={DividerHeight.Large} />
+</>
+```

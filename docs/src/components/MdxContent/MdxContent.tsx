@@ -4,7 +4,8 @@ import * as fondueComponents from '@frontify/fondue-components';
 import { getMDXComponent } from 'mdx-bundler/client';
 import { useMemo } from 'react';
 
-import { MdxCodeBlock } from './MdxCodeBlock';
+import { Code, Pre } from './MdxCode';
+import { MdxTable } from './MdxTable';
 import { Heading2, Heading3 } from './MdxTypography';
 
 export const MdxContent = ({ data }: { data: string }) => {
@@ -12,11 +13,15 @@ export const MdxContent = ({ data }: { data: string }) => {
 
     return (
         <Component
-            components={{
+            globals={{
                 ...fondueComponents,
-                code: MdxCodeBlock,
+            }}
+            components={{
+                pre: Pre,
+                code: Code,
                 h2: Heading2,
                 h3: Heading3,
+                ...MdxTable,
             }}
         />
     );

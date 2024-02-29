@@ -3,3 +3,4 @@
 import './styles.css';
 
 export { Tag } from './components/Tag/Tag';
+export { Divider, DividerHeight, DividerStyle } from './components/Divider/Divider';

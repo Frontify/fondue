@@ -9,5 +9,5 @@ export const Heading2 = (props: HeadingProps) => {
 };
 
 export const Heading3 = (props: HeadingProps) => {
-    return <h3 className="tw-text-lg tw-font-normal tw-mb-2 tw-italic">{props.children}</h3>;
+    return <h3 className="tw-text-md tw-font-semibold tw-mb-1">{props.children}</h3>;
 };

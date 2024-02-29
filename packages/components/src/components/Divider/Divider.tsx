@@ -40,39 +40,35 @@ export const Divider = ({
     color = '#CCC',
 }: DividerProps): ReactElement => {
     const verticalClassNames = `tw-w-px tw-h-full tw-border-r tw-m-0 ${styleMap[style]}`;
-    return (
-        <>
-            {vertical && (
-                <div
-                    aria-hidden="true"
-                    className="tw-flex tw-self-stretch tw-mt-0 tw-mb-0 tw-items-center tw-justify-center"
-                    data-test-id={dataTestId}
-                    style={{
-                        marginLeft: parseInt(height) / 2,
-                        marginRight: parseInt(height) / 2,
-                    }}
-                >
-                    <div
-                        className={verticalClassNames}
-                        style={{ borderRightColor: color }}
-                        data-test-id="fondue-divider-line"
-                    />
-                </div>
-            )}
-            {!vertical && (
-                <div
-                    aria-hidden="true"
-                    className="tw-flex tw-items-center tw-w-full"
-                    style={{ height }}
-                    data-test-id={dataTestId}
-                >
-                    <hr
-                        className={`tw-border-t tw-m-0 tw-w-full ${styleMap[style]}`}
-                        style={{ borderTopColor: color }}
-                        data-test-id="fondue-divider-line"
-                    />
-                </div>
-            )}
-        </>
+
+    return vertical ? (
+        <div
+            aria-hidden="true"
+            className="tw-flex tw-self-stretch tw-mt-0 tw-mb-0 tw-items-center tw-justify-center"
+            data-test-id={dataTestId}
+            style={{
+                marginLeft: parseInt(height) / 2,
+                marginRight: parseInt(height) / 2,
+            }}
+        >
+            <div
+                className={verticalClassNames}
+                style={{ borderRightColor: color }}
+                data-test-id="fondue-divider-line"
+            />
+        </div>
+    ) : (
+        <div
+            aria-hidden="true"
+            className="tw-flex tw-items-center tw-w-full"
+            style={{ height }}
+            data-test-id={dataTestId}
+        >
+            <hr
+                className={`tw-border-t tw-m-0 tw-w-full ${styleMap[style]}`}
+                style={{ borderTopColor: color }}
+                data-test-id="fondue-divider-line"
+            />
+        </div>
     );
 };
