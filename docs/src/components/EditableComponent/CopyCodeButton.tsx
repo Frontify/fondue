@@ -22,7 +22,7 @@ export const CopyCodeButton = ({ onClick }: CopyButtonProps) => {
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             onClick={handleButtonClick}
-            className="tw-absolute tw-rounded-br tw-mx-2 tw-bottom-2 tw-right-0 tw-text-sm tw-text-text-weak "
+            className="tw-absolute tw-rounded-br tw-mx-2 tw-bottom-2 tw-right-0 tw-text-sm tw-text-text-weak"
         >
             <div
                 className={`tw-transition-all tw-duration-500 tw-flex tw-overflow-hidden tw-absolute tw-right-0 tw-bottom-0 ${copiedSuccessfully ? '-tw-translate-y-full tw-opacity-0' : 'tw-opacity-1'}`}
