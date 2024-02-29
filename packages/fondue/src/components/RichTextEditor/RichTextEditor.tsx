@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { CSSProperties, useCallback, useMemo } from 'react';
+import { KeyboardEvent, useCallback, useMemo } from 'react';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { Plate, PlateContent, TEditableProps } from '@udecode/plate-core';
 import { ContentReplacement } from './ContentReplacement';
@@ -13,11 +13,7 @@ import { PaddingSizes, TreeOfNodes } from './types';
 import { parseRawValue } from './utils';
 import { BlurObserver } from '@components/RichTextEditor/BlurObserver';
 import noop from 'lodash-es/noop';
-
-const PLACEHOLDER_STYLES: CSSProperties = {
-    position: 'relative',
-    height: '0',
-};
+import { RenderPlaceholder } from './components/RenderPlaceholder';
 
 export type RichTextEditorProps = {
     id?: string;
@@ -40,7 +36,7 @@ export const RichTextEditor = ({
     id,
     value,
     placeholder = '',
-    readonly = false,
+    readonly: readOnly = false,
     onTextChange,
     onBlur,
     padding = PaddingSizes.None,
@@ -64,17 +60,6 @@ export const RichTextEditor = ({
     const columns = breakAfterPlugin?.options?.columns ?? 1;
     const columnGap = breakAfterPlugin?.options?.gap ?? GAP_DEFAULT;
 
-    const renderPlaceholder: TEditableProps['renderPlaceholder'] = useCallback(({ children, attributes }) => {
-        const mergedAttributes = {
-            ...attributes,
-            style: {
-                ...attributes.style,
-                ...PLACEHOLDER_STYLES,
-            },
-        };
-        return <span {...mergedAttributes}>{children}</span>;
-    }, []);
-
     const style = useMemo(
         () => ({
             columns,
@@ -90,7 +75,7 @@ export const RichTextEditor = ({
         }
     }, [onBlur, localValue]);
 
-    const onKeyDownHandler = useCallback((event) => {
+    const onKeyDownHandler = useCallback((event: KeyboardEvent<HTMLDivElement>) => {
         if (event.code === 'Tab') {
             forceToFocusNextElement(event, !event.shiftKey);
         }
@@ -98,8 +83,8 @@ export const RichTextEditor = ({
 
     const editableProps: TEditableProps = {
         placeholder,
-        renderPlaceholder,
-        readOnly: readonly,
+        renderPlaceholder: RenderPlaceholder,
+        readOnly,
         onBlur: onBlurHandler,
         className: `${padding}`,
         style,
@@ -107,16 +92,9 @@ export const RichTextEditor = ({
         scrollSelectionIntoView: noop,
     };
 
-    const providerValues = useMemo(
-        () => ({ styles: config.styles(), position, border, editorId }),
-        [border, config, editorId, position],
-    );
-
-    const platePlugins = useMemo(() => config.create(), [config]);
-
     return (
-        <RichTextEditorProvider value={providerValues}>
-            <Plate id={editorId} onChange={onChange} plugins={platePlugins} initialValue={memoizedValue}>
+        <RichTextEditorProvider styles={config.styles()} position={position} border={border} editorId={editorId}>
+            <Plate id={editorId} onChange={onChange} plugins={config.plugins} initialValue={memoizedValue}>
                 <PlateContent {...editableProps} />
                 {!editableProps.readOnly && config.toolbar(toolbarWidth)}
                 {config.inline()}

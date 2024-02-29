@@ -6,7 +6,7 @@ import { Toolbar } from '../components/Toolbar';
 import type { PluginComposer } from './PluginComposer';
 
 type GeneratePluginsReturn = {
-    create: () => PlatePlugin<Record<string, any>>[];
+    plugins: PlatePlugin<Record<string, any>>[];
     toolbar: (toolbarWidth: number | undefined) => ReactNode;
     inline: () => ReactNode;
     styles: () => Record<string, CSSProperties>;
@@ -19,7 +19,7 @@ export const createPlatePlugins = (pluginComposer: PluginComposer): PlatePlugin[
 
 export const GeneratePlugins = (editorId: string, pluginComposer: PluginComposer): GeneratePluginsReturn => {
     return {
-        create: () => createPlatePlugins(pluginComposer),
+        plugins: createPlatePlugins(pluginComposer),
         toolbar: (toolbarWidth) =>
             pluginComposer.hasToolbar ? (
                 <Toolbar toolbarButtons={pluginComposer.buttons} editorId={editorId} toolbarWidth={toolbarWidth} />

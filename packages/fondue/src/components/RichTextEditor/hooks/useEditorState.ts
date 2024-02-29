@@ -23,14 +23,14 @@ export const useEditorState = ({
 }: useEditorStateProps) => {
     const localValue = useRef<TreeOfNodes | null>(null);
 
-    const onChangeBase = useCallback(
+    const _onChange = useCallback(
         (value: TreeOfNodes) => {
             onTextChange && onTextChange(JSON.stringify(value));
         },
         [onTextChange],
     );
 
-    const debouncedOnChange = useDebounce(onChangeBase, ON_SAVE_DELAY_IN_MS);
+    const debouncedOnChange = useDebounce(_onChange, ON_SAVE_DELAY_IN_MS);
 
     const onChange = useCallback(
         (value: TreeOfNodes) => {
