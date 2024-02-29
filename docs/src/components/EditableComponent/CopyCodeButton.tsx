@@ -39,7 +39,7 @@ export const CopyCodeButton = ({ onClick }: CopyButtonProps) => {
             <div
                 className={`tw-transition-all tw-duration-500 tw-flex tw-overflow-hidden tw-absolute tw-right-0 tw-bottom-0 ${!copiedSuccessfully ? 'tw-translate-y-full tw-opacity-0' : 'tw-opacity-1'}`}
             >
-                <span className={'tw-pr-2 tw-whitespace-nowrap'}>Copied Successfully</span>
+                <span className="tw-pr-2 tw-whitespace-nowrap">Copied Successfully</span>
                 <div className="tw-bg-[#011627] tw-z-10">
                     <IconCheckMark size={20} />
                 </div>
