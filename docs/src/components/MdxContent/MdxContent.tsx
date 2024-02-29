@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import * as fondueComponents from '@frontify/fondue-components';
 import { getMDXComponent } from 'mdx-bundler/client';
 import { useMemo } from 'react';
 
@@ -13,9 +12,6 @@ export const MdxContent = ({ data }: { data: string }) => {
 
     return (
         <Component
-            globals={{
-                ...fondueComponents,
-            }}
             components={{
                 pre: Pre,
                 code: Code,
