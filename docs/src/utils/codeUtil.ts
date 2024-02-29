@@ -3,5 +3,7 @@
 import { type Component } from '#contentlayer/generated';
 
 export const getImportStatement = (props: Component) => {
-    return `import { ${props.exportedName} } from '@frontify/fondue/components';`;
+    if (props.type === 'Component' && props.exportedName) {
+        return `import { ${props.exportedName} } from '@frontify/fondue/components';`;
+    }
 };

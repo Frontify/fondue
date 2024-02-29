@@ -22,6 +22,9 @@ export const CodeSnippet = ({ code, language, disabled }: EditableContentProps) 
             throw new Error('Failed to copy code to clipboard');
         }
     };
+    if (code === undefined || code === null || code === '') {
+        return null;
+    }
     return (
         <LiveProvider code={code.trim()} scope={{ ...fondueComponents }} language={language} disabled={disabled}>
             <div className="tw-border-black-60 tw-border-2 tw-rounded-lg tw-overflow-hidden tw-mt-4 tw-mb-8 tw-relative">
