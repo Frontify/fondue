@@ -6,7 +6,7 @@ import { MdxContent } from '../../../components/MdxContent/MdxContent';
 
 import { type Data } from './+data';
 
-import { EditableComponent } from '#/components/EditableComponent/EditableComponent';
+import { CodeSnippet } from '#/components/EditableComponent/CodeSnippet';
 import { getImportStatement } from '#/utils/codeUtil';
 
 export const Page = () => {
@@ -21,7 +21,7 @@ export const Page = () => {
             <div className="tw-p-8 tw-w-full tw-flex tw-justify-center">
                 <div className="tw-max-w-[856px] tw-w-full">
                     <h1 className="tw-text-xl tw-font-bold tw-mb-8">{data.component.title}</h1>
-                    <EditableComponent language={'ts'} code={getImportStatement(data.component)} disabled={true} />
+                    <CodeSnippet language={'ts'} code={getImportStatement(data.component)} disabled={true} />
                     <MdxContent data={data.component.body.code} />
                 </div>
             </div>

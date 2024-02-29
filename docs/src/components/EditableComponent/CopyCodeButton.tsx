@@ -4,17 +4,18 @@ import { IconCheckMark, IconClipboard } from '@frontify/fondue-icons';
 import { useState } from 'react';
 
 type CopyButtonProps = {
-    onClick: () => void;
+    onClick: (successCallback: () => void) => void;
 };
 export const CopyCodeButton = ({ onClick }: CopyButtonProps) => {
     const [isHovered, setIsHovered] = useState(false);
     const [copiedSuccessfully, setCopiedSuccessfully] = useState(false);
     const handleButtonClick = () => {
-        onClick();
-        setCopiedSuccessfully(true);
-        setTimeout(() => {
-            setCopiedSuccessfully(false);
-        }, 3000);
+        onClick(() => {
+            setCopiedSuccessfully(true);
+            setTimeout(() => {
+                setCopiedSuccessfully(false);
+            }, 3000);
+        });
     };
     return (
         <button

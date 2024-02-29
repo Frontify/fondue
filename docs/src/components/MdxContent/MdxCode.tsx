@@ -2,7 +2,7 @@
 
 import { type DetailedHTMLProps, type HTMLAttributes, isValidElement } from 'react';
 
-import { EditableComponent } from '../EditableComponent/EditableComponent';
+import { CodeSnippet } from '../EditableComponent/CodeSnippet';
 
 type PreProps = {
     children?: React.ReactNode;
@@ -32,5 +32,5 @@ export const MdxLiveCodeBlock = (props: DetailedHTMLProps<HTMLAttributes<HTMLEle
         throw new Error('Invalid Code Content');
     }
 
-    return <EditableComponent language={props.className?.split('language-')[1]} code={props.children as string} />;
+    return <CodeSnippet language={props.className?.split('language-')[1]} code={props.children as string} />;
 };

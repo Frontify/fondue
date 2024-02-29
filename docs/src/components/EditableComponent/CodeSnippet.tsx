@@ -13,10 +13,11 @@ type EditableContentProps = {
 
 const LANGUAGES_WITH_PREVIEW = ['tsx'];
 
-export const EditableComponent = ({ code, language, disabled }: EditableContentProps) => {
-    const handleCopyCode = async () => {
+export const CodeSnippet = ({ code, language, disabled }: EditableContentProps) => {
+    const handleCopyCode = async (successCallback: () => void) => {
         try {
             await navigator.clipboard.writeText(code);
+            successCallback();
         } catch (error) {
             throw new Error('Failed to copy code to clipboard');
         }
