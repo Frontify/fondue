@@ -3,7 +3,7 @@
 import { render } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { Divider, DividerHeight, DividerStyle } from '../Divider';
+import { Divider, DividerHeight } from '../Divider';
 
 const DEFAULT_COLOR_HEX = '#CCC';
 const COLOR_HEX = '#4065AE';
@@ -45,28 +45,28 @@ describe('Divider component', () => {
     });
 
     it('should allow for the divider border style to be dashed', () => {
-        const { getByTestId } = render(<Divider style={DividerStyle.Dashed} />);
+        const { getByTestId } = render(<Divider style="dashed" />);
         const divider = getByTestId(DIVIDER_LINE_SELECTOR);
 
         expect(divider).toHaveClass('tw-border-dashed');
     });
 
     it('should allow for the divider to have no border', () => {
-        const { getByTestId } = render(<Divider style={DividerStyle.NoLine} />);
+        const { getByTestId } = render(<Divider style="noline" />);
         const divider = getByTestId(DIVIDER_LINE_SELECTOR);
 
         expect(divider).toHaveClass('tw-border-none');
     });
 
     it('should allow for the divider to have solid border', () => {
-        const { getByTestId } = render(<Divider style={DividerStyle.Solid} />);
+        const { getByTestId } = render(<Divider style="solid" />);
         const divider = getByTestId(DIVIDER_LINE_SELECTOR);
 
         expect(divider).toHaveClass('tw-border-solid');
     });
 
     it('should allow for the divider to have dotted border', () => {
-        const { getByTestId } = render(<Divider style={DividerStyle.Dotted} />);
+        const { getByTestId } = render(<Divider style="dotted" />);
         const divider = getByTestId(DIVIDER_LINE_SELECTOR);
 
         expect(divider).toHaveClass('tw-border-dotted');
