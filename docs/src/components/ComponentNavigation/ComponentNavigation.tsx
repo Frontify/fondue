@@ -28,7 +28,7 @@ export const ComponentNavigation = () => {
                                 <span className="tw-font-semibold tw-capitalize">{componentGroupKey}</span>
                                 <ul className="tw-ml-4 tw-my-1">
                                     {componentGroup.map((component) => (
-                                        <li className="tw-my-1" key={componentGroupKey}>
+                                        <li className="tw-my-1" key={`${componentGroupKey}-${component.title}`}>
                                             <a href={`/components/${component.route}`}>{component.title}</a>
                                         </li>
                                     ))}

@@ -2,12 +2,7 @@
 
 import { type ReactElement } from 'react';
 
-export enum DividerStyle {
-    NoLine = 'noline',
-    Dashed = 'dashed',
-    Solid = 'solid',
-    Dotted = 'dotted',
-}
+export type DividerStyle = 'noline' | 'dashed' | 'solid' | 'dotted';
 
 export enum DividerHeight {
     Small = '36px',
@@ -24,23 +19,21 @@ export type DividerProps = {
 };
 
 const styleMap = {
-    [DividerStyle.NoLine]: 'tw-border-none',
-    [DividerStyle.Dashed]: 'tw-border-dashed',
-    [DividerStyle.Solid]: 'tw-border-solid',
-    [DividerStyle.Dotted]: 'tw-border-dotted',
+    noline: 'tw-border-none',
+    dashed: 'tw-border-dashed',
+    solid: 'tw-border-solid',
+    dotted: 'tw-border-dotted',
 };
 
 const DIVIDER_TEST_ID = 'fondue-divider';
 
 export const Divider = ({
     vertical = false,
-    style = DividerStyle.Solid,
+    style = 'solid',
     height = DividerHeight.Small,
     'data-test-id': dataTestId = DIVIDER_TEST_ID,
     color = '#CCC',
 }: DividerProps): ReactElement => {
-    const verticalClassNames = `tw-w-px tw-h-full tw-border-r tw-m-0 ${styleMap[style]}`;
-
     return vertical ? (
         <div
             aria-hidden="true"
@@ -52,7 +45,7 @@ export const Divider = ({
             }}
         >
             <div
-                className={verticalClassNames}
+                className={`tw-w-px tw-h-full tw-border-r tw-m-0 ${styleMap[style]}`}
                 style={{ borderRightColor: color }}
                 data-test-id="fondue-divider-line"
             />
