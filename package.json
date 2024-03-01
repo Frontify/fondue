@@ -2,17 +2,10 @@
     "name": "root",
     "private": true,
     "type": "module",
-    "watch": {
-        "dev:content": {
-            "patterns": [
-                "packages/components/*"
-            ],
-            "extensions": "md,mdx"
-        }
-    },
     "scripts": {
-        "dev": "concurrently 'npm-watch' 'pnpm run dev:docs'",
+        "dev": "concurrently 'pnpm run watch:content' 'pnpm run dev:docs'",
         "dev:docs": "pnpm --stream --filter {docs} dev:docs",
+        "watch:content": "chokidar 'packages/components/**/*.mdx' -c 'pnpm run dev:content'",
         "dev:content": "pnpm --stream --filter {docs} dev:contentlayer",
         "build:fondue": "pnpm --stream --filter {packages/fondue} build",
         "build:docs": "pnpm --stream --filter {docs} build",
@@ -24,9 +17,9 @@
     "devDependencies": {
         "@changesets/changelog-github": "^0.5.0",
         "@changesets/cli": "^2.27.1",
+        "chokidar-cli": "^3.0.0",
         "concurrently": "^8.2.2",
-        "glob": "^10.3.10",
-        "npm-watch": "^0.11.0"
+        "glob": "^10.3.10"
     },
     "pnpm": {
         "patchedDependencies": {

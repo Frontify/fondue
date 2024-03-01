@@ -24,6 +24,7 @@ export const ComponentNavigation = () => {
                     .toSorted((a, b) => a.localeCompare(b))
                     .map((componentGroupKey) => {
                         const componentGroup = componentTree[componentGroupKey] || [];
+
                         if (componentGroup.length > 1) {
                             return (
                                 <li className="tw-my-2" key={componentGroupKey}>
@@ -40,6 +41,7 @@ export const ComponentNavigation = () => {
                                 </li>
                             );
                         }
+
                         if (componentGroup[0]) {
                             return (
                                 <li className="tw-my-2" key={componentGroupKey}>
@@ -49,6 +51,7 @@ export const ComponentNavigation = () => {
                                 </li>
                             );
                         }
+
                         return null;
                     })}
             </ul>

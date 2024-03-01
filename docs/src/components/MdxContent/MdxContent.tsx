@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 
 import { Code, Pre } from './MdxCode';
 import { MdxTable } from './MdxTable';
-import { Heading2, Heading3 } from './MdxTypography';
+import { MdxTypography } from './MdxTypography';
 
 export const MdxContent = ({ data }: { data: string }) => {
     const Component = useMemo(() => getMDXComponent(data), [data]);
@@ -15,8 +15,7 @@ export const MdxContent = ({ data }: { data: string }) => {
             components={{
                 pre: Pre,
                 code: Code,
-                h2: Heading2,
-                h3: Heading3,
+                ...MdxTypography,
                 ...MdxTable,
             }}
         />

@@ -4,21 +4,33 @@ type: Component
 exportedName: Divider, DividerHeight
 ---
 
-## API
-
-| Name     | Type                                          | Description              |
-| -------- | --------------------------------------------- | ------------------------ |
-| `color`  | `color`                                       | hex value or color token |
-| `style`  | `"solid" \| "dashed" \| "dotted" \| "noLine"` | union type for height    |
-| `height` | `"small" \| "medium" \| "large"`              | union type for height    |
-
-## Examples
-
-### Simple
+## Usage
 
 ```tsx
 <Divider />
 ```
+
+## API
+
+### Props
+
+| Name     | Type                                          | Default               |
+| -------- | --------------------------------------------- | --------------------- |
+| `color`  | `color`                                       | `#CCC`                |
+| `style`  | `"solid" \| "dashed" \| "dotted" \| "noLine"` | `solid`               |
+| `height` | `DividerHeight`                               | `DividerHeight.Small` |
+
+### DividerHeight
+
+```ts
+export enum DividerHeight {
+    Small = '36px',
+    Medium = '60px',
+    Large = '96px',
+}
+```
+
+## Examples
 
 ### Fully Featured
 
