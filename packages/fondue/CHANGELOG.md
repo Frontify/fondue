@@ -1,5 +1,11 @@
 # @frontify/fondue
 
+## 12.0.0-beta.409
+
+### Patch Changes
+
+- [#1724](https://github.com/Frontify/fondue/pull/1724) [`3ecff27`](https://github.com/Frontify/fondue/commit/3ecff272f25e39a826221854e5ea02a70b581563) Thanks [@fulopdaniel](https://github.com/fulopdaniel)! - fix(RTE): lic and checkbox item serialization
+
 ## 12.0.0-beta.408
 
 ### Patch Changes

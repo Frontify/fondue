@@ -23,9 +23,14 @@ export const useEditorState = ({
 }: useEditorStateProps) => {
     const localValue = useRef<TreeOfNodes | null>(null);
 
-    const debouncedOnChange = useDebounce((value: TreeOfNodes) => {
-        onTextChange && onTextChange(JSON.stringify(value));
-    }, ON_SAVE_DELAY_IN_MS);
+    const _onChange = useCallback(
+        (value: TreeOfNodes) => {
+            onTextChange && onTextChange(JSON.stringify(value));
+        },
+        [onTextChange],
+    );
+
+    const debouncedOnChange = useDebounce(_onChange, ON_SAVE_DELAY_IN_MS);
 
     const onChange = useCallback(
         (value: TreeOfNodes) => {
@@ -42,7 +47,7 @@ export const useEditorState = ({
         [editorId],
     );
 
-    const config = GeneratePlugins(editorId, plugins);
+    const config = useMemo(() => GeneratePlugins(editorId, plugins), [editorId, plugins]);
 
     return { localValue, onChange, memoizedValue, config };
 };

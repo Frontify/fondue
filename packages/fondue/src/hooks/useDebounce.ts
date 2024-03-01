@@ -1,14 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useRef } from 'react';
+import { useCallback, useRef } from 'react';
 
 export const useDebounce = <T extends unknown[]>(func: (...args: T) => void, timeout = 10) => {
     const timer = useRef<ReturnType<typeof setTimeout>>();
 
-    const debouncedFunc = (...args: T) => {
-        clearTimeout(timer.current);
-        timer.current = setTimeout(() => func.apply(this, args), timeout);
-    };
+    const debouncedFunc = useCallback(
+        (...args: T) => {
+            clearTimeout(timer.current);
+            timer.current = setTimeout(() => func.apply(this, args), timeout);
+        },
+        [func, timeout],
+    );
 
     return debouncedFunc;
 };

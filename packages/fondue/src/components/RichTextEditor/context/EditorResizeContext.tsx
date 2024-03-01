@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactNode, createContext, useContext } from 'react';
+import { ReactNode, createContext, useContext, useMemo } from 'react';
 import { useEditorResize } from '../hooks';
 import { PlateWrapper } from '../components/EditorPositioningWrapper/PlateWrapper';
 
@@ -19,10 +19,12 @@ type EditorResizeContextProviderProps = {
 };
 
 export const EditorResizeContextProvider = ({ children }: EditorResizeContextProviderProps) => {
-    const { editorWidth, editorRef } = useEditorResize();
+    const { editorRef, editorWidth } = useEditorResize();
+
+    const value = useMemo(() => ({ editorWidth, editorRef }), [editorWidth, editorRef]);
 
     return (
-        <EditorResizeContext.Provider value={{ editorWidth, editorRef }}>
+        <EditorResizeContext.Provider value={value}>
             <PlateWrapper ref={editorRef}>{children}</PlateWrapper>
         </EditorResizeContext.Provider>
     );

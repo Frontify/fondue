@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { CSSProperties, ReactNode, createContext, useContext } from 'react';
+import { CSSProperties, ReactNode, createContext, useContext, useMemo } from 'react';
 import { Position, getEditorWrapperClassNames } from '../components/EditorPositioningWrapper';
 import { EditorResizeContextProvider } from './EditorResizeContext';
 import { defaultStyles } from '../utils';
@@ -22,23 +22,28 @@ export const useRichTextEditorContext = () => useContext(RichTextEditorContext);
 
 type RichTextEditorProviderProps = {
     children: ReactNode;
-    value: {
-        styles: Record<string, CSSProperties>;
-        position: Position;
-        border: boolean;
-        editorId: string;
-    };
+    styles: Record<string, CSSProperties>;
+    position: Position;
+    border: boolean;
+    editorId: string;
 };
 
-export const RichTextEditorProvider = ({ children, value }: RichTextEditorProviderProps) => {
-    const { styles, position, border, editorId } = value;
-
-    const state = {
-        styles,
-        editorId,
-        position,
-        wrapperClassNames: getEditorWrapperClassNames(position, border),
-    };
+export const RichTextEditorProvider = ({
+    children,
+    styles,
+    position,
+    border,
+    editorId,
+}: RichTextEditorProviderProps) => {
+    const state = useMemo(
+        () => ({
+            styles,
+            editorId,
+            position,
+            wrapperClassNames: getEditorWrapperClassNames(position, border),
+        }),
+        [styles, editorId, position, border],
+    );
 
     return (
         <RichTextEditorContext.Provider value={state}>
