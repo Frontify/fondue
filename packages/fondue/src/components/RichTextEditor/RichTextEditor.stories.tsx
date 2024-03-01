@@ -123,6 +123,7 @@ const allTextStylesPlugin = new TextStylePlugin({
 });
 
 const allPlugins = new PluginComposer();
+
 allPlugins
     .setPlugin([new SoftBreakPlugin(), allTextStylesPlugin])
     .setPlugin([new MentionPlugin({ mentionableItems: mentionable })])
