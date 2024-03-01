@@ -76,9 +76,7 @@ export const Tooltip = ({
     const [hasInteractiveElements, setHasInteractiveElements] = useState(false);
 
     const handleHideTooltip = useCallback(() => {
-        if (!disabled) {
-            handleTimeout(() => setOpen(false), leaveDelay, timeoutRef);
-        }
+        handleTimeout(() => setOpen(false), leaveDelay, timeoutRef);
     }, [disabled, leaveDelay, setOpen]);
 
     const handleShowTooltip = useCallback(() => {
