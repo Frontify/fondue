@@ -2,11 +2,11 @@
 
 import { useData } from 'vike-react/useData';
 
-import { type Data } from './+data';
-
 import { CodeSnippet } from '#/components/EditableComponent/CodeSnippet';
 import { MdxContent } from '#/components/MdxContent/MdxContent';
 import { getImportStatement } from '#/utils/codeUtil';
+
+import { type Data } from './+data';
 
 export const Page = () => {
     const data = useData<Data>();
