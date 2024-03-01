@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Meta, StoryFn } from '@storybook/react';
-import { ComponentProps, useState } from 'react';
+import { ComponentProps } from 'react';
 import { Position } from './components/EditorPositioningWrapper';
 import {
     IPSUM,
@@ -101,35 +101,9 @@ export default {
     },
 } as Meta;
 
-const RichTextEditorTemplate: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => {
-    const [readonly, setReadonly] = useState(false);
-
-    return (
-        <>
-            <button onClick={() => setReadonly((r) => !r)}>Click {readonly ? 'on' : 'off'}</button>
-            <RichTextEditorComponent {...args} readonly={readonly} />
-            <RichTextEditorComponent {...args} readonly={readonly} />
-            <RichTextEditorComponent {...args} readonly={readonly} />
-            <RichTextEditorComponent {...args} readonly={readonly} />
-            <RichTextEditorComponent {...args} readonly={readonly} />
-            <RichTextEditorComponent {...args} readonly={readonly} />
-            <RichTextEditorComponent {...args} readonly={readonly} />
-            <RichTextEditorComponent {...args} readonly={readonly} />
-            <RichTextEditorComponent {...args} readonly={readonly} />
-            <RichTextEditorComponent {...args} readonly={readonly} />
-            <RichTextEditorComponent {...args} readonly={readonly} />
-            <RichTextEditorComponent {...args} readonly={readonly} />
-            <RichTextEditorComponent {...args} readonly={readonly} />
-            <RichTextEditorComponent {...args} readonly={readonly} />
-            <RichTextEditorComponent {...args} readonly={readonly} />
-            <RichTextEditorComponent {...args} readonly={readonly} />
-            <RichTextEditorComponent {...args} readonly={readonly} />
-            <RichTextEditorComponent {...args} readonly={readonly} />
-            <RichTextEditorComponent {...args} readonly={readonly} />
-            <RichTextEditorComponent {...args} readonly={readonly} />
-        </>
-    );
-};
+const RichTextEditorTemplate: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
+    <RichTextEditorComponent {...args} />
+);
 
 const allTextStyles = Object.values(TextStyles);
 const allTextStylesPlugin = new TextStylePlugin({
