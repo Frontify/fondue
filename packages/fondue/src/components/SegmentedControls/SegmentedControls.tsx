@@ -135,6 +135,7 @@ export const SegmentedControls = ({
     hugWidth = false,
     size,
 }: SegmentedControlsProps): ReactElement => {
+    const hasEnabledItems = useMemo(() => items.some((item) => !item.disabled), [items]);
     const id = useMemoizedId(propId);
     const groupProps = { onChange, value: activeItemId, label: ariaLabel, isDisabled: disabled };
     const radioGroupState = useRadioGroupState(groupProps);
@@ -155,14 +156,19 @@ export const SegmentedControls = ({
         ));
     }, [items, id, disabled, radioGroupState, size]);
 
-    const selectedIndex = items.findIndex((item, index) => {
+    const selectedIndex = hasEnabledItems ? items.findIndex((item, index) => {
         const isActiveItem = item.id === radioGroupState.selectedValue;
         if (item.disabled && isActiveItem) {
-            const nextIndex = index + 1;
-            radioGroupState.setSelectedValue(items[nextIndex].id);
+            if (index > 0) {
+                const previousIndex = index - 1;
+                radioGroupState.setSelectedValue(items[previousIndex].id);
+            } else {
+                const nextIndex = index + 1;
+                radioGroupState.setSelectedValue(items[nextIndex].id);
+            }
         }
         return isActiveItem;
-    });
+    }) : -1;
 
     const width = hugWidth ? '' : 'tw-w-full';
     const alignment = hugWidth ? 'tw-flex' : 'tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly';

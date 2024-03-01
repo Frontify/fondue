@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import IconTextAlignmentCentre from '@foundation/Icon/Generated/IconTextAlignmentCentre';
+import IconTextAlignmentLeft from '@foundation/Icon/Generated/IconTextAlignmentLeft';
+import IconTextAlignmentRight from '@foundation/Icon/Generated/IconTextAlignmentRight';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { Meta, StoryFn } from '@storybook/react';
 import { useState } from 'react';
 import { SegmentedControls, SegmentedControlsProps } from './SegmentedControls';
-import IconTextAlignmentLeft from '@foundation/Icon/Generated/IconTextAlignmentLeft';
-import IconTextAlignmentCentre from '@foundation/Icon/Generated/IconTextAlignmentCentre';
-import IconTextAlignmentRight from '@foundation/Icon/Generated/IconTextAlignmentRight';
 
 export default {
     title: 'Components/SegmentedControls',
@@ -27,7 +27,7 @@ export default {
 } as Meta<SegmentedControlsProps>;
 
 const SegmentedControlsTemplate: StoryFn<SegmentedControlsProps> = (args: SegmentedControlsProps) => {
-    const [activeItemId, setActiveItemId] = useState(args.items[0].id);
+    const [activeItemId, setActiveItemId] = useState(args.activeItemId || args.items[0].id);
     return (
         <SegmentedControls
             {...args}
