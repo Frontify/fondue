@@ -18,7 +18,7 @@ export class InitPlateEditor {
 
     static init(editorId: string = generateRandomId(), plugins: PluginComposer = defaultPlugins) {
         const config = GeneratePlugins(editorId, plugins);
-        this.editor = createPlateEditor({ id: editorId, plugins: config.create() });
+        this.editor = createPlateEditor({ id: editorId, plugins: config.plugins });
         return this;
     }
 }

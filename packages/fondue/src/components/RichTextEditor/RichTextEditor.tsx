@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { CSSProperties } from 'react';
+import { KeyboardEvent, useCallback, useMemo } from 'react';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { Plate, PlateContent, TEditableProps } from '@udecode/plate-core';
 import { ContentReplacement } from './ContentReplacement';
@@ -12,11 +12,8 @@ import { GAP_DEFAULT, KEY_ELEMENT_BREAK_AFTER_COLUMN, PluginComposer, defaultPlu
 import { PaddingSizes, TreeOfNodes } from './types';
 import { parseRawValue } from './utils';
 import { BlurObserver } from '@components/RichTextEditor/BlurObserver';
-
-const PLACEHOLDER_STYLES: CSSProperties = {
-    position: 'relative',
-    height: '0',
-};
+import noop from 'lodash-es/noop';
+import { RenderPlaceholder } from './components/RenderPlaceholder';
 
 export type RichTextEditorProps = {
     id?: string;
@@ -39,7 +36,7 @@ export const RichTextEditor = ({
     id,
     value,
     placeholder = '',
-    readonly = false,
+    readonly: readOnly = false,
     onTextChange,
     onBlur,
     padding = PaddingSizes.None,
@@ -62,46 +59,42 @@ export const RichTextEditor = ({
     const breakAfterPlugin = plugins.plugins.find((plugin) => plugin.key === KEY_ELEMENT_BREAK_AFTER_COLUMN);
     const columns = breakAfterPlugin?.options?.columns ?? 1;
     const columnGap = breakAfterPlugin?.options?.gap ?? GAP_DEFAULT;
-    const editableProps: TEditableProps = {
-        placeholder,
-        renderPlaceholder: ({ children, attributes }) => {
-            const mergedAttributes = {
-                ...attributes,
-                style: {
-                    ...attributes.style,
-                    ...PLACEHOLDER_STYLES,
-                },
-            };
-            return <span {...mergedAttributes}>{children}</span>;
-        },
-        readOnly: readonly,
-        onBlur: () => onBlur && onBlur(JSON.stringify(localValue.current)),
-        className: `${padding}`,
-        style: {
+
+    const style = useMemo(
+        () => ({
             columns,
             columnGap,
             outline: 'none',
-        },
-        onKeyDown: (event) => {
-            if (event.code === 'Tab') {
-                forceToFocusNextElement(event, !event.shiftKey);
-            }
-        },
-        scrollSelectionIntoView: () => {
-            // We pass in an empty function here because we don't want the default scroll behaviour
-        },
+        }),
+        [columns, columnGap],
+    );
+
+    const onBlurHandler = useCallback(() => {
+        if (onBlur) {
+            onBlur(JSON.stringify(localValue.current));
+        }
+    }, [onBlur, localValue]);
+
+    const onKeyDownHandler = useCallback((event: KeyboardEvent<HTMLDivElement>) => {
+        if (event.code === 'Tab') {
+            forceToFocusNextElement(event, !event.shiftKey);
+        }
+    }, []);
+
+    const editableProps: TEditableProps = {
+        placeholder,
+        renderPlaceholder: RenderPlaceholder,
+        readOnly,
+        onBlur: onBlurHandler,
+        className: `${padding}`,
+        style,
+        onKeyDown: onKeyDownHandler,
+        scrollSelectionIntoView: noop,
     };
 
     return (
-        <RichTextEditorProvider
-            value={{
-                styles: config.styles(),
-                position,
-                border,
-                editorId,
-            }}
-        >
-            <Plate id={editorId} onChange={onChange} plugins={config.create()} initialValue={memoizedValue}>
+        <RichTextEditorProvider styles={config.styles()} position={position} border={border} editorId={editorId}>
+            <Plate id={editorId} onChange={onChange} plugins={config.plugins} initialValue={memoizedValue}>
                 <PlateContent {...editableProps} />
                 {!editableProps.readOnly && config.toolbar(toolbarWidth)}
                 {config.inline()}
