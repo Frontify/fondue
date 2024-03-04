@@ -12,6 +12,7 @@ const Component = defineDocumentType(() => ({
     contentType: 'mdx',
     fields: {
         title: { type: 'string', required: true },
+        additionalExports: { type: 'string', required: false },
     },
     computedFields: {
         url: {

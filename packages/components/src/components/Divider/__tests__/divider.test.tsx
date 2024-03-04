@@ -3,7 +3,7 @@
 import { render } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { Divider, DividerHeight } from '../Divider';
+import { Divider } from '../Divider';
 
 const DEFAULT_COLOR_HEX = '#CCC';
 const COLOR_HEX = '#4065AE';
@@ -24,24 +24,24 @@ describe('Divider component', () => {
         expect(divider).toHaveStyle({ borderTopColor: COLOR_HEX });
     });
     it('should allow for the height to be set to Small', () => {
-        const { getByTestId } = render(<Divider height={DividerHeight.Small} />);
+        const { getByTestId } = render(<Divider height={"small"} />);
         const divider = getByTestId(DIVIDER_SELECTOR);
 
-        expect(divider).toHaveStyle({ height: DividerHeight.Small });
+        expect(divider).toHaveStyle({ height: 36 });
     });
 
     it('should allow for the height to be set to Medium', () => {
-        const { getByTestId } = render(<Divider height={DividerHeight.Medium} />);
+        const { getByTestId } = render(<Divider height={"medium"} />);
         const divider = getByTestId(DIVIDER_SELECTOR);
 
-        expect(divider).toHaveStyle({ height: DividerHeight.Medium });
+        expect(divider).toHaveStyle({ height: 60 });
     });
 
     it('should allow for the height to be set to Large', () => {
-        const { getByTestId } = render(<Divider height={DividerHeight.Large} />);
+        const { getByTestId } = render(<Divider height={"large"} />);
         const divider = getByTestId(DIVIDER_SELECTOR);
 
-        expect(divider).toHaveStyle({ height: DividerHeight.Large });
+        expect(divider).toHaveStyle({ height: 96 });
     });
 
     it('should allow for the divider border style to be dashed', () => {
