@@ -84,7 +84,7 @@ export default defineConfig({
             entry: ['./src/index.ts'],
             fileName: (format: string) => `[name].${format}.js`,
         },
-        outDir: "./dist/fondue",
+        outDir: './dist/fondue',
         sourcemap: true,
         minify: true,
         rollupOptions: {
