@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { defineDocumentType, makeSource } from 'contentlayer/source-files';
+import remarkGfm from 'remark-gfm';
 
 const EXCLUDES = ['node_modules', '.contentlayer', 'dist', 'package.json', 'tsconfig.json', 'tsconfig.node.json'];
 const FONDUE_COMPONENTS_PATH = 'node_modules/@frontify/fondue-components';
@@ -11,6 +12,7 @@ const Component = defineDocumentType(() => ({
     contentType: 'mdx',
     fields: {
         title: { type: 'string', required: true },
+        additionalExports: { type: 'string', required: false },
     },
     computedFields: {
         url: {
@@ -40,6 +42,9 @@ const sources: ReturnType<typeof makeSource> = makeSource({
     contentDirInclude: [FONDUE_COMPONENTS_PATH],
     contentDirExclude: [...EXCLUDES, ...EXCLUDES.map((path) => `${FONDUE_COMPONENTS_PATH}/${path}`)],
     documentTypes: [Component],
+    mdx: {
+        remarkPlugins: [remarkGfm],
+    },
 });
 
 export default sources;

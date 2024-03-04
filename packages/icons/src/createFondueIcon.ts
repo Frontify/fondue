@@ -10,7 +10,8 @@ import {
 } from 'react';
 
 import { defaultAttributes } from './constants';
-import { kebabCase } from './utilities/kebabCase';
+import { htmlKeysToJsxKeys } from './utilities/jsxKeyFormat';
+import { kebabCase } from './utilities/stringCasing';
 
 export type IconNode = [elementName: keyof ReactSVG, attrs: Record<string, string>, children?: IconNode][];
 
@@ -49,12 +50,17 @@ const iconSizeToNumber: Record<Exclude<FondueIconProps['size'], undefined>, Icon
     32: 32,
 };
 
-const renderIconNode = (iconNode: IconNode): ReturnType<typeof createElement>[] => {
+const renderIconNode = (iconNode: IconNode, iconName: string): ReturnType<typeof createElement>[] => {
     return iconNode.map(([tagName, attributes, children]) =>
         createElement(
             tagName,
-            attributes,
-            Array.isArray(children) && children.length > 0 ? children.map((item) => renderIconNode([item])) : [],
+            {
+                key: `${iconName}-${tagName}`,
+                ...(attributes ? htmlKeysToJsxKeys(attributes) : {}),
+            },
+            Array.isArray(children) && children.length > 0
+                ? children.map((item) => renderIconNode([item], `${iconName}-${tagName}`))
+                : [],
         ),
     );
 };
@@ -72,10 +78,11 @@ export const createFondueIcon = (iconName: string, iconNode: IconNode): FondueIc
                     height: iconSizeToNumber[size],
                     className: ['fondue', `fondue-${kebabCase(iconName)}`, className].filter(Boolean).join(' '),
                     'data-test-id': `fondue-icons-${kebabCase(iconName)}`,
+                    key: `fondue-icons-${kebabCase(iconName)}`,
                     ...rest,
                 },
                 [
-                    ...renderIconNode(iconNode),
+                    ...renderIconNode(iconNode, kebabCase(iconName)),
                     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                     ...(Array.isArray(children) ? children : [children]),
                 ],

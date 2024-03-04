@@ -1,0 +1,64 @@
+---
+title: Divider
+---
+
+## Usage
+
+```tsx
+<Divider />
+```
+
+## API
+
+### Props
+
+| Name     | Type                                          | Default               |
+| -------- | --------------------------------------------- | --------------------- |
+| `color`  | `color`                                       | `#CCC`                |
+| `style`  | `"solid" \| "dashed" \| "dotted" \| "noLine"` | `solid`               |
+| `height` | `DividerHeight`                               | `DividerHeight.Small` |
+
+### DividerHeight
+
+```ts
+export enum DividerHeight {
+    Small = '36px',
+    Medium = '60px',
+    Large = '96px',
+}
+```
+
+## Examples
+
+### Fully Featured
+
+```tsx
+<Divider color="#FF0000" style={'dashed'} height={'medium'} />
+```
+
+### Custom Color
+
+```tsx
+<Divider color="#FF0000" />
+```
+
+### Custom Style
+
+```tsx
+<>
+    <Divider style={'solid'} />
+    <Divider style={'dashed'} />
+    <Divider style={'dotted'} />
+    <Divider style={'noline'} />
+</>
+```
+
+### Custom Height
+
+```tsx
+<>
+    <Divider height={'small'} />
+    <Divider height={'medium'} />
+    <Divider height={'large'} />
+</>
+```
