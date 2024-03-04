@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import react from '@vitejs/plugin-react';
 import { build } from 'esbuild';
 import { Plugin, defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import tsConfigPaths from 'vite-tsconfig-paths';
-import react from '@vitejs/plugin-react';
 
 import { dependencies as dependenciesMap, peerDependencies as peerDependenciesMap } from './package.json';
 
@@ -81,9 +81,10 @@ export default defineConfig({
     plugins: [react(), tsConfigPaths(), dts({ insertTypesEntry: true, rollupTypes: true }), bundleIconsInDevPlugin()],
     build: {
         lib: {
-            entry: './src/index.ts',
+            entry: ['./src/index.ts'],
             fileName: (format: string) => `[name].${format}.js`,
         },
+        outDir: "./dist/fondue",
         sourcemap: true,
         minify: true,
         rollupOptions: {
