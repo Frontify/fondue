@@ -1,5 +1,11 @@
 # @frontify/fondue
 
+## 12.0.0-beta.410
+
+### Patch Changes
+
+- [#1729](https://github.com/Frontify/fondue/pull/1729) [`f38e4a8`](https://github.com/Frontify/fondue/commit/f38e4a8bd3f3bd01a2c51844301dac57b0f78e4e) Thanks [@SamCreasey](https://github.com/SamCreasey)! - perf(RichTextEditor): memoize props to reduce rendering times
+
 ## 12.0.0-beta.409
 
 ### Patch Changes
