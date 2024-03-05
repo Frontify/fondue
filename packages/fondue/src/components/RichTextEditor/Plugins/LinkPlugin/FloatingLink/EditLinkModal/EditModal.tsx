@@ -4,6 +4,7 @@ import { MouseEvent } from 'react';
 import IconPen16 from '@foundation/Icon/Generated/IconPen16';
 import IconTrashBin16 from '@foundation/Icon/Generated/IconTrashBin16';
 import { useRichTextEditorContext } from '@components/RichTextEditor/context';
+import { FloatingModalWrapper } from '@components/RichTextEditor/components';
 import { LINK_PLUGIN } from '../../id';
 import { useLinkOpenButtonState } from '@udecode/plate-link';
 import { getUrlFromLinkOrLegacyLink } from '@components/RichTextEditor/Plugins/LinkPlugin/utils';
@@ -24,7 +25,7 @@ export const EditModal = ({ editButtonProps, unlinkButtonProps }: EditModalProps
     const url = element ? getUrlFromLinkOrLegacyLink(element) : '';
 
     return (
-        <div data-test-id="floating-link-edit" className="tw-bg-white tw-rounded tw-shadow tw-p-4 tw-min-w-[400px]">
+        <FloatingModalWrapper data-test-id="floating-link-edit" padding="16px" minWidth="400px">
             <span data-test-id={'preview-link-flyout'} className="tw-flex tw-justify-between">
                 <span style={styles[LINK_PLUGIN]} className="tw-pointer-events-none">
                     {url}
@@ -49,6 +50,6 @@ export const EditModal = ({ editButtonProps, unlinkButtonProps }: EditModalProps
                     </button>
                 </span>
             </span>
-        </div>
+        </FloatingModalWrapper>
     );
 };

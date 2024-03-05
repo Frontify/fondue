@@ -2,7 +2,9 @@
 
 import { useEditorRef } from '@udecode/plate-core';
 import { floatingLinkActions, useFloatingLinkSelectors } from '@udecode/plate-link';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+
+import { FLOATING_MODAL_SELECTOR } from './components';
 
 export const BlurObserver = ({
     hideExternalFloatingModals,
@@ -11,6 +13,7 @@ export const BlurObserver = ({
 }) => {
     const editorRef = useEditorRef();
     const isFloatingLinkModalOpen = useFloatingLinkSelectors().isOpen(editorRef.id);
+    const [isBlurObserverActive, setIsBlurObserverActive] = useState(false);
 
     const collapseFloatingModals = useCallback(() => {
         if (isFloatingLinkModalOpen) {
@@ -27,35 +30,58 @@ export const BlurObserver = ({
     }, [editorRef, collapseFloatingModals]);
 
     useEffect(() => {
+        if (!isBlurObserverActive) {
+            return;
+        }
+
         const handleInteractWithOutside = (event: FocusEvent | MouseEvent) => {
             const richTextEditorSelector = `[data-editor-id='${editorRef.id}']`;
             const toolbarSelector = "[data-selector='toolbar-floating']";
             const modalSelector = '[data-is-underlay]';
-            const richTextEditorWrapper = document.querySelector<HTMLDivElement>(richTextEditorSelector);
-            const toolbarWrapper = document.querySelector<HTMLDivElement>(toolbarSelector);
-            const modalWrapper = document.querySelector<HTMLDivElement>(modalSelector);
+
             const targetElement = event.target as HTMLElement;
 
-            const isTargetInsideModal = modalWrapper?.contains(targetElement);
-            const isTargetInsideRichTextEditor = richTextEditorWrapper?.contains(targetElement);
-            const isTargetInsideRichTextEditorToolbar = toolbarWrapper?.contains(targetElement);
+            const isInsidePortalledModal = targetElement.closest(modalSelector);
+            const isInsideNonPortalledModal = targetElement.closest(FLOATING_MODAL_SELECTOR);
+            const isInsideRichTextEditor = targetElement.closest(richTextEditorSelector);
+            const isInsideRichTextEditorToolbar = targetElement.closest(toolbarSelector);
 
-            if (isTargetInsideRichTextEditorToolbar) {
+            if ((isInsideRichTextEditor && !isInsideNonPortalledModal) || isInsideRichTextEditorToolbar) {
                 collapseFloatingModals();
-            }
-
-            if (!isTargetInsideRichTextEditor && !isTargetInsideRichTextEditorToolbar && !isTargetInsideModal) {
+            } else if (!isInsideRichTextEditor && !isInsideRichTextEditorToolbar && !isInsidePortalledModal) {
                 collapseEverything();
+                setIsBlurObserverActive(false);
             }
         };
 
         document.addEventListener('pointerdown', handleInteractWithOutside);
         document.addEventListener('focusin', handleInteractWithOutside);
+
         return () => {
             document.removeEventListener('focusin', handleInteractWithOutside);
             document.removeEventListener('pointerdown', handleInteractWithOutside);
         };
-    }, [collapseEverything, collapseFloatingModals, editorRef.id]);
+    }, [collapseEverything, collapseFloatingModals, editorRef.id, isBlurObserverActive]);
+
+    /* Only activate blur observer when the user has focused the editor
+     to limit the number of active document event listeners */
+    useEffect(() => {
+        const richTextEditor = document.querySelector(`[data-editor-id='${editorRef.id}']`);
+
+        if (!richTextEditor) {
+            return;
+        }
+
+        const setupBlurObserver = () => {
+            setIsBlurObserverActive(true);
+        };
+
+        richTextEditor.addEventListener('focusin', setupBlurObserver);
+
+        return () => {
+            richTextEditor.removeEventListener('focusin', setupBlurObserver);
+        };
+    }, [editorRef.id]);
 
     return null;
 };
