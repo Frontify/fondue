@@ -4,6 +4,7 @@ import { ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
 import { Button } from '@components/Button/Button';
 import { Checkbox } from '@components/Checkbox';
 import { FormControl } from '@components/FormControl';
+import { FloatingModalWrapper } from '@components/RichTextEditor/components';
 import { TextInput } from '@components/TextInput';
 import IconCheckMark20 from '@foundation/Icon/Generated/IconCheckMark20';
 import { MouseEvent, ReactElement, ReactNode } from 'react';
@@ -34,7 +35,7 @@ export const InsertModal = ({
     testId,
     children,
 }: Props): ReactElement => (
-    <div data-test-id={testId} className="tw-bg-white tw-rounded tw-shadow tw-p-7 tw-min-w-[400px] tw-overflow-y-auto">
+    <FloatingModalWrapper data-test-id={testId} minWidth="400px" padding="28px">
         <FormControl
             label={{
                 children: 'Text',
@@ -87,5 +88,5 @@ export const InsertModal = ({
                 </Button>
             </div>
         </div>
-    </div>
+    </FloatingModalWrapper>
 );
