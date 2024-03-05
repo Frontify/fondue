@@ -1,5 +1,13 @@
 # @frontify/fondue
 
+## 12.0.0-beta.411
+
+### Patch Changes
+
+- [#1732](https://github.com/Frontify/fondue/pull/1732) [`7acb645`](https://github.com/Frontify/fondue/commit/7acb6454b5af1b3bd9e4e4a3497c5c2e650c2660) Thanks [@SamCreasey](https://github.com/SamCreasey)! - feat(RichTextEditor): `FloatingModalWrapper` component has been created. Use this when a custom plugin requires a flyout. An example of it's usage be found in `src/components/RichTextEditor/Plugins/LinkPlugin/FloatingLink/InsertLinkModal/InsertModal.tsx`
+
+  fix(RichTextEditor): The `BlurObserver` element has been updated to close floating modals when the user clicks inside the richTextEditor content. In addition, it will only be activated once the user has focused the editor, reducing the number of event listeners active on the page.
+
 ## 12.0.0-beta.410
 
 ### Patch Changes
