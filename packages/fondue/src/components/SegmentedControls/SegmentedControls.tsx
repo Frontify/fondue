@@ -17,11 +17,13 @@ export type IconItem = {
     icon: ReactElement<IconProps>;
     value?: string;
     ariaLabel: string;
+    disabled?: boolean;
 };
 
 export type TextOrNumberItem = {
     id: string;
     value: string | number;
+    disabled?: boolean;
 };
 
 export type SegmentSize = 'small' | 'medium';
@@ -88,7 +90,7 @@ const SegmentedControlsItem = forwardRef<HTMLDivElement, SegmentedControlsItemPr
             ref={ref}
             className={merge([
                 'tw-relative',
-                "after:tw-content-[''] after:tw-border-r after:tw-border-solid after:tw-border-line-strong after:tw-absolute after:tw-right-0 after:tw-h-full last:after:tw-hidden",
+                "after:tw-content-[''] after:tw-border-r after:tw-border-solid after:tw-border-line-x-strong after:tw-absolute after:tw-right-0 after:tw-h-[2.2rem] last:after:tw-hidden",
                 isFocusVisible && FOCUS_STYLE,
             ])}
         >
@@ -104,9 +106,11 @@ const SegmentedControlsItem = forwardRef<HTMLDivElement, SegmentedControlsItemPr
                 className={merge([
                     'tw-relative tw-w-full tw-py-2 tw-inline-flex tw-justify-center tw-items-center tw-font-sans tw-font-normal tw-h-full tw-text-center',
                     size === 'small' ? 'tw-px-2' : 'tw-px-4',
-                    isActive && !disabled ? 'tw-text-text' : 'tw-text-text-weak',
+                    isActive && !disabled
+                        ? 'tw-transition tw-ease-in-out tw-delay-300 tw-text-text tw-bg-base'
+                        : 'tw-text-text-weak',
                     disabled
-                        ? 'tw-text-box-disabled-inverse tw-bg-box-disabled hover:tw-cursor-not-allowed'
+                        ? 'tw-text-box-disabled-inverse tw-bg-box-disabled tw-h-[2.15rem] tw-rounded hover:tw-cursor-not-allowed tw-border-line-x-strong'
                         : 'hover:tw-text-text hover:tw-cursor-pointer',
                 ])}
             >
@@ -131,6 +135,7 @@ export const SegmentedControls = ({
     hugWidth = false,
     size,
 }: SegmentedControlsProps): ReactElement => {
+    const hasEnabledItems = useMemo(() => items.some((item) => !item.disabled), [items]);
     const id = useMemoizedId(propId);
     const groupProps = { onChange, value: activeItemId, label: ariaLabel, isDisabled: disabled };
     const radioGroupState = useRadioGroupState(groupProps);
@@ -142,7 +147,7 @@ export const SegmentedControls = ({
             <SegmentedControlsItem
                 id={id}
                 item={item}
-                disabled={disabled}
+                disabled={item.disabled ?? disabled}
                 radioGroupState={radioGroupState}
                 ref={(el) => (itemsRef.current[index] = el)}
                 key={`fondue-segmented-controls-${id}-item-${item.id}`}
@@ -150,7 +155,23 @@ export const SegmentedControls = ({
             />
         ));
     }, [items, id, disabled, radioGroupState, size]);
-    const selectedIndex = items.findIndex((item) => item.id === radioGroupState.selectedValue);
+
+    const selectedIndex = hasEnabledItems
+        ? items.findIndex((item, index) => {
+              const isActiveItem = item.id === radioGroupState.selectedValue;
+              if (item.disabled && isActiveItem) {
+                  if (index > 0) {
+                      const previousIndex = index - 1;
+                      radioGroupState.setSelectedValue(items[previousIndex].id);
+                  } else {
+                      const nextIndex = index + 1;
+                      radioGroupState.setSelectedValue(items[nextIndex].id);
+                  }
+              }
+              return isActiveItem;
+          })
+        : -1;
+
     const width = hugWidth ? '' : 'tw-w-full';
     const alignment = hugWidth ? 'tw-flex' : 'tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly';
     const isSmall = size === 'small';
@@ -195,30 +216,30 @@ export const SegmentedControls = ({
                 {...radioGroupProps}
                 data-test-id="fondue-segmented-controls"
                 className={merge([
-                    'tw-relative tw-h-9 tw-p-0 tw-border tw-border-solid tw-border-line-strong tw-m-0 tw-bg-base-alt tw-rounded tw-font-sans tw-text-s tw-select-none',
+                    'tw-relative tw-h-9 tw-p-0 tw-border tw-border-solid tw-border-line-strong tw-m-0 tw-bg-base-alt tw-rounded tw-font-sans tw-text-sm tw-select-none',
                     width,
                     alignment,
                 ])}
             >
-                <VisuallyHidden>
-                    <span {...labelProps}>{ariaLabel}</span>
-                </VisuallyHidden>
-                <motion.div
-                    aria-hidden="true"
-                    // div border is not included in width so it must be subtracted from translation.
-                    animate={activeBorderDimensions ?? { x: '0px', width: '0px' }}
-                    initial={false}
-                    transition={{ type: 'tween', duration: 0.3 }}
-                    hidden={!activeItemId}
-                    className={merge([
-                        'tw-absolute tw--inset-y-px tw-h-full tw-box-content tw-border tw-rounded tw-pointer-events-none',
-                        disabled
-                            ? 'tw-border-line-x-strong hover:tw-cursor-not-allowed'
-                            : 'tw-border-line-xx-strong tw-bg-base',
-                    ])}
-                />
                 {itemElements}
             </fieldset>
+            <VisuallyHidden>
+                <span {...labelProps}>{ariaLabel}</span>
+            </VisuallyHidden>
+            <motion.div
+                aria-hidden="true"
+                // div border is not included in width so it must be subtracted from translation.
+                animate={activeBorderDimensions ?? { x: '0px', width: '0px' }}
+                initial={false}
+                transition={{ type: 'tween', duration: 0.3 }}
+                hidden={!activeItemId}
+                className={merge([
+                    'tw-absolute tw-h-9 tw-box-content tw-border tw-rounded tw-pointer-events-none tw-top-[0.96rem]',
+                    disabled
+                        ? 'tw-border-line-x-strong hover:tw-cursor-not-allowed'
+                        : 'tw-border-line-xx-strong tw-bg-transparent',
+                ])}
+            />
         </div>
     );
 };
