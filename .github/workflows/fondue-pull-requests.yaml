@@ -90,6 +90,7 @@ jobs:
                   github_token: ${{ secrets.GITHUB_TOKEN }}
                   directory: packages/fondue/
                   build_script: pnpm run build
+                  package_manager: pnpm
     old-component-tests:
         name: Old Component Tests
         runs-on: ubuntu-latest
