@@ -17,11 +17,11 @@
     },
     "homepage": "https://github.com/Frontify/fondue",
     "packageManager": "pnpm@8.6.0",
-    "main": "dist/index.umd.js",
-    "unpkg": "dist/index.umd.js",
-    "jsdelivr": "dist/index.umd.js",
-    "module": "dist/index.es.js",
-    "types": "dist/index.d.ts",
+    "main": "dist/fondue/index.umd.js",
+    "unpkg": "dist/fondue/index.umd.js",
+    "jsdelivr": "dist/fondue/index.umd.js",
+    "module": "dist/fondue/index.es.js",
+    "types": "dist/fondue/index.d.ts",
     "sideEffects": false,
     "files": [
         "dist",
@@ -29,20 +29,26 @@
     ],
     "exports": {
         ".": {
-            "types": "./dist/index.d.ts",
-            "import": "./dist/index.es.js",
-            "require": "./dist/index.umd.js"
+            "types": "./dist/fondue/index.d.ts",
+            "import": "./dist/fondue/index.es.js",
+            "require": "./dist/fondue/index.umd.js"
+        },
+        "./components": {
+            "types": "./dist/fondue-components/index.d.ts",
+            "import": "./dist/fondue-components/fondueComponents.es.js",
+            "require": "./dist/fondue-components/fondueComponents.umd.js"
         },
         "./tailwind": "./tailwind.config.js",
-        "./style": "./dist/style.css",
-        "./styles": "./dist/style.css",
+        "./style": "./dist/fondue/style.css",
+        "./styles": "./dist/fondue/style.css",
         "./extractedThirdPartyStyles": "./dist/extractedThirdPartyStyles.css",
         "./dist/*": "./dist/*"
     },
     "scripts": {
-        "build": "pnpm clean && pnpm generate:icons && pnpm generate:componentsEnum && pnpm build:library && pnpm build:extractedThirdPartyStyles",
+        "build": "pnpm clean && pnpm generate:icons && pnpm generate:componentsEnum && pnpm build:library && pnpm build:components && pnpm build:extractedThirdPartyStyles",
         "build:extractedThirdPartyStyles": "concat src/components/**/*.css | postcss > dist/extractedThirdPartyStyles.css",
         "build:library": "vite build",
+        "build:components": "vite build --config fondueComponents.vite.config.ts",
         "build:storybook": "pnpm generate:icons && pnpm generate:componentsEnum && storybook build",
         "dev": "cross-env NODE_ENV=development pnpm dev:library",
         "dev:library": "vite build --emptyOutDir false --watch",
@@ -127,6 +133,7 @@
         "vite-tsconfig-paths": "^4.3.1"
     },
     "dependencies": {
+        "@frontify/fondue-components": "workspace:*",
         "@ctrl/tinycolor": "^4.0.3",
         "@dnd-kit/core": "^6.1.0",
         "@dnd-kit/modifiers": "^7.0.0",
