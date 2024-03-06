@@ -1,5 +1,11 @@
 # @frontify/fondue
 
+## 12.0.0-beta.413
+
+### Patch Changes
+
+- [#1739](https://github.com/Frontify/fondue/pull/1739) [`30bfe34`](https://github.com/Frontify/fondue/commit/30bfe3487ee2f121d83d13607c79089d70d57071) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: change classname order to avoid overwriting
+
 ## 12.0.0-beta.412
 
 ### Minor Changes

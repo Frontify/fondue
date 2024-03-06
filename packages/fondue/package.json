@@ -1,7 +1,7 @@
 {
     "name": "@frontify/fondue",
     "author": "Frontify Developers <developers@frontify.com>",
-    "version": "12.0.0-beta.412",
+    "version": "12.0.0-beta.413",
     "description": "Design system of Frontify",
     "type": "module",
     "repository": {
