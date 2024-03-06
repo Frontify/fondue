@@ -61,9 +61,9 @@ export const Grid = ({
                 'tw-grid',
                 bg,
                 color,
+                GetGapClassName(GAP_DIRECTIONS.GAP, spacing),
                 GetGapClassName(GAP_DIRECTIONS.GAP_X, spacingX),
                 GetGapClassName(GAP_DIRECTIONS.GAP_Y, spacingY),
-                GetGapClassName(GAP_DIRECTIONS.GAP, spacing),
             ])}
             style={{
                 width,
