@@ -1,0 +1,10 @@
+{
+    "files": [{
+        "path": "./dist/fondue-components/*.js",
+        "maxSize": "100kb",
+        "compression": "none"
+    }],
+    "defaultCompression": "gzip",
+    "bundlewatchServiceHost": "https://frontify.com/bundle-size"
+}
+
