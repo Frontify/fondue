@@ -79,10 +79,6 @@ jobs:
 
             - name: Typecheck code
               run: pnpm --stream --filter {packages/fondue} --filter {packages/components} --filter {packages/icons} typecheck
-    bundle-size:
-        name: Bundle Size
-        runs-on: ubuntu-latest
-        run: pnpm --stream --filter {packages/fondue} bundlewatch
 
     old-component-tests:
         name: Old Component Tests
