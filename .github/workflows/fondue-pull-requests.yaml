@@ -79,7 +79,17 @@ jobs:
 
             - name: Typecheck code
               run: pnpm --stream --filter {packages/fondue} --filter {packages/components} --filter {packages/icons} typecheck
-
+    size:
+        runs-on: ubuntu-latest
+        env:
+            CI_JOB_NUMBER: 1
+        steps:
+            - uses: actions/checkout@v1
+            - uses: andresz1/size-limit-action@v1
+              with:
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  directory: packages/fondue/
+                  package_manager: pnpm
     old-component-tests:
         name: Old Component Tests
         runs-on: ubuntu-latest
