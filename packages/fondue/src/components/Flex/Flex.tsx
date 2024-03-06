@@ -119,9 +119,9 @@ export const Flex = ({
             data-test-id={dataTestId}
             className={merge([
                 'tw-flex',
+                GetGapClassName(GAP_DIRECTIONS.GAP, spacing),
                 GetGapClassName(GAP_DIRECTIONS.GAP_X, spacingX),
                 GetGapClassName(GAP_DIRECTIONS.GAP_Y, spacingY),
-                GetGapClassName(GAP_DIRECTIONS.GAP, spacing),
                 directionMapping[direction],
                 wrapMapping[wrap],
                 justifyMapping[justify],

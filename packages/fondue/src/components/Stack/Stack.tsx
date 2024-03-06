@@ -106,9 +106,9 @@ export const Stack = ({
                 STACK_JUSTIFY_MAPPING[justify],
                 STACK_ALIGN_ITEMS_MAPPING[alignItems],
                 STACK_DIRECTION_MAPPING[direction],
+                GetGapClassName(GAP_DIRECTIONS.GAP, spacing),
                 GetGapClassName(GAP_DIRECTIONS.GAP_X, spacingX),
                 GetGapClassName(GAP_DIRECTIONS.GAP_Y, spacingY),
-                GetGapClassName(GAP_DIRECTIONS.GAP, spacing),
                 bg,
                 color,
             ])}
