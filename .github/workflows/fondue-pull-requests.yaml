@@ -112,11 +112,18 @@ jobs:
             - name: Setup pnpm cache
               uses: actions/cache@v3
               with:
-                  path: |
-                      ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
-                      ~/.cache/Cypress
-                  key: pnpm-with-cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-                  restore-keys: pnpm-with-cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+                  path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
+                  key: pnpm-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+                  restore-keys: |
+                      pnpm-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+
+            - name: Cache Cypress binary
+              uses: actions/cache@v3
+              with:
+                  path: ~/.cache/Cypress
+                  key: cypress-13.6.6-${{ runner.os }}-cypress-${{ hashFiles('**/pnpm-lock.yaml')}}
+                  restore-keys: |
+                      cypress-13.6.6-${{ runner.os }}-cypress-
 
             - name: Install dependencies
               run: pnpm install --frozen-lockfile
@@ -148,8 +155,19 @@ jobs:
                   node-version-file: ".nvmrc"
                   cache: "pnpm"
 
+            - name: Cache Cypress binary
+              uses: actions/cache@v3
+              with:
+                  path: ~/.cache/Cypress
+                  key: cypress-13.6.6-${{ runner.os }}-cypress-${{ hashFiles('**/pnpm-lock.yaml')}}
+                  restore-keys: |
+                      cypress-13.6.6-${{ runner.os }}-cypress-
+
             - name: Install dependencies
               run: pnpm install --frozen-lockfile
 
-            - name: Test code
+            - name: Unit Tests
               run: pnpm --stream --filter {packages/components} test
+
+            - name: Integration Tests
+              run: pnpm --stream --filter {packages/components} test:integ:ci

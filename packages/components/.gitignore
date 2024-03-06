@@ -24,3 +24,8 @@ dist-ssr
 *.sw?
 
 coverage
+
+# Cypress
+cypress/screenshots
+cypress/videos
+cypress/download
