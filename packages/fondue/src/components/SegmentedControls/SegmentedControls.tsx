@@ -168,41 +168,39 @@ export const SegmentedControls = ({
     const alignment = hugWidth ? 'tw-flex' : 'tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly';
 
     const getSliderX = useCallback(() => {
+        const dividerLineOffset = selectedIndex > 0 ? 1 : 0;
         const itemLeft = itemsRef.current[selectedIndex]?.getBoundingClientRect().left ?? 0;
         const containerLeft = itemContainerRef.current?.getBoundingClientRect().left ?? 0;
         const containerWidth = itemContainerRef.current?.offsetWidth ?? 0;
 
-        const distanceBetween = itemLeft - (containerLeft + 1);
+        const distanceBetween = itemLeft + dividerLineOffset - (containerLeft + 1);
         const left = (distanceBetween / containerWidth) * 100;
 
         return `${left}%`;
     }, [selectedIndex]);
 
     const getSliderWidth = useCallback(() => {
-        const widthInt = itemsRef.current[selectedIndex]?.offsetWidth ?? 0;
-        const containerWidth = itemContainerRef.current?.offsetWidth ?? 0;
+        const widthInt = itemsRef.current[selectedIndex]?.clientWidth ?? 0;
+        const containerWidth = itemContainerRef.current?.clientWidth ?? 0;
 
-        const percentage = (widthInt / (containerWidth - 2)) * 100;
+        console.log('widthInt', widthInt);
+        console.log('containerWidth', containerWidth);
 
-        return `${percentage}%`;
+        const percentage = (widthInt / containerWidth) * 100;
+
+        console.log(percentage);
+
+        return `calc(${percentage}% + 1px)`;
     }, [selectedIndex]);
 
     const setSliderDimensions = useCallback(() => {
-        const dimensions = itemsRef.current
-            ? { left: getSliderX(), width: getSliderWidth() }
-            : { left: '0%', width: '0px' };
-        setActiveBorderDimensions(dimensions);
+        setActiveBorderDimensions({ left: getSliderX(), width: getSliderWidth() });
     }, [getSliderWidth, getSliderX]);
 
     useEffect(() => {
         if (selectedIndex >= 0) {
             setSliderDimensions();
         }
-        window.addEventListener('resize', setSliderDimensions);
-
-        return () => {
-            window.removeEventListener('resize', setSliderDimensions);
-        };
     }, [selectedIndex, setSliderDimensions]);
 
     return (
@@ -224,12 +222,11 @@ export const SegmentedControls = ({
             {activeItemId && activeBorderDimensions && (
                 <motion.div
                     aria-hidden="true"
-                    // div border is not included in width so it must be subtracted from translation.
-                    animate={activeBorderDimensions ?? { left: '0%', width: '0%' }}
+                    animate={activeBorderDimensions}
                     initial={false}
                     transition={{ type: 'tween', duration: 0.3 }}
                     className={merge([
-                        'tw-absolute tw-h-9 tw-box-content tw-border tw-rounded tw-pointer-events-none tw--top-px',
+                        'tw-absolute tw-h-9 tw-box-border tw-border tw-rounded tw-pointer-events-none tw-top-0',
                         disabled
                             ? 'tw-border-line-x-strong hover:tw-cursor-not-allowed'
                             : 'tw-border-line-xx-strong tw-bg-transparent',
