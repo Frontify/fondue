@@ -11,7 +11,7 @@ import { dependencies as dependenciesMap, peerDependencies as peerDependenciesMa
 const peerDependencies = Object.keys(peerDependenciesMap);
 // TODO: review this approach to exclude all deps from the final bundles.
 // The filtering is used for an hotfix and is a temporary workaround until we have refined how to improve and stabilize the deps building
-const dependencies = Object.keys(dependenciesMap).filter((dependency) => !dependency.startsWith('@frontify/fondue'));
+const dependencies = Object.keys(dependenciesMap);
 
 export const globals = {
     react: 'React',
@@ -83,10 +83,9 @@ export default defineConfig({
     plugins: [react(), tsConfigPaths(), dts({ insertTypesEntry: true, rollupTypes: true }), bundleIconsInDevPlugin()],
     build: {
         lib: {
-            entry: ['./src/index.ts'],
+            entry: './src/index.ts',
             fileName: (format: string) => `[name].${format}.js`,
         },
-        outDir: './dist/fondue',
         sourcemap: true,
         minify: true,
         rollupOptions: {
