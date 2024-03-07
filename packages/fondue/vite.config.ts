@@ -9,7 +9,8 @@ import tsConfigPaths from 'vite-tsconfig-paths';
 import { dependencies as dependenciesMap, peerDependencies as peerDependenciesMap } from './package.json';
 
 const peerDependencies = Object.keys(peerDependenciesMap);
-const dependencies = Object.keys(dependenciesMap);
+const dependencies = Object.keys(dependenciesMap).filter((dependency) => !dependency.startsWith('@frontify/fondue'));
+
 
 export const globals = {
     react: 'React',
