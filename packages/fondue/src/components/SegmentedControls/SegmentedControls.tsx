@@ -173,26 +173,25 @@ export const SegmentedControls = ({
         if (activeItem && itemContainerRef.current) {
             const fieldsetRect = itemContainerRef.current.getBoundingClientRect();
             const activeItemRect = activeItem.getBoundingClientRect();
-            const nextItem = itemsRef.current[selectedIndex + 1];
-            const nextItemRect = nextItem ? nextItem.getBoundingClientRect() : null;
 
-            let left = ((activeItemRect.left - fieldsetRect.left) / fieldsetRect.width) * 100;
-            let width = (activeItemRect.width / fieldsetRect.width) * 100;
+            let left = activeItemRect.left - fieldsetRect.left;
+            let width = activeItemRect.width;
 
             // Adjust for borders
             if (selectedIndex === 0) {
                 // If it's the first item, cover the left border of the fieldset
-                left -= (1 / fieldsetRect.width) * 100;
-                width += (2 / fieldsetRect.width) * 100;
-            } else if (nextItemRect) {
-                // If it's not the last item, cover the left border of the next item
-                width += ((nextItemRect.left - activeItemRect.right + 1) / fieldsetRect.width) * 100;
+                left -= 1;
+                width += 2;
             } else {
-                // If it's the last item, cover the right border of the fieldset
-                width += ((fieldsetRect.right - activeItemRect.right) / fieldsetRect.width) * 100;
+                /* If it's the last item, cover the right border of the fieldset.
+                If it's not the last item, cover the left border of the next item */
+                width += 1;
             }
 
-            setActiveBorderDimensions({ width: `${width}%`, left: `${left}%` });
+            const widthPercentage = (width / fieldsetRect.width) * 100;
+            const leftPercentage = (left / fieldsetRect.width) * 100;
+
+            setActiveBorderDimensions({ width: `${widthPercentage}%`, left: `${leftPercentage}%` });
         }
     }, [activeItemId, selectedIndex]);
 
