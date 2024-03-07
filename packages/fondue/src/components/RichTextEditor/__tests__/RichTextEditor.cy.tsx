@@ -640,7 +640,7 @@ describe('RichTextEditor Component', () => {
             cy.get('[data-plugin-id="a"]').click();
             cy.get('[data-test-id="floating-link-insert"]').should('be.visible');
             cy.get('#outside').click({ force: true });
-            cy.get('[data-test-id="floating-link-insert"]').should('not.be.visible');
+            cy.get('[data-test-id="floating-link-insert"]').should('not.exist');
             cy.get(TOOLBAR_FLOATING).should('not.exist');
         });
     });
