@@ -1,15 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import react from '@vitejs/plugin-react';
 import { build } from 'esbuild';
 import { Plugin, defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import tsConfigPaths from 'vite-tsconfig-paths';
-import react from '@vitejs/plugin-react';
 
 import { dependencies as dependenciesMap, peerDependencies as peerDependenciesMap } from './package.json';
 
 const peerDependencies = Object.keys(peerDependenciesMap);
-const dependencies = Object.keys(dependenciesMap);
+// TODO: review this approach to exclude all deps from the final bundles.
+// The filtering is used for an hotfix and is a temporary workaround until we have refined how to improve and stabilize the deps building
+const dependencies = Object.keys(dependenciesMap).filter((dependency) => !dependency.startsWith('@frontify/fondue'));
 
 export const globals = {
     react: 'React',
@@ -81,9 +83,10 @@ export default defineConfig({
     plugins: [react(), tsConfigPaths(), dts({ insertTypesEntry: true, rollupTypes: true }), bundleIconsInDevPlugin()],
     build: {
         lib: {
-            entry: './src/index.ts',
+            entry: ['./src/index.ts'],
             fileName: (format: string) => `[name].${format}.js`,
         },
+        outDir: './dist/fondue',
         sourcemap: true,
         minify: true,
         rollupOptions: {
