@@ -11,7 +11,6 @@ import { dependencies as dependenciesMap, peerDependencies as peerDependenciesMa
 const peerDependencies = Object.keys(peerDependenciesMap);
 const dependencies = Object.keys(dependenciesMap).filter((dependency) => !dependency.startsWith('@frontify/fondue'));
 
-
 export const globals = {
     react: 'React',
     'react-dom': 'ReactDOM',
