@@ -8,11 +8,11 @@
     "@frontify/fondue-icons": "0.1.43"
   },
   "changesets": [
+    "big-clouds-type",
     "chilly-bananas-mix",
     "clever-wolves-guess",
     "cold-carrots-kiss",
     "curvy-books-rescue",
-    "fast-ties-crash",
     "five-chicken-jam",
     "gold-dragons-compare",
     "green-horses-scream",

@@ -1,5 +1,11 @@
 # @frontify/fondue
 
+## 12.0.0-beta.415
+
+### Patch Changes
+
+- [#1746](https://github.com/Frontify/fondue/pull/1746) [`b433069`](https://github.com/Frontify/fondue/commit/b4330693df2c76a1e7a9825e386e7d3bea765fdf) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: revert exporting of fondue-components
+
 ## 12.0.0-beta.414
 
 ### Patch Changes
