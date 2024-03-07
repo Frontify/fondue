@@ -85,15 +85,7 @@ const SegmentedControlsItem = forwardRef<HTMLDivElement, SegmentedControlsItemPr
     };
 
     return (
-        <div
-            key={item.id}
-            ref={ref}
-            className={merge([
-                'tw-relative',
-                "after:tw-content-[''] after:tw-border-r after:tw-border-solid after:tw-border-line-x-strong after:tw-absolute after:tw-right-0 after:tw-h-[2.2rem] last:after:tw-hidden",
-                isFocusVisible && FOCUS_STYLE,
-            ])}
-        >
+        <div key={item.id} ref={ref} className={merge(['tw-relative', isFocusVisible && FOCUS_STYLE])}>
             <VisuallyHidden>
                 <input {...inputProps} {...focusProps} data-test-id="fondue-segmented-controls-input" ref={inputRef} />
             </VisuallyHidden>
@@ -104,7 +96,7 @@ const SegmentedControlsItem = forwardRef<HTMLDivElement, SegmentedControlsItemPr
                 role="none"
                 data-test-id={getSegmentedControlsItemTestId()}
                 className={merge([
-                    'tw-relative tw-w-full tw-py-2 tw-inline-flex tw-justify-center tw-items-center tw-font-sans tw-font-normal tw-h-full tw-text-center',
+                    'tw-relative tw-w-full tw-py-1.5 tw-inline-flex tw-justify-center tw-items-center tw-font-sans tw-font-normal tw-h-full tw-text-center',
                     size === 'small' ? 'tw-px-2' : 'tw-px-4',
                     isActive && !disabled
                         ? 'tw-transition tw-ease-in-out tw-delay-300 tw-text-text tw-bg-base'
@@ -141,7 +133,8 @@ export const SegmentedControls = ({
     const radioGroupState = useRadioGroupState(groupProps);
     const { radioGroupProps, labelProps } = useRadioGroup(groupProps, radioGroupState);
     const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
-    const [activeBorderDimensions, setActiveBorderDimensions] = useState<{ x: string; width: string } | null>(null);
+    const itemContainerRef = useRef<HTMLFieldSetElement>(null);
+    const [activeBorderDimensions, setActiveBorderDimensions] = useState<{ left: string; width: string } | null>(null);
     const itemElements = useMemo(() => {
         return items.map((item, index) => (
             <SegmentedControlsItem
@@ -172,30 +165,32 @@ export const SegmentedControls = ({
           })
         : -1;
 
-    const width = hugWidth ? '' : 'tw-w-full';
     const alignment = hugWidth ? 'tw-flex' : 'tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly';
-    const isSmall = size === 'small';
-    const isLastElement = selectedIndex === itemsRef.current.length - 1;
 
     const getSliderX = useCallback(() => {
-        let translateX = hugWidth ? -1 : 0;
-        translateX -= isSmall && isLastElement ? 1 : 0;
-        for (let i = 0; i < selectedIndex; i++) {
-            translateX += itemsRef.current[i]?.clientWidth ?? 0;
-        }
+        const itemLeft = itemsRef.current[selectedIndex]?.getBoundingClientRect().left ?? 0;
+        const containerLeft = itemContainerRef.current?.getBoundingClientRect().left ?? 0;
+        const containerWidth = itemContainerRef.current?.offsetWidth ?? 0;
 
-        translateX -= isLastElement || hugWidth ? 0 : 1;
-        return `${translateX}px`;
-    }, [selectedIndex, isSmall, isLastElement, hugWidth]);
+        const distanceBetween = itemLeft - (containerLeft + 1);
+        const left = (distanceBetween / containerWidth) * 100;
+
+        return `${left}%`;
+    }, [selectedIndex]);
 
     const getSliderWidth = useCallback(() => {
-        const width = isSmall || hugWidth ? -1 : 0;
+        const widthInt = itemsRef.current[selectedIndex]?.offsetWidth ?? 0;
+        const containerWidth = itemContainerRef.current?.offsetWidth ?? 0;
 
-        return `${(itemsRef.current[selectedIndex]?.clientWidth ?? 0) + width}px`;
-    }, [selectedIndex, isSmall, hugWidth]);
+        const percentage = (widthInt / (containerWidth - 2)) * 100;
+
+        return `${percentage}%`;
+    }, [selectedIndex]);
 
     const setSliderDimensions = useCallback(() => {
-        const dimensions = itemsRef.current ? { x: getSliderX(), width: getSliderWidth() } : { x: '0px', width: '0px' };
+        const dimensions = itemsRef.current
+            ? { left: getSliderX(), width: getSliderWidth() }
+            : { left: '0%', width: '0px' };
         setActiveBorderDimensions(dimensions);
     }, [getSliderWidth, getSliderX]);
 
@@ -211,35 +206,36 @@ export const SegmentedControls = ({
     }, [selectedIndex, setSliderDimensions]);
 
     return (
-        <div className="tw-flex">
+        <div className={merge([hugWidth ? 'tw-inline-flex' : 'tw-flex', 'tw-relative'])}>
             <fieldset
                 {...radioGroupProps}
                 data-test-id="fondue-segmented-controls"
                 className={merge([
-                    'tw-relative tw-h-9 tw-p-0 tw-border tw-border-solid tw-border-line-strong tw-m-0 tw-bg-base-alt tw-rounded tw-font-sans tw-text-sm tw-select-none',
-                    width,
+                    'tw-relative tw-divide-x tw-divide-line-strong tw-w-full tw-h-9 tw-p-0 tw-border tw-border-solid tw-border-line-strong tw-m-0 tw-bg-base-alt tw-rounded tw-font-sans tw-text-sm tw-select-none',
                     alignment,
                 ])}
+                ref={itemContainerRef}
             >
                 {itemElements}
             </fieldset>
             <VisuallyHidden>
                 <span {...labelProps}>{ariaLabel}</span>
             </VisuallyHidden>
-            <motion.div
-                aria-hidden="true"
-                // div border is not included in width so it must be subtracted from translation.
-                animate={activeBorderDimensions ?? { x: '0px', width: '0px' }}
-                initial={false}
-                transition={{ type: 'tween', duration: 0.3 }}
-                hidden={!activeItemId}
-                className={merge([
-                    'tw-absolute tw-h-9 tw-box-content tw-border tw-rounded tw-pointer-events-none tw-top-[0.96rem]',
-                    disabled
-                        ? 'tw-border-line-x-strong hover:tw-cursor-not-allowed'
-                        : 'tw-border-line-xx-strong tw-bg-transparent',
-                ])}
-            />
+            {activeItemId && activeBorderDimensions && (
+                <motion.div
+                    aria-hidden="true"
+                    // div border is not included in width so it must be subtracted from translation.
+                    animate={activeBorderDimensions ?? { left: '0%', width: '0%' }}
+                    initial={false}
+                    transition={{ type: 'tween', duration: 0.3 }}
+                    className={merge([
+                        'tw-absolute tw-h-9 tw-box-content tw-border tw-rounded tw-pointer-events-none tw--top-px',
+                        disabled
+                            ? 'tw-border-line-x-strong hover:tw-cursor-not-allowed'
+                            : 'tw-border-line-xx-strong tw-bg-transparent',
+                    ])}
+                />
+            )}
         </div>
     );
 };
