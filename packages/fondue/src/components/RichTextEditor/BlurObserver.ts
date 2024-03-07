@@ -17,7 +17,7 @@ export const BlurObserver = ({
 
     const collapseFloatingModals = useCallback(() => {
         if (isFloatingLinkModalOpen) {
-            floatingLinkActions.reset();
+            floatingLinkActions.hide();
         }
         if (hideExternalFloatingModals) {
             hideExternalFloatingModals(editorRef.id);

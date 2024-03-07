@@ -2,4 +2,4 @@
 "@frontify/fondue": patch
 ---
 
-bundle fondue-components
+build: bundle fondue-components within fondue build

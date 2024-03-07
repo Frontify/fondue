@@ -1,5 +1,13 @@
 # @frontify/fondue
 
+## 12.0.0-beta.414
+
+### Patch Changes
+
+- [#1744](https://github.com/Frontify/fondue/pull/1744) [`17b7b7d`](https://github.com/Frontify/fondue/commit/17b7b7d354b5d2c1bb83cef44c34116dd1b46f07) Thanks [@noahwaldner](https://github.com/noahwaldner)! - build: bundle fondue-components within fondue build
+
+- [#1741](https://github.com/Frontify/fondue/pull/1741) [`b244528`](https://github.com/Frontify/fondue/commit/b244528576d9748c9d1b8e5665d0b3fd892dc2ed) Thanks [@SamCreasey](https://github.com/SamCreasey)! - fix: hide floating link
+
 ## 12.0.0-beta.413
 
 ### Patch Changes
