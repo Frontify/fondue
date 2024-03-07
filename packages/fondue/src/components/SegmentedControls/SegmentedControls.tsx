@@ -10,7 +10,7 @@ import { RadioGroupState, useRadioGroupState } from '@react-stately/radio';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { motion } from 'framer-motion';
-import { ReactElement, forwardRef, useEffect, useMemo, useRef, useState } from 'react';
+import { ReactElement, forwardRef, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 export type IconItem = {
     id: string;
@@ -132,9 +132,12 @@ export const SegmentedControls = ({
     const groupProps = { onChange, value: activeItemId, label: ariaLabel, isDisabled: disabled };
     const radioGroupState = useRadioGroupState(groupProps);
     const { radioGroupProps, labelProps } = useRadioGroup(groupProps, radioGroupState);
+
     const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
     const itemContainerRef = useRef<HTMLFieldSetElement>(null);
+
     const [activeBorderDimensions, setActiveBorderDimensions] = useState<{ left: string; width: string } | null>(null);
+
     const itemElements = useMemo(() => {
         return items.map((item, index) => (
             <SegmentedControlsItem
@@ -167,7 +170,7 @@ export const SegmentedControls = ({
 
     const alignment = hugWidth ? 'tw-flex' : 'tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly';
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         const activeItem = itemsRef.current[selectedIndex];
 
         if (activeItem && itemContainerRef.current) {
@@ -193,7 +196,7 @@ export const SegmentedControls = ({
 
             setActiveBorderDimensions({ width: `${widthPercentage}%`, left: `${leftPercentage}%` });
         }
-    }, [activeItemId, selectedIndex]);
+    }, [activeItemId, selectedIndex, size]);
 
     return (
         <div className={merge([hugWidth ? 'tw-inline-flex' : 'tw-flex', 'tw-relative'])}>
