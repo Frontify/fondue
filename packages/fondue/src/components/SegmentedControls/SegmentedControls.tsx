@@ -10,7 +10,7 @@ import { RadioGroupState, useRadioGroupState } from '@react-stately/radio';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { motion } from 'framer-motion';
-import { ReactElement, forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ReactElement, forwardRef, useEffect, useMemo, useRef, useState } from 'react';
 
 export type IconItem = {
     id: string;
@@ -167,41 +167,34 @@ export const SegmentedControls = ({
 
     const alignment = hugWidth ? 'tw-flex' : 'tw-grid tw-grid-flow-col tw-auto-cols-fr tw-justify-evenly';
 
-    const getSliderX = useCallback(() => {
-        const dividerLineOffset = selectedIndex > 0 ? 1 : 0;
-        const itemLeft = itemsRef.current[selectedIndex]?.getBoundingClientRect().left ?? 0;
-        const containerLeft = itemContainerRef.current?.getBoundingClientRect().left ?? 0;
-        const containerWidth = itemContainerRef.current?.offsetWidth ?? 0;
-
-        const distanceBetween = itemLeft + dividerLineOffset - (containerLeft + 1);
-        const left = (distanceBetween / containerWidth) * 100;
-
-        return `${left}%`;
-    }, [selectedIndex]);
-
-    const getSliderWidth = useCallback(() => {
-        const widthInt = itemsRef.current[selectedIndex]?.clientWidth ?? 0;
-        const containerWidth = itemContainerRef.current?.clientWidth ?? 0;
-
-        console.log('widthInt', widthInt);
-        console.log('containerWidth', containerWidth);
-
-        const percentage = (widthInt / containerWidth) * 100;
-
-        console.log(percentage);
-
-        return `calc(${percentage}% + 1px)`;
-    }, [selectedIndex]);
-
-    const setSliderDimensions = useCallback(() => {
-        setActiveBorderDimensions({ left: getSliderX(), width: getSliderWidth() });
-    }, [getSliderWidth, getSliderX]);
-
     useEffect(() => {
-        if (selectedIndex >= 0) {
-            setSliderDimensions();
+        const activeItem = itemsRef.current[selectedIndex];
+
+        if (activeItem && itemContainerRef.current) {
+            const fieldsetRect = itemContainerRef.current.getBoundingClientRect();
+            const activeItemRect = activeItem.getBoundingClientRect();
+            const nextItem = itemsRef.current[selectedIndex + 1];
+            const nextItemRect = nextItem ? nextItem.getBoundingClientRect() : null;
+
+            let left = ((activeItemRect.left - fieldsetRect.left) / fieldsetRect.width) * 100;
+            let width = (activeItemRect.width / fieldsetRect.width) * 100;
+
+            // Adjust for borders
+            if (selectedIndex === 0) {
+                // If it's the first item, cover the left border of the fieldset
+                left -= (1 / fieldsetRect.width) * 100;
+                width += (2 / fieldsetRect.width) * 100;
+            } else if (nextItemRect) {
+                // If it's not the last item, cover the left border of the next item
+                width += ((nextItemRect.left - activeItemRect.right + 1) / fieldsetRect.width) * 100;
+            } else {
+                // If it's the last item, cover the right border of the fieldset
+                width += ((fieldsetRect.right - activeItemRect.right) / fieldsetRect.width) * 100;
+            }
+
+            setActiveBorderDimensions({ width: `${width}%`, left: `${left}%` });
         }
-    }, [selectedIndex, setSliderDimensions]);
+    }, [activeItemId, selectedIndex]);
 
     return (
         <div className={merge([hugWidth ? 'tw-inline-flex' : 'tw-flex', 'tw-relative'])}>
