@@ -18,12 +18,15 @@
         "node": ">=18"
     },
     "scripts": {
+        "install:playwright": "playwright install",
         "lint": "eslint .",
         "lint:fix": "eslint --fix .",
         "typecheck": "tsc --noEmit",
         "test": "vitest run --coverage",
         "test:ui": "vitest --ui",
-        "test:watch": "vitest"
+        "test:watch": "vitest",
+        "test:integ": "playwright test --ui -c playwright-ct.config.ts",
+        "test:integ:ci": "playwright test -c playwright-ct.config.ts"
     },
     "peerDependencies": {
         "react": "^18"
@@ -32,7 +35,8 @@
         "@frontify/fondue-tokens": "3.4.0"
     },
     "devDependencies": {
-        "@frontify/eslint-config-react": "0.17.1",
+        "@frontify/eslint-config-react": "0.17.0",
+        "@playwright/experimental-ct-react": "^1.42.1",
         "@tailwindcss/forms": "^0.5.7",
         "@testing-library/jest-dom": "^6.4.2",
         "@testing-library/react": "^14.2.2",
@@ -48,6 +52,7 @@
         "postcss-import": "^16.1.0",
         "prettier": "^3.2.5",
         "react": "^18.2.0",
+        "react-dom": "^18.2.0",
         "tailwindcss": "^3.4.1",
         "typescript": "^5.4.3",
         "vitest": "^1.4.0"
