@@ -1,5 +1,13 @@
 # @frontify/fondue
 
+## 12.0.0-beta.416
+
+### Patch Changes
+
+- [#1745](https://github.com/Frontify/fondue/pull/1745) [`93be3c9`](https://github.com/Frontify/fondue/commit/93be3c9d9c77c2d7e645e33aeb64b49aedb0d65e) Thanks [@SamCreasey](https://github.com/SamCreasey)! - fix(SegmentedControls): Update size calculations to prevent resizing glitches
+
+  fix(SegmentedControls): Remove initial motion.div that appears before position has been calculated
+
 ## 12.0.0-beta.415
 
 ### Patch Changes
