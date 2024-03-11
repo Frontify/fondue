@@ -190,7 +190,7 @@ WithFilterOption.args = {
             value: 'Checkbox label 3',
         },
     ],
-    emphasis: TriggerEmphasis.Weak,
+    emphasis: TriggerEmphasis.Default,
     filterable: true,
     filterLabel: 'Filter items',
 };
