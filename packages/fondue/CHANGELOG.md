@@ -1,5 +1,46 @@
 # @frontify/fondue
 
+## 12.0.0-beta.415
+
+### Patch Changes
+
+- [#1746](https://github.com/Frontify/fondue/pull/1746) [`b433069`](https://github.com/Frontify/fondue/commit/b4330693df2c76a1e7a9825e386e7d3bea765fdf) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: revert exporting of fondue-components
+
+## 12.0.0-beta.414
+
+### Patch Changes
+
+- [#1744](https://github.com/Frontify/fondue/pull/1744) [`17b7b7d`](https://github.com/Frontify/fondue/commit/17b7b7d354b5d2c1bb83cef44c34116dd1b46f07) Thanks [@noahwaldner](https://github.com/noahwaldner)! - build: bundle fondue-components within fondue build
+
+- [#1741](https://github.com/Frontify/fondue/pull/1741) [`b244528`](https://github.com/Frontify/fondue/commit/b244528576d9748c9d1b8e5665d0b3fd892dc2ed) Thanks [@SamCreasey](https://github.com/SamCreasey)! - fix: hide floating link
+
+## 12.0.0-beta.413
+
+### Patch Changes
+
+- [#1739](https://github.com/Frontify/fondue/pull/1739) [`30bfe34`](https://github.com/Frontify/fondue/commit/30bfe3487ee2f121d83d13607c79089d70d57071) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: change classname order to avoid overwriting
+
+## 12.0.0-beta.412
+
+### Minor Changes
+
+- [#1731](https://github.com/Frontify/fondue/pull/1731) [`ef0519d`](https://github.com/Frontify/fondue/commit/ef0519d8021204b280b65812c98686b4ce3b909e) Thanks [@noahwaldner](https://github.com/noahwaldner)! - added export for the new components in fondue
+
+### Patch Changes
+
+- [#1735](https://github.com/Frontify/fondue/pull/1735) [`4dc05a3`](https://github.com/Frontify/fondue/commit/4dc05a354dec3c9510423aeb736ae9ecc722be27) Thanks [@fulopdaniel](https://github.com/fulopdaniel)! - fix(RTE): toolbar closes on safari
+
+- Updated dependencies [[`ef0519d`](https://github.com/Frontify/fondue/commit/ef0519d8021204b280b65812c98686b4ce3b909e)]:
+  - @frontify/fondue-components@0.1.0-beta.0
+
+## 12.0.0-beta.411
+
+### Patch Changes
+
+- [#1732](https://github.com/Frontify/fondue/pull/1732) [`7acb645`](https://github.com/Frontify/fondue/commit/7acb6454b5af1b3bd9e4e4a3497c5c2e650c2660) Thanks [@SamCreasey](https://github.com/SamCreasey)! - feat(RichTextEditor): `FloatingModalWrapper` component has been created. Use this when a custom plugin requires a flyout. An example of it's usage be found in `src/components/RichTextEditor/Plugins/LinkPlugin/FloatingLink/InsertLinkModal/InsertModal.tsx`
+
+  fix(RichTextEditor): The `BlurObserver` element has been updated to close floating modals when the user clicks inside the richTextEditor content. In addition, it will only be activated once the user has focused the editor, reducing the number of event listeners active on the page.
+
 ## 12.0.0-beta.410
 
 ### Patch Changes

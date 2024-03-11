@@ -193,7 +193,7 @@ export const GAP_DIRECTIONS: Record<GapDirectionKey, GapDirection> = {
 };
 
 const getMappedSpacingValue = (map: SpacingMapType, spacingValue: SpacingValue) => {
-    return SPACING_VALUES.includes(spacingValue) ? map[spacingValue] : map[0];
+    return SPACING_VALUES.includes(spacingValue) ? map[spacingValue] : '';
 };
 
 export const GetPaddingClassNames = (direction: PaddingDirection, padding?: SpacingValue): string => {
