@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PointerEvent, ReactElement, useCallback, useEffect, useState } from 'react';
+import { PointerEvent, ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 import { PopperPlacement } from '@components/Popper';
 import { merge } from '@utilities/merge';
 import { Z_INDEX_TOOLTIP } from '@utilities/dialogs/constants';
@@ -36,14 +36,16 @@ const formatTooltipText = (text: string) => {
     return text.split(lineBreakRegex).join('\n');
 };
 
-let timeoutId: number | undefined;
-const handleTimeout = (callback: () => void, delay: number) => {
-    if (timeoutId) {
-        window.clearTimeout(timeoutId);
+type TimeoutRef = {
+    current?: number;
+};
+const handleTimeout = (callback: () => void, delay: number, timeoutRef: TimeoutRef) => {
+    if (timeoutRef.current) {
+        window.clearTimeout(timeoutRef.current);
     }
 
     if (delay) {
-        timeoutId = window.setTimeout(callback, delay);
+        timeoutRef.current = window.setTimeout(callback, delay);
     } else {
         callback();
     }
@@ -70,20 +72,25 @@ export const Tooltip = ({
     zIndex = Z_INDEX_TOOLTIP,
     'data-test-id': dataTestId = 'fondue-tooltip',
 }: TooltipProps) => {
+    const timeoutRef = useRef<number | undefined>(undefined);
     const [open, setOpen] = useState(openOnMount);
     const [hasInteractiveElements, setHasInteractiveElements] = useState(false);
 
     const handleShowTooltip = () => {
         if (!disabled) {
-            handleTimeout(() => setOpen(true), enterDelay);
+            handleTimeout(() => setOpen(true), enterDelay, timeoutRef);
         }
     };
 
     const handleHideTooltip = useCallback(() => {
-        handleTimeout(() => {
-            setOpen(false);
-            clearTimeout(timeoutId);
-        }, leaveDelay);
+        handleTimeout(
+            () => {
+                setOpen(false);
+                window.clearTimeout(timeoutRef.current);
+            },
+            leaveDelay,
+            timeoutRef,
+        );
     }, [leaveDelay]);
 
     const { dismissibleElementRef } = useClickOutside<HTMLDivElement>(handleHideTooltip, []);
