@@ -1,5 +1,5 @@
 ---
-"@frontify/fondue": major
+"@frontify/fondue": minor
 ---
 
-fix(Tooltip): Replaced onmouse events with pointer events, to distinguish between devices.
+refactor(Tooltip): replaced `onMouse` events with `onPointer` events to distinguish between devices.
