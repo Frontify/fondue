@@ -36,14 +36,14 @@ const formatTooltipText = (text: string) => {
     return text.split(lineBreakRegex).join('\n');
 };
 
-let timeoutId: NodeJS.Timeout | undefined;
+let timeoutId: number | undefined;
 const handleTimeout = (callback: () => void, delay: number) => {
     if (timeoutId) {
-        clearTimeout(timeoutId);
+        window.clearTimeout(timeoutId);
     }
 
     if (delay) {
-        timeoutId = setTimeout(callback, delay);
+        timeoutId = window.setTimeout(callback, delay);
     } else {
         callback();
     }
