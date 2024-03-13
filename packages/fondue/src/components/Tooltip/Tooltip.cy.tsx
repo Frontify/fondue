@@ -17,7 +17,10 @@ describe('Tooltip Component', () => {
             </Tooltip>,
         );
         cy.get(TOOLTIP_TRIGGER).should('exist');
-        cy.get(TOOLTIP_TRIGGER).trigger('mouseover');
+        cy.get(TOOLTIP_TRIGGER).trigger('pointerover', {
+            eventConstructor: 'MouseEvent',
+            pointerType: 'mouse',
+        });
         cy.get(TOOLTIP_SELECTOR).should('exist');
         cy.get(TOOLTIP_SELECTOR).should('have.text', 'Hello There');
     });
@@ -32,7 +35,10 @@ describe('Tooltip Component', () => {
                 </Tooltip>,
             );
             cy.get(TOOLTIP_TRIGGER).should('exist');
-            cy.get(TOOLTIP_TRIGGER).trigger('mouseover');
+            cy.get(TOOLTIP_TRIGGER).trigger('pointerover', {
+                eventConstructor: 'MouseEvent',
+                pointerType: 'mouse',
+            });
             cy.get(TOOLTIP_SELECTOR).parent().should('have.attr', 'data-popper-placement', 'top');
         });
 
@@ -45,7 +51,10 @@ describe('Tooltip Component', () => {
                 </Tooltip>,
             );
             cy.get(TOOLTIP_TRIGGER).should('exist');
-            cy.get(TOOLTIP_TRIGGER).trigger('mouseover');
+            cy.get(TOOLTIP_TRIGGER).trigger('pointerover', {
+                eventConstructor: 'MouseEvent',
+                pointerType: 'mouse',
+            });
             cy.get(TOOLTIP_SELECTOR).parent().should('have.attr', 'data-popper-placement', 'bottom');
         });
 
@@ -58,7 +67,10 @@ describe('Tooltip Component', () => {
                 </Tooltip>,
             );
             cy.get(TOOLTIP_TRIGGER).should('exist');
-            cy.get(TOOLTIP_TRIGGER).trigger('mouseover');
+            cy.get(TOOLTIP_TRIGGER).trigger('pointerover', {
+                eventConstructor: 'MouseEvent',
+                pointerType: 'mouse',
+            });
             cy.get(TOOLTIP_SELECTOR).parent().should('have.attr', 'data-popper-placement', 'right');
         });
 
@@ -71,7 +83,10 @@ describe('Tooltip Component', () => {
                 </Tooltip>,
             );
             cy.get(TOOLTIP_TRIGGER).should('exist');
-            cy.get(TOOLTIP_TRIGGER).trigger('mouseover');
+            cy.get(TOOLTIP_TRIGGER).trigger('pointerover', {
+                eventConstructor: 'MouseEvent',
+                pointerType: 'mouse',
+            });
             cy.get(TOOLTIP_SELECTOR).parent().should('have.attr', 'data-popper-placement', 'left');
         });
 
@@ -84,7 +99,10 @@ describe('Tooltip Component', () => {
                 </Tooltip>,
             );
             cy.get(TOOLTIP_TRIGGER).should('exist');
-            cy.get(TOOLTIP_TRIGGER).trigger('mouseover');
+            cy.get(TOOLTIP_TRIGGER).trigger('pointerover', {
+                eventConstructor: 'MouseEvent',
+                pointerType: 'mouse',
+            });
             cy.get(TOOLTIP_SELECTOR).parent().should('have.attr', 'data-popper-placement', 'bottom-start');
         });
 
@@ -97,7 +115,10 @@ describe('Tooltip Component', () => {
                 </Tooltip>,
             );
             cy.get(TOOLTIP_TRIGGER).should('exist');
-            cy.get(TOOLTIP_TRIGGER).trigger('mouseover');
+            cy.get(TOOLTIP_TRIGGER).trigger('pointerover', {
+                eventConstructor: 'MouseEvent',
+                pointerType: 'mouse',
+            });
             cy.get(TOOLTIP_SELECTOR).parent().should('have.attr', 'data-popper-placement', 'bottom-end');
         });
     });
@@ -112,7 +133,10 @@ describe('Tooltip Component', () => {
                 </Tooltip>,
             );
             cy.get(TOOLTIP_TRIGGER).should('exist');
-            cy.get(TOOLTIP_TRIGGER).trigger('mouseover');
+            cy.get(TOOLTIP_TRIGGER).trigger('pointerover', {
+                eventConstructor: 'MouseEvent',
+                pointerType: 'mouse',
+            });
             cy.get(TOOLTIP_SELECTOR).parent().should('have.attr', 'data-popper-placement', 'bottom');
         });
 
@@ -125,7 +149,10 @@ describe('Tooltip Component', () => {
                 </Tooltip>,
             );
             cy.get(TOOLTIP_TRIGGER).should('exist');
-            cy.get(TOOLTIP_TRIGGER).trigger('mouseover');
+            cy.get(TOOLTIP_TRIGGER).trigger('pointerover', {
+                eventConstructor: 'MouseEvent',
+                pointerType: 'mouse',
+            });
             cy.get(TOOLTIP_SELECTOR).parent().should('have.attr', 'data-popper-placement', 'top');
         });
     });
@@ -140,7 +167,10 @@ describe('Tooltip Component', () => {
                 </Tooltip>,
             );
             cy.get(TOOLTIP_TRIGGER).should('exist');
-            cy.get(TOOLTIP_TRIGGER).trigger('mouseover');
+            cy.get(TOOLTIP_TRIGGER).trigger('pointerover', {
+                eventConstructor: 'MouseEvent',
+                pointerType: 'mouse',
+            });
             cy.get(TOOLTIP_SELECTOR).should('not.exist');
         });
 
@@ -165,7 +195,10 @@ describe('Tooltip Component', () => {
                 </Tooltip>,
             );
             cy.get(TOOLTIP_TRIGGER).should('exist');
-            cy.get(TOOLTIP_TRIGGER).trigger('mouseover');
+            cy.get(TOOLTIP_TRIGGER).trigger('pointerover', {
+                eventConstructor: 'MouseEvent',
+                pointerType: 'mouse',
+            });
             cy.get(TOOLTIP_SELECTOR).should('not.exist');
             cy.wait(2000);
             cy.get(TOOLTIP_SELECTOR).should('exist');
@@ -180,7 +213,10 @@ describe('Tooltip Component', () => {
                 </Tooltip>,
             );
             cy.get(TOOLTIP_TRIGGER).should('exist');
-            cy.get(TOOLTIP_TRIGGER).trigger('mouseover');
+            cy.get(TOOLTIP_TRIGGER).trigger('pointerover', {
+                eventConstructor: 'MouseEvent',
+                pointerType: 'mouse',
+            });
             cy.get(TOOLTIP_SELECTOR).should('exist');
             cy.get(TOOLTIP_TRIGGER).trigger('mouseleave');
             cy.get(TOOLTIP_SELECTOR).should('exist');
@@ -199,7 +235,10 @@ describe('Tooltip Component', () => {
                 </Tooltip>,
             );
             cy.get(TOOLTIP_TRIGGER).should('exist');
-            cy.get(TOOLTIP_TRIGGER).trigger('mouseover');
+            cy.get(TOOLTIP_TRIGGER).trigger('pointerover', {
+                eventConstructor: 'MouseEvent',
+                pointerType: 'mouse',
+            });
             cy.get(TOOLTIP_ARROW).should('exist');
         });
 
@@ -212,7 +251,10 @@ describe('Tooltip Component', () => {
                 </Tooltip>,
             );
             cy.get(TOOLTIP_TRIGGER).should('exist');
-            cy.get(TOOLTIP_TRIGGER).trigger('mouseover');
+            cy.get(TOOLTIP_TRIGGER).trigger('pointerover', {
+                eventConstructor: 'MouseEvent',
+                pointerType: 'mouse',
+            });
             cy.get(TOOLTIP_ARROW).should('not.exist');
         });
 
@@ -225,7 +267,10 @@ describe('Tooltip Component', () => {
                 </Tooltip>,
             );
             cy.get(TOOLTIP_TRIGGER).should('exist');
-            cy.get(TOOLTIP_TRIGGER).trigger('mouseover');
+            cy.get(TOOLTIP_TRIGGER).trigger('pointerover', {
+                eventConstructor: 'MouseEvent',
+                pointerType: 'mouse',
+            });
             cy.get(TOOLTIP_SELECTOR).find('p').should('have.css', 'padding', '8px 12px 10px');
         });
 
@@ -238,7 +283,10 @@ describe('Tooltip Component', () => {
                 </Tooltip>,
             );
             cy.get(TOOLTIP_TRIGGER).should('exist');
-            cy.get(TOOLTIP_TRIGGER).trigger('mouseover');
+            cy.get(TOOLTIP_TRIGGER).trigger('pointerover', {
+                eventConstructor: 'MouseEvent',
+                pointerType: 'mouse',
+            });
             cy.get(TOOLTIP_SELECTOR).find('p').should('have.css', 'padding', '4px 8px 6px');
         });
 
@@ -251,7 +299,10 @@ describe('Tooltip Component', () => {
                 </Tooltip>,
             );
             cy.get(TOOLTIP_TRIGGER).should('exist');
-            cy.get(TOOLTIP_TRIGGER).trigger('mouseover');
+            cy.get(TOOLTIP_TRIGGER).trigger('pointerover', {
+                eventConstructor: 'MouseEvent',
+                pointerType: 'mouse',
+            });
             cy.get(TOOLTIP_SELECTOR).should('have.text', 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.');
             cy.get(TOOLTIP_SELECTOR).should('have.css', 'max-width', '200px');
         });
@@ -265,7 +316,10 @@ describe('Tooltip Component', () => {
                 </Tooltip>,
             );
             cy.get(TOOLTIP_TRIGGER).should('exist');
-            cy.get(TOOLTIP_TRIGGER).trigger('mouseover');
+            cy.get(TOOLTIP_TRIGGER).trigger('pointerover', {
+                eventConstructor: 'MouseEvent',
+                pointerType: 'mouse',
+            });
             cy.get(TOOLTIP_SELECTOR).should('have.text', 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.');
             cy.get(TOOLTIP_SELECTOR).should('have.css', 'max-width', '150px');
         });
@@ -279,9 +333,46 @@ describe('Tooltip Component', () => {
                 </Tooltip>,
             );
             cy.get(TOOLTIP_TRIGGER).should('exist');
-            cy.get(TOOLTIP_TRIGGER).trigger('mouseover');
+            cy.get(TOOLTIP_TRIGGER).trigger('pointerover', {
+                eventConstructor: 'MouseEvent',
+                pointerType: 'mouse',
+            });
             cy.get(TOOLTIP_SELECTOR).should('have.text', 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.');
             cy.get(TOOLTIP_SELECTOR).should('have.css', 'max-height', '50px');
+        });
+    });
+
+    describe('Pointer Events for touch devices', () => {
+        it('should not open tooltip on touch event', () => {
+            cy.mount(
+                <Tooltip content="No Touch" maxHeight={50}>
+                    <span data-test-id="tooltip-trigger">
+                        <IconIcon24 />
+                    </span>
+                </Tooltip>,
+            );
+            cy.get(TOOLTIP_TRIGGER).should('exist');
+            cy.get(TOOLTIP_TRIGGER).trigger('pointerover', {
+                eventConstructor: 'MouseEvent',
+                pointerType: 'touch',
+            });
+            cy.get(TOOLTIP_SELECTOR).should('not.exist');
+        });
+
+        it('should not open tooltip on pen event', () => {
+            cy.mount(
+                <Tooltip content="No Pen" maxHeight={50}>
+                    <span data-test-id="tooltip-trigger">
+                        <IconIcon24 />
+                    </span>
+                </Tooltip>,
+            );
+            cy.get(TOOLTIP_TRIGGER).should('exist');
+            cy.get(TOOLTIP_TRIGGER).trigger('pointerover', {
+                eventConstructor: 'MouseEvent',
+                pointerType: 'pen',
+            });
+            cy.get(TOOLTIP_SELECTOR).should('not.exist');
         });
     });
 });
