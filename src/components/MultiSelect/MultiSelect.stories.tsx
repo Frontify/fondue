@@ -174,3 +174,23 @@ WithWeakTriggerEmphasis.args = {
     placeholder: 'Weak emphasis placeholder text',
     emphasis: TriggerEmphasis.Weak,
 };
+
+export const WithFilterOption = MultiSelectTemplate.bind({});
+
+WithFilterOption.args = {
+    activeItemKeys: [],
+    items: [
+        {
+            value: 'Short tag',
+        },
+        {
+            value: 'Checkbox label 2',
+        },
+        {
+            value: 'Checkbox label 3',
+        },
+    ],
+    emphasis: TriggerEmphasis.Default,
+    filterable: true,
+    filterLabel: 'Filter items',
+};

@@ -11,7 +11,7 @@ import { Text } from '@typography/Text';
 import { EnablePortalWrapper } from '@utilities/dialogs/EnablePortalWrapper';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
-import { KeyboardEvent, ReactElement, ReactNode, useEffect, useId, useRef, useState } from 'react';
+import { ChangeEvent, KeyboardEvent, ReactElement, ReactNode, useEffect, useId, useRef, useState } from 'react';
 import { usePopper } from 'react-popper';
 import { getPaddingClasses, useClickOutside } from './helpers';
 
@@ -50,6 +50,8 @@ export type MultiSelectProps = {
     flip?: boolean;
     emphasis?: TriggerEmphasis;
     enablePortal?: boolean;
+    filterable?: boolean;
+    filterLabel?: string;
 };
 
 export type Item = {
@@ -78,6 +80,8 @@ export const MultiSelect = ({
     flip = false,
     emphasis = TriggerEmphasis.Default,
     enablePortal = true,
+    filterable = false,
+    filterLabel,
 }: MultiSelectProps): ReactElement => {
     const [open, setOpen] = useState(false);
     const [checkboxes, setCheckboxes] = useState<Item[]>([]);
@@ -130,7 +134,7 @@ export const MultiSelect = ({
     };
 
     const handleSpacebarToggle = (e: KeyboardEvent<HTMLDivElement>) => {
-        if (e.code === 'Space') {
+        if (e.code === 'Space' && document.activeElement !== filterInputRef.current) {
             toggleOpen();
         }
     };
@@ -140,6 +144,21 @@ export const MultiSelect = ({
             return TagType.Selected;
         }
         return TagType.SelectedWithFocus;
+    };
+
+    const handleFilterChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setCheckboxes(
+            items.reduce((acc: Item[], item) => {
+                if (
+                    item.isCategory ||
+                    item.isDivider ||
+                    item.value.toLowerCase().includes(e.currentTarget.value.toLowerCase())
+                ) {
+                    acc.push({ ...item, label: item.value });
+                }
+                return acc;
+            }, []),
+        );
     };
 
     useEffect(() => {
@@ -239,6 +258,14 @@ export const MultiSelect = ({
 
                             {activeItemKeys.length === 0 && placeholder && <Text color="weak">{placeholder}</Text>}
                         </div>
+                        {filterable && (
+                            <input
+                                ref={filterInputRef}
+                                className="focus:tw-outline-0 tw-text-s tw-bg-transparent"
+                                placeholder={activeItemKeys.length === 0 ? placeholder : filterLabel}
+                                onChange={handleFilterChange}
+                            />
+                        )}
                     </div>
                 </div>
             </Trigger>
