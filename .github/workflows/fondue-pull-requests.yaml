@@ -151,36 +151,11 @@ jobs:
             - name: Install dependencies
               run: pnpm install --frozen-lockfile
 
+            - name: Install Playwright Browsers
+              run: pnpm --stream --filter {packages/components} install:playwright
+
             - name: Unit Test
               run: pnpm --stream --filter {packages/components} test
 
-    playwright:
-        name: "Playwright Tests"
-        runs-on: ubuntu-latest
-        container:
-            image: mcr.microsoft.com/playwright:v1.42.1-jammy
-
-        steps:
-            - name: Checkout current commit
-              uses: actions/checkout@v4
-
-            - name: Use pnpm
-              uses: pnpm/action-setup@v2
-              with:
-                  version: latest
-                  run_install: false
-
-            - name: Use Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version-file: ".nvmrc"
-                  cache: "pnpm"
-
-            - name: Install dependencies
-              run: pnpm install --frozen-lockfile
-
-            - name: Install Playwright
-              run: pnpm --stream --filter {packages/components} --filter {packages/icons} install:playwright
-
             - name: Playwright Tests
-              run: pnpm --stream --filter {packages/components} test:integ:ci
+              run: pnpm --stream --filter {packages/components} test:playwright:ci
