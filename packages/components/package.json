@@ -18,18 +18,19 @@
         "node": ">=18"
     },
     "scripts": {
-        "install:playwright": "playwright install",
+        "install:playwright": "playwright install --with-deps",
         "lint": "eslint .",
         "lint:fix": "eslint --fix .",
         "typecheck": "tsc --noEmit",
         "test": "vitest run --coverage",
         "test:ui": "vitest --ui",
         "test:watch": "vitest",
-        "test:integ": "playwright test --ui -c playwright-ct.config.ts",
-        "test:integ:ci": "playwright test -c playwright-ct.config.ts"
+        "test:playwright": "playwright test --ui -c playwright.config.ts",
+        "test:playwright:ci": "playwright test -c playwright.config.ts"
     },
     "peerDependencies": {
-        "react": "^18"
+        "react": "^18",
+        "react-dom": "^18"
     },
     "dependencies": {
         "@frontify/fondue-tokens": "3.4.0"
