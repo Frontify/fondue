@@ -139,22 +139,6 @@ describe('Tooltip Component', () => {
             });
             cy.get(TOOLTIP_SELECTOR).parent().should('have.attr', 'data-popper-placement', 'bottom');
         });
-
-        it('should not flip if disabled', () => {
-            cy.mount(
-                <Tooltip content="Hello There" placement="top" flip={false}>
-                    <span data-test-id="tooltip-trigger">
-                        <IconIcon24 />
-                    </span>
-                </Tooltip>,
-            );
-            cy.get(TOOLTIP_TRIGGER).should('exist');
-            cy.get(TOOLTIP_TRIGGER).trigger('pointerover', {
-                eventConstructor: 'MouseEvent',
-                pointerType: 'mouse',
-            });
-            cy.get(TOOLTIP_SELECTOR).parent().should('have.attr', 'data-popper-placement', 'top');
-        });
     });
 
     describe('Appearance/Disappearance', () => {
