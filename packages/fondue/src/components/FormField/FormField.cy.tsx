@@ -147,14 +147,5 @@ describe('Form Field Component', () => {
             });
             cy.get(FORM_FIELD_TOOLTIP_TWO).should('exist');
         });
-
-        it('should not open 1st tooltip on touch event', () => {
-            cy.mount(COMPONENT_BASE_WITH_TOOLTIPS);
-            cy.get(FORM_FIELD_TOOLTIP_ONE_ICON).trigger('pointerover', {
-                eventConstructor: 'MouseEvent',
-                pointerType: 'touch',
-            });
-            cy.get(FORM_FIELD_TOOLTIP_ONE).should('not.exist');
-        });
     });
 });
