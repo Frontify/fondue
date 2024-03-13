@@ -151,7 +151,22 @@ jobs:
             - name: Install dependencies
               run: pnpm install --frozen-lockfile
 
+            - name: Playwright Version
+              run: |
+                  PLAYWRIGHT_VERSION=$(pnpm --stream --filter {packages/components} exec playwright --version | sed -n 's/Version \([0-9.]*\)/\1/p')
+                  echo "Playwright version: $PLAYWRIGHT_VERSION"
+                  echo "PLAYWRIGHT_VERSION=$PLAYWRIGHT_VERSION" >> $GITHUB_ENV
+
+            - name: Cache playwright binaries
+              uses: actions/cache@v3
+              id: playwright-cache-version
+              with:
+                  path: |
+                      ~/.cache/ms-playwright
+                  key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
+
             - name: Install Playwright Browsers
+              if: steps.playwright-cache-version.outputs.cache-hit != 'true'
               run: pnpm --stream --filter {packages/components} install:playwright
 
             - name: Unit Test
