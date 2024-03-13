@@ -260,6 +260,7 @@ export const MultiSelect = ({
                         </div>
                         {filterable && (
                             <input
+                                data-test-id="filter-input"
                                 ref={filterInputRef}
                                 className="focus:tw-outline-0 tw-text-s tw-bg-transparent"
                                 placeholder={activeItemKeys.length === 0 ? placeholder : filterLabel}

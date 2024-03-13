@@ -12,6 +12,7 @@ const TAG_ID = '[data-test-id=tag]';
 const TAG_CLOSE_BUTTON = '[data-test-id=tag-reject-icon]';
 const CHECKLIST_ID = '[data-test-id=checklist]';
 const EXCLAMATION_MARK_ICON_ID = '[data-test-id=error-state-exclamation-mark-icon]';
+const FILTER_INPUT = '[data-test-id=filter-input]';
 
 const ITEMS = {
     activeItemKeys: ['Short tag', 'Tag 74'],
@@ -41,12 +42,14 @@ type Props = {
     validation?: Validation;
     emphasis?: TriggerEmphasis;
     disabled?: boolean;
+    filterable?: boolean;
 };
 
 const Component = ({
     validation = Validation.Default,
     emphasis = TriggerEmphasis.Default,
     disabled = false,
+    filterable = false,
 }: Props) => {
     const [activeItems, setActiveItems] = useState<(string | number)[]>(ITEMS.activeItemKeys);
     return (
@@ -57,6 +60,7 @@ const Component = ({
             validation={validation}
             emphasis={emphasis}
             disabled={disabled}
+            filterable={filterable}
         />
     );
 };
@@ -114,5 +118,20 @@ describe('MultiSelect Component', () => {
     it('when disabled, should hide close buttons from tags', () => {
         cy.mount(<Component disabled={true} />);
         cy.get(TAG_CLOSE_BUTTON).should('not.exist');
+    });
+
+    it('will display input field as content of MultiSelect if filterable property is on', () => {
+        cy.mount(<Component filterable={true} />);
+        cy.get(TRIGGER_ID).click();
+        cy.get(FILTER_INPUT).should('exist');
+    });
+
+    it.only('will filter MultiSelect items based on input value', () => {
+        cy.mount(<Component filterable={true} />);
+        cy.get(TRIGGER_ID).click();
+        cy.get(FILTER_INPUT).type('checkbox label');
+        cy.get(CHECKLIST_ID).find(CHECKBOX_ID).should('have.length', 3);
+
+        cy.get(CHECKBOX_ID).first().contains('Checkbox label 1');
     });
 });
