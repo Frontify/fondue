@@ -191,6 +191,8 @@ WithFilterOption.args = {
         },
     ],
     emphasis: TriggerEmphasis.Default,
-    filterable: true,
-    filterLabel: 'Filter items',
+    filter: {
+        enabled: true,
+        label: 'Filter items',
+    },
 };

@@ -34,6 +34,16 @@ export type MultiSelectItem = {
     ariaLabel?: string;
 };
 
+type MultiSelectFilter =
+    | {
+          enabled: true;
+          label?: string;
+      }
+    | {
+          enabled: false;
+          label?: never;
+      };
+
 export type MultiSelectProps = {
     items: MultiSelectItem[];
     activeItemKeys: (string | number)[];
@@ -50,8 +60,7 @@ export type MultiSelectProps = {
     flip?: boolean;
     emphasis?: TriggerEmphasis;
     enablePortal?: boolean;
-    filterable?: boolean;
-    filterLabel?: string;
+    filter?: MultiSelectFilter;
 };
 
 export type Item = {
@@ -80,8 +89,9 @@ export const MultiSelect = ({
     flip = false,
     emphasis = TriggerEmphasis.Default,
     enablePortal = true,
-    filterable = false,
-    filterLabel,
+    filter = {
+        enabled: false,
+    },
 }: MultiSelectProps): ReactElement => {
     const [open, setOpen] = useState(false);
     const [checkboxes, setCheckboxes] = useState<Item[]>([]);
@@ -133,8 +143,8 @@ export const MultiSelect = ({
         onSelectionChange(Array.from(keySet));
     };
 
-    const handleSpacebarToggle = (e: KeyboardEvent<HTMLDivElement>) => {
-        if (e.code === 'Space' && document.activeElement !== filterInputRef.current) {
+    const handleSpacebarToggle = (event: KeyboardEvent<HTMLDivElement>) => {
+        if (event.code === 'Space' && document.activeElement !== filterInputRef.current) {
             toggleOpen();
         }
     };
@@ -146,15 +156,15 @@ export const MultiSelect = ({
         return TagType.SelectedWithFocus;
     };
 
-    const handleFilterChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const handleFilterChange = (event: ChangeEvent<HTMLInputElement>) => {
         setCheckboxes(
             items.reduce((acc: Item[], item) => {
                 if (
                     item.isCategory ||
                     item.isDivider ||
-                    item.value.toLowerCase().includes(e.currentTarget.value.toLowerCase())
+                    item.value.toLowerCase().includes(event.currentTarget.value.toLowerCase())
                 ) {
-                    acc.push({ ...item, label: item.value });
+                    return [...acc, { ...item, label: item.value }];
                 }
                 return acc;
             }, []),
@@ -258,12 +268,12 @@ export const MultiSelect = ({
 
                             {activeItemKeys.length === 0 && placeholder && <Text color="weak">{placeholder}</Text>}
                         </div>
-                        {filterable && (
+                        {filter.enabled && (
                             <input
                                 data-test-id="filter-input"
                                 ref={filterInputRef}
                                 className="tw-outline-none tw-bg-transparent tw-placeholder-black-60 tw-text-s"
-                                placeholder={activeItemKeys.length === 0 ? placeholder : filterLabel}
+                                placeholder={activeItemKeys.length === 0 ? placeholder : filter.label}
                                 onChange={handleFilterChange}
                             />
                         )}

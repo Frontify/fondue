@@ -60,7 +60,9 @@ const Component = ({
             validation={validation}
             emphasis={emphasis}
             disabled={disabled}
-            filterable={filterable}
+            filter={{
+                enabled: filterable,
+            }}
         />
     );
 };
@@ -126,7 +128,7 @@ describe('MultiSelect Component', () => {
         cy.get(FILTER_INPUT).should('exist');
     });
 
-    it.only('will filter MultiSelect items based on input value', () => {
+    it('will filter MultiSelect items based on input value', () => {
         cy.mount(<Component filterable={true} />);
         cy.get(TRIGGER_ID).click();
         cy.get(FILTER_INPUT).type('checkbox label');
