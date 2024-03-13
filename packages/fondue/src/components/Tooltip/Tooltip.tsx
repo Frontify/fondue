@@ -91,14 +91,14 @@ export const Tooltip = ({
     const focusAndMouseAttributes = {
         onBlur: handleHideTooltip,
         onFocus: handleShowTooltip,
-        onPointerLeave: (event: PointerEvent) => {
-            if (isPointerEventTypeMouse(event)) {
-                handleHideTooltip();
-            }
-        },
         onPointerEnter: (event: PointerEvent) => {
             if (isPointerEventTypeMouse(event)) {
                 handleShowTooltip();
+            }
+        },
+        onPointerLeave: (event: PointerEvent) => {
+            if (isPointerEventTypeMouse(event)) {
+                handleHideTooltip();
             }
         },
     };

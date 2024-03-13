@@ -117,27 +117,44 @@ describe('Form Field Component', () => {
         cy.get(FORM_FIELD_TEXT_INPUT).focused();
     });
 
-    it('should render tooltip', () => {
-        cy.mount(COMPONENT_BASE_WITH_TOOLTIPS);
-        cy.get(FORM_FIELD_TOOLTIP_ONE_ICON).should('exist');
-    });
+    describe('Tooltips', () => {
+        it('should render', () => {
+            cy.mount(COMPONENT_BASE_WITH_TOOLTIPS);
+            cy.get(FORM_FIELD_TOOLTIP_ONE_ICON).should('exist');
+        });
 
-    it('should render multiple tooltips', () => {
-        cy.mount(COMPONENT_BASE_WITH_TOOLTIPS);
-        cy.get(FORM_FIELD_LABEL).children().should('have.length', 2);
-        cy.get(FORM_FIELD_TOOLTIP_ONE_ICON).should('exist');
-        cy.get(FORM_FIELD_TOOLTIP_TWO_ICON).should('exist');
-    });
+        it('should render multiple', () => {
+            cy.mount(COMPONENT_BASE_WITH_TOOLTIPS);
+            cy.get(FORM_FIELD_LABEL).children().should('have.length', 2);
+            cy.get(FORM_FIELD_TOOLTIP_ONE_ICON).should('exist');
+            cy.get(FORM_FIELD_TOOLTIP_TWO_ICON).should('exist');
+        });
 
-    it('should open 1st tooltip dialog on hover', () => {
-        cy.mount(COMPONENT_BASE_WITH_TOOLTIPS);
-        cy.get(FORM_FIELD_TOOLTIP_ONE_ICON).trigger('mouseover');
-        cy.get(FORM_FIELD_TOOLTIP_ONE).should('exist');
-    });
+        it('should open 1st tooltip dialog on hover', () => {
+            cy.mount(COMPONENT_BASE_WITH_TOOLTIPS);
+            cy.get(FORM_FIELD_TOOLTIP_ONE_ICON).trigger('pointerover', {
+                eventConstructor: 'MouseEvent',
+                pointerType: 'mouse',
+            });
+            cy.get(FORM_FIELD_TOOLTIP_ONE).should('exist');
+        });
 
-    it('should open 2nd tooltip dialog on hover', () => {
-        cy.mount(COMPONENT_BASE_WITH_TOOLTIPS);
-        cy.get(FORM_FIELD_TOOLTIP_TWO_ICON).trigger('mouseover');
-        cy.get(FORM_FIELD_TOOLTIP_TWO).should('exist');
+        it('should open 2nd tooltip dialog on hover', () => {
+            cy.mount(COMPONENT_BASE_WITH_TOOLTIPS);
+            cy.get(FORM_FIELD_TOOLTIP_TWO_ICON).trigger('pointerover', {
+                eventConstructor: 'MouseEvent',
+                pointerType: 'mouse',
+            });
+            cy.get(FORM_FIELD_TOOLTIP_TWO).should('exist');
+        });
+
+        it('should not open 1st tooltip on touch event', () => {
+            cy.mount(COMPONENT_BASE_WITH_TOOLTIPS);
+            cy.get(FORM_FIELD_TOOLTIP_ONE_ICON).trigger('pointerover', {
+                eventConstructor: 'MouseEvent',
+                pointerType: 'touch',
+            });
+            cy.get(FORM_FIELD_TOOLTIP_ONE).should('not.exist');
+        });
     });
 });
