@@ -2,4 +2,4 @@
 "@frontify/fondue": minor
 ---
 
-feat: add disabled prop for AssetInput
+feat: add `disabled` prop on the `AssetInput`
