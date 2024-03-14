@@ -84,7 +84,3 @@ Breaking Changes can be declared with a exclamation mark (!) after the type.
 -   SonarCloud checks the code base for its quality.
 -   Cypress tests are run to make sure, you're not breaking anything.
 
-### Merge Pull Request
-
-Make sure you choose "Squash and merge" when merging the PR into the `main` branch.
-You can find more about that [here](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/incorporating-changes-from-a-pull-request/about-pull-request-merges).
