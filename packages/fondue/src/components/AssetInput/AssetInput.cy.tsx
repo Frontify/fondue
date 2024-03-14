@@ -122,4 +122,21 @@ describe('MultiAssetPreview Component', () => {
         cy.get(ASSET_SINGLE_INPUT_ID).should('contain', 'Uploading').and('contain', 'Your Asset');
         cy.get(SPINNING_CIRCLE_ID).should('exist');
     });
+
+    it('renders the disabled state', () => {
+        const onLibraryClickStub = cy.stub().as('onLibraryClickStub');
+        const onUploadClickStub = cy.stub().as('onUploadClickStub');
+        cy.mount(
+            <AssetInput
+                size={AssetInputSize.Small}
+                disabled={true}
+                onLibraryClick={onLibraryClickStub}
+                onUploadClick={onUploadClickStub}
+            />,
+        );
+
+        cy.get(ASSET_PLACEHOLDER_UPLOAD_ID).find('[data-test-id="button"]').should('be.disabled');
+        cy.get(ASSET_PLACEHOLDER_UPLOAD_ID).find('input').should('be.disabled');
+        cy.get(ASSET_PLACEHOLDER_LIBRARY_ID).find('[data-test-id="button"]').should('be.disabled');
+    });
 });

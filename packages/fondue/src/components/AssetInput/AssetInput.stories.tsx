@@ -18,6 +18,13 @@ export default {
         onMultiAssetClick: {
             action: 'onMultiAssetClick',
         },
+        disabled: {
+            type: 'boolean',
+            table: {
+                type: { summary: 'boolean | undefined' },
+                defaultValue: { summary: false },
+            },
+        },
     },
     args: {
         size: AssetInputSize.Small,
@@ -25,6 +32,7 @@ export default {
         hideSize: false,
         hideExtension: false,
         numberOfLocations: 1,
+        disabled: false,
     },
 } as Meta<AssetInputProps>;
 

@@ -71,6 +71,7 @@ export type AssetInputProps = {
     onLibraryClick?: () => void;
     onMultiAssetClick?: () => void;
     acceptFileType?: string;
+    disabled?: boolean;
 };
 
 export const AssetInput = ({
@@ -85,6 +86,7 @@ export const AssetInput = ({
     onUploadClick,
     onMultiAssetClick,
     acceptFileType,
+    disabled = false,
 }: AssetInputProps): ReactElement => {
     const assetsLength = assets.length;
     const inputFile = useRef<HTMLInputElement | null>(null);
@@ -139,6 +141,7 @@ export const AssetInput = ({
                         onClick={onOpenFileUpload}
                         emphasis={ButtonEmphasis.Weak}
                         icon={<IconArrowCircleUp />}
+                        disabled={disabled}
                     >
                         Upload
                     </Button>
@@ -150,6 +153,7 @@ export const AssetInput = ({
                         accept={acceptFileType}
                         multiple={!!onMultiAssetClick}
                         onChange={onFileChange}
+                        disabled={disabled}
                     />
                 </div>
             )}
@@ -163,6 +167,7 @@ export const AssetInput = ({
                         onClick={onLibraryClick}
                         emphasis={ButtonEmphasis.Weak}
                         icon={<IconImageStack />}
+                        disabled={disabled}
                     >
                         Browse
                     </Button>
