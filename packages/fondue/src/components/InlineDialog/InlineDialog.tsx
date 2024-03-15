@@ -29,6 +29,7 @@ export const InlineDialog = ({
     autoHeight = false,
     roundedCorners = true,
     width = 360,
+    zIndex = Z_INDEX_MODAL,
 }: WithRequired<InlineDialogProps, 'handleClose'>) => {
     return (
         <Overlay
@@ -47,7 +48,7 @@ export const InlineDialog = ({
             handleClose={handleClose}
             role={modality === Modality.NonModal ? 'region' : 'dialog'}
             autoHeight={autoHeight}
-            zIndex={Z_INDEX_MODAL}
+            zIndex={zIndex}
             roundedCorners={roundedCorners}
             borderRadius="small"
             shadow="medium"
