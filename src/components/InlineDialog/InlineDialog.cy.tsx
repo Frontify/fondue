@@ -13,6 +13,7 @@ const INLINE_DIALOG_TRIGGER_SELECTOR = '[data-test-id=fondue-inlineDialog-trigge
 const INLINE_DIALOG_SELECTOR = '[data-test-id=fondue-inlineDialog-content]';
 const OUTSIDE_DIALOG_BUTTON = '[data-test-id=outside-button]';
 const INLINE_DIALOG_UNDERLAY = '[data-test-id=fondue-inlineDialog-underlay]';
+const INLINE_DIALOG_CONTENT = '[data-test-id=fondue-inlineDialog-content]';
 
 const InlineDialogComponent = (props: Omit<InlineDialogProps, 'open' | 'anchor' | 'handleClose'>) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -280,6 +281,14 @@ describe('InlineDialog Component', () => {
             cy.viewport(360, 745);
             cy.get(INLINE_DIALOG_TRIGGER_SELECTOR).children().eq(0).click();
             cy.get(INLINE_DIALOG_UNDERLAY).should('exist');
+        });
+    });
+
+    describe('Unsafe zIndex', () => {
+        it('renders with Unsafe custom zIndex', () => {
+            cy.mount(<InlineDialogComponent unsafe_zIndex={2020} />);
+            cy.get(INLINE_DIALOG_TRIGGER_SELECTOR).children().eq(0).click();
+            cy.get(INLINE_DIALOG_CONTENT).parent().should('have.css', 'z-index', '2020');
         });
     });
 });

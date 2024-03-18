@@ -48,6 +48,9 @@ export default {
             type: 'boolean',
         },
         zIndex: { table: { disable: true } },
+        unsafe_zIndex: {
+            type: 'number',
+        },
     },
 } as Meta<InlineDialogProps>;
 
