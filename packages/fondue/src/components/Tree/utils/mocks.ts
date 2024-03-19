@@ -3,11 +3,12 @@
 import { useEffect, useState } from 'react';
 import { TreeItemMultiselectProps, TreeItemProps } from '../types';
 
-export type TreeItemMock = TreeItemProps & {
-    id: string;
-    nodes?: TreeItemMock[];
-    numChildNodes?: number;
-};
+export type TreeItemMock = TreeItemMultiselectProps &
+    TreeItemProps & {
+        id: string;
+        nodes?: TreeItemMock[];
+        numChildNodes?: number;
+    };
 
 export type TreeItemMockMultiselect = TreeItemMultiselectProps & {
     id: string;
@@ -44,6 +45,7 @@ const testSubCategoryMock: TreeItemMock[] = [
         id: '1-2-3-2',
         label: 'SubItem 2',
         type: 'document-page',
+        isDisabled: true,
     },
     {
         id: '1-2-3-3',
