@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
+import { PointerEvent, ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 import { PopperPlacement } from '@components/Popper';
 import { merge } from '@utilities/merge';
 import { Z_INDEX_TOOLTIP } from '@utilities/dialogs/constants';
@@ -36,21 +36,23 @@ const formatTooltipText = (text: string) => {
     return text.split(lineBreakRegex).join('\n');
 };
 
-type TimeoutRef = {
-    current: NodeJS.Timeout | null;
-};
+const handleTimeout = (callback: () => void, delay: number, timeoutId: number | null) => {
+    let newTimeoutId = timeoutId;
 
-const handleTimeout = (callback: () => void, delay: number, timeoutRef: TimeoutRef) => {
-    if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
+    if (newTimeoutId) {
+        window.clearTimeout(newTimeoutId);
     }
 
-    if (delay) {
-        timeoutRef.current = setTimeout(callback, delay);
+    if (delay > 0) {
+        newTimeoutId = window.setTimeout(callback, delay);
     } else {
         callback();
     }
+
+    return newTimeoutId;
 };
+
+const isPointerEventTypeMouse = (event: PointerEvent): boolean => event.pointerType === 'mouse';
 
 export const Tooltip = ({
     id,
@@ -71,38 +73,40 @@ export const Tooltip = ({
     zIndex = Z_INDEX_TOOLTIP,
     'data-test-id': dataTestId = 'fondue-tooltip',
 }: TooltipProps) => {
+    const timeoutRef = useRef<number | null>(null);
     const [open, setOpen] = useState(openOnMount);
-    const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const [hasInteractiveElements, setHasInteractiveElements] = useState(false);
 
-    const handleHideTooltip = useCallback(() => {
-        handleTimeout(() => setOpen(false), leaveDelay, timeoutRef);
-    }, [disabled, leaveDelay, setOpen]);
-
-    const handleShowTooltip = useCallback(() => {
+    const handleShowTooltip = () => {
         if (!disabled) {
-            handleTimeout(() => setOpen(true), enterDelay, timeoutRef);
+            timeoutRef.current = handleTimeout(() => setOpen(true), enterDelay, timeoutRef.current);
         }
-    }, [disabled, enterDelay, setOpen]);
+    };
+
+    const handleHideTooltip = useCallback(() => {
+        timeoutRef.current = handleTimeout(() => setOpen(false), leaveDelay, timeoutRef.current);
+    }, [leaveDelay]);
 
     const { dismissibleElementRef } = useClickOutside<HTMLDivElement>(handleHideTooltip, []);
 
     const focusAndMouseAttributes = {
         onBlur: handleHideTooltip,
         onFocus: handleShowTooltip,
-        onMouseEnter: handleShowTooltip,
-        onMouseLeave: handleHideTooltip,
+        onPointerEnter: (event: PointerEvent) => {
+            if (isPointerEventTypeMouse(event)) {
+                handleShowTooltip();
+            }
+        },
+        onPointerLeave: (event: PointerEvent) => {
+            if (isPointerEventTypeMouse(event)) {
+                handleHideTooltip();
+            }
+        },
     };
 
     useEffect(() => {
         setHasInteractiveElements(checkIfContainInteractiveElements(dismissibleElementRef.current));
     }, [dismissibleElementRef]);
-
-    useEffect(() => {
-        if (timeoutRef.current && !open) {
-            clearTimeout(timeoutRef.current);
-        }
-    }, [open]);
 
     return (
         <>

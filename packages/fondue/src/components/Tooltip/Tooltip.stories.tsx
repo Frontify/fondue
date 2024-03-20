@@ -52,6 +52,18 @@ const Template: StoryFn<TooltipProps> = (args) => (
     </Tooltip>
 );
 
+const DoubleTooltipTemplate: StoryFn<TooltipProps> = (args) => (
+    <div>
+        <Tooltip {...args}>
+            <IconIcon24 />
+        </Tooltip>
+
+        <Tooltip {...args}>
+            <IconIcon24 />
+        </Tooltip>
+    </div>
+);
+
 export const Default = Template.bind({});
 Default.args = {
     leaveDelay: 0,
@@ -71,3 +83,5 @@ export const Disabled = Template.bind({});
 Disabled.args = {
     disabled: true,
 };
+
+export const DoubleTooltip = DoubleTooltipTemplate.bind({});
