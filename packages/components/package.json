@@ -25,7 +25,7 @@
     "test:ui": "vitest --ui",
     "test:watch": "vitest",
     "storybook": "storybook dev --no-open -p 6010",
-    "build-storybook": "storybook build"
+    "build:storybook": "storybook build"
   },
   "peerDependencies": {
     "react": "^18"
