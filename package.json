@@ -3,6 +3,7 @@
     "private": true,
     "type": "module",
     "scripts": {
+        "storybook": "pnpm --stream --parallel --filter {packages/**} storybook",
         "dev": "concurrently 'pnpm run watch:content' 'pnpm run dev:docs'",
         "dev:docs": "pnpm --stream --filter {docs} dev:docs",
         "watch:content": "chokidar 'packages/components/**/*.mdx' -c 'pnpm run dev:content'",

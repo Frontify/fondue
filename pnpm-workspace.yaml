@@ -1,4 +1,4 @@
 prefer-workspace-packages: true
 packages:
-    - 'packages/*'
-    - 'docs'
+    - "packages/*"
+    - "docs"
