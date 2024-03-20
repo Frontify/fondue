@@ -13,6 +13,7 @@
         "postcss.config.cjs",
         "package.json",
         "playwright.config.ts",
+        "playwright.percy.config.ts",
         "playwright"
     ]
 }
