@@ -21,7 +21,7 @@ import { SpinningCircle } from './SpinningCircle';
 
 export type SelectedAssetProps = Pick<
     AssetInputProps,
-    'actions' | 'isLoading' | 'size' | 'hideSize' | 'hideExtension'
+    'actions' | 'isLoading' | 'size' | 'hideSize' | 'hideExtension' | 'disabled'
 > & {
     asset: AssetType;
 };
@@ -33,15 +33,16 @@ export const SelectedAsset = ({
     isLoading,
     hideSize = false,
     hideExtension = false,
-}: Required<Omit<SelectedAssetProps, 'hideSize' | 'hideExtension'>> &
-    Pick<SelectedAssetProps, 'hideSize' | 'hideExtension'>): ReactElement => {
+    disabled = false,
+}: Required<Omit<SelectedAssetProps, 'hideSize' | 'hideExtension' | 'disabled'>> &
+    Pick<SelectedAssetProps, 'hideSize' | 'hideExtension' | 'disabled'>): ReactElement => {
     const menuId = useMemoizedId();
     const labelId = useMemoizedId();
     const buttonRef = useRef<HTMLButtonElement | null>(null);
     const menuState = useMenuTriggerState({ closeOnSelect: true });
     const { isOpen, focusStrategy } = menuState;
-    const { menuTriggerProps } = useMenuTrigger({}, menuState, buttonRef);
-    const { buttonProps } = useButton(menuTriggerProps, buttonRef);
+    const { menuTriggerProps } = useMenuTrigger({ isDisabled: disabled }, menuState, buttonRef);
+    const { buttonProps } = useButton({ ...menuTriggerProps, isDisabled: disabled }, buttonRef);
     const { isFocusVisible, focusProps } = useFocusRing();
     const overlayRef = useRef<HTMLDivElement | null>(null);
     const { overlayProps } = useOverlay(

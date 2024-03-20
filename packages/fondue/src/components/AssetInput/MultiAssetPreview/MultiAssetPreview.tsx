@@ -15,13 +15,19 @@ export type MultiAssetPreviewProps = {
     numberOfLocations: number;
     assets: AssetType[];
     onClick: () => void;
+    disabled: boolean;
 };
 
 // const FOCUS_STYLE = "tw-border-black-90 dark:tw-border-black-10";
 
-export const MultiAssetPreview = ({ numberOfLocations, assets, onClick }: MultiAssetPreviewProps): ReactElement => {
+export const MultiAssetPreview = ({
+    numberOfLocations,
+    assets,
+    onClick,
+    disabled = false,
+}: MultiAssetPreviewProps): ReactElement => {
     const buttonRef = useRef<HTMLButtonElement | null>(null);
-    const { buttonProps } = useButton({ onPress: onClick }, buttonRef);
+    const { buttonProps } = useButton({ onPress: onClick, isDisabled: disabled }, buttonRef);
     const { isFocusVisible, focusProps } = useFocusRing();
     const assetsLength = assets.length;
 
@@ -33,7 +39,7 @@ export const MultiAssetPreview = ({ numberOfLocations, assets, onClick }: MultiA
                 ref={buttonRef}
                 className={merge([
                     'tw-flex tw-border tw-rounded hover:tw-border-black-90 dark:hover:tw-border-black-40 focus-visible:tw-outline-none dark:tw-text-white tw-mb-4 tw-w-full',
-                    isFocusVisible
+                    isFocusVisible && !disabled
                         ? `${FOCUS_STYLE} tw-border-black-90 dark:tw-border-black-10`
                         : 'tw-border-black-20 dark:tw-border-black-80',
                 ])}

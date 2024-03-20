@@ -115,12 +115,20 @@ export const AssetInput = ({
                 isLoading={isLoading}
                 hideExtension={hideExtension}
                 hideSize={hideSize}
+                disabled={disabled}
             />
         );
     }
 
     if (assetsLength > 1 && onMultiAssetClick) {
-        return <MultiAssetPreview assets={assets} onClick={onMultiAssetClick} numberOfLocations={numberOfLocations} />;
+        return (
+            <MultiAssetPreview
+                assets={assets}
+                onClick={onMultiAssetClick}
+                numberOfLocations={numberOfLocations}
+                disabled={disabled}
+            />
+        );
     }
 
     return (
