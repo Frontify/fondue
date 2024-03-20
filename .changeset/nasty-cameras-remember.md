@@ -2,4 +2,4 @@
 "@frontify/fondue": minor
 ---
 
-add `tabIndex` prop to `Button`
+feat(Button): add `tabIndex` prop
