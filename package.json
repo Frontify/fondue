@@ -3,7 +3,9 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "storybook": "pnpm --stream --parallel --filter {packages/**} storybook",
+        "storybook": "concurrently 'pnpm run storybook:new' 'pnpm run strorybook:main'",
+        "storybook:new": "pnpm --stream  --filter {packages/components} storybook",
+        "strorybook:main": "wait-on http://localhost:6010 && pnpm --stream  --filter {packages/fondue} storybook",
         "dev": "concurrently 'pnpm run watch:content' 'pnpm run dev:docs'",
         "dev:docs": "pnpm --stream --filter {docs} dev:docs",
         "watch:content": "chokidar 'packages/components/**/*.mdx' -c 'pnpm run dev:content'",
@@ -20,7 +22,8 @@
         "@changesets/cli": "^2.27.1",
         "chokidar-cli": "^3.0.0",
         "concurrently": "^8.2.2",
-        "glob": "^10.3.10"
+        "glob": "^10.3.10",
+        "wait-on": "^7.2.0"
     },
     "pnpm": {
         "patchedDependencies": {

@@ -58,7 +58,7 @@
         "test:browser": "cypress open --component",
         "test:file": "cypress run --component --spec",
         "typecheck": "tsc --noEmit",
-        "storybook": "storybook dev --no-open -p 6011",
+        "storybook": "storybook dev -p 6006",
         "ci": "pnpm install --frozen-lockfile"
     },
     "keywords": [

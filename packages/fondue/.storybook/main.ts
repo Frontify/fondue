@@ -22,4 +22,21 @@ export default <StorybookConfig>{
 
         return config;
     },
+    refs: (config, { configType }) => {
+        if (configType === 'DEVELOPMENT') {
+            return {
+                new: {
+                    title: 'New',
+                    url: 'http://localhost:6010',
+                    type: "auto-inject",
+                },
+            };
+        }
+        return {
+            new: {
+                title: 'New',
+                url: 'https://your-production-angular-storybook-url',
+            },
+        }
+    }
 };

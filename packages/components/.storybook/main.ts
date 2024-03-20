@@ -16,21 +16,6 @@ const config: StorybookConfig = {
     docs: {
         autodocs: 'tag',
     },
-    refs: (config, { configType }) => {
-        if (configType === 'DEVELOPMENT') {
-            return {
-                legacy: {
-                    title: 'Legacy',
-                    url: 'http://localhost:6011',
-                },
-            };
-        }
-        return {
-            legacy: {
-                title: 'Old Storybook',
-                url: 'https://your-production-angular-storybook-url',
-            },
-        }
-    }
+
 };
 export default config;
