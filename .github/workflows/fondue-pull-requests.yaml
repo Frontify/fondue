@@ -159,8 +159,3 @@ jobs:
 
             - name: Playwright Tests
               run: pnpm --stream --filter {packages/components} test:playwright:ci
-
-            - name: Percy Tests
-              run: pnpm --stream --filter {packages/components} test:percy
-              env:
-                  PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}

@@ -1,0 +1,49 @@
+name: Visual Regression
+
+env:
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
+
+on:
+    pull_request:
+        branches:
+            - main
+        types:
+            - labeled
+            - synchronize
+            - reopened
+            - ready_for_review
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        # Percy is only run when the PR is labeled with "percy"
+        # This is to avoid running Percy on every PR and every commit/push, which would be expensive
+        # Developers should apply the "percy" label once the CI is green and PR has been reviewed, as last QA step before merging
+        if: contains(github.event.pull_request.labels.*.name, 'percy')
+        timeout-minutes: 10
+
+        steps:
+            - name: Checkout current commit
+              uses: actions/checkout@v4
+
+            - name: Use pnpm
+              uses: pnpm/action-setup@v2
+              with:
+                  version: latest
+                  run_install: false
+
+            - name: Use Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version-file: ".nvmrc"
+                  cache: "pnpm"
+
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
+
+            - name: Install Playwright Browsers
+              run: pnpm --stream --filter {packages/components} install:playwright
+
+            - name: Percy Tests
+              run: pnpm --stream --filter {packages/components} test:percy
