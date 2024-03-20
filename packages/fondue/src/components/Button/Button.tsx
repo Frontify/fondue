@@ -51,6 +51,7 @@ export type ButtonProps = {
     /** @deprecated inverted can be done by wrapping the component in a className="tw-dark" */
     inverted?: boolean;
     'data-test-id'?: string;
+    tabIndex?: number;
 };
 
 const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, ButtonProps> = (
@@ -73,6 +74,7 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
         solid,
         inverted,
         'data-test-id': dataTestId = 'button',
+        tabIndex,
     },
     externalRef,
 ) => {
@@ -122,6 +124,7 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
             disabled={disabled}
             form={formId}
             title={title}
+            tabIndex={tabIndex}
             {...buttonProps}
             {...focusProps}
         >
