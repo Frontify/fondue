@@ -267,16 +267,17 @@ export const MultiSelect = ({
                             )}
 
                             {activeItemKeys.length === 0 && placeholder && <Text color="weak">{placeholder}</Text>}
+
+                            {filter.enabled && (
+                                <input
+                                    data-test-id="filter-input"
+                                    ref={filterInputRef}
+                                    className="tw-outline-none tw-bg-transparent tw-placeholder-black-60 tw-text-s"
+                                    placeholder={filter.label}
+                                    onChange={handleFilterChange}
+                                />
+                            )}
                         </div>
-                        {filter.enabled && (
-                            <input
-                                data-test-id="filter-input"
-                                ref={filterInputRef}
-                                className="tw-outline-none tw-bg-transparent tw-placeholder-black-60 tw-text-s"
-                                placeholder={filter.label}
-                                onChange={handleFilterChange}
-                            />
-                        )}
                     </div>
                 </div>
             </Trigger>
