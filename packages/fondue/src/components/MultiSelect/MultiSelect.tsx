@@ -164,6 +164,10 @@ export const MultiSelect = ({
                     item.isDivider ||
                     item.value.toLowerCase().includes(event.currentTarget.value.toLowerCase())
                 ) {
+                    if (indeterminateItemKeys?.includes(item.value)) {
+                        return [...acc, { ...item, label: item.value, state: CheckboxState.Mixed }];
+                    }
+
                     return [...acc, { ...item, label: item.value }];
                 }
                 return acc;
