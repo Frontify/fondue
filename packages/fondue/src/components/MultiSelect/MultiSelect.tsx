@@ -273,7 +273,7 @@ export const MultiSelect = ({
                                 data-test-id="filter-input"
                                 ref={filterInputRef}
                                 className="tw-outline-none tw-bg-transparent tw-placeholder-black-60 tw-text-s"
-                                placeholder={activeItemKeys.length === 0 ? placeholder : filter.label}
+                                placeholder={filter.label}
                                 onChange={handleFilterChange}
                             />
                         )}
