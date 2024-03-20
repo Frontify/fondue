@@ -156,6 +156,17 @@ jobs:
             - name: Test code
               run: pnpm --stream --filter {packages/components} test
 
+            - name: Install Playwright Browsers
+              run: pnpm --stream --filter {packages/components} install:playwright
+
+            - name: Playwright Tests
+              run: pnpm --stream --filter {packages/components} test:playwright:ci
+
+            - name: Percy Tests
+              run: pnpm --stream --filter {packages/components} test:percy
+              env:
+                  PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
+
     publish:
         name: Publish
         runs-on: ubuntu-latest
