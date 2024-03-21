@@ -12,7 +12,8 @@ const TAG_ID = '[data-test-id=tag]';
 const TAG_CLOSE_BUTTON = '[data-test-id=tag-reject-icon]';
 const CHECKLIST_ID = '[data-test-id=checklist]';
 const EXCLAMATION_MARK_ICON_ID = '[data-test-id=error-state-exclamation-mark-icon]';
-const FILTER_INPUT = '[data-test-id=fondue-text-input-component]';
+const FILTER_TEXT_COMPONENT_ID = '[data-test-id=fondue-text-input-component]';
+const FILTER_TEXT_INPUT_ID = '[data-test-id=text-input]';
 
 const ITEMS = {
     activeItemKeys: ['Short tag', 'Tag 74'],
@@ -125,13 +126,13 @@ describe('MultiSelect Component', () => {
     it('will display text input to search if filterable property is on', () => {
         cy.mount(<Component filterable={true} />);
         cy.get(TRIGGER_ID).click();
-        cy.get(FILTER_INPUT).should('exist');
+        cy.get(FILTER_TEXT_COMPONENT_ID).should('exist');
     });
 
     it('will filter MultiSelect items based on input value', () => {
         cy.mount(<Component filterable={true} />);
         cy.get(TRIGGER_ID).click();
-        cy.get(FILTER_INPUT).type('checkbox label');
+        cy.get(FILTER_TEXT_COMPONENT_ID).type('checkbox label');
         cy.get(CHECKLIST_ID).find(CHECKBOX_ID).should('have.length', 3);
 
         cy.get(CHECKBOX_ID).first().contains('Checkbox label 1');
@@ -141,12 +142,18 @@ describe('MultiSelect Component', () => {
         cy.mount(<Component filterable={true} />);
         cy.get(TRIGGER_ID).click();
 
-        cy.get(FILTER_INPUT).type('checkbox label');
+        cy.get(FILTER_TEXT_COMPONENT_ID).type('checkbox label');
         cy.get(CHECKLIST_ID).find(CHECKBOX_ID).should('have.length', 3);
 
         cy.get(TRIGGER_ID).click();
         cy.get(TRIGGER_ID).click();
-        cy.get(FILTER_INPUT).should('have.value', '');
+        cy.get(FILTER_TEXT_COMPONENT_ID).should('have.value', '');
         cy.get(CHECKLIST_ID).find(CHECKBOX_ID).should('have.length', 6);
+    });
+
+    it('filter input should have focus on mount', () => {
+        cy.mount(<Component filterable={true} />);
+        cy.get(TRIGGER_ID).click();
+        cy.get(FILTER_TEXT_INPUT_ID).should('have.focus');
     });
 });
