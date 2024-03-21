@@ -1,5 +1,11 @@
 # @frontify/fondue
 
+## 12.0.0-beta.418
+
+### Patch Changes
+
+- [#1758](https://github.com/Frontify/fondue/pull/1758) [`fc7fffc`](https://github.com/Frontify/fondue/commit/fc7fffc738d0a3559c214b5ecfe0e35295eb31ae) Thanks [@anxobotana](https://github.com/anxobotana)! - feat: disabled items unchecked on multiselect tree
+
 ## 12.0.0-beta.417
 
 ### Minor Changes
