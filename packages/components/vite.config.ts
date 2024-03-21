@@ -41,20 +41,13 @@ export default defineConfig({
                 ...Object.keys(pkg.dependencies ?? {}),
                 'react/jsx-runtime',
             ],
-            output: [
-                {
-                    format: 'es',
-                    name: 'FondueUI',
-                    preserveModulesRoot: join(__dirname, 'src'),
-                    preserveModules: true,
-                    globals,
-                },
-                {
-                    format: 'umd',
-                    name: 'FondueUI',
-                    globals,
-                },
-            ],
+            output: {
+                format: 'es',
+                name: 'FondueUI',
+                preserveModulesRoot: join(__dirname, 'src'),
+                preserveModules: true,
+                globals,
+            },
         },
     },
 });
