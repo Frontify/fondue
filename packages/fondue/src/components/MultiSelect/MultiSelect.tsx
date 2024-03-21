@@ -304,6 +304,7 @@ export const MultiSelect = ({
                                         placeholder={filter.label}
                                         clearable={true}
                                         onChange={handleFilterChange}
+                                        focusOnMount={true}
                                     />
                                 </div>
                             )}
