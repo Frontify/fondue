@@ -9,7 +9,7 @@ export type InlineDialogProps = Omit<
     OverlayProps,
     'theme' | 'isDetached' | 'verticalAlignment' | 'withArrow' | 'arrowCustomColors' | 'shadow' | 'isDialog'
 > &
-    Omit<BaseDialogProps, 'darkUnderlay'>;
+    Omit<BaseDialogProps, 'darkUnderlay'> & { unsafe_zIndex?: number };
 
 export const InlineDialog = ({
     children,
@@ -29,6 +29,12 @@ export const InlineDialog = ({
     autoHeight = false,
     roundedCorners = true,
     width = 360,
+    /**
+     * This property is used to override the default zIndex of the overlay.
+     * This is needed to support the legacy Terrific Modal, which dynamically compounds z-indexes to create a "stacked" modal approach.
+     * Once the legacy Terrific Modal is removed/refactored to a pre-determined set of z-indexes, this property can be removed as well.
+     */
+    unsafe_zIndex = Z_INDEX_MODAL,
 }: WithRequired<InlineDialogProps, 'handleClose'>) => {
     return (
         <Overlay
@@ -47,12 +53,12 @@ export const InlineDialog = ({
             handleClose={handleClose}
             role={modality === Modality.NonModal ? 'region' : 'dialog'}
             autoHeight={autoHeight}
-            zIndex={Z_INDEX_MODAL}
             roundedCorners={roundedCorners}
             borderRadius="small"
             shadow="medium"
             width={width}
             isDialog={true}
+            zIndex={unsafe_zIndex}
         >
             {children}
         </Overlay>
