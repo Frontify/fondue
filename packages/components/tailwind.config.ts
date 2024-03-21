@@ -12,6 +12,13 @@ export default {
             strategy: 'class',
         }),
     ],
+    corePlugins: {
+        /**
+         * Disable preflight to avoid conflicts with global styles
+         * TODO: there are several architectural conflicts with a Tailwind toolchain of libraries that needs to be resolved before we commit to use Tailwind in this package.
+         */
+        preflight: false,
+    },
     theme: {
         extend: {
             outline: {

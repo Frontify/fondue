@@ -4,7 +4,7 @@ import { defineDocumentType, makeSource } from 'contentlayer/source-files';
 import remarkGfm from 'remark-gfm';
 
 const EXCLUDES = ['node_modules', '.contentlayer', 'dist', 'package.json', 'tsconfig.json', 'tsconfig.node.json'];
-const FONDUE_COMPONENTS_PATH = 'node_modules/@frontify/fondue-components';
+const FONDUE_COMPONENTS_PATH = 'node_modules/@frontify/fondue-ui';
 
 const Component = defineDocumentType(() => ({
     name: 'Component',
