@@ -194,5 +194,6 @@ WithFilterOption.args = {
     filter: {
         enabled: true,
         label: 'Filter items',
+        noResultsLabel: 'No results found',
     },
 };

@@ -11,9 +11,10 @@ import { Text } from '@typography/Text';
 import { EnablePortalWrapper } from '@utilities/dialogs/EnablePortalWrapper';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
-import { ChangeEvent, KeyboardEvent, ReactElement, ReactNode, useEffect, useId, useRef, useState } from 'react';
+import { KeyboardEvent, ReactElement, ReactNode, useCallback, useEffect, useId, useRef, useState } from 'react';
 import { usePopper } from 'react-popper';
 import { getPaddingClasses, useClickOutside } from './helpers';
+import { TextInput } from '@components/TextInput';
 
 export enum MultiSelectType {
     Default = 'Default',
@@ -38,10 +39,12 @@ type MultiSelectFilter =
     | {
           enabled: true;
           label?: string;
+          noResultsLabel?: string;
       }
     | {
           enabled: false;
           label?: never;
+          noResultsLabel?: never;
       };
 
 export type MultiSelectProps = {
@@ -95,12 +98,12 @@ export const MultiSelect = ({
 }: MultiSelectProps): ReactElement => {
     const [open, setOpen] = useState(false);
     const [checkboxes, setCheckboxes] = useState<Item[]>([]);
-    const multiSelectRef = useRef<HTMLDivElement | null>(null);
+    const [searchTerm, setSearchTerm] = useState<string>('');
 
+    const multiSelectRef = useRef<HTMLDivElement | null>(null);
     const [multiSelectMenuRef, setMultiSelectMenuRef] = useState<null | HTMLDivElement>(null);
     const [triggerRef, setTriggerRef] = useState<HTMLDivElement | null>(null);
 
-    const filterInputRef = useRef<HTMLInputElement | null>(null);
     const { isFocusVisible, focusProps } = useFocusRing();
 
     const { maxHeight } = useDropdownAutoHeight({ current: triggerRef }, { isOpen: open, autoResize: true });
@@ -144,7 +147,7 @@ export const MultiSelect = ({
     };
 
     const handleSpacebarToggle = (event: KeyboardEvent<HTMLDivElement>) => {
-        if (event.code === 'Space' && document.activeElement !== filterInputRef.current) {
+        if (event.code === 'Space') {
             toggleOpen();
         }
     };
@@ -154,25 +157,6 @@ export const MultiSelect = ({
             return TagType.Selected;
         }
         return TagType.SelectedWithFocus;
-    };
-
-    const handleFilterChange = (event: ChangeEvent<HTMLInputElement>) => {
-        setCheckboxes(
-            items.reduce((acc: Item[], item) => {
-                if (
-                    item.isCategory ||
-                    item.isDivider ||
-                    item.value.toLowerCase().includes(event.currentTarget.value.toLowerCase())
-                ) {
-                    if (indeterminateItemKeys?.includes(item.value)) {
-                        return [...acc, { ...item, label: item.value, state: CheckboxState.Mixed }];
-                    }
-
-                    return [...acc, { ...item, label: item.value }];
-                }
-                return acc;
-            }, []),
-        );
     };
 
     useEffect(() => {
@@ -190,6 +174,34 @@ export const MultiSelect = ({
             }),
         );
     }, [items, indeterminateItemKeys]);
+
+    const handleFilterChange = useCallback(
+        (newValue: string) => {
+            setSearchTerm(newValue);
+
+            setCheckboxes(
+                items.reduce((acc: Item[], item) => {
+                    if (
+                        item.isCategory ||
+                        item.isDivider ||
+                        item.value.toLowerCase().includes(newValue.toLowerCase())
+                    ) {
+                        if (indeterminateItemKeys?.includes(item.value)) {
+                            return [...acc, { ...item, label: item.value, state: CheckboxState.Mixed }];
+                        }
+
+                        return [...acc, { ...item, label: item.value }];
+                    }
+                    return acc;
+                }, []),
+            );
+        },
+        [indeterminateItemKeys, items],
+    );
+
+    useEffect(() => {
+        !open && handleFilterChange('');
+    }, [open, handleFilterChange]);
 
     const popperInstance = usePopper(triggerRef, multiSelectMenuRef, {
         placement: 'bottom-start',
@@ -232,12 +244,7 @@ export const MultiSelect = ({
                 <div className={merge(['tw-flex tw-flex-1 tw-gap-2', getPaddingClasses(size)])} ref={setTriggerRef}>
                     <div
                         className="tw-flex tw-flex-1 tw-gap-2 focus:tw-outline-0"
-                        onClick={(e) => {
-                            if (e.target === filterInputRef.current && open) {
-                                return;
-                            }
-                            toggleOpen();
-                        }}
+                        onClick={toggleOpen}
                         role="combobox"
                         aria-expanded={open}
                         aria-controls={muliSelectContentId}
@@ -271,16 +278,6 @@ export const MultiSelect = ({
                             )}
 
                             {activeItemKeys.length === 0 && placeholder && <Text color="weak">{placeholder}</Text>}
-
-                            {filter.enabled && (
-                                <input
-                                    data-test-id="filter-input"
-                                    ref={filterInputRef}
-                                    className="tw-outline-none tw-bg-transparent tw-placeholder-black-60 tw-text-s"
-                                    placeholder={filter.label}
-                                    onChange={handleFilterChange}
-                                />
-                            )}
                         </div>
                     </div>
                 </div>
@@ -300,17 +297,35 @@ export const MultiSelect = ({
                         {...popperInstance.attributes.popper}
                     >
                         <FocusScope restoreFocus>
+                            {filter.enabled && (
+                                <div className="tw-p-4 tw-pb-0">
+                                    <TextInput
+                                        value={searchTerm}
+                                        placeholder={filter.label}
+                                        clearable={true}
+                                        onChange={handleFilterChange}
+                                    />
+                                </div>
+                            )}
                             <div
                                 className="tw-p-4 tw-overflow-y-auto tw-overflow-x-hidden tw-w-full tw-relative"
                                 style={{ maxHeight }}
                             >
-                                <Checklist
-                                    activeValues={activeItemKeys.map((key) => key.toString())}
-                                    setActiveValues={onSelectionChange}
-                                    checkboxes={checkboxes.filter((item) => !item.isDivider && !item.isCategory)}
-                                    direction={ChecklistDirection.Vertical}
-                                    ariaLabel={ariaLabel}
-                                />
+                                {checkboxes.length > 0 && (
+                                    <Checklist
+                                        activeValues={activeItemKeys.map((key) => key.toString())}
+                                        setActiveValues={onSelectionChange}
+                                        checkboxes={checkboxes.filter((item) => !item.isDivider && !item.isCategory)}
+                                        direction={ChecklistDirection.Vertical}
+                                        ariaLabel={ariaLabel}
+                                    />
+                                )}
+
+                                {checkboxes.length === 0 && filter?.enabled && (
+                                    <Text size="small" color="weak">
+                                        {filter?.noResultsLabel}
+                                    </Text>
+                                )}
                             </div>
                         </FocusScope>
                     </div>
