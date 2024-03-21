@@ -136,4 +136,17 @@ describe('MultiSelect Component', () => {
 
         cy.get(CHECKBOX_ID).first().contains('Checkbox label 1');
     });
+
+    it('will reset filter input value when dropdown is closed', () => {
+        cy.mount(<Component filterable={true} />);
+        cy.get(TRIGGER_ID).click();
+
+        cy.get(FILTER_INPUT).type('checkbox label');
+        cy.get(CHECKLIST_ID).find(CHECKBOX_ID).should('have.length', 3);
+
+        cy.get(TRIGGER_ID).click();
+        cy.get(TRIGGER_ID).click();
+        cy.get(FILTER_INPUT).should('have.value', '');
+        cy.get(CHECKLIST_ID).find(CHECKBOX_ID).should('have.length', 6);
+    });
 });
