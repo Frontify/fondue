@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import * as fondueComponents from '@frontify/fondue-components';
+import { Tag, Divider } from '@frontify/fondue-ui';
 import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live';
 
 import { CopyCodeButton } from './CopyCodeButton';
@@ -31,7 +31,7 @@ export const CodeSnippet = ({ code, language, disabled }: EditableContentProps) 
     return (
         <LiveProvider
             code={code.trim()}
-            scope={{ ...fondueComponents }}
+            scope={{ Tag, Divider }}
             language={language}
             disabled={disabled}
             theme={editorTheme}

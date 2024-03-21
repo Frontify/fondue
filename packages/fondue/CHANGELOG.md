@@ -47,7 +47,7 @@
 - [#1735](https://github.com/Frontify/fondue/pull/1735) [`4dc05a3`](https://github.com/Frontify/fondue/commit/4dc05a354dec3c9510423aeb736ae9ecc722be27) Thanks [@fulopdaniel](https://github.com/fulopdaniel)! - fix(RTE): toolbar closes on safari
 
 - Updated dependencies [[`ef0519d`](https://github.com/Frontify/fondue/commit/ef0519d8021204b280b65812c98686b4ce3b909e)]:
-  - @frontify/fondue-components@0.1.0-beta.0
+  - @frontify/fondue-ui@0.1.0-beta.0
 
 ## 12.0.0-beta.411
 

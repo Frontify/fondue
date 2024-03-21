@@ -1,4 +1,4 @@
-# @frontify/fondue-components
+# @frontify/fondue-ui
 
 ## 0.1.0-beta.0
 
