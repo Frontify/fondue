@@ -182,11 +182,11 @@ export const MultiSelect = ({
     useEffect(() => {
         setCheckboxes(
             items.map((item) => {
-                const checkboxBaseItem = { ...item, label: item.value };
                 if (indeterminateItemKeys?.includes(item.value)) {
-                    return { ...checkboxBaseItem, state: CheckboxState.Mixed };
+                    return { ...item, label: item.value, state: CheckboxState.Mixed };
                 }
-                return checkboxBaseItem;
+
+                return { ...item, label: item.value };
             }),
         );
     }, [items, indeterminateItemKeys]);
