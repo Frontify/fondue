@@ -117,7 +117,7 @@ export const MultiSelect = ({
 
     const heightIsReady = maxHeight !== DEFAULT_DROPDOWN_MAX_HEIGHT;
 
-    const muliSelectContentId = useId();
+    const multiSelectContentId = useId();
 
     const toggleOpen = () => setOpen((open) => !open);
 
@@ -146,7 +146,7 @@ export const MultiSelect = ({
         onSelectionChange(Array.from(keySet));
     };
 
-    const handleSpacebarToggle = (event: KeyboardEvent<HTMLDivElement>) => {
+    const handleSpaceBarToggle = (event: KeyboardEvent<HTMLDivElement>) => {
         if (event.code === 'Space') {
             toggleOpen();
         }
@@ -247,11 +247,11 @@ export const MultiSelect = ({
                         onClick={toggleOpen}
                         role="combobox"
                         aria-expanded={open}
-                        aria-controls={muliSelectContentId}
+                        aria-controls={multiSelectContentId}
                         aria-label={ariaLabel}
                         {...focusProps}
                         tabIndex={0}
-                        onKeyDown={handleSpacebarToggle}
+                        onKeyDown={handleSpaceBarToggle}
                     >
                         <div className="tw-flex tw-flex-wrap tw-gap-2 tw-outline-none tw-items-center tw-min-h-[28px]">
                             {label && hasSelectedItems && <Text weight="strong">{label}</Text>}
@@ -286,7 +286,7 @@ export const MultiSelect = ({
             {open && heightIsReady && (
                 <EnablePortalWrapper enablePortal={enablePortal}>
                     <div
-                        id={muliSelectContentId}
+                        id={multiSelectContentId}
                         ref={setMultiSelectMenuRef}
                         className="tw-absolute tw-left-0 tw-w-full tw-overflow-hidden tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-[120000] tw-bg-base tw-min-w-[18rem]"
                         key="content"
