@@ -286,9 +286,9 @@ describe('InlineDialog Component', () => {
 
     describe('Unsafe zIndex', () => {
         it('renders with Unsafe custom zIndex', () => {
-            cy.mount(<InlineDialogComponent unsafe_zIndex={2020} />);
+            cy.mount(<InlineDialogComponent unsafe_zIndex={2004} />);
             cy.get(INLINE_DIALOG_TRIGGER_SELECTOR).children().eq(0).click();
-            cy.get(INLINE_DIALOG_CONTENT).parent().should('have.css', 'z-index', '2020');
+            cy.get(INLINE_DIALOG_CONTENT).parent().should('have.css', 'z-index', '2004');
         });
     });
 });
