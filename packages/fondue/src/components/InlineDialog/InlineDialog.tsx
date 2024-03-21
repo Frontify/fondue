@@ -34,7 +34,7 @@ export const InlineDialog = ({
      * This is needed to support the legacy Terrific Modal, which dynamically compounds z-indexes to create a "stacked" modal approach.
      * Once the legacy Terrific Modal is removed/refactored to a pre-determined set of z-indexes, this property can be removed as well.
      */
-    unsafe_zIndex,
+    unsafe_zIndex = Z_INDEX_MODAL,
 }: WithRequired<InlineDialogProps, 'handleClose'>) => {
     return (
         <Overlay
@@ -58,7 +58,7 @@ export const InlineDialog = ({
             shadow="medium"
             width={width}
             isDialog={true}
-            zIndex={unsafe_zIndex || Z_INDEX_MODAL}
+            zIndex={unsafe_zIndex}
         >
             {children}
         </Overlay>
