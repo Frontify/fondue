@@ -1,0 +1,55 @@
+{
+    "name": "@frontify/fondue-components",
+    "type": "module",
+    "version": "0.1.0-beta.0",
+    "private": true,
+    "homepage": "https://github.com/Frontify/fondue",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Frontify/fondue",
+        "directory": "packages/components"
+    },
+    "bugs": {
+        "url": "https://github.com/frontify/fondue/issues"
+    },
+    "main": "src/index.ts",
+    "types": "src/index.ts",
+    "engines": {
+        "node": ">=18"
+    },
+    "scripts": {
+        "lint": "eslint .",
+        "lint:fix": "eslint --fix .",
+        "typecheck": "tsc --noEmit",
+        "test": "vitest run --coverage",
+        "test:ui": "vitest --ui",
+        "test:watch": "vitest"
+    },
+    "peerDependencies": {
+        "react": "^18"
+    },
+    "dependencies": {
+        "@frontify/fondue-tokens": "3.4.0"
+    },
+    "devDependencies": {
+        "@frontify/eslint-config-react": "0.17.0",
+        "@tailwindcss/forms": "^0.5.7",
+        "@testing-library/jest-dom": "^6.4.2",
+        "@testing-library/react": "^14.2.1",
+        "@types/node": "^20.11.19",
+        "@types/react": "^18.2.55",
+        "@vitejs/plugin-react": "^4.2.1",
+        "@vitest/coverage-v8": "^1.3.0",
+        "@vitest/ui": "^1.3.0",
+        "eslint": "^8.56.0",
+        "eslint-plugin-notice": "^0.9.10",
+        "happy-dom": "^13.3.8",
+        "postcss": "^8.4.35",
+        "postcss-import": "^16.0.1",
+        "prettier": "^3.2.5",
+        "react": "^18.2.0",
+        "tailwindcss": "^3.4.1",
+        "typescript": "^5.3.3",
+        "vitest": "^1.3.0"
+    }
+}

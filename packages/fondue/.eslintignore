@@ -1,0 +1,6 @@
+src/foundation/Icon/Generated/**/*.tsx
+src/foundation/Icon/Generated/index.ts
+src/foundation/Icon/IconEnum.ts
+src/components/ComponentEnum.ts
+dist
+storybook-static

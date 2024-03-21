@@ -2,15 +2,3 @@
 node_modules
 .idea
 .vscode
-
-# Build
-src/components/ComponentEnum.ts
-src/foundation/Icon/Generated
-src/foundation/Icon/IconEnum.ts
-!.src/foundation/Icon/Generated/.gitkeep
-storybook-static
-dist
-
-# Testing
-cypress/videos
-cypress/screenshots
