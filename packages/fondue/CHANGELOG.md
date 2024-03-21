@@ -1,5 +1,13 @@
 # @frontify/fondue
 
+## 12.0.0-beta.417
+
+### Minor Changes
+
+- [#1761](https://github.com/Frontify/fondue/pull/1761) [`54142eb`](https://github.com/Frontify/fondue/commit/54142ebb1f683c626dd13b3eae9920f25cb82c79) Thanks [@ftascon](https://github.com/ftascon)! - feat(InlineDialog): add `unsafe_zIndex` as a temporary workaround to support stacked layers
+
+- [#1752](https://github.com/Frontify/fondue/pull/1752) [`86f58b2`](https://github.com/Frontify/fondue/commit/86f58b2e509dcd59ae7e743a4b7f3db5c8b11111) Thanks [@bojangles-m](https://github.com/bojangles-m)! - refactor(Tooltip): replaced `onMouse` events with `onPointer` events to distinguish between devices.
+
 ## 12.0.0-beta.416
 
 ### Patch Changes
