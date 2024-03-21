@@ -12,7 +12,7 @@ const TAG_ID = '[data-test-id=tag]';
 const TAG_CLOSE_BUTTON = '[data-test-id=tag-reject-icon]';
 const CHECKLIST_ID = '[data-test-id=checklist]';
 const EXCLAMATION_MARK_ICON_ID = '[data-test-id=error-state-exclamation-mark-icon]';
-const FILTER_INPUT = '[data-test-id=filter-input]';
+const FILTER_INPUT = '[data-test-id=fondue-text-input-component]';
 
 const ITEMS = {
     activeItemKeys: ['Short tag', 'Tag 74'],
@@ -122,7 +122,7 @@ describe('MultiSelect Component', () => {
         cy.get(TAG_CLOSE_BUTTON).should('not.exist');
     });
 
-    it('will display input field as content of MultiSelect if filterable property is on', () => {
+    it('will display text input to search if filterable property is on', () => {
         cy.mount(<Component filterable={true} />);
         cy.get(TRIGGER_ID).click();
         cy.get(FILTER_INPUT).should('exist');
