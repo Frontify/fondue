@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { Meta, StoryFn } from '@storybook/react';
 import { TextInput, TextInputProps, TextInputType } from './TextInput';
@@ -24,6 +24,7 @@ export default {
         validation: Validation.Default,
         spellcheck: true,
         copyable: false,
+        focus: false,
     },
     argTypes: {
         validation: {
@@ -47,13 +48,22 @@ export default {
     },
 } as Meta<TextInputProps>;
 
-const TextInputTemplate: StoryFn<TextInputProps> = (args: TextInputProps) => {
+type TextInputStoryProps = TextInputProps & { focus?: boolean };
+
+const TextInputTemplate: StoryFn<TextInputStoryProps> = (args: TextInputStoryProps) => {
+    const inputRef = useRef<HTMLInputElement>(null);
     const [input, setInput] = useState('');
     useEffect(() => setInput(`${args.value ?? ''}`), [args.value]);
 
+    useEffect(() => {
+        if (inputRef.current && args.focus) {
+            inputRef.current.focus();
+        }
+    }, [args.focus]);
+
     return (
         <FormField label={{ text: 'sample' }} hiddenLabel>
-            <TextInput {...args} value={input} onChange={setInput} />
+            <TextInput {...args} value={input} onChange={setInput} ref={inputRef} />
         </FormField>
     );
 };
@@ -152,7 +162,7 @@ export const FocusOnMount = TextInputTemplate.bind({});
 
 FocusOnMount.args = {
     value: 'Value text',
-    focusOnMount: true,
+    focus: true,
 };
 
 export const SelectableInput = TextInputTemplate.bind({});
