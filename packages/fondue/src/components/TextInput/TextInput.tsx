@@ -64,7 +64,23 @@ export type TextInputBaseProps = {
     maxLength?: number;
     size?: number;
     spellcheck?: boolean;
-    /** @deprecated since v-beta.418, to set focus use ref exposed from the component */
+    /** @deprecated a `ref` can be forwarded to expose the underlying `<input />` DOM node. 
+        @example
+        ```tsx
+            import { TextInput } from '@frontify/fondue';
+
+            const Component = () => {
+            const inputRef = useRef();
+
+            useEffect(() => {
+                if (inputRef.current) {
+                    inputRef.current.focus();
+                }
+            }, [)
+            return <TextInput ref={inputRef} />
+         }
+         ```
+    */
     focusOnMount?: boolean;
     selectable?: boolean;
     extraActions?: TextInputExtraAction[];
