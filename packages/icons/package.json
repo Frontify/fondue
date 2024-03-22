@@ -1,7 +1,7 @@
 {
     "name": "@frontify/fondue-icons",
     "type": "module",
-    "version": "0.1.43",
+    "version": "0.1.44",
     "description": "Frontify's icon SVGs",
     "homepage": "https://github.com/Frontify/fondue",
     "repository": {
