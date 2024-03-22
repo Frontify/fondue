@@ -1,5 +1,11 @@
 # @frontify/fondue
 
+## 12.0.0-beta.419
+
+### Minor Changes
+
+- [#1764](https://github.com/Frontify/fondue/pull/1764) [`068fda8`](https://github.com/Frontify/fondue/commit/068fda89478d0784410e4b391452931ed684fad6) Thanks [@bojangles-m](https://github.com/bojangles-m)! - feat(TextInput): exposed component ref and set focusOnMount prop to be deprecated.
+
 ## 12.0.0-beta.418
 
 ### Patch Changes
