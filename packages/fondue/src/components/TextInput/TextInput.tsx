@@ -64,7 +64,7 @@ export type TextInputBaseProps = {
     maxLength?: number;
     size?: number;
     spellcheck?: boolean;
-    /** @deprecated since v-beta.418, to set focus use ref exposed form the component */
+    /** @deprecated since v-beta.418, to set focus use ref exposed from the component */
     focusOnMount?: boolean;
     selectable?: boolean;
     extraActions?: TextInputExtraAction[];
