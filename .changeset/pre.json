@@ -5,7 +5,7 @@
     "@frontify/fondue": "12.0.0-beta.400",
     "@fondue/docs": "0.0.1",
     "@frontify/fondue-components": "0.0.1",
-    "@frontify/fondue-icons": "0.1.43"
+    "@frontify/fondue-icons": "0.1.44"
   },
   "changesets": [
     "big-clouds-type",
