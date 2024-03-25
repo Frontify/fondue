@@ -47,7 +47,9 @@ export default {
     },
 } as Meta<TextInputProps>;
 
-const TextInputTemplate: StoryFn<TextInputProps> = (args: TextInputProps) => {
+type TextInputStoryProps = TextInputProps & { focus?: boolean };
+
+const TextInputTemplate: StoryFn<TextInputStoryProps> = (args: TextInputStoryProps) => {
     const [input, setInput] = useState('');
     useEffect(() => setInput(`${args.value ?? ''}`), [args.value]);
 
@@ -146,13 +148,6 @@ TypeNumber.argTypes = {
 
 TypeNumber.args = {
     type: TextInputType.Number,
-};
-
-export const FocusOnMount = TextInputTemplate.bind({});
-
-FocusOnMount.args = {
-    value: 'Value text',
-    focusOnMount: true,
 };
 
 export const SelectableInput = TextInputTemplate.bind({});

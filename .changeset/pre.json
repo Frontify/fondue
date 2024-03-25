@@ -5,7 +5,7 @@
     "@frontify/fondue": "12.0.0-beta.400",
     "@fondue/docs": "0.0.1",
     "@frontify/fondue-components": "0.0.1",
-    "@frontify/fondue-icons": "0.1.43"
+    "@frontify/fondue-icons": "0.1.44"
   },
   "changesets": [
     "big-clouds-type",
@@ -14,10 +14,13 @@
     "cold-carrots-kiss",
     "curvy-books-rescue",
     "five-chicken-jam",
+    "five-moons-teach",
     "gold-dragons-compare",
     "green-horses-scream",
     "honest-teachers-deny",
     "little-moons-play",
+    "little-vans-jog",
+    "lucky-rivers-doubt",
     "moody-nails-rule",
     "nasty-bottles-tie",
     "new-sheep-bow",
@@ -30,6 +33,7 @@
     "shiny-years-leave",
     "slow-onions-build",
     "spicy-pets-itch",
-    "swift-bees-greet"
+    "swift-bees-greet",
+    "wicked-parrots-live"
   ]
 }

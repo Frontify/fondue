@@ -14,7 +14,7 @@ import {
 } from '../helpers/multiselectTreeItemstyling';
 
 import { ExpandButton } from './ExpandButton';
-import { Checkbox, CheckboxEmphasis, CheckboxSize } from '@components/Checkbox/Checkbox';
+import { Checkbox, CheckboxEmphasis, CheckboxSize, CheckboxState } from '@components/Checkbox/Checkbox';
 import { Container } from '@components/Container';
 import { useMultiselectTreeItem } from './useMultiselectTreeItem';
 
@@ -139,7 +139,11 @@ export const TreeItemMultiselect = memo(
                         label=""
                         onChange={checkBoxOnSelect}
                         size={CheckboxSize.Default}
-                        state={getMultiselectCheckBoxState(isSelected, isPartialSelected)}
+                        state={
+                            isDisabled
+                                ? CheckboxState.Unchecked
+                                : getMultiselectCheckBoxState(isSelected, isPartialSelected)
+                        }
                         tooltip={[]}
                         value={id}
                     />

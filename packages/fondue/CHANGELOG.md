@@ -1,5 +1,25 @@
 # @frontify/fondue
 
+## 12.0.0-beta.419
+
+### Minor Changes
+
+- [#1764](https://github.com/Frontify/fondue/pull/1764) [`068fda8`](https://github.com/Frontify/fondue/commit/068fda89478d0784410e4b391452931ed684fad6) Thanks [@bojangles-m](https://github.com/bojangles-m)! - feat(TextInput): exposed component ref and set focusOnMount prop to be deprecated.
+
+## 12.0.0-beta.418
+
+### Patch Changes
+
+- [#1758](https://github.com/Frontify/fondue/pull/1758) [`fc7fffc`](https://github.com/Frontify/fondue/commit/fc7fffc738d0a3559c214b5ecfe0e35295eb31ae) Thanks [@anxobotana](https://github.com/anxobotana)! - feat: disabled items unchecked on multiselect tree
+
+## 12.0.0-beta.417
+
+### Minor Changes
+
+- [#1761](https://github.com/Frontify/fondue/pull/1761) [`54142eb`](https://github.com/Frontify/fondue/commit/54142ebb1f683c626dd13b3eae9920f25cb82c79) Thanks [@ftascon](https://github.com/ftascon)! - feat(InlineDialog): add `unsafe_zIndex` as a temporary workaround to support stacked layers
+
+- [#1752](https://github.com/Frontify/fondue/pull/1752) [`86f58b2`](https://github.com/Frontify/fondue/commit/86f58b2e509dcd59ae7e743a4b7f3db5c8b11111) Thanks [@bojangles-m](https://github.com/bojangles-m)! - refactor(Tooltip): replaced `onMouse` events with `onPointer` events to distinguish between devices.
+
 ## 12.0.0-beta.416
 
 ### Patch Changes
