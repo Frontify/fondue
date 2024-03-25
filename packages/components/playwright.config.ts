@@ -2,13 +2,11 @@
 
 import { defineConfig, devices } from '@playwright/experimental-ct-react';
 
-/**
- * See https://playwright.dev/docs/test-configuration.
- */
+// https://playwright.dev/docs/test-configuration
 export default defineConfig({
     testDir: './src',
     snapshotDir: './__snapshots__',
-    timeout: 10 * 1000,
+    timeout: 10_000,
     fullyParallel: true,
     forbidOnly: !!process.env.CI,
     retries: process.env.CI ? 2 : 0,
@@ -19,19 +17,9 @@ export default defineConfig({
         trace: 'on-first-retry',
         ctPort: 3100,
     },
-
     projects: [
-        {
-            name: 'chromium',
-            use: { ...devices['Desktop Chrome'] },
-        },
-        {
-            name: 'firefox',
-            use: { ...devices['Desktop Firefox'] },
-        },
-        {
-            name: 'webkit',
-            use: { ...devices['Desktop Safari'] },
-        },
+        { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+        { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
+        { name: 'webkit', use: { ...devices['Desktop Safari'] } },
     ],
 });
