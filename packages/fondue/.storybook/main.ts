@@ -29,6 +29,7 @@ export default <StorybookConfig>{
                     title: 'New',
                     url: 'http://localhost:6010',
                     type: "auto-inject",
+                    expanded: true,
                 },
             };
         }
