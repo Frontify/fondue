@@ -64,7 +64,7 @@ export type TextInputBaseProps = {
     maxLength?: number;
     size?: number;
     spellcheck?: boolean;
-    /** @deprecated a `ref` can be forwarded to expose the underlying `<input />` DOM node. 
+    /** @deprecated a `ref` can be forwarded to expose the underlying `<input />` DOM node.
         @example
         ```tsx
             import { TextInput } from '@frontify/fondue';
@@ -124,7 +124,7 @@ const ExtraActionButton: ForwardRefRenderFunction<HTMLButtonElement | null, Extr
             className={merge([
                 'tw-flex tw-items-center tw-justify-center tw-transition-colors tw-rounded tw-p-1',
                 isDisabled
-                    ? 'tw-cursor-default tw-text-text-disabled'
+                    ? 'tw-cursor-default tw-text-text-disabled tw-bg-box-disabled hover:tw-cursor-not-allowed tw-border-line-weak'
                     : 'tw-text-text-weak hover:tw-bg-box-neutral-hover hover:tw-text-box-neutral-inverse-hover',
                 extraActionButtonIsFocusVisible && FOCUS_STYLE,
             ])}
