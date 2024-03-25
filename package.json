@@ -13,7 +13,7 @@
         "build:fondue": "pnpm --stream --filter {packages/fondue} build",
         "build:docs": "pnpm --stream --filter {docs} build",
         "build:storybook": "pnpm run build:storybook-new",
-        "build:storybook-new": "pnpm --stream --filter {packages/components} build:storybook && mkdir packages/components/storybook-static/ && cp -r packages/components/storybook-static/ storybook-docs/storybook-static/fondue-components/",
+        "build:storybook-new": "pnpm --stream --filter {packages/components} build:storybook && mkdir storybook-docs/storybook-static/fondue-components/ && cp -r packages/components/storybook-static/ storybook-docs/storybook-static/fondue-components/",
         "build:globalStorybook": "pnpm --stream --filter {storybook-docs} build:storybook",
         "lint": "pnpm --stream --filter {packages/**} --filter {docs} lint",
         "typecheck": "pnpm --stream --filter {packages/**} --filter {docs} typecheck",
