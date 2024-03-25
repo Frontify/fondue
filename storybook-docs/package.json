@@ -7,7 +7,7 @@
     "storybook": "storybook dev -p 6006",
     "build:copyComponentsStorybook": "mkdir -p storybook-static/new/ && cp -r ../packages/components/storybook-static/. storybook-static/new",
     "build:copyFondueStorybook": "mkdir -p storybook-static/legacy/ && cp -r ../packages/fondue/storybook-static/. storybook-static/legacy",
-    "build:storybook": "storybook build && pnpm run build:copyComponentsStorybook "
+    "build:storybook": "storybook build && pnpm run build:copyComponentsStorybook && pnpm run build:copyFondueStorybook"
   },
   "dependencies": {
     "@frontify/fondue": "workspace:^",
