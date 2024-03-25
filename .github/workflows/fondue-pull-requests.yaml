@@ -158,4 +158,4 @@ jobs:
               run: pnpm --stream --filter {packages/components} install:playwright
 
             - name: Playwright tests
-              run: pnpm --stream --filter {packages/components} test:playwright:ci
+              run: pnpm --stream --filter {packages/components} test:components:ci
