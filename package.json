@@ -12,6 +12,7 @@
         "dev:content": "pnpm --stream --filter {docs} dev:contentlayer",
         "build:fondue": "pnpm --stream --filter {packages/fondue} build",
         "build:docs": "pnpm --stream --filter {docs} build",
+        "build:storybook": "ls && pnpm --stream --filter {storybook-docs} build:copy",
         "lint": "pnpm --stream --filter {packages/**} --filter {docs} lint",
         "typecheck": "pnpm --stream --filter {packages/**} --filter {docs} typecheck",
         "ci:version": "pnpm build:fondue && changeset version",
