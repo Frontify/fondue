@@ -25,8 +25,8 @@
         "test": "vitest run --coverage",
         "test:ui": "vitest --ui",
         "test:watch": "vitest",
-        "test:playwright": "playwright test --ui -c playwright.config.ts",
-        "test:playwright:ci": "playwright test -c playwright.config.ts"
+        "test:components": "playwright test --ui -c playwright.config.ts",
+        "test:components:ci": "playwright test -c playwright.config.ts"
     },
     "peerDependencies": {
         "react": "^18",
