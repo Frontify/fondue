@@ -22,23 +22,4 @@ export default <StorybookConfig>{
 
         return config;
     },
-    refs: (config, { configType }) => {
-        if (configType === 'DEVELOPMENT') {
-            return {
-                new: {
-                    title: 'New',
-                    url: 'http://localhost:6010',
-                    type: "auto-inject",
-                    expanded: true,
-                },
-            };
-        }
-        return {
-            new: {
-                title: 'New',
-                url: 'https://new-fondue-components.netlify.app/',
-                expanded: true,
-            },
-        }
-    }
 };
