@@ -1,8 +1,4 @@
-# routing internally.
-[[redirects]]
-  from = "/new"
-  to = "/node_modules/@frontify/fondue-components/storybook-static"
-  status = 200
+
 
 [[headers]]
   # Define which paths this specific [[headers]] block will cover.
