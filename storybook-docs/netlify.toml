@@ -1,10 +1,5 @@
 # routing internally.
 [[redirects]]
-  from = "/*"
-  to = "/storybook-static/index.html"
-  status = 200
-
-[[redirects]]
   from = "/new"
   to = "/node_modules/@frontify/fondue-components/storybook-static"
   status = 200
