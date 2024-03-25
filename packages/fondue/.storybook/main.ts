@@ -36,6 +36,7 @@ export default <StorybookConfig>{
             new: {
                 title: 'New',
                 url: 'https://new-fondue-components.netlify.app/',
+                expanded: true,
             },
         }
     }
