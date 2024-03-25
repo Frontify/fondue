@@ -1,5 +1,11 @@
 # @frontify/fondue
 
+## 12.0.0-beta.420
+
+### Patch Changes
+
+- [#1771](https://github.com/Frontify/fondue/pull/1771) [`f325dc7`](https://github.com/Frontify/fondue/commit/f325dc74579772dfac1d568bda361bc91e56c684) Thanks [@noahwaldner](https://github.com/noahwaldner)! - added filtered multiselect
+
 ## 12.0.0-beta.419
 
 ### Minor Changes
