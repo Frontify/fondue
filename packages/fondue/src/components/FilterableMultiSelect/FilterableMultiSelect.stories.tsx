@@ -121,7 +121,7 @@ const MultiSelectRightAlignedContainerTemplate: StoryFn<FilterableMultiSelectPro
     );
 };
 
-export const MultiSelect = MultiSelectTemplate.bind({});
+export const FilterableMultiSelect = MultiSelectTemplate.bind({});
 
 export const WithPlaceholder = MultiSelectTemplate.bind({});
 
