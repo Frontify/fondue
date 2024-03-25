@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "storybook": "storybook dev -p 6006",
-    "build:copy": "mkdir -p storybook-static/fondue-components && cp -r node_modules/@frontify/fondue-components/storybook-static/* storybook-static/fondue-components/",
+    "build:copy": "mkdir -p storybook-static/fondue-components && cp -r node_modules/@frontify/fondue-components/storybook-static/ storybook-static/fondue-components/",
     "build:storybook": "storybook build && pnpm run build:copy"
   },
   "dependencies": {
