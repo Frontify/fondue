@@ -3,9 +3,10 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "storybook": "concurrently 'pnpm run storybook:new' 'pnpm run strorybook:main'",
-        "storybook:new": "pnpm --stream  --filter {packages/components} storybook",
-        "strorybook:main": "wait-on http://localhost:6010 && pnpm --stream  --filter {packages/fondue} storybook",
+        "storybook": "concurrently 'pnpm run storybook:new' 'pnpm run storybook:legacy' 'pnpm run storybook:main'",
+        "storybook:new": "pnpm --stream  --filter {packages/components} storybook:background",
+        "storybook:legacy": "pnpm --stream  --filter {packages/fondue} storybook:background",
+        "storybook:main": "wait-on http://localhost:6006 http://localhost:6007 && pnpm --stream  --filter {storybook-docs} storybook",
         "dev": "concurrently 'pnpm run watch:content' 'pnpm run dev:docs'",
         "dev:docs": "pnpm --stream --filter {docs} dev:docs",
         "watch:content": "chokidar 'packages/components/**/*.mdx' -c 'pnpm run dev:content'",

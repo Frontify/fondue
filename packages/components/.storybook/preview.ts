@@ -1,13 +1,15 @@
 import type { Preview } from '@storybook/react';
-
+import DocumentationTemplate from './DocumentationTemplate.mdx';
 const preview: Preview = {
+
     parameters: {
         docs: {
-            canvas: {
-                sourceState: "shown",
-            }
+            page: DocumentationTemplate,
+            toc: {
+                title: "Table of contents",
+                headingSelector: 'h2, h3',
+            },
         },
-
         controls: {
             matchers: {
                 color: /(background|color)$/i,

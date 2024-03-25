@@ -17,19 +17,20 @@ const config = {
   },
   docs: {
     autodocs: "tag",
+    defaultName: "Documentation",
   },
   refs: (config, { configType }) => {
     if (configType === 'DEVELOPMENT') {
         return {
             new: {
                 title: 'New',
-                url: 'http://localhost:6010',
+                url: 'http://localhost:6007',
                 type: "auto-inject",
                 expanded: true,
             },
             legacy: {
                 title: 'Legacy',
-                url: 'http://localhost:6010',
+                url: 'http://localhost:6006',
                 type: "auto-inject",
                 expanded: true,
             },
