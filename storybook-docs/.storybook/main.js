@@ -18,5 +18,24 @@ const config = {
   docs: {
     autodocs: "tag",
   },
+  refs: (config, { configType }) => {
+    if (configType === 'DEVELOPMENT') {
+        return {
+            new: {
+                title: 'New',
+                url: 'http://localhost:6010',
+                type: "auto-inject",
+                expanded: true,
+            },
+        };
+    }
+    return {
+        new: {
+            title: 'New',
+            url: '/new',
+            expanded: true,
+        },
+    }
+}
 };
 export default config;
