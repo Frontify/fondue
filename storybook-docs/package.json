@@ -5,8 +5,9 @@
   "private": true,
   "scripts": {
     "storybook": "storybook dev -p 6006",
-    "build:copyStorybook": "mkdir -p storybook-static/new/ && cp -r ../packages/components/storybook-static/. storybook-static/new",
-    "build:storybook": "storybook build && pnpm run build:copyStorybook "
+    "build:copyComponentsStorybook": "mkdir -p storybook-static/new/ && cp -r ../packages/components/storybook-static/. storybook-static/new",
+    "build:copyFondueStorybook": "mkdir -p storybook-static/legacy/ && cp -r ../packages/fondue/storybook-static/. storybook-static/legacy",
+    "build:storybook": "storybook build && pnpm run build:copyComponentsStorybook "
   },
   "dependencies": {
     "@frontify/fondue": "workspace:^",

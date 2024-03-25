@@ -27,12 +27,23 @@ const config = {
                 type: "auto-inject",
                 expanded: true,
             },
+            legacy: {
+                title: 'Legacy',
+                url: 'http://localhost:6010',
+                type: "auto-inject",
+                expanded: true,
+            },
         };
     }
     return {
         new: {
             title: 'New',
             url: '/new',
+            expanded: true,
+        },
+        legacy: {
+            title: 'Legacy',
+            url: '/legacy',
             expanded: true,
         },
     }
