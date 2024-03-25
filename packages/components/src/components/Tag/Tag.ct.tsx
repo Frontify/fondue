@@ -9,7 +9,6 @@ test('should render without error', async ({ mount }) => {
     await expect(component).toContainText('Test');
 });
 
-// TODO: This test should be a responsibility of a Visual Regression tool
 test('should allow for the tag to have a border color and background color', async ({ mount }) => {
     const component = await mount(<Tag>Test</Tag>);
     await expect(component).toHaveCSS('background-color', 'rgb(240, 234, 250)');

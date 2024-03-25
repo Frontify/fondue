@@ -151,11 +151,11 @@ jobs:
             - name: Install dependencies
               run: pnpm install --frozen-lockfile
 
-            - name: Unit Test
+            - name: Unit test
               run: pnpm --stream --filter {packages/components} test
 
-            - name: Install Playwright Browsers
+            - name: Install Playwright browsers
               run: pnpm --stream --filter {packages/components} install:playwright
 
-            - name: Playwright Tests
+            - name: Playwright tests
               run: pnpm --stream --filter {packages/components} test:playwright:ci
