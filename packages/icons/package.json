@@ -39,19 +39,19 @@
         "react": "^18"
     },
     "devDependencies": {
-        "@frontify/eslint-config-react": "^0.17.0",
+        "@frontify/eslint-config-react": "^0.17.1",
         "@iconify/tools": "^4.0.2",
-        "@types/lodash": "^4.14.202",
-        "@types/node": "^20.11.19",
-        "@types/react": "^18.2.55",
-        "dotenv-cli": "^7.3.0",
-        "eslint": "^8.56.0",
+        "@types/lodash": "^4.17.0",
+        "@types/node": "^20.11.30",
+        "@types/react": "^18.2.71",
+        "dotenv-cli": "^7.4.1",
+        "eslint": "^8.57.0",
         "figma-api": "^1.11.0",
         "lodash": "^4.17.21",
         "prettier": "^3.2.5",
         "react": "^18.2.0",
         "svgson": "^5.3.1",
         "tsx": "^4.7.1",
-        "typescript": "^5.3.3"
+        "typescript": "^5.4.3"
     }
 }
