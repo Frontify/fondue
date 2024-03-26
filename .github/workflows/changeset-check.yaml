@@ -1,0 +1,28 @@
+name: Changeset Check
+
+on:
+    pull_request:
+        branches:
+            - main
+        paths:
+            - 'packages/**'
+
+jobs:
+    changeset-check:
+        runs-on: ubuntu-latest
+        timeout-minutes: 5
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
+              with:
+                    fetch-depth: 0
+            - name: Check for changeset file
+              run: |
+                    if git diff --name-only --diff-filter=A origin/main HEAD '.changeset/*.md' | grep '.*'; then
+                        echo "Changeset file found!"
+                        exit 0
+                    else
+                        echo "No changeset file found."
+                        exit 1
+                    fi

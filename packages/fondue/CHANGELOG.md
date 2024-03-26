@@ -1,5 +1,17 @@
 # @frontify/fondue
 
+## 12.0.0-beta.421
+
+### Patch Changes
+
+- [#1774](https://github.com/Frontify/fondue/pull/1774) [`f7e4d31`](https://github.com/Frontify/fondue/commit/f7e4d319ae953761c3cf7f32ac0b4d23844ad6be) Thanks [@selimovicz](https://github.com/selimovicz)! - chore: Exporting FilterableMultiSelect component
+
+## 12.0.0-beta.420
+
+### Patch Changes
+
+- [#1771](https://github.com/Frontify/fondue/pull/1771) [`f325dc7`](https://github.com/Frontify/fondue/commit/f325dc74579772dfac1d568bda361bc91e56c684) Thanks [@noahwaldner](https://github.com/noahwaldner)! - added filtered multiselect
+
 ## 12.0.0-beta.419
 
 ### Minor Changes
