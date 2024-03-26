@@ -55,7 +55,7 @@ export type FilterableMultiSelectProps = {
     emptyFilteredResultsLabel?: string;
 };
 
-export type Item = {
+type FilterableMultiSelectCheckboxItem = {
     label: string;
     value: string;
     avatar?: ReactNode;
@@ -85,7 +85,7 @@ export const FilterableMultiSelect = ({
     emptyFilteredResultsLabel,
 }: FilterableMultiSelectProps): ReactElement => {
     const [open, setOpen] = useState(false);
-    const [checkboxes, setCheckboxes] = useState<Item[]>([]);
+    const [checkboxes, setCheckboxes] = useState<FilterableMultiSelectCheckboxItem[]>([]);
     const [searchTerm, setSearchTerm] = useState<string>('');
 
     const multiSelectRef = useRef<HTMLDivElement | null>(null);
@@ -168,7 +168,7 @@ export const FilterableMultiSelect = ({
             setSearchTerm(newValue);
 
             setCheckboxes(
-                items.reduce((acc: Item[], item) => {
+                items.reduce((acc: FilterableMultiSelectCheckboxItem[], item) => {
                     if (
                         item.isCategory ||
                         item.isDivider ||
