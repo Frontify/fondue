@@ -40,7 +40,7 @@ export const useSelectedTextStyles = (editor: PlateEditor): string[] => {
         const styleToAdd =
             node.type === ELEMENT_LIC || node.type === ELEMENT_CHECK_ITEM
                 ? getTextStyle(node)
-                : (node.textStyle as string);
+                : ((node.textStyle || node.type) as string);
 
         if (styleToAdd && !styles.includes(styleToAdd) && !excludeStyles.includes(styleToAdd)) {
             styles.push(styleToAdd);
