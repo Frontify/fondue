@@ -19,7 +19,7 @@ jobs:
                     fetch-depth: 0
             - name: Check for changeset file
               run: |
-                    if git diff --name-only --diff-filter=A origin/main HEAD '.changeset/*.md' | grep '.*'; then; then
+                    if git diff --name-only --diff-filter=A origin/main HEAD '.changeset/*.md' | grep '.*'; then
                         echo "Changeset file found!"
                         exit 0
                     else
