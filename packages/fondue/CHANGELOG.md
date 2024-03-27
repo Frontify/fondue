@@ -1,5 +1,11 @@
 # @frontify/fondue
 
+## 12.0.0-beta.422
+
+### Patch Changes
+
+- [#1777](https://github.com/Frontify/fondue/pull/1777) [`29a9b34`](https://github.com/Frontify/fondue/commit/29a9b34ac76209484e6fd6d1ca8495ce02d93cd3) Thanks [@fulopdaniel](https://github.com/fulopdaniel)! - fix(RTE): text style dropdown shows wrong value
+
 ## 12.0.0-beta.421
 
 ### Patch Changes
