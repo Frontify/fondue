@@ -36,6 +36,14 @@ export default {
         },
         placeholder: { type: 'string' },
         maxLength: { type: 'number' },
+        disabled: {
+            control: { type: 'boolean' },
+            defaultValue: false,
+        },
+        readonly: {
+            control: { type: 'boolean' },
+            defaultValue: false,
+        },
         value: { table: { disable: true } },
         obfuscated: { table: { disable: true } },
         type: { table: { disable: true } },
@@ -54,7 +62,7 @@ const TextInputTemplate: StoryFn<TextInputStoryProps> = (args: TextInputStoryPro
     useEffect(() => setInput(`${args.value ?? ''}`), [args.value]);
 
     return (
-        <FormField label={{ text: 'sample' }} hiddenLabel>
+        <FormField disabled={args.disabled} label={{ text: 'sample' }} hiddenLabel>
             <TextInput {...args} value={input} onChange={setInput} />
         </FormField>
     );
@@ -89,6 +97,13 @@ export const WithMaxLength = TextInputTemplate.bind({});
 
 WithMaxLength.args = {
     maxLength: 10,
+};
+
+export const Disabled = TextInputTemplate.bind({});
+
+Disabled.args = {
+    value: 'This a disabled input',
+    disabled: true,
 };
 
 export const WithCharacterDecorator = TextInputTemplate.bind({});
