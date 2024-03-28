@@ -24,10 +24,5 @@
         "concurrently": "^8.2.2",
         "glob": "^10.3.10",
         "wait-on": "^7.2.0"
-    },
-    "pnpm": {
-        "patchedDependencies": {
-            "@contentlayer/cli@0.3.4": "patches/@contentlayer__cli@0.3.4.patch"
-        }
     }
 }
