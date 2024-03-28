@@ -1,4 +1,3 @@
-/** @type { import('@storybook/react').Preview } */
 import type { Preview } from '@storybook/react';
 
 const preview: Preview = {
