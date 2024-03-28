@@ -3,9 +3,8 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "storybook": "concurrently 'pnpm run storybook:new' 'pnpm run storybook:legacy' 'pnpm run storybook:main'",
-        "storybook:new": "pnpm --stream  --filter {packages/components} storybook:background",
-        "storybook:legacy": "pnpm --stream  --filter {packages/fondue} storybook:background",
+        "storybook": "concurrently 'pnpm run storybook:packages' 'pnpm run storybook:main'",
+        "storybook:packages": "pnpm --parallel --filter {packages/*} storybook:background",
         "storybook:main": "wait-on http://localhost:6006 http://localhost:6007 && pnpm --stream  --filter {storybook-docs} storybook",
         "build:fondue": "pnpm --stream --filter {packages/fondue} build",
         "build:storybook": "pnpm run build:storybook-new && pnpm run build:storybook-legacy && pnpm run build:storybook-global",
