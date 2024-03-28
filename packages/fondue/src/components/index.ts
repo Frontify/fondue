@@ -70,3 +70,4 @@ export * from './TooltipIcon';
 export * from './Tree';
 export * from './Trigger';
 export * from './ComponentEnum';
+export * from './FilterableMultiSelect';

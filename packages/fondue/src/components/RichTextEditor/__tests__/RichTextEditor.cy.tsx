@@ -326,6 +326,60 @@ describe('RichTextEditor Component', () => {
         });
     });
 
+    const RichTextEditorWithTextStyles = ({ value }: { value?: string }) => {
+        const pluginsWithColumns = new PluginComposer();
+        pluginsWithColumns.setPlugin([new TextStylePlugin({ textStyles: TextStylePlugins })]);
+
+        return <RichTextEditor plugins={pluginsWithColumns} value={value} />;
+    };
+
+    describe('TextStyle plugin', () => {
+        it('should display the correct text style in the dropdown', () => {
+            cy.mount(
+                <RichTextEditorWithTextStyles
+                    value={JSON.stringify([
+                        {
+                            type: 'heading1',
+                            children: [{ text: 'This a heading 1 text.', textStyle: 'heading1' }],
+                        },
+                    ])}
+                />,
+            );
+            cy.get('[contenteditable=true]').type('{selectall}');
+            cy.get(TOOLBAR_FLOATING).should('include.html', 'Heading 1');
+        });
+
+        it('should display the correct text style in the dropdown if the textstyle is missing', () => {
+            cy.mount(
+                <RichTextEditorWithTextStyles
+                    value={JSON.stringify([
+                        {
+                            type: 'heading1',
+                            children: [{ text: 'This a heading 1 text.' }],
+                        },
+                    ])}
+                />,
+            );
+            cy.get('[contenteditable=true]').type('{selectall}');
+            cy.get(TOOLBAR_FLOATING).should('include.html', 'Heading 1');
+        });
+
+        it('should display mixed if multiple text styles are defined', () => {
+            cy.mount(
+                <RichTextEditorWithTextStyles
+                    value={JSON.stringify([
+                        {
+                            type: 'p',
+                            children: [{ text: 'This a heading 1 text.', textStyle: 'heading1' }],
+                        },
+                    ])}
+                />,
+            );
+            cy.get('[contenteditable=true]').type('{selectall}');
+            cy.get(TOOLBAR_FLOATING).should('include.html', 'Mixed');
+        });
+    });
+
     const RichTextEditorWithTwoColumns = ({ value }: { value?: string }) => {
         const [initialValue, setInitialValue] = useState(value);
 

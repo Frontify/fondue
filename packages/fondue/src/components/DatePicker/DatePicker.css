@@ -149,7 +149,7 @@
     color: var(--text-color-disabled);
 }
 
-/* reset styles injected by the library */ 
+/* reset styles injected by the library */
 .react-datepicker__children-container {
     width: 100%;
     margin: 0;
