@@ -106,7 +106,7 @@ const SegmentedControlsItem = forwardRef<HTMLDivElement, SegmentedControlsItemPr
                         : 'hover:tw-text-text hover:tw-cursor-pointer',
                 ])}
             >
-                <span className="tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap tw-flex">
+                <span className="tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap tw-flex tw-items-center">
                     {isIconItem(item) && <span className="tw-leading-3">{item.icon}</span>}
                     {item.value && <span className={isIconItem(item) ? 'tw-ml-2' : ''}>{item.value.toString()}</span>}
                 </span>
