@@ -1,4 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/react';
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+import { type Meta, type StoryObj } from '@storybook/react';
+
 import { Divider } from './Divider';
 
 type Story = StoryObj<typeof Divider>;
@@ -8,19 +11,17 @@ const meta: Meta<typeof Divider> = {
 };
 export default meta;
 
-
 export const Primary: Story = {
     args: {
         color: '#FF0000',
-        style: "dashed",
-        height: "medium"
+        style: 'dashed',
+        height: 'medium',
     },
 };
 
 export const Minimal: Story = {
     args: {},
 };
-
 
 export const CustomColor: Story = {
     args: {
@@ -34,11 +35,8 @@ export const CustomStyle: Story = {
     },
 };
 
-
 export const CustomHeight: Story = {
     args: {
         height: 'large',
     },
 };
-
-
