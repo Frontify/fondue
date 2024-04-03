@@ -16,7 +16,7 @@
         "node": ">=18"
     },
     "homepage": "https://github.com/Frontify/fondue",
-    "packageManager": "pnpm@8.6.0",
+    "packageManager": "pnpm@8.15.6",
     "main": "dist/index.umd.js",
     "unpkg": "dist/index.umd.js",
     "jsdelivr": "dist/index.umd.js",
