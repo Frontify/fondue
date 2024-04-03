@@ -1,10 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlatePlugin, createPluginFactory } from '@udecode/plate-core';
-import { Plugin, PluginProps } from '../Plugin';
+import { type PlatePlugin, createPluginFactory } from '@udecode/plate-core';
+import { type CSSProperties } from 'react';
+
+import { Plugin, type PluginProps } from '../Plugin';
+
 import { ColumnBreakButton } from './ColumnBreakButton';
 import { onKeyDownColumnBreak } from './onKeyDownColumnBreak';
-import { CSSProperties } from 'react';
 import { useColumnBreakHandler } from './useColumnBreakHandler';
 
 export const KEY_ELEMENT_BREAK_AFTER_COLUMN = 'breakAfterColumn';

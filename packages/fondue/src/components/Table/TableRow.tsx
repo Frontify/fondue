@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactNode, useRef } from 'react';
+import { type ReactNode, useRef } from 'react';
 
 export type TableRowProps = {
     isSelected?: boolean;

@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ResetFormattingToolbarButton } from './ResetFormattingToolbarButton';
 import { ButtonWrapper } from '../../helper';
-import { PluginButtonProps } from '../../types';
+import { type PluginButtonProps } from '../../types';
+
+import { ResetFormattingToolbarButton } from './ResetFormattingToolbarButton';
 
 export const ResetFormattingButton = ({ id }: PluginButtonProps) => (
     <ButtonWrapper id={id}>

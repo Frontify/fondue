@@ -1,14 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { useMenu } from '@react-aria/menu';
+import { useTreeState } from '@react-stately/tree';
+import { type FocusStrategy } from '@react-types/shared';
+import { type ReactElement, useRef } from 'react';
+
 import { AriaList } from '@components/ActionMenu/Aria/AriaList';
 import { AriaMenuItem } from '@components/ActionMenu/Aria/AriaMenuItem';
 import { AriaSection } from '@components/ActionMenu/Aria/AriaSection';
 import { getDisabledItemIds, getKeyItemRecord, getMenuItems, mapToAriaProps } from '@components/ActionMenu/Aria/helper';
-import { MenuItemType } from '@components/Dropdown/SelectMenu/SelectMenu';
-import { useMenu } from '@react-aria/menu';
-import { useTreeState } from '@react-stately/tree';
-import { FocusStrategy } from '@react-types/shared';
-import { ReactElement, useRef } from 'react';
+import { type MenuItemType } from '@components/Dropdown/SelectMenu/SelectMenu';
 
 export type ActionMenuItemType = MenuItemType & { onClick: () => void };
 export type ActionMenuSwitchItemType = MenuItemType & {

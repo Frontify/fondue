@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import {
-    TypographyDecoration,
-    TypographyDisplay,
-    TypographyOverflow,
-    TypographyWhitespace,
-    TypographyWordBreak,
+    type TypographyDecoration,
+    type TypographyDisplay,
+    type TypographyOverflow,
+    type TypographyWhitespace,
+    type TypographyWordBreak,
 } from './types';
 
 export const overflowMap: Record<TypographyOverflow, string> = {

@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { AlignJustifyMarkupElement } from './AlignJustifyMarkupElement';
-import { AlignJustifyButton } from './AlignJustifyButton';
 import { AlignPlugin } from '../AlignPlugin';
-import { AlignPluginProps } from '../types';
+import { type AlignPluginProps } from '../types';
+
+import { AlignJustifyButton } from './AlignJustifyButton';
+import { AlignJustifyMarkupElement } from './AlignJustifyMarkupElement';
 
 export class AlignJustifyPlugin extends AlignPlugin {
     constructor(props?: AlignPluginProps) {

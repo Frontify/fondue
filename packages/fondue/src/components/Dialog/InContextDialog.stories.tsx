@@ -1,27 +1,30 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type Meta, type StoryFn } from '@storybook/react';
 import { useCallback, useRef, useState } from 'react';
-import { Meta, StoryFn } from '@storybook/react';
-import { Dialog, DialogProps } from './Dialog';
+
+import { Box } from '@components/Box';
 import { Button, ButtonEmphasis } from '@components/Button';
-import { Modality } from '../../types';
-import { DialogHeader } from '@components/DialogHeader';
 import { DialogBody } from '@components/DialogBody';
 import { DialogFooter } from '@components/DialogFooter';
-import { TabItem, Tabs, TabsPaddingX } from '@components/Tabs';
-import { Box } from '@components/Box';
+import { DialogHeader } from '@components/DialogHeader';
+import { Flex } from '@components/Flex';
+import { InlineDialog } from '@components/InlineDialog';
 import { LegacyTooltip, TooltipPosition } from '@components/LegacyTooltip';
-import { IconSize } from '@foundation/Icon/IconSize';
+import { MenuItem } from '@components/MenuItem';
+import { TabItem, Tabs, TabsPaddingX } from '@components/Tabs';
+import { TextInput } from '@components/TextInput';
+import { Tooltip } from '@components/Tooltip';
 import IconCaretDown from '@foundation/Icon/Generated/IconCaretDown';
 import IconCaretUp from '@foundation/Icon/Generated/IconCaretUp';
 import IconExclamationMarkCircle16 from '@foundation/Icon/Generated/IconExclamationMarkCircle16';
 import IconMagnifier from '@foundation/Icon/Generated/IconMagnifier';
-import { InlineDialog } from '@components/InlineDialog';
+import { IconSize } from '@foundation/Icon/IconSize';
 import { Text } from '@typography/Text';
-import { MenuItem } from '@components/MenuItem';
-import { TextInput } from '@components/TextInput';
-import { Tooltip } from '@components/Tooltip';
-import { Flex } from '@components/Flex';
+
+import { Modality } from '../../types';
+
+import { Dialog, type DialogProps } from './Dialog';
 
 export default {
     title: 'Experimental/Dialog/In Context',

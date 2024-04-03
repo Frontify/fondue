@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { action } from '@storybook/addon-actions';
-import { Meta, StoryFn } from '@storybook/react';
-import { RadioPill as RadioPillComponent, RadioPillProps } from './RadioPill';
+import { type Meta, type StoryFn } from '@storybook/react';
+
 import IconIcon from '@foundation/Icon/Generated/IconIcon';
+
+import { RadioPill as RadioPillComponent, type RadioPillProps } from './RadioPill';
 
 export default {
     title: 'Components/Radio Pill',

@@ -1,33 +1,36 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { assetInputActions } from '@components/AssetInput/asset-input-actions';
+import { action } from '@storybook/addon-actions';
+import { type Meta, type StoryFn } from '@storybook/react';
+import { type ReactElement, type ReactNode, useState } from 'react';
+
 import { AssetInput, AssetInputSize } from '@components/AssetInput/AssetInput';
+import { assetInputActions } from '@components/AssetInput/asset-input-actions';
 import { Button } from '@components/Button/Button';
 import { ColorPickerFlyout as ColorPickerFlyoutComponent } from '@components/ColorInputFlyout/ColorPickerFlyout';
 import { EXAMPLE_PALETTES } from '@components/ColorPicker/example-palettes';
+import { DatePicker } from '@components/DatePicker';
 import { Dropdown } from '@components/Dropdown';
 import { FormControl } from '@components/FormControl/FormControl';
 import { LinkChooser } from '@components/LinkChooser/LinkChooser.stories';
+import { ScrollWrapper } from '@components/ScrollWrapper';
 import { SegmentedControls } from '@components/SegmentedControls/SegmentedControls';
 import { Switch } from '@components/Switch/Switch';
 import { TextInput, TextInputType } from '@components/TextInput/TextInput';
+import IconIcon from '@foundation/Icon/Generated/IconIcon';
+import IconTextAlignmentCentre from '@foundation/Icon/Generated/IconTextAlignmentCentre';
+import IconTextAlignmentLeft from '@foundation/Icon/Generated/IconTextAlignmentLeft';
+import IconTextAlignmentRight from '@foundation/Icon/Generated/IconTextAlignmentRight';
 import { IconSize } from '@foundation/Icon/IconSize';
-import { action } from '@storybook/addon-actions';
-import { Meta, StoryFn } from '@storybook/react';
+import { LegacyStack } from '@layout/LegacyStack';
 import { merge } from '@utilities/merge';
-import { ReactElement, ReactNode, useState } from 'react';
-import { Color } from '../../types';
+
+import { type Color } from '../../types';
 import { EXAMPLE_IMAGES } from '../AssetInput/example-assets';
+
 import { Accordion as AccordionComponent, AccordionItem } from './Accordion';
 import { AccordionHeaderIcon } from './AccordionHeaderIcon';
-import { AccordionHeaderProps, AccordionProps } from './types';
-import { LegacyStack } from '@layout/LegacyStack';
-import { DatePicker } from '@components/DatePicker';
-import { ScrollWrapper } from '@components/ScrollWrapper';
-import IconIcon from '@foundation/Icon/Generated/IconIcon';
-import IconTextAlignmentLeft from '@foundation/Icon/Generated/IconTextAlignmentLeft';
-import IconTextAlignmentCentre from '@foundation/Icon/Generated/IconTextAlignmentCentre';
-import IconTextAlignmentRight from '@foundation/Icon/Generated/IconTextAlignmentRight';
+import { type AccordionHeaderProps, type AccordionProps } from './types';
 
 export default {
     title: 'Components/Accordion',

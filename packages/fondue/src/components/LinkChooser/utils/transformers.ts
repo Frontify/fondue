@@ -2,8 +2,10 @@
 
 import { MenuItemContentSize, SelectionIndicatorIcon } from '@components/MenuItem';
 import { generateRandomId } from '@utilities/generateRandomId';
+
 import { CUSTOM_LINK_ID, DEFAULT_ICON, MAX_STORED_ITEMS, QUERIES_STORAGE_KEY } from '../LinkChooser';
-import { SearchResult } from '../types';
+import { type SearchResult } from '../types';
+
 import { isCustomLink, prependHttps } from './helpers';
 
 export const createCustomLink = (query: string): SearchResult =>

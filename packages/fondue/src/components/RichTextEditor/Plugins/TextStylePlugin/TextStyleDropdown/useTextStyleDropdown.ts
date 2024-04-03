@@ -1,11 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlateEditor, useEditorState } from '@udecode/plate-core';
-import { Dispatch, HTMLAttributes, SetStateAction, useCallback, useEffect, useState } from 'react';
+import { type PlateEditor, useEditorState } from '@udecode/plate-core';
+import { type Dispatch, type HTMLAttributes, type SetStateAction, useCallback, useEffect, useState } from 'react';
 import { usePopper } from 'react-popper';
+
+import { DEFAULT_TEXT_STYLE_VALUE } from '../types';
+
 import { useSelectedTextStyles } from './useSelectedTextStyles';
 import { verticalPositionModifier } from './verticalPositionModifier';
-import { DEFAULT_TEXT_STYLE_VALUE } from '../types';
 
 type UseTextStyleDropdownReturn<T, P> = {
     state: { isOpen: boolean; toggle: () => void; editor: PlateEditor };

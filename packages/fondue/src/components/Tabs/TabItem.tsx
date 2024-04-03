@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement, ReactNode, useEffect, useState } from 'react';
-import { BadgeProps } from '@components/Badge';
-import { merge } from '@utilities/merge';
+import { type ReactElement, type ReactNode, useEffect, useState } from 'react';
+
+import { type BadgeProps } from '@components/Badge';
 import { checkIfContainInteractiveElements } from '@utilities/elements';
+import { merge } from '@utilities/merge';
 
 export type TabItemProps = {
     id: string;

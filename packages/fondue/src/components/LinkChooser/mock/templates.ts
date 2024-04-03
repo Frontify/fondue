@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ExtraSection, IconName, SearchResult } from '../types';
+import { type ExtraSection, IconName, type SearchResult } from '../types';
 import { filterItems } from '../utils/helpers';
 
 const defaultTemplateProps = { link: '#', icon: IconName.Template };

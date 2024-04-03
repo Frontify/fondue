@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { UseEmojiPickerType } from '@udecode/plate-emoji';
+import { type UseEmojiPickerType } from '@udecode/plate-emoji';
 
 export type EmojiPickerPreviewProps = Pick<UseEmojiPickerType, 'emoji' | 'hasFound' | 'isSearching' | 'i18n'>;
 

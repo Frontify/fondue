@@ -1,16 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement, cloneElement } from 'react';
-import { merge } from '@utilities/merge';
+import { type ReactElement, cloneElement } from 'react';
+
 import {
     PatternDesign,
     PatternScale,
-    PatternScaleOrigin,
+    type PatternScaleOrigin,
     PatternTheme,
     patternDesigns,
     patternScales,
     patternThemes,
 } from '@foundation/Pattern';
+import { merge } from '@utilities/merge';
 
 export type FrontifyPatternProps = {
     pattern: PatternDesign;

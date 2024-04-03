@@ -1,10 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactNode } from 'react';
-import { merge } from '@utilities/merge';
-import { ContainerHTMLElement } from '../../types/elements';
+import { type ReactNode } from 'react';
+
 import { Box } from '@components/Box';
-import { DimensionUnity, GAP_DIRECTIONS, GetGapClassName, SpacingValue } from '@utilities/dimensions';
+import { type DimensionUnity, GAP_DIRECTIONS, GetGapClassName, type SpacingValue } from '@utilities/dimensions';
+import { merge } from '@utilities/merge';
+
+import { type ContainerHTMLElement } from '../../types/elements';
 
 export type FlexDirection = 'row' | 'column' | 'row-reverse' | 'column-reverse';
 export type FlexWrap = 'nowrap' | 'wrap' | 'wrap-reverse';

@@ -1,11 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement, cloneElement, isValidElement, useState } from 'react';
+import { type ReactElement, cloneElement, isValidElement, useState } from 'react';
+
+import { type IconProps } from '@foundation/Icon/IconProps';
 import { IconSize } from '@foundation/Icon/IconSize';
-import { IconProps } from '@foundation/Icon/IconProps';
 import { merge } from '@utilities/merge';
-import { AccordionHeaderProps } from './types';
+
 import { AccordionHeaderIcon } from './AccordionHeaderIcon';
+import { type AccordionHeaderProps } from './types';
 
 export const ACCORDION_HEADER_TEST_ID = 'fondue-accordion-header';
 

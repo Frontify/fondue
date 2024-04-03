@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { EditableMode, EditableText } from '@components/EditableText/EditableText';
+import { type EditableMode, EditableText } from '@components/EditableText/EditableText';
 
 const EDITABLE_CONTAINER = '[data-test-id=editable-node-container]';
 const EDITABLE_LINK_NAME = '[data-test-id=node-link-name]';

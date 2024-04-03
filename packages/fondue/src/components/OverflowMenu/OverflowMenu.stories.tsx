@@ -1,8 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
-import { OverflowMenu, OverflowMenuProps } from './OverflowMenu';
+import { type Meta, type StoryFn } from '@storybook/react';
+
 import { BreadcrumbItem } from '@components/Breadcrumbs';
+
+import { OverflowMenu, type OverflowMenuProps } from './OverflowMenu';
 
 const link = document.referrer;
 const ITEMS = [
@@ -12,16 +14,16 @@ const ITEMS = [
 ];
 
 const BUTTON_ITEMS = [
-    { label: 'Button Item 1', onClick: () => void 0 },
-    { label: 'Button Item 2', onClick: () => void 0 },
-    { label: 'Button Item 3', onClick: () => void 0 },
+    { label: 'Button Item 1', onClick: () => {} },
+    { label: 'Button Item 2', onClick: () => {} },
+    { label: 'Button Item 3', onClick: () => {} },
 ];
 
 const SPAN_ITEMS = [{ label: 'Span Item 1' }, { label: 'Span Item 2' }, { label: 'Span Item 3' }];
 
 const MIXED_ITEMS = [
     { label: 'Item 1', link },
-    { label: 'Button Item 1', onClick: () => void 0 },
+    { label: 'Button Item 1', onClick: () => {} },
     { label: 'Span Item 1' },
 ];
 

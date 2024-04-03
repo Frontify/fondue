@@ -1,11 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
+import { type Meta, type StoryFn } from '@storybook/react';
 import { useState } from 'react';
+
 import {
     MenuItem as MenuItemComponent,
     MenuItemContentSize,
-    MenuItemProps,
+    type MenuItemProps,
     MenuItemStyle,
     SelectionIndicatorIcon,
 } from '@components/MenuItem';

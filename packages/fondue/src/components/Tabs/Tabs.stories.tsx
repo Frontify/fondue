@@ -1,16 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type Meta, type StoryFn } from '@storybook/react';
 import { useState } from 'react';
-import { Meta, StoryFn } from '@storybook/react';
-import { TabSize, Tabs, TabsPaddingX, TabsProps } from './Tabs';
-import { Button } from '@components/Button';
-import { Text } from '@typography/Text';
-import { Divider } from '@components/Divider';
-import { TabItem, TabItemProps } from '@components/Tabs/TabItem';
-import { IconSize } from '@foundation/Icon/IconSize';
-import IconIcon from '@foundation/Icon/Generated/IconIcon';
+
 import { BadgeStyle } from '@components/Badge';
-import { Checkbox as CheckboxComponent, CheckboxProps, CheckboxState } from '@components/Checkbox/Checkbox';
+import { Button } from '@components/Button';
+import { Checkbox as CheckboxComponent, type CheckboxProps, CheckboxState } from '@components/Checkbox/Checkbox';
+import { Divider } from '@components/Divider';
+import { TabItem, type TabItemProps } from '@components/Tabs/TabItem';
+import IconIcon from '@foundation/Icon/Generated/IconIcon';
+import { IconSize } from '@foundation/Icon/IconSize';
+import { Text } from '@typography/Text';
+
+import { TabSize, Tabs, TabsPaddingX, type TabsProps } from './Tabs';
 
 const checkboxArgs = {
     state: CheckboxState.Unchecked,

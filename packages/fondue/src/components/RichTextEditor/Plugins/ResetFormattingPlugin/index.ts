@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlatePlugin, createPluginFactory } from '@udecode/plate-core';
-import { ELEMENT_RESET_FORMATTING, RESET_FORMATTING_PLUGIN } from './id';
+import { type PlatePlugin, createPluginFactory } from '@udecode/plate-core';
+
+import { Plugin, type PluginProps } from '../Plugin';
+
 import { ResetFormattingButton } from './ResetFormattingButton';
-import { Plugin, PluginProps } from '../Plugin';
+import { ELEMENT_RESET_FORMATTING, RESET_FORMATTING_PLUGIN } from './id';
 
 export const createResetFormattingPlugin: ReturnType<typeof createPluginFactory<NonNullable<unknown>>> =
     createPluginFactory({

@@ -1,13 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlateEditor, toggleNodeType } from '@udecode/plate-core';
+import { type PlateEditor, toggleNodeType } from '@udecode/plate-core';
 import { ELEMENT_LI } from '@udecode/plate-list';
 import { getAboveNode, someNode } from '@udecode/slate';
 import { getMark, setMarks } from '@udecode/slate-utils';
+
+import { merge } from '@utilities/merge';
+
 import { ELEMENT_CHECK_ITEM } from '../../CheckboxListPlugin';
 import { MARK_TEXT_STYLE } from '../../ListPlugin/ListPlugin';
-import { merge } from '@utilities/merge';
-import { DropdownItemProps } from './types';
+
+import { type DropdownItemProps } from './types';
 
 const isInList = (editor: PlateEditor) =>
     getAboveNode(editor, {

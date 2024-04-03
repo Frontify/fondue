@@ -1,12 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import {
-    BOLD_CLASSES,
-    CODE_CLASSES,
-    ITALIC_CLASSES,
-    STRIKETHROUGH_CLASSES,
-    UNDERLINE_CLASSES,
-} from '@components/RichTextEditor/Plugins';
+import { BOLD_CLASSES } from '@components/RichTextEditor/Plugins/MarkPlugin/BoldPlugin/BoldMarkupElement';
+import { CODE_CLASSES } from '@components/RichTextEditor/Plugins/MarkPlugin/CodePlugin/CodeMarkupElement';
+import { ITALIC_CLASSES } from '@components/RichTextEditor/Plugins/MarkPlugin/ItalicPlugin/ItalicMarkupElement';
+import { STRIKETHROUGH_CLASSES } from '@components/RichTextEditor/Plugins/MarkPlugin/StrikethroughPlugin/StrikethroughMarkupElement';
+import { UNDERLINE_CLASSES } from '@components/RichTextEditor/Plugins/MarkPlugin/UnderlinePlugin/UnderlineMarkupElement';
+
 import { serializeLeafToHtml } from './serializeLeafToHtml';
 
 describe('serializeLeafToHtml()', () => {

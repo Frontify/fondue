@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactNode, createContext, useContext, useMemo } from 'react';
-import { useEditorResize } from '../hooks';
+import { type ReactNode, createContext, useContext, useMemo } from 'react';
+
 import { PlateWrapper } from '../components/EditorPositioningWrapper/PlateWrapper';
+import { useEditorResize } from '../hooks';
 
 type EditorResizeContextProps = {
     editorWidth: number | undefined;

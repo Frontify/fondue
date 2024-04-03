@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useEffect, useState } from 'react';
-import { TreeItemMultiselectProps, TreeItemProps } from '../types';
+
+import { type TreeItemMultiselectProps, type TreeItemProps } from '../types';
 
 export type TreeItemMock = TreeItemMultiselectProps &
     TreeItemProps & {

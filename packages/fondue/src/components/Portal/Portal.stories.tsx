@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
-import { Portal, PortalProps } from './Portal';
+import { type Meta, type StoryFn } from '@storybook/react';
+
+import { Portal, type PortalProps } from './Portal';
 
 export default {
     title: 'Utilities/Portal',

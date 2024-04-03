@@ -1,18 +1,20 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
+import { type Meta, type StoryFn } from '@storybook/react';
 import { useEffect, useState } from 'react';
+
+import { TooltipIconTriggerStyle } from '@components/TooltipIcon';
+import IconExclamationMarkCircle from '@foundation/Icon/Generated/IconExclamationMarkCircle';
+import IconInfo from '@foundation/Icon/Generated/IconInfo';
+import IconQuestionMarkCircle from '@foundation/Icon/Generated/IconQuestionMarkCircle';
+
 import {
     Checkbox as CheckboxComponent,
     CheckboxEmphasis,
-    CheckboxProps,
+    type CheckboxProps,
     CheckboxSize,
     CheckboxState,
 } from './Checkbox';
-import { TooltipIconTriggerStyle } from '@components/TooltipIcon';
-import IconExclamationMarkCircle from '@foundation/Icon/Generated/IconExclamationMarkCircle';
-import IconQuestionMarkCircle from '@foundation/Icon/Generated/IconQuestionMarkCircle';
-import IconInfo from '@foundation/Icon/Generated/IconInfo';
 
 export default {
     title: 'Components/Checkbox',

@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
-import { Menu, MenuProps } from './Menu';
+import { type Meta, type StoryFn } from '@storybook/react';
+
+import { Menu, type MenuProps } from './Menu';
 import {
     BASIC_MENU_WITH_LINKS_CODE_SNIPPET,
     BASIC_MENU_WITH_ONCLICK_CODE_SNIPPET,
@@ -10,7 +11,7 @@ import {
     ComponentStructure,
     ITEMS,
     ITEMS_WITH_LINKS,
-    Item,
+    type Item,
 } from './utils/componentMocks';
 
 export default {

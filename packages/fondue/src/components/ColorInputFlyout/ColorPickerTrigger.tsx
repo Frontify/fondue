@@ -1,18 +1,21 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { TinyColor } from '@ctrl/tinycolor';
+import { useFocusRing } from '@react-aria/focus';
+import { type ReactElement } from 'react';
+
 import { MenuItemContent } from '@components/MenuItem/MenuItemContent';
 import { Trigger } from '@components/Trigger/Trigger';
 import IconDroplet from '@foundation/Icon/Generated/IconDroplet';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { useMemoizedId } from '@hooks/useMemoizedId';
-import { useFocusRing } from '@react-aria/focus';
 import { toShortRgb } from '@utilities/colors';
 import { merge } from '@utilities/merge';
-import { ReactElement } from 'react';
-import { TinyColor } from '@ctrl/tinycolor';
-import { ColorFormat } from '../../types/colors';
+
+import { type ColorFormat } from '../../types/colors';
+
 import { ColorInputTitle } from './ColorInputTitle';
-import { ColorPickerFlyoutProps } from './ColorPickerFlyout';
+import { type ColorPickerFlyoutProps } from './ColorPickerFlyout';
 
 type ColorInputTriggerProps = Pick<ColorPickerFlyoutProps, 'id' | 'currentColor' | 'disabled'> & {
     isOpen?: boolean;

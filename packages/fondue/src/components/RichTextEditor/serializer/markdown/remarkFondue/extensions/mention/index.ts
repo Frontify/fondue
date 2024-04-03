@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { VisitorResult, visit } from 'unist-util-visit';
-import { NodeChild, NodeChildKey, RemarkExtension, TreeNode } from '../../types';
+import { type VisitorResult, visit } from 'unist-util-visit';
+
 import { MENTION_SERIALIZE_REGEX } from '../../../utils';
-import { RegExpMatchArray } from './types';
+import { type NodeChild, type NodeChildKey, type RemarkExtension, type TreeNode } from '../../types';
+
+import { type RegExpMatchArray } from './types';
 
 export default function Extension(): RemarkExtension {
     return transformer;

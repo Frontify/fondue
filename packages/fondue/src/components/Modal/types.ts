@@ -1,11 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { AriaOverlayProps } from '@react-aria/overlays';
-import { AriaDialogProps } from '@react-types/dialog';
-import { PatternDesign, PatternTheme } from '@foundation/Pattern';
-import { ScrollWrapperDirection } from '@components/ScrollWrapper/types';
-import { ReactElement, ReactNode } from 'react';
-import { ButtonProps } from '../Button/Button';
+import { type AriaOverlayProps } from '@react-aria/overlays';
+import { type AriaDialogProps } from '@react-types/dialog';
+import { type ReactElement, type ReactNode } from 'react';
+
+import { type ScrollWrapperDirection } from '@components/ScrollWrapper/types';
+import { type PatternDesign, type PatternTheme } from '@foundation/Pattern';
+
+import { type ButtonProps } from '../Button/Button';
 
 export type ModalButton = Omit<ButtonProps, 'size'>;
 

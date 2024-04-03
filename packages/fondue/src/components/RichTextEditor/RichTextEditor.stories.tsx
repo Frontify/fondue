@@ -1,22 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
-import { ComponentProps } from 'react';
-import { Position } from './components/EditorPositioningWrapper';
-import {
-    IPSUM,
-    checkboxValue,
-    customControlValues,
-    defaultValue,
-    htmlValue,
-    markdownText,
-    mentionValue,
-    mentionable,
-    nodesToSerialize,
-    orderedListValue,
-    unorderedListValue,
-    value,
-} from './helpers/exampleValues';
+import { type Meta, type StoryFn } from '@storybook/react';
+import { type ComponentProps } from 'react';
+
+import { SubscriptPlugin, SuperscriptPlugin } from '@components/RichTextEditor/Plugins/MarkPlugin';
+
 import {
     AlignCenterPlugin,
     AlignJustifyPlugin,
@@ -52,16 +40,30 @@ import {
     UnderlinePlugin,
     UnorderedListPlugin,
 } from './Plugins';
-import { RichTextEditor as RichTextEditorComponent, RichTextEditorProps } from './RichTextEditor';
+import { RichTextEditor as RichTextEditorComponent, type RichTextEditorProps } from './RichTextEditor';
+import { Position } from './components/EditorPositioningWrapper';
+import {
+    IPSUM,
+    checkboxValue,
+    customControlValues,
+    defaultValue,
+    htmlValue,
+    markdownText,
+    mentionValue,
+    mentionable,
+    nodesToSerialize,
+    orderedListValue,
+    unorderedListValue,
+    value,
+} from './helpers/exampleValues';
 import {
     MarkdownToSlate,
-    SerializeNodesToHtmlOptions,
+    type SerializeNodesToHtmlOptions,
     SlateToMarkdown,
     Transform,
     serializeNodesToHtml,
 } from './serializer';
 import { PaddingSizes } from './types';
-import { SubscriptPlugin, SuperscriptPlugin } from '@components/RichTextEditor/Plugins/MarkPlugin';
 
 export default {
     title: 'Components/Rich Text Editor',

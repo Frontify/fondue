@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useMarkToolbarButton, useMarkToolbarButtonState } from '@udecode/plate-utils';
+import { type ReactNode, forwardRef } from 'react';
 
 import { ToolbarButton } from '../../components/Toolbar/ToolbarButton';
-import { ReactNode, forwardRef } from 'react';
 
 export const MarkToolbarButton = forwardRef<
     HTMLButtonElement,

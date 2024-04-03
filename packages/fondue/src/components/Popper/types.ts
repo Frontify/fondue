@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PositioningStrategy } from '@popperjs/core/lib/types';
-import { ReactNode, RefObject } from 'react';
+import { type PositioningStrategy } from '@popperjs/core/lib/types';
+import { type ReactNode, type RefObject } from 'react';
 
 export type PopperPlacement =
     | 'top'

@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
-import { Slider, SliderProps } from './Slider';
+import { type Meta, type StoryFn } from '@storybook/react';
+
+import { Slider, type SliderProps } from './Slider';
 
 export default {
     title: 'Components/Slider',
@@ -15,7 +16,7 @@ export default {
         step: { type: 'number' },
         stepMultiplier: { type: 'number' },
         label: { type: 'string' },
-        ['aria-label']: { type: 'string' },
+        'aria-label': { type: 'string' },
         valueSuffix: { type: 'string' },
         showMinMax: { type: 'boolean' },
         disabled: { type: 'boolean' },
@@ -40,12 +41,12 @@ BasicUsage.args = {
     value: 30,
     step: 1,
     valueSuffix: '%',
-    ['aria-label']: 'Percentage slider',
+    'aria-label': 'Percentage slider',
 };
 
 export const DisabledState = SliderTemplate.bind({});
 DisabledState.args = {
     value: 20,
-    ['aria-label']: 'Percentage slider',
+    'aria-label': 'Percentage slider',
     disabled: true,
 };

@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { writeFile } from 'node:fs/promises';
+
 import fastGlob from 'fast-glob';
-import { writeFile } from 'fs/promises';
 
 const ICON_ENUM_OUTPUT_PATH = './src/foundation/Icon/IconEnum.ts';
 

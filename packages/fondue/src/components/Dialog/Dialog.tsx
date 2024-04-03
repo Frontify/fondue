@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { BaseDialogProps, Modality, OverlayProps } from '../../types';
 import { Overlay } from '@utilities/dialogs/Overlay';
 import { Z_INDEX_MODAL } from '@utilities/dialogs/constants';
-import { WithRequired } from 'src/types/withRequired';
+import { type WithRequired } from 'src/types/withRequired';
+
+import { type BaseDialogProps, Modality, type OverlayProps } from '../../types';
 
 export type DialogProps = Omit<
     OverlayProps,

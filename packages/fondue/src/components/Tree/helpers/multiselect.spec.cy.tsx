@@ -1,7 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { CheckboxState } from '@components/Checkbox';
+
+import { ROOT_ID } from './constants';
 import {
-    TreeItemMultiselectWithNodes,
+    type TreeItemMultiselectWithNodes,
     addSelectedIds,
     addSelectedItemsFromSelection,
     cleanOrphanSelectedIds,
@@ -16,8 +19,6 @@ import {
     removePartialFlagSelectedId,
     removeSelectedIds,
 } from './multiselect';
-import { CheckboxState } from '@components/Checkbox';
-import { ROOT_ID } from './constants';
 
 const treeMultiselect: TreeItemMultiselectWithNodes[] = [
     {

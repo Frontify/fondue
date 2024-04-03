@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement } from 'react';
-import { DraggableItem } from '@utilities/dnd';
-import { DragHandlerPosition, TreeItemStyling, TreeProps } from '@components/Tree/types';
+import { type ReactElement } from 'react';
+
+import { type DragHandlerPosition, type TreeItemStyling, type TreeProps } from '@components/Tree/types';
+import { type DraggableItem } from '@utilities/dnd';
 
 export type RenderListItem<T> = (items: OrderableListItem<T>) => ReactElement;
 

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconEnum } from './IconEnum';
-import { IconSize } from './IconSize';
+import { type IconEnum } from './IconEnum';
+import { type IconSize } from './IconSize';
 
 export type GeneratedIconProps = {
     size?: IconSize;

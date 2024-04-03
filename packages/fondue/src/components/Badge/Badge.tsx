@@ -1,13 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type ReactElement, type ReactNode, cloneElement } from 'react';
+
 import IconCross from '@foundation/Icon/Generated/IconCross';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import { ReactElement, ReactNode, cloneElement } from 'react';
+
 import { BadgeStatusIcon } from './BadgeStatusIcon';
 import { getCircularSizeClasses, getSizeClasses, getStyleClasses } from './helpers';
-import { BadgeEmphasis, BadgeProps, BadgeStyle } from './types';
+import { BadgeEmphasis, type BadgeProps, BadgeStyle } from './types';
 
 export const Badge = ({
     children,
@@ -32,7 +34,7 @@ export const Badge = ({
         if (['string', 'number'].includes(typeof node)) {
             return node as string;
         }
-        if (node instanceof Array) {
+        if (Array.isArray(node)) {
             return node.map(getNodeText).join('');
         }
         if (node && typeof node === 'object' && 'props' in node) {

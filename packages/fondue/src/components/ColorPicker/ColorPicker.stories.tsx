@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
+import { type Meta, type StoryFn } from '@storybook/react';
 import { useState } from 'react';
+
 import { ColorFormat } from '../../types/colors';
-import { ColorPicker, ColorPickerProps } from './ColorPicker';
+
+import { ColorPicker, type ColorPickerProps } from './ColorPicker';
 import { EXAMPLE_PALETTES } from './example-palettes';
 
 export default {

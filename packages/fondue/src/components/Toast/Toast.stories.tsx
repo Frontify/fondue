@@ -1,14 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type Meta, type StoryFn } from '@storybook/react';
+
+import { Button } from '@components/Button/Button';
+import { ButtonGroup } from '@components/ButtonGroup/ButtonGroup';
 import IconExclamationMarkCircle24 from '@foundation/Icon/Generated/IconExclamationMarkCircle24';
 import IconExclamationMarkTriangle24 from '@foundation/Icon/Generated/IconExclamationMarkTriangle24';
 import IconTrashBin24 from '@foundation/Icon/Generated/IconTrashBin24';
-import { Meta, StoryFn } from '@storybook/react';
+
 import { ButtonSize, ButtonStyle } from '../Button/ButtonTypes';
+
 import { Toast as ToastComponent } from './Toast';
-import { ToastAnimationDirection, ToastProps, ToastStyle } from './types';
-import { ButtonGroup } from '@components/ButtonGroup/ButtonGroup';
-import { Button } from '@components/Button/Button';
+import { ToastAnimationDirection, type ToastProps, ToastStyle } from './types';
 
 export default {
     title: 'Components/Toast',

@@ -1,13 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { createAlignPlugin } from '@udecode/plate-alignment';
-import { PlatePlugin } from '@udecode/plate-core';
-import { ELEMENT_PARAGRAPH } from '@udecode/plate-paragraph';
+import { type PlatePlugin } from '@udecode/plate-core';
 import { ELEMENT_LIC } from '@udecode/plate-list';
+import { ELEMENT_PARAGRAPH } from '@udecode/plate-paragraph';
+
 import { ELEMENT_CHECK_ITEM } from '../CheckboxListPlugin';
 import { Plugin } from '../Plugin';
-import { AlignPluginProps } from './types';
+
 import { ALIGN_PLUGIN } from './id';
+import { type AlignPluginProps } from './types';
 
 export class AlignPlugin extends Plugin<AlignPluginProps> {
     protected validTypes: string[] = [];

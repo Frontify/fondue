@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement, ReactNode } from 'react';
-import { PlateEditor, PlatePlugin } from '@udecode/plate-core';
-import type { Plugin } from './Plugin';
-import { Position } from '../components/EditorPositioningWrapper';
+import { type PlateEditor, type PlatePlugin } from '@udecode/plate-core';
+import { type ReactElement, type ReactNode } from 'react';
+
+import { type Position } from '../components/EditorPositioningWrapper';
+
+import { type Plugin } from './Plugin';
 
 export type Unknown = unknown;
 export type ObjectType<T extends Unknown> = Record<string, T>;

@@ -1,10 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TEXT_STYLE_PLUGIN } from './id';
-import { TextStyleButton } from './TextStyleDropdown/TextStyleButton';
+import { type PlatePlugin } from '@udecode/plate-core';
+
 import { Plugin } from '../Plugin';
+
+import { TextStyleButton } from './TextStyleDropdown/TextStyleButton';
 import { withTextStyles } from './TextStyleDropdown/withTextStyles';
-import { PlatePlugin } from '@udecode/plate-core';
+import { TEXT_STYLE_PLUGIN } from './id';
 
 export class TextStylePlugin extends Plugin {
     public textStyles: Plugin[];

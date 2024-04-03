@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { MenuItem, MenuItemContentSize, type MenuItemProps, SelectionIndicatorIcon } from '@components/MenuItem';
 import IconMusicNote from '@foundation/Icon/Generated/IconMusicNote';
 import { IconSize } from '@foundation/Icon/IconSize';
-import { MenuItem, MenuItemContentSize, MenuItemProps, SelectionIndicatorIcon } from '@components/MenuItem';
 
 const MENU_ITEM_ACTIVE_ID = '[data-test-id=menu-item-active]';
 const MENU_ITEM_TITLE_ID = '[data-test-id=menu-item-title]';

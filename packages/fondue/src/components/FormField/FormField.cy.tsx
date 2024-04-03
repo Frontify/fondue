@@ -1,10 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Validation, validationTextClassMap } from '@utilities/validation';
-import { TextInput } from '../TextInput/TextInput';
-import { FormField, FormFieldProps } from './FormField';
 import IconInfo from '@foundation/Icon/Generated/IconInfo';
 import IconQuestionMark from '@foundation/Icon/Generated/IconQuestionMark';
+import { Validation, validationTextClassMap } from '@utilities/validation';
+
+import { TextInput } from '../TextInput/TextInput';
+
+import { FormField, type FormFieldProps } from './FormField';
 
 const FORM_FIELD_LABEL = '[data-test-id=fondue-form-field-label]';
 const FORM_FIELD_LABEL_TEXT = '[data-test-id=fondue-form-field-label-text]';

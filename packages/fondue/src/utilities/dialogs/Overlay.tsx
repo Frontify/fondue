@@ -1,18 +1,20 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useMemoizedId } from '@hooks/useMemoizedId';
-import { Popper } from '@components/Popper';
 import { useCallback, useEffect, useState } from 'react';
-import { OVERLAY_CONTAINER_DARK_THEME_STYLING, OVERLAY_CONTAINER_LIGHT_THEME_STYLING } from '@utilities/overlayStyle';
-import { BaseDialogProps, Modality, OverlayProps, overlayBorderRadius, overlayShadowMap } from '../../types';
-import { merge, mergeRefs } from '@utilities/merge';
-import { useFocusTrap } from '@hooks/useFocusTrap';
-import { useClickOutside } from '@hooks/useClickOutside';
+
+import { Popper } from '@components/Popper';
 import { Portal } from '@components/Portal';
+import { useClickOutside } from '@hooks/useClickOutside';
 import { useDropdownAutoHeight } from '@hooks/useDropdownAutoHeight';
-import { Z_INDEX_MODAL_BACKDROP } from '@utilities/dialogs/constants';
-import useMobileDetection from '@hooks/useMobileDetection';
+import { useFocusTrap } from '@hooks/useFocusTrap';
 import { useHandleCloseOnEscape } from '@hooks/useHandleCloseOnEscape';
+import { useMemoizedId } from '@hooks/useMemoizedId';
+import { useMobileDetection } from '@hooks/useMobileDetection';
+import { Z_INDEX_MODAL_BACKDROP } from '@utilities/dialogs/constants';
+import { merge, mergeRefs } from '@utilities/merge';
+import { OVERLAY_CONTAINER_DARK_THEME_STYLING, OVERLAY_CONTAINER_LIGHT_THEME_STYLING } from '@utilities/overlayStyle';
+
+import { type BaseDialogProps, Modality, type OverlayProps, overlayBorderRadius, overlayShadowMap } from '../../types';
 
 export const Overlay = ({
     id: customId,

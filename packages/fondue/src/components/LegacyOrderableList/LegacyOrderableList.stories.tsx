@@ -1,11 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
-import { useState } from 'react';
-import { LegacyOrderableList as OrderableListComponent } from './LegacyOrderableList';
-import { LegacyOrderableListItem, LegacyOrderableListProps } from './types';
 import { chain } from '@react-aria/utils';
+import { type Meta, type StoryFn } from '@storybook/react';
+import { useState } from 'react';
+
 import { renderContent, storyItems } from '@components/LegacyOrderableList/utils';
+
+import { LegacyOrderableList as OrderableListComponent } from './LegacyOrderableList';
+import { type LegacyOrderableListItem, type LegacyOrderableListProps } from './types';
 
 export default {
     title: 'Deprecated/Legacy Orderable List',

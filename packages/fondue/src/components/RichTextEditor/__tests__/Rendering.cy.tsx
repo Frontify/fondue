@@ -1,8 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ELEMENT_PARAGRAPH } from '@udecode/plate-paragraph';
-import { ReactElement, useState } from 'react';
+import { type ReactElement, useState } from 'react';
+
 import { RichTextEditor } from '../RichTextEditor';
+
 import { RICH_TEXT_EDITOR } from './fixtures/selectors';
 
 const RichTextEditorWithValueSetOutside = ({ value }: { value: string }): ReactElement => {

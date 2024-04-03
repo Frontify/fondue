@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { getParentNode, getPointBefore, getStartPoint, select } from '@udecode/slate';
-import { PlateEditor } from '@udecode/plate-core';
-import { TPath } from '@udecode/slate';
+import { type PlateEditor } from '@udecode/plate-core';
+import { getParentNode, getPointBefore, getStartPoint, select, type TPath } from '@udecode/slate';
+
 import { KEY_ELEMENT_BREAK_AFTER_COLUMN } from './createColumnBreakPlugin';
 import { setColumnBreaks } from './utils/setColumnBreaks';
 import { updateColumnBreaks } from './utils/updateColumnBreaks';
@@ -28,10 +28,11 @@ export const useColumnBreakHandler = <E extends PlateEditor = PlateEditor>(edito
 
     editor.apply = (operation) => {
         switch (operation.type) {
-            case 'split_node':
+            case 'split_node': {
                 operation.properties = { ...operation.properties, breakAfterColumn: undefined };
                 break;
-            case 'merge_node':
+            }
+            case 'merge_node': {
                 const pointBefore = getPointBefore(editor, operation.path);
 
                 if (!pointBefore) {
@@ -48,6 +49,7 @@ export const useColumnBreakHandler = <E extends PlateEditor = PlateEditor>(edito
                 }
 
                 break;
+            }
         }
 
         apply(operation);

@@ -1,13 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { forwardRef, useEffect } from 'react';
 import * as Popover from '@radix-ui/react-popover';
-import { useEditorRef, useEditorSelector, useEventEditorSelectors, usePlateSelectors } from '@udecode/plate-core';
-import { createVirtualRef } from '@udecode/plate-floating';
 import {
-    ComboboxContentItemProps,
-    ComboboxContentProps,
-    ComboboxProps,
+    type ComboboxContentItemProps,
+    type ComboboxContentProps,
+    type ComboboxProps,
     comboboxActions,
     comboboxSelectors,
     useActiveComboboxStore,
@@ -17,8 +14,12 @@ import {
     useComboboxItem,
     useComboboxSelectors,
 } from '@udecode/plate-combobox';
-import { merge } from '@utilities/merge';
+import { useEditorRef, useEditorSelector, useEventEditorSelectors, usePlateSelectors } from '@udecode/plate-core';
+import { createVirtualRef } from '@udecode/plate-floating';
+import { forwardRef, useEffect } from 'react';
+
 import { zIndexLayers } from '@components/RichTextEditor/helpers/zIndexLayers';
+import { merge } from '@utilities/merge';
 
 export const ComboboxItem = forwardRef<'div', ComboboxContentItemProps & { className?: string }>(
     ({ combobox, index, item, onRenderItem, className, ...externalProps }, ref) => {
@@ -102,7 +103,6 @@ export function Combobox({
     const editorId = usePlateSelectors().id();
 
     useEffect(() => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { [id]: _deleted, ...comboBoxesToKeep } = comboboxSelectors.state().byId;
         comboboxActions.byId(comboBoxesToKeep);
         comboboxActions.setComboboxById({

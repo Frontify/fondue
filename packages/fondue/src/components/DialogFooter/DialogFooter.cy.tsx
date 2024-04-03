@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { DialogFooter } from './DialogFooter';
 import { ButtonEmphasis } from '@components/Button';
+
+import { DialogFooter } from './DialogFooter';
 
 const DIALOG_FOOTER_SELECTOR = '[data-test-id=fondue-dialog-footer]';
 const DIALOG_FOOTER_SELECTOR_BACK_BUTTON = '[data-test-id=fondue-dialog-footer-back-button]';

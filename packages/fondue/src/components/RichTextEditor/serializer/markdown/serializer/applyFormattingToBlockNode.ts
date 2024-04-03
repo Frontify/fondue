@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import escapeHtml from 'escape-html';
-import { BlockType, InputNodeTypes, NodeType, OptionType, Targets } from '../types';
-import { isLeafNode } from './isLeafNode';
+
+import { type BlockType, type InputNodeTypes, type NodeType, type OptionType, Targets } from '../types';
 import { isMaliciousLink } from '../utils';
+
+import { isLeafNode } from './isLeafNode';
 
 const processMentionNode = (chunk: BlockType) => `@[${chunk.category}:${chunk.id}]`;
 
@@ -51,61 +53,77 @@ export const applyFormattingToBlockNode = (
     const nodeTypes = options.nodeTypes as InputNodeTypes;
 
     switch (type) {
-        case nodeTypes.heading[1]:
+        case nodeTypes.heading[1]: {
             return `# ${children}\n`;
-        case nodeTypes.heading[2]:
+        }
+        case nodeTypes.heading[2]: {
             return `## ${children}\n`;
-        case nodeTypes.heading[3]:
+        }
+        case nodeTypes.heading[3]: {
             return `### ${children}\n`;
-        case nodeTypes.heading[4]:
+        }
+        case nodeTypes.heading[4]: {
             return `#### ${children}\n`;
-        case nodeTypes.heading[5]:
+        }
+        case nodeTypes.heading[5]: {
             return `##### ${children}\n`;
-        case nodeTypes.heading[6]:
+        }
+        case nodeTypes.heading[6]: {
             return `###### ${children}\n`;
+        }
 
-        case nodeTypes.blockQuote:
+        case nodeTypes.blockQuote: {
             /**
              * For some reason, marked is parsing blockquote w/ one new line as
              * continued blockquote, so adding two new lines ensures that doesn't
              * happen
              */
             return `> ${children}`;
+        }
 
-        case nodeTypes.codeBlock:
+        case nodeTypes.codeBlock: {
             return `\`\`\`${(chunk as BlockType).language || ''}\n${children}\n\`\`\`\n`;
+        }
 
-        case nodeTypes.link:
+        case nodeTypes.link: {
             let linkUrl = (chunk as BlockType).url ?? '';
             linkUrl = isMaliciousLink(linkUrl) ? '' : linkUrl;
             const target = (chunk as BlockType).target ?? Targets.Blank;
             return `[${children}](${linkUrl}){:target="${target}"}`;
-
-        case nodeTypes.image:
+        }
+        case nodeTypes.image: {
             let imageUrl = (chunk as BlockType).link ?? '';
             imageUrl = isMaliciousLink(imageUrl) ? '' : imageUrl;
             return `![${(chunk as BlockType).caption}](${imageUrl})`;
+        }
 
         case nodeTypes.ulList:
-        case nodeTypes.olList:
+        case nodeTypes.olList: {
             return `\n${children}\n`;
+        }
 
-        case nodeTypes.listItem:
+        case nodeTypes.listItem: {
             return processListItemNode(nodeTypes, children, chunk, listDepth);
+        }
 
-        case nodeTypes.listItemChild:
+        case nodeTypes.listItemChild: {
             return processListItemChildNode(children);
+        }
 
-        case nodeTypes.paragraph:
+        case nodeTypes.paragraph: {
             return `${children}\n\n`;
+        }
 
-        case nodeTypes.thematicBreak:
+        case nodeTypes.thematicBreak: {
             return `\n---${children}\n\n`;
+        }
 
-        case nodeTypes.mention:
+        case nodeTypes.mention: {
             return processMentionNode(chunk as BlockType);
+        }
 
-        default:
+        default: {
             return shouldEscapeNode(children, nodeTypes, type, parentType);
+        }
     }
 };

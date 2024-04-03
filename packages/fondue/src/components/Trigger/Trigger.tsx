@@ -1,15 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { useFocusRing } from '@react-aria/focus';
+import { type HTMLAttributes, type ReactElement, type ReactNode } from 'react';
+
 import IconCaretDown from '@foundation/Icon/Generated/IconCaretDown';
 import IconCross from '@foundation/Icon/Generated/IconCross';
 import IconExclamationMarkTriangle from '@foundation/Icon/Generated/IconExclamationMarkTriangle';
 import IconTrashBin from '@foundation/Icon/Generated/IconTrashBin';
 import { IconSize } from '@foundation/Icon/IconSize';
-import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE, FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
-import { HTMLAttributes, ReactElement, ReactNode } from 'react';
 
 export enum TriggerSize {
     Small = 'Small',

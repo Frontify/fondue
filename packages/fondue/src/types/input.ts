@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Validation } from '@utilities/validation';
-import type { AriaAttributes, InputHTMLAttributes, ReactElement } from 'react';
+import { type AriaAttributes, type InputHTMLAttributes, type ReactElement } from 'react';
+
+import { type Validation } from '@utilities/validation';
 
 export type InputSharedBaseProps = {
     autocomplete?: boolean;

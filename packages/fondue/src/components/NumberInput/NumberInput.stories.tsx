@@ -1,12 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
-import { NumberInput } from './NumberInput';
-import { NumberInputProps } from './types';
+import { type Meta, type StoryFn } from '@storybook/react';
 import { useState } from 'react';
+
 import IconNook16 from '@foundation/Icon/Generated/IconNook16';
 import { Validation } from '@utilities/validation';
+
 import { Box } from '../Box/Box';
+
+import { NumberInput } from './NumberInput';
+import { type NumberInputProps } from './types';
 
 export default {
     title: 'Components/Number Input',

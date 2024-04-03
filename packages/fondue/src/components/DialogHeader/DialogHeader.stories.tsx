@@ -1,11 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
-import { DialogHeader as DialogHeaderComponent } from './DialogHeader';
-import { Badge, BadgeStyle } from '@components/Badge';
 import { action } from '@storybook/addon-actions';
-import { DIALOG_PADDING, DialogHeaderProps } from '../../types';
+import { type Meta, type StoryFn } from '@storybook/react';
+
+import { Badge, BadgeStyle } from '@components/Badge';
 import IconIcon24 from '@foundation/Icon/Generated/IconIcon24';
+
+import { DIALOG_PADDING, type DialogHeaderProps } from '../../types';
+
+import { DialogHeader as DialogHeaderComponent } from './DialogHeader';
 
 export default {
     title: 'Experimental/DialogHeader',

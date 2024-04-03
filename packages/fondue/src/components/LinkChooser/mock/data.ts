@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconName, ImageSearchResult, SearchResult } from '../types';
+import { IconName, type ImageSearchResult, type SearchResult } from '../types';
+
 import { GUIDELINE_ITEMS } from './guidelines';
 import { TEMPLATE_ITEMS } from './templates';
 

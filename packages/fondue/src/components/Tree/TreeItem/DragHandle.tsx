@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ButtonHTMLAttributes, DetailedHTMLProps, forwardRef } from 'react';
+import { type ButtonHTMLAttributes, type DetailedHTMLProps, forwardRef } from 'react';
 
 import IconGrabHandle12 from '@foundation/Icon/Generated/IconGrabHandle12';
-
-import { merge } from '@utilities/merge';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
-import { TreeItemColors, TreeItemColorsClassMap } from '../types';
+import { merge } from '@utilities/merge';
+
+import { type TreeItemColors, TreeItemColorsClassMap } from '../types';
 
 export type DragHandleProps = DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> & {
     active?: boolean;

@@ -1,14 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import type { ReactElement } from 'react';
-import { cloneElement } from 'react';
-import { merge } from '@utilities/merge';
-import { IconSize } from '@foundation/Icon/IconSize';
-import { HelperText } from '@utilities/input';
-import { Validation } from '@utilities/validation';
-import { generateRandomId } from '@utilities/generateRandomId';
-import { Tooltip, TooltipProps } from '@components/Tooltip/Tooltip';
 import { VisuallyHidden } from '@react-aria/visually-hidden';
+import { cloneElement, type ReactElement } from 'react';
+
+import { Tooltip, type TooltipProps } from '@components/Tooltip/Tooltip';
+import { type IconSize } from '@foundation/Icon/IconSize';
+import { generateRandomId } from '@utilities/generateRandomId';
+import { HelperText } from '@utilities/input';
+import { merge } from '@utilities/merge';
+import { Validation } from '@utilities/validation';
 
 export type LabelProps = {
     text: string;

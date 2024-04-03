@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import type { KeyboardEvent } from 'react';
+import { type KeyboardEvent } from 'react';
 
 const TABBABLE_ELEMENTS = [
     'input',

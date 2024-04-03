@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ToolbarWrapperProps } from './types';
 import { ToolbarWrapper } from '@components/RichTextEditor/components/Toolbar/ToolbarWrapper';
+
+import { type ToolbarWrapperProps } from './types';
 
 export const ToolbarWrapperPositioningBottom = ({ children }: ToolbarWrapperProps) => {
     return (

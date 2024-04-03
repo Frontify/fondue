@@ -1,10 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MenuItemContentSize, MenuItemStyle, SelectionIndicatorIcon } from '@components/MenuItem';
 import { action } from '@storybook/addon-actions';
-import { Meta, StoryFn } from '@storybook/react';
-import { ActionMenu as ActionMenuComponent, ActionMenuProps } from './ActionMenu';
+import { type Meta, type StoryFn } from '@storybook/react';
+
+import { MenuItemContentSize, MenuItemStyle, SelectionIndicatorIcon } from '@components/MenuItem';
 import IconMusicNote from '@foundation/Icon/Generated/IconMusicNote';
+
+import { ActionMenu as ActionMenuComponent, type ActionMenuProps } from './ActionMenu';
 
 export default {
     title: 'Components/Action Menu',

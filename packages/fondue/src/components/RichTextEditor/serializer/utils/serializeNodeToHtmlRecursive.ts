@@ -1,32 +1,34 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import {
-    ELEMENT_BUTTON,
-    ELEMENT_CHECK_ITEM,
-    MappedMentionableItems,
-    OL_STYLES,
-    TextStyles,
-    UL_CLASSES,
-    alignmentClassnames,
-    getOrderedListClasses,
-} from '@components/RichTextEditor/Plugins';
+import { ELEMENT_LINK } from '@udecode/plate-link';
+import { ELEMENT_LI, ELEMENT_LIC, ELEMENT_OL, ELEMENT_UL } from '@udecode/plate-list';
+import { ELEMENT_MENTION } from '@udecode/plate-mention';
+import { type TDescendant, type TElement, isText } from '@udecode/slate';
+
+import { ELEMENT_CHECK_ITEM } from '@components/RichTextEditor/Plugins/CheckboxListPlugin/id';
 import {
     LIST_ITEM_SPAN_CLASSES,
     getLicElementClassNames,
 } from '@components/RichTextEditor/Plugins/ListPlugin/ListItemContentMarkupElement';
 import { LI_CLASSNAMES, getLiStyles } from '@components/RichTextEditor/Plugins/ListPlugin/ListItemMarkupElement';
-import { ELEMENT_LI, ELEMENT_LIC, ELEMENT_OL, ELEMENT_UL } from '@udecode/plate-list';
-import { ELEMENT_LINK } from '@udecode/plate-link';
-import { ELEMENT_MENTION } from '@udecode/plate-mention';
-import { TDescendant, TElement, isText } from '@udecode/slate';
+import {
+    OL_STYLES,
+    getOrderedListClasses,
+} from '@components/RichTextEditor/Plugins/ListPlugin/OrderedListPlugin/OrderedListMarkupElement';
+import { UL_CLASSES } from '@components/RichTextEditor/Plugins/ListPlugin/UnorderedListPlugin/UnorderedListMarkupElement';
+import { type MappedMentionableItems } from '@components/RichTextEditor/Plugins/MentionPlugin/types';
+import { TextStyles } from '@components/RichTextEditor/Plugins/TextStylePlugin/types';
+import { ELEMENT_BUTTON, alignmentClassnames } from '@components/RichTextEditor/Plugins/helper';
 import { merge } from '@utilities/merge';
-import { ButtonStylesType, buttonNode } from '../nodes/button';
+
+import { type ButtonStylesType, buttonNode } from '../nodes/button';
 import { checkItemNode } from '../nodes/checkItem';
 import { linkNode } from '../nodes/link';
 import { mentionHtmlNode } from '../nodes/mentionHtmlNode';
+import { type CSSPropertiesHover } from '../types';
+
 import { reactCssPropsToCss } from './reactCssPropsToCss';
 import { serializeLeafToHtml } from './serializeLeafToHtml';
-import { CSSPropertiesHover } from '../types';
 
 const getNestingLevels = (nodes: TDescendant[], type: string): number => {
     let maxDepth = 0;

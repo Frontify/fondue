@@ -1,15 +1,16 @@
-/* eslint-disable react/display-name */
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { combineMentionableKeyWith, renderMentionLabel } from '../helpers';
-import { MappedMentionableItems, MentionableCategory } from '../types';
+import { type MappedMentionableItems, type MentionableCategory } from '../types';
+
 import { MarkupElementNodeComponent } from './MarkupElementNode';
-import { MarkupElementNodeType } from './types';
+import { type MarkupElementNodeType } from './types';
 
 export const renderLabel = (mentionable: MappedMentionableItems, key: string, id: string) => mentionable.get(key) ?? id;
 
 export const MentionMarkupElementNode =
     (mentionable: MappedMentionableItems): MarkupElementNodeType =>
+    // eslint-disable-next-line react/display-name
     (props) => {
         const { element, children } = props;
 

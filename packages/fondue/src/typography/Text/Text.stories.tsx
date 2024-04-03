@@ -1,10 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
-import { sharedTypographyArgTypes, sharedTypographyArgs } from '../shared/Shared';
-import { Text as TextComponent, TextProps } from './Text';
+import { type Meta, type StoryFn } from '@storybook/react';
+
 import { Container } from '@components/Container';
 import { SPACING_VALUES } from '@utilities/dimensions';
+
+import { sharedTypographyArgTypes, sharedTypographyArgs } from '../shared/Shared';
+
+import { Text as TextComponent, type TextProps } from './Text';
 
 export default {
     title: 'Typography/Text',
