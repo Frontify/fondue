@@ -1,4 +1,3 @@
-//@ts-ignore
 import { create } from '@storybook/theming/create';
 
 export const light = create({

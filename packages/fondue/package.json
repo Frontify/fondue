@@ -35,15 +35,15 @@
     "main": "dist/index.umd.js",
     "module": "dist/index.es.js",
     "unpkg": "dist/index.umd.js",
-    "engines": {
-        "node": ">=18"
-    },
     "jsdelivr": "dist/index.umd.js",
     "types": "dist/index.d.ts",
     "files": [
         "dist",
         "tailwind.config.js"
     ],
+    "engines": {
+        "node": ">=18"
+    },
     "scripts": {
         "build": "pnpm clean && pnpm generate:icons && pnpm generate:componentsEnum && pnpm build:library && pnpm build:extractedThirdPartyStyles",
         "build:extractedThirdPartyStyles": "concat src/components/**/*.css | postcss > dist/extractedThirdPartyStyles.css",
@@ -171,6 +171,7 @@
         "@storybook/addon-essentials": "^8.0.5",
         "@storybook/addon-links": "^8.0.5",
         "@storybook/manager-api": "^8.0.5",
+        "@storybook/react": "^8.0.5",
         "@storybook/react-vite": "^8.0.5",
         "@storybook/theming": "^8.0.5",
         "@svgr/babel-plugin-transform-svg-component": "^6.5.1",
