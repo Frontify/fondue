@@ -2,7 +2,6 @@
     "name": "@frontify/fondue",
     "type": "module",
     "version": "12.0.0-beta.422",
-    "packageManager": "pnpm@8.6.0",
     "description": "Design system of Frontify",
     "author": "Frontify Developers <developers@frontify.com>",
     "homepage": "https://github.com/Frontify/fondue",
