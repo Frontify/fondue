@@ -30,7 +30,7 @@
         "vike-react": "^0.4.6"
     },
     "devDependencies": {
-        "@frontify/eslint-config-react": "0.17.0",
+        "@frontify/eslint-config-react": "0.17.6",
         "@types/lodash": "^4.17.0",
         "@types/node": "^20.11.30",
         "@types/react": "^18.2.71",
