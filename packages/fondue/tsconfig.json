@@ -25,6 +25,15 @@
         },
         "types": ["cypress", "cypress-real-events", "vite/client", "node"]
     },
-    "include": ["src/types", "src/**/*", "cypress/support/component.ts", "scripts/**/*"],
+    "include": [
+        ".eslintrc.cjs",
+        "postcss.config.cjs",
+        "cypress.config.ts",
+        "src",
+        "cypress",
+        "scripts",
+        "vite.config.ts",
+        "tailwind.config.ts"
+    ],
     "exclude": ["node_modules", "dist"]
 }
