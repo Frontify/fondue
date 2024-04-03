@@ -3,17 +3,17 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "storybook": "concurrently 'pnpm run storybook:packages' 'pnpm run storybook:main'",
-        "storybook:packages": "pnpm --parallel --filter {packages/*} storybook --no-open",
-        "storybook:main": "wait-on http://localhost:6006 http://localhost:6007 && pnpm --stream  --filter {storybook-docs} storybook",
         "build:fondue": "pnpm --stream --filter {packages/fondue} build",
         "build:storybook": "pnpm run build:storybook:packages && pnpm run build:storybook:main",
-        "build:storybook:packages": "pnpm --stream --parallel --filter {packages/*} build:storybook ",
         "build:storybook:main": "pnpm --stream --filter {storybook-docs} build:storybook",
-        "lint": "pnpm --stream --filter {packages/**}lint",
-        "typecheck": "pnpm --stream --filter {packages/**} typecheck",
+        "build:storybook:packages": "pnpm --stream --parallel --filter {packages/*} build:storybook ",
+        "ci:publish": "pnpm build:fondue && changeset publish",
         "ci:version": "pnpm build:fondue && changeset version",
-        "ci:publish": "pnpm build:fondue && changeset publish"
+        "lint": "pnpm --stream --filter {packages/**}lint",
+        "storybook": "concurrently 'pnpm run storybook:packages' 'pnpm run storybook:main'",
+        "storybook:main": "wait-on http://localhost:6006 http://localhost:6007 && pnpm --stream  --filter {storybook-docs} storybook",
+        "storybook:packages": "pnpm --parallel --filter {packages/*} storybook --no-open",
+        "typecheck": "pnpm --stream --filter {packages/**} typecheck"
     },
     "devDependencies": {
         "@changesets/changelog-github": "^0.5.0",
