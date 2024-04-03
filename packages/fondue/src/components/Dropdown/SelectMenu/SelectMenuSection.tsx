@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useListBoxSection } from '@react-aria/listbox';
-import { ReactElement, ReactNode } from 'react';
+import { type ReactElement, type ReactNode } from 'react';
 
 type SelectMenuSectionProps = {
     ariaLabel?: string;

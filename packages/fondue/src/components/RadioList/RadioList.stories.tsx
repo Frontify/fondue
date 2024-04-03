@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { action } from '@storybook/addon-actions';
-import { Meta, StoryFn } from '@storybook/react';
+import { type Meta, type StoryFn } from '@storybook/react';
+
 import { RadioButton, RadioButtonEmphasis } from './RadioButton';
-import { RadioList, RadioListDirection, RadioListProps } from './RadioList';
+import { RadioList, RadioListDirection, type RadioListProps } from './RadioList';
 
 export default {
     title: 'Components/RadioList',

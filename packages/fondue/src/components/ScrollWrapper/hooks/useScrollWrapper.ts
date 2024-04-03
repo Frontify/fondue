@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { RefObject, UIEvent, useEffect, useState } from 'react';
+import { type RefObject, type UIEvent, useEffect, useState } from 'react';
 
 const getScrollDimensions = (HTMLElement: HTMLElement) => ({
     top: Math.ceil(HTMLElement.scrollTop),

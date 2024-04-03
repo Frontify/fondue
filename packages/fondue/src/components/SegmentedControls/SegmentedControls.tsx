@@ -1,16 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconProps } from '@foundation/Icon/IconProps';
-import { useMemoizedId } from '@hooks/useMemoizedId';
 import { useFocusRing } from '@react-aria/focus';
 import { setInteractionModality } from '@react-aria/interactions';
 import { useRadio, useRadioGroup } from '@react-aria/radio';
 import { VisuallyHidden } from '@react-aria/visually-hidden';
-import { RadioGroupState, useRadioGroupState } from '@react-stately/radio';
+import { type RadioGroupState, useRadioGroupState } from '@react-stately/radio';
+import { motion } from 'framer-motion';
+import { type ReactElement, forwardRef, useLayoutEffect, useMemo, useRef, useState } from 'react';
+
+import { type IconProps } from '@foundation/Icon/IconProps';
+import { useMemoizedId } from '@hooks/useMemoizedId';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import { motion } from 'framer-motion';
-import { ReactElement, forwardRef, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 export type IconItem = {
     id: string;

@@ -1,8 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type ReactElement, useState } from 'react';
+
 import { CheckboxState } from '@components/Checkbox/Checkbox';
-import { ReactElement, useState } from 'react';
-import { Checklist, ChecklistDirection, Columns } from './Checklist';
+
+import { Checklist, ChecklistDirection, type Columns } from './Checklist';
 
 const CHECKBOXES = [
     {

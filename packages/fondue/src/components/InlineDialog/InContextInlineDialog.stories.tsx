@@ -1,20 +1,23 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
-import { InlineDialog, InlineDialogProps } from './InlineDialog';
-import { DialogHeader } from '@components/DialogHeader';
-import { DialogBody } from '@components/DialogBody/DialogBody';
-import { Dropdown } from '@components/Dropdown';
-import { DialogFooter } from '@components/DialogFooter';
-import { Modality } from '../../types';
-import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
-import { POPPER_STORY_ARGS } from '@components/Popper/constantStories';
 import { action } from '@storybook/addon-actions';
-import { Divider } from '@components/Divider';
-import { Flex } from '@components/Flex';
-import { Box } from '@components/Box';
-import IconDotsVertical16 from '@foundation/Icon/Generated/IconDotsVertical16';
+import { type Meta, type StoryFn } from '@storybook/react';
 import { useRef, useState } from 'react';
+
+import { Box } from '@components/Box';
+import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
+import { DialogBody } from '@components/DialogBody/DialogBody';
+import { DialogFooter } from '@components/DialogFooter';
+import { DialogHeader } from '@components/DialogHeader';
+import { Divider } from '@components/Divider';
+import { Dropdown } from '@components/Dropdown';
+import { Flex } from '@components/Flex';
+import { POPPER_STORY_ARGS } from '@components/Popper/constantStories';
+import IconDotsVertical16 from '@foundation/Icon/Generated/IconDotsVertical16';
+
+import { Modality } from '../../types';
+
+import { InlineDialog, type InlineDialogProps } from './InlineDialog';
 
 export default {
     title: 'Experimental/InlineDialog/In Context',

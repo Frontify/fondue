@@ -1,10 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Plugin, PluginProps } from '../Plugin';
-import { AUTOFORMAT_PLUGIN } from './id';
-import { ELEMENT_OL, ELEMENT_UL, toggleList, unwrapList } from '@udecode/plate-list';
-import { MARK_BOLD, MARK_CODE, MARK_ITALIC, MARK_STRIKETHROUGH, MARK_UNDERLINE } from '@udecode/plate-basic-marks';
-import { PlatePlugin } from '@udecode/plate-core';
 import {
     autoformatArrow,
     autoformatFraction,
@@ -16,8 +11,15 @@ import {
     autoformatSuperscriptSymbols,
     createAutoformatPlugin,
 } from '@udecode/plate-autoformat';
-import { TextStyles } from '../TextStylePlugin';
+import { MARK_BOLD, MARK_CODE, MARK_ITALIC, MARK_STRIKETHROUGH, MARK_UNDERLINE } from '@udecode/plate-basic-marks';
+import { type PlatePlugin } from '@udecode/plate-core';
+import { ELEMENT_OL, ELEMENT_UL, toggleList, unwrapList } from '@udecode/plate-list';
+
 import { ELEMENT_CHECK_ITEM } from '../CheckboxListPlugin';
+import { Plugin, type PluginProps } from '../Plugin';
+import { TextStyles } from '../TextStylePlugin';
+
+import { AUTOFORMAT_PLUGIN } from './id';
 
 export class AutoformatPlugin extends Plugin {
     constructor(props?: PluginProps) {

@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type PlateEditor, type PlateRenderLeafProps, useEditorRef } from '@udecode/plate-core';
 import { ELEMENT_LI, ELEMENT_OL } from '@udecode/plate-list';
-import { PlateEditor, PlateRenderLeafProps, useEditorRef } from '@udecode/plate-core';
-import { TElement, getNodeAncestors } from '@udecode/slate';
+import { type TElement, getNodeAncestors } from '@udecode/slate';
 import { findNodePath } from '@udecode/slate-react';
+
 import { MarkupElement } from '../../MarkupElement';
 
 const LIST_TYPES = [

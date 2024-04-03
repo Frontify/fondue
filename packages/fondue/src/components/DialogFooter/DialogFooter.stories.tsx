@@ -1,12 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
-import { DialogFooter } from './DialogFooter';
-import { ButtonEmphasis, ButtonStyle } from '@components/Button';
-import IconCheckMark from '@foundation/Icon/Generated/IconCheckMark';
 import { action } from '@storybook/addon-actions';
-import { DIALOG_PADDING, DialogFooterProps } from '../../types';
+import { type Meta, type StoryFn } from '@storybook/react';
+
+import { ButtonEmphasis, ButtonStyle } from '@components/Button';
 import { Flex } from '@components/Flex';
+import IconCheckMark from '@foundation/Icon/Generated/IconCheckMark';
+
+import { DIALOG_PADDING, type DialogFooterProps } from '../../types';
+
+import { DialogFooter } from './DialogFooter';
 
 export default {
     title: 'Experimental/DialogFooter',

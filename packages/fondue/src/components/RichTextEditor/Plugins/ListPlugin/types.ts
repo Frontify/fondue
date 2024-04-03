@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ListPlugin } from '@udecode/plate-list';
-import { PluginProps } from '../Plugin';
+import { type ListPlugin } from '@udecode/plate-list';
+
+import { type PluginProps } from '../Plugin';
 
 export type ListPluginProps = PluginProps & {
     isSoftBreak?: boolean;

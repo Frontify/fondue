@@ -1,6 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
+import { merge } from '@utilities/merge';
+
 import {
     TreeItemBorderClassMap,
     TreeItemBorderRadiusClassMap,
@@ -8,9 +10,8 @@ import {
     TreeItemColorsClassMap,
     TreeItemShadowClassMap,
     TreeItemSpacingClassMap,
-    TreeItemStyling,
+    type TreeItemStyling,
 } from '../types';
-import { merge } from '@utilities/merge';
 
 export const getTreeItemStyling = (itemStyle: TreeItemStyling) => {
     const itemStyleProps = {
@@ -51,7 +52,7 @@ export const getMultiselectBackgroundClassName = (
             ? TreeItemBorderRadiusClassMap[itemStyleProps.borderRadius ?? 'small']
             : '',
         (!isSelected || itemStyleProps.activeColorStyle !== 'neutral') && styling.pressedBackgroundColor,
-        isDisabled ? TreeItemColorsClassMap['none'].backgroundColor : styling.backgroundColor,
+        isDisabled ? TreeItemColorsClassMap.none.backgroundColor : styling.backgroundColor,
     ]);
 };
 

@@ -1,12 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useState } from 'react';
 import { chain } from '@react-aria/utils';
-import { Meta, StoryFn } from '@storybook/react';
+import { type Meta, type StoryFn } from '@storybook/react';
+import { useState } from 'react';
 
-import { LegacyOrderableList as DropZoneComponent, LegacyOrderableListProps } from '@components/LegacyOrderableList';
-import { StoryListItem, renderContent, storyItems } from '@components/LegacyOrderableList/utils';
-import type { LegacyOrderableListItem } from '@components/LegacyOrderableList/types';
+import {
+    LegacyOrderableList as DropZoneComponent,
+    type LegacyOrderableListProps,
+} from '@components/LegacyOrderableList';
+import { type LegacyOrderableListItem } from '@components/LegacyOrderableList/types';
+import { type StoryListItem, renderContent, storyItems } from '@components/LegacyOrderableList/utils';
 
 export default {
     title: 'Components/Drop Zone',

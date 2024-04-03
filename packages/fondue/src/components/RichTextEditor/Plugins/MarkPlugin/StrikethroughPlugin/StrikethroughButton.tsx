@@ -1,11 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { getPluginType } from '@udecode/plate-core';
+
+import { MarkToolbarButton } from '@components/RichTextEditor/Plugins/MarkPlugin/MarkToolbarButton';
 import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
 import { IconTextFormatStrikethrough } from '@foundation/Icon/Generated';
-import { getPluginType } from '@udecode/plate-core';
+
 import { ButtonWrapper, IconStylingWrapper } from '../../helper';
-import { PluginButtonProps } from '../../types';
-import { MarkToolbarButton } from '@components/RichTextEditor/Plugins/MarkPlugin/MarkToolbarButton';
+import { type PluginButtonProps } from '../../types';
 
 export const StrikethroughButton = ({ editor, id }: PluginButtonProps) => (
     <ButtonWrapper id={id}>

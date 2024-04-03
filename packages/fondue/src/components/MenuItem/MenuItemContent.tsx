@@ -1,8 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { HTMLAttributes, ReactElement, ReactNode, cloneElement } from 'react';
+import { type HTMLAttributes, type ReactElement, type ReactNode, cloneElement } from 'react';
+
 import { IconSize } from '@foundation/Icon/IconSize';
 import { merge } from '@utilities/merge';
+
 import { MenuItemContentSize } from './types';
 
 export type MenuItemContentProps = {

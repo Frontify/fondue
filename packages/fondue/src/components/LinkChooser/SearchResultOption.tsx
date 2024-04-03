@@ -1,15 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MenuItemContentSize } from '@components/MenuItem';
-import { MenuItem } from '@components/MenuItem/MenuItem';
 import { getInteractionModality } from '@react-aria/interactions';
 import { useOption } from '@react-aria/listbox';
-import { merge } from '@utilities/merge';
 import { useActor } from '@xstate/react';
-import { ReactElement, useRef } from 'react';
+import { type ReactElement, useRef } from 'react';
+
+import { MenuItemContentSize } from '@components/MenuItem';
+import { MenuItem } from '@components/MenuItem/MenuItem';
+import { merge } from '@utilities/merge';
+
 import { IconOptions } from './LinkChooser';
 import { DropdownState, LinkChooserState, SectionState } from './state/types';
-import { ImageMenuItemProps, SearchResult, SearchResultOptionProps } from './types';
+import { type ImageMenuItemProps, type SearchResult, type SearchResultOptionProps } from './types';
 import { findSection } from './utils/helpers';
 
 export const SearchResultOption = ({

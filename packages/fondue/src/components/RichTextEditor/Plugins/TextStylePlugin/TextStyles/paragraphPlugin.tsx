@@ -1,12 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlatePlugin, createPluginFactory } from '@udecode/plate-core';
+import { type PlatePlugin, createPluginFactory } from '@udecode/plate-core';
 import { createParagraphPlugin as createPlateParagraphPlugin } from '@udecode/plate-paragraph';
-import { CSSProperties } from 'react';
-import { MarkupElement, Plugin, PluginProps, defaultStyles, getColumnBreakClasses } from '../../..';
-import { alignmentClassnames } from '../../helper';
+import { type CSSProperties } from 'react';
+
 import { merge } from '@utilities/merge';
-import { TextStyleRenderElementProps, TextStyles } from '../types';
+
+import { MarkupElement, Plugin, type PluginProps, defaultStyles, getColumnBreakClasses } from '../../..';
+import { alignmentClassnames } from '../../helper';
+import { type TextStyleRenderElementProps, TextStyles } from '../types';
 
 export class ParagraphPlugin extends Plugin {
     public styles: CSSProperties = {};

@@ -1,10 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { LegacyTooltipProps } from '@components/LegacyTooltip/LegacyTooltip';
-import { TooltipIcon, TooltipIconProps } from '@components/TooltipIcon/TooltipIcon';
+import { type ReactElement, type ReactNode } from 'react';
+
+import { type LegacyTooltipProps } from '@components/LegacyTooltip/LegacyTooltip';
+import { TooltipIcon, type TooltipIconProps } from '@components/TooltipIcon/TooltipIcon';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { merge } from '@utilities/merge';
-import { ReactElement, ReactNode } from 'react';
 
 export type InputLabelTooltipProps =
     | (LegacyTooltipProps & Pick<TooltipIconProps, 'triggerStyle' | 'triggerIcon'>)

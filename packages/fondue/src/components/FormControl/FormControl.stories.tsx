@@ -1,14 +1,22 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type Meta, type StoryFn } from '@storybook/react';
+import { useState } from 'react';
+
 import { Checklist, ChecklistDirection } from '@components/Checklist/Checklist';
 import { Dropdown, DropdownSize } from '@components/Dropdown/Dropdown';
 import { MenuItemContentSize } from '@components/MenuItem';
 import { SegmentedControls } from '@components/SegmentedControls/SegmentedControls';
 import { TextInput } from '@components/TextInput/TextInput';
-import { Meta, StoryFn } from '@storybook/react';
 import { generateRandomId } from '@utilities/generateRandomId';
-import { useState } from 'react';
-import { FormControl, FormControlDirection, FormControlProps, FormControlStyle, HelperPosition } from './FormControl';
+
+import {
+    FormControl,
+    FormControlDirection,
+    type FormControlProps,
+    FormControlStyle,
+    HelperPosition,
+} from './FormControl';
 
 export default {
     title: 'Components/Form Control',

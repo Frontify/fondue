@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Form } from '@components/Form/Form';
 import { Button, ButtonType } from '@components/Button';
+import { Form } from '@components/Form/Form';
 import { TextInput } from '@components/TextInput';
 
 const FORM_ID = '[data-test-id=fondue-form]';

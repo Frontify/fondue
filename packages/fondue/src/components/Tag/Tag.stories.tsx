@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { action } from '@storybook/addon-actions';
-import { Meta, StoryFn } from '@storybook/react';
-import { Tag, TagProps, TagSize, TagType } from './Tag';
+import { type Meta, type StoryFn } from '@storybook/react';
+
+import { Tag, type TagProps, TagSize, TagType } from './Tag';
 
 export default {
     title: 'Components/Tag',

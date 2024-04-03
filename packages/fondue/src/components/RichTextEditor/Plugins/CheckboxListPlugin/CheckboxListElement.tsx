@@ -1,15 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { CSSProperties } from 'react';
-import { TElement, setNodes } from '@udecode/slate';
-import { TTodoListItemElement } from '@udecode/plate-list';
-import { PlateRenderElementProps } from '@udecode/plate-core';
-import { merge } from '@utilities/merge';
-import { MarkupElement } from '../MarkupElement';
-import { ELEMENT_CHECK_ITEM } from './id';
-import { justifyClassNames } from '../helper';
-import { useRichTextEditorContext } from '@components/RichTextEditor/context';
+import { type PlateRenderElementProps } from '@udecode/plate-core';
+import { type TTodoListItemElement } from '@udecode/plate-list';
+import { type TElement, setNodes } from '@udecode/slate';
 import { type TReactEditor, findNodePath } from '@udecode/slate-react';
+import { type CSSProperties } from 'react';
+
+import { useRichTextEditorContext } from '@components/RichTextEditor/context';
+import { merge } from '@utilities/merge';
+
+import { MarkupElement } from '../MarkupElement';
+import { justifyClassNames } from '../helper';
+
+import { ELEMENT_CHECK_ITEM } from './id';
 
 const getCheckboxListStyles = (styles: Record<string, CSSProperties>, element: TElement): CSSProperties =>
     styles[element.children[0].textStyle as string];

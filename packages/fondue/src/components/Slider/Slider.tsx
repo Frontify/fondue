@@ -1,22 +1,22 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import {
-    AriaAttributes,
-    KeyboardEvent,
-    MouseEvent,
-    TouchEvent,
+    type AriaAttributes,
+    type KeyboardEvent,
+    type MouseEvent,
+    type TouchEvent,
     useCallback,
     useEffect,
     useMemo,
     useState,
 } from 'react';
 
-import { useMemoizedId } from '@hooks/useMemoizedId';
-import { merge } from '@utilities/merge';
 import { TextInput, TextInputType } from '@components/TextInput';
-import { Validation } from '@utilities/validation';
-import { clamp } from '@utilities/number';
+import { useMemoizedId } from '@hooks/useMemoizedId';
 import { debounce } from '@utilities/debounce';
+import { merge } from '@utilities/merge';
+import { clamp } from '@utilities/number';
+import { Validation } from '@utilities/validation';
 
 type BaseSliderProps = {
     id?: string;
@@ -121,7 +121,7 @@ export const Slider = ({
     const onDrag = useMemo(
         () =>
             !sliderRef
-                ? () => void 0
+                ? () => {}
                 : debounce((event: Event & { clientX: number; touches: [{ clientX: number }] }) => {
                       if (disabled) {
                           return;

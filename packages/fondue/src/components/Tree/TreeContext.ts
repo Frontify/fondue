@@ -2,7 +2,7 @@
 
 import { createContext, useContext } from 'react';
 
-import type { OnExpandCallback, OnSelectInternalCallback, OnShrinkCallback, TreeState } from './types';
+import { type OnExpandCallback, type OnSelectInternalCallback, type OnShrinkCallback, type TreeState } from './types';
 
 export type TreeContextProps = {
     treeState: TreeState;

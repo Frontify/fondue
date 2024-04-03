@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type AriaAttributes, type ReactElement, type ReactNode } from 'react';
+
 import { merge } from '@utilities/merge';
-import { AriaAttributes, ReactElement, ReactNode } from 'react';
+
 import { decorationMap, displayMap, overflowMap, whitespaceMap, wordBreakMap } from '../shared/records';
-import { SharedTypographyProps } from '../shared/types';
+import { type SharedTypographyProps } from '../shared/types';
 
 type TextWeight = 'default' | 'strong' | 'x-strong';
 type TextSize = 'x-small' | 'small' | 'medium' | 'large';

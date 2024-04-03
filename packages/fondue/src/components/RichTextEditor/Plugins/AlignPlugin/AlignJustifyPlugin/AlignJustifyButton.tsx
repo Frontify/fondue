@@ -1,10 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconTextAlignmentJustify16 from '@foundation/Icon/Generated/IconTextAlignmentJustify16';
-import { getTooltip } from '@components/RichTextEditor/helpers';
 import { AlignmentToolbarButton } from '@components/RichTextEditor/Plugins/AlignPlugin/AlignmentToolbarbutton';
+import { getTooltip } from '@components/RichTextEditor/helpers';
+import IconTextAlignmentJustify16 from '@foundation/Icon/Generated/IconTextAlignmentJustify16';
+
 import { ButtonWrapper, IconStylingWrapper } from '../../helper';
-import { PluginButtonProps } from '../../types';
+import { type PluginButtonProps } from '../../types';
 
 export const AlignJustifyButton = ({ id, editorId }: PluginButtonProps) => {
     return (

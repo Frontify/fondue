@@ -1,7 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ENode, SetNodesOptions, TLocation, TNodeMatch, Value, isBlock, setElements, unsetNodes } from '@udecode/slate';
-import { PlateEditor, PlatePluginKey } from '@udecode/plate-core';
+import { type PlateEditor, type PlatePluginKey } from '@udecode/plate-core';
+import {
+    type ENode,
+    type SetNodesOptions,
+    type TLocation,
+    type TNodeMatch,
+    type Value,
+    isBlock,
+    setElements,
+    unsetNodes,
+} from '@udecode/slate';
+
 import { KEY_ELEMENT_BREAK_AFTER_COLUMN } from '../createColumnBreakPlugin';
 
 export type ColumnBreakValue = 'active' | 'inactive' | undefined;

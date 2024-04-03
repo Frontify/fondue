@@ -1,10 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement } from 'react';
-import { AssetInputProps } from '../AssetInput';
-import { SelectedAssetProps } from './SelectedAsset';
-import IconImageStack from '@foundation/Icon/Generated/IconImageStack';
+import { type ReactElement } from 'react';
+
 import IconArrowCircleUp from '@foundation/Icon/Generated/IconArrowCircleUp';
+import IconImageStack from '@foundation/Icon/Generated/IconImageStack';
+
+import { type AssetInputProps } from '../AssetInput';
+
+import { type SelectedAssetProps } from './SelectedAsset';
 
 type AssetSublineProps = Pick<AssetInputProps, 'isLoading' | 'hideSize' | 'hideExtension'> &
     Pick<SelectedAssetProps, 'asset'>;

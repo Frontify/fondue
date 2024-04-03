@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { AnimatePresence, motion } from 'framer-motion';
-import { ReactElement } from 'react';
-import { CollapsibleWrapProps } from './types';
+import { type ReactElement } from 'react';
+
+import { type CollapsibleWrapProps } from './types';
 
 export const CollapsibleWrap = ({
     children,

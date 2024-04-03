@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement, memo } from 'react';
+import { type ReactElement, memo } from 'react';
 
 function PatternDigitalAssets(): ReactElement {
     return (

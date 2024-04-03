@@ -1,14 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { TinyColor } from '@ctrl/tinycolor';
+import { type ReactElement, useEffect, useState } from 'react';
+import { RgbaColorPicker } from 'react-colorful';
+
 import { Dropdown } from '@components/Dropdown/Dropdown';
 import { TextInputType } from '@components/TextInput/TextInput';
 import { toLongRgb, toShortRgb } from '@utilities/colors';
-import { ReactElement, useEffect, useState } from 'react';
-import { RgbaColorPicker } from 'react-colorful';
-import { TinyColor } from '@ctrl/tinycolor';
-import { Color, ColorFormat } from '../../types';
+
+import { type Color, ColorFormat } from '../../types';
+
 import { ColorInput, DecoratorPosition } from './ColorInput';
-import { ColorPickerProps } from './ColorPicker';
+import { type ColorPickerProps } from './ColorPicker';
 
 const convertToHex = (color: Color) => new TinyColor(toShortRgb(color)).toHex();
 

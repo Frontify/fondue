@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
+
 import {
     currentNodesChanged,
     findIndexById,
@@ -226,13 +227,13 @@ describe('reducer', () => {
 
         it('should return false if new nodes with no contentComponent but no props changed, excluding functions', () => {
             const currentNodes = [
-                <Component key="1" id="1" props1={() => void 0} />,
+                <Component key="1" id="1" props1={() => {}} />,
                 <Component key="3" id="3" />,
                 <Component key="4" id="4" />,
             ];
 
             const newNodes = [
-                <Component key="1" id="1" props1={() => void 0} />,
+                <Component key="1" id="1" props1={() => {}} />,
                 <Component key="3" id="3" />,
                 <Component key="4" id="4" />,
             ];

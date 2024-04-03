@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
-import { Code as CodeComponent, CodeProps } from './Code';
+import { type Meta, type StoryFn } from '@storybook/react';
+
+import { Code as CodeComponent, type CodeProps } from './Code';
 
 export default {
     title: 'Typography/Code',

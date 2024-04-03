@@ -1,16 +1,27 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { CollapsibleWrap } from '@components/CollapsibleWrap';
 import { useAccordion, useAccordionItem } from '@react-aria/accordion';
 import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
 import { Item as StatelyItem } from '@react-stately/collections';
 import { useTreeState } from '@react-stately/tree';
+import {
+    Children,
+    type Key,
+    type KeyboardEvent,
+    type ReactElement,
+    type ReactNode,
+    isValidElement,
+    useEffect,
+    useRef,
+} from 'react';
+
+import { CollapsibleWrap } from '@components/CollapsibleWrap';
 import { FOCUS_STYLE_NO_OFFSET } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import { Children, Key, KeyboardEvent, ReactElement, ReactNode, isValidElement, useEffect, useRef } from 'react';
+
 import { AccordionHeader } from './AccordionHeader';
-import { AccordionItemProps, AccordionProps, AriaAccordionItemProps } from './types';
+import { type AccordionItemProps, type AccordionProps, type AriaAccordionItemProps } from './types';
 
 const ACCORDION_ID = 'fondue-accordion';
 const ACCORDION_ITEM_ID = 'fondue-accordion-item';
@@ -150,7 +161,7 @@ export const Accordion = (props: AccordionProps): ReactElement => {
         accordionProps: { onMouseDown, onKeyDown, ...accordionProps },
         // @react-aria enable by default typeahead which result in an event fired up on keypress and select the section
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        //@ts-ignore
+        // @ts-ignore
     } = useAccordion({ ...ariaProps, disallowTypeAhead: true }, state, ref);
 
     const accordionKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {

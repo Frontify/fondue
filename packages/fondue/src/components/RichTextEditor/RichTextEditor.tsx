@@ -1,19 +1,21 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { KeyboardEvent, useCallback, useMemo } from 'react';
+import { Plate, PlateContent, type TEditableProps } from '@udecode/plate-core';
+import noop from 'lodash-es/noop';
+import { type KeyboardEvent, useCallback, useMemo } from 'react';
+
+import { BlurObserver } from '@components/RichTextEditor/BlurObserver';
 import { useMemoizedId } from '@hooks/useMemoizedId';
-import { Plate, PlateContent, TEditableProps } from '@udecode/plate-core';
+
 import { ContentReplacement } from './ContentReplacement';
-import { RichTextEditorProvider } from './context/RichTextEditorContext';
+import { GAP_DEFAULT, KEY_ELEMENT_BREAK_AFTER_COLUMN, type PluginComposer, defaultPlugins } from './Plugins';
 import { Position } from './components/EditorPositioningWrapper';
+import { RenderPlaceholder } from './components/RenderPlaceholder';
+import { RichTextEditorProvider } from './context/RichTextEditorContext';
 import { forceToFocusNextElement } from './helpers';
 import { useEditorState } from './hooks';
-import { GAP_DEFAULT, KEY_ELEMENT_BREAK_AFTER_COLUMN, PluginComposer, defaultPlugins } from './Plugins';
-import { PaddingSizes, TreeOfNodes } from './types';
+import { PaddingSizes, type TreeOfNodes } from './types';
 import { parseRawValue } from './utils';
-import { BlurObserver } from '@components/RichTextEditor/BlurObserver';
-import noop from 'lodash-es/noop';
-import { RenderPlaceholder } from './components/RenderPlaceholder';
 
 export type RichTextEditorProps = {
     id?: string;

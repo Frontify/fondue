@@ -1,13 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { useEditorRef } from '@udecode/plate-core';
 import { useLinkToolbarButton, useLinkToolbarButtonState } from '@udecode/plate-link';
+import { focusEditor } from '@udecode/slate-react';
+import { type ReactNode, forwardRef } from 'react';
 
 import { IconStylingWrapper } from '@components/RichTextEditor/Plugins';
-import IconLink16 from '@foundation/Icon/Generated/IconLink16';
 import { ToolbarButton } from '@components/RichTextEditor/components/Toolbar/ToolbarButton';
-import { ReactNode, forwardRef } from 'react';
-import { focusEditor } from '@udecode/slate-react';
-import { useEditorRef } from '@udecode/plate-core';
+import IconLink16 from '@foundation/Icon/Generated/IconLink16';
 
 export const LinkToolbarButton = forwardRef<HTMLButtonElement, { disabled: boolean; tooltip: ReactNode }>(
     (rootProps, ref) => {

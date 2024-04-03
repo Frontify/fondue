@@ -1,21 +1,25 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { TinyColor } from '@ctrl/tinycolor';
-import { Color, ColorFormat, ColorRgb } from '../types/colors';
+
+import { type Color, ColorFormat, type ColorRgb } from '../types/colors';
 
 export const getColorDisplayValue = (color: Color, format: ColorFormat, showAlpha = true): string => {
     const parsedColor = new TinyColor(toShortRgb(color));
 
     switch (format) {
-        case ColorFormat.Rgba:
+        case ColorFormat.Rgba: {
             return parsedColor.toRgbString();
-        case ColorFormat.Hex:
+        }
+        case ColorFormat.Hex: {
             const hex = parsedColor.toHexString();
             return showAlpha && color.alpha && color.alpha < 1
                 ? `${hex} ${Math.trunc(parsedColor.getAlpha() * 100)}%`
                 : hex;
-        default:
+        }
+        default: {
             return parsedColor.toHexString();
+        }
     }
 };
 

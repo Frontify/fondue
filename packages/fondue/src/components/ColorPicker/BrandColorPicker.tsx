@@ -1,17 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { TinyColor } from '@ctrl/tinycolor';
+import { type ReactElement, useEffect, useState } from 'react';
+
 import { SegmentedControls } from '@components/SegmentedControls/SegmentedControls';
 import { TextInput } from '@components/TextInput/TextInput';
+import IconCheckMark from '@foundation/Icon/Generated/IconCheckMark';
+import IconGridRegular from '@foundation/Icon/Generated/IconGridRegular';
+import IconMagnifier from '@foundation/Icon/Generated/IconMagnifier';
+import IconStackVertical from '@foundation/Icon/Generated/IconStackVertical';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { isColorLight, toShortRgb } from '@utilities/colors';
 import { merge } from '@utilities/merge';
-import { ReactElement, useEffect, useState } from 'react';
-import { TinyColor } from '@ctrl/tinycolor';
-import { ColorPickerProps } from './ColorPicker';
-import IconGridRegular from '@foundation/Icon/Generated/IconGridRegular';
-import IconStackVertical from '@foundation/Icon/Generated/IconStackVertical';
-import IconMagnifier from '@foundation/Icon/Generated/IconMagnifier';
-import IconCheckMark from '@foundation/Icon/Generated/IconCheckMark';
+
+import { type ColorPickerProps } from './ColorPicker';
 
 const find = (haystack?: string, needle = '') =>
     haystack?.toLocaleLowerCase().includes(needle.toLocaleLowerCase().trim());

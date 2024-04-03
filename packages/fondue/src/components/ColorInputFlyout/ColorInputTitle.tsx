@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { getColorDisplayValue, toShortRgb } from '@utilities/colors';
-import { ReactElement } from 'react';
 import { TinyColor } from '@ctrl/tinycolor';
-import { Color, ColorFormat } from '../../types/colors';
+import { type ReactElement } from 'react';
+
+import { getColorDisplayValue, toShortRgb } from '@utilities/colors';
+
+import { type Color, ColorFormat } from '../../types/colors';
 
 type Props = {
     currentColor: Color;

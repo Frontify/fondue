@@ -1,19 +1,21 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ForwardRefRenderFunction, MouseEvent, ReactElement, ReactNode, cloneElement, forwardRef } from 'react';
-
 import { useButton } from '@react-aria/button';
+import { useFocusRing } from '@react-aria/focus';
+import {
+    type ForwardRefRenderFunction,
+    type MouseEvent,
+    type ReactElement,
+    type ReactNode,
+    cloneElement,
+    forwardRef,
+} from 'react';
+
+import { buttonIconSizeMap, buttonTypeMap } from '@components/Button/mappings';
+import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { useForwardedRef } from '@utilities/useForwardedRef';
-import {
-    ButtonElements,
-    ButtonEmphasis,
-    ButtonRounding,
-    ButtonSize,
-    ButtonStyle,
-    ButtonType,
-    UpdatedButtonStyle,
-} from './ButtonTypes';
+
 import {
     ButtonCommonClasses,
     ButtonDisabledClasses,
@@ -22,13 +24,15 @@ import {
     ButtonStyleClasses,
     IconSpacingClasses,
 } from './ButtonClasses';
-import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
-import { buttonIconSizeMap, buttonTypeMap } from '@components/Button/mappings';
-import { useFocusRing } from '@react-aria/focus';
-
-// To be NON-Breaking but import should be done through index.ts
-export * from './ButtonClasses';
-export * from './ButtonTypes';
+import {
+    type ButtonElements,
+    ButtonEmphasis,
+    ButtonRounding,
+    ButtonSize,
+    ButtonStyle,
+    ButtonType,
+    type UpdatedButtonStyle,
+} from './ButtonTypes';
 
 export type ButtonProps = {
     type?: ButtonType;

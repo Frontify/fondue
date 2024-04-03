@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ComponentPropsWithoutRef, ComponentType, ElementRef, ReactNode, forwardRef } from 'react';
 import * as TooltipPrimitive from '@radix-ui/react-tooltip';
+import { type ComponentPropsWithoutRef, type ComponentType, type ElementRef, type ReactNode, forwardRef } from 'react';
+
 import { zIndexLayers } from '@components/RichTextEditor/helpers/zIndexLayers';
 
 export const TooltipProvider = TooltipPrimitive.Provider;

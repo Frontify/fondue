@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
+import { type Meta, type StoryFn } from '@storybook/react';
+
 import { AccordionHeaderIcon as AccordionHeaderIconComponent } from './AccordionHeaderIcon';
-import { AccordionHeaderIconProps } from './types';
+import { type AccordionHeaderIconProps } from './types';
 
 export default {
     title: 'Components/Accordion/Accordion Header Icon',

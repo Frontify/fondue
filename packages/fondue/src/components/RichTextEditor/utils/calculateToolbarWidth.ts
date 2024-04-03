@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ButtonGroupsPerRow } from '../components/Toolbar/types';
+import { type ButtonGroupsPerRow } from '../components/Toolbar/types';
 
 export const calculateToolbarWidth = (toolbarButtonGroups: ButtonGroupsPerRow) =>
     Math.max(

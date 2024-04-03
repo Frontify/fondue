@@ -1,16 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Badge } from '@components/Badge/Badge';
-import { TextInput } from '@components/TextInput/TextInput';
-
-import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
-import { IconSize } from '@foundation/Icon/IconSize';
 import { action } from '@storybook/addon-actions';
-import { Meta, StoryFn } from '@storybook/react';
-import { ReactElement, useEffect, useState } from 'react';
-import { Column, Row, SelectionMode, SortDirection, Table, TableProps } from './Table';
-import IconFaceHappy from '@foundation/Icon/Generated/IconFaceHappy';
+import { type Meta, type StoryFn } from '@storybook/react';
+import { type ReactElement, useEffect, useState } from 'react';
+
+import { Badge } from '@components/Badge/Badge';
+import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
+import { TextInput } from '@components/TextInput/TextInput';
 import IconDotsVertical from '@foundation/Icon/Generated/IconDotsVertical';
+import IconFaceHappy from '@foundation/Icon/Generated/IconFaceHappy';
+import { IconSize } from '@foundation/Icon/IconSize';
+
+import { type Column, type Row, SelectionMode, SortDirection, Table, type TableProps } from './Table';
 
 export default {
     title: 'Components/Table',

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MutableRefObject } from 'react';
+import { type MutableRefObject } from 'react';
 
 export const getTotalOverlayHeight = (
     overlayRef: MutableRefObject<HTMLElement | null>,

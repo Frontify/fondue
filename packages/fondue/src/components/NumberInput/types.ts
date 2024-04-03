@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import type { InputBaseProps } from '../../types/input';
+import { type InputBaseProps } from '../../types/input';
 
 export type NumberInputProps = {
     controls?: boolean;

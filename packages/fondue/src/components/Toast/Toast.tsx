@@ -1,10 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { AnimatePresence, motion } from 'framer-motion';
+import { type ReactElement } from 'react';
+
 import { INSET_BORDER, MIGHTY_INSET_BORDER } from '@utilities/borderStyle';
 import { merge } from '@utilities/merge';
-import { AnimatePresence, motion } from 'framer-motion';
-import { ReactElement } from 'react';
-import { ToastAnimationDirection, ToastProps, ToastTheme, toastStylesBackgroundColorsMap } from './types';
+
+import { ToastAnimationDirection, type ToastProps, type ToastTheme, toastStylesBackgroundColorsMap } from './types';
 
 const CONTAINER_BASE_CLASSES = 'tw-min-h-[2rem] tw-rounded-lg tw-shadow-mid tw-z-[120000] before:!tw-rounded-lg';
 

@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type Meta, type StoryFn } from '@storybook/react';
 import { useEffect, useState } from 'react';
-import { Meta, StoryFn } from '@storybook/react';
-import { LegacyTextareaProps, LegacyTextarea as TextareaComponent } from './LegacyTextarea';
+
 import { Validation } from '@utilities/validation';
+
+import { type LegacyTextareaProps, LegacyTextarea as TextareaComponent } from './LegacyTextarea';
 
 export default {
     title: 'Deprecated/LegacyTextarea',

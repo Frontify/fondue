@@ -1,13 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type Meta, type StoryFn } from '@storybook/react';
 import { useRef, useState } from 'react';
-import { Meta, StoryFn } from '@storybook/react';
-import { Popper } from './Popper';
+
+import { Box } from '@components/Box';
 import { Button } from '@components/Button';
 import { POPPER_STORY_ARGS } from '@components/Popper/constantStories';
-import { Box } from '@components/Box';
 import { ARROW_LIGHT_THEME } from '@utilities/overlayStyle';
-import { PopperProps } from './types';
+
+import { Popper } from './Popper';
+import { type PopperProps } from './types';
 
 export default {
     title: 'Utilities/Popper',

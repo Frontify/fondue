@@ -1,12 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Validation } from '@utilities/validation';
-import { Meta, StoryFn } from '@storybook/react';
+import { type Meta, type StoryFn } from '@storybook/react';
 import { useState } from 'react';
+
+import { Validation } from '@utilities/validation';
+
 import { LinkChooser as LinkChooserComponent } from './LinkChooser';
 import { data } from './mock/data';
 import { extraSections } from './sections';
-import { LinkChooserProps, SearchResult } from './types';
+import { type LinkChooserProps, type SearchResult } from './types';
 import { doesContainSubstring } from './utils/helpers';
 
 export default {

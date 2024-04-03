@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { chain } from '@react-aria/utils';
-import { FocusEvent, KeyboardEvent } from 'react';
-import { ManualComboBoxEventProps, ManualComboBoxEvents } from '../types';
+import { type FocusEvent, type KeyboardEvent } from 'react';
+
+import { type ManualComboBoxEventProps, type ManualComboBoxEvents } from '../types';
 
 export const useManualComboBoxEventHandlers = (
     { inputProps, inputRef, popoverRef, state }: ManualComboBoxEventProps,

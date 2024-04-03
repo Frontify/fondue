@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MarkdownAstNode, PartialOptionType } from '../types';
+import { type MarkdownAstNode, type PartialOptionType } from '../types';
 import { getSelectedOptions } from '../utils';
+
 import deserialize from './deserialize';
-import { DeserializerConfig } from './types';
+import { type DeserializerConfig } from './types';
 
 const defaultDeserializerConfig: DeserializerConfig = {
     allowUnsafeLink: false,
@@ -18,7 +19,7 @@ export default function plugin(options?: PartialOptionType, config?: Deserialize
         return node.children.map((c) => deserialize(c, getSelectedOptions(options), mergedConfig));
     };
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
+    // @ts-expect-error this is not correctly typed as it doesn't know what we extend
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, no-invalid-this
     this.Compiler = compiler;
 }

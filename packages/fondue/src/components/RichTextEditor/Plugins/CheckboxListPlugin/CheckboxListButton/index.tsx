@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { CheckboxListToolbarButton } from './CheckboxListToolbarButton';
 import { ButtonWrapper } from '../../helper';
-import { PluginButtonProps } from '../../types';
+import { type PluginButtonProps } from '../../types';
+
+import { CheckboxListToolbarButton } from './CheckboxListToolbarButton';
 
 export const CheckboxListButton = ({ id }: PluginButtonProps) => (
     <ButtonWrapper id={id}>

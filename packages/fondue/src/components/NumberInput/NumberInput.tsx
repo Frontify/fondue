@@ -1,14 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type KeyboardEvent } from '@react-types/shared';
 import { useCallback, useEffect, useRef } from 'react';
-import { NumberInputIncrement, NumberInputProps } from './types';
-import { merge } from '@utilities/merge';
+
 import IconMinus16 from '@foundation/Icon/Generated/IconMinus16';
 import IconPlus16 from '@foundation/Icon/Generated/IconPlus16';
 import { useMemoizedId } from '@hooks/useMemoizedId';
-import { Validation, validationClassMap } from '@utilities/validation';
-import { KeyboardEvent } from '@react-types/shared';
 import { GetStatusIcon, InputActions, InputStyles } from '@utilities/input';
+import { merge } from '@utilities/merge';
+import { Validation, validationClassMap } from '@utilities/validation';
+
+import { NumberInputIncrement, type NumberInputProps } from './types';
 
 const INCREMENT_KEYS = ['ArrowUp', 'ArrowRight'];
 const DECREMENT_KEYS = ['ArrowDown', 'ArrowLeft'];

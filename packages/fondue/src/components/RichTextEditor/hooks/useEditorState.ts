@@ -1,10 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useCallback, useMemo, useRef } from 'react';
+
 import { useDebounce } from '@hooks/useDebounce';
+
+import { GeneratePlugins, type PluginComposer } from '../Plugins';
+import { type TreeOfNodes } from '../types';
 import { ON_SAVE_DELAY_IN_MS, parseRawValue } from '../utils';
-import { GeneratePlugins, PluginComposer } from '../Plugins';
-import { TreeOfNodes } from '../types';
 
 type useEditorStateProps = {
     editorId: string;

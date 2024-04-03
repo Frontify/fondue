@@ -1,18 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
-import { Tooltip, TooltipProps } from '@components/Tooltip/Tooltip';
-import IconIcon24 from '@foundation/Icon/Generated/IconIcon24';
-import { InlineDialog } from '@components/InlineDialog';
-import { Button } from '@components/Button';
-import { Box } from '@components/Box';
-import { Flex } from '@components/Flex';
-import { Dropdown } from '@components/Dropdown';
-import { DialogBody } from '@components/DialogBody';
-import { useRef, useState } from 'react';
-import IconJohanna from '@foundation/Icon/Generated/IconJohanna';
-import { Card } from '@components/Card';
 import { action } from '@storybook/addon-actions';
+import { type Meta, type StoryFn } from '@storybook/react';
+import { useRef, useState } from 'react';
+
+import { Box } from '@components/Box';
+import { Button } from '@components/Button';
+import { Card } from '@components/Card';
+import { DialogBody } from '@components/DialogBody';
+import { Dropdown } from '@components/Dropdown';
+import { Flex } from '@components/Flex';
+import { InlineDialog } from '@components/InlineDialog';
+import { Tooltip, type TooltipProps } from '@components/Tooltip/Tooltip';
+import IconIcon24 from '@foundation/Icon/Generated/IconIcon24';
+import IconJohanna from '@foundation/Icon/Generated/IconJohanna';
 import IconJohanna24 from '@foundation/Icon/Generated/IconJohanna24';
 
 export default {

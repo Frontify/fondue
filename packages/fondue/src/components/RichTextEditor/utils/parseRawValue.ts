@@ -1,20 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Value, normalizeEditor } from '@udecode/slate';
 import { deserializeHtml } from '@udecode/plate-core';
 import { ELEMENT_PARAGRAPH } from '@udecode/plate-paragraph';
-import { PluginComposer } from '../Plugins';
+import { type Value, normalizeEditor } from '@udecode/slate';
+
+import { type PluginComposer } from '../Plugins';
+
 import { InitPlateEditor } from './InitPlateEditor';
 
-const wrapChildrenWithoutTypeInParagraph = (children: Value): Value =>
-    children[0].hasOwnProperty('type')
-        ? children
-        : [
-              {
-                  type: 'p',
-                  children,
-              },
-          ];
+const wrapChildrenWithoutTypeInParagraph = (children: Value): Value => {
+    return 'type' in children[0] ? children : [{ type: 'p', children }];
+};
 
 export const EMPTY_RICH_TEXT_VALUE: Value = [{ type: ELEMENT_PARAGRAPH, children: [{ text: '' }] }];
 

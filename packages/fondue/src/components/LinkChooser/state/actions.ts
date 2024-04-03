@@ -1,11 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type DoneInvokeEvent, assign } from 'xstate';
+
 import { QUERIES_STORAGE_KEY } from '@components/LinkChooser/LinkChooser';
-import { DoneInvokeEvent, assign } from 'xstate';
+
 import { defaultSection } from '../sections';
-import { LinkChooserContext, LinkChooserEventData, SearchResult } from '../types';
+import { type LinkChooserContext, type LinkChooserEventData, type SearchResult } from '../types';
 import { isCustomLink } from '../utils/helpers';
 import { createCustomLink, mergeResultWithRecentQueries, retrieveRecentQueries } from '../utils/transformers';
+
 import { DropdownState, LinkChooserState, SectionState } from './types';
 
 export const updateQueryFromString = assign<LinkChooserContext, DoneInvokeEvent<LinkChooserEventData>>({

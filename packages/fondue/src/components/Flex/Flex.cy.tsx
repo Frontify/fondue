@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Box } from '@components/Box';
-import { Flex, FlexProps } from './Flex';
+
+import { Flex, type FlexProps } from './Flex';
 
 const FLEX_ID = '[data-test-id=fondue-flex]';
 const CUSTOM_DATA_TEST_ID_STRING = 'my-custom-id';

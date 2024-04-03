@@ -1,7 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { CheckboxState } from '@components/Checkbox';
-import { TreeItemMultiselectProps } from '../types';
+
+import { type TreeItemMultiselectProps } from '../types';
+
 import { ROOT_ID } from './constants';
 
 export type TreeItemMultiselectWithNodes = TreeItemMultiselectProps & {

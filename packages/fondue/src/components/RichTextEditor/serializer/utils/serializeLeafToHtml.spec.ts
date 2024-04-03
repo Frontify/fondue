@@ -7,6 +7,7 @@ import {
     STRIKETHROUGH_CLASSES,
     UNDERLINE_CLASSES,
 } from '@components/RichTextEditor/Plugins';
+
 import { serializeLeafToHtml } from './serializeLeafToHtml';
 
 describe('serializeLeafToHtml()', () => {

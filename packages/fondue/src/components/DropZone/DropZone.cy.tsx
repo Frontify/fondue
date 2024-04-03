@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { DropZone, DropZoneData, DropZoneProps } from '@components/DropZone/DropZone';
-import { DraggableItem as DraggableItemProp } from '@utilities/dnd';
 import { DndProvider, useDrag } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
+
+import { DropZone, type DropZoneData, type DropZoneProps } from '@components/DropZone/DropZone';
+import { type DraggableItem as DraggableItemProp } from '@utilities/dnd';
 
 const LIST_ID = 'list-id';
 const DROP_ZONE_DATA: DropZoneData<{ id: string; sort: Nullable<number> }> = {

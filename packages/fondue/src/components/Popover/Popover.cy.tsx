@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useRef, useState } from 'react';
+
 import { Button } from '@components/Button';
 import { Popover } from '@components/Popover/Popover';
-import { OverlayProps } from '../../types';
+
+import { type OverlayProps } from '../../types';
 
 const POPOVER_SELECTOR = '[data-test-id=fondue-popover-content]';
 const POPOVER_TRIGGER = '[data-test-id=popover-trigger]';

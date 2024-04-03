@@ -2,7 +2,10 @@
 
 import { ELEMENT_PARAGRAPH } from '@udecode/plate-paragraph';
 import { useState } from 'react';
-import { orderedListValue } from '../helpers/exampleValues';
+
+import { SubscriptPlugin } from '@components/RichTextEditor/Plugins/MarkPlugin/SubscriptPlugin';
+import { SuperscriptPlugin } from '@components/RichTextEditor/Plugins/MarkPlugin/SuperscriptPlugin';
+
 import {
     AlignRightPlugin,
     AutoformatPlugin,
@@ -35,7 +38,9 @@ import {
 } from '../Plugins';
 import { ACTIVE_COLUMN_BREAK_CLASS_NAMES } from '../Plugins/ColumnBreakPlugin/utils/getColumnBreakClasses';
 import { RichTextEditor } from '../RichTextEditor';
+import { orderedListValue } from '../helpers/exampleValues';
 import { ON_SAVE_DELAY_IN_MS } from '../utils';
+
 import {
     RichTextWithCustomTextStylesDefaultValues,
     TextStylePlugins,
@@ -49,8 +54,6 @@ import {
     TOOLBAR_GROUP_1,
     TOOLBAR_GROUP_2,
 } from './fixtures/selectors';
-import { SubscriptPlugin } from '@components/RichTextEditor/Plugins/MarkPlugin/SubscriptPlugin';
-import { SuperscriptPlugin } from '@components/RichTextEditor/Plugins/MarkPlugin/SuperscriptPlugin';
 
 const BREAK_AFTER_PLUGIN_TOOLBAR_BUTTON = '[data-plugin-id="break-after-plugin"] button';
 

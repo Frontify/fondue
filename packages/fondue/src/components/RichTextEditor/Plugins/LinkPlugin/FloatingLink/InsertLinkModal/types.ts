@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { CheckboxState } from '@components/Checkbox';
+import { type CheckboxState } from '@components/Checkbox';
 
 export type InsertModalDispatchType = { type: string; payload?: Partial<InsertModalStateProps> };
 

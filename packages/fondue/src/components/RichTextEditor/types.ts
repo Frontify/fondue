@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TNode } from '@udecode/slate';
+import { type TNode } from '@udecode/slate';
 
 export enum PaddingSizes {
     None = 'tw-p-0',

@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { CSSProperties } from 'react';
+import { type CSSProperties } from 'react';
+
 import { convertCamelCaseToKebabCase } from './convertCamelCaseToKebabCase';
 
 export const reactCssPropsToCss = (props?: CSSProperties): string => {

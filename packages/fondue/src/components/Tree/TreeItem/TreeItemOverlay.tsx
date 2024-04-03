@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Children, ReactNode } from 'react';
+import { Children, type ReactNode } from 'react';
 
-import { merge } from '@utilities/merge';
 import IconGrabHandle12 from '@foundation/Icon/Generated/IconGrabHandle12';
+import { merge } from '@utilities/merge';
 
 import { INDENTATION_WIDTH } from '../helpers';
-import { DragHandlerPosition } from '../types';
+import { type DragHandlerPosition } from '../types';
 
 export type Overlay = {
     id: string;
@@ -43,6 +43,7 @@ export const TreeItemOverlay = ({
 
     return (
         <li
+            // eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role
             role="treeitem"
             style={liStyle}
             id={id.toString()}

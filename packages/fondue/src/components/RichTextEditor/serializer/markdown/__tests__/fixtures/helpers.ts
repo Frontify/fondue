@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { BlockType, LeafType, TargetValue } from '../../types';
+import { type BlockType, type LeafType, type TargetValue } from '../../types';
 
 const createElement = <T>(type: string, children: Array<T>) => {
     return {

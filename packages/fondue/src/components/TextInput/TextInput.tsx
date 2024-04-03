@@ -1,33 +1,36 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle';
-import { useCopy } from '@hooks/useCopy';
-import { useMemoizedId } from '@hooks/useMemoizedId';
 import { useFocusRing } from '@react-aria/focus';
-import { FOCUS_STYLE } from '@utilities/focusStyle';
-import { merge } from '@utilities/merge';
-import { Validation, validationClassMap } from '@utilities/validation';
 import {
-    AriaAttributes,
-    FocusEvent,
-    ForwardRefRenderFunction,
-    KeyboardEvent,
-    ReactElement,
-    ReactNode,
+    type AriaAttributes,
+    type FocusEvent,
+    type ForwardRefRenderFunction,
+    type KeyboardEvent,
+    type ReactElement,
+    type ReactNode,
     forwardRef,
     useEffect,
     useImperativeHandle,
     useRef,
     useState,
 } from 'react';
-import { LegacyTooltip, LegacyTooltipProps } from '../LegacyTooltip';
-import IconEye from '@foundation/Icon/Generated/IconEye';
-import IconEyeOff from '@foundation/Icon/Generated/IconEyeOff';
-import IconCross from '@foundation/Icon/Generated/IconCross';
-import IconExclamationMarkTriangle from '@foundation/Icon/Generated/IconExclamationMarkTriangle';
-import IconCrossCircle from '@foundation/Icon/Generated/IconCrossCircle';
+
+import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle';
 import IconCheckMark from '@foundation/Icon/Generated/IconCheckMark';
 import IconClipboard from '@foundation/Icon/Generated/IconClipboard';
+import IconCross from '@foundation/Icon/Generated/IconCross';
+import IconCrossCircle from '@foundation/Icon/Generated/IconCrossCircle';
+import IconExclamationMarkTriangle from '@foundation/Icon/Generated/IconExclamationMarkTriangle';
+import IconEye from '@foundation/Icon/Generated/IconEye';
+import IconEyeOff from '@foundation/Icon/Generated/IconEyeOff';
+import { useCopy } from '@hooks/useCopy';
+import { useMemoizedId } from '@hooks/useMemoizedId';
+import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { merge } from '@utilities/merge';
+import { Validation, validationClassMap } from '@utilities/validation';
+
+import { LegacyTooltip, type LegacyTooltipProps } from '../LegacyTooltip';
+
 export enum TextInputType {
     Text = 'text',
     Password = 'password',

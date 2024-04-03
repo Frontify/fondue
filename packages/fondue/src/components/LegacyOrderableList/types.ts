@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement } from 'react';
-import { DraggableItem } from '@utilities/dnd';
+import { type ReactElement } from 'react';
+
+import { type DraggableItem } from '@utilities/dnd';
 
 export type LegacyRenderListItem<T> = (
     items: LegacyOrderableListItem<T>,

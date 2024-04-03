@@ -1,15 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useMemoizedId } from '@hooks/useMemoizedId';
 import { useFocusRing } from '@react-aria/focus';
+import { type KeyboardEvent, type ReactElement, type TextareaHTMLAttributes, useEffect } from 'react';
+import TextareaAutosize, { type TextareaAutosizeProps } from 'react-textarea-autosize';
+
+import { useMemoizedId } from '@hooks/useMemoizedId';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { GetStatusIcon, InputActions, InputExtraActions, InputStyles } from '@utilities/input';
 import { merge } from '@utilities/merge';
 import { useForwardedRef } from '@utilities/useForwardedRef';
 import { Validation, validationClassMap } from '@utilities/validation';
-import { KeyboardEvent, ReactElement, TextareaHTMLAttributes, useEffect } from 'react';
-import TextareaAutosize, { TextareaAutosizeProps } from 'react-textarea-autosize';
-import { InputSharedBaseProps } from '../../types/input';
+
+import { type InputSharedBaseProps } from '../../types/input';
 
 export type TextareaProps = {
     autosize?: boolean;

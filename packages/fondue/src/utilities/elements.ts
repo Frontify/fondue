@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MouseEvent } from 'react';
+import { type MouseEvent } from 'react';
 
 export type ItemElementType = 'a' | 'button' | 'span';
 export const TABBABLE_ELEMENTS = [

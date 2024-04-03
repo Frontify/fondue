@@ -1,30 +1,33 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Modal } from './Modal';
-import { useState } from 'react';
-import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
-import { Meta, StoryFn } from '@storybook/react';
-import { TextInput } from '@components/TextInput';
-import { action } from '@storybook/addon-actions';
-import { generateRandomId } from '@utilities/generateRandomId';
-import { useOverlayTriggerState } from '@react-stately/overlays';
-import { PatternDesign, PatternTheme } from '@foundation/Pattern';
-import { ScrollWrapperDirection } from '@components/ScrollWrapper/types';
 import { OverlayContainer, OverlayProvider } from '@react-aria/overlays';
-import {
-    ModalBodyProps,
-    ModalHeaderProps,
-    ModalHeaderVariant,
-    ModalProps,
-    ModalVisualProps,
-    ModalWidth,
-} from './types';
+import { useOverlayTriggerState } from '@react-stately/overlays';
+import { action } from '@storybook/addon-actions';
+import { type Meta, type StoryFn } from '@storybook/react';
+import { useState } from 'react';
+
+import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
 import { FormControl, FormControlDirection, FormControlStyle } from '@components/FormControl';
-import { Divider } from '../Divider/Divider';
-import { MODAL_PADDING } from './context/ModalLayout';
+import { ScrollWrapperDirection } from '@components/ScrollWrapper/types';
+import { TextInput } from '@components/TextInput';
 import IconCap from '@foundation/Icon/Generated/IconCap';
 import IconIcon from '@foundation/Icon/Generated/IconIcon';
 import IconMusicNote from '@foundation/Icon/Generated/IconMusicNote';
+import { PatternDesign, PatternTheme } from '@foundation/Pattern';
+import { generateRandomId } from '@utilities/generateRandomId';
+
+import { Divider } from '../Divider/Divider';
+
+import { Modal } from './Modal';
+import { MODAL_PADDING } from './context/ModalLayout';
+import {
+    type ModalBodyProps,
+    type ModalHeaderProps,
+    ModalHeaderVariant,
+    type ModalProps,
+    type ModalVisualProps,
+    ModalWidth,
+} from './types';
 
 export default {
     title: 'Deprecated/Modal',

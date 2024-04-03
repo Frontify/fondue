@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TDescendant, isDescendant } from '@udecode/slate';
-import { getNodeString } from '@udecode/slate';
+import { type TDescendant, isDescendant, getNodeString } from '@udecode/slate';
 
 export const toPlaintext = (nodes: TDescendant[] | string): string => {
     const nodesArray = Array.isArray(nodes) ? nodes : JSON.parse(nodes);

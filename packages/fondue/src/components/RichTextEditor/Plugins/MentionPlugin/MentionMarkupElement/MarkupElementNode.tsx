@@ -1,9 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type PlateRenderElementProps } from '@udecode/plate-core';
+
 import IconPeople12 from '@foundation/Icon/Generated/IconPeople12';
+
 import { MentionableCategory } from '../types';
-import { PlateRenderElementProps } from '@udecode/plate-core';
-import { MarkupElementNodeComponentType, MarkupElementNodeType } from './types';
+
+import { type MarkupElementNodeComponentType, type MarkupElementNodeType } from './types';
 
 const MarkupElementNode = ({ attributes, element, nodeProps, children }: PlateRenderElementProps) => (
     <span
@@ -60,7 +63,7 @@ export const MarkupElementNodeComponent: MarkupElementNodeComponentType = ({ cat
         [MentionableCategory.ALL]: MarkupElementNodeAll,
     };
 
-    const Component = component[category as MentionableCategory] ?? component[MentionableCategory.USER];
+    const Component = component[category] ?? component[MentionableCategory.USER];
 
     return <Component {...props}>{children}</Component>;
 };

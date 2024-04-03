@@ -2,15 +2,13 @@
 
 import react from '@vitejs/plugin-react';
 import { build } from 'esbuild';
-import { Plugin, defineConfig } from 'vite';
+import { type Plugin, defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import tsConfigPaths from 'vite-tsconfig-paths';
 
 import { dependencies as dependenciesMap, peerDependencies as peerDependenciesMap } from './package.json';
 
 const peerDependencies = Object.keys(peerDependenciesMap);
-// TODO: review this approach to exclude all deps from the final bundles.
-// The filtering is used for an hotfix and is a temporary workaround until we have refined how to improve and stabilize the deps building
 const dependencies = Object.keys(dependenciesMap);
 
 export const globals = {

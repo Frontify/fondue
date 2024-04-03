@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactNode } from 'react';
 import * as Popover from '@radix-ui/react-popover';
+import { type ReactNode } from 'react';
+
 import { zIndexLayers } from '@components/RichTextEditor/helpers/zIndexLayers';
 
 type EmojiToolbarDropdownProps = {

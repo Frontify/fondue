@@ -1,11 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { zIndexLayers } from '@components/RichTextEditor/helpers/zIndexLayers';
+
+import { DEFAULT_TEXT_STYLE_VALUE } from '../types';
+
 import { DropdownItem } from './DropdownItem';
 import { DropdownTrigger } from './DropdownTrigger';
-import { TextStyleDropdownProps } from './types';
+import { type TextStyleDropdownProps } from './types';
 import { useTextStyleDropdown } from './useTextStyleDropdown';
-import { DEFAULT_TEXT_STYLE_VALUE } from '../types';
-import { zIndexLayers } from '@components/RichTextEditor/helpers/zIndexLayers';
 
 export const TextStyleDropdown = ({ editorId, textStyles = [] }: TextStyleDropdownProps) => {
     const {

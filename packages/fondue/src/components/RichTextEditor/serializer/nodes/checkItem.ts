@@ -1,10 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TElement } from '@udecode/slate';
-import { merge } from '@utilities/merge';
+import { type TElement } from '@udecode/slate';
+
 import { CHECKBOX_SPAN_CLASSES } from '@components/RichTextEditor/Plugins';
+import { merge } from '@utilities/merge';
+
+import { type CSSPropertiesHover } from '../types';
 import { reactCssPropsToCss } from '../utils/reactCssPropsToCss';
-import { CSSPropertiesHover } from '../types';
 
 export const checkItemNode = (
     node: TElement,

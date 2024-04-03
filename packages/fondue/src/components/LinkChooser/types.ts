@@ -1,24 +1,25 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { CheckboxState } from '@components/Checkbox/Checkbox';
-import { MenuBlock, MenuItemType } from '@components/Dropdown/SelectMenu/SelectMenu';
-import { AriaListBoxOptions } from '@react-aria/listbox';
-import { ComboBoxState } from '@react-stately/combobox';
-import { ListState } from '@react-stately/list';
-import { Node } from '@react-types/shared';
+import { type AriaListBoxOptions } from '@react-aria/listbox';
+import { type ComboBoxState } from '@react-stately/combobox';
+import { type ListState } from '@react-stately/list';
+import { type Node } from '@react-types/shared';
 import {
-    HTMLAttributes,
-    InputHTMLAttributes,
-    Key,
-    KeyboardEvent,
-    MouseEvent,
-    MutableRefObject,
-    ReactElement,
-    ReactNode,
-    RefObject,
+    type HTMLAttributes,
+    type InputHTMLAttributes,
+    type Key,
+    type KeyboardEvent,
+    type MouseEvent,
+    type MutableRefObject,
+    type ReactElement,
+    type ReactNode,
+    type RefObject,
 } from 'react';
-import { DoneInvokeEvent, Interpreter } from 'xstate';
-import { Validation } from '@utilities/validation';
+import { type DoneInvokeEvent, type Interpreter } from 'xstate';
+
+import { type CheckboxState } from '@components/Checkbox/Checkbox';
+import { type MenuBlock, type MenuItemType } from '@components/Dropdown/SelectMenu/SelectMenu';
+import { type Validation } from '@utilities/validation';
 
 export type MachineService = Interpreter<
     LinkChooserContext,

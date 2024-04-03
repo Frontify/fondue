@@ -1,15 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import {
-    DroppableContainer,
+    type DroppableContainer,
     KeyboardCode,
-    KeyboardCoordinateGetter,
+    type KeyboardCoordinateGetter,
     closestCorners,
     getFirstCollision,
 } from '@dnd-kit/core';
 
 import { INDENTATION_WIDTH, getProjection } from '../helpers';
-import type { SensorContext } from '../types';
+import { type SensorContext } from '../types';
 
 const directions: string[] = [KeyboardCode.Down, KeyboardCode.Right, KeyboardCode.Up, KeyboardCode.Left];
 
@@ -38,6 +38,7 @@ export const sortableTreeKeyboardCoordinates: (context: SensorContext) => Keyboa
                 });
 
                 switch (event.code) {
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
                     case KeyboardCode.Left:
                         if (depth > minDepth) {
                             return {
@@ -46,6 +47,7 @@ export const sortableTreeKeyboardCoordinates: (context: SensorContext) => Keyboa
                             };
                         }
                         break;
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
                     case KeyboardCode.Right:
                         if (depth < maxDepth) {
                             return {
@@ -73,11 +75,13 @@ export const sortableTreeKeyboardCoordinates: (context: SensorContext) => Keyboa
                 }
 
                 switch (event.code) {
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
                     case KeyboardCode.Down:
                         if (collisionRect.top < rect.top) {
                             containers.push(container);
                         }
                         break;
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
                     case KeyboardCode.Up:
                         if (collisionRect.top > rect.top) {
                             containers.push(container);

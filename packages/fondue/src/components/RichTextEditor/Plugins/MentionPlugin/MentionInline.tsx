@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MentionableItems } from './types';
-import { filterItems } from './helpers';
 import { MentionCombobox } from '@components/RichTextEditor/Plugins/MentionPlugin/MentionCombobox/MentionCombobox';
+
+import { filterItems } from './helpers';
+import { type MentionableItems } from './types';
 
 // eslint-disable-next-line react/display-name
 export const MentionInline = (items: MentionableItems) => () => {

@@ -1,14 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
-import { InlineDialog, InlineDialogProps } from './InlineDialog';
-import { DialogBody } from '@components/DialogBody/DialogBody';
-import { Modality } from '../../types';
-import { Button } from '@components/Button';
-import { POPPER_STORY_ARGS } from '@components/Popper/constantStories';
-import { Box } from '@components/Box';
+import { type Meta, type StoryFn } from '@storybook/react';
 import { useRef, useState } from 'react';
+
+import { Box } from '@components/Box';
+import { Button } from '@components/Button';
+import { DialogBody } from '@components/DialogBody/DialogBody';
+import { POPPER_STORY_ARGS } from '@components/Popper/constantStories';
 import IconJohanna from '@foundation/Icon/Generated/IconJohanna';
+
+import { Modality } from '../../types';
+
+import { InlineDialog, type InlineDialogProps } from './InlineDialog';
 
 export default {
     title: 'Experimental/InlineDialog',

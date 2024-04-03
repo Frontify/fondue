@@ -1,18 +1,21 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
-import { IconSize } from '@foundation/Icon/IconSize';
-import format from 'date-fns/format';
-import getYear from 'date-fns/getYear';
-import { KeyboardEvent, ReactNode, forwardRef, useState } from 'react';
-import DatepickerComponent, { ReactDatePicker } from 'react-datepicker';
 import './DatePicker.css';
-import { DatePickerTrigger } from './DatePickerTrigger';
+
+import { format } from 'date-fns/format';
+import { getYear } from 'date-fns/getYear';
+import { type KeyboardEvent, type ReactNode, forwardRef, useState } from 'react';
+import DatepickerComponent, { type ReactDatePicker } from 'react-datepicker';
+
+import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
 import IconCaretLeft from '@foundation/Icon/Generated/IconCaretLeft';
-import IconCaretRightDouble from '@foundation/Icon/Generated/IconCaretRightDouble';
-import IconCaretRight from '@foundation/Icon/Generated/IconCaretRight';
 import IconCaretLeftDouble from '@foundation/Icon/Generated/IconCaretLeftDouble';
+import IconCaretRight from '@foundation/Icon/Generated/IconCaretRight';
+import IconCaretRightDouble from '@foundation/Icon/Generated/IconCaretRightDouble';
+import { IconSize } from '@foundation/Icon/IconSize';
 import { Validation } from '@utilities/validation';
+
+import { DatePickerTrigger } from './DatePickerTrigger';
 
 const ARROW_PADDING_CORRECTION = 40;
 

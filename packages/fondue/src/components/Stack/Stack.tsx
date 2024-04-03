@@ -1,10 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Children, ReactElement, ReactNode } from 'react';
+import { Children, type ReactElement, type ReactNode } from 'react';
+
 import { Box } from '@components/Box';
-import { GAP_DIRECTIONS, GetGapClassName, SpacingValue } from '@utilities/dimensions';
+import { GAP_DIRECTIONS, GetGapClassName, type SpacingValue } from '@utilities/dimensions';
 import { merge } from '@utilities/merge';
-import { ContainerHTMLElement } from '../../types/elements';
+
+import { type ContainerHTMLElement } from '../../types/elements';
 
 export type STACK_DIRECTION = 'row' | 'column' | 'row-reverse' | 'column-reverse';
 

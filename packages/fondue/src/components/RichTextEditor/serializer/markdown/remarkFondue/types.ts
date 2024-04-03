@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TargetValue } from '../types';
+import { type TargetValue } from '../types';
 
 export type NodeChild = {
     type: string;

@@ -1,20 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-
-import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle';
-import { Validation, validationClassMap } from '@utilities/validation';
 import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
-import { FOCUS_STYLE } from '@utilities/focusStyle';
-import { merge } from '@utilities/merge';
 import { useActor } from '@xstate/react';
-import { MouseEvent, ReactElement, forwardRef } from 'react';
-import { IconButtonProps, SearchInputProps } from './types';
+import { type MouseEvent, type ReactElement, forwardRef } from 'react';
+
+import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle';
 import IconArrowOutExternal from '@foundation/Icon/Generated/IconArrowOutExternal';
 import IconClipboard from '@foundation/Icon/Generated/IconClipboard';
 import IconCross from '@foundation/Icon/Generated/IconCross';
+import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { merge } from '@utilities/merge';
+import { Validation, validationClassMap } from '@utilities/validation';
+
+import { type IconButtonProps, type SearchInputProps } from './types';
 
 export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>(
     (
@@ -40,6 +39,7 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
         const isLoading = validation === Validation.Loading;
 
         return (
+            // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
             <div
                 data-test-id="link-chooser-search-wrapper"
                 className={merge([
@@ -101,6 +101,7 @@ export const SearchInput = forwardRef<HTMLInputElement | null, SearchInputProps>
                         onClick={() => send('COPY_TO_CLIPBOARD')}
                     />
                 )}
+                {/* eslint-disable-next-line @typescript-eslint/restrict-template-expressions */}
                 {`${value}`.length > 0 && clearable && !isLoading && (
                     <IconButton
                         disabled={disabled}

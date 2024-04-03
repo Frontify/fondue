@@ -2,8 +2,9 @@
 
 import { DismissButton, useOverlay } from '@react-aria/overlays';
 import { mergeProps } from '@react-aria/utils';
-import { MouseEvent, ReactElement, TouchEvent, useRef } from 'react';
-import { PopoverProps } from './types';
+import { type MouseEvent, type ReactElement, type TouchEvent, useRef } from 'react';
+
+import { type PopoverProps } from './types';
 
 export const Popover = (props: PopoverProps): ReactElement => {
     const ref = useRef<HTMLDivElement>(null);

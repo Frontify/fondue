@@ -1,10 +1,11 @@
-/* eslint-disable react/display-name */
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ForwardedRef, forwardRef } from 'react';
+import { type ForwardedRef, forwardRef } from 'react';
+
 import IconCaretDown12 from '@foundation/Icon/Generated/IconCaretDown12';
 import { merge } from '@utilities/merge';
-import { DropdownTriggerProps } from './types';
+
+import { type DropdownTriggerProps } from './types';
 
 export const DropdownTriggerComponent = (
     { label, open, onClick }: DropdownTriggerProps,

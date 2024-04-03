@@ -1,14 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type Meta, type StoryFn } from '@storybook/react';
 import { useEffect, useState } from 'react';
-import { Meta, StoryFn } from '@storybook/react';
+
+import IconIcon from '@foundation/Icon/Generated/IconIcon';
+
 import {
     FieldsetHeader as FieldsetHeaderComponent,
-    FieldsetHeaderProps,
+    type FieldsetHeaderProps,
     FieldsetHeaderSize,
     FieldsetHeaderType,
 } from './FieldsetHeader';
-import IconIcon from '@foundation/Icon/Generated/IconIcon';
 
 export default {
     title: 'Deprecated/Fieldset Header',

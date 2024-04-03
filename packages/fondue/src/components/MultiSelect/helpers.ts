@@ -1,8 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { merge } from '@utilities/merge';
-import { MultiSelectSize } from './MultiSelect';
 import { useEffect } from 'react';
+
+import { merge } from '@utilities/merge';
+
+import { MultiSelectSize } from './MultiSelect';
 
 export const getPaddingClasses = (size: MultiSelectSize) => {
     const classes = ['tw-pr-9'];

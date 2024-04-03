@@ -1,12 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement, cloneElement } from 'react';
-import { merge } from '@utilities/merge';
-import { IconSize } from '@foundation/Icon/IconSize';
-import IconExclamationMarkCircle from '@foundation/Icon/Generated/IconExclamationMarkCircle';
-import IconExclamationMarkTriangle from '@foundation/Icon/Generated/IconExclamationMarkTriangle';
+import { type ReactElement, cloneElement } from 'react';
+
 import IconCheckMark from '@foundation/Icon/Generated/IconCheckMark';
 import IconDocument from '@foundation/Icon/Generated/IconDocument';
+import IconExclamationMarkCircle from '@foundation/Icon/Generated/IconExclamationMarkCircle';
+import IconExclamationMarkTriangle from '@foundation/Icon/Generated/IconExclamationMarkTriangle';
+import { IconSize } from '@foundation/Icon/IconSize';
+import { merge } from '@utilities/merge';
 
 export enum BrightHeaderStyle {
     Information = 'Information',

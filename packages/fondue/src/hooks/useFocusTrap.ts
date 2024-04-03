@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useCallback, useEffect, useRef } from 'react';
+
 import { TABBABLE_ELEMENTS } from '@utilities/elements';
 
 export const useFocusTrap = <T extends HTMLElement = HTMLElement>(

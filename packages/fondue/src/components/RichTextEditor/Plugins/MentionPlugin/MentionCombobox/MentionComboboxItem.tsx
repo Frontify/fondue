@@ -1,11 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement } from 'react';
-import { ComboboxItemProps } from '@udecode/plate-combobox';
-import { MentionItemData, MentionableCategory } from '../types';
+import { type ComboboxItemProps } from '@udecode/plate-combobox';
+import { type ReactElement } from 'react';
+
 import IconPeople12 from '@foundation/Icon/Generated/IconPeople12';
 import IconPerson12 from '@foundation/Icon/Generated/IconPerson12';
 import IconTarget12 from '@foundation/Icon/Generated/IconTarget12';
+
+import { type MentionItemData, MentionableCategory } from '../types';
 
 type RenderAvatarProps = {
     category: MentionableCategory;

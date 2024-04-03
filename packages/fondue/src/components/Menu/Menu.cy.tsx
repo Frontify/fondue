@@ -5,7 +5,7 @@ import {
     ITEMS,
     ITEMS_WITHOUT_ITERACTION,
     ITEMS_WITH_LINKS,
-    Item,
+    type Item,
     NoTriggerMenuComponent,
 } from './utils/componentMocks';
 

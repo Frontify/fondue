@@ -1,8 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type ReactElement } from 'react';
+
 import { Box } from '@components/Box';
-import { ReactElement } from 'react';
-import { Grid, GridProps } from './Grid';
+
+import { Grid, type GridProps } from './Grid';
 
 const GRID_ID = '[data-test-id=fondue-grid]';
 const CONTENT_STRING = 'Test';

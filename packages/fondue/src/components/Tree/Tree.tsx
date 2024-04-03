@@ -1,7 +1,24 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import {
-    KeyboardEvent,
+    DndContext,
+    type DragEndEvent,
+    type DragMoveEvent,
+    DragOverlay,
+    KeyboardSensor,
+    type MeasuringConfiguration,
+    MeasuringStrategy,
+    PointerSensor,
+    closestCorners,
+    useSensor,
+    useSensors,
+} from '@dnd-kit/core';
+import { restrictToWindowEdges } from '@dnd-kit/modifiers';
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { enableMapSet, produce } from 'immer';
+import isEqual from 'lodash-es/isEqual';
+import {
+    type KeyboardEvent,
     cloneElement,
     memo,
     useCallback,
@@ -12,47 +29,25 @@ import {
     useState,
     useTransition,
 } from 'react';
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { restrictToWindowEdges } from '@dnd-kit/modifiers';
-import { enableMapSet, produce } from 'immer';
 import { createPortal } from 'react-dom';
-import isEqual from 'lodash-es/isEqual';
-import {
-    DndContext,
-    DragEndEvent,
-    DragMoveEvent,
-    DragOverlay,
-    KeyboardSensor,
-    MeasuringConfiguration,
-    MeasuringStrategy,
-    PointerSensor,
-    closestCorners,
-    useSensor,
-    useSensors,
-} from '@dnd-kit/core';
 
-import type {
-    DragHandlerPosition,
-    RegisterNodeChildrenPayload,
-    SensorContext,
-    TreeAnnouncements,
-    TreeDragOverEvent,
-    TreeDragStartEvent,
-    TreeItemProps,
-    TreeItemStyling,
-    TreeProps,
-    TreeState,
-    TreeStateAction,
+import {
+    type DragHandlerPosition,
+    type RegisterNodeChildrenPayload,
+    type SensorContext,
+    type TreeAnnouncements,
+    type TreeDragOverEvent,
+    type TreeDragStartEvent,
+    type TreeItemProps,
+    type TreeItemStyling,
+    type TreeProps,
+    type TreeState,
+    type TreeStateAction,
 } from '@components/Tree/types';
 
-import { InternalTreeItemProps, type Overlay, TreeItemOverlay } from './TreeItem';
-
-import {
-    recursivelyRemoveFragmentsAndEnrichChildren,
-    sortableTreeKeyboardCoordinates,
-    useDeepCompareEffect,
-} from './utils';
-
+import { TreeContext, type TreeContextProps } from './TreeContext';
+import { type InternalTreeItemProps, type Overlay, TreeItemOverlay } from './TreeItem';
+import { type InternalTreeItemMultiSelectProps } from './TreeItem/TreeItemMultiselect';
 import {
     ROOT_ID,
     currentNodesChanged,
@@ -70,9 +65,11 @@ import {
     shouldUpdateTreeState,
     updateNodeWithNewChildren,
 } from './helpers';
-
-import { TreeContext, TreeContextProps } from './TreeContext';
-import { InternalTreeItemMultiSelectProps } from './TreeItem/TreeItemMultiselect';
+import {
+    recursivelyRemoveFragmentsAndEnrichChildren,
+    sortableTreeKeyboardCoordinates,
+    useDeepCompareEffect,
+} from './utils';
 
 const measuring: MeasuringConfiguration = {
     droppable: {
@@ -84,32 +81,36 @@ enableMapSet();
 
 const reducer = produce((draft: TreeState, action: TreeStateAction) => {
     switch (action.type) {
-        case 'EXPAND_NODE':
+        case 'EXPAND_NODE': {
             draft.expandedIds = new Set(draft.expandedIds).add(action.payload);
             return;
+        }
 
-        case 'SHRINK_NODE':
+        case 'SHRINK_NODE': {
             const newExpanded = new Set(draft.expandedIds);
             newExpanded.delete(action.payload);
 
             draft.expandedIds = newExpanded;
             return;
+        }
 
         case 'SET_SELECTION_MODE':
             draft.selectionMode = action.payload.selectionMode;
             return;
 
-        case 'SET_PROJECTION':
+        case 'SET_PROJECTION': {
             if (!isEqual(draft.projection, action.payload)) {
                 draft.projection = action.payload;
             }
             return;
+        }
 
-        case 'REGISTER_OVERLAY_ITEM':
+        case 'REGISTER_OVERLAY_ITEM': {
             draft.overlay = action.payload;
             return;
+        }
 
-        case 'REGISTER_ROOT_NODES':
+        case 'REGISTER_ROOT_NODES': {
             // reset rootNodes keeping any children when expanded
             draft.rootNodes = getCurrentChildrenForNewNodesIfExpanded(
                 draft.rootNodes,
@@ -117,8 +118,9 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
                 action.payload,
             );
             return;
+        }
 
-        case 'REGISTER_NODE_CHILDREN':
+        case 'REGISTER_NODE_CHILDREN': {
             const { id: parentId, children } = action.payload;
 
             if (findIndexById(draft.rootNodes, parentId) === -1) {
@@ -147,27 +149,32 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
             }
 
             return;
+        }
 
-        case 'UNREGISTER_NODE_CHILDREN':
+        case 'UNREGISTER_NODE_CHILDREN': {
             const nodeIds = getReactNodeIdsInFlatArray(draft.rootNodes, action.payload);
             if (nodeIds.length > 0) {
                 draft.rootNodes = removeReactNodesFromFlatArray(draft.rootNodes, nodeIds);
             }
             return;
+        }
 
-        case 'REGISTER_NODES':
+        case 'REGISTER_NODES': {
             draft.nodes = action.payload;
             return;
+        }
 
-        case 'REPLACE_EXPANDED':
+        case 'REPLACE_EXPANDED': {
             draft.expandedIds = new Set(action.payload);
             return;
+        }
 
-        case 'REPLACE_SELECTED':
+        case 'REPLACE_SELECTED': {
             draft.selectedIds = new Set(action.payload);
             return;
+        }
 
-        case 'REPLACE_STATE':
+        case 'REPLACE_STATE': {
             draft.rootNodes = action.payload.rootNodes;
             draft.overlay = action.payload.overlay;
             draft.projection = action.payload.projection;
@@ -175,10 +182,12 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
             draft.expandedIds = action.payload.expandedIds;
             draft.selectionMode = action.payload.selectionMode;
             return;
+        }
 
-        default:
+        default: {
             console.warn(`Updated tree with action "${action.type}" but it has not effect.`);
             return;
+        }
     }
 });
 
@@ -186,7 +195,7 @@ export const Tree = memo(
     ({
         id,
         onDrop,
-        onSelect = () => void 0,
+        onSelect = () => {},
         onExpand,
         onShrink,
         children,
@@ -538,6 +547,7 @@ export const Tree = memo(
             <TreeContext.Provider value={contextValue}>
                 <ul
                     id={id}
+                    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role
                     role="tree"
                     data-test-id={dataTestId}
                     onKeyDown={handleKeyDown}

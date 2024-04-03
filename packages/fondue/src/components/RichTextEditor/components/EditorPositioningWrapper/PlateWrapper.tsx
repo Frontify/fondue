@@ -1,8 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { forwardRef } from 'react';
-import { WrapperProps } from './types';
+
 import { useRichTextEditorContext } from '../../context/RichTextEditorContext';
+
+import { type WrapperProps } from './types';
 
 export const PlateWrapper = forwardRef<HTMLDivElement, WrapperProps>(({ children }, ref) => {
     const { wrapperClassNames, editorId } = useRichTextEditorContext();

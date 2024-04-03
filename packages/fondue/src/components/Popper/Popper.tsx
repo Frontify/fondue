@@ -2,7 +2,8 @@
 
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { usePopper } from 'react-popper';
-import { PopperDimension, PopperProps, PrepareElementStyleProps } from '@components/Popper/types';
+
+import { type PopperDimension, type PopperProps, type PrepareElementStyleProps } from '@components/Popper/types';
 import { EnablePortalWrapper } from '@utilities/dialogs/EnablePortalWrapper';
 import { merge } from '@utilities/merge';
 

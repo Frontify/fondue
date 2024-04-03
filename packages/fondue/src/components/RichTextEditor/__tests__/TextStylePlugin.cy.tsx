@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { RichTextEditor } from '../RichTextEditor';
+
 import {
     RichTextEditorWithOrderedListStyles,
     RichTextWithCustomTextStylesDefaultValues,

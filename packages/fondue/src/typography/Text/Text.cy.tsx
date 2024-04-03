@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Box } from '@components/index';
-import { Text } from './Text';
 import { BOX_BG_ALIAS_TOKENS_CLASSES, BOX_TEXT_ALIAS_TOKENS_CLASSES } from '@utilities/tokens';
+
+import { Text } from './Text';
 
 const classRecord = {
     color: ['weak', 'tw-text-text-weak'],

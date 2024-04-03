@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import {
-    ButtonElements,
+    type ButtonElements,
     ButtonEmphasis,
     ButtonRounding,
     ButtonSize,
     ButtonStyle,
-    UpdatedButtonStyle,
+    type UpdatedButtonStyle,
 } from './ButtonTypes';
 
 export const ButtonCommonClasses =

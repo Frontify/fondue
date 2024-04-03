@@ -1,15 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { useId } from '@react-aria/utils';
 import { Fragment, useEffect, useState } from 'react';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+
+import { DropZone } from '@components/DropZone';
+import { moveItems } from '@utilities/dnd';
+
+import { type CollisionPosition } from '../Tree/types';
 
 import { LegacyCollectionItem } from './LegacyCollectionItem';
-import { LegacyOrderableListItem, LegacyOrderableListProps } from './types';
-import { DropZone } from '@components/DropZone';
-import { HTML5Backend } from 'react-dnd-html5-backend';
-import { DndProvider } from 'react-dnd';
-import { moveItems } from '@utilities/dnd';
-import { useId } from '@react-aria/utils';
-import { CollisionPosition } from '../Tree/types';
+import { type LegacyOrderableListItem, type LegacyOrderableListProps } from './types';
 
 const listItemsCompareFn = <T extends object>(
     itemA: LegacyOrderableListItem<T>,

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { OnTreeDropCallback, Tree, TreeItem } from '@components/Tree';
-import { TreeItemMock, treeItemsMock } from '@components/Tree/utils';
+import { type OnTreeDropCallback, Tree, TreeItem } from '@components/Tree';
+import { type TreeItemMock, treeItemsMock } from '@components/Tree/utils';
 
 const TreeComponent = ({
     onSelect,

@@ -1,13 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useEffect, useState } from 'react';
-import { IconSize } from '@foundation/Icon/IconSize';
-import { Meta, StoryFn } from '@storybook/react';
-import { TextInput, TextInputProps, TextInputType } from './TextInput';
-import { Validation } from '@utilities/validation';
-import IconIcon from '@foundation/Icon/Generated/IconIcon';
 import { action } from '@storybook/addon-actions';
+import { type Meta, type StoryFn } from '@storybook/react';
+import { useEffect, useState } from 'react';
+
+import IconIcon from '@foundation/Icon/Generated/IconIcon';
+import { IconSize } from '@foundation/Icon/IconSize';
+import { Validation } from '@utilities/validation';
+
 import { FormField } from '../FormField';
+
+import { TextInput, type TextInputProps, TextInputType } from './TextInput';
 
 export default {
     title: 'Components/Text Input',

@@ -1,10 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement, ReactNode } from 'react';
-import { IconProps } from '@foundation/Icon/IconProps';
-import { BadgeProps } from '@components/Badge';
-import { ButtonProps } from '@components/Button';
-import { PopperProps } from '@components/Popper/types';
+import { type ReactElement, type ReactNode } from 'react';
+
+import { type BadgeProps } from '@components/Badge';
+import { type ButtonProps } from '@components/Button';
+import { type PopperProps } from '@components/Popper/types';
+import { type IconProps } from '@foundation/Icon/IconProps';
 
 export type DialogPadding = 'none' | 'compact' | 'comfortable' | 'spacious';
 export const DIALOG_PADDING = ['compact', 'comfortable', 'spacious']; // To be used in Stories

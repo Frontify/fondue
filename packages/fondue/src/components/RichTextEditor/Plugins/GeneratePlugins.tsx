@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { CSSProperties, ReactNode } from 'react';
-import { PlatePlugin, createPlugins } from '@udecode/plate-core';
+import { type PlatePlugin, createPlugins } from '@udecode/plate-core';
+import { type CSSProperties, type ReactNode } from 'react';
+
 import { Toolbar } from '../components/Toolbar';
-import type { PluginComposer } from './PluginComposer';
+
+import { type PluginComposer } from './PluginComposer';
 
 type GeneratePluginsReturn = {
     plugins: PlatePlugin<Record<string, any>>[];

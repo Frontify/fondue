@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { assetInputActions } from '../asset-input-actions';
 import { AssetInputSize } from '../AssetInput';
+import { assetInputActions } from '../asset-input-actions';
 import { EXAMPLE_IMAGES } from '../example-assets';
+
 import { SelectedAsset } from './SelectedAsset';
 
 const SELECTED_ASSET_ID = '[data-test-id=asset-single-input]';

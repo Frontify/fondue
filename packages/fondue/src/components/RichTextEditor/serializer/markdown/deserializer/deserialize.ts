@@ -1,25 +1,26 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import {
-    BlockQuoteNode,
-    CodeBlockNode,
-    DeserializedNode,
-    HeadingNode,
-    ImageNode,
-    InputNodeTypes,
-    ItalicNode,
-    LinkNode,
-    ListItemChildNode,
-    ListItemNode,
-    ListNode,
-    MarkdownAstNode,
-    OptionType,
-    ParagraphNode,
-    TextNode,
-    ThematicBreakNode,
+    type BlockQuoteNode,
+    type CodeBlockNode,
+    type DeserializedNode,
+    type HeadingNode,
+    type ImageNode,
+    type InputNodeTypes,
+    type ItalicNode,
+    type LinkNode,
+    type ListItemChildNode,
+    type ListItemNode,
+    type ListNode,
+    type MarkdownAstNode,
+    type OptionType,
+    type ParagraphNode,
+    type TextNode,
+    type ThematicBreakNode,
 } from '../types';
 import { MENTION_DESERIALIZE_REGEX, isMaliciousLink } from '../utils';
-import { DeserializerConfig } from './types';
+
+import { type DeserializerConfig } from './types';
 
 export default function deserialize<T extends InputNodeTypes>(
     node: MarkdownAstNode,
@@ -45,7 +46,7 @@ export default function deserialize<T extends InputNodeTypes>(
     }
 
     switch (node.type) {
-        case 'mention':
+        case 'mention': {
             const value = node.children ? node.children[0].value : undefined;
             const matches = value?.match(MENTION_DESERIALIZE_REGEX) as RegExpMatchArray;
             return {
@@ -54,46 +55,55 @@ export default function deserialize<T extends InputNodeTypes>(
                 id: matches[2],
                 children: [{ text: '' }],
             };
-        case 'heading':
+        }
+        case 'heading': {
             return {
                 type: types.heading[node.depth || 1],
                 children,
             } as HeadingNode<T>;
-        case 'list':
+        }
+        case 'list': {
             return {
                 type: node.ordered ? types.olList : types.ulList,
                 children,
             } as ListNode<T>;
-        case 'listItem':
+        }
+        case 'listItem': {
             return { type: types.listItem, children } as ListItemNode<T>;
-        case 'listItemChild':
+        }
+        case 'listItemChild': {
             return { type: types.listItemChild, children } as ListItemChildNode<T>;
-        case 'paragraph':
+        }
+        case 'paragraph': {
             return { type: types.paragraph, children } as ParagraphNode<T>;
-        case 'link':
+        }
+        case 'link': {
             return {
                 type: types.link,
                 [linkDestinationKey]: allowUnsafeLink(node.url, config?.allowUnsafeLink),
                 target: node.target,
                 children,
             } as LinkNode<T>;
-        case 'image':
+        }
+        case 'image': {
             return {
                 type: types.image,
                 children: [{ text: '' }],
                 [imageSourceKey]: allowUnsafeLink(node.url, config?.allowUnsafeLink),
                 [imageCaptionKey]: node.alt,
             } as ImageNode<T>;
-        case 'blockquote':
+        }
+        case 'blockquote': {
             return { type: types.blockQuote, children } as BlockQuoteNode<T>;
-        case 'code':
+        }
+        case 'code': {
             return {
                 type: types.codeBlock,
                 language: node.lang ?? undefined,
                 children: [{ text: node.value }],
             } as CodeBlockNode<T>;
-
-        case 'html':
+        }
+        case 'html': {
             if (node.value?.includes('<br>')) {
                 return {
                     break: true,
@@ -102,43 +112,48 @@ export default function deserialize<T extends InputNodeTypes>(
                 } as ParagraphNode<T>;
             }
             return { type: types.paragraph, children: [{ text: node.value || '' }] };
-
-        case 'emphasis':
+        }
+        case 'emphasis': {
             return {
-                [types.emphasisMark as string]: true,
+                [types.emphasisMark]: true,
                 ...forceLeafNode(children as Array<TextNode>),
                 ...persistLeafFormats(children as Array<MarkdownAstNode>),
             } as unknown as ItalicNode<T>;
-        case 'strong':
+        }
+        case 'strong': {
             return {
-                [types.strongMark as string]: true,
+                [types.strongMark]: true,
                 ...forceLeafNode(children as Array<TextNode>),
                 ...persistLeafFormats(children as Array<MarkdownAstNode>),
             };
-        case 'delete':
+        }
+        case 'delete': {
             return {
-                [types.deleteMark as string]: true,
+                [types.deleteMark]: true,
                 ...forceLeafNode(children as Array<TextNode>),
                 ...persistLeafFormats(children as Array<MarkdownAstNode>),
             };
-        case 'inlineCode':
+        }
+        case 'inlineCode': {
             return {
-                [types.inlineCodeMark as string]: true,
+                [types.inlineCodeMark]: true,
                 text: node.value,
                 ...persistLeafFormats(children as Array<MarkdownAstNode>),
             };
-        case 'thematicBreak':
+        }
+        case 'thematicBreak': {
             return {
                 type: types.thematicBreak,
                 children: [{ text: '' }],
             } as ThematicBreakNode<T>;
-
-        case 'text':
+        }
+        case 'text': {
             // Unicode Character 'NO-BREAK SPACE' (U+00A0)
             return { text: node.value?.replace(/\u00A0/g, '').length === 0 ? '' : node.value };
-
-        default:
+        }
+        default: {
             return { text: node.value ?? '' };
+        }
     }
 }
 

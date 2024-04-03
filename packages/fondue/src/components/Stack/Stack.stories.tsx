@@ -1,10 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
-import { STACK_PROPS, Stack as StackComponent } from './Stack';
+import { type Meta, type StoryFn } from '@storybook/react';
+
+import { Divider } from '@components/Divider';
 import { SPACING_VALUES } from '@utilities/dimensions';
 import { BOX_BG_ALIAS_TOKENS_CLASSES, BOX_TEXT_ALIAS_TOKENS_CLASSES } from '@utilities/tokens';
-import { Divider } from '@components/Divider';
+
+import { type STACK_PROPS, Stack as StackComponent } from './Stack';
 
 const STACK_DIRECTIONS = ['row', 'column', 'row-reverse', 'column-reverse'];
 

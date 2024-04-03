@@ -1,8 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement, useState } from 'react';
-import type { Color, Palette } from '../../types/colors';
+import { type ReactElement, useState } from 'react';
+
+import { type Color, type Palette } from '../../types/colors';
 import { EXAMPLE_PALETTES } from '../ColorPicker/example-palettes';
+
 import { ColorPickerFlyout } from './ColorPickerFlyout';
 
 const TRIGGER_ID = '[data-test-id=trigger]';

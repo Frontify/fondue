@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement, useContext } from 'react';
-import { ModalBodyProps } from './types';
+import { type ReactElement, useContext } from 'react';
+
 import { ScrollWrapper } from '@components/ScrollWrapper/ScrollWrapper';
+
 import { ModalLayout } from './context/ModalLayout';
+import { type ModalBodyProps } from './types';
 
 export const ModalBody = ({ direction, children, horizontalPadding = true }: ModalBodyProps): ReactElement => {
     const { padding } = useContext(ModalLayout);

@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Validation } from '@utilities/validation';
 import { useState } from 'react';
-import { MultiSelect } from './MultiSelect';
+
 import { TriggerEmphasis } from '@components/Trigger';
+import { Validation } from '@utilities/validation';
+
+import { MultiSelect } from './MultiSelect';
 
 const TRIGGER_ID = '[data-test-id=trigger]';
 const CHECKBOX_ID = '[data-test-id=checkbox]';

@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type ReactElement, type ReactNode } from 'react';
+
 import { merge } from '@utilities/merge';
-import { ReactElement, ReactNode } from 'react';
+
 import { decorationMap, displayMap, overflowMap, whitespaceMap, wordBreakMap } from '../shared/records';
-import { SharedTypographyProps } from '../shared/types';
+import { type SharedTypographyProps } from '../shared/types';
 
 type HeadingWeight = 'default' | 'strong';
 type HeadingSize = 'medium' | 'large' | 'x-large' | 'xx-large';

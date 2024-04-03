@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { MentionableCategory } from '@components/RichTextEditor/Plugins/MentionPlugin/types';
-import { OptionType, PartialOptionType, defaultNodeTypes } from './types';
+
+import { type OptionType, type PartialOptionType, defaultNodeTypes } from './types';
 
 const MENTION_ID_REGEX = '[\\d=a-z]+';
 const MENTIONABLE_CATEGORIES = Object.values(MentionableCategory).join('|');

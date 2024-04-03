@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ENode, Value, getNodeEntries, isNode, isText } from '@udecode/slate';
+import { type PlateEditor } from '@udecode/plate-core';
 import { ELEMENT_LI, ELEMENT_LIC, ELEMENT_OL, ELEMENT_UL } from '@udecode/plate-list';
 import { ELEMENT_PARAGRAPH } from '@udecode/plate-paragraph';
-import { PlateEditor } from '@udecode/plate-core';
+import { type ENode, type Value, getNodeEntries, isNode, isText } from '@udecode/slate';
+
 import { ELEMENT_CHECK_ITEM } from '../../CheckboxListPlugin';
 import { MARK_TEXT_STYLE } from '../../ListPlugin';
 

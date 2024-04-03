@@ -1,13 +1,13 @@
-/* react-aria hook props types are inexplicitly typed */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type AriaListBoxOptions, useListBox } from '@react-aria/listbox';
+import { type ListState } from '@react-stately/list';
+import { type ReactElement, useRef } from 'react';
+
 import { getKeyItemRecord, getMenuItems } from '@components/ActionMenu/Aria/helper';
-import { MenuItemProps } from '@components/MenuItem/MenuItem';
-import { AriaListBoxOptions, useListBox } from '@react-aria/listbox';
-import { ListState } from '@react-stately/list';
+import { type MenuItemProps } from '@components/MenuItem/MenuItem';
 import { merge } from '@utilities/merge';
-import { ReactElement, useRef } from 'react';
+
 import { SelectMenuItem } from './SelectMenuItem';
 import { SelectMenuSection } from './SelectMenuSection';
 

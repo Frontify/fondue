@@ -1,11 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
+import { type Meta, type StoryFn } from '@storybook/react';
 import { useState } from 'react';
+
 import { FormControl } from '@components/FormControl';
-import { Validation } from '@utilities/validation';
-import { MultiSelect as MultiSelectComponent, MultiSelectProps, MultiSelectSize, MultiSelectType } from './MultiSelect';
 import { TriggerEmphasis } from '@components/Trigger';
+import { Validation } from '@utilities/validation';
+
+import {
+    MultiSelect as MultiSelectComponent,
+    type MultiSelectProps,
+    MultiSelectSize,
+    MultiSelectType,
+} from './MultiSelect';
 
 export default {
     title: 'Components/Multi Select',

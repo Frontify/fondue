@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { TinyColor } from '@ctrl/tinycolor';
-import { Color, Palette } from '../../types/colors';
+
+import { type Color, type Palette } from '../../types/colors';
 
 const generatePalette = (color: string, amount: number): Color[] => {
     const sourceColor = new TinyColor(color);

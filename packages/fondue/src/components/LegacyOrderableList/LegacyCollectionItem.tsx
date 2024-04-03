@@ -1,10 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useFocusRing } from '@react-aria/focus';
+import { useDrag } from 'react-dnd';
+
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import { LegacyCollectionItemProps, LegacyItemDragState } from './types';
-import { useDrag } from 'react-dnd';
+
+import { type LegacyCollectionItemProps, LegacyItemDragState } from './types';
 
 export const LegacyCollectionItem = <T extends object>({
     item,

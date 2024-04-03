@@ -1,8 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlateEditor, createPlateEditor } from '@udecode/plate-core';
+import { type PlateEditor, createPlateEditor } from '@udecode/plate-core';
+
 import { generateRandomId } from '@utilities/generateRandomId';
-import { GeneratePlugins, PluginComposer, defaultPlugins } from '../Plugins';
+
+import { GeneratePlugins, type PluginComposer, defaultPlugins } from '../Plugins';
 
 export class InitPlateEditor {
     static editor: PlateEditor;

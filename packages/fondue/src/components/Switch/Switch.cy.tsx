@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement, useState } from 'react';
-import { Switch, SwitchProps } from './Switch';
+import { type ReactElement, useState } from 'react';
+
+import { Switch, type SwitchProps } from './Switch';
 
 const Component = ({ mode = 'off', ...props }: SwitchProps): ReactElement => {
     const [active, setActive] = useState(mode);

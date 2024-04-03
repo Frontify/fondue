@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
 export type ToastProps = {
     isOpen: boolean;

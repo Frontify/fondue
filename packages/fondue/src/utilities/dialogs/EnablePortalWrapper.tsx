@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement, ReactNode } from 'react';
+import { type ReactElement, type ReactNode } from 'react';
+
 import { Portal } from '@components/Portal/Portal';
 export const EnablePortalWrapper = ({
     enablePortal = true,

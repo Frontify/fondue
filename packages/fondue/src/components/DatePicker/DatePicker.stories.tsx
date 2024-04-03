@@ -1,16 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type Meta, type StoryFn } from '@storybook/react';
+import { addDays } from 'date-fns/addDays';
+import { subDays } from 'date-fns/subDays';
 import { useRef, useState } from 'react';
-import { Meta, StoryFn } from '@storybook/react';
-import { DatePicker, DatePickerProps, ReactDatePickerRef } from './DatePicker';
+
 import { Badge, BadgeEmphasis, BadgeStyle } from '@components/Badge';
 import { Button } from '@components/Button';
 import { FormControl } from '@components/FormControl';
 import { SegmentedControls } from '@components/SegmentedControls';
-import { Validation } from '@utilities/validation';
-import addDays from 'date-fns/addDays';
-import subDays from 'date-fns/subDays';
 import IconCalendar16 from '@foundation/Icon/Generated/IconCalendar16';
+import { Validation } from '@utilities/validation';
+
+import { DatePicker, type DatePickerProps, type ReactDatePickerRef } from './DatePicker';
 
 export default {
     title: 'Components/DatePicker',
@@ -82,7 +84,7 @@ const TemplateWithFormControl: StoryFn<DatePickerProps> = (args: DatePickerProps
                             { id: 'b', value: 'def' },
                             { id: 'c', value: 'ghi' },
                         ]}
-                        onChange={() => void 0}
+                        onChange={() => {}}
                     />
                 </FormControl>
             </div>

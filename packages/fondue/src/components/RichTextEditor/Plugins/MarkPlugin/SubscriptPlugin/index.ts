@@ -1,12 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { createSubscriptPlugin } from '@udecode/plate-basic-marks';
-import { PlatePlugin } from '@udecode/plate-core';
+import { type PlatePlugin } from '@udecode/plate-core';
 
-import { Plugin, PluginProps } from '../../Plugin';
 import { SubscriptButton } from '@components/RichTextEditor/Plugins/MarkPlugin/SubscriptPlugin/SubscriptButton';
 import { SubscriptMarkupElement } from '@components/RichTextEditor/Plugins/MarkPlugin/SubscriptPlugin/SubscriptMarkupElement';
 import { SUBSCRIPT_PLUGIN } from '@components/RichTextEditor/Plugins/MarkPlugin/SubscriptPlugin/id';
+
+import { Plugin, type PluginProps } from '../../Plugin';
 
 export class SubscriptPlugin extends Plugin {
     constructor(props?: PluginProps) {

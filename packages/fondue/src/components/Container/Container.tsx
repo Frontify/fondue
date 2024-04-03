@@ -1,10 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type ReactNode } from 'react';
+
 import { Box } from '@components/Box';
-import { DimensionUnity, SpacingValue } from '@utilities/dimensions';
+import { type DimensionUnity, type SpacingValue } from '@utilities/dimensions';
 import { merge } from '@utilities/merge';
-import { ReactNode } from 'react';
-import { ContainerHTMLElement } from '../../types/elements';
+
+import { type ContainerHTMLElement } from '../../types/elements';
 
 export type ContainerProps = {
     children?: ReactNode | ReactNode[];

@@ -1,10 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type StoryFn } from '@storybook/react';
 import { useState } from 'react';
-import { EditableMode, EditableText, EditableTextProps } from '@components/EditableText/EditableText';
-import { StoryFn } from '@storybook/react';
-import { IconSize } from '@foundation/Icon/IconSize';
+
+import { EditableMode, EditableText, type EditableTextProps } from '@components/EditableText/EditableText';
 import IconPen from '@foundation/Icon/Generated/IconPen';
+import { IconSize } from '@foundation/Icon/IconSize';
 
 export default {
     title: 'Components/Editable Text',

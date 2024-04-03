@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Dispatch, SetStateAction, isValidElement } from 'react';
 import { arrayMove } from '@dnd-kit/sortable';
+import { type Dispatch, type SetStateAction, isValidElement } from 'react';
 
-import { TreeActive, TreeAnnouncements, TreeOver, TreeState } from '../types';
+import { type TreeActive, type TreeAnnouncements, type TreeOver, type TreeState } from '../types';
 
 type AnnouncementItem = {
     level: number;

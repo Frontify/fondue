@@ -1,15 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { existsSync } from 'node:fs';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
+
+import { transform } from '@svgr/core';
 import fastGlob from 'fast-glob';
-import { join } from 'path';
-import { mkdir, readFile, writeFile } from 'fs/promises';
+import { type Entry } from 'fast-glob/out/types';
 import camelCase from 'lodash-es/camelCase';
 import toUpper from 'lodash-es/toUpper';
-import { transform } from '@svgr/core';
-import { Entry } from 'fast-glob/out/types';
+
 import { IconTemplate } from '@foundation/Icon/IconTemplate';
-import { IconComponent, IconTemplateDynamic } from '@foundation/Icon/IconTemplateDynamic';
-import { existsSync } from 'fs';
+import { type IconComponent, IconTemplateDynamic } from '@foundation/Icon/IconTemplateDynamic';
 
 const ICON_SOURCE_DIRECTORY = 'node_modules/@frontify/fondue-icons/icons/';
 const GENERATED_ICONS_DIRECTORY = 'src/foundation/Icon/Generated/';

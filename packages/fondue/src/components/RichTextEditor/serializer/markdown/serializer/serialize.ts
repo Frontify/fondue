@@ -1,10 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { BlockType, InputNodeTypes, LeafType, NodeType, OptionType, PartialOptionType } from '../types';
+import {
+    type BlockType,
+    type InputNodeTypes,
+    type LeafType,
+    type NodeType,
+    type OptionType,
+    type PartialOptionType,
+} from '../types';
+import { BREAK_TAG, getSelectedOptions } from '../utils';
+
+import { applyFormattingToBlockNode } from './applyFormattingToBlockNode';
 import { applyFormattingToLeafNode } from './applyFormattingToLeafNode';
 import { isLeafNode } from './isLeafNode';
-import { applyFormattingToBlockNode } from './applyFormattingToBlockNode';
-import { BREAK_TAG, getSelectedOptions } from '../utils';
 
 const IGNORE_ELEMENTS: Array<keyof InputNodeTypes> = ['thematicBreak', 'image', 'mention'];
 

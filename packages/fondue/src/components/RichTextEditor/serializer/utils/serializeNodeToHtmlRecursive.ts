@@ -1,9 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { ELEMENT_LINK } from '@udecode/plate-link';
+import { ELEMENT_LI, ELEMENT_LIC, ELEMENT_OL, ELEMENT_UL } from '@udecode/plate-list';
+import { ELEMENT_MENTION } from '@udecode/plate-mention';
+import { type TDescendant, type TElement, isText } from '@udecode/slate';
+
 import {
     ELEMENT_BUTTON,
     ELEMENT_CHECK_ITEM,
-    MappedMentionableItems,
+    type MappedMentionableItems,
     OL_STYLES,
     TextStyles,
     UL_CLASSES,
@@ -15,18 +20,16 @@ import {
     getLicElementClassNames,
 } from '@components/RichTextEditor/Plugins/ListPlugin/ListItemContentMarkupElement';
 import { LI_CLASSNAMES, getLiStyles } from '@components/RichTextEditor/Plugins/ListPlugin/ListItemMarkupElement';
-import { ELEMENT_LI, ELEMENT_LIC, ELEMENT_OL, ELEMENT_UL } from '@udecode/plate-list';
-import { ELEMENT_LINK } from '@udecode/plate-link';
-import { ELEMENT_MENTION } from '@udecode/plate-mention';
-import { TDescendant, TElement, isText } from '@udecode/slate';
 import { merge } from '@utilities/merge';
-import { ButtonStylesType, buttonNode } from '../nodes/button';
+
+import { type ButtonStylesType, buttonNode } from '../nodes/button';
 import { checkItemNode } from '../nodes/checkItem';
 import { linkNode } from '../nodes/link';
 import { mentionHtmlNode } from '../nodes/mentionHtmlNode';
+import { type CSSPropertiesHover } from '../types';
+
 import { reactCssPropsToCss } from './reactCssPropsToCss';
 import { serializeLeafToHtml } from './serializeLeafToHtml';
-import { CSSPropertiesHover } from '../types';
 
 const getNestingLevels = (nodes: TDescendant[], type: string): number => {
     let maxDepth = 0;

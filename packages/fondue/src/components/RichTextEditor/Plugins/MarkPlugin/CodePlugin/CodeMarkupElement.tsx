@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { MARK_CODE } from '@udecode/plate-basic-marks';
-import { PlateRenderLeafProps } from '@udecode/plate-core';
+import { type PlateRenderLeafProps } from '@udecode/plate-core';
+
 import { MarkupElement } from '../../MarkupElement';
 
 export const CODE_CLASSES =

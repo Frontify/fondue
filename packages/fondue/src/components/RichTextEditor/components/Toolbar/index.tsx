@@ -1,12 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useEditorRef } from '@udecode/plate-core';
+
 import { useEditorResizeContext } from '../../context/EditorResizeContext';
 import { useRichTextEditorContext } from '../../context/RichTextEditorContext';
 import { EditorPositioningWrapper } from '../EditorPositioningWrapper';
-import { ToolbarProps } from './types';
-import { getButtonGroupWidths, getButtonGroupsPerRow } from './utils';
+
 import { ButtonGroupWrapper } from './ButtonGroupWrapper';
+import { type ToolbarProps } from './types';
+import { getButtonGroupWidths, getButtonGroupsPerRow } from './utils';
 
 export const Toolbar = ({ toolbarButtons, editorId, toolbarWidth }: ToolbarProps) => {
     const editor = useEditorRef(editorId);

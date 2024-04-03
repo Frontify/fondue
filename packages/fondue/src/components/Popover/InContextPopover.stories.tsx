@@ -1,15 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
-import { Popover } from '@components/Popover/Popover';
-import { Button } from '@components/Button';
-import { Box } from '@components/Box';
-import { OverlayProps } from '../../types';
+import { type Meta, type StoryFn } from '@storybook/react';
 import { useRef, useState } from 'react';
-import { DialogHeader } from '@components/DialogHeader';
+
+import { Box } from '@components/Box';
+import { Button } from '@components/Button';
 import { DialogBody } from '@components/DialogBody';
 import { DialogFooter } from '@components/DialogFooter';
+import { DialogHeader } from '@components/DialogHeader';
+import { Popover } from '@components/Popover/Popover';
 import IconJohanna from '@foundation/Icon/Generated/IconJohanna';
+
+import { type OverlayProps } from '../../types';
 
 export default {
     title: 'Experimental/Popover/In Context',

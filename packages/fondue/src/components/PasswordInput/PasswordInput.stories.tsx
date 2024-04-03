@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
-import { PasswordInput, PasswordInputProps } from './PasswordInput';
-import { Validation } from '@utilities/validation';
 import { action } from '@storybook/addon-actions';
+import { type Meta, type StoryFn } from '@storybook/react';
+
+import { Validation } from '@utilities/validation';
+
+import { PasswordInput, type PasswordInputProps } from './PasswordInput';
 
 export default {
     title: 'Components/Password Input',

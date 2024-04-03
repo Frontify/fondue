@@ -1,10 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Children, ReactNode } from 'react';
-import { DimensionUnity, GAP_DIRECTIONS, GetGapClassName, SpacingValue } from '@utilities/dimensions';
-import { ContainerHTMLElement } from '../../types/elements';
-import { merge } from '@utilities/merge';
+import { Children, type ReactNode } from 'react';
+
 import { Box } from '@components/Box';
+import { type DimensionUnity, GAP_DIRECTIONS, GetGapClassName, type SpacingValue } from '@utilities/dimensions';
+import { merge } from '@utilities/merge';
+
+import { type ContainerHTMLElement } from '../../types/elements';
 
 export type GridProps = {
     column?: number;

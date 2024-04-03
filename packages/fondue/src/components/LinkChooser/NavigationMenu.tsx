@@ -1,16 +1,17 @@
-/* eslint-disable jsx-a11y/click-events-have-key-events */
 /* (c) Copyright Frontify Ltd., all rights reserved. */
+
+import { getInteractionModality } from '@react-aria/interactions';
+import { useOption } from '@react-aria/listbox';
+import { useActor } from '@xstate/react';
+import { type ReactElement, useMemo, useRef } from 'react';
 
 import { MenuItem, MenuItemContentSize, SelectionIndicatorIcon } from '@components/MenuItem';
 import IconArrowLeft from '@foundation/Icon/Generated/IconArrowLeft';
-import { getInteractionModality } from '@react-aria/interactions';
-import { useOption } from '@react-aria/listbox';
 import { merge } from '@utilities/merge';
-import { useActor } from '@xstate/react';
-import { ReactElement, useMemo, useRef } from 'react';
+
 import { defaultSection } from './sections';
 import { DropdownState, LinkChooserState } from './state/types';
-import { NavigationMenuItemProps, NavigationMenuProps } from './types';
+import { type NavigationMenuItemProps, type NavigationMenuProps } from './types';
 
 export const NavigationMenu = ({ machineService, state }: NavigationMenuProps): Nullable<ReactElement> => {
     const [{ matches, context }, send] = useActor(machineService);
@@ -58,6 +59,7 @@ export const NavigationMenuItem = ({
     const isFocusVisible = getInteractionModality() !== 'pointer';
 
     return (
+        // eslint-disable-next-line jsx-a11y/click-events-have-key-events
         <div
             onClick={onPress}
             tabIndex={0}

@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type ReactElement, type ReactNode } from 'react';
+
 import { merge } from '@utilities/merge';
-import { ReactElement, ReactNode } from 'react';
 
 type CodeWeight = 'default' | 'strong';
 

@@ -1,10 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
-import { IconSize } from './IconSize';
-import { IconProps } from './IconProps';
-import { IconEnum } from './IconEnum';
+import { type Meta, type StoryFn } from '@storybook/react';
+
 import * as AllIcons from './Generated';
+import { IconEnum } from './IconEnum';
+import { type IconProps } from './IconProps';
+import { IconSize } from './IconSize';
 
 export default {
     title: 'Foundation/Icon',

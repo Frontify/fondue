@@ -1,11 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type Meta } from '@storybook/react';
 import { useEffect, useState } from 'react';
-import { Meta } from '@storybook/react';
 
-import IconDocument from '@foundation/Icon/Generated/IconDocument';
-
-import type { TreeItemStyling, TreeNodeWithoutElements, TreeProps } from '@components/Tree/types';
+import { Container } from '@components/Container';
 import {
     TreeItemBorderClassMap,
     TreeItemBorderRadiusClassMap,
@@ -15,8 +13,10 @@ import {
     TreeItemSpacingClassMap,
     Tree as TreeView,
 } from '@components/Tree';
-import { TreeItemMockMultiselect, treeItemsMockMultiseclect } from '@components/Tree/utils';
-import { Container } from '@components/Container';
+import { type TreeItemStyling, type TreeNodeWithoutElements, type TreeProps } from '@components/Tree/types';
+import { type TreeItemMockMultiselect, treeItemsMockMultiseclect } from '@components/Tree/utils';
+import IconDocument from '@foundation/Icon/Generated/IconDocument';
+
 import { TreeItemMultiselect } from './TreeItem/TreeItemMultiselect';
 import { getNewSelectedItems } from './helpers';
 

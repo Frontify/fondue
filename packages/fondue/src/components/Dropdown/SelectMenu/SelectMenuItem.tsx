@@ -3,13 +3,16 @@
 import { useFocusRing } from '@react-aria/focus';
 import { useOption } from '@react-aria/listbox';
 import { mergeProps } from '@react-aria/utils';
-import { ListState } from '@react-stately/list';
-import { Node } from '@react-types/shared';
+import { type ListState } from '@react-stately/list';
+import { type Node } from '@react-types/shared';
+import { type ReactElement, useRef } from 'react';
+
 import { FOCUS_STYLE_INSET } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import { ReactElement, useRef } from 'react';
+
 import { MenuItem } from '../../MenuItem';
-import { MenuItemType } from './SelectMenu';
+
+import { type MenuItemType } from './SelectMenu';
 
 type SelectMenuItemProps = {
     state: ListState<object>;

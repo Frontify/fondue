@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { DependencyList, EffectCallback, useEffect, useRef } from 'react';
+import { type DependencyList, type EffectCallback, useEffect, useRef } from 'react';
 import isEqual from 'react-fast-compare';
 
 const isPrimitive = (val: unknown): boolean => val !== Object(val);

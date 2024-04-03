@@ -1,10 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement } from 'react';
-import PatternSound from '@foundation/Pattern/PatternSound';
-import PatternImagery from '@foundation/Pattern/PatternImagery';
-import PatternTypography from '@foundation/Pattern/PatternTypography';
+import { type ReactElement } from 'react';
+
 import PatternDigitalAssets from '@foundation/Pattern/PatternDigitalAssets';
+import PatternImagery from '@foundation/Pattern/PatternImagery';
+import PatternSound from '@foundation/Pattern/PatternSound';
+import PatternTypography from '@foundation/Pattern/PatternTypography';
 
 export enum PatternDesign {
     DigitalAssets = 'DigitalAssets',

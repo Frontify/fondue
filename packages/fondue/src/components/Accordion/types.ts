@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TreeState } from '@react-stately/tree';
-import { ReactElement, ReactNode } from 'react';
-import { Node } from '@react-types/shared';
+import { type TreeState } from '@react-stately/tree';
+import { type Node } from '@react-types/shared';
+import { type ReactElement, type ReactNode } from 'react';
 
 export type AccordionProps = {
     children?: ReactNode;

@@ -1,16 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { getKeyItemRecord, getMenuItems } from '@components/ActionMenu/Aria/helper';
 import { useListBox } from '@react-aria/listbox';
 import { useActor } from '@xstate/react';
-import { ReactElement, useMemo, useRef } from 'react';
+import { type ReactElement, useMemo, useRef } from 'react';
+
+import { getKeyItemRecord, getMenuItems } from '@components/ActionMenu/Aria/helper';
+
+import { NavigationMenuItem } from './NavigationMenu';
+import { SearchResultSection } from './SearchResultSection';
 import BackgroundIcon from './assets/background.svg';
 import NoResultsIcon from './assets/no-results.svg';
 import FetchingIcon from './assets/nook-animated.png';
-import { NavigationMenuItem } from './NavigationMenu';
-import { SearchResultSection } from './SearchResultSection';
 import { defaultSection } from './sections';
-import { SearchResultListProps } from './types';
+import { type SearchResultListProps } from './types';
 import { findSection } from './utils/helpers';
 import { isFetching, isUnsuccessful, shouldGoBack } from './utils/state';
 

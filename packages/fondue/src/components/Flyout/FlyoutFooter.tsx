@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Button, ButtonEmphasis, ButtonProps, ButtonSize, ButtonStyle } from '@components/Button';
+import { type ReactElement, type ReactNode } from 'react';
+
+import { Button, ButtonEmphasis, type ButtonProps, ButtonSize, ButtonStyle } from '@components/Button';
 import IconCheckMark from '@foundation/Icon/Generated/IconCheckMark';
 import { merge } from '@utilities/merge';
-import { ReactElement, ReactNode } from 'react';
 
 export type FlyoutFooterProps = {
     buttons: [ButtonProps, ButtonProps] | [ButtonProps];

@@ -1,12 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconCheckMark from '@foundation/Icon/Generated/IconCheckMark';
-import IconMinus from '@foundation/Icon/Generated/IconMinus';
-import { InputLabel, InputLabelTooltipProps } from '@components/InputLabel/InputLabel';
+import { useCheckbox } from '@react-aria/checkbox';
+import { useFocusRing } from '@react-aria/focus';
+import { mergeProps } from '@react-aria/utils';
+import { useToggleState } from '@react-stately/toggle';
 import {
-    ForwardRefRenderFunction,
-    HTMLAttributes,
-    ReactNode,
+    type ForwardRefRenderFunction,
+    type HTMLAttributes,
+    type ReactNode,
     forwardRef,
     useCallback,
     useEffect,
@@ -14,15 +15,14 @@ import {
     useState,
 } from 'react';
 
-import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { InputLabel, type InputLabelTooltipProps } from '@components/InputLabel/InputLabel';
+import IconCheckMark from '@foundation/Icon/Generated/IconCheckMark';
+import IconMinus from '@foundation/Icon/Generated/IconMinus';
 import { IconSize } from '@foundation/Icon/IconSize';
-import { merge } from '@utilities/merge';
-import { mergeProps } from '@react-aria/utils';
-import { useCheckbox } from '@react-aria/checkbox';
-import { useFocusRing } from '@react-aria/focus';
-import { useForwardedRef } from '@utilities/useForwardedRef';
 import { useMemoizedId } from '@hooks/useMemoizedId';
-import { useToggleState } from '@react-stately/toggle';
+import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { merge } from '@utilities/merge';
+import { useForwardedRef } from '@utilities/useForwardedRef';
 
 export enum CheckboxState {
     Checked = 'Checked',

@@ -1,12 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type Meta, type StoryFn } from '@storybook/react';
+import { useState } from 'react';
+
 import IconTextAlignmentCentre from '@foundation/Icon/Generated/IconTextAlignmentCentre';
 import IconTextAlignmentLeft from '@foundation/Icon/Generated/IconTextAlignmentLeft';
 import IconTextAlignmentRight from '@foundation/Icon/Generated/IconTextAlignmentRight';
 import { IconSize } from '@foundation/Icon/IconSize';
-import { Meta, StoryFn } from '@storybook/react';
-import { useState } from 'react';
-import { SegmentedControls, SegmentedControlsProps } from './SegmentedControls';
+
+import { SegmentedControls, type SegmentedControlsProps } from './SegmentedControls';
 
 export default {
     title: 'Components/SegmentedControls',

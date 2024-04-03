@@ -1,10 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type ReactElement } from 'react';
+
 import { merge } from '@utilities/merge';
-import { ReactElement } from 'react';
-import { AssetInputSize, AssetType, ImageAsset, LibrarySource } from '../AssetInput';
+
+import { AssetInputSize, type AssetType, type ImageAsset, type LibrarySource } from '../AssetInput';
 import { AssetThumbnail } from '../AssetThumbnail';
-import { MultiAssetPreviewProps } from './MultiAssetPreview';
+
+import { type MultiAssetPreviewProps } from './MultiAssetPreview';
 
 const isImageAsset = (asset: AssetType): asset is ImageAsset & LibrarySource =>
     asset.type === 'image' || asset.type === 'logo';

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { CSSProperties } from 'react';
-import { PlateRenderElementProps } from '@udecode/plate-core';
+import { type PlateRenderElementProps } from '@udecode/plate-core';
+import { type CSSProperties } from 'react';
 
 export const DEFAULT_TEXT_STYLE_VALUE = 'Mixed';
 

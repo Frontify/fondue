@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
-import { TooltipIcon, TooltipIconProps, TooltipIconTriggerStyle } from './TooltipIcon';
-import { IconSize } from '@foundation/Icon/IconSize';
+import { type Meta, type StoryFn } from '@storybook/react';
+
 import IconExclamationMarkCircle from '@foundation/Icon/Generated/IconExclamationMarkCircle';
+import { IconSize } from '@foundation/Icon/IconSize';
+
+import { TooltipIcon, type TooltipIconProps, TooltipIconTriggerStyle } from './TooltipIcon';
 
 export default {
     title: 'Deprecated/TooltipIcon',

@@ -1,5 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type TText } from '@udecode/slate';
+import escapeHtml from 'escape-html';
+
 import {
     BOLD_CLASSES,
     CODE_CLASSES,
@@ -7,8 +10,6 @@ import {
     STRIKETHROUGH_CLASSES,
     UNDERLINE_CLASSES,
 } from '@components/RichTextEditor/Plugins';
-import { TText } from '@udecode/slate';
-import escapeHtml from 'escape-html';
 
 export const serializeLeafToHtml = (node: TText): string => {
     let string = escapeHtml(node.text);

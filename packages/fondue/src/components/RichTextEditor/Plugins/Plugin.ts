@@ -1,10 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlatePlugin } from '@udecode/plate-core';
-import { InlineData, PluginButton } from './types';
+import { type PlatePlugin } from '@udecode/plate-core';
+import { type CSSProperties } from 'react';
+
 import { Position } from '../components/EditorPositioningWrapper';
-import type { MarkupElement } from './MarkupElement';
-import { CSSProperties } from 'react';
+
+import { type MarkupElement } from './MarkupElement';
+import { type InlineData, type PluginButton } from './types';
 
 export type PluginProps = {
     id?: string;

@@ -1,15 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PointerEvent, ReactElement, useCallback, useEffect, useRef, useState } from 'react';
-import { PopperPlacement } from '@components/Popper';
-import { merge } from '@utilities/merge';
-import { Z_INDEX_TOOLTIP } from '@utilities/dialogs/constants';
-import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
-import { ARROW_DARK_THEME } from '@utilities/overlayStyle';
-import { Overlay } from '@utilities/dialogs/Overlay';
-import { Modality } from '../../types';
-import { checkIfContainInteractiveElements } from '@utilities/elements';
+import { type PointerEvent, type ReactElement, useCallback, useEffect, useRef, useState } from 'react';
+
+import { type PopperPlacement } from '@components/Popper';
 import { useClickOutside } from '@hooks/useClickOutside';
+import { Overlay } from '@utilities/dialogs/Overlay';
+import { Z_INDEX_TOOLTIP } from '@utilities/dialogs/constants';
+import { checkIfContainInteractiveElements } from '@utilities/elements';
+import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
+import { merge } from '@utilities/merge';
+import { ARROW_DARK_THEME } from '@utilities/overlayStyle';
+
+import { Modality } from '../../types';
 
 export type TooltipProps = {
     id?: string;

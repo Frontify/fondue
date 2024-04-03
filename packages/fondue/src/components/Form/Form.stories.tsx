@@ -1,12 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
-import { Form, FormProps } from './Form';
+import { action } from '@storybook/addon-actions';
+import { type Meta, type StoryFn } from '@storybook/react';
+
+import { Box } from '@components/Box';
+import { Button } from '@components/Button';
 import { FormControl } from '@components/FormControl';
 import { TextInput } from '@components/TextInput';
-import { Button } from '@components/Button';
-import { action } from '@storybook/addon-actions';
-import { Box } from '@components/Box';
+
+import { Form, type FormProps } from './Form';
 
 export default {
     title: 'Components/Form',

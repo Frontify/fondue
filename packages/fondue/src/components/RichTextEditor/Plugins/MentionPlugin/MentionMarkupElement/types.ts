@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement } from 'react';
-import { PlateRenderElementProps } from '@udecode/plate-core';
-import { MentionableCategory } from '../types';
+import { type PlateRenderElementProps } from '@udecode/plate-core';
+import { type ReactElement } from 'react';
+
+import { type MentionableCategory } from '../types';
 
 export type MarkupElementProps = PlateRenderElementProps;
 export type MarkupElementNodeType = ({ children, ...props }: MarkupElementProps) => ReactElement;

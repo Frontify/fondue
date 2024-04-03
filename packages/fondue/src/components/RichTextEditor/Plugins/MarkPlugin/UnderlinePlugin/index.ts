@@ -1,12 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { createUnderlinePlugin } from '@udecode/plate-basic-marks';
-import { PlatePlugin } from '@udecode/plate-core';
+import { type PlatePlugin } from '@udecode/plate-core';
 
-import { UNDERLINE_PLUGIN } from './id';
-import { UNDERLINE_CLASSES, UnderlineMarkupElement } from './UnderlineMarkupElement';
+import { Plugin, type PluginProps } from '../../Plugin';
+
 import { UnderlineButton } from './UnderlineButton';
-import { Plugin, PluginProps } from '../../Plugin';
+import { UNDERLINE_CLASSES, UnderlineMarkupElement } from './UnderlineMarkupElement';
+import { UNDERLINE_PLUGIN } from './id';
 
 const PLATE_UNDERLINE_RULES = [
     {

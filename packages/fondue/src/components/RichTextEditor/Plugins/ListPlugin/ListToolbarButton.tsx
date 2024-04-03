@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ELEMENT_UL, useListToolbarButton, useListToolbarButtonState } from '@udecode/plate-list';
+import { type ReactNode, forwardRef } from 'react';
 
 import { ToolbarButton } from '@components/RichTextEditor/components/Toolbar/ToolbarButton';
-import { ReactNode, forwardRef } from 'react';
 
 export const ListToolbarButton = forwardRef<
     HTMLButtonElement,

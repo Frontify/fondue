@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type ReactElement, useState } from 'react';
+
 import { Button } from '@components/Button';
-import { ReactElement, useState } from 'react';
+
 import { CollapsibleWrap as CollapsibleWrapComponent } from './CollapsibleWrap';
-import { CollapsibleWrapProps } from './types';
+import { type CollapsibleWrapProps } from './types';
 
 const CONTENT_ID = '[data-test-id="collapsible-wrap-content"]';
 const WRAP_ID = '[data-test-id="collapsible-wrap"]';

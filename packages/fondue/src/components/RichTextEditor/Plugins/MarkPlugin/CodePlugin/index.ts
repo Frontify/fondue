@@ -1,12 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { createCodePlugin } from '@udecode/plate-basic-marks';
-import { PlatePlugin } from '@udecode/plate-core';
+import { type PlatePlugin } from '@udecode/plate-core';
 
-import { CODE_PLUGIN } from './id';
-import { CodeMarkupElement } from './CodeMarkupElement';
+import { Plugin, type PluginProps } from '../../Plugin';
+
 import { CodeButton } from './CodeButton';
-import { Plugin, PluginProps } from '../../Plugin';
+import { CodeMarkupElement } from './CodeMarkupElement';
+import { CODE_PLUGIN } from './id';
 
 export class CodePlugin extends Plugin {
     constructor(props?: PluginProps) {

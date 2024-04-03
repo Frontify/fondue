@@ -1,9 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { BadgeProps, BadgeSize, BadgeStatus, BadgeStyle } from './types';
+import { type ReactNode } from 'react';
+
 import { merge } from '@utilities/merge';
-import { Color } from '../../types';
-import { ReactNode } from 'react';
+
+import { type Color } from '../../types';
+
+import { type BadgeProps, type BadgeSize, BadgeStatus, BadgeStyle } from './types';
 
 export const getStyleClasses = (style: BadgeStyle, hasHover: boolean, strong: boolean): string =>
     (strong
@@ -73,7 +76,7 @@ export const getSizeClasses = (
     if (isSmall) {
         return merge(['tw-h-5 tw-px-1.5', isDismissable && 'tw-pr-5']);
     } else {
-        const hasMaximumTwoComponents = !Boolean(children && status && icon);
+        const hasMaximumTwoComponents = !(children && status && icon);
         return merge(['tw-h-6', 'tw-px-2', hasMaximumTwoComponents && 'tw-gap-x-0.5', isDismissable && 'tw-pr-6']);
     }
 };

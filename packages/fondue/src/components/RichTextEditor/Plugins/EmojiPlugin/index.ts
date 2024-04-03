@@ -1,13 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { EMOJI_PLUGIN } from './id';
-import { Plugin, PluginProps } from '../Plugin';
+import { createComboboxPlugin } from '@udecode/plate-combobox';
+import { type PlatePlugin } from '@udecode/plate-core';
+import { createEmojiPlugin } from '@udecode/plate-emoji';
+
+import { Position } from '@components/RichTextEditor/components/EditorPositioningWrapper';
+
+import { Plugin, type PluginProps } from '../Plugin';
+
 import { EmojiButton } from './EmojiButton';
 import { emojiPlugin } from './config';
-import { Position } from '@components/RichTextEditor/components/EditorPositioningWrapper';
-import { createComboboxPlugin } from '@udecode/plate-combobox';
-import { PlatePlugin } from '@udecode/plate-core';
-import { createEmojiPlugin } from '@udecode/plate-emoji';
+import { EMOJI_PLUGIN } from './id';
 
 export class EmojiPlugin extends Plugin {
     constructor(props?: PluginProps) {

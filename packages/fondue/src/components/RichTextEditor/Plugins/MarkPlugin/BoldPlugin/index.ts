@@ -1,11 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlatePlugin } from '@udecode/plate-core';
 import { createBoldPlugin } from '@udecode/plate-basic-marks';
-import { BOLD_PLUGIN } from './id';
-import { BOLD_CLASSES, BoldMarkupElement } from './BoldMarkupElement';
+import { type PlatePlugin } from '@udecode/plate-core';
+
+import { Plugin, type PluginProps } from '../../Plugin';
+
 import { BoldButton } from './BoldButton';
-import { Plugin, PluginProps } from '../../Plugin';
+import { BOLD_CLASSES, BoldMarkupElement } from './BoldMarkupElement';
+import { BOLD_PLUGIN } from './id';
 
 const PLATE_BOLD_RULES = [
     { validNodeName: ['STRONG', 'B'] },

@@ -1,11 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ElementRef, forwardRef } from 'react';
 import * as ToolbarPrimitive from '@radix-ui/react-toolbar';
+import { type ElementRef, forwardRef } from 'react';
+
+import { IconCaretDown16 } from '@foundation/Icon';
+import { merge } from '@utilities/merge';
 
 import { withTooltip } from './Tooltip';
-import { merge } from '@utilities/merge';
-import { IconCaretDown16 } from '@foundation/Icon';
 
 const ToolbarButtonComponent = forwardRef<
     ElementRef<typeof ToolbarPrimitive.ToggleItem>,

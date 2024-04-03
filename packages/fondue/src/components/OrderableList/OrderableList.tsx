@@ -1,13 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { useId } from '@react-aria/utils';
 import { useEffect, useMemo, useState } from 'react';
 
-import { OrderableListItem, OrderableListItemStyle, OrderableListProps } from './types';
-import { useId } from '@react-aria/utils';
-import { DraggableItem } from '@utilities/dnd/types';
-import { TreeItem } from '@components/Tree/TreeItem/TreeItem';
 import { Tree } from '@components/Tree/Tree';
-import { OnTreeDropCallback } from '@components/Tree/types';
+import { TreeItem } from '@components/Tree/TreeItem/TreeItem';
+import { type OnTreeDropCallback } from '@components/Tree/types';
+import { type DraggableItem } from '@utilities/dnd/types';
+
+import { type OrderableListItem, type OrderableListItemStyle, type OrderableListProps } from './types';
 
 const listItemsCompareFn = <T extends object>(itemA: OrderableListItem<T>, itemB: OrderableListItem<T>): number => {
     if (itemA.sort === null && itemB.sort === null) {

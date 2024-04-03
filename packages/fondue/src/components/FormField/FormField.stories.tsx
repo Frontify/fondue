@@ -1,14 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
-import { TextInput, TextInputType } from '@components/TextInput';
-import { FormField, FormFieldProps } from './FormField';
+import { type Meta, type StoryFn } from '@storybook/react';
 import { useState } from 'react';
-import { Validation } from '@utilities/validation';
-import { NumberInput } from '../NumberInput';
+
+import { TextInput, TextInputType } from '@components/TextInput';
 import IconInfo from '@foundation/Icon/Generated/IconInfo';
 import IconNook16 from '@foundation/Icon/Generated/IconNook16';
 import IconQuestionMark from '@foundation/Icon/Generated/IconQuestionMark';
+import { Validation } from '@utilities/validation';
+
+import { NumberInput } from '../NumberInput';
+
+import { FormField, type FormFieldProps } from './FormField';
 
 export default {
     title: 'Components/FormField',

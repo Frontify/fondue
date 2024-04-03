@@ -1,13 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type Meta, type StoryFn } from '@storybook/react';
 import { useRef, useState } from 'react';
-import { Meta, StoryFn } from '@storybook/react';
-import { Dialog, DialogProps } from './Dialog';
+
 import { Button } from '@components/Button';
-import { Modality } from '../../types';
 import { DialogBody } from '@components/DialogBody';
 import { DialogFooter } from '@components/DialogFooter';
 import IconJohanna from '@foundation/Icon/Generated/IconJohanna';
+
+import { Modality } from '../../types';
+
+import { Dialog, type DialogProps } from './Dialog';
 
 export default {
     title: 'Experimental/Dialog',

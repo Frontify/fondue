@@ -1,15 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { FocusEvent, MouseEvent, ReactNode } from 'react';
-import { merge } from '@utilities/merge';
+import { useFocusRing } from '@react-aria/focus';
+import { type FocusEvent, type MouseEvent, type ReactNode } from 'react';
+
+import { MenuItemContent, type MenuItemContentProps } from '@components/MenuItem/MenuItemContent';
 import IconCaretRight from '@foundation/Icon/Generated/IconCaretRight';
 import IconCheckMark from '@foundation/Icon/Generated/IconCheckMark';
 import { IconSize } from '@foundation/Icon/IconSize';
-import { MenuItemContent, MenuItemContentProps } from '@components/MenuItem/MenuItemContent';
-import { MenuItemContentSize, MenuItemStyle, SelectionIndicatorIcon } from './types';
 import { getItemElementType } from '@utilities/elements';
-import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE_NO_OFFSET } from '@utilities/focusStyle';
+import { merge } from '@utilities/merge';
+
+import { MenuItemContentSize, MenuItemStyle, SelectionIndicatorIcon } from './types';
 
 export type MenuItemProps = {
     style?: MenuItemStyle;
@@ -125,6 +127,7 @@ export const MenuItem = ({
             {children && (
                 <li
                     data-test-id={dataTestId}
+                    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role
                     role="menuitem"
                     className={merge([
                         'tw-text-sm tw-leading-4 tw-text-text-weak',

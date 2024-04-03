@@ -1,10 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Checkbox, CheckboxProps, CheckboxState } from '@components/Checkbox/Checkbox';
 import { useCheckboxGroup, useCheckboxGroupItem } from '@react-aria/checkbox';
-import { CheckboxGroupState, useCheckboxGroupState } from '@react-stately/checkbox';
-import { merge } from '@utilities/merge';
+import { type CheckboxGroupState, useCheckboxGroupState } from '@react-stately/checkbox';
 import { useEffect, useRef, useState } from 'react';
+
+import { Checkbox, type CheckboxProps, CheckboxState } from '@components/Checkbox/Checkbox';
+import { merge } from '@utilities/merge';
 
 export enum ChecklistDirection {
     Horizontal = 'Horizontal',

@@ -1,14 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Switch, SwitchSize } from '@components/Switch/Switch';
-import { useMemoizedId } from '@hooks/useMemoizedId';
-import { merge } from '@utilities/merge';
-import { ReactElement, ReactNode, cloneElement, isValidElement } from 'react';
-import { IconSize } from '@foundation/Icon/IconSize';
-import { IconProps } from '@foundation/Icon/IconProps';
+import { type ReactElement, type ReactNode, cloneElement, isValidElement } from 'react';
+
+import { Switch, type SwitchSize } from '@components/Switch/Switch';
+import IconCaretDown from '@foundation/Icon/Generated/IconCaretDown';
 import IconMinus from '@foundation/Icon/Generated/IconMinus';
 import IconPlus from '@foundation/Icon/Generated/IconPlus';
-import IconCaretDown from '@foundation/Icon/Generated/IconCaretDown';
+import { type IconProps } from '@foundation/Icon/IconProps';
+import { IconSize } from '@foundation/Icon/IconSize';
+import { useMemoizedId } from '@hooks/useMemoizedId';
+import { merge } from '@utilities/merge';
 
 export const ACCORDION_ICON_CONTAINER_ID = 'accordion-icon-container';
 
@@ -139,6 +140,7 @@ export const FieldsetHeader = ({
     }
 
     return (
+        // eslint-disable-next-line jsx-a11y/no-static-element-interactions
         <header
             data-test-id={dataTestId}
             role={onClick ? 'button' : undefined}

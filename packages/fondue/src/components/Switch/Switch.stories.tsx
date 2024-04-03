@@ -1,10 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
-import { MouseEvent, useEffect, useState } from 'react';
-import { Switch, SwitchLabelStyle, SwitchMode, SwitchProps, SwitchSize } from './Switch';
+import { type Meta, type StoryFn } from '@storybook/react';
+import { type MouseEvent, useEffect, useState } from 'react';
+
 import { TooltipIconTriggerStyle } from '@components/TooltipIcon';
 import IconExclamationMarkCircle from '@foundation/Icon/Generated/IconExclamationMarkCircle';
+
+import { Switch, type SwitchLabelStyle, type SwitchMode, type SwitchProps, type SwitchSize } from './Switch';
 
 const SwitchSizeTypes: SwitchSize[] = ['small', 'medium'];
 

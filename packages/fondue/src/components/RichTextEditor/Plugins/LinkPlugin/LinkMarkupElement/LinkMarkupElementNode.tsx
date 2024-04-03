@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type PlateRenderElementProps } from '@udecode/plate-core';
+
+import { type TLinkElement } from '@components/RichTextEditor/Plugins/LinkPlugin/types';
 import { useRichTextEditorContext } from '@components/RichTextEditor/context';
+
 import { LINK_PLUGIN } from '../id';
-import { PlateRenderElementProps } from '@udecode/plate-core';
-import { TLinkElement } from '@components/RichTextEditor/Plugins/LinkPlugin/types';
 
 export const LinkMarkupElementNode = (props: PlateRenderElementProps & { element: TLinkElement }) => {
     const { attributes, children } = props;

@@ -1,13 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MouseEvent } from 'react';
+import { useLinkOpenButtonState } from '@udecode/plate-link';
+import { type MouseEvent } from 'react';
+
+import { getUrlFromLinkOrLegacyLink } from '@components/RichTextEditor/Plugins/LinkPlugin/utils';
+import { FloatingModalWrapper } from '@components/RichTextEditor/components';
+import { useRichTextEditorContext } from '@components/RichTextEditor/context';
 import IconPen16 from '@foundation/Icon/Generated/IconPen16';
 import IconTrashBin16 from '@foundation/Icon/Generated/IconTrashBin16';
-import { useRichTextEditorContext } from '@components/RichTextEditor/context';
-import { FloatingModalWrapper } from '@components/RichTextEditor/components';
+
 import { LINK_PLUGIN } from '../../id';
-import { useLinkOpenButtonState } from '@udecode/plate-link';
-import { getUrlFromLinkOrLegacyLink } from '@components/RichTextEditor/Plugins/LinkPlugin/utils';
 
 type EditModalProps = {
     editButtonProps: {

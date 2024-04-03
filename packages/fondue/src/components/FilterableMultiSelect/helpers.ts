@@ -1,8 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { merge } from '@utilities/merge';
-import { FilterableMultiSelectSize } from './FilterableMultiSelect';
 import { useEffect } from 'react';
+
+import { merge } from '@utilities/merge';
+
+import { FilterableMultiSelectSize } from './FilterableMultiSelect';
 
 export const getPaddingClasses = (size: FilterableMultiSelectSize) => {
     const classes = ['tw-pr-9'];

@@ -1,14 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlateEditor, getPluginType } from '@udecode/plate-core';
 import { MARK_BOLD, MARK_CODE, MARK_ITALIC, MARK_STRIKETHROUGH } from '@udecode/plate-basic-marks';
-import { ELEMENT_LI, ELEMENT_LIC, ELEMENT_OL, ELEMENT_UL } from '@udecode/plate-list';
-import { ELEMENT_PARAGRAPH } from '@udecode/plate-paragraph';
-import { ELEMENT_MENTION } from '@udecode/plate-mention';
-import { ELEMENT_LINK } from '@udecode/plate-link';
 import { ELEMENT_CODE_BLOCK } from '@udecode/plate-code-block';
-import { PartialOptionType } from './types';
+import { type PlateEditor, getPluginType } from '@udecode/plate-core';
+import { ELEMENT_LINK } from '@udecode/plate-link';
+import { ELEMENT_LI, ELEMENT_LIC, ELEMENT_OL, ELEMENT_UL } from '@udecode/plate-list';
+import { ELEMENT_MENTION } from '@udecode/plate-mention';
+import { ELEMENT_PARAGRAPH } from '@udecode/plate-paragraph';
+
 import { TextStyles } from '@components/RichTextEditor/Plugins';
+
+import { type PartialOptionType } from './types';
 
 export const options = (editor: PlateEditor): PartialOptionType => ({
     nodeTypes: {

@@ -1,15 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { isValidUrl } from '@components/RichTextEditor/utils/isValidUrl';
+import { type PlatePlugin, createPluginFactory } from '@udecode/plate-core';
 import { createLinkPlugin as createPlateLinkPlugin } from '@udecode/plate-link';
-import { PlatePlugin, createPluginFactory } from '@udecode/plate-core';
-import { Plugin, PluginProps } from '../Plugin';
+import { type CSSProperties } from 'react';
+
+import { defaultStyles } from '@components/RichTextEditor/utils';
+import { isValidUrl } from '@components/RichTextEditor/utils/isValidUrl';
+
+import { Plugin, type PluginProps } from '../Plugin';
+
 import { CustomFloatingLink } from './FloatingLink/CustomFloatingLink';
-import { LINK_PLUGIN } from './id';
 import { LinkButton } from './LinkButton';
 import { LinkMarkupElement } from './LinkMarkupElement';
-import { CSSProperties } from 'react';
-import { defaultStyles } from '@components/RichTextEditor/utils';
+import { LINK_PLUGIN } from './id';
 
 const createLinkPlugin: ReturnType<typeof createPluginFactory<NonNullable<unknown>>> = createPluginFactory({
     ...createPlateLinkPlugin(),

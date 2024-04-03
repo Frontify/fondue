@@ -1,10 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useFocusRing } from '@react-aria/focus';
-import { ReactElement, useRef } from 'react';
+import { type ReactElement, useRef } from 'react';
+
 import { FOCUS_STYLE, merge } from '../..';
+
 import { useScrollWrapper } from './hooks/useScrollWrapper';
-import { ScrollWrapperDirection, ScrollWrapperProps, scrollWrapperDirections } from './types';
+import { ScrollWrapperDirection, type ScrollWrapperProps, scrollWrapperDirections } from './types';
 
 const GRADIENTS = {
     bottom: 'linear-gradient(180deg, rgba(232, 233, 233, 0) 0%, #E8E9E9 100%)',
@@ -44,7 +46,6 @@ export const ScrollWrapper = ({
             <div
                 data-test-id="fondue-scrollwrapper-content"
                 ref={scrollingContainer}
-                // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
                 tabIndex={tabIndex}
                 role="region"
                 aria-label="Scrollable dialogue content"

@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { AlignLeftMarkupElement } from './AlignLeftMarkupElement';
-import { AlignLeftButton } from './AlignLeftButton';
 import { AlignPlugin } from '../AlignPlugin';
-import { AlignPluginProps } from '../types';
+import { type AlignPluginProps } from '../types';
+
+import { AlignLeftButton } from './AlignLeftButton';
+import { AlignLeftMarkupElement } from './AlignLeftMarkupElement';
 
 export class AlignLeftPlugin extends AlignPlugin {
     constructor(props?: AlignPluginProps) {

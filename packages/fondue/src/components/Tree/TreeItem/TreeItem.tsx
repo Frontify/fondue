@@ -1,13 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Children, MouseEvent, memo, useCallback, useEffect, useMemo, useRef } from 'react';
-import { AnimateLayoutChanges, useSortable } from '@dnd-kit/sortable';
 import { useDndContext, useDndMonitor } from '@dnd-kit/core';
+import { type AnimateLayoutChanges, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import noop from 'lodash-es/noop';
-
-import { merge } from '@utilities/merge';
-import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
+import { Children, type MouseEvent, memo, useCallback, useEffect, useMemo, useRef } from 'react';
 
 import {
     type RegisterNodeChildrenPayload,
@@ -21,16 +18,18 @@ import {
     type TreeItemProps,
     TreeItemShadowClassMap,
     TreeItemSpacingClassMap,
-    TreeItemStyling,
+    type TreeItemStyling,
 } from '@components/Tree/types';
+import { useDebounce } from '@hooks/useDebounce';
+import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
+import { merge } from '@utilities/merge';
 
-import { EXPAND_ONHOVER_DELAY, INDENTATION_WIDTH, Projection } from '../helpers';
+import { EXPAND_ONHOVER_DELAY, INDENTATION_WIDTH, type Projection } from '../helpers';
 import { removeFragmentsAndEnrichChildren, useDeepCompareEffect } from '../utils';
 
 import { DragHandle } from './DragHandle';
-import { Overlay } from './TreeItemOverlay';
 import { ExpandButton } from './ExpandButton';
-import { useDebounce } from '@hooks/useDebounce';
+import { type Overlay } from './TreeItemOverlay';
 import { useTreeItem } from './useTreeItem';
 
 const animateLayoutChanges: AnimateLayoutChanges = ({ isSorting, wasDragging }) =>
@@ -350,7 +349,7 @@ export const TreeItem = memo(
             previousItemToBeExpandedFeedback = merge([
                 'tw-border-solid tw-border-box-selected-strong',
                 TreeItemBorderRadiusClassMap[itemStyleProps.borderRadius ?? 'small'],
-                TreeItemBorderClassMap['small'],
+                TreeItemBorderClassMap.small,
             ]);
         }
 
@@ -413,6 +412,7 @@ export const TreeItem = memo(
                 id={id}
                 key={id}
                 tabIndex={0}
+                // eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role
                 role="treeitem"
                 style={liStyle}
                 onKeyDown={noop}

@@ -1,11 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
-import { CollapsibleWrapProps } from './types';
-import { CollapsibleWrap as CollapsibleWrapComponent } from './CollapsibleWrap';
-import { Text } from '@typography/Text';
-import { Heading } from '@typography/Heading';
+import { type Meta, type StoryFn } from '@storybook/react';
+
 import { Card } from '@components/Card';
+import { Heading } from '@typography/Heading';
+import { Text } from '@typography/Text';
+
+import { CollapsibleWrap as CollapsibleWrapComponent } from './CollapsibleWrap';
+import { type CollapsibleWrapProps } from './types';
 
 export default {
     title: 'Components/Collapsible Wrap',

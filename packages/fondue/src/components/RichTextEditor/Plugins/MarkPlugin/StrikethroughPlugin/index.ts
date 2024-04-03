@@ -1,12 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { createStrikethroughPlugin } from '@udecode/plate-basic-marks';
-import { PlatePlugin } from '@udecode/plate-core';
+import { type PlatePlugin } from '@udecode/plate-core';
 
-import { STRIKETHROUGH_PLUGIN } from './id';
-import { StrikethroughMarkupElement } from './StrikethroughMarkupElement';
+import { Plugin, type PluginProps } from '../../Plugin';
+
 import { StrikethroughButton } from './StrikethroughButton';
-import { Plugin, PluginProps } from '../../Plugin';
+import { StrikethroughMarkupElement } from './StrikethroughMarkupElement';
+import { STRIKETHROUGH_PLUGIN } from './id';
 
 export class StrikethroughPlugin extends Plugin {
     constructor(props?: PluginProps) {

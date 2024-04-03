@@ -1,8 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
+import { type Meta, type StoryFn } from '@storybook/react';
+
+import { DIALOG_PADDING, type DialogBodyProps } from '../../types';
+
 import { DialogBody } from './DialogBody';
-import { DIALOG_PADDING, DialogBodyProps } from '../../types';
 
 export default {
     title: 'Experimental/DialogBody',

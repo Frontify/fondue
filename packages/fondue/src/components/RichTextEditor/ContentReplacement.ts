@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Value, insertNodes } from '@udecode/slate';
-import { PlateEditor, useEditorRef } from '@udecode/plate-core';
+import { type PlateEditor, useEditorRef } from '@udecode/plate-core';
+import { type Value, insertNodes } from '@udecode/slate';
 import { useEffect } from 'react';
 
 const clearEditor = ({ children, apply }: PlateEditor): void => {

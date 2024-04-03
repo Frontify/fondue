@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type MouseEvent, type ReactElement, type ReactNode } from 'react';
+
 import { ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
 import { Button } from '@components/Button/Button';
 import { Checkbox } from '@components/Checkbox';
@@ -7,8 +9,8 @@ import { FormControl } from '@components/FormControl';
 import { FloatingModalWrapper } from '@components/RichTextEditor/components';
 import { TextInput } from '@components/TextInput';
 import IconCheckMark20 from '@foundation/Icon/Generated/IconCheckMark20';
-import { MouseEvent, ReactElement, ReactNode } from 'react';
-import { InsertModalStateProps } from './types';
+
+import { type InsertModalStateProps } from './types';
 
 type Props = {
     state: InsertModalStateProps;

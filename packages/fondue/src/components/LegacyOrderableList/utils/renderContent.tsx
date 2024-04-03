@@ -1,8 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { LegacyDragProperties, LegacyItemDragState, LegacyOrderableListItem } from '@components/LegacyOrderableList';
+import {
+    type LegacyDragProperties,
+    LegacyItemDragState,
+    type LegacyOrderableListItem,
+} from '@components/LegacyOrderableList';
+import { type StoryListItem } from '@components/LegacyOrderableList/utils/types';
 import { merge } from '@utilities/merge';
-import { StoryListItem } from '@components/LegacyOrderableList/utils/types';
 
 const dragStoryStyles: Record<LegacyItemDragState, string> = {
     [LegacyItemDragState.Dragging]: 'tw-bg-black-10 tw-border-black-20 tw-opacity-75',

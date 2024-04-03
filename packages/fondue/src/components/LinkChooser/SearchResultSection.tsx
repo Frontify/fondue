@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useListBoxSection } from '@react-aria/listbox';
-import { ReactElement } from 'react';
-import { SearchResultSectionProps } from './types';
+import { type ReactElement } from 'react';
+
 import { SearchResultOption } from './SearchResultOption';
+import { type SearchResultSectionProps } from './types';
 
 export const SearchResultSection = ({
     heading,

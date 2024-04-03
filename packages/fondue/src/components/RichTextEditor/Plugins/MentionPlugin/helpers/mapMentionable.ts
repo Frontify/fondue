@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MentionableCategory } from '../types';
-import type { MappedMentionableItems, MentionableItems } from '../types';
+import { type MentionableCategory, type MappedMentionableItems, type MentionableItems } from '../types';
 
 export const combineMentionableKeyWith = (category: MentionableCategory, id: string) => `${category}:${id}`;
 

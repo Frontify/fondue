@@ -1,11 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconListNumbers16 from '@foundation/Icon/Generated/IconListNumbers16';
-import { ButtonWrapper, IconStylingWrapper } from '../../helper';
-import { PluginButtonProps } from '../../types';
+import { getPluginType } from '@udecode/plate-core';
+
 import { ListToolbarButton } from '@components/RichTextEditor/Plugins/ListPlugin/ListToolbarButton';
 import { getTooltip } from '@components/RichTextEditor/helpers';
-import { getPluginType } from '@udecode/plate-core';
+import IconListNumbers16 from '@foundation/Icon/Generated/IconListNumbers16';
+
+import { ButtonWrapper, IconStylingWrapper } from '../../helper';
+import { type PluginButtonProps } from '../../types';
 
 export const OrderedListButton = ({ editor, id }: PluginButtonProps) => (
     <ButtonWrapper id={id}>

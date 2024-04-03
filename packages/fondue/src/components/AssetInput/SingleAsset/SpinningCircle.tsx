@@ -1,8 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type ReactElement } from 'react';
+
 import { merge } from '@utilities/merge';
-import { ReactElement } from 'react';
-import { AssetInputProps, AssetInputSize } from '../AssetInput';
+
+import { type AssetInputProps, AssetInputSize } from '../AssetInput';
 
 export const SpinningCircle = ({ size }: Pick<AssetInputProps, 'size'>): ReactElement => (
     <svg

@@ -1,10 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement } from 'react';
-import { merge } from '@utilities/merge';
-import { ModalVisualProps } from './types';
+import { type ReactElement } from 'react';
+
 import { FrontifyPattern } from '@components/FrontifyPattern/FrontifyPattern';
 import { PatternDesign, PatternScale, patternThemes } from '@foundation/Pattern';
+import { merge } from '@utilities/merge';
+
+import { type ModalVisualProps } from './types';
 
 export const ModalVisual = ({
     pattern = PatternDesign.DigitalAssets,

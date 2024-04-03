@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement } from 'react';
-
-import type { InternalTreeItemProps } from '../TreeItem';
 import isEqualWith from 'lodash-es/isEqualWith';
+import { type ReactElement } from 'react';
+
+import { type InternalTreeItemProps } from '../TreeItem';
+
 import { getReactNodeIdsInFlatArray, getReactNodesInFlatArray, removeReactNodesFromFlatArray } from './nodes';
 
 export const shouldUpdateTreeState = (event: globalThis.KeyboardEvent, multiselect: boolean) => {

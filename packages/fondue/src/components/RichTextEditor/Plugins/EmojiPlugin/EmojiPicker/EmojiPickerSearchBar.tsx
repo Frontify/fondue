@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactNode } from 'react';
-import { UseEmojiPickerType } from '@udecode/plate-emoji';
+import { type UseEmojiPickerType } from '@udecode/plate-emoji';
+import { type ReactNode } from 'react';
 
 export type EmojiPickerSearchBarProps = {
     children: ReactNode;

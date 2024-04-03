@@ -1,10 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Grid, GridProps } from './Grid';
-import { SPACING_VALUES } from '@utilities/dimensions';
-import { Meta, StoryFn } from '@storybook/react';
+import { type Meta, type StoryFn } from '@storybook/react';
+
 import { Box } from '@components/Box';
+import { SPACING_VALUES } from '@utilities/dimensions';
 import { merge } from '@utilities/merge';
+
+import { Grid, type GridProps } from './Grid';
 
 const EXAMPLE_CONTENT = 'Lorem ipsum dolor sit amet';
 

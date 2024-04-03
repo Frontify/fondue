@@ -1,8 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { KeyboardEvent } from 'react';
 import { KeyboardCode } from '@dnd-kit/core';
-import { TreeState } from '../types';
+import { type KeyboardEvent } from 'react';
+
+import { type TreeState } from '../types';
+
 import { ROOT_ID } from './constants';
 
 export const handleKeyDownEvent = (
@@ -67,16 +69,19 @@ export const handleKeyDownEvent = (
     };
 
     switch (code) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
         case KeyboardCode.Enter:
             toggleSelect();
 
             break;
 
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
         case KeyboardCode.Space:
             hasChildren ? expandItem() : toggleSelect();
 
             break;
 
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
         case KeyboardCode.Right:
             if (!hasChildren) {
                 break;
@@ -86,6 +91,7 @@ export const handleKeyDownEvent = (
 
             break;
 
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
         case KeyboardCode.Left:
             if (hasChildren && isExpanded) {
                 shrinkItem();
@@ -96,12 +102,14 @@ export const handleKeyDownEvent = (
             }
             break;
 
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
         case KeyboardCode.Up:
             event.preventDefault();
             focusPrevious();
 
             break;
 
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
         case KeyboardCode.Down:
             event.preventDefault();
             focusNext();

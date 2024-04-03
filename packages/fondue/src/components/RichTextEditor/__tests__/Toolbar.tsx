@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { BoldPlugin, ItalicPlugin, LinkPlugin, PluginComposer, UnorderedListPlugin } from '../Plugins';
 import { RichTextEditor } from '../RichTextEditor';
 import { Position } from '../components/EditorPositioningWrapper';
-import { BoldPlugin, ItalicPlugin, LinkPlugin, PluginComposer, UnorderedListPlugin } from '../Plugins';
+
 import { insertTextAndOpenToolbar } from './fixtures/RichTextEditor';
 
 const RICH_TEXT_EDITOR = '[data-test-id=rich-text-editor]';

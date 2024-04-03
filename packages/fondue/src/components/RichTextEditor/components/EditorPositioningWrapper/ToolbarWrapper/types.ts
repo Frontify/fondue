@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactNode } from 'react';
-import { ButtonGroupsPerRow } from '../../Toolbar/types';
+import { type ReactNode } from 'react';
+
+import { type ButtonGroupsPerRow } from '../../Toolbar/types';
 
 export type ToolbarWrapperProps = {
     children: ReactNode;

@@ -1,21 +1,24 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ActionMenu } from '@components/ActionMenu/ActionMenu/ActionMenu';
-import IconCaretDown from '@foundation/Icon/Generated/IconCaretDown';
-import { IconSize } from '@foundation/Icon/IconSize';
-import { useMemoizedId } from '@hooks/useMemoizedId';
 import { useButton } from '@react-aria/button';
 import { FocusScope, useFocusRing } from '@react-aria/focus';
 import { useMenuTrigger } from '@react-aria/menu';
 import { DismissButton, useOverlay } from '@react-aria/overlays';
 import { mergeProps } from '@react-aria/utils';
 import { useMenuTriggerState } from '@react-stately/menu';
+import { AnimatePresence, motion } from 'framer-motion';
+import { type ReactElement, useEffect, useRef, useState } from 'react';
+
+import { ActionMenu } from '@components/ActionMenu/ActionMenu/ActionMenu';
+import IconCaretDown from '@foundation/Icon/Generated/IconCaretDown';
+import { IconSize } from '@foundation/Icon/IconSize';
+import { useMemoizedId } from '@hooks/useMemoizedId';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import { AnimatePresence, motion } from 'framer-motion';
-import { ReactElement, useEffect, useRef, useState } from 'react';
-import { AssetInputProps, AssetInputSize, AssetType } from '../AssetInput';
+
+import { type AssetInputProps, AssetInputSize, type AssetType } from '../AssetInput';
 import { AssetThumbnail } from '../AssetThumbnail';
+
 import { AssetSubline } from './AssetSubline';
 import { SpinningCircle } from './SpinningCircle';
 

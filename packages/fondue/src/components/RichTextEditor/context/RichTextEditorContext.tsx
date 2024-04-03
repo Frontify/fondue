@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { CSSProperties, ReactNode, createContext, useContext, useMemo } from 'react';
+import { type CSSProperties, type ReactNode, createContext, useContext, useMemo } from 'react';
+
 import { Position, getEditorWrapperClassNames } from '../components/EditorPositioningWrapper';
-import { EditorResizeContextProvider } from './EditorResizeContext';
 import { defaultStyles } from '../utils';
+
+import { EditorResizeContextProvider } from './EditorResizeContext';
 
 export type RichTextEditorContextProps = {
     styles: Record<string, CSSProperties>;

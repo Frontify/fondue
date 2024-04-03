@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { EmojiCategoryList, IEmojiFloatingLibrary, UseEmojiPickerType } from '@udecode/plate-emoji';
+import { type EmojiCategoryList, type IEmojiFloatingLibrary, type UseEmojiPickerType } from '@udecode/plate-emoji';
+
 import { merge } from '@utilities/merge';
 
 export type EmojiPickerNavigationProps = Pick<

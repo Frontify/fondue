@@ -1,14 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
 import { MARK_SUBSCRIPT } from '@udecode/plate-basic-marks';
 import { getPluginType } from '@udecode/plate-core';
 
-import { ButtonWrapper, IconStylingWrapper } from '../../helper';
-import { PluginButtonProps } from '../../types';
-import IconSuperscript16 from '@foundation/Icon/Generated/IconSuperscript16';
 import { getHotkeyByPlatform } from '@components/RichTextEditor';
 import { MarkToolbarButton } from '@components/RichTextEditor/Plugins/MarkPlugin/MarkToolbarButton';
+import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
+import IconSuperscript16 from '@foundation/Icon/Generated/IconSuperscript16';
+
+import { ButtonWrapper, IconStylingWrapper } from '../../helper';
+import { type PluginButtonProps } from '../../types';
 
 export const SuperscriptButton = ({ editor, id }: PluginButtonProps) => (
     <ButtonWrapper id={id}>

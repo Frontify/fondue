@@ -1,8 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
+import { type Meta, type StoryFn } from '@storybook/react';
+
 import { PatternDesign, PatternScale, PatternTheme } from '@foundation/Pattern';
-import { FrontifyPattern, FrontifyPatternProps } from './FrontifyPattern';
+
+import { FrontifyPattern, type FrontifyPatternProps } from './FrontifyPattern';
 
 export default {
     title: 'Components/FrontifyPattern',

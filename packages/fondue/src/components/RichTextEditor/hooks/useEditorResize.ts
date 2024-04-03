@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useCallback, useRef, useState } from 'react';
+
 import { debounce } from '@utilities/debounce';
 
 export const useEditorResize = () => {

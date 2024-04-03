@@ -1,11 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MouseEvent, ReactElement, useMemo } from 'react';
-import { merge } from '@utilities/merge';
 import { useFocusRing } from '@react-aria/focus';
-import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { type MouseEvent, type ReactElement, useMemo } from 'react';
+
+import { InputLabel, type InputLabelTooltipProps } from '@components/InputLabel/InputLabel';
 import { useMemoizedId } from '@hooks/useMemoizedId';
-import { InputLabel, InputLabelTooltipProps } from '@components/InputLabel/InputLabel';
+import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { merge } from '@utilities/merge';
 export const SWITCH_ID = 'switch-container';
 
 export type SwitchSize = 'small' | 'medium';

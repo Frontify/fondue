@@ -1,7 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { access, mkdir, writeFile } from 'fs/promises';
+import { access, mkdir, writeFile } from 'node:fs/promises';
+
 import chalk from 'chalk';
+
 import templates from './templates';
 
 (async () => {

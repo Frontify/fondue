@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { NumberInput } from './NumberInput';
 import IconNook16 from '@foundation/Icon/Generated/IconNook16';
 import { Validation, validationClassMap, validationTextClassMap } from '@utilities/validation';
+
+import { NumberInput } from './NumberInput';
 
 const NUMBER_INPUT_COMPONENT = '[data-test-id=fondue-number-input]';
 const NUMBER_INPUT_ELEMENT = '[data-test-id=fondue-number-input-input]';

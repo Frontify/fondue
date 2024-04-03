@@ -1,18 +1,20 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Dispatch, MouseEvent, Reducer, useEffect, useReducer } from 'react';
+import { getPluginOptions, useEditorRef, useHotkeys } from '@udecode/plate-core';
 import {
     ELEMENT_LINK,
-    LinkPlugin,
+    type LinkPlugin,
     floatingLinkActions,
     floatingLinkSelectors,
     submitFloatingLink,
 } from '@udecode/plate-link';
-import { getPluginOptions, useEditorRef, useHotkeys } from '@udecode/plate-core';
+import { type Dispatch, type MouseEvent, type Reducer, useEffect, useReducer } from 'react';
+
+import { CheckboxState } from '@components/Checkbox';
 
 import { getLegacyUrl, getUrl } from '../../utils';
-import { CheckboxState } from '@components/Checkbox';
-import { InsertModalDispatchType, InsertModalStateProps } from './types';
+
+import { type InsertModalDispatchType, type InsertModalStateProps } from './types';
 
 const initialState: InsertModalStateProps = {
     url: '',

@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ButtonHTMLAttributes, DetailedHTMLProps } from 'react';
+import { type ButtonHTMLAttributes, type DetailedHTMLProps } from 'react';
 
-import { merge } from '@utilities/merge';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
+import { merge } from '@utilities/merge';
 
 export type ExpandButtonProps = DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> & {
     expanded?: boolean;

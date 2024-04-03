@@ -1,11 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ToolbarButton } from '../../components/Toolbar/ToolbarButton';
-import { useEditorSelector, useEditorState, useEventPlateId } from '@udecode/plate-core';
 import { KEY_ALIGN, setAlign } from '@udecode/plate-alignment';
+import { useEditorSelector, useEditorState, useEventPlateId } from '@udecode/plate-core';
 import { findNode } from '@udecode/slate';
 import { isDefined } from '@udecode/utils';
-import { ReactNode, forwardRef } from 'react';
+import { type ReactNode, forwardRef } from 'react';
+
+import { ToolbarButton } from '../../components/Toolbar/ToolbarButton';
 
 export const AlignmentToolbarButton = forwardRef<
     HTMLButtonElement,

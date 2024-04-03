@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TElement } from '@udecode/slate';
+import { type TElement } from '@udecode/slate';
+
+import { type CSSPropertiesHover } from '../types';
 import { reactCssPropsToCss } from '../utils/reactCssPropsToCss';
-import { CSSPropertiesHover } from '../types';
 
 export type ButtonStylesType = Record<string, Record<string, CSSPropertiesHover>>;
 
@@ -13,8 +14,9 @@ export const buttonNode = (node: TElement, children: string, defaultClassNames: 
     const buttonStyle = buttonStyles[buttonType];
 
     const defaultStyles = reactCssPropsToCss(buttonStyle);
-    return `<a href="${node.url}"
-                target="${node.target ?? '_blank'}"
+
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-base-to-string
+    return `<a href="${node.url}" target="${node.target ?? '_blank'}"
                 dir="auto"
                 style="${defaultStyles}"
                 class="${defaultClassNames}"
