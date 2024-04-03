@@ -5,21 +5,20 @@ import { ELEMENT_LI, ELEMENT_LIC, ELEMENT_OL, ELEMENT_UL } from '@udecode/plate-
 import { ELEMENT_MENTION } from '@udecode/plate-mention';
 import { type TDescendant, type TElement, isText } from '@udecode/slate';
 
-import {
-    ELEMENT_BUTTON,
-    ELEMENT_CHECK_ITEM,
-    type MappedMentionableItems,
-    OL_STYLES,
-    TextStyles,
-    UL_CLASSES,
-    alignmentClassnames,
-    getOrderedListClasses,
-} from '@components/RichTextEditor/Plugins';
+import { ELEMENT_CHECK_ITEM } from '@components/RichTextEditor/Plugins/CheckboxListPlugin/id';
 import {
     LIST_ITEM_SPAN_CLASSES,
     getLicElementClassNames,
 } from '@components/RichTextEditor/Plugins/ListPlugin/ListItemContentMarkupElement';
 import { LI_CLASSNAMES, getLiStyles } from '@components/RichTextEditor/Plugins/ListPlugin/ListItemMarkupElement';
+import {
+    OL_STYLES,
+    getOrderedListClasses,
+} from '@components/RichTextEditor/Plugins/ListPlugin/OrderedListPlugin/OrderedListMarkupElement';
+import { UL_CLASSES } from '@components/RichTextEditor/Plugins/ListPlugin/UnorderedListPlugin/UnorderedListMarkupElement';
+import { type MappedMentionableItems } from '@components/RichTextEditor/Plugins/MentionPlugin/types';
+import { TextStyles } from '@components/RichTextEditor/Plugins/TextStylePlugin/types';
+import { ELEMENT_BUTTON, alignmentClassnames } from '@components/RichTextEditor/Plugins/helper';
 import { merge } from '@utilities/merge';
 
 import { type ButtonStylesType, buttonNode } from '../nodes/button';

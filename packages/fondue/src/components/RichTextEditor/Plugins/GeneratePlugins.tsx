@@ -19,7 +19,7 @@ export const createPlatePlugins = (pluginComposer: PluginComposer): PlatePlugin[
         components: pluginComposer.elements,
     });
 
-export const GeneratePlugins = (editorId: string, pluginComposer: PluginComposer): GeneratePluginsReturn => {
+export const generatePlugins = (editorId: string, pluginComposer: PluginComposer): GeneratePluginsReturn => {
     return {
         plugins: createPlatePlugins(pluginComposer),
         toolbar: (toolbarWidth) =>

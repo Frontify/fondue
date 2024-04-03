@@ -3,8 +3,8 @@
 import { MARK_SUBSCRIPT } from '@udecode/plate-basic-marks';
 import { getPluginType } from '@udecode/plate-core';
 
-import { getHotkeyByPlatform } from '@components/RichTextEditor';
 import { MarkToolbarButton } from '@components/RichTextEditor/Plugins/MarkPlugin/MarkToolbarButton';
+import { getHotkeyByPlatform } from '@components/RichTextEditor/helpers/getHotkeyByPlatform';
 import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
 import IconSuperscript16 from '@foundation/Icon/Generated/IconSuperscript16';
 

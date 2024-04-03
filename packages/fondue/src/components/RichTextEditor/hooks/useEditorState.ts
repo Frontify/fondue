@@ -4,7 +4,7 @@ import { useCallback, useMemo, useRef } from 'react';
 
 import { useDebounce } from '@hooks/useDebounce';
 
-import { GeneratePlugins, type PluginComposer } from '../Plugins';
+import { generatePlugins, type PluginComposer } from '../Plugins';
 import { type TreeOfNodes } from '../types';
 import { ON_SAVE_DELAY_IN_MS, parseRawValue } from '../utils';
 
@@ -49,7 +49,7 @@ export const useEditorState = ({
         [editorId],
     );
 
-    const config = useMemo(() => GeneratePlugins(editorId, plugins), [editorId, plugins]);
+    const config = useMemo(() => generatePlugins(editorId, plugins), [editorId, plugins]);
 
     return { localValue, onChange, memoizedValue, config };
 };

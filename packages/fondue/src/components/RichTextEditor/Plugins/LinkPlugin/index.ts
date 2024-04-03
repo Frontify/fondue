@@ -4,7 +4,7 @@ import { type PlatePlugin, createPluginFactory } from '@udecode/plate-core';
 import { createLinkPlugin as createPlateLinkPlugin } from '@udecode/plate-link';
 import { type CSSProperties } from 'react';
 
-import { defaultStyles } from '@components/RichTextEditor/utils';
+import { defaultStyles } from '@components/RichTextEditor/utils/defaultStyles';
 import { isValidUrl } from '@components/RichTextEditor/utils/isValidUrl';
 
 import { Plugin, type PluginProps } from '../Plugin';

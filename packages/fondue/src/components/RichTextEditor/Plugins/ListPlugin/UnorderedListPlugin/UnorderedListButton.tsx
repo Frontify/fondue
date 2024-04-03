@@ -3,7 +3,7 @@
 import { getPluginType } from '@udecode/plate-core';
 
 import { ListToolbarButton } from '@components/RichTextEditor/Plugins/ListPlugin/ListToolbarButton';
-import { getTooltip } from '@components/RichTextEditor/helpers';
+import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
 import IconListBullet16 from '@foundation/Icon/Generated/IconListBullet16';
 
 import { ButtonWrapper, IconStylingWrapper } from '../../helper';

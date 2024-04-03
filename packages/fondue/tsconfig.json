@@ -7,7 +7,7 @@
         "esModuleInterop": true,
         "lib": ["dom", "dom.iterable", "esnext"],
         "module": "ESNext",
-        "moduleResolution": "node",
+        "moduleResolution": "Bundler",
         "noUnusedLocals": true,
         "noEmit": true,
         "strict": true,

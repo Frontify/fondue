@@ -4,7 +4,9 @@ import { type PlateEditor, createPlateEditor } from '@udecode/plate-core';
 
 import { generateRandomId } from '@utilities/generateRandomId';
 
-import { GeneratePlugins, type PluginComposer, defaultPlugins } from '../Plugins';
+import { generatePlugins } from '../Plugins/GeneratePlugins';
+import { type PluginComposer } from '../Plugins/PluginComposer';
+import { defaultPlugins } from '../Plugins/defaultPlugins';
 
 export class InitPlateEditor {
     static editor: PlateEditor;
@@ -19,7 +21,7 @@ export class InitPlateEditor {
     }
 
     static init(editorId: string = generateRandomId(), plugins: PluginComposer = defaultPlugins) {
-        const config = GeneratePlugins(editorId, plugins);
+        const config = generatePlugins(editorId, plugins);
         this.editor = createPlateEditor({ id: editorId, plugins: config.plugins });
         return this;
     }

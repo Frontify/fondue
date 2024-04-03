@@ -5,9 +5,10 @@ import { useLinkToolbarButton, useLinkToolbarButtonState } from '@udecode/plate-
 import { focusEditor } from '@udecode/slate-react';
 import { type ReactNode, forwardRef } from 'react';
 
-import { IconStylingWrapper } from '@components/RichTextEditor/Plugins';
 import { ToolbarButton } from '@components/RichTextEditor/components/Toolbar/ToolbarButton';
 import IconLink16 from '@foundation/Icon/Generated/IconLink16';
+
+import { IconStylingWrapper } from '../helper';
 
 export const LinkToolbarButton = forwardRef<HTMLButtonElement, { disabled: boolean; tooltip: ReactNode }>(
     (rootProps, ref) => {

@@ -2,8 +2,8 @@
 
 import './DatePicker.css';
 
-import { format } from 'date-fns/format';
-import { getYear } from 'date-fns/getYear';
+import format from 'date-fns/format';
+import getYear from 'date-fns/getYear';
 import { type KeyboardEvent, type ReactNode, forwardRef, useState } from 'react';
 import DatepickerComponent, { type ReactDatePicker } from 'react-datepicker';
 
