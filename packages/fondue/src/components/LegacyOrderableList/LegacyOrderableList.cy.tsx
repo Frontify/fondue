@@ -1,7 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { LegacyOrderableList } from './LegacyOrderableList';
-import { LegacyDragProperties, LegacyItemDragState, LegacyOrderableListItem, LegacyOrderableListProps } from './types';
+import {
+    type LegacyDragProperties,
+    LegacyItemDragState,
+    type LegacyOrderableListItem,
+    type LegacyOrderableListProps,
+} from './types';
 
 const LIST_ID = '[data-test-id=orderable-list]';
 const DRAGGABLE_ITEM = '[data-test-id=draggable-item]';

@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { writeFile } from 'node:fs/promises';
+
 import fastGlob from 'fast-glob';
-import { writeFile } from 'fs/promises';
 
 const COMPONENT_ENUM_OUTPUT_PATH = './src/components/ComponentEnum.ts';
 

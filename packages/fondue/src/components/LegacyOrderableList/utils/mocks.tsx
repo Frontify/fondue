@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { LegacyOrderableListItem } from '@components/LegacyOrderableList';
-import { HighlightColor, HighlightProps, StoryListItem } from '@components/LegacyOrderableList/utils/types';
-import { ReactElement } from 'react';
+import { type ReactElement } from 'react';
+
+import { type LegacyOrderableListItem } from '@components/LegacyOrderableList';
+import { HighlightColor, type HighlightProps, type StoryListItem } from '@components/LegacyOrderableList/utils/types';
 import { merge } from '@utilities/merge';
 
 const HighlightClasses: Record<HighlightColor, string> = {

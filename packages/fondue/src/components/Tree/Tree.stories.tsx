@@ -1,12 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Meta, StoryFn } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
+import { type Meta, type StoryFn } from '@storybook/react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import IconDocument from '@foundation/Icon/Generated/IconDocument';
-
-import type { TreeItemStyling, TreeProps } from '@components/Tree/types';
+import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
+import { Container } from '@components/Container';
+import { DialogBody } from '@components/DialogBody';
+import { InlineDialog } from '@components/InlineDialog';
 import {
     TreeItem,
     TreeItemBorderClassMap,
@@ -18,16 +19,15 @@ import {
     Tree as TreeView,
     useTreeItem,
 } from '@components/Tree';
+import { type TreeItemStyling, type TreeProps } from '@components/Tree/types';
 import {
     type TreeItemMock,
     treeItemsMock,
     useDynamicNavigationMock,
     useNavigationWithLazyLoadedItemsMock,
 } from '@components/Tree/utils';
-import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
-import { Container } from '@components/Container';
-import { InlineDialog } from '@components/InlineDialog';
-import { DialogBody } from '@components/DialogBody';
+import IconDocument from '@foundation/Icon/Generated/IconDocument';
+
 import { Modality } from '../../types';
 
 export default {

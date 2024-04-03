@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { nodesToSerialize } from '../helpers/exampleValues';
+
 import { serializeNodesToHtml } from './serializeToHtml';
 
 describe('serializeNodesToHtml()', () => {

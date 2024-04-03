@@ -1,11 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TextInputBaseProps, TextInputType } from '@components/TextInput/TextInput';
-import { useMemoizedId } from '@hooks/useMemoizedId';
 import { useFocusRing } from '@react-aria/focus';
+import { type KeyboardEvent, type ReactElement, useRef } from 'react';
+
+import { type TextInputBaseProps, TextInputType } from '@components/TextInput/TextInput';
+import { useMemoizedId } from '@hooks/useMemoizedId';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import { KeyboardEvent, ReactElement, useRef } from 'react';
 
 export type ColorInputProps = {
     min?: number;

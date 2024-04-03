@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type Modifier } from 'react-popper';
+
 import { getVerticalPositioning } from '@components/Flyout';
-import { Modifier } from 'react-popper';
 
 const OFFSET = 6;
 const VIEWPORT_PADDING = 10;

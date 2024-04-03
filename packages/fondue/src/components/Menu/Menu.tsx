@@ -1,11 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactNode, RefObject, useCallback, useEffect, useState } from 'react';
+import { type ReactNode, type RefObject, useCallback, useEffect, useState } from 'react';
 import { usePopper } from 'react-popper';
-import { merge } from '@utilities/merge';
+
 import { useMenuKeyboardNavigation } from '@components/Menu/useMenuKeyboardNavigation';
 import { useClickOutside } from '@hooks/useClickOutside';
 import { INSET_BORDER } from '@utilities/borderStyle';
+import { merge } from '@utilities/merge';
 
 interface Props {
     triggerRef?: RefObject<Element>;

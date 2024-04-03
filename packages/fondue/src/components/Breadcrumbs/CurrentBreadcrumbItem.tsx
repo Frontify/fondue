@@ -1,16 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement, useRef } from 'react';
 import { useBreadcrumbItem } from '@react-aria/breadcrumbs';
 import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
+import { type ReactElement, useRef } from 'react';
 
 import { Badge } from '@components/Badge';
+import { getItemElementType } from '@utilities/elements';
 import { FOCUS_STYLE_NO_OFFSET } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import { getItemElementType } from '@utilities/elements';
 
-import { Breadcrumb } from './Breadcrumbs';
+import { type Breadcrumb } from './Breadcrumbs';
 
 type CurrentBreadcrumbItemProps = Breadcrumb;
 

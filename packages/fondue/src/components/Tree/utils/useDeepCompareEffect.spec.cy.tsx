@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useState } from 'react';
 import { mount } from 'cypress/react18';
+import { useState } from 'react';
+
 import { useDeepCompareEffect } from './useDeepCompareEffect';
 
 type Props = {

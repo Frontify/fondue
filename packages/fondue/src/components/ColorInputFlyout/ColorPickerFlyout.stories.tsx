@@ -1,10 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
+import { type Meta, type StoryFn } from '@storybook/react';
 import { useState } from 'react';
-import { Color } from '../../types/colors';
+
+import { type Color } from '../../types/colors';
 import { EXAMPLE_PALETTES } from '../ColorPicker/example-palettes';
-import { ColorPickerFlyout as ColorPickerFlyoutComponent, ColorPickerFlyoutProps } from './ColorPickerFlyout';
+
+import { ColorPickerFlyout as ColorPickerFlyoutComponent, type ColorPickerFlyoutProps } from './ColorPickerFlyout';
 
 export default {
     title: 'Components/Color Picker/Flyout',

@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Key } from 'react';
+import { type Key } from 'react';
+
 import { CUSTOM_LINK_ID, DEFAULT_ICON, IconOptions } from '../LinkChooser';
 import { defaultSection } from '../sections';
-import { ExtraSection, SearchResult } from '../types';
+import { type ExtraSection, type SearchResult } from '../types';
 
 export const doesContainSubstring = (source: string, target: string, sections: ExtraSection[]): boolean =>
     source.toLowerCase().includes(target.toLowerCase()) ||

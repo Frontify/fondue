@@ -2,6 +2,7 @@
 
 import { TooltipIconTriggerStyle } from '@components/TooltipIcon';
 import IconReport from '@foundation/Icon/Generated/IconReport';
+
 import { InputLabel } from './InputLabel';
 
 const LABEL_TEXT = 'This is a fancy label.';

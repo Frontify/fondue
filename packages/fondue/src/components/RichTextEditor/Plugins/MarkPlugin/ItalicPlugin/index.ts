@@ -1,12 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { createItalicPlugin } from '@udecode/plate-basic-marks';
-import { PlatePlugin } from '@udecode/plate-core';
+import { type PlatePlugin } from '@udecode/plate-core';
 
-import { ITALIC_PLUGIN } from './id';
-import { ITALIC_CLASSES, ItalicMarkupElement } from './ItalicMarkupElement';
-import { Plugin, PluginProps } from '../../Plugin';
+import { Plugin, type PluginProps } from '../../Plugin';
+
 import { ItalicButton } from './ItalicButton';
+import { ITALIC_CLASSES, ItalicMarkupElement } from './ItalicMarkupElement';
+import { ITALIC_PLUGIN } from './id';
 
 const PLATE_ITALIC_RULES = [
     { validNodeName: ['EM', 'I'] },

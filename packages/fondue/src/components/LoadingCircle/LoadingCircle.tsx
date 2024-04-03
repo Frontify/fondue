@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type ReactElement } from 'react';
+
 import { merge } from '@utilities/merge';
-import { ReactElement } from 'react';
 
 export enum LoadingCircleStyle {
     Progress = 'Progress',

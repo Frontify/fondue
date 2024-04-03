@@ -1,14 +1,24 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlateEditor, toggleNodeType, useEditorState, useEventPlateId } from '@udecode/plate-core';
-import { ELEMENT_PARAGRAPH } from '@udecode/plate-paragraph';
+import { type PlateEditor, toggleNodeType, useEditorState, useEventPlateId } from '@udecode/plate-core';
 import { unwrapList } from '@udecode/plate-list';
-import { NodeOf, Value, getNode, getParentNode, setElements, someNode, withoutNormalizing } from '@udecode/slate';
+import { ELEMENT_PARAGRAPH } from '@udecode/plate-paragraph';
+import {
+    type NodeOf,
+    type Value,
+    getNode,
+    getParentNode,
+    setElements,
+    someNode,
+    withoutNormalizing,
+} from '@udecode/slate';
 import { focusEditor } from '@udecode/slate-react';
-import { ELEMENT_CHECK_ITEM } from '../id';
-import IconListCheck16 from '@foundation/Icon/Generated/IconListCheck16';
+
 import { IconStylingWrapper } from '@components/RichTextEditor/Plugins/helper';
 import { ToolbarButton } from '@components/RichTextEditor/components/Toolbar/ToolbarButton';
+import IconListCheck16 from '@foundation/Icon/Generated/IconListCheck16';
+
+import { ELEMENT_CHECK_ITEM } from '../id';
 
 export const CheckboxListToolbarButton = ({ id, type = ELEMENT_CHECK_ITEM }: { id: string; type?: string }) => {
     const editor = useEditorState(useEventPlateId(id));

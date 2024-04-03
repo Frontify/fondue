@@ -1,10 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useDrop } from 'react-dnd';
+
+import { type LegacyOrderableListItem } from '@components/LegacyOrderableList/types';
+import { type CollisionPosition } from '@components/Tree/types';
+import { type DraggableItem } from '@utilities/dnd';
 import { merge } from '@utilities/merge';
-import { LegacyOrderableListItem } from '@components/LegacyOrderableList/types';
-import { DraggableItem } from '@utilities/dnd';
-import { CollisionPosition } from '@components/Tree/types';
 
 export type OnDropCallback<T> = (
     targetItem: DraggableItem<T>,

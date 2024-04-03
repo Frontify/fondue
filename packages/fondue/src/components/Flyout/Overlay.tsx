@@ -1,13 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Badge } from '@components/Badge/Badge';
-import { FieldsetHeader } from '@components/FieldsetHeader/FieldsetHeader';
 import { useDialog } from '@react-aria/dialog';
 import { DismissButton, useModal, useOverlay } from '@react-aria/overlays';
 import { mergeProps } from '@react-aria/utils';
+import { Children, type ForwardRefRenderFunction, type HTMLAttributes, type RefObject, forwardRef } from 'react';
+
+import { Badge } from '@components/Badge/Badge';
+import { FieldsetHeader } from '@components/FieldsetHeader/FieldsetHeader';
 import { merge } from '@utilities/merge';
-import { Children, ForwardRefRenderFunction, HTMLAttributes, RefObject, forwardRef } from 'react';
-import { FlyoutProps } from './Flyout';
+
+import { type FlyoutProps } from './Flyout';
 
 type OverlayProps = Omit<FlyoutProps, 'trigger' | 'onOpenChange' | 'onConfirm' | 'legacyFooter' | 'onCancel'> & {
     positionProps: HTMLAttributes<Element>;

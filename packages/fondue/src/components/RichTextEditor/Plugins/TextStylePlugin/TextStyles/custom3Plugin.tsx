@@ -1,11 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlatePlugin, PlateRenderElementProps, createPluginFactory } from '@udecode/plate-core';
-import { CSSProperties } from 'react';
-import { MarkupElement, Plugin, PluginProps, defaultStyles, getColumnBreakClasses } from '../../..';
-import { alignmentClassnames } from '../../helper';
+import { type PlatePlugin, type PlateRenderElementProps, createPluginFactory } from '@udecode/plate-core';
+import { type CSSProperties } from 'react';
+
 import { merge } from '@utilities/merge';
-import { TextStyleRenderElementProps, TextStyles } from '../types';
+
+import { MarkupElement, Plugin, type PluginProps, defaultStyles, getColumnBreakClasses } from '../../..';
+import { alignmentClassnames } from '../../helper';
+import { type TextStyleRenderElementProps, TextStyles } from '../types';
 
 const ID = 'textstyle-custom3-plugin';
 

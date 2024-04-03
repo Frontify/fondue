@@ -1,13 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type Meta, type StoryFn } from '@storybook/react';
 import { useState } from 'react';
-import { Meta, StoryFn } from '@storybook/react';
-import { Card, CardProps } from './Card';
-import { SegmentedControls } from '@components/SegmentedControls/SegmentedControls';
+
+import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
 import { Divider } from '@components/Divider/Divider';
+import { SegmentedControls } from '@components/SegmentedControls/SegmentedControls';
 import { LegacyStack } from '@layout/LegacyStack';
 import { Text } from '@typography/Text';
-import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
+
+import { Card, type CardProps } from './Card';
 
 export default {
     title: 'Components/Card',

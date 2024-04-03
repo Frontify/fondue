@@ -1,8 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
+import { type Meta, type StoryFn } from '@storybook/react';
+
 import { sharedTypographyArgTypes, sharedTypographyArgs } from '../shared/Shared';
-import { Heading as HeadingComponent, HeadingProps } from './Heading';
+
+import { Heading as HeadingComponent, type HeadingProps } from './Heading';
 
 export default {
     title: 'Typography/Heading',

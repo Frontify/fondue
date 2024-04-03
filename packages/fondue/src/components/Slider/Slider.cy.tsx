@@ -1,6 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MAX_DEFAULT_VALUE, MIN_DEFAULT_VALUE, Slider, SliderError, SliderProps, SliderValue } from './Slider';
+import {
+    MAX_DEFAULT_VALUE,
+    MIN_DEFAULT_VALUE,
+    Slider,
+    SliderError,
+    type SliderProps,
+    type SliderValue,
+} from './Slider';
 
 const SLIDER_ID = '[data-test-id=fondue-slider]';
 const SLIDER_LABEL_ID = '[data-test-id=fondue-slider-label]';

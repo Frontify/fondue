@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { VisitorResult, visit } from 'unist-util-visit';
-import { NodeChild, RemarkExtension, TreeNode } from '../../types';
+import { type VisitorResult, visit } from 'unist-util-visit';
+
+import { type NodeChild, type RemarkExtension, type TreeNode } from '../../types';
 
 export default function Extension(): RemarkExtension {
     return transformer;

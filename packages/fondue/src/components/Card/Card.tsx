@@ -1,12 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement, ReactNode, useRef, useState } from 'react';
 import { useButton } from '@react-aria/button';
-import { merge } from '@utilities/merge';
-import { PressEvent } from '@react-types/shared';
-import { mergeProps } from '@react-aria/utils';
 import { useFocusRing } from '@react-aria/focus';
+import { mergeProps } from '@react-aria/utils';
+import { type PressEvent } from '@react-types/shared';
+import { type ReactElement, type ReactNode, useRef, useState } from 'react';
+
 import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { merge } from '@utilities/merge';
 
 export type CardProps = {
     children: ReactNode | ReactNode[];
@@ -35,7 +36,7 @@ export const Card = ({
     );
     const { isFocusVisible, focusProps } = useFocusRing();
 
-    const clickableProps = !!onClick ? mergeProps(buttonProps, focusProps) : {};
+    const clickableProps = onClick ? mergeProps(buttonProps, focusProps) : {};
 
     return (
         <div

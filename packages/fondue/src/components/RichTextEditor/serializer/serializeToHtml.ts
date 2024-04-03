@@ -1,14 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TDescendant } from '@udecode/slate';
-import { CSSProperties } from 'react';
+import { type TDescendant } from '@udecode/slate';
+import { type CSSProperties } from 'react';
+
+import { type PluginComposer, defaultPlugins } from '../Plugins';
+import { type MentionableItems } from '../Plugins/MentionPlugin';
 import { mapMentionable } from '../Plugins/MentionPlugin/helpers';
-import { parseRawValue } from '../utils/parseRawValue';
-import { serializeNodeToHtmlRecursive } from './utils/serializeNodeToHtmlRecursive';
-import type { MentionableItems } from '../Plugins/MentionPlugin';
 import { defaultStyles } from '../utils';
-import { PluginComposer, defaultPlugins } from '../Plugins';
-import { CSSPropertiesHover } from './types';
+import { parseRawValue } from '../utils/parseRawValue';
+
+import { type CSSPropertiesHover } from './types';
+import { serializeNodeToHtmlRecursive } from './utils/serializeNodeToHtmlRecursive';
 
 export const serializeRawToHtml = (
     raw: string,

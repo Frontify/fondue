@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Children, ReactElement, ReactNode } from 'react';
+import { Children, type ReactElement, type ReactNode } from 'react';
 
 export enum MultiInputLayout {
     Columns = 'Columns',

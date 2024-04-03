@@ -4,3 +4,4 @@ src/foundation/Icon/IconEnum.ts
 src/components/ComponentEnum.ts
 dist
 storybook-static
+node_modules

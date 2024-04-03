@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PopperPlacement } from '@components/Popper/types';
+import { type PopperPlacement } from '@components/Popper/types';
 import { Tooltip } from '@components/Tooltip/Tooltip';
 import IconIcon24 from '@foundation/Icon/Generated/IconIcon24';
 

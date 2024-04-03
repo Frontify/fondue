@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { draggableItemCompareFn } from '@utilities/dnd/draggableItemCompareFn';
-import { DraggableItem } from '@utilities/dnd/types';
+import { type DraggableItem } from '@utilities/dnd/types';
 
 describe('draggableItemCompareFn', () => {
     const firstItem: DraggableItem = { id: '1', sort: 1 };

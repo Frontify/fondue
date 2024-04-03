@@ -1,11 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement, cloneElement, useContext } from 'react';
-import { merge } from '@utilities/merge';
-import { ModalHeaderProps, ModalHeaderVariant, modalHeaderVariants } from './types';
+import { type ReactElement, cloneElement, useContext } from 'react';
+
 import { IconSize } from '@foundation/Icon/IconSize';
-import { ModalTitle } from './context/ModalTitle';
+import { merge } from '@utilities/merge';
+
 import { ModalLayout } from './context/ModalLayout';
+import { ModalTitle } from './context/ModalTitle';
+import { type ModalHeaderProps, ModalHeaderVariant, modalHeaderVariants } from './types';
 
 export const ModalHeader = ({
     title,

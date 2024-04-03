@@ -1,8 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconProps } from '@foundation/Icon/IconProps';
-import { ReactElement, ReactNode } from 'react';
-import { Color } from '../../types';
+import { type ReactElement, type ReactNode } from 'react';
+
+import { type IconProps } from '@foundation/Icon/IconProps';
+
+import { type Color } from '../../types';
 
 export type BadgeSize = 'small' | 'medium';
 

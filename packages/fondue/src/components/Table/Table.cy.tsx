@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type Key, useEffect, useState } from 'react';
+
 import { Button } from '@components/Button/Button';
 import { TextInput } from '@components/TextInput/TextInput';
-import { Key, useEffect, useState } from 'react';
-import { Column, Row, SelectionMode, SortDirection, Table } from './Table';
+
+import { type Column, type Row, SelectionMode, SortDirection, Table } from './Table';
 
 const TABLE_COLUMNS: Column[] = [
     { name: 'User', key: 'user' },

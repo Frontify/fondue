@@ -6,10 +6,11 @@ import {
     Row as AriaRow,
     TableBody,
     TableHeader,
-    TableStateProps,
+    type TableStateProps,
     useTableState,
 } from '@react-stately/table';
-import { Key, ReactNode, useRef, useState } from 'react';
+import { type Key, type ReactNode, useRef, useState } from 'react';
+
 import { TableCell, TableCellType } from './TableCell';
 import { TableColumnHeader, TableColumnHeaderType } from './TableColumnHeader';
 import { TableHeaderRow } from './TableHeaderRow';

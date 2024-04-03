@@ -1,10 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
-import { useEffect, useRef, useState } from 'react';
-import { OrderableList as OrderableListComponent } from './OrderableList';
-import { OrderableListItem, OrderableListItemStyle, OrderableListProps } from './types';
 import { chain } from '@react-aria/utils';
+import { type Meta, type StoryFn } from '@storybook/react';
+import { useEffect, useRef, useState } from 'react';
+
 import { renderContent, storyItems } from '@components/OrderableList/utils';
 import {
     TreeItemBorderClassMap,
@@ -14,6 +13,9 @@ import {
     TreeItemShadowClassMap,
     TreeItemSpacingClassMap,
 } from '@components/Tree/types';
+
+import { OrderableList as OrderableListComponent } from './OrderableList';
+import { type OrderableListItem, type OrderableListItemStyle, type OrderableListProps } from './types';
 
 export default {
     title: 'Components/Orderable List',

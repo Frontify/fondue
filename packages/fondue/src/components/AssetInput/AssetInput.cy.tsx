@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { assetInputActions } from './asset-input-actions';
 import { AssetInput, AssetInputSize } from './AssetInput';
+import { assetInputActions } from './asset-input-actions';
 import { EXAMPLE_IMAGES, MIXED_ASSETS } from './example-assets';
 
 const MULTI_ASSET_PREVIEW_ID = '[data-test-id=multi-asset-preview]';

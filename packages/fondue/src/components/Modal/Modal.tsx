@@ -1,18 +1,20 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement, memo, useRef } from 'react';
-import { merge } from '@utilities/merge';
-import { ModalProps, ModalWidth } from './types';
-import { ModalVisual } from './ModalVisual';
-import { OverlayContainer, useModal, useOverlay, usePreventScroll } from '@react-aria/overlays';
-import { FocusScope } from '@react-aria/focus';
 import { useDialog } from '@react-aria/dialog';
+import { FocusScope } from '@react-aria/focus';
+import { OverlayContainer, useModal, useOverlay, usePreventScroll } from '@react-aria/overlays';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ModalTitle } from './context/ModalTitle';
-import { ModalHeader } from './ModalHeader';
+import { type ReactElement, memo, useRef } from 'react';
+
+import { merge } from '@utilities/merge';
+
 import { ModalBody } from './ModalBody';
 import { ModalFooter } from './ModalFooter';
+import { ModalHeader } from './ModalHeader';
+import { ModalVisual } from './ModalVisual';
 import { MODAL_PADDING, ModalLayout } from './context/ModalLayout';
+import { ModalTitle } from './context/ModalTitle';
+import { type ModalProps, ModalWidth } from './types';
 
 const UNDERLAY_VARIANTS = {
     initial: {

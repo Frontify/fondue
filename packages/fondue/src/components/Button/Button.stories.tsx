@@ -1,13 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
-import { Button, ButtonProps } from './Button';
-import { ButtonEmphasis, ButtonRounding, ButtonSize, ButtonStyle, ButtonType } from './ButtonTypes';
-import { IconEnum } from '@foundation/Icon/IconEnum';
-import IconIcon16 from '@foundation/Icon/Generated/IconIcon16';
-import IconDotsVertical16 from '@foundation/Icon/Generated/IconDotsVertical16';
-import IconColorFan16 from '@foundation/Icon/Generated/IconColorFan16';
+import { type Meta, type StoryFn } from '@storybook/react';
+
 import IconAnchor16 from '@foundation/Icon/Generated/IconAnchor16';
+import IconColorFan16 from '@foundation/Icon/Generated/IconColorFan16';
+import IconDotsVertical16 from '@foundation/Icon/Generated/IconDotsVertical16';
+import IconIcon16 from '@foundation/Icon/Generated/IconIcon16';
+import { IconEnum } from '@foundation/Icon/IconEnum';
+
+import { Button, type ButtonProps } from './Button';
+import { ButtonEmphasis, ButtonRounding, ButtonSize, ButtonStyle, ButtonType } from './ButtonTypes';
 
 const defaultArgs = {
     type: ButtonType.Button,

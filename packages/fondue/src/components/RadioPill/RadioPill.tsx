@@ -1,10 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconSize } from '@foundation/Icon/IconSize';
 import { useFocusRing } from '@react-aria/focus';
+import { type MouseEvent, type ReactElement, cloneElement } from 'react';
+
+import { IconSize } from '@foundation/Icon/IconSize';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import { MouseEvent, ReactElement, cloneElement } from 'react';
 
 export type RadioPillProps = {
     label: string;
@@ -33,7 +34,7 @@ export const RadioPill = ({
                     ? 'dark:tw-bg-black-5 dark:tw-text-black-100 tw-bg-black-100 tw-text-white'
                     : 'tw-text-black-80 dark:tw-text-black-40',
                 isFocusVisible && FOCUS_STYLE,
-                !!onClick ? 'tw-cursor-pointer' : 'tw-cursor-auto',
+                onClick ? 'tw-cursor-pointer' : 'tw-cursor-auto',
             ])}
             onClick={onClick}
             {...focusProps}

@@ -1,13 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { InlineDialog, InlineDialogProps } from './InlineDialog';
-import { Modality } from '../../types';
-import { Button, ButtonEmphasis } from '@components/Button';
-import IconDotsVertical16 from '@foundation/Icon/Generated/IconDotsVertical16';
-import { DialogBody } from '@components/DialogBody';
-import { Box } from '@components/Box';
-import { Dropdown } from '@components/Dropdown';
 import { useRef, useState } from 'react';
+
+import { Box } from '@components/Box';
+import { Button, ButtonEmphasis } from '@components/Button';
+import { DialogBody } from '@components/DialogBody';
+import { Dropdown } from '@components/Dropdown';
+import IconDotsVertical16 from '@foundation/Icon/Generated/IconDotsVertical16';
+
+import { Modality } from '../../types';
+
+import { InlineDialog, type InlineDialogProps } from './InlineDialog';
 
 const INLINE_DIALOG_TRIGGER_SELECTOR = '[data-test-id=fondue-inlineDialog-trigger]';
 const INLINE_DIALOG_SELECTOR = '[data-test-id=fondue-inlineDialog-content]';

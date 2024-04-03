@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Hotkeys, KeyboardHandlerReturnType, PlateEditor, WithPlatePlugin } from '@udecode/plate-core';
-import { Value } from '@udecode/slate';
+import { Hotkeys, type KeyboardHandlerReturnType, type PlateEditor, type WithPlatePlugin } from '@udecode/plate-core';
+import { type Value } from '@udecode/slate';
+
 import { forceToBlurActiveElement } from '@components/RichTextEditor/helpers';
-import { BlurOnBreakPlatePlugin } from './types';
+
+import { type BlurOnBreakPlatePlugin } from './types';
 
 export const onKeyDownBlurOnBreak =
     <V extends Value = Value, E extends PlateEditor<V> = PlateEditor<V>>(

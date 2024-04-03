@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import type { MutableRefObject, ReactElement, ReactNode } from 'react';
-import { Active, Collision, Over, Translate } from '@dnd-kit/core';
-import { useSortable } from '@dnd-kit/sortable';
+import { type Active, type Collision, type Over, type Translate } from '@dnd-kit/core';
+import { type useSortable } from '@dnd-kit/sortable';
+import { type MutableRefObject, type ReactElement, type ReactNode } from 'react';
 
-import { InternalTreeItemProps, type Overlay } from './TreeItem';
+import { type InternalTreeItemProps, type Overlay } from './TreeItem';
 import { type Projection } from './helpers';
 
 export type SensorContext = MutableRefObject<{

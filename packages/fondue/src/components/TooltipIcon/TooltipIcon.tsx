@@ -1,12 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement, cloneElement } from 'react';
+import { type ReactElement, cloneElement } from 'react';
+
+import { LegacyTooltip, type LegacyTooltipProps } from '@components/LegacyTooltip/LegacyTooltip';
+import IconQuestionMarkCircle from '@foundation/Icon/Generated/IconQuestionMarkCircle';
+import { type IconProps } from '@foundation/Icon/IconProps';
 import { IconSize } from '@foundation/Icon/IconSize';
-import { LegacyTooltip, LegacyTooltipProps } from '@components/LegacyTooltip/LegacyTooltip';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import { IconProps } from '@foundation/Icon/IconProps';
-import IconQuestionMarkCircle from '@foundation/Icon/Generated/IconQuestionMarkCircle';
 
 export type TooltipIconProps = {
     tooltip?: LegacyTooltipProps;

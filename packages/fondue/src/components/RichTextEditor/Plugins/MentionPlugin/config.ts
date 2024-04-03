@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MentionItemData, MentionPlugin } from './types';
+import { type MentionItemData, type MentionPlugin } from './types';
 
 export const mentionPlugin: MentionPlugin<MentionItemData> = {
     options: {

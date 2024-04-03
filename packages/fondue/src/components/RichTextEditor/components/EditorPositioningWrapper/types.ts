@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactNode } from 'react';
-import { ToolbarWrapperProps } from './ToolbarWrapper/types';
+import { type ReactNode } from 'react';
+
+import { type ToolbarWrapperProps } from './ToolbarWrapper/types';
 
 export enum Position {
     FLOATING = 'Floating',

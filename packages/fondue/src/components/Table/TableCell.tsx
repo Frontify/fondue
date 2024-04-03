@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import { type Key, useRef } from 'react';
+
 import { Checkbox as CheckboxComponent, CheckboxState } from '@components/Checkbox/Checkbox';
 import { merge } from '@utilities/merge';
-import { Key, useRef } from 'react';
+
 import { SelectionMode } from './Table';
 
 export enum TableCellType {
@@ -44,6 +45,7 @@ export const TableCell = ({
             }
 
             const rowsToSelect =
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
                 selectionMode === SelectionMode.SingleSelect ? [cell.parentKey] : [...selectedRows, cell.parentKey];
             setSelectedRows(rowsToSelect);
         };

@@ -1,10 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { BadgeProps } from '@components/Badge';
-import { IconProps } from '@foundation/Icon/IconProps';
-import { AriaBreadcrumbsProps, useBreadcrumbs } from '@react-aria/breadcrumbs';
-import { MouseEvent, ReactElement } from 'react';
+import { type AriaBreadcrumbsProps, useBreadcrumbs } from '@react-aria/breadcrumbs';
+import { type MouseEvent, type ReactElement } from 'react';
+
+import { type BadgeProps } from '@components/Badge';
+import { type IconProps } from '@foundation/Icon/IconProps';
 import { merge } from '@utilities/merge';
+
 import { FormattedBreadcrumbs } from './FormattedBreadcrumbs';
 
 const mapBreadcrumbsToAriaProps = (items: Breadcrumb[]) => ({

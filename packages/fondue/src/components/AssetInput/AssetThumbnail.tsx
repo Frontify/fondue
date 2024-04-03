@@ -1,11 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type ReactElement, cloneElement } from 'react';
+
+import IconMusicNote from '@foundation/Icon/Generated/IconMusicNote';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { merge } from '@utilities/merge';
-import { ReactElement, cloneElement } from 'react';
-import { AssetInputProps, AssetInputSize } from './AssetInput';
-import { SelectedAssetProps } from './SingleAsset/SelectedAsset';
-import IconMusicNote from '@foundation/Icon/Generated/IconMusicNote';
+
+import { type AssetInputProps, AssetInputSize } from './AssetInput';
+import { type SelectedAssetProps } from './SingleAsset/SelectedAsset';
 
 type AssetThumbnailProps = {
     asset: SelectedAssetProps['asset'];

@@ -1,13 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconPlus from '@foundation/Icon/Generated/IconPlus';
-import { IconSize } from '@foundation/Icon/IconSize';
 import { useButton } from '@react-aria/button';
 import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
+import { type ReactElement, useRef } from 'react';
+
+import IconPlus from '@foundation/Icon/Generated/IconPlus';
+import { IconSize } from '@foundation/Icon/IconSize';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import { ReactElement, useRef } from 'react';
 
 export enum AddBlockButtonDirection {
     Horizontal = 'Horizontal',

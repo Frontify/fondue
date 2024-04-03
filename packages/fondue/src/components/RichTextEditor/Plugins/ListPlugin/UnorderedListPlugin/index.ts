@@ -1,10 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { LIST_PLUGIN } from '../id';
-import { UnorderedListMarkupElement } from './UnorderedListMarkupElement';
-import { UnorderedListButton } from './UnorderedListButton';
 import { ListPlugin } from '../ListPlugin';
-import { ListPluginProps } from '../types';
+import { LIST_PLUGIN } from '../id';
+import { type ListPluginProps } from '../types';
+
+import { UnorderedListButton } from './UnorderedListButton';
+import { UnorderedListMarkupElement } from './UnorderedListMarkupElement';
 
 export class UnorderedListPlugin extends ListPlugin {
     constructor(props?: ListPluginProps) {

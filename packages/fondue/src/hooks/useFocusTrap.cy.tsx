@@ -1,10 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactNode, useRef, useState } from 'react';
-import { useFocusTrap } from '@hooks/useFocusTrap';
-import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
+import { type ReactNode, useRef, useState } from 'react';
+
 import { Box } from '@components/Box';
+import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
 import { TextInput } from '@components/TextInput';
+import { useFocusTrap } from '@hooks/useFocusTrap';
 
 const TOGGLE_BUTTON = '[data-test-id=toggle-button]';
 const FOCUS_TRAP_CONTAINER = '[data-test-id=focus-trap-container]';

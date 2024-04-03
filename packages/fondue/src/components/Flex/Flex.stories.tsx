@@ -1,10 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
-import { Flex, FlexProps } from './Flex';
+import { type Meta, type StoryFn } from '@storybook/react';
+
 import { Box } from '@components/Box';
-import { BOX_BG_ALIAS_TOKENS_CLASSES, BOX_TEXT_ALIAS_TOKENS_CLASSES } from '@utilities/tokens';
 import { SPACING_VALUES } from '@utilities/dimensions';
+import { BOX_BG_ALIAS_TOKENS_CLASSES, BOX_TEXT_ALIAS_TOKENS_CLASSES } from '@utilities/tokens';
+
+import { Flex, type FlexProps } from './Flex';
 
 const DirectionTypes = ['row', 'column', 'row-reverse', 'column-reverse'];
 

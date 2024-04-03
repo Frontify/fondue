@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MutableRefObject, useLayoutEffect, useState } from 'react';
+import { type MutableRefObject, useLayoutEffect, useState } from 'react';
 
 export const DEFAULT_DROPDOWN_MAX_HEIGHT = 'auto';
 

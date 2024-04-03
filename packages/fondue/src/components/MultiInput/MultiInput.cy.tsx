@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { TextInput } from '@components/TextInput/TextInput';
+
 import { MultiInput, MultiInputLayout } from './MultiInput';
 
 const MULTI_INPUT_COLUMNS_ID = '[data-test-id=multi-input-grid-columns]';

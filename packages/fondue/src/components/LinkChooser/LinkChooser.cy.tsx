@@ -2,11 +2,12 @@
 
 import { MenuItemContentSize, SelectionIndicatorIcon } from '@components/MenuItem';
 import { Validation, validationClassMap } from '@utilities/validation';
+
 import { LinkChooser, QUERIES_STORAGE_KEY } from './LinkChooser';
 import { data } from './mock/data';
 import { GUIDELINE_ITEMS, guidelineSection } from './mock/guidelines';
 import { TEMPLATE_ITEMS, templateSection } from './mock/templates';
-import { LinkChooserProps, SearchResult } from './types';
+import { type LinkChooserProps, type SearchResult } from './types';
 import { filterItems } from './utils/helpers';
 
 const LINK_CHOOSER_ID = '[data-test-id=link-chooser]';

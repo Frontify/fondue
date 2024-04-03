@@ -1,10 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Modality, OverlayProps } from '../../types';
 import { Overlay } from '@utilities/dialogs/Overlay';
 import { Z_INDEX_POPOVER } from '@utilities/dialogs/constants';
 import { ARROW_DARK_THEME, ARROW_LIGHT_THEME } from '@utilities/overlayStyle';
-import { WithRequired } from 'src/types/withRequired';
+import { type WithRequired } from 'src/types/withRequired';
+
+import { Modality, type OverlayProps } from '../../types';
 
 type PopoverProps = Omit<
     OverlayProps,

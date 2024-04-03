@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Template } from '@svgr/babel-plugin-transform-svg-component';
+import { type Template } from '@svgr/babel-plugin-transform-svg-component';
 
 export const IconTemplate: Template = ({ interfaces, componentName, jsx }, { tpl }) => {
     return tpl`

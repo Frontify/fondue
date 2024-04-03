@@ -1,11 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement, ReactNode } from 'react';
-import { Meta, StoryFn } from '@storybook/react';
-import { Container as ContainerComponent, ContainerProps } from './Container';
+import { type Meta, type StoryFn } from '@storybook/react';
+import { type ReactElement, type ReactNode } from 'react';
+
+import { Box } from '@components/Box';
 import { SPACING_VALUES } from '@utilities/dimensions';
 import { BOX_BG_ALIAS_TOKENS_CLASSES, BOX_TEXT_ALIAS_TOKENS_CLASSES } from '@utilities/tokens';
-import { Box } from '@components/Box';
+
+import { Container as ContainerComponent, type ContainerProps } from './Container';
 
 const spacingSelect = {
     options: Object.values(SPACING_VALUES),

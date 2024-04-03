@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { useRef } from 'react';
+
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { checkIfContainInteractiveElements } from '@utilities/elements';
-import { useRef } from 'react';
 
 export enum RadioButtonEmphasis {
     Default = 'Default',

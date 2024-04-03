@@ -1,10 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type ReactElement, useState } from 'react';
+
 import { ColorPreview } from '@components/ColorPicker';
-import { ColorPicker, ColorPickerProps } from '@components/ColorPicker/ColorPicker';
+import { ColorPicker, type ColorPickerProps } from '@components/ColorPicker/ColorPicker';
 import { Flyout } from '@components/Flyout/Flyout';
-import { ReactElement, useState } from 'react';
-import { Color, ColorFormat } from '../../types/colors';
+
+import { type Color, ColorFormat } from '../../types/colors';
+
 import { ColorInputTrigger } from './ColorPickerTrigger';
 
 export type ColorPickerFlyoutProps = Pick<ColorPickerProps, 'palettes' | 'onSelect'> & {

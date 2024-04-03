@@ -1,17 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import {
-    ChangeEvent,
-    FocusEvent,
-    FocusEventHandler,
-    KeyboardEvent,
-    KeyboardEventHandler,
-    ReactElement,
+    type ChangeEvent,
+    type FocusEvent,
+    type FocusEventHandler,
+    type KeyboardEvent,
+    type KeyboardEventHandler,
+    type ReactElement,
     cloneElement,
     useEffect,
     useRef,
     useState,
 } from 'react';
+
 import { EditableTextHelper } from '@components/EditableText/lib/helper';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';

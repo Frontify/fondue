@@ -1,11 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlatePlugin, createPluginFactory } from '@udecode/plate-core';
+import { type PlatePlugin, createPluginFactory } from '@udecode/plate-core';
 import { createIndentPlugin } from '@udecode/plate-indent';
-import { CHECKBOX_LIST_PLUGIN, ELEMENT_CHECK_ITEM } from './id';
-import { CheckboxListElement } from './CheckboxListElement';
+
+import { Plugin, type PluginProps } from '../Plugin';
+
 import { CheckboxListButton } from './CheckboxListButton';
-import { Plugin, PluginProps } from '../Plugin';
+import { CheckboxListElement } from './CheckboxListElement';
+import { CHECKBOX_LIST_PLUGIN, ELEMENT_CHECK_ITEM } from './id';
 
 export const createCheckboxListPlugin: ReturnType<typeof createPluginFactory<NonNullable<unknown>>> =
     createPluginFactory({

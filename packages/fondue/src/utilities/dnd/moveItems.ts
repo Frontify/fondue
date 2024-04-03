@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { CollisionPosition } from '@components/Tree';
-import { DraggableItem } from '@utilities/dnd/types';
+import { type CollisionPosition } from '@components/Tree';
+import { type DraggableItem } from '@utilities/dnd/types';
 
 const isFirstItemWithoutSortValue = (index: number, sort: Nullable<number>) => index === 0 && sort === null;
 const isPreviousItemWithoutSortValue = (index: number, movedItemTargetIndex: number, sort: Nullable<number>) =>

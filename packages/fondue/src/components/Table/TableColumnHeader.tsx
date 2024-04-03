@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import { type Key, cloneElement, useEffect, useRef, useState } from 'react';
+
 import { Checkbox, CheckboxState } from '@components/Checkbox/Checkbox';
 import IconArrowBidirectional from '@foundation/Icon/Generated/IconArrowBidirectional';
 import IconArrowDown from '@foundation/Icon/Generated/IconArrowDown';
@@ -8,7 +9,7 @@ import IconArrowUp from '@foundation/Icon/Generated/IconArrowUp';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import { Key, cloneElement, useEffect, useRef, useState } from 'react';
+
 import { SelectionMode, SortDirection } from './Table';
 
 export enum TableColumnHeaderType {
@@ -84,6 +85,7 @@ export const TableColumnHeader = ({
                 className="tw-pl-8 tw-py-3 tw-pr-4 tw-w-16 tw-border-l-4 tw-border-transparent tw-group tw-outline-none"
                 data-test-id="table-select-cell"
             >
+                {/* eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison */}
                 {selectionMode === SelectionMode.SingleSelect ? (
                     <span className="tw-sr-only">{ariaProps['aria-label']}</span>
                 ) : (

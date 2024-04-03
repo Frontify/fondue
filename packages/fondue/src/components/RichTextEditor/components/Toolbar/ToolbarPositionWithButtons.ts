@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type Button, type Buttons, type Plugin, type ToolbarButtons } from '../../Plugins/types';
 import { Position } from '../EditorPositioningWrapper';
-import { Button, Buttons, Plugin, ToolbarButtons } from '../../Plugins/types';
-import { ToolbarButtonsPosition } from './types';
+
+import { type ToolbarButtonsPosition } from './types';
 
 export class ToolbarPositionWithButtons implements ToolbarButtons {
     private toolbarButtons: ToolbarButtonsPosition = {

@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type PlateEditor } from '@udecode/plate-core';
 import { ELEMENT_LINK } from '@udecode/plate-link';
-import { PlateEditor } from '@udecode/plate-core';
 import { getAboveNode } from '@udecode/slate';
-import { TLinkElement } from '../types';
+
+import { type TLinkElement } from '../types';
 
 const getLinkNode = (editor: PlateEditor, cb: (link: TLinkElement) => string): string => {
     const linkNode = getAboveNode<TLinkElement>(editor, { match: { type: ELEMENT_LINK } });

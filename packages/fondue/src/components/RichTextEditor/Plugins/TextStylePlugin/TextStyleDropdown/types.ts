@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactNode } from 'react';
-import { PlateEditor } from '@udecode/plate-core';
-import { PluginButtonProps } from '../../types';
-import { Plugin } from '../../Plugin';
+import { type PlateEditor } from '@udecode/plate-core';
+import { type ReactNode } from 'react';
+
+import { type Plugin } from '../../Plugin';
+import { type PluginButtonProps } from '../../types';
 
 export type TextStyleDropdownProps = {
     editorId?: string;

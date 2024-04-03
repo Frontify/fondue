@@ -1,13 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type Meta, type StoryFn } from '@storybook/react';
+import { useState } from 'react';
+
 import { Dropdown, DropdownSize } from '@components/Dropdown/Dropdown';
 import { MenuItemContentSize } from '@components/MenuItem';
 import { TextInput } from '@components/TextInput/TextInput';
-import { IconSize } from '@foundation/Icon/IconSize';
-import { Meta, StoryFn } from '@storybook/react';
-import { useState } from 'react';
-import { MultiInput as MultiInputComponent, MultiInputLayout, MultiInputProps } from './MultiInput';
 import IconIcon from '@foundation/Icon/Generated/IconIcon';
+import { IconSize } from '@foundation/Icon/IconSize';
+
+import { MultiInput as MultiInputComponent, MultiInputLayout, type MultiInputProps } from './MultiInput';
 
 export default {
     title: 'Components/Multi Input',

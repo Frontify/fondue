@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Validation } from '@utilities/validation';
-import { ReactElement, useEffect, useState } from 'react';
-import { TextInput, TextInputProps, TextInputType } from './TextInput';
+import { type ReactElement, useEffect, useState } from 'react';
+
 import IconIcon from '@foundation/Icon/Generated/IconIcon';
+import { Validation } from '@utilities/validation';
+
+import { TextInput, type TextInputProps, TextInputType } from './TextInput';
 
 const TEXT_INPUT_COMPONENT = '[data-test-id=fondue-text-input-component]';
 const TEXT_INPUT_ID = '[data-test-id=text-input]';
@@ -20,7 +22,7 @@ const EXCLAMATION_MARK_ICON_ID = '[data-test-id=error-state-exclamation-mark-ico
 const EXTRA_ACTION_ID = '[data-test-id=fondue-extra-action-icon]';
 const EXTRA_ACTION = {
     icon: <IconIcon />,
-    onClick: () => void 0,
+    onClick: () => {},
     title: 'extra action',
 };
 

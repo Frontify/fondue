@@ -1,7 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type VariationPlacement } from '@popperjs/core';
+import { useButton } from '@react-aria/button';
+import { FocusScope, useFocusRing } from '@react-aria/focus';
+import { DismissButton, useOverlay } from '@react-aria/overlays';
+import { HiddenSelect, useSelect } from '@react-aria/select';
+import { mergeProps } from '@react-aria/utils';
+import { useSelectState } from '@react-stately/select';
+import { type ReactElement, useEffect, useRef } from 'react';
+import { usePopper } from 'react-popper';
+
 import { getDisabledItemIds, getMenuItems, mapToAriaProps } from '@components/ActionMenu/Aria/helper';
-import { MenuBlock, MenuItemType, SelectMenu } from '@components/Dropdown/SelectMenu/SelectMenu';
+import { type MenuBlock, type MenuItemType, SelectMenu } from '@components/Dropdown/SelectMenu/SelectMenu';
 import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle';
 import {
     MenuItemContent,
@@ -11,22 +21,13 @@ import {
     menuItemTextColorRecord,
 } from '@components/MenuItem';
 import { Trigger, TriggerEmphasis, TriggerSize } from '@components/Trigger/Trigger';
+import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from '@hooks/useDropdownAutoHeight';
 import { useMemoizedId } from '@hooks/useMemoizedId';
-import { VariationPlacement } from '@popperjs/core';
-import { useButton } from '@react-aria/button';
-import { FocusScope, useFocusRing } from '@react-aria/focus';
-import { DismissButton, useOverlay } from '@react-aria/overlays';
-import { HiddenSelect, useSelect } from '@react-aria/select';
-import { mergeProps } from '@react-aria/utils';
-import { useSelectState } from '@react-stately/select';
+import { EnablePortalWrapper } from '@utilities/dialogs/EnablePortalWrapper';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
-import { ReactElement, useEffect, useRef } from 'react';
-import { usePopper } from 'react-popper';
-import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from '@hooks/useDropdownAutoHeight';
-import { EnablePortalWrapper } from '@utilities/dialogs/EnablePortalWrapper';
 
-export const DEFAULT_DROPDOWN_MIN_ANIMATION_HEIGHT = 36; //Small Input height as default
+export const DEFAULT_DROPDOWN_MIN_ANIMATION_HEIGHT = 36; // Small Input height as default
 
 export enum DropdownSize {
     Small = 'Small',
@@ -98,7 +99,7 @@ export const Dropdown = ({
     'data-test-id': dataTestId = 'dropdown',
     enablePortal = true,
 }: DropdownProps): ReactElement => {
-    const activeItem = !!activeItemId ? getActiveItem(menuBlocks, activeItemId) : null;
+    const activeItem = activeItemId ? getActiveItem(menuBlocks, activeItemId) : null;
     const props = mapToAriaProps(ariaLabel, menuBlocks);
     const state = useSelectState({
         ...props,
@@ -154,10 +155,10 @@ export const Dropdown = ({
     const dropdownRef = useRef<HTMLDivElement | null>(null);
 
     const placementMap: Record<string, VariationPlacement> = {
-        ['Top-Start']: 'top-start',
-        ['Top-End']: 'top-end',
-        ['Bottom-Start']: 'bottom-start',
-        ['Bottom-End']: 'bottom-end',
+        'Top-Start': 'top-start',
+        'Top-End': 'top-end',
+        'Bottom-Start': 'bottom-start',
+        'Bottom-End': 'bottom-end',
     };
     const popperInstance = usePopper(triggerRef?.current, dropdownRef.current, {
         placement: placementMap[`${position}-${alignment}`],

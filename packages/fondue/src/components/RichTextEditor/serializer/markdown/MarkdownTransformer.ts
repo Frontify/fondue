@@ -1,8 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlateEditor } from '@udecode/plate-core';
-import { Transformer } from '../types';
+import { type PlateEditor } from '@udecode/plate-core';
+
 import { InitPlateEditor } from '@components/RichTextEditor/utils';
+
+import { type Transformer } from '../types';
 
 export abstract class MarkdownTransformer<T, R> implements Transformer<T, R> {
     protected editor: PlateEditor;

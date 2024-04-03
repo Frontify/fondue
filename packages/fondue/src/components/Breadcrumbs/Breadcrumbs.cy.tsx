@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement, useState } from 'react';
-import { BreadcrumbsProps } from './Breadcrumbs';
-import { BreadcrumbGap, Breadcrumbs, verticalGapClassMap } from './Breadcrumbs';
+import { type ReactElement, useState } from 'react';
+
+import { type BreadcrumbsProps, BreadcrumbGap, Breadcrumbs, verticalGapClassMap } from './Breadcrumbs';
 
 beforeEach('Getting the seperator', () => {
     cy.intercept('GET', '/img/diagonal-line.svg', '/public/img/diagonal-line.svg');
