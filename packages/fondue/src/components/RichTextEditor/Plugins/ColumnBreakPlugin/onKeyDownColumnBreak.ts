@@ -1,14 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Value, getNodeEntries, isBlock, someNode } from '@udecode/slate';
-import { HotkeyPlugin, KeyboardHandlerReturnType, PlateEditor, WithPlatePlugin, isHotkey } from '@udecode/plate-core';
+import {
+    type HotkeyPlugin,
+    type KeyboardHandlerReturnType,
+    type PlateEditor,
+    type WithPlatePlugin,
+    isHotkey,
+} from '@udecode/plate-core';
+import { type Value, getNodeEntries, isBlock, someNode, type TLocation } from '@udecode/slate';
+import { type BaseSyntheticEvent } from 'react';
 
-import { TLocation } from '@udecode/slate';
 import { KEY_ELEMENT_BREAK_AFTER_COLUMN } from './createColumnBreakPlugin';
 import { getColumnBreakCount } from './utils/getColumnBreakCount';
 import { setColumnBreaks } from './utils/setColumnBreaks';
 import { updateColumnBreaks } from './utils/updateColumnBreaks';
-import type { BaseSyntheticEvent } from 'react';
 
 export const toggleColumnBreak = (editor: PlateEditor<Value>, columns: number, event: BaseSyntheticEvent) => {
     event.preventDefault();

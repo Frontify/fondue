@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type PlateEditor, type WithPlatePlugin } from '@udecode/plate-core';
 import {
     deleteBackwardList,
     deleteForwardList,
@@ -8,9 +9,9 @@ import {
     insertFragmentList,
     normalizeList,
 } from '@udecode/plate-list';
-import { PlateEditor, WithPlatePlugin } from '@udecode/plate-core';
-import { Value } from '@udecode/slate';
-import { WithListPlugin } from './types';
+import { type Value } from '@udecode/slate';
+
+import { type WithListPlugin } from './types';
 
 export const withList = <V extends Value = Value, E extends PlateEditor<V> = PlateEditor<V>>(
     editor: E,

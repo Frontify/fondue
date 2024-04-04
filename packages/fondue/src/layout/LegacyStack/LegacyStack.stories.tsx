@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
+import { type Meta, type StoryFn } from '@storybook/react';
+import { type ReactElement } from 'react';
+
 import { merge } from '@utilities/merge';
-import { ReactElement } from 'react';
-import { LegacyStack, LegacyStackProps } from './LegacyStack';
+
+import { LegacyStack, type LegacyStackProps } from './LegacyStack';
 
 const Placeholder = ({
     width = 'auto',

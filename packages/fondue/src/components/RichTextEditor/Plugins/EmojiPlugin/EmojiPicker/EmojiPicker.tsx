@@ -1,15 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { EmojiSettings, UseEmojiPickerType } from '@udecode/plate-emoji';
+import { EmojiSettings, type UseEmojiPickerType } from '@udecode/plate-emoji';
+
+import {
+    emojiCategoryIcons,
+    emojiSearchIcons,
+} from '@components/RichTextEditor/Plugins/EmojiPlugin/EmojiPicker/EmojiIcons';
+
 import { EmojiPickerContent } from './EmojiPickerContent';
 import { EmojiPickerNavigation } from './EmojiPickerNavigation';
 import { EmojiPickerPreview } from './EmojiPickerPreview';
 import { EmojiPickerSearchAndClear } from './EmojiPickerSearchAndClear';
 import { EmojiPickerSearchBar } from './EmojiPickerSearchBar';
-import {
-    emojiCategoryIcons,
-    emojiSearchIcons,
-} from '@components/RichTextEditor/Plugins/EmojiPlugin/EmojiPicker/EmojiIcons';
 
 export function EmojiPicker({
     settings = EmojiSettings,

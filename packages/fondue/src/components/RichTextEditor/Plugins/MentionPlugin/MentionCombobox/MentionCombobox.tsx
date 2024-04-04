@@ -1,10 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type ComboboxProps } from '@udecode/plate-combobox';
+import { getPluginOptions, useEditorRef } from '@udecode/plate-core';
+import { ELEMENT_MENTION, type MentionPlugin, getMentionOnSelectItem } from '@udecode/plate-mention';
+
 import { MentionComboboxItem } from '@components/RichTextEditor/Plugins/MentionPlugin/MentionCombobox/MentionComboboxItem';
 import { Combobox } from '@components/RichTextEditor/components/ComboBox/Combobox';
-import { ELEMENT_MENTION, MentionPlugin, getMentionOnSelectItem } from '@udecode/plate-mention';
-import { ComboboxProps } from '@udecode/plate-combobox';
-import { getPluginOptions, useEditorRef } from '@udecode/plate-core';
 
 export function MentionCombobox({
     pluginKey = ELEMENT_MENTION,

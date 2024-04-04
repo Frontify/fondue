@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Children, ReactElement, ReactNode, cloneElement, isValidElement } from 'react';
+import { Children, type ReactElement, type ReactNode, cloneElement, isValidElement } from 'react';
 import { isFragment } from 'react-is';
 
 type EnrichedProps = {

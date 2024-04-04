@@ -1,8 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
-import { BOX_TEST_ID, Box as BoxComponent, BoxProps } from './Box';
+import { type Meta, type StoryFn } from '@storybook/react';
+
 import { SPACING_VALUES } from '@utilities/dimensions';
+
+import { BOX_TEST_ID, Box as BoxComponent, type BoxProps } from './Box';
 
 type Props = JSX.IntrinsicElements['div'] | JSX.IntrinsicElements['span'] | BoxProps;
 

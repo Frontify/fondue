@@ -1,21 +1,25 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Children, MouseEvent, memo, useCallback, useEffect, useMemo, useRef } from 'react';
 import noop from 'lodash-es/noop';
+import { Children, type MouseEvent, memo, useCallback, useEffect, useMemo, useRef } from 'react';
 
-import { type RegisterNodeChildrenPayload, TreeItemMultiselectProps, TreeItemStyling } from '@components/Tree/types';
+import { Checkbox, CheckboxEmphasis, CheckboxSize, CheckboxState } from '@components/Checkbox/Checkbox';
+import { Container } from '@components/Container';
+import {
+    type RegisterNodeChildrenPayload,
+    type TreeItemMultiselectProps,
+    type TreeItemStyling,
+} from '@components/Tree/types';
 
 import { INDENTATION_WIDTH, getMultiselectCheckBoxState } from '../helpers';
-import { removeFragmentsAndEnrichChildren, useDeepCompareEffect } from '../utils';
 import {
     getMultiselectBackgroundClassName,
     getMultiselectContainerClassName,
     getMultiselectLiClassName,
 } from '../helpers/multiselectTreeItemstyling';
+import { removeFragmentsAndEnrichChildren, useDeepCompareEffect } from '../utils';
 
 import { ExpandButton } from './ExpandButton';
-import { Checkbox, CheckboxEmphasis, CheckboxSize, CheckboxState } from '@components/Checkbox/Checkbox';
-import { Container } from '@components/Container';
 import { useMultiselectTreeItem } from './useMultiselectTreeItem';
 
 /** @private */
@@ -124,7 +128,7 @@ export const TreeItemMultiselect = memo(
         const liStyle = { paddingLeft: levelPadding };
         const backgroundStyle = itemStyleProps.borderWidth !== 'none' ? {} : { marginLeft: -1 * levelPadding };
 
-        const checkBoxOnSelect = isDisabled ? () => void 0 : () => onSelect?.(id, false);
+        const checkBoxOnSelect = isDisabled ? () => {} : () => onSelect?.(id, false);
         const checkBox =
             checkBoxPosition !== 'none' ? (
                 <Container maxWidth="16px" maxHeight="16px">
@@ -155,6 +159,7 @@ export const TreeItemMultiselect = memo(
                 id={id}
                 key={id}
                 tabIndex={0}
+                // eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role
                 role="treeitem"
                 style={liStyle}
                 onKeyDown={noop}

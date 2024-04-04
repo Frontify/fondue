@@ -2,9 +2,11 @@
 
 import { ELEMENT_LINK } from '@udecode/plate-link';
 import { ELEMENT_PARAGRAPH } from '@udecode/plate-paragraph';
-import { ReactElement } from 'react';
+import { type ReactElement } from 'react';
+
 import { LinkPlugin, PluginComposer } from '../Plugins';
 import { RichTextEditor } from '../RichTextEditor';
+
 import { insertTextAndOpenToolbar } from './fixtures/RichTextEditor';
 import {
     BUTTON,

@@ -1,7 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MarkdownToSlate } from '../MarkdownToSlate';
 import { Transform } from '../../transform';
+import { MarkdownToSlate } from '../MarkdownToSlate';
+import { type NodeType } from '../types';
+
 import {
     basicMarksMarkdown,
     basicMarksTree,
@@ -32,7 +34,6 @@ import {
     unsafeLinkMarkdown,
     unsafeLinkTree,
 } from './fixtures';
-import { NodeType } from '../types';
 
 const testCases = {
     'Basic marks': [

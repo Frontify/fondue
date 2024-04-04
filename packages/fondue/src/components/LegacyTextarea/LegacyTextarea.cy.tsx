@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Validation } from '@utilities/validation';
+
 import { LegacyTextarea } from './LegacyTextarea';
 
 const DEFAULT_TEXT = 'A new text area';

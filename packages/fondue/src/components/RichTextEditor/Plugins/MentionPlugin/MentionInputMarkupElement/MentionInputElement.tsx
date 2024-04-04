@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlateElement, PlateElementProps } from '@udecode/plate-utils';
+import { PlateElement, type PlateElementProps } from '@udecode/plate-utils';
 import { getHandler } from '@udecode/utils';
+import { type ForwardedRef, forwardRef } from 'react';
+
 import { merge } from '@utilities/merge';
-import { ForwardedRef, forwardRef } from 'react';
 
 export const MentionInputElement = forwardRef(
     (

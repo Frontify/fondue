@@ -1,8 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement } from 'react';
-import { DialogBodyProps, dialogPaddingMap } from '../../types/dialog';
+import { type ReactElement } from 'react';
+
 import { merge } from '@utilities/merge';
+
+import { type DialogBodyProps, dialogPaddingMap } from '../../types/dialog';
 
 export const DialogBody = ({
     children,

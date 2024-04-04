@@ -1,10 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement, useRef } from 'react';
-import { BreadcrumbsProps } from './Breadcrumbs';
-import { CurrentBreadcrumbItem } from './CurrentBreadcrumbItem';
+import { type ReactElement, useRef } from 'react';
+
+import { OverflowMenu, type OverflowMenuItemProps } from '../OverflowMenu';
+
 import { BreadcrumbItem } from './BreadcrumbItem';
-import { OverflowMenu, OverflowMenuItemProps } from '../OverflowMenu';
+import { type BreadcrumbsProps } from './Breadcrumbs';
+import { CurrentBreadcrumbItem } from './CurrentBreadcrumbItem';
 
 export const FormattedBreadcrumbs = ({
     items,

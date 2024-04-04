@@ -1,11 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { FloatingToolbarState, useFloatingToolbar, useFloatingToolbarState } from '@udecode/plate-floating';
+import { type FloatingToolbarState, useFloatingToolbar, useFloatingToolbarState } from '@udecode/plate-floating';
 import { PortalBody, useComposedRef } from '@udecode/react-utils';
-import { ToolbarWrapper } from './ToolbarWrapper';
-import { merge } from '@utilities/merge';
-import { ReactNode, forwardRef } from 'react';
+import { type ReactNode, forwardRef } from 'react';
+
 import { zIndexLayers } from '@components/RichTextEditor/helpers/zIndexLayers';
+import { merge } from '@utilities/merge';
+
+import { ToolbarWrapper } from './ToolbarWrapper';
 
 export const FloatingToolbar = forwardRef<
     HTMLDivElement,

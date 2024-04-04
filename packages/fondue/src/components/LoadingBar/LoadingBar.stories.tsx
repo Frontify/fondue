@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
-import { LoadingBar as LoadingBarComponent, LoadingBarProps, LoadingBarSize, LoadingBarState } from './LoadingBar';
+import { type Meta, type StoryFn } from '@storybook/react';
+
+import { LoadingBar as LoadingBarComponent, type LoadingBarProps, LoadingBarSize, LoadingBarState } from './LoadingBar';
 
 export default {
     title: 'Components/LoadingBar',

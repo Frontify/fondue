@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ForwardedRef, MutableRefObject, useEffect, useRef } from 'react';
+import { type ForwardedRef, type MutableRefObject, useEffect, useRef } from 'react';
 
 export function useForwardedRef<T>(ref: ForwardedRef<T>): MutableRefObject<T | null> {
     const innerRef = useRef(null);

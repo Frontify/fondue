@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
-import { LoadingCircle, LoadingCircleProps, LoadingCircleSize, LoadingCircleStyle } from './LoadingCircle';
+import { type Meta, type StoryFn } from '@storybook/react';
+
+import { LoadingCircle, type LoadingCircleProps, LoadingCircleSize, LoadingCircleStyle } from './LoadingCircle';
 
 export default {
     title: 'Components/LoadingCircle',

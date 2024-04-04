@@ -1,8 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
-import { Divider as DividerComponent, DividerHeight, DividerProps, DividerStyle } from './Divider';
+import { type Meta, type StoryFn } from '@storybook/react';
+
 import { Flex } from '@components/Flex';
+
+import { Divider as DividerComponent, DividerHeight, type DividerProps, DividerStyle } from './Divider';
 
 export default {
     title: 'Components/Divider',

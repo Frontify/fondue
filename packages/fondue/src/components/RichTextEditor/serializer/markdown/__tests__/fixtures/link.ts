@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Targets } from '../../types';
+
 import { createLink, createP, createText } from './helpers';
 
 export const linkMarkdownTargetSelf =

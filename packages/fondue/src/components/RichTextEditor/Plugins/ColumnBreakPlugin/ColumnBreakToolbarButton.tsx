@@ -1,20 +1,22 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
-import { PlateEditor, PlatePlugin, useEditorState, useEventPlateId } from '@udecode/plate-core';
+import { type PlateEditor, type PlatePlugin, useEditorState, useEventPlateId } from '@udecode/plate-core';
 import { someNode } from '@udecode/slate';
+
+import { IconStylingWrapper } from '@components/RichTextEditor/Plugins/helper';
+import { ToolbarButton } from '@components/RichTextEditor/components/Toolbar/ToolbarButton';
+import { type ToolbarButtonProps } from '@components/RichTextEditor/components/Toolbar/types';
+import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
+import IconTextColumnBreak16 from '@foundation/Icon/Generated/IconTextColumnBreak16';
+
 import { toggleColumnBreak } from './onKeyDownColumnBreak';
 import { getColumnBreakCount } from './utils/getColumnBreakCount';
-import { ToolbarButton } from '@components/RichTextEditor/components/Toolbar/ToolbarButton';
-import { IconStylingWrapper } from '@components/RichTextEditor/Plugins/helper';
-import IconTextColumnBreak16 from '@foundation/Icon/Generated/IconTextColumnBreak16';
-import { ToolbarButtonProps } from '@components/RichTextEditor/components/Toolbar/types';
 
 export const ColumnBreakToolbarButton = ({ id, ...props }: ToolbarButtonProps) => {
     const editor = useEditorState(useEventPlateId(id));
     const isActive = !!editor?.selection && someNode(editor, { match: (node) => !!node.breakAfterColumn });
 
-    const columns = (editor?.pluginsByKey['breakAfterColumn'] as PlatePlugin)?.options?.columns;
+    const columns = (editor?.pluginsByKey.breakAfterColumn as PlatePlugin)?.options?.columns;
 
     const columnCount = Number(columns) || 1;
     const canBreakAfter = isColumnBreakEnabled(editor, columnCount, isActive);

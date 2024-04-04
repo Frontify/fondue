@@ -1,12 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { Children, type ReactNode, isValidElement, useEffect, useRef, useState } from 'react';
+
 import { LegacyTooltip, TooltipAlignment, TooltipPosition } from '@components/LegacyTooltip';
 import IconQuestionMarkCircle from '@foundation/Icon/Generated/IconQuestionMarkCircle';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { generateRandomId } from '@utilities/generateRandomId';
 import { merge } from '@utilities/merge';
-import { Children, ReactNode, isValidElement, useEffect, useRef, useState } from 'react';
-import { RadioButtonEmphasis, RadioButtonProps } from './RadioButton';
+
+import { RadioButtonEmphasis, type RadioButtonProps } from './RadioButton';
 
 export enum RadioListDirection {
     Horizontal = 'Horizontal',

@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
+
 import {
     extractNodeFromElement,
     getReactNodeIdsInFlatArray,

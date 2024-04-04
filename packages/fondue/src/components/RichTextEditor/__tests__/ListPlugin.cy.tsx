@@ -1,8 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ELEMENT_LI, ELEMENT_LIC, ELEMENT_OL } from '@udecode/plate-list';
+
 import { OrderedListPlugin, PluginComposer, UnorderedListPlugin } from '../Plugins';
 import { RichTextEditor } from '../RichTextEditor';
+
 import {
     RichTextEditorWithOrderedListStyles,
     RichTextEditorWithUnorderedListStyles,

@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { AlignCenterMarkupElement } from './AlignCenterMarkupElement';
-import { AlignCenterButton } from './AlignCenterButton';
 import { AlignPlugin } from '../AlignPlugin';
-import { AlignPluginProps } from '../types';
+import { type AlignPluginProps } from '../types';
+
+import { AlignCenterButton } from './AlignCenterButton';
+import { AlignCenterMarkupElement } from './AlignCenterMarkupElement';
 
 export class AlignCenterPlugin extends AlignPlugin {
     constructor(props?: AlignPluginProps) {

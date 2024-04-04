@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type ReferenceType, autoUpdate, flip, shift } from '@udecode/plate-floating';
 import { useEffect, useRef } from 'react';
-import { ReferenceType, autoUpdate, flip, shift } from '@udecode/plate-floating';
-import { ToolbarWrapperProps } from './types';
+
 import { FloatingToolbar } from '@components/RichTextEditor/components/Toolbar/FloatingToolbar';
+
+import { type ToolbarWrapperProps } from './types';
 
 export const ToolbarWrapperPositioningFloating = ({ children }: ToolbarWrapperProps) => {
     const cleanupFunction = useRef<() => void | undefined>();

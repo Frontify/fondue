@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { DraggableItem } from '@utilities/dnd/types';
+import { type DraggableItem } from '@utilities/dnd/types';
 
 export const draggableItemCompareFn = <T extends object>(itemA: DraggableItem<T>, itemB: DraggableItem<T>): number => {
     if (itemA.sort === null && itemB.sort === null) {

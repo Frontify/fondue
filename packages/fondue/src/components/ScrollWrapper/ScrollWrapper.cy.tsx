@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ScrollWrapper } from './ScrollWrapper';
-import { ScrollWrapperDirection, ScrollWrapperProps } from './types';
+import { ScrollWrapperDirection, type ScrollWrapperProps } from './types';
 
 const SCROLL_WRAPPER_CONTAINER = '[data-test-id=scroll-wrapper]';
 const SCROLL_WRAPPER_TOP_SHADOW_ID = '[data-test-id=fondue-scrollwrapper-top-shadow]';

@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useRef, useState } from 'react';
-import { Menu, MenuProps } from '../Menu';
-import { MenuItem } from '@components/MenuItem';
+
 import { Button } from '@components/Button';
+import { MenuItem } from '@components/MenuItem';
+
+import { Menu, type MenuProps } from '../Menu';
 
 export interface Item {
     label: string;
@@ -12,9 +14,9 @@ export interface Item {
     disabled?: boolean;
 }
 export const ITEMS: Item[] = [
-    { label: 'Button Item 1', onClick: () => void 0 },
-    { label: 'Button Item 2', onClick: () => void 0 },
-    { label: 'Button Item 3', onClick: () => void 0 },
+    { label: 'Button Item 1', onClick: () => {} },
+    { label: 'Button Item 2', onClick: () => {} },
+    { label: 'Button Item 3', onClick: () => {} },
 ];
 
 export const ITEMS_WITH_LINKS: Item[] = [
@@ -111,9 +113,9 @@ ${BASIC_MENU_CODE_SNIPPET}
 
 <BasicMenuComponent
     items={[
-    { label: 'Button Item 1', onClick: () => void 0 },
-    { label: 'Button Item 2', onClick: () => void 0 },
-    { label: 'Button Item 3', onClick: () => void 0 },
+    { label: 'Button Item 1', onClick: () => {} },
+    { label: 'Button Item 2', onClick: () => {} },
+    { label: 'Button Item 3', onClick: () => {} },
   ]}
 />
 `;

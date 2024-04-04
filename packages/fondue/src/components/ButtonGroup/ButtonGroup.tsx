@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Children, ReactElement, ReactNode, cloneElement, isValidElement } from 'react';
-import { ButtonProps, ButtonSize } from '@components/Button';
+import { Children, type ReactElement, type ReactNode, cloneElement, isValidElement } from 'react';
+
+import { type ButtonProps, ButtonSize } from '@components/Button';
 import { merge } from '@utilities/merge';
 
 export type ButtonGroupProps = { size: ButtonSize; children?: ReactNode; 'data-test-id'?: string };

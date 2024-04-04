@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { DialogHeader } from './DialogHeader';
-import IconIcon from '@foundation/Icon/Generated/IconIcon';
 import { Badge, BadgeStyle } from '@components/Badge';
+import IconIcon from '@foundation/Icon/Generated/IconIcon';
+
+import { DialogHeader } from './DialogHeader';
 
 const DIALOG_HEADER_SELECTOR = '[data-test-id=fondue-dialog-header]';
 const DIALOG_HEADER_TITLE = '[data-test-id=fondue-dialog-header-title]';

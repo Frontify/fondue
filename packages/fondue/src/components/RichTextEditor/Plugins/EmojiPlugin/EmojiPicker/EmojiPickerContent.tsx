@@ -1,7 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import {
+    type Emoji,
+    type EmojiCategoryList,
+    EmojiSettings,
+    type GridRow,
+    type UseEmojiPickerType,
+} from '@udecode/plate-emoji';
 import { useCallback } from 'react';
-import { Emoji, EmojiCategoryList, EmojiSettings, GridRow, UseEmojiPickerType } from '@udecode/plate-emoji';
 
 export type EmojiPickerContentProps = Pick<
     UseEmojiPickerType,

@@ -1,10 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Dialog, DialogProps } from './Dialog';
-import { Button } from '@components/Button';
-import { DialogHeader } from '@components/DialogHeader';
-import { DialogBody } from '@components/DialogBody';
 import { useRef, useState } from 'react';
+
+import { Button } from '@components/Button';
+import { DialogBody } from '@components/DialogBody';
+import { DialogHeader } from '@components/DialogHeader';
+
+import { Dialog, type DialogProps } from './Dialog';
 
 const DIALOG_SELECTOR = '[data-test-id=fondue-dialog-content]';
 

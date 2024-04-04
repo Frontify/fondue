@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { LeafType } from '../types';
+import { type LeafType } from '../types';
 
 const reverseStr = (string: string) => string.split('').reverse().join('');
 

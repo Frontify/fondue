@@ -1,26 +1,28 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { BadgeStatus, BadgeStyle } from '@components/Badge';
-import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
-import { Divider } from '@components/Divider/Divider';
-import { FormControl } from '@components/FormControl/FormControl';
-import { SegmentedControls } from '@components/SegmentedControls/SegmentedControls';
-import { LegacyTextarea } from '@components/LegacyTextarea/LegacyTextarea';
-import { TextInput } from '@components/TextInput/TextInput';
 import { chain } from '@react-aria/utils';
 import { action } from '@storybook/addon-actions';
-import { Meta, StoryFn } from '@storybook/react';
-import { FOCUS_STYLE } from '@utilities/focusStyle';
-import { merge } from '@utilities/merge';
-import { MutableRefObject, useState } from 'react';
-import { FLYOUT_DIVIDER_COLOR, FLYOUT_DIVIDER_HEIGHT, Flyout, FlyoutPlacement, FlyoutProps } from './Flyout';
-import { FlyoutFooter } from './FlyoutFooter';
-import { Dropdown } from '@components/Dropdown';
+import { type Meta, type StoryFn } from '@storybook/react';
+import { type MutableRefObject, useState } from 'react';
+
+import { BadgeStatus, BadgeStyle } from '@components/Badge';
+import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
 import { DatePicker } from '@components/DatePicker';
+import { Divider } from '@components/Divider/Divider';
+import { Dropdown } from '@components/Dropdown';
+import { FormControl } from '@components/FormControl/FormControl';
+import { LegacyTextarea } from '@components/LegacyTextarea/LegacyTextarea';
+import { SegmentedControls } from '@components/SegmentedControls/SegmentedControls';
+import { TextInput } from '@components/TextInput/TextInput';
 import { TooltipIcon } from '@components/TooltipIcon';
 import IconDotsVertical from '@foundation/Icon/Generated/IconDotsVertical';
-import IconIcon from '@foundation/Icon/Generated/IconIcon';
 import IconExclamationMarkCircle from '@foundation/Icon/Generated/IconExclamationMarkCircle';
+import IconIcon from '@foundation/Icon/Generated/IconIcon';
+import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { merge } from '@utilities/merge';
+
+import { FLYOUT_DIVIDER_COLOR, FLYOUT_DIVIDER_HEIGHT, Flyout, FlyoutPlacement, type FlyoutProps } from './Flyout';
+import { FlyoutFooter } from './FlyoutFooter';
 
 export default {
     title: 'Deprecated/Flyout',

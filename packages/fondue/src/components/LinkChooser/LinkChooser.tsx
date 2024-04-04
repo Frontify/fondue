@@ -1,16 +1,24 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { mapToAriaProps } from '@components/ActionMenu/Aria/helper';
-import { Checkbox, CheckboxState } from '@components/Checkbox/Checkbox';
-import { useDropdownAutoHeight } from '@hooks/useDropdownAutoHeight';
 import { useComboBox } from '@react-aria/combobox';
 import { DismissButton } from '@react-aria/overlays';
 import { scrollIntoView } from '@react-aria/utils';
 import { useComboBoxState } from '@react-stately/combobox';
-import { Validation } from '@utilities/validation';
 import { useMachine } from '@xstate/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Key, MouseEvent, ReactElement, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { type Key, type MouseEvent, type ReactElement, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
+import { mapToAriaProps } from '@components/ActionMenu/Aria/helper';
+import { Checkbox, CheckboxState } from '@components/Checkbox/Checkbox';
+import IconArrowOutExternal from '@foundation/Icon/Generated/IconArrowOutExternal';
+import IconBuildingBlock from '@foundation/Icon/Generated/IconBuildingBlock';
+import IconDocument from '@foundation/Icon/Generated/IconDocument';
+import IconDocumentStack from '@foundation/Icon/Generated/IconDocumentStack';
+import IconLayersSingle from '@foundation/Icon/Generated/IconLayersSingle';
+import IconLink from '@foundation/Icon/Generated/IconLink';
+import { useDropdownAutoHeight } from '@hooks/useDropdownAutoHeight';
+import { Validation } from '@utilities/validation';
+
 import { NavigationMenu } from './NavigationMenu';
 import { Popover } from './Popover';
 import { SearchInput } from './SearchInput';
@@ -18,17 +26,11 @@ import { SearchResultsList } from './SearchResultsList';
 import { defaultSection } from './sections';
 import { linkChooserMachine } from './state/machine';
 import { LinkChooserState } from './state/types';
-import { IconName, LinkChooserProps, SearchMenuBlock } from './types';
+import { IconName, type LinkChooserProps, type SearchMenuBlock } from './types';
 import { decoratedResults, doesContainSubstring, findSection, getDefaultData } from './utils/helpers';
 import { closeBoxState, isLoaded, openBoxState, queryMatchesSelection, shouldGoBack } from './utils/state';
 import { createCustomLink } from './utils/transformers';
 import { useManualComboBoxEventHandlers } from './utils/useManualComboBoxHandlers';
-import IconDocument from '@foundation/Icon/Generated/IconDocument';
-import IconDocumentStack from '@foundation/Icon/Generated/IconDocumentStack';
-import IconLink from '@foundation/Icon/Generated/IconLink';
-import IconArrowOutExternal from '@foundation/Icon/Generated/IconArrowOutExternal';
-import IconLayersSingle from '@foundation/Icon/Generated/IconLayersSingle';
-import IconBuildingBlock from '@foundation/Icon/Generated/IconBuildingBlock';
 
 export const IconOptions: Record<IconName | string, ReactElement> = {
     [IconName.Document]: <IconDocument />,

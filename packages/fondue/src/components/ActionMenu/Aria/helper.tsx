@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Item, Section } from '@react-stately/collections';
-import { ReactNode } from 'react';
-import { ActionMenuBlock, ActionMenuItemType } from '../ActionMenu/ActionMenu';
-import { MenuBlock, MenuItemType } from '../../Dropdown/SelectMenu/SelectMenu';
+import { type ReactNode } from 'react';
+
+import { type MenuBlock, type MenuItemType } from '../../Dropdown/SelectMenu/SelectMenu';
+import { type ActionMenuBlock, type ActionMenuItemType } from '../ActionMenu/ActionMenu';
 
 export type MenuStateType = {
     'aria-label': string;
@@ -11,7 +12,7 @@ export type MenuStateType = {
 };
 
 // Method return type is unclear because React Aria hook props are inexplicitly typed
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+
 export const mapToAriaProps = (ariaLabel: string, menuBlocks: MenuBlock[] | ActionMenuBlock[]) => ({
     'aria-label': ariaLabel,
     children: menuBlocks.map(({ id, menuItems, ariaLabel: sectionAriaLabel }) => (

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { DraggableItem } from '@utilities/dnd/types';
 import { moveItems } from '@utilities/dnd/moveItems';
+import { type DraggableItem } from '@utilities/dnd/types';
 
 const items: DraggableItem[] = [
     {

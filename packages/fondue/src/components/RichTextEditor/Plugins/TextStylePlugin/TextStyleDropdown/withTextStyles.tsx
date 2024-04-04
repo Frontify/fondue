@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-/* eslint-disable react/display-name */
+import { type ComponentType } from 'react';
 
-import { ComponentType } from 'react';
-import { Plugin } from '../../Plugin';
+import { type Plugin } from '../../Plugin';
 
 export const withTextStyles =
     <T extends Record<string, unknown>>(Component: ComponentType<T>, textStyles: Plugin[]) =>
+    // eslint-disable-next-line react/display-name
     (props: T) => <Component {...props} textStyles={textStyles} />;

@@ -1,11 +1,21 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PlatePlugin, PlatePluginComponent } from '@udecode/plate-core';
+import { type PlatePlugin, type PlatePluginComponent } from '@udecode/plate-core';
+import { type CSSProperties } from 'react';
+
 import { ToolbarPositionWithButtons } from '../components/Toolbar/ToolbarPositionWithButtons';
-import { MarkupElement } from './MarkupElement';
-import { InlineData, ObjectType, PlatePluginList, Plugin, PluginComposerProps, Plugins, ToolbarButtons } from './types';
-import { CSSProperties } from 'react';
-import { PluginProps } from './Plugin';
+
+import { type MarkupElement } from './MarkupElement';
+import { type PluginProps } from './Plugin';
+import {
+    type InlineData,
+    type ObjectType,
+    type PlatePluginList,
+    type Plugin,
+    type PluginComposerProps,
+    type Plugins,
+    type ToolbarButtons,
+} from './types';
 
 export class PluginComposer {
     private platePlugins: PlatePluginList = new Map();

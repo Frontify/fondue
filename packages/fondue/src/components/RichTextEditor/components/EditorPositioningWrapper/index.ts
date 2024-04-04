@@ -1,12 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { EditorPositioningWrapperProps, Position } from './types';
+import { merge } from '@utilities/merge';
+
 import {
     ToolbarWrapperPositioningBottom,
     ToolbarWrapperPositioningFloating,
     ToolbarWrapperPositioningTop,
 } from './ToolbarWrapper';
-import { merge } from '@utilities/merge';
+import { type EditorPositioningWrapperProps, Position } from './types';
 
 export { Position } from './types';
 export const EditorPositioningWrapper: EditorPositioningWrapperProps = {

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement } from 'react';
-import { EmojiCategoryList } from '@udecode/plate-emoji';
+import { type EmojiCategoryList } from '@udecode/plate-emoji';
+import { type ReactElement } from 'react';
 
 export const emojiCategoryIcons: Record<EmojiCategoryList, { outline: ReactElement; solid: ReactElement }> = {
     activity: {

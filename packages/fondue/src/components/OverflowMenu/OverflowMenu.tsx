@@ -1,12 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MouseEvent, useRef, useState } from 'react';
-import IconDotsHorizontal from '@foundation/Icon/Generated/IconDotsHorizontal';
-import { merge } from '@utilities/merge';
-import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
+import { useFocusRing } from '@react-aria/focus';
+import { type MouseEvent, useRef, useState } from 'react';
+
 import { Menu } from '@components/Menu';
 import { MenuItem } from '@components/MenuItem';
-import { useFocusRing } from '@react-aria/focus';
+import IconDotsHorizontal from '@foundation/Icon/Generated/IconDotsHorizontal';
+import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
+import { merge } from '@utilities/merge';
 
 export interface OverflowMenuItemProps {
     id?: string;

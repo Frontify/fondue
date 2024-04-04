@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Checkbox, CheckboxProps, CheckboxSize, CheckboxState } from './Checkbox';
-import { ReactElement, useState } from 'react';
+import { type ReactElement, useState } from 'react';
+
+import { Checkbox, type CheckboxProps, CheckboxSize, CheckboxState } from './Checkbox';
 
 const CHECKBOX_LABEL = 'Checkbox label';
 const CHECKBOX_LONG_LABEL =

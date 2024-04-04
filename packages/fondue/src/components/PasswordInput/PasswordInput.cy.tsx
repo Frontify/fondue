@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Validation } from '@utilities/validation';
+
 import { PasswordInput } from './PasswordInput';
 
 const PASSWORD_INPUT = '[data-test-id=fondue-password-input]';

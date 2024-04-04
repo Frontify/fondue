@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MutableRefObject, Ref, RefCallback } from 'react';
+import { type MutableRefObject, type Ref, type RefCallback } from 'react';
 
 /**
  * Cleans and joins an array of inputs with possible undefined or boolean values.

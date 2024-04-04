@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import IconIcon from '@foundation/Icon/Generated/IconIcon';
-import { AssetType } from './AssetInput';
+
+import { type AssetType } from './AssetInput';
 
 export const EXAMPLE_IMAGES: AssetType[] = [
     {

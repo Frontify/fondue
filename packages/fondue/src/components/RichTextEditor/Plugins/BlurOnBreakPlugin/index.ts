@@ -1,10 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { BLUR_ON_BREAK_PLUGIN } from './id';
-import { Plugin, PluginProps } from '../Plugin';
+import { type PlatePlugin } from '@udecode/plate-core';
+
+import { Plugin, type PluginProps } from '../Plugin';
+
 import { createBlurOnBreakPlugin } from './createBlurOnBreakPlugin';
-import { BlurOnBreakPlatePlugin } from './types';
-import { PlatePlugin } from '@udecode/plate-core';
+import { BLUR_ON_BREAK_PLUGIN } from './id';
+import { type BlurOnBreakPlatePlugin } from './types';
 
 export type BlurOnBreakPluginProps = PluginProps & BlurOnBreakPlatePlugin;
 

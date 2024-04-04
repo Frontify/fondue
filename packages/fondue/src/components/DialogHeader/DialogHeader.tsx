@@ -1,11 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { merge } from '@utilities/merge';
-import IconCross from '@foundation/Icon/Generated/IconCross';
-import { Flex } from '@components/Flex';
 import { Box } from '@components/Box';
-import { DialogHeaderProps, dialogHeadingMap, dialogPaddingMap } from '../../types';
+import { Flex } from '@components/Flex';
+import IconCross from '@foundation/Icon/Generated/IconCross';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
+import { merge } from '@utilities/merge';
+
+import { type DialogHeaderProps, dialogHeadingMap, dialogPaddingMap } from '../../types';
 
 export const DialogHeader = ({
     title,

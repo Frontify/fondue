@@ -1,8 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactElement } from 'react';
+import { type ReactElement } from 'react';
+
+import { type TreeNodeWithoutElements, type TreeState } from '../types';
+
 import { ROOT_ID } from './constants';
-import { TreeNodeWithoutElements, TreeState } from '../types';
 
 export const removeReactNodesFromFlatArray = (tree: ReactElement[], nodeIds: string[]): ReactElement[] => {
     // Create a set of the node IDs to remove for faster lookup
@@ -21,16 +23,16 @@ export const getReactNodeIdsInFlatArray = (tree: ReactElement[], startingNodeId:
     // Find the node with the given id
     const startingNode = nodeMap.get(startingNodeId);
 
-    if (startingNode) {
-        // Recursively find all child nodes
-        function findChildNodes(nodeId: number) {
-            const children = tree.filter((child) => child.props.parentId === nodeId);
-            for (const child of children) {
-                nodeIds.push(child.props.id);
-                findChildNodes(child.props.id);
-            }
+    // Recursively find all child nodes
+    function findChildNodes(nodeId: number) {
+        const children = tree.filter((child) => child.props.parentId === nodeId);
+        for (const child of children) {
+            nodeIds.push(child.props.id);
+            findChildNodes(child.props.id);
         }
+    }
 
+    if (startingNode) {
         findChildNodes(startingNode.props.id);
     }
 
@@ -46,16 +48,16 @@ export const getReactNodesInFlatArray = (tree: ReactElement[], startingNodeId: s
     // Find the node with the given id
     const startingNode = nodeMap.get(startingNodeId);
 
-    if (startingNode) {
-        // Recursively find all child nodes
-        function findChildNodes(nodeId: number) {
-            const children = tree.filter((child) => child.props.parentId === nodeId);
-            for (const child of children) {
-                nodes.push(child);
-                findChildNodes(child.props.id);
-            }
+    // Recursively find all child nodes
+    function findChildNodes(nodeId: number) {
+        const children = tree.filter((child) => child.props.parentId === nodeId);
+        for (const child of children) {
+            nodes.push(child);
+            findChildNodes(child.props.id);
         }
+    }
 
+    if (startingNode) {
         findChildNodes(startingNode.props.id);
     }
 

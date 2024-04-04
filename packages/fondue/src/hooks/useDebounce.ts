@@ -8,6 +8,7 @@ export const useDebounce = <T extends unknown[]>(func: (...args: T) => void, tim
     const debouncedFunc = useCallback(
         (...args: T) => {
             clearTimeout(timer.current);
+            // eslint-disable-next-line no-invalid-this
             timer.current = setTimeout(() => func.apply(this, args), timeout);
         },
         [func, timeout],

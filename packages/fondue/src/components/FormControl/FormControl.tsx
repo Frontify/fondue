@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { InputLabel, InputLabelProps } from '@components/InputLabel/InputLabel';
+import { type ReactElement, type ReactNode, cloneElement, isValidElement } from 'react';
+
+import { InputLabel, type InputLabelProps } from '@components/InputLabel/InputLabel';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
-import { ReactElement, ReactNode, cloneElement, isValidElement } from 'react';
 
 export enum FormControlStyle {
     Primary = 'Primary',

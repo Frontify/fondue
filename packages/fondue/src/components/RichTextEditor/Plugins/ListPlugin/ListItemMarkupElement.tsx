@@ -1,11 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TElement } from '@udecode/slate';
+import { type PlateRenderElementProps } from '@udecode/plate-core';
 import { ELEMENT_LI } from '@udecode/plate-list';
-import { PlateRenderElementProps } from '@udecode/plate-core';
-import { CSSProperties } from 'react';
-import { MarkupElement } from '../MarkupElement';
+import { type TElement } from '@udecode/slate';
+import { type CSSProperties } from 'react';
+
 import { useRichTextEditorContext } from '@components/RichTextEditor/context';
+
+import { MarkupElement } from '../MarkupElement';
 import { TextStyles } from '../TextStylePlugin';
 
 export const LI_CLASSNAMES =

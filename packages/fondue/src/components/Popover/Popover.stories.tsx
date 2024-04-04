@@ -1,14 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
-import { Popover } from '@components/Popover/Popover';
-import { Button } from '@components/Button';
-import IconExclamationMarkTriangle16 from '@foundation/Icon/Generated/IconExclamationMarkTriangle16';
-import { Container } from '@components/Container';
-import { POPPER_STORY_ARGS } from '@components/Popper/constantStories';
-import { OverlayProps } from '../../types';
+import { type Meta, type StoryFn } from '@storybook/react';
 import { useRef, useState } from 'react';
+
+import { Button } from '@components/Button';
+import { Container } from '@components/Container';
+import { Popover } from '@components/Popover/Popover';
+import { POPPER_STORY_ARGS } from '@components/Popper/constantStories';
+import IconExclamationMarkTriangle16 from '@foundation/Icon/Generated/IconExclamationMarkTriangle16';
 import IconJohanna from '@foundation/Icon/Generated/IconJohanna';
+
+import { type OverlayProps } from '../../types';
 
 export default {
     title: 'Experimental/Popover',

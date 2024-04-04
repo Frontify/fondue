@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactNode } from 'react';
-import { Position } from '../EditorPositioningWrapper';
-import { Button, Buttons, ToolbarButtons } from '../../Plugins/types';
-import * as ToolbarPrimitive from '@radix-ui/react-toolbar';
+import { type ReactNode } from 'react';
+
+import { type Button, type Buttons, type ToolbarButtons } from '../../Plugins/types';
+import { type Position } from '../EditorPositioningWrapper';
+
+import type * as ToolbarPrimitive from '@radix-ui/react-toolbar';
 
 export type ToolbarButtonsPosition = Record<Position, Buttons>;
 

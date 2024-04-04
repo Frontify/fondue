@@ -1,16 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { MARK_BOLD, MARK_CODE, MARK_ITALIC, MARK_STRIKETHROUGH, MARK_UNDERLINE } from '@udecode/plate-basic-marks';
-import { TDescendant, TNode } from '@udecode/slate';
-import { ELEMENT_MENTION } from '@udecode/plate-mention';
 import { ELEMENT_LINK } from '@udecode/plate-link';
-import { ELEMENT_PARAGRAPH } from '@udecode/plate-paragraph';
 import { ELEMENT_LI, ELEMENT_LIC, ELEMENT_OL, ELEMENT_UL } from '@udecode/plate-list';
+import { ELEMENT_MENTION } from '@udecode/plate-mention';
+import { ELEMENT_PARAGRAPH } from '@udecode/plate-paragraph';
+import { type TDescendant, type TNode } from '@udecode/slate';
+
 import { ELEMENT_BUTTON } from '../../Plugins';
 import { ELEMENT_CHECK_ITEM } from '../../Plugins/CheckboxListPlugin/id';
-import { mixedMarkdownWithUnsafeLink1 } from '../../serializer/markdown/__tests__/fixtures';
 import { MARK_TEXT_STYLE } from '../../Plugins/ListPlugin/ListPlugin';
 import { TextStyles } from '../../Plugins/TextStylePlugin/types';
+import { mixedMarkdownWithUnsafeLink1 } from '../../serializer/markdown/__tests__/fixtures';
 
 type CreateElementProps = {
     text: string;
@@ -380,6 +381,7 @@ export const alignedValues = [
     },
 ];
 
+/* eslint-disable no-irregular-whitespace */
 export const htmlValue = `
         <p><strong>This text is bold.</strong></p>
         <p><i>This text is italic.</i></p>
@@ -417,6 +419,7 @@ export const htmlValue = `
         <blockquote>Quote</blockquote>
         <a class="btn btn-primary" contenteditable="false" href="https://smartive.ch/" data-design="primary">﻿<span contenteditable="false">Test</span>﻿</a>
     `;
+/* eslint-enable no-irregular-whitespace */
 
 export const checkboxValue = [
     {

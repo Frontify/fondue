@@ -1,16 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { UseVirtualFloatingOptions, flip, offset } from '@udecode/plate-floating';
+import { type UseVirtualFloatingOptions, flip, offset } from '@udecode/plate-floating';
 import {
-    LinkFloatingToolbarState,
+    type LinkFloatingToolbarState,
     useFloatingLinkEdit,
     useFloatingLinkEditState,
     useFloatingLinkInsert,
     useFloatingLinkInsertState,
 } from '@udecode/plate-link';
+
+import { zIndexLayers } from '@components/RichTextEditor/helpers/zIndexLayers';
+
 import { EditModal } from './EditLinkModal';
 import { InsertLinkModal } from './InsertLinkModal/InsertLinkModal';
-import { zIndexLayers } from '@components/RichTextEditor/helpers/zIndexLayers';
 
 const floatingOptions: UseVirtualFloatingOptions = {
     placement: 'bottom-start',

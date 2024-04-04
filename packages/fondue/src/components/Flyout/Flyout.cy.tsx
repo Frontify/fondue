@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type ReactElement, useState } from 'react';
+
 import { ButtonEmphasis, ButtonStyle } from '@components/Button';
 import { TextInput } from '@components/TextInput/TextInput';
-import { ReactElement, useState } from 'react';
-import { Flyout, FlyoutProps } from './Flyout';
+
+import { Flyout, type FlyoutProps } from './Flyout';
 import { FlyoutFooter } from './FlyoutFooter';
 
 const FLYOUT_TRIGGER_ID = '[data-test-id=flyout-trigger]';

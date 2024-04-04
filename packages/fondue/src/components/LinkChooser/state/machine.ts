@@ -1,8 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { DoneInvokeEvent, createMachine } from 'xstate';
-import { LinkChooserContext, LinkChooserEventData } from '../types';
+import { type DoneInvokeEvent, createMachine } from 'xstate';
+
+import { type LinkChooserContext, type LinkChooserEventData } from '../types';
 import { isFetching } from '../utils/state';
+
 import {
     clearSelectedResult,
     copyLinkToClipboard,

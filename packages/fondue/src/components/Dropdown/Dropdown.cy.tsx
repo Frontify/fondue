@@ -1,11 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MenuBlock } from '@components/Dropdown/SelectMenu/SelectMenu';
+import { type ReactElement, useState } from 'react';
+
+import { type MenuBlock } from '@components/Dropdown/SelectMenu/SelectMenu';
 import { MenuItemContentSize } from '@components/MenuItem';
 import IconIcon from '@foundation/Icon/Generated/IconIcon';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { Validation } from '@utilities/validation';
-import { ReactElement, useState } from 'react';
+
 import { Dropdown } from './Dropdown';
 
 const DROPDOWN_TRIGGER_ID = '[data-test-id=dropdown-trigger]';
@@ -204,6 +206,7 @@ describe('Dropdown Component', () => {
         cy.get(MENU_ITEM_TITLE_ID).contains('Select item');
         cy.get(TRIGGER_ID)
             .invoke('css', 'width')
+            // eslint-disable-next-line @typescript-eslint/no-base-to-string
             .then((width) => cy.get(TRIGGER_ID).click(parseInt(width.toString()) - MARGIN_RIGHT, MARGIN_TOP));
         cy.get(MENU_ITEM_LIST_ID).children().should('have.length', 5);
     });

@@ -1,15 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type HTMLAttributes } from 'react';
+
 import {
     GetMarginClassNames,
     GetPaddingClassNames,
     MARGIN_DIRECTIONS,
     PADDING_DIRECTIONS,
-    SpacingValue,
+    type SpacingValue,
 } from '@utilities/dimensions';
 import { merge } from '@utilities/index';
-import { HTMLAttributes } from 'react';
-import { ContainerHTMLElement } from '../../types/elements';
+
+import { type ContainerHTMLElement } from '../../types/elements';
 
 export type BoxProps = {
     'data-test-id'?: string;

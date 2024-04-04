@@ -1,13 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { useId } from '@react-aria/utils';
+import { type Meta, type StoryFn } from '@storybook/react';
+import { useState } from 'react';
+
 import { Button } from '@components/Button';
 import { FormControl, FormControlDirection, FormControlStyle } from '@components/FormControl';
 import { TextInput } from '@components/TextInput';
-import { useId } from '@react-aria/utils';
-import { Meta, StoryFn } from '@storybook/react';
-import { useState } from 'react';
+
 import { ScrollWrapper } from './ScrollWrapper';
-import { ScrollWrapperDirection, ScrollWrapperProps } from './types';
+import { ScrollWrapperDirection, type ScrollWrapperProps } from './types';
 
 export default {
     title: 'Components/ScrollWrapper',

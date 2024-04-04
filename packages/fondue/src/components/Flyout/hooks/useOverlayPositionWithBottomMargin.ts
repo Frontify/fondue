@@ -1,10 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { AriaPositionProps, useOverlayPosition } from '@react-aria/overlays';
-import { MutableRefObject, useLayoutEffect, useState } from 'react';
+import { type AriaPositionProps, useOverlayPosition } from '@react-aria/overlays';
+import { type MutableRefObject, useLayoutEffect, useState } from 'react';
+
+import { FlyoutPlacement } from '@components/Flyout';
+
 import { getTotalOverlayHeight } from '../helpers/getTotalOverlayHeight';
 import { getVerticalPositioning } from '../helpers/getVerticalPositioning';
-import { FlyoutPlacement } from '@components/Flyout';
 
 const FLYOUT_OVERLAY_OFFSET = 5;
 const DEFAULT_OVERLAY_PADDING = 12;
@@ -21,14 +23,14 @@ type UseOverlayPositionWithBottomMarginProps = {
 };
 
 const flippedPositionMap: Record<FlyoutPlacement, AriaPositionProps['placement']> = {
-    ['top']: 'bottom',
-    ['bottom']: 'top',
-    ['left']: 'right',
-    ['right']: 'left',
-    ['top left']: 'bottom left',
-    ['top right']: 'bottom right',
-    ['bottom left']: 'top left',
-    ['bottom right']: 'top right',
+    top: 'bottom',
+    bottom: 'top',
+    left: 'right',
+    right: 'left',
+    'top left': 'bottom left',
+    'top right': 'bottom right',
+    'bottom left': 'top left',
+    'bottom right': 'top right',
 };
 
 export const useOverlayPositionWithBottomMargin = ({

@@ -39,7 +39,7 @@
         "react": "^18"
     },
     "devDependencies": {
-        "@frontify/eslint-config-react": "^0.17.1",
+        "@frontify/eslint-config-react": "^0.17.6",
         "@iconify/tools": "^4.0.2",
         "@types/lodash": "^4.17.0",
         "@types/node": "^20.11.30",

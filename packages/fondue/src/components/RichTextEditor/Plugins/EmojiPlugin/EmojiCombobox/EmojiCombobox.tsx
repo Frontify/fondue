@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { KEY_EMOJI, TEmojiCombobox, useEmojiComboboxState } from '@udecode/plate-emoji';
+import { KEY_EMOJI, type TEmojiCombobox, useEmojiComboboxState } from '@udecode/plate-emoji';
 
 import { EmojiComboboxItem } from '@components/RichTextEditor/Plugins/EmojiPlugin/EmojiCombobox/EmojiComboboxItem';
 import { useEmojiSelect } from '@components/RichTextEditor/Plugins/EmojiPlugin/useEmojiSelect';

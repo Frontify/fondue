@@ -1,15 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
-import { IconSize } from '@foundation/Icon/IconSize';
+import { type Placement } from '@popperjs/core';
 import { useLink } from '@react-aria/link';
-import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
-import { merge } from '@utilities/merge';
 import {
-    FocusEvent,
-    HTMLAttributes,
-    ReactElement,
-    ReactNode,
+    type FocusEvent,
+    type HTMLAttributes,
+    type ReactElement,
+    type ReactNode,
     cloneElement,
     useCallback,
     useEffect,
@@ -18,11 +15,16 @@ import {
     useRef,
     useState,
 } from 'react';
-import { BrightHeader, BrightHeaderStyle, brightHeaderArrowBackgroundColors } from './BrightHeader';
 import { usePopper } from 'react-popper';
-import { Placement } from '@popperjs/core';
-import { useMemoizedId } from '@hooks/useMemoizedId';
+
+import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
 import { Portal } from '@components/Portal';
+import { IconSize } from '@foundation/Icon/IconSize';
+import { useMemoizedId } from '@hooks/useMemoizedId';
+import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
+import { merge } from '@utilities/merge';
+
+import { BrightHeader, type BrightHeaderStyle, brightHeaderArrowBackgroundColors } from './BrightHeader';
 
 export type TooltipButton = {
     label: string;
@@ -79,18 +81,18 @@ export enum TooltipAlignment {
 }
 
 const placementMap: Record<`${TooltipPosition}-${TooltipAlignment}`, Placement> = {
-    ['Top-Start']: 'top-start',
-    ['Top-End']: 'top-end',
-    ['Bottom-Start']: 'bottom-start',
-    ['Bottom-End']: 'bottom-end',
-    ['Left-Start']: 'left-start',
-    ['Left-End']: 'left-end',
-    ['Right-Start']: 'right-start',
-    ['Right-End']: 'right-end',
-    ['Top-Middle']: 'top',
-    ['Right-Middle']: 'right',
-    ['Bottom-Middle']: 'bottom',
-    ['Left-Middle']: 'left',
+    'Top-Start': 'top-start',
+    'Top-End': 'top-end',
+    'Bottom-Start': 'bottom-start',
+    'Bottom-End': 'bottom-end',
+    'Left-Start': 'left-start',
+    'Left-End': 'left-end',
+    'Right-Start': 'right-start',
+    'Right-End': 'right-end',
+    'Top-Middle': 'top',
+    'Right-Middle': 'right',
+    'Bottom-Middle': 'bottom',
+    'Left-Middle': 'left',
 };
 
 const getArrowClasses = (currentPlacement: string, brightHeader: BrightHeaderStyle | undefined, alignment: string) => {
@@ -101,6 +103,7 @@ const getArrowClasses = (currentPlacement: string, brightHeader: BrightHeaderSty
             return merge([
                 'before:tw-border-t-0 before:tw-border-r-0 tw-left-[-5px]',
                 brightHeader &&
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
                 alignment === TooltipAlignment.Start &&
                 currentPlacement.toString().includes(TooltipAlignment.Start.toLowerCase())
                     ? brightHeaderArrowBackgroundColors[brightHeader]
@@ -115,6 +118,7 @@ const getArrowClasses = (currentPlacement: string, brightHeader: BrightHeaderSty
             return merge([
                 'before:tw-border-b-0 before:tw-border-l-0 tw-right-[-5px]',
                 brightHeader &&
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
                 alignment === TooltipAlignment.Start &&
                 currentPlacement.toString().includes(TooltipAlignment.Start.toLowerCase())
                     ? brightHeaderArrowBackgroundColors[brightHeader]

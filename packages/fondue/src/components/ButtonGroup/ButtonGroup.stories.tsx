@@ -1,12 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
 import { action } from '@storybook/addon-actions';
-import { Meta, StoryFn } from '@storybook/react';
-import { ButtonGroup as ButtonGroupComponent, ButtonGroupProps } from './ButtonGroup';
-import IconPlus from '@foundation/Icon/Generated/IconPlus';
+import { type Meta, type StoryFn } from '@storybook/react';
+
+import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
 import IconCheckMark from '@foundation/Icon/Generated/IconCheckMark';
 import IconCross from '@foundation/Icon/Generated/IconCross';
+import IconPlus from '@foundation/Icon/Generated/IconPlus';
+
+import { ButtonGroup as ButtonGroupComponent, type ButtonGroupProps } from './ButtonGroup';
 
 export default {
     title: 'Components/Button Group',

@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { TextInput } from '../TextInput/TextInput';
+
 import { FormControl, FormControlDirection, HelperPosition } from './FormControl';
 
 const FORM_CONTROL_ID = '[data-test-id=form-control]';

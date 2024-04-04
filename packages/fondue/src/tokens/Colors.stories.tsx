@@ -1,19 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
+// @ts-expect-error untyped
 import tokens from '@frontify/fondue-tokens';
-
-import { Meta, StoryFn } from '@storybook/react';
+import { type Meta, type StoryFn } from '@storybook/react';
 
 export default {
     title: 'Tokens',
 } as Meta;
 
 function getPalette(color: any) {
-    return !!color.value ? [color] : [...Object.values(color)];
+    return color.value ? [color] : [...Object.values(color)];
 }
 
 export const AliasTokens: StoryFn = () => {

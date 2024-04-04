@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Meta, StoryFn } from '@storybook/react';
-import { AddBlockButton as AddBlockButtonComponent, AddBlockButtonProps, ButtonDirection } from './AddBlockButton';
+import { type Meta, type StoryFn } from '@storybook/react';
+
+import { AddBlockButton as AddBlockButtonComponent, type AddBlockButtonProps, ButtonDirection } from './AddBlockButton';
 
 export default {
     title: 'Components/Add Block Button',

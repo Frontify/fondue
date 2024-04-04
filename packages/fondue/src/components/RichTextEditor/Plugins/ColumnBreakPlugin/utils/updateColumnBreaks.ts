@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Value, getNodeEntries } from '@udecode/slate';
-import { PlateEditor } from '@udecode/plate-core';
-import { TLocation } from '@udecode/slate';
-import { ColumnBreakValue, setColumnBreaks } from './setColumnBreaks';
+import { type PlateEditor } from '@udecode/plate-core';
+import { type Value, getNodeEntries, type TLocation } from '@udecode/slate';
+
+import { type ColumnBreakValue, setColumnBreaks } from './setColumnBreaks';
 
 export const updateColumnBreak = (editor: PlateEditor<Value>, at: TLocation, value: ColumnBreakValue) => {
     setColumnBreaks<Value>(editor, { at, value });

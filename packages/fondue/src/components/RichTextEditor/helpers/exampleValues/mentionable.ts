@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MentionableCategory, MentionableItems } from '@components/RichTextEditor/Plugins';
+import { MentionableCategory, type MentionableItems } from '@components/RichTextEditor/Plugins';
 
 export const mentionable: MentionableItems = [
     { data: { id: 'true', category: MentionableCategory.ALL }, key: '0', text: 'All' },
