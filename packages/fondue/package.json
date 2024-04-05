@@ -83,7 +83,7 @@
         "@radix-ui/react-tooltip": "^1.0.7",
         "@react-aria/accordion": "3.0.0-alpha.17",
         "@react-aria/aria-modal-polyfill": "3.7.8",
-        "@react-aria/breadcrumbs": "3.5.2",
+        "@react-aria/breadcrumbs": "3.5.11",
         "@react-aria/button": "3.9.3",
         "@react-aria/checkbox": "3.7.0",
         "@react-aria/combobox": "3.4.3",
