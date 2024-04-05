@@ -85,7 +85,7 @@
         "@react-aria/aria-modal-polyfill": "3.7.8",
         "@react-aria/breadcrumbs": "3.5.2",
         "@react-aria/button": "3.6.3",
-        "@react-aria/checkbox": "3.7.0",
+        "@react-aria/checkbox": "3.14.1",
         "@react-aria/combobox": "3.4.3",
         "@react-aria/dialog": "3.4.1",
         "@react-aria/focus": "3.12.0",
