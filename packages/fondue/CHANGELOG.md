@@ -1,5 +1,11 @@
 # @frontify/fondue
 
+## 12.0.0-beta.424
+
+### Patch Changes
+
+- [#1789](https://github.com/Frontify/fondue/pull/1789) [`4a2ce08`](https://github.com/Frontify/fondue/commit/4a2ce081da056f22547023a994b98277c6d53a3a) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: wrong export path in package.json
+
 ## 12.0.0-beta.423
 
 ### Minor Changes
