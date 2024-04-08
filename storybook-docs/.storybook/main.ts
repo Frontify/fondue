@@ -6,10 +6,21 @@ const config: StorybookConfig = {
         "../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)",
     ],
     addons: [
+        {
+            name: "@storybook/addon-essentials",
+            options: {
+                backgrounds: false,
+                outline: false,
+                measure: false,
+            },
+        },
         "@storybook/addon-links",
-        "@storybook/addon-essentials",
         "@storybook/addon-interactions",
+        "storybook-dark-mode",
+        "@storybook/addon-a11y",
+        '@etchteam/storybook-addon-status'
     ],
+    staticDirs: ["assets"],
     framework: {
         name: "@storybook/react-vite",
         options: {},

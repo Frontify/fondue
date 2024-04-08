@@ -10,6 +10,8 @@
         "build:storybook": "storybook build && pnpm run copy:ui:storybook && pnpm run copy:fondue:storybook"
     },
     "devDependencies": {
+        "@etchteam/storybook-addon-status": "^4.2.4",
+        "@storybook/addon-a11y": "^7.6.17",
         "@storybook/addon-essentials": "^8.0.4",
         "@storybook/addon-interactions": "^8.0.1",
         "@storybook/addon-links": "^8.0.4",
@@ -17,8 +19,10 @@
         "@storybook/react": "^8.0.4",
         "@storybook/react-vite": "^8.0.4",
         "@storybook/test": "^8.0.1",
+        "@storybook/theming": "^7.6.17",
         "prop-types": "^15.8.1",
         "storybook": "^8.0.4",
+        "storybook-dark-mode": "^3",
         "typescript": "^5.3.3",
         "vite": "^5.1.3"
     }

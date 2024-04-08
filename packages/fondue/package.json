@@ -164,6 +164,7 @@
     "devDependencies": {
         "@babel/core": "^7.24.3",
         "@cypress/vite-dev-server": "^5.0.7",
+        "@etchteam/storybook-addon-status": "^4.2.4",
         "@frontify/eslint-config-react": "^0.17.6",
         "@frontify/fondue-icons": "workspace:^",
         "@storybook/addon-a11y": "^7.6.17",
