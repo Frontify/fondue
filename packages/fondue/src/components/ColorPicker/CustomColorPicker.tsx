@@ -74,7 +74,7 @@ export const CustomColorPicker = ({
                                 size={3}
                                 type={TextInputType.Number}
                                 value={red.toString()}
-                                onChange={(value) => onSelect({ ...currentColor, red: parseInt(value) })}
+                                onChange={(value) => onSelect({ ...currentColor, red: parseInt(value || '0') })}
                                 aria-label="Color Code Type"
                             />
                         </div>
@@ -85,7 +85,7 @@ export const CustomColorPicker = ({
                                 size={3}
                                 type={TextInputType.Number}
                                 value={green.toString()}
-                                onChange={(value) => onSelect({ ...currentColor, green: parseInt(value) })}
+                                onChange={(value) => onSelect({ ...currentColor, green: parseInt(value || '0') })}
                                 aria-label="Color Value"
                             />
                         </div>
@@ -96,7 +96,7 @@ export const CustomColorPicker = ({
                                 size={3}
                                 type={TextInputType.Number}
                                 value={blue.toString()}
-                                onChange={(value) => onSelect({ ...currentColor, blue: parseInt(value) })}
+                                onChange={(value) => onSelect({ ...currentColor, blue: parseInt(value || '0') })}
                                 aria-label="Color Opacity"
                             />
                         </div>
@@ -111,7 +111,7 @@ export const CustomColorPicker = ({
                     decorator="%"
                     decoratorPosition={DecoratorPosition.Right}
                     onChange={(value) => {
-                        const a = parseInt(value || '0', 10) / 100;
+                        const a = parseInt(value || '0') / 100;
                         setAlphaValue(a);
                         onSelect({ ...currentColor, alpha: a });
                     }}
