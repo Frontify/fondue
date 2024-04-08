@@ -35,6 +35,7 @@ export enum TextInputType {
     Text = 'text',
     Password = 'password',
     Number = 'number',
+    Search = 'search',
 }
 
 export type TextInputExtraAction = {
@@ -90,21 +91,25 @@ export type TextInputBaseProps = {
     ariaLabel?: string;
 } & AriaAttributes;
 
-export type TextInputProps =
-    | ({
-          type?: TextInputType.Text;
-          obfuscated?: false;
-      } & TextInputBaseProps)
-    | ({
-          type?: TextInputType.Number;
-          obfuscated?: false;
-          min?: number;
-          max?: number;
-      } & TextInputBaseProps)
-    | ({
-          type: TextInputType.Password;
-          obfuscated?: boolean;
-      } & TextInputBaseProps);
+type TextInputTextProps = TextInputBaseProps & {
+    type?: TextInputType.Text;
+    obfuscated?: false;
+};
+type TextInputSearchProps = TextInputBaseProps & {
+    type: TextInputType.Search;
+    obfuscated?: false;
+};
+type TextInputNumberProps = TextInputBaseProps & {
+    type: TextInputType.Number;
+    min?: number;
+    max?: number;
+    obfuscated?: false;
+};
+type TextInputPasswordProps = TextInputBaseProps & {
+    type: TextInputType.Password;
+    obfuscated?: boolean;
+};
+export type TextInputProps = TextInputTextProps | TextInputNumberProps | TextInputPasswordProps | TextInputSearchProps;
 
 type ExtraActionButtonProps = {
     extraAction: TextInputExtraAction;
