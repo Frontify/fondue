@@ -1,7 +1,7 @@
 {
     "name": "@frontify/fondue",
     "type": "module",
-    "version": "12.0.0-beta.423",
+    "version": "12.0.0-beta.424",
     "description": "Design system of Frontify",
     "author": "Frontify Developers <developers@frontify.com>",
     "homepage": "https://github.com/Frontify/fondue",
@@ -26,7 +26,7 @@
             "require": "./dist/index.umd.js",
             "import": "./dist/index.es.js"
         },
-        "./tailwind": "./tailwind.config.js",
+        "./tailwind": "./tailwind.config.ts",
         "./style": "./dist/style.css",
         "./styles": "./dist/style.css",
         "./extractedThirdPartyStyles": "./dist/extractedThirdPartyStyles.css",
