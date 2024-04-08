@@ -11,8 +11,8 @@ const meta: Meta<typeof Tag> = {
     parameters: {
         status: {
             type: 'planned',
-        }
-    }
+        },
+    },
 };
 export default meta;
 

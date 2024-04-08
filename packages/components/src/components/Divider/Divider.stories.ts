@@ -11,8 +11,8 @@ const meta: Meta<typeof Divider> = {
     parameters: {
         status: {
             type: 'released',
-        }
-    }
+        },
+    },
 };
 export default meta;
 
