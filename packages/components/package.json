@@ -35,6 +35,7 @@
         "react-dom": "^18"
     },
     "devDependencies": {
+        "@etchteam/storybook-addon-status": "^4.2.4",
         "@frontify/eslint-config-react": "^0.17.6",
         "@frontify/fondue-tokens": "^3.4.0",
         "@playwright/experimental-ct-react": "^1.42.1",

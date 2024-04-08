@@ -28,7 +28,7 @@ export const light = create({
     inputBg: '#FFFFFF',
     inputBorder: '#EAEBEE',
     inputTextColor: '#2d3232',
-    inputBorderRadius: 4,
+    inputBorderRadius: 40,
 
     brandTitle: 'Frontify Storybook',
     brandUrl: 'https://frontify.com',

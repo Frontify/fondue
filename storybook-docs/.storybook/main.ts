@@ -17,7 +17,8 @@ const config: StorybookConfig = {
         "@storybook/addon-links",
         "@storybook/addon-interactions",
         "storybook-dark-mode",
-        "@storybook/addon-a11y"
+        "@storybook/addon-a11y",
+        '@etchteam/storybook-addon-status'
     ],
     staticDirs: ["assets"],
     framework: {

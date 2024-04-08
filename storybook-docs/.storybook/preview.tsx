@@ -26,4 +26,28 @@ export const parameters = {
     outline: {
         disable: true,
     },
+    status: {
+        statuses: {
+            released: {
+                background: "rgb(50, 210, 182)",
+                color: "#ffffff",
+                description: "This component is stable and released",
+            },
+            planned: {
+                background: "rgb(254, 194, 50)",
+                color: "#ffffff",
+                description: "This component is planned to be revamped",
+            },
+            legacy: {
+                background: "rgb(129, 132, 132)",
+                color: "#ffffff",
+                description: "This is a legacy component",
+            },
+            deprecated: {
+                background: "rgb(153, 33, 54)",
+                color: "#ffffff",
+                description: "This is a legacy component",
+            },
+        },
+    },
 };

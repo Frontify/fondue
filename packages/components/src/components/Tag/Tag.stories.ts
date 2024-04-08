@@ -8,6 +8,11 @@ type Story = StoryObj<typeof Tag>;
 const meta: Meta<typeof Tag> = {
     component: Tag,
     tags: ['autodocs'],
+    parameters: {
+        status: {
+            type: 'planned',
+        }
+    }
 };
 export default meta;
 

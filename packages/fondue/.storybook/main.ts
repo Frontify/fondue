@@ -6,7 +6,7 @@ import ts from 'typescript';
 export default <StorybookConfig>{
     framework: '@storybook/react-vite',
     stories: ['../src/**/*.stories.tsx'],
-    addons: ['storybook-dark-mode', '@storybook/addon-links', '@storybook/addon-essentials', '@storybook/addon-a11y'],
+    addons: ['storybook-dark-mode', '@storybook/addon-links', '@storybook/addon-essentials', '@storybook/addon-a11y', '@etchteam/storybook-addon-status'],
     staticDirs: ['assets'],
     docs: {
         autodocs: 'tag',

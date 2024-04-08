@@ -8,6 +8,11 @@ type Story = StoryObj<typeof Divider>;
 const meta: Meta<typeof Divider> = {
     component: Divider,
     tags: ['autodocs'],
+    parameters: {
+        status: {
+            type: 'released',
+        }
+    }
 };
 export default meta;
 

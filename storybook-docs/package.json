@@ -10,6 +10,7 @@
         "build:storybook": "storybook build && pnpm run copy:ui:storybook && pnpm run copy:fondue:storybook"
     },
     "devDependencies": {
+        "@etchteam/storybook-addon-status": "^4.2.4",
         "@storybook/addon-a11y": "^7.6.17",
         "@storybook/addon-essentials": "^8.0.4",
         "@storybook/addon-interactions": "^8.0.1",
