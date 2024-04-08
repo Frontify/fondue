@@ -1,4 +1,3 @@
-/** @type { import('@storybook/react-vite').StorybookConfig } */
 import type { StorybookConfig } from '@storybook/react-vite';
 
 const config: StorybookConfig = {
