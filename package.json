@@ -4,13 +4,13 @@
     "type": "module",
     "scripts": {
         "build:fondue": "pnpm --stream --filter {packages/fondue} build",
-        "build:storybook": "pnpm run build:storybook:packages && pnpm run build:storybook:main",
+        "build:storybook": "pnpm build:storybook:packages && pnpm build:storybook:main",
         "build:storybook:main": "pnpm --stream --filter {storybook-docs} build:storybook",
         "build:storybook:packages": "pnpm --stream --parallel --filter {packages/*} build:storybook ",
         "ci:publish": "pnpm build:fondue && changeset publish",
         "ci:version": "pnpm build:fondue && changeset version",
-        "lint": "pnpm --stream --filter {packages/**}lint",
-        "storybook": "concurrently 'pnpm run storybook:packages' 'pnpm run storybook:main'",
+        "lint": "pnpm --stream --filter {packages/**} lint",
+        "storybook": "concurrently 'pnpm storybook:packages' 'pnpm storybook:main'",
         "storybook:main": "wait-on http://localhost:6006 http://localhost:6007 && pnpm --stream  --filter {storybook-docs} storybook",
         "storybook:packages": "pnpm --parallel --filter {packages/*} storybook --no-open",
         "typecheck": "pnpm --stream --filter {packages/**} typecheck"

@@ -3,11 +3,12 @@
   "tag": "beta",
   "initialVersions": {
     "@frontify/fondue": "12.0.0-beta.400",
-    "@fondue/docs": "0.0.1",
     "@frontify/fondue-components": "0.0.1",
-    "@frontify/fondue-icons": "0.1.44"
+    "@frontify/fondue-icons": "0.1.44",
+    "@frontify/fondue-storybook-docs": "0.0.1"
   },
   "changesets": [
+    "angry-dodos-joke",
     "big-clouds-type",
     "chilly-bananas-mix",
     "clever-wolves-guess",

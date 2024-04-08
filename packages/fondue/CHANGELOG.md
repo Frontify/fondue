@@ -1,5 +1,11 @@
 # @frontify/fondue
 
+## 12.0.0-beta.425
+
+### Patch Changes
+
+- [#1791](https://github.com/Frontify/fondue/pull/1791) [`a78ec51`](https://github.com/Frontify/fondue/commit/a78ec5191314a82cc661e1f5202688de1402cccc) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: add `tailwind.config.ts` to exported files
+
 ## 12.0.0-beta.424
 
 ### Patch Changes
