@@ -39,7 +39,7 @@
     "types": "dist/index.d.ts",
     "files": [
         "dist",
-        "tailwind.config.js"
+        "tailwind.config.ts"
     ],
     "engines": {
         "node": ">=18"
