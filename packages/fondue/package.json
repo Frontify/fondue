@@ -26,7 +26,7 @@
             "require": "./dist/index.umd.js",
             "import": "./dist/index.es.js"
         },
-        "./tailwind": "./tailwind.config.js",
+        "./tailwind": "./tailwind.config.ts",
         "./style": "./dist/style.css",
         "./styles": "./dist/style.css",
         "./extractedThirdPartyStyles": "./dist/extractedThirdPartyStyles.css",
