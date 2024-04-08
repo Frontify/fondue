@@ -38,6 +38,9 @@ importers:
       '@playwright/experimental-ct-react':
         specifier: ^1.42.1
         version: 1.42.1(@types/node@20.11.30)(vite@5.1.3)
+      '@storybook/addon-a11y':
+        specifier: ^7.6.17
+        version: 7.6.17
       '@storybook/addon-essentials':
         specifier: ^8.0.6
         version: 8.0.6(@types/react@18.2.73)(react-dom@18.2.0)(react@18.2.0)
@@ -609,6 +612,9 @@ importers:
 
   storybook-docs:
     devDependencies:
+      '@storybook/addon-a11y':
+        specifier: ^7.6.17
+        version: 7.6.17
       '@storybook/addon-essentials':
         specifier: ^8.0.4
         version: 8.0.4(@types/react@18.2.74)(react-dom@18.2.0)(react@18.2.0)
@@ -630,12 +636,18 @@ importers:
       '@storybook/test':
         specifier: ^8.0.1
         version: 8.0.1
+      '@storybook/theming':
+        specifier: ^7.6.17
+        version: 7.6.17(react-dom@18.2.0)(react@18.2.0)
       prop-types:
         specifier: ^15.8.1
         version: 15.8.1
       storybook:
         specifier: ^8.0.4
         version: 8.0.4(react-dom@18.2.0)(react@18.2.0)
+      storybook-dark-mode:
+        specifier: ^3
+        version: 3.0.3(@types/react-dom@18.2.23)(@types/react@18.2.74)(react-dom@18.2.0)(react@18.2.0)
       typescript:
         specifier: ^5.3.3
         version: 5.3.3

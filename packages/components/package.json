@@ -38,6 +38,7 @@
         "@frontify/eslint-config-react": "^0.17.6",
         "@frontify/fondue-tokens": "^3.4.0",
         "@playwright/experimental-ct-react": "^1.42.1",
+        "@storybook/addon-a11y": "^7.6.17",
         "@storybook/addon-essentials": "^8.0.6",
         "@storybook/addon-interactions": "^8.0.6",
         "@storybook/addon-links": "^8.0.6",
