@@ -6,7 +6,7 @@ import { type Config } from 'tailwindcss';
 export default {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     presets: [require('@frontify/fondue-tokens/tailwind')],
-    content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+    content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}', './.storybook/DocumentationTemplate.mdx'],
     plugins: [
         tailwindForms({
             strategy: 'class',

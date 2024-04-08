@@ -1,4 +1,5 @@
 import type { Preview } from '@storybook/react';
+import '../src/styles.css';
 import DocumentationTemplate from './DocumentationTemplate.mdx';
 const preview: Preview = {
 
