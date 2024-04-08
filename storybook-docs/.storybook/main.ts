@@ -22,29 +22,29 @@ const config: StorybookConfig = {
     refs: (config, { configType }) => {
         if (configType === 'DEVELOPMENT') {
             return {
-                new: {
-                    title: 'New',
-                    url: 'http://localhost:6007',
-                    type: "auto-inject",
-                    expanded: true,
-                },
                 legacy: {
                     title: 'Legacy',
                     url: 'http://localhost:6006',
                     type: "auto-inject",
                     expanded: true,
                 },
+                current: {
+                    title: 'Current',
+                    url: 'http://localhost:6007',
+                    type: "auto-inject",
+                    expanded: true,
+                },
             };
         }
         return {
-            new: {
-                title: 'New',
-                url: '/new',
-                expanded: true,
-            },
             legacy: {
                 title: 'Legacy',
                 url: '/legacy',
+                expanded: true,
+            },
+            current: {
+                title: 'Current',
+                url: '/new',
                 expanded: true,
             },
         }

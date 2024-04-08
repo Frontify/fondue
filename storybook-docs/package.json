@@ -1,5 +1,5 @@
 {
-    "name": "@fondue/storybook-docs",
+    "name": "@frontify/fondue-storybook-docs",
     "type": "module",
     "version": "0.0.1",
     "private": true,
