@@ -76,6 +76,11 @@ export const parameters = {
                 color: '#ffffff',
                 description: 'This component is stable and released',
             },
+            in_progess: {
+                background: 'rgb(154, 126, 254)',
+                color: '#ffffff',
+                description: 'This component is in progress',
+            },
             planned: {
                 background: 'rgb(254, 194, 50)',
                 color: '#ffffff',
