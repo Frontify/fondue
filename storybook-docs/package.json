@@ -1,0 +1,25 @@
+{
+    "name": "@frontify/fondue-storybook-docs",
+    "type": "module",
+    "version": "0.0.1",
+    "private": true,
+    "scripts": {
+        "storybook": "storybook dev -p 6010",
+        "copy:ui:storybook": "mkdir -p storybook-static/new/ && cp -r ../packages/components/storybook-static/. storybook-static/new",
+        "copy:fondue:storybook": "mkdir -p storybook-static/legacy/ && cp -r ../packages/fondue/storybook-static/. storybook-static/legacy",
+        "build:storybook": "storybook build && pnpm run copy:ui:storybook && pnpm run copy:fondue:storybook"
+    },
+    "devDependencies": {
+        "@storybook/addon-essentials": "^8.0.4",
+        "@storybook/addon-interactions": "^8.0.1",
+        "@storybook/addon-links": "^8.0.4",
+        "@storybook/blocks": "^8.0.1",
+        "@storybook/react": "^8.0.4",
+        "@storybook/react-vite": "^8.0.4",
+        "@storybook/test": "^8.0.1",
+        "prop-types": "^15.8.1",
+        "storybook": "^8.0.4",
+        "typescript": "^5.3.3",
+        "vite": "^5.1.3"
+    }
+}

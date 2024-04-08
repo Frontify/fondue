@@ -24,6 +24,9 @@ dist-ssr
 *.sw?
 
 coverage
+
+*storybook.log
+storybook-static
 /test-results/
 /playwright-report/
 /blob-report/

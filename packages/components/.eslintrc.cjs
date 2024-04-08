@@ -2,7 +2,7 @@
 
 module.exports = {
     root: true,
-    extends: ['@frontify/eslint-config-react'],
+    extends: ['@frontify/eslint-config-react', 'plugin:storybook/recommended'],
     plugins: ['notice'],
     settings: {
         react: {

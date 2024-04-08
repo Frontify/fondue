@@ -40,9 +40,6 @@ jobs:
             - name: Generate React icons
               run: pnpm --stream --filter {packages/icons} build:generate-react-icons
 
-            - name: Contentlayer build
-              run: pnpm --stream --filter {docs} build:contentlayer
-
             - name: Lint code
               run: pnpm lint
 
@@ -74,9 +71,6 @@ jobs:
 
             - name: Generate React icons
               run: pnpm --stream --filter {packages/icons} build:generate-react-icons
-
-            - name: Contentlayer build
-              run: pnpm --stream --filter {docs} build:contentlayer
 
             - name: Typecheck code
               run: pnpm typecheck
