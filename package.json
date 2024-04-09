@@ -7,6 +7,7 @@
         "build:storybook": "pnpm build:storybook:packages && pnpm build:storybook:main",
         "build:storybook:main": "pnpm --stream --filter {storybook-docs} build:storybook",
         "build:storybook:packages": "pnpm --stream --parallel --filter {packages/*} build:storybook ",
+        "build:icons": "pnpm --stream --filter {packages/icons} build",
         "ci:publish": "pnpm build:fondue && changeset publish",
         "ci:version": "pnpm build:fondue && changeset version",
         "lint": "pnpm --stream --filter {packages/**} lint",
