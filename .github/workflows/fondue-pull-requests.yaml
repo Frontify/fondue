@@ -24,7 +24,7 @@ jobs:
               uses: actions/checkout@v4
 
             - name: Use pnpm
-              uses: pnpm/action-setup@v2
+              uses: pnpm/action-setup@v3
               with:
                   version: latest
                   run_install: false
@@ -57,7 +57,7 @@ jobs:
               uses: actions/checkout@v4
 
             - name: Use pnpm
-              uses: pnpm/action-setup@v2
+              uses: pnpm/action-setup@v3
               with:
                   version: latest
                   run_install: false
@@ -100,7 +100,7 @@ jobs:
                   node-version-file: ".nvmrc"
 
             - name: Use pnpm
-              uses: pnpm/action-setup@v2.2.4
+              uses: pnpm/action-setup@v3
               with:
                   version: latest
                   run_install: false
@@ -137,7 +137,7 @@ jobs:
               uses: actions/checkout@v4
 
             - name: Use pnpm
-              uses: pnpm/action-setup@v2
+              uses: pnpm/action-setup@v3
               with:
                   version: latest
                   run_install: false

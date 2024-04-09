@@ -4,7 +4,7 @@ on:
     workflow_dispatch:
     pull_request:
         paths:
-            - 'pnpm-lock.yaml'
+            - "pnpm-lock.yaml"
 
 jobs:
     audit:
@@ -20,13 +20,13 @@ jobs:
             - name: Use Node.js
               uses: actions/setup-node@v3
               with:
-                  node-version-file: '.nvmrc'
+                  node-version-file: ".nvmrc"
 
             - name: Use pnpm
-              uses: pnpm/action-setup@v2.2.4
+              uses: pnpm/action-setup@v3
               with:
                   version: latest
                   run_install: false
 
             - name: Audit NPM packages
-              run: 'pnpm audit --audit-level low | tee $GITHUB_STEP_SUMMARY'
+              run: "pnpm audit --audit-level low | tee $GITHUB_STEP_SUMMARY"
