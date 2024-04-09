@@ -1,5 +1,11 @@
 # @frontify/fondue
 
+## 12.0.0-beta.426
+
+### Patch Changes
+
+- [#1795](https://github.com/Frontify/fondue/pull/1795) [`a27e8fe`](https://github.com/Frontify/fondue/commit/a27e8fe918f8520039c033bfa5fbcbde62f267ed) Thanks [@bojangles-m](https://github.com/bojangles-m)! - fix(TextInput): due to accessibility issues, an additional input type 'search' has been added
+
 ## 12.0.0-beta.425
 
 ### Patch Changes
