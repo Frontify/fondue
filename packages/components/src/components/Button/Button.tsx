@@ -9,9 +9,9 @@ import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import {
     ButtonCommonClasses,
     ButtonDisabledClasses,
-    ButtonEmphasisClasses,
     ButtonRoundingClasses,
     ButtonSizeClasses,
+    ButtonStyleClasses,
 } from './ButtonClasses';
 import {
     ButtonEmphasis,
@@ -70,7 +70,9 @@ export const ButtonComponent = (
     ref: React.ForwardedRef<HTMLButtonElement | null>,
 ) => {
     const getStyles = (kind: keyof ButtonElements) =>
-        !disabled ? `${ButtonEmphasisClasses[style as unknown as UpdatedButtonStyle][kind]}` : ButtonDisabledClasses;
+        !disabled
+            ? `${ButtonStyleClasses[emphasis][style as unknown as UpdatedButtonStyle][kind]}`
+            : ButtonDisabledClasses;
 
     const buttonClassName = twMerge([
         getStyles('button'),
@@ -87,7 +89,7 @@ export const ButtonComponent = (
             aria-disabled={disabled}
             aria-describedby={ariaDescribedBy}
             ref={ref}
-            className={twMerge([buttonClassName, true && FOCUS_VISIBLE_STYLE])}
+            className={twMerge([buttonClassName, true && FOCUS_VISIBLE_STYLE, 'tw-dark'])}
             disabled={disabled}
             form={formId}
             title={title}
