@@ -1,5 +1,11 @@
 # @frontify/fondue
 
+## 12.0.0-beta.427
+
+### Patch Changes
+
+- [#1799](https://github.com/Frontify/fondue/pull/1799) [`22f155c`](https://github.com/Frontify/fondue/commit/22f155c244bdf206403959bb688411584e72c0e2) Thanks [@ragi96](https://github.com/ragi96)! - chore: bump all `@udecode/plate` dependencies to v31
+
 ## 12.0.0-beta.426
 
 ### Patch Changes
