@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type KeyboardEvent } from '@react-types/shared';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, type FocusEvent } from 'react';
 
 import IconMinus16 from '@foundation/Icon/Generated/IconMinus16';
 import IconPlus16 from '@foundation/Icon/Generated/IconPlus16';
@@ -189,13 +189,13 @@ export const NumberInput = ({
         handleOnChange();
     };
 
-    const handleFocus = (event: React.FocusEvent<HTMLInputElement, Element>) => {
+    const handleFocus = (event: FocusEvent<HTMLInputElement, Element>) => {
         if (onFocus) {
             onFocus(event);
         }
     };
 
-    const handleBlur = (event: React.FocusEvent<HTMLInputElement, Element>) => {
+    const handleBlur = (event: FocusEvent<HTMLInputElement, Element>) => {
         if (onBlur) {
             onBlur(event);
         }

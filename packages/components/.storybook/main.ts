@@ -7,7 +7,8 @@ const config: StorybookConfig = {
         '@storybook/addon-essentials',
         '@storybook/addon-interactions',
         '@storybook/addon-a11y',
-        '@etchteam/storybook-addon-status'
+        '@etchteam/storybook-addon-status',
+        'storybook-dark-mode',
     ],
     framework: {
         name: '@storybook/react-vite',
@@ -17,6 +18,6 @@ const config: StorybookConfig = {
         autodocs: 'tag',
         defaultName: 'Documentation',
     },
-
 };
+
 export default config;

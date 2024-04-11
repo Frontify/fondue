@@ -1,13 +1,13 @@
-import type { Preview } from '@storybook/react';
 import '../src/styles.css';
+import type { Preview } from '@storybook/react';
 import DocumentationTemplate from './DocumentationTemplate.mdx';
-const preview: Preview = {
 
+const preview: Preview = {
     parameters: {
         docs: {
             page: DocumentationTemplate,
             toc: {
-                title: "Table of contents",
+                title: 'Table of contents',
                 headingSelector: 'h2, h3',
             },
         },
@@ -25,10 +25,10 @@ const preview: Preview = {
                     color: '#ffffff',
                     description: 'This component is stable and released',
                 },
-                in_progess: {
-                    background: "rgb(154, 126, 254)",
-                    color: "#ffffff",
-                    description: "This component is in progress",
+                in_progress: {
+                    background: 'rgb(154, 126, 254)',
+                    color: '#ffffff',
+                    description: 'This component is in progress',
                 },
                 planned: {
                     background: 'rgb(254, 194, 50)',
