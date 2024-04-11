@@ -1,4 +1,4 @@
-import type { StorybookConfig } from '@storybook/react-vite';
+import type { StorybookConfig } from "@storybook/react-vite";
 
 const config: StorybookConfig = {
     stories: [
@@ -18,7 +18,7 @@ const config: StorybookConfig = {
         "@storybook/addon-interactions",
         "storybook-dark-mode",
         "@storybook/addon-a11y",
-        '@etchteam/storybook-addon-status'
+        "@etchteam/storybook-addon-status",
     ],
     staticDirs: ["assets"],
     framework: {
@@ -29,18 +29,18 @@ const config: StorybookConfig = {
         autodocs: "tag",
         defaultName: "Documentation",
     },
-    refs: (config, { configType }) => {
-        if (configType === 'DEVELOPMENT') {
+    refs: (_config, { configType }) => {
+        if (configType === "DEVELOPMENT") {
             return {
                 legacy: {
-                    title: 'Legacy',
-                    url: 'http://localhost:6006',
+                    title: "Legacy",
+                    url: "http://localhost:6006",
                     type: "auto-inject",
                     expanded: true,
                 },
                 current: {
-                    title: 'Current',
-                    url: 'http://localhost:6007',
+                    title: "Current",
+                    url: "http://localhost:6007",
                     type: "auto-inject",
                     expanded: true,
                 },
@@ -48,16 +48,16 @@ const config: StorybookConfig = {
         }
         return {
             legacy: {
-                title: 'Legacy',
-                url: '/legacy',
+                title: "Legacy",
+                url: "/legacy",
                 expanded: true,
             },
             current: {
-                title: 'Current',
-                url: '/new',
+                title: "Current",
+                url: "/new",
                 expanded: true,
             },
-        }
-    }
+        };
+    },
 };
 export default config;
