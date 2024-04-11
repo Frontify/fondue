@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { cloneElement, forwardRef, type MouseEvent, type ReactElement, type ReactNode } from 'react';
+import { ForwardedRef, cloneElement, forwardRef, type MouseEvent, type ReactElement, type ReactNode } from 'react';
 
 import { buttonIconSizeMap, buttonStyles } from './styles/buttonStyles';
 import { iconStyles } from './styles/iconStyles';
@@ -9,8 +9,6 @@ import { textStyles } from './styles/textStyles';
 export type ButtonRounding = 'medium' | 'full';
 
 export type ButtonStyle = 'default' | 'positive' | 'negative' | 'danger' | 'loud';
-
-export type UpdatedButtonStyle = 'default' | 'positive' | 'negative' | 'danger' | 'loud';
 
 export type ButtonSize = 'small' | 'medium' | 'large';
 
@@ -56,7 +54,7 @@ export const ButtonComponent = (
         'aria-describedby': ariaDescribedBy,
         'data-test-id': dataTestId = 'button',
     }: ButtonProps,
-    ref: React.ForwardedRef<HTMLButtonElement | null>,
+    ref: ForwardedRef<HTMLButtonElement | null>,
 ) => {
     return (
         <button

@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { tv } from 'tailwind-variants';
+import { styleVariants } from '@utilities/styleUtilities';
 
-export const iconStyles = tv({
+export const iconStyles = styleVariants({
     variants: {
         iconSpacing: {
             none: '',

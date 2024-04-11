@@ -1,17 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type IconSizeAsNumber } from '@frontify/fondue-icons';
-import { tv } from 'tailwind-variants';
+import { FondueIconProps } from '@frontify/fondue-icons';
 
-import { type ButtonSize } from '../';
+import { styleVariants } from '@utilities/styleUtilities';
+import { type ButtonSize } from '../Button';
 
-export const buttonIconSizeMap: Record<ButtonSize, IconSizeAsNumber> = {
+export const buttonIconSizeMap: Record<ButtonSize, FondueIconProps['size']> = {
     small: 16,
     medium: 20,
     large: 24,
 };
 
-export const buttonStyles = tv({
+export const buttonStyles = styleVariants({
     base: 'tw-group tw-border tw-box-box tw-relative tw-flex tw-items-center tw-justify-center tw-cursor-pointer tw-outline-none tw-font-body tw-font-medium',
     variants: {
         disabled: {
