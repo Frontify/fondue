@@ -1,7 +1,9 @@
-import { IconSizeAsNumber } from '@frontify/fondue-icons';
-import { tv } from 'tailwind-variants';
-import { ButtonSize } from '../ButtonTypes';
+/* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type IconSizeAsNumber } from '@frontify/fondue-icons';
+import { tv } from 'tailwind-variants';
+
+import { type ButtonSize } from '../ButtonTypes';
 
 export const buttonIconSizeMap: Record<ButtonSize, IconSizeAsNumber> = {
     small: 16,
@@ -163,6 +165,3 @@ export const buttonStyles = tv({
         },
     ],
 });
-
-
-

@@ -3,7 +3,8 @@
 import { IconIcon } from '@frontify/fondue-icons';
 import { render } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { Button, ButtonStyle } from '..';
+
+import { Button, type ButtonStyle } from '..';
 
 const BUTTON_TEXT = 'Frontify';
 const BUTTON_TEST_ID = 'button';

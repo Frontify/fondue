@@ -2,10 +2,10 @@
 
 import react from '@vitejs/plugin-react';
 import tsConfigPaths from 'vite-tsconfig-paths';
-import { UserConfig, defineConfig } from 'vitest/config';
+import { type UserConfig, defineConfig } from 'vitest/config';
 
 export default defineConfig({
-    plugins: [react(), tsConfigPaths()] as UserConfig["plugins"],
+    plugins: [react(), tsConfigPaths()] as UserConfig['plugins'],
     test: {
         environment: 'happy-dom',
         setupFiles: ['./src/setupTests.ts'],

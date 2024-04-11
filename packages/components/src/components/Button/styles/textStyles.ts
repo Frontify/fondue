@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { tv } from 'tailwind-variants';
 
 export const textStyles = tv({
@@ -126,7 +128,8 @@ export const textStyles = tv({
         {
             style: 'loud',
             emphasis: 'weak',
-            class: 'tw-text-box-selected-inverse ' +
+            class:
+                'tw-text-box-selected-inverse ' +
                 'group-hover:tw-text-box-selected-inverse-hover' +
                 'group-active:tw-text-box-selected-inverse-pressed ',
         },

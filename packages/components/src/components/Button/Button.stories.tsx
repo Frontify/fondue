@@ -1,8 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type Meta, type StoryObj } from '@storybook/react';
-
 import { IconColorFan, IconIcon } from '@frontify/fondue-icons';
+import { type Meta, type StoryObj } from '@storybook/react';
 
 import { Button } from './Button';
 
