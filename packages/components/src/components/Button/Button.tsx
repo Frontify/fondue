@@ -58,6 +58,7 @@ export const ButtonComponent = (
             title={title}
             type={type}
             onClick={onClick}
+            disabled={disabled}
             className={buttonStyles({
                 disabled,
                 rounding,
