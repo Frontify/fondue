@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { forwardRef, type MouseEvent, type ReactElement, type ReactNode } from 'react';
+import { cloneElement, forwardRef, type MouseEvent, type ReactElement, type ReactNode } from 'react';
 
-import { buttonStyles, textStyles } from './ButtonStyles';
 import { ButtonEmphasis, type ButtonRounding, type ButtonSize, type ButtonStyle, type ButtonType } from './ButtonTypes';
+import { buttonIconSizeMap, buttonStyles } from './styles/buttonStyles';
+import { iconStyles } from './styles/iconStyles';
+import { textStyles } from './styles/textStyles';
 
 export type ButtonProps = {
     type?: ButtonType;
@@ -55,6 +57,7 @@ export const ButtonComponent = (
             form={formId}
             title={title}
             type={type}
+            onClick={onClick}
             className={buttonStyles({
                 disabled,
                 rounding,
@@ -66,9 +69,15 @@ export const ButtonComponent = (
             })}
         >
             {icon && (
-                <span data-test-id={`${dataTestId}-icon`}>
-                    {icon}
-                    {/*cloneElement(icon, { size: buttonIconSizeMap[size] })*/}
+                <span
+                    data-test-id={`${dataTestId}-icon`}
+                    className={iconStyles({
+                        iconSpacing: children && !hideLabel ? size : 'none',
+                        emphasis,
+                        style,
+                    })}
+                >
+                    {cloneElement(icon, { size: buttonIconSizeMap[size] })}
                 </span>
             )}
             {children && (

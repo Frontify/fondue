@@ -20,9 +20,7 @@ export const ButtonStyleClasses: Record<ButtonEmphasis, Record<ButtonStyle, Butt
     "default": {
         "default": {
             icon:
-                'tw-text-button-icon ' +
-                'group-hover:tw-text-button-icon-hover ' +
-                'group-active:tw-text-button-icon-pressed tw-leading-none ',
+                ,
             text:
                 ,
         },
@@ -66,9 +64,7 @@ export const ButtonStyleClasses: Record<ButtonEmphasis, Record<ButtonStyle, Butt
     "strong": {
         "default": {
             icon:
-                'tw-text-button-strong-icon ' +
-                'group-hover:tw-text-button-strong-icon-hover ' +
-                'group-active:tw-text-button-strong-icon-pressed tw-leading-none ',
+                ,
             text:
                 ,
         },
@@ -112,9 +108,7 @@ export const ButtonStyleClasses: Record<ButtonEmphasis, Record<ButtonStyle, Butt
     "weak": {
         "default": {
             icon:
-                'tw-text-button-icon ' +
-                'group-hover:tw-text-button-icon-hover ' +
-                'group-active:tw-text-button-icon-pressed tw-leading-none ',
+                ,
             text:
                 ,
         },

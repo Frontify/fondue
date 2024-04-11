@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import {
-    forwardRef,
     createElement,
-    type ReactSVG,
-    type SVGProps,
+    forwardRef,
     type ForwardRefExoticComponent,
+    type ReactSVG,
     type RefAttributes,
+    type SVGProps,
 } from 'react';
 
 import { defaultAttributes } from './constants';
@@ -18,7 +18,7 @@ export type IconNode = [elementName: keyof ReactSVG, attrs: Record<string, strin
 export type SVGAttributes = Partial<SVGProps<SVGSVGElement>>;
 type ComponentAttributes = RefAttributes<SVGSVGElement> & SVGAttributes;
 
-type IconSizeAsNumber = 12 | 16 | 20 | 24 | 32;
+export type IconSizeAsNumber = 12 | 16 | 20 | 24 | 32;
 
 /**
  * @deprecated Use a string or number instead
