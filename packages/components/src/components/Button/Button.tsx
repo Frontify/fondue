@@ -7,6 +7,18 @@ import { buttonIconSizeMap, buttonStyles } from './styles/buttonStyles';
 import { iconStyles } from './styles/iconStyles';
 import { textStyles } from './styles/textStyles';
 
+export type ButtonRounding = 'medium' | 'full';
+
+export type ButtonStyle = 'default' | 'positive' | 'negative' | 'danger' | 'loud';
+
+export type UpdatedButtonStyle = 'default' | 'positive' | 'negative' | 'danger' | 'loud';
+
+export type ButtonSize = 'small' | 'medium' | 'large';
+
+export type ButtonType = 'button' | 'submit' | 'reset';
+
+export type ButtonEmphasis = 'default' | 'weak' | 'strong';
+
 export type ButtonProps = {
     type?: ButtonType;
     title?: string;
