@@ -1,5 +1,5 @@
 import { extendTailwindMerge } from "tailwind-merge";
-import { tv } from "tailwind-variants";
+import { TV, tv } from "tailwind-variants";
 
 type ClassNameValue = ClassNameArray | string | null | undefined | 0 | false;
 type ClassNameArray = ClassNameValue[];
@@ -12,4 +12,6 @@ export const cn = (...classLists: ClassNameValue[]): string => {
     return customTwMerge(...classLists);
 };
 
-export const styleVariants = tv
+export const sv: TV = (variants) => {
+    return tv(variants);
+}

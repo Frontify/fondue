@@ -2,7 +2,7 @@
 
 import { FondueIconProps } from '@frontify/fondue-icons';
 
-import { styleVariants } from '@utilities/styleUtilities';
+import { sv } from '@utilities/styleUtilities';
 import { type ButtonSize } from '../Button';
 
 export const buttonIconSizeMap: Record<ButtonSize, FondueIconProps['size']> = {
@@ -11,7 +11,7 @@ export const buttonIconSizeMap: Record<ButtonSize, FondueIconProps['size']> = {
     large: 24,
 };
 
-export const buttonStyles = styleVariants({
+export const buttonStyles = sv({
     base: 'tw-group tw-border tw-box-box tw-relative tw-flex tw-items-center tw-justify-center tw-cursor-pointer tw-outline-none tw-font-body tw-font-medium',
     variants: {
         disabled: {

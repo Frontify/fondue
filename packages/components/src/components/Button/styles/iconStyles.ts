@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { styleVariants } from '@utilities/styleUtilities';
+import { sv } from '@utilities/styleUtilities';
 
-export const iconStyles = styleVariants({
+export const iconStyles = sv({
     variants: {
         iconSpacing: {
             none: '',
