@@ -1,5 +1,17 @@
 # @frontify/fondue
 
+## 12.0.0-beta.427
+
+### Patch Changes
+
+- [#1799](https://github.com/Frontify/fondue/pull/1799) [`22f155c`](https://github.com/Frontify/fondue/commit/22f155c244bdf206403959bb688411584e72c0e2) Thanks [@ragi96](https://github.com/ragi96)! - chore: bump all `@udecode/plate` dependencies to v31
+
+## 12.0.0-beta.426
+
+### Patch Changes
+
+- [#1795](https://github.com/Frontify/fondue/pull/1795) [`a27e8fe`](https://github.com/Frontify/fondue/commit/a27e8fe918f8520039c033bfa5fbcbde62f267ed) Thanks [@bojangles-m](https://github.com/bojangles-m)! - fix(TextInput): due to accessibility issues, an additional input type 'search' has been added
+
 ## 12.0.0-beta.425
 
 ### Patch Changes
