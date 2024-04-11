@@ -7,7 +7,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { Button, type ButtonStyle } from '..';
 
 const BUTTON_TEXT = 'Frontify';
-const BUTTON_TEST_ID = 'button';
+const BUTTON_TEST_ID = 'fondue-button';
 
 const styles: ButtonStyle[] = ['default', 'positive', 'negative', 'danger', 'loud'];
 

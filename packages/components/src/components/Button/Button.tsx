@@ -52,7 +52,7 @@ export const ButtonComponent = (
         formId,
         'aria-label': ariaLabel,
         'aria-describedby': ariaDescribedBy,
-        'data-test-id': dataTestId = 'button',
+        'data-test-id': dataTestId = 'fondue-button',
     }: ButtonProps,
     ref: ForwardedRef<HTMLButtonElement | null>,
 ) => {
