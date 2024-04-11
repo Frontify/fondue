@@ -2,32 +2,8 @@
 
 import { forwardRef, type MouseEvent, type ReactElement, type ReactNode } from 'react';
 
-import { twMerge } from 'tailwind-merge';
-
-import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
-
-import {
-    ButtonCommonClasses,
-    ButtonDisabledClasses,
-    ButtonRoundingClasses,
-    ButtonSizeClasses,
-    ButtonStyleClasses,
-} from './ButtonClasses';
-import {
-    ButtonEmphasis,
-    type ButtonElements,
-    type ButtonRounding,
-    type ButtonSize,
-    type ButtonStyle,
-    type ButtonType,
-    type UpdatedButtonStyle,
-} from './ButtonTypes';
-/*
-const buttonIconSizeMap: Record<ButtonSize, IconSize> = {
-    ['small']: IconSize.Size16,
-    ['medium']: IconSize.Size20,
-    ['large']: IconSize.Size24,
-};*/
+import { buttonStyles, textStyles } from './ButtonStyles';
+import { ButtonEmphasis, type ButtonRounding, type ButtonSize, type ButtonStyle, type ButtonType } from './ButtonTypes';
 
 export type ButtonProps = {
     type?: ButtonType;
@@ -69,19 +45,6 @@ export const ButtonComponent = (
     }: ButtonProps,
     ref: React.ForwardedRef<HTMLButtonElement | null>,
 ) => {
-    const getStyles = (kind: keyof ButtonElements) =>
-        !disabled
-            ? `${ButtonStyleClasses[emphasis][style as unknown as UpdatedButtonStyle][kind]}`
-            : ButtonDisabledClasses;
-
-    const buttonClassName = twMerge([
-        getStyles('button'),
-        ButtonCommonClasses,
-        ButtonRoundingClasses[rounding],
-        (icon && !children) || hideLabel ? ButtonSizeClasses[size].iconOnly : ButtonSizeClasses[size].default,
-        !hugWidth && 'tw-w-full',
-    ]);
-
     return (
         <button
             data-test-id={dataTestId}
@@ -89,25 +52,27 @@ export const ButtonComponent = (
             aria-disabled={disabled}
             aria-describedby={ariaDescribedBy}
             ref={ref}
-            className={twMerge([buttonClassName, true && FOCUS_VISIBLE_STYLE, 'tw-dark'])}
-            disabled={disabled}
             form={formId}
             title={title}
+            type={type}
+            className={buttonStyles({
+                disabled,
+                rounding,
+                size,
+                hugWidth,
+                emphasis,
+                style,
+                iconOnly: (icon && !children) || hideLabel,
+            })}
         >
             {icon && (
-                <span
-                    data-test-id={`${dataTestId}-icon`}
-                    className={twMerge([children && !hideLabel ? IconSpacingClasses[size] : '', getStyles('icon')])}
-                >
+                <span data-test-id={`${dataTestId}-icon`}>
                     {icon}
                     {/*cloneElement(icon, { size: buttonIconSizeMap[size] })*/}
                 </span>
             )}
             {children && (
-                <span
-                    data-test-id={`${dataTestId}-text`}
-                    className={twMerge([getStyles('text'), hideLabel && 'tw-sr-only'])}
-                >
+                <span className={textStyles({ hideLabel, emphasis, style })} data-test-id={`${dataTestId}-text`}>
                     {children}
                 </span>
             )}

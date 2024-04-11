@@ -18,6 +18,7 @@ const meta: Meta<typeof Button> = {
     args: {
         type: 'button',
         style: 'default',
+        emphasis: 'default',
         size: 'medium',
         rounding: 'medium',
         hideLabel: false,
