@@ -2,6 +2,7 @@
 
 import { type IconSizeAsNumber } from '@frontify/fondue-icons';
 import { tv } from 'tailwind-variants';
+
 import { type ButtonSize } from '../';
 
 export const buttonIconSizeMap: Record<ButtonSize, IconSizeAsNumber> = {
