@@ -39,6 +39,7 @@
         "typecheck": "tsc --noEmit",
         "test:watch": "vitest",
         "test": "vitest run",
+        "test:ui": "vitest --ui",
         "test:coverage": "vitest run --coverage"
     },
     "peerDependencies": {
@@ -81,6 +82,7 @@
         "@visx/mock-data": "^2.17.0",
         "@vitejs/plugin-react": "^4.2.1",
         "@vitest/coverage-v8": "^1.4.0",
+        "@vitest/ui": "1.4.0",
         "autoprefixer": "^10.4.19",
         "eslint": "^8.57.0",
         "eslint-plugin-notice": "^0.9.10",
