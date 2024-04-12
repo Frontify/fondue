@@ -4,15 +4,14 @@
         "module": "ESNext",
         "moduleResolution": "Node",
         "allowSyntheticDefaultImports": true,
-        "resolveJsonModule": true
+        "resolveJsonModule": true,
+        "baseUrl": "."
     },
     "include": [
         ".eslintrc.cjs",
         "tailwind.config.ts",
         "vite.config.ts",
         "postcss.config.cjs",
-        "package.json",
-        "playwright.config.ts",
-        "playwright"
+        "package.json"
     ]
 }

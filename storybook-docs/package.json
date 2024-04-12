@@ -20,7 +20,6 @@
         "@storybook/react": "^8.0.8",
         "@storybook/react-vite": "^8.0.8",
         "@storybook/theming": "^8.0.8",
-        "prop-types": "^15.8.1",
         "storybook": "^8.0.8",
         "storybook-dark-mode": "^4.0.1",
         "typescript": "^5.4.5",

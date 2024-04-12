@@ -18,4 +18,10 @@ export default {
         autodocs: 'tag',
         defaultName: 'Documentation',
     },
+    viteFinal(config) {
+        // @ts-expect-error untyped name property
+        config.plugins = (config.plugins ?? []).filter((plugin) => plugin?.name !== 'vite:dts');
+
+        return config;
+    },
 } satisfies StorybookConfig;

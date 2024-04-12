@@ -3,7 +3,7 @@ name: Fondue Charts CI
 on:
     pull_request:
         paths:
-            - packages/charts
+            - packages/charts/**
 
 # Ensures that only one workflow per branch will run at a time.
 concurrency:
