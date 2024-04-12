@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import react from '@vitejs/plugin-react';
-import { defineConfig } from 'vitest/config';
 import dts from 'vite-plugin-dts';
 import vitePluginExternal from 'vite-plugin-external';
 import tsConfigPaths from 'vite-tsconfig-paths';
+import { defineConfig } from 'vitest/config';
 
 import { peerDependencies as peerDependenciesMap } from './package.json';
 
@@ -18,6 +18,15 @@ export default defineConfig({
         }),
         dts({ insertTypesEntry: true, rollupTypes: true, exclude: ['**/*.stories.tsx'] }),
     ],
+    build: {
+        lib: {
+            entry: './src/index.ts',
+            name: 'FondueComponents',
+            formats: ['es'],
+        },
+        sourcemap: true,
+        minify: true,
+    },
     test: {
         environment: 'happy-dom',
         setupFiles: ['./src/setupTests.ts'],
