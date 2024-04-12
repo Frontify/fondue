@@ -215,7 +215,7 @@ const addFourthSeries = (data: LineChartSeries[]): LineChartSeries[] => {
     const withFourthSeries = [...data];
     withFourthSeries.push({
         name: 'SF minus 10 degrees',
-        dataPoints: data[2]!.dataPoints.map((dataPoint) => ({
+        dataPoints: data[2].dataPoints.map((dataPoint) => ({
             ...dataPoint,
             value: dataPoint.value ? dataPoint.value - 10 : null,
         })),
@@ -226,7 +226,7 @@ const addFourthSeries = (data: LineChartSeries[]): LineChartSeries[] => {
 
 export const SingleDataSet = Template.bind({});
 SingleDataSet.args = {
-    series: [formattedTemperatureData[0]!],
+    series: [formattedTemperatureData[0]],
     width: 1000,
     height: 500,
     hideGlyphs: true,
@@ -239,7 +239,7 @@ SingleDataSet.args = {
 
 export const SingleDataSetShort = Template.bind({});
 SingleDataSetShort.args = {
-    series: filterOnePointPerWeek([formattedTemperatureData[0]!]),
+    series: filterOnePointPerWeek([formattedTemperatureData[0]]),
     width: 1000,
     height: 500,
     valueFormatter,
@@ -247,7 +247,7 @@ SingleDataSetShort.args = {
 
 export const SingleWithMissingData = Template.bind({});
 SingleWithMissingData.args = {
-    series: makeMissingData([formattedTemperatureData[1]!]),
+    series: makeMissingData([formattedTemperatureData[1]]),
     width: 1000,
     height: 500,
     missingValueLabel: 'Missing data',
@@ -257,7 +257,7 @@ SingleWithMissingData.args = {
 
 export const SingleWithMissingDataShort = Template.bind({});
 SingleWithMissingDataShort.args = {
-    series: makeMissingData(filterOnePointPerWeek([formattedTemperatureData[1]!])),
+    series: makeMissingData(filterOnePointPerWeek([formattedTemperatureData[1]])),
     width: 1000,
     height: 500,
     missingValueLabel: 'Missing data',
@@ -347,7 +347,7 @@ WithHeading.args = {
 
 export const WithoutLegend = Template.bind({});
 WithoutLegend.args = {
-    series: filterOnePointPerWeek([formattedTemperatureData[0]!]),
+    series: filterOnePointPerWeek([formattedTemperatureData[0]]),
     width: 1000,
     height: 500,
     hideLegend: true,
@@ -356,7 +356,7 @@ WithoutLegend.args = {
 
 export const WithNegativeValues = Template.bind({});
 WithNegativeValues.args = {
-    series: createNegativeData([formattedTemperatureData[1]!]),
+    series: createNegativeData([formattedTemperatureData[1]]),
     width: 1000,
     height: 500,
     hideGlyphs: true,
@@ -365,7 +365,7 @@ WithNegativeValues.args = {
 
 export const WithNegativeValuesShort = Template.bind({});
 WithNegativeValuesShort.args = {
-    series: createNegativeData(filterOnePointPerWeek([formattedTemperatureData[1]!])),
+    series: createNegativeData(filterOnePointPerWeek([formattedTemperatureData[1]])),
     width: 1000,
     height: 500,
     valueFormatter,
@@ -399,7 +399,7 @@ ThreeWithNegativeValuesWithMissingDataShort.args = {
 
 export const LegendBelowChart = Template.bind({});
 LegendBelowChart.args = {
-    series: filterOnePointPerWeek([formattedTemperatureData[0]!]),
+    series: filterOnePointPerWeek([formattedTemperatureData[0]]),
     width: 1000,
     height: 500,
     legendPosition: 'bottom',

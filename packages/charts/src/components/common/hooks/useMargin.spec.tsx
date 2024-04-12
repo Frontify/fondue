@@ -10,10 +10,11 @@ import { useMargin } from '@components/common/hooks/useMargin';
 const TICK_LENGTH = 4;
 const VALUE_FORMATTER = (value: number | string) => `${value}°C`;
 const NUMERIC_TICKS = [-5, 0, 15, 745];
-const NUMERIC_TICKS_LONGEST_FORMATTED = VALUE_FORMATTER(NUMERIC_TICKS[3]!);
-const NUMERIC_TICKS_LONGEST = NUMERIC_TICKS[3]!;
+// @ts-expect-error Wrong typing in the original code
+const NUMERIC_TICKS_LONGEST_FORMATTED = VALUE_FORMATTER(NUMERIC_TICKS[3]);
+const NUMERIC_TICKS_LONGEST = NUMERIC_TICKS[3];
 const STRING_TICKS = ['Chrome', 'Firefox', 'Safari', 'Edge', 'IE'];
-const STRING_TICKS_LONGEST = STRING_TICKS[1]!;
+const STRING_TICKS_LONGEST = STRING_TICKS[1];
 const TICK_LABEL_STYLE: TextProps = {
     fontSize: 12,
     fontFamily: 'var(--fc-font-family)',
@@ -96,6 +97,7 @@ describe('useMargin', () => {
         expect(result.current).toEqual({
             ...BASE_MARGIN,
             left:
+                // @ts-expect-error Wrong typing in the original code
                 BASE_MARGIN.left + STRING_TICKS_LONGEST.length + TICK_LENGTH + Math.abs(TICK_LABEL_STYLE.dx as number),
         });
         expect(useFontFaceObserverMock).toHaveBeenCalledTimes(2);
@@ -191,6 +193,7 @@ describe('useMargin', () => {
             ...BASE_MARGIN,
             left:
                 BASE_MARGIN.left +
+                // @ts-expect-error Wrong typing in the original code
                 valueFormatter(NUMERIC_TICKS_LONGEST).length +
                 TICK_LENGTH +
                 Math.abs(TICK_LABEL_STYLE.dx as number),
@@ -212,6 +215,7 @@ describe('useMargin', () => {
             ...BASE_MARGIN,
             left:
                 BASE_MARGIN.left +
+                // @ts-expect-error Wrong typing in the original code
                 truncateTextLabel(valueFormatter(STRING_TICKS_LONGEST)).length +
                 TICK_LENGTH +
                 Math.abs(TICK_LABEL_STYLE.dx as number),

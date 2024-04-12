@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { describe, expect, test } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { getXTickValues } from './getXTickValues';
 
@@ -33,12 +33,12 @@ const SERIES = [
 ];
 
 describe('getXTickValues', () => {
-    test('should return empty array if no data points', () => {
+    it('should return empty array if no data points', () => {
         const result = getXTickValues([{ name: 'foo', dataPoints: [] }], 500);
         expect(result).toEqual([]);
     });
 
-    test('should return 10 ticks if axis length is 600', () => {
+    it('should return 10 ticks if axis length is 600', () => {
         const result = getXTickValues(SERIES, 600);
         expect(result).toEqual([
             new Date('2021-01-01'),
@@ -54,17 +54,18 @@ describe('getXTickValues', () => {
         ]);
     });
 
-    test('should return all ticks if axis length is 2000', () => {
+    it('should return all ticks if axis length is 2000', () => {
         const result = getXTickValues(SERIES, 2000);
-        expect(result).toEqual(SERIES[0]!.dataPoints.map((item) => item.timestamp));
+        // @ts-expect-error Wrong typing in the original code
+        expect(result).toEqual(SERIES[0].dataPoints.map((item) => item.timestamp));
     });
 
-    test('should return 2 data point if axis length is 100', () => {
+    it('should return 2 data point if axis length is 100', () => {
         const result = getXTickValues(SERIES, 100);
         expect(result).toEqual([new Date('2021-01-01'), new Date('2021-01-20')]);
     });
 
-    test('should return 1 data point if axis length is 50', () => {
+    it('should return 1 data point if axis length is 50', () => {
         const result = getXTickValues(SERIES, 50);
         expect(result).toEqual([new Date('2021-01-01')]);
     });

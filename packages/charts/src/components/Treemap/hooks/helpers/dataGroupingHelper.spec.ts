@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { describe, expect, test } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import {
     getDataPointsToBeGrouped,
@@ -85,7 +85,7 @@ const colorLabelMap = {
 };
 
 describe('getDataPointsToBeGrouped', () => {
-    test('should not group if threshold is 0', () => {
+    it('should not group if threshold is 0', () => {
         const result = getDataPointsToBeGrouped(MOCK_DATA, 0);
 
         expect(result).toEqual({
@@ -95,7 +95,7 @@ describe('getDataPointsToBeGrouped', () => {
         });
     });
 
-    test('should group data points whose value is smaller than threshold', () => {
+    it('should group data points whose value is smaller than threshold', () => {
         const result = getDataPointsToBeGrouped(MOCK_DATA, 3);
 
         expect(result).toEqual({
@@ -105,7 +105,7 @@ describe('getDataPointsToBeGrouped', () => {
         });
     });
 
-    test('should group all data points except root if threshold is larger than the largest data point', () => {
+    it('should group all data points except root if threshold is larger than the largest data point', () => {
         const result = getDataPointsToBeGrouped(MOCK_DATA, 10);
 
         expect(result).toEqual({
@@ -122,7 +122,7 @@ describe('getDataPointsToBeGrouped', () => {
         });
     });
 
-    test('should never group root, even if threshold is larger than the sum of all data points', () => {
+    it('should never group root, even if threshold is larger than the sum of all data points', () => {
         const result = getDataPointsToBeGrouped(MOCK_DATA, Infinity);
 
         expect(result).toEqual({
@@ -141,8 +141,9 @@ describe('getDataPointsToBeGrouped', () => {
 });
 
 describe('getFirstLevelGroups', () => {
-    test('should group data points by color', () => {
-        const result = getFirstLevelGroups([MOCK_DATA[1]!, MOCK_DATA[2]!]);
+    it('should group data points by color', () => {
+        // @ts-expect-error Wrong typing in the original code
+        const result = getFirstLevelGroups([MOCK_DATA[1], MOCK_DATA[2]]);
 
         expect(result).toEqual([
             {
@@ -159,9 +160,10 @@ describe('getFirstLevelGroups', () => {
 });
 
 describe('getSecondLevelGroups', () => {
-    test('should group data points by color and parent group', () => {
+    it('should group data points by color and parent group', () => {
         const result = getSecondLevelGroups(
-            [MOCK_DATA[3]!, MOCK_DATA[4]!, MOCK_DATA[5]!, MOCK_DATA[6]!, MOCK_DATA[7]!, MOCK_DATA[8]!],
+            // @ts-expect-error Wrong typing in the original code
+            [MOCK_DATA[3], MOCK_DATA[4], MOCK_DATA[5], MOCK_DATA[6], MOCK_DATA[7], MOCK_DATA[8]],
             [
                 {
                     id: 'group-transparent',
@@ -198,9 +200,10 @@ describe('getSecondLevelGroups', () => {
         ]);
     });
 
-    test('should group data points by color when no first-level group exists', () => {
+    it('should group data points by color when no first-level group exists', () => {
         const result = getSecondLevelGroups(
-            [MOCK_DATA[3]!, MOCK_DATA[4]!, MOCK_DATA[5]!, MOCK_DATA[6]!, MOCK_DATA[7]!, MOCK_DATA[8]!],
+            // @ts-expect-error Wrong typing in the original code
+            [MOCK_DATA[3], MOCK_DATA[4], MOCK_DATA[5], MOCK_DATA[6], MOCK_DATA[7], MOCK_DATA[8]],
             [],
             colorLabelMap,
         );
