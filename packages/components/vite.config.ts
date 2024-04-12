@@ -6,7 +6,7 @@ import vitePluginExternal from 'vite-plugin-external';
 import tsConfigPaths from 'vite-tsconfig-paths';
 import { defineConfig } from 'vitest/config';
 
-import { peerDependencies as peerDependenciesMap } from './package.json';
+import { dependencies as dependenciesMap, peerDependencies as peerDependenciesMap } from './package.json';
 
 export default defineConfig({
     plugins: [
@@ -14,7 +14,7 @@ export default defineConfig({
         tsConfigPaths(),
         vitePluginExternal({
             nodeBuiltins: true,
-            externalizeDeps: Object.keys(peerDependenciesMap),
+            externalizeDeps: [...Object.keys(dependenciesMap), ...Object.keys(peerDependenciesMap)],
         }),
         dts({ insertTypesEntry: true, rollupTypes: true, exclude: ['**/*.stories.tsx'] }),
     ],

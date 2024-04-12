@@ -129,6 +129,19 @@ export default {
                 xl: '1280px',
                 '2xl': '1536px',
             },
+            animation: {
+                'loading-bar-infinite': 'loading-bar-infinite 1s infinite linear',
+            },
+            keyframes: {
+                'loading-bar-infinite': {
+                    '0%': { transform: ' translateX(0) scaleX(0)' },
+                    '40%': { transform: 'translateX(0) scaleX(0.4)' },
+                    '100%': { transform: 'translateX(100%) scaleX(0.5)' },
+                },
+            },
+            transformOrigin: {
+                'left-right': '0% 50%',
+            },
         },
     },
 } satisfies Config;
