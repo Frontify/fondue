@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ReactPortal } from 'react';
-import { type ReactNode } from 'react';
+import { type ReactPortal, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 
 export type PortalProps = { children?: ReactNode; container?: HTMLElement };
