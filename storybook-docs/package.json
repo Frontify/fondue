@@ -5,24 +5,25 @@
     "private": true,
     "scripts": {
         "storybook": "storybook dev -p 6010",
-        "copy:ui:storybook": "mkdir -p storybook-static/new/ && cp -r ../packages/components/storybook-static/. storybook-static/new",
-        "copy:fondue:storybook": "mkdir -p storybook-static/legacy/ && cp -r ../packages/fondue/storybook-static/. storybook-static/legacy",
-        "build:storybook": "storybook build && pnpm run copy:ui:storybook && pnpm run copy:fondue:storybook"
+        "copy:ui:storybook": "mkdir -p storybook-static/new && cp -r ../packages/components/storybook-static/. storybook-static/new",
+        "copy:charts:storybook": "mkdir -p storybook-static/charts && cp -r ../packages/charts/storybook-static/. storybook-static/charts",
+        "copy:fondue:storybook": "mkdir -p storybook-static/legacy && cp -r ../packages/fondue/storybook-static/. storybook-static/legacy",
+        "build:storybook": "storybook build && pnpm run copy:ui:storybook && pnpm run copy:fondue:storybook && pnpm copy:charts:storybook"
     },
     "devDependencies": {
         "@etchteam/storybook-addon-status": "^4.2.4",
-        "@storybook/addon-a11y": "^8.0.7",
-        "@storybook/addon-essentials": "^8.0.7",
-        "@storybook/addon-interactions": "^8.0.7",
-        "@storybook/addon-links": "^8.0.7",
-        "@storybook/blocks": "^8.0.7",
-        "@storybook/react": "^8.0.7",
-        "@storybook/react-vite": "^8.0.7",
-        "@storybook/theming": "^8.0.7",
+        "@storybook/addon-a11y": "^8.0.8",
+        "@storybook/addon-essentials": "^8.0.8",
+        "@storybook/addon-interactions": "^8.0.8",
+        "@storybook/addon-links": "^8.0.8",
+        "@storybook/blocks": "^8.0.8",
+        "@storybook/react": "^8.0.8",
+        "@storybook/react-vite": "^8.0.8",
+        "@storybook/theming": "^8.0.8",
         "prop-types": "^15.8.1",
-        "storybook": "^8.0.7",
-        "storybook-dark-mode": "^3.0.3",
-        "typescript": "^5.3.3",
+        "storybook": "^8.0.8",
+        "storybook-dark-mode": "^4.0.1",
+        "typescript": "^5.4.5",
         "vite": "^5.2.8"
     }
 }

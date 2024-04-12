@@ -1,0 +1,102 @@
+{
+    "name": "@frontify/fondue-charts",
+    "type": "module",
+    "version": "1.7.7",
+    "description": "Frontify's data viz library",
+    "author": "Frontify Developers <developers@frontify.com>",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Frontify/fondue",
+        "directory": "packages/charts"
+    },
+    "bugs": {
+        "url": "https://github.com/frontify/fondue/issues"
+    },
+    "sideEffects": false,
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.es.js"
+        },
+        "./styles": "./dist/styles/index.css",
+        "./dist/*": "./dist/*"
+    },
+    "main": "./dist/index.es.js",
+    "types": "./dist/index.d.ts",
+    "files": [
+        "dist"
+    ],
+    "engines": {
+        "node": ">=18"
+    },
+    "scripts": {
+        "build": "vite build",
+        "build:watch": "vite build --watch",
+        "build:storybook": "storybook build",
+        "storybook": "storybook dev -p 6007",
+        "lint": "eslint .",
+        "lint:fix": "eslint --fix .",
+        "typecheck": "tsc --noEmit",
+        "test:watch": "vitest",
+        "test": "vitest run",
+        "test:coverage": "vitest run --coverage"
+    },
+    "peerDependencies": {
+        "react": "^18",
+        "react-dom": "^18"
+    },
+    "dependencies": {
+        "@frontify/fondue-tokens": "^3.3.0-next.5",
+        "@visx/axis": "^3.10.1",
+        "@visx/glyph": "3.3.0",
+        "@visx/grid": "^3.5.0",
+        "@visx/group": "3.3.0",
+        "@visx/hierarchy": "^1.17.1",
+        "@visx/responsive": "^3.10.2",
+        "@visx/scale": "3.5.0",
+        "@visx/shape": "3.5.0",
+        "@visx/text": "3.3.0",
+        "@visx/tooltip": "3.3.0",
+        "@visx/xychart": "3.10.2",
+        "lodash": "^4.17.21",
+        "react-spring": "9.7.3",
+        "use-font-face-observer": "^1.2.1"
+    },
+    "devDependencies": {
+        "@etchteam/storybook-addon-status": "^4.2.4",
+        "@frontify/eslint-config-react": "^0.17.6",
+        "@storybook/addon-a11y": "^8.0.8",
+        "@storybook/addon-actions": "^8.0.8",
+        "@storybook/addon-essentials": "^8.0.8",
+        "@storybook/addon-links": "^8.0.8",
+        "@storybook/react": "^8.0.8",
+        "@storybook/react-vite": "^8.0.8",
+        "@testing-library/react": "^15.0.0",
+        "@types/d3-hierarchy": "^3.1.7",
+        "@types/d3-scale": "^4.0.8",
+        "@types/d3-shape": "^3.1.6",
+        "@types/lodash": "^4.17.0",
+        "@types/react": "^18.2.75",
+        "@types/react-dom": "^18.2.23",
+        "@visx/mock-data": "^2.17.0",
+        "@vitejs/plugin-react": "^4.2.1",
+        "@vitest/coverage-v8": "^1.4.0",
+        "autoprefixer": "^10.4.19",
+        "eslint": "^8.57.0",
+        "eslint-plugin-notice": "^0.9.10",
+        "happy-dom": "^14.7.1",
+        "postcss": "8.4.38",
+        "prettier": "3.2.5",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "storybook": "^8.0.8",
+        "storybook-dark-mode": "^4.0.1",
+        "tailwindcss": "^3.4.3",
+        "typescript": "^5.4.5",
+        "vite": "5.2.8",
+        "vite-plugin-dts": "3.8.1",
+        "vite-plugin-eslint": "1.8.1",
+        "vite-tsconfig-paths": "^4.3.2",
+        "vitest": "^1.4.0"
+    }
+}

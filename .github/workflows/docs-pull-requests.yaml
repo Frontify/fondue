@@ -36,6 +36,9 @@ jobs:
             - name: Build Icon package
               run: pnpm --stream --filter {packages/icons} build:generate-react-icons
 
+            - name: Build Charts package
+              run: pnpm --stream --filter {packages/charts} build
+
             - name: Build Storybook packages
               run: pnpm --stream --filter {packages/fondue} --filter {packages/ui} build:storybook
 
