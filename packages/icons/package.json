@@ -18,8 +18,12 @@
         "icons",
         "design system"
     ],
-    "main": "dist/fondue-icons.js",
-    "types": "dist/index.d.ts",
+    "exports": {
+        ".": {
+            "import": "./dist/fondue-icons.js",
+            "types": "./dist/index.d.ts"
+        }
+    },
     "files": [
         "icons",
         "dist"

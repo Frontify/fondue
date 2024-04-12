@@ -12,8 +12,12 @@
     "bugs": {
         "url": "https://github.com/frontify/fondue/issues"
     },
-    "main": "dist/fondue-components.js",
-    "types": "dist/index.d.ts",
+    "exports": {
+        ".": {
+            "import": "./dist/fondue-components.js",
+            "types": "./dist/index.d.ts"
+        }
+    },
     "engines": {
         "node": ">=18"
     },
