@@ -151,6 +151,9 @@ jobs:
             - name: Install dependencies
               run: pnpm install --frozen-lockfile
 
+            - name: Generate React icons
+              run: pnpm --stream --filter {packages/icons} build:generate-react-icons
+
             - name: Unit test
               run: pnpm --stream --filter {packages/components} test
 
