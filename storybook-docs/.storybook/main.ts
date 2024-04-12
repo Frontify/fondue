@@ -40,13 +40,13 @@ const config: StorybookConfig = {
                 },
                 charts: {
                     title: "Charts",
-                    url: "http://localhost:6008",
+                    url: "http://localhost:6007",
                     type: "auto-inject",
                     expanded: true,
                 },
                 legacy: {
                     title: "Legacy",
-                    url: "http://localhost:6007",
+                    url: "http://localhost:6008",
                     type: "auto-inject",
                     expanded: true,
                 },

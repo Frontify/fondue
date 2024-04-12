@@ -4,10 +4,10 @@ export default {
     stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
     staticDirs: ['assets'],
     addons: [
-        '@storybook/addon-links',
-        '@storybook/addon-essentials',
-        '@storybook/addon-a11y',
         '@etchteam/storybook-addon-status',
+        '@storybook/addon-a11y',
+        '@storybook/addon-essentials',
+        '@storybook/addon-links',
         'storybook-dark-mode',
     ],
     framework: {

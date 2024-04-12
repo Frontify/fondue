@@ -33,7 +33,7 @@
         "build": "vite build",
         "build:watch": "vite build --watch",
         "build:storybook": "storybook build",
-        "storybook": "storybook dev -p 6008",
+        "storybook": "storybook dev -p 6007",
         "lint": "eslint .",
         "lint:fix": "eslint --fix .",
         "typecheck": "tsc --noEmit",
