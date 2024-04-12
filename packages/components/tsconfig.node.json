@@ -12,6 +12,8 @@
         "tailwind.config.ts",
         "vite.config.ts",
         "postcss.config.cjs",
-        "package.json"
+        "package.json",
+        "playwright.config.ts",
+        "playwright"
     ]
 }
