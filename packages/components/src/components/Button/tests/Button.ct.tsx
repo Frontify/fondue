@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconIcon } from '@frontify/fondue-icons';
 import { expect, test } from '@playwright/experimental-ct-react';
 
-import { IconIcon } from '@frontify/fondue-icons';
-import { Button } from '../Button.tsx';
+import { Button } from '../Button';
 
 const BUTTON_TEXT = 'Frontify';
-const BUTTON_TEST_ID = 'fondue-button';
+// const BUTTON_TEST_ID = 'fondue-button';
 
 test.use({ viewport: { width: 500, height: 500 } });
 

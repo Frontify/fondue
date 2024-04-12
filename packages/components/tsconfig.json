@@ -18,8 +18,7 @@
         "noFallthroughCasesInSwitch": true,
         "baseUrl": ".",
         "paths": {
-            "@components/*": ["./src/components/*"],
-            "@utilities/*": ["./src/utilities/*"]
+            "#/*": ["./src/*"]
         }
     },
     "include": [".storybook", "src", "playwright.config.ts", "playwright"],

@@ -1,50 +1,62 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { cn, sv } from '@utilities/styleUtilities';
 import { describe, expect, it } from 'vitest';
 
+import { cn, sv } from '#/utilities/styleUtilities';
+
 describe('class merging utility', () => {
-    it(`concatinates strings from list`, () => {
+    it('concatinates strings from list', () => {
         const className = cn('tw-flex', 'tw-p-8 tw-justiify-center', 'tw-items-start');
         expect(className).toBe('tw-flex tw-p-8 tw-justiify-center tw-items-start');
     });
-    it(`allows for dynamic inputs`, () => {
+
+    it('allows for dynamic inputs', () => {
+        // eslint-disable-next-line no-constant-condition
         const className = cn('tw-flex', 'tw-p-8 tw-justiify-center', true ? 'tw-items-start' : 'kiwi');
         expect(className).toBe('tw-flex tw-p-8 tw-justiify-center tw-items-start');
     });
-    it(`removes whitespaces`, () => {
+
+    it('removes whitespaces', () => {
         const className = cn('tw-flex', 'tw-p-8     tw-justiify-center', '    tw-items-start');
         expect(className).toBe('tw-flex tw-p-8 tw-justiify-center tw-items-start');
     });
-    it(`supports arrays`, () => {
+
+    it('supports arrays', () => {
         const className = cn('tw-flex', ['tw-p-8', ' tw-justiify-center'], 'tw-items-start');
         expect(className).toBe('tw-flex tw-p-8 tw-justiify-center tw-items-start');
     });
-    it(`removes empty strings`, () => {
+
+    it('removes empty strings', () => {
         const className = cn('tw-flex', 'tw-p-8', ' ', 'tw-justiify-center', 'tw-items-start');
         expect(className).toBe('tw-flex tw-p-8 tw-justiify-center tw-items-start');
     });
-    it(`removes null values`, () => {
+
+    it('removes null values', () => {
         const className = cn('tw-flex', 'tw-p-8', null, 'tw-justiify-center', 'tw-items-start');
         expect(className).toBe('tw-flex tw-p-8 tw-justiify-center tw-items-start');
     });
-    it(`removes undefined values`, () => {
+
+    it('removes undefined values', () => {
         const className = cn('tw-flex', 'tw-p-8', undefined, 'tw-justiify-center', 'tw-items-start');
         expect(className).toBe('tw-flex tw-p-8 tw-justiify-center tw-items-start');
     });
-    it(`removes false values`, () => {
+
+    it('removes false values', () => {
         const className = cn('tw-flex', 'tw-p-8', false, 'tw-justiify-center', 'tw-items-start');
         expect(className).toBe('tw-flex tw-p-8 tw-justiify-center tw-items-start');
     });
-    it(`removes 0 values`, () => {
+
+    it('removes 0 values', () => {
         const className = cn('tw-flex', 'tw-p-8', 0, 'tw-justiify-center', 'tw-items-start');
         expect(className).toBe('tw-flex tw-p-8 tw-justiify-center tw-items-start');
     });
-    it(`removes empty arrays`, () => {
+
+    it('removes empty arrays', () => {
         const className = cn('tw-flex', 'tw-p-8', [], 'tw-justiify-center', 'tw-items-start');
         expect(className).toBe('tw-flex tw-p-8 tw-justiify-center tw-items-start');
     });
-    it(`removes overridden classes`, () => {
+
+    it('removes overridden classes', () => {
         const className = cn('tw-flex', 'tw-p-8', 'tw-justiify-center', 'tw-items-start', 'tw-flex', 'tw-p-2');
         expect(className).toBe('tw-justiify-center tw-items-start tw-flex tw-p-2');
     });
@@ -78,19 +90,24 @@ describe('tailwind variants utility', () => {
             },
         ],
     });
-    it(`returns base styles`, () => {
+
+    it('returns base styles', () => {
         const className = styledDiv();
         expect(className).toBe('tw-flex tw-flex-col');
     });
-    it(`applies variants`, () => {
+
+    it('applies variants', () => {
         const className = styledDiv({ alignment: 'start', size: 'medium' });
         expect(className).toBe('tw-flex tw-flex-col tw-px-4 tw-h-9 tw-items-start');
     });
-    it(`ignores invalid variants`, () => {
+
+    it('ignores invalid variants', () => {
+        // @ts-expect-error Wrong value on purpose for the test
         const className = styledDiv({ alignment: 'weird', size: 'medium' });
         expect(className).toBe('tw-flex tw-flex-col tw-px-4 tw-h-9');
     });
-    it(`applies compound variants`, () => {
+
+    it('applies compound variants', () => {
         const className = styledDiv({ alignment: 'end', size: 'large' });
         expect(className).toBe('tw-flex tw-flex-col tw-px-6 tw-h-12 tw-items-end tw-border-2 tw-border-black');
     });

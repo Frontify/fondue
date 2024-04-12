@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { defineConfig, devices } from '@playwright/experimental-ct-react';
-import { resolve } from 'path';
+import tsConfigPaths from 'vite-tsconfig-paths';
 
 // https://playwright.dev/docs/test-configuration
 export default defineConfig({
@@ -18,13 +18,8 @@ export default defineConfig({
         trace: 'on-first-retry',
         ctPort: 3100,
         ctViteConfig: {
-            resolve: {
-                alias: {
-                    '@components': resolve('./src/components'),
-                    '@utilities': resolve('./src/utilities'),
-                },
-            },
-        }
+            plugins: [tsConfigPaths()],
+        },
     },
     projects: [
         { name: 'chromium', use: { ...devices['Desktop Chrome'] } },

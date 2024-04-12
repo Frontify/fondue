@@ -13,8 +13,8 @@
     },
     "exports": {
         ".": {
-            "import": "./dist/fondue-components.js",
-            "types": "./dist/index.d.ts"
+            "types": "./dist/index.d.ts",
+            "import": "./dist/fondue-components.js"
         }
     },
     "engines": {
@@ -39,15 +39,12 @@
         "react": "^18",
         "react-dom": "^18"
     },
-    "dependencies": {
-        "@frontify/fondue-icons": "workspace:*"
-    },
     "devDependencies": {
         "@etchteam/storybook-addon-status": "^4.2.4",
         "@frontify/eslint-config-react": "^0.17.6",
         "@frontify/fondue-icons": "workspace:^",
         "@frontify/fondue-tokens": "^3.4.0",
-        "@playwright/experimental-ct-react": "^1.43.0",
+        "@playwright/experimental-ct-react": "1.41.2",
         "@storybook/addon-a11y": "^8.0.8",
         "@storybook/addon-essentials": "^8.0.8",
         "@storybook/addon-interactions": "^8.0.8",
@@ -57,9 +54,9 @@
         "@storybook/react-vite": "^8.0.8",
         "@tailwindcss/forms": "^0.5.7",
         "@testing-library/jest-dom": "^6.4.2",
-        "@testing-library/react": "^15.0.0",
+        "@testing-library/react": "^15.0.1",
         "@types/node": "^20.12.7",
-        "@types/react": "^18.2.75",
+        "@types/react": "^18.2.77",
         "@vitejs/plugin-react": "^4.2.1",
         "@vitest/coverage-v8": "^1.4.0",
         "@vitest/ui": "^1.4.0",

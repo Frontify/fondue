@@ -1,8 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { cn } from "./styleUtilities";
-
-
+import { cn } from './styleUtilities';
 
 export const FOCUS_STYLE = 'tw-ring-4 tw-ring-blue tw-ring-offset-2 dark:tw-ring-offset-black tw-outline-none';
 export const FOCUS_STYLE_NO_OFFSET = 'tw-ring-4 tw-ring-blue dark:tw-ring-offset-black tw-outline-none';

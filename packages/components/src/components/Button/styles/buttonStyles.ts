@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { FondueIconProps } from '@frontify/fondue-icons';
+import { type FondueIconProps } from '@frontify/fondue-icons';
 
-import { sv } from '@utilities/styleUtilities';
+import { sv } from '#/utilities/styleUtilities';
+
 import { type ButtonSize } from '../Button';
 
 export const buttonIconSizeMap: Record<ButtonSize, FondueIconProps['size']> = {

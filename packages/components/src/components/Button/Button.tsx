@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ForwardedRef, cloneElement, forwardRef, type MouseEvent, type ReactElement, type ReactNode } from 'react';
+import { type ForwardedRef, cloneElement, forwardRef, type MouseEvent, type ReactElement, type ReactNode } from 'react';
 
 import { buttonIconSizeMap, buttonStyles } from './styles/buttonStyles';
 import { iconStyles } from './styles/iconStyles';
