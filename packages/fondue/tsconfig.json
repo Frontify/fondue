@@ -26,6 +26,7 @@
         "types": ["cypress", "cypress-real-events", "vite/client", "node"]
     },
     "include": [
+        ".storybook",
         ".eslintrc.cjs",
         "postcss.config.cjs",
         "cypress.config.ts",

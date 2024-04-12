@@ -18,10 +18,9 @@
         "noFallthroughCasesInSwitch": true,
         "baseUrl": ".",
         "paths": {
-            "#contentlayer/generated": ["./.contentlayer/generated"],
             "#/*": ["./src/*"]
         }
     },
-    "include": ["src/**/*", ".contentlayer/generated"],
+    "include": ["src/**/*"],
     "references": [{ "path": "./tsconfig.node.json" }]
 }

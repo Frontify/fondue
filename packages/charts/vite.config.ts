@@ -18,7 +18,11 @@ export const globals = {
 };
 
 export default defineConfig({
-    plugins: [react(), tsConfigPaths(), dts({ insertTypesEntry: true, rollupTypes: true })],
+    plugins: [
+        react(),
+        tsConfigPaths(),
+        dts({ insertTypesEntry: true, rollupTypes: true, exclude: ['**/*.stories.tsx'] }),
+    ],
     build: {
         lib: {
             entry: './src/index.ts',

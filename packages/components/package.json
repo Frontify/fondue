@@ -27,16 +27,18 @@
         "test": "vitest run --coverage",
         "test:ui": "vitest --ui",
         "test:watch": "vitest",
-        "test:components": "playwright test --ui -c playwright.config.ts",
-        "test:components:ci": "playwright test -c playwright.config.ts"
+        "test:components": "playwright test --ui",
+        "test:components:ci": "playwright test"
     },
     "peerDependencies": {
+        "@frontify/fondue-icons": "workspace:^",
         "react": "^18",
         "react-dom": "^18"
     },
     "devDependencies": {
         "@etchteam/storybook-addon-status": "^4.2.4",
         "@frontify/eslint-config-react": "^0.17.6",
+        "@frontify/fondue-icons": "workspace:^",
         "@frontify/fondue-tokens": "^3.4.0",
         "@playwright/experimental-ct-react": "^1.43.0",
         "@storybook/addon-a11y": "^8.0.8",
@@ -67,6 +69,9 @@
         "tailwindcss": "^3.4.3",
         "typescript": "^5.4.5",
         "vite": "^5.2.8",
+        "vite-plugin-dts": "^3.8.1",
+        "vite-plugin-external": "^4.3.1",
+        "vite-tsconfig-paths": "^4.3.2",
         "vitest": "^1.4.0"
     }
 }

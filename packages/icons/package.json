@@ -18,8 +18,8 @@
         "icons",
         "design system"
     ],
-    "main": "src/index.ts",
-    "types": "src/index.ts",
+    "main": "dist/fondue-icons.js",
+    "types": "dist/index.d.ts",
     "files": [
         "icons",
         "dist"
@@ -28,7 +28,7 @@
         "node": ">=18"
     },
     "scripts": {
-        "build": "pnpm build:download-new-icons && pnpm build:generate-react-icons",
+        "build": "pnpm build:download-new-icons && pnpm build:generate-react-icons && vite build",
         "build:download-new-icons": "dotenv tsx scripts/download_new_icons.ts",
         "build:generate-react-icons": "tsx scripts/generate_react_icons.ts",
         "lint": "eslint .",
@@ -43,7 +43,8 @@
         "@iconify/tools": "^4.0.4",
         "@types/lodash": "^4.17.0",
         "@types/node": "^20.12.7",
-        "@types/react": "^18.2.75",
+        "@types/react": "^18.2.77",
+        "@vitejs/plugin-react": "^4.2.1",
         "dotenv-cli": "^7.4.1",
         "eslint": "^8.57.0",
         "figma-api": "^1.11.0",
@@ -52,6 +53,10 @@
         "react": "^18.2.0",
         "svgson": "^5.3.1",
         "tsx": "^4.7.2",
-        "typescript": "^5.4.5"
+        "typescript": "^5.4.5",
+        "vite": "^5.2.8",
+        "vite-plugin-dts": "^3.8.1",
+        "vite-plugin-external": "^4.3.1",
+        "vite-tsconfig-paths": "^4.3.2"
     }
 }

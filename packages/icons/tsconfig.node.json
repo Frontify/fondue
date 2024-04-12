@@ -6,7 +6,8 @@
         "allowSyntheticDefaultImports": true,
         "resolveJsonModule": true,
         "lib": ["ESNext"],
-        "target": "ESNext"
+        "target": "ESNext",
+        "baseUrl": "."
     },
-    "include": ["scripts", ".eslintrc.cjs"]
+    "include": ["scripts", ".eslintrc.cjs", "vite.config.ts"]
 }

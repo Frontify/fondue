@@ -78,7 +78,12 @@ export default defineConfig({
         'process.env.REACT_APP_SC_ATTR': JSON.stringify(process.env.REACT_APP_SC_ATTR),
         'process.env.SC_ATTR': JSON.stringify(process.env.SC_ATTR),
     },
-    plugins: [react(), tsConfigPaths(), dts({ insertTypesEntry: true, rollupTypes: true }), bundleIconsInDevPlugin()],
+    plugins: [
+        react(),
+        tsConfigPaths(),
+        dts({ insertTypesEntry: true, rollupTypes: true, exclude: ['**/*.stories.tsx'] }),
+        bundleIconsInDevPlugin(),
+    ],
     build: {
         lib: {
             entry: './src/index.ts',
