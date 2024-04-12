@@ -129,6 +129,9 @@ importers:
       '@vitest/coverage-v8':
         specifier: ^1.4.0
         version: 1.4.0(vitest@1.4.0)
+      '@vitest/ui':
+        specifier: 1.4.0
+        version: 1.4.0(vitest@1.4.0)
       autoprefixer:
         specifier: ^10.4.19
         version: 10.4.19(postcss@8.4.38)
