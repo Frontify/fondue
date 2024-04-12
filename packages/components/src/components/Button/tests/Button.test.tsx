@@ -4,12 +4,12 @@ import { IconIcon } from '@frontify/fondue-icons';
 import { render } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { Button, type ButtonStyle } from '..';
+import { Button, type ButtonProps } from '../Button';
 
 const BUTTON_TEXT = 'Frontify';
 const BUTTON_TEST_ID = 'fondue-button';
 
-const styles: ButtonStyle[] = ['default', 'positive', 'negative', 'danger', 'loud'];
+const styles: ButtonProps['style'][] = ['default', 'positive', 'negative', 'danger', 'loud'];
 
 describe('Button component', () => {
     for (const style of styles) {

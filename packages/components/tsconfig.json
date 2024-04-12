@@ -21,6 +21,6 @@
             "#/*": ["./src/*"]
         }
     },
-    "include": [".storybook", "src", "playwright.config.ts", "playwright"],
+    "include": [".storybook", "src"],
     "references": [{ "path": "./tsconfig.node.json" }]
 }

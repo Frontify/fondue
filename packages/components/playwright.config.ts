@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { defineConfig, devices } from '@playwright/experimental-ct-react';
+import { type InlineConfig } from 'vite';
 import tsConfigPaths from 'vite-tsconfig-paths';
 
 // https://playwright.dev/docs/test-configuration

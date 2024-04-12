@@ -4,9 +4,9 @@ import { type FondueIconProps } from '@frontify/fondue-icons';
 
 import { sv } from '#/utilities/styleUtilities';
 
-import { type ButtonSize } from '../Button';
+import { type ButtonProps } from '../Button';
 
-export const buttonIconSizeMap: Record<ButtonSize, FondueIconProps['size']> = {
+export const buttonIconSizeMap: { [buttonSize in Exclude<ButtonProps['size'], undefined>]: FondueIconProps['size'] } = {
     small: 16,
     medium: 20,
     large: 24,

@@ -3,4 +3,4 @@
 "@frontify/fondue-icons": patch
 ---
 
-refactored button
+refactor: refactored button approach to size/variants
