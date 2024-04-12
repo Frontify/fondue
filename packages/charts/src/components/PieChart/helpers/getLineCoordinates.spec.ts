@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { describe, expect, test } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { getLineCoordinates } from '@components/PieChart/helpers/getLineCoordinates';
 
 describe('getLineCoordinates', () => {
-    test('returns expected coordinates for labelAngle < PI / 2', () => {
+    it('returns expected coordinates for labelAngle < PI / 2', () => {
         const result = getLineCoordinates(Math.PI / 4, [100, -100], 200, false);
         expect(result).toEqual({
             x1: 173.53910524340094,
@@ -16,7 +16,7 @@ describe('getLineCoordinates', () => {
         });
     });
 
-    test('returns expected coordinates for labelAngle === PI / 2', () => {
+    it('returns expected coordinates for labelAngle === PI / 2', () => {
         const result = getLineCoordinates(Math.PI / 2, [100, 0], 200, false);
         expect(result).toEqual({
             x3: 249,
@@ -27,7 +27,7 @@ describe('getLineCoordinates', () => {
         });
     });
 
-    test('returns expected coordinates for labelAngle > PI / 2 && labelAngle < PI', () => {
+    it('returns expected coordinates for labelAngle > PI / 2 && labelAngle < PI', () => {
         const result = getLineCoordinates(Math.PI / 1.5, [100, 100], 200, false);
         expect(result).toEqual({
             x3: 231.0474041071148,
@@ -38,7 +38,7 @@ describe('getLineCoordinates', () => {
         });
     });
 
-    test('returns expected coordinates for labelAngle === PI', () => {
+    it('returns expected coordinates for labelAngle === PI', () => {
         const result = getLineCoordinates(Math.PI, [0, 100], 200, false);
         expect(result).toEqual({
             x3: 15.000000000000009,
@@ -49,7 +49,7 @@ describe('getLineCoordinates', () => {
         });
     });
 
-    test('returns expected coordinates for labelAngle > PI && labelAngle < 3 * PI / 2', () => {
+    it('returns expected coordinates for labelAngle > PI && labelAngle < 3 * PI / 2', () => {
         const result = getLineCoordinates(Math.PI * 1.3, [-100, 100], 200, false);
         expect(result).toEqual({
             x1: -184.13776741499453,
@@ -60,7 +60,7 @@ describe('getLineCoordinates', () => {
         });
     });
 
-    test('returns expected coordinates for labelAngle  === 3 * PI / 2', () => {
+    it('returns expected coordinates for labelAngle  === 3 * PI / 2', () => {
         const result = getLineCoordinates(Math.PI * 1.5, [-100, 0], 200, false);
         expect(result).toEqual({
             x3: -249,
@@ -71,7 +71,7 @@ describe('getLineCoordinates', () => {
         });
     });
 
-    test('returns expected coordinates for labelAngle > 3 * PI / 2 && labelAngle < 2 * PI', () => {
+    it('returns expected coordinates for labelAngle > 3 * PI / 2 && labelAngle < 2 * PI', () => {
         const result = getLineCoordinates(Math.PI * 1.7, [-100, -100], 200, false);
         expect(result).toEqual({
             x3: -223.40827724624296,
@@ -82,7 +82,7 @@ describe('getLineCoordinates', () => {
         });
     });
 
-    test('returns flipped orientation for labelAngle > 3 * PI / 2 && labelAngle < 2 * PI', () => {
+    it('returns flipped orientation for labelAngle > 3 * PI / 2 && labelAngle < 2 * PI', () => {
         const result = getLineCoordinates(Math.PI * 1.7, [-100, -100], 200, true);
         expect(result).toEqual({
             x1: -184.13776741499453,

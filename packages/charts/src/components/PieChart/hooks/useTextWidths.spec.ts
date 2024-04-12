@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { renderHook } from '@testing-library/react';
-import { type Mock, afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import { type Mock, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useTextWidths } from '@components/PieChart/hooks/useTextWidths';
 import { getSVGTextDimensions } from '@components/common/helpers';
@@ -32,7 +32,7 @@ describe('useTextWidths', () => {
         vi.restoreAllMocks();
     });
 
-    test('should return the correct widths', () => {
+    it('should return the correct widths', () => {
         const { result } = renderHook(() => useTextWidths('label', 'someValue', 'percentage'));
 
         expect(result.current).toEqual({
@@ -44,7 +44,7 @@ describe('useTextWidths', () => {
         expect(getSVGTextDimensionsMock).toHaveBeenCalledTimes(3);
     });
 
-    test('should return the correct widths when font is not loaded and update once it is loaded', () => {
+    it('should return the correct widths when font is not loaded and update once it is loaded', () => {
         useFontFaceObserverMock.mockReturnValue(false);
         const { result, rerender } = renderHook(() => useTextWidths('label', 'someValue', 'percentage'));
 

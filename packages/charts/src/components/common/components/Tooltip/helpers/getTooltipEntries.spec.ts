@@ -1,14 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type TooltipDatum } from '@visx/xychart/lib/types/tooltip';
-import { describe, expect, test, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { type LineChartDataPoint } from '@components/LineChart';
 
 import { getTooltipEntries } from './getTooltipEntries';
 
 describe('getTooltipEntries', () => {
-    test('returns the expected data', () => {
+    it('returns the expected data', () => {
         const datumByKey = {
             series1: {
                 datum: {
@@ -38,7 +38,7 @@ describe('getTooltipEntries', () => {
         expect(valueFormatter).toHaveBeenCalledWith(200);
     });
 
-    test('ignores no data keys', () => {
+    it('ignores no data keys', () => {
         const datumByKey = {
             series1: {
                 datum: {

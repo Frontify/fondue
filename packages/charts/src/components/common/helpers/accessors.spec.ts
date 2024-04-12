@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { describe, expect, test } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { BASE_COLORS, HOVER_COLORS } from '@theme/consts';
 
@@ -13,17 +13,17 @@ describe('common accessors', () => {
             { name: 'key2', dataPoints: [] },
             { name: 'key3', dataPoints: [] },
         ];
-        test('returns color for valid keys', () => {
+        it('returns color for valid keys', () => {
             expect(colorAccessorByKey('key1', data)).toBe(BASE_COLORS[0]);
             expect(colorAccessorByKey('key2', data)).toBe(BASE_COLORS[1]);
             expect(colorAccessorByKey('key3', data)).toBe(BASE_COLORS[2]);
         });
 
-        test('returns undefined for invalid keys', () => {
+        it('returns undefined for invalid keys', () => {
             expect(colorAccessorByKey('invalid key', data)).toBe(undefined);
         });
 
-        test('handles more than three data sets', () => {
+        it('handles more than three data sets', () => {
             const longData = [
                 ...data,
                 { name: 'key4', dataPoints: [] },
@@ -43,17 +43,17 @@ describe('common accessors', () => {
     });
 
     describe('colorAccessorByIndex', () => {
-        test('handles first three data sets', () => {
+        it('handles first three data sets', () => {
             expect(colorAccessorByIndex(0)).toBe(BASE_COLORS[0]);
             expect(colorAccessorByIndex(1)).toBe(BASE_COLORS[1]);
             expect(colorAccessorByIndex(2)).toBe(BASE_COLORS[2]);
         });
 
-        test('returns undefined for invalid index', () => {
+        it('returns undefined for invalid index', () => {
             expect(colorAccessorByIndex(-1)).toBe(undefined);
         });
 
-        test('handles more than three data sets', () => {
+        it('handles more than three data sets', () => {
             expect(colorAccessorByIndex(3)).toBe(BASE_COLORS[0]);
             expect(colorAccessorByIndex(4)).toBe(BASE_COLORS[1]);
             expect(colorAccessorByIndex(5)).toBe(BASE_COLORS[2]);
@@ -63,17 +63,17 @@ describe('common accessors', () => {
     });
 
     describe('hoverColorAccessorByIndex', () => {
-        test('handles first three data sets', () => {
+        it('handles first three data sets', () => {
             expect(hoverColorAccessorByIndex(0)).toBe(HOVER_COLORS[0]);
             expect(hoverColorAccessorByIndex(1)).toBe(HOVER_COLORS[1]);
             expect(hoverColorAccessorByIndex(2)).toBe(HOVER_COLORS[2]);
         });
 
-        test('returns undefined for invalid index', () => {
+        it('returns undefined for invalid index', () => {
             expect(hoverColorAccessorByIndex(-1)).toBe(undefined);
         });
 
-        test('handles more than three data sets', () => {
+        it('handles more than three data sets', () => {
             expect(hoverColorAccessorByIndex(3)).toBe(HOVER_COLORS[0]);
             expect(hoverColorAccessorByIndex(4)).toBe(HOVER_COLORS[1]);
             expect(hoverColorAccessorByIndex(5)).toBe(HOVER_COLORS[2]);
@@ -83,17 +83,17 @@ describe('common accessors', () => {
     });
 
     describe('hoverColorWeakAccessorByIndex', () => {
-        test('handles first three data sets', () => {
+        it('handles first three data sets', () => {
             expect(hoverColorAccessorByIndex(0)).toBe(HOVER_COLORS[0]);
             expect(hoverColorAccessorByIndex(1)).toBe(HOVER_COLORS[1]);
             expect(hoverColorAccessorByIndex(2)).toBe(HOVER_COLORS[2]);
         });
 
-        test('returns undefined for invalid index', () => {
+        it('returns undefined for invalid index', () => {
             expect(hoverColorAccessorByIndex(-1)).toBe(undefined);
         });
 
-        test('handles more than three data sets', () => {
+        it('handles more than three data sets', () => {
             expect(hoverColorAccessorByIndex(3)).toBe(HOVER_COLORS[0]);
             expect(hoverColorAccessorByIndex(4)).toBe(HOVER_COLORS[1]);
             expect(hoverColorAccessorByIndex(5)).toBe(HOVER_COLORS[2]);

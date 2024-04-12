@@ -2,7 +2,7 @@
 
 import { renderHook } from '@testing-library/react';
 import { type RefObject } from 'react';
-import { describe, expect, test } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { type Padding } from '@components/PieChart';
 import { useResponsiveChart } from '@components/PieChart/hooks/useResponsiveChart';
@@ -21,7 +21,7 @@ const getExpectedResult = (labelStyle: 'label' | 'legend', expectedSize: number,
 };
 
 describe('useResponsiveChart', () => {
-    test('returns defaults when no containerRef is present', () => {
+    it('returns defaults when no containerRef is present', () => {
         const SIZE_PROP = 200;
         const CONTAINER_REF = {} as RefObject<HTMLDivElement>;
         const LABEL_PADDING = { top: 10, right: 15, bottom: 20, left: 25 };
@@ -30,7 +30,7 @@ describe('useResponsiveChart', () => {
         expect(result.current).toEqual(getExpectedResult('label', SIZE_PROP, LABEL_PADDING));
     });
 
-    test('returns defaults when container is bigger than chart', () => {
+    it('returns defaults when container is bigger than chart', () => {
         const SIZE_PROP = 200;
         const CONTAINER_REF = { current: { clientWidth: 500 } } as RefObject<HTMLDivElement>;
         const LABEL_PADDING = { top: 10, right: 15, bottom: 20, left: 25 };
@@ -39,7 +39,7 @@ describe('useResponsiveChart', () => {
         expect(result.current).toEqual(getExpectedResult('label', SIZE_PROP, LABEL_PADDING));
     });
 
-    test('returns defaults when container is bigger than chart', () => {
+    it('returns defaults when container is bigger than chart', () => {
         const SIZE_PROP = 200;
         const CONTAINER_REF = { current: { clientWidth: 500 } } as RefObject<HTMLDivElement>;
         const LABEL_PADDING = { top: 10, right: 15, bottom: 20, left: 25 };
@@ -48,7 +48,7 @@ describe('useResponsiveChart', () => {
         expect(result.current).toEqual(getExpectedResult('label', SIZE_PROP, LABEL_PADDING));
     });
 
-    test('adjusts chart size to fit container when container is smaller than chart', () => {
+    it('adjusts chart size to fit container when container is smaller than chart', () => {
         const SIZE_PROP = 200;
         const CONTAINER_WIDTH = 100;
         const CONTAINER_REF = { current: { clientWidth: CONTAINER_WIDTH } } as RefObject<HTMLDivElement>;
@@ -58,7 +58,7 @@ describe('useResponsiveChart', () => {
         expect(result.current).toEqual(getExpectedResult('legend', CONTAINER_WIDTH, 'none'));
     });
 
-    test('preserves chart size, displays legend and removes paddings when label padding prevents chart from fitting in container', () => {
+    it('preserves chart size, displays legend and removes paddings when label padding prevents chart from fitting in container', () => {
         const SIZE_PROP = 50;
         const CONTAINER_WIDTH = 100;
         const CONTAINER_REF = { current: { clientWidth: CONTAINER_WIDTH } } as RefObject<HTMLDivElement>;
@@ -68,7 +68,7 @@ describe('useResponsiveChart', () => {
         expect(result.current).toEqual(getExpectedResult('legend', SIZE_PROP, 'none'));
     });
 
-    test('updates correctly when sizeProp changes to smaller than container size', () => {
+    it('updates correctly when sizeProp changes to smaller than container size', () => {
         const SIZE_PROP = 200;
         const CONTAINER_WIDTH = 100;
         const CONTAINER_REF = { current: { clientWidth: CONTAINER_WIDTH } } as RefObject<HTMLDivElement>;
@@ -86,7 +86,7 @@ describe('useResponsiveChart', () => {
         expect(result.current).toEqual(getExpectedResult('label', NEW_SIZE_PROP, LABEL_PADDING));
     });
 
-    test('updates correctly when sizeProp changes to bigger than container size', () => {
+    it('updates correctly when sizeProp changes to bigger than container size', () => {
         const SIZE_PROP = 50;
         const CONTAINER_WIDTH = 100;
         const CONTAINER_REF = { current: { clientWidth: CONTAINER_WIDTH } } as RefObject<HTMLDivElement>;
@@ -104,7 +104,7 @@ describe('useResponsiveChart', () => {
         expect(result.current).toEqual(getExpectedResult('legend', CONTAINER_WIDTH, 'none'));
     });
 
-    test('updates correctly when labelPadding changes so that chart no longer fits in the container', () => {
+    it('updates correctly when labelPadding changes so that chart no longer fits in the container', () => {
         const SIZE_PROP = 50;
         const CONTAINER_WIDTH = 100;
         const CONTAINER_REF = { current: { clientWidth: CONTAINER_WIDTH } } as RefObject<HTMLDivElement>;
@@ -122,7 +122,7 @@ describe('useResponsiveChart', () => {
         expect(result.current).toEqual(getExpectedResult('legend', SIZE_PROP, 'none'));
     });
 
-    test('updates correctly when container becomes too small to fit the chart', () => {
+    it('updates correctly when container becomes too small to fit the chart', () => {
         const SIZE_PROP = 50;
         const CONTAINER_WIDTH = 100;
         const CONTAINER_REF = { current: { clientWidth: CONTAINER_WIDTH } } as RefObject<HTMLDivElement>;
@@ -138,7 +138,7 @@ describe('useResponsiveChart', () => {
         expect(result.current).toEqual(getExpectedResult('legend', NEW_CONTAINER_WIDTH, 'none'));
     });
 
-    test('updates correctly when container becomes too small to fit the chart with padding after padding has been updated', () => {
+    it('updates correctly when container becomes too small to fit the chart with padding after padding has been updated', () => {
         const SIZE_PROP = 50;
         const CONTAINER_WIDTH = 100;
         const CONTAINER_REF = { current: { clientWidth: CONTAINER_WIDTH } } as RefObject<HTMLDivElement>;
@@ -160,7 +160,7 @@ describe('useResponsiveChart', () => {
         expect(result.current).toEqual(getExpectedResult('legend', SIZE_PROP, 'none'));
     });
 
-    test('updates correctly when container becomes big enough to fit the chart', () => {
+    it('updates correctly when container becomes big enough to fit the chart', () => {
         const SIZE_PROP = 50;
         const CONTAINER_WIDTH = 30;
         const CONTAINER_REF = { current: { clientWidth: CONTAINER_WIDTH } } as RefObject<HTMLDivElement>;

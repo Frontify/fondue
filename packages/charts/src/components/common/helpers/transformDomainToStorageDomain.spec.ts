@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { describe, expect, test } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { transformDomainToStorageDomain } from './transformDomainToStorageDomain';
 
 describe('transformDomainToStorageDomain', () => {
-    test('should not round values under 1000 or over 100000', () => {
+    it('should not round values under 1000 or over 100000', () => {
         const mockDomain1: [number, number] = [0, 1];
         const mockDomain2: [number, number] = [0, 10];
         const mockDomain3: [number, number] = [0, 100];
@@ -21,7 +21,7 @@ describe('transformDomainToStorageDomain', () => {
         expect(result4).toEqual([0, 999]);
     });
 
-    test('should round to nearest storage value an amount between 1000 and 100000', () => {
+    it('should round to nearest storage value an amount between 1000 and 100000', () => {
         const mockDomain1: [number, number] = [0, 1001];
         const mockDomain2: [number, number] = [0, 7000];
         const mockDomain3: [number, number] = [0, 12000];
@@ -43,7 +43,7 @@ describe('transformDomainToStorageDomain', () => {
         expect(result6).toEqual([0, 99328]);
     });
 
-    test('should round to nearest big storage value an amount greater than 100000', () => {
+    it('should round to nearest big storage value an amount greater than 100000', () => {
         const mockDomain1: [number, number] = [0, 100001];
         const mockDomain2: [number, number] = [0, 200000];
         const mockDomain3: [number, number] = [0, 530000];

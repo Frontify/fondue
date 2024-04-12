@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { describe, expect, test } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { type BarChartSeries } from '@components/BarChart';
 import { getInitialBandTicks } from '@components/BarChart/helpers/getInitialBandTicks';
@@ -17,7 +17,7 @@ const series = [
 ] as BarChartSeries[];
 
 describe('getInitialBandTicks', () => {
-    test('returns all labels', () => {
+    it('returns all labels', () => {
         const result = getInitialBandTicks(series);
         expect(result).toEqual(labels);
     });

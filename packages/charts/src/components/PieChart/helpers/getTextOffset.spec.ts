@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { CSSStyleDeclaration } from 'happy-dom';
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { FONT_SIZE } from '@components/PieChart/components/consts';
 import { getTextOffset } from '@components/PieChart/helpers/getTextOffset';
@@ -24,7 +24,7 @@ describe('getTextOffset', () => {
     afterEach(() => {
         vi.restoreAllMocks();
     });
-    test('returns expected offset title only', () => {
+    it('returns expected offset title only', () => {
         const result = getTextOffset(true, false, false);
         expect(CSSStyleDeclaration.prototype.getPropertyValue).toHaveBeenCalledWith('font-size');
         expect(CSSStyleDeclaration.prototype.getPropertyValue).toHaveBeenCalledWith(FONT_SIZE);
@@ -32,7 +32,7 @@ describe('getTextOffset', () => {
         expect(result).toEqual({ textTopOffset: 16, textBottomOffset: 0 });
     });
 
-    test('returns expected offset title and value', () => {
+    it('returns expected offset title and value', () => {
         const result = getTextOffset(true, true, false);
         expect(CSSStyleDeclaration.prototype.getPropertyValue).toHaveBeenCalledWith('font-size');
         expect(CSSStyleDeclaration.prototype.getPropertyValue).toHaveBeenCalledWith(FONT_SIZE);
@@ -40,7 +40,7 @@ describe('getTextOffset', () => {
         expect(result).toEqual({ textTopOffset: 16, textBottomOffset: 16 });
     });
 
-    test('returns expected offset title, value and percentage', () => {
+    it('returns expected offset title, value and percentage', () => {
         const result = getTextOffset(true, true, true);
         expect(CSSStyleDeclaration.prototype.getPropertyValue).toHaveBeenCalledWith('font-size');
         expect(CSSStyleDeclaration.prototype.getPropertyValue).toHaveBeenCalledWith(FONT_SIZE);
@@ -48,7 +48,7 @@ describe('getTextOffset', () => {
         expect(result).toEqual({ textTopOffset: 16, textBottomOffset: 16 });
     });
 
-    test('returns expected offset title and percentage', () => {
+    it('returns expected offset title and percentage', () => {
         const result = getTextOffset(true, false, true);
         expect(CSSStyleDeclaration.prototype.getPropertyValue).toHaveBeenCalledWith('font-size');
         expect(CSSStyleDeclaration.prototype.getPropertyValue).toHaveBeenCalledWith(FONT_SIZE);
@@ -56,7 +56,7 @@ describe('getTextOffset', () => {
         expect(result).toEqual({ textTopOffset: 16, textBottomOffset: 16 });
     });
 
-    test('returns expected offset value and percentage', () => {
+    it('returns expected offset value and percentage', () => {
         const result = getTextOffset(false, true, true);
         expect(CSSStyleDeclaration.prototype.getPropertyValue).toHaveBeenCalledWith('font-size');
         expect(CSSStyleDeclaration.prototype.getPropertyValue).toHaveBeenCalledWith(FONT_SIZE);
@@ -64,7 +64,7 @@ describe('getTextOffset', () => {
         expect(result).toEqual({ textTopOffset: 16, textBottomOffset: 0 });
     });
 
-    test('returns expected offset value only', () => {
+    it('returns expected offset value only', () => {
         const result = getTextOffset(false, true, false);
         expect(CSSStyleDeclaration.prototype.getPropertyValue).toHaveBeenCalledWith('font-size');
         expect(CSSStyleDeclaration.prototype.getPropertyValue).toHaveBeenCalledWith(FONT_SIZE);
@@ -72,7 +72,7 @@ describe('getTextOffset', () => {
         expect(result).toEqual({ textTopOffset: 16, textBottomOffset: 0 });
     });
 
-    test('returns expected offset percentage only', () => {
+    it('returns expected offset percentage only', () => {
         const result = getTextOffset(false, false, true);
         expect(CSSStyleDeclaration.prototype.getPropertyValue).toHaveBeenCalledWith('font-size');
         expect(CSSStyleDeclaration.prototype.getPropertyValue).toHaveBeenCalledWith(FONT_SIZE);

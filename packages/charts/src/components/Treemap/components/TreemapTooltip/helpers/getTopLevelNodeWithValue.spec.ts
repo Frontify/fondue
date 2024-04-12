@@ -1,13 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type HierarchyNode } from 'd3-hierarchy';
-import { describe, expect, test } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { getTopLevelNodeWithValue } from '@components/Treemap/components/TreemapTooltip/helpers/getTopLevelNodeWithValue';
 import { type TreemapDataPoint } from '@components/Treemap/types';
 
 describe('getTopLevelNodeWithValue', () => {
-    test('returns top level node with value as sum of children if active node is top level node', () => {
+    it('returns top level node with value as sum of children if active node is top level node', () => {
         const hierarchyNode = {
             depth: 1,
             data: {
@@ -34,7 +34,7 @@ describe('getTopLevelNodeWithValue', () => {
         });
     });
 
-    test('returns top level node with value as sum of children if active node is not top level node', () => {
+    it('returns top level node with value as sum of children if active node is not top level node', () => {
         const hierarchyNode = {
             depth: 2,
             data: {

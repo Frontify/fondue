@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Document, HTMLElement, type SVGElement } from 'happy-dom';
-import { describe, expect, test, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { getSVGTextDimensions } from '@components/common/helpers/getSVGTextDimensions';
 
@@ -9,7 +9,7 @@ Document.prototype.createElementNS = vi.fn();
 HTMLElement.prototype.appendChild = vi.fn();
 
 describe('getSVGTextDimensions', () => {
-    test('returns expected dimensions and sets attributes correctly', () => {
+    it('returns expected dimensions and sets attributes correctly', () => {
         const mockSVGElement = {
             setAttribute: vi.fn(),
             appendChild: vi.fn(),

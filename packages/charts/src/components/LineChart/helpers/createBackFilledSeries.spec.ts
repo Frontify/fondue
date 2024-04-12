@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { describe, expect, test } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { createBackfilledSeries } from '@components/LineChart/helpers/createBackfilledSeries';
 
@@ -41,7 +41,7 @@ const dataWithoutMissingValues = [
 ];
 
 describe('createBackFilledSeries', () => {
-    test('handles gap in data', () => {
+    it('handles gap in data', () => {
         const missingData = createBackfilledSeries(dataWithMissingValues);
         expect(missingData.length).toBe(2);
         expect(missingData[0]?.dataPoints.length).toEqual(5);
@@ -60,12 +60,12 @@ describe('createBackFilledSeries', () => {
         expect(missingData[1]?.dataPoints[3]?.value).toEqual(7);
     });
 
-    test('handles no gap in data', () => {
+    it('handles no gap in data', () => {
         const missingData = createBackfilledSeries(dataWithoutMissingValues);
         expect(missingData.length).toBe(0);
     });
 
-    test('handles missing data in the beginning', () => {
+    it('handles missing data in the beginning', () => {
         const data = [
             {
                 dataPoints: [
@@ -94,7 +94,7 @@ describe('createBackFilledSeries', () => {
         expect(missingData[0]?.dataPoints[3]?.timestamp.valueOf()).toEqual(new Date('2021-01-04').valueOf());
     });
 
-    test('handles only missing data', () => {
+    it('handles only missing data', () => {
         const data = [
             {
                 dataPoints: [

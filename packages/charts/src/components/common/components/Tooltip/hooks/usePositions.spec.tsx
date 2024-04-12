@@ -4,7 +4,7 @@ import { renderHook } from '@testing-library/react';
 import { type AxisScale } from '@visx/axis';
 import { DataContext, type DataContextType, TooltipContext, type TooltipContextType } from '@visx/xychart';
 import { type ReactNode } from 'react';
-import { type Mock, afterEach, describe, expect, test, vi } from 'vitest';
+import { type Mock, afterEach, describe, expect, it, vi } from 'vitest';
 
 import { type BarChartDataPoint } from '@components/BarChart';
 import { type LineChartDataPoint } from '@components/LineChart';
@@ -114,7 +114,7 @@ describe('usePositions', () => {
         vi.clearAllMocks();
     });
 
-    test('should return correct coordinates', () => {
+    it('should return correct coordinates', () => {
         const bandWidthX = 20;
         const bandWidthY = 10;
         const { accessorMocks, ...dataContext } = mockDataContext(bandWidthX, bandWidthY);
@@ -162,7 +162,7 @@ describe('usePositions', () => {
         expect(accessorMocks.yAccessor).toHaveBeenCalledWith(tooltipContext.tooltipData?.datumByKey?.key2?.datum);
     });
 
-    test('should return correct values when tooltip is not open', () => {
+    it('should return correct values when tooltip is not open', () => {
         const bandWidthX = 20;
         const bandWidthY = 10;
         const { accessorMocks, ...dataContext } = mockDataContext(bandWidthX, bandWidthY);
@@ -192,7 +192,7 @@ describe('usePositions', () => {
         expect(accessorMocks.yAccessor).not.toHaveBeenCalled();
     });
 
-    test('should return correct values when hideGlyphs is true', () => {
+    it('should return correct values when hideGlyphs is true', () => {
         const bandWidthX = 20;
         const bandWidthY = 10;
         const { accessorMocks, ...dataContext } = mockDataContext(bandWidthX, bandWidthY);
@@ -229,7 +229,7 @@ describe('usePositions', () => {
         expect(accessorMocks.yAccessor).not.toHaveBeenCalledWith(tooltipContext.tooltipData?.datumByKey?.key2?.datum);
     });
 
-    test('should return correct values for stacking dataPoints', () => {
+    it('should return correct values for stacking dataPoints', () => {
         const bandWidthX = 0;
         const bandWidthY = 0;
         const dataContext = mockDataContext(bandWidthX, bandWidthY);

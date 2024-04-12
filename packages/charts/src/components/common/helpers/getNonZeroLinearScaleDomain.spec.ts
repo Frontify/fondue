@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { describe, expect, test } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { type LineChartSeries } from '@components/LineChart';
 import { getNonZeroLinearScaleDomain } from '@components/common/helpers/getNonZeroLinearScaleDomain';
@@ -41,52 +41,52 @@ const SERIES_IDENTICAL_NON_ZERO_VALUES = [
     },
 ] as LineChartSeries[];
 describe('getNonZeroLinearScaleDomain', () => {
-    test('positive values', () => {
+    it('positive values', () => {
         const result = getNonZeroLinearScaleDomain(SERIES_POSITIVE_VALUES);
         expect(result).toEqual([0, 2000]);
     });
 
-    test('mixed values', () => {
+    it('mixed values', () => {
         const result = getNonZeroLinearScaleDomain(SERIES_MIXED_VALUES);
         expect(result).toEqual([-3000, 6]);
     });
 
-    test('mixed values with markLine', () => {
+    it('mixed values with markLine', () => {
         const result = getNonZeroLinearScaleDomain(SERIES_MIXED_VALUES, 2);
         expect(result).toEqual([-3000, 6]);
     });
 
-    test('mixed values with markLine above domain', () => {
+    it('mixed values with markLine above domain', () => {
         const result = getNonZeroLinearScaleDomain(SERIES_MIXED_VALUES, 10);
         expect(result).toEqual([-3000, 10]);
     });
 
-    test('mixed values with markLine below domain', () => {
+    it('mixed values with markLine below domain', () => {
         const result = getNonZeroLinearScaleDomain(SERIES_MIXED_VALUES, -10240);
         expect(result).toEqual([-20000, 6]);
     });
 
-    test('only zero values', () => {
+    it('only zero values', () => {
         const result = getNonZeroLinearScaleDomain(SERIES_ONLY_ZERO_VALUES);
         expect(result).toEqual([0, 1]);
     });
 
-    test('only zero values with markLine', () => {
+    it('only zero values with markLine', () => {
         const result = getNonZeroLinearScaleDomain(SERIES_ONLY_ZERO_VALUES, 5);
         expect(result).toEqual([0, 5]);
     });
 
-    test('identical non-zero values', () => {
+    it('identical non-zero values', () => {
         const result = getNonZeroLinearScaleDomain(SERIES_IDENTICAL_NON_ZERO_VALUES);
         expect(result).toEqual([0, 8]);
     });
 
-    test('identical non-zero values with markLine above domain', () => {
+    it('identical non-zero values with markLine above domain', () => {
         const result = getNonZeroLinearScaleDomain(SERIES_IDENTICAL_NON_ZERO_VALUES, 10);
         expect(result).toEqual([8, 10]);
     });
 
-    test('identical non-zero values with markLine below domain', () => {
+    it('identical non-zero values with markLine below domain', () => {
         const result = getNonZeroLinearScaleDomain(SERIES_IDENTICAL_NON_ZERO_VALUES, -10);
         expect(result).toEqual([-10, 8]);
     });

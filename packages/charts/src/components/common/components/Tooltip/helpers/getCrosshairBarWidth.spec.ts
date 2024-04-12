@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type AxisScale } from '@visx/axis';
-import { describe, expect, test } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { getCrosshairBarWidth } from './getCrosshairBarWidth';
 
@@ -19,7 +19,7 @@ const BAND_SCALE = {
 const NON_BAND_SCALE = {} as AxisScale;
 
 describe('getCrosshairBarWidth', () => {
-    test('returs correct value with band scale', () => {
+    it('returs correct value with band scale', () => {
         let xScale = BAND_SCALE;
         let yScale = NON_BAND_SCALE;
         const expected = BANDWIDTH * (1 + PADDING_INNER + PADDING_OUTER);
@@ -33,7 +33,7 @@ describe('getCrosshairBarWidth', () => {
         expect(resultHorizontal).toBe(expected);
     });
 
-    test('returs zero with non-band scale', () => {
+    it('returs zero with non-band scale', () => {
         let xScale = NON_BAND_SCALE;
         let yScale = BAND_SCALE;
 

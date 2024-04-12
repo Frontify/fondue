@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { render } from '@testing-library/react';
-import { describe, expect, test, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { LineChart } from '@components/LineChart';
 
@@ -32,7 +32,7 @@ vi.mock('@components/common/hooks', () => ({
 }));
 
 describe('LineChart', () => {
-    test('Should read the data-ready attribute and set the value', () => {
+    it('Should read the data-ready attribute and set the value', () => {
         const { container } = render(<LineChart series={dataWithMissingValues} width={400} height={200} />);
 
         const svgContainer = container.getElementsByTagName('svg')[0];

@@ -4,7 +4,7 @@ import { renderHook } from '@testing-library/react';
 import { type AxisScale } from '@visx/axis';
 import { DataContext, type DataContextType } from '@visx/xychart';
 import { type ReactNode, type Dispatch, type SetStateAction } from 'react';
-import { type Mock, afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import { type Mock, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useRotatedLabel } from '@components/BarChart/components/hooks/useRotatedLabel';
 
@@ -58,7 +58,7 @@ describe('useRotatedLabel', () => {
         vi.restoreAllMocks();
     });
 
-    test('returns 360 when horizontal', () => {
+    it('returns 360 when horizontal', () => {
         const dataContext = mockData(20, 0.5);
         const wrapper = ({ children }: { children: ReactNode }) => (
             <DataProvider dataContext={dataContext}>{children}</DataProvider>
@@ -79,7 +79,7 @@ describe('useRotatedLabel', () => {
         expect(updateFirstLabelOverflowsByMock).not.toHaveBeenCalled();
     });
 
-    test('returns 360 when labels fit', () => {
+    it('returns 360 when labels fit', () => {
         const dataContext = mockData(180, 0.5);
         const wrapper = ({ children }: { children: ReactNode }) => (
             <DataProvider dataContext={dataContext}>{children}</DataProvider>
@@ -107,7 +107,7 @@ describe('useRotatedLabel', () => {
         expect(updateFirstLabelOverflowsByMock).toHaveBeenCalledWith(-35);
     });
 
-    test('returns 315 (45deg counter-clockwise) when labels do not fit', () => {
+    it('returns 315 (45deg counter-clockwise) when labels do not fit', () => {
         const dataContext = mockData(20, 0.5);
         const wrapper = ({ children }: { children: ReactNode }) => (
             <DataProvider dataContext={dataContext}>{children}</DataProvider>
@@ -131,7 +131,7 @@ describe('useRotatedLabel', () => {
         expect(updateFirstLabelOverflowsByMock).toHaveBeenCalledWith(85);
     });
 
-    test('returns 0 until font is loaded, then 315', () => {
+    it('returns 0 until font is loaded, then 315', () => {
         useFontFaceObserverMock.mockReturnValue(false);
 
         const dataContext = mockData(20, 0.5);
@@ -164,7 +164,7 @@ describe('useRotatedLabel', () => {
         expect(updateFirstLabelOverflowsByMock).toHaveBeenCalledWith(85);
     });
 
-    test('updates margin when label would overflow and returns 315', () => {
+    it('updates margin when label would overflow and returns 315', () => {
         const dataContext = mockData(80, 0.5);
         const wrapper = ({ children }: { children: ReactNode }) => (
             <DataProvider dataContext={dataContext}>{children}</DataProvider>

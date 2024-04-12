@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { describe, expect, test } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { type LineChartSeries } from '@components/LineChart';
 import { getNonZeroLinearStackingScaleDomain } from '@components/common/helpers/getNonZeroLinearStackingScaleDomain';
@@ -42,39 +42,39 @@ const MOCK_SERIES_6 = [
 ] as LineChartSeries[];
 
 describe('getNonZeroLinearStackingScaleDomain', () => {
-    test('positive values with 1 digits', () => {
+    it('positive values with 1 digits', () => {
         const result = getNonZeroLinearStackingScaleDomain(MOCK_SERIES_1);
         expect(result).toEqual([0, 7]);
     });
-    test('positive values with 2 digits', () => {
+    it('positive values with 2 digits', () => {
         const result = getNonZeroLinearStackingScaleDomain(MOCK_SERIES_2);
         expect(result).toEqual([0, 90]);
     });
-    test('positive values with 3 digits', () => {
+    it('positive values with 3 digits', () => {
         const result = getNonZeroLinearStackingScaleDomain(MOCK_SERIES_3);
         expect(result).toEqual([0, 500]);
     });
-    test('positive values with 4 digits', () => {
+    it('positive values with 4 digits', () => {
         const result = getNonZeroLinearStackingScaleDomain(MOCK_SERIES_4);
         expect(result).toEqual([0, 2000]);
     });
-    test('positive values with 5 digits', () => {
+    it('positive values with 5 digits', () => {
         const result = getNonZeroLinearStackingScaleDomain(MOCK_SERIES_5);
         expect(result).toEqual([0, 30000]);
     });
-    test('positive values with 6 digits', () => {
+    it('positive values with 6 digits', () => {
         const result = getNonZeroLinearStackingScaleDomain(MOCK_SERIES_6);
         expect(result).toEqual([0, 500000]);
     });
-    test('with markline being the max before threshold', () => {
+    it('with markline being the max before threshold', () => {
         const result = getNonZeroLinearStackingScaleDomain(MOCK_SERIES_1, 9999);
         expect(result).toEqual([0, 10000]);
     });
-    test('with markline being the max after threshold', () => {
+    it('with markline being the max after threshold', () => {
         const result = getNonZeroLinearStackingScaleDomain(MOCK_SERIES_1, 10001);
         expect(result).toEqual([0, 20000]);
     });
-    test('with markline not being the max', () => {
+    it('with markline not being the max', () => {
         const result = getNonZeroLinearStackingScaleDomain(MOCK_SERIES_5, 10000);
         expect(result).toEqual([0, 30000]);
     });

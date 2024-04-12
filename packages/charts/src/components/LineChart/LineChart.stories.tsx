@@ -215,6 +215,7 @@ const addFourthSeries = (data: LineChartSeries[]): LineChartSeries[] => {
     const withFourthSeries = [...data];
     withFourthSeries.push({
         name: 'SF minus 10 degrees',
+        // @ts-expect-error Wrong typing in the original code
         dataPoints: data[2].dataPoints.map((dataPoint) => ({
             ...dataPoint,
             value: dataPoint.value ? dataPoint.value - 10 : null,
@@ -226,6 +227,7 @@ const addFourthSeries = (data: LineChartSeries[]): LineChartSeries[] => {
 
 export const SingleDataSet = Template.bind({});
 SingleDataSet.args = {
+    // @ts-expect-error Wrong typing in the original code
     series: [formattedTemperatureData[0]],
     width: 1000,
     height: 500,
@@ -239,6 +241,7 @@ SingleDataSet.args = {
 
 export const SingleDataSetShort = Template.bind({});
 SingleDataSetShort.args = {
+    // @ts-expect-error Wrong typing in the original code
     series: filterOnePointPerWeek([formattedTemperatureData[0]]),
     width: 1000,
     height: 500,
@@ -247,6 +250,7 @@ SingleDataSetShort.args = {
 
 export const SingleWithMissingData = Template.bind({});
 SingleWithMissingData.args = {
+    // @ts-expect-error Wrong typing in the original code
     series: makeMissingData([formattedTemperatureData[1]]),
     width: 1000,
     height: 500,
@@ -257,6 +261,7 @@ SingleWithMissingData.args = {
 
 export const SingleWithMissingDataShort = Template.bind({});
 SingleWithMissingDataShort.args = {
+    // @ts-expect-error Wrong typing in the original code
     series: makeMissingData(filterOnePointPerWeek([formattedTemperatureData[1]])),
     width: 1000,
     height: 500,
@@ -347,6 +352,7 @@ WithHeading.args = {
 
 export const WithoutLegend = Template.bind({});
 WithoutLegend.args = {
+    // @ts-expect-error Wrong typing in the original code
     series: filterOnePointPerWeek([formattedTemperatureData[0]]),
     width: 1000,
     height: 500,
@@ -356,6 +362,7 @@ WithoutLegend.args = {
 
 export const WithNegativeValues = Template.bind({});
 WithNegativeValues.args = {
+    // @ts-expect-error Wrong typing in the original code
     series: createNegativeData([formattedTemperatureData[1]]),
     width: 1000,
     height: 500,
@@ -365,6 +372,7 @@ WithNegativeValues.args = {
 
 export const WithNegativeValuesShort = Template.bind({});
 WithNegativeValuesShort.args = {
+    // @ts-expect-error Wrong typing in the original code
     series: createNegativeData(filterOnePointPerWeek([formattedTemperatureData[1]])),
     width: 1000,
     height: 500,
@@ -399,6 +407,7 @@ ThreeWithNegativeValuesWithMissingDataShort.args = {
 
 export const LegendBelowChart = Template.bind({});
 LegendBelowChart.args = {
+    // @ts-expect-error Wrong typing in the original code
     series: filterOnePointPerWeek([formattedTemperatureData[0]]),
     width: 1000,
     height: 500,

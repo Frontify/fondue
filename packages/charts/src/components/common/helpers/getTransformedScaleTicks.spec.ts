@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { describe, expect, test } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { getTransformedScaleTicks } from './getTransformedScaleTicks';
 
 describe('getTransformedScaleTicks', () => {
-    test('should get linear scale ticks for normal linear scale', () => {
+    it('should get linear scale ticks for normal linear scale', () => {
         const domain1: [number, number] = [0, 100];
         const numTicks1 = 5;
         const result1 = getTransformedScaleTicks(domain1, numTicks1);
@@ -22,7 +22,7 @@ describe('getTransformedScaleTicks', () => {
         expect(result3).toEqual([0, 1800, 3600, 5400, 7200, 9000]);
     });
 
-    test('should get linear scale ticks for storage linear scale', () => {
+    it('should get linear scale ticks for storage linear scale', () => {
         const domain1: [number, number] = [0, 10240];
         const numTicks1 = 5;
         const result1 = getTransformedScaleTicks(domain1, numTicks1);

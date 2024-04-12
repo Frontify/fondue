@@ -1,15 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { describe, expect, test } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { transformToHierarchyData } from '@components/Treemap/helpers/transformers';
 
 describe('transformToSortedHierarchyData', () => {
-    test('throws if dataPoints array is empty', () => {
+    it('throws if dataPoints array is empty', () => {
         expect(() => transformToHierarchyData([])).toThrow('no root');
     });
 
-    test('throws if dataPoints includes multiple roots', () => {
+    it('throws if dataPoints includes multiple roots', () => {
         const dataPoints = [
             {
                 id: 'Root',
@@ -27,7 +27,7 @@ describe('transformToSortedHierarchyData', () => {
         expect(() => transformToHierarchyData(dataPoints)).toThrow('multiple roots');
     });
 
-    test('throws if root is not found', () => {
+    it('throws if root is not found', () => {
         const dataPoints = [
             {
                 id: 'Node1',
@@ -45,7 +45,7 @@ describe('transformToSortedHierarchyData', () => {
         expect(() => transformToHierarchyData(dataPoints)).toThrow('missing: Top Level 1');
     });
 
-    test('returns hierarchy data if structure is correct', () => {
+    it('returns hierarchy data if structure is correct', () => {
         const dataPoints = [
             {
                 id: 'Root',

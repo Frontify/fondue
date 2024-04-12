@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type AxisScale } from '@visx/xychart';
-import { describe, expect, test, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { getBandScaleColumnWidth } from '@components/BarChart/components/helpers/getBandScaleColumnWidth';
 
@@ -12,15 +12,15 @@ const MOCK_SCALE = {
 } as unknown as AxisScale;
 
 describe('getBandScaleColumnWidth', () => {
-    test('returns zero when scale is undefined', () => {
+    it('returns zero when scale is undefined', () => {
         expect(getBandScaleColumnWidth(undefined)).toBe(0);
     });
 
-    test('returns zero when scale is not a band scale', () => {
+    it('returns zero when scale is not a band scale', () => {
         expect(getBandScaleColumnWidth({} as unknown as AxisScale)).toBe(0);
     });
 
-    test('returns the correct column width', () => {
+    it('returns the correct column width', () => {
         expect(getBandScaleColumnWidth(MOCK_SCALE)).toBe(15);
     });
 });

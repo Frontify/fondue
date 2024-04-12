@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type Mock, afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import { type Mock, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getLinearScaleTicks } from '@components/common/helpers/getLinearScaleTicks';
 
@@ -33,43 +33,43 @@ describe('getLinearScaleTicks', () => {
         vi.restoreAllMocks();
     });
 
-    test('passes correct values for positive domain', () => {
+    it('passes correct values for positive domain', () => {
         const ticks = getLinearScaleTicks([0, 100], 5);
         expect(createLinearScaleMock).toHaveBeenCalledWith({ domain: [0, 100] });
         expect(ticks).toEqual([0, 25, 50, 75, 100]);
     });
 
-    test('passes correct values for positive domain above zero', () => {
+    it('passes correct values for positive domain above zero', () => {
         const ticks = getLinearScaleTicks([10, 100], 5);
         expect(createLinearScaleMock).toHaveBeenCalledWith({ domain: [0, 100] });
         expect(ticks).toEqual([0, 25, 50, 75, 100]);
     });
 
-    test('passes correct values for negative domain', () => {
+    it('passes correct values for negative domain', () => {
         const ticks = getLinearScaleTicks([-100, 0], 5);
         expect(createLinearScaleMock).toHaveBeenCalledWith({ domain: [-100, 0] });
         expect(ticks).toEqual([-100, -75, -50, -25, 0]);
     });
 
-    test('passes correct values for negative domain below zero', () => {
+    it('passes correct values for negative domain below zero', () => {
         const ticks = getLinearScaleTicks([-100, -10], 5);
         expect(createLinearScaleMock).toHaveBeenCalledWith({ domain: [-100, 0] });
         expect(ticks).toEqual([-100, -75, -50, -25, 0]);
     });
 
-    test('passes correct values for mixed domain', () => {
+    it('passes correct values for mixed domain', () => {
         const ticks = getLinearScaleTicks([-100, 100], 5);
         expect(createLinearScaleMock).toHaveBeenCalledWith({ domain: [-100, 100] });
         expect(ticks).toEqual([-100, -50, 0, 50, 100]);
     });
 
-    test('returns decimal tick values by default', () => {
+    it('returns decimal tick values by default', () => {
         const ticks = getLinearScaleTicks([0, 2], 5);
         expect(createLinearScaleMock).toHaveBeenCalledWith({ domain: [0, 2] });
         expect(ticks).toEqual([0, 0.5, 1, 1.5, 2]);
     });
 
-    test('returns only non-decimal tick values when allowDecimalValues is false', () => {
+    it('returns only non-decimal tick values when allowDecimalValues is false', () => {
         const ticks = getLinearScaleTicks([0, 2], 5, false);
         expect(createLinearScaleMock).toHaveBeenCalledWith({ domain: [0, 2] });
         expect(ticks).toEqual([0, 1, 2]);

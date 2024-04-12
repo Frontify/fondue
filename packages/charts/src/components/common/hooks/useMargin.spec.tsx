@@ -2,7 +2,7 @@
 
 import { renderHook } from '@testing-library/react';
 import { type TextProps } from '@visx/text';
-import { type Mock, afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import { type Mock, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { truncateTextLabel } from '@components/BarChart/helpers';
 import { useMargin } from '@components/common/hooks/useMargin';
@@ -55,7 +55,7 @@ describe('useMargin', () => {
         vi.restoreAllMocks();
     });
 
-    test('returns correct margin for formatted numeric ticks', () => {
+    it('returns correct margin for formatted numeric ticks', () => {
         const { result } = renderHook(() =>
             useMargin({
                 ticks: NUMERIC_TICKS,
@@ -75,7 +75,7 @@ describe('useMargin', () => {
         expect(useFontFaceObserverMock).toHaveBeenCalledTimes(2);
     });
 
-    test('returns correct margin for unformatted numeric ticks', () => {
+    it('returns correct margin for unformatted numeric ticks', () => {
         const { result } = renderHook(() =>
             useMargin({ ticks: NUMERIC_TICKS, tickLabelStyle: TICK_LABEL_STYLE, tickLength: TICK_LENGTH }),
         );
@@ -90,7 +90,7 @@ describe('useMargin', () => {
         expect(useFontFaceObserverMock).toHaveBeenCalledTimes(2);
     });
 
-    test('returns correct margin for string ticks', () => {
+    it('returns correct margin for string ticks', () => {
         const { result } = renderHook(() =>
             useMargin({ ticks: STRING_TICKS, tickLabelStyle: TICK_LABEL_STYLE, tickLength: TICK_LENGTH }),
         );
@@ -103,7 +103,7 @@ describe('useMargin', () => {
         expect(useFontFaceObserverMock).toHaveBeenCalledTimes(2);
     });
 
-    test('returns correct margin for with maxLabelHeight and firstLabelOverflowsBy', () => {
+    it('returns correct margin for with maxLabelHeight and firstLabelOverflowsBy', () => {
         const { result } = renderHook(() =>
             useMargin({
                 ticks: STRING_TICKS,
@@ -121,7 +121,7 @@ describe('useMargin', () => {
         expect(useFontFaceObserverMock).toHaveBeenCalledTimes(2);
     });
 
-    test('returns correct margin for with maxLabelHeight and firstLabelOverflowsBy < tickLabelOffset', () => {
+    it('returns correct margin for with maxLabelHeight and firstLabelOverflowsBy < tickLabelOffset', () => {
         const { result } = renderHook(() =>
             useMargin({
                 ticks: STRING_TICKS,
@@ -139,7 +139,7 @@ describe('useMargin', () => {
         expect(useFontFaceObserverMock).toHaveBeenCalledTimes(2);
     });
 
-    test('returns null when font is not loaded', () => {
+    it('returns null when font is not loaded', () => {
         useFontFaceObserverMock.mockReturnValue(false);
         const { result, rerender } = renderHook(() =>
             useMargin({
@@ -166,7 +166,7 @@ describe('useMargin', () => {
         expect(useFontFaceObserverMock).toHaveBeenCalledTimes(3);
     });
 
-    test('updated value formatter updates results', () => {
+    it('updated value formatter updates results', () => {
         let valueFormatter = VALUE_FORMATTER;
         const { result, rerender } = renderHook(() =>
             useMargin({
@@ -201,7 +201,7 @@ describe('useMargin', () => {
         expect(useFontFaceObserverMock).toHaveBeenCalledTimes(4);
     });
 
-    test('long tick labels are truncated and truncation reflected in calculated margin', () => {
+    it('long tick labels are truncated and truncation reflected in calculated margin', () => {
         const valueFormatter = (value: number | string) => `${value} degrees celsius`;
         const { result } = renderHook(() =>
             useMargin({

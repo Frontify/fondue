@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { describe, expect, test } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { xAccessor, yAccessor } from './accessors';
 
@@ -9,33 +9,33 @@ const VALUE = 42;
 
 describe('BarChart accessors', () => {
     describe('xAccessor', () => {
-        test('returns label if horizontal is not set', () => {
+        it('returns label if horizontal is not set', () => {
             expect(xAccessor({ label: LABEL, value: VALUE })).toBe(LABEL);
         });
 
-        test('returns label if horizontal is false', () => {
+        it('returns label if horizontal is false', () => {
             expect(xAccessor({ label: LABEL, value: VALUE })).toBe(LABEL);
         });
 
-        test('returns value if horizontal is true', () => {
+        it('returns value if horizontal is true', () => {
             expect(xAccessor({ label: LABEL, value: VALUE }, true)).toBe(VALUE);
         });
     });
 
     describe('yAccessor', () => {
-        test('returns value if defined', () => {
+        it('returns value if defined', () => {
             expect(yAccessor({ label: LABEL, value: VALUE })).toBe(VALUE);
         });
 
-        test('returns null if value is null', () => {
+        it('returns null if value is null', () => {
             expect(yAccessor({ label: LABEL, value: null })).toBe(null);
         });
 
-        test('returns value if horizontal is false', () => {
+        it('returns value if horizontal is false', () => {
             expect(yAccessor({ label: LABEL, value: VALUE }, false)).toBe(VALUE);
         });
 
-        test('returns label if horizontal is true', () => {
+        it('returns label if horizontal is true', () => {
             expect(yAccessor({ label: LABEL, value: VALUE }, true)).toBe(LABEL);
         });
     });

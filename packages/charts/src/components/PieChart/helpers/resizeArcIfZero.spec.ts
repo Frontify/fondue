@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type PieArcDatum } from '@visx/shape/lib/shapes/Pie';
-import { describe, expect, test } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { type PieChartDatum } from '@components/PieChart';
 import { resizeArcIfZero } from '@components/PieChart/helpers/resizeArcIfZero';
@@ -21,7 +21,7 @@ const ZERO_ARC = {
 } as PieArcDatum<PieChartDatum>;
 
 describe('resizeArcIfZero', () => {
-    test('returns original arc if startAngle and endAngle are not equal', () => {
+    it('returns original arc if startAngle and endAngle are not equal', () => {
         expect(resizeArcIfZero(NON_ZERO_ARC, 1)).toEqual(NON_ZERO_ARC);
         expect(resizeArcIfZero(NON_ZERO_ARC, 2)).toEqual(NON_ZERO_ARC);
         expect(resizeArcIfZero(NON_ZERO_ARC, 3)).toEqual(NON_ZERO_ARC);
@@ -30,19 +30,19 @@ describe('resizeArcIfZero', () => {
         expect(resizeArcIfZero({ ...NON_ZERO_ARC, index: 2 }, 3)).toEqual({ ...NON_ZERO_ARC, index: 2 });
     });
 
-    test('returns resized arc if startAngle and endAngle are equal, single arc', () => {
+    it('returns resized arc if startAngle and endAngle are equal, single arc', () => {
         const result = resizeArcIfZero(ZERO_ARC, 1);
         expect(result).toEqual({ ...ZERO_ARC, startAngle: 0, endAngle: 2 * Math.PI });
     });
 
-    test('returns resized arc if startAngle and endAngle are equal, two arcs', () => {
+    it('returns resized arc if startAngle and endAngle are equal, two arcs', () => {
         const firstArc = resizeArcIfZero(ZERO_ARC, 2);
         expect(firstArc).toEqual({ ...ZERO_ARC, startAngle: 0, endAngle: Math.PI });
         const secondArc = resizeArcIfZero({ ...ZERO_ARC, index: 1 }, 2);
         expect(secondArc).toEqual({ ...ZERO_ARC, index: 1, startAngle: Math.PI, endAngle: 2 * Math.PI });
     });
 
-    test('returns resized arc if startAngle and endAngle are equal, three arcs', () => {
+    it('returns resized arc if startAngle and endAngle are equal, three arcs', () => {
         const firstArc = resizeArcIfZero(ZERO_ARC, 3);
         expect(firstArc).toEqual({ ...ZERO_ARC, startAngle: 0, endAngle: (2 * Math.PI) / 3 });
         const secondArc = resizeArcIfZero({ ...ZERO_ARC, index: 1 }, 3);
