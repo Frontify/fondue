@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { defineConfig, devices } from '@playwright/experimental-ct-react';
+import { resolve } from 'path';
 
 // https://playwright.dev/docs/test-configuration
 export default defineConfig({
@@ -16,6 +17,14 @@ export default defineConfig({
     use: {
         trace: 'on-first-retry',
         ctPort: 3100,
+        ctViteConfig: {
+            resolve: {
+                alias: {
+                    '@components': './src/components',
+                    '@utilities': resolve('./src/utilities'),
+                },
+            },
+        }
     },
     projects: [
         { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
