@@ -292,6 +292,9 @@ importers:
       vite:
         specifier: ^5.2.8
         version: 5.2.8(@types/node@20.12.7)
+      vite-tsconfig-paths:
+        specifier: ^4.3.2
+        version: 4.3.2(typescript@5.4.5)(vite@5.2.8)
       vitest:
         specifier: ^1.4.0
         version: 1.4.0(@types/node@20.12.7)(@vitest/ui@1.4.0)(happy-dom@14.7.1)

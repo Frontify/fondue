@@ -20,7 +20,7 @@ export default defineConfig({
         ctViteConfig: {
             resolve: {
                 alias: {
-                    '@components': './src/components',
+                    '@components': resolve('./src/components'),
                     '@utilities': resolve('./src/utilities'),
                 },
             },

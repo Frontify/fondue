@@ -30,9 +30,11 @@
         "test:components:ci": "playwright test -c playwright.config.ts"
     },
     "peerDependencies": {
-        "@frontify/fondue-icons": "workspace:*",
         "react": "^18",
         "react-dom": "^18"
+    },
+    "dependencies": {
+        "@frontify/fondue-icons": "workspace:*"
     },
     "devDependencies": {
         "@etchteam/storybook-addon-status": "^4.2.4",
@@ -70,6 +72,7 @@
         "tailwindcss": "^3.4.3",
         "typescript": "^5.4.5",
         "vite": "^5.2.8",
+        "vite-tsconfig-paths": "^4.3.2",
         "vitest": "^1.4.0"
     }
 }

@@ -2,6 +2,7 @@
 
 import { expect, test } from '@playwright/experimental-ct-react';
 
+import { IconIcon } from '@frontify/fondue-icons';
 import { Button } from '../Button.tsx';
 
 const BUTTON_TEXT = 'Frontify';
@@ -34,14 +35,13 @@ test('should react on Click', async ({ mount }) => {
     await expect(component).toContainText(BUTTON_TEXT);
 });
 
-/*
 test('should render in positive medium and with only icon.', async ({ mount }) => {
     const component = await mount(<Button style="positive" size="medium" icon={<IconIcon />} />);
     await expect(component).toBeVisible();
     await expect(component).toContainText(BUTTON_TEXT);
 });
 
-
+/*
 
 it(`renders in ${style} medium with only an icon.`, () => {
     const { getByTestId } = render(<Button style={style} size="medium" icon={<IconIcon />} />);
