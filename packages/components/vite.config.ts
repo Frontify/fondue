@@ -13,7 +13,6 @@ export default defineConfig({
             enabled: true,
             provider: 'v8',
             reporter: ['text', 'lcov', 'html'],
-            all: false,
         },
     },
 });

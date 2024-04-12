@@ -1,0 +1,61 @@
+@import '@frontify/fondue-tokens/styles';
+@import '@frontify/fondue-tokens/themes/theme.dark.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --fc-base-color: var(--base-color);
+
+    --fc-primary-base-color: #00c8a5;
+    --fc-secondary-base-color: #825fff;
+    --fc-tertiary-base-color: #ffb400;
+    --fc-backfilled-base-color: var(--box-neutral-inverse-color-pressed);
+    --fc-negative-base-color: var(--box-negative-strong-color);
+
+    --fc-primary-hover-color: #32d2b6;
+    --fc-secondary-hover-color: #9a7efe;
+    --fc-tertiary-hover-color: #fec232;
+
+    --fc-primary-hover-color-weak: #35ddc0;
+    --fc-secondary-hover-color-weak: #a086ff;
+    --fc-tertiary-hover-color-weak: #ffcb4d;
+
+    --fc-primary-fill-color-weak: #bee1d4;
+    --fc-secondary-fill-color-weak: #c8d1ed;
+    --fc-tertiary-fill-color-weak: #eec779;
+
+    --fc-primary-weak-color: rgba(0, 200, 165, 0.1);
+    --fc-secondary-weak-color: rgba(130, 95, 255, 0.1);
+    --fc-tertiary-weak-color: rgba(255, 180, 0, 0.1);
+    --fc-backfilled-weak-color: rgba(250, 250, 250, 0.3);
+    --fc-negative-weak-color: rgba(254, 142, 163, 0.1);
+
+    --fc-tick-stroke-color: var(--line-color-x-strong);
+
+    --fc-axis-x-color: var(--line-color-x-strong);
+    --fc-axis-y-color: 'transparent';
+    --fc-grid-stroke-color: var(--line-color);
+    --fc-tooltip-crosshair-stroke-color: var(--line-color-x-strong);
+    --fc-tooltip-crosshair-stroke-color-weak: rgba(8, 8, 8, 0.05);
+
+    --fc-font-family: var(--body-family);
+
+    --fc-font-color-weak: var(--text-color-weak);
+    --fc-font-color-x-weak: var(--text-color-x-weak);
+    --fc-font-color-default: var(--text-color);
+}
+
+/**
+ * Safari produces visual artifacts on the tooltip glyph unless its
+ * containing svg element has a fixed size specified
+ */
+.visx-tooltip-glyph svg {
+    width: 6px;
+    height: 6px;
+}
+
+.bar-chart-cursor-pointer svg rect {
+    cursor: pointer;
+}

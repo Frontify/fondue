@@ -33,8 +33,14 @@ jobs:
             - name: Install npm dependencies
               run: pnpm i --frozen-lockfile
 
-            - name : Build Storybook Packages
-              run: pnpm --stream --filter {packages/fondue} --stream --filter {packages/ui} build:storybook
+            - name: Build Icon package
+              run: pnpm --stream --filter {packages/icons} build:generate-react-icons
 
-            - name: Build Storybook Docs
+            - name: Build Charts package
+              run: pnpm --stream --filter {packages/charts} build
+
+            - name: Build Storybook packages
+              run: pnpm --stream --filter {packages/fondue} --filter {packages/ui} build:storybook
+
+            - name: Build Storybook docs
               run: pnpm build:storybook

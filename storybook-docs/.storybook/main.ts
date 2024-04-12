@@ -1,4 +1,4 @@
-import type { StorybookConfig } from '@storybook/react-vite';
+import type { StorybookConfig } from "@storybook/react-vite";
 
 const config: StorybookConfig = {
     stories: [
@@ -18,7 +18,7 @@ const config: StorybookConfig = {
         "@storybook/addon-interactions",
         "storybook-dark-mode",
         "@storybook/addon-a11y",
-        '@etchteam/storybook-addon-status'
+        "@etchteam/storybook-addon-status",
     ],
     staticDirs: ["assets"],
     framework: {
@@ -29,35 +29,47 @@ const config: StorybookConfig = {
         autodocs: "tag",
         defaultName: "Documentation",
     },
-    refs: (config, { configType }) => {
-        if (configType === 'DEVELOPMENT') {
+    refs: (_config, { configType }) => {
+        if (configType === "DEVELOPMENT") {
             return {
-                legacy: {
-                    title: 'Legacy',
-                    url: 'http://localhost:6006',
+                current: {
+                    title: "Current",
+                    url: "http://localhost:6006",
                     type: "auto-inject",
                     expanded: true,
                 },
-                current: {
-                    title: 'Current',
-                    url: 'http://localhost:6007',
+                charts: {
+                    title: "Charts",
+                    url: "http://localhost:6007",
+                    type: "auto-inject",
+                    expanded: true,
+                },
+                legacy: {
+                    title: "Legacy",
+                    url: "http://localhost:6008",
                     type: "auto-inject",
                     expanded: true,
                 },
             };
         }
         return {
-            legacy: {
-                title: 'Legacy',
-                url: '/legacy',
-                expanded: true,
-            },
             current: {
-                title: 'Current',
-                url: '/new',
+                title: "Current",
+                url: "/new",
                 expanded: true,
             },
-        }
-    }
+            charts: {
+                title: "Charts",
+                url: "/charts",
+                expanded: true,
+            },
+            legacy: {
+                title: "Legacy",
+                url: "/legacy",
+                expanded: true,
+            },
+        };
+    },
 };
+
 export default config;

@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type KeyboardEvent } from 'react';
+
 export const renderContent = ({
     textContent,
     id,
@@ -9,7 +11,7 @@ export const renderContent = ({
     id: string;
     onSelect: (id: string) => void;
 }) => {
-    const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
         if (event.key === 'Enter') {
             onSelect(id);
         }
