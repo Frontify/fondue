@@ -13,8 +13,8 @@
     },
     "exports": {
         ".": {
-            "types": "./dist/index.d.ts",
-            "import": "./dist/fondue-components.js"
+            "import": "./dist/fondue-components.js",
+            "types": "./dist/index.d.ts"
         }
     },
     "engines": {

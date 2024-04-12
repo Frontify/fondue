@@ -20,8 +20,8 @@
     ],
     "exports": {
         ".": {
-            "import": "./dist/fondue-icons.js",
-            "types": "./dist/index.d.ts"
+            "types": "./dist/index.d.ts",
+            "import": "./dist/fondue-icons.js"
         }
     },
     "files": [
