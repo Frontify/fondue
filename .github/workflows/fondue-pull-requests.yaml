@@ -151,6 +151,9 @@ jobs:
             - name: Install dependencies
               run: pnpm install --frozen-lockfile
 
+            - name: Build Fondue icons
+              run: pnpm build:icons
+
             - name: Unit test
               run: pnpm --stream --filter {packages/components} test
 
