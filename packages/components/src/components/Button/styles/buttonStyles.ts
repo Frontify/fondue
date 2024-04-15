@@ -149,7 +149,7 @@ export const buttonStyles = sv({
             class:
                 'tw-bg-box-selected tw-border-button-border ' +
                 'hover:tw-bg-box-selected-hover ' +
-                'active:tw-bg-box-selected-pressed',
+                'active:tw-bg-box-selected-pressed ',
         },
         {
             style: 'loud',
@@ -162,7 +162,7 @@ export const buttonStyles = sv({
             class:
                 'tw-bg-box-selected-strong tw-border-box-selected-strong ' +
                 'hover:tw-bg-box-selected-strong-hover ' +
-                'active:tw-bg-box-selected-strong-pressed',
+                'active:tw-bg-box-selected-strong-pressed ',
         },
     ],
     defaultVariants: {

@@ -81,6 +81,7 @@ export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(
                 className={buttonStyles({
                     iconOnly: (icon && !children) || hideLabel,
                     size,
+                    style,
                     ...props,
                 })}
                 {...props}
