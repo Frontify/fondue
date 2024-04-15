@@ -97,4 +97,4 @@ export const ButtonComponent = (
 };
 
 export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(ButtonComponent);
-Button.displayName = 'FondueButton';
+Button.displayName = 'Button';
