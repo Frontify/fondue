@@ -165,4 +165,11 @@ export const buttonStyles = sv({
                 'active:tw-bg-box-selected-strong-pressed',
         },
     ],
+    defaultVariants: {
+        style: 'default',
+        emphasis: 'strong',
+        size: 'medium',
+        rounding: 'medium',
+        hugWidth: true,
+    }
 });

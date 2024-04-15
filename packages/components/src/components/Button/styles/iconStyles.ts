@@ -145,4 +145,7 @@ export const iconStyles = sv({
                 'group-active:tw-text-box-selected-strong-inverse tw-leading-none',
         },
     ],
+    defaultVariants: {
+        emphasis: "strong",
+    }
 });
