@@ -10,5 +10,12 @@
     "updateInternalDependencies": "patch",
     "ignore": ["@frontify/fondue-storybook-docs"],
     "linked": [],
-    "fixed": []
+    "fixed": [
+        [
+            "@frontify/fondue",
+            "@frontify/fondue-components",
+            "@frontify/fondue-icons",
+            "@frontify/fondue-charts"
+        ]
+    ]
 }

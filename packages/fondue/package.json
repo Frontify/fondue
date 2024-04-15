@@ -26,6 +26,18 @@
             "require": "./dist/index.umd.js",
             "import": "./dist/index.es.js"
         },
+        "./components": {
+            "types": "./dist/packages/components/index.d.ts",
+            "import": "./dist/packages/components/index.js"
+        },
+        "./icons": {
+            "types": "./dist/packages/icons/index.d.ts",
+            "import": "./dist/packages/icons/fondue-icons.js"
+        },
+        "./charts": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.es.js"
+        },
         "./tailwind": "./tailwind.config.ts",
         "./style": "./dist/style.css",
         "./styles": "./dist/style.css",
@@ -45,10 +57,13 @@
         "node": ">=18"
     },
     "scripts": {
-        "build": "pnpm clean && pnpm generate:icons && pnpm generate:componentsEnum && pnpm build:library && pnpm build:extractedThirdPartyStyles",
+        "build": "pnpm clean && pnpm generate:icons && pnpm generate:componentsEnum && pnpm build:library && pnpm build:extractedThirdPartyStyles && pnpm build:package:components && pnpm build:package:icons && pnpm build:package:charts",
         "build:extractedThirdPartyStyles": "concat src/components/**/*.css | postcss > dist/extractedThirdPartyStyles.css",
         "build:library": "vite build",
         "build:storybook": "pnpm generate:icons && pnpm generate:componentsEnum && storybook build",
+        "build:package:components": "pnpm --stream --filter @frontify/fondue-components build && mkdir -p dist/packages/components && cp -r ../components/dist/. dist/packages/components",
+        "build:package:icons": "pnpm --stream --filter @frontify/fondue-icons build && mkdir -p dist/packages/icons && cp -r ../components/dist/. dist/packages/icons",
+        "build:package:charts": "pnpm --stream --filter @frontify/fondue-charts build && mkdir -p dist/packages/charts && cp -r ../components/dist/. dist/packages/charts",
         "dev": "cross-env NODE_ENV=development pnpm dev:library",
         "dev:library": "vite build --emptyOutDir false --watch",
         "clean": "rimraf dist",
