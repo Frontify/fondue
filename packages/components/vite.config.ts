@@ -4,7 +4,7 @@ import react from '@vitejs/plugin-react';
 import dts from 'vite-plugin-dts';
 import vitePluginExternal from 'vite-plugin-external';
 import tsConfigPaths from 'vite-tsconfig-paths';
-import { defineConfig } from 'vitest/config';
+import { configDefaults, defineConfig } from 'vitest/config';
 
 import { peerDependencies as peerDependenciesMap } from './package.json';
 
@@ -31,7 +31,9 @@ export default defineConfig({
         environment: 'happy-dom',
         setupFiles: ['./src/setupTests.ts'],
         css: true,
+        include: ['./src/**/*.test.ts', './src/**/*.test.tsx'],
         coverage: {
+            exclude: [...configDefaults.exclude, '**.**', 'scripts/templates/**/*'],
             enabled: true,
             provider: 'v8',
             reporter: ['text', 'lcov', 'html'],
