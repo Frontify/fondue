@@ -147,5 +147,6 @@ export const iconStyles = sv({
     ],
     defaultVariants: {
         emphasis: 'strong',
+        style: 'default',
     },
 });

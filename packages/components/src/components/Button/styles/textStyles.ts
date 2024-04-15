@@ -144,5 +144,6 @@ export const textStyles = sv({
     ],
     defaultVariants: {
         emphasis: 'strong',
+        style: 'default',
     },
 });
