@@ -60,7 +60,6 @@
         "@vitejs/plugin-react": "^4.2.1",
         "@vitest/coverage-v8": "^1.4.0",
         "@vitest/ui": "^1.4.0",
-        "babel-plugin-macros": "^3.1.0",
         "eslint": "^8.57.0",
         "eslint-plugin-notice": "^0.9.10",
         "happy-dom": "^14.7.1",

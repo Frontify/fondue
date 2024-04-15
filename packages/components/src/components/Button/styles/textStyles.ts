@@ -27,7 +27,7 @@ export const textStyles = sv({
             class:
                 'tw-text-button-text ' +
                 'group-hover:tw-text-button-text-hover ' +
-                'group-active:tw-text-button-text-pressed ',
+                'group-active:tw-text-button-text-pressed',
         },
         {
             style: 'default',
@@ -35,7 +35,7 @@ export const textStyles = sv({
             class:
                 'tw-text-button-text ' +
                 'group-hover:tw-text-button-text-hover ' +
-                'group-active:tw-text-button-text-pressed ',
+                'group-active:tw-text-button-text-pressed',
         },
         {
             style: 'default',
@@ -43,7 +43,7 @@ export const textStyles = sv({
             class:
                 'tw-text-button-strong-icon ' +
                 'group-hover:tw-text-button-strong-icon-hover ' +
-                'group-active:tw-text-button-strong-text-pressed ',
+                'group-active:tw-text-button-strong-text-pressed',
         },
         {
             style: 'positive',
@@ -51,7 +51,7 @@ export const textStyles = sv({
             class:
                 'tw-text-button-positive-text ' +
                 'group-hover:tw-text-button-positive-text-hover ' +
-                'group-active:tw-text-button-positive-text-pressed ',
+                'group-active:tw-text-button-positive-text-pressed',
         },
         {
             style: 'positive',
@@ -59,7 +59,7 @@ export const textStyles = sv({
             class:
                 'tw-text-button-positive-text ' +
                 'group-hover:tw-text-button-positive-text-hover ' +
-                'group-active:tw-text-button-positive-text-pressed ',
+                'group-active:tw-text-button-positive-text-pressed',
         },
         {
             style: 'positive',
@@ -67,7 +67,7 @@ export const textStyles = sv({
             class:
                 'tw-text-button-strong-positive-text ' +
                 'group-hover:tw-text-button-strong-positive-text-hover ' +
-                'group-active:tw-text-button-strong-positive-text-pressed ',
+                'group-active:tw-text-button-strong-positive-text-pressed',
         },
         {
             style: 'negative',
@@ -75,7 +75,7 @@ export const textStyles = sv({
             class:
                 'tw-text-button-negative-text ' +
                 'group-hover:tw-text-button-negative-text-hover' +
-                'group-active:tw-text-button-negative-text-pressed ',
+                'group-active:tw-text-button-negative-text-pressed',
         },
         {
             style: 'negative',
@@ -83,7 +83,7 @@ export const textStyles = sv({
             class:
                 'tw-text-button-negative-text ' +
                 'group-hover:tw-text-button-negative-text-hover' +
-                'group-active:tw-text-button-negative-text-pressed ',
+                'group-active:tw-text-button-negative-text-pressed',
         },
         {
             style: 'negative',
@@ -91,7 +91,7 @@ export const textStyles = sv({
             class:
                 'tw-text-button-strong-negative-text ' +
                 'group-hover:tw-text-button-strong-negative-text-hover' +
-                'group-active:tw-text-button-strong-negative-text-pressed ',
+                'group-active:tw-text-button-strong-negative-text-pressed',
         },
         {
             style: 'danger',
@@ -99,7 +99,7 @@ export const textStyles = sv({
             class:
                 'tw-text-button-negative-icon ' +
                 'group-hover:tw-text-button-negative-icon-hover' +
-                'group-active:tw-text-button-negative-icon-pressed ',
+                'group-active:tw-text-button-negative-icon-pressed',
         },
         {
             style: 'danger',
@@ -107,7 +107,7 @@ export const textStyles = sv({
             class:
                 'tw-text-button-negative-icon ' +
                 'group-hover:tw-text-button-negative-icon-hover' +
-                'group-active:tw-text-button-negative-icon-pressed ',
+                'group-active:tw-text-button-negative-icon-pressed',
         },
         {
             style: 'danger',
@@ -115,7 +115,7 @@ export const textStyles = sv({
             class:
                 'tw-text-button-danger-text ' +
                 'group-hover:tw-text-button-danger-text-hover' +
-                'group-active:tw-text-button-danger-text-pressed ',
+                'group-active:tw-text-button-danger-text-pressed',
         },
         {
             style: 'loud',
@@ -123,7 +123,7 @@ export const textStyles = sv({
             class:
                 'tw-text-box-selected-inverse ' +
                 'group-hover:tw-text-box-selected-inverse-hover' +
-                'group-active:tw-text-box-selected-inverse-pressed ',
+                'group-active:tw-text-box-selected-inverse-pressed',
         },
         {
             style: 'loud',
@@ -131,7 +131,7 @@ export const textStyles = sv({
             class:
                 'tw-text-box-selected-inverse ' +
                 'group-hover:tw-text-box-selected-inverse-hover' +
-                'group-active:tw-text-box-selected-inverse-pressed ',
+                'group-active:tw-text-box-selected-inverse-pressed',
         },
         {
             style: 'loud',
@@ -139,7 +139,7 @@ export const textStyles = sv({
             class:
                 'tw-text-box-selected-strong-inverse ' +
                 'group-hover:tw-text-box-selected-strong-inverse' +
-                'group-active:tw-text-box-selected-strong-inverse ',
+                'group-active:tw-text-box-selected-strong-inverse',
         },
     ],
 });

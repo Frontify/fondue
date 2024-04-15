@@ -7,7 +7,6 @@ import { Button } from '../Button';
 
 const BUTTON_TEXT = 'Frontify';
 
-test.use({ viewport: { width: 500, height: 500 } });
 
 test('should render without error', async ({ mount }) => {
     const component = await mount(<Button>{BUTTON_TEXT}</Button>);
