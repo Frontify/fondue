@@ -143,6 +143,6 @@ export const textStyles = sv({
         },
     ],
     defaultVariants: {
-        emphasis: "strong",
+        emphasis: 'strong',
     },
 });

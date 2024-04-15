@@ -50,6 +50,7 @@ export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(
         return (
             <button
                 ref={ref}
+                data-test-id={dataTestId}
                 className={buttonStyles({
                     ...props,
                     iconOnly: (icon && !children) || hideLabel,

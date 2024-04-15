@@ -171,5 +171,5 @@ export const buttonStyles = sv({
         size: 'medium',
         rounding: 'medium',
         hugWidth: true,
-    }
+    },
 });
