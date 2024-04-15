@@ -1,8 +1,5 @@
 # Fondue Design System by Frontify
 
-<a href="https://github.com/Frontify/fondue/actions/workflows/continuous-integration.yml">
-    <img src="https://github.com/Frontify/react-components/actions/workflows/continuous-integration.yml/badge.svg" alt="CI Status" />
-</a>
 <a href="https://snyk.io/test/github/Frontify/fondue">
     <img src="https://snyk.io/test/github/Frontify/fondue/badge.svg" alt="Known Vulnerabilities" />
 </a>
@@ -63,8 +60,6 @@ See [Contribution Guidelines](CONTRIBUTING.md) for contributing and local develo
 
 ## Important Links
 
--   [Storybook](https://storybook.js.org/docs/react/get-started/introduction) – Used for isolated development and documentation of Fondue components
--   [https://www.cypress.io/](Cypress) – Used for Testing in Fondue
--   [Frontify React Guidelines](https://www.notion.so/React-Architecture-0ce55540be0b48fa88a2c3848e35eb81) – Internal Coding Guidelines for Frontify
--   [Fondue Tokens](https://github.com/Frontify/fondue-tokens) – Design Tokens used at Frontify
+-   [Storybook](https://fondue-components.frontify.com) – Storybook for previweing Fondue Components
+-   [Fondue Documentation](https://weare.frontify.com/document/1266?#/using-fondue) – Documentation for the Fondue Design System
 -   [Tailwind](https://tailwindcss.com/docs) – Utility-first CSS framework used in Fondue

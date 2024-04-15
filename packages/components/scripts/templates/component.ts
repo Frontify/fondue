@@ -1,0 +1,24 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+import { toKebabCase } from '../transforms';
+import { type ComponentFileBuilderResponse } from '../types';
+
+export const setup = (componentName: string): ComponentFileBuilderResponse => ({
+    content: `/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+import { ReactNode } from "react";
+import { ${componentName}Styles } from './styles/${componentName}Styles';
+
+export type ${componentName}Props = { children?: ReactNode; };
+
+export const ${componentName} = ({ children }: ${componentName}Props) => {
+    return (
+        <div className={${componentName}Styles()} data-test-id="${toKebabCase(componentName)}">
+            {children}
+        </div>
+    );
+};
+${componentName}.displayName = "${componentName}";
+`,
+    extension: `.tsx`,
+});

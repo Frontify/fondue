@@ -5,7 +5,7 @@
 1. Clone the Git repository
 2. Install the dependencies
 3. Run Storybook
-4. ???
+4. Implement your changes
 5. Profit!
 
 > Fondue uses `pnpm` to manage the dependencies. If you don't have it installed in your local, please refer to [their installation guide](https://pnpm.io/installation).
@@ -13,16 +13,26 @@
 ```shell
 $ git clone git@github.com:Frontify/fondue.git
 $ pnpm i
-$ pnpm storybook
-$ echo "YAY ✨"
 ```
+
+Run `pnpm storybook` to start the storybook development server.
+
+Storybook will be available on [http://localhost:6010](http://localhost:6010).
+This Storybook instance is configured and served from the `/storybook-docs` package which is caused to proxy and compose all other Storybook instances in the monorepo.
+
+In the background, multiple instances of Storybook will start up, one for each component package in the monorepo.
+
+-   Storybook for `@frontify/fondue-components` will be available on Port 6006
+-   Storybook for `@frontify/fondue` will be available on Port 6008
+
+You can also start the Storybook instances for the individual packages by running `pnpm storybook` in the respective package directory.
 
 ## Create a new Component
 
 When adding a new component to Fondue this is the flow that is applied.
 
 1. Create new branch
-2. Create component files, write tests, write stories & fiddle with React
+2. Create component files, write tests, write stories
 3. Open PR
 4. Squash
 
@@ -31,7 +41,7 @@ When adding a new component to Fondue this is the flow that is applied.
 Create a new branch for your additions
 
 ```shell
-git checkout -b feat/add-cool-cats-and-kittens
+git checkout -b feat/add-fancy-component
 ```
 
 The name of the branch is not really relevant. Nonetheless we usually go for a prefix following Conventional Commits, slash as a separator and a short description of what the branch will change in kebab-case.
@@ -41,7 +51,7 @@ The name of the branch is not really relevant. Nonetheless we usually go for a p
 Theres a nifty script that creates that files you'll need:
 
 ```shell
-pnpm component:create CoolCatsAndKittens
+pnpm component:create FancyComponent
 ```
 
 This will add a folder inside `src/components` with the name `CoolCatsAndKittens` and three files:
@@ -50,37 +60,24 @@ This will add a folder inside `src/components` with the name `CoolCatsAndKittens
 -   `CoolCatsAndKittens.spec.tsx` is the place to write your tests 🔬
 -   `CoolCatsAndKittens.stories.tsx` is for your Stories inside Storybook 📄
 
-## Opening a PR
+## Building Packages
 
-Once you're happy with your new component, it's time to open a new PR. Push your branch to GitHub as a start:
+The Packages in the Monorepo are built independently.
+To build the packages, run `pnpm build` in the respective package directory.
 
-```shell
-git push -u origin feat/cool-cats-and-kittens
-```
+Alternatively you can run the following scripts in the root directory.
 
-and click the link provided by the git CLI.
+-   `pnpm build:components`
+-   `pnpm build:fondue`
+-   `pnpm build:icons`
+-   `pnpm build:charts`
 
-### Naming your PR
+## Releasing Packages
 
-The Pull Requests basically follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
+We utilize [Changesets](https://github.com/changesets/changesets) to manage our releases.
 
-The name of your PR should be:
+To bump the version of a Package, run `pnpm release` in the root directory and follow the prompts to select your package and version bump.
+A file containg your release notes will be created in the `.changeset` directory.
 
-```
-<type>[optional scope]: <description>
-```
-
-Following the example from above, it would look like this:
-
-```
-feat: Add CoolCatsAndKittens Component
-```
-
-Breaking Changes can be declared with a exclamation mark (!) after the type.
-
-### GitHub Actions
-
--   GitHub automatically deploys Storybook with your new changes to Netlify and adds a Preview link to the PR.
--   SonarCloud checks the code base for its quality.
--   Cypress tests are run to make sure, you're not breaking anything.
-
+After your change is merged to the `main` branch, the change will automatically be added to a release PR.
+Once we merge the release PR, the package will be published to NPM.
