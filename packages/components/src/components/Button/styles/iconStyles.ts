@@ -6,9 +6,9 @@ export const iconStyles = sv({
     variants: {
         iconSpacing: {
             none: '',
-            small: 'tw--ml-0.5 tw-mr-1 ',
-            medium: 'tw--ml-1 tw-mr-1.5 ',
-            large: 'tw--ml-1 tw-mr-2 ',
+            small: 'tw--ml-0.5 tw-mr-1',
+            medium: 'tw--ml-1 tw-mr-1.5',
+            large: 'tw--ml-1 tw-mr-2',
         },
         emphasis: {
             default: '',
@@ -30,7 +30,7 @@ export const iconStyles = sv({
             class:
                 'tw-text-button-icon ' +
                 'group-hover:tw-text-button-icon-hover ' +
-                'group-active:tw-text-button-icon-pressed tw-leading-none ',
+                'group-active:tw-text-button-icon-pressed tw-leading-none',
         },
         {
             style: 'default',
@@ -38,7 +38,7 @@ export const iconStyles = sv({
             class:
                 'tw-text-button-icon ' +
                 'group-hover:tw-text-button-icon-hover ' +
-                'group-active:tw-text-button-icon-pressed tw-leading-none ',
+                'group-active:tw-text-button-icon-pressed tw-leading-none',
         },
         {
             style: 'default',
@@ -46,7 +46,7 @@ export const iconStyles = sv({
             class:
                 'tw-text-button-strong-icon ' +
                 'group-hover:tw-text-button-strong-icon-hover ' +
-                'group-active:tw-text-button-strong-icon-pressed tw-leading-none ',
+                'group-active:tw-text-button-strong-icon-pressed tw-leading-none',
         },
         {
             style: 'positive',
@@ -54,7 +54,7 @@ export const iconStyles = sv({
             class:
                 'tw-text-button-positive-icon ' +
                 'group-hover:tw-text-button-positive-icon-hover ' +
-                'group-active:tw-text-button-positive-icon-pressed tw-leading-none ',
+                'group-active:tw-text-button-positive-icon-pressed tw-leading-none',
         },
         {
             style: 'positive',
@@ -62,7 +62,7 @@ export const iconStyles = sv({
             class:
                 'tw-text-button-strong-positive-icon ' +
                 'group-hover:tw-text-button-strong-positive-icon-hover' +
-                'group-active:tw-text-button-strong-positive-icon-pressed tw-leading-none ',
+                'group-active:tw-text-button-strong-positive-icon-pressed tw-leading-none',
         },
         {
             style: 'positive',
@@ -70,7 +70,7 @@ export const iconStyles = sv({
             class:
                 'tw-text-button-strong-positive-icon ' +
                 'group-hover:tw-text-button-strong-positive-icon-hover ' +
-                'group-active:tw-text-button-strong-positive-icon-pressed tw-leading-none ',
+                'group-active:tw-text-button-strong-positive-icon-pressed tw-leading-none',
         },
         {
             style: 'negative',
@@ -78,7 +78,7 @@ export const iconStyles = sv({
             class:
                 'tw-text-button-negative-icon ' +
                 'group-hover:tw-text-button-negative-icon-hover' +
-                'group-active:tw-text-button-negative-icon-pressed tw-leading-none ',
+                'group-active:tw-text-button-negative-icon-pressed tw-leading-none',
         },
         {
             style: 'negative',
@@ -86,7 +86,7 @@ export const iconStyles = sv({
             class:
                 'tw-text-button-negative-icon ' +
                 'group-hover:tw-text-button-negative-icon-hover' +
-                'group-active:tw-text-button-negative-icon-pressed tw-leading-none ',
+                'group-active:tw-text-button-negative-icon-pressed tw-leading-none',
         },
         {
             style: 'negative',
@@ -94,7 +94,7 @@ export const iconStyles = sv({
             class:
                 'tw-text-button-strong-negative-icon ' +
                 'group-hover:tw-text-button-strong-negative-icon-hover' +
-                'group-active:tw-text-button-strong-negative-icon-pressed tw-leading-none ',
+                'group-active:tw-text-button-strong-negative-icon-pressed tw-leading-none',
         },
         {
             style: 'danger',
@@ -102,7 +102,7 @@ export const iconStyles = sv({
             class:
                 'tw-text-button-negative-icon ' +
                 'group-hover:tw-text-button-negative-icon-hover' +
-                'group-active:tw-text-button-negative-icon-pressed tw-leading-none ',
+                'group-active:tw-text-button-negative-icon-pressed tw-leading-none',
         },
         {
             style: 'danger',
@@ -110,7 +110,7 @@ export const iconStyles = sv({
             class:
                 'tw-text-button-negative-icon ' +
                 'group-hover:tw-text-button-negative-icon-hover' +
-                'group-active:tw-text-button-negative-icon-pressed tw-leading-none ',
+                'group-active:tw-text-button-negative-icon-pressed tw-leading-none',
         },
         {
             style: 'danger',
@@ -118,7 +118,7 @@ export const iconStyles = sv({
             class:
                 'tw-text-button-danger-icon ' +
                 'group-hover:tw-text-button-danger-icon-hover' +
-                'group-active:tw-text-button-danger-icon-pressed tw-leading-none ',
+                'group-active:tw-text-button-danger-icon-pressed tw-leading-none',
         },
         {
             style: 'loud',
@@ -126,7 +126,7 @@ export const iconStyles = sv({
             class:
                 'tw-text-box-selected-inverse ' +
                 'group-hover:tw-text-box-selected-inverse-hover' +
-                'group-active:tw-text-box-selected-inverse-pressed tw-leading-none ',
+                'group-active:tw-text-box-selected-inverse-pressed tw-leading-none',
         },
         {
             style: 'loud',
@@ -134,7 +134,7 @@ export const iconStyles = sv({
             class:
                 'tw-text-box-selected-inverse ' +
                 'group-hover:tw-text-box-selected-inverse-hover' +
-                'group-active:tw-text-box-selected-inverse-pressed tw-leading-none ',
+                'group-active:tw-text-box-selected-inverse-pressed tw-leading-none',
         },
         {
             style: 'loud',
@@ -142,7 +142,7 @@ export const iconStyles = sv({
             class:
                 'tw-text-box-selected-strong-inverse ' +
                 'group-hover:tw-text-box-selected-strong-inverse' +
-                'group-active:tw-text-box-selected-strong-inverse tw-leading-none ',
+                'group-active:tw-text-box-selected-strong-inverse tw-leading-none',
         },
     ],
 });
