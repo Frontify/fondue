@@ -17,18 +17,45 @@ type ButtonType = 'button' | 'submit' | 'reset';
 type ButtonEmphasis = 'default' | 'weak' | 'strong';
 
 export type ButtonProps = {
+    /**
+     * @default null
+     */
     type?: ButtonType;
+    /**
+     * @default null
+     */
     title?: string;
+    /**
+     * @default 'default'
+     */
     style?: ButtonStyle;
+    /**
+     * @default 'strong'
+     */
     emphasis?: ButtonEmphasis;
+    /**
+     * @default false
+     */
     hideLabel?: boolean;
+    /**
+     * @default 'medium'
+     */
     size?: ButtonSize;
+    /**
+     * @default 'medium'
+     */
     rounding?: ButtonRounding;
+    /**
+     * @default false
+     */
     disabled?: boolean;
+    /**
+     * @default true
+     */
+    hugWidth?: boolean;
     icon?: ReactElement;
     children?: ReactNode;
     onClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
-    hugWidth?: boolean;
     'aria-label'?: string;
     'aria-describedby'?: string;
     'data-test-id'?: string;
@@ -52,8 +79,9 @@ export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(
                 ref={ref}
                 data-test-id={dataTestId}
                 className={buttonStyles({
-                    ...props,
                     iconOnly: (icon && !children) || hideLabel,
+                    size,
+                    ...props,
                 })}
                 {...props}
             >
