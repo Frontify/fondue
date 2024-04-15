@@ -22,6 +22,6 @@
             "@theme/*": ["./src/theme/*"]
         }
     },
-    "include": ["src"],
+    "include": [".storybook", "src"],
     "references": [{ "path": "./tsconfig.node.json" }]
 }

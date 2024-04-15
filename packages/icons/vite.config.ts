@@ -1,12 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import vitePluginExternal from 'vite-plugin-external';
 import tsConfigPaths from 'vite-tsconfig-paths';
-import { defineConfig } from 'vitest/config';
 
 import { peerDependencies as peerDependenciesMap } from './package.json';
+
+export const globals = {
+    react: 'React',
+    'react/jsx-runtime': 'react/jsx-runtime',
+};
 
 export default defineConfig({
     plugins: [
@@ -16,25 +21,15 @@ export default defineConfig({
             nodeBuiltins: true,
             externalizeDeps: Object.keys(peerDependenciesMap),
         }),
-        dts({ insertTypesEntry: true, rollupTypes: true, exclude: ['**/*.stories.tsx'] }),
+        dts({ insertTypesEntry: true, exclude: ['**/*.stories.tsx'] }),
     ],
     build: {
         lib: {
             entry: './src/index.ts',
-            name: 'FondueComponents',
+            name: 'FondueIcons',
             formats: ['es'],
         },
         sourcemap: true,
         minify: true,
-    },
-    test: {
-        environment: 'happy-dom',
-        setupFiles: ['./src/setupTests.ts'],
-        css: true,
-        coverage: {
-            enabled: true,
-            provider: 'v8',
-            reporter: ['text', 'lcov', 'html'],
-        },
     },
 });

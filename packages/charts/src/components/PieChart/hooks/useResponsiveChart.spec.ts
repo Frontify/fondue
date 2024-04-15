@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { renderHook } from '@testing-library/react';
+import { renderHook, fireEvent } from '@testing-library/react';
 import { type RefObject } from 'react';
 import { describe, expect, it } from 'vitest';
 
@@ -133,7 +133,7 @@ describe('useResponsiveChart', () => {
 
         const NEW_CONTAINER_WIDTH = 30;
         (CONTAINER_REF as any).current.clientWidth = NEW_CONTAINER_WIDTH;
-        window.dispatchEvent(new Event('resize'));
+        fireEvent(window, new Event('resize'));
 
         expect(result.current).toEqual(getExpectedResult('legend', NEW_CONTAINER_WIDTH, 'none'));
     });
@@ -155,7 +155,7 @@ describe('useResponsiveChart', () => {
 
         const NEW_CONTAINER_WIDTH = 60;
         (CONTAINER_REF as any).current.clientWidth = NEW_CONTAINER_WIDTH;
-        window.dispatchEvent(new Event('resize'));
+        fireEvent(window, new Event('resize'));
 
         expect(result.current).toEqual(getExpectedResult('legend', SIZE_PROP, 'none'));
     });
@@ -171,7 +171,7 @@ describe('useResponsiveChart', () => {
 
         const NEW_CONTAINER_WIDTH = 100;
         (CONTAINER_REF as any).current.clientWidth = NEW_CONTAINER_WIDTH;
-        window.dispatchEvent(new Event('resize'));
+        fireEvent(window, new Event('resize'));
 
         expect(result.current).toEqual(getExpectedResult('label', SIZE_PROP, LABEL_PADDING));
     });
