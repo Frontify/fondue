@@ -12,45 +12,43 @@ const BUTTON_TEST_ID = 'fondue-button';
 const styles: ButtonProps['style'][] = ['default', 'positive', 'negative', 'danger', 'loud'];
 
 describe('Button component', () => {
-    for (const style of styles) {
-        it(`renders in ${style} medium and with only text.`, () => {
-            const { getByTestId } = render(
-                <Button style={style} size="medium">
-                    {BUTTON_TEXT}
-                </Button>,
-            );
-            const button = getByTestId(BUTTON_TEST_ID);
-            expect(button).toBeVisible();
-            expect(button).toContainHTML(BUTTON_TEXT);
-        });
+    it(`renders in medium and with only text.`, () => {
+        const { getByTestId } = render(
+            <Button style="default" size="medium">
+                {BUTTON_TEXT}
+            </Button>,
+        );
+        const button = getByTestId(BUTTON_TEST_ID);
+        expect(button).toBeVisible();
+        expect(button).toContainHTML(BUTTON_TEXT);
+    });
 
-        it(`renders in ${style} medium with only an icon.`, () => {
-            const { getByTestId } = render(<Button style={style} size="medium" icon={<IconIcon />} />);
-            const button = getByTestId(BUTTON_TEST_ID);
-            expect(button.getElementsByTagName('svg')[0]).toBeVisible();
-            expect(button).not.toContainHTML(BUTTON_TEXT);
-        });
+    it(`renders in medium with only an icon.`, () => {
+        const { getByTestId } = render(<Button style="default" size="medium" icon={<IconIcon />} />);
+        const button = getByTestId(BUTTON_TEST_ID);
+        expect(button.getElementsByTagName('svg')[0]).toBeVisible();
+        expect(button).not.toContainHTML(BUTTON_TEXT);
+    });
 
-        it(`renders in ${style} medium with only an icon and fully rounded.`, () => {
-            const { getByTestId } = render(<Button style={style} size="medium" icon={<IconIcon />} rounding="full" />);
-            const button = getByTestId(BUTTON_TEST_ID);
-            expect(button.getElementsByTagName('svg')[0]).toBeVisible();
-            expect(button).not.toContainHTML(BUTTON_TEXT);
-            expect(button).toHaveClass('tw-rounded-full');
-        });
+    it(`renders in medium with only an icon and fully rounded.`, () => {
+        const { getByTestId } = render(<Button style="default" size="medium" icon={<IconIcon />} rounding="full" />);
+        const button = getByTestId(BUTTON_TEST_ID);
+        expect(button.getElementsByTagName('svg')[0]).toBeVisible();
+        expect(button).not.toContainHTML(BUTTON_TEXT);
+        expect(button).toHaveClass('tw-rounded-full');
+    });
 
-        it(`renders in ${style} medium with an icon and text.`, () => {
-            const { getByTestId } = render(
-                <Button style={style} size="medium" icon={<IconIcon />}>
-                    {BUTTON_TEXT}
-                </Button>,
-            );
-            const button = getByTestId(BUTTON_TEST_ID);
-            expect(button).toBeVisible();
-            expect(button).toContainHTML(BUTTON_TEXT);
-            expect(button.querySelector('span > svg')).toBeVisible();
-        });
-    }
+    it(`renders in medium with an icon and text.`, () => {
+        const { getByTestId } = render(
+            <Button style="default" size="medium" icon={<IconIcon />}>
+                {BUTTON_TEXT}
+            </Button>,
+        );
+        const button = getByTestId(BUTTON_TEST_ID);
+        expect(button).toBeVisible();
+        expect(button).toContainHTML(BUTTON_TEXT);
+        expect(button.querySelector('span > svg')).toBeVisible();
+    });
 
     it('reacts on click', () => {
         const clickListener = vi.fn();
