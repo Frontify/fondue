@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ForwardedRef, cloneElement, forwardRef, type MouseEvent, type ReactElement, type ReactNode } from 'react';
+import { cloneElement, forwardRef, type ForwardedRef, type MouseEvent, type ReactElement, type ReactNode } from 'react';
 
 import { buttonIconSizeMap, buttonStyles } from './styles/buttonStyles';
 import { iconStyles } from './styles/iconStyles';
@@ -31,7 +31,6 @@ export type ButtonProps = {
     hugWidth?: boolean;
     'aria-label'?: string;
     'aria-describedby'?: string;
-    formId?: string;
     'data-test-id'?: string;
 };
 
@@ -49,7 +48,6 @@ export const ButtonComponent = (
         children,
         onClick,
         hugWidth = true,
-        formId,
         'aria-label': ariaLabel,
         'aria-describedby': ariaDescribedBy,
         'data-test-id': dataTestId = 'fondue-button',
@@ -63,7 +61,6 @@ export const ButtonComponent = (
             aria-disabled={disabled}
             aria-describedby={ariaDescribedBy}
             ref={ref}
-            form={formId}
             title={title}
             type={type}
             onClick={onClick}
