@@ -21,10 +21,17 @@ const defaultArgs = {
     hugWidth: true,
     children: 'Button Text',
 };
-
+/**
+ ### This component is deprecated, please use the [new Button](/docs/current_components-button--documentation) component instead.
+ */
 export default {
     title: 'Components/Button',
     component: Button,
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
+    },
     tags: ['autodocs'],
     argTypes: {
         size: {

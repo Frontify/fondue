@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import {
-    forwardRef,
     createElement,
-    type ReactSVG,
-    type SVGProps,
+    forwardRef,
     type ForwardRefExoticComponent,
+    type ReactSVG,
     type RefAttributes,
+    type SVGProps,
 } from 'react';
 
 import { defaultAttributes } from './constants';

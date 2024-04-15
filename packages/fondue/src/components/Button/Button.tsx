@@ -3,12 +3,12 @@
 import { useButton } from '@react-aria/button';
 import { useFocusRing } from '@react-aria/focus';
 import {
+    cloneElement,
+    forwardRef,
     type ForwardRefRenderFunction,
     type MouseEvent,
     type ReactElement,
     type ReactNode,
-    cloneElement,
-    forwardRef,
 } from 'react';
 
 import { buttonIconSizeMap, buttonTypeMap } from '@components/Button/mappings';
@@ -25,12 +25,12 @@ import {
     IconSpacingClasses,
 } from './ButtonClasses';
 import {
-    type ButtonElements,
     ButtonEmphasis,
     ButtonRounding,
     ButtonSize,
     ButtonStyle,
     ButtonType,
+    type ButtonElements,
     type UpdatedButtonStyle,
 } from './ButtonTypes';
 
@@ -149,5 +149,8 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
     );
 };
 
+/**
+ * @deprecated Please use updated button component from @frontify/fondue/components
+ */
 export const Button = forwardRef(ButtonComponent);
 Button.displayName = 'FondueButton';
