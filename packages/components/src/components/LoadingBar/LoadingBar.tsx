@@ -65,4 +65,4 @@ export const LoadingBar = forwardRef<ElementRef<typeof ProgressRadixPrimitive.Ro
         );
     },
 );
-LoadingBar.displayName = 'FondueLoadingBar';
+LoadingBar.displayName = 'LoadingBar';
