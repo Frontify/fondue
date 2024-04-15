@@ -16,7 +16,10 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "noFallthroughCasesInSwitch": true,
-        "baseUrl": "."
+        "baseUrl": ".",
+        "paths": {
+            "#/*": ["./src/*"]
+        }
     },
     "include": [".storybook", "src"],
     "references": [{ "path": "./tsconfig.node.json" }]
