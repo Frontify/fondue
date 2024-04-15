@@ -23,7 +23,7 @@ const meta: Meta<typeof LoadingBar> = {
 
 export default meta;
 
-export const WithValue: Story = {};
+export const WithDefinedValue: Story = {};
 
 export const Indeterminate: Story = {
     args: {
