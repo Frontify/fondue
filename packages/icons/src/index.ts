@@ -4,8 +4,8 @@ export {
     IconSize,
     type FondueIcon,
     type FondueIconProps,
-    type IconNode,
-    type IconSizeAsNumber,
+    type IconNode
 } from './createFondueIcon';
 export * from './icons';
 export * as icons from './icons';
+
