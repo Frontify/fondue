@@ -1,10 +1,11 @@
 # Fondue Design System by Frontify
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/898e60eb-df4e-49d9-9d1d-829aeb9f61c2/deploy-status)](https://app.netlify.com/sites/fondue-components/deploys)
 <a href="https://snyk.io/test/github/Frontify/fondue">
-    <img src="https://snyk.io/test/github/Frontify/fondue/badge.svg" alt="Known Vulnerabilities" />
+<img src="https://snyk.io/test/github/Frontify/fondue/badge.svg" alt="Known Vulnerabilities" />
 </a>
 <a href="https://github.com/Frontify/fondue/blob/main/README.md" title="latest">
-    <img alt="latest" src="https://img.shields.io/npm/v/@frontify/fondue/latest.svg" />
+<img alt="latest" src="https://img.shields.io/npm/v/@frontify/fondue/latest.svg" />
 </a>
 
 ## Using `@frontify/fondue`
