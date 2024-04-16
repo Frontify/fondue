@@ -23,6 +23,7 @@ This Storybook instance is configured and served from the `/storybook-docs` pack
 In the background, multiple instances of Storybook will start up, one for each component package in the monorepo.
 
 -   Storybook for `@frontify/fondue-components` will be available on port 6006
+-   Storybook for `@frontify/fondue-charts` will be available on port 6007
 -   Storybook for `@frontify/fondue` will be available on port 6008
 
 You can also start the Storybook instances for the individual packages by running `pnpm storybook` in the respective package directory.
