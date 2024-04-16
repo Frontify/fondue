@@ -1,4 +1,4 @@
-# Fondue Design System by Frontify
+# Fondue design system by Frontify
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/898e60eb-df4e-49d9-9d1d-829aeb9f61c2/deploy-status)](https://app.netlify.com/sites/fondue-components/deploys)
 <a href="https://snyk.io/test/github/Frontify/fondue">
