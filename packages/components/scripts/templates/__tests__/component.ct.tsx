@@ -7,6 +7,7 @@ export const Setup = (componentName: string): ComponentFileBuilderResponse => ({
     content: `/* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { expect, test } from '@playwright/experimental-ct-react';
+
 import { ${componentName} } from "../${componentName}";
 
 const ${componentName}_TEST_ID = "test-${toKebabCase(componentName)}";
