@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 
