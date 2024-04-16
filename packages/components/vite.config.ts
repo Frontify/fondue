@@ -31,9 +31,9 @@ export default defineConfig({
         environment: 'happy-dom',
         setupFiles: ['./src/setupTests.ts'],
         css: true,
-        include: ['./src/**/*.test.ts', './src/**/*.test.tsx'],
+        exclude: [...configDefaults.exclude, 'scripts/templates/**/*.**'],
         coverage: {
-            exclude: [...configDefaults.exclude, '**.**', 'scripts/templates/**/*'],
+            exclude: [...configDefaults.exclude, '.storybook', 'playwright', 'scripts/templates', '.eslintrc.cjs', '**.config.{ts,cjs}', '**/**/*.{ct,spec,test,stories}.{ts,tsx}'],
             enabled: true,
             provider: 'v8',
             reporter: ['text', 'lcov', 'html'],
