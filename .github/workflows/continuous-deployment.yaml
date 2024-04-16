@@ -87,6 +87,9 @@ jobs:
             - name: Build Fondue Charts
               run: pnpm build:charts
 
+            - name: Build Fondue Components
+              run: pnpm build:components
+
             - name: Typecheck code
               run: pnpm typecheck
 
