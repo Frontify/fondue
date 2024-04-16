@@ -5,7 +5,8 @@
         "moduleResolution": "Node",
         "allowSyntheticDefaultImports": true,
         "resolveJsonModule": true,
-        "baseUrl": "."
+        "baseUrl": ".",
+        "lib": ["ESNext"],
     },
     "include": [
         ".eslintrc.cjs",
@@ -14,6 +15,7 @@
         "postcss.config.cjs",
         "package.json",
         "playwright.config.ts",
-        "playwright"
+        "playwright",
+        "scripts",
     ]
 }
