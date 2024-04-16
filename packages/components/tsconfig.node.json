@@ -6,7 +6,7 @@
         "allowSyntheticDefaultImports": true,
         "resolveJsonModule": true,
         "baseUrl": ".",
-        "lib": ["ESNext"],
+        "lib": ["ESNext"]
     },
     "include": [
         ".eslintrc.cjs",
@@ -16,6 +16,6 @@
         "package.json",
         "playwright.config.ts",
         "playwright",
-        "scripts",
+        "scripts"
     ]
 }
