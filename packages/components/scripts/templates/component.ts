@@ -6,7 +6,8 @@ import { type ComponentFileBuilderResponse } from '../types';
 export const Setup = (componentName: string): ComponentFileBuilderResponse => ({
     content: `/* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ReactNode } from "react";
+import { type ReactNode } from "react";
+
 import { ${componentName}Styles } from './styles/${componentName}Styles';
 
 export type ${componentName}Props = { children?: ReactNode; };
