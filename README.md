@@ -69,6 +69,6 @@ See [Contribution guidelines](CONTRIBUTING.md) for contributing and local develo
 
 ## Important links
 
--   [Storybook](https://fondue-components.frontify.com) – Storybook for previweing fondue components
+-   [Storybook](https://fondue-components.frontify.com) – Storybook for previewing Fondue components
 -   [Fondue documentation](https://weare.frontify.com/document/1266?#/using-fondue) – Documentation for the Fondue design system
 -   [Tailwind](https://tailwindcss.com/docs) – Utility-first CSS framework used in fondue
