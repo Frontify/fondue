@@ -40,6 +40,9 @@
         "react": "^18",
         "react-dom": "^18"
     },
+    "dependencies": {
+        "@radix-ui/react-progress": "^1.0.3"
+    },
     "devDependencies": {
         "@etchteam/storybook-addon-status": "^4.2.4",
         "@frontify/eslint-config-react": "^0.17.6",
