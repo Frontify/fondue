@@ -3,7 +3,7 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "pnpm --stream --filter {packages/*} build",
+        "build": "pnpm build:tokens && pnpm build:charts && pnpm build:icons && pnpm build:components && pnpm build:fondue",
         "build:charts": "pnpm --stream --filter {packages/charts} build",
         "build:components": "pnpm --stream --filter {packages/components} build",
         "build:fondue": "pnpm --stream --filter {packages/fondue} build",
