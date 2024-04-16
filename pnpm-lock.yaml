@@ -189,12 +189,6 @@ importers:
       '@radix-ui/react-progress':
         specifier: ^1.0.3
         version: 1.0.3(@types/react@18.2.77)(react-dom@18.2.0)(react@18.2.0)
-      react:
-        specifier: ^18.2.0
-        version: 18.2.0
-      react-dom:
-        specifier: ^18.2.0
-        version: 18.2.0(react@18.2.0)
     devDependencies:
       '@etchteam/storybook-addon-status':
         specifier: ^4.2.4
@@ -274,6 +268,12 @@ importers:
       prettier:
         specifier: ^3.2.5
         version: 3.2.5
+      react:
+        specifier: ^18.2.0
+        version: 18.2.0
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.2.0(react@18.2.0)
       storybook:
         specifier: ^8.0.8
         version: 8.0.8(@babel/preset-env@7.23.9)(react-dom@18.2.0)(react@18.2.0)
@@ -298,9 +298,6 @@ importers:
       vite-plugin-dts:
         specifier: ^3.8.1
         version: 3.8.1(@types/node@20.12.7)(rollup@4.14.0)(typescript@5.4.5)(vite@5.2.8)
-      vite-plugin-external:
-        specifier: ^4.3.1
-        version: 4.3.1
       vite-tsconfig-paths:
         specifier: ^4.3.2
         version: 4.3.2(typescript@5.4.5)(vite@5.2.8)

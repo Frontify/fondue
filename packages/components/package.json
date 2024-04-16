@@ -40,9 +40,7 @@
         "react-dom": "^18"
     },
     "dependencies": {
-        "@radix-ui/react-progress": "^1.0.3",
-        "react": "^18.2.0",
-        "react-dom": "^18.2.0"
+        "@radix-ui/react-progress": "^1.0.3"
     },
     "devDependencies": {
         "@etchteam/storybook-addon-status": "^4.2.4",
@@ -71,6 +69,8 @@
         "postcss": "^8.4.38",
         "postcss-import": "^16.1.0",
         "prettier": "^3.2.5",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
         "storybook": "^8.0.8",
         "storybook-dark-mode": "^4.0.1",
         "tailwind-merge": "^2.2.2",
@@ -79,7 +79,6 @@
         "typescript": "^5.4.5",
         "vite": "^5.2.8",
         "vite-plugin-dts": "^3.8.1",
-        "vite-plugin-external": "^4.3.1",
         "vite-tsconfig-paths": "^4.3.2",
         "vitest": "^1.4.0"
     }
