@@ -2,7 +2,6 @@
 
 // @ts-expect-error untyped
 import * as tokens from '@frontify/fondue-tokens';
-
 import { type Meta, type StoryFn } from '@storybook/react';
 
 export default {
