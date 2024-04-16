@@ -3,8 +3,8 @@
 import { access, mkdir, writeFile } from 'node:fs/promises';
 
 import chalk from 'chalk';
-import templates from './templates';
 
+import templates from './templates';
 
 (async () => {
     const componentName = process.argv[3] || process.argv[2];
@@ -33,7 +33,6 @@ import templates from './templates';
 
     const generatedTemplates = templates.map((template) => template(componentName));
     console.log(generatedTemplates);
-
 
     await mkdir(componentDirectory);
 

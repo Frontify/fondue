@@ -18,6 +18,6 @@ test('should render without error', async ({ mount }) => {
 });
 
 `,
-    extension: `.ct.tsx`,
+    extension: '.ct.tsx',
     subdirectory: '__tests__',
 });

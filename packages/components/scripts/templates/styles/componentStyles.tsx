@@ -12,6 +12,6 @@ export const ${componentName}Styles = sv({
 })
 
 `,
-    extension: `Styles.tsx`,
+    extension: 'Styles.tsx',
     subdirectory: 'styles',
 });

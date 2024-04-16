@@ -20,5 +20,5 @@ export const ${componentName} = ({ children }: ${componentName}Props) => {
 };
 ${componentName}.displayName = "${componentName}";
 `,
-    extension: `.tsx`,
+    extension: '.tsx',
 });
