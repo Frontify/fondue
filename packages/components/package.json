@@ -40,7 +40,9 @@
         "react-dom": "^18"
     },
     "dependencies": {
-        "@radix-ui/react-progress": "^1.0.3"
+        "@radix-ui/react-progress": "^1.0.3",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0"
     },
     "devDependencies": {
         "@etchteam/storybook-addon-status": "^4.2.4",
@@ -69,8 +71,6 @@
         "postcss": "^8.4.38",
         "postcss-import": "^16.1.0",
         "prettier": "^3.2.5",
-        "react": "^18.2.0",
-        "react-dom": "^18.2.0",
         "storybook": "^8.0.8",
         "storybook-dark-mode": "^4.0.1",
         "tailwind-merge": "^2.2.2",
