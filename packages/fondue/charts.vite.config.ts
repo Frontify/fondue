@@ -4,9 +4,7 @@ import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 
 export default defineConfig({
-    plugins: [,
-        dts({ insertTypesEntry: true, exclude: ['**/*.stories.tsx'], include: 'src/subpackages/charts.ts' }),
-    ],
+    plugins: [dts({ insertTypesEntry: true, exclude: ['**/*.stories.tsx'], include: 'src/subpackages/charts.ts' })],
     build: {
         lib: {
             entry: 'src/subpackages/charts.ts',
@@ -16,6 +14,6 @@ export default defineConfig({
         rollupOptions: {
             external: ['@frontify/fondue-charts'],
         },
-        outDir: 'dist/packages/charts'
-    }
+        outDir: 'dist/packages/charts',
+    },
 });

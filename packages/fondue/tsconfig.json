@@ -34,6 +34,9 @@
         "cypress",
         "scripts",
         "vite.config.ts",
+        "components.vite.config.ts",
+        "charts.vite.config.ts",
+        "icons.vite.config.ts",
         "tailwind.config.ts"
     ],
     "exclude": ["node_modules", "dist"]
