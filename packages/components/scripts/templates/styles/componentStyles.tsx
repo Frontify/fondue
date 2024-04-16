@@ -2,7 +2,7 @@
 
 import { type ComponentFileBuilderResponse } from '../../types';
 
-export const setup = (componentName: string): ComponentFileBuilderResponse => ({
+export const Setup = (componentName: string): ComponentFileBuilderResponse => ({
     content: `/* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { sv } from '#/utilities/styleUtilities';

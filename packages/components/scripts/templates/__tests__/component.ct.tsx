@@ -3,7 +3,7 @@
 import { toKebabCase } from '../../transforms';
 import { type ComponentFileBuilderResponse } from '../../types';
 
-export const setup = (componentName: string): ComponentFileBuilderResponse => ({
+export const Setup = (componentName: string): ComponentFileBuilderResponse => ({
     content: `/* (c) Copyright Frontify Ltd., all rights reserved. */
 import { expect, test } from '@playwright/experimental-ct-react';
 import { ${componentName} } from "../${componentName}";

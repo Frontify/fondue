@@ -7,9 +7,9 @@ import * as componentStories from './component.stories';
 import * as componentStyles from './styles/componentStyles';
 
 export default [
-    component.setup,
-    componentStories.setup,
-    componentFunctionalTests.setup,
-    componentVisualTests.setup,
-    componentStyles.setup,
+    component.Setup,
+    componentStories.Setup,
+    componentFunctionalTests.Setup,
+    componentVisualTests.Setup,
+    componentStyles.Setup,
 ];

@@ -6,7 +6,7 @@ import chalk from 'chalk';
 
 import templates from './templates';
 
-(async () => {
+await (async () => {
     const componentName = process.argv[3] || process.argv[2];
 
     if (!componentName) {
