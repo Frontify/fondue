@@ -1,10 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { readdirSync, readFileSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const OUTPUT_DIRECTORY = join(import.meta.dirname, '../../dist');
-const TEMPORARY_DIRECTORY = join(import.meta.dirname, '../../tmp');
+const directory = dirname(fileURLToPath(import.meta.url));
+
+const OUTPUT_DIRECTORY = join(directory, '../../dist');
+const TEMPORARY_DIRECTORY = join(directory, '../../tmp');
 const FIGMA_OUTPUT_DIRECTORY = join(OUTPUT_DIRECTORY, './figma');
 const FIGMA_TEMPORARY_DIRECTORY = join(TEMPORARY_DIRECTORY, './figma');
 

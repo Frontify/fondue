@@ -41,10 +41,13 @@
             "require": "./dist/packages/charts/fondue-charts.umd.cjs",
             "import": "./dist/packages/charts/fondue-charts.js"
         },
+        "./charts/styles": "./dist/packages/charts/style.css",
         "./tokens": {
-            "types": "./dist/packages/tokens/index.d.ts",
-            "require": "./dist/packages/tokens/fondue-tokens.umd.cjs",
-            "import": "./dist/packages/tokens/fondue-tokens.js"
+            ".": "./dist/js/colors.js",
+            "./tokens": "./dist/js/tokens.js",
+            "./tailwind": "./dist/tailwind/tailwind.config.js",
+            "./styles": "./dist/css/all.css",
+            "./themes/*": "./dist/css/*"
         },
         "./tailwind": "./tailwind.config.ts",
         "./style": "./dist/style.css",
