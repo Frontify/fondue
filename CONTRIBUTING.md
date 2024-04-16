@@ -62,7 +62,7 @@ This will add a folder inside `src/components` with the name `CoolCatsAndKittens
 
 ## Building Packages
 
-The Packages in the Monorepo are built independently.
+The packages in the monorepo are built independently.
 To build the packages, run `pnpm build` in the respective package directory.
 
 Alternatively you can run the following scripts in the root directory.
