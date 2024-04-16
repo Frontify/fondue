@@ -5,4 +5,4 @@
 "@frontify/fondue-icons": patch
 ---
 
-add subexports
+feat: add packages sub-export to `@frontify/fondue`
