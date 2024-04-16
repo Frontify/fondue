@@ -322,13 +322,13 @@ importers:
         specifier: ^3.2.2
         version: 3.2.2(react@18.2.0)
       '@frontify/fondue-charts':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../charts
       '@frontify/fondue-components':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../components
       '@frontify/fondue-icons':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../icons
       '@frontify/fondue-tokens':
         specifier: 3.3.0-next.8
