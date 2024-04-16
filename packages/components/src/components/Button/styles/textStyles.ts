@@ -142,4 +142,8 @@ export const textStyles = sv({
                 'group-active:tw-text-box-selected-strong-inverse',
         },
     ],
+    defaultVariants: {
+        emphasis: 'strong',
+        style: 'default',
+    },
 });

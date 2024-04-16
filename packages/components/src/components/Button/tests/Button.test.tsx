@@ -20,7 +20,11 @@ describe('Button component', () => {
 
     it('does not react on click when disabled', () => {
         const clickListener = vi.fn();
-        const { getByTestId } = render(<Button disabled>{BUTTON_TEXT}</Button>);
+        const { getByTestId } = render(
+            <Button onClick={clickListener} disabled>
+                {BUTTON_TEXT}
+            </Button>,
+        );
         const button = getByTestId(BUTTON_TEST_ID);
         expect(clickListener).not.toHaveBeenCalled();
         expect(button).toHaveAttribute('disabled');

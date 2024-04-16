@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ForwardedRef, cloneElement, forwardRef, type MouseEvent, type ReactElement, type ReactNode } from 'react';
+import { cloneElement, forwardRef, type ForwardedRef, type MouseEvent, type ReactElement, type ReactNode } from 'react';
 
 import { buttonIconSizeMap, buttonStyles } from './styles/buttonStyles';
 import { iconStyles } from './styles/iconStyles';
@@ -17,87 +17,95 @@ type ButtonType = 'button' | 'submit' | 'reset';
 type ButtonEmphasis = 'default' | 'weak' | 'strong';
 
 export type ButtonProps = {
+    /**
+     * @default null
+     */
     type?: ButtonType;
+    /**
+     * @default null
+     */
     title?: string;
+    /**
+     * @default 'default'
+     */
     style?: ButtonStyle;
+    /**
+     * @default 'strong'
+     */
     emphasis?: ButtonEmphasis;
+    /**
+     * @default false
+     */
     hideLabel?: boolean;
+    /**
+     * @default 'medium'
+     */
     size?: ButtonSize;
+    /**
+     * @default 'medium'
+     */
     rounding?: ButtonRounding;
+    /**
+     * @default false
+     */
     disabled?: boolean;
+    /**
+     * @default true
+     */
+    hugWidth?: boolean;
     icon?: ReactElement;
     children?: ReactNode;
     onClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
-    hugWidth?: boolean;
     'aria-label'?: string;
     'aria-describedby'?: string;
-    formId?: string;
     'data-test-id'?: string;
 };
 
-export const ButtonComponent = (
-    {
-        type = 'button',
-        style = 'default',
-        size = 'medium',
-        rounding = 'medium',
-        emphasis = 'strong',
-        title = '',
-        hideLabel = false,
-        disabled = false,
-        icon,
-        children,
-        onClick,
-        hugWidth = true,
-        formId,
-        'aria-label': ariaLabel,
-        'aria-describedby': ariaDescribedBy,
-        'data-test-id': dataTestId = 'fondue-button',
-    }: ButtonProps,
-    ref: ForwardedRef<HTMLButtonElement | null>,
-) => {
-    return (
-        <button
-            data-test-id={dataTestId}
-            aria-label={ariaLabel}
-            aria-disabled={disabled}
-            aria-describedby={ariaDescribedBy}
-            ref={ref}
-            form={formId}
-            title={title}
-            type={type}
-            onClick={onClick}
-            disabled={disabled}
-            className={buttonStyles({
-                disabled,
-                rounding,
-                size,
-                hugWidth,
-                emphasis,
-                style,
-                iconOnly: (icon && !children) || hideLabel,
-            })}
-        >
-            {icon && (
-                <span
-                    data-test-id={`${dataTestId}-icon`}
-                    className={iconStyles({
-                        iconSpacing: children && !hideLabel ? size : 'none',
-                        emphasis,
-                        style,
-                    })}
-                >
-                    {cloneElement(icon, { size: buttonIconSizeMap[size] })}
-                </span>
-            )}
-            {children && (
-                <span className={textStyles({ hideLabel, emphasis, style })} data-test-id={`${dataTestId}-text`}>
-                    {children}
-                </span>
-            )}
-        </button>
-    );
-};
+export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(
+    (
+        {
+            icon,
+            children,
+            hideLabel,
+            style,
+            size = 'medium',
+            'data-test-id': dataTestId = 'fondue-button',
+            ...props
+        }: ButtonProps,
+        ref: ForwardedRef<HTMLButtonElement | null>,
+    ) => {
+        return (
+            <button
+                ref={ref}
+                data-test-id={dataTestId}
+                className={buttonStyles({
+                    iconOnly: (icon && !children) || hideLabel,
+                    size,
+                    style,
+                    ...props,
+                })}
+                {...props}
+            >
+                {icon && (
+                    <span
+                        data-test-id={`${dataTestId}-icon`}
+                        className={iconStyles({
+                            iconSpacing: children && !hideLabel ? size : 'none',
+                            style,
+                            ...props,
+                        })}
+                    >
+                        {cloneElement(icon, { size: buttonIconSizeMap[size] })}
+                    </span>
+                )}
+                {children && (
+                    <span className={textStyles({ hideLabel, style, ...props })} data-test-id={`${dataTestId}-text`}>
+                        {children}
+                    </span>
+                )}
+            </button>
+        );
+    },
+);
 
-export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(ButtonComponent);
-Button.displayName = 'FondueButton';
+Button.displayName = 'Button';

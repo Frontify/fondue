@@ -4266,6 +4266,7 @@ packages:
       '@radix-ui/react-context': 1.0.1(@types/react@18.2.77)(react@18.2.0)
       '@radix-ui/react-primitive': 1.0.3(@types/react-dom@18.2.25)(@types/react@18.2.77)(react-dom@18.2.0)(react@18.2.0)
       '@types/react': 18.2.77
+      '@types/react-dom': 18.2.25
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
     dev: false
