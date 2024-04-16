@@ -271,9 +271,6 @@ importers:
       prettier:
         specifier: ^3.2.5
         version: 3.2.5
-      promises:
-        specifier: link:node:fs/promises
-        version: link:node:fs/promises
       react:
         specifier: ^18.2.0
         version: 18.2.0
