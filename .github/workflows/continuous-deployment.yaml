@@ -23,7 +23,7 @@ jobs:
             - name: Use pnpm
               uses: pnpm/action-setup@v3
               with:
-                  version: latest
+                  version: 8
 
             - name: Use Node.js
               uses: actions/setup-node@v4
@@ -64,7 +64,7 @@ jobs:
             - name: Use pnpm
               uses: pnpm/action-setup@v3
               with:
-                  version: latest
+                  version: 8
 
             - name: Use Node.js
               uses: actions/setup-node@v4
@@ -112,7 +112,7 @@ jobs:
             - name: Use pnpm
               uses: pnpm/action-setup@v3
               with:
-                  version: latest
+                  version: 8
                   run_install: false
 
             - name: Get pnpm store directory
@@ -153,7 +153,7 @@ jobs:
             - name: Use pnpm
               uses: pnpm/action-setup@v3
               with:
-                  version: latest
+                  version: 8
                   run_install: false
 
             - name: Use Node.js
@@ -192,7 +192,7 @@ jobs:
             - name: Use pnpm
               uses: pnpm/action-setup@v3
               with:
-                  version: latest
+                  version: 8
 
             - name: Use Node.js
               uses: actions/setup-node@v4
