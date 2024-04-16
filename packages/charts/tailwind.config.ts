@@ -1,8 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+// @ts-expect-error Untyped
+import frontifyTailwindConfig from '@frontify/fondue-tokens/tailwind';
 import { type Config } from 'tailwindcss';
 
 export default {
-    presets: [require('@frontify/fondue-tokens/tailwind')],
+    presets: [frontifyTailwindConfig as Config],
     content: ['./src/**/*.{ts,tsx}'],
 } satisfies Config;

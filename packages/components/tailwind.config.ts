@@ -1,11 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+// @ts-expect-error Untyped
+import frontifyTailwindConfig from '@frontify/fondue-tokens/tailwind';
 import tailwindForms from '@tailwindcss/forms';
 import { type Config } from 'tailwindcss';
 
 export default {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    presets: [require('@frontify/fondue-tokens/tailwind')],
+    presets: [frontifyTailwindConfig as Config],
     content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}', './.storybook/DocumentationTemplate.mdx'],
     plugins: [
         tailwindForms({
