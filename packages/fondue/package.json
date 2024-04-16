@@ -28,15 +28,18 @@
         },
         "./components": {
             "types": "./dist/packages/components/index.d.ts",
-            "import": "./dist/packages/components/index.js"
+            "require": "./dist/packages/components/fondue-components.umd.cjs",
+            "import": "./dist/packages/components/fondue-components.js"
         },
         "./icons": {
             "types": "./dist/packages/icons/index.d.ts",
+            "require": "./dist/packages/icons/fondue-icons.umd.cjs",
             "import": "./dist/packages/icons/fondue-icons.js"
         },
         "./charts": {
-            "types": "./dist/index.d.ts",
-            "import": "./dist/index.es.js"
+            "types": "./dist/packages/charts/index.d.ts",
+            "require": "./dist/packages/charts/fondue-charts.umd.cjs",
+            "import": "./dist/packages/charts/fondue-charts.js"
         },
         "./tailwind": "./tailwind.config.ts",
         "./style": "./dist/style.css",
