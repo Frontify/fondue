@@ -19,6 +19,6 @@ describe("${componentName} Component", () => {
     });
 });
 `,
-    extension: '.test.tsx',
+    extension: '.spec.tsx',
     subdirectory: '__tests__',
 });
