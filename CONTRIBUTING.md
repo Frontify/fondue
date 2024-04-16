@@ -1,6 +1,6 @@
 # How to contribute
 
-## Running Fondue Locally
+## Running Fondue locally
 
 1. Clone the Git repository
 2. Install the dependencies
@@ -27,7 +27,7 @@ In the background, multiple instances of Storybook will start up, one for each c
 
 You can also start the Storybook instances for the individual packages by running `pnpm storybook` in the respective package directory.
 
-## Create a new Component
+## Create a new component
 
 When adding a new component to Fondue this is the flow that is applied.
 
@@ -46,7 +46,7 @@ git checkout -b feat/add-fancy-component
 
 The name of the branch is not really relevant. Nonetheless we usually go for a prefix following Conventional Commits, slash as a separator and a short description of what the branch will change in kebab-case.
 
-### Create Component Files
+### Create component files
 
 Theres a nifty script that creates that files you'll need:
 
@@ -60,7 +60,7 @@ This will add a folder inside `src/components` with the name `CoolCatsAndKittens
 -   `CoolCatsAndKittens.spec.tsx` is the place to write your tests 🔬
 -   `CoolCatsAndKittens.stories.tsx` is for your Stories inside Storybook 📄
 
-## Building Packages
+## Building packages
 
 The packages in the monorepo are built independently.
 To build the packages, run `pnpm build` in the respective package directory.
@@ -72,7 +72,7 @@ Alternatively you can run the following scripts in the root directory.
 -   `pnpm build:icons`
 -   `pnpm build:charts`
 
-## Releasing Packages
+## Releasing packages
 
 We utilize [changesets](https://github.com/changesets/changesets) to manage our releases.
 

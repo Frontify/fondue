@@ -10,18 +10,26 @@
 
 ## Using `@frontify/fondue`
 
-# Getting Started
+# Getting started
 
-Welcome to Fondue, The Design System for the [Frontify](https://frontify.com) ecosystem.
+Welcome to Fondue, The design system for the [Frontify](https://frontify.com) ecosystem.
 
 ## Installation
 
-Add the Fondue Design System Package as a dependency to your project. `pnpm i @frontify/fondue`
+Add the Fondue design system package as a dependency to your project.
 
-## Finding Components
+```shell
+npm i @frontify/fondue
+# or
+pnpm i @frontify/fondue
+# or
+yarn add @frontify/fondue
+```
 
-You can browse all available components in the Storybook instance for the [Fondue Design System](https://fondue-components.frontify.com).
-This Storybook contains all Components from all subpackages in the Fondue Monorepo. Each Component will have a Badge in the Top Bar indicating it's current lifecycele state.
+## Finding components
+
+You can browse all available components in the Storybook instance of the [Fondue design system](https://fondue-components.frontify.com).
+This Storybook contains all components from all subpackages in the Fondue monorepo. Each component will have a badge in the top bar indicating its current lifecycle state.
 
 For the designers, the documentation is available in the [Fondue Design System Documentation](https://weare.frontify.com/document/1266?#/using-fondue) on weare.
 

@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { access, mkdir, writeFile } from 'node:fs/promises';
 
 import chalk from 'chalk';
 
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import templates from './templates';
 
 await (async () => {
@@ -18,40 +18,24 @@ await (async () => {
 
     const componentDirectory = `./src/components/${componentName}`;
 
-    let directoryExists: boolean;
-    try {
-        await access(componentDirectory);
-        directoryExists = true;
-    } catch {
-        directoryExists = false;
-    }
-
-    if (directoryExists) {
+    if (existsSync(componentDirectory)) {
         console.error(chalk.red(`Component ${componentName} already exists.`));
         process.exit(1);
     }
 
     const generatedTemplates = templates.map((template) => template(componentName));
-    console.log(generatedTemplates);
 
-    await mkdir(componentDirectory);
+    mkdirSync(componentDirectory);
 
     for (const template of generatedTemplates) {
         let directory = componentDirectory;
         if (template.subdirectory) {
             directory = `${componentDirectory}/${template.subdirectory}`;
-            let directoryExists: boolean;
-            try {
-                await access(directory);
-                directoryExists = true;
-            } catch {
-                directoryExists = false;
-            }
-            if (!directoryExists) {
-                await mkdir(`${componentDirectory}/${template.subdirectory}`);
+            if (!existsSync(directory)) {
+                mkdirSync(`${componentDirectory}/${template.subdirectory}`);
             }
         }
-        await writeFile(`${directory}/${componentName}${template.extension}`, template.content);
+        writeFileSync(`${directory}/${componentName}${template.extension}`, template.content);
     }
 
     console.log(chalk.green(`Component created in ${componentDirectory}`));

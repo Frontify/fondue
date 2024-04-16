@@ -17,7 +17,7 @@
         "storybook:main": "wait-on http://localhost:6006 http://localhost:6007 http://localhost:6008 && pnpm --stream  --filter {storybook-docs} storybook",
         "storybook:packages": "pnpm --parallel --filter {packages/*} storybook --no-open",
         "typecheck": "pnpm --stream --filter {packages/*} typecheck",
-        "release": "changeset",
+        "changeset": "changeset",
         "create:component": "pnpm --stream --filter {packages/components} create:component"
     },
     "devDependencies": {

@@ -10,7 +10,6 @@ import { sv } from '#/utilities/styleUtilities';
 export const ${componentName}Styles = sv({
     base: "tw-block",
 })
-
 `,
     extension: 'Styles.tsx',
     subdirectory: 'styles',
