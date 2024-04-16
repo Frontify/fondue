@@ -1,0 +1,62 @@
+{
+    "name": "@frontify/fondue-tokens",
+    "type": "module",
+    "version": "3.4.0",
+    "description": "Single source of truth for Fondue Design Tokens",
+    "author": "Frontify Developers <developers@frontify.com>",
+    "homepage": "https://github.com/Frontify/fondue",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Frontify/fondue",
+        "directory": "packages/tokens"
+    },
+    "bugs": {
+        "url": "https://github.com/frontify/fondue/issues"
+    },
+    "keywords": [
+        "fondue",
+        "design",
+        "tokens",
+        "variables"
+    ],
+    "exports": {
+        ".": "./dist/js/colors.js",
+        "./tokens": "./dist/js/tokens.js",
+        "./tailwind": "./dist/tailwind/tailwind.config.js",
+        "./styles": "./dist/css/all.css",
+        "./themes/*": "./dist/css/*"
+    },
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "clean": "rimraf dist",
+        "build": "pnpm clean && tsx src/build.ts",
+        "build:debug": "pnpm clean && tsx src/build.ts --debug && pnpm build:tailwind:debug",
+        "build:tailwind:debug": "tailwind -c ./dist/tailwind/tailwind.config.js -o ./dist/css/tailwind_unpurged.css",
+        "lint": "eslint .",
+        "lint:fix": "eslint --fix .",
+        "typecheck": "tsc --noEmit"
+    },
+    "publishConfig": {
+        "access": "public"
+    },
+    "peerDependencies": {
+        "tailwindcss": "^3.0.0"
+    },
+    "devDependencies": {
+        "@frontify/eslint-config-basic": "^0.20.5",
+        "@types/chroma-js": "^2.4.4",
+        "@types/node": "^20.12.7",
+        "chalk": "^5.3.0",
+        "chroma-js": "^2.4.2",
+        "eslint": "^8.57.0",
+        "nodemon": "^3.1.0",
+        "prettier": "^3.2.5",
+        "rimraf": "^5.0.5",
+        "style-dictionary": "^3.9.2",
+        "tailwindcss": "^3.4.3",
+        "tsx": "^4.7.2",
+        "typescript": "^5.4.5"
+    }
+}
