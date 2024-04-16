@@ -1,23 +1,34 @@
-# Getting Started
 
-Welcome to Fondue, The Design System for the [Frontify](https://frontify.com) ecosystem.
+# Getting started
+
+Welcome to Fondue, The design system for the [Frontify](https://frontify.com) ecosystem.
 
 ## Installation
 
-Add the Fondue Design System Package as a dependency to your project. ```pnpm i @frontify/fondue```
+Add the Fondue design system package as a dependency to your project.
 
-## Finding Components
+```shell
+npm i @frontify/fondue
+# or
+pnpm i @frontify/fondue
+# or
+yarn add @frontify/fondue
+```
 
-You can browse all available components in the Storybook instance for the [Fondue Design System](https://fondue-components.frontify.com).
-This Storybook contains all Components from all subpackages in the Fondue Monorepo. Each Component will have a Badge in the Top Bar indicating it's current lifecycele state.
+## Finding components
+
+You can browse all available components in the Storybook instance of the [Fondue design system](https://fondue-components.frontify.com).
+This Storybook contains all components from all subpackages in the Fondue monorepo. Each component will have a badge in the top bar indicating its current lifecycle state.
 
 For the designers, the documentation is available in the [Fondue Design System Documentation](https://weare.frontify.com/document/1266?#/using-fondue) on weare.
+
 ## Usage
+
 During the transition period in which we are cleaning up the Fondue Components, you can use old and new components side by side.
 
 ### Was this component already refactored?
 
-If a component was refactored, the old implementation will be marked as __deprecated__.
+If a component was refactored, the old implementation will be marked as **deprecated**.
 
 This will be visible in the code when you consume the Component and through a Badge in the Top Bar of the Storybook Story.
 
@@ -26,11 +37,9 @@ This will be visible in the code when you consume the Component and through a Ba
 If you want to use a refactored component, you can already import them through the `/components` subexport in the fondue package.
 
 ```tsx
-import { Button } from '@frontify/fondue/components';
+import { Button } from "@frontify/fondue/components";
 
-const App = () => (
-    <Button>Click Me</Button>
-);
+const App = () => <Button>Click Me</Button>;
 ```
 
 ### Using Old Components
@@ -38,10 +47,17 @@ const App = () => (
 If you are using the old components, you can continue to import them directly from the `@frontify/fondue` package.
 
 ```tsx
-import { FondueButton } from '@frontify/fondue';
+import { FondueButton } from "@frontify/fondue";
 
-const App = () => (
-    <FondueButton>Click Me</FondueButton>
-);
+const App = () => <FondueButton>Click Me</FondueButton>;
 ```
 
+## Contributing
+
+See [Contribution Guidelines](CONTRIBUTING.md) for contributing and local development help.
+
+## Important Links
+
+-   [Storybook](https://fondue-components.frontify.com) – Storybook for previweing Fondue Components
+-   [Fondue Documentation](https://weare.frontify.com/document/1266?#/using-fondue) – Documentation for the Fondue Design System
+-   [Tailwind](https://tailwindcss.com/docs) – Utility-first CSS framework used in Fondue
