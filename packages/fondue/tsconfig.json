@@ -34,6 +34,7 @@
         "cypress",
         "scripts",
         "vite.config.ts",
+        "tailwind.config.js",
         "components.vite.config.ts",
         "charts.vite.config.ts",
         "icons.vite.config.ts",
