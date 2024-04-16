@@ -1,8 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-
 import { defineConfig } from 'vite';
-import { viteStaticCopy } from "vite-plugin-static-copy";
+import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 export default defineConfig({
     plugins: [
@@ -10,10 +9,10 @@ export default defineConfig({
             targets: [
                 {
                     src: 'node_modules/@frontify/fondue-tokens/dist/tailwind/tailwind.config.js',
-                    dest: ''
-                }
-            ]
-        })
+                    dest: '',
+                },
+            ],
+        }),
     ],
     build: {
         lib: {
