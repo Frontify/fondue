@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'url';
+import { join } from 'node:path';
 
 import StyleDictionary from 'style-dictionary';
 
@@ -13,11 +12,9 @@ import { trimHyphens } from './utils/trimHyphens';
 
 const debug = process.argv[2] === '--debug';
 
-const directory = dirname(fileURLToPath(import.meta.url));
-
-const INPUT_DIRECTORY = join(directory, './tokens');
-const TEMPORARY_DIRECTORY = join(directory, '../tmp');
-const OUTPUT_DIRECTORY = join(directory, '../dist');
+const INPUT_DIRECTORY = join(import.meta.dirname, './tokens');
+const TEMPORARY_DIRECTORY = join(import.meta.dirname, '../tmp');
+const OUTPUT_DIRECTORY = join(import.meta.dirname, '../dist');
 const COLOR_THEMES = ['dark'];
 
 const MAIN_TOKENS_GLOB = [
@@ -257,4 +254,3 @@ for (const theme of COLOR_THEMES) {
 }
 
 mergeFigmaFiles();
-
