@@ -77,6 +77,21 @@ Alternatively you can run the following scripts in the root directory.
 We utilize [changesets](https://github.com/changesets/changesets) to manage our releases.
 
 To bump the version of a package, run `pnpm changeset` in the root directory and follow the prompts to select your package and version bump.
+
+When creating your changeset, please prefix the description with "When creating your changeset, please prefix the description with one of the following:
+
+-   `feat:` for a new feature
+-   `fix:` for a bug fix
+-   `chore:` for changes to the build process or auxiliary tools and libraries such as documentation generation
+-   `docs:` for documentation only changes
+-   `build:` for changes that affect the build system or external dependencies
+-   `refactor:` for a code change that neither fixes a bug nor adds a feature
+-   `perf:` for a code change that improves performance
+-   `test:` for adding missing tests or correcting existing tests
+-   `ci:` for changes to our CI configuration files and scripts
+
+These prefixes help to quickly identify the type of changes included in the release. The description should be easily readable and understandable. Clear and concise descriptions help others to understand the changes you've made and their impact on the project.
+
 A file containg your release notes will be created in the `.changeset` directory.
 
 After your change is merged to the `main` branch, the change will automatically be added to a release PR.
