@@ -14,7 +14,6 @@
         "postcss.config.cjs",
         "package.json",
         "playwright.config.ts",
-        "playwright",
-        "scripts"
+        "playwright"
     ]
 }

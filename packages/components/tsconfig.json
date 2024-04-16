@@ -21,6 +21,6 @@
             "#/*": ["./src/*"]
         }
     },
-    "include": [".storybook", "src"],
+    "include": [".storybook", "src", "scripts"],
     "references": [{ "path": "./tsconfig.node.json" }]
 }
