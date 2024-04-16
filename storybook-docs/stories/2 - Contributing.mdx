@@ -45,7 +45,7 @@ Create a new branch for your additions
 git checkout -b feat/add-fancy-component
 ```
 
-The name of the branch is not really relevant. Nonetheless we usually go for a prefix following Conventional Commits, slash as a separator and a short description of what the branch will change in kebab-case.
+The name of the branch is not really relevant. Nonetheless we usually go for a prefix following conventional commits, slash as a separator and a short description of what the branch will change in kebab-case.
 
 ### Create component files
 
