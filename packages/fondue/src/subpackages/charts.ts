@@ -1,2 +1,3 @@
-export * from "@frontify/fondue-charts";
+/* (c) Copyright Frontify Ltd., all rights reserved. */
 
+export * from '@frontify/fondue-charts';
