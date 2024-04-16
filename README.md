@@ -67,7 +67,7 @@ const App = () => <FondueButton>Click Me</FondueButton>;
 
 See [Contribution guidelines](CONTRIBUTING.md) for contributing and local development help.
 
-## Important Links
+## Important links
 
 -   [Storybook](https://fondue-components.frontify.com) – Storybook for previweing fondue components
 -   [Fondue documentation](https://weare.frontify.com/document/1266?#/using-fondue) – Documentation for the Fondue design system
