@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 
 import chalk from 'chalk';
 
-import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import templates from './templates';
 
 await (async () => {

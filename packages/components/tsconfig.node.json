@@ -15,6 +15,6 @@
         "package.json",
         "playwright.config.ts",
         "playwright",
-        "scripts",
+        "scripts"
     ]
 }
