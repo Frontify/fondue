@@ -8,7 +8,6 @@ const getDeclaration = ({ token, dictionary }: { token: Dictionary['tokens'][str
     const reference = dictionary.getReferences(token?.original.value)[0];
     const name = token?.name;
 
-    // Text
     // @ts-expect-error Old untyped code
     if (token.path?.[0] === 'text') {
         // @ts-expect-error Old untyped code
