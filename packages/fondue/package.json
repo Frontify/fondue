@@ -41,6 +41,11 @@
             "require": "./dist/packages/charts/fondue-charts.umd.cjs",
             "import": "./dist/packages/charts/fondue-charts.js"
         },
+        "./tokens": {
+            "types": "./dist/packages/tokens/index.d.ts",
+            "require": "./dist/packages/tokens/fondue-tokens.umd.cjs",
+            "import": "./dist/packages/tokens/fondue-tokens.js"
+        },
         "./tailwind": "./tailwind.config.ts",
         "./style": "./dist/style.css",
         "./styles": "./dist/style.css",
@@ -60,13 +65,14 @@
         "node": ">=18"
     },
     "scripts": {
-        "build": "pnpm clean && pnpm generate:icons && pnpm generate:componentsEnum && pnpm build:library && pnpm build:extractedThirdPartyStyles && pnpm build:package:components && pnpm build:package:icons && pnpm build:package:charts",
+        "build": "pnpm clean && pnpm generate:icons && pnpm generate:componentsEnum && pnpm build:library && pnpm build:extractedThirdPartyStyles && pnpm build:package:components && pnpm build:package:icons && pnpm build:package:charts && pnpm build:package:tokens",
         "build:extractedThirdPartyStyles": "concat src/components/**/*.css | postcss > dist/extractedThirdPartyStyles.css",
         "build:library": "vite build",
         "build:storybook": "pnpm generate:icons && pnpm generate:componentsEnum && storybook build",
         "build:package:components": "vite build -c components.vite.config.ts",
         "build:package:icons": "vite build -c icons.vite.config.ts",
         "build:package:charts": "vite build -c charts.vite.config.ts",
+        "build:package:tokens": "vite build -c tokens.vite.config.ts",
         "dev": "cross-env NODE_ENV=development pnpm dev:library",
         "dev:library": "vite build --emptyOutDir false --watch",
         "clean": "rimraf dist",
@@ -97,7 +103,7 @@
         "@frontify/fondue-charts": "workspace:^",
         "@frontify/fondue-components": "workspace:^",
         "@frontify/fondue-icons": "workspace:^",
-        "@frontify/fondue-tokens": "3.3.0-next.8",
+        "@frontify/fondue-tokens": "workspace:^",
         "@popperjs/core": "^2.11.8",
         "@radix-ui/react-popover": "^1.0.7",
         "@radix-ui/react-toolbar": "^1.0.4",

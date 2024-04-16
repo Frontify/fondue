@@ -335,8 +335,8 @@ importers:
         specifier: workspace:^
         version: link:../icons
       '@frontify/fondue-tokens':
-        specifier: 3.3.0-next.8
-        version: 3.3.0-next.8(ts-node@10.9.2)
+        specifier: workspace:^
+        version: link:../tokens
       '@popperjs/core':
         specifier: ^2.11.8
         version: 2.11.8
@@ -3490,14 +3490,6 @@ packages:
       - supports-color
       - typescript
     dev: true
-
-  /@frontify/fondue-tokens@3.3.0-next.8(ts-node@10.9.2):
-    resolution: {integrity: sha512-jVSWvrO2KQ0+enLksjLrvQ512j5LUgycLVzbDiwgIEhEkfne5RuJBjLOa1cWiGpzIj1458Br7cVzCykYFLeJ4g==}
-    dependencies:
-      tailwindcss: 3.4.3(ts-node@10.9.2)
-    transitivePeerDependencies:
-      - ts-node
-    dev: false
 
   /@hapi/hoek@9.3.0:
     resolution: {integrity: sha512-/c6rf4UJlmHlC9b5BaNvzAcFv7HZ2QHaV0D4/HNlBdvFnvQq8RI4kYdhyPCl7Xj+oWvTWQ8ujhqS53LIgAe6KQ==}
