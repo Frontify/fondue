@@ -18,7 +18,7 @@ export type IconNode = [elementName: keyof ReactSVG, attrs: Record<string, strin
 export type SVGAttributes = Partial<SVGProps<SVGSVGElement>>;
 type ComponentAttributes = RefAttributes<SVGSVGElement> & SVGAttributes;
 
-export type IconSizeAsNumber = 12 | 16 | 20 | 24 | 32;
+type IconSizeAsNumber = 12 | 16 | 20 | 24 | 32;
 
 /**
  * @deprecated Use a string or number instead
