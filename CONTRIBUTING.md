@@ -76,7 +76,7 @@ Alternatively you can run the following scripts in the root directory.
 
 We utilize [changesets](https://github.com/changesets/changesets) to manage our releases.
 
-To bump the version of a Package, run `pnpm release` in the root directory and follow the prompts to select your package and version bump.
+To bump the version of a package, run `pnpm changeset` in the root directory and follow the prompts to select your package and version bump.
 A file containg your release notes will be created in the `.changeset` directory.
 
 After your change is merged to the `main` branch, the change will automatically be added to a release PR.
