@@ -23,7 +23,5 @@ export const tailwindFormatter: (args: Parameters<Formatter>[0] & { debug?: bool
 
     const tailwindConfigTemplate = debug === true ? templateDebug : template;
 
-    return `${fileHeader({ file })}
-${tailwindConfigTemplate({ theme, plugin })}
-`;
+    return `${fileHeader({ file })}${tailwindConfigTemplate({ theme, plugin })}`;
 };
