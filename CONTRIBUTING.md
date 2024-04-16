@@ -18,7 +18,7 @@ $ pnpm i
 Run `pnpm storybook` to start the storybook development server.
 
 Storybook will be available on [http://localhost:6010](http://localhost:6010).
-This Storybook instance is configured and served from the `/storybook-docs` package which is caused to proxy and compose all other Storybook instances in the monorepo.
+This Storybook instance is configured and served from the `/storybook-docs` package which is used to proxy and compose all other Storybook instances in the monorepo.
 
 In the background, multiple instances of Storybook will start up, one for each component package in the monorepo.
 
