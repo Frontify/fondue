@@ -80,4 +80,4 @@ To bump the version of a package, run `pnpm changeset` in the root directory and
 A file containg your release notes will be created in the `.changeset` directory.
 
 After your change is merged to the `main` branch, the change will automatically be added to a release PR.
-Once we merge the release PR, the package will be published to NPM.
+Once we merge the release PR, the package will be published to npm.
