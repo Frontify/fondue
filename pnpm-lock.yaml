@@ -321,6 +321,15 @@ importers:
       '@dnd-kit/utilities':
         specifier: ^3.2.2
         version: 3.2.2(react@18.2.0)
+      '@frontify/fondue-charts':
+        specifier: workspace:*
+        version: link:../charts
+      '@frontify/fondue-components':
+        specifier: workspace:*
+        version: link:../components
+      '@frontify/fondue-icons':
+        specifier: workspace:*
+        version: link:../icons
       '@frontify/fondue-tokens':
         specifier: 3.3.0-next.8
         version: 3.3.0-next.8(ts-node@10.9.2)
@@ -586,9 +595,6 @@ importers:
       '@frontify/eslint-config-react':
         specifier: ^0.17.6
         version: 0.17.6(eslint@8.57.0)(prettier@3.2.5)(react@18.2.0)(typescript@5.4.5)
-      '@frontify/fondue-icons':
-        specifier: workspace:^
-        version: link:../icons
       '@storybook/addon-a11y':
         specifier: ^8.0.8
         version: 8.0.8
