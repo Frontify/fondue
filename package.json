@@ -11,7 +11,7 @@
         "build:storybook": "pnpm build:storybook:packages && pnpm build:storybook:main",
         "build:storybook:main": "pnpm --stream --filter {storybook-docs} build:storybook",
         "build:storybook:packages": "pnpm --stream --parallel --filter {packages/*} build:storybook",
-        "ci:publish": "pnpm build:icons && pnpm build:charts && pnpm build:components && pnpm build:fondue && changeset publish",
+        "ci:publish": "pnpm build:tokens && pnpm build:icons && pnpm build:charts && pnpm build:components && pnpm build:fondue && changeset publish",
         "ci:version": "changeset version",
         "lint": "pnpm --stream --filter {packages/**} lint",
         "storybook": "concurrently 'pnpm storybook:packages' 'pnpm storybook:main'",

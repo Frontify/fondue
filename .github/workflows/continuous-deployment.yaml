@@ -40,6 +40,9 @@ jobs:
             - name: Build Fondue Icons
               run: pnpm build:icons
 
+            - name: Build Fondue Tokens
+              run: pnpm build:tokens
+
             - name: Build Fondue Charts
               run: pnpm build:charts
 
@@ -74,6 +77,9 @@ jobs:
 
             - name: Build Fondue Icons
               run: pnpm build:icons
+
+            - name: Build Fondue Tokens
+              run: pnpm build:tokens
 
             - name: Build Fondue Charts
               run: pnpm build:charts
