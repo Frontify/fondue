@@ -1,13 +1,23 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+
 import { defineConfig } from 'vite';
-import dts from 'vite-plugin-dts';
+import { viteStaticCopy } from "vite-plugin-static-copy";
 
 export default defineConfig({
-    plugins: [dts({ insertTypesEntry: true, exclude: ['**/*.stories.tsx'], include: 'src/subpackages/tokens.ts' })],
+    plugins: [
+        viteStaticCopy({
+            targets: [
+                {
+                    src: 'node_modules/@frontify/fondue-tokens/dist/tailwind/tailwind.config.js',
+                    dest: ''
+                }
+            ]
+        })
+    ],
     build: {
         lib: {
-            entry: 'src/subpackages/tokens.ts',
+            entry: 'src/subpackages/tokens.js',
             name: 'FondueTokens',
             fileName: 'fondue-tokens',
         },

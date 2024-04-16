@@ -21,11 +21,6 @@
     ],
     "sideEffects": false,
     "exports": {
-        ".": {
-            "types": "./dist/index.d.ts",
-            "require": "./dist/index.umd.js",
-            "import": "./dist/index.es.js"
-        },
         "./components": {
             "types": "./dist/packages/components/index.d.ts",
             "require": "./dist/packages/components/fondue-components.umd.cjs",
@@ -43,11 +38,16 @@
         },
         "./charts/styles": "./dist/packages/charts/style.css",
         "./tokens": {
-            ".": "./dist/js/colors.js",
-            "./tokens": "./dist/js/tokens.js",
-            "./tailwind": "./dist/tailwind/tailwind.config.js",
-            "./styles": "./dist/css/all.css",
-            "./themes/*": "./dist/css/*"
+            "require": "./dist/packages/tokens/fondue-tokens.umd.cjs",
+            "import": "./dist/packages/tokens/fondue-tokens.js"
+        },
+        "./tokens/styles": "./dist/packages/tokens/style.css",
+        "./tokens/tokens": "./dist/packages/tokens/tokens.js",
+        "./tokens/tailwind": "./dist/packages/tokens/tailwind.config.js",
+        ".": {
+            "types": "./dist/index.d.ts",
+            "require": "./dist/index.umd.js",
+            "import": "./dist/index.es.js"
         },
         "./tailwind": "./tailwind.config.ts",
         "./style": "./dist/style.css",
@@ -249,6 +249,7 @@
         "typescript": "^5.4.5",
         "vite": "^5.2.8",
         "vite-plugin-dts": "^3.8.1",
+        "vite-plugin-static-copy": "^1.0.2",
         "vite-tsconfig-paths": "^4.3.2"
     }
 }
