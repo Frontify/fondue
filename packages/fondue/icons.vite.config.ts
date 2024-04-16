@@ -3,9 +3,6 @@
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 
-/**
- * @type {import('vite').UserConfig}
- */
 export default defineConfig({
     plugins: [,
         dts({ insertTypesEntry: true, exclude: ['**/*.stories.tsx'], include: 'src/subpackages/icons.ts' }),
