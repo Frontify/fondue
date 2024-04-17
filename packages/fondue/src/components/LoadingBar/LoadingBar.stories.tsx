@@ -2,12 +2,17 @@
 
 import { type Meta, type StoryFn } from '@storybook/react';
 
-import { LoadingBar as LoadingBarComponent, type LoadingBarProps, LoadingBarSize, LoadingBarState } from './LoadingBar';
+import { LoadingBar as LoadingBarComponent, LoadingBarSize, LoadingBarState, type LoadingBarProps } from './LoadingBar';
 
 export default {
     title: 'Components/LoadingBar',
     component: LoadingBarComponent,
     tags: ['autodocs'],
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
+    },
     argTypes: {
         state: {
             options: Object.values(LoadingBarState),

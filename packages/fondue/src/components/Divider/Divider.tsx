@@ -32,6 +32,9 @@ const styleMap = {
 
 const DIVIDER_TEST_ID = 'fondue-divider';
 
+/**
+ * @deprecated Please use updated Divider component from @frontify/fondue/components
+ */
 export const Divider = ({
     vertical = false,
     style = DividerStyle.Solid,
