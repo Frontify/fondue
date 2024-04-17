@@ -130,8 +130,8 @@ StyleDictionary.extend({
             buildPath: `${OUTPUT_DIRECTORY}/js/`,
             files: [
                 {
-                    destination: 'colors.js',
-                    format: 'javascript/module',
+                    destination: 'colors.json',
+                    format: 'json',
                     filter: 'isColor',
                 },
             ],

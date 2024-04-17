@@ -20,7 +20,7 @@
         "variables"
     ],
     "exports": {
-        ".": "./dist/js/colors.js",
+        ".": "./dist/js/colors.json",
         "./tokens": "./dist/js/tokens.js",
         "./tailwind": "./dist/tailwind/tailwind.config.js",
         "./styles": "./dist/css/all.css",
