@@ -21,6 +21,9 @@
         },
         "./styles": "./dist/style.css"
     },
+    "files": [
+        "dist"
+    ],
     "engines": {
         "node": ">=18"
     },
