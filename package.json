@@ -14,7 +14,6 @@
         "build:storybook:packages": "pnpm --stream --parallel --filter {packages/*} build:storybook",
         "ci:publish": "pnpm build:tokens && pnpm build:icons && pnpm build:charts && pnpm build:components && pnpm build:fondue && changeset publish",
         "ci:version": "changeset version",
-        "typecheck": "pnpm --stream --filter {packages/*} typecheck",
         "lint": "pnpm --stream --filter {packages/**} lint",
         "storybook": "concurrently 'pnpm storybook:packages' 'pnpm storybook:main'",
         "storybook:main": "wait-on http://localhost:6006 http://localhost:6007 http://localhost:6008 && pnpm --stream  --filter {storybook-docs} storybook",
