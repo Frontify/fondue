@@ -30,7 +30,7 @@ importers:
   packages/charts:
     dependencies:
       '@frontify/fondue-tokens':
-        specifier: ^3.3.0-next.5
+        specifier: ^3.5.0
         version: link:../tokens
       '@visx/axis':
         specifier: ^3.10.1
@@ -200,7 +200,7 @@ importers:
         specifier: workspace:^
         version: link:../icons
       '@frontify/fondue-tokens':
-        specifier: ^3.4.0
+        specifier: ^3.5.0
         version: link:../tokens
       '@playwright/experimental-ct-react':
         specifier: 1.41.2
