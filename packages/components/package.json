@@ -18,7 +18,8 @@
         ".": {
             "types": "./dist/index.d.ts",
             "import": "./dist/fondue-components.js"
-        }
+        },
+        "./styles": "./dist/style.css"
     },
     "engines": {
         "node": ">=18"
