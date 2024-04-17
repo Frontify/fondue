@@ -2,6 +2,7 @@ import type { StorybookConfig } from '@storybook/react-vite';
 
 const config: StorybookConfig = {
     stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
+    staticDirs: ['assets'],
     addons: [
         '@etchteam/storybook-addon-status',
         '@storybook/addon-a11y',
