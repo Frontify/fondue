@@ -304,9 +304,6 @@ importers:
       vite-plugin-dts:
         specifier: ^3.8.1
         version: 3.8.1(@types/node@20.12.7)(rollup@4.14.0)(typescript@5.4.5)(vite@5.2.8)
-      vite-plugin-external:
-        specifier: ^4.3.1
-        version: 4.3.1
       vite-tsconfig-paths:
         specifier: ^4.3.2
         version: 4.3.2(typescript@5.4.5)(vite@5.2.8)
@@ -331,9 +328,18 @@ importers:
       '@dnd-kit/utilities':
         specifier: ^3.2.2
         version: 3.2.2(react@18.2.0)
+      '@frontify/fondue-charts':
+        specifier: workspace:^
+        version: link:../charts
+      '@frontify/fondue-components':
+        specifier: workspace:^
+        version: link:../components
+      '@frontify/fondue-icons':
+        specifier: workspace:^
+        version: link:../icons
       '@frontify/fondue-tokens':
-        specifier: 3.3.0-next.8
-        version: 3.3.0-next.8(ts-node@10.9.2)
+        specifier: workspace:^
+        version: link:../tokens
       '@popperjs/core':
         specifier: ^2.11.8
         version: 2.11.8
@@ -596,9 +602,6 @@ importers:
       '@frontify/eslint-config-react':
         specifier: ^0.17.6
         version: 0.17.6(eslint@8.57.0)(prettier@3.2.5)(react@18.2.0)(typescript@5.4.5)
-      '@frontify/fondue-icons':
-        specifier: workspace:^
-        version: link:../icons
       '@storybook/addon-a11y':
         specifier: ^8.0.8
         version: 8.0.8
@@ -755,6 +758,9 @@ importers:
       vite-plugin-dts:
         specifier: ^3.8.1
         version: 3.8.1(@types/node@20.12.7)(rollup@4.14.0)(typescript@5.4.5)(vite@5.2.8)
+      vite-plugin-static-copy:
+        specifier: ^1.0.2
+        version: 1.0.2(vite@5.2.8)
       vite-tsconfig-paths:
         specifier: ^4.3.2
         version: 4.3.2(typescript@5.4.5)(vite@5.2.8)
@@ -3490,14 +3496,6 @@ packages:
       - supports-color
       - typescript
     dev: true
-
-  /@frontify/fondue-tokens@3.3.0-next.8(ts-node@10.9.2):
-    resolution: {integrity: sha512-jVSWvrO2KQ0+enLksjLrvQ512j5LUgycLVzbDiwgIEhEkfne5RuJBjLOa1cWiGpzIj1458Br7cVzCykYFLeJ4g==}
-    dependencies:
-      tailwindcss: 3.4.3(ts-node@10.9.2)
-    transitivePeerDependencies:
-      - ts-node
-    dev: false
 
   /@hapi/hoek@9.3.0:
     resolution: {integrity: sha512-/c6rf4UJlmHlC9b5BaNvzAcFv7HZ2QHaV0D4/HNlBdvFnvQq8RI4kYdhyPCl7Xj+oWvTWQ8ujhqS53LIgAe6KQ==}
@@ -18934,6 +18932,19 @@ packages:
       '@types/fs-extra': 11.0.4
       '@types/node': 14.18.63
       fs-extra: 11.1.1
+    dev: true
+
+  /vite-plugin-static-copy@1.0.2(vite@5.2.8):
+    resolution: {integrity: sha512-AfmEF+a/mfjsUsrgjbCkhzUCeIUF4EKQXXt3Ie1cour9MBpy6f6GphbdW2td28oYfOrwCyRzFCksgLkpk58q6Q==}
+    engines: {node: ^18.0.0 || >=20.0.0}
+    peerDependencies:
+      vite: ^5.0.0
+    dependencies:
+      chokidar: 3.5.3
+      fast-glob: 3.3.2
+      fs-extra: 11.1.1
+      picocolors: 1.0.0
+      vite: 5.2.8(@types/node@20.12.7)
     dev: true
 
   /vite-tsconfig-paths@4.3.2(typescript@5.4.5)(vite@5.2.8):

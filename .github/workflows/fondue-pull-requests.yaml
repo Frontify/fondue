@@ -77,6 +77,15 @@ jobs:
             - name: Build Fondue icons
               run: pnpm build:icons
 
+            - name: Build Fondue Tokens
+              run: pnpm build:tokens
+
+            - name: Build Fondue Charts
+              run: pnpm build:charts
+
+            - name: Build Fondue Components
+              run: pnpm build:components
+
             - name: Typecheck code
               run: pnpm --stream --filter {packages/fondue} --filter {packages/components} --filter {packages/icons} typecheck
 
