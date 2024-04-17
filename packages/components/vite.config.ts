@@ -3,7 +3,7 @@
 import react from '@vitejs/plugin-react';
 import dts from 'vite-plugin-dts';
 import tsConfigPaths from 'vite-tsconfig-paths';
-import { defineConfig } from 'vitest/config';
+import { configDefaults, defineConfig } from 'vitest/config';
 
 import { dependencies as dependenciesMap, peerDependencies as peerDependenciesMap } from './package.json';
 
@@ -48,7 +48,17 @@ export default defineConfig({
         environment: 'happy-dom',
         setupFiles: ['./src/setupTests.ts'],
         css: true,
+        exclude: [...configDefaults.exclude, 'scripts/templates/**/*.**'],
         coverage: {
+            exclude: [
+                ...configDefaults.exclude,
+                '.storybook',
+                'playwright',
+                'scripts/templates',
+                '.eslintrc.cjs',
+                '**.config.{ts,cjs}',
+                '**/**/*.{ct,spec,test,stories}.{ts,tsx}',
+            ],
             enabled: true,
             provider: 'v8',
             reporter: ['text', 'lcov', 'html'],
