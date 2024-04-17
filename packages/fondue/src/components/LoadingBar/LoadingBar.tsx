@@ -45,7 +45,7 @@ export const loadingBarStateClasses: Record<LoadingBarState, { outer: string; in
 };
 
 /**
- * @deprecated Please use updated LoadingBar component from @frontify/fondue/components
+ * @deprecated Please use updated LoadingBar component from `@frontify/fondue/components`.
  */
 export const LoadingBar = ({
     percentage = 0,
