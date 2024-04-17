@@ -42,6 +42,9 @@
         "test:ui": "vitest --ui",
         "test:coverage": "vitest run --coverage"
     },
+    "publishConfig": {
+        "access": "public"
+    },
     "peerDependencies": {
         "react": "^18",
         "react-dom": "^18"
