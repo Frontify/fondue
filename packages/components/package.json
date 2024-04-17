@@ -1,7 +1,7 @@
 {
     "name": "@frontify/fondue-components",
     "type": "module",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "homepage": "https://github.com/Frontify/fondue",
     "repository": {
         "type": "git",
@@ -51,7 +51,7 @@
         "@etchteam/storybook-addon-status": "^4.2.4",
         "@frontify/eslint-config-react": "^0.17.6",
         "@frontify/fondue-icons": "workspace:^",
-        "@frontify/fondue-tokens": "^3.4.0",
+        "@frontify/fondue-tokens": "^3.5.0",
         "@playwright/experimental-ct-react": "1.41.2",
         "@storybook/addon-a11y": "^8.0.8",
         "@storybook/addon-essentials": "^8.0.8",
