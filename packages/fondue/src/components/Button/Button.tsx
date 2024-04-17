@@ -150,7 +150,7 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
 };
 
 /**
- * @deprecated Please use updated button component from @frontify/fondue/components
+ * @deprecated Please use updated button component from `@frontify/fondue/components`.
  */
 export const Button = forwardRef(ButtonComponent);
 Button.displayName = 'FondueButton';
