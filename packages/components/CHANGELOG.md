@@ -1,5 +1,11 @@
 # @frontify/fondue-components
 
+## 1.0.1
+
+### Patch Changes
+
+- [#1812](https://github.com/Frontify/fondue/pull/1812) [`27eac5a`](https://github.com/Frontify/fondue/commit/27eac5a989fe81a6464d16a10c50160036301c9d) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: add missing `dist` folder in built package
+
 ## 1.0.0
 
 ### Minor Changes
