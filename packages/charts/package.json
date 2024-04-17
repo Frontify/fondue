@@ -1,7 +1,7 @@
 {
     "name": "@frontify/fondue-charts",
     "type": "module",
-    "version": "1.7.7",
+    "version": "1.8.0",
     "description": "Frontify's data viz library",
     "author": "Frontify Developers <developers@frontify.com>",
     "repository": {
@@ -50,7 +50,7 @@
         "react-dom": "^18"
     },
     "dependencies": {
-        "@frontify/fondue-tokens": "^3.3.0-next.5",
+        "@frontify/fondue-tokens": "^3.5.0",
         "@visx/axis": "^3.10.1",
         "@visx/glyph": "3.3.0",
         "@visx/grid": "^3.5.0",
