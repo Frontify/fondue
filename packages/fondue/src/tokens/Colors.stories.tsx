@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 // @ts-expect-error untyped
-import tokens from '@frontify/fondue-tokens';
+import * as tokens from '@frontify/fondue-tokens';
 import { type Meta, type StoryFn } from '@storybook/react';
 
 export default {
