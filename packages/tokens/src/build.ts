@@ -141,8 +141,8 @@ StyleDictionary.extend({
             buildPath: `${OUTPUT_DIRECTORY}/js/`,
             files: [
                 {
-                    destination: 'tokens.js',
-                    format: 'javascript/module',
+                    destination: 'tokens.json',
+                    format: 'json',
                     filter: 'isAliasNonColor',
                 },
             ],
