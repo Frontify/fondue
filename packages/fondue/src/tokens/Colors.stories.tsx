@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-// @ts-expect-error untyped
-import * as tokens from '@frontify/fondue-tokens';
+import tokens from '@frontify/fondue-tokens';
 import { type Meta, type StoryFn } from '@storybook/react';
 
 export default {
@@ -25,7 +24,6 @@ export const AliasTokens: StoryFn = () => {
             </div>
             {categories.map((category: string) => {
                 const palette = getPalette(tokens[category]);
-
                 return (
                     <div key={category}>
                         <div className="tw-flex tw-flex-col tw-space-y-3 sm:tw-flex-row tw-text-xs sm:tw-space-y-0 sm:tw-space-x-4">

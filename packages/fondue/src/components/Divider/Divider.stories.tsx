@@ -4,7 +4,7 @@ import { type Meta, type StoryFn } from '@storybook/react';
 
 import { Flex } from '@components/Flex';
 
-import { Divider as DividerComponent, DividerHeight, type DividerProps, DividerStyle } from './Divider';
+import { Divider as DividerComponent, DividerHeight, DividerStyle, type DividerProps } from './Divider';
 
 export default {
     title: 'Components/Divider',
@@ -14,6 +14,11 @@ export default {
         color: 'red',
         vertical: false,
         'data-test-id': 'custom-test-id',
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
     },
     argTypes: {
         color: {
