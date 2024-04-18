@@ -25,7 +25,7 @@ export default defineConfig({
         sourcemap: true,
         minify: true,
         rollupOptions: {
-            external: [...peerDependencies],
+            external: [...peerDependencies, 'react/jsx-runtime'],
             output: [
                 {
                     name: 'FondueIcons',

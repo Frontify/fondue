@@ -45,6 +45,7 @@ module.exports = {
                 '@typescript-eslint/await-thenable': 'warn',
                 '@typescript-eslint/no-unsafe-enum-comparison': 'warn',
                 '@typescript-eslint/restrict-plus-operands': 'warn',
+                'lodash/import-scope': 'off',
             },
         },
         {

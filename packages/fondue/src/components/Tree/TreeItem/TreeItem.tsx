@@ -3,7 +3,7 @@
 import { useDndContext, useDndMonitor } from '@dnd-kit/core';
 import { type AnimateLayoutChanges, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import noop from 'lodash-es/noop';
+import { noop } from 'lodash-es';
 import { Children, type MouseEvent, memo, useCallback, useEffect, useMemo, useRef } from 'react';
 
 import {

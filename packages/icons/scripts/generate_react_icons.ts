@@ -3,8 +3,7 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve, basename } from 'node:path';
 
-import camelCase from 'lodash/fp/camelCase';
-import upperFirst from 'lodash/fp/upperFirst';
+import { camelCase, upperFirst } from 'lodash-es';
 import { type INode, parseSync } from 'svgson';
 
 import { template as reactComponentTemplate } from './templates/exportReactTemplate';
