@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type AxisScale } from '@visx/xychart';
-import getScaleBandwidth from '@visx/xychart/lib/utils/getScaleBandwidth';
 
 import { isBandScale } from '@components/BarChart/types';
+import { getScaleBandwidth } from '@components/common/helpers/getScaleBandwith';
 
 export const getCrosshairBarWidth = (
     horizontal: boolean,

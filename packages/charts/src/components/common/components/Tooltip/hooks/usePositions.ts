@@ -1,13 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { DataContext, TooltipContext, type TooltipContextType } from '@visx/xychart';
-import isValidNumber from '@visx/xychart/lib/typeguards/isValidNumber';
-import getScaleBandwidth from '@visx/xychart/lib/utils/getScaleBandwidth';
 import { useCallback, useContext } from 'react';
 
 import { type BarChartDataPoint } from '@components/BarChart';
 import { type LineChartDataPoint } from '@components/LineChart';
+import { getScaleBandwidth } from '@components/common/helpers/getScaleBandwith';
 
+import { isValidNumber } from '../../../../../utils/isValidNumber';
 import { xAccessor } from '../../../../LineChart/helpers';
 import { getTooltipCoordinates } from '../helpers/getTooltipCoordinates';
 

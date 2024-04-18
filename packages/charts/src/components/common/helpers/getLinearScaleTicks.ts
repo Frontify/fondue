@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import createLinearScale from '@visx/scale/lib/scales/linear';
+import { createScale } from '@visx/scale';
 
 export const getLinearScaleTicks = (
     domain: [number, number],
@@ -9,7 +9,7 @@ export const getLinearScaleTicks = (
 ): number[] => {
     const min = domain[0] > 0 ? 0 : domain[0];
     const max = domain[1] < 0 ? 0 : domain[1];
-    const scale = createLinearScale({ domain: [min, max] });
+    const scale = createScale({ type: 'linear', domain: [min, max] });
     const ticks = scale.ticks(maxNumberOfTicks);
 
     return allowDecimalValues ? ticks : getNonDecimalTickValues(ticks);
