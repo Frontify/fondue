@@ -3,7 +3,7 @@
 import { useArgs } from '@storybook/preview-api';
 import { type Meta, type StoryObj } from '@storybook/react';
 import fuzzysort from 'fuzzysort';
-import kebabCase from 'lodash/fp/kebabCase';
+import { kebabCase } from 'lodash-es';
 import { type FormEvent } from 'react';
 
 import * as FondueIcons from './icons';

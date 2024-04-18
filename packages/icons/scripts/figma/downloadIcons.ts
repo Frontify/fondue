@@ -2,7 +2,7 @@
 
 import { existsSync, mkdirSync } from 'node:fs';
 
-import chunk from 'lodash/fp/chunk';
+import { chunk } from 'lodash-es';
 
 import { FIGMA_ICON_FILE_ID, ICONS_DIRECTORY } from '../config';
 import { downloadFile } from '../utilities/downloadFile';
