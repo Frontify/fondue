@@ -23,9 +23,9 @@ export const buttonStyles = sv({
             full: 'tw-rounded-full',
         },
         size: {
-            small: 'tw-px-2 tw-h-6 tw-text-body-small',
-            medium: 'tw-px-4 tw-h-9 tw-text-body-medium',
-            large: 'tw-px-6 tw-h-12 tw-text-body-large',
+            small: 'tw-h-6 tw-text-body-small',
+            medium: 'tw-h-9 tw-text-body-medium',
+            large: 'tw-h-12 tw-text-body-large',
         },
         iconOnly: {
             true: 'tw-aspect-square tw-px-0',
@@ -163,6 +163,21 @@ export const buttonStyles = sv({
                 'tw-bg-box-selected-strong tw-border-box-selected-strong ' +
                 'hover:tw-bg-box-selected-strong-hover ' +
                 'active:tw-bg-box-selected-strong-pressed ',
+        },
+        {
+            iconOnly: false,
+            size: 'small',
+            class: 'tw-px-2',
+        },
+        {
+            iconOnly: false,
+            size: 'medium',
+            class: 'tw-px-4',
+        },
+        {
+            iconOnly: false,
+            size: 'small',
+            class: 'tw-px-6',
         },
     ],
     defaultVariants: {
