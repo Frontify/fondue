@@ -178,7 +178,7 @@ export const buttonStyles = sv({
             iconOnly: false,
             size: 'small',
             class: 'tw-px-6',
-        }
+        },
     ],
     defaultVariants: {
         style: 'default',
