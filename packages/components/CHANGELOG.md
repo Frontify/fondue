@@ -1,5 +1,11 @@
 # @frontify/fondue-components
 
+## 1.1.0
+
+### Minor Changes
+
+- [#1818](https://github.com/Frontify/fondue/pull/1818) [`158973e`](https://github.com/Frontify/fondue/commit/158973e0ce2ae63f074db85b798942a953ecb38e) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: fix padding for button with icon only
+
 ## 1.0.1
 
 ### Patch Changes
