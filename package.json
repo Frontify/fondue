@@ -16,7 +16,7 @@
         "ci:version": "changeset version",
         "lint": "pnpm --stream --filter {packages/**} lint",
         "storybook": "concurrently 'pnpm storybook:packages' 'pnpm storybook:main'",
-        "storybook:main": "wait-on http://localhost:6006 http://localhost:6007 http://localhost:6008 && pnpm --stream  --filter {storybook-docs} storybook",
+        "storybook:main": "wait-on http://localhost:6006 http://localhost:6007 http://localhost:6008 http://localhost:6009 && pnpm --stream  --filter {storybook-docs} storybook",
         "storybook:packages": "pnpm --parallel --filter {packages/*} storybook --no-open",
         "typecheck": "pnpm --stream --filter {packages/*} typecheck",
         "changeset": "changeset",

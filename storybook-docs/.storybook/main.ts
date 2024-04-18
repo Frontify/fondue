@@ -38,15 +38,21 @@ const config: StorybookConfig = {
                     type: "auto-inject",
                     expanded: true,
                 },
+                icons: {
+                    title: "Icons",
+                    url: "http://localhost:6007",
+                    type: "auto-inject",
+                    expanded: true,
+                },
                 charts: {
                     title: "Charts",
-                    url: "http://localhost:6007",
+                    url: "http://localhost:6008",
                     type: "auto-inject",
                     expanded: true,
                 },
                 legacy: {
                     title: "Legacy",
-                    url: "http://localhost:6008",
+                    url: "http://localhost:6009",
                     type: "auto-inject",
                     expanded: true,
                 },
@@ -56,6 +62,11 @@ const config: StorybookConfig = {
             current: {
                 title: "Current",
                 url: "/new",
+                expanded: true,
+            },
+            icons: {
+                title: "Icons",
+                url: "/icons",
                 expanded: true,
             },
             charts: {

@@ -9,5 +9,5 @@
         "target": "ESNext",
         "baseUrl": "."
     },
-    "include": ["scripts", ".eslintrc.cjs", "vite.config.ts"]
+    "include": ["scripts", ".eslintrc.cjs", "postcss.config.cjs", "tailwind.config.ts", "vite.config.ts"]
 }

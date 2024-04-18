@@ -782,12 +782,48 @@ importers:
 
   packages/icons:
     devDependencies:
+      '@etchteam/storybook-addon-status':
+        specifier: ^4.2.4
+        version: 4.2.4(@types/react-dom@18.2.25)(@types/react@18.2.77)
       '@frontify/eslint-config-react':
         specifier: ^0.17.6
         version: 0.17.6(eslint@8.57.0)(prettier@3.2.5)(react@18.2.0)(typescript@5.4.5)
+      '@frontify/fondue-tokens':
+        specifier: workspace:^
+        version: link:../tokens
       '@iconify/tools':
         specifier: ^4.0.4
         version: 4.0.4
+      '@storybook/addon-a11y':
+        specifier: ^8.0.8
+        version: 8.0.8
+      '@storybook/addon-essentials':
+        specifier: ^8.0.8
+        version: 8.0.8(@types/react@18.2.77)(react-dom@18.2.0)(react@18.2.0)
+      '@storybook/addon-interactions':
+        specifier: ^8.0.8
+        version: 8.0.8(vitest@1.4.0)
+      '@storybook/addon-links':
+        specifier: ^8.0.8
+        version: 8.0.8(react@18.2.0)
+      '@storybook/blocks':
+        specifier: ^8.0.8
+        version: 8.0.8(@types/react@18.2.77)(react-dom@18.2.0)(react@18.2.0)
+      '@storybook/manager-api':
+        specifier: ^8.0.8
+        version: 8.0.8(react-dom@18.2.0)(react@18.2.0)
+      '@storybook/preview-api':
+        specifier: ^8.0.8
+        version: 8.0.8
+      '@storybook/react':
+        specifier: ^8.0.8
+        version: 8.0.8(react-dom@18.2.0)(react@18.2.0)(typescript@5.4.5)
+      '@storybook/react-vite':
+        specifier: ^8.0.8
+        version: 8.0.8(react-dom@18.2.0)(react@18.2.0)(rollup@4.14.0)(typescript@5.4.5)(vite@5.2.8)
+      '@storybook/theming':
+        specifier: ^8.0.8
+        version: 8.0.8(react-dom@18.2.0)(react@18.2.0)
       '@types/lodash':
         specifier: ^4.17.0
         version: 4.17.0
@@ -800,6 +836,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
         version: 4.2.1(vite@5.2.8)
+      autoprefixer:
+        specifier: ^10.4.19
+        version: 10.4.19(postcss@8.4.38)
       dotenv-cli:
         specifier: ^7.4.1
         version: 7.4.1
@@ -809,18 +848,33 @@ importers:
       figma-api:
         specifier: ^1.11.0
         version: 1.11.0
+      fuzzysort:
+        specifier: ^2.0.4
+        version: 2.0.4
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
+      postcss:
+        specifier: ^8.4.38
+        version: 8.4.38
       prettier:
         specifier: ^3.2.5
         version: 3.2.5
       react:
         specifier: ^18.2.0
         version: 18.2.0
+      storybook:
+        specifier: ^8.0.8
+        version: 8.0.8(@babel/preset-env@7.23.9)(react-dom@18.2.0)(react@18.2.0)
+      storybook-dark-mode:
+        specifier: ^4.0.1
+        version: 4.0.1(@types/react@18.2.77)(react-dom@18.2.0)(react@18.2.0)
       svgson:
         specifier: ^5.3.1
         version: 5.3.1
+      tailwindcss:
+        specifier: ^3.4.3
+        version: 3.4.3(ts-node@10.9.2)
       tsx:
         specifier: ^4.7.2
         version: 4.7.2
@@ -6826,7 +6880,7 @@ packages:
       commander: 6.2.1
       cross-spawn: 7.0.3
       detect-indent: 6.1.0
-      envinfo: 7.8.1
+      envinfo: 7.12.0
       execa: 5.1.1
       find-up: 5.0.0
       fs-extra: 11.1.1
@@ -11545,13 +11599,6 @@ packages:
     resolution: {integrity: sha512-Iw9rQJBGpJRd3rwXm9ft/JiGoAZmLxxJZELYDQoPRZ4USVhkKtIcNBPw6U+/K2mBpaqM25JSV6Yl4Az9vO2wJg==}
     engines: {node: '>=4'}
     hasBin: true
-    dev: false
-
-  /envinfo@7.8.1:
-    resolution: {integrity: sha512-/o+BXHmB7ocbHEAs6F2EnG0ogybVVUdkRunTT2glZU9XAaGmhqskrvKwqXuDfNjEO0LZKWdejEEpnq8aM0tOaw==}
-    engines: {node: '>=4'}
-    hasBin: true
-    dev: true
 
   /error-ex@1.3.2:
     resolution: {integrity: sha512-7dFHNmqeFSEt2ZBsCriorKnn3Z2pj+fd9kmI6QoWw4//DL+icEBfc0U7qJCisqrTsKTjw4fNFy2pW9OqStD84g==}
@@ -12852,6 +12899,10 @@ packages:
 
   /functions-have-names@1.2.3:
     resolution: {integrity: sha512-xckBUXyTIqT97tq2x2AMb+g163b5JFysYk0x4qxNFwbfQkmNZoiRHb6sPzI9/QV33WeuvVYBUIiD4NzNIyqaRQ==}
+    dev: true
+
+  /fuzzysort@2.0.4:
+    resolution: {integrity: sha512-Api1mJL+Ad7W7vnDZnWq5pGaXJjyencT+iKGia2PlHUcSsSzWwIQ3S1isiMpwpavjYtGd2FzhUIhnnhOULZgDw==}
     dev: true
 
   /gensync@1.0.0-beta.2:

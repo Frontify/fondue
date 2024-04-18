@@ -111,3 +111,5 @@ dist
 
 src/icons
 !src/icons/.gitkeep
+
+storybook-static
