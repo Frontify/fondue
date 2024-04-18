@@ -6,13 +6,16 @@ import { type ComponentFileBuilderResponse } from '../../types';
 export const Setup = (componentName: string): ComponentFileBuilderResponse => ({
     content: `/* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ${componentName} } from "../${componentName}";
+import { render } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
 
-const ${componentName}_TEST_ID = "test-${toKebabCase(componentName)}";
-const ${componentName}_TEXT = "sample ${toKebabCase(componentName)}";
+import { ${componentName} } from '../${componentName}';
 
-describe("${componentName} Component", () => {
-    it("should render foo text correctly", () => {
+const ${componentName}_TEST_ID = 'test-${toKebabCase(componentName)}';
+const ${componentName}_TEXT = 'sample ${toKebabCase(componentName)}';
+
+describe('${componentName} Component', () => {
+    it('should render foo text correctly', () => {
         const { getByTestId } = render(<${componentName} data-test-id={${componentName}_TEST_ID}>{${componentName}_TEXT}</${componentName}>);
         const component = getByTestId(${componentName}_TEST_ID);
         expect(component).toContain(${componentName}_TEXT);
