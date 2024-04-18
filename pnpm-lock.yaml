@@ -93,12 +93,18 @@ importers:
       '@storybook/addon-links':
         specifier: ^8.0.8
         version: 8.0.8(react@18.2.0)
+      '@storybook/manager-api':
+        specifier: ^8.0.8
+        version: 8.0.8(react-dom@18.2.0)(react@18.2.0)
       '@storybook/react':
         specifier: ^8.0.8
         version: 8.0.8(react-dom@18.2.0)(react@18.2.0)(typescript@5.4.5)
       '@storybook/react-vite':
         specifier: ^8.0.8
         version: 8.0.8(react-dom@18.2.0)(react@18.2.0)(rollup@4.14.0)(typescript@5.4.5)(vite@5.2.8)
+      '@storybook/theming':
+        specifier: ^8.0.8
+        version: 8.0.8(react-dom@18.2.0)(react@18.2.0)
       '@testing-library/react':
         specifier: ^15.0.0
         version: 15.0.1(react-dom@18.2.0)(react@18.2.0)
@@ -200,7 +206,7 @@ importers:
         specifier: workspace:^
         version: link:../icons
       '@frontify/fondue-tokens':
-        specifier: ^3.5.0
+        specifier: workspace:^
         version: link:../tokens
       '@playwright/experimental-ct-react':
         specifier: 1.41.2
@@ -220,12 +226,18 @@ importers:
       '@storybook/blocks':
         specifier: ^8.0.8
         version: 8.0.8(@types/react@18.2.77)(react-dom@18.2.0)(react@18.2.0)
+      '@storybook/manager-api':
+        specifier: ^8.0.8
+        version: 8.0.8(react-dom@18.2.0)(react@18.2.0)
       '@storybook/react':
         specifier: ^8.0.8
         version: 8.0.8(react-dom@18.2.0)(react@18.2.0)(typescript@5.4.5)
       '@storybook/react-vite':
         specifier: ^8.0.8
         version: 8.0.8(react-dom@18.2.0)(react@18.2.0)(rollup@4.14.0)(typescript@5.4.5)(vite@5.2.8)
+      '@storybook/theming':
+        specifier: ^8.0.8
+        version: 8.0.8(react-dom@18.2.0)(react@18.2.0)
       '@tailwindcss/forms':
         specifier: ^0.5.7
         version: 0.5.7(tailwindcss@3.4.3)
@@ -250,6 +262,9 @@ importers:
       '@vitest/ui':
         specifier: ^1.4.0
         version: 1.4.0(vitest@1.4.0)
+      autoprefixer:
+        specifier: ^10.4.19
+        version: 10.4.19(postcss@8.4.38)
       chalk:
         specifier: ^5.3.0
         version: 5.3.0
@@ -1018,7 +1033,7 @@ packages:
     dependencies:
       '@babel/compat-data': 7.23.5
       '@babel/helper-validator-option': 7.23.5
-      browserslist: 4.22.3
+      browserslist: 4.23.0
       lru-cache: 5.1.1
       semver: 6.3.1
 
@@ -10077,16 +10092,6 @@ packages:
       pako: 0.2.9
     dev: true
 
-  /browserslist@4.22.3:
-    resolution: {integrity: sha512-UAp55yfwNv0klWNapjs/ktHoguxuQNGnOzxYmfnXIS+8AsRDZkSDxg7R1AX3GKzn078SBI5dzwzj/Yx0Or0e3A==}
-    engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
-    hasBin: true
-    dependencies:
-      caniuse-lite: 1.0.30001600
-      electron-to-chromium: 1.4.719
-      node-releases: 2.0.14
-      update-browserslist-db: 1.0.13(browserslist@4.22.3)
-
   /browserslist@4.23.0:
     resolution: {integrity: sha512-QW8HiM1shhT2GuzkvklfjcKDiWFXHOeFCIA/huJPwHsslwcydgk7X+z2zXpEijP98UCY7HbubZt5J2Zgvf0CaQ==}
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
@@ -18576,16 +18581,6 @@ packages:
     resolution: {integrity: sha512-KK8xQ1mkzZeg9inewmFVDNkg3l5LUhoq9kN6iWYB/CC9YMG8HA+c1Q8HwDe6dEX7kErrEVNVBO3fWsVq5iDgtw==}
     engines: {node: '>=8'}
     dev: true
-
-  /update-browserslist-db@1.0.13(browserslist@4.22.3):
-    resolution: {integrity: sha512-xebP81SNcPuNpPP3uzeW1NYXxI3rxyJzF3pD6sH4jE7o/IX+WtSpwnVU+qIsDPyk0d3hmFQ7mjqc6AtV604hbg==}
-    hasBin: true
-    peerDependencies:
-      browserslist: '>= 4.21.0'
-    dependencies:
-      browserslist: 4.22.3
-      escalade: 3.1.1
-      picocolors: 1.0.0
 
   /update-browserslist-db@1.0.13(browserslist@4.23.0):
     resolution: {integrity: sha512-xebP81SNcPuNpPP3uzeW1NYXxI3rxyJzF3pD6sH4jE7o/IX+WtSpwnVU+qIsDPyk0d3hmFQ7mjqc6AtV604hbg==}
