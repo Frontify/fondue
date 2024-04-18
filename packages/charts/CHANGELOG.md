@@ -1,5 +1,11 @@
 # @frontify/fondue-charts
 
+## 1.8.2
+
+### Patch Changes
+
+- [#1820](https://github.com/Frontify/fondue/pull/1820) [`65a6163`](https://github.com/Frontify/fondue/commit/65a61630c01b2e0492352df44d1956d902543c45) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: remove deep import from visx as it causes problems
+
 ## 1.8.1
 
 ### Patch Changes
