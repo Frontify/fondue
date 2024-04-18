@@ -1,5 +1,13 @@
 # @frontify/fondue-charts
 
+## 1.8.3
+
+### Patch Changes
+
+- [#1822](https://github.com/Frontify/fondue/pull/1822) [`3470a6a`](https://github.com/Frontify/fondue/commit/3470a6a9671d39fc40c0939bc48df0e8f49bdeeb) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: add missing dependencies to `external`
+
+- [#1822](https://github.com/Frontify/fondue/pull/1822) [`3470a6a`](https://github.com/Frontify/fondue/commit/3470a6a9671d39fc40c0939bc48df0e8f49bdeeb) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - refactor: replace `lodash` by `lodash-es`
+
 ## 1.8.2
 
 ### Patch Changes
