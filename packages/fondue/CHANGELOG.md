@@ -1,5 +1,12 @@
 # @frontify/fondue
 
+## 12.0.2
+
+### Patch Changes
+
+- Updated dependencies [[`fcb84f3`](https://github.com/Frontify/fondue/commit/fcb84f3d269ceba04a282c27c8548dd62699d439)]:
+  - @frontify/fondue-charts@1.8.1
+
 ## 12.0.1
 
 ### Patch Changes

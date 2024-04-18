@@ -1,5 +1,11 @@
 # @frontify/fondue-charts
 
+## 1.8.1
+
+### Patch Changes
+
+- [#1816](https://github.com/Frontify/fondue/pull/1816) [`fcb84f3`](https://github.com/Frontify/fondue/commit/fcb84f3d269ceba04a282c27c8548dd62699d439) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update `@visx/hierarchy`
+
 ## 1.8.0
 
 ### Minor Changes
