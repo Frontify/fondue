@@ -10,10 +10,9 @@ const customTwMerge = extendTailwindMerge({
     prefix: 'tw-',
     extend: {
         classGroups: {
-            "font-size": ['text-body-x-small', 'text-body-small', 'text-body-medium', 'text-body-large'],
-        }
-    }
-
+            'font-size': ['text-body-x-small', 'text-body-small', 'text-body-medium', 'text-body-large'],
+        },
+    },
 });
 
 export const cn = (...classLists: ClassNameValue[]): string => {

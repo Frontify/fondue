@@ -166,20 +166,20 @@ export const buttonStyles = sv({
                 'active:tw-bg-box-selected-strong-pressed ',
         },
         {
-            aspect: "default",
+            aspect: 'default',
             size: 'small',
             class: 'tw-px-2',
         },
         {
-            aspect: "default",
+            aspect: 'default',
             size: 'medium',
             class: 'tw-px-4',
         },
         {
-            aspect: "default",
+            aspect: 'default',
             size: 'large',
             class: 'tw-px-6',
-        }
+        },
     ],
     defaultVariants: {
         style: 'default',
