@@ -47,7 +47,8 @@ export const TextLabelOnly: Story = {
 export const WithIcon: Story = {
     name: 'Icon Only',
     args: {
-        icon: <IconIcon size={20} />,
+        aspect: 'square',
+        children: <IconIcon size={20} />,
     },
 };
 

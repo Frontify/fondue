@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { cloneElement, forwardRef, type ForwardedRef, type MouseEvent, type ReactElement, type ReactNode } from 'react';
+import { forwardRef, type ForwardedRef, type MouseEvent, type ReactNode } from 'react';
 
 import { cn } from '#/utilities/styleUtilities';
 
-import { buttonIconSizeMap, buttonStyles } from './styles/buttonStyles';
+import { buttonStyles } from './styles/buttonStyles';
 import { iconStyles } from './styles/iconStyles';
 import { textStyles } from './styles/textStyles';
 
@@ -57,10 +57,6 @@ export type ButtonProps = {
      * @default true
      */
     hugWidth?: boolean;
-    /**
-     * @deprecated please pass the Icon as a child and use the `aspect` prop
-     */
-    icon?: ReactElement;
     children?: ReactNode;
     onClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
     'aria-label'?: string;
@@ -87,25 +83,13 @@ export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(
                 ref={ref}
                 data-test-id={dataTestId}
                 className={cn(
-                    buttonStyles({
-                        size,
-                        style,
-                        ...props,
-                    }),
+                    buttonStyles({ size, style, ...props }),
                     textStyles({ style, ...props }),
-                    iconStyles({
-                        style,
-                        ...props,
-                    }),
+                    iconStyles({ style, ...props }),
                     className,
                 )}
                 {...props}
             >
-                {icon && (
-                    <span data-test-id={`${dataTestId}-icon`}>
-                        {cloneElement(icon, { size: buttonIconSizeMap[size] })}
-                    </span>
-                )}
                 {children}
             </button>
         );
