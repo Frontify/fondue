@@ -6,11 +6,11 @@ import { type ComponentFileBuilderResponse } from '../types';
 export const Setup = (componentName: string): ComponentFileBuilderResponse => ({
     content: `/* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ReactNode } from "react";
+import { type ReactNode } from 'react';
 
 import { ${componentName}Styles } from './styles/${componentName}Styles';
 
-export type ${componentName}Props = { children?: ReactNode; };
+export type ${componentName}Props = { children?: ReactNode };
 
 export const ${componentName} = ({ children }: ${componentName}Props) => {
     return (
@@ -19,7 +19,7 @@ export const ${componentName} = ({ children }: ${componentName}Props) => {
         </div>
     );
 };
-${componentName}.displayName = "${componentName}";
+${componentName}.displayName = '${componentName}';
 `,
     extension: '.tsx',
 });
