@@ -2,8 +2,6 @@
 
 import { sv } from '#/utilities/styleUtilities';
 
-import { type ButtonProps } from '../Button';
-
 export const buttonStyles = sv({
     base: 'tw-group tw-border tw-box-box tw-relative tw-flex tw-flex-row tw-gap-2 tw-items-center tw-justify-center tw-cursor-pointer tw-outline-none tw-font-body tw-font-medium',
     variants: {
