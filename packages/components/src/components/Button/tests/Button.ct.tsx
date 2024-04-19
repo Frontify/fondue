@@ -34,7 +34,9 @@ test('should react on Click', async ({ mount }) => {
 
 test('should render in positive medium and with only icon.', async ({ mount }) => {
     const component = await mount(
-        <Button style="positive" size="medium" icon={<IconIcon data-test-id="fondue-icon-icon" />} />,
+        <Button style="positive" size="medium">
+            <IconIcon data-test-id="fondue-icon-icon" />
+        </Button>,
     );
     await expect(component).toBeVisible();
     await expect(component.locator('data-test-id=fondue-icon-icon')).toBeVisible();
@@ -42,7 +44,9 @@ test('should render in positive medium and with only icon.', async ({ mount }) =
 
 test('should render in positive medium and with only only an icon and fully rounded.', async ({ mount }) => {
     const component = await mount(
-        <Button style="positive" size="medium" icon={<IconIcon data-test-id="fondue-icon-icon" />} rounding="full" />,
+        <Button style="positive" size="medium" rounding="full">
+            <IconIcon data-test-id="fondue-icon-icon" />
+        </Button>,
     );
     await expect(component).toBeVisible();
     await expect(component).toHaveClass(/tw-rounded-full/);
@@ -51,7 +55,8 @@ test('should render in positive medium and with only only an icon and fully roun
 
 test('should render in positive medium with an icon and text.', async ({ mount }) => {
     const component = await mount(
-        <Button style="positive" size="medium" icon={<IconIcon data-test-id="fondue-icon-icon" />}>
+        <Button style="positive" size="medium">
+            <IconIcon data-test-id="fondue-icon-icon" />
             {BUTTON_TEXT}
         </Button>,
     );

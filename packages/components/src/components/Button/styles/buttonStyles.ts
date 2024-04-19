@@ -1,16 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type FondueIconProps } from '@frontify/fondue-icons';
-
 import { sv } from '#/utilities/styleUtilities';
 
 import { type ButtonProps } from '../Button';
-
-export const buttonIconSizeMap: { [buttonSize in Exclude<ButtonProps['size'], undefined>]: FondueIconProps['size'] } = {
-    small: 16,
-    medium: 20,
-    large: 24,
-};
 
 export const buttonStyles = sv({
     base: 'tw-group tw-border tw-box-box tw-relative tw-flex tw-flex-row tw-gap-2 tw-items-center tw-justify-center tw-cursor-pointer tw-outline-none tw-font-body tw-font-medium',
