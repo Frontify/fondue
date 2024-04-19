@@ -68,7 +68,6 @@ export type ButtonProps = {
 export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(
     (
         {
-            icon,
             children,
             style,
             size = 'medium',

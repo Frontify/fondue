@@ -40,9 +40,7 @@ export const Default: Story = {
     },
 };
 
-export const TextLabelOnly: Story = {
-    name: 'Text Label Only',
-};
+export const TextLabelOnly: Story = {};
 
 export const WithIcon: Story = {
     name: 'Icon Only',
