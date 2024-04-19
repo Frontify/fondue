@@ -13,7 +13,7 @@ export const buttonIconSizeMap: { [buttonSize in Exclude<ButtonProps['size'], un
 };
 
 export const buttonStyles = sv({
-    base: 'tw-group tw-border tw-box-box tw-relative tw-flex tw-items-center tw-justify-center tw-cursor-pointer tw-outline-none tw-font-body tw-font-medium',
+    base: 'tw-group tw-border tw-box-box tw-relative tw-flex tw-flex-row tw-gap-2 tw-items-center tw-justify-center tw-cursor-pointer tw-outline-none tw-font-body tw-font-medium',
     variants: {
         disabled: {
             true: 'tw-not-allowed tw-pointer-events-none tw-border-transparent tw-text-box-disabled-inverse tw-bg-box-disabled',
@@ -27,8 +27,9 @@ export const buttonStyles = sv({
             medium: 'tw-h-9 tw-text-body-medium',
             large: 'tw-h-12 tw-text-body-large',
         },
-        iconOnly: {
-            true: 'tw-aspect-square tw-px-0',
+        aspect: {
+            square: 'tw-aspect-square tw-px-0',
+            default: '',
         },
         hugWidth: {
             false: 'tw-w-full',
@@ -165,18 +166,18 @@ export const buttonStyles = sv({
                 'active:tw-bg-box-selected-strong-pressed ',
         },
         {
-            iconOnly: false,
+            aspect: "default",
             size: 'small',
             class: 'tw-px-2',
         },
         {
-            iconOnly: false,
+            aspect: "default",
             size: 'medium',
             class: 'tw-px-4',
         },
         {
-            iconOnly: false,
-            size: 'small',
+            aspect: "default",
+            size: 'large',
             class: 'tw-px-6',
         }
     ],
@@ -186,5 +187,6 @@ export const buttonStyles = sv({
         size: 'medium',
         rounding: 'medium',
         hugWidth: true,
+        aspect: 'default',
     },
 });

@@ -2,6 +2,7 @@
 
 import { cloneElement, forwardRef, type ForwardedRef, type MouseEvent, type ReactElement, type ReactNode } from 'react';
 
+import { cn } from '#/utilities/styleUtilities';
 import { buttonIconSizeMap, buttonStyles } from './styles/buttonStyles';
 import { iconStyles } from './styles/iconStyles';
 import { textStyles } from './styles/textStyles';
@@ -15,6 +16,8 @@ type ButtonSize = 'small' | 'medium' | 'large';
 type ButtonType = 'button' | 'submit' | 'reset';
 
 type ButtonEmphasis = 'default' | 'weak' | 'strong';
+
+type ButtonAspect = 'default' | 'square';
 
 export type ButtonProps = {
     /**
@@ -34,10 +37,6 @@ export type ButtonProps = {
      */
     emphasis?: ButtonEmphasis;
     /**
-     * @default false
-     */
-    hideLabel?: boolean;
-    /**
      * @default 'medium'
      */
     size?: ButtonSize;
@@ -50,15 +49,23 @@ export type ButtonProps = {
      */
     disabled?: boolean;
     /**
+     * @default 'default'
+     */
+    aspect?: ButtonAspect;
+    /**
      * @default true
      */
     hugWidth?: boolean;
+    /**
+     * @deprecated please pass the Icon as a child and use the `aspect` prop
+     */
     icon?: ReactElement;
     children?: ReactNode;
     onClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
     'aria-label'?: string;
     'aria-describedby'?: string;
     'data-test-id'?: string;
+    className?: string;
 };
 
 export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(
@@ -66,10 +73,10 @@ export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(
         {
             icon,
             children,
-            hideLabel,
             style,
             size = 'medium',
             'data-test-id': dataTestId = 'fondue-button',
+            className = '',
             ...props
         }: ButtonProps,
         ref: ForwardedRef<HTMLButtonElement | null>,
@@ -78,31 +85,27 @@ export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(
             <button
                 ref={ref}
                 data-test-id={dataTestId}
-                className={buttonStyles({
-                    iconOnly: (icon && !children) || hideLabel,
-                    size,
-                    style,
-                    ...props,
-                })}
+                className={cn(
+                    buttonStyles({
+                        size,
+                        style,
+                        ...props,
+                    }),
+                    textStyles({ style, ...props }),
+                    iconStyles({
+                        style,
+                        ...props,
+                    }),
+                    className,
+                )}
                 {...props}
             >
                 {icon && (
-                    <span
-                        data-test-id={`${dataTestId}-icon`}
-                        className={iconStyles({
-                            iconSpacing: children && !hideLabel ? size : 'none',
-                            style,
-                            ...props,
-                        })}
-                    >
+                    <span data-test-id={`${dataTestId}-icon`}>
                         {cloneElement(icon, { size: buttonIconSizeMap[size] })}
                     </span>
                 )}
-                {children && (
-                    <span className={textStyles({ hideLabel, style, ...props })} data-test-id={`${dataTestId}-text`}>
-                        {children}
-                    </span>
-                )}
+                {children}
             </button>
         );
     },
