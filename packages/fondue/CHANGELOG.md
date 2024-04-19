@@ -1,5 +1,14 @@
 # @frontify/fondue
 
+## 12.0.6
+
+### Patch Changes
+
+- [#1825](https://github.com/Frontify/fondue/pull/1825) [`005adfa`](https://github.com/Frontify/fondue/commit/005adfa769764d741bac932cf153e70c5e54c04a) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: handle icon in new button component
+
+- Updated dependencies [[`005adfa`](https://github.com/Frontify/fondue/commit/005adfa769764d741bac932cf153e70c5e54c04a), [`005adfa`](https://github.com/Frontify/fondue/commit/005adfa769764d741bac932cf153e70c5e54c04a)]:
+  - @frontify/fondue-components@1.2.0
+
 ## 12.0.5
 
 ### Patch Changes
