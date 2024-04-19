@@ -1,5 +1,15 @@
 # @frontify/fondue-components
 
+## 1.2.0
+
+### Minor Changes
+
+- [#1825](https://github.com/Frontify/fondue/pull/1825) [`005adfa`](https://github.com/Frontify/fondue/commit/005adfa769764d741bac932cf153e70c5e54c04a) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: fix padding for button with icon only
+
+### Patch Changes
+
+- [#1825](https://github.com/Frontify/fondue/pull/1825) [`005adfa`](https://github.com/Frontify/fondue/commit/005adfa769764d741bac932cf153e70c5e54c04a) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: handle icon in new button component
+
 ## 1.1.1
 
 ### Patch Changes
