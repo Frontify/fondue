@@ -20,23 +20,33 @@ const meta: Meta<typeof Button> = {
         emphasis: 'default',
         size: 'medium',
         rounding: 'medium',
-        hideLabel: false,
         disabled: false,
         hugWidth: true,
         children: 'Button Text',
+        aspect: 'default',
     },
 };
 export default meta;
 
 export const Default: Story = {
-    name: 'Text Label Only',
+    name: 'Icon and Text Label',
+    args: {
+        children: (
+            <>
+                <IconColorFan size={16} />
+                Button Text
+            </>
+        ),
+    },
 };
+
+export const TextLabelOnly: Story = {};
 
 export const WithIcon: Story = {
     name: 'Icon Only',
     args: {
-        hideLabel: true,
-        icon: <IconIcon />,
+        aspect: 'square',
+        children: <IconIcon size={20} />,
     },
 };
 
@@ -44,14 +54,20 @@ export const WithRoundedIcon: Story = {
     name: 'Icon Only Rounded',
     args: {
         rounding: 'full',
-        icon: <IconIcon />,
-        hideLabel: true,
+        title: 'Icon Only Rounded',
+        children: <IconIcon size={20} />,
+        aspect: 'square',
     },
 };
 
 export const WithIconAndLabel: Story = {
     name: 'Icon and Text Label',
     args: {
-        icon: <IconColorFan />,
+        children: (
+            <>
+                <IconColorFan size={16} />
+                Button Text
+            </>
+        ),
     },
 };

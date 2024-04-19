@@ -14,4 +14,7 @@ export const IconSizeMap = {
     [IconSize.Size20]: '!tw-h-5 !tw-w-5',
     [IconSize.Size24]: '!tw-h-6 !tw-w-6',
     [IconSize.Size32]: '!tw-h-8 !tw-w-8',
+    16: '!tw-h-4 !tw-w-4',
+    20: '!tw-h-5 !tw-w-5',
+    24: '!tw-h-6 !tw-w-6',
 };

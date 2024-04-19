@@ -4,9 +4,6 @@ import { sv } from '#/utilities/styleUtilities';
 
 export const textStyles = sv({
     variants: {
-        hideLabel: {
-            true: 'tw-sr-only',
-        },
         emphasis: {
             default: '',
             weak: '',
