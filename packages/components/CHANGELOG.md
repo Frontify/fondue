@@ -1,5 +1,20 @@
 # @frontify/fondue-components
 
+## 1.1.1
+
+### Patch Changes
+
+- [#1822](https://github.com/Frontify/fondue/pull/1822) [`3470a6a`](https://github.com/Frontify/fondue/commit/3470a6a9671d39fc40c0939bc48df0e8f49bdeeb) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: add missing dependencies to `external`
+
+- Updated dependencies [[`3470a6a`](https://github.com/Frontify/fondue/commit/3470a6a9671d39fc40c0939bc48df0e8f49bdeeb), [`3470a6a`](https://github.com/Frontify/fondue/commit/3470a6a9671d39fc40c0939bc48df0e8f49bdeeb)]:
+  - @frontify/fondue-icons@0.2.1
+
+## 1.1.0
+
+### Minor Changes
+
+- [#1818](https://github.com/Frontify/fondue/pull/1818) [`158973e`](https://github.com/Frontify/fondue/commit/158973e0ce2ae63f074db85b798942a953ecb38e) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: fix padding for button with icon only
+
 ## 1.0.1
 
 ### Patch Changes

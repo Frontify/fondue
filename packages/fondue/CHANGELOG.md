@@ -1,5 +1,30 @@
 # @frontify/fondue
 
+## 12.0.5
+
+### Patch Changes
+
+- [#1822](https://github.com/Frontify/fondue/pull/1822) [`3470a6a`](https://github.com/Frontify/fondue/commit/3470a6a9671d39fc40c0939bc48df0e8f49bdeeb) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - refactor: replace `lodash` by `lodash-es`
+
+- Updated dependencies [[`3470a6a`](https://github.com/Frontify/fondue/commit/3470a6a9671d39fc40c0939bc48df0e8f49bdeeb), [`3470a6a`](https://github.com/Frontify/fondue/commit/3470a6a9671d39fc40c0939bc48df0e8f49bdeeb)]:
+  - @frontify/fondue-components@1.1.1
+  - @frontify/fondue-charts@1.8.3
+  - @frontify/fondue-icons@0.2.1
+
+## 12.0.4
+
+### Patch Changes
+
+- Updated dependencies [[`65a6163`](https://github.com/Frontify/fondue/commit/65a61630c01b2e0492352df44d1956d902543c45)]:
+  - @frontify/fondue-charts@1.8.2
+
+## 12.0.3
+
+### Patch Changes
+
+- Updated dependencies [[`158973e`](https://github.com/Frontify/fondue/commit/158973e0ce2ae63f074db85b798942a953ecb38e)]:
+  - @frontify/fondue-components@1.1.0
+
 ## 12.0.2
 
 ### Patch Changes

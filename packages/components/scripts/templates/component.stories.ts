@@ -7,9 +7,9 @@ import { type ComponentFileBuilderResponse } from '../types';
 export const Setup = (componentName: string): ComponentFileBuilderResponse => ({
     content: `/* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type Meta, type StoryObj } from "@storybook/react";
+import { type Meta, type StoryObj } from '@storybook/react';
 
-import { ${componentName} } from "./${componentName}";
+import { ${componentName} } from './${componentName}';
 
 type Story = StoryObj<typeof ${componentName}>;
 const meta: Meta<typeof ${componentName}> = {

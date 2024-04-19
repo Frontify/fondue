@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import isValidNumber from '@visx/xychart/lib/typeguards/isValidNumber';
+import { isValidNumber } from '../../../../../utils/isValidNumber';
 
 export const getTooltipCoordinates = (
     datumCoords: { left?: number; top?: number },

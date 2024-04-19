@@ -29,5 +29,11 @@ module.exports = {
                 ],
             },
         },
+        {
+            files: ['*.ts', '*.tsx', '*.mts', '*.cts'],
+            rules: {
+                'lodash/import-scope': 'off',
+            },
+        },
     ],
 };

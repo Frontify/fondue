@@ -32,7 +32,7 @@ export default defineConfig({
         sourcemap: true,
         minify: true,
         rollupOptions: {
-            external: [...dependencies, ...peerDependencies],
+            external: [...dependencies, ...peerDependencies, 'react-dom/client', 'react/jsx-runtime'],
             output: [
                 {
                     name: 'FondueComponents',
