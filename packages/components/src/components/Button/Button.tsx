@@ -58,7 +58,7 @@ export type ButtonProps = {
      */
     hugWidth?: boolean;
     children?: ReactNode;
-    onClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
+    onPress?: (event?: MouseEvent<HTMLButtonElement>) => void;
     'aria-label'?: string;
     'aria-describedby'?: string;
     'data-test-id'?: string;
@@ -73,7 +73,9 @@ export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(
             size = 'medium',
             'data-test-id': dataTestId = 'fondue-button',
             className = '',
-            onClick = () => {},
+            onPress = () => {
+                console.log('event');
+            },
             ...props
         }: ButtonProps,
         ref: ForwardedRef<HTMLButtonElement | null>,
@@ -88,8 +90,8 @@ export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(
                     iconStyles({ style, ...props }),
                     className,
                 )}
-                onClick={onClick}
-                onKeyDown={(e) => (e.key === 'Enter' ? onClick() : null)}
+                onClick={onPress}
+                onKeyDown={(e) => (e.key === 'Enter' ? onPress() : null)}
                 {...props}
             >
                 {children}
