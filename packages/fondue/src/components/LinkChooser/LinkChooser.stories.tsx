@@ -1,9 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Meta, type StoryFn } from '@storybook/react';
-import { useState } from 'react';
-
 import { Validation } from '@utilities/validation';
+import { useState } from 'react';
 
 import { LinkChooser as LinkChooserComponent } from './LinkChooser';
 import { data } from './mock/data';
@@ -11,9 +10,17 @@ import { extraSections } from './sections';
 import { type LinkChooserProps, type SearchResult } from './types';
 import { doesContainSubstring } from './utils/helpers';
 
+/**
+ ### This component is deprecated, please use the [LinkInput](@frontify/guideline-blocks-settings) component instead.
+ */
 export default {
     title: 'Components/Link Chooser',
     component: LinkChooserComponent,
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
+    },
     tags: ['autodocs'],
     args: {
         placeholder: 'https://example.com',
