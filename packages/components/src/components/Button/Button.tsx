@@ -73,6 +73,7 @@ export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(
             size = 'medium',
             'data-test-id': dataTestId = 'fondue-button',
             className = '',
+            onClick = () => {},
             ...props
         }: ButtonProps,
         ref: ForwardedRef<HTMLButtonElement | null>,
@@ -87,6 +88,8 @@ export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(
                     iconStyles({ style, ...props }),
                     className,
                 )}
+                onClick={onClick}
+                onKeyDown={(e) => (e.key === 'Enter' ? onClick() : null)}
                 {...props}
             >
                 {children}

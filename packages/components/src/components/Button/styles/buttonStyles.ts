@@ -3,7 +3,7 @@
 import { sv } from '#/utilities/styleUtilities';
 
 export const buttonStyles = sv({
-    base: 'tw-group tw-border tw-box-box tw-relative tw-flex tw-flex-row tw-gap-2 tw-items-center tw-justify-center tw-cursor-pointer tw-outline-none tw-font-body tw-font-medium',
+    base: 'tw-group tw-border tw-box-box tw-relative tw-flex tw-flex-row tw-gap-2 tw-items-center tw-justify-center tw-cursor-pointer tw-outline-none tw-font-body tw-font-medium focus-visible:tw-ring-4 focus-visible:tw-ring-blue focus-visible:tw-ring-offset-2 focus-visible:dark:tw-ring-offset-black ',
     variants: {
         disabled: {
             true: 'tw-not-allowed tw-pointer-events-none tw-border-transparent tw-text-box-disabled-inverse tw-bg-box-disabled',
