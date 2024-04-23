@@ -73,9 +73,7 @@ export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(
             size = 'medium',
             'data-test-id': dataTestId = 'fondue-button',
             className = '',
-            onPress = () => {
-                console.log('event');
-            },
+            onPress = () => {},
             ...props
         }: ButtonProps,
         ref: ForwardedRef<HTMLButtonElement | null>,
