@@ -2,4 +2,4 @@
 "@frontify/fondue-components": patch
 ---
 
-fix: add default value for diabled
+fix: add default value for `disabled`
