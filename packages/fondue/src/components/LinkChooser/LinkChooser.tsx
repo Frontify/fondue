@@ -1,5 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { useComboBox } from '@react-aria/combobox';
+import { DismissButton } from '@react-aria/overlays';
+import { scrollIntoView } from '@react-aria/utils';
+import { useComboBoxState } from '@react-stately/combobox';
+import { useMachine } from '@xstate/react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { type Key, type MouseEvent, type ReactElement, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
 import { mapToAriaProps } from '@components/ActionMenu/Aria/helper';
 import { Checkbox, CheckboxState } from '@components/Checkbox/Checkbox';
 import IconArrowOutExternal from '@foundation/Icon/Generated/IconArrowOutExternal';
@@ -9,14 +17,7 @@ import IconDocumentStack from '@foundation/Icon/Generated/IconDocumentStack';
 import IconLayersSingle from '@foundation/Icon/Generated/IconLayersSingle';
 import IconLink from '@foundation/Icon/Generated/IconLink';
 import { useDropdownAutoHeight } from '@hooks/useDropdownAutoHeight';
-import { useComboBox } from '@react-aria/combobox';
-import { DismissButton } from '@react-aria/overlays';
-import { scrollIntoView } from '@react-aria/utils';
-import { useComboBoxState } from '@react-stately/combobox';
 import { Validation } from '@utilities/validation';
-import { useMachine } from '@xstate/react';
-import { AnimatePresence, motion } from 'framer-motion';
-import { type Key, type MouseEvent, type ReactElement, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { NavigationMenu } from './NavigationMenu';
 import { Popover } from './Popover';
