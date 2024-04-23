@@ -1,5 +1,11 @@
 # @frontify/fondue-components
 
+## 1.2.1
+
+### Patch Changes
+
+- [#1830](https://github.com/Frontify/fondue/pull/1830) [`d6fd8db`](https://github.com/Frontify/fondue/commit/d6fd8db3c185084b52649d964a70de4965324948) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: button disable style fix
+
 ## 1.2.0
 
 ### Minor Changes

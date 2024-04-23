@@ -1,5 +1,12 @@
 # @frontify/fondue
 
+## 12.0.7
+
+### Patch Changes
+
+- Updated dependencies [[`d6fd8db`](https://github.com/Frontify/fondue/commit/d6fd8db3c185084b52649d964a70de4965324948)]:
+  - @frontify/fondue-components@1.2.1
+
 ## 12.0.6
 
 ### Patch Changes
