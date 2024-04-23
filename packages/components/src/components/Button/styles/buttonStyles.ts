@@ -193,5 +193,6 @@ export const buttonStyles = sv({
         rounding: 'medium',
         hugWidth: true,
         aspect: 'default',
+        disabled: false,
     },
 });
