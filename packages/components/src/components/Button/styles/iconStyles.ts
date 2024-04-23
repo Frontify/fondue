@@ -16,9 +16,13 @@ export const iconStyles = sv({
             danger: '',
             loud: '',
         },
+        disabled: {
+            true: 'tw-text-box-disabled-inverse',
+        },
     },
     compoundVariants: [
         {
+            disabled: false,
             style: 'default',
             emphasis: 'default',
             class:
@@ -27,6 +31,7 @@ export const iconStyles = sv({
                 'group-active:[&_svg]:tw-text-button-icon-pressed [&_svg]:tw-leading-none',
         },
         {
+            disabled: false,
             style: 'default',
             emphasis: 'weak',
             class:
@@ -35,6 +40,7 @@ export const iconStyles = sv({
                 'group-active:[&_svg]:tw-text-button-icon-pressed [&_svg]:tw-leading-none',
         },
         {
+            disabled: false,
             style: 'default',
             emphasis: 'strong',
             class:
@@ -43,6 +49,7 @@ export const iconStyles = sv({
                 'group-active:[&_svg]:tw-text-button-strong-icon-pressed [&_svg]:tw-leading-none',
         },
         {
+            disabled: false,
             style: 'positive',
             emphasis: 'default',
             class:
@@ -51,6 +58,7 @@ export const iconStyles = sv({
                 'group-active:[&_svg]:tw-text-button-positive-icon-pressed [&_svg]:tw-leading-none',
         },
         {
+            disabled: false,
             style: 'positive',
             emphasis: 'weak',
             class:
@@ -59,6 +67,7 @@ export const iconStyles = sv({
                 'group-active:[&_svg]:tw-text-button-strong-positive-icon-pressed [&_svg]:tw-leading-none',
         },
         {
+            disabled: false,
             style: 'positive',
             emphasis: 'strong',
             class:
@@ -67,6 +76,7 @@ export const iconStyles = sv({
                 'group-active:[&_svg]:tw-text-button-strong-positive-icon-pressed [&_svg]:tw-leading-none',
         },
         {
+            disabled: false,
             style: 'negative',
             emphasis: 'default',
             class:
@@ -75,6 +85,7 @@ export const iconStyles = sv({
                 'group-active:[&_svg]:tw-text-button-negative-icon-pressed [&_svg]:tw-leading-none',
         },
         {
+            disabled: false,
             style: 'negative',
             emphasis: 'weak',
             class:
@@ -83,6 +94,7 @@ export const iconStyles = sv({
                 'group-active:[&_svg]:tw-text-button-negative-icon-pressed [&_svg]:tw-leading-none',
         },
         {
+            disabled: false,
             style: 'negative',
             emphasis: 'strong',
             class:
@@ -91,6 +103,7 @@ export const iconStyles = sv({
                 'group-active:[&_svg]:tw-text-button-strong-negative-icon-pressed [&_svg]:tw-leading-none',
         },
         {
+            disabled: false,
             style: 'danger',
             emphasis: 'default',
             class:
@@ -99,6 +112,7 @@ export const iconStyles = sv({
                 'group-active:[&_svg]:tw-text-button-negative-icon-pressed [&_svg]:tw-leading-none',
         },
         {
+            disabled: false,
             style: 'danger',
             emphasis: 'weak',
             class:
@@ -107,6 +121,7 @@ export const iconStyles = sv({
                 'group-active:[&_svg]:tw-text-button-negative-icon-pressed [&_svg]:tw-leading-none',
         },
         {
+            disabled: false,
             style: 'danger',
             emphasis: 'strong',
             class:
@@ -115,6 +130,7 @@ export const iconStyles = sv({
                 'group-active:[&_svg]:tw-text-button-danger-icon-pressed [&_svg]:tw-leading-none',
         },
         {
+            disabled: false,
             style: 'loud',
             emphasis: 'default',
             class:
@@ -123,6 +139,7 @@ export const iconStyles = sv({
                 'group-active:[&_svg]:tw-text-box-selected-inverse-pressed [&_svg]:tw-leading-none',
         },
         {
+            disabled: false,
             style: 'loud',
             emphasis: 'weak',
             class:
@@ -131,6 +148,7 @@ export const iconStyles = sv({
                 'group-active:[&_svg]:tw-text-box-selected-inverse-pressed [&_svg]:tw-leading-none',
         },
         {
+            disabled: false,
             style: 'loud',
             emphasis: 'strong',
             class:

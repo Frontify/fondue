@@ -16,9 +16,13 @@ export const textStyles = sv({
             danger: '',
             loud: '',
         },
+        disabled: {
+            true: 'tw-text-box-disabled-inverse',
+        },
     },
     compoundVariants: [
         {
+            disabled: false,
             style: 'default',
             emphasis: 'default',
             class:
@@ -27,6 +31,7 @@ export const textStyles = sv({
                 'group-active:tw-text-button-text-pressed',
         },
         {
+            disabled: false,
             style: 'default',
             emphasis: 'weak',
             class:
@@ -35,6 +40,7 @@ export const textStyles = sv({
                 'group-active:tw-text-button-text-pressed',
         },
         {
+            disabled: false,
             style: 'default',
             emphasis: 'strong',
             class:
@@ -43,6 +49,7 @@ export const textStyles = sv({
                 'group-active:tw-text-button-strong-text-pressed',
         },
         {
+            disabled: false,
             style: 'positive',
             emphasis: 'default',
             class:
@@ -51,6 +58,7 @@ export const textStyles = sv({
                 'group-active:tw-text-button-positive-text-pressed',
         },
         {
+            disabled: false,
             style: 'positive',
             emphasis: 'weak',
             class:
@@ -59,6 +67,7 @@ export const textStyles = sv({
                 'group-active:tw-text-button-positive-text-pressed',
         },
         {
+            disabled: false,
             style: 'positive',
             emphasis: 'strong',
             class:
@@ -67,6 +76,7 @@ export const textStyles = sv({
                 'group-active:tw-text-button-strong-positive-text-pressed',
         },
         {
+            disabled: false,
             style: 'negative',
             emphasis: 'default',
             class:
@@ -75,6 +85,7 @@ export const textStyles = sv({
                 'group-active:tw-text-button-negative-text-pressed',
         },
         {
+            disabled: false,
             style: 'negative',
             emphasis: 'weak',
             class:
@@ -83,6 +94,7 @@ export const textStyles = sv({
                 'group-active:tw-text-button-negative-text-pressed',
         },
         {
+            disabled: false,
             style: 'negative',
             emphasis: 'strong',
             class:
@@ -91,6 +103,7 @@ export const textStyles = sv({
                 'group-active:tw-text-button-strong-negative-text-pressed',
         },
         {
+            disabled: false,
             style: 'danger',
             emphasis: 'default',
             class:
@@ -99,6 +112,7 @@ export const textStyles = sv({
                 'group-active:tw-text-button-negative-icon-pressed',
         },
         {
+            disabled: false,
             style: 'danger',
             emphasis: 'weak',
             class:
@@ -107,6 +121,7 @@ export const textStyles = sv({
                 'group-active:tw-text-button-negative-icon-pressed',
         },
         {
+            disabled: false,
             style: 'danger',
             emphasis: 'strong',
             class:
@@ -115,6 +130,7 @@ export const textStyles = sv({
                 'group-active:tw-text-button-danger-text-pressed',
         },
         {
+            disabled: false,
             style: 'loud',
             emphasis: 'default',
             class:
@@ -123,6 +139,7 @@ export const textStyles = sv({
                 'group-active:tw-text-box-selected-inverse-pressed',
         },
         {
+            disabled: false,
             style: 'loud',
             emphasis: 'weak',
             class:
@@ -131,6 +148,7 @@ export const textStyles = sv({
                 'group-active:tw-text-box-selected-inverse-pressed',
         },
         {
+            disabled: false,
             style: 'loud',
             emphasis: 'strong',
             class:
