@@ -1,5 +1,11 @@
 # @frontify/fondue-components
 
+## 1.2.2
+
+### Patch Changes
+
+- [#1833](https://github.com/Frontify/fondue/pull/1833) [`10987c3`](https://github.com/Frontify/fondue/commit/10987c384e275dcba4dc59b3ffb1daa8dc5270f9) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: add default value for `disabled`
+
 ## 1.2.1
 
 ### Patch Changes
