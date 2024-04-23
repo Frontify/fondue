@@ -42,7 +42,6 @@ export const WithDifferentAccordionItems: StoryFn<AccordionProps> = () => {
     const [activeItemId, setActiveItemId] = useState<string | number | undefined>();
     const [temporaryColor, setTemporaryColor] = useState<Color | null>({ red: 0, green: 146, blue: 120 });
     const [selectedColor, setSelectedColor] = useState<Color | null>(null);
-    const [openInNewTab, setOpenInNewTab] = useState<boolean>(false);
     const [selectedDate, setSelectedDate] = useState<Date | null>();
 
     return (
