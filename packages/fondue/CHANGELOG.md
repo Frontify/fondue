@@ -1,5 +1,14 @@
 # @frontify/fondue
 
+## 12.0.9
+
+### Patch Changes
+
+- [#1834](https://github.com/Frontify/fondue/pull/1834) [`42cde8f`](https://github.com/Frontify/fondue/commit/42cde8fc062f1bdb6370975ed3eb51812db276fa) Thanks [@ragi96](https://github.com/ragi96)! - chore: deprecating `linkChooser` in favor of `linkInput` from the package `@frontify/guideline-blocks-settings`
+
+- Updated dependencies [[`d9007fc`](https://github.com/Frontify/fondue/commit/d9007fcd392b5dc3c4b47416e196470672c4cd81), [`fe48b6c`](https://github.com/Frontify/fondue/commit/fe48b6c7d7f1200a5a0792afff85d635b6992eef)]:
+  - @frontify/fondue-components@1.2.3
+
 ## 12.0.8
 
 ### Patch Changes
