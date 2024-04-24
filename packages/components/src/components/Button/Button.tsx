@@ -90,10 +90,7 @@ export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(
                     className,
                     FOCUS_OUTLINE,
                 )}
-                onClick={() => {
-                    console.log('click');
-                    onPress();
-                }}
+                onClick={onPress}
                 {...props}
             >
                 {children}
