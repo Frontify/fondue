@@ -214,6 +214,9 @@ importers:
       '@storybook/addon-a11y':
         specifier: ^8.0.8
         version: 8.0.8
+      '@storybook/addon-actions':
+        specifier: ^8.0.8
+        version: 8.0.8
       '@storybook/addon-essentials':
         specifier: ^8.0.8
         version: 8.0.8(@types/react@18.2.77)(react-dom@18.2.0)(react@18.2.0)
