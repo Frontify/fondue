@@ -74,7 +74,7 @@ export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(
             children,
             style,
             size = 'medium',
-            'data-test-id': dataTestId = '  fondue-button',
+            'data-test-id': dataTestId = 'fondue-button',
             className = '',
             onPress = () => {},
             ...props
