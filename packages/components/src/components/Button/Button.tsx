@@ -94,7 +94,7 @@ export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(
                 )}
                 onClick={onPress}
                 onKeyDown={(event: KeyboardEvent<HTMLButtonElement>) => {
-                    event.key === 'Enter' && onPress(e);
+                    event.key === 'Enter' && onPress(event);
                 }}
                 {...props}
             >
