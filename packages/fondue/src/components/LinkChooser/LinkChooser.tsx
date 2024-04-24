@@ -46,6 +46,9 @@ export const CUSTOM_LINK_ID = 'custom-link';
 export const MAX_STORED_ITEMS = 5;
 export const QUERIES_STORAGE_KEY = 'queries';
 
+/**
+ * @deprecated Please use the new LinkInput component from `@frontify/guideline-block-settings`.
+ */
 export const LinkChooser = ({
     getGlobalByQuery = getDefaultData,
     openPreview = window.open,

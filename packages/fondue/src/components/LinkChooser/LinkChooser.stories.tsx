@@ -11,9 +11,17 @@ import { extraSections } from './sections';
 import { type LinkChooserProps, type SearchResult } from './types';
 import { doesContainSubstring } from './utils/helpers';
 
+/**
+ ### This component is deprecated, please use the [LinkInput](@frontify/guideline-blocks-settings) component instead.
+ */
 export default {
     title: 'Components/Link Chooser',
     component: LinkChooserComponent,
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
+    },
     tags: ['autodocs'],
     args: {
         placeholder: 'https://example.com',

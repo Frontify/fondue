@@ -12,7 +12,6 @@ import { EXAMPLE_PALETTES } from '@components/ColorPicker/example-palettes';
 import { DatePicker } from '@components/DatePicker';
 import { Dropdown } from '@components/Dropdown';
 import { FormControl } from '@components/FormControl/FormControl';
-import { LinkChooser } from '@components/LinkChooser/LinkChooser.stories';
 import { ScrollWrapper } from '@components/ScrollWrapper';
 import { SegmentedControls } from '@components/SegmentedControls/SegmentedControls';
 import { Switch } from '@components/Switch/Switch';
@@ -44,7 +43,6 @@ export const WithDifferentAccordionItems: StoryFn<AccordionProps> = () => {
     const [activeItemId, setActiveItemId] = useState<string | number | undefined>();
     const [temporaryColor, setTemporaryColor] = useState<Color | null>({ red: 0, green: 146, blue: 120 });
     const [selectedColor, setSelectedColor] = useState<Color | null>(null);
-    const [openInNewTab, setOpenInNewTab] = useState<boolean>(false);
     const [selectedDate, setSelectedDate] = useState<Date | null>();
 
     return (
@@ -94,13 +92,6 @@ export const WithDifferentAccordionItems: StoryFn<AccordionProps> = () => {
                         onChange={(date) => setSelectedDate(date)}
                     />
                 </ScrollWrapper>
-            </AccordionItem>
-            <AccordionItem header={{ children: 'Item with linkchooser' }}>
-                <LinkChooser
-                    onLinkChange={action('onLinkChange')}
-                    openInNewTab={openInNewTab}
-                    onOpenInNewTabChange={setOpenInNewTab}
-                />
             </AccordionItem>
             <AccordionItem header={{ children: 'Item with assetinput' }}>
                 <AssetInput size={AssetInputSize.Large} assets={[EXAMPLE_IMAGES[0]]} actions={assetInputActions} />
