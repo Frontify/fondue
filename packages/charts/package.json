@@ -46,11 +46,11 @@
         "access": "public"
     },
     "peerDependencies": {
+        "@frontify/fondue-tokens": "^3.5.0",
         "react": "^18",
         "react-dom": "^18"
     },
     "dependencies": {
-        "@frontify/fondue-tokens": "^3.5.0",
         "@visx/axis": "^3.10.1",
         "@visx/glyph": "^3.3.0",
         "@visx/grid": "^3.5.0",
@@ -69,6 +69,7 @@
     "devDependencies": {
         "@etchteam/storybook-addon-status": "^4.2.4",
         "@frontify/eslint-config-react": "^0.17.6",
+        "@frontify/fondue-tokens": "^3.5.0",
         "@storybook/addon-a11y": "^8.0.8",
         "@storybook/addon-actions": "^8.0.8",
         "@storybook/addon-essentials": "^8.0.8",

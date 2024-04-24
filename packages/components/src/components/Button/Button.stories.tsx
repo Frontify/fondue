@@ -8,6 +8,7 @@ import { Button } from './Button';
 
 type Story = StoryObj<typeof Button>;
 const meta: Meta<typeof Button> = {
+    title: 'Components/Button',
     component: Button,
     tags: ['autodocs'],
     parameters: {
@@ -32,14 +33,12 @@ export default meta;
 
 export const Default: Story = {
     name: 'Icon and Text Label',
-    args: {
-        children: (
-            <>
-                <IconColorFan size={16} />
-                Button Text
-            </>
-        ),
-    },
+    render: (args) => (
+        <Button {...args}>
+            <IconColorFan size={16} />
+            Button Text
+        </Button>
+    ),
 };
 
 export const TextLabelOnly: Story = {};
@@ -64,12 +63,10 @@ export const WithRoundedIcon: Story = {
 
 export const WithIconAndLabel: Story = {
     name: 'Icon and Text Label',
-    args: {
-        children: (
-            <>
-                <IconColorFan size={16} />
-                Button Text
-            </>
-        ),
-    },
+    render: (args) => (
+        <Button {...args}>
+            <IconColorFan size={16} />
+            Button Text
+        </Button>
+    ),
 };

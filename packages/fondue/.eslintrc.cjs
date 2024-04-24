@@ -43,5 +43,12 @@ module.exports = {
                 'lodash/import-scope': 'off',
             },
         },
+        {
+            files: ['**/*.md/**/*'],
+            processor: 'markdown/markdown',
+            parserOptions: {
+                project: null,
+            },
+        },
     ],
 };

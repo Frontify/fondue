@@ -6,6 +6,7 @@ import { LoadingBar } from './LoadingBar';
 
 type Story = StoryObj<typeof LoadingBar>;
 const meta: Meta<typeof LoadingBar> = {
+    title: 'Components/Loading Bar',
     component: LoadingBar,
     tags: ['autodocs'],
     parameters: {

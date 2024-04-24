@@ -118,6 +118,9 @@ const SegmentedControlsItem = forwardRef<HTMLDivElement, SegmentedControlsItemPr
 
 SegmentedControlsItem.displayName = 'SegmentedControlsItem';
 
+/**
+ * @deprecated Use `SegmentedControl` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md the migration guide}.
+ */
 export const SegmentedControls = ({
     id: propId,
     items,

@@ -44,11 +44,13 @@
     },
     "peerDependencies": {
         "@frontify/fondue-icons": "workspace:^",
+        "@frontify/fondue-tokens": "workspace:^",
         "react": "^18",
         "react-dom": "^18"
     },
     "dependencies": {
-        "@radix-ui/react-progress": "^1.0.3"
+        "@radix-ui/react-progress": "^1.0.3",
+        "@radix-ui/react-toggle-group": "^1.0.4"
     },
     "devDependencies": {
         "@etchteam/storybook-addon-status": "^4.2.4",
@@ -72,6 +74,7 @@
         "@testing-library/user-event": "^14.5.2",
         "@types/node": "^20.12.7",
         "@types/react": "^18.2.77",
+        "@types/sinon": "^17.0.3",
         "@vitejs/plugin-react": "^4.2.1",
         "@vitest/coverage-v8": "^1.4.0",
         "@vitest/ui": "^1.4.0",
@@ -85,6 +88,7 @@
         "prettier": "^3.2.5",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
+        "sinon": "^17.0.1",
         "storybook": "^8.0.8",
         "storybook-dark-mode": "^4.0.1",
         "tailwind-merge": "^2.2.2",
