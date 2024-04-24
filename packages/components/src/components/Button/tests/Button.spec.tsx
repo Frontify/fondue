@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
 import { Button } from '../Button';
@@ -18,6 +19,26 @@ describe('Button component', () => {
         expect(clickListener).toHaveBeenCalledOnce();
     });
 
+    it('reacts on enter', async () => {
+        const clickListener = vi.fn();
+        const { getByTestId } = render(<Button onPress={clickListener}>{BUTTON_TEXT}</Button>);
+        const button = getByTestId(BUTTON_TEST_ID);
+        expect(clickListener).not.toHaveBeenCalled();
+        button.focus();
+        await userEvent.keyboard('{Enter}');
+        expect(clickListener).toHaveBeenCalledOnce();
+    });
+
+    it('reacts on space', async () => {
+        const clickListener = vi.fn();
+        const { getByTestId } = render(<Button onPress={clickListener}>{BUTTON_TEXT}</Button>);
+        const button = getByTestId(BUTTON_TEST_ID);
+        expect(clickListener).not.toHaveBeenCalled();
+        button.focus();
+        await userEvent.keyboard('{ }');
+        expect(clickListener).toHaveBeenCalledOnce();
+    });
+
     it('does not react on click when disabled', () => {
         const clickListener = vi.fn();
         const { getByTestId } = render(
@@ -29,6 +50,36 @@ describe('Button component', () => {
         expect(clickListener).not.toHaveBeenCalled();
         expect(button).toHaveAttribute('disabled');
         button.click();
+        expect(clickListener).not.toHaveBeenCalled();
+    });
+
+    it('does not react on enter when disabled', async () => {
+        const clickListener = vi.fn();
+        const { getByTestId } = render(
+            <Button onPress={clickListener} disabled>
+                {BUTTON_TEXT}
+            </Button>,
+        );
+        const button = getByTestId(BUTTON_TEST_ID);
+        expect(clickListener).not.toHaveBeenCalled();
+        expect(button).toHaveAttribute('disabled');
+        button.focus();
+        await userEvent.keyboard('{Enter}');
+        expect(clickListener).not.toHaveBeenCalled();
+    });
+
+    it('does not react on space when disabled', async () => {
+        const clickListener = vi.fn();
+        const { getByTestId } = render(
+            <Button onPress={clickListener} disabled>
+                {BUTTON_TEXT}
+            </Button>,
+        );
+        const button = getByTestId(BUTTON_TEST_ID);
+        expect(clickListener).not.toHaveBeenCalled();
+        expect(button).toHaveAttribute('disabled');
+        button.focus();
+        await userEvent.keyboard('{ }');
         expect(clickListener).not.toHaveBeenCalled();
     });
 });
