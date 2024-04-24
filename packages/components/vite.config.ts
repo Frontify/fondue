@@ -58,6 +58,7 @@ export default defineConfig({
                 '.eslintrc.cjs',
                 '**.config.{ts,cjs}',
                 '**/**/*.{ct,spec,test,stories}.{ts,tsx}',
+                'storybook-static',
             ],
             enabled: true,
             provider: 'v8',

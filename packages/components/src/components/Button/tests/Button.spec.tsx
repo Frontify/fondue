@@ -11,7 +11,7 @@ const BUTTON_TEST_ID = 'fondue-button';
 describe('Button component', () => {
     it('reacts on click', () => {
         const clickListener = vi.fn();
-        const { getByTestId } = render(<Button onClick={clickListener}>{BUTTON_TEXT}</Button>);
+        const { getByTestId } = render(<Button onPress={clickListener}>{BUTTON_TEXT}</Button>);
         const button = getByTestId(BUTTON_TEST_ID);
         expect(clickListener).not.toHaveBeenCalled();
         button.click();
@@ -21,7 +21,7 @@ describe('Button component', () => {
     it('does not react on click when disabled', () => {
         const clickListener = vi.fn();
         const { getByTestId } = render(
-            <Button onClick={clickListener} disabled>
+            <Button onPress={clickListener} disabled>
                 {BUTTON_TEXT}
             </Button>,
         );

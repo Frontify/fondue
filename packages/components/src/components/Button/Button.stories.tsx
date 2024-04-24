@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconColorFan, IconIcon } from '@frontify/fondue-icons';
+import { action } from '@storybook/addon-actions';
 import { type Meta, type StoryObj } from '@storybook/react';
 
 import { Button } from './Button';
@@ -24,6 +25,7 @@ const meta: Meta<typeof Button> = {
         hugWidth: true,
         children: 'Button Text',
         aspect: 'default',
+        onPress: action('onPress'),
     },
 };
 export default meta;
