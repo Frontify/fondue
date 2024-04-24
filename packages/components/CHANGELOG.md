@@ -1,5 +1,13 @@
 # @frontify/fondue-components
 
+## 1.2.3
+
+### Patch Changes
+
+- [#1832](https://github.com/Frontify/fondue/pull/1832) [`d9007fc`](https://github.com/Frontify/fondue/commit/d9007fcd392b5dc3c4b47416e196470672c4cd81) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: add missing key handler
+
+- [#1837](https://github.com/Frontify/fondue/pull/1837) [`fe48b6c`](https://github.com/Frontify/fondue/commit/fe48b6c7d7f1200a5a0792afff85d635b6992eef) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: remove unneccessary key listener
+
 ## 1.2.2
 
 ### Patch Changes
