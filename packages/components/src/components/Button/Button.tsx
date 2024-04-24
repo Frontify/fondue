@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { forwardRef, type ForwardedRef, type KeyboardEvent, type MouseEvent, type ReactNode } from 'react';
+import { forwardRef, type ForwardedRef, type MouseEvent, type ReactNode } from 'react';
 
 import { FOCUS_OUTLINE } from '#/utilities/focusStyle';
 import { cn } from '#/utilities/styleUtilities';
@@ -20,8 +20,6 @@ type ButtonType = 'button' | 'submit' | 'reset';
 type ButtonEmphasis = 'default' | 'weak' | 'strong';
 
 type ButtonAspect = 'default' | 'square';
-
-type PressEvent = MouseEvent<HTMLButtonElement> | KeyboardEvent<HTMLButtonElement>;
 
 export type ButtonProps = {
     /**
