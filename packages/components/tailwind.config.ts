@@ -29,6 +29,9 @@ export default {
             ringColor: {
                 blue: '#5e9ed6',
             },
+            outlineColor: {
+                blue: '#5e9ed6',
+            },
             colors: {
                 transparent: 'transparent',
                 current: 'currentColor',

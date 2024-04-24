@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { forwardRef, type ForwardedRef, type MouseEvent, type ReactNode } from 'react';
+import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
 
 import { cn } from '#/utilities/styleUtilities';
 
+import { FOCUS_OUTLINE } from '#/utilities/focusStyle';
 import { buttonStyles } from './styles/buttonStyles';
 import { iconStyles } from './styles/iconStyles';
 import { textStyles } from './styles/textStyles';
@@ -19,6 +20,10 @@ type ButtonType = 'button' | 'submit' | 'reset';
 type ButtonEmphasis = 'default' | 'weak' | 'strong';
 
 type ButtonAspect = 'default' | 'square';
+
+type PressEvent = {
+    type: 'key' | 'click';
+};
 
 export type ButtonProps = {
     /**
@@ -58,7 +63,7 @@ export type ButtonProps = {
      */
     hugWidth?: boolean;
     children?: ReactNode;
-    onPress?: (event?: MouseEvent<HTMLButtonElement>) => void;
+    onPress?: (event?: PressEvent) => void;
     'aria-label'?: string;
     'aria-describedby'?: string;
     'data-test-id'?: string;
@@ -87,9 +92,12 @@ export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(
                     textStyles({ style, ...props }),
                     iconStyles({ style, ...props }),
                     className,
+                    FOCUS_OUTLINE,
                 )}
-                onClick={onPress}
-                onKeyDown={(e) => (e.key === 'Enter' ? onPress() : null)}
+                onClick={() => {
+                    onPress({ type: 'click' });
+                }}
+                onKeyDown={(e) => (e.key === 'Enter' ? onPress({ type: 'key' }) : null)}
                 {...props}
             >
                 {children}
