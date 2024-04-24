@@ -10,4 +10,4 @@ export const FOCUS_STYLE_INSET = cn([FOCUS_STYLE, 'tw-ring-inset']);
 export const FOCUS_VISIBLE_STYLE_INSET = cn([FOCUS_VISIBLE_STYLE, 'tw-ring-inset']);
 export const FOCUS_WITHIN_STYLE =
     'focus-within:tw-ring-4 focus-within:tw-ring-blue focus-within:tw-ring-offset-2 focus-within:dark:tw-ring-offset-black focus-within:tw-outline-none';
-export const FOCUS_OUTLINE = "focus-visible:tw-outline tw-outline-4 tw-outline-offset-2 tw-outline-blue"
+export const FOCUS_OUTLINE = 'focus-visible:tw-outline tw-outline-4 tw-outline-offset-2 tw-outline-blue';
