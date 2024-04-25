@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group';
-import { type Ref, type ReactNode } from 'react';
+import { type ReactNode, forwardRef } from 'react';
 
 import { useControllableState } from '#/hooks/useControllableState';
 
@@ -21,62 +21,59 @@ export type SegmentedControlRootProps = {
     value?: string;
     onValueChange?: (value: string) => void;
     disabled?: boolean;
-    ref?: Ref<HTMLDivElement>;
 };
 
-export const SegmentedControlRoot = ({
-    children,
-    value: propsValue,
-    defaultValue,
-    onValueChange,
-    ...rootProps
-}: SegmentedControlRootProps) => {
-    const [value, setValue] = useControllableState({
-        prop: propsValue,
-        defaultProp: defaultValue,
-        onChange: onValueChange,
-    });
+export const SegmentedControlRoot = forwardRef<HTMLDivElement, SegmentedControlRootProps>(
+    ({ children, value: propsValue, defaultValue, onValueChange, ...rootProps }, ref) => {
+        const [value, setValue] = useControllableState({
+            prop: propsValue,
+            defaultProp: defaultValue,
+            onChange: onValueChange,
+        });
 
-    return (
-        <ToggleGroupPrimitive.Root
-            {...rootProps}
-            className={segmentedControlRootStyles}
-            onValueChange={(value) => {
-                if (value) {
-                    setValue(value);
-                }
-            }}
-            value={value}
-            type="single"
-            asChild={false}
-            aria-disabled={rootProps.disabled}
-        >
-            {children}
-            {/* Active indicator */}
-            <div className={segmentedControlActiveIndicatorStyles} />
-        </ToggleGroupPrimitive.Root>
-    );
-};
+        return (
+            <ToggleGroupPrimitive.Root
+                ref={ref}
+                {...rootProps}
+                className={segmentedControlRootStyles}
+                onValueChange={(value) => {
+                    if (value) {
+                        setValue(value);
+                    }
+                }}
+                value={value}
+                type="single"
+                asChild={false}
+                aria-disabled={rootProps.disabled}
+            >
+                {children}
+                {/* Active indicator */}
+                <div className={segmentedControlActiveIndicatorStyles} />
+            </ToggleGroupPrimitive.Root>
+        );
+    },
+);
 SegmentedControlRoot.displayName = 'SegmentedControl.Root';
 
 type SegmentedControlItemProps = {
     children: ReactNode;
     value: string;
-    ref?: Ref<HTMLButtonElement>;
 };
 
-export const SegmentedControlItem = ({ children, ...itemProps }: SegmentedControlItemProps) => (
-    <ToggleGroupPrimitive.Item {...itemProps} className={segmentedControlItemStyles} asChild={false}>
-        {/* Separator */}
-        <span className={segmentedControlItemSeparatorStyles} />
-        <span className={segmentedControlItemLabelStyles}>
-            {/* Active children */}
-            <span className={segmentedControlItemLabelActiveStyles}>{children}</span>
+export const SegmentedControlItem = forwardRef<HTMLButtonElement, SegmentedControlItemProps>(
+    ({ children, ...itemProps }, ref) => (
+        <ToggleGroupPrimitive.Item ref={ref} {...itemProps} className={segmentedControlItemStyles} asChild={false}>
+            {/* Separator */}
+            <span className={segmentedControlItemSeparatorStyles} />
+            <span className={segmentedControlItemLabelStyles}>
+                {/* Active children */}
+                <span className={segmentedControlItemLabelActiveStyles}>{children}</span>
 
-            {/* Inactive children */}
-            <span className={segmentedControlItemLabelInactiveStyles}>{children}</span>
-        </span>
-    </ToggleGroupPrimitive.Item>
+                {/* Inactive children */}
+                <span className={segmentedControlItemLabelInactiveStyles}>{children}</span>
+            </span>
+        </ToggleGroupPrimitive.Item>
+    ),
 );
 SegmentedControlItem.displayName = 'SegmentedControl.Item';
 
