@@ -15,13 +15,12 @@ export default {
     title: 'Components/Number Input',
     component: NumberInput,
     tags: ['autodocs'],
-    args: { clearable: false },
+    args: { clearable: false, disabled: false, readOnly: false },
     argTypes: {
         decorator: {
             description: 'Add decorator element to start of the input',
             name: 'decorator',
             defaultValue: undefined,
-            control: { type: 'React Element' },
         },
         suffix: {
             description: 'String to append to the input value.',
@@ -33,14 +32,12 @@ export default {
             type: 'boolean',
             table: {
                 type: { summary: 'boolean | undefined' },
-                defaultValue: { summary: false },
             },
         },
         readOnly: {
             type: 'boolean',
             table: {
                 type: { summary: 'boolean | undefined' },
-                defaultValue: { summary: false },
             },
         },
         controls: {

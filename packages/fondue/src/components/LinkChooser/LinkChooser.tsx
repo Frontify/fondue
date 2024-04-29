@@ -134,6 +134,7 @@ export const LinkChooser = ({
         menuTrigger: 'manual',
         shouldCloseOnBlur: false,
         allowsEmptyCollection: true,
+        // @ts-expect-error https://github.com/adobe/react-spectrum/issues/5939
         selectedKey,
     });
 

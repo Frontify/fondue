@@ -131,6 +131,7 @@ export const Accordion = (props: AccordionProps): ReactElement => {
     const ariaProps = mapToAriaProps(children);
 
     const ref = useRef<HTMLDivElement | null>(null);
+    // @ts-expect-error https://github.com/adobe/react-spectrum/issues/5939
     const state = useTreeState<AccordionItemProps>(ariaProps);
 
     // We need to detect the firstRender and childrenLength to not toggle any panel
@@ -147,6 +148,7 @@ export const Accordion = (props: AccordionProps): ReactElement => {
             !accordionChildren.current.firstRender &&
             Children.toArray(props.children).length > accordionChildren.current.childLength
         ) {
+            // @ts-expect-error https://github.com/adobe/react-spectrum/issues/5939
             state.toggleKey(ariaProps.defaultExpandedKeys[ariaProps.defaultExpandedKeys.length - 1]);
         }
         accordionChildren.current = { firstRender: false, childLength: Children.toArray(props.children).length };

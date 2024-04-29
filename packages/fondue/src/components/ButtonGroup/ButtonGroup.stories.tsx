@@ -16,15 +16,21 @@ export default {
     tags: ['autodocs'],
     argTypes: {
         size: {
-            options: ButtonSize,
+            options: [ButtonSize.Small, ButtonSize.Medium, ButtonSize.Large],
             control: { type: 'radio' },
         },
         style: {
-            options: ButtonStyle,
+            options: [
+                ButtonStyle.Default,
+                ButtonStyle.Positive,
+                ButtonStyle.Negative,
+                ButtonStyle.Danger,
+                ButtonStyle.Loud,
+            ],
             control: { type: 'radio' },
         },
         emphasis: {
-            options: ButtonEmphasis,
+            options: [ButtonEmphasis.Default, ButtonEmphasis.Weak, ButtonEmphasis.Strong],
             control: { type: 'radio' },
         },
     },

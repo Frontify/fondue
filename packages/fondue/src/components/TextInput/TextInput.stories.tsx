@@ -34,7 +34,7 @@ export default {
             control: { type: 'select' },
         },
         spellcheck: {
-            options: { undefined, true: true, false: false },
+            options: [undefined, true, false],
             control: { type: 'select' },
         },
         placeholder: { type: 'string' },
@@ -116,10 +116,6 @@ WithCharacterDecorator.args = {
     placeholder: 'Placeholder text',
 };
 
-const PasswordArgTypes = {
-    obfuscated: { control: { type: 'boolean' }, table: { disable: false } },
-};
-
 const PasswordArgs = {
     type: TextInputType.Password,
     value: 'Secret',
@@ -127,13 +123,9 @@ const PasswordArgs = {
 
 export const Password = TextInputTemplate.bind({});
 
-Password.argTypes = PasswordArgTypes;
-
 Password.args = { ...PasswordArgs };
 
 export const PasswordWithIconDecorator = TextInputTemplate.bind({});
-
-PasswordWithIconDecorator.argTypes = PasswordArgTypes;
 
 PasswordWithIconDecorator.args = {
     ...PasswordArgs,
@@ -142,16 +134,12 @@ PasswordWithIconDecorator.args = {
 
 export const PasswordWithCharacterDecorator = TextInputTemplate.bind({});
 
-PasswordWithCharacterDecorator.argTypes = PasswordArgTypes;
-
 PasswordWithCharacterDecorator.args = {
     ...PasswordArgs,
     decorator: 'P',
 };
 
 export const PasswordVisible = TextInputTemplate.bind({});
-
-PasswordVisible.argTypes = PasswordArgTypes;
 
 PasswordVisible.args = {
     ...PasswordArgs,

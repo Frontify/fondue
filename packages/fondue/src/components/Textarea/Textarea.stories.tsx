@@ -39,7 +39,6 @@ export default {
             description: 'If `true`, component rendered is a auto sizing Textarea',
             table: {
                 type: { summary: 'boolean | undefined' },
-                defaultValue: { summary: false },
             },
         },
         autocomplete: {
@@ -47,7 +46,6 @@ export default {
             description: 'If `true`, Textarea will have `autoComplete` functionality',
             table: {
                 type: { summary: 'boolean | undefined' },
-                defaultValue: { summary: false },
             },
         },
         clearable: {
@@ -55,14 +53,12 @@ export default {
             description: 'Render `clear` button to clear input on click',
             table: {
                 type: { summary: 'boolean | undefined' },
-                defaultValue: { summary: false },
             },
         },
         decorator: {
             description: 'A `ReactElement` that will be rendered at the start of the `Textarea`',
             table: {
                 type: { summary: 'ReactElement | undefined' },
-                defaultValue: { summary: undefined },
             },
         },
         defaultValue: {
@@ -78,21 +74,18 @@ export default {
             description: 'Value set by parent',
             table: {
                 type: { summary: 'string | undefined' },
-                defaultValue: { summary: undefined },
             },
         },
         disabled: {
             type: 'boolean',
             table: {
                 type: { summary: 'boolean | undefined' },
-                defaultValue: { summary: false },
             },
         },
         extraActions: {
             description: 'Collection of extra actions the input can preform',
             table: {
                 type: { summary: 'ExtraAction[] | undefined' },
-                defaultValue: { summary: undefined },
             },
         },
         focusOnMount: {
@@ -100,7 +93,6 @@ export default {
             description: 'If `true`, Textarea will be focused on mount',
             table: {
                 type: { summary: 'boolean | undefined' },
-                defaultValue: { summary: false },
             },
         },
         minRows: {
@@ -108,7 +100,6 @@ export default {
             description: 'If `autosize` is false, this is used as `rows` property for default textarea',
             table: {
                 type: { summary: 'number | undefined' },
-                defaultValue: { summary: undefined },
             },
         },
         maxRows: {
@@ -125,28 +116,24 @@ export default {
             description: 'Placeholder text',
             table: {
                 type: { summary: 'string | undefined' },
-                defaultValue: { summary: undefined },
             },
         },
         readOnly: {
             type: 'boolean',
             table: {
                 type: { summary: 'boolean | undefined' },
-                defaultValue: { summary: false },
             },
         },
         resizable: {
             type: 'boolean',
             table: {
                 type: { summary: 'boolean | undefined' },
-                defaultValue: { summary: false },
             },
         },
         selectable: {
             type: 'boolean',
             table: {
                 type: { summary: 'boolean | undefined' },
-                defaultValue: { summary: false },
             },
         },
         status: {
@@ -157,52 +144,41 @@ export default {
                 'The current `Validation` status of the input and will trigger the corresponding `icon` to be appended to the `Textarea`',
             table: {
                 type: { summary: 'Validation | undefined' },
-                defaultValue: { summary: 'Validation.Default' },
             },
         },
         onChange: {
             action: 'onChange',
-            type: 'function',
             description: 'Callback function to return current value on the `Textarea`',
             table: {
                 type: { summary: '((value: string) => void) | undefined' },
-                defaultValue: { summary: undefined },
             },
         },
         onEnterPressed: {
             action: 'onEnterPressed',
             description: 'Callback function to return current value on the `Textarea` when `enter` key id pressed',
-            type: 'function',
             table: {
                 type: { summary: '((value: string) => void) | undefined' },
-                defaultValue: { summary: undefined },
             },
         },
         onKeyDown: {
             action: 'onKeyDown',
             description: 'Callback function that is called on every `keydown` event',
-            type: 'function',
             table: {
                 type: { summary: '((event: KeyboardEvent<HTMLTextAreaElement>) => void) | undefined' },
-                defaultValue: { summary: undefined },
             },
         },
         onBlur: {
             action: 'onBlur',
             description: 'Callback function that is called when `Textarea` is unfocused',
-            type: 'function',
             table: {
                 type: { summary: '((event: FocusEvent<HTMLTextAreaElement, Element>) => void) | undefined' },
-                defaultValue: { summary: undefined },
             },
         },
         onFocus: {
             action: 'onFocus',
             description: 'Callback function that is called when `Textarea` is focused',
-            type: 'function',
             table: {
                 type: { summary: '((event: FocusEvent<HTMLTextAreaElement, Element>) => void) | undefined' },
-                defaultValue: { summary: undefined },
             },
         },
     },
