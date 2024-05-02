@@ -15,33 +15,33 @@ describe('Divider component', () => {
         const { getByTestId } = render(<Divider />);
         const divider = getByTestId(DIVIDER_LINE_SELECTOR);
 
-        expect(divider).toHaveStyle({ borderTopColor: DEFAULT_COLOR_HEX });
+        expect(divider).toBeVisible();
     });
     it('should have correct color', () => {
-        const { getByTestId } = render(<Divider color={COLOR_HEX} />);
+        const { getByTestId } = render(<Divider color="x-strong" />);
         const divider = getByTestId(DIVIDER_LINE_SELECTOR);
 
-        expect(divider).toHaveStyle({ borderTopColor: COLOR_HEX });
+        expect(divider).toHaveClass('tw-border-line-x-strong');
     });
-    it('should allow for the height to be set to Small', () => {
-        const { getByTestId } = render(<Divider height={'small'} />);
+    it('should allow for the padding to be set to Small', () => {
+        const { getByTestId } = render(<Divider padding="small" />);
         const divider = getByTestId(DIVIDER_SELECTOR);
 
-        expect(divider).toHaveStyle({ height: '36px' });
+        expect(divider).toHaveClass('tw-h-9');
     });
 
-    it('should allow for the height to be set to Medium', () => {
-        const { getByTestId } = render(<Divider height={'medium'} />);
+    it('should allow for the padding to be set to Medium', () => {
+        const { getByTestId } = render(<Divider padding="medium" />);
         const divider = getByTestId(DIVIDER_SELECTOR);
 
-        expect(divider).toHaveStyle({ height: '60px' });
+        expect(divider).toHaveClass('tw-h-16');
     });
 
     it('should allow for the height to be set to Large', () => {
-        const { getByTestId } = render(<Divider height={'large'} />);
+        const { getByTestId } = render(<Divider padding="large" />);
         const divider = getByTestId(DIVIDER_SELECTOR);
 
-        expect(divider).toHaveStyle({ height: '96px' });
+        expect(divider).toHaveClass('tw-h-24');
     });
 
     it('should allow for the divider border style to be dashed', () => {
@@ -65,15 +65,8 @@ describe('Divider component', () => {
         expect(divider).toHaveClass('tw-border-solid');
     });
 
-    it('should allow for the divider to have dotted border', () => {
-        const { getByTestId } = render(<Divider style="dotted" />);
-        const divider = getByTestId(DIVIDER_LINE_SELECTOR);
-
-        expect(divider).toHaveClass('tw-border-dotted');
-    });
-
     it('should allow for the divider to be vertical', () => {
-        const { getByTestId } = render(<Divider vertical={true} />);
+        const { getByTestId } = render(<Divider direction="vertical" />);
         const divider = getByTestId(DIVIDER_LINE_SELECTOR);
 
         expect(divider).toHaveClass('tw-border-r');

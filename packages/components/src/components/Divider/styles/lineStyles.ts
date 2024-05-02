@@ -3,7 +3,7 @@
 import { sv } from '#/utilities/styleUtilities';
 
 export const lineStyles = sv({
-    base: 'tw-self-stretch tw-m-0',
+    base: 'tw-self-stretch',
     variants: {
         style: {
             solid: 'tw-border-solid',
@@ -17,8 +17,8 @@ export const lineStyles = sv({
             'x-strong': 'tw-border-line-x-strong',
         },
         direction: {
-            horizontal: 'tw-border-t-[1px] tw-w-full',
-            vertical: 'tw-border-r-[1px] tw-min-h-4 tw-h-full',
+            horizontal: 'tw-border-t tw-w-full',
+            vertical: 'tw-border-r tw-min-h-4 tw-h-full',
         },
     },
     defaultVariants: {

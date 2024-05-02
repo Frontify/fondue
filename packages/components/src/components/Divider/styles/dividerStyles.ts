@@ -6,8 +6,8 @@ export const dividerStyles = sv({
     base: 'tw-flex tw-self-stretch tw-justify-center ',
     variants: {
         direction: {
-            horizontal: 'tw-flex-col tw-h-1 ',
-            vertical: 'tw-flex-row tw-w-1 ',
+            horizontal: 'tw-flex-col tw-h-1 tw-w-full',
+            vertical: 'tw-flex-row tw-w-1 tw-h-full ',
         },
     },
     compoundVariants: [

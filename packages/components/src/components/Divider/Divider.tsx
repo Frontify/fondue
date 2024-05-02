@@ -22,6 +22,7 @@ export type DividerProps = {
 };
 
 const DIVIDER_TEST_ID = 'fondue-divider';
+const DIVIDER_LINE_TEST_ID_SUFFIX = '-line';
 
 export const Divider = ({
     'data-test-id': dataTestId = DIVIDER_TEST_ID,
@@ -42,6 +43,7 @@ export const Divider = ({
             data-test-id={dataTestId}
         >
             <hr
+                data-test-id={`${dataTestId}${DIVIDER_LINE_TEST_ID_SUFFIX}`}
                 className={lineStyles({
                     direction,
                     ...props,
