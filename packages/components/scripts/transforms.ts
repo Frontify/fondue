@@ -18,3 +18,14 @@ export const toKebabCase = (name: string): string =>
  * @returns String in UPPERCASE_SNAKE_CASE
  */
 export const toUpperSnakeCase = (name: string): string => name.replaceAll(/([a-z])([A-Z])/g, '$1_$2').toUpperCase();
+
+/**
+ * Converts any given input to camelCase
+ *
+ * @param name String in any case (PascalCase, kebab-case, ...)
+ * @returns String in camelCase
+ */
+export const toCamelCase = (name: string): string => {
+    const kebabCase = toKebabCase(name);
+    return kebabCase.replaceAll(/-([a-z])/g, (g) => g[1].toUpperCase());
+};
