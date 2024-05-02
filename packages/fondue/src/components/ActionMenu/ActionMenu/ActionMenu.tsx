@@ -30,6 +30,24 @@ export type ActionMenuProps = {
     focus?: FocusStrategy;
     border?: boolean;
     scrollable?: boolean;
+    /**
+     * @deprecated Use the onClick method available on each `menuItem` in the `menuBlocks` instead.
+     * @example
+     *  <ActionMenu
+          menuBlocks={[
+              {
+                  id: 'menu-block-1',
+                  menuItems: [
+                      {
+                          id: 'menu-item-1',
+                          label: 'Item 1',
+                          onClick: () => console.log('Item 1 clicked');
+                      },
+                  ],
+              },
+          ]}
+        />
+     *  */
     onClick?: () => void;
 };
 

@@ -19,6 +19,9 @@ export type AriaOptionProps = {
     node: Node<object>;
     isSelected?: boolean;
     state: TreeState<object>;
+    /**
+     *  @deprecated Use `menuItem.onClick` instead
+     *  */
     onClick?: () => void;
 };
 
@@ -94,7 +97,7 @@ export const AriaMenuItem = ({ menuItem, node, state, isSelected, onClick }: Ari
     return (
         // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions
         <li
-            {...mergeProps(menuItemProps, focusProps)}
+            {...mergeProps(menuItemProps, focusProps, { onClick: () => onClick?.() })}
             data-test-id="menu-item"
             className={merge([
                 'tw-relative hover:tw-bg-box-neutral-hover tw-list-none tw-outline-none',
@@ -102,12 +105,6 @@ export const AriaMenuItem = ({ menuItem, node, state, isSelected, onClick }: Ari
                 isFocusVisible && FOCUS_STYLE_INSET,
             ])}
             ref={ref}
-            onClick={(event) => {
-                event.stopPropagation();
-                if (onClick) {
-                    onClick();
-                }
-            }}
         >
             <MenuItem
                 title={title}
