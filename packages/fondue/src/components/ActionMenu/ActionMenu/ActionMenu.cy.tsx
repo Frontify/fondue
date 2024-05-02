@@ -110,4 +110,27 @@ describe('ActionMenu Component', () => {
         cy.get('[data-test-id="add-block-button"]').first().click();
         cy.get(MENU_ITEM_LIST_ID).should('have.length', 3);
     });
+
+    it('should fire both onClick events when touch-to-click is used', () => {
+        const onClickStub = cy.stub().as('onClickStub');
+        const menuOnClickStub = cy.stub().as('menuOnClickStub');
+
+        const menuBlocks = MENU_BLOCKS.map((block) => ({
+            ...block,
+            menuItems: block.menuItems.map((item) => ({
+                ...item,
+                onClick: onClickStub,
+            })),
+        }));
+
+        cy.mount(<ActionMenu menuBlocks={menuBlocks} onClick={menuOnClickStub} />);
+
+        cy.get('@onClickStub').should('not.be.called');
+        // Cypress .click() triggers other events that are not reflected by touch-to-click.
+        cy.get(MENU_ITEM_ID).then(($item) => {
+            $item[0].dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        });
+        cy.get('@onClickStub').should('be.calledOnce');
+        cy.get('@menuOnClickStub').should('be.calledOnce');
+    });
 });
