@@ -5,8 +5,6 @@ import { describe, expect, it } from 'vitest';
 
 import { Divider } from '../Divider';
 
-const DEFAULT_COLOR_HEX = '#CCC';
-const COLOR_HEX = '#4065AE';
 const DIVIDER_SELECTOR = 'fondue-divider';
 const DIVIDER_LINE_SELECTOR = 'fondue-divider-line';
 
