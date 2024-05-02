@@ -1,5 +1,11 @@
 # @frontify/fondue
 
+## 12.0.10
+
+### Patch Changes
+
+- [#1844](https://github.com/Frontify/fondue/pull/1844) [`871d82a`](https://github.com/Frontify/fondue/commit/871d82a51be775061d5aaca9fb91daf0da6bfbf3) Thanks [@SamCreasey](https://github.com/SamCreasey)! - fix(ActionMenu): Stop internal `onClick` prop of `AriaMenuItem` being overwritten by `ActionMenu` level onClick prop, even if this prop is not supplied. This fixes an issue where touch-to-click commands were not recognised by the `AriaMenuItem`.
+
 ## 12.0.9
 
 ### Patch Changes
