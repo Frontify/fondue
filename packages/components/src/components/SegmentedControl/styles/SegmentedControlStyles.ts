@@ -14,8 +14,8 @@ export const segmentedControlItemStyles =
 export const segmentedControlActiveIndicatorStyles =
     'tw-hidden tw-absolute -tw-z-[1] tw-top-0 tw-left-0 tw-h-full tw-pointer-events-none tw-transition-transform ' +
     // Outline of active item
-    "before:tw-content-[''] before:tw-inset-0 before:tw-absolute before:tw-rounded-[calc(var(--radius)-1px)] before:tw-bg-white peer-disabled:before:tw-bg-box-disabled " +
-    'before:tw-shadow-[0_0_0_1px_var(--line-color-xx-strong)] peer-disabled:before:tw-shadow-[0_0_0_1px_var(--line-color-x-strong)] ' +
+    "before:tw-content-[''] before:tw-inset-0 before:tw-absolute before:tw-rounded-[calc(var(--radius)-var(--line-width))] before:tw-bg-white peer-disabled:before:tw-bg-box-disabled " +
+    'before:tw-shadow-[0_0_0_var(--line-width)_var(--line-color-xx-strong)] peer-disabled:before:tw-shadow-[0_0_0_var(--line-width)_var(--line-color-x-strong)] ' +
     // Show the active indicator when the state is on
     'peer-data-[state=on]:tw-block ' +
     // Used to animate the active indicator horizontally
