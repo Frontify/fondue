@@ -11,7 +11,11 @@ import { TextInput } from './TextInput';
 type Story = StoryObj<typeof TextInput>;
 const meta: Meta<typeof TextInput> = {
     title: 'Components/Text Input',
-    component: TextInput,
+    component: TextInput.Root,
+    subcomponents: {
+        // @ts-expect-error Storybook types are incorrect
+        'TextInput.Slot': TextInput.Slot,
+    },
     tags: ['autodocs'],
     parameters: {
         status: {
@@ -24,6 +28,7 @@ const meta: Meta<typeof TextInput> = {
     },
     render: (args) => {
         // Used to get the correct component in the Storybook for the simple cases (`TextInput` instead of `TextInput.Root`)
+        // More complex cases are using the Story `render` function
         const Component = (props: ComponentProps<typeof TextInput>) => <TextInput {...props} />;
         Component.displayName = 'TextInput';
         return <Component {...args} />;
