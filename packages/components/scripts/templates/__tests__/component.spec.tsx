@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { toKebabCase } from '../../transforms';
+import { toKebabCase, toUpperSnakeCase } from '../../transforms';
 import { type ComponentFileBuilderResponse } from '../../types';
 
 export const Setup = (componentName: string): ComponentFileBuilderResponse => ({
@@ -11,14 +11,14 @@ import { describe, expect, it } from 'vitest';
 
 import { ${componentName} } from '../${componentName}';
 
-const ${componentName}_TEST_ID = 'test-${toKebabCase(componentName)}';
-const ${componentName}_TEXT = 'sample ${toKebabCase(componentName)}';
+const ${toUpperSnakeCase(componentName)}_TEST_ID = 'test-${toKebabCase(componentName)}';
+const ${toUpperSnakeCase(componentName)}_TEXT = 'sample ${toKebabCase(componentName)}';
 
 describe('${componentName} Component', () => {
     it('should render foo text correctly', () => {
-        const { getByTestId } = render(<${componentName} data-test-id={${componentName}_TEST_ID}>{${componentName}_TEXT}</${componentName}>);
-        const component = getByTestId(${componentName}_TEST_ID);
-        expect(component).toContain(${componentName}_TEXT);
+        const { getByTestId } = render(<${componentName} data-test-id={${toUpperSnakeCase(componentName)}_TEST_ID}>{${toUpperSnakeCase(componentName)}_TEXT}</${componentName}>);
+        const component = getByTestId(${toUpperSnakeCase(componentName)}_TEST_ID);
+        expect(component).toContain(${toUpperSnakeCase(componentName)}_TEXT);
     });
 });
 `,
