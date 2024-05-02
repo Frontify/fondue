@@ -29,5 +29,12 @@ module.exports = {
                 ],
             },
         },
+        {
+            files: ['**/*.md/**/*'],
+            processor: 'markdown/markdown',
+            parserOptions: {
+                project: null,
+            },
+        },
     ],
 };
