@@ -49,31 +49,6 @@ export const Divider = ({
                     ...props,
                 })}
             />
-            {/* direction === 'horizontal' ? (
-                <div
-                    className={`tw-w-px tw-h-full tw-border-r tw-m-0 ${styleMap[style]}`}
-                    style={{ borderRightColor: color }}
-                    data-test-id="fondue-divider-line"
-                />
-            ) : (
-                <hr
-                    className={`tw-border-t tw-m-0 tw-w-full ${styleMap[style]}`}
-                    style={{ borderTopColor: color }}
-                    data-test-id="fondue-divider-line"
-                />
-                 ) */}
         </div>
-    ); /* (
-        <div
-            aria-hidden="true"
-            className={cn(
-                dividerStyles({
-                    ...props,
-                }),
-                'tw-full',
-            )}
-            style={{ height: heightMap[height] }}
-            data-test-id={dataTestId}
-        ></div>,
-    ); */
+    );
 };
