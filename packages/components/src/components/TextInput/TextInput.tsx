@@ -1,12 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ChangeEvent, forwardRef, type ReactNode } from 'react';
+import { type ChangeEvent, type KeyboardEvent, forwardRef, type ReactNode } from 'react';
 
 import { cn } from '#/utilities/styleUtilities';
 
 import { rootStyles, inputStyles, slotStyles, loadingStatusStyles } from './styles/textInputStyles';
 
 type TextInputProps = {
+    id?: string;
     children?: ReactNode;
     defaultValue?: string | number;
     value?: string | number;
@@ -16,31 +17,47 @@ type TextInputProps = {
      */
     type?: 'date' | 'email' | 'hidden' | 'number' | 'password' | 'search' | 'tel' | 'text' | 'time' | 'url';
     placeholder?: string;
+    disabled?: boolean;
+    required?: boolean;
+    spellCheck?: boolean;
+    readOnly?: boolean;
+    autoComplete?: string;
+    maxLength?: number;
     /**
      * Status of the input field
      * @default neutral
      */
     status?: 'neutral' | 'success' | 'error' | 'loading';
+    className?: string;
     onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
     onBlur?: (event: ChangeEvent<HTMLInputElement>) => void;
     onFocus?: (event: ChangeEvent<HTMLInputElement>) => void;
-    disabled?: boolean;
-    readOnly?: boolean;
-    className?: string;
+    onKeyDown?: (event: KeyboardEvent<HTMLInputElement>) => void;
+    onKeyUp?: (event: KeyboardEvent<HTMLInputElement>) => void;
+    'data-test-id'?: string;
+    'aria-label'?: string;
+    'aria-labelledby'?: string;
+    'aria-describedby'?: string;
 };
 
 const TextFieldRoot = forwardRef<HTMLInputElement, TextInputProps>(
-    ({ children, className, status = 'neutral', ...inputProps }, ref) => {
+    ({ children, className, status = 'neutral', 'data-test-id': dataTestId, ...inputProps }, ref) => {
         return (
             <div
                 className={cn(rootStyles, className)}
                 data-disabled={inputProps.disabled}
                 data-read-only={inputProps.readOnly}
                 data-status={status}
-                data-test-id="fondue-text-input"
+                data-test-id={dataTestId ?? 'fondue-text-input'}
             >
-                <div className={loadingStatusStyles} />
-                <input spellCheck="false" type="text" {...inputProps} ref={ref} className={inputStyles} />
+                <div className={loadingStatusStyles} data-test-id="fondue-text-input-loader" />
+                <input
+                    type="text"
+                    {...inputProps}
+                    ref={ref}
+                    className={inputStyles}
+                    aria-invalid={status === 'error'}
+                />
                 {children}
             </div>
         );
@@ -50,13 +67,13 @@ TextFieldRoot.displayName = 'TextField.Root';
 
 type TextFieldSlotProps = {
     children: ReactNode;
-    side?: 'left' | 'right';
+    name?: 'left' | 'right';
     className?: string;
 };
 
 const TextFieldSlot = forwardRef<HTMLDivElement, TextFieldSlotProps>(
-    ({ side, className, ...slotProps }, forwardedRef) => {
-        return <div data-side={side} {...slotProps} ref={forwardedRef} className={cn(slotStyles, className)} />;
+    ({ name, className, ...slotProps }, forwardedRef) => {
+        return <div data-name={name} {...slotProps} ref={forwardedRef} className={cn(slotStyles, className)} />;
     },
 );
 TextFieldSlot.displayName = 'TextField.Slot';

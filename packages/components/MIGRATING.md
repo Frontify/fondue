@@ -4,12 +4,15 @@ This document describes the changes that you need to make to your code to migrat
 
 ## Table of contents
 
--   [Migration guide](#migration-guide)
-    -   [Table of contents](#table-of-contents)
-    -   [Components](#components)
-        -   [Segmented Control](#segmented-control)
-            -   [Old](#old)
-            -   [New](#new)
+- [Migration guide](#migration-guide)
+  - [Table of contents](#table-of-contents)
+  - [Components](#components)
+    - [Segmented Control](#segmented-control)
+      - [Old](#old)
+      - [New](#new)
+    - [Text Input](#text-input)
+      - [Old](#old-1)
+      - [New](#new-1)
 
 ## Components
 
@@ -57,4 +60,100 @@ Changes:
         <IconIcon />
     </SegmentedControl.Item>
 </SegmentedControl.Root>
+```
+
+### Text Input
+
+Changes:
+
+-   The `TextInput` component can be used in 2 fashions:
+    -   Simple input: `TextInput`
+        ```tsx
+        <TextInput value={value} onChange={setValue} />
+        ```
+    -   Input with decorators / actions / ...: `TextInput.Root` and `TextInput.Slot` (see examples below)
+-   The properties `size` and `selectable` have been removed without replacement.
+-   The property `dotted` have been removed, `className` can be used to add custom border styles.
+-   The event `onEnterPressed` has been removed, use `onKeyDown` with a `event.key === 'Enter'` condition instead.
+-   The properties `decorator`, `clearable` / `onClear`, `copyable` and `extraActions` have been removed with the introduction of the `TextInput.Slot` component.
+
+    -   `TextInput.Slot` can be used to add decorators, actions, etc. to the input.
+
+        ```tsx
+        <TextInput.Root>
+            {/* The following replace `decorator` prop */}
+            <TextInput.Slot name="left">
+                <IconIcon />
+            </TextInput.Slot>
+
+            {/* The following replace `clearable`, `copyable` and `extraActions` props */}
+            <TextInput.Slot name="right">
+                <Button onClick={(event) => {}}>
+                    <IconClear />
+                </Button>
+
+                <Button onClick={(event) => {}}>
+                    <IconCopy />
+                </Button>
+            </TextInput.Slot>
+        </TextInput.Root>
+        ```
+
+-   Few properties have been renamed/type changed to match the React default props:
+    -   `autocomplete` (boolean) -> `autoComplete` (string like `current-password`, `new-password`, `one-time-code`, etc.)
+    -   `ariaLabel` -> `aria-label`
+    -   `readonly` -> `readOnly`
+    -   `spellcheck` -> `spellCheck`
+
+#### Old
+
+```tsx
+<TextInput
+    value={value}
+    onChange={setValue}
+    onEnterPressed={handleEnter}
+    decorator={<IconIcon />}
+    clearable
+    copyable
+    dotted
+    extraActions={[
+        {
+            icon: <IconIcon />,
+            onClick: handleExtraAction,
+            title: 'Extra action',
+            tooltip: {
+                content: TOOLTIP_CONTENT,
+            },
+        },
+    ]}
+/>
+```
+
+#### New
+
+```tsx
+<TextInput.Root value={value} onChange={setValue} onKeyDown={handleKeyDown} className="custom-border">
+    <TextInput.Slot name="left">
+        <IconIcon />
+    </TextInput.Slot>
+
+    <TextInput.Slot name="right">
+        <Button onClick={handleClear}>
+            <IconClear />
+        </Button>
+
+        <Button onClick={handleCopy}>
+            <IconCopy />
+        </Button>
+
+        <Tooltip.Root>
+            <Tooltip.Trigger>
+                <Button onClick={handleExtraAction} title="Extra action">
+                    <IconIcon />
+                </Button>
+            </Tooltip.Trigger>
+            <Tooltip.Content>{TOOLTIP_CONTENT}</Tooltip.Content>
+        </Tooltip.Root>
+    </TextInput.Slot>
+</TextInput.Root>
 ```
