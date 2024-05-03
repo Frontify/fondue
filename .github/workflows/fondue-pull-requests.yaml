@@ -10,9 +10,6 @@ concurrency:
     group: ${{ github.workflow }}-${{ github.ref }}
     cancel-in-progress: true
 
-env:
-    NUMBER_OF_RUNNERS: 8
-
 jobs:
     lint:
         name: Lint
@@ -137,7 +134,7 @@ jobs:
               run: pnpm build:tokens
 
             - name: Component Tests
-              run: pnpm run --stream --filter {packages/fondue} test --spec $(node ./.github/lib/cypress-matrix.mjs ${{ env.NUMBER_OF_RUNNERS }} ${{ matrix.containers }})
+              run: pnpm run --stream --filter {packages/fondue} test --spec $(node ./.github/lib/cypress-matrix.mjs ${{ strategy.job-total }} ${{ matrix.containers }})
 
     component-tests:
         name: Component Tests
