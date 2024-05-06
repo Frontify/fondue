@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconIcon } from '@frontify/fondue-icons';
+import { IconIcon, IconPen } from '@frontify/fondue-icons';
 import { action } from '@storybook/addon-actions';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { type ComponentProps } from 'react';
@@ -85,7 +85,7 @@ export const WithLeftAndRightItem: Story = {
     render: (args) => (
         <TextInput.Root {...args}>
             <TextInput.Slot name="left">
-                <IconIcon size={16} />
+                <IconPen size={16} />
             </TextInput.Slot>
             <TextInput.Slot name="right">
                 <IconIcon size={16} />
@@ -116,7 +116,7 @@ export const Success: Story = {
     render: (args) => (
         <TextInput.Root {...args}>
             <TextInput.Slot name="left">
-                <IconIcon size={16} />
+                <IconPen size={16} />
             </TextInput.Slot>
             <TextInput.Slot name="right">
                 <IconIcon size={16} />
@@ -132,7 +132,7 @@ export const Errored: Story = {
     render: (args) => (
         <TextInput.Root {...args}>
             <TextInput.Slot name="left">
-                <IconIcon size={16} />
+                <IconPen size={16} />
             </TextInput.Slot>
             <TextInput.Slot name="right">
                 <IconIcon size={16} />
@@ -148,7 +148,7 @@ export const Loading: Story = {
     render: (args) => (
         <TextInput.Root {...args}>
             <TextInput.Slot name="left">
-                <IconIcon size={16} />
+                <IconPen size={16} />
             </TextInput.Slot>
             <TextInput.Slot name="right">
                 <IconIcon size={16} />

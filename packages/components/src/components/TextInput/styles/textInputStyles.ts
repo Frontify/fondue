@@ -12,10 +12,10 @@ export const rootStyles =
 export const inputStyles =
     'tw-w-full tw-bg-transparent tw-flex tw-items-center [text-align:inherit] tw-indent-3 tw-outline-none tw-rounded-[calc(var(--radius)_-_var(--line-width))] ' +
     // Remove border-radius and text-indent/padding on the left if there’s a left-side slot
-    'has-[~_:not([data-name="right"])]:tw-indent-0 has-[~_:not([data-name="right"])]:tw-pl-0 has-[~_:not([data-name="right"])]:tw-rounded-l-[0px] ' +
+    'has-[~_div:not([data-name="right"])]:tw-indent-0 has-[~_:not([data-name="right"])]:tw-pl-0 has-[~_:not([data-name="right"])]:tw-rounded-l-[0px] ' +
     // Remove border-radius and padding on the right if there’s a right-side slot
     'has-[~_[data-name="right"]]:tw-pr-0 has-[~_[data-name="right"]]:tw-rounded-r-[0px] ' +
-    '' +
+    '[~_:not([data-name="right"])_~_:not([data-name="left"])]:tw-pr-0 [~_:not([data-name="right"])_~_:not([data-name="left"])]:tw-rounded-r-[0px]' +
     // Readonly or disabled styles
     'read-only:tw-cursor-text disabled:tw-cursor-text read-only:tw-text-text-disabled disabled:tw-text-text-disabled ';
 
@@ -24,8 +24,9 @@ export const slotStyles =
     // Left slot
     '[&:not([data-name="right"])]:-tw-order-1 [&:not([data-name="right"])]:tw-ml-px [&:not([data-name="right"])]:tw-mr-0 ' +
     // Right slot
-    'data-[name="right"]:tw-order-0 data-[name="right"]:tw-ml-0 data-[name="right"]:tw-mr-px ' +
-    '' +
+    'data-[name="right"]:tw-order-[0] data-[name="right"]:tw-ml-0 data-[name="right"]:tw-mr-px ' +
+    // 2 slots without any name should be implicitly ordered
+    '[&:not([data-name="right"])_~_:not([data-name="left"])]:tw-order-[0] [&:not([data-name="right"])_~_:not([data-name="left"])]:tw-ml-0 [&:not([data-name="right"])_~_:not([data-name="left"])]:tw-mr-px ' +
     // Readonly or disabled color styles
     'group-data-[read-only="true"]:tw-text-text-disabled group-data-[disabled="true"]:tw-text-text-disabled ';
 

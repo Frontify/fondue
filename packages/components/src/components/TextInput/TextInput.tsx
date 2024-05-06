@@ -1,10 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconCheckMark, IconCross } from '@frontify/fondue-icons';
 import { type ChangeEvent, type KeyboardEvent, forwardRef, type ReactNode } from 'react';
 
-import { cn } from '#/utilities/styleUtilities';
-
 import { rootStyles, inputStyles, slotStyles, loadingStatusStyles } from './styles/textInputStyles';
+
+import { cn } from '#/utilities/styleUtilities';
 
 type TextInputProps = {
     id?: string;
@@ -58,6 +59,17 @@ const TextFieldRoot = forwardRef<HTMLInputElement, TextInputProps>(
                     className={inputStyles}
                     aria-invalid={status === 'error'}
                 />
+
+                <IconCheckMark
+                    size={16}
+                    className='tw-hidden group-data-[status="success"]:tw-flex tw-text-text-positive tw-h-full tw-items-center tw-ml-3'
+                />
+
+                <IconCross
+                    size={16}
+                    className='tw-hidden group-data-[status="error"]:tw-flex tw-text-text-negative tw-h-full tw-items-center tw-ml-3'
+                />
+
                 {children}
             </div>
         );
@@ -73,7 +85,15 @@ type TextFieldSlotProps = {
 
 const TextFieldSlot = forwardRef<HTMLDivElement, TextFieldSlotProps>(
     ({ name, className, ...slotProps }, forwardedRef) => {
-        return <div data-name={name} {...slotProps} ref={forwardedRef} className={cn(slotStyles, className)} />;
+        return (
+            <div
+                data-slot={true}
+                data-name={name}
+                {...slotProps}
+                ref={forwardedRef}
+                className={cn(slotStyles, className)}
+            />
+        );
     },
 );
 TextFieldSlot.displayName = 'TextField.Slot';
