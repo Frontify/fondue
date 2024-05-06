@@ -16,15 +16,15 @@ export default {
     tags: ['autodocs'],
     argTypes: {
         size: {
-            options: ButtonSize,
+            options: Object.values(ButtonSize),
             control: { type: 'radio' },
         },
         style: {
-            options: ButtonStyle,
+            options: Object.values(ButtonStyle),
             control: { type: 'radio' },
         },
         emphasis: {
-            options: ButtonEmphasis,
+            options: Object.values(ButtonEmphasis),
             control: { type: 'radio' },
         },
     },

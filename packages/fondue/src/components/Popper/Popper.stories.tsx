@@ -31,7 +31,7 @@ export default {
         arrowCustomColors: {
             description:
                 'Color Styling for the popper arrow using tailwind classes and before prefix, example: "before:tw-border before:tw-border-line-x-strong before:tw-bg-base"',
-            control: { type: 'string' },
+            control: { type: 'text' },
         },
         isDetached: {
             description: 'if true, the popper container will detach from the Trigger position and act as a Dialog',

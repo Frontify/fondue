@@ -10,7 +10,7 @@ module.exports = {
         },
     },
     parserOptions: {
-        project: ['tsconfig.json', 'tsconfig.node.json'],
+        EXPERIMENTAL_useProjectService: true,
         tsconfigRootDir: __dirname,
         sourceType: 'module',
     },
