@@ -3,7 +3,7 @@
 import { sv } from '#/utilities/styleUtilities';
 
 export const tooltipContentStyles = sv({
-    base: 'tw-bg-box-neutral-mighty tw-text-box-neutral-mighty-inverse tw-border tw-border-line-mighty tw-rounded-md tw-max-w-48 tw-min-w-[--radix-tooltip-trigger-width] tw-text-sm',
+    base: 'tw-bg-box-neutral-mighty tw-text-box-neutral-mighty-inverse tw-rounded tw-max-w-48 tw-text-sm tw-overflow-hidden',
     variants: {
         padding: {
             spacious: 'tw-px-3 tw-py-2',
