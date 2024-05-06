@@ -21,7 +21,6 @@ export default {
         children: {
             description: 'Input element to be bonded to label.',
             name: 'children',
-            control: { type: 'ReactElement' },
         },
         label: {
             description: 'Label object to pass the for the label element.',
@@ -38,7 +37,7 @@ export default {
             description: 'Error text to display on error state.',
             name: 'errorText',
             defaultValue: undefined,
-            control: { type: 'string' },
+            control: { type: 'text' },
         },
         errorTextColor: {
             description: 'Token alisa to apply to the error message text.',
@@ -50,7 +49,7 @@ export default {
             description: 'Helper text to display on helper state.',
             name: 'helperText',
             defaultValue: undefined,
-            control: { type: 'string' },
+            control: { type: 'text' },
         },
         helperTextColor: {
             description: 'Token alisa to apply to the helper message text.',
