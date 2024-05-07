@@ -12,10 +12,10 @@ export const rootStyles =
 export const inputStyles =
     'tw-w-full tw-bg-transparent tw-flex tw-items-center [text-align:inherit] tw-indent-3 tw-outline-none tw-rounded-[calc(var(--radius)_-_var(--line-width))] ' +
     // Remove border-radius and text-indent/padding on the left if there’s a left-side slot
-    'has-[~_div:not([data-name="right"])]:tw-indent-0 has-[~_:not([data-name="right"])]:tw-pl-0 has-[~_:not([data-name="right"])]:tw-rounded-l-[0px] ' +
+    'has-[~_div:not([data-name="right"])]:tw-indent-0 has-[~_:not([data-name="right"])]:tw-pl-0 has-[~_:not([data-name="right"])]:tw-rounded-l-none ' +
     // Remove border-radius and padding on the right if there’s a right-side slot
-    'has-[~_[data-name="right"]]:tw-pr-0 has-[~_[data-name="right"]]:tw-rounded-r-[0px] ' +
-    '[~_:not([data-name="right"])_~_:not([data-name="left"])]:tw-pr-0 [~_:not([data-name="right"])_~_:not([data-name="left"])]:tw-rounded-r-[0px]' +
+    'has-[~_[data-name="right"]]:tw-pr-0 has-[~_[data-name="right"]]:tw-rounded-r-none ' +
+    '[~_:not([data-name="right"])_~_:not([data-name="left"])]:tw-pr-0 [~_:not([data-name="right"])_~_:not([data-name="left"])]:tw-rounded-r-none' +
     // Readonly or disabled styles
     'read-only:tw-cursor-text disabled:tw-cursor-text read-only:tw-text-text-disabled disabled:tw-text-text-disabled ';
 
@@ -31,7 +31,7 @@ export const slotStyles =
     'group-data-[read-only="true"]:tw-text-text-disabled group-data-[disabled="true"]:tw-text-text-disabled ';
 
 export const loadingStatusStyles =
-    'group-data-[status="loading"]:tw-flex tw-hidden tw-absolute tw-size-6 -tw-top-3 -tw-right-3 tw-pointer-events-none ' +
+    'tw-flex tw-absolute tw-size-6 -tw-top-3 -tw-right-3 tw-pointer-events-none ' +
     'tw-items-center tw-justify-center tw-bg-base tw-border tw-border-line-strong tw-rounded-full ' +
     'before:tw-flex before:tw-items-center before:tw-justify-center before:tw-size-4 before:tw-rounded-full ' +
     'before:tw-border before:tw-border-solid before:tw-border-text-interactive before:tw-border-t-transparent before:tw-animate-spin';

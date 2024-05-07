@@ -42,16 +42,20 @@ type TextInputProps = {
 };
 
 const TextFieldRoot = forwardRef<HTMLInputElement, TextInputProps>(
-    ({ children, className, status = 'neutral', 'data-test-id': dataTestId, ...inputProps }, ref) => {
+    (
+        { children, className, status = 'neutral', 'data-test-id': dataTestId = 'fondue-text-input', ...inputProps },
+        ref,
+    ) => {
         return (
             <div
                 className={cn(rootStyles, className)}
                 data-disabled={inputProps.disabled}
                 data-read-only={inputProps.readOnly}
                 data-status={status}
-                data-test-id={dataTestId ?? 'fondue-text-input'}
+                data-test-id={dataTestId}
             >
-                <div className={loadingStatusStyles} data-test-id="fondue-text-input-loader" />
+                {status === 'loading' ? <div className={loadingStatusStyles} data-test-id="loader" /> : null}
+
                 <input
                     type="text"
                     {...inputProps}
@@ -60,15 +64,21 @@ const TextFieldRoot = forwardRef<HTMLInputElement, TextInputProps>(
                     aria-invalid={status === 'error'}
                 />
 
-                <IconCheckMark
-                    size={16}
-                    className='tw-hidden group-data-[status="success"]:tw-flex tw-text-text-positive tw-h-full tw-items-center tw-ml-3'
-                />
+                {status === 'success' ? (
+                    <IconCheckMark
+                        size={16}
+                        className="tw-flex tw-text-text-positive tw-h-full tw-items-center tw-ml-3"
+                        data-test-id="success-icon"
+                    />
+                ) : null}
 
-                <IconCross
-                    size={16}
-                    className='tw-hidden group-data-[status="error"]:tw-flex tw-text-text-negative tw-h-full tw-items-center tw-ml-3'
-                />
+                {status === 'error' ? (
+                    <IconCross
+                        size={16}
+                        className="tw-flex tw-text-text-negative tw-h-full tw-items-center tw-ml-3"
+                        data-test-id="error-icon"
+                    />
+                ) : null}
 
                 {children}
             </div>

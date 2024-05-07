@@ -6,7 +6,9 @@ import sinon from 'sinon';
 import { TextInput } from '../TextInput';
 
 const TEXT_INPUT_TEXT = 'sample text input';
-const TEXT_INPUT_LOADER_TEST_ID = 'fondue-text-input-loader';
+const TEXT_INPUT_LOADER_TEST_ID = 'loader';
+const TEXT_INPUT_SUCCESS_ICON_TEST_ID = 'success-icon';
+const TEXT_INPUT_ERROR_ICON_TEST_ID = 'error-icon';
 
 test('render with the correct value', async ({ mount }) => {
     const component = await mount(<TextInput value={TEXT_INPUT_TEXT} />);
@@ -25,6 +27,7 @@ test('render the success status', async ({ mount }) => {
 
     await expect(component).toHaveAttribute('data-status', 'success');
     await expect(component).toHaveCSS('border', '1px solid rgb(21, 129, 111)');
+    await expect(component.getByTestId(TEXT_INPUT_SUCCESS_ICON_TEST_ID)).toBeVisible();
 });
 
 test('render the loading status', async ({ mount }) => {
@@ -41,6 +44,7 @@ test('render the error status ', async ({ mount }) => {
     await expect(component).toHaveAttribute('data-status', 'error');
     await expect(component.getByRole('textbox')).toHaveAttribute('aria-invalid', 'true');
     await expect(component).toHaveCSS('border', '1px solid rgb(217, 47, 76)');
+    await expect(component.getByTestId(TEXT_INPUT_ERROR_ICON_TEST_ID)).toBeVisible();
 });
 
 test('emits on change event', async ({ mount }) => {

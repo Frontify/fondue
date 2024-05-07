@@ -88,11 +88,11 @@ Changes:
 
             {/* The following replace `clearable`, `copyable` and `extraActions` props */}
             <TextInput.Slot name="right">
-                <Button onClick={(event) => {}}>
+                <Button onPress={(event) => {}}>
                     <IconClear />
                 </Button>
 
-                <Button onClick={(event) => {}}>
+                <Button onPress={(event) => {}}>
                     <IconCopy />
                 </Button>
             </TextInput.Slot>
@@ -138,17 +138,17 @@ Changes:
     </TextInput.Slot>
 
     <TextInput.Slot name="right">
-        <Button onClick={handleClear}>
+        <Button onPress={handleClear}>
             <IconClear />
         </Button>
 
-        <Button onClick={handleCopy}>
+        <Button onPress={handleCopy}>
             <IconCopy />
         </Button>
 
         <Tooltip.Root>
             <Tooltip.Trigger>
-                <Button onClick={handleExtraAction} title="Extra action">
+                <Button onPress={handleExtraAction} title="Extra action">
                     <IconIcon />
                 </Button>
             </Tooltip.Trigger>
