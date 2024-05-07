@@ -32,7 +32,7 @@ export default {
             defaultValue: true,
         },
         placeholder: {
-            control: { type: 'string' },
+            control: { type: 'text' },
             description: 'Text for placeholder',
             defaultValue: undefined,
         },
@@ -48,7 +48,6 @@ export default {
             table: { disable: true },
         },
         onChange: {
-            control: { type: 'callback' },
             description: 'onChange callback',
             action: 'onchange',
             defaultValue: undefined,

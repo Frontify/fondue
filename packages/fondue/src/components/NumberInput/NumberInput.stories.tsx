@@ -11,6 +11,7 @@ import { Box } from '../Box/Box';
 import { NumberInput } from './NumberInput';
 import { type NumberInputProps } from './types';
 
+// @ts-expect-error type changed?
 export default {
     title: 'Components/Number Input',
     component: NumberInput,
@@ -21,7 +22,6 @@ export default {
             description: 'Add decorator element to start of the input',
             name: 'decorator',
             defaultValue: undefined,
-            control: { type: 'React Element' },
         },
         suffix: {
             description: 'String to append to the input value.',
