@@ -48,13 +48,7 @@ const TextFieldRoot = forwardRef<HTMLInputElement, TextInputProps>(
         ref,
     ) => {
         return (
-            <div
-                className={cn(rootStyles, className)}
-                data-disabled={inputProps.disabled}
-                data-read-only={inputProps.readOnly}
-                data-status={status}
-                data-test-id={dataTestId}
-            >
+            <div className={cn(rootStyles, className)} data-status={status} data-test-id={dataTestId}>
                 {status === 'loading' ? <div className={loadingStatusStyles} data-test-id="loader" /> : null}
 
                 <input
