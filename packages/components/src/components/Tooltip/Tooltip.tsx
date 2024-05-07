@@ -21,7 +21,7 @@ export type TooltipContentProps = {
     children: string | ReactElement<HTMLParagraphElement | HTMLSpanElement>;
 };
 
-const TooltipRoot = ({ children, enterDelay = 700 }: TooltipRootProps) => {
+export const TooltipRoot = ({ children, enterDelay = 700 }: TooltipRootProps) => {
     return (
         <RadixTooltip.Provider>
             <RadixTooltip.Root delayDuration={enterDelay}>{children}</RadixTooltip.Root>
@@ -30,12 +30,12 @@ const TooltipRoot = ({ children, enterDelay = 700 }: TooltipRootProps) => {
 };
 TooltipRoot.displayName = 'Tooltip.Root';
 
-const TooltipTrigger = ({ children }: TooltipTriggerProps) => {
+export const TooltipTrigger = ({ children }: TooltipTriggerProps) => {
     return <RadixTooltip.Trigger>{children}</RadixTooltip.Trigger>;
 };
 TooltipTrigger.displayName = 'Tooltip.Trigger';
 
-const TooltipContent = ({ children, className, maxWidth, ignoreCollisions, ...props }: TooltipContentProps) => {
+export const TooltipContent = ({ children, className, maxWidth, ignoreCollisions, ...props }: TooltipContentProps) => {
     return (
         <RadixTooltip.Portal>
             <RadixTooltip.Content
