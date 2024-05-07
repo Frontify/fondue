@@ -36,7 +36,7 @@ export const segmentedControlActiveIndicatorStyles =
     'peer-[[data-state=on]:nth-child(10)]:tw-translate-x-[900%]';
 
 export const segmentedControlItemSeparatorStyles =
-    '-tw-z-[1] tw-min-w-px tw-w-px tw-my-[3px] -tw-mx-[0.5px] tw-bg-line-strong tw-transition-opacity tw-ease-out ' +
+    '-tw-z-[1] tw-min-w-px tw-w-px -tw-mx-[0.5px] tw-bg-line-strong tw-transition-opacity tw-ease-out ' +
     // Hide the separator when the state is on to rely on the active item's border
     'group-first:tw-opacity-0 group-first:tw-ease-in ' +
     'group-data-[state=on]:tw-opacity-0 group-data-[state=on]:tw-ease-in ' +
