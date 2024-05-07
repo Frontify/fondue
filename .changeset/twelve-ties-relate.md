@@ -2,4 +2,4 @@
 "@frontify/fondue": minor
 ---
 
-fix: added extra small 2xs screen breakpoint to tailwind config
+fix: change the `xs` breakpoint from `480px` to `390px`
