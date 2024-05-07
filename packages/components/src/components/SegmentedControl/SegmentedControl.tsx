@@ -16,6 +16,7 @@ import {
 } from './styles/segmentedControlStyles';
 
 export type SegmentedControlRootProps = {
+    id?: string;
     children: ReactNode;
     defaultValue: string;
     value?: string;
