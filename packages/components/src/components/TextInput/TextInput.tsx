@@ -3,9 +3,9 @@
 import { IconCheckMark, IconCross } from '@frontify/fondue-icons';
 import { type ChangeEvent, type KeyboardEvent, forwardRef, type ReactNode } from 'react';
 
-import { rootStyles, inputStyles, slotStyles, loadingStatusStyles } from './styles/textInputStyles';
-
 import { cn } from '#/utilities/styleUtilities';
+
+import { rootStyles, inputStyles, slotStyles, loadingStatusStyles } from './styles/textInputStyles';
 
 type TextInputProps = {
     id?: string;
