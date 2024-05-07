@@ -9,6 +9,7 @@ import { rootStyles, inputStyles, slotStyles, loadingStatusStyles } from './styl
 
 type TextInputProps = {
     id?: string;
+    name?: string;
     children?: ReactNode;
     defaultValue?: string | number;
     value?: string | number;
