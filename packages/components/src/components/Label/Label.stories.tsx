@@ -88,8 +88,8 @@ export const WithCheckbox: Story = {
         STextInput.displayName = 'TextInput';
 
         return (
-            <div className="tw-flex tw-flex-col tw-gap-2">
-                <Checkbox id="input" defaultValue="indeterminate" />
+            <div className="tw-flex tw-gap-2">
+                <Checkbox id="input" />
                 <Label {...args} htmlFor="input" />
             </div>
         );
