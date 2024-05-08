@@ -6,9 +6,9 @@ import sinon from 'sinon';
 import { TextInput } from '../TextInput';
 
 const TEXT_INPUT_TEXT = 'sample text input';
-const TEXT_INPUT_LOADER_TEST_ID = 'loader';
-const TEXT_INPUT_SUCCESS_ICON_TEST_ID = 'success-icon';
-const TEXT_INPUT_ERROR_ICON_TEST_ID = 'error-icon';
+const TEXT_INPUT_LOADER_TEST_ID = 'fondue-text-input-loader';
+const TEXT_INPUT_SUCCESS_ICON_TEST_ID = 'fondue-text-input-success-icon';
+const TEXT_INPUT_ERROR_ICON_TEST_ID = 'fondue-text-input-error-icon';
 
 test('render with the correct value', async ({ mount }) => {
     const component = await mount(<TextInput value={TEXT_INPUT_TEXT} />);

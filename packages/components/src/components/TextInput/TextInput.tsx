@@ -49,7 +49,9 @@ const TextFieldRoot = forwardRef<HTMLInputElement, TextInputProps>(
     ) => {
         return (
             <div className={cn(rootStyles, className)} data-status={status} data-test-id={dataTestId}>
-                {status === 'loading' ? <div className={loadingStatusStyles} data-test-id="loader" /> : null}
+                {status === 'loading' ? (
+                    <div className={loadingStatusStyles} data-test-id={`${dataTestId}-loader`} />
+                ) : null}
 
                 <input
                     type="text"
@@ -63,7 +65,7 @@ const TextFieldRoot = forwardRef<HTMLInputElement, TextInputProps>(
                     <IconCheckMark
                         size={16}
                         className="tw-flex tw-text-text-positive tw-h-full tw-items-center tw-ml-3"
-                        data-test-id="success-icon"
+                        data-test-id={`${dataTestId}-success-icon`}
                     />
                 ) : null}
 
@@ -71,7 +73,7 @@ const TextFieldRoot = forwardRef<HTMLInputElement, TextInputProps>(
                     <IconCross
                         size={16}
                         className="tw-flex tw-text-text-negative tw-h-full tw-items-center tw-ml-3"
-                        data-test-id="error-icon"
+                        data-test-id={`${dataTestId}-error-icon`}
                     />
                 ) : null}
 
