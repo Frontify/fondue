@@ -20,6 +20,7 @@ export default defineConfig({
         ctViteConfig: {
             plugins: [tsConfigPaths()],
         },
+        testIdAttribute: 'data-test-id',
     },
     projects: [
         { name: 'chromium', use: { ...devices['Desktop Chrome'] } },

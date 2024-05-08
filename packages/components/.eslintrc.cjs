@@ -10,7 +10,7 @@ module.exports = {
         },
     },
     parserOptions: {
-        project: ['tsconfig.json', 'tsconfig.node.json'],
+        EXPERIMENTAL_useProjectService: true,
         tsconfigRootDir: __dirname,
         sourceType: 'module',
     },
@@ -27,6 +27,13 @@ module.exports = {
                         },
                     },
                 ],
+            },
+        },
+        {
+            files: ['**/*.md/**/*'],
+            processor: 'markdown/markdown',
+            parserOptions: {
+                project: null,
             },
         },
     ],

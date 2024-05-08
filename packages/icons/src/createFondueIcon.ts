@@ -90,7 +90,7 @@ export const createFondueIcon = (iconName: string, iconNode: IconNode): FondueIc
         },
     );
 
-    Component.displayName = iconName;
+    Component.displayName = `Icon${iconName}`;
 
     return Component;
 };

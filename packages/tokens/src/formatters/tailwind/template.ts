@@ -6,7 +6,7 @@ type TemplateOptions = {
 };
 
 export const template = ({ theme, plugin }: TemplateOptions) => {
-    return `const plugin = require('tailwindcss/plugin')
+    return `import plugin from 'tailwindcss/plugin';
 
   export default {
       darkMode: "class",
@@ -22,7 +22,7 @@ export const template = ({ theme, plugin }: TemplateOptions) => {
 };
 
 export const templateDebug = ({ theme, plugin }: TemplateOptions) => {
-    return `const plugin = require('tailwindcss/plugin')
+    return `import plugin from 'tailwindcss/plugin';
 
   export default {
       darkMode: "class",
