@@ -4,8 +4,9 @@ import { IconIcon } from '@frontify/fondue-icons';
 import { action } from '@storybook/addon-actions';
 import { type Meta, type StoryObj } from '@storybook/react';
 
-import { SegmentedControl, type SegmentedControlRootProps } from './SegmentedControl';
 import { Label } from '../Label/Label';
+
+import { SegmentedControl, type SegmentedControlRootProps } from './SegmentedControl';
 
 type Story = StoryObj<SegmentedControlRootProps>;
 const meta: Meta<typeof SegmentedControl.Root> = {
