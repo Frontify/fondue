@@ -56,4 +56,4 @@ export const DividerComponent = (
 
 DividerComponent.displayName = 'Divider';
 
-export const Divider = forwardRef<HTMLDivElement | null, DividerProps>(DividerComponent);
+export const Divider = forwardRef<HTMLDivElement, DividerProps>(DividerComponent);
