@@ -27,7 +27,7 @@ const meta: Meta<typeof Checkbox> = {
         const [value, setValue] = useState(args.value);
 
         const handleToggle = (event: FormEvent) => {
-            action('onBlur')(event);
+            action('onChange')(event);
             setValue((prevIsChecked) => (prevIsChecked === 'indeterminate' ? true : !prevIsChecked));
         };
 
