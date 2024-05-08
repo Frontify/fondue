@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import * as Separator from '@radix-ui/react-separator';
 import { type ReactElement } from 'react';
 
 import { cn } from '#/utilities/styleUtilities';
 
 import { dividerStyles } from './styles/dividerStyles';
-import { lineStyles } from './styles/lineStyles';
 
 type DividerStyle = 'noline' | 'dashed' | 'solid';
 type DividerPadding = 'none' | 'small' | 'medium' | 'large';
@@ -22,7 +22,6 @@ export type DividerProps = {
 };
 
 const DIVIDER_TEST_ID = 'fondue-divider';
-const DIVIDER_LINE_TEST_ID_SUFFIX = '-line';
 
 export const Divider = ({
     'data-test-id': dataTestId = DIVIDER_TEST_ID,
@@ -31,8 +30,7 @@ export const Divider = ({
     ...props
 }: DividerProps): ReactElement => {
     return (
-        <div
-            aria-hidden="true"
+        <Separator.Root
             className={cn(
                 dividerStyles({
                     direction,
@@ -41,14 +39,6 @@ export const Divider = ({
                 className,
             )}
             data-test-id={dataTestId}
-        >
-            <hr
-                data-test-id={`${dataTestId}${DIVIDER_LINE_TEST_ID_SUFFIX}`}
-                className={lineStyles({
-                    direction,
-                    ...props,
-                })}
-            />
-        </div>
+        />
     );
 };

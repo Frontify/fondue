@@ -56,6 +56,7 @@
         "@frontify/fondue-icons": "workspace:^",
         "@frontify/fondue-tokens": "workspace:^",
         "@playwright/experimental-ct-react": "1.41.2",
+        "@radix-ui/react-separator": "^1.0.3",
         "@storybook/addon-a11y": "^8.0.8",
         "@storybook/addon-actions": "^8.0.8",
         "@storybook/addon-essentials": "^8.0.8",

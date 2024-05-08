@@ -48,4 +48,11 @@ export const Vertical: Story = {
     args: {
         direction: 'vertical',
     },
+    decorators: [
+        (Story) => (
+            <div data-test-id="storbook-wrapper" className="tw-h-8">
+                <Story />
+            </div>
+        ),
+    ],
 };
