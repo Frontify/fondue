@@ -6,9 +6,9 @@ import { type Meta, type StoryObj } from '@storybook/react';
 import { type ComponentProps } from 'react';
 
 import { Button } from '../Button/Button';
+import { Label } from '../Label/Label';
 
 import { TextInput } from './TextInput';
-import { Label } from '../Label/Label';
 
 type Story = StoryObj<typeof TextInput>;
 const meta: Meta<typeof TextInput> = {
