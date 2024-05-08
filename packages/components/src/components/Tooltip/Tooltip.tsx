@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import * as RadixTooltip from '@radix-ui/react-tooltip';
-import { type ReactElement, type ReactNode } from 'react';
+import { forwardRef, type ForwardedRef, type ReactElement, type ReactNode } from 'react';
 
 import { cn } from '#/utilities/styleUtilities';
 
@@ -21,21 +21,26 @@ export type TooltipContentProps = {
     children: string | ReactElement<HTMLParagraphElement | HTMLSpanElement>;
 };
 
-export const TooltipRoot = ({ children, enterDelay = 700 }: TooltipRootProps) => {
+export const TooltipRoot = ({ children, enterDelay = 700 }: TooltipRootProps, ref: ForwardedRef<HTMLDivElement>) => {
     return (
         <RadixTooltip.Provider>
-            <RadixTooltip.Root delayDuration={enterDelay}>{children}</RadixTooltip.Root>
+            <RadixTooltip.Root ref={ref} delayDuration={enterDelay}>
+                {children}
+            </RadixTooltip.Root>
         </RadixTooltip.Provider>
     );
 };
 TooltipRoot.displayName = 'Tooltip.Root';
 
-export const TooltipTrigger = ({ children }: TooltipTriggerProps) => {
-    return <RadixTooltip.Trigger>{children}</RadixTooltip.Trigger>;
+export const TooltipTrigger = ({ children }: TooltipTriggerProps, ref: ForwardedRef<HTMLDivElement>) => {
+    return <RadixTooltip.Trigger ref={ref}>{children}</RadixTooltip.Trigger>;
 };
 TooltipTrigger.displayName = 'Tooltip.Trigger';
 
-export const TooltipContent = ({ children, className, maxWidth, ignoreCollisions, ...props }: TooltipContentProps) => {
+export const TooltipContent = (
+    { children, className, maxWidth, ignoreCollisions, ...props }: TooltipContentProps,
+    ref: ForwardedRef<HTMLDivElement>,
+) => {
     return (
         <RadixTooltip.Portal>
             <RadixTooltip.Content
@@ -49,6 +54,7 @@ export const TooltipContent = ({ children, className, maxWidth, ignoreCollisions
                 avoidCollisions={!ignoreCollisions}
                 collisionPadding={16}
                 sideOffset={8}
+                ref={ref}
                 {...props}
             >
                 {children}
@@ -63,7 +69,7 @@ export const TooltipContent = ({ children, className, maxWidth, ignoreCollisions
 TooltipContent.displayName = 'Tooltip.Content';
 
 export const Tooltip = {
-    Root: TooltipRoot,
-    Trigger: TooltipTrigger,
-    Content: TooltipContent,
+    Root: forwardRef<HTMLDivElement, TooltipRootProps>(TooltipRoot),
+    Trigger: forwardRef<HTMLDivElement, TooltipTriggerProps>(TooltipTrigger),
+    Content: forwardRef<HTMLDivElement, TooltipContentProps>(TooltipContent),
 };
