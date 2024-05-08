@@ -4,17 +4,94 @@ This document describes the changes that you need to make to your code to migrat
 
 ## Table of contents
 
-- [Migration guide](#migration-guide)
-  - [Table of contents](#table-of-contents)
-  - [Components](#components)
-    - [Segmented Control](#segmented-control)
-      - [Old](#old)
-      - [New](#new)
-    - [Text Input](#text-input)
-      - [Old](#old-1)
-      - [New](#new-1)
+-   [Migration guide](#migration-guide)
+    -   [Table of contents](#table-of-contents)
+    -   [Components](#components)
+        -   [Checkbox](#checkbox)
+            -   [Old](#old)
+            -   [New](#new)
+        -   [Label (old `InputLabel`)](#label-old-inputlabel)
+            -   [Old](#old-1)
+            -   [New](#new-1)
+        -   [Segmented Control](#segmented-control)
+            -   [Old](#old-2)
+            -   [New](#new-2)
+        -   [Text Input](#text-input)
+            -   [Old](#old-3)
+            -   [New](#new-3)
 
 ## Components
+
+### Checkbox
+
+Changes:
+
+-   The `state` property has been removed and replaced by `value` (`boolean | 'indeterminate'`).
+-   The `label` property has been replaced by the `Label` component as a sibling of the `Checkbox`.
+    -   `hideLabel` have been removed as Label is now a sibling component.
+-   The `onChange` function signature has changed to expose the full event instead of the value.
+-   The properties `value` and `groupInputProps` have been removed without replacement.
+-   The property `ariaLabel` has been renamed to `aria-label`.
+-   The size `CheckboxSize.XLarge` has been removed without replacement.
+
+#### Old
+
+```tsx
+<Checkbox
+    state={CheckboxState.Mixed}
+    label="My Checkbox"
+    size={CheckboxSize.Large}
+    onChange={setValue}
+    tooltip={{ triggerIcon: <IconInfo />, content: 'Tooltip' }}
+    value="a random value"
+    ariaLabel="My Checkbox"
+/>
+```
+
+#### New
+
+```tsx
+<Checkbox id="checkbox-id" size="large" value="indeterminate" onChange={() => {}} aria-label="My Checkbox">
+<Label htmlFor="checkbox-id">
+    My Checkbox
+    <Tooltip.Root>
+        <Tooltip.Trigger>
+            <IconInfo />
+        </Tooltip.Trigger>
+        <Tooltip.Content>Tooltip</Tooltip.Content>
+    </Tooltip.Root>
+</Label>
+```
+
+### Label (old `InputLabel`)
+
+Changes:
+
+-   The component has been renamed from `InputLabel` to `Label`.
+-   The `clickable` and `bold` properties have been removed without replacement.
+-   The `tooltip` property has been removed and replaced by the `Tooltip` component which can be used as a `children`.
+
+#### Old
+
+```tsx
+<InputLabel htmlFor="my-input" required tooltip={[{ triggerIcon: <IconInfo />, content: 'Tooltip' }]}>
+    My Label
+</InputLabel>
+```
+
+#### New
+
+```tsx
+<Label htmlFor="my-input" required>
+    My Label
+    <Tooltip.Root>
+        <Tooltip.Trigger>
+            <IconInfo />
+        </Tooltip.Trigger>
+        <Tooltip.Content>Tooltip</Tooltip.Content>
+    </Tooltip.Root>
+</Label>
+```
 
 ### Segmented Control
 
