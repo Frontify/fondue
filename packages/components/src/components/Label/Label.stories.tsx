@@ -3,15 +3,15 @@
 import { type Meta, type StoryObj } from '@storybook/react';
 import { type ComponentProps } from 'react';
 
+import { Checkbox } from '../Checkbox/Checkbox';
 import { TextInput } from '../TextInput/TextInput';
 
-import { Label } from './Label';
-import { Checkbox } from '../Checkbox/Checkbox';
+import { Label, LabelComponent } from './Label';
 
-type Story = StoryObj<typeof Label>;
-const meta: Meta<typeof Label> = {
+type Story = StoryObj<typeof LabelComponent>;
+const meta: Meta<typeof LabelComponent> = {
     title: 'Components/Label',
-    component: Label,
+    component: LabelComponent,
     tags: ['autodocs'],
     parameters: {
         status: {

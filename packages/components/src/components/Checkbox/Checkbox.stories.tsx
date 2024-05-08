@@ -6,12 +6,12 @@ import { type FormEvent, useState } from 'react';
 
 import { Label } from '../Label/Label';
 
-import { Checkbox } from './Checkbox';
+import { Checkbox, CheckboxComponent } from './Checkbox';
 
-type Story = StoryObj<typeof Checkbox>;
-const meta: Meta<typeof Checkbox> = {
+type Story = StoryObj<typeof CheckboxComponent>;
+const meta: Meta<typeof CheckboxComponent> = {
     title: 'Components/Checkbox',
-    component: Checkbox,
+    component: CheckboxComponent,
     tags: ['autodocs'],
     parameters: {
         status: {
