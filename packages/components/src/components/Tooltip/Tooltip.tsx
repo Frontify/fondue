@@ -21,19 +21,21 @@ export type TooltipContentProps = {
     children: string | ReactElement<HTMLParagraphElement | HTMLSpanElement>;
 };
 
-export const TooltipRoot = ({ children, enterDelay = 700 }: TooltipRootProps, ref: ForwardedRef<HTMLDivElement>) => {
+export const TooltipRoot = ({ children, enterDelay = 700 }: TooltipRootProps) => {
     return (
         <RadixTooltip.Provider>
-            <RadixTooltip.Root ref={ref} delayDuration={enterDelay}>
-                {children}
-            </RadixTooltip.Root>
+            <RadixTooltip.Root delayDuration={enterDelay}>{children}</RadixTooltip.Root>
         </RadixTooltip.Provider>
     );
 };
 TooltipRoot.displayName = 'Tooltip.Root';
 
-export const TooltipTrigger = ({ children }: TooltipTriggerProps, ref: ForwardedRef<HTMLDivElement>) => {
-    return <RadixTooltip.Trigger ref={ref}>{children}</RadixTooltip.Trigger>;
+export const TooltipTrigger = ({ children }: TooltipTriggerProps, ref: ForwardedRef<HTMLButtonElement>) => {
+    return (
+        <RadixTooltip.Trigger asChild ref={ref}>
+            {children}
+        </RadixTooltip.Trigger>
+    );
 };
 TooltipTrigger.displayName = 'Tooltip.Trigger';
 
@@ -69,7 +71,7 @@ export const TooltipContent = (
 TooltipContent.displayName = 'Tooltip.Content';
 
 export const Tooltip = {
-    Root: forwardRef<HTMLDivElement, TooltipRootProps>(TooltipRoot),
-    Trigger: forwardRef<HTMLDivElement, TooltipTriggerProps>(TooltipTrigger),
+    Root: TooltipRoot,
+    Trigger: forwardRef<HTMLButtonElement, TooltipTriggerProps>(TooltipTrigger),
     Content: forwardRef<HTMLDivElement, TooltipContentProps>(TooltipContent),
 };
