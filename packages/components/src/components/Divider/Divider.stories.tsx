@@ -19,6 +19,7 @@ const meta: Meta<typeof Divider> = {
             type: 'released',
         },
     },
+    render: (args) => <Divider {...args} />,
 };
 export default meta;
 
