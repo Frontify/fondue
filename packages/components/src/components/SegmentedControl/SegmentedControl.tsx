@@ -13,7 +13,7 @@ import {
     segmentedControlItemSeparatorStyles,
     segmentedControlItemStyles,
     segmentedControlRootStyles,
-} from './styles/SegmentedControlStyles';
+} from './styles/segmentedControlStyles';
 
 export type SegmentedControlRootProps = {
     children: ReactNode;

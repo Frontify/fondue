@@ -14,8 +14,8 @@ export const segmentedControlItemStyles =
 export const segmentedControlActiveIndicatorStyles =
     'tw-hidden tw-absolute -tw-z-[1] tw-top-0 tw-left-0 tw-h-full tw-pointer-events-none tw-transition-transform ' +
     // Outline of active item
-    "before:tw-content-[''] before:tw-inset-0 before:tw-absolute before:tw-rounded-[calc(var(--radius)-1px)] before:tw-bg-white peer-disabled:before:tw-bg-box-disabled " +
-    'before:tw-shadow-[0_0_0_1px_var(--line-color-xx-strong)] peer-disabled:before:tw-shadow-[0_0_0_1px_var(--line-color-x-strong)] ' +
+    "before:tw-content-[''] before:tw-inset-0 before:tw-absolute before:tw-rounded-[calc(var(--radius)-var(--line-width))] before:tw-bg-white peer-disabled:before:tw-bg-box-disabled " +
+    'before:tw-shadow-[0_0_0_var(--line-width)_var(--line-color-xx-strong)] peer-disabled:before:tw-shadow-[0_0_0_var(--line-width)_var(--line-color-x-strong)] ' +
     // Show the active indicator when the state is on
     'peer-data-[state=on]:tw-block ' +
     // Used to animate the active indicator horizontally
@@ -36,7 +36,7 @@ export const segmentedControlActiveIndicatorStyles =
     'peer-[[data-state=on]:nth-child(10)]:tw-translate-x-[900%]';
 
 export const segmentedControlItemSeparatorStyles =
-    '-tw-z-[1] tw-min-w-px tw-w-px tw-my-[3px] -tw-mx-[0.5px] tw-bg-line-strong tw-transition-opacity tw-ease-out ' +
+    '-tw-z-[1] tw-min-w-px tw-w-px -tw-mx-[0.5px] tw-bg-line-strong tw-transition-opacity tw-ease-out ' +
     // Hide the separator when the state is on to rely on the active item's border
     'group-first:tw-opacity-0 group-first:tw-ease-in ' +
     'group-data-[state=on]:tw-opacity-0 group-data-[state=on]:tw-ease-in ' +

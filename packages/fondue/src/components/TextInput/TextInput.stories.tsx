@@ -34,7 +34,7 @@ export default {
             control: { type: 'select' },
         },
         spellcheck: {
-            options: { undefined, true: true, false: false },
+            options: [undefined, true, false],
             control: { type: 'select' },
         },
         placeholder: { type: 'string' },
@@ -118,7 +118,7 @@ WithCharacterDecorator.args = {
 
 const PasswordArgTypes = {
     obfuscated: { control: { type: 'boolean' }, table: { disable: false } },
-};
+} as const;
 
 const PasswordArgs = {
     type: TextInputType.Password,

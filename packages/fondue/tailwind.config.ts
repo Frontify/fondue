@@ -124,7 +124,7 @@ export default {
                 width: 'width',
             },
             screens: {
-                xs: '480px',
+                xs: '390px',
                 sm: '600px',
                 md: '768px',
                 lg: '1024px',

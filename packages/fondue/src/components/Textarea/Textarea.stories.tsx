@@ -29,6 +29,7 @@ const ExtraActions: ExtraAction[] = [
     },
 ];
 
+// @ts-expect-error - type changed?
 export default {
     title: 'Components/Textarea',
     component: Textarea,

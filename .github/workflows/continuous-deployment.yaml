@@ -7,9 +7,6 @@ on:
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
-env:
-    NUMBER_OF_RUNNERS: 8
-
 jobs:
     lint:
         name: Lint
@@ -22,8 +19,6 @@ jobs:
 
             - name: Use pnpm
               uses: pnpm/action-setup@v3
-              with:
-                  version: 9
 
             - name: Use Node.js
               uses: actions/setup-node@v4
@@ -63,8 +58,6 @@ jobs:
 
             - name: Use pnpm
               uses: pnpm/action-setup@v3
-              with:
-                  version: 9
 
             - name: Use Node.js
               uses: actions/setup-node@v4
@@ -115,7 +108,6 @@ jobs:
             - name: Use pnpm
               uses: pnpm/action-setup@v3
               with:
-                  version: 9
                   run_install: false
 
             - name: Get pnpm store directory
@@ -142,7 +134,7 @@ jobs:
               run: pnpm build:tokens
 
             - name: Component Tests
-              run: pnpm run --stream --filter {packages/fondue} test --spec $(node ./.github/lib/cypress-matrix.mjs ${{ env.NUMBER_OF_RUNNERS }} ${{ matrix.containers }})
+              run: pnpm run --stream --filter {packages/fondue} test --spec $(node ./.github/lib/cypress-matrix.mjs ${{ strategy.job-total }} ${{ matrix.containers }})
 
     component-tests:
         name: Component Tests
@@ -156,7 +148,6 @@ jobs:
             - name: Use pnpm
               uses: pnpm/action-setup@v3
               with:
-                  version: 9
                   run_install: false
 
             - name: Use Node.js
@@ -194,8 +185,6 @@ jobs:
 
             - name: Use pnpm
               uses: pnpm/action-setup@v3
-              with:
-                  version: 9
 
             - name: Use Node.js
               uses: actions/setup-node@v4

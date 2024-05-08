@@ -31,5 +31,5 @@ export const Default: Story = {
     },
 };
 `,
-    extension: '.stories.ts',
+    extension: '.stories.tsx',
 });

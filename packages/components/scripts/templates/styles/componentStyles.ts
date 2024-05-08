@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { toCamelCase } from 'scripts/transforms';
-
+import { toCamelCase } from '../../transforms';
 import { type ComponentFileBuilderResponse } from '../../types';
 
 export const Setup = (componentName: string): ComponentFileBuilderResponse => ({
@@ -13,6 +12,6 @@ export const ${toCamelCase(componentName)}Styles = sv({
     base: 'tw-block',
 });
 `,
-    extension: 'Styles.tsx',
+    extension: 'Styles.ts',
     subdirectory: 'styles',
 });
