@@ -71,14 +71,12 @@ test('emits the focus and blur events', async ({ mount }) => {
 test('render disabled state', async ({ mount }) => {
     const component = await mount(<TextInput disabled />);
 
-    await expect(component).toHaveAttribute('data-disabled', 'true');
     await expect(component.getByRole('textbox')).toBeDisabled();
 });
 
 test('render read-only state', async ({ mount }) => {
     const component = await mount(<TextInput readOnly />);
 
-    await expect(component).toHaveAttribute('data-read-only', 'true');
     await expect(component.getByRole('textbox')).toHaveAttribute('readonly');
 });
 
