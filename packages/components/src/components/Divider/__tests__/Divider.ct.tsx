@@ -4,8 +4,6 @@ import { expect, test } from '@playwright/experimental-ct-react';
 
 import { Divider } from '../Divider';
 
-const DIVIDER_LINE_TEST_ID = '[data-test-id="fondue-divider-line"]';
-
 test('should render without error', async ({ mount }) => {
     const component = await mount(<Divider />);
     await expect(component).toBeVisible();
@@ -23,80 +21,80 @@ test('should render with custom classname', async ({ mount }) => {
 
 test('should render with style solid', async ({ mount }) => {
     const component = await mount(<Divider style="solid" />);
-    await expect(component.locator(DIVIDER_LINE_TEST_ID)).toHaveClass(/tw-border-solid/);
+    await expect(component).toHaveClass(/tw-border-solid/);
 });
 
 test('should render with style dashed', async ({ mount }) => {
     const component = await mount(<Divider style="dashed" />);
-    await expect(component.locator(DIVIDER_LINE_TEST_ID)).toHaveClass(/tw-border-dashed/);
+    await expect(component).toHaveClass(/tw-border-dashed/);
 });
 
 test('should render with style noline', async ({ mount }) => {
     const component = await mount(<Divider style="noline" />);
-    await expect(component.locator(DIVIDER_LINE_TEST_ID)).toHaveClass(/tw-border-none/);
+    await expect(component).toHaveClass(/tw-border-none/);
 });
 
 test('should render with color weak', async ({ mount }) => {
     const component = await mount(<Divider color="weak" />);
-    await expect(component.locator(DIVIDER_LINE_TEST_ID)).toHaveClass(/tw-border-line-weak/);
+    await expect(component).toHaveClass(/tw-border-line-weak/);
 });
 
 test('should render with color default', async ({ mount }) => {
     const component = await mount(<Divider color="default" />);
-    await expect(component.locator(DIVIDER_LINE_TEST_ID)).toHaveClass(/tw-border-line /);
+    await expect(component).toHaveClass(/tw-border-line /);
 });
 
 test('should render with color strong', async ({ mount }) => {
     const component = await mount(<Divider color="strong" />);
-    await expect(component.locator(DIVIDER_LINE_TEST_ID)).toHaveClass(/tw-border-line-strong/);
+    await expect(component).toHaveClass(/tw-border-line-strong/);
 });
 
 test('should render with color x-strong', async ({ mount }) => {
     const component = await mount(<Divider color="x-strong" />);
-    await expect(component.locator(DIVIDER_LINE_TEST_ID)).toHaveClass(/tw-border-line-x-strong/);
+    await expect(component).toHaveClass(/tw-border-line-x-strong/);
 });
 
 test('should render with direction vertical', async ({ mount }) => {
     const component = await mount(<Divider direction="vertical" />);
-    await expect(component.locator(DIVIDER_LINE_TEST_ID)).toHaveClass(/tw-border-r/);
+    await expect(component).toHaveClass(/tw-border-r/);
 });
 
 test('should render with padding none horizontal', async ({ mount }) => {
     const component = await mount(<Divider padding="none" />);
-    await expect(component).toHaveClass(/tw-h-1/);
+    await expect(component).not.toHaveClass(/tw-my-/);
 });
 
 test('should render with padding none vertical', async ({ mount }) => {
     const component = await mount(<Divider direction="vertical" padding="none" />);
-    await expect(component).toHaveClass(/tw-w-1/);
+    await expect(component).not.toHaveClass(/tw-mx-/);
 });
 
 test('should render with padding small horizontal', async ({ mount }) => {
     const component = await mount(<Divider padding="small" />);
-    await expect(component).toHaveClass(/tw-h-9/);
+    await expect(component).toHaveClass(/tw-my-4/);
 });
 
 test('should render with padding small vertical', async ({ mount }) => {
     const component = await mount(<Divider direction="vertical" padding="small" />);
-    await expect(component).toHaveClass(/tw-w-9/);
+    await expect(component).toHaveClass(/tw-mx-4/);
 });
 
 test('should render with padding medium horizontal', async ({ mount }) => {
     const component = await mount(<Divider padding="medium" />);
-    await expect(component).toHaveClass(/tw-h-16/);
+    await expect(component).toHaveClass(/tw-my-7/);
 });
 
 test('should render with padding medium vertical', async ({ mount }) => {
     const component = await mount(<Divider direction="vertical" padding="medium" />);
-    await expect(component).toHaveClass(/tw-w-16/);
+    await expect(component).toHaveClass(/tw-mx-7/);
 });
 
 test('should render with padding large horizontal', async ({ mount }) => {
     const component = await mount(<Divider padding="large" />);
-    await expect(component).toHaveClass(/tw-h-24/);
+    await expect(component).toHaveClass(/tw-my-12/);
 });
 
 test('should render with padding large vertical', async ({ mount }) => {
     const component = await mount(<Divider direction="vertical" padding="large" />);
-    await expect(component).toHaveClass(/tw-w-24/);
+    await expect(component).toHaveClass(/tw-mx-12/);
 });

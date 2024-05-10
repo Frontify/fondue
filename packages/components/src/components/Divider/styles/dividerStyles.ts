@@ -12,8 +12,8 @@ export const dividerStyles = sv({
         color: {
             weak: 'tw-border-line-weak',
             default: 'tw-border-line',
-            strong: 'tw-bg-border-strong',
-            'x-strong': 'tw-bg-border-x-strong',
+            strong: 'tw-border-line-strong',
+            'x-strong': 'tw-border-x-line-strong',
         },
         style: {
             solid: 'tw-border-solid',
@@ -25,32 +25,32 @@ export const dividerStyles = sv({
         {
             direction: 'horizontal',
             padding: 'small',
-            class: 'tw-my-9',
+            class: 'tw-my-4',
         },
         {
             direction: 'horizontal',
             padding: 'medium',
-            class: 'tw-my-16',
+            class: 'tw-my-7',
         },
         {
             direction: 'horizontal',
             padding: 'large',
-            class: 'tw-my-24',
+            class: 'tw-my-12',
         },
         {
             direction: 'vertical',
             padding: 'small',
-            class: 'tw-mx-9',
+            class: 'tw-mx-4',
         },
         {
             direction: 'vertical',
             padding: 'medium',
-            class: 'tw-mx-16',
+            class: 'tw-mx-7',
         },
         {
             direction: 'vertical',
             padding: 'large',
-            class: 'tw-mx-24',
+            class: 'tw-mx-12',
         },
     ],
     defaultVariants: {
