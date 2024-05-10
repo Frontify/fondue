@@ -50,36 +50,36 @@ test('should render progress 42%', async ({ mount }) => {
     await expect(container).toHaveCSS('--loading-bar-value', '42%');
 });
 
-test('should render progress 100%', async ({ mount }) => {
+test('should render progress 100 as 100%', async ({ mount }) => {
     const container = await mount(<LoadingBar value={100} aria-label="Fondue Loading Bar" />);
 
     await expect(container).toHaveCSS('--loading-bar-value', '100%');
 });
 
-test('should render progress 70% with 140% max', async ({ mount }) => {
+test('should render progress 70 with 140 max as 50%', async ({ mount }) => {
     const container = await mount(<LoadingBar value={70} max={140} aria-label="Fondue Loading Bar" />);
 
     await expect(container).toHaveCSS('--loading-bar-value', '50%');
 });
 
-test('should render progress 0% with 140% max', async ({ mount }) => {
+test('should render progress 0 with 140 max as 0%', async ({ mount }) => {
     const container = await mount(<LoadingBar value={0} max={140} aria-label="Fondue Loading Bar" />);
 
     await expect(container).toHaveCSS('--loading-bar-value', '0%');
 });
 
-test('should render progress 140% with 140% max', async ({ mount }) => {
+test('should render progress 140 with 140 max as 100%', async ({ mount }) => {
     const container = await mount(<LoadingBar value={140} max={140} aria-label="Fondue Loading Bar" />);
 
     await expect(container).toHaveCSS('--loading-bar-value', '100%');
 });
 
-test('should render progress 199% with 200% max', async ({ mount }) => {
+test('should render progress 199 with 200 max as 100%', async ({ mount }) => {
     const container = await mount(<LoadingBar value={199} max={200} aria-label="Fondue Loading Bar" />);
 
     await expect(container).toHaveCSS('--loading-bar-value', '100%');
 });
-test('should render progress 199% with 200% max', async ({ mount }) => {
+test('should render progress 198 with 200 max as 100%', async ({ mount }) => {
     const container = await mount(<LoadingBar value={198} max={200} aria-label="Fondue Loading Bar" />);
 
     await expect(container).toHaveCSS('--loading-bar-value', '99%');
