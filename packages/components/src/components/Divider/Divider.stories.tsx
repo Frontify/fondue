@@ -9,6 +9,12 @@ const meta: Meta<typeof Divider> = {
     title: 'Components/Divider',
     component: Divider,
     tags: ['autodocs'],
+    args: {
+        color: 'default',
+        style: 'solid',
+        padding: 'medium',
+        direction: 'horizontal',
+    },
     parameters: {
         status: {
             type: 'released',
@@ -18,31 +24,36 @@ const meta: Meta<typeof Divider> = {
 export default meta;
 
 export const Primary: Story = {
-    args: {
-        color: '#FF0000',
-        style: 'dashed',
-        height: 'medium',
-    },
-};
-
-export const Minimal: Story = {
     args: {},
 };
 
 export const CustomColor: Story = {
     args: {
-        color: '#FF0000',
+        color: 'strong',
     },
 };
 
 export const CustomStyle: Story = {
     args: {
-        style: 'dotted',
+        style: 'dashed',
     },
 };
 
 export const CustomHeight: Story = {
     args: {
-        height: 'large',
+        padding: 'large',
     },
+};
+
+export const Vertical: Story = {
+    args: {
+        direction: 'vertical',
+    },
+    decorators: [
+        (Story) => (
+            <div className="tw-h-8">
+                <Story />
+            </div>
+        ),
+    ],
 };
