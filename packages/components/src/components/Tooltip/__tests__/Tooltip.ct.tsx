@@ -72,24 +72,6 @@ test('should have correct padding compact', async ({ mount, page }) => {
     await expect(tooltipContent).toHaveClass(/tw-px-2 tw-py-1/);
 });
 
-test('should have correct padding compact', async ({ mount, page }) => {
-    const component = await mount(
-        <Tooltip.Root>
-            <Tooltip.Trigger data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
-                <button>Hover over me!</button>
-            </Tooltip.Trigger>
-            <Tooltip.Content data-test-id={TOOLTIP_CONTENT_TEST_ID} padding="compact">
-                {TOOLTIP_TEXT}
-            </Tooltip.Content>
-        </Tooltip.Root>,
-    );
-    const tooltipContent = page.getByTestId(TOOLTIP_CONTENT_TEST_ID);
-    await expect(component).toBeVisible();
-    await component.hover();
-    await expect(tooltipContent).toBeVisible();
-    await expect(tooltipContent).toHaveClass(/tw-px-2 tw-py-1/);
-});
-
 test('should have correct max width', async ({ mount, page }) => {
     const component = await mount(
         <Tooltip.Root>
