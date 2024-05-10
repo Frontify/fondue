@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import * as ProgressRadixPrimitive from '@radix-ui/react-progress';
-import { type CSSProperties, forwardRef, type ElementRef } from 'react';
+import { forwardRef, useMemo, type CSSProperties, type ElementRef } from 'react';
 
 import { loadingBarContainerStyles, loadingBarStyles } from './styles/loadingBarStyles';
 
@@ -47,6 +47,13 @@ export const LoadingBar = forwardRef<ElementRef<typeof ProgressRadixPrimitive.Ro
         },
         ref,
     ) => {
+        const progressValue = useMemo(() => {
+            if (value === null || value > max) {
+                return 100;
+            }
+            return Math.round(value / (max / 100));
+        }, [value, max]);
+
         return (
             <ProgressRadixPrimitive.Root
                 ref={ref}
@@ -55,7 +62,7 @@ export const LoadingBar = forwardRef<ElementRef<typeof ProgressRadixPrimitive.Ro
                 aria-busy={value !== max}
                 value={value}
                 max={max}
-                style={value ? ({ '--loading-bar-value': `${value}%` } as CSSProperties) : {}}
+                style={{ '--loading-bar-value': `${progressValue}%` } as CSSProperties}
                 {...props}
             >
                 <ProgressRadixPrimitive.Indicator
