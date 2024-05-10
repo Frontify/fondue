@@ -37,3 +37,57 @@ test('should render in indeterminate state', async ({ mount }) => {
     await expect(container).toHaveAttribute('aria-busy', 'true');
     await expect(container).not.toHaveAttribute('aria-valuetext');
 });
+
+test('should render progress 0%', async ({ mount }) => {
+    const container = await mount(<LoadingBar value={0} aria-label="Fondue Loading Bar" />);
+
+    await expect(container).toHaveCSS('--loading-bar-value', '0%');
+});
+
+test('should render progress 42%', async ({ mount }) => {
+    const container = await mount(<LoadingBar value={42} aria-label="Fondue Loading Bar" />);
+
+    await expect(container).toHaveCSS('--loading-bar-value', '42%');
+});
+
+test('should render progress 100%', async ({ mount }) => {
+    const container = await mount(<LoadingBar value={100} aria-label="Fondue Loading Bar" />);
+
+    await expect(container).toHaveCSS('--loading-bar-value', '100%');
+});
+
+test('should render progress 70% with 140% max', async ({ mount }) => {
+    const container = await mount(<LoadingBar value={70} max={140} aria-label="Fondue Loading Bar" />);
+
+    await expect(container).toHaveCSS('--loading-bar-value', '50%');
+});
+
+test('should render progress 0% with 140% max', async ({ mount }) => {
+    const container = await mount(<LoadingBar value={0} max={140} aria-label="Fondue Loading Bar" />);
+
+    await expect(container).toHaveCSS('--loading-bar-value', '0%');
+});
+
+test('should render progress 140% with 140% max', async ({ mount }) => {
+    const container = await mount(<LoadingBar value={140} max={140} aria-label="Fondue Loading Bar" />);
+
+    await expect(container).toHaveCSS('--loading-bar-value', '100%');
+});
+
+test('should render progress 199% with 200% max', async ({ mount }) => {
+    const container = await mount(<LoadingBar value={199} max={200} aria-label="Fondue Loading Bar" />);
+
+    await expect(container).toHaveCSS('--loading-bar-value', '100%');
+});
+test('should render progress 199% with 200% max', async ({ mount }) => {
+    const container = await mount(<LoadingBar value={198} max={200} aria-label="Fondue Loading Bar" />);
+
+    await expect(container).toHaveCSS('--loading-bar-value', '99%');
+});
+
+test('should render intermediate state with max value', async ({ mount }) => {
+    const container = await mount(<LoadingBar value={null} max={200} aria-label="Fondue Loading Bar" />);
+
+    await expect(container).toHaveAttribute('aria-busy', 'true');
+    await expect(container).not.toHaveAttribute('aria-valuetext');
+});
