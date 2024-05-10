@@ -6,6 +6,7 @@ import { type Meta, type StoryObj } from '@storybook/react';
 import { type ComponentProps } from 'react';
 
 import { Button } from '../Button/Button';
+import { Label } from '../Label/Label';
 
 import { TextInput } from './TextInput';
 
@@ -106,6 +107,23 @@ export const WithButtons: Story = {
                 </Button>
             </TextInput.Slot>
         </TextInput.Root>
+    ),
+};
+
+export const WithLabel: Story = {
+    render: (args) => (
+        <div className="tw-flex tw-flex-col tw-gap-2">
+            <Label htmlFor="text-input">Label</Label>
+
+            <TextInput.Root {...args} id="text-input">
+                <TextInput.Slot name="left">
+                    <IconPen size={16} />
+                </TextInput.Slot>
+                <TextInput.Slot name="right">
+                    <IconIcon size={16} />
+                </TextInput.Slot>
+            </TextInput.Root>
+        </div>
     ),
 };
 

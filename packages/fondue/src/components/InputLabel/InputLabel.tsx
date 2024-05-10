@@ -22,6 +22,9 @@ export type InputLabelProps = {
     'data-test-id'?: string;
 };
 
+/**
+ * @deprecated Use `Label` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md the migration guide}.
+ */
 export const InputLabel = ({
     children,
     htmlFor,
