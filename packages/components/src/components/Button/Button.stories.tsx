@@ -17,15 +17,6 @@ const meta: Meta<typeof Button> = {
         },
     },
     args: {
-        type: 'button',
-        style: 'default',
-        emphasis: 'default',
-        size: 'medium',
-        rounding: 'medium',
-        disabled: false,
-        hugWidth: true,
-        children: 'Button Text',
-        aspect: 'default',
         onPress: action('onPress'),
     },
 };
@@ -41,7 +32,11 @@ export const Default: Story = {
     ),
 };
 
-export const TextLabelOnly: Story = {};
+export const TextLabelOnly: Story = {
+    args: {
+        children: 'Button Text',
+    },
+};
 
 export const WithIcon: Story = {
     name: 'Icon Only',

@@ -23,27 +23,26 @@ type ButtonAspect = 'default' | 'square';
 
 export type ButtonProps = {
     /**
-     * @default null
+     * The function to be called when the button is clicked, tapped or triggered via keyboard
+     *
+     * @default () => {}
      */
-    type?: ButtonType;
+    onPress?: (event?: MouseEvent<HTMLButtonElement>) => void;
     /**
-     * @default null
-     */
-    title?: string;
-    /**
-     * @default 'default'
+     * @description The style of the button
+     * @default default
      */
     style?: ButtonStyle;
     /**
-     * @default 'strong'
+     * @default strong
      */
     emphasis?: ButtonEmphasis;
     /**
-     * @default 'medium'
+     * @default medium
      */
     size?: ButtonSize;
     /**
-     * @default 'medium'
+     * @default medium
      */
     rounding?: ButtonRounding;
     /**
@@ -51,19 +50,28 @@ export type ButtonProps = {
      */
     disabled?: boolean;
     /**
-     * @default 'default'
+     * @default default
      */
     aspect?: ButtonAspect;
     /**
      * @default true
      */
     hugWidth?: boolean;
-    children?: ReactNode;
-    onPress?: (event?: MouseEvent<HTMLButtonElement>) => void;
+    /**
+     * @default null
+     */
+    type?: ButtonType;
+    /**
+     * @required true
+     * @description The title of the button
+     * @default null
+     */
+    title?: string;
     'aria-label'?: string;
     'aria-describedby'?: string;
     'data-test-id'?: string;
     className?: string;
+    children?: ReactNode;
 };
 
 export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(

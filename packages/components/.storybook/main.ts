@@ -19,6 +19,9 @@ const config: StorybookConfig = {
         autodocs: 'tag',
         defaultName: 'Documentation',
     },
+    typescript: {
+        reactDocgen: 'react-docgen-typescript',
+    },
     viteFinal(config) {
         // @ts-expect-error untyped name property
         config.plugins = (config.plugins ?? []).filter((plugin) => plugin?.name !== 'vite:dts');
