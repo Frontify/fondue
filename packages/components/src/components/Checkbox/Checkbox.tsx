@@ -2,38 +2,65 @@
 
 import { IconCheckMark, IconMinus } from '@frontify/fondue-icons';
 import * as CheckboxPrimitive from '@radix-ui/react-checkbox';
-import { type FormEvent, forwardRef, type ForwardedRef } from 'react';
+import { forwardRef, type FormEvent, type ForwardedRef } from 'react';
 
 import { cn } from '#/utilities/styleUtilities';
 
 import { checkboxIndicatorStyles, checkboxStyles } from './styles/checkboxStyles';
 
 export type CheckboxProps = {
-    id?: string;
-    name?: string;
-    defaultValue?: boolean | 'indeterminate';
-    value?: boolean | 'indeterminate';
+    /**
+     * Size of the checkbox
+     * @default default
+     */
     size?: 'default' | 'large';
+    /**
+     * Emphasis of the checkbox
+     * @default default
+     */
     emphasis?: 'default' | 'weak';
+    /**
+     * Initial State of the checkbox
+     * @default false
+     */
+    defaultValue?: boolean | 'indeterminate';
+    /**
+     * Externally controlled state of the checkbox
+     */
+    value?: boolean | 'indeterminate';
     disabled?: boolean;
     required?: boolean;
     readOnly?: boolean;
-    className?: string;
+    id?: string;
+    name?: string;
+    /**
+     * Function to be called when the checkbox is clicked
+     * @default () => {}
+     */
     onChange?: (event: FormEvent<HTMLButtonElement>) => void;
+    /**
+     * Function to be called when the checkbox is is unfocused
+     * @default () => {}
+     */
     onBlur?: (event: FormEvent<HTMLButtonElement>) => void;
+    /**
+     * Function to be called when the checkbox is focused
+     * @default () => {}
+     */
     onFocus?: (event: FormEvent<HTMLButtonElement>) => void;
     'data-test-id'?: string;
     'aria-label'?: string;
     'aria-labelledby'?: string;
     'aria-describedby'?: string;
+    className?: string;
 };
 
 export const CheckboxComponent = (
     {
         className,
-        value,
+        value = false,
         onChange,
-        defaultValue,
+        defaultValue = false,
         'data-test-id': dataTestId = 'fondue-checkbox',
         ...props
     }: CheckboxProps,

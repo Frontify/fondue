@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group';
-import { type ReactNode, forwardRef } from 'react';
+import { forwardRef, type ReactNode } from 'react';
 
 import { useControllableState } from '#/hooks/useControllableState';
 
@@ -17,11 +17,20 @@ import {
 
 export type SegmentedControlRootProps = {
     id?: string;
-    children: ReactNode;
+    /**
+     * Initial value when uncontrolled
+     */
     defaultValue: string;
+    /**
+     * Externally controlled value
+     */
     value?: string;
-    onValueChange?: (value: string) => void;
     disabled?: boolean;
+    /**
+     * Callback when the value changes
+     */
+    onValueChange?: (value: string) => void;
+    children: ReactNode;
 };
 
 export const SegmentedControlRoot = forwardRef<HTMLDivElement, SegmentedControlRootProps>(

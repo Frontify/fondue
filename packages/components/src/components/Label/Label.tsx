@@ -1,13 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import * as LabelPrimitive from '@radix-ui/react-label';
-import { type ForwardedRef, forwardRef, type ReactNode } from 'react';
+import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
 
 import { cn } from '#/utilities/styleUtilities';
 
 export type LabelProps = {
     children: ReactNode;
     htmlFor: string;
+    /**
+     * Display required marker next to the label
+     * @default false
+     */
     required?: boolean;
     className?: string;
     'data-test-id'?: string;

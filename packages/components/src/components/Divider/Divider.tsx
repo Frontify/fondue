@@ -14,19 +14,19 @@ type DividerColor = 'weak' | 'default' | 'strong' | 'x-strong';
 
 export type DividerProps = {
     /**
-     * @default 'solid'
+     * @default solid
      */
     style?: DividerStyle;
     /**
-     * @default 'medium'
+     * @default medium
      */
     padding?: DividerPadding;
     /**
-     * @default 'default'
+     * @default default
      */
     color?: DividerColor;
     /**
-     * @default 'horizontal'
+     * @default horizontal
      */
     direction?: DividerDirection;
     'data-test-id'?: string;

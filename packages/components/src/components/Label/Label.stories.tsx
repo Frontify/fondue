@@ -7,12 +7,12 @@ import { type ComponentProps } from 'react';
 import { Checkbox } from '../Checkbox/Checkbox';
 import { TextInput } from '../TextInput/TextInput';
 
-import { Label, LabelComponent } from './Label';
+import { Label } from './Label';
 
-type Story = StoryObj<typeof LabelComponent>;
-const meta: Meta<typeof LabelComponent> = {
+type Story = StoryObj<typeof Label>;
+const meta: Meta<typeof Label> = {
     title: 'Components/Label',
-    component: LabelComponent,
+    component: Label,
     tags: ['autodocs'],
     parameters: {
         status: {

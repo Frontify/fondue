@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import * as ProgressRadixPrimitive from '@radix-ui/react-progress';
-import { type CSSProperties, forwardRef, type ElementRef } from 'react';
+import { forwardRef, type CSSProperties, type ElementRef } from 'react';
 
 import { loadingBarContainerStyles, loadingBarStyles } from './styles/loadingBarStyles';
 
@@ -16,15 +16,11 @@ export type LoadingBarProps = {
      */
     max?: number;
     /**
-     * @default 'fondue-loading-bar'
-     */
-    'data-test-id'?: string;
-    /**
      * @default true
      */
     rounded?: boolean;
     /**
-     * @default 'default'
+     * @default default
      */
     style?: 'default' | 'positive' | 'negative';
     /**
@@ -32,6 +28,10 @@ export type LoadingBarProps = {
      */
     size?: 'small' | 'medium' | 'large' | 'x-large';
     getValueLabel?: (value: number, max: number) => string;
+    /**
+     * @default fondue-loading-bar
+     */
+    'data-test-id'?: string;
 } & ({ 'aria-label': string } | { 'aria-labelledby': string });
 
 export const LoadingBar = forwardRef<ElementRef<typeof ProgressRadixPrimitive.Root>, LoadingBarProps>(

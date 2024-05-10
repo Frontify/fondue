@@ -16,9 +16,6 @@ const meta: Meta<typeof LoadingBar> = {
     },
     args: {
         value: 42,
-        max: 100,
-        rounded: true,
-        'aria-label': 'Fondue Loading Bar',
     },
 };
 

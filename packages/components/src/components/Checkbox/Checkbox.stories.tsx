@@ -2,16 +2,16 @@
 
 import { action } from '@storybook/addon-actions';
 import { type Meta, type StoryObj } from '@storybook/react';
-import { type FormEvent, useState } from 'react';
+import { useState, type FormEvent } from 'react';
 
 import { Label } from '../Label/Label';
 
-import { Checkbox, CheckboxComponent } from './Checkbox';
+import { Checkbox } from './Checkbox';
 
-type Story = StoryObj<typeof CheckboxComponent>;
-const meta: Meta<typeof CheckboxComponent> = {
+type Story = StoryObj<typeof Checkbox>;
+const meta: Meta<typeof Checkbox> = {
     title: 'Components/Checkbox',
-    component: CheckboxComponent,
+    component: Checkbox,
     tags: ['autodocs'],
     parameters: {
         status: {
@@ -24,7 +24,7 @@ const meta: Meta<typeof CheckboxComponent> = {
         onFocus: action('onFocus'),
     },
     render: (args) => {
-        const [value, setValue] = useState(args.value);
+        const [value, setValue] = useState(args.defaultValue);
 
         const handleToggle = (event: FormEvent) => {
             action('onChange')(event);
@@ -33,7 +33,7 @@ const meta: Meta<typeof CheckboxComponent> = {
 
         return (
             <div className="tw-flex tw-gap-2 tw-items-center">
-                <Checkbox {...args} id="checkbox" value={value} onChange={handleToggle} />
+                <Checkbox {...args} id="checkbox" value={args.value || value} onChange={handleToggle} />
                 <Label htmlFor="checkbox">Checkbox</Label>
             </div>
         );
