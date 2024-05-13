@@ -55,7 +55,13 @@ export const LoadingBar = forwardRef<ElementRef<typeof ProgressRadixPrimitive.Ro
                 aria-busy={value !== max}
                 value={value}
                 max={max}
-                style={value ? ({ '--loading-bar-value': `${value}%` } as CSSProperties) : {}}
+                style={
+                    {
+                        '--loading-bar-value': value,
+                        '--loading-bar-max': max,
+                        '--loading-bar-proportion': 'calc(var(--loading-bar-value) / var(--loading-bar-max))',
+                    } as CSSProperties
+                }
                 {...props}
             >
                 <ProgressRadixPrimitive.Indicator
