@@ -10,8 +10,8 @@ import { Label } from '../Label/Label';
 
 import { TextInput } from './TextInput';
 
-type Story = StoryObj<typeof TextInput>;
-const meta: Meta<typeof TextInput> = {
+type Story = StoryObj<typeof TextInput.Root>;
+const meta: Meta<typeof TextInput.Root> = {
     title: 'Components/Text Input',
     component: TextInput.Root,
     subcomponents: {
