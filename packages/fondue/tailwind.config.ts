@@ -28,7 +28,7 @@ export default {
                 none: 'none',
             },
             ringColor: {
-                blue: '#5e9ed6',
+                blue: '#5495cf',
             },
             colors: {
                 transparent: 'transparent',

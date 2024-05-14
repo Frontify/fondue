@@ -4,15 +4,17 @@ import { IconIcon } from '@frontify/fondue-icons';
 import { action } from '@storybook/addon-actions';
 import { type Meta, type StoryObj } from '@storybook/react';
 
-import { SegmentedControl, type SegmentedControlRootProps } from './SegmentedControl';
+import { Label } from '../Label/Label';
 
-type Story = StoryObj<SegmentedControlRootProps>;
-const meta: Meta<typeof SegmentedControl.Root> = {
+import { SegmentedControl, SegmentedControlItem, SegmentedControlRoot } from './SegmentedControl';
+
+type Story = StoryObj<typeof meta>;
+const meta: Meta<typeof SegmentedControlRoot> = {
     title: 'Components/Segmented Control',
-    component: SegmentedControl.Root,
+    component: SegmentedControlRoot,
     subcomponents: {
         // @ts-expect-error Storybook types are incorrect
-        'SegmentedControl.Item': SegmentedControl.Item,
+        'SegmentedControl.Item': SegmentedControlItem,
     },
     tags: ['autodocs'],
     parameters: {
@@ -95,4 +97,20 @@ export const Disabled: Story = {
             </SegmentedControl.Item>
         </SegmentedControl.Root>
     ),
+};
+
+export const WithLabel: Story = {
+    render: (args) => {
+        return (
+            <div className="tw-flex tw-flex-col tw-gap-2">
+                <Label htmlFor="segmented-control">Segmented Control</Label>
+
+                <SegmentedControl.Root {...args} id="segmented-control">
+                    <SegmentedControl.Item value="first">First</SegmentedControl.Item>
+                    <SegmentedControl.Item value="second">Second</SegmentedControl.Item>
+                    <SegmentedControl.Item value="third">Third</SegmentedControl.Item>
+                </SegmentedControl.Root>
+            </div>
+        );
+    },
 };

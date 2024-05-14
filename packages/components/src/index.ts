@@ -3,6 +3,9 @@
 import './styles.css';
 
 export { Button } from './components/Button/Button';
+export { Checkbox } from './components/Checkbox/Checkbox';
 export { Divider } from './components/Divider/Divider';
+export { Label } from './components/Label/Label';
 export { LoadingBar } from './components/LoadingBar/LoadingBar';
 export { SegmentedControl } from './components/SegmentedControl/SegmentedControl';
+export { TextInput } from './components/TextInput/TextInput';
