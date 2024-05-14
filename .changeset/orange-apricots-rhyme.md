@@ -2,4 +2,4 @@
 "@frontify/fondue-charts": patch
 ---
 
-fix: move Fondue Tokens to `peerDependencies` to avoid duplication
+fix: added additional prop `project_color_id` to the `GuidelineSearchResultApi`.
