@@ -121,10 +121,10 @@ test('should show on correct default side top', async ({ mount, page }) => {
     await expect(tooltipContent).toBeVisible();
     const tooltipTriggerRect = await component.boundingBox();
     const tooltipContentRect = await tooltipContent.boundingBox();
-    expect(tooltipContentRect).not.toBeUndefined();
-    expect(tooltipTriggerRect).not.toBeUndefined();
     if (tooltipContentRect && tooltipTriggerRect) {
         expect(tooltipContentRect.y + tooltipContentRect.height).toBeLessThan(tooltipTriggerRect.y);
+    } else {
+        throw new Error('Bounding boxes are undefined');
     }
 });
 
@@ -145,10 +145,10 @@ test('should show on custom side top', async ({ mount, page }) => {
     await expect(tooltipContent).toBeVisible();
     const tooltipTriggerRect = await component.boundingBox();
     const tooltipContentRect = await tooltipContent.boundingBox();
-    expect(tooltipContentRect).not.toBeUndefined();
-    expect(tooltipTriggerRect).not.toBeUndefined();
     if (tooltipContentRect && tooltipTriggerRect) {
         expect(tooltipContentRect.y + tooltipContentRect.height).toBeLessThan(tooltipTriggerRect.y);
+    } else {
+        throw new Error('Bounding boxes are undefined');
     }
 });
 
@@ -169,10 +169,10 @@ test('should show on custom side bottom', async ({ mount, page }) => {
     await expect(tooltipContent).toBeVisible();
     const tooltipTriggerRect = await component.boundingBox();
     const tooltipContentRect = await tooltipContent.boundingBox();
-    expect(tooltipContentRect).not.toBeUndefined();
-    expect(tooltipTriggerRect).not.toBeUndefined();
     if (tooltipContentRect && tooltipTriggerRect) {
         expect(tooltipTriggerRect.y + tooltipTriggerRect.height).toBeLessThan(tooltipContentRect.y);
+    } else {
+        throw new Error('Bounding boxes are undefined');
     }
 });
 
@@ -193,10 +193,10 @@ test('should show on custom side left', async ({ mount, page }) => {
     await expect(tooltipContent).toBeVisible();
     const tooltipTriggerRect = await component.boundingBox();
     const tooltipContentRect = await tooltipContent.boundingBox();
-    expect(tooltipContentRect).not.toBeUndefined();
-    expect(tooltipTriggerRect).not.toBeUndefined();
     if (tooltipContentRect && tooltipTriggerRect) {
         expect(tooltipContentRect.x + tooltipContentRect.width).toBeLessThan(tooltipTriggerRect.x);
+    } else {
+        throw new Error('Bounding boxes are undefined');
     }
 });
 
@@ -217,10 +217,10 @@ test('should show on custom side right', async ({ mount, page }) => {
     await expect(tooltipContent).toBeVisible();
     const tooltipTriggerRect = await component.boundingBox();
     const tooltipContentRect = await tooltipContent.boundingBox();
-    expect(tooltipContentRect).not.toBeUndefined();
-    expect(tooltipTriggerRect).not.toBeUndefined();
     if (tooltipContentRect && tooltipTriggerRect) {
         expect(tooltipTriggerRect.x + tooltipTriggerRect.width).toBeLessThan(tooltipContentRect.x);
+    } else {
+        throw new Error('Bounding boxes are undefined');
     }
 });
 
@@ -241,10 +241,10 @@ test('should detect left collision and show on the right', async ({ mount, page 
     await expect(tooltipContent).toBeVisible();
     const tooltipTriggerRect = await component.boundingBox();
     const tooltipContentRect = await tooltipContent.boundingBox();
-    expect(tooltipContentRect).not.toBeUndefined();
-    expect(tooltipTriggerRect).not.toBeUndefined();
     if (tooltipContentRect && tooltipTriggerRect) {
         expect(tooltipTriggerRect.x + tooltipTriggerRect.width).toBeLessThan(tooltipContentRect.x);
+    } else {
+        throw new Error('Bounding boxes are undefined');
     }
 });
 
@@ -265,57 +265,9 @@ test('should detect top collision and show on the bottom', async ({ mount, page 
     await expect(tooltipContent).toBeVisible();
     const tooltipTriggerRect = await component.boundingBox();
     const tooltipContentRect = await tooltipContent.boundingBox();
-    expect(tooltipContentRect).not.toBeUndefined();
-    expect(tooltipTriggerRect).not.toBeUndefined();
     if (tooltipContentRect && tooltipTriggerRect) {
         expect(tooltipTriggerRect.y + tooltipTriggerRect.height).toBeLessThan(tooltipContentRect.y);
-    }
-});
-
-test('should ignore left collision', async ({ mount, page }) => {
-    const component = await mount(
-        <Tooltip.Root>
-            <Tooltip.Trigger data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
-                <button>Hover over me!</button>
-            </Tooltip.Trigger>
-            <Tooltip.Content side="left" ignoreCollisions data-test-id={TOOLTIP_CONTENT_TEST_ID}>
-                {TOOLTIP_TEXT}
-            </Tooltip.Content>
-        </Tooltip.Root>,
-    );
-    const tooltipContent = page.getByTestId(TOOLTIP_CONTENT_TEST_ID);
-    await expect(component).toBeVisible();
-    await component.hover();
-    await expect(tooltipContent).toBeVisible();
-    const tooltipTriggerRect = await component.boundingBox();
-    const tooltipContentRect = await tooltipContent.boundingBox();
-    expect(tooltipContentRect).not.toBeUndefined();
-    expect(tooltipTriggerRect).not.toBeUndefined();
-    if (tooltipContentRect && tooltipTriggerRect) {
-        expect(tooltipContentRect.x + tooltipContentRect.width).toBeLessThan(tooltipTriggerRect.x);
-    }
-});
-
-test('should ignore top collision', async ({ mount, page }) => {
-    const component = await mount(
-        <Tooltip.Root>
-            <Tooltip.Trigger data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
-                <button>Hover over me!</button>
-            </Tooltip.Trigger>
-            <Tooltip.Content side="top" ignoreCollisions data-test-id={TOOLTIP_CONTENT_TEST_ID}>
-                {TOOLTIP_TEXT}
-            </Tooltip.Content>
-        </Tooltip.Root>,
-    );
-    const tooltipContent = page.getByTestId(TOOLTIP_CONTENT_TEST_ID);
-    await expect(component).toBeVisible();
-    await component.hover();
-    await expect(tooltipContent).toBeVisible();
-    const tooltipTriggerRect = await component.boundingBox();
-    const tooltipContentRect = await tooltipContent.boundingBox();
-    expect(tooltipContentRect).not.toBeUndefined();
-    expect(tooltipTriggerRect).not.toBeUndefined();
-    if (tooltipContentRect && tooltipTriggerRect) {
-        expect(tooltipContentRect.y + tooltipContentRect.height).toBeLessThan(tooltipTriggerRect.y);
+    } else {
+        throw new Error('Bounding boxes are undefined');
     }
 });

@@ -14,7 +14,6 @@ const meta: Meta<typeof TooltipContent> = {
     args: {
         padding: 'spacious',
         side: 'top',
-        ignoreCollisions: false,
         maxWidth: '200px',
         children:
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',

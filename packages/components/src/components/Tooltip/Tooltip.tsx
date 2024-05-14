@@ -13,10 +13,15 @@ export type TooltipRootProps = {
 };
 export type TooltipTriggerProps = { children: ReactNode; 'data-test-id'?: string };
 export type TooltipContentProps = {
+    /**
+     * @default spacious
+     */
     padding?: 'spacious' | 'compact';
-    maxWidth?: string;
+    /**
+     * Defines the preffered side of the tooltip. It will not be respected if there are collisions with the viewport.
+     */
     side?: 'top' | 'right' | 'bottom' | 'left';
-    ignoreCollisions?: boolean;
+    maxWidth?: string;
     className?: string;
     children: ReactNode;
     'data-test-id'?: string;
@@ -48,7 +53,6 @@ export const TooltipContent = (
         children,
         className,
         maxWidth,
-        ignoreCollisions,
         'data-test-id': dataTestId = 'fondue-tooltip-content',
         ...props
     }: TooltipContentProps,
@@ -65,7 +69,6 @@ export const TooltipContent = (
                     className,
                 )}
                 style={{ maxWidth }}
-                avoidCollisions={!ignoreCollisions}
                 collisionPadding={16}
                 sideOffset={8}
                 ref={ref}
