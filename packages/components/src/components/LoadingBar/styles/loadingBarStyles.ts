@@ -32,7 +32,7 @@ export const loadingBarStyles = sv({
         },
         indeterminateState: {
             true: 'tw-animate-loading-bar-infinite tw-origin-left-right',
-            false: 'tw-transition-all tw--translate-x-[calc(100%-var(--loading-bar-value))]',
+            false: 'tw-transition-all tw-origin-left tw-scale-x-[--loading-bar-proportion]',
         },
     },
 });
