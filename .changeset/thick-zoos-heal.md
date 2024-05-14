@@ -2,4 +2,4 @@
 "@frontify/fondue-components": patch
 ---
 
-feature: refactored tooltip component
+feat: add tooltip component
