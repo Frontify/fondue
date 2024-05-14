@@ -112,22 +112,3 @@ export const WithMaxWidth: Story = {
         maxWidth: '400px',
     },
 };
-
-export const IgnoreCollisions: Story = {
-    args: {
-        ignoreCollisions: true,
-        side: 'left',
-    },
-    render: ({ ...args }) => {
-        return (
-            <div className="tw-ml-20">
-                <Tooltip.Root>
-                    <Tooltip.Trigger>
-                        <Button>Hover over me!</Button>
-                    </Tooltip.Trigger>
-                    <Tooltip.Content {...args} />
-                </Tooltip.Root>
-            </div>
-        );
-    },
-};
