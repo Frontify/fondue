@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import * as ProgressRadixPrimitive from '@radix-ui/react-progress';
-import { type CSSProperties, forwardRef, type ElementRef } from 'react';
+import { forwardRef, type CSSProperties, type ElementRef, type ForwardedRef } from 'react';
 
 import { loadingBarContainerStyles, loadingBarStyles } from './styles/loadingBarStyles';
 
@@ -44,8 +44,8 @@ export const LoadingBar = forwardRef<ElementRef<typeof ProgressRadixPrimitive.Ro
             size = 'medium',
             'data-test-id': dataTestId = 'fondue-loading-bar',
             ...props
-        },
-        ref,
+        }: LoadingBarProps,
+        ref: ForwardedRef<ElementRef<typeof ProgressRadixPrimitive.Root>>,
     ) => {
         return (
             <ProgressRadixPrimitive.Root

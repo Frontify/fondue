@@ -8,15 +8,15 @@ import { type ComponentProps } from 'react';
 import { Button } from '../Button/Button';
 import { Label } from '../Label/Label';
 
-import { TextInput } from './TextInput';
+import { TextFieldRoot, TextFieldSlot, TextInput } from './TextInput';
 
-type Story = StoryObj<typeof TextInput>;
-const meta: Meta<typeof TextInput> = {
+type Story = StoryObj<typeof meta>;
+const meta: Meta<typeof TextFieldRoot> = {
     title: 'Components/Text Input',
-    component: TextInput.Root,
+    component: TextFieldRoot,
     subcomponents: {
         // @ts-expect-error Storybook types are incorrect
-        'TextInput.Slot': TextInput.Slot,
+        'TextInput.Slot': TextFieldSlot,
     },
     tags: ['autodocs'],
     parameters: {
