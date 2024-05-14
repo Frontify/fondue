@@ -18,7 +18,7 @@ export type TooltipContentProps = {
     side?: 'top' | 'right' | 'bottom' | 'left';
     ignoreCollisions?: boolean;
     className?: string;
-    children: string | ReactElement<HTMLParagraphElement | HTMLSpanElement>;
+    children: ReactNode;
     'data-test-id'?: string;
 };
 
