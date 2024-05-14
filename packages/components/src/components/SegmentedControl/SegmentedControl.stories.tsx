@@ -6,15 +6,15 @@ import { type Meta, type StoryObj } from '@storybook/react';
 
 import { Label } from '../Label/Label';
 
-import { SegmentedControl, type SegmentedControlRootProps } from './SegmentedControl';
+import { SegmentedControl, SegmentedControlItem, SegmentedControlRoot } from './SegmentedControl';
 
-type Story = StoryObj<SegmentedControlRootProps>;
-const meta: Meta<typeof SegmentedControl.Root> = {
+type Story = StoryObj<typeof meta>;
+const meta: Meta<typeof SegmentedControlRoot> = {
     title: 'Components/Segmented Control',
-    component: SegmentedControl.Root,
+    component: SegmentedControlRoot,
     subcomponents: {
         // @ts-expect-error Storybook types are incorrect
-        'SegmentedControl.Item': SegmentedControl.Item,
+        'SegmentedControl.Item': SegmentedControlItem,
     },
     tags: ['autodocs'],
     parameters: {
