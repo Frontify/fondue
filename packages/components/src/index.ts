@@ -9,3 +9,4 @@ export { Label } from './components/Label/Label';
 export { LoadingBar } from './components/LoadingBar/LoadingBar';
 export { SegmentedControl } from './components/SegmentedControl/SegmentedControl';
 export { TextInput } from './components/TextInput/TextInput';
+export { Tooltip } from './components/Tooltip/Tooltip';

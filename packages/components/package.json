@@ -53,7 +53,8 @@
         "@radix-ui/react-label": "^2.0.2",
         "@radix-ui/react-progress": "^1.0.3",
         "@radix-ui/react-separator": "^1.0.3",
-        "@radix-ui/react-toggle-group": "^1.0.4"
+        "@radix-ui/react-toggle-group": "^1.0.4",
+        "@radix-ui/react-tooltip": "^1.0.7"
     },
     "devDependencies": {
         "@etchteam/storybook-addon-status": "^4.2.4",
