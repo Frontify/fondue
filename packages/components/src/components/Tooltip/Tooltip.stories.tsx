@@ -17,9 +17,6 @@ const meta: Meta<typeof TooltipRoot> = {
         'Tooltip.Trigger': TooltipTrigger,
     },
     tags: ['autodocs'],
-    args: {
-        enterDelay: 700,
-    },
     parameters: {
         status: {
             type: 'in_progress',

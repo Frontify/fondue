@@ -38,7 +38,7 @@ const meta: Meta<typeof TooltipContent> = {
 };
 export default meta;
 
-export const Default: Story = {
+export const LongText: Story = {
     args: {},
 };
 
