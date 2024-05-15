@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconCheckMark, IconCross } from '@frontify/fondue-icons';
+import { IconCheckMark, IconExclamationMarkTriangle } from '@frontify/fondue-icons';
 import { forwardRef, type ChangeEvent, type ForwardedRef, type KeyboardEvent, type ReactNode } from 'react';
 
 import { cn } from '#/utilities/styleUtilities';
@@ -69,7 +69,7 @@ export const TextFieldRoot = (
             ) : null}
 
             {status === 'error' ? (
-                <IconCross
+                <IconExclamationMarkTriangle
                     size={16}
                     className="tw-flex tw-text-text-negative tw-h-full tw-items-center tw-ml-3"
                     data-test-id={`${dataTestId}-error-icon`}

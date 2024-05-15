@@ -22,11 +22,11 @@ export const LabelComponent = (
             ref={ref}
             data-required={props.required}
             className={cn(
-                'tw-group tw-flex tw-gap-1 tw-font-sans tw-font-medium tw-text-body-medium tw-text-text-weak group-hover:tw-text-text-weak-hover',
+                'tw-group tw-flex tw-gap-1.5 tw-font-sans tw-font-medium tw-text-body-medium tw-text-text-weak group-hover:tw-text-text-weak-hover',
                 // Disabled state if siblings has disabled state
                 'has-[+_*_:disabled]:tw-text-text-disabled has-[~_:disabled]:tw-cursor-not-allowed peer-disabled:tw-text-text-disabled peer-disabled:tw-cursor-not-allowed',
                 // Required asterisk
-                'after:tw-hidden data-[required="true"]:after:tw-flex after:tw-content-["*"] after:-tw-ml-0.5 after:tw-font-sans after:tw-text-body-small after:tw-font-medium after:tw-text-text-negative group-hover:tw-text-text-negative-hover',
+                'after:tw-hidden data-[required="true"]:after:tw-flex after:tw-content-["*"] after:-tw-ml-1 after:tw-font-sans after:tw-text-body-small after:tw-font-medium after:tw-text-text-negative group-hover:tw-text-text-negative-hover',
                 className,
             )}
             data-test-id={dataTestId}

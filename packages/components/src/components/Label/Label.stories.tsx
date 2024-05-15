@@ -6,6 +6,7 @@ import { type ComponentProps } from 'react';
 
 import { Checkbox } from '../Checkbox/Checkbox';
 import { TextInput } from '../TextInput/TextInput';
+import { Tooltip } from '../Tooltip/Tooltip';
 
 import { Label, LabelComponent } from './Label';
 
@@ -89,7 +90,7 @@ export const WithCheckbox: Story = {
         STextInput.displayName = 'TextInput';
 
         return (
-            <div className="tw-flex tw-gap-2">
+            <div className="tw-flex tw-gap-1.5">
                 <Checkbox id="input" />
                 <Label {...args} htmlFor="input" />
             </div>
@@ -107,10 +108,15 @@ export const WithTooltip: Story = {
         STextInput.displayName = 'TextInput';
 
         return (
-            <div className="tw-flex tw-flex-col tw-gap-2">
+            <div className="tw-flex tw-flex-col tw-gap-1.5">
                 <Label {...args} htmlFor="input">
                     Hello World
-                    <IconIcon size={16} /> {/* TODO: Update with Tooltip when refactored */}
+                    <Tooltip.Root>
+                        <Tooltip.Trigger>
+                            <IconIcon size={16} />
+                        </Tooltip.Trigger>
+                        <Tooltip.Content>Tooltip</Tooltip.Content>
+                    </Tooltip.Root>
                 </Label>
                 <STextInput id="input" placeholder="Enter your name" />
             </div>

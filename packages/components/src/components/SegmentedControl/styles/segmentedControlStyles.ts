@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 export const segmentedControlRootStyles =
-    'tw-inline-grid tw-h-9 tw-grid-flow-col tw-auto-cols-[1fr] tw-items-stretch tw-bg-box-neutral aria-disabled:tw-bg-box-disabled ' +
+    'tw-inline-grid tw-h-9 tw-grid-flow-col tw-auto-cols-[1fr] tw-items-stretch tw-bg-base-alt disabled:tw-bg-base-alt ' +
     'tw-border tw-border-line-strong tw-rounded tw-relative tw-min-w-max tw-font-sans tw-font-normal tw-text-center tw-isolate';
 
 export const segmentedControlItemStyles =
