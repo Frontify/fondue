@@ -54,12 +54,58 @@ export const Disabled: Story = {
         disabled: true,
     },
     render: (args) => (
-        <TextInput.Root {...args}>
-            <TextInput.Slot>
-                <IconIcon size={16} />
-            </TextInput.Slot>
-        </TextInput.Root>
+        <>
+            <TextInput {...args} />
+            <TextInput.Root {...args}>
+                <TextInput.Slot>
+                    <IconIcon size={16} />
+                </TextInput.Slot>
+                <TextInput.Slot name="right">
+                    <Button aspect="square" rounding="full" emphasis="weak" size="small" disabled>
+                        <IconIcon size={16} />
+                    </Button>
+                </TextInput.Slot>
+            </TextInput.Root>
+        </>
     ),
+    decorators: [
+        (Story) => (
+            <div className="tw-flex tw-flex-col tw-gap-4">
+                <Story />
+            </div>
+        ),
+    ],
+};
+
+export const Readonly: Story = {
+    args: {
+        readOnly: true,
+    },
+    render: (args) => (
+        <>
+            <TextInput {...args} />
+
+            <TextInput.Root {...args}>
+                <TextInput.Slot>
+                    <IconIcon size={16} />
+                </TextInput.Slot>
+                <TextInput.Slot name="right">
+                    {!args.readOnly ? (
+                        <Button aspect="square" rounding="full" emphasis="weak" size="small" disabled>
+                            <IconIcon size={16} />
+                        </Button>
+                    ) : null}
+                </TextInput.Slot>
+            </TextInput.Root>
+        </>
+    ),
+    decorators: [
+        (Story) => (
+            <div className="tw-flex tw-flex-col tw-gap-4">
+                <Story />
+            </div>
+        ),
+    ],
 };
 
 export const WithLeftItem: Story = {
