@@ -86,6 +86,7 @@ export const FlyoutContent = (
                 ref={ref}
                 align={align}
                 sideOffset={8}
+                collisionPadding={8}
                 className={flyoutContentStyles({ ...props })}
                 data-flyout-spacing={padding}
                 {...props}
@@ -100,7 +101,7 @@ FlyoutContent.displayName = 'Flyout.Content';
 export const FlyoutHeader = ({ showCloseButton, children }: FlyoutHeaderProps, ref: ForwardedRef<HTMLDivElement>) => {
     return (
         <div ref={ref} className={flyoutHeaderStyles}>
-            {children}
+            <div>{children}</div>
             {showCloseButton && (
                 <RadixPopover.Close className="tw-cursor-pointer" asChild>
                     <IconCross size={20} />
