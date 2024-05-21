@@ -27,7 +27,12 @@ const meta: Meta<typeof FlyoutContent> = {
                     <Button>Click Me</Button>
                 </Flyout.Trigger>
                 <Flyout.Content {...args}>
-                    <div className="tw-p-4">I am a flyout!</div>
+                    <Flyout.Header showCloseButton>Header</Flyout.Header>
+                    <Flyout.Body>I am a flyout</Flyout.Body>
+                    <Flyout.Footer>
+                        <Button emphasis="default">Cancel</Button>
+                        <Button>Submit</Button>
+                    </Flyout.Footer>
                 </Flyout.Content>
             </Flyout.Root>
         );
