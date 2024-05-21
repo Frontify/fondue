@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { getColumnClasses } from '@components/RichTextEditor/helpers/getColumnClasses';
 import { type TDescendant } from '@udecode/slate';
 import { type CSSProperties } from 'react';
 
@@ -54,7 +55,7 @@ export const serializeNodesToHtml = (
     }
 
     if (columns > 1) {
-        return `<div style="columns:${columns}; column-gap:${columnGap};">${html}</div>`;
+        return `<div class="${getColumnClasses(columns)}" style="column-gap:${columnGap};">${html}</div>`;
     }
 
     return html;

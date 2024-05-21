@@ -1,11 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { BlurObserver } from '@components/RichTextEditor/BlurObserver';
+import { getColumnClasses } from '@components/RichTextEditor/helpers/getColumnClasses';
+import { useMemoizedId } from '@hooks/useMemoizedId';
 import { Plate, PlateContent, type TEditableProps } from '@udecode/plate-core';
+import { merge } from '@utilities/merge';
 import { noop } from 'lodash-es';
 import { type KeyboardEvent, useCallback, useMemo } from 'react';
-
-import { BlurObserver } from '@components/RichTextEditor/BlurObserver';
-import { useMemoizedId } from '@hooks/useMemoizedId';
 
 import { ContentReplacement } from './ContentReplacement';
 import { GAP_DEFAULT, KEY_ELEMENT_BREAK_AFTER_COLUMN, type PluginComposer, defaultPlugins } from './Plugins';
@@ -64,11 +65,10 @@ export const RichTextEditor = ({
 
     const style = useMemo(
         () => ({
-            columns,
             columnGap,
             outline: 'none',
         }),
-        [columns, columnGap],
+        [columnGap],
     );
 
     const onBlurHandler = useCallback(() => {
@@ -88,7 +88,7 @@ export const RichTextEditor = ({
         renderPlaceholder: RenderPlaceholder,
         readOnly,
         onBlur: onBlurHandler,
-        className: `${padding}`,
+        className: merge([padding, getColumnClasses(+columns)]),
         style,
         onKeyDown: onKeyDownHandler,
         scrollSelectionIntoView: noop,

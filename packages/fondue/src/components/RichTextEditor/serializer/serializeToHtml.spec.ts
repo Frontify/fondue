@@ -12,17 +12,17 @@ describe('serializeNodesToHtml()', () => {
 
     it('should render columns if there is more than one given', () => {
         const serialized = serializeNodesToHtml(nodesToSerialize, { columns: 2 });
-        expect(serialized).to.contain('columns:2;');
+        expect(serialized).to.contain('tw-columns-1 xs:tw-columns-2');
     });
 
     it('should not render columns if there is only one given', () => {
         const serialized = serializeNodesToHtml(nodesToSerialize, { columns: 1 });
-        expect(serialized).not.to.contain('columns:1;');
+        expect(serialized).not.to.contain('tw-columns-1');
     });
 
     it('should have a default column count of 1', () => {
         const serialized = serializeNodesToHtml(nodesToSerialize);
-        expect(serialized).not.to.contain('columns:1;');
+        expect(serialized).not.to.contain('tw-columns-1');
     });
 
     it('should render column gap if there is more than one column', () => {
