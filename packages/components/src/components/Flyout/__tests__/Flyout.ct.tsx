@@ -273,6 +273,32 @@ test('should render full flyout layout', async ({ mount, page }) => {
     await expect(tooltipContent).toContainText(FLYOUT_FOOTER_TEXT);
 });
 
+test('should render custom content', async ({ mount, page }) => {
+    const component = await mount(
+        <Flyout.Root>
+            <Flyout.Trigger>
+                <Button>{FLYOUT_TRIGGER_TEXT}</Button>
+            </Flyout.Trigger>
+            <Flyout.Content>
+                <div data-test-id="custom-content" className="tw-bg-[red]">
+                    {FLYOUT_BODY_TEXT}
+                </div>
+            </Flyout.Content>
+        </Flyout.Root>,
+    );
+    const tooltipTrigger = page.getByTestId(FLYOUT_TRIGGER_TEST_ID);
+    const tooltipContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
+    await expect(component).toBeVisible();
+    await expect(tooltipTrigger).toBeVisible();
+    await expect(component).toContainText(FLYOUT_TRIGGER_TEXT);
+    await expect(tooltipContent).not.toBeVisible();
+    await tooltipTrigger.click();
+    await expect(tooltipContent).toBeVisible();
+    await expect(tooltipContent).toContainText(FLYOUT_BODY_TEXT);
+    await expect(tooltipContent.getByTestId('custom-content')).toBeVisible();
+    await expect(tooltipContent.getByTestId('custom-content')).toHaveCSS('background-color', 'rgb(255, 0, 0)');
+});
+
 test('should render compact padding by default', async ({ mount, page }) => {
     const component = await mount(
         <Flyout.Root>
