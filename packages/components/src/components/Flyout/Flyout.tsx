@@ -13,7 +13,7 @@ export type FlyoutRootProps = {
      */
     modal?: boolean;
     /**
-     * external control of the open state
+     * The controlled `open` state of the flyout
      */
     open?: boolean;
     /**
