@@ -4,8 +4,10 @@ export const rootStyles =
     'tw-group tw-relative tw-flex tw-items-stretch tw-font-sans tw-font-normal tw-text-start tw-h-9 tw-text-body-medium tw-transition-colors ' +
     // Focus and border styles
     'tw-bg-base dark:tw-bg-transparent tw-rounded tw-border tw-border-line-strong hover:tw-border-line-x-strong has-[:focus-visible]:tw-border-line-xx-strong ' +
-    // Readonly or disabled styles
-    'has-[input:read-only]:tw-border-line-weak has-[input:disabled]:tw-border-line-weak has-[input:read-only]:tw-bg-box-disabled has-[input:disabled]:tw-bg-box-disabled ' +
+    // Readonly styles
+    'has-[input[readonly]]:tw-border-transparent ' +
+    // Disabled styles
+    'has-[input:disabled]:tw-border-line-weak has-[input:disabled]:tw-bg-box-disabled ' +
     // Success and error status styles
     'data-[status="success"]:tw-border-text-positive data-[status="error"]:tw-border-text-negative ';
 
@@ -16,19 +18,23 @@ export const inputStyles =
     // Remove border-radius and padding on the right if there’s a right-side slot
     'has-[~_[data-name="right"]]:tw-pr-0 has-[~_[data-name="right"]]:tw-rounded-r-none ' +
     '[~_:not([data-name="right"])_~_:not([data-name="left"])]:tw-pr-0 [~_:not([data-name="right"])_~_:not([data-name="left"])]:tw-rounded-r-none' +
-    // Readonly or disabled styles
-    'read-only:tw-cursor-text disabled:tw-cursor-text read-only:tw-text-text-disabled disabled:tw-text-text-disabled ';
+    // Readonly styles
+    '[&[readonly]]:tw-cursor-text [&[readonly]]:tw-text-text-weak [&[readonly]]:tw-indent-0 ' +
+    // Disabled styles
+    'disabled:tw-cursor-text disabled:tw-text-text-disabled ';
 
 export const slotStyles =
-    'tw-peer tw-shrink-0 tw-flex tw-items-center tw-cursor-text tw-gap-2 tw-pl-3 tw-pr-2 ' +
+    'tw-peer tw-shrink-0 tw-flex tw-items-center tw-cursor-text tw-gap-1.5 tw-pl-3 tw-pr-1.5 ' +
     // Left slot
-    '[&:not([data-name="right"])]:-tw-order-1 [&:not([data-name="right"])]:tw-ml-px [&:not([data-name="right"])]:tw-mr-0 ' +
+    '[&:not([data-name="right"])]:-tw-order-1 [&:not([data-name="right"])]:tw-mx-0 ' +
     // Right slot
-    'data-[name="right"]:tw-order-[0] data-[name="right"]:tw-ml-0 data-[name="right"]:tw-mr-px ' +
+    'data-[name="right"]:tw-order-[0] data-[name="right"]:tw-mx-0 data-[name="right"]:tw-pr-3 ' +
     // 2 slots without any name should be implicitly ordered
-    '[&:not([data-name="right"])_~_:not([data-name="left"])]:tw-order-[0] [&:not([data-name="right"])_~_:not([data-name="left"])]:tw-ml-0 [&:not([data-name="right"])_~_:not([data-name="left"])]:tw-mr-px ' +
-    // Readonly or disabled color styles
-    'peer-read-only/input:tw-text-text-disabled peer-disabled/input:tw-text-text-disabled ';
+    '[&:not([data-name="right"])_~_:not([data-name="left"])]:tw-order-[0] [&:not([data-name="right"])_~_:not([data-name="left"])]:tw-mx-0 ' +
+    // Readonly color styles
+    'peer-[&[readonly]]/input:tw-text-text-weak peer-[&[readonly]]/input:[&:not([data-name="right"])]:tw-pl-0 ' +
+    // Disabled color styles
+    'peer-disabled/input:tw-text-text-disabled ';
 
 export const loadingStatusStyles =
     'tw-flex tw-absolute tw-size-6 -tw-top-3 -tw-right-3 tw-pointer-events-none ' +
