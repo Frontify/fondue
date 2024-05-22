@@ -25,6 +25,7 @@ export type FlyoutRootProps = {
 
 export type FlyoutContentProps = {
     /**
+     * Add rounded corners to the flyout
      * @default true
      */
     rounded?: boolean;
@@ -40,10 +41,12 @@ export type FlyoutContentProps = {
     align?: 'start' | 'center' | 'end';
     /**
      * Define the padding of the flyout
+     * @default compact
      */
     padding?: 'compact' | 'comfortable' | 'spacious';
     /**
      * Override the `360px` maximum width of the flyout
+     * @default 360px
      */
     maxWidth?: string;
     children?: ReactNode;
@@ -51,7 +54,14 @@ export type FlyoutContentProps = {
 
 export type FlyoutTriggerProps = { children?: ReactNode };
 
-export type FlyoutHeaderProps = { showCloseButton?: boolean; children?: ReactNode };
+export type FlyoutHeaderProps = {
+    /**
+     * Show a close button in the header
+     * @default false
+     */
+    showCloseButton?: boolean;
+    children?: ReactNode;
+};
 
 export type FlyoutFooterProps = { children?: ReactNode };
 

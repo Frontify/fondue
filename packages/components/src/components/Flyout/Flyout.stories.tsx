@@ -22,28 +22,23 @@ const meta: Meta<typeof FlyoutContent> = {
     args: {
         children: 'Hello World',
     },
-    decorators: [
-        (Story) => (
-            <Flyout.Root>
-                <Flyout.Trigger>
-                    <Button className="tw-ml-9">Click Me</Button>
-                </Flyout.Trigger>
-                <Story />
-            </Flyout.Root>
-        ),
-    ],
     render: ({ ...args }) => {
         return (
-            <Flyout.Content {...args}>
-                <Flyout.Header showCloseButton>Header</Flyout.Header>
-                <Flyout.Body {...args} />
-                <Flyout.Footer>
-                    <div className="tw-flex tw-justify-end tw-gap-2">
-                        <Button emphasis="default">Cancel</Button>
-                        <Button>Submit</Button>
-                    </div>
-                </Flyout.Footer>
-            </Flyout.Content>
+            <Flyout.Root>
+                <Flyout.Trigger>
+                    <Button>Click Me</Button>
+                </Flyout.Trigger>
+                <Flyout.Content {...args}>
+                    <Flyout.Header showCloseButton>Header</Flyout.Header>
+                    <Flyout.Body {...args} />
+                    <Flyout.Footer>
+                        <div className="tw-flex tw-justify-end tw-gap-2">
+                            <Button emphasis="default">Cancel</Button>
+                            <Button>Submit</Button>
+                        </div>
+                    </Flyout.Footer>
+                </Flyout.Content>
+            </Flyout.Root>
         );
     },
 };
@@ -63,13 +58,18 @@ export const WithFooter: Story = {
     name: 'Button Content',
     render: ({ ...args }) => {
         return (
-            <Flyout.Content {...args}>
-                <Flyout.Body>I am a flyout</Flyout.Body>
-                <Flyout.Footer>
-                    <Button emphasis="default">Cancel</Button>
-                    <Button>Submit</Button>
-                </Flyout.Footer>
-            </Flyout.Content>
+            <Flyout.Root>
+                <Flyout.Trigger>
+                    <Button>Click Me</Button>
+                </Flyout.Trigger>
+                <Flyout.Content {...args}>
+                    <Flyout.Body>I am a flyout</Flyout.Body>
+                    <Flyout.Footer>
+                        <Button emphasis="default">Cancel</Button>
+                        <Button>Submit</Button>
+                    </Flyout.Footer>
+                </Flyout.Content>
+            </Flyout.Root>
         );
     },
 };
@@ -78,10 +78,15 @@ export const WithHeader: Story = {
     name: 'Button Content',
     render: ({ ...args }) => {
         return (
-            <Flyout.Content {...args}>
-                <Flyout.Header>Header</Flyout.Header>
-                <Flyout.Body>I am a flyout</Flyout.Body>
-            </Flyout.Content>
+            <Flyout.Root>
+                <Flyout.Trigger>
+                    <Button>Click Me</Button>
+                </Flyout.Trigger>
+                <Flyout.Content {...args}>
+                    <Flyout.Header>Header</Flyout.Header>
+                    <Flyout.Body>I am a flyout</Flyout.Body>
+                </Flyout.Content>
+            </Flyout.Root>
         );
     },
 };
@@ -90,10 +95,15 @@ export const WithCloseButton: Story = {
     name: 'With Close Button',
     render: ({ ...args }) => {
         return (
-            <Flyout.Content {...args}>
-                <Flyout.Header showCloseButton>Header</Flyout.Header>
-                <Flyout.Body>I am a flyout</Flyout.Body>
-            </Flyout.Content>
+            <Flyout.Root>
+                <Flyout.Trigger>
+                    <Button>Click Me</Button>
+                </Flyout.Trigger>
+                <Flyout.Content {...args}>
+                    <Flyout.Header showCloseButton>Header</Flyout.Header>
+                    <Flyout.Body>I am a flyout</Flyout.Body>
+                </Flyout.Content>
+            </Flyout.Root>
         );
     },
 };
@@ -102,9 +112,14 @@ export const WithCustomContent: Story = {
     name: 'With Custom Conent',
     render: ({ ...args }) => {
         return (
-            <Flyout.Content {...args}>
-                <div className="tw-bg-box-neutral tw-p-10">This is FlyoutContent</div>
-            </Flyout.Content>
+            <Flyout.Root>
+                <Flyout.Trigger>
+                    <Button>Click Me</Button>
+                </Flyout.Trigger>
+                <Flyout.Content {...args}>
+                    <div className="tw-bg-box-neutral tw-p-10">This is FlyoutContent</div>
+                </Flyout.Content>
+            </Flyout.Root>
         );
     },
 };
