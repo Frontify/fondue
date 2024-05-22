@@ -69,8 +69,8 @@ export type FlyoutFooterProps = { children?: ReactNode; 'data-test-id'?: string 
 
 export type FlyoutBodyProps = { children?: ReactNode; 'data-test-id'?: string };
 
-export const FlyoutRoot = ({ children }: FlyoutRootProps) => {
-    return <RadixPopover.Root>{children}</RadixPopover.Root>;
+export const FlyoutRoot = ({ children, ...props }: FlyoutRootProps) => {
+    return <RadixPopover.Root {...props}>{children}</RadixPopover.Root>;
 };
 FlyoutRoot.displayName = 'Flyout.Root';
 

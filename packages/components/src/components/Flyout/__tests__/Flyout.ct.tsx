@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { expect, test } from '@playwright/experimental-ct-react';
+import sinon from 'sinon';
 
 import { Button } from '#/components/Button/Button';
 
@@ -124,34 +125,6 @@ test('should close on cross icon click', async ({ mount, page }) => {
     await expect(tooltipContent).toBeVisible();
     await page.getByTestId('fondue-icons-cross').click();
     await expect(tooltipContent).not.toBeVisible();
-});
-
-test('should not render close icon when prop is not passed', async ({ mount, page }) => {
-    const component = await mount(
-        <Flyout.Root>
-            <Flyout.Trigger>
-                <Button>{FLYOUT_TRIGGER_TEXT}</Button>
-            </Flyout.Trigger>
-            <Flyout.Content>
-                <Flyout.Header>{FLYOUT_HEADER_TEXT}</Flyout.Header>
-                <Flyout.Body>{FLYOUT_BODY_TEXT}</Flyout.Body>
-                <Flyout.Footer>
-                    <div className="tw-flex tw-justify-end tw-gap-2">
-                        <Button>{FLYOUT_FOOTER_TEXT}</Button>
-                    </div>
-                </Flyout.Footer>
-            </Flyout.Content>
-        </Flyout.Root>,
-    );
-    const tooltipTrigger = page.getByTestId(FLYOUT_TRIGGER_TEST_ID);
-    const tooltipContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
-    await expect(component).toBeVisible();
-    await expect(tooltipTrigger).toBeVisible();
-    await expect(component).toContainText(FLYOUT_TRIGGER_TEXT);
-    await expect(tooltipContent).not.toBeVisible();
-    await tooltipTrigger.click();
-    await expect(tooltipContent).toBeVisible();
-    await expect(page.getByTestId('fondue-icons-cross')).not.toBeVisible();
 });
 
 test('should not render close icon when prop is not passed', async ({ mount, page }) => {
@@ -325,10 +298,9 @@ test('should render compact padding by default', async ({ mount, page }) => {
     await expect(tooltipContent).not.toBeVisible();
     await tooltipTrigger.click();
     await expect(tooltipContent).toBeVisible();
-    await expect(tooltipContent.getByTestId(FLYOUT_HEADER_TEST_ID)).toHaveClass(/tw-p-4/);
-    await expect(tooltipContent.getByTestId(FLYOUT_BODY_TEST_ID)).toHaveClass(/tw-py-2/);
-    await expect(tooltipContent.getByTestId(FLYOUT_BODY_TEST_ID)).toHaveClass(/tw-px-6/);
-    await expect(tooltipContent.getByTestId(FLYOUT_FOOTER_TEST_ID)).toHaveClass(/tw-p-10/);
+    await expect(tooltipContent.getByTestId(FLYOUT_HEADER_TEST_ID)).toHaveCSS('padding', '16px');
+    await expect(tooltipContent.getByTestId(FLYOUT_BODY_TEST_ID)).toHaveCSS('padding', '8px 16px');
+    await expect(tooltipContent.getByTestId(FLYOUT_FOOTER_TEST_ID)).toHaveCSS('padding', '16px');
 });
 
 test('should render compact padding', async ({ mount, page }) => {
@@ -356,10 +328,9 @@ test('should render compact padding', async ({ mount, page }) => {
     await expect(tooltipContent).not.toBeVisible();
     await tooltipTrigger.click();
     await expect(tooltipContent).toBeVisible();
-    await expect(tooltipContent.getByTestId(FLYOUT_HEADER_TEST_ID)).toHaveClass(/tw-p-4/);
-    await expect(tooltipContent.getByTestId(FLYOUT_BODY_TEST_ID)).toHaveClass(/tw-py-2/);
-    await expect(tooltipContent.getByTestId(FLYOUT_BODY_TEST_ID)).toHaveClass(/tw-px-6/);
-    await expect(tooltipContent.getByTestId(FLYOUT_FOOTER_TEST_ID)).toHaveClass(/tw-p-10/);
+    await expect(tooltipContent.getByTestId(FLYOUT_HEADER_TEST_ID)).toHaveCSS('padding', '16px');
+    await expect(tooltipContent.getByTestId(FLYOUT_BODY_TEST_ID)).toHaveCSS('padding', '8px 16px');
+    await expect(tooltipContent.getByTestId(FLYOUT_FOOTER_TEST_ID)).toHaveCSS('padding', '16px');
 });
 
 test('should render comfortable padding', async ({ mount, page }) => {
@@ -387,8 +358,86 @@ test('should render comfortable padding', async ({ mount, page }) => {
     await expect(tooltipContent).not.toBeVisible();
     await tooltipTrigger.click();
     await expect(tooltipContent).toBeVisible();
-    await expect(tooltipContent.getByTestId(FLYOUT_HEADER_TEST_ID)).toHaveClass(/tw-p-6/);
-    await expect(tooltipContent.getByTestId(FLYOUT_BODY_TEST_ID)).toHaveClass(/tw-py-4/);
-    await expect(tooltipContent.getByTestId(FLYOUT_BODY_TEST_ID)).toHaveClass(/tw-px-6/);
-    await expect(tooltipContent.getByTestId(FLYOUT_FOOTER_TEST_ID)).toHaveClass(/tw-p-6/);
+    await expect(tooltipContent.getByTestId(FLYOUT_HEADER_TEST_ID)).toHaveCSS('padding', '24px');
+    await expect(tooltipContent.getByTestId(FLYOUT_BODY_TEST_ID)).toHaveCSS('padding', '16px 24px');
+    await expect(tooltipContent.getByTestId(FLYOUT_FOOTER_TEST_ID)).toHaveCSS('padding', '24px');
+});
+
+test('should render spacious padding', async ({ mount, page }) => {
+    const component = await mount(
+        <Flyout.Root>
+            <Flyout.Trigger>
+                <Button>{FLYOUT_TRIGGER_TEXT}</Button>
+            </Flyout.Trigger>
+            <Flyout.Content padding="spacious">
+                <Flyout.Header>{FLYOUT_HEADER_TEXT}</Flyout.Header>
+                <Flyout.Body>{FLYOUT_BODY_TEXT}</Flyout.Body>
+                <Flyout.Footer>
+                    <div className="tw-flex tw-justify-end tw-gap-2">
+                        <Button>{FLYOUT_FOOTER_TEXT}</Button>
+                    </div>
+                </Flyout.Footer>
+            </Flyout.Content>
+        </Flyout.Root>,
+    );
+    const tooltipTrigger = page.getByTestId(FLYOUT_TRIGGER_TEST_ID);
+    const tooltipContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
+    await expect(component).toBeVisible();
+    await expect(tooltipTrigger).toBeVisible();
+    await expect(component).toContainText(FLYOUT_TRIGGER_TEXT);
+    await expect(tooltipContent).not.toBeVisible();
+    await tooltipTrigger.click();
+    await expect(tooltipContent).toBeVisible();
+    await expect(tooltipContent.getByTestId(FLYOUT_HEADER_TEST_ID)).toHaveCSS('padding', '40px');
+    await expect(tooltipContent.getByTestId(FLYOUT_BODY_TEST_ID)).toHaveCSS('padding', '24px 40px');
+    await expect(tooltipContent.getByTestId(FLYOUT_FOOTER_TEST_ID)).toHaveCSS('padding', '40px');
+});
+
+test('should render open', async ({ mount, page }) => {
+    const component = await mount(
+        <Flyout.Root open={true}>
+            <Flyout.Trigger>
+                <Button>{FLYOUT_TRIGGER_TEXT}</Button>
+            </Flyout.Trigger>
+            <Flyout.Content padding="spacious">
+                <Flyout.Header>{FLYOUT_HEADER_TEXT}</Flyout.Header>
+                <Flyout.Body>{FLYOUT_BODY_TEXT}</Flyout.Body>
+                <Flyout.Footer>
+                    <div className="tw-flex tw-justify-end tw-gap-2">
+                        <Button>{FLYOUT_FOOTER_TEXT}</Button>
+                    </div>
+                </Flyout.Footer>
+            </Flyout.Content>
+        </Flyout.Root>,
+    );
+    const tooltipTrigger = page.getByTestId(FLYOUT_TRIGGER_TEST_ID);
+    const tooltipContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
+    await expect(component).toBeVisible();
+    await expect(tooltipTrigger).toBeVisible();
+    await expect(tooltipContent).toBeVisible();
+});
+
+test('should trigger callback on open and close', async ({ mount, page }) => {
+    const onOpenChange = sinon.spy();
+    const component = await mount(
+        <Flyout.Root onOpenChange={onOpenChange}>
+            <Flyout.Trigger>
+                <Button>{FLYOUT_TRIGGER_TEXT}</Button>
+            </Flyout.Trigger>
+            <Flyout.Content padding="spacious">
+                <Flyout.Header>{FLYOUT_HEADER_TEXT}</Flyout.Header>
+                <Flyout.Body>{FLYOUT_BODY_TEXT}</Flyout.Body>
+                <Flyout.Footer>
+                    <div className="tw-flex tw-justify-end tw-gap-2">
+                        <Button>{FLYOUT_FOOTER_TEXT}</Button>
+                    </div>
+                </Flyout.Footer>
+            </Flyout.Content>
+        </Flyout.Root>,
+    );
+    const tooltipTrigger = page.getByTestId(FLYOUT_TRIGGER_TEST_ID);
+    await expect(component).toBeVisible();
+    await expect(tooltipTrigger).toBeVisible();
+    await tooltipTrigger.click();
+    expect(onOpenChange.called).toBe(true);
 });
