@@ -62,11 +62,12 @@ export type FlyoutHeaderProps = {
      */
     showCloseButton?: boolean;
     children?: ReactNode;
+    'data-test-id'?: string;
 };
 
-export type FlyoutFooterProps = { children?: ReactNode };
+export type FlyoutFooterProps = { children?: ReactNode; 'data-test-id'?: string };
 
-export type FlyoutBodyProps = { children?: ReactNode };
+export type FlyoutBodyProps = { children?: ReactNode; 'data-test-id'?: string };
 
 export const FlyoutRoot = ({ children }: FlyoutRootProps) => {
     return <RadixPopover.Root>{children}</RadixPopover.Root>;
@@ -120,9 +121,12 @@ export const FlyoutContent = (
 };
 FlyoutContent.displayName = 'Flyout.Content';
 
-export const FlyoutHeader = ({ showCloseButton, children }: FlyoutHeaderProps, ref: ForwardedRef<HTMLDivElement>) => {
+export const FlyoutHeader = (
+    { showCloseButton, children, 'data-test-id': dataTestId = 'fondue-flyout-header' }: FlyoutHeaderProps,
+    ref: ForwardedRef<HTMLDivElement>,
+) => {
     return (
-        <div ref={ref} className={flyoutHeaderStyles}>
+        <div data-test-id={dataTestId} ref={ref} className={flyoutHeaderStyles}>
             <div>{children}</div>
             {showCloseButton && (
                 <RadixPopover.Close className="tw-cursor-pointer">
@@ -133,17 +137,23 @@ export const FlyoutHeader = ({ showCloseButton, children }: FlyoutHeaderProps, r
     );
 };
 
-export const FlyoutFooter = ({ children }: FlyoutFooterProps, ref: ForwardedRef<HTMLDivElement>) => {
+export const FlyoutFooter = (
+    { children, 'data-test-id': dataTestId = 'fondue-flyout-footer' }: FlyoutFooterProps,
+    ref: ForwardedRef<HTMLDivElement>,
+) => {
     return (
-        <div ref={ref} className={flyoutFooterStyles}>
+        <div data-test-id={dataTestId} ref={ref} className={flyoutFooterStyles}>
             {children}
         </div>
     );
 };
 
-export const FlyoutBody = ({ children }: FlyoutBodyProps, ref: ForwardedRef<HTMLDivElement>) => {
+export const FlyoutBody = (
+    { children, 'data-test-id': dataTestId = 'fondue-flyout-body' }: FlyoutBodyProps,
+    ref: ForwardedRef<HTMLDivElement>,
+) => {
     return (
-        <div ref={ref} data-flyout-spacing="compact" className={flyoutBodyStyles}>
+        <div data-test-id={dataTestId} ref={ref} data-flyout-spacing="compact" className={flyoutBodyStyles}>
             {children}
         </div>
     );
