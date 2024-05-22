@@ -52,6 +52,18 @@ export const BasicContent: Story = {
     args: {
         children: 'Hello World',
     },
+    render: ({ ...args }) => {
+        return (
+            <Flyout.Root>
+                <Flyout.Trigger>
+                    <Button>Click Me</Button>
+                </Flyout.Trigger>
+                <Flyout.Content {...args}>
+                    <Flyout.Body {...args} />
+                </Flyout.Content>
+            </Flyout.Root>
+        );
+    },
 };
 
 export const WithFooter: Story = {
@@ -105,6 +117,20 @@ export const WithCloseButton: Story = {
                 </Flyout.Content>
             </Flyout.Root>
         );
+    },
+};
+
+export const WithComfortablePadding: Story = {
+    name: 'With Comfortable Padding',
+    args: {
+        padding: 'comfortable',
+    },
+};
+
+export const WithSpaciousPadding: Story = {
+    name: 'With Spacious Padding',
+    args: {
+        padding: 'spacious',
     },
 };
 

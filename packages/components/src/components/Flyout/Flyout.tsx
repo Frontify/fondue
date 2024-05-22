@@ -50,9 +50,10 @@ export type FlyoutContentProps = {
      */
     maxWidth?: string;
     children?: ReactNode;
+    'data-test-id'?: string;
 };
 
-export type FlyoutTriggerProps = { children?: ReactNode };
+export type FlyoutTriggerProps = { children?: ReactNode; 'data-test-id'?: string };
 
 export type FlyoutHeaderProps = {
     /**
@@ -72,9 +73,12 @@ export const FlyoutRoot = ({ children }: FlyoutRootProps) => {
 };
 FlyoutRoot.displayName = 'Flyout.Root';
 
-export const FlyoutTrigger = ({ children }: FlyoutTriggerProps, ref: ForwardedRef<HTMLButtonElement>) => {
+export const FlyoutTrigger = (
+    { children, 'data-test-id': dataTestId = 'fondue-flyout-trigger' }: FlyoutTriggerProps,
+    ref: ForwardedRef<HTMLButtonElement>,
+) => {
     return (
-        <RadixPopover.Trigger asChild ref={ref}>
+        <RadixPopover.Trigger data-test-id={dataTestId} asChild ref={ref}>
             {children}
         </RadixPopover.Trigger>
     );
@@ -82,7 +86,14 @@ export const FlyoutTrigger = ({ children }: FlyoutTriggerProps, ref: ForwardedRe
 FlyoutTrigger.displayName = 'Flyout.Trigger';
 
 export const FlyoutContent = (
-    { align = 'start', maxWidth = '360px', padding = 'compact', children, ...props }: FlyoutContentProps,
+    {
+        align = 'start',
+        maxWidth = '360px',
+        padding = 'compact',
+        'data-test-id': dataTestId = 'fondue-flyout-content',
+        children,
+        ...props
+    }: FlyoutContentProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
@@ -99,6 +110,7 @@ export const FlyoutContent = (
                 sideOffset={8}
                 className={flyoutContentStyles({ ...props })}
                 data-flyout-spacing={padding}
+                data-test-id={dataTestId}
                 {...props}
             >
                 {children}
