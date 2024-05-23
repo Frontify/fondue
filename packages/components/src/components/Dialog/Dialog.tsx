@@ -153,6 +153,7 @@ export const DialogHeader = (
         </div>
     );
 };
+DialogHeader.displayName = 'Dialog.Header';
 
 export const DialogFooter = (
     { children, 'data-test-id': dataTestId = 'fondue-Dialog-footer' }: DialogFooterProps,
@@ -164,6 +165,7 @@ export const DialogFooter = (
         </div>
     );
 };
+DialogFooter.displayName = 'Dialog.Footer';
 
 export const DialogBody = (
     { children, 'data-test-id': dataTestId = 'fondue-Dialog-body' }: DialogBodyProps,
@@ -175,6 +177,7 @@ export const DialogBody = (
         </div>
     );
 };
+DialogBody.displayName = 'Dialog.Body';
 
 export const SideContent = (
     { children, 'data-test-id': dataTestId = 'fondue-Dialog-body' }: DialogBodyProps,
@@ -186,6 +189,7 @@ export const SideContent = (
         </div>
     );
 };
+SideContent.displayName = 'Dialog.SideContent';
 
 export const Dialog = {
     Root: DialogRoot,
