@@ -1,8 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconDotsVertical from '@foundation/Icon/Generated/IconDotsVertical';
-import IconExclamationMarkCircle from '@foundation/Icon/Generated/IconExclamationMarkCircle';
-import IconIcon from '@foundation/Icon/Generated/IconIcon';
 import { chain } from '@react-aria/utils';
 import { action } from '@storybook/addon-actions';
 import { type Meta, type StoryFn } from '@storybook/react';
@@ -18,6 +15,9 @@ import { LegacyTextarea } from '@components/LegacyTextarea/LegacyTextarea';
 import { SegmentedControls } from '@components/SegmentedControls/SegmentedControls';
 import { TextInput } from '@components/TextInput/TextInput';
 import { TooltipIcon } from '@components/TooltipIcon';
+import IconDotsVertical from '@foundation/Icon/Generated/IconDotsVertical';
+import IconExclamationMarkCircle from '@foundation/Icon/Generated/IconExclamationMarkCircle';
+import IconIcon from '@foundation/Icon/Generated/IconIcon';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 

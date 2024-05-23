@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconDotsVertical16 from '@foundation/Icon/Generated/IconDotsVertical16';
+
 import { action } from '@storybook/addon-actions';
 import { type Meta, type StoryFn } from '@storybook/react';
 import { useRef, useState } from 'react';
@@ -14,6 +14,7 @@ import { Divider } from '@components/Divider';
 import { Dropdown } from '@components/Dropdown';
 import { Flex } from '@components/Flex';
 import { POPPER_STORY_ARGS } from '@components/Popper/constantStories';
+import IconDotsVertical16 from '@foundation/Icon/Generated/IconDotsVertical16';
 
 import { Modality } from '../../types';
 
