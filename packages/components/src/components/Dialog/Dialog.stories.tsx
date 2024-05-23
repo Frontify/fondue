@@ -33,7 +33,7 @@ const meta: Meta<typeof DialogContent> = {
                     <Dialog.Header showCloseButton>Header</Dialog.Header>
                     <Dialog.Body {...args} />
                     <Dialog.Footer>
-                        <div className="tw-flex tw-justify-end tw-gap-2">
+                        <div className="tw-flex tw-h-fit tw-justify-end tw-gap-2">
                             <Button emphasis="default">Cancel</Button>
                             <Button>Submit</Button>
                         </div>

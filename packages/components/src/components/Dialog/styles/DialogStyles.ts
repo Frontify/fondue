@@ -3,7 +3,7 @@
 import { sv } from '#/utilities/styleUtilities';
 
 export const dialogContentStyles = sv({
-    base: 'tw-group tw-block tw-fixed tw-left-2 tw-right-2 tw-top-1/2 sm:tw-left-1/2 sm:tw-transform sm:tw--translate-x-1/2 tw--translate-y-1/2 tw-bg-base tw-shadow-mid tw-z-20 has-[[data-dialog-layout-component]]:tw-grid tw-min-w-[--dialog-min-width] tw-max-w-[--dialog-max-width] tw-h-fit tw-overflow-hidden',
+    base: 'tw-group tw-block tw-fixed tw-left-2 tw-right-2 tw-top-1/2 sm:tw-left-1/2 sm:tw-transform sm:tw--translate-x-1/2 tw--translate-y-1/2 tw-bg-base tw-shadow-mid tw-z-20 has-[[data-dialog-layout-component]]:tw-grid tw-grid-rows-[auto_auto_1fr_auto] sm:tw-grid-rows-[auto_1fr_auto] tw-min-w-[--dialog-min-width] tw-max-w-[--dialog-max-width] tw-min-h-[--dialog-min-height] tw-h-fit tw-overflow-hidden',
     variants: {
         rounded: {
             true: 'tw-rounded-lg',
@@ -32,13 +32,13 @@ export const dialogSideContentStyles =
     'tw-col-start-1 tw-row-start-1 tw-row-span-1 sm:tw-row-span-3 tw-min-h-10 tw-min-w-10';
 
 export const dialogHeaderStyles =
-    'tw-flex tw-justify-between tw-items-center tw-border-b tw-border-line tw-font-medium tw-p-[--flyout-padding] tw-col-start-1 sm:tw-col-start-2 tw-row-start-2 sm:tw-row-start-1 ' +
+    'tw-flex tw-h-fit tw-justify-between tw-items-center tw-border-b tw-border-line tw-font-medium tw-p-[--flyout-padding] tw-col-start-1 sm:tw-col-start-2 tw-row-start-2 sm:tw-row-start-1 ' +
     'group-data-[dialog-spacing=compact]:tw-p-4 ' +
     'group-data-[dialog-spacing=comfortable]:tw-p-6 ' +
     'group-data-[dialog-spacing=spacious]:tw-p-10 ';
 
 export const dialogFooterStyles =
-    'tw-border-t tw-border-line tw-font-medium tw-col-start-1 sm:tw-col-start-2 tw-row-start-4 sm:tw-row-start-3 ' +
+    'tw-h-fit tw-border-t tw-border-line tw-font-medium tw-col-start-1 sm:tw-col-start-2 tw-row-start-4 sm:tw-row-start-3 ' +
     'group-data-[dialog-spacing=compact]:tw-p-4 ' +
     'group-data-[dialog-spacing=comfortable]:tw-p-6 ' +
     'group-data-[dialog-spacing=spacious]:tw-p-10 ';

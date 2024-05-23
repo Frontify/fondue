@@ -53,6 +53,11 @@ export type DialogContentProps = {
      */
     minWidth?: string;
     /**
+     * Override the `200px` maximum width of the Dialog
+     * @default 200px
+     */
+    minHeight?: string;
+    /**
      * Show a dark underlay behind the Dialog
      * @default false
      */
@@ -100,6 +105,7 @@ export const DialogContent = (
     {
         maxWidth = '800px',
         minWidth = '400px',
+        minHeight = '200px',
         padding = 'compact',
         'data-test-id': dataTestId = 'fondue-Dialog-content',
         showUnderlay = false,
@@ -110,12 +116,13 @@ export const DialogContent = (
 ) => {
     return (
         <RadixDialog.Portal>
-            <RadixDialog.Overlay className={dialogUnderlayStyles(showUnderlay)} />
+            <RadixDialog.Overlay className={dialogUnderlayStyles({ showUnderlay })} />
             <RadixDialog.Content
                 style={
                     {
                         '--dialog-max-width': maxWidth,
                         '--dialog-min-width': minWidth,
+                        '--dialog-min-height': minHeight,
                     } as CSSProperties
                 }
                 ref={ref}
