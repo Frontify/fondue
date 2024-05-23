@@ -91,8 +91,8 @@ export const WithCheckbox: Story = {
 
         return (
             <div className="tw-flex tw-gap-1.5">
-                <Checkbox id="input" />
-                <Label {...args} htmlFor="input" />
+                <Checkbox id="input" aria-labelledby="label" />
+                <Label {...args} id="label" htmlFor="input" />
             </div>
         );
     },
