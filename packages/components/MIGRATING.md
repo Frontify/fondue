@@ -321,7 +321,7 @@ return (
     </Flyout.Trigger>
     {/* Pass in the Flyout Content Component */}
     <Flyout.Content side="right">
-        {/* Use the layout subcomponens insode the content */}
+        {/* Use the layout subcomponents inside the content */}
         <Flyout.Header showCloseButton>Header</Flyout.Header>
         <Flyout.Body {...args} />
         <Flyout.Footer>
