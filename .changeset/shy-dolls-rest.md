@@ -1,5 +1,5 @@
 ---
-"@frontify/fondue-components": patch
+"@frontify/fondue-components": minor
 ---
 
-refactor: add `flyout` component
+feat: add `Flyout` component
