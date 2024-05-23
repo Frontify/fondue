@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import IconDotsVertical16 from '@foundation/Icon/Generated/IconDotsVertical16';
 import { useRef, useState } from 'react';
 
 import { Box } from '@components/Box';
 import { Button, ButtonEmphasis } from '@components/Button';
 import { DialogBody } from '@components/DialogBody';
 import { Dropdown } from '@components/Dropdown';
-import IconDotsVertical16 from '@foundation/Icon/Generated/IconDotsVertical16';
 
 import { Modality } from '../../types';
 
