@@ -182,8 +182,8 @@ export const LongContent: Story = {
     },
 };
 
-export const CustomMaxWidth: Story = {
-    name: 'Custom Max Width',
+export const WithCustomMaxWidth: Story = {
+    name: 'With Custom Max Width',
     args: {
         maxWidth: '200px',
         side: 'bottom',
