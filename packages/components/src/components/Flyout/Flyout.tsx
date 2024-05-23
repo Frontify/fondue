@@ -136,6 +136,7 @@ export const FlyoutHeader = (
         </div>
     );
 };
+FlyoutHeader.displayName = 'Flyout.Header';
 
 export const FlyoutFooter = (
     { children, 'data-test-id': dataTestId = 'fondue-flyout-footer' }: FlyoutFooterProps,
@@ -147,6 +148,7 @@ export const FlyoutFooter = (
         </div>
     );
 };
+FlyoutFooter.displayName = 'Flyout.Footer';
 
 export const FlyoutBody = (
     { children, 'data-test-id': dataTestId = 'fondue-flyout-body' }: FlyoutBodyProps,
@@ -158,6 +160,7 @@ export const FlyoutBody = (
         </div>
     );
 };
+FlyoutBody.displayName = 'Flyout.Body';
 
 export const Flyout = {
     Root: FlyoutRoot,
