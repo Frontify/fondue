@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import IconJohanna from '@foundation/Icon/Generated/IconJohanna';
 import { type Meta, type StoryFn } from '@storybook/react';
 import { useRef, useState } from 'react';
 
@@ -7,16 +8,23 @@ import { Box } from '@components/Box';
 import { Button } from '@components/Button';
 import { DialogBody } from '@components/DialogBody/DialogBody';
 import { POPPER_STORY_ARGS } from '@components/Popper/constantStories';
-import IconJohanna from '@foundation/Icon/Generated/IconJohanna';
 
 import { Modality } from '../../types';
 
 import { InlineDialog, type InlineDialogProps } from './InlineDialog';
 
+/**
+ ### This component is deprecated, please use the [new Flyout](/docs/current_components-flyout--documentation) component instead.
+ */
 export default {
     title: 'Experimental/InlineDialog',
     component: InlineDialog,
     tags: ['autodocs'],
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
+    },
     args: {
         placement: 'bottom-start',
         modality: Modality.Modal,

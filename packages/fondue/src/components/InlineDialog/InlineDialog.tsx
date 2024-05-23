@@ -4,7 +4,7 @@ import { Overlay } from '@utilities/dialogs/Overlay';
 import { Z_INDEX_MODAL } from '@utilities/dialogs/constants';
 import { type WithRequired } from 'src/types/withRequired';
 
-import { type BaseDialogProps, Modality, type OverlayProps } from '../../types';
+import { Modality, type BaseDialogProps, type OverlayProps } from '../../types';
 
 export type InlineDialogProps = Omit<
     OverlayProps,
@@ -12,6 +12,9 @@ export type InlineDialogProps = Omit<
 > &
     Omit<BaseDialogProps, 'darkUnderlay'> & { unsafe_zIndex?: number };
 
+/**
+ * @deprecated Please use updated button component from `@frontify/fondue/components`.
+ */
 export const InlineDialog = ({
     children,
     open,

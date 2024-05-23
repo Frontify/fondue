@@ -279,7 +279,9 @@ Changes:
 
     -   The `placement` and `flip` props were removed and replaced by `side` and `alignment`.
 
-    When the flyout content collides with the viewport, it is automatically flipped to the other side and / or slightly shifted to fit into the viewport.
+        When the flyout content collides with the viewport, it is automatically flipped to the other side and / or slightly shifted to fit into the viewport.
+
+    -   The `padding` prop can be passed to define the padding used by all the layout components (`Flyout.Header`, `Flyout.Body`, `Flyout.Footer`) inside. It has no effect on the `Flyout.Content` or custom components passed as children.
 
 -   The Subcomponents `Flyout.Header`, `Flyout.Body`, and `Flyout.Footer` can be used to add defaut styling to the content inside of `Flyout.Content`.
 
