@@ -70,9 +70,9 @@ Changes:
 
 Changes:
 
--   The `Flyout` component now controls it's open state internally.
+-   The `Flyout` component now controls its open state internally by default.
 
-    -   You can pass in a Trigger component as a child of `Flyout.Trigger` to control the open state.
+    -   You can pass in a trigger component as a child of `Flyout.Trigger` to control the open state.
 
     -   The `open` and `onOpenChange` props can still be used to control the open state externally if needed.
 
@@ -92,26 +92,26 @@ Changes:
 
 -   The styling / layout is now controlled on the subcomponent `Flyout.Container`
 
--   The Subcompnent `Flyout.Content` is used to display the flyout container.
+-   The subcomponent `Flyout.Content` is used to display the flyout container.
     It provides no styling by default and can be used to wrap a custom content.
 
     -   `roundedCorners` is now called `rounded` and is a boolean.
 
-    -   The `width`, `minWidth`, `minHeight` and `maxHeight` props were removed. The Flyout container adjusts to the content inside. Use a custom Component inside if neccessary.
+    -   The `width`, `minWidth`, `minHeight` and `maxHeight` props were removed. The Flyout container adjusts to the content inside. Use a custom component inside if neccessary.
 
-    -   The `strategy`, `unsafe_Zindex` and `role` props were removed to simplify the api.
+    -   The `strategy`, `unsafe_Zindex` and `role` props were removed to simplify the API.
 
     -   The `enablePortal` and `anchor` props were removed to standardize the flyout.
 
-        The Flyout now uses a portal by default and the anchor is the parent of the Flyout.Trigger.
+        The flyout now uses a portal by default and the anchor is the parent of the `Flyout.Trigger`.
 
     -   The `placement` and `flip` props were removed and replaced by `side` and `alignment`.
 
         When the flyout content collides with the viewport, it is automatically flipped to the other side and / or slightly shifted to fit into the viewport.
 
-    -   The `padding` prop can be passed to define the padding used by all the layout components (`Flyout.Header`, `Flyout.Body`, `Flyout.Footer`) inside. It has no effect on the `Flyout.Content` or custom components passed as children.
+    -   The `padding` prop can be passed to define the padding used by all the layout components (`Flyout.Header`, `Flyout.Body` and `Flyout.Footer`) inside. It has no effect on the `Flyout.Content` or custom components passed as children.
 
--   The Subcomponents `Flyout.Header`, `Flyout.Body`, and `Flyout.Footer` can be used to add defaut styling to the content inside of `Flyout.Content`.
+-   The subcomponents `Flyout.Header`, `Flyout.Body`, and `Flyout.Footer` can be used to add defaut styling to the content inside of `Flyout.Content`.
 
     -   The prop `showCloseButton` was added to the `Flyout.Header` to add a close button to the header.
 
@@ -143,13 +143,13 @@ return (
 
 ```tsx
 <Flyout.Root>
-    {/* Pass in a Trigger Component */}
+    {/* Pass in a Trigger component */}
     <Flyout.Trigger>
         <Button>Click me</Button>
     </Flyout.Trigger>
-    {/* Pass in the Flyout Content Component */}
+    {/* Pass in the Flyout Content component */}
     <Flyout.Content side="right">
-        {/* Use the layout subcomponens insode the content */}
+        {/* Use the layout subcomponents inside the content */}
         <Flyout.Header showCloseButton>Header</Flyout.Header>
         <Flyout.Body {...args} />
         <Flyout.Footer>
