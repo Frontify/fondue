@@ -62,7 +62,7 @@
         "@frontify/eslint-config-react": "^0.17.6",
         "@frontify/fondue-icons": "workspace:^",
         "@frontify/fondue-tokens": "workspace:^",
-        "@playwright/experimental-ct-react": "1.41.2",
+        "@playwright/experimental-ct-react": "1.44.0",
         "@storybook/addon-a11y": "^8.0.10",
         "@storybook/addon-actions": "^8.0.10",
         "@storybook/addon-essentials": "^8.0.10",
