@@ -3,7 +3,7 @@
 import { sv } from '#/utilities/styleUtilities';
 
 export const dialogContentStyles = sv({
-    base: 'tw-group tw-block tw-fixed tw-top-1/2 tw-left-1/2 tw-transform tw--translate-x-1/2 tw--translate-y-1/2 tw-bg-base tw-shadow-mid tw-z-20 has-[[data-dialog-layout-component]]:tw-grid tw-min-w-[--dialog-min-width] tw-max-w-[--dialog-max-width] tw-h-fit tw-overflow-hidden',
+    base: 'tw-group tw-block tw-fixed tw-left-2 tw-right-2 tw-top-1/2 sm:tw-left-1/2 sm:tw-transform sm:tw--translate-x-1/2 tw--translate-y-1/2 tw-bg-base tw-shadow-mid tw-z-20 has-[[data-dialog-layout-component]]:tw-grid tw-min-w-[--dialog-min-width] tw-max-w-[--dialog-max-width] tw-h-fit tw-overflow-hidden',
     variants: {
         rounded: {
             true: 'tw-rounded-lg',
@@ -15,7 +15,18 @@ export const dialogContentStyles = sv({
     },
 });
 
-export const dialogOverlayStyles = 'tw-fixed tw-inset-0 tw-bg-box-neutral-mighty tw-opacity-50 tw-z-10';
+export const dialogUnderlayStyles = sv({
+    base: 'tw-fixed tw-inset-0 tw-bg-box-neutral-mighty tw-z-10',
+    variants: {
+        showUnderlay: {
+            true: 'tw-opacity-50',
+            false: 'tw-opacity-0',
+        },
+    },
+    defaultVariants: {
+        showUnderlay: false,
+    },
+});
 
 export const dialogSideContentStyles =
     'tw-col-start-1 tw-row-start-1 tw-row-span-1 sm:tw-row-span-3 tw-min-h-10 tw-min-w-10';

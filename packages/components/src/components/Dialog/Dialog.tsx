@@ -10,8 +10,8 @@ import {
     dialogContentStyles,
     dialogFooterStyles,
     dialogHeaderStyles,
-    dialogOverlayStyles,
     dialogSideContentStyles,
+    dialogUnderlayStyles,
 } from './styles/DialogStyles';
 
 export type DialogRootProps = {
@@ -110,7 +110,7 @@ export const DialogContent = (
 ) => {
     return (
         <RadixDialog.Portal>
-            {showUnderlay && <RadixDialog.Overlay className={dialogOverlayStyles} />}
+            <RadixDialog.Overlay className={dialogUnderlayStyles(showUnderlay)} />
             <RadixDialog.Content
                 style={
                     {
