@@ -195,6 +195,9 @@ importers:
       '@radix-ui/react-checkbox':
         specifier: ^1.0.4
         version: 1.0.4(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@radix-ui/react-dialog':
+        specifier: ^1.0.5
+        version: 1.0.5(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@radix-ui/react-label':
         specifier: ^2.0.2
         version: 2.0.2(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -225,7 +228,7 @@ importers:
         version: link:../tokens
       '@playwright/experimental-ct-react':
         specifier: 1.41.2
-        version: 1.41.2(@types/node@20.12.8)(terser@5.30.4)(vite@5.2.11(@types/node@20.12.8)(terser@5.30.4))
+        version: 1.41.2(@types/node@20.12.8)(terser@5.31.0)(vite@5.2.11(@types/node@20.12.8)(terser@5.31.0))
       '@storybook/addon-a11y':
         specifier: ^8.0.10
         version: 8.0.10
@@ -237,7 +240,7 @@ importers:
         version: 8.0.10(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@storybook/addon-interactions':
         specifier: ^8.0.10
-        version: 8.0.10(vitest@1.4.0(@types/node@20.12.8)(terser@5.30.4))
+        version: 8.0.10(vitest@1.4.0(@types/node@20.12.8)(@vitest/ui@1.4.0)(happy-dom@14.7.1)(terser@5.31.0))
       '@storybook/addon-links':
         specifier: ^8.0.10
         version: 8.0.10(react@18.3.1)
@@ -252,7 +255,7 @@ importers:
         version: 8.0.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.4.5)
       '@storybook/react-vite':
         specifier: ^8.0.10
-        version: 8.0.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.17.2)(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.8)(terser@5.30.4))
+        version: 8.0.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.17.2)(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.8)(terser@5.31.0))
       '@storybook/theming':
         specifier: ^8.0.10
         version: 8.0.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -261,7 +264,7 @@ importers:
         version: 0.5.7(tailwindcss@3.4.3(ts-node@10.9.2(@types/node@20.12.8)(typescript@5.4.5)))
       '@testing-library/jest-dom':
         specifier: ^6.4.5
-        version: 6.4.5(vitest@1.4.0(@types/node@20.12.8)(terser@5.30.4))
+        version: 6.4.5(vitest@1.4.0(@types/node@20.12.8)(@vitest/ui@1.4.0)(happy-dom@14.7.1)(terser@5.31.0))
       '@testing-library/react':
         specifier: ^15.0.6
         version: 15.0.7(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -279,10 +282,10 @@ importers:
         version: 17.0.3
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.2.11(@types/node@20.12.8)(terser@5.30.4))
+        version: 4.2.1(vite@5.2.11(@types/node@20.12.8)(terser@5.31.0))
       '@vitest/coverage-v8':
         specifier: ^1.4.0
-        version: 1.4.0(vitest@1.4.0(@types/node@20.12.8)(@vitest/ui@1.4.0)(happy-dom@14.7.1)(terser@5.30.4))
+        version: 1.4.0(vitest@1.4.0(@types/node@20.12.8)(@vitest/ui@1.4.0)(happy-dom@14.7.1)(terser@5.31.0))
       '@vitest/ui':
         specifier: ^1.4.0
         version: 1.4.0(vitest@1.4.0)
@@ -342,16 +345,16 @@ importers:
         version: 5.4.5
       vite:
         specifier: ^5.2.11
-        version: 5.2.11(@types/node@20.12.8)(terser@5.30.4)
+        version: 5.2.11(@types/node@20.12.8)(terser@5.31.0)
       vite-plugin-dts:
         specifier: ^3.9.1
-        version: 3.9.1(@types/node@20.12.8)(rollup@4.17.2)(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.8)(terser@5.30.4))
+        version: 3.9.1(@types/node@20.12.8)(rollup@4.17.2)(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.8)(terser@5.31.0))
       vite-tsconfig-paths:
         specifier: ^4.3.2
-        version: 4.3.2(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.8)(terser@5.30.4))
+        version: 4.3.2(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.8)(terser@5.31.0))
       vitest:
         specifier: ^1.4.0
-        version: 1.4.0(@types/node@20.12.8)(@vitest/ui@1.4.0)(happy-dom@14.7.1)(terser@5.30.4)
+        version: 1.4.0(@types/node@20.12.8)(@vitest/ui@1.4.0)(happy-dom@14.7.1)(terser@5.31.0)
 
   packages/fondue:
     dependencies:
@@ -664,7 +667,7 @@ importers:
         version: 8.0.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.4.5)
       '@storybook/react-vite':
         specifier: ^8.0.10
-        version: 8.0.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.14.0)(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.8)(terser@5.30.4))
+        version: 8.0.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.14.0)(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.8)(terser@5.31.0))
       '@storybook/theming':
         specifier: ^8.0.10
         version: 8.0.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -709,7 +712,7 @@ importers:
         version: 18.3.0
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.2.11(@types/node@20.12.8)(terser@5.30.4))
+        version: 4.2.1(vite@5.2.11(@types/node@20.12.8)(terser@5.31.0))
       autoprefixer:
         specifier: ^10.4.19
         version: 10.4.19(postcss@8.4.38)
@@ -796,16 +799,16 @@ importers:
         version: 5.4.5
       vite:
         specifier: ^5.2.11
-        version: 5.2.11(@types/node@20.12.8)(terser@5.30.4)
+        version: 5.2.11(@types/node@20.12.8)(terser@5.31.0)
       vite-plugin-dts:
         specifier: ^3.9.1
-        version: 3.9.1(@types/node@20.12.8)(rollup@4.14.0)(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.8)(terser@5.30.4))
+        version: 3.9.1(@types/node@20.12.8)(rollup@4.14.0)(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.8)(terser@5.31.0))
       vite-plugin-static-copy:
         specifier: ^1.0.4
-        version: 1.0.4(vite@5.2.11(@types/node@20.12.8)(terser@5.30.4))
+        version: 1.0.4(vite@5.2.11(@types/node@20.12.8)(terser@5.31.0))
       vite-tsconfig-paths:
         specifier: ^4.3.2
-        version: 4.3.2(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.8)(terser@5.30.4))
+        version: 4.3.2(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.8)(terser@5.31.0))
 
   packages/icons:
     devDependencies:
@@ -829,7 +832,7 @@ importers:
         version: 8.0.10(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@storybook/addon-interactions':
         specifier: ^8.0.10
-        version: 8.0.10(vitest@1.4.0(@types/node@20.12.8)(terser@5.30.4))
+        version: 8.0.10(vitest@1.4.0(@types/node@20.12.8)(terser@5.31.0))
       '@storybook/addon-links':
         specifier: ^8.0.10
         version: 8.0.10(react@18.3.1)
@@ -847,7 +850,7 @@ importers:
         version: 8.0.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.4.5)
       '@storybook/react-vite':
         specifier: ^8.0.10
-        version: 8.0.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.17.2)(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.8)(terser@5.30.4))
+        version: 8.0.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.17.2)(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.8)(terser@5.31.0))
       '@storybook/theming':
         specifier: ^8.0.10
         version: 8.0.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -862,7 +865,7 @@ importers:
         version: 18.3.1
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.2.11(@types/node@20.12.8)(terser@5.30.4))
+        version: 4.2.1(vite@5.2.11(@types/node@20.12.8)(terser@5.31.0))
       autoprefixer:
         specifier: ^10.4.19
         version: 10.4.19(postcss@8.4.38)
@@ -910,16 +913,16 @@ importers:
         version: 5.4.5
       vite:
         specifier: ^5.2.11
-        version: 5.2.11(@types/node@20.12.8)(terser@5.30.4)
+        version: 5.2.11(@types/node@20.12.8)(terser@5.31.0)
       vite-plugin-dts:
         specifier: ^3.9.1
-        version: 3.9.1(@types/node@20.12.8)(rollup@4.17.2)(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.8)(terser@5.30.4))
+        version: 3.9.1(@types/node@20.12.8)(rollup@4.17.2)(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.8)(terser@5.31.0))
       vite-plugin-external:
         specifier: ^4.3.1
         version: 4.3.1
       vite-tsconfig-paths:
         specifier: ^4.3.2
-        version: 4.3.2(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.8)(terser@5.30.4))
+        version: 4.3.2(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.8)(terser@5.31.0))
 
   packages/tokens:
     devDependencies:
@@ -976,7 +979,7 @@ importers:
         version: 8.0.10(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@storybook/addon-interactions':
         specifier: ^8.0.10
-        version: 8.0.10(vitest@1.4.0(@types/node@20.12.8)(terser@5.30.4))
+        version: 8.0.10(vitest@1.4.0(@types/node@20.12.12)(terser@5.31.0))
       '@storybook/addon-links':
         specifier: ^8.0.10
         version: 8.0.10(react@18.3.1)
@@ -988,7 +991,7 @@ importers:
         version: 8.0.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.4.5)
       '@storybook/react-vite':
         specifier: ^8.0.10
-        version: 8.0.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.17.2)(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.8)(terser@5.30.4))
+        version: 8.0.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.17.2)(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.12)(terser@5.31.0))
       '@storybook/theming':
         specifier: ^8.0.10
         version: 8.0.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1003,7 +1006,7 @@ importers:
         version: 5.4.5
       vite:
         specifier: ^5.2.11
-        version: 5.2.11(@types/node@20.12.8)(terser@5.30.4)
+        version: 5.2.11(@types/node@20.12.12)(terser@5.31.0)
 
 packages:
 
@@ -2578,6 +2581,19 @@ packages:
       react: ^16.8 || ^17.0 || ^18.0
     peerDependenciesMeta:
       '@types/react':
+        optional: true
+
+  '@radix-ui/react-dialog@1.0.5':
+    resolution: {integrity: sha512-GjWJX/AUpB703eEBanuBnIWdIXg6NvJFCXcNlSZk4xdszCdhrJgBoUd1cGk67vFO+WdA2pfI/plOpqz/5GUP6Q==}
+    peerDependencies:
+      '@types/react': '*'
+      '@types/react-dom': '*'
+      react: ^16.8 || ^17.0 || ^18.0
+      react-dom: ^16.8 || ^17.0 || ^18.0
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      '@types/react-dom':
         optional: true
 
   '@radix-ui/react-direction@1.0.1':
@@ -9638,11 +9654,6 @@ packages:
     resolution: {integrity: sha512-wK0Ri4fOGjv/XPy8SBHZChl8CM7uMc5VML7SqiQ0zG7+J5Vr+RMQDoHa2CNT6KHUnTGIXH34UDMkPzAUyapBZg==}
     engines: {node: '>=8'}
 
-  terser@5.30.4:
-    resolution: {integrity: sha512-xRdd0v64a8mFK9bnsKVdoNP9GQIKUAaJPTaqEQDL4w/J8WaW4sWXXoMZ+6SimPkfT5bElreXf8m9HnmPc3E1BQ==}
-    engines: {node: '>=10'}
-    hasBin: true
-
   terser@5.31.0:
     resolution: {integrity: sha512-Q1JFAoUKE5IMfI4Z/lkE/E6+SwgzO+x4tq4v1AyBLRj8VSYvRO6A/rQrPg1yud4g0En9EKI1TvFRF2tQFcoUkg==}
     engines: {node: '>=10'}
@@ -11565,7 +11576,7 @@ snapshots:
 
   '@changesets/apply-release-plan@7.0.0':
     dependencies:
-      '@babel/runtime': 7.22.15
+      '@babel/runtime': 7.24.5
       '@changesets/config': 3.0.0
       '@changesets/get-version-range-type': 0.4.0
       '@changesets/git': 3.0.0
@@ -11581,7 +11592,7 @@ snapshots:
 
   '@changesets/assemble-release-plan@6.0.0':
     dependencies:
-      '@babel/runtime': 7.22.15
+      '@babel/runtime': 7.24.5
       '@changesets/errors': 0.2.0
       '@changesets/get-dependents-graph': 2.0.0
       '@changesets/types': 6.0.0
@@ -11666,7 +11677,7 @@ snapshots:
 
   '@changesets/get-release-plan@4.0.0':
     dependencies:
-      '@babel/runtime': 7.22.15
+      '@babel/runtime': 7.24.5
       '@changesets/assemble-release-plan': 6.0.0
       '@changesets/config': 3.0.0
       '@changesets/pre': 2.0.0
@@ -11678,7 +11689,7 @@ snapshots:
 
   '@changesets/git@3.0.0':
     dependencies:
-      '@babel/runtime': 7.22.15
+      '@babel/runtime': 7.24.5
       '@changesets/errors': 0.2.0
       '@changesets/types': 6.0.0
       '@manypkg/get-packages': 1.1.3
@@ -11697,7 +11708,7 @@ snapshots:
 
   '@changesets/pre@2.0.0':
     dependencies:
-      '@babel/runtime': 7.22.15
+      '@babel/runtime': 7.24.5
       '@changesets/errors': 0.2.0
       '@changesets/types': 6.0.0
       '@manypkg/get-packages': 1.1.3
@@ -11705,7 +11716,7 @@ snapshots:
 
   '@changesets/read@0.6.0':
     dependencies:
-      '@babel/runtime': 7.22.15
+      '@babel/runtime': 7.24.5
       '@changesets/git': 3.0.0
       '@changesets/logger': 0.1.0
       '@changesets/parse': 0.4.0
@@ -11720,7 +11731,7 @@ snapshots:
 
   '@changesets/write@0.3.0':
     dependencies:
-      '@babel/runtime': 7.22.15
+      '@babel/runtime': 7.24.5
       '@changesets/types': 6.0.0
       fs-extra: 7.0.1
       human-id: 1.0.2
@@ -12234,13 +12245,13 @@ snapshots:
     optionalDependencies:
       typescript: 5.4.5
 
-  '@joshwooding/vite-plugin-react-docgen-typescript@0.3.0(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.8)(terser@5.30.4))':
+  '@joshwooding/vite-plugin-react-docgen-typescript@0.3.0(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.8)(terser@5.31.0))':
     dependencies:
       glob: 7.2.3
       glob-promise: 4.2.2(glob@7.2.3)
       magic-string: 0.27.0
       react-docgen-typescript: 2.2.2(typescript@5.4.5)
-      vite: 5.2.11(@types/node@20.12.8)(terser@5.30.4)
+      vite: 5.2.11(@types/node@20.12.8)(terser@5.31.0)
     optionalDependencies:
       typescript: 5.4.5
 
@@ -12282,14 +12293,14 @@ snapshots:
 
   '@manypkg/find-root@1.1.0':
     dependencies:
-      '@babel/runtime': 7.22.15
+      '@babel/runtime': 7.24.5
       '@types/node': 12.20.55
       find-up: 4.1.0
       fs-extra: 8.1.0
 
   '@manypkg/get-packages@1.1.3':
     dependencies:
-      '@babel/runtime': 7.22.15
+      '@babel/runtime': 7.24.5
       '@changesets/types': 4.1.0
       '@manypkg/find-root': 1.1.0
       fs-extra: 8.1.0
@@ -12386,11 +12397,11 @@ snapshots:
 
   '@pkgr/core@0.1.1': {}
 
-  '@playwright/experimental-ct-core@1.41.2(@types/node@20.12.8)(terser@5.30.4)':
+  '@playwright/experimental-ct-core@1.41.2(@types/node@20.12.8)(terser@5.31.0)':
     dependencies:
       playwright: 1.41.2
       playwright-core: 1.41.2
-      vite: 4.5.3(@types/node@20.12.8)(terser@5.30.4)
+      vite: 4.5.3(@types/node@20.12.8)(terser@5.31.0)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -12400,10 +12411,10 @@ snapshots:
       - sugarss
       - terser
 
-  '@playwright/experimental-ct-react@1.41.2(@types/node@20.12.8)(terser@5.30.4)(vite@5.2.11(@types/node@20.12.8)(terser@5.30.4))':
+  '@playwright/experimental-ct-react@1.41.2(@types/node@20.12.8)(terser@5.31.0)(vite@5.2.11(@types/node@20.12.8)(terser@5.31.0))':
     dependencies:
-      '@playwright/experimental-ct-core': 1.41.2(@types/node@20.12.8)(terser@5.30.4)
-      '@vitejs/plugin-react': 4.2.1(vite@5.2.11(@types/node@20.12.8)(terser@5.30.4))
+      '@playwright/experimental-ct-core': 1.41.2(@types/node@20.12.8)(terser@5.31.0)
+      '@vitejs/plugin-react': 4.2.1(vite@5.2.11(@types/node@20.12.8)(terser@5.31.0))
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -12429,7 +12440,7 @@ snapshots:
 
   '@radix-ui/react-arrow@1.0.3(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1(react@18.2.0))(react@18.2.0)':
     dependencies:
-      '@babel/runtime': 7.24.4
+      '@babel/runtime': 7.24.5
       '@radix-ui/react-primitive': 1.0.3(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1(react@18.2.0))(react@18.2.0)
       react: 18.2.0
       react-dom: 18.3.1(react@18.2.0)
@@ -12439,7 +12450,7 @@ snapshots:
 
   '@radix-ui/react-arrow@1.0.3(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@babel/runtime': 7.24.4
+      '@babel/runtime': 7.24.5
       '@radix-ui/react-primitive': 1.0.3(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
@@ -12492,21 +12503,21 @@ snapshots:
 
   '@radix-ui/react-compose-refs@1.0.1(@types/react@18.3.1)(react@18.2.0)':
     dependencies:
-      '@babel/runtime': 7.24.4
+      '@babel/runtime': 7.24.5
       react: 18.2.0
     optionalDependencies:
       '@types/react': 18.3.1
 
   '@radix-ui/react-compose-refs@1.0.1(@types/react@18.3.1)(react@18.3.1)':
     dependencies:
-      '@babel/runtime': 7.24.4
+      '@babel/runtime': 7.24.5
       react: 18.3.1
     optionalDependencies:
       '@types/react': 18.3.1
 
   '@radix-ui/react-context@1.0.1(@types/react@18.3.1)(react@18.2.0)':
     dependencies:
-      '@babel/runtime': 7.24.4
+      '@babel/runtime': 7.24.5
       react: 18.2.0
     optionalDependencies:
       '@types/react': 18.3.1
@@ -12517,6 +12528,29 @@ snapshots:
       react: 18.3.1
     optionalDependencies:
       '@types/react': 18.3.1
+
+  '@radix-ui/react-dialog@1.0.5(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@babel/runtime': 7.24.5
+      '@radix-ui/primitive': 1.0.1
+      '@radix-ui/react-compose-refs': 1.0.1(@types/react@18.3.1)(react@18.3.1)
+      '@radix-ui/react-context': 1.0.1(@types/react@18.3.1)(react@18.3.1)
+      '@radix-ui/react-dismissable-layer': 1.0.5(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@radix-ui/react-focus-guards': 1.0.1(@types/react@18.3.1)(react@18.3.1)
+      '@radix-ui/react-focus-scope': 1.0.4(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@radix-ui/react-id': 1.0.1(@types/react@18.3.1)(react@18.3.1)
+      '@radix-ui/react-portal': 1.0.4(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@radix-ui/react-presence': 1.0.1(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@radix-ui/react-primitive': 1.0.3(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@radix-ui/react-slot': 1.0.2(@types/react@18.3.1)(react@18.3.1)
+      '@radix-ui/react-use-controllable-state': 1.0.1(@types/react@18.3.1)(react@18.3.1)
+      aria-hidden: 1.2.4
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      react-remove-scroll: 2.5.5(@types/react@18.3.1)(react@18.3.1)
+    optionalDependencies:
+      '@types/react': 18.3.1
+      '@types/react-dom': 18.3.0
 
   '@radix-ui/react-direction@1.0.1(@types/react@18.3.1)(react@18.2.0)':
     dependencies:
@@ -12548,7 +12582,7 @@ snapshots:
 
   '@radix-ui/react-dismissable-layer@1.0.5(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@babel/runtime': 7.24.4
+      '@babel/runtime': 7.24.5
       '@radix-ui/primitive': 1.0.1
       '@radix-ui/react-compose-refs': 1.0.1(@types/react@18.3.1)(react@18.3.1)
       '@radix-ui/react-primitive': 1.0.3(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -12562,14 +12596,14 @@ snapshots:
 
   '@radix-ui/react-focus-guards@1.0.1(@types/react@18.3.1)(react@18.2.0)':
     dependencies:
-      '@babel/runtime': 7.24.4
+      '@babel/runtime': 7.24.5
       react: 18.2.0
     optionalDependencies:
       '@types/react': 18.3.1
 
   '@radix-ui/react-focus-guards@1.0.1(@types/react@18.3.1)(react@18.3.1)':
     dependencies:
-      '@babel/runtime': 7.24.4
+      '@babel/runtime': 7.24.5
       react: 18.3.1
     optionalDependencies:
       '@types/react': 18.3.1
@@ -12588,7 +12622,7 @@ snapshots:
 
   '@radix-ui/react-focus-scope@1.0.4(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@babel/runtime': 7.24.4
+      '@babel/runtime': 7.24.5
       '@radix-ui/react-compose-refs': 1.0.1(@types/react@18.3.1)(react@18.3.1)
       '@radix-ui/react-primitive': 1.0.3(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@radix-ui/react-use-callback-ref': 1.0.1(@types/react@18.3.1)(react@18.3.1)
@@ -12608,7 +12642,7 @@ snapshots:
 
   '@radix-ui/react-id@1.0.1(@types/react@18.3.1)(react@18.3.1)':
     dependencies:
-      '@babel/runtime': 7.24.4
+      '@babel/runtime': 7.24.5
       '@radix-ui/react-use-layout-effect': 1.0.1(@types/react@18.3.1)(react@18.3.1)
       react: 18.3.1
     optionalDependencies:
@@ -12669,7 +12703,7 @@ snapshots:
 
   '@radix-ui/react-popper@1.1.3(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@babel/runtime': 7.24.4
+      '@babel/runtime': 7.24.5
       '@floating-ui/react-dom': 2.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@radix-ui/react-arrow': 1.0.3(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@radix-ui/react-compose-refs': 1.0.1(@types/react@18.3.1)(react@18.3.1)
@@ -12698,7 +12732,7 @@ snapshots:
 
   '@radix-ui/react-portal@1.0.4(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@babel/runtime': 7.24.4
+      '@babel/runtime': 7.24.5
       '@radix-ui/react-primitive': 1.0.3(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
@@ -12719,7 +12753,7 @@ snapshots:
 
   '@radix-ui/react-primitive@1.0.3(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1(react@18.2.0))(react@18.2.0)':
     dependencies:
-      '@babel/runtime': 7.24.4
+      '@babel/runtime': 7.24.5
       '@radix-ui/react-slot': 1.0.2(@types/react@18.3.1)(react@18.2.0)
       react: 18.2.0
       react-dom: 18.3.1(react@18.2.0)
@@ -12991,7 +13025,7 @@ snapshots:
 
   '@radix-ui/react-use-escape-keydown@1.0.3(@types/react@18.3.1)(react@18.2.0)':
     dependencies:
-      '@babel/runtime': 7.24.4
+      '@babel/runtime': 7.24.5
       '@radix-ui/react-use-callback-ref': 1.0.1(@types/react@18.3.1)(react@18.2.0)
       react: 18.2.0
     optionalDependencies:
@@ -12999,7 +13033,7 @@ snapshots:
 
   '@radix-ui/react-use-escape-keydown@1.0.3(@types/react@18.3.1)(react@18.3.1)':
     dependencies:
-      '@babel/runtime': 7.24.4
+      '@babel/runtime': 7.24.5
       '@radix-ui/react-use-callback-ref': 1.0.1(@types/react@18.3.1)(react@18.3.1)
       react: 18.3.1
     optionalDependencies:
@@ -13035,7 +13069,7 @@ snapshots:
 
   '@radix-ui/react-use-rect@1.0.1(@types/react@18.3.1)(react@18.2.0)':
     dependencies:
-      '@babel/runtime': 7.24.4
+      '@babel/runtime': 7.24.5
       '@radix-ui/rect': 1.0.1
       react: 18.2.0
     optionalDependencies:
@@ -13043,7 +13077,7 @@ snapshots:
 
   '@radix-ui/react-use-rect@1.0.1(@types/react@18.3.1)(react@18.3.1)':
     dependencies:
-      '@babel/runtime': 7.24.4
+      '@babel/runtime': 7.24.5
       '@radix-ui/rect': 1.0.1
       react: 18.3.1
     optionalDependencies:
@@ -13067,7 +13101,7 @@ snapshots:
 
   '@radix-ui/react-visually-hidden@1.0.3(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1(react@18.2.0))(react@18.2.0)':
     dependencies:
-      '@babel/runtime': 7.24.4
+      '@babel/runtime': 7.24.5
       '@radix-ui/react-primitive': 1.0.3(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1(react@18.2.0))(react@18.2.0)
       react: 18.2.0
       react-dom: 18.3.1(react@18.2.0)
@@ -13077,7 +13111,7 @@ snapshots:
 
   '@radix-ui/react-visually-hidden@1.0.3(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@babel/runtime': 7.24.4
+      '@babel/runtime': 7.24.5
       '@radix-ui/react-primitive': 1.0.3(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
@@ -13087,7 +13121,7 @@ snapshots:
 
   '@radix-ui/rect@1.0.1':
     dependencies:
-      '@babel/runtime': 7.24.4
+      '@babel/runtime': 7.24.5
 
   '@react-aria/accordion@3.0.0-alpha.17(react@18.3.1)':
     dependencies:
@@ -14540,11 +14574,41 @@ snapshots:
     dependencies:
       '@storybook/global': 5.0.0
 
-  '@storybook/addon-interactions@8.0.10(vitest@1.4.0(@types/node@20.12.8)(terser@5.30.4))':
+  '@storybook/addon-interactions@8.0.10(vitest@1.4.0(@types/node@20.12.12)(terser@5.31.0))':
     dependencies:
       '@storybook/global': 5.0.0
       '@storybook/instrumenter': 8.0.10
-      '@storybook/test': 8.0.10(vitest@1.4.0(@types/node@20.12.8)(terser@5.30.4))
+      '@storybook/test': 8.0.10(vitest@1.4.0(@types/node@20.12.12)(terser@5.31.0))
+      '@storybook/types': 8.0.10
+      polished: 4.2.2
+      ts-dedent: 2.2.0
+    transitivePeerDependencies:
+      - '@jest/globals'
+      - '@types/bun'
+      - '@types/jest'
+      - jest
+      - vitest
+
+  '@storybook/addon-interactions@8.0.10(vitest@1.4.0(@types/node@20.12.8)(@vitest/ui@1.4.0)(happy-dom@14.7.1)(terser@5.31.0))':
+    dependencies:
+      '@storybook/global': 5.0.0
+      '@storybook/instrumenter': 8.0.10
+      '@storybook/test': 8.0.10(vitest@1.4.0(@types/node@20.12.8)(@vitest/ui@1.4.0)(happy-dom@14.7.1)(terser@5.31.0))
+      '@storybook/types': 8.0.10
+      polished: 4.2.2
+      ts-dedent: 2.2.0
+    transitivePeerDependencies:
+      - '@jest/globals'
+      - '@types/bun'
+      - '@types/jest'
+      - jest
+      - vitest
+
+  '@storybook/addon-interactions@8.0.10(vitest@1.4.0(@types/node@20.12.8)(terser@5.31.0))':
+    dependencies:
+      '@storybook/global': 5.0.0
+      '@storybook/instrumenter': 8.0.10
+      '@storybook/test': 8.0.10(vitest@1.4.0(@types/node@20.12.8)(terser@5.31.0))
       '@storybook/types': 8.0.10
       polished: 4.2.2
       ts-dedent: 2.2.0
@@ -14667,7 +14731,7 @@ snapshots:
       - encoding
       - supports-color
 
-  '@storybook/builder-vite@8.0.10(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.8)(terser@5.30.4))':
+  '@storybook/builder-vite@8.0.10(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.8)(terser@5.31.0))':
     dependencies:
       '@storybook/channels': 8.0.10
       '@storybook/client-logger': 8.0.10
@@ -14686,7 +14750,7 @@ snapshots:
       fs-extra: 11.2.0
       magic-string: 0.30.8
       ts-dedent: 2.2.0
-      vite: 5.2.11(@types/node@20.12.8)(terser@5.30.4)
+      vite: 5.2.11(@types/node@20.12.8)(terser@5.31.0)
     optionalDependencies:
       typescript: 5.4.5
     transitivePeerDependencies:
@@ -15077,11 +15141,11 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
-  '@storybook/react-vite@8.0.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.14.0)(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.8)(terser@5.30.4))':
+  '@storybook/react-vite@8.0.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.14.0)(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.8)(terser@5.31.0))':
     dependencies:
-      '@joshwooding/vite-plugin-react-docgen-typescript': 0.3.0(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.8)(terser@5.30.4))
+      '@joshwooding/vite-plugin-react-docgen-typescript': 0.3.0(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.8)(terser@5.31.0))
       '@rollup/pluginutils': 5.1.0(rollup@4.14.0)
-      '@storybook/builder-vite': 8.0.10(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.8)(terser@5.30.4))
+      '@storybook/builder-vite': 8.0.10(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.8)(terser@5.31.0))
       '@storybook/node-logger': 8.0.10
       '@storybook/react': 8.0.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.4.5)
       find-up: 5.0.0
@@ -15091,7 +15155,7 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
       resolve: 1.22.8
       tsconfig-paths: 4.2.0
-      vite: 5.2.11(@types/node@20.12.8)(terser@5.30.4)
+      vite: 5.2.11(@types/node@20.12.8)(terser@5.31.0)
     transitivePeerDependencies:
       - '@preact/preset-vite'
       - encoding
@@ -15123,11 +15187,11 @@ snapshots:
       - typescript
       - vite-plugin-glimmerx
 
-  '@storybook/react-vite@8.0.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.17.2)(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.8)(terser@5.30.4))':
+  '@storybook/react-vite@8.0.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.17.2)(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.8)(terser@5.31.0))':
     dependencies:
-      '@joshwooding/vite-plugin-react-docgen-typescript': 0.3.0(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.8)(terser@5.30.4))
+      '@joshwooding/vite-plugin-react-docgen-typescript': 0.3.0(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.8)(terser@5.31.0))
       '@rollup/pluginutils': 5.1.0(rollup@4.17.2)
-      '@storybook/builder-vite': 8.0.10(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.8)(terser@5.30.4))
+      '@storybook/builder-vite': 8.0.10(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.8)(terser@5.31.0))
       '@storybook/node-logger': 8.0.10
       '@storybook/react': 8.0.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.4.5)
       find-up: 5.0.0
@@ -15137,7 +15201,7 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
       resolve: 1.22.8
       tsconfig-paths: 4.2.0
-      vite: 5.2.11(@types/node@20.12.8)(terser@5.30.4)
+      vite: 5.2.11(@types/node@20.12.8)(terser@5.31.0)
     transitivePeerDependencies:
       - '@preact/preset-vite'
       - encoding
@@ -15203,14 +15267,52 @@ snapshots:
       - encoding
       - supports-color
 
-  '@storybook/test@8.0.10(vitest@1.4.0(@types/node@20.12.8)(terser@5.30.4))':
+  '@storybook/test@8.0.10(vitest@1.4.0(@types/node@20.12.12)(terser@5.31.0))':
     dependencies:
       '@storybook/client-logger': 8.0.10
       '@storybook/core-events': 8.0.10
       '@storybook/instrumenter': 8.0.10
       '@storybook/preview-api': 8.0.10
       '@testing-library/dom': 9.3.4
-      '@testing-library/jest-dom': 6.4.5(vitest@1.4.0(@types/node@20.12.8)(terser@5.30.4))
+      '@testing-library/jest-dom': 6.4.5(vitest@1.4.0(@types/node@20.12.12)(terser@5.31.0))
+      '@testing-library/user-event': 14.5.2(@testing-library/dom@9.3.4)
+      '@vitest/expect': 1.3.1
+      '@vitest/spy': 1.4.0
+      util: 0.12.5
+    transitivePeerDependencies:
+      - '@jest/globals'
+      - '@types/bun'
+      - '@types/jest'
+      - jest
+      - vitest
+
+  '@storybook/test@8.0.10(vitest@1.4.0(@types/node@20.12.8)(@vitest/ui@1.4.0)(happy-dom@14.7.1)(terser@5.31.0))':
+    dependencies:
+      '@storybook/client-logger': 8.0.10
+      '@storybook/core-events': 8.0.10
+      '@storybook/instrumenter': 8.0.10
+      '@storybook/preview-api': 8.0.10
+      '@testing-library/dom': 9.3.4
+      '@testing-library/jest-dom': 6.4.5(vitest@1.4.0(@types/node@20.12.8)(@vitest/ui@1.4.0)(happy-dom@14.7.1)(terser@5.31.0))
+      '@testing-library/user-event': 14.5.2(@testing-library/dom@9.3.4)
+      '@vitest/expect': 1.3.1
+      '@vitest/spy': 1.4.0
+      util: 0.12.5
+    transitivePeerDependencies:
+      - '@jest/globals'
+      - '@types/bun'
+      - '@types/jest'
+      - jest
+      - vitest
+
+  '@storybook/test@8.0.10(vitest@1.4.0(@types/node@20.12.8)(terser@5.31.0))':
+    dependencies:
+      '@storybook/client-logger': 8.0.10
+      '@storybook/core-events': 8.0.10
+      '@storybook/instrumenter': 8.0.10
+      '@storybook/preview-api': 8.0.10
+      '@testing-library/dom': 9.3.4
+      '@testing-library/jest-dom': 6.4.5(vitest@1.4.0(@types/node@20.12.8)(terser@5.31.0))
       '@testing-library/user-event': 14.5.2(@testing-library/dom@9.3.4)
       '@vitest/expect': 1.3.1
       '@vitest/spy': 1.4.0
@@ -15387,7 +15489,7 @@ snapshots:
       lz-string: 1.5.0
       pretty-format: 27.5.1
 
-  '@testing-library/jest-dom@6.4.5(vitest@1.4.0(@types/node@20.12.8)(terser@5.30.4))':
+  '@testing-library/jest-dom@6.4.5(vitest@1.4.0(@types/node@20.12.12)(terser@5.31.0))':
     dependencies:
       '@adobe/css-tools': 4.3.3
       '@babel/runtime': 7.24.5
@@ -15398,7 +15500,33 @@ snapshots:
       lodash: 4.17.21
       redent: 3.0.0
     optionalDependencies:
-      vitest: 1.4.0(@types/node@20.12.8)(@vitest/ui@1.4.0)(happy-dom@14.7.1)(terser@5.30.4)
+      vitest: 1.4.0(@types/node@20.12.12)(@vitest/ui@1.4.0)(happy-dom@14.7.1)(terser@5.31.0)
+
+  '@testing-library/jest-dom@6.4.5(vitest@1.4.0(@types/node@20.12.8)(@vitest/ui@1.4.0)(happy-dom@14.7.1)(terser@5.31.0))':
+    dependencies:
+      '@adobe/css-tools': 4.3.3
+      '@babel/runtime': 7.24.5
+      aria-query: 5.3.0
+      chalk: 3.0.0
+      css.escape: 1.5.1
+      dom-accessibility-api: 0.6.3
+      lodash: 4.17.21
+      redent: 3.0.0
+    optionalDependencies:
+      vitest: 1.4.0(@types/node@20.12.8)(@vitest/ui@1.4.0)(happy-dom@14.7.1)(terser@5.31.0)
+
+  '@testing-library/jest-dom@6.4.5(vitest@1.4.0(@types/node@20.12.8)(terser@5.31.0))':
+    dependencies:
+      '@adobe/css-tools': 4.3.3
+      '@babel/runtime': 7.24.5
+      aria-query: 5.3.0
+      chalk: 3.0.0
+      css.escape: 1.5.1
+      dom-accessibility-api: 0.6.3
+      lodash: 4.17.21
+      redent: 3.0.0
+    optionalDependencies:
+      vitest: 1.4.0(@types/node@20.12.8)(@vitest/ui@1.4.0)(happy-dom@14.7.1)(terser@5.31.0)
 
   '@testing-library/react@15.0.7(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
@@ -16377,14 +16505,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitejs/plugin-react@4.2.1(vite@5.2.11(@types/node@20.12.8)(terser@5.30.4))':
+  '@vitejs/plugin-react@4.2.1(vite@5.2.11(@types/node@20.12.8)(terser@5.31.0))':
     dependencies:
       '@babel/core': 7.24.4
       '@babel/plugin-transform-react-jsx-self': 7.23.3(@babel/core@7.24.4)
       '@babel/plugin-transform-react-jsx-source': 7.23.3(@babel/core@7.24.4)
       '@types/babel__core': 7.20.5
       react-refresh: 0.14.0
-      vite: 5.2.11(@types/node@20.12.8)(terser@5.30.4)
+      vite: 5.2.11(@types/node@20.12.8)(terser@5.31.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -16408,7 +16536,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitest/coverage-v8@1.4.0(vitest@1.4.0(@types/node@20.12.8)(@vitest/ui@1.4.0)(happy-dom@14.7.1)(terser@5.30.4))':
+  '@vitest/coverage-v8@1.4.0(vitest@1.4.0(@types/node@20.12.8)(@vitest/ui@1.4.0)(happy-dom@14.7.1)(terser@5.31.0))':
     dependencies:
       '@ampproject/remapping': 2.2.1
       '@bcoe/v8-coverage': 0.2.3
@@ -16424,7 +16552,7 @@ snapshots:
       strip-literal: 2.0.0
       test-exclude: 6.0.0
       v8-to-istanbul: 9.2.0
-      vitest: 1.4.0(@types/node@20.12.8)(@vitest/ui@1.4.0)(happy-dom@14.7.1)(terser@5.30.4)
+      vitest: 1.4.0(@types/node@20.12.8)(@vitest/ui@1.4.0)(happy-dom@14.7.1)(terser@5.31.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -16469,7 +16597,7 @@ snapshots:
       pathe: 1.1.2
       picocolors: 1.0.0
       sirv: 2.0.4
-      vitest: 1.4.0(@types/node@20.12.12)(@vitest/ui@1.4.0)(happy-dom@14.7.1)(terser@5.31.0)
+      vitest: 1.4.0(@types/node@20.12.8)(@vitest/ui@1.4.0)(happy-dom@14.7.1)(terser@5.31.0)
 
   '@vitest/utils@1.3.1':
     dependencies:
@@ -22169,14 +22297,6 @@ snapshots:
 
   term-size@2.2.1: {}
 
-  terser@5.30.4:
-    dependencies:
-      '@jridgewell/source-map': 0.3.6
-      acorn: 8.11.3
-      commander: 2.20.3
-      source-map-support: 0.5.21
-    optional: true
-
   terser@5.31.0:
     dependencies:
       '@jridgewell/source-map': 0.3.6
@@ -22710,13 +22830,13 @@ snapshots:
       - supports-color
       - terser
 
-  vite-node@1.4.0(@types/node@20.12.8)(terser@5.30.4):
+  vite-node@1.4.0(@types/node@20.12.8)(terser@5.31.0):
     dependencies:
       cac: 6.7.14
       debug: 4.3.4(supports-color@5.5.0)
       pathe: 1.1.2
       picocolors: 1.0.0
-      vite: 5.2.11(@types/node@20.12.8)(terser@5.30.4)
+      vite: 5.2.11(@types/node@20.12.8)(terser@5.31.0)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -22744,7 +22864,7 @@ snapshots:
       - rollup
       - supports-color
 
-  vite-plugin-dts@3.9.1(@types/node@20.12.8)(rollup@4.14.0)(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.8)(terser@5.30.4)):
+  vite-plugin-dts@3.9.1(@types/node@20.12.8)(rollup@4.14.0)(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.8)(terser@5.31.0)):
     dependencies:
       '@microsoft/api-extractor': 7.43.0(@types/node@20.12.8)
       '@rollup/pluginutils': 5.1.0(rollup@4.14.0)
@@ -22755,13 +22875,13 @@ snapshots:
       typescript: 5.4.5
       vue-tsc: 1.8.27(typescript@5.4.5)
     optionalDependencies:
-      vite: 5.2.11(@types/node@20.12.8)(terser@5.30.4)
+      vite: 5.2.11(@types/node@20.12.8)(terser@5.31.0)
     transitivePeerDependencies:
       - '@types/node'
       - rollup
       - supports-color
 
-  vite-plugin-dts@3.9.1(@types/node@20.12.8)(rollup@4.17.2)(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.8)(terser@5.30.4)):
+  vite-plugin-dts@3.9.1(@types/node@20.12.8)(rollup@4.17.2)(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.8)(terser@5.31.0)):
     dependencies:
       '@microsoft/api-extractor': 7.43.0(@types/node@20.12.8)
       '@rollup/pluginutils': 5.1.0(rollup@4.17.2)
@@ -22772,7 +22892,7 @@ snapshots:
       typescript: 5.4.5
       vue-tsc: 1.8.27(typescript@5.4.5)
     optionalDependencies:
-      vite: 5.2.11(@types/node@20.12.8)(terser@5.30.4)
+      vite: 5.2.11(@types/node@20.12.8)(terser@5.31.0)
     transitivePeerDependencies:
       - '@types/node'
       - rollup
@@ -22792,13 +22912,13 @@ snapshots:
       '@types/node': 14.18.63
       fs-extra: 11.1.1
 
-  vite-plugin-static-copy@1.0.4(vite@5.2.11(@types/node@20.12.8)(terser@5.30.4)):
+  vite-plugin-static-copy@1.0.4(vite@5.2.11(@types/node@20.12.8)(terser@5.31.0)):
     dependencies:
       chokidar: 3.6.0
       fast-glob: 3.3.2
       fs-extra: 11.2.0
       picocolors: 1.0.0
-      vite: 5.2.11(@types/node@20.12.8)(terser@5.30.4)
+      vite: 5.2.11(@types/node@20.12.8)(terser@5.31.0)
 
   vite-tsconfig-paths@4.3.2(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.12)(terser@5.31.0)):
     dependencies:
@@ -22811,18 +22931,18 @@ snapshots:
       - supports-color
       - typescript
 
-  vite-tsconfig-paths@4.3.2(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.8)(terser@5.30.4)):
+  vite-tsconfig-paths@4.3.2(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.8)(terser@5.31.0)):
     dependencies:
       debug: 4.3.4(supports-color@5.5.0)
       globrex: 0.1.2
       tsconfck: 3.0.3(typescript@5.4.5)
     optionalDependencies:
-      vite: 5.2.11(@types/node@20.12.8)(terser@5.30.4)
+      vite: 5.2.11(@types/node@20.12.8)(terser@5.31.0)
     transitivePeerDependencies:
       - supports-color
       - typescript
 
-  vite@4.5.3(@types/node@20.12.8)(terser@5.30.4):
+  vite@4.5.3(@types/node@20.12.8)(terser@5.31.0):
     dependencies:
       esbuild: 0.18.20
       postcss: 8.4.38
@@ -22830,7 +22950,7 @@ snapshots:
     optionalDependencies:
       '@types/node': 20.12.8
       fsevents: 2.3.3
-      terser: 5.30.4
+      terser: 5.31.0
 
   vite@5.2.11(@types/node@20.12.12)(terser@5.31.0):
     dependencies:
@@ -22842,7 +22962,7 @@ snapshots:
       fsevents: 2.3.3
       terser: 5.31.0
 
-  vite@5.2.11(@types/node@20.12.8)(terser@5.30.4):
+  vite@5.2.11(@types/node@20.12.8)(terser@5.31.0):
     dependencies:
       esbuild: 0.20.2
       postcss: 8.4.38
@@ -22850,7 +22970,7 @@ snapshots:
     optionalDependencies:
       '@types/node': 20.12.8
       fsevents: 2.3.3
-      terser: 5.30.4
+      terser: 5.31.0
 
   vitest@1.4.0(@types/node@20.12.12)(@vitest/ui@1.4.0)(happy-dom@14.7.1)(terser@5.31.0):
     dependencies:
@@ -22887,7 +23007,7 @@ snapshots:
       - supports-color
       - terser
 
-  vitest@1.4.0(@types/node@20.12.8)(@vitest/ui@1.4.0)(happy-dom@14.7.1)(terser@5.30.4):
+  vitest@1.4.0(@types/node@20.12.8)(@vitest/ui@1.4.0)(happy-dom@14.7.1)(terser@5.31.0):
     dependencies:
       '@vitest/expect': 1.4.0
       '@vitest/runner': 1.4.0
@@ -22906,8 +23026,8 @@ snapshots:
       strip-literal: 2.0.0
       tinybench: 2.6.0
       tinypool: 0.8.2
-      vite: 5.2.11(@types/node@20.12.8)(terser@5.30.4)
-      vite-node: 1.4.0(@types/node@20.12.8)(terser@5.30.4)
+      vite: 5.2.11(@types/node@20.12.8)(terser@5.31.0)
+      vite-node: 1.4.0(@types/node@20.12.8)(terser@5.31.0)
       why-is-node-running: 2.2.2
     optionalDependencies:
       '@types/node': 20.12.8
