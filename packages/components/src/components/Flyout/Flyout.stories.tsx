@@ -63,6 +63,23 @@ export const BasicContent: Story = {
     },
 };
 
+export const WithHeader: Story = {
+    name: 'With Header',
+    render: ({ ...args }) => {
+        return (
+            <Flyout.Root>
+                <Flyout.Trigger>
+                    <Button>Click me</Button>
+                </Flyout.Trigger>
+                <Flyout.Content {...args}>
+                    <Flyout.Header>Header</Flyout.Header>
+                    <Flyout.Body>I am a flyout</Flyout.Body>
+                </Flyout.Content>
+            </Flyout.Root>
+        );
+    },
+};
+
 export const WithFooter: Story = {
     name: 'With Footer',
     render: ({ ...args }) => {
@@ -76,23 +93,6 @@ export const WithFooter: Story = {
                     <Flyout.Footer>
                         <Button>Submit</Button>
                     </Flyout.Footer>
-                </Flyout.Content>
-            </Flyout.Root>
-        );
-    },
-};
-
-export const WithHeader: Story = {
-    name: 'Button Content',
-    render: ({ ...args }) => {
-        return (
-            <Flyout.Root>
-                <Flyout.Trigger>
-                    <Button>Click me</Button>
-                </Flyout.Trigger>
-                <Flyout.Content {...args}>
-                    <Flyout.Header>Header</Flyout.Header>
-                    <Flyout.Body>I am a flyout</Flyout.Body>
                 </Flyout.Content>
             </Flyout.Root>
         );

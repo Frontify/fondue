@@ -78,7 +78,7 @@ Changes:
 
 -   The `Flyout` now provides multiple subcomponents.
 
-    -   _required_ - The `Flyout.Root` all other subcomponents and handles the flyout state and modality.
+    -   _required_ - The `Flyout.Root` wraps all other subcomponents and handles the flyout state and modality.
 
     -   _required_ - The `Flyout.Trigger` is used to pass in a component to trigger the flyout.
 

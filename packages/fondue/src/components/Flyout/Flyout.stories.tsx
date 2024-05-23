@@ -1,9 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import IconDotsVertical from '@foundation/Icon/Generated/IconDotsVertical';
+import IconExclamationMarkCircle from '@foundation/Icon/Generated/IconExclamationMarkCircle';
+import IconIcon from '@foundation/Icon/Generated/IconIcon';
 import { chain } from '@react-aria/utils';
 import { action } from '@storybook/addon-actions';
 import { type Meta, type StoryFn } from '@storybook/react';
-import { type MutableRefObject, useState } from 'react';
+import { useState, type MutableRefObject } from 'react';
 
 import { BadgeStatus, BadgeStyle } from '@components/Badge';
 import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
@@ -15,19 +18,24 @@ import { LegacyTextarea } from '@components/LegacyTextarea/LegacyTextarea';
 import { SegmentedControls } from '@components/SegmentedControls/SegmentedControls';
 import { TextInput } from '@components/TextInput/TextInput';
 import { TooltipIcon } from '@components/TooltipIcon';
-import IconDotsVertical from '@foundation/Icon/Generated/IconDotsVertical';
-import IconExclamationMarkCircle from '@foundation/Icon/Generated/IconExclamationMarkCircle';
-import IconIcon from '@foundation/Icon/Generated/IconIcon';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 
 import { FLYOUT_DIVIDER_COLOR, FLYOUT_DIVIDER_HEIGHT, Flyout, FlyoutPlacement, type FlyoutProps } from './Flyout';
 import { FlyoutFooter } from './FlyoutFooter';
 
+/**
+ ### This component is deprecated, please use the [new Flyout](/docs/current_components-flyout--documentation) component instead.
+ */
 export default {
     title: 'Deprecated/Flyout',
     component: Flyout,
     tags: ['autodocs'],
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
+    },
     argTypes: {
         onCancel: { action: 'onCancel', table: { disable: true } },
         onOpenChange: { action: 'onOpenChange', table: { disable: true } },
