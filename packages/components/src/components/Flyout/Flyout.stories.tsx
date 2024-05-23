@@ -191,3 +191,37 @@ export const CustomMaxWidth: Story = {
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
     },
 };
+
+export const MobileView: Story = {
+    name: 'Mobile View',
+    parameters: {
+        viewport: {
+            viewports: {
+                mobile: {
+                    name: 'Mobile',
+                    styles: {
+                        width: '375px',
+                        height: '667px',
+                    },
+                },
+            },
+            defaultViewport: 'mobile',
+        },
+    },
+    render: ({ ...args }) => {
+        return (
+            <Flyout.Root>
+                <Flyout.Trigger>
+                    <Button>Click me</Button>
+                </Flyout.Trigger>
+                <Flyout.Content {...args}>
+                    <Flyout.Header showCloseButton>Header</Flyout.Header>
+                    <Flyout.Body>I am a flyout</Flyout.Body>
+                    <Flyout.Footer>
+                        <Button>Submit</Button>
+                    </Flyout.Footer>
+                </Flyout.Content>
+            </Flyout.Root>
+        );
+    },
+};
