@@ -8,7 +8,7 @@ import { flyoutBodyStyles, flyoutContentStyles, flyoutFooterStyles, flyoutHeader
 
 export type FlyoutRootProps = {
     /**
-     * Disable Interaction with the rest of the page
+     * Disable interaction with the rest of the page
      * @default false
      */
     modal?: boolean;
@@ -17,7 +17,7 @@ export type FlyoutRootProps = {
      */
     open?: boolean;
     /**
-     * callback when the open state changes
+     * Event handler called when the `open` state changes
      */
     onOpenChange?: (open: boolean) => void;
     children?: ReactNode;
@@ -30,12 +30,12 @@ export type FlyoutContentProps = {
      */
     rounded?: boolean;
     /**
-     * Define the preffered side of the flyout. Can be overriden by viewport collisions viewport.
+     * Define the prefered side of the flyout. Can be overriden by viewport collisions viewport.
      * @default bottom
      */
     side?: 'top' | 'right' | 'bottom' | 'left';
     /**
-     * Define the preffered alignment of the flyout. Can be overriden by viewport collisions viewport.
+     * Define the prefered alignment of the flyout. Can be overriden by viewport collisions viewport.
      * @default start
      */
     align?: 'start' | 'center' | 'end';
@@ -45,7 +45,7 @@ export type FlyoutContentProps = {
      */
     padding?: 'compact' | 'comfortable' | 'spacious';
     /**
-     * Override the `360px` maximum width of the flyout
+     * Define the maximum width of the flyout
      * @default 360px
      */
     maxWidth?: string;

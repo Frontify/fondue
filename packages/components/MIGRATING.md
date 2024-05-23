@@ -66,6 +66,102 @@ Changes:
 </Label>
 ```
 
+### Flyout (old `InlineDialog`)
+
+Changes:
+
+-   The `Flyout` component now controls it's open state internally.
+
+    -   You can pass in a Trigger component as a child of `Flyout.Trigger` to control the open state.
+
+    -   The `open` and `onOpenChange` props can still be used to control the open state externally if needed.
+
+-   The `Flyout` now provides multiple subcomponents.
+
+    -   _required_ - The `Flyout.Root` all other subcomponents and handles the flyout state and modality.
+
+    -   _required_ - The `Flyout.Trigger` is used to pass in a component to trigger the flyout.
+
+    -   _required_ - The `Flyout.Content` is the container appearing when the flyout is Visible
+
+        -   _optional_ - The `Flyout.Header` can be passed in as a child of `Flyout.Content` to add a styled header to the flyout.
+
+        -   _optional_ - The `Flyout.Body` can be passed in as a child of `Flyout.Content` to add a styled body to the flyout.
+
+        -   _optional_ - The `Flyout.Footer` can be passed in as a child of `Flyout.Footer` to add a styled footer to the flyout.
+
+-   The styling / layout is now controlled on the subcomponent `Flyout.Container`
+
+-   The Subcompnent `Flyout.Content` is used to display the flyout container.
+    It provides no styling by default and can be used to wrap a custom content.
+
+    -   `roundedCorners` is now called `rounded` and is a boolean.
+
+    -   The `width`, `minWidth`, `minHeight` and `maxHeight` props were removed. The Flyout container adjusts to the content inside. Use a custom Component inside if neccessary.
+
+    -   The `strategy`, `unsafe_Zindex` and `role` props were removed to simplify the api.
+
+    -   The `enablePortal` and `anchor` props were removed to standardize the flyout.
+
+        The Flyout now uses a portal by default and the anchor is the parent of the Flyout.Trigger.
+
+    -   The `placement` and `flip` props were removed and replaced by `side` and `alignment`.
+
+        When the flyout content collides with the viewport, it is automatically flipped to the other side and / or slightly shifted to fit into the viewport.
+
+    -   The `padding` prop can be passed to define the padding used by all the layout components (`Flyout.Header`, `Flyout.Body`, `Flyout.Footer`) inside. It has no effect on the `Flyout.Content` or custom components passed as children.
+
+-   The Subcomponents `Flyout.Header`, `Flyout.Body`, and `Flyout.Footer` can be used to add defaut styling to the content inside of `Flyout.Content`.
+
+    -   The prop `showCloseButton` was added to the `Flyout.Header` to add a close button to the header.
+
+#### Old
+
+```tsx
+const [isOpen, setIsOpen] = useState(false);
+
+return (
+    <Box className="tw-w-fit">
+        <Button icon={<IconIcon />} onClick={() => setIsOpen(!isOpen)}>
+            Trigger
+        </Button>
+        <InlineDialog {...args} anchor={triggerRef} open={isOpen} handleClose={() => setIsOpen(false)}>
+            <DialogBody padding="comfortable">
+                <Box className="tw-text-text">
+                    <TextExample />
+                    <TextExample />
+                    <TextExample />
+                    <Button onClick={() => setIsOpen(!isOpen)}>Close</Button>
+                </Box>
+            </DialogBody>
+        </InlineDialog>
+    </Box>
+);
+```
+
+#### New
+
+```tsx
+<Flyout.Root>
+    {/* Pass in a Trigger Component */}
+    <Flyout.Trigger>
+        <Button>Click me</Button>
+    </Flyout.Trigger>
+    {/* Pass in the Flyout Content Component */}
+    <Flyout.Content side="right">
+        {/* Use the layout subcomponens insode the content */}
+        <Flyout.Header showCloseButton>Header</Flyout.Header>
+        <Flyout.Body {...args} />
+        <Flyout.Footer>
+            <div className="tw-flex tw-justify-end tw-gap-2">
+                <Button emphasis="default">Cancel</Button>
+                <Button>Submit</Button>
+            </div>
+        </Flyout.Footer>
+    </Flyout.Content>
+</Flyout.Root>
+```
+
 ### Label (old `InputLabel`)
 
 Changes:
@@ -236,100 +332,4 @@ Changes:
         </Tooltip.Root>
     </TextInput.Slot>
 </TextInput.Root>
-```
-
-### Flyout
-
-Changes:
-
--   The `Flyout` component now controls it's open state internally.
-
-    -   You can pass in a Trigger component as a child of `Flyout.Trigger` to control the open state.
-
-    -   The `open` and `onOpenChange` props can still be used to control the open state externally if needed.
-
--   The `Flyout` now provides multiple subcomponents.
-
-    -   _required_ - The `Flyout.Root` all other subcomponents and handles the flyout state and modality.
-
-    -   _required_ - The `Flyout.Trigger` is used to pass in a component to trigger the flyout.
-
-    -   _required_ - The `Flyout.Content` is the container appearing when the flyout is Visible
-
-        -   _optional_ - The `Flyout.Header` can be passed in as a child of `Flyout.Content` to add a styled header to the flyout.
-
-        -   _optional_ - The `Flyout.Body` can be passed in as a child of `Flyout.Content` to add a styled body to the flyout.
-
-        -   _optional_ - The `Flyout.Footer` can be passed in as a child of `Flyout.Footer` to add a styled footer to the flyout.
-
--   The styling / layout is now controlled on the subcomponent `Flyout.Container`
-
--   The Subcompnent `Flyout.Content` is used to display the flyout container.
-    It provides no styling by default and can be used to wrap a custom content.
-
-    -   `roundedCorners` is now called `rounded` and is a boolean.
-
-    -   The `width`, `minWidth`, `minHeight` and `maxHeight` props were removed. The Flyout container adjusts to the content inside. Use a custom Component inside if neccessary.
-
-    -   The `strategy`, `unsafe_Zindex` and `role` props were removed to simplify the api.
-
-    -   The `enablePortal` and `anchor` props were removed to standardize the flyout.
-
-        The Flyout now uses a portal by default and the anchor is the parent of the Flyout.Trigger.
-
-    -   The `placement` and `flip` props were removed and replaced by `side` and `alignment`.
-
-        When the flyout content collides with the viewport, it is automatically flipped to the other side and / or slightly shifted to fit into the viewport.
-
-    -   The `padding` prop can be passed to define the padding used by all the layout components (`Flyout.Header`, `Flyout.Body`, `Flyout.Footer`) inside. It has no effect on the `Flyout.Content` or custom components passed as children.
-
--   The Subcomponents `Flyout.Header`, `Flyout.Body`, and `Flyout.Footer` can be used to add defaut styling to the content inside of `Flyout.Content`.
-
-    -   The prop `showCloseButton` was added to the `Flyout.Header` to add a close button to the header.
-
-#### Old
-
-```tsx
-const [isOpen, setIsOpen] = useState(false);
-
-return (
-    <Box className="tw-w-fit">
-        <Button icon={<IconJohanna />} onClick={() => setIsOpen(!isOpen)}>
-            Trigger
-        </Button>
-        <InlineDialog {...args} anchor={triggerRef} open={isOpen} handleClose={() => setIsOpen(false)}>
-            <DialogBody padding="comfortable">
-                <Box className="tw-text-text">
-                    <TextExample />
-                    <TextExample />
-                    <TextExample />
-                    <Button onClick={() => setIsOpen(!isOpen)}>Close</Button>
-                </Box>
-            </DialogBody>
-        </InlineDialog>
-    </Box>
-);
-```
-
-#### New
-
-```tsx
-<Flyout.Root>
-    {/* Pass in a Trigger Component */}
-    <Flyout.Trigger>
-        <Button>Click Me</Button>
-    </Flyout.Trigger>
-    {/* Pass in the Flyout Content Component */}
-    <Flyout.Content side="right">
-        {/* Use the layout subcomponens insode the content */}
-        <Flyout.Header showCloseButton>Header</Flyout.Header>
-        <Flyout.Body {...args} />
-        <Flyout.Footer>
-            <div className="tw-flex tw-justify-end tw-gap-2">
-                <Button emphasis="default">Cancel</Button>
-                <Button>Submit</Button>
-            </div>
-        </Flyout.Footer>
-    </Flyout.Content>
-</Flyout.Root>
 ```

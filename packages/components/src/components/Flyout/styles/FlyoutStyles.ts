@@ -5,9 +5,9 @@ import { sv } from '#/utilities/styleUtilities';
 export const flyoutContentStyles = sv({
     base:
         'tw-block tw-bg-base tw-shadow-mid tw-border tw-border-line tw-w-full sm:tw-w-fit sm:tw-max-w-[--flyout-max-width] tw-group tw-mt-4 sm:tw-mt-0 ' +
-        // using a special selector to set the transform of the wrapper component in the mobile view to allow for a full width flyout
+        // Mobile view flyout-> dialog responsiveness
         '[body>[data-radix-popper-content-wrapper]:has(&)]:max-sm:tw-p-2 [body>[data-radix-popper-content-wrapper]:has(&)]:max-sm:tw-w-screen [body>[data-radix-popper-content-wrapper]:has(&)]:max-sm:!tw-translate-x-0 [body>[data-radix-popper-content-wrapper]:has(&)]:max-sm:!tw-translate-y-0 ' +
-        // add a full page pseudo element to darken the background
+        // Background Element
         'before:tw-fixed tw-content-[" "] before:tw-top-0 before:tw-left-0 before:tw-h-screen before:tw-w-screen before:tw-bg-black before:tw-opacity-30 before:tw-z-[-1] sm:before:tw-hidden',
     variants: {
         rounded: {
