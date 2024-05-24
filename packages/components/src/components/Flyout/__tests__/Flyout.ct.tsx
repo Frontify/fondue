@@ -98,7 +98,7 @@ test('should close on click outside', async ({ mount, page }) => {
     await expect(tooltipContent).not.toBeVisible();
 });
 
-test('should close on cross icon click', async ({ mount, page }) => {
+test('should close on cross button click', async ({ mount, page }) => {
     const component = await mount(
         <Flyout.Root>
             <Flyout.Trigger>
@@ -127,7 +127,7 @@ test('should close on cross icon click', async ({ mount, page }) => {
     await expect(tooltipContent).not.toBeVisible();
 });
 
-test('should not render close icon when prop is not passed', async ({ mount, page }) => {
+test('should not render close button when prop is not passed', async ({ mount, page }) => {
     const component = await mount(
         <Flyout.Root>
             <Flyout.Trigger>
