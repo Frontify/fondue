@@ -4,7 +4,7 @@ import { IconCross } from '@frontify/fondue-icons';
 import * as RadixPopover from '@radix-ui/react-popover';
 import { forwardRef, type CSSProperties, type ForwardedRef, type ReactNode } from 'react';
 
-import { flyoutBodyStyles, flyoutContentStyles, flyoutFooterStyles, flyoutHeaderStyles } from './styles/FlyoutStyles';
+import { flyoutBodyStyles, flyoutContentStyles, flyoutFooterStyles, flyoutHeaderStyles } from './styles/flyoutStyle';
 
 export type FlyoutRootProps = {
     /**
