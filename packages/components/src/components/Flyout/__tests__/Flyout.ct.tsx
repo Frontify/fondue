@@ -152,7 +152,7 @@ test('should not render close icon when prop is not passed', async ({ mount, pag
     await expect(tooltipContent).not.toBeVisible();
     await tooltipTrigger.click();
     await expect(tooltipContent).toBeVisible();
-    await expect(page.getByTestId('fondue-icons-cross')).not.toBeVisible();
+    await expect(page.getByTestId('fondue-flyout-header-close')).not.toBeVisible();
 });
 
 test('should render only flyout header', async ({ mount, page }) => {
