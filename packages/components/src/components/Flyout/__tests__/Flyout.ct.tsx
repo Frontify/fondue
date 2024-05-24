@@ -123,7 +123,7 @@ test('should close on cross icon click', async ({ mount, page }) => {
     await expect(tooltipContent).not.toBeVisible();
     await tooltipTrigger.click();
     await expect(tooltipContent).toBeVisible();
-    await page.getByTestId('fondue-icons-cross').click();
+    await page.getByTestId('fondue-flyout-header-close').click();
     await expect(tooltipContent).not.toBeVisible();
 });
 

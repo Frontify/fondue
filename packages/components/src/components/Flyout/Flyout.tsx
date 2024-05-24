@@ -129,7 +129,7 @@ export const FlyoutHeader = (
         <div data-test-id={dataTestId} ref={ref} className={flyoutHeaderStyles}>
             <div>{children}</div>
             {showCloseButton && (
-                <RadixPopover.Close className="tw-cursor-pointer">
+                <RadixPopover.Close role="button" data-test-id={`${dataTestId}-close`} className="tw-cursor-pointer">
                     <IconCross size={20} />
                 </RadixPopover.Close>
             )}
