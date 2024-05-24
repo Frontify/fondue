@@ -133,7 +133,7 @@ export const WithLongText: Story = {
                 </Dialog.Trigger>
                 <Dialog.Content {...args}>
                     <Dialog.SideContent>
-                        <div className="tw-bg-box-positive-strong tw-h-full tw-w-full"></div>
+                        <div className="tw-bg-box-positive-strong tw-h-full tw-w-40"></div>
                     </Dialog.SideContent>
                     <Dialog.Header>Header</Dialog.Header>
                     <Dialog.Body {...args} />
@@ -146,5 +146,26 @@ export const WithLongText: Story = {
                 </Dialog.Content>
             </Dialog.Root>
         );
+    },
+};
+
+export const Mobile: Story = {
+    name: 'Mobile View',
+    parameters: {
+        viewport: {
+            viewports: {
+                mobile: {
+                    name: 'Mobile',
+                    styles: {
+                        width: '375px',
+                        height: '667px',
+                    },
+                },
+            },
+            defaultViewport: 'mobile',
+        },
+    },
+    args: {
+        children: 'Hello World',
     },
 };
