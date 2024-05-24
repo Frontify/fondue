@@ -30,7 +30,7 @@ const meta: Meta<typeof DialogContent> = {
                     <Dialog.SideContent>
                         <div className="tw-bg-box-positive-strong tw-h-full tw-w-full"></div>
                     </Dialog.SideContent>
-                    <Dialog.Header showCloseButton>Header</Dialog.Header>
+                    <Dialog.Header>Header</Dialog.Header>
                     <Dialog.Body {...args} />
                     <Dialog.Footer>
                         <div className="tw-flex tw-h-fit tw-justify-end tw-gap-2">
@@ -64,7 +64,7 @@ export const WithHeader: Story = {
                     <Button>Click Me</Button>
                 </Dialog.Trigger>
                 <Dialog.Content {...args}>
-                    <Dialog.Header showCloseButton>Header</Dialog.Header>
+                    <Dialog.Header>Header</Dialog.Header>
                     <Dialog.Body {...args} />
                 </Dialog.Content>
             </Dialog.Root>
@@ -135,7 +135,7 @@ export const WithLongText: Story = {
                     <Dialog.SideContent>
                         <div className="tw-bg-box-positive-strong tw-h-full tw-w-full"></div>
                     </Dialog.SideContent>
-                    <Dialog.Header showCloseButton>Header</Dialog.Header>
+                    <Dialog.Header>Header</Dialog.Header>
                     <Dialog.Body {...args} />
                     <Dialog.Footer>
                         <div className="tw-flex tw-h-fit tw-justify-end tw-gap-2">

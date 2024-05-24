@@ -69,11 +69,6 @@ export type DialogContentProps = {
 export type DialogTriggerProps = { children?: ReactNode; 'data-test-id'?: string };
 
 export type DialogHeaderProps = {
-    /**
-     * Show a close button in the header
-     * @default false
-     */
-    showCloseButton?: boolean;
     children?: ReactNode;
     'data-test-id'?: string;
 };
@@ -90,7 +85,7 @@ export const DialogRoot = ({ children, ...props }: DialogRootProps) => {
 DialogRoot.displayName = 'Dialog.Root';
 
 export const DialogTrigger = (
-    { children, 'data-test-id': dataTestId = 'fondue-Dialog-trigger' }: DialogTriggerProps,
+    { children, 'data-test-id': dataTestId = 'fondue-dialog-trigger' }: DialogTriggerProps,
     ref: ForwardedRef<HTMLButtonElement>,
 ) => {
     return (
@@ -107,7 +102,7 @@ export const DialogContent = (
         minWidth = '400px',
         minHeight = '200px',
         padding = 'compact',
-        'data-test-id': dataTestId = 'fondue-Dialog-content',
+        'data-test-id': dataTestId = 'fondue-dialog-content',
         showUnderlay = false,
         children,
         ...props
@@ -139,24 +134,22 @@ export const DialogContent = (
 DialogContent.displayName = 'Dialog.Content';
 
 export const DialogHeader = (
-    { showCloseButton, children, 'data-test-id': dataTestId = 'fondue-Dialog-header' }: DialogHeaderProps,
+    { children, 'data-test-id': dataTestId = 'fondue-dialog-header' }: DialogHeaderProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
         <div data-test-id={dataTestId} ref={ref} className={dialogHeaderStyles} data-dialog-layout-component>
             <div>{children}</div>
-            {showCloseButton && (
-                <RadixDialog.Close className="tw-cursor-pointer">
-                    <IconCross size={20} />
-                </RadixDialog.Close>
-            )}
+            <RadixDialog.Close role="button" data-test-id={`${dataTestId}-close`} className="tw-cursor-pointer">
+                <IconCross size={20} />
+            </RadixDialog.Close>
         </div>
     );
 };
 DialogHeader.displayName = 'Dialog.Header';
 
 export const DialogFooter = (
-    { children, 'data-test-id': dataTestId = 'fondue-Dialog-footer' }: DialogFooterProps,
+    { children, 'data-test-id': dataTestId = 'fondue-dialog-footer' }: DialogFooterProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
@@ -168,7 +161,7 @@ export const DialogFooter = (
 DialogFooter.displayName = 'Dialog.Footer';
 
 export const DialogBody = (
-    { children, 'data-test-id': dataTestId = 'fondue-Dialog-body' }: DialogBodyProps,
+    { children, 'data-test-id': dataTestId = 'fondue-dialog-body' }: DialogBodyProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
@@ -180,7 +173,7 @@ export const DialogBody = (
 DialogBody.displayName = 'Dialog.Body';
 
 export const SideContent = (
-    { children, 'data-test-id': dataTestId = 'fondue-Dialog-body' }: DialogBodyProps,
+    { children, 'data-test-id': dataTestId = 'fondue-dialog-body' }: DialogBodyProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
