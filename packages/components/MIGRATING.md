@@ -10,15 +10,18 @@ This document describes the changes that you need to make to your code to migrat
         -   [Checkbox](#checkbox)
             -   [Old](#old)
             -   [New](#new)
-        -   [Label (old `InputLabel`)](#label-old-inputlabel)
+        -   [Flyout (old `InlineDialog`)](#flyout-old-inlinedialog)
             -   [Old](#old-1)
             -   [New](#new-1)
-        -   [Segmented Control](#segmented-control)
+        -   [Label (old `InputLabel`)](#label-old-inputlabel)
             -   [Old](#old-2)
             -   [New](#new-2)
-        -   [Text Input](#text-input)
+        -   [Segmented Control](#segmented-control)
             -   [Old](#old-3)
             -   [New](#new-3)
+        -   [Text Input](#text-input)
+            -   [Old](#old-4)
+            -   [New](#new-4)
 
 ## Components
 
@@ -61,6 +64,102 @@ Changes:
         <Tooltip.Content>Tooltip</Tooltip.Content>
     </Tooltip.Root>
 </Label>
+```
+
+### Flyout (old `InlineDialog`)
+
+Changes:
+
+-   The `Flyout` component now controls its open state internally by default.
+
+    -   You can pass in a trigger component as a child of `Flyout.Trigger` to control the open state.
+
+    -   The `open` and `onOpenChange` props can still be used to control the open state externally if needed.
+
+-   The `Flyout` now provides multiple subcomponents.
+
+    -   _required_ - The `Flyout.Root` wraps all other subcomponents and handles the flyout state and modality.
+
+    -   _required_ - The `Flyout.Trigger` is used to pass in a component to trigger the flyout.
+
+    -   _required_ - The `Flyout.Content` is the container appearing when the flyout is Visible
+
+        -   _optional_ - The `Flyout.Header` can be passed in as a child of `Flyout.Content` to add a styled header to the flyout.
+
+        -   _optional_ - The `Flyout.Body` can be passed in as a child of `Flyout.Content` to add a styled body to the flyout.
+
+        -   _optional_ - The `Flyout.Footer` can be passed in as a child of `Flyout.Footer` to add a styled footer to the flyout.
+
+-   The styling / layout is now controlled on the subcomponent `Flyout.Container`
+
+-   The subcomponent `Flyout.Content` is used to display the flyout container.
+    It provides no styling by default and can be used to wrap a custom content.
+
+    -   `roundedCorners` is now called `rounded` and is a boolean.
+
+    -   The `width`, `minWidth`, `minHeight` and `maxHeight` props were removed. The Flyout container adjusts to the content inside. Use a custom component inside if neccessary.
+
+    -   The `strategy`, `unsafe_Zindex` and `role` props were removed to simplify the API.
+
+    -   The `enablePortal` and `anchor` props were removed to standardize the flyout.
+
+        The flyout now uses a portal by default and the anchor is the parent of the `Flyout.Trigger`.
+
+    -   The `placement` and `flip` props were removed and replaced by `side` and `alignment`.
+
+        When the flyout content collides with the viewport, it is automatically flipped to the other side and / or slightly shifted to fit into the viewport.
+
+    -   The `padding` prop can be passed to define the padding used by all the layout components (`Flyout.Header`, `Flyout.Body` and `Flyout.Footer`) inside. It has no effect on the `Flyout.Content` or custom components passed as children.
+
+-   The subcomponents `Flyout.Header`, `Flyout.Body`, and `Flyout.Footer` can be used to add defaut styling to the content inside of `Flyout.Content`.
+
+    -   The prop `showCloseButton` was added to the `Flyout.Header` to add a close button to the header.
+
+#### Old
+
+```tsx
+const [isOpen, setIsOpen] = useState(false);
+
+return (
+    <Box className="tw-w-fit">
+        <Button icon={<IconIcon />} onClick={() => setIsOpen(!isOpen)}>
+            Trigger
+        </Button>
+        <InlineDialog {...args} anchor={triggerRef} open={isOpen} handleClose={() => setIsOpen(false)}>
+            <DialogBody padding="comfortable">
+                <Box className="tw-text-text">
+                    <TextExample />
+                    <TextExample />
+                    <TextExample />
+                    <Button onClick={() => setIsOpen(!isOpen)}>Close</Button>
+                </Box>
+            </DialogBody>
+        </InlineDialog>
+    </Box>
+);
+```
+
+#### New
+
+```tsx
+<Flyout.Root>
+    {/* Pass in a Trigger component */}
+    <Flyout.Trigger>
+        <Button>Click me</Button>
+    </Flyout.Trigger>
+    {/* Pass in the Flyout Content component */}
+    <Flyout.Content side="right">
+        {/* Use the layout subcomponents inside the content */}
+        <Flyout.Header showCloseButton>Header</Flyout.Header>
+        <Flyout.Body {...args} />
+        <Flyout.Footer>
+            <div className="tw-flex tw-justify-end tw-gap-2">
+                <Button emphasis="default">Cancel</Button>
+                <Button>Submit</Button>
+            </div>
+        </Flyout.Footer>
+    </Flyout.Content>
+</Flyout.Root>
 ```
 
 ### Label (old `InputLabel`)

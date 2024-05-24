@@ -13,10 +13,18 @@ import { Modality } from '../../types';
 
 import { InlineDialog, type InlineDialogProps } from './InlineDialog';
 
+/**
+ ### This component is deprecated, please use the [new Flyout component](/docs/current_components-flyout--documentation) instead.
+ */
 export default {
     title: 'Experimental/InlineDialog',
     component: InlineDialog,
     tags: ['autodocs'],
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
+    },
     args: {
         placement: 'bottom-start',
         modality: Modality.Modal,
