@@ -4,7 +4,7 @@ import { useAccordion, useAccordionItem } from '@react-aria/accordion';
 import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
 import { Item as StatelyItem } from '@react-stately/collections';
-import { TreeProps, useTreeState } from '@react-stately/tree';
+import { type TreeProps, useTreeState } from '@react-stately/tree';
 import {
     Children,
     type Key,
