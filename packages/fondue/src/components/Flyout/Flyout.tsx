@@ -7,13 +7,13 @@ import { OverlayContainer, useOverlayTrigger } from '@react-aria/overlays';
 import { mergeProps } from '@react-aria/utils';
 import { useOverlayTriggerState } from '@react-stately/overlays';
 import {
+    useEffect,
+    useRef,
     type HTMLAttributes,
     type MouseEvent,
     type MutableRefObject,
     type ReactElement,
     type ReactNode,
-    useEffect,
-    useRef,
 } from 'react';
 
 import { type BadgeProps } from '@components/Badge';
@@ -71,6 +71,9 @@ export type FlyoutProps = {
     children?: ReactNode;
 };
 
+/**
+ * @deprecated Use `Flyout` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#flyout the migration guide}.
+ */
 export const Flyout = ({
     trigger,
     isTriggerDisabled = false,
