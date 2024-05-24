@@ -4,7 +4,7 @@ import { useAccordion, useAccordionItem } from '@react-aria/accordion';
 import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
 import { Item as StatelyItem } from '@react-stately/collections';
-import { useTreeState } from '@react-stately/tree';
+import { TreeProps, useTreeState } from '@react-stately/tree';
 import {
     Children,
     type Key,
@@ -84,7 +84,7 @@ const AriaAccordionItem = ({
     );
 };
 
-const mapToAriaProps = (children: ReactElement<AccordionItemProps>[]) => {
+const mapToAriaProps = (children: ReactElement<AccordionItemProps>[]): TreeProps<AccordionItemProps> => {
     const ariaChildren = Children.map(children, (child, index) => {
         const { header, children } = child.props;
 
@@ -99,6 +99,7 @@ const mapToAriaProps = (children: ReactElement<AccordionItemProps>[]) => {
         .map((item) => item.key)
         .filter((key, index) => key && !!children[index]?.props.header?.active) || []) as Key[];
 
+    // @ts-expect-error Type missmatch from library update
     return { children: ariaChildren, defaultExpandedKeys };
 };
 
@@ -147,6 +148,7 @@ export const Accordion = (props: AccordionProps): ReactElement => {
             !accordionChildren.current.firstRender &&
             Children.toArray(props.children).length > accordionChildren.current.childLength
         ) {
+            // @ts-expect-error Type missmatch from library update
             state.toggleKey(ariaProps.defaultExpandedKeys[ariaProps.defaultExpandedKeys.length - 1]);
         }
         accordionChildren.current = { firstRender: false, childLength: Children.toArray(props.children).length };
