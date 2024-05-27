@@ -99,6 +99,8 @@ Changes:
 
 -   The styling / layout is now controlled on the subcomponent `Dialog.Content`
 
+-   The `anchor` prop was removed and the subcomponents now accept refs
+
 -   The subcomponent `Dialog.Content` is used to display the dialog container.
     It provides no styling by default and can be used to wrap a custom content.
 
