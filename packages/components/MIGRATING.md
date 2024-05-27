@@ -77,7 +77,7 @@ Changes:
 
     -   You can pass in a trigger component as a child of `Dialog.Trigger` to control the open state.
 
-    -   The `open` and `onOpenChange` props can still be used to control the open state externally if needed.
+    -   The `handleClose`prop was replaced by `onOpenChange`. Together with the `open` prop it can be used to control the open state externally if needed.
 
 -   The `Dialog` now provides multiple subcomponents.
 
