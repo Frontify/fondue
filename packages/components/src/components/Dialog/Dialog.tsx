@@ -11,7 +11,7 @@ import {
     dialogHeaderStyles,
     dialogSideContentStyles,
     dialogUnderlayStyles,
-} from './styles/dialogStyle';
+} from './styles/dialogStyles';
 
 export type DialogRootProps = {
     /**
