@@ -4,24 +4,22 @@ import { type Meta, type StoryObj } from '@storybook/react';
 
 import { Button } from '../Button/Button';
 
-import { Flyout, FlyoutContent, FlyoutRoot } from './Flyout';
+import { Flyout, FlyoutContent, FlyoutRoot, FlyoutTrigger, FlyoutHeader, FlyoutBody, FlyoutFooter } from './Flyout';
 
 type Story = StoryObj<typeof meta>;
 const meta: Meta<typeof FlyoutContent> = {
     component: FlyoutContent,
     subcomponents: {
-        // @ts-expect-error - Storybook has the wrong type for subomponents
+        // @ts-expect-error - Storybook has the wrong type for subcomponents
         'Flyout.Root': FlyoutRoot,
-        // @ts-expect-error - Storybook has the wrong type for subomponents
-        'Flyout.Trigger': Flyout.Trigger,
-        // @ts-expect-error - Storybook has the wrong type for subomponents
-        'Flyout.Content': FlyoutContent,
-        // @ts-expect-error - Storybook has the wrong type for subomponents
-        'Flyout.Header': Flyout.Header,
-        // @ts-expect-error - Storybook has the wrong type for subomponents
-        'Flyout.Body': Flyout.Body,
-        // @ts-expect-error - Storybook has the wrong type for subomponents
-        'Flyout.Footer': Flyout.Footer,
+        // @ts-expect-error - Storybook has the wrong type for subcomponents
+        'Flyout.Trigger': FlyoutTrigger,
+        // @ts-expect-error - Storybook has the wrong type for subcomponents
+        'Flyout.Header': FlyoutHeader,
+        // @ts-expect-error - Storybook has the wrong type for subcomponents
+        'Flyout.Body': FlyoutBody,
+        // @ts-expect-error - Storybook has the wrong type for subcomponents
+        'Flyout.Footer': FlyoutFooter,
     },
     tags: ['autodocs'],
     parameters: {
@@ -36,7 +34,7 @@ const meta: Meta<typeof FlyoutContent> = {
         return (
             <Flyout.Root>
                 <Flyout.Trigger>
-                    <Button>Click me</Button>
+                    <Button>Open flyout</Button>
                 </Flyout.Trigger>
                 <Flyout.Content {...args}>
                     <Flyout.Header showCloseButton>Header</Flyout.Header>
@@ -62,7 +60,7 @@ export const BasicContent: Story = {
         return (
             <Flyout.Root>
                 <Flyout.Trigger>
-                    <Button>Click me</Button>
+                    <Button>Open flyout</Button>
                 </Flyout.Trigger>
                 <Flyout.Content {...args}>
                     <Flyout.Body {...args} />
@@ -77,7 +75,7 @@ export const WithHeader: Story = {
         return (
             <Flyout.Root>
                 <Flyout.Trigger>
-                    <Button>Click me</Button>
+                    <Button>Open flyout</Button>
                 </Flyout.Trigger>
                 <Flyout.Content {...args}>
                     <Flyout.Header>Header</Flyout.Header>
@@ -93,7 +91,7 @@ export const WithFooter: Story = {
         return (
             <Flyout.Root>
                 <Flyout.Trigger>
-                    <Button>Click me</Button>
+                    <Button>Open flyout</Button>
                 </Flyout.Trigger>
                 <Flyout.Content {...args}>
                     <Flyout.Body>I am a flyout</Flyout.Body>
@@ -113,7 +111,7 @@ export const WithCloseButton: Story = {
         return (
             <Flyout.Root>
                 <Flyout.Trigger>
-                    <Button>Click me</Button>
+                    <Button>Open flyout</Button>
                 </Flyout.Trigger>
                 <Flyout.Content {...args}>
                     <Flyout.Header showCloseButton>Header</Flyout.Header>
@@ -141,7 +139,7 @@ export const WithCustomContent: Story = {
         return (
             <Flyout.Root>
                 <Flyout.Trigger>
-                    <Button>Click me</Button>
+                    <Button>Open flyout</Button>
                 </Flyout.Trigger>
                 <Flyout.Content {...args}>
                     <div className="tw-bg-box-neutral tw-p-10">This is FlyoutContent</div>
@@ -207,7 +205,7 @@ export const MobileView: Story = {
         return (
             <Flyout.Root>
                 <Flyout.Trigger>
-                    <Button>Click me</Button>
+                    <Button>Open flyout</Button>
                 </Flyout.Trigger>
                 <Flyout.Content {...args}>
                     <Flyout.Header showCloseButton>Header</Flyout.Header>
