@@ -7,23 +7,70 @@ This document describes the changes that you need to make to your code to migrat
 -   [Migration guide](#migration-guide)
     -   [Table of contents](#table-of-contents)
     -   [Components](#components)
-        -   [Checkbox](#checkbox)
+        -   [Button](#button)
             -   [Old](#old)
             -   [New](#new)
-        -   [Flyout (old `InlineDialog`)](#flyout-old-inlinedialog)
+        -   [Checkbox](#checkbox)
             -   [Old](#old-1)
             -   [New](#new-1)
-        -   [Label (old `InputLabel`)](#label-old-inputlabel)
+        -   [Flyout (old `InlineDialog`)](#flyout-old-inlinedialog)
             -   [Old](#old-2)
             -   [New](#new-2)
-        -   [Segmented Control](#segmented-control)
+        -   [Label (old `InputLabel`)](#label-old-inputlabel)
             -   [Old](#old-3)
             -   [New](#new-3)
-        -   [Text Input](#text-input)
+        -   [Segmented Control](#segmented-control)
             -   [Old](#old-4)
             -   [New](#new-4)
+        -   [Text Input](#text-input)
+            -   [Old](#old-5)
+            -   [New](#new-5)
 
 ## Components
+
+### Button
+
+Changes:
+
+-   The props `size`, `style`, `type`, `rounding` now use a union type instead of an enum.
+-   The `icon` prop was removed and the Icon is now passed in as a child of the button.
+-   The `onClick` prop was renamed to `onPress`.
+-   The `hideLabel` prop was removed and the label should now be passed in conditionally as a child of the button.
+-   The `aspect` prop was added to be able to make the button square, when only an icon is schown.
+
+#### Old
+
+```tsx
+<Button
+    hugWidth
+    onClick={() => {}}
+    icon={<Icon.ColorFan16 />}
+    rounding={ButtonRounding.Medium}
+    size={ButtonSize.Medium}
+    style={ButtonStyle.Default}
+    type={ButtonType.Button}
+>
+    Button Text
+</Button>
+```
+
+#### New
+
+```tsx
+<Button
+    aspect="default"
+    emphasis="default"
+    hugWidth
+    onPress={function Qa() {}}
+    rounding="medium"
+    size="medium"
+    style="default"
+    type="button"
+>
+    <IconColorFan size={16} />
+    Button Text
+</Button>
+```
 
 ### Checkbox
 
