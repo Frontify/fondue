@@ -10,18 +10,21 @@ This document describes the changes that you need to make to your code to migrat
         -   [Checkbox](#checkbox)
             -   [Old](#old)
             -   [New](#new)
-        -   [Label (old `InputLabel`)](#label-old-inputlabel)
+        -   [Flyout (old `InlineDialog`)](#flyout-old-inlinedialog)
             -   [Old](#old-1)
             -   [New](#new-1)
-        -   [Segmented Control](#segmented-control)
+        -   [Dialog](#dialog)
             -   [Old](#old-2)
             -   [New](#new-2)
-        -   [Text Input](#text-input)
+        -   [Label (old `InputLabel`)](#label-old-inputlabel)
             -   [Old](#old-3)
             -   [New](#new-3)
-        -   [Flyout](#flyout)
+        -   [Segmented Control](#segmented-control)
             -   [Old](#old-4)
             -   [New](#new-4)
+        -   [Text Input](#text-input)
+            -   [Old](#old-5)
+            -   [New](#new-5)
 
 ## Components
 
@@ -160,6 +163,108 @@ return (
         </Flyout.Footer>
     </Flyout.Content>
 </Flyout.Root>
+```
+
+### Dialog
+
+Changes:
+
+-   The `Dialog` component now controls its open state internally by default.
+
+    -   You can pass in a trigger component as a child of `Dialog.Trigger` to control the open state.
+
+    -   The `open` and `onOpenChange` props can still be used to control the open state externally if needed.
+
+-   The `Dialog` now provides multiple subcomponents.
+
+    -   _required_ - The `Dialog.Root` wraps all other subcomponents and handles the flyout state and modality.
+
+    -   _required_ - The `Dialog.Trigger` is used to pass in a component to trigger the flyout.
+
+    -   _required_ - The `Dialog.Content` is the container appearing when the flyout is Visible
+
+        -   _optional_ - The `Dialog.Header` can be passed in as a child of `Dialog.Content` to add a styled header to the flyout.
+
+        -   _optional_ - The `Dialog.Body` can be passed in as a child of `Dialog.Content` to add a styled body to the flyout.
+
+        -   _optional_ - The `Dialog.Footer` can be passed in as a child of `Dialog.Content` to add a styled footer to the flyout.
+
+        -   _optional_ - The `Dialog.SideContent` can be passed in as a child of `Dialog.Content` to add a space on the left side of the dialog. Custom components can then be passed in as as children of `Dialog.SideContent`
+
+-   The styling / layout is now controlled on the subcomponent `Dialog.Content`
+
+-   The subcomponent `Dialog.Content` is used to display the dialog container.
+    It provides no styling by default and can be used to wrap a custom content.
+
+    -   `roundedCorners` is now called `rounded` and is a boolean.
+
+    -   The `width` and `maxHeight` props were removed. The Flyout container adjusts to the content inside. You can use a custom component inside if neccessary. you can use `minWidth`, `maxWidth` and `minHeight` to override the default values.
+
+    -   The `strategy` and `role` props were removed to simplify the API.
+
+    -   The `enablePortal` and `verticalAlignment` props were removed to standardize the dialog.
+
+        The dialog now uses a portal by default and is placed centered
+
+-   The subcomponents `Dialog.Header`, `Dialog.Body`, `Dialog.Footer` and `Dialog.SideContent` can be used to add defaut styling to the content inside of `Dialog.Content`.
+
+#### Old
+
+```tsx
+const [isOpen, setIsOpen] = useState(false);
+
+return (
+    <Button icon={<IconIcon/>} ref={triggerRef} onClick={() => setIsOpen(!isOpen)}>
+        Dialog Trigger
+    </Button>
+
+    <Dialog {...args} anchor={triggerRef} open={isOpen} handleClose={() => setIsOpen(false)}>
+        <DialogBody padding="spacious">
+            <p>
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad illum impedit iure numquam praesentium vel.
+                Distinctio perferendis, suscipit! Dolor doloremque et ex, modi nobis officiis perspiciatis quis tempora
+                temporibus voluptates?
+            </p>
+        </DialogBody>
+        <DialogFooter
+            actionButtons={[
+                {
+                    children: 'Close',
+                    onClick: () => setIsOpen(false),
+                },
+            ]}
+        ></DialogFooter>
+    </Dialog>
+)
+```
+
+#### New
+
+```tsx
+<Dialog.Root>
+    {/* Pass in a Trigger component */}
+    <Dialog.Trigger>
+        <Button>Open dialog</Button>
+    </Dialog.Trigger>
+    {/* Pass in the Dialog Content component */}
+    <Dialog.Content {...args}>
+        {/* Pass in the Dialog SideContent component */}
+        <Dialog.SideContent>
+            <div className="tw-bg-box-positive-strong tw-h-full tw-w-full"></div>
+        </Dialog.SideContent>
+        {/* Pass in the Dialog Header component */}
+        <Dialog.Header>Header</Dialog.Header>
+        {/* Pass in the Dialog Body component */}
+        <Dialog.Body {...args} />
+        {/* Pass in the Dialog Footer component */}
+        <Dialog.Footer>
+            <div className="tw-flex tw-h-fit tw-justify-end tw-gap-2">
+                <Button emphasis="default">Cancel</Button>
+                <Button>Submit</Button>
+            </div>
+        </Dialog.Footer>
+    </Dialog.Content>
+</Dialog.Root>
 ```
 
 ### Label (old `InputLabel`)
