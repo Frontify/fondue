@@ -17,7 +17,7 @@ import IconJohanna from '@foundation/Icon/Generated/IconJohanna';
 import IconJohanna24 from '@foundation/Icon/Generated/IconJohanna24';
 
 /**
- ### This component is deprecated, please use the [new Tooltip](/docs/current_components-tooltip--documentation) component instead.
+ ### This component is deprecated, please use the [new Tooltip component](/docs/current_components-tooltip--documentation) instead.
  */
 export default {
     title: 'Components/Tooltip/In Context',
