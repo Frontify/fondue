@@ -12,10 +12,18 @@ import { Modality } from '../../types';
 
 import { Dialog, type DialogProps } from './Dialog';
 
+/**
+ ### This component is deprecated, please use the [new Dialog](/docs/current_components-dialog--documentation) component instead.
+ */
 export default {
     title: 'Experimental/Dialog',
     component: Dialog,
     tags: ['autodocs'],
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
+    },
     args: {
         modality: Modality.Modal,
         strategy: 'absolute',

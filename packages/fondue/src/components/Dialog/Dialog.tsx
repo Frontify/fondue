@@ -4,7 +4,7 @@ import { Overlay } from '@utilities/dialogs/Overlay';
 import { Z_INDEX_MODAL } from '@utilities/dialogs/constants';
 import { type WithRequired } from 'src/types/withRequired';
 
-import { type BaseDialogProps, Modality, type OverlayProps } from '../../types';
+import { Modality, type BaseDialogProps, type OverlayProps } from '../../types';
 
 export type DialogProps = Omit<
     OverlayProps,
@@ -12,6 +12,9 @@ export type DialogProps = Omit<
 > &
     Omit<BaseDialogProps, 'width'>;
 
+/**
+ * @deprecated Use `Dialog` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dialog the migration guide}.
+ */
 export const Dialog = ({
     id,
     children,
