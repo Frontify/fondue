@@ -12,6 +12,9 @@ type PopoverProps = Omit<
     'isDetached' | 'arrowCustomColors' | 'verticalAlignment' | 'shadow' | 'isDialog'
 >;
 
+/**
+ * @deprecated Please use updated flyout component from `@frontify/fondue/components`.
+ */
 export const Popover = ({
     children,
     open,

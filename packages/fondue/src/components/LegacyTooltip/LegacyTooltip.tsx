@@ -3,10 +3,6 @@
 import { type Placement } from '@popperjs/core';
 import { useLink } from '@react-aria/link';
 import {
-    type FocusEvent,
-    type HTMLAttributes,
-    type ReactElement,
-    type ReactNode,
     cloneElement,
     useCallback,
     useEffect,
@@ -14,6 +10,10 @@ import {
     useMemo,
     useRef,
     useState,
+    type FocusEvent,
+    type HTMLAttributes,
+    type ReactElement,
+    type ReactNode,
 } from 'react';
 import { usePopper } from 'react-popper';
 
@@ -24,7 +24,7 @@ import { useMemoizedId } from '@hooks/useMemoizedId';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 
-import { BrightHeader, type BrightHeaderStyle, brightHeaderArrowBackgroundColors } from './BrightHeader';
+import { BrightHeader, brightHeaderArrowBackgroundColors, type BrightHeaderStyle } from './BrightHeader';
 
 export type TooltipButton = {
     label: string;
@@ -143,6 +143,9 @@ const TooltipWrapper = ({
     return children as JSX.Element;
 };
 
+/**
+ * @deprecated Please use updated tolltip component from `@frontify/fondue/components`.
+ */
 export const LegacyTooltip = ({
     content,
     tooltipIcon,

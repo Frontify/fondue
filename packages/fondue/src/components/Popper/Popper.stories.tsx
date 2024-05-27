@@ -11,10 +11,18 @@ import { ARROW_LIGHT_THEME } from '@utilities/overlayStyle';
 import { Popper } from './Popper';
 import { type PopperProps } from './types';
 
+/**
+ ### This component is deprecated, please use the [new Flyout](/docs/current_components-flyout--documentation) component instead.
+ */
 export default {
     title: 'Utilities/Popper',
     component: Popper,
     tags: ['autodocs'],
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
+    },
     args: {
         placement: 'bottom-start',
         offset: [0, 8],

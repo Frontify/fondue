@@ -45,6 +45,9 @@ const getNewOffsetBasedOnArrowPosition = (currentPlacement: string, offset: [num
     }
 };
 
+/**
+ * @deprecated Please use updated flyout component from `@frontify/fondue/components`.
+ */
 export const Popper = ({
     children,
     open,

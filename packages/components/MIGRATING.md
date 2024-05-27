@@ -90,7 +90,7 @@ Changes:
 
         -   _optional_ - The `Flyout.Footer` can be passed in as a child of `Flyout.Footer` to add a styled footer to the flyout.
 
--   The styling / layout is now controlled on the subcomponent `Flyout.Container`
+-   The styling / layout is now controlled on the subcomponent `Flyout.Content`
 
 -   The subcomponent `Flyout.Content` is used to display the flyout container.
     It provides no styling by default and can be used to wrap a custom content.

@@ -16,9 +16,17 @@ import IconIcon24 from '@foundation/Icon/Generated/IconIcon24';
 import IconJohanna from '@foundation/Icon/Generated/IconJohanna';
 import IconJohanna24 from '@foundation/Icon/Generated/IconJohanna24';
 
+/**
+ ### This component is deprecated, please use the [new Tooltip](/docs/current_components-tooltip--documentation) component instead.
+ */
 export default {
     title: 'Components/Tooltip/In Context',
     tags: ['autodocs'],
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
+    },
 } as Meta<TooltipProps>;
 
 const WithinInlineDialogTemplate: StoryFn<TooltipProps> = () => {

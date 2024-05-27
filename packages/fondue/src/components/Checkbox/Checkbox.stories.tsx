@@ -11,14 +11,22 @@ import IconQuestionMarkCircle from '@foundation/Icon/Generated/IconQuestionMarkC
 import {
     Checkbox as CheckboxComponent,
     CheckboxEmphasis,
-    type CheckboxProps,
     CheckboxSize,
     CheckboxState,
+    type CheckboxProps,
 } from './Checkbox';
 
+/**
+ ### This component is deprecated, please use the [new Checkbox](/docs/current_components-checkbox--documentation) component instead.
+ */
 export default {
     title: 'Components/Checkbox',
     tags: ['autodocs'],
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
+    },
     argTypes: {
         state: {
             options: Object.values(CheckboxState),
