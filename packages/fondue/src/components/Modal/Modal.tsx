@@ -4,7 +4,7 @@ import { useDialog } from '@react-aria/dialog';
 import { FocusScope } from '@react-aria/focus';
 import { OverlayContainer, useModal, useOverlay, usePreventScroll } from '@react-aria/overlays';
 import { AnimatePresence, motion } from 'framer-motion';
-import { type ReactElement, memo, useRef } from 'react';
+import { memo, useRef, type ReactElement } from 'react';
 
 import { merge } from '@utilities/merge';
 
@@ -14,7 +14,7 @@ import { ModalHeader } from './ModalHeader';
 import { ModalVisual } from './ModalVisual';
 import { MODAL_PADDING, ModalLayout } from './context/ModalLayout';
 import { ModalTitle } from './context/ModalTitle';
-import { type ModalProps, ModalWidth } from './types';
+import { ModalWidth, type ModalProps } from './types';
 
 const UNDERLAY_VARIANTS = {
     initial: {
@@ -48,6 +48,9 @@ const widthMap: Record<ModalWidth, string> = {
 
 const DEFAULT_ZINDEX = 50;
 
+/**
+ * @deprecated Use `Dialog` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dialog the migration guide}.
+ */
 const ModalComponent = memo((props: ModalProps): ReactElement => {
     const { visual, children, width = ModalWidth.Default, zIndex = DEFAULT_ZINDEX, compact = false } = props;
     const ref = useRef<HTMLDivElement>(null);
@@ -112,6 +115,9 @@ const ModalComponent = memo((props: ModalProps): ReactElement => {
 
 ModalComponent.displayName = 'Modal';
 
+/**
+ * @deprecated Use `Dialog` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dialog the migration guide}.
+ */
 export const Modal = ({ isOpen, ...modalProps }: ModalProps) => (
     <OverlayContainer>
         <AnimatePresence>{isOpen && <ModalComponent {...modalProps} isOpen />}</AnimatePresence>

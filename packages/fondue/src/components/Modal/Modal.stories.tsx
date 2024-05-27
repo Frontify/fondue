@@ -1,5 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import IconCap from '@foundation/Icon/Generated/IconCap';
+import IconIcon from '@foundation/Icon/Generated/IconIcon';
+import IconMusicNote from '@foundation/Icon/Generated/IconMusicNote';
 import { OverlayContainer, OverlayProvider } from '@react-aria/overlays';
 import { useOverlayTriggerState } from '@react-stately/overlays';
 import { action } from '@storybook/addon-actions';
@@ -10,9 +13,6 @@ import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
 import { FormControl, FormControlDirection, FormControlStyle } from '@components/FormControl';
 import { ScrollWrapperDirection } from '@components/ScrollWrapper/types';
 import { TextInput } from '@components/TextInput';
-import IconCap from '@foundation/Icon/Generated/IconCap';
-import IconIcon from '@foundation/Icon/Generated/IconIcon';
-import IconMusicNote from '@foundation/Icon/Generated/IconMusicNote';
 import { PatternDesign, PatternTheme } from '@foundation/Pattern';
 import { generateRandomId } from '@utilities/generateRandomId';
 
@@ -21,18 +21,26 @@ import { Divider } from '../Divider/Divider';
 import { Modal } from './Modal';
 import { MODAL_PADDING } from './context/ModalLayout';
 import {
+    ModalHeaderVariant,
+    ModalWidth,
     type ModalBodyProps,
     type ModalHeaderProps,
-    ModalHeaderVariant,
     type ModalProps,
     type ModalVisualProps,
-    ModalWidth,
 } from './types';
 
+/**
+ ### This component is deprecated, please use the [new Dialog](/docs/current_components-dialog--documentation) component instead.
+ */
 export default {
     title: 'Deprecated/Modal',
     component: Modal,
     tags: ['autodocs'],
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
+    },
     argTypes: {
         pattern: {
             table: {

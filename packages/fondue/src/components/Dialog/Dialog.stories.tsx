@@ -1,21 +1,29 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import IconJohanna from '@foundation/Icon/Generated/IconJohanna';
 import { type Meta, type StoryFn } from '@storybook/react';
 import { useRef, useState } from 'react';
 
 import { Button } from '@components/Button';
 import { DialogBody } from '@components/DialogBody';
 import { DialogFooter } from '@components/DialogFooter';
-import IconJohanna from '@foundation/Icon/Generated/IconJohanna';
 
 import { Modality } from '../../types';
 
 import { Dialog, type DialogProps } from './Dialog';
 
+/**
+ ### This component is deprecated, please use the [new Dialog](/docs/current_components-dialog--documentation) component instead.
+ */
 export default {
     title: 'Experimental/Dialog',
     component: Dialog,
     tags: ['autodocs'],
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
+    },
     args: {
         modality: Modality.Modal,
         strategy: 'absolute',

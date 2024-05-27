@@ -1,14 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ReactElement, cloneElement, useContext } from 'react';
+import { cloneElement, useContext, type ReactElement } from 'react';
 
 import { IconSize } from '@foundation/Icon/IconSize';
 import { merge } from '@utilities/merge';
 
 import { ModalLayout } from './context/ModalLayout';
 import { ModalTitle } from './context/ModalTitle';
-import { type ModalHeaderProps, ModalHeaderVariant, modalHeaderVariants } from './types';
+import { ModalHeaderVariant, modalHeaderVariants, type ModalHeaderProps } from './types';
 
+/**
+ * @deprecated Use `DialogHeader` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dialog the migration guide}.
+ */
 export const ModalHeader = ({
     title,
     leadText,
