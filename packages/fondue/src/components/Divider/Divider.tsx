@@ -33,7 +33,7 @@ const styleMap = {
 const DIVIDER_TEST_ID = 'fondue-divider';
 
 /**
- * @deprecated Please use updated Divider component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#flyout the migration guide}.
+ * @deprecated Please use updated Divider component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dividerthe migration guide}.
  */
 export const Divider = ({
     vertical = false,

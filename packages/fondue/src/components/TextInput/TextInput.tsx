@@ -2,17 +2,17 @@
 
 import { useFocusRing } from '@react-aria/focus';
 import {
+    forwardRef,
+    useEffect,
+    useImperativeHandle,
+    useRef,
+    useState,
     type AriaAttributes,
     type FocusEvent,
     type ForwardRefRenderFunction,
     type KeyboardEvent,
     type ReactElement,
     type ReactNode,
-    forwardRef,
-    useEffect,
-    useImperativeHandle,
-    useRef,
-    useState,
 } from 'react';
 
 import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle';
@@ -152,7 +152,7 @@ const ExtraActionButton: ForwardRefRenderFunction<HTMLButtonElement | null, Extr
 const ExtraActionButtonWithRef = forwardRef(ExtraActionButton);
 
 /**
- * @deprecated Use `TextInput` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md the migration guide}.
+ * @deprecated Use `TextInput` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#text-input the migration guide}.
  */
 export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
     (

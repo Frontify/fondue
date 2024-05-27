@@ -4,9 +4,9 @@ import { useFocusRing } from '@react-aria/focus';
 import { setInteractionModality } from '@react-aria/interactions';
 import { useRadio, useRadioGroup } from '@react-aria/radio';
 import { VisuallyHidden } from '@react-aria/visually-hidden';
-import { type RadioGroupState, useRadioGroupState } from '@react-stately/radio';
+import { useRadioGroupState, type RadioGroupState } from '@react-stately/radio';
 import { motion } from 'framer-motion';
-import { type ReactElement, forwardRef, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { forwardRef, useLayoutEffect, useMemo, useRef, useState, type ReactElement } from 'react';
 
 import { type IconProps } from '@foundation/Icon/IconProps';
 import { useMemoizedId } from '@hooks/useMemoizedId';
@@ -119,7 +119,7 @@ const SegmentedControlsItem = forwardRef<HTMLDivElement, SegmentedControlsItemPr
 SegmentedControlsItem.displayName = 'SegmentedControlsItem';
 
 /**
- * @deprecated Use `SegmentedControl` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md the migration guide}.
+ * @deprecated Use `SegmentedControl` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#segmented-control the migration guide}.
  */
 export const SegmentedControls = ({
     id: propId,
