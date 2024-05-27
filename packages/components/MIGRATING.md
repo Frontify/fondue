@@ -11,7 +11,7 @@ This document describes the changes that you need to make to your code to migrat
             -   [Old](#old)
             -   [New](#new)
         -   [Checkbox](#checkbox)
-            [Old](#old-1)
+            -   [Old](#old-1)
             -   [New](#new-1)
         -   [Dialog](#dialog)
             -   [Old](#old-2)
