@@ -172,7 +172,7 @@ export const DialogBody = (
 };
 DialogBody.displayName = 'Dialog.Body';
 
-export const SideContent = (
+export const DialogSideContent = (
     { children, 'data-test-id': dataTestId = 'fondue-dialog-side-content' }: DialogBodyProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
@@ -182,7 +182,7 @@ export const SideContent = (
         </div>
     );
 };
-SideContent.displayName = 'Dialog.SideContent';
+DialogSideContent.displayName = 'Dialog.SideContent';
 
 export const Dialog = {
     Root: DialogRoot,
@@ -191,5 +191,5 @@ export const Dialog = {
     Header: forwardRef<HTMLDivElement, DialogHeaderProps>(DialogHeader),
     Footer: forwardRef<HTMLDivElement, DialogFooterProps>(DialogFooter),
     Body: forwardRef<HTMLDivElement, DialogBodyProps>(DialogBody),
-    SideContent: forwardRef<HTMLDivElement, SideContentProps>(SideContent),
+    SideContent: forwardRef<HTMLDivElement, SideContentProps>(DialogSideContent),
 };

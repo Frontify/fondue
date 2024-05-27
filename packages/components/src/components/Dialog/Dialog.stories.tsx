@@ -4,7 +4,15 @@ import { type Meta, type StoryObj } from '@storybook/react';
 
 import { Button } from '../Button/Button';
 
-import { Dialog, DialogBody, DialogContent, DialogHeader, DialogRoot, DialogTrigger } from './Dialog';
+import {
+    Dialog,
+    DialogBody,
+    DialogContent,
+    DialogHeader,
+    DialogRoot,
+    DialogSideContent,
+    DialogTrigger,
+} from './Dialog';
 
 type Story = StoryObj<typeof meta>;
 const meta: Meta<typeof DialogContent> = {
@@ -15,7 +23,7 @@ const meta: Meta<typeof DialogContent> = {
         // @ts-expect-error - Storybook has the wrong type for subcomponents
         'Dialog.Trigger': DialogTrigger,
         // @ts-expect-error - Storybook has the wrong type for subcomponents
-        'Dialog.Content': DialogContent,
+        'Dialog.SideContent': DialogSideContent,
         // @ts-expect-error - Storybook has the wrong type for subcomponents
         'Dialog.Header': DialogHeader,
         // @ts-expect-error - Storybook has the wrong type for subcomponents
