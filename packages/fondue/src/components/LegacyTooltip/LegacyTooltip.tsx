@@ -144,7 +144,7 @@ const TooltipWrapper = ({
 };
 
 /**
- * @deprecated Please use updated tolltip component from `@frontify/fondue/components`.
+ * @deprecated Please use updated tooltip component from `@frontify/fondue/components`.
  */
 export const LegacyTooltip = ({
     content,

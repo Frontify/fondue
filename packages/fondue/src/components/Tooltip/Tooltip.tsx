@@ -57,7 +57,7 @@ const handleTimeout = (callback: () => void, delay: number, timeoutId: number | 
 const isPointerEventTypeMouse = (event: PointerEvent): boolean => event.pointerType === 'mouse';
 
 /**
- * @deprecated Please use updated tolltip component from `@frontify/fondue/components`.
+ * @deprecated Please use updated tooltip component from `@frontify/fondue/components`.
  */
 export const Tooltip = ({
     id,
