@@ -134,7 +134,7 @@ return (
             actionButtons={[
                 {
                     children: 'Close',
-                    onClick: () => setIsOpen(false),
+                    onClick: () => {},
                 },
             ]}
         ></DialogFooter>
@@ -147,18 +147,21 @@ return (
 ```tsx
 <Dialog.Root>
     <Dialog.Trigger>
-        <Button>Open dialog</Button>
+        <Button>Dialog Trigger</Button>
     </Dialog.Trigger>
     <Dialog.Content {...args}>
         <Dialog.SideContent>
             <div className="tw-bg-box-positive-strong tw-h-full tw-w-full"></div>
         </Dialog.SideContent>
         <Dialog.Header>Header</Dialog.Header>
-        <Dialog.Body {...args} />
+        <Dialog.Body padding="spacious">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad illum impedit iure numquam praesentium vel.
+            Distinctio perferendis, suscipit! Dolor doloremque et ex, modi nobis officiis perspiciatis quis tempora
+            temporibus voluptates?
+        </Dialog.Body>
         <Dialog.Footer>
             <div className="tw-flex tw-h-fit tw-justify-end tw-gap-2">
-                <Button emphasis="default">Cancel</Button>
-                <Button>Submit</Button>
+                <Button onPress={() => {}}>Close</Button>
             </div>
         </Dialog.Footer>
     </Dialog.Content>

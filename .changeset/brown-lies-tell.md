@@ -2,4 +2,4 @@
 "@frontify/fondue-components": patch
 ---
 
-feat: add dialog component
+feat: add `Dialog` component

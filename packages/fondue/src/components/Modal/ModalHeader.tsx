@@ -10,7 +10,7 @@ import { ModalTitle } from './context/ModalTitle';
 import { ModalHeaderVariant, modalHeaderVariants, type ModalHeaderProps } from './types';
 
 /**
- * @deprecated Use `DialogHeader` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dialog the migration guide}.
+ * @deprecated Use `Dialog.Header` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dialog the migration guide}.
  */
 export const ModalHeader = ({
     title,
