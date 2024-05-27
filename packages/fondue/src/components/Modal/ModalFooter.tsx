@@ -8,7 +8,7 @@ import { ModalLayout } from './context/ModalLayout';
 import { type ModalFooterProps } from './types';
 
 /**
- * @deprecated Use `DialogFooter` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dialog the migration guide}.
+ * @deprecated Use `Dialog.Footer` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dialog the migration guide}.
  */
 export const ModalFooter = ({ buttons }: ModalFooterProps): ReactElement => {
     const { padding } = useContext(ModalLayout);
