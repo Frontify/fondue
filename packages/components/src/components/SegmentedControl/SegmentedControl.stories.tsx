@@ -19,7 +19,7 @@ const meta: Meta<typeof SegmentedControlRoot> = {
     tags: ['autodocs'],
     parameters: {
         status: {
-            type: 'in_progress',
+            type: 'released',
         },
     },
     args: {

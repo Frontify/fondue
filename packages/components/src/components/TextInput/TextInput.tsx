@@ -10,31 +10,82 @@ import { inputStyles, loadingStatusStyles, rootStyles, slotStyles } from './styl
 export type TextInputProps = {
     id?: string;
     name?: string;
+    /**
+     * The place where the input slots are placed
+     */
     children?: ReactNode;
+    /**
+     * The default value of the text input
+     * Used for uncontrolled components
+     */
     defaultValue?: string | number;
+    /**
+     * The controlled value of the text input
+     */
     value?: string | number;
     /**
-     * Type of the input field
-     * @default text
+     * Type of the text input
+     * @default "text"
      */
     type?: 'date' | 'email' | 'hidden' | 'number' | 'password' | 'search' | 'tel' | 'text' | 'time' | 'url';
+    /**
+     * The placeholder in the text input
+     */
     placeholder?: string;
+    /**
+     * Disable the text input
+     * @default false
+     */
     disabled?: boolean;
+    /**
+     * Make the text input required in form
+     * @default false
+     */
     required?: boolean;
+    /**
+     * Make the text input spell-checkable
+     * @default true
+     */
     spellCheck?: boolean;
+    /**
+     * Make the text input read-only
+     * @default false
+     */
     readOnly?: boolean;
+    /**
+     * Set the type of input so autocomplete can help the user
+     * @default "on"
+     */
     autoComplete?: string;
+    /**
+     * The maximum length of the text input
+     */
     maxLength?: number;
     /**
-     * Status of the input field
-     * @default neutral
+     * Status of the text input
+     * @default "neutral"
      */
     status?: 'neutral' | 'success' | 'error' | 'loading';
     className?: string;
+    /**
+     * Event handler called when the text input value changes
+     */
     onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
+    /**
+     * Event handler called when the text input is blurred
+     */
     onBlur?: (event: ChangeEvent<HTMLInputElement>) => void;
+    /**
+     * Event handler called when the text input is focused
+     */
     onFocus?: (event: ChangeEvent<HTMLInputElement>) => void;
+    /**
+     * Event handler called when a key is pressed
+     */
     onKeyDown?: (event: KeyboardEvent<HTMLInputElement>) => void;
+    /**
+     * Event handler called when a key is released
+     */
     onKeyUp?: (event: KeyboardEvent<HTMLInputElement>) => void;
     'data-test-id'?: string;
     'aria-label'?: string;

@@ -12,6 +12,16 @@ const meta: Meta<typeof FlyoutContent> = {
     subcomponents: {
         // @ts-expect-error - Storybook has the wrong type for subomponents
         'Flyout.Root': FlyoutRoot,
+        // @ts-expect-error - Storybook has the wrong type for subomponents
+        'Flyout.Trigger': Flyout.Trigger,
+        // @ts-expect-error - Storybook has the wrong type for subomponents
+        'Flyout.Content': FlyoutContent,
+        // @ts-expect-error - Storybook has the wrong type for subomponents
+        'Flyout.Header': Flyout.Header,
+        // @ts-expect-error - Storybook has the wrong type for subomponents
+        'Flyout.Body': Flyout.Body,
+        // @ts-expect-error - Storybook has the wrong type for subomponents
+        'Flyout.Footer': Flyout.Footer,
     },
     tags: ['autodocs'],
     parameters: {
@@ -45,7 +55,6 @@ const meta: Meta<typeof FlyoutContent> = {
 export default meta;
 
 export const BasicContent: Story = {
-    name: 'Basic Content',
     args: {
         children: 'Hello World',
     },
@@ -64,7 +73,6 @@ export const BasicContent: Story = {
 };
 
 export const WithHeader: Story = {
-    name: 'With Header',
     render: ({ ...args }) => {
         return (
             <Flyout.Root>
@@ -81,7 +89,6 @@ export const WithHeader: Story = {
 };
 
 export const WithFooter: Story = {
-    name: 'With Footer',
     render: ({ ...args }) => {
         return (
             <Flyout.Root>
@@ -99,12 +106,9 @@ export const WithFooter: Story = {
     },
 };
 
-export const WithHeaderAndFooter: Story = {
-    name: 'With Header and Footer',
-};
+export const WithHeaderAndFooter: Story = {};
 
 export const WithCloseButton: Story = {
-    name: 'With Close Button',
     render: ({ ...args }) => {
         return (
             <Flyout.Root>
@@ -121,21 +125,18 @@ export const WithCloseButton: Story = {
 };
 
 export const WithComfortablePadding: Story = {
-    name: 'With Comfortable Padding',
     args: {
         padding: 'comfortable',
     },
 };
 
 export const WithSpaciousPadding: Story = {
-    name: 'With Spacious Padding',
     args: {
         padding: 'spacious',
     },
 };
 
 export const WithCustomContent: Story = {
-    name: 'With Custom Content',
     render: ({ ...args }) => {
         return (
             <Flyout.Root>
@@ -151,14 +152,12 @@ export const WithCustomContent: Story = {
 };
 
 export const RightSide: Story = {
-    name: 'Right Side',
     args: {
         side: 'right',
     },
 };
 
 export const AlignCenter: Story = {
-    name: 'Align Center',
     args: {
         side: 'right',
         align: 'center',
@@ -166,7 +165,6 @@ export const AlignCenter: Story = {
 };
 
 export const AlignEnd: Story = {
-    name: 'Align End',
     args: {
         side: 'right',
         align: 'end',
@@ -174,7 +172,6 @@ export const AlignEnd: Story = {
 };
 
 export const LongContent: Story = {
-    name: 'Long Content',
     args: {
         side: 'bottom',
         children:
@@ -183,7 +180,6 @@ export const LongContent: Story = {
 };
 
 export const WithCustomMaxWidth: Story = {
-    name: 'With Custom Max Width',
     args: {
         maxWidth: '200px',
         side: 'bottom',
@@ -193,7 +189,6 @@ export const WithCustomMaxWidth: Story = {
 };
 
 export const MobileView: Story = {
-    name: 'Mobile View',
     parameters: {
         viewport: {
             viewports: {

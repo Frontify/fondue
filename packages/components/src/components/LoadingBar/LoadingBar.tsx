@@ -12,6 +12,7 @@ export type LoadingBarProps = {
      */
     value: number | null;
     /**
+     * The maximum value of the loading bar
      * @default 100
      */
     max?: number;
@@ -20,17 +21,23 @@ export type LoadingBarProps = {
      */
     'data-test-id'?: string;
     /**
+     * Add rounded corners to the loading bar
      * @default true
      */
     rounded?: boolean;
     /**
-     * @default 'default'
+     * The style of the loading bar
+     * @default "default"
      */
     style?: 'default' | 'positive' | 'negative';
     /**
-     * @default 'medium'
+     * The size of the loading bar
+     * @default "medium"
      */
     size?: 'small' | 'medium' | 'large' | 'x-large';
+    /**
+     * The label of the loading bar for accessibility purposes
+     */
     getValueLabel?: (value: number, max: number) => string;
 } & ({ 'aria-label': string } | { 'aria-labelledby': string });
 

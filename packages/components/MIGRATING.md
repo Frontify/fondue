@@ -303,20 +303,18 @@ return (
 
 ```tsx
 <Flyout.Root>
-    {/* Pass in a Trigger component */}
     <Flyout.Trigger>
-        <Button>Click me</Button>
+        <Button>
+            <IconIcon />
+            Trigger
+        </Button>
     </Flyout.Trigger>
-    {/* Pass in the Flyout Content component */}
     <Flyout.Content side="right">
-        {/* Use the layout subcomponents inside the content */}
         <Flyout.Header showCloseButton>Header</Flyout.Header>
         <Flyout.Body {...args} />
         <Flyout.Footer>
-            <div className="tw-flex tw-justify-end tw-gap-2">
-                <Button emphasis="default">Cancel</Button>
-                <Button>Submit</Button>
-            </div>
+            <Button emphasis="default">Cancel</Button>
+            <Button>Submit</Button>
         </Flyout.Footer>
     </Flyout.Content>
 </Flyout.Root>

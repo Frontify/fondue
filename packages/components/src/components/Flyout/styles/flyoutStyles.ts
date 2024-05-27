@@ -27,7 +27,7 @@ export const flyoutHeaderStyles =
     'group-data-[flyout-spacing=spacious]:tw-p-10 ';
 
 export const flyoutFooterStyles =
-    'tw-border-t tw-border-line tw-font-medium ' +
+    'tw-flex tw-justify-end tw-gap-2 tw-border-t tw-border-line tw-font-medium ' +
     'group-data-[flyout-spacing=compact]:tw-p-4 ' +
     'group-data-[flyout-spacing=comfortable]:tw-p-6 ' +
     'group-data-[flyout-spacing=spacious]:tw-p-10 ';
