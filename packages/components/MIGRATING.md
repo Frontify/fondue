@@ -28,6 +28,9 @@ This document describes the changes that you need to make to your code to migrat
         -   [Text Input](#text-input)
             -   [Old](#old-6)
             -   [New](#new-6)
+        -   [Tooltip](#tooltip)
+            -   [Old](#old-7)
+            -   [New](#new-7)
 
 ## Components
 
@@ -489,4 +492,54 @@ Changes:
         </Tooltip.Root>
     </TextInput.Slot>
 </TextInput.Root>
+```
+
+### Tooltip
+
+Changes:
+
+-   The props now use a uion type instead of an enum.
+-   The `Tooltip` component now provides multiple subcomponents.
+    -   The `trigger` prop has been removed and the trigger is now passed in as a child of `Tooltip.Trigger`.
+    -   The `content` prop has been removed and the content is now passed in as a child of `Tooltip.Content`.
+-   The `placement` and `flip` props have been removed and replaced by `side`.
+
+        When the tooltip content collides with the viewport, it is automatically flipped to the other side and / or slightly shifted to fit into the viewport.
+
+-   The `openOnMount` prop has been removed, the open state can be externally controlled with the `open` prop.
+-   The `enablePortal` prop has been removed, the tooltip now uses a portal by default.
+-   The `withArrow` prop has been removed, the arrow is now always shown.
+-   The `offset`, `zIndex`, `strategy`, `leaveDelay` and `maxHeight` props have been removed to simplify the API
+
+#### Old
+
+```tsx
+<Tooltip
+    content="Your text here"
+    enablePortal
+    enterDelay={200}
+    flip
+    leaveDelay={0}
+    maxHeight="auto"
+    maxWidth={200}
+    offset={[0, 8]}
+    placement="bottom-center"
+    size="spacious"
+    withArrow
+>
+    <Button>Hover over me!</Button>
+</Tooltip>
+```
+
+#### New
+
+```tsx
+<Tooltip.Root enterDelay={200}>
+    <Tooltip.Trigger>
+        <Button>Hover over me!</Button>
+    </Tooltip.Trigger>
+    <Tooltip.Content side="bottom" padding="spacious">
+        Your text here
+    </Tooltip.Content>
+</Tooltip.Root>
 ```
