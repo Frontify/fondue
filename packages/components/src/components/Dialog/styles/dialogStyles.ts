@@ -41,7 +41,7 @@ export const dialogHeaderStyles =
     'group-data-[dialog-spacing=spacious]:tw-p-10 ';
 
 export const dialogFooterStyles =
-    'tw-h-fit tw-border-t tw-border-line tw-font-medium tw-col-start-1 sm:tw-col-start-2 tw-row-start-4 sm:tw-row-start-3 ' +
+    'tw-flex tw-gap-2 tw-justify-end tw-h-fit tw-border-t tw-border-line tw-font-medium tw-col-start-1 sm:tw-col-start-2 tw-row-start-4 sm:tw-row-start-3 ' +
     'group-data-[dialog-spacing=compact]:tw-p-4 ' +
     'group-data-[dialog-spacing=comfortable]:tw-p-6 ' +
     'group-data-[dialog-spacing=spacious]:tw-p-10 ';

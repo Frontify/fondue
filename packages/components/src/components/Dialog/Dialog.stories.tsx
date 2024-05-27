@@ -33,10 +33,8 @@ const meta: Meta<typeof DialogContent> = {
                     <Dialog.Header>Header</Dialog.Header>
                     <Dialog.Body {...args} />
                     <Dialog.Footer>
-                        <div className="tw-flex tw-h-fit tw-justify-end tw-gap-2">
-                            <Button emphasis="default">Cancel</Button>
-                            <Button>Submit</Button>
-                        </div>
+                        <Button emphasis="default">Cancel</Button>
+                        <Button>Submit</Button>
                     </Dialog.Footer>
                 </Dialog.Content>
             </Dialog.Root>
@@ -86,10 +84,8 @@ export const WithFooter: Story = {
                 <Dialog.Content {...args}>
                     <Dialog.Body {...args} />
                     <Dialog.Footer>
-                        <div className="tw-flex tw-h-fit tw-justify-end tw-gap-2">
-                            <Button emphasis="default">Cancel</Button>
-                            <Button>Submit</Button>
-                        </div>
+                        <Button emphasis="default">Cancel</Button>
+                        <Button>Submit</Button>
                     </Dialog.Footer>
                 </Dialog.Content>
             </Dialog.Root>
@@ -138,10 +134,8 @@ export const WithLongText: Story = {
                     <Dialog.Header>Header</Dialog.Header>
                     <Dialog.Body {...args} />
                     <Dialog.Footer>
-                        <div className="tw-flex tw-h-fit tw-justify-end tw-gap-2">
-                            <Button emphasis="default">Cancel</Button>
-                            <Button>Submit</Button>
-                        </div>
+                        <Button emphasis="default">Cancel</Button>
+                        <Button>Submit</Button>
                     </Dialog.Footer>
                 </Dialog.Content>
             </Dialog.Root>

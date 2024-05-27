@@ -165,9 +165,7 @@ return (
             temporibus voluptates?
         </Dialog.Body>
         <Dialog.Footer>
-            <div className="tw-flex tw-h-fit tw-justify-end tw-gap-2">
-                <Button onPress={() => {}}>Close</Button>
-            </div>
+            <Button onPress={() => {}}>Close</Button>
         </Dialog.Footer>
     </Dialog.Content>
 </Dialog.Root>
