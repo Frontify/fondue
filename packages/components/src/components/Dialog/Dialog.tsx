@@ -20,7 +20,7 @@ export type DialogRootProps = {
      */
     modal?: boolean;
     /**
-     * The controlled `open` state of the Dialog
+     * The controlled `open` state of the dialog
      */
     open?: boolean;
     /**
@@ -32,27 +32,27 @@ export type DialogRootProps = {
 
 export type DialogContentProps = {
     /**
-     * Add rounded corners to the Dialog
+     * Add rounded corners to the dialog
      * @default true
      */
     rounded?: boolean;
     /**
-     * Define the padding of the Dialog
+     * Define the padding of the dialog
      * @default "compact"
      */
     padding?: 'compact' | 'comfortable' | 'spacious';
     /**
-     * Define a maximum width for the Dialog
+     * Define a maximum width for the dialog
      * @default 800px
      */
     maxWidth?: string;
     /**
-     * Define a minimum width for the Dialog
+     * Define a minimum width for the dialog
      * @default 400px
      */
     minWidth?: string;
     /**
-     * Define a maximum height for the Dialog
+     * Define a maximum height for the dialog
      * @default 200px
      */
     minHeight?: string;
