@@ -83,6 +83,8 @@ Changes:
 
     -   _required_ - The `Dialog.Root` wraps all other subcomponents and handles the dialog state and modality.
 
+        -   The `modality` prop was replaced by `modal` and is now a boolean.
+
     -   _required_ - The `Dialog.Trigger` is used to pass in a component to trigger the dialog.
 
     -   _required_ - The `Dialog.Content` is the container appearing when the dialog is Visible
@@ -102,13 +104,15 @@ Changes:
 
     -   `roundedCorners` is now called `rounded` and is a boolean.
 
-    -   The `width` and `maxHeight` props were removed. The Dialog container adjusts to the content inside. You can use a custom component inside if neccessary. you can use `minWidth`, `maxWidth` and `minHeight` to override the default values.
+    -   The `width`, `maxHeight` and `autoHeight` props were removed. The Dialog container adjusts to the content inside. You can use a custom component inside if neccessary. you can use `minWidth`, `maxWidth` and `minHeight` to override the default values.
 
     -   The `strategy` and `role` props were removed to simplify the API.
 
     -   The `enablePortal` and `verticalAlignment` props were removed to standardize the dialog.
 
         The dialog now uses a portal by default and is placed centered
+
+    -   The prop `darkUnderlay` was replaced by `showUnderlay`.
 
 -   The subcomponents `Dialog.Header`, `Dialog.Body`, `Dialog.Footer` and `Dialog.SideContent` can be used to add defaut styling to the content inside of `Dialog.Content`.
 
@@ -123,6 +127,7 @@ return (
     </Button>
 
     <Dialog {...args} anchor={triggerRef} open={isOpen} handleClose={() => setIsOpen(false)}>
+        <DialogHeader>Header</DialogHeader>
         <DialogBody padding="spacious">
             <p>
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad illum impedit iure numquam praesentium vel.
