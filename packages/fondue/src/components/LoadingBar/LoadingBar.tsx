@@ -45,7 +45,7 @@ export const loadingBarStateClasses: Record<LoadingBarState, { outer: string; in
 };
 
 /**
- * @deprecated Please use updated LoadingBar component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#flyout-old-inlinedialog the migration guide}.
+ * @deprecated Please use updated LoadingBar component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#loading-bar the migration guide}.
  */
 export const LoadingBar = ({
     percentage = 0,

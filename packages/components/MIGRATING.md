@@ -22,15 +22,18 @@ This document describes the changes that you need to make to your code to migrat
         -   [Label (old `InputLabel`)](#label-old-inputlabel)
             -   [Old](#old-4)
             -   [New](#new-4)
-        -   [Segmented Control](#segmented-control)
+        -   [Loading Bar](#loading-bar)
             -   [Old](#old-5)
             -   [New](#new-5)
-        -   [Text Input](#text-input)
+        -   [Segmented Control](#segmented-control)
             -   [Old](#old-6)
             -   [New](#new-6)
-        -   [Tooltip](#tooltip)
+        -   [Text Input](#text-input)
             -   [Old](#old-7)
             -   [New](#new-7)
+        -   [Tooltip](#tooltip)
+            -   [Old](#old-8)
+            -   [New](#new-8)
 
 ## Components
 
@@ -348,6 +351,27 @@ Changes:
         <Tooltip.Content>Tooltip</Tooltip.Content>
     </Tooltip.Root>
 </Label>
+```
+
+### Loading Bar
+
+Changes:
+
+-   The property `percentage` has been renamed to `value`.
+    -   If the `value` is `null`, the loading bar will be in an indeterminate state.
+    -   A new property `max` has been introduced so the inner loading bar percentage can be calculated based on the `max` value.
+-   The property `state` has been renamed to `style`
+
+#### Old
+
+```tsx
+<LoadingBar percentage={50} state={LoadingBarState.Success} rounded />
+```
+
+#### New
+
+```tsx
+<LoadingBar value={50} style="success" rounded />
 ```
 
 ### Segmented Control

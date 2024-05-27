@@ -12,6 +12,9 @@ import { FormField } from '../FormField';
 
 import { TextInput, type TextInputProps, TextInputType } from './TextInput';
 
+/**
+ ### This component is deprecated, please use the [new TextInput component](/docs/current_components-text-input--documentation) instead.
+ */
 export default {
     title: 'Components/Text Input',
     component: TextInput,

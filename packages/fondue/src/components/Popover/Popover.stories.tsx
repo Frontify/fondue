@@ -13,7 +13,7 @@ import IconJohanna from '@foundation/Icon/Generated/IconJohanna';
 import { type OverlayProps } from '../../types';
 
 /**
- ### This component is deprecated, please use the [new Flyout](/docs/current_components-flyout--documentation) component instead.
+ ### This component is deprecated, please use the [new Flyout component](/docs/current_components-flyout--documentation) instead.
  */
 export default {
     title: 'Experimental/Popover',

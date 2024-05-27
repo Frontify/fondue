@@ -7,7 +7,7 @@ import { Tooltip, type TooltipProps } from '@components/Tooltip/Tooltip';
 import IconIcon24 from '@foundation/Icon/Generated/IconIcon24';
 
 /**
- ### This component is deprecated, please use the [new Tooltip](/docs/current_components-tooltip--documentation) component instead.
+ ### This component is deprecated, please use the [new Tooltip component](/docs/current_components-tooltip--documentation) instead.
  */
 export default {
     title: 'Components/Tooltip',

@@ -17,7 +17,7 @@ import {
 } from './Checkbox';
 
 /**
- ### This component is deprecated, please use the [new Checkbox](/docs/current_components-checkbox--documentation) component instead.
+ ### This component is deprecated, please use the [new Checkbox component](/docs/current_components-checkbox--documentation) instead.
  */
 export default {
     title: 'Components/Checkbox',
