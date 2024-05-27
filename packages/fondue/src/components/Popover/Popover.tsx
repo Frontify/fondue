@@ -13,7 +13,7 @@ type PopoverProps = Omit<
 >;
 
 /**
- * @deprecated Please use updated flyout component from `@frontify/fondue/components`.
+ * @deprecated Please use updated flyout component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#flyout the migration guide}.
  */
 export const Popover = ({
     children,
