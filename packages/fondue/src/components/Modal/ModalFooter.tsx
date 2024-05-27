@@ -1,12 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ReactElement, useContext } from 'react';
+import { useContext, type ReactElement } from 'react';
 
 import { Button, ButtonSize } from '@components/Button';
 
 import { ModalLayout } from './context/ModalLayout';
 import { type ModalFooterProps } from './types';
 
+/**
+ * @deprecated Use `Dialog.Footer` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dialog the migration guide}.
+ */
 export const ModalFooter = ({ buttons }: ModalFooterProps): ReactElement => {
     const { padding } = useContext(ModalLayout);
 

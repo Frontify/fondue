@@ -10,18 +10,21 @@ This document describes the changes that you need to make to your code to migrat
         -   [Checkbox](#checkbox)
             -   [Old](#old)
             -   [New](#new)
-        -   [Flyout (old `InlineDialog`)](#flyout-old-inlinedialog)
+        -   [Dialog](#dialog)
             -   [Old](#old-1)
             -   [New](#new-1)
-        -   [Label (old `InputLabel`)](#label-old-inputlabel)
+        -   [Flyout (old `InlineDialog`)](#flyout-old-inlinedialog)
             -   [Old](#old-2)
             -   [New](#new-2)
-        -   [Segmented Control](#segmented-control)
+        -   [Label (old `InputLabel`)](#label-old-inputlabel)
             -   [Old](#old-3)
             -   [New](#new-3)
-        -   [Text Input](#text-input)
+        -   [Segmented Control](#segmented-control)
             -   [Old](#old-4)
             -   [New](#new-4)
+        -   [Text Input](#text-input)
+            -   [Old](#old-5)
+            -   [New](#new-5)
 
 ## Components
 
@@ -64,6 +67,113 @@ Changes:
         <Tooltip.Content>Tooltip</Tooltip.Content>
     </Tooltip.Root>
 </Label>
+```
+
+### Dialog
+
+Changes:
+
+-   The `Dialog` component now controls its open state internally by default.
+
+    -   You can pass in a trigger component as a child of `Dialog.Trigger` to control the open state.
+
+    -   The `handleClose`prop was replaced by `onOpenChange`. Together with the `open` prop it can be used to control the open state externally if needed.
+
+-   The `Dialog` now provides multiple subcomponents.
+
+    -   _required_ - The `Dialog.Root` wraps all other subcomponents and handles the dialog state and modality.
+
+        -   The `modality` prop was replaced by `modal` and is now a boolean.
+
+    -   _required_ - The `Dialog.Trigger` is used to pass in a component to trigger the dialog.
+
+    -   _required_ - The `Dialog.Content` is the container appearing when the dialog is Visible
+
+        -   _optional_ - The `Dialog.Header` can be passed in as a child of `Dialog.Content` to add a styled header to the dialog.
+
+        -   _optional_ - The `Dialog.Body` can be passed in as a child of `Dialog.Content` to add a styled body to the dialog.
+
+        -   _optional_ - The `Dialog.Footer` can be passed in as a child of `Dialog.Content` to add a styled footer to the dialog.
+
+        -   _optional_ - The `Dialog.SideContent` can be passed in as a child of `Dialog.Content` to add a space on the left side of the dialog. Custom components can then be passed in as as children of `Dialog.SideContent`
+
+-   The styling / layout is now controlled on the subcomponent `Dialog.Content`
+
+-   The `anchor` prop was removed and the subcomponents now accept refs
+
+-   The subcomponent `Dialog.Content` is used to display the dialog container.
+    It provides no styling by default and can be used to wrap a custom content.
+
+    -   `roundedCorners` is now called `rounded` and is a boolean.
+
+    -   The `width`, `maxHeight` and `autoHeight` props were removed. The Dialog container adjusts to the content inside. You can use a custom component inside if neccessary. you can use `minWidth`, `maxWidth` and `minHeight` to override the default values.
+
+    -   The `strategy` and `role` props were removed to simplify the API.
+
+    -   The `enablePortal` and `verticalAlignment` props were removed to standardize the dialog.
+
+        The dialog now uses a portal by default and is placed centered
+
+    -   The prop `darkUnderlay` was replaced by `showUnderlay`.
+
+-   The subcomponents `Dialog.Header`, `Dialog.Body`, `Dialog.Footer` and `Dialog.SideContent` can be used to add defaut styling to the content inside of `Dialog.Content`.
+
+#### Old
+
+```tsx
+const [isOpen, setIsOpen] = useState(false);
+
+return (
+    <Button icon={<IconIcon/>} ref={triggerRef} onClick={() => setIsOpen(!isOpen)}>
+        Dialog Trigger
+    </Button>
+
+    <Dialog {...args} anchor={triggerRef} open={isOpen} handleClose={() => setIsOpen(false)}>
+        <DialogHeader>Header</DialogHeader>
+        <DialogBody padding="spacious">
+            <p>
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad illum impedit iure numquam praesentium vel.
+                Distinctio perferendis, suscipit! Dolor doloremque et ex, modi nobis officiis perspiciatis quis tempora
+                temporibus voluptates?
+            </p>
+        </DialogBody>
+        <DialogFooter
+            actionButtons={[
+                {
+                    children: 'Close',
+                    onClick: () => {},
+                },
+            ]}
+        ></DialogFooter>
+    </Dialog>
+)
+```
+
+#### New
+
+```tsx
+<Dialog.Root>
+    <Dialog.Trigger>
+        <Button>
+            <IconIcon />
+            Dialog Trigger
+        </Button>
+    </Dialog.Trigger>
+    <Dialog.Content {...args}>
+        <Dialog.SideContent>
+            <div className="tw-bg-box-positive-strong tw-h-full tw-w-full"></div>
+        </Dialog.SideContent>
+        <Dialog.Header>Header</Dialog.Header>
+        <Dialog.Body padding="spacious">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad illum impedit iure numquam praesentium vel.
+            Distinctio perferendis, suscipit! Dolor doloremque et ex, modi nobis officiis perspiciatis quis tempora
+            temporibus voluptates?
+        </Dialog.Body>
+        <Dialog.Footer>
+            <Button onPress={() => {}}>Close</Button>
+        </Dialog.Footer>
+    </Dialog.Content>
+</Dialog.Root>
 ```
 
 ### Flyout (old `InlineDialog`)

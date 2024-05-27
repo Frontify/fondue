@@ -21,18 +21,26 @@ import { Divider } from '../Divider/Divider';
 import { Modal } from './Modal';
 import { MODAL_PADDING } from './context/ModalLayout';
 import {
+    ModalHeaderVariant,
+    ModalWidth,
     type ModalBodyProps,
     type ModalHeaderProps,
-    ModalHeaderVariant,
     type ModalProps,
     type ModalVisualProps,
-    ModalWidth,
 } from './types';
 
+/**
+ ### This component is deprecated, please use the [new Dialog](/docs/current_components-dialog--documentation) component instead.
+ */
 export default {
     title: 'Deprecated/Modal',
     component: Modal,
     tags: ['autodocs'],
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
+    },
     argTypes: {
         pattern: {
             table: {
