@@ -84,7 +84,7 @@ export const WithFooter: Story = {
         return (
             <Dialog.Root>
                 <Dialog.Trigger>
-                    <Button>Click Me</Button>
+                    <Button>Open dialog</Button>
                 </Dialog.Trigger>
                 <Dialog.Content {...args}>
                     <Dialog.Body {...args} />
@@ -106,7 +106,7 @@ export const WithSideContent: Story = {
         return (
             <Dialog.Root>
                 <Dialog.Trigger>
-                    <Button>Click Me</Button>
+                    <Button>Open dialog</Button>
                 </Dialog.Trigger>
                 <Dialog.Content {...args}>
                     <Dialog.SideContent>
@@ -128,7 +128,7 @@ export const WithLongText: Story = {
         return (
             <Dialog.Root>
                 <Dialog.Trigger>
-                    <Button>Click Me</Button>
+                    <Button>Open dialog</Button>
                 </Dialog.Trigger>
                 <Dialog.Content {...args}>
                     <Dialog.SideContent>
