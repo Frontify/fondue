@@ -21,7 +21,7 @@ const meta: Meta<typeof TextFieldRoot> = {
     tags: ['autodocs'],
     parameters: {
         status: {
-            type: 'in_progress',
+            type: 'released',
         },
     },
     args: {

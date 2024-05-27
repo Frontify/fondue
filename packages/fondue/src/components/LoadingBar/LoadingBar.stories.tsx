@@ -4,6 +4,9 @@ import { type Meta, type StoryFn } from '@storybook/react';
 
 import { LoadingBar as LoadingBarComponent, LoadingBarSize, LoadingBarState, type LoadingBarProps } from './LoadingBar';
 
+/**
+ ### This component is deprecated, please use the [new LoadingBar component](/docs/current_components-loading-bar--documentation) instead.
+ */
 export default {
     title: 'Components/LoadingBar',
     component: LoadingBarComponent,

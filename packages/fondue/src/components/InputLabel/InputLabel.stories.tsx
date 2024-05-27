@@ -9,6 +9,9 @@ import IconQuestionMarkCircle from '@foundation/Icon/Generated/IconQuestionMarkC
 
 import { InputLabel as InputLabelComponent, type InputLabelProps } from './InputLabel';
 
+/**
+ ### This component is deprecated, please use the [new Label component](/docs/current_components-label--documentation) instead.
+ */
 export default {
     title: 'Components/Input Label',
     component: InputLabelComponent,

@@ -20,7 +20,7 @@ import { BrightHeaderStyle } from './BrightHeader';
 import { LegacyTooltip, TooltipAlignment, TooltipPosition, type LegacyTooltipProps } from './LegacyTooltip';
 
 /**
- ### This component is deprecated, please use the [new Tooltip](/docs/current_components-tooltip--documentation) component instead.
+ ### This component is deprecated, please use the [new Tooltip component](/docs/current_components-tooltip--documentation) instead.
  */
 export default {
     title: 'Deprecated/LegacyTooltip',

@@ -14,6 +14,7 @@ export type FlyoutRootProps = {
     modal?: boolean;
     /**
      * The controlled `open` state of the flyout
+     * @default false
      */
     open?: boolean;
     /**
@@ -31,22 +32,22 @@ export type FlyoutContentProps = {
     rounded?: boolean;
     /**
      * Define the prefered side of the flyout. Can be overriden by viewport collisions viewport.
-     * @default bottom
+     * @default "bottom"
      */
     side?: 'top' | 'right' | 'bottom' | 'left';
     /**
      * Define the prefered alignment of the flyout. Can be overriden by viewport collisions viewport.
-     * @default start
+     * @default "start"
      */
     align?: 'start' | 'center' | 'end';
     /**
      * Define the padding of the flyout
-     * @default compact
+     * @default "compact"
      */
     padding?: 'compact' | 'comfortable' | 'spacious';
     /**
      * Define the maximum width of the flyout
-     * @default 360px
+     * @default "360px"
      */
     maxWidth?: string;
     children?: ReactNode;

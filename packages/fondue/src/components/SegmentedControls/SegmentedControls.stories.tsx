@@ -10,6 +10,9 @@ import { IconSize } from '@foundation/Icon/IconSize';
 
 import { SegmentedControls, type SegmentedControlsProps } from './SegmentedControls';
 
+/**
+ ### This component is deprecated, please use the [new SegmentedControl component](/docs/current_components-segmented-control--documentation) instead.
+ */
 export default {
     title: 'Components/SegmentedControls',
     component: SegmentedControls,

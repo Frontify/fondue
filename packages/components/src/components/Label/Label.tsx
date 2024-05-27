@@ -8,7 +8,14 @@ import { cn } from '#/utilities/styleUtilities';
 export type LabelProps = {
     id?: string;
     children: ReactNode;
+    /**
+     * The id of the input element the label is associated with
+     */
     htmlFor: string;
+    /**
+     * Add an asterisk to the label to indicate it is required
+     * @default false
+     */
     required?: boolean;
     className?: string;
     'data-test-id'?: string;

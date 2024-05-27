@@ -14,29 +14,31 @@ type DividerColor = 'weak' | 'default' | 'strong' | 'x-strong';
 
 export type DividerProps = {
     /**
-     * @default 'solid'
+     * The style of the divider
+     * @default "solid"
      */
     style?: DividerStyle;
     /**
-     * @default 'medium'
+     * The padding of the divider
+     * @default "medium"
      */
     padding?: DividerPadding;
     /**
-     * @default 'default'
+     * The color of the divider
+     * @default "default"
      */
     color?: DividerColor;
     /**
-     * @default 'horizontal'
+     * The direction of the divider
+     * @default "horizontal"
      */
     direction?: DividerDirection;
     'data-test-id'?: string;
     className?: string;
 };
 
-const DIVIDER_TEST_ID = 'fondue-divider';
-
 export const DividerComponent = (
-    { 'data-test-id': dataTestId = DIVIDER_TEST_ID, direction = 'horizontal', className, ...props }: DividerProps,
+    { 'data-test-id': dataTestId = 'fondue-divider', direction = 'horizontal', className, ...props }: DividerProps,
     ref: ForwardedRef<HTMLDivElement | null>,
 ): ReactElement => {
     return (
