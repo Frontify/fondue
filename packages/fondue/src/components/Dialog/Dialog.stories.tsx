@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconJohanna from '@foundation/Icon/Generated/IconJohanna';
 import { type Meta, type StoryFn } from '@storybook/react';
 import { useRef, useState } from 'react';
 
 import { Button } from '@components/Button';
 import { DialogBody } from '@components/DialogBody';
 import { DialogFooter } from '@components/DialogFooter';
+import IconJohanna from '@foundation/Icon/Generated/IconJohanna';
 
 import { Modality } from '../../types';
 
