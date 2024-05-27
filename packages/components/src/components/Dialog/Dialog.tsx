@@ -42,17 +42,17 @@ export type DialogContentProps = {
      */
     padding?: 'compact' | 'comfortable' | 'spacious';
     /**
-     * Override the `800px` maximum width of the Dialog
+     * Define a maximum width for the Dialog
      * @default 800px
      */
     maxWidth?: string;
     /**
-     * Override the `400px` maximum width of the Dialog
+     * Define a minimum width for the Dialog
      * @default 400px
      */
     minWidth?: string;
     /**
-     * Override the `200px` maximum width of the Dialog
+     * Define a maximum height for the Dialog
      * @default 200px
      */
     minHeight?: string;
@@ -172,7 +172,7 @@ export const DialogBody = (
 DialogBody.displayName = 'Dialog.Body';
 
 export const SideContent = (
-    { children, 'data-test-id': dataTestId = 'fondue-dialog-body' }: DialogBodyProps,
+    { children, 'data-test-id': dataTestId = 'fondue-dialog-side-content' }: DialogBodyProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     return (

@@ -45,10 +45,10 @@ const meta: Meta<typeof DialogContent> = {
 };
 export default meta;
 
-export const Default: Story = {
-    name: 'Text Label Only',
+export const FullLayout: Story = {
+    name: 'With Full Layout',
     args: {
-        children: 'Hello World',
+        children: 'I am a dialog content',
     },
 };
 
