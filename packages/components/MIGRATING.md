@@ -4,27 +4,27 @@ This document describes the changes that you need to make to your code to migrat
 
 ## Table of contents
 
--   [Migration guide](#migration-guide)
-    -   [Table of contents](#table-of-contents)
-    -   [Components](#components)
-        -   [Checkbox](#checkbox)
-            -   [Old](#old)
-            -   [New](#new)
-        -   [Dialog](#dialog)
-            -   [Old](#old-1)
-            -   [New](#new-1)
-        -   [Flyout (old `InlineDialog`)](#flyout-old-inlinedialog)
-            -   [Old](#old-2)
-            -   [New](#new-2)
-        -   [Label (old `InputLabel`)](#label-old-inputlabel)
-            -   [Old](#old-3)
-            -   [New](#new-3)
-        -   [Segmented Control](#segmented-control)
-            -   [Old](#old-4)
-            -   [New](#new-4)
-        -   [Text Input](#text-input)
-            -   [Old](#old-5)
-            -   [New](#new-5)
+- [Migration guide](#migration-guide)
+  - [Table of contents](#table-of-contents)
+  - [Components](#components)
+    - [Checkbox](#checkbox)
+      - [Old](#old)
+      - [New](#new)
+    - [Dialog](#dialog)
+      - [Old](#old-1)
+      - [New](#new-1)
+    - [Flyout (old `InlineDialog`)](#flyout-old-inlinedialog)
+      - [Old](#old-2)
+      - [New](#new-2)
+    - [Label (old `InputLabel`)](#label-old-inputlabel)
+      - [Old](#old-3)
+      - [New](#new-3)
+    - [Segmented Control](#segmented-control)
+      - [Old](#old-4)
+      - [New](#new-4)
+    - [Text Input](#text-input)
+      - [Old](#old-5)
+      - [New](#new-5)
 
 ## Components
 
@@ -154,7 +154,10 @@ return (
 ```tsx
 <Dialog.Root>
     <Dialog.Trigger>
-        <Button>Dialog Trigger</Button>
+        <Button>
+            <IconIcon />
+            Dialog Trigger
+        </Button>
     </Dialog.Trigger>
     <Dialog.Content {...args}>
         <Dialog.SideContent>

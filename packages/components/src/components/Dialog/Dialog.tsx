@@ -21,6 +21,7 @@ export type DialogRootProps = {
     modal?: boolean;
     /**
      * The controlled `open` state of the dialog
+     * @default false
      */
     open?: boolean;
     /**
@@ -43,17 +44,17 @@ export type DialogContentProps = {
     padding?: 'compact' | 'comfortable' | 'spacious';
     /**
      * Define a maximum width for the dialog
-     * @default 800px
+     * @default "800px"
      */
     maxWidth?: string;
     /**
      * Define a minimum width for the dialog
-     * @default 400px
+     * @default "400px"
      */
     minWidth?: string;
     /**
      * Define a maximum height for the dialog
-     * @default 200px
+     * @default "200px"
      */
     minHeight?: string;
     /**
