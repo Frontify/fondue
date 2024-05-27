@@ -7,26 +7,79 @@ This document describes the changes that you need to make to your code to migrat
 -   [Migration guide](#migration-guide)
     -   [Table of contents](#table-of-contents)
     -   [Components](#components)
-        -   [Checkbox](#checkbox)
+        -   [Button](#button)
             -   [Old](#old)
             -   [New](#new)
-        -   [Dialog](#dialog)
+        -   [Checkbox](#checkbox)
             -   [Old](#old-1)
             -   [New](#new-1)
-        -   [Flyout (old `InlineDialog`)](#flyout-old-inlinedialog)
+        -   [Dialog](#dialog)
             -   [Old](#old-2)
             -   [New](#new-2)
-        -   [Label (old `InputLabel`)](#label-old-inputlabel)
+        -   [Flyout (old `InlineDialog`)](#flyout-old-inlinedialog)
             -   [Old](#old-3)
             -   [New](#new-3)
-        -   [Segmented Control](#segmented-control)
+        -   [Label (old `InputLabel`)](#label-old-inputlabel)
             -   [Old](#old-4)
             -   [New](#new-4)
-        -   [Text Input](#text-input)
+        -   [Loading Bar](#loading-bar)
             -   [Old](#old-5)
             -   [New](#new-5)
+        -   [Segmented Control](#segmented-control)
+            -   [Old](#old-6)
+            -   [New](#new-6)
+        -   [Text Input](#text-input)
+            -   [Old](#old-7)
+            -   [New](#new-7)
+        -   [Tooltip](#tooltip)
+            -   [Old](#old-8)
+            -   [New](#new-8)
 
 ## Components
+
+### Button
+
+Changes:
+
+-   The props `size`, `style`, `type`, `rounding` now use a union type instead of an enum.
+-   The `icon` prop was removed and the Icon is now passed in as a child of the button.
+-   The `onClick` prop was renamed to `onPress`.
+-   The `hideLabel` prop was removed and the label should now be passed in conditionally as a child of the button.
+-   The `aspect` prop was added to be able to make the button square, when only an icon is schown.
+
+#### Old
+
+```tsx
+<Button
+    hugWidth
+    onClick={() => {}}
+    icon={<Icon.ColorFan16 />}
+    rounding={ButtonRounding.Medium}
+    size={ButtonSize.Medium}
+    style={ButtonStyle.Default}
+    type={ButtonType.Button}
+>
+    Button Text
+</Button>
+```
+
+#### New
+
+```tsx
+<Button
+    aspect="default"
+    emphasis="default"
+    hugWidth
+    onPress={function Qa() {}}
+    rounding="medium"
+    size="medium"
+    style="default"
+    type="button"
+>
+    <IconColorFan size={16} />
+    Button Text
+</Button>
+```
 
 ### Checkbox
 
@@ -200,7 +253,7 @@ Changes:
 
         -   _optional_ - The `Flyout.Footer` can be passed in as a child of `Flyout.Footer` to add a styled footer to the flyout.
 
--   The styling / layout is now controlled on the subcomponent `Flyout.Container`
+-   The styling / layout is now controlled on the subcomponent `Flyout.Content`
 
 -   The subcomponent `Flyout.Content` is used to display the flyout container.
     It provides no styling by default and can be used to wrap a custom content.
@@ -253,20 +306,18 @@ return (
 
 ```tsx
 <Flyout.Root>
-    {/* Pass in a Trigger component */}
     <Flyout.Trigger>
-        <Button>Click me</Button>
+        <Button>
+            <IconIcon />
+            Trigger
+        </Button>
     </Flyout.Trigger>
-    {/* Pass in the Flyout Content component */}
     <Flyout.Content side="right">
-        {/* Use the layout subcomponents inside the content */}
         <Flyout.Header showCloseButton>Header</Flyout.Header>
         <Flyout.Body {...args} />
         <Flyout.Footer>
-            <div className="tw-flex tw-justify-end tw-gap-2">
-                <Button emphasis="default">Cancel</Button>
-                <Button>Submit</Button>
-            </div>
+            <Button emphasis="default">Cancel</Button>
+            <Button>Submit</Button>
         </Flyout.Footer>
     </Flyout.Content>
 </Flyout.Root>
@@ -300,6 +351,27 @@ Changes:
         <Tooltip.Content>Tooltip</Tooltip.Content>
     </Tooltip.Root>
 </Label>
+```
+
+### Loading Bar
+
+Changes:
+
+-   The property `percentage` has been renamed to `value`.
+    -   If the `value` is `null`, the loading bar will be in an indeterminate state.
+    -   A new property `max` has been introduced so the inner loading bar percentage can be calculated based on the `max` value.
+-   The property `state` has been renamed to `style`
+
+#### Old
+
+```tsx
+<LoadingBar percentage={50} state={LoadingBarState.Success} rounded />
+```
+
+#### New
+
+```tsx
+<LoadingBar value={50} style="success" rounded />
 ```
 
 ### Segmented Control
@@ -442,4 +514,54 @@ Changes:
         </Tooltip.Root>
     </TextInput.Slot>
 </TextInput.Root>
+```
+
+### Tooltip
+
+Changes:
+
+-   The props now use a uion type instead of an enum.
+-   The `Tooltip` component now provides multiple subcomponents.
+    -   The `trigger` prop has been removed and the trigger is now passed in as a child of `Tooltip.Trigger`.
+    -   The `content` prop has been removed and the content is now passed in as a child of `Tooltip.Content`.
+-   The `placement` and `flip` props have been removed and replaced by `side`.
+
+        When the tooltip content collides with the viewport, it is automatically flipped to the other side and / or slightly shifted to fit into the viewport.
+
+-   The `openOnMount` prop has been removed, the open state can be externally controlled with the `open` prop.
+-   The `enablePortal` prop has been removed, the tooltip now uses a portal by default.
+-   The `withArrow` prop has been removed, the arrow is now always shown.
+-   The `offset`, `zIndex`, `strategy`, `leaveDelay` and `maxHeight` props have been removed to simplify the API
+
+#### Old
+
+```tsx
+<Tooltip
+    content="Your text here"
+    enablePortal
+    enterDelay={200}
+    flip
+    leaveDelay={0}
+    maxHeight="auto"
+    maxWidth={200}
+    offset={[0, 8]}
+    placement="bottom-center"
+    size="spacious"
+    withArrow
+>
+    <Button>Hover over me!</Button>
+</Tooltip>
+```
+
+#### New
+
+```tsx
+<Tooltip.Root enterDelay={200}>
+    <Tooltip.Trigger>
+        <Button>Hover over me!</Button>
+    </Tooltip.Trigger>
+    <Tooltip.Content side="bottom" padding="spacious">
+        Your text here
+    </Tooltip.Content>
+</Tooltip.Root>
 ```

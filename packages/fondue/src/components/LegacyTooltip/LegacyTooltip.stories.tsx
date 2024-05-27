@@ -17,12 +17,20 @@ import IconIcon from '@foundation/Icon/Generated/IconIcon';
 import { FormControl } from '../FormControl/FormControl';
 
 import { BrightHeaderStyle } from './BrightHeader';
-import { LegacyTooltip, type LegacyTooltipProps, TooltipAlignment, TooltipPosition } from './LegacyTooltip';
+import { LegacyTooltip, TooltipAlignment, TooltipPosition, type LegacyTooltipProps } from './LegacyTooltip';
 
+/**
+ ### This component is deprecated, please use the [new Tooltip component](/docs/current_components-tooltip--documentation) instead.
+ */
 export default {
     title: 'Deprecated/LegacyTooltip',
     component: LegacyTooltip,
     tags: ['autodocs'],
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
+    },
     args: {
         content: 'Cupcake ipsum dolor sit amet ice cream. (https://Cupcakeipsumdolorsitameticecream.com)',
         heading: '',

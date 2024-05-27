@@ -6,6 +6,9 @@ import { Flex } from '@components/Flex';
 
 import { Divider as DividerComponent, DividerHeight, DividerStyle, type DividerProps } from './Divider';
 
+/**
+ ### This component is deprecated, please use the [new Divider component](/docs/current_components-divider--documentation) instead.
+ */
 export default {
     title: 'Components/Divider',
     component: DividerComponent,

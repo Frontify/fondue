@@ -18,9 +18,23 @@ import {
 export type SegmentedControlRootProps = {
     id?: string;
     children: ReactNode;
+    /**
+     * The default value of the segmented control
+     * Used for uncontrolled components
+     */
     defaultValue: string;
+    /**
+     * The controlled value of the segmented control
+     */
     value?: string;
+    /**
+     * Event handler called when the value changes
+     */
     onValueChange?: (value: string) => void;
+    /**
+     * Disable the segmented control
+     * @default false
+     */
     disabled?: boolean;
 };
 

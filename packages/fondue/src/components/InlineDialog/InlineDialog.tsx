@@ -13,7 +13,7 @@ export type InlineDialogProps = Omit<
     Omit<BaseDialogProps, 'darkUnderlay'> & { unsafe_zIndex?: number };
 
 /**
- * @deprecated Use `Flyout` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#flyout the migration guide}.
+ * @deprecated Use `Flyout` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#flyout-old-inlinedialog the migration guide}.
  */
 export const InlineDialog = ({
     children,

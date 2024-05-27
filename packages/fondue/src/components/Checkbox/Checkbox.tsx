@@ -5,14 +5,14 @@ import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
 import { useToggleState } from '@react-stately/toggle';
 import {
-    type ForwardRefRenderFunction,
-    type HTMLAttributes,
-    type ReactNode,
     forwardRef,
     useCallback,
     useEffect,
     useRef,
     useState,
+    type ForwardRefRenderFunction,
+    type HTMLAttributes,
+    type ReactNode,
 } from 'react';
 
 import { InputLabel, type InputLabelTooltipProps } from '@components/InputLabel/InputLabel';
@@ -272,7 +272,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
 };
 
 /**
- * @deprecated Use `Checkbox` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md the migration guide}.
+ * @deprecated Use `Checkbox` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#checkbox the migration guide}.
  */
 export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(CheckboxComponent);
 Checkbox.displayName = 'FondueCheckbox';

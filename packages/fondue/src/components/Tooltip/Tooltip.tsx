@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type PointerEvent, type ReactElement, useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type PointerEvent, type ReactElement } from 'react';
 
 import { type PopperPlacement } from '@components/Popper';
 import { useClickOutside } from '@hooks/useClickOutside';
@@ -56,6 +56,9 @@ const handleTimeout = (callback: () => void, delay: number, timeoutId: number | 
 
 const isPointerEventTypeMouse = (event: PointerEvent): boolean => event.pointerType === 'mouse';
 
+/**
+ * @deprecated Please use updated tooltip component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tooltip the migration guide}.
+ */
 export const Tooltip = ({
     id,
     children,

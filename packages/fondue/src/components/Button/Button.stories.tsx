@@ -22,7 +22,7 @@ const defaultArgs = {
     children: 'Button Text',
 };
 /**
- ### This component is deprecated, please use the [new Button](/docs/current_components-button--documentation) component instead.
+ ### This component is deprecated, please use the [new Button component](/docs/current_components-button--documentation) instead.
  */
 export default {
     title: 'Components/Button',

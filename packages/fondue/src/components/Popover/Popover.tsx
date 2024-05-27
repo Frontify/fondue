@@ -12,6 +12,9 @@ type PopoverProps = Omit<
     'isDetached' | 'arrowCustomColors' | 'verticalAlignment' | 'shadow' | 'isDialog'
 >;
 
+/**
+ * @deprecated Please use updated flyout component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#flyout-old-inlinedialog the migration guide}.
+ */
 export const Popover = ({
     children,
     open,

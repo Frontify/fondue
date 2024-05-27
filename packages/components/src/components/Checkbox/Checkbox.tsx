@@ -11,16 +11,54 @@ import { checkboxIndicatorStyles, checkboxStyles } from './styles/checkboxStyles
 export type CheckboxProps = {
     id?: string;
     name?: string;
+    /**
+     * The default value of the checkbox
+     * Used for uncontrolled components
+     * @default false
+     */
     defaultValue?: boolean | 'indeterminate';
+    /**
+     * The controlled value of the checkbox
+     * @default false
+     */
     value?: boolean | 'indeterminate';
+    /**
+     * The size of the checkbox
+     * @default "default"
+     */
     size?: 'default' | 'large';
+    /**
+     * The emphasis of the checkbox
+     * @default "default"
+     */
     emphasis?: 'default' | 'weak';
+    /**
+     * Disable the checkbox
+     * @default false
+     */
     disabled?: boolean;
+    /**
+     * Make the checkbox required in form
+     * @default false
+     */
     required?: boolean;
+    /**
+     * Make the checkbox read-only
+     * @default false
+     */
     readOnly?: boolean;
     className?: string;
+    /**
+     * Event handler called when the checkbox value changes
+     */
     onChange?: (event: FormEvent<HTMLButtonElement>) => void;
+    /**
+     * Event handler called when the checkbox is blurred
+     */
     onBlur?: (event: FormEvent<HTMLButtonElement>) => void;
+    /**
+     * Event handler called when the checkbox is focused
+     */
     onFocus?: (event: FormEvent<HTMLButtonElement>) => void;
     'data-test-id'?: string;
     'aria-label'?: string;

@@ -17,7 +17,7 @@ const meta: Meta<typeof LabelComponent> = {
     tags: ['autodocs'],
     parameters: {
         status: {
-            type: 'in_progress',
+            type: 'released',
         },
     },
     args: {

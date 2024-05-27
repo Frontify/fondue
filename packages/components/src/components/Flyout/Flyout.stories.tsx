@@ -4,14 +4,22 @@ import { type Meta, type StoryObj } from '@storybook/react';
 
 import { Button } from '../Button/Button';
 
-import { Flyout, FlyoutContent, FlyoutRoot } from './Flyout';
+import { Flyout, FlyoutContent, FlyoutRoot, FlyoutTrigger, FlyoutHeader, FlyoutBody, FlyoutFooter } from './Flyout';
 
 type Story = StoryObj<typeof meta>;
 const meta: Meta<typeof FlyoutContent> = {
     component: FlyoutContent,
     subcomponents: {
-        // @ts-expect-error - Storybook has the wrong type for subomponents
+        // @ts-expect-error - Storybook has the wrong type for subcomponents
         'Flyout.Root': FlyoutRoot,
+        // @ts-expect-error - Storybook has the wrong type for subcomponents
+        'Flyout.Trigger': FlyoutTrigger,
+        // @ts-expect-error - Storybook has the wrong type for subcomponents
+        'Flyout.Header': FlyoutHeader,
+        // @ts-expect-error - Storybook has the wrong type for subcomponents
+        'Flyout.Body': FlyoutBody,
+        // @ts-expect-error - Storybook has the wrong type for subcomponents
+        'Flyout.Footer': FlyoutFooter,
     },
     tags: ['autodocs'],
     parameters: {
@@ -26,7 +34,7 @@ const meta: Meta<typeof FlyoutContent> = {
         return (
             <Flyout.Root>
                 <Flyout.Trigger>
-                    <Button>Click me</Button>
+                    <Button>Open flyout</Button>
                 </Flyout.Trigger>
                 <Flyout.Content {...args}>
                     <Flyout.Header showCloseButton>Header</Flyout.Header>
@@ -45,7 +53,6 @@ const meta: Meta<typeof FlyoutContent> = {
 export default meta;
 
 export const BasicContent: Story = {
-    name: 'Basic Content',
     args: {
         children: 'Hello World',
     },
@@ -53,7 +60,7 @@ export const BasicContent: Story = {
         return (
             <Flyout.Root>
                 <Flyout.Trigger>
-                    <Button>Click me</Button>
+                    <Button>Open flyout</Button>
                 </Flyout.Trigger>
                 <Flyout.Content {...args}>
                     <Flyout.Body {...args} />
@@ -64,12 +71,11 @@ export const BasicContent: Story = {
 };
 
 export const WithHeader: Story = {
-    name: 'With Header',
     render: ({ ...args }) => {
         return (
             <Flyout.Root>
                 <Flyout.Trigger>
-                    <Button>Click me</Button>
+                    <Button>Open flyout</Button>
                 </Flyout.Trigger>
                 <Flyout.Content {...args}>
                     <Flyout.Header>Header</Flyout.Header>
@@ -81,12 +87,11 @@ export const WithHeader: Story = {
 };
 
 export const WithFooter: Story = {
-    name: 'With Footer',
     render: ({ ...args }) => {
         return (
             <Flyout.Root>
                 <Flyout.Trigger>
-                    <Button>Click me</Button>
+                    <Button>Open flyout</Button>
                 </Flyout.Trigger>
                 <Flyout.Content {...args}>
                     <Flyout.Body>I am a flyout</Flyout.Body>
@@ -99,17 +104,14 @@ export const WithFooter: Story = {
     },
 };
 
-export const WithHeaderAndFooter: Story = {
-    name: 'With Header and Footer',
-};
+export const WithHeaderAndFooter: Story = {};
 
 export const WithCloseButton: Story = {
-    name: 'With Close Button',
     render: ({ ...args }) => {
         return (
             <Flyout.Root>
                 <Flyout.Trigger>
-                    <Button>Click me</Button>
+                    <Button>Open flyout</Button>
                 </Flyout.Trigger>
                 <Flyout.Content {...args}>
                     <Flyout.Header showCloseButton>Header</Flyout.Header>
@@ -121,26 +123,23 @@ export const WithCloseButton: Story = {
 };
 
 export const WithComfortablePadding: Story = {
-    name: 'With Comfortable Padding',
     args: {
         padding: 'comfortable',
     },
 };
 
 export const WithSpaciousPadding: Story = {
-    name: 'With Spacious Padding',
     args: {
         padding: 'spacious',
     },
 };
 
 export const WithCustomContent: Story = {
-    name: 'With Custom Content',
     render: ({ ...args }) => {
         return (
             <Flyout.Root>
                 <Flyout.Trigger>
-                    <Button>Click me</Button>
+                    <Button>Open flyout</Button>
                 </Flyout.Trigger>
                 <Flyout.Content {...args}>
                     <div className="tw-bg-box-neutral tw-p-10">This is FlyoutContent</div>
@@ -151,14 +150,12 @@ export const WithCustomContent: Story = {
 };
 
 export const RightSide: Story = {
-    name: 'Right Side',
     args: {
         side: 'right',
     },
 };
 
 export const AlignCenter: Story = {
-    name: 'Align Center',
     args: {
         side: 'right',
         align: 'center',
@@ -166,7 +163,6 @@ export const AlignCenter: Story = {
 };
 
 export const AlignEnd: Story = {
-    name: 'Align End',
     args: {
         side: 'right',
         align: 'end',
@@ -174,7 +170,6 @@ export const AlignEnd: Story = {
 };
 
 export const LongContent: Story = {
-    name: 'Long Content',
     args: {
         side: 'bottom',
         children:
@@ -183,7 +178,6 @@ export const LongContent: Story = {
 };
 
 export const WithCustomMaxWidth: Story = {
-    name: 'With Custom Max Width',
     args: {
         maxWidth: '200px',
         side: 'bottom',
@@ -193,7 +187,6 @@ export const WithCustomMaxWidth: Story = {
 };
 
 export const MobileView: Story = {
-    name: 'Mobile View',
     parameters: {
         viewport: {
             viewports: {
@@ -212,7 +205,7 @@ export const MobileView: Story = {
         return (
             <Flyout.Root>
                 <Flyout.Trigger>
-                    <Button>Click me</Button>
+                    <Button>Open flyout</Button>
                 </Flyout.Trigger>
                 <Flyout.Content {...args}>
                     <Flyout.Header showCloseButton>Header</Flyout.Header>
