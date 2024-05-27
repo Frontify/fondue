@@ -10,7 +10,7 @@ type Story = StoryObj<typeof meta>;
 const meta: Meta<typeof DialogContent> = {
     component: DialogContent,
     subcomponents: {
-        // @ts-expect-error - Storybook has the wrong type for TooltipContent
+        // @ts-expect-error - Storybook has the wrong type for subcomponents
         'Dialog.Root': DialogRoot,
     },
     tags: ['autodocs'],
@@ -24,7 +24,7 @@ const meta: Meta<typeof DialogContent> = {
         return (
             <Dialog.Root>
                 <Dialog.Trigger>
-                    <Button>Click Me</Button>
+                    <Button>Open dialog</Button>
                 </Dialog.Trigger>
                 <Dialog.Content {...args}>
                     <Dialog.SideContent>
@@ -61,7 +61,7 @@ export const WithHeader: Story = {
         return (
             <Dialog.Root>
                 <Dialog.Trigger>
-                    <Button>Click Me</Button>
+                    <Button>Open dialog</Button>
                 </Dialog.Trigger>
                 <Dialog.Content {...args}>
                     <Dialog.Header>Header</Dialog.Header>

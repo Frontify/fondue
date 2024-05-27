@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-/* (c) Copyright Frontify Ltd., all rights reserved. */
 import { IconCross } from '@frontify/fondue-icons';
 import * as RadixDialog from '@radix-ui/react-dialog';
 import { forwardRef, type CSSProperties, type ForwardedRef, type ReactNode } from 'react';
@@ -16,7 +15,7 @@ import {
 
 export type DialogRootProps = {
     /**
-     * Disable Interaction with the rest of the page
+     * Disable interaction with the rest of the page
      * @default false
      */
     modal?: boolean;
@@ -25,7 +24,7 @@ export type DialogRootProps = {
      */
     open?: boolean;
     /**
-     * callback when the open state changes
+     * Event handler called when the `open` state changes
      */
     onOpenChange?: (open: boolean) => void;
     children?: ReactNode;
@@ -39,7 +38,7 @@ export type DialogContentProps = {
     rounded?: boolean;
     /**
      * Define the padding of the Dialog
-     * @default compact
+     * @default "compact"
      */
     padding?: 'compact' | 'comfortable' | 'spacious';
     /**
@@ -58,7 +57,7 @@ export type DialogContentProps = {
      */
     minHeight?: string;
     /**
-     * Show a dark underlay behind the Dialog
+     * Show a dark underlay behind the dialog
      * @default false
      */
     showUnderlay?: boolean;
