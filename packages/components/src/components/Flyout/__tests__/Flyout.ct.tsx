@@ -27,9 +27,7 @@ test('should render trigger', async ({ mount, page }) => {
                 <Flyout.Header showCloseButton>{FLYOUT_HEADER_TEXT}</Flyout.Header>
                 <Flyout.Body>{FLYOUT_BODY_TEXT}</Flyout.Body>
                 <Flyout.Footer>
-                    <div className="tw-flex tw-justify-end tw-gap-2">
-                        <Button>{FLYOUT_FOOTER_TEXT}</Button>
-                    </div>
+                    <Button>{FLYOUT_FOOTER_TEXT}</Button>
                 </Flyout.Footer>
             </Flyout.Content>
         </Flyout.Root>,
@@ -52,9 +50,7 @@ test('should render content on click', async ({ mount, page }) => {
                 <Flyout.Header showCloseButton>{FLYOUT_HEADER_TEXT}</Flyout.Header>
                 <Flyout.Body>{FLYOUT_BODY_TEXT}</Flyout.Body>
                 <Flyout.Footer>
-                    <div className="tw-flex tw-justify-end tw-gap-2">
-                        <Button>{FLYOUT_FOOTER_TEXT}</Button>
-                    </div>
+                    <Button>{FLYOUT_FOOTER_TEXT}</Button>
                 </Flyout.Footer>
             </Flyout.Content>
         </Flyout.Root>,
@@ -70,7 +66,7 @@ test('should render content on click', async ({ mount, page }) => {
 });
 
 test('should close on click outside', async ({ mount, page }) => {
-    const component = await mount(
+    await mount(
         <Flyout.Root>
             <Flyout.Trigger>
                 <Button>{FLYOUT_TRIGGER_TEXT}</Button>
@@ -79,19 +75,13 @@ test('should close on click outside', async ({ mount, page }) => {
                 <Flyout.Header showCloseButton>{FLYOUT_HEADER_TEXT}</Flyout.Header>
                 <Flyout.Body>{FLYOUT_BODY_TEXT}</Flyout.Body>
                 <Flyout.Footer>
-                    <div className="tw-flex tw-justify-end tw-gap-2">
-                        <Button>{FLYOUT_FOOTER_TEXT}</Button>
-                    </div>
+                    <Button>{FLYOUT_FOOTER_TEXT}</Button>
                 </Flyout.Footer>
             </Flyout.Content>
         </Flyout.Root>,
     );
     const tooltipTrigger = page.getByTestId(FLYOUT_TRIGGER_TEST_ID);
     const tooltipContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
-    await expect(component).toBeVisible();
-    await expect(tooltipTrigger).toBeVisible();
-    await expect(component).toContainText(FLYOUT_TRIGGER_TEXT);
-    await expect(tooltipContent).not.toBeVisible();
     await tooltipTrigger.click();
     await expect(tooltipContent).toBeVisible();
     await page.click('body');
@@ -99,7 +89,7 @@ test('should close on click outside', async ({ mount, page }) => {
 });
 
 test('should close on cross button click', async ({ mount, page }) => {
-    const component = await mount(
+    await mount(
         <Flyout.Root>
             <Flyout.Trigger>
                 <Button>{FLYOUT_TRIGGER_TEXT}</Button>
@@ -108,19 +98,13 @@ test('should close on cross button click', async ({ mount, page }) => {
                 <Flyout.Header showCloseButton>{FLYOUT_HEADER_TEXT}</Flyout.Header>
                 <Flyout.Body>{FLYOUT_BODY_TEXT}</Flyout.Body>
                 <Flyout.Footer>
-                    <div className="tw-flex tw-justify-end tw-gap-2">
-                        <Button>{FLYOUT_FOOTER_TEXT}</Button>
-                    </div>
+                    <Button>{FLYOUT_FOOTER_TEXT}</Button>
                 </Flyout.Footer>
             </Flyout.Content>
         </Flyout.Root>,
     );
     const tooltipTrigger = page.getByTestId(FLYOUT_TRIGGER_TEST_ID);
     const tooltipContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
-    await expect(component).toBeVisible();
-    await expect(tooltipTrigger).toBeVisible();
-    await expect(component).toContainText(FLYOUT_TRIGGER_TEXT);
-    await expect(tooltipContent).not.toBeVisible();
     await tooltipTrigger.click();
     await expect(tooltipContent).toBeVisible();
     await page.getByTestId('fondue-flyout-header-close').click();
@@ -128,8 +112,8 @@ test('should close on cross button click', async ({ mount, page }) => {
 });
 
 test('should not render close button when prop is not passed', async ({ mount, page }) => {
-    const component = await mount(
-        <Flyout.Root>
+    await mount(
+        <Flyout.Root open>
             <Flyout.Trigger>
                 <Button>{FLYOUT_TRIGGER_TEXT}</Button>
             </Flyout.Trigger>
@@ -137,27 +121,19 @@ test('should not render close button when prop is not passed', async ({ mount, p
                 <Flyout.Header>{FLYOUT_HEADER_TEXT}</Flyout.Header>
                 <Flyout.Body>{FLYOUT_BODY_TEXT}</Flyout.Body>
                 <Flyout.Footer>
-                    <div className="tw-flex tw-justify-end tw-gap-2">
-                        <Button>{FLYOUT_FOOTER_TEXT}</Button>
-                    </div>
+                    <Button>{FLYOUT_FOOTER_TEXT}</Button>
                 </Flyout.Footer>
             </Flyout.Content>
         </Flyout.Root>,
     );
-    const tooltipTrigger = page.getByTestId(FLYOUT_TRIGGER_TEST_ID);
     const tooltipContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
-    await expect(component).toBeVisible();
-    await expect(tooltipTrigger).toBeVisible();
-    await expect(component).toContainText(FLYOUT_TRIGGER_TEXT);
-    await expect(tooltipContent).not.toBeVisible();
-    await tooltipTrigger.click();
     await expect(tooltipContent).toBeVisible();
     await expect(page.getByTestId('fondue-flyout-header-close')).not.toBeVisible();
 });
 
 test('should render only flyout header', async ({ mount, page }) => {
-    const component = await mount(
-        <Flyout.Root>
+    await mount(
+        <Flyout.Root open>
             <Flyout.Trigger>
                 <Button>{FLYOUT_TRIGGER_TEXT}</Button>
             </Flyout.Trigger>
@@ -166,14 +142,7 @@ test('should render only flyout header', async ({ mount, page }) => {
             </Flyout.Content>
         </Flyout.Root>,
     );
-    const tooltipTrigger = page.getByTestId(FLYOUT_TRIGGER_TEST_ID);
     const tooltipContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
-    await expect(component).toBeVisible();
-    await expect(tooltipTrigger).toBeVisible();
-    await expect(component).toContainText(FLYOUT_TRIGGER_TEXT);
-    await expect(tooltipContent).not.toBeVisible();
-    await tooltipTrigger.click();
-    await expect(tooltipContent).toBeVisible();
     await expect(tooltipContent.getByTestId(FLYOUT_HEADER_TEST_ID)).toBeVisible();
     await expect(tooltipContent).toContainText(FLYOUT_HEADER_TEXT);
     await expect(tooltipContent.getByTestId(FLYOUT_BODY_TEST_ID)).not.toBeVisible();
@@ -183,8 +152,8 @@ test('should render only flyout header', async ({ mount, page }) => {
 });
 
 test('should render only flyout body', async ({ mount, page }) => {
-    const component = await mount(
-        <Flyout.Root>
+    await mount(
+        <Flyout.Root open>
             <Flyout.Trigger>
                 <Button>{FLYOUT_TRIGGER_TEXT}</Button>
             </Flyout.Trigger>
@@ -193,14 +162,7 @@ test('should render only flyout body', async ({ mount, page }) => {
             </Flyout.Content>
         </Flyout.Root>,
     );
-    const tooltipTrigger = page.getByTestId(FLYOUT_TRIGGER_TEST_ID);
     const tooltipContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
-    await expect(component).toBeVisible();
-    await expect(tooltipTrigger).toBeVisible();
-    await expect(component).toContainText(FLYOUT_TRIGGER_TEXT);
-    await expect(tooltipContent).not.toBeVisible();
-    await tooltipTrigger.click();
-    await expect(tooltipContent).toBeVisible();
     await expect(tooltipContent.getByTestId(FLYOUT_HEADER_TEST_ID)).not.toBeVisible();
     await expect(tooltipContent).not.toContainText(FLYOUT_HEADER_TEXT);
     await expect(tooltipContent.getByTestId(FLYOUT_BODY_TEST_ID)).toBeVisible();
@@ -210,28 +172,19 @@ test('should render only flyout body', async ({ mount, page }) => {
 });
 
 test('should render only flyout footer', async ({ mount, page }) => {
-    const component = await mount(
-        <Flyout.Root>
+    await mount(
+        <Flyout.Root open>
             <Flyout.Trigger>
                 <Button>{FLYOUT_TRIGGER_TEXT}</Button>
             </Flyout.Trigger>
             <Flyout.Content>
                 <Flyout.Footer>
-                    <div className="tw-flex tw-justify-end tw-gap-2">
-                        <Button>{FLYOUT_FOOTER_TEXT}</Button>
-                    </div>
+                    <Button>{FLYOUT_FOOTER_TEXT}</Button>
                 </Flyout.Footer>
             </Flyout.Content>
         </Flyout.Root>,
     );
-    const tooltipTrigger = page.getByTestId(FLYOUT_TRIGGER_TEST_ID);
     const tooltipContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
-    await expect(component).toBeVisible();
-    await expect(tooltipTrigger).toBeVisible();
-    await expect(component).toContainText(FLYOUT_TRIGGER_TEXT);
-    await expect(tooltipContent).not.toBeVisible();
-    await tooltipTrigger.click();
-    await expect(tooltipContent).toBeVisible();
     await expect(tooltipContent.getByTestId(FLYOUT_HEADER_TEST_ID)).not.toBeVisible();
     await expect(tooltipContent).not.toContainText(FLYOUT_HEADER_TEXT);
     await expect(tooltipContent.getByTestId(FLYOUT_BODY_TEST_ID)).not.toBeVisible();
@@ -241,8 +194,8 @@ test('should render only flyout footer', async ({ mount, page }) => {
 });
 
 test('should render full flyout layout', async ({ mount, page }) => {
-    const component = await mount(
-        <Flyout.Root>
+    await mount(
+        <Flyout.Root open>
             <Flyout.Trigger>
                 <Button>{FLYOUT_TRIGGER_TEXT}</Button>
             </Flyout.Trigger>
@@ -250,21 +203,12 @@ test('should render full flyout layout', async ({ mount, page }) => {
                 <Flyout.Header>{FLYOUT_HEADER_TEXT}</Flyout.Header>
                 <Flyout.Body>{FLYOUT_BODY_TEXT}</Flyout.Body>
                 <Flyout.Footer>
-                    <div className="tw-flex tw-justify-end tw-gap-2">
-                        <Button>{FLYOUT_FOOTER_TEXT}</Button>
-                    </div>
+                    <Button>{FLYOUT_FOOTER_TEXT}</Button>
                 </Flyout.Footer>
             </Flyout.Content>
         </Flyout.Root>,
     );
-    const tooltipTrigger = page.getByTestId(FLYOUT_TRIGGER_TEST_ID);
     const tooltipContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
-    await expect(component).toBeVisible();
-    await expect(tooltipTrigger).toBeVisible();
-    await expect(component).toContainText(FLYOUT_TRIGGER_TEXT);
-    await expect(tooltipContent).not.toBeVisible();
-    await tooltipTrigger.click();
-    await expect(tooltipContent).toBeVisible();
     await expect(tooltipContent.getByTestId(FLYOUT_HEADER_TEST_ID)).toBeVisible();
     await expect(tooltipContent).toContainText(FLYOUT_HEADER_TEXT);
     await expect(tooltipContent.getByTestId(FLYOUT_BODY_TEST_ID)).toBeVisible();
@@ -274,8 +218,8 @@ test('should render full flyout layout', async ({ mount, page }) => {
 });
 
 test('should render custom content', async ({ mount, page }) => {
-    const component = await mount(
-        <Flyout.Root>
+    await mount(
+        <Flyout.Root open>
             <Flyout.Trigger>
                 <Button>{FLYOUT_TRIGGER_TEXT}</Button>
             </Flyout.Trigger>
@@ -286,22 +230,15 @@ test('should render custom content', async ({ mount, page }) => {
             </Flyout.Content>
         </Flyout.Root>,
     );
-    const tooltipTrigger = page.getByTestId(FLYOUT_TRIGGER_TEST_ID);
     const tooltipContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
-    await expect(component).toBeVisible();
-    await expect(tooltipTrigger).toBeVisible();
-    await expect(component).toContainText(FLYOUT_TRIGGER_TEXT);
-    await expect(tooltipContent).not.toBeVisible();
-    await tooltipTrigger.click();
-    await expect(tooltipContent).toBeVisible();
     await expect(tooltipContent).toContainText(FLYOUT_BODY_TEXT);
     await expect(tooltipContent.getByTestId('custom-content')).toBeVisible();
     await expect(tooltipContent.getByTestId('custom-content')).toHaveCSS('background-color', 'rgb(255, 0, 0)');
 });
 
 test('should render compact padding by default', async ({ mount, page }) => {
-    const component = await mount(
-        <Flyout.Root>
+    await mount(
+        <Flyout.Root open>
             <Flyout.Trigger>
                 <Button>{FLYOUT_TRIGGER_TEXT}</Button>
             </Flyout.Trigger>
@@ -309,29 +246,20 @@ test('should render compact padding by default', async ({ mount, page }) => {
                 <Flyout.Header>{FLYOUT_HEADER_TEXT}</Flyout.Header>
                 <Flyout.Body>{FLYOUT_BODY_TEXT}</Flyout.Body>
                 <Flyout.Footer>
-                    <div className="tw-flex tw-justify-end tw-gap-2">
-                        <Button>{FLYOUT_FOOTER_TEXT}</Button>
-                    </div>
+                    <Button>{FLYOUT_FOOTER_TEXT}</Button>
                 </Flyout.Footer>
             </Flyout.Content>
         </Flyout.Root>,
     );
-    const tooltipTrigger = page.getByTestId(FLYOUT_TRIGGER_TEST_ID);
     const tooltipContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
-    await expect(component).toBeVisible();
-    await expect(tooltipTrigger).toBeVisible();
-    await expect(component).toContainText(FLYOUT_TRIGGER_TEXT);
-    await expect(tooltipContent).not.toBeVisible();
-    await tooltipTrigger.click();
-    await expect(tooltipContent).toBeVisible();
     await expect(tooltipContent.getByTestId(FLYOUT_HEADER_TEST_ID)).toHaveCSS('padding', '16px');
     await expect(tooltipContent.getByTestId(FLYOUT_BODY_TEST_ID)).toHaveCSS('padding', '8px 16px');
     await expect(tooltipContent.getByTestId(FLYOUT_FOOTER_TEST_ID)).toHaveCSS('padding', '16px');
 });
 
 test('should render compact padding', async ({ mount, page }) => {
-    const component = await mount(
-        <Flyout.Root>
+    await mount(
+        <Flyout.Root open>
             <Flyout.Trigger>
                 <Button>{FLYOUT_TRIGGER_TEXT}</Button>
             </Flyout.Trigger>
@@ -339,29 +267,20 @@ test('should render compact padding', async ({ mount, page }) => {
                 <Flyout.Header>{FLYOUT_HEADER_TEXT}</Flyout.Header>
                 <Flyout.Body>{FLYOUT_BODY_TEXT}</Flyout.Body>
                 <Flyout.Footer>
-                    <div className="tw-flex tw-justify-end tw-gap-2">
-                        <Button>{FLYOUT_FOOTER_TEXT}</Button>
-                    </div>
+                    <Button>{FLYOUT_FOOTER_TEXT}</Button>
                 </Flyout.Footer>
             </Flyout.Content>
         </Flyout.Root>,
     );
-    const tooltipTrigger = page.getByTestId(FLYOUT_TRIGGER_TEST_ID);
     const tooltipContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
-    await expect(component).toBeVisible();
-    await expect(tooltipTrigger).toBeVisible();
-    await expect(component).toContainText(FLYOUT_TRIGGER_TEXT);
-    await expect(tooltipContent).not.toBeVisible();
-    await tooltipTrigger.click();
-    await expect(tooltipContent).toBeVisible();
     await expect(tooltipContent.getByTestId(FLYOUT_HEADER_TEST_ID)).toHaveCSS('padding', '16px');
     await expect(tooltipContent.getByTestId(FLYOUT_BODY_TEST_ID)).toHaveCSS('padding', '8px 16px');
     await expect(tooltipContent.getByTestId(FLYOUT_FOOTER_TEST_ID)).toHaveCSS('padding', '16px');
 });
 
 test('should render comfortable padding', async ({ mount, page }) => {
-    const component = await mount(
-        <Flyout.Root>
+    await mount(
+        <Flyout.Root open>
             <Flyout.Trigger>
                 <Button>{FLYOUT_TRIGGER_TEXT}</Button>
             </Flyout.Trigger>
@@ -369,29 +288,20 @@ test('should render comfortable padding', async ({ mount, page }) => {
                 <Flyout.Header>{FLYOUT_HEADER_TEXT}</Flyout.Header>
                 <Flyout.Body>{FLYOUT_BODY_TEXT}</Flyout.Body>
                 <Flyout.Footer>
-                    <div className="tw-flex tw-justify-end tw-gap-2">
-                        <Button>{FLYOUT_FOOTER_TEXT}</Button>
-                    </div>
+                    <Button>{FLYOUT_FOOTER_TEXT}</Button>
                 </Flyout.Footer>
             </Flyout.Content>
         </Flyout.Root>,
     );
-    const tooltipTrigger = page.getByTestId(FLYOUT_TRIGGER_TEST_ID);
     const tooltipContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
-    await expect(component).toBeVisible();
-    await expect(tooltipTrigger).toBeVisible();
-    await expect(component).toContainText(FLYOUT_TRIGGER_TEXT);
-    await expect(tooltipContent).not.toBeVisible();
-    await tooltipTrigger.click();
-    await expect(tooltipContent).toBeVisible();
     await expect(tooltipContent.getByTestId(FLYOUT_HEADER_TEST_ID)).toHaveCSS('padding', '24px');
     await expect(tooltipContent.getByTestId(FLYOUT_BODY_TEST_ID)).toHaveCSS('padding', '16px 24px');
     await expect(tooltipContent.getByTestId(FLYOUT_FOOTER_TEST_ID)).toHaveCSS('padding', '24px');
 });
 
 test('should render spacious padding', async ({ mount, page }) => {
-    const component = await mount(
-        <Flyout.Root>
+    await mount(
+        <Flyout.Root open>
             <Flyout.Trigger>
                 <Button>{FLYOUT_TRIGGER_TEXT}</Button>
             </Flyout.Trigger>
@@ -399,28 +309,19 @@ test('should render spacious padding', async ({ mount, page }) => {
                 <Flyout.Header>{FLYOUT_HEADER_TEXT}</Flyout.Header>
                 <Flyout.Body>{FLYOUT_BODY_TEXT}</Flyout.Body>
                 <Flyout.Footer>
-                    <div className="tw-flex tw-justify-end tw-gap-2">
-                        <Button>{FLYOUT_FOOTER_TEXT}</Button>
-                    </div>
+                    <Button>{FLYOUT_FOOTER_TEXT}</Button>
                 </Flyout.Footer>
             </Flyout.Content>
         </Flyout.Root>,
     );
-    const tooltipTrigger = page.getByTestId(FLYOUT_TRIGGER_TEST_ID);
     const tooltipContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
-    await expect(component).toBeVisible();
-    await expect(tooltipTrigger).toBeVisible();
-    await expect(component).toContainText(FLYOUT_TRIGGER_TEXT);
-    await expect(tooltipContent).not.toBeVisible();
-    await tooltipTrigger.click();
-    await expect(tooltipContent).toBeVisible();
     await expect(tooltipContent.getByTestId(FLYOUT_HEADER_TEST_ID)).toHaveCSS('padding', '40px');
     await expect(tooltipContent.getByTestId(FLYOUT_BODY_TEST_ID)).toHaveCSS('padding', '24px 40px');
     await expect(tooltipContent.getByTestId(FLYOUT_FOOTER_TEST_ID)).toHaveCSS('padding', '40px');
 });
 
 test('should render open', async ({ mount, page }) => {
-    const component = await mount(
+    await mount(
         <Flyout.Root open={true}>
             <Flyout.Trigger>
                 <Button>{FLYOUT_TRIGGER_TEXT}</Button>
@@ -429,22 +330,18 @@ test('should render open', async ({ mount, page }) => {
                 <Flyout.Header>{FLYOUT_HEADER_TEXT}</Flyout.Header>
                 <Flyout.Body>{FLYOUT_BODY_TEXT}</Flyout.Body>
                 <Flyout.Footer>
-                    <div className="tw-flex tw-justify-end tw-gap-2">
-                        <Button>{FLYOUT_FOOTER_TEXT}</Button>
-                    </div>
+                    <Button>{FLYOUT_FOOTER_TEXT}</Button>
                 </Flyout.Footer>
             </Flyout.Content>
         </Flyout.Root>,
     );
-    const tooltipTrigger = page.getByTestId(FLYOUT_TRIGGER_TEST_ID);
     const tooltipContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
-    await expect(component).toBeVisible();
-    await expect(tooltipTrigger).toBeVisible();
     await expect(tooltipContent).toBeVisible();
 });
 
 test('should trigger callback on open and close', async ({ mount, page }) => {
     const onOpenChange = sinon.spy();
+
     const component = await mount(
         <Flyout.Root onOpenChange={onOpenChange}>
             <Flyout.Trigger>
@@ -454,9 +351,7 @@ test('should trigger callback on open and close', async ({ mount, page }) => {
                 <Flyout.Header>{FLYOUT_HEADER_TEXT}</Flyout.Header>
                 <Flyout.Body>{FLYOUT_BODY_TEXT}</Flyout.Body>
                 <Flyout.Footer>
-                    <div className="tw-flex tw-justify-end tw-gap-2">
-                        <Button>{FLYOUT_FOOTER_TEXT}</Button>
-                    </div>
+                    <Button>{FLYOUT_FOOTER_TEXT}</Button>
                 </Flyout.Footer>
             </Flyout.Content>
         </Flyout.Root>,
@@ -465,5 +360,7 @@ test('should trigger callback on open and close', async ({ mount, page }) => {
     await expect(component).toBeVisible();
     await expect(tooltipTrigger).toBeVisible();
     await tooltipTrigger.click();
-    expect(onOpenChange.called).toBe(true);
+    expect(onOpenChange.calledWith(true)).toBe(true);
+    await page.click('body');
+    expect(onOpenChange.calledWith(false)).toBe(true);
 });
