@@ -1,5 +1,11 @@
 # @frontify/fondue-components
 
+## 1.3.1
+
+### Patch Changes
+
+-   [#1882](https://github.com/Frontify/fondue/pull/1882) [`56b089b`](https://github.com/Frontify/fondue/commit/56b089b16cfa3a88ef2aacfa71f63221a8b5921e) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: add export for dialog component
+
 ## 1.3.0
 
 ### Minor Changes
