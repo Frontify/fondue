@@ -11,7 +11,6 @@ export const segmentedControlItemStyles =
     // Apply border radius based on the index
     'first:tw-rounded-l-[inherit] [&:nth-last-child(2)]:tw-rounded-r-[inherit] ' +
     // Focus styles for keyboard navigation
-    'focus-visible:tw-rounded-[inherit] focus-visible:tw-outline focus-visible:tw-outline-blue' +
     `${FOCUS_OUTLINE}`;
 
 export const segmentedControlActiveIndicatorStyles =
