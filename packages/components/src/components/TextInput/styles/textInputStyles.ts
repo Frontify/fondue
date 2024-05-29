@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 export const rootStyles =
-    'tw-group tw-relative tw-flex tw-items-stretch tw-font-sans tw-font-normal tw-text-start tw-h-9 tw-text-body-medium tw-transition-colors ' +
+    'tw-group tw-relative tw-flex tw-items-stretch tw-font-sans tw-font-normal tw-text-start tw-h-9 tw-text-body-medium tw-text-text tw-transition-colors ' +
     // Focus and border styles
     'tw-bg-base dark:tw-bg-transparent tw-rounded tw-border tw-border-line-strong hover:tw-border-line-x-strong has-[:focus-visible]:tw-border-line-xx-strong ' +
     // Readonly styles
@@ -12,7 +12,7 @@ export const rootStyles =
     'data-[status="success"]:tw-border-text-positive data-[status="error"]:tw-border-text-negative ';
 
 export const inputStyles =
-    'tw-peer/input tw-w-full tw-bg-transparent tw-flex tw-items-center [text-align:inherit] tw-indent-3 tw-outline-none tw-rounded-[calc(var(--radius)_-_var(--line-width))] ' +
+    'tw-peer/input tw-w-full tw-bg-transparent placeholder:tw-text-text-x-weak tw-flex tw-items-center [text-align:inherit] tw-indent-3 tw-outline-none tw-rounded-[calc(var(--radius)_-_var(--line-width))] ' +
     // Remove border-radius and text-indent/padding on the left if there’s a left-side slot
     'has-[~_div:not([data-name="right"])]:tw-indent-0 has-[~_:not([data-name="right"])]:tw-pl-0 has-[~_:not([data-name="right"])]:tw-rounded-l-none ' +
     // Remove border-radius and padding on the right if there’s a right-side slot

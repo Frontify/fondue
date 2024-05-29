@@ -21,7 +21,7 @@ export const flyoutContentStyles = sv({
 });
 
 export const flyoutHeaderStyles =
-    'tw-flex tw-justify-between tw-items-center tw-border-b tw-border-line tw-font-medium tw-p-[--flyout-padding] ' +
+    'tw-flex tw-justify-between tw-items-center tw-border-b tw-border-line tw-font-medium ' +
     'group-data-[flyout-spacing=compact]:tw-p-4 ' +
     'group-data-[flyout-spacing=comfortable]:tw-p-6 ' +
     'group-data-[flyout-spacing=spacious]:tw-p-10 ';
