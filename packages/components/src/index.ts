@@ -4,6 +4,7 @@ import './styles.css';
 
 export { Button } from './components/Button/Button';
 export { Checkbox } from './components/Checkbox/Checkbox';
+export { Dialog } from './components/Dialog/Dialog';
 export { Divider } from './components/Divider/Divider';
 export { Flyout } from './components/Flyout/Flyout';
 export { Label } from './components/Label/Label';
