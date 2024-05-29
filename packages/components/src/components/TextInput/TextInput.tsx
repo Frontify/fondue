@@ -1,7 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconCheckMark, IconExclamationMarkTriangle } from '@frontify/fondue-icons';
-import { forwardRef, useRef, type ChangeEvent, type ForwardedRef, type KeyboardEvent, type ReactNode } from 'react';
+import {
+    forwardRef,
+    useRef,
+    type ChangeEvent,
+    type ForwardedRef,
+    type KeyboardEvent,
+    type ReactNode,
+    type SyntheticEvent,
+} from 'react';
 
 import { FOCUS_OUTLINE } from '#/utilities/focusStyle';
 import { cn } from '#/utilities/styleUtilities';
@@ -88,6 +96,10 @@ export type TextInputProps = {
      * Event handler called when a key is released
      */
     onKeyUp?: (event: KeyboardEvent<HTMLInputElement>) => void;
+    /**
+     * Event handler called when the text inside of text input is selected
+     */
+    onSelect?: (event: SyntheticEvent<HTMLInputElement>) => void;
     'data-test-id'?: string;
     'aria-label'?: string;
     'aria-labelledby'?: string;

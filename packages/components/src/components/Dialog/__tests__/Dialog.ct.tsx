@@ -185,7 +185,7 @@ test('should call event handler on open and close', async ({ mount, page }) => {
 
 test('should show layout elements', async ({ mount, page }) => {
     await mount(
-        <Dialog.Root>
+        <Dialog.Root open>
             <Dialog.Trigger data-test-id={DIALOG_TRIGGER_TEST_ID}>
                 <Button>{DIALOG_TRIGGER_TEXT}</Button>
             </Dialog.Trigger>
@@ -203,16 +203,10 @@ test('should show layout elements', async ({ mount, page }) => {
             </Dialog.Content>
         </Dialog.Root>,
     );
-    const triggerElement = page.getByTestId(DIALOG_TRIGGER_TEST_ID);
-    const contentElement = page.getByTestId(DIALOG_CONTENT_TEST_ID);
     const sideContentElement = page.getByTestId(DIALOG_SIDE_CONTENT_TEST_ID);
     const headerElement = page.getByTestId(DIALOG_HEADER_TEST_ID);
     const bodyElement = page.getByTestId(DIALOG_BODY_TEST_ID);
     const footerElement = page.getByTestId(DIALOG_FOOTER_TEST_ID);
-    await expect(triggerElement).toBeVisible();
-    await expect(contentElement).not.toBeVisible();
-    await triggerElement.click();
-    await expect(contentElement).toBeVisible();
     await expect(sideContentElement).toBeVisible();
     await expect(headerElement).toBeVisible();
     await expect(bodyElement).toBeVisible();
