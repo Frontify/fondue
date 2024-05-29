@@ -219,6 +219,9 @@ importers:
       '@radix-ui/react-tooltip':
         specifier: ^1.0.7
         version: 1.0.7(@types/react-dom@18.3.0)(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      downshift:
+        specifier: ^9.0.6
+        version: 9.0.6(react@18.3.1)
     devDependencies:
       '@etchteam/storybook-addon-status':
         specifier: ^4.2.4
@@ -6134,6 +6137,11 @@ packages:
     peerDependencies:
       react: '>=16.12.0'
 
+  downshift@9.0.6:
+    resolution: {integrity: sha512-lkqWh0eb34XuH+3z3/BH/LGVRV7ur0rielSlxtlQKsjAFF/wc/c0wsM9phUGXyzK2g1QWHoNHQyc+vVAheI17Q==}
+    peerDependencies:
+      react: '>=16.12.0'
+
   duplexify@3.7.1:
     resolution: {integrity: sha512-07z8uv2wMyS51kKhD1KsdXJg5WQ6t93RneqRxUHnskXVtlYYkLqM0gqStQZ3pj073g687jPCHrqNfCzawLYh5g==}
 
@@ -8802,6 +8810,9 @@ packages:
 
   react-is@18.1.0:
     resolution: {integrity: sha512-Fl7FuabXsJnV5Q1qIOQwx/sagGF18kogb4gpfcG4gjLBWO0WDiiz1ko/ExayuxE7InyQkBLkxRFG5oxY6Uu3Kg==}
+
+  react-is@18.2.0:
+    resolution: {integrity: sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==}
 
   react-is@18.3.1:
     resolution: {integrity: sha512-/LLMVyas0ljjAtoYiPqYiL8VWXzUUdThrmU5+n20DZv+a+ClRoevUzw5JxU+Ieh5/c87ytoTBV9G1FiKfNJdmg==}
@@ -17538,6 +17549,15 @@ snapshots:
       react-is: 17.0.2
       tslib: 2.6.2
 
+  downshift@9.0.6(react@18.3.1):
+    dependencies:
+      '@babel/runtime': 7.24.5
+      compute-scroll-into-view: 3.1.0
+      prop-types: 15.8.1
+      react: 18.3.1
+      react-is: 18.2.0
+      tslib: 2.6.2
+
   duplexify@3.7.1:
     dependencies:
       end-of-stream: 1.4.4
@@ -20772,6 +20792,8 @@ snapshots:
   react-is@17.0.2: {}
 
   react-is@18.1.0: {}
+
+  react-is@18.2.0: {}
 
   react-is@18.3.1: {}
 
