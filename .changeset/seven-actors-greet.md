@@ -3,4 +3,4 @@
 "@frontify/fondue": minor
 ---
 
-tailwind config: override the entire `screens` key to add smaller xs key at the beginning of the list
+fix: make the `xs:` breakpoint work correctly
