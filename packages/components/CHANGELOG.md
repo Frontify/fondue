@@ -1,5 +1,19 @@
 # @frontify/fondue-components
 
+## 1.3.2
+
+### Patch Changes
+
+-   [#1884](https://github.com/Frontify/fondue/pull/1884) [`462ac41`](https://github.com/Frontify/fondue/commit/462ac41c8265f43d932b91a5cb6cb2978bc4f1a0) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - feat: expose `Dialog.Title` and `Dialog.Description` on the `Dialog` component
+
+-   [#1884](https://github.com/Frontify/fondue/pull/1884) [`462ac41`](https://github.com/Frontify/fondue/commit/462ac41c8265f43d932b91a5cb6cb2978bc4f1a0) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: expose `onSelect` on `TextInput`
+
+-   [#1884](https://github.com/Frontify/fondue/pull/1884) [`462ac41`](https://github.com/Frontify/fondue/commit/462ac41c8265f43d932b91a5cb6cb2978bc4f1a0) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: text input text color
+
+-   [#1884](https://github.com/Frontify/fondue/pull/1884) [`462ac41`](https://github.com/Frontify/fondue/commit/462ac41c8265f43d932b91a5cb6cb2978bc4f1a0) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: delete unused padding class in Flyout and Dialog
+
+-   [#1886](https://github.com/Frontify/fondue/pull/1886) [`a8d7f4e`](https://github.com/Frontify/fondue/commit/a8d7f4ebaac78f70495a99cd51f26036f5fec38b) Thanks [@bojangles-m](https://github.com/bojangles-m)! - fix: make the `xs:` breakpoint work correctly
+
 ## 1.3.1
 
 ### Patch Changes
