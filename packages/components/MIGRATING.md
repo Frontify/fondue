@@ -126,11 +126,15 @@ Changes:
 
 Changes:
 
+-   The `Dialog` should not be rendered conditionally anymore. It should always be rendered and the open state should be controlled by the `open` prop.
+
 -   The `Dialog` component now controls its open state internally by default.
 
-    -   You can pass in a trigger component as a child of `Dialog.Trigger` to control the open state.
+    -   You can pass in a trigger component as a child of `Dialog.Trigger` to open the dialog.
 
-    -   The `handleClose`prop was replaced by `onOpenChange`. Together with the `open` prop it can be used to control the open state externally if needed.
+    -   You can wrap an element inside `Dialog.Close` for it to close the dialog.
+
+    -   The `handleClose` prop was replaced by `onOpenChange`. Together with the `open` prop it can be used to control the open state externally if needed.
 
 -   The `Dialog` now provides multiple subcomponents.
 
@@ -138,17 +142,31 @@ Changes:
 
         -   The `modality` prop was replaced by `modal` and is now a boolean.
 
-    -   _required_ - The `Dialog.Trigger` is used to pass in a component to trigger the dialog.
+        -   The `showCloseButton` prop can be used to show a close icon on the right side of the header.
 
-    -   _required_ - The `Dialog.Content` is the container appearing when the dialog is Visible
+    -   _optional_ - The `Dialog.Trigger` is used to pass in a component to trigger the dialog.
 
-        -   _optional_ - The `Dialog.Header` can be passed in as a child of `Dialog.Content` to add a styled header to the dialog.
+    -   _required_ - The `Dialog.Content` is the container appearing when the dialog is Visible. All dialog content needs to be wrapped inside of this element.
+
+        -   _optional_ - The `Dialog.Header` can be passed in as a child of `Dialog.Content` to add a styled header to the dialog
+
+            -   The prop `showCloseButton` can be passed to add a close button to the header.
 
         -   _optional_ - The `Dialog.Body` can be passed in as a child of `Dialog.Content` to add a styled body to the dialog.
 
         -   _optional_ - The `Dialog.Footer` can be passed in as a child of `Dialog.Content` to add a styled footer to the dialog.
 
         -   _optional_ - The `Dialog.SideContent` can be passed in as a child of `Dialog.Content` to add a space on the left side of the dialog. Custom components can then be passed in as as children of `Dialog.SideContent`
+
+-   Accessiblity
+
+    -   _required_ - The `Dialog.Title` component is used to wrap the title of the flyout so it will be refereced by the dialog and correctly exposed to screenreaders. It can be placed anywhere inside of `Dialog.Content`.
+
+        -   The prop `asChild` can be passed to `Dialog.Title` to avoid wrapping the content in a `h2` tag, but directly use the child.
+
+    -   _optional_ - The `Dialog.Desciption` component is used to wrap the description of the flyout so it will be refereced by the dialog and correctly exposed to screenreaders. It can be placed anywhere inside of `Dialog.Content`.
+
+        -   The prop `asChild` can be passed to `Dialog.Description` to avoid wrapping the content in a `h2` tag, but directly use the child.
 
 -   The styling / layout is now controlled on the subcomponent `Dialog.Content`
 
@@ -168,8 +186,6 @@ Changes:
         The dialog now uses a portal by default and is placed centered
 
     -   The prop `darkUnderlay` was replaced by `showUnderlay`.
-
--   The subcomponents `Dialog.Header`, `Dialog.Body`, `Dialog.Footer` and `Dialog.SideContent` can be used to add defaut styling to the content inside of `Dialog.Content`.
 
 #### Old
 
