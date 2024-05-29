@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconCross } from '@frontify/fondue-icons';
 import * as RadixDialog from '@radix-ui/react-dialog';
 import { forwardRef, type CSSProperties, type ForwardedRef, type ReactNode } from 'react';
 
@@ -143,6 +144,9 @@ export const DialogHeader = (
     return (
         <div data-test-id={dataTestId} ref={ref} className={dialogHeaderStyles} data-dialog-layout-component>
             <div>{children}</div>
+            <RadixDialog.Close role="button" data-test-id={`${dataTestId}-close`} className="tw-cursor-pointer">
+                <IconCross size={20} />
+            </RadixDialog.Close>
         </div>
     );
 };
