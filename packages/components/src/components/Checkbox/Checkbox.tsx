@@ -2,10 +2,11 @@
 
 import { IconCheckMark, IconMinus } from '@frontify/fondue-icons';
 import * as CheckboxPrimitive from '@radix-ui/react-checkbox';
-import { type FormEvent, forwardRef, type ForwardedRef } from 'react';
+import { forwardRef, type FormEvent, type ForwardedRef } from 'react';
 
 import { cn } from '#/utilities/styleUtilities';
 
+import { FOCUS_OUTLINE } from '#/utilities/focusStyle';
 import { checkboxIndicatorStyles, checkboxStyles } from './styles/checkboxStyles';
 
 export type CheckboxProps = {
@@ -82,7 +83,7 @@ export const CheckboxComponent = (
             ref={ref}
             checked={value}
             defaultChecked={defaultValue}
-            className={cn(checkboxStyles(props), className)}
+            className={cn(checkboxStyles(props), FOCUS_OUTLINE, className)}
             onClick={onChange}
             data-test-id={dataTestId}
             {...props}
