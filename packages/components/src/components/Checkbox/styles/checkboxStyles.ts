@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { FOCUS_OUTLINE } from '#/utilities/focusStyle';
 import { sv } from '#/utilities/styleUtilities';
 
 export const checkboxStyles = sv({
@@ -7,7 +8,8 @@ export const checkboxStyles = sv({
         'tw-peer tw-relative tw-inline-flex tw-bg-base tw-text-white tw-shrink-0 tw-rounded tw-border tw-border-line-x-strong group-hover:tw-border-line-xx-strong hover:tw-border-line-xx-strong tw-transition-colors ' +
         'data-[state="checked"]:tw-border-transparent data-[state="indeterminate"]:tw-border-transparent ' +
         'disabled:tw-border-line-strong disabled:tw-bg-base disabled:tw-cursor-not-allowed data-[state="checked"]:disabled:tw-bg-box-disabled-strong ' +
-        'focus-visible:tw-outline focus-visible:tw-outline-blue ',
+        'focus-visible:tw-outline focus-visible:tw-outline-blue ' +
+        `${FOCUS_OUTLINE}`,
     variants: {
         size: {
             default: 'tw-size-4',

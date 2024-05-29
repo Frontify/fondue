@@ -11,7 +11,6 @@ import {
     type SyntheticEvent,
 } from 'react';
 
-import { FOCUS_OUTLINE } from '#/utilities/focusStyle';
 import { cn } from '#/utilities/styleUtilities';
 
 import { inputStyles, loadingStatusStyles, rootStyles, slotStyles } from './styles/textInputStyles';
@@ -119,7 +118,7 @@ export const TextFieldRoot = (
     const wasClicked = useRef(false);
 
     return (
-        <div className={cn(rootStyles, FOCUS_OUTLINE, className)} data-status={status} data-test-id={dataTestId}>
+        <div className={cn(rootStyles, className)} data-status={status} data-test-id={dataTestId}>
             {status === 'loading' ? (
                 <div className={loadingStatusStyles} data-test-id={`${dataTestId}-loader`} />
             ) : null}

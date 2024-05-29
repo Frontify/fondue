@@ -4,8 +4,6 @@ import * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group';
 import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
 
 import { useControllableState } from '#/hooks/useControllableState';
-import { FOCUS_OUTLINE } from '#/utilities/focusStyle';
-import { cn } from '#/utilities/styleUtilities';
 
 import {
     segmentedControlActiveIndicatorStyles,
@@ -82,12 +80,7 @@ export const SegmentedControlItem = (
     { children, ...itemProps }: SegmentedControlItemProps,
     ref: ForwardedRef<HTMLButtonElement>,
 ) => (
-    <ToggleGroupPrimitive.Item
-        ref={ref}
-        {...itemProps}
-        className={cn(segmentedControlItemStyles, FOCUS_OUTLINE)}
-        asChild={false}
-    >
+    <ToggleGroupPrimitive.Item ref={ref} {...itemProps} className={segmentedControlItemStyles} asChild={false}>
         {/* Separator */}
         <span className={segmentedControlItemSeparatorStyles} />
         <span className={segmentedControlItemLabelStyles}>
