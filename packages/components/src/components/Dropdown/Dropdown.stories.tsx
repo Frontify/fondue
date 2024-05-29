@@ -20,6 +20,25 @@ export default meta;
 export const Default: Story = {
     name: 'Text Label Only',
     args: {
-        children: 'Hello World',
+        items: [
+            {
+                label: 'aaaa 1',
+                value: '1',
+            },
+            {
+                label: 'bbbb 2',
+                value: '2',
+            },
+            {
+                label: 'cccc 3',
+                value: '3',
+            },
+        ],
     },
+    render: (args) => (
+        <>
+            <Dropdown {...args} />
+            <Dropdown {...args} isSearchable />
+        </>
+    ),
 };
