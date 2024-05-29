@@ -125,14 +125,7 @@ export default {
                 height: 'height',
                 width: 'width',
             },
-            screens: {
-                xs: '390px',
-                sm: '600px',
-                md: '768px',
-                lg: '1024px',
-                xl: '1280px',
-                '2xl': '1536px',
-            },
+
             animation: {
                 'loading-bar-infinite': 'loading-bar-infinite 1s infinite linear',
             },
@@ -146,6 +139,14 @@ export default {
             transformOrigin: {
                 'left-right': '0% 50%',
             },
+        },
+        screens: {
+            xs: '390px',
+            sm: '600px',
+            md: '768px',
+            lg: '1024px',
+            xl: '1280px',
+            '2xl': '1536px',
         },
     },
 } satisfies Config;
