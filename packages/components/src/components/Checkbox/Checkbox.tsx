@@ -4,9 +4,9 @@ import { IconCheckMark, IconMinus } from '@frontify/fondue-icons';
 import * as CheckboxPrimitive from '@radix-ui/react-checkbox';
 import { forwardRef, type FormEvent, type ForwardedRef } from 'react';
 
+import { FOCUS_OUTLINE } from '#/utilities/focusStyle';
 import { cn } from '#/utilities/styleUtilities';
 
-import { FOCUS_OUTLINE } from '#/utilities/focusStyle';
 import { checkboxIndicatorStyles, checkboxStyles } from './styles/checkboxStyles';
 
 export type CheckboxProps = {

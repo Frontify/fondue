@@ -4,9 +4,9 @@ import * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group';
 import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
 
 import { useControllableState } from '#/hooks/useControllableState';
-
 import { FOCUS_OUTLINE } from '#/utilities/focusStyle';
 import { cn } from '#/utilities/styleUtilities';
+
 import {
     segmentedControlActiveIndicatorStyles,
     segmentedControlItemLabelActiveStyles,
