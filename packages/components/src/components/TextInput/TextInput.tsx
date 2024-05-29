@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconCheckMark, IconExclamationMarkTriangle } from '@frontify/fondue-icons';
-import { forwardRef, type ChangeEvent, type ForwardedRef, type KeyboardEvent, type ReactNode } from 'react';
+import { forwardRef, useRef, type ChangeEvent, type ForwardedRef, type KeyboardEvent, type ReactNode } from 'react';
 
+import { FOCUS_OUTLINE } from '#/utilities/focusStyle';
 import { cn } from '#/utilities/styleUtilities';
 
 import { inputStyles, loadingStatusStyles, rootStyles, slotStyles } from './styles/textInputStyles';
@@ -103,13 +104,35 @@ export const TextFieldRoot = (
     }: TextInputProps,
     ref: ForwardedRef<HTMLInputElement>,
 ) => {
+    const wasClicked = useRef(false);
+
     return (
-        <div className={cn(rootStyles, className)} data-status={status} data-test-id={dataTestId}>
+        <div className={cn(rootStyles, FOCUS_OUTLINE, className)} data-status={status} data-test-id={dataTestId}>
             {status === 'loading' ? (
                 <div className={loadingStatusStyles} data-test-id={`${dataTestId}-loader`} />
             ) : null}
-
-            <input type="text" {...inputProps} ref={ref} className={inputStyles} aria-invalid={status === 'error'} />
+            <input
+                onMouseDown={(mouseEvent) => {
+                    wasClicked.current = true;
+                    mouseEvent.currentTarget.dataset.showFocusRing = 'false';
+                }}
+                type="text"
+                {...inputProps}
+                onFocus={(focusEvent) => {
+                    if (!wasClicked.current) {
+                        focusEvent.target.dataset.showFocusRing = 'true';
+                    }
+                    inputProps.onFocus?.(focusEvent);
+                }}
+                onBlur={(blurEvent) => {
+                    blurEvent.target.dataset.showFocusRing = 'false';
+                    wasClicked.current = false;
+                    inputProps.onBlur?.(blurEvent);
+                }}
+                ref={ref}
+                className={inputStyles}
+                aria-invalid={status === 'error'}
+            />
 
             {status === 'success' ? (
                 <IconCheckMark
