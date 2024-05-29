@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconCross } from '@frontify/fondue-icons';
 import * as RadixDialog from '@radix-ui/react-dialog';
 import { forwardRef, type CSSProperties, type ForwardedRef, type ReactNode } from 'react';
 
@@ -69,11 +68,6 @@ export type DialogContentProps = {
 export type DialogTriggerProps = { children?: ReactNode; 'data-test-id'?: string };
 
 export type DialogHeaderProps = {
-    /**
-     * Show a close button in the header
-     * @default true
-     */
-    showCloseButton?: boolean;
     children?: ReactNode;
     'data-test-id'?: string;
 };
@@ -143,17 +137,12 @@ export const DialogContent = (
 DialogContent.displayName = 'Dialog.Content';
 
 export const DialogHeader = (
-    { showCloseButton = true, children, 'data-test-id': dataTestId = 'fondue-dialog-header' }: DialogHeaderProps,
+    { children, 'data-test-id': dataTestId = 'fondue-dialog-header' }: DialogHeaderProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
         <div data-test-id={dataTestId} ref={ref} className={dialogHeaderStyles} data-dialog-layout-component>
             <div>{children}</div>
-            {showCloseButton && (
-                <RadixDialog.Close role="button" data-test-id={`${dataTestId}-close`} className="tw-cursor-pointer">
-                    <IconCross size={20} />
-                </RadixDialog.Close>
-            )}
         </div>
     );
 };

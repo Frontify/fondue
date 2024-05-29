@@ -4,36 +4,36 @@ This document describes the changes that you need to make to your code to migrat
 
 ## Table of contents
 
--   [Migration guide](#migration-guide)
-    -   [Table of contents](#table-of-contents)
-    -   [Components](#components)
-        -   [Button](#button)
-            -   [Old](#old)
-            -   [New](#new)
-        -   [Checkbox](#checkbox)
-            -   [Old](#old-1)
-            -   [New](#new-1)
-        -   [Dialog](#dialog)
-            -   [Old](#old-2)
-            -   [New](#new-2)
-        -   [Flyout (old `InlineDialog`)](#flyout-old-inlinedialog)
-            -   [Old](#old-3)
-            -   [New](#new-3)
-        -   [Label (old `InputLabel`)](#label-old-inputlabel)
-            -   [Old](#old-4)
-            -   [New](#new-4)
-        -   [Loading Bar](#loading-bar)
-            -   [Old](#old-5)
-            -   [New](#new-5)
-        -   [Segmented Control](#segmented-control)
-            -   [Old](#old-6)
-            -   [New](#new-6)
-        -   [Text Input](#text-input)
-            -   [Old](#old-7)
-            -   [New](#new-7)
-        -   [Tooltip](#tooltip)
-            -   [Old](#old-8)
-            -   [New](#new-8)
+- [Migration guide](#migration-guide)
+  - [Table of contents](#table-of-contents)
+  - [Components](#components)
+    - [Button](#button)
+      - [Old](#old)
+      - [New](#new)
+    - [Checkbox](#checkbox)
+      - [Old](#old-1)
+      - [New](#new-1)
+    - [Dialog](#dialog)
+      - [Old](#old-2)
+      - [New](#new-2)
+    - [Flyout (old `InlineDialog`)](#flyout-old-inlinedialog)
+      - [Old](#old-3)
+      - [New](#new-3)
+    - [Label (old `InputLabel`)](#label-old-inputlabel)
+      - [Old](#old-4)
+      - [New](#new-4)
+    - [Loading Bar](#loading-bar)
+      - [Old](#old-5)
+      - [New](#new-5)
+    - [Segmented Control](#segmented-control)
+      - [Old](#old-6)
+      - [New](#new-6)
+    - [Text Input](#text-input)
+      - [Old](#old-7)
+      - [New](#new-7)
+    - [Tooltip](#tooltip)
+      - [Old](#old-8)
+      - [New](#new-8)
 
 ## Components
 
@@ -45,7 +45,7 @@ Changes:
 -   The `icon` prop was removed and the Icon is now passed in as a child of the button.
 -   The `onClick` prop was renamed to `onPress`.
 -   The `hideLabel` prop was removed and the label should now be passed in conditionally as a child of the button.
--   The `aspect` prop was added to be able to make the button square, when only an icon is schown.
+-   The `aspect` prop was added to be able to make the button square, when only an icon is shown.
 
 #### Old
 
@@ -158,13 +158,13 @@ Changes:
 
         -   _optional_ - The `Dialog.SideContent` can be passed in as a child of `Dialog.Content` to add a space on the left side of the dialog. Custom components can then be passed in as as children of `Dialog.SideContent`
 
--   Accessiblity
+-   Accessibility
 
-    -   _required_ - The `Dialog.Title` component is used to wrap the title of the flyout so it will be refereced by the dialog and correctly exposed to screenreaders. It can be placed anywhere inside of `Dialog.Content`.
+    -   _required_ - The `Dialog.Title` component is used to wrap the title of the dialog, it will be read by the screen reader. It can be placed anywhere inside of `Dialog.Content`.
 
         -   The prop `asChild` can be passed to `Dialog.Title` to avoid wrapping the content in a `h2` tag, but directly use the child.
 
-    -   _optional_ - The `Dialog.Desciption` component is used to wrap the description of the flyout so it will be refereced by the dialog and correctly exposed to screenreaders. It can be placed anywhere inside of `Dialog.Content`.
+    -   _optional_ - The `Dialog.Description` component is used to wrap the description of the dialog and will be read by the screen readers alongside the title. It can be placed anywhere inside of `Dialog.Content`.
 
         -   The prop `asChild` can be passed to `Dialog.Description` to avoid wrapping the content in a `h2` tag, but directly use the child.
 
@@ -177,7 +177,7 @@ Changes:
 
     -   `roundedCorners` is now called `rounded` and is a boolean.
 
-    -   The `width`, `maxHeight` and `autoHeight` props were removed. The Dialog container adjusts to the content inside. You can use a custom component inside if neccessary. you can use `minWidth`, `maxWidth` and `minHeight` to override the default values.
+    -   The `width`, `maxHeight` and `autoHeight` props were removed. The Dialog container adjusts to the content inside. You can use a custom component inside if necessary. you can use `minWidth`, `maxWidth` and `minHeight` to override the default values.
 
     -   The `strategy` and `role` props were removed to simplify the API.
 
@@ -276,7 +276,7 @@ Changes:
 
     -   `roundedCorners` is now called `rounded` and is a boolean.
 
-    -   The `width`, `minWidth`, `minHeight` and `maxHeight` props were removed. The Flyout container adjusts to the content inside. Use a custom component inside if neccessary.
+    -   The `width`, `minWidth`, `minHeight` and `maxHeight` props were removed. The Flyout container adjusts to the content inside. Use a custom component inside if necessary.
 
     -   The `strategy`, `unsafe_Zindex` and `role` props were removed to simplify the API.
 
@@ -290,7 +290,7 @@ Changes:
 
     -   The `padding` prop can be passed to define the padding used by all the layout components (`Flyout.Header`, `Flyout.Body` and `Flyout.Footer`) inside. It has no effect on the `Flyout.Content` or custom components passed as children.
 
--   The subcomponents `Flyout.Header`, `Flyout.Body`, and `Flyout.Footer` can be used to add defaut styling to the content inside of `Flyout.Content`.
+-   The subcomponents `Flyout.Header`, `Flyout.Body`, and `Flyout.Footer` can be used to add default styling to the content inside of `Flyout.Content`.
 
     -   The prop `showCloseButton` was added to the `Flyout.Header` to add a close button to the header.
 
@@ -536,7 +536,7 @@ Changes:
 
 Changes:
 
--   The props now use a uion type instead of an enum.
+-   The props now use a union type instead of an enum.
 -   The `Tooltip` component now provides multiple subcomponents.
     -   The `trigger` prop has been removed and the trigger is now passed in as a child of `Tooltip.Trigger`.
     -   The `content` prop has been removed and the content is now passed in as a child of `Tooltip.Content`.

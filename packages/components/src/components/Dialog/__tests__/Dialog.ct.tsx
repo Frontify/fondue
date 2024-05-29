@@ -212,20 +212,3 @@ test('should show layout elements', async ({ mount, page }) => {
     await expect(bodyElement).toBeVisible();
     await expect(footerElement).toBeVisible();
 });
-
-test('should hide the modal close button', async ({ mount, page }) => {
-    await mount(
-        <Dialog.Root open>
-            <Dialog.Trigger data-test-id={DIALOG_TRIGGER_TEST_ID}>
-                <Button>{DIALOG_TRIGGER_TEXT}</Button>
-            </Dialog.Trigger>
-            <Dialog.Content data-test-id={DIALOG_CONTENT_TEST_ID}>
-                <Dialog.Header data-test-id={DIALOG_HEADER_TEST_ID} showCloseButton={false}>
-                    {DIALOG_HEADER_TEXT}
-                </Dialog.Header>
-            </Dialog.Content>
-        </Dialog.Root>,
-    );
-    const closeModalElement = page.getByTestId(DIALOG_HEADER_CLOSE_TEST_ID);
-    await expect(closeModalElement).not.toBeVisible();
-});
