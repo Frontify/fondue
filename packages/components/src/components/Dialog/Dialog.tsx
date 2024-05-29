@@ -82,7 +82,11 @@ export type DialogFooterProps = { children?: ReactNode; 'data-test-id'?: string 
 
 export type DialogBodyProps = { children?: ReactNode; 'data-test-id'?: string };
 
-export type SideContentProps = { children?: ReactNode; 'data-test-id'?: string };
+export type DialogSideContentProps = { children?: ReactNode; 'data-test-id'?: string };
+
+export type DialogCloseProps = { children?: ReactNode };
+
+export type DialogAnnouncementProps = { children?: ReactNode; asChild?: boolean };
 
 export const DialogRoot = ({ children, ...props }: DialogRootProps) => {
     return <RadixDialog.Root {...props}>{children}</RadixDialog.Root>;
@@ -180,7 +184,7 @@ export const DialogBody = (
 DialogBody.displayName = 'Dialog.Body';
 
 export const DialogSideContent = (
-    { children, 'data-test-id': dataTestId = 'fondue-dialog-side-content' }: DialogBodyProps,
+    { children, 'data-test-id': dataTestId = 'fondue-dialog-side-content' }: DialogSideContentProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
@@ -191,12 +195,30 @@ export const DialogSideContent = (
 };
 DialogSideContent.displayName = 'Dialog.SideContent';
 
+export const DialogClose = ({ children }: DialogCloseProps) => {
+    return <RadixDialog.Close asChild>{children}</RadixDialog.Close>;
+};
+DialogClose.displayName = 'Dialog.Close';
+
+export const DialogTitle = ({ children, asChild }: DialogAnnouncementProps) => {
+    return <RadixDialog.Title asChild={asChild}>{children}</RadixDialog.Title>;
+};
+DialogTitle.displayName = 'Dialog.Title';
+
+export const DialogDescription = ({ children, asChild }: DialogAnnouncementProps) => {
+    return <RadixDialog.Description asChild={asChild}>{children}</RadixDialog.Description>;
+};
+DialogDescription.displayName = 'Dialog.Description';
+
 export const Dialog = {
     Root: DialogRoot,
+    Title: DialogTitle,
+    Description: DialogDescription,
+    Close: DialogClose,
     Trigger: forwardRef<HTMLButtonElement, DialogTriggerProps>(DialogTrigger),
     Content: forwardRef<HTMLDivElement, DialogContentProps>(DialogContent),
     Header: forwardRef<HTMLDivElement, DialogHeaderProps>(DialogHeader),
     Footer: forwardRef<HTMLDivElement, DialogFooterProps>(DialogFooter),
     Body: forwardRef<HTMLDivElement, DialogBodyProps>(DialogBody),
-    SideContent: forwardRef<HTMLDivElement, SideContentProps>(DialogSideContent),
+    SideContent: forwardRef<HTMLDivElement, DialogSideContentProps>(DialogSideContent),
 };
