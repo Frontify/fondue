@@ -7,10 +7,13 @@ import { Button } from '../Button/Button';
 import {
     Dialog,
     DialogBody,
+    DialogClose,
     DialogContent,
+    DialogDescription,
     DialogHeader,
     DialogRoot,
     DialogSideContent,
+    DialogTitle,
     DialogTrigger,
 } from './Dialog';
 
@@ -28,6 +31,12 @@ const meta: Meta<typeof DialogContent> = {
         'Dialog.Header': DialogHeader,
         // @ts-expect-error - Storybook has the wrong type for subcomponents
         'Dialog.Body': DialogBody,
+        // @ts-expect-error - Storybook has the wrong type for subcomponents
+        'Dialog.Title': DialogTitle,
+        // @ts-expect-error - Storybook has the wrong type for subcomponents
+        'Dialog.Description': DialogDescription,
+        // @ts-expect-error - Storybook has the wrong type for subcomponents
+        'Dialog.Close': DialogClose,
     },
     tags: ['autodocs'],
     parameters: {
