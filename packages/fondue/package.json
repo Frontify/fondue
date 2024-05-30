@@ -167,8 +167,6 @@
         "@udecode/slate-utils": "^31.3.2",
         "@udecode/utils": "^31.0.0",
         "@udecode/zustood": "2.0.0",
-        "@xstate/immer": "0.3.3",
-        "@xstate/react": "1.6.3",
         "date-fns": "^3.6.0",
         "escape-html": "^1.0.3",
         "framer-motion": "^10.18.0",
@@ -187,8 +185,7 @@
         "slate": "^0.102.0",
         "slate-react": "^0.102.0",
         "unified": "^10.1.2",
-        "unist-util-visit": "^5.0.0",
-        "xstate": "4.38.3"
+        "unist-util-visit": "^5.0.0"
     },
     "devDependencies": {
         "@babel/core": "^7.24.5",

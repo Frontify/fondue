@@ -35,7 +35,6 @@ export * from './Grid';
 export * from './InlineDialog';
 export * from './InputLabel';
 export * from './LegacyOrderableList';
-export * from './LinkChooser';
 export * from './LoadingBar';
 export * from './LoadingCircle';
 export * from './Menu';
