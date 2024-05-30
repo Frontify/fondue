@@ -2,7 +2,7 @@
 
 import { expect, test } from '@playwright/experimental-ct-react';
 
-import { Dropdown } from '../Dropdown';
+import { Dropdown } from '../Select';
 
 const DROPDOWN_TEST_ID = 'test-dropdown';
 const DROPDOWN_TEXT = 'sample dropdown';

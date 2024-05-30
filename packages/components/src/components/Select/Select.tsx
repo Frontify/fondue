@@ -1,10 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useCombobox } from 'downshift';
 import { useState, type ReactNode } from 'react';
-import { inputStyles } from './styles/dropdownStyles';
 
-export type DropdownProps = {
+import { inputStyles } from './styles/selectStyles';
+import { useSelectData } from './useSelectData';
+
+export type SelectProps = {
     children?: ReactNode;
     items: {
         label: string;
@@ -13,7 +14,7 @@ export type DropdownProps = {
     isSearchable?: boolean;
 };
 
-export const Dropdown = ({ children, items, isSearchable }: DropdownProps) => {
+export const Select = ({ children, items, isSearchable }: SelectProps) => {
     const [inputItems, setInputItems] = useState(items);
     const {
         isOpen,
@@ -24,7 +25,7 @@ export const Dropdown = ({ children, items, isSearchable }: DropdownProps) => {
         highlightedIndex,
         getItemProps,
         selectedItem,
-    } = useCombobox({
+    } = useSelectData({
         items: inputItems,
         onSelectedItemChange: ({ selectedItem }) => {
             console.log('selectedItem', selectedItem);
@@ -74,4 +75,4 @@ export const Dropdown = ({ children, items, isSearchable }: DropdownProps) => {
         </div>
     );
 };
-Dropdown.displayName = 'Dropdown';
+Select.displayName = 'Select';

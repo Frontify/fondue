@@ -3,7 +3,7 @@
 import { render } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { Dropdown } from '../Dropdown';
+import { Dropdown } from '../Select';
 
 const DROPDOWN_TEST_ID = 'test-dropdown';
 const DROPDOWN_TEXT = 'sample dropdown';

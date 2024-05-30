@@ -2,11 +2,11 @@
 
 import { type Meta, type StoryObj } from '@storybook/react';
 
-import { Dropdown } from './Dropdown';
+import { Select } from './Select';
 
-type Story = StoryObj<typeof Dropdown>;
-const meta: Meta<typeof Dropdown> = {
-    component: Dropdown,
+type Story = StoryObj<typeof meta>;
+const meta: Meta<typeof Select> = {
+    component: Select,
     tags: ['autodocs'],
     parameters: {
         status: {
@@ -37,8 +37,8 @@ export const Default: Story = {
     },
     render: (args) => (
         <>
-            <Dropdown {...args} />
-            <Dropdown {...args} isSearchable />
+            <Select {...args} />
+            <Select {...args} isSearchable />
         </>
     ),
 };
