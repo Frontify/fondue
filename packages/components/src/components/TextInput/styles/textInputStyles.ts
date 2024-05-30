@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { FOCUS_OUTLINE } from '#/utilities/focusStyle';
+
 export const rootStyles =
     'tw-group tw-relative tw-flex tw-items-stretch tw-font-sans tw-font-normal tw-text-start tw-h-9 tw-text-body-medium tw-text-text tw-transition-colors ' +
     // Focus and border styles
@@ -9,7 +11,8 @@ export const rootStyles =
     // Disabled styles
     'has-[input:disabled]:tw-border-line-weak has-[input:disabled]:tw-bg-box-disabled ' +
     // Success and error status styles
-    'data-[status="success"]:tw-border-text-positive data-[status="error"]:tw-border-text-negative ';
+    'data-[status="success"]:tw-border-text-positive data-[status="error"]:tw-border-text-negative ' +
+    `${FOCUS_OUTLINE}`;
 
 export const inputStyles =
     'tw-peer/input tw-w-full tw-bg-transparent placeholder:tw-text-text-x-weak tw-flex tw-items-center [text-align:inherit] tw-indent-3 tw-outline-none tw-rounded-[calc(var(--radius)_-_var(--line-width))] ' +
