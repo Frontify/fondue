@@ -17,14 +17,14 @@ export type SelectProps = {
 export const Select = ({ children, items, isSearchable }: SelectProps) => {
     const [inputItems, setInputItems] = useState(items);
     const {
-        isOpen,
-        getToggleButtonProps,
-        getLabelProps,
-        getMenuProps,
-        getInputProps,
-        highlightedIndex,
+        inputProps,
+        toggleButtonProps,
+        labelProps,
+        menuProps,
         getItemProps,
         selectedItem,
+        isOpen,
+        highlightedIndex,
     } = useSelectData(
         {
             items: inputItems,
@@ -47,25 +47,24 @@ export const Select = ({ children, items, isSearchable }: SelectProps) => {
 
     return (
         <div>
-            <label htmlFor="abc" {...getLabelProps()}>
+            <label htmlFor="abc" {...labelProps}>
                 Choose an element:
             </label>
             {isSearchable ? (
                 <div className={inputStyles}>
-                    <input className="tw-w-full tw-bg-box-neutral" id="abc" {...getInputProps()} />
-                    <button type="button" {...getToggleButtonProps()} aria-label="toggle menu">
+                    <input className="tw-w-full tw-bg-box-neutral" id="abc" {...inputProps} />
+                    <button type="button" {...toggleButtonProps} aria-label="toggle menu">
                         &#8595;
                     </button>
                 </div>
             ) : (
-                <button className={inputStyles} {...getToggleButtonProps()} tabIndex={0}>
-                    <input className="tw-hidden" id="abc" {...getInputProps()} />
+                <button className={inputStyles} {...toggleButtonProps} tabIndex={0}>
                     <span>{selectedItem ? selectedItem.label : 'Please select'}</span>
                     <span className="px-2">{isOpen ? <>&#8593;</> : <>&#8595;</>}</span>
                 </button>
             )}
 
-            <ul className="tw-border tw-p-2 tw-rounded tw-mt-2" {...getMenuProps()}>
+            <ul className="tw-border tw-p-2 tw-rounded tw-mt-2" {...menuProps}>
                 {isOpen &&
                     inputItems.map((item, index) => (
                         <li
