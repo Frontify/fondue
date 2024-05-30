@@ -25,20 +25,25 @@ export const Select = ({ children, items, isSearchable }: SelectProps) => {
         highlightedIndex,
         getItemProps,
         selectedItem,
-    } = useSelectData({
-        items: inputItems,
-        onSelectedItemChange: ({ selectedItem }) => {
-            console.log('selectedItem', selectedItem);
-            setInputItems(items);
+    } = useSelectData(
+        {
+            items: inputItems,
+            onSelectedItemChange: ({ selectedItem }) => {
+                console.log('selectedItem', selectedItem);
+                setInputItems(items);
+            },
+            onInputValueChange: ({ inputValue }) => {
+                console.log('inputValue', inputValue);
+                if (isSearchable) {
+                    setInputItems(
+                        items.filter((item) => item.label.toLowerCase().startsWith(inputValue.toLowerCase())),
+                    );
+                }
+            },
+            itemToString: (item) => (item ? item.label : ''),
         },
-        onInputValueChange: ({ inputValue }) => {
-            console.log('inputValue', inputValue);
-            if (isSearchable) {
-                setInputItems(items.filter((item) => item.label.toLowerCase().startsWith(inputValue.toLowerCase())));
-            }
-        },
-        itemToString: (item) => (item ? item.label : ''),
-    });
+        isSearchable,
+    );
 
     return (
         <div>
