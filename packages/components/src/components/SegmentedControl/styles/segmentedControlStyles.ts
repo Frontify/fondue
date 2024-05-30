@@ -10,8 +10,8 @@ export const segmentedControlItemStyles =
     'tw-peer tw-group tw-flex tw-items-stretch tw-justify-center tw-select-none ' +
     // Apply border radius based on the index
     'first:tw-rounded-l-[inherit] [&:nth-last-child(2)]:tw-rounded-r-[inherit] ' +
-    // Focus styles for keyboard navigation
-    `${FOCUS_OUTLINE} focus-visible:tw-rounded-[calc(var(--radius)-var(--line-width))]`;
+    // Focus styles for keyboard navigation, custom rounding applied to match the active indicator
+    `${FOCUS_OUTLINE} tw-rounded-[calc(var(--radius)-var(--line-width))]`;
 
 export const segmentedControlActiveIndicatorStyles =
     'tw-hidden tw-absolute -tw-z-[1] tw-top-0 tw-left-0 tw-h-full tw-pointer-events-none tw-transition-transform ' +
