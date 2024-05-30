@@ -571,12 +571,6 @@ importers:
       '@udecode/zustood':
         specifier: 2.0.0
         version: 2.0.0(react-dom@18.3.1(react@18.3.1))(react-native@0.74.0(@babel/core@7.24.5)(@babel/preset-env@7.24.4(@babel/core@7.24.5))(@types/react@18.3.3)(react@18.3.1))(react@18.3.1)(scheduler@0.24.0-canary-efb381bbf-20230505)(zustand@4.5.2(@types/react@18.3.3)(immer@10.1.1)(react@18.3.1))
-      '@xstate/immer':
-        specifier: 0.3.3
-        version: 0.3.3(immer@10.1.1)(xstate@4.38.3)
-      '@xstate/react':
-        specifier: 1.6.3
-        version: 1.6.3(@types/react@18.3.3)(react@18.3.1)(xstate@4.38.3)
       date-fns:
         specifier: ^3.6.0
         version: 3.6.0
@@ -634,9 +628,6 @@ importers:
       unist-util-visit:
         specifier: ^5.0.0
         version: 5.0.0
-      xstate:
-        specifier: 4.38.3
-        version: 4.38.3
     devDependencies:
       '@babel/core':
         specifier: ^7.24.5
@@ -4957,24 +4948,6 @@ packages:
 
   '@vue/shared@3.3.4':
     resolution: {integrity: sha512-7OjdcV8vQ74eiz1TZLzZP4JwqM5fA94K6yntPS5Z25r9HDuGNzaGdgvwKYq6S+MxwF0TFRwe50fIR/MYnakdkQ==}
-
-  '@xstate/immer@0.3.3':
-    resolution: {integrity: sha512-6AcNYkWdQrU+BKRg0MVjC2HBRZrZWADHJXcUL9uXem4BFpw9qy9NlbLPWkvnDayvmUq2sbYrzWTfxBMaiOhe5A==}
-    peerDependencies:
-      immer: ^9.0.6 || ^10
-      xstate: ^4.37.2
-
-  '@xstate/react@1.6.3':
-    resolution: {integrity: sha512-NCUReRHPGvvCvj2yLZUTfR0qVp6+apc8G83oXSjN4rl89ZjyujiKrTff55bze/HrsvCsP/sUJASf2n0nzMF1KQ==}
-    peerDependencies:
-      '@xstate/fsm': ^1.0.0
-      react: ^16.8.0 || ^17.0.0
-      xstate: ^4.11.0
-    peerDependenciesMeta:
-      '@xstate/fsm':
-        optional: true
-      xstate:
-        optional: true
 
   '@yarnpkg/esbuild-plugin-pnp@3.0.0-rc.15':
     resolution: {integrity: sha512-kYzDJO5CA9sy+on/s2aIW0411AklfCi8Ck/4QDivOqsMKpStZA2SsR+X27VTggGwpStWaLrjJcDcdDMowtG8MA==}
@@ -10032,11 +10005,6 @@ packages:
       '@types/react':
         optional: true
 
-  use-subscription@1.8.0:
-    resolution: {integrity: sha512-LISuG0/TmmoDoCRmV5XAqYkd3UCBNM0ML3gGBndze65WITcsExCD3DTvXXTLyNcOC0heFQZzluW88bN/oC1DQQ==}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
-
   use-sync-external-store@1.2.0:
     resolution: {integrity: sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==}
     peerDependencies:
@@ -10335,9 +10303,6 @@ packages:
 
   xml-reader@2.4.3:
     resolution: {integrity: sha512-xWldrIxjeAMAu6+HSf9t50ot1uL5M+BtOidRCWHXIeewvSeIpscWCsp4Zxjk8kHHhdqFBrfK8U0EJeCcnyQ/gA==}
-
-  xstate@4.38.3:
-    resolution: {integrity: sha512-SH7nAaaPQx57dx6qvfcIgqKRXIh4L0A1iYEqim4s1u7c9VoCgzZc+63FY90AKU4ZzOC2cfJzTnpO4zK7fCUzzw==}
 
   xtend@4.0.2:
     resolution: {integrity: sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==}
@@ -16202,21 +16167,6 @@ snapshots:
       typescript: 5.4.5
 
   '@vue/shared@3.3.4': {}
-
-  '@xstate/immer@0.3.3(immer@10.1.1)(xstate@4.38.3)':
-    dependencies:
-      immer: 10.1.1
-      xstate: 4.38.3
-
-  '@xstate/react@1.6.3(@types/react@18.3.3)(react@18.3.1)(xstate@4.38.3)':
-    dependencies:
-      react: 18.3.1
-      use-isomorphic-layout-effect: 1.1.2(@types/react@18.3.3)(react@18.3.1)
-      use-subscription: 1.8.0(react@18.3.1)
-    optionalDependencies:
-      xstate: 4.38.3
-    transitivePeerDependencies:
-      - '@types/react'
 
   '@yarnpkg/esbuild-plugin-pnp@3.0.0-rc.15(esbuild@0.20.2)':
     dependencies:
@@ -22243,11 +22193,6 @@ snapshots:
     optionalDependencies:
       '@types/react': 18.3.3
 
-  use-subscription@1.8.0(react@18.3.1):
-    dependencies:
-      react: 18.3.1
-      use-sync-external-store: 1.2.0(react@18.3.1)
-
   use-sync-external-store@1.2.0(react@18.3.1):
     dependencies:
       react: 18.3.1
@@ -22582,8 +22527,6 @@ snapshots:
     dependencies:
       eventemitter3: 2.0.3
       xml-lexer: 0.2.2
-
-  xstate@4.38.3: {}
 
   xtend@4.0.2: {}
 
