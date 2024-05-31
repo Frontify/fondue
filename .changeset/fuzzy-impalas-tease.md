@@ -2,4 +2,4 @@
 "@frontify/fondue": patch
 ---
 
-fix: improve style exports for thirdpartystyles
+fix: combine third party styles into one file to prevent PostCSS warning
