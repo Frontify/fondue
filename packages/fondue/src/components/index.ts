@@ -39,6 +39,8 @@ export * from './Grid';
 export * from './InlineDialog';
 export * from './InputLabel';
 export * from './LegacyOrderableList';
+export * from './LegacyTextarea';
+export * from './LegacyTooltip';
 export * from './LoadingBar';
 export * from './LoadingCircle';
 export * from './Menu';
