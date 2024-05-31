@@ -2,7 +2,6 @@
 
 import { forwardRef, type ForwardedRef, type MouseEvent, type ReactNode } from 'react';
 
-import { FOCUS_OUTLINE } from '#/utilities/focusStyle';
 import { cn } from '#/utilities/styleUtilities';
 
 import { buttonStyles } from './styles/buttonStyles';
@@ -88,7 +87,6 @@ export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(
                     textStyles({ style, ...props }),
                     iconStyles({ style, ...props }),
                     className,
-                    FOCUS_OUTLINE,
                 )}
                 onClick={onPress}
                 {...props}

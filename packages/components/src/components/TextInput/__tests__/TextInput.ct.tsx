@@ -6,6 +6,7 @@ import sinon from 'sinon';
 import { TextInput } from '../TextInput';
 
 const TEXT_INPUT_TEXT = 'sample text input';
+const TEXT_INPUT_TEST_ID = 'fondue-text-input';
 const TEXT_INPUT_LOADER_TEST_ID = 'fondue-text-input-loader';
 const TEXT_INPUT_SUCCESS_ICON_TEST_ID = 'fondue-text-input-success-icon';
 const TEXT_INPUT_ERROR_ICON_TEST_ID = 'fondue-text-input-error-icon';
@@ -111,4 +112,24 @@ test('render slot on the right side and apply correct focus order', async ({ mou
     await component.press('Tab');
 
     await expect(component.getByTestId('right-button-slot')).toBeFocused();
+});
+
+test('render focus ring when keyboard focused', async ({ mount, page }) => {
+    const component = await mount(<TextInput value={TEXT_INPUT_TEXT} />);
+
+    await page.focus('body');
+    await expect(page.getByTestId(TEXT_INPUT_TEST_ID)).not.toHaveCSS('outline-width', '4px');
+    await page.keyboard.press('Tab');
+    await expect(component.getByRole('textbox')).toBeFocused();
+    await expect(page.getByTestId(TEXT_INPUT_TEST_ID)).toHaveCSS('outline-width', '4px');
+});
+
+test('render no focus ring when keyboard focused', async ({ mount, page }) => {
+    const component = await mount(<TextInput value={TEXT_INPUT_TEXT} />);
+
+    await page.focus('body');
+    await expect(page.getByTestId(TEXT_INPUT_TEST_ID)).not.toHaveCSS('outline-width', '4px');
+    await component.click();
+    await expect(component.getByRole('textbox')).toBeFocused();
+    await expect(page.getByTestId(TEXT_INPUT_TEST_ID)).not.toHaveCSS('outline-width', '4px');
 });
