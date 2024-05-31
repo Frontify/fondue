@@ -1,10 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import './DatePicker.css';
-
 import format from 'date-fns/format';
 import getYear from 'date-fns/getYear';
-import { type KeyboardEvent, type ReactNode, forwardRef, useState } from 'react';
+import { forwardRef, useState, type KeyboardEvent, type ReactNode } from 'react';
 import DatepickerComponent, { type ReactDatePicker } from 'react-datepicker';
 
 import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
