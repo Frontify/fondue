@@ -1,9 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { FOCUS_OUTLINE } from '#/utilities/focusStyle';
 import { sv } from '#/utilities/styleUtilities';
 
 export const buttonStyles = sv({
-    base: 'tw-group tw-border tw-relative tw-flex tw-flex-row tw-gap-2 tw-items-center tw-justify-center tw-cursor-pointer tw-font-body tw-font-medium',
+    base:
+        'tw-group tw-border tw-relative tw-flex tw-flex-row tw-gap-2 tw-items-center tw-justify-center tw-cursor-pointer tw-font-body tw-font-medium ' +
+        `${FOCUS_OUTLINE}`,
     variants: {
         disabled: {
             true: 'tw-not-allowed tw-pointer-events-none tw-border-transparent tw-text-box-disabled-inverse tw-bg-box-disabled',
