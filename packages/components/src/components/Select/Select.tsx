@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconCheckMark } from '@frontify/fondue-icons';
 import { useState, type ReactNode } from 'react';
 
-import { inputStyles } from './styles/selectStyles';
+import { inputStyles, rootStyles } from './styles/selectStyles';
 import { useSelectData } from './useSelectData';
 
 export type SelectProps = {
@@ -51,16 +52,24 @@ export const Select = ({ children, items, isSearchable }: SelectProps) => {
                 Choose an element:
             </label>
             {isSearchable ? (
-                <div className={inputStyles}>
-                    <input className="tw-w-full tw-bg-box-neutral" id="abc" {...inputProps} />
+                <div className={rootStyles}>
+                    <input id="abc" {...inputProps} className={inputStyles} />
                     <button type="button" {...toggleButtonProps} aria-label="toggle menu">
-                        &#8595;
+                        <IconCheckMark
+                            size={16}
+                            className="tw-flex tw-text-text-positive tw-h-full tw-items-center tw-mr-3"
+                            data-test-id={'test-success-icon'}
+                        />
                     </button>
                 </div>
             ) : (
-                <button className={inputStyles} {...toggleButtonProps} tabIndex={0}>
-                    <span>{selectedItem ? selectedItem.label : 'Please select'}</span>
-                    <span className="px-2">{isOpen ? <>&#8593;</> : <>&#8595;</>}</span>
+                <button className={rootStyles} {...toggleButtonProps} tabIndex={0}>
+                    <span className={inputStyles}>{selectedItem ? selectedItem.label : 'Please select'}</span>
+                    <IconCheckMark
+                        size={16}
+                        className="tw-flex tw-text-text-positive tw-h-full tw-items-center tw-mr-3"
+                        data-test-id={'test-success-icon'}
+                    />
                 </button>
             )}
 
