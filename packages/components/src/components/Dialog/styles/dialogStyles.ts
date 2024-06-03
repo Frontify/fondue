@@ -4,7 +4,7 @@ import { sv } from '#/utilities/styleUtilities';
 
 export const dialogContentStyles = sv({
     base:
-        'tw-group tw-block tw-fixed tw-left-2 tw-right-2 tw-top-1/2 sm:tw-left-1/2 sm:tw-transform sm:tw--translate-x-1/2 tw--translate-y-1/2 tw-bg-base tw-shadow-mid tw-z-20 ' +
+        'tw-group tw-block tw-fixed tw-left-2 tw-right-2 tw-top-1/2 sm:tw-left-1/2 sm:tw-transform sm:tw--translate-x-1/2 tw--translate-y-1/2 tw-bg-base tw-shadow-mid tw-border tw-border-line tw-z-20 ' +
         'sm:tw-w-fit sm:tw-min-w-[--dialog-min-width] tw-max-w-[--dialog-max-width] tw-min-h-[--dialog-min-height] tw-max-h-screen tw-h-fit tw-overflow-hidden ' +
         'has-[[data-dialog-layout-component]]:tw-grid tw-grid-rows-[auto_auto_minmax(0_,_1fr)_auto] sm:tw-grid-rows-[auto_minmax(0_,_1fr)_auto] sm:tw-grid-cols-[min-content_auto]',
     variants: {
