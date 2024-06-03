@@ -19,4 +19,5 @@ declare global {
 }
 
 import 'cypress-real-events/support';
+import '../../src/components/styles.css';
 import '../../src/styles.css';

@@ -4,10 +4,9 @@ import { useState } from 'react';
 
 import { SegmentedControls } from '@components/SegmentedControls/SegmentedControls';
 
-import { type Color, ColorFormat, type Palette } from '../../types/colors';
+import { ColorFormat, type Color, type Palette } from '../../types/colors';
 
 import { BrandColorPicker } from './BrandColorPicker';
-import './ColorPicker.css';
 import { ColorPreview } from './ColorPreview';
 import { CustomColorPicker } from './CustomColorPicker';
 
