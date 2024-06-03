@@ -68,7 +68,7 @@
     },
     "scripts": {
         "build": "pnpm clean && pnpm generate:icons && pnpm generate:componentsEnum && pnpm build:library && pnpm build:extractedThirdPartyStyles && pnpm build:package:components && pnpm build:package:icons && pnpm build:package:charts && pnpm build:package:tokens",
-        "build:extractedThirdPartyStyles": "concat src/components/**/*.css | postcss > dist/extractedThirdPartyStyles.css",
+        "build:extractedThirdPartyStyles": "postcss --config src/components/postcss.config.cjs ./src/components/styles.css -o dist/extractedThirdPartyStyles.css",
         "build:library": "vite build",
         "build:storybook": "pnpm generate:icons && pnpm generate:componentsEnum && storybook build",
         "build:package:components": "vite build -c components.vite.config.ts",
