@@ -1,5 +1,13 @@
 # @frontify/fondue-components
 
+## 1.3.3
+
+### Patch Changes
+
+-   [#1894](https://github.com/Frontify/fondue/pull/1894) [`d37842c`](https://github.com/Frontify/fondue/commit/d37842c1cc4689265588c5612261f2447f63535b) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: fixes styling issues on the dialog component
+
+-   [#1888](https://github.com/Frontify/fondue/pull/1888) [`9bb310e`](https://github.com/Frontify/fondue/commit/9bb310e1753516e797f687e2f181b86d6f2c9754) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add focus outline for all components
+
 ## 1.3.2
 
 ### Patch Changes
