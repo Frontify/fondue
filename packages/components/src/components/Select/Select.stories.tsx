@@ -4,6 +4,7 @@ import { type Meta, type StoryObj } from '@storybook/react';
 
 import { Select } from './Select';
 import { SelectItem } from './SelectMenu';
+import { SelectWrapper } from './SelectWrapper';
 
 type Story = StoryObj<typeof meta>;
 const meta: Meta<typeof Select> = {
@@ -21,9 +22,13 @@ export default meta;
 export const Default: Story = {
     name: 'Text Label Only',
     render: (args) => (
-        <Select {...args}>
-            <SelectItem>Test</SelectItem>
-            <SelectItem>Test2</SelectItem>
-        </Select>
+        <SelectWrapper {...args}>
+            <SelectItem value="bla" label="test">
+                Test
+            </SelectItem>
+            <SelectItem value="bla2" label="test2">
+                Test2
+            </SelectItem>
+        </SelectWrapper>
     ),
 };

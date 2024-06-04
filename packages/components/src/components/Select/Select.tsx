@@ -14,10 +14,11 @@ export type SelectProps = {
 };
 
 export const Select = ({ children }: SelectProps) => {
-    const { inputItems } = useSelectData();
+    const { items } = useSelectData();
+
     const { getToggleButtonProps, getLabelProps, getMenuProps, getItemProps, selectedItem, isOpen, highlightedIndex } =
         useSelect({
-            items: inputItems,
+            items,
             onSelectedItemChange: ({ selectedItem }) => {
                 console.log('selectedItem', selectedItem);
             },
@@ -43,7 +44,6 @@ export const Select = ({ children }: SelectProps) => {
 
                 <SelectMenu
                     isOpen={isOpen}
-                    inputItems={inputItems}
                     highlightedIndex={highlightedIndex}
                     getMenuProps={getMenuProps}
                     getItemProps={getItemProps}
