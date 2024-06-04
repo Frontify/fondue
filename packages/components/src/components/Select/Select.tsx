@@ -2,7 +2,7 @@
 
 import { IconCheckMark } from '@frontify/fondue-icons';
 import * as RadixPopover from '@radix-ui/react-popover';
-import { useState, type ReactNode } from 'react';
+import { useRef, useState, type ReactNode } from 'react';
 
 import { cn } from '#/utilities/styleUtilities';
 
@@ -48,6 +48,7 @@ export const Select = ({ children, items, isSearchable }: SelectProps) => {
         },
         isSearchable,
     );
+    const wasClicked = useRef(false);
 
     console.log(isOpen);
 
@@ -60,7 +61,27 @@ export const Select = ({ children, items, isSearchable }: SelectProps) => {
                 <RadixPopover.Trigger asChild>
                     {isSearchable ? (
                         <div className={rootStyles}>
-                            <input id="abc" {...inputProps} className={inputStyles} />
+                            <input
+                                onMouseDown={(mouseEvent) => {
+                                    wasClicked.current = true;
+                                    mouseEvent.currentTarget.dataset.showFocusRing = 'false';
+                                }}
+                                id="abc"
+                                {...inputProps}
+                                onFocus={(focusEvent) => {
+                                    if (!wasClicked.current) {
+                                        focusEvent.target.dataset.showFocusRing = 'true';
+                                    }
+                                }}
+                                onBlur={(blurEvent) => {
+                                    blurEvent.target.dataset.showFocusRing = 'false';
+                                    wasClicked.current = false;
+                                    if (inputProps) {
+                                        inputProps.onBlur?.(blurEvent);
+                                    }
+                                }}
+                                className={inputStyles}
+                            />
                             <button type="button" {...toggleButtonProps} aria-label="toggle menu">
                                 <IconCheckMark
                                     size={16}
