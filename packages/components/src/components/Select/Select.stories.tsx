@@ -23,9 +23,7 @@ export const Default: Story = {
     name: 'Text Label Only',
     render: (args) => (
         <SelectWrapper {...args}>
-            <SelectItem value="bla" label="test">
-                Test
-            </SelectItem>
+            <SelectItem>Test</SelectItem>
             <SelectItem value="bla2" label="test2">
                 Test2
             </SelectItem>

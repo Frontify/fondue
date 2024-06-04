@@ -21,7 +21,7 @@ export const SelectContext = createContext<ContextType>({
 
 export const SelectContextProvider = ({ children }: { children: ReactNode }) => {
     const [inputItems, setInputItemState] = useState<SelectItemType[]>([]);
-    const [filterText, setFilterText] = useState('2');
+    const [filterText, setFilterText] = useState('');
     const registerMenuItem = (item: SelectItemType) => {
         if (inputItems.some((i) => i.value === item.value)) {
             return;

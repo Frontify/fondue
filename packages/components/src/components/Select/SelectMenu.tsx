@@ -3,12 +3,13 @@
 import * as RadixPopover from '@radix-ui/react-popover';
 import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { type UseSelectPropGetters } from 'downshift';
-import { Children, useEffect } from 'react';
+import { Children, isValidElement, useEffect } from 'react';
 
 import { cn } from '#/utilities/styleUtilities';
 
 import { itemStyles, menuStyles } from './styles/selectStyles';
 import { useSelectData } from './useSelectData';
+import { getSelectOptionValue } from './utils';
 
 type SelectMenuProps = {
     isOpen: boolean;
@@ -19,22 +20,29 @@ type SelectMenuProps = {
 };
 
 export const SelectMenu = ({ isOpen, highlightedIndex, getMenuProps, getItemProps, children }: SelectMenuProps) => {
-    const { items } = useSelectData();
     return (
         <RadixPopover.Portal>
             <RadixPopover.Content>
                 {
                     <ul data-open-state={isOpen} className={menuStyles} {...getMenuProps()}>
                         {Children.map(Children.toArray(children), (child, index) => {
-                            return (
-                                <RadixSlot
-                                    className={cn(itemStyles, highlightedIndex === index && 'tw-bg-box-neutral-hover')}
-                                    key={`${index}`}
-                                    {...getItemProps({ item: { label: 'test' }, index })}
-                                >
-                                    {child}
-                                </RadixSlot>
-                            );
+                            if (isValidElement(child) && child.type !== 'li') {
+                                return (
+                                    <RadixSlot
+                                        className={cn(
+                                            itemStyles,
+                                            highlightedIndex === index && 'tw-bg-box-neutral-hover',
+                                        )}
+                                        key={`${index}`}
+                                        {...getItemProps({
+                                            item: getSelectOptionValue(child.props as SelectItemElementType),
+                                            index,
+                                        })}
+                                    >
+                                        {child}
+                                    </RadixSlot>
+                                );
+                            }
                         })}
                     </ul>
                 }
@@ -43,22 +51,25 @@ export const SelectMenu = ({ isOpen, highlightedIndex, getMenuProps, getItemProp
     );
 };
 
-export const SelectItem = ({
-    children,
-    value,
-    label,
-    ...props
-}: {
-    children: React.ReactNode;
-    value: string;
-    label: string;
-}) => {
+export type SelectItemElementType = { label?: string } & (
+    | {
+          value: string;
+          children: React.ReactNode;
+      }
+    | {
+          value?: string;
+          children: string;
+      }
+);
+
+export const SelectItem = (props: SelectItemElementType) => {
     const { registerMenuItem, items } = useSelectData();
+    const { value, label } = getSelectOptionValue(props);
 
     useEffect(() => {
         registerMenuItem({ value, label });
     }, []);
     if (items.map((item) => item.value).includes(value)) {
-        return <li {...props}>{children}</li>;
+        return <li {...props}>{props.children}</li>;
     }
 };
