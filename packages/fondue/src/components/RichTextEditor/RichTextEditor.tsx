@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Plate, PlateContent, type TEditableProps } from '@udecode/plate-core';
-import { noop } from 'lodash-es';
-import { type KeyboardEvent, useCallback, useMemo } from 'react';
-
 import { BlurObserver } from '@components/RichTextEditor/BlurObserver';
 import { useMemoizedId } from '@hooks/useMemoizedId';
+import { Plate, PlateContent, type TEditableProps } from '@udecode/plate-core';
+import { merge } from '@utilities/merge';
+import { noop } from 'lodash-es';
+import { type KeyboardEvent, useCallback, useMemo } from 'react';
 
 import { ContentReplacement } from './ContentReplacement';
 import { GAP_DEFAULT, KEY_ELEMENT_BREAK_AFTER_COLUMN, type PluginComposer, defaultPlugins } from './Plugins';
@@ -59,8 +59,9 @@ export const RichTextEditor = ({
         onValueChanged,
     });
     const breakAfterPlugin = plugins.plugins.find((plugin) => plugin.key === KEY_ELEMENT_BREAK_AFTER_COLUMN);
-    const columns = breakAfterPlugin?.options?.columns ?? 1;
-    const columnGap = breakAfterPlugin?.options?.gap ?? GAP_DEFAULT;
+    const customClass = breakAfterPlugin?.options?.customClass as string | undefined;
+    const columns = customClass ? null : breakAfterPlugin?.options?.columns ?? 1;
+    const columnGap = customClass ? null : breakAfterPlugin?.options?.gap ?? GAP_DEFAULT;
 
     const style = useMemo(
         () => ({
@@ -88,7 +89,7 @@ export const RichTextEditor = ({
         renderPlaceholder: RenderPlaceholder,
         readOnly,
         onBlur: onBlurHandler,
-        className: `${padding}`,
+        className: merge([padding, customClass]),
         style,
         onKeyDown: onKeyDownHandler,
         scrollSelectionIntoView: noop,
