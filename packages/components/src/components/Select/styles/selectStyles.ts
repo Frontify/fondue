@@ -28,7 +28,7 @@ export const inputStyles =
     'disabled:tw-cursor-text disabled:tw-text-text-disabled ';
 
 export const menuStyles =
-    'tw-rounded tw-mt-2 tw-hidden data-[open-state=true]:tw-block tw-bg-base tw-shadow-mid tw-border tw-border-line tw-w-[var(--radix-popover-trigger-width)]';
+    'tw-rounded tw-mt-2 tw-hidden data-[open-state=true]:has-[li]:tw-block tw-bg-base tw-shadow-mid tw-border tw-border-line tw-w-[var(--radix-popover-trigger-width)]';
 
 export const itemStyles =
     'tw-py-3 tw-px-5 tw-cursor-pointer tw-transition-colors tw-text-body-medium tw-text-start ' +
