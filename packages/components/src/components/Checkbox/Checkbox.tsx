@@ -2,7 +2,7 @@
 
 import { IconCheckMark, IconMinus } from '@frontify/fondue-icons';
 import * as CheckboxPrimitive from '@radix-ui/react-checkbox';
-import { type FormEvent, forwardRef, type ForwardedRef } from 'react';
+import { forwardRef, type FormEvent, type ForwardedRef } from 'react';
 
 import { cn } from '#/utilities/styleUtilities';
 

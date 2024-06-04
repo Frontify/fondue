@@ -1,5 +1,43 @@
 # @frontify/fondue
 
+## 12.1.4
+
+### Patch Changes
+
+-   Updated dependencies [[`84623eb`](https://github.com/Frontify/fondue/commit/84623eb4e89bbd2781e1cf7df857aafdd9bb3003)]:
+    -   @frontify/fondue-components@1.3.4
+
+## 12.1.3
+
+### Patch Changes
+
+-   [#1876](https://github.com/Frontify/fondue/pull/1876) [`3f73129`](https://github.com/Frontify/fondue/commit/3f73129e360d5bd88814a0aa23a843628f97bc41) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update react aria dependencies
+
+-   [#1889](https://github.com/Frontify/fondue/pull/1889) [`91fdfa4`](https://github.com/Frontify/fondue/commit/91fdfa49f83730b2033b76f8aad3ab2be41d880f) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - refactor: remove deprecated `LinkChooser`
+
+-   [#1891](https://github.com/Frontify/fondue/pull/1891) [`60032c5`](https://github.com/Frontify/fondue/commit/60032c5d9a883ee3bf9eaaa62abaf1970d8e5c00) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: combine third party styles into one file to prevent PostCSS warning
+
+-   [#1895](https://github.com/Frontify/fondue/pull/1895) [`1462920`](https://github.com/Frontify/fondue/commit/146292093ee372d46afe01a64a364a95c5149a8c) Thanks [@fulopdaniel](https://github.com/fulopdaniel)! - fix(RTE): link toolbar button is not clickable on safari
+
+-   Updated dependencies [[`d37842c`](https://github.com/Frontify/fondue/commit/d37842c1cc4689265588c5612261f2447f63535b), [`9bb310e`](https://github.com/Frontify/fondue/commit/9bb310e1753516e797f687e2f181b86d6f2c9754)]:
+    -   @frontify/fondue-components@1.3.3
+
+## 12.1.2
+
+### Patch Changes
+
+-   [#1886](https://github.com/Frontify/fondue/pull/1886) [`a8d7f4e`](https://github.com/Frontify/fondue/commit/a8d7f4ebaac78f70495a99cd51f26036f5fec38b) Thanks [@bojangles-m](https://github.com/bojangles-m)! - fix: make the `xs:` breakpoint work correctly
+
+-   Updated dependencies [[`462ac41`](https://github.com/Frontify/fondue/commit/462ac41c8265f43d932b91a5cb6cb2978bc4f1a0), [`462ac41`](https://github.com/Frontify/fondue/commit/462ac41c8265f43d932b91a5cb6cb2978bc4f1a0), [`462ac41`](https://github.com/Frontify/fondue/commit/462ac41c8265f43d932b91a5cb6cb2978bc4f1a0), [`462ac41`](https://github.com/Frontify/fondue/commit/462ac41c8265f43d932b91a5cb6cb2978bc4f1a0), [`a8d7f4e`](https://github.com/Frontify/fondue/commit/a8d7f4ebaac78f70495a99cd51f26036f5fec38b)]:
+    -   @frontify/fondue-components@1.3.2
+
+## 12.1.1
+
+### Patch Changes
+
+-   Updated dependencies [[`56b089b`](https://github.com/Frontify/fondue/commit/56b089b16cfa3a88ef2aacfa71f63221a8b5921e)]:
+    -   @frontify/fondue-components@1.3.1
+
 ## 12.1.0
 
 ### Minor Changes

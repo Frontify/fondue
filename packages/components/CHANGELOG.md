@@ -1,5 +1,39 @@
 # @frontify/fondue-components
 
+## 1.3.4
+
+### Patch Changes
+
+-   [#1897](https://github.com/Frontify/fondue/pull/1897) [`84623eb`](https://github.com/Frontify/fondue/commit/84623eb4e89bbd2781e1cf7df857aafdd9bb3003) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: remove double quote breaking tests
+
+## 1.3.3
+
+### Patch Changes
+
+-   [#1894](https://github.com/Frontify/fondue/pull/1894) [`d37842c`](https://github.com/Frontify/fondue/commit/d37842c1cc4689265588c5612261f2447f63535b) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: fixes styling issues on the dialog component
+
+-   [#1888](https://github.com/Frontify/fondue/pull/1888) [`9bb310e`](https://github.com/Frontify/fondue/commit/9bb310e1753516e797f687e2f181b86d6f2c9754) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add focus outline for all components
+
+## 1.3.2
+
+### Patch Changes
+
+-   [#1884](https://github.com/Frontify/fondue/pull/1884) [`462ac41`](https://github.com/Frontify/fondue/commit/462ac41c8265f43d932b91a5cb6cb2978bc4f1a0) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - feat: expose `Dialog.Title` and `Dialog.Description` on the `Dialog` component
+
+-   [#1884](https://github.com/Frontify/fondue/pull/1884) [`462ac41`](https://github.com/Frontify/fondue/commit/462ac41c8265f43d932b91a5cb6cb2978bc4f1a0) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: expose `onSelect` on `TextInput`
+
+-   [#1884](https://github.com/Frontify/fondue/pull/1884) [`462ac41`](https://github.com/Frontify/fondue/commit/462ac41c8265f43d932b91a5cb6cb2978bc4f1a0) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: text input text color
+
+-   [#1884](https://github.com/Frontify/fondue/pull/1884) [`462ac41`](https://github.com/Frontify/fondue/commit/462ac41c8265f43d932b91a5cb6cb2978bc4f1a0) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: delete unused padding class in Flyout and Dialog
+
+-   [#1886](https://github.com/Frontify/fondue/pull/1886) [`a8d7f4e`](https://github.com/Frontify/fondue/commit/a8d7f4ebaac78f70495a99cd51f26036f5fec38b) Thanks [@bojangles-m](https://github.com/bojangles-m)! - fix: make the `xs:` breakpoint work correctly
+
+## 1.3.1
+
+### Patch Changes
+
+-   [#1882](https://github.com/Frontify/fondue/pull/1882) [`56b089b`](https://github.com/Frontify/fondue/commit/56b089b16cfa3a88ef2aacfa71f63221a8b5921e) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: add export for dialog component
+
 ## 1.3.0
 
 ### Minor Changes
