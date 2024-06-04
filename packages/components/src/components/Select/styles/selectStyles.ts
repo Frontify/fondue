@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { FOCUS_OUTLINE } from '#/utilities/focusStyle';
+
 export const rootStyles =
     'tw-w-full tw-group tw-relative tw-flex tw-items-stretch tw-font-sans tw-font-normal tw-text-start tw-h-9 tw-text-body-medium tw-transition-colors ' +
     // Focus and border styles
@@ -9,7 +11,9 @@ export const rootStyles =
     // Disabled styles
     'has-[input:disabled]:tw-border-line-weak has-[input:disabled]:tw-bg-box-disabled ' +
     // Success and error status styles
-    'data-[status="success"]:tw-border-text-positive data-[status="error"]:tw-border-text-negative ';
+    'data-[status="success"]:tw-border-text-positive data-[status="error"]:tw-border-text-negative ' +
+    // active styles
+    `${FOCUS_OUTLINE}`;
 
 export const inputStyles =
     'tw-peer/input tw-w-full tw-bg-transparent tw-flex tw-items-center [text-align:inherit] tw-indent-3 tw-outline-none tw-rounded-[calc(var(--radius)_-_var(--line-width))] ' +
@@ -24,10 +28,9 @@ export const inputStyles =
     'disabled:tw-cursor-text disabled:tw-text-text-disabled ';
 
 export const menuStyles =
-    'tw-block tw-bg-base tw-shadow-mid tw-border tw-border-line tw-w-[var(--radix-popover-trigger-width)] sm:tw-max-w-[--flyout-max-width] tw-group tw-mt-4 sm:tw-mt-0 ' +
-    // Mobile view flyout -> dialog responsiveness
-    '[body>[data-radix-popper-content-wrapper]:has(&)]:max-sm:tw-p-2 [body>[data-radix-popper-content-wrapper]:has(&)]:max-sm:tw-w-screen [body>[data-radix-popper-content-wrapper]:has(&)]:max-sm:!tw-translate-x-0 [body>[data-radix-popper-content-wrapper]:has(&)]:max-sm:!tw-translate-y-0 ' +
-    // Responsive dialog background element
-    'before:tw-fixed tw-content-[""] before:tw-top-0 before:tw-left-0 before:tw-h-screen before:tw-w-screen before:tw-bg-black before:tw-opacity-30 before:tw-z-[-1] before:tw-pointer-events-none sm:before:tw-hidden';
+    'tw-rounded tw-mt-2 tw-hidden data-[open-state=true]:tw-block tw-bg-base tw-shadow-mid tw-border tw-border-line tw-w-[var(--radix-popover-trigger-width)]';
 
-export const itemStyles = 'tw-m-2 ';
+export const itemStyles =
+    'tw-py-3 tw-px-5 tw-cursor-pointer tw-transition-colors tw-text-body-medium tw-text-start ' +
+    // hover styles
+    'hover:tw-bg-box-neutral-hover';

@@ -83,11 +83,14 @@ export const Select = ({ children, items, isSearchable }: SelectProps) => {
 
                 <RadixPopover.Portal>
                     <RadixPopover.Content>
-                        {isOpen && (
-                            <ul className={menuStyles} {...menuProps}>
+                        {
+                            <ul data-open-state={isOpen} className={menuStyles} {...menuProps}>
                                 {inputItems.map((item, index) => (
                                     <li
-                                        className={cn(itemStyles, highlightedIndex === index && 'tw-bg-red-70')}
+                                        className={cn(
+                                            itemStyles,
+                                            highlightedIndex === index && 'tw-bg-box-neutral-hover',
+                                        )}
                                         key={`${item.label}${index}`}
                                         {...getItemProps({ item, index })}
                                     >
@@ -95,7 +98,7 @@ export const Select = ({ children, items, isSearchable }: SelectProps) => {
                                     </li>
                                 ))}
                             </ul>
-                        )}
+                        }
                     </RadixPopover.Content>
                 </RadixPopover.Portal>
             </RadixPopover.Root>
