@@ -2,126 +2,54 @@
 
 import { IconCheckMark } from '@frontify/fondue-icons';
 import * as RadixPopover from '@radix-ui/react-popover';
-import { useRef, useState, type ReactNode } from 'react';
+import { useSelect } from 'downshift';
+import { type ReactNode } from 'react';
 
-import { cn } from '#/utilities/styleUtilities';
-
-import { inputStyles, itemStyles, menuStyles, rootStyles } from './styles/selectStyles';
+import { SelectMenu } from './SelectMenu';
+import { inputStyles, rootStyles } from './styles/selectStyles';
 import { useSelectData } from './useSelectData';
 
 export type SelectProps = {
     children?: ReactNode;
-    items: {
-        label: string;
-        value: string;
-    }[];
-    isSearchable?: boolean;
 };
 
-export const Select = ({ children, items, isSearchable }: SelectProps) => {
-    const [inputItems, setInputItems] = useState(items);
-    const {
-        inputProps,
-        toggleButtonProps,
-        labelProps,
-        menuProps,
-        getItemProps,
-        selectedItem,
-        isOpen,
-        highlightedIndex,
-    } = useSelectData(
-        {
+export const Select = ({ children }: SelectProps) => {
+    const { inputItems } = useSelectData();
+    const { getToggleButtonProps, getLabelProps, getMenuProps, getItemProps, selectedItem, isOpen, highlightedIndex } =
+        useSelect({
             items: inputItems,
             onSelectedItemChange: ({ selectedItem }) => {
                 console.log('selectedItem', selectedItem);
-                setInputItems(items);
-            },
-            onInputValueChange: ({ inputValue }) => {
-                console.log('inputValue', inputValue);
-                if (isSearchable) {
-                    setInputItems(
-                        items.filter((item) => item.label.toLowerCase().startsWith(inputValue.toLowerCase())),
-                    );
-                }
             },
             itemToString: (item) => (item ? item.label : ''),
-        },
-        isSearchable,
-    );
-    const wasClicked = useRef(false);
-
-    console.log(isOpen);
+        });
 
     return (
         <div>
             <RadixPopover.Root open={true}>
-                <label htmlFor="abc" {...labelProps}>
+                <label htmlFor="abc" {...getLabelProps()}>
                     Choose an element:
                 </label>
                 <RadixPopover.Trigger asChild>
-                    {isSearchable ? (
-                        <div className={rootStyles}>
-                            <input
-                                onMouseDown={(mouseEvent) => {
-                                    wasClicked.current = true;
-                                    mouseEvent.currentTarget.dataset.showFocusRing = 'false';
-                                }}
-                                id="abc"
-                                {...inputProps}
-                                onFocus={(focusEvent) => {
-                                    if (!wasClicked.current) {
-                                        focusEvent.target.dataset.showFocusRing = 'true';
-                                    }
-                                }}
-                                onBlur={(blurEvent) => {
-                                    blurEvent.target.dataset.showFocusRing = 'false';
-                                    wasClicked.current = false;
-                                    if (inputProps) {
-                                        inputProps.onBlur?.(blurEvent);
-                                    }
-                                }}
-                                className={inputStyles}
-                            />
-                            <button type="button" {...toggleButtonProps} aria-label="toggle menu">
-                                <IconCheckMark
-                                    size={16}
-                                    className="tw-flex tw-text-text-positive tw-h-full tw-items-center tw-mr-3"
-                                    data-test-id={'test-success-icon'}
-                                />
-                            </button>
-                        </div>
-                    ) : (
-                        <button className={rootStyles} {...toggleButtonProps} tabIndex={0}>
-                            <span className={inputStyles}>{selectedItem ? selectedItem.label : 'Please select'}</span>
-                            <IconCheckMark
-                                size={16}
-                                className="tw-flex tw-text-text-positive tw-h-full tw-items-center tw-mr-3"
-                                data-test-id={'test-success-icon'}
-                            />
-                        </button>
-                    )}
+                    <button className={rootStyles} {...getToggleButtonProps()} tabIndex={0}>
+                        <span className={inputStyles}>{selectedItem ? selectedItem.label : 'Please select'}</span>
+                        <IconCheckMark
+                            size={16}
+                            className="tw-flex tw-text-text-positive tw-h-full tw-items-center tw-mr-3"
+                            data-test-id={'test-success-icon'}
+                        />
+                    </button>
                 </RadixPopover.Trigger>
 
-                <RadixPopover.Portal>
-                    <RadixPopover.Content>
-                        {
-                            <ul data-open-state={isOpen} className={menuStyles} {...menuProps}>
-                                {inputItems.map((item, index) => (
-                                    <li
-                                        className={cn(
-                                            itemStyles,
-                                            highlightedIndex === index && 'tw-bg-box-neutral-hover',
-                                        )}
-                                        key={`${item.label}${index}`}
-                                        {...getItemProps({ item, index })}
-                                    >
-                                        {item.label}
-                                    </li>
-                                ))}
-                            </ul>
-                        }
-                    </RadixPopover.Content>
-                </RadixPopover.Portal>
+                <SelectMenu
+                    isOpen={isOpen}
+                    inputItems={inputItems}
+                    highlightedIndex={highlightedIndex}
+                    getMenuProps={getMenuProps}
+                    getItemProps={getItemProps}
+                >
+                    {children}
+                </SelectMenu>
             </RadixPopover.Root>
         </div>
     );

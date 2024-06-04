@@ -32,5 +32,5 @@ export const menuStyles =
 
 export const itemStyles =
     'tw-py-3 tw-px-5 tw-cursor-pointer tw-transition-colors tw-text-body-medium tw-text-start ' +
-    // hover styles
-    'hover:tw-bg-box-neutral-hover';
+    // active styles
+    'hover:tw-bg-box-neutral-hover data-[item-highlighted]:tw-bg-box-neutral-hover ';
