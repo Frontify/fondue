@@ -2,16 +2,18 @@
 
 import { type ReactNode } from 'react';
 
+import { Combobox } from './Combobox';
 import { Select } from './Select';
 import { SelectContextProvider } from './useSelectData';
 
 export type SelectWrapperProps = {
     children?: ReactNode;
+    isSearchable?: boolean;
 };
-export const SelectWrapper = ({ children }: SelectWrapperProps) => {
+export const SelectWrapper = ({ children, isSearchable }: SelectWrapperProps) => {
     return (
         <SelectContextProvider>
-            <Select>{children}</Select>
+            {isSearchable ? <Combobox>{children}</Combobox> : <Select>{children}</Select>}
         </SelectContextProvider>
     );
 };

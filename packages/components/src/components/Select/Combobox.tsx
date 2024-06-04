@@ -3,46 +3,32 @@
 import { IconCheckMark } from '@frontify/fondue-icons';
 import * as RadixPopover from '@radix-ui/react-popover';
 import { useCombobox } from 'downshift';
-import { useRef, useState, type ReactNode } from 'react';
+import { useRef, type ReactNode } from 'react';
 
-import { cn } from '#/utilities/styleUtilities';
-
-import { inputStyles, itemStyles, menuStyles, rootStyles } from './styles/selectStyles';
+import { SelectMenu } from './SelectMenu';
+import { inputStyles, rootStyles } from './styles/selectStyles';
+import { useSelectData } from './useSelectData';
 
 export type SelectProps = {
     children?: ReactNode;
-    items: {
-        label: string;
-        value: string;
-    }[];
-    isSearchable?: boolean;
 };
 
-export const Combobox = ({ children, items }: SelectProps) => {
-    const [inputItems, setInputItems] = useState(items);
-    const {
-        getInputProps,
-        getToggleButtonProps,
-        getLabelProps,
-        getMenuProps,
-        getItemProps,
-        selectedItem,
-        isOpen,
-        highlightedIndex,
-    } = useCombobox({
-        items: inputItems,
-        onSelectedItemChange: ({ selectedItem }) => {
-            console.log('selectedItem', selectedItem);
-            setInputItems(items);
-        },
-        onInputValueChange: ({ inputValue }) => {
-            setInputItems(items.filter((item) => item.label.toLowerCase().startsWith(inputValue.toLowerCase())));
-        },
-        itemToString: (item) => (item ? item.label : ''),
-    });
-    const wasClicked = useRef(false);
+export const Combobox = ({ children }: SelectProps) => {
+    const { items, setFilterText } = useSelectData();
+    console.log('items', items);
 
-    console.log(isOpen);
+    const { getInputProps, getToggleButtonProps, getLabelProps, getMenuProps, getItemProps, isOpen, highlightedIndex } =
+        useCombobox({
+            items,
+            onSelectedItemChange: ({ selectedItem }) => {
+                console.log('selectedItem', selectedItem);
+            },
+            onInputValueChange: ({ inputValue }) => {
+                setFilterText(inputValue);
+            },
+            itemToString: (item) => (item ? item.label : ''),
+        });
+    const wasClicked = useRef(false);
 
     return (
         <div>
@@ -83,21 +69,14 @@ export const Combobox = ({ children, items }: SelectProps) => {
                     </div>
                 </RadixPopover.Trigger>
 
-                <RadixPopover.Portal>
-                    <RadixPopover.Content>
-                        <ul data-open-state={isOpen} className={menuStyles} {...getMenuProps()}>
-                            {inputItems.map((item, index) => (
-                                <li
-                                    className={cn(itemStyles, highlightedIndex === index && 'tw-bg-box-neutral-hover')}
-                                    key={`${item.label}${index}`}
-                                    {...getItemProps({ item, index })}
-                                >
-                                    {item.label}
-                                </li>
-                            ))}
-                        </ul>
-                    </RadixPopover.Content>
-                </RadixPopover.Portal>
+                <SelectMenu
+                    isOpen={isOpen}
+                    highlightedIndex={highlightedIndex}
+                    getMenuProps={getMenuProps}
+                    getItemProps={getItemProps}
+                >
+                    {children}
+                </SelectMenu>
             </RadixPopover.Root>
         </div>
     );

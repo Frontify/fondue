@@ -7,7 +7,7 @@ import { SelectItem } from './SelectMenu';
 import { SelectWrapper } from './SelectWrapper';
 
 type Story = StoryObj<typeof meta>;
-const meta: Meta<typeof Select> = {
+const meta: Meta<typeof SelectWrapper> = {
     component: Select,
     tags: ['autodocs'],
     parameters: {
@@ -15,7 +15,9 @@ const meta: Meta<typeof Select> = {
             type: 'in_progress',
         },
     },
-    args: {},
+    args: {
+        isSearchable: true,
+    },
 };
 export default meta;
 

@@ -2,7 +2,7 @@
 
 import * as RadixPopover from '@radix-ui/react-popover';
 import { Slot as RadixSlot } from '@radix-ui/react-slot';
-import { type UseSelectPropGetters } from 'downshift';
+import { type UseComboboxPropGetters, type UseSelectPropGetters } from 'downshift';
 import { Children, isValidElement, useEffect } from 'react';
 
 import { cn } from '#/utilities/styleUtilities';
@@ -14,8 +14,8 @@ import { getSelectOptionValue } from './utils';
 type SelectMenuProps = {
     isOpen: boolean;
     highlightedIndex: number;
-    getMenuProps: UseSelectPropGetters<unknown>['getMenuProps'];
-    getItemProps: UseSelectPropGetters<unknown>['getItemProps'];
+    getMenuProps: UseSelectPropGetters<unknown>['getMenuProps'] | UseComboboxPropGetters<unknown>['getMenuProps'];
+    getItemProps: UseSelectPropGetters<unknown>['getItemProps'] | UseComboboxPropGetters<unknown>['getItemProps'];
     children: React.ReactNode;
 };
 
