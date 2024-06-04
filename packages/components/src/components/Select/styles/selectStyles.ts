@@ -22,3 +22,12 @@ export const inputStyles =
     '[&[readonly]]:tw-cursor-text [&[readonly]]:tw-text-text-weak [&[readonly]]:tw-indent-0 ' +
     // Disabled styles
     'disabled:tw-cursor-text disabled:tw-text-text-disabled ';
+
+export const menuStyles =
+    'tw-block tw-bg-base tw-shadow-mid tw-border tw-border-line tw-w-[var(--radix-popover-trigger-width)] sm:tw-max-w-[--flyout-max-width] tw-group tw-mt-4 sm:tw-mt-0 ' +
+    // Mobile view flyout -> dialog responsiveness
+    '[body>[data-radix-popper-content-wrapper]:has(&)]:max-sm:tw-p-2 [body>[data-radix-popper-content-wrapper]:has(&)]:max-sm:tw-w-screen [body>[data-radix-popper-content-wrapper]:has(&)]:max-sm:!tw-translate-x-0 [body>[data-radix-popper-content-wrapper]:has(&)]:max-sm:!tw-translate-y-0 ' +
+    // Responsive dialog background element
+    'before:tw-fixed tw-content-[""] before:tw-top-0 before:tw-left-0 before:tw-h-screen before:tw-w-screen before:tw-bg-black before:tw-opacity-30 before:tw-z-[-1] before:tw-pointer-events-none sm:before:tw-hidden';
+
+export const itemStyles = 'tw-m-2 ';
