@@ -1,5 +1,11 @@
 # @frontify/fondue-components
 
+## 1.3.4
+
+### Patch Changes
+
+-   [#1897](https://github.com/Frontify/fondue/pull/1897) [`84623eb`](https://github.com/Frontify/fondue/commit/84623eb4e89bbd2781e1cf7df857aafdd9bb3003) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: remove double quote breaking tests
+
 ## 1.3.3
 
 ### Patch Changes
