@@ -3,13 +3,13 @@
 import * as RadixPopover from '@radix-ui/react-popover';
 import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { type UseComboboxPropGetters, type UseSelectPropGetters } from 'downshift';
-import { Children, cloneElement, isValidElement, useEffect, type ForwardedRef, type ReactNode } from 'react';
+import { useEffect, type ForwardedRef, type ReactNode } from 'react';
 
 import { cn } from '#/utilities/styleUtilities';
 
 import { itemStyles, menuStyles } from './styles/selectStyles';
 import { useSelectData } from './useSelectData';
-import { getSelectOptionValue } from './utils';
+import { getSelectOptionValue, recursiveMap } from './utils';
 
 export type SelectMenuProps = {
     isOpen: boolean;
@@ -17,41 +17,6 @@ export type SelectMenuProps = {
     getMenuProps: UseSelectPropGetters<unknown>['getMenuProps'] | UseComboboxPropGetters<unknown>['getMenuProps'];
     getItemProps: UseSelectPropGetters<unknown>['getItemProps'] | UseComboboxPropGetters<unknown>['getItemProps'];
     children: React.ReactNode;
-};
-
-/**
- * Determines if the child is a leaf node of React, meaning it has one final child of a native type;
- * @param child ReactNode
- * @returns boolean
- */
-const isReactLeaf = (child: ReactNode): boolean => {
-    return (
-        isValidElement(child) &&
-        !isValidElement(child?.props?.children) &&
-        !Children.toArray(child?.props?.children).some((child) => isValidElement(child))
-    );
-};
-
-const recursiveMap = (
-    children: ReactNode,
-    fn: (child: ReactNode, nextIndex: number) => ReactNode,
-    nextIndex: number = 0,
-): ReactNode[] => {
-    const resultingChildren: ReactNode[] = [];
-    Children.forEach(children, (child) => {
-        if (isReactLeaf(child)) {
-            resultingChildren.push(fn(child, nextIndex + resultingChildren.length));
-        } else if (child?.props.children) {
-            child = cloneElement(child, {
-                children: recursiveMap(child.props.children, fn, nextIndex + resultingChildren.length),
-                key: `group-${nextIndex + resultingChildren.length}`,
-            });
-            resultingChildren.push(child);
-        } else {
-            resultingChildren.push(child);
-        }
-    });
-    return resultingChildren;
 };
 
 export const SelectMenu = (
