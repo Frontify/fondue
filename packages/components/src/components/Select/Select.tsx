@@ -9,11 +9,11 @@ import { SelectMenu } from './SelectMenu';
 import { inputStyles, rootStyles } from './styles/selectStyles';
 import { useSelectData } from './useSelectData';
 
-export type SelectProps = {
+export type SelectComponentProps = {
     children?: ReactNode;
 };
 
-export const Select = ({ children }: SelectProps) => {
+export const SelectComponent = ({ children }: SelectComponentProps) => {
     const { items } = useSelectData();
 
     const { getToggleButtonProps, getLabelProps, getMenuProps, getItemProps, selectedItem, isOpen, highlightedIndex } =
@@ -54,4 +54,4 @@ export const Select = ({ children }: SelectProps) => {
         </div>
     );
 };
-Select.displayName = 'Select';
+SelectComponent.displayName = 'Select';

@@ -53,8 +53,8 @@ export const Combobox = ({ children }: SelectProps) => {
                             onBlur={(blurEvent) => {
                                 blurEvent.target.dataset.showFocusRing = 'false';
                                 wasClicked.current = false;
-                                if (inputProps) {
-                                    inputProps.onBlur?.(blurEvent);
+                                if (getInputProps().onBlur) {
+                                    getInputProps().onBlur?.(blurEvent);
                                 }
                             }}
                             className={inputStyles}
