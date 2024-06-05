@@ -14,7 +14,7 @@ export type ${componentName}Props = { children?: ReactNode };
 
 export const ${componentName} = ({ children }: ${componentName}Props) => {
     return (
-        <div className={${toCamelCase(componentName)}Styles()} data-test-id="${toKebabCase(componentName)}">
+        <div className={${toCamelCase(componentName)}Styles()} data-test-id="fondue-${toKebabCase(componentName)}">
             {children}
         </div>
     );
