@@ -26,6 +26,7 @@ export const Default: Story = {
         const testRef = useRef<HTMLLIElement>(null);
         return (
             <Select.Root {...args}>
+                <Select.SearchInput />
                 <Select.Item ref={testRef}>Test1</Select.Item>
                 <Select.Item value="bla2" label="test2">
                     Test2

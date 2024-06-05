@@ -19,19 +19,12 @@ export type SelectMenuProps = {
     children: React.ReactNode;
 };
 
-export const SelectMenu = (
-    { isOpen, highlightedIndex, getMenuProps, getItemProps, children }: SelectMenuProps,
-    forwardedRef?: ForwardedRef<HTMLUListElement>,
-) => {
+export const SelectMenu = ({ isOpen, highlightedIndex, getMenuProps, getItemProps, children }: SelectMenuProps) => {
     return (
         <RadixPopover.Portal>
             <RadixPopover.Content>
                 {
-                    <ul
-                        data-open-state={isOpen}
-                        className={menuStyles}
-                        {...getMenuProps(forwardedRef.current ? { ref: forwardedRef } : {})}
-                    >
+                    <ul data-open-state={isOpen} className={menuStyles} {...getMenuProps()}>
                         {recursiveMap(children, (child, index) => {
                             console.log('child', child);
 
@@ -56,6 +49,21 @@ export const SelectMenu = (
         </RadixPopover.Portal>
     );
 };
+SelectMenu.displayName = 'Select.Menu';
+
+export type SelectItemGroupProps = { children: ReactNode; groupId: string };
+
+export const SelectItemGroup = (
+    { children, groupId }: SelectItemGroupProps,
+    forwardedRef?: ForwardedRef<HTMLDivElement>,
+) => {
+    return (
+        <div ref={forwardedRef} key={groupId}>
+            {children}
+        </div>
+    );
+};
+SelectItemGroup.displayName = 'Select.Group';
 
 export type SelectItemProps = { label?: string } & (
     | {
@@ -84,16 +92,3 @@ export const SelectItem = (props: SelectItemProps, forwardedRef?: ForwardedRef<H
     }
 };
 SelectItem.displayName = 'Select.Item';
-
-export type SelectItemGroupProps = { children: ReactNode; groupId: string };
-
-export const SelectItemGroup = (
-    { children, groupId }: SelectItemGroupProps,
-    forwardedRef?: ForwardedRef<HTMLDivElement>,
-) => {
-    return (
-        <div ref={forwardedRef} key={groupId}>
-            {children}
-        </div>
-    );
-};

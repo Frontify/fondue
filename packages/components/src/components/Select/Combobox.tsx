@@ -13,9 +13,8 @@ export type SelectProps = {
     children?: ReactNode;
 };
 
-export const Combobox = ({ children }: SelectProps) => {
+export const SearchInput = ({ children }: SelectProps) => {
     const { items, setFilterText } = useSelectData();
-    console.log('items', items);
 
     const { getInputProps, getToggleButtonProps, getLabelProps, getMenuProps, getItemProps, isOpen, highlightedIndex } =
         useCombobox({
@@ -81,4 +80,4 @@ export const Combobox = ({ children }: SelectProps) => {
         </div>
     );
 };
-Combobox.displayName = 'Combobox';
+SearchInput.displayName = 'Select.SearchInput';

@@ -13,7 +13,7 @@ export type SelectComponentProps = {
     children?: ReactNode;
 };
 
-export const SelectComponent = ({ children }: SelectComponentProps) => {
+export const SelectInput = ({ children }: SelectComponentProps) => {
     const { items } = useSelectData();
 
     const { getToggleButtonProps, getLabelProps, getMenuProps, getItemProps, selectedItem, isOpen, highlightedIndex } =
@@ -54,4 +54,4 @@ export const SelectComponent = ({ children }: SelectComponentProps) => {
         </div>
     );
 };
-SelectComponent.displayName = 'Select';
+SelectInput.displayName = 'Select.Input';
