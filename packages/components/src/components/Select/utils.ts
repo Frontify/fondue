@@ -2,13 +2,13 @@
 
 import { Children, cloneElement, isValidElement, type ReactNode } from 'react';
 
-import { type SelectItemElementType } from './SelectMenu';
+import { type SelectItemProps } from './SelectMenu';
 
 export const getSelectOptionValue = ({
     children,
     value,
     label,
-}: SelectItemElementType): {
+}: SelectItemProps): {
     value: string;
     label: string;
 } => {
