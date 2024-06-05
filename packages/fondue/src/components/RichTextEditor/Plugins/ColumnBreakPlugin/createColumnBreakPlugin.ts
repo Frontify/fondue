@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type BreakAfterPluginProps } from '@components/RichTextEditor/Plugins/ColumnBreakPlugin/types';
 import { type PlatePlugin, createPluginFactory } from '@udecode/plate-core';
 import { type CSSProperties } from 'react';
+
+import { type BreakAfterPluginProps } from '@components/RichTextEditor/Plugins/ColumnBreakPlugin/types';
 
 import { Plugin } from '../Plugin';
 
