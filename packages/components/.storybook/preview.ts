@@ -1,6 +1,8 @@
-import "@frontify/fondue-tokens/styles";
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+import '@frontify/fondue-tokens/styles';
 import type { Preview } from '@storybook/react';
-import '../src/styles.css';
+import '../src/styles.scss';
 import DocumentationTemplate from './DocumentationTemplate.mdx';
 
 const preview: Preview = {

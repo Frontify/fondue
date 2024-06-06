@@ -1,0 +1,186 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@import '../../../utilities/sizeToken.module.scss';
+@import '../../../utilities/focusStyle.module.scss';
+@import '../../../utilities/transitions.module.scss';
+
+.root {
+    @include focus-outline;
+    @include transition-colors;
+
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    font-family: var(--body-family-stack);
+    font-weight: 400;
+    font-size: var(--body-size-medium);
+    line-height: var(--body-size-medium-line-height);
+    text-align: start;
+    height: sizeToken(9);
+    color: var(--text-color);
+    background-color: var(--base-color);
+    border-radius: var(--radius);
+    border: var(--line-width) solid var(--line-color-strong);
+
+    &:hover {
+        border-color: var(--line-color-x-strong);
+    }
+
+    &:has(:focus-visible) {
+        border-color: var(--line-color-xx-strong);
+    }
+
+    &:has(input[readonly]) {
+        border-color: transparent;
+    }
+
+    &:has(input:disabled) {
+        border-color: var(--line-color-weak);
+        background-color: var(--box-disabled-color);
+    }
+
+    &[data-status='success'] {
+        border-color: var(--text-color-positive);
+    }
+
+    &[data-status='error'] {
+        border-color: var(--text-color-negative);
+    }
+}
+
+.input {
+    width: 100%;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    text-align: inherit;
+    text-indent: sizeToken(3);
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    border-radius: calc(var(--radius) - var(--line-width));
+
+    &::placeholder {
+        color: var(--text-color-x-weak);
+    }
+
+    // Remove border-radius and text-indent/padding on the left if there’s a left-side slot
+    &:has(~ div:not([data-name='right'])) {
+        text-indent: 0px;
+        border-top-left-radius: 0px;
+        border-bottom-left-radius: 0px;
+    }
+
+    // Remove border-radius and padding on the right if there’s a right-side slot
+    &:has(~ .slot[data-side='right'], ~ .slot:not([data-side='right']) ~ .slot:not([data-side='left'])) {
+        padding-right: 0;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    // Readonly styles
+    &[readonly] {
+        cursor: text;
+        color: var(--text-color-weak);
+        text-indent: 0px;
+    }
+    &[readonly] ~ .slot {
+        color: var(--text-color-weak);
+    }
+    &[readonly] ~ .slot:not([data-name='right']) {
+        padding-left: 0px;
+    }
+
+    &:disabled {
+        cursor: text;
+        color: var(--text-color-disabled);
+    }
+    &:disabled ~ .slot {
+        color: var(--text-color-disabled);
+    }
+}
+
+.slot {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    cursor: text;
+    gap: sizeToken(1.5);
+    padding-left: sizeToken(3);
+    padding-right: sizeToken(1.5);
+
+    // Left slot
+    &:not([data-name='right']) {
+        order: -1;
+        margin-left: 0px;
+        margin-right: 0px;
+    }
+
+    // Right slot
+    &[data-name='right'] {
+        order: 0;
+        margin-left: 0px;
+        margin-right: 0px;
+        padding-right: sizeToken(3);
+    }
+
+    // 2 slots without any name should be implicitly ordered
+    &:not([data-name='right']) ~ :not([data-name='left']) {
+        order: 0;
+        margin-left: 0px;
+        margin-right: 0px;
+    }
+}
+
+.iconSuccess {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    margin-left: sizeToken(3);
+    color: var(--text-color-positive);
+}
+
+.iconError {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    margin-left: sizeToken(3);
+    color: var(--text-color-negative);
+}
+
+.loadingStatus {
+    display: flex;
+    position: absolute;
+    width: sizeToken(6);
+    height: sizeToken(6);
+    top: sizeToken(-3);
+    right: sizeToken(-3);
+    pointer-events: none;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--base-color);
+    border: var(--line-width) solid var(--line-color-strong);
+    border-radius: 9999px;
+
+    &::before {
+        content: '';
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: sizeToken(4);
+        height: sizeToken(4);
+        border: var(--line-width) solid var(--text-color-interactive);
+        border-top-color: transparent;
+        border-radius: 9999px;
+        animation: spin 1s linear infinite;
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.tw-dark .root {
+    background-color: transparent;
+}

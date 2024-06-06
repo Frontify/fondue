@@ -13,7 +13,7 @@ import {
 
 import { cn } from '#/utilities/styleUtilities';
 
-import { inputStyles, loadingStatusStyles, rootStyles, slotStyles } from './styles/textInputStyles';
+import styles from './styles/text.module.scss';
 
 export type TextInputProps = {
     id?: string;
@@ -118,9 +118,9 @@ export const TextFieldRoot = (
     const wasClicked = useRef(false);
 
     return (
-        <div className={cn(rootStyles, className)} data-status={status} data-test-id={dataTestId}>
+        <div className={cn(styles.root, className)} data-status={status} data-test-id={dataTestId}>
             {status === 'loading' ? (
-                <div className={loadingStatusStyles} data-test-id={`${dataTestId}-loader`} />
+                <div className={styles.loadingStatus} data-test-id={`${dataTestId}-loader`} />
             ) : null}
             <input
                 onMouseDown={(mouseEvent) => {
@@ -141,22 +141,18 @@ export const TextFieldRoot = (
                     inputProps.onBlur?.(blurEvent);
                 }}
                 ref={ref}
-                className={inputStyles}
+                className={styles.input}
                 aria-invalid={status === 'error'}
             />
 
             {status === 'success' ? (
-                <IconCheckMark
-                    size={16}
-                    className="tw-flex tw-text-text-positive tw-h-full tw-items-center tw-ml-3"
-                    data-test-id={`${dataTestId}-success-icon`}
-                />
+                <IconCheckMark size={16} className={styles.iconSuccess} data-test-id={`${dataTestId}-success-icon`} />
             ) : null}
 
             {status === 'error' ? (
                 <IconExclamationMarkTriangle
                     size={16}
-                    className="tw-flex tw-text-text-negative tw-h-full tw-items-center tw-ml-3"
+                    className={styles.iconError}
                     data-test-id={`${dataTestId}-error-icon`}
                 />
             ) : null}
@@ -183,7 +179,7 @@ export const TextFieldSlot = (
             data-name={name}
             {...slotProps}
             ref={forwardedRef}
-            className={cn(slotStyles, className)}
+            className={cn(styles.slot, className)}
         />
     );
 };
