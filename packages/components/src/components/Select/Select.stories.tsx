@@ -20,10 +20,10 @@ export default meta;
 
 export const Default: Story = {
     name: 'Text Label Only',
-    render: (args) => {
+    render: () => {
         const test = useRef<HTMLLIElement | null>(null);
         return (
-            <Select.Combobox>
+            <Select.Combobox defaultItem={{ value: 'bla2', label: 'test2' }}>
                 <Select.Item ref={test}>Test1</Select.Item>
                 <Select.Item value="bla2" label="test2">
                     Test2

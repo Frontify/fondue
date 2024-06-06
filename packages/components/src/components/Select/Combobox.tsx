@@ -1,29 +1,36 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconCheckMark } from '@frontify/fondue-icons';
+import { IconCaretDown, IconCaretUp } from '@frontify/fondue-icons';
 import * as RadixPopover from '@radix-ui/react-popover';
 import { useCombobox } from 'downshift';
 import { useRef, type ForwardedRef, type ReactNode } from 'react';
 
 import { SelectMenu } from './SelectMenu';
 import { inputStyles, rootStyles } from './styles/selectStyles';
-import { useSelectData } from './useSelectData';
+import { useSelectData, type SelectItemType } from './useSelectData';
 
 export type ComboboxProps = {
     children?: ReactNode;
+    onSelect?: (selectedItem: SelectItemType) => void;
+    defaultItem?: SelectItemType;
 };
 
-export const Combobox = ({ children }: ComboboxProps, forwardedRef: ForwardedRef<HTMLDivElement>) => {
+export const Combobox = (
+    { children, onSelect, defaultItem }: ComboboxProps,
+    forwardedRef: ForwardedRef<HTMLDivElement>,
+) => {
     const { items, setFilterText } = useSelectData();
-    const { getInputProps, getToggleButtonProps, getLabelProps, getMenuProps, getItemProps, isOpen, highlightedIndex } =
-        useCombobox({
-            items,
-            onSelectedItemChange: ({ selectedItem }) => {},
-            onInputValueChange: ({ inputValue }) => {
-                setFilterText(inputValue);
-            },
-            itemToString: (item) => (item ? item.label : ''),
-        });
+    const { getInputProps, getToggleButtonProps, getMenuProps, getItemProps, isOpen, highlightedIndex } = useCombobox({
+        items,
+        onSelectedItemChange: ({ selectedItem }) => {
+            onSelect && onSelect(selectedItem);
+        },
+        onInputValueChange: ({ inputValue }) => {
+            setFilterText(inputValue);
+        },
+        defaultSelectedItem: defaultItem,
+        itemToString: (item) => (item ? item.label : ''),
+    });
 
     const wasClicked = useRef(false);
 
@@ -33,11 +40,14 @@ export const Combobox = ({ children }: ComboboxProps, forwardedRef: ForwardedRef
                 <div ref={forwardedRef} className={rootStyles}>
                     <input
                         onMouseDown={(mouseEvent) => {
+                            console.log('input click');
                             wasClicked.current = true;
                             mouseEvent.currentTarget.dataset.showFocusRing = 'false';
                         }}
                         {...getInputProps()}
                         onFocus={(focusEvent) => {
+                            console.log('focus', focusEvent, wasClicked);
+
                             if (!wasClicked.current) {
                                 focusEvent.target.dataset.showFocusRing = 'true';
                             }
@@ -51,12 +61,27 @@ export const Combobox = ({ children }: ComboboxProps, forwardedRef: ForwardedRef
                         }}
                         className={inputStyles}
                     />
-                    <button type="button" {...getToggleButtonProps()} aria-label="toggle menu">
-                        <IconCheckMark
-                            size={16}
-                            className="tw-flex tw-text-text-positive tw-h-full tw-items-center tw-mr-3"
-                            data-test-id={'test-success-icon'}
-                        />
+                    <button
+                        type="button"
+                        onMouseDown={(mouseEvent) => {
+                            console.log('button click', mouseEvent);
+                            wasClicked.current = true;
+                            console.log(wasClicked);
+                        }}
+                        {...getToggleButtonProps()}
+                        aria-label="toggle menu"
+                    >
+                        {isOpen ? (
+                            <IconCaretUp
+                                size={16}
+                                className="tw-flex tw-text-text-neutral tw-h-full tw-items-center tw-mr-3"
+                            />
+                        ) : (
+                            <IconCaretDown
+                                size={16}
+                                className="tw-flex tw-text-text-neutral tw-h-full tw-items-center tw-mr-3"
+                            />
+                        )}
                     </button>
                 </div>
             </RadixPopover.Trigger>

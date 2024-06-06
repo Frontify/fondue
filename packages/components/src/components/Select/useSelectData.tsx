@@ -55,7 +55,6 @@ const SelectContextProvider = ({ children }: { children: ReactNode }) => {
 
 export const useSelectData = () => {
     const { items, registerMenuItem, setFilterText } = useContext(SelectContext);
-
     return {
         items,
         registerMenuItem,

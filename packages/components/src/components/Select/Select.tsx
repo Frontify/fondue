@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconCheckMark } from '@frontify/fondue-icons';
+import { IconArrowAlignDown } from '@frontify/fondue-icons';
 import * as RadixPopover from '@radix-ui/react-popover';
 import { useSelect } from 'downshift';
 import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
@@ -8,19 +8,23 @@ import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
 import { Combobox, type ComboboxProps } from './Combobox';
 import { SelectItem, SelectItemGroup, SelectMenu, type SelectItemGroupProps, type SelectItemProps } from './SelectMenu';
 import { inputStyles, rootStyles } from './styles/selectStyles';
-import { useSelectData, withSelectContext } from './useSelectData';
+import { useSelectData, withSelectContext, type SelectItemType } from './useSelectData';
 
 export type SelectComponentProps = {
     children?: ReactNode;
+    onSelect?: (selectedItem: SelectItemType) => void;
 };
 
-export const SelectInput = ({ children }: SelectComponentProps, forwardedRef: ForwardedRef<HTMLButtonElement>) => {
+export const SelectInput = (
+    { children, onSelect }: SelectComponentProps,
+    forwardedRef: ForwardedRef<HTMLButtonElement>,
+) => {
     const { items } = useSelectData();
 
     const { getToggleButtonProps, getMenuProps, getItemProps, selectedItem, isOpen, highlightedIndex } = useSelect({
         items,
         onSelectedItemChange: ({ selectedItem }) => {
-            console.log('selectedItem', selectedItem);
+            onSelect && onSelect(selectedItem);
         },
         itemToString: (item) => (item ? item.label : ''),
     });
@@ -34,7 +38,7 @@ export const SelectInput = ({ children }: SelectComponentProps, forwardedRef: Fo
                     tabIndex={0}
                 >
                     <span className={inputStyles}>{selectedItem ? selectedItem.label : 'Please select'}</span>
-                    <IconCheckMark
+                    <IconArrowAlignDown
                         size={16}
                         className="tw-flex tw-text-text-positive tw-h-full tw-items-center tw-mr-3"
                         data-test-id={'test-success-icon'}
@@ -60,7 +64,8 @@ const ForwardedRefCombobox = forwardRef<HTMLDivElement, ComboboxProps>(Combobox)
 const ForwardedRefSelectItem = forwardRef<HTMLLIElement, SelectItemProps>(SelectItem);
 ForwardedRefSelectItem.displayName = 'Select.Item';
 const ForwardedRefSelectItemGroup = forwardRef<HTMLDivElement, SelectItemGroupProps>(SelectItemGroup);
-// @ts-expect-error We support both single component (without slots) and compound components (with slots)
+
+// @ts-expect-error We support both Select and Select.Combobox as the Root
 export const Select: typeof SelectInput & {
     Combobox: typeof ForwardedRefCombobox;
     Item: typeof ForwardedRefSelectItem;

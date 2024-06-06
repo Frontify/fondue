@@ -25,8 +25,6 @@ export const SelectMenu = ({ isOpen, highlightedIndex, getMenuProps, getItemProp
             <RadixPopover.Content>
                 <ul data-open-state={isOpen} className={menuStyles} {...getMenuProps()}>
                     {recursiveMap(children, (child, index) => {
-                        console.log('child', child, child);
-
                         const isValid = <TProps,>(
                             child: ReactNode,
                         ): child is ReactElement<TProps> & { ref: ForwardedRef<HTMLElement> } => {
