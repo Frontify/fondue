@@ -9,7 +9,6 @@ import { Combobox, type ComboboxProps } from './Combobox';
 import { SelectItem, SelectItemGroup, SelectMenu, type SelectItemGroupProps, type SelectItemProps } from './SelectMenu';
 import { inputStyles, rootStyles } from './styles/selectStyles';
 import { useSelectData, withSelectContext } from './useSelectData';
-import { withInternalItemType } from './utils';
 
 export type SelectComponentProps = {
     children?: ReactNode;
@@ -67,5 +66,5 @@ export const Select: typeof SelectInput & {
     Group: typeof ForwardedRefSelectItemGroup;
 } = withSelectContext<HTMLButtonElement, SelectComponentProps>(ForwardedRefSelect);
 Select.Combobox = withSelectContext<HTMLDivElement, ComboboxProps>(ForwardedRefCombobox);
-Select.Item = withInternalItemType<HTMLLIElement, SelectItemProps>(ForwardedRefSelectItem, 'SelectItem');
+Select.Item = ForwardedRefSelectItem;
 Select.Group = ForwardedRefSelectItemGroup;
