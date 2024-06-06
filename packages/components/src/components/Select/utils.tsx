@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Children, cloneElement, isValidElement, type ReactNode } from 'react';
+import { Children, cloneElement, forwardRef, isValidElement, type FC, type ForwardedRef, type ReactNode } from 'react';
 
 import { type SelectItemProps } from './SelectMenu';
 
@@ -58,4 +58,11 @@ export const recursiveMap = (
         }
     });
     return resultingChildren;
+};
+
+export const withInternalItemType = <RefType, ComponentPropType>(Component: FC<ComponentPropType>, type: string) => {
+    // eslint-disable-next-line react/display-name
+    return forwardRef<RefType, ComponentPropType>((props: ComponentPropType, forwardedRef: ForwardedRef<RefType>) => {
+        return <Component {...props} internalItemType={type} ref={forwardedRef} />;
+    });
 };

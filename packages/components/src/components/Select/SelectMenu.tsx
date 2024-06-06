@@ -23,31 +23,26 @@ export const SelectMenu = ({ isOpen, highlightedIndex, getMenuProps, getItemProp
     return (
         <RadixPopover.Portal>
             <RadixPopover.Content>
-                {
-                    <ul data-open-state={isOpen} className={menuStyles} {...getMenuProps()}>
-                        {recursiveMap(children, (child, index) => {
-                            if (typeof child === 'object' && child !== null && 'type' in child) {
-                                return (
-                                    <RadixSlot
-                                        className={cn(
-                                            itemStyles,
-                                            highlightedIndex === index && 'tw-bg-box-neutral-hover',
-                                        )}
-                                        key={`${index}`}
-                                        data-key={index}
-                                        {...getItemProps({
-                                            item: getSelectOptionValue(child.props),
-                                            index,
-                                            ...(child.ref ? { ref: child.ref } : {}),
-                                        })}
-                                    >
-                                        {child}
-                                    </RadixSlot>
-                                );
-                            }
-                        })}
-                    </ul>
-                }
+                <ul data-open-state={isOpen} className={menuStyles} {...getMenuProps()}>
+                    {recursiveMap(children, (child, index) => {
+                        if (typeof child === 'object' && child !== null && 'type' in child) {
+                            return (
+                                <RadixSlot
+                                    className={cn(itemStyles, highlightedIndex === index && 'tw-bg-box-neutral-hover')}
+                                    key={`${index}`}
+                                    data-key={index}
+                                    {...getItemProps({
+                                        item: getSelectOptionValue(child.props),
+                                        index,
+                                        ...(child.ref ? { ref: child.ref } : {}),
+                                    })}
+                                >
+                                    {child}
+                                </RadixSlot>
+                            );
+                        }
+                    })}
+                </ul>
             </RadixPopover.Content>
         </RadixPopover.Portal>
     );

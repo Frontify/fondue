@@ -1,6 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createContext, useContext, useMemo, useState, type ReactNode } from 'react';
+import {
+    createContext,
+    forwardRef,
+    useContext,
+    useMemo,
+    useState,
+    type FC,
+    type ForwardedRef,
+    type ReactNode,
+} from 'react';
 
 export type SelectItemType = {
     value: string;
@@ -13,13 +22,13 @@ type ContextType = {
     setFilterText: (text: string) => void;
 };
 
-export const SelectContext = createContext<ContextType>({
+const SelectContext = createContext<ContextType>({
     items: [{ value: 'test', label: 'test' }],
     registerMenuItem: () => {},
     setFilterText: () => {},
 });
 
-export const SelectContextProvider = ({ children }: { children: ReactNode }) => {
+const SelectContextProvider = ({ children }: { children: ReactNode }) => {
     const [inputItems, setInputItemState] = useState<SelectItemType[]>([]);
     const [filterText, setFilterText] = useState('');
     const registerMenuItem = (item: SelectItemType) => {
@@ -52,4 +61,15 @@ export const useSelectData = () => {
         registerMenuItem,
         setFilterText,
     };
+};
+
+export const withSelectContext = <RefType, ComponentPropType>(Component: FC<ComponentPropType>) => {
+    // eslint-disable-next-line react/display-name
+    return forwardRef<RefType, ComponentPropType>((props: ComponentPropType, forwardedRef: ForwardedRef<RefType>) => {
+        return (
+            <SelectContextProvider>
+                <Component {...props} ref={forwardedRef} />
+            </SelectContextProvider>
+        );
+    });
 };

@@ -3,17 +3,17 @@
 import { IconCheckMark } from '@frontify/fondue-icons';
 import * as RadixPopover from '@radix-ui/react-popover';
 import { useCombobox } from 'downshift';
-import { useRef, type ReactNode } from 'react';
+import { useRef, type ForwardedRef, type ReactNode } from 'react';
 
 import { SelectMenu } from './SelectMenu';
 import { inputStyles, rootStyles } from './styles/selectStyles';
 import { useSelectData } from './useSelectData';
 
-export type SelectProps = {
+export type ComboboxProps = {
     children?: ReactNode;
 };
 
-export const SearchInput = ({ children }: SelectProps) => {
+export const Combobox = ({ children }: ComboboxProps, forwardedRef: ForwardedRef<HTMLDivElement>) => {
     const { items, setFilterText } = useSelectData();
     const { getInputProps, getToggleButtonProps, getLabelProps, getMenuProps, getItemProps, isOpen, highlightedIndex } =
         useCombobox({
@@ -28,15 +28,14 @@ export const SearchInput = ({ children }: SelectProps) => {
     const wasClicked = useRef(false);
 
     return (
-        <>
+        <RadixPopover.Root open={true}>
             <RadixPopover.Trigger asChild>
-                <div className={rootStyles}>
+                <div ref={forwardedRef} className={rootStyles}>
                     <input
                         onMouseDown={(mouseEvent) => {
                             wasClicked.current = true;
                             mouseEvent.currentTarget.dataset.showFocusRing = 'false';
                         }}
-                        id="abc"
                         {...getInputProps()}
                         onFocus={(focusEvent) => {
                             if (!wasClicked.current) {
@@ -70,7 +69,7 @@ export const SearchInput = ({ children }: SelectProps) => {
             >
                 {children}
             </SelectMenu>
-        </>
+        </RadixPopover.Root>
     );
 };
-SearchInput.displayName = 'Select.SearchInput';
+Combobox.displayName = 'Select.Combobox';
