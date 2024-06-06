@@ -63,7 +63,7 @@ export const SelectItemGroup = (
 };
 SelectItemGroup.displayName = 'Select.Group';
 
-export type SelectItemProps = { label?: string } & (
+export type SelectItemProps = { label?: string; internalItemType: string } & (
     | {
           value: string;
           children: React.ReactNode;
