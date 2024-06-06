@@ -3,10 +3,7 @@
 import {
     Children,
     cloneElement,
-    forwardRef,
     isValidElement,
-    type FC,
-    type ForwardedRef,
     type JSXElementConstructor,
     type ReactElement,
     type ReactNode,
@@ -65,16 +62,4 @@ export const recursiveMap = (
         }
     });
     return resultingChildren;
-};
-
-export const withInternalItemType = <RefType, ComponentPropType>(Component: FC<ComponentPropType>, type: string) => {
-    const HOC = forwardRef<RefType, ComponentPropType>(
-        (props: ComponentPropType, forwardedRef: ForwardedRef<RefType>) => {
-            console.log('HOC', type);
-
-            return <Component {...props} internalItemType={type} ref={forwardedRef} />;
-        },
-    );
-    HOC.displayName = 'HOC';
-    return HOC;
 };

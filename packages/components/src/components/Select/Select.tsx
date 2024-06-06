@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconArrowAlignDown } from '@frontify/fondue-icons';
+import { IconCaretDown, IconCaretUp } from '@frontify/fondue-icons';
 import * as RadixPopover from '@radix-ui/react-popover';
 import { useSelect } from 'downshift';
 import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
@@ -13,16 +13,18 @@ import { useSelectData, withSelectContext, type SelectItemType } from './useSele
 export type SelectComponentProps = {
     children?: ReactNode;
     onSelect?: (selectedItem: SelectItemType) => void;
+    defaultItem?: SelectItemType;
 };
 
 export const SelectInput = (
-    { children, onSelect }: SelectComponentProps,
+    { children, onSelect, defaultItem }: SelectComponentProps,
     forwardedRef: ForwardedRef<HTMLButtonElement>,
 ) => {
     const { items } = useSelectData();
 
     const { getToggleButtonProps, getMenuProps, getItemProps, selectedItem, isOpen, highlightedIndex } = useSelect({
         items,
+        defaultSelectedItem: defaultItem,
         onSelectedItemChange: ({ selectedItem }) => {
             onSelect && onSelect(selectedItem);
         },
@@ -38,11 +40,17 @@ export const SelectInput = (
                     tabIndex={0}
                 >
                     <span className={inputStyles}>{selectedItem ? selectedItem.label : 'Please select'}</span>
-                    <IconArrowAlignDown
-                        size={16}
-                        className="tw-flex tw-text-text-positive tw-h-full tw-items-center tw-mr-3"
-                        data-test-id={'test-success-icon'}
-                    />
+                    {isOpen ? (
+                        <IconCaretUp
+                            size={16}
+                            className="tw-flex tw-text-text-neutral tw-h-full tw-items-center tw-mr-3"
+                        />
+                    ) : (
+                        <IconCaretDown
+                            size={16}
+                            className="tw-flex tw-text-text-neutral tw-h-full tw-items-center tw-mr-3"
+                        />
+                    )}
                 </button>
             </RadixPopover.Trigger>
 

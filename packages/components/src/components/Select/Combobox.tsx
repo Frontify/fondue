@@ -40,14 +40,11 @@ export const Combobox = (
                 <div ref={forwardedRef} className={rootStyles}>
                     <input
                         onMouseDown={(mouseEvent) => {
-                            console.log('input click');
                             wasClicked.current = true;
                             mouseEvent.currentTarget.dataset.showFocusRing = 'false';
                         }}
                         {...getInputProps()}
                         onFocus={(focusEvent) => {
-                            console.log('focus', focusEvent, wasClicked);
-
                             if (!wasClicked.current) {
                                 focusEvent.target.dataset.showFocusRing = 'true';
                             }
@@ -63,10 +60,8 @@ export const Combobox = (
                     />
                     <button
                         type="button"
-                        onMouseDown={(mouseEvent) => {
-                            console.log('button click', mouseEvent);
+                        onMouseDown={() => {
                             wasClicked.current = true;
-                            console.log(wasClicked);
                         }}
                         {...getToggleButtonProps()}
                         aria-label="toggle menu"

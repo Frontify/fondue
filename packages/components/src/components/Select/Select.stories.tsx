@@ -23,7 +23,7 @@ export const Default: Story = {
     render: () => {
         const test = useRef<HTMLLIElement | null>(null);
         return (
-            <Select.Combobox defaultItem={{ value: 'bla2', label: 'test2' }}>
+            <Select>
                 <Select.Item ref={test}>Test1</Select.Item>
                 <Select.Item value="bla2" label="test2">
                     Test2
@@ -35,7 +35,7 @@ export const Default: Story = {
                         Test4
                     </Select.Item>
                 </Select.Group>
-            </Select.Combobox>
+            </Select>
         );
     },
 };
