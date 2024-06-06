@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import './styles.css';
+import './styles.scss';
 
 export { Button } from './components/Button/Button';
 export { Checkbox } from './components/Checkbox/Checkbox';
