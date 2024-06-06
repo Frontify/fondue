@@ -40,8 +40,6 @@ export const getSelectOptionValue = ({
  * @returns boolean
  */
 export const isReactLeaf = (child: ReactNode): child is ReactElement => {
-    console.log('child', child);
-
     return (
         isValidElement(child) &&
         !isValidElement(child?.props?.children) &&
