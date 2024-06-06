@@ -22,7 +22,7 @@ type ButtonAspect = 'default' | 'square';
 
 export type ButtonProps = {
     /**
-     * @default null
+     * @default "button"
      */
     type?: ButtonType;
     /**
@@ -30,19 +30,19 @@ export type ButtonProps = {
      */
     title?: string;
     /**
-     * @default 'default'
+     * @default "default"
      */
     style?: ButtonStyle;
     /**
-     * @default 'strong'
+     * @default "strong"
      */
     emphasis?: ButtonEmphasis;
     /**
-     * @default 'medium'
+     * @default "medium"
      */
     size?: ButtonSize;
     /**
-     * @default 'medium'
+     * @default "medium"
      */
     rounding?: ButtonRounding;
     /**
@@ -50,7 +50,7 @@ export type ButtonProps = {
      */
     disabled?: boolean;
     /**
-     * @default 'default'
+     * @default "default"
      */
     aspect?: ButtonAspect;
     /**
@@ -69,6 +69,7 @@ export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(
     (
         {
             children,
+            type = 'button',
             style,
             size = 'medium',
             'data-test-id': dataTestId = 'fondue-button',
@@ -81,6 +82,7 @@ export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(
         return (
             <button
                 ref={ref}
+                type={type}
                 data-test-id={dataTestId}
                 className={cn(
                     buttonStyles({ size, style, ...props }),
