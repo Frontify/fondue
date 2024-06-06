@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Meta, type StoryObj } from '@storybook/react';
+import { useRef } from 'react';
 
 import { Select } from './Select';
 
@@ -20,9 +21,10 @@ export default meta;
 export const Default: Story = {
     name: 'Text Label Only',
     render: (args) => {
+        const test = useRef<HTMLLIElement | null>(null);
         return (
             <Select.Combobox>
-                <Select.Item>Test1</Select.Item>
+                <Select.Item ref={test}>Test1</Select.Item>
                 <Select.Item value="bla2" label="test2">
                     Test2
                 </Select.Item>

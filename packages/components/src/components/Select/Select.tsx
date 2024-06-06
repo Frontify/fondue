@@ -58,6 +58,7 @@ SelectInput.displayName = 'Select';
 const ForwardedRefSelect = forwardRef<HTMLButtonElement, SelectComponentProps>(SelectInput);
 const ForwardedRefCombobox = forwardRef<HTMLDivElement, ComboboxProps>(Combobox);
 const ForwardedRefSelectItem = forwardRef<HTMLLIElement, SelectItemProps>(SelectItem);
+ForwardedRefSelectItem.displayName = 'Select.Item';
 const ForwardedRefSelectItemGroup = forwardRef<HTMLDivElement, SelectItemGroupProps>(SelectItemGroup);
 // @ts-expect-error We support both single component (without slots) and compound components (with slots)
 export const Select: typeof SelectInput & {

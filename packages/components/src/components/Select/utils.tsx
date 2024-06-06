@@ -7,10 +7,12 @@ import {
     isValidElement,
     type FC,
     type ForwardedRef,
+    type JSXElementConstructor,
     type ReactElement,
     type ReactNode,
 } from 'react';
 
+import { Select } from './Select';
 import { type SelectItemProps } from './SelectMenu';
 
 export const getSelectOptionValue = ({
@@ -39,12 +41,8 @@ export const getSelectOptionValue = ({
  * @param child ReactNode
  * @returns boolean
  */
-export const isReactLeaf = (child: ReactNode): child is ReactElement => {
-    return (
-        isValidElement(child) &&
-        !isValidElement(child?.props?.children) &&
-        !Children.toArray(child?.props?.children).some((child) => isValidElement(child))
-    );
+export const isReactLeaf = (child: ReactNode, Component: JSXElementConstructor<any>): child is ReactElement => {
+    return isValidElement(child) && child.type === Component;
 };
 
 export const recursiveMap = (
@@ -54,9 +52,9 @@ export const recursiveMap = (
 ): ReactNode[] => {
     const resultingChildren: ReactNode[] = [];
     Children.forEach(children, (child) => {
-        if (isReactLeaf(child)) {
+        if (isReactLeaf(child, Select.Item)) {
             resultingChildren.push(fn(child, nextIndex + resultingChildren.length));
-        } else if (child?.props.children) {
+        } else if (isValidElement<{ children: ReactNode }>(child) && child?.props.children) {
             child = cloneElement(child, {
                 children: recursiveMap(child.props.children, fn, nextIndex + resultingChildren.length),
                 key: `group-${nextIndex + resultingChildren.length}`,

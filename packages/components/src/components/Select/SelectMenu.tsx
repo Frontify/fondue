@@ -3,7 +3,7 @@
 import * as RadixPopover from '@radix-ui/react-popover';
 import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { type UseComboboxPropGetters, type UseSelectPropGetters } from 'downshift';
-import { useEffect, type ForwardedRef, type ReactNode } from 'react';
+import { isValidElement, useEffect, type ForwardedRef, type ReactElement, type ReactNode } from 'react';
 
 import { cn } from '#/utilities/styleUtilities';
 
@@ -25,7 +25,16 @@ export const SelectMenu = ({ isOpen, highlightedIndex, getMenuProps, getItemProp
             <RadixPopover.Content>
                 <ul data-open-state={isOpen} className={menuStyles} {...getMenuProps()}>
                     {recursiveMap(children, (child, index) => {
-                        if (typeof child === 'object' && child !== null && 'type' in child) {
+                        console.log('child', child, child);
+
+                        const isValid = <TProps,>(
+                            child: ReactNode,
+                        ): child is ReactElement<TProps> & { ref: ForwardedRef<HTMLElement> } => {
+                            // @ts-expect-error - We are explicitly checking for ref
+                            return isValidElement<TProps>(child) && child.ref !== undefined;
+                        };
+
+                        if (isValid<SelectItemProps>(child)) {
                             return (
                                 <RadixSlot
                                     className={cn(itemStyles, highlightedIndex === index && 'tw-bg-box-neutral-hover')}
@@ -63,7 +72,7 @@ export const SelectItemGroup = (
 };
 SelectItemGroup.displayName = 'Select.Group';
 
-export type SelectItemProps = { label?: string; internalItemType: string } & (
+export type SelectItemProps = { label?: string } & (
     | {
           value: string;
           children: React.ReactNode;
