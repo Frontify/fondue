@@ -42,11 +42,7 @@
         background-color: var(--box-disabled-color);
     }
 
-    &[data-status='success'] {
-        border-color: var(--text-color-positive);
-    }
-
-    &[data-status='error'] {
+    &[data-error='true'] {
         border-color: var(--text-color-negative);
     }
 }
@@ -108,6 +104,10 @@
     align-items: center;
     justify-content: center;
     margin-right: sizeToken(3);
+
+    [data-error='true'] & {
+        color: var(--text-color-negative);
+    }
 }
 
 .menu {

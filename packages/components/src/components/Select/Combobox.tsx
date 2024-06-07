@@ -20,24 +20,31 @@ export const Combobox = (
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
     const { items, setFilterText } = useSelectData();
-    const { getInputProps, getToggleButtonProps, getMenuProps, getItemProps, isOpen, highlightedIndex } = useCombobox({
-        items,
-        onSelectedItemChange: ({ selectedItem }) => {
-            onSelect && onSelect(selectedItem);
-        },
-        onInputValueChange: ({ inputValue }) => {
-            setFilterText(inputValue);
-        },
-        defaultSelectedItem: defaultItem,
-        itemToString: (item) => (item ? item.label : ''),
-    });
+    const { getInputProps, getToggleButtonProps, getMenuProps, getItemProps, isOpen, highlightedIndex, inputValue } =
+        useCombobox({
+            items,
+            onSelectedItemChange: ({ selectedItem }) => {
+                onSelect && onSelect(selectedItem);
+            },
+            onInputValueChange: ({ inputValue }) => {
+                setFilterText(inputValue);
+            },
+            defaultSelectedItem: defaultItem,
+            itemToString: (item) => (item ? item.label : ''),
+        });
 
     const wasClicked = useRef(false);
 
     return (
         <RadixPopover.Root open={true}>
             <RadixPopover.Trigger asChild>
-                <div ref={forwardedRef} className={styles.root}>
+                <div
+                    ref={forwardedRef}
+                    className={styles.root}
+                    data-error={
+                        inputValue && !items.some((item) => item.label.toLowerCase().includes(inputValue.toLowerCase()))
+                    }
+                >
                     <input
                         onMouseDown={(mouseEvent) => {
                             wasClicked.current = true;

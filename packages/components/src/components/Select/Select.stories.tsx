@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Meta, type StoryObj } from '@storybook/react';
-import { useRef } from 'react';
 
 import { Select } from './Select';
 
@@ -21,9 +20,12 @@ export default meta;
 export const Default: Story = {
     name: 'Text Label Only',
     render: () => {
-        const test = useRef<HTMLLIElement | null>(null);
         return (
-            <Select>
+            <Select.Combobox
+                onSelect={(item) => {
+                    console.log(item);
+                }}
+            >
                 <Select.Item>Test1</Select.Item>
                 <Select.Item>Test2</Select.Item>
 
@@ -38,7 +40,7 @@ export const Default: Story = {
                 </Select.Group>
                 <Select.Item>End1</Select.Item>
                 <Select.Item>End2</Select.Item>
-            </Select>
+            </Select.Combobox>
         );
     },
 };
