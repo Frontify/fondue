@@ -25,6 +25,7 @@ const meta: Meta<typeof SelectInput> = {
     },
     args: {
         ariaLabel: 'Select an item',
+        emphasis: 'weak',
     },
 };
 export default meta;
@@ -43,6 +44,10 @@ export const SimpleSelect: Story = {
 };
 
 export const Combobox: Story = {
+    args: {
+        placeholder: 'Select an item',
+        clearable: true,
+    },
     render: (args) => {
         return (
             <Select.Combobox {...args}>
@@ -50,6 +55,21 @@ export const Combobox: Story = {
                 <Select.Item>Test2</Select.Item>
                 <Select.Item>Test3</Select.Item>
             </Select.Combobox>
+        );
+    },
+};
+
+export const Disabled: Story = {
+    args: {
+        disabled: true,
+    },
+    render: (args) => {
+        return (
+            <Select {...args}>
+                <Select.Item>Test1</Select.Item>
+                <Select.Item>Test2</Select.Item>
+                <Select.Item>Test3</Select.Item>
+            </Select>
         );
     },
 };
@@ -71,11 +91,14 @@ export const WithPlaceholder: Story = {
 
 export const DefaultItem: Story = {
     args: {
-        defaultItem: 'Test2',
+        defaultItem: {
+            label: 'Test2',
+            value: 'Test2',
+        },
     },
     render: (args) => {
         return (
-            <Select defaultItem="Test2" {...args}>
+            <Select {...args}>
                 <Select.Item>First</Select.Item>
                 <Select.Item>Test1</Select.Item>
                 <Select.Item>Test2</Select.Item>

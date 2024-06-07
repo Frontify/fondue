@@ -24,6 +24,12 @@
     background-color: var(--base-color);
     border-radius: var(--radius);
     border: var(--line-width) solid var(--line-color-strong);
+    cursor: pointer;
+
+    &[data-emphasis='weak'] {
+        border-color: transparent;
+        background-color: transparent;
+    }
 
     &:hover {
         border-color: var(--line-color-x-strong);
@@ -33,17 +39,19 @@
         border-color: var(--line-color-xx-strong);
     }
 
-    &:has(input[readonly]) {
-        border-color: transparent;
-    }
-
-    &:has(input:disabled) {
+    &:has(input:disabled), &[data-disabled='true'] {
         border-color: var(--line-color-weak);
         background-color: var(--box-disabled-color);
+        color: var(--text-color-disabled);
+        cursor: default;
     }
 
     &[data-error='true'] {
         border-color: var(--text-color-negative);
+    }
+
+    &[data-empty='true'] {
+        color: var(--text-color-x-weak);
     }
 }
 
@@ -90,12 +98,20 @@
     }
 
     &:disabled {
-        cursor: text;
         color: var(--text-color-disabled);
     }
     &:disabled ~ .slot {
         color: var(--text-color-disabled);
     }
+}
+
+.clear {
+    display: flex;
+    height: 100%;
+    width: fit-content;
+    align-items: center;
+    justify-content: center;
+    padding: 0 sizeToken(2);
 }
 
 .caret {
@@ -104,6 +120,7 @@
     align-items: center;
     justify-content: center;
     margin-right: sizeToken(3);
+    color: var(--text-color-weak);
 
     [data-error='true'] & {
         color: var(--text-color-negative);

@@ -6,51 +6,66 @@ import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
 
 import { Combobox, type ComboboxProps } from './Combobox';
 import { SelectCaret } from './SelectCaret';
+import { SelectClear } from './SelectClear';
 import { SelectItem, SelectItemGroup, SelectMenu, type SelectItemGroupProps, type SelectItemProps } from './SelectMenu';
 import styles from './styles/select.module.scss';
 import { useSelectData, withSelectContext, type SelectItemType } from './useSelectData';
 
+export type SelectEmphasis = 'default' | 'weak';
+
 export type SelectComponentProps = {
     children?: ReactNode;
     onSelect?: (selectedItem: SelectItemType) => void;
-    defaultItem?: SelectItemType | string;
+    defaultItem?: SelectItemType;
     placeholder?: string;
+    disabled?: boolean;
+    clearable?: boolean;
+    emphasis?: SelectEmphasis;
     ariaLabel: string;
 };
 
 export const SelectInput = (
-    { children, onSelect, defaultItem, ariaLabel, placeholder = '' }: SelectComponentProps,
+    {
+        children,
+        onSelect,
+        defaultItem,
+        ariaLabel,
+        placeholder = '',
+        disabled,
+        clearable,
+        emphasis,
+    }: SelectComponentProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
     const { items } = useSelectData();
 
-    console.log(
-        defaultItem,
-        items.find((item) => item.value === defaultItem),
-    );
-
-    const { getToggleButtonProps, getMenuProps, getItemProps, selectedItem, isOpen, highlightedIndex } = useSelect({
-        items,
-        defaultSelectedItem: (typeof defaultItem === 'string'
-            ? items.find((item) => item.value === defaultItem) || null
-            : defaultItem) as SelectItemType | null,
-        onSelectedItemChange: ({ selectedItem }) => {
-            onSelect && onSelect(selectedItem);
-        },
-        itemToString: (item) => (item ? item.label : ''),
-    });
+    const { getToggleButtonProps, getMenuProps, getItemProps, reset, selectedItem, isOpen, highlightedIndex } =
+        useSelect({
+            items,
+            defaultSelectedItem: defaultItem,
+            onSelectedItemChange: ({ selectedItem }) => {
+                onSelect && onSelect(selectedItem);
+            },
+            itemToString: (item) => (item ? item.label : ''),
+        });
 
     return (
         <RadixPopover.Root open={true}>
             <RadixPopover.Anchor asChild>
                 <div
                     className={styles.root}
-                    {...getToggleButtonProps({
-                        'aria-label': ariaLabel,
-                        ...(forwardedRef ? { ref: forwardedRef } : {}),
-                    })}
+                    data-emphasis={emphasis}
+                    data-disabled={disabled}
+                    data-empty={!selectedItem}
+                    {...(disabled
+                        ? {}
+                        : getToggleButtonProps({
+                              'aria-label': ariaLabel,
+                              ...(forwardedRef ? { ref: forwardedRef } : {}),
+                          }))}
                 >
                     <span className={styles.input}>{selectedItem ? selectedItem.label : placeholder}</span>
+                    {clearable && <SelectClear reset={reset} />}
                     <SelectCaret isOpen={isOpen} />
                 </div>
             </RadixPopover.Anchor>
