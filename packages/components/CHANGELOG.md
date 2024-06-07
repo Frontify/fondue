@@ -1,5 +1,11 @@
 # @frontify/fondue-components
 
+## 1.3.5
+
+### Patch Changes
+
+-   [#1901](https://github.com/Frontify/fondue/pull/1901) [`7eb073a`](https://github.com/Frontify/fondue/commit/7eb073ad066132b7dd76ec64dd182b46b4ca7580) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: prevent Button from submitting by default
+
 ## 1.3.4
 
 ### Patch Changes
