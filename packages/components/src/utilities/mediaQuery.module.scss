@@ -1,0 +1,3 @@
+@mixin sm{
+    @media (min-width: 600px) { @content; }
+}

@@ -4,14 +4,7 @@ import { IconCross } from '@frontify/fondue-icons';
 import * as RadixDialog from '@radix-ui/react-dialog';
 import { forwardRef, type CSSProperties, type ForwardedRef, type ReactNode } from 'react';
 
-import {
-    dialogBodyStyles,
-    dialogContentStyles,
-    dialogFooterStyles,
-    dialogHeaderStyles,
-    dialogSideContentStyles,
-    dialogUnderlayStyles,
-} from './styles/dialogStyles';
+import styles from './styles/dialog.module.scss';
 
 export type DialogRootProps = {
     /**
@@ -109,13 +102,14 @@ export const DialogContent = (
         'data-test-id': dataTestId = 'fondue-dialog-content',
         showUnderlay = false,
         children,
+        rounded = true,
         ...props
     }: DialogContentProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
         <RadixDialog.Portal>
-            <RadixDialog.Overlay className={dialogUnderlayStyles({ showUnderlay })} />
+            <RadixDialog.Overlay data-visible={showUnderlay} className={styles.underlay} />
             <RadixDialog.Content
                 style={
                     {
@@ -125,7 +119,8 @@ export const DialogContent = (
                     } as CSSProperties
                 }
                 ref={ref}
-                className={dialogContentStyles({ ...props })}
+                className={styles.content}
+                data-dialog-rounded={rounded}
                 data-dialog-spacing={padding}
                 data-test-id={dataTestId}
                 {...props}
@@ -142,7 +137,7 @@ export const DialogHeader = (
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
-        <div data-test-id={dataTestId} ref={ref} className={dialogHeaderStyles} data-dialog-layout-component>
+        <div data-test-id={dataTestId} ref={ref} className={styles.header} data-dialog-layout-component>
             <div>{children}</div>
             <RadixDialog.Close role="button" data-test-id={`${dataTestId}-close`} className="tw-cursor-pointer">
                 <IconCross size={20} />
@@ -157,7 +152,7 @@ export const DialogFooter = (
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
-        <div data-test-id={dataTestId} ref={ref} className={dialogFooterStyles} data-dialog-layout-component>
+        <div data-test-id={dataTestId} ref={ref} className={styles.footer} data-dialog-layout-component>
             {children}
         </div>
     );
@@ -169,7 +164,7 @@ export const DialogBody = (
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
-        <div data-test-id={dataTestId} ref={ref} className={dialogBodyStyles} data-dialog-layout-component>
+        <div data-test-id={dataTestId} ref={ref} className={styles.body} data-dialog-layout-component>
             {children}
         </div>
     );
@@ -181,7 +176,7 @@ export const DialogSideContent = (
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
-        <div data-test-id={dataTestId} ref={ref} className={dialogSideContentStyles} data-dialog-layout-component>
+        <div data-test-id={dataTestId} ref={ref} className={styles.sideContent} data-dialog-layout-component>
             {children}
         </div>
     );
