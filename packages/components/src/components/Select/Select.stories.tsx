@@ -2,11 +2,21 @@
 
 import { type Meta, type StoryObj } from '@storybook/react';
 
-import { Select } from './Select';
+import { Combobox } from './Combobox';
+import { Select, SelectInput } from './Select';
+import { SelectItem, SelectItemGroup } from './SelectMenu';
 
 type Story = StoryObj<typeof meta>;
-const meta: Meta<typeof Select> = {
-    component: Select,
+const meta: Meta<typeof SelectInput> = {
+    component: SelectInput,
+    subcomponents: {
+        // @ts-expect-error Storybook types are incorrect
+        'Select.Combobox': Combobox,
+        // @ts-expect-error Storybook types are incorrect
+        'Select.Group': SelectItemGroup,
+        // @ts-expect-error Storybook types are incorrect
+        'Select.Item': SelectItem,
+    },
     tags: ['autodocs'],
     parameters: {
         status: {
@@ -28,7 +38,6 @@ export const Default: Story = {
             >
                 <Select.Item>Test1</Select.Item>
                 <Select.Item>Test2</Select.Item>
-
                 <Select.Group groupId="testgroup">
                     <Select.Item>Group 1.1</Select.Item>
                     <Select.Item>Group 1.2</Select.Item>
