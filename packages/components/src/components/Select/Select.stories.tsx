@@ -2,7 +2,6 @@
 
 import { type Meta, type StoryObj } from '@storybook/react';
 
-import { Combobox } from './Combobox';
 import { Select, SelectInput } from './Select';
 import { SelectItem, SelectItemGroup } from './SelectMenu';
 
@@ -11,7 +10,7 @@ const meta: Meta<typeof SelectInput> = {
     component: SelectInput,
     subcomponents: {
         // @ts-expect-error Storybook types are incorrect
-        'Select.Combobox': Combobox,
+        // 'Select.Combobox': Combobox,
         // @ts-expect-error Storybook types are incorrect
         'Select.Group': SelectItemGroup,
         // @ts-expect-error Storybook types are incorrect
@@ -23,19 +22,17 @@ const meta: Meta<typeof SelectInput> = {
             type: 'in_progress',
         },
     },
-    args: {},
+    args: {
+        ariaLabel: 'Select an item',
+    },
 };
 export default meta;
 
 export const Default: Story = {
-    name: 'Text Label Only',
-    render: () => {
+    name: 'Simple Select',
+    render: (args) => {
         return (
-            <Select.Combobox
-                onSelect={(item) => {
-                    console.log(item);
-                }}
-            >
+            <Select {...args}>
                 <Select.Item>Test1</Select.Item>
                 <Select.Item>Test2</Select.Item>
                 <Select.Group groupId="testgroup">
@@ -49,7 +46,7 @@ export const Default: Story = {
                 </Select.Group>
                 <Select.Item>End1</Select.Item>
                 <Select.Item>End2</Select.Item>
-            </Select.Combobox>
+            </Select>
         );
     },
 };

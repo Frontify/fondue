@@ -14,11 +14,12 @@ export type SelectComponentProps = {
     children?: ReactNode;
     onSelect?: (selectedItem: SelectItemType) => void;
     defaultItem?: SelectItemType;
+    ariaLabel: string;
 };
 
 export const SelectInput = (
-    { children, onSelect, defaultItem }: SelectComponentProps,
-    forwardedRef: ForwardedRef<HTMLButtonElement>,
+    { children, onSelect, defaultItem, ariaLabel }: SelectComponentProps,
+    forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
     const { items } = useSelectData();
 
@@ -34,14 +35,16 @@ export const SelectInput = (
     return (
         <RadixPopover.Root open={true}>
             <RadixPopover.Trigger asChild>
-                <button
+                <div
                     className={styles.root}
-                    {...getToggleButtonProps(forwardedRef ? { ref: forwardedRef } : {})}
-                    tabIndex={0}
+                    {...getToggleButtonProps({
+                        'aria-label': ariaLabel,
+                        ...(forwardedRef ? { ref: forwardedRef } : {}),
+                    })}
                 >
                     <span className={styles.input}>{selectedItem ? selectedItem.label : 'Please select'}</span>
                     <SelectCaret isOpen={isOpen} />
-                </button>
+                </div>
             </RadixPopover.Trigger>
 
             <SelectMenu
@@ -57,7 +60,7 @@ export const SelectInput = (
 };
 SelectInput.displayName = 'Select';
 
-const ForwardedRefSelect = forwardRef<HTMLButtonElement, SelectComponentProps>(SelectInput);
+const ForwardedRefSelect = forwardRef<HTMLDivElement, SelectComponentProps>(SelectInput);
 const ForwardedRefCombobox = forwardRef<HTMLDivElement, ComboboxProps>(Combobox);
 const ForwardedRefSelectItem = forwardRef<HTMLLIElement, SelectItemProps>(SelectItem);
 ForwardedRefSelectItem.displayName = 'Select.Item';
