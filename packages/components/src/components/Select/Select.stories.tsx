@@ -24,17 +24,20 @@ export const Default: Story = {
         const test = useRef<HTMLLIElement | null>(null);
         return (
             <Select>
-                <Select.Item ref={test}>Test1</Select.Item>
-                <Select.Item value="bla2" label="test2">
-                    Test2
-                </Select.Item>
+                <Select.Item>Test1</Select.Item>
+                <Select.Item>Test2</Select.Item>
 
                 <Select.Group groupId="testgroup">
-                    <Select.Item>Tes3</Select.Item>
-                    <Select.Item value="bla4" label="test4">
-                        Test4
-                    </Select.Item>
+                    <Select.Item>Group 1.1</Select.Item>
+                    <Select.Item>Group 1.2</Select.Item>
+                    <Select.Item>Group 1.3</Select.Item>
                 </Select.Group>
+                <Select.Group groupId="testgroup2">
+                    <Select.Item>Group 2.1</Select.Item>
+                    <Select.Item>Group 2.2</Select.Item>
+                </Select.Group>
+                <Select.Item>End1</Select.Item>
+                <Select.Item>End2</Select.Item>
             </Select>
         );
     },

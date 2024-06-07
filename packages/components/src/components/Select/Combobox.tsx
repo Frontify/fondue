@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconCaretDown, IconCaretUp } from '@frontify/fondue-icons';
 import * as RadixPopover from '@radix-ui/react-popover';
 import { useCombobox } from 'downshift';
 import { useRef, type ForwardedRef, type ReactNode } from 'react';
 
+import { SelectCaret } from './SelectCaret';
 import { SelectMenu } from './SelectMenu';
-import { inputStyles, rootStyles } from './styles/selectStyles';
+import styles from './styles/select.module.scss';
 import { useSelectData, type SelectItemType } from './useSelectData';
 
 export type ComboboxProps = {
@@ -37,7 +37,7 @@ export const Combobox = (
     return (
         <RadixPopover.Root open={true}>
             <RadixPopover.Trigger asChild>
-                <div ref={forwardedRef} className={rootStyles}>
+                <div ref={forwardedRef} className={styles.root}>
                     <input
                         onMouseDown={(mouseEvent) => {
                             wasClicked.current = true;
@@ -56,7 +56,7 @@ export const Combobox = (
                                 getInputProps().onBlur?.(blurEvent);
                             }
                         }}
-                        className={inputStyles}
+                        className={styles.input}
                     />
                     <button
                         type="button"
@@ -66,17 +66,7 @@ export const Combobox = (
                         {...getToggleButtonProps()}
                         aria-label="toggle menu"
                     >
-                        {isOpen ? (
-                            <IconCaretUp
-                                size={16}
-                                className="tw-flex tw-text-text-neutral tw-h-full tw-items-center tw-mr-3"
-                            />
-                        ) : (
-                            <IconCaretDown
-                                size={16}
-                                className="tw-flex tw-text-text-neutral tw-h-full tw-items-center tw-mr-3"
-                            />
-                        )}
+                        <SelectCaret isOpen={isOpen} />
                     </button>
                 </div>
             </RadixPopover.Trigger>

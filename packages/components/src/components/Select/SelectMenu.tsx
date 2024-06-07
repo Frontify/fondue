@@ -5,9 +5,7 @@ import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { type UseComboboxPropGetters, type UseSelectPropGetters } from 'downshift';
 import { isValidElement, useEffect, type ForwardedRef, type ReactElement, type ReactNode } from 'react';
 
-import { cn } from '#/utilities/styleUtilities';
-
-import { itemStyles, menuStyles } from './styles/selectStyles';
+import styles from './styles/select.module.scss';
 import { useSelectData } from './useSelectData';
 import { getSelectOptionValue, recursiveMap } from './utils';
 
@@ -23,7 +21,7 @@ export const SelectMenu = ({ isOpen, highlightedIndex, getMenuProps, getItemProp
     return (
         <RadixPopover.Portal>
             <RadixPopover.Content>
-                <ul data-open-state={isOpen} className={menuStyles} {...getMenuProps()}>
+                <ul data-open-state={isOpen} className={styles.menu} {...getMenuProps()}>
                     {recursiveMap(children, (child, index) => {
                         const isValid = <TProps,>(
                             child: ReactNode,
@@ -35,9 +33,10 @@ export const SelectMenu = ({ isOpen, highlightedIndex, getMenuProps, getItemProp
                         if (isValid<SelectItemProps>(child)) {
                             return (
                                 <RadixSlot
-                                    className={cn(itemStyles, highlightedIndex === index && 'tw-bg-box-neutral-hover')}
+                                    className={styles.item}
+                                    data-highlighted={highlightedIndex === index}
+                                    data-index={`${index}`}
                                     key={`${index}`}
-                                    data-key={index}
                                     {...getItemProps({
                                         item: getSelectOptionValue(child.props),
                                         index,
@@ -63,7 +62,7 @@ export const SelectItemGroup = (
     forwardedRef?: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
-        <div ref={forwardedRef} key={groupId}>
+        <div className={styles.group} ref={forwardedRef} key={groupId}>
             {children}
         </div>
     );
