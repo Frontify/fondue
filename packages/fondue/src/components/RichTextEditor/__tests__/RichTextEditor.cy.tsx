@@ -405,6 +405,28 @@ describe('RichTextEditor Component', () => {
         );
     };
 
+    const RichTextEditorWithCustomColumnClasses = ({ value }: { value?: string }) => {
+        const [initialValue, setInitialValue] = useState(value);
+
+        const pluginsWithColumns = new PluginComposer();
+        pluginsWithColumns
+            .setPlugin([new SoftBreakPlugin()])
+            .setPlugin([new TextStylePlugin({ textStyles: TextStylePlugins })])
+            .setPlugin(
+                [new BoldPlugin(), new BreakAfterPlugin({ customClass: 'tw-columns-1 @sm:tw-columns-2' })],
+                [new AlignRightPlugin(), new UnorderedListPlugin(), new OrderedListPlugin()],
+            );
+
+        return (
+            <RichTextEditor
+                border={false}
+                plugins={pluginsWithColumns}
+                value={initialValue}
+                onTextChange={(value) => setInitialValue(value)}
+            />
+        );
+    };
+
     describe('column break plugin', () => {
         it('it should add column break on paragraph', () => {
             cy.mount(<RichTextEditorWithTwoColumns />);
@@ -485,6 +507,13 @@ describe('RichTextEditor Component', () => {
             cy.get('[contenteditable=true]').should('not.include.html', ACTIVE_COLUMN_BREAK_CLASS_NAMES);
             cy.get(TOOLBAR_GROUP_1).children().eq(-1).click();
             cy.get('[contenteditable=true]').should('include.html', ACTIVE_COLUMN_BREAK_CLASS_NAMES);
+        });
+
+        it('it should add custom class if provided', () => {
+            cy.mount(<RichTextEditorWithCustomColumnClasses />);
+            insertTextAndOpenToolbar();
+            cy.get(TOOLBAR_FLOATING).should('be.visible');
+            cy.get('[contenteditable=true]').should('have.class', 'tw-columns-1 @sm:tw-columns-2');
         });
 
         it('it should move the text after the column break to the second column', () => {
