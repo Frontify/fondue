@@ -48,7 +48,7 @@ export const Combobox = (
                     ref={forwardedRef}
                     className={styles.root}
                     data-error={
-                        inputValue && !items.some((item) => item.label.toLowerCase().includes(inputValue.toLowerCase()))
+                        inputValue && !items.find((item) => item.label.toLowerCase().includes(inputValue.toLowerCase()))
                     }
                 >
                     <input

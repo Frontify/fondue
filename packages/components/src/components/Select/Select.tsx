@@ -24,10 +24,15 @@ export const SelectInput = (
 ) => {
     const { items } = useSelectData();
 
+    console.log(
+        defaultItem,
+        items.find((item) => item.value === defaultItem),
+    );
+
     const { getToggleButtonProps, getMenuProps, getItemProps, selectedItem, isOpen, highlightedIndex } = useSelect({
         items,
         defaultSelectedItem: (typeof defaultItem === 'string'
-            ? items.some((item) => item.value === defaultItem) || null
+            ? items.find((item) => item.value === defaultItem) || null
             : defaultItem) as SelectItemType | null,
         onSelectedItemChange: ({ selectedItem }) => {
             onSelect && onSelect(selectedItem);

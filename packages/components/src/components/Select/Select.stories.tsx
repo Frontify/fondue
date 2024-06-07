@@ -54,10 +54,28 @@ export const Combobox: Story = {
     },
 };
 
-export const DefaultItem: Story = {
+export const WithPlaceholder: Story = {
+    args: {
+        placeholder: 'Select an item',
+    },
     render: (args) => {
         return (
-            <Select defaultItem="Test1" {...args}>
+            <Select {...args}>
+                <Select.Item>Test1</Select.Item>
+                <Select.Item>Test2</Select.Item>
+                <Select.Item>Test3</Select.Item>
+            </Select>
+        );
+    },
+};
+
+export const DefaultItem: Story = {
+    args: {
+        defaultItem: 'Test2',
+    },
+    render: (args) => {
+        return (
+            <Select defaultItem="Test2" {...args}>
                 <Select.Item>First</Select.Item>
                 <Select.Item>Test1</Select.Item>
                 <Select.Item>Test2</Select.Item>
