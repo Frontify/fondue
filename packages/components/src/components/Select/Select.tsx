@@ -34,7 +34,7 @@ export const SelectInput = (
 
     return (
         <RadixPopover.Root open={true}>
-            <RadixPopover.Trigger asChild>
+            <RadixPopover.Anchor asChild>
                 <div
                     className={styles.root}
                     {...getToggleButtonProps({
@@ -45,7 +45,7 @@ export const SelectInput = (
                     <span className={styles.input}>{selectedItem ? selectedItem.label : 'Please select'}</span>
                     <SelectCaret isOpen={isOpen} />
                 </div>
-            </RadixPopover.Trigger>
+            </RadixPopover.Anchor>
 
             <SelectMenu
                 isOpen={isOpen}

@@ -13,10 +13,11 @@ export type ComboboxProps = {
     children?: ReactNode;
     onSelect?: (selectedItem: SelectItemType) => void;
     defaultItem?: SelectItemType;
+    ariaLabel: string;
 };
 
 export const Combobox = (
-    { children, onSelect, defaultItem }: ComboboxProps,
+    { children, onSelect, defaultItem, ariaLabel }: ComboboxProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
     const { items, setFilterText } = useSelectData();
@@ -37,7 +38,7 @@ export const Combobox = (
 
     return (
         <RadixPopover.Root open={true}>
-            <RadixPopover.Trigger asChild>
+            <RadixPopover.Anchor asChild>
                 <div
                     ref={forwardedRef}
                     className={styles.root}
@@ -50,7 +51,9 @@ export const Combobox = (
                             wasClicked.current = true;
                             mouseEvent.currentTarget.dataset.showFocusRing = 'false';
                         }}
-                        {...getInputProps()}
+                        {...getInputProps({
+                            'aria-label': ariaLabel,
+                        })}
                         onFocus={(focusEvent) => {
                             if (!wasClicked.current) {
                                 focusEvent.target.dataset.showFocusRing = 'true';
@@ -76,7 +79,7 @@ export const Combobox = (
                         <SelectCaret isOpen={isOpen} />
                     </button>
                 </div>
-            </RadixPopover.Trigger>
+            </RadixPopover.Anchor>
 
             <SelectMenu
                 isOpen={isOpen}

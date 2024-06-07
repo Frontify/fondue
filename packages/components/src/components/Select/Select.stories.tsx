@@ -50,3 +50,25 @@ export const Default: Story = {
         );
     },
 };
+
+export const Combobox: Story = {
+    render: (args) => {
+        return (
+            <Select.Combobox {...args}>
+                <Select.Item>Test1</Select.Item>
+                <Select.Item>Test2</Select.Item>
+                <Select.Group groupId="testgroup">
+                    <Select.Item>Group 1.1</Select.Item>
+                    <Select.Item>Group 1.2</Select.Item>
+                    <Select.Item>Group 1.3</Select.Item>
+                </Select.Group>
+                <Select.Group groupId="testgroup2">
+                    <Select.Item>Group 2.1</Select.Item>
+                    <Select.Item>Group 2.2</Select.Item>
+                </Select.Group>
+                <Select.Item>End1</Select.Item>
+                <Select.Item>End2</Select.Item>
+            </Select.Combobox>
+        );
+    },
+};
