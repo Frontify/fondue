@@ -22,32 +22,33 @@ export const SelectMenu = ({ isOpen, highlightedIndex, getMenuProps, getItemProp
         <RadixPopover.Portal>
             <RadixPopover.Content>
                 <ul data-open-state={isOpen} className={styles.menu} {...getMenuProps()}>
-                    {recursiveMap(children, (child, index) => {
-                        const isValid = <TProps,>(
-                            child: ReactNode,
-                        ): child is ReactElement<TProps> & { ref: ForwardedRef<HTMLElement> } => {
-                            // @ts-expect-error - We are explicitly checking for ref
-                            return isValidElement<TProps>(child) && child.ref !== undefined;
-                        };
+                    {
+                        recursiveMap(children, (child, index) => {
+                            const isValid = <TProps,>(
+                                child: ReactNode,
+                            ): child is ReactElement<TProps> & { ref: ForwardedRef<HTMLElement> } => {
+                                // @ts-expect-error - We are explicitly checking for ref
+                                return isValidElement<TProps>(child) && child.ref !== undefined;
+                            };
 
-                        if (isValid<SelectItemProps>(child)) {
-                            return (
-                                <RadixSlot
-                                    className={styles.item}
-                                    data-highlighted={highlightedIndex === index}
-                                    data-index={`${index}`}
-                                    key={`${index}`}
-                                    {...getItemProps({
-                                        item: getSelectOptionValue(child.props),
-                                        index,
-                                        ...(child.ref ? { ref: child.ref } : {}),
-                                    })}
-                                >
-                                    {child}
-                                </RadixSlot>
-                            );
-                        }
-                    })}
+                            if (isValid<SelectItemProps>(child)) {
+                                return (
+                                    <RadixSlot
+                                        className={styles.item}
+                                        data-highlighted={highlightedIndex === index}
+                                        key={`${index}`}
+                                        {...getItemProps({
+                                            item: getSelectOptionValue(child.props),
+                                            index,
+                                            ...(child.ref ? { ref: child.ref } : {}),
+                                        })}
+                                    >
+                                        {child}
+                                    </RadixSlot>
+                                );
+                            }
+                        }).parsedChildren
+                    }
                 </ul>
             </RadixPopover.Content>
         </RadixPopover.Portal>

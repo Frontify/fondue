@@ -46,20 +46,30 @@ export const recursiveMap = (
     children: ReactNode,
     fn: (child: ReactNode, nextIndex: number) => ReactNode,
     nextIndex: number = 0,
-): ReactNode[] => {
+): {
+    parsedChildren: ReactNode[];
+    subElementCount: number;
+} => {
     const resultingChildren: ReactNode[] = [];
+    let itemCounter = 0;
     Children.forEach(children, (child) => {
         if (isReactLeaf(child, Select.Item)) {
-            resultingChildren.push(fn(child, nextIndex + resultingChildren.length));
+            resultingChildren.push(fn(child, nextIndex + itemCounter));
+            itemCounter++;
         } else if (isValidElement<{ children: ReactNode }>(child) && child?.props.children) {
+            const { parsedChildren, subElementCount } = recursiveMap(child.props.children, fn, nextIndex + itemCounter);
             child = cloneElement(child, {
-                children: recursiveMap(child.props.children, fn, nextIndex + resultingChildren.length),
-                key: `group-${nextIndex + resultingChildren.length}`,
+                children: parsedChildren,
+                key: `group-${nextIndex + itemCounter}`,
             });
             resultingChildren.push(child);
+            itemCounter += subElementCount;
         } else {
             resultingChildren.push(child);
         }
     });
-    return resultingChildren;
+    return {
+        parsedChildren: resultingChildren,
+        subElementCount: itemCounter,
+    };
 };
