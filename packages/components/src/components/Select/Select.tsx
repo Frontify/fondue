@@ -13,19 +13,22 @@ import { useSelectData, withSelectContext, type SelectItemType } from './useSele
 export type SelectComponentProps = {
     children?: ReactNode;
     onSelect?: (selectedItem: SelectItemType) => void;
-    defaultItem?: SelectItemType;
+    defaultItem?: SelectItemType | string;
+    placeholder?: string;
     ariaLabel: string;
 };
 
 export const SelectInput = (
-    { children, onSelect, defaultItem, ariaLabel }: SelectComponentProps,
+    { children, onSelect, defaultItem, ariaLabel, placeholder = '' }: SelectComponentProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
     const { items } = useSelectData();
 
     const { getToggleButtonProps, getMenuProps, getItemProps, selectedItem, isOpen, highlightedIndex } = useSelect({
         items,
-        defaultSelectedItem: defaultItem,
+        defaultSelectedItem: (typeof defaultItem === 'string'
+            ? items.some((item) => item.value === defaultItem) || null
+            : defaultItem) as SelectItemType | null,
         onSelectedItemChange: ({ selectedItem }) => {
             onSelect && onSelect(selectedItem);
         },
@@ -42,7 +45,7 @@ export const SelectInput = (
                         ...(forwardedRef ? { ref: forwardedRef } : {}),
                     })}
                 >
-                    <span className={styles.input}>{selectedItem ? selectedItem.label : 'Please select'}</span>
+                    <span className={styles.input}>{selectedItem ? selectedItem.label : placeholder}</span>
                     <SelectCaret isOpen={isOpen} />
                 </div>
             </RadixPopover.Anchor>

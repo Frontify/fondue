@@ -28,24 +28,14 @@ const meta: Meta<typeof SelectInput> = {
 };
 export default meta;
 
-export const Default: Story = {
-    name: 'Simple Select',
+export const SimpleSelect: Story = {
+    name: 'Select',
     render: (args) => {
         return (
             <Select {...args}>
                 <Select.Item>Test1</Select.Item>
                 <Select.Item>Test2</Select.Item>
-                <Select.Group groupId="testgroup">
-                    <Select.Item>Group 1.1</Select.Item>
-                    <Select.Item>Group 1.2</Select.Item>
-                    <Select.Item>Group 1.3</Select.Item>
-                </Select.Group>
-                <Select.Group groupId="testgroup2">
-                    <Select.Item>Group 2.1</Select.Item>
-                    <Select.Item>Group 2.2</Select.Item>
-                </Select.Group>
-                <Select.Item>End1</Select.Item>
-                <Select.Item>End2</Select.Item>
+                <Select.Item>Test3</Select.Item>
             </Select>
         );
     },
@@ -57,18 +47,42 @@ export const Combobox: Story = {
             <Select.Combobox {...args}>
                 <Select.Item>Test1</Select.Item>
                 <Select.Item>Test2</Select.Item>
-                <Select.Group groupId="testgroup">
-                    <Select.Item>Group 1.1</Select.Item>
-                    <Select.Item>Group 1.2</Select.Item>
-                    <Select.Item>Group 1.3</Select.Item>
-                </Select.Group>
-                <Select.Group groupId="testgroup2">
-                    <Select.Item>Group 2.1</Select.Item>
-                    <Select.Item>Group 2.2</Select.Item>
-                </Select.Group>
-                <Select.Item>End1</Select.Item>
-                <Select.Item>End2</Select.Item>
+                <Select.Item>Test3</Select.Item>
             </Select.Combobox>
+        );
+    },
+};
+
+export const WithDefaultItemValue: Story = {
+    render: (args) => {
+        return (
+            <Select defaultItem="Test1" {...args}>
+                <Select.Item>First</Select.Item>
+                <Select.Item>Test1</Select.Item>
+                <Select.Item>Test2</Select.Item>
+                <Select.Item>Test3</Select.Item>
+            </Select>
+        );
+    },
+};
+
+export const WithDefaultItem: Story = {
+    render: (args) => {
+        return (
+            <Select
+                defaultItem={{
+                    label: 'aa',
+                    value: 'aa',
+                }}
+                {...args}
+            >
+                <Select.Item>First</Select.Item>
+                <Select.Item label="aa" value="aa">
+                    Test1
+                </Select.Item>
+                <Select.Item>Test2</Select.Item>
+                <Select.Item>Test3</Select.Item>
+            </Select>
         );
     },
 };

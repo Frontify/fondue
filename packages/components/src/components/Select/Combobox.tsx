@@ -12,12 +12,13 @@ import { useSelectData, type SelectItemType } from './useSelectData';
 export type ComboboxProps = {
     children?: ReactNode;
     onSelect?: (selectedItem: SelectItemType) => void;
-    defaultItem?: SelectItemType;
+    defaultItem?: SelectItemType | string;
     ariaLabel: string;
+    placeholder?: string;
 };
 
 export const Combobox = (
-    { children, onSelect, defaultItem, ariaLabel }: ComboboxProps,
+    { children, onSelect, defaultItem, ariaLabel, placeholder = '' }: ComboboxProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
     const { items, setFilterText } = useSelectData();
@@ -30,11 +31,15 @@ export const Combobox = (
             onInputValueChange: ({ inputValue }) => {
                 setFilterText(inputValue);
             },
-            defaultSelectedItem: defaultItem,
+            defaultSelectedItem: (typeof defaultItem === 'string'
+                ? items.some((item) => item.value === defaultItem) || null
+                : defaultItem) as SelectItemType | null,
+            defaultHighlightedIndex: 0,
             itemToString: (item) => (item ? item.label : ''),
         });
 
     const wasClicked = useRef(false);
+    console.log(highlightedIndex);
 
     return (
         <RadixPopover.Root open={true}>
@@ -51,6 +56,7 @@ export const Combobox = (
                             wasClicked.current = true;
                             mouseEvent.currentTarget.dataset.showFocusRing = 'false';
                         }}
+                        placeholder={placeholder}
                         {...getInputProps({
                             'aria-label': ariaLabel,
                         })}
