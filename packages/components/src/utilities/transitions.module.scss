@@ -1,0 +1,28 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@mixin transition($property: all, $duration: 150ms, $timing-function: cubic-bezier(0.4, 0, 0.2, 1), $delay: 0s) {
+    transition-property: $property;
+    transition-duration: $duration;
+    transition-timing-function: $timing-function;
+    transition-delay: $delay;
+}
+
+@mixin transition-none {
+    @include transition(none);
+}
+
+@mixin transition-all {
+    @include transition(all);
+}
+
+@mixin transition-colors {
+    @include transition((color, background-color, border-color, text-decoration-color, fill, stroke));
+}
+
+@mixin transition-opacity {
+    @include transition(opacity);
+}
+
+@mixin transition-transform {
+    @include transition(transform);
+}

@@ -1,0 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@function sizeToken($value) {
+    @return $value * 0.25rem;
+}
