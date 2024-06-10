@@ -33,7 +33,7 @@ const meta: Meta<typeof SelectInput> = {
         },
     },
     args: {
-        ariaLabel: 'Select an item',
+        'aria-label': 'Select an item',
     },
 };
 export default meta;
