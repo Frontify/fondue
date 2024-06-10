@@ -7,14 +7,12 @@ import * as sinon from 'sinon';
 import { Select } from '../SelectWrapper';
 
 const SELECT_TEST_ID = 'test-dropdown';
-const COMBOBOX_TEST_ID = 'test-combobox';
 const GROUP_TEST_ID = 'test-group';
 const ITEM_TEST_ID1 = 'test-item1';
 const ITEM_TEST_ID2 = 'test-item2';
 const SLOT_LEFT_TEST_ID = 'test-slot-left';
 const SLOT_RIGHT_TEST_ID = 'test-slot-right';
 const SLOT_CLEAR_TEST_ID = 'test-slot-clear';
-const DROPDOWN_TEXT = 'sample dropdown';
 const PLACEHOLDER_TEXT = 'sample placeholder1';
 const ITEM_LABEL1 = 'test1';
 const ITEM_TEXT1 = 'sample text1';
