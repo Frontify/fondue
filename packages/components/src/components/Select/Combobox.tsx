@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-/* (c) Copyright Frontify Ltd., all rights reserved. */
 import * as RadixPopover from '@radix-ui/react-popover';
 import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { useCombobox } from 'downshift';
@@ -103,6 +102,7 @@ export const Combobox = (
                                 reset();
                             }}
                             className={styles.clear}
+                            role="button"
                         >
                             {clearButton}
                         </RadixSlot>
