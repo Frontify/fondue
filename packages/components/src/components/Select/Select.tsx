@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import * as RadixPopover from '@radix-ui/react-popover';
+import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { useSelect } from 'downshift';
 import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
 
@@ -8,7 +9,7 @@ import { Combobox, type ComboboxProps } from './Combobox';
 import { SelectCaret } from './SelectCaret';
 import { SelectClear } from './SelectClear';
 import { SelectItem, SelectItemGroup, SelectMenu, type SelectItemGroupProps, type SelectItemProps } from './SelectMenu';
-import { SelectSlot } from './SelectSlot';
+import { SelectSlot, type SelectSlotProps } from './SelectSlot';
 import styles from './styles/select.module.scss';
 import { useSelectData, type SelectItemType } from './useSelectData';
 
@@ -38,17 +39,29 @@ export const SelectInput = (
     }: SelectComponentProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
-    const { inputSlots, menuSlots, items, defaultItem } = useSelectData(children, defaultValue);
+    const { inputSlots, menuSlots, items, defaultItem, label } = useSelectData(children, defaultValue);
 
-    const { getToggleButtonProps, getMenuProps, getItemProps, reset, selectedItem, isOpen, highlightedIndex } =
-        useSelect({
-            items,
-            defaultSelectedItem: defaultItem,
-            onSelectedItemChange: ({ selectedItem }) => {
-                onSelect && onSelect(selectedItem);
-            },
-            itemToString: (item) => (item ? item.label : ''),
-        });
+    console.log('input', inputSlots);
+
+    const {
+        getToggleButtonProps,
+        getMenuProps,
+        getItemProps,
+        getLabelProps,
+        reset,
+        selectedItem,
+        isOpen,
+        highlightedIndex,
+    } = useSelect({
+        items,
+        defaultSelectedItem: defaultItem,
+        onSelectedItemChange: ({ selectedItem }) => {
+            onSelect && onSelect(selectedItem);
+        },
+        itemToString: (item) => (item ? item.label : ''),
+    });
+
+    console.log(label);
 
     return (
         <RadixPopover.Root open={true}>
@@ -65,6 +78,9 @@ export const SelectInput = (
                               ...(forwardedRef ? { ref: forwardedRef } : {}),
                           }))}
                 >
+                    <RadixSlot data-test="bla" {...getLabelProps()}>
+                        {label}
+                    </RadixSlot>
                     <span className={styles.input}>{selectedItem ? selectedItem.label : placeholder}</span>
                     {inputSlots}
                     {clearable && <SelectClear reset={reset} />}
@@ -88,6 +104,7 @@ SelectInput.displayName = 'Select';
 const ForwardedRefSelect = forwardRef<HTMLDivElement, SelectComponentProps>(SelectInput);
 const ForwardedRefCombobox = forwardRef<HTMLDivElement, ComboboxProps>(Combobox);
 const ForwardedRefSelectItem = forwardRef<HTMLLIElement, SelectItemProps>(SelectItem);
+const ForwardedRefSelectSlot = forwardRef<HTMLDivElement, SelectSlotProps>(SelectSlot);
 ForwardedRefSelectItem.displayName = 'Select.Item';
 const ForwardedRefSelectItemGroup = forwardRef<HTMLDivElement, SelectItemGroupProps>(SelectItemGroup);
 
@@ -96,9 +113,9 @@ export const Select: typeof SelectInput & {
     Combobox: typeof ForwardedRefCombobox;
     Item: typeof ForwardedRefSelectItem;
     Group: typeof ForwardedRefSelectItemGroup;
-    Slot: typeof SelectSlot;
+    Slot: typeof ForwardedRefSelectSlot;
 } = ForwardedRefSelect;
 Select.Combobox = ForwardedRefCombobox;
 Select.Item = ForwardedRefSelectItem;
 Select.Group = ForwardedRefSelectItemGroup;
-Select.Slot = SelectSlot;
+Select.Slot = ForwardedRefSelectSlot;

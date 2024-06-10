@@ -6,7 +6,6 @@ import { useRef, type ForwardedRef, type ReactNode } from 'react';
 
 import { type SelectEmphasis } from './Select';
 import { SelectCaret } from './SelectCaret';
-import { SelectClear } from './SelectClear';
 import { SelectMenu } from './SelectMenu';
 import styles from './styles/select.module.scss';
 import { useSelectData, type SelectItemType } from './useSelectData';
@@ -87,7 +86,6 @@ export const Combobox = (
                         className={styles.input}
                         disabled={disabled}
                     />
-                    {clearable && <SelectClear reset={reset} />}
                     {inputSlots}
                     <button
                         type="button"

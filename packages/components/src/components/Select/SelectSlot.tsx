@@ -1,10 +1,21 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type ForwardedRef, type ReactElement } from 'react';
+
+import styles from './styles/select.module.scss';
+
 export type SelectSlotProps = {
-    children?: React.ReactNode;
-    name: 'menu' | 'left' | 'right';
+    children?: ReactElement;
+    name: 'menu' | 'left' | 'right' | 'label';
 };
 
-export const SelectSlot = ({ children, name }: SelectSlotProps) => {
-    return <div data-slot-name={name}>{children}</div>;
+export const SelectSlot = (
+    { children, name, ...props }: SelectSlotProps,
+    forwardedRef: ForwardedRef<HTMLDivElement>,
+) => {
+    return (
+        <div ref={forwardedRef} className={styles.slot} data-name={name} {...props}>
+            {children}
+        </div>
+    );
 };

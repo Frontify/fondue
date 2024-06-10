@@ -34,11 +34,12 @@ export const SimpleSelect: Story = {
     render: (args) => {
         return (
             <Select {...args}>
+                <Select.Slot name="label">Label</Select.Slot>
                 <Select.Slot name="left">
-                    <div>Left Slot</div>
+                    <IconIcon size={16} />
                 </Select.Slot>
                 <Select.Slot name="right">
-                    <div>Right Slot</div>
+                    <IconIcon size={16} />
                 </Select.Slot>
                 <Select.Slot name="menu">
                     <Select.Item value="test1">Test1</Select.Item>
@@ -59,10 +60,10 @@ export const Combobox: Story = {
         return (
             <Select.Combobox {...args}>
                 <Select.Slot name="left">
-                    <div>Left Slot</div>
+                    <IconIcon size={16} />
                 </Select.Slot>
                 <Select.Slot name="right">
-                    <div>Right Slot</div>
+                    <IconIcon size={16} />
                 </Select.Slot>
                 <Select.Slot name="menu">
                     <Select.Item value="test1">Test1</Select.Item>

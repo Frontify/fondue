@@ -25,27 +25,23 @@ export const getRecursiveOptionValues = (children: ReactNode): { value: string; 
     return values;
 };
 
-export const useSelectData = (
-    children: ReactNode,
-    defaultValue?: string,
-): {
-    inputSlots: ReactNode[];
-    menuSlots: ReactNode[];
-    setFilterText: (text: string) => void;
-    items: SelectItemType[];
-    defaultItem: SelectItemType | undefined;
-} => {
+export const useSelectData = (children: ReactNode, defaultValue?: string) => {
     const [filterText, setFilterText] = useState('');
-    const { inputSlots, menuSlots, itemValues } = useMemo(() => {
+    const { inputSlots, menuSlots, itemValues, label } = useMemo(() => {
         const inputSlots: ReactNode[] = [];
         const menuSlots: ReactNode[] = [];
+        let label: ReactNode;
 
         Children.forEach(children, (child) => {
             if (isValidElement<SelectSlotProps>(child) && child.type === Select.Slot) {
                 if (child.props.name === 'menu') {
                     menuSlots.push(child.props.children);
                 } else if (child.props.name === 'left' || child.props.name === 'right') {
-                    inputSlots.push(child.props.children);
+                    console.log('child.props.children', child);
+
+                    inputSlots.push(child);
+                } else if (child.props.name === 'label') {
+                    label = child;
                 }
             }
         });
@@ -53,6 +49,7 @@ export const useSelectData = (
         return {
             inputSlots,
             menuSlots,
+            label,
             itemValues: getRecursiveOptionValues(menuSlots),
         };
     }, [children]);
@@ -71,6 +68,7 @@ export const useSelectData = (
         menuSlots,
         setFilterText,
         items: filteredItems,
+        label,
         defaultItem,
     };
 };

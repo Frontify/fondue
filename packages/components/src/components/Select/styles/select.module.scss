@@ -53,6 +53,10 @@
     &[data-empty='true'] {
         color: var(--text-color-x-weak);
     }
+
+    &:has(input:placeholder-shown) {
+        color: var(--text-color-x-weak);
+    }
 }
 
 .input {
@@ -105,6 +109,47 @@
     }
 }
 
+.slot {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    cursor: text;
+    gap: sizeToken(1.5);
+    padding-left: sizeToken(3);
+    padding-right: sizeToken(2);
+
+    // Left slot
+    &[data-name='left'] {
+        order: -1;
+        margin-left: 0px;
+        margin-right: 0px;
+    }
+
+    // Right slot
+    &[data-name='right'] {
+        order: 0;
+        margin-left: 0px;
+        margin-right: 0px;
+        padding-right: sizeToken(3);
+    }
+
+    //Label slot
+    &[data-name='label'] {
+        display: flex;
+        align-items: center;
+        cursor: text;
+        height: 100%;
+        padding-left: sizeToken(3);
+        padding-right: sizeToken(2);
+        color: var(--text-color-weak);
+
+        &:has(~ div[data-name='left']) {
+            text-indent: 0px;
+            padding-left: 0;
+        }
+    }
+}
+
 .clear {
     display: flex;
     height: 100%;
@@ -117,6 +162,7 @@
 .caret {
     display: flex;
     height: 100%;
+    width: sizeToken(4);
     align-items: center;
     justify-content: center;
     margin-right: sizeToken(3);
