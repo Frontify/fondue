@@ -14,7 +14,7 @@ import { useSelectData, type SelectItemType } from './useSelectData';
 export type ComboboxProps = {
     children?: ReactNode;
     onSelect?: (selectedItem: SelectItemType) => void;
-    defaultItem?: SelectItemType;
+    defaultValue?: string;
     placeholder?: string;
     disabled?: boolean;
     clearable?: boolean;
@@ -23,10 +23,11 @@ export type ComboboxProps = {
 };
 
 export const Combobox = (
-    { children, onSelect, defaultItem, ariaLabel, placeholder = '', disabled, clearable, emphasis }: ComboboxProps,
+    { children, onSelect, defaultValue, ariaLabel, placeholder = '', disabled, clearable, emphasis }: ComboboxProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
-    const { items, setFilterText } = useSelectData();
+    const { inputSlots, menuSlots, items, defaultItem, setFilterText } = useSelectData(children, defaultValue);
+
     const {
         getInputProps,
         getToggleButtonProps,
@@ -87,6 +88,7 @@ export const Combobox = (
                         disabled={disabled}
                     />
                     {clearable && <SelectClear reset={reset} />}
+                    {inputSlots}
                     <button
                         type="button"
                         onMouseDown={() => {
@@ -107,7 +109,7 @@ export const Combobox = (
                 getMenuProps={getMenuProps}
                 getItemProps={getItemProps}
             >
-                {children}
+                {menuSlots}
             </SelectMenu>
         </RadixPopover.Root>
     );
