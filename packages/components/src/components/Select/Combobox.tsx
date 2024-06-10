@@ -28,7 +28,7 @@ export const SelectCombobox = (
     { children, onSelect, activeItem, defaultValue, ariaLabel, placeholder = '', disabled, emphasis }: ComboboxProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
-    const { inputSlots, menuSlots, items, defaultItem, label, clearButton, setFilterText } = useSelectData(
+    const { inputSlots, menuSlots, items, defaultItem, filterText, clearButton, setFilterText } = useSelectData(
         children,
         defaultValue,
     );
@@ -38,7 +38,6 @@ export const SelectCombobox = (
         getToggleButtonProps,
         getMenuProps,
         getItemProps,
-        getLabelProps,
         reset,
         isOpen,
         highlightedIndex,
@@ -70,9 +69,6 @@ export const SelectCombobox = (
                         inputValue && !items.find((item) => item.label.toLowerCase().includes(inputValue.toLowerCase()))
                     }
                 >
-                    <RadixSlot data-test="bla" {...getLabelProps()}>
-                        {label}
-                    </RadixSlot>
                     <input
                         onMouseDown={(mouseEvent) => {
                             wasClicked.current = true;
@@ -127,6 +123,7 @@ export const SelectCombobox = (
             <SelectMenu
                 isOpen={isOpen}
                 highlightedIndex={highlightedIndex}
+                filterText={filterText}
                 getMenuProps={getMenuProps}
                 getItemProps={getItemProps}
             >

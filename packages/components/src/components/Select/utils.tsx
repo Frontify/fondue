@@ -44,6 +44,7 @@ export const isReactLeaf = (child: ReactNode, Component: JSXElementConstructor<a
 export const recursiveMap = (
     children: ReactNode,
     fn: (child: ReactNode, nextIndex: number) => ReactNode,
+    filterText?: string,
     nextIndex: number = 0,
 ): {
     parsedChildren: ReactNode[];
@@ -53,10 +54,22 @@ export const recursiveMap = (
     let itemCounter = 0;
     Children.forEach(children, (child) => {
         if (isReactLeaf(child, ForwardedRefSelectItem)) {
-            resultingChildren.push(fn(child, nextIndex + itemCounter));
-            itemCounter++;
+            if (
+                isValidElement<SelectItemProps>(child) &&
+                getSelectOptionValue(child.props)
+                    .label.toLowerCase()
+                    .includes(filterText?.toLowerCase() || '')
+            ) {
+                resultingChildren.push(fn(child, nextIndex + itemCounter));
+                itemCounter++;
+            }
         } else if (isValidElement<{ children: ReactNode }>(child) && child?.props.children) {
-            const { parsedChildren, subElementCount } = recursiveMap(child.props.children, fn, nextIndex + itemCounter);
+            const { parsedChildren, subElementCount } = recursiveMap(
+                child.props.children,
+                fn,
+                '',
+                nextIndex + itemCounter,
+            );
             child = cloneElement(child, {
                 children: parsedChildren,
                 key: `group-${nextIndex + itemCounter}`,

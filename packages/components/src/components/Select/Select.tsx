@@ -96,7 +96,6 @@ export const SelectInput = (
                               ...(forwardedRef ? { ref: forwardedRef } : {}),
                           }))}
                 >
-                    <RadixSlot {...getLabelProps()}>{label}</RadixSlot>
                     <span className={styles.input}>{selectedItem ? selectedItem.label : placeholder}</span>
                     {inputSlots}
                     {clearButton && (

@@ -27,10 +27,9 @@ export const getRecursiveOptionValues = (children: ReactNode): { value: string; 
 
 export const useSelectData = (children: ReactNode, defaultValue?: string) => {
     const [filterText, setFilterText] = useState('');
-    const { inputSlots, menuSlots, itemValues, label, clearButton } = useMemo(() => {
+    const { inputSlots, menuSlots, itemValues, clearButton } = useMemo(() => {
         const inputSlots: ReactNode[] = [];
         const menuSlots: ReactNode[] = [];
-        let label: ReactNode;
         let clearButton: ReactNode;
 
         Children.forEach(children, (child) => {
@@ -39,8 +38,6 @@ export const useSelectData = (children: ReactNode, defaultValue?: string) => {
                     menuSlots.push(child.props.children);
                 } else if (child.props.name === 'left' || child.props.name === 'right') {
                     inputSlots.push(child);
-                } else if (child.props.name === 'label') {
-                    label = child;
                 } else if (child.props.name === 'clear') {
                     if (child.props.children) {
                         clearButton = child;
@@ -55,7 +52,6 @@ export const useSelectData = (children: ReactNode, defaultValue?: string) => {
             inputSlots,
             menuSlots,
             clearButton,
-            label,
             itemValues: getRecursiveOptionValues(menuSlots),
         };
     }, [children]);
@@ -74,8 +70,8 @@ export const useSelectData = (children: ReactNode, defaultValue?: string) => {
         menuSlots,
         clearButton,
         setFilterText,
+        filterText,
         items: filteredItems,
-        label,
         defaultItem,
     };
 };
