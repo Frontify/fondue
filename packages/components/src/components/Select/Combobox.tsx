@@ -10,8 +10,6 @@ import { SelectMenu } from './SelectMenu';
 import styles from './styles/select.module.scss';
 import { useSelectData, type SelectItemType } from './useSelectData';
 
-export type ComboboxEmphasis = 'default' | 'weak';
-
 export type ComboboxProps = {
     children?: ReactNode;
     onSelect?: (selectedItem: SelectItemType) => void;
@@ -20,12 +18,19 @@ export type ComboboxProps = {
     placeholder?: string;
     disabled?: boolean;
     clearable?: boolean;
-    emphasis?: ComboboxEmphasis;
-    ariaLabel: string;
+    'aria-label': string;
 };
 
 export const SelectCombobox = (
-    { children, onSelect, activeItem, defaultValue, ariaLabel, placeholder = '', disabled, emphasis }: ComboboxProps,
+    {
+        children,
+        onSelect,
+        activeItem,
+        defaultValue,
+        placeholder = '',
+        disabled,
+        'aria-label': ariaLabel,
+    }: ComboboxProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
     const { inputSlots, menuSlots, items, defaultItem, filterText, clearButton, setFilterText } = useSelectData(
@@ -63,7 +68,6 @@ export const SelectCombobox = (
             <RadixPopover.Anchor asChild>
                 <div
                     ref={forwardedRef}
-                    data-emphasis={emphasis}
                     className={styles.root}
                     data-error={
                         inputValue && !items.find((item) => item.label.toLowerCase().includes(inputValue.toLowerCase()))

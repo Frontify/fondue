@@ -15,7 +15,7 @@ export type SelectMenuProps = {
     getMenuProps: UseSelectPropGetters<unknown>['getMenuProps'] | UseComboboxPropGetters<unknown>['getMenuProps'];
     getItemProps: UseSelectPropGetters<unknown>['getItemProps'] | UseComboboxPropGetters<unknown>['getItemProps'];
     children: React.ReactNode;
-    filterText: string;
+    filterText?: string;
 };
 
 export const SelectMenu = ({

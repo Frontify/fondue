@@ -10,8 +10,6 @@ import { SelectMenu } from './SelectMenu';
 import styles from './styles/select.module.scss';
 import { useSelectData, type SelectItemType } from './useSelectData';
 
-export type SelectEmphasis = 'default' | 'weak';
-
 export type SelectComponentProps = {
     /**
      *    Children of the Select component. This can contain the Select.Slot components for the label, decorators, clear action and menu.
@@ -38,13 +36,9 @@ export type SelectComponentProps = {
      */
     disabled?: boolean;
     /**
-     *    The visual emphasis of the select component.
-     */
-    emphasis?: SelectEmphasis;
-    /**
      *    The aria label of the select component. For accessibility purposes when no Label Slot is provided.
      */
-    ariaLabel: string;
+    'aria-label': string;
 };
 
 export const SelectInput = (
@@ -53,40 +47,30 @@ export const SelectInput = (
         onSelect,
         activeItem,
         defaultValue,
-        ariaLabel,
         placeholder = '',
         disabled,
-        emphasis,
+        'aria-label': ariaLabel,
     }: SelectComponentProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
-    const { inputSlots, menuSlots, items, defaultItem, label, clearButton } = useSelectData(children, defaultValue);
+    const { inputSlots, menuSlots, items, defaultItem, clearButton } = useSelectData(children, defaultValue);
 
-    const {
-        getToggleButtonProps,
-        getMenuProps,
-        getItemProps,
-        getLabelProps,
-        reset,
-        selectedItem,
-        isOpen,
-        highlightedIndex,
-    } = useSelect({
-        items,
-        defaultSelectedItem: defaultItem,
-        selectedItem: activeItem,
-        onSelectedItemChange: ({ selectedItem }) => {
-            onSelect && onSelect(selectedItem);
-        },
-        itemToString: (item) => (item ? item.label : ''),
-    });
+    const { getToggleButtonProps, getMenuProps, getItemProps, reset, selectedItem, isOpen, highlightedIndex } =
+        useSelect({
+            items,
+            defaultSelectedItem: defaultItem,
+            selectedItem: activeItem,
+            onSelectedItemChange: ({ selectedItem }) => {
+                onSelect && onSelect(selectedItem);
+            },
+            itemToString: (item) => (item ? item.label : ''),
+        });
 
     return (
         <RadixPopover.Root open={true}>
             <RadixPopover.Anchor asChild>
                 <div
                     className={styles.root}
-                    data-emphasis={emphasis}
                     data-disabled={disabled}
                     data-empty={!selectedItem}
                     {...(disabled

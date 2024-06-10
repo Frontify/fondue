@@ -26,11 +26,6 @@
     border: var(--line-width) solid var(--line-color-strong);
     cursor: pointer;
 
-    &[data-emphasis='weak'] {
-        border-color: transparent;
-        background-color: transparent;
-    }
-
     &:hover {
         border-color: var(--line-color-x-strong);
     }
@@ -120,7 +115,7 @@
         margin-right: 0px;
         padding-right: sizeToken(3);
 
-        &:has(~ div:not([data-name='clear'])) {
+        &:has(~ div[data-name='clear']) {
             padding-right: 0;
         }
     }

@@ -139,6 +139,9 @@ export const Clearable: Story = {
     render: (args) => {
         return (
             <Select {...args}>
+                <Select.Slot name="right">
+                    <IconIcon size={16} />
+                </Select.Slot>
                 <Select.Slot name="clear" />
                 <Select.Slot name="label">Label</Select.Slot>
                 <Select.Slot name="menu">
