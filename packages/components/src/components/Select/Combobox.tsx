@@ -1,6 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+/* (c) Copyright Frontify Ltd., all rights reserved. */
 import * as RadixPopover from '@radix-ui/react-popover';
+import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { useCombobox } from 'downshift';
 import { useRef, type ForwardedRef, type ReactNode } from 'react';
 
@@ -25,13 +27,14 @@ export const Combobox = (
     { children, onSelect, defaultValue, ariaLabel, placeholder = '', disabled, clearable, emphasis }: ComboboxProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
-    const { inputSlots, menuSlots, items, defaultItem, setFilterText } = useSelectData(children, defaultValue);
+    const { inputSlots, menuSlots, items, defaultItem, label, setFilterText } = useSelectData(children, defaultValue);
 
     const {
         getInputProps,
         getToggleButtonProps,
         getMenuProps,
         getItemProps,
+        getLabelProps,
         reset,
         isOpen,
         highlightedIndex,
@@ -62,6 +65,9 @@ export const Combobox = (
                         inputValue && !items.find((item) => item.label.toLowerCase().includes(inputValue.toLowerCase()))
                     }
                 >
+                    <RadixSlot data-test="bla" {...getLabelProps()}>
+                        {label}
+                    </RadixSlot>
                     <input
                         onMouseDown={(mouseEvent) => {
                             wasClicked.current = true;

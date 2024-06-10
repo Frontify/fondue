@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ForwardedRef, type ReactElement } from 'react';
+import { type ForwardedRef, type ReactNode } from 'react';
 
 import styles from './styles/select.module.scss';
 
 export type SelectSlotProps = {
-    children?: ReactElement;
+    children?: ReactNode;
     name: 'menu' | 'left' | 'right' | 'label';
 };
 

@@ -59,6 +59,7 @@ export const Combobox: Story = {
     render: (args) => {
         return (
             <Select.Combobox {...args}>
+                <Select.Slot name="label">Label</Select.Slot>
                 <Select.Slot name="left">
                     <IconIcon size={16} />
                 </Select.Slot>
