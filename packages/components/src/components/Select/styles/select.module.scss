@@ -183,6 +183,10 @@
     }
 }
 
+.portal {
+    z-index: 30;
+}
+
 .item {
     @include transition-colors;
 

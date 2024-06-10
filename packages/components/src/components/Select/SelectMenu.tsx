@@ -28,7 +28,7 @@ export const SelectMenu = ({
 }: SelectMenuProps) => {
     return (
         <RadixPopover.Portal>
-            <RadixPopover.Content>
+            <RadixPopover.Content className={styles.portal}>
                 <ul data-open-state={isOpen} className={styles.menu} {...getMenuProps()}>
                     {
                         recursiveMap(
