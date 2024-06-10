@@ -5,11 +5,8 @@ import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { useSelect } from 'downshift';
 import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
 
-import { SelectCombobox, type ComboboxProps } from './Combobox';
 import { SelectCaret } from './SelectCaret';
-import { SelectItem, SelectItemGroup, type SelectItemGroupProps, type SelectItemProps } from './SelectItem';
 import { SelectMenu } from './SelectMenu';
-import { SelectSlot, type SelectSlotProps } from './SelectSlot';
 import styles from './styles/select.module.scss';
 import { useSelectData, type SelectItemType } from './useSelectData';
 
@@ -132,23 +129,4 @@ export const SelectInput = (
 };
 SelectInput.displayName = 'Select';
 
-const ForwardedRefSelect = forwardRef<HTMLDivElement, SelectComponentProps>(SelectInput);
-const ForwardedRefCombobox = forwardRef<HTMLDivElement, ComboboxProps>(SelectCombobox);
-const ForwardedRefSelectItem = forwardRef<HTMLLIElement, SelectItemProps>(SelectItem);
-const ForwardedRefSelectSlot = forwardRef<HTMLDivElement, SelectSlotProps>(SelectSlot);
-const ForwardedRefSelectItemGroup = forwardRef<HTMLDivElement, SelectItemGroupProps>(SelectItemGroup);
-
-// @ts-expect-error We support both Select and Select.Combobox as the Root
-export const Select: typeof SelectInput & {
-    Basic: typeof ForwardedRefSelect;
-    Combobox: typeof ForwardedRefCombobox;
-    Item: typeof ForwardedRefSelectItem;
-    Group: typeof ForwardedRefSelectItemGroup;
-    Slot: typeof ForwardedRefSelectSlot;
-} = ForwardedRefSelect;
-Select.displayName = 'Select';
-Select.Basic = ForwardedRefSelect;
-Select.Combobox = ForwardedRefCombobox;
-Select.Item = ForwardedRefSelectItem;
-Select.Group = ForwardedRefSelectItemGroup;
-Select.Slot = ForwardedRefSelectSlot;
+export const ForwardedRefSelect = forwardRef<HTMLDivElement, SelectComponentProps>(SelectInput);

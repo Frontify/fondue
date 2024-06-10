@@ -3,9 +3,8 @@
 import { IconCross } from '@frontify/fondue-icons';
 import { Children, cloneElement, isValidElement, useMemo, useState, type ReactNode } from 'react';
 
-import { Select } from './Select';
-import { type SelectItemProps } from './SelectMenu';
-import { type SelectSlotProps } from './SelectSlot';
+import { ForwardedRefSelectItem, type SelectItemProps } from './SelectItem';
+import { ForwardedRefSelectSlot, type SelectSlotProps } from './SelectSlot';
 import { getSelectOptionValue } from './utils';
 
 export type SelectItemType = {
@@ -16,7 +15,7 @@ export type SelectItemType = {
 export const getRecursiveOptionValues = (children: ReactNode): { value: string; label: string }[] => {
     const values: { value: string; label: string }[] = [];
     Children.forEach(children, (child) => {
-        if (isValidElement<SelectItemProps>(child) && child.type === Select.Item) {
+        if (isValidElement<SelectItemProps>(child) && child.type === ForwardedRefSelectItem) {
             values.push(getSelectOptionValue(child.props));
         } else if (isValidElement<{ children: ReactNode }>(child) && child?.props.children) {
             const optionValues = getRecursiveOptionValues(child.props.children);
@@ -35,7 +34,7 @@ export const useSelectData = (children: ReactNode, defaultValue?: string) => {
         let clearButton: ReactNode;
 
         Children.forEach(children, (child) => {
-            if (isValidElement<SelectSlotProps>(child) && child.type === Select.Slot) {
+            if (isValidElement<SelectSlotProps>(child) && child.type === ForwardedRefSelectSlot) {
                 if (child.props.name === 'menu') {
                     menuSlots.push(child.props.children);
                 } else if (child.props.name === 'left' || child.props.name === 'right') {

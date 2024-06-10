@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ForwardedRef, type ReactNode } from 'react';
+import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
 
 import styles from './styles/select.module.scss';
 
@@ -20,3 +20,5 @@ export const SelectSlot = (
     );
 };
 SelectSlot.displayName = 'Select.Slot';
+
+export const ForwardedRefSelectSlot = forwardRef<HTMLDivElement, SelectSlotProps>(SelectSlot);

@@ -9,8 +9,7 @@ import {
     type ReactNode,
 } from 'react';
 
-import { Select } from './Select';
-import { type SelectItemProps } from './SelectMenu';
+import { ForwardedRefSelectItem, type SelectItemProps } from './SelectItem';
 
 export const getSelectOptionValue = ({
     children,
@@ -53,7 +52,7 @@ export const recursiveMap = (
     const resultingChildren: ReactNode[] = [];
     let itemCounter = 0;
     Children.forEach(children, (child) => {
-        if (isReactLeaf(child, Select.Item)) {
+        if (isReactLeaf(child, ForwardedRefSelectItem)) {
             resultingChildren.push(fn(child, nextIndex + itemCounter));
             itemCounter++;
         } else if (isValidElement<{ children: ReactNode }>(child) && child?.props.children) {

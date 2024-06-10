@@ -6,9 +6,11 @@ import { useState } from 'react';
 
 import { Button } from '../Button/Button';
 
-import { Select, SelectInput } from './Select';
+import { SelectCombobox } from './Combobox';
+import { SelectInput } from './Select';
 import { SelectItem, SelectItemGroup } from './SelectItem';
 import { SelectSlot } from './SelectSlot';
+import { Select } from './SelectWrapper';
 import { type SelectItemType } from './useSelectData';
 
 type Story = StoryObj<typeof meta>;
@@ -16,7 +18,7 @@ const meta: Meta<typeof SelectInput> = {
     component: SelectInput,
     subcomponents: {
         // @ts-expect-error Storybook types are incorrect
-        // 'Select.Combobox': SelectCombobox,
+        'Select.Combobox': SelectCombobox,
         // @ts-expect-error Storybook types are incorrect
         'Select.Slot': SelectSlot,
         // @ts-expect-error Storybook types are incorrect

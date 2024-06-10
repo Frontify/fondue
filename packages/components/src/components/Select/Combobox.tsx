@@ -3,7 +3,7 @@
 import * as RadixPopover from '@radix-ui/react-popover';
 import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { useCombobox } from 'downshift';
-import { useRef, type ForwardedRef, type ReactNode } from 'react';
+import { forwardRef, useRef, type ForwardedRef, type ReactNode } from 'react';
 
 import { SelectCaret } from './SelectCaret';
 import { SelectMenu } from './SelectMenu';
@@ -136,3 +136,5 @@ export const SelectCombobox = (
     );
 };
 SelectCombobox.displayName = 'Select.Combobox';
+
+export const ForwardedRefCombobox = forwardRef<HTMLDivElement, ComboboxProps>(SelectCombobox);

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ForwardedRef, type ReactNode } from 'react';
+import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
 
 import styles from './styles/select.module.scss';
 
@@ -35,6 +35,8 @@ export const SelectItem = (props: SelectItemProps, forwardedRef?: ForwardedRef<H
 };
 SelectItem.displayName = 'Select.Item';
 
+export const ForwardedRefSelectItem = forwardRef<HTMLLIElement, SelectItemProps>(SelectItem);
+
 export type SelectItemGroupProps = {
     /**
      *  The children of the select item group. This can contain multiple Select.Item components.
@@ -57,3 +59,5 @@ export const SelectItemGroup = (
     );
 };
 SelectItemGroup.displayName = 'Select.Group';
+
+export const ForwardedRefSelectItemGroup = forwardRef<HTMLDivElement, SelectItemGroupProps>(SelectItemGroup);
