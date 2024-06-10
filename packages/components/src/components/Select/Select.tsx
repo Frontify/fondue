@@ -7,7 +7,6 @@ import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
 
 import { Combobox, type ComboboxProps } from './Combobox';
 import { SelectCaret } from './SelectCaret';
-import { SelectClear } from './SelectClear';
 import { SelectItem, SelectItemGroup, SelectMenu, type SelectItemGroupProps, type SelectItemProps } from './SelectMenu';
 import { SelectSlot, type SelectSlotProps } from './SelectSlot';
 import styles from './styles/select.module.scss';
@@ -27,21 +26,10 @@ export type SelectComponentProps = {
 };
 
 export const SelectInput = (
-    {
-        children,
-        onSelect,
-        defaultValue,
-        ariaLabel,
-        placeholder = '',
-        disabled,
-        clearable,
-        emphasis,
-    }: SelectComponentProps,
+    { children, onSelect, defaultValue, ariaLabel, placeholder = '', disabled, emphasis }: SelectComponentProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
-    const { inputSlots, menuSlots, items, defaultItem, label } = useSelectData(children, defaultValue);
-
-    console.log('input', inputSlots);
+    const { inputSlots, menuSlots, items, defaultItem, label, clearButton } = useSelectData(children, defaultValue);
 
     const {
         getToggleButtonProps,
@@ -78,12 +66,20 @@ export const SelectInput = (
                               ...(forwardedRef ? { ref: forwardedRef } : {}),
                           }))}
                 >
-                    <RadixSlot data-test="bla" {...getLabelProps()}>
-                        {label}
-                    </RadixSlot>
+                    <RadixSlot {...getLabelProps()}>{label}</RadixSlot>
                     <span className={styles.input}>{selectedItem ? selectedItem.label : placeholder}</span>
                     {inputSlots}
-                    {clearable && <SelectClear reset={reset} />}
+                    {clearButton && (
+                        <RadixSlot
+                            onClick={(event) => {
+                                event.stopPropagation();
+                                reset();
+                            }}
+                            className={styles.clear}
+                        >
+                            {clearButton}
+                        </RadixSlot>
+                    )}
                     <div>
                         <SelectCaret isOpen={isOpen} />
                     </div>

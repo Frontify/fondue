@@ -35,6 +35,7 @@ export const SimpleSelect: Story = {
         return (
             <Select {...args}>
                 <Select.Slot name="label">Label</Select.Slot>
+                <Select.Slot name="clear">Clear</Select.Slot>
                 <Select.Slot name="left">
                     <IconIcon size={16} />
                 </Select.Slot>
@@ -60,6 +61,7 @@ export const Combobox: Story = {
         return (
             <Select.Combobox {...args}>
                 <Select.Slot name="label">Label</Select.Slot>
+                <Select.Slot name="clear" />
                 <Select.Slot name="left">
                     <IconIcon size={16} />
                 </Select.Slot>
@@ -108,18 +110,24 @@ export const WithPlaceholder: Story = {
 
 export const DefaultItem: Story = {
     args: {
-        defaultItem: {
-            label: 'Test2',
-            value: 'Test2',
-        },
+        defaultValue: 'test1',
     },
     render: (args) => {
         return (
             <Select {...args}>
-                <Select.Item>First</Select.Item>
-                <Select.Item>Test1</Select.Item>
-                <Select.Item>Test2</Select.Item>
-                <Select.Item>Test3</Select.Item>
+                <Select.Slot name="label">Label</Select.Slot>
+                <Select.Slot name="clear">Clear</Select.Slot>
+                <Select.Slot name="left">
+                    <IconIcon size={16} />
+                </Select.Slot>
+                <Select.Slot name="right">
+                    <IconIcon size={16} />
+                </Select.Slot>
+                <Select.Slot name="menu">
+                    <Select.Item value="test1">Test1</Select.Item>
+                    <Select.Item value="test2">Test2</Select.Item>
+                    <Select.Item value="test3">Test3</Select.Item>
+                </Select.Slot>
             </Select>
         );
     },

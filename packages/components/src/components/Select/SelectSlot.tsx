@@ -6,7 +6,7 @@ import styles from './styles/select.module.scss';
 
 export type SelectSlotProps = {
     children?: ReactNode;
-    name: 'menu' | 'left' | 'right' | 'label';
+    name: 'menu' | 'left' | 'right' | 'label' | 'clear';
 };
 
 export const SelectSlot = (

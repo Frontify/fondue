@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Children, isValidElement, useMemo, useState, type ReactNode } from 'react';
+import { IconCross } from '@frontify/fondue-icons';
+import { Children, cloneElement, isValidElement, useMemo, useState, type ReactNode } from 'react';
 
 import { Select } from './Select';
 import { type SelectItemProps } from './SelectMenu';
@@ -27,21 +28,26 @@ export const getRecursiveOptionValues = (children: ReactNode): { value: string; 
 
 export const useSelectData = (children: ReactNode, defaultValue?: string) => {
     const [filterText, setFilterText] = useState('');
-    const { inputSlots, menuSlots, itemValues, label } = useMemo(() => {
+    const { inputSlots, menuSlots, itemValues, label, clearButton } = useMemo(() => {
         const inputSlots: ReactNode[] = [];
         const menuSlots: ReactNode[] = [];
         let label: ReactNode;
+        let clearButton: ReactNode;
 
         Children.forEach(children, (child) => {
             if (isValidElement<SelectSlotProps>(child) && child.type === Select.Slot) {
                 if (child.props.name === 'menu') {
                     menuSlots.push(child.props.children);
                 } else if (child.props.name === 'left' || child.props.name === 'right') {
-                    console.log('child.props.children', child);
-
                     inputSlots.push(child);
                 } else if (child.props.name === 'label') {
                     label = child;
+                } else if (child.props.name === 'clear') {
+                    if (child.props.children) {
+                        clearButton = child;
+                    } else {
+                        clearButton = cloneElement(child, { children: <IconCross size={16} /> });
+                    }
                 }
             }
         });
@@ -49,6 +55,7 @@ export const useSelectData = (children: ReactNode, defaultValue?: string) => {
         return {
             inputSlots,
             menuSlots,
+            clearButton,
             label,
             itemValues: getRecursiveOptionValues(menuSlots),
         };
@@ -66,6 +73,7 @@ export const useSelectData = (children: ReactNode, defaultValue?: string) => {
     return {
         inputSlots,
         menuSlots,
+        clearButton,
         setFilterText,
         items: filteredItems,
         label,

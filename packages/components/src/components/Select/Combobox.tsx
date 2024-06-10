@@ -24,10 +24,13 @@ export type ComboboxProps = {
 };
 
 export const Combobox = (
-    { children, onSelect, defaultValue, ariaLabel, placeholder = '', disabled, clearable, emphasis }: ComboboxProps,
+    { children, onSelect, defaultValue, ariaLabel, placeholder = '', disabled, emphasis }: ComboboxProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
-    const { inputSlots, menuSlots, items, defaultItem, label, setFilterText } = useSelectData(children, defaultValue);
+    const { inputSlots, menuSlots, items, defaultItem, label, clearButton, setFilterText } = useSelectData(
+        children,
+        defaultValue,
+    );
 
     const {
         getInputProps,
@@ -93,6 +96,17 @@ export const Combobox = (
                         disabled={disabled}
                     />
                     {inputSlots}
+                    {clearButton && (
+                        <RadixSlot
+                            onClick={(event) => {
+                                event.stopPropagation();
+                                reset();
+                            }}
+                            className={styles.clear}
+                        >
+                            {clearButton}
+                        </RadixSlot>
+                    )}
                     <button
                         type="button"
                         onMouseDown={() => {

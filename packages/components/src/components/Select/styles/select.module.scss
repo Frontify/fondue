@@ -75,30 +75,17 @@
     }
 
     // Remove border-radius and text-indent/padding on the left if there’s a left-side slot
-    &:has(~ div:not([data-name='right'])) {
+    &:has(~ div[data-name='left']) {
         text-indent: 0px;
         border-top-left-radius: 0px;
         border-bottom-left-radius: 0px;
     }
 
     // Remove border-radius and padding on the right if there’s a right-side slot
-    &:has(~ .slot[data-side='right'], ~ .slot:not([data-side='right']) ~ .slot:not([data-side='left'])) {
+    &:has(~ .slot[data-side='right'], ~ .slot:not([data-side='right'])) {
         padding-right: 0;
         border-top-right-radius: 0;
         border-bottom-right-radius: 0;
-    }
-
-    // Readonly styles
-    &[readonly] {
-        cursor: text;
-        color: var(--text-color-weak);
-        text-indent: 0px;
-    }
-    &[readonly] ~ .slot {
-        color: var(--text-color-weak);
-    }
-    &[readonly] ~ .slot:not([data-name='right']) {
-        padding-left: 0px;
     }
 
     &:disabled {
@@ -117,6 +104,7 @@
     gap: sizeToken(1.5);
     padding-left: sizeToken(3);
     padding-right: sizeToken(2);
+    color: var(--text-color-weak);
 
     // Left slot
     &[data-name='left'] {
@@ -131,6 +119,10 @@
         margin-left: 0px;
         margin-right: 0px;
         padding-right: sizeToken(3);
+
+        &:has(~ div:not([data-name='right'])) {
+            padding-right: 0;
+        }
     }
 
     //Label slot
@@ -141,13 +133,14 @@
         height: 100%;
         padding-left: sizeToken(3);
         padding-right: sizeToken(2);
-        color: var(--text-color-weak);
 
         &:has(~ div[data-name='left']) {
             text-indent: 0px;
             padding-left: 0;
         }
     }
+
+
 }
 
 .clear {
@@ -156,7 +149,8 @@
     width: fit-content;
     align-items: center;
     justify-content: center;
-    padding: 0 sizeToken(2);
+    padding: 0 sizeToken(3);
+    color: var(--text-color-weak);
 }
 
 .caret {
