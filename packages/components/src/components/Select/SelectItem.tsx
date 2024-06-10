@@ -9,6 +9,10 @@ export type SelectItemProps = {
      *   The value of the select item.
      */
     value: string;
+    /**
+     *  The data test id of the select item.
+     */
+    'data-test-id': string;
 } & (
     | {
           /**
@@ -26,9 +30,12 @@ export type SelectItemProps = {
       }
 );
 
-export const SelectItem = (props: SelectItemProps, forwardedRef?: ForwardedRef<HTMLLIElement>) => {
+export const SelectItem = (
+    { 'data-test-id': dataTestId = 'fondue-select-item', ...props }: SelectItemProps,
+    forwardedRef?: ForwardedRef<HTMLLIElement>,
+) => {
     return (
-        <li ref={forwardedRef} data-test-bla {...props}>
+        <li data-test-id={dataTestId} ref={forwardedRef} {...props}>
             {props.children}
         </li>
     );
@@ -46,14 +53,18 @@ export type SelectItemGroupProps = {
      * The internal group id of the select item group.
      */
     groupId: string;
+    /**
+     * The data test id of the select item group.
+     */
+    'data-test-id': string;
 };
 
 export const SelectItemGroup = (
-    { children, groupId }: SelectItemGroupProps,
+    { children, groupId, 'data-test-id': dataTestId = 'fondue-select-item-group' }: SelectItemGroupProps,
     forwardedRef?: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
-        <div className={styles.group} ref={forwardedRef} key={groupId}>
+        <div data-test-id={dataTestId} className={styles.group} ref={forwardedRef} key={groupId}>
             {children}
         </div>
     );

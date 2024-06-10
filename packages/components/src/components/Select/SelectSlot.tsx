@@ -7,14 +7,15 @@ import styles from './styles/select.module.scss';
 export type SelectSlotProps = {
     children?: ReactNode;
     name: 'menu' | 'left' | 'right' | 'label' | 'clear';
+    'data-test-id': string;
 };
 
 export const SelectSlot = (
-    { children, name, ...props }: SelectSlotProps,
+    { children, name, 'data-test-id': dataTestId = 'fondue-select-slot', ...props }: SelectSlotProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
-        <div ref={forwardedRef} className={styles.slot} data-name={name} {...props}>
+        <div data-test-id={dataTestId} ref={forwardedRef} className={styles.slot} data-name={name} {...props}>
             {children}
         </div>
     );

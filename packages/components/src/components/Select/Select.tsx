@@ -39,6 +39,10 @@ export type SelectComponentProps = {
      *    The aria label of the select component. For accessibility purposes when no Label Slot is provided.
      */
     'aria-label': string;
+    /**
+     *    The data test id of the select component.
+     */
+    'data-test-id': string;
 };
 
 export const SelectInput = (
@@ -50,6 +54,7 @@ export const SelectInput = (
         placeholder = '',
         disabled,
         'aria-label': ariaLabel,
+        'data-test-id': dataTestId = 'fondue-select',
     }: SelectComponentProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
@@ -73,6 +78,7 @@ export const SelectInput = (
                     className={styles.root}
                     data-disabled={disabled}
                     data-empty={!selectedItem}
+                    data-test-id={dataTestId}
                     {...(disabled
                         ? {}
                         : getToggleButtonProps({

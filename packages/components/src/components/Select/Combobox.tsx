@@ -19,6 +19,7 @@ export type ComboboxProps = {
     disabled?: boolean;
     clearable?: boolean;
     'aria-label': string;
+    'data-test-id': string;
 };
 
 export const SelectCombobox = (
@@ -30,6 +31,7 @@ export const SelectCombobox = (
         placeholder = '',
         disabled,
         'aria-label': ariaLabel,
+        'data-test-id': dataTestId = 'fondue-select-combobox',
     }: ComboboxProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
@@ -72,6 +74,7 @@ export const SelectCombobox = (
                     data-error={
                         inputValue && !items.find((item) => item.label.toLowerCase().includes(inputValue.toLowerCase()))
                     }
+                    data-test-id={dataTestId}
                 >
                     <input
                         onMouseDown={(mouseEvent) => {
