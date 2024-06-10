@@ -11,7 +11,7 @@ const meta: Meta<typeof SelectInput> = {
     component: SelectInput,
     subcomponents: {
         // @ts-expect-error Storybook types are incorrect
-        // 'Select.Combobox': Combobox,
+        // 'Select.Combobox': SelectCombobox,
         // @ts-expect-error Storybook types are incorrect
         'Select.Group': SelectItemGroup,
         // @ts-expect-error Storybook types are incorrect
@@ -35,13 +35,6 @@ export const SimpleSelect: Story = {
         return (
             <Select {...args}>
                 <Select.Slot name="label">Label</Select.Slot>
-                <Select.Slot name="clear">Clear</Select.Slot>
-                <Select.Slot name="left">
-                    <IconIcon size={16} />
-                </Select.Slot>
-                <Select.Slot name="right">
-                    <IconIcon size={16} />
-                </Select.Slot>
                 <Select.Slot name="menu">
                     <Select.Item value="test1">Test1</Select.Item>
                     <Select.Item value="test2">Test2</Select.Item>
@@ -55,19 +48,11 @@ export const SimpleSelect: Story = {
 export const Combobox: Story = {
     args: {
         placeholder: 'Select an item',
-        clearable: true,
     },
     render: (args) => {
         return (
             <Select.Combobox {...args}>
                 <Select.Slot name="label">Label</Select.Slot>
-                <Select.Slot name="clear" />
-                <Select.Slot name="left">
-                    <IconIcon size={16} />
-                </Select.Slot>
-                <Select.Slot name="right">
-                    <IconIcon size={16} />
-                </Select.Slot>
                 <Select.Slot name="menu">
                     <Select.Item value="test1">Test1</Select.Item>
                     <Select.Item value="test2">Test2</Select.Item>
@@ -85,9 +70,12 @@ export const Disabled: Story = {
     render: (args) => {
         return (
             <Select {...args}>
-                <Select.Item>Test1</Select.Item>
-                <Select.Item>Test2</Select.Item>
-                <Select.Item>Test3</Select.Item>
+                <Select.Slot name="label">Label</Select.Slot>
+                <Select.Slot name="menu">
+                    <Select.Item value="test1">Test1</Select.Item>
+                    <Select.Item value="test2">Test2</Select.Item>
+                    <Select.Item value="test3">Test3</Select.Item>
+                </Select.Slot>
             </Select>
         );
     },
@@ -100,9 +88,86 @@ export const WithPlaceholder: Story = {
     render: (args) => {
         return (
             <Select {...args}>
-                <Select.Item>Test1</Select.Item>
-                <Select.Item>Test2</Select.Item>
-                <Select.Item>Test3</Select.Item>
+                <Select.Slot name="label">Label</Select.Slot>
+                <Select.Slot name="menu">
+                    <Select.Item value="test1">Test1</Select.Item>
+                    <Select.Item value="test2">Test2</Select.Item>
+                    <Select.Item value="test3">Test3</Select.Item>
+                </Select.Slot>
+            </Select>
+        );
+    },
+};
+
+export const WithDecorator: Story = {
+    args: {
+        placeholder: 'Select an item',
+    },
+    render: (args) => {
+        return (
+            <Select {...args}>
+                <Select.Slot name="left">
+                    <IconIcon size={16} />
+                </Select.Slot>
+                <Select.Slot name="right">
+                    <IconIcon size={16} />
+                </Select.Slot>
+                <Select.Slot name="label">Label</Select.Slot>
+                <Select.Slot name="menu">
+                    <Select.Item value="test1">Test1</Select.Item>
+                    <Select.Item value="test2">Test2</Select.Item>
+                    <Select.Item value="test3">Test3</Select.Item>
+                </Select.Slot>
+            </Select>
+        );
+    },
+};
+
+export const Clearable: Story = {
+    args: {
+        placeholder: 'Select an item',
+    },
+    render: (args) => {
+        return (
+            <Select {...args}>
+                <Select.Slot name="clear" />
+                <Select.Slot name="left">
+                    <IconIcon size={16} />
+                </Select.Slot>
+                <Select.Slot name="right">
+                    <IconIcon size={16} />
+                </Select.Slot>
+                <Select.Slot name="label">Label</Select.Slot>
+                <Select.Slot name="menu">
+                    <Select.Item value="test1">Test1</Select.Item>
+                    <Select.Item value="test2">Test2</Select.Item>
+                    <Select.Item value="test3">Test3</Select.Item>
+                </Select.Slot>
+            </Select>
+        );
+    },
+};
+
+export const CustomClearElement: Story = {
+    args: {
+        placeholder: 'Select an item',
+    },
+    render: (args) => {
+        return (
+            <Select {...args}>
+                <Select.Slot name="clear">Clear</Select.Slot>
+                <Select.Slot name="left">
+                    <IconIcon size={16} />
+                </Select.Slot>
+                <Select.Slot name="right">
+                    <IconIcon size={16} />
+                </Select.Slot>
+                <Select.Slot name="label">Label</Select.Slot>
+                <Select.Slot name="menu">
+                    <Select.Item value="test1">Test1</Select.Item>
+                    <Select.Item value="test2">Test2</Select.Item>
+                    <Select.Item value="test3">Test3</Select.Item>
+                </Select.Slot>
             </Select>
         );
     },
@@ -116,13 +181,6 @@ export const DefaultItem: Story = {
         return (
             <Select {...args}>
                 <Select.Slot name="label">Label</Select.Slot>
-                <Select.Slot name="clear">Clear</Select.Slot>
-                <Select.Slot name="left">
-                    <IconIcon size={16} />
-                </Select.Slot>
-                <Select.Slot name="right">
-                    <IconIcon size={16} />
-                </Select.Slot>
                 <Select.Slot name="menu">
                     <Select.Item value="test1">Test1</Select.Item>
                     <Select.Item value="test2">Test2</Select.Item>
@@ -137,26 +195,17 @@ export const ItemGroups: Story = {
     render: (args) => {
         return (
             <Select {...args}>
-                <Select.Item>Test1</Select.Item>
-                <Select.Item>Test2</Select.Item>
-                <Select.Group groupId="Group 1">
-                    <Select.Item>Test3</Select.Item>
-                    <Select.Item>Test4</Select.Item>
-                    <Select.Item>Test5</Select.Item>
-                </Select.Group>
-                <Select.Item>Test6</Select.Item>
-            </Select>
-        );
-    },
-};
-
-export const SeparateValue: Story = {
-    render: (args) => {
-        return (
-            <Select {...args}>
-                <Select.Item value="CH">Switzerland</Select.Item>
-                <Select.Item value="DE">Germany</Select.Item>
-                <Select.Item value="FR">France</Select.Item>
+                <Select.Slot name="label">Label</Select.Slot>
+                <Select.Slot name="menu">
+                    <Select.Item value="test1">Test1</Select.Item>
+                    <Select.Item value="test2">Test2</Select.Item>
+                    <Select.Group groupId="Group 1">
+                        <Select.Item value="test3">Test3</Select.Item>
+                        <Select.Item value="test4">Test4</Select.Item>
+                        <Select.Item value="test5">Test5</Select.Item>
+                    </Select.Group>
+                    <Select.Item value="test6">Test6</Select.Item>
+                </Select.Slot>
             </Select>
         );
     },
@@ -166,19 +215,24 @@ export const CustomItem: Story = {
     render: (args) => {
         return (
             <Select {...args}>
-                <Select.Item value="ch">
-                    <div className="tw-flex tw-items-center tw-gap-4">
-                        <img src="https://flagsapi.com/CH/flat/16.png" alt="Switzerland" />
-                        <p>Switzerland</p>
-                    </div>
-                </Select.Item>
-                <Select.Item value="icon">
-                    <div className="tw-flex tw-items-center tw-gap-4">
-                        <p>With a Component</p>
-                        <IconIcon width={16} />
-                    </div>
-                </Select.Item>
-                <Select.Item value="basic">Basic</Select.Item>
+                <Select.Slot name="label">Label</Select.Slot>
+                <Select.Slot name="menu">
+                    <Select.Item value="ch" label="Switzerland">
+                        <div className="tw-flex tw-items-center tw-gap-4">
+                            <img src="https://flagsapi.com/CH/flat/16.png" alt="Switzerland" />
+                            <p>Switzerland</p>
+                        </div>
+                    </Select.Item>
+                    <Select.Item value="icon" label="Component">
+                        <div className="tw-flex tw-items-center tw-gap-4">
+                            <p>With a Component</p>
+                            <IconIcon width={16} />
+                        </div>
+                    </Select.Item>
+                    <Select.Item value="basic" label="Basic">
+                        Basic
+                    </Select.Item>
+                </Select.Slot>
             </Select>
         );
     },

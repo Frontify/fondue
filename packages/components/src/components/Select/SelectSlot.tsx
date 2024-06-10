@@ -19,3 +19,4 @@ export const SelectSlot = (
         </div>
     );
 };
+SelectSlot.displayName = 'Select.Slot';

@@ -120,7 +120,7 @@
         margin-right: 0px;
         padding-right: sizeToken(3);
 
-        &:has(~ div:not([data-name='right'])) {
+        &:has(~ div:not([data-name='clear'])) {
             padding-right: 0;
         }
     }

@@ -5,11 +5,12 @@ import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { useCombobox } from 'downshift';
 import { useRef, type ForwardedRef, type ReactNode } from 'react';
 
-import { type SelectEmphasis } from './Select';
 import { SelectCaret } from './SelectCaret';
 import { SelectMenu } from './SelectMenu';
 import styles from './styles/select.module.scss';
 import { useSelectData, type SelectItemType } from './useSelectData';
+
+export type ComboboxEmphasis = 'default' | 'weak';
 
 export type ComboboxProps = {
     children?: ReactNode;
@@ -18,11 +19,11 @@ export type ComboboxProps = {
     placeholder?: string;
     disabled?: boolean;
     clearable?: boolean;
-    emphasis?: SelectEmphasis;
+    emphasis?: ComboboxEmphasis;
     ariaLabel: string;
 };
 
-export const Combobox = (
+export const SelectCombobox = (
     { children, onSelect, defaultValue, ariaLabel, placeholder = '', disabled, emphasis }: ComboboxProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
@@ -132,4 +133,4 @@ export const Combobox = (
         </RadixPopover.Root>
     );
 };
-Combobox.displayName = 'Select.Combobox';
+SelectCombobox.displayName = 'Select.Combobox';
