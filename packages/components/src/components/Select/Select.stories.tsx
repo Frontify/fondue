@@ -2,9 +2,14 @@
 
 import { IconIcon } from '@frontify/fondue-icons';
 import { type Meta, type StoryObj } from '@storybook/react';
+import { useState } from 'react';
+
+import { Button } from '../Button/Button';
 
 import { Select, SelectInput } from './Select';
 import { SelectItem, SelectItemGroup } from './SelectMenu';
+import { SelectSlot } from './SelectSlot';
+import { type SelectItemType } from './useSelectData';
 
 type Story = StoryObj<typeof meta>;
 const meta: Meta<typeof SelectInput> = {
@@ -12,6 +17,8 @@ const meta: Meta<typeof SelectInput> = {
     subcomponents: {
         // @ts-expect-error Storybook types are incorrect
         // 'Select.Combobox': SelectCombobox,
+        // @ts-expect-error Storybook types are incorrect
+        'Select.Slot': SelectSlot,
         // @ts-expect-error Storybook types are incorrect
         'Select.Group': SelectItemGroup,
         // @ts-expect-error Storybook types are incorrect
@@ -234,6 +241,40 @@ export const CustomItem: Story = {
                     </Select.Item>
                 </Select.Slot>
             </Select>
+        );
+    },
+};
+
+export const ExternallyControlled: Story = {
+    render: (args) => {
+        const [activeItem, setActiveItem] = useState<SelectItemType>();
+        return (
+            <>
+                <Select
+                    onSelect={(selectedItem) => {
+                        setActiveItem(() => selectedItem);
+                    }}
+                    activeItem={activeItem}
+                    {...args}
+                >
+                    <Select.Slot name="label">Label</Select.Slot>
+                    <Select.Slot name="menu">
+                        <Select.Item value="test1">Test1</Select.Item>
+                        <Select.Item value="test2">Test2</Select.Item>
+                        <Select.Item value="test3">Test3</Select.Item>
+                    </Select.Slot>
+                </Select>
+                <Button
+                    onPress={() =>
+                        setActiveItem({
+                            value: 'test1',
+                            label: 'Test1',
+                        })
+                    }
+                >
+                    Set Test1
+                </Button>
+            </>
         );
     },
 };

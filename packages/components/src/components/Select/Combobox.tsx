@@ -15,6 +15,7 @@ export type ComboboxEmphasis = 'default' | 'weak';
 export type ComboboxProps = {
     children?: ReactNode;
     onSelect?: (selectedItem: SelectItemType) => void;
+    activeItem?: SelectItemType;
     defaultValue?: string;
     placeholder?: string;
     disabled?: boolean;
@@ -24,7 +25,7 @@ export type ComboboxProps = {
 };
 
 export const SelectCombobox = (
-    { children, onSelect, defaultValue, ariaLabel, placeholder = '', disabled, emphasis }: ComboboxProps,
+    { children, onSelect, activeItem, defaultValue, ariaLabel, placeholder = '', disabled, emphasis }: ComboboxProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
     const { inputSlots, menuSlots, items, defaultItem, label, clearButton, setFilterText } = useSelectData(
@@ -47,6 +48,7 @@ export const SelectCombobox = (
         onSelectedItemChange: ({ selectedItem }) => {
             onSelect && onSelect(selectedItem);
         },
+        selectedItem: activeItem,
         onInputValueChange: ({ inputValue }) => {
             setFilterText(inputValue);
         },

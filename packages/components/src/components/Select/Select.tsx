@@ -17,6 +17,7 @@ export type SelectEmphasis = 'default' | 'weak';
 export type SelectComponentProps = {
     children?: ReactNode;
     onSelect?: (selectedItem: SelectItemType) => void;
+    activeItem?: SelectItemType;
     defaultValue?: string;
     placeholder?: string;
     disabled?: boolean;
@@ -26,7 +27,16 @@ export type SelectComponentProps = {
 };
 
 export const SelectInput = (
-    { children, onSelect, defaultValue, ariaLabel, placeholder = '', disabled, emphasis }: SelectComponentProps,
+    {
+        children,
+        onSelect,
+        activeItem,
+        defaultValue,
+        ariaLabel,
+        placeholder = '',
+        disabled,
+        emphasis,
+    }: SelectComponentProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
     const { inputSlots, menuSlots, items, defaultItem, label, clearButton } = useSelectData(children, defaultValue);
@@ -43,13 +53,12 @@ export const SelectInput = (
     } = useSelect({
         items,
         defaultSelectedItem: defaultItem,
+        selectedItem: activeItem,
         onSelectedItemChange: ({ selectedItem }) => {
             onSelect && onSelect(selectedItem);
         },
         itemToString: (item) => (item ? item.label : ''),
     });
-
-    console.log(label);
 
     return (
         <RadixPopover.Root open={true}>
