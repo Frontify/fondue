@@ -8,15 +8,16 @@ import { Combobox, type ComboboxProps } from './Combobox';
 import { SelectCaret } from './SelectCaret';
 import { SelectClear } from './SelectClear';
 import { SelectItem, SelectItemGroup, SelectMenu, type SelectItemGroupProps, type SelectItemProps } from './SelectMenu';
+import { SelectSlot } from './SelectSlot';
 import styles from './styles/select.module.scss';
-import { useSelectData, withSelectContext, type SelectItemType } from './useSelectData';
+import { useSelectData, type SelectItemType } from './useSelectData';
 
 export type SelectEmphasis = 'default' | 'weak';
 
 export type SelectComponentProps = {
     children?: ReactNode;
     onSelect?: (selectedItem: SelectItemType) => void;
-    defaultItem?: SelectItemType;
+    defaultValue?: string;
     placeholder?: string;
     disabled?: boolean;
     clearable?: boolean;
@@ -28,7 +29,7 @@ export const SelectInput = (
     {
         children,
         onSelect,
-        defaultItem,
+        defaultValue,
         ariaLabel,
         placeholder = '',
         disabled,
@@ -37,7 +38,7 @@ export const SelectInput = (
     }: SelectComponentProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
-    const { items } = useSelectData();
+    const { inputSlots, menuSlots, items, defaultItem } = useSelectData(children, defaultValue);
 
     const { getToggleButtonProps, getMenuProps, getItemProps, reset, selectedItem, isOpen, highlightedIndex } =
         useSelect({
@@ -65,6 +66,7 @@ export const SelectInput = (
                           }))}
                 >
                     <span className={styles.input}>{selectedItem ? selectedItem.label : placeholder}</span>
+                    {inputSlots}
                     {clearable && <SelectClear reset={reset} />}
                     <SelectCaret isOpen={isOpen} />
                 </div>
@@ -76,7 +78,7 @@ export const SelectInput = (
                 getMenuProps={getMenuProps}
                 getItemProps={getItemProps}
             >
-                {children}
+                {menuSlots}
             </SelectMenu>
         </RadixPopover.Root>
     );
@@ -94,7 +96,9 @@ export const Select: typeof SelectInput & {
     Combobox: typeof ForwardedRefCombobox;
     Item: typeof ForwardedRefSelectItem;
     Group: typeof ForwardedRefSelectItemGroup;
-} = withSelectContext<HTMLButtonElement, SelectComponentProps>(ForwardedRefSelect);
-Select.Combobox = withSelectContext<HTMLDivElement, ComboboxProps>(ForwardedRefCombobox);
+    Slot: typeof SelectSlot;
+} = ForwardedRefSelect;
+Select.Combobox = ForwardedRefCombobox;
 Select.Item = ForwardedRefSelectItem;
 Select.Group = ForwardedRefSelectItemGroup;
+Select.Slot = SelectSlot;

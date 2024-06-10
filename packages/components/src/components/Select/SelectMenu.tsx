@@ -3,10 +3,9 @@
 import * as RadixPopover from '@radix-ui/react-popover';
 import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { type UseComboboxPropGetters, type UseSelectPropGetters } from 'downshift';
-import { isValidElement, useEffect, type ForwardedRef, type ReactElement, type ReactNode } from 'react';
+import { isValidElement, type ForwardedRef, type ReactElement, type ReactNode } from 'react';
 
 import styles from './styles/select.module.scss';
-import { useSelectData } from './useSelectData';
 import { getSelectOptionValue, recursiveMap } from './utils';
 
 export type SelectMenuProps = {
@@ -70,30 +69,22 @@ export const SelectItemGroup = (
 };
 SelectItemGroup.displayName = 'Select.Group';
 
-export type SelectItemProps = { label?: string } & (
+export type SelectItemProps = { value: string } & (
     | {
-          value: string;
-          children: React.ReactNode;
+          label: string;
+          children?: React.ReactNode;
       }
     | {
-          value?: string;
+          label?: string;
           children: string;
       }
 );
 
 export const SelectItem = (props: SelectItemProps, forwardedRef?: ForwardedRef<HTMLLIElement>) => {
-    const { registerMenuItem, items } = useSelectData();
-    const { value, label } = getSelectOptionValue(props);
-
-    useEffect(() => {
-        registerMenuItem({ value, label });
-    }, []);
-    if (items.map((item) => item.value).includes(value)) {
-        return (
-            <li ref={forwardedRef} data-test-bla {...props}>
-                {props.children}
-            </li>
-        );
-    }
+    return (
+        <li ref={forwardedRef} data-test-bla {...props}>
+            {props.children}
+        </li>
+    );
 };
 SelectItem.displayName = 'Select.Item';

@@ -25,7 +25,6 @@ const meta: Meta<typeof SelectInput> = {
     },
     args: {
         ariaLabel: 'Select an item',
-        emphasis: 'weak',
     },
 };
 export default meta;
@@ -35,9 +34,17 @@ export const SimpleSelect: Story = {
     render: (args) => {
         return (
             <Select {...args}>
-                <Select.Item>Test1</Select.Item>
-                <Select.Item>Test2</Select.Item>
-                <Select.Item>Test3</Select.Item>
+                <Select.Slot name="left">
+                    <div>Left Slot</div>
+                </Select.Slot>
+                <Select.Slot name="right">
+                    <div>Right Slot</div>
+                </Select.Slot>
+                <Select.Slot name="menu">
+                    <Select.Item>Test1</Select.Item>
+                    <Select.Item>Test2</Select.Item>
+                    <Select.Item>Test3</Select.Item>
+                </Select.Slot>
             </Select>
         );
     },

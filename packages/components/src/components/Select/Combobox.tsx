@@ -18,7 +18,7 @@ export type ComboboxProps = {
     placeholder?: string;
     disabled?: boolean;
     clearable?: boolean;
-    emphasis: SelectEmphasis;
+    emphasis?: SelectEmphasis;
     ariaLabel: string;
 };
 
