@@ -74,7 +74,6 @@ export const SelectCombobox = (
                     data-error={
                         inputValue && !items.find((item) => item.label.toLowerCase().includes(inputValue.toLowerCase()))
                     }
-                    data-test-id={dataTestId}
                 >
                     <input
                         onMouseDown={(mouseEvent) => {
@@ -99,6 +98,7 @@ export const SelectCombobox = (
                         }}
                         className={styles.input}
                         disabled={disabled}
+                        data-test-id={dataTestId}
                     />
                     {inputSlots}
                     {clearButton && (
