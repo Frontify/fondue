@@ -84,7 +84,9 @@ export const SelectInput = (
                     <span className={styles.input}>{selectedItem ? selectedItem.label : placeholder}</span>
                     {inputSlots}
                     {clearable && <SelectClear reset={reset} />}
-                    <SelectCaret isOpen={isOpen} />
+                    <div>
+                        <SelectCaret isOpen={isOpen} />
+                    </div>
                 </div>
             </RadixPopover.Anchor>
 
