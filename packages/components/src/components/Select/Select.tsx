@@ -40,9 +40,10 @@ export type SelectComponentProps = {
      */
     'aria-label': string;
     /**
+     *
      *    The data test id of the select component.
      */
-    'data-test-id': string;
+    'data-test-id'?: string;
 };
 
 export const SelectInput = (

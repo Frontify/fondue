@@ -6,8 +6,8 @@ import styles from './styles/select.module.scss';
 
 export type SelectSlotProps = {
     children?: ReactNode;
-    name: 'menu' | 'left' | 'right' | 'label' | 'clear';
-    'data-test-id': string;
+    name: 'menu' | 'left' | 'right' | 'clear';
+    'data-test-id'?: string;
 };
 
 export const SelectSlot = (

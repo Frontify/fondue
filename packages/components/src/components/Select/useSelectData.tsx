@@ -19,7 +19,9 @@ export const getRecursiveOptionValues = (children: ReactNode): { value: string; 
             values.push(getSelectOptionValue(child.props));
         } else if (isValidElement<{ children: ReactNode }>(child) && child?.props.children) {
             const optionValues = getRecursiveOptionValues(child.props.children);
-            values.push.apply(optionValues);
+            for (const optionValue of optionValues) {
+                values.push(optionValue);
+            }
         }
     });
     return values;
@@ -57,7 +59,10 @@ export const useSelectData = (children: ReactNode, defaultValue?: string) => {
     }, [children]);
 
     const filteredItems = useMemo(
-        () => itemValues.filter((item) => item.label.toLowerCase().includes(filterText.toLowerCase())),
+        () =>
+            itemValues.filter(
+                (item) => filterText === '' || item.label.toLowerCase().includes(filterText.toLowerCase()),
+            ),
         [itemValues, filterText],
     );
 

@@ -12,7 +12,7 @@ export type SelectItemProps = {
     /**
      *  The data test id of the select item.
      */
-    'data-test-id': string;
+    'data-test-id'?: string;
 } & (
     | {
           /**
@@ -56,7 +56,7 @@ export type SelectItemGroupProps = {
     /**
      * The data test id of the select item group.
      */
-    'data-test-id': string;
+    'data-test-id'?: string;
 };
 
 export const SelectItemGroup = (

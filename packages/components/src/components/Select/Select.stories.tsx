@@ -43,7 +43,6 @@ export const SimpleSelect: Story = {
     render: (args) => {
         return (
             <Select {...args}>
-                <Select.Slot name="label">Label</Select.Slot>
                 <Select.Slot name="menu">
                     <Select.Item value="test1">Test1</Select.Item>
                     <Select.Item value="test2">Test2</Select.Item>
@@ -61,7 +60,6 @@ export const Combobox: Story = {
     render: (args) => {
         return (
             <Select.Combobox {...args}>
-                <Select.Slot name="label">Label</Select.Slot>
                 <Select.Slot name="menu">
                     <Select.Item value="test1">Test1</Select.Item>
                     <Select.Item value="test2">Test2</Select.Item>
@@ -79,7 +77,6 @@ export const Disabled: Story = {
     render: (args) => {
         return (
             <Select {...args}>
-                <Select.Slot name="label">Label</Select.Slot>
                 <Select.Slot name="menu">
                     <Select.Item value="test1">Test1</Select.Item>
                     <Select.Item value="test2">Test2</Select.Item>
@@ -97,7 +94,6 @@ export const WithPlaceholder: Story = {
     render: (args) => {
         return (
             <Select {...args}>
-                <Select.Slot name="label">Label</Select.Slot>
                 <Select.Slot name="menu">
                     <Select.Item value="test1">Test1</Select.Item>
                     <Select.Item value="test2">Test2</Select.Item>
@@ -121,7 +117,6 @@ export const WithDecorator: Story = {
                 <Select.Slot name="right">
                     <IconIcon size={16} />
                 </Select.Slot>
-                <Select.Slot name="label">Label</Select.Slot>
                 <Select.Slot name="menu">
                     <Select.Item value="test1">Test1</Select.Item>
                     <Select.Item value="test2">Test2</Select.Item>
@@ -143,7 +138,6 @@ export const Clearable: Story = {
                     <IconIcon size={16} />
                 </Select.Slot>
                 <Select.Slot name="clear" />
-                <Select.Slot name="label">Label</Select.Slot>
                 <Select.Slot name="menu">
                     <Select.Item value="test1">Test1</Select.Item>
                     <Select.Item value="test2">Test2</Select.Item>
@@ -168,7 +162,6 @@ export const CustomClearElement: Story = {
                 <Select.Slot name="right">
                     <IconIcon size={16} />
                 </Select.Slot>
-                <Select.Slot name="label">Label</Select.Slot>
                 <Select.Slot name="menu">
                     <Select.Item value="test1">Test1</Select.Item>
                     <Select.Item value="test2">Test2</Select.Item>
@@ -186,7 +179,6 @@ export const DefaultItem: Story = {
     render: (args) => {
         return (
             <Select {...args}>
-                <Select.Slot name="label">Label</Select.Slot>
                 <Select.Slot name="menu">
                     <Select.Item value="test1">Test1</Select.Item>
                     <Select.Item value="test2">Test2</Select.Item>
@@ -201,7 +193,6 @@ export const ItemGroups: Story = {
     render: (args) => {
         return (
             <Select {...args}>
-                <Select.Slot name="label">Label</Select.Slot>
                 <Select.Slot name="menu">
                     <Select.Item value="test1">Test1</Select.Item>
                     <Select.Item value="test2">Test2</Select.Item>
@@ -221,7 +212,6 @@ export const CustomItem: Story = {
     render: (args) => {
         return (
             <Select {...args}>
-                <Select.Slot name="label">Label</Select.Slot>
                 <Select.Slot name="menu">
                     <Select.Item value="ch" label="Switzerland">
                         <div className="tw-flex tw-items-center tw-gap-4">
@@ -256,7 +246,6 @@ export const ExternallyControlled: Story = {
                     activeItem={activeItem}
                     {...args}
                 >
-                    <Select.Slot name="label">Label</Select.Slot>
                     <Select.Slot name="menu">
                         <Select.Item value="test1">Test1</Select.Item>
                         <Select.Item value="test2">Test2</Select.Item>

@@ -19,7 +19,7 @@ export type ComboboxProps = {
     disabled?: boolean;
     clearable?: boolean;
     'aria-label': string;
-    'data-test-id': string;
+    'data-test-id'?: string;
 };
 
 export const SelectCombobox = (
