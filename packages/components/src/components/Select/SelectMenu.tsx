@@ -10,7 +10,6 @@ import styles from './styles/select.module.scss';
 import { getSelectOptionValue, recursiveMap } from './utils';
 
 export type SelectMenuProps = {
-    isOpen: boolean;
     highlightedIndex: number;
     getMenuProps: UseSelectPropGetters<unknown>['getMenuProps'] | UseComboboxPropGetters<unknown>['getMenuProps'];
     getItemProps: UseSelectPropGetters<unknown>['getItemProps'] | UseComboboxPropGetters<unknown>['getItemProps'];
@@ -18,18 +17,16 @@ export type SelectMenuProps = {
     filterText?: string;
 };
 
-export const SelectMenu = ({
-    isOpen,
-    highlightedIndex,
-    getMenuProps,
-    getItemProps,
-    children,
-    filterText,
-}: SelectMenuProps) => {
+export const SelectMenu = ({ highlightedIndex, getMenuProps, getItemProps, children, filterText }: SelectMenuProps) => {
     return (
         <RadixPopover.Portal>
-            <RadixPopover.Content className={styles.portal}>
-                <ul data-open-state={isOpen} className={styles.menu} {...getMenuProps()}>
+            <RadixPopover.Content
+                onOpenAutoFocus={(e) => {
+                    e.preventDefault();
+                }}
+                className={styles.portal}
+            >
+                <ul className={styles.menu} {...getMenuProps()} role="dialog">
                     {
                         recursiveMap(
                             children,

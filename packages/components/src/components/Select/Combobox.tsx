@@ -66,7 +66,7 @@ export const SelectCombobox = (
     const wasClicked = useRef(false);
 
     return (
-        <RadixPopover.Root open={true}>
+        <RadixPopover.Root open={isOpen}>
             <RadixPopover.Anchor asChild>
                 <div
                     ref={forwardedRef}
@@ -128,7 +128,6 @@ export const SelectCombobox = (
             </RadixPopover.Anchor>
 
             <SelectMenu
-                isOpen={isOpen}
                 highlightedIndex={highlightedIndex}
                 filterText={filterText}
                 getMenuProps={getMenuProps}

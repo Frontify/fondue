@@ -73,7 +73,7 @@ export const SelectInput = (
         });
 
     return (
-        <RadixPopover.Root open={true}>
+        <RadixPopover.Root open={isOpen}>
             <RadixPopover.Anchor asChild>
                 <div
                     className={styles.root}
@@ -106,12 +106,7 @@ export const SelectInput = (
                 </div>
             </RadixPopover.Anchor>
 
-            <SelectMenu
-                isOpen={isOpen}
-                highlightedIndex={highlightedIndex}
-                getMenuProps={getMenuProps}
-                getItemProps={getItemProps}
-            >
+            <SelectMenu highlightedIndex={highlightedIndex} getMenuProps={getMenuProps} getItemProps={getItemProps}>
                 {menuSlots}
             </SelectMenu>
         </RadixPopover.Root>

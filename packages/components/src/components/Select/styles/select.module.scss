@@ -178,7 +178,7 @@
     width: var(--radix-popover-trigger-width);
     overflow: hidden;
 
-    &[data-open-state='true']:has(li) {
+    &:has(li) {
         display: block;
     }
 }
