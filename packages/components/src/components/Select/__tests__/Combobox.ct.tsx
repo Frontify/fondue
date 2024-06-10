@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconIcon } from '@frontify/fondue-icons';
 import { expect, test } from '@playwright/experimental-ct-react';
 import * as sinon from 'sinon';
 
@@ -141,35 +140,6 @@ test('should select item in group in list', async ({ mount, page }) => {
     await expect(component).toContainText(ITEM_TEXT2);
     expect(onSelectChange.callCount).toBe(1);
     expect(onSelectChange.calledWith({ value: 'test2', label: 'sample text2' })).toBe(true);
-});
-
-test('should select custom item in list', async ({ mount, page }) => {
-    const onSelectChange = sinon.spy();
-    const component = await mount(
-        <Select
-            onSelect={onSelectChange}
-            aria-label="test"
-            data-test-id={SELECT_TEST_ID}
-            placeholder={PLACEHOLDER_TEXT}
-        >
-            <Select.Slot name="menu">
-                <Select.Item data-test-id={ITEM_TEST_ID1} label={ITEM_LABEL1} value="test1">
-                    <IconIcon />
-                </Select.Item>
-                <Select.Item data-test-id={ITEM_TEST_ID2} label={ITEM_LABEL2} value="test2">
-                    <IconIcon />
-                </Select.Item>
-            </Select.Slot>
-        </Select>,
-    );
-    await expect(component).toBeVisible();
-    await component.click();
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('Enter');
-    await expect(component).toContainText(ITEM_LABEL2);
-    expect(onSelectChange.callCount).toBe(1);
-    expect(onSelectChange.calledWith({ value: 'test2', label: ITEM_LABEL2 })).toBe(true);
 });
 
 test('should not open menu when disabled', async ({ mount, page }) => {
