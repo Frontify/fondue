@@ -176,6 +176,7 @@
     background-color: var(--base-color);
     border: var(--line-width) solid var(--line-color-strong);
     width: var(--radix-popover-trigger-width);
+    overflow: hidden;
 
     &[data-open-state='true']:has(li) {
         display: block;
