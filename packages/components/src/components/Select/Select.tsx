@@ -7,7 +7,8 @@ import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
 
 import { SelectCombobox, type ComboboxProps } from './Combobox';
 import { SelectCaret } from './SelectCaret';
-import { SelectItem, SelectItemGroup, SelectMenu, type SelectItemGroupProps, type SelectItemProps } from './SelectMenu';
+import { SelectItem, SelectItemGroup, type SelectItemGroupProps, type SelectItemProps } from './SelectItem';
+import { SelectMenu } from './SelectMenu';
 import { SelectSlot, type SelectSlotProps } from './SelectSlot';
 import styles from './styles/select.module.scss';
 import { useSelectData, type SelectItemType } from './useSelectData';
@@ -15,14 +16,37 @@ import { useSelectData, type SelectItemType } from './useSelectData';
 export type SelectEmphasis = 'default' | 'weak';
 
 export type SelectComponentProps = {
+    /**
+     *    Children of the Select component. This can contain the Select.Slot components for the label, decorators, clear action and menu.
+     */
     children?: ReactNode;
+    /**
+     *    Callback function that is called when an item is selected.
+     */
     onSelect?: (selectedItem: SelectItemType) => void;
+    /**
+     *    The active item in the select component. This is used to control the select externally.
+     */
     activeItem?: SelectItemType;
+    /**
+     *    The default value of the select component. Used for uncontrolled usages.
+     */
     defaultValue?: string;
+    /**
+     *    The placeholder in the select component.
+     */
     placeholder?: string;
+    /**
+     *    Disables the select component.
+     */
     disabled?: boolean;
-    clearable?: boolean;
+    /**
+     *    The visual emphasis of the select component.
+     */
     emphasis?: SelectEmphasis;
+    /**
+     *    The aria label of the select component. For accessibility purposes when no Label Slot is provided.
+     */
     ariaLabel: string;
 };
 

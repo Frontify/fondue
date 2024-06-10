@@ -54,37 +54,3 @@ export const SelectMenu = ({ isOpen, highlightedIndex, getMenuProps, getItemProp
     );
 };
 SelectMenu.displayName = 'Select.Menu';
-
-export type SelectItemGroupProps = { children: ReactNode; groupId: string };
-
-export const SelectItemGroup = (
-    { children, groupId }: SelectItemGroupProps,
-    forwardedRef?: ForwardedRef<HTMLDivElement>,
-) => {
-    return (
-        <div className={styles.group} ref={forwardedRef} key={groupId}>
-            {children}
-        </div>
-    );
-};
-SelectItemGroup.displayName = 'Select.Group';
-
-export type SelectItemProps = { value: string } & (
-    | {
-          label: string;
-          children?: React.ReactNode;
-      }
-    | {
-          label?: string;
-          children: string;
-      }
-);
-
-export const SelectItem = (props: SelectItemProps, forwardedRef?: ForwardedRef<HTMLLIElement>) => {
-    return (
-        <li ref={forwardedRef} data-test-bla {...props}>
-            {props.children}
-        </li>
-    );
-};
-SelectItem.displayName = 'Select.Item';

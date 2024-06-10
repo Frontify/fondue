@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { Button } from '../Button/Button';
 
 import { Select, SelectInput } from './Select';
-import { SelectItem, SelectItemGroup } from './SelectMenu';
+import { SelectItem, SelectItemGroup } from './SelectItem';
 import { SelectSlot } from './SelectSlot';
 import { type SelectItemType } from './useSelectData';
 
@@ -138,12 +138,6 @@ export const Clearable: Story = {
         return (
             <Select {...args}>
                 <Select.Slot name="clear" />
-                <Select.Slot name="left">
-                    <IconIcon size={16} />
-                </Select.Slot>
-                <Select.Slot name="right">
-                    <IconIcon size={16} />
-                </Select.Slot>
                 <Select.Slot name="label">Label</Select.Slot>
                 <Select.Slot name="menu">
                     <Select.Item value="test1">Test1</Select.Item>
