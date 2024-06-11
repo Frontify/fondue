@@ -1,0 +1,47 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@import '../../../utilities/sizeToken.module.scss';
+@import '../../../utilities/focusStyle.module.scss';
+@import '../../../utilities/transitions.module.scss';
+
+.content, .subContent {
+    display: block;
+    border-radius: var(--radius);
+    margin-top: sizeToken(2);
+    background-color: var(--base-color);
+    border: var(--line-width) solid var(--line-color-strong);
+    box-shadow: var(--shadow-matrix);
+    overflow: hidden;
+    min-width: 250px;
+}
+
+
+
+.item, .subTrigger {
+    @include transition-colors;
+
+    padding: sizeToken(3) sizeToken(5);
+    cursor: pointer;
+    text-align: start;
+    font-size: var(--body-size-medium);
+    line-height: var(--body-size-medium-line-height);
+    outline: none;
+
+    &:hover {
+        background-color: var(--box-neutral-color-hover);
+    }
+
+    &[data-highlighted='true'] {
+        background-color: var(--box-neutral-color-hover);
+    }
+}
+
+
+.group {
+    .item~& {
+        border-top: var(--line-width) solid var(--line-color-strong);
+    }
+    &:has(+ .item) {
+        border-bottom: var(--line-width) solid var(--line-color-strong);
+    }
+}

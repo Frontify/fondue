@@ -1,16 +1,129 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ReactNode } from 'react';
+import * as RadixDropdown from '@radix-ui/react-dropdown-menu';
+import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
 
-import { dropdownStyles } from './styles/dropdownStyles';
+import styles from './styles/dropdown.module.scss';
 
-export type DropdownProps = { children?: ReactNode };
+export type DropdownRootProps = { children?: ReactNode; 'data-test-id'?: string };
 
-export const Dropdown = ({ children }: DropdownProps) => {
+export const DropdownRoot = ({ children, 'data-test-id': dataTestId = 'fondue-dropdown' }: DropdownRootProps) => {
+    return <RadixDropdown.Root data-test-id={dataTestId}>{children}</RadixDropdown.Root>;
+};
+DropdownRoot.displayName = 'Dropdown.Root';
+
+export type DropdownTriggerProps = { children?: ReactNode; 'data-test-id'?: string };
+
+export const DropdownTrigger = (
+    { children, 'data-test-id': dataTestId = 'fondue-dropdown-trigger' }: DropdownTriggerProps,
+    ref: ForwardedRef<HTMLButtonElement>,
+) => {
     return (
-        <div className={dropdownStyles()} data-test-id="dropdown">
+        <RadixDropdown.Trigger asChild data-test-id={dataTestId} ref={ref}>
             {children}
-        </div>
+        </RadixDropdown.Trigger>
     );
 };
-Dropdown.displayName = 'Dropdown';
+DropdownTrigger.displayName = 'Dropdown.Trigger';
+
+export type DropdownContentProps = { children?: ReactNode; 'data-test-id'?: string };
+
+export const DropdownContent = (
+    { children, 'data-test-id': dataTestId = 'fondue-dropdown-content' }: DropdownContentProps,
+    ref: ForwardedRef<HTMLDivElement>,
+) => {
+    return (
+        <RadixDropdown.Portal>
+            <RadixDropdown.Content className={styles.content} data-test-id={dataTestId} ref={ref}>
+                {children}
+            </RadixDropdown.Content>
+        </RadixDropdown.Portal>
+    );
+};
+DropdownContent.displayName = 'Dropdown.Content';
+
+export type DropdownGroupProps = { children: ReactNode; 'data-test-id'?: string };
+
+export const DropdownGroup = (
+    { children, 'data-test-id': dataTestId = 'fondue-dropdown-group' }: DropdownGroupProps,
+    ref: ForwardedRef<HTMLDivElement>,
+) => {
+    return (
+        <RadixDropdown.Group className={styles.group} data-test-id={dataTestId} ref={ref}>
+            {children}
+        </RadixDropdown.Group>
+    );
+};
+DropdownGroup.displayName = 'Dropdown.Group';
+
+export type DropdownSubMenuProps = { children: ReactNode; 'data-test-id'?: string };
+
+export const DropdownSubMenu = ({
+    children,
+    'data-test-id': dataTestId = 'fondue-dropdown-submenu',
+}: DropdownSubMenuProps) => {
+    return <RadixDropdown.Sub data-test-id={dataTestId}>{children}</RadixDropdown.Sub>;
+};
+DropdownSubMenu.displayName = 'Dropdown.SubMenu';
+
+export type DropdownSubTriggerProps = { children: ReactNode; 'data-test-id'?: string };
+
+export const DropdownSubTrigger = (
+    { children, 'data-test-id': dataTestId = 'fondue-dropdown-subtrigger' }: DropdownSubTriggerProps,
+    ref: ForwardedRef<HTMLDivElement>,
+) => {
+    return (
+        <RadixDropdown.SubTrigger className={styles.subTrigger} data-test-id={dataTestId} ref={ref}>
+            {children}
+        </RadixDropdown.SubTrigger>
+    );
+};
+DropdownSubTrigger.displayName = 'Dropdown.SubTrigger';
+
+export type DropdownSubContentProps = { children: ReactNode; 'data-test-id'?: string };
+
+export const DropdownSubContent = (
+    { children, 'data-test-id': dataTestId = 'fondue-dropdown-subcontent' }: DropdownSubContentProps,
+    ref: ForwardedRef<HTMLDivElement>,
+) => {
+    return (
+        <RadixDropdown.Portal>
+            <RadixDropdown.SubContent className={styles.subContent} data-test-id={dataTestId} ref={ref}>
+                {children}
+            </RadixDropdown.SubContent>
+        </RadixDropdown.Portal>
+    );
+};
+DropdownSubContent.displayName = 'Dropdown.SubContent';
+
+export type DropdownItemProps = { children: ReactNode; 'data-test-id'?: string };
+
+export const DropdownItem = (
+    { children, 'data-test-id': dataTestId = 'fondue-dropdown-subtrigger' }: DropdownItemProps,
+    ref: ForwardedRef<HTMLDivElement>,
+) => {
+    return (
+        <RadixDropdown.Item className={styles.item} data-test-id={dataTestId} ref={ref}>
+            {children}
+        </RadixDropdown.Item>
+    );
+};
+DropdownItem.displayName = 'Dropdown.Item';
+
+const ForwardedRefDropdownTrigger = forwardRef<HTMLButtonElement, DropdownTriggerProps>(DropdownTrigger);
+const ForwardedRefDropdownContent = forwardRef<HTMLDivElement, DropdownContentProps>(DropdownContent);
+const ForwardedRefDropdownGroup = forwardRef<HTMLDivElement, DropdownGroupProps>(DropdownGroup);
+const ForwardedRefDropdownSubTrigger = forwardRef<HTMLDivElement, DropdownSubTriggerProps>(DropdownSubTrigger);
+const ForwardedRefDropdownSubContent = forwardRef<HTMLDivElement, DropdownSubContentProps>(DropdownSubContent);
+const ForwardedRefDropdownItem = forwardRef<HTMLDivElement, DropdownItemProps>(DropdownItem);
+
+export const Dropdown = {
+    Root: DropdownRoot,
+    Trigger: ForwardedRefDropdownTrigger,
+    Content: ForwardedRefDropdownContent,
+    Group: ForwardedRefDropdownGroup,
+    SubMenu: DropdownSubMenu,
+    SubTrigger: ForwardedRefDropdownSubTrigger,
+    SubContent: ForwardedRefDropdownSubContent,
+    Item: ForwardedRefDropdownItem,
+};

@@ -2,11 +2,39 @@
 
 import { type Meta, type StoryObj } from '@storybook/react';
 
-import { Dropdown } from './Dropdown';
+import { Button } from '../Button/Button';
 
-type Story = StoryObj<typeof Dropdown>;
-const meta: Meta<typeof Dropdown> = {
-    component: Dropdown,
+import {
+    Dropdown,
+    DropdownContent,
+    DropdownGroup,
+    DropdownItem,
+    DropdownRoot,
+    DropdownSubContent,
+    DropdownSubMenu,
+    DropdownSubTrigger,
+    DropdownTrigger,
+} from './Dropdown';
+
+type Story = StoryObj<typeof meta>;
+const meta: Meta<typeof DropdownRoot> = {
+    component: DropdownRoot,
+    subcomponents: {
+        // @ts-expect-error Storybook types are incorrect
+        'Dropdown.Trigger': DropdownTrigger,
+        // @ts-expect-error Storybook types are incorrect
+        'Dropdown.Content': DropdownContent,
+        // @ts-expect-error Storybook types are incorrect
+        'Dropdown.Group': DropdownGroup,
+        // @ts-expect-error Storybook types are incorrect
+        'Dropdown.SubMenu': DropdownSubMenu,
+        // @ts-expect-error Storybook types are incorrect
+        'Dropdown.Item': DropdownItem,
+        // @ts-expect-error Storybook types are incorrect
+        'Dropdown.SubTrigger': DropdownSubTrigger,
+        // @ts-expect-error Storybook types are incorrect
+        'Dropdown.SubContent': DropdownSubContent,
+    },
     tags: ['autodocs'],
     parameters: {
         status: {
@@ -22,4 +50,28 @@ export const Default: Story = {
     args: {
         children: 'Hello World',
     },
+    render: (args) => (
+        <Dropdown.Root>
+            <Dropdown.Trigger>
+                <Button>Trigger</Button>
+            </Dropdown.Trigger>
+            <Dropdown.Content>
+                <Dropdown.Item>Item 1</Dropdown.Item>
+                <Dropdown.Item>Item 1</Dropdown.Item>
+                <Dropdown.Group>
+                    <Dropdown.Item>Item 1</Dropdown.Item>
+                    <Dropdown.Item>Item 1</Dropdown.Item>
+                </Dropdown.Group>
+                <Dropdown.Item>Item 1</Dropdown.Item>
+                <Dropdown.SubMenu>
+                    <Dropdown.SubTrigger>Sub Trigger</Dropdown.SubTrigger>
+                    <Dropdown.SubContent>
+                        <Dropdown.Item>Item 1</Dropdown.Item>
+                        <Dropdown.Item>Item 1</Dropdown.Item>
+                    </Dropdown.SubContent>
+                </Dropdown.SubMenu>
+                <Dropdown.Item>Item 1</Dropdown.Item>
+            </Dropdown.Content>
+        </Dropdown.Root>
+    ),
 };
