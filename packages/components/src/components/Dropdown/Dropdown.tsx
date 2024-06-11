@@ -133,7 +133,7 @@ export const DropdownItem = (
 };
 DropdownItem.displayName = 'Dropdown.Item';
 
-export type DropdownSlotProps = { children: ReactNode; name: 'left' | 'right'; 'data-test-id'?: string };
+export type DropdownSlotProps = { children: ReactNode; name?: 'left' | 'right'; 'data-test-id'?: string };
 
 export const DropdownSlot = (
     { children, name, 'data-test-id': dataTestId = 'fondue-dropdown-slot' }: DropdownSlotProps,

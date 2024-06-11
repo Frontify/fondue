@@ -22,6 +22,7 @@
 
     display: flex;
     align-items: center;
+    gap: sizeToken(1.5);
     padding: sizeToken(3) sizeToken(5);
     cursor: pointer;
     text-align: start;
@@ -40,19 +41,12 @@
         color: var(--text-color-disabled);
         background-color: var(--box-disabled-color);
     }
-}
 
-.subMenuIndicator {
-    order: 2;
-    margin-left: auto;
-
-    div[data-name='right']~& {
-        margin-left: 0;
+    .subMenuIndicator {
+        order: 2;
+        margin-left: auto;
     }
 }
-
-
-
 
 .group {
     .item~& {
@@ -68,29 +62,32 @@
     display: flex;
     flex-shrink: 0;
     align-items: center;
-    cursor: text;
     gap: sizeToken(1.5);
-    padding-right: sizeToken(1.5);
 
     // Left slot
     &:not([data-name='right']) {
         order: -1;
-        margin-left: 0px;
-        margin-right: 0px;
     }
 
     // Right slot
     &[data-name='right'] {
         order: 1;
         margin-left: auto;
-        margin-right: 0px;
-        padding-right: sizeToken(3);
+
+        &~.subMenuIndicator {
+            margin-left: sizeToken(1.5);
+        }
     }
 
     // 2 slots without any name should be implicitly ordered
-    /*&:not([data-name='right']) ~ :not([data-name='left']) {
-        order: 0;
-        margin-left: 0px;
-        margin-right: 0px;
-    }*/
+    &:not([data-name='right']) ~ :not([data-name='left']) {
+        order: 1;
+        margin-left: auto;
+
+        &~.subMenuIndicator {
+            margin-left: 0;
+        }
+    }
 }
+
+
