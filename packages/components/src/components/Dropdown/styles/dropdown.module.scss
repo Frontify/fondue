@@ -19,9 +19,9 @@
 
 .item, .subTrigger {
     @include transition-colors;
-
     display: flex;
     align-items: center;
+    height: sizeToken(10);
     gap: sizeToken(1.5);
     padding: sizeToken(3) sizeToken(5);
     cursor: pointer;
@@ -30,6 +30,11 @@
     line-height: var(--body-size-medium-line-height);
     color: var(--text-color-weak);
     outline: none;
+
+    &[data-state='open'] {
+        background-color: var(--box-neutral-color);
+        color: var(--text-color);
+    }
 
     &[data-highlighted] {
         background-color: var(--box-neutral-color-hover);
@@ -41,6 +46,8 @@
         color: var(--text-color-disabled);
         background-color: var(--box-disabled-color);
     }
+
+
 
     .subMenuIndicator {
         order: 2;

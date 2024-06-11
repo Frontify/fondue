@@ -6,10 +6,24 @@ import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
 
 import styles from './styles/dropdown.module.scss';
 
-export type DropdownRootProps = { children?: ReactNode; 'data-test-id'?: string };
+export type DropdownRootProps = {
+    children?: ReactNode;
+    open?: boolean;
+    onOpenChange?: (open: boolean) => void;
+    'data-test-id'?: string;
+};
 
-export const DropdownRoot = ({ children, 'data-test-id': dataTestId = 'fondue-dropdown' }: DropdownRootProps) => {
-    return <RadixDropdown.Root data-test-id={dataTestId}>{children}</RadixDropdown.Root>;
+export const DropdownRoot = ({
+    children,
+    open,
+    onOpenChange,
+    'data-test-id': dataTestId = 'fondue-dropdown',
+}: DropdownRootProps) => {
+    return (
+        <RadixDropdown.Root open={open} onOpenChange={onOpenChange} data-test-id={dataTestId}>
+            {children}
+        </RadixDropdown.Root>
+    );
 };
 DropdownRoot.displayName = 'Dropdown.Root';
 
@@ -35,7 +49,14 @@ export const DropdownContent = (
 ) => {
     return (
         <RadixDropdown.Portal>
-            <RadixDropdown.Content className={styles.content} data-test-id={dataTestId} ref={ref}>
+            <RadixDropdown.Content
+                align="start"
+                collisionPadding={8}
+                sideOffset={8}
+                className={styles.content}
+                data-test-id={dataTestId}
+                ref={ref}
+            >
                 {children}
             </RadixDropdown.Content>
         </RadixDropdown.Portal>
@@ -102,7 +123,7 @@ export type DropdownItemProps = {
     children: ReactNode;
     disabled?: boolean;
     textValue?: string;
-    onSelect?: (event: Event) => void;
+    onSelect: (event: Event) => void;
     'data-test-id'?: string;
 };
 
