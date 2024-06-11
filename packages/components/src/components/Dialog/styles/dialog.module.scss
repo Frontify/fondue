@@ -23,7 +23,6 @@
     overflow: hidden;
     grid-template-rows: auto auto minmax(0, 1fr) auto;
 
-
     @include sm {
         left: 50%;
         transform: translateX(-50%) translateY(-50%);
@@ -42,18 +41,19 @@
     }
 
     &[data-dialog-spacing='comfortable'] {
-        .header, .footer {
+        .header,
+        .footer {
             padding: sizeToken(6);
         }
 
         .body {
             padding: sizeToken(4) sizeToken(6);
         }
-
     }
 
     &[data-dialog-spacing='spacious'] {
-        .header, .footer {
+        .header,
+        .footer {
             padding: sizeToken(10);
         }
 
@@ -114,7 +114,6 @@
     grid-column: 1;
     padding: sizeToken(4);
 
-
     @include sm {
         grid-row: 3;
         grid-column: 2;
@@ -128,7 +127,7 @@
     overflow: hidden;
     grid-row: 3;
     grid-column: 1;
-    padding: sizeToken(2) sizeToken(4); ;
+    padding: sizeToken(2) sizeToken(4);
 
     @include sm {
         grid-row: 2;
