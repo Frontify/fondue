@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconCaretRight } from '@frontify/fondue-icons';
 import * as RadixDropdown from '@radix-ui/react-dropdown-menu';
 import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
 
@@ -75,6 +76,7 @@ export const DropdownSubTrigger = (
     return (
         <RadixDropdown.SubTrigger className={styles.subTrigger} data-test-id={dataTestId} ref={ref}>
             {children}
+            <IconCaretRight className={styles.subMenuIndicator} size={16} />
         </RadixDropdown.SubTrigger>
     );
 };
@@ -96,19 +98,54 @@ export const DropdownSubContent = (
 };
 DropdownSubContent.displayName = 'Dropdown.SubContent';
 
-export type DropdownItemProps = { children: ReactNode; 'data-test-id'?: string };
+export type DropdownItemProps = {
+    children: ReactNode;
+    disabled?: boolean;
+    textValue?: string;
+    onSelect?: (event: Event) => void;
+    'data-test-id'?: string;
+};
 
 export const DropdownItem = (
-    { children, 'data-test-id': dataTestId = 'fondue-dropdown-subtrigger' }: DropdownItemProps,
+    {
+        children,
+        disabled,
+        textValue,
+        onSelect,
+        'data-test-id': dataTestId = 'fondue-dropdown-subtrigger',
+        ...props
+    }: DropdownItemProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
-        <RadixDropdown.Item className={styles.item} data-test-id={dataTestId} ref={ref}>
+        <RadixDropdown.Item
+            onSelect={onSelect}
+            className={styles.item}
+            textValue={textValue}
+            data-test-id={dataTestId}
+            ref={ref}
+            disabled={disabled}
+            {...props}
+        >
             {children}
         </RadixDropdown.Item>
     );
 };
 DropdownItem.displayName = 'Dropdown.Item';
+
+export type DropdownSlotProps = { children: ReactNode; name: 'left' | 'right'; 'data-test-id'?: string };
+
+export const DropdownSlot = (
+    { children, name, 'data-test-id': dataTestId = 'fondue-dropdown-slot' }: DropdownSlotProps,
+    ref: ForwardedRef<HTMLDivElement>,
+) => {
+    return (
+        <div data-name={name} className={styles.slot} data-test-id={dataTestId} ref={ref}>
+            {children}
+        </div>
+    );
+};
+DropdownSlot.displayName = 'Dropdown.Slot';
 
 const ForwardedRefDropdownTrigger = forwardRef<HTMLButtonElement, DropdownTriggerProps>(DropdownTrigger);
 const ForwardedRefDropdownContent = forwardRef<HTMLDivElement, DropdownContentProps>(DropdownContent);
@@ -116,6 +153,7 @@ const ForwardedRefDropdownGroup = forwardRef<HTMLDivElement, DropdownGroupProps>
 const ForwardedRefDropdownSubTrigger = forwardRef<HTMLDivElement, DropdownSubTriggerProps>(DropdownSubTrigger);
 const ForwardedRefDropdownSubContent = forwardRef<HTMLDivElement, DropdownSubContentProps>(DropdownSubContent);
 const ForwardedRefDropdownItem = forwardRef<HTMLDivElement, DropdownItemProps>(DropdownItem);
+const ForwardedRefDropdownSlot = forwardRef<HTMLDivElement, DropdownSlotProps>(DropdownSlot);
 
 export const Dropdown = {
     Root: DropdownRoot,
@@ -126,4 +164,5 @@ export const Dropdown = {
     SubTrigger: ForwardedRefDropdownSubTrigger,
     SubContent: ForwardedRefDropdownSubContent,
     Item: ForwardedRefDropdownItem,
+    Slot: ForwardedRefDropdownSlot,
 };

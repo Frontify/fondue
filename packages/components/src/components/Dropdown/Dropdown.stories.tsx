@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconIcon } from '@frontify/fondue-icons';
 import { type Meta, type StoryObj } from '@storybook/react';
 
 import { Button } from '../Button/Button';
@@ -59,12 +60,28 @@ export const Default: Story = {
                 <Dropdown.Item>Item 1</Dropdown.Item>
                 <Dropdown.Item>Item 1</Dropdown.Item>
                 <Dropdown.Group>
-                    <Dropdown.Item>Item 1</Dropdown.Item>
+                    <Dropdown.Item>
+                        <Dropdown.Slot name="left">
+                            <IconIcon size={16} />
+                        </Dropdown.Slot>
+                        Item 1
+                        <Dropdown.Slot name="right">
+                            <IconIcon size={16} />
+                        </Dropdown.Slot>
+                    </Dropdown.Item>
                     <Dropdown.Item>Item 1</Dropdown.Item>
                 </Dropdown.Group>
-                <Dropdown.Item>Item 1</Dropdown.Item>
+                <Dropdown.Item disabled>Item 1</Dropdown.Item>
                 <Dropdown.SubMenu>
-                    <Dropdown.SubTrigger>Sub Trigger</Dropdown.SubTrigger>
+                    <Dropdown.SubTrigger>
+                        <Dropdown.Slot name="left">
+                            <IconIcon size={16} />
+                        </Dropdown.Slot>
+                        Sub trigger
+                        <Dropdown.Slot name="right">
+                            <IconIcon size={16} />
+                        </Dropdown.Slot>
+                    </Dropdown.SubTrigger>
                     <Dropdown.SubContent>
                         <Dropdown.Item>Item 1</Dropdown.Item>
                         <Dropdown.Item>Item 1</Dropdown.Item>

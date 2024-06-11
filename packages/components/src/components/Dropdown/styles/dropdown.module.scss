@@ -20,21 +20,38 @@
 .item, .subTrigger {
     @include transition-colors;
 
+    display: flex;
+    align-items: center;
     padding: sizeToken(3) sizeToken(5);
     cursor: pointer;
     text-align: start;
     font-size: var(--body-size-medium);
     line-height: var(--body-size-medium-line-height);
+    color: var(--text-color-weak);
     outline: none;
 
-    &:hover {
+    &[data-highlighted] {
         background-color: var(--box-neutral-color-hover);
+        color: var(--text-color);
     }
 
-    &[data-highlighted='true'] {
-        background-color: var(--box-neutral-color-hover);
+    &[data-disabled] {
+        cursor: not-allowed;
+        color: var(--text-color-disabled);
+        background-color: var(--box-disabled-color);
     }
 }
+
+.subMenuIndicator {
+    order: 2;
+    margin-left: auto;
+
+    div[data-name='right']~& {
+        margin-left: 0;
+    }
+}
+
+
 
 
 .group {
@@ -44,4 +61,36 @@
     &:has(+ .item) {
         border-bottom: var(--line-width) solid var(--line-color-strong);
     }
+}
+
+
+.slot {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    cursor: text;
+    gap: sizeToken(1.5);
+    padding-right: sizeToken(1.5);
+
+    // Left slot
+    &:not([data-name='right']) {
+        order: -1;
+        margin-left: 0px;
+        margin-right: 0px;
+    }
+
+    // Right slot
+    &[data-name='right'] {
+        order: 1;
+        margin-left: auto;
+        margin-right: 0px;
+        padding-right: sizeToken(3);
+    }
+
+    // 2 slots without any name should be implicitly ordered
+    /*&:not([data-name='right']) ~ :not([data-name='left']) {
+        order: 0;
+        margin-left: 0px;
+        margin-right: 0px;
+    }*/
 }
