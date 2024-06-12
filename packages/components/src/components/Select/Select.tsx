@@ -15,7 +15,7 @@ import { useSelectData, type SelectItemType } from './useSelectData';
 
 export type SelectComponentProps = {
     /**
-     * Children of the Select component. This can contain the Select.Slot components for the label, decorators, clear action and menu.
+     * Children of the Select component. This can contain the `Select.Slot` components for the label, decorators, clear action and menu.
      */
     children?: ReactNode;
     /**
@@ -39,11 +39,10 @@ export type SelectComponentProps = {
      */
     disabled?: boolean;
     /**
-     * The aria label of the select component. For accessibility purposes when no Label Slot is provided.
+     * The aria label of the select component.
      */
     'aria-label': string;
     /**
-     *
      * The data test id of the select component.
      */
     'data-test-id'?: string;

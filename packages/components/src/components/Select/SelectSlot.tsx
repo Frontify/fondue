@@ -5,8 +5,17 @@ import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
 import styles from './styles/select.module.scss';
 
 export type SelectSlotProps = {
+    /**
+     * The children of the select slot. This can be a custom component.
+     */
     children?: ReactNode;
+    /**
+     * The slot name that is used to determine the placement.
+     */
     name: 'menu' | 'left' | 'right' | 'clear';
+    /**
+     * The data test id of the select slot.
+     */
     'data-test-id'?: string;
 };
 

@@ -11,14 +11,37 @@ import styles from './styles/select.module.scss';
 import { useSelectData, type SelectItemType } from './useSelectData';
 
 export type ComboboxProps = {
+    /**
+     * Children of the Combobox component. This can contain the `Select.Slot` components for the label, decorators, clear action and menu.
+     */
     children?: ReactNode;
+    /**
+     * Callback function that is called when an item is selected.
+     */
     onSelect?: (selectedItem: SelectItemType) => void;
+    /**
+     * The active item in the combobox component. This is used to control the combobox externally.
+     */
     activeItem?: SelectItemType;
+    /**
+     * The default value of the combobox component. Used for uncontrolled usages.
+     */
     defaultValue?: string;
+    /**
+     * The placeholder in the combobox component.
+     */
     placeholder?: string;
+    /**
+     * Disables the combobox component.
+     */
     disabled?: boolean;
-    clearable?: boolean;
+    /**
+     * The aria label of the combobox component.
+     */
     'aria-label': string;
+    /**
+     * The data test id of the select component.
+     */
     'data-test-id'?: string;
 };
 
