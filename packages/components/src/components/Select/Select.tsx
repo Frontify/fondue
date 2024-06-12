@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconCaretUp } from '@frontify/fondue-icons';
 import * as RadixPopover from '@radix-ui/react-popover';
 import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { useSelect } from 'downshift';
 import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
 
 import { ForwardedRefCombobox } from './Combobox';
-import { SelectCaret } from './SelectCaret';
 import { ForwardedRefSelectItem, ForwardedRefSelectItemGroup } from './SelectItem';
 import { SelectMenu } from './SelectMenu';
 import { ForwardedRefSelectSlot } from './SelectSlot';
@@ -103,7 +103,7 @@ export const SelectInput = (
                         </RadixSlot>
                     )}
                     <div>
-                        <SelectCaret isOpen={isOpen} />
+                        <IconCaretUp size={16} className={styles.caret} />
                     </div>
                 </div>
             </RadixPopover.Anchor>

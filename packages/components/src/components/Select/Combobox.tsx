@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconCaretUp } from '@frontify/fondue-icons';
 import * as RadixPopover from '@radix-ui/react-popover';
 import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { useCombobox } from 'downshift';
 import { forwardRef, useRef, type ForwardedRef, type ReactNode } from 'react';
 
-import { SelectCaret } from './SelectCaret';
 import { SelectMenu } from './SelectMenu';
 import styles from './styles/select.module.scss';
 import { useSelectData, type SelectItemType } from './useSelectData';
@@ -145,7 +145,7 @@ export const SelectCombobox = (
                         aria-label="toggle menu"
                         disabled={disabled}
                     >
-                        <SelectCaret isOpen={isOpen} />
+                        <IconCaretUp size={16} className={styles.caret} />
                     </button>
                 </div>
             </RadixPopover.Anchor>
