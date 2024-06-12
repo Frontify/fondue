@@ -150,6 +150,7 @@
 }
 
 .caret {
+    @include transition-transform;
     display: flex;
     height: 100%;
     width: sizeToken(4);
@@ -160,6 +161,11 @@
 
     &:hover {
         color: var(--text-color-weak-hover);
+    }
+
+    div[role='combobox'][aria-expanded='true'] &,
+    button[aria-expanded='true'] & {
+        transform: rotateX(180deg);
     }
 }
 
