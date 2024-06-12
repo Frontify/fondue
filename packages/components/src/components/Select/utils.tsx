@@ -43,7 +43,7 @@ export const isReactLeaf = (child: ReactNode, Component: JSXElementConstructor<a
 
 export const recursiveMap = (
     children: ReactNode,
-    fn: (child: ReactNode, nextIndex: number) => ReactNode,
+    callback: (child: ReactNode, nextIndex: number) => ReactNode,
     filterText?: string,
     nextIndex: number = 0,
 ): {
@@ -60,13 +60,13 @@ export const recursiveMap = (
                     .label.toLowerCase()
                     .includes(filterText?.toLowerCase() || '')
             ) {
-                resultingChildren.push(fn(child, nextIndex + itemCounter));
+                resultingChildren.push(callback(child, nextIndex + itemCounter));
                 itemCounter++;
             }
         } else if (isValidElement<{ children: ReactNode }>(child) && child?.props.children) {
             const { parsedChildren, subElementCount } = recursiveMap(
                 child.props.children,
-                fn,
+                callback,
                 '',
                 nextIndex + itemCounter,
             );

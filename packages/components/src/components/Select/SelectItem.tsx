@@ -6,23 +6,23 @@ import styles from './styles/select.module.scss';
 
 export type SelectItemProps = {
     /**
-     *   The value of the select item.
+     * The value of the select item.
      */
     value: string;
     /**
-     *  The data test id of the select item.
+     * The data test id of the select item.
      */
     'data-test-id'?: string;
 } & (
     | {
           /**
-           *  The label of the select item. Required when the child is not a string.
+           * The label of the select item. Required when the child is not a string.
            */
           label: string;
           /**
-           *  The children of the select item. This can be a custom component or a string.
+           * The children of the select item. This can be a custom component or a string.
            */
-          children?: React.ReactNode;
+          children?: ReactNode;
       }
     | {
           label?: string;
@@ -46,11 +46,11 @@ export const ForwardedRefSelectItem = forwardRef<HTMLLIElement, SelectItemProps>
 
 export type SelectItemGroupProps = {
     /**
-     *  The children of the select item group. This can contain multiple Select.Item components.
+     * The children of the select item group. This can contain multiple `Select.Item` components.
      */
     children: ReactNode;
     /**
-     * The internal group id of the select item group.
+     * The internal group ID of the select item group.
      */
     groupId: string;
     /**

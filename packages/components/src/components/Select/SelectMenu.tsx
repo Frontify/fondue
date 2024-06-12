@@ -13,7 +13,7 @@ export type SelectMenuProps = {
     highlightedIndex: number;
     getMenuProps: UseSelectPropGetters<unknown>['getMenuProps'] | UseComboboxPropGetters<unknown>['getMenuProps'];
     getItemProps: UseSelectPropGetters<unknown>['getItemProps'] | UseComboboxPropGetters<unknown>['getItemProps'];
-    children: React.ReactNode;
+    children: ReactNode;
     filterText?: string;
 };
 
@@ -21,8 +21,8 @@ export const SelectMenu = ({ highlightedIndex, getMenuProps, getItemProps, child
     return (
         <RadixPopover.Portal>
             <RadixPopover.Content
-                onOpenAutoFocus={(e) => {
-                    e.preventDefault();
+                onOpenAutoFocus={(event) => {
+                    event.preventDefault();
                 }}
                 className={styles.portal}
             >
@@ -43,7 +43,7 @@ export const SelectMenu = ({ highlightedIndex, getMenuProps, getItemProps, child
                                         <RadixSlot
                                             className={styles.item}
                                             data-highlighted={highlightedIndex === index}
-                                            key={`${index}`}
+                                            key={`${child.props.value}`}
                                             {...getItemProps({
                                                 item: getSelectOptionValue(child.props),
                                                 index,

@@ -5,22 +5,22 @@ import { IconCross } from '@frontify/fondue-icons';
 import styles from './styles/select.module.scss';
 
 type SelectClearProps = {
-    reset: () => void;
+    onClick: () => void;
 };
 
-export const SelectClear = ({ reset }: SelectClearProps) => {
+export const SelectClear = ({ onClick }: SelectClearProps) => {
     return (
         <button
             aria-label="clear input"
             className={styles.clear}
-            onClick={(e) => {
-                e.stopPropagation();
-                reset();
+            onClick={(event) => {
+                event.stopPropagation();
+                onClick();
             }}
-            onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                    e.stopPropagation();
-                    reset();
+            onKeyDown={(event) => {
+                if (event.key === 'Enter') {
+                    event.stopPropagation();
+                    onClick();
                 }
             }}
         >

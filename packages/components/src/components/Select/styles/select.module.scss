@@ -4,8 +4,6 @@
 @import '../../../utilities/focusStyle.module.scss';
 @import '../../../utilities/transitions.module.scss';
 
-
-
 .root {
     @include focus-outline;
     @include transition-colors;
@@ -34,7 +32,8 @@
         border-color: var(--line-color-xx-strong);
     }
 
-    &:has(input:disabled), &[data-disabled='true'] {
+    &:has(input:disabled),
+    &[data-disabled='true'] {
         border-color: var(--line-color-weak);
         background-color: var(--box-disabled-color);
         color: var(--text-color-disabled);
@@ -120,7 +119,7 @@
         }
     }
 
-    //Label slot
+    // Label slot
     &[data-name='label'] {
         display: flex;
         align-items: center;
@@ -134,8 +133,6 @@
             padding-left: 0;
         }
     }
-
-
 }
 
 .clear {
@@ -150,7 +147,6 @@
     &:hover {
         color: var(--text-color-weak-hover);
     }
-
 }
 
 .caret {
@@ -161,8 +157,6 @@
     justify-content: center;
     margin-right: sizeToken(3);
     color: var(--text-color-weak);
-
-
 
     &:hover {
         color: var(--text-color-weak-hover);
@@ -203,11 +197,10 @@
     &[data-highlighted='true'] {
         background-color: var(--box-neutral-color-hover);
     }
-
 }
 
 .group {
-    .item~& {
+    .item ~ & {
         border-top: var(--line-width) solid var(--line-color-strong);
     }
     &:has(+ .item) {

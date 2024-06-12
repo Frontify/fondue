@@ -17,7 +17,7 @@ export const getRecursiveOptionValues = (children: ReactNode): { value: string; 
     Children.forEach(children, (child) => {
         if (isValidElement<SelectItemProps>(child) && child.type === ForwardedRefSelectItem) {
             values.push(getSelectOptionValue(child.props));
-        } else if (isValidElement<{ children: ReactNode }>(child) && child?.props.children) {
+        } else if (isValidElement<{ children: ReactNode }>(child) && child.props.children) {
             const optionValues = getRecursiveOptionValues(child.props.children);
             for (const optionValue of optionValues) {
                 values.push(optionValue);

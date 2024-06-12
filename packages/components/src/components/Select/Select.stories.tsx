@@ -7,10 +7,9 @@ import { useState } from 'react';
 import { Button } from '../Button/Button';
 
 import { SelectCombobox } from './Combobox';
-import { SelectInput } from './Select';
+import { Select, SelectInput } from './Select';
 import { SelectItem, SelectItemGroup } from './SelectItem';
 import { SelectSlot } from './SelectSlot';
-import { Select } from './SelectWrapper';
 import { type SelectItemType } from './useSelectData';
 
 type Story = StoryObj<typeof meta>;
