@@ -48,8 +48,8 @@ const meta: Meta<typeof DropdownRoot> = {
 export default meta;
 
 export const Default: Story = {
-    render: () => (
-        <Dropdown.Root>
+    render: ({ ...args }) => (
+        <Dropdown.Root {...args}>
             <Dropdown.Trigger>
                 <Button>Trigger</Button>
             </Dropdown.Trigger>
@@ -63,8 +63,8 @@ export const Default: Story = {
 };
 
 export const DisabledItems: Story = {
-    render: () => (
-        <Dropdown.Root>
+    render: ({ ...args }) => (
+        <Dropdown.Root {...args}>
             <Dropdown.Trigger>
                 <Button>Trigger</Button>
             </Dropdown.Trigger>
@@ -80,8 +80,8 @@ export const DisabledItems: Story = {
 };
 
 export const ItemGroups: Story = {
-    render: () => (
-        <Dropdown.Root>
+    render: ({ ...args }) => (
+        <Dropdown.Root {...args}>
             <Dropdown.Trigger>
                 <Button>Trigger</Button>
             </Dropdown.Trigger>
@@ -100,8 +100,8 @@ export const ItemGroups: Story = {
 };
 
 export const SubMenus: Story = {
-    render: () => (
-        <Dropdown.Root>
+    render: ({ ...args }) => (
+        <Dropdown.Root {...args}>
             <Dropdown.Trigger>
                 <Button>Trigger</Button>
             </Dropdown.Trigger>
@@ -125,8 +125,8 @@ export const SubMenus: Story = {
 };
 
 export const Decorator: Story = {
-    render: () => (
-        <Dropdown.Root>
+    render: ({ ...args }) => (
+        <Dropdown.Root {...args}>
             <Dropdown.Trigger>
                 <Button>Trigger</Button>
             </Dropdown.Trigger>
@@ -166,8 +166,8 @@ export const Decorator: Story = {
 };
 
 export const CustomItem: Story = {
-    render: () => (
-        <Dropdown.Root>
+    render: ({ ...args }) => (
+        <Dropdown.Root {...args}>
             <Dropdown.Trigger>
                 <Button>Trigger</Button>
             </Dropdown.Trigger>
@@ -184,12 +184,12 @@ export const CustomItem: Story = {
 };
 
 export const ExternallyControlled: Story = {
-    render: () => {
+    render: ({ ...args }) => {
         const [isOpen, setIsOpen] = useState(false);
         return (
             <>
                 <Button onPress={() => setIsOpen(!isOpen)}>Toggle Dropdown</Button>
-                <Dropdown.Root open={isOpen} onOpenChange={setIsOpen}>
+                <Dropdown.Root {...args} open={isOpen} onOpenChange={setIsOpen}>
                     <Dropdown.Trigger>
                         <Button>Trigger</Button>
                     </Dropdown.Trigger>
