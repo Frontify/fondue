@@ -2,10 +2,10 @@
 
 import { type ReactNode } from 'react';
 
-import styles from './styles/flex.module.scss';
-
 import { type Responsive, type SizeValue, type LayoutComponentProps } from '#/helpers/layout';
 import { propsToCssVariables } from '#/helpers/propsToCssVariables';
+
+import styles from './styles/flex.module.scss';
 
 export type FlexProps = LayoutComponentProps & {
     /**

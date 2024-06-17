@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import type tailwindConfig from '../../tailwind.config';
+import { type screens } from '../../tailwind.config';
 
-export type Breakpoint = keyof typeof tailwindConfig.theme.screens;
+export type Breakpoint = keyof typeof screens;
 export type Responsive<TValue> = { [key in Breakpoint]?: TValue } | TValue;
 
 // `(string & {})` allows for arbitrary strings to be passed in while keeping the suggestion of the union type

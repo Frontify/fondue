@@ -3,11 +3,11 @@
 import { type Meta, type StoryObj } from '@storybook/react';
 import { type ComponentProps } from 'react';
 
+import { DecorativeContent } from '#storybook/components/DecorativeContent';
+
 import { Box } from '../Box/Box';
 
 import { Flex } from './Flex';
-
-import { DecorativeContent } from '#storybook/components/DecorativeContent';
 
 const DecorativeBox = (props: ComponentProps<typeof Box>) => (
     <Box width="100px" height="100px" {...props}>

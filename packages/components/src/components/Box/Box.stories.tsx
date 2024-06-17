@@ -2,9 +2,9 @@
 
 import { type Meta, type StoryObj } from '@storybook/react';
 
-import { Box } from './Box';
-
 import { DecorativeContent } from '#storybook/components/DecorativeContent';
+
+import { Box } from './Box';
 
 type Story = StoryObj<typeof Box>;
 const meta: Meta<typeof Box> = {

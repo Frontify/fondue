@@ -2,18 +2,25 @@
 
 import { type ReactNode } from 'react';
 
-import { sectionStyles } from './styles/sectionStyles';
+import { type Responsive, type LayoutComponentProps } from '#/helpers/layout';
+import { propsToCssVariables } from '#/helpers/propsToCssVariables';
 
-import { type LayoutComponentProps } from '#/types/layoutProps';
+import styles from './styles/section.module.scss';
 
 export type SectionProps = LayoutComponentProps & {
+    /**
+     * The display property of the Box component.
+     * @default 'block'
+     */
+    display?: Responsive<'none' | 'block' | 'inline-block' | 'inline'>;
+
     children?: ReactNode;
     'data-test-id'?: string;
 };
 
-export const Section = ({ 'data-test-id': dataTestId = 'fondue-section', children }: SectionProps) => {
+export const Section = ({ 'data-test-id': dataTestId = 'fondue-section', children, ...props }: SectionProps) => {
     return (
-        <section className={sectionStyles()} data-test-id={dataTestId}>
+        <section className={styles.section} data-test-id={dataTestId} style={propsToCssVariables(props)}>
             {children}
         </section>
     );

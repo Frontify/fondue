@@ -2,11 +2,10 @@
 
 import { type ReactNode } from 'react';
 
-import styles from './styles/box.module.scss';
-
 import { type Responsive, type LayoutComponentProps } from '#/helpers/layout';
 import { propsToCssVariables } from '#/helpers/propsToCssVariables';
-import { cn } from '#/utilities/styleUtilities';
+
+import styles from './styles/box.module.scss';
 
 export type BoxProps = LayoutComponentProps & {
     /**
@@ -31,7 +30,7 @@ export const Box = ({
     ...props
 }: BoxProps) => {
     return (
-        <Component className={cn(styles.box)} data-test-id={dataTestId} style={propsToCssVariables(props)}>
+        <Component className={styles.box} data-test-id={dataTestId} style={propsToCssVariables(props)}>
             {children}
         </Component>
     );

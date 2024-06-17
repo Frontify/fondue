@@ -1,0 +1,16 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@import '../../../helpers/layout.module.scss';
+
+$properties: (display, gap, gap-x, gap-y, );
+
+.grid {
+    @include responsive-properties(join($properties, $layoutProperties));
+
+    // Default values override
+    --display: grid;
+    --align-items: stretch;
+    --justify-content: flex-start;
+    --grid-template-columns: minmax(0, 1fr);
+    --grid-template-rows: none;
+}
