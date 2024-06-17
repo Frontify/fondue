@@ -2,7 +2,8 @@
 
 import { IconIcon } from '@frontify/fondue-icons';
 import { act, renderHook } from '@testing-library/react';
-import { describe, it } from 'vitest';
+import { Children, isValidElement } from 'react';
+import { describe, expect, it } from 'vitest';
 
 import { Select } from '../Select';
 import { useSelectData } from '../useSelectData';
@@ -33,27 +34,53 @@ describe('useSelectData', () => {
             <IconIcon size={16} />
         </Select.Slot>,
     ];
+    const selectSlots = [...menuSlot, ...decoratorsSlot, ...clearSlot];
+
     it('returns menu slots', () => {
-        const { result } = renderHook(() => useSelectData(menuSlot));
-        console.log(result);
+        const {
+            result: { current: result },
+        } = renderHook(() => useSelectData(selectSlots));
+        expect(
+            Children.toArray(result.menuSlots).every((item) => {
+                return isValidElement(item) && (item.type === Select.Item || item.type === Select.Group);
+            }),
+        ).toBe(true);
+        expect(Children.toArray(result.menuSlots).length).toBe(4);
+        expect(result.items.length).toBe(6);
     });
+
     it('returns decorator slots', () => {
-        const { result } = renderHook(() => useSelectData(decoratorsSlot));
-        console.log(result);
+        const {
+            result: { current: result },
+        } = renderHook(() => useSelectData(selectSlots));
+        expect(
+            result.inputSlots.every((decorator) => {
+                return isValidElement(decorator) && decorator.type === Select.Slot;
+            }),
+        ).toBe(true);
+        expect(result.inputSlots.length).toBe(2);
     });
+
     it('returns clear slot', () => {
-        const { result } = renderHook(() => useSelectData(clearSlot));
-        console.log(result);
+        const {
+            result: { current: result },
+        } = renderHook(() => useSelectData(selectSlots));
+        expect(isValidElement(result.clearButton) && result.clearButton.type === Select.Slot).toBe(true);
     });
+
     it('returns default item', () => {
-        const { result } = renderHook(() => useSelectData(menuSlot, 'test3'));
-        console.log(result);
+        const {
+            result: { current: result },
+        } = renderHook(() => useSelectData(selectSlots, 'test3'));
+        expect(result.defaultItem?.value).toBe('test3');
     });
+
     it('returns handles filterText', () => {
         const { result } = renderHook(() => useSelectData(menuSlot));
+        expect(result.current.filterText).toBe('');
         act(() => {
             result.current.setFilterText('test1');
         });
-        console.log(result);
+        expect(result.current.filterText).toBe('test1');
     });
 });
