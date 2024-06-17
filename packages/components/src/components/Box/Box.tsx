@@ -2,9 +2,11 @@
 
 import { type ReactNode } from 'react';
 
-import { boxStyles } from './styles/boxStyles';
+import styles from './styles/box.module.scss';
 
-import { type LayoutComponentProps } from '#/types/layoutProps';
+import { type Responsive, type LayoutComponentProps } from '#/helpers/layout';
+import { propsToCssVariables } from '#/helpers/propsToCssVariables';
+import { cn } from '#/utilities/styleUtilities';
 
 export type BoxProps = LayoutComponentProps & {
     /**
@@ -16,15 +18,20 @@ export type BoxProps = LayoutComponentProps & {
      * The display property of the Box component.
      * @default 'block'
      */
-    display?: 'none' | 'block' | 'inline-block' | 'inline';
+    display?: Responsive<'none' | 'block' | 'inline-block' | 'inline'>;
 
     children?: ReactNode;
     'data-test-id'?: string;
 };
 
-export const Box = ({ as: Component = 'div', 'data-test-id': dataTestId = 'fondue-box', children }: BoxProps) => {
+export const Box = ({
+    as: Component = 'div',
+    'data-test-id': dataTestId = 'fondue-box',
+    children,
+    ...props
+}: BoxProps) => {
     return (
-        <Component className={boxStyles()} data-test-id={dataTestId}>
+        <Component className={cn(styles.box)} data-test-id={dataTestId} style={propsToCssVariables(props)}>
             {children}
         </Component>
     );

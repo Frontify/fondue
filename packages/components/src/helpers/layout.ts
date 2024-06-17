@@ -2,12 +2,12 @@
 
 import type tailwindConfig from '../../tailwind.config';
 
-type Breakpoint = keyof typeof tailwindConfig.theme.screens;
+export type Breakpoint = keyof typeof tailwindConfig.theme.screens;
 export type Responsive<TValue> = { [key in Breakpoint]?: TValue } | TValue;
 
 // `(string & {})` allows for arbitrary strings to be passed in while keeping the suggestion of the union type
 // eslint-disable-next-line @typescript-eslint/ban-types
-type SizeValue = (string & {}) | 'auto' | 'fit-content' | 'intrinsic' | 'max-content' | 'min-content';
+export type SizeValue = (string & {}) | 'auto' | 'fit-content' | 'intrinsic' | 'max-content' | 'min-content';
 
 // `(string & {})` allows for arbitrary strings to be passed in while keeping the suggestion of the union type
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -22,11 +22,11 @@ export type LayoutComponentProps = {
      */
     m?: Responsive<SpacingValue>;
     /**
-     * The margin-left and margin-right property of the component.
+     * The horizontal margin property of the component.
      */
     mx?: Responsive<SpacingValue>;
     /**
-     * The margin-top and margin-bottom property of the component.
+     * The vertical margin property of the component.
      */
     my?: Responsive<SpacingValue>;
     /**
@@ -51,11 +51,11 @@ export type LayoutComponentProps = {
      */
     p?: Responsive<SpacingValue>;
     /**
-     * The padding-left and padding-right property of the component.
+     * The horizontal padding property of the component.
      */
     px?: Responsive<SpacingValue>;
     /**
-     * The padding-top and padding-bottom property of the component.
+     * The vertical padding property of the component.
      */
     py?: Responsive<SpacingValue>;
     /**
@@ -106,11 +106,11 @@ export type LayoutComponentProps = {
      */
     overflow?: Responsive<OverflowValue>;
     /**
-     * The overflow-x property of the component.
+     * The horizontal overflow property of the component.
      */
     overflowX?: Responsive<OverflowValue>;
     /**
-     * The overflow-y property of the component.
+     * The vertical overflow property of the component.
      */
     overflowY?: Responsive<OverflowValue>;
 

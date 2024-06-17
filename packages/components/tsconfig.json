@@ -18,7 +18,8 @@
         "noFallthroughCasesInSwitch": true,
         "baseUrl": ".",
         "paths": {
-            "#/*": ["./src/*"]
+            "#/*": ["./src/*"],
+            "#storybook/*": [".storybook/*"]
         }
     },
     "include": [".storybook", "src"],

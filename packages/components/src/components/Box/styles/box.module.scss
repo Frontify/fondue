@@ -1,0 +1,12 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@import '../../../helpers/layout.module.scss';
+
+$properties: (display);
+
+.box {
+    @include responsive-properties(join($properties, $layoutProperties));
+
+    // Default values override
+    --display: block;
+}

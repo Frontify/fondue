@@ -1,8 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Meta, type StoryObj } from '@storybook/react';
+import { type ComponentProps } from 'react';
+
+import { Box } from '../Box/Box';
 
 import { Flex } from './Flex';
+
+import { DecorativeContent } from '#storybook/components/DecorativeContent';
+
+const DecorativeBox = (props: ComponentProps<typeof Box>) => (
+    <Box width="100px" height="100px" {...props}>
+        <DecorativeContent />
+    </Box>
+);
 
 type Story = StoryObj<typeof Flex>;
 const meta: Meta<typeof Flex> = {
@@ -14,12 +25,33 @@ const meta: Meta<typeof Flex> = {
             type: 'in_progress',
         },
     },
-    args: {},
+    args: {
+        gap: '10px',
+        direction: 'column',
+    },
 };
 export default meta;
 
 export const Default: Story = {
-    args: {
-        children: 'Hello World',
+    render: (args) => {
+        return (
+            <Flex {...args}>
+                <Flex gapX="10px">
+                    <DecorativeBox />
+                    <DecorativeBox />
+                    <DecorativeBox />
+                    <DecorativeBox />
+                    <DecorativeBox />
+                </Flex>
+
+                <Flex gapX="10px">
+                    <DecorativeBox />
+                    <DecorativeBox />
+                    <DecorativeBox />
+                    <DecorativeBox />
+                    <DecorativeBox />
+                </Flex>
+            </Flex>
+        );
     },
 };
