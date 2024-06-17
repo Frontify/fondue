@@ -4,7 +4,7 @@ import { IconIcon } from '@frontify/fondue-icons';
 import { expect, test } from '@playwright/experimental-ct-react';
 import * as sinon from 'sinon';
 
-import { Select } from '../SelectWrapper';
+import { Select } from '../Select';
 
 const SELECT_TEST_ID = 'test-dropdown';
 const GROUP_TEST_ID = 'test-group';
