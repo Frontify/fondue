@@ -78,9 +78,11 @@ describe('useSelectData', () => {
     it('returns handles filterText', () => {
         const { result } = renderHook(() => useSelectData(menuSlot));
         expect(result.current.filterText).toBe('');
+        expect(result.current.items.length).toBe(6);
         act(() => {
             result.current.setFilterText('test1');
         });
         expect(result.current.filterText).toBe('test1');
+        expect(result.current.items.length).toBe(1);
     });
 });
