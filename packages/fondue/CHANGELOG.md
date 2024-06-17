@@ -1,5 +1,11 @@
 # @frontify/fondue
 
+## 12.1.6
+
+### Patch Changes
+
+-   [#1899](https://github.com/Frontify/fondue/pull/1899) [`c42a0f2`](https://github.com/Frontify/fondue/commit/c42a0f220402ae4a70f4754d1f53337e5097dc33) Thanks [@fulopdaniel](https://github.com/fulopdaniel)! - feat(RTE): add custom class to column break plugin
+
 ## 12.1.5
 
 ### Patch Changes
