@@ -14,7 +14,6 @@ const DROPDOWN_SUB_CONTENT_TEST_ID = 'fondue-dropdown-sub-content';
 const DROPDOWN_ITEM_TEST_ID = 'fondue-dropdown-item';
 
 test('should render without error', async ({ mount, page }) => {
-    const onSelect = sinon.spy();
     const component = await mount(
         <Dropdown.Root>
             <Dropdown.Trigger>
