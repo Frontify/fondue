@@ -221,7 +221,7 @@ export const CustomItem: Story = {
                     <Select.Item value="icon" label="Component">
                         <div className="tw-flex tw-items-center tw-gap-4">
                             <p>With a Component</p>
-                            <IconIcon width={16} />
+                            <IconIcon size={16} />
                         </div>
                     </Select.Item>
                     <Select.Item value="basic" label="Basic">

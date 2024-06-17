@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconCaretUp } from '@frontify/fondue-icons';
+import { IconCaretDown } from '@frontify/fondue-icons';
 import * as RadixPopover from '@radix-ui/react-popover';
 import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { useSelect } from 'downshift';
@@ -103,7 +103,7 @@ export const SelectInput = (
                         </RadixSlot>
                     )}
                     <div>
-                        <IconCaretUp size={16} className={styles.caret} />
+                        <IconCaretDown size={16} className={styles.caret} />
                     </div>
                 </div>
             </RadixPopover.Anchor>
