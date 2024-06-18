@@ -70,11 +70,11 @@ describe('useSelectData', () => {
         expect(isValidElement(result.clearButton) && result.clearButton.type === Select.Slot).toBe(true);
     });
 
-    it('returns default item', () => {
+    it('returns item from value', () => {
         const {
             result: { current: result },
-        } = renderHook(() => useSelectData(selectSlots, 'test3'));
-        expect(result.defaultItem?.value).toBe('test3');
+        } = renderHook(() => useSelectData(menuSlot));
+        expect(result.getItemByValue('test1')).toBe('Test1');
     });
 
     it('returns handles filterText', () => {

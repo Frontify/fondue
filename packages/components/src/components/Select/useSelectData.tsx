@@ -27,7 +27,7 @@ export const getRecursiveOptionValues = (children: ReactNode): { value: string; 
     return values;
 };
 
-export const useSelectData = (children: ReactNode, defaultValue?: string) => {
+export const useSelectData = (children: ReactNode) => {
     const [filterText, setFilterText] = useState('');
     const { inputSlots, menuSlots, itemValues, clearButton } = useMemo(() => {
         const inputSlots: ReactNode[] = [];

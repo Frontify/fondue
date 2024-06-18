@@ -8,7 +8,7 @@ import { forwardRef, useMemo, useRef, type ForwardedRef, type ReactNode } from '
 
 import { SelectMenu } from './SelectMenu';
 import styles from './styles/select.module.scss';
-import { useSelectData, type SelectItemType } from './useSelectData';
+import { useSelectData } from './useSelectData';
 
 export type ComboboxProps = {
     /**
@@ -18,11 +18,11 @@ export type ComboboxProps = {
     /**
      * Callback function that is called when an item is selected.
      */
-    onSelect?: (selectedItem: SelectItemType) => void;
+    onSelect?: (selectedValue: string) => void;
     /**
      * The active value in the combobox component. This is used to control the combobox externally.
      */
-    value?: SelectItemType;
+    value?: string;
     /**
      * The default value of the combobox component. Used for uncontrolled usages.
      */
