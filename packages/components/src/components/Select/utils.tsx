@@ -25,7 +25,7 @@ export const getSelectOptionValue = ({
             label: label ? label : children,
         };
     }
-    
+
     return {
         value: value || '',
         label: label ? label : value || '',
