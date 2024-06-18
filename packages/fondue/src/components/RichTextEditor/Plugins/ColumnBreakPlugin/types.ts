@@ -6,7 +6,7 @@ export type BreakAfterPluginProps = PluginProps & {
     columns?: number;
     gap?: string | number;
     /**
-     * If provided the `columns` and `gap` properties will be ignored
+     * If provided the `columns` property will be ignored
      */
     customClass?: string;
 };

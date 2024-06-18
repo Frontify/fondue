@@ -17,20 +17,22 @@ export const serializeRawToHtml = (
     plugins: PluginComposer = defaultPlugins,
     columns: SerializeNodesToHtmlOptions['columns'] = 1,
     columnGap: SerializeNodesToHtmlOptions['columnGap'] = 'normal',
+    customClass = '',
 ): string => {
     const nodes = parseRawValue({ raw, plugins });
     const styles = plugins.getStyles;
-    return serializeNodesToHtml(nodes, { columns, columnGap, styles });
+    return serializeNodesToHtml(nodes, { columns, columnGap, styles, customClass });
 };
 export const serializeRawToHtmlAsync = async (
     raw: string,
     plugins: PluginComposer = defaultPlugins,
     columns: SerializeNodesToHtmlOptions['columns'] = 1,
     columnGap: SerializeNodesToHtmlOptions['columnGap'] = 'normal',
+    customClass = '',
 ): Promise<string> => {
     const nodes = parseRawValue({ raw, plugins });
     const styles = plugins.getStyles;
-    return Promise.resolve(serializeNodesToHtml(nodes, { columns, columnGap, styles }));
+    return Promise.resolve(serializeNodesToHtml(nodes, { columns, columnGap, styles, customClass }));
 };
 
 export type SerializeNodesToHtmlOptions = {
@@ -38,11 +40,18 @@ export type SerializeNodesToHtmlOptions = {
     mentionable?: MentionableItems;
     columns?: number;
     columnGap?: CSSProperties['columnGap'];
+    customClass?: string;
 };
 
 export const serializeNodesToHtml = (
     nodes: TDescendant[],
-    { mentionable, columns = 1, columnGap = 'normal', styles = defaultStyles }: SerializeNodesToHtmlOptions = {},
+    {
+        mentionable,
+        columns = 1,
+        columnGap = 'normal',
+        customClass = '',
+        styles = defaultStyles,
+    }: SerializeNodesToHtmlOptions = {},
 ): string => {
     const mappedMentionable = mentionable ? mapMentionable(mentionable) : new Map();
 
@@ -53,8 +62,11 @@ export const serializeNodesToHtml = (
         });
     }
 
-    if (columns > 1) {
-        return `<div style="columns:${columns}; column-gap:${columnGap};">${html}</div>`;
+    const columnsStyle = customClass ? '' : `columns:${columns};`;
+    const style = `${columnsStyle} column-gap:${columnGap};`;
+
+    if (columns > 1 || customClass) {
+        return `<div style="${style}" class="${customClass}">${html}</div>`;
     }
 
     return html;
