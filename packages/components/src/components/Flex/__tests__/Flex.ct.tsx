@@ -27,11 +27,15 @@ const responsiveTests = [
 test.describe('Responsiveness (base)', () => {
     test.use({ viewport: { width: 200, height: 200 } });
 
-    responsiveTests.forEach((testContent) => test(...testContent));
+    for (const testContent of responsiveTests) {
+        test(...testContent);
+    }
 });
 
 test.describe('Responsiveness (lg)', () => {
     test.use({ viewport: { width: 1201, height: 801 } });
 
-    responsiveTests.forEach((testContent) => test(...testContent));
+    for (const testContent of responsiveTests) {
+        test(...testContent);
+    }
 });
