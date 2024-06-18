@@ -8,6 +8,7 @@ export default defineConfig({
     testDir: './src',
     timeout: 10_000,
     fullyParallel: true,
+    snapshotPathTemplate: './src/{testFileDir}/__snapshots__/{testFileName}/{arg}-{projectName}{ext}',
     forbidOnly: !!process.env.CI,
     retries: process.env.CI ? 2 : 0,
     workers: process.env.CI ? 1 : undefined,
