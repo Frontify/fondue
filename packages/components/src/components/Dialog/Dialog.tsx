@@ -6,6 +6,8 @@ import { forwardRef, type CSSProperties, type ForwardedRef, type ReactNode } fro
 
 import styles from './styles/dialog.module.scss';
 
+type DialogVerticalAlign = 'top' | 'center';
+
 export type DialogRootProps = {
     /**
      * Disable interaction with the rest of the page
@@ -36,9 +38,15 @@ export type DialogContentProps = {
      */
     padding?: 'compact' | 'comfortable' | 'spacious';
     /**
+     * The vertical alignment of the divider
+     * @default "center"
+     */
+    verticalAlign?: DialogVerticalAlign;
+    /**
      * Define a maximum width for the dialog
      * @default "800px"
      */
+
     maxWidth?: string;
     /**
      * Define a minimum width for the dialog
@@ -99,6 +107,7 @@ export const DialogContent = (
         minWidth = '400px',
         minHeight = '200px',
         padding = 'compact',
+        verticalAlign = 'center',
         'data-test-id': dataTestId = 'fondue-dialog-content',
         showUnderlay = false,
         children,
@@ -123,6 +132,7 @@ export const DialogContent = (
                 data-dialog-rounded={rounded}
                 data-dialog-spacing={padding}
                 data-test-id={dataTestId}
+                data-dialog-vertical-align={verticalAlign}
                 {...props}
             >
                 {children}
