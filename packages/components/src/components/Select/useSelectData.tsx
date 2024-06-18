@@ -33,29 +33,39 @@ export const useSelectData = (children: ReactNode, defaultValue?: string) => {
         const inputSlots: ReactNode[] = [];
         const menuSlots: ReactNode[] = [];
         let clearButton: ReactNode;
+        const hasSlots = Children.toArray(children).some(
+            (child) => isValidElement<SelectSlotProps>(child) && child.type === ForwardedRefSelectSlot,
+        );
 
-        Children.forEach(children, (child) => {
-            if (isValidElement<SelectSlotProps>(child) && child.type === ForwardedRefSelectSlot) {
-                if (child.props.name === 'menu') {
-                    menuSlots.push(child.props.children);
-                } else if (child.props.name === 'left' || child.props.name === 'right') {
-                    inputSlots.push(child);
-                } else if (child.props.name === 'clear') {
-                    if (child.props.children) {
-                        clearButton = child;
-                    } else {
-                        clearButton = cloneElement(child, { children: <IconCross size={16} /> });
+        if (hasSlots) {
+            Children.forEach(children, (child) => {
+                if (isValidElement<SelectSlotProps>(child) && child.type === ForwardedRefSelectSlot) {
+                    if (child.props.name === 'menu') {
+                        menuSlots.push(child.props.children);
+                    } else if (child.props.name === 'left' || child.props.name === 'right') {
+                        inputSlots.push(child);
+                    } else if (child.props.name === 'clear') {
+                        if (child.props.children) {
+                            clearButton = child;
+                        } else {
+                            clearButton = cloneElement(child, { children: <IconCross size={16} /> });
+                        }
                     }
                 }
-            }
-        });
+            });
 
-        return {
-            inputSlots,
-            menuSlots,
-            clearButton,
-            itemValues: getRecursiveOptionValues(menuSlots),
-        };
+            return {
+                inputSlots,
+                menuSlots,
+                clearButton,
+                itemValues: getRecursiveOptionValues(menuSlots),
+            };
+        } else {
+            return {
+                menuSlots: children,
+                itemValues: getRecursiveOptionValues(children),
+            };
+        }
     }, [children]);
 
     const filteredItems = useMemo(
