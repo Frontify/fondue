@@ -9,7 +9,7 @@ import styles from './styles/section.module.scss';
 
 export type SectionProps = LayoutComponentProps & {
     /**
-     * The display property of the Box component.
+     * The display property.
      * @default 'block'
      */
     display?: Responsive<'none' | 'block' | 'inline-block' | 'inline'>;

@@ -21,19 +21,26 @@ const abbreviationToCssProperty: Record<string, string> = {
     pl: 'padding-left',
     direction: 'flex-direction',
     align: 'align-items',
-    justify: 'justify-content',
     wrap: 'flex-wrap',
+    columns: 'grid-template-columns',
+    rows: 'grid-template-rows',
 };
 
 export const propsToCssVariables = (
     props: Record<string, string | number | { [key in Breakpoint]?: string | number }>,
+    extraAbbreviationToCssProperty: Record<string, string> = {},
 ): CSSProperties => {
     return Object.entries(props).reduce((acc, [key, value]) => {
         if (value === undefined) {
             return acc;
         }
 
-        const cssProperty = key in abbreviationToCssProperty ? abbreviationToCssProperty[key] : key;
+        const cssProperty =
+            key in extraAbbreviationToCssProperty
+                ? extraAbbreviationToCssProperty[key]
+                : key in abbreviationToCssProperty
+                  ? abbreviationToCssProperty[key]
+                  : key;
         const cssPropertyKebabCase = cssProperty?.replaceAll(/([\da-z]|(?=[A-Z]))([A-Z])/g, '$1-$2').toLowerCase();
 
         if (typeof value === 'object') {

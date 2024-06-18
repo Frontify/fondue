@@ -14,7 +14,7 @@ export type BoxProps = LayoutComponentProps & {
      */
     as?: 'div' | 'span';
     /**
-     * The display property of the Box component.
+     * The display property.
      * @default 'block'
      */
     display?: Responsive<'none' | 'block' | 'inline-block' | 'inline'>;

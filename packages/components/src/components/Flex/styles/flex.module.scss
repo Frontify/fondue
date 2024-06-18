@@ -7,6 +7,7 @@ $properties: (display, flex-direction, align-items, justify-content, flex-wrap, 
 .flex {
     @include responsive-properties(join($properties, $layoutProperties));
 
-    // Default values override
-    --display: flex;
+    // Default values
+    @include responsive-default-value(display, flex);
+    @include responsive-default-value(flex-direction, row);
 }

@@ -9,46 +9,46 @@ import styles from './styles/grid.module.scss';
 
 export type GridProps = LayoutComponentProps & {
     /**
-     * The element to render the Box component as.
+     * The element to render the Grid component as.
      * @default 'div'
      */
     as?: 'div' | 'span';
 
     /**
-     * The display property of the Grid component.
+     * The display property.
      * @default 'grid'
      */
     display?: 'none' | 'grid' | 'inline-grid';
     /**
-     * The columns property of the Grid component.
+     * The columns property.
      */
-    columns?: Responsive<string>; // TODO
+    columns?: Responsive<string>;
     /**
-     * The rows property of the Grid component.
+     * The rows property.
      */
-    rows?: Responsive<string>; // TODO
+    rows?: Responsive<string>;
     /**
-     * The flow property of the Grid component.
+     * The flow property.
      */
-    flow?: Responsive<string>; // TODO
+    flow?: Responsive<'row' | 'column' | 'dense' | 'row-dense' | 'column-dense'>;
     /**
-     * The alignment of the children of the Grid component.
+     * The alignment of the children.
      */
-    align?: Responsive<''>; // TODO
+    align?: Responsive<'start' | 'center' | 'end' | 'baseline' | 'stretch'>;
     /**
-     * The justification of the children of the Grid component.
+     * The justification of the children.
      */
-    justify?: Responsive<''>; // TODO
+    justify?: Responsive<'start' | 'center' | 'end' | 'between'>;
     /**
-     * The gap between the children of the Grid component.
+     * The gap between the children.
      */
     gap?: Responsive<SizeValue>;
     /**
-     * The horizontal gap between the children of the Grid component.
+     * The horizontal gap between the children.
      */
     gapX?: Responsive<SizeValue>;
     /**
-     * The vertical gap between the children of the Grid component.
+     * The vertical gap between the children.
      */
     gapY?: Responsive<SizeValue>;
 
@@ -63,7 +63,11 @@ export const Grid = ({
     ...props
 }: GridProps) => {
     return (
-        <Component className={styles.grid} data-test-id={dataTestId} style={propsToCssVariables(props)}>
+        <Component
+            className={styles.grid}
+            data-test-id={dataTestId}
+            style={propsToCssVariables(props, { justify: 'justify-items' })}
+        >
             {children}
         </Component>
     );

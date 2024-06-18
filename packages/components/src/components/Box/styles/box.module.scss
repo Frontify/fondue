@@ -7,6 +7,6 @@ $properties: (display);
 .box {
     @include responsive-properties(join($properties, $layoutProperties));
 
-    // Default values override
-    --display: block;
+    // Default values
+    @include responsive-default-value(display, block);
 }

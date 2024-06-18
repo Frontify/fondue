@@ -26,10 +26,8 @@ const meta: Meta<typeof Grid> = {
         },
     },
     args: {
-        columns: '3',
-        gap: '3',
-        rows: 'repeat(2, 64px)',
-        width: 'auto',
+        columns: 'repeat(3, 1fr)',
+        gap: '16px',
     },
 };
 export default meta;
@@ -46,5 +44,35 @@ export const Default: Story = {
                 <DecorativeBox />
             </Grid>
         );
+    },
+};
+
+export const ResponsiveGrid: Story = {
+    render: (args) => {
+        return (
+            <Grid {...args}>
+                <DecorativeBox />
+                <DecorativeBox />
+                <DecorativeBox />
+                <DecorativeBox />
+                <DecorativeBox />
+                <DecorativeBox />
+                <DecorativeBox />
+                <DecorativeBox />
+                <DecorativeBox />
+                <DecorativeBox />
+                <DecorativeBox />
+                <DecorativeBox />
+            </Grid>
+        );
+    },
+    args: {
+        columns: {
+            base: 'repeat(1, 1fr)',
+            xs: 'repeat(4, 1fr)',
+            sm: 'repeat(5, 1fr)',
+            md: 'repeat(6, 1fr)',
+            '2xl': 'repeat(8, 1fr)',
+        },
     },
 };

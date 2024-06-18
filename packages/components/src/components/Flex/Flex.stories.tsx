@@ -26,7 +26,7 @@ const meta: Meta<typeof Flex> = {
         },
     },
     args: {
-        gap: '10px',
+        gap: '20px',
         direction: 'column',
     },
 };
@@ -45,6 +45,50 @@ export const Default: Story = {
                 </Flex>
 
                 <Flex gapX="10px">
+                    <DecorativeBox />
+                    <DecorativeBox />
+                    <DecorativeBox />
+                    <DecorativeBox />
+                    <DecorativeBox />
+                </Flex>
+            </Flex>
+        );
+    },
+};
+
+export const Responsive: Story = {
+    render: (args) => {
+        return (
+            <Flex
+                {...args}
+                direction={{
+                    base: 'row',
+                    sm: 'column',
+                }}
+            >
+                <Flex
+                    gapX={{ sm: '10px' }}
+                    gapY={{ base: '10px', sm: '0px' }}
+                    direction={{
+                        base: 'column',
+                        sm: 'row',
+                    }}
+                >
+                    <DecorativeBox />
+                    <DecorativeBox />
+                    <DecorativeBox />
+                    <DecorativeBox />
+                    <DecorativeBox />
+                </Flex>
+
+                <Flex
+                    gapX={{ sm: '10px' }}
+                    gapY={{ base: '10px', sm: '0px' }}
+                    direction={{
+                        base: 'column',
+                        sm: 'row',
+                    }}
+                >
                     <DecorativeBox />
                     <DecorativeBox />
                     <DecorativeBox />

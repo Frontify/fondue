@@ -14,37 +14,37 @@ export type FlexProps = LayoutComponentProps & {
      */
     as?: 'div' | 'span';
     /**
-     * The display property of the Flex component.
+     * The display property.
      * @default 'flex'
      */
     display?: Responsive<'none' | 'flex' | 'inline-flex'>;
     /**
-     * The direction of the Flex component.
+     * The direction of the children.
      * @default 'row'
      */
     direction?: Responsive<'row' | 'row-reverse' | 'column' | 'column-reverse'>;
     /**
-     * The alignment of the children of the Flex component.
+     * The alignment of the children.
      */
     align?: Responsive<'flex-start' | 'center' | 'flex-end' | 'stretch' | 'baseline'>;
     /**
-     * The justification of the children of the Flex component.
+     * The justification of the children.
      */
     justify?: Responsive<'flex-start' | 'center' | 'flex-end' | 'space-between' | 'space-around' | 'space-evenly'>;
     /**
-     * The wrap property of the Flex component.
+     * The wrap property.
      */
     wrap?: Responsive<'nowrap' | 'wrap' | 'wrap-reverse'>;
     /**
-     * The gap between the children of the Flex component.
+     * The gap between the children.
      */
     gap?: Responsive<SizeValue>;
     /**
-     * The horizontal gap between the children of the Flex component.
+     * The horizontal gap between the children.
      */
     gapX?: Responsive<SizeValue>;
     /**
-     * The vertical gap between the children of the Flex component.
+     * The vertical gap between the children.
      */
     gapY?: Responsive<SizeValue>;
 
@@ -59,7 +59,11 @@ export const Flex = ({
     ...props
 }: FlexProps) => {
     return (
-        <Component className={styles.flex} data-test-id={dataTestId} style={propsToCssVariables(props)}>
+        <Component
+            className={styles.flex}
+            data-test-id={dataTestId}
+            style={propsToCssVariables(props, { justify: 'justify-content' })}
+        >
             {children}
         </Component>
     );
