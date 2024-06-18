@@ -24,12 +24,12 @@ export const getSelectOptionValue = ({
             value: value ? value : children,
             label: label ? label : children,
         };
-    } else {
-        return {
-            value: value || '',
-            label: label ? label : value || '',
-        };
     }
+    
+    return {
+        value: value || '',
+        label: label ? label : value || '',
+    };
 };
 
 /**
