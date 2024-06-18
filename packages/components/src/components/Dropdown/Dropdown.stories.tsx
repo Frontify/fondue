@@ -183,7 +183,7 @@ export const CustomItem: Story = {
     ),
 };
 
-export const ExternallyControlled: Story = {
+export const ControlledComponent: Story = {
     decorators: [
         (Story) => (
             <div className="tw-flex tw-flex-col tw-gap-2 tw-w-fit">
