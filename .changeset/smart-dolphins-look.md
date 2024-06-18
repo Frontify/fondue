@@ -2,4 +2,4 @@
 "@frontify/fondue": patch
 ---
 
-feat: added `whitespace="none"` to the Text props
+feat: added `whitespace="unset"` to the Text props
