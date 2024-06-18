@@ -41,7 +41,7 @@
         transform: translateY(0);
 
         @include sm {
-            transform: translateX(50%) translateY(0);
+            transform: translateX(-50%) translateY(0);
         }
     }
 
