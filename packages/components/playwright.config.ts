@@ -6,7 +6,6 @@ import tsConfigPaths from 'vite-tsconfig-paths';
 // https://playwright.dev/docs/test-configuration
 export default defineConfig({
     testDir: './src',
-    snapshotDir: './__snapshots__',
     timeout: 10_000,
     fullyParallel: true,
     forbidOnly: !!process.env.CI,
