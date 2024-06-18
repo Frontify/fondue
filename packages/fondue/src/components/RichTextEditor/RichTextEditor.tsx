@@ -62,7 +62,7 @@ export const RichTextEditor = ({
     const breakAfterPlugin = plugins.plugins.find((plugin) => plugin.key === KEY_ELEMENT_BREAK_AFTER_COLUMN);
     const customClass = breakAfterPlugin?.options?.customClass as string | undefined;
     const columns = customClass ? null : breakAfterPlugin?.options?.columns ?? 1;
-    const columnGap = customClass ? null : breakAfterPlugin?.options?.gap ?? GAP_DEFAULT;
+    const columnGap = breakAfterPlugin?.options?.gap ?? GAP_DEFAULT;
 
     const style = useMemo(
         () => ({

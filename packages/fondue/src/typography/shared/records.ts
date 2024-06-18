@@ -16,6 +16,7 @@ export const overflowMap: Record<TypographyOverflow, string> = {
 };
 
 export const whitespaceMap: Record<TypographyWhitespace, string> = {
+    unset: '',
     normal: 'tw-whitespace-normal',
     nowrap: 'tw-whitespace-nowrap',
     pre: 'tw-whitespace-pre',
