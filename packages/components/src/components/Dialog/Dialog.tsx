@@ -42,11 +42,11 @@ export type DialogContentProps = {
      * @default "center"
      */
     verticalAlign?: DialogVerticalAlign;
+
     /**
      * Define a maximum width for the dialog
      * @default "800px"
      */
-
     maxWidth?: string;
     /**
      * Define a minimum width for the dialog
