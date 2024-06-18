@@ -105,7 +105,7 @@ test('should select item in list', async ({ mount, page }) => {
     await page.keyboard.press('Enter');
     await expect(component.getByTestId(SELECT_TEST_ID)).toHaveValue(ITEM_TEXT2);
     expect(onSelectChange.callCount).toBe(1);
-    expect(onSelectChange.calledWith({ value: 'test2', label: 'sample text2' })).toBe(true);
+    expect(onSelectChange.calledWith('test2')).toBe(true);
 });
 
 test('should select item in group in list', async ({ mount, page }) => {
@@ -135,7 +135,7 @@ test('should select item in group in list', async ({ mount, page }) => {
     await page.keyboard.press('Enter');
     await expect(component.getByTestId(SELECT_TEST_ID)).toHaveValue(ITEM_TEXT2);
     expect(onSelectChange.callCount).toBe(1);
-    expect(onSelectChange.calledWith({ value: 'test2', label: 'sample text2' })).toBe(true);
+    expect(onSelectChange.calledWith('test2')).toBe(true);
 });
 
 test('should select custom item in list', async ({ mount, page }) => {
@@ -163,7 +163,7 @@ test('should select custom item in list', async ({ mount, page }) => {
     await page.keyboard.press('Enter');
     await expect(component.getByTestId(SELECT_TEST_ID)).toHaveValue(ITEM_LABEL2);
     expect(onSelectChange.callCount).toBe(1);
-    expect(onSelectChange.calledWith({ value: 'test2', label: ITEM_LABEL2 })).toBe(true);
+    expect(onSelectChange.calledWith('test2')).toBe(true);
 });
 
 test('should not open menu when disabled', async ({ mount, page }) => {

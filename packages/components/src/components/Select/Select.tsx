@@ -61,7 +61,7 @@ export const SelectInput = (
     }: SelectComponentProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
-    const { inputSlots, menuSlots, items, clearButton, getItemByValue } = useSelectData(children, defaultValue);
+    const { inputSlots, menuSlots, items, clearButton, getItemByValue } = useSelectData(children);
 
     const defaultItem = getItemByValue(defaultValue);
     const activeItem = getItemByValue(value);

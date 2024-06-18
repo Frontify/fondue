@@ -58,10 +58,8 @@ export const SelectCombobox = (
     }: ComboboxProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
-    const { inputSlots, menuSlots, items, filterText, clearButton, getItemByValue, setFilterText } = useSelectData(
-        children,
-        defaultValue,
-    );
+    const { inputSlots, menuSlots, items, filterText, clearButton, getItemByValue, setFilterText } =
+        useSelectData(children);
 
     const defaultItem = getItemByValue(defaultValue);
     const activeItem = getItemByValue(value);
@@ -78,7 +76,7 @@ export const SelectCombobox = (
     } = useCombobox({
         items,
         onSelectedItemChange: ({ selectedItem }) => {
-            onSelect && onSelect(selectedItem);
+            onSelect && onSelect(selectedItem.value);
         },
         selectedItem: activeItem,
         onInputValueChange: ({ inputValue }) => {
