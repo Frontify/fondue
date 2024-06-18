@@ -74,7 +74,10 @@ describe('useSelectData', () => {
         const {
             result: { current: result },
         } = renderHook(() => useSelectData(menuSlot));
-        expect(result.getItemByValue('test1')).toBe('Test1');
+        expect(result.getItemByValue('test1')).toEqual({
+            value: 'test1',
+            label: 'Test1',
+        });
     });
 
     it('returns handles filterText', () => {
