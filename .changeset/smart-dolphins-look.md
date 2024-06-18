@@ -2,4 +2,4 @@
 "@frontify/fondue": patch
 ---
 
-Text: added `none` as typography whitspace prop
+feat: added `whitespace="none"` to the Text props
