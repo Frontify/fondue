@@ -4,20 +4,19 @@
 @import '../../../utilities/focusStyle.module.scss';
 @import '../../../utilities/transitions.module.scss';
 
-.content, .subContent {
+.content,
+.subContent {
     display: block;
     border-radius: var(--radius);
     margin-top: sizeToken(2);
     background-color: var(--base-color);
     border: var(--line-width) solid var(--line-color-strong);
     box-shadow: var(--shadow-matrix);
-    overflow: hidden;
     min-width: 250px;
 }
 
-
-
-.item, .subTrigger {
+.item,
+.subTrigger {
     @include transition-colors;
     display: flex;
     align-items: center;
@@ -29,8 +28,7 @@
     font-size: var(--body-size-medium);
     line-height: var(--body-size-medium-line-height);
     color: var(--text-color-weak);
-    outline: none;
-
+    outline-style: none;
     &[data-state='open'] {
         background-color: var(--box-neutral-color);
         color: var(--text-color);
@@ -39,6 +37,10 @@
     &[data-highlighted] {
         background-color: var(--box-neutral-color-hover);
         color: var(--text-color);
+        outline-style: solid;
+        outline-width: 4px;
+        outline-offset: 2px;
+        outline-color: #5495cf;
     }
 
     &[data-disabled] {
@@ -47,8 +49,6 @@
         background-color: var(--box-disabled-color);
     }
 
-
-
     .subMenuIndicator {
         order: 2;
         margin-left: auto;
@@ -56,14 +56,13 @@
 }
 
 .group {
-    .item~& {
+    .item ~ & {
         border-top: var(--line-width) solid var(--line-color-strong);
     }
     &:has(+ .item) {
         border-bottom: var(--line-width) solid var(--line-color-strong);
     }
 }
-
 
 .slot {
     display: flex;
@@ -81,7 +80,7 @@
         order: 1;
         margin-left: auto;
 
-        &~.subMenuIndicator {
+        & ~ .subMenuIndicator {
             margin-left: sizeToken(1.5);
         }
     }
@@ -91,10 +90,8 @@
         order: 1;
         margin-left: auto;
 
-        &~.subMenuIndicator {
+        & ~ .subMenuIndicator {
             margin-left: 0;
         }
     }
 }
-
-

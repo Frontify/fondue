@@ -184,14 +184,21 @@ export const CustomItem: Story = {
 };
 
 export const ExternallyControlled: Story = {
+    decorators: [
+        (Story) => (
+            <div className="tw-flex tw-flex-col tw-gap-2 tw-w-fit">
+                <Story />
+            </div>
+        ),
+    ],
     render: ({ ...args }) => {
         const [isOpen, setIsOpen] = useState(false);
         return (
             <>
-                <Button onPress={() => setIsOpen(!isOpen)}>Toggle Dropdown</Button>
+                <Button onPress={() => setIsOpen(!isOpen)}>External Toggle Dropdown</Button>
                 <Dropdown.Root {...args} open={isOpen} onOpenChange={setIsOpen}>
                     <Dropdown.Trigger>
-                        <Button>Trigger</Button>
+                        <Button style="loud">Trigger</Button>
                     </Dropdown.Trigger>
                     <Dropdown.Content>
                         <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
