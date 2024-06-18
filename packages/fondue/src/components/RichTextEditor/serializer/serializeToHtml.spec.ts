@@ -20,6 +20,17 @@ describe('serializeNodesToHtml()', () => {
         expect(serialized).not.to.contain('columns:1;');
     });
 
+    it('should render the custom class if provided', () => {
+        const serialized = serializeNodesToHtml(nodesToSerialize, {
+            customClass: 'tw-columns-3',
+            columnGap: '20px',
+            columns: 2,
+        });
+        expect(serialized).to.contain('class="tw-columns-3"');
+        expect(serialized).to.contain('column-gap:20px');
+        expect(serialized).not.to.contain('columns:2');
+    });
+
     it('should have a default column count of 1', () => {
         const serialized = serializeNodesToHtml(nodesToSerialize);
         expect(serialized).not.to.contain('columns:1;');
