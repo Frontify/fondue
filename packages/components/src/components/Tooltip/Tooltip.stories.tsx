@@ -52,7 +52,7 @@ export const LongDelay: Story = {
     },
 };
 
-export const ExternalControl: Story = {
+export const ControlledComponent: Story = {
     decorators: [
         (Story) => {
             return (
