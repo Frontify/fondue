@@ -63,6 +63,7 @@ export const useSelectData = (children: ReactNode, defaultValue?: string) => {
         } else {
             return {
                 menuSlots: children,
+                inputSlots: [],
                 itemValues: getRecursiveOptionValues(children),
             };
         }
