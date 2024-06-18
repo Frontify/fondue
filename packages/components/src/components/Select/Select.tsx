@@ -41,7 +41,7 @@ export type SelectComponentProps = {
     /**
      * The aria label of the select component.
      */
-    'aria-label': string;
+    'aria-label'?: string;
     /**
      * The data test id of the select component.
      */
