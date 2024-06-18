@@ -20,9 +20,9 @@ export type ComboboxProps = {
      */
     onSelect?: (selectedItem: SelectItemType) => void;
     /**
-     * The active item in the combobox component. This is used to control the combobox externally.
+     * The active value in the combobox component. This is used to control the combobox externally.
      */
-    activeItem?: SelectItemType;
+    value?: SelectItemType;
     /**
      * The default value of the combobox component. Used for uncontrolled usages.
      */
@@ -49,7 +49,7 @@ export const SelectCombobox = (
     {
         children,
         onSelect,
-        activeItem,
+        value,
         defaultValue,
         placeholder = '',
         disabled,
@@ -58,10 +58,13 @@ export const SelectCombobox = (
     }: ComboboxProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
-    const { inputSlots, menuSlots, items, defaultItem, filterText, clearButton, setFilterText } = useSelectData(
+    const { inputSlots, menuSlots, items, filterText, clearButton, getItemByValue, setFilterText } = useSelectData(
         children,
         defaultValue,
     );
+
+    const defaultItem = getItemByValue(defaultValue);
+    const activeItem = getItemByValue(value);
 
     const {
         getInputProps,

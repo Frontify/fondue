@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconCross } from '@frontify/fondue-icons';
-import { Children, cloneElement, isValidElement, useMemo, useState, type ReactNode } from 'react';
+import { Children, cloneElement, isValidElement, useCallback, useMemo, useState, type ReactNode } from 'react';
 
 import { ForwardedRefSelectItem, type SelectItemProps } from './SelectItem';
 import { ForwardedRefSelectSlot, type SelectSlotProps } from './SelectSlot';
@@ -77,9 +77,10 @@ export const useSelectData = (children: ReactNode, defaultValue?: string) => {
         [itemValues, filterText],
     );
 
-    const defaultItem = useMemo(() => {
-        return itemValues.find((item) => item.value === defaultValue);
-    }, [itemValues, defaultValue]);
+    const getItemByValue = useCallback(
+        (value?: string) => (value ? itemValues.find((item) => item.value === value) : undefined),
+        [itemValues],
+    );
 
     return {
         inputSlots,
@@ -88,6 +89,6 @@ export const useSelectData = (children: ReactNode, defaultValue?: string) => {
         setFilterText,
         filterText,
         items: filteredItems,
-        defaultItem,
+        getItemByValue,
     };
 };

@@ -10,7 +10,6 @@ import { SelectCombobox } from './Combobox';
 import { Select, SelectInput } from './Select';
 import { SelectItem, SelectItemGroup } from './SelectItem';
 import { SelectSlot } from './SelectSlot';
-import { type SelectItemType } from './useSelectData';
 
 type Story = StoryObj<typeof meta>;
 const meta: Meta<typeof SelectInput> = {
@@ -231,14 +230,14 @@ export const CustomItem: Story = {
 
 export const ExternallyControlled: Story = {
     render: (args) => {
-        const [activeItem, setActiveItem] = useState<SelectItemType>();
+        const [activeItem, setActiveItem] = useState<string>();
         return (
             <>
                 <Select
                     onSelect={(selectedItem) => {
                         setActiveItem(() => selectedItem);
                     }}
-                    activeItem={activeItem}
+                    value={activeItem}
                     {...args}
                 >
                     <Select.Slot name="menu">
@@ -247,16 +246,7 @@ export const ExternallyControlled: Story = {
                         <Select.Item value="test3">Test3</Select.Item>
                     </Select.Slot>
                 </Select>
-                <Button
-                    onPress={() =>
-                        setActiveItem({
-                            value: 'test1',
-                            label: 'Test1',
-                        })
-                    }
-                >
-                    Set Test1
-                </Button>
+                <Button onPress={() => setActiveItem('test1')}>Set Test1</Button>
             </>
         );
     },

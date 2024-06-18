@@ -11,7 +11,7 @@ import { ForwardedRefSelectItem, ForwardedRefSelectItemGroup } from './SelectIte
 import { SelectMenu } from './SelectMenu';
 import { ForwardedRefSelectSlot } from './SelectSlot';
 import styles from './styles/select.module.scss';
-import { useSelectData, type SelectItemType } from './useSelectData';
+import { useSelectData } from './useSelectData';
 
 export type SelectComponentProps = {
     /**
@@ -21,11 +21,11 @@ export type SelectComponentProps = {
     /**
      * Callback function that is called when an item is selected.
      */
-    onSelect?: (selectedItem: SelectItemType) => void;
+    onSelect?: (selectedValue: string) => void;
     /**
-     * The active item in the select component. This is used to control the select externally.
+     * The active value in the select component. This is used to control the select externally.
      */
-    activeItem?: SelectItemType;
+    value?: string;
     /**
      * The default value of the select component. Used for uncontrolled usages.
      */
@@ -52,7 +52,7 @@ export const SelectInput = (
     {
         children,
         onSelect,
-        activeItem,
+        value,
         defaultValue,
         placeholder = '',
         disabled,
@@ -61,7 +61,10 @@ export const SelectInput = (
     }: SelectComponentProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
-    const { inputSlots, menuSlots, items, defaultItem, clearButton } = useSelectData(children, defaultValue);
+    const { inputSlots, menuSlots, items, clearButton, getItemByValue } = useSelectData(children, defaultValue);
+
+    const defaultItem = getItemByValue(defaultValue);
+    const activeItem = getItemByValue(value);
 
     const { getToggleButtonProps, getMenuProps, getItemProps, reset, selectedItem, isOpen, highlightedIndex } =
         useSelect({
@@ -69,7 +72,7 @@ export const SelectInput = (
             defaultSelectedItem: defaultItem,
             selectedItem: activeItem,
             onSelectedItemChange: ({ selectedItem }) => {
-                onSelect && onSelect(selectedItem);
+                onSelect && onSelect(selectedItem.value);
             },
             itemToString: (item) => (item ? item.label : ''),
         });
