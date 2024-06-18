@@ -289,7 +289,7 @@ test('should allow for external control of open state', async ({ mount, page }) 
     await expect(tooltipContent).toBeVisible();
 });
 
-test('should trigger callback on open state change', async ({ mount, page }) => {
+test('should trigger callback on open state change', async ({ mount }) => {
     const onOpenChange = sinon.spy();
     const component = await mount(
         <Tooltip.Root onOpenChange={onOpenChange} enterDelay={0}>
