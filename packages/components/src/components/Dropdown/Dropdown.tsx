@@ -8,7 +8,13 @@ import styles from './styles/dropdown.module.scss';
 
 export type DropdownRootProps = {
     children?: ReactNode;
+    /**
+     * Controls the open state of the dropdown.
+     */
     open?: boolean;
+    /**
+     * Callback that is called when the open state of the dropdown changes.
+     */
     onOpenChange?: (open: boolean) => void;
     'data-test-id'?: string;
 };
@@ -121,8 +127,17 @@ DropdownSubContent.displayName = 'Dropdown.SubContent';
 
 export type DropdownItemProps = {
     children: ReactNode;
+    /**
+     * Disables the item.
+     */
     disabled?: boolean;
+    /**
+     * The text value of the item that is passed to the onSelect callback.
+     */
     textValue?: string;
+    /**
+     * Callback that is called when the item is selected.
+     */
     onSelect: (event: Event) => void;
     'data-test-id'?: string;
 };
