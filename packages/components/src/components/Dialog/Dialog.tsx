@@ -6,8 +6,6 @@ import { forwardRef, type CSSProperties, type ForwardedRef, type ReactNode } fro
 
 import styles from './styles/dialog.module.scss';
 
-type DialogVerticalAlign = 'top' | 'center';
-
 export type DialogRootProps = {
     /**
      * Disable interaction with the rest of the page
@@ -41,7 +39,7 @@ export type DialogContentProps = {
      * The vertical alignment of the divider
      * @default "center"
      */
-    verticalAlign?: DialogVerticalAlign;
+    verticalAlign?: 'top' | 'center';
 
     /**
      * Define a maximum width for the dialog
