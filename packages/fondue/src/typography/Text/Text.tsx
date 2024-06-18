@@ -1,8 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type AriaAttributes, type ReactElement, type ReactNode } from 'react';
-
 import { merge } from '@utilities/merge';
+import { type AriaAttributes, type ReactElement, type ReactNode } from 'react';
 
 import { decorationMap, displayMap, overflowMap, whitespaceMap, wordBreakMap } from '../shared/records';
 import { type SharedTypographyProps } from '../shared/types';
