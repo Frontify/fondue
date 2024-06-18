@@ -53,16 +53,15 @@ export const recursiveMap = (
     const resultingChildren: ReactNode[] = [];
     let itemCounter = 0;
     Children.forEach(children, (child) => {
-        if (isReactLeaf(child, ForwardedRefSelectItem)) {
-            if (
-                isValidElement<SelectItemProps>(child) &&
-                getSelectOptionValue(child.props)
-                    .label.toLowerCase()
-                    .includes(filterText?.toLowerCase() || '')
-            ) {
-                resultingChildren.push(callback(child, nextIndex + itemCounter));
-                itemCounter++;
-            }
+        if (
+            isReactLeaf(child, ForwardedRefSelectItem) &&
+            isValidElement<SelectItemProps>(child) &&
+            getSelectOptionValue(child.props)
+                .label.toLowerCase()
+                .includes(filterText?.toLowerCase() || '')
+        ) {
+            resultingChildren.push(callback(child, nextIndex + itemCounter));
+            itemCounter++;
         } else if (isValidElement<{ children: ReactNode }>(child) && child?.props.children) {
             const { parsedChildren, subElementCount } = recursiveMap(
                 child.props.children,

@@ -4,7 +4,7 @@ import { IconCaretDown } from '@frontify/fondue-icons';
 import * as RadixPopover from '@radix-ui/react-popover';
 import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { useCombobox } from 'downshift';
-import { forwardRef, useRef, type ForwardedRef, type ReactNode } from 'react';
+import { forwardRef, useMemo, useRef, type ForwardedRef, type ReactNode } from 'react';
 
 import { SelectMenu } from './SelectMenu';
 import styles from './styles/select.module.scss';
@@ -38,7 +38,7 @@ export type ComboboxProps = {
     /**
      * The aria label of the combobox component.
      */
-    'aria-label': string;
+    'aria-label'?: string;
     /**
      * The data test id of the select component.
      */
@@ -87,17 +87,15 @@ export const SelectCombobox = (
     });
 
     const wasClicked = useRef(false);
+    const valueInvalid = useMemo(
+        () => inputValue && !items.find((item) => item.label.toLowerCase().includes(inputValue.toLowerCase())),
+        [inputValue, items],
+    );
 
     return (
         <RadixPopover.Root open={isOpen}>
             <RadixPopover.Anchor asChild>
-                <div
-                    ref={forwardedRef}
-                    className={styles.root}
-                    data-error={
-                        inputValue && !items.find((item) => item.label.toLowerCase().includes(inputValue.toLowerCase()))
-                    }
-                >
+                <div ref={forwardedRef} className={styles.root} data-error={valueInvalid}>
                     <input
                         onMouseDown={(mouseEvent) => {
                             wasClicked.current = true;
