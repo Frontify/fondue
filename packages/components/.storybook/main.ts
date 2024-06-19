@@ -22,6 +22,11 @@ const config: StorybookConfig = {
         autodocs: 'tag',
         defaultName: 'Documentation',
     },
+    build: {
+        test: {
+            disabledAddons: [], // 👈 don't disable any addons
+        },
+    },
     viteFinal(config) {
         // @ts-expect-error untyped name property
         config.plugins = (config.plugins ?? []).filter((plugin) => plugin?.name !== 'vite:dts');

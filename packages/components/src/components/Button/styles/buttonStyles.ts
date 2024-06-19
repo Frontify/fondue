@@ -5,7 +5,7 @@ import { sv } from '#/utilities/styleUtilities';
 
 export const buttonStyles = sv({
     base:
-        'tw-group tw-border tw-relative tw-flex tw-flex-row tw-gap-2 tw-items-center tw-justify-center tw-cursor-pointer tw-font-body tw-font-medium tw-p-8 ' +
+        'tw-group tw-border tw-relative tw-flex tw-flex-row tw-gap-2 tw-items-center tw-justify-center tw-cursor-pointer tw-font-body tw-font-medium ' +
         `${FOCUS_OUTLINE}`,
     variants: {
         disabled: {
