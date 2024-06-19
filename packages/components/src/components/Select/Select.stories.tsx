@@ -32,6 +32,7 @@ const meta: Meta<typeof SelectInput> = {
     },
     args: {
         'aria-label': 'Select an item',
+        placeholder: 'Select an item',
     },
 };
 export default meta;
@@ -229,6 +230,15 @@ export const CustomItem: Story = {
 };
 
 export const ExternallyControlled: Story = {
+    decorators: [
+        (Story) => {
+            return (
+                <div className="tw-flex tw-gap-4">
+                    <Story />
+                </div>
+            );
+        },
+    ],
     render: (args) => {
         const [activeItem, setActiveItem] = useState<string>();
         return (

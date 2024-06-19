@@ -11,22 +11,27 @@ import { getSelectOptionValue, recursiveMap } from './utils';
 
 export type SelectMenuProps = {
     /**
+     * @internal
      * The index of the highlighted item in the menu.
      */
     highlightedIndex: number;
     /**
+     * @internal
      * Callback function to retrieve the props for a menu element.
      */
     getMenuProps: UseSelectPropGetters<unknown>['getMenuProps'] | UseComboboxPropGetters<unknown>['getMenuProps'];
     /**
+     * @internal
      * Callback function to retrieve the props for a item element.
      */
     getItemProps: UseSelectPropGetters<unknown>['getItemProps'] | UseComboboxPropGetters<unknown>['getItemProps'];
     /**
+     * @internal
      * The children of the menu component. This can contain multiple `Select.Item` or `Select.Group` components.
      */
     children: ReactNode;
     /**
+     * @internal
      * The filter text shown in the combobox input element.
      */
     filterText?: string;
