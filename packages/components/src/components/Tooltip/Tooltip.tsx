@@ -8,6 +8,18 @@ import { cn } from '#/utilities/styleUtilities';
 import { tooltipArrowStyles, tooltipContentStyles } from './styles/tooltipStyles';
 
 export type TooltipRootProps = {
+    /**
+     * Sets the open state of the tooltip.
+     */
+    open?: boolean;
+    /**
+     * Callback that is called when the open state of the tooltip changes.
+     */
+    onOpenChange?: (open: boolean) => void;
+    /**
+     * The delay in milliseconds before the tooltip appears.
+     * @default 700
+     */
     enterDelay?: number;
     children: Array<ReactElement<TooltipTriggerProps | TooltipContentProps>>;
 };
@@ -27,10 +39,12 @@ export type TooltipContentProps = {
     'data-test-id'?: string;
 };
 
-export const TooltipRoot = ({ children, enterDelay = 700 }: TooltipRootProps) => {
+export const TooltipRoot = ({ children, enterDelay = 700, open, onOpenChange }: TooltipRootProps) => {
     return (
         <RadixTooltip.Provider>
-            <RadixTooltip.Root delayDuration={enterDelay}>{children}</RadixTooltip.Root>
+            <RadixTooltip.Root delayDuration={enterDelay} open={open} onOpenChange={onOpenChange}>
+                {children}
+            </RadixTooltip.Root>
         </RadixTooltip.Provider>
     );
 };
