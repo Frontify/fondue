@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { expect, test } from '@playwright/experimental-ct-react';
+import * as sinon from 'sinon';
 
 import { Tooltip } from '../Tooltip';
 
@@ -270,4 +271,38 @@ test('should detect top collision and show on the bottom', async ({ mount, page 
     } else {
         throw new Error('Bounding boxes are undefined');
     }
+});
+
+test('should allow for external control of open state', async ({ mount, page }) => {
+    const component = await mount(
+        <Tooltip.Root open={true}>
+            <Tooltip.Trigger data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
+                <button>Hover over me!</button>
+            </Tooltip.Trigger>
+            <Tooltip.Content side="top" data-test-id={TOOLTIP_CONTENT_TEST_ID}>
+                {TOOLTIP_TEXT}
+            </Tooltip.Content>
+        </Tooltip.Root>,
+    );
+    const tooltipContent = page.getByTestId(TOOLTIP_CONTENT_TEST_ID);
+    await expect(component).toBeVisible();
+    await expect(tooltipContent).toBeVisible();
+});
+
+test('should trigger callback on open state change', async ({ mount }) => {
+    const onOpenChange = sinon.spy();
+    const component = await mount(
+        <Tooltip.Root onOpenChange={onOpenChange} enterDelay={0}>
+            <Tooltip.Trigger data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
+                <button>Hover over me!</button>
+            </Tooltip.Trigger>
+            <Tooltip.Content side="top" data-test-id={TOOLTIP_CONTENT_TEST_ID}>
+                {TOOLTIP_TEXT}
+            </Tooltip.Content>
+        </Tooltip.Root>,
+    );
+    await expect(component).toBeVisible();
+    expect(onOpenChange.callCount).toBe(0);
+    await component.hover();
+    expect(onOpenChange.callCount).toBe(1);
 });

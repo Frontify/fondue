@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Meta, type StoryObj } from '@storybook/react';
+import { useState } from 'react';
 
 import { Button } from '../Button/Button';
 
@@ -48,5 +49,32 @@ export const NoDelay: Story = {
 export const LongDelay: Story = {
     args: {
         enterDelay: 2000,
+    },
+};
+
+export const ControlledComponent: Story = {
+    decorators: [
+        (Story) => {
+            return (
+                <div className="tw-flex tw-gap-4">
+                    <Story />
+                </div>
+            );
+        },
+    ],
+    render: () => {
+        const [isTooltipOpen, setIsTooltipOpen] = useState(false);
+        return (
+            <>
+                <Tooltip.Root open={isTooltipOpen} onOpenChange={setIsTooltipOpen}>
+                    <Tooltip.Trigger>
+                        <Button>Hover over me!</Button>
+                    </Tooltip.Trigger>
+                    <Tooltip.Content>I am a tooltip!</Tooltip.Content>
+                </Tooltip.Root>
+                <Button onPress={() => setIsTooltipOpen(true)}>Open Tooltip</Button>
+                <Button onPress={() => setIsTooltipOpen(false)}>Close Tooltip</Button>
+            </>
+        );
     },
 };
