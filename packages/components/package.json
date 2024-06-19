@@ -40,7 +40,9 @@
         "test:watch": "vitest",
         "test:components": "playwright test --ui",
         "test:components:ci": "playwright test",
-        "create:component": "tsx scripts/createNewComponent.ts"
+        "create:component": "tsx scripts/createNewComponent.ts",
+        "percy": "percy storybook:start -d --port 6006",
+        "chromatic": "chromatic --config-file ./chromatic.config.json"
     },
     "peerDependencies": {
         "@frontify/fondue-icons": "workspace:^",
@@ -59,10 +61,13 @@
         "@radix-ui/react-tooltip": "^1.0.7"
     },
     "devDependencies": {
+        "@chromatic-com/storybook": "^1.5.0",
         "@etchteam/storybook-addon-status": "^5.0.0",
         "@frontify/eslint-config-react": "^0.17.6",
         "@frontify/fondue-icons": "workspace:^",
         "@frontify/fondue-tokens": "workspace:^",
+        "@percy/cli": "^1.28.7",
+        "@percy/storybook": "^6.0.0",
         "@playwright/experimental-ct-react": "1.44.1",
         "@storybook/addon-a11y": "^8.1.5",
         "@storybook/addon-actions": "^8.1.5",
@@ -86,6 +91,7 @@
         "@vitest/ui": "^1.6.0",
         "autoprefixer": "^10.4.19",
         "chalk": "^5.3.0",
+        "chromatic": "^11.5.4",
         "eslint": "^8.57.0",
         "eslint-plugin-notice": "^0.9.10",
         "happy-dom": "^14.12.0",

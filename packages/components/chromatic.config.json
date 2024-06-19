@@ -1,0 +1,7 @@
+{
+    "projectId": "Fondue",
+    "buildScriptName": "build:storybook",
+    "projectToken": "chpt_3486897473cff72",
+    "storybookBaseDir": "packages/components",
+    "onlyChanged": true
+}
