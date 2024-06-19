@@ -36,6 +36,15 @@
         display: grid;
     }
 
+    &[data-dialog-vertical-align='top'] {
+        top: 5rem;
+        transform: translateY(0);
+
+        @include sm {
+            transform: translateX(-50%) translateY(0);
+        }
+    }
+
     &[data-dialog-rounded='true'] {
         border-radius: var(--radius-large);
     }
