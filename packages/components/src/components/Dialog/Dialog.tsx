@@ -36,6 +36,12 @@ export type DialogContentProps = {
      */
     padding?: 'compact' | 'comfortable' | 'spacious';
     /**
+     * The vertical alignment of the divider
+     * @default "center"
+     */
+    verticalAlign?: 'top' | 'center';
+
+    /**
      * Define a maximum width for the dialog
      * @default "800px"
      */
@@ -99,6 +105,7 @@ export const DialogContent = (
         minWidth = '400px',
         minHeight = '200px',
         padding = 'compact',
+        verticalAlign = 'center',
         'data-test-id': dataTestId = 'fondue-dialog-content',
         showUnderlay = false,
         children,
@@ -123,6 +130,7 @@ export const DialogContent = (
                 data-dialog-rounded={rounded}
                 data-dialog-spacing={padding}
                 data-test-id={dataTestId}
+                data-dialog-vertical-align={verticalAlign}
                 {...props}
             >
                 {children}
