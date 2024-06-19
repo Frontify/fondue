@@ -11,7 +11,7 @@ export const checkboxStyles = sv({
         `${FOCUS_OUTLINE}`,
     variants: {
         size: {
-            default: 'tw-size-8',
+            default: 'tw-size-4',
             large: 'tw-size-5',
         },
         emphasis: {
