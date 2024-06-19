@@ -1,5 +1,21 @@
 # @frontify/fondue-components
 
+## 1.4.0
+
+### Minor Changes
+
+-   [#1915](https://github.com/Frontify/fondue/pull/1915) [`2289e2d`](https://github.com/Frontify/fondue/commit/2289e2dbd9019412bdbd2ce50a4fc96d14fa3a1c) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add new dropdown component
+
+-   [#1920](https://github.com/Frontify/fondue/pull/1920) [`8ff132f`](https://github.com/Frontify/fondue/commit/8ff132fd1bb3f89a1919d609bf4d44b1fde7026d) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add ability to control the `Tooltip` externally
+
+-   [#1919](https://github.com/Frontify/fondue/pull/1919) [`639a96b`](https://github.com/Frontify/fondue/commit/639a96bbde41fb52d847ca5eecf117d2186c5a75) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add option to position dialog at the top of the screen
+
+### Patch Changes
+
+-   [#1904](https://github.com/Frontify/fondue/pull/1904) [`60a86e8`](https://github.com/Frontify/fondue/commit/60a86e8d097ed12b1e93f07278b54c36488a8ee8) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add select component
+
+-   [#1906](https://github.com/Frontify/fondue/pull/1906) [`958b5ad`](https://github.com/Frontify/fondue/commit/958b5adb7b11dbde85d09fdd7a0c12c61beb60a7) Thanks [@noahwaldner](https://github.com/noahwaldner)! - refactor: migrate dialog to use scss
+
 ## 1.3.5
 
 ### Patch Changes

@@ -1,5 +1,16 @@
 # @frontify/fondue
 
+## 12.1.7
+
+### Patch Changes
+
+-   [#1916](https://github.com/Frontify/fondue/pull/1916) [`d40a8e2`](https://github.com/Frontify/fondue/commit/d40a8e2036e608805e015d5a9b5cf61c90ed8ed9) Thanks [@fulopdaniel](https://github.com/fulopdaniel)! - fix(RTE): serializer is missing custom class
+
+-   [#1917](https://github.com/Frontify/fondue/pull/1917) [`212d224`](https://github.com/Frontify/fondue/commit/212d2249f58cd575f1ea4bface8d5591be21a3b8) Thanks [@bojangles-m](https://github.com/bojangles-m)! - feat: added `whitespace="unset"` to the Text props
+
+-   Updated dependencies [[`2289e2d`](https://github.com/Frontify/fondue/commit/2289e2dbd9019412bdbd2ce50a4fc96d14fa3a1c), [`60a86e8`](https://github.com/Frontify/fondue/commit/60a86e8d097ed12b1e93f07278b54c36488a8ee8), [`8ff132f`](https://github.com/Frontify/fondue/commit/8ff132fd1bb3f89a1919d609bf4d44b1fde7026d), [`639a96b`](https://github.com/Frontify/fondue/commit/639a96bbde41fb52d847ca5eecf117d2186c5a75), [`958b5ad`](https://github.com/Frontify/fondue/commit/958b5adb7b11dbde85d09fdd7a0c12c61beb60a7)]:
+    -   @frontify/fondue-components@1.4.0
+
 ## 12.1.6
 
 ### Patch Changes
