@@ -28,7 +28,7 @@ const abbreviationToCssProperty: Record<string, string> = {
 
 const transformValueBasedOnKey = (key: string, value: string | number): string | number => {
     if (key === 'columns' || key === 'rows') {
-        if (!Number.isNaN(Number(value))) {
+        if (typeof value === 'number') {
             return `repeat(${value}, 1fr)`;
         }
         return value;

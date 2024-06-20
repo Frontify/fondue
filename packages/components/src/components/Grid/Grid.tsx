@@ -22,11 +22,11 @@ export type GridProps = LayoutComponentProps & {
     /**
      * The columns property.
      */
-    columns?: Responsive<string>;
+    columns?: Responsive<string | number>;
     /**
      * The rows property.
      */
-    rows?: Responsive<string>;
+    rows?: Responsive<string | number>;
     /**
      * The flow property.
      */

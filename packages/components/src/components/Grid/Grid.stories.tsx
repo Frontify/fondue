@@ -67,7 +67,7 @@ export const GridWithFixedColumnsAndRows: Story = {
         );
     },
     args: {
-        columns: '3',
+        columns: 3,
     },
 };
 
