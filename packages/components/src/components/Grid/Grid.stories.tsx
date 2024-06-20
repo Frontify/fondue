@@ -47,6 +47,30 @@ export const Default: Story = {
     },
 };
 
+export const GridWithFixedColumnsAndRows: Story = {
+    render: (args) => {
+        return (
+            <Grid {...args}>
+                <DecorativeBox />
+                <DecorativeBox />
+                <DecorativeBox />
+                <DecorativeBox />
+                <DecorativeBox />
+                <DecorativeBox />
+                <DecorativeBox />
+                <DecorativeBox />
+                <DecorativeBox />
+                <DecorativeBox />
+                <DecorativeBox />
+                <DecorativeBox />
+            </Grid>
+        );
+    },
+    args: {
+        columns: '3',
+    },
+};
+
 export const ResponsiveGrid: Story = {
     render: (args) => {
         return (

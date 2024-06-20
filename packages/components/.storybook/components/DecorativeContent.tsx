@@ -1,5 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+/**
+ * This component is used to create a decorative background for stories.
+ */
 export const DecorativeContent = () => {
     return (
         <div

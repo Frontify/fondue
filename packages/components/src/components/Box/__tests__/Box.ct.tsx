@@ -6,62 +6,49 @@ import { Box } from '../Box';
 
 const BOX_TEXT = 'sample box';
 
-test('should render without error', async ({ mount }) => {
-    const component = await mount(
-        <Box>
-            <div style={{ border: '1px solid black' }}>{BOX_TEXT}</div>
-        </Box>,
-    );
-    await expect(component).toBeVisible();
-    await expect(component).toContainText(BOX_TEXT);
-    await expect(component).toHaveScreenshot();
-});
-
 test('should render with more precise padding/margin', async ({ mount }) => {
     const component = await mount(
         <Box p="20px" px="40px" py="60px" m="80px" mx="100px" my="120px">
-            <div style={{ border: '1px solid black' }}>{BOX_TEXT}</div>
+            {BOX_TEXT}
         </Box>,
     );
-    await expect(component).toHaveScreenshot();
+    await expect(component).toContainText(BOX_TEXT);
+    await expect(component).toHaveCSS('padding', '60px 40px');
+    await expect(component).toHaveCSS('margin', '120px 100px');
 });
 
 test('should render with normal padding/margin', async ({ mount }) => {
     const component = await mount(
         <Box p="20px" m="80px">
-            <div style={{ border: '1px solid black' }}>{BOX_TEXT}</div>
+            {BOX_TEXT}
         </Box>,
     );
-    await expect(component).toHaveScreenshot();
+    await expect(component).toHaveCSS('padding', '20px');
+    await expect(component).toHaveCSS('margin', '80px');
 });
 
-const responsiveTests = [
-    [
-        'should render with responsive padding/margin',
-        '',
-        async ({ mount }) => {
-            const component = await mount(
-                <Box p={{ sm: '20px', md: '40px', lg: '60px' }} m={{ sm: '80px', md: '100px', lg: '120px' }}>
-                    <div style={{ border: '1px solid black' }}>{BOX_TEXT}</div>
-                </Box>,
-            );
-            await expect(component).toHaveScreenshot();
-        },
-    ],
-] as Parameters<typeof test>[];
+const ResponsiveComponent = (
+    <Box p={{ base: '20px', md: '40px', lg: '60px' }} m={{ base: '80px', md: '100px', lg: '120px' }}>
+        {BOX_TEXT}
+    </Box>
+);
 
 test.describe('Responsiveness (base)', () => {
     test.use({ viewport: { width: 200, height: 200 } });
 
-    for (const testContent of responsiveTests) {
-        test(...testContent);
-    }
+    test('should render with responsive padding/margin', async ({ mount }) => {
+        const component = await mount(ResponsiveComponent);
+        await expect(component).toHaveCSS('padding', '20px');
+        await expect(component).toHaveCSS('margin', '80px');
+    });
 });
 
 test.describe('Responsiveness (lg)', () => {
-    test.use({ viewport: { width: 1201, height: 801 } });
+    test.use({ viewport: { width: 1600, height: 900 } });
 
-    for (const testContent of responsiveTests) {
-        test(...testContent);
-    }
+    test('should render with responsive padding/margin', async ({ mount }) => {
+        const component = await mount(ResponsiveComponent);
+        await expect(component).toHaveCSS('padding', '60px');
+        await expect(component).toHaveCSS('margin', '120px');
+    });
 });

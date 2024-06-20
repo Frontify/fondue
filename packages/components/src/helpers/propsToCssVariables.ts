@@ -26,15 +26,21 @@ const abbreviationToCssProperty: Record<string, string> = {
     rows: 'grid-template-rows',
 };
 
+const transformValueBasedOnKey = (key: string, value: string | number): string | number => {
+    if (key === 'columns' || key === 'rows') {
+        if (!Number.isNaN(Number(value))) {
+            return `repeat(${value}, 1fr)`;
+        }
+        return value;
+    }
+    return value;
+};
+
 export const propsToCssVariables = (
     props: Record<string, string | number | { [key in Breakpoint]?: string | number }>,
     extraAbbreviationToCssProperty: Record<string, string> = {},
 ): CSSProperties => {
     return Object.entries(props).reduce((acc, [key, value]) => {
-        if (value === undefined) {
-            return acc;
-        }
-
         const cssProperty =
             key in extraAbbreviationToCssProperty
                 ? extraAbbreviationToCssProperty[key]
@@ -47,12 +53,12 @@ export const propsToCssVariables = (
             for (const [breakpoint, breakpointValue] of Object.entries(value)) {
                 if (breakpointValue !== undefined) {
                     // @ts-expect-error CSS variables are not typed into `CSSProperties`
-                    acc[`--${breakpoint}-${cssPropertyKebabCase}`] = breakpointValue;
+                    acc[`--${breakpoint}-${cssPropertyKebabCase}`] = transformValueBasedOnKey(key, breakpointValue);
                 }
             }
         } else {
             // @ts-expect-error CSS variables are not typed into `CSSProperties`
-            acc[`--${cssPropertyKebabCase}`] = value;
+            acc[`--${cssPropertyKebabCase}`] = transformValueBasedOnKey(key, value);
         }
 
         return acc;
