@@ -24,6 +24,34 @@ test('should render without error', async ({ mount }) => {
     );
 });
 
+test('should render with correct columns counts (number)', async ({ mount }) => {
+    const component = await mount(
+        <Grid columns={3}>
+            <div>{GRID_TEXT}1</div>
+            <div>{GRID_TEXT}2</div>
+            <div>{GRID_TEXT}3</div>
+            <div>{GRID_TEXT}4</div>
+            <div>{GRID_TEXT}5</div>
+            <div>{GRID_TEXT}6</div>
+        </Grid>,
+    );
+    await expect(component).toHaveCSS('grid-template-columns', '416px 416px 416px');
+});
+
+test('should render with correct columns counts (string)', async ({ mount }) => {
+    const component = await mount(
+        <Grid columns="repeat(6, 1fr)">
+            <div>{GRID_TEXT}1</div>
+            <div>{GRID_TEXT}2</div>
+            <div>{GRID_TEXT}3</div>
+            <div>{GRID_TEXT}4</div>
+            <div>{GRID_TEXT}5</div>
+            <div>{GRID_TEXT}6</div>
+        </Grid>,
+    );
+    await expect(component).toHaveCSS('grid-template-columns', '208px 208px 208px 208px 208px 208px');
+});
+
 const ResponsiveComponent = (
     <Grid
         columns={{ base: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)' }}
