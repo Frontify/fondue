@@ -41,8 +41,7 @@ $layoutProperties: (
 
 @mixin responsive-properties($additional-properties: ()) {
     @each $property in $additional-properties {
-        --#{$property}: initial;
-        --#{$property}-computed: var(/* Value defined by the component, e.g. --display */ --#{$property}, initial);
+        --#{$property}-computed: var(/* Value defined by the component, e.g. --display */ --#{$property});
     }
 
     $previous-breakpoint: null;
