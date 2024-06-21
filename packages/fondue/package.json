@@ -51,7 +51,6 @@
         "./tailwind": "./tailwind.config.ts",
         "./style": "./dist/style.css",
         "./styles": "./dist/style.css",
-        "./extractedThirdPartyStyles": "./dist/extractedThirdPartyStyles.css",
         "./dist/*": "./dist/*"
     },
     "main": "dist/index.umd.js",
@@ -67,8 +66,7 @@
         "node": ">=18"
     },
     "scripts": {
-        "build": "pnpm clean && pnpm generate:icons && pnpm generate:componentsEnum && pnpm build:library && pnpm build:extractedThirdPartyStyles && pnpm build:package:components && pnpm build:package:icons && pnpm build:package:charts && pnpm build:package:tokens",
-        "build:extractedThirdPartyStyles": "postcss --config src/components/postcss.config.cjs ./src/components/styles.css -o dist/extractedThirdPartyStyles.css",
+        "build": "pnpm clean && pnpm generate:icons && pnpm generate:componentsEnum && pnpm build:library && pnpm build:package:components && pnpm build:package:icons && pnpm build:package:charts && pnpm build:package:tokens",
         "build:library": "vite build",
         "build:storybook": "pnpm generate:icons && pnpm generate:componentsEnum && storybook build",
         "build:package:components": "vite build -c components.vite.config.ts",
@@ -229,7 +227,6 @@
         "glob": "^10.4.2",
         "lodash-es": "^4.17.21",
         "postcss": "^8.4.38",
-        "postcss-cli": "^11.0.0",
         "postcss-import": "^16.1.0",
         "postcss-nested": "^6.0.1",
         "prettier": "^3.3.2",

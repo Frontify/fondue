@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import './styles.css';
+
 import { format } from 'date-fns/format';
 import { getYear } from 'date-fns/getYear';
 import { forwardRef, useState, type KeyboardEvent, type ReactNode } from 'react';
