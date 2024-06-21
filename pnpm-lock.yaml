@@ -409,6 +409,9 @@ importers:
       '@dnd-kit/utilities':
         specifier: ^3.2.2
         version: 3.2.2(react@18.3.1)
+      '@floating-ui/dom':
+        specifier: ^1.6.5
+        version: 1.6.5
       '@frontify/fondue-charts':
         specifier: workspace:^
         version: link:../charts

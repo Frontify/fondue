@@ -100,6 +100,7 @@
         "@dnd-kit/modifiers": "^7.0.0",
         "@dnd-kit/sortable": "^8.0.0",
         "@dnd-kit/utilities": "^3.2.2",
+        "@floating-ui/dom": "^1.6.5",
         "@frontify/fondue-charts": "workspace:^",
         "@frontify/fondue-components": "workspace:^",
         "@frontify/fondue-icons": "workspace:^",

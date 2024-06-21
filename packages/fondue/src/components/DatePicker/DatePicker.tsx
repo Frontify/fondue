@@ -2,6 +2,7 @@
 
 import './styles.css';
 
+import { offset, shift } from '@floating-ui/dom';
 import { format } from 'date-fns/format';
 import { getYear } from 'date-fns/getYear';
 import { forwardRef, useState, type KeyboardEvent, type ReactNode } from 'react';
@@ -147,6 +148,7 @@ export const DatePicker = forwardRef<ReactDatePickerRef, DatePickerProps>(
                     popperProps={{
                         strategy: 'fixed',
                     }}
+                    popperModifiers={[shift({ padding: 8 }), offset(8)]}
                     renderCustomHeader={({ date, decreaseMonth, increaseMonth, increaseYear, decreaseYear }) => (
                         <div className="tw-flex tw-flex-col tw-gap-3">
                             {customHeader}
