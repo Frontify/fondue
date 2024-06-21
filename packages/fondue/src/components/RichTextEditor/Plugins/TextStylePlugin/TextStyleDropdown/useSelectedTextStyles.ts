@@ -3,16 +3,16 @@
 import { type PlateEditor } from '@udecode/plate-core';
 import { ELEMENT_LI, ELEMENT_LIC, ELEMENT_OL, ELEMENT_UL } from '@udecode/plate-list';
 import { ELEMENT_PARAGRAPH } from '@udecode/plate-paragraph';
-import { type ENode, type Value, getNodeEntries, isNode, isText } from '@udecode/slate';
+import { type ENode, type Value, getNodeEntries, isNode, isText, type TText } from '@udecode/slate';
 
 import { ELEMENT_CHECK_ITEM } from '../../CheckboxListPlugin';
 import { MARK_TEXT_STYLE } from '../../ListPlugin';
 
 const getTextStyle = (node: ENode<Value>): string => {
     if (Array.isArray(node.children)) {
-        const textNode = node.children.find((node) => isText(node)) ?? {};
+        const textNode: TText | undefined = node.children.find((node) => isText(node));
 
-        return textNode[MARK_TEXT_STYLE];
+        return (textNode?.[MARK_TEXT_STYLE] as string | undefined) ?? '';
     }
 
     return ELEMENT_PARAGRAPH;

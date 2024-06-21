@@ -82,7 +82,7 @@
         "svgson": "^5.3.1",
         "tailwindcss": "^3.4.4",
         "tsx": "^4.15.7",
-        "typescript": "^5.4.5",
+        "typescript": "^5.5.2",
         "vite": "^5.3.1",
         "vite-plugin-dts": "^3.9.1",
         "vite-plugin-external": "^4.3.1",
