@@ -266,6 +266,12 @@ export const WithCustomElementAnnouncements: Story = {
     },
 };
 
+export const TopAligned: Story = {
+    args: {
+        verticalAlign: 'top',
+    },
+};
+
 export const MobileView: Story = {
     parameters: {
         viewport: {

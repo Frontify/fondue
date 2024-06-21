@@ -413,7 +413,7 @@ describe('RichTextEditor Component', () => {
             .setPlugin([new SoftBreakPlugin()])
             .setPlugin([new TextStylePlugin({ textStyles: TextStylePlugins })])
             .setPlugin(
-                [new BoldPlugin(), new BreakAfterPlugin({ customClass: 'tw-columns-1 @sm:tw-columns-2' })],
+                [new BoldPlugin(), new BreakAfterPlugin({ customClass: 'tw-columns-1 @sm:tw-columns-2', gap: 20 })],
                 [new AlignRightPlugin(), new UnorderedListPlugin(), new OrderedListPlugin()],
             );
 
@@ -514,6 +514,7 @@ describe('RichTextEditor Component', () => {
             insertTextAndOpenToolbar();
             cy.get(TOOLBAR_FLOATING).should('be.visible');
             cy.get('[contenteditable=true]').should('have.class', 'tw-columns-1 @sm:tw-columns-2');
+            cy.get('[contenteditable=true]').invoke('attr', 'style').should('include', 'column-gap: 20px');
         });
 
         it('it should move the text after the column break to the second column', () => {
