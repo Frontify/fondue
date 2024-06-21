@@ -5,7 +5,7 @@ import ts from 'typescript';
 
 export default <StorybookConfig>{
     framework: '@storybook/react-vite',
-    stories: ['../src/components/DatePicker/**/*.stories.tsx'],
+    stories: ['../src/**/*.stories.tsx'],
     addons: [
         '@etchteam/storybook-addon-status',
         '@storybook/addon-a11y',
