@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { create } from '@storybook/theming/create';
 
 export const light = create({
