@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import type { StorybookConfig } from '@storybook/react-vite';
 
 const config: StorybookConfig = {

@@ -19,11 +19,11 @@
         "build:storybook:packages": "pnpm --stream --parallel --filter {packages/*} build:storybook",
         "ci:publish": "pnpm build && changeset publish",
         "ci:version": "changeset version",
-        "lint": "pnpm --stream --filter {packages/**} lint",
+        "lint": "pnpm --stream --filter {packages/*} --filter {storybook-docs} lint",
         "storybook": "concurrently 'pnpm storybook:packages' 'pnpm storybook:main'",
         "storybook:main": "wait-on http://localhost:6006 http://localhost:6007 http://localhost:6008 http://localhost:6009 && pnpm --stream  --filter {storybook-docs} storybook",
         "storybook:packages": "pnpm --parallel --filter {packages/*} storybook --no-open",
-        "typecheck": "pnpm --stream --filter {packages/*} typecheck",
+        "typecheck": "pnpm --stream --filter {packages/*} --filter {storybook-docs} typecheck",
         "changeset": "changeset",
         "create:component": "pnpm --stream --filter {packages/components} create:component"
     },
@@ -32,7 +32,7 @@
         "@changesets/cli": "^2.27.5",
         "chokidar-cli": "^3.0.0",
         "concurrently": "^8.2.2",
-        "glob": "^10.4.1",
+        "glob": "^10.4.2",
         "wait-on": "^7.2.0"
     }
 }

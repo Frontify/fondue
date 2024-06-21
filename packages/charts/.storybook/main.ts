@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { StorybookConfig } from '@storybook/react-vite';
 
 export default {
