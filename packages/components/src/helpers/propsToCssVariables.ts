@@ -4,6 +4,10 @@ import { type CSSProperties } from 'react';
 
 import { type Breakpoint } from './layout';
 
+const isAriaProp = (key: string): boolean => {
+    return key.startsWith('aria-') || key === 'role';
+};
+
 const abbreviationToCssProperty: Record<string, string> = {
     m: 'margin',
     mx: 'margin-x',
@@ -37,10 +41,14 @@ const transformValueBasedOnKey = (key: string, value: string | number): string |
 };
 
 export const propsToCssVariables = (
-    props: Record<string, string | number | { [key in Breakpoint]?: string | number }>,
+    props: Record<string, string | number | boolean | { [key in Breakpoint]?: string | number | boolean }>,
     extraAbbreviationToCssProperty: Record<string, string> = {},
 ): CSSProperties => {
     return Object.entries(props).reduce((acc, [key, value]) => {
+        if (isAriaProp(key)) {
+            return acc;
+        }
+
         const cssProperty =
             key in extraAbbreviationToCssProperty
                 ? extraAbbreviationToCssProperty[key]

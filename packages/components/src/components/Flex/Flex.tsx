@@ -2,6 +2,7 @@
 
 import { type ReactNode } from 'react';
 
+import { type CommonAriaProps } from '#/helpers/aria';
 import { type Responsive, type SizeValue, type LayoutComponentProps } from '#/helpers/layout';
 import { propsToCssVariables } from '#/helpers/propsToCssVariables';
 
@@ -50,7 +51,7 @@ export type FlexProps = LayoutComponentProps & {
 
     children?: ReactNode;
     'data-test-id'?: string;
-};
+} & CommonAriaProps;
 
 export const Flex = ({
     as: Component = 'div',

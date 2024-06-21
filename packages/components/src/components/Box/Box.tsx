@@ -2,6 +2,7 @@
 
 import { type ReactNode } from 'react';
 
+import { type CommonAriaProps } from '#/helpers/aria';
 import { type Responsive, type LayoutComponentProps } from '#/helpers/layout';
 import { propsToCssVariables } from '#/helpers/propsToCssVariables';
 
@@ -21,7 +22,7 @@ export type BoxProps = LayoutComponentProps & {
 
     children?: ReactNode;
     'data-test-id'?: string;
-};
+} & CommonAriaProps;
 
 export const Box = ({
     as: Component = 'div',
@@ -30,7 +31,7 @@ export const Box = ({
     ...props
 }: BoxProps) => {
     return (
-        <Component className={styles.box} data-test-id={dataTestId} style={propsToCssVariables(props)}>
+        <Component className={styles.box} data-test-id={dataTestId} {...props} style={propsToCssVariables(props)}>
             {children}
         </Component>
     );

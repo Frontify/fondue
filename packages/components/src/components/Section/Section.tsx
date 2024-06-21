@@ -2,6 +2,7 @@
 
 import { type ReactNode } from 'react';
 
+import { type CommonAriaProps } from '#/helpers/aria';
 import { type Responsive, type LayoutComponentProps } from '#/helpers/layout';
 import { propsToCssVariables } from '#/helpers/propsToCssVariables';
 
@@ -16,7 +17,7 @@ export type SectionProps = LayoutComponentProps & {
 
     children?: ReactNode;
     'data-test-id'?: string;
-};
+} & CommonAriaProps;
 
 export const Section = ({ 'data-test-id': dataTestId = 'fondue-section', children, ...props }: SectionProps) => {
     return (

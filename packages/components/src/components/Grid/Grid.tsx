@@ -2,6 +2,7 @@
 
 import { type ReactNode } from 'react';
 
+import { type CommonAriaProps } from '#/helpers/aria';
 import { type Responsive, type SizeValue, type LayoutComponentProps } from '#/helpers/layout';
 import { propsToCssVariables } from '#/helpers/propsToCssVariables';
 
@@ -54,7 +55,7 @@ export type GridProps = LayoutComponentProps & {
 
     children?: ReactNode;
     'data-test-id'?: string;
-};
+} & CommonAriaProps;
 
 export const Grid = ({
     as: Component = 'div',

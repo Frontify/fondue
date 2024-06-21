@@ -77,4 +77,13 @@ describe('propsToCssVariables', () => {
         };
         expect(propsToCssVariables(props)).toStrictEqual(expected);
     });
+
+    it('should not add blocklisted attributes as CSS variables', () => {
+        const props = { m: 10, 'aria-label': 'foo', fooBar: 'fooBar', role: 'foo' };
+        const expected = {
+            '--margin': 10,
+            '--foo-bar': 'fooBar',
+        };
+        expect(propsToCssVariables(props)).toStrictEqual(expected);
+    });
 });

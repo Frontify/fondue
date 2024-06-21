@@ -35,7 +35,7 @@ export const getSelectOptionValue = ({
 /**
  * Determines if the child is a leaf node of React, meaning it has one final child of a native type;
  */
-export const isReactLeaf = (child: ReactNode, Component: JSXElementConstructor<any>): child is ReactElement => {
+export const isReactLeaf = (child: ReactNode, Component: JSXElementConstructor<never>): child is ReactElement => {
     return isValidElement(child) && child.type === Component;
 };
 
