@@ -18,9 +18,10 @@
         "noFallthroughCasesInSwitch": true,
         "baseUrl": ".",
         "paths": {
-            "#/*": ["./src/*"]
+            "#/*": ["./src/*"],
+            "#storybook/*": [".storybook/*"]
         }
     },
-    "include": [".storybook", "src"],
+    "include": [".storybook", "src", "tailwind.config.ts"],
     "references": [{ "path": "./tsconfig.node.json" }]
 }

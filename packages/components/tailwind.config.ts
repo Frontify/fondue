@@ -5,6 +5,15 @@ import frontifyTailwindConfig from '@frontify/fondue-tokens/tailwind';
 import tailwindForms from '@tailwindcss/forms';
 import { type Config } from 'tailwindcss';
 
+export const screens = {
+    xs: '390px',
+    sm: '600px',
+    md: '768px',
+    lg: '1024px',
+    xl: '1280px',
+    '2xl': '1536px',
+};
+
 export default {
     presets: [frontifyTailwindConfig as Config],
     content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}', './.storybook/DocumentationTemplate.mdx'],
@@ -140,13 +149,6 @@ export default {
                 'left-right': '0% 50%',
             },
         },
-        screens: {
-            xs: '390px',
-            sm: '600px',
-            md: '768px',
-            lg: '1024px',
-            xl: '1280px',
-            '2xl': '1536px',
-        },
+        screens,
     },
 } satisfies Config;

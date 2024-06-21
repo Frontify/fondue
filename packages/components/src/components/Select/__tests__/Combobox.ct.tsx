@@ -27,6 +27,7 @@ test('should render with placeholder', async ({ mount, page }) => {
             </Select.Slot>
         </Select.Combobox>,
     );
+
     await expect(component).toBeVisible();
     await expect(page.getByPlaceholder(PLACEHOLDER_TEXT)).toBeVisible();
 });
@@ -44,8 +45,10 @@ test('should open menu and show item', async ({ mount, page }) => {
             </Select.Slot>
         </Select.Combobox>,
     );
+
     await expect(component).toBeVisible();
     await component.click();
+
     await expect(page.getByTestId(ITEM_TEST_ID1)).toBeVisible();
     await expect(page.getByTestId(ITEM_TEST_ID1)).toContainText(ITEM_TEXT1);
     await expect(page.getByTestId(ITEM_TEST_ID2)).toBeVisible();
@@ -65,16 +68,22 @@ test('should navigate though menu with arrow', async ({ mount, page }) => {
             </Select.Slot>
         </Select.Combobox>,
     );
+
     await expect(component).toBeVisible();
     await component.click();
+
     await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveAttribute('data-highlighted', 'true');
     await expect(page.getByTestId(ITEM_TEST_ID2)).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
     await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveCSS('background-color', 'rgb(234, 235, 235)');
+
     await page.keyboard.press('ArrowDown');
+
     await expect(page.getByTestId(ITEM_TEST_ID2)).toHaveAttribute('data-highlighted', 'true');
     await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
     await expect(page.getByTestId(ITEM_TEST_ID2)).toHaveCSS('background-color', 'rgb(234, 235, 235)');
+
     await page.keyboard.press('ArrowUp');
+
     await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveAttribute('data-highlighted', 'true');
     await expect(page.getByTestId(ITEM_TEST_ID2)).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
     await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveCSS('background-color', 'rgb(234, 235, 235)');
@@ -99,10 +108,12 @@ test('should select item in list', async ({ mount, page }) => {
             </Select.Slot>
         </Select.Combobox>,
     );
+
     await expect(component).toBeVisible();
     await component.click();
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
+
     await expect(component.getByTestId(SELECT_TEST_ID)).toHaveValue(ITEM_TEXT2);
     expect(onSelectChange.callCount).toBe(1);
     expect(onSelectChange.calledWith('test2')).toBe(true);
@@ -129,10 +140,13 @@ test('should select item in group in list', async ({ mount, page }) => {
             </Select.Slot>
         </Select.Combobox>,
     );
+
     await expect(component).toBeVisible();
     await component.click();
+
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
+
     await expect(component.getByTestId(SELECT_TEST_ID)).toHaveValue(ITEM_TEXT2);
     expect(onSelectChange.callCount).toBe(1);
     expect(onSelectChange.calledWith('test2')).toBe(true);
@@ -159,8 +173,10 @@ test('should select custom item in list', async ({ mount, page }) => {
     );
     await expect(component).toBeVisible();
     await component.click();
+
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
+
     await expect(component.getByTestId(SELECT_TEST_ID)).toHaveValue(ITEM_LABEL2);
     expect(onSelectChange.callCount).toBe(1);
     expect(onSelectChange.calledWith('test2')).toBe(true);
@@ -181,10 +197,15 @@ test('should not open menu when disabled', async ({ mount, page }) => {
     );
     await expect(component).toBeVisible();
     await component.click();
+
     await expect(page.getByTestId(ITEM_TEST_ID1)).not.toBeVisible();
+
     await page.keyboard.press('ArrowDown');
+
     await expect(page.getByTestId(ITEM_TEST_ID1)).not.toBeVisible();
+
     await page.keyboard.press('Enter');
+
     await expect(page.getByPlaceholder(PLACEHOLDER_TEXT)).toBeVisible();
     await expect(component.getByTestId(SELECT_TEST_ID)).not.toHaveValue(ITEM_TEXT2);
 });
@@ -206,12 +227,17 @@ test('should allow to clear', async ({ mount, page }) => {
             </Select.Slot>
         </Select.Combobox>,
     );
+
     await expect(component).toBeVisible();
     await component.click();
+
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
+
     await expect(component.getByTestId(SELECT_TEST_ID)).toHaveValue(ITEM_TEXT2);
+
     await page.click(`[data-test-id=${SLOT_CLEAR_TEST_ID}]`);
+
     await expect(component.getByTestId(SELECT_TEST_ID)).not.toHaveValue(ITEM_TEXT2);
     await expect(page.getByPlaceholder(PLACEHOLDER_TEXT)).toBeVisible();
 });
@@ -232,6 +258,7 @@ test('should render left slot', async ({ mount, page }) => {
             </Select.Slot>
         </Select.Combobox>,
     );
+
     await expect(component).toBeVisible();
     await expect(page.getByTestId(SLOT_LEFT_TEST_ID)).toBeVisible();
     await expect(component).toContainText('Left Slot');
@@ -253,6 +280,7 @@ test('should render right slot', async ({ mount, page }) => {
             </Select.Slot>
         </Select.Combobox>,
     );
+
     await expect(component).toBeVisible();
     await expect(page.getByTestId(SLOT_RIGHT_TEST_ID)).toBeVisible();
     await expect(component).toContainText('Right Slot');
@@ -274,6 +302,7 @@ test('should render custom clear slot', async ({ mount, page }) => {
             </Select.Slot>
         </Select.Combobox>,
     );
+
     await expect(component).toBeVisible();
     await expect(page.getByTestId(SLOT_CLEAR_TEST_ID)).toBeVisible();
     await expect(component).toContainText('Clear Slot');

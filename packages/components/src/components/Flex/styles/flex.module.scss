@@ -1,0 +1,13 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@import '../../../helpers/layout.module.scss';
+
+$properties: (display, flex-direction, align-items, justify-content, flex-wrap, gap, gap-x, gap-y);
+
+.flex {
+    @include responsive-properties(join($properties, $layoutProperties));
+
+    // Default values
+    @include responsive-default-value(display, flex);
+    @include responsive-default-value(flex-direction, row);
+}

@@ -25,7 +25,6 @@ const meta: Meta<typeof ${componentName}> = {
 export default meta;
 
 export const Default: Story = {
-    name: 'Text Label Only',
     args: {
         children: 'Hello World',
     },

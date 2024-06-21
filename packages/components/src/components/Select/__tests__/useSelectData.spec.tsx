@@ -30,6 +30,7 @@ describe('useSelectData', () => {
             <IconIcon size={16} />
         </Select.Slot>,
     ];
+
     const clearSlot = (
         <Select.Slot key="test-clear" name="clear">
             <IconIcon size={16} />
@@ -42,11 +43,13 @@ describe('useSelectData', () => {
         const {
             result: { current: result },
         } = renderHook(() => useSelectData(selectSlots));
+
         expect(
             Children.toArray(result.menuSlots).every((item) => {
                 return isValidElement(item) && (item.type === Select.Item || item.type === Select.Group);
             }),
         ).toBe(true);
+
         expect(Children.toArray(result.menuSlots).length).toBe(4);
         expect(result.items.length).toBe(6);
     });
@@ -55,11 +58,13 @@ describe('useSelectData', () => {
         const {
             result: { current: result },
         } = renderHook(() => useSelectData(selectSlots));
+
         expect(
             result.inputSlots.every((decorator) => {
                 return isValidElement(decorator) && decorator.type === Select.Slot;
             }),
         ).toBe(true);
+
         expect(result.inputSlots.length).toBe(2);
     });
 
@@ -67,6 +72,7 @@ describe('useSelectData', () => {
         const {
             result: { current: result },
         } = renderHook(() => useSelectData(selectSlots));
+
         expect(isValidElement(result.clearButton) && result.clearButton.type === Select.Slot).toBe(true);
     });
 
@@ -74,6 +80,7 @@ describe('useSelectData', () => {
         const {
             result: { current: result },
         } = renderHook(() => useSelectData(menuSlot));
+
         expect(result.getItemByValue('test1')).toEqual({
             value: 'test1',
             label: 'Test1',
@@ -82,11 +89,14 @@ describe('useSelectData', () => {
 
     it('returns handles filterText', () => {
         const { result } = renderHook(() => useSelectData(menuSlot));
+
         expect(result.current.filterText).toBe('');
         expect(result.current.items.length).toBe(6);
+
         act(() => {
             result.current.setFilterText('test1');
         });
+
         expect(result.current.filterText).toBe('test1');
         expect(result.current.items.length).toBe(1);
     });

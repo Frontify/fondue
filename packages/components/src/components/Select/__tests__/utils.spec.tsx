@@ -44,11 +44,13 @@ describe('isReactLeaf', () => {
         const isLeaf = isReactLeaf(basicItem, Select.Item);
         expect(isLeaf).toBe(true);
     });
+
     it('returns if item with number is a react leaf', () => {
         const basicItem = <Select.Item value="test1">123</Select.Item>;
         const isLeaf = isReactLeaf(basicItem, Select.Item);
         expect(isLeaf).toBe(true);
     });
+
     it('returns if group with items is a react leaf', () => {
         const group = (
             <Select.Group groupId="testgroup">
@@ -59,11 +61,13 @@ describe('isReactLeaf', () => {
         const isLeaf = isReactLeaf(group, Select.Group);
         expect(isLeaf).toBe(true);
     });
+
     it('returns if group with string is a react leaf', () => {
         const group = <Select.Group groupId="testgroup">ABC</Select.Group>;
         const isLeaf = isReactLeaf(group, Select.Group);
         expect(isLeaf).toBe(true);
     });
+
     it('returns if string is a react leaf', () => {
         const group = 'abc';
         const isLeaf = isReactLeaf(group, Select.Item);

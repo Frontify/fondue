@@ -40,6 +40,7 @@
         "test:watch": "vitest",
         "test:components": "playwright test --ui",
         "test:components:ci": "playwright test",
+        "test:components:update-snapshot": "playwright test --update-snapshots",
         "create:component": "tsx scripts/createNewComponent.ts"
     },
     "peerDependencies": {

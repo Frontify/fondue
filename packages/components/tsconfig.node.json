@@ -10,7 +10,6 @@
     },
     "include": [
         ".eslintrc.cjs",
-        "tailwind.config.ts",
         "vite.config.ts",
         "postcss.config.cjs",
         "package.json",
