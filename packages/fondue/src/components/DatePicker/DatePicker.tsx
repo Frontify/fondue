@@ -3,8 +3,7 @@
 import './styles.css';
 
 import { offset, shift } from '@floating-ui/dom';
-import { format } from 'date-fns/format';
-import { getYear } from 'date-fns/getYear';
+import { format, getYear } from 'date-fns';
 import { forwardRef, useState, type KeyboardEvent, type ReactNode } from 'react';
 import ReactDatePicker from 'react-datepicker';
 
