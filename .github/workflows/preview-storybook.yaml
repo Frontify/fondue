@@ -40,7 +40,7 @@ jobs:
               run: pnpm build:storybook:packages && pnpm build:storybook:main
 
             - name: Deploy Storybook to GitHub Pages
-              uses: rossjrw/pr-preview-action@v1
+              uses: JamesIves/github-pages-deploy-action@v4
               with:
-                  source-dir: ./storybook-docs/storybook-static
+                  folder: ./storybook-docs/storybook-static
                   clean-exclude: pr-preview
