@@ -1,9 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import format from 'date-fns/format';
-import getYear from 'date-fns/getYear';
+import './styles.css';
+
+import { offset, shift } from '@floating-ui/dom';
+import { format } from 'date-fns/format';
+import { getYear } from 'date-fns/getYear';
 import { forwardRef, useState, type KeyboardEvent, type ReactNode } from 'react';
-import DatepickerComponent, { type ReactDatePicker } from 'react-datepicker';
+import ReactDatePicker from 'react-datepicker';
 
 import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
 import IconCaretLeft from '@foundation/Icon/Generated/IconCaretLeft';
@@ -15,11 +18,9 @@ import { Validation } from '@utilities/validation';
 
 import { DatePickerTrigger } from './DatePickerTrigger';
 
-const ARROW_PADDING_CORRECTION = 40;
-
 // Needed because of https://github.com/Hacker0x01/react-datepicker/issues/3834
 const ReactDatePickerComponent =
-    (DatepickerComponent as unknown as { default: typeof DatepickerComponent }).default ?? DatepickerComponent;
+    (ReactDatePicker as unknown as { default: typeof ReactDatePicker }).default ?? ReactDatePicker;
 
 type SingleDatePickerProps = {
     variant?: 'single';
@@ -65,9 +66,9 @@ const getDayClasses = (variant: DatePickerProps['variant'], date: Date) => {
     return 'range-day';
 };
 
-export type ReactDatePickerRef = ReactDatePicker<never, boolean>;
+export type ReactDatePickerRef = ReactDatePicker<boolean, undefined>;
 
-export const DatePicker = forwardRef<ReactDatePicker<never, boolean>, DatePickerProps>(
+export const DatePicker = forwardRef<ReactDatePickerRef, DatePickerProps>(
     (
         {
             placeHolder = 'Select a date',
@@ -147,6 +148,7 @@ export const DatePicker = forwardRef<ReactDatePicker<never, boolean>, DatePicker
                     popperProps={{
                         strategy: 'fixed',
                     }}
+                    popperModifiers={[shift({ padding: 8 }), offset(8)]}
                     renderCustomHeader={({ date, decreaseMonth, increaseMonth, increaseYear, decreaseYear }) => (
                         <div className="tw-flex tw-flex-col tw-gap-3">
                             {customHeader}
@@ -185,23 +187,6 @@ export const DatePicker = forwardRef<ReactDatePicker<never, boolean>, DatePicker
                             </div>
                         </div>
                     )}
-                    popperModifiers={[
-                        {
-                            name: 'arrow',
-                            options: {
-                                padding: ({ popper, reference, placement }) => {
-                                    const side = placement.includes('end') ? 'left' : 'right';
-                                    const padding = {
-                                        [`${side}`]:
-                                            Math.max(popper.width, Math.min(popper.width, reference.width)) -
-                                            ARROW_PADDING_CORRECTION,
-                                    };
-
-                                    return padding;
-                                },
-                            },
-                        },
-                    ]}
                 >
                     {children}
                 </ReactDatePickerComponent>

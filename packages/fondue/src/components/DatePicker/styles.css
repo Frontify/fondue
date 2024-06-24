@@ -22,7 +22,7 @@
     box-shadow: 0 3px 10px 0 rgba(8, 8, 8, 0.3);
 }
 
-.react-datepicker-wrap .react-datepicker__triangle {
+.react-datepicker-popper .react-datepicker__triangle {
     z-index: 1;
 }
 
@@ -34,8 +34,15 @@
     margin: var(--space-m) 0 0;
 }
 
-.react-datepicker-wrap .react-datepicker__triangle::after {
+.react-datepicker-popper .react-datepicker__triangle::after {
     border-bottom-color: var(--base-color) !important;
+    fill: var(--base-color) !important;
+    color: var(--base-color) !important;
+}
+
+.react-datepicker-popper .react-datepicker__triangle {
+    fill: var(--base-color) !important;
+    color: var(--base-color) !important;
 }
 
 .react-datepicker-wrap .react-datepicker__header {
