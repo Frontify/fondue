@@ -1,5 +1,21 @@
 # @frontify/fondue
 
+## 12.1.8
+
+### Patch Changes
+
+-   [#1924](https://github.com/Frontify/fondue/pull/1924) [`2e526b8`](https://github.com/Frontify/fondue/commit/2e526b8ca3430adfc7700684916f5cfd3fb81b99) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update `react-datepicker` dependency
+
+-   [#1922](https://github.com/Frontify/fondue/pull/1922) [`3690a68`](https://github.com/Frontify/fondue/commit/3690a6830f220aeb0216c3aa3c5ab6ddfb4520cf) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: bump dependencies
+
+-   [#1927](https://github.com/Frontify/fondue/pull/1927) [`249956f`](https://github.com/Frontify/fondue/commit/249956f1c3f94f4886cff14f93f2a57a7777a1a2) Thanks [@fulopdaniel](https://github.com/fulopdaniel)! - chore: add @udecode/plate-common dependency explicitly
+
+-   Updated dependencies [[`3690a68`](https://github.com/Frontify/fondue/commit/3690a6830f220aeb0216c3aa3c5ab6ddfb4520cf), [`7c1effa`](https://github.com/Frontify/fondue/commit/7c1effacc785c0473cb3c54c1f8ee5315be418e3), [`7c1effa`](https://github.com/Frontify/fondue/commit/7c1effacc785c0473cb3c54c1f8ee5315be418e3), [`7c1effa`](https://github.com/Frontify/fondue/commit/7c1effacc785c0473cb3c54c1f8ee5315be418e3), [`7c1effa`](https://github.com/Frontify/fondue/commit/7c1effacc785c0473cb3c54c1f8ee5315be418e3)]:
+    -   @frontify/fondue-components@1.5.0
+    -   @frontify/fondue-charts@1.8.5
+    -   @frontify/fondue-tokens@3.5.2
+    -   @frontify/fondue-icons@0.2.2
+
 ## 12.1.7
 
 ### Patch Changes
