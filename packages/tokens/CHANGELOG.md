@@ -1,5 +1,11 @@
 # @frontify/fondue-tokens
 
+## 3.5.2
+
+### Patch Changes
+
+-   [#1922](https://github.com/Frontify/fondue/pull/1922) [`3690a68`](https://github.com/Frontify/fondue/commit/3690a6830f220aeb0216c3aa3c5ab6ddfb4520cf) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: bump dependencies
+
 ## 3.5.1
 
 ### Patch Changes

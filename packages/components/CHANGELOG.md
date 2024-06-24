@@ -1,5 +1,25 @@
 # @frontify/fondue-components
 
+## 1.5.0
+
+### Minor Changes
+
+-   [#1900](https://github.com/Frontify/fondue/pull/1900) [`7c1effa`](https://github.com/Frontify/fondue/commit/7c1effacc785c0473cb3c54c1f8ee5315be418e3) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - feat: add `Box` component
+
+-   [#1900](https://github.com/Frontify/fondue/pull/1900) [`7c1effa`](https://github.com/Frontify/fondue/commit/7c1effacc785c0473cb3c54c1f8ee5315be418e3) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - feat: add `Section` component
+
+-   [#1900](https://github.com/Frontify/fondue/pull/1900) [`7c1effa`](https://github.com/Frontify/fondue/commit/7c1effacc785c0473cb3c54c1f8ee5315be418e3) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - feat: add `Flex` component
+
+-   [#1900](https://github.com/Frontify/fondue/pull/1900) [`7c1effa`](https://github.com/Frontify/fondue/commit/7c1effacc785c0473cb3c54c1f8ee5315be418e3) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - feat: add `Grid` component
+
+### Patch Changes
+
+-   [#1922](https://github.com/Frontify/fondue/pull/1922) [`3690a68`](https://github.com/Frontify/fondue/commit/3690a6830f220aeb0216c3aa3c5ab6ddfb4520cf) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: bump dependencies
+
+-   Updated dependencies [[`3690a68`](https://github.com/Frontify/fondue/commit/3690a6830f220aeb0216c3aa3c5ab6ddfb4520cf)]:
+    -   @frontify/fondue-tokens@3.5.2
+    -   @frontify/fondue-icons@0.2.2
+
 ## 1.4.0
 
 ### Minor Changes
