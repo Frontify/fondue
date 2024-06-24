@@ -1,5 +1,11 @@
 # @frontify/fondue
 
+## 12.1.9
+
+### Patch Changes
+
+-   [#1929](https://github.com/Frontify/fondue/pull/1929) [`dc9d05c`](https://github.com/Frontify/fondue/commit/dc9d05cc7e23c323c42a97fb915982043937ddbe) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: update import path of `date-fns`
+
 ## 12.1.8
 
 ### Patch Changes
