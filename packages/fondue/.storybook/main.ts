@@ -3,6 +3,8 @@
 import type { StorybookConfig } from '@storybook/react-vite';
 import ts from 'typescript';
 
+const productionPathPrefix = process.env.STORYBOOK_PATH_PREFIX ? `${process.env.STORYBOOK_PATH_PREFIX}legacy/` : '/';
+
 export default <StorybookConfig>{
     framework: '@storybook/react-vite',
     stories: ['../src/**/*.stories.tsx'],
@@ -22,7 +24,22 @@ export default <StorybookConfig>{
             componentNameResolver: (expression: ts.Symbol) => expression.getName(),
         },
     },
-    viteFinal(config) {
+    managerHead: (head, { configType }) => {
+        if (configType === 'PRODUCTION') {
+            const injections = [
+                `<link rel="shortcut icon" type="image/x-icon" href="${productionPathPrefix}favicon.ico">`,
+                `<script>window.PREVIEW_URL = '${productionPathPrefix}iframe.html'</script>`,
+            ];
+            return `${head}${injections.join('')}`;
+        }
+
+        return head;
+    },
+    viteFinal(config, { configType }) {
+        if (configType === 'PRODUCTION') {
+            config.base = productionPathPrefix;
+        }
+
         // @ts-expect-error untyped name property
         config.plugins = (config.plugins ?? []).filter((plugin) => plugin?.name !== 'vite:dts');
 
