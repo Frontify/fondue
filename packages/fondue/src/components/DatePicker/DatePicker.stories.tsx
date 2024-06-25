@@ -1,8 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Meta, type StoryFn } from '@storybook/react';
-import { addDays } from 'date-fns/addDays';
-import { subDays } from 'date-fns/subDays';
+import { addDays, subDays } from 'date-fns';
 import { useRef, useState } from 'react';
 
 import { Badge, BadgeEmphasis, BadgeStyle } from '@components/Badge';
