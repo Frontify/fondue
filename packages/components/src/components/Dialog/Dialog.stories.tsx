@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Meta, type StoryObj } from '@storybook/react';
+import { useState } from 'react';
 
 import { Button } from '../Button/Button';
 
@@ -289,5 +290,32 @@ export const MobileView: Story = {
     },
     args: {
         children: 'Hello World',
+    },
+};
+
+export const ExternalControl: Story = {
+    args: {
+        children: 'I am a dialog content',
+    },
+    render: ({ ...args }) => {
+        const [isDialogOpen, setIsDialogOpen] = useState(false);
+        return (
+            <Dialog.Root
+                open={isDialogOpen}
+                onOpenChange={(state) => {
+                    setIsDialogOpen(state);
+                }}
+            >
+                <Dialog.Trigger>
+                    <Button>Open dialog</Button>
+                </Dialog.Trigger>
+                <Dialog.Content {...args}>
+                    <Dialog.Header>
+                        <Dialog.Title>Header</Dialog.Title>
+                    </Dialog.Header>
+                    <Dialog.Body {...args} />
+                </Dialog.Content>
+            </Dialog.Root>
+        );
     },
 };
