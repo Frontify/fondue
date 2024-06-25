@@ -1,16 +1,14 @@
-name: Fondue Documentation CI
+name: Deploy Storybook
 
 on:
-    pull_request:
-
-# Ensures that only one workflow per branch will run at a time.
-concurrency:
-    group: ${{ github.workflow }}-${{ github.ref }}
-    cancel-in-progress: true
+    push:
+        branches:
+            - main
+    workflow_dispatch:
 
 jobs:
-    storybook:
-        name: Storybook
+    deploy-preview:
+        name: Deploy Storybook
         runs-on: ubuntu-latest
         timeout-minutes: 10
 
@@ -39,4 +37,10 @@ jobs:
               run: pnpm build:tokens
 
             - name: Build Storybook docs
-              run: pnpm build:storybook
+              run: pnpm build:storybook:packages && pnpm build:storybook:main
+
+            - name: Deploy Storybook to GitHub Pages
+              uses: JamesIves/github-pages-deploy-action@v4
+              with:
+                  folder: ./storybook-docs/storybook-static
+                  clean-exclude: pr-preview
