@@ -1,1 +1,0 @@
-const l=(e,n,p,s)=>{var r;let t="bottom",o=1/0;if(!e||!n)return{position:t,maxHeight:o};const{top:c,bottom:w}=e.getBoundingClientRect(),i=(((r=window.visualViewport)==null?void 0:r.height)??0)-w-p-s,g=c-p;return i<n&&(t=i<g?"top":"bottom"),o=t==="top"?g:i,{position:t,maxHeight:o}};export{l as g};
