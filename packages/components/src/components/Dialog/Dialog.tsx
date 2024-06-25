@@ -68,6 +68,11 @@ export type DialogContentProps = {
 export type DialogTriggerProps = { children?: ReactNode; 'data-test-id'?: string };
 
 export type DialogHeaderProps = {
+    /**
+     * Show a close button in the header
+     * @default true
+     */
+    showCloseButton?: boolean;
     children?: ReactNode;
     'data-test-id'?: string;
 };
@@ -141,15 +146,17 @@ export const DialogContent = (
 DialogContent.displayName = 'Dialog.Content';
 
 export const DialogHeader = (
-    { children, 'data-test-id': dataTestId = 'fondue-dialog-header' }: DialogHeaderProps,
+    { children, showCloseButton = true, 'data-test-id': dataTestId = 'fondue-dialog-header' }: DialogHeaderProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
         <div data-test-id={dataTestId} ref={ref} className={styles.header} data-dialog-layout-component>
             <div>{children}</div>
-            <RadixDialog.Close role="button" data-test-id={`${dataTestId}-close`} className="tw-cursor-pointer">
-                <IconCross size={20} />
-            </RadixDialog.Close>
+            {showCloseButton && (
+                <RadixDialog.Close role="button" data-test-id={`${dataTestId}-close`} className="tw-cursor-pointer">
+                    <IconCross size={20} />
+                </RadixDialog.Close>
+            )}
         </div>
     );
 };

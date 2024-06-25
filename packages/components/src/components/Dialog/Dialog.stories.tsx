@@ -97,6 +97,27 @@ export const WithHeader: Story = {
     },
 };
 
+export const WithCloseButton: Story = {
+    args: {
+        children: 'I am a dialog content',
+    },
+    render: ({ ...args }) => {
+        return (
+            <Dialog.Root>
+                <Dialog.Trigger>
+                    <Button>Open dialog</Button>
+                </Dialog.Trigger>
+                <Dialog.Content {...args}>
+                    <Dialog.Header showCloseButton>
+                        <Dialog.Title>Header</Dialog.Title>
+                    </Dialog.Header>
+                    <Dialog.Body {...args} />
+                </Dialog.Content>
+            </Dialog.Root>
+        );
+    },
+};
+
 export const WithFooter: Story = {
     args: {
         children: 'I am a dialog content',

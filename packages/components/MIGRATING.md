@@ -4,36 +4,36 @@ This document describes the changes that you need to make to your code to migrat
 
 ## Table of contents
 
-- [Migration guide](#migration-guide)
-  - [Table of contents](#table-of-contents)
-  - [Components](#components)
-    - [Button](#button)
-      - [Old](#old)
-      - [New](#new)
-    - [Checkbox](#checkbox)
-      - [Old](#old-1)
-      - [New](#new-1)
-    - [Dialog](#dialog)
-      - [Old](#old-2)
-      - [New](#new-2)
-    - [Flyout (old `InlineDialog`)](#flyout-old-inlinedialog)
-      - [Old](#old-3)
-      - [New](#new-3)
-    - [Label (old `InputLabel`)](#label-old-inputlabel)
-      - [Old](#old-4)
-      - [New](#new-4)
-    - [Loading Bar](#loading-bar)
-      - [Old](#old-5)
-      - [New](#new-5)
-    - [Segmented Control](#segmented-control)
-      - [Old](#old-6)
-      - [New](#new-6)
-    - [Text Input](#text-input)
-      - [Old](#old-7)
-      - [New](#new-7)
-    - [Tooltip](#tooltip)
-      - [Old](#old-8)
-      - [New](#new-8)
+-   [Migration guide](#migration-guide)
+    -   [Table of contents](#table-of-contents)
+    -   [Components](#components)
+        -   [Button](#button)
+            -   [Old](#old)
+            -   [New](#new)
+        -   [Checkbox](#checkbox)
+            -   [Old](#old-1)
+            -   [New](#new-1)
+        -   [Dialog](#dialog)
+            -   [Old](#old-2)
+            -   [New](#new-2)
+        -   [Flyout (old `InlineDialog`)](#flyout-old-inlinedialog)
+            -   [Old](#old-3)
+            -   [New](#new-3)
+        -   [Label (old `InputLabel`)](#label-old-inputlabel)
+            -   [Old](#old-4)
+            -   [New](#new-4)
+        -   [Loading Bar](#loading-bar)
+            -   [Old](#old-5)
+            -   [New](#new-5)
+        -   [Segmented Control](#segmented-control)
+            -   [Old](#old-6)
+            -   [New](#new-6)
+        -   [Text Input](#text-input)
+            -   [Old](#old-7)
+            -   [New](#new-7)
+        -   [Tooltip](#tooltip)
+            -   [Old](#old-8)
+            -   [New](#new-8)
 
 ## Components
 
@@ -142,15 +142,13 @@ Changes:
 
         -   The `modality` prop was replaced by `modal` and is now a boolean.
 
-        -   The `showCloseButton` prop can be used to show a close icon on the right side of the header.
-
     -   _optional_ - The `Dialog.Trigger` is used to pass in a component to trigger the dialog.
 
     -   _required_ - The `Dialog.Content` is the container appearing when the dialog is Visible. All dialog content needs to be wrapped inside of this element.
 
         -   _optional_ - The `Dialog.Header` can be passed in as a child of `Dialog.Content` to add a styled header to the dialog
 
-            -   The prop `showCloseButton` can be passed to add a close button to the header.
+            -   _optional_ The prop `showCloseButton` can be passed to add a close button to the header.
 
         -   _optional_ - The `Dialog.Body` can be passed in as a child of `Dialog.Content` to add a styled body to the dialog.
 
