@@ -1,0 +1,27 @@
+import{j as t}from"./jsx-runtime-Nms4Y4qS.js";import{r as n}from"./index-BwDkhjyp.js";import{B as b}from"./Box-DNE3sJgB.js";import{B as h}from"./Button-CYWlMQhW.js";import{P as g}from"./constantStories-DEfmjXOT.js";import{P as d,b as x}from"./Tooltip-BPz0Lj3Z.js";import"./_commonjsHelpers-BosuxZz1.js";import"./borderStyle-D9jrV09G.js";import"./merge-DI-veSMP.js";import"./focusStyle-CBFElZiz.js";import"./input-BKIC3e9m.js";import"./Divider-DCi-HcbY.js";import"./Dropdown-CTG8V9Ey.js";import"./useButton-DofEV6SJ.js";import"./useFocusable-CAGu0lKI.js";import"./useFocusRing-4Vnvtzpc.js";import"./SSRProvider-CYXx33DY.js";import"./chain-D5h1pgIF.js";import"./FocusScope-DYM0gkGr.js";import"./useOverlayTriggerState-Bq4IkdK0.js";import"./useControlledState-C0C-dzuH.js";import"./useMenuTrigger-BhJE1x_4.js";import"./useLabels-DH9bA-v0.js";import"./useLocalizedStringFormatter-D7Kogc_3.js";import"./context-C2PaECDE.js";import"./VisuallyHidden-YFPGrsWM.js";import"./helper-DdpWMU6g.js";import"./index-B8XB3FuZ.js";import"./isScrollable-Bts8_1NI.js";import"./SelectionManager-BuW52QpN.js";import"./useField-BhCfq6jD.js";import"./useFormValidationState-Vs0Uifwm.js";import"./usePopper-D9CaHHBx.js";import"./index-CfyPTyT-.js";import"./MenuItem-C9PA6k_H.js";import"./IconSize-BcCrF_mi.js";import"./IconCaretRight-CxmZKZHS.js";import"./IconCheckMark-CLvJH1sB.js";import"./elements-BOYmskOL.js";import"./LoadingCircle-CZrma5le.js";import"./Trigger-BkAUJNF7.js";import"./IconCaretDown-Cxrx1sF_.js";import"./IconCaretDown16-BGp5IVAI.js";import"./IconCross-Bt-I3opn.js";import"./IconExclamationMarkTriangle-CRTWkDyu.js";import"./IconExclamationMarkTriangle24-GqPjgFpk.js";import"./IconTrashBin-Bl46mt1V.js";import"./IconTrashBin16-qlTE457i.js";import"./IconTrashBin24-CvdAkIgz.js";import"./validation-C9S5KgfE.js";import"./EnablePortalWrapper-BTwPCJkS.js";import"./Portal-dPA1dSZg.js";import"./useMemoizedId-EtHZ7Sxa.js";import"./FormControl-CpFjR1tE.js";import"./InputLabel-Cp7I5Zy5.js";import"./TooltipIcon-fOjL_ywJ.js";import"./LegacyTooltip-BsRDxGT9.js";import"./useLink-DorAuuFQ.js";import"./IconExclamationMarkCircle-Cob4vb5T.js";import"./IconExclamationMarkCircle24-DpwtNT9z.js";import"./IconQuestionMarkCircle-C_agVHg1.js";import"./SegmentedControls-D3WaRgzO.js";import"./motion-C48bHxkn.js";import"./Switch-tgKqV9Jh.js";import"./TabItem-DYJEWVSF.js";import"./TextInput-D2gdfhfK.js";import"./IconEyeOff-Dzh4tjis.js";import"./Tree-Dq_9_v-4.js";import"./immer-DBm1MMjE.js";import"./IconGrabHandle12-IS3l0vsO.js";import"./useClickOutside-CKV3CrvD.js";import"./dialog-Dre1eVQK.js";const Mt={title:"Utilities/Popper",component:d,tags:["autodocs"],parameters:{status:{type:"deprecated"},docs:{description:{component:"### This component is deprecated, please use the [new Flyout](/docs/current_components-flyout--documentation) component instead."}}},args:{placement:"bottom-start",offset:[0,8],flip:!0,strategy:"absolute",withArrow:!1,arrowCustomColors:x},argTypes:{...g,withArrow:{control:{type:"boolean"}},arrowCustomColors:{description:'Color Styling for the popper arrow using tailwind classes and before prefix, example: "before:tw-border before:tw-border-line-x-strong before:tw-bg-base"',control:{type:"text"}},isDetached:{description:"if true, the popper container will detach from the Trigger position and act as a Dialog",control:{type:"boolean"}},verticalAlignment:{description:"if isDetached is set to true, verticalAlignment will position the Dialog either in the center of the viewport or on Top of the screen.",options:["top","centered"],control:{type:"radio"}}}},u=f=>{const[e,w]=n.useState(!1),p=n.useRef(null);return t.jsxs("div",{className:"tw-flex tw-justify-center",children:[t.jsx(h,{ref:p,onClick:()=>w(!e),children:"Hello"}),t.jsx(d,{...f,anchor:p,open:e,children:t.jsx(b,{className:"tw-bg-base tw-border tw-border-black tw-w-[400px]",children:t.jsx("p",{children:"Some content"})})})]})},o=u.bind({});o.args={enablePortal:!1};const r=u.bind({});r.args={enablePortal:!0};var i,s,a;o.parameters={...o.parameters,docs:{...(i=o.parameters)==null?void 0:i.docs,source:{originalSource:`args => {
+  const [open, setOpen] = useState(false);
+  const anchorRef = useRef<HTMLButtonElement | null>(null);
+  return <div className="tw-flex tw-justify-center">
+            <Button ref={anchorRef} onClick={() => setOpen(!open)}>
+                Hello
+            </Button>
+            <Popper {...args} anchor={anchorRef} open={open}>
+                <Box className="tw-bg-base tw-border tw-border-black tw-w-[400px]">
+                    <p>Some content</p>
+                </Box>
+            </Popper>
+        </div>;
+}`,...(a=(s=o.parameters)==null?void 0:s.docs)==null?void 0:a.source}}};var m,c,l;r.parameters={...r.parameters,docs:{...(m=r.parameters)==null?void 0:m.docs,source:{originalSource:`args => {
+  const [open, setOpen] = useState(false);
+  const anchorRef = useRef<HTMLButtonElement | null>(null);
+  return <div className="tw-flex tw-justify-center">
+            <Button ref={anchorRef} onClick={() => setOpen(!open)}>
+                Hello
+            </Button>
+            <Popper {...args} anchor={anchorRef} open={open}>
+                <Box className="tw-bg-base tw-border tw-border-black tw-w-[400px]">
+                    <p>Some content</p>
+                </Box>
+            </Popper>
+        </div>;
+}`,...(l=(c=r.parameters)==null?void 0:c.docs)==null?void 0:l.source}}};const Wt=["Default","WithPortal"];export{o as Default,r as WithPortal,Wt as __namedExportsOrder,Mt as default};
