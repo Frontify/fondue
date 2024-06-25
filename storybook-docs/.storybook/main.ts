@@ -1,5 +1,7 @@
 import type { StorybookConfig } from '@storybook/react-vite';
 
+const pathPrefix = process.env.STORYBOOK_PATH_PREFIX || '/';
+
 const config: StorybookConfig = {
     stories: ['../stories/**/*.mdx', '../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
     addons: [
@@ -55,25 +57,28 @@ const config: StorybookConfig = {
                 },
             };
         }
+
+        const pathPrefix = process.env.STORYBOOK_PATH_PREFIX || '/';
+
         return {
             current: {
                 title: 'Current',
-                url: '/new',
+                url: `${pathPrefix}new`,
                 expanded: true,
             },
             icons: {
                 title: 'Icons',
-                url: '/icons',
+                url: `${pathPrefix}icons`,
                 expanded: true,
             },
             charts: {
                 title: 'Charts',
-                url: '/charts',
+                url: `${pathPrefix}charts`,
                 expanded: true,
             },
             legacy: {
                 title: 'Legacy',
-                url: '/legacy',
+                url: `${pathPrefix}legacy`,
                 expanded: true,
             },
         };
