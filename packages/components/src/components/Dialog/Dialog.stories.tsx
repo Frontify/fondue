@@ -293,7 +293,7 @@ export const MobileView: Story = {
     },
 };
 
-export const ExternalControl: Story = {
+export const ControlledComponent: Story = {
     args: {
         children: 'I am a dialog content',
     },
