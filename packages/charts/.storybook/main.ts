@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { StorybookConfig } from '@storybook/react-vite';
+import { type StorybookConfig } from '@storybook/react-vite';
 
 const productionPathPrefix = process.env.STORYBOOK_PATH_PREFIX ? `${process.env.STORYBOOK_PATH_PREFIX}charts/` : '/';
 
@@ -8,11 +8,19 @@ export default {
     stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
     staticDirs: ['assets'],
     addons: [
-        '@etchteam/storybook-addon-status',
-        '@storybook/addon-a11y',
-        '@storybook/addon-essentials',
+        {
+            name: '@storybook/addon-essentials',
+            options: {
+                backgrounds: false,
+                outline: false,
+                measure: false,
+            },
+        },
         '@storybook/addon-links',
+        '@storybook/addon-interactions',
         'storybook-dark-mode',
+        '@storybook/addon-a11y',
+        '@etchteam/storybook-addon-status',
     ],
     framework: {
         name: '@storybook/react-vite',
@@ -23,7 +31,7 @@ export default {
         defaultName: 'Documentation',
     },
     managerHead: (head, { configType }) => {
-        if (configType === 'PRODUCTION') {
+        if (configType === 'PRODUCTION' && process.env.STORYBOOK_PATH_PREFIX) {
             const injections = [
                 `<link rel="shortcut icon" type="image/x-icon" href="${productionPathPrefix}favicon.ico">`,
                 `<script>window.PREVIEW_URL = '${productionPathPrefix}iframe.html'</script>`,
@@ -34,7 +42,7 @@ export default {
         return head;
     },
     viteFinal(config, { configType }) {
-        if (configType === 'PRODUCTION') {
+        if (configType === 'PRODUCTION' && process.env.STORYBOOK_PATH_PREFIX) {
             config.base = productionPathPrefix;
         }
 
