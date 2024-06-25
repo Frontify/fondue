@@ -145,7 +145,7 @@ export const DialogContent = (
 DialogContent.displayName = 'Dialog.Content';
 
 export const DialogHeader = (
-    { children, showCloseButton, 'data-test-id': dataTestId = 'fondue-dialog-header' }: DialogHeaderProps,
+    { children, showCloseButton = true, 'data-test-id': dataTestId = 'fondue-dialog-header' }: DialogHeaderProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
