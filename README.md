@@ -1,6 +1,6 @@
 # Fondue design system by Frontify
 
-[<img src="https://img.shields.io/github/actions/workflow/status/frontify/fondue/pages/pages-build-deployment?label=preview&logo=github&style=flat-square" alt="GitHub Pages Preview status">](https://fondue-components.frontify.com/)
+[<img src="https://img.shields.io/github/actions/workflow/status/frontify/fondue/pages/pages-build-deployment?label=preview&logo=github" alt="GitHub Pages Preview status">](https://fondue-components.frontify.com/)
 [<img src="https://snyk.io/test/github/Frontify/fondue/badge.svg" alt="Known Vulnerabilities">](https://snyk.io/test/github/Frontify/fondue)
 [<img src="https://img.shields.io/npm/v/@frontify/fondue/latest.svg" alt="Latest npm version released">](https://www.npmjs.com/package/@frontify/fondue)
 
