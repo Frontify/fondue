@@ -70,6 +70,7 @@ export type DialogTriggerProps = { children?: ReactNode; 'data-test-id'?: string
 export type DialogHeaderProps = {
     /**
      * Show a close button in the header
+     * @default true
      */
     showCloseButton?: boolean;
     children?: ReactNode;
