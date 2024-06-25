@@ -165,8 +165,14 @@ jobs:
             - name: Build Fondue Tokens
               run: pnpm build:tokens
 
-            - name: Test code
+            - name: Unit test
               run: pnpm --stream --filter {packages/components} test
+
+            - name: Install Playwright browsers
+              run: pnpm --stream --filter {packages/components} install:playwright
+
+            - name: Playwright tests
+              run: pnpm --stream --filter {packages/components} test:components:ci
 
     publish:
         name: Publish

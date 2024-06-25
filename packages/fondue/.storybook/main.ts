@@ -1,31 +1,37 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import type { StorybookConfig } from '@storybook/react-vite';
-import ts from 'typescript';
+import { type StorybookConfig } from '@storybook/react-vite';
 
 const productionPathPrefix = process.env.STORYBOOK_PATH_PREFIX ? `${process.env.STORYBOOK_PATH_PREFIX}legacy/` : '/';
 
-export default <StorybookConfig>{
-    framework: '@storybook/react-vite',
-    stories: ['../src/**/*.stories.tsx'],
-    addons: [
-        '@etchteam/storybook-addon-status',
-        '@storybook/addon-a11y',
-        '@storybook/addon-essentials',
-        '@storybook/addon-links',
-        'storybook-dark-mode',
-    ],
+export default {
+    stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
     staticDirs: ['assets'],
+    addons: [
+        {
+            name: '@storybook/addon-essentials',
+            options: {
+                backgrounds: false,
+                outline: false,
+                measure: false,
+            },
+        },
+        '@storybook/addon-links',
+        '@storybook/addon-interactions',
+        'storybook-dark-mode',
+        '@storybook/addon-a11y',
+        '@etchteam/storybook-addon-status',
+    ],
+    framework: {
+        name: '@storybook/react-vite',
+        options: {},
+    },
     docs: {
         autodocs: 'tag',
-    },
-    typescript: {
-        reactDocgenTypescriptOptions: {
-            componentNameResolver: (expression: ts.Symbol) => expression.getName(),
-        },
+        defaultName: 'Documentation',
     },
     managerHead: (head, { configType }) => {
-        if (configType === 'PRODUCTION') {
+        if (configType === 'PRODUCTION' && process.env.STORYBOOK_PATH_PREFIX) {
             const injections = [
                 `<link rel="shortcut icon" type="image/x-icon" href="${productionPathPrefix}favicon.ico">`,
                 `<script>window.PREVIEW_URL = '${productionPathPrefix}iframe.html'</script>`,
@@ -36,7 +42,7 @@ export default <StorybookConfig>{
         return head;
     },
     viteFinal(config, { configType }) {
-        if (configType === 'PRODUCTION') {
+        if (configType === 'PRODUCTION' && process.env.STORYBOOK_PATH_PREFIX) {
             config.base = productionPathPrefix;
         }
 
@@ -45,4 +51,4 @@ export default <StorybookConfig>{
 
         return config;
     },
-};
+} satisfies StorybookConfig;

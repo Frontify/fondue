@@ -1,4 +1,4 @@
-import type { StorybookConfig } from '@storybook/react-vite';
+import { type StorybookConfig } from '@storybook/react-vite';
 
 const pathPrefix = process.env.STORYBOOK_PATH_PREFIX || '/';
 
@@ -58,7 +58,7 @@ const config: StorybookConfig = {
             };
         }
 
-        const pathPrefix = process.env.STORYBOOK_PATH_PREFIX || '/';
+        console.log('pathPrefix', pathPrefix);
 
         return {
             current: {
