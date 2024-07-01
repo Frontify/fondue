@@ -67,6 +67,38 @@ describe('serializeNodeToHtmlRecursive()', () => {
         );
     });
 
+    it('serializes ordered list to html with column break', () => {
+        const node = {
+            type: ELEMENT_OL,
+            children: [
+                {
+                    type: ELEMENT_LI,
+                    children: [
+                        {
+                            type: ELEMENT_LIC,
+                            children: [{ text: 'First item' }],
+                            breakAfterColumn: 'active',
+                        },
+                    ],
+                },
+                {
+                    type: ELEMENT_LI,
+                    children: [
+                        {
+                            type: ELEMENT_LIC,
+                            children: [{ text: 'Second item' }],
+                        },
+                    ],
+                },
+            ],
+        };
+        const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
+
+        expect(result).to.be.equal(
+            `<ol dir="auto" class="tw-list-none tw-pl-[10px] tw-mb-[10px] tw-ml-[15px] [&>li>p]:before:tw-pr-1 [&>li>p]:before:tw-tabular-nums [&>li>p]:before:tw-content-[counter(count,decimal)_'._'] tw-break-words" style="counter-reset: count;"><li dir="auto" class="tw-break-words [&>p]:before:tw-flex [&>p]:before:tw-justify-end [&>p]:before:tw-w-[1.2em] !tw-no-underline !tw-list-item" style="font-size: 14px; font-style: normal; font-weight: normal; counter-increment: count;"><p dir="auto" class="tw-break-words tw-break-after-column tw-break-inside-avoid-column tw-justify-start tw-grid tw-grid-cols-[min-content_repeat(3,_auto)]"><span class="${LIST_ITEM_SPAN_CLASSES}">First item</span></p></li><li dir="auto" class="tw-break-words [&>p]:before:tw-flex [&>p]:before:tw-justify-end [&>p]:before:tw-w-[1.2em] !tw-no-underline !tw-list-item" style="font-size: 14px; font-style: normal; font-weight: normal; counter-increment: count;"><p dir="auto" class="tw-break-words tw-justify-start tw-grid tw-grid-cols-[min-content_repeat(3,_auto)]"><span class="${LIST_ITEM_SPAN_CLASSES}">Second item</span></p></li></ol>`,
+        );
+    });
+
     it('serializes active break after column element to html', () => {
         const node = {
             type: ELEMENT_PARAGRAPH,

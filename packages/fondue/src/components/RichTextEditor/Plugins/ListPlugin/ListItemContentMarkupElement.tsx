@@ -12,9 +12,9 @@ import { justifyClassNames } from '../helper';
 
 export const LIST_ITEM_SPAN_CLASSES = 'tw-w-auto tw-min-w-[10px]';
 
-export const getLicElementClassNames = (element: TElement) =>
+export const getLicElementClassNames = (element: TElement, includeColumnBreakClasses = true) =>
     merge([
-        getColumnBreakClasses(element),
+        includeColumnBreakClasses && getColumnBreakClasses(element),
         element.align ? justifyClassNames[element.align as string] : 'tw-justify-start',
         'tw-grid tw-grid-cols-[min-content_repeat(3,_auto)]',
     ]);
