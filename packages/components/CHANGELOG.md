@@ -1,5 +1,11 @@
 # @frontify/fondue-components
 
+## 1.5.1
+
+### Patch Changes
+
+-   [#1931](https://github.com/Frontify/fondue/pull/1931) [`25cad76`](https://github.com/Frontify/fondue/commit/25cad76fd22a0e716842c4abfdcaf62ffab6502b) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: add missing prop `showCloseButton`
+
 ## 1.5.0
 
 ### Minor Changes

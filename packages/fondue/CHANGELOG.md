@@ -1,5 +1,14 @@
 # @frontify/fondue
 
+## 12.1.10
+
+### Patch Changes
+
+-   [#1937](https://github.com/Frontify/fondue/pull/1937) [`8f5f9e9`](https://github.com/Frontify/fondue/commit/8f5f9e9395be4057b996f9a5c54188850c61f4b2) Thanks [@fulopdaniel](https://github.com/fulopdaniel)! - fix(RTE): column break classes are applied twice to lic element
+
+-   Updated dependencies [[`25cad76`](https://github.com/Frontify/fondue/commit/25cad76fd22a0e716842c4abfdcaf62ffab6502b)]:
+    -   @frontify/fondue-components@1.5.1
+
 ## 12.1.9
 
 ### Patch Changes
