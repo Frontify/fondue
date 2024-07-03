@@ -63,7 +63,6 @@
         "@visx/tooltip": "^3.3.0",
         "@visx/xychart": "^3.10.2",
         "lodash-es": "^4.17.21",
-        "react-spring": "^9.7.3",
         "use-font-face-observer": "^1.2.2"
     },
     "devDependencies": {
