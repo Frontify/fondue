@@ -1,5 +1,14 @@
 # @frontify/fondue
 
+## 12.1.11
+
+### Patch Changes
+
+-   [#1944](https://github.com/Frontify/fondue/pull/1944) [`2f69178`](https://github.com/Frontify/fondue/commit/2f691784b3e18da48b6e90dc3fdc886e90f23da5) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: add back the CSS file of just custom CSS (no tailwind)
+
+-   Updated dependencies [[`a8ee090`](https://github.com/Frontify/fondue/commit/a8ee09064bbc94ff59ac3090679360bd88c0b1e7)]:
+    -   @frontify/fondue-charts@1.8.6
+
 ## 12.1.10
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @frontify/fondue-charts
 
+## 1.8.6
+
+### Patch Changes
+
+-   [#1942](https://github.com/Frontify/fondue/pull/1942) [`a8ee090`](https://github.com/Frontify/fondue/commit/a8ee09064bbc94ff59ac3090679360bd88c0b1e7) Thanks [@julianiff](https://github.com/julianiff)! - chore: remove react spring
+
 ## 1.8.5
 
 ### Patch Changes
