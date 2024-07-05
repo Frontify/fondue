@@ -90,8 +90,8 @@ export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(
                     iconStyles({ style, ...props }),
                     className,
                 )}
-                onClick={onPress}
                 {...props}
+                onClick={onPress}
             >
                 {children}
             </button>
