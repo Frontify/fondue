@@ -66,8 +66,9 @@
         "node": ">=18"
     },
     "scripts": {
-        "build": "pnpm clean && pnpm generate:icons && pnpm generate:componentsEnum && pnpm build:library && pnpm build:package:components && pnpm build:package:icons && pnpm build:package:charts && pnpm build:package:tokens",
+        "build": "pnpm clean && pnpm generate:icons && pnpm generate:componentsEnum && pnpm build:library && pnpm build:styles-with-tw && pnpm build:package:components && pnpm build:package:icons && pnpm build:package:charts && pnpm build:package:tokens",
         "build:library": "vite build",
+        "build:styles-with-tw": "postcss ./src/components/**/*.css --config src/components/postcss.config.cjs -o dist/styles-without-tailwind.css",
         "build:storybook": "pnpm generate:icons && pnpm generate:componentsEnum && storybook build",
         "build:package:components": "vite build -c components.vite.config.ts",
         "build:package:icons": "vite build -c icons.vite.config.ts",
@@ -230,6 +231,7 @@
         "glob": "^10.4.2",
         "lodash-es": "^4.17.21",
         "postcss": "^8.4.38",
+        "postcss-cli": "^11.0.0",
         "postcss-import": "^16.1.0",
         "postcss-nested": "^6.0.1",
         "prettier": "^3.3.2",
