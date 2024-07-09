@@ -2,7 +2,7 @@
 
 import { existsSync, mkdirSync } from 'node:fs';
 
-import { chunk } from 'lodash-es';
+import chunk from 'lodash-es/chunk';
 
 import { FIGMA_ICON_FILE_ID, ICONS_DIRECTORY } from '../config';
 import { downloadFile } from '../utilities/downloadFile';
@@ -15,7 +15,7 @@ export const downloadIcons = async (
     icons: Record<string, { name: string; fileName: string; imageUrl: null }>,
 ) => {
     const ids = Object.keys(icons);
-    const chunks = chunk(500, ids);
+    const chunks = chunk(ids, 500);
     const images: Record<string, string> = {};
 
     for (const chunk of chunks) {
@@ -26,7 +26,6 @@ export const downloadIcons = async (
         });
 
         for (const key in imagesResponse.images) {
-            // @ts-expect-error untyped
             images[key] = imagesResponse.images[key];
         }
     }

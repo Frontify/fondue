@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Plate, PlateContent, type TEditableProps } from '@udecode/plate-core';
-import { noop } from 'lodash-es';
+import noop from 'lodash-es/noop';
 import { type KeyboardEvent, useCallback, useMemo } from 'react';
 
 import { BlurObserver } from '@components/RichTextEditor/BlurObserver';

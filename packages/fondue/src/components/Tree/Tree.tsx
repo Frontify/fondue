@@ -16,7 +16,7 @@ import {
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { enableMapSet, produce } from 'immer';
-import { isEqual } from 'lodash-es';
+import isEqual from 'lodash-es/isEqual';
 import {
     type KeyboardEvent,
     cloneElement,
