@@ -7,7 +7,8 @@ import { join } from 'node:path';
 import { transform } from '@svgr/core';
 import fastGlob from 'fast-glob';
 import { type Entry } from 'fast-glob/out/types';
-import { camelCase, toUpper } from 'lodash-es';
+import camelCase from 'lodash-es/camelCase';
+import toUpper from 'lodash-es/toUpper';
 
 import { IconTemplate } from '@foundation/Icon/IconTemplate';
 import { type IconComponent, IconTemplateDynamic } from '@foundation/Icon/IconTemplateDynamic';

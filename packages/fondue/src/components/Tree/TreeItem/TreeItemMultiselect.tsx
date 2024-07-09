@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { noop } from 'lodash-es';
+import noop from 'lodash-es/noop';
 import { Children, type MouseEvent, memo, useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { Checkbox, CheckboxEmphasis, CheckboxSize, CheckboxState } from '@components/Checkbox/Checkbox';
