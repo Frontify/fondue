@@ -1,5 +1,27 @@
 # @frontify/fondue
 
+## 12.1.13
+
+### Patch Changes
+
+-   [#1951](https://github.com/Frontify/fondue/pull/1951) [`077dfdc`](https://github.com/Frontify/fondue/commit/077dfdcb08e3efaa281d80df8e1e7005b2051384) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: prevent `lodash-es` from being bundled
+
+-   Updated dependencies [[`077dfdc`](https://github.com/Frontify/fondue/commit/077dfdcb08e3efaa281d80df8e1e7005b2051384)]:
+    -   @frontify/fondue-icons@0.2.4
+    -   @frontify/fondue-charts@1.8.8
+    -   @frontify/fondue-components@1.5.3
+
+## 12.1.12
+
+### Patch Changes
+
+-   [#1949](https://github.com/Frontify/fondue/pull/1949) [`8e9e866`](https://github.com/Frontify/fondue/commit/8e9e866a908f3ee8996c985b8a20ed4a77d31cf4) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: mark `lodash-es` as external and import treeshaked file
+
+-   Updated dependencies [[`8e9e866`](https://github.com/Frontify/fondue/commit/8e9e866a908f3ee8996c985b8a20ed4a77d31cf4)]:
+    -   @frontify/fondue-charts@1.8.7
+    -   @frontify/fondue-icons@0.2.3
+    -   @frontify/fondue-components@1.5.2
+
 ## 12.1.11
 
 ### Patch Changes
