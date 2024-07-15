@@ -85,7 +85,7 @@ export const Slider: React.FC<SliderProps> = ({
                 <RadixSlider.Track className={styles.SliderTrack}>
                     <RadixSlider.Range className={styles.SliderRange} />
                 </RadixSlider.Track>
-                {(value || defaultValue).map((_, i) => (
+                {(value || defaultValue).map((_, index) => (
                     <RadixSlider.Thumb key={i} className={styles.SliderThumb} />
                 ))}
             </RadixSlider.Root>
