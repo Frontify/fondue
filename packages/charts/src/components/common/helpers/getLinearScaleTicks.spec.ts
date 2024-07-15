@@ -22,7 +22,7 @@ const getTicksWithEqualSteps = ({ domain }: { domain: [number, number] }) => {
 };
 
 describe('getLinearScaleTicks', () => {
-    let createScaleMock: Mock<any[], any>;
+    let createScaleMock: Mock<() => any>;
     beforeEach(async () => {
         const { createScale } = await import('@visx/scale');
         vi.mocked(createScale).mockImplementation(getTicksWithEqualSteps as any);

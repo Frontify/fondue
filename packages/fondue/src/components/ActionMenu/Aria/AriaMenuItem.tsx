@@ -95,7 +95,6 @@ export const AriaMenuItem = ({ menuItem, node, state, isSelected, onClick }: Ari
     const { isFocusVisible, focusProps } = useFocusRing();
 
     return (
-        // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions
         <li
             {...mergeProps(menuItemProps, focusProps, { onClick: () => onClick?.() })}
             data-test-id="menu-item"

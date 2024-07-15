@@ -32,7 +32,8 @@ const findLongestFormattedTickValue = ({ ticks, tickLabelStyle, valueFormatter }
 };
 
 const getTickLabelOffset = ({ tickLabelStyle, tickLength }: Pick<UseMarginProps, 'tickLabelStyle' | 'tickLength'>) => {
-    const labelOffset = typeof tickLabelStyle.dx === 'string' ? parseFloat(tickLabelStyle.dx) : tickLabelStyle.dx ?? 0;
+    const labelOffset =
+        typeof tickLabelStyle.dx === 'string' ? parseFloat(tickLabelStyle.dx) : (tickLabelStyle.dx ?? 0);
     return tickLength + Math.abs(labelOffset);
 };
 
