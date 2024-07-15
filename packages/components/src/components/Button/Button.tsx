@@ -91,7 +91,7 @@ export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(
                     className,
                 )}
                 {...props}
-                onClick={(e) => {
+                onClick={(event) => {
                     // @ts-expect-error - this is done to allow other components who use Button as a trigger to pass an action
                     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                     props.onClick?.(e);
