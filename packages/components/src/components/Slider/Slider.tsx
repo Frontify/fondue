@@ -6,9 +6,6 @@ import { Label } from '../Label/Label';
 
 import styles from './styles/slider.module.scss';
 
-/**
- * Properties for the Slider component.
- */
 export interface SliderProps {
     id?: string;
     label?: string;
