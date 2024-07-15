@@ -25,8 +25,9 @@ export const BlurObserver = ({
     }, [isFloatingLinkModalOpen, hideExternalFloatingModals, editorRef]);
 
     const collapseEverything = useCallback(() => {
-        editorRef.collapse();
         collapseFloatingModals();
+        editorRef.deselect();
+        editorRef.collapse();
     }, [editorRef, collapseFloatingModals]);
 
     useEffect(() => {
