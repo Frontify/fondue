@@ -15,8 +15,8 @@ vi.mock('@components/common/helpers', () => ({
 }));
 
 describe('useTextWidths', () => {
-    let useFontFaceObserverMock: Mock<any[], boolean>;
-    let getSVGTextDimensionsMock: Mock<any[], { width: number; height: number }>;
+    let useFontFaceObserverMock: Mock<() => boolean>;
+    let getSVGTextDimensionsMock: Mock<typeof getSVGTextDimensions>;
 
     beforeEach(async () => {
         // @ts-expect-error Wrong export of types

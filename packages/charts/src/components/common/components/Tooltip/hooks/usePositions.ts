@@ -29,8 +29,9 @@ export const usePositions = (hideGlyphs: boolean, horizontal: boolean, stackingG
             const entry = dataRegistry?.get(key);
             const xAccessor = entry?.xAccessor;
             const yAccessor = entry?.yAccessor;
-            const left = xScale && xAccessor ? Number(xScale(xAccessor(datum))) + xScaleBandwidth / 2 ?? 0 : undefined;
-            const top = yScale && yAccessor ? Number(yScale(yAccessor(datum))) + yScaleBandwidth / 2 ?? 0 : undefined;
+            const left =
+                xScale && xAccessor ? (Number(xScale(xAccessor(datum))) + xScaleBandwidth / 2 ?? 0) : undefined;
+            const top = yScale && yAccessor ? (Number(yScale(yAccessor(datum))) + yScaleBandwidth / 2 ?? 0) : undefined;
 
             return { left, top };
         },
