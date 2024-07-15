@@ -82,7 +82,7 @@ const SliderComponent = (
     return (
         <RadixSlider.Root
             ref={ref}
-            className={styles.SliderRoot}
+            className={styles.slider}
             defaultValue={defaultValue}
             aria-label={ariaLabel}
             onValueChange={onChange}
@@ -90,11 +90,11 @@ const SliderComponent = (
             data-test-id={dataTestId}
             {...props}
         >
-            <RadixSlider.Track className={styles.SliderTrack}>
-                <RadixSlider.Range className={styles.SliderRange} />
+            <RadixSlider.Track className={styles.track}>
+                <RadixSlider.Range className={styles.range} />
             </RadixSlider.Track>
             {(value || defaultValue).map((_, index) => (
-                <RadixSlider.Thumb key={index} className={styles.SliderThumb} />
+                <RadixSlider.Thumb key={index} className={styles.thumb} />
             ))}
             {showMinMax && (
                 <span>
