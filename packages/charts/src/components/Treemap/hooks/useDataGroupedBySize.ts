@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import isEqual from 'lodash-es/isEqual';
+import { isEqual } from 'lodash-es';
 import { useEffect, useRef, useState } from 'react';
 
 import {

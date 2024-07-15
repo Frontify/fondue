@@ -3,7 +3,7 @@
 import { existsSync } from 'node:fs';
 
 import * as Figma from 'figma-api';
-import kebabCase from 'lodash-es/kebabCase';
+import { kebabCase } from 'lodash-es';
 
 import {
     FIGMA_FILLED_PROPERTY_NAME,

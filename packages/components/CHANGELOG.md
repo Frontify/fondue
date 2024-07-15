@@ -1,5 +1,12 @@
 # @frontify/fondue-components
 
+## 1.5.3
+
+### Patch Changes
+
+-   Updated dependencies [[`077dfdc`](https://github.com/Frontify/fondue/commit/077dfdcb08e3efaa281d80df8e1e7005b2051384)]:
+    -   @frontify/fondue-icons@0.2.4
+
 ## 1.5.2
 
 ### Patch Changes
