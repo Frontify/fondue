@@ -15,7 +15,6 @@ const meta: Meta<typeof Slider> = {
         },
     },
     args: {
-        label: 'Slide me',
         'aria-label': 'Slide me',
     },
 };
@@ -66,5 +65,14 @@ export const MultipleThumbsUncontrolled: Story = {
         max: 100,
         defaultValue: [33, 67],
         step: 1,
+    },
+};
+
+export const Disabled: Story = {
+    args: {
+        min: 0,
+        max: 100,
+        defaultValue: [50],
+        disabled: true,
     },
 };

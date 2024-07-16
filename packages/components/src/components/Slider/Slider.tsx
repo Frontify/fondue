@@ -5,6 +5,8 @@ import { type ForwardedRef, forwardRef } from 'react';
 
 import styles from './styles/slider.module.scss';
 
+import { type CommonAriaAttrs } from '#/utilities/types';
+
 export type SliderProps = {
     id?: string;
     name?: string;
@@ -45,35 +47,33 @@ export type SliderProps = {
      */
     showMinMax?: boolean;
     /**
-     * Disable the checkbox
+     * Disable the slider
      * @default false
      */
     disabled?: boolean;
     /**
-     * Make the checkbox required in form
+     * Make the slider required in form
      * @default false
      */
     required?: boolean;
     /**
-     * Make the checkbox read-only
+     * Make the slider read-only
      * @default false
      */
     onChange?: (value: number[]) => void;
     onCommit?: (value: number[]) => void;
-    'aria-label': string; // Required for accessibility.
     'data-test-id'?: string;
-};
+} & CommonAriaAttrs;
 
 const SliderComponent = (
     {
-        showMinMax = false,
-        value = [0],
+        value,
         defaultValue = [0],
         min = 0,
         max = 100,
         onChange,
         onCommit,
-        'aria-label': ariaLabel,
+        'aria-labelledby': ariaLabelledBy,
         'data-test-id': dataTestId = 'fondue-slider',
         ...props
     }: SliderProps,
@@ -83,8 +83,11 @@ const SliderComponent = (
         <RadixSlider.Root
             ref={ref}
             className={styles.slider}
+            value={value}
+            min={min}
+            max={max}
             defaultValue={defaultValue}
-            aria-label={ariaLabel}
+            aria-labelledby={ariaLabelledBy}
             onValueChange={onChange}
             onValueCommit={onCommit}
             data-test-id={dataTestId}
@@ -96,11 +99,6 @@ const SliderComponent = (
             {(value || defaultValue).map((_, index) => (
                 <RadixSlider.Thumb key={index} className={styles.thumb} />
             ))}
-            {showMinMax && (
-                <span>
-                    {min} - {max}
-                </span>
-            )}
         </RadixSlider.Root>
     );
 };
