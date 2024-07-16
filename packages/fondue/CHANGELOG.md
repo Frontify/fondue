@@ -1,5 +1,19 @@
 # @frontify/fondue
 
+## 12.1.14
+
+### Patch Changes
+
+-   [#1957](https://github.com/Frontify/fondue/pull/1957) [`6e96909`](https://github.com/Frontify/fondue/commit/6e96909c6dd8626b567372da6b0051f1b17e736a) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+
+-   [#1955](https://github.com/Frontify/fondue/pull/1955) [`2042896`](https://github.com/Frontify/fondue/commit/20428968453fe210a033709afa26e4187c300e96) Thanks [@fulopdaniel](https://github.com/fulopdaniel)! - fix(RTE): blur event is not fired properly when text is selected
+
+-   Updated dependencies [[`a0114a3`](https://github.com/Frontify/fondue/commit/a0114a3c215b8ebfcc36320ebd1921c2f5994a7a), [`6e96909`](https://github.com/Frontify/fondue/commit/6e96909c6dd8626b567372da6b0051f1b17e736a), [`b740c19`](https://github.com/Frontify/fondue/commit/b740c19143bca8e5e7e2b8e7b490f2094fab50ba)]:
+    -   @frontify/fondue-components@1.5.4
+    -   @frontify/fondue-charts@1.8.9
+    -   @frontify/fondue-tokens@3.5.3
+    -   @frontify/fondue-icons@0.2.5
+
 ## 12.1.13
 
 ### Patch Changes
