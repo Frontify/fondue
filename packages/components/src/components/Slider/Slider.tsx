@@ -42,24 +42,10 @@ export type SliderProps = {
      */
     minStepsBetweenThumbs?: number;
     /**
-     * Determines whether to display the minimum and maximum values below the slider
-     * @default false
-     */
-    showMinMax?: boolean;
-    /**
      * Disable the slider
      * @default false
      */
     disabled?: boolean;
-    /**
-     * Make the slider required in form
-     * @default false
-     */
-    required?: boolean;
-    /**
-     * Make the slider read-only
-     * @default false
-     */
     onChange?: (value: number[]) => void;
     onCommit?: (value: number[]) => void;
     'data-test-id'?: string;
@@ -73,7 +59,6 @@ const SliderComponent = (
         max = 100,
         onChange,
         onCommit,
-        'aria-labelledby': ariaLabelledBy,
         'data-test-id': dataTestId = 'fondue-slider',
         ...props
     }: SliderProps,
@@ -87,7 +72,6 @@ const SliderComponent = (
             min={min}
             max={max}
             defaultValue={defaultValue}
-            aria-labelledby={ariaLabelledBy}
             onValueChange={onChange}
             onValueCommit={onCommit}
             data-test-id={dataTestId}
