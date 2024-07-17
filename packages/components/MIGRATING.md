@@ -595,6 +595,8 @@ Changes:
 -   **Event Handling**:
 
     -   The new `onCommit` event is introduced for actions when user interaction ends, akin to an `onBlur`.
+    -   Error handling via `onError` as this component can no longer be in an error state. Use controlled mode to limit and alert the user.
+
 
 -   **Removed Properties**:
 
@@ -609,9 +611,6 @@ Changes:
             {min}%-{max}%
         </span>
         ```
-
--   **Error Handling**:
-    -   Error handling via `onError` as this component can no longer be in an error state. Use controlled mode to limit and alert the user.
 
 #### Old
 ```tsx
