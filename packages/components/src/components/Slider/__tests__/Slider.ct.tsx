@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { expect, type MountResult, test } from '@playwright/experimental-ct-react';
-import { type Locator, type Page } from '@playwright/test';
+// import { type Locator, type Page } from '@playwright/test';
 import sinon from 'sinon';
 
 import { Slider } from '../Slider';
@@ -10,9 +10,9 @@ const SLIDER_TEST_ID = 'test-slider';
 const ARIA_LABEL = 'test slider';
 
 async function dragSlider(
-    page: Page,
+    page: any,
     wrapper: MountResult,
-    slider: Locator,
+    slider: any,
     travelPercentage: number,
     onBeforeMouseUp?: () => void,
 ) {
