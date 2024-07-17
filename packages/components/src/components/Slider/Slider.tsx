@@ -9,7 +9,7 @@ import { type CommonAriaAttrs } from '#/utilities/types';
 
 export type SliderProps = {
     id?: string;
-    name?: string;
+    // name?: string; // For some reason radix does nothing with this
     /**
      * The default value of the slider
      * Used for uncontrolled components
@@ -63,29 +63,27 @@ const SliderComponent = (
         ...props
     }: SliderProps,
     ref: ForwardedRef<HTMLButtonElement>,
-) => {
-    return (
-        <RadixSlider.Root
-            ref={ref}
-            className={styles.slider}
-            value={value}
-            min={min}
-            max={max}
-            defaultValue={defaultValue}
-            onValueChange={onChange}
-            onValueCommit={onCommit}
-            data-test-id={dataTestId}
-            {...props}
-        >
-            <RadixSlider.Track className={styles.track}>
-                <RadixSlider.Range className={styles.range} />
-            </RadixSlider.Track>
-            {(value || defaultValue).map((_, index) => (
-                <RadixSlider.Thumb key={index} className={styles.thumb} />
-            ))}
-        </RadixSlider.Root>
-    );
-};
+) => (
+    <RadixSlider.Root
+        ref={ref}
+        className={styles.slider}
+        value={value}
+        min={min}
+        max={max}
+        defaultValue={defaultValue}
+        onValueChange={onChange}
+        onValueCommit={onCommit}
+        data-test-id={dataTestId}
+        {...props}
+    >
+        <RadixSlider.Track className={styles.track}>
+            <RadixSlider.Range className={styles.range} />
+        </RadixSlider.Track>
+        {(value || defaultValue).map((_, index) => (
+            <RadixSlider.Thumb key={index} className={styles.thumb} />
+        ))}
+    </RadixSlider.Root>
+);
 
 export const Slider = forwardRef<HTMLButtonElement, SliderProps>(SliderComponent);
 Slider.displayName = 'Slider';

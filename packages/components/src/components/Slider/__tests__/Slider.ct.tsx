@@ -1,17 +1,40 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { expect, test } from '@playwright/experimental-ct-react';
+import { expect, type MountResult, test } from '@playwright/experimental-ct-react';
+import { type Locator, type Page } from '@playwright/test';
 import sinon from 'sinon';
 
 import { Slider } from '../Slider';
 
 const SLIDER_TEST_ID = 'test-slider';
-const ARIA_LABEL = 'sample slider';
+const ARIA_LABEL = 'test slider';
 
-test('should render without error', async ({ mount }) => {
-    const component = await mount(<Slider data-test-id={SLIDER_TEST_ID} aria-label={ARIA_LABEL} defaultValue={[0]} />);
-    await expect(component).toBeVisible();
-});
+async function dragSlider(
+    page: Page,
+    wrapper: MountResult,
+    slider: Locator,
+    travelPercentage: number,
+    onBeforeMouseUp?: () => void,
+) {
+    const sliderBox = await slider.boundingBox();
+
+    const wrapperBox = await wrapper.boundingBox();
+
+    if (!sliderBox || !wrapperBox) {
+        throw new Error('Slider position not found');
+    }
+
+    const startingXPos = sliderBox.x + sliderBox.width / 2;
+    const travelDistance = wrapperBox.width * (travelPercentage / 100);
+    const endingXPos = startingXPos + travelDistance;
+    const startingYPos = sliderBox.y + sliderBox.height / 2;
+
+    await slider.hover();
+    await page.mouse.down();
+    await page.mouse.move(endingXPos, startingYPos);
+    onBeforeMouseUp && onBeforeMouseUp();
+    await page.mouse.up();
+}
 
 test('should render a slider', async ({ mount }) => {
     const component = await mount(<Slider data-test-id={SLIDER_TEST_ID} aria-label={ARIA_LABEL} defaultValue={[0]} />);
@@ -33,6 +56,46 @@ test('should render two sliders', async ({ mount }) => {
     expect(allSliders).toHaveLength(2);
 });
 
+test('should render with default value', async ({ mount }) => {
+    const component = await mount(<Slider aria-label={ARIA_LABEL} defaultValue={[50]} />);
+    const slider = component.getByRole('slider');
+    expect(await slider.getAttribute('aria-valuenow')).toBe('50');
+});
+
+test('should render with controlled value', async ({ mount }) => {
+    const component = await mount(<Slider aria-label={ARIA_LABEL} value={[20]} />);
+    const slider = component.getByRole('slider');
+    expect(await slider.getAttribute('aria-valuenow')).toBe('20');
+});
+
+test('should render with custom data-test-id', async ({ mount }) => {
+    const component = await mount(<Slider data-test-id="custom-slider" aria-label={ARIA_LABEL} defaultValue={[0]} />);
+    expect(await component.getAttribute('data-test-id')).toBe('custom-slider');
+});
+
+test('should render with custom aria-label', async ({ mount }) => {
+    const component = await mount(
+        <Slider data-test-id={SLIDER_TEST_ID} aria-label="custom-label" defaultValue={[0]} />,
+    );
+    expect(await component.getAttribute('aria-label')).toBe('custom-label');
+});
+
+test('should render with custom aria-labelledby', async ({ mount }) => {
+    const component = await mount(
+        <Slider data-test-id={SLIDER_TEST_ID} aria-labelledby="custom-label" defaultValue={[0]} />,
+    );
+    const ariaLabelledBy = await component.getAttribute('aria-labelledby');
+    expect(ariaLabelledBy).toBe('custom-label');
+});
+
+test('should render with custom aria-describedby', async ({ mount }) => {
+    const component = await mount(
+        <Slider aria-label="custom-aria" aria-describedby="custom-description" defaultValue={[0]} />,
+    );
+    const ariaDescribedBy = await component.getAttribute('aria-describedby');
+    expect(ariaDescribedBy).toBe('custom-description');
+});
+
 test('should handle controlled component behavior', async ({ mount }) => {
     let value = [20];
     const component = await mount(
@@ -52,31 +115,76 @@ test('should handle controlled component behavior', async ({ mount }) => {
 test('should update values when mouse dragged', async ({ mount, page }) => {
     const onChange = sinon.spy();
     const onCommit = sinon.spy();
+
     const component = await mount(
         <Slider aria-label="volume-control" onChange={onChange} onCommit={onCommit} defaultValue={[50]} />,
     );
+
     const slider = component.getByRole('slider');
-    const sliderBox = await slider.boundingBox();
 
-    const wrapperBox = await component.boundingBox();
+    await dragSlider(page, component, slider, 10, onBeforeMouseUp);
 
-    if (!sliderBox || !wrapperBox) {
-        throw new Error('Slider position not found');
+    function onBeforeMouseUp() {
+        sinon.assert.notCalled(onCommit);
     }
 
-    const startingXPos = sliderBox.x + sliderBox.width / 2;
-    const endingXPos = startingXPos + wrapperBox.width / 10;
-    const startingYPos = sliderBox.y + sliderBox.height / 2;
-
-    await slider.hover();
-    await page.mouse.down();
-    await page.mouse.move(endingXPos, startingYPos);
-    sinon.assert.notCalled(onCommit);
-    sinon.assert.calledOnceWithExactly(onChange, [60]);
-
-    await page.mouse.up();
-    sinon.assert.calledOnceWithExactly(onCommit, [60]);
+    sinon.assert.calledWithExactly(onChange, [60]);
+    sinon.assert.calledWithExactly(onCommit, [60]);
     expect(await slider.getAttribute('aria-valuenow')).toBe('60');
+});
+
+test('should set and enforce min and max values', async ({ mount, page }) => {
+    const onChange = sinon.spy();
+    const onCommit = sinon.spy();
+    const component = await mount(
+        <Slider aria-label="range" min={20} max={50} defaultValue={[30]} onChange={onChange} onCommit={onCommit} />,
+    );
+    const slider = component.getByRole('slider');
+
+    expect(await slider.getAttribute('aria-valuemin')).toBe('20');
+    expect(await slider.getAttribute('aria-valuemax')).toBe('50');
+
+    await dragSlider(page, component, slider, -100);
+
+    sinon.assert.calledWithExactly(onChange, [20]);
+    sinon.assert.calledWithExactly(onCommit, [20]);
+    expect(await slider.getAttribute('aria-valuenow')).toBe('20');
+
+    await dragSlider(page, component, slider, 100);
+
+    sinon.assert.calledWithExactly(onChange, [50]);
+    sinon.assert.calledWithExactly(onCommit, [50]);
+    expect(await slider.getAttribute('aria-valuenow')).toBe('50');
+});
+
+test('should not interact with slider when disabled', async ({ mount }) => {
+    const component = await mount(<Slider aria-label="disabled-slider" disabled={true} defaultValue={[50]} />);
+
+    expect(await component.getAttribute('aria-disabled')).toBe('true');
+    expect(await component.getAttribute('data-disabled')).toBeDefined();
+
+    const pointerEvents = await component.evaluate((el) => getComputedStyle(el).pointerEvents);
+    expect(pointerEvents).toBe('none');
+});
+
+test('should enforce min steps between sliders', async ({ mount, page }) => {
+    const onChange = sinon.spy();
+    const onCommit = sinon.spy();
+    const component = await mount(<Slider aria-label="range" minStepsBetweenThumbs={10} defaultValue={[0, 50]} />);
+
+    const sliders = component.getByRole('slider');
+    const allSliders = await sliders.all();
+    const secondSlider = allSliders[1];
+
+    if (!secondSlider) {
+        throw new Error('Second slider not found');
+    }
+
+    await dragSlider(page, component, secondSlider, -45);
+
+    sinon.assert.notCalled(onChange);
+    sinon.assert.notCalled(onCommit);
+    expect(await secondSlider.getAttribute('aria-valuenow')).toBe('50');
 });
 
 test('should update values when arrows used', async ({ mount, page }) => {
@@ -102,75 +210,4 @@ test('should update values when arrows used', async ({ mount, page }) => {
     sinon.assert.calledWithExactly(onChange, [60]);
     sinon.assert.calledWithExactly(onCommit, [60]);
     expect(await slider.getAttribute('aria-valuenow')).toBe('60');
-});
-
-test('should set and enforce min and max values', async ({ mount, page }) => {
-    const onChange = sinon.spy();
-    const onCommit = sinon.spy();
-    const component = await mount(
-        <Slider aria-label="range" min={20} max={50} defaultValue={[30]} onChange={onChange} onCommit={onCommit} />,
-    );
-    const slider = component.getByRole('slider');
-
-    expect(await slider.getAttribute('aria-valuemin')).toBe('20');
-    expect(await slider.getAttribute('aria-valuemax')).toBe('50');
-
-    const sliderBox = await slider.boundingBox();
-    const wrapperBox = await component.boundingBox();
-
-    if (!sliderBox || !wrapperBox) {
-        throw new Error('Slider position not found');
-    }
-
-    const startingXPos = sliderBox.x + sliderBox.width / 2;
-    const endingXPos = startingXPos - wrapperBox.width;
-    const startingYPos = sliderBox.y + sliderBox.height / 2;
-
-    await slider.hover();
-    await page.mouse.down();
-    await page.mouse.move(endingXPos, startingYPos);
-    await page.mouse.up();
-
-    sinon.assert.calledWithExactly(onChange, [20]);
-    sinon.assert.calledWithExactly(onCommit, [20]);
-    expect(await slider.getAttribute('aria-valuenow')).toBe('20');
-});
-
-test('should not interact with slider when disabled', async ({ mount }) => {
-    const component = await mount(<Slider aria-label="disabled-slider" disabled={true} />);
-    expect(await component.getAttribute('aria-disabled')).toBe('true');
-});
-
-test('should set min steps between sliders', async ({ mount, page }) => {
-    const onChange = sinon.spy();
-    const onCommit = sinon.spy();
-    const component = await mount(<Slider aria-label="range" minStepsBetweenThumbs={10} defaultValue={[0, 50]} />);
-
-    const sliders = component.getByRole('slider');
-    const allSliders = await sliders.all();
-    const secondSlider = allSliders[1];
-
-    if (!secondSlider) {
-        throw new Error('Second slider not found');
-    }
-
-    const sliderBox = await secondSlider.boundingBox();
-    const wrapperBox = await component.boundingBox();
-
-    if (!sliderBox || !wrapperBox) {
-        throw new Error('Slider position not found');
-    }
-
-    const startingXPos = sliderBox.x + sliderBox.width / 2;
-    const endingXPos = startingXPos - wrapperBox.width / 2;
-    const startingYPos = sliderBox.y + sliderBox.height / 2;
-
-    await secondSlider.hover();
-    await page.mouse.down();
-    await page.mouse.move(endingXPos, startingYPos);
-    await page.mouse.up();
-
-    sinon.assert.notCalled(onChange);
-    sinon.assert.notCalled(onCommit);
-    expect(await secondSlider.getAttribute('aria-valuenow')).toBe('50');
 });

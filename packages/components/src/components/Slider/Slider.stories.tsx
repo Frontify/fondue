@@ -17,6 +17,7 @@ const meta: Meta<typeof Slider> = {
     },
     args: {
         'aria-labelledby': 'some-label-id',
+        'aria-label': 'Slider',
     },
 };
 

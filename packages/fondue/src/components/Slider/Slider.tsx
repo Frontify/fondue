@@ -57,6 +57,9 @@ const INCREMENT_KEYS = ['ArrowUp', 'ArrowRight'];
 const DECREMENT_KEYS = ['ArrowDown', 'ArrowLeft'];
 const LIMITS_KEYS = ['Home', 'End'];
 
+/**
+ * @deprecated Use `Slider` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#slider the migration guide}.
+ */
 export const Slider = ({
     id: propId,
     label,

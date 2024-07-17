@@ -71,6 +71,7 @@
         "@frontify/fondue-icons": "workspace:^",
         "@frontify/fondue-tokens": "workspace:^",
         "@playwright/experimental-ct-react": "1.44.1",
+        "@playwright/test": "^1.45.2",
         "@storybook/addon-a11y": "^8.1.10",
         "@storybook/addon-actions": "^8.1.10",
         "@storybook/addon-essentials": "^8.1.10",
