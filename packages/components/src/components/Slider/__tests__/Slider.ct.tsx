@@ -152,8 +152,8 @@ test('should set and enforce min and max values', async ({ mount, page }) => {
 
     await dragSlider(page, component, slider, 100);
 
-    expect(onChange.calledWith([40]));
-    expect(onCommit.calledWith([40]));
+    sinon.assert.calledWithExactly(onChange, [40]);
+    sinon.assert.calledWithExactly(onCommit, [40]);
     expect(await slider.getAttribute('aria-valuenow')).toBe('40');
 });
 
