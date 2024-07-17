@@ -263,11 +263,8 @@ importers:
         specifier: workspace:^
         version: link:../tokens
       '@playwright/experimental-ct-react':
-        specifier: ^1.45.2
-        version: 1.45.2(@types/node@20.14.10)(sass@1.77.8)(terser@5.31.1)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.8)(terser@5.31.1))
-      '@playwright/test':
-        specifier: ^1.45.2
-        version: 1.45.2
+        specifier: ^1.45.1
+        version: 1.45.1(@types/node@20.14.10)(sass@1.77.8)(terser@5.31.1)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.8)(terser@5.31.1))
       '@storybook/addon-a11y':
         specifier: ^8.2.3
         version: 8.2.3(storybook@8.2.3(@babel/preset-env@7.24.4(@babel/core@7.24.9)))
@@ -2530,17 +2527,12 @@ packages:
     resolution: {integrity: sha512-cq8o4cWH0ibXh9VGi5P20Tu9XF/0fFXl9EUinr9QfTM7a7p0oTA4iJRCQWppXR1Pg8dSM0UCItCkPwsk9qWWYA==}
     engines: {node: ^12.20.0 || ^14.18.0 || >=16.0.0}
 
-  '@playwright/experimental-ct-core@1.45.2':
-    resolution: {integrity: sha512-WDRaEqDZHmvmj5gTwi9c0S9iY0N0sMSZHdiRROuVxKDq5HgWVwu2Xs3eDtNrklW4PiQ84li+ciwVyVSovhYeZg==}
+  '@playwright/experimental-ct-core@1.45.1':
+    resolution: {integrity: sha512-/QuzNWJaKTVpa6hkZgjrtNyNawUWXdZ6+iafUEy0hs8Kq9bVEfXlTetIjUHWmF/sCW6MEF+pcTWyHj51rQMatw==}
     engines: {node: '>=18'}
 
-  '@playwright/experimental-ct-react@1.45.2':
-    resolution: {integrity: sha512-bTEKExSLsWJuc7eIBZEfzGImT2lr4pAkQhimAim44+TeeaHlHMmv8Vj7IIYQ5Dtq7+pIEaMgcpKzBYuPYYf5Dg==}
-    engines: {node: '>=18'}
-    hasBin: true
-
-  '@playwright/test@1.45.2':
-    resolution: {integrity: sha512-JxG9eq92ET75EbVi3s+4sYbcG7q72ECeZNbdBlaMkGcNbiDQ4cAi8U2QP5oKkOx+1gpaiL1LDStmzCaEM1Z6fQ==}
+  '@playwright/experimental-ct-react@1.45.1':
+    resolution: {integrity: sha512-kf9GcPGQ4cmhFjjx6+WPvuy6lTCpuHXsKGAEOyEo9+oPZkSZ/x7kC+mGURCA0yZoH7tCBWG3SLFNmoe5Q+nA0A==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -8141,13 +8133,13 @@ packages:
   pkg-types@1.0.3:
     resolution: {integrity: sha512-nN7pYi0AQqJnoLPC9eHFQ8AcyaixBUOwvqc5TDnIKCMEE6I0y8P7OKA7fPexsXGCGxQDl/cmrLAp26LhcwxZ4A==}
 
-  playwright-core@1.45.2:
-    resolution: {integrity: sha512-ha175tAWb0dTK0X4orvBIqi3jGEt701SMxMhyujxNrgd8K0Uy5wMSwwcQHtyB4om7INUkfndx02XnQ2p6dvLDw==}
+  playwright-core@1.45.1:
+    resolution: {integrity: sha512-LF4CUUtrUu2TCpDw4mcrAIuYrEjVDfT1cHbJMfwnE2+1b8PZcFzPNgvZCvq2JfQ4aTjRCCHw5EJ2tmr2NSzdPg==}
     engines: {node: '>=18'}
     hasBin: true
 
-  playwright@1.45.2:
-    resolution: {integrity: sha512-ReywF2t/0teRvNBpfIgh5e4wnrI/8Su8ssdo5XsQKpjxJj+jspm00jSoz9BTg91TT0c9HRjXO7LBNVrgYj9X0g==}
+  playwright@1.45.1:
+    resolution: {integrity: sha512-Hjrgae4kpSQBr98nhCj3IScxVeVUixqj+5oyif8TdIn2opTCPEzqAqNMeK42i3cWDCVu9MI+ZsGWw+gVR4ISBg==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -11797,10 +11789,10 @@ snapshots:
 
   '@pkgr/core@0.1.1': {}
 
-  '@playwright/experimental-ct-core@1.45.2(@types/node@20.14.10)(sass@1.77.8)(terser@5.31.1)':
+  '@playwright/experimental-ct-core@1.45.1(@types/node@20.14.10)(sass@1.77.8)(terser@5.31.1)':
     dependencies:
-      playwright: 1.45.2
-      playwright-core: 1.45.2
+      playwright: 1.45.1
+      playwright-core: 1.45.1
       vite: 5.3.3(@types/node@20.14.10)(sass@1.77.8)(terser@5.31.1)
     transitivePeerDependencies:
       - '@types/node'
@@ -11811,9 +11803,9 @@ snapshots:
       - sugarss
       - terser
 
-  '@playwright/experimental-ct-react@1.45.2(@types/node@20.14.10)(sass@1.77.8)(terser@5.31.1)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.8)(terser@5.31.1))':
+  '@playwright/experimental-ct-react@1.45.1(@types/node@20.14.10)(sass@1.77.8)(terser@5.31.1)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.8)(terser@5.31.1))':
     dependencies:
-      '@playwright/experimental-ct-core': 1.45.2(@types/node@20.14.10)(sass@1.77.8)(terser@5.31.1)
+      '@playwright/experimental-ct-core': 1.45.1(@types/node@20.14.10)(sass@1.77.8)(terser@5.31.1)
       '@vitejs/plugin-react': 4.3.1(vite@5.3.3(@types/node@20.14.10)(sass@1.77.8)(terser@5.31.1))
     transitivePeerDependencies:
       - '@types/node'
@@ -11825,10 +11817,6 @@ snapshots:
       - supports-color
       - terser
       - vite
-
-  '@playwright/test@1.45.2':
-    dependencies:
-      playwright: 1.45.2
 
   '@polka/url@1.0.0-next.24': {}
 
@@ -19114,11 +19102,11 @@ snapshots:
       mlly: 1.5.0
       pathe: 1.1.2
 
-  playwright-core@1.45.2: {}
+  playwright-core@1.45.1: {}
 
-  playwright@1.45.2:
+  playwright@1.45.1:
     dependencies:
-      playwright-core: 1.45.2
+      playwright-core: 1.45.1
     optionalDependencies:
       fsevents: 2.3.2
 
