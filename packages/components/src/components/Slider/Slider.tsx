@@ -55,8 +55,6 @@ const SliderComponent = (
     {
         value,
         defaultValue = [0],
-        min = 0,
-        max = 100,
         onChange,
         onCommit,
         'data-test-id': dataTestId = 'fondue-slider',
@@ -68,8 +66,6 @@ const SliderComponent = (
         ref={ref}
         className={styles.slider}
         value={value}
-        min={min}
-        max={max}
         defaultValue={defaultValue}
         onValueChange={onChange}
         onValueCommit={onCommit}
