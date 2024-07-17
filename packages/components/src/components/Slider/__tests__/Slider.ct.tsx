@@ -125,11 +125,11 @@ test('should update values when mouse dragged', async ({ mount, page }) => {
     await dragSlider(page, component, slider, 10, onBeforeMouseUp);
 
     function onBeforeMouseUp() {
-        sinon.assert.notCalled(onCommit);
+        expect(onCommit.notCalled).toBe(true);
     }
 
-    sinon.assert.calledWithExactly(onChange, [60]);
-    sinon.assert.calledWithExactly(onCommit, [60]);
+    expect(onChange.calledWithExactly([60]));
+    expect(onCommit.calledWithExactly([60]));
     expect(await slider.getAttribute('aria-valuenow')).toBe('60');
 });
 
@@ -146,14 +146,14 @@ test('should set and enforce min and max values', async ({ mount, page }) => {
 
     await dragSlider(page, component, slider, -100);
 
-    sinon.assert.calledWithExactly(onChange, [20]);
-    sinon.assert.calledWithExactly(onCommit, [20]);
+    expect(onChange.calledWithExactly([20]));
+    expect(onCommit.calledWithExactly([20]));
     expect(await slider.getAttribute('aria-valuenow')).toBe('20');
 
     await dragSlider(page, component, slider, 100);
 
-    sinon.assert.calledWithExactly(onChange, [50]);
-    sinon.assert.calledWithExactly(onCommit, [50]);
+    expect(onChange.calledWithExactly([50]));
+    expect(onCommit.calledWithExactly([50]));
     expect(await slider.getAttribute('aria-valuenow')).toBe('50');
 });
 
@@ -182,8 +182,8 @@ test('should enforce min steps between sliders', async ({ mount, page }) => {
 
     await dragSlider(page, component, secondSlider, -45);
 
-    sinon.assert.notCalled(onChange);
-    sinon.assert.notCalled(onCommit);
+    expect(onChange.notCalled).toBe(true);
+    expect(onCommit.notCalled).toBe(true);
     expect(await secondSlider.getAttribute('aria-valuenow')).toBe('50');
 });
 
@@ -195,19 +195,21 @@ test('should update values when arrows used', async ({ mount, page }) => {
     );
     const slider = component.getByRole('slider');
     await slider.focus();
-
     await page.keyboard.press('ArrowRight');
-    sinon.assert.calledWithExactly(onChange, [51]);
-    sinon.assert.calledWithExactly(onCommit, [51]);
+
+    expect(onChange.calledWithExactly([51]));
+    expect(onCommit.calledWithExactly([51]));
     expect(await slider.getAttribute('aria-valuenow')).toBe('51');
 
     await page.keyboard.press('ArrowLeft');
-    sinon.assert.calledWithExactly(onChange, [50]);
-    sinon.assert.calledWithExactly(onCommit, [50]);
+
+    expect(onChange.calledWithExactly([50]));
+    expect(onCommit.calledWithExactly([50]));
     expect(await slider.getAttribute('aria-valuenow')).toBe('50');
 
     await page.keyboard.press('Shift+ArrowRight');
-    sinon.assert.calledWithExactly(onChange, [60]);
-    sinon.assert.calledWithExactly(onCommit, [60]);
+
+    expect(onChange.calledWithExactly([60]));
+    expect(onCommit.calledWithExactly([60]));
     expect(await slider.getAttribute('aria-valuenow')).toBe('60');
 });
