@@ -3,9 +3,9 @@
 import * as RadixSlider from '@radix-ui/react-slider';
 import { type ForwardedRef, forwardRef } from 'react';
 
-import styles from './styles/slider.module.scss';
-
 import { type CommonAriaAttrs } from '#/utilities/types';
+
+import styles from './styles/slider.module.scss';
 
 export type SliderProps = {
     id?: string;
