@@ -27,11 +27,7 @@ export const SimpleSlider: Story = {};
 
 export const Disabled: Story = {
     args: {
-        min: 0,
-        max: 100,
-        step: 10,
         disabled: true,
-        defaultValue: [50],
     },
 };
 
@@ -39,18 +35,16 @@ export const MinimumAndMaximum: Story = {
     args: {
         min: 50,
         max: 1000,
-        onCommit: (value) => console.log(value),
     },
 };
 
 export const MinimumGap: Story = {
     args: {
         minStepsBetweenThumbs: 25,
-        defaultValue: [50, 100],
     },
 };
 
-export const Steps: Story = {
+export const StepSize: Story = {
     args: {
         step: 25,
     },
