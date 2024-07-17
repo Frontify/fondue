@@ -18,8 +18,8 @@ type DataProviderProps = {
 };
 
 type ScaleMock = {
-    bandwidth: Mock<void[], number>;
-} & Mock<[number], number>;
+    bandwidth: Mock<() => number>;
+} & Mock<() => number>;
 
 const Providers = ({ children, dataContext, tooltipContext }: DataProviderProps) => {
     return (
@@ -54,8 +54,8 @@ const mockDataContext = (bandWidthX: number, bandWidthY: number) => {
         },
     } as unknown as DataContextType<AxisScale, AxisScale, Record<string, unknown>> & {
         accessorMocks: {
-            xAccessor: Mock<[LineChartDataPoint | BarChartDataPoint], number>;
-            yAccessor: Mock<[LineChartDataPoint | BarChartDataPoint], number>;
+            xAccessor: Mock<() => number>;
+            yAccessor: Mock<() => number>;
         };
     };
 };

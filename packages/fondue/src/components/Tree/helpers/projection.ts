@@ -96,7 +96,7 @@ export const getProjection = ({ nodes, activeId, overId, dragOffset }: Projectio
         if (previousNode.props.level !== undefined && depth > previousNode.props.level) {
             return previousNode.props.accepts
                 ? previousNode.props.id
-                : previousNode.props.parentId ?? previousNode.props.id;
+                : (previousNode.props.parentId ?? previousNode.props.id);
         }
 
         const newParent = newNodes

@@ -90,8 +90,13 @@ export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(
                     iconStyles({ style, ...props }),
                     className,
                 )}
-                onClick={onPress}
                 {...props}
+                onClick={(event) => {
+                    // @ts-expect-error - Allows other components who use Button as a trigger to pass an action
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+                    props.onClick?.(event);
+                    onPress?.(event);
+                }}
             >
                 {children}
             </button>
