@@ -134,44 +134,42 @@ test('should set and enforce min and max values', async ({ mount, page, browserN
     expect(await slider.getAttribute('aria-valuemin')).toBe('20');
     expect(await slider.getAttribute('aria-valuemax')).toBe('40');
 
-    const sliderBox = await slider.boundingBox();
-
-    const wrapperBox = await component.boundingBox();
-
-    if (!sliderBox || !wrapperBox) {
-        throw new Error('Slider position not found');
-    }
-
-    const startingXPos = sliderBox.x + sliderBox.width / 2;
-    let travelPercentage = -100;
-    let travelDistance = wrapperBox.width * (travelPercentage / 100);
-    let startingYPos = sliderBox.y + sliderBox.height / 2;
-    let endingXPos = startingXPos + travelDistance;
-
-    await slider.hover();
-    await page.mouse.down();
-    await page.mouse.move(endingXPos, startingYPos);
-    await page.mouse.up();
-
     if (browserName !== 'firefox') {
         // for now we are not able to test this in firefox as its displaying flaky behaviour
+        const sliderBox = await slider.boundingBox();
+
+        const wrapperBox = await component.boundingBox();
+
+        if (!sliderBox || !wrapperBox) {
+            throw new Error('Slider position not found');
+        }
+
+        const startingXPos = sliderBox.x + sliderBox.width / 2;
+        let travelPercentage = -100;
+        let travelDistance = wrapperBox.width * (travelPercentage / 100);
+        let startingYPos = sliderBox.y + sliderBox.height / 2;
+        let endingXPos = startingXPos + travelDistance;
+
+        await slider.hover();
+        await page.mouse.down();
+        await page.mouse.move(endingXPos, startingYPos);
+        await page.mouse.up();
+
         sinon.assert.calledWithExactly(onChange, [20]);
         sinon.assert.calledWithExactly(onCommit, [20]);
         expect(await slider.getAttribute('aria-valuenow')).toBe('20');
-    }
 
-    travelPercentage = 100;
-    startingYPos = sliderBox.y + sliderBox.height / 2;
-    travelDistance = wrapperBox.width * (travelPercentage / 100);
-    endingXPos = startingXPos + travelDistance;
+        travelPercentage = 100;
+        startingYPos = sliderBox.y + sliderBox.height / 2;
+        travelDistance = wrapperBox.width * (travelPercentage / 100);
+        endingXPos = startingXPos + travelDistance;
 
-    await slider.hover();
-    await page.mouse.down();
-    await page.mouse.move(endingXPos, startingYPos);
-    await page.mouse.up();
-    await page.waitForTimeout(1000);
+        await slider.hover();
+        await page.mouse.down();
+        await page.mouse.move(endingXPos, startingYPos);
+        await page.mouse.up();
+        await page.waitForTimeout(1000);
 
-    if (browserName !== 'firefox') {
         // for now we are not able to test this in firefox as its displaying flaky behaviour
         sinon.assert.calledWithExactly(onChange, [40]);
         sinon.assert.calledWithExactly(onCommit, [40]);
