@@ -265,9 +265,6 @@ importers:
       '@playwright/experimental-ct-react':
         specifier: ^1.45.1
         version: 1.45.1(@types/node@20.14.10)(sass@1.77.8)(terser@5.31.1)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.8)(terser@5.31.1))
-      '@playwright/test':
-        specifier: 1.45.1
-        version: 1.45.1
       '@storybook/addon-a11y':
         specifier: ^8.2.3
         version: 8.2.3(storybook@8.2.3(@babel/preset-env@7.24.4(@babel/core@7.24.9)))
@@ -2536,11 +2533,6 @@ packages:
 
   '@playwright/experimental-ct-react@1.45.1':
     resolution: {integrity: sha512-kf9GcPGQ4cmhFjjx6+WPvuy6lTCpuHXsKGAEOyEo9+oPZkSZ/x7kC+mGURCA0yZoH7tCBWG3SLFNmoe5Q+nA0A==}
-    engines: {node: '>=18'}
-    hasBin: true
-
-  '@playwright/test@1.45.1':
-    resolution: {integrity: sha512-Wo1bWTzQvGA7LyKGIZc8nFSTFf2TkthGIFBR+QVNilvwouGzFd4PYukZe3rvf5PSqjHi1+1NyKSDZKcQWETzaA==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -11825,10 +11817,6 @@ snapshots:
       - supports-color
       - terser
       - vite
-
-  '@playwright/test@1.45.1':
-    dependencies:
-      playwright: 1.45.1
 
   '@polka/url@1.0.0-next.24': {}
 
