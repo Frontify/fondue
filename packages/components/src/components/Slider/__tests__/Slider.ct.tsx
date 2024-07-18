@@ -1,16 +1,40 @@
-/* eslint-disable eslint-comments/disable-enable-pair */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { expect, test } from '@playwright/experimental-ct-react';
+import { expect, type MountResult, test } from '@playwright/experimental-ct-react';
+import { type Locator, type Page } from '@playwright/test';
 import sinon from 'sinon';
 
 import { Slider } from '../Slider';
 
 const SLIDER_TEST_ID = 'test-slider';
 const ARIA_LABEL = 'test slider';
+
+async function dragSlider(
+    page: Page,
+    wrapper: MountResult,
+    slider: Locator,
+    travelPercentage: number,
+    onBeforeMouseUp?: () => void,
+) {
+    const sliderBox = await slider.boundingBox();
+
+    const wrapperBox = await wrapper.boundingBox();
+
+    if (!sliderBox || !wrapperBox) {
+        throw new Error('Slider position not found');
+    }
+
+    const startingXPos = sliderBox.x + sliderBox.width / 2;
+    const travelDistance = wrapperBox.width * (travelPercentage / 100);
+    const endingXPos = startingXPos + travelDistance;
+    const startingYPos = sliderBox.y + sliderBox.height / 2;
+
+    await slider.hover();
+    await page.mouse.down();
+    await page.mouse.move(endingXPos, startingYPos);
+    onBeforeMouseUp && onBeforeMouseUp();
+    await page.mouse.up();
+}
 
 test('should render a slider', async ({ mount }) => {
     const component = await mount(<Slider data-test-id={SLIDER_TEST_ID} aria-label={ARIA_LABEL} defaultValue={[0]} />);
@@ -98,32 +122,18 @@ test('should update values when mouse dragged', async ({ mount, page }) => {
 
     const slider = component.getByRole('slider');
 
-    const sliderBox = await slider.boundingBox();
+    await dragSlider(page, component, slider, 10, onBeforeMouseUp);
 
-    const wrapperBox = await component.boundingBox();
-
-    if (!sliderBox || !wrapperBox) {
-        throw new Error('Slider position not found');
+    function onBeforeMouseUp() {
+        expect(onCommit.notCalled).toBe(true);
     }
-
-    const travelPercentage = 10;
-    const startingXPos = sliderBox.x + sliderBox.width / 2;
-    const startingYPos = sliderBox.y + sliderBox.height / 2;
-    const travelDistance = wrapperBox.width * (travelPercentage / 100);
-    const endingXPos = startingXPos + travelDistance;
-
-    await slider.hover();
-    await page.mouse.down();
-    await page.mouse.move(endingXPos, startingYPos);
-    expect(onCommit.notCalled).toBe(true);
-    await page.mouse.up();
 
     sinon.assert.calledWithExactly(onChange, [60]);
     sinon.assert.calledWithExactly(onCommit, [60]);
     expect(await slider.getAttribute('aria-valuenow')).toBe('60');
 });
 
-test('should set and enforce min and max values', async ({ mount, page, browserName }) => {
+test('should set and enforce min and max values', async ({ mount, page }) => {
     const onChange = sinon.spy();
     const onCommit = sinon.spy();
     const component = await mount(
@@ -134,47 +144,17 @@ test('should set and enforce min and max values', async ({ mount, page, browserN
     expect(await slider.getAttribute('aria-valuemin')).toBe('20');
     expect(await slider.getAttribute('aria-valuemax')).toBe('40');
 
-    if (browserName !== 'firefox') {
-        // for now we are not able to test this in firefox as its displaying flaky behaviour
-        const sliderBox = await slider.boundingBox();
+    await dragSlider(page, component, slider, -100);
 
-        const wrapperBox = await component.boundingBox();
+    sinon.assert.calledWithExactly(onChange, [20]);
+    sinon.assert.calledWithExactly(onCommit, [20]);
+    expect(await slider.getAttribute('aria-valuenow')).toBe('20');
 
-        if (!sliderBox || !wrapperBox) {
-            throw new Error('Slider position not found');
-        }
+    await dragSlider(page, component, slider, 100);
 
-        const startingXPos = sliderBox.x + sliderBox.width / 2;
-        let travelPercentage = -100;
-        let travelDistance = wrapperBox.width * (travelPercentage / 100);
-        let startingYPos = sliderBox.y + sliderBox.height / 2;
-        let endingXPos = startingXPos + travelDistance;
-
-        await slider.hover();
-        await page.mouse.down();
-        await page.mouse.move(endingXPos, startingYPos);
-        await page.mouse.up();
-
-        sinon.assert.calledWithExactly(onChange, [20]);
-        sinon.assert.calledWithExactly(onCommit, [20]);
-        expect(await slider.getAttribute('aria-valuenow')).toBe('20');
-
-        travelPercentage = 100;
-        startingYPos = sliderBox.y + sliderBox.height / 2;
-        travelDistance = wrapperBox.width * (travelPercentage / 100);
-        endingXPos = startingXPos + travelDistance;
-
-        await slider.hover();
-        await page.mouse.down();
-        await page.mouse.move(endingXPos, startingYPos);
-        await page.mouse.up();
-        await page.waitForTimeout(1000);
-
-        // for now we are not able to test this in firefox as its displaying flaky behaviour
-        sinon.assert.calledWithExactly(onChange, [40]);
-        sinon.assert.calledWithExactly(onCommit, [40]);
-        expect(await slider.getAttribute('aria-valuenow')).toBe('40');
-    }
+    sinon.assert.calledWithExactly(onChange, [40]);
+    sinon.assert.calledWithExactly(onCommit, [40]);
+    expect(await slider.getAttribute('aria-valuenow')).toBe('40');
 });
 
 test('should not interact with slider when disabled', async ({ mount }) => {
@@ -200,24 +180,7 @@ test('should enforce min steps between sliders', async ({ mount, page }) => {
         throw new Error('Second slider not found');
     }
 
-    const sliderBox = await secondSlider.boundingBox();
-
-    const wrapperBox = await component.boundingBox();
-
-    if (!sliderBox || !wrapperBox) {
-        throw new Error('Slider position not found');
-    }
-
-    const travelPercentage = -45;
-    const startingXPos = sliderBox.x + sliderBox.width / 2;
-    const startingYPos = sliderBox.y + sliderBox.height / 2;
-    const travelDistance = wrapperBox.width * (travelPercentage / 100);
-    const endingXPos = startingXPos + travelDistance;
-
-    await secondSlider.hover();
-    await page.mouse.down();
-    await page.mouse.move(endingXPos, startingYPos);
-    await page.mouse.up();
+    await dragSlider(page, component, secondSlider, -45);
 
     expect(onChange.notCalled).toBe(true);
     expect(onCommit.notCalled).toBe(true);
