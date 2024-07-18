@@ -11,21 +11,21 @@ const ARIA_LABEL = 'test slider';
 
 async function dragSlider(
     page: Page,
-    wrapper: MountResult,
+    container: MountResult | Locator,
     slider: Locator,
     travelPercentage: number,
     onBeforeMouseUp?: () => void,
 ) {
     const sliderBox = await slider.boundingBox();
 
-    const wrapperBox = await wrapper.boundingBox();
+    const containerBox = await container.boundingBox();
 
-    if (!sliderBox || !wrapperBox) {
+    if (!sliderBox || !containerBox) {
         throw new Error('Slider position not found');
     }
 
     const startingXPos = sliderBox.x + sliderBox.width / 2;
-    const travelDistance = wrapperBox.width * (travelPercentage / 100);
+    const travelDistance = containerBox.width * (travelPercentage / 100);
     const endingXPos = startingXPos + travelDistance;
     const startingYPos = sliderBox.y + sliderBox.height / 2;
 
@@ -136,9 +136,21 @@ test('should update values when mouse dragged', async ({ mount, page }) => {
 test('should set and enforce min and max values', async ({ mount, page }) => {
     const onChange = sinon.spy();
     const onCommit = sinon.spy();
-    const component = await mount(
-        <Slider aria-label="range" min={20} max={40} defaultValue={[30]} onChange={onChange} onCommit={onCommit} />,
+    const wrapper = await mount(
+        <div style={{ position: 'relative', display: 'block', width: '300px', padding: '0 100px' }}>
+            <Slider
+                data-test-id={SLIDER_TEST_ID}
+                aria-label="range"
+                min={20}
+                max={40}
+                defaultValue={[30]}
+                onChange={onChange}
+                onCommit={onCommit}
+            />
+        </div>,
     );
+    const component = wrapper.getByTestId(SLIDER_TEST_ID);
+
     const slider = component.getByRole('slider');
 
     expect(await slider.getAttribute('aria-valuemin')).toBe('20');
