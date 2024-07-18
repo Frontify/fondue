@@ -157,8 +157,8 @@ test('should set and enforce min and max values', async ({ mount, page, browserN
         // for now we are not able to test this in firefox as its displaying flaky behaviour
         sinon.assert.calledWithExactly(onChange, [20]);
         sinon.assert.calledWithExactly(onCommit, [20]);
+        expect(await slider.getAttribute('aria-valuenow')).toBe('20');
     }
-    expect(await slider.getAttribute('aria-valuenow')).toBe('20');
 
     travelPercentage = 100;
     startingYPos = sliderBox.y + sliderBox.height / 2;
@@ -169,13 +169,14 @@ test('should set and enforce min and max values', async ({ mount, page, browserN
     await page.mouse.down();
     await page.mouse.move(endingXPos, startingYPos);
     await page.mouse.up();
+    await page.waitForTimeout(1000);
 
     if (browserName !== 'firefox') {
         // for now we are not able to test this in firefox as its displaying flaky behaviour
         sinon.assert.calledWithExactly(onChange, [40]);
         sinon.assert.calledWithExactly(onCommit, [40]);
+        expect(await slider.getAttribute('aria-valuenow')).toBe('40');
     }
-    expect(await slider.getAttribute('aria-valuenow')).toBe('40');
 });
 
 test('should not interact with slider when disabled', async ({ mount }) => {
