@@ -4,7 +4,6 @@ import { type Meta, type StoryObj } from '@storybook/react';
 import { useRef, useState } from 'react';
 
 import { Slider } from './Slider';
-import { Label } from '../Label/Label';
 
 type Story = StoryObj<typeof Slider>;
 
