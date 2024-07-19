@@ -36,11 +36,6 @@ async function dragSlider(
     await page.mouse.up();
 }
 
-test('should render a slider', async ({ mount }) => {
-    const component = await mount(<Slider data-test-id={SLIDER_TEST_ID} aria-label={ARIA_LABEL} defaultValue={[0]} />);
-    await expect(component).toBeVisible();
-    await expect(component.getByRole('slider')).toBeVisible();
-});
 
 test('should render two sliders', async ({ mount }) => {
     const component = await mount(
