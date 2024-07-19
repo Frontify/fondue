@@ -179,7 +179,7 @@ test('should not interact with slider when disabled', async ({ mount }) => {
     expect(pointerEvents).toBe('none');
 });
 
-test('should enforce min steps between sliders', async ({ mount, page }) => {
+test('should enforce min steps between thumbs', async ({ mount, page }) => {
     const onChange = sinon.spy();
     const onCommit = sinon.spy();
     const component = await mount(<Slider aria-label="range" minStepsBetweenThumbs={10} defaultValue={[0, 50]} />);
