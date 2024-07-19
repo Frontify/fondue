@@ -29,6 +29,7 @@
             height: 100%;
         }
     }
+
     .thumb {
         @include focus-outline;
         @include transition-colors;
