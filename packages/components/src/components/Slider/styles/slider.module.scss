@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 @import '../../../utilities/sizeToken.module.scss';
 @import '../../../utilities/focusStyle.module.scss';
 @import '../../../utilities/transitions.module.scss';
@@ -41,6 +43,7 @@
         border-radius: 100%;
         border: 1px solid var(--line-color-strong);
         cursor: pointer;
+
         &:active {
             outline-offset: 0;
             outline-width: sizeToken(2);

@@ -9,7 +9,7 @@ import styles from './styles/slider.module.scss';
 
 export type SliderProps = {
     id?: string;
-    // name?: string; // For some reason radix does nothing with this
+    name?: string;
     /**
      * The default value of the slider
      * Used for uncontrolled components

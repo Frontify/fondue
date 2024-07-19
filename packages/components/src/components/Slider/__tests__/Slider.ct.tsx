@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { expect, type MountResult, test } from '@playwright/experimental-ct-react';
+import { expect, test } from '@playwright/experimental-ct-react';
 import { type Locator, type Page } from '@playwright/test';
 import sinon from 'sinon';
 
@@ -11,7 +11,7 @@ const ARIA_LABEL = 'test slider';
 
 async function dragSlider(
     page: Page,
-    container: MountResult | Locator,
+    container: Locator,
     slider: Locator,
     travelPercentage: number,
     onBeforeMouseUp?: () => void,
@@ -35,7 +35,6 @@ async function dragSlider(
     onBeforeMouseUp && onBeforeMouseUp();
     await page.mouse.up();
 }
-
 
 test('should render two sliders', async ({ mount }) => {
     const component = await mount(
@@ -63,32 +62,20 @@ test('should render with controlled value', async ({ mount }) => {
     expect(await slider.getAttribute('aria-valuenow')).toBe('20');
 });
 
-test('should render with custom data-test-id', async ({ mount }) => {
-    const component = await mount(<Slider data-test-id="custom-slider" aria-label={ARIA_LABEL} defaultValue={[0]} />);
-    expect(await component.getAttribute('data-test-id')).toBe('custom-slider');
-});
-
-test('should render with custom aria-label', async ({ mount }) => {
+test('should render with custom aria attributes and test id', async ({ mount }) => {
     const component = await mount(
-        <Slider data-test-id={SLIDER_TEST_ID} aria-label="custom-label" defaultValue={[0]} />,
+        <Slider
+            data-test-id={SLIDER_TEST_ID}
+            aria-label="custom-label"
+            aria-labelledby="custom-label"
+            aria-describedby="custom-description"
+            defaultValue={[0]}
+        />,
     );
+    expect(await component.getAttribute('data-test-id')).toBe('test-slider');
     expect(await component.getAttribute('aria-label')).toBe('custom-label');
-});
-
-test('should render with custom aria-labelledby', async ({ mount }) => {
-    const component = await mount(
-        <Slider data-test-id={SLIDER_TEST_ID} aria-labelledby="custom-label" defaultValue={[0]} />,
-    );
-    const ariaLabelledBy = await component.getAttribute('aria-labelledby');
-    expect(ariaLabelledBy).toBe('custom-label');
-});
-
-test('should render with custom aria-describedby', async ({ mount }) => {
-    const component = await mount(
-        <Slider aria-label="custom-aria" aria-describedby="custom-description" defaultValue={[0]} />,
-    );
-    const ariaDescribedBy = await component.getAttribute('aria-describedby');
-    expect(ariaDescribedBy).toBe('custom-description');
+    expect(await component.getAttribute('aria-labelledby')).toBe('custom-label');
+    expect(await component.getAttribute('aria-describedby')).toBe('custom-description');
 });
 
 test('should handle controlled component behavior', async ({ mount }) => {

@@ -28,15 +28,15 @@ This document describes the changes that you need to make to your code to migrat
         -   [Segmented Control](#segmented-control)
             -   [Old](#old-6)
             -   [New](#new-6)
-        -   [Text Input](#text-input)
+        -   [Slider](#slider)
             -   [Old](#old-7)
             -   [New](#new-7)
+        -   [Text Input](#text-input)
+            -   [Old](#old-8)
+            -   [New](#new-8)
         -   [Tooltip](#tooltip)
-            -   [Old](#old-8)
-            -   [New](#new-8)
-        -   [Slider](#slider)
-            -   [Old](#old-8)
-            -   [New](#new-8)
+            -   [Old](#old-9)
+            -   [New](#new-9)
 
 ## Components
 
@@ -437,6 +437,74 @@ Changes:
 </SegmentedControl.Root>
 ```
 
+## Slider
+
+Changes:
+
+-   **Controlled and Uncontrolled States**:
+
+    -   `value` (controlled) and `defaultValue` (uncontrolled) props are now arrays reflecting support for range sliders in the new component.
+    -   The `onChange` event now returns an array of numbers reflecting the new multi-thumb capabilities.
+
+-   **Event Handling**:
+
+    -   The new `onCommit` event is introduced for actions when user interaction ends, similar to an `onBlur`.
+    -   Error handling via `onError` as this component can no longer be in an error state. Use controlled mode to limit and alert the user.
+
+-   **Removed Properties**:
+
+    -   `stepMultiplier` is no longer needed.
+    -   `showMinMax` is no longer supported.
+    -   `showMinMax` is no longer supported.
+    -   Additional UI flourishes should be added outside the component as needed.
+
+        ```tsx
+        <Slider />
+        <span className="tw-mr-3">
+            {min}%-{max}%
+        </span>
+        ```
+
+#### Old
+
+```tsx
+<Slider
+    id="old-slider"
+    label="Volume"
+    value={50}
+    min={0}
+    max={100}
+    showMinMax={true}
+    step={5}
+    stepMultiplier={10}
+    valueSuffix="%"
+    disabled={false}
+    onError={(errorCode) => console.error('Error:', errorCode)}
+    onChange={(value) => console.log('Value:', value.raw, value.withSuffix)}
+    data-test-id="slider-test"
+    aria-label="Adjust volume level"
+/>
+```
+
+#### New
+
+```tsx
+<Slider
+    id="new-slider"
+    value={[50]} // use for controlled mode
+    defaultValue={[50]} // use for uncontrolled mode
+    min={0}
+    max={100}
+    step={5}
+    disabled={false}
+    onChange={(values) => console.log('Value:', values)}
+    onCommit={(values) => console.log('Final Value:', values)}
+    data-test-id="slider-test"
+    aria-label="Adjust volume level"
+    aria-describedby="volume-description"
+/>
+```
+
 ### Text Input
 
 Changes:
@@ -581,71 +649,4 @@ Changes:
         Your text here
     </Tooltip.Content>
 </Tooltip.Root>
-```
-
-## Slider
-
-Changes:
-
--   **Controlled and Uncontrolled States**:
-
-    -   `value` (controlled) and `defaultValue` (uncontrolled) props are now arrays reflecting support for range sliders in the new component.
-    -   The `onChange` event now returns an array of numbers reflecting the new multi-thumb capabilities.
-
--   **Event Handling**:
-
-    -   The new `onCommit` event is introduced for actions when user interaction ends, similar to an `onBlur`.
-    -   Error handling via `onError` as this component can no longer be in an error state. Use controlled mode to limit and alert the user.
-
-
--   **Removed Properties**:
-
-    -   `stepMultiplier` is no longer needed.
-    -   `showMinMax` is no longer supported.
-    -   `showMinMax` is no longer supported. 
-    -   Additional UI flourishes should be added outside the component as needed.
-
-        ```tsx
-        <Slider />
-        <span className="tw-mr-3">
-            {min}%-{max}%
-        </span>
-        ```
-
-#### Old
-```tsx
-// Old Slider
-<Slider
-    id="old-slider"
-    label="Volume"
-    value={50}
-    min={0}
-    max={100}
-    showMinMax={true}
-    step={5}
-    stepMultiplier={10}
-    valueSuffix="%"
-    disabled={false}
-    onError={(errorCode) => console.error("Error:", errorCode)}
-    onChange={(value) => console.log("Value:", value.raw, value.withSuffix)}
-    data-test-id="slider-test"
-    aria-label="Adjust volume level"
-/>
-```
-#### New
-```tsx
-<Slider
-    id={"new-slider"}
-    value={[50]} // use for controlled mode
-    defaultValue={[50]} // use for uncontrolled mode
-    min={0}
-    max={100}
-    step={5}
-    disabled={false}
-    onChange={(values) => console.log("Value:", values)}
-    onCommit={(values) => console.log("Final Value:", values)}
-    data-test-id="slider-test"
-    aria-label="Adjust volume level"
-    aria-describedby="volume-description"
-/>
 ```

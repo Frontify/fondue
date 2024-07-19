@@ -23,7 +23,11 @@ const meta: Meta<typeof Slider> = {
 
 export default meta;
 
-export const SimpleSlider: Story = {};
+export const SimpleSlider: Story = {
+    args: {
+        name: 'Simple slider',
+    },
+};
 
 export const Disabled: Story = {
     args: {
@@ -50,7 +54,13 @@ export const StepSize: Story = {
     },
 };
 
-export const Controlled: Story = {
+export const MultipleThumbsUncontrolled: Story = {
+    args: {
+        defaultValue: [33, 67],
+    },
+};
+
+export const ExternallyControlled: Story = {
     render: (args) => {
         const [sliderRange, setSliderRange] = useState([50]);
         const userIsWarned = useRef(false);
@@ -73,7 +83,7 @@ export const Controlled: Story = {
     },
 };
 
-export const MultipleThumbsControlled: Story = {
+export const MultipleThumbsExternallyControlled: Story = {
     render: (args) => {
         const [sliderRange, setSliderRange] = useState([33, 67]);
         return (
@@ -92,11 +102,5 @@ export const MultipleThumbsControlled: Story = {
                 {...args}
             />
         );
-    },
-};
-
-export const MultipleThumbsUncontrolled: Story = {
-    args: {
-        defaultValue: [33, 67],
     },
 };
