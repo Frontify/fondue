@@ -489,6 +489,7 @@ Changes:
 #### New
 
 ```tsx
+<Label htmlFor="new-slider">Volume</Label>
 <Slider
     id="new-slider"
     value={[50]} // use for controlled mode
