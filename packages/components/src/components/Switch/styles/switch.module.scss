@@ -1,44 +1,75 @@
-.root {
-    display: 'flex';
-    align-items: 'center';
+/* (c) Copyright Frontify Ltd., all rights reserved. */
 
-    .switch {
-        width: 42px;
-        height: 25px;
-        background-color: black;
-        border-radius: 9999px;
-        position: relative;
-        box-shadow: 0 2px 10px black;
-        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-        &:focus {
-            box-shadow: 0 0 0 2px black;
-        }
-        &[data-state='checked'] {
-            background-color: black;
+@import '../../../utilities/sizeToken.module.scss';
+@import '../../../utilities/focusStyle.module.scss';
+@import '../../../utilities/transitions.module.scss';
+
+.root {
+    @include focus-outline;
+    @include transition-colors;
+
+    position: relative;
+    background-color: var(--box-neutral-color);
+    border-radius: 9999px;
+    border: 1px solid rgba(8, 8, 8, 0.3);
+    container-type: size;
+
+    &[data-state='checked'] {
+        background-color: var(--text-color-weak);
+        &:hover {
+            background: var(--box-neutral-strong-color-hover);
         }
     }
+
+    &.indeterminate {
+        background-color: var(--text-color-weak);
+        .thumb {
+            opacity: 0;
+        }
+        &::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 30%;
+            height: 10%;
+            background-color: var(--base-color);
+            border-radius: 9999px;
+        }
+    }
+
+    &.small {
+        width: sizeToken(10);
+        height: sizeToken(6);
+    }
+
+    &.medium {
+        width: sizeToken(13);
+        height: sizeToken(7);
+    }
+
+    &.large {
+        width: sizeToken(15);
+        height: sizeToken(8);
+    }
+
+    &.fullwidth {
+        width: 100%;
+    }
+
     .thumb {
         display: block;
-        width: 21px;
-        height: 21px;
-        background-color: white;
+        background-color: var(--base-color);
         border-radius: 9999px;
-        box-shadow: 0 2px 2px black;
+        border: 1px solid var(--box-neutral-inverse-color, #2d3232);
         transition: transform 100ms;
         transform: translateX(2px);
         will-change: transform;
+        width: calc(100cqh - 4px);
+        height: calc(100% - 4px);
         &[data-state='checked'] {
-            transform: translateX(19px);
+            transform: translateX(calc(100cqw - 100% - 2px));
         }
-    }
-
-    .label {
-        font-size: 15px;
-        padding-right: 12px;
-        line-height: 1;
-    }
-    /* reset */
-    button {
-        all: unset;
     }
 }
