@@ -32,7 +32,7 @@ export type ButtonProps = {
     /**
      * @default "default"
      */
-    style?: ButtonStyle;
+    variant?: ButtonStyle;
     /**
      * @default "strong"
      */
@@ -70,7 +70,7 @@ export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(
         {
             children,
             type = 'button',
-            style,
+            variant,
             size = 'medium',
             'data-test-id': dataTestId = 'fondue-button',
             className = '',
@@ -85,9 +85,9 @@ export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(
                 type={type}
                 data-test-id={dataTestId}
                 className={cn(
-                    buttonStyles({ size, style, ...props }),
-                    textStyles({ style, ...props }),
-                    iconStyles({ style, ...props }),
+                    buttonStyles({ size, style: variant, ...props }),
+                    textStyles({ style: variant, ...props }),
+                    iconStyles({ style: variant, ...props }),
                     className,
                 )}
                 {...props}
