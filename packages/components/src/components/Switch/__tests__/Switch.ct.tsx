@@ -34,7 +34,7 @@ test('should apply size and full width classes', async ({ mount }) => {
     await expect(component).toHaveClass(/small/);
 
     component.update(<Switch hugWidth={true} />);
-    await expect(component).toHaveClass(/hugWidth/);
+    await expect(component).toHaveClass(/fullwidth/);
 });
 
 test('should respect the disabled state', async ({ mount }) => {
