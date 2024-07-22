@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { expect, test } from '@playwright/experimental-ct-react';
 import sinon from 'sinon';
 
@@ -14,7 +16,7 @@ test('should toggle switch state', async ({ mount }) => {
 
 test('should handle controlled component behavior', async ({ mount }) => {
     let checked = false;
-    const onChange = sinon.spy((newChecked) => {
+    const onChange = sinon.spy((newChecked: boolean) => {
         checked = newChecked;
     });
     const component = await mount(<Switch value={checked} onChange={onChange} />);
@@ -27,13 +29,13 @@ test('should apply size and full width classes', async ({ mount }) => {
     const component = await mount(<Switch />);
     await expect(component).toHaveClass(/medium/);
 
-    component.update(<Switch size="large" />);
+    await component.update(<Switch size="large" />);
     await expect(component).toHaveClass(/large/);
 
-    component.update(<Switch size="small" />);
+    await component.update(<Switch size="small" />);
     await expect(component).toHaveClass(/small/);
 
-    component.update(<Switch hugWidth={true} />);
+    await component.update(<Switch hugWidth={true} />);
     await expect(component).toHaveClass(/fullwidth/);
 });
 

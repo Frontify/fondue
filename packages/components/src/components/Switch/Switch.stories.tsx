@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Meta, type StoryObj } from '@storybook/react';
+import { useState } from 'react';
 
 import { Switch } from './Switch';
-import { useState } from 'react';
 
 type Story = StoryObj<typeof Switch>;
 const meta: Meta<typeof Switch> = {

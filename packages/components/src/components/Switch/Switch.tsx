@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import * as RadixSwitch from '@radix-ui/react-switch';
-import { ForwardedRef, forwardRef, MouseEventHandler, useState } from 'react';
+import { type ForwardedRef, forwardRef, type MouseEventHandler, useState } from 'react';
 
 import styles from './styles/switch.module.scss';
 
