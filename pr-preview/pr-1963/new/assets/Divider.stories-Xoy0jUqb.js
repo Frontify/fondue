@@ -1,0 +1,30 @@
+import{j as n}from"./jsx-runtime-DBEcOq3S.js";import{r as O}from"./index-DtJulBIN.js";import{P}from"./index-B6WxdOXM.js";import{s as _,c as k}from"./styleUtilities-T76WvCte.js";import"./_commonjsHelpers-BosuxZz1.js";import"./index-DD2ZIxVL.js";var I="Separator",p="horizontal",R=["horizontal","vertical"],j=O.forwardRef((e,s)=>{const{decorative:d,orientation:a=p,...m}=e,c=A(a)?a:p,E=d?{role:"none"}:{"aria-orientation":c==="vertical"?c:void 0,role:"separator"};return n.jsx(P.div,{"data-orientation":c,...E,...m,ref:s})});j.displayName=I;function A(e){return R.includes(e)}var H=j;const F=_({base:"tw-flex tw-self-stretch tw-justify-center ",variants:{direction:{horizontal:"tw-flex-col tw-h-0 tw-border-t tw-w-full",vertical:"tw-flex-row tw-w-0 tw-border-r tw-h-full "},color:{weak:"tw-border-line-weak",default:"tw-border-line",strong:"tw-border-line-strong","x-strong":"tw-border-x-line-strong"},style:{solid:"tw-border-solid",dashed:"tw-border-dashed",noline:"tw-border-none"}},compoundVariants:[{direction:"horizontal",padding:"small",class:"tw-my-4"},{direction:"horizontal",padding:"medium",class:"tw-my-7"},{direction:"horizontal",padding:"large",class:"tw-my-12"},{direction:"vertical",padding:"small",class:"tw-mx-4"},{direction:"vertical",padding:"medium",class:"tw-mx-7"},{direction:"vertical",padding:"large",class:"tw-mx-12"}],defaultVariants:{padding:"medium",direction:"horizontal",color:"default",style:"solid"}}),u=({"data-test-id":e="fondue-divider",direction:s="horizontal",className:d,...a},m)=>n.jsx(H,{ref:m,className:k(F({direction:s,...a}),d),"data-test-id":e});u.displayName="Divider";const D=O.forwardRef(u);u.__docgenInfo={description:"",methods:[],displayName:"Divider",props:{style:{required:!1,tsType:{name:"union",raw:"'noline' | 'dashed' | 'solid'",elements:[{name:"literal",value:"'noline'"},{name:"literal",value:"'dashed'"},{name:"literal",value:"'solid'"}]},description:`The style of the divider
+@default "solid"`},padding:{required:!1,tsType:{name:"union",raw:"'none' | 'small' | 'medium' | 'large'",elements:[{name:"literal",value:"'none'"},{name:"literal",value:"'small'"},{name:"literal",value:"'medium'"},{name:"literal",value:"'large'"}]},description:`The padding of the divider
+@default "medium"`},color:{required:!1,tsType:{name:"union",raw:"'weak' | 'default' | 'strong' | 'x-strong'",elements:[{name:"literal",value:"'weak'"},{name:"literal",value:"'default'"},{name:"literal",value:"'strong'"},{name:"literal",value:"'x-strong'"}]},description:`The color of the divider
+@default "default"`},direction:{required:!1,tsType:{name:"union",raw:"'horizontal' | 'vertical'",elements:[{name:"literal",value:"'horizontal'"},{name:"literal",value:"'vertical'"}]},description:`The direction of the divider
+@default "horizontal"`,defaultValue:{value:"'horizontal'",computed:!1}},"data-test-id":{required:!1,tsType:{name:"string"},description:"",defaultValue:{value:"'fondue-divider'",computed:!1}},className:{required:!1,tsType:{name:"string"},description:""}}};D.__docgenInfo={description:"",methods:[],displayName:"Divider",props:{style:{required:!1,tsType:{name:"union",raw:"'noline' | 'dashed' | 'solid'",elements:[{name:"literal",value:"'noline'"},{name:"literal",value:"'dashed'"},{name:"literal",value:"'solid'"}]},description:`The style of the divider
+@default "solid"`},padding:{required:!1,tsType:{name:"union",raw:"'none' | 'small' | 'medium' | 'large'",elements:[{name:"literal",value:"'none'"},{name:"literal",value:"'small'"},{name:"literal",value:"'medium'"},{name:"literal",value:"'large'"}]},description:`The padding of the divider
+@default "medium"`},color:{required:!1,tsType:{name:"union",raw:"'weak' | 'default' | 'strong' | 'x-strong'",elements:[{name:"literal",value:"'weak'"},{name:"literal",value:"'default'"},{name:"literal",value:"'strong'"},{name:"literal",value:"'x-strong'"}]},description:`The color of the divider
+@default "default"`},direction:{required:!1,tsType:{name:"union",raw:"'horizontal' | 'vertical'",elements:[{name:"literal",value:"'horizontal'"},{name:"literal",value:"'vertical'"}]},description:`The direction of the divider
+@default "horizontal"`,defaultValue:{value:"'horizontal'",computed:!1}},"data-test-id":{required:!1,tsType:{name:"string"},description:"",defaultValue:{value:"'fondue-divider'",computed:!1}},className:{required:!1,tsType:{name:"string"},description:""}}};const Q={title:"Components/Divider",component:D,tags:["autodocs"],args:{color:"default",style:"solid",padding:"medium",direction:"horizontal"},parameters:{status:{type:"released"}}},r={args:{}},t={args:{color:"strong"}},i={args:{style:"dashed"}},o={args:{padding:"large"}},l={args:{direction:"vertical"},decorators:[e=>n.jsx("div",{className:"tw-h-8",children:n.jsx(e,{})})]};var v,f,g;r.parameters={...r.parameters,docs:{...(v=r.parameters)==null?void 0:v.docs,source:{originalSource:`{
+  args: {}
+}`,...(g=(f=r.parameters)==null?void 0:f.docs)==null?void 0:g.source}}};var h,w,y;t.parameters={...t.parameters,docs:{...(h=t.parameters)==null?void 0:h.docs,source:{originalSource:`{
+  args: {
+    color: 'strong'
+  }
+}`,...(y=(w=t.parameters)==null?void 0:w.docs)==null?void 0:y.source}}};var T,x,z;i.parameters={...i.parameters,docs:{...(T=i.parameters)==null?void 0:T.docs,source:{originalSource:`{
+  args: {
+    style: 'dashed'
+  }
+}`,...(z=(x=i.parameters)==null?void 0:x.docs)==null?void 0:z.source}}};var N,S,q;o.parameters={...o.parameters,docs:{...(N=o.parameters)==null?void 0:N.docs,source:{originalSource:`{
+  args: {
+    padding: 'large'
+  }
+}`,...(q=(S=o.parameters)==null?void 0:S.docs)==null?void 0:q.source}}};var b,C,V;l.parameters={...l.parameters,docs:{...(b=l.parameters)==null?void 0:b.docs,source:{originalSource:`{
+  args: {
+    direction: 'vertical'
+  },
+  decorators: [Story => <div className="tw-h-8">
+                <Story />
+            </div>]
+}`,...(V=(C=l.parameters)==null?void 0:C.docs)==null?void 0:V.source}}};const W=["Primary","CustomColor","CustomStyle","CustomHeight","Vertical"];export{t as CustomColor,o as CustomHeight,i as CustomStyle,r as Primary,l as Vertical,W as __namedExportsOrder,Q as default};
