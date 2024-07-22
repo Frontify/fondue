@@ -65,7 +65,7 @@ const SwitchComponent = (
 
     const rootClasses = [
         styles.root,
-        size && styles[size],
+        styles[size],
         hugWidth && styles.fullwidth,
         isStateIndeterminate && styles.indeterminate,
     ].join(' ');
