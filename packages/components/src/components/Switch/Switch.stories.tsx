@@ -14,6 +14,11 @@ const meta: Meta<typeof Switch> = {
             type: 'in_progress',
         },
     },
+    argTypes: {
+        size: {
+            control: { type: 'select', options: ['small', 'medium', 'large'] },
+        },
+    },
     args: {
         id: 'airplane-mode',
         'aria-label': 'Toggle airplane mode',
@@ -59,30 +64,9 @@ export const ExternallyControlled: Story = {
     },
 };
 
-export const HugWidth: Story = {
-    args: {
-        defaultValue: false,
-        hug: true,
-    },
-};
-
-export const SizeSmall: Story = {
+export const Size: Story = {
     args: {
         defaultValue: false,
         size: 'small',
-    },
-};
-
-export const SizeMedium: Story = {
-    args: {
-        defaultValue: false,
-        size: 'medium',
-    },
-};
-
-export const SizeLarge: Story = {
-    args: {
-        defaultValue: false,
-        size: 'large',
     },
 };

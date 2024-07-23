@@ -36,7 +36,7 @@ This document describes the changes that you need to make to your code to migrat
             -   [New](#new-8)
         -   [Tooltip](#tooltip)
             -   [Old](#old-9)
-            -   [New](#new-0)
+            -   [New](#new-9)
 
 ## Components
 
@@ -460,7 +460,7 @@ Changes:
 
 -   **Removed Properties**:
 
-    -   `label`, `labelStyle` and `tooltip` have been removed in favour of composition.
+    -   `label`, `labelStyle` and `tooltip` have been removed in favor of composition.
 
 #### Old
 

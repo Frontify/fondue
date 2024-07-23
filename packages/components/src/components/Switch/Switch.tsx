@@ -3,6 +3,7 @@
 import * as RadixSwitch from '@radix-ui/react-switch';
 import { type FormEvent, type ForwardedRef, forwardRef } from 'react';
 
+import { cn } from '#/utilities/styleUtilities';
 import { type CommonAriaAttrs } from '#/utilities/types';
 
 import styles from './styles/switch.module.scss';
@@ -12,38 +13,42 @@ type SwitchProps = {
     name?: string;
     /**
      * The size of the switch component.
+     * @default medium
      */
     size?: 'small' | 'medium' | 'large';
     /**
-     * Whether the switch should be full width.
-     */
-    hug?: boolean;
-    /**
      * The active value in the select component. This is used to control the select externally.
+     * @default false
      */
     value?: boolean;
     /**
      * The default value of the select component. Used for uncontrolled usages.
+     * @default false
      */
     defaultValue?: boolean;
     /**
      * Disables the select component.
+     * @default false
      */
     disabled?: boolean;
     /**
      * Whether the switch is required.
+     * @default false
      */
     required?: boolean;
     /**
      * Callback function that is called when the switch is toggled.
+     * @param checked - The new checked state of the switch
      */
     onChange?: (checked: boolean) => void;
     /**
      * Event handler called when the checkbox is blurred
+     * @param event - The event object
      */
     onBlur?: (event: FormEvent<HTMLButtonElement>) => void;
     /**
      * Event handler called when the checkbox is focused
+     * @param event - The event object
      */
     onFocus?: (event: FormEvent<HTMLButtonElement>) => void;
     'data-test-id'?: string;
@@ -54,7 +59,6 @@ const SwitchComponent = (
         value,
         defaultValue,
         size = 'medium',
-        hug = false,
         onChange,
         'data-test-id': dataTestId = 'fondue-switch',
         'aria-label': ariaLabel = 'Switch',
@@ -62,7 +66,7 @@ const SwitchComponent = (
     }: SwitchProps,
     ref: ForwardedRef<HTMLButtonElement>,
 ) => {
-    const rootClasses = [styles.root, styles[size], hug && styles.fullwidth].join(' ');
+    const rootClasses = cn([styles.root, styles[size]]);
 
     return (
         <RadixSwitch.Root

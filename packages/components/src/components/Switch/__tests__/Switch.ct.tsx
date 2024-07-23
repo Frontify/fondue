@@ -41,9 +41,6 @@ test('should apply size and full width classes', async ({ mount }) => {
 
     await component.update(<Switch aria-label={ARIA_LABEL} size="small" />);
     await expect(component).toHaveClass(/small/);
-
-    await component.update(<Switch aria-label={ARIA_LABEL} hug={true} />);
-    await expect(component).toHaveClass(/fullwidth/);
 });
 
 test('should update value when user focuses and presses enter', async ({ mount }) => {
