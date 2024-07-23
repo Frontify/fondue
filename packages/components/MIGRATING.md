@@ -482,9 +482,10 @@ Changes:
 #### New
 
 ```tsx
+<Label id="dark-mode-label" htmlFor="new-switch">Dark mode</Label>
 <Tooltip.Root enterDelay={200}>
     <Tooltip.Trigger>
-        <Label id="dark-mode-label" htmlFor="new-switch">Dark mode</Label>
+        <IconQuestionMarkCircle />
     </Tooltip.Trigger>
     <Tooltip.Content side="top" padding="spacious">
         <p id="dark-mode-switch-description">Toggle dark mode.</p>
@@ -495,7 +496,6 @@ Changes:
     name="dark-mode-switch"
     defaultValue={true}
     size="medium"
-    hug={true}
     required={true}
     disabled={false}
     onChange={(value) => console.log('Value:', value)}
