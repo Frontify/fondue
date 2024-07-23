@@ -1,0 +1,14 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+@import '../../../utilities/sizeToken.module.scss';
+
+.input {
+    display: block;
+}
+
+.colorPreview {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: sizeToken(4);
+}
