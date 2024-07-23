@@ -1,10 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Slot as RadixSlot } from '@radix-ui/react-slot';
-import { Children } from 'react';
+import { Children, useState } from 'react';
+
+import { SegmentedControl } from '../SegmentedControl/SegmentedControl';
+
 import { ColorPreview } from './ColorPreview';
 import styles from './styles/colorPicker.module.scss';
-import { Color, ColorPickerProps } from './types';
+import { type Color, type ColorPickerProps } from './types';
+
+type PickerType = 'brand' | 'custom';
 
 export const ColorPicker = ({
     currentColor,
@@ -13,10 +18,26 @@ export const ColorPicker = ({
     allowCustomColor = true,
     children,
 }: ColorPickerProps) => {
+    const [activePicker, setActivePicker] = useState<PickerType>('brand');
+
     return (
         <div className={styles.root}>
             {showPreview && <ColorPreview color={currentColor} />}
-            <div className="tw-p-5 tw-flex tw-flex-col tw-gap-2">
+            <div className={styles.pickerSwitcher}>
+                <SegmentedControl.Root
+                    defaultValue="brand"
+                    onValueChange={(value) => setActivePicker(value as PickerType)}
+                >
+                    <SegmentedControl.Item value="brand" aria-label="Brand">
+                        Brand
+                    </SegmentedControl.Item>
+
+                    <SegmentedControl.Item value="custom" aria-label="Custom">
+                        Custom
+                    </SegmentedControl.Item>
+                </SegmentedControl.Root>
+            </div>
+            <div className={styles.pickers} data-active-picker={activePicker}>
                 {Children.map(children, (child, index) => (
                     <RadixSlot
                         key={index}

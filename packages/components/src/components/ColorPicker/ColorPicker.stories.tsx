@@ -5,6 +5,7 @@ import { useState } from 'react';
 
 import { BrandColorPicker } from './BrandColorPicker';
 import { ColorPicker } from './ColorPicker';
+import { CustomColorPicker } from './CustomColorPicker';
 import { type Color } from './types';
 
 const palettes = [
@@ -53,6 +54,7 @@ export const Default: Story = {
         return (
             <ColorPicker currentColor={currentColor} onSelect={setCurrentColor}>
                 <BrandColorPicker palettes={palettes} />
+                <CustomColorPicker palettes={palettes} />
             </ColorPicker>
         );
     },

@@ -9,10 +9,13 @@
 .root {
     display: none;
 
-    [data-active-picker='brand'] & {
+    [data-active-picker='custom'] & {
         display: flex;
         flex-direction: column;
         gap: sizeToken(4);
+        height: sizeToken(20);
+        background-color: blue;
+        width: 100%;
     }
 }
 

@@ -46,7 +46,7 @@ export const BrandColorPicker = ({
     }, [query, palettes]);
 
     return (
-        <div className={styles.root} data-test-id="brand-color-picker" {...props}>
+        <div className={styles.root} data-picker-type="brand-color" data-test-id="brand-color-picker" {...props}>
             <div className={styles.header}>
                 <div className={styles.search}>
                     <TextInput.Root
