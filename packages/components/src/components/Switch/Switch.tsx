@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import * as RadixSwitch from '@radix-ui/react-switch';
-import { type ForwardedRef, forwardRef, type MouseEventHandler, useState } from 'react';
+import { type FormEvent, type ForwardedRef, forwardRef } from 'react';
 
 import styles from './styles/switch.module.scss';
 
@@ -37,13 +37,17 @@ type SwitchProps = {
      */
     onChange?: (checked: boolean) => void;
     /**
-     * The aria label of the select component.
+     * Event handler called when the checkbox is blurred
      */
-    'aria-label'?: string;
+    onBlur?: (event: FormEvent<HTMLButtonElement>) => void;
     /**
-     * The data test id of the select component.
+     * Event handler called when the checkbox is focused
      */
+    onFocus?: (event: FormEvent<HTMLButtonElement>) => void;
     'data-test-id'?: string;
+    'aria-label'?: string;
+    'aria-labelledby'?: string;
+    'aria-describedby'?: string;
 };
 
 const SwitchComponent = (
@@ -59,32 +63,15 @@ const SwitchComponent = (
     }: SwitchProps,
     ref: ForwardedRef<HTMLButtonElement>,
 ) => {
-    const [defaultChecked, setDefaultChecked] = useState(defaultValue);
-
-    const isStateIndeterminate = value === undefined && defaultChecked === undefined;
-
-    const rootClasses = [
-        styles.root,
-        styles[size],
-        hugWidth && styles.fullwidth,
-        isStateIndeterminate && styles.indeterminate,
-    ].join(' ');
-
-    const onClick: MouseEventHandler<HTMLButtonElement> = (event) => {
-        event.stopPropagation();
-        if (isStateIndeterminate) {
-            setDefaultChecked(true);
-        }
-    };
+    const rootClasses = [styles.root, styles[size], hugWidth && styles.fullwidth].join(' ');
 
     return (
         <RadixSwitch.Root
             ref={ref}
             checked={value}
-            defaultChecked={defaultChecked}
+            defaultChecked={defaultValue}
             className={rootClasses}
             onCheckedChange={onChange}
-            onClick={onClick}
             aria-label={ariaLabel}
             data-test-id={dataTestId}
             {...props}
