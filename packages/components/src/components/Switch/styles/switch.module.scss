@@ -20,6 +20,7 @@
 
     &[data-state='checked'] {
         background-color: var(--text-color-weak);
+
         &:hover {
             background: var(--box-neutral-strong-color-hover);
         }
@@ -43,6 +44,7 @@
     &[disabled] {
         border-color: var(--line-color);
         background-color: var(--box-neutral-color);
+
         .thumb {
             border-color: var(--line-color-strong);
         }
@@ -58,6 +60,7 @@
         will-change: transform;
         width: calc(100cqh + 2px);
         height: calc(100cqh + 2px);
+
         &[data-state='checked'] {
             transform: translate(calc(100cqw - 100% + 1px), -1px);
         }

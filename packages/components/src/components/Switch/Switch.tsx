@@ -66,14 +66,12 @@ const SwitchComponent = (
     }: SwitchProps,
     ref: ForwardedRef<HTMLButtonElement>,
 ) => {
-    const rootClasses = cn([styles.switch, styles[size]]);
-
     return (
         <RadixSwitch.Root
             ref={ref}
             checked={value}
             defaultChecked={defaultValue}
-            className={rootClasses}
+            className={cn([styles.switch, styles[size]])}
             onCheckedChange={onChange}
             aria-label={ariaLabel}
             data-test-id={dataTestId}

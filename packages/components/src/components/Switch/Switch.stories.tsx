@@ -97,11 +97,20 @@ export const ExternallyControlled: Story = {
 };
 
 export const Size: Story = {
+    decorators: [
+        (Story) => {
+            return (
+                <div className="tw-flex tw-flex-col tw-gap-4 tw-items-center">
+                    <Story />
+                </div>
+            );
+        },
+    ],
     render: (args) => (
-        <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+        <>
             <Switch {...args} size="small" />
             <Switch {...args} size="medium" />
             <Switch {...args} size="large" />
-        </div>
+        </>
     ),
 };
