@@ -1,7 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconQuestionMarkCircle } from '@frontify/fondue-icons';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { useState } from 'react';
+
+import { Label } from '../Label/Label';
+import { Tooltip } from '../Tooltip/Tooltip';
 
 import { Switch } from './Switch';
 
@@ -50,6 +54,34 @@ export const Required: Story = {
         defaultValue: false,
         required: true,
     },
+};
+
+export const WithLabel: Story = {
+    render: (args) => (
+        <div className="tw-flex tw-gap-1.5 tw-items-center">
+            <Label id="label" htmlFor="switch">
+                Switch
+            </Label>
+            <Switch {...args} id="switch" aria-labelledby="label" />
+        </div>
+    ),
+};
+
+export const WithLabelAndTooltip: Story = {
+    render: (args) => (
+        <div className="tw-flex tw-gap-1.5 tw-items-center">
+            <Label id="label" htmlFor="switch">
+                Switch
+                <Tooltip.Root>
+                    <Tooltip.Trigger>
+                        <IconQuestionMarkCircle size="16" />
+                    </Tooltip.Trigger>
+                    <Tooltip.Content>Tooltip</Tooltip.Content>
+                </Tooltip.Root>
+            </Label>
+            <Switch {...args} id="switch" aria-labelledby="label" />
+        </div>
+    ),
 };
 
 export const ExternallyControlled: Story = {
