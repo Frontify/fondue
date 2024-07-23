@@ -49,7 +49,9 @@ export type SwitchProps = {
     onChange?: (e: MouseEvent) => void;
     'data-test-id'?: string;
 };
-
+/**
+ * @deprecated Use `Switch` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#switch the migration guide}.
+ */
 export const Switch = ({
     id: propId,
     name,

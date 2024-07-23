@@ -65,8 +65,11 @@ export const ExternallyControlled: Story = {
 };
 
 export const Size: Story = {
-    args: {
-        defaultValue: false,
-        size: 'small',
-    },
+    render: (args) => (
+        <>
+            <Switch {...args} size="small" />
+            <Switch {...args} size="medium" />
+            <Switch {...args} size="large" />
+        </>
+    ),
 };
