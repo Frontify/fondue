@@ -28,6 +28,13 @@ const meta: Meta<typeof Switch> = {
         id: 'airplane-mode',
         'aria-label': 'Toggle airplane mode',
     },
+    decorators: [
+        (Story) => (
+            <div className="tw-flex tw-gap-1.5 tw-items-center">
+                <Story />
+            </div>
+        ),
+    ],
 };
 
 export default meta;
@@ -60,18 +67,18 @@ export const Required: Story = {
 
 export const WithLabel: Story = {
     render: (args) => (
-        <div className="tw-flex tw-gap-1.5 tw-items-center">
+        <>
             <Label id="label" htmlFor="switch">
                 Switch
             </Label>
             <Switch {...args} id="switch" aria-labelledby="label" />
-        </div>
+        </>
     ),
 };
 
 export const WithLabelAndTooltip: Story = {
     render: (args) => (
-        <div className="tw-flex tw-gap-1.5 tw-items-center">
+        <>
             <Label id="label" htmlFor="switch">
                 Switch
                 <Tooltip.Root>
@@ -82,7 +89,7 @@ export const WithLabelAndTooltip: Story = {
                 </Tooltip.Root>
             </Label>
             <Switch {...args} id="switch" aria-labelledby="label" />
-        </div>
+        </>
     ),
 };
 
@@ -99,15 +106,6 @@ export const ExternallyControlled: Story = {
 };
 
 export const Size: Story = {
-    decorators: [
-        (Story) => {
-            return (
-                <div className="tw-flex tw-flex-col tw-gap-4 tw-items-center">
-                    <Story />
-                </div>
-            );
-        },
-    ],
     render: (args) => (
         <>
             <Switch {...args} size="small" />
