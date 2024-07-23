@@ -66,10 +66,10 @@ export const ExternallyControlled: Story = {
 
 export const Size: Story = {
     render: (args) => (
-        <>
+        <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
             <Switch {...args} size="small" />
             <Switch {...args} size="medium" />
             <Switch {...args} size="large" />
-        </>
+        </div>
     ),
 };
