@@ -40,18 +40,18 @@
     }
 
     &.small {
-        width: sizeToken(10);
-        height: sizeToken(6);
+        width: sizeToken(6);
+        height: sizeToken(3);
     }
 
     &.medium {
-        width: sizeToken(13);
-        height: sizeToken(7);
+        width: sizeToken(7.5);
+        height: sizeToken(4);
     }
 
     &.large {
-        width: sizeToken(15);
-        height: sizeToken(8);
+        width: sizeToken(9);
+        height: sizeToken(5);
     }
 
     &.fullwidth {
@@ -64,12 +64,12 @@
         border-radius: 9999px;
         border: 1px solid var(--box-neutral-inverse-color, #2d3232);
         transition: transform 100ms;
-        transform: translateX(2px);
+        transform: translateX(0);
         will-change: transform;
-        width: calc(100cqh - 4px);
-        height: calc(100% - 4px);
+        width: calc(100cqh);
+        height: calc(100%);
         &[data-state='checked'] {
-            transform: translateX(calc(100cqw - 100% - 2px));
+            transform: translateX(calc(100cqw - 100%));
         }
     }
 }

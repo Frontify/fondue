@@ -47,10 +47,6 @@ export const Required: Story = {
     },
 };
 
-export const Indeterminate: Story = {
-    args: {},
-};
-
 export const ExternallyControlled: Story = {
     render: (args) => {
         const [checked, setChecked] = useState(false);
@@ -66,7 +62,7 @@ export const ExternallyControlled: Story = {
 export const HugWidth: Story = {
     args: {
         defaultValue: false,
-        hugWidth: true,
+        hug: true,
     },
 };
 

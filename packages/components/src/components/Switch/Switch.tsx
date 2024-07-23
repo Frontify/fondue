@@ -3,6 +3,8 @@
 import * as RadixSwitch from '@radix-ui/react-switch';
 import { type FormEvent, type ForwardedRef, forwardRef } from 'react';
 
+import { type CommonAriaAttrs } from '#/utilities/types';
+
 import styles from './styles/switch.module.scss';
 
 type SwitchProps = {
@@ -15,7 +17,7 @@ type SwitchProps = {
     /**
      * Whether the switch should be full width.
      */
-    hugWidth?: boolean;
+    hug?: boolean;
     /**
      * The active value in the select component. This is used to control the select externally.
      */
@@ -45,17 +47,14 @@ type SwitchProps = {
      */
     onFocus?: (event: FormEvent<HTMLButtonElement>) => void;
     'data-test-id'?: string;
-    'aria-label'?: string;
-    'aria-labelledby'?: string;
-    'aria-describedby'?: string;
-};
+} & CommonAriaAttrs;
 
 const SwitchComponent = (
     {
         value,
         defaultValue,
         size = 'medium',
-        hugWidth = false,
+        hug = false,
         onChange,
         'data-test-id': dataTestId = 'fondue-switch',
         'aria-label': ariaLabel = 'Switch',
@@ -63,7 +62,7 @@ const SwitchComponent = (
     }: SwitchProps,
     ref: ForwardedRef<HTMLButtonElement>,
 ) => {
-    const rootClasses = [styles.root, styles[size], hugWidth && styles.fullwidth].join(' ');
+    const rootClasses = [styles.root, styles[size], hug && styles.fullwidth].join(' ');
 
     return (
         <RadixSwitch.Root
