@@ -1,5 +1,19 @@
 # @frontify/fondue-components
 
+## 1.5.4
+
+### Patch Changes
+
+-   [#1953](https://github.com/Frontify/fondue/pull/1953) [`a0114a3`](https://github.com/Frontify/fondue/commit/a0114a3c215b8ebfcc36320ebd1921c2f5994a7a) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - bugfix: prevent firefox from overriding outline class with global pseudo class def
+
+-   [#1957](https://github.com/Frontify/fondue/pull/1957) [`6e96909`](https://github.com/Frontify/fondue/commit/6e96909c6dd8626b567372da6b0051f1b17e736a) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+
+-   [#1945](https://github.com/Frontify/fondue/pull/1945) [`b740c19`](https://github.com/Frontify/fondue/commit/b740c19143bca8e5e7e2b8e7b490f2094fab50ba) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: reorder props to allow `onPress` when used as tooltip trigger
+
+-   Updated dependencies [[`6e96909`](https://github.com/Frontify/fondue/commit/6e96909c6dd8626b567372da6b0051f1b17e736a)]:
+    -   @frontify/fondue-tokens@3.5.3
+    -   @frontify/fondue-icons@0.2.5
+
 ## 1.5.3
 
 ### Patch Changes

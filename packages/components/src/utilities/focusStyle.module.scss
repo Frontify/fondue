@@ -1,15 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 @mixin focus-outline {
-    outline-width: 4px;
-    outline-offset: 2px;
-    outline-color: #4196fb;
-
     &:focus-visible {
         outline-style: solid;
     }
-
     &:has([data-show-focus-ring='true']) {
         outline-style: solid;
+    }
+    &:focus-visible,
+    &:has([data-show-focus-ring='true']) {
+        outline-width: 4px;
+        outline-offset: 2px;
+        outline-color: #4196fb;
     }
 }

@@ -22,16 +22,21 @@ export enum SelectionMode {
     MultiSelect = 'multiple',
 }
 
+export type ColumnAlign = 'left' | 'right';
+
 export type Cell = {
     sortId: string | number;
     value: ReactNode;
     ariaLabel?: string;
+    align?: ColumnAlign;
 };
 
 export type Column = {
     name: string;
+    titleNode?: ReactNode;
     key: string;
     sortable?: boolean;
+    align?: ColumnAlign;
 };
 
 export type Row = {
@@ -73,7 +78,11 @@ const mapToTableAriaProps = (columns: Column[], rows: Row[], hasSort = false): T
             <TableHeader key="table-header" columns={columns}>
                 {(column) => {
                     const allowsSorting = !!(column.sortable && hasSort);
-                    return <AriaColumn allowsSorting={allowsSorting}>{column.name}</AriaColumn>;
+                    return (
+                        <AriaColumn allowsSorting={allowsSorting} {...{ align: column.align }}>
+                            {column.titleNode ?? column.name}
+                        </AriaColumn>
+                    );
                 }}
             </TableHeader>,
             <TableBody key="table-body" items={rows}>
@@ -159,6 +168,7 @@ export const Table = ({
                                         isColumnSorted={sortedColumnKey === column.key}
                                         handleSortChange={onSortChange}
                                         setSelectedRows={onSelectionChange}
+                                        align={column.props?.align}
                                     />
                                 );
                             })}
@@ -173,6 +183,9 @@ export const Table = ({
                         return (
                             <TableRow key={ariaRow.key} isSelected={selectedRowIds.includes(ariaRow.key)}>
                                 {[...ariaRow.childNodes].map((cell) => {
+                                    const cellColumn = columns.find(
+                                        ({ key }) => key === String(cell.key).split(`${ariaRow.key}-`)[1],
+                                    );
                                     const cellType = cell.props.isSelectionCell
                                         ? TableCellType.Checkbox
                                         : TableCellType.Default;
@@ -185,6 +198,7 @@ export const Table = ({
                                             isChecked={selectedRowIds.includes(ariaRow.key)}
                                             selectedRows={selectedRowIds}
                                             setSelectedRows={onSelectionChange}
+                                            align={cellColumn?.align}
                                         />
                                     );
                                 })}

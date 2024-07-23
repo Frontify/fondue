@@ -43,7 +43,7 @@ vi.mock('@components/LineChart/helpers', () => ({
 }));
 
 describe('useMargin', () => {
-    let useFontFaceObserverMock: Mock<any[], any>;
+    let useFontFaceObserverMock: Mock<() => boolean>;
     beforeEach(async () => {
         // @ts-expect-error Wrong export of types
         const { default: useFontFaceObserver } = await import('use-font-face-observer');

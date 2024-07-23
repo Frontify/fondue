@@ -1,5 +1,14 @@
 # @frontify/fondue-charts
 
+## 1.8.9
+
+### Patch Changes
+
+-   [#1957](https://github.com/Frontify/fondue/pull/1957) [`6e96909`](https://github.com/Frontify/fondue/commit/6e96909c6dd8626b567372da6b0051f1b17e736a) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+
+-   Updated dependencies [[`6e96909`](https://github.com/Frontify/fondue/commit/6e96909c6dd8626b567372da6b0051f1b17e736a)]:
+    -   @frontify/fondue-tokens@3.5.3
+
 ## 1.8.8
 
 ### Patch Changes

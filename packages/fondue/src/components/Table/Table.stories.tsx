@@ -57,6 +57,26 @@ const columns: Column[] = [
     { name: 'Countries', key: 'countries' },
 ];
 
+const columnsWithAlignment: Column[] = [
+    { name: 'User', key: 'user' },
+    { name: 'Active Sessions', key: 'activeSessions', sortable: true, align: 'right' },
+    { name: 'Last Active', key: 'lastActive', align: 'right' },
+    { name: 'Regions', key: 'regions', align: 'right' },
+    { name: 'Countries', key: 'countries' },
+];
+
+const columnsWithTitleNode: Column[] = [
+    { name: 'User', key: 'user', titleNode: <span className="tw-bg-green-20">user</span> },
+    { name: 'Active Sessions', key: 'activeSessions', sortable: true },
+    {
+        name: 'Last Active',
+        key: 'lastActive',
+        titleNode: <span className="tw-bg-red-20">number - in %</span>,
+    },
+    { name: 'Regions', key: 'regions' },
+    { name: 'Countries', key: 'countries' },
+];
+
 const rows: Row[] = [
     {
         key: 'row-1',
@@ -215,7 +235,7 @@ const rows: Row[] = [
 
 const Template: StoryFn<TableProps> = (args) => {
     const [selectedRows, setSelectedRows] = useState<(string | number)[]>([]);
-    const [sortedRows, setSortedRows] = useState<Row[]>(rows);
+    const [sortedRows, setSortedRows] = useState<Row[]>(args.rows || rows);
 
     const onSortChange = (key: string, direction?: SortDirection) => {
         const sortRows = () => {
@@ -239,7 +259,7 @@ const Template: StoryFn<TableProps> = (args) => {
     return (
         <Table
             {...args}
-            columns={columns}
+            columns={args.columns ?? columns}
             rows={sortedRows}
             selectedRowIds={selectedRows}
             onSelectionChange={(ids) => setSelectedRows((ids as (string | number)[]) || [])}
@@ -316,3 +336,13 @@ MultiSelect.args = {
 };
 
 export const FilterRows = TemplateWithSearch.bind({});
+
+export const ColumnAlignment = Template.bind({});
+ColumnAlignment.args = {
+    columns: columnsWithAlignment,
+};
+
+export const ColumnTitleNodes = Template.bind({});
+ColumnTitleNodes.args = {
+    columns: columnsWithTitleNode,
+};

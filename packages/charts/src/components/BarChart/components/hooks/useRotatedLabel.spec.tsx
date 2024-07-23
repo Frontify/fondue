@@ -39,8 +39,8 @@ vi.mock('@components/common/helpers', () => ({
     getSVGTextDimensions: vi.fn(),
 }));
 
-const updateMaxLabelHeightMock: Mock<[(prevState: number) => number], void> = vi.fn();
-const updateFirstLabelOverflowsByMock: Mock<[(prevState: number) => number], void> = vi.fn();
+const updateMaxLabelHeightMock: Mock<(prevState: number) => number> = vi.fn();
+const updateFirstLabelOverflowsByMock: Mock<(prevState: number) => number> = vi.fn();
 
 describe('useRotatedLabel', () => {
     let useFontFaceObserverMock: typeof useFontFaceObserver;

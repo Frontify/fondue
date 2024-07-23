@@ -5,7 +5,7 @@ import { type Key, useRef } from 'react';
 import { Checkbox as CheckboxComponent, CheckboxState } from '@components/Checkbox/Checkbox';
 import { merge } from '@utilities/merge';
 
-import { SelectionMode } from './Table';
+import { type ColumnAlign, SelectionMode } from './Table';
 
 export enum TableCellType {
     Default = 'Default',
@@ -19,6 +19,7 @@ export type TableCellProps = {
     isChecked?: boolean;
     selectedRows: Key[];
     setSelectedRows?: (ids?: Key[]) => void;
+    align?: ColumnAlign;
 };
 
 export const TableCell = ({
@@ -28,6 +29,7 @@ export const TableCell = ({
     isChecked = false,
     selectedRows,
     setSelectedRows,
+    align = 'left',
 }: TableCellProps) => {
     const ref = useRef<HTMLTableCellElement | null>(null);
 
@@ -52,7 +54,6 @@ export const TableCell = ({
 
         return (
             <td
-                // eslint-disable-next-line jsx-a11y/no-interactive-element-to-noninteractive-role
                 role="cell"
                 ref={ref}
                 className={merge([
@@ -73,7 +74,6 @@ export const TableCell = ({
 
     return (
         <td
-            // eslint-disable-next-line jsx-a11y/no-interactive-element-to-noninteractive-role
             role="cell"
             ref={ref}
             className={merge([
@@ -81,7 +81,7 @@ export const TableCell = ({
                 isChecked ? 'tw-text-black-100 dark:tw-text-white' : 'tw-text-black-80 dark:tw-text-black-20',
             ])}
         >
-            {cell.rendered}
+            <div className={merge(['tw-flex', align === 'right' && 'tw-w-full tw-justify-end'])}>{cell.rendered}</div>
         </td>
     );
 };
