@@ -10,6 +10,7 @@ import { Tooltip } from '../Tooltip/Tooltip';
 import { Switch } from './Switch';
 
 type Story = StoryObj<typeof Switch>;
+
 const meta: Meta<typeof Switch> = {
     component: Switch,
     tags: ['autodocs'],
@@ -28,6 +29,7 @@ const meta: Meta<typeof Switch> = {
         'aria-label': 'Toggle airplane mode',
     },
 };
+
 export default meta;
 
 export const Checked: Story = {

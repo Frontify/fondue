@@ -18,14 +18,6 @@
         background-color: var(--box-neutral-color-hover);
     }
 
-    &[data-state='checked'] {
-        background-color: var(--text-color-weak);
-
-        &:hover {
-            background: var(--box-neutral-strong-color-hover);
-        }
-    }
-
     &.small {
         width: sizeToken(6);
         height: sizeToken(3);
@@ -39,6 +31,14 @@
     &.large {
         width: sizeToken(9);
         height: sizeToken(5);
+    }
+
+    &[data-state='checked'] {
+        background-color: var(--text-color-weak);
+
+        &:hover {
+            background: var(--box-neutral-strong-color-hover);
+        }
     }
 
     &[disabled] {

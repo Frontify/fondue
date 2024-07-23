@@ -65,22 +65,20 @@ const SwitchComponent = (
         ...props
     }: SwitchProps,
     ref: ForwardedRef<HTMLButtonElement>,
-) => {
-    return (
-        <RadixSwitch.Root
-            ref={ref}
-            checked={value}
-            defaultChecked={defaultValue}
-            className={cn([styles.switch, styles[size]])}
-            onCheckedChange={onChange}
-            aria-label={ariaLabel}
-            data-test-id={dataTestId}
-            {...props}
-        >
-            <RadixSwitch.Thumb className={styles.thumb} />
-        </RadixSwitch.Root>
-    );
-};
+) => (
+    <RadixSwitch.Root
+        ref={ref}
+        checked={value}
+        defaultChecked={defaultValue}
+        className={cn([styles.switch, styles[size]])}
+        onCheckedChange={onChange}
+        aria-label={ariaLabel}
+        data-test-id={dataTestId}
+        {...props}
+    >
+        <RadixSwitch.Thumb className={styles.thumb} />
+    </RadixSwitch.Root>
+);
 
 export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(SwitchComponent);
 Switch.displayName = 'Switch';
