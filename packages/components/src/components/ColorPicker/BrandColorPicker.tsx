@@ -8,7 +8,7 @@ import { TextInput } from '../TextInput/TextInput';
 
 import styles from './styles/brandColorPicker.module.scss';
 import { type BrandColorPickerProps } from './types';
-import { colorToCss, isColorLight } from './utils';
+import { areColorsEqual, colorToCss, isColorLight } from './utils';
 
 type BrandColorView = 'grid' | 'list';
 
@@ -100,11 +100,7 @@ export const BrandColorPicker = ({
                                                           : 'var(--base-color)',
                                                   }}
                                               >
-                                                  {currentColor &&
-                                                      color.red === currentColor.red &&
-                                                      color.green === currentColor.green &&
-                                                      color.blue === currentColor.blue &&
-                                                      color.alpha === currentColor.alpha && <IconCheckMark size={20} />}
+                                                  {areColorsEqual(color, currentColor) && <IconCheckMark size={20} />}
                                               </span>
                                               {view === 'list' && (
                                                   <span className={styles.colorName}>{color.name}</span>
