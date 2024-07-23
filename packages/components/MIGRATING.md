@@ -460,7 +460,7 @@ Changes:
 
 -   **Removed Properties**:
 
-    -   `label`, `labelStyle` and `tooltip` have been removed in favor of composition.
+    -   `label`, `labelStyle`, `hug`, and `tooltip` have been removed in favor of composition.
 
 #### Old
 

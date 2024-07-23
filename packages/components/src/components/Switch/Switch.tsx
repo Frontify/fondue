@@ -66,7 +66,7 @@ const SwitchComponent = (
     }: SwitchProps,
     ref: ForwardedRef<HTMLButtonElement>,
 ) => {
-    const rootClasses = cn([styles.root, styles[size]]);
+    const rootClasses = cn([styles.switch, styles[size]]);
 
     return (
         <RadixSwitch.Root

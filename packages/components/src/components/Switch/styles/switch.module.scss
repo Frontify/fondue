@@ -4,7 +4,7 @@
 @import '../../../utilities/focusStyle.module.scss';
 @import '../../../utilities/transitions.module.scss';
 
-.root {
+.switch {
     @include focus-outline;
     @include transition-colors;
 
