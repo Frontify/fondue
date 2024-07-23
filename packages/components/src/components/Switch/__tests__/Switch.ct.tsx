@@ -32,7 +32,7 @@ test('should handle controlled component behavior', async ({ mount }) => {
     sinon.assert.calledOnceWithExactly(onChange, true);
 });
 
-test('should apply size and full width classes', async ({ mount }) => {
+test('should apply size classes', async ({ mount }) => {
     const component = await mount(<Switch aria-label={ARIA_LABEL} />);
     await expect(component).toHaveClass(/medium/);
 
