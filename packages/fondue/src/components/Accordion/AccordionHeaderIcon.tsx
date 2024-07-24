@@ -22,7 +22,6 @@ export const AccordionHeaderIcon = ({
     'data-test-id': dataTestId = ACCORDION_HEADER_ICON_ID,
 }: AccordionHeaderIconProps): ReactElement => {
     const props = {
-        'aria-labelledby': '',
         size: sizeMap[size],
     };
 
