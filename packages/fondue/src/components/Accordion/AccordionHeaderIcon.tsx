@@ -20,20 +20,15 @@ export const AccordionHeaderIcon = ({
     size = 'medium',
     isOpen,
     'data-test-id': dataTestId = ACCORDION_HEADER_ICON_ID,
-}: AccordionHeaderIconProps): ReactElement => {
-    const props = {
-        size: sizeMap[size],
-    };
-
-    return (
-        <span data-test-id={`${dataTestId}-wrapper`} className="tw-block">
-            <span
-                data-test-id={dataTestId}
-                className={merge(['tw-block tw-transition-transform', isOpen && 'tw-rotate-180 tw-duration-300'])}
-            >
-                <IconCaretDown {...props} />
-            </span>
+}: AccordionHeaderIconProps): ReactElement => (
+    <span data-test-id={`${dataTestId}-wrapper`} className="tw-block">
+        <span
+            data-test-id={dataTestId}
+            className={merge(['tw-block tw-transition-transform', isOpen && 'tw-rotate-180 tw-duration-300'])}
+        >
+            <IconCaretDown size={sizeMap[size]} />
         </span>
-    );
-};
+    </span>
+);
+
 AccordionHeaderIcon.displayName = 'FondueAccordionHeaderIcon';
