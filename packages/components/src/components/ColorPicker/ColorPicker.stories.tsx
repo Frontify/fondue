@@ -52,7 +52,7 @@ export const Default: Story = {
     render: () => {
         const [currentColor, setCurrentColor] = useState<Color | undefined>();
         return (
-            <ColorPicker currentColor={currentColor} onSelect={setCurrentColor}>
+            <ColorPicker currentColor={currentColor} onColorChange={setCurrentColor}>
                 <BrandColorPicker palettes={palettes} />
                 <CustomColorPicker palettes={palettes} />
             </ColorPicker>

@@ -27,3 +27,35 @@ export const areColorsEqual = (color1?: Color, color2?: Color): boolean => {
         color1.alpha === color2.alpha
     );
 };
+
+export const isValidHexColor = (color: string): boolean => {
+    const hexRegex = /^([\dA-Fa-f]{3}){1,2}$/;
+    console.log(color.length > 2 && hexRegex.test(color));
+
+    return color.length > 2 && hexRegex.test(color);
+};
+
+export const hexColorToRgb = (hex: string): Color => {
+    const hexRegex = /^([\dA-Fa-f]{3}){1,2}$/;
+    const matches = hex.match(hexRegex);
+    if (!matches) {
+        return {
+            red: 0,
+            green: 0,
+            blue: 0,
+        };
+    }
+    const hexColor = matches[0];
+    if (hexColor.length === 3) {
+        return {
+            red: parseInt(`${hexColor[0]}${hexColor[0]}`, 16),
+            green: parseInt(`${hexColor[1]}${hexColor[1]}`, 16),
+            blue: parseInt(`${hexColor[2]}${hexColor[2]}`, 16),
+        };
+    }
+    return {
+        red: parseInt(hexColor.slice(0, 2), 16),
+        green: parseInt(hexColor.slice(2, 4), 16),
+        blue: parseInt(hexColor.slice(4, 6), 16),
+    };
+};

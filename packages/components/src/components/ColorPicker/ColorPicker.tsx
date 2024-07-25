@@ -44,7 +44,7 @@ export const ColorPicker = ({
                         key={index}
                         data-test="tttt"
                         currentColor={currentColor}
-                        onColorSelected={(color: Color) => {
+                        onColorChange={(color: Color) => {
                             onColorChange(color);
                         }}
                     >

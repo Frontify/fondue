@@ -7,6 +7,7 @@ import { TextInput } from '../TextInput/TextInput';
 
 import styles from './styles/customColorPicker.module.scss';
 import { type Color } from './types';
+import { hexColorToRgb, isValidHexColor } from './utils';
 
 type ColorFormat = 'HEX' | 'RGBA';
 type CustomColorPickerProps = {
@@ -14,16 +15,16 @@ type CustomColorPickerProps = {
     onColorChange: (color: Color) => void;
 };
 
-export const CustomColorPicker = ({
-    currentColor,
-    onColorChange = () => {
-        console.log('default custom');
-    },
-    ...props
-}: CustomColorPickerProps) => {
+export const CustomColorPicker = ({ currentColor, onColorChange, ...props }: CustomColorPickerProps) => {
+    const colorChange = (color: Color) => {
+        onColorChange(color);
+    };
+
+    console.log('current', currentColor);
+
     return (
         <div className={styles.root} data-picker-type="custom-color" data-test-id="custom-color-picker" {...props}>
-            <ColorPickerInputs currentColor={currentColor} onColorChange={onColorChange} />
+            <ColorPickerInputs currentColor={currentColor} onColorChange={colorChange} />
         </div>
     );
 };
@@ -31,7 +32,7 @@ CustomColorPicker.displayName = 'ColorPicker.Wrapper';
 
 type ColorPickerInputsProps = CustomColorPickerProps;
 export const ColorPickerInputs = ({
-    currentColor,
+    currentColor = { red: 0, green: 0, blue: 0, alpha: 1 },
     onColorChange = () => {
         console.log('default');
     },
@@ -56,9 +57,12 @@ export const ColorPickerInputs = ({
             {currentFormat === 'HEX' ? (
                 <TextInput.Root
                     className={`${styles.valueInput} ${styles.colorHexInput}`}
-                    value={50}
-                    type="number"
-                    onChange={(event) => console.log(event.target.value)}
+                    type="text"
+                    onChange={(event) => {
+                        if (isValidHexColor(event.target.value)) {
+                            onColorChange(hexColorToRgb(event.target.value));
+                        }
+                    }}
                     aria-label="Red Color Channel"
                 >
                     <TextInput.Slot name="left">
@@ -69,9 +73,16 @@ export const ColorPickerInputs = ({
                 <>
                     <TextInput.Root
                         className={`${styles.valueInput} ${styles.colorChannelInput}`}
-                        value={10}
+                        value={currentColor.red}
                         type="number"
-                        onChange={(event) => console.log(event.target.value)}
+                        onChange={(event) => {
+                            console.log(parseInt(event.target.value));
+
+                            onColorChange({
+                                ...currentColor,
+                                red: parseInt(event.target.value),
+                            });
+                        }}
                         aria-label="Red Color Channel"
                     >
                         <TextInput.Slot name="left">
@@ -80,9 +91,14 @@ export const ColorPickerInputs = ({
                     </TextInput.Root>
                     <TextInput.Root
                         className={`${styles.valueInput} ${styles.colorChannelInput}`}
-                        value={20}
+                        value={currentColor.green}
                         type="number"
-                        onChange={(event) => console.log(event.target.value)}
+                        onChange={(event) => {
+                            onColorChange({
+                                ...currentColor,
+                                green: parseInt(event.target.value),
+                            });
+                        }}
                         aria-label="Green Color Channel"
                     >
                         <TextInput.Slot name="left">
@@ -91,9 +107,14 @@ export const ColorPickerInputs = ({
                     </TextInput.Root>
                     <TextInput.Root
                         className={`${styles.valueInput} ${styles.colorChannelInput}`}
-                        value={30}
+                        value={currentColor.blue}
                         type="number"
-                        onChange={(event) => console.log(event.target.value)}
+                        onChange={(event) => {
+                            onColorChange({
+                                ...currentColor,
+                                blue: parseInt(event.target.value),
+                            });
+                        }}
                         aria-label="Blue Color Channel"
                     >
                         <TextInput.Slot name="left">
@@ -104,9 +125,14 @@ export const ColorPickerInputs = ({
             )}
             <TextInput.Root
                 className={`${styles.valueInput} ${styles.colorAlphaInput}`}
-                value={100}
+                value={currentColor.alpha}
                 type="number"
-                onChange={(event) => console.log(event.target.value)}
+                onChange={(event) => {
+                    onColorChange({
+                        ...currentColor,
+                        alpha: parseInt(event.target.value),
+                    });
+                }}
                 aria-label="Color Opacity"
             >
                 <TextInput.Slot name="right">%</TextInput.Slot>
