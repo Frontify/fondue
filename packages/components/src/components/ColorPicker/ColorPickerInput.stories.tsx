@@ -21,9 +21,9 @@ export default meta;
 
 export const Default: Story = {
     args: {
-        currentColor: { red: 230, green: 100, blue: 50, alpha: 0.8 },
+        currentColor: { red: 230, green: 100, blue: 50, alpha: 0.8, name: 'custom-color' },
     },
     render: (args) => {
-        return <ColorPicker.Input currentColor={args.currentColor} isOpen={true} onClear={() => {}} />;
+        return <ColorPicker.Input {...args} onClear={() => {}} />;
     },
 };

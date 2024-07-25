@@ -2,7 +2,8 @@
 
 import { type RgbaColor } from './types';
 
-export const DEFAULT_COLOR = { red: 255, green: 255, blue: 255, alpha: 1 };
+export const DEFAULT_COLOR = { red: 255, green: 255, blue: 255, alpha: 1, name: '' };
+export const DEFAULT_FORMAT = 'HEX';
 
 export const colorToCss = (color?: RgbaColor) => {
     if (!color) {

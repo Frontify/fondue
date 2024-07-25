@@ -34,7 +34,7 @@ export const Default: Story = {
         const [currentColor, setCurrentColor] = useState(args.currentColor);
         return (
             <>
-                <span>{currentColor.name}</span>
+                <span>{currentColor?.name}</span>
                 <ColorPicker.Root defaultFormat="HEX" currentColor={currentColor} onColorChange={setCurrentColor}>
                     <ColorPicker.Values />
                     <ColorPicker.Gradient />

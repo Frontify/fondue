@@ -7,7 +7,7 @@ import { TextInput } from '../TextInput/TextInput';
 
 import styles from './styles/customColorPicker.module.scss';
 import { type RgbaColor } from './types';
-import { DEFAULT_COLOR, hexColorToRgb, isValidHexColor, rgbColorToHex } from './utils';
+import { DEFAULT_COLOR, DEFAULT_FORMAT, hexColorToRgb, isValidHexColor, rgbColorToHex } from './utils';
 
 type ColorFormat = 'HEX' | 'RGBA';
 
@@ -26,19 +26,19 @@ type ColorValueInputProps = {
      * @ignore
      * The format to use for the color input, passed down from the root component
      */
-    currentFormat: ColorFormat;
+    currentFormat?: ColorFormat;
     /**
      * @ignore
      * The format to use for the color input, passed down from the root component
      */
-    setCurrentFormat: (format: ColorFormat) => void;
+    setCurrentFormat?: (format: ColorFormat) => void;
 };
 
 export const ColorValueInput = ({
     currentColor = DEFAULT_COLOR,
     onColorChange = () => {},
-    currentFormat,
-    setCurrentFormat,
+    currentFormat = DEFAULT_FORMAT,
+    setCurrentFormat = () => {},
 }: ColorValueInputProps) => {
     const [hexColorValue, setHexColorValue] = useState<string>(rgbColorToHex(currentColor));
 

@@ -15,7 +15,7 @@ type ColorPickerInputProps = {
     /**
      * The open state of the color picker used to dermine arrow state
      */
-    isOpen?: (color: RgbaColor) => void;
+    isOpen?: boolean;
     /**
      * callback for clearing the color
      */

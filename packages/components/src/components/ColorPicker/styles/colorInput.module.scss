@@ -56,3 +56,13 @@
     height: sizeToken(4);
     border-radius: sizeToken(1);
 }
+
+.caret {
+    @include transition-all;
+}
+
+[data-open-state='true'] {
+    .caret {
+        transform: rotate(180deg);
+    }
+}
