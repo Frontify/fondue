@@ -4,7 +4,7 @@ import { type Color } from './types';
 
 export const colorToCss = (color?: Color) => {
     if (!color) {
-        return 'rgba(0, 0, 0, 1)';
+        return undefined;
     }
     return `rgba(${color.red}, ${color.green}, ${color.blue}, ${color.alpha || 1})`;
 };
@@ -30,8 +30,6 @@ export const areColorsEqual = (color1?: Color, color2?: Color): boolean => {
 
 export const isValidHexColor = (color: string): boolean => {
     const hexRegex = /^([\dA-Fa-f]{3}){1,2}$/;
-    console.log(color.length > 2 && hexRegex.test(color));
-
     return color.length > 2 && hexRegex.test(color);
 };
 

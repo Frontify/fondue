@@ -4,7 +4,9 @@ import { type Meta, type StoryObj } from '@storybook/react';
 import { useState } from 'react';
 
 import { BrandColorPicker } from './BrandColorPicker';
+import { ColorGradientInput } from './ColorGradientInput';
 import { ColorPicker } from './ColorPicker';
+import { ColorValueInput } from './ColorValueInput';
 import { CustomColorPicker } from './CustomColorPicker';
 import { type Color } from './types';
 
@@ -54,7 +56,10 @@ export const Default: Story = {
         return (
             <ColorPicker currentColor={currentColor} onColorChange={setCurrentColor}>
                 <BrandColorPicker palettes={palettes} />
-                <CustomColorPicker palettes={palettes} />
+                <CustomColorPicker>
+                    <ColorValueInput defaultFormat="HEX" />
+                    <ColorGradientInput />
+                </CustomColorPicker>
             </ColorPicker>
         );
     },

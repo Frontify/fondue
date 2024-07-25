@@ -37,6 +37,14 @@
     color: var(--text-color-weak);
 }
 
+.gradientInput {
+    width: 100%;
+
+    .reactColorful {
+        width: 100%;
+    }
+}
+
 //remove arrows from number inputs
 .valueInput input::-webkit-outer-spin-button,
 .valueInput input::-webkit-inner-spin-button {
