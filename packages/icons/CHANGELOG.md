@@ -1,5 +1,15 @@
 # @frontify/fondue-icons
 
+## 0.3.0
+
+### Minor Changes
+
+-   [#1970](https://github.com/Frontify/fondue/pull/1970) [`c502760`](https://github.com/Frontify/fondue/commit/c5027602c21c0c5a0861879b9d0896e7f5627a5f) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix: remove empty aria-labelledby from `accordion`, add aria-hidden to `icons`
+
+### Patch Changes
+
+-   [#1968](https://github.com/Frontify/fondue/pull/1968) [`032dfff`](https://github.com/Frontify/fondue/commit/032dfffb1b7eed0dafbb6e12f7aa16a74f34b2a6) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+
 ## 0.2.5
 
 ### Patch Changes
