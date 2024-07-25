@@ -11,7 +11,7 @@ export type Palette = {
 export type BrandColorPickerProps = {
     palettes?: Palette[];
     currentColor?: Color;
-    onColorSelected?: (color: Color) => void;
+    onColorChange?: (color: Color) => void;
 };
 
 export type Color = {
@@ -24,7 +24,7 @@ export type Color = {
 export type ColorPickerProps = {
     children?: ReactNode;
     currentColor?: Color;
-    onSelect: (color: Color) => void;
+    onColorChange: (color: Color) => void;
     showPreview?: boolean;
     allowCustomColor?: boolean;
 };

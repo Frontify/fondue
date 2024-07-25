@@ -1,10 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 @import '../../../utilities/sizeToken.module.scss';
 @import '../../../utilities/focusStyle.module.scss';
-
-.input {
-    display: block;
-}
+@import '../../../utilities/mediaQuery.module.scss';
 
 .root {
     display: none;
@@ -13,64 +10,40 @@
         display: flex;
         flex-direction: column;
         gap: sizeToken(4);
-        height: sizeToken(20);
-        background-color: blue;
         width: 100%;
     }
 }
 
-.header {
-    display: flex;
+.inputs {
+    display: grid;
+    grid-template-columns: 1fr;
     gap: sizeToken(2);
+    width: 100%;
 
-    .search {
-        flex-grow: 1;
+    @include sm {
+        grid-template-columns: minmax(min-content, 100px) repeat(3, 1fr) minmax(min-content, 100px);
     }
 }
 
-.paletteList {
-    display: flex;
-    flex-direction: column;
-    gap: sizeToken(4);
-}
+.colorHexInput {
+    grid-column: 1;
 
-.palettePreview {
-    display: flex;
-    flex-direction: column;
-    gap: sizeToken(2);
-}
-
-.colorList {
-    display: flex;
-    flex-direction: row;
-    gap: sizeToken(4);
-
-    [data-layout='list'] & {
-        display: flex;
-        flex-direction: column;
-        gap: sizeToken(4);
+    @include sm {
+        grid-column: 2 / 5;
     }
 }
-.colorContainer {
-    display: flex;
-    align-items: center;
-    flex-direction: row;
-    gap: sizeToken(2);
+
+.inputDecorator {
+    color: var(--text-color-weak);
 }
 
-.colorPreview {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: sizeToken(6);
-    height: sizeToken(6);
-    border-radius: sizeToken(1);
-    box-shadow: var(--shadow-color-box-neutral-pressed);
-    color: var(--text-color);
+//remove arrows from number inputs
+.valueInput input::-webkit-outer-spin-button,
+.valueInput input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
-.colorName {
-    text-align: left;
-    width: sizeToken(20);
-    height: sizeToken(6);
+.valueInput input[type='number'] {
+    -moz-appearance: textfield;
 }

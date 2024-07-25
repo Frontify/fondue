@@ -13,19 +13,20 @@ type PickerType = 'brand' | 'custom';
 
 export const ColorPicker = ({
     currentColor,
-    onSelect,
+    onColorChange,
     showPreview = true,
     allowCustomColor = true,
     children,
 }: ColorPickerProps) => {
-    const [activePicker, setActivePicker] = useState<PickerType>('brand');
+    const [activePicker, setActivePicker] = useState<PickerType>('custom');
 
     return (
         <div className={styles.root}>
             {showPreview && <ColorPreview color={currentColor} />}
             <div className={styles.pickerSwitcher}>
                 <SegmentedControl.Root
-                    defaultValue="brand"
+                    defaultValue="custom"
+                    value={activePicker}
                     onValueChange={(value) => setActivePicker(value as PickerType)}
                 >
                     <SegmentedControl.Item value="brand" aria-label="Brand">
@@ -44,7 +45,7 @@ export const ColorPicker = ({
                         data-test="tttt"
                         currentColor={currentColor}
                         onColorSelected={(color: Color) => {
-                            onSelect(color);
+                            onColorChange(color);
                         }}
                     >
                         {child}

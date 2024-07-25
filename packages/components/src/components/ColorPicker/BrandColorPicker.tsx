@@ -15,8 +15,8 @@ type BrandColorView = 'grid' | 'list';
 export const BrandColorPicker = ({
     currentColor,
     palettes = [],
-    onColorSelected = () => {
-        console.log('default');
+    onColorChange = () => {
+        console.log('default brand');
     },
     ...props
 }: BrandColorPickerProps) => {
@@ -87,7 +87,7 @@ export const BrandColorPicker = ({
                                       <li key={color.name} data-test-id="brand-color">
                                           <button
                                               className={styles.colorContainer}
-                                              onClick={() => onColorSelected(color)}
+                                              onClick={() => onColorChange(color)}
                                               type="button"
                                               aria-label={`color value: ${color.name}`}
                                           >
