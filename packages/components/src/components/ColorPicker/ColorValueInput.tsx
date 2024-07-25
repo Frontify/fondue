@@ -1,17 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useEffect, useState } from 'react';
+import { forwardRef, useEffect, useState } from 'react';
 
 import { Select } from '../Select/Select';
 import { TextInput } from '../TextInput/TextInput';
 
-import { type CustomColorPickerProps } from './CustomColorPicker';
 import styles from './styles/customColorPicker.module.scss';
+import { type ColorPickerProps } from './types';
 import { hexColorToRgb, isValidHexColor, rgbColorToHex } from './utils';
 
 type ColorFormat = 'HEX' | 'RGBA';
 
-type ColorValueInputProps = CustomColorPickerProps & {
+type ColorValueInputProps = ColorPickerProps & {
     defaultFormat?: ColorFormat;
 };
 
@@ -19,7 +19,6 @@ export const ColorValueInput = ({
     currentColor = { red: 150, green: 150, blue: 150, alpha: 1 },
     onColorChange = () => {},
     defaultFormat = 'HEX',
-    ...props
 }: ColorValueInputProps) => {
     const [currentFormat, setCurrentFormat] = useState<ColorFormat>(defaultFormat);
     const [hexColorValue, setHexColorValue] = useState<string>(rgbColorToHex(currentColor));
@@ -29,7 +28,7 @@ export const ColorValueInput = ({
     }, [currentColor]);
 
     return (
-        <div className={styles.inputs} data-test-id="custom-color-value-inputs" {...props}>
+        <div className={styles.inputs} data-test-id="custom-color-value-inputs">
             <div className={styles.colorFormatInput}>
                 <Select
                     aria-label="Select an item"
@@ -163,4 +162,6 @@ export const ColorValueInput = ({
         </div>
     );
 };
-ColorValueInput.displayName = 'ColorPicker.ValueInput';
+ColorValueInput.displayName = 'ColorPicker.Values';
+
+export const ForwardedRefColorValueInput = forwardRef<HTMLDivElement, ColorPickerProps>(ColorValueInput);

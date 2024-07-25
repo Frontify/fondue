@@ -9,10 +9,9 @@ export type Color = {
     alpha?: number;
     name?: string;
 };
+
 export type ColorPickerProps = {
     children?: ReactNode;
     currentColor?: Color;
-    onColorChange: (color: Color) => void;
-    showPreview?: boolean;
-    allowCustomColor?: boolean;
+    onColorChange?: (color: Color) => void;
 };
