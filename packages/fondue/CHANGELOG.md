@@ -1,5 +1,25 @@
 # @frontify/fondue
 
+## 12.2.0
+
+### Minor Changes
+
+-   [#1966](https://github.com/Frontify/fondue/pull/1966) [`74b5db0`](https://github.com/Frontify/fondue/commit/74b5db0bcf372eda40c0bc6cfa543c1f647cd35a) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - chore: update blue color
+
+### Patch Changes
+
+-   [#1969](https://github.com/Frontify/fondue/pull/1969) [`2bf6b97`](https://github.com/Frontify/fondue/commit/2bf6b97231d953b05a04ebd90ecdb0e4aa82d7e4) Thanks [@Kenny806](https://github.com/Kenny806)! - feat: add forwardRef to TreeItem component
+
+-   [#1965](https://github.com/Frontify/fondue/pull/1965) [`f56adc1`](https://github.com/Frontify/fondue/commit/f56adc12c183d9101aa35002df75add674f9ff00) Thanks [@joseazevedo88](https://github.com/joseazevedo88)! - Table: add column align prop and possibility for custom column headers as components
+
+-   [#1968](https://github.com/Frontify/fondue/pull/1968) [`032dfff`](https://github.com/Frontify/fondue/commit/032dfffb1b7eed0dafbb6e12f7aa16a74f34b2a6) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+
+-   Updated dependencies [[`74b5db0`](https://github.com/Frontify/fondue/commit/74b5db0bcf372eda40c0bc6cfa543c1f647cd35a), [`c502760`](https://github.com/Frontify/fondue/commit/c5027602c21c0c5a0861879b9d0896e7f5627a5f), [`032dfff`](https://github.com/Frontify/fondue/commit/032dfffb1b7eed0dafbb6e12f7aa16a74f34b2a6)]:
+    -   @frontify/fondue-components@2.0.0
+    -   @frontify/fondue-icons@0.3.0
+    -   @frontify/fondue-charts@1.8.10
+    -   @frontify/fondue-tokens@3.5.4
+
 ## 12.1.14
 
 ### Patch Changes
