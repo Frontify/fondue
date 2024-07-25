@@ -1,12 +1,27 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Slot as RadixSlot } from '@radix-ui/react-slot';
-import { Children, forwardRef } from 'react';
+import { Children, forwardRef, type ReactNode } from 'react';
 
 import { ForwardedRefColorGradientInput } from './ColorGradientInput';
 import { ForwardedRefColorValueInput } from './ColorValueInput';
 import styles from './styles/customColorPicker.module.scss';
-import { type ColorPickerProps } from './types';
+import { type RgbaColor } from './types';
+
+type ColorPickerProps = {
+    /**
+     * The children of the color picker component. This can contain multiple `ColorPicker.Values` or `ColorPicker.Gradient` components.
+     */
+    children?: ReactNode;
+    /**
+     * The active color in the color picker
+     */
+    currentColor?: RgbaColor;
+    /**
+     * Event handler called when the color changes
+     */
+    onColorChange?: (color: RgbaColor) => void;
+};
 
 export const ColorPickerRoot = ({ children, ...props }: ColorPickerProps) => {
     return (

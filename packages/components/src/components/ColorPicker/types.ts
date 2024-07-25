@@ -1,17 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ReactNode } from 'react';
-
-export type Color = {
+export type RgbaColor = {
     red: number;
     green: number;
     blue: number;
     alpha?: number;
-    name?: string;
-};
-
-export type ColorPickerProps = {
-    children?: ReactNode;
-    currentColor?: Color;
-    onColorChange?: (color: Color) => void;
 };

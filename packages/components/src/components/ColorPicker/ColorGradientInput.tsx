@@ -4,12 +4,25 @@ import { forwardRef } from 'react';
 import { RgbaColorPicker } from 'react-colorful';
 
 import styles from './styles/customColorPicker.module.scss';
-import { type ColorPickerProps } from './types';
+import { type RgbaColor } from './types';
+
+type ColorGradientInputProps = {
+    /**
+     * @ignore
+     * The active color in the color picker, passed down from the root component
+     */
+    currentColor?: RgbaColor;
+    /**
+     * @ignore
+     * Event handler called when the color changes, passed down from the root component
+     */
+    onColorChange?: (color: RgbaColor) => void;
+};
 
 export const ColorGradientInput = ({
     currentColor = { red: 150, green: 150, blue: 150, alpha: 1 },
     onColorChange = () => {},
-}: ColorPickerProps) => {
+}: ColorGradientInputProps) => {
     return (
         <div className={styles.gradientInput} data-test-id="custom-color-value-inputs">
             <RgbaColorPicker

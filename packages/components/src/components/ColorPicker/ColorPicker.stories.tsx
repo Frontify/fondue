@@ -6,7 +6,6 @@ import { useState } from 'react';
 import { ColorGradientInput } from './ColorGradientInput';
 import { ColorPicker, ColorPickerRoot } from './ColorPicker';
 import { ColorValueInput } from './ColorValueInput';
-import { type Color } from './types';
 
 type Story = StoryObj<typeof meta>;
 const meta: Meta<typeof ColorPickerRoot> = {
@@ -28,13 +27,58 @@ const meta: Meta<typeof ColorPickerRoot> = {
 export default meta;
 
 export const Default: Story = {
-    args: {},
+    args: {
+        currentColor: { red: 230, green: 100, blue: 50, alpha: 0.8 },
+    },
     render: (args) => {
-        const [currentColor, setCurrentColor] = useState<Color | undefined>();
+        const [currentColor, setCurrentColor] = useState(args.currentColor);
         return (
             <ColorPicker.Root currentColor={currentColor} onColorChange={setCurrentColor}>
                 <ColorPicker.Values />
                 <ColorPicker.Gradient />
+            </ColorPicker.Root>
+        );
+    },
+};
+
+export const WithRgbaDefaultFormat: Story = {
+    args: {
+        currentColor: { red: 230, green: 100, blue: 50, alpha: 0.8 },
+    },
+    render: (args) => {
+        const [currentColor, setCurrentColor] = useState(args.currentColor);
+        return (
+            <ColorPicker.Root currentColor={currentColor} onColorChange={setCurrentColor}>
+                <ColorPicker.Values defaultFormat="RGBA" />
+                <ColorPicker.Gradient />
+            </ColorPicker.Root>
+        );
+    },
+};
+
+export const OnlyPicker: Story = {
+    args: {
+        currentColor: { red: 230, green: 100, blue: 50, alpha: 0.8 },
+    },
+    render: (args) => {
+        const [currentColor, setCurrentColor] = useState(args.currentColor);
+        return (
+            <ColorPicker.Root currentColor={currentColor} onColorChange={setCurrentColor}>
+                <ColorPicker.Gradient />
+            </ColorPicker.Root>
+        );
+    },
+};
+
+export const OnlyValues: Story = {
+    args: {
+        currentColor: { red: 230, green: 100, blue: 50, alpha: 0.8 },
+    },
+    render: (args) => {
+        const [currentColor, setCurrentColor] = useState(args.currentColor);
+        return (
+            <ColorPicker.Root currentColor={currentColor} onColorChange={setCurrentColor}>
+                <ColorPicker.Values />
             </ColorPicker.Root>
         );
     },

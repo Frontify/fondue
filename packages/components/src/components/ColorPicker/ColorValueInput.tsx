@@ -6,12 +6,25 @@ import { Select } from '../Select/Select';
 import { TextInput } from '../TextInput/TextInput';
 
 import styles from './styles/customColorPicker.module.scss';
-import { type ColorPickerProps } from './types';
+import { type RgbaColor } from './types';
 import { hexColorToRgb, isValidHexColor, rgbColorToHex } from './utils';
 
 type ColorFormat = 'HEX' | 'RGBA';
 
-type ColorValueInputProps = ColorPickerProps & {
+type ColorValueInputProps = {
+    /**
+     * @ignore
+     * The active color in the color picker, passed down from the root component
+     */
+    currentColor?: RgbaColor;
+    /**
+     * @ignore
+     * Event handler called when the color changes, passed down from the root component
+     */
+    onColorChange?: (color: RgbaColor) => void;
+    /**
+     * The default format to use for the color input
+     */
     defaultFormat?: ColorFormat;
 };
 
