@@ -3,11 +3,11 @@
 import { type Meta, type StoryObj } from '@storybook/react';
 import { useState } from 'react';
 
-import { BrandColorPicker } from './BrandColorPicker';
 import { ColorGradientInput } from './ColorGradientInput';
-import { ColorPicker } from './ColorPicker';
 import { ColorValueInput } from './ColorValueInput';
 import { CustomColorPicker } from './CustomColorPicker';
+import { BrandColorPicker } from './moveToWebApp/BrandColorPicker';
+import { ColorChooser } from './moveToWebApp/ColorChooser';
 import { type Color } from './types';
 
 const palettes = [
@@ -34,9 +34,9 @@ const palettes = [
     },
 ];
 
-type Story = StoryObj<typeof ColorPicker>;
-const meta: Meta<typeof ColorPicker> = {
-    component: ColorPicker,
+type Story = StoryObj<typeof ColorChooser>;
+const meta: Meta<typeof ColorChooser> = {
+    component: ColorChooser,
     tags: ['autodocs'],
     parameters: {
         status: {
@@ -54,13 +54,13 @@ export const Default: Story = {
     render: () => {
         const [currentColor, setCurrentColor] = useState<Color | undefined>();
         return (
-            <ColorPicker currentColor={currentColor} onColorChange={setCurrentColor}>
+            <ColorChooser currentColor={currentColor} onColorChange={setCurrentColor}>
                 <BrandColorPicker palettes={palettes} />
                 <CustomColorPicker>
-                    <ColorValueInput defaultFormat="HEX" />
+                    <ColorValueInput defaultFormat="RGBA" />
                     <ColorGradientInput />
                 </CustomColorPicker>
-            </ColorPicker>
+            </ColorChooser>
         );
     },
 };

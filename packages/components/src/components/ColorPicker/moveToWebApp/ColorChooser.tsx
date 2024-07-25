@@ -3,15 +3,15 @@
 import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { Children, useState } from 'react';
 
-import { SegmentedControl } from '../SegmentedControl/SegmentedControl';
+import { SegmentedControl } from '../../SegmentedControl/SegmentedControl';
+import { type ColorPickerProps } from '../types';
 
 import { ColorPreview } from './ColorPreview';
 import styles from './styles/colorPicker.module.scss';
-import { type ColorPickerProps } from './types';
 
 type PickerType = 'brand' | 'custom';
 
-export const ColorPicker = ({ showPreview = true, children, ...props }: ColorPickerProps) => {
+export const ColorChooser = ({ showPreview = true, children, ...props }: ColorPickerProps) => {
     const [activePicker, setActivePicker] = useState<PickerType>('custom');
 
     return (
@@ -40,4 +40,4 @@ export const ColorPicker = ({ showPreview = true, children, ...props }: ColorPic
         </div>
     );
 };
-ColorPicker.displayName = 'ColorPicker.Root';
+ColorChooser.displayName = 'ColorChooser';

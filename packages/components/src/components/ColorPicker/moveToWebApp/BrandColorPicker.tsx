@@ -3,12 +3,12 @@
 import { IconCheckMark, IconGridRegular, IconMagnifier, IconStackVertical } from '@frontify/fondue-icons';
 import { useEffect, useState } from 'react';
 
-import { SegmentedControl } from '../SegmentedControl/SegmentedControl';
-import { TextInput } from '../TextInput/TextInput';
+import { SegmentedControl } from '../../SegmentedControl/SegmentedControl';
+import { TextInput } from '../../TextInput/TextInput';
+import { areColorsEqual, colorToCss, isColorLight } from '../utils';
 
 import styles from './styles/brandColorPicker.module.scss';
 import { type BrandColorPickerProps } from './types';
-import { areColorsEqual, colorToCss, isColorLight } from './utils';
 
 type BrandColorView = 'grid' | 'list';
 
@@ -116,4 +116,4 @@ export const BrandColorPicker = ({
         </div>
     );
 };
-BrandColorPicker.displayName = 'ColorPicker.Brand';
+BrandColorPicker.displayName = 'ColorChooser.Brand';

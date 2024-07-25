@@ -2,7 +2,7 @@
 
 import { expect, test } from '@playwright/experimental-ct-react';
 
-import { ColorPicker } from '../ColorPicker';
+import { ColorPicker } from '../moveToWebApp/ColorChooser';
 
 const COLOR_PICKER_TEST_ID = 'test-color-picker';
 const COLOR_PICKER_TEXT = 'sample color-picker';
