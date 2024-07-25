@@ -8,7 +8,7 @@ import { ForwardedRefColorPickerInput } from './ColorPickerInput';
 import { ForwardedRefColorValueInput } from './ColorValueInput';
 import styles from './styles/customColorPicker.module.scss';
 import { type ColorFormat, type RgbaColor } from './types';
-import { DEFAULT_COLOR, rgbColorToHex } from './utils';
+import { DEFAULT_COLOR, DEFAULT_FORMAT, rgbColorToHex } from './utils';
 
 type ColorPickerProps = {
     /**
@@ -27,14 +27,14 @@ type ColorPickerProps = {
      * The default format to use for the color input
      * @default "HEX"
      */
-    defaultFormat: ColorFormat;
+    defaultFormat?: ColorFormat;
 };
 
 export const ColorPickerRoot = ({
     children,
     currentColor = DEFAULT_COLOR,
     onColorChange = () => {},
-    defaultFormat = 'HEX',
+    defaultFormat = DEFAULT_FORMAT,
     ...props
 }: ColorPickerProps) => {
     const [currentFormat, setCurrentFormat] = useState<ColorFormat>(defaultFormat);
@@ -59,7 +59,7 @@ export const ColorPickerRoot = ({
     return (
         <div className={styles.root} data-picker-type="custom-color" data-test-id="custom-color-picker">
             {Children.map(children, (child) => (
-                <RadixSlot
+                <ColorPickerSlot
                     {...props}
                     onColorChange={(color: RgbaColor) => {
                         handleColorChange(color, currentFormat);
@@ -72,12 +72,18 @@ export const ColorPickerRoot = ({
                     }}
                 >
                     {child}
-                </RadixSlot>
+                </ColorPickerSlot>
             ))}
         </div>
     );
 };
 ColorPickerRoot.displayName = 'ColorPicker';
+
+type ColorPickerSlotProps = ColorPickerProps & {
+    currentFormat?: ColorFormat;
+    setCurrentFormat?: (format: ColorFormat) => void;
+};
+const ColorPickerSlot = ({ children, ...props }: ColorPickerSlotProps) => <RadixSlot {...props}>{children}</RadixSlot>;
 
 export const ForwardedRefColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(ColorPickerRoot);
 
