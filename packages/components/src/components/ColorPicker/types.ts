@@ -5,4 +5,7 @@ export type RgbaColor = {
     green: number;
     blue: number;
     alpha?: number;
+    name?: string;
 };
+
+export type ColorFormat = 'HEX' | 'RGBA';

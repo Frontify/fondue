@@ -5,6 +5,7 @@ import { RgbaColorPicker } from 'react-colorful';
 
 import styles from './styles/customColorPicker.module.scss';
 import { type RgbaColor } from './types';
+import { DEFAULT_COLOR } from './utils';
 
 type ColorGradientInputProps = {
     /**
@@ -20,7 +21,7 @@ type ColorGradientInputProps = {
 };
 
 export const ColorGradientInput = ({
-    currentColor = { red: 150, green: 150, blue: 150, alpha: 1 },
+    currentColor = DEFAULT_COLOR,
     onColorChange = () => {},
 }: ColorGradientInputProps) => {
     return (
@@ -47,4 +48,4 @@ export const ColorGradientInput = ({
 };
 ColorGradientInput.displayName = 'ColorPicker.Gradient';
 
-export const ForwardedRefColorGradientInput = forwardRef<HTMLDivElement, ColorPickerProps>(ColorGradientInput);
+export const ForwardedRefColorGradientInput = forwardRef<HTMLDivElement, ColorGradientInputProps>(ColorGradientInput);

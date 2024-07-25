@@ -7,7 +7,7 @@ import { TextInput } from '../TextInput/TextInput';
 
 import styles from './styles/customColorPicker.module.scss';
 import { type RgbaColor } from './types';
-import { hexColorToRgb, isValidHexColor, rgbColorToHex } from './utils';
+import { DEFAULT_COLOR, hexColorToRgb, isValidHexColor, rgbColorToHex } from './utils';
 
 type ColorFormat = 'HEX' | 'RGBA';
 
@@ -23,22 +23,30 @@ type ColorValueInputProps = {
      */
     onColorChange?: (color: RgbaColor) => void;
     /**
-     * The default format to use for the color input
+     * @ignore
+     * The format to use for the color input, passed down from the root component
      */
-    defaultFormat?: ColorFormat;
+    currentFormat: ColorFormat;
+    /**
+     * @ignore
+     * The format to use for the color input, passed down from the root component
+     */
+    setCurrentFormat: (format: ColorFormat) => void;
 };
 
 export const ColorValueInput = ({
-    currentColor = { red: 150, green: 150, blue: 150, alpha: 1 },
+    currentColor = DEFAULT_COLOR,
     onColorChange = () => {},
-    defaultFormat = 'HEX',
+    currentFormat,
+    setCurrentFormat,
 }: ColorValueInputProps) => {
-    const [currentFormat, setCurrentFormat] = useState<ColorFormat>(defaultFormat);
     const [hexColorValue, setHexColorValue] = useState<string>(rgbColorToHex(currentColor));
 
     useEffect(() => {
         setHexColorValue(rgbColorToHex(currentColor));
     }, [currentColor]);
+
+    console.log(currentColor.alpha, currentColor.alpha === undefined ? 100 : Math.trunc(currentColor.alpha * 100));
 
     return (
         <div className={styles.inputs} data-test-id="custom-color-value-inputs">
@@ -155,7 +163,7 @@ export const ColorValueInput = ({
             )}
             <TextInput.Root
                 className={`${styles.valueInput} ${styles.colorAlphaInput}`}
-                value={currentColor === undefined ? 100 : Math.trunc((currentColor.alpha || 1) * 100)}
+                value={currentColor.alpha === undefined ? 100 : Math.trunc(currentColor.alpha * 100)}
                 type="number"
                 onChange={(event) => {
                     onColorChange({
@@ -177,4 +185,4 @@ export const ColorValueInput = ({
 };
 ColorValueInput.displayName = 'ColorPicker.Values';
 
-export const ForwardedRefColorValueInput = forwardRef<HTMLDivElement, ColorPickerProps>(ColorValueInput);
+export const ForwardedRefColorValueInput = forwardRef<HTMLDivElement, ColorValueInputProps>(ColorValueInput);

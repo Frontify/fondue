@@ -1,22 +1,24 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type Color } from './types';
+import { type RgbaColor } from './types';
 
-export const colorToCss = (color?: Color) => {
+export const DEFAULT_COLOR = { red: 255, green: 255, blue: 255, alpha: 1 };
+
+export const colorToCss = (color?: RgbaColor) => {
     if (!color) {
         return undefined;
     }
     return `rgba(${color.red}, ${color.green}, ${color.blue}, ${color.alpha || 1})`;
 };
 
-export const isColorLight = (color: Color): boolean => {
+export const isColorLight = (color: RgbaColor): boolean => {
     // copied brightness calculation from tiny color
     const brightness = (color.red * 299 + color.green * 587 + color.blue * 114) / 1000;
 
     return brightness > 128 || (color.alpha && color.alpha < 0.25) || false;
 };
 
-export const areColorsEqual = (color1?: Color, color2?: Color): boolean => {
+export const areColorsEqual = (color1?: RgbaColor, color2?: RgbaColor): boolean => {
     if (!color1 || !color2) {
         return false;
     }

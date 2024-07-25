@@ -33,10 +33,13 @@ export const Default: Story = {
     render: (args) => {
         const [currentColor, setCurrentColor] = useState(args.currentColor);
         return (
-            <ColorPicker.Root currentColor={currentColor} onColorChange={setCurrentColor}>
-                <ColorPicker.Values />
-                <ColorPicker.Gradient />
-            </ColorPicker.Root>
+            <>
+                <span>{currentColor.name}</span>
+                <ColorPicker.Root defaultFormat="HEX" currentColor={currentColor} onColorChange={setCurrentColor}>
+                    <ColorPicker.Values />
+                    <ColorPicker.Gradient />
+                </ColorPicker.Root>
+            </>
         );
     },
 };
