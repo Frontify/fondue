@@ -35,7 +35,13 @@ export const isValidHexColor = (color: string): boolean => {
     return color.length > 2 && hexRegex.test(color);
 };
 
-export const hexColorToRgb = (hex: string): Color => {
+type RgbColor = {
+    red: number;
+    green: number;
+    blue: number;
+};
+
+export const hexColorToRgb = (hex: string): RgbColor => {
     const hexRegex = /^([\dA-Fa-f]{3}){1,2}$/;
     const matches = hex.match(hexRegex);
     if (!matches) {
@@ -58,4 +64,9 @@ export const hexColorToRgb = (hex: string): Color => {
         green: parseInt(hexColor.slice(2, 4), 16),
         blue: parseInt(hexColor.slice(4, 6), 16),
     };
+};
+
+export const rgbColorToHex = (rgb: RgbColor): string => {
+    const { red, green, blue } = rgb;
+    return `${red.toString(16).padStart(2, '0')}${green.toString(16).padStart(2, '0')}${blue.toString(16).padStart(2, '0')}`;
 };
