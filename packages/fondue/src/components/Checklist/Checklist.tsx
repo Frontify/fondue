@@ -113,15 +113,25 @@ export const Checklist = ({
             const currentIndex = focusableElements.indexOf(document.activeElement as HTMLInputElement);
             let nextIndex = currentIndex;
 
-            switch (event.key) {
-                case 'ArrowDown':
-                    nextIndex = (currentIndex + 1) % focusableElements.length;
-                    break;
-                case 'ArrowUp':
-                    nextIndex = (currentIndex - 1 + focusableElements.length) % focusableElements.length;
-                    break;
-                default:
-                    return;
+            if (event.key === 'ArrowDown' || event.key === 'ArrowRight') {
+                nextIndex++;
+                if (nextIndex === focusableElements.length) {
+                    nextIndex = 0;
+                }
+                if (focusableElements[nextIndex].disabled) {
+                    nextIndex++;
+                }
+            } else if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') {
+                nextIndex--;
+                if (nextIndex === -1) {
+                    nextIndex = focusableElements.length - 1;
+                }
+
+                if (focusableElements[nextIndex].disabled) {
+                    nextIndex--;
+                }
+            } else {
+                return;
             }
 
             focusableElements[nextIndex].focus();
@@ -155,26 +165,24 @@ export const Checklist = ({
             ])}
             ref={listContainerRef}
         >
-            {checkboxes.map((checkbox, index) => {
-                return (
-                    <div
-                        key={checkbox.value}
-                        style={{
-                            maxWidth: listContainerRef?.current?.getBoundingClientRect().width,
-                            gridColumn:
-                                index === checkboxes.length - 1 && direction === ChecklistDirection.Vertical
-                                    ? getLastItemColumnSpan(checkboxes, columns)
-                                    : undefined,
-                        }}
-                    >
-                        <ChecklistItem
-                            checkbox={checkbox}
-                            state={state}
-                            forwardedRef={(el) => (checkboxRefs.current[index] = el)}
-                        />
-                    </div>
-                );
-            })}
+            {checkboxes.map((checkbox, index) => (
+                <div
+                    key={checkbox.value}
+                    style={{
+                        maxWidth: listContainerRef?.current?.getBoundingClientRect().width,
+                        gridColumn:
+                            index === checkboxes.length - 1 && direction === ChecklistDirection.Vertical
+                                ? getLastItemColumnSpan(checkboxes, columns)
+                                : undefined,
+                    }}
+                >
+                    <ChecklistItem
+                        checkbox={checkbox}
+                        state={state}
+                        forwardedRef={(el) => (checkboxRefs.current[index] = el)}
+                    />
+                </div>
+            ))}
         </div>
     );
 };
