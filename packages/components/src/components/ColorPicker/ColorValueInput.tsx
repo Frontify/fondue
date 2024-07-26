@@ -90,20 +90,10 @@ export const ColorValueInput = (
                         className={styles.valueInput}
                         value={currentColor.red}
                         type="number"
-                        onBlur={(event) => {
-                            if (event.target.value.length === 0) {
-                                onColorChange({
-                                    ...currentColor,
-                                    red: 0,
-                                });
-                            }
-                        }}
                         onChange={(event) => {
-                            console.log(parseInt(event.target.value));
-
                             onColorChange({
                                 ...currentColor,
-                                red: parseInt(event.target.value),
+                                red: limitedColorChannelValue(event.target.value),
                             });
                         }}
                         aria-label="Red Color Channel"
@@ -116,18 +106,10 @@ export const ColorValueInput = (
                         className={styles.valueInput}
                         value={currentColor.green}
                         type="number"
-                        onBlur={(event) => {
-                            if (event.target.value.length === 0) {
-                                onColorChange({
-                                    ...currentColor,
-                                    green: 0,
-                                });
-                            }
-                        }}
                         onChange={(event) => {
                             onColorChange({
                                 ...currentColor,
-                                green: parseInt(event.target.value),
+                                green: limitedColorChannelValue(event.target.value),
                             });
                         }}
                         aria-label="Green Color Channel"
@@ -140,18 +122,10 @@ export const ColorValueInput = (
                         className={styles.valueInput}
                         value={currentColor.blue}
                         type="number"
-                        onBlur={(event) => {
-                            if (event.target.value.length === 0) {
-                                onColorChange({
-                                    ...currentColor,
-                                    blue: 0,
-                                });
-                            }
-                        }}
                         onChange={(event) => {
                             onColorChange({
                                 ...currentColor,
-                                blue: parseInt(event.target.value),
+                                blue: limitedColorChannelValue(event.target.value),
                             });
                         }}
                         aria-label="Blue Color Channel"
@@ -170,7 +144,7 @@ export const ColorValueInput = (
                     onChange={(event) => {
                         onColorChange({
                             ...currentColor,
-                            alpha: parseInt(event.target.value) / 100,
+                            alpha: limitedColorChannelValue(event.target.value, 0, 100) / 100,
                         });
                     }}
                     aria-label="Color Opacity"
@@ -187,5 +161,14 @@ export const ColorValueInput = (
     );
 };
 ColorValueInput.displayName = 'ColorPicker.Values';
+
+const limitedColorChannelValue = (value: string, min: number = 0, max: number = 255): number => {
+    if (value.length === 0 || parseInt(value) < min) {
+        return min;
+    } else if (parseInt(value) > max) {
+        return max;
+    }
+    return parseInt(value);
+};
 
 export const ForwardedRefColorValueInput = forwardRef<HTMLDivElement, ColorValueInputProps>(ColorValueInput);
