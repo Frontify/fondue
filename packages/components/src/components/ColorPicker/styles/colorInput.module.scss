@@ -24,7 +24,7 @@
 
     text-align: start;
     height: sizeToken(9);
-    color: var(--text-color);
+    color: var(--text-color-x-weak);
     background-color: var(--base-color);
     border-radius: var(--radius);
     border: var(--line-width) solid var(--line-color-strong);
@@ -32,10 +32,13 @@
 
     &:hover {
         border-color: var(--line-color-x-strong);
+        color: var(--text-color-weak);
     }
 
-    &:has(:focus-visible) {
+    &:has(:focus-visible),
+    &[data-state='open'] {
         border-color: var(--line-color-xx-strong);
+        color: var(--line-color-xx-strong);
     }
 
     &:has(input:disabled),
@@ -61,7 +64,7 @@
     @include transition-all;
 }
 
-[data-open-state='true'] {
+[data-state='open'] {
     .caret {
         transform: rotate(180deg);
     }

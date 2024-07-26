@@ -27,3 +27,10 @@ export const Default: Story = {
         return <ColorPicker.Input {...args} onClear={() => {}} />;
     },
 };
+
+export const Empty: Story = {
+    args: {},
+    render: (args) => {
+        return <ColorPicker.Input {...args} onClear={() => {}} />;
+    },
+};

@@ -27,19 +27,13 @@ type ColorPickerInputProps = {
 };
 
 export const ColorPickerInput = (
-    {
-        currentColor,
-        onClear,
-        isOpen,
-        'data-test-id': dataTestId = 'color-picker-input',
-        ...props
-    }: ColorPickerInputProps,
+    { currentColor, onClear, 'data-test-id': dataTestId = 'color-picker-input', ...props }: ColorPickerInputProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
     const colorNameId = useId();
 
     return (
-        <div className={styles.input} data-open-state={isOpen} {...props} ref={forwardedRef} data-test-id={dataTestId}>
+        <div className={styles.input} {...props} ref={forwardedRef} data-test-id={dataTestId}>
             {currentColor?.red !== undefined ? (
                 <div
                     aria-describedby={colorNameId}
@@ -47,14 +41,17 @@ export const ColorPickerInput = (
                     style={{ backgroundColor: colorToCss(currentColor) }}
                 />
             ) : (
-                <IconDroplet size={16} />
+                <>
+                    <IconDroplet size={16} />
+                    <span>Select Color</span>
+                </>
             )}
 
             <span id={colorNameId} className={styles.colorName}>
                 {currentColor?.name}
             </span>
             {onClear && (
-                <button type="button" aria-label="Clear color" className={styles.clear}>
+                <button type="button" aria-label="Clear color" onClick={onClear} className={styles.clear}>
                     <IconTrashBin size={16} />
                 </button>
             )}
