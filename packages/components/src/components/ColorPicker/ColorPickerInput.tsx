@@ -3,6 +3,7 @@
 import { IconCaretDown, IconDroplet, IconTrashBin } from '@frontify/fondue-icons';
 import { type ForwardedRef, forwardRef, useId } from 'react';
 
+import { CommonAriaAttrs } from '#/utilities/types';
 import styles from './styles/colorInput.module.scss';
 import { type RgbaColor } from './types';
 import { colorToCss } from './utils';
@@ -24,7 +25,7 @@ type ColorPickerInputProps = {
      * The test id of the color picker input
      */
     'data-test-id'?: string;
-};
+} & CommonAriaAttrs;
 
 export const ColorPickerInput = (
     { currentColor, onClear, 'data-test-id': dataTestId = 'color-picker-input', ...props }: ColorPickerInputProps,

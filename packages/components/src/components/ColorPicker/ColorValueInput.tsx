@@ -65,8 +65,7 @@ export const ColorValueInput = (
         <div className={styles.inputs} data-test-id={dataTestId} ref={forwardedRef}>
             <div className={styles.colorFormatInput}>
                 <Select
-                    aria-label="Select an item"
-                    placeholder="Select a Format"
+                    aria-label="Select a color format"
                     onSelect={(selectedValue) => {
                         setCurrentFormat(selectedValue as ColorFormat);
                     }}
