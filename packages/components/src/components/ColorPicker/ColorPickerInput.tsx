@@ -3,7 +3,8 @@
 import { IconCaretDown, IconDroplet, IconTrashBin } from '@frontify/fondue-icons';
 import { type ForwardedRef, forwardRef, useId } from 'react';
 
-import { CommonAriaAttrs } from '#/utilities/types';
+import { type CommonAriaAttrs } from '#/utilities/types';
+
 import styles from './styles/colorInput.module.scss';
 import { type RgbaColor } from './types';
 import { colorToCss } from './utils';
