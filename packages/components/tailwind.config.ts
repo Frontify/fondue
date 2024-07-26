@@ -36,10 +36,10 @@ export default {
                 none: 'none',
             },
             ringColor: {
-                blue: '#5495cf',
+                blue: '#4196fb',
             },
             outlineColor: {
-                blue: '#5495cf',
+                blue: '#4196fb',
             },
             colors: {
                 transparent: 'transparent',

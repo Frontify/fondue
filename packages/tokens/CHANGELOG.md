@@ -1,5 +1,11 @@
 # @frontify/fondue-tokens
 
+## 3.5.4
+
+### Patch Changes
+
+-   [#1968](https://github.com/Frontify/fondue/pull/1968) [`032dfff`](https://github.com/Frontify/fondue/commit/032dfffb1b7eed0dafbb6e12f7aa16a74f34b2a6) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+
 ## 3.5.3
 
 ### Patch Changes

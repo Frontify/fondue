@@ -1,0 +1,68 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@import '../../../utilities/sizeToken.module.scss';
+@import '../../../utilities/focusStyle.module.scss';
+@import '../../../utilities/transitions.module.scss';
+
+.switch {
+    @include focus-outline;
+    @include transition-colors;
+
+    position: relative;
+    background-color: var(--box-neutral-color);
+    border-radius: 9999px;
+    border: 1px solid var(--line-color-x-strong);
+    container-type: size;
+
+    &:hover {
+        background-color: var(--box-neutral-color-hover);
+    }
+
+    &.small {
+        width: sizeToken(6);
+        height: sizeToken(3);
+    }
+
+    &.medium {
+        width: sizeToken(7.5);
+        height: sizeToken(4);
+    }
+
+    &.large {
+        width: sizeToken(9);
+        height: sizeToken(5);
+    }
+
+    &[data-state='checked'] {
+        background-color: var(--text-color-weak);
+
+        &:hover {
+            background: var(--box-neutral-strong-color-hover);
+        }
+    }
+
+    &[disabled] {
+        border-color: var(--line-color);
+        background-color: var(--box-neutral-color);
+
+        .thumb {
+            border-color: var(--line-color-strong);
+        }
+    }
+
+    .thumb {
+        display: block;
+        background-color: var(--base-color);
+        border-radius: 9999px;
+        border: 1px solid var(--box-neutral-inverse-color);
+        transition: transform 100ms;
+        transform: translate(-1px, -1px);
+        will-change: transform;
+        width: calc(100cqh + 2px);
+        height: calc(100cqh + 2px);
+
+        &[data-state='checked'] {
+            transform: translate(calc(100cqw - 100% + 1px), -1px);
+        }
+    }
+}
