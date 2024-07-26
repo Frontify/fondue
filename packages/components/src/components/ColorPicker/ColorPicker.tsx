@@ -41,6 +41,10 @@ type ColorPickerProps = {
      * @default "HEX"
      */
     defaultFormat?: ColorFormat;
+    /**
+     * The test id of the color picker
+     */
+    'data-test-id'?: string;
 };
 
 export const ColorPickerRoot = (
@@ -49,6 +53,7 @@ export const ColorPickerRoot = (
         currentColor = DEFAULT_COLOR,
         onColorChange = () => {},
         defaultFormat = DEFAULT_FORMAT,
+        'data-test-id': dataTestId = 'color-picker-input',
         ...props
     }: ColorPickerProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
@@ -56,12 +61,7 @@ export const ColorPickerRoot = (
     const [currentFormat, setCurrentFormat] = useState<ColorFormat>(defaultFormat);
 
     return (
-        <div
-            className={styles.root}
-            data-picker-type="custom-color"
-            data-test-id="custom-color-picker"
-            ref={forwardedRef}
-        >
+        <div className={styles.root} data-picker-type="custom-color" data-test-id={dataTestId} ref={forwardedRef}>
             {Children.map(children, (child) => (
                 <ColorPickerSlot
                     {...props}

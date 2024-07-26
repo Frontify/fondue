@@ -18,14 +18,22 @@ type ColorGradientInputProps = {
      * Event handler called when the color changes, passed down from the root component
      */
     onColorChange?: (color: RgbaColor) => void;
+    /**
+     * The test id of the color picker gradient input
+     */
+    'data-test-id'?: string;
 };
 
 export const ColorGradientInput = (
-    { currentColor = DEFAULT_COLOR, onColorChange = () => {} }: ColorGradientInputProps,
+    {
+        currentColor = DEFAULT_COLOR,
+        onColorChange = () => {},
+        'data-test-id': dataTestId = 'color-picker-input',
+    }: ColorGradientInputProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
-        <div className={styles.gradientInput} data-test-id="custom-color-value-inputs" ref={forwardedRef}>
+        <div className={styles.gradientInput} data-test-id={dataTestId} ref={forwardedRef}>
             <RgbaColorPicker
                 className={styles.reactColorful}
                 color={{

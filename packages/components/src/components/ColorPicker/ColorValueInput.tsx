@@ -32,6 +32,10 @@ type ColorValueInputProps = {
      * The format to use for the color input, passed down from the root component
      */
     setCurrentFormat?: (format: ColorFormat) => void;
+    /**
+     * The test id of the color picker value input
+     */
+    'data-test-id'?: string;
 };
 
 export const ColorValueInput = (
@@ -40,6 +44,7 @@ export const ColorValueInput = (
         onColorChange = () => {},
         currentFormat = DEFAULT_FORMAT,
         setCurrentFormat = () => {},
+        'data-test-id': dataTestId = 'color-picker-value-input',
     }: ColorValueInputProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
@@ -50,7 +55,7 @@ export const ColorValueInput = (
     }, [currentColor]);
 
     return (
-        <div className={styles.inputs} data-test-id="custom-color-value-inputs" ref={forwardedRef}>
+        <div className={styles.inputs} data-test-id={dataTestId} ref={forwardedRef}>
             <div className={styles.colorFormatInput}>
                 <Select
                     aria-label="Select an item"

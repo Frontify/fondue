@@ -20,17 +20,27 @@ type ColorPickerInputProps = {
      * callback for clearing the color
      */
     onClear?: () => void;
+    /**
+     * The test id of the color picker input
+     */
+    'data-test-id'?: string;
 };
 
 export const ColorPickerInput = (
-    { currentColor, onClear, isOpen, ...props }: ColorPickerInputProps,
+    {
+        currentColor,
+        onClear,
+        isOpen,
+        'data-test-id': dataTestId = 'color-picker-input',
+        ...props
+    }: ColorPickerInputProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
     const colorNameId = useId();
     console.log(currentColor);
 
     return (
-        <div className={styles.input} data-open-state={isOpen} {...props} ref={forwardedRef}>
+        <div className={styles.input} data-open-state={isOpen} {...props} ref={forwardedRef} data-test-id={dataTestId}>
             {currentColor?.red !== undefined ? (
                 <div
                     aria-describedby={colorNameId}
