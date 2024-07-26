@@ -8,20 +8,7 @@ import { ForwardedRefColorPickerInput } from './ColorPickerInput';
 import { ForwardedRefColorValueInput } from './ColorValueInput';
 import styles from './styles/customColorPicker.module.scss';
 import { type ColorFormat, type RgbaColor } from './types';
-import { DEFAULT_COLOR, DEFAULT_FORMAT, rgbColorToHex } from './utils';
-
-const getColorWithName = (color: RgbaColor, currentFormat: ColorFormat) => {
-    if (currentFormat === 'HEX') {
-        return {
-            ...color,
-            name: `#${rgbColorToHex(color)}`,
-        };
-    }
-    return {
-        ...color,
-        name: `rgba(${color.red}, ${color.green}, ${color.blue}, ${color.alpha || 1})`,
-    };
-};
+import { DEFAULT_COLOR, DEFAULT_FORMAT } from './utils';
 
 type ColorPickerProps = {
     /**

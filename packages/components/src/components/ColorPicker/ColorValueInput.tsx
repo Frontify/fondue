@@ -7,7 +7,14 @@ import { TextInput } from '../TextInput/TextInput';
 
 import styles from './styles/customColorPicker.module.scss';
 import { type RgbaColor } from './types';
-import { DEFAULT_COLOR, DEFAULT_FORMAT, hexColorToRgb, isValidHexColor, rgbColorToHex } from './utils';
+import {
+    DEFAULT_COLOR,
+    DEFAULT_FORMAT,
+    getLimitedColorChannelValue,
+    hexColorToRgb,
+    isValidHexColor,
+    rgbColorToHex,
+} from './utils';
 
 type ColorFormat = 'HEX' | 'RGBA';
 
@@ -98,7 +105,7 @@ export const ColorValueInput = (
                         onChange={(event) => {
                             onColorChange({
                                 ...currentColor,
-                                red: limitedColorChannelValue(event.target.value),
+                                red: getLimitedColorChannelValue(event.target.value),
                             });
                         }}
                         aria-label="Red Color Channel"
@@ -114,7 +121,7 @@ export const ColorValueInput = (
                         onChange={(event) => {
                             onColorChange({
                                 ...currentColor,
-                                green: limitedColorChannelValue(event.target.value),
+                                green: getLimitedColorChannelValue(event.target.value),
                             });
                         }}
                         aria-label="Green Color Channel"
@@ -130,7 +137,7 @@ export const ColorValueInput = (
                         onChange={(event) => {
                             onColorChange({
                                 ...currentColor,
-                                blue: limitedColorChannelValue(event.target.value),
+                                blue: getLimitedColorChannelValue(event.target.value),
                             });
                         }}
                         aria-label="Blue Color Channel"
@@ -149,7 +156,7 @@ export const ColorValueInput = (
                     onChange={(event) => {
                         onColorChange({
                             ...currentColor,
-                            alpha: limitedColorChannelValue(event.target.value, 0, 100) / 100,
+                            alpha: getLimitedColorChannelValue(event.target.value, 0, 100) / 100,
                         });
                     }}
                     aria-label="Color Opacity"
@@ -166,14 +173,5 @@ export const ColorValueInput = (
     );
 };
 ColorValueInput.displayName = 'ColorPicker.Values';
-
-const limitedColorChannelValue = (value: string, min: number = 0, max: number = 255): number => {
-    if (value.length === 0 || parseInt(value) < min) {
-        return min;
-    } else if (parseInt(value) > max) {
-        return max;
-    }
-    return parseInt(value);
-};
 
 export const ForwardedRefColorValueInput = forwardRef<HTMLDivElement, ColorValueInputProps>(ColorValueInput);

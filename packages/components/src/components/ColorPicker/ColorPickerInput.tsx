@@ -37,7 +37,6 @@ export const ColorPickerInput = (
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
     const colorNameId = useId();
-    console.log(currentColor);
 
     return (
         <div className={styles.input} data-open-state={isOpen} {...props} ref={forwardedRef} data-test-id={dataTestId}>
