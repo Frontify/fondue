@@ -78,7 +78,7 @@ export const RadioList = ({
                             value={radio.value}
                             aria-label={radio.hideLabel ? radio.value : undefined}
                             aria-labelledby={!radio.hideLabel ? `${id}-label` : undefined}
-                            aria-describedby={!radio.hideLabel && radio.helperText ? `${id}-label` : undefined}
+                            aria-describedby={!radio.hideLabel && radio.helperText ? `${id}-description` : undefined}
                             aria-checked={radio.value === activeValue}
                             defaultChecked={radio.value === activeValue}
                             className={merge([
