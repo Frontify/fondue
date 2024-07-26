@@ -3,6 +3,7 @@
 import { type Meta, type StoryObj } from '@storybook/react';
 import { useState } from 'react';
 
+import { Button } from '../Button/Button';
 import { Flyout } from '../Flyout/Flyout';
 
 import { ColorGradientInput } from './ColorGradientInput';
@@ -92,9 +93,11 @@ export const OnlyValues: Story = {
 export const InFlyout: Story = {
     args: {},
     render: (args) => {
+        const [savedColor, setSavedColor] = useState(args.currentColor);
         const [currentColor, setCurrentColor] = useState(args.currentColor);
+        const [isOpen, setIsOpen] = useState(true);
         return (
-            <Flyout.Root open={true}>
+            <Flyout.Root open={isOpen} onOpenChange={setIsOpen}>
                 <Flyout.Trigger>
                     <ColorPicker.Input
                         currentColor={currentColor}
@@ -103,18 +106,38 @@ export const InFlyout: Story = {
                         }}
                     />
                 </Flyout.Trigger>
-
                 <Flyout.Content maxWidth="600px">
-                    <div className="tw-p-4 md:tw-w-[600px]">
-                        <ColorPicker.Root
-                            defaultFormat="RGBA"
-                            currentColor={currentColor}
-                            onColorChange={setCurrentColor}
+                    <Flyout.Body>
+                        <div className="tw-p-2 md:tw-w-[450px]">
+                            <ColorPicker.Root
+                                defaultFormat="RGBA"
+                                currentColor={currentColor}
+                                onColorChange={setCurrentColor}
+                            >
+                                <ColorPicker.Values />
+                                <ColorPicker.Gradient />
+                            </ColorPicker.Root>
+                        </div>
+                    </Flyout.Body>
+                    <Flyout.Footer>
+                        <Button
+                            emphasis="default"
+                            onPress={() => {
+                                setIsOpen(false);
+                                setCurrentColor(savedColor);
+                            }}
                         >
-                            <ColorPicker.Values />
-                            <ColorPicker.Gradient />
-                        </ColorPicker.Root>
-                    </div>
+                            Cancel
+                        </Button>
+                        <Button
+                            onPress={() => {
+                                setIsOpen(false);
+                                setSavedColor(currentColor);
+                            }}
+                        >
+                            Save
+                        </Button>
+                    </Flyout.Footer>
                 </Flyout.Content>
             </Flyout.Root>
         );
