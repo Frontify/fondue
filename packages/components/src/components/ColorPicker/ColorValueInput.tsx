@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { forwardRef, useEffect, useState } from 'react';
+import { type ForwardedRef, forwardRef, useEffect, useState } from 'react';
 
 import { Select } from '../Select/Select';
 import { TextInput } from '../TextInput/TextInput';
@@ -34,22 +34,23 @@ type ColorValueInputProps = {
     setCurrentFormat?: (format: ColorFormat) => void;
 };
 
-export const ColorValueInput = ({
-    currentColor = DEFAULT_COLOR,
-    onColorChange = () => {},
-    currentFormat = DEFAULT_FORMAT,
-    setCurrentFormat = () => {},
-}: ColorValueInputProps) => {
+export const ColorValueInput = (
+    {
+        currentColor = DEFAULT_COLOR,
+        onColorChange = () => {},
+        currentFormat = DEFAULT_FORMAT,
+        setCurrentFormat = () => {},
+    }: ColorValueInputProps,
+    forwardedRef: ForwardedRef<HTMLDivElement>,
+) => {
     const [hexColorValue, setHexColorValue] = useState<string>(rgbColorToHex(currentColor));
 
     useEffect(() => {
         setHexColorValue(rgbColorToHex(currentColor));
     }, [currentColor]);
 
-    console.log(currentColor.alpha, currentColor.alpha === undefined ? 100 : Math.trunc(currentColor.alpha * 100));
-
     return (
-        <div className={styles.inputs} data-test-id="custom-color-value-inputs">
+        <div className={styles.inputs} data-test-id="custom-color-value-inputs" ref={forwardedRef}>
             <div className={styles.colorFormatInput}>
                 <Select
                     aria-label="Select an item"

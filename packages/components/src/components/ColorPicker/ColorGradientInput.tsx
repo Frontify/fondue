@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { forwardRef } from 'react';
+import { type ForwardedRef, forwardRef } from 'react';
 import { RgbaColorPicker } from 'react-colorful';
 
 import styles from './styles/customColorPicker.module.scss';
@@ -20,12 +20,12 @@ type ColorGradientInputProps = {
     onColorChange?: (color: RgbaColor) => void;
 };
 
-export const ColorGradientInput = ({
-    currentColor = DEFAULT_COLOR,
-    onColorChange = () => {},
-}: ColorGradientInputProps) => {
+export const ColorGradientInput = (
+    { currentColor = DEFAULT_COLOR, onColorChange = () => {} }: ColorGradientInputProps,
+    forwardedRef: ForwardedRef<HTMLDivElement>,
+) => {
     return (
-        <div className={styles.gradientInput} data-test-id="custom-color-value-inputs">
+        <div className={styles.gradientInput} data-test-id="custom-color-value-inputs" ref={forwardedRef}>
             <RgbaColorPicker
                 className={styles.reactColorful}
                 color={{

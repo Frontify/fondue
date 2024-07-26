@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Slot as RadixSlot } from '@radix-ui/react-slot';
-import { Children, forwardRef, useCallback, useState, type ReactNode } from 'react';
+import { Children, forwardRef, useState, type ForwardedRef, type ReactNode } from 'react';
 
 import { ForwardedRefColorGradientInput } from './ColorGradientInput';
 import { ForwardedRefColorPickerInput } from './ColorPickerInput';
@@ -9,6 +9,19 @@ import { ForwardedRefColorValueInput } from './ColorValueInput';
 import styles from './styles/customColorPicker.module.scss';
 import { type ColorFormat, type RgbaColor } from './types';
 import { DEFAULT_COLOR, DEFAULT_FORMAT, rgbColorToHex } from './utils';
+
+const getColorWithName = (color: RgbaColor, currentFormat: ColorFormat) => {
+    if (currentFormat === 'HEX') {
+        return {
+            ...color,
+            name: `#${rgbColorToHex(color)}`,
+        };
+    }
+    return {
+        ...color,
+        name: `rgba(${color.red}, ${color.green}, ${color.blue}, ${color.alpha || 1})`,
+    };
+};
 
 type ColorPickerProps = {
     /**
@@ -30,45 +43,36 @@ type ColorPickerProps = {
     defaultFormat?: ColorFormat;
 };
 
-export const ColorPickerRoot = ({
-    children,
-    currentColor = DEFAULT_COLOR,
-    onColorChange = () => {},
-    defaultFormat = DEFAULT_FORMAT,
-    ...props
-}: ColorPickerProps) => {
+export const ColorPickerRoot = (
+    {
+        children,
+        currentColor = DEFAULT_COLOR,
+        onColorChange = () => {},
+        defaultFormat = DEFAULT_FORMAT,
+        ...props
+    }: ColorPickerProps,
+    forwardedRef: ForwardedRef<HTMLDivElement>,
+) => {
     const [currentFormat, setCurrentFormat] = useState<ColorFormat>(defaultFormat);
 
-    const handleColorChange = useCallback(
-        (color: RgbaColor, currentFormat: ColorFormat) => {
-            if (currentFormat === 'HEX') {
-                onColorChange({
-                    ...color,
-                    name: `#${rgbColorToHex(color)}`,
-                });
-            } else {
-                onColorChange({
-                    ...color,
-                    name: `rgba(${color.red}, ${color.green}, ${color.blue}, ${color.alpha || 1})`,
-                });
-            }
-        },
-        [onColorChange],
-    );
-
     return (
-        <div className={styles.root} data-picker-type="custom-color" data-test-id="custom-color-picker">
+        <div
+            className={styles.root}
+            data-picker-type="custom-color"
+            data-test-id="custom-color-picker"
+            ref={forwardedRef}
+        >
             {Children.map(children, (child) => (
                 <ColorPickerSlot
                     {...props}
                     onColorChange={(color: RgbaColor) => {
-                        handleColorChange(color, currentFormat);
+                        onColorChange(getColorWithName(color, currentFormat));
                     }}
                     currentColor={currentColor}
                     currentFormat={currentFormat}
                     setCurrentFormat={(currentFormat: ColorFormat) => {
                         setCurrentFormat(currentFormat);
-                        handleColorChange(currentColor, currentFormat);
+                        onColorChange(getColorWithName(currentColor, currentFormat));
                     }}
                 >
                     {child}

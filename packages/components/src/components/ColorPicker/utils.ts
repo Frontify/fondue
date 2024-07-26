@@ -15,7 +15,6 @@ export const colorToCss = (color?: RgbaColor) => {
 export const isColorLight = (color: RgbaColor): boolean => {
     // copied brightness calculation from tiny color
     const brightness = (color.red * 299 + color.green * 587 + color.blue * 114) / 1000;
-
     return brightness > 128 || (color.alpha && color.alpha < 0.25) || false;
 };
 

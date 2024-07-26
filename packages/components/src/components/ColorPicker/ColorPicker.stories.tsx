@@ -3,6 +3,8 @@
 import { type Meta, type StoryObj } from '@storybook/react';
 import { useState } from 'react';
 
+import { Flyout } from '../Flyout/Flyout';
+
 import { ColorGradientInput } from './ColorGradientInput';
 import { ColorPicker, ColorPickerRoot } from './ColorPicker';
 import { ColorValueInput } from './ColorValueInput';
@@ -33,10 +35,13 @@ export const Default: Story = {
     render: (args) => {
         const [currentColor, setCurrentColor] = useState(args.currentColor);
         return (
-            <ColorPicker.Root defaultFormat="HEX" currentColor={currentColor} onColorChange={setCurrentColor}>
-                <ColorPicker.Values />
-                <ColorPicker.Gradient />
-            </ColorPicker.Root>
+            <>
+                <span>{JSON.stringify(currentColor)}</span>
+                <ColorPicker.Root defaultFormat="HEX" currentColor={currentColor} onColorChange={setCurrentColor}>
+                    <ColorPicker.Values />
+                    <ColorPicker.Gradient />
+                </ColorPicker.Root>
+            </>
         );
     },
 };
@@ -80,6 +85,34 @@ export const OnlyValues: Story = {
             <ColorPicker.Root currentColor={currentColor} onColorChange={setCurrentColor}>
                 <ColorPicker.Values />
             </ColorPicker.Root>
+        );
+    },
+};
+
+export const InFlyout: Story = {
+    args: {},
+    render: (args) => {
+        const [currentColor, setCurrentColor] = useState(args.currentColor);
+        return (
+            <Flyout.Root>
+                <Flyout.Trigger>
+                    <ColorPicker.Input
+                        currentColor={currentColor}
+                        onClear={() => {
+                            setCurrentColor(undefined);
+                        }}
+                    />
+                </Flyout.Trigger>
+
+                <Flyout.Content maxWidth="500px">
+                    <div className="tw-p-4">
+                        <ColorPicker.Root currentColor={currentColor} onColorChange={setCurrentColor}>
+                            <ColorPicker.Values />
+                            <ColorPicker.Gradient />
+                        </ColorPicker.Root>
+                    </div>
+                </Flyout.Content>
+            </Flyout.Root>
         );
     },
 };
