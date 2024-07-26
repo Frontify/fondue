@@ -32,7 +32,7 @@
         "build:storybook": "storybook build",
         "install:playwright": "playwright install --with-deps",
         "lint": "eslint .",
-        "lint:fix": "eslint --fix ",
+        "lint:fix": "eslint --fix .",
         "storybook": "storybook dev -p 6006",
         "typecheck": "tsc --noEmit",
         "test": "vitest run --coverage",

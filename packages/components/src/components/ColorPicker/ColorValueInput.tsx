@@ -11,7 +11,7 @@ import {
     DEFAULT_COLOR,
     DEFAULT_FORMAT,
     getLimitedColorChannelValue,
-    hexColorToRgb,
+    hexColorToRgba,
     isValidHexColor,
     rgbColorToHex,
 } from './utils';
@@ -84,7 +84,7 @@ export const ColorValueInput = (
                     status={isValidHexColor(hexColorValue) ? 'neutral' : 'error'}
                     onBlur={(event) => {
                         if (isValidHexColor(event.target.value)) {
-                            onColorChange(hexColorToRgb(event.target.value));
+                            onColorChange(hexColorToRgba(event.target.value));
                         }
                     }}
                     onChange={(event) => {

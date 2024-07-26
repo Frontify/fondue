@@ -8,7 +8,7 @@ import { ForwardedRefColorPickerInput } from './ColorPickerInput';
 import { ForwardedRefColorValueInput } from './ColorValueInput';
 import styles from './styles/customColorPicker.module.scss';
 import { type ColorFormat, type RgbaColor } from './types';
-import { DEFAULT_COLOR, DEFAULT_FORMAT } from './utils';
+import { DEFAULT_COLOR, DEFAULT_FORMAT, getColorWithName } from './utils';
 
 type ColorPickerProps = {
     /**
