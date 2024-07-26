@@ -2,13 +2,13 @@
 
 import { expect, test } from '@playwright/experimental-ct-react';
 
-import { ColorPicker } from '../moveToWebApp/ColorChooser';
+import { ColorPicker } from '../ColorPicker';
 
 const COLOR_PICKER_TEST_ID = 'test-color-picker';
 const COLOR_PICKER_TEXT = 'sample color-picker';
 
 test('should render without error', async ({ mount }) => {
-    const component = await mount(<ColorPicker data-test-id={COLOR_PICKER_TEST_ID}>{COLOR_PICKER_TEXT}</ColorPicker>);
+    const component = await mount(<ColorPicker.Root data-test-id={COLOR_PICKER_TEST_ID}></ColorPicker.Root>);
     await expect(component).toBeVisible();
     await expect(component).toContainText(COLOR_PICKER_TEXT);
 });
