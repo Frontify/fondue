@@ -220,6 +220,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                                 role="checkbox"
                                 aria-checked={state === CheckboxState.Checked}
                                 required={required}
+                                aria-label={ariaLabel}
                                 aria-labelledby={label ? `${id}-label` : undefined}
                             />
                             <span
