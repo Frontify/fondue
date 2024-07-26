@@ -7,24 +7,31 @@
     display: flex;
     flex-direction: column;
     gap: sizeToken(4);
+    max-width: 700px;
 }
 
 .inputs {
     display: grid;
     grid-template-columns: 1fr;
     gap: sizeToken(2);
-    width: 100%;
 
     @include sm {
-        grid-template-columns: minmax(min-content, 100px) repeat(3, 100px) minmax(min-content, 100px);
+        grid-template-columns: 100px 1fr 100px;
     }
 }
 
-.colorHexInput {
-    grid-column: 1;
+.colorFormatInput,
+.colorAlphaInput {
+    width: 100%;
+}
+
+.colorChannelInputGroup {
+    display: flex;
+    flex-direction: column;
+    gap: sizeToken(2);
 
     @include sm {
-        grid-column: 2 / 5;
+        flex-direction: row;
     }
 }
 

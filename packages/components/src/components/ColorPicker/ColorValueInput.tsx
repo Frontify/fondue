@@ -66,7 +66,7 @@ export const ColorValueInput = (
             </div>
             {currentFormat === 'HEX' ? (
                 <TextInput.Root
-                    className={`${styles.valueInput} ${styles.colorHexInput}`}
+                    className={styles.valueInput}
                     type="text"
                     value={hexColorValue}
                     status={isValidHexColor(hexColorValue) ? 'neutral' : 'error'}
@@ -85,9 +85,9 @@ export const ColorValueInput = (
                     </TextInput.Slot>
                 </TextInput.Root>
             ) : (
-                <>
+                <div className={styles.colorChannelInputGroup}>
                     <TextInput.Root
-                        className={`${styles.valueInput} ${styles.colorChannelInput}`}
+                        className={styles.valueInput}
                         value={currentColor.red}
                         type="number"
                         onBlur={(event) => {
@@ -113,7 +113,7 @@ export const ColorValueInput = (
                         </TextInput.Slot>
                     </TextInput.Root>
                     <TextInput.Root
-                        className={`${styles.valueInput} ${styles.colorChannelInput}`}
+                        className={styles.valueInput}
                         value={currentColor.green}
                         type="number"
                         onBlur={(event) => {
@@ -137,7 +137,7 @@ export const ColorValueInput = (
                         </TextInput.Slot>
                     </TextInput.Root>
                     <TextInput.Root
-                        className={`${styles.valueInput} ${styles.colorChannelInput}`}
+                        className={styles.valueInput}
                         value={currentColor.blue}
                         type="number"
                         onBlur={(event) => {
@@ -160,27 +160,29 @@ export const ColorValueInput = (
                             <span className={styles.inputDecorator}>B</span>
                         </TextInput.Slot>
                     </TextInput.Root>
-                </>
+                </div>
             )}
-            <TextInput.Root
-                className={`${styles.valueInput} ${styles.colorAlphaInput}`}
-                value={currentColor.alpha === undefined ? 100 : Math.trunc(currentColor.alpha * 100)}
-                type="number"
-                onChange={(event) => {
-                    onColorChange({
-                        ...currentColor,
-                        alpha: parseInt(event.target.value) / 100,
-                    });
-                }}
-                aria-label="Color Opacity"
-            >
-                <TextInput.Slot name="left">
-                    <span className={styles.inputDecorator}>A</span>
-                </TextInput.Slot>
-                <TextInput.Slot name="right">
-                    <span className={styles.inputDecorator}>%</span>
-                </TextInput.Slot>
-            </TextInput.Root>
+            <div className={styles.colorAlphaInput}>
+                <TextInput.Root
+                    className={styles.valueInput}
+                    value={currentColor.alpha === undefined ? 100 : Math.trunc(currentColor.alpha * 100)}
+                    type="number"
+                    onChange={(event) => {
+                        onColorChange({
+                            ...currentColor,
+                            alpha: parseInt(event.target.value) / 100,
+                        });
+                    }}
+                    aria-label="Color Opacity"
+                >
+                    <TextInput.Slot name="left">
+                        <span className={styles.inputDecorator}>A</span>
+                    </TextInput.Slot>
+                    <TextInput.Slot name="right">
+                        <span className={styles.inputDecorator}>%</span>
+                    </TextInput.Slot>
+                </TextInput.Root>
+            </div>
         </div>
     );
 };

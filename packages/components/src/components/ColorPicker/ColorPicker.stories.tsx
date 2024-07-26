@@ -94,7 +94,7 @@ export const InFlyout: Story = {
     render: (args) => {
         const [currentColor, setCurrentColor] = useState(args.currentColor);
         return (
-            <Flyout.Root>
+            <Flyout.Root open={true}>
                 <Flyout.Trigger>
                     <ColorPicker.Input
                         currentColor={currentColor}
@@ -104,9 +104,13 @@ export const InFlyout: Story = {
                     />
                 </Flyout.Trigger>
 
-                <Flyout.Content maxWidth="500px">
-                    <div className="tw-p-4">
-                        <ColorPicker.Root currentColor={currentColor} onColorChange={setCurrentColor}>
+                <Flyout.Content maxWidth="600px">
+                    <div className="tw-p-4 md:tw-w-[600px]">
+                        <ColorPicker.Root
+                            defaultFormat="RGBA"
+                            currentColor={currentColor}
+                            onColorChange={setCurrentColor}
+                        >
                             <ColorPicker.Values />
                             <ColorPicker.Gradient />
                         </ColorPicker.Root>
