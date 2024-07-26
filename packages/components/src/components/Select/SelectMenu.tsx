@@ -46,17 +46,7 @@ export const SelectMenu = ({ highlightedIndex, getMenuProps, getItemProps, child
                 }}
                 className={styles.portal}
             >
-                <ul
-                    className={styles.menu}
-                    {...getMenuProps(
-                        {},
-                        {
-                            // Suppress the ref error caused by the usage of a portal
-                            suppressRefError: true,
-                        },
-                    )}
-                    role="dialog"
-                >
+                <ul className={styles.menu} {...getMenuProps()} role="dialog">
                     {
                         recursiveMap(
                             children,
