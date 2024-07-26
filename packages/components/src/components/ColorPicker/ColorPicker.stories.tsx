@@ -33,13 +33,10 @@ export const Default: Story = {
     render: (args) => {
         const [currentColor, setCurrentColor] = useState(args.currentColor);
         return (
-            <>
-                <span>{currentColor?.name}</span>
-                <ColorPicker.Root defaultFormat="HEX" currentColor={currentColor} onColorChange={setCurrentColor}>
-                    <ColorPicker.Values />
-                    <ColorPicker.Gradient />
-                </ColorPicker.Root>
-            </>
+            <ColorPicker.Root defaultFormat="HEX" currentColor={currentColor} onColorChange={setCurrentColor}>
+                <ColorPicker.Values />
+                <ColorPicker.Gradient />
+            </ColorPicker.Root>
         );
     },
 };
@@ -51,8 +48,8 @@ export const WithRgbaDefaultFormat: Story = {
     render: (args) => {
         const [currentColor, setCurrentColor] = useState(args.currentColor);
         return (
-            <ColorPicker.Root currentColor={currentColor} onColorChange={setCurrentColor}>
-                <ColorPicker.Values defaultFormat="RGBA" />
+            <ColorPicker.Root currentColor={currentColor} onColorChange={setCurrentColor} defaultFormat="RGBA">
+                <ColorPicker.Values />
                 <ColorPicker.Gradient />
             </ColorPicker.Root>
         );
