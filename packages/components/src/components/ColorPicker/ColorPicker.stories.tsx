@@ -100,6 +100,7 @@ export const InFlyout: Story = {
             <Flyout.Root open={isOpen} onOpenChange={setIsOpen}>
                 <Flyout.Trigger>
                     <ColorPicker.Input
+                        aria-label="Color Picker"
                         currentColor={currentColor}
                         onClear={() => {
                             setCurrentColor(undefined);
