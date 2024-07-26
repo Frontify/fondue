@@ -39,7 +39,9 @@ export type SliderValue = {
     withSuffix: string;
 };
 
-export type SliderProps = BaseSliderProps & Pick<AriaAttributes, 'aria-label'>;
+export type SliderProps = BaseSliderProps &
+    Pick<AriaAttributes, 'aria-label'> &
+    Pick<AriaAttributes, 'aria-labelledby'>;
 
 export enum SliderError {
     MinMax = 'MinMax',
@@ -70,6 +72,7 @@ export const Slider = ({
     onError,
     onChange,
     'aria-label': ariaLabel = ARIA_LABEL_DEFAULT_VALUE,
+    'aria-labelledby': ariaLabelledBy,
     disabled = false,
     'data-test-id': dataTestId = 'fondue-slider',
 }: SliderProps) => {
@@ -296,13 +299,16 @@ export const Slider = ({
 
     return (
         <div className="tw-flex tw-flex-col" data-test-id={dataTestId} id={id}>
-            <label
-                htmlFor={id}
-                className={merge([!label && 'tw-hidden', disabled && 'tw-text-text-disabled'])}
-                data-test-id={`${dataTestId}-label`}
-            >
-                {label}
-            </label>
+            {label && (
+                <label
+                    id={`${id}-label`}
+                    htmlFor={id}
+                    className={merge([!label && 'tw-hidden', disabled && 'tw-text-text-disabled'])}
+                    data-test-id={`${dataTestId}-label`}
+                >
+                    {label}
+                </label>
+            )}
             <div className="tw-flex">
                 <div className={merge(['tw-flex-1 tw-flex tw-items-center'])}>
                     {showMinMax && (
@@ -334,6 +340,7 @@ export const Slider = ({
                                 aria-valuemin={min}
                                 aria-valuemax={max}
                                 aria-label={ariaLabel}
+                                aria-labelledby={label ? `${id}-label` : ariaLabelledBy}
                                 data-test-id={`${dataTestId}-track`}
                                 className={merge([
                                     'tw-absolute tw-block tw-top-1/2 tw--translate-y-1/2 tw-origin-left tw-w-full tw-h-1  tw-rounded-sm tw-bg-box-neutral-strong tw-flex-1',
@@ -365,6 +372,7 @@ export const Slider = ({
                             id={`${id}-text-input`}
                             value={valueWithSuffix}
                             placeholder={ariaLabel}
+                            aria-labelledby={label ? `${id}-label` : ariaLabelledBy}
                             type={TextInputType.Text}
                             validation={error ? Validation.Error : Validation.Default}
                             onChange={onInputChange}

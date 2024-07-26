@@ -91,7 +91,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
         hideLabel,
         tooltip,
         helperText,
-        'aria-label': ariaLabel = 'Checkbox',
+        'aria-label': ariaLabel,
         value,
         groupInputProps,
         onChange,
@@ -201,6 +201,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
         <div className="tw-gap-1 tw-transition-colors tw-w-full" data-test-id={dataTestId}>
             <div className={merge(['tw-inline-flex tw-flex-row tw-rounded tw-w-full', showFocus ? FOCUS_STYLE : ''])}>
                 <InputLabel
+                    id={`${id}-label`}
                     disabled={disabled}
                     clickable
                     htmlFor={id}
@@ -219,6 +220,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                                 role="checkbox"
                                 aria-checked={state === CheckboxState.Checked}
                                 required={required}
+                                aria-labelledby={label ? `${id}-label` : undefined}
                             />
                             <span
                                 data-test-id={`${dataTestId}-icon-box`}
