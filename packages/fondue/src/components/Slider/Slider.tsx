@@ -299,16 +299,14 @@ export const Slider = ({
 
     return (
         <div className="tw-flex tw-flex-col" data-test-id={dataTestId} id={id}>
-            {label && (
-                <label
-                    id={`${id}-label`}
-                    htmlFor={id}
-                    className={merge([!label && 'tw-hidden', disabled && 'tw-text-text-disabled'])}
-                    data-test-id={`${dataTestId}-label`}
-                >
-                    {label}
-                </label>
-            )}
+            <label
+                id={`${id}-label`}
+                htmlFor={id}
+                className={merge([!label && 'tw-hidden', disabled && 'tw-text-text-disabled'])}
+                data-test-id={`${dataTestId}-label`}
+            >
+                {label}
+            </label>
             <div className="tw-flex">
                 <div className={merge(['tw-flex-1 tw-flex tw-items-center'])}>
                     {showMinMax && (
