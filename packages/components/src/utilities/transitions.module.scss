@@ -26,3 +26,7 @@
 @mixin transition-transform {
     @include transition(transform);
 }
+
+@mixin transition-box-shadow {
+    @include transition(box-shadow);
+}

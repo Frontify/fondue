@@ -456,6 +456,7 @@ Changes:
     -   `stepMultiplier` is no longer needed.
     -   `showMinMax` is no longer supported.
     -   `showMinMax` is no longer supported.
+    -   Input no longer included by default.
     -   Additional UI flourishes should be added outside the component as needed.
 
         ```tsx
@@ -489,21 +490,42 @@ Changes:
 #### New
 
 ```tsx
-<Label htmlFor="new-slider">Volume</Label>
-<Slider
-    id="new-slider"
-    value={[50]} // use for controlled mode
-    defaultValue={[50]} // use for uncontrolled mode
-    min={0}
-    max={100}
-    step={5}
-    disabled={false}
-    onChange={(values) => console.log('Value:', values)}
-    onCommit={(values) => console.log('Final Value:', values)}
-    data-test-id="slider-test"
-    aria-label="Adjust volume level"
-    aria-describedby="volume-description"
-/>
+const [volume, setVolume] = useState([0]);
+
+const onSliderChange = (value: number[]) => {
+    setVolume(value);
+};
+
+const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const newValue = parseInt(event.target.value, 10);
+    if (newValue >= 0 && newValue <= 100) {
+        setVolume(value);
+    }
+};
+
+return (
+    <div style={{ display: 'flex', gap: 16 }}>
+        <Label id="new-slider-label" htmlFor="new-slider">
+            Volume
+        </Label>
+
+        <Slider
+            id="new-slider"
+            value={range}
+            min={0}
+            max={100}
+            aria-labelledby="new-slider-label"
+            onChange={onSliderChange}
+        />
+
+        <TextInput
+            id="new-slider-input"
+            value={value}
+            type="number"
+            aria-labelledby="new-slider-label"
+            onChange={onInputChange}
+        />
+    </div>
 ```
 
 ### Text Input

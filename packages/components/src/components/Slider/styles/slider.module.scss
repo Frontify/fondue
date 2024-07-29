@@ -14,40 +14,53 @@
 
     &[data-disabled] {
         pointer-events: none;
-        opacity: 0.6;
     }
 
     .track {
         background-color: var(--box-neutral-color);
         position: relative;
         flex-grow: 1;
-        border-radius: 9999px;
+        border-radius: 4px;
         height: sizeToken(1);
 
         .range {
             position: absolute;
             background-color: var(--box-neutral-strong-color);
-            border-radius: 9999px;
+            border-radius: 4px;
             height: 100%;
+
+            &[data-disabled] {
+                background-color: var(--box-neutral-color);
+            }
         }
     }
 
     .thumb {
         @include focus-outline;
         @include transition-colors;
+        @include transition-box-shadow;
 
         display: block;
         width: sizeToken(5);
         height: sizeToken(5);
         background-color: var(--base-color);
-        border-radius: 100%;
         border: 1px solid var(--line-color-strong);
+        border-radius: 100%;
         cursor: pointer;
+
+        &:hover {
+            box-shadow: 0px 3px 10px 0px #08080826;
+        }
 
         &:active {
             outline-offset: 0;
             outline-width: sizeToken(2);
-            outline-color: rgba(0, 0, 0, 0.2);
+            outline-color: #1a1c1c33;
+        }
+
+        &[data-disabled] {
+            background-color: var(--box-neutral-color);
+            border-color: #0808081a;
         }
     }
 }

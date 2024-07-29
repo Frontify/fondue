@@ -1,7 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Meta, type StoryObj } from '@storybook/react';
-import { useRef, useState } from 'react';
+import { type ChangeEvent, useRef, useState } from 'react';
+
+import { Label } from '../Label/Label';
+import { TextInput } from '../TextInput/TextInput';
 
 import { Slider } from './Slider';
 
@@ -16,8 +19,8 @@ const meta: Meta<typeof Slider> = {
         },
     },
     args: {
-        'aria-labelledby': 'some-label-id',
-        'aria-label': 'Slider',
+        min: 0,
+        max: 100,
     },
 };
 
@@ -32,6 +35,7 @@ export const SimpleSlider: Story = {
 export const Disabled: Story = {
     args: {
         disabled: true,
+        defaultValue: [50],
     },
 };
 
@@ -101,6 +105,62 @@ export const MultipleThumbsExternallyControlled: Story = {
                 value={sliderRange}
                 {...args}
             />
+        );
+    },
+};
+
+export const WithInputs: Story = {
+    decorators: (Story) => {
+        return (
+            <div style={{ display: 'flex', gap: 16 }}>
+                <Story />
+            </div>
+        );
+    },
+    render: () => {
+        const [range, setRange] = useState([250, 450]);
+
+        const onRangeChange = (value: number[]) => {
+            setRange(value);
+        };
+
+        const onInputChange = (index: number) => (event: ChangeEvent<HTMLInputElement>) => {
+            const newValue = parseInt(event.target.value, 10);
+            if (newValue >= 200 && newValue <= 500) {
+                setRange((prev) => {
+                    const newRange = [...prev];
+                    newRange[index] = newValue;
+                    return newRange;
+                });
+            }
+        };
+
+        return (
+            <>
+                <Label id="new-slider-label" htmlFor="new-slider">
+                    Price range
+                </Label>
+
+                <Slider
+                    id="new-slider"
+                    aria-labelledby="new-slider-label"
+                    value={range}
+                    min={200}
+                    max={500}
+                    onChange={onRangeChange}
+                />
+
+                {range.map((value, index) => (
+                    <TextInput
+                        key={index}
+                        id={`new-slider-input-${index}`}
+                        value={value}
+                        type="number"
+                        aria-label={`Price range ${index === 0 ? 'from' : 'to'}`}
+                        onChange={onInputChange(index)}
+                    />
+                ))}
+            </>
         );
     },
 };
