@@ -1,11 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Axis as VisxAxis } from '@visx/xychart';
-import { type Dispatch, type SetStateAction } from 'react';
-
 import { useBandTicks } from '@components/BarChart/components/hooks/useBandTicks';
 import { useRotatedLabel } from '@components/BarChart/components/hooks/useRotatedLabel';
 import { type LabelFormatter, type ValueFormatter } from '@components/common/types';
+import { Axis as VisxAxis } from '@visx/xychart';
+import { type Dispatch, type SetStateAction } from 'react';
 
 import { truncateTextLabel } from '../helpers';
 
@@ -38,7 +37,7 @@ export const Axes = ({
     valueFormatter,
     labelFormatter,
 }: AxesProps) => {
-    const formatLabel = (label: string) => truncateTextLabel(labelFormatter(label));
+    const formatLabel = (label: string) => truncateTextLabel(labelFormatter(label).toString());
     const angle = useRotatedLabel(horizontal, updateMaxLabelHeight, updateFirstLabelOverflowsBy, formatLabel);
     const filteredTicks = useBandTicks(horizontal, updateBandScaleTicks);
     const textAnchor = getTextAnchorProp(horizontal, angle);
