@@ -85,9 +85,9 @@ export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(
                 type={type}
                 data-test-id={dataTestId}
                 className={cn(
-                    buttonStyles({ size, style: variant, ...props }),
-                    textStyles({ style: variant, ...props }),
-                    iconStyles({ style: variant, ...props }),
+                    buttonStyles({ size, variant, ...props }),
+                    textStyles({ variant, ...props }),
+                    iconStyles({ variant, ...props }),
                     className,
                 )}
                 {...props}

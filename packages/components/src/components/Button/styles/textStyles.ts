@@ -9,7 +9,7 @@ export const textStyles = sv({
             weak: '',
             strong: '',
         },
-        style: {
+        variant: {
             default: '',
             positive: '',
             negative: '',
@@ -23,7 +23,7 @@ export const textStyles = sv({
     compoundVariants: [
         {
             disabled: false,
-            style: 'default',
+            variant: 'default',
             emphasis: 'default',
             class:
                 'tw-text-button-text ' +
@@ -32,7 +32,7 @@ export const textStyles = sv({
         },
         {
             disabled: false,
-            style: 'default',
+            variant: 'default',
             emphasis: 'weak',
             class:
                 'tw-text-button-text ' +
@@ -41,7 +41,7 @@ export const textStyles = sv({
         },
         {
             disabled: false,
-            style: 'default',
+            variant: 'default',
             emphasis: 'strong',
             class:
                 'tw-text-button-strong-icon ' +
@@ -50,7 +50,7 @@ export const textStyles = sv({
         },
         {
             disabled: false,
-            style: 'positive',
+            variant: 'positive',
             emphasis: 'default',
             class:
                 'tw-text-button-positive-text ' +
@@ -59,7 +59,7 @@ export const textStyles = sv({
         },
         {
             disabled: false,
-            style: 'positive',
+            variant: 'positive',
             emphasis: 'weak',
             class:
                 'tw-text-button-positive-text ' +
@@ -68,7 +68,7 @@ export const textStyles = sv({
         },
         {
             disabled: false,
-            style: 'positive',
+            variant: 'positive',
             emphasis: 'strong',
             class:
                 'tw-text-button-strong-positive-text ' +
@@ -77,7 +77,7 @@ export const textStyles = sv({
         },
         {
             disabled: false,
-            style: 'negative',
+            variant: 'negative',
             emphasis: 'default',
             class:
                 'tw-text-button-negative-text ' +
@@ -86,7 +86,7 @@ export const textStyles = sv({
         },
         {
             disabled: false,
-            style: 'negative',
+            variant: 'negative',
             emphasis: 'weak',
             class:
                 'tw-text-button-negative-text ' +
@@ -95,7 +95,7 @@ export const textStyles = sv({
         },
         {
             disabled: false,
-            style: 'negative',
+            variant: 'negative',
             emphasis: 'strong',
             class:
                 'tw-text-button-strong-negative-text ' +
@@ -104,7 +104,7 @@ export const textStyles = sv({
         },
         {
             disabled: false,
-            style: 'danger',
+            variant: 'danger',
             emphasis: 'default',
             class:
                 'tw-text-button-negative-icon ' +
@@ -113,7 +113,7 @@ export const textStyles = sv({
         },
         {
             disabled: false,
-            style: 'danger',
+            variant: 'danger',
             emphasis: 'weak',
             class:
                 'tw-text-button-negative-icon ' +
@@ -122,7 +122,7 @@ export const textStyles = sv({
         },
         {
             disabled: false,
-            style: 'danger',
+            variant: 'danger',
             emphasis: 'strong',
             class:
                 'tw-text-button-danger-text ' +
@@ -131,7 +131,7 @@ export const textStyles = sv({
         },
         {
             disabled: false,
-            style: 'loud',
+            variant: 'loud',
             emphasis: 'default',
             class:
                 'tw-text-box-selected-inverse ' +
@@ -140,7 +140,7 @@ export const textStyles = sv({
         },
         {
             disabled: false,
-            style: 'loud',
+            variant: 'loud',
             emphasis: 'weak',
             class:
                 'tw-text-box-selected-inverse ' +
@@ -149,7 +149,7 @@ export const textStyles = sv({
         },
         {
             disabled: false,
-            style: 'loud',
+            variant: 'loud',
             emphasis: 'strong',
             class:
                 'tw-text-box-selected-strong-inverse ' +
@@ -159,7 +159,7 @@ export const textStyles = sv({
     ],
     defaultVariants: {
         emphasis: 'strong',
-        style: 'default',
+        variant: 'default',
         disabled: false,
     },
 });

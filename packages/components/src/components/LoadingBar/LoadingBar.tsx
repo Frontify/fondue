@@ -58,7 +58,7 @@ export const LoadingBar = forwardRef<ElementRef<typeof ProgressRadixPrimitive.Ro
             <ProgressRadixPrimitive.Root
                 ref={ref}
                 data-test-id={dataTestId}
-                className={loadingBarContainerStyles({ rounded, size, style: variant })}
+                className={loadingBarContainerStyles({ rounded, size, variant })}
                 aria-busy={value !== max}
                 value={value}
                 max={max}
@@ -72,7 +72,7 @@ export const LoadingBar = forwardRef<ElementRef<typeof ProgressRadixPrimitive.Ro
                 {...props}
             >
                 <ProgressRadixPrimitive.Indicator
-                    className={loadingBarStyles({ style: variant, indeterminateState: value === null })}
+                    className={loadingBarStyles({ variant, indeterminateState: value === null })}
                 />
             </ProgressRadixPrimitive.Root>
         );
