@@ -14,6 +14,9 @@ const SwitchModeTypes: SwitchMode[] = ['on', 'off', 'indeterminate'];
 
 const SwitchLabelStyleTypes: SwitchLabelStyle[] = ['default', 'heading'];
 
+/**
+ ### This component is deprecated, please use the [new Switch component](/docs/current_components-switch--documentation) instead.
+ */
 export default {
     title: 'Components/Switch',
     component: Switch,

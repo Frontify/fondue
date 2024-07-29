@@ -31,6 +31,9 @@ This document describes the changes that you need to make to your code to migrat
         -   [Slider](#slider)
             -   [Old](#old-7)
             -   [New](#new-7)
+        -   [Switch](#switch)
+            -   [Old](#old-7)
+            -   [New](#new-7)
         -   [Text Input](#text-input)
             -   [Old](#old-8)
             -   [New](#new-8)
@@ -484,7 +487,6 @@ Changes:
     onChange={(value) => console.log('Value:', value.raw, value.withSuffix)}
     data-test-id="slider-test"
     aria-label="Adjust volume level"
-/>
 ```
 
 #### New
@@ -504,28 +506,97 @@ const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
 };
 
 return (
-    <div style={{ display: 'flex', gap: 16 }}>
-        <Label id="new-slider-label" htmlFor="new-slider">
-            Volume
-        </Label>
+<Label id="new-slider-label" htmlFor="new-slider">
+    Volume
+</Label>
 
-        <Slider
-            id="new-slider"
-            value={range}
-            min={0}
-            max={100}
-            aria-labelledby="new-slider-label"
-            onChange={onSliderChange}
-        />
+<Slider
+    id="new-slider"
+    value={range}
+    min={0}
+    max={100}
+    aria-labelledby="new-slider-label"
+    onChange={onSliderChange}
+/>
 
-        <TextInput
-            id="new-slider-input"
-            value={value}
-            type="number"
-            aria-labelledby="new-slider-label"
-            onChange={onInputChange}
-        />
-    </div>
+<TextInput
+    id="new-slider-input"
+    value={value}
+    type="number"
+    aria-labelledby="new-slider-label"
+    onChange={onInputChange}
+/>
+```
+
+## Switch
+
+Changes:
+
+-   **States**:
+
+    -   `value` (controlled) and `defaultValue` (uncontrolled) replaces `mode`.
+    -   `indeterminate` state support has been dropped.
+    -   `required` is now available.
+    -   `name` is now available.
+
+-   **Accessibility**:
+
+    -   `aria-label` and `aria-labelledby` are both optional but one must be used.
+    -   `aria-describedby` has been added.
+
+-   **Event Handling**:
+
+    -   The `onChange` event now returns the latest state of the value rather than a `MouseEvent`.
+    -   `onBlur` and `onFocus` callbacks have been added.
+
+-   **Removed Properties**:
+
+    -   `label`, `labelStyle` and `tooltip` have been removed in favor of composition.
+    -   `hug` have been removed without replacement
+
+#### Old
+
+```tsx
+<Switch
+    id="old-switch"
+    label="Dark mode"
+    tooltip="Toggle dark mode"
+    mode={true}
+    size="medium"
+    hug={true}
+    disabled={false}
+    onChange={(event) => console.log('Value:', event.target.value}
+    aria-label="Adjust volume level"
+    data-test-id="switch-test"
+/>
+```
+
+#### New
+
+```tsx
+<Label id="dark-mode-label" htmlFor="new-switch">Dark mode</Label>
+<Tooltip.Root enterDelay={200}>
+    <Tooltip.Trigger>
+        <IconQuestionMarkCircle />
+    </Tooltip.Trigger>
+    <Tooltip.Content side="top" padding="spacious">
+        <p id="dark-mode-switch-description">Toggle dark mode.</p>
+    </Tooltip.Content>
+</Tooltip.Root>
+<Switch
+    id="new-switch"
+    name="dark-mode-switch"
+    defaultValue={true}
+    size="medium"
+    required={true}
+    disabled={false}
+    onChange={(value) => console.log('Value:', value)}
+    onBlur={(event) => console.log('Event:', event)}
+    onFocus={(event) => console.log('Event:', event)}
+    aria-labelledby="dark-mode-label"
+    aria-describedby="dark-mode-switch-description"
+    data-test-id="switch-test"
+/>
 ```
 
 ### Text Input

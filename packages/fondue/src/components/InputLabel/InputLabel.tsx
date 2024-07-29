@@ -12,6 +12,7 @@ export type InputLabelTooltipProps =
     | (LegacyTooltipProps & Pick<TooltipIconProps, 'triggerStyle' | 'triggerIcon'>)[];
 
 export type InputLabelProps = {
+    id?: string;
     htmlFor: string;
     required?: boolean;
     disabled?: boolean;
@@ -26,6 +27,7 @@ export type InputLabelProps = {
  * @deprecated Use `Label` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#label-old-inputlabel the migration guide}.
  */
 export const InputLabel = ({
+    id,
     children,
     htmlFor,
     required = false,
@@ -52,6 +54,7 @@ export const InputLabel = ({
         >
             <div className="tw-flex-1 tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap">
                 <label
+                    id={id}
                     htmlFor={htmlFor}
                     className={merge([
                         'tw-select-none tw-max-w-full',

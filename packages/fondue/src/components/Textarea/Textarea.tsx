@@ -169,7 +169,6 @@ export const Textarea = ({
                         }
                     }}
                     onKeyDown={handleOnKeyDown}
-                    aria-label={dataTestId}
                     data-test-id={dataTestId}
                     className={merge([
                         hugWidth ? '' : InputStyles.width,
