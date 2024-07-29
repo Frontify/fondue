@@ -18,6 +18,85 @@ const meta: Meta<typeof Slider> = {
             type: 'in_progress',
         },
     },
+    argTypes: {
+        defaultValue: {
+            control: 'object',
+            description: 'The default value of the slider, used for uncontrolled components.',
+            defaultValue: [0],
+            table: {
+                type: { summary: 'number[]' },
+                defaultValue: { summary: '[0]' },
+            },
+        },
+        value: {
+            control: 'object',
+            description: 'The controlled value of the slider.',
+            defaultValue: [0],
+            table: {
+                type: { summary: 'number[]' },
+                defaultValue: { summary: '[0]' },
+            },
+        },
+        min: {
+            control: 'number',
+            description: 'Minimum value of the slider.',
+            defaultValue: 0,
+            table: {
+                type: { summary: 'number' },
+                defaultValue: { summary: '0' },
+            },
+        },
+        max: {
+            control: 'number',
+            description: 'Maximum value of the slider.',
+            defaultValue: 100,
+            table: {
+                type: { summary: 'number' },
+                defaultValue: { summary: '100' },
+            },
+        },
+        step: {
+            control: 'number',
+            description: 'The granularity with which the slider can step through values.',
+            defaultValue: 1,
+            table: {
+                type: { summary: 'number' },
+                defaultValue: { summary: '1' },
+            },
+        },
+        minStepsBetweenThumbs: {
+            control: 'number',
+            description: 'The minimum steps between thumbs in a range slider.',
+            defaultValue: 0,
+            table: {
+                type: { summary: 'number' },
+                defaultValue: { summary: '0' },
+            },
+        },
+        disabled: {
+            control: 'boolean',
+            description: 'Disable the slider.',
+            defaultValue: false,
+            table: {
+                type: { summary: 'boolean' },
+                defaultValue: { summary: 'false' },
+            },
+        },
+        onChange: {
+            action: 'onChange',
+            description: 'Function called when the value changes.',
+            table: {
+                type: { summary: '(value: number[]) => void' },
+            },
+        },
+        onCommit: {
+            action: 'onCommit',
+            description: 'Function called when the value change is committed.',
+            table: {
+                type: { summary: '(value: number[]) => void' },
+            },
+        },
+    },
     args: {
         min: 0,
         max: 100,
