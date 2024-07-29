@@ -2,7 +2,16 @@
 
 import { useButton } from '@react-aria/button';
 import { FocusScope, useFocusRing } from '@react-aria/focus';
-import { type KeyboardEvent, type ReactElement, type ReactNode, useEffect, useId, useRef, useState } from 'react';
+import {
+    type KeyboardEvent,
+    type ReactElement,
+    type ReactNode,
+    useEffect,
+    useId,
+    useLayoutEffect,
+    useRef,
+    useState,
+} from 'react';
 import { usePopper } from 'react-popper';
 
 import { CheckboxState } from '@components/Checkbox/Checkbox';
@@ -132,7 +141,7 @@ export const MultiSelect = ({
     };
 
     const handleSpacebarToggle = (e: KeyboardEvent<HTMLDivElement>) => {
-        if (e.code === 'Space') {
+        if (e.code === 'Space' || e.code === 'Enter') {
             toggleOpen();
         }
     };
@@ -187,6 +196,20 @@ export const MultiSelect = ({
         updatePopper().catch(console.error);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeItemKeys]);
+
+    useLayoutEffect(() => {
+        const handleEscapeKey = (event: globalThis.KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                setOpen(false);
+            }
+        };
+
+        window.addEventListener('keyup', handleEscapeKey);
+
+        return () => {
+            window.removeEventListener('keyup', handleEscapeKey);
+        };
+    }, []);
 
     return (
         <div className="tw-relative" ref={multiSelectRef}>

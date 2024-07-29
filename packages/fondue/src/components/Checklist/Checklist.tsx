@@ -2,7 +2,7 @@
 
 import { useCheckboxGroup, useCheckboxGroupItem } from '@react-aria/checkbox';
 import { type CheckboxGroupState, useCheckboxGroupState } from '@react-stately/checkbox';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import { Checkbox, type CheckboxProps, CheckboxState } from '@components/Checkbox/Checkbox';
 import { merge } from '@utilities/merge';
@@ -36,9 +36,13 @@ export type ChecklistProps = ChecklistBase & {
     columns?: Columns;
 };
 
-type ChecklistItemProps = { checkbox: CheckboxValue; state: CheckboxGroupState };
+type ChecklistItemProps = {
+    checkbox: CheckboxValue;
+    state: CheckboxGroupState;
+    forwardedRef?: (ref: HTMLInputElement) => void;
+};
 
-const ChecklistItem = ({ checkbox, state }: ChecklistItemProps) => {
+const ChecklistItem = ({ checkbox, state, forwardedRef }: ChecklistItemProps) => {
     const ref = useRef<HTMLInputElement | null>(null);
     const { value, disabled, label, 'aria-label': checkboxAriaLabel, state: checkboxState } = checkbox;
     const [checkState, setCheckState] = useState(checkboxState);
@@ -56,6 +60,10 @@ const ChecklistItem = ({ checkbox, state }: ChecklistItemProps) => {
             setCheckState(isSelected ? CheckboxState.Checked : CheckboxState.Unchecked);
         }
     }, [checkState, isSelected]);
+
+    useEffect(() => {
+        forwardedRef && ref.current && forwardedRef(ref.current);
+    }, [isSelected]);
 
     return <Checkbox {...checkbox} state={checkState} groupInputProps={inputProps} ref={ref} />;
 };
@@ -84,6 +92,7 @@ export const Checklist = ({
     'data-test-id': dataTestId = 'checklist',
     ...props
 }: ChecklistProps) => {
+    const checkboxRefs = useRef<(HTMLInputElement | null)[]>(Array.from({ length: checkboxes.length }));
     const listContainerRef = useRef<HTMLDivElement | null>(null);
     const state = useCheckboxGroupState({
         value: activeValues,
@@ -98,6 +107,53 @@ export const Checklist = ({
 
     const columns = ('columns' in props && props.columns) || 1;
 
+    useLayoutEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            const focusableElements = checkboxRefs.current.filter((el) => el !== null);
+            const currentIndex = focusableElements.indexOf(document.activeElement as HTMLInputElement);
+            let nextIndex = currentIndex;
+
+            if (event.key === 'ArrowDown' || event.key === 'ArrowRight') {
+                nextIndex++;
+                if (nextIndex === focusableElements.length) {
+                    nextIndex = 0;
+                }
+                if (focusableElements[nextIndex].disabled) {
+                    nextIndex++;
+                }
+            } else if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') {
+                nextIndex--;
+                if (nextIndex === -1) {
+                    nextIndex = focusableElements.length - 1;
+                }
+
+                if (focusableElements[nextIndex].disabled) {
+                    nextIndex--;
+                }
+            } else {
+                return;
+            }
+
+            focusableElements[nextIndex].focus();
+
+            const tabEvent = new KeyboardEvent('keyup', {
+                key: 'Tab',
+                code: 'Tab',
+                keyCode: 9,
+                bubbles: true,
+            });
+
+            focusableElements[nextIndex].dispatchEvent(tabEvent);
+        };
+
+        const listElem = listContainerRef.current;
+        listElem?.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            listElem?.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [checkboxes.length]);
+
     return (
         <div
             {...groupProps}
@@ -109,22 +165,24 @@ export const Checklist = ({
             ])}
             ref={listContainerRef}
         >
-            {checkboxes.map((checkbox, index) => {
-                return (
-                    <div
-                        key={checkbox.value}
-                        style={{
-                            maxWidth: listContainerRef?.current?.getBoundingClientRect().width,
-                            gridColumn:
-                                index === checkboxes.length - 1 && direction === ChecklistDirection.Vertical
-                                    ? getLastItemColumnSpan(checkboxes, columns)
-                                    : undefined,
-                        }}
-                    >
-                        <ChecklistItem checkbox={checkbox} state={state} />
-                    </div>
-                );
-            })}
+            {checkboxes.map((checkbox, index) => (
+                <div
+                    key={checkbox.value}
+                    style={{
+                        maxWidth: listContainerRef?.current?.getBoundingClientRect().width,
+                        gridColumn:
+                            index === checkboxes.length - 1 && direction === ChecklistDirection.Vertical
+                                ? getLastItemColumnSpan(checkboxes, columns)
+                                : undefined,
+                    }}
+                >
+                    <ChecklistItem
+                        checkbox={checkbox}
+                        state={state}
+                        forwardedRef={(el) => (checkboxRefs.current[index] = el)}
+                    />
+                </div>
+            ))}
         </div>
     );
 };

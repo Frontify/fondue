@@ -108,7 +108,6 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
         isSelected: state === CheckboxState.Checked,
     });
     const [showFocus, setShowFocus] = useState<Nullable<boolean>>();
-    const [listeningForKeyboardEvents, setListeningForKeyboardEvents] = useState<Nullable<boolean>>();
     const labelContainer = useRef<HTMLSpanElement>(null);
     const helperTextContainer = useRef<HTMLSpanElement>(null);
     const [isLabelOverflowing, setIsLabelOverflowing] = useState(false);
@@ -125,15 +124,14 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
     };
 
     useEffect(() => {
-        if (!listeningForKeyboardEvents) {
-            inputRef?.current?.removeEventListener('keyup', tabFocusListener);
-            inputRef?.current?.addEventListener('keyup', tabFocusListener);
-            inputRef?.current?.removeEventListener('blur', blurListener);
-            inputRef?.current?.addEventListener('blur', blurListener);
+        inputRef?.current?.addEventListener('keyup', tabFocusListener);
+        inputRef?.current?.addEventListener('blur', blurListener);
 
-            setListeningForKeyboardEvents(true);
-        }
-    }, [listeningForKeyboardEvents, inputRef]);
+        return () => {
+            inputRef?.current?.removeEventListener('keyup', tabFocusListener);
+            inputRef?.current?.removeEventListener('blur', blurListener);
+        };
+    }, []);
 
     const { inputProps } = useCheckbox(
         {
