@@ -32,7 +32,6 @@ describe('Slider Component', () => {
     it('renders with default values', () => {
         renderSlider({
             onChange: onChangeStub,
-            label: LABEL,
         });
 
         cy.get(SLIDER_ID).should('be.visible');
