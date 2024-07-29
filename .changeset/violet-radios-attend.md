@@ -1,5 +1,5 @@
 ---
-"@frontify/fondue-components": minor
+"@frontify/fondue-components": patch
 ---
 
 feat: add `slider` component
