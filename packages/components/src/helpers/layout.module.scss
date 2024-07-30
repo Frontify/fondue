@@ -230,17 +230,23 @@ $layoutProperties: (
                 @error 'Value for "#{$property}" at breakpoint "#{$breakpoint}" is not defined.';
             }
 
-            --#{$breakpoint}-#{$property}: $value-at-breakpoint;
+            & {
+                --#{$breakpoint}-#{$property}: $value-at-breakpoint;
+            }
 
             @if $breakpoint == base {
                 --#{$property}: $value-at-breakpoint;
             }
         }
     } @else {
-        --#{$property}: #{$value};
+        & {
+            --#{$property}: #{$value};
+        }
 
         @each $breakpoint, $min-width in $screens {
-            --#{$breakpoint}-#{$property}: var(--#{$breakpoint}-#{$property}, #{$value});
+            & {
+                --#{$breakpoint}-#{$property}: var(--#{$breakpoint}-#{$property}, #{$value});
+            }
         }
     }
 }

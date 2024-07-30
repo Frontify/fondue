@@ -1,5 +1,21 @@
 # @frontify/fondue-components
 
+## 2.0.0
+
+### Minor Changes
+
+-   [#1966](https://github.com/Frontify/fondue/pull/1966) [`74b5db0`](https://github.com/Frontify/fondue/commit/74b5db0bcf372eda40c0bc6cfa543c1f647cd35a) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - chore: update blue color
+
+-   [#1970](https://github.com/Frontify/fondue/pull/1970) [`c502760`](https://github.com/Frontify/fondue/commit/c5027602c21c0c5a0861879b9d0896e7f5627a5f) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix: remove empty aria-labelledby from `accordion`, add aria-hidden to `icons`
+
+### Patch Changes
+
+-   [#1968](https://github.com/Frontify/fondue/pull/1968) [`032dfff`](https://github.com/Frontify/fondue/commit/032dfffb1b7eed0dafbb6e12f7aa16a74f34b2a6) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+
+-   Updated dependencies [[`c502760`](https://github.com/Frontify/fondue/commit/c5027602c21c0c5a0861879b9d0896e7f5627a5f), [`032dfff`](https://github.com/Frontify/fondue/commit/032dfffb1b7eed0dafbb6e12f7aa16a74f34b2a6)]:
+    -   @frontify/fondue-icons@0.3.0
+    -   @frontify/fondue-tokens@3.5.4
+
 ## 1.5.4
 
 ### Patch Changes

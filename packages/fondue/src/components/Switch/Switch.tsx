@@ -50,6 +50,9 @@ export type SwitchProps = {
     'data-test-id'?: string;
 };
 
+/**
+ * @deprecated Use `Switch` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#switch the migration guide}.
+ */
 export const Switch = ({
     id: propId,
     name,
@@ -59,7 +62,7 @@ export const Switch = ({
     size = 'medium',
     mode = 'off',
     labelStyle = 'default',
-    ariaLabel = 'Switch',
+    ariaLabel,
     hug = false,
     tooltip,
     'data-test-id': dataTestId = 'switch',
@@ -132,14 +135,15 @@ export const Switch = ({
     }, [mode, disabled, size]);
 
     // Wraps the InputLabel instance and switch element
-    const containerClasses = useMemo(() => {
-        return merge(['tw-gap-2 tw-items-center tw-justify-between', hug ? 'tw-inline-flex' : 'tw-flex']);
-    }, [hug]);
+    const containerClasses = useMemo(
+        () => merge(['tw-gap-2 tw-items-center tw-justify-between', hug ? 'tw-inline-flex' : 'tw-flex']),
+        [hug],
+    );
 
     return (
         <div className={containerClasses} data-test-id={`${dataTestId}-container`}>
             {label && (
-                <InputLabel clickable htmlFor={id} disabled={disabled} tooltip={tooltip}>
+                <InputLabel clickable id={`${id}-label`} htmlFor={id} disabled={disabled} tooltip={tooltip}>
                     <span
                         data-test-id={`${dataTestId}-label-wrapper`}
                         className={
@@ -160,7 +164,10 @@ export const Switch = ({
                 value={mode}
                 onClick={onChange}
                 type="button"
+                role="switch"
+                aria-checked={mode === 'on'}
                 aria-label={ariaLabel}
+                aria-labelledby={label ? `${id}-label` : undefined}
             >
                 <div className={dotWrapperClasses}>
                     <div className={dotClasses} />

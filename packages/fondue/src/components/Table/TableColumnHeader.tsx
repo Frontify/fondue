@@ -10,7 +10,7 @@ import { IconSize } from '@foundation/Icon/IconSize';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 
-import { SelectionMode, SortDirection } from './Table';
+import { type ColumnAlign, SelectionMode, SortDirection } from './Table';
 
 export enum TableColumnHeaderType {
     Default = 'Default',
@@ -26,6 +26,7 @@ export type TableColumnHeaderProps = {
     isColumnSorted?: boolean;
     handleSortChange: (column: string, direction?: SortDirection) => void;
     setSelectedRows?: (ids?: Key[]) => void;
+    align?: ColumnAlign;
 };
 
 export const TableColumnHeader = ({
@@ -37,6 +38,7 @@ export const TableColumnHeader = ({
     isColumnSorted = false,
     handleSortChange,
     setSelectedRows,
+    align = 'left',
 }: TableColumnHeaderProps) => {
     const {
         key,
@@ -47,6 +49,8 @@ export const TableColumnHeader = ({
     const [isChecked, setIsChecked] = useState(false);
     const ref = useRef<HTMLTableCellElement | null>(null);
     const ButtonOrSpan = allowsSorting ? 'button' : 'span';
+    const cursorStyle = allowsSorting ? 'tw-cursor-pointer' : 'tw-cursor-default';
+    const alignStyles = align === 'right' ? 'tw-w-full tw-justify-end' : '';
 
     useEffect(() => {
         if (isColumnSorted) {
@@ -107,11 +111,7 @@ export const TableColumnHeader = ({
             onClick={allowsSorting ? () => handleSortChange(column.key, sortDirection) : () => null}
         >
             <ButtonOrSpan
-                className={merge([
-                    'tw-flex tw-gap-x-1 tw-items-center',
-                    FOCUS_VISIBLE_STYLE,
-                    allowsSorting ? 'tw-cursor-pointer' : 'tw-cursor-default',
-                ])}
+                className={merge(['tw-flex tw-gap-x-1 tw-items-center', FOCUS_VISIBLE_STYLE, cursorStyle, alignStyles])}
             >
                 {rendered}
                 {allowsSorting && (

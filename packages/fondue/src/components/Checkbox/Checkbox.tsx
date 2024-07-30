@@ -91,7 +91,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
         hideLabel,
         tooltip,
         helperText,
-        'aria-label': ariaLabel = 'Checkbox',
+        'aria-label': ariaLabel,
         value,
         groupInputProps,
         onChange,
@@ -108,7 +108,6 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
         isSelected: state === CheckboxState.Checked,
     });
     const [showFocus, setShowFocus] = useState<Nullable<boolean>>();
-    const [listeningForKeyboardEvents, setListeningForKeyboardEvents] = useState<Nullable<boolean>>();
     const labelContainer = useRef<HTMLSpanElement>(null);
     const helperTextContainer = useRef<HTMLSpanElement>(null);
     const [isLabelOverflowing, setIsLabelOverflowing] = useState(false);
@@ -125,15 +124,14 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
     };
 
     useEffect(() => {
-        if (!listeningForKeyboardEvents) {
-            inputRef?.current?.removeEventListener('keyup', tabFocusListener);
-            inputRef?.current?.addEventListener('keyup', tabFocusListener);
-            inputRef?.current?.removeEventListener('blur', blurListener);
-            inputRef?.current?.addEventListener('blur', blurListener);
+        inputRef?.current?.addEventListener('keyup', tabFocusListener);
+        inputRef?.current?.addEventListener('blur', blurListener);
 
-            setListeningForKeyboardEvents(true);
-        }
-    }, [listeningForKeyboardEvents, inputRef]);
+        return () => {
+            inputRef?.current?.removeEventListener('keyup', tabFocusListener);
+            inputRef?.current?.removeEventListener('blur', blurListener);
+        };
+    }, []);
 
     const { inputProps } = useCheckbox(
         {
@@ -201,6 +199,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
         <div className="tw-gap-1 tw-transition-colors tw-w-full" data-test-id={dataTestId}>
             <div className={merge(['tw-inline-flex tw-flex-row tw-rounded tw-w-full', showFocus ? FOCUS_STYLE : ''])}>
                 <InputLabel
+                    id={`${id}-label`}
                     disabled={disabled}
                     clickable
                     htmlFor={id}
@@ -219,6 +218,8 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                                 role="checkbox"
                                 aria-checked={state === CheckboxState.Checked}
                                 required={required}
+                                aria-label={ariaLabel}
+                                aria-labelledby={label ? `${id}-label` : undefined}
                             />
                             <span
                                 data-test-id={`${dataTestId}-icon-box`}

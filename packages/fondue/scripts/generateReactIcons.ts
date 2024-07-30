@@ -69,6 +69,7 @@ const generateSvgComponent = async (svgPath: Entry) => {
             svgProps: {
                 className: '{customClassName}',
                 name: `${ICON_COMPONENT_PREFIX}${svgFileName}`,
+                'aria-hidden': 'true',
             },
         },
         { componentName: `${ICON_COMPONENT_PREFIX}${svgFileName}` },
