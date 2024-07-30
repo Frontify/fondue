@@ -367,3 +367,39 @@ test('should trigger color change on alpha handle move', async ({ mount, page })
         name: 'rgba(255, 0, 0, 0.52)',
     });
 });
+
+test('color picker input should render rgba value without error', async ({ mount }) => {
+    const component = await mount(
+        <ColorPicker.Input
+            aria-label="Color picker input"
+            currentColor={{
+                red: 255,
+                green: 0,
+                blue: 0,
+                alpha: 0.4,
+                name: 'rgba(255, 0, 0, 0.4)',
+            }}
+            onClear={() => {}}
+        />,
+    );
+    await expect(component).toBeVisible();
+    await expect(component).toHaveText('rgba(255, 0, 0, 0.4)');
+});
+
+test('color picker input should render hex value without error', async ({ mount }) => {
+    const component = await mount(
+        <ColorPicker.Input
+            aria-label="Color picker input"
+            currentColor={{
+                red: 255,
+                green: 0,
+                blue: 0,
+                alpha: 0.4,
+                name: '#ff0000',
+            }}
+            onClear={() => {}}
+        />,
+    );
+    await expect(component).toBeVisible();
+    await expect(component).toHaveText('#ff0000');
+});
