@@ -1,5 +1,11 @@
 # @frontify/fondue-icons
 
+## 0.4.0
+
+### Minor Changes
+
+-   [#1980](https://github.com/Frontify/fondue/pull/1980) [`4fee458`](https://github.com/Frontify/fondue/commit/4fee458a540102197f7cc5bc9079198b8ac656e2) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add new icons from figma
+
 ## 0.3.0
 
 ### Minor Changes
