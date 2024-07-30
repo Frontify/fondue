@@ -363,7 +363,7 @@ test('should trigger color change on alpha handle move', async ({ mount, page })
         red: 255,
         green: 0,
         blue: 0,
-        alpha: 0.5,
+        alpha: 0.52,
         name: 'rgba(255, 0, 0, 0.52)',
     });
 });
