@@ -17,7 +17,7 @@ export type DividerProps = {
      * The style of the divider
      * @default "solid"
      */
-    style?: DividerStyle;
+    variant?: DividerStyle;
     /**
      * The padding of the divider
      * @default "medium"
@@ -38,7 +38,13 @@ export type DividerProps = {
 };
 
 export const DividerComponent = (
-    { 'data-test-id': dataTestId = 'fondue-divider', direction = 'horizontal', className, ...props }: DividerProps,
+    {
+        'data-test-id': dataTestId = 'fondue-divider',
+        direction = 'horizontal',
+        className,
+        variant,
+        ...props
+    }: DividerProps,
     ref: ForwardedRef<HTMLDivElement | null>,
 ): ReactElement => {
     return (
@@ -47,6 +53,7 @@ export const DividerComponent = (
             className={cn(
                 dividerStyles({
                     direction,
+                    variant,
                     ...props,
                 }),
                 className,

@@ -1,5 +1,26 @@
 # @frontify/fondue-components
 
+## 3.0.1
+
+### Patch Changes
+
+-   [#1984](https://github.com/Frontify/fondue/pull/1984) [`f3f3578`](https://github.com/Frontify/fondue/commit/f3f3578982377d73090e9bdfd86a3b49b0d80c86) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix: button styles not applying properly
+
+## 3.0.0
+
+### Minor Changes
+
+-   [#1962](https://github.com/Frontify/fondue/pull/1962) [`14c9529`](https://github.com/Frontify/fondue/commit/14c95291b80e9e9cf0b47e924a726684cdf258e1) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - feat: add `Switch` component
+
+### Patch Changes
+
+-   [#1964](https://github.com/Frontify/fondue/pull/1964) [`4be6013`](https://github.com/Frontify/fondue/commit/4be60139c9b896246801e272ce9369f4e8513ce2) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix: change prop name "style" to "variant"
+
+-   [#1981](https://github.com/Frontify/fondue/pull/1981) [`4ee538e`](https://github.com/Frontify/fondue/commit/4ee538eda3cce00b1cff4a9dc75f82a2a4762a89) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: sass deprecation warning
+
+-   Updated dependencies [[`4fee458`](https://github.com/Frontify/fondue/commit/4fee458a540102197f7cc5bc9079198b8ac656e2)]:
+    -   @frontify/fondue-icons@0.4.0
+
 ## 2.0.0
 
 ### Minor Changes

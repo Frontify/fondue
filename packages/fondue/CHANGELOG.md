@@ -1,5 +1,24 @@
 # @frontify/fondue
 
+## 12.2.2
+
+### Patch Changes
+
+-   Updated dependencies [[`f3f3578`](https://github.com/Frontify/fondue/commit/f3f3578982377d73090e9bdfd86a3b49b0d80c86)]:
+    -   @frontify/fondue-components@3.0.1
+
+## 12.2.1
+
+### Patch Changes
+
+-   [#1972](https://github.com/Frontify/fondue/pull/1972) [`c8fe20d`](https://github.com/Frontify/fondue/commit/c8fe20def5e7b07cac057b9c92f684e8fcd38583) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix: `MultiSelect` component not a11y compliant
+
+-   [#1975](https://github.com/Frontify/fondue/pull/1975) [`9b3d6d9`](https://github.com/Frontify/fondue/commit/9b3d6d988a6b83b1860bf4e830f8781a14cc956f) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix: multiple aria attr adjustments
+
+-   Updated dependencies [[`14c9529`](https://github.com/Frontify/fondue/commit/14c95291b80e9e9cf0b47e924a726684cdf258e1), [`4fee458`](https://github.com/Frontify/fondue/commit/4fee458a540102197f7cc5bc9079198b8ac656e2), [`4be6013`](https://github.com/Frontify/fondue/commit/4be60139c9b896246801e272ce9369f4e8513ce2), [`4ee538e`](https://github.com/Frontify/fondue/commit/4ee538eda3cce00b1cff4a9dc75f82a2a4762a89)]:
+    -   @frontify/fondue-components@3.0.0
+    -   @frontify/fondue-icons@0.4.0
+
 ## 12.2.0
 
 ### Minor Changes

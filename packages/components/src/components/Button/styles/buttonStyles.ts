@@ -32,7 +32,7 @@ export const buttonStyles = sv({
             weak: '',
             strong: '',
         },
-        style: {
+        variant: {
             default: '',
             positive: '',
             negative: '',
@@ -43,7 +43,7 @@ export const buttonStyles = sv({
     compoundVariants: [
         {
             disabled: false,
-            style: 'default',
+            variant: 'default',
             emphasis: 'default',
             class:
                 'tw-bg-button-background tw-border-button-border ' +
@@ -52,7 +52,7 @@ export const buttonStyles = sv({
         },
         {
             disabled: false,
-            style: 'default',
+            variant: 'default',
             emphasis: 'weak',
             class:
                 'tw-border-transparent ' +
@@ -61,7 +61,7 @@ export const buttonStyles = sv({
         },
         {
             disabled: false,
-            style: 'default',
+            variant: 'default',
             emphasis: 'strong',
             class:
                 'tw-bg-button-strong-background tw-border-button-strong-border ' +
@@ -70,7 +70,7 @@ export const buttonStyles = sv({
         },
         {
             disabled: false,
-            style: 'positive',
+            variant: 'positive',
             emphasis: 'default',
             class:
                 'tw-bg-button-positive-background tw-border-button-positive-border ' +
@@ -79,7 +79,7 @@ export const buttonStyles = sv({
         },
         {
             disabled: false,
-            style: 'positive',
+            variant: 'positive',
             emphasis: 'weak',
             class:
                 'tw-border-transparent ' +
@@ -88,7 +88,7 @@ export const buttonStyles = sv({
         },
         {
             disabled: false,
-            style: 'positive',
+            variant: 'positive',
             emphasis: 'strong',
             class:
                 'tw-bg-button-strong-positive-background tw-border-button-strong-positive-border ' +
@@ -97,7 +97,7 @@ export const buttonStyles = sv({
         },
         {
             disabled: false,
-            style: 'negative',
+            variant: 'negative',
             emphasis: 'default',
             class:
                 'tw-bg-button-negative-background tw-border-button-negative-border ' +
@@ -106,7 +106,7 @@ export const buttonStyles = sv({
         },
         {
             disabled: false,
-            style: 'negative',
+            variant: 'negative',
             emphasis: 'weak',
             class:
                 'tw-border-transparent ' +
@@ -115,7 +115,7 @@ export const buttonStyles = sv({
         },
         {
             disabled: false,
-            style: 'negative',
+            variant: 'negative',
             emphasis: 'strong',
             class:
                 'tw-bg-button-strong-negative-background tw-border-button-strong-negative-border ' +
@@ -124,7 +124,7 @@ export const buttonStyles = sv({
         },
         {
             disabled: false,
-            style: 'danger',
+            variant: 'danger',
             emphasis: 'default',
             class:
                 'tw-bg-button-background tw-border-button-border ' +
@@ -133,7 +133,7 @@ export const buttonStyles = sv({
         },
         {
             disabled: false,
-            style: 'danger',
+            variant: 'danger',
             emphasis: 'weak',
             class:
                 'tw-border-transparent ' +
@@ -142,7 +142,7 @@ export const buttonStyles = sv({
         },
         {
             disabled: false,
-            style: 'danger',
+            variant: 'danger',
             emphasis: 'strong',
             class:
                 'tw-bg-button-danger-background tw-border-button-danger-border ' +
@@ -151,7 +151,7 @@ export const buttonStyles = sv({
         },
         {
             disabled: false,
-            style: 'loud',
+            variant: 'loud',
             emphasis: 'default',
             class:
                 'tw-bg-box-selected tw-border-button-border ' +
@@ -160,13 +160,13 @@ export const buttonStyles = sv({
         },
         {
             disabled: false,
-            style: 'loud',
+            variant: 'loud',
             emphasis: 'weak',
             class: 'tw-border-transparent hover:tw-bg-box-selected-hover active:tw-bg-box-selected-pressed',
         },
         {
             disabled: false,
-            style: 'loud',
+            variant: 'loud',
             emphasis: 'strong',
             class:
                 'tw-bg-box-selected-strong tw-border-box-selected-strong ' +
@@ -190,7 +190,7 @@ export const buttonStyles = sv({
         },
     ],
     defaultVariants: {
-        style: 'default',
+        variant: 'default',
         emphasis: 'strong',
         size: 'medium',
         rounding: 'medium',

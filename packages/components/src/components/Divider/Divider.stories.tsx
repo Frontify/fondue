@@ -11,7 +11,7 @@ const meta: Meta<typeof Divider> = {
     tags: ['autodocs'],
     args: {
         color: 'default',
-        style: 'solid',
+        variant: 'solid',
         padding: 'medium',
         direction: 'horizontal',
     },
@@ -35,7 +35,7 @@ export const CustomColor: Story = {
 
 export const CustomStyle: Story = {
     args: {
-        style: 'dashed',
+        variant: 'dashed',
     },
 };
 

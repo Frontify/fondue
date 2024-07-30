@@ -76,7 +76,9 @@ export const RadioList = ({
                             type="radio"
                             name={name}
                             value={radio.value}
-                            aria-label="radio"
+                            aria-label={radio.hideLabel ? radio.value : undefined}
+                            aria-labelledby={!radio.hideLabel ? `${id}-label` : undefined}
+                            aria-describedby={!radio.hideLabel && radio.helperText ? `${id}-description` : undefined}
                             aria-checked={radio.value === activeValue}
                             defaultChecked={radio.value === activeValue}
                             className={merge([
@@ -94,15 +96,18 @@ export const RadioList = ({
                         />
                         {!radio.hideLabel && (
                             <label
-                                data-test-id="radio-label"
+                                id={`${id}-label`}
                                 htmlFor={id}
                                 className={merge([
                                     'tw-flex tw-flex-col tw-pl-2 tw-text-sm tw-font-normal peer-checked:tw-font-medium tw-text-black-80 peer-disabled:tw-text-black-40',
                                 ])}
+                                data-test-id="radio-label"
                             >
                                 {radio.value}
                                 {radio.helperText && (
-                                    <span className="tw-text-black-80 tw-font-normal">{radio.helperText}</span>
+                                    <span id={`${id}-description`} className="tw-text-black-80 tw-font-normal">
+                                        {radio.helperText}
+                                    </span>
                                 )}
                             </label>
                         )}

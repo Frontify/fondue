@@ -20,17 +20,17 @@ test('should render with custom classname', async ({ mount }) => {
 });
 
 test('should render with style solid', async ({ mount }) => {
-    const component = await mount(<Divider style="solid" />);
+    const component = await mount(<Divider variant="solid" />);
     await expect(component).toHaveClass(/tw-border-solid/);
 });
 
 test('should render with style dashed', async ({ mount }) => {
-    const component = await mount(<Divider style="dashed" />);
+    const component = await mount(<Divider variant="dashed" />);
     await expect(component).toHaveClass(/tw-border-dashed/);
 });
 
 test('should render with style noline', async ({ mount }) => {
-    const component = await mount(<Divider style="noline" />);
+    const component = await mount(<Divider variant="noline" />);
     await expect(component).toHaveClass(/tw-border-none/);
 });
 
