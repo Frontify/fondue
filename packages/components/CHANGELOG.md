@@ -1,5 +1,11 @@
 # @frontify/fondue-components
 
+## 3.0.1
+
+### Patch Changes
+
+-   [#1984](https://github.com/Frontify/fondue/pull/1984) [`f3f3578`](https://github.com/Frontify/fondue/commit/f3f3578982377d73090e9bdfd86a3b49b0d80c86) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix: button styles not applying properly
+
 ## 3.0.0
 
 ### Minor Changes
