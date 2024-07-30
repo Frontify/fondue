@@ -3,11 +3,20 @@
 import * as RadixPopover from '@radix-ui/react-popover';
 import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { type UseComboboxPropGetters, type UseSelectPropGetters } from 'downshift';
-import { isValidElement, type ForwardedRef, type ReactElement, type ReactNode } from 'react';
+import { isValidElement, useEffect, useRef, type ForwardedRef, type ReactElement, type ReactNode } from 'react';
 
 import { type SelectItemProps } from './SelectItem';
 import styles from './styles/select.module.scss';
 import { getSelectOptionValue, recursiveMap } from './utils';
+
+function setDialogMaxHeight(dialog: HTMLUListElement) {
+    // send to the end of the event loop
+    setTimeout(() => {
+        const { top } = dialog.getBoundingClientRect();
+        const spaceBelow = window.innerHeight - (top + 16); // Assuming 16px margin
+        dialog.style.maxHeight = `${spaceBelow}px`;
+    });
+}
 
 export type SelectMenuProps = {
     /**
@@ -38,15 +47,32 @@ export type SelectMenuProps = {
 };
 
 export const SelectMenu = ({ highlightedIndex, getMenuProps, getItemProps, children, filterText }: SelectMenuProps) => {
+    const dialogRef = useRef<HTMLUListElement | null>(null);
+
+    const handleResize = () => {
+        if (dialogRef.current) {
+            setDialogMaxHeight(dialogRef.current);
+        }
+    };
+
+    const handleOnOpenAutoFocus = (event: Event) => {
+        event.preventDefault();
+        if (dialogRef.current) {
+            setDialogMaxHeight(dialogRef.current);
+        }
+    };
+
+    useEffect(() => {
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
     return (
         <RadixPopover.Portal>
-            <RadixPopover.Content
-                onOpenAutoFocus={(event) => {
-                    event.preventDefault();
-                }}
-                className={styles.portal}
-            >
-                <ul className={styles.menu} {...getMenuProps()} role="dialog">
+            <RadixPopover.Content onOpenAutoFocus={handleOnOpenAutoFocus} className={styles.portal}>
+                <ul className={styles.menu} {...getMenuProps()} ref={dialogRef} data-test-id="fondue-select-menu">
                     {
                         recursiveMap(
                             children,
