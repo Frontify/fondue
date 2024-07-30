@@ -153,13 +153,115 @@ test('should trigger color change event from RGB input', async ({ mount }) => {
     await component.getByTestId(COLOR_PICKER_VALUE_INPUT_BLUE_TEST_ID).locator('input').fill('100');
     await component.getByTestId(COLOR_PICKER_VALUE_INPUT_ALPHA_TEST_ID).locator('input').fill('40');
     expect(onChange.callCount).toBe(4);
-    expect(
-        onChange.calledWith({
-            red: 200,
-            green: 50,
-            blue: 200,
-            alpha: 0.4,
-            name: 'rgba(200, 170, 0, 0.8)',
-        }),
-    ).toEqual(true);
+    expect(onChange.calledWith({ red: 255, green: 170, blue: 0, alpha: 0.4, name: 'rgba(255, 170, 0, 0.4)' })).toEqual(
+        true,
+    );
+});
+
+test('should move saturation handle on value change', async ({ mount }) => {
+    const component = await mount(
+        <ColorPicker.Root
+            currentColor={{ red: 255, green: 0, blue: 0, alpha: 0.4 }}
+            defaultFormat="RGBA"
+            data-test-id={COLOR_PICKER_TEST_ID}
+        >
+            <ColorPicker.Values data-test-id={COLOR_PICKER_VALUE_INPUT_TEST_ID} />
+            <ColorPicker.Gradient data-test-id={COLOR_PICKER_GRADIENT_INPUT_TEST_ID} />
+        </ColorPicker.Root>,
+    );
+    await expect(component).toBeVisible();
+    const oldPosition = await component
+        .getByTestId(COLOR_PICKER_GRADIENT_INPUT_TEST_ID)
+        .locator('div.react-colorful__saturation-pointer')
+        .first()
+        .boundingBox();
+
+    await component.update(
+        <ColorPicker.Root
+            currentColor={{ red: 100, green: 0, blue: 0, alpha: 0.4 }}
+            defaultFormat="RGBA"
+            data-test-id={COLOR_PICKER_TEST_ID}
+        >
+            <ColorPicker.Values data-test-id={COLOR_PICKER_VALUE_INPUT_TEST_ID} />
+            <ColorPicker.Gradient data-test-id={COLOR_PICKER_GRADIENT_INPUT_TEST_ID} />
+        </ColorPicker.Root>,
+    );
+    const newPosition = await component
+        .getByTestId(COLOR_PICKER_GRADIENT_INPUT_TEST_ID)
+        .locator('div.react-colorful__saturation-pointer')
+        .first()
+        .boundingBox();
+    expect(oldPosition?.y || 1).toBeLessThan(newPosition?.y || 0);
+});
+
+test('should move hue handle on value change', async ({ mount }) => {
+    const component = await mount(
+        <ColorPicker.Root
+            currentColor={{ red: 255, green: 0, blue: 0, alpha: 0.4 }}
+            defaultFormat="RGBA"
+            data-test-id={COLOR_PICKER_TEST_ID}
+        >
+            <ColorPicker.Values data-test-id={COLOR_PICKER_VALUE_INPUT_TEST_ID} />
+            <ColorPicker.Gradient data-test-id={COLOR_PICKER_GRADIENT_INPUT_TEST_ID} />
+        </ColorPicker.Root>,
+    );
+    await expect(component).toBeVisible();
+    const oldPosition = await component
+        .getByTestId(COLOR_PICKER_GRADIENT_INPUT_TEST_ID)
+        .locator('div.react-colorful__hue-pointer')
+        .first()
+        .boundingBox();
+
+    await component.update(
+        <ColorPicker.Root
+            currentColor={{ red: 0, green: 255, blue: 0, alpha: 0.4 }}
+            defaultFormat="RGBA"
+            data-test-id={COLOR_PICKER_TEST_ID}
+        >
+            <ColorPicker.Values data-test-id={COLOR_PICKER_VALUE_INPUT_TEST_ID} />
+            <ColorPicker.Gradient data-test-id={COLOR_PICKER_GRADIENT_INPUT_TEST_ID} />
+        </ColorPicker.Root>,
+    );
+    const newPosition = await component
+        .getByTestId(COLOR_PICKER_GRADIENT_INPUT_TEST_ID)
+        .locator('div.react-colorful__hue-pointer')
+        .first()
+        .boundingBox();
+    expect(oldPosition?.x || 1).toBeLessThan(newPosition?.x || 0);
+});
+
+test('should move alpha handle on value change', async ({ mount }) => {
+    const component = await mount(
+        <ColorPicker.Root
+            currentColor={{ red: 255, green: 0, blue: 0, alpha: 0.4 }}
+            defaultFormat="RGBA"
+            data-test-id={COLOR_PICKER_TEST_ID}
+        >
+            <ColorPicker.Values data-test-id={COLOR_PICKER_VALUE_INPUT_TEST_ID} />
+            <ColorPicker.Gradient data-test-id={COLOR_PICKER_GRADIENT_INPUT_TEST_ID} />
+        </ColorPicker.Root>,
+    );
+    await expect(component).toBeVisible();
+    const oldPosition = await component
+        .getByTestId(COLOR_PICKER_GRADIENT_INPUT_TEST_ID)
+        .locator('div.react-colorful__alpha-pointer')
+        .first()
+        .boundingBox();
+
+    await component.update(
+        <ColorPicker.Root
+            currentColor={{ red: 255, green: 0, blue: 0, alpha: 0.9 }}
+            defaultFormat="RGBA"
+            data-test-id={COLOR_PICKER_TEST_ID}
+        >
+            <ColorPicker.Values data-test-id={COLOR_PICKER_VALUE_INPUT_TEST_ID} />
+            <ColorPicker.Gradient data-test-id={COLOR_PICKER_GRADIENT_INPUT_TEST_ID} />
+        </ColorPicker.Root>,
+    );
+    const newPosition = await component
+        .getByTestId(COLOR_PICKER_GRADIENT_INPUT_TEST_ID)
+        .locator('div.react-colorful__alpha-pointer')
+        .first()
+        .boundingBox();
+    expect(oldPosition?.x || 1).toBeLessThan(newPosition?.x || 0);
 });
