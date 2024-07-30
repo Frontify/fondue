@@ -266,7 +266,7 @@ test('should move alpha handle on value change', async ({ mount }) => {
     expect(oldPosition?.x || 1).toBeLessThan(newPosition?.x || 0);
 });
 
-test('should trigger color change on gradient handle move', async ({ mount }) => {
+test('should trigger color change on gradient handle move', async ({ mount, page }) => {
     const onChange = sinon.spy();
     const component = await mount(
         <ColorPicker.Root
@@ -284,7 +284,86 @@ test('should trigger color change on gradient handle move', async ({ mount }) =>
         .getByTestId(COLOR_PICKER_GRADIENT_INPUT_TEST_ID)
         .locator('div.react-colorful__saturation-pointer')
         .first();
+    const handleCoordinates = await gradientHandle.boundingBox();
     await expect(gradientHandle).toBeVisible();
-    await gradientHandle.dragTo(gradientHandle, { targetPosition: { x: 300, y: 300 } });
+    await gradientHandle.hover();
+    await page.mouse.down();
+    await page.mouse.move((handleCoordinates?.x || 0) - 100, handleCoordinates?.y || 0);
+    await page.mouse.up();
     expect(onChange.calledOnce).toBe(true);
+    expect(onChange.getCall(0).args[0]).toEqual({
+        red: 255,
+        green: 42,
+        blue: 42,
+        alpha: 0.4,
+        name: 'rgba(255, 42, 42, 0.4)',
+    });
+});
+
+test('should trigger color change on hue handle move', async ({ mount, page }) => {
+    const onChange = sinon.spy();
+    const component = await mount(
+        <ColorPicker.Root
+            onColorChange={onChange}
+            currentColor={{ red: 255, green: 0, blue: 0, alpha: 0.4 }}
+            defaultFormat="RGBA"
+            data-test-id={COLOR_PICKER_TEST_ID}
+        >
+            <ColorPicker.Values data-test-id={COLOR_PICKER_VALUE_INPUT_TEST_ID} />
+            <ColorPicker.Gradient data-test-id={COLOR_PICKER_GRADIENT_INPUT_TEST_ID} />
+        </ColorPicker.Root>,
+    );
+    await expect(component).toBeVisible();
+    const gradientHandle = component
+        .getByTestId(COLOR_PICKER_GRADIENT_INPUT_TEST_ID)
+        .locator('div.react-colorful__hue-pointer')
+        .first();
+    const handleCoordinates = await gradientHandle.boundingBox();
+    await expect(gradientHandle).toBeVisible();
+    await gradientHandle.hover();
+    await page.mouse.down();
+    await page.mouse.move((handleCoordinates?.x || 0) + 100, handleCoordinates?.y || 0);
+    await page.mouse.up();
+    expect(onChange.calledOnce).toBe(true);
+    expect(onChange.getCall(0).args[0]).toEqual({
+        red: 255,
+        green: 188,
+        blue: 0,
+        alpha: 0.4,
+        name: 'rgba(255, 188, 0, 0.4)',
+    });
+});
+
+test('should trigger color change on alpha handle move', async ({ mount, page }) => {
+    const onChange = sinon.spy();
+    const component = await mount(
+        <ColorPicker.Root
+            onColorChange={onChange}
+            currentColor={{ red: 255, green: 0, blue: 0, alpha: 0.4 }}
+            defaultFormat="RGBA"
+            data-test-id={COLOR_PICKER_TEST_ID}
+        >
+            <ColorPicker.Values data-test-id={COLOR_PICKER_VALUE_INPUT_TEST_ID} />
+            <ColorPicker.Gradient data-test-id={COLOR_PICKER_GRADIENT_INPUT_TEST_ID} />
+        </ColorPicker.Root>,
+    );
+    await expect(component).toBeVisible();
+    const gradientHandle = component
+        .getByTestId(COLOR_PICKER_GRADIENT_INPUT_TEST_ID)
+        .locator('div.react-colorful__alpha-pointer')
+        .first();
+    const handleCoordinates = await gradientHandle.boundingBox();
+    await expect(gradientHandle).toBeVisible();
+    await gradientHandle.hover();
+    await page.mouse.down();
+    await page.mouse.move((handleCoordinates?.x || 0) + 100, handleCoordinates?.y || 0);
+    await page.mouse.up();
+    expect(onChange.calledOnce).toBe(true);
+    expect(onChange.getCall(0).args[0]).toEqual({
+        red: 255,
+        green: 0,
+        blue: 0,
+        alpha: 0.5,
+        name: 'rgba(255, 0, 0, 0.52)',
+    });
 });
