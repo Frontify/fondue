@@ -38,7 +38,7 @@ export const Axes = ({
     valueFormatter,
     labelFormatter,
 }: AxesProps) => {
-    const formatLabel = (label: string) => truncateTextLabel(labelFormatter(label).toString());
+    const formatLabel = (label: string | number) => truncateTextLabel(labelFormatter(label.toString()));
     const angle = useRotatedLabel(horizontal, updateMaxLabelHeight, updateFirstLabelOverflowsBy, formatLabel);
     const filteredTicks = useBandTicks(horizontal, updateBandScaleTicks);
     const textAnchor = getTextAnchorProp(horizontal, angle);
@@ -46,23 +46,23 @@ export const Axes = ({
     return (
         <>
             <VisxAxis
-                tickClassName={'tick'}
+                tickClassName="tick"
                 tickLength={4}
                 hideAxisLine={false}
-                stroke={'var(--fc-axis-y-color)'}
-                tickStroke={'var(--fc-tick-stroke-color)'}
+                stroke="var(--fc-axis-y-color)"
+                tickStroke="var(--fc-tick-stroke-color)"
                 numTicks={linearAxesTicks.length}
                 orientation={horizontal ? 'bottom' : 'left'}
                 tickValues={linearAxesTicks}
                 tickFormat={valueFormatter}
             />
             <VisxAxis
-                tickClassName={'tick'}
+                tickClassName="tick"
                 tickLength={4}
                 hideAxisLine={false}
                 orientation={horizontal ? 'left' : 'bottom'}
-                stroke={'var(--fc-axis-x-color)'}
-                tickStroke={'var(--fc-tick-stroke-color)'}
+                stroke="var(--fc-axis-x-color)"
+                tickStroke="var(--fc-tick-stroke-color)"
                 tickLabelProps={() => ({
                     angle,
                     textAnchor,

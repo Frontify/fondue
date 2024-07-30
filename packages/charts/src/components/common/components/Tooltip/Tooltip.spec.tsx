@@ -55,9 +55,7 @@ describe('Tooltip', () => {
             tooltipPosition: { tooltipLeft: 20, tooltipTop: 30 },
             glyphProps: [],
         });
-        const { getByText } = render(
-            <Tooltip crossHairStyle="line" colorAccessor={(str) => str} valueContextBySeries={['%', 'ºC', 'F']} />,
-        );
+        const { getByText } = render(<Tooltip crossHairStyle="line" valueContextBySeries={['%', 'ºC', 'F']} />);
 
         expect(getByText(/10 %/i)).toBeDefined();
         expect(getByText(/20 ºc/i)).toBeDefined();

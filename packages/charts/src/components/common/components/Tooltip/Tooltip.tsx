@@ -36,7 +36,7 @@ const TOOLTIP_NO_STYLE: CSSProperties = {
 export type TooltipCrossHairStyle = 'line' | 'bar';
 
 type TooltipPropsBase = {
-    colorAccessor: (key: string) => string | undefined;
+    colorAccessor?: (key: string) => string | undefined;
     missingValueLabel?: string;
     childSumLabel?: string;
     valueFormatter?: ValueFormatter;
@@ -70,7 +70,7 @@ export const Tooltip = ({
     missingValueLabel = MISSING_VALUE_LABEL,
     childSumLabel,
     scalePadding = 0,
-    colorAccessor,
+    colorAccessor = () => '',
     valueFormatter,
     valueContextBySeries,
     labelFormatter,
@@ -92,12 +92,10 @@ export const Tooltip = ({
         valueFormatter,
         tooltipContext.tooltipData?.datumByKey,
         childSumLabel,
+        valueContextBySeries,
     );
-    const entriesWithFormattedSeries = valueContextBySeries
-        ? entries.map((entry, index) => ({ ...entry, valueContextBySeries: valueContextBySeries[index] }))
-        : entries;
     const shouldReverseEntries = stackingGlyphs;
-    const sortedEntries = shouldReverseEntries ? [...entriesWithFormattedSeries].reverse() : entriesWithFormattedSeries;
+    const sortedEntries = shouldReverseEntries ? [...entries].reverse() : entries;
 
     return (
         <svg ref={containerRef} style={INVISIBLE_STYLES} key={wrapperKey}>
