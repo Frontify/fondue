@@ -65,6 +65,7 @@ export const ColorValueInput = (
         <div className={styles.inputs} data-test-id={dataTestId} ref={forwardedRef}>
             <div className={styles.colorFormatInput}>
                 <Select
+                    data-test-id="color-picker-select-format"
                     aria-label="Select a color format"
                     onSelect={(selectedValue) => {
                         setCurrentFormat(selectedValue as ColorFormat);
@@ -77,6 +78,7 @@ export const ColorValueInput = (
             </div>
             {currentFormat === 'HEX' ? (
                 <TextInput.Root
+                    data-test-id="color-picker-value-input-hex"
                     className={styles.valueInput}
                     type="text"
                     value={hexColorValue}
@@ -89,7 +91,7 @@ export const ColorValueInput = (
                     onChange={(event) => {
                         setHexColorValue(event.target.value);
                     }}
-                    aria-label="Red Color Channel"
+                    aria-label="Hex color value"
                 >
                     <TextInput.Slot name="left">
                         <span className={styles.inputDecorator}>#</span>
@@ -98,6 +100,7 @@ export const ColorValueInput = (
             ) : (
                 <div className={styles.colorChannelInputGroup}>
                     <TextInput.Root
+                        data-test-id="color-picker-value-input-red"
                         className={styles.valueInput}
                         value={currentColor.red}
                         type="number"
@@ -114,6 +117,7 @@ export const ColorValueInput = (
                         </TextInput.Slot>
                     </TextInput.Root>
                     <TextInput.Root
+                        data-test-id="color-picker-value-input-green"
                         className={styles.valueInput}
                         value={currentColor.green}
                         type="number"
@@ -130,6 +134,7 @@ export const ColorValueInput = (
                         </TextInput.Slot>
                     </TextInput.Root>
                     <TextInput.Root
+                        data-test-id="color-picker-value-input-blue"
                         className={styles.valueInput}
                         value={currentColor.blue}
                         type="number"
@@ -149,6 +154,7 @@ export const ColorValueInput = (
             )}
             <div className={styles.colorAlphaInput}>
                 <TextInput.Root
+                    data-test-id="color-picker-value-input-alpha"
                     className={styles.valueInput}
                     value={currentColor.alpha === undefined ? 100 : Math.trunc(currentColor.alpha * 100)}
                     type="number"
