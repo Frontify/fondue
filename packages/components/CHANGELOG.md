@@ -1,5 +1,11 @@
 # @frontify/fondue-components
 
+## 3.0.2
+
+### Patch Changes
+
+-   [#1986](https://github.com/Frontify/fondue/pull/1986) [`03e2544`](https://github.com/Frontify/fondue/commit/03e25441fcdbf1d828376ff64297bea867dfc1ad) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix: replace missing style prop
+
 ## 3.0.1
 
 ### Patch Changes
