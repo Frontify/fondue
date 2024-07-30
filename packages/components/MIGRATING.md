@@ -506,26 +506,28 @@ const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
 };
 
 return (
-<Label id="new-slider-label" htmlFor="new-slider">
-    Volume
-</Label>
+    <div style={{ display: 'flex', gap: 16 }}>
+        <Label id="new-slider-label" htmlFor="new-slider">
+            Volume
+        </Label>
 
-<Slider
-    id="new-slider"
-    value={range}
-    min={0}
-    max={100}
-    aria-labelledby="new-slider-label"
-    onChange={onSliderChange}
-/>
+        <Slider
+            id="new-slider"
+            value={range}
+            min={0}
+            max={100}
+            aria-labelledby="new-slider-label"
+            onChange={onSliderChange}
+        />
 
-<TextInput
-    id="new-slider-input"
-    value={value}
-    type="number"
-    aria-labelledby="new-slider-label"
-    onChange={onInputChange}
-/>
+        <TextInput
+            id="new-slider-input"
+            value={value}
+            type="number"
+            aria-labelledby="new-slider-label"
+            onChange={onInputChange}
+        />
+    </div>
 ```
 
 ## Switch
