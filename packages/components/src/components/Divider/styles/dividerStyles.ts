@@ -57,6 +57,6 @@ export const dividerStyles = sv({
         padding: 'medium',
         direction: 'horizontal',
         color: 'default',
-        style: 'solid',
+        variant: 'solid',
     },
 });
