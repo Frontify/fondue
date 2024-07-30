@@ -440,8 +440,8 @@ importers:
         specifier: ^1.1.2
         version: 1.1.2(@types/react-dom@18.3.0)(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@react-aria/accordion':
-        specifier: 3.0.0-alpha.29
-        version: 3.0.0-alpha.29(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 3.0.0-alpha.31
+        version: 3.0.0-alpha.31(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@react-aria/aria-modal-polyfill':
         specifier: ^3.7.10
         version: 3.7.10(react@18.3.1)
@@ -2401,6 +2401,9 @@ packages:
   '@internationalized/date@3.5.4':
     resolution: {integrity: sha512-qoVJVro+O0rBaw+8HPjUB1iH8Ihf8oziEnqMnvhJUSuVIrHOuZ6eNLHNvzXJKUvAtaDiqMnRlg8Z2mgh09BlUw==}
 
+  '@internationalized/date@3.5.5':
+    resolution: {integrity: sha512-H+CfYvOZ0LTJeeLOqm19E3uj/4YjrmOFtBufDHPfvtI80hFAMqtrp7oCACpe4Cil5l8S0Qu/9dYfZc/5lY8WQQ==}
+
   '@internationalized/message@3.1.4':
     resolution: {integrity: sha512-Dygi9hH1s7V9nha07pggCkvmRfDd3q2lWnMGvrJyrOwYMe1yj4D2T9BoH9I6MGR7xz0biQrtLPsqUkqXzIrBOw==}
 
@@ -2980,11 +2983,11 @@ packages:
   '@radix-ui/rect@1.1.0':
     resolution: {integrity: sha512-A9+lCBZoaMJlVKcRBz2YByCG+Cp2t6nAnMnNba+XiWxnj6r4JUFqfsgwocMBZU9LPtdxC6wB56ySYpc7LQIoJg==}
 
-  '@react-aria/accordion@3.0.0-alpha.29':
-    resolution: {integrity: sha512-WFbXfZ9Z6mk7jto9LI+3z9QNvWNKmAhH44jmRQADKG4JE3p7ATFRdxaLhLVsMktbSKhSrDipwrCWqAkl0HZ1rg==}
+  '@react-aria/accordion@3.0.0-alpha.31':
+    resolution: {integrity: sha512-EpWhrwJYKppoCjibUmnT92xljHH8MMXJIo/rAoqFphmwn10L2vYaYrFG2W0hVg6LKNZGRUBuhkewvsHNHtcukA==}
     peerDependencies:
-      react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-      react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+      react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+      react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
 
   '@react-aria/aria-modal-polyfill@3.7.10':
     resolution: {integrity: sha512-OBRyVwA6orodO6K4e2YDXziWYDIV54FEDUOmSfRO4r6o7Zg0TGxQw8bM1ZIskje9jo2FZb+2vrypR3cKNUy9dQ==}
@@ -3000,6 +3003,11 @@ packages:
     resolution: {integrity: sha512-dgcYR6j8WDOMLKuVrtxzx4jIC05cVKDzc+HnPO8lNkBAOfjcuN5tkGRtIjLtqjMvpZHhQT5aDbgFpIaZzxgFIg==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+
+  '@react-aria/button@3.9.7':
+    resolution: {integrity: sha512-xwE6uatbbn3KbNSc0dyDnOo539HJM2cqCPfjiQGt8O9cFbpQSmx76Fj4WotU3BwT7ZVbcAC8D206CgF1C2cDcQ==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
 
   '@react-aria/checkbox@3.14.3':
     resolution: {integrity: sha512-EtBJL6iu0gvrw3A4R7UeVLR6diaVk/mh4kFBc7c8hQjpEJweRr4hmJT3hrNg3MBcTWLxFiMEXPGgWEwXDBygtA==}
@@ -3023,6 +3031,11 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
 
+  '@react-aria/focus@3.18.1':
+    resolution: {integrity: sha512-N0Cy61WCIv+57mbqC7hiZAsB+3rF5n4JKabxUmg/2RTJL6lq7hJ5N4gx75ymKxkN8GnVDwt4pKZah48Wopa5jw==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+
   '@react-aria/form@3.0.5':
     resolution: {integrity: sha512-n290jRwrrRXO3fS82MyWR+OKN7yznVesy5Q10IclSTVYHHI3VI53xtAPr/WzNjJR1um8aLhOcDNFKwnNIUUCsQ==}
     peerDependencies:
@@ -3039,10 +3052,20 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
 
+  '@react-aria/i18n@3.12.1':
+    resolution: {integrity: sha512-0q3gyogF9Ekah+9LOo6tcfshxsk2Ope+KdbtFHJVhznedMxn6RpHGcVur5ImbQ1dYafA5CmjBUGJW70b56+BGA==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+
   '@react-aria/interactions@3.21.3':
     resolution: {integrity: sha512-BWIuf4qCs5FreDJ9AguawLVS0lV9UU+sK4CCnbCNNmYqOWY+1+gRXCsnOM32K+oMESBxilAjdHW5n1hsMqYMpA==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+
+  '@react-aria/interactions@3.22.1':
+    resolution: {integrity: sha512-5TLzQaDAQQ5C70yG8GInbO4wIylKY67RfTIIwQPGR/4n5OIjbUD8BOj3NuSsuZ/frUPaBXo1VEBBmSO23fxkjw==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
 
   '@react-aria/label@3.7.8':
     resolution: {integrity: sha512-MzgTm5+suPA3KX7Ug6ZBK2NX9cin/RFLsv1BdafJ6CZpmUSpWnGE/yQfYUB7csN7j31OsZrD3/P56eShYWAQfg==}
@@ -3092,11 +3115,23 @@ packages:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
 
+  '@react-aria/selection@3.19.1':
+    resolution: {integrity: sha512-mbExvq2Omi60sTWFGjwcNz1ja2P8VDsxWAqSypHRTyqXhtgqbv8V/v8Gp+7BmVPH1YHcbhztl6rvUZTDOSszzw==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+      react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+
   '@react-aria/ssr@3.9.4':
     resolution: {integrity: sha512-4jmAigVq409qcJvQyuorsmBR4+9r3+JEC60wC+Y0MZV0HCtTmm8D9guYXlJMdx0SSkgj0hHAyFm/HvPNFofCoQ==}
     engines: {node: '>= 12'}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+
+  '@react-aria/ssr@3.9.5':
+    resolution: {integrity: sha512-xEwGKoysu+oXulibNUSkXf8itW0npHHTa6c4AyYeZIJyRoegeteYuFpZUBPtIDE8RfHdNsSmE1ssOkxRnwbkuQ==}
+    engines: {node: '>= 12'}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
 
   '@react-aria/table@3.14.1':
     resolution: {integrity: sha512-WaPgQe4zQF5OaluO5rm+Y2nEoFR63vsLd4BT4yjK1uaFhKhDY2Zk+1SCVQvBLLKS4WK9dhP05nrNzT0vp/ZPOw==}
@@ -3123,6 +3158,11 @@ packages:
     resolution: {integrity: sha512-O3s9qhPMd6n42x9sKeJ3lhu5V1Tlnzhu6Yk8QOvDuXf7UGuUjXf9mzfHJt1dYzID4l9Fwm8toczBzPM9t0jc8Q==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+
+  '@react-aria/utils@3.25.1':
+    resolution: {integrity: sha512-5Uj864e7T5+yj78ZfLnfHqmypLiqW2mN+nsdslog2z5ssunTqjolVeM15ootXskjISlZ7MojLpq97kIC4nlnAw==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
 
   '@react-aria/visually-hidden@3.8.12':
     resolution: {integrity: sha512-Bawm+2Cmw3Xrlr7ARzl2RLtKh0lNUdJ0eNqzWcyx4c0VHUAWtThmH5l+HRqFUGzzutFZVo89SAy40BAbd0gjVw==}
@@ -3270,6 +3310,11 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
 
+  '@react-stately/collections@3.10.9':
+    resolution: {integrity: sha512-plyrng6hOQMG8LrjArMA6ts/DgWyXln3g90/hFNbqe/hdVYF53sDVsj8Jb+5LtoYTpiAlV6eOvy1XR0vPZUf8w==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+
   '@react-stately/combobox@3.8.4':
     resolution: {integrity: sha512-iLVGvKRRz0TeJXZhZyK783hveHpYA6xovOSdzSD+WGYpiPXo1QrcrNoH3AE0Z2sHtorU+8nc0j58vh5PB+m2AA==}
     peerDependencies:
@@ -3318,6 +3363,11 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
 
+  '@react-stately/selection@3.16.1':
+    resolution: {integrity: sha512-qmnmYaXY7IhhzmIiInec1a/yPxlPSBHka6vrWddvt0S6zN7FU5cv6sm69ONUwYwLKSoaNHgOGvZhmsTzyV0O2A==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+
   '@react-stately/table@3.11.8':
     resolution: {integrity: sha512-EdyRW3lT1/kAVDp5FkEIi1BQ7tvmD2YgniGdLuW/l9LADo0T+oxZqruv60qpUS6sQap+59Riaxl91ClDxrJnpg==}
     peerDependencies:
@@ -3327,6 +3377,11 @@ packages:
     resolution: {integrity: sha512-CoYFe9WrhLkDP4HGDpJYQKwfiYCRBAeoBQHv+JWl5eyK61S8xSwoHsveYuEZ3bowx71zyCnNAqWRrmNOxJ4CKA==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+
+  '@react-stately/toggle@3.7.6':
+    resolution: {integrity: sha512-xRZyrjNVu1VCd1xpg5RwmNYs9fXb+JHChoUaRcBmGCCjsPD0R5uR3iNuE17RXJtWS3/8o9IJVn90+/7NW7boOg==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
 
   '@react-stately/tooltip@3.4.9':
     resolution: {integrity: sha512-P7CDJsdoKarz32qFwf3VNS01lyC+63gXpDZG31pUu+EO5BeQd4WKN/AH1Beuswpr4GWzxzFc1aXQgERFGVzraA==}
@@ -3338,20 +3393,30 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
 
+  '@react-stately/tree@3.8.3':
+    resolution: {integrity: sha512-9sRQOxkK7ZMdtSTGHx0sMabHC39PEM4tMl+IdJKkmcp60bfsm3p6LHXhha3E58jwnZaemBfUrlQmTP/E26BbGw==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+
   '@react-stately/utils@3.10.1':
     resolution: {integrity: sha512-VS/EHRyicef25zDZcM/ClpzYMC5i2YGN6uegOeQawmgfGjb02yaCX0F0zR69Pod9m2Hr3wunTbtpgVXvYbZItg==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+
+  '@react-stately/utils@3.10.2':
+    resolution: {integrity: sha512-fh6OTQtbeQC0ywp6LJuuKs6tKIgFvt/DlIZEcIpGho6/oZG229UnIk6TUekwxnDbumuYyan6D9EgUtEMmT8UIg==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
 
   '@react-stately/virtualizer@3.7.1':
     resolution: {integrity: sha512-voHgE6EQ+oZaLv6u2umKxakvIKNkCQuUihqKACTjdslp7SJh4Mvs3oLBI0hf0JOh+rCcFIKDvQtFwy1fXFRYBA==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
 
-  '@react-types/accordion@3.0.0-alpha.21':
-    resolution: {integrity: sha512-cbE06jH/ZoI+1898xd7ocQ/A/Rtkz8wTJAVOYgc8VRY1SYNQ/XZTGH5T6dD6aERAmiDwL/kjD7xhsE80DyaEKA==}
+  '@react-types/accordion@3.0.0-alpha.23':
+    resolution: {integrity: sha512-D2D/92ZyhFDJ6RiPwX6ZtZfj+cldGHaXekqwo7cxca6WkrZxtgee8SHGpKNyVBNv9qbPXa7OK2CF4DmJ7Y591A==}
     peerDependencies:
-      react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+      react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
 
   '@react-types/breadcrumbs@3.7.5':
     resolution: {integrity: sha512-lV9IDYsMiu2TgdMIjEmsOE0YWwjb3jhUNK1DCZZfq6uWuiHLgyx2EncazJBUWSjHJ4ta32j7xTuXch+8Ai6u/A==}
@@ -3363,10 +3428,20 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
 
+  '@react-types/button@3.9.6':
+    resolution: {integrity: sha512-8lA+D5JLbNyQikf8M/cPP2cji91aVTcqjrGpDqI7sQnaLFikM8eFR6l1ZWGtZS5MCcbfooko77ha35SYplSQvw==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
+
   '@react-types/checkbox@3.8.1':
     resolution: {integrity: sha512-5/oVByPw4MbR/8QSdHCaalmyWC71H/QGgd4aduTJSaNi825o+v/hsN2/CH7Fq9atkLKsC8fvKD00Bj2VGaKriQ==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+
+  '@react-types/checkbox@3.8.3':
+    resolution: {integrity: sha512-f4c1mnLEt0iS1NMkyZXgT3q3AgcxzDk7w6MSONOKydcnh0xG5L2oefY14DhVDLkAuQS7jThlUFwiAs+MxiO3MA==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
 
   '@react-types/combobox@3.11.1':
     resolution: {integrity: sha512-UNc3OHt5cUt5gCTHqhQIqhaWwKCpaNciD8R7eQazmHiA9fq8ROlV+7l3gdNgdhJbTf5Bu/V5ISnN7Y1xwL3zqQ==}
@@ -3417,6 +3492,11 @@ packages:
     resolution: {integrity: sha512-5d+3HbFDxGZjhbMBeFHRQhexMFt4pUce3okyRtUVKbbedQFUrtXSBg9VszgF2RTeQDKDkMCIQDtz5ccP/Lk1gw==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+
+  '@react-types/shared@3.24.1':
+    resolution: {integrity: sha512-AUQeGYEm/zDTN6zLzdXolDxz3Jk5dDL7f506F07U8tBwxNNI3WRdhU84G0/AaFikOZzDXhOZDr3MhQMzyE7Ydw==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
 
   '@react-types/table@3.9.5':
     resolution: {integrity: sha512-fgM2j9F/UR4Anmd28CueghCgBwOZoCVyN8fjaIFPd2MN4gCwUUfANwxLav65gZk4BpwUXGoQdsW+X50L3555mg==}
@@ -11469,54 +11549,28 @@ snapshots:
   '@formatjs/ecma402-abstract@1.14.3':
     dependencies:
       '@formatjs/intl-localematcher': 0.2.32
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@formatjs/fast-memoize@1.2.8':
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@formatjs/icu-messageformat-parser@2.2.0':
     dependencies:
       '@formatjs/ecma402-abstract': 1.14.3
       '@formatjs/icu-skeleton-parser': 1.3.18
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@formatjs/icu-skeleton-parser@1.3.18':
     dependencies:
       '@formatjs/ecma402-abstract': 1.14.3
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@formatjs/intl-localematcher@0.2.32':
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@frontify/eslint-config-basic@0.20.6(@types/eslint@8.56.9)(eslint@8.57.0)(prettier@3.3.3)(typescript@5.5.4)':
-    dependencies:
-      '@typescript-eslint/eslint-plugin': 7.16.0(@typescript-eslint/parser@7.16.0(eslint@8.57.0)(typescript@5.5.4))(eslint@8.57.0)(typescript@5.5.4)
-      '@typescript-eslint/parser': 7.16.0(eslint@8.57.0)(typescript@5.5.4)
-      eslint: 8.57.0
-      eslint-config-prettier: 9.1.0(eslint@8.57.0)
-      eslint-import-resolver-typescript: 3.6.1(@typescript-eslint/parser@7.16.0(eslint@8.57.0)(typescript@5.5.4))(eslint-plugin-import@2.29.1(@typescript-eslint/parser@7.16.0(eslint@8.57.0)(typescript@5.5.4))(eslint@8.57.0))(eslint@8.57.0)
-      eslint-plugin-eslint-comments: 3.2.0(eslint@8.57.0)
-      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@7.16.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.16.0(eslint@8.57.0)(typescript@5.5.4))(eslint-plugin-import@2.29.1(@typescript-eslint/parser@7.16.0(eslint@8.57.0)(typescript@5.5.4))(eslint@8.57.0))(eslint@8.57.0))(eslint@8.57.0)
-      eslint-plugin-jsonc: 2.16.0(eslint@8.57.0)
-      eslint-plugin-lodash: 8.0.0(eslint@8.57.0)
-      eslint-plugin-markdown: 5.1.0(eslint@8.57.0)
-      eslint-plugin-no-only-tests: 3.1.0
-      eslint-plugin-prettier: 5.1.3(@types/eslint@8.56.9)(eslint-config-prettier@9.1.0(eslint@8.57.0))(eslint@8.57.0)(prettier@3.3.3)
-      eslint-plugin-promise: 6.4.0(eslint@8.57.0)
-      eslint-plugin-unicorn: 54.0.0(eslint@8.57.0)
-      eslint-plugin-yml: 1.14.0(eslint@8.57.0)
-      prettier: 3.3.3
-      yaml-eslint-parser: 1.2.3
-    transitivePeerDependencies:
-      - '@types/eslint'
-      - eslint-import-resolver-node
-      - eslint-import-resolver-webpack
-      - supports-color
-      - typescript
-
-  '@frontify/eslint-config-basic@0.20.6(eslint@8.57.0)(prettier@3.3.3)(typescript@5.5.4)':
     dependencies:
       '@typescript-eslint/eslint-plugin': 7.16.0(@typescript-eslint/parser@7.16.0(eslint@8.57.0)(typescript@5.5.4))(eslint@8.57.0)(typescript@5.5.4)
       '@typescript-eslint/parser': 7.16.0(eslint@8.57.0)(typescript@5.5.4)
@@ -11544,7 +11598,7 @@ snapshots:
 
   '@frontify/eslint-config-react@0.17.7(eslint@8.57.0)(prettier@3.3.3)(react@18.3.1)(typescript@5.5.4)':
     dependencies:
-      '@frontify/eslint-config-basic': 0.20.6(eslint@8.57.0)(prettier@3.3.3)(typescript@5.5.4)
+      '@frontify/eslint-config-basic': 0.20.6(@types/eslint@8.56.9)(eslint@8.57.0)(prettier@3.3.3)(typescript@5.5.4)
       eslint: 8.57.0
       eslint-plugin-jsx-a11y: 6.9.0(eslint@8.57.0)
       eslint-plugin-react: 7.34.4(eslint@8.57.0)
@@ -11607,6 +11661,10 @@ snapshots:
       - supports-color
 
   '@internationalized/date@3.5.4':
+    dependencies:
+      '@swc/helpers': 0.5.8
+
+  '@internationalized/date@3.5.5':
     dependencies:
       '@swc/helpers': 0.5.8
 
@@ -12273,14 +12331,14 @@ snapshots:
 
   '@radix-ui/rect@1.1.0': {}
 
-  '@react-aria/accordion@3.0.0-alpha.29(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@react-aria/accordion@3.0.0-alpha.31(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@react-aria/button': 3.9.5(react@18.3.1)
-      '@react-aria/selection': 3.18.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@react-aria/utils': 3.24.1(react@18.3.1)
-      '@react-stately/tree': 3.8.1(react@18.3.1)
-      '@react-types/accordion': 3.0.0-alpha.21(react@18.3.1)
-      '@react-types/shared': 3.23.1(react@18.3.1)
+      '@react-aria/button': 3.9.7(react@18.3.1)
+      '@react-aria/selection': 3.19.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@react-aria/utils': 3.25.1(react@18.3.1)
+      '@react-stately/tree': 3.8.3(react@18.3.1)
+      '@react-types/accordion': 3.0.0-alpha.23(react@18.3.1)
+      '@react-types/shared': 3.24.1(react@18.3.1)
       '@swc/helpers': 0.5.8
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
@@ -12309,6 +12367,17 @@ snapshots:
       '@react-stately/toggle': 3.7.4(react@18.3.1)
       '@react-types/button': 3.9.4(react@18.3.1)
       '@react-types/shared': 3.23.1(react@18.3.1)
+      '@swc/helpers': 0.5.8
+      react: 18.3.1
+
+  '@react-aria/button@3.9.7(react@18.3.1)':
+    dependencies:
+      '@react-aria/focus': 3.18.1(react@18.3.1)
+      '@react-aria/interactions': 3.22.1(react@18.3.1)
+      '@react-aria/utils': 3.25.1(react@18.3.1)
+      '@react-stately/toggle': 3.7.6(react@18.3.1)
+      '@react-types/button': 3.9.6(react@18.3.1)
+      '@react-types/shared': 3.24.1(react@18.3.1)
       '@swc/helpers': 0.5.8
       react: 18.3.1
 
@@ -12367,6 +12436,15 @@ snapshots:
       clsx: 2.1.0
       react: 18.3.1
 
+  '@react-aria/focus@3.18.1(react@18.3.1)':
+    dependencies:
+      '@react-aria/interactions': 3.22.1(react@18.3.1)
+      '@react-aria/utils': 3.25.1(react@18.3.1)
+      '@react-types/shared': 3.24.1(react@18.3.1)
+      '@swc/helpers': 0.5.8
+      clsx: 2.1.0
+      react: 18.3.1
+
   '@react-aria/form@3.0.5(react@18.3.1)':
     dependencies:
       '@react-aria/interactions': 3.21.3(react@18.3.1)
@@ -12407,11 +12485,31 @@ snapshots:
       '@swc/helpers': 0.5.8
       react: 18.3.1
 
+  '@react-aria/i18n@3.12.1(react@18.3.1)':
+    dependencies:
+      '@internationalized/date': 3.5.5
+      '@internationalized/message': 3.1.4
+      '@internationalized/number': 3.5.3
+      '@internationalized/string': 3.2.3
+      '@react-aria/ssr': 3.9.5(react@18.3.1)
+      '@react-aria/utils': 3.25.1(react@18.3.1)
+      '@react-types/shared': 3.24.1(react@18.3.1)
+      '@swc/helpers': 0.5.8
+      react: 18.3.1
+
   '@react-aria/interactions@3.21.3(react@18.3.1)':
     dependencies:
       '@react-aria/ssr': 3.9.4(react@18.3.1)
       '@react-aria/utils': 3.24.1(react@18.3.1)
       '@react-types/shared': 3.23.1(react@18.3.1)
+      '@swc/helpers': 0.5.8
+      react: 18.3.1
+
+  '@react-aria/interactions@3.22.1(react@18.3.1)':
+    dependencies:
+      '@react-aria/ssr': 3.9.5(react@18.3.1)
+      '@react-aria/utils': 3.25.1(react@18.3.1)
+      '@react-types/shared': 3.24.1(react@18.3.1)
       '@swc/helpers': 0.5.8
       react: 18.3.1
 
@@ -12529,7 +12627,24 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
+  '@react-aria/selection@3.19.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@react-aria/focus': 3.18.1(react@18.3.1)
+      '@react-aria/i18n': 3.12.1(react@18.3.1)
+      '@react-aria/interactions': 3.22.1(react@18.3.1)
+      '@react-aria/utils': 3.25.1(react@18.3.1)
+      '@react-stately/selection': 3.16.1(react@18.3.1)
+      '@react-types/shared': 3.24.1(react@18.3.1)
+      '@swc/helpers': 0.5.8
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+
   '@react-aria/ssr@3.9.4(react@18.3.1)':
+    dependencies:
+      '@swc/helpers': 0.5.8
+      react: 18.3.1
+
+  '@react-aria/ssr@3.9.5(react@18.3.1)':
     dependencies:
       '@swc/helpers': 0.5.8
       react: 18.3.1
@@ -12594,6 +12709,15 @@ snapshots:
       '@react-aria/ssr': 3.9.4(react@18.3.1)
       '@react-stately/utils': 3.10.1(react@18.3.1)
       '@react-types/shared': 3.23.1(react@18.3.1)
+      '@swc/helpers': 0.5.8
+      clsx: 2.1.0
+      react: 18.3.1
+
+  '@react-aria/utils@3.25.1(react@18.3.1)':
+    dependencies:
+      '@react-aria/ssr': 3.9.5(react@18.3.1)
+      '@react-stately/utils': 3.10.2(react@18.3.1)
+      '@react-types/shared': 3.24.1(react@18.3.1)
       '@swc/helpers': 0.5.8
       clsx: 2.1.0
       react: 18.3.1
@@ -12968,6 +13092,12 @@ snapshots:
       '@swc/helpers': 0.5.8
       react: 18.3.1
 
+  '@react-stately/collections@3.10.9(react@18.3.1)':
+    dependencies:
+      '@react-types/shared': 3.24.1(react@18.3.1)
+      '@swc/helpers': 0.5.8
+      react: 18.3.1
+
   '@react-stately/combobox@3.8.4(react@18.3.1)':
     dependencies:
       '@react-stately/collections': 3.10.7(react@18.3.1)
@@ -13051,6 +13181,14 @@ snapshots:
       '@swc/helpers': 0.5.8
       react: 18.3.1
 
+  '@react-stately/selection@3.16.1(react@18.3.1)':
+    dependencies:
+      '@react-stately/collections': 3.10.9(react@18.3.1)
+      '@react-stately/utils': 3.10.2(react@18.3.1)
+      '@react-types/shared': 3.24.1(react@18.3.1)
+      '@swc/helpers': 0.5.8
+      react: 18.3.1
+
   '@react-stately/table@3.11.8(react@18.3.1)':
     dependencies:
       '@react-stately/collections': 3.10.7(react@18.3.1)
@@ -13071,6 +13209,13 @@ snapshots:
       '@swc/helpers': 0.5.8
       react: 18.3.1
 
+  '@react-stately/toggle@3.7.6(react@18.3.1)':
+    dependencies:
+      '@react-stately/utils': 3.10.2(react@18.3.1)
+      '@react-types/checkbox': 3.8.3(react@18.3.1)
+      '@swc/helpers': 0.5.8
+      react: 18.3.1
+
   '@react-stately/tooltip@3.4.9(react@18.3.1)':
     dependencies:
       '@react-stately/overlays': 3.6.7(react@18.3.1)
@@ -13087,7 +13232,21 @@ snapshots:
       '@swc/helpers': 0.5.8
       react: 18.3.1
 
+  '@react-stately/tree@3.8.3(react@18.3.1)':
+    dependencies:
+      '@react-stately/collections': 3.10.9(react@18.3.1)
+      '@react-stately/selection': 3.16.1(react@18.3.1)
+      '@react-stately/utils': 3.10.2(react@18.3.1)
+      '@react-types/shared': 3.24.1(react@18.3.1)
+      '@swc/helpers': 0.5.8
+      react: 18.3.1
+
   '@react-stately/utils@3.10.1(react@18.3.1)':
+    dependencies:
+      '@swc/helpers': 0.5.8
+      react: 18.3.1
+
+  '@react-stately/utils@3.10.2(react@18.3.1)':
     dependencies:
       '@swc/helpers': 0.5.8
       react: 18.3.1
@@ -13099,9 +13258,9 @@ snapshots:
       '@swc/helpers': 0.5.8
       react: 18.3.1
 
-  '@react-types/accordion@3.0.0-alpha.21(react@18.3.1)':
+  '@react-types/accordion@3.0.0-alpha.23(react@18.3.1)':
     dependencies:
-      '@react-types/shared': 3.23.1(react@18.3.1)
+      '@react-types/shared': 3.24.1(react@18.3.1)
       react: 18.3.1
 
   '@react-types/breadcrumbs@3.7.5(react@18.3.1)':
@@ -13115,9 +13274,19 @@ snapshots:
       '@react-types/shared': 3.23.1(react@18.3.1)
       react: 18.3.1
 
+  '@react-types/button@3.9.6(react@18.3.1)':
+    dependencies:
+      '@react-types/shared': 3.24.1(react@18.3.1)
+      react: 18.3.1
+
   '@react-types/checkbox@3.8.1(react@18.3.1)':
     dependencies:
       '@react-types/shared': 3.23.1(react@18.3.1)
+      react: 18.3.1
+
+  '@react-types/checkbox@3.8.3(react@18.3.1)':
+    dependencies:
+      '@react-types/shared': 3.24.1(react@18.3.1)
       react: 18.3.1
 
   '@react-types/combobox@3.11.1(react@18.3.1)':
@@ -13168,6 +13337,10 @@ snapshots:
       react: 18.3.1
 
   '@react-types/shared@3.23.1(react@18.3.1)':
+    dependencies:
+      react: 18.3.1
+
+  '@react-types/shared@3.24.1(react@18.3.1)':
     dependencies:
       react: 18.3.1
 
@@ -13774,7 +13947,7 @@ snapshots:
 
   '@swc/helpers@0.5.8':
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@tailwindcss/forms@0.5.7(tailwindcss@3.4.6(ts-node@10.9.2(@types/node@20.14.12)(typescript@5.5.4)))':
     dependencies:
@@ -15363,7 +15536,7 @@ snapshots:
   camel-case@4.1.2:
     dependencies:
       pascal-case: 3.1.2
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   camelcase-css@2.0.1: {}
 
@@ -15378,7 +15551,7 @@ snapshots:
   capital-case@1.0.4:
     dependencies:
       no-case: 3.0.4
-      tslib: 2.6.2
+      tslib: 2.6.3
       upper-case-first: 2.0.2
 
   caseless@0.12.0: {}
@@ -15677,7 +15850,7 @@ snapshots:
   constant-case@3.0.4:
     dependencies:
       no-case: 3.0.4
-      tslib: 2.6.2
+      tslib: 2.6.3
       upper-case: 2.0.2
 
   content-disposition@0.5.4:
@@ -16112,7 +16285,7 @@ snapshots:
   dot-case@3.0.4:
     dependencies:
       no-case: 3.0.4
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   dotenv-cli@7.4.2:
     dependencies:
@@ -16457,23 +16630,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.16.0(eslint@8.57.0)(typescript@5.5.4))(eslint-plugin-import@2.29.1(@typescript-eslint/parser@7.16.0(eslint@8.57.0)(typescript@5.5.4))(eslint@8.57.0))(eslint@8.57.0):
-    dependencies:
-      debug: 4.3.5(supports-color@5.5.0)
-      enhanced-resolve: 5.15.0
-      eslint: 8.57.0
-      eslint-module-utils: 2.8.0(@typescript-eslint/parser@7.16.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.16.0(eslint@8.57.0)(typescript@5.5.4))(eslint-plugin-import@2.29.1(@typescript-eslint/parser@7.16.0(eslint@8.57.0)(typescript@5.5.4))(eslint@8.57.0))(eslint@8.57.0))(eslint@8.57.0)
-      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@7.16.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.16.0(eslint@8.57.0)(typescript@5.5.4))(eslint-plugin-import@2.29.1(@typescript-eslint/parser@7.16.0(eslint@8.57.0)(typescript@5.5.4))(eslint@8.57.0))(eslint@8.57.0))(eslint@8.57.0)
-      fast-glob: 3.3.2
-      get-tsconfig: 4.7.5
-      is-core-module: 2.13.1
-      is-glob: 4.0.3
-    transitivePeerDependencies:
-      - '@typescript-eslint/parser'
-      - eslint-import-resolver-node
-      - eslint-import-resolver-webpack
-      - supports-color
-
   eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.16.0(eslint@8.57.0)(typescript@5.5.4))(eslint-plugin-import@2.29.1)(eslint@8.57.0):
     dependencies:
       debug: 4.3.5(supports-color@5.5.0)
@@ -16489,17 +16645,6 @@ snapshots:
       - '@typescript-eslint/parser'
       - eslint-import-resolver-node
       - eslint-import-resolver-webpack
-      - supports-color
-
-  eslint-module-utils@2.8.0(@typescript-eslint/parser@7.16.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.16.0(eslint@8.57.0)(typescript@5.5.4))(eslint-plugin-import@2.29.1(@typescript-eslint/parser@7.16.0(eslint@8.57.0)(typescript@5.5.4))(eslint@8.57.0))(eslint@8.57.0))(eslint@8.57.0):
-    dependencies:
-      debug: 3.2.7(supports-color@8.1.1)
-    optionalDependencies:
-      '@typescript-eslint/parser': 7.16.0(eslint@8.57.0)(typescript@5.5.4)
-      eslint: 8.57.0
-      eslint-import-resolver-node: 0.3.9
-      eslint-import-resolver-typescript: 3.6.1(@typescript-eslint/parser@7.16.0(eslint@8.57.0)(typescript@5.5.4))(eslint-plugin-import@2.29.1(@typescript-eslint/parser@7.16.0(eslint@8.57.0)(typescript@5.5.4))(eslint@8.57.0))(eslint@8.57.0)
-    transitivePeerDependencies:
       - supports-color
 
   eslint-module-utils@2.8.0(@typescript-eslint/parser@7.16.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.16.0(eslint@8.57.0)(typescript@5.5.4))(eslint-plugin-import@2.29.1)(eslint@8.57.0))(eslint@8.57.0):
@@ -16518,33 +16663,6 @@ snapshots:
       escape-string-regexp: 1.0.5
       eslint: 8.57.0
       ignore: 5.3.1
-
-  eslint-plugin-import@2.29.1(@typescript-eslint/parser@7.16.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.16.0(eslint@8.57.0)(typescript@5.5.4))(eslint-plugin-import@2.29.1(@typescript-eslint/parser@7.16.0(eslint@8.57.0)(typescript@5.5.4))(eslint@8.57.0))(eslint@8.57.0))(eslint@8.57.0):
-    dependencies:
-      array-includes: 3.1.8
-      array.prototype.findlastindex: 1.2.4
-      array.prototype.flat: 1.3.2
-      array.prototype.flatmap: 1.3.2
-      debug: 3.2.7(supports-color@8.1.1)
-      doctrine: 2.1.0
-      eslint: 8.57.0
-      eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.8.0(@typescript-eslint/parser@7.16.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.16.0(eslint@8.57.0)(typescript@5.5.4))(eslint-plugin-import@2.29.1(@typescript-eslint/parser@7.16.0(eslint@8.57.0)(typescript@5.5.4))(eslint@8.57.0))(eslint@8.57.0))(eslint@8.57.0)
-      hasown: 2.0.2
-      is-core-module: 2.13.1
-      is-glob: 4.0.3
-      minimatch: 3.1.2
-      object.fromentries: 2.0.8
-      object.groupby: 1.0.2
-      object.values: 1.2.0
-      semver: 6.3.1
-      tsconfig-paths: 3.15.0
-    optionalDependencies:
-      '@typescript-eslint/parser': 7.16.0(eslint@8.57.0)(typescript@5.5.4)
-    transitivePeerDependencies:
-      - eslint-import-resolver-typescript
-      - eslint-import-resolver-webpack
-      - supports-color
 
   eslint-plugin-import@2.29.1(@typescript-eslint/parser@7.16.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.0):
     dependencies:
@@ -17366,7 +17484,7 @@ snapshots:
   header-case@2.0.4:
     dependencies:
       capital-case: 1.0.4
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   hermes-estree@0.19.1:
     optional: true
@@ -17495,7 +17613,7 @@ snapshots:
       '@formatjs/ecma402-abstract': 1.14.3
       '@formatjs/fast-memoize': 1.2.8
       '@formatjs/icu-messageformat-parser': 2.2.0
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   invariant@2.2.4:
     dependencies:
@@ -18101,7 +18219,7 @@ snapshots:
 
   lower-case@2.0.2:
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   lru-cache@10.2.0: {}
 
@@ -18798,7 +18916,7 @@ snapshots:
   no-case@3.0.4:
     dependencies:
       lower-case: 2.0.2
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   nocache@3.0.4:
     optional: true
@@ -19045,7 +19163,7 @@ snapshots:
   param-case@3.0.4:
     dependencies:
       dot-case: 3.0.4
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   parent-module@1.0.1:
     dependencies:
@@ -19087,14 +19205,14 @@ snapshots:
   pascal-case@3.1.2:
     dependencies:
       no-case: 3.0.4
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   path-browserify@1.0.1: {}
 
   path-case@3.0.4:
     dependencies:
       dot-case: 3.0.4
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   path-exists@3.0.0: {}
 
@@ -19951,7 +20069,7 @@ snapshots:
   sentence-case@3.0.4:
     dependencies:
       no-case: 3.0.4
-      tslib: 2.6.2
+      tslib: 2.6.3
       upper-case-first: 2.0.2
 
   serialize-error@2.1.0:
@@ -20095,7 +20213,7 @@ snapshots:
   snake-case@3.0.4:
     dependencies:
       dot-case: 3.0.4
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   source-map-js@1.2.0: {}
 
@@ -20815,11 +20933,11 @@ snapshots:
 
   upper-case-first@2.0.2:
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   upper-case@2.0.2:
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   uri-js@4.4.1:
     dependencies:
