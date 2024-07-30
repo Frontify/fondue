@@ -53,7 +53,7 @@ export const DividerComponent = (
             className={cn(
                 dividerStyles({
                     direction,
-                    style: variant,
+                    variant,
                     ...props,
                 }),
                 className,

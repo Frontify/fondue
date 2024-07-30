@@ -15,7 +15,7 @@ export const dividerStyles = sv({
             strong: 'tw-border-line-strong',
             'x-strong': 'tw-border-x-line-strong',
         },
-        style: {
+        variant: {
             solid: 'tw-border-solid',
             dashed: 'tw-border-dashed',
             noline: 'tw-border-none',
