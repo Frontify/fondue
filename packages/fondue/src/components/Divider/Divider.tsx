@@ -16,7 +16,7 @@ export enum DividerHeight {
 }
 
 export type DividerProps = {
-    style?: DividerStyle;
+    variant?: DividerStyle;
     height?: DividerHeight | string;
     color?: string;
     vertical?: boolean;
