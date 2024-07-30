@@ -37,10 +37,6 @@
     &[data-highlighted] {
         background-color: var(--box-neutral-color-hover);
         color: var(--text-color);
-        outline-style: solid;
-        outline-width: 4px;
-        outline-offset: 2px;
-        outline-color: #4196fb;
     }
 
     &[data-disabled] {
@@ -52,6 +48,10 @@
     .subMenuIndicator {
         order: 2;
         margin-left: auto;
+    }
+
+    &:not(&:hover) {
+        @include focus-outline;
     }
 }
 
