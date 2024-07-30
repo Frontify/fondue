@@ -29,7 +29,7 @@ export type LoadingBarProps = {
      * The style of the loading bar
      * @default "default"
      */
-    style?: 'default' | 'positive' | 'negative';
+    variant?: 'default' | 'positive' | 'negative';
     /**
      * The size of the loading bar
      * @default "medium"
@@ -47,7 +47,7 @@ export const LoadingBar = forwardRef<ElementRef<typeof ProgressRadixPrimitive.Ro
             value,
             max = 100,
             rounded = true,
-            style = 'default',
+            variant = 'default',
             size = 'medium',
             'data-test-id': dataTestId = 'fondue-loading-bar',
             ...props
@@ -58,7 +58,7 @@ export const LoadingBar = forwardRef<ElementRef<typeof ProgressRadixPrimitive.Ro
             <ProgressRadixPrimitive.Root
                 ref={ref}
                 data-test-id={dataTestId}
-                className={loadingBarContainerStyles({ rounded, size, style })}
+                className={loadingBarContainerStyles({ rounded, size, variant })}
                 aria-busy={value !== max}
                 value={value}
                 max={max}
@@ -72,7 +72,7 @@ export const LoadingBar = forwardRef<ElementRef<typeof ProgressRadixPrimitive.Ro
                 {...props}
             >
                 <ProgressRadixPrimitive.Indicator
-                    className={loadingBarStyles({ style, indeterminateState: value === null })}
+                    className={loadingBarStyles({ variant, indeterminateState: value === null })}
                 />
             </ProgressRadixPrimitive.Root>
         );

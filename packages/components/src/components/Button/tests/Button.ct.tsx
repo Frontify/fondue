@@ -14,7 +14,7 @@ test('should render without error', async ({ mount }) => {
 
 test('should render in positive medium and with only text.', async ({ mount }) => {
     const component = await mount(
-        <Button style="positive" size="medium">
+        <Button variant="positive" size="medium">
             {BUTTON_TEXT}
         </Button>,
     );
@@ -24,7 +24,7 @@ test('should render in positive medium and with only text.', async ({ mount }) =
 
 test('should react on Click', async ({ mount }) => {
     const component = await mount(
-        <Button style="positive" size="medium">
+        <Button variant="positive" size="medium">
             {BUTTON_TEXT}
         </Button>,
     );
@@ -34,7 +34,7 @@ test('should react on Click', async ({ mount }) => {
 
 test('should render in positive medium and with only icon.', async ({ mount }) => {
     const component = await mount(
-        <Button style="positive" size="medium">
+        <Button variant="positive" size="medium">
             <IconIcon data-test-id="fondue-icon-icon" />
         </Button>,
     );
@@ -44,7 +44,7 @@ test('should render in positive medium and with only icon.', async ({ mount }) =
 
 test('should render in positive medium and with only only an icon and fully rounded.', async ({ mount }) => {
     const component = await mount(
-        <Button style="positive" size="medium" rounding="full">
+        <Button variant="positive" size="medium" rounding="full">
             <IconIcon data-test-id="fondue-icon-icon" />
         </Button>,
     );
@@ -55,7 +55,7 @@ test('should render in positive medium and with only only an icon and fully roun
 
 test('should render in positive medium with an icon and text.', async ({ mount }) => {
     const component = await mount(
-        <Button style="positive" size="medium">
+        <Button variant="positive" size="medium">
             <IconIcon data-test-id="fondue-icon-icon" />
             {BUTTON_TEXT}
         </Button>,

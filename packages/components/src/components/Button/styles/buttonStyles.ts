@@ -32,7 +32,7 @@ export const buttonStyles = sv({
             weak: '',
             strong: '',
         },
-        style: {
+        variant: {
             default: '',
             positive: '',
             negative: '',

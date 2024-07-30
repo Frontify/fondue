@@ -198,7 +198,7 @@ export const ControlledComponent: Story = {
                 <Button onPress={() => setIsOpen(!isOpen)}>External Toggle Dropdown</Button>
                 <Dropdown.Root {...args} open={isOpen} onOpenChange={setIsOpen}>
                     <Dropdown.Trigger>
-                        <Button style="loud">Trigger</Button>
+                        <Button variant="loud">Trigger</Button>
                     </Dropdown.Trigger>
                     <Dropdown.Content>
                         <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>

@@ -14,7 +14,7 @@ export const loadingBarContainerStyles = sv({
             large: 'tw-h-3',
             'x-large': 'tw-h-4',
         },
-        style: {
+        variant: {
             default: 'tw-bg-box-selected',
             positive: 'tw-bg-box-positive',
             negative: 'tw-bg-box-negative',
@@ -25,7 +25,7 @@ export const loadingBarContainerStyles = sv({
 export const loadingBarStyles = sv({
     base: 'tw-h-full tw-w-full',
     variants: {
-        style: {
+        variant: {
             default: 'tw-bg-text-interactive',
             positive: 'tw-bg-text-positive',
             negative: 'tw-bg-text-negative',
