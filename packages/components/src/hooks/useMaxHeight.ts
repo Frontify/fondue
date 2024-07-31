@@ -1,5 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type RefObject, useCallback, useEffect } from 'react';
+
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 export const MAX_HEIGHT_MARGIN = 16;
 
 /**
@@ -13,9 +17,9 @@ export const MAX_HEIGHT_MARGIN = 16;
  * // Suppose you have a dialog element with id 'my-dialog'.
  * const dialogElement = myDialogRef.current || document.getElementById('my-dialog');
  * // Setting its max height relative to its current position and the viewport's dimensions.
- * setDialogMaxHeight(dialogElement);
+ * setMaxHeight(dialogElement);
  */
-export function setDialogMaxHeight(dialog: HTMLElement, onResize?: (spaceBelow: number) => void): void {
+function setMaxHeight(dialog: HTMLElement, onResize?: (spaceBelow: number) => void): void {
     // Move the max height calculation to the end of the event loop to ensure the dialog has been rendered
     const timeout = () =>
         new Promise<number>((resolve, reject) =>
@@ -31,6 +35,10 @@ export function setDialogMaxHeight(dialog: HTMLElement, onResize?: (spaceBelow: 
             }, 0),
         );
 
+    if (!window) {
+        throw new Error('Window object not found, this method should be used in a browser environment');
+    }
+
     // This way we don't have to await this function, making it more conventient when adding it to resize event listeners
     timeout().then(
         (spaceBelow) => onResize && onResize(spaceBelow),
@@ -38,4 +46,36 @@ export function setDialogMaxHeight(dialog: HTMLElement, onResize?: (spaceBelow: 
             throw new Error(`Failed to set dialog max height:${error}`);
         },
     );
+}
+
+/**
+ * Custom hook to dynamically adjust the maximum height of an HTMLElement
+ * based on the window's resize events. This function provides an object
+ * containing the `triggerMaxHeightDefinition` method to manually trigger
+ * the maximum height adjustment if needed.
+ *
+ * ! Note: Components utilizing this hook should have tests in place to verify
+ * ! that the maximum height adjustments work correctly across different screen
+ * ! sizes and during window resizing events.
+ *
+ * @param {RefObject<HTMLElement | null>} ref - A reference to the HTMLElement.
+ * @returns {Object} An object containing `triggerMaxHeightDefinition` method.
+ */
+export function useMaxHeight(ref: RefObject<HTMLElement | null>) {
+    const triggerMaxHeightDefinition = useCallback(() => {
+        if (ref.current) {
+            setMaxHeight(ref.current);
+        }
+    }, [ref]);
+
+    useEffect(() => {
+        window.addEventListener('resize', triggerMaxHeightDefinition);
+        return () => {
+            window.removeEventListener('resize', triggerMaxHeightDefinition);
+        };
+    }, [triggerMaxHeightDefinition]);
+
+    return {
+        triggerMaxHeightDefinition,
+    };
 }

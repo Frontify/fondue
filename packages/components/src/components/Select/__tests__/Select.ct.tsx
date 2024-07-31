@@ -4,6 +4,8 @@ import { IconIcon } from '@frontify/fondue-icons';
 import { expect, test } from '@playwright/experimental-ct-react';
 import * as sinon from 'sinon';
 
+import { MAX_HEIGHT_MARGIN } from '#/hooks/useMaxHeight';
+
 import { Select } from '../Select';
 
 const SELECT_TEST_ID = 'test-dropdown';
@@ -315,4 +317,31 @@ test('should render custom clear slot', async ({ mount, page }) => {
     await expect(component).toBeVisible();
     await expect(page.getByTestId(SLOT_CLEAR_TEST_ID)).toBeVisible();
     await expect(component).toContainText('Clear Slot');
+});
+
+test('should have max height equal to available space', async ({ mount, page }) => {
+    const component = await mount(
+        <Select aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
+            <Select.Slot name="menu">
+                <Select.Item data-test-id={ITEM_TEST_ID1} value="test1">
+                    {ITEM_TEXT1}
+                </Select.Item>
+                <Select.Item data-test-id={ITEM_TEST_ID2} value="test2">
+                    {ITEM_TEXT2}
+                </Select.Item>
+            </Select.Slot>
+        </Select>,
+    );
+
+    await expect(component).toBeVisible();
+    await component.click();
+
+    const dialog = page.getByTestId('fondue-select-menu');
+    await expect(dialog).toBeVisible();
+
+    const boundingBox = await dialog.boundingBox();
+    const windowHeight = page.viewportSize()?.height || 0;
+    const expectedMaxHeight = windowHeight - (boundingBox?.y || 0) - MAX_HEIGHT_MARGIN;
+    const actualMaxHeight = await dialog.evaluate((node) => parseFloat(window.getComputedStyle(node).maxHeight));
+    expect(actualMaxHeight).toBe(expectedMaxHeight);
 });
