@@ -6,6 +6,7 @@ type TooltipEntry = {
     value: string | number;
     type?: string;
     typeByGrouping?: string;
+    valueContextBySeries?: string;
 };
 
 type TooltipContentV2Props = {
@@ -42,6 +43,7 @@ export const TooltipContent = ({ title, description, entries }: TooltipContentV2
                     color={entry.color}
                     value={entry.value}
                     type={entry?.typeByGrouping}
+                    valueContextBySeries={entry.valueContextBySeries}
                 />
             ))}
         </div>
@@ -53,9 +55,10 @@ export type TooltipItemProps = {
     value: string | number;
     color?: string;
     type?: string;
+    valueContextBySeries?: string;
 };
 
-const TooltipItem = ({ title, value, color, type }: TooltipItemProps) => {
+const TooltipItem = ({ title, value, color, type, valueContextBySeries }: TooltipItemProps) => {
     return (
         <div key={`${title}-value`} className="tw-text-[var(--fc-base-color)] tw-text-sm tw-font-normal">
             {color && (
@@ -66,7 +69,8 @@ const TooltipItem = ({ title, value, color, type }: TooltipItemProps) => {
                     }}
                 />
             )}
-            {`${type || title}: ${value}`}
+            <span>{`${type || title}: `}</span>
+            <span className="tw-font-semibold">{`${value} ${valueContextBySeries || ''}`}</span>
         </div>
     );
 };

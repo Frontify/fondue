@@ -16,23 +16,29 @@ export const getTooltipEntries = (
         [key: string]: TooltipDatum<LineChartDataPoint | BarChartDataPoint>;
     },
     childSumLabel?: string,
+    valueContextBySeries?: string[],
 ) => {
     const dataPoints = [];
     let sum = 0;
-    for (const key in datumByKey) {
-        if (isNoDataKey(key)) {
-            continue;
-        }
 
-        if (childSumLabel) {
-            sum += datumByKey[key]?.datum.value || 0;
-        }
+    if (datumByKey) {
+        for (const [index, key] of Object.keys(datumByKey).entries()) {
+            if (isNoDataKey(key)) {
+                continue;
+            }
 
-        dataPoints.push({
-            title: key,
-            value: getDataPointValue(missingValueLabel, datumByKey[key]?.datum.value, valueFormatter),
-            color: colorAccessor(key),
-        });
+            if (childSumLabel) {
+                sum += datumByKey[key]?.datum.value || 0;
+            }
+
+            dataPoints.push({
+                title: key,
+                value: getDataPointValue(missingValueLabel, datumByKey[key]?.datum.value, valueFormatter),
+                color: colorAccessor(key),
+
+                ...(valueContextBySeries?.[index] ? { valueContextBySeries: valueContextBySeries?.[index] } : {}),
+            });
+        }
     }
 
     if (childSumLabel) {

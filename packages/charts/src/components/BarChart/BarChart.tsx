@@ -31,6 +31,7 @@ export const BarChart = <DataPointDetails extends Record<string, any> | void = v
     legendPosition = 'top',
     valueFormatter = DEFAULT_VALUE_FORMATTER,
     labelFormatter = DEFAULT_LABEL_FORMATTER,
+    valueContextBySeries = undefined,
     onBarClick,
 }: BarChartProps<DataPointDetails>) => {
     const [maxLabelHeight, setMaxLabelHeight] = useState<number>(0);
@@ -54,7 +55,7 @@ export const BarChart = <DataPointDetails extends Record<string, any> | void = v
     return (
         <div className="tw-flex tw-flex-col tw-gap-6">
             {!hideLegend && legendPosition === 'top' && (
-                <Legend style={'rectangle'} names={series.map((series) => series.name)} />
+                <Legend style="rectangle" names={series.map((series) => series.name)} />
             )}
             {margin && (
                 <span className={onBarClick ? 'bar-chart-cursor-pointer' : ''}>
@@ -95,19 +96,20 @@ export const BarChart = <DataPointDetails extends Record<string, any> | void = v
                         />
                         <Bars series={series} horizontal={horizontal} displayStyle={displayStyle} />
                         <Tooltip
-                            crossHairStyle={'bar'}
+                            crossHairStyle="bar"
                             hideGlyphs
                             colorAccessor={(key) => colorAccessorByKey(key, series)}
                             horizontal={horizontal}
                             scalePadding={scalePadding}
                             valueFormatter={valueFormatter}
                             labelFormatter={labelFormatter}
+                            valueContextBySeries={valueContextBySeries}
                         />
                     </XYChart>
                 </span>
             )}
             {!hideLegend && legendPosition === 'bottom' && (
-                <Legend style={'rectangle'} names={series.map((series) => series.name)} />
+                <Legend style="rectangle" names={series.map((series) => series.name)} />
             )}
         </div>
     );
