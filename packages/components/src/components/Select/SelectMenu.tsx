@@ -87,10 +87,9 @@ export const SelectMenu = ({ highlightedIndex, getMenuProps, getItemProps, child
                             (child, index) => {
                                 const isValid = <TProps,>(
                                     child: ReactNode,
-                                ): child is ReactElement<TProps> & { ref: ForwardedRef<HTMLElement> } => {
+                                ): child is ReactElement<TProps> & { ref: ForwardedRef<HTMLElement> } =>
                                     // @ts-expect-error - We are explicitly checking for ref
-                                    return isValidElement<TProps>(child) && child.ref !== undefined;
-                                };
+                                    isValidElement<TProps>(child) && child.ref !== undefined;
 
                                 if (isValid<SelectItemProps>(child)) {
                                     const itemProps = getItemProps({
