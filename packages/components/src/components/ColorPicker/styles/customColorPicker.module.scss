@@ -1,0 +1,61 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+@import '../../../utilities/sizeToken.module.scss';
+@import '../../../utilities/focusStyle.module.scss';
+@import '../../../utilities/mediaQuery.module.scss';
+
+.root {
+    display: flex;
+    flex-direction: column;
+    gap: sizeToken(4);
+    max-width: 700px;
+}
+
+.inputs {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: sizeToken(2);
+
+    @include sm {
+        grid-template-columns: 100px 1fr 100px;
+    }
+}
+
+.colorFormatInput,
+.colorAlphaInput {
+    width: 100%;
+}
+
+.colorChannelInputGroup {
+    display: flex;
+    flex-direction: column;
+    gap: sizeToken(2);
+
+    @include sm {
+        flex-direction: row;
+    }
+}
+
+.inputDecorator {
+    color: var(--text-color-weak);
+}
+
+.gradientInput {
+    width: 100%;
+
+    .reactColorful {
+        width: 100%;
+    }
+}
+
+//remove arrows from number inputs
+.valueInput {
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    input[type='number'] {
+        -moz-appearance: textfield;
+    }
+}

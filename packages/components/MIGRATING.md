@@ -13,6 +13,9 @@ This document describes the changes that you need to make to your code to migrat
         -   [Checkbox](#checkbox)
             -   [Old](#old-1)
             -   [New](#new-1)
+        -   [Color Picker](#color-picker)
+            -   [Old](#old-color-picker)
+            -   [New](#new-color-picker)
         -   [Dialog](#dialog)
             -   [Old](#old-2)
             -   [New](#new-2)
@@ -123,6 +126,54 @@ Changes:
         <Tooltip.Content>Tooltip</Tooltip.Content>
     </Tooltip.Root>
 </Label>
+```
+
+### Color Picker
+
+Changes:
+
+-   The Color Picker does not Provide a Flyout, please use the `Flyout` component instead with composition.
+-   The Color Picker Input is now available as a separate component `ColorPicker.Input`.
+-   The Color Picker now uses Composition to display the Value Input and the Color Gradient.
+    -   You can pass `ColorPicker.Values` as a child to show the value input fields.
+    -   You can pass `ColorPicker.Gradient` as a child to show the color gradient input.
+-   The format is now handled internally. You can pass in the initial format with the prop `defaultFormat`.
+
+#### Old
+
+```tsx
+<ColorPicker
+    {...args}
+    currentColor={selectedColor}
+    currentFormat={currentFormat}
+    setFormat={setCurrentFormat}
+    onSelect={(color) => {}}
+/>
+```
+
+#### New
+
+```tsx
+const [currentColor, setCurrentColor] = useState({ red: 85, green: 102, blue: 255 });
+
+<Flyout.Root>
+    <Flyout.Trigger>
+        <ColorPicker.Input currentColor={currentColor} onColorChange={setCurrentColor} />
+    </Flyout.Trigger>
+    <Flyout.Content>
+        <ColorPicker.Root defaultFormat="HEX" currentColor={currentColor} onColorChange={setCurrentColor}>
+            <ColorPicker.Values />
+            <ColorPicker.Gradient />
+        </ColorPicker.Root>
+    </Flyout.Content>
+</Flyout.Root>
+
+// or
+
+<ColorPicker.Root defaultFormat="HEX" currentColor={currentColor} onColorChange={setCurrentColor}>
+    <ColorPicker.Values />
+    <ColorPicker.Gradient />
+</ColorPicker.Root>
 ```
 
 ### Dialog

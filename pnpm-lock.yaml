@@ -240,6 +240,9 @@ importers:
       downshift:
         specifier: ^9.0.6
         version: 9.0.6(react@18.3.1)
+      react-colorful:
+        specifier: ^5.6.1
+        version: 5.6.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       tailwind-merge:
         specifier: ^2.4.0
         version: 2.4.0

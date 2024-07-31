@@ -1,0 +1,71 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+@import '../../../utilities/sizeToken.module.scss';
+@import '../../../utilities/focusStyle.module.scss';
+@import '../../../utilities/mediaQuery.module.scss';
+@import '../../../utilities/transitions.module.scss';
+
+.input {
+    @include focus-outline;
+    @include transition-colors;
+
+    width: 100%;
+    position: relative;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap: sizeToken(2);
+    padding-left: sizeToken(3);
+    padding-right: sizeToken(3);
+
+    font-family: var(--body-family-stack);
+    font-weight: 400;
+    font-size: var(--body-size-medium);
+    line-height: var(--body-size-medium-line-height);
+
+    text-align: start;
+    height: sizeToken(9);
+    color: var(--text-color-x-weak);
+    background-color: var(--base-color);
+    border-radius: var(--radius);
+    border: var(--line-width) solid var(--line-color-strong);
+    cursor: pointer;
+
+    &:hover {
+        border-color: var(--line-color-x-strong);
+        color: var(--text-color-weak);
+    }
+
+    &:has(:focus-visible),
+    &[data-state='open'] {
+        border-color: var(--line-color-xx-strong);
+        color: var(--line-color-xx-strong);
+    }
+
+    &:has(input:disabled),
+    &[data-disabled='true'] {
+        border-color: var(--line-color-weak);
+        background-color: var(--box-disabled-color);
+        color: var(--text-color-disabled);
+        cursor: default;
+    }
+}
+
+.colorName {
+    flex-grow: 1;
+}
+
+.colorIndicator {
+    width: sizeToken(4);
+    height: sizeToken(4);
+    border-radius: sizeToken(1);
+}
+
+.caret {
+    @include transition-all;
+}
+
+[data-state='open'] {
+    .caret {
+        transform: rotate(180deg);
+    }
+}
