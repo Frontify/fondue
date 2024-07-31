@@ -16,7 +16,7 @@ const DialogComponent = (_: NonNullable<unknown>, forwardedRef: ForwardedRef<HTM
 const Dialog = forwardRef<HTMLDivElement, NonNullable<unknown>>(DialogComponent);
 
 test('setDialogMaxHeight sets the correct max-height based on viewport size', async ({ mount }) => {
-    const dialogRef = useRef<HTMLDivElement | null>(null);
+    const dialogRef: ForwardedRef<HTMLDivElement> = { current: null };
 
     await mount(<Dialog ref={dialogRef} />);
 
@@ -24,8 +24,11 @@ test('setDialogMaxHeight sets the correct max-height based on viewport size', as
         throw new Error('Dialog not found');
     }
 
-    setDialogMaxHeight(dialogRef.current, (dialog) => {
-        const maxHeight = dialog.style.maxHeight;
+    setDialogMaxHeight(dialogRef.current, () => {
+        if (!dialogRef.current) {
+            throw new Error('Dialog not found');
+        }
+        const maxHeight = dialogRef.current.style.maxHeight;
         const expectedMaxHeight = `${window.innerHeight - MAX_HEIGHT_MARGIN}px`;
         expect(maxHeight).toBe(expectedMaxHeight);
     });

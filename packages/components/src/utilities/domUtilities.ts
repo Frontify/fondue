@@ -15,24 +15,27 @@ export const MAX_HEIGHT_MARGIN = 16;
  * // Setting its max height relative to its current position and the viewport's dimensions.
  * setDialogMaxHeight(dialogElement);
  */
-export function setDialogMaxHeight(dialog: HTMLElement, onResize?: () => void): void {
-    // Delaying the execution to ensure the page layout has stabilized
+export function setDialogMaxHeight(dialog: HTMLElement, onResize?: (spaceBelow: number) => void): void {
+    // Move the max height calculation to the end of the event loop to ensure the dialog has been rendered
     const timeout = () =>
-        new Promise<void>((resolve) =>
+        new Promise<number>((resolve, reject) =>
             setTimeout(() => {
-                const { top } = dialog.getBoundingClientRect();
-                const spaceBelow = window.innerHeight - (top + 16); // Assuming a 16px margin
-                dialog.style.maxHeight = `${spaceBelow}px`;
-                resolve();
+                try {
+                    const { top } = dialog.getBoundingClientRect();
+                    const spaceBelow = window.innerHeight - (top + MAX_HEIGHT_MARGIN);
+                    dialog.style.maxHeight = `${spaceBelow}px`;
+                    resolve(spaceBelow);
+                } catch (error) {
+                    reject(error);
+                }
             }, 0),
         );
 
+    // This way we don't have to await this function, making it more conventient when adding it to resize event listeners
     timeout().then(
-        () => {
-            onResize && onResize();
-        },
-        () => {
-            throw new Error('Failed to set dialog max height');
+        (spaceBelow) => onResize && onResize(spaceBelow),
+        (error) => {
+            throw new Error(`Failed to set dialog max height:${error}`);
         },
     );
 }
