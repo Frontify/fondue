@@ -32,14 +32,14 @@ This document describes the changes that you need to make to your code to migrat
             -   [Old](#old-7)
             -   [New](#new-7)
         -   [Switch](#switch)
-            -   [Old](#old-7)
-            -   [New](#new-7)
-        -   [Text Input](#text-input)
             -   [Old](#old-8)
             -   [New](#new-8)
-        -   [Tooltip](#tooltip)
+        -   [Text Input](#text-input)
             -   [Old](#old-9)
             -   [New](#new-9)
+        -   [Tooltip](#tooltip)
+            -   [Old](#old-10)
+            -   [New](#new-10)
 
 ## Components
 
@@ -487,6 +487,7 @@ Changes:
     onChange={(value) => console.log('Value:', value.raw, value.withSuffix)}
     data-test-id="slider-test"
     aria-label="Adjust volume level"
+/>
 ```
 
 #### New

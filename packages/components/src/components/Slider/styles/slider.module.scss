@@ -3,6 +3,7 @@
 @import '../../../utilities/sizeToken.module.scss';
 @import '../../../utilities/focusStyle.module.scss';
 @import '../../../utilities/transitions.module.scss';
+@import '../../../utilities/opacities.module.scss';
 
 .slider {
     position: relative;
@@ -40,6 +41,24 @@
         @include transition-colors;
         @include transition-box-shadow;
 
+        --slider-thumb-hover-box-shadow-color: color-mix(
+            in srgb,
+            var(--box-neutral-inverse-color-pressed) 15%,
+            transparent
+        );
+
+        --slider-thumb-active-outline-color: color-mix(
+            in srgb,
+            var(--box-neutral-inverse-color-hover) 20%,
+            transparent
+        );
+
+        --slider-thumb-disabled-border-color: color-mix(
+            in srgb,
+            var(--box-neutral-inverse-color-pressed) 10%,
+            transparent
+        );
+
         display: block;
         width: sizeToken(5);
         height: sizeToken(5);
@@ -49,18 +68,18 @@
         cursor: pointer;
 
         &:hover {
-            box-shadow: 0px 3px 10px 0px #08080826;
+            box-shadow: 0px 3px 10px 0px var(--slider-thumb-hover-box-shadow-color);
         }
 
         &:active {
             outline-offset: 0;
             outline-width: sizeToken(2);
-            outline-color: #1a1c1c33;
+            outline-color: var(--slider-thumb-active-outline-color);
         }
 
         &[data-disabled] {
             background-color: var(--box-neutral-color);
-            border-color: #0808081a;
+            border-color: var(--slider-thumb-disabled-border-color);
         }
     }
 }
