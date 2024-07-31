@@ -50,6 +50,10 @@ export default {
         // @ts-expect-error untyped name property
         config.plugins = (config.plugins ?? []).filter((plugin) => plugin?.name !== 'vite:dts');
 
+        if (config.optimizeDeps) {
+            config.optimizeDeps.exclude = ["./node_modules/.cache/storybook"];
+        }
+
         return config;
     },
 } satisfies StorybookConfig;
