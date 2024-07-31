@@ -3,32 +3,29 @@
 // Import the necessary modules from Playwright
 
 import { expect, test } from '@playwright/experimental-ct-react';
-import { type ForwardedRef, forwardRef } from 'react';
 
 import { MAX_HEIGHT_MARGIN, setDialogMaxHeight } from '../domUtilities';
 
-const DialogComponent = (_: NonNullable<unknown>, forwardedRef: ForwardedRef<HTMLDivElement>) => (
-    <div id="dialog" ref={forwardedRef}>
+const Dialog = () => (
+    <div id="dialog">
         <p>Dialog content</p>
     </div>
 );
 
-const Dialog = forwardRef<HTMLDivElement, NonNullable<unknown>>(DialogComponent);
-
 test('setDialogMaxHeight sets the correct max-height based on viewport size', async ({ mount }) => {
-    const dialogRef: ForwardedRef<HTMLDivElement> = { current: null };
+    await mount(<Dialog />);
 
-    await mount(<Dialog ref={dialogRef} />);
+    const dialog = document.getElementById('dialog');
 
-    if (!dialogRef.current) {
+    if (!dialog) {
         throw new Error('Dialog not found');
     }
 
-    setDialogMaxHeight(dialogRef.current, () => {
-        if (!dialogRef.current) {
+    setDialogMaxHeight(dialog, () => {
+        if (!dialog) {
             throw new Error('Dialog not found');
         }
-        const maxHeight = dialogRef.current.style.maxHeight;
+        const maxHeight = dialog.style.maxHeight;
         const expectedMaxHeight = `${window.innerHeight - MAX_HEIGHT_MARGIN}px`;
         expect(maxHeight).toBe(expectedMaxHeight);
     });
