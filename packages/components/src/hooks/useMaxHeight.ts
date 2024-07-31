@@ -55,8 +55,7 @@ function setMaxHeight(dialog: HTMLElement, onResize?: (spaceBelow: number) => vo
  * the maximum height adjustment if needed.
  *
  * ! Note: Components utilizing this hook should have tests in place to verify
- * ! that the maximum height adjustments work correctly across different screen
- * ! sizes and during window resizing events.
+ * ! that the correct max-height is being set based on the viewport's dimensions.
  *
  * @param {RefObject<HTMLElement | null>} ref - A reference to the HTMLElement.
  * @returns {Object} An object containing `triggerMaxHeightDefinition` method.
