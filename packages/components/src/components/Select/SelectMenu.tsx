@@ -13,18 +13,11 @@ import {
     type ReactNode,
 } from 'react';
 
+import { setDialogMaxHeight } from '#/utilities/domUtilities';
+
 import { type SelectItemProps } from './SelectItem';
 import styles from './styles/select.module.scss';
 import { getSelectOptionValue, recursiveMap } from './utils';
-
-function setDialogMaxHeight(dialog: HTMLUListElement) {
-    // send to the end of the event loop
-    setTimeout(() => {
-        const { top } = dialog.getBoundingClientRect();
-        const spaceBelow = window.innerHeight - (top + 16); // Assuming 16px margin
-        dialog.style.maxHeight = `${spaceBelow}px`;
-    });
-}
 
 export type SelectMenuProps = {
     /**
