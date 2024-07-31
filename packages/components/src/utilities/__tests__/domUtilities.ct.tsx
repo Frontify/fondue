@@ -3,7 +3,7 @@
 // Import the necessary modules from Playwright
 
 import { expect, test } from '@playwright/experimental-ct-react';
-import { type ForwardedRef, forwardRef, useRef } from 'react';
+import { type ForwardedRef, forwardRef } from 'react';
 
 import { MAX_HEIGHT_MARGIN, setDialogMaxHeight } from '../domUtilities';
 
