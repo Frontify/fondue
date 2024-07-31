@@ -3,7 +3,7 @@
 import * as RadixPopover from '@radix-ui/react-popover';
 import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { type UseComboboxPropGetters, type UseSelectPropGetters } from 'downshift';
-import { isValidElement, type ForwardedRef, type ReactElement, type ReactNode } from 'react';
+import { isValidElement, type ForwardedRef, type MouseEvent, type ReactElement, type ReactNode } from 'react';
 
 import { type SelectItemProps } from './SelectItem';
 import styles from './styles/select.module.scss';
@@ -59,16 +59,23 @@ export const SelectMenu = ({ highlightedIndex, getMenuProps, getItemProps, child
                                 };
 
                                 if (isValid<SelectItemProps>(child)) {
+                                    const itemProps = getItemProps({
+                                        item: getSelectOptionValue(child.props),
+                                        index,
+                                        ...(child.ref ? { ref: child.ref } : {}),
+                                    });
                                     return (
                                         <RadixSlot
                                             className={styles.item}
                                             data-highlighted={highlightedIndex === index}
                                             key={`${child.props.value}`}
-                                            {...getItemProps({
-                                                item: getSelectOptionValue(child.props),
-                                                index,
-                                                ...(child.ref ? { ref: child.ref } : {}),
-                                            })}
+                                            // Workaround for the issue where the onClick event is not fired on touch devices because of portal usage
+                                            onTouchStart={(event) => {
+                                                if (itemProps.onClick) {
+                                                    itemProps.onClick(event as unknown as MouseEvent<HTMLElement>);
+                                                }
+                                            }}
+                                            {...itemProps}
                                         >
                                             {child}
                                         </RadixSlot>
