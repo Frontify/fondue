@@ -5,17 +5,6 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { MAX_HEIGHT_MARGIN, setMaxHeight, useMaxHeight } from '../useMaxHeight';
 
-// Manually mock setMaxHeight
-const setMaxHeightMock = vi.fn();
-
-// Mock the module import
-vi.mock('../useMaxheight', async () => {
-    const originalModule = await vi.importActual('../useMaxheight');
-    return {
-        ...originalModule,
-        setMaxHeightMock,
-    };
-});
 describe('setMaxHeight', () => {
     it('should set maxHeight based on viewport size and top offset', () => {
         const dialog = document.createElement('div');
