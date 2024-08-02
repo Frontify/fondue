@@ -15,7 +15,7 @@ export const MAX_HEIGHT_MARGIN = 16;
  * // Setting its max height relative to its current position and the viewport's dimensions.
  * setMaxHeightToSpaceBelow(dialogElement);
  */
-export function setMaxHeightToSpaceBelow(dialog: HTMLElement): void {
+export function setMaxHeightToSpaceBelow(dialog: HTMLElement) {
     if (!window) {
         throw new Error('Window object not found, this method should be used in a browser environment');
     }
@@ -34,7 +34,7 @@ export function setMaxHeightToSpaceBelow(dialog: HTMLElement): void {
  * @param {HTMLElement} element - The HTML element to check for visibility.
  * @returns {boolean} Returns true if the element is visible according to the criteria specified, otherwise returns false.
  */
-export function isElementVisible(element: HTMLElement): boolean {
+export function isElementVisible(element: HTMLElement) {
     const rect = element.getBoundingClientRect();
     const hasSize = rect.width > 0 && rect.height > 0;
 
