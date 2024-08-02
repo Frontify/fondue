@@ -13,7 +13,7 @@ import { isElementVisible, setMaxHeightToSpaceBelow } from '#/utilities/domUtili
  * @param {RefObject<HTMLElement | null>} ref - A reference to the HTMLElement.
  * @returns {Object} An object containing `triggerMaxHeightDefinition` method.
  */
-export function useMaxHeight(ref: RefObject<HTMLElement | null>) {
+export function usePreventDialogOverflow(ref: RefObject<HTMLElement | null>) {
     const triggerMaxHeightDefinition = useCallback(() => {
         setTimeout(() => {
             if (ref.current && isElementVisible(ref.current)) {

@@ -3,13 +3,13 @@
 import { act, renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { useMaxHeight } from '../useMaxHeight';
+import { usePreventDialogOverflow } from '../usePreventDialogOverflow';
 
-describe('useMaxHeight', () => {
+describe('usePreventDialogOverflow', () => {
     it('sets up and tears down the resize event listener correctly', () => {
         const addEventListenerSpy = vi.spyOn(window, 'addEventListener');
         const removeEventListenerSpy = vi.spyOn(window, 'removeEventListener');
-        const { unmount } = renderHook(() => useMaxHeight({ current: document.createElement('div') }));
+        const { unmount } = renderHook(() => usePreventDialogOverflow({ current: document.createElement('div') }));
 
         expect(addEventListenerSpy).toHaveBeenCalledWith('resize', expect.any(Function));
 
@@ -21,7 +21,7 @@ describe('useMaxHeight', () => {
     });
 
     it('does not crash if ref is null', () => {
-        const { result } = renderHook(() => useMaxHeight({ current: null }));
+        const { result } = renderHook(() => usePreventDialogOverflow({ current: null }));
 
         act(() => {
             result.current.triggerMaxHeightDefinition();
