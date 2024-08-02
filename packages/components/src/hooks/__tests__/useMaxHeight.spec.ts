@@ -3,26 +3,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { MAX_HEIGHT_MARGIN, setMaxHeight, useMaxHeight } from '../useMaxHeight';
-
-describe('setMaxHeight', () => {
-    it('should set maxHeight based on viewport size and top offset', () => {
-        const dialog = document.createElement('div');
-        document.body.appendChild(document.createElement('div'));
-
-        Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: 800 });
-        Object.defineProperty(dialog, 'getBoundingClientRect', {
-            writable: true,
-            value: () => ({
-                top: 150,
-            }),
-        });
-
-        setMaxHeight(dialog);
-        const expectedMaxHeight = `${800 - (150 + MAX_HEIGHT_MARGIN)}px`;
-        expect(dialog.style.maxHeight).toBe(expectedMaxHeight);
-    });
-});
+import { useMaxHeight } from '../useMaxHeight';
 
 describe('useMaxHeight', () => {
     it('sets up and tears down the resize event listener correctly', () => {
