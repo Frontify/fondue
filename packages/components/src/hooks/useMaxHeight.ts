@@ -19,33 +19,13 @@ export const MAX_HEIGHT_MARGIN = 16;
  * // Setting its max height relative to its current position and the viewport's dimensions.
  * setMaxHeight(dialogElement);
  */
-function setMaxHeight(dialog: HTMLElement, onResize?: (spaceBelow: number) => void): void {
-    // Move the max height calculation to the end of the event loop to ensure the dialog has been rendered
-    const timeout = () =>
-        new Promise<number>((resolve, reject) =>
-            setTimeout(() => {
-                try {
-                    const { top } = dialog.getBoundingClientRect();
-                    const spaceBelow = window.innerHeight - (top + MAX_HEIGHT_MARGIN);
-                    dialog.style.maxHeight = `${spaceBelow}px`;
-                    resolve(spaceBelow);
-                } catch (error) {
-                    reject(error);
-                }
-            }, 0),
-        );
-
+export function setMaxHeight(dialog: HTMLElement): void {
     if (!window) {
         throw new Error('Window object not found, this method should be used in a browser environment');
     }
-
-    // This way we don't have to await this function, making it more conventient when adding it to resize event listeners
-    timeout().then(
-        (spaceBelow) => onResize && onResize(spaceBelow),
-        (error) => {
-            throw new Error(`Failed to set dialog max height:${error}`);
-        },
-    );
+    const { top } = dialog.getBoundingClientRect();
+    const spaceBelow = window.innerHeight - (top + MAX_HEIGHT_MARGIN);
+    dialog.style.maxHeight = `${spaceBelow}px`;
 }
 
 /**
@@ -62,9 +42,12 @@ function setMaxHeight(dialog: HTMLElement, onResize?: (spaceBelow: number) => vo
  */
 export function useMaxHeight(ref: RefObject<HTMLElement | null>) {
     const triggerMaxHeightDefinition = useCallback(() => {
-        if (ref.current) {
-            setMaxHeight(ref.current);
-        }
+        // Move the max height calculation to the end of the event loop to ensure the dialog has been rendered
+        setTimeout(() => {
+            if (ref.current) {
+                setMaxHeight(ref.current);
+            }
+        });
     }, [ref]);
 
     useEffect(() => {
