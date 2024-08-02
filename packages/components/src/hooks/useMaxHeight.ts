@@ -34,9 +34,6 @@ export function setMaxHeight(dialog: HTMLElement): void {
  * containing the `triggerMaxHeightDefinition` method to manually trigger
  * the maximum height adjustment if needed.
  *
- * ! Note: Components utilizing this hook should have tests in place to verify
- * ! that the correct max-height is being set based on the viewport's dimensions.
- *
  * @param {RefObject<HTMLElement | null>} ref - A reference to the HTMLElement.
  * @returns {Object} An object containing `triggerMaxHeightDefinition` method.
  */
