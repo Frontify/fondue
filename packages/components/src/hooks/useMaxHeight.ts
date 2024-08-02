@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type RefObject, useCallback, useEffect } from 'react';
+import { type RefObject, useCallback, useLayoutEffect } from 'react';
 
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
@@ -28,6 +28,11 @@ export function setMaxHeight(dialog: HTMLElement): void {
     dialog.style.maxHeight = `${spaceBelow}px`;
 }
 
+export function isElementVisible(element: HTMLElement) {
+    const rect = element.getBoundingClientRect();
+    return rect.width > 0 && rect.height > 0 && window.getComputedStyle(element).display !== 'none';
+}
+
 /**
  * Custom hook to dynamically adjust the maximum height of an HTMLElement
  * based on the window's resize events. This function provides an object
@@ -39,15 +44,16 @@ export function setMaxHeight(dialog: HTMLElement): void {
  */
 export function useMaxHeight(ref: RefObject<HTMLElement | null>) {
     const triggerMaxHeightDefinition = useCallback(() => {
-        // Move the max height calculation to the end of the event loop to ensure the dialog has been rendered
         setTimeout(() => {
-            if (ref.current) {
+            if (ref.current && isElementVisible(ref.current)) {
                 setMaxHeight(ref.current);
             }
         });
     }, [ref]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
+        triggerMaxHeightDefinition();
+
         window.addEventListener('resize', triggerMaxHeightDefinition);
         return () => {
             window.removeEventListener('resize', triggerMaxHeightDefinition);
