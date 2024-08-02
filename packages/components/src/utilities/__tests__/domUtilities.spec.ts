@@ -2,9 +2,9 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { MAX_HEIGHT_MARGIN, setElementMaxHeight, isElementVisible } from '../domUtilities';
+import { MAX_HEIGHT_MARGIN, setMaxHeightToSpaceBelow, isElementVisible } from '../domUtilities';
 
-describe('setElementMaxHeight', () => {
+describe('setMaxHeightToSpaceBelow', () => {
     it('should set maxHeight based on viewport size and top offset', () => {
         const dialog = document.createElement('div');
         document.body.appendChild(document.createElement('div'));
@@ -17,7 +17,7 @@ describe('setElementMaxHeight', () => {
             }),
         });
 
-        setElementMaxHeight(dialog);
+        setMaxHeightToSpaceBelow(dialog);
         const expectedMaxHeight = `${800 - (150 + MAX_HEIGHT_MARGIN)}px`;
         expect(dialog.style.maxHeight).toBe(expectedMaxHeight);
     });

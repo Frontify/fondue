@@ -2,7 +2,7 @@
 
 import { type RefObject, useCallback, useLayoutEffect } from 'react';
 
-import { isElementVisible, setElementMaxHeight } from '#/utilities/domUtilities';
+import { isElementVisible, setMaxHeightToSpaceBelow } from '#/utilities/domUtilities';
 
 /**
  * Custom hook to dynamically adjust the maximum height of an HTMLElement
@@ -17,7 +17,7 @@ export function useMaxHeight(ref: RefObject<HTMLElement | null>) {
     const triggerMaxHeightDefinition = useCallback(() => {
         setTimeout(() => {
             if (ref.current && isElementVisible(ref.current)) {
-                setElementMaxHeight(ref.current);
+                setMaxHeightToSpaceBelow(ref.current);
             }
         });
     }, [ref]);
