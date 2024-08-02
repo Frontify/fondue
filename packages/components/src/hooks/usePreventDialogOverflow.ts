@@ -10,6 +10,10 @@ import { isElementVisible, setMaxHeightToSpaceBelow } from '#/utilities/domUtili
  * containing the `triggerMaxHeightDefinition` method to manually trigger
  * the maximum height adjustment if needed.
  *
+ * ! Note: Components utilizing this hook should have tests in place to verify
+ * ! that in each scenario, the height is correctly adjusted accodrding to the
+ * ! requirements of the component and the viewport.
+ *
  * @param {RefObject<HTMLElement | null>} ref - A reference to the HTMLElement.
  * @returns {Object} An object containing `triggerMaxHeightDefinition` method.
  */
