@@ -57,23 +57,20 @@ export function isElementVisible(element: HTMLElement) {
 }
 
 /**
- * Assigns a local DOM ref to a forwarded ref within the next animation frame.
- * This ensures that the forwarded ref receives the most up-to-date reference.
+ * Assigns a local DOM ref to a forwarded ref.
  *
  * @param {RefObject<HTMLDivElement>} localRef - The local React reference to an HTMLDivElement.
  * @param {ForwardedRef<HTMLDivElement>} forwardedRef - The ref forwarded from a parent component,
  *                                                       which can either be a function or a mutable ref object.
  */
-export function syncRefsOnNextFrame(localRef: RefObject<HTMLDivElement>, forwardedRef: ForwardedRef<HTMLDivElement>) {
+export function syncRefs(localRef: RefObject<HTMLDivElement>, forwardedRef: ForwardedRef<HTMLDivElement>) {
     if (!forwardedRef) {
         return;
     }
 
-    requestAnimationFrame(() => {
-        if (typeof forwardedRef === 'function') {
-            forwardedRef(localRef.current);
-        } else if (forwardedRef && 'current' in forwardedRef) {
-            forwardedRef.current = localRef.current;
-        }
-    });
+    if (typeof forwardedRef === 'function') {
+        forwardedRef(localRef.current);
+    } else if (forwardedRef && 'current' in forwardedRef) {
+        forwardedRef.current = localRef.current;
+    }
 }

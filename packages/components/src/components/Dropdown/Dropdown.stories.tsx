@@ -2,7 +2,7 @@
 
 import { IconIcon } from '@frontify/fondue-icons';
 import { type Meta, type StoryObj } from '@storybook/react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { Button } from '../Button/Button';
 
@@ -234,13 +234,14 @@ export const Overflow: Story = {
         },
     },
     render: ({ ...args }) => {
+        const ref = useRef(null);
         return (
             <>
                 <Dropdown.Root {...args}>
                     <Dropdown.Trigger>
                         <Button variant="loud">Trigger 1</Button>
                     </Dropdown.Trigger>
-                    <Dropdown.Content>
+                    <Dropdown.Content ref={ref}>
                         <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
                         <Dropdown.Item onSelect={() => {}}>Item 2</Dropdown.Item>
                         <Dropdown.Item onSelect={() => {}}>Item 3</Dropdown.Item>

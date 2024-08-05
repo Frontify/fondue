@@ -5,7 +5,7 @@ import * as RadixDropdown from '@radix-ui/react-dropdown-menu';
 import { forwardRef, useRef, type ForwardedRef, type ReactNode } from 'react';
 
 import { usePreventDropdownOverflow } from '#/hooks/usePreventDropdownOverflow';
-import { syncRefsOnNextFrame } from '#/utilities/domUtilities';
+import { syncRefs } from '#/utilities/domUtilities';
 
 import styles from './styles/dropdown.module.scss';
 
@@ -71,13 +71,13 @@ export const DropdownContent = (
                 data-test-id={dataTestId}
                 ref={localRef}
                 onCloseAutoFocus={() => {
-                    syncRefsOnNextFrame(localRef, ref);
+                    syncRefs(localRef, ref);
                     dropdownIsOpen.current = false;
                 }}
                 onFocusCapture={() => {
                     if (!dropdownIsOpen.current) {
                         setMaxHeight();
-                        syncRefsOnNextFrame(localRef, ref);
+                        syncRefs(localRef, ref);
                         dropdownIsOpen.current = true;
                     }
                 }}
