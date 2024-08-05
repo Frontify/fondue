@@ -2,7 +2,9 @@
 
 import { IconCaretRight } from '@frontify/fondue-icons';
 import * as RadixDropdown from '@radix-ui/react-dropdown-menu';
-import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
+import { forwardRef, useLayoutEffect, useRef, type ForwardedRef, type ReactNode } from 'react';
+
+import { usePreventDialogOverflow } from '#/hooks/usePreventDialogOverflow';
 
 import styles from './styles/dropdown.module.scss';
 
@@ -53,6 +55,24 @@ export const DropdownContent = (
     { children, 'data-test-id': dataTestId = 'fondue-dropdown-content' }: DropdownContentProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
+    const internalRef = useRef(null);
+    const heightSet = useRef(false);
+
+    const { triggerMaxHeightDefinition } = usePreventDialogOverflow(internalRef);
+
+    useLayoutEffect(() => {
+        if (ref) {
+            // send ref definition to the end of the call stack
+            setTimeout(() => {
+                if (typeof ref === 'function') {
+                    ref(internalRef.current);
+                } else {
+                    ref.current = internalRef.current;
+                }
+            });
+        }
+    });
+
     return (
         <RadixDropdown.Portal>
             <RadixDropdown.Content
@@ -61,7 +81,16 @@ export const DropdownContent = (
                 sideOffset={8}
                 className={styles.content}
                 data-test-id={dataTestId}
-                ref={ref}
+                ref={internalRef}
+                onFocus={() => {
+                    if (!heightSet.current) {
+                        triggerMaxHeightDefinition();
+                        heightSet.current = true;
+                    }
+                }}
+                onBlur={() => {
+                    heightSet.current = false;
+                }}
             >
                 {children}
             </RadixDropdown.Content>
