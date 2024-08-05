@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ForwardedRef, RefObject } from 'react';
+import { type ForwardedRef, type RefObject } from 'react';
 
 export const MAX_HEIGHT_MARGIN = 16;
 
