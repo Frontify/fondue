@@ -25,7 +25,6 @@ export function setMaxHeightToAvailableSpace(dialog: HTMLElement) {
     dialog.style.maxHeight = '';
 
     const { top, bottom } = dialog.getBoundingClientRect();
-
     if (top - MAX_HEIGHT_MARGIN < 0) {
         // if the dialog is overflowing to the top
         dialog.style.maxHeight = `${bottom - MAX_HEIGHT_MARGIN}px`;

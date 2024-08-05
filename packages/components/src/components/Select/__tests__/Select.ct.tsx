@@ -323,12 +323,16 @@ test('should have max height equal to available space', async ({ mount, page }) 
     const component = await mount(
         <Select aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
             <Select.Slot name="menu">
-                <Select.Item data-test-id={ITEM_TEST_ID1} value="test1">
-                    {ITEM_TEXT1}
-                </Select.Item>
-                <Select.Item data-test-id={ITEM_TEST_ID2} value="test2">
-                    {ITEM_TEXT2}
-                </Select.Item>
+                <Select.Item value="test1">{ITEM_TEXT1}</Select.Item>
+                <Select.Item value="test2">{ITEM_TEXT2}</Select.Item>
+                <Select.Item value="test1">{ITEM_TEXT1}</Select.Item>
+                <Select.Item value="test2">{ITEM_TEXT2}</Select.Item>
+                <Select.Item value="test1">{ITEM_TEXT1}</Select.Item>
+                <Select.Item value="test2">{ITEM_TEXT2}</Select.Item>
+                <Select.Item value="test1">{ITEM_TEXT1}</Select.Item>
+                <Select.Item value="test2">{ITEM_TEXT2}</Select.Item>
+                <Select.Item value="test1">{ITEM_TEXT1}</Select.Item>
+                <Select.Item value="test2">{ITEM_TEXT2}</Select.Item>
             </Select.Slot>
         </Select>,
     );
@@ -338,10 +342,9 @@ test('should have max height equal to available space', async ({ mount, page }) 
 
     const dialog = page.getByTestId('fondue-select-menu');
     await expect(dialog).toBeVisible();
-
-    const boundingBox = await dialog.boundingBox();
-
+    await page.setViewportSize({ width: 800, height: 300 });
     const windowHeight = page.viewportSize()?.height || 0;
+    const boundingBox = await dialog.boundingBox();
     const expectedMaxHeight = windowHeight - (boundingBox?.y || 0) - MAX_HEIGHT_MARGIN;
     const actualMaxHeight = await dialog.evaluate((node) => parseFloat(window.getComputedStyle(node).maxHeight));
     expect(actualMaxHeight).toBe(expectedMaxHeight);
