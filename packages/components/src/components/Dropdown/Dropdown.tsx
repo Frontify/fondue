@@ -57,7 +57,7 @@ export const DropdownContent = (
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     const localRef = useRef(null);
-    const nodeInDom = useRef(false);
+    const dropdownIsOpen = useRef(false);
 
     const { triggerMaxHeightDefinition } = usePreventDialogOverflow(localRef);
 
@@ -72,13 +72,13 @@ export const DropdownContent = (
                 ref={localRef}
                 onCloseAutoFocus={() => {
                     syncRefsOnNextFrame(localRef, ref);
-                    nodeInDom.current = false;
+                    dropdownIsOpen.current = false;
                 }}
                 onFocusCapture={() => {
-                    if (!nodeInDom.current) {
+                    if (!dropdownIsOpen.current) {
                         triggerMaxHeightDefinition();
                         syncRefsOnNextFrame(localRef, ref);
-                        nodeInDom.current = true;
+                        dropdownIsOpen.current = true;
                     }
                 }}
             >
