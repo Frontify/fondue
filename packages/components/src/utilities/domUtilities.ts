@@ -29,7 +29,7 @@ export function setMaxHeightToAvailableSpace(dialog: HTMLElement) {
     if (top - MAX_HEIGHT_MARGIN < 0) {
         // if the dialog is overflowing to the top
         dialog.style.maxHeight = `${bottom - MAX_HEIGHT_MARGIN}px`;
-    } else if (bottom > window.innerHeight - MAX_HEIGHT_MARGIN) {
+    } else if (bottom + MAX_HEIGHT_MARGIN > window.innerHeight) {
         // if the dialog is overflowing to the bottom
         dialog.style.maxHeight = `${window.innerHeight - top - MAX_HEIGHT_MARGIN}px`;
     }
