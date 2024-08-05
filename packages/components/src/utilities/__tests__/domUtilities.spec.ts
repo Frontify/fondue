@@ -5,21 +5,38 @@ import { describe, expect, it } from 'vitest';
 import { MAX_HEIGHT_MARGIN, setMaxHeightToSpaceAvailable, isElementVisible } from '../domUtilities';
 
 describe('setMaxHeightToSpaceAvailable', () => {
-    it('should set maxHeight based on viewport size and top offset', () => {
+    Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: 800 });
+    it('sets maxHeight correctly if dialog overflows the bottom', () => {
         const dialog = document.createElement('div');
-        document.body.appendChild(document.createElement('div'));
-
-        Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: 800 });
         Object.defineProperty(dialog, 'getBoundingClientRect', {
             writable: true,
-            value: () => ({
-                top: 150,
-            }),
+            value: () => ({ top: 750, bottom: 850 }),
         });
 
         setMaxHeightToSpaceAvailable(dialog);
-        const expectedMaxHeight = `${800 - (150 + MAX_HEIGHT_MARGIN)}px`;
-        expect(dialog.style.maxHeight).toBe(expectedMaxHeight);
+        expect(dialog.style.maxHeight).toBe(`${800 - 750 - MAX_HEIGHT_MARGIN}px`);
+    });
+
+    it('sets maxHeight correctly if dialog overflows the top', () => {
+        const dialog = document.createElement('div');
+        Object.defineProperty(dialog, 'getBoundingClientRect', {
+            writable: true,
+            value: () => ({ top: -50, bottom: 100 }),
+        });
+
+        setMaxHeightToSpaceAvailable(dialog);
+        expect(dialog.style.maxHeight).toBe(`${100 - MAX_HEIGHT_MARGIN}px`);
+    });
+
+    it('does not change maxHeight if dialog fits within the viewport', () => {
+        const dialog = document.createElement('div');
+        Object.defineProperty(dialog, 'getBoundingClientRect', {
+            writable: true,
+            value: () => ({ top: 200, bottom: 600 }),
+        });
+
+        setMaxHeightToSpaceAvailable(dialog);
+        expect(dialog.style.maxHeight).toBe('');
     });
 });
 
@@ -40,12 +57,14 @@ describe('isElementVisible', () => {
     it('should return false for an element with display none', () => {
         const element = document.createElement('div');
         Object.assign(element.style, { display: 'none' });
+
         expect(isElementVisible(element)).toBe(false);
     });
 
     it('should return false for an element with zero opacity', () => {
         const element = document.createElement('div');
         Object.assign(element.style, { opacity: '0' });
+
         expect(isElementVisible(element)).toBe(false);
     });
 
@@ -54,12 +73,14 @@ describe('isElementVisible', () => {
         Object.defineProperty(element, 'getBoundingClientRect', {
             value: () => ({ top: -100, left: -100, bottom: -50, right: -50, width: 50, height: 50 }),
         });
+
         expect(isElementVisible(element)).toBe(false);
     });
 
     it('should return false for an element with visibility hidden', () => {
         const element = document.createElement('div');
         Object.assign(element.style, { visibility: 'hidden' });
+
         expect(isElementVisible(element)).toBe(false);
     });
 });
