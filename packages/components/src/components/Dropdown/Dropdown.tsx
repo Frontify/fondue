@@ -5,6 +5,7 @@ import * as RadixDropdown from '@radix-ui/react-dropdown-menu';
 import { forwardRef, useRef, type ForwardedRef, type ReactNode } from 'react';
 
 import { usePreventDialogOverflow } from '#/hooks/usePreventDialogOverflow';
+import { syncRefsOnNextFrame } from '#/utilities/domUtilities';
 
 import styles from './styles/dropdown.module.scss';
 
@@ -55,22 +56,10 @@ export const DropdownContent = (
     { children, 'data-test-id': dataTestId = 'fondue-dropdown-content' }: DropdownContentProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
-    const internalRef = useRef(null);
+    const localRef = useRef(null);
     const nodeInDom = useRef(false);
 
-    const { triggerMaxHeightDefinition } = usePreventDialogOverflow(internalRef);
-
-    const setExernalRef = () => {
-        if (ref) {
-            requestAnimationFrame(() => {
-                if (typeof ref === 'function') {
-                    ref(internalRef.current);
-                } else {
-                    ref.current = internalRef.current;
-                }
-            });
-        }
-    };
+    const { triggerMaxHeightDefinition } = usePreventDialogOverflow(localRef);
 
     return (
         <RadixDropdown.Portal>
@@ -80,15 +69,15 @@ export const DropdownContent = (
                 sideOffset={8}
                 className={styles.content}
                 data-test-id={dataTestId}
-                ref={internalRef}
+                ref={localRef}
                 onCloseAutoFocus={() => {
+                    syncRefsOnNextFrame(localRef, ref);
                     nodeInDom.current = false;
-                    setExernalRef();
                 }}
                 onFocusCapture={() => {
                     if (!nodeInDom.current) {
                         triggerMaxHeightDefinition();
-                        setExernalRef();
+                        syncRefsOnNextFrame(localRef, ref);
                         nodeInDom.current = true;
                     }
                 }}

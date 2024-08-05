@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { ForwardedRef, RefObject } from 'react';
+
 export const MAX_HEIGHT_MARGIN = 16;
 
 /**
@@ -52,4 +54,26 @@ export function isElementVisible(element: HTMLElement) {
         rect.top < window.innerHeight && rect.left < window.innerWidth && rect.bottom > 0 && rect.right > 0;
 
     return hasSize && isVisibleStyle && isInViewport;
+}
+
+/**
+ * Assigns a local DOM ref to a forwarded ref within the next animation frame.
+ * This ensures that the forwarded ref receives the most up-to-date reference.
+ *
+ * @param {RefObject<HTMLDivElement>} localRef - The local React reference to an HTMLDivElement.
+ * @param {ForwardedRef<HTMLDivElement>} forwardedRef - The ref forwarded from a parent component,
+ *                                                       which can either be a function or a mutable ref object.
+ */
+export function syncRefsOnNextFrame(localRef: RefObject<HTMLDivElement>, forwardedRef: ForwardedRef<HTMLDivElement>) {
+    if (!forwardedRef) {
+        return;
+    }
+
+    requestAnimationFrame(() => {
+        if (typeof forwardedRef === 'function') {
+            forwardedRef(localRef.current);
+        } else if (forwardedRef && 'current' in forwardedRef) {
+            forwardedRef.current = localRef.current;
+        }
+    });
 }
