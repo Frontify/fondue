@@ -71,8 +71,16 @@
         }
 
         &:active {
+            @include transition(outline);
             outline-offset: 0;
             outline-width: sizeToken(2);
+            outline-color: var(--slider-thumb-active-outline-color);
+        }
+
+        &[data-prevent-blue-outline='true']:not(:active) {
+            @include transition(outline);
+            outline-offset: 0;
+            outline-width: sizeToken(1);
             outline-color: var(--slider-thumb-active-outline-color);
         }
 
