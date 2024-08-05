@@ -1,5 +1,11 @@
 # @frontify/fondue-charts
 
+## 1.8.11
+
+### Patch Changes
+
+-   [#1982](https://github.com/Frontify/fondue/pull/1982) [`386999e`](https://github.com/Frontify/fondue/commit/386999ee4c4bfea7a348cd81db90af3070f4ba3e) Thanks [@joseazevedo88](https://github.com/joseazevedo88)! - Update fondue charts tooltip
+
 ## 1.8.10
 
 ### Patch Changes

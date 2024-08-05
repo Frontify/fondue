@@ -1,5 +1,15 @@
 # @frontify/fondue-components
 
+## 3.0.3
+
+### Patch Changes
+
+-   [#1983](https://github.com/Frontify/fondue/pull/1983) [`254915c`](https://github.com/Frontify/fondue/commit/254915cf9713f2df5f006276c74d2e4af9305e2b) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: remove focus outline on hover inside dropdown
+
+-   [#1973](https://github.com/Frontify/fondue/pull/1973) [`caf74c2`](https://github.com/Frontify/fondue/commit/caf74c2b441d72a2132af490e7c2044d089467c1) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: refactored color picker
+
+-   [#1990](https://github.com/Frontify/fondue/pull/1990) [`4ee57a9`](https://github.com/Frontify/fondue/commit/4ee57a97a0dc571f100709d11ce1ba2662a4d42b) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: combobox options filtering
+
 ## 3.0.2
 
 ### Patch Changes
