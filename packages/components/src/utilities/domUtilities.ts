@@ -21,6 +21,9 @@ export function setMaxHeightToAvailableSpace(dialog: HTMLElement) {
     if (!window) {
         throw new Error('Window object not found, this method should be used in a browser environment');
     }
+
+    dialog.style.maxHeight = '';
+
     const { top, bottom } = dialog.getBoundingClientRect();
 
     if (top < 0) {
