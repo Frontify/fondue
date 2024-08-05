@@ -2,7 +2,7 @@
 
 import { type RefObject, useCallback, useLayoutEffect } from 'react';
 
-import { isElementVisible, setMaxHeightToSpaceBelow } from '#/utilities/domUtilities';
+import { isElementVisible, setMaxHeightToSpaceAvailable } from '#/utilities/domUtilities';
 
 /**
  * Custom hook to dynamically adjust the maximum height of an HTMLElement
@@ -21,7 +21,7 @@ export function usePreventDialogOverflow(ref: RefObject<HTMLElement | null>) {
     const triggerMaxHeightDefinition = useCallback(() => {
         setTimeout(() => {
             if (ref.current && isElementVisible(ref.current)) {
-                setMaxHeightToSpaceBelow(ref.current);
+                setMaxHeightToSpaceAvailable(ref.current);
             }
         });
     }, [ref]);
