@@ -234,14 +234,13 @@ export const Overflow: Story = {
         },
     },
     render: ({ ...args }) => {
-        const ref = useRef(null);
         return (
             <>
                 <Dropdown.Root {...args}>
                     <Dropdown.Trigger>
                         <Button variant="loud">Trigger 1</Button>
                     </Dropdown.Trigger>
-                    <Dropdown.Content ref={ref}>
+                    <Dropdown.Content>
                         <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
                         <Dropdown.Item onSelect={() => {}}>Item 2</Dropdown.Item>
                         <Dropdown.Item onSelect={() => {}}>Item 3</Dropdown.Item>
