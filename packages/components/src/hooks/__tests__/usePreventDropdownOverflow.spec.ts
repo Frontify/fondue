@@ -3,13 +3,13 @@
 import { act, renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { usePreventDialogOverflow } from '../usePreventDialogOverflow';
+import { usePreventDropdownOverflow } from '../usePreventDropdownOverflow';
 
-describe('usePreventDialogOverflow', () => {
+describe('usePreventDropdownOverflow', () => {
     it('sets up and tears down the resize event listener correctly', () => {
         const addEventListenerSpy = vi.spyOn(window, 'addEventListener');
         const removeEventListenerSpy = vi.spyOn(window, 'removeEventListener');
-        const { unmount } = renderHook(() => usePreventDialogOverflow({ current: document.createElement('div') }));
+        const { unmount } = renderHook(() => usePreventDropdownOverflow({ current: document.createElement('div') }));
 
         expect(addEventListenerSpy).toHaveBeenCalledWith('resize', expect.any(Function));
 
@@ -21,10 +21,10 @@ describe('usePreventDialogOverflow', () => {
     });
 
     it('does not crash if ref is null', () => {
-        const { result } = renderHook(() => usePreventDialogOverflow({ current: null }));
+        const { result } = renderHook(() => usePreventDropdownOverflow({ current: null }));
 
         act(() => {
-            result.current.triggerMaxHeightDefinition();
+            result.current.setMaxHeight();
         });
 
         expect(true).toBe(true);

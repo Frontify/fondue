@@ -4,7 +4,7 @@ import { IconCaretRight } from '@frontify/fondue-icons';
 import * as RadixDropdown from '@radix-ui/react-dropdown-menu';
 import { forwardRef, useRef, type ForwardedRef, type ReactNode } from 'react';
 
-import { usePreventDialogOverflow } from '#/hooks/usePreventDialogOverflow';
+import { usePreventDropdownOverflow } from '#/hooks/usePreventDropdownOverflow';
 import { syncRefsOnNextFrame } from '#/utilities/domUtilities';
 
 import styles from './styles/dropdown.module.scss';
@@ -59,7 +59,7 @@ export const DropdownContent = (
     const localRef = useRef(null);
     const dropdownIsOpen = useRef(false);
 
-    const { triggerMaxHeightDefinition } = usePreventDialogOverflow(localRef);
+    const { setMaxHeight } = usePreventDropdownOverflow(localRef);
 
     return (
         <RadixDropdown.Portal>
@@ -76,7 +76,7 @@ export const DropdownContent = (
                 }}
                 onFocusCapture={() => {
                     if (!dropdownIsOpen.current) {
-                        triggerMaxHeightDefinition();
+                        setMaxHeight();
                         syncRefsOnNextFrame(localRef, ref);
                         dropdownIsOpen.current = true;
                     }

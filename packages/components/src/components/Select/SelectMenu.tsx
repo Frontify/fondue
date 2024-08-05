@@ -5,7 +5,7 @@ import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { type UseComboboxPropGetters, type UseSelectPropGetters } from 'downshift';
 import { isValidElement, useRef, type ForwardedRef, type MouseEvent, type ReactElement, type ReactNode } from 'react';
 
-import { usePreventDialogOverflow } from '#/hooks/usePreventDialogOverflow';
+import { usePreventDropdownOverflow } from '#/hooks/usePreventDropdownOverflow';
 
 import { type SelectItemProps } from './SelectItem';
 import styles from './styles/select.module.scss';
@@ -42,11 +42,11 @@ export type SelectMenuProps = {
 export const SelectMenu = ({ highlightedIndex, getMenuProps, getItemProps, children, filterText }: SelectMenuProps) => {
     const ref = useRef<HTMLUListElement | null>(null);
 
-    const { triggerMaxHeightDefinition } = usePreventDialogOverflow(ref);
+    const { setMaxHeight } = usePreventDropdownOverflow(ref);
 
     const handleOnOpenAutoFocus = (event: Event) => {
         event.preventDefault();
-        triggerMaxHeightDefinition();
+        setMaxHeight();
     };
 
     return (

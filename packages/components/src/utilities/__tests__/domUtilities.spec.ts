@@ -2,9 +2,9 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { MAX_HEIGHT_MARGIN, setMaxHeightToSpaceAvailable, isElementVisible } from '../domUtilities';
+import { MAX_HEIGHT_MARGIN, setMaxHeightToAvailableSpace, isElementVisible } from '../domUtilities';
 
-describe('setMaxHeightToSpaceAvailable', () => {
+describe('setMaxHeightToAvailableSpace', () => {
     Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: 800 });
     it('sets maxHeight correctly if dialog overflows the bottom', () => {
         const dialog = document.createElement('div');
@@ -13,7 +13,7 @@ describe('setMaxHeightToSpaceAvailable', () => {
             value: () => ({ top: 750, bottom: 850 }),
         });
 
-        setMaxHeightToSpaceAvailable(dialog);
+        setMaxHeightToAvailableSpace(dialog);
         expect(dialog.style.maxHeight).toBe(`${800 - 750 - MAX_HEIGHT_MARGIN}px`);
     });
 
@@ -24,7 +24,7 @@ describe('setMaxHeightToSpaceAvailable', () => {
             value: () => ({ top: -50, bottom: 100 }),
         });
 
-        setMaxHeightToSpaceAvailable(dialog);
+        setMaxHeightToAvailableSpace(dialog);
         expect(dialog.style.maxHeight).toBe(`${100 - MAX_HEIGHT_MARGIN}px`);
     });
 
@@ -35,7 +35,7 @@ describe('setMaxHeightToSpaceAvailable', () => {
             value: () => ({ top: 200, bottom: 600 }),
         });
 
-        setMaxHeightToSpaceAvailable(dialog);
+        setMaxHeightToAvailableSpace(dialog);
         expect(dialog.style.maxHeight).toBe('');
     });
 });

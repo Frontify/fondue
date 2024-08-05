@@ -2,12 +2,12 @@
 
 import { type RefObject, useCallback, useLayoutEffect } from 'react';
 
-import { isElementVisible, setMaxHeightToSpaceAvailable } from '#/utilities/domUtilities';
+import { isElementVisible, setMaxHeightToAvailableSpace } from '#/utilities/domUtilities';
 
 /**
  * Custom hook to dynamically adjust the maximum height of an HTMLElement
  * based on the window's resize events. This function provides an object
- * containing the `triggerMaxHeightDefinition` method to manually trigger
+ * containing the `setMaxHeight` method to manually trigger
  * the maximum height adjustment if needed.
  *
  * ! Note: Components utilizing this hook should have tests in place to verify
@@ -15,26 +15,26 @@ import { isElementVisible, setMaxHeightToSpaceAvailable } from '#/utilities/domU
  * ! requirements of the component and the viewport.
  *
  * @param {RefObject<HTMLElement | null>} ref - A reference to the HTMLElement.
- * @returns {Object} An object containing `triggerMaxHeightDefinition` method.
+ * @returns {Object} An object containing `setMaxHeight` method.
  */
-export function usePreventDialogOverflow(ref: RefObject<HTMLElement | null>) {
-    const triggerMaxHeightDefinition = useCallback(() => {
+export function usePreventDropdownOverflow(ref: RefObject<HTMLElement | null>) {
+    const setMaxHeight = useCallback(() => {
         requestAnimationFrame(() => {
             if (ref.current && isElementVisible(ref.current)) {
-                setMaxHeightToSpaceAvailable(ref.current);
+                setMaxHeightToAvailableSpace(ref.current);
             }
         });
     }, [ref]);
 
     useLayoutEffect(() => {
-        triggerMaxHeightDefinition();
-        window.addEventListener('resize', triggerMaxHeightDefinition);
+        setMaxHeight();
+        window.addEventListener('resize', setMaxHeight);
         return () => {
-            window.removeEventListener('resize', triggerMaxHeightDefinition);
+            window.removeEventListener('resize', setMaxHeight);
         };
-    }, [triggerMaxHeightDefinition]);
+    }, [setMaxHeight]);
 
     return {
-        triggerMaxHeightDefinition,
+        setMaxHeight,
     };
 }

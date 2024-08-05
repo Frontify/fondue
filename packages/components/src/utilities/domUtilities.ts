@@ -15,9 +15,9 @@ export const MAX_HEIGHT_MARGIN = 16;
  * // Suppose you have a dialog element with id 'my-dialog'.
  * const dialogElement = myDialogRef.current || document.getElementById('my-dialog');
  * // Setting its max height relative to its current position and the viewport's dimensions.
- * setMaxHeightToSpaceAvailable(dialogElement);
+ * setMaxHeightToAvailableSpace(dialogElement);
  */
-export function setMaxHeightToSpaceAvailable(dialog: HTMLElement) {
+export function setMaxHeightToAvailableSpace(dialog: HTMLElement) {
     if (!window) {
         throw new Error('Window object not found, this method should be used in a browser environment');
     }
