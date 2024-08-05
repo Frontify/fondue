@@ -2,7 +2,7 @@
 
 import { IconCaretRight } from '@frontify/fondue-icons';
 import * as RadixDropdown from '@radix-ui/react-dropdown-menu';
-import { forwardRef, useLayoutEffect, useRef, type ForwardedRef, type ReactNode } from 'react';
+import { forwardRef, useRef, type ForwardedRef, type ReactNode } from 'react';
 
 import { usePreventDialogOverflow } from '#/hooks/usePreventDialogOverflow';
 
@@ -56,14 +56,13 @@ export const DropdownContent = (
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     const internalRef = useRef(null);
-    const heightSet = useRef(false);
+    const nodeInDom = useRef(false);
 
     const { triggerMaxHeightDefinition } = usePreventDialogOverflow(internalRef);
 
-    useLayoutEffect(() => {
+    const setExernalRef = () => {
         if (ref) {
-            // send ref definition to the end of the call stack
-            setTimeout(() => {
+            requestAnimationFrame(() => {
                 if (typeof ref === 'function') {
                     ref(internalRef.current);
                 } else {
@@ -71,7 +70,7 @@ export const DropdownContent = (
                 }
             });
         }
-    });
+    };
 
     return (
         <RadixDropdown.Portal>
@@ -82,14 +81,16 @@ export const DropdownContent = (
                 className={styles.content}
                 data-test-id={dataTestId}
                 ref={internalRef}
-                onFocus={() => {
-                    if (!heightSet.current) {
-                        triggerMaxHeightDefinition();
-                        heightSet.current = true;
-                    }
+                onCloseAutoFocus={() => {
+                    nodeInDom.current = false;
+                    setExernalRef();
                 }}
-                onBlur={() => {
-                    heightSet.current = false;
+                onFocusCapture={() => {
+                    if (!nodeInDom.current) {
+                        triggerMaxHeightDefinition();
+                        setExernalRef();
+                        nodeInDom.current = true;
+                    }
                 }}
             >
                 {children}

@@ -2,7 +2,7 @@
 
 import { IconIcon } from '@frontify/fondue-icons';
 import { type Meta, type StoryObj } from '@storybook/react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { Button } from '../Button/Button';
 

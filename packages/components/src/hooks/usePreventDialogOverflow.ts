@@ -19,7 +19,7 @@ import { isElementVisible, setMaxHeightToSpaceAvailable } from '#/utilities/domU
  */
 export function usePreventDialogOverflow(ref: RefObject<HTMLElement | null>) {
     const triggerMaxHeightDefinition = useCallback(() => {
-        setTimeout(() => {
+        requestAnimationFrame(() => {
             if (ref.current && isElementVisible(ref.current)) {
                 setMaxHeightToSpaceAvailable(ref.current);
             }
