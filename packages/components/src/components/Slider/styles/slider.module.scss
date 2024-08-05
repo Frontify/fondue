@@ -43,7 +43,10 @@
     .thumb {
         @include focus-outline;
         @include transition-colors;
-        @include transition-box-shadow;
+
+        &:not(:focus) {
+            @include transition-box-shadow;
+        }
 
         --slider-thumb-hover-box-shadow-color: color-mix(
             in srgb,
