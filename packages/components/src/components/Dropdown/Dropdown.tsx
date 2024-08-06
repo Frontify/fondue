@@ -84,7 +84,6 @@ export const DropdownContent = (
                     if (!dropdownIsOpen.current) {
                         setMaxHeight();
                         syncRefs(localRef, ref);
-                        debugger;
                         onOpen && onOpen();
                         dropdownIsOpen.current = true;
                     }
