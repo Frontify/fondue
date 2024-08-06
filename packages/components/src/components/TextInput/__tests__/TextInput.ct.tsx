@@ -121,15 +121,24 @@ test('render focus ring when keyboard focused', async ({ mount, page }) => {
     await expect(page.getByTestId(TEXT_INPUT_TEST_ID)).not.toHaveCSS('outline-width', '4px');
     await page.keyboard.press('Tab');
     await expect(component.getByRole('textbox')).toBeFocused();
-    await expect(page.getByTestId(TEXT_INPUT_TEST_ID)).toHaveCSS('outline-width', '4px');
+    await expect(page.getByTestId(TEXT_INPUT_TEST_ID)).toHaveCSS(
+        'box-shadow',
+        'rgb(255, 255, 255) 0px 0px 0px 2px, rgb(65, 150, 251) 0px 0px 0px 6px',
+    );
 });
 
 test('render no focus ring when keyboard focused', async ({ mount, page }) => {
     const component = await mount(<TextInput value={TEXT_INPUT_TEXT} />);
 
     await page.focus('body');
-    await expect(page.getByTestId(TEXT_INPUT_TEST_ID)).not.toHaveCSS('outline-width', '4px');
+    await expect(page.getByTestId(TEXT_INPUT_TEST_ID)).not.toHaveCSS(
+        'box-shadow',
+        'rgb(255, 255, 255) 0px 0px 0px 2px, rgb(65, 150, 251) 0px 0px 0px 6px',
+    );
     await component.click();
     await expect(component.getByRole('textbox')).toBeFocused();
-    await expect(page.getByTestId(TEXT_INPUT_TEST_ID)).not.toHaveCSS('outline-width', '4px');
+    await expect(page.getByTestId(TEXT_INPUT_TEST_ID)).not.toHaveCSS(
+        'box-shadow',
+        'rgb(255, 255, 255) 0px 0px 0px 2px, rgb(65, 150, 251) 0px 0px 0px 6px',
+    );
 });
