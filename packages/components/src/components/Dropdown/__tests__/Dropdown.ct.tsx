@@ -112,6 +112,30 @@ test('should call onSelect by click', async ({ mount, page }) => {
     expect(onSelect.calledOnce).toBe(true);
 });
 
+test('should call open and close callbacks', async ({ mount, page }) => {
+    const onOpen = sinon.spy();
+    const onClose = sinon.spy();
+    const component = await mount(
+        <Dropdown.Root>
+            <Dropdown.Trigger>
+                <Button data-test-id={DROPDOWN_TRIGGER_TEST_ID}>Trigger</Button>
+            </Dropdown.Trigger>
+            <Dropdown.Content data-test-id={DROPDOWN_CONTENT_TEST_ID} onOpen={onOpen} onClose={onClose}>
+                <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}}>Item 2</Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}}>Item 3</Dropdown.Item>
+            </Dropdown.Content>
+        </Dropdown.Root>,
+    );
+    await expect(component).toBeVisible();
+    await expect(page.getByTestId(DROPDOWN_TRIGGER_TEST_ID)).toBeVisible();
+    await page.getByTestId(DROPDOWN_TRIGGER_TEST_ID).focus();
+    await page.keyboard.press('Enter');
+    sinon.assert.calledOnce(onOpen);
+    await page.keyboard.press('Enter');
+    sinon.assert.calledOnce(onClose);
+});
+
 test('should open submenu by keyboard', async ({ mount, page }) => {
     const onSelect = sinon.spy();
     const component = await mount(

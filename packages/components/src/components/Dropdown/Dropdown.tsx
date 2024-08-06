@@ -50,10 +50,15 @@ export const DropdownTrigger = (
 };
 DropdownTrigger.displayName = 'Dropdown.Trigger';
 
-export type DropdownContentProps = { children?: ReactNode; 'data-test-id'?: string };
+export type DropdownContentProps = {
+    children?: ReactNode;
+    'data-test-id'?: string;
+    onOpen?: () => void;
+    onClose?: () => void;
+};
 
 export const DropdownContent = (
-    { children, 'data-test-id': dataTestId = 'fondue-dropdown-content' }: DropdownContentProps,
+    { onOpen, onClose, children, 'data-test-id': dataTestId = 'fondue-dropdown-content' }: DropdownContentProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     const localRef = useRef(null);
@@ -72,12 +77,15 @@ export const DropdownContent = (
                 ref={localRef}
                 onCloseAutoFocus={() => {
                     syncRefs(localRef, ref);
+                    onClose && onClose();
                     dropdownIsOpen.current = false;
                 }}
-                onFocusCapture={() => {
+                onFocus={() => {
                     if (!dropdownIsOpen.current) {
                         setMaxHeight();
                         syncRefs(localRef, ref);
+                        debugger;
+                        onOpen && onOpen();
                         dropdownIsOpen.current = true;
                     }
                 }}
