@@ -1,5 +1,5 @@
 ---
-"@frontify/fondue-components": patch
+"@frontify/fondue-components": minor
 ---
 
 feat: improve outline styles
