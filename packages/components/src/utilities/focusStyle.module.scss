@@ -1,15 +1,20 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-@mixin focus-outline-styles($offset: 2px) {
-    outline-style: solid;
+@mixin focus-outline-base($offset: 2px) {
     outline-width: 4px;
     outline-offset: $offset;
     outline-color: #4196fb;
 }
 
+@mixin focus-outline-styles($offset: 2px) {
+    outline-style: solid;
+    @include focus-outline-styles($offset);
+}
+
 @mixin focus-outline($offset: 2px) {
+    @include focus-outline-base($offset);
     &:focus-visible,
     &:has([data-show-focus-ring='true']) {
-        @include focus-outline-styles($offset);
+        outline-style: solid;
     }
 }
