@@ -2,6 +2,6 @@
 
 module.exports = {
     focus: {
-        'ring-color': { value: '{color.violet.50.value}', attributes: { category: 'color', type: 'shadow' } },
+        'ring-color': { value: '#4196FB', attributes: { category: 'color', type: 'shadow' } },
     },
 };
