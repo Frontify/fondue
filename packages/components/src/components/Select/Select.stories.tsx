@@ -261,3 +261,69 @@ export const ExternallyControlled: Story = {
         );
     },
 };
+
+export const Overflow: Story = {
+    decorators: [
+        (Story) => (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+                <Story />
+            </div>
+        ),
+    ],
+    parameters: {
+        viewport: {
+            viewports: {
+                mobile: {
+                    name: 'Mobile',
+                    styles: {
+                        width: '300px',
+                        height: '272px',
+                    },
+                },
+            },
+            defaultViewport: 'mobile',
+        },
+    },
+    render: (args) => {
+        return (
+            <>
+                <Select {...args}>
+                    <Select.Item value="test1">Test1</Select.Item>
+                    <Select.Item value="test2">Test2</Select.Item>
+                    <Select.Item value="test3">Test3</Select.Item>
+                    <Select.Item value="test4">Test4</Select.Item>
+                    <Select.Item value="test5">Test5</Select.Item>
+                    <Select.Item value="test6">Test6</Select.Item>
+                    <Select.Item value="test7">Test7</Select.Item>
+                </Select>
+                <Select {...args}>
+                    <Select.Item value="test1">Test1</Select.Item>
+                    <Select.Item value="test2">Test2</Select.Item>
+                    <Select.Item value="test3">Test3</Select.Item>
+                    <Select.Item value="test4">Test4</Select.Item>
+                    <Select.Item value="test5">Test5</Select.Item>
+                    <Select.Item value="test6">Test6</Select.Item>
+                    <Select.Item value="test7">Test7</Select.Item>
+                </Select>
+                <Select {...args}>
+                    <Select.Item value="test1">Test1</Select.Item>
+                    <Select.Item value="test2">Test2</Select.Item>
+                    <Select.Item value="test3">Test3</Select.Item>
+                    <Select.Item value="test4">Test4</Select.Item>
+                    <Select.Item value="test5">Test5</Select.Item>
+                    <Select.Item value="test6">Test6</Select.Item>
+                    <Select.Item value="test7">Test7</Select.Item>
+                </Select>
+                <Select {...args}>
+                    <Select.Item value="test1">Test1</Select.Item>
+                    <Select.Item value="test2">Test2</Select.Item>
+                    <Select.Item value="test3">Test3</Select.Item>
+                    <Select.Item value="test4">Test4</Select.Item>
+                    <Select.Item value="test5">Test5</Select.Item>
+                    <Select.Item value="test6">Test6</Select.Item>
+                    <Select.Item value="test7">Test7</Select.Item>
+                </Select>
+            </>
+        );
+    },
+};

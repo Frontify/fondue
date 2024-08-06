@@ -3,7 +3,9 @@
 import * as RadixPopover from '@radix-ui/react-popover';
 import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { type UseComboboxPropGetters, type UseSelectPropGetters } from 'downshift';
-import { isValidElement, type ForwardedRef, type MouseEvent, type ReactElement, type ReactNode } from 'react';
+import { isValidElement, useRef, type ForwardedRef, type MouseEvent, type ReactElement, type ReactNode } from 'react';
+
+import { usePreventDropdownOverflow } from '#/hooks/usePreventDropdownOverflow';
 
 import { type SelectItemProps } from './SelectItem';
 import styles from './styles/select.module.scss';
@@ -38,25 +40,28 @@ export type SelectMenuProps = {
 };
 
 export const SelectMenu = ({ highlightedIndex, getMenuProps, getItemProps, children, filterText }: SelectMenuProps) => {
+    const ref = useRef<HTMLUListElement | null>(null);
+
+    const { setMaxHeight } = usePreventDropdownOverflow(ref);
+
+    const handleOnOpenAutoFocus = (event: Event) => {
+        event.preventDefault();
+        setMaxHeight();
+    };
+
     return (
         <RadixPopover.Portal>
-            <RadixPopover.Content
-                onOpenAutoFocus={(event) => {
-                    event.preventDefault();
-                }}
-                className={styles.portal}
-            >
-                <ul className={styles.menu} {...getMenuProps()} role="dialog">
+            <RadixPopover.Content onOpenAutoFocus={handleOnOpenAutoFocus} className={styles.portal}>
+                <ul className={styles.menu} {...getMenuProps()} ref={ref} data-test-id="fondue-select-menu">
                     {
                         recursiveMap(
                             children,
                             (child, index) => {
                                 const isValid = <TProps,>(
                                     child: ReactNode,
-                                ): child is ReactElement<TProps> & { ref: ForwardedRef<HTMLElement> } => {
+                                ): child is ReactElement<TProps> & { ref: ForwardedRef<HTMLElement> } =>
                                     // @ts-expect-error - We are explicitly checking for ref
-                                    return isValidElement<TProps>(child) && child.ref !== undefined;
-                                };
+                                    isValidElement<TProps>(child) && child.ref !== undefined;
 
                                 if (isValid<SelectItemProps>(child)) {
                                     const itemProps = getItemProps({

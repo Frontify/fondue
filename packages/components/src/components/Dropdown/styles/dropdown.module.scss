@@ -13,6 +13,7 @@
     border: var(--line-width) solid var(--line-color-strong);
     box-shadow: var(--shadow-matrix);
     min-width: 250px;
+    overflow: auto;
 }
 
 .item,

@@ -210,3 +210,50 @@ export const ControlledComponent: Story = {
         );
     },
 };
+
+export const Overflow: Story = {
+    decorators: [
+        (Story) => (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+                <Story />
+            </div>
+        ),
+    ],
+    parameters: {
+        viewport: {
+            viewports: {
+                mobile: {
+                    name: 'Mobile',
+                    styles: {
+                        width: '300px',
+                        height: '272px',
+                    },
+                },
+            },
+            defaultViewport: 'mobile',
+        },
+    },
+    render: ({ ...args }) => (
+        <>
+            {Array.from({ length: 4 }).map((_, index) => (
+                <Dropdown.Root {...args} key={index}>
+                    <Dropdown.Trigger>
+                        <Button variant="loud">Trigger 1</Button>
+                    </Dropdown.Trigger>
+                    <Dropdown.Content>
+                        <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
+                        <Dropdown.Item onSelect={() => {}}>Item 2</Dropdown.Item>
+                        <Dropdown.Item onSelect={() => {}}>Item 3</Dropdown.Item>
+                        <Dropdown.Item onSelect={() => {}}>Item 4</Dropdown.Item>
+                        <Dropdown.Item onSelect={() => {}}>Item 5</Dropdown.Item>
+                        <Dropdown.Item onSelect={() => {}}>Item 6</Dropdown.Item>
+                        <Dropdown.Item onSelect={() => {}}>Item 7</Dropdown.Item>
+                        <Dropdown.Item onSelect={() => {}}>Item 8</Dropdown.Item>
+                        <Dropdown.Item onSelect={() => {}}>Item 9</Dropdown.Item>
+                        <Dropdown.Item onSelect={() => {}}>Item 10</Dropdown.Item>
+                    </Dropdown.Content>
+                </Dropdown.Root>
+            ))}
+        </>
+    ),
+};
