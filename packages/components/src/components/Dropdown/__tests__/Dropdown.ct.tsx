@@ -122,8 +122,6 @@ test('should call open and close callbacks', async ({ mount, page }) => {
             </Dropdown.Trigger>
             <Dropdown.Content data-test-id={DROPDOWN_CONTENT_TEST_ID} onOpen={onOpen} onClose={onClose}>
                 <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
-                <Dropdown.Item onSelect={() => {}}>Item 2</Dropdown.Item>
-                <Dropdown.Item onSelect={() => {}}>Item 3</Dropdown.Item>
             </Dropdown.Content>
         </Dropdown.Root>,
     );

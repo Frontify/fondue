@@ -233,10 +233,10 @@ export const Overflow: Story = {
             defaultViewport: 'mobile',
         },
     },
-    render: ({ ...args }) => {
-        return (
-            <>
-                <Dropdown.Root {...args}>
+    render: ({ ...args }) => (
+        <>
+            {Array.from({ length: 4 }).map((_, index) => (
+                <Dropdown.Root {...args} key={index}>
                     <Dropdown.Trigger>
                         <Button variant="loud">Trigger 1</Button>
                     </Dropdown.Trigger>
@@ -253,58 +253,7 @@ export const Overflow: Story = {
                         <Dropdown.Item onSelect={() => {}}>Item 10</Dropdown.Item>
                     </Dropdown.Content>
                 </Dropdown.Root>
-                <Dropdown.Root {...args}>
-                    <Dropdown.Trigger>
-                        <Button variant="loud">Trigger 2</Button>
-                    </Dropdown.Trigger>
-                    <Dropdown.Content>
-                        <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
-                        <Dropdown.Item onSelect={() => {}}>Item 2</Dropdown.Item>
-                        <Dropdown.Item onSelect={() => {}}>Item 3</Dropdown.Item>
-                        <Dropdown.Item onSelect={() => {}}>Item 4</Dropdown.Item>
-                        <Dropdown.Item onSelect={() => {}}>Item 5</Dropdown.Item>
-                        <Dropdown.Item onSelect={() => {}}>Item 6</Dropdown.Item>
-                        <Dropdown.Item onSelect={() => {}}>Item 7</Dropdown.Item>
-                        <Dropdown.Item onSelect={() => {}}>Item 8</Dropdown.Item>
-                        <Dropdown.Item onSelect={() => {}}>Item 9</Dropdown.Item>
-                        <Dropdown.Item onSelect={() => {}}>Item 10</Dropdown.Item>
-                    </Dropdown.Content>
-                </Dropdown.Root>
-                <Dropdown.Root {...args}>
-                    <Dropdown.Trigger>
-                        <Button variant="loud">Trigger 3</Button>
-                    </Dropdown.Trigger>
-                    <Dropdown.Content>
-                        <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
-                        <Dropdown.Item onSelect={() => {}}>Item 2</Dropdown.Item>
-                        <Dropdown.Item onSelect={() => {}}>Item 3</Dropdown.Item>
-                        <Dropdown.Item onSelect={() => {}}>Item 4</Dropdown.Item>
-                        <Dropdown.Item onSelect={() => {}}>Item 5</Dropdown.Item>
-                        <Dropdown.Item onSelect={() => {}}>Item 6</Dropdown.Item>
-                        <Dropdown.Item onSelect={() => {}}>Item 7</Dropdown.Item>
-                        <Dropdown.Item onSelect={() => {}}>Item 8</Dropdown.Item>
-                        <Dropdown.Item onSelect={() => {}}>Item 9</Dropdown.Item>
-                        <Dropdown.Item onSelect={() => {}}>Item 10</Dropdown.Item>
-                    </Dropdown.Content>
-                </Dropdown.Root>
-                <Dropdown.Root {...args}>
-                    <Dropdown.Trigger>
-                        <Button variant="loud">Trigger 4</Button>
-                    </Dropdown.Trigger>
-                    <Dropdown.Content>
-                        <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
-                        <Dropdown.Item onSelect={() => {}}>Item 2</Dropdown.Item>
-                        <Dropdown.Item onSelect={() => {}}>Item 3</Dropdown.Item>
-                        <Dropdown.Item onSelect={() => {}}>Item 4</Dropdown.Item>
-                        <Dropdown.Item onSelect={() => {}}>Item 5</Dropdown.Item>
-                        <Dropdown.Item onSelect={() => {}}>Item 6</Dropdown.Item>
-                        <Dropdown.Item onSelect={() => {}}>Item 7</Dropdown.Item>
-                        <Dropdown.Item onSelect={() => {}}>Item 8</Dropdown.Item>
-                        <Dropdown.Item onSelect={() => {}}>Item 9</Dropdown.Item>
-                        <Dropdown.Item onSelect={() => {}}>Item 10</Dropdown.Item>
-                    </Dropdown.Content>
-                </Dropdown.Root>
-            </>
-        );
-    },
+            ))}
+        </>
+    ),
 };
