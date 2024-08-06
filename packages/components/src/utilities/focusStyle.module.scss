@@ -1,13 +1,23 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-@mixin focus-outline {
-    outline-color: #4196fb;
-    outline-width: 4px;
-    outline-offset: 2px;
+@mixin focus-outline-styles($style: 'default') {
+    outline-style: none;
+    transition-property: box-shadow;
+    transition-duration: 0ms;
+
+    @if $style == 'inset' {
+        box-shadow: inset 0 0 0 4px var(--focus-ring-color);
+    } @else {
+        box-shadow:
+            0 0 0 2px var(--base-color),
+            0 0 0 6px var(--focus-ring-color);
+    }
+}
+
+@mixin focus-outline($style: 'default') {
     &:focus-visible,
     &:focus-visible:hover,
     &:has([data-show-focus-ring='true']) {
-        outline-style: solid;
-        box-shadow: 0 0 0 2px #fff;
+        @include focus-outline-styles($style);
     }
 }

@@ -41,8 +41,8 @@
     }
 
     .thumb {
-        @include focus-outline;
         @include transition-colors;
+        @include focus-outline;
 
         &:not(:focus) {
             @include transition-box-shadow;
