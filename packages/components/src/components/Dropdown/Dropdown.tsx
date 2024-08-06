@@ -2,7 +2,10 @@
 
 import { IconCaretRight } from '@frontify/fondue-icons';
 import * as RadixDropdown from '@radix-ui/react-dropdown-menu';
-import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
+import { forwardRef, useRef, type ForwardedRef, type ReactNode } from 'react';
+
+import { usePreventDropdownOverflow } from '#/hooks/usePreventDropdownOverflow';
+import { syncRefs } from '#/utilities/domUtilities';
 
 import styles from './styles/dropdown.module.scss';
 
@@ -47,12 +50,22 @@ export const DropdownTrigger = (
 };
 DropdownTrigger.displayName = 'Dropdown.Trigger';
 
-export type DropdownContentProps = { children?: ReactNode; 'data-test-id'?: string };
+export type DropdownContentProps = {
+    children?: ReactNode;
+    'data-test-id'?: string;
+    onOpen?: () => void;
+    onClose?: () => void;
+};
 
 export const DropdownContent = (
-    { children, 'data-test-id': dataTestId = 'fondue-dropdown-content' }: DropdownContentProps,
+    { onOpen, onClose, children, 'data-test-id': dataTestId = 'fondue-dropdown-content' }: DropdownContentProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
+    const localRef = useRef(null);
+    const dropdownIsOpen = useRef(false);
+
+    const { setMaxHeight } = usePreventDropdownOverflow(localRef);
+
     return (
         <RadixDropdown.Portal>
             <RadixDropdown.Content
@@ -61,7 +74,20 @@ export const DropdownContent = (
                 sideOffset={8}
                 className={styles.content}
                 data-test-id={dataTestId}
-                ref={ref}
+                ref={localRef}
+                onCloseAutoFocus={() => {
+                    syncRefs(localRef, ref);
+                    onClose && onClose();
+                    dropdownIsOpen.current = false;
+                }}
+                onFocus={() => {
+                    if (!dropdownIsOpen.current) {
+                        setMaxHeight();
+                        syncRefs(localRef, ref);
+                        onOpen && onOpen();
+                        dropdownIsOpen.current = true;
+                    }
+                }}
             >
                 {children}
             </RadixDropdown.Content>

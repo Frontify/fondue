@@ -176,7 +176,7 @@
     background-color: var(--base-color);
     border: var(--line-width) solid var(--line-color-strong);
     width: var(--radix-popover-trigger-width);
-    overflow: hidden;
+    overflow: auto;
 
     &:has(li[role='option']) {
         display: block;
