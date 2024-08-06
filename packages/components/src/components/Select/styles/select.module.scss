@@ -202,6 +202,9 @@
 
     &[data-highlighted='true'] {
         background-color: var(--box-neutral-color-hover);
+        &:not(:hover) {
+            @include focus-outline-styles(-4px);
+        }
     }
 }
 

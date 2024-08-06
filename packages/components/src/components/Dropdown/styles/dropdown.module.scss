@@ -51,7 +51,7 @@
     }
 
     &:not(:hover) {
-        @include focus-outline;
+        @include focus-outline(-4px);
     }
 }
 
