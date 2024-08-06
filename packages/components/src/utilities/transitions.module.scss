@@ -18,7 +18,7 @@
 }
 
 @mixin transition-colors {
-    @include transition((color, background-color, border-color, text-decoration-color, fill, stroke));
+    @include transition((color, background-color, border-color, text-decoration-color, outline-color, fill, stroke));
 }
 
 @mixin transition-opacity {
@@ -27,4 +27,8 @@
 
 @mixin transition-transform {
     @include transition(transform);
+}
+
+@mixin transition-box-shadow {
+    @include transition(box-shadow);
 }

@@ -31,15 +31,18 @@ This document describes the changes that you need to make to your code to migrat
         -   [Segmented Control](#segmented-control)
             -   [Old](#old-6)
             -   [New](#new-6)
-        -   [Switch](#switch)
+        -   [Slider](#slider)
             -   [Old](#old-7)
             -   [New](#new-7)
-        -   [Text Input](#text-input)
+        -   [Switch](#switch)
             -   [Old](#old-8)
             -   [New](#new-8)
-        -   [Tooltip](#tooltip)
+        -   [Text Input](#text-input)
             -   [Old](#old-9)
             -   [New](#new-9)
+        -   [Tooltip](#tooltip)
+            -   [Old](#old-10)
+            -   [New](#new-10)
 
 ## Components
 
@@ -486,6 +489,97 @@ Changes:
         <IconIcon />
     </SegmentedControl.Item>
 </SegmentedControl.Root>
+```
+
+## Slider
+
+Changes:
+
+-   **Controlled and Uncontrolled States**:
+
+    -   `value` (controlled) and `defaultValue` (uncontrolled) props are now arrays reflecting support for range sliders in the new component.
+    -   The `onChange` event now returns an array of numbers reflecting the new multi-thumb capabilities.
+
+-   **Event Handling**:
+
+    -   The new `onCommit` event is introduced for actions when user interaction ends, similar to an `onBlur`.
+    -   Error handling via `onError` as this component can no longer be in an error state. Use controlled mode to limit and alert the user.
+
+-   **Removed Properties**:
+
+    -   `stepMultiplier` is no longer needed.
+    -   `showMinMax` is no longer supported.
+    -   `showMinMax` is no longer supported.
+    -   Input no longer included by default.
+    -   Additional UI flourishes should be added outside the component as needed.
+
+        ```tsx
+        <Slider />
+        <span className="tw-mr-3">
+            {min}%-{max}%
+        </span>
+        ```
+
+#### Old
+
+```tsx
+<Slider
+    id="old-slider"
+    label="Volume"
+    value={50}
+    min={0}
+    max={100}
+    showMinMax={true}
+    step={5}
+    stepMultiplier={10}
+    valueSuffix="%"
+    disabled={false}
+    onError={(errorCode) => console.error('Error:', errorCode)}
+    onChange={(value) => console.log('Value:', value.raw, value.withSuffix)}
+    data-test-id="slider-test"
+    aria-label="Adjust volume level"
+/>
+```
+
+#### New
+
+```tsx
+const [volume, setVolume] = useState([0]);
+
+const onSliderChange = (value: number[]) => {
+    setVolume(value);
+};
+
+const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const newValue = parseInt(event.target.value, 10);
+    if (newValue >= 0 && newValue <= 100) {
+        setVolume(value);
+    }
+};
+
+return (
+    <div style={{ display: 'flex', gap: 16 }}>
+        <Label id="new-slider-label" htmlFor="new-slider">
+            Volume
+        </Label>
+
+        <Slider
+            id="new-slider"
+            value={range}
+            min={0}
+            max={100}
+            aria-labelledby="new-slider-label"
+            onChange={onSliderChange}
+        />
+
+        <TextInput
+            id="new-slider-input"
+            value={value}
+            type="number"
+            aria-labelledby="new-slider-label"
+            onChange={onInputChange}
+        />
+    </div>
 ```
 
 ## Switch

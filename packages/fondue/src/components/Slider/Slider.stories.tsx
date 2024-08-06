@@ -4,6 +4,9 @@ import { type Meta, type StoryFn } from '@storybook/react';
 
 import { Slider, type SliderProps } from './Slider';
 
+/**
+ ### This component is deprecated, please use the [new Slider component](/docs/current_components-slider--documentation) instead.
+ */
 export default {
     title: 'Components/Slider',
     component: Slider,
