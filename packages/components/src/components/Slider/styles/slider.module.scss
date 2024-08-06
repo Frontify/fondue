@@ -79,7 +79,7 @@
             box-shadow: 0px 3px 10px 0px var(--slider-thumb-hover-box-shadow-color);
         }
 
-        &:active,
+        &:active:hover,
         //firefox support requires this additional selector
         &[data-prevent-blue-outline='true']:hover:focus-visible {
             @include transition(outline);
