@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 @import '../../../utilities/sizeToken.module.scss';
-@import '../../../utilities/focusStyle.module.scss';
 @import '../../../utilities/transitions.module.scss';
 
 .content,
@@ -36,8 +35,8 @@
     }
 
     &[data-highlighted] {
-        background-color: var(--box-neutral-color-hover);
-        color: var(--text-color);
+        background-color: var(--box-neutral-strong-color);
+        color: var(--box-neutral-strong-inverse-color);
     }
 
     &[data-disabled] {
@@ -49,10 +48,6 @@
     .subMenuIndicator {
         order: 2;
         margin-left: auto;
-    }
-
-    &:not(:hover) {
-        @include focus-outline('inset');
     }
 }
 
