@@ -1,0 +1,1 @@
+import{g as n}from"./_commonjsHelpers-BosuxZz1.js";import{_ as o,i as r}from"./isObjectLike-D3B22v-T.js";var e=o,c=r,i="[object AsyncFunction]",s="[object Function]",g="[object GeneratorFunction]",u="[object Proxy]";function b(a){if(!c(a))return!1;var t=e(a);return t==s||t==g||t==i||t==u}var f=b;const T=n(f);export{T as a,f as i};
