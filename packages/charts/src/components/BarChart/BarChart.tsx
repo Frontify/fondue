@@ -1,5 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { Grid, XYChart } from '@visx/xychart';
+import { useState } from 'react';
+
 import { BandwidthAdjuster } from '@components/BarChart/components/BandwidthAdjuster';
 import { getInitialBandTicks } from '@components/BarChart/helpers';
 import { Legend, Tooltip } from '@components/common/components';
@@ -9,8 +12,6 @@ import { useMargin } from '@components/common/hooks';
 import { type ValueFormatter } from '@components/common/types';
 import { BASE_COLORS } from '@theme/consts';
 import { createTheme } from '@theme/createTheme';
-import { Grid, XYChart } from '@visx/xychart';
-import { useState } from 'react';
 
 import { Axes, Bars } from './components';
 import { type BarChartProps } from './types';
