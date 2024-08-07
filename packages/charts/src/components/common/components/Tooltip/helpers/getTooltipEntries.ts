@@ -1,12 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type TooltipDatum } from '@visx/xychart/lib/types/tooltip';
-
 import { type BarChartDataPoint } from '@components/BarChart';
 import { type LineChartDataPoint } from '@components/LineChart';
 import { getDataPointValue } from '@components/common/components/Tooltip/helpers/getDataPointValue';
 import { isNoDataKey } from '@components/common/components/Tooltip/helpers/isNoDataKey';
 import { type ValueFormatter } from '@components/common/types';
+import { type TooltipDatum } from '@visx/xychart/lib/types/tooltip';
 
 export const getTooltipEntries = (
     missingValueLabel: string,
@@ -16,13 +15,12 @@ export const getTooltipEntries = (
         [key: string]: TooltipDatum<LineChartDataPoint | BarChartDataPoint>;
     },
     childSumLabel?: string,
-    valueContextBySeries?: string[],
 ) => {
     const dataPoints = [];
     let sum = 0;
 
     if (datumByKey) {
-        for (const [index, key] of Object.keys(datumByKey).entries()) {
+        for (const key of Object.keys(datumByKey)) {
             if (isNoDataKey(key)) {
                 continue;
             }
@@ -35,8 +33,7 @@ export const getTooltipEntries = (
                 title: key,
                 value: getDataPointValue(missingValueLabel, datumByKey[key]?.datum.value, valueFormatter),
                 color: colorAccessor(key),
-
-                ...(valueContextBySeries?.[index] ? { valueContextBySeries: valueContextBySeries?.[index] } : {}),
+                ...(datumByKey[key]?.datum.valueContext ? { valueContext: datumByKey[key]?.datum.valueContext } : {}),
             });
         }
     }

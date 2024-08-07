@@ -86,11 +86,6 @@ export default {
             description:
                 'An optional function to format the displayed labels both on the axis and in the tooltip. BarChart data requires unique labels to work well, which can lead to the necessity of enriching the labels so that they are unique, for example appending an id. This prop can be used to format the labels back to its original form.',
         },
-        valueContextBySeries: {
-            name: 'valueContextBySeries',
-            type: { name: 'other', value: 'string[]', required: false },
-            description: 'An optional function to individually add info after the formatted value.',
-        },
     },
 } as Meta<BarChartProps>;
 
@@ -148,10 +143,12 @@ const browserUsageData = ((): BarChartSeries[] => {
         firefoxSeries.dataPoints.push({
             label: entry.date,
             value: parseFloat(entry.Firefox),
+            valueContext: `(${Math.round(parseInt(entry['Google Chrome'], 10) / parseInt(entry.Firefox, 10))}%)`,
         });
         safariSeries.dataPoints.push({
             label: entry.date,
             value: parseFloat(entry.Safari),
+            valueContext: `(CTR ${Math.round(parseInt(entry.Firefox, 10) / parseInt(entry.Safari, 10))}%)`,
         });
     }
 
@@ -210,7 +207,6 @@ MultipleDataSets.args = {
     series: filterOnePointPerMonth(browserUsageData),
     width: 1000,
     height: 500,
-    valueContextBySeries: ['%', 'ºC', '...'],
 };
 
 export const MultipleDataSetsWithOnClick = TemplateWithUrl.bind({});

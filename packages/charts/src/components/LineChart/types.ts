@@ -6,6 +6,7 @@ export type LineChartDataPoint = {
     timestamp: Date;
     value: number | null;
     description?: string;
+    valueContext?: string;
 };
 
 export type LineChartSeries = {

@@ -1,14 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type LabelFormatter, type ValueFormatter } from '@components/common/types';
 import { type AxisScale, type EventHandlerParams } from '@visx/xychart';
 import { type ScaleBand } from 'd3-scale';
-
-import { type LabelFormatter, type ValueFormatter } from '@components/common/types';
 
 type BarChartDataPointBase = {
     label: string;
     value: number | null;
     description?: string;
+    valueContext?: string;
 };
 
 export type BarChartDataPoint<DataPointDetails extends Record<string, any> | void = void> =
@@ -38,7 +38,6 @@ export type BarChartProps<DataPointDetails extends Record<string, any> | void = 
     legendPosition?: LegendPosition;
     valueFormatter?: ValueFormatter;
     labelFormatter?: LabelFormatter;
-    valueContextBySeries?: string[];
     onBarClick?: (e: BarChartClickHandlerParams<DataPointDetails>) => void;
 };
 

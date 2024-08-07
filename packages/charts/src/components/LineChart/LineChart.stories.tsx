@@ -1,9 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { ChartHeading } from '@components/ChartHeading';
 import { type Meta, type StoryFn } from '@storybook/react';
 import { cityTemperature } from '@visx/mock-data';
-
-import { ChartHeading } from '@components/ChartHeading';
 
 import { IconRocket } from '../../utils/components/IconRocket';
 
@@ -147,10 +146,12 @@ const formattedTemperatureData = ((): LineChartSeries[] => {
         newYork.push({
             value: parseInt(obj['New York'], 10),
             timestamp: new Date(obj.date),
+            valueContext: `${Math.round(parseInt(obj['New York'], 10) / parseInt(obj.Austin, 10))}%`,
         });
         sanFrancisco.push({
             value: parseInt(obj['San Francisco'], 10),
             timestamp: new Date(obj.date),
+            valueContext: `(CTR ${Math.round(parseInt(obj['San Francisco'], 10) / parseInt(obj['New York'], 10))}%)`,
         });
     }
 

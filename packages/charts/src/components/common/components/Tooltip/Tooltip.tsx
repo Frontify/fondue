@@ -1,16 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { GlyphDot } from '@visx/glyph';
-import { useTooltipInPortal } from '@visx/tooltip';
-import { TooltipContext, type TooltipContextType } from '@visx/xychart';
-import { type CSSProperties, useContext } from 'react';
-
 import { type BarChartDataPoint } from '@components/BarChart';
 import { type LineChartDataPoint } from '@components/LineChart';
 import { Crosshair } from '@components/common/components/Tooltip/Crosshair';
 import { TooltipContent } from '@components/common/components/Tooltip/TooltipContent';
 import { MISSING_VALUE_LABEL } from '@components/common/components/consts';
 import { type LabelFormatter, type ValueFormatter } from '@components/common/types';
+import { GlyphDot } from '@visx/glyph';
+import { useTooltipInPortal } from '@visx/tooltip';
+import { TooltipContext, type TooltipContextType } from '@visx/xychart';
+import { type CSSProperties, useContext } from 'react';
 
 import { getHeadingFromDatum, getTooltipEntries, isNoDataKey } from './helpers';
 import { useKeyToForceRepaint, usePositions } from './hooks/';
@@ -42,7 +41,6 @@ type TooltipPropsBase = {
     valueFormatter?: ValueFormatter;
     labelFormatter?: LabelFormatter;
     locale?: string;
-    valueContextBySeries?: string[];
 };
 
 type TooltipBarProps = {
@@ -72,7 +70,6 @@ export const Tooltip = ({
     scalePadding = 0,
     colorAccessor = () => '',
     valueFormatter,
-    valueContextBySeries,
     labelFormatter,
     locale,
     stackingGlyphs = false,
@@ -92,7 +89,6 @@ export const Tooltip = ({
         valueFormatter,
         tooltipContext.tooltipData?.datumByKey,
         childSumLabel,
-        valueContextBySeries,
     );
     const shouldReverseEntries = stackingGlyphs;
     const sortedEntries = shouldReverseEntries ? [...entries].reverse() : entries;
