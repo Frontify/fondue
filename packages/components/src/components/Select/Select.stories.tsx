@@ -327,3 +327,33 @@ export const Overflow: Story = {
         );
     },
 };
+
+export const Success: Story = {
+    args: {
+        status: 'success',
+    },
+    render: (args) => {
+        return (
+            <Select {...args}>
+                <Select.Item value="test1">Test1</Select.Item>
+                <Select.Item value="test2">Test2</Select.Item>
+                <Select.Item value="test3">Test3</Select.Item>
+            </Select>
+        );
+    },
+};
+
+export const Errored: Story = {
+    args: {
+        status: 'error',
+    },
+    render: (args) => {
+        return (
+            <Select {...args}>
+                <Select.Item value="test1">Test1</Select.Item>
+                <Select.Item value="test2">Test2</Select.Item>
+                <Select.Item value="test3">Test3</Select.Item>
+            </Select>
+        );
+    },
+};

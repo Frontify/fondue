@@ -48,6 +48,10 @@
         border-color: var(--text-color-positive);
     }
 
+    &[data-status='error'] {
+        border-color: var(--text-color-negative);
+    }
+
     &[data-empty='true'] {
         color: var(--text-color-x-weak);
     }
@@ -153,6 +157,12 @@
     }
 }
 
+.icons {
+    display: flex;
+    gap: 4px;
+    padding: 0 6px;
+}
+
 .caret {
     @include transition-transform;
     display: flex;
@@ -161,6 +171,7 @@
     align-items: center;
     justify-content: center;
     margin-right: sizeToken(3);
+    margin: 0 sizeToken(1);
     color: var(--text-color-weak);
 
     &:hover {
@@ -171,6 +182,22 @@
     button[aria-expanded='true'] & {
         transform: rotateX(180deg);
     }
+}
+
+.iconSuccess {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    margin: 0 sizeToken(1);
+    color: var(--text-color-positive);
+}
+
+.iconError {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    margin: 0 sizeToken(1);
+    color: var(--text-color-negative);
 }
 
 .menu {
@@ -213,49 +240,5 @@
     }
     &:has(+ .item) {
         border-bottom: var(--line-width) solid var(--line-color-strong);
-    }
-}
-
-.iconSuccess {
-    display: flex;
-    align-items: center;
-    height: 100%;
-    margin-left: sizeToken(3);
-    color: var(--text-color-positive);
-}
-
-.iconError {
-    display: flex;
-    align-items: center;
-    height: 100%;
-    margin-left: sizeToken(3);
-    color: var(--text-color-negative);
-}
-
-.loadingStatus {
-    display: flex;
-    position: absolute;
-    width: sizeToken(6);
-    height: sizeToken(6);
-    top: sizeToken(-3);
-    right: sizeToken(-3);
-    pointer-events: none;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--base-color);
-    border: var(--line-width) solid var(--line-color-strong);
-    border-radius: 9999px;
-
-    &::before {
-        content: '';
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: sizeToken(4);
-        height: sizeToken(4);
-        border: var(--line-width) solid var(--text-color-interactive);
-        border-top-color: transparent;
-        border-radius: 9999px;
-        animation: spin 1s linear infinite;
     }
 }

@@ -112,7 +112,7 @@ export const SelectInput = (
                             {clearButton}
                         </RadixSlot>
                     )}
-                    <div>
+                    <div className={styles.icons}>
                         <IconCaretDown size={16} className={styles.caret} />
                         {status === 'success' ? (
                             <IconCheckMark
