@@ -196,15 +196,9 @@
     font-size: var(--body-size-medium);
     line-height: var(--body-size-medium-line-height);
 
-    &:hover {
-        background-color: var(--box-neutral-color-hover);
-    }
-
     &[data-highlighted='true'] {
-        background-color: var(--box-neutral-color-hover);
-        &:not(:hover) {
-            @include focus-outline-styles('inset');
-        }
+        background-color: var(--box-neutral-strong-color);
+        color: var(--box-neutral-strong-inverse-color);
     }
 }
 

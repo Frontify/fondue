@@ -168,12 +168,12 @@ test('should open submenu by keyboard', async ({ mount, page }) => {
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('ArrowDown');
-    await expect(page.getByTestId(DROPDOWN_SUB_TRIGGER_TEST_ID)).toHaveCSS('background-color', 'rgb(234, 235, 235)');
+    await expect(page.getByTestId(DROPDOWN_SUB_TRIGGER_TEST_ID)).toHaveCSS('background-color', 'rgb(66, 71, 71)');
     await page.keyboard.press('ArrowRight');
     await expect(page.getByTestId(DROPDOWN_SUB_CONTENT_TEST_ID)).toBeVisible();
     await page.keyboard.press('ArrowDown');
     await expect(page.getByTestId(DROPDOWN_SUB_TRIGGER_TEST_ID)).toHaveCSS('background-color', 'rgb(241, 241, 241)');
-    await expect(page.getByTestId(DROPDOWN_ITEM_TEST_ID)).toHaveCSS('background-color', 'rgb(234, 235, 235)');
+    await expect(page.getByTestId(DROPDOWN_ITEM_TEST_ID)).toHaveCSS('background-color', 'rgb(66, 71, 71)');
     await page.keyboard.press('Enter');
     expect(onSelect.calledOnce).toBe(true);
 });
@@ -209,11 +209,11 @@ test('should open submenu by mouse', async ({ mount, page }) => {
     await page.getByTestId(DROPDOWN_TRIGGER_TEST_ID).click();
     await expect(page.getByTestId(DROPDOWN_CONTENT_TEST_ID)).toBeVisible();
     await page.getByTestId(DROPDOWN_SUB_TRIGGER_TEST_ID).hover();
-    await expect(page.getByTestId(DROPDOWN_SUB_TRIGGER_TEST_ID)).toHaveCSS('background-color', 'rgb(234, 235, 235)');
+    await expect(page.getByTestId(DROPDOWN_SUB_TRIGGER_TEST_ID)).toHaveCSS('background-color', 'rgb(66, 71, 71)');
     await expect(page.getByTestId(DROPDOWN_SUB_CONTENT_TEST_ID)).toBeVisible();
     await page.getByTestId(DROPDOWN_ITEM_TEST_ID).hover();
     await expect(page.getByTestId(DROPDOWN_SUB_TRIGGER_TEST_ID)).toHaveCSS('background-color', 'rgb(241, 241, 241)');
-    await expect(page.getByTestId(DROPDOWN_ITEM_TEST_ID)).toHaveCSS('background-color', 'rgb(234, 235, 235)');
+    await expect(page.getByTestId(DROPDOWN_ITEM_TEST_ID)).toHaveCSS('background-color', 'rgb(66, 71, 71)');
     await page.getByTestId(DROPDOWN_ITEM_TEST_ID).click();
     expect(onSelect.calledOnce).toBe(true);
 });
