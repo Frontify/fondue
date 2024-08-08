@@ -14,38 +14,38 @@ This document describes the changes that you need to make to your code to migrat
             -   [Old](#old-1)
             -   [New](#new-1)
         -   [Color Picker](#color-picker)
-            -   [Old](#old-color-picker)
-            -   [New](#new-color-picker)
-        -   [Dialog](#dialog)
             -   [Old](#old-2)
             -   [New](#new-2)
-        -   [Dropdown (replaces `Dropdown` and `Menu`)](#dropdown)
+        -   [Dialog](#dialog)
             -   [Old](#old-3)
             -   [New](#new-3)
-        -   [Flyout (old `InlineDialog`)](#flyout-old-inlinedialog)
+        -   [Dropdown (replaces `Dropdown` and `Menu`)](#dropdown-replaces-dropdown-and-menu)
             -   [Old](#old-4)
             -   [New](#new-4)
-        -   [Label (old `InputLabel`)](#label-old-inputlabel)
+        -   [Flyout (old `InlineDialog`)](#flyout-old-inlinedialog)
             -   [Old](#old-5)
             -   [New](#new-5)
-        -   [Loading Bar](#loading-bar)
+        -   [Label (old `InputLabel`)](#label-old-inputlabel)
             -   [Old](#old-6)
             -   [New](#new-6)
-        -   [Segmented Control](#segmented-control)
+        -   [Loading Bar](#loading-bar)
             -   [Old](#old-7)
             -   [New](#new-7)
-        -   [Slider](#slider)
+        -   [Segmented Control](#segmented-control)
             -   [Old](#old-8)
             -   [New](#new-8)
-        -   [Switch](#switch)
+        -   [Slider](#slider)
             -   [Old](#old-9)
             -   [New](#new-9)
-        -   [Text Input](#text-input)
+        -   [Switch](#switch)
             -   [Old](#old-10)
             -   [New](#new-10)
-        -   [Tooltip](#tooltip)
+        -   [Text Input](#text-input)
             -   [Old](#old-11)
             -   [New](#new-11)
+        -   [Tooltip](#tooltip)
+            -   [Old](#old-12)
+            -   [New](#new-12)
 
 ## Components
 
@@ -302,16 +302,24 @@ return (
 </Dialog.Root>
 ```
 
-### Dropdown (replaces `Menu` and `Dropdown`)
+### Dropdown (replaces `Dropdown` and `Menu`)
 
 Changes:
+
+The `Dropdown` is no longer meant to be used a `Select` component so many features have been deprecated. See the [Select](#select) migration guide if you need a select box.
+
+-   Position is now set automatically wherever there is space.
+-   `Dropdown.Trigger` requires a component with a `forwardRef` so that it can consume the node as an anchor for the position of the `Dropdown.Content`. Any new `Fondue` component will work.
+-   The `menuBlocks` prop has been replaced by a composable component structure, allowing for full control of the content of the `Dropdown.Content`.
+-   Rather than an `onChange` on the parent, we can now assign callbacks to each individual element on the `Dropdown`.
+-   Rather than adding `decorators`, we can fully control the look of each `Dropdown.Item` by using whatever component we like within.
 
 #### Old
 
 ```tsx
 
 return (
-    <Dropdown onChange={(id) => setActive(id)} menuBlocks={[
+    <Dropdown menuBlocks={[
         {
             id: 'block1',
             ariaLabel: 'First section',
@@ -356,7 +364,9 @@ return (
 
 ```tsx
 <Dropdown.Root {...args}>
-    <Dropdown.Trigger>Trigger</Dropdown.Trigger>
+    <Dropdown.Trigger>
+        <Button>Trigger</Button>
+    </Dropdown.Trigger>
     <Dropdown.Content>
         <Dropdown.Item onSelect={() => {}}>Dropdown item default</Dropdown.Item>
         <Dropdown.Item onSelect={() => {}}>
