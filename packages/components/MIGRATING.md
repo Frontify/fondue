@@ -19,30 +19,33 @@ This document describes the changes that you need to make to your code to migrat
         -   [Dialog](#dialog)
             -   [Old](#old-2)
             -   [New](#new-2)
-        -   [Flyout (old `InlineDialog`)](#flyout-old-inlinedialog)
+        -   [Dropdown (replaces `Dropdown` and `Menu`)](#dropdown)
             -   [Old](#old-3)
             -   [New](#new-3)
-        -   [Label (old `InputLabel`)](#label-old-inputlabel)
+        -   [Flyout (old `InlineDialog`)](#flyout-old-inlinedialog)
             -   [Old](#old-4)
             -   [New](#new-4)
-        -   [Loading Bar](#loading-bar)
+        -   [Label (old `InputLabel`)](#label-old-inputlabel)
             -   [Old](#old-5)
             -   [New](#new-5)
-        -   [Segmented Control](#segmented-control)
+        -   [Loading Bar](#loading-bar)
             -   [Old](#old-6)
             -   [New](#new-6)
-        -   [Slider](#slider)
+        -   [Segmented Control](#segmented-control)
             -   [Old](#old-7)
             -   [New](#new-7)
-        -   [Switch](#switch)
+        -   [Slider](#slider)
             -   [Old](#old-8)
             -   [New](#new-8)
-        -   [Text Input](#text-input)
+        -   [Switch](#switch)
             -   [Old](#old-9)
             -   [New](#new-9)
-        -   [Tooltip](#tooltip)
+        -   [Text Input](#text-input)
             -   [Old](#old-10)
             -   [New](#new-10)
+        -   [Tooltip](#tooltip)
+            -   [Old](#old-11)
+            -   [New](#new-11)
 
 ## Components
 
@@ -246,7 +249,6 @@ Changes:
 
 ```tsx
 const [isOpen, setIsOpen] = useState(false);
-
 return (
     <Button icon={<IconIcon/>} ref={triggerRef} onClick={() => setIsOpen(!isOpen)}>
         Dialog Trigger
@@ -298,6 +300,83 @@ return (
         </Dialog.Footer>
     </Dialog.Content>
 </Dialog.Root>
+```
+
+### Dropdown (replaces `Menu` and `Dropdown`)
+
+Changes:
+
+#### Old
+
+```tsx
+
+return (
+    <Dropdown onChange={(id) => setActive(id)} menuBlocks={[
+        {
+            id: 'block1',
+            ariaLabel: 'First section',
+            menuItems: [
+                {
+                    id: 1,
+                    title: 'Dropdown item default',
+                },
+                {
+                    id: 2,
+                    title: 'Dropdown item small',
+                    size: MenuItemContentSize.Small,
+                },
+                {
+                    id: 3,
+                    title: 'Dropdown item decorator',
+                    decorator: <IconMusicNote />,
+                },
+            ],
+        },
+        {
+            id: 'block2',
+            ariaLabel: 'Second section',
+            menuItems: [
+                {
+                    id: '9',
+                    title: 'Dropdown item disabled',
+                    disabled: true,
+                },
+                {
+                    id: '10',
+                    title: 'Dropdown item danger',
+                    style: MenuItemStyle.Danger,
+                },
+            ],
+        },
+    ]}>
+)
+```
+
+#### New
+
+```tsx
+<Dropdown.Root {...args}>
+    <Dropdown.Trigger>Trigger</Dropdown.Trigger>
+    <Dropdown.Content>
+        <Dropdown.Item onSelect={() => {}}>Dropdown item default</Dropdown.Item>
+        <Dropdown.Item onSelect={() => {}}>
+            <span className="tw-text-sm">Dropdown item small</span>
+        </Dropdown.Item>
+        <Dropdown.Item onSelect={() => {}}>
+            <Dropdown.Slot name="left">
+                <IconIcon size={16} />
+            </Dropdown.Slot>
+            Dropdown item decorator
+        </Dropdown.Item>
+        <hr />
+        <Dropdown.Item onSelect={() => {}} disabled>
+            Dropdown item disabled
+        </Dropdown.Item>
+        <Dropdown.Item onSelect={() => {}}>
+            <span className="tw-bg-red-50">Dropdown item danger</span>
+        </Dropdown.Item>
+    </Dropdown.Content>
+</Dropdown.Root>
 ```
 
 ### Flyout (old `InlineDialog`)
