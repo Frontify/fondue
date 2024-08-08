@@ -143,12 +143,12 @@ const browserUsageData = ((): BarChartSeries[] => {
         firefoxSeries.dataPoints.push({
             label: entry.date,
             value: parseFloat(entry.Firefox),
-            valueContext: `(${Math.round(parseInt(entry['Google Chrome'], 10) / parseInt(entry.Firefox, 10))}%)`,
+            valueContext: `(% over Safari: ${Math.round(parseFloat(entry.Firefox) - parseFloat(entry.Safari))}%)`,
         });
         safariSeries.dataPoints.push({
             label: entry.date,
             value: parseFloat(entry.Safari),
-            valueContext: `(CTR ${Math.round(parseInt(entry.Firefox, 10) / parseInt(entry.Safari, 10))}%)`,
+            valueContext: `(% less than Chrome ${Math.round(parseFloat(entry['Google Chrome']) - parseFloat(entry.Safari))}%)`,
         });
     }
 
