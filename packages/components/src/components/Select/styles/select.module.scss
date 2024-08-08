@@ -177,6 +177,7 @@
     border: var(--line-width) solid var(--line-color-strong);
     width: var(--radix-popover-trigger-width);
     overflow: auto;
+    padding: sizeToken(2) 0;
 
     &:has(li[role='option']) {
         display: block;
