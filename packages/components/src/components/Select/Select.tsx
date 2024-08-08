@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconCaretDown } from '@frontify/fondue-icons';
+import { IconCaretDown, IconCheckMark, IconExclamationMarkTriangle } from '@frontify/fondue-icons';
 import * as RadixPopover from '@radix-ui/react-popover';
 import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { useSelect } from 'downshift';
@@ -35,6 +35,11 @@ export type SelectComponentProps = {
      */
     placeholder?: string;
     /**
+     * Status of the text input
+     * @default "neutral"
+     */
+    status?: 'neutral' | 'success' | 'error' | 'loading';
+    /**
      * Disables the select component.
      */
     disabled?: boolean;
@@ -55,6 +60,7 @@ export const SelectInput = (
         value,
         defaultValue,
         placeholder = '',
+        status = 'neutral',
         disabled,
         'aria-label': ariaLabel,
         'data-test-id': dataTestId = 'fondue-select',
@@ -82,6 +88,7 @@ export const SelectInput = (
             <RadixPopover.Anchor asChild>
                 <div
                     className={styles.root}
+                    data-status={status}
                     data-disabled={disabled}
                     data-empty={!selectedItem}
                     data-test-id={dataTestId}
@@ -107,6 +114,20 @@ export const SelectInput = (
                     )}
                     <div>
                         <IconCaretDown size={16} className={styles.caret} />
+                        {status === 'success' ? (
+                            <IconCheckMark
+                                size={16}
+                                className={styles.iconSuccess}
+                                data-test-id={`${dataTestId}-success-icon`}
+                            />
+                        ) : null}
+                        {status === 'error' ? (
+                            <IconExclamationMarkTriangle
+                                size={16}
+                                className={styles.iconError}
+                                data-test-id={`${dataTestId}-error-icon`}
+                            />
+                        ) : null}
                     </div>
                 </div>
             </RadixPopover.Anchor>
