@@ -34,7 +34,7 @@ export const getTooltipEntries = (
                 title: key,
                 value: getDataPointValue(missingValueLabel, datumByKey[key]?.datum.value, valueFormatter),
                 color: colorAccessor(key),
-                ...(datumByKey[key]?.datum.valueContext ? { valueContext: datumByKey[key]?.datum.valueContext } : {}),
+                valueContext: datumByKey[key]?.datum.valueContext,
             });
         }
     }

@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ChartHeading } from '@components/ChartHeading';
 import { type Meta, type StoryFn } from '@storybook/react';
 import { cityTemperature } from '@visx/mock-data';
+
+import { ChartHeading } from '@components/ChartHeading';
 
 import { IconRocket } from '../../utils/components/IconRocket';
 
