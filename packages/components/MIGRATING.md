@@ -309,6 +309,7 @@ Changes:
 The `Dropdown` is no longer meant to be used a `Select` component so many features have been deprecated. See the [Select](#select) migration guide if you need a select box.
 
 -   Position is now set automatically wherever there is space.
+-   `Controlled` behavior supported (use `open` prop).
 -   `Dropdown.Trigger` requires a component with a `forwardRef` so that it can consume the node as an anchor for the position of the `Dropdown.Content`. Any new `Fondue` component will work.
 -   The `menuBlocks` prop has been replaced by a composable component structure, allowing for full control of the content of the `Dropdown.Content`.
 -   Rather than an `onChange` on the parent, we can now assign callbacks to each individual element on the `Dropdown`.
@@ -318,72 +319,98 @@ The `Dropdown` is no longer meant to be used a `Select` component so many featur
 
 ```tsx
 
-return (
-    <Dropdown menuBlocks={[
-        {
-            id: 'block1',
-            ariaLabel: 'First section',
-            menuItems: [
-                {
-                    id: 1,
-                    title: 'Dropdown item default',
-                },
-                {
-                    id: 2,
-                    title: 'Dropdown item small',
-                    size: MenuItemContentSize.Small,
-                },
-                {
-                    id: 3,
-                    title: 'Dropdown item decorator',
-                    decorator: <IconMusicNote />,
-                },
-            ],
-        },
-        {
-            id: 'block2',
-            ariaLabel: 'Second section',
-            menuItems: [
-                {
-                    id: '9',
-                    title: 'Dropdown item disabled',
-                    disabled: true,
-                },
-                {
-                    id: '10',
-                    title: 'Dropdown item danger',
-                    style: MenuItemStyle.Danger,
-                },
-            ],
-        },
-    ]}>
-)
+<Dropdown menuBlocks={[
+    {
+        id: 'block1',
+        ariaLabel: 'First section',
+        menuItems: [
+            {
+                id: 1,
+                title: 'Item default',
+            },
+            {
+                id: 2,
+                title: 'Item small',
+                size: MenuItemContentSize.Small,
+            },
+            {
+                id: 3,
+                title: 'Item decorator',
+                decorator: <IconMusicNote />,
+            },
+        ],
+    },
+    {
+        id: 'block2',
+        ariaLabel: 'Second section',
+        menuItems: [
+            {
+                id: '9',
+                title: 'Item disabled',
+                disabled: true,
+            },
+            {
+                id: '10',
+                title: 'Item danger',
+                style: MenuItemStyle.Danger,
+            },
+        ],
+    },
+]}>
+
+/* or */
+
+<Menu onClose={() => {}}>
+    <MenuItem onClick={() => {}}>Item default</MenuItem>
+    <MenuItem onClick={() => {}}>
+        <span className="tw-text-sm">Item small</span>
+    </MenuItem>
+    <MenuItem onClick={() => {}}>
+        <div style={{display: "flex", gap: 8}}>
+            <IconIcon size={16} />
+            <span> Item decorator </span>
+        </div>
+    </MenuItem>
+    <hr />
+    <MenuItem disabled>
+        Item disabled
+    </MenuItem>
+    <MenuItem onClick={() => {}}>
+        <span className="tw-bg-red-50">Item danger</span>
+    </MenuItem>
+    <MenuItem link="/?path=/docs/components-menu--docs">
+        Item link
+    </MenuItem>
+</Menu>
 ```
 
 #### New
 
 ```tsx
-<Dropdown.Root {...args}>
+<Dropdown.Root onOpenChange={() => {}} open={open} {...args}>
     <Dropdown.Trigger>
         <Button>Trigger</Button>
     </Dropdown.Trigger>
-    <Dropdown.Content>
-        <Dropdown.Item onSelect={() => {}}>Dropdown item default</Dropdown.Item>
+    <Dropdown.Content onOpen={() => {}}  onClose={() => {}}>
+        <Dropdown.Item onSelect={() => {}}>Item default</Dropdown.Item>
         <Dropdown.Item onSelect={() => {}}>
-            <span className="tw-text-sm">Dropdown item small</span>
+            <span className="tw-text-sm">Item small</span>
         </Dropdown.Item>
         <Dropdown.Item onSelect={() => {}}>
             <Dropdown.Slot name="left">
                 <IconIcon size={16} />
             </Dropdown.Slot>
-            Dropdown item decorator
+            Item decorator
         </Dropdown.Item>
         <hr />
-        <Dropdown.Item onSelect={() => {}} disabled>
-            Dropdown item disabled
+        <Dropdown.Item disabled>
+            Item disabled
         </Dropdown.Item>
         <Dropdown.Item onSelect={() => {}}>
-            <span className="tw-bg-red-50">Dropdown item danger</span>
+            <span className="tw-bg-red-50">Item danger</span>
+        </Dropdown.Item>
+        <Dropdown.Item>
+            <a href="https://www.frontify.com/" target="_blank">Item link</span>
         </Dropdown.Item>
     </Dropdown.Content>
 </Dropdown.Root>

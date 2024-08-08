@@ -164,7 +164,7 @@ export type DropdownItemProps = {
     /**
      * Callback that is called when the item is selected.
      */
-    onSelect: (event: Event) => void;
+    onSelect?: (event: Event) => void;
     'data-test-id'?: string;
 };
 
