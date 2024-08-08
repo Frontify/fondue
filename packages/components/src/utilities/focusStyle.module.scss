@@ -14,6 +14,6 @@
     &:focus-visible,
     &:focus-visible:hover,
     &:has([data-show-focus-ring='true']) {
-        @include focus-outline-styles($style);
+        @include focus-outline-styles;
     }
 }
