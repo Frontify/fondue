@@ -58,7 +58,6 @@ export const getRecursiveOptionValues = (children: ReactNode): { value: string; 
  * @property {boolean} valueExists - Whether the current filter text matches an existing item.
  * @property {SelectItemType | undefined} existingValueItem - The matching item if valueExists is true.
  * @property {boolean} shouldAddCustomItem - Whether a custom item should be added based on the current state.
- * @property {boolean} valueInvalid - Whether the current value is invalid (when custom values are not allowed).
  * @property {function} setFilterText - Function to update the filter text.
  * @property {function} getItemByValue - Function to get an item by its value.
  */
