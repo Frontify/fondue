@@ -249,6 +249,7 @@ Changes:
 
 ```tsx
 const [isOpen, setIsOpen] = useState(false);
+
 return (
     <Button icon={<IconIcon/>} ref={triggerRef} onClick={() => setIsOpen(!isOpen)}>
         Dialog Trigger
