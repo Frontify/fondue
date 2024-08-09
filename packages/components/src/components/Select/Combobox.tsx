@@ -64,10 +64,8 @@ export const SelectCombobox = (
     }: ComboboxProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
-    const { inputSlots, menuSlots, items, filterText, clearButton, getItemByValue, setFilterText } = useSelectData(
-        children,
-        allowCustomValue,
-    );
+    const { inputSlots, menuSlots, items, filterText, clearButton, valueExists, getItemByValue, setFilterText } =
+        useSelectData(children, allowCustomValue);
 
     const defaultItem = getItemByValue(defaultValue);
     const [activeItem, setActiveItem] = useState(getItemByValue(value));
@@ -124,7 +122,7 @@ export const SelectCombobox = (
                         onBlur={(blurEvent) => {
                             blurEvent.target.dataset.showFocusRing = 'false';
                             wasClicked.current = false;
-                            if (!items.some((item) => item.value === activeItem?.value)) {
+                            if (!valueExists) {
                                 reset();
                             }
                             if (getInputProps().onBlur) {
