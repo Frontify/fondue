@@ -5,6 +5,15 @@ import { type ReactNode, useMemo } from 'react';
 import { ForwardedRefSelectItem } from './SelectItem';
 import { type SelectItemType } from './useSelectData';
 
+/**
+ * Hook to manage combobox data and filtering and add custom value support.
+ *
+ * @param {SelectItemType[]} initialItems - The initial list of selectable items.
+ * @param {ReactNode[]} initialMenuSlots - The initial list of menu slot components.
+ * @param {string} filterText - The current filter text input by the user.
+ * @param {boolean} allowCustomValue - Whether to allow custom values not in the initial items list.
+ * @returns {ComboboxData} An object containing filtered items, menu slots, and value existence information.
+ */
 export const useComboboxData = (
     initialItems: SelectItemType[],
     initialMenuSlots: ReactNode[],

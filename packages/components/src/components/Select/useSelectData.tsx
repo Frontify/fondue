@@ -44,17 +44,9 @@ export const getRecursiveOptionValues = (children: ReactNode): SelectItemType[] 
 
 /**
  * Custom hook for managing select data and filtering.
- * This hook processes the children to extract select items, handles filtering.
  *
  * @param {ReactNode} children - The React children to process, typically SelectItem components.
- * @returns {Object} An object containing various select data and utility functions.
- * @property {ReactNode[]} inputSlots - Slots for input customization (left and right).
- * @property {ReactNode[]} menuSlots - Slots for menu customization.
- * @property {ReactNode} clearButton - The clear button component if provided.
- * @property {string} filterText - The current filter text.
- * @property {SelectItemType[]} items - The filtered list of items based on the current filter text.
- * @property {function} setFilterText - Function to update the filter text.
- * @property {function} getItemByValue - Function to get an item by its value.
+ * @returns {Object} An object containing the following properties:
  */
 export const useSelectData = (children: ReactNode) => {
     const [filterText, setFilterText] = useState('');
