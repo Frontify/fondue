@@ -82,7 +82,7 @@ export const SelectCombobox = (
         highlightedIndex,
         inputValue,
         selectedItem,
-        setInputValue,
+        selectItem,
         getInputProps,
         getToggleButtonProps,
         getMenuProps,
@@ -111,7 +111,7 @@ export const SelectCombobox = (
         if (valueExists) {
             if (existingValueItem?.label) {
                 // if the value exists, normalize the casing on the input
-                setInputValue(existingValueItem.label);
+                selectItem(existingValueItem);
             }
         } else {
             const selectedItemNullOrOutdated =
