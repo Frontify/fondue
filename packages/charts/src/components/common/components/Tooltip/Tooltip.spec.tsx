@@ -17,7 +17,7 @@ vi.mock('./hooks/usePositions', async () => ({
 }));
 
 describe('Tooltip', () => {
-    it('should render the value info by series', () => {
+    it('should render the value context if it is present in datum', () => {
         vi.mocked(useContext).mockReturnValue({
             tooltipData: {
                 datumByKey: {
@@ -25,6 +25,7 @@ describe('Tooltip', () => {
                         datum: {
                             label: 'test1',
                             value: 10,
+                            valueContext: '5%',
                         },
                         index: 1,
                         key: 'test1',
@@ -34,6 +35,7 @@ describe('Tooltip', () => {
                         datum: {
                             label: 'test2',
                             value: 20,
+                            valueContext: '10%',
                         },
                         index: 2,
                         key: 'test2',
@@ -43,6 +45,7 @@ describe('Tooltip', () => {
                         datum: {
                             label: 'test3',
                             value: 30,
+                            valueContext: 'CTR 20%',
                         },
                         index: 3,
                         key: 'test3',
@@ -55,10 +58,10 @@ describe('Tooltip', () => {
             tooltipPosition: { tooltipLeft: 20, tooltipTop: 30 },
             glyphProps: [],
         });
-        const { getByText } = render(<Tooltip crossHairStyle="line" valueContextBySeries={['%', 'ºC', 'F']} />);
+        const { getByText } = render(<Tooltip crossHairStyle="line" />);
 
-        expect(getByText(/10 %/i)).toBeDefined();
-        expect(getByText(/20 ºc/i)).toBeDefined();
-        expect(getByText(/30 f/i)).toBeDefined();
+        expect(getByText(/5%/i)).toBeDefined();
+        expect(getByText(/10%/i)).toBeDefined();
+        expect(getByText(/ctr 20%/i)).toBeDefined();
     });
 });

@@ -84,27 +84,29 @@ describe('getTooltipEntries', () => {
         expect(valueFormatter).toHaveBeenCalledWith(200);
     });
 
-    it('returns data with value context by series', () => {
+    it('returns data with value context', () => {
         const datumByKey = {
             series1: {
                 datum: {
                     label: 'foo',
                     value: 100,
+                    valueContext: '10%',
                 },
             },
             series2: {
                 datum: {
                     label: 'bar',
                     value: 200,
+                    valueContext: '(CTR 20%)',
                 },
             },
         } as unknown as { [key: string]: TooltipDatum<LineChartDataPoint> };
         const colorAccessor = vi.fn();
         const valueFormatter = vi.fn().mockImplementation((value) => value);
-        const result = getTooltipEntries('No data', colorAccessor, valueFormatter, datumByKey, '', ['%', 'ºC']);
+        const result = getTooltipEntries('No data', colorAccessor, valueFormatter, datumByKey, '');
         expect(result).toEqual([
-            { title: 'series1', value: 100, valueContextBySeries: '%' },
-            { title: 'series2', value: 200, valueContextBySeries: 'ºC' },
+            { title: 'series1', value: 100, valueContext: '10%' },
+            { title: 'series2', value: 200, valueContext: '(CTR 20%)' },
         ]);
     });
 });

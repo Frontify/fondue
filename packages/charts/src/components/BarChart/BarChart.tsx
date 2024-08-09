@@ -31,7 +31,6 @@ export const BarChart = <DataPointDetails extends Record<string, any> | void = v
     legendPosition = 'top',
     valueFormatter = DEFAULT_VALUE_FORMATTER,
     labelFormatter = DEFAULT_LABEL_FORMATTER,
-    valueContextBySeries = undefined,
     onBarClick,
 }: BarChartProps<DataPointDetails>) => {
     const [maxLabelHeight, setMaxLabelHeight] = useState<number>(0);
@@ -103,7 +102,6 @@ export const BarChart = <DataPointDetails extends Record<string, any> | void = v
                             scalePadding={scalePadding}
                             valueFormatter={valueFormatter}
                             labelFormatter={labelFormatter}
-                            valueContextBySeries={valueContextBySeries}
                         />
                     </XYChart>
                 </span>
