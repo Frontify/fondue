@@ -27,7 +27,7 @@ export type SelectItemType = {
  * const values = getRecursiveOptionValues(options);
  * // Returns: [{ value: '1', label: 'Option 1' }, { value: '2', label: 'Option 2' }]
  */
-export const getRecursiveOptionValues = (children: ReactNode): { value: string; label: string }[] => {
+export const getRecursiveOptionValues = (children: ReactNode): SelectItemType[] => {
     const values: { value: string; label: string }[] = [];
     Children.forEach(children, (child) => {
         if (isValidElement<SelectItemProps>(child) && child.type === ForwardedRefSelectItem) {
@@ -44,24 +44,19 @@ export const getRecursiveOptionValues = (children: ReactNode): { value: string; 
 
 /**
  * Custom hook for managing select data and filtering.
- * This hook processes the children to extract select items, handles filtering,
- * and manages the state for custom values if allowed.
+ * This hook processes the children to extract select items, handles filtering.
  *
  * @param {ReactNode} children - The React children to process, typically SelectItem components.
- * @param {boolean} [allowCustomValue=false] - Whether to allow custom values that are not in the predefined list.
  * @returns {Object} An object containing various select data and utility functions.
  * @property {ReactNode[]} inputSlots - Slots for input customization (left and right).
  * @property {ReactNode[]} menuSlots - Slots for menu customization.
  * @property {ReactNode} clearButton - The clear button component if provided.
  * @property {string} filterText - The current filter text.
  * @property {SelectItemType[]} items - The filtered list of items based on the current filter text.
- * @property {boolean} valueExists - Whether the current filter text matches an existing item.
- * @property {SelectItemType | undefined} existingValueItem - The matching item if valueExists is true.
- * @property {boolean} shouldAddCustomItem - Whether a custom item should be added based on the current state.
  * @property {function} setFilterText - Function to update the filter text.
  * @property {function} getItemByValue - Function to get an item by its value.
  */
-export const useSelectData = (children: ReactNode, allowCustomValue = false) => {
+export const useSelectData = (children: ReactNode) => {
     const [filterText, setFilterText] = useState('');
 
     const { inputSlots, menuSlots, clearButton } = useMemo(() => {
@@ -103,35 +98,6 @@ export const useSelectData = (children: ReactNode, allowCustomValue = false) => 
 
     const itemValues = useMemo(() => getRecursiveOptionValues(menuSlots), [menuSlots]);
 
-    const { valueExists, existingValueItem } = useMemo(() => {
-        const existingValueItem = itemValues.find(
-            (item) => item.label.toLocaleLowerCase() === filterText.toLocaleLowerCase(),
-        );
-        return {
-            valueExists: !!existingValueItem,
-            existingValueItem,
-        };
-    }, [itemValues, filterText]);
-
-    const shouldAddCustomItem = useMemo(
-        () => allowCustomValue && filterText !== '' && !valueExists,
-        [allowCustomValue, filterText, valueExists],
-    );
-
-    const allMenuSlots = useMemo(() => {
-        if (shouldAddCustomItem) {
-            const customItem = (
-                <ForwardedRefSelectItem key={filterText} value={filterText} data-test-id="custom-item">
-                    {filterText}
-                </ForwardedRefSelectItem>
-            );
-
-            return [...menuSlots, customItem];
-        }
-
-        return menuSlots;
-    }, [menuSlots, shouldAddCustomItem, filterText]);
-
     const getItemByValue = useCallback(
         (value?: string) => (value ? itemValues.find((item) => item.value === value) : undefined),
         [itemValues],
@@ -142,22 +108,15 @@ export const useSelectData = (children: ReactNode, allowCustomValue = false) => 
             (item) => filterText === '' || item.label.toLowerCase().includes(filterText.toLowerCase()),
         );
 
-        if (shouldAddCustomItem) {
-            filteredItems.push({ label: filterText, value: filterText });
-        }
-
         return filteredItems;
-    }, [itemValues, shouldAddCustomItem, filterText]);
+    }, [itemValues, filterText]);
 
     return {
         inputSlots,
-        menuSlots: allMenuSlots,
+        menuSlots,
         clearButton,
         filterText,
         items,
-        valueExists,
-        existingValueItem,
-        shouldAddCustomItem,
         setFilterText,
         getItemByValue,
     };
