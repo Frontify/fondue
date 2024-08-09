@@ -307,3 +307,115 @@ test('should render custom clear slot', async ({ mount, page }) => {
     await expect(page.getByTestId(SLOT_CLEAR_TEST_ID)).toBeVisible();
     await expect(component).toContainText('Clear Slot');
 });
+
+test('should allow custom value when allowCustomValue is true', async ({ mount, page }) => {
+    const onSelectChange = sinon.spy();
+    const component = await mount(
+        <Select.Combobox
+            onSelect={onSelectChange}
+            aria-label="test"
+            data-test-id={SELECT_TEST_ID}
+            placeholder={PLACEHOLDER_TEXT}
+            allowCustomValue={true}
+        >
+            <Select.Slot name="menu">
+                <Select.Item data-test-id={ITEM_TEST_ID1} value="test1">
+                    {ITEM_TEXT1}
+                </Select.Item>
+                <Select.Item data-test-id={ITEM_TEST_ID2} value="test2">
+                    {ITEM_TEXT2}
+                </Select.Item>
+            </Select.Slot>
+        </Select.Combobox>,
+    );
+
+    await expect(component).toBeVisible();
+    await component.click();
+
+    const customValue = 'Custom Option';
+    await page.keyboard.type(customValue);
+    await page.keyboard.press('Enter');
+
+    await expect(component.getByTestId(SELECT_TEST_ID)).toHaveValue(customValue);
+    expect(onSelectChange.callCount).toBe(1);
+    expect(onSelectChange.calledWith(customValue)).toBe(true);
+});
+
+test('should not allow custom value when allowCustomValue is false', async ({ mount, page }) => {
+    const onSelectChange = sinon.spy();
+    const component = await mount(
+        <Select.Combobox
+            onSelect={onSelectChange}
+            aria-label="test"
+            data-test-id={SELECT_TEST_ID}
+            placeholder={PLACEHOLDER_TEXT}
+            allowCustomValue={false}
+        >
+            <Select.Slot name="menu">
+                <Select.Item data-test-id={ITEM_TEST_ID1} value="test1">
+                    {ITEM_TEXT1}
+                </Select.Item>
+                <Select.Item data-test-id={ITEM_TEST_ID2} value="test2">
+                    {ITEM_TEXT2}
+                </Select.Item>
+            </Select.Slot>
+        </Select.Combobox>,
+    );
+
+    await expect(component).toBeVisible();
+    await component.click();
+
+    const customValue = 'Custom Option';
+    await page.keyboard.type(customValue);
+    await page.keyboard.press('Enter');
+
+    expect(onSelectChange.callCount).toBe(0);
+});
+
+test('should clear input when typed value is not selected and not in options', async ({ mount, page }) => {
+    const component = await mount(
+        <Select.Combobox aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
+            <Select.Slot name="menu">
+                <Select.Item data-test-id={ITEM_TEST_ID1} value="test1">
+                    {ITEM_TEXT1}
+                </Select.Item>
+                <Select.Item data-test-id={ITEM_TEST_ID2} value="test2">
+                    {ITEM_TEXT2}
+                </Select.Item>
+            </Select.Slot>
+        </Select.Combobox>,
+    );
+
+    await expect(component).toBeVisible();
+    await component.click();
+
+    const nonExistentValue = 'Non-existent Option';
+    await page.keyboard.type(nonExistentValue);
+    await page.keyboard.press('Tab'); // Simulate moving focus away from the input
+
+    await expect(component.getByTestId(SELECT_TEST_ID)).toHaveValue('');
+    await expect(page.getByPlaceholder(PLACEHOLDER_TEXT)).toBeVisible();
+});
+
+test('should keep existing selection when typing partial match and moving focus away', async ({ mount, page }) => {
+    const component = await mount(
+        <Select.Combobox aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
+            <Select.Slot name="menu">
+                <Select.Item data-test-id={ITEM_TEST_ID1} value="test1">
+                    {ITEM_TEXT1}
+                </Select.Item>
+                <Select.Item data-test-id={ITEM_TEST_ID2} value="test2">
+                    {ITEM_TEXT2}
+                </Select.Item>
+            </Select.Slot>
+        </Select.Combobox>,
+    );
+
+    await expect(component).toBeVisible();
+    await component.click();
+
+    await page.keyboard.type('SAMPLE TEXT1');
+    await page.keyboard.press('Tab');
+
+    await expect(component.getByTestId(SELECT_TEST_ID)).toHaveValue(ITEM_TEXT1);
+});
