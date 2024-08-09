@@ -88,7 +88,7 @@ export const useSelectData = (children: ReactNode) => {
         clearButton,
         setFilterText,
         filterText,
-        items: filteredItems,
+        filteredItems,
         getItemByValue,
     };
 };

@@ -6,7 +6,7 @@ import * as sinon from 'sinon';
 
 import { Select } from '../Select';
 
-const SELECT_TEST_ID = 'test-dropdown';
+const SELECT_TEST_ID = 'test-combobox';
 const GROUP_TEST_ID = 'test-group';
 const ITEM_TEST_ID1 = 'test-item1';
 const ITEM_TEST_ID2 = 'test-item2';

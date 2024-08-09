@@ -51,7 +51,7 @@ describe('useSelectData', () => {
         ).toBe(true);
 
         expect(Children.toArray(result.menuSlots).length).toBe(4);
-        expect(result.items.length).toBe(6);
+        expect(result.filteredItems.length).toBe(6);
     });
 
     it('returns decorator slots', () => {
@@ -91,14 +91,14 @@ describe('useSelectData', () => {
         const { result } = renderHook(() => useSelectData(menuSlot));
 
         expect(result.current.filterText).toBe('');
-        expect(result.current.items.length).toBe(6);
+        expect(result.current.filteredItems.length).toBe(6);
 
         act(() => {
             result.current.setFilterText('test1');
         });
 
         expect(result.current.filterText).toBe('test1');
-        expect(result.current.items.length).toBe(1);
+        expect(result.current.filteredItems.length).toBe(1);
     });
 });
 

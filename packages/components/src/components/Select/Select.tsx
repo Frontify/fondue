@@ -35,6 +35,11 @@ export type SelectComponentProps = {
      */
     placeholder?: string;
     /**
+     * Allow custom value in the combobox component.
+     * @default false
+     */
+    allowCustomValue?: boolean;
+    /**
      * Disables the select component.
      */
     disabled?: boolean;
@@ -61,14 +66,14 @@ export const SelectInput = (
     }: SelectComponentProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
-    const { inputSlots, menuSlots, items, clearButton, getItemByValue } = useSelectData(children);
+    const { inputSlots, menuSlots, filteredItems, clearButton, getItemByValue } = useSelectData(children);
 
     const defaultItem = getItemByValue(defaultValue);
     const activeItem = getItemByValue(value);
 
     const { getToggleButtonProps, getMenuProps, getItemProps, reset, selectedItem, isOpen, highlightedIndex } =
         useSelect({
-            items,
+            items: filteredItems,
             defaultSelectedItem: defaultItem,
             selectedItem: activeItem,
             onSelectedItemChange: ({ selectedItem }) => {

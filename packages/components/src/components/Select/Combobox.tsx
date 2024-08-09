@@ -4,10 +4,11 @@ import { IconCaretDown } from '@frontify/fondue-icons';
 import * as RadixPopover from '@radix-ui/react-popover';
 import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { useCombobox } from 'downshift';
-import { forwardRef, useMemo, useRef, type ForwardedRef, type ReactNode } from 'react';
+import { forwardRef, useMemo, useRef, useState, type ForwardedRef, type ReactNode } from 'react';
 
 import { SelectMenu } from './SelectMenu';
 import styles from './styles/select.module.scss';
+import { useAddCustomValueSupport } from './useAddCustomValueSupport';
 import { useSelectData } from './useSelectData';
 
 export type ComboboxProps = {
@@ -32,6 +33,11 @@ export type ComboboxProps = {
      */
     placeholder?: string;
     /**
+     * Allow custom value in the combobox component.
+     * @default false
+     */
+    allowCustomValue?: boolean;
+    /**
      * Disables the combobox component.
      */
     disabled?: boolean;
@@ -52,17 +58,20 @@ export const SelectCombobox = (
         value,
         defaultValue,
         placeholder = '',
+        allowCustomValue = false,
         disabled,
         'aria-label': ariaLabel,
         'data-test-id': dataTestId = 'fondue-select-combobox',
     }: ComboboxProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
-    const { inputSlots, menuSlots, items, filterText, clearButton, getItemByValue, setFilterText } =
+    const { inputSlots, menuSlots, filteredItems, filterText, clearButton, getItemByValue, setFilterText } =
         useSelectData(children);
 
+    const [items, setItems] = useState(filteredItems);
+
     const defaultItem = getItemByValue(defaultValue);
-    const activeItem = getItemByValue(value);
+    const [activeItem, setActiveItem] = useState(getItemByValue(value));
 
     const {
         getInputProps,
@@ -76,21 +85,35 @@ export const SelectCombobox = (
     } = useCombobox({
         items,
         onSelectedItemChange: ({ selectedItem }) => {
+            setActiveItem(selectedItem);
             onSelect && onSelect(selectedItem.value);
         },
         selectedItem: activeItem,
         onInputValueChange: ({ inputValue }) => {
             setFilterText(inputValue);
+            setActiveItem(undefined);
         },
         defaultSelectedItem: defaultItem,
         defaultHighlightedIndex: 0,
         itemToString: (item) => (item ? item.label : ''),
     });
 
+    const { valueExists, allMenuSlots } = useAddCustomValueSupport(
+        filteredItems,
+        menuSlots,
+        inputValue,
+        allowCustomValue,
+        setItems,
+    );
+
     const wasClicked = useRef(false);
+
     const valueInvalid = useMemo(
-        () => inputValue && !items.find((item) => item.label.toLowerCase().includes(inputValue.toLowerCase())),
-        [inputValue, items],
+        () =>
+            inputValue &&
+            !allowCustomValue &&
+            !items.find((item) => item.label.toLowerCase().includes(inputValue.toLowerCase())),
+        [allowCustomValue, inputValue, items],
     );
 
     return (
@@ -114,6 +137,9 @@ export const SelectCombobox = (
                         onBlur={(blurEvent) => {
                             blurEvent.target.dataset.showFocusRing = 'false';
                             wasClicked.current = false;
+                            if (!valueExists && !activeItem) {
+                                reset();
+                            }
                             if (getInputProps().onBlur) {
                                 getInputProps().onBlur?.(blurEvent);
                             }
@@ -155,7 +181,7 @@ export const SelectCombobox = (
                 getMenuProps={getMenuProps}
                 getItemProps={getItemProps}
             >
-                {menuSlots}
+                {allMenuSlots}
             </SelectMenu>
         </RadixPopover.Root>
     );
