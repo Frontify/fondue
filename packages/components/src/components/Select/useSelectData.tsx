@@ -29,10 +29,25 @@ export const getRecursiveOptionValues = (children: ReactNode): { value: string; 
 
 export const useSelectData = (children: ReactNode, allowCustomValue = false) => {
     const [filterText, setFilterText] = useState('');
-    const { inputSlots, menuSlots, itemValues, clearButton } = useMemo(() => {
+
+    const itemValues = useMemo(() => getRecursiveOptionValues(children), [children]);
+
+    const valueExists = useMemo(
+        () => itemValues.some((item) => item.label.toLocaleLowerCase() === filterText.toLocaleLowerCase()),
+        [itemValues, filterText],
+    );
+
+    const shouldAddCustomItem = useMemo(
+        () => allowCustomValue && filterText !== '' && !valueExists,
+        [allowCustomValue, filterText, valueExists],
+    );
+
+    const { inputSlots, menuSlots, clearButton } = useMemo(() => {
         const inputSlots: ReactNode[] = [];
         const menuSlots: ReactNode[] = [];
+
         let clearButton: ReactNode;
+
         const hasSlots = Children.toArray(children).some(
             (child) => isValidElement<SelectSlotProps>(child) && child.type === ForwardedRefSelectSlot,
         );
@@ -53,35 +68,30 @@ export const useSelectData = (children: ReactNode, allowCustomValue = false) => 
                     }
                 }
             });
-
-            return {
-                inputSlots,
-                menuSlots,
-                clearButton,
-                itemValues: getRecursiveOptionValues(menuSlots),
-            };
         } else {
-            return {
-                menuSlots: children,
-                inputSlots: [],
-                itemValues: getRecursiveOptionValues(children),
-            };
+            menuSlots.push(children);
         }
-    }, [children]);
+
+        if (shouldAddCustomItem) {
+            const customItem = (
+                <ForwardedRefSelectItem key={filterText} value={filterText} data-test-id="custom-item">
+                    {filterText}
+                </ForwardedRefSelectItem>
+            );
+
+            menuSlots.push(customItem);
+        }
+
+        return {
+            inputSlots,
+            menuSlots,
+            clearButton,
+        };
+    }, [children, filterText, shouldAddCustomItem]);
 
     const getItemByValue = useCallback(
         (value?: string) => (value ? itemValues.find((item) => item.value === value) : undefined),
         [itemValues],
-    );
-
-    const valueExists = useMemo(
-        () => itemValues.some((item) => item.label.toLocaleLowerCase() === filterText.toLocaleLowerCase()),
-        [itemValues, filterText],
-    );
-
-    const shouldAddCustomItem = useMemo(
-        () => allowCustomValue && filterText !== '' && !valueExists,
-        [allowCustomValue, filterText, valueExists],
     );
 
     const items = useMemo(() => {
@@ -90,33 +100,15 @@ export const useSelectData = (children: ReactNode, allowCustomValue = false) => 
         );
 
         if (shouldAddCustomItem) {
-            return [...filteredItems, { label: filterText, value: filterText }];
+            filteredItems.push({ label: filterText, value: filterText });
         }
 
         return filteredItems;
     }, [itemValues, shouldAddCustomItem, filterText]);
 
-    const allMenuSlots = useMemo(() => {
-        if (shouldAddCustomItem) {
-            const customItem = (
-                <ForwardedRefSelectItem key={filterText} value={filterText} data-test-id="custom-item">
-                    {filterText}
-                </ForwardedRefSelectItem>
-            );
-
-            if (Array.isArray(menuSlots)) {
-                return [...menuSlots, customItem];
-            }
-
-            return [menuSlots, customItem];
-        }
-
-        return menuSlots;
-    }, [shouldAddCustomItem, filterText, menuSlots]);
-
     return {
         inputSlots,
-        menuSlots: allMenuSlots,
+        menuSlots,
         clearButton,
         filterText,
         items,
