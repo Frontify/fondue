@@ -4,7 +4,7 @@ import { IconCaretDown } from '@frontify/fondue-icons';
 import * as RadixPopover from '@radix-ui/react-popover';
 import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { useCombobox } from 'downshift';
-import { forwardRef, useMemo, useRef, useState, type ForwardedRef, type ReactNode } from 'react';
+import { type FocusEvent, forwardRef, useRef, type ForwardedRef, type ReactNode } from 'react';
 
 import { SelectMenu } from './SelectMenu';
 import styles from './styles/select.module.scss';
@@ -64,28 +64,36 @@ export const SelectCombobox = (
     }: ComboboxProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
-    const { inputSlots, menuSlots, items, filterText, clearButton, valueExists, getItemByValue, setFilterText } =
-        useSelectData(children, allowCustomValue);
-
-    const defaultItem = getItemByValue(defaultValue);
-    const [activeItem, setActiveItem] = useState(getItemByValue(value));
+    const {
+        inputSlots,
+        menuSlots,
+        items,
+        filterText,
+        clearButton,
+        valueExists,
+        existingValueItem,
+        valueInvalid,
+        getItemByValue,
+        setFilterText,
+    } = useSelectData(children, allowCustomValue);
 
     const {
+        isOpen,
+        highlightedIndex,
+        inputValue,
+        selectedItem,
+        setInputValue,
         getInputProps,
         getToggleButtonProps,
         getMenuProps,
         getItemProps,
         reset,
-        isOpen,
-        highlightedIndex,
-        inputValue,
     } = useCombobox({
         items,
-        selectedItem: activeItem,
-        defaultSelectedItem: defaultItem,
         defaultHighlightedIndex: 0,
+        selectedItem: getItemByValue(value),
+        defaultSelectedItem: getItemByValue(defaultValue),
         onSelectedItemChange: ({ selectedItem }) => {
-            setActiveItem(selectedItem);
             onSelect && onSelect(selectedItem.value);
         },
         onInputValueChange: ({ inputValue }) => {
@@ -96,44 +104,58 @@ export const SelectCombobox = (
 
     const wasClicked = useRef(false);
 
-    const valueInvalid = useMemo(
-        () => !allowCustomValue && !items.find((item) => item.label.toLowerCase().includes(inputValue.toLowerCase())),
-        [allowCustomValue, inputValue, items],
-    );
+    const onBlurHandler = (blurEvent: FocusEvent<HTMLInputElement, Element>) => {
+        blurEvent.target.dataset.showFocusRing = 'false';
+        wasClicked.current = false;
+
+        if (valueExists) {
+            if (existingValueItem?.label) {
+                // if the value exists, normalize the casing on the input
+                setInputValue(existingValueItem.label);
+            }
+        } else {
+            const selectedItemNullOrOutdated =
+                selectedItem?.label.toLocaleLowerCase() !== inputValue.toLocaleLowerCase();
+
+            if (selectedItemNullOrOutdated) {
+                // if there is no selection or
+                // the existing selected value is not the same as the input value (old),
+                // reset the input
+                reset();
+            }
+        }
+
+        if (getInputProps().onBlur) {
+            getInputProps().onBlur?.(blurEvent);
+        }
+    };
 
     return (
         <RadixPopover.Root open={isOpen}>
             <RadixPopover.Anchor asChild>
                 <div ref={forwardedRef} className={styles.root} data-error={valueInvalid}>
                     <input
+                        data-test-id={dataTestId}
+                        {...getInputProps({
+                            'aria-label': ariaLabel,
+                        })}
+                        placeholder={placeholder}
+                        className={styles.input}
+                        disabled={disabled}
                         onMouseDown={(mouseEvent) => {
                             wasClicked.current = true;
                             mouseEvent.currentTarget.dataset.showFocusRing = 'false';
                         }}
-                        placeholder={placeholder}
-                        {...getInputProps({
-                            'aria-label': ariaLabel,
-                        })}
                         onFocus={(focusEvent) => {
                             if (!wasClicked.current) {
                                 focusEvent.target.dataset.showFocusRing = 'true';
                             }
                         }}
-                        onBlur={(blurEvent) => {
-                            blurEvent.target.dataset.showFocusRing = 'false';
-                            wasClicked.current = false;
-                            if (!valueExists) {
-                                reset();
-                            }
-                            if (getInputProps().onBlur) {
-                                getInputProps().onBlur?.(blurEvent);
-                            }
-                        }}
-                        className={styles.input}
-                        disabled={disabled}
-                        data-test-id={dataTestId}
+                        onBlur={onBlurHandler}
                     />
+
                     {inputSlots}
+
                     {clearButton && (
                         <RadixSlot
                             onClick={(event) => {
@@ -146,14 +168,15 @@ export const SelectCombobox = (
                             {clearButton}
                         </RadixSlot>
                     )}
+
                     <button
+                        {...getToggleButtonProps()}
                         type="button"
+                        aria-label="toggle menu"
+                        disabled={disabled}
                         onMouseDown={() => {
                             wasClicked.current = true;
                         }}
-                        {...getToggleButtonProps()}
-                        aria-label="toggle menu"
-                        disabled={disabled}
                     >
                         <IconCaretDown size={16} className={styles.caret} />
                     </button>

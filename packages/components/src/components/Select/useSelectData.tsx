@@ -12,6 +12,21 @@ export type SelectItemType = {
     label: string;
 };
 
+/**
+ * Recursively extracts option values from children.
+ * This function traverses through the React component tree and collects all SelectItem values.
+ *
+ * @param {ReactNode} children - The React children to extract values from.
+ * @returns {SelectItemType[]} An array of SelectItemType objects.
+ *
+ * @example
+ * const options = (
+ *   <SelectItem value="1">Option 1</SelectItem>
+ *   <SelectItem value="2">Option 2</SelectItem>
+ * );
+ * const values = getRecursiveOptionValues(options);
+ * // Returns: [{ value: '1', label: 'Option 1' }, { value: '2', label: 'Option 2' }]
+ */
 export const getRecursiveOptionValues = (children: ReactNode): { value: string; label: string }[] => {
     const values: { value: string; label: string }[] = [];
     Children.forEach(children, (child) => {
@@ -27,15 +42,40 @@ export const getRecursiveOptionValues = (children: ReactNode): { value: string; 
     return values;
 };
 
+/**
+ * Custom hook for managing select data and filtering.
+ * This hook processes the children to extract select items, handles filtering,
+ * and manages the state for custom values if allowed.
+ *
+ * @param {ReactNode} children - The React children to process, typically SelectItem components.
+ * @param {boolean} [allowCustomValue=false] - Whether to allow custom values that are not in the predefined list.
+ * @returns {Object} An object containing various select data and utility functions.
+ * @property {ReactNode[]} inputSlots - Slots for input customization (left and right).
+ * @property {ReactNode[]} menuSlots - Slots for menu customization.
+ * @property {ReactNode} clearButton - The clear button component if provided.
+ * @property {string} filterText - The current filter text.
+ * @property {SelectItemType[]} items - The filtered list of items based on the current filter text.
+ * @property {boolean} valueExists - Whether the current filter text matches an existing item.
+ * @property {SelectItemType | undefined} existingValueItem - The matching item if valueExists is true.
+ * @property {boolean} shouldAddCustomItem - Whether a custom item should be added based on the current state.
+ * @property {boolean} valueInvalid - Whether the current value is invalid (when custom values are not allowed).
+ * @property {function} setFilterText - Function to update the filter text.
+ * @property {function} getItemByValue - Function to get an item by its value.
+ */
 export const useSelectData = (children: ReactNode, allowCustomValue = false) => {
     const [filterText, setFilterText] = useState('');
 
     const itemValues = useMemo(() => getRecursiveOptionValues(children), [children]);
 
-    const valueExists = useMemo(
-        () => itemValues.some((item) => item.label.toLocaleLowerCase() === filterText.toLocaleLowerCase()),
-        [itemValues, filterText],
-    );
+    const { valueExists, existingValueItem } = useMemo(() => {
+        const existingValueItem = itemValues.find(
+            (item) => item.label.toLocaleLowerCase() === filterText.toLocaleLowerCase(),
+        );
+        return {
+            valueExists: !!existingValueItem,
+            existingValueItem,
+        };
+    }, [itemValues, filterText]);
 
     const shouldAddCustomItem = useMemo(
         () => allowCustomValue && filterText !== '' && !valueExists,
@@ -106,6 +146,11 @@ export const useSelectData = (children: ReactNode, allowCustomValue = false) => 
         return filteredItems;
     }, [itemValues, shouldAddCustomItem, filterText]);
 
+    const valueInvalid = useMemo(
+        () => !allowCustomValue && !items.find((item) => item.label.toLowerCase().includes(filterText.toLowerCase())),
+        [allowCustomValue, filterText, items],
+    );
+
     return {
         inputSlots,
         menuSlots,
@@ -113,6 +158,9 @@ export const useSelectData = (children: ReactNode, allowCustomValue = false) => 
         filterText,
         items,
         valueExists,
+        existingValueItem,
+        shouldAddCustomItem,
+        valueInvalid,
         setFilterText,
         getItemByValue,
     };
