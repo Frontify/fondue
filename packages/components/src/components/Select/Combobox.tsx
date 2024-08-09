@@ -4,7 +4,7 @@ import { IconCaretDown } from '@frontify/fondue-icons';
 import * as RadixPopover from '@radix-ui/react-popover';
 import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { useCombobox } from 'downshift';
-import { type FocusEvent, forwardRef, useRef, type ForwardedRef, type ReactNode } from 'react';
+import { type FocusEvent, forwardRef, useRef, type ForwardedRef, type ReactNode, useMemo } from 'react';
 
 import { SelectMenu } from './SelectMenu';
 import styles from './styles/select.module.scss';
@@ -72,7 +72,6 @@ export const SelectCombobox = (
         clearButton,
         valueExists,
         existingValueItem,
-        valueInvalid,
         getItemByValue,
         setFilterText,
     } = useSelectData(children, allowCustomValue);
@@ -101,6 +100,11 @@ export const SelectCombobox = (
         },
         itemToString: (item) => (item ? item.label : ''),
     });
+
+    const valueInvalid = useMemo(
+        () => !allowCustomValue && !items.find((item) => item.label.toLowerCase().includes(filterText.toLowerCase())),
+        [allowCustomValue, filterText, items],
+    );
 
     const wasClicked = useRef(false);
 
@@ -136,12 +140,12 @@ export const SelectCombobox = (
                 <div ref={forwardedRef} className={styles.root} data-error={valueInvalid}>
                     <input
                         data-test-id={dataTestId}
-                        {...getInputProps({
-                            'aria-label': ariaLabel,
-                        })}
                         placeholder={placeholder}
                         className={styles.input}
                         disabled={disabled}
+                        {...getInputProps({
+                            'aria-label': ariaLabel,
+                        })}
                         onMouseDown={(mouseEvent) => {
                             wasClicked.current = true;
                             mouseEvent.currentTarget.dataset.showFocusRing = 'false';
@@ -170,10 +174,10 @@ export const SelectCombobox = (
                     )}
 
                     <button
-                        {...getToggleButtonProps()}
                         type="button"
                         aria-label="toggle menu"
                         disabled={disabled}
+                        {...getToggleButtonProps()}
                         onMouseDown={() => {
                             wasClicked.current = true;
                         }}
