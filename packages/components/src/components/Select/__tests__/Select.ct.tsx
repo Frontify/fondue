@@ -20,8 +20,8 @@ const ITEM_LABEL1 = 'test1';
 const ITEM_TEXT1 = 'sample text1';
 const ITEM_LABEL2 = 'test2';
 const ITEM_TEXT2 = 'sample text2';
-const SELECT_SUCCESS_ICON_TEST_ID = 'test-select-success-icon';
-const SELECT_ERROR_ICON_TEST_ID = 'test-select-error-icon';
+const SELECT_SUCCESS_ICON_TEST_ID = `${SELECT_TEST_ID}-success-icon`;
+const SELECT_ERROR_ICON_TEST_ID = `${SELECT_TEST_ID}-error-icon`;
 
 test('should render with placeholder', async ({ mount }) => {
     const component = await mount(
