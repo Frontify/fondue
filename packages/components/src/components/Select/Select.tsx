@@ -35,6 +35,11 @@ export type SelectComponentProps = {
      */
     placeholder?: string;
     /**
+     * Allow custom value in the combobox component.
+     * @default false
+     */
+    allowCustomValue?: boolean;
+    /**
      * Disables the select component.
      */
     disabled?: boolean;

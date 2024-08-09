@@ -4,10 +4,11 @@ import { IconCaretDown } from '@frontify/fondue-icons';
 import * as RadixPopover from '@radix-ui/react-popover';
 import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { useCombobox } from 'downshift';
-import { forwardRef, useMemo, useRef, type ForwardedRef, type ReactNode } from 'react';
+import { type FocusEvent, forwardRef, useRef, type ForwardedRef, type ReactNode, useMemo } from 'react';
 
 import { SelectMenu } from './SelectMenu';
 import styles from './styles/select.module.scss';
+import { useComboboxData } from './useComboboxData';
 import { useSelectData } from './useSelectData';
 
 export type ComboboxProps = {
@@ -32,6 +33,11 @@ export type ComboboxProps = {
      */
     placeholder?: string;
     /**
+     * Allow custom value in the combobox component.
+     * @default false
+     */
+    allowCustomValue?: boolean;
+    /**
      * Disables the combobox component.
      */
     disabled?: boolean;
@@ -52,77 +58,114 @@ export const SelectCombobox = (
         value,
         defaultValue,
         placeholder = '',
+        allowCustomValue = false,
         disabled,
         'aria-label': ariaLabel,
         'data-test-id': dataTestId = 'fondue-select-combobox',
     }: ComboboxProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
-    const { inputSlots, menuSlots, items, filterText, clearButton, getItemByValue, setFilterText } =
-        useSelectData(children);
+    const {
+        inputSlots,
+        menuSlots: initialMenuSlots,
+        items: initialItems,
+        filterText,
+        clearButton,
+        getItemByValue,
+        setFilterText,
+    } = useSelectData(children);
 
-    const defaultItem = getItemByValue(defaultValue);
-    const activeItem = getItemByValue(value);
+    const { items, menuSlots, valueExists, existingValueItem } = useComboboxData(
+        initialItems,
+        initialMenuSlots,
+        filterText,
+        allowCustomValue,
+    );
 
     const {
+        isOpen,
+        highlightedIndex,
+        inputValue,
+        selectedItem,
+        selectItem,
         getInputProps,
         getToggleButtonProps,
         getMenuProps,
         getItemProps,
         reset,
-        isOpen,
-        highlightedIndex,
-        inputValue,
     } = useCombobox({
         items,
+        defaultHighlightedIndex: 0,
+        selectedItem: getItemByValue(value),
+        defaultSelectedItem: getItemByValue(defaultValue),
         onSelectedItemChange: ({ selectedItem }) => {
             onSelect && onSelect(selectedItem.value);
         },
-        selectedItem: activeItem,
         onInputValueChange: ({ inputValue }) => {
             setFilterText(inputValue);
         },
-        defaultSelectedItem: defaultItem,
-        defaultHighlightedIndex: 0,
         itemToString: (item) => (item ? item.label : ''),
     });
 
-    const wasClicked = useRef(false);
     const valueInvalid = useMemo(
-        () => inputValue && !items.find((item) => item.label.toLowerCase().includes(inputValue.toLowerCase())),
-        [inputValue, items],
+        () => !allowCustomValue && !items.find((item) => item.label.toLowerCase().includes(filterText.toLowerCase())),
+        [allowCustomValue, filterText, items],
     );
+
+    const wasClicked = useRef(false);
+
+    const onBlurHandler = (blurEvent: FocusEvent<HTMLInputElement, Element>) => {
+        blurEvent.target.dataset.showFocusRing = 'false';
+        wasClicked.current = false;
+
+        if (valueExists) {
+            if (existingValueItem?.label) {
+                // if the value exists, normalize the casing on the input
+                selectItem(existingValueItem);
+            }
+        } else {
+            const selectedItemNullOrOutdated =
+                selectedItem?.label.toLocaleLowerCase() !== inputValue.toLocaleLowerCase();
+
+            if (selectedItemNullOrOutdated) {
+                // if there is no selection or
+                // the existing selected value is not the same as the input value (old),
+                // reset the input
+                reset();
+            }
+        }
+
+        if (getInputProps().onBlur) {
+            getInputProps().onBlur?.(blurEvent);
+        }
+    };
 
     return (
         <RadixPopover.Root open={isOpen}>
             <RadixPopover.Anchor asChild>
                 <div ref={forwardedRef} className={styles.root} data-error={valueInvalid}>
                     <input
+                        data-test-id={dataTestId}
+                        placeholder={placeholder}
+                        className={styles.input}
+                        disabled={disabled}
+                        {...getInputProps({
+                            'aria-label': ariaLabel,
+                        })}
                         onMouseDown={(mouseEvent) => {
                             wasClicked.current = true;
                             mouseEvent.currentTarget.dataset.showFocusRing = 'false';
                         }}
-                        placeholder={placeholder}
-                        {...getInputProps({
-                            'aria-label': ariaLabel,
-                        })}
                         onFocus={(focusEvent) => {
                             if (!wasClicked.current) {
                                 focusEvent.target.dataset.showFocusRing = 'true';
                             }
                         }}
-                        onBlur={(blurEvent) => {
-                            blurEvent.target.dataset.showFocusRing = 'false';
-                            wasClicked.current = false;
-                            if (getInputProps().onBlur) {
-                                getInputProps().onBlur?.(blurEvent);
-                            }
-                        }}
-                        className={styles.input}
-                        disabled={disabled}
-                        data-test-id={dataTestId}
+                        onBlur={onBlurHandler}
                     />
+
                     {inputSlots}
+
                     {clearButton && (
                         <RadixSlot
                             onClick={(event) => {
@@ -135,14 +178,15 @@ export const SelectCombobox = (
                             {clearButton}
                         </RadixSlot>
                     )}
+
                     <button
                         type="button"
+                        aria-label="toggle menu"
+                        disabled={disabled}
+                        {...getToggleButtonProps()}
                         onMouseDown={() => {
                             wasClicked.current = true;
                         }}
-                        {...getToggleButtonProps()}
-                        aria-label="toggle menu"
-                        disabled={disabled}
                     >
                         <IconCaretDown size={16} className={styles.caret} />
                     </button>

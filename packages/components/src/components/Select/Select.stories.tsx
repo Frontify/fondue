@@ -12,6 +12,7 @@ import { SelectItem, SelectItemGroup } from './SelectItem';
 import { SelectSlot } from './SelectSlot';
 
 type Story = StoryObj<typeof meta>;
+
 const meta: Meta<typeof SelectInput> = {
     component: SelectInput,
     subcomponents: {
@@ -60,6 +61,22 @@ export const Combobox: Story = {
                 <Select.Item value="test1">Test1</Select.Item>
                 <Select.Item value="test2">Test2</Select.Item>
                 <Select.Item value="test3">Test3</Select.Item>
+            </Select.Combobox>
+        );
+    },
+};
+
+export const AllowCustomValue: Story = {
+    args: {
+        placeholder: 'Select an item',
+        allowCustomValue: true,
+    },
+    render: (args) => {
+        return (
+            <Select.Combobox {...args}>
+                <Select.Item value="test1">Test1</Select.Item>
+                <Select.Item value="test1">Test2</Select.Item>
+                <Select.Item value="test1">Test3</Select.Item>
             </Select.Combobox>
         );
     },
