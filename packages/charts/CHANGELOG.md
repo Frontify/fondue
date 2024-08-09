@@ -1,5 +1,14 @@
 # @frontify/fondue-charts
 
+## 1.8.12
+
+### Patch Changes
+
+-   [#1997](https://github.com/Frontify/fondue/pull/1997) [`e0d63ca`](https://github.com/Frontify/fondue/commit/e0d63ca91dc19dc22afad711eabe64b31f888809) Thanks [@joseazevedo88](https://github.com/joseazevedo88)! - Tooltip value context changes
+
+-   Updated dependencies [[`0c43841`](https://github.com/Frontify/fondue/commit/0c43841f4d3244fccdf4beb5cd5daa16841f61a8)]:
+    -   @frontify/fondue-tokens@3.5.5
+
 ## 1.8.11
 
 ### Patch Changes
