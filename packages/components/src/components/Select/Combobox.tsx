@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconCaretDown } from '@frontify/fondue-icons';
+import { IconCaretDown, IconCheckMark, IconExclamationMarkTriangle } from '@frontify/fondue-icons';
 import * as RadixPopover from '@radix-ui/react-popover';
 import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { useCombobox } from 'downshift';
@@ -32,6 +32,11 @@ export type ComboboxProps = {
      */
     placeholder?: string;
     /**
+     * Status of the text input
+     * @default "neutral"
+     */
+    status?: 'neutral' | 'success' | 'error';
+    /**
      * Disables the combobox component.
      */
     disabled?: boolean;
@@ -52,6 +57,7 @@ export const SelectCombobox = (
         value,
         defaultValue,
         placeholder = '',
+        status = 'neutral',
         disabled,
         'aria-label': ariaLabel,
         'data-test-id': dataTestId = 'fondue-select-combobox',
@@ -88,15 +94,26 @@ export const SelectCombobox = (
     });
 
     const wasClicked = useRef(false);
+
     const valueInvalid = useMemo(
-        () => inputValue && !items.find((item) => item.label.toLowerCase().includes(inputValue.toLowerCase())),
+        () => !items.find((item) => item.label.toLowerCase().includes(inputValue.toLowerCase())),
         [inputValue, items],
     );
+
+    const localStatus = useMemo(() => {
+        if (status === 'error' || valueInvalid) {
+            return 'error';
+        }
+        if (status === 'success') {
+            return 'success';
+        }
+        return 'neutral';
+    }, [status, valueInvalid]);
 
     return (
         <RadixPopover.Root open={isOpen}>
             <RadixPopover.Anchor asChild>
-                <div ref={forwardedRef} className={styles.root} data-error={valueInvalid}>
+                <div ref={forwardedRef} className={styles.root} data-status={localStatus}>
                     <input
                         onMouseDown={(mouseEvent) => {
                             wasClicked.current = true;
@@ -135,17 +152,33 @@ export const SelectCombobox = (
                             {clearButton}
                         </RadixSlot>
                     )}
-                    <button
-                        type="button"
-                        onMouseDown={() => {
-                            wasClicked.current = true;
-                        }}
-                        {...getToggleButtonProps()}
-                        aria-label="toggle menu"
-                        disabled={disabled}
-                    >
-                        <IconCaretDown size={16} className={styles.caret} />
-                    </button>
+                    <div className={styles.icons}>
+                        <button
+                            type="button"
+                            onMouseDown={() => {
+                                wasClicked.current = true;
+                            }}
+                            {...getToggleButtonProps()}
+                            aria-label="toggle menu"
+                            disabled={disabled}
+                        >
+                            <IconCaretDown size={16} className={styles.caret} />
+                        </button>
+                        {status === 'success' ? (
+                            <IconCheckMark
+                                size={16}
+                                className={styles.iconSuccess}
+                                data-test-id={`${dataTestId}-success-icon`}
+                            />
+                        ) : null}
+                        {status === 'error' ? (
+                            <IconExclamationMarkTriangle
+                                size={16}
+                                className={styles.iconError}
+                                data-test-id={`${dataTestId}-error-icon`}
+                            />
+                        ) : null}
+                    </div>
                 </div>
             </RadixPopover.Anchor>
 

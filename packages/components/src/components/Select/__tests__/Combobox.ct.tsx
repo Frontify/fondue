@@ -6,7 +6,7 @@ import * as sinon from 'sinon';
 
 import { Select } from '../Select';
 
-const SELECT_TEST_ID = 'test-dropdown';
+const SELECT_TEST_ID = 'test-combobox';
 const GROUP_TEST_ID = 'test-group';
 const ITEM_TEST_ID1 = 'test-item1';
 const ITEM_TEST_ID2 = 'test-item2';
@@ -18,6 +18,8 @@ const ITEM_LABEL1 = 'test1';
 const ITEM_TEXT1 = 'sample text1';
 const ITEM_LABEL2 = 'test2';
 const ITEM_TEXT2 = 'sample text2';
+const SELECT_SUCCESS_ICON_TEST_ID = `${SELECT_TEST_ID}-success-icon`;
+const SELECT_ERROR_ICON_TEST_ID = `${SELECT_TEST_ID}-error-icon`;
 
 test('should render with placeholder', async ({ mount, page }) => {
     const component = await mount(
@@ -30,6 +32,34 @@ test('should render with placeholder', async ({ mount, page }) => {
 
     await expect(component).toBeVisible();
     await expect(page.getByPlaceholder(PLACEHOLDER_TEXT)).toBeVisible();
+});
+
+test('render the success status', async ({ mount }) => {
+    const component = await mount(
+        <Select aria-label="test" data-test-id={SELECT_TEST_ID} status="success">
+            <Select.Slot name="menu">
+                <Select.Item value="test1">{ITEM_TEXT1}</Select.Item>
+            </Select.Slot>
+        </Select>,
+    );
+
+    await expect(component).toHaveAttribute('data-status', 'success');
+    await expect(component).toHaveCSS('border', '1px solid rgb(21, 129, 111)');
+    await expect(component.getByTestId(SELECT_SUCCESS_ICON_TEST_ID)).toBeVisible();
+});
+
+test('render the error status', async ({ mount }) => {
+    const component = await mount(
+        <Select aria-label="test" data-test-id={SELECT_TEST_ID} status="error">
+            <Select.Slot name="menu">
+                <Select.Item value="test1">{ITEM_TEXT1}</Select.Item>
+            </Select.Slot>
+        </Select>,
+    );
+
+    await expect(component).toHaveAttribute('data-status', 'error');
+    await expect(component).toHaveCSS('border', '1px solid rgb(217, 47, 76)');
+    await expect(component.getByTestId(SELECT_ERROR_ICON_TEST_ID)).toBeVisible();
 });
 
 test('should open menu and show item', async ({ mount, page }) => {
