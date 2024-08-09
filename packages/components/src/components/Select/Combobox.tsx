@@ -1,11 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconCaretDown } from '@frontify/fondue-icons';
+import { IconCaretDown, IconPlus } from '@frontify/fondue-icons';
 import * as RadixPopover from '@radix-ui/react-popover';
 import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { useCombobox } from 'downshift';
 import { forwardRef, useMemo, useRef, type ForwardedRef, type ReactNode } from 'react';
 
+import { ForwardedRefSelectItem } from './SelectItem';
 import { SelectMenu } from './SelectMenu';
 import styles from './styles/select.module.scss';
 import { useSelectData } from './useSelectData';
@@ -58,8 +59,16 @@ export const SelectCombobox = (
     }: ComboboxProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
-    const { inputSlots, menuSlots, items, filterText, clearButton, getItemByValue, setFilterText } =
-        useSelectData(children);
+    const {
+        inputSlots,
+        menuSlots,
+        items,
+        filterText,
+        clearButton,
+        getItemByValue,
+        setFilterText,
+        shouldAddCustomValue,
+    } = useSelectData(children, true);
 
     const defaultItem = getItemByValue(defaultValue);
     const activeItem = getItemByValue(value);
@@ -156,6 +165,14 @@ export const SelectCombobox = (
                 getItemProps={getItemProps}
             >
                 {menuSlots}
+                {shouldAddCustomValue && (
+                    <ForwardedRefSelectItem value={filterText} label={filterText}>
+                        <p style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                            <IconPlus size={16} className={styles.icon} />
+                            {filterText}
+                        </p>
+                    </ForwardedRefSelectItem>
+                )}
             </SelectMenu>
         </RadixPopover.Root>
     );

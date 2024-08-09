@@ -27,7 +27,7 @@ export const getRecursiveOptionValues = (children: ReactNode): { value: string; 
     return values;
 };
 
-export const useSelectData = (children: ReactNode) => {
+export const useSelectData = (children: ReactNode, allowCustomValue?: boolean) => {
     const [filterText, setFilterText] = useState('');
     const { inputSlots, menuSlots, itemValues, clearButton } = useMemo(() => {
         const inputSlots: ReactNode[] = [];
@@ -77,6 +77,14 @@ export const useSelectData = (children: ReactNode) => {
         [itemValues, filterText],
     );
 
+    const shouldAddCustomValue = useMemo(() => {
+        return (
+            allowCustomValue &&
+            filterText !== '' &&
+            !filteredItems.some((value) => value.label.toLowerCase() === filterText.toLowerCase())
+        );
+    }, [allowCustomValue, filterText, filteredItems]);
+
     const getItemByValue = useCallback(
         (value?: string) => (value ? itemValues.find((item) => item.value === value) : undefined),
         [itemValues],
@@ -88,7 +96,8 @@ export const useSelectData = (children: ReactNode) => {
         clearButton,
         setFilterText,
         filterText,
-        items: filteredItems,
+        items: [...filteredItems, ...(shouldAddCustomValue ? [{ value: filterText, label: filterText }] : [])],
+        shouldAddCustomValue,
         getItemByValue,
     };
 };
