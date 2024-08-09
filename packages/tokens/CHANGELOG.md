@@ -1,5 +1,11 @@
 # @frontify/fondue-tokens
 
+## 3.5.5
+
+### Patch Changes
+
+-   [#1992](https://github.com/Frontify/fondue/pull/1992) [`0c43841`](https://github.com/Frontify/fondue/commit/0c43841f4d3244fccdf4beb5cd5daa16841f61a8) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: modify focus-ring color token
+
 ## 3.5.4
 
 ### Patch Changes
