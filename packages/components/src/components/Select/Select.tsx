@@ -38,7 +38,7 @@ export type SelectComponentProps = {
      * Status of the text input
      * @default "neutral"
      */
-    status?: 'neutral' | 'success' | 'error' | 'loading';
+    status?: 'neutral' | 'success' | 'error';
     /**
      * Disables the select component.
      */

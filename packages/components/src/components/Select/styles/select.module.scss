@@ -40,10 +40,6 @@
         cursor: default;
     }
 
-    &[data-error='true'] {
-        border-color: var(--text-color-negative);
-    }
-
     &[data-status='success'] {
         border-color: var(--text-color-positive);
     }
@@ -159,8 +155,8 @@
 
 .icons {
     display: flex;
-    gap: 4px;
-    padding: 0 6px;
+    gap: sizeToken(1);
+    padding: 0 sizeToken(1.5);
 }
 
 .caret {
@@ -185,16 +181,12 @@
 }
 
 .iconSuccess {
-    display: flex;
-    align-items: center;
     height: 100%;
     margin: 0 sizeToken(1);
     color: var(--text-color-positive);
 }
 
 .iconError {
-    display: flex;
-    align-items: center;
     height: 100%;
     margin: 0 sizeToken(1);
     color: var(--text-color-negative);

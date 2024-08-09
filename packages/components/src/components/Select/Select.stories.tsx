@@ -349,11 +349,11 @@ export const Errored: Story = {
     },
     render: (args) => {
         return (
-            <Select {...args}>
+            <Select.Combobox {...args}>
                 <Select.Item value="test1">Test1</Select.Item>
                 <Select.Item value="test2">Test2</Select.Item>
                 <Select.Item value="test3">Test3</Select.Item>
-            </Select>
+            </Select.Combobox>
         );
     },
 };

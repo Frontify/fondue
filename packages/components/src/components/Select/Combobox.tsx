@@ -35,7 +35,7 @@ export type ComboboxProps = {
      * Status of the text input
      * @default "neutral"
      */
-    status?: 'neutral' | 'success' | 'error' | 'loading';
+    status?: 'neutral' | 'success' | 'error';
     /**
      * Disables the combobox component.
      */
@@ -94,15 +94,26 @@ export const SelectCombobox = (
     });
 
     const wasClicked = useRef(false);
+
     const valueInvalid = useMemo(
-        () => inputValue && !items.find((item) => item.label.toLowerCase().includes(inputValue.toLowerCase())),
+        () => !items.find((item) => item.label.toLowerCase().includes(inputValue.toLowerCase())),
         [inputValue, items],
     );
+
+    const localStatus = useMemo(() => {
+        if (status === 'error' || valueInvalid) {
+            return 'error';
+        }
+        if (status === 'success') {
+            return 'success';
+        }
+        return 'neutral';
+    }, [status, valueInvalid]);
 
     return (
         <RadixPopover.Root open={isOpen}>
             <RadixPopover.Anchor asChild>
-                <div ref={forwardedRef} className={styles.root} data-status={status} data-error={valueInvalid}>
+                <div ref={forwardedRef} className={styles.root} data-status={localStatus}>
                     <input
                         onMouseDown={(mouseEvent) => {
                             wasClicked.current = true;
@@ -141,31 +152,33 @@ export const SelectCombobox = (
                             {clearButton}
                         </RadixSlot>
                     )}
-                    <button
-                        type="button"
-                        onMouseDown={() => {
-                            wasClicked.current = true;
-                        }}
-                        {...getToggleButtonProps()}
-                        aria-label="toggle menu"
-                        disabled={disabled}
-                    >
-                        <IconCaretDown size={16} className={styles.caret} />
-                    </button>
-                    {status === 'success' ? (
-                        <IconCheckMark
-                            size={16}
-                            className={styles.iconSuccess}
-                            data-test-id={`${dataTestId}-success-icon`}
-                        />
-                    ) : null}
-                    {status === 'error' ? (
-                        <IconExclamationMarkTriangle
-                            size={16}
-                            className={styles.iconError}
-                            data-test-id={`${dataTestId}-error-icon`}
-                        />
-                    ) : null}
+                    <div className={styles.icons}>
+                        <button
+                            type="button"
+                            onMouseDown={() => {
+                                wasClicked.current = true;
+                            }}
+                            {...getToggleButtonProps()}
+                            aria-label="toggle menu"
+                            disabled={disabled}
+                        >
+                            <IconCaretDown size={16} className={styles.caret} />
+                        </button>
+                        {status === 'success' ? (
+                            <IconCheckMark
+                                size={16}
+                                className={styles.iconSuccess}
+                                data-test-id={`${dataTestId}-success-icon`}
+                            />
+                        ) : null}
+                        {status === 'error' ? (
+                            <IconExclamationMarkTriangle
+                                size={16}
+                                className={styles.iconError}
+                                data-test-id={`${dataTestId}-error-icon`}
+                            />
+                        ) : null}
+                    </div>
                 </div>
             </RadixPopover.Anchor>
 
