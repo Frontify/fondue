@@ -27,7 +27,7 @@ export const getRecursiveOptionValues = (children: ReactNode): { value: string; 
     return values;
 };
 
-export const useSelectData = (children: ReactNode) => {
+export const useSelectData = (children: ReactNode, allowCustomValue = false) => {
     const [filterText, setFilterText] = useState('');
     const { inputSlots, menuSlots, itemValues, clearButton } = useMemo(() => {
         const inputSlots: ReactNode[] = [];
@@ -69,26 +69,59 @@ export const useSelectData = (children: ReactNode) => {
         }
     }, [children]);
 
-    const filteredItems = useMemo(
-        () =>
-            itemValues.filter(
-                (item) => filterText === '' || item.label.toLowerCase().includes(filterText.toLowerCase()),
-            ),
-        [itemValues, filterText],
-    );
-
     const getItemByValue = useCallback(
         (value?: string) => (value ? itemValues.find((item) => item.value === value) : undefined),
         [itemValues],
     );
 
+    const valueExists = useMemo(
+        () => itemValues.some((item) => item.label.toLocaleLowerCase() === filterText.toLocaleLowerCase()),
+        [itemValues, filterText],
+    );
+
+    const shouldAddCustomItem = useMemo(
+        () => allowCustomValue && filterText !== '' && !valueExists,
+        [allowCustomValue, filterText, valueExists],
+    );
+
+    const items = useMemo(() => {
+        const filteredItems = itemValues.filter(
+            (item) => filterText === '' || item.label.toLowerCase().includes(filterText.toLowerCase()),
+        );
+
+        if (shouldAddCustomItem) {
+            return [...filteredItems, { label: filterText, value: filterText }];
+        }
+
+        return filteredItems;
+    }, [itemValues, shouldAddCustomItem, filterText]);
+
+    const allMenuSlots = useMemo(() => {
+        if (shouldAddCustomItem) {
+            const customItem = (
+                <ForwardedRefSelectItem key={filterText} value={filterText} data-test-id="custom-item">
+                    {filterText}
+                </ForwardedRefSelectItem>
+            );
+
+            if (Array.isArray(menuSlots)) {
+                return [...menuSlots, customItem];
+            }
+
+            return [menuSlots, customItem];
+        }
+
+        return menuSlots;
+    }, [shouldAddCustomItem, filterText, menuSlots]);
+
     return {
         inputSlots,
-        menuSlots,
+        menuSlots: allMenuSlots,
         clearButton,
-        setFilterText,
         filterText,
-        filteredItems,
+        items,
+        valueExists,
+        setFilterText,
         getItemByValue,
     };
 };

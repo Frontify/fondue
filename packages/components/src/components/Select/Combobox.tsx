@@ -8,7 +8,6 @@ import { forwardRef, useMemo, useRef, useState, type ForwardedRef, type ReactNod
 
 import { SelectMenu } from './SelectMenu';
 import styles from './styles/select.module.scss';
-import { useAddCustomValueSupport } from './useAddCustomValueSupport';
 import { useSelectData } from './useSelectData';
 
 export type ComboboxProps = {
@@ -65,10 +64,10 @@ export const SelectCombobox = (
     }: ComboboxProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
-    const { inputSlots, menuSlots, filteredItems, filterText, clearButton, getItemByValue, setFilterText } =
-        useSelectData(children);
-
-    const [items, setItems] = useState(filteredItems);
+    const { inputSlots, menuSlots, items, filterText, clearButton, getItemByValue, setFilterText } = useSelectData(
+        children,
+        allowCustomValue,
+    );
 
     const defaultItem = getItemByValue(defaultValue);
     const [activeItem, setActiveItem] = useState(getItemByValue(value));
@@ -84,27 +83,18 @@ export const SelectCombobox = (
         inputValue,
     } = useCombobox({
         items,
+        selectedItem: activeItem,
+        defaultSelectedItem: defaultItem,
+        defaultHighlightedIndex: 0,
         onSelectedItemChange: ({ selectedItem }) => {
             setActiveItem(selectedItem);
             onSelect && onSelect(selectedItem.value);
         },
-        selectedItem: activeItem,
         onInputValueChange: ({ inputValue }) => {
             setFilterText(inputValue);
-            setActiveItem(undefined);
         },
-        defaultSelectedItem: defaultItem,
-        defaultHighlightedIndex: 0,
         itemToString: (item) => (item ? item.label : ''),
     });
-
-    const { valueExists, allMenuSlots } = useAddCustomValueSupport(
-        filteredItems,
-        menuSlots,
-        inputValue,
-        allowCustomValue,
-        setItems,
-    );
 
     const wasClicked = useRef(false);
 
@@ -134,7 +124,7 @@ export const SelectCombobox = (
                         onBlur={(blurEvent) => {
                             blurEvent.target.dataset.showFocusRing = 'false';
                             wasClicked.current = false;
-                            if (!valueExists && !activeItem) {
+                            if (!items.some((item) => item.value === activeItem?.value)) {
                                 reset();
                             }
                             if (getInputProps().onBlur) {
@@ -178,7 +168,7 @@ export const SelectCombobox = (
                 getMenuProps={getMenuProps}
                 getItemProps={getItemProps}
             >
-                {allMenuSlots}
+                {menuSlots}
             </SelectMenu>
         </RadixPopover.Root>
     );

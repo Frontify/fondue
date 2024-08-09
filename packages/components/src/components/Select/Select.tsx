@@ -66,14 +66,14 @@ export const SelectInput = (
     }: SelectComponentProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
-    const { inputSlots, menuSlots, filteredItems, clearButton, getItemByValue } = useSelectData(children);
+    const { inputSlots, menuSlots, items, clearButton, getItemByValue } = useSelectData(children);
 
     const defaultItem = getItemByValue(defaultValue);
     const activeItem = getItemByValue(value);
 
     const { getToggleButtonProps, getMenuProps, getItemProps, reset, selectedItem, isOpen, highlightedIndex } =
         useSelect({
-            items: filteredItems,
+            items,
             defaultSelectedItem: defaultItem,
             selectedItem: activeItem,
             onSelectedItemChange: ({ selectedItem }) => {
