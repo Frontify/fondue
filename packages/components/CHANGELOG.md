@@ -1,5 +1,27 @@
 # @frontify/fondue-components
 
+## 3.1.0
+
+### Minor Changes
+
+-   [#1995](https://github.com/Frontify/fondue/pull/1995) [`58981d6`](https://github.com/Frontify/fondue/commit/58981d66a23f4fe584daf2e9ddf3762e7dab610e) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - feat: improve outline styles
+
+### Patch Changes
+
+-   [#1988](https://github.com/Frontify/fondue/pull/1988) [`5afbdb9`](https://github.com/Frontify/fondue/commit/5afbdb97d5c601663bf338cd6ea09e367a41ec4f) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix: select not scrollable when overflowing viewport height
+
+-   [#1996](https://github.com/Frontify/fondue/pull/1996) [`5be7b57`](https://github.com/Frontify/fondue/commit/5be7b573c8d36167deacc3d2aa6695363fc13dfd) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix: select & dropdown item flicker
+
+-   [#1998](https://github.com/Frontify/fondue/pull/1998) [`285115d`](https://github.com/Frontify/fondue/commit/285115d42a388117edfa10c809d97e4336c83aa6) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - feat: add migration guide to `Dropdown` component
+
+-   [#2004](https://github.com/Frontify/fondue/pull/2004) [`ff226c3`](https://github.com/Frontify/fondue/commit/ff226c3960111629afa0ad3f5c446d1673958ebd) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: add missing `side` property to `Dropdown`
+
+-   [#1956](https://github.com/Frontify/fondue/pull/1956) [`d5998fe`](https://github.com/Frontify/fondue/commit/d5998fe72001114a1a412d3cf660cc514e944908) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - feat: add `slider` component
+
+-   Updated dependencies [[`0c43841`](https://github.com/Frontify/fondue/commit/0c43841f4d3244fccdf4beb5cd5daa16841f61a8)]:
+    -   @frontify/fondue-tokens@3.5.5
+    -   @frontify/fondue-icons@0.4.0
+
 ## 3.0.3
 
 ### Patch Changes
