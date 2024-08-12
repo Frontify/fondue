@@ -688,7 +688,7 @@ return(
     </Select>
 )
 
-// Or, for a simpler setup you can also ignore the slots and keep the component in an uncontrolled state:
+// Or, for a simpler setup you don't have to use the slots:
 
 <Select>
     <Select.Item value="item-1">Item 2</Select.Item>
