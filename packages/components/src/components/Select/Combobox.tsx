@@ -145,6 +145,9 @@ export const SelectCombobox = (
             <RadixPopover.Anchor asChild>
                 <div ref={forwardedRef} className={styles.root} data-error={valueInvalid}>
                     <input
+                        {...getInputProps({
+                            'aria-label': ariaLabel,
+                        })}
                         data-test-id={dataTestId}
                         placeholder={placeholder}
                         className={styles.input}
@@ -159,9 +162,6 @@ export const SelectCombobox = (
                             }
                         }}
                         onBlur={onBlurHandler}
-                        {...getInputProps({
-                            'aria-label': ariaLabel,
-                        })}
                     />
 
                     {inputSlots}
@@ -180,13 +180,13 @@ export const SelectCombobox = (
                     )}
 
                     <button
+                        {...getToggleButtonProps()}
                         type="button"
                         aria-label="toggle menu"
                         disabled={disabled}
                         onMouseDown={() => {
                             wasClicked.current = true;
                         }}
-                        {...getToggleButtonProps()}
                     >
                         <IconCaretDown size={16} className={styles.caret} />
                     </button>

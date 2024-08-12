@@ -391,7 +391,7 @@ test('should clear input when typed value is not selected and not in options', a
 
     const nonExistentValue = 'Non-existent Option';
     await page.keyboard.type(nonExistentValue);
-    await page.keyboard.press('Tab'); // Simulate moving focus away from the input
+    await page.keyboard.press('Tab');
 
     await expect(component.getByTestId(SELECT_TEST_ID)).toHaveValue('');
     await expect(page.getByPlaceholder(PLACEHOLDER_TEXT)).toBeVisible();
