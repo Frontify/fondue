@@ -3,26 +3,23 @@
 import { type ReactNode, useMemo } from 'react';
 
 import { ForwardedRefSelectItem } from './SelectItem';
-import { useSelectData } from './useSelectData';
+import { type SelectItemType } from './useSelectData';
 
 /**
  * Hook to manage combobox data and filtering and add custom value support.
  *
- * @param {ReactNode} children - The React children to process, typically SelectItem components.
+ * @param {SelectItemType[]} initialItems - The initial list of selectable items.
+ * @param {ReactNode[]} initialMenuSlots - The initial list of menu slot components.
+ * @param {string} filterText - The current filter text input by the user.
  * @param {boolean} allowCustomValue - Whether to allow custom values not in the initial items list.
- * @returns {Object} An object containing the slots, items, filter text, clear button, and other combobox data.
+ * @returns {ComboboxData} An object containing filtered items, menu slots, and value existence information.
  */
-export const useComboboxData = (children: ReactNode, allowCustomValue: boolean) => {
-    const {
-        menuSlots: initialMenuSlots,
-        items: initialItems,
-        inputSlots,
-        filterText,
-        clearButton,
-        getItemByValue,
-        setFilterText,
-    } = useSelectData(children);
-
+export const useComboboxData = (
+    initialItems: SelectItemType[],
+    initialMenuSlots: ReactNode[],
+    filterText: string,
+    allowCustomValue: boolean,
+) => {
     const { valueExists, existingValueItem } = useMemo(() => {
         const existingValueItem = initialItems.find(
             (item) => item.label.toLocaleLowerCase() === filterText.toLocaleLowerCase(),
@@ -65,14 +62,9 @@ export const useComboboxData = (children: ReactNode, allowCustomValue: boolean) 
     }, [initialItems, shouldAddCustomItem, filterText]);
 
     return {
-        inputSlots,
-        filterText,
-        clearButton,
         items,
         menuSlots,
         valueExists,
         existingValueItem,
-        getItemByValue,
-        setFilterText,
     };
 };
