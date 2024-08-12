@@ -249,3 +249,24 @@ test('should have max height equal to available space', async ({ mount, page }) 
     const actualMaxHeight = await dialog.evaluate((node) => parseFloat(window.getComputedStyle(node).maxHeight));
     expect(actualMaxHeight).toBe(expectedMaxHeight);
 });
+
+test('should render the dropdown content to the right side of the trigger', async ({ mount, page }) => {
+    await mount(
+        <Dropdown.Root open>
+            <Dropdown.Trigger>
+                <Button data-test-id={DROPDOWN_TRIGGER_TEST_ID}>Trigger</Button>
+            </Dropdown.Trigger>
+            <Dropdown.Content side="right" data-test-id={DROPDOWN_CONTENT_TEST_ID}>
+                <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
+            </Dropdown.Content>
+        </Dropdown.Root>,
+    );
+
+    const dropdownContentElement = page.getByTestId(DROPDOWN_CONTENT_TEST_ID);
+    const boundingBox = await dropdownContentElement.boundingBox();
+    const triggerElement = page.getByTestId(DROPDOWN_TRIGGER_TEST_ID);
+    const triggerBoundingBox = await triggerElement.boundingBox();
+
+    expect(boundingBox?.x).toBeGreaterThan(triggerBoundingBox?.x || -1);
+    expect(boundingBox?.y).toBe(triggerBoundingBox?.y || -1);
+});
