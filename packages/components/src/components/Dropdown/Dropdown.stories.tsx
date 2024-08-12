@@ -264,7 +264,16 @@ export const RightSide: Story = {
             <Dropdown.Trigger>
                 <Button>Trigger</Button>
             </Dropdown.Trigger>
-            <Dropdown.Content side="right">
+            <Dropdown.Content side="left">
+                <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}}>Item 2</Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}}>Item 3</Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}}>Item 2</Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}}>Item 3</Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}}>Item 2</Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}}>Item 3</Dropdown.Item>
                 <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
                 <Dropdown.Item onSelect={() => {}}>Item 2</Dropdown.Item>
                 <Dropdown.Item onSelect={() => {}}>Item 3</Dropdown.Item>
