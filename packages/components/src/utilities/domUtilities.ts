@@ -22,13 +22,30 @@ export function setMaxHeightToAvailableSpace(dialog: HTMLElement) {
         throw new Error('Window object not found, this method should be used in a browser environment');
     }
 
+    const getOverflowParent = (element: HTMLElement) => {
+        let parent = element.parentElement;
+        while (parent && parent !== document.body) {
+            const style = window.getComputedStyle(parent);
+            if (/(auto|hidden)/.test(style.overflow + style.overflowY)) {
+                return parent;
+            }
+            parent = parent.parentElement;
+        }
+        return parent;
+    };
+
     dialog.style.maxHeight = '';
 
+    const overflowParent = getOverflowParent(dialog);
+
+    const availableHeight = overflowParent ? overflowParent.clientHeight : window.innerHeight;
+
     const { top, bottom } = dialog.getBoundingClientRect();
+
     if (top - MAX_HEIGHT_MARGIN < 0) {
         // if the dialog is overflowing to the top
         dialog.style.maxHeight = `${bottom - MAX_HEIGHT_MARGIN}px`;
-    } else if (bottom + MAX_HEIGHT_MARGIN > window.innerHeight) {
+    } else if (bottom + MAX_HEIGHT_MARGIN > availableHeight) {
         // if the dialog is overflowing to the bottom
         dialog.style.maxHeight = `${window.innerHeight - top - MAX_HEIGHT_MARGIN}px`;
     }

@@ -10,6 +10,7 @@ import { SelectCombobox } from './Combobox';
 import { Select, SelectInput } from './Select';
 import { SelectItem, SelectItemGroup } from './SelectItem';
 import { SelectSlot } from './SelectSlot';
+import { Dialog } from '../Dialog/Dialog';
 
 type Story = StoryObj<typeof meta>;
 const meta: Meta<typeof SelectInput> = {
@@ -284,6 +285,71 @@ export const Overflow: Story = {
             defaultViewport: 'mobile',
         },
     },
+    render: (args) => {
+        return (
+            <>
+                <Select {...args}>
+                    <Select.Item value="test1">Test1</Select.Item>
+                    <Select.Item value="test2">Test2</Select.Item>
+                    <Select.Item value="test3">Test3</Select.Item>
+                    <Select.Item value="test4">Test4</Select.Item>
+                    <Select.Item value="test5">Test5</Select.Item>
+                    <Select.Item value="test6">Test6</Select.Item>
+                    <Select.Item value="test7">Test7</Select.Item>
+                </Select>
+                <Select {...args}>
+                    <Select.Item value="test1">Test1</Select.Item>
+                    <Select.Item value="test2">Test2</Select.Item>
+                    <Select.Item value="test3">Test3</Select.Item>
+                    <Select.Item value="test4">Test4</Select.Item>
+                    <Select.Item value="test5">Test5</Select.Item>
+                    <Select.Item value="test6">Test6</Select.Item>
+                    <Select.Item value="test7">Test7</Select.Item>
+                </Select>
+                <Select {...args}>
+                    <Select.Item value="test1">Test1</Select.Item>
+                    <Select.Item value="test2">Test2</Select.Item>
+                    <Select.Item value="test3">Test3</Select.Item>
+                    <Select.Item value="test4">Test4</Select.Item>
+                    <Select.Item value="test5">Test5</Select.Item>
+                    <Select.Item value="test6">Test6</Select.Item>
+                    <Select.Item value="test7">Test7</Select.Item>
+                </Select>
+                <Select {...args}>
+                    <Select.Item value="test1">Test1</Select.Item>
+                    <Select.Item value="test2">Test2</Select.Item>
+                    <Select.Item value="test3">Test3</Select.Item>
+                    <Select.Item value="test4">Test4</Select.Item>
+                    <Select.Item value="test5">Test5</Select.Item>
+                    <Select.Item value="test6">Test6</Select.Item>
+                    <Select.Item value="test7">Test7</Select.Item>
+                </Select>
+            </>
+        );
+    },
+};
+
+export const OverflowModal: Story = {
+    decorators: [
+        (Story) => (
+            <Dialog.Root>
+                <Dialog.Trigger>
+                    <Button>Open dialog</Button>
+                </Dialog.Trigger>
+                <Dialog.Content>
+                    <Dialog.Header>
+                        <Dialog.Title>Header</Dialog.Title>
+                    </Dialog.Header>
+                    <Dialog.Body>
+                        <div>
+                            <Story />
+                        </div>
+                    </Dialog.Body>
+                </Dialog.Content>
+            </Dialog.Root>
+        ),
+    ],
+
     render: (args) => {
         return (
             <>
