@@ -3,23 +3,26 @@
 import { type ReactNode, useMemo } from 'react';
 
 import { ForwardedRefSelectItem } from './SelectItem';
-import { type SelectItemType } from './useSelectData';
+import { useSelectData } from './useSelectData';
 
 /**
  * Hook to manage combobox data and filtering and add custom value support.
  *
- * @param {SelectItemType[]} initialItems - The initial list of selectable items.
- * @param {ReactNode[]} initialMenuSlots - The initial list of menu slot components.
- * @param {string} filterText - The current filter text input by the user.
+ * @param {ReactNode} children - The React children to process, typically SelectItem components.
  * @param {boolean} allowCustomValue - Whether to allow custom values not in the initial items list.
- * @returns {ComboboxData} An object containing filtered items, menu slots, and value existence information.
+ * @returns {Object} An object containing the slots, items, filter text, clear button, and other combobox data.
  */
-export const useComboboxData = (
-    initialItems: SelectItemType[],
-    initialMenuSlots: ReactNode[],
-    filterText: string,
-    allowCustomValue: boolean,
-) => {
+export const useComboboxData = (children: ReactNode, allowCustomValue: boolean) => {
+    const {
+        menuSlots: initialMenuSlots,
+        items: initialItems,
+        inputSlots,
+        filterText,
+        clearButton,
+        getItemByValue,
+        setFilterText,
+    } = useSelectData(children);
+
     const { valueExists, existingValueItem } = useMemo(() => {
         const existingValueItem = initialItems.find(
             (item) => item.label.toLocaleLowerCase() === filterText.toLocaleLowerCase(),
@@ -62,9 +65,14 @@ export const useComboboxData = (
     }, [initialItems, shouldAddCustomItem, filterText]);
 
     return {
+        inputSlots,
+        filterText,
+        clearButton,
         items,
         menuSlots,
         valueExists,
         existingValueItem,
+        getItemByValue,
+        setFilterText,
     };
 };

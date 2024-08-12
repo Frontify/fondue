@@ -9,7 +9,6 @@ import { type FocusEvent, forwardRef, useRef, type ForwardedRef, type ReactNode,
 import { SelectMenu } from './SelectMenu';
 import styles from './styles/select.module.scss';
 import { useComboboxData } from './useComboboxData';
-import { useSelectData } from './useSelectData';
 
 export type ComboboxProps = {
     /**
@@ -67,20 +66,15 @@ export const SelectCombobox = (
 ) => {
     const {
         inputSlots,
-        menuSlots: initialMenuSlots,
-        items: initialItems,
+        menuSlots,
+        items,
         filterText,
         clearButton,
+        valueExists,
+        existingValueItem,
         getItemByValue,
         setFilterText,
-    } = useSelectData(children);
-
-    const { items, menuSlots, valueExists, existingValueItem } = useComboboxData(
-        initialItems,
-        initialMenuSlots,
-        filterText,
-        allowCustomValue,
-    );
+    } = useComboboxData(children, allowCustomValue);
 
     const {
         isOpen,
