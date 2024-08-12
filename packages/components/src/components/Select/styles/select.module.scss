@@ -28,7 +28,7 @@
         border-color: var(--line-color-x-strong);
     }
 
-    &:has(:focus-visible) {
+    &[aria-expanded='false']:focus {
         border-color: var(--line-color-xx-strong);
     }
 
@@ -196,7 +196,7 @@
     border-radius: var(--radius);
     margin-top: sizeToken(2);
     background-color: var(--base-color);
-    border: var(--line-width) solid var(--line-color-strong);
+    border: var(--line-width) solid var(--line-color-xx-strong);
     width: var(--radix-popover-trigger-width);
     overflow: auto;
     padding: sizeToken(2) 0;
