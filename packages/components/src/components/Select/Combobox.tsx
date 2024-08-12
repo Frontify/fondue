@@ -149,9 +149,6 @@ export const SelectCombobox = (
                         placeholder={placeholder}
                         className={styles.input}
                         disabled={disabled}
-                        {...getInputProps({
-                            'aria-label': ariaLabel,
-                        })}
                         onMouseDown={(mouseEvent) => {
                             wasClicked.current = true;
                             mouseEvent.currentTarget.dataset.showFocusRing = 'false';
@@ -162,6 +159,9 @@ export const SelectCombobox = (
                             }
                         }}
                         onBlur={onBlurHandler}
+                        {...getInputProps({
+                            'aria-label': ariaLabel,
+                        })}
                     />
 
                     {inputSlots}
@@ -183,10 +183,10 @@ export const SelectCombobox = (
                         type="button"
                         aria-label="toggle menu"
                         disabled={disabled}
-                        {...getToggleButtonProps()}
                         onMouseDown={() => {
                             wasClicked.current = true;
                         }}
+                        {...getToggleButtonProps()}
                     >
                         <IconCaretDown size={16} className={styles.caret} />
                     </button>
