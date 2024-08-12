@@ -51,7 +51,7 @@ export const getRecursiveOptionValues = (children: ReactNode): SelectItemType[] 
 export const useSelectData = (children: ReactNode) => {
     const [filterText, setFilterText] = useState('');
 
-    const { inputSlots, menuSlots, clearButton } = useMemo(() => {
+    const { itemValues, inputSlots, menuSlots, clearButton } = useMemo(() => {
         const inputSlots: ReactNode[] = [];
         const menuSlots: ReactNode[] = [];
 
@@ -81,14 +81,15 @@ export const useSelectData = (children: ReactNode) => {
             menuSlots.push(children);
         }
 
+        const itemValues = getRecursiveOptionValues(menuSlots);
+
         return {
+            itemValues,
             inputSlots,
             menuSlots,
             clearButton,
         };
     }, [children]);
-
-    const itemValues = useMemo(() => getRecursiveOptionValues(menuSlots), [menuSlots]);
 
     const getItemByValue = useCallback(
         (value?: string) => (value ? itemValues.find((item) => item.value === value) : undefined),
