@@ -100,20 +100,10 @@ export const SelectCombobox = (
         [inputValue, items],
     );
 
-    const localStatus = useMemo(() => {
-        if (status === 'error' || valueInvalid) {
-            return 'error';
-        }
-        if (status === 'success') {
-            return 'success';
-        }
-        return 'neutral';
-    }, [status, valueInvalid]);
-
     return (
         <RadixPopover.Root open={isOpen}>
             <RadixPopover.Anchor asChild>
-                <div ref={forwardedRef} className={styles.root} data-status={localStatus}>
+                <div ref={forwardedRef} className={styles.root} data-status={valueInvalid ? 'error' : status}>
                     <input
                         onMouseDown={(mouseEvent) => {
                             wasClicked.current = true;
@@ -171,7 +161,7 @@ export const SelectCombobox = (
                                 data-test-id={`${dataTestId}-success-icon`}
                             />
                         ) : null}
-                        {status === 'error' ? (
+                        {valueInvalid || status === 'error' ? (
                             <IconExclamationMarkTriangle
                                 size={16}
                                 className={styles.iconError}
