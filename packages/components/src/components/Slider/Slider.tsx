@@ -103,14 +103,3 @@ const SliderComponent = (
 
 export const Slider = forwardRef<HTMLButtonElement, SliderProps>(SliderComponent);
 Slider.displayName = 'Slider';
-
-/*
-
-default -> none OKAY
-hover -> shadow OKAY
-dragging (active + hover) -> big gray shadow OKAY
-
-dropped (focus-visible) -> small gray shadow
-keyboard focus -> blue outline
-
-*/
