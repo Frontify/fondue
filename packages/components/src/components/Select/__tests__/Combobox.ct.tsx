@@ -6,7 +6,7 @@ import * as sinon from 'sinon';
 
 import { Select } from '../Select';
 
-const SELECT_TEST_ID = 'test-dropdown';
+const SELECT_TEST_ID = 'test-combobox';
 const GROUP_TEST_ID = 'test-group';
 const ITEM_TEST_ID1 = 'test-item1';
 const ITEM_TEST_ID2 = 'test-item2';
@@ -306,4 +306,29 @@ test('should render custom clear slot', async ({ mount, page }) => {
     await expect(component).toBeVisible();
     await expect(page.getByTestId(SLOT_CLEAR_TEST_ID)).toBeVisible();
     await expect(component).toContainText('Clear Slot');
+});
+
+test('should clear input when typed value is not selected', async ({ mount, page }) => {
+    const component = await mount(
+        <Select.Combobox aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
+            <Select.Slot name="menu">
+                <Select.Item data-test-id={ITEM_TEST_ID1} value="test1">
+                    {ITEM_TEXT1}
+                </Select.Item>
+                <Select.Item data-test-id={ITEM_TEST_ID2} value="test2">
+                    {ITEM_TEXT2}
+                </Select.Item>
+            </Select.Slot>
+        </Select.Combobox>,
+    );
+
+    await expect(component).toBeVisible();
+    await component.click();
+
+    const nonExistentValue = 'test1';
+    await page.keyboard.type(nonExistentValue);
+    await page.keyboard.press('Tab');
+
+    await expect(component.getByTestId(SELECT_TEST_ID)).toHaveValue('');
+    await expect(page.getByPlaceholder(PLACEHOLDER_TEXT)).toBeVisible();
 });
