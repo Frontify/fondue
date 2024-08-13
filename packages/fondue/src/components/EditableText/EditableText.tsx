@@ -161,46 +161,21 @@ export const EditableText = ({
             className={merge(['tw-relative tw-h-full', options?.removeBoxPadding === true ? '' : 'tw-p-2'])}
         >
             {editableState === EditableMode.INPUT ? (
-                <div
-                    className={merge([
-                        'tw-flex tw-items-center',
-                        options?.isSlimInputField === true
-                            ? '-tw-translate-x-[0.315rem] -tw-translate-y-[0.07rem]'
-                            : '-tw-translate-x-[0.81rem] -tw-translate-y-[0.56rem]',
-                    ])}
-                >
-                    <div
-                        data-test-id="editable-input"
-                        className={merge(['tw-relative', isOverflowing && 'tw-w-full tw-flex tw-items-center'])}
-                    >
-                        <input
-                            ref={inputRef}
-                            type="text"
-                            className={merge([
-                                options?.isSlimInputField === true
-                                    ? 'focus-visible:tw-outline-none'
-                                    : FOCUS_VISIBLE_STYLE,
-                                'tw-absolute tw-w-full tw-text-text tw-border tw-rounded tw-bg-base tw-border-solid',
-                                options?.isSlimInputField === true ? 'tw-py-0 tw-px-1' : 'tw-px-3 tw-py-2',
-                            ])}
-                            style={inputStyling}
-                            value={inputValue}
-                            onChange={handleInputChange}
-                            onKeyDown={handleKeyDown}
-                            onBlur={handleBlur}
-                        />
-                        <span
-                            aria-hidden="true"
-                            className={merge([
-                                'tw-rounded tw-px-4 tw-py-2 tw-bg-base tw-truncate',
-                                options?.isSlimInputField === true && 'tw-py-0 tw-px-2',
-                                isOverflowing && 'tw-w-0',
-                            ])}
-                            style={inputStyling}
-                        >
-                            {inputValue}
-                        </span>
-                    </div>
+                <div data-test-id="editable-input" className={merge(['tw-relative', isOverflowing && 'tw-w-full'])}>
+                    <input
+                        ref={inputRef}
+                        type="text"
+                        className={merge([
+                            options?.isSlimInputField === true ? 'focus-visible:tw-outline-none' : FOCUS_VISIBLE_STYLE,
+                            'tw-mw-full tw-text-text tw-border tw-rounded tw-bg-base tw-border-solid',
+                            options?.isSlimInputField === true ? 'tw-py-0 tw-px-1' : 'tw-px-3 tw-py-2',
+                        ])}
+                        style={inputStyling}
+                        value={inputValue}
+                        onChange={handleInputChange}
+                        onKeyDown={handleKeyDown}
+                        onBlur={handleBlur}
+                    />
                 </div>
             ) : null}
             <button
