@@ -96,7 +96,7 @@ export const SelectCombobox = (
     const wasClicked = useRef(false);
 
     const valueInvalid = useMemo(
-        () => !items.find((item) => item.label.toLowerCase().includes(inputValue.toLowerCase())),
+        () => !items.some((item) => item.label.toLowerCase().includes(inputValue.toLowerCase())),
         [inputValue, items],
     );
 
