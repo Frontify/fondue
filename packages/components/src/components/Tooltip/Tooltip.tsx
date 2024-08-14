@@ -30,7 +30,7 @@ export type TooltipContentProps = {
      */
     padding?: 'spacious' | 'compact';
     /**
-     * Defines the preffered side of the tooltip. It will not be respected if there are collisions with the viewport.
+     * Defines the preferred side of the tooltip. It will not be respected if there are collisions with the viewport.
      */
     side?: 'top' | 'right' | 'bottom' | 'left';
     maxWidth?: string;

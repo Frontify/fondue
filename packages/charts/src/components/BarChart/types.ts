@@ -9,6 +9,7 @@ type BarChartDataPointBase = {
     label: string;
     value: number | null;
     description?: string;
+    valueContext?: string;
 };
 
 export type BarChartDataPoint<DataPointDetails extends Record<string, any> | void = void> =
@@ -38,7 +39,6 @@ export type BarChartProps<DataPointDetails extends Record<string, any> | void = 
     legendPosition?: LegendPosition;
     valueFormatter?: ValueFormatter;
     labelFormatter?: LabelFormatter;
-    valueContextBySeries?: string[];
     onBarClick?: (e: BarChartClickHandlerParams<DataPointDetails>) => void;
 };
 
