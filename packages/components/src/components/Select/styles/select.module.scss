@@ -28,7 +28,7 @@
         border-color: var(--line-color-x-strong);
     }
 
-    &[aria-expanded='false']:focus {
+    &[aria-expanded='false'][data-show-focus-ring='false']:focus {
         border-color: var(--line-color-xx-strong);
     }
 
