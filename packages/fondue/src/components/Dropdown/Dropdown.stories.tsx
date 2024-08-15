@@ -12,6 +12,9 @@ import { Validation } from '@utilities/validation';
 
 import { Dropdown, DropdownAlignment, DropdownPosition, type DropdownProps, DropdownSize } from './Dropdown';
 
+/**
+ ### This component is deprecated, please use the [new Dropdown component](/docs/current_components-dropdown--documentation) instead.
+ */
 export default {
     title: 'Components/Dropdown',
     component: Dropdown,

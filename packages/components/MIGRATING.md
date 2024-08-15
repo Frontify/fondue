@@ -34,18 +34,21 @@ This document describes the changes that you need to make to your code to migrat
         -   [Segmented Control](#segmented-control)
             -   [Old](#old-8)
             -   [New](#new-8)
-        -   [Slider](#slider)
+        -   [Select](#select)
             -   [Old](#old-9)
             -   [New](#new-9)
-        -   [Switch](#switch)
+        -   [Slider](#slider)
             -   [Old](#old-10)
             -   [New](#new-10)
-        -   [Text Input](#text-input)
+        -   [Switch](#switch)
             -   [Old](#old-11)
             -   [New](#new-11)
-        -   [Tooltip](#tooltip)
+        -   [Text Input](#text-input)
             -   [Old](#old-12)
             -   [New](#new-12)
+        -   [Tooltip](#tooltip)
+            -   [Old](#old-13)
+            -   [New](#new-13)
 
 ## Components
 
@@ -149,7 +152,6 @@ Changes:
 
 ```tsx
 <ColorPicker
-    {...args}
     currentColor={selectedColor}
     currentFormat={currentFormat}
     setFormat={setCurrentFormat}
@@ -255,7 +257,7 @@ return (
         Dialog Trigger
     </Button>
 
-    <Dialog {...args} anchor={triggerRef} open={isOpen} handleClose={() => setIsOpen(false)}>
+    <Dialog anchor={triggerRef} open={isOpen} handleClose={() => setIsOpen(false)}>
         <DialogHeader>Header</DialogHeader>
         <DialogBody padding="spacious">
             <p>
@@ -286,7 +288,7 @@ return (
             Dialog Trigger
         </Button>
     </Dialog.Trigger>
-    <Dialog.Content {...args}>
+    <Dialog.Content>
         <Dialog.SideContent>
             <div className="tw-bg-box-positive-strong tw-h-full tw-w-full"></div>
         </Dialog.SideContent>
@@ -388,7 +390,7 @@ The `Dropdown` is no longer meant to be used a `Select` component so many featur
 #### New
 
 ```tsx
-<Dropdown.Root onOpenChange={() => {}} open={open} {...args}>
+<Dropdown.Root onOpenChange={() => {}} open={open}>
     <Dropdown.Trigger>
         <Button>Trigger</Button>
     </Dropdown.Trigger>
@@ -476,7 +478,7 @@ return (
         <Button icon={<IconIcon />} onClick={() => setIsOpen(!isOpen)}>
             Trigger
         </Button>
-        <InlineDialog {...args} anchor={triggerRef} open={isOpen} handleClose={() => setIsOpen(false)}>
+        <InlineDialog anchor={triggerRef} open={isOpen} handleClose={() => setIsOpen(false)}>
             <DialogBody padding="comfortable">
                 <Box className="tw-text-text">
                     <TextExample />
@@ -502,7 +504,7 @@ return (
     </Flyout.Trigger>
     <Flyout.Content side="right">
         <Flyout.Header showCloseButton>Header</Flyout.Header>
-        <Flyout.Body {...args} />
+        <Flyout.Body />
         <Flyout.Footer>
             <Button emphasis="default">Cancel</Button>
             <Button>Submit</Button>
@@ -606,6 +608,94 @@ Changes:
         <IconIcon />
     </SegmentedControl.Item>
 </SegmentedControl.Root>
+```
+
+### Select
+
+Changes:
+
+-   This component replaces the old `Dropdown` component.
+-   `menuItems` array has been removed and replaced by `children` to follow the composition pattern.
+    -   `children` can have any kind of content (icons, text, etc.) and will be rendered as the content of the item.
+-   `activeItemId` has been replaced by `value`.
+-   `onChange` has been replaced by `onSelect`.
+-   `disabled` has been removed from individual items and moved to the `Root` component.
+    -   If you need to disable per item, you will need to conditionally render the item.
+
+#### Old
+
+```tsx
+const [active, setActive] = useState(args.activeItemId);
+useEffect(() => setActive(args.activeItemId), [args.activeItemId]);
+return (
+    <Dropdown activeItemId={active} onChange={(id) => setActive(id)} menuBlocks={[
+        {
+            id: 'block1',
+            ariaLabel: 'First section',
+            menuItems: [
+                {
+                    id: 1,
+                    title: 'Simple',
+                },
+                {
+                    id: 2,
+                    title: 'Item with icon',
+                    decorator: <IconMusicNote />,
+                    style: MenuItemStyle.Danger,
+                },
+                {
+                    id: 3,
+                    title: 'Item small',
+                    size: MenuItemContentSize.Small,
+                },
+            ],
+        },
+
+    ]}>
+)
+```
+
+#### New
+
+```tsx
+const [activeItem, setActiveItem] = useState('');
+
+return(
+    <Select
+        onSelect={(selectedItem) => {
+            setActiveItem(() => selectedItem);
+        }}
+        value={activeItem}
+    >
+        <Select.Slot name="left">
+            <IconIcon size={16} />
+        </Select.Slot>
+        <Select.Slot name="right">
+            <IconIcon size={16} />
+        </Select.Slot>
+        <Select.Slot name="menu">
+            <Select.Item value="simple">Simple</Select.Item>
+            <Select.Item value="item-with-icon">
+                <div className="tw-flex tw-items-center tw-gap-4">
+                    <IconMusicNote />
+                    <span>Item with icon</span>
+                </div>
+            </Select.Item>
+            <Select.Item value="small-item">
+                <span class="tw-text-sm">Small item</span>
+            </Select.Item>
+        </Select.Slot>
+    </Select>
+)
+
+// Or, for a simpler setup you don't have to use the slots:
+
+<Select>
+    <Select.Item value="item-1">Item 2</Select.Item>
+    <Select.Item value="item-2">Item 2</Select.Item>
+    <Select.Item value="item-3">Item 3</Select.Item>
+</Select>
+
 ```
 
 ## Slider
