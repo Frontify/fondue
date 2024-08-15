@@ -1,0 +1,193 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@import '../../../utilities/sizeToken.module.scss';
+@import '../../../utilities/transitions.module.scss';
+@import '../../../utilities/focusStyle.module.scss';
+
+.root {
+    position: relative;
+    display: inline-grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    align-items: stretch;
+    background-color: var(--base-color-alt);
+
+    min-width: max-content;
+    height: sizeToken(9);
+    font-family: var(--body-family-stack);
+    font-weight: 400;
+    text-align: center;
+
+    border: var(--line-width) solid var(--line-color-strong);
+    border-radius: var(--radius);
+
+    isolation: isolate;
+
+    &:disabled {
+        background-color: var(--base-color-alt);
+    }
+}
+
+.item {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    user-select: none;
+
+    // Apply border radius based on the index
+    &:first-child {
+        border-top-left-radius: calc(var(--radius) - var(--line-width));
+        border-bottom-left-radius: calc(var(--radius) - var(--line-width));
+    }
+    &:nth-last-child(2) {
+        border-top-right-radius: calc(var(--radius) - var(--line-width));
+        border-bottom-right-radius: calc(var(--radius) - var(--line-width));
+    }
+
+    // Focus styles for keyboard navigation, custom rounding applied to match the active indicator
+    &:focus-visible {
+        border-radius: calc(var(--radius) - var(--line-width));
+        outline: 2px solid var(--focus-ring-color);
+        outline-offset: 2px;
+    }
+}
+
+.itemLabel {
+    display: flex;
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+    border-radius: inherit;
+    padding-left: sizeToken(4);
+    padding-right: sizeToken(4);
+    gap: sizeToken(2);
+    font-size: var(--body-size-medium);
+    line-height: var(--body-size-medium-line-height);
+
+    // Prevent shrinking of icons
+    & svg {
+        flex-shrink: 0;
+    }
+
+    // Hover on unselected items but not when disabled
+    .item[data-state='off']:enabled &:hover {
+        background-color: #00005506;
+    }
+}
+
+.itemLabelActive {
+    @include transition-opacity;
+
+    display: inline-flex;
+    gap: sizeToken(2);
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    opacity: 0;
+    transition-timing-function: ease-in;
+
+    // Color the label based on the disabled state
+    .item:disabled & {
+        color: var(--box-disabled-color-inverse);
+    }
+    .item[data-state='on'] & {
+        opacity: 1;
+        transition-timing-function: ease-out;
+    }
+}
+
+.itemLabelInactive {
+    @include transition-opacity;
+
+    position: absolute;
+    display: inline-flex;
+    gap: sizeToken(2);
+    align-items: center;
+    justify-content: center;
+    font-weight: 400;
+    opacity: 1;
+    transition-timing-function: ease-out;
+
+    // Color the label based on the disabled state
+    .item:disabled & {
+        color: var(--box-disabled-color-inverse);
+    }
+    .item[data-state='on'] & {
+        opacity: 0;
+        transition-timing-function: ease-in;
+    }
+}
+
+.activeIndicator {
+    @include transition-transform;
+
+    display: none;
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: 0;
+    height: 100%;
+
+    pointer-events: none;
+
+    // Outline of active item
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: calc(var(--radius) - var(--line-width));
+        background-color: #fff;
+
+        box-shadow: 0 0 0 var(--line-width) var(--line-color-xx-strong);
+    }
+
+    // Show the active indicator when the state is on
+    .item[data-state='on'] ~ & {
+        display: block;
+    }
+
+    // Active indicator style when segmented control/item is disabled
+    .item:disabled ~ &::before {
+        background-color: var(--box-disabled-color);
+        box-shadow: 0 0 0 var(--line-width) var(--line-color-x-strong);
+    }
+
+    // Used to animate the active indicator horizontally
+    @for $index from 2 through 11 {
+        &:nth-child(#{$index}) {
+            width: calc(100% / calc(#{$index} - 1));
+        }
+    }
+    @for $index from 1 through 10 {
+        .item[data-state='on']:nth-child(#{$index}) ~ & {
+            transform: translateX(calc(100% * calc(#{$index} - 1)));
+        }
+    }
+}
+
+.separator {
+    @include transition-opacity;
+    // Make separators slow to disappear and fast to appear, in pair with the other `ease-in` transition
+    transition-timing-function: ease-out;
+
+    z-index: -1;
+    min-width: 1px;
+    width: 1px;
+    margin-left: -0.5px;
+    margin-right: -0.5px;
+    background-color: var(--line-color-strong);
+
+    // Hide the separator when the state is on to rely on the active item's border
+    .item:first-child &,
+    .item:focus-visible &,
+    .item[data-state='on'] &,
+    .item[data-state='on'] + * & {
+        opacity: 0;
+        transition-timing-function: ease-in;
+    }
+
+    // Remove transition is the control is focused
+    .item:focus-visible & {
+        transition-duration: 0s;
+    }
+}
