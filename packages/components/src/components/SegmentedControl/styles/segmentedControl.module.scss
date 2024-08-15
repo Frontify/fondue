@@ -4,20 +4,22 @@
 @import '../../../utilities/transitions.module.scss';
 @import '../../../utilities/focusStyle.module.scss';
 
+$radius-without-border: calc(var(--radius) - var(--line-width));
+
 .root {
     position: relative;
     display: inline-grid;
     grid-auto-flow: column;
     grid-auto-columns: 1fr;
     align-items: stretch;
-    background-color: var(--base-color-alt);
 
-    min-width: max-content;
-    height: sizeToken(9);
     font-family: var(--body-family-stack);
     font-weight: 400;
     text-align: center;
+    min-width: max-content;
+    height: sizeToken(9);
 
+    background-color: var(--base-color-alt);
     border: var(--line-width) solid var(--line-color-strong);
     border-radius: var(--radius);
 
@@ -36,17 +38,17 @@
 
     // Apply border radius based on the index
     &:first-child {
-        border-top-left-radius: calc(var(--radius) - var(--line-width));
-        border-bottom-left-radius: calc(var(--radius) - var(--line-width));
+        border-top-left-radius: $radius-without-border;
+        border-bottom-left-radius: $radius-without-border;
     }
     &:nth-last-child(2) {
-        border-top-right-radius: calc(var(--radius) - var(--line-width));
-        border-bottom-right-radius: calc(var(--radius) - var(--line-width));
+        border-top-right-radius: $radius-without-border;
+        border-bottom-right-radius: $radius-without-border;
     }
 
     // Focus styles for keyboard navigation, custom rounding applied to match the active indicator
     &:focus-visible {
-        border-radius: calc(var(--radius) - var(--line-width));
+        border-radius: $radius-without-border;
         outline: 2px solid var(--focus-ring-color);
         outline-offset: 2px;
     }
@@ -61,6 +63,7 @@
     padding-left: sizeToken(4);
     padding-right: sizeToken(4);
     gap: sizeToken(2);
+
     font-size: var(--body-size-medium);
     line-height: var(--body-size-medium-line-height);
 
@@ -77,14 +80,15 @@
 
 .itemLabelActive {
     @include transition-opacity;
+    transition-timing-function: ease-in;
 
     display: inline-flex;
     gap: sizeToken(2);
     align-items: center;
     justify-content: center;
-    font-weight: 500;
     opacity: 0;
-    transition-timing-function: ease-in;
+
+    font-weight: 500;
 
     // Color the label based on the disabled state
     .item:disabled & {
@@ -98,15 +102,16 @@
 
 .itemLabelInactive {
     @include transition-opacity;
+    transition-timing-function: ease-out;
 
     position: absolute;
     display: inline-flex;
     gap: sizeToken(2);
     align-items: center;
     justify-content: center;
-    font-weight: 400;
     opacity: 1;
-    transition-timing-function: ease-out;
+
+    font-weight: 400;
 
     // Color the label based on the disabled state
     .item:disabled & {
@@ -135,7 +140,7 @@
         content: '';
         position: absolute;
         inset: 0;
-        border-radius: calc(var(--radius) - var(--line-width));
+        border-radius: $radius-without-border;
         background-color: #fff;
 
         box-shadow: 0 0 0 var(--line-width) var(--line-color-xx-strong);
