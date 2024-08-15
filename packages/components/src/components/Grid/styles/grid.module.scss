@@ -14,7 +14,7 @@ $properties: (
     justify-items
 );
 
-.grid {
+.root {
     @include responsive-properties(join($properties, $layoutProperties));
 
     // Default values

@@ -35,7 +35,7 @@ export const ColorPickerInput = (
     const colorNameId = useId();
 
     return (
-        <div className={styles.input} {...props} ref={forwardedRef} data-test-id={dataTestId}>
+        <div className={styles.root} {...props} ref={forwardedRef} data-test-id={dataTestId}>
             {currentColor?.red !== undefined ? (
                 <div
                     aria-describedby={colorNameId}
