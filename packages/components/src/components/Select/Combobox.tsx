@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconCaretDown } from '@frontify/fondue-icons';
+import { IconCaretDown, IconCheckMark, IconExclamationMarkTriangle } from '@frontify/fondue-icons';
 import * as RadixPopover from '@radix-ui/react-popover';
 import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { useCombobox } from 'downshift';
@@ -32,6 +32,11 @@ export type ComboboxProps = {
      */
     placeholder?: string;
     /**
+     * Status of the text input
+     * @default "neutral"
+     */
+    status?: 'neutral' | 'success' | 'error';
+    /**
      * Disables the combobox component.
      */
     disabled?: boolean;
@@ -52,6 +57,7 @@ export const SelectCombobox = (
         value,
         defaultValue,
         placeholder = '',
+        status = 'neutral',
         disabled,
         'aria-label': ariaLabel,
         'data-test-id': dataTestId = 'fondue-select-combobox',
@@ -113,14 +119,13 @@ export const SelectCombobox = (
     return (
         <RadixPopover.Root open={isOpen}>
             <RadixPopover.Anchor asChild>
-                <div ref={forwardedRef} className={styles.root} data-error={valueInvalid}>
+                <div ref={forwardedRef} className={styles.root} data-status={valueInvalid ? 'error' : status}>
                     <input
                         {...getInputProps({
                             'aria-label': ariaLabel,
                         })}
                         data-test-id={dataTestId}
                         placeholder={placeholder}
-                        onBlur={onBlurHandler}
                         className={styles.input}
                         disabled={disabled}
                         onMouseDown={(mouseEvent) => {
@@ -132,6 +137,7 @@ export const SelectCombobox = (
                                 focusEvent.target.dataset.showFocusRing = 'true';
                             }
                         }}
+                        onBlur={onBlurHandler}
                     />
                     {inputSlots}
                     {clearButton && (
@@ -146,17 +152,33 @@ export const SelectCombobox = (
                             {clearButton}
                         </RadixSlot>
                     )}
-                    <button
-                        {...getToggleButtonProps()}
-                        type="button"
-                        aria-label="toggle menu"
-                        disabled={disabled}
-                        onMouseDown={() => {
-                            wasClicked.current = true;
-                        }}
-                    >
-                        <IconCaretDown size={16} className={styles.caret} />
-                    </button>
+                    <div className={styles.icons}>
+                        <button
+                            {...getToggleButtonProps()}
+                            type="button"
+                            aria-label="toggle menu"
+                            disabled={disabled}
+                            onMouseDown={() => {
+                                wasClicked.current = true;
+                            }}
+                        >
+                            <IconCaretDown size={16} className={styles.caret} />
+                        </button>
+                        {status === 'success' ? (
+                            <IconCheckMark
+                                size={16}
+                                className={styles.iconSuccess}
+                                data-test-id={`${dataTestId}-success-icon`}
+                            />
+                        ) : null}
+                        {valueInvalid || status === 'error' ? (
+                            <IconExclamationMarkTriangle
+                                size={16}
+                                className={styles.iconError}
+                                data-test-id={`${dataTestId}-error-icon`}
+                            />
+                        ) : null}
+                    </div>
                 </div>
             </RadixPopover.Anchor>
 
