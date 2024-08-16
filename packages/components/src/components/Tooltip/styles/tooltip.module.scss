@@ -1,0 +1,26 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@import '../../../utilities/sizeToken.module.scss';
+@import '../../../utilities/text.module.scss';
+
+.root {
+    background-color: var(--box-neutral-mighty-color);
+    color: var(--box-neutral-mighty-inverse-color);
+    border-radius: var(--radius);
+    max-width: sizeToken(48);
+    overflow: hidden;
+
+    @include text-sm;
+
+    &[data-tooltip-spacing='compact'] {
+        padding: sizeToken(1) sizeToken(2);
+    }
+
+    &[data-tooltip-spacing='spacious'] {
+        padding: sizeToken(2) sizeToken(3);
+    }
+}
+
+.arrow {
+    fill: var(--box-neutral-mighty-color);
+}
