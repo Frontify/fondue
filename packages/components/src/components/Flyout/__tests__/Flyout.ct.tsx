@@ -4,6 +4,7 @@ import { expect, test } from '@playwright/experimental-ct-react';
 import sinon from 'sinon';
 
 import { Button } from '#/components/Button/Button';
+import { TextInput } from '#/components/TextInput/TextInput';
 
 import { Flyout } from '../Flyout';
 
@@ -16,6 +17,9 @@ const FLYOUT_HEADER_TEST_ID = 'fondue-flyout-header';
 const FLYOUT_HEADER_TEXT = 'Flyout Header';
 const FLYOUT_FOOTER_TEST_ID = 'fondue-flyout-footer';
 const FLYOUT_FOOTER_TEXT = 'Flyout Footer';
+const TEXT_INPUT_TEST_ID_1 = 'fondue-text-input-1';
+const TEXT_INPUT_TEST_ID_2 = 'fondue-text-input-2';
+const TEXT_INPUT_TEST_ID_3 = 'fondue-text-input-3';
 
 test('should render trigger', async ({ mount, page }) => {
     const component = await mount(
@@ -363,4 +367,82 @@ test('should trigger callback on open and close', async ({ mount, page }) => {
     expect(onOpenChange.calledWith(true)).toBe(true);
     await page.click('body');
     expect(onOpenChange.calledWith(false)).toBe(true);
+});
+
+test('should render focus visible input on enter press', async ({ mount, page }) => {
+    const component = await mount(
+        <Flyout.Root>
+            <Flyout.Trigger>
+                <Button>Open flyout</Button>
+            </Flyout.Trigger>
+            <Flyout.Content>
+                <Flyout.Body>
+                    <TextInput data-test-id={TEXT_INPUT_TEST_ID_1} />
+                    <TextInput data-test-id={TEXT_INPUT_TEST_ID_2} />
+                    <TextInput data-test-id={TEXT_INPUT_TEST_ID_3} />
+                </Flyout.Body>
+            </Flyout.Content>
+        </Flyout.Root>,
+    );
+    const tooltipTrigger = page.getByTestId(FLYOUT_TRIGGER_TEST_ID);
+    const textInput1 = page.getByTestId(TEXT_INPUT_TEST_ID_1);
+    const textInput2 = page.getByTestId(TEXT_INPUT_TEST_ID_2);
+    const textInput3 = page.getByTestId(TEXT_INPUT_TEST_ID_3);
+    await expect(component).toBeVisible();
+    await expect(tooltipTrigger).toBeVisible();
+    await tooltipTrigger.focus();
+    await page.keyboard.press('Enter');
+    await expect(textInput1).toHaveCSS(
+        'box-shadow',
+        'rgb(255, 255, 255) 0px 0px 0px 2px, rgb(65, 150, 251) 0px 0px 0px 6px',
+    );
+    await page.keyboard.press('Tab');
+    await expect(textInput2).toHaveCSS(
+        'box-shadow',
+        'rgb(255, 255, 255) 0px 0px 0px 2px, rgb(65, 150, 251) 0px 0px 0px 6px',
+    );
+    await textInput3.click();
+    await expect(textInput3).not.toHaveCSS(
+        'box-shadow',
+        'rgb(255, 255, 255) 0px 0px 0px 2px, rgb(65, 150, 251) 0px 0px 0px 6px',
+    );
+});
+
+test('should not render focus visible input on click', async ({ mount, page }) => {
+    const component = await mount(
+        <Flyout.Root>
+            <Flyout.Trigger>
+                <Button>Open flyout</Button>
+            </Flyout.Trigger>
+            <Flyout.Content>
+                <Flyout.Body>
+                    <TextInput data-test-id={TEXT_INPUT_TEST_ID_1} />
+                    <TextInput data-test-id={TEXT_INPUT_TEST_ID_2} />
+                    <TextInput data-test-id={TEXT_INPUT_TEST_ID_3} />
+                </Flyout.Body>
+            </Flyout.Content>
+        </Flyout.Root>,
+    );
+    const tooltipTrigger = page.getByTestId(FLYOUT_TRIGGER_TEST_ID);
+    const textInput1 = page.getByTestId(TEXT_INPUT_TEST_ID_1);
+    const textInput2 = page.getByTestId(TEXT_INPUT_TEST_ID_2);
+    const textInput3 = page.getByTestId(TEXT_INPUT_TEST_ID_3);
+    await expect(component).toBeVisible();
+    await expect(tooltipTrigger).toBeVisible();
+    await tooltipTrigger.focus();
+    await tooltipTrigger.click();
+    await expect(textInput1).not.toHaveCSS(
+        'box-shadow',
+        'rgb(255, 255, 255) 0px 0px 0px 2px, rgb(65, 150, 251) 0px 0px 0px 6px',
+    );
+    await textInput2.click();
+    await expect(textInput2).not.toHaveCSS(
+        'box-shadow',
+        'rgb(255, 255, 255) 0px 0px 0px 2px, rgb(65, 150, 251) 0px 0px 0px 6px',
+    );
+    await page.keyboard.press('Tab');
+    await expect(textInput3).toHaveCSS(
+        'box-shadow',
+        'rgb(255, 255, 255) 0px 0px 0px 2px, rgb(65, 150, 251) 0px 0px 0px 6px',
+    );
 });
