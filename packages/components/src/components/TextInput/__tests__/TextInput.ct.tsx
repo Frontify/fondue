@@ -3,6 +3,8 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import sinon from 'sinon';
 
+import { FOCUS_BORDER_CSS, FOCUS_OUTLINE_CSS } from '#/helpers/constants';
+
 import { TextInput } from '../TextInput';
 
 const TEXT_INPUT_TEXT = 'sample text input';
@@ -114,31 +116,36 @@ test('render slot on the right side and apply correct focus order', async ({ mou
     await expect(component.getByTestId('right-button-slot')).toBeFocused();
 });
 
-test('render focus ring when keyboard focused', async ({ mount, page }) => {
+test('render focus ring and no border when keyboard focused', async ({ mount, page }) => {
     const component = await mount(<TextInput value={TEXT_INPUT_TEXT} />);
+    const input = page.getByTestId(TEXT_INPUT_TEST_ID);
 
     await page.focus('body');
-    await expect(page.getByTestId(TEXT_INPUT_TEST_ID)).not.toHaveCSS('outline-width', '4px');
+
+    await expect(input).not.toHaveCSS(...FOCUS_OUTLINE_CSS);
+    await expect(input).not.toHaveCSS(...FOCUS_BORDER_CSS);
+
     await page.keyboard.press('Tab');
+
     await expect(component.getByRole('textbox')).toBeFocused();
-    await expect(page.getByTestId(TEXT_INPUT_TEST_ID)).toHaveCSS(
-        'box-shadow',
-        'rgb(255, 255, 255) 0px 0px 0px 2px, rgb(65, 150, 251) 0px 0px 0px 6px',
-    );
+
+    await expect(input).toHaveCSS(...FOCUS_OUTLINE_CSS);
+    await expect(input).not.toHaveCSS(...FOCUS_BORDER_CSS);
 });
 
-test('render no focus ring when keyboard focused', async ({ mount, page }) => {
+test('render border and no focus ring when mouse focused', async ({ mount, page }) => {
     const component = await mount(<TextInput value={TEXT_INPUT_TEXT} />);
+    const input = page.getByTestId(TEXT_INPUT_TEST_ID);
 
     await page.focus('body');
-    await expect(page.getByTestId(TEXT_INPUT_TEST_ID)).not.toHaveCSS(
-        'box-shadow',
-        'rgb(255, 255, 255) 0px 0px 0px 2px, rgb(65, 150, 251) 0px 0px 0px 6px',
-    );
+
+    await expect(input).not.toHaveCSS(...FOCUS_BORDER_CSS);
+    await expect(input).not.toHaveCSS(...FOCUS_OUTLINE_CSS);
+
     await component.click();
+
     await expect(component.getByRole('textbox')).toBeFocused();
-    await expect(page.getByTestId(TEXT_INPUT_TEST_ID)).not.toHaveCSS(
-        'box-shadow',
-        'rgb(255, 255, 255) 0px 0px 0px 2px, rgb(65, 150, 251) 0px 0px 0px 6px',
-    );
+
+    await expect(input).toHaveCSS(...FOCUS_BORDER_CSS);
+    await expect(input).not.toHaveCSS(...FOCUS_OUTLINE_CSS);
 });
