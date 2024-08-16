@@ -4,7 +4,7 @@ import { sv } from '#/utilities/styleUtilities';
 
 export const flyoutContentStyles = sv({
     base:
-        'tw-block tw-bg-base tw-shadow-mid tw-border tw-border-line tw-w-full sm:tw-w-fit sm:tw-max-w-[--flyout-max-width] tw-group tw-mt-4 sm:tw-mt-0 ' +
+        'tw-block tw-bg-base tw-shadow-mid tw-border tw-border-line tw-w-full sm:tw-w-fit sm:tw-max-w-[--flyout-max-width] tw-group tw-mt-4 sm:!tw-mt-0 ' +
         // Mobile view flyout -> dialog responsiveness
         '[body>[data-radix-popper-content-wrapper]:has(&)]:max-sm:tw-p-2 [body>[data-radix-popper-content-wrapper]:has(&)]:max-sm:tw-w-screen [body>[data-radix-popper-content-wrapper]:has(&)]:max-sm:!tw-translate-x-0 [body>[data-radix-popper-content-wrapper]:has(&)]:max-sm:!tw-translate-y-0 ' +
         // Responsive dialog background element
