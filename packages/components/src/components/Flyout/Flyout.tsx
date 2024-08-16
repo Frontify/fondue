@@ -94,6 +94,7 @@ export const FlyoutContent = (
         padding = 'compact',
         'data-test-id': dataTestId = 'fondue-flyout-content',
         children,
+        rounded,
         ...props
     }: FlyoutContentProps,
     ref: ForwardedRef<HTMLDivElement>,
@@ -112,6 +113,7 @@ export const FlyoutContent = (
                 sideOffset={8}
                 className={styles.root}
                 data-flyout-spacing={padding}
+                data-rounded={rounded}
                 data-test-id={dataTestId}
                 {...props}
             >
