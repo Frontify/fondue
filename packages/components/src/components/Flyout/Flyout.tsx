@@ -4,7 +4,7 @@ import { IconCross } from '@frontify/fondue-icons';
 import * as RadixPopover from '@radix-ui/react-popover';
 import { forwardRef, type CSSProperties, type ForwardedRef, type ReactNode } from 'react';
 
-import { flyoutBodyStyles, flyoutContentStyles, flyoutFooterStyles, flyoutHeaderStyles } from './styles/flyoutStyles';
+import styles from './styles/flyout.module.scss';
 
 export type FlyoutRootProps = {
     /**
@@ -110,7 +110,7 @@ export const FlyoutContent = (
                 align={align}
                 collisionPadding={8}
                 sideOffset={8}
-                className={flyoutContentStyles({ ...props })}
+                className={styles.root}
                 data-flyout-spacing={padding}
                 data-test-id={dataTestId}
                 {...props}
@@ -127,10 +127,10 @@ export const FlyoutHeader = (
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
-        <div data-test-id={dataTestId} ref={ref} className={flyoutHeaderStyles}>
+        <div data-test-id={dataTestId} ref={ref} className={styles.header}>
             <div>{children}</div>
             {showCloseButton && (
-                <RadixPopover.Close role="button" data-test-id={`${dataTestId}-close`} className="tw-cursor-pointer">
+                <RadixPopover.Close role="button" data-test-id={`${dataTestId}-close`} className={styles.close}>
                     <IconCross size={20} />
                 </RadixPopover.Close>
             )}
@@ -144,7 +144,7 @@ export const FlyoutFooter = (
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
-        <div data-test-id={dataTestId} ref={ref} className={flyoutFooterStyles}>
+        <div data-test-id={dataTestId} ref={ref} className={styles.footer}>
             {children}
         </div>
     );
@@ -156,7 +156,7 @@ export const FlyoutBody = (
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
-        <div data-test-id={dataTestId} ref={ref} data-flyout-spacing="compact" className={flyoutBodyStyles}>
+        <div data-test-id={dataTestId} ref={ref} data-flyout-spacing="compact" className={styles.body}>
             {children}
         </div>
     );
