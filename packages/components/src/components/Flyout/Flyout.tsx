@@ -82,8 +82,6 @@ export const FlyoutTrigger = (
     return (
         <RadixPopover.Trigger
             onMouseDown={(mouseEvent) => {
-                console.log('mouse');
-
                 mouseEvent.currentTarget.dataset.autoFocusVisible = 'false';
             }}
             data-auto-focus-visible="true"
