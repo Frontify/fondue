@@ -122,13 +122,13 @@ export const FlyoutContent = (
                 className={flyoutContentStyles({ ...props })}
                 data-flyout-spacing={padding}
                 data-test-id={dataTestId}
-                onFocus={(e) => {
-                    const triggerElement = e.relatedTarget as HTMLElement;
+                onFocus={(event) => {
+                    const triggerElement = event.relatedTarget as HTMLElement;
                     if (triggerElement && triggerElement.dataset.flyoutTrigger) {
                         const focusVisible = triggerElement.dataset.autoFocusVisible === 'true';
                         triggerElement.dataset.autoFocusVisible = 'true';
                         if (!focusVisible) {
-                            e.target.dataset.showFocusRing = 'false';
+                            event.target.dataset.showFocusRing = 'false';
                         }
                     }
                 }}

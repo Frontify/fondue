@@ -5,6 +5,7 @@ import sinon from 'sinon';
 
 import { Button } from '#/components/Button/Button';
 import { TextInput } from '#/components/TextInput/TextInput';
+import { FOCUS_BORDER_CSS, FOCUS_OUTLINE_CSS } from '#/helpers/constants';
 
 import { Flyout } from '../Flyout';
 
@@ -392,20 +393,14 @@ test('should render focus visible input on enter press', async ({ mount, page })
     await expect(tooltipTrigger).toBeVisible();
     await tooltipTrigger.focus();
     await page.keyboard.press('Enter');
-    await expect(textInput1).toHaveCSS(
-        'box-shadow',
-        'rgb(255, 255, 255) 0px 0px 0px 2px, rgb(65, 150, 251) 0px 0px 0px 6px',
-    );
+    await expect(textInput1).toHaveCSS(...FOCUS_OUTLINE_CSS);
+    await expect(textInput1).not.toHaveCSS(...FOCUS_BORDER_CSS);
     await page.keyboard.press('Tab');
-    await expect(textInput2).toHaveCSS(
-        'box-shadow',
-        'rgb(255, 255, 255) 0px 0px 0px 2px, rgb(65, 150, 251) 0px 0px 0px 6px',
-    );
+    await expect(textInput2).toHaveCSS(...FOCUS_OUTLINE_CSS);
+    await expect(textInput2).not.toHaveCSS(...FOCUS_BORDER_CSS);
     await textInput3.click();
-    await expect(textInput3).not.toHaveCSS(
-        'box-shadow',
-        'rgb(255, 255, 255) 0px 0px 0px 2px, rgb(65, 150, 251) 0px 0px 0px 6px',
-    );
+    await expect(textInput3).not.toHaveCSS(...FOCUS_OUTLINE_CSS);
+    await expect(textInput3).toHaveCSS(...FOCUS_BORDER_CSS);
 });
 
 test('should not render focus visible input on click', async ({ mount, page }) => {
@@ -431,18 +426,12 @@ test('should not render focus visible input on click', async ({ mount, page }) =
     await expect(tooltipTrigger).toBeVisible();
     await tooltipTrigger.focus();
     await tooltipTrigger.click();
-    await expect(textInput1).not.toHaveCSS(
-        'box-shadow',
-        'rgb(255, 255, 255) 0px 0px 0px 2px, rgb(65, 150, 251) 0px 0px 0px 6px',
-    );
+    await expect(textInput1).not.toHaveCSS(...FOCUS_OUTLINE_CSS);
+    await expect(textInput1).toHaveCSS(...FOCUS_BORDER_CSS);
     await textInput2.click();
-    await expect(textInput2).not.toHaveCSS(
-        'box-shadow',
-        'rgb(255, 255, 255) 0px 0px 0px 2px, rgb(65, 150, 251) 0px 0px 0px 6px',
-    );
+    await expect(textInput2).not.toHaveCSS(...FOCUS_OUTLINE_CSS);
+    await expect(textInput2).toHaveCSS(...FOCUS_BORDER_CSS);
     await page.keyboard.press('Tab');
-    await expect(textInput3).toHaveCSS(
-        'box-shadow',
-        'rgb(255, 255, 255) 0px 0px 0px 2px, rgb(65, 150, 251) 0px 0px 0px 6px',
-    );
+    await expect(textInput3).toHaveCSS(...FOCUS_OUTLINE_CSS);
+    await expect(textInput3).not.toHaveCSS(...FOCUS_BORDER_CSS);
 });
