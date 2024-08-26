@@ -52,7 +52,7 @@ test('should have correct padding spacious', async ({ mount, page }) => {
     await expect(component).toBeVisible();
     await component.hover();
     await expect(tooltipContent).toBeVisible();
-    await expect(tooltipContent).toHaveClass(/tw-px-3 tw-py-2/);
+    await expect(tooltipContent).toHaveCSS('padding', '8px 12px');
 });
 
 test('should have correct padding compact', async ({ mount, page }) => {
@@ -70,7 +70,7 @@ test('should have correct padding compact', async ({ mount, page }) => {
     await expect(component).toBeVisible();
     await component.hover();
     await expect(tooltipContent).toBeVisible();
-    await expect(tooltipContent).toHaveClass(/tw-px-2 tw-py-1/);
+    await expect(tooltipContent).toHaveCSS('padding', '4px 8px');
 });
 
 test('should have correct max width', async ({ mount, page }) => {
@@ -86,7 +86,7 @@ test('should have correct max width', async ({ mount, page }) => {
     await expect(component).toBeVisible();
     await component.hover();
     await expect(tooltipContent).toBeVisible();
-    await expect(tooltipContent).toHaveClass(/tw-max-w-48/);
+    await expect(tooltipContent).toHaveCSS('max-width', '192px');
 });
 
 test('should have custom max width', async ({ mount, page }) => {

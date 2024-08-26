@@ -5,15 +5,7 @@ import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
 
 import { useControllableState } from '#/hooks/useControllableState';
 
-import {
-    segmentedControlActiveIndicatorStyles,
-    segmentedControlItemLabelActiveStyles,
-    segmentedControlItemLabelInactiveStyles,
-    segmentedControlItemLabelStyles,
-    segmentedControlItemSeparatorStyles,
-    segmentedControlItemStyles,
-    segmentedControlRootStyles,
-} from './styles/segmentedControlStyles';
+import styles from './styles/segmentedControl.module.scss';
 
 export type SegmentedControlRootProps = {
     id?: string;
@@ -52,7 +44,7 @@ export const SegmentedControlRoot = (
         <ToggleGroupPrimitive.Root
             ref={ref}
             {...rootProps}
-            className={segmentedControlRootStyles}
+            className={styles.root}
             onValueChange={(value) => {
                 if (value) {
                     setValue(value);
@@ -65,7 +57,7 @@ export const SegmentedControlRoot = (
         >
             {children}
             {/* Active indicator */}
-            <div className={segmentedControlActiveIndicatorStyles} />
+            <div className={styles.activeIndicator} />
         </ToggleGroupPrimitive.Root>
     );
 };
@@ -80,15 +72,15 @@ export const SegmentedControlItem = (
     { children, ...itemProps }: SegmentedControlItemProps,
     ref: ForwardedRef<HTMLButtonElement>,
 ) => (
-    <ToggleGroupPrimitive.Item ref={ref} {...itemProps} className={segmentedControlItemStyles} asChild={false}>
+    <ToggleGroupPrimitive.Item ref={ref} {...itemProps} className={styles.item} asChild={false}>
         {/* Separator */}
-        <span className={segmentedControlItemSeparatorStyles} />
-        <span className={segmentedControlItemLabelStyles}>
+        <span className={styles.separator} />
+        <span className={styles.itemLabel}>
             {/* Active children */}
-            <span className={segmentedControlItemLabelActiveStyles}>{children}</span>
+            <span className={styles.itemLabelActive}>{children}</span>
 
             {/* Inactive children */}
-            <span className={segmentedControlItemLabelInactiveStyles}>{children}</span>
+            <span className={styles.itemLabelInactive}>{children}</span>
         </span>
     </ToggleGroupPrimitive.Item>
 );

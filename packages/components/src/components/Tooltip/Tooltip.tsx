@@ -5,7 +5,7 @@ import { forwardRef, type ForwardedRef, type ReactElement, type ReactNode } from
 
 import { cn } from '#/utilities/styleUtilities';
 
-import { tooltipArrowStyles, tooltipContentStyles } from './styles/tooltipStyles';
+import styles from './styles/tooltip.module.scss';
 
 export type TooltipRootProps = {
     /**
@@ -26,7 +26,7 @@ export type TooltipRootProps = {
 export type TooltipTriggerProps = { children: ReactNode; 'data-test-id'?: string };
 export type TooltipContentProps = {
     /**
-     * @default spacious
+     * @default "spacious"
      */
     padding?: 'spacious' | 'compact';
     /**
@@ -68,6 +68,7 @@ export const TooltipContent = (
         className,
         maxWidth,
         'data-test-id': dataTestId = 'fondue-tooltip-content',
+        padding = 'spacious',
         ...props
     }: TooltipContentProps,
     ref: ForwardedRef<HTMLDivElement>,
@@ -76,12 +77,8 @@ export const TooltipContent = (
         <RadixTooltip.Portal>
             <RadixTooltip.Content
                 data-test-id={dataTestId}
-                className={cn(
-                    tooltipContentStyles({
-                        ...props,
-                    }),
-                    className,
-                )}
+                data-tooltip-spacing={padding}
+                className={cn(styles.root, className)}
                 style={{ maxWidth }}
                 collisionPadding={16}
                 sideOffset={8}
@@ -89,10 +86,7 @@ export const TooltipContent = (
                 {...props}
             >
                 {children}
-
-                <RadixTooltip.Arrow asChild>
-                    <div aria-hidden="true" className={tooltipArrowStyles} />
-                </RadixTooltip.Arrow>
+                <RadixTooltip.Arrow aria-hidden="true" className={styles.arrow} />
             </RadixTooltip.Content>
         </RadixTooltip.Portal>
     );

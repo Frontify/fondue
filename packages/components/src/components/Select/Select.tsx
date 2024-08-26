@@ -4,7 +4,7 @@ import { IconCaretDown, IconCheckMark, IconExclamationMarkTriangle } from '@fron
 import * as RadixPopover from '@radix-ui/react-popover';
 import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { useSelect } from 'downshift';
-import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
+import { forwardRef, useRef, type ForwardedRef, type ReactNode } from 'react';
 
 import { ForwardedRefCombobox } from './Combobox';
 import { ForwardedRefSelectItem, ForwardedRefSelectItemGroup } from './SelectItem';
@@ -72,6 +72,8 @@ export const SelectInput = (
     const defaultItem = getItemByValue(defaultValue);
     const activeItem = getItemByValue(value);
 
+    const wasClicked = useRef(false);
+
     const { getToggleButtonProps, getMenuProps, getItemProps, reset, selectedItem, isOpen, highlightedIndex } =
         useSelect({
             items,
@@ -85,7 +87,22 @@ export const SelectInput = (
 
     return (
         <RadixPopover.Root open={isOpen}>
-            <RadixPopover.Anchor asChild>
+            <RadixPopover.Anchor
+                asChild
+                onMouseDown={(mouseEvent) => {
+                    wasClicked.current = true;
+                    mouseEvent.currentTarget.dataset.showFocusRing = 'false';
+                }}
+                onFocus={(focusEvent) => {
+                    if (!wasClicked.current) {
+                        focusEvent.target.dataset.showFocusRing = 'true';
+                    }
+                }}
+                onBlur={(blurEvent) => {
+                    blurEvent.target.dataset.showFocusRing = 'false';
+                    wasClicked.current = false;
+                }}
+            >
                 <div
                     className={styles.root}
                     data-status={status}
