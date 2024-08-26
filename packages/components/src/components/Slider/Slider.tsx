@@ -87,6 +87,7 @@ const SliderComponent = (
             {(value || defaultValue).map((_, index) => (
                 <RadixSlider.Thumb
                     ref={sliderThumbRef}
+                    className={styles.thumb}
                     onPointerDown={(event) => {
                         event.currentTarget.dataset.preventBlueOutline = 'true';
                     }}
@@ -94,7 +95,6 @@ const SliderComponent = (
                         event.currentTarget.dataset.preventBlueOutline = 'false';
                     }}
                     key={index}
-                    className={styles.thumb}
                 />
             ))}
         </RadixSlider.Root>

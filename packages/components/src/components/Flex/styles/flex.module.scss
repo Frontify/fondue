@@ -4,7 +4,7 @@
 
 $properties: (display, flex-direction, align-items, justify-content, flex-wrap, gap, gap-x, gap-y);
 
-.flex {
+.root {
     @include responsive-properties(join($properties, $layoutProperties));
 
     // Default values
