@@ -54,9 +54,7 @@
         var(--box-neutral-inverse-color-pressed) 15%,
         transparent
     );
-
     --slider-thumb-active-outline-color: color-mix(in srgb, var(--box-neutral-inverse-color-hover) 20%, transparent);
-
     --slider-thumb-disabled-border-color: color-mix(in srgb, var(--box-neutral-inverse-color-pressed) 10%, transparent);
 
     display: block;
