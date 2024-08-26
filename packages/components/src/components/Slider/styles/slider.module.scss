@@ -4,7 +4,7 @@
 @import '../../../utilities/focusStyle.module.scss';
 @import '../../../utilities/transitions.module.scss';
 
-.slider {
+.root {
     position: relative;
     display: flex;
     align-items: center;
@@ -16,88 +16,83 @@
         pointer-events: none;
     }
 
-    .track {
-        background-color: var(--box-neutral-color);
-        position: relative;
-        flex-grow: 1;
-        border-radius: 4px;
-        height: sizeToken(1);
-
-        .range {
-            position: absolute;
-            background-color: var(--box-neutral-strong-color);
-            border-radius: 4px;
-            height: 100%;
-
-            &[data-disabled] {
-                background-color: var(--box-neutral-color);
-            }
-        }
-    }
-
     //add a border radius to the thumbs parent so it doesn't capture clicks outside
     span:has(> .thumb) {
         border-radius: 100%;
     }
+}
 
-    .thumb {
-        @include transition-colors;
-        @include focus-outline;
+.track {
+    background-color: var(--box-neutral-color);
+    position: relative;
+    flex-grow: 1;
+    border-radius: 4px;
+    height: sizeToken(1);
 
-        &:not(:focus) {
-            @include transition-box-shadow;
-        }
-
-        --slider-thumb-hover-box-shadow-color: color-mix(
-            in srgb,
-            var(--box-neutral-inverse-color-pressed) 15%,
-            transparent
-        );
-
-        --slider-thumb-active-outline-color: color-mix(
-            in srgb,
-            var(--box-neutral-inverse-color-hover) 20%,
-            transparent
-        );
-
-        --slider-thumb-disabled-border-color: color-mix(
-            in srgb,
-            var(--box-neutral-inverse-color-pressed) 10%,
-            transparent
-        );
-
-        display: block;
-        width: sizeToken(5);
-        height: sizeToken(5);
-        background-color: var(--base-color);
-        border: 1px solid var(--line-color-strong);
-        border-radius: 100%;
-        cursor: pointer;
-        box-sizing: border-box;
-
-        &:hover {
-            box-shadow: 0px 3px 10px 0px var(--slider-thumb-hover-box-shadow-color);
-
-            &:active,
-            //firefox support requires this additional selector
-            &[data-prevent-blue-outline='true']:focus-visible {
-                @include transition(outline);
-                outline-offset: 0;
-                outline-width: sizeToken(2);
-                outline-color: var(--slider-thumb-active-outline-color);
-            }
-        }
-
-        &[data-prevent-blue-outline='true']:not(:active) {
-            @include transition(outline);
-            outline-offset: 0;
-            outline-width: sizeToken(1);
-            outline-color: var(--slider-thumb-active-outline-color);
-        }
+    .range {
+        position: absolute;
+        background-color: var(--box-neutral-strong-color);
+        border-radius: 4px;
+        height: 100%;
 
         &[data-disabled] {
             background-color: var(--box-neutral-color);
-            border-color: var(--slider-thumb-disabled-border-color);
         }
+    }
+}
+
+.thumb {
+    @include transition-colors;
+
+    &:not(:focus) {
+        @include transition-box-shadow;
+    }
+
+    --slider-thumb-hover-box-shadow-color: color-mix(
+        in srgb,
+        var(--box-neutral-inverse-color-pressed) 15%,
+        transparent
+    );
+    --slider-thumb-active-outline-color: color-mix(in srgb, var(--box-neutral-inverse-color-hover) 20%, transparent);
+    --slider-thumb-disabled-border-color: color-mix(in srgb, var(--box-neutral-inverse-color-pressed) 10%, transparent);
+
+    display: block;
+    width: sizeToken(5);
+    height: sizeToken(5);
+    background-color: var(--base-color);
+    border: 1px solid var(--line-color-strong);
+    border-radius: 100%;
+    cursor: pointer;
+    box-sizing: border-box;
+
+    &:hover {
+        box-shadow: 0px 3px 10px 0px var(--slider-thumb-hover-box-shadow-color);
+
+        &:active,
+        //firefox support requires this additional selector
+        &[data-prevent-blue-outline='true']:focus-visible {
+            @include transition(outline);
+            outline-style: solid;
+            outline-offset: 0;
+            outline-width: sizeToken(2);
+            outline-color: var(--slider-thumb-active-outline-color);
+        }
+    }
+
+    &[data-prevent-blue-outline='true']:not(:active) {
+        @include transition(outline);
+        outline-style: solid;
+        outline-offset: 0;
+        outline-width: sizeToken(1);
+        outline-color: var(--slider-thumb-active-outline-color);
+    }
+
+    &[data-prevent-blue-outline='false'] {
+        @include focus-outline;
+    }
+
+    &[data-disabled] {
+        background-color: var(--box-neutral-color);
+        border-color: var(--slider-thumb-disabled-border-color);
     }
 }

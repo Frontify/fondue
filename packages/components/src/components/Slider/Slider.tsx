@@ -66,7 +66,7 @@ const SliderComponent = (
     return (
         <RadixSlider.Root
             ref={ref}
-            className={styles.slider}
+            className={styles.root}
             value={value}
             defaultValue={defaultValue}
             onValueChange={onChange}
