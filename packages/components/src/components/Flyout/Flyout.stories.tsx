@@ -222,7 +222,7 @@ export const MobileView: Story = {
 export const Overflow: Story = {
     decorators: [
         (Story) => (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 32, margin: '120px 300px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 32, margin: '100px 300px' }}>
                 <Story />
             </div>
         ),
