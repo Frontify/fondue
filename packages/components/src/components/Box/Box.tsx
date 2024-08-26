@@ -31,7 +31,7 @@ export const Box = ({
     ...props
 }: BoxProps) => {
     return (
-        <Component className={styles.box} data-test-id={dataTestId} {...props} style={propsToCssVariables(props)}>
+        <Component className={styles.root} data-test-id={dataTestId} {...props} style={propsToCssVariables(props)}>
             {children}
         </Component>
     );

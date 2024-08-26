@@ -61,7 +61,7 @@ export const Flex = ({
 }: FlexProps) => {
     return (
         <Component
-            className={styles.flex}
+            className={styles.root}
             data-test-id={dataTestId}
             style={propsToCssVariables(props, { justify: 'justify-content' })}
         >
