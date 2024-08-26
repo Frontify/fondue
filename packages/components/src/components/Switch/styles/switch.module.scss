@@ -4,7 +4,7 @@
 @import '../../../utilities/focusStyle.module.scss';
 @import '../../../utilities/transitions.module.scss';
 
-.switch {
+.root {
     @include focus-outline;
     @include transition-colors;
 
@@ -49,20 +49,19 @@
             border-color: var(--line-color-strong);
         }
     }
+}
+.thumb {
+    display: block;
+    background-color: var(--base-color);
+    border-radius: 9999px;
+    border: 1px solid var(--box-neutral-inverse-color);
+    transition: transform 100ms;
+    transform: translate(-1px, -1px);
+    will-change: transform;
+    width: calc(100cqh + 2px);
+    height: calc(100cqh + 2px);
 
-    .thumb {
-        display: block;
-        background-color: var(--base-color);
-        border-radius: 9999px;
-        border: 1px solid var(--box-neutral-inverse-color);
-        transition: transform 100ms;
-        transform: translate(-1px, -1px);
-        will-change: transform;
-        width: calc(100cqh + 2px);
-        height: calc(100cqh + 2px);
-
-        &[data-state='checked'] {
-            transform: translate(calc(100cqw - 100% + 1px), -1px);
-        }
+    &[data-state='checked'] {
+        transform: translate(calc(100cqw - 100% + 1px), -1px);
     }
 }
