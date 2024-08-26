@@ -3,7 +3,7 @@
 @import '../../../utilities/focusStyle.module.scss';
 @import '../../../utilities/transitions.module.scss';
 
-.input {
+.root {
     @include focus-outline;
     @include transition-colors;
 

@@ -65,7 +65,7 @@ export const Grid = ({
 }: GridProps) => {
     return (
         <Component
-            className={styles.grid}
+            className={styles.root}
             data-test-id={dataTestId}
             style={propsToCssVariables(props, { justify: 'justify-items' })}
         >
