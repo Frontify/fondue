@@ -60,6 +60,14 @@
     font-weight: 500;
     border-bottom: var(--line-width) solid var(--line-color);
 
+    .root[data-flyout-spacing='tight'] & {
+        padding: sizeToken(2);
+    }
+
+    .root[data-flyout-spacing='compact'] & {
+        padding: sizeToken(2);
+    }
+
     .root[data-flyout-spacing='compact'] & {
         padding: sizeToken(4);
     }
@@ -101,6 +109,14 @@
     gap: sizeToken(2);
     font-weight: 400;
     border-top: var(--line-width) solid var(--line-color);
+
+    .root[data-flyout-spacing='tight'] & {
+        padding: sizeToken(2);
+    }
+
+    .root[data-flyout-spacing='compact'] & {
+        padding: sizeToken(2);
+    }
 
     .root[data-flyout-spacing='compact'] & {
         padding: sizeToken(4);
