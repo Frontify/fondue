@@ -65,11 +65,11 @@
         "@radix-ui/react-tooltip": "^1.1.2",
         "downshift": "^9.0.8",
         "react-colorful": "^5.6.1",
-        "tailwind-merge": "^2.4.0",
+        "tailwind-merge": "^2.5.2",
         "tailwind-variants": "^0.2.1"
     },
     "devDependencies": {
-        "@babel/core": "^7.24.9",
+        "@babel/core": "^7.25.2",
         "@etchteam/storybook-addon-status": "^5.0.0",
         "@frontify/eslint-config-react": "^0.17.7",
         "@frontify/fondue-icons": "workspace:^",
@@ -113,9 +113,9 @@
         "storybook": "^8.2.9",
         "storybook-dark-mode": "^4.0.2",
         "tailwindcss": "^3.4.10",
-        "tsx": "^4.16.2",
+        "tsx": "^4.19.0",
         "typescript": "^5.5.4",
-        "vite": "^5.3.4",
+        "vite": "^5.4.2",
         "vite-plugin-dts": "^3.9.1",
         "vite-tsconfig-paths": "^4.3.2",
         "vitest": "^2.0.5"
