@@ -78,6 +78,10 @@
     flex-direction: column;
     gap: sizeToken(4);
 
+    .root[data-flyout-spacing='tight'] & {
+        padding: sizeToken(2);
+    }
+
     .root[data-flyout-spacing='compact'] & {
         padding: sizeToken(2) sizeToken(4);
     }

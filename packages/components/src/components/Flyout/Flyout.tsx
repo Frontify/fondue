@@ -47,7 +47,7 @@ export type FlyoutContentProps = {
      * Define the padding of the flyout
      * @default "compact"
      */
-    padding?: 'compact' | 'comfortable' | 'spacious';
+    padding?: 'tight' | 'compact' | 'comfortable' | 'spacious';
     /**
      * Define the maximum width of the flyout
      * @default "360px"
