@@ -147,10 +147,12 @@ const formattedTemperatureData = ((): LineChartSeries[] => {
         newYork.push({
             value: parseInt(obj['New York'], 10),
             timestamp: new Date(obj.date),
+            valueContext: `Difference with Austin is ${Math.round(parseInt(obj['New York'], 10) - parseInt(obj.Austin, 10))}ºF`,
         });
         sanFrancisco.push({
             value: parseInt(obj['San Francisco'], 10),
             timestamp: new Date(obj.date),
+            valueContext: `(Sum with NY is ${parseInt(obj['San Francisco'], 10) + parseInt(obj['New York'], 10)}ºF)`,
         });
     }
 

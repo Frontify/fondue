@@ -2,4 +2,4 @@
 "@frontify/fondue-components": patch
 ---
 
-feat: add `slider` component
+refactor: normalize root styling names

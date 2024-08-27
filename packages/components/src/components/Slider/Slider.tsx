@@ -66,7 +66,7 @@ const SliderComponent = (
     return (
         <RadixSlider.Root
             ref={ref}
-            className={styles.slider}
+            className={styles.root}
             value={value}
             defaultValue={defaultValue}
             onValueChange={onChange}
@@ -77,7 +77,7 @@ const SliderComponent = (
             <RadixSlider.Track
                 onPointerDown={() => {
                     if (sliderThumbRef.current) {
-                        sliderThumbRef.current.dataset.preventBlueOutline = 'true';
+                        sliderThumbRef.current.dataset.showFocusRing = 'false';
                     }
                 }}
                 className={styles.track}
@@ -87,14 +87,14 @@ const SliderComponent = (
             {(value || defaultValue).map((_, index) => (
                 <RadixSlider.Thumb
                     ref={sliderThumbRef}
+                    className={styles.thumb}
                     onPointerDown={(event) => {
-                        event.currentTarget.dataset.preventBlueOutline = 'true';
+                        event.currentTarget.dataset.showFocusRing = 'false';
                     }}
                     onBlur={(event) => {
-                        event.currentTarget.dataset.preventBlueOutline = 'false';
+                        event.currentTarget.dataset.showFocusRing = 'true';
                     }}
                     key={index}
-                    className={styles.thumb}
                 />
             ))}
         </RadixSlider.Root>
@@ -103,14 +103,3 @@ const SliderComponent = (
 
 export const Slider = forwardRef<HTMLButtonElement, SliderProps>(SliderComponent);
 Slider.displayName = 'Slider';
-
-/*
-
-default -> none OKAY
-hover -> shadow OKAY
-dragging (active + hover) -> big gray shadow OKAY
-
-dropped (focus-visible) -> small gray shadow
-keyboard focus -> blue outline
-
-*/

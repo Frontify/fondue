@@ -218,3 +218,49 @@ export const MobileView: Story = {
         );
     },
 };
+
+export const Overflow: Story = {
+    decorators: [
+        (Story) => (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 32, margin: '100px 300px' }}>
+                <Story />
+            </div>
+        ),
+    ],
+    parameters: {
+        viewport: {
+            viewports: {
+                desktop: {
+                    name: 'Desktop',
+                    styles: {
+                        width: '800px',
+                        height: '500px',
+                    },
+                },
+            },
+            defaultViewport: 'desktop',
+        },
+    },
+    render: ({ ...args }) => (
+        <>
+            {Array.from({ length: 4 }).map((_, index) => (
+                <Flyout.Root {...args} key={index}>
+                    <Flyout.Trigger>
+                        <Button>Trigger {index}</Button>
+                    </Flyout.Trigger>
+                    <Flyout.Content>
+                        <Flyout.Header>Flyout {index}</Flyout.Header>
+                        <Flyout.Body>
+                            <p>Lorem ipsum dolor sit amet</p>
+                            <p>Lorem ipsum dolor sit amet</p>
+                            <p>Lorem ipsum dolor sit amet</p>
+                            <p>Lorem ipsum dolor sit amet</p>
+                            <p>Lorem ipsum dolor sit amet</p>
+                            <p>Lorem ipsum dolor sit amet</p>
+                        </Flyout.Body>
+                    </Flyout.Content>
+                </Flyout.Root>
+            ))}
+        </>
+    ),
+};

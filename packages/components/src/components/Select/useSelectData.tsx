@@ -12,6 +12,21 @@ export type SelectItemType = {
     label: string;
 };
 
+/**
+ * Recursively extracts option values from children.
+ * This function traverses through the React component tree and collects all SelectItem values.
+ *
+ * @param {ReactNode} children - The React children to extract values from.
+ * @returns {SelectItemType[]} An array of SelectItemType objects.
+ *
+ * @example
+ * const options = (
+ *   <SelectItem value="1">Option 1</SelectItem>
+ *   <SelectItem value="2">Option 2</SelectItem>
+ * );
+ * const values = getRecursiveOptionValues(options);
+ * // Returns: [{ value: '1', label: 'Option 1' }, { value: '2', label: 'Option 2' }]
+ */
 export const getRecursiveOptionValues = (children: ReactNode): { value: string; label: string }[] => {
     const values: { value: string; label: string }[] = [];
     Children.forEach(children, (child) => {
@@ -27,12 +42,19 @@ export const getRecursiveOptionValues = (children: ReactNode): { value: string; 
     return values;
 };
 
+/**
+ * Custom hook for managing select data and filtering.
+ *
+ * @param {ReactNode} children - The React children to process, typically SelectItem components.
+ * @returns {Object} An object containing the processed data.
+ */
 export const useSelectData = (children: ReactNode) => {
     const [filterText, setFilterText] = useState('');
     const { inputSlots, menuSlots, itemValues, clearButton } = useMemo(() => {
         const inputSlots: ReactNode[] = [];
         const menuSlots: ReactNode[] = [];
         let clearButton: ReactNode;
+
         const hasSlots = Children.toArray(children).some(
             (child) => isValidElement<SelectSlotProps>(child) && child.type === ForwardedRefSelectSlot,
         );
@@ -53,23 +75,16 @@ export const useSelectData = (children: ReactNode) => {
                     }
                 }
             });
-
-            return {
-                inputSlots,
-                menuSlots,
-                clearButton,
-                itemValues: getRecursiveOptionValues(menuSlots),
-            };
         } else {
-            return {
-                menuSlots: children,
-                inputSlots: [],
-                itemValues: getRecursiveOptionValues(children),
-            };
+            menuSlots.push(children);
         }
+
+        const itemValues = getRecursiveOptionValues(menuSlots);
+
+        return { inputSlots, menuSlots, itemValues, clearButton };
     }, [children]);
 
-    const filteredItems = useMemo(
+    const items = useMemo(
         () =>
             itemValues.filter(
                 (item) => filterText === '' || item.label.toLowerCase().includes(filterText.toLowerCase()),
@@ -83,12 +98,12 @@ export const useSelectData = (children: ReactNode) => {
     );
 
     return {
-        inputSlots,
+        items,
         menuSlots,
+        filterText,
+        inputSlots,
         clearButton,
         setFilterText,
-        filterText,
-        items: filteredItems,
         getItemByValue,
     };
 };

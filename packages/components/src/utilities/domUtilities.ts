@@ -2,7 +2,7 @@
 
 import { type ForwardedRef, type RefObject } from 'react';
 
-export const MAX_HEIGHT_MARGIN = 16;
+export const MAX_HEIGHT_MARGIN = 8;
 
 /**
  * Sets the maximum height for a dialog element based on its position on the viewport.

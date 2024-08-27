@@ -6,7 +6,7 @@ import * as sinon from 'sinon';
 
 import { Select } from '../Select';
 
-const SELECT_TEST_ID = 'test-dropdown';
+const SELECT_TEST_ID = 'test-combobox';
 const GROUP_TEST_ID = 'test-group';
 const ITEM_TEST_ID1 = 'test-item1';
 const ITEM_TEST_ID2 = 'test-item2';
@@ -18,6 +18,8 @@ const ITEM_LABEL1 = 'test1';
 const ITEM_TEXT1 = 'sample text1';
 const ITEM_LABEL2 = 'test2';
 const ITEM_TEXT2 = 'sample text2';
+const SELECT_SUCCESS_ICON_TEST_ID = `${SELECT_TEST_ID}-success-icon`;
+const SELECT_ERROR_ICON_TEST_ID = `${SELECT_TEST_ID}-error-icon`;
 
 test('should render with placeholder', async ({ mount, page }) => {
     const component = await mount(
@@ -30,6 +32,34 @@ test('should render with placeholder', async ({ mount, page }) => {
 
     await expect(component).toBeVisible();
     await expect(page.getByPlaceholder(PLACEHOLDER_TEXT)).toBeVisible();
+});
+
+test('render the success status', async ({ mount }) => {
+    const component = await mount(
+        <Select aria-label="test" data-test-id={SELECT_TEST_ID} status="success">
+            <Select.Slot name="menu">
+                <Select.Item value="test1">{ITEM_TEXT1}</Select.Item>
+            </Select.Slot>
+        </Select>,
+    );
+
+    await expect(component).toHaveAttribute('data-status', 'success');
+    await expect(component).toHaveCSS('border', '1px solid rgb(21, 129, 111)');
+    await expect(component.getByTestId(SELECT_SUCCESS_ICON_TEST_ID)).toBeVisible();
+});
+
+test('render the error status', async ({ mount }) => {
+    const component = await mount(
+        <Select aria-label="test" data-test-id={SELECT_TEST_ID} status="error">
+            <Select.Slot name="menu">
+                <Select.Item value="test1">{ITEM_TEXT1}</Select.Item>
+            </Select.Slot>
+        </Select>,
+    );
+
+    await expect(component).toHaveAttribute('data-status', 'error');
+    await expect(component).toHaveCSS('border', '1px solid rgb(217, 47, 76)');
+    await expect(component.getByTestId(SELECT_ERROR_ICON_TEST_ID)).toBeVisible();
 });
 
 test('should open menu and show item', async ({ mount, page }) => {
@@ -74,19 +104,19 @@ test('should navigate though menu with arrow', async ({ mount, page }) => {
 
     await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveAttribute('data-highlighted', 'true');
     await expect(page.getByTestId(ITEM_TEST_ID2)).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-    await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveCSS('background-color', 'rgb(234, 235, 235)');
+    await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveCSS('background-color', 'rgb(66, 71, 71)');
 
     await page.keyboard.press('ArrowDown');
 
     await expect(page.getByTestId(ITEM_TEST_ID2)).toHaveAttribute('data-highlighted', 'true');
     await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-    await expect(page.getByTestId(ITEM_TEST_ID2)).toHaveCSS('background-color', 'rgb(234, 235, 235)');
+    await expect(page.getByTestId(ITEM_TEST_ID2)).toHaveCSS('background-color', 'rgb(66, 71, 71)');
 
     await page.keyboard.press('ArrowUp');
 
     await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveAttribute('data-highlighted', 'true');
     await expect(page.getByTestId(ITEM_TEST_ID2)).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-    await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveCSS('background-color', 'rgb(234, 235, 235)');
+    await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveCSS('background-color', 'rgb(66, 71, 71)');
 });
 
 test('should select item in list', async ({ mount, page }) => {
@@ -306,4 +336,29 @@ test('should render custom clear slot', async ({ mount, page }) => {
     await expect(component).toBeVisible();
     await expect(page.getByTestId(SLOT_CLEAR_TEST_ID)).toBeVisible();
     await expect(component).toContainText('Clear Slot');
+});
+
+test('should clear input when typed value is not selected', async ({ mount, page }) => {
+    const component = await mount(
+        <Select.Combobox aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
+            <Select.Slot name="menu">
+                <Select.Item data-test-id={ITEM_TEST_ID1} value="test1">
+                    {ITEM_TEXT1}
+                </Select.Item>
+                <Select.Item data-test-id={ITEM_TEST_ID2} value="test2">
+                    {ITEM_TEXT2}
+                </Select.Item>
+            </Select.Slot>
+        </Select.Combobox>,
+    );
+
+    await expect(component).toBeVisible();
+    await component.click();
+
+    const nonExistentValue = 'test1';
+    await page.keyboard.type(nonExistentValue);
+    await page.keyboard.press('Tab');
+
+    await expect(component.getByTestId(SELECT_TEST_ID)).toHaveValue('');
+    await expect(page.getByPlaceholder(PLACEHOLDER_TEXT)).toBeVisible();
 });

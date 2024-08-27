@@ -42,7 +42,6 @@ type TooltipPropsBase = {
     valueFormatter?: ValueFormatter;
     labelFormatter?: LabelFormatter;
     locale?: string;
-    valueContextBySeries?: string[];
 };
 
 type TooltipBarProps = {
@@ -72,7 +71,6 @@ export const Tooltip = ({
     scalePadding = 0,
     colorAccessor = () => '',
     valueFormatter,
-    valueContextBySeries,
     labelFormatter,
     locale,
     stackingGlyphs = false,
@@ -92,7 +90,6 @@ export const Tooltip = ({
         valueFormatter,
         tooltipContext.tooltipData?.datumByKey,
         childSumLabel,
-        valueContextBySeries,
     );
     const shouldReverseEntries = stackingGlyphs;
     const sortedEntries = shouldReverseEntries ? [...entries].reverse() : entries;
