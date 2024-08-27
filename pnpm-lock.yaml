@@ -706,7 +706,7 @@ importers:
         version: 8.2.9(storybook@8.2.9(@babel/preset-env@7.24.4(@babel/core@7.24.9)))
       '@storybook/addon-interactions':
         specifier: ^8.2.9
-        version: 8.2.9(storybook@8.2.9(@babel/preset-env@7.24.4(@babel/core@7.25.2)))(vitest@2.0.5(@types/node@20.14.12)(@vitest/ui@2.0.5)(happy-dom@14.12.3)(sass@1.77.8)(terser@5.31.1))
+        version: 8.2.9(storybook@8.2.9(@babel/preset-env@7.24.4(@babel/core@7.24.9)))
       '@storybook/addon-links':
         specifier: ^8.2.9
         version: 8.2.9(react@18.3.1)(storybook@8.2.9(@babel/preset-env@7.24.4(@babel/core@7.24.9)))
@@ -883,7 +883,7 @@ importers:
         version: 8.2.9(storybook@8.2.9(@babel/preset-env@7.24.4(@babel/core@7.24.9)))
       '@storybook/addon-interactions':
         specifier: ^8.2.9
-        version: 8.2.9(storybook@8.2.9(@babel/preset-env@7.24.4(@babel/core@7.25.2)))(vitest@2.0.5(@types/node@20.14.12)(@vitest/ui@2.0.5)(happy-dom@14.12.3)(sass@1.77.8)(terser@5.31.1))
+        version: 8.2.9(storybook@8.2.9(@babel/preset-env@7.24.4(@babel/core@7.24.9)))
       '@storybook/addon-links':
         specifier: ^8.2.9
         version: 8.2.9(react@18.3.1)(storybook@8.2.9(@babel/preset-env@7.24.4(@babel/core@7.24.9)))
@@ -1029,8 +1029,8 @@ importers:
   storybook-docs:
     devDependencies:
       '@babel/core':
-        specifier: ^7.24.9
-        version: 7.24.9
+        specifier: ^7.25.2
+        version: 7.25.2
       '@etchteam/storybook-addon-status':
         specifier: ^5.0.0
         version: 5.0.0
@@ -13856,6 +13856,21 @@ snapshots:
       '@storybook/global': 5.0.0
       storybook: 8.2.9(@babel/preset-env@7.24.4(@babel/core@7.24.9))
 
+  '@storybook/addon-interactions@8.2.9(storybook@8.2.9(@babel/preset-env@7.24.4(@babel/core@7.24.9)))':
+    dependencies:
+      '@storybook/global': 5.0.0
+      '@storybook/instrumenter': 8.2.9(storybook@8.2.9(@babel/preset-env@7.24.4(@babel/core@7.24.9)))
+      '@storybook/test': 8.2.9(storybook@8.2.9(@babel/preset-env@7.24.4(@babel/core@7.24.9)))
+      polished: 4.2.2
+      storybook: 8.2.9(@babel/preset-env@7.24.4(@babel/core@7.24.9))
+      ts-dedent: 2.2.0
+    transitivePeerDependencies:
+      - '@jest/globals'
+      - '@types/bun'
+      - '@types/jest'
+      - jest
+      - vitest
+
   '@storybook/addon-interactions@8.2.9(storybook@8.2.9(@babel/preset-env@7.24.4(@babel/core@7.25.2)))(vitest@2.0.5(@types/node@20.14.12)(@vitest/ui@2.0.5)(happy-dom@14.12.3)(sass@1.77.8)(terser@5.31.1))':
     dependencies:
       '@storybook/global': 5.0.0
@@ -14170,6 +14185,24 @@ snapshots:
       util-deprecate: 1.0.2
     optionalDependencies:
       typescript: 5.5.4
+
+  '@storybook/test@8.2.9(storybook@8.2.9(@babel/preset-env@7.24.4(@babel/core@7.24.9)))':
+    dependencies:
+      '@storybook/csf': 0.1.11
+      '@storybook/instrumenter': 8.2.9(storybook@8.2.9(@babel/preset-env@7.24.4(@babel/core@7.24.9)))
+      '@testing-library/dom': 10.1.0
+      '@testing-library/jest-dom': 6.4.5(vitest@2.0.5(@types/node@20.14.12)(@vitest/ui@2.0.5)(happy-dom@14.12.3)(sass@1.77.8)(terser@5.31.1))
+      '@testing-library/user-event': 14.5.2(@testing-library/dom@10.1.0)
+      '@vitest/expect': 1.6.0
+      '@vitest/spy': 1.6.0
+      storybook: 8.2.9(@babel/preset-env@7.24.4(@babel/core@7.24.9))
+      util: 0.12.5
+    transitivePeerDependencies:
+      - '@jest/globals'
+      - '@types/bun'
+      - '@types/jest'
+      - jest
+      - vitest
 
   '@storybook/test@8.2.9(storybook@8.2.9(@babel/preset-env@7.24.4(@babel/core@7.25.2)))(vitest@2.0.5(@types/node@20.14.12)(@vitest/ui@2.0.5)(happy-dom@14.12.3)(sass@1.77.8)(terser@5.31.1))':
     dependencies:
