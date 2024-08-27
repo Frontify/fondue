@@ -33,11 +33,11 @@ test('should render trigger', async ({ mount, page }) => {
         </Flyout.Root>,
     );
     const tooltipTrigger = page.getByTestId(FLYOUT_TRIGGER_TEST_ID);
-    const tooltipContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
+    const flyoutContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
     await expect(component).toBeVisible();
     await expect(tooltipTrigger).toBeVisible();
     await expect(component).toContainText(FLYOUT_TRIGGER_TEXT);
-    await expect(tooltipContent).not.toBeVisible();
+    await expect(flyoutContent).not.toBeVisible();
 });
 
 test('should render content on click', async ({ mount, page }) => {
@@ -56,13 +56,13 @@ test('should render content on click', async ({ mount, page }) => {
         </Flyout.Root>,
     );
     const tooltipTrigger = page.getByTestId(FLYOUT_TRIGGER_TEST_ID);
-    const tooltipContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
+    const flyoutContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
     await expect(component).toBeVisible();
     await expect(tooltipTrigger).toBeVisible();
     await expect(component).toContainText(FLYOUT_TRIGGER_TEXT);
-    await expect(tooltipContent).not.toBeVisible();
+    await expect(flyoutContent).not.toBeVisible();
     await tooltipTrigger.click();
-    await expect(tooltipContent).toBeVisible();
+    await expect(flyoutContent).toBeVisible();
 });
 
 test('should close on click outside', async ({ mount, page }) => {
@@ -81,11 +81,11 @@ test('should close on click outside', async ({ mount, page }) => {
         </Flyout.Root>,
     );
     const tooltipTrigger = page.getByTestId(FLYOUT_TRIGGER_TEST_ID);
-    const tooltipContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
+    const flyoutContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
     await tooltipTrigger.click();
-    await expect(tooltipContent).toBeVisible();
+    await expect(flyoutContent).toBeVisible();
     await page.click('body');
-    await expect(tooltipContent).not.toBeVisible();
+    await expect(flyoutContent).not.toBeVisible();
 });
 
 test('should close on cross button click', async ({ mount, page }) => {
@@ -104,11 +104,11 @@ test('should close on cross button click', async ({ mount, page }) => {
         </Flyout.Root>,
     );
     const tooltipTrigger = page.getByTestId(FLYOUT_TRIGGER_TEST_ID);
-    const tooltipContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
+    const flyoutContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
     await tooltipTrigger.click();
-    await expect(tooltipContent).toBeVisible();
+    await expect(flyoutContent).toBeVisible();
     await page.getByTestId('fondue-flyout-header-close').click();
-    await expect(tooltipContent).not.toBeVisible();
+    await expect(flyoutContent).not.toBeVisible();
 });
 
 test('should not render close button when prop is not passed', async ({ mount, page }) => {
@@ -126,8 +126,8 @@ test('should not render close button when prop is not passed', async ({ mount, p
             </Flyout.Content>
         </Flyout.Root>,
     );
-    const tooltipContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
-    await expect(tooltipContent).toBeVisible();
+    const flyoutContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
+    await expect(flyoutContent).toBeVisible();
     await expect(page.getByTestId('fondue-flyout-header-close')).not.toBeVisible();
 });
 
@@ -142,13 +142,13 @@ test('should render only flyout header', async ({ mount, page }) => {
             </Flyout.Content>
         </Flyout.Root>,
     );
-    const tooltipContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
-    await expect(tooltipContent.getByTestId(FLYOUT_HEADER_TEST_ID)).toBeVisible();
-    await expect(tooltipContent).toContainText(FLYOUT_HEADER_TEXT);
-    await expect(tooltipContent.getByTestId(FLYOUT_BODY_TEST_ID)).not.toBeVisible();
-    await expect(tooltipContent).not.toContainText(FLYOUT_BODY_TEXT);
-    await expect(tooltipContent.getByTestId(FLYOUT_FOOTER_TEST_ID)).not.toBeVisible();
-    await expect(tooltipContent).not.toContainText(FLYOUT_FOOTER_TEXT);
+    const flyoutContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
+    await expect(flyoutContent.getByTestId(FLYOUT_HEADER_TEST_ID)).toBeVisible();
+    await expect(flyoutContent).toContainText(FLYOUT_HEADER_TEXT);
+    await expect(flyoutContent.getByTestId(FLYOUT_BODY_TEST_ID)).not.toBeVisible();
+    await expect(flyoutContent).not.toContainText(FLYOUT_BODY_TEXT);
+    await expect(flyoutContent.getByTestId(FLYOUT_FOOTER_TEST_ID)).not.toBeVisible();
+    await expect(flyoutContent).not.toContainText(FLYOUT_FOOTER_TEXT);
 });
 
 test('should render only flyout body', async ({ mount, page }) => {
@@ -162,13 +162,13 @@ test('should render only flyout body', async ({ mount, page }) => {
             </Flyout.Content>
         </Flyout.Root>,
     );
-    const tooltipContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
-    await expect(tooltipContent.getByTestId(FLYOUT_HEADER_TEST_ID)).not.toBeVisible();
-    await expect(tooltipContent).not.toContainText(FLYOUT_HEADER_TEXT);
-    await expect(tooltipContent.getByTestId(FLYOUT_BODY_TEST_ID)).toBeVisible();
-    await expect(tooltipContent).toContainText(FLYOUT_BODY_TEXT);
-    await expect(tooltipContent.getByTestId(FLYOUT_FOOTER_TEST_ID)).not.toBeVisible();
-    await expect(tooltipContent).not.toContainText(FLYOUT_FOOTER_TEXT);
+    const flyoutContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
+    await expect(flyoutContent.getByTestId(FLYOUT_HEADER_TEST_ID)).not.toBeVisible();
+    await expect(flyoutContent).not.toContainText(FLYOUT_HEADER_TEXT);
+    await expect(flyoutContent.getByTestId(FLYOUT_BODY_TEST_ID)).toBeVisible();
+    await expect(flyoutContent).toContainText(FLYOUT_BODY_TEXT);
+    await expect(flyoutContent.getByTestId(FLYOUT_FOOTER_TEST_ID)).not.toBeVisible();
+    await expect(flyoutContent).not.toContainText(FLYOUT_FOOTER_TEXT);
 });
 
 test('should render only flyout footer', async ({ mount, page }) => {
@@ -184,13 +184,13 @@ test('should render only flyout footer', async ({ mount, page }) => {
             </Flyout.Content>
         </Flyout.Root>,
     );
-    const tooltipContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
-    await expect(tooltipContent.getByTestId(FLYOUT_HEADER_TEST_ID)).not.toBeVisible();
-    await expect(tooltipContent).not.toContainText(FLYOUT_HEADER_TEXT);
-    await expect(tooltipContent.getByTestId(FLYOUT_BODY_TEST_ID)).not.toBeVisible();
-    await expect(tooltipContent).not.toContainText(FLYOUT_BODY_TEXT);
-    await expect(tooltipContent.getByTestId(FLYOUT_FOOTER_TEST_ID)).toBeVisible();
-    await expect(tooltipContent).toContainText(FLYOUT_FOOTER_TEXT);
+    const flyoutContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
+    await expect(flyoutContent.getByTestId(FLYOUT_HEADER_TEST_ID)).not.toBeVisible();
+    await expect(flyoutContent).not.toContainText(FLYOUT_HEADER_TEXT);
+    await expect(flyoutContent.getByTestId(FLYOUT_BODY_TEST_ID)).not.toBeVisible();
+    await expect(flyoutContent).not.toContainText(FLYOUT_BODY_TEXT);
+    await expect(flyoutContent.getByTestId(FLYOUT_FOOTER_TEST_ID)).toBeVisible();
+    await expect(flyoutContent).toContainText(FLYOUT_FOOTER_TEXT);
 });
 
 test('should render full flyout layout', async ({ mount, page }) => {
@@ -208,13 +208,13 @@ test('should render full flyout layout', async ({ mount, page }) => {
             </Flyout.Content>
         </Flyout.Root>,
     );
-    const tooltipContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
-    await expect(tooltipContent.getByTestId(FLYOUT_HEADER_TEST_ID)).toBeVisible();
-    await expect(tooltipContent).toContainText(FLYOUT_HEADER_TEXT);
-    await expect(tooltipContent.getByTestId(FLYOUT_BODY_TEST_ID)).toBeVisible();
-    await expect(tooltipContent).toContainText(FLYOUT_BODY_TEXT);
-    await expect(tooltipContent.getByTestId(FLYOUT_FOOTER_TEST_ID)).toBeVisible();
-    await expect(tooltipContent).toContainText(FLYOUT_FOOTER_TEXT);
+    const flyoutContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
+    await expect(flyoutContent.getByTestId(FLYOUT_HEADER_TEST_ID)).toBeVisible();
+    await expect(flyoutContent).toContainText(FLYOUT_HEADER_TEXT);
+    await expect(flyoutContent.getByTestId(FLYOUT_BODY_TEST_ID)).toBeVisible();
+    await expect(flyoutContent).toContainText(FLYOUT_BODY_TEXT);
+    await expect(flyoutContent.getByTestId(FLYOUT_FOOTER_TEST_ID)).toBeVisible();
+    await expect(flyoutContent).toContainText(FLYOUT_FOOTER_TEXT);
 });
 
 test('should render custom content', async ({ mount, page }) => {
@@ -230,10 +230,10 @@ test('should render custom content', async ({ mount, page }) => {
             </Flyout.Content>
         </Flyout.Root>,
     );
-    const tooltipContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
-    await expect(tooltipContent).toContainText(FLYOUT_BODY_TEXT);
-    await expect(tooltipContent.getByTestId('custom-content')).toBeVisible();
-    await expect(tooltipContent.getByTestId('custom-content')).toHaveCSS('background-color', 'rgb(255, 0, 0)');
+    const flyoutContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
+    await expect(flyoutContent).toContainText(FLYOUT_BODY_TEXT);
+    await expect(flyoutContent.getByTestId('custom-content')).toBeVisible();
+    await expect(flyoutContent.getByTestId('custom-content')).toHaveCSS('background-color', 'rgb(255, 0, 0)');
 });
 
 test('should render compact padding by default', async ({ mount, page }) => {
@@ -251,10 +251,31 @@ test('should render compact padding by default', async ({ mount, page }) => {
             </Flyout.Content>
         </Flyout.Root>,
     );
-    const tooltipContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
-    await expect(tooltipContent.getByTestId(FLYOUT_HEADER_TEST_ID)).toHaveCSS('padding', '16px');
-    await expect(tooltipContent.getByTestId(FLYOUT_BODY_TEST_ID)).toHaveCSS('padding', '8px 16px');
-    await expect(tooltipContent.getByTestId(FLYOUT_FOOTER_TEST_ID)).toHaveCSS('padding', '16px');
+    const flyoutContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
+    await expect(flyoutContent.getByTestId(FLYOUT_HEADER_TEST_ID)).toHaveCSS('padding', '16px');
+    await expect(flyoutContent.getByTestId(FLYOUT_BODY_TEST_ID)).toHaveCSS('padding', '8px 16px');
+    await expect(flyoutContent.getByTestId(FLYOUT_FOOTER_TEST_ID)).toHaveCSS('padding', '16px');
+});
+
+test('should render tight padding', async ({ mount, page }) => {
+    await mount(
+        <Flyout.Root open>
+            <Flyout.Trigger>
+                <Button>{FLYOUT_TRIGGER_TEXT}</Button>
+            </Flyout.Trigger>
+            <Flyout.Content padding="tight">
+                <Flyout.Header>{FLYOUT_HEADER_TEXT}</Flyout.Header>
+                <Flyout.Body>{FLYOUT_BODY_TEXT}</Flyout.Body>
+                <Flyout.Footer>
+                    <Button>{FLYOUT_FOOTER_TEXT}</Button>
+                </Flyout.Footer>
+            </Flyout.Content>
+        </Flyout.Root>,
+    );
+    const flyoutContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
+    await expect(flyoutContent.getByTestId(FLYOUT_HEADER_TEST_ID)).toHaveCSS('padding', '8px');
+    await expect(flyoutContent.getByTestId(FLYOUT_BODY_TEST_ID)).toHaveCSS('padding', '8px');
+    await expect(flyoutContent.getByTestId(FLYOUT_FOOTER_TEST_ID)).toHaveCSS('padding', '8px');
 });
 
 test('should render compact padding', async ({ mount, page }) => {
@@ -272,10 +293,10 @@ test('should render compact padding', async ({ mount, page }) => {
             </Flyout.Content>
         </Flyout.Root>,
     );
-    const tooltipContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
-    await expect(tooltipContent.getByTestId(FLYOUT_HEADER_TEST_ID)).toHaveCSS('padding', '16px');
-    await expect(tooltipContent.getByTestId(FLYOUT_BODY_TEST_ID)).toHaveCSS('padding', '8px 16px');
-    await expect(tooltipContent.getByTestId(FLYOUT_FOOTER_TEST_ID)).toHaveCSS('padding', '16px');
+    const flyoutContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
+    await expect(flyoutContent.getByTestId(FLYOUT_HEADER_TEST_ID)).toHaveCSS('padding', '16px');
+    await expect(flyoutContent.getByTestId(FLYOUT_BODY_TEST_ID)).toHaveCSS('padding', '8px 16px');
+    await expect(flyoutContent.getByTestId(FLYOUT_FOOTER_TEST_ID)).toHaveCSS('padding', '16px');
 });
 
 test('should render comfortable padding', async ({ mount, page }) => {
@@ -293,10 +314,10 @@ test('should render comfortable padding', async ({ mount, page }) => {
             </Flyout.Content>
         </Flyout.Root>,
     );
-    const tooltipContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
-    await expect(tooltipContent.getByTestId(FLYOUT_HEADER_TEST_ID)).toHaveCSS('padding', '24px');
-    await expect(tooltipContent.getByTestId(FLYOUT_BODY_TEST_ID)).toHaveCSS('padding', '16px 24px');
-    await expect(tooltipContent.getByTestId(FLYOUT_FOOTER_TEST_ID)).toHaveCSS('padding', '24px');
+    const flyoutContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
+    await expect(flyoutContent.getByTestId(FLYOUT_HEADER_TEST_ID)).toHaveCSS('padding', '24px');
+    await expect(flyoutContent.getByTestId(FLYOUT_BODY_TEST_ID)).toHaveCSS('padding', '16px 24px');
+    await expect(flyoutContent.getByTestId(FLYOUT_FOOTER_TEST_ID)).toHaveCSS('padding', '24px');
 });
 
 test('should render spacious padding', async ({ mount, page }) => {
@@ -314,10 +335,10 @@ test('should render spacious padding', async ({ mount, page }) => {
             </Flyout.Content>
         </Flyout.Root>,
     );
-    const tooltipContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
-    await expect(tooltipContent.getByTestId(FLYOUT_HEADER_TEST_ID)).toHaveCSS('padding', '40px');
-    await expect(tooltipContent.getByTestId(FLYOUT_BODY_TEST_ID)).toHaveCSS('padding', '24px 40px');
-    await expect(tooltipContent.getByTestId(FLYOUT_FOOTER_TEST_ID)).toHaveCSS('padding', '40px');
+    const flyoutContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
+    await expect(flyoutContent.getByTestId(FLYOUT_HEADER_TEST_ID)).toHaveCSS('padding', '40px');
+    await expect(flyoutContent.getByTestId(FLYOUT_BODY_TEST_ID)).toHaveCSS('padding', '24px 40px');
+    await expect(flyoutContent.getByTestId(FLYOUT_FOOTER_TEST_ID)).toHaveCSS('padding', '40px');
 });
 
 test('should render open', async ({ mount, page }) => {
@@ -335,8 +356,8 @@ test('should render open', async ({ mount, page }) => {
             </Flyout.Content>
         </Flyout.Root>,
     );
-    const tooltipContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
-    await expect(tooltipContent).toBeVisible();
+    const flyoutContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
+    await expect(flyoutContent).toBeVisible();
 });
 
 test('should trigger callback on open and close', async ({ mount, page }) => {
