@@ -1,5 +1,37 @@
 # @frontify/fondue-components
 
+## 3.2.0
+
+### Minor Changes
+
+-   [#2011](https://github.com/Frontify/fondue/pull/2011) [`00ff0b8`](https://github.com/Frontify/fondue/commit/00ff0b8e33664642a3bf0a0ffdde0c78d1af6e79) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - refactor: styles of segmented controls to SCSS
+
+-   [#2017](https://github.com/Frontify/fondue/pull/2017) [`aa60625`](https://github.com/Frontify/fondue/commit/aa606256df39fc33be775bf23082bcc943642b97) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - refactor: tooltip styles from Tailwind to SCSS
+
+-   [#2000](https://github.com/Frontify/fondue/pull/2000) [`2c023f2`](https://github.com/Frontify/fondue/commit/2c023f2d17c2340985c07ea13f2256bd38c6727c) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - feat: add error status, success status and focus border to select/combobox input and margins to content. Remove border from input on keyboard navigation (outline only)
+
+-   [#2021](https://github.com/Frontify/fondue/pull/2021) [`3968380`](https://github.com/Frontify/fondue/commit/39683801b626306b5001503a8625f2861362cf63) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - feat: add flyout spacing option "tight"
+
+-   [#2015](https://github.com/Frontify/fondue/pull/2015) [`3db8329`](https://github.com/Frontify/fondue/commit/3db8329558944fcc1363995ad8d35f4ba437409d) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - refactor: flyout styles from Tailwind to SCSS
+
+### Patch Changes
+
+-   [#2006](https://github.com/Frontify/fondue/pull/2006) [`38c5911`](https://github.com/Frontify/fondue/commit/38c5911b8030333f9c5eb6ed96280cebb91c415d) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix: reset combobox if no option selected (onblur)
+
+-   [#2018](https://github.com/Frontify/fondue/pull/2018) [`f775988`](https://github.com/Frontify/fondue/commit/f775988d17d59ecad92ffaf876e45650d62ea50e) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix: outline styles not displaying properly
+
+-   [#2003](https://github.com/Frontify/fondue/pull/2003) [`526da81`](https://github.com/Frontify/fondue/commit/526da81ba53f6fcf3bd853f46938abb4973561b6) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - feat: add migration guide for select component
+
+-   [#2012](https://github.com/Frontify/fondue/pull/2012) [`af112ab`](https://github.com/Frontify/fondue/commit/af112abea2f44dc946fc9cbe96d7b08f1da7a469) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - refactor: normalize root styling names
+
+-   [#2020](https://github.com/Frontify/fondue/pull/2020) [`bd6a3df`](https://github.com/Frontify/fondue/commit/bd6a3df99dab5391cb5ec7ff9e5f9fbba5a3a462) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix: add missing exports
+
+-   [#2014](https://github.com/Frontify/fondue/pull/2014) [`3aa54a6`](https://github.com/Frontify/fondue/commit/3aa54a63279509d8432e95c8b319ef77ea919917) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add missing color picker export
+
+-   [#2009](https://github.com/Frontify/fondue/pull/2009) [`c8fee79`](https://github.com/Frontify/fondue/commit/c8fee79a0ad9602cf0cb2e97002f6b44359e4a15) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix: prevent outline style duplication (input and select)
+
+-   [#2010](https://github.com/Frontify/fondue/pull/2010) [`8172ebf`](https://github.com/Frontify/fondue/commit/8172ebfee0299a91b85cc8ee8b396c6d2d3c3f2c) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix: add flyout max height to prevent viewport overflows
+
 ## 3.1.0
 
 ### Minor Changes
