@@ -263,7 +263,7 @@ test('should render tight padding', async ({ mount, page }) => {
             <Flyout.Trigger>
                 <Button>{FLYOUT_TRIGGER_TEXT}</Button>
             </Flyout.Trigger>
-            <Flyout.Content padding="compact">
+            <Flyout.Content padding="tight">
                 <Flyout.Header>{FLYOUT_HEADER_TEXT}</Flyout.Header>
                 <Flyout.Body>{FLYOUT_BODY_TEXT}</Flyout.Body>
                 <Flyout.Footer>
@@ -274,7 +274,7 @@ test('should render tight padding', async ({ mount, page }) => {
     );
     const flyoutContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
     await expect(flyoutContent.getByTestId(FLYOUT_HEADER_TEST_ID)).toHaveCSS('padding', '8px');
-    await expect(flyoutContent.getByTestId(FLYOUT_BODY_TEST_ID)).toHaveCSS('padding', '8px 8px');
+    await expect(flyoutContent.getByTestId(FLYOUT_BODY_TEST_ID)).toHaveCSS('padding', '8px');
     await expect(flyoutContent.getByTestId(FLYOUT_FOOTER_TEST_ID)).toHaveCSS('padding', '8px');
 });
 

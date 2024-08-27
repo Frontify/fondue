@@ -115,10 +115,6 @@
     }
 
     .root[data-flyout-spacing='compact'] & {
-        padding: sizeToken(2);
-    }
-
-    .root[data-flyout-spacing='compact'] & {
         padding: sizeToken(4);
     }
 
