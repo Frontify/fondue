@@ -77,7 +77,7 @@ const SliderComponent = (
             <RadixSlider.Track
                 onPointerDown={() => {
                     if (sliderThumbRef.current) {
-                        sliderThumbRef.current.dataset.preventBlueOutline = 'true';
+                        sliderThumbRef.current.dataset.showFocusRing = 'false';
                     }
                 }}
                 className={styles.track}
@@ -89,10 +89,10 @@ const SliderComponent = (
                     ref={sliderThumbRef}
                     className={styles.thumb}
                     onPointerDown={(event) => {
-                        event.currentTarget.dataset.preventBlueOutline = 'true';
+                        event.currentTarget.dataset.showFocusRing = 'false';
                     }}
                     onBlur={(event) => {
-                        event.currentTarget.dataset.preventBlueOutline = 'false';
+                        event.currentTarget.dataset.showFocusRing = 'true';
                     }}
                     key={index}
                 />
