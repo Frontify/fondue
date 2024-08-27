@@ -43,10 +43,7 @@
 
 .thumb {
     @include transition-colors;
-
-    &:not(:focus) {
-        @include transition-box-shadow;
-    }
+    @include transition(outline);
 
     --slider-thumb-hover-box-shadow-color: color-mix(
         in srgb,
@@ -57,11 +54,17 @@
     --slider-thumb-disabled-border-color: color-mix(in srgb, var(--box-neutral-inverse-color-pressed) 10%, transparent);
 
     display: block;
+
     width: sizeToken(5);
     height: sizeToken(5);
+
     background-color: var(--base-color);
     border: 1px solid var(--line-color-strong);
     border-radius: 100%;
+    outline-color: var(--slider-thumb-active-outline-color);
+    outline-style: solid;
+    outline-width: 0;
+
     cursor: pointer;
     box-sizing: border-box;
 
@@ -71,23 +74,16 @@
         &:active,
         //firefox support requires this additional selector
         &[data-show-focus-ring='false']:focus-visible {
-            @include transition(outline);
-            outline-style: solid;
-            outline-offset: 0;
             outline-width: sizeToken(2);
-            outline-color: var(--slider-thumb-active-outline-color);
         }
     }
 
     &[data-show-focus-ring='false']:not(:active) {
-        @include transition(outline);
-        outline-style: solid;
-        outline-offset: 0;
         outline-width: sizeToken(1);
-        outline-color: var(--slider-thumb-active-outline-color);
     }
 
     &:not([data-show-focus-ring='false']) {
+        @include transition-box-shadow;
         @include focus-outline;
     }
 
