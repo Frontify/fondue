@@ -6499,9 +6499,6 @@ packages:
     resolution: {integrity: sha512-dm9s5Pw7Jc0GvMYbshN6zchCA9RgQlzzEZX3vylR9IqFfS8XciblUXOKfW6SiuJ0e13eDYZoZV5wdrev7P3Nwg==}
     engines: {node: ^10.12.0 || >=12.0.0}
 
-  flatted@3.2.9:
-    resolution: {integrity: sha512-36yxDn5H7OFZQla0/jFJmbIKTdZAQHngCedGxiMmpNfEZM0sdEeT+WczLQrjK6D7o2aiyLYDnkw0R3JK0Qv1RQ==}
-
   flatted@3.3.1:
     resolution: {integrity: sha512-X8cqMLLie7KsNUDSdzeN8FYK9rEt4Dt67OsG/DNGnYTSDBG4uFAJFBnUeiV+zCVAvwFy56IjM9sH51jVaEhNxw==}
 
@@ -16635,7 +16632,7 @@ snapshots:
       prop-types: 15.8.1
       react: 18.3.1
       react-is: 17.0.2
-      tslib: 2.6.3
+      tslib: 2.6.2
 
   downshift@9.0.8(react@18.3.1):
     dependencies:
@@ -17497,10 +17494,8 @@ snapshots:
 
   flat-cache@3.0.4:
     dependencies:
-      flatted: 3.2.9
+      flatted: 3.3.1
       rimraf: 3.0.2
-
-  flatted@3.2.9: {}
 
   flatted@3.3.1: {}
 
