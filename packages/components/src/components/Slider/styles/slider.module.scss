@@ -61,9 +61,7 @@
     background-color: var(--base-color);
     border: 1px solid var(--line-color-strong);
     border-radius: 100%;
-    outline-color: var(--slider-thumb-active-outline-color);
-    outline-style: solid;
-    outline-width: 0;
+    outline: 0 solid var(--slider-thumb-active-outline-color);
 
     cursor: pointer;
     box-sizing: border-box;
