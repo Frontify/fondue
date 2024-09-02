@@ -12,7 +12,6 @@ $allProperties: join($properties, $layoutProperties);
     @each $property in $allProperties {
         @include responsive-default-value($property, initial);
     }
-
     @include responsive-default-value(display, flex);
     @include responsive-default-value(flex-direction, row);
 }

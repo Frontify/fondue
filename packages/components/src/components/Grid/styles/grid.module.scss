@@ -14,10 +14,16 @@ $properties: (
     justify-items
 );
 
+$allProperties: join($properties, $layoutProperties);
+
 .root {
-    @include responsive-properties(join($properties, $layoutProperties));
+    @include responsive-properties($allProperties);
 
     // Default values
+    @each $property in $allProperties {
+        @include responsive-default-value($property, initial);
+    }
+
     @include responsive-default-value(display, grid);
     @include responsive-default-value(align-items, stretch);
     @include responsive-default-value(justify-items, start);
