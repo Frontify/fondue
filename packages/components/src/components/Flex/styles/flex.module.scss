@@ -4,14 +4,15 @@
 
 $properties: (display, flex-direction, align-items, justify-content, flex-wrap, gap, gap-x, gap-y);
 $allProperties: join($properties, $layoutProperties);
+
 .root {
     @include responsive-properties($allProperties);
 
+    // Default values
     @each $property in $allProperties {
         @include responsive-default-value($property, initial);
     }
 
-    // Default values
     @include responsive-default-value(display, flex);
     @include responsive-default-value(flex-direction, row);
 }
