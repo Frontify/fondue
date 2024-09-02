@@ -6,13 +6,7 @@ export type Breakpoint = keyof typeof screens;
 export type Responsive<TValue> = ({ [key in Breakpoint]?: TValue } & { base?: TValue }) | TValue;
 // `(string & {})` allows for arbitrary strings to be passed in while keeping the suggestion of the union type
 // eslint-disable-next-line @typescript-eslint/ban-types
-export type SizeValue =
-    | (string & Record<string, never>)
-    | 'auto'
-    | 'fit-content'
-    | 'intrinsic'
-    | 'max-content'
-    | 'min-content';
+export type SizeValue = (string & {}) | 'auto' | 'fit-content' | 'intrinsic' | 'max-content' | 'min-content';
 
 // `(string & {})` allows for arbitrary strings to be passed in while keeping the suggestion of the union type
 // eslint-disable-next-line @typescript-eslint/ban-types

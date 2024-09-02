@@ -36,11 +36,21 @@ export const Default: Story = {
     render: (args) => {
         return (
             <Flex {...args}>
-                <DecorativeBox />
-                <DecorativeBox />
-                <DecorativeBox />
-                <DecorativeBox />
-                <DecorativeBox />
+                <Flex gapX="10px">
+                    <DecorativeBox />
+                    <DecorativeBox />
+                    <DecorativeBox />
+                    <DecorativeBox />
+                    <DecorativeBox />
+                </Flex>
+
+                <Flex gapX="10px">
+                    <DecorativeBox />
+                    <DecorativeBox />
+                    <DecorativeBox />
+                    <DecorativeBox />
+                    <DecorativeBox />
+                </Flex>
             </Flex>
         );
     },
