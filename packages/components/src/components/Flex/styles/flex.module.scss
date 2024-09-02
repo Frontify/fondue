@@ -3,9 +3,13 @@
 @import '../../../helpers/layout.module.scss';
 
 $properties: (display, flex-direction, align-items, justify-content, flex-wrap, gap, gap-x, gap-y);
-
+$allProperties: join($properties, $layoutProperties);
 .root {
-    @include responsive-properties(join($properties, $layoutProperties));
+    @include responsive-properties($allProperties);
+
+    @each $property in $allProperties {
+        @include responsive-default-value($property, initial);
+    }
 
     // Default values
     @include responsive-default-value(display, flex);

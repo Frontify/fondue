@@ -3,7 +3,7 @@
 import { type ReactNode } from 'react';
 
 import { type CommonAriaProps } from '#/helpers/aria';
-import { type Responsive, type SizeValue, type LayoutComponentProps, type GlobalValues } from '#/helpers/layout';
+import { type Responsive, type SizeValue, type LayoutComponentProps } from '#/helpers/layout';
 import { propsToCssVariables } from '#/helpers/propsToCssVariables';
 
 import styles from './styles/flex.module.scss';
@@ -18,26 +18,24 @@ export type FlexProps = LayoutComponentProps & {
      * The display property.
      * @default 'flex'
      */
-    display?: Responsive<'none' | 'flex' | 'inline-flex' | GlobalValues>;
+    display?: Responsive<'none' | 'flex' | 'inline-flex'>;
     /**
      * The direction of the children.
      * @default 'row'
      */
-    direction?: Responsive<'row' | 'row-reverse' | 'column' | 'column-reverse' | GlobalValues>;
+    direction?: Responsive<'row' | 'row-reverse' | 'column' | 'column-reverse'>;
     /**
      * The alignment of the children.
      */
-    align?: Responsive<'flex-start' | 'center' | 'flex-end' | 'stretch' | 'baseline' | GlobalValues>;
+    align?: Responsive<'flex-start' | 'center' | 'flex-end' | 'stretch' | 'baseline'>;
     /**
      * The justification of the children.
      */
-    justify?: Responsive<
-        'flex-start' | 'center' | 'flex-end' | 'space-between' | 'space-around' | 'space-evenly' | GlobalValues
-    >;
+    justify?: Responsive<'flex-start' | 'center' | 'flex-end' | 'space-between' | 'space-around' | 'space-evenly'>;
     /**
      * The wrap property.
      */
-    wrap?: Responsive<'nowrap' | 'wrap' | 'wrap-reverse' | GlobalValues>;
+    wrap?: Responsive<'nowrap' | 'wrap' | 'wrap-reverse'>;
     /**
      * The gap between the children.
      */
@@ -55,56 +53,12 @@ export type FlexProps = LayoutComponentProps & {
     'data-test-id'?: string;
 } & CommonAriaProps;
 
-const ALL_POSSIBLE_PROPS_DEFAILT_VALUES: FlexProps = {
-    direction: 'initial',
-    align: 'initial',
-    justify: 'initial',
-    wrap: 'initial',
-    gap: 'initial',
-    gapX: 'initial',
-    gapY: 'initial',
-    m: 'initial',
-    mx: 'initial',
-    my: 'initial',
-    mt: 'initial',
-    mr: 'initial',
-    mb: 'initial',
-    ml: 'initial',
-    p: 'initial',
-    px: 'initial',
-    py: 'initial',
-    pt: 'initial',
-    pr: 'initial',
-    pb: 'initial',
-    pl: 'initial',
-    width: 'initial',
-    minWidth: 'initial',
-    maxWidth: 'initial',
-    height: 'initial',
-    minHeight: 'initial',
-    maxHeight: 'initial',
-    overflow: 'initial',
-    overflowX: 'initial',
-    overflowY: 'initial',
-    position: 'initial',
-    top: 'initial',
-    right: 'initial',
-    bottom: 'initial',
-    left: 'initial',
-};
-
 export const Flex = ({
     as: Component = 'div',
     'data-test-id': dataTestId = 'fondue-flex',
     children,
     ...props
 }: FlexProps) => {
-    for (const key in ALL_POSSIBLE_PROPS_DEFAILT_VALUES) {
-        if (!props[key]) {
-            props[key] = ALL_POSSIBLE_PROPS_DEFAILT_VALUES[key];
-        }
-    }
-
     return (
         <Component
             className={styles.root}

@@ -4,7 +4,6 @@ import { type screens } from '../../tailwind.config';
 
 export type Breakpoint = keyof typeof screens;
 export type Responsive<TValue> = ({ [key in Breakpoint]?: TValue } & { base?: TValue }) | TValue;
-export type GlobalValues = 'initial' | 'inherit' | 'unset';
 // `(string & {})` allows for arbitrary strings to be passed in while keeping the suggestion of the union type
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type SizeValue =
@@ -13,8 +12,7 @@ export type SizeValue =
     | 'fit-content'
     | 'intrinsic'
     | 'max-content'
-    | 'min-content'
-    | GlobalValues;
+    | 'min-content';
 
 // `(string & {})` allows for arbitrary strings to be passed in while keeping the suggestion of the union type
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -111,20 +109,20 @@ export type LayoutComponentProps = {
     /**
      * The overflow property of the component.
      */
-    overflow?: Responsive<OverflowValue | GlobalValues>;
+    overflow?: Responsive<OverflowValue>;
     /**
      * The horizontal overflow property of the component.
      */
-    overflowX?: Responsive<OverflowValue | GlobalValues>;
+    overflowX?: Responsive<OverflowValue>;
     /**
      * The vertical overflow property of the component.
      */
-    overflowY?: Responsive<OverflowValue | GlobalValues>;
+    overflowY?: Responsive<OverflowValue>;
 
     /**
      * The position property of the component.
      */
-    position?: Responsive<PositionValue | GlobalValues>;
+    position?: Responsive<PositionValue>;
     /**
      * The top property of the component.
      */
