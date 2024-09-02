@@ -2,4 +2,4 @@
 "@frontify/fondue-components": patch
 ---
 
-fix: flex css variable collision
+fix: layout components css variable unwanted inheritance
