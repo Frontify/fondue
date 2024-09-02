@@ -56,7 +56,6 @@ export type FlexProps = LayoutComponentProps & {
 } & CommonAriaProps;
 
 const ALL_POSSIBLE_PROPS_DEFAILT_VALUES: FlexProps = {
-    display: 'initial',
     direction: 'initial',
     align: 'initial',
     justify: 'initial',
