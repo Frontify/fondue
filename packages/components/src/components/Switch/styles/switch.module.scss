@@ -9,10 +9,12 @@
     @include transition-colors;
 
     position: relative;
-    background-color: var(--box-neutral-color);
-    border-radius: 9999px;
-    border: 1px solid var(--line-color-x-strong);
     container-type: size;
+    box-sizing: border-box;
+    border-radius: 9999px;
+
+    background-color: var(--box-neutral-color);
+    border: 1px solid var(--line-color-x-strong);
 
     &:hover {
         background-color: var(--box-neutral-color-hover);
