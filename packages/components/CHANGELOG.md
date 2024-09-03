@@ -1,5 +1,19 @@
 # @frontify/fondue-components
 
+## 3.2.1
+
+### Patch Changes
+
+-   [#2028](https://github.com/Frontify/fondue/pull/2028) [`b773556`](https://github.com/Frontify/fondue/commit/b77355620a964b95e9d101a7950483e062f7cef0) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix: layout components css variable unwanted inheritance
+
+-   [#2022](https://github.com/Frontify/fondue/pull/2022) [`3db4385`](https://github.com/Frontify/fondue/commit/3db4385c2e3f92f2cd4cce12d3d6c8abaad4b326) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - chore: update dependencies
+
+-   [#2029](https://github.com/Frontify/fondue/pull/2029) [`5d09e39`](https://github.com/Frontify/fondue/commit/5d09e391e0a942a7911bfe836800d82fdcd600db) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix: prevent box-sizing override from normalization scripts in web app
+
+-   Updated dependencies [[`3db4385`](https://github.com/Frontify/fondue/commit/3db4385c2e3f92f2cd4cce12d3d6c8abaad4b326)]:
+    -   @frontify/fondue-tokens@3.5.6
+    -   @frontify/fondue-icons@0.4.1
+
 ## 3.2.0
 
 ### Minor Changes
