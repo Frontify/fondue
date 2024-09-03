@@ -18,3 +18,19 @@ test('should render without error', async ({ mount }) => {
     await expect(component).toHaveCSS('margin', '40px');
     await expect(component).toHaveCSS('max-width', '1000px');
 });
+
+test('should not inherit parent props', async ({ mount }) => {
+    const component = await mount(
+        <Section p="20px" m="50px">
+            <Section data-test-id="flex-child">{SECTION_TEXT}</Section>
+        </Section>,
+    );
+
+    await expect(component).toHaveCSS('padding', '20px');
+    await expect(component).toHaveCSS('margin', '50px');
+
+    const child = component.getByTestId('flex-child');
+
+    await expect(child).not.toHaveCSS('padding', '20px');
+    await expect(child).not.toHaveCSS('margin', '50px');
+});

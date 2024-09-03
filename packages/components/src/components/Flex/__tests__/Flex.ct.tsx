@@ -12,6 +12,22 @@ test('should render without error', async ({ mount }) => {
     await expect(component).toContainText(FLEX_TEXT);
 });
 
+test('should not inherit parent props', async ({ mount }) => {
+    const component = await mount(
+        <Flex p="20px" gap="50px">
+            <Flex data-test-id="flex-child">{FLEX_TEXT}</Flex>
+        </Flex>,
+    );
+
+    await expect(component).toHaveCSS('padding', '20px');
+    await expect(component).toHaveCSS('gap', '50px');
+
+    const child = component.getByTestId('flex-child');
+
+    await expect(child).not.toHaveCSS('padding', '20px');
+    await expect(child).not.toHaveCSS('gap', '50px');
+});
+
 const ResponsiveComponent = (
     <Flex
         direction={{ base: 'row', md: 'column' }}
