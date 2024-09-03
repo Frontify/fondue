@@ -1,5 +1,17 @@
 # @frontify/fondue
 
+## 12.2.7
+
+### Patch Changes
+
+-   [#2022](https://github.com/Frontify/fondue/pull/2022) [`3db4385`](https://github.com/Frontify/fondue/commit/3db4385c2e3f92f2cd4cce12d3d6c8abaad4b326) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - chore: update dependencies
+
+-   Updated dependencies [[`b773556`](https://github.com/Frontify/fondue/commit/b77355620a964b95e9d101a7950483e062f7cef0), [`3db4385`](https://github.com/Frontify/fondue/commit/3db4385c2e3f92f2cd4cce12d3d6c8abaad4b326), [`5d09e39`](https://github.com/Frontify/fondue/commit/5d09e391e0a942a7911bfe836800d82fdcd600db)]:
+    -   @frontify/fondue-components@3.2.1
+    -   @frontify/fondue-charts@1.8.13
+    -   @frontify/fondue-tokens@3.5.6
+    -   @frontify/fondue-icons@0.4.1
+
 ## 12.2.6
 
 ### Patch Changes
