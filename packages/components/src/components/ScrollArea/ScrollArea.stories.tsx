@@ -19,11 +19,6 @@ const meta: Meta<typeof ScrollArea> = {
 export default meta;
 
 export const Default: Story = {
-    decorators: [
-        (Story) => {
-            return <Story />;
-        },
-    ],
     render: () => {
         return (
             <ScrollArea maxHeight={200} maxWidth={300}>
