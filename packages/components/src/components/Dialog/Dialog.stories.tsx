@@ -320,19 +320,19 @@ export const WithFocusableContent: Story = {
     },
     render: ({ ...args }) => {
         return (
-            <Flyout.Root>
-                <Flyout.Trigger>
+            <Dialog.Root>
+                <Dialog.Trigger>
                     <Button>Open flyout</Button>
-                </Flyout.Trigger>
-                <Flyout.Content {...args}>
-                    <Flyout.Header>Header</Flyout.Header>
-                    <Flyout.Body {...args}>
+                </Dialog.Trigger>
+                <Dialog.Content {...args}>
+                    <Dialog.Header>Header</Dialog.Header>
+                    <Dialog.Body {...args}>
                         <TextInput />
                         <TextInput />
                         <TextInput />
-                    </Flyout.Body>
-                </Flyout.Content>
-            </Flyout.Root>
+                    </Dialog.Body>
+                </Dialog.Content>
+            </Dialog.Root>
         );
     },
 };
