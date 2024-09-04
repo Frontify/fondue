@@ -7,6 +7,14 @@ import styles from './styles/scrollArea.module.scss';
 
 export type ScrollAreaProps = {
     /**
+     * "auto" visible when content is overflowing on the corresponding orientation.
+     * "always" always visible regardless of whether the content is overflowing.
+     * "scroll" visible when the user is scrolling along its corresponding orientation.
+     * "hover" when the user is hovering over the scroll area.
+     * @default 'hover'
+     */
+    type?: 'auto' | 'always' | 'scroll' | 'hover';
+    /**
      * Maximum height of the scroll area
      * @default '100%'
      */
@@ -22,6 +30,7 @@ export type ScrollAreaProps = {
 
 const ScrollAreaComponent = (
     {
+        type,
         maxHeight = '100%',
         maxWidth = '100%',
         children,
@@ -30,7 +39,13 @@ const ScrollAreaComponent = (
     ref: ForwardedRef<HTMLDivElement>,
 ): ReactElement => {
     return (
-        <RadixScrollArea.Root className={styles.root} style={{ maxWidth }} data-test-id={dataTestId} ref={ref}>
+        <RadixScrollArea.Root
+            type={type}
+            className={styles.root}
+            style={{ maxWidth }}
+            data-test-id={dataTestId}
+            ref={ref}
+        >
             <RadixScrollArea.Viewport
                 className={styles.viewport}
                 style={{ maxHeight }}

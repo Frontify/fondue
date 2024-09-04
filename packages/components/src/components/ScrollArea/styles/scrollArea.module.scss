@@ -17,7 +17,6 @@
 
 .scrollbar {
     @include transition-colors;
-
     display: flex;
     /* ensures no selection */
     user-select: none;

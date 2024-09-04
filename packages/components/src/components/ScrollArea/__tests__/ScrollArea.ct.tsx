@@ -35,7 +35,7 @@ test.describe('ScrollArea Component', () => {
         await expect(viewport).toHaveCSS('max-height', '500px');
     });
 
-    test('renders scrollbars when content exceeds viewport', async ({ mount }) => {
+    test('renders scrollbars on hover', async ({ mount }) => {
         const component = await mount(
             <ScrollArea maxHeight="300px" maxWidth="300px">
                 <div style={{ height: '1000px', width: '1000px' }}>Scrollable content</div>
@@ -46,6 +46,46 @@ test.describe('ScrollArea Component', () => {
 
         const verticalScrollbar = component.getByTestId('fondue-scroll-area-vertical-scrollbar');
         const horizontalScrollbar = component.getByTestId('fondue-scroll-area-horizontal-scrollbar');
+
+        await expect(verticalScrollbar).toBeVisible();
+        await expect(horizontalScrollbar).toBeVisible();
+    });
+
+    test('renders scrollbars always', async ({ mount }) => {
+        const component = await mount(<ScrollArea type="always">Scrollable content</ScrollArea>);
+
+        const verticalScrollbar = component.getByTestId('fondue-scroll-area-vertical-scrollbar');
+        const horizontalScrollbar = component.getByTestId('fondue-scroll-area-horizontal-scrollbar');
+
+        await expect(verticalScrollbar).toBeVisible();
+        await expect(horizontalScrollbar).toBeVisible();
+    });
+
+    test('renders scrollbars when content overflows', async ({ mount }) => {
+        const component = await mount(
+            <ScrollArea type="always" maxHeight="300px" maxWidth="300px">
+                <div style={{ height: '1000px', width: '1000px' }}>Scrollable content</div>
+            </ScrollArea>,
+        );
+
+        const verticalScrollbar = component.getByTestId('fondue-scroll-area-vertical-scrollbar');
+        const horizontalScrollbar = component.getByTestId('fondue-scroll-area-horizontal-scrollbar');
+
+        await expect(verticalScrollbar).toBeVisible();
+        await expect(horizontalScrollbar).toBeVisible();
+    });
+    test('renders scrollbars when scrolling', async ({ mount }) => {
+        const component = await mount(
+            <ScrollArea type="always" maxHeight="300px" maxWidth="300px">
+                <div style={{ height: '1000px', width: '1000px' }}>Scrollable content</div>
+            </ScrollArea>,
+        );
+
+        const verticalScrollbar = component.getByTestId('fondue-scroll-area-vertical-scrollbar');
+        const horizontalScrollbar = component.getByTestId('fondue-scroll-area-horizontal-scrollbar');
+
+        await component.hover();
+        // todo: scroll content
 
         await expect(verticalScrollbar).toBeVisible();
         await expect(horizontalScrollbar).toBeVisible();
@@ -69,7 +109,6 @@ test.describe('ScrollArea Component', () => {
         const verticalScrollbarThumb = component.getByTestId('fondue-scroll-area-vertical-scrollbar-thumb');
         await expect(verticalScrollbarThumb).toBeVisible();
 
-        // Get the initial position of the first and last paragraphs
         const firstParagraph = component.getByTestId('paragraph-0');
         const initialFirstParagraphBox = await firstParagraph.boundingBox();
 
