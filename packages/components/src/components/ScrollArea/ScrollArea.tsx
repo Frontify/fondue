@@ -23,8 +23,8 @@ export type ScrollAreaProps = {
 const ScrollAreaComponent = ({
     maxHeight = '100%',
     maxWidth = '100%',
-    'data-test-id': dataTestId = 'fondue-scroll-area',
     children,
+    'data-test-id': dataTestId = 'fondue-scroll-area',
 }: ScrollAreaProps) => {
     return (
         <RadixScrollArea.Root className={styles.root} style={{ maxWidth }} data-test-id={dataTestId}>
