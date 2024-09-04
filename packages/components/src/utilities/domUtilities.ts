@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ForwardedRef, type RefObject } from 'react';
+import { type FocusEvent, type MouseEvent as ReactMouseEvent, type ForwardedRef, type RefObject } from 'react';
 
 export const MAX_HEIGHT_MARGIN = 8;
 
@@ -73,5 +73,25 @@ export function syncRefs(localRef: RefObject<HTMLDivElement>, forwardedRef: Forw
         forwardedRef(localRef.current);
     } else if (forwardedRef && 'current' in forwardedRef) {
         forwardedRef.current = localRef.current;
+    }
+}
+
+export function addAutoFocusAttribute(mouseEvent: ReactMouseEvent<HTMLButtonElement, MouseEvent>) {
+    mouseEvent.currentTarget.dataset.autoFocusVisible = 'false';
+}
+
+export function addShowFocusRing(event: FocusEvent<HTMLDivElement, HTMLElement>) {
+    const triggerElement = event.relatedTarget;
+
+    if (triggerElement && triggerElement.dataset.autoFocusTrigger) {
+        const focusVisible = triggerElement.dataset.autoFocusVisible === 'true';
+
+        if (focusVisible) {
+            event.target.dataset.showFocusRing = 'true';
+        } else {
+            event.target.dataset.showFocusRing = 'false';
+        }
+
+        triggerElement.dataset.autoFocusVisible = 'true';
     }
 }

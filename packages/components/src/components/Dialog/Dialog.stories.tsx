@@ -20,6 +20,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from './Dialog';
+import { TextInput } from '../TextInput/TextInput';
 
 type Story = StoryObj<typeof meta>;
 const meta: Meta<typeof DialogContent> = {
@@ -309,6 +310,29 @@ export const WithCustomElementAnnouncements: Story = {
                     </Dialog.Footer>
                 </Dialog.Content>
             </Dialog.Root>
+        );
+    },
+};
+
+export const WithFocusableContent: Story = {
+    args: {
+        children: 'Hello World',
+    },
+    render: ({ ...args }) => {
+        return (
+            <Flyout.Root>
+                <Flyout.Trigger>
+                    <Button>Open flyout</Button>
+                </Flyout.Trigger>
+                <Flyout.Content {...args}>
+                    <Flyout.Header>Header</Flyout.Header>
+                    <Flyout.Body {...args}>
+                        <TextInput />
+                        <TextInput />
+                        <TextInput />
+                    </Flyout.Body>
+                </Flyout.Content>
+            </Flyout.Root>
         );
     },
 };

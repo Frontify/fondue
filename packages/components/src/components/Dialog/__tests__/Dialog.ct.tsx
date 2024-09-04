@@ -4,6 +4,8 @@ import { expect, test } from '@playwright/experimental-ct-react';
 import sinon from 'sinon';
 
 import { Button } from '#/components/Button/Button';
+import { TextInput } from '#/components/TextInput/TextInput';
+import { FOCUS_BORDER_CSS, FOCUS_OUTLINE_CSS } from '#/helpers/constants';
 
 import { Dialog } from '../Dialog';
 
@@ -18,6 +20,9 @@ const DIALOG_FOOTER_TEXT = 'Dialog Footer';
 const DIALOG_FOOTER_TEST_ID = 'fondue-dialog-footer';
 const DIALOG_CONTENT_TEST_ID = 'fondue-dialog-content';
 const DIALOG_SIDE_CONTENT_TEST_ID = 'fondue-dialog-side-content';
+const TEXT_INPUT_TEST_ID_1 = 'fondue-text-input-1';
+const TEXT_INPUT_TEST_ID_2 = 'fondue-text-input-2';
+const TEXT_INPUT_TEST_ID_3 = 'fondue-text-input-3';
 
 test('should render without error', async ({ mount }) => {
     const component = await mount(
@@ -211,4 +216,70 @@ test('should show layout elements', async ({ mount, page }) => {
     await expect(headerElement).toBeVisible();
     await expect(bodyElement).toBeVisible();
     await expect(footerElement).toBeVisible();
+});
+
+test('should render focus visible input on enter press', async ({ mount, page }) => {
+    const component = await mount(
+        <Dialog.Root>
+            <Dialog.Trigger>
+                <Button>{DIALOG_TRIGGER_TEXT}</Button>
+            </Dialog.Trigger>
+            <Dialog.Content>
+                <Dialog.Body>
+                    <TextInput data-test-id={TEXT_INPUT_TEST_ID_1} />
+                    <TextInput data-test-id={TEXT_INPUT_TEST_ID_2} />
+                    <TextInput data-test-id={TEXT_INPUT_TEST_ID_3} />
+                </Dialog.Body>
+            </Dialog.Content>
+        </Dialog.Root>,
+    );
+    const tooltipTrigger = page.getByTestId(DIALOG_TRIGGER_TEST_ID);
+    const textInput1 = page.getByTestId(TEXT_INPUT_TEST_ID_1);
+    const textInput2 = page.getByTestId(TEXT_INPUT_TEST_ID_2);
+    const textInput3 = page.getByTestId(TEXT_INPUT_TEST_ID_3);
+    await expect(component).toBeVisible();
+    await expect(tooltipTrigger).toBeVisible();
+    await tooltipTrigger.focus();
+    await page.keyboard.press('Enter');
+    await expect(textInput1).toHaveCSS(...FOCUS_OUTLINE_CSS);
+    await expect(textInput1).not.toHaveCSS(...FOCUS_BORDER_CSS);
+    await page.keyboard.press('Tab');
+    await expect(textInput2).toHaveCSS(...FOCUS_OUTLINE_CSS);
+    await expect(textInput2).not.toHaveCSS(...FOCUS_BORDER_CSS);
+    await textInput3.click();
+    await expect(textInput3).not.toHaveCSS(...FOCUS_OUTLINE_CSS);
+    await expect(textInput3).toHaveCSS(...FOCUS_BORDER_CSS);
+});
+
+test('should not render focus visible input on click', async ({ mount, page }) => {
+    const component = await mount(
+        <Dialog.Root>
+            <Dialog.Trigger>
+                <Button>{DIALOG_TRIGGER_TEXT}</Button>
+            </Dialog.Trigger>
+            <Dialog.Content>
+                <Dialog.Body>
+                    <TextInput data-test-id={TEXT_INPUT_TEST_ID_1} />
+                    <TextInput data-test-id={TEXT_INPUT_TEST_ID_2} />
+                    <TextInput data-test-id={TEXT_INPUT_TEST_ID_3} />
+                </Dialog.Body>
+            </Dialog.Content>
+        </Dialog.Root>,
+    );
+    const tooltipTrigger = page.getByTestId(DIALOG_TRIGGER_TEST_ID);
+    const textInput1 = page.getByTestId(TEXT_INPUT_TEST_ID_1);
+    const textInput2 = page.getByTestId(TEXT_INPUT_TEST_ID_2);
+    const textInput3 = page.getByTestId(TEXT_INPUT_TEST_ID_3);
+    await expect(component).toBeVisible();
+    await expect(tooltipTrigger).toBeVisible();
+    await tooltipTrigger.focus();
+    await tooltipTrigger.click();
+    await expect(textInput1).not.toHaveCSS(...FOCUS_OUTLINE_CSS);
+    await expect(textInput1).toHaveCSS(...FOCUS_BORDER_CSS);
+    await textInput2.click();
+    await expect(textInput2).not.toHaveCSS(...FOCUS_OUTLINE_CSS);
+    await expect(textInput2).toHaveCSS(...FOCUS_BORDER_CSS);
+    await page.keyboard.press('Tab');
+    await expect(textInput3).toHaveCSS(...FOCUS_OUTLINE_CSS);
+    await expect(textInput3).not.toHaveCSS(...FOCUS_BORDER_CSS);
 });
