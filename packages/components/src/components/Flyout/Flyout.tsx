@@ -118,8 +118,7 @@ export const FlyoutContent = (
                 align={align}
                 collisionPadding={8}
                 sideOffset={8}
-                onOpenAutoFocus={(event) => {
-                    event.preventDefault();
+                onOpenAutoFocus={() => {
                     setMaxHeight();
                     syncRefs(localRef, ref);
                 }}

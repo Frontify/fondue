@@ -136,9 +136,6 @@ export const DialogContent = (
                     data-dialog-spacing={padding}
                     data-test-id={dataTestId}
                     data-dialog-vertical-align={verticalAlign}
-                    onOpenAutoFocus={(event) => {
-                        event.preventDefault();
-                    }}
                     {...props}
                 >
                     {children}
