@@ -38,9 +38,7 @@ describe('LineChart', () => {
 
         const svgContainer = container.getElementsByTagName('svg')[0];
 
-        console.log(container.attributes);
-
-        // expect(svgContainer?.getAttribute('width')).toBe('400');
+        expect(svgContainer?.getAttribute('width')).toBe('400');
         expect(svgContainer?.getAttribute('height')).toBe('200');
     });
 });
