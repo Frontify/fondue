@@ -63,5 +63,5 @@ const ScrollAreaComponent = (
     );
 };
 
-export const ScrollArea = forwardRef<HTMLButtonElement, ScrollAreaProps>(ScrollAreaComponent);
+export const ScrollArea = forwardRef<HTMLDivElement, ScrollAreaProps>(ScrollAreaComponent);
 ScrollArea.displayName = 'ScrollArea';
