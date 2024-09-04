@@ -3,8 +3,9 @@
 import { type Meta, type StoryObj } from '@storybook/react';
 
 import { Button } from '../Button/Button';
+import { TextInput } from '../TextInput/TextInput';
 
-import { Flyout, FlyoutContent, FlyoutRoot, FlyoutTrigger, FlyoutHeader, FlyoutBody, FlyoutFooter } from './Flyout';
+import { Flyout, FlyoutBody, FlyoutContent, FlyoutFooter, FlyoutHeader, FlyoutRoot, FlyoutTrigger } from './Flyout';
 
 type Story = StoryObj<typeof meta>;
 const meta: Meta<typeof FlyoutContent> = {
@@ -98,6 +99,29 @@ export const WithFooter: Story = {
                     <Flyout.Footer>
                         <Button>Submit</Button>
                     </Flyout.Footer>
+                </Flyout.Content>
+            </Flyout.Root>
+        );
+    },
+};
+
+export const WithFocusableContent: Story = {
+    args: {
+        children: 'Hello World',
+    },
+    render: ({ ...args }) => {
+        return (
+            <Flyout.Root>
+                <Flyout.Trigger>
+                    <Button>Open flyout</Button>
+                </Flyout.Trigger>
+                <Flyout.Content {...args}>
+                    <Flyout.Header>Header</Flyout.Header>
+                    <Flyout.Body {...args}>
+                        <TextInput />
+                        <TextInput />
+                        <TextInput />
+                    </Flyout.Body>
                 </Flyout.Content>
             </Flyout.Root>
         );

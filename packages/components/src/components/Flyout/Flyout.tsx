@@ -83,7 +83,16 @@ export const FlyoutTrigger = (
     ref: ForwardedRef<HTMLButtonElement>,
 ) => {
     return (
-        <RadixPopover.Trigger data-test-id={dataTestId} asChild ref={ref}>
+        <RadixPopover.Trigger
+            onMouseDown={(mouseEvent) => {
+                mouseEvent.currentTarget.dataset.autoFocusVisible = 'false';
+            }}
+            data-auto-focus-visible="true"
+            data-flyout-trigger
+            data-test-id={dataTestId}
+            asChild
+            ref={ref}
+        >
             {children}
         </RadixPopover.Trigger>
     );
@@ -129,6 +138,16 @@ export const FlyoutContent = (
                 data-flyout-spacing={padding}
                 data-rounded={rounded}
                 data-test-id={dataTestId}
+                onFocus={(event) => {
+                    const triggerElement = event.relatedTarget as HTMLElement;
+                    if (triggerElement && triggerElement.dataset.flyoutTrigger) {
+                        const focusVisible = triggerElement.dataset.autoFocusVisible === 'true';
+                        triggerElement.dataset.autoFocusVisible = 'true';
+                        if (!focusVisible) {
+                            event.target.dataset.showFocusRing = 'false';
+                        }
+                    }
+                }}
                 {...props}
             >
                 {children}
