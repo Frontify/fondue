@@ -51,7 +51,7 @@ export const TooltipRoot = ({ children, enterDelay = 700, open, onOpenChange }: 
 TooltipRoot.displayName = 'Tooltip.Root';
 
 export const TooltipTrigger = (
-    { children, 'data-test-id': dataTestId = 'fondue-tooltip-content' }: TooltipTriggerProps,
+    { children, 'data-test-id': dataTestId = 'fondue-tooltip-trigger' }: TooltipTriggerProps,
     ref: ForwardedRef<HTMLButtonElement>,
 ) => {
     return (

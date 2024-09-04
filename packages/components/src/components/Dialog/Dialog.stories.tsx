@@ -1,9 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Meta, type StoryObj } from '@storybook/react';
-import { useState } from 'react';
+import { forwardRef, useState } from 'react';
 
 import { Button } from '../Button/Button';
+import { Flex } from '../Flex/Flex';
+import { Flyout } from '../Flyout/Flyout';
+import { Tooltip } from '../Tooltip/Tooltip';
 
 import {
     Dialog,
@@ -155,6 +158,28 @@ export const WithSideContent: Story = {
                     <Dialog.SideContent>
                         <div className="tw-bg-box-positive-strong tw-h-full tw-min-w-40"></div>
                     </Dialog.SideContent>
+                    <Dialog.Body {...args} />
+                </Dialog.Content>
+            </Dialog.Root>
+        );
+    },
+};
+
+export const WithUnderlay: Story = {
+    args: {
+        children: 'I am a dialog content',
+        showUnderlay: true,
+    },
+    render: ({ ...args }) => {
+        return (
+            <Dialog.Root>
+                <Dialog.Trigger>
+                    <Button>Open dialog</Button>
+                </Dialog.Trigger>
+                <Dialog.Content {...args}>
+                    <Dialog.Header>
+                        <Dialog.Title>Header</Dialog.Title>
+                    </Dialog.Header>
                     <Dialog.Body {...args} />
                 </Dialog.Content>
             </Dialog.Root>
@@ -335,6 +360,74 @@ export const ControlledComponent: Story = {
                         <Dialog.Title>Header</Dialog.Title>
                     </Dialog.Header>
                     <Dialog.Body {...args} />
+                </Dialog.Content>
+            </Dialog.Root>
+        );
+    },
+};
+
+export const WithFlyoutAndTooltip: Story = {
+    render: ({ ...args }) => {
+        const ButtonWithTooltip = forwardRef<HTMLButtonElement | null, { text: string; tooltipText: string }>(
+            ({ text, tooltipText }, ref) => {
+                return (
+                    <Tooltip.Root>
+                        <Tooltip.Trigger>
+                            <div>
+                                <Flyout.Trigger>
+                                    <Button ref={ref}>{text}</Button>
+                                </Flyout.Trigger>
+                            </div>
+                        </Tooltip.Trigger>
+                        <Tooltip.Content side="left">{tooltipText}</Tooltip.Content>
+                    </Tooltip.Root>
+                );
+            },
+        );
+        ButtonWithTooltip.displayName = 'ButtonWithTooltip';
+
+        return (
+            <Dialog.Root>
+                <Dialog.Trigger>
+                    <Button>Open dialog</Button>
+                </Dialog.Trigger>
+                <Dialog.Content {...args} showUnderlay>
+                    <Dialog.Body>
+                        <Flex direction="column" gap="8px" align="flex-start">
+                            <Flyout.Root>
+                                <Flyout.Trigger>
+                                    <Button>Open flyout</Button>
+                                </Flyout.Trigger>
+                                <Flyout.Content>
+                                    <Flyout.Header>Header</Flyout.Header>
+                                    <Flyout.Body>I am a flyout</Flyout.Body>
+                                </Flyout.Content>
+                            </Flyout.Root>
+
+                            <Tooltip.Root>
+                                <Tooltip.Trigger>
+                                    <Button>I am a tooltip, hover me</Button>
+                                </Tooltip.Trigger>
+                                <Tooltip.Content side="left">Tooltip content</Tooltip.Content>
+                            </Tooltip.Root>
+
+                            <Flyout.Root>
+                                <ButtonWithTooltip
+                                    text="Open flyout (and I am a tooltip too)"
+                                    tooltipText="Tooltip text"
+                                />
+                                <Flyout.Content>
+                                    <Flyout.Header>Header</Flyout.Header>
+                                    <Flyout.Body>I am a flyout</Flyout.Body>
+                                </Flyout.Content>
+                            </Flyout.Root>
+                        </Flex>
+                    </Dialog.Body>
+
+                    <Dialog.Footer>
+                        <Button emphasis="default">Cancel</Button>
+                        <Button>Submit</Button>
+                    </Dialog.Footer>
                 </Dialog.Content>
             </Dialog.Root>
         );
