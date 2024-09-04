@@ -43,11 +43,6 @@ export const Default: Story = {
 };
 
 export const WithWrapper: Story = {
-    decorators: [
-        (Story) => {
-            return <Story />;
-        },
-    ],
     render: () => {
         return (
             <div style={{ width: 300, height: 200 }}>
