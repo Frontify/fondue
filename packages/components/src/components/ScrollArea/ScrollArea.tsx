@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import * as RadixScrollArea from '@radix-ui/react-scroll-area';
-import { ForwardedRef, forwardRef, ReactElement, type ReactNode } from 'react';
+import { type ForwardedRef, forwardRef, type ReactElement, type ReactNode } from 'react';
 
 import styles from './styles/scrollArea.module.scss';
 
