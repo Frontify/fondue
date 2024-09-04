@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import * as RadixScrollArea from '@radix-ui/react-scroll-area';
-import { forwardRef, type ReactNode } from 'react';
+import { ForwardedRef, forwardRef, ReactElement, type ReactNode } from 'react';
 
 import styles from './styles/scrollArea.module.scss';
 
@@ -20,14 +20,17 @@ export type ScrollAreaProps = {
     children: ReactNode;
 };
 
-const ScrollAreaComponent = ({
-    maxHeight = '100%',
-    maxWidth = '100%',
-    children,
-    'data-test-id': dataTestId = 'fondue-scroll-area',
-}: ScrollAreaProps) => {
+const ScrollAreaComponent = (
+    {
+        maxHeight = '100%',
+        maxWidth = '100%',
+        children,
+        'data-test-id': dataTestId = 'fondue-scroll-area',
+    }: ScrollAreaProps,
+    ref: ForwardedRef<HTMLDivElement>,
+): ReactElement => {
     return (
-        <RadixScrollArea.Root className={styles.root} style={{ maxWidth }} data-test-id={dataTestId}>
+        <RadixScrollArea.Root className={styles.root} style={{ maxWidth }} data-test-id={dataTestId} ref={ref}>
             <RadixScrollArea.Viewport
                 className={styles.viewport}
                 style={{ maxHeight }}
