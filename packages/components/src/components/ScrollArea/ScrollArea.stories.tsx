@@ -6,6 +6,7 @@ import { ScrollArea } from './ScrollArea';
 
 type Story = StoryObj<typeof ScrollArea>;
 const meta: Meta<typeof ScrollArea> = {
+    title: 'Components/Scroll Area',
     component: ScrollArea,
     tags: ['autodocs'],
     parameters: {
