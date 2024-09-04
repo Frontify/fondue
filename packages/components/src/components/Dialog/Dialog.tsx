@@ -121,25 +121,26 @@ export const DialogContent = (
 ) => {
     return (
         <RadixDialog.Portal>
-            <RadixDialog.Overlay data-visible={showUnderlay} className={styles.underlay} />
-            <RadixDialog.Content
-                style={
-                    {
-                        '--dialog-max-width': maxWidth,
-                        '--dialog-min-width': minWidth,
-                        '--dialog-min-height': minHeight,
-                    } as CSSProperties
-                }
-                ref={ref}
-                className={styles.content}
-                data-dialog-rounded={rounded}
-                data-dialog-spacing={padding}
-                data-test-id={dataTestId}
-                data-dialog-vertical-align={verticalAlign}
-                {...props}
-            >
-                {children}
-            </RadixDialog.Content>
+            <RadixDialog.Overlay data-visible={showUnderlay} className={styles.underlay}>
+                <RadixDialog.Content
+                    style={
+                        {
+                            '--dialog-max-width': maxWidth,
+                            '--dialog-min-width': minWidth,
+                            '--dialog-min-height': minHeight,
+                        } as CSSProperties
+                    }
+                    ref={ref}
+                    className={styles.content}
+                    data-dialog-rounded={rounded}
+                    data-dialog-spacing={padding}
+                    data-test-id={dataTestId}
+                    data-dialog-vertical-align={verticalAlign}
+                    {...props}
+                >
+                    {children}
+                </RadixDialog.Content>
+            </RadixDialog.Overlay>
         </RadixDialog.Portal>
     );
 };

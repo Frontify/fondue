@@ -15,13 +15,14 @@
     background-color: var(--base-color);
     box-shadow: var(--shadow-matrix);
     border: var(--line-width) solid var(--line-color);
-    z-index: 20;
+    z-index: 1;
     max-width: var(--dialog-max-width);
     height: fit-content;
     min-height: var(--dialog-min-height);
     max-height: 100dvh;
     overflow: hidden;
     grid-template-rows: auto auto minmax(0, 1fr) auto;
+    box-sizing: border-box;
 
     @include sm {
         left: 50%;
@@ -75,12 +76,10 @@
 .underlay {
     position: fixed;
     inset: 0;
-    background-color: var(--box-neutral-mighty-color);
-    z-index: 10;
-    opacity: 0;
+    background-color: rgb(from var(--box-neutral-mighty-color) r g b / 0);
 
     &[data-visible='true'] {
-        opacity: 0.5;
+        background-color: rgb(from var(--box-neutral-mighty-color) r g b / 0.5);
     }
 }
 
