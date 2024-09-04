@@ -6,6 +6,7 @@ import { forwardRef, useState } from 'react';
 import { Button } from '../Button/Button';
 import { Flex } from '../Flex/Flex';
 import { Flyout } from '../Flyout/Flyout';
+import { TextInput } from '../TextInput/TextInput';
 import { Tooltip } from '../Tooltip/Tooltip';
 
 import {
@@ -20,7 +21,6 @@ import {
     DialogTitle,
     DialogTrigger,
 } from './Dialog';
-import { TextInput } from '../TextInput/TextInput';
 
 type Story = StoryObj<typeof meta>;
 const meta: Meta<typeof DialogContent> = {
