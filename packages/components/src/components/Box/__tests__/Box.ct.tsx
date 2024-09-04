@@ -27,6 +27,22 @@ test('should render with normal padding/margin', async ({ mount }) => {
     await expect(component).toHaveCSS('margin', '80px');
 });
 
+test('should not inherit parent props', async ({ mount }) => {
+    const component = await mount(
+        <Box p="20px" m="50px">
+            <Box data-test-id="flex-child">{BOX_TEXT}</Box>
+        </Box>,
+    );
+
+    await expect(component).toHaveCSS('padding', '20px');
+    await expect(component).toHaveCSS('margin', '50px');
+
+    const child = component.getByTestId('flex-child');
+
+    await expect(child).not.toHaveCSS('padding', '20px');
+    await expect(child).not.toHaveCSS('margin', '50px');
+});
+
 const ResponsiveComponent = (
     <Box p={{ base: '20px', md: '40px', lg: '60px' }} m={{ base: '80px', md: '100px', lg: '120px' }}>
         {BOX_TEXT}

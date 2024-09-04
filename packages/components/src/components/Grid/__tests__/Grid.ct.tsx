@@ -52,6 +52,22 @@ test('should render with correct columns counts (string)', async ({ mount }) => 
     await expect(component).toHaveCSS('grid-template-columns', '208px 208px 208px 208px 208px 208px');
 });
 
+test('should not inherit parent props', async ({ mount }) => {
+    const component = await mount(
+        <Grid p="20px" m="50px">
+            <Grid data-test-id="flex-child">{GRID_TEXT}</Grid>
+        </Grid>,
+    );
+
+    await expect(component).toHaveCSS('padding', '20px');
+    await expect(component).toHaveCSS('margin', '50px');
+
+    const child = component.getByTestId('flex-child');
+
+    await expect(child).not.toHaveCSS('padding', '20px');
+    await expect(child).not.toHaveCSS('margin', '50px');
+});
+
 const ResponsiveComponent = (
     <Grid
         columns={{ base: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)' }}
