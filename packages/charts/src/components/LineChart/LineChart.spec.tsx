@@ -21,6 +21,7 @@ const dataWithMissingValues = [
         name: 'name',
     },
 ];
+
 vi.mock('@visx/scale', () => ({
     createScale: () => ({
         ticks: vi.fn().mockReturnValue([20, 40, 60, 80, 100]),
