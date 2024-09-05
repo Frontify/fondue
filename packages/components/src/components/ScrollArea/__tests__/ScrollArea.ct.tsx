@@ -66,30 +66,32 @@ test.describe('ScrollArea Component', () => {
         await expect(horizontalScrollbar).toBeVisible();
     });
 
-    test('renders scrollbars only when content overflows', async ({ mount }) => {
-        const componentOverflows = await mount(
-            <ScrollArea type="auto" maxHeight="300px" maxWidth="300px">
-                <div style={{ height: '1000px', width: '1000px' }}>Scrollable content</div>
-            </ScrollArea>,
-        );
-
-        let verticalScrollbar = componentOverflows.getByTestId('fondue-scroll-area-vertical-scrollbar');
-        let horizontalScrollbar = componentOverflows.getByTestId('fondue-scroll-area-horizontal-scrollbar');
-
-        await expect(verticalScrollbar).toBeVisible();
-        await expect(horizontalScrollbar).toBeVisible();
-
-        const componentDoesNotOverflow = await mount(
+    test('renders scrollbars only when content overflows (and it does not)', async ({ mount }) => {
+        const component = await mount(
             <ScrollArea type="auto" maxHeight="300px" maxWidth="300px">
                 Scrollable content
             </ScrollArea>,
         );
 
-        verticalScrollbar = componentDoesNotOverflow.getByTestId('fondue-scroll-area-vertical-scrollbar');
-        horizontalScrollbar = componentDoesNotOverflow.getByTestId('fondue-scroll-area-horizontal-scrollbar');
+        const verticalScrollbar = component.getByTestId('fondue-scroll-area-vertical-scrollbar');
+        const horizontalScrollbar = component.getByTestId('fondue-scroll-area-horizontal-scrollbar');
 
         await expect(verticalScrollbar).not.toBeVisible();
         await expect(horizontalScrollbar).not.toBeVisible();
+    });
+
+    test('renders scrollbars only when content overflows (and it does)', async ({ mount }) => {
+        const component = await mount(
+            <ScrollArea type="auto" maxHeight="300px" maxWidth="300px">
+                <div style={{ height: '1000px', width: '1000px' }}>Scrollable content</div>
+            </ScrollArea>,
+        );
+
+        const verticalScrollbar = component.getByTestId('fondue-scroll-area-vertical-scrollbar');
+        const horizontalScrollbar = component.getByTestId('fondue-scroll-area-horizontal-scrollbar');
+
+        await expect(verticalScrollbar).toBeVisible();
+        await expect(horizontalScrollbar).toBeVisible();
     });
 
     test('renders scrollbars only when scrolling', async ({ mount }) => {
