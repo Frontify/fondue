@@ -1,5 +1,17 @@
 # @frontify/fondue
 
+## 12.2.8
+
+### Patch Changes
+
+-   [#2033](https://github.com/Frontify/fondue/pull/2033) [`48a6604`](https://github.com/Frontify/fondue/commit/48a660495177a065126c7ab1d700175cc7104961) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+
+-   Updated dependencies [[`4084841`](https://github.com/Frontify/fondue/commit/4084841b90d79973f11c6a040d5e1379ec64450a), [`f303003`](https://github.com/Frontify/fondue/commit/f303003b9335a1f09483c41b7bfe629d76c91725), [`57e6ffb`](https://github.com/Frontify/fondue/commit/57e6ffb96e1dc9532dbf04f7853ea28ac74cb92b), [`48a6604`](https://github.com/Frontify/fondue/commit/48a660495177a065126c7ab1d700175cc7104961), [`42970a7`](https://github.com/Frontify/fondue/commit/42970a78e60aff2b934c0011032ec29a38284584), [`93a3d5d`](https://github.com/Frontify/fondue/commit/93a3d5db60be4804586aeb40559f249ec5a5a613), [`d5d9779`](https://github.com/Frontify/fondue/commit/d5d9779a436b6be1a2b75f31fdf015f03f201947), [`29739b5`](https://github.com/Frontify/fondue/commit/29739b560ad615f04e0a89a13bdeebe9f6af3339)]:
+    -   @frontify/fondue-components@3.3.0
+    -   @frontify/fondue-charts@1.8.14
+    -   @frontify/fondue-tokens@3.5.7
+    -   @frontify/fondue-icons@0.4.2
+
 ## 12.2.7
 
 ### Patch Changes
