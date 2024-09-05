@@ -99,7 +99,7 @@ export function addAutoFocusAttribute(mouseEvent: ReactMouseEvent<HTMLButtonElem
 export function addShowFocusRing(event: FocusEvent<HTMLDivElement, HTMLElement>) {
     const triggerElement = event.relatedTarget;
 
-    if (!triggerElement || !triggerElement.dataset.autoFocusTrigger) {
+    if (!triggerElement?.dataset.autoFocusTrigger) {
         return;
     }
 
@@ -107,6 +107,7 @@ export function addShowFocusRing(event: FocusEvent<HTMLDivElement, HTMLElement>)
         event.target.dataset.showFocusRing = 'true';
     } else {
         event.target.dataset.showFocusRing = 'false';
-        triggerElement.dataset.autoFocusVisible = 'true';
     }
+
+    triggerElement.dataset.autoFocusVisible = 'true';
 }

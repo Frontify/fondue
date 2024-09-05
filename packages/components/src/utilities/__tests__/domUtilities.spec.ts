@@ -106,52 +106,42 @@ describe('addAutoFocusAttribute', () => {
 });
 
 describe('addShowFocusRing', () => {
+    const eventWithRelatedTarget = {
+        target: {
+            dataset: {},
+        },
+        relatedTarget: {
+            dataset: {
+                autoFocusVisible: 'true',
+                autoFocusTrigger: 'true',
+            },
+        },
+    } as unknown as React.FocusEvent<HTMLDivElement, HTMLElement>;
+
     it('sets showFocusRing to true when previous element had autoFocusVisible true', () => {
-        const mockEvent = {
-            target: {
-                dataset: {},
-            },
-            relatedTarget: {
-                dataset: {
-                    autoFocusVisible: 'true',
-                },
-            },
-        } as unknown as React.FocusEvent<HTMLDivElement, HTMLElement>;
+        addShowFocusRing(eventWithRelatedTarget);
 
-        addShowFocusRing(mockEvent);
-
-        expect(mockEvent.target.dataset.showFocusRing).toBe('true');
-        expect((mockEvent.relatedTarget as HTMLElement).dataset.autoFocusVisible).toBe('true');
+        expect(eventWithRelatedTarget.target.dataset.showFocusRing).toBe('true');
+        expect((eventWithRelatedTarget.relatedTarget as HTMLElement).dataset.autoFocusVisible).toBe('true');
     });
 
     it('sets showFocusRing to false when previous element had autoFocusVisible false', () => {
-        const mockEvent = {
-            target: {
-                dataset: {},
-            },
-            relatedTarget: {
-                dataset: {
-                    autoFocusVisible: 'false',
-                },
-            },
-        } as unknown as React.FocusEvent<HTMLDivElement, HTMLElement>;
+        addShowFocusRing(eventWithRelatedTarget);
 
-        addShowFocusRing(mockEvent);
-
-        expect(mockEvent.target.dataset.showFocusRing).toBe('false');
-        expect((mockEvent.relatedTarget as HTMLElement).dataset.autoFocusVisible).toBe('true');
+        expect(eventWithRelatedTarget.target.dataset.showFocusRing).toBe('false');
+        expect((eventWithRelatedTarget.relatedTarget as HTMLElement).dataset.autoFocusVisible).toBe('true');
     });
 
     it('does nothing when there is no relatedTarget', () => {
-        const mockEvent = {
+        const eventWithoutRelatedTarget = {
             target: {
                 dataset: {},
             },
             relatedTarget: null,
         } as unknown as React.FocusEvent<HTMLDivElement, HTMLElement>;
 
-        addShowFocusRing(mockEvent);
+        addShowFocusRing(eventWithoutRelatedTarget);
 
-        expect(mockEvent.target.dataset.showFocusRing).toBeUndefined();
+        expect(eventWithoutRelatedTarget.target.dataset.showFocusRing).toBeUndefined();
     });
 });
