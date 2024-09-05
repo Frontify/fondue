@@ -1,5 +1,11 @@
 # @frontify/fondue-icons
 
+## 0.4.2
+
+### Patch Changes
+
+-   [#2033](https://github.com/Frontify/fondue/pull/2033) [`48a6604`](https://github.com/Frontify/fondue/commit/48a660495177a065126c7ab1d700175cc7104961) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+
 ## 0.4.1
 
 ### Patch Changes

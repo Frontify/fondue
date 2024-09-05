@@ -1,5 +1,31 @@
 # @frontify/fondue-components
 
+## 3.3.0
+
+### Minor Changes
+
+-   [#2034](https://github.com/Frontify/fondue/pull/2034) [`29739b5`](https://github.com/Frontify/fondue/commit/29739b560ad615f04e0a89a13bdeebe9f6af3339) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - feat: add scroll area component
+
+### Patch Changes
+
+-   [#2016](https://github.com/Frontify/fondue/pull/2016) [`4084841`](https://github.com/Frontify/fondue/commit/4084841b90d79973f11c6a040d5e1379ec64450a) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add handling for autofocus in flyout
+
+-   [#2035](https://github.com/Frontify/fondue/pull/2035) [`f303003`](https://github.com/Frontify/fondue/commit/f303003b9335a1f09483c41b7bfe629d76c91725) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix: prevent dialog autofocus on click
+
+-   [#2031](https://github.com/Frontify/fondue/pull/2031) [`57e6ffb`](https://github.com/Frontify/fondue/commit/57e6ffb96e1dc9532dbf04f7853ea28ac74cb92b) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: tooltip/flyout appearance in dialog
+
+-   [#2033](https://github.com/Frontify/fondue/pull/2033) [`48a6604`](https://github.com/Frontify/fondue/commit/48a660495177a065126c7ab1d700175cc7104961) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+
+-   [#2030](https://github.com/Frontify/fondue/pull/2030) [`42970a7`](https://github.com/Frontify/fondue/commit/42970a78e60aff2b934c0011032ec29a38284584) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - feat: add tests for layout components inheritance prevention
+
+-   [#2036](https://github.com/Frontify/fondue/pull/2036) [`93a3d5d`](https://github.com/Frontify/fondue/commit/93a3d5db60be4804586aeb40559f249ec5a5a613) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - feat: add no padding option to flyout
+
+-   [#2037](https://github.com/Frontify/fondue/pull/2037) [`d5d9779`](https://github.com/Frontify/fondue/commit/d5d9779a436b6be1a2b75f31fdf015f03f201947) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - feat: add spacing options to dialog
+
+-   Updated dependencies [[`48a6604`](https://github.com/Frontify/fondue/commit/48a660495177a065126c7ab1d700175cc7104961)]:
+    -   @frontify/fondue-tokens@3.5.7
+    -   @frontify/fondue-icons@0.4.2
+
 ## 3.2.1
 
 ### Patch Changes
