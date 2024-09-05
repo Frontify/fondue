@@ -31,11 +31,7 @@ test('should render without error', async ({ mount }) => {
                 </Dialog.SideContent>
                 <Dialog.Header data-test-id={DIALOG_HEADER_TEST_ID}>{DIALOG_HEADER_TEXT}</Dialog.Header>
                 <Dialog.Body data-test-id={DIALOG_BODY_TEST_ID}>{DIALOG_BODY_TEXT}</Dialog.Body>
-                <Dialog.Footer data-test-id={DIALOG_FOOTER_TEST_ID}>
-                    <div className="tw-flex tw-h-fit tw-justify-end tw-gap-2">
-                        <Button>{DIALOG_FOOTER_TEXT}</Button>
-                    </div>
-                </Dialog.Footer>
+                <Dialog.Footer data-test-id={DIALOG_FOOTER_TEST_ID}>{DIALOG_FOOTER_TEXT}</Dialog.Footer>
             </Dialog.Content>
         </Dialog.Root>,
     );
@@ -43,9 +39,108 @@ test('should render without error', async ({ mount }) => {
     await expect(component).toContainText(DIALOG_TRIGGER_TEXT);
 });
 
+test('should render no padding', async ({ mount, page }) => {
+    await mount(
+        <Dialog.Root open={true}>
+            <Dialog.Trigger data-test-id={DIALOG_TRIGGER_TEST_ID}>
+                <Button>{DIALOG_TRIGGER_TEXT}</Button>
+            </Dialog.Trigger>
+            <Dialog.Content padding="none" data-test-id={DIALOG_CONTENT_TEST_ID}>
+                <Dialog.Header data-test-id={DIALOG_HEADER_TEST_ID}>{DIALOG_HEADER_TEXT}</Dialog.Header>
+                <Dialog.Body data-test-id={DIALOG_BODY_TEST_ID}>{DIALOG_BODY_TEXT}</Dialog.Body>
+                <Dialog.Footer data-test-id={DIALOG_FOOTER_TEST_ID}>{DIALOG_FOOTER_TEXT}</Dialog.Footer>
+            </Dialog.Content>
+        </Dialog.Root>,
+    );
+    const dialogContent = page.getByTestId(DIALOG_CONTENT_TEST_ID);
+    await expect(dialogContent.getByTestId(DIALOG_HEADER_TEST_ID)).toHaveCSS('padding', '0px');
+    await expect(dialogContent.getByTestId(DIALOG_BODY_TEST_ID)).toHaveCSS('padding', '0px');
+    await expect(dialogContent.getByTestId(DIALOG_FOOTER_TEST_ID)).toHaveCSS('padding', '0px');
+});
+
+test('should render tight padding', async ({ mount, page }) => {
+    await mount(
+        <Dialog.Root open={true}>
+            <Dialog.Trigger data-test-id={DIALOG_TRIGGER_TEST_ID}>
+                <Button>{DIALOG_TRIGGER_TEXT}</Button>
+            </Dialog.Trigger>
+            <Dialog.Content padding="tight" data-test-id={DIALOG_CONTENT_TEST_ID}>
+                <Dialog.Header data-test-id={DIALOG_HEADER_TEST_ID}>{DIALOG_HEADER_TEXT}</Dialog.Header>
+                <Dialog.Body data-test-id={DIALOG_BODY_TEST_ID}>{DIALOG_BODY_TEXT}</Dialog.Body>
+                <Dialog.Footer data-test-id={DIALOG_FOOTER_TEST_ID}>{DIALOG_FOOTER_TEXT}</Dialog.Footer>
+            </Dialog.Content>
+        </Dialog.Root>,
+    );
+    const dialogContent = page.getByTestId(DIALOG_CONTENT_TEST_ID);
+    await expect(dialogContent.getByTestId(DIALOG_HEADER_TEST_ID)).toHaveCSS('padding', '8px');
+    await expect(dialogContent.getByTestId(DIALOG_BODY_TEST_ID)).toHaveCSS('padding', '8px');
+    await expect(dialogContent.getByTestId(DIALOG_FOOTER_TEST_ID)).toHaveCSS('padding', '8px');
+});
+
+test('should render compact padding', async ({ mount, page }) => {
+    await mount(
+        <Dialog.Root open={true}>
+            <Dialog.Trigger data-test-id={DIALOG_TRIGGER_TEST_ID}>
+                <Button>{DIALOG_TRIGGER_TEXT}</Button>
+            </Dialog.Trigger>
+            <Dialog.Content padding="compact" data-test-id={DIALOG_CONTENT_TEST_ID}>
+                <Dialog.Header data-test-id={DIALOG_HEADER_TEST_ID}>{DIALOG_HEADER_TEXT}</Dialog.Header>
+                <Dialog.Body data-test-id={DIALOG_BODY_TEST_ID}>{DIALOG_BODY_TEXT}</Dialog.Body>
+                <Dialog.Footer data-test-id={DIALOG_FOOTER_TEST_ID}>{DIALOG_FOOTER_TEXT}</Dialog.Footer>
+            </Dialog.Content>
+        </Dialog.Root>,
+    );
+    const dialogContent = page.getByTestId(DIALOG_CONTENT_TEST_ID);
+    await expect(dialogContent.getByTestId(DIALOG_HEADER_TEST_ID)).toHaveCSS('padding', '16px');
+    await expect(dialogContent.getByTestId(DIALOG_BODY_TEST_ID)).toHaveCSS('padding', '8px 16px');
+    await expect(dialogContent.getByTestId(DIALOG_FOOTER_TEST_ID)).toHaveCSS('padding', '16px');
+});
+
+test('should render comfortable padding', async ({ mount, page }) => {
+    await mount(
+        <Dialog.Root open={true}>
+            <Dialog.Trigger data-test-id={DIALOG_TRIGGER_TEST_ID}>
+                <Button>{DIALOG_TRIGGER_TEXT}</Button>
+            </Dialog.Trigger>
+            <Dialog.Content padding="comfortable" data-test-id={DIALOG_CONTENT_TEST_ID}>
+                <Dialog.Header data-test-id={DIALOG_HEADER_TEST_ID}>{DIALOG_HEADER_TEXT}</Dialog.Header>
+                <Dialog.Body data-test-id={DIALOG_BODY_TEST_ID}>{DIALOG_BODY_TEXT}</Dialog.Body>
+                <Dialog.Footer data-test-id={DIALOG_FOOTER_TEST_ID}>
+                    <Button>{DIALOG_FOOTER_TEXT}</Button>
+                </Dialog.Footer>
+            </Dialog.Content>
+        </Dialog.Root>,
+    );
+    const dialogContent = page.getByTestId(DIALOG_CONTENT_TEST_ID);
+    await expect(dialogContent.getByTestId(DIALOG_HEADER_TEST_ID)).toHaveCSS('padding', '24px');
+    await expect(dialogContent.getByTestId(DIALOG_BODY_TEST_ID)).toHaveCSS('padding', '16px 24px');
+    await expect(dialogContent.getByTestId(DIALOG_FOOTER_TEST_ID)).toHaveCSS('padding', '24px');
+});
+
+test('should render spacious padding', async ({ mount, page }) => {
+    await mount(
+        <Dialog.Root open={true}>
+            <Dialog.Trigger data-test-id={DIALOG_TRIGGER_TEST_ID}>
+                <Button>{DIALOG_TRIGGER_TEXT}</Button>
+            </Dialog.Trigger>
+            <Dialog.Content padding="spacious" data-test-id={DIALOG_CONTENT_TEST_ID}>
+                <Dialog.Header data-test-id={DIALOG_HEADER_TEST_ID}>{DIALOG_HEADER_TEXT}</Dialog.Header>
+                <Dialog.Body data-test-id={DIALOG_BODY_TEST_ID}>{DIALOG_BODY_TEXT}</Dialog.Body>
+                <Dialog.Footer data-test-id={DIALOG_FOOTER_TEST_ID}>
+                    <Button>{DIALOG_FOOTER_TEXT}</Button>
+                </Dialog.Footer>
+            </Dialog.Content>
+        </Dialog.Root>,
+    );
+    const dialogContent = page.getByTestId(DIALOG_CONTENT_TEST_ID);
+    await expect(dialogContent.getByTestId(DIALOG_HEADER_TEST_ID)).toHaveCSS('padding', '40px');
+    await expect(dialogContent.getByTestId(DIALOG_BODY_TEST_ID)).toHaveCSS('padding', '24px 40px');
+    await expect(dialogContent.getByTestId(DIALOG_FOOTER_TEST_ID)).toHaveCSS('padding', '40px');
+});
+
 test('should render trigger element', async ({ mount, page }) => {
     await mount(
-        <Dialog.Root>
+        <Dialog.Root open={true}>
             <Dialog.Trigger data-test-id={DIALOG_TRIGGER_TEST_ID}>
                 <Button>{DIALOG_TRIGGER_TEXT}</Button>
             </Dialog.Trigger>
