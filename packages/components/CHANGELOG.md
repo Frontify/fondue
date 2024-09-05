@@ -1,5 +1,11 @@
 # @frontify/fondue-components
 
+## 3.3.1
+
+### Patch Changes
+
+-   [#2038](https://github.com/Frontify/fondue/pull/2038) [`fa32794`](https://github.com/Frontify/fondue/commit/fa32794bb0c11466a4b3195c88d1722685b54bc6) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix: dialog missing spacing when shrunk by viewport
+
 ## 3.3.0
 
 ### Minor Changes
