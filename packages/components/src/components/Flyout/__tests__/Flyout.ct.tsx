@@ -262,6 +262,27 @@ test('should render compact padding by default', async ({ mount, page }) => {
     await expect(flyoutContent.getByTestId(FLYOUT_FOOTER_TEST_ID)).toHaveCSS('padding', '16px');
 });
 
+test('should render no padding', async ({ mount, page }) => {
+    await mount(
+        <Flyout.Root open>
+            <Flyout.Trigger>
+                <Button>{FLYOUT_TRIGGER_TEXT}</Button>
+            </Flyout.Trigger>
+            <Flyout.Content padding="none">
+                <Flyout.Header>{FLYOUT_HEADER_TEXT}</Flyout.Header>
+                <Flyout.Body>{FLYOUT_BODY_TEXT}</Flyout.Body>
+                <Flyout.Footer>
+                    <Button>{FLYOUT_FOOTER_TEXT}</Button>
+                </Flyout.Footer>
+            </Flyout.Content>
+        </Flyout.Root>,
+    );
+    const flyoutContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
+    await expect(flyoutContent.getByTestId(FLYOUT_HEADER_TEST_ID)).toHaveCSS('padding', '0px');
+    await expect(flyoutContent.getByTestId(FLYOUT_BODY_TEST_ID)).toHaveCSS('padding', '0px');
+    await expect(flyoutContent.getByTestId(FLYOUT_FOOTER_TEST_ID)).toHaveCSS('padding', '0px');
+});
+
 test('should render tight padding', async ({ mount, page }) => {
     await mount(
         <Flyout.Root open>
