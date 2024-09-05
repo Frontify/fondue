@@ -146,6 +146,12 @@ export const WithCloseButton: Story = {
     },
 };
 
+export const WithNoPadding: Story = {
+    args: {
+        padding: 'none',
+    },
+};
+
 export const WithTightPadding: Story = {
     args: {
         padding: 'tight',
