@@ -36,7 +36,7 @@ export type DialogContentProps = {
      * Define the padding of the dialog
      * @default "compact"
      */
-    padding?: 'compact' | 'comfortable' | 'spacious';
+    padding?: 'none' | 'tight' | 'compact' | 'comfortable' | 'spacious';
     /**
      * The vertical alignment of the divider
      * @default "center"
