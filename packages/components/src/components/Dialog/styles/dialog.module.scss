@@ -11,7 +11,7 @@
     left: sizeToken(2);
     right: sizeToken(2);
     top: 50%;
-    transform: translateY(-50%);
+    transform: translateY(calc(50% + 5dvh));
     background-color: var(--base-color);
     box-shadow: var(--shadow-matrix);
     border: var(--line-width) solid var(--line-color);
@@ -19,7 +19,7 @@
     max-width: var(--dialog-max-width);
     height: fit-content;
     min-height: var(--dialog-min-height);
-    max-height: 100dvh;
+    max-height: 90dvh;
     overflow: hidden;
     grid-template-rows: auto auto minmax(0, 1fr) auto;
     box-sizing: border-box;
