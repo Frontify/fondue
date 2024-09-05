@@ -66,7 +66,7 @@ export const Horizontal: Story = {
     },
 };
 
-export const TwoDimentions: Story = {
+export const TwoDimensions: Story = {
     render: () => {
         return (
             <ScrollArea maxHeight={200} maxWidth={300}>
