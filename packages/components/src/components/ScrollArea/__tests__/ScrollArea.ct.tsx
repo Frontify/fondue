@@ -16,6 +16,7 @@ test.describe('ScrollArea Component', () => {
         await expect(component).toHaveCSS('max-width', '100%');
 
         const viewport = component.getByTestId('fondue-scroll-area-viewport');
+
         await expect(viewport).toBeVisible();
         await expect(viewport).toHaveCSS('max-height', '100%');
     });
@@ -31,6 +32,7 @@ test.describe('ScrollArea Component', () => {
         await expect(component).toHaveCSS('max-width', '800px');
 
         const viewport = component.locator('data-test-id=fondue-scroll-area-viewport');
+
         await expect(viewport).toBeVisible();
         await expect(viewport).toHaveCSS('max-height', '500px');
     });
@@ -42,10 +44,13 @@ test.describe('ScrollArea Component', () => {
             </ScrollArea>,
         );
 
-        await component.hover();
-
         const verticalScrollbar = component.getByTestId('fondue-scroll-area-vertical-scrollbar');
         const horizontalScrollbar = component.getByTestId('fondue-scroll-area-horizontal-scrollbar');
+
+        await expect(verticalScrollbar).not.toBeVisible();
+        await expect(horizontalScrollbar).not.toBeVisible();
+
+        await component.hover();
 
         await expect(verticalScrollbar).toBeVisible();
         await expect(horizontalScrollbar).toBeVisible();
@@ -61,22 +66,35 @@ test.describe('ScrollArea Component', () => {
         await expect(horizontalScrollbar).toBeVisible();
     });
 
-    test('renders scrollbars when content overflows', async ({ mount }) => {
-        const component = await mount(
-            <ScrollArea type="always" maxHeight="300px" maxWidth="300px">
+    test('renders scrollbars only when content overflows', async ({ mount }) => {
+        const componentOverflows = await mount(
+            <ScrollArea type="auto" maxHeight="300px" maxWidth="300px">
                 <div style={{ height: '1000px', width: '1000px' }}>Scrollable content</div>
             </ScrollArea>,
         );
 
-        const verticalScrollbar = component.getByTestId('fondue-scroll-area-vertical-scrollbar');
-        const horizontalScrollbar = component.getByTestId('fondue-scroll-area-horizontal-scrollbar');
+        let verticalScrollbar = componentOverflows.getByTestId('fondue-scroll-area-vertical-scrollbar');
+        let horizontalScrollbar = componentOverflows.getByTestId('fondue-scroll-area-horizontal-scrollbar');
 
         await expect(verticalScrollbar).toBeVisible();
         await expect(horizontalScrollbar).toBeVisible();
+
+        const componentDoesNotOverflow = await mount(
+            <ScrollArea type="auto" maxHeight="300px" maxWidth="300px">
+                Scrollable content
+            </ScrollArea>,
+        );
+
+        verticalScrollbar = componentDoesNotOverflow.getByTestId('fondue-scroll-area-vertical-scrollbar');
+        horizontalScrollbar = componentDoesNotOverflow.getByTestId('fondue-scroll-area-horizontal-scrollbar');
+
+        await expect(verticalScrollbar).not.toBeVisible();
+        await expect(horizontalScrollbar).not.toBeVisible();
     });
-    test('renders scrollbars when scrolling', async ({ mount }) => {
+
+    test('renders scrollbars only when scrolling', async ({ mount }) => {
         const component = await mount(
-            <ScrollArea type="always" maxHeight="300px" maxWidth="300px">
+            <ScrollArea type="scroll" maxHeight="300px" maxWidth="300px">
                 <div style={{ height: '1000px', width: '1000px' }}>Scrollable content</div>
             </ScrollArea>,
         );
@@ -84,10 +102,16 @@ test.describe('ScrollArea Component', () => {
         const verticalScrollbar = component.getByTestId('fondue-scroll-area-vertical-scrollbar');
         const horizontalScrollbar = component.getByTestId('fondue-scroll-area-horizontal-scrollbar');
 
-        await component.hover();
-        // todo: scroll content
+        await expect(verticalScrollbar).not.toBeVisible();
+        await expect(horizontalScrollbar).not.toBeVisible();
 
+        await component.hover();
+        await component.click();
+
+        await component.press('ArrowDown');
         await expect(verticalScrollbar).toBeVisible();
+
+        await component.press('ArrowRight');
         await expect(horizontalScrollbar).toBeVisible();
     });
 
@@ -107,11 +131,11 @@ test.describe('ScrollArea Component', () => {
         await component.hover();
 
         const verticalScrollbarThumb = component.getByTestId('fondue-scroll-area-vertical-scrollbar-thumb');
+
         await expect(verticalScrollbarThumb).toBeVisible();
 
         const firstParagraph = component.getByTestId('paragraph-0');
         const initialFirstParagraphBox = await firstParagraph.boundingBox();
-
         const thumbBox = await verticalScrollbarThumb.boundingBox();
 
         if (!thumbBox) {
@@ -144,11 +168,11 @@ test.describe('ScrollArea Component', () => {
         await component.hover();
 
         const horizontalScrollbarThumb = component.getByTestId('fondue-scroll-area-horizontal-scrollbar-thumb');
+
         await expect(horizontalScrollbarThumb).toBeVisible();
 
         const longText = component.getByTestId('long-text');
         const initialTextBox = await longText.boundingBox();
-
         const thumbBox = await horizontalScrollbarThumb.boundingBox();
 
         if (!thumbBox) {
@@ -172,8 +196,11 @@ test.describe('ScrollArea Component', () => {
                 <div style={{ height: '1000px', width: '1000px' }}>Scrollable content</div>
             </ScrollArea>,
         );
+
         await component.hover();
+
         const corner = component.getByTestId('fondue-scroll-area-corner');
+
         await expect(corner).toBeVisible();
     });
 });
