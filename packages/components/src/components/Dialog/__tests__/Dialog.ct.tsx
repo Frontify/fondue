@@ -140,7 +140,7 @@ test('should render spacious padding', async ({ mount, page }) => {
 
 test('should render trigger element', async ({ mount, page }) => {
     await mount(
-        <Dialog.Root open={true}>
+        <Dialog.Root>
             <Dialog.Trigger data-test-id={DIALOG_TRIGGER_TEST_ID}>
                 <Button>{DIALOG_TRIGGER_TEXT}</Button>
             </Dialog.Trigger>
