@@ -313,6 +313,36 @@ export const WithCustomElementAnnouncements: Story = {
     },
 };
 
+export const WithNoPadding: Story = {
+    args: {
+        padding: 'none',
+    },
+};
+
+export const WithTightPadding: Story = {
+    args: {
+        padding: 'tight',
+    },
+};
+
+export const WithCompactPadding: Story = {
+    args: {
+        padding: 'compact',
+    },
+};
+
+export const WithComfortablePadding: Story = {
+    args: {
+        padding: 'comfortable',
+    },
+};
+
+export const WithSpaciousPadding: Story = {
+    args: {
+        padding: 'spacious',
+    },
+};
+
 export const TopAligned: Story = {
     args: {
         verticalAlign: 'top',
