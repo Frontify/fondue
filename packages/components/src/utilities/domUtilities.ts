@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ForwardedRef, type RefObject } from 'react';
+import { type FocusEvent, type MouseEvent as ReactMouseEvent, type ForwardedRef, type RefObject } from 'react';
 
 export const MAX_HEIGHT_MARGIN = 8;
 
@@ -74,4 +74,40 @@ export function syncRefs(localRef: RefObject<HTMLDivElement>, forwardedRef: Forw
     } else if (forwardedRef && 'current' in forwardedRef) {
         forwardedRef.current = localRef.current;
     }
+}
+
+/**
+ * Sets the 'autoFocusVisible' data attribute to 'false' on the current target of a mouse event.
+ * This function is typically used to indicate that an element has been interacted with via mouse,
+ * which should prevent the focus ring from being displayed when the element receives focus.
+ *
+ * @param mouseEvent - The mouse event object.
+ */
+export function addAutoFocusAttribute(mouseEvent: ReactMouseEvent<HTMLButtonElement, MouseEvent>) {
+    mouseEvent.currentTarget.dataset.autoFocusVisible = 'false';
+}
+
+/**
+ * Manages the focus ring visibility based on the previous focus state and the current focus event.
+ * This function sets the 'showFocusRing' data attribute on the target element and updates the
+ * 'autoFocusVisible' data attribute on the previously focused element.
+ *
+ * ! This function should be used in conjunction with the 'addAutoFocusAttribute' function and the autoFocusVisible data autoFocusTrigger.
+ *
+ * @param event - The focus event object.
+ */
+export function addShowFocusRing(event: FocusEvent<HTMLDivElement, HTMLElement>) {
+    const triggerElement = event.relatedTarget;
+
+    if (!triggerElement?.dataset.autoFocusTrigger) {
+        return;
+    }
+
+    if (triggerElement.dataset.autoFocusVisible === 'true') {
+        event.target.dataset.showFocusRing = 'true';
+    } else {
+        event.target.dataset.showFocusRing = 'false';
+    }
+
+    triggerElement.dataset.autoFocusVisible = 'true';
 }

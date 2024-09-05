@@ -6,6 +6,7 @@ import { forwardRef, useState } from 'react';
 import { Button } from '../Button/Button';
 import { Flex } from '../Flex/Flex';
 import { Flyout } from '../Flyout/Flyout';
+import { TextInput } from '../TextInput/TextInput';
 import { Tooltip } from '../Tooltip/Tooltip';
 
 import {
@@ -307,6 +308,29 @@ export const WithCustomElementAnnouncements: Story = {
                         <Button emphasis="default">Cancel</Button>
                         <Button>Submit</Button>
                     </Dialog.Footer>
+                </Dialog.Content>
+            </Dialog.Root>
+        );
+    },
+};
+
+export const WithFocusableContent: Story = {
+    args: {
+        children: 'Hello World',
+    },
+    render: ({ ...args }) => {
+        return (
+            <Dialog.Root>
+                <Dialog.Trigger>
+                    <Button>Open flyout</Button>
+                </Dialog.Trigger>
+                <Dialog.Content {...args}>
+                    <Dialog.Header>Header</Dialog.Header>
+                    <Dialog.Body {...args}>
+                        <TextInput />
+                        <TextInput />
+                        <TextInput />
+                    </Dialog.Body>
                 </Dialog.Content>
             </Dialog.Root>
         );

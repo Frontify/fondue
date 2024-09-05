@@ -4,6 +4,8 @@ import { IconCross } from '@frontify/fondue-icons';
 import * as RadixDialog from '@radix-ui/react-dialog';
 import { forwardRef, type CSSProperties, type ForwardedRef, type ReactNode } from 'react';
 
+import { addAutoFocusAttribute, addShowFocusRing } from '#/utilities/domUtilities';
+
 import styles from './styles/dialog.module.scss';
 
 export type DialogRootProps = {
@@ -97,7 +99,14 @@ export const DialogTrigger = (
     ref: ForwardedRef<HTMLButtonElement>,
 ) => {
     return (
-        <RadixDialog.Trigger data-test-id={dataTestId} asChild ref={ref}>
+        <RadixDialog.Trigger
+            onMouseDown={addAutoFocusAttribute}
+            data-auto-focus-visible="true"
+            data-auto-focus-trigger
+            data-test-id={dataTestId}
+            asChild
+            ref={ref}
+        >
             {children}
         </RadixDialog.Trigger>
     );
@@ -132,6 +141,7 @@ export const DialogContent = (
                     }
                     ref={ref}
                     className={styles.content}
+                    onFocus={addShowFocusRing}
                     data-dialog-rounded={rounded}
                     data-dialog-spacing={padding}
                     data-test-id={dataTestId}

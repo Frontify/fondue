@@ -5,7 +5,7 @@ import * as RadixPopover from '@radix-ui/react-popover';
 import { forwardRef, useRef, type CSSProperties, type ForwardedRef, type ReactNode } from 'react';
 
 import { usePreventDropdownOverflow } from '#/hooks/usePreventDropdownOverflow';
-import { syncRefs } from '#/utilities/domUtilities';
+import { addAutoFocusAttribute, addShowFocusRing, syncRefs } from '#/utilities/domUtilities';
 
 import styles from './styles/flyout.module.scss';
 
@@ -84,11 +84,9 @@ export const FlyoutTrigger = (
 ) => {
     return (
         <RadixPopover.Trigger
-            onMouseDown={(mouseEvent) => {
-                mouseEvent.currentTarget.dataset.autoFocusVisible = 'false';
-            }}
+            onMouseDown={addAutoFocusAttribute}
             data-auto-focus-visible="true"
-            data-flyout-trigger
+            data-auto-focus-trigger
             data-test-id={dataTestId}
             asChild
             ref={ref}
@@ -138,16 +136,7 @@ export const FlyoutContent = (
                 data-flyout-spacing={padding}
                 data-rounded={rounded}
                 data-test-id={dataTestId}
-                onFocus={(event) => {
-                    const triggerElement = event.relatedTarget as HTMLElement;
-                    if (triggerElement && triggerElement.dataset.flyoutTrigger) {
-                        const focusVisible = triggerElement.dataset.autoFocusVisible === 'true';
-                        triggerElement.dataset.autoFocusVisible = 'true';
-                        if (!focusVisible) {
-                            event.target.dataset.showFocusRing = 'false';
-                        }
-                    }
-                }}
+                onFocus={addShowFocusRing}
                 {...props}
             >
                 {children}
