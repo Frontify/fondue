@@ -18,7 +18,6 @@
 .scrollbar {
     @include transition-colors;
     display: flex;
-    /* ensures no selection */
     user-select: none;
     /* disable browser handling of all panning and zooming gestures on touch devices */
     touch-action: none;
