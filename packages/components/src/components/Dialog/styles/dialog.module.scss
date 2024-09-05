@@ -10,7 +10,7 @@
     position: fixed;
     left: sizeToken(2);
     right: sizeToken(2);
-    top: calc(50%);
+    top: 50%;
     transform: translateY(calc(50% + 5dvh));
     background-color: var(--base-color);
     box-shadow: var(--shadow-matrix);
