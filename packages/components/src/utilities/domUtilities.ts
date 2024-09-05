@@ -92,13 +92,14 @@ export function addAutoFocusAttribute(mouseEvent: ReactMouseEvent<HTMLButtonElem
  * This function sets the 'showFocusRing' data attribute on the target element and updates the
  * 'autoFocusVisible' data attribute on the previously focused element.
  *
- * @param event - The focus event object.
+ * ! This function should be used in conjunction with the 'addAutoFocusAttribute' function and the autoFocusVisible data autoFocusTrigger.
  *
+ * @param event - The focus event object.
  */
 export function addShowFocusRing(event: FocusEvent<HTMLDivElement, HTMLElement>) {
     const triggerElement = event.relatedTarget;
 
-    if (!triggerElement) {
+    if (!triggerElement || !triggerElement.dataset.autoFocusTrigger) {
         return;
     }
 
@@ -106,7 +107,6 @@ export function addShowFocusRing(event: FocusEvent<HTMLDivElement, HTMLElement>)
         event.target.dataset.showFocusRing = 'true';
     } else {
         event.target.dataset.showFocusRing = 'false';
+        triggerElement.dataset.autoFocusVisible = 'true';
     }
-
-    triggerElement.dataset.autoFocusVisible = 'true';
 }

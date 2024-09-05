@@ -233,13 +233,13 @@ test('should render focus visible input on enter press', async ({ mount, page })
             </Dialog.Content>
         </Dialog.Root>,
     );
-    const tooltipTrigger = page.getByTestId(DIALOG_TRIGGER_TEST_ID);
+    const dialogTrigger = page.getByTestId(DIALOG_TRIGGER_TEST_ID);
     const textInput1 = page.getByTestId(TEXT_INPUT_TEST_ID_1);
     const textInput2 = page.getByTestId(TEXT_INPUT_TEST_ID_2);
     const textInput3 = page.getByTestId(TEXT_INPUT_TEST_ID_3);
     await expect(component).toBeVisible();
-    await expect(tooltipTrigger).toBeVisible();
-    await tooltipTrigger.focus();
+    await expect(dialogTrigger).toBeVisible();
+    await dialogTrigger.focus();
     await page.keyboard.press('Enter');
     await expect(textInput1).toHaveCSS(...FOCUS_OUTLINE_CSS);
     await expect(textInput1).not.toHaveCSS(...FOCUS_BORDER_CSS);
@@ -266,14 +266,14 @@ test('should not render focus visible input on click', async ({ mount, page }) =
             </Dialog.Content>
         </Dialog.Root>,
     );
-    const tooltipTrigger = page.getByTestId(DIALOG_TRIGGER_TEST_ID);
+    const dialogTrigger = page.getByTestId(DIALOG_TRIGGER_TEST_ID);
     const textInput1 = page.getByTestId(TEXT_INPUT_TEST_ID_1);
     const textInput2 = page.getByTestId(TEXT_INPUT_TEST_ID_2);
     const textInput3 = page.getByTestId(TEXT_INPUT_TEST_ID_3);
     await expect(component).toBeVisible();
-    await expect(tooltipTrigger).toBeVisible();
-    await tooltipTrigger.focus();
-    await tooltipTrigger.click();
+    await expect(dialogTrigger).toBeVisible();
+    await dialogTrigger.focus();
+    await dialogTrigger.click();
     await expect(textInput1).not.toHaveCSS(...FOCUS_OUTLINE_CSS);
     await expect(textInput1).toHaveCSS(...FOCUS_BORDER_CSS);
     await textInput2.click();
