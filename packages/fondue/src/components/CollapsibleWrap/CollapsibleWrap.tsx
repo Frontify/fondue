@@ -19,7 +19,14 @@ export const CollapsibleWrap = ({
                 animate={'open'}
                 exit={'collapsed'}
                 variants={{
-                    open: { height: 'auto', overflow: 'hidden', opacity: 1 },
+                    open: {
+                        height: 'auto',
+                        overflow: 'hidden',
+                        opacity: 1,
+                        transitionEnd: {
+                            overflow: 'visible',
+                        },
+                    },
                     collapsed: { height: 0, overflow: 'hidden', opacity: animateOpacity ? 0 : 1 },
                 }}
                 transition={{ type: 'tween' }}
