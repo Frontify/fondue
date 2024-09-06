@@ -249,5 +249,8 @@
         "vite-plugin-dts": "^4.1.0",
         "vite-plugin-static-copy": "^1.0.6",
         "vite-tsconfig-paths": "^5.0.1"
+    },
+    "overrides": {
+        "ip": "^2.0.1"
     }
 }
