@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconCheckMark } from '@frontify/fondue-icons';
 import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
 
 import styles from './styles/select.module.scss';
@@ -37,6 +38,7 @@ export const SelectItem = (
     return (
         <li data-test-id={dataTestId} ref={forwardedRef} {...props}>
             {props.children}
+            <IconCheckMark className={styles.checkmarkIcon} />
         </li>
     );
 };

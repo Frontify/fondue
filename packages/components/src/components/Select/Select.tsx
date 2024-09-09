@@ -149,7 +149,12 @@ export const SelectInput = (
                 </div>
             </RadixPopover.Anchor>
 
-            <SelectMenu highlightedIndex={highlightedIndex} getMenuProps={getMenuProps} getItemProps={getItemProps}>
+            <SelectMenu
+                highlightedIndex={highlightedIndex}
+                getMenuProps={getMenuProps}
+                getItemProps={getItemProps}
+                selectedItem={selectedItem}
+            >
                 {menuSlots}
             </SelectMenu>
         </RadixPopover.Root>

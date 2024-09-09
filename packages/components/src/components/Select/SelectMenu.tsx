@@ -5,11 +5,11 @@ import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { type UseComboboxPropGetters, type UseSelectPropGetters } from 'downshift';
 import { isValidElement, useRef, type ForwardedRef, type MouseEvent, type ReactElement, type ReactNode } from 'react';
 
-import { usePreventDropdownOverflow } from '#/hooks/usePreventDropdownOverflow';
-
 import { type SelectItemProps } from './SelectItem';
 import styles from './styles/select.module.scss';
 import { getSelectOptionValue, recursiveMap } from './utils';
+
+import { usePreventDropdownOverflow } from '#/hooks/usePreventDropdownOverflow';
 
 export type SelectMenuProps = {
     /**
@@ -37,9 +37,23 @@ export type SelectMenuProps = {
      * The filter text shown in the combobox input element.
      */
     filterText?: string;
+    /**
+     * @internal
+     * The type of the menu.
+     */
+    selectedItem?: {
+        value: string;
+    } | null;
 };
 
-export const SelectMenu = ({ highlightedIndex, getMenuProps, getItemProps, children, filterText }: SelectMenuProps) => {
+export const SelectMenu = ({
+    highlightedIndex,
+    getMenuProps,
+    getItemProps,
+    children,
+    filterText,
+    selectedItem,
+}: SelectMenuProps) => {
     const ref = useRef<HTMLUListElement | null>(null);
 
     const { setMaxHeight } = usePreventDropdownOverflow(ref);
@@ -64,15 +78,24 @@ export const SelectMenu = ({ highlightedIndex, getMenuProps, getItemProps, child
                                     isValidElement<TProps>(child) && child.ref !== undefined;
 
                                 if (isValid<SelectItemProps>(child)) {
+                                    const optionData = getSelectOptionValue(child.props);
                                     const itemProps = getItemProps({
-                                        item: getSelectOptionValue(child.props),
+                                        item: optionData,
                                         index,
                                         ...(child.ref ? { ref: child.ref } : {}),
                                     });
+
+                                    console.log(
+                                        optionData.value,
+                                        selectedItem?.value,
+                                        optionData.value === selectedItem?.value,
+                                    );
+
                                     return (
                                         <RadixSlot
                                             className={styles.item}
                                             data-highlighted={highlightedIndex === index}
+                                            data-selected={selectedItem?.value === optionData.value}
                                             key={`${child.props.value}`}
                                             // Workaround for the issue where the onClick event is not fired on touch devices because of portal usage
                                             onTouchStart={(event) => {

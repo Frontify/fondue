@@ -4,7 +4,7 @@ import { IconCaretDown, IconCheckMark, IconExclamationMarkTriangle } from '@fron
 import * as RadixPopover from '@radix-ui/react-popover';
 import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { useCombobox } from 'downshift';
-import { type FocusEvent, forwardRef, useMemo, useRef, type ForwardedRef, type ReactNode } from 'react';
+import { forwardRef, useMemo, useRef, type FocusEvent, type ForwardedRef, type ReactNode } from 'react';
 
 import { SelectMenu } from './SelectMenu';
 import styles from './styles/select.module.scss';
@@ -187,6 +187,7 @@ export const SelectCombobox = (
                 filterText={filterText}
                 getMenuProps={getMenuProps}
                 getItemProps={getItemProps}
+                selectedItem={selectedItem}
             >
                 {menuSlots}
             </SelectMenu>
