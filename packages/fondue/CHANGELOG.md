@@ -1,5 +1,16 @@
 # @frontify/fondue
 
+## 12.2.10
+
+### Patch Changes
+
+-   [#2047](https://github.com/Frontify/fondue/pull/2047) [`d909d97`](https://github.com/Frontify/fondue/commit/d909d97f810f0cf5053f739c4dda401df193e25c) Thanks [@fulopdaniel](https://github.com/fulopdaniel)! - fix(RTE): ordered list points can break into multiple lines
+
+-   [#2040](https://github.com/Frontify/fondue/pull/2040) [`a77cb5e`](https://github.com/Frontify/fondue/commit/a77cb5ec50baa6b9d0a19086cda51f5cae085710) Thanks [@fulopdaniel](https://github.com/fulopdaniel)! - fix(CollapsibleWrap): overflow is kept hidden after expansion
+
+-   Updated dependencies [[`ce81add`](https://github.com/Frontify/fondue/commit/ce81adde64525df6bb74cdb04e5e6f58087f414e)]:
+    -   @frontify/fondue-components@3.3.2
+
 ## 12.2.9
 
 ### Patch Changes
