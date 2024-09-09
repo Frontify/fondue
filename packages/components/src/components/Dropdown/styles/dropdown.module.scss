@@ -28,6 +28,7 @@
     line-height: var(--body-size-medium-line-height);
     color: var(--text-color-weak);
     outline-style: none;
+    box-sizing: border-box;
     &[data-state='open'] {
         background-color: var(--box-neutral-color);
         color: var(--text-color);
