@@ -221,17 +221,21 @@
     font-size: var(--body-size-medium);
     line-height: var(--body-size-medium-line-height);
 
+    &[data-highlighted='true'] {
+        background-color: var(--box-neutral-strong-color);
+        color: var(--box-neutral-strong-inverse-color);
+    }
+
     &[data-selected='true'] {
-        background-color: var(--box-selected-color);
-        color: var(--box-selected-inverse-color);
         .checkmarkIcon {
             display: block;
         }
     }
 
-    &[data-highlighted='true'] {
-        background-color: var(--box-neutral-strong-color);
-        color: var(--box-neutral-strong-inverse-color);
+    .menu[data-has-interacted='false'] &[data-selected='true']:not(:hover),
+    &[data-selected='true'][data-highlighted='false'] {
+        background-color: var(--box-selected-color);
+        color: var(--box-selected-inverse-color);
     }
 }
 

@@ -4,7 +4,7 @@ import { IconCaretDown, IconCheckMark, IconExclamationMarkTriangle } from '@fron
 import * as RadixPopover from '@radix-ui/react-popover';
 import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { useCombobox } from 'downshift';
-import { forwardRef, useMemo, useRef, type FocusEvent, type ForwardedRef, type ReactNode } from 'react';
+import { forwardRef, useMemo, useRef, useState, type FocusEvent, type ForwardedRef, type ReactNode } from 'react';
 
 import { SelectMenu } from './SelectMenu';
 import styles from './styles/select.module.scss';
@@ -67,6 +67,8 @@ export const SelectCombobox = (
     const { inputSlots, menuSlots, items, filterText, clearButton, getItemByValue, setFilterText } =
         useSelectData(children);
 
+    const [hasInteractedSinceOpening, setHasInteractedSinceOpening] = useState(false);
+
     const {
         getInputProps,
         getToggleButtonProps,
@@ -87,6 +89,12 @@ export const SelectCombobox = (
         },
         onInputValueChange: ({ inputValue }) => {
             setFilterText(inputValue);
+        },
+        onIsOpenChange: () => {
+            setHasInteractedSinceOpening(false);
+        },
+        onHighlightedIndexChange: () => {
+            setHasInteractedSinceOpening(true);
         },
         itemToString: (item) => (item ? item.label : ''),
     });
@@ -188,6 +196,7 @@ export const SelectCombobox = (
                 getMenuProps={getMenuProps}
                 getItemProps={getItemProps}
                 selectedItem={selectedItem}
+                hasInteractedSinceOpening={hasInteractedSinceOpening}
             >
                 {menuSlots}
             </SelectMenu>

@@ -44,6 +44,12 @@ export type SelectMenuProps = {
     selectedItem?: {
         value: string;
     } | null;
+    /**
+     * @internal
+     * A boolean to indicate if highlighted item was changed since opening the menu.
+     * This is used to determine the style of the selected/highlighted item.
+     */
+    hasInteractedSinceOpening?: boolean;
 };
 
 export const SelectMenu = ({
@@ -53,6 +59,7 @@ export const SelectMenu = ({
     children,
     filterText,
     selectedItem,
+    hasInteractedSinceOpening,
 }: SelectMenuProps) => {
     const ref = useRef<HTMLUListElement | null>(null);
 
@@ -66,7 +73,13 @@ export const SelectMenu = ({
     return (
         <RadixPopover.Portal>
             <RadixPopover.Content onOpenAutoFocus={handleOnOpenAutoFocus} className={styles.portal}>
-                <ul className={styles.menu} {...getMenuProps()} ref={ref} data-test-id="fondue-select-menu">
+                <ul
+                    className={styles.menu}
+                    {...getMenuProps()}
+                    ref={ref}
+                    data-has-interacted={hasInteractedSinceOpening ? 'true' : 'false'}
+                    data-test-id="fondue-select-menu"
+                >
                     {
                         recursiveMap(
                             children,
@@ -84,12 +97,6 @@ export const SelectMenu = ({
                                         index,
                                         ...(child.ref ? { ref: child.ref } : {}),
                                     });
-
-                                    console.log(
-                                        optionData.value,
-                                        selectedItem?.value,
-                                        optionData.value === selectedItem?.value,
-                                    );
 
                                     return (
                                         <RadixSlot
