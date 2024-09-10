@@ -1,5 +1,11 @@
 # @frontify/fondue-components
 
+## 3.3.2
+
+### Patch Changes
+
+-   [#2048](https://github.com/Frontify/fondue/pull/2048) [`ce81add`](https://github.com/Frontify/fondue/commit/ce81adde64525df6bb74cdb04e5e6f58087f414e) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix: prevent global box sizing normalization from overriding fondue spacings
+
 ## 3.3.1
 
 ### Patch Changes

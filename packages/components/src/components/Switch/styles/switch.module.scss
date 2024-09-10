@@ -10,7 +10,6 @@
 
     position: relative;
     container-type: size;
-    box-sizing: border-box;
     border-radius: 9999px;
 
     background-color: var(--box-neutral-color);
@@ -53,15 +52,19 @@
     }
 }
 .thumb {
+    @include transition-transform;
+
     display: block;
+    transform: translate(-1px, -1px);
+    will-change: transform;
+
+    box-sizing: border-box;
+    width: calc(100cqh + 2px);
+    height: calc(100cqh + 2px);
+
     background-color: var(--base-color);
     border-radius: 9999px;
     border: 1px solid var(--box-neutral-inverse-color);
-    transition: transform 100ms;
-    transform: translate(-1px, -1px);
-    will-change: transform;
-    width: calc(100cqh + 2px);
-    height: calc(100cqh + 2px);
 
     &[data-state='checked'] {
         transform: translate(calc(100cqw - 100% + 1px), -1px);
