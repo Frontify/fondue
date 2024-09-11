@@ -462,7 +462,7 @@ test('render indicator on selected item', async ({ mount, page }) => {
     await component.click();
 
     await expect(firstItem).toHaveAttribute('data-selected', 'true');
-    await expect(firstItem).toHaveCSS('background-color', 'rgb(66, 71, 71)');
+    await expect(firstItem).toHaveCSS('background-color', 'rgb(240, 234, 250)');
     await expect(chekmarkIcon).toBeVisible();
 
     await page.keyboard.press('ArrowDown');
