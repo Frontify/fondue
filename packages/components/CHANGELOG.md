@@ -1,5 +1,13 @@
 # @frontify/fondue-components
 
+## 3.3.3
+
+### Patch Changes
+
+-   [#2049](https://github.com/Frontify/fondue/pull/2049) [`28390ac`](https://github.com/Frontify/fondue/commit/28390ac22ffea343b28becab23cc36aeda3099fb) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: align select and dropdown styles with design
+
+-   [#2051](https://github.com/Frontify/fondue/pull/2051) [`105ba35`](https://github.com/Frontify/fondue/commit/105ba353ecda5dfb9766f52ecce19536f4fc023c) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: fix non modal dialog not visible
+
 ## 3.3.2
 
 ### Patch Changes
