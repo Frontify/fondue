@@ -172,7 +172,6 @@ export const DialogContent = (
                     data-dialog-spacing={padding}
                     data-test-id={dataTestId}
                     data-dialog-vertical-align={verticalAlign}
-                    data-debug="hello-world-2"
                     {...props}
                 >
                     {children}
