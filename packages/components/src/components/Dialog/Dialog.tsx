@@ -123,7 +123,7 @@ export const DialogTrigger = (
 };
 DialogTrigger.displayName = 'Dialog.Trigger';
 
-const DialogUnderlay = ({ children, showUnderlay }: { children: ReactNode, showUnderlay: boolean }) => {
+const DialogUnderlay = ({ children, showUnderlay }: { children: ReactNode; showUnderlay: boolean }) => {
     const { isModal } = useContext(DialogContext);
     if (isModal) {
         return (
@@ -154,7 +154,6 @@ export const DialogContent = (
     }: DialogContentProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
-
     return (
         <RadixDialog.Portal>
             <DialogUnderlay showUnderlay={showUnderlay}>
