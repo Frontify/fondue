@@ -2,7 +2,7 @@
 
 import { IconCross } from '@frontify/fondue-icons';
 import * as RadixDialog from '@radix-ui/react-dialog';
-import { forwardRef, type CSSProperties, type ForwardedRef, type ReactNode } from 'react';
+import { createContext, forwardRef, useContext, type CSSProperties, type ForwardedRef, type ReactNode } from 'react';
 
 import { addAutoFocusAttribute, addShowFocusRing } from '#/utilities/domUtilities';
 
@@ -89,8 +89,18 @@ export type DialogCloseProps = { children?: ReactNode };
 
 export type DialogAnnouncementProps = { children?: ReactNode; asChild?: boolean };
 
+type DialogContextType = {
+    isModal: boolean;
+};
+
+const DialogContext = createContext<DialogContextType>({ isModal: false });
+
 export const DialogRoot = ({ children, ...props }: DialogRootProps) => {
-    return <RadixDialog.Root {...props}>{children}</RadixDialog.Root>;
+    return (
+        <DialogContext.Provider value={{ isModal: props.modal ?? false }}>
+            <RadixDialog.Root {...props}>{children}</RadixDialog.Root>
+        </DialogContext.Provider>
+    );
 };
 DialogRoot.displayName = 'Dialog.Root';
 
@@ -113,6 +123,22 @@ export const DialogTrigger = (
 };
 DialogTrigger.displayName = 'Dialog.Trigger';
 
+const DialogUnderlay = ({ children, showUnderlay }: { children: ReactNode; showUnderlay: boolean }) => {
+    const { isModal } = useContext(DialogContext);
+    if (isModal) {
+        return (
+            <RadixDialog.Overlay data-visible={showUnderlay} className={styles.underlay}>
+                {children}
+            </RadixDialog.Overlay>
+        );
+    }
+    return (
+        <div className={styles.underlay} data-visible={showUnderlay}>
+            {children}
+        </div>
+    );
+};
+
 export const DialogContent = (
     {
         maxWidth = '800px',
@@ -130,7 +156,7 @@ export const DialogContent = (
 ) => {
     return (
         <RadixDialog.Portal>
-            <RadixDialog.Overlay data-visible={showUnderlay} className={styles.underlay}>
+            <DialogUnderlay showUnderlay={showUnderlay}>
                 <RadixDialog.Content
                     style={
                         {
@@ -150,7 +176,7 @@ export const DialogContent = (
                 >
                     {children}
                 </RadixDialog.Content>
-            </RadixDialog.Overlay>
+            </DialogUnderlay>
         </RadixDialog.Portal>
     );
 };
