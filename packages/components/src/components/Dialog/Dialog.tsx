@@ -127,7 +127,7 @@ const DialogUnderlay = ({ children, showUnderlay }: { children: ReactNode; showU
     const { isModal } = useContext(DialogContext);
     if (isModal) {
         return (
-            <RadixDialog.Overlay data-visible={showUnderlay} className={styles.underlay} asChild>
+            <RadixDialog.Overlay data-visible={showUnderlay} className={styles.underlay}>
                 {children}
             </RadixDialog.Overlay>
         );
