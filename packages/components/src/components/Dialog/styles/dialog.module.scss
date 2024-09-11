@@ -131,6 +131,11 @@
         grid-row: 1;
         grid-column: 2;
     }
+
+    > div {
+        display: flex;
+        width: 100%;
+    }
 }
 
 .footer {
