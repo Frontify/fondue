@@ -28,7 +28,8 @@
         border-color: var(--line-color-x-strong);
     }
 
-    &[aria-expanded='false'][data-show-focus-ring='false']:focus {
+    &[data-show-focus-ring='false']:focus,
+    &:has(input[data-show-focus-ring='false']:focus) {
         border-color: var(--line-color-xx-strong);
     }
 
@@ -196,7 +197,7 @@
     border-radius: var(--radius);
     margin-top: sizeToken(2);
     background-color: var(--base-color);
-    border: var(--line-width) solid var(--line-color-xx-strong);
+    border: var(--line-width) solid var(--line-color-x-strong);
     width: var(--radix-popover-trigger-width);
     overflow: auto;
     padding: sizeToken(2) 0;
@@ -212,7 +213,8 @@
 
 .item {
     @include transition-colors;
-
+    display: flex;
+    justify-content: space-between;
     padding: sizeToken(3) sizeToken(5);
     cursor: pointer;
     text-align: start;
@@ -223,6 +225,24 @@
         background-color: var(--box-neutral-strong-color);
         color: var(--box-neutral-strong-inverse-color);
     }
+
+    &[data-selected='true'] {
+        .checkmarkIcon {
+            display: block;
+        }
+    }
+
+    .menu[data-has-interacted='false'] &[data-selected='true']:not(:hover),
+    &[data-selected='true'][data-highlighted='false'] {
+        background-color: var(--box-selected-color);
+        color: var(--box-selected-inverse-color);
+    }
+}
+
+.checkmarkIcon {
+    width: sizeToken(4);
+    height: sizeToken(4);
+    display: none;
 }
 
 .group {

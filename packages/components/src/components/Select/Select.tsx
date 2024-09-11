@@ -4,7 +4,7 @@ import { IconCaretDown, IconCheckMark, IconExclamationMarkTriangle } from '@fron
 import * as RadixPopover from '@radix-ui/react-popover';
 import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { useSelect } from 'downshift';
-import { forwardRef, useRef, type ForwardedRef, type ReactNode } from 'react';
+import { forwardRef, useRef, useState, type ForwardedRef, type ReactNode } from 'react';
 
 import { ForwardedRefCombobox } from './Combobox';
 import { ForwardedRefSelectItem, ForwardedRefSelectItemGroup } from './SelectItem';
@@ -74,11 +74,19 @@ export const SelectInput = (
 
     const wasClicked = useRef(false);
 
+    const [hasInteractedSinceOpening, setHasInteractedSinceOpening] = useState(false);
+
     const { getToggleButtonProps, getMenuProps, getItemProps, reset, selectedItem, isOpen, highlightedIndex } =
         useSelect({
             items,
             defaultSelectedItem: defaultItem,
             selectedItem: activeItem,
+            onIsOpenChange: () => {
+                setHasInteractedSinceOpening(false);
+            },
+            onHighlightedIndexChange: () => {
+                setHasInteractedSinceOpening(true);
+            },
             onSelectedItemChange: ({ selectedItem }) => {
                 onSelect && onSelect(selectedItem.value);
             },
@@ -149,7 +157,13 @@ export const SelectInput = (
                 </div>
             </RadixPopover.Anchor>
 
-            <SelectMenu highlightedIndex={highlightedIndex} getMenuProps={getMenuProps} getItemProps={getItemProps}>
+            <SelectMenu
+                highlightedIndex={highlightedIndex}
+                getMenuProps={getMenuProps}
+                getItemProps={getItemProps}
+                selectedItem={selectedItem}
+                hasInteractedSinceOpening={hasInteractedSinceOpening}
+            >
                 {menuSlots}
             </SelectMenu>
         </RadixPopover.Root>

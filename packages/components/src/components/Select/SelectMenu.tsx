@@ -37,9 +37,30 @@ export type SelectMenuProps = {
      * The filter text shown in the combobox input element.
      */
     filterText?: string;
+    /**
+     * @internal
+     * The type of the menu.
+     */
+    selectedItem?: {
+        value: string;
+    } | null;
+    /**
+     * @internal
+     * A boolean to indicate if highlighted item was changed since opening the menu.
+     * This is used to determine the style of the selected/highlighted item.
+     */
+    hasInteractedSinceOpening?: boolean;
 };
 
-export const SelectMenu = ({ highlightedIndex, getMenuProps, getItemProps, children, filterText }: SelectMenuProps) => {
+export const SelectMenu = ({
+    highlightedIndex,
+    getMenuProps,
+    getItemProps,
+    children,
+    filterText,
+    selectedItem,
+    hasInteractedSinceOpening,
+}: SelectMenuProps) => {
     const ref = useRef<HTMLUListElement | null>(null);
 
     const { setMaxHeight } = usePreventDropdownOverflow(ref);
@@ -52,7 +73,13 @@ export const SelectMenu = ({ highlightedIndex, getMenuProps, getItemProps, child
     return (
         <RadixPopover.Portal>
             <RadixPopover.Content onOpenAutoFocus={handleOnOpenAutoFocus} className={styles.portal}>
-                <ul className={styles.menu} {...getMenuProps()} ref={ref} data-test-id="fondue-select-menu">
+                <ul
+                    className={styles.menu}
+                    {...getMenuProps()}
+                    ref={ref}
+                    data-has-interacted={hasInteractedSinceOpening ? 'true' : 'false'}
+                    data-test-id="fondue-select-menu"
+                >
                     {
                         recursiveMap(
                             children,
@@ -64,16 +91,19 @@ export const SelectMenu = ({ highlightedIndex, getMenuProps, getItemProps, child
                                     isValidElement<TProps>(child) && child.ref !== undefined;
 
                                 if (isValid<SelectItemProps>(child)) {
+                                    const optionData = getSelectOptionValue(child.props);
                                     const itemProps = getItemProps({
-                                        item: getSelectOptionValue(child.props),
+                                        item: optionData,
                                         index,
                                         ...(child.ref ? { ref: child.ref } : {}),
                                     });
+
                                     return (
                                         <RadixSlot
                                             className={styles.item}
                                             data-highlighted={highlightedIndex === index}
-                                            key={`${child.props.value}`}
+                                            data-selected={selectedItem?.value === optionData.value}
+                                            key={child.props.value}
                                             // Workaround for the issue where the onClick event is not fired on touch devices because of portal usage
                                             onTouchStart={(event) => {
                                                 if (itemProps.onClick) {

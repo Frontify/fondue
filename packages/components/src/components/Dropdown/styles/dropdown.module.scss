@@ -12,6 +12,14 @@
     box-shadow: var(--shadow-matrix);
     min-width: 250px;
     overflow: auto;
+
+    &:focus-within {
+        border-color: var(--line-color-xx-strong);
+    }
+}
+
+.subContent {
+    margin-left: sizeToken(2);
 }
 
 .item,
@@ -22,6 +30,8 @@
     height: sizeToken(10);
     gap: sizeToken(1.5);
     padding: sizeToken(3) sizeToken(5);
+    margin: sizeToken(1);
+    border-radius: sizeToken(1);
     cursor: pointer;
     text-align: start;
     font-size: var(--body-size-medium);

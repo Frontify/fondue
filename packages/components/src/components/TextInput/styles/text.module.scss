@@ -8,19 +8,21 @@
     @include focus-outline;
     @include transition-colors;
 
-    position: relative;
-    display: flex;
-    align-items: stretch;
-    font-family: var(--body-family-stack);
-    font-weight: 400;
-    font-size: var(--body-size-medium);
-    line-height: var(--body-size-medium-line-height);
-    text-align: start;
-    height: sizeToken(9);
-    color: var(--text-color);
-    background-color: var(--base-color);
-    border-radius: var(--radius);
-    border: var(--line-width) solid var(--line-color-strong);
+    & {
+        position: relative;
+        display: flex;
+        align-items: stretch;
+        font-family: var(--body-family-stack);
+        font-weight: 400;
+        font-size: var(--body-size-medium);
+        line-height: var(--body-size-medium-line-height);
+        text-align: start;
+        height: sizeToken(9);
+        color: var(--text-color);
+        background-color: var(--base-color);
+        border-radius: var(--radius);
+        border: var(--line-width) solid var(--line-color-strong);
+    }
 
     &:hover {
         border-color: var(--line-color-x-strong);
