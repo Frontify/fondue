@@ -103,7 +103,7 @@ export const SelectMenu = ({
                                             className={styles.item}
                                             data-highlighted={highlightedIndex === index}
                                             data-selected={selectedItem?.value === optionData.value}
-                                            key={`${child.props.value}`}
+                                            key={child.props.value}
                                             // Workaround for the issue where the onClick event is not fired on touch devices because of portal usage
                                             onTouchStart={(event) => {
                                                 if (itemProps.onClick) {
