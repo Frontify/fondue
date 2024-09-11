@@ -54,7 +54,7 @@ export type DialogContentProps = {
      */
     minWidth?: string;
     /**
-     * Define a maximum height for the dialog
+     * Define a minimum height for the dialog
      * @default "200px"
      */
     minHeight?: string;
