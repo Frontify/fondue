@@ -1,5 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type PieArcDatum } from '@visx/shape/lib/shapes/Pie';
+import { type Dispatch, type SetStateAction, useEffect } from 'react';
+
 import { type ColorScale, type Padding, type PieChartDatum } from '@components/PieChart';
 import { LABEL_PERCENTAGE_STYLE, LABEL_TITLE_STYLE, LABEL_VALUE_STYLE } from '@components/PieChart/components/consts';
 import { DEFAULT_PADDING } from '@components/PieChart/consts';
@@ -14,8 +17,6 @@ import { useTextWidths } from '@components/PieChart/hooks/useTextWidths';
 import { colorAccessorByIndex } from '@components/common/helpers';
 import { type ValueFormatter } from '@components/common/types';
 import { TICK_LABEL_STYLE } from '@theme/createTheme';
-import { type PieArcDatum } from '@visx/shape/lib/shapes/Pie';
-import { type Dispatch, type SetStateAction, useEffect } from 'react';
 
 type LabelProps = {
     centroid: [number, number];
