@@ -1,8 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type PieArcDatum } from '@visx/shape/lib/shapes/Pie';
-import { type Dispatch, type SetStateAction, useEffect } from 'react';
-
 import { type ColorScale, type Padding, type PieChartDatum } from '@components/PieChart';
 import { LABEL_PERCENTAGE_STYLE, LABEL_TITLE_STYLE, LABEL_VALUE_STYLE } from '@components/PieChart/components/consts';
 import { DEFAULT_PADDING } from '@components/PieChart/consts';
@@ -17,6 +14,8 @@ import { useTextWidths } from '@components/PieChart/hooks/useTextWidths';
 import { colorAccessorByIndex } from '@components/common/helpers';
 import { type ValueFormatter } from '@components/common/types';
 import { TICK_LABEL_STYLE } from '@theme/createTheme';
+import { type PieArcDatum } from '@visx/shape/lib/shapes/Pie';
+import { type Dispatch, type SetStateAction, useEffect } from 'react';
 
 type LabelProps = {
     centroid: [number, number];
@@ -55,7 +54,7 @@ export const Label = ({
     const formattedValue = valueFormatter?.(data.value) ?? data.value;
     const titleText = showLabelTitle ? data.label : '';
     const valueText = `${showLabelValue ? formattedValue : ''}`;
-    const percentageText = showLabelPercentage ? `${showLabelValue ? ' ' : ''}(${percentage}%)` : '';
+    const percentageText = showLabelPercentage ? `(${percentage}%)` : '';
     const { labelWidth, valueWidth, percentageWidth } = useTextWidths(titleText, valueText, percentageText);
     const textWidth = Math.max(labelWidth, valueWidth + percentageWidth);
 
@@ -117,14 +116,7 @@ export const Label = ({
                     </tspan>
                 )}
                 <tspan x={textAnchorX} dy={textBottomOffset * 1.25} {...LABEL_VALUE_STYLE}>
-                    {valueText}
-                </tspan>
-                <tspan
-                    x={textAnchorX + valueWidth}
-                    dy={!showLabelValue ? textBottomOffset * 1.25 : 0}
-                    {...LABEL_PERCENTAGE_STYLE}
-                >
-                    {percentageText}
+                    {valueText} <tspan {...LABEL_PERCENTAGE_STYLE}>{percentageText}</tspan>
                 </tspan>
             </text>
         </g>
