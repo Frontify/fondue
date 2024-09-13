@@ -27,7 +27,10 @@ export type TooltipTriggerProps = {
     /**
      * Whether the trigger should be applied to the child of a wrapper element.
      * If disabled, the margins around the element will not affect the tooltip positioning.
-     * Enable this if you have styling or behavioral issues with the child element.
+     * Whether to wrap the child in a trigger element.
+     * When true, add a wrapper with the trigger behavior around the child.
+     * When false, applies trigger behavior directly to the child.
+     * Enable when direct application causes styling or behavioral issues.
      * @default false
      */
     wrapChild?: boolean;
