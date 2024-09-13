@@ -2,4 +2,4 @@
 "@frontify/fondue-charts": patch
 ---
 
-Pie chart label overlap fix
+fix: prevent overlap of label and percent on PieChart
