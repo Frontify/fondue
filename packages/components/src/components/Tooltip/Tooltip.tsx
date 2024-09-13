@@ -28,7 +28,7 @@ export type TooltipTriggerProps = {
      * Whether the trigger should be applied to the child of a wrapper element.
      * If disabled, the margins around the element will not affect the tooltip positioning.
      * Enable this if you have styling or behavioral issues with the child element.
-     * @default true
+     * @default false
      */
     wrapChild?: boolean;
     children: ReactNode;
