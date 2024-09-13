@@ -55,7 +55,7 @@ export const Label = ({
     const formattedValue = valueFormatter?.(data.value) ?? data.value;
     const titleText = showLabelTitle ? data.label : '';
     const valueText = `${showLabelValue ? formattedValue : ''}`;
-    const percentageText = showLabelPercentage ? `${showLabelValue ? ' ' : ''}(${percentage}%)` : '';
+    const percentageText = showLabelPercentage ? `(${percentage}%)` : '';
     const { labelWidth, valueWidth, percentageWidth } = useTextWidths(titleText, valueText, percentageText);
     const textWidth = Math.max(labelWidth, valueWidth + percentageWidth);
 
@@ -117,14 +117,7 @@ export const Label = ({
                     </tspan>
                 )}
                 <tspan x={textAnchorX} dy={textBottomOffset * 1.25} {...LABEL_VALUE_STYLE}>
-                    {valueText}
-                </tspan>
-                <tspan
-                    x={textAnchorX + valueWidth}
-                    dy={!showLabelValue ? textBottomOffset * 1.25 : 0}
-                    {...LABEL_PERCENTAGE_STYLE}
-                >
-                    {percentageText}
+                    {valueText} <tspan {...LABEL_PERCENTAGE_STYLE}>{percentageText}</tspan>
                 </tspan>
             </text>
         </g>
