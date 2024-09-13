@@ -225,6 +225,31 @@ test('should show on custom side right', async ({ mount, page }) => {
     }
 });
 
+test('should respect margins when wrapped', async ({ mount, page }) => {
+    const component = await mount(
+        <Tooltip.Root>
+            <Tooltip.Trigger wrapChild={true} data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
+                <button style={{ margin: 250 }} data-test-id="fondue-tooltip-button">
+                    Hover over me!
+                </button>
+            </Tooltip.Trigger>
+            <Tooltip.Content data-test-id={TOOLTIP_CONTENT_TEST_ID}>{TOOLTIP_TEXT}</Tooltip.Content>
+        </Tooltip.Root>,
+    );
+    const tooltipContent = page.getByTestId(TOOLTIP_CONTENT_TEST_ID);
+    const tooltipButton = page.getByTestId('fondue-tooltip-button');
+    await expect(component).toBeVisible();
+    await component.hover();
+    await expect(tooltipContent).toBeVisible();
+    const tooltipTriggerRect = await tooltipButton.boundingBox();
+    const tooltipContentRect = await tooltipContent.boundingBox();
+    if (tooltipContentRect && tooltipTriggerRect) {
+        expect(tooltipContentRect.y).toBe(tooltipTriggerRect.y + tooltipTriggerRect.height + 250 + 16 - 3); // margin + padding - negative offset applied by radix
+    } else {
+        throw new Error('Bounding boxes are undefined');
+    }
+});
+
 test('should detect left collision and show on the right', async ({ mount, page }) => {
     const component = await mount(
         <Tooltip.Root>
