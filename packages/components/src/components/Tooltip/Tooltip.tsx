@@ -25,8 +25,6 @@ export type TooltipRootProps = {
 };
 export type TooltipTriggerProps = {
     /**
-     * Whether the trigger should be applied to the child of a wrapper element.
-     * If disabled, the margins around the element will not affect the tooltip positioning.
      * Whether to wrap the child in a trigger element.
      * When true, add a wrapper with the trigger behavior around the child.
      * When false, applies trigger behavior directly to the child.
