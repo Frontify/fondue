@@ -26,11 +26,11 @@ export type TooltipRootProps = {
 export type TooltipTriggerProps = {
     /**
      * Whether the trigger should be applied to the child of a wrapper element.
-     * If enabled, the margins around the element will not affect the tooltip positioning.
-     * Disable this if you have styling or behavioral issues with the child element.
+     * If disabled, the margins around the element will not affect the tooltip positioning.
+     * Enable this if you have styling or behavioral issues with the child element.
      * @default true
      */
-    asChild?: boolean;
+    wrapChild?: boolean;
     children: ReactNode;
     'data-test-id'?: string;
 };
@@ -61,11 +61,11 @@ export const TooltipRoot = ({ children, enterDelay = 700, open, onOpenChange }: 
 TooltipRoot.displayName = 'Tooltip.Root';
 
 export const TooltipTrigger = (
-    { asChild = true, children, 'data-test-id': dataTestId = 'fondue-tooltip-trigger' }: TooltipTriggerProps,
+    { wrapChild = false, children, 'data-test-id': dataTestId = 'fondue-tooltip-trigger' }: TooltipTriggerProps,
     ref: ForwardedRef<HTMLButtonElement>,
 ) => {
     return (
-        <RadixTooltip.Trigger asChild={asChild} data-test-id={dataTestId} ref={ref}>
+        <RadixTooltip.Trigger asChild={!wrapChild} data-test-id={dataTestId} ref={ref}>
             {children}
         </RadixTooltip.Trigger>
     );
