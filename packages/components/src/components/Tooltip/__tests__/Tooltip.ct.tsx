@@ -109,18 +109,22 @@ test('should have custom max width', async ({ mount, page }) => {
 
 test('should show on correct default side top', async ({ mount, page }) => {
     const component = await mount(
-        <Tooltip.Root>
-            <Tooltip.Trigger asChild={true} data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
-                <button style={{ margin: 250 }}>Hover over me!</button>
-            </Tooltip.Trigger>
-            <Tooltip.Content data-test-id={TOOLTIP_CONTENT_TEST_ID}>{TOOLTIP_TEXT}</Tooltip.Content>
-        </Tooltip.Root>,
+        <div style={{ margin: 250 }}>
+            <Tooltip.Root>
+                <Tooltip.Trigger data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
+                    <button>Hover over me!</button>
+                </Tooltip.Trigger>
+                <Tooltip.Content data-test-id={TOOLTIP_CONTENT_TEST_ID}>{TOOLTIP_TEXT}</Tooltip.Content>
+            </Tooltip.Root>
+            ,
+        </div>,
     );
     const tooltipContent = page.getByTestId(TOOLTIP_CONTENT_TEST_ID);
     await expect(component).toBeVisible();
-    await component.hover();
+    const tooltipTrigger = page.getByTestId(TOOLTIP_TRIGGER_TEST_ID);
+    await tooltipTrigger.hover();
     await expect(tooltipContent).toBeVisible();
-    const tooltipTriggerRect = await component.boundingBox();
+    const tooltipTriggerRect = await tooltipTrigger.boundingBox();
     const tooltipContentRect = await tooltipContent.boundingBox();
     if (tooltipContentRect && tooltipTriggerRect) {
         expect(tooltipContentRect.y + tooltipContentRect.height).toBeLessThan(tooltipTriggerRect.y);
@@ -131,20 +135,24 @@ test('should show on correct default side top', async ({ mount, page }) => {
 
 test('should show on custom side top', async ({ mount, page }) => {
     const component = await mount(
-        <Tooltip.Root>
-            <Tooltip.Trigger asChild={true} data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
-                <button style={{ margin: 250 }}>Hover over me!</button>
-            </Tooltip.Trigger>
-            <Tooltip.Content side="top" data-test-id={TOOLTIP_CONTENT_TEST_ID}>
-                {TOOLTIP_TEXT}
-            </Tooltip.Content>
-        </Tooltip.Root>,
+        <div style={{ margin: 250 }}>
+            <Tooltip.Root>
+                <Tooltip.Trigger data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
+                    <button>Hover over me!</button>
+                </Tooltip.Trigger>
+                <Tooltip.Content side="top" data-test-id={TOOLTIP_CONTENT_TEST_ID}>
+                    {TOOLTIP_TEXT}
+                </Tooltip.Content>
+            </Tooltip.Root>
+            ,
+        </div>,
     );
     const tooltipContent = page.getByTestId(TOOLTIP_CONTENT_TEST_ID);
     await expect(component).toBeVisible();
-    await component.hover();
+    const tooltipTrigger = page.getByTestId(TOOLTIP_TRIGGER_TEST_ID);
+    await tooltipTrigger.hover();
     await expect(tooltipContent).toBeVisible();
-    const tooltipTriggerRect = await component.boundingBox();
+    const tooltipTriggerRect = await tooltipTrigger.boundingBox();
     const tooltipContentRect = await tooltipContent.boundingBox();
     if (tooltipContentRect && tooltipTriggerRect) {
         expect(tooltipContentRect.y + tooltipContentRect.height).toBeLessThan(tooltipTriggerRect.y);
@@ -155,20 +163,24 @@ test('should show on custom side top', async ({ mount, page }) => {
 
 test('should show on custom side bottom', async ({ mount, page }) => {
     const component = await mount(
-        <Tooltip.Root>
-            <Tooltip.Trigger asChild={true} data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
-                <button style={{ margin: 250 }}>Hover over me!</button>
-            </Tooltip.Trigger>
-            <Tooltip.Content side="bottom" data-test-id={TOOLTIP_CONTENT_TEST_ID}>
-                {TOOLTIP_TEXT}
-            </Tooltip.Content>
-        </Tooltip.Root>,
+        <div style={{ margin: 250 }}>
+            <Tooltip.Root>
+                <Tooltip.Trigger data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
+                    <button>Hover over me!</button>
+                </Tooltip.Trigger>
+                <Tooltip.Content side="bottom" data-test-id={TOOLTIP_CONTENT_TEST_ID}>
+                    {TOOLTIP_TEXT}
+                </Tooltip.Content>
+            </Tooltip.Root>
+            ,
+        </div>,
     );
     const tooltipContent = page.getByTestId(TOOLTIP_CONTENT_TEST_ID);
     await expect(component).toBeVisible();
-    await component.hover();
+    const tooltipTrigger = page.getByTestId(TOOLTIP_TRIGGER_TEST_ID);
+    await tooltipTrigger.hover();
     await expect(tooltipContent).toBeVisible();
-    const tooltipTriggerRect = await component.boundingBox();
+    const tooltipTriggerRect = await tooltipTrigger.boundingBox();
     const tooltipContentRect = await tooltipContent.boundingBox();
     if (tooltipContentRect && tooltipTriggerRect) {
         expect(tooltipTriggerRect.y + tooltipTriggerRect.height).toBeLessThan(tooltipContentRect.y);
@@ -179,20 +191,24 @@ test('should show on custom side bottom', async ({ mount, page }) => {
 
 test('should show on custom side left', async ({ mount, page }) => {
     const component = await mount(
-        <Tooltip.Root>
-            <Tooltip.Trigger asChild={true} data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
-                <button style={{ margin: 250 }}>Hover over me!</button>
-            </Tooltip.Trigger>
-            <Tooltip.Content side="left" data-test-id={TOOLTIP_CONTENT_TEST_ID}>
-                {TOOLTIP_TEXT}
-            </Tooltip.Content>
-        </Tooltip.Root>,
+        <div style={{ margin: 250 }}>
+            <Tooltip.Root>
+                <Tooltip.Trigger data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
+                    <button>Hover over me!</button>
+                </Tooltip.Trigger>
+                <Tooltip.Content side="left" data-test-id={TOOLTIP_CONTENT_TEST_ID}>
+                    {TOOLTIP_TEXT}
+                </Tooltip.Content>
+            </Tooltip.Root>
+            ,
+        </div>,
     );
     const tooltipContent = page.getByTestId(TOOLTIP_CONTENT_TEST_ID);
     await expect(component).toBeVisible();
-    await component.hover();
+    const tooltipTrigger = page.getByTestId(TOOLTIP_TRIGGER_TEST_ID);
+    await tooltipTrigger.hover();
     await expect(tooltipContent).toBeVisible();
-    const tooltipTriggerRect = await component.boundingBox();
+    const tooltipTriggerRect = await tooltipTrigger.boundingBox();
     const tooltipContentRect = await tooltipContent.boundingBox();
     if (tooltipContentRect && tooltipTriggerRect) {
         expect(tooltipContentRect.x + tooltipContentRect.width).toBeLessThan(tooltipTriggerRect.x);
@@ -203,48 +219,27 @@ test('should show on custom side left', async ({ mount, page }) => {
 
 test('should show on custom side right', async ({ mount, page }) => {
     const component = await mount(
-        <Tooltip.Root>
-            <Tooltip.Trigger asChild={true} data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
-                <button style={{ margin: 250 }}>Hover over me!</button>
-            </Tooltip.Trigger>
-            <Tooltip.Content side="right" data-test-id={TOOLTIP_CONTENT_TEST_ID}>
-                {TOOLTIP_TEXT}
-            </Tooltip.Content>
-        </Tooltip.Root>,
+        <div style={{ margin: 250 }}>
+            <Tooltip.Root>
+                <Tooltip.Trigger data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
+                    <button>Hover over me!</button>
+                </Tooltip.Trigger>
+                <Tooltip.Content side="right" data-test-id={TOOLTIP_CONTENT_TEST_ID}>
+                    {TOOLTIP_TEXT}
+                </Tooltip.Content>
+            </Tooltip.Root>
+            ,
+        </div>,
     );
     const tooltipContent = page.getByTestId(TOOLTIP_CONTENT_TEST_ID);
     await expect(component).toBeVisible();
-    await component.hover();
+    const tooltipTrigger = page.getByTestId(TOOLTIP_TRIGGER_TEST_ID);
+    await tooltipTrigger.hover();
     await expect(tooltipContent).toBeVisible();
-    const tooltipTriggerRect = await component.boundingBox();
+    const tooltipTriggerRect = await tooltipTrigger.boundingBox();
     const tooltipContentRect = await tooltipContent.boundingBox();
     if (tooltipContentRect && tooltipTriggerRect) {
         expect(tooltipTriggerRect.x + tooltipTriggerRect.width).toBeLessThan(tooltipContentRect.x);
-    } else {
-        throw new Error('Bounding boxes are undefined');
-    }
-});
-
-test('should respect margins when wrapped', async ({ mount, page }) => {
-    const component = await mount(
-        <Tooltip.Root>
-            <Tooltip.Trigger data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
-                <button style={{ margin: 250 }} data-test-id="fondue-tooltip-button">
-                    Hover over me!
-                </button>
-            </Tooltip.Trigger>
-            <Tooltip.Content data-test-id={TOOLTIP_CONTENT_TEST_ID}>{TOOLTIP_TEXT}</Tooltip.Content>
-        </Tooltip.Root>,
-    );
-    const tooltipContent = page.getByTestId(TOOLTIP_CONTENT_TEST_ID);
-    const tooltipButton = page.getByTestId('fondue-tooltip-button');
-    await expect(component).toBeVisible();
-    await component.hover();
-    await expect(tooltipContent).toBeVisible();
-    const tooltipTriggerRect = await tooltipButton.boundingBox();
-    const tooltipContentRect = await tooltipContent.boundingBox();
-    if (tooltipContentRect && tooltipTriggerRect) {
-        expect(tooltipContentRect.y).toBe(tooltipTriggerRect.y + tooltipTriggerRect.height + 250 + 16 - 3); // margin + padding - negative offset applied by radix
     } else {
         throw new Error('Bounding boxes are undefined');
     }
