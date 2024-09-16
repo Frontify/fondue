@@ -26,12 +26,11 @@ export type TooltipRootProps = {
 export type TooltipTriggerProps = {
     /**
      * Whether to wrap the child in a trigger element.
-     * When true, add a wrapper with the trigger behavior around the child.
-     * When false, applies trigger behavior directly to the child.
-     * Enable when direct application causes styling or behavioral issues.
+     * When false, add a wrapper with the trigger behavior around the child.
+     * When true, applies trigger behavior directly to the child.
      * @default false
      */
-    wrapChild?: boolean;
+    asChild?: boolean;
     children: ReactNode;
     'data-test-id'?: string;
 };
@@ -62,11 +61,11 @@ export const TooltipRoot = ({ children, enterDelay = 700, open, onOpenChange }: 
 TooltipRoot.displayName = 'Tooltip.Root';
 
 export const TooltipTrigger = (
-    { wrapChild = false, children, 'data-test-id': dataTestId = 'fondue-tooltip-trigger' }: TooltipTriggerProps,
+    { asChild = false, children, 'data-test-id': dataTestId = 'fondue-tooltip-trigger' }: TooltipTriggerProps,
     ref: ForwardedRef<HTMLButtonElement>,
 ) => {
     return (
-        <RadixTooltip.Trigger asChild={!wrapChild} data-test-id={dataTestId} ref={ref}>
+        <RadixTooltip.Trigger asChild={asChild} data-test-id={dataTestId} ref={ref}>
             {children}
         </RadixTooltip.Trigger>
     );

@@ -110,7 +110,7 @@ test('should have custom max width', async ({ mount, page }) => {
 test('should show on correct default side top', async ({ mount, page }) => {
     const component = await mount(
         <Tooltip.Root>
-            <Tooltip.Trigger data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
+            <Tooltip.Trigger asChild={true} data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
                 <button style={{ margin: 250 }}>Hover over me!</button>
             </Tooltip.Trigger>
             <Tooltip.Content data-test-id={TOOLTIP_CONTENT_TEST_ID}>{TOOLTIP_TEXT}</Tooltip.Content>
@@ -132,7 +132,7 @@ test('should show on correct default side top', async ({ mount, page }) => {
 test('should show on custom side top', async ({ mount, page }) => {
     const component = await mount(
         <Tooltip.Root>
-            <Tooltip.Trigger data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
+            <Tooltip.Trigger asChild={true} data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
                 <button style={{ margin: 250 }}>Hover over me!</button>
             </Tooltip.Trigger>
             <Tooltip.Content side="top" data-test-id={TOOLTIP_CONTENT_TEST_ID}>
@@ -156,7 +156,7 @@ test('should show on custom side top', async ({ mount, page }) => {
 test('should show on custom side bottom', async ({ mount, page }) => {
     const component = await mount(
         <Tooltip.Root>
-            <Tooltip.Trigger data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
+            <Tooltip.Trigger asChild={true} data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
                 <button style={{ margin: 250 }}>Hover over me!</button>
             </Tooltip.Trigger>
             <Tooltip.Content side="bottom" data-test-id={TOOLTIP_CONTENT_TEST_ID}>
@@ -180,7 +180,7 @@ test('should show on custom side bottom', async ({ mount, page }) => {
 test('should show on custom side left', async ({ mount, page }) => {
     const component = await mount(
         <Tooltip.Root>
-            <Tooltip.Trigger data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
+            <Tooltip.Trigger asChild={true} data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
                 <button style={{ margin: 250 }}>Hover over me!</button>
             </Tooltip.Trigger>
             <Tooltip.Content side="left" data-test-id={TOOLTIP_CONTENT_TEST_ID}>
@@ -204,7 +204,7 @@ test('should show on custom side left', async ({ mount, page }) => {
 test('should show on custom side right', async ({ mount, page }) => {
     const component = await mount(
         <Tooltip.Root>
-            <Tooltip.Trigger data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
+            <Tooltip.Trigger asChild={true} data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
                 <button style={{ margin: 250 }}>Hover over me!</button>
             </Tooltip.Trigger>
             <Tooltip.Content side="right" data-test-id={TOOLTIP_CONTENT_TEST_ID}>
@@ -228,7 +228,7 @@ test('should show on custom side right', async ({ mount, page }) => {
 test('should respect margins when wrapped', async ({ mount, page }) => {
     const component = await mount(
         <Tooltip.Root>
-            <Tooltip.Trigger wrapChild={true} data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
+            <Tooltip.Trigger data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
                 <button style={{ margin: 250 }} data-test-id="fondue-tooltip-button">
                     Hover over me!
                 </button>
