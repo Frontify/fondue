@@ -10,8 +10,6 @@ import {
 } from '@udecode/plate-link';
 import { createPortal } from 'react-dom';
 
-import { zIndexLayers } from '@components/RichTextEditor/helpers/zIndexLayers';
-
 import { EditModal } from './EditLinkModal';
 import { InsertLinkModal } from './InsertLinkModal/InsertLinkModal';
 
@@ -59,11 +57,7 @@ export const CustomFloatingLink = () => {
             {insertState.isOpen &&
                 !editState.isOpen &&
                 createPortal(
-                    <div
-                        ref={insertRef}
-                        {...insertProps}
-                        style={{ ...insertProps.style, zIndex: zIndexLayers.floatingModal }}
-                    >
+                    <div ref={insertRef} {...insertProps} style={insertProps.style}>
                         {input}
                     </div>,
                     document.body,
@@ -71,11 +65,7 @@ export const CustomFloatingLink = () => {
 
             {editState.isOpen &&
                 createPortal(
-                    <div
-                        ref={editRef}
-                        {...editProps}
-                        style={{ ...editProps.style, zIndex: zIndexLayers.floatingModal }}
-                    >
+                    <div ref={editRef} {...editProps} style={editProps.style}>
                         {editContent}
                     </div>,
                     document.body,
