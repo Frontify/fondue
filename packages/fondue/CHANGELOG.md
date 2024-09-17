@@ -1,5 +1,13 @@
 # @frontify/fondue
 
+## 12.2.12
+
+### Patch Changes
+
+-   Updated dependencies [[`6f7840d`](https://github.com/Frontify/fondue/commit/6f7840db1e2ac779c8e5eb4b72edbdf0c30811b1), [`b13ee96`](https://github.com/Frontify/fondue/commit/b13ee96a5e734ad99ab59114ba16ceec4e28fb6e), [`7593ce4`](https://github.com/Frontify/fondue/commit/7593ce48adeaf903dec853ef3ceeb31f8bd3e203), [`ad7ece2`](https://github.com/Frontify/fondue/commit/ad7ece27e40a8b33e960d4e9ddc358b38a04d8c7)]:
+    -   @frontify/fondue-components@3.3.4
+    -   @frontify/fondue-charts@1.8.15
+
 ## 12.2.11
 
 ### Patch Changes

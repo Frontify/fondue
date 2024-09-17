@@ -1,5 +1,15 @@
 # @frontify/fondue-components
 
+## 3.3.4
+
+### Patch Changes
+
+-   [#2052](https://github.com/Frontify/fondue/pull/2052) [`6f7840d`](https://github.com/Frontify/fondue/commit/6f7840db1e2ac779c8e5eb4b72edbdf0c30811b1) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix: dialog overflowing bottom of viewport in mobile
+
+-   [#2056](https://github.com/Frontify/fondue/pull/2056) [`b13ee96`](https://github.com/Frontify/fondue/commit/b13ee96a5e734ad99ab59114ba16ceec4e28fb6e) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix: tooltip data-state conflicts with other components
+
+-   [#2053](https://github.com/Frontify/fondue/pull/2053) [`7593ce4`](https://github.com/Frontify/fondue/commit/7593ce48adeaf903dec853ef3ceeb31f8bd3e203) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: add full width wrapper in the header to allow more content like a `Button` in the header.
+
 ## 3.3.3
 
 ### Patch Changes
