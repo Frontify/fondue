@@ -11,6 +11,8 @@ import {
 
 import { zIndexLayers } from '@components/RichTextEditor/helpers/zIndexLayers';
 
+import { createPortal } from 'react-dom';
+
 import { EditModal } from './EditLinkModal';
 import { InsertLinkModal } from './InsertLinkModal/InsertLinkModal';
 
@@ -55,21 +57,30 @@ export const CustomFloatingLink = () => {
 
     return (
         <>
-            {insertState.isOpen && !editState.isOpen && (
-                <div
-                    ref={insertRef}
-                    {...insertProps}
-                    style={{ ...insertProps.style, zIndex: zIndexLayers.floatingModal }}
-                >
-                    {input}
-                </div>
-            )}
+            {insertState.isOpen &&
+                !editState.isOpen &&
+                createPortal(
+                    <div
+                        ref={insertRef}
+                        {...insertProps}
+                        style={{ ...insertProps.style, zIndex: zIndexLayers.floatingModal }}
+                    >
+                        {input}
+                    </div>,
+                    document.body,
+                )}
 
-            {editState.isOpen && (
-                <div ref={editRef} {...editProps} style={{ ...editProps.style, zIndex: zIndexLayers.floatingModal }}>
-                    {editContent}
-                </div>
-            )}
+            {editState.isOpen &&
+                createPortal(
+                    <div
+                        ref={editRef}
+                        {...editProps}
+                        style={{ ...editProps.style, zIndex: zIndexLayers.floatingModal }}
+                    >
+                        {editContent}
+                    </div>,
+                    document.body,
+                )}
         </>
     );
 };
