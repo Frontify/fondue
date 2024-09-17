@@ -1,5 +1,11 @@
 # @frontify/fondue-charts
 
+## 1.8.15
+
+### Patch Changes
+
+-   [#2055](https://github.com/Frontify/fondue/pull/2055) [`ad7ece2`](https://github.com/Frontify/fondue/commit/ad7ece27e40a8b33e960d4e9ddc358b38a04d8c7) Thanks [@joseazevedo88](https://github.com/joseazevedo88)! - fix: prevent overlap of label and percent on PieChart
+
 ## 1.8.14
 
 ### Patch Changes
