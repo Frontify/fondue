@@ -23,10 +23,7 @@ export type TooltipRootProps = {
     enterDelay?: number;
     children: Array<ReactElement<TooltipTriggerProps | TooltipContentProps>>;
 };
-export type TooltipTriggerProps = {
-    children: ReactNode;
-    'data-test-id'?: string;
-};
+export type TooltipTriggerProps = { children: ReactNode; 'data-test-id'?: string };
 export type TooltipContentProps = {
     /**
      * @default "spacious"
@@ -58,7 +55,7 @@ export const TooltipTrigger = (
     ref: ForwardedRef<HTMLButtonElement>,
 ) => {
     return (
-        <RadixTooltip.Trigger data-test-id={dataTestId} ref={ref}>
+        <RadixTooltip.Trigger data-test-id={dataTestId} asChild ref={ref}>
             {children}
         </RadixTooltip.Trigger>
     );

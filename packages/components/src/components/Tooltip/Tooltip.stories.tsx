@@ -4,7 +4,6 @@ import { type Meta, type StoryObj } from '@storybook/react';
 import { useState } from 'react';
 
 import { Button } from '../Button/Button';
-import { Switch } from '../Switch/Switch';
 
 import { Tooltip, TooltipContent, TooltipRoot, TooltipTrigger } from './Tooltip';
 
@@ -76,28 +75,6 @@ export const ControlledComponent: Story = {
                 <Button onPress={() => setIsTooltipOpen(true)}>Open Tooltip</Button>
                 <Button onPress={() => setIsTooltipOpen(false)}>Close Tooltip</Button>
             </>
-        );
-    },
-};
-
-export const WithFormComponent: Story = {
-    decorators: [
-        (Story) => {
-            return (
-                <div className="tw-flex tw-gap-4">
-                    <Story />
-                </div>
-            );
-        },
-    ],
-    render: () => {
-        return (
-            <Tooltip.Root>
-                <Tooltip.Trigger>
-                    <Switch aria-label="Hover me!" />
-                </Tooltip.Trigger>
-                <Tooltip.Content>I am a tooltip!</Tooltip.Content>
-            </Tooltip.Root>
         );
     },
 };
