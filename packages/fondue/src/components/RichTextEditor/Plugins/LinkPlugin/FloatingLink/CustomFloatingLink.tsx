@@ -57,7 +57,7 @@ export const CustomFloatingLink = () => {
             {insertState.isOpen &&
                 !editState.isOpen &&
                 createPortal(
-                    <div ref={insertRef} {...insertProps} style={insertProps.style}>
+                    <div data-is-underlay ref={insertRef} {...insertProps} style={insertProps.style}>
                         {input}
                     </div>,
                     document.body,
@@ -65,7 +65,7 @@ export const CustomFloatingLink = () => {
 
             {editState.isOpen &&
                 createPortal(
-                    <div ref={editRef} {...editProps} style={editProps.style}>
+                    <div data-is-underlay ref={editRef} {...editProps} style={editProps.style}>
                         {editContent}
                     </div>,
                     document.body,
