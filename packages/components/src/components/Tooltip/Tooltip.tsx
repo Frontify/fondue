@@ -26,7 +26,7 @@ export type TooltipRootProps = {
 export type TooltipTriggerProps = {
     /**
      * If true, the trigger will not be wrapped in a button element.
-     * @default false
+     * @default true
      */
     asChild?: boolean;
     children: ReactNode;
@@ -59,7 +59,7 @@ export const TooltipRoot = ({ children, enterDelay = 700, open, onOpenChange }: 
 TooltipRoot.displayName = 'Tooltip.Root';
 
 export const TooltipTrigger = (
-    { asChild = false, children, 'data-test-id': dataTestId = 'fondue-tooltip-trigger' }: TooltipTriggerProps,
+    { asChild = true, children, 'data-test-id': dataTestId = 'fondue-tooltip-trigger' }: TooltipTriggerProps,
     ref: ForwardedRef<HTMLButtonElement>,
 ) => {
     return (
