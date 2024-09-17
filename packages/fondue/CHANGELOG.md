@@ -1,5 +1,14 @@
 # @frontify/fondue
 
+## 12.2.13
+
+### Patch Changes
+
+-   [#2060](https://github.com/Frontify/fondue/pull/2060) [`2f6024c`](https://github.com/Frontify/fondue/commit/2f6024c929fd48cf6d1d0b0ebd9c99222809a55c) Thanks [@fulopdaniel](https://github.com/fulopdaniel)! - feat(RTE): portal the link modal
+
+-   Updated dependencies [[`4359fc8`](https://github.com/Frontify/fondue/commit/4359fc8756527db48dc88ff6d690ac3c24d842f5)]:
+    -   @frontify/fondue-components@3.3.5
+
 ## 12.2.12
 
 ### Patch Changes
