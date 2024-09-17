@@ -8,10 +8,9 @@ import {
     useFloatingLinkInsert,
     useFloatingLinkInsertState,
 } from '@udecode/plate-link';
+import { createPortal } from 'react-dom';
 
 import { zIndexLayers } from '@components/RichTextEditor/helpers/zIndexLayers';
-
-import { createPortal } from 'react-dom';
 
 import { EditModal } from './EditLinkModal';
 import { InsertLinkModal } from './InsertLinkModal/InsertLinkModal';
