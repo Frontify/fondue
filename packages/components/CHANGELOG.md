@@ -1,5 +1,11 @@
 # @frontify/fondue-components
 
+## 3.3.5
+
+### Patch Changes
+
+-   [#2063](https://github.com/Frontify/fondue/pull/2063) [`4359fc8`](https://github.com/Frontify/fondue/commit/4359fc8756527db48dc88ff6d690ac3c24d842f5) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - Revert "fix: tooltip data-state conflicts with other components"
+
 ## 3.3.4
 
 ### Patch Changes
