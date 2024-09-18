@@ -1,5 +1,11 @@
 # @frontify/fondue-icons
 
+## 0.4.3
+
+### Patch Changes
+
+-   [`31e06eb`](https://github.com/Frontify/fondue/commit/31e06ebf538762c66507ffe1b3daf9da5388a360) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - feat: add Market and Wand icons
+
 ## 0.4.2
 
 ### Patch Changes
