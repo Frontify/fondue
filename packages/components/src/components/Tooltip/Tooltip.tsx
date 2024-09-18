@@ -46,7 +46,7 @@ export type TooltipTriggerProps = {
 };
 
 export const TooltipTrigger = (
-    { asChild = false, children, 'data-test-id': dataTestId = 'fondue-tooltip-trigger' }: TooltipTriggerProps,
+    { asChild = true, children, 'data-test-id': dataTestId = 'fondue-tooltip-trigger' }: TooltipTriggerProps,
     ref: ForwardedRef<HTMLButtonElement>,
 ) => {
     return (

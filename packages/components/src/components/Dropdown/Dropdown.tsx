@@ -47,7 +47,7 @@ export type DropdownTriggerProps = {
 };
 
 export const DropdownTrigger = (
-    { asChild = false, children, 'data-test-id': dataTestId = 'fondue-dropdown-trigger' }: DropdownTriggerProps,
+    { asChild = true, children, 'data-test-id': dataTestId = 'fondue-dropdown-trigger' }: DropdownTriggerProps,
     ref: ForwardedRef<HTMLButtonElement>,
 ) => {
     return (
