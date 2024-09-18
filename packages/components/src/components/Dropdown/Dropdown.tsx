@@ -36,14 +36,22 @@ export const DropdownRoot = ({
 };
 DropdownRoot.displayName = 'Dropdown.Root';
 
-export type DropdownTriggerProps = { children?: ReactNode; 'data-test-id'?: string };
+export type DropdownTriggerProps = {
+    /**
+     * Change the default rendered element for the one passed as a child, merging their props and behavior.
+     * @default true
+     */
+    asChild?: boolean;
+    children?: ReactNode;
+    'data-test-id'?: string;
+};
 
 export const DropdownTrigger = (
-    { children, 'data-test-id': dataTestId = 'fondue-dropdown-trigger' }: DropdownTriggerProps,
+    { asChild = false, children, 'data-test-id': dataTestId = 'fondue-dropdown-trigger' }: DropdownTriggerProps,
     ref: ForwardedRef<HTMLButtonElement>,
 ) => {
     return (
-        <RadixDropdown.Trigger asChild data-test-id={dataTestId} ref={ref}>
+        <RadixDropdown.Trigger asChild={asChild} data-test-id={dataTestId} ref={ref}>
             {children}
         </RadixDropdown.Trigger>
     );

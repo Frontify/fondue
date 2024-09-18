@@ -23,7 +23,40 @@ export type TooltipRootProps = {
     enterDelay?: number;
     children: Array<ReactElement<TooltipTriggerProps | TooltipContentProps>>;
 };
-export type TooltipTriggerProps = { children: ReactNode; 'data-test-id'?: string };
+
+export const TooltipRoot = ({ children, enterDelay = 700, open, onOpenChange }: TooltipRootProps) => {
+    return (
+        <RadixTooltip.Provider>
+            <RadixTooltip.Root delayDuration={enterDelay} open={open} onOpenChange={onOpenChange}>
+                {children}
+            </RadixTooltip.Root>
+        </RadixTooltip.Provider>
+    );
+};
+TooltipRoot.displayName = 'Tooltip.Root';
+
+export type TooltipTriggerProps = {
+    /**
+     * Change the default rendered element for the one passed as a child, merging their props and behavior.
+     * @default true
+     */
+    asChild?: boolean;
+    children: ReactNode;
+    'data-test-id'?: string;
+};
+
+export const TooltipTrigger = (
+    { asChild = false, children, 'data-test-id': dataTestId = 'fondue-tooltip-trigger' }: TooltipTriggerProps,
+    ref: ForwardedRef<HTMLButtonElement>,
+) => {
+    return (
+        <RadixTooltip.Trigger data-test-id={dataTestId} asChild={asChild} ref={ref}>
+            {children}
+        </RadixTooltip.Trigger>
+    );
+};
+TooltipTrigger.displayName = 'Tooltip.Trigger';
+
 export type TooltipContentProps = {
     /**
      * @default "spacious"
@@ -38,29 +71,6 @@ export type TooltipContentProps = {
     children: ReactNode;
     'data-test-id'?: string;
 };
-
-export const TooltipRoot = ({ children, enterDelay = 700, open, onOpenChange }: TooltipRootProps) => {
-    return (
-        <RadixTooltip.Provider>
-            <RadixTooltip.Root delayDuration={enterDelay} open={open} onOpenChange={onOpenChange}>
-                {children}
-            </RadixTooltip.Root>
-        </RadixTooltip.Provider>
-    );
-};
-TooltipRoot.displayName = 'Tooltip.Root';
-
-export const TooltipTrigger = (
-    { children, 'data-test-id': dataTestId = 'fondue-tooltip-trigger' }: TooltipTriggerProps,
-    ref: ForwardedRef<HTMLButtonElement>,
-) => {
-    return (
-        <RadixTooltip.Trigger data-test-id={dataTestId} asChild ref={ref}>
-            {children}
-        </RadixTooltip.Trigger>
-    );
-};
-TooltipTrigger.displayName = 'Tooltip.Trigger';
 
 export const TooltipContent = (
     {
