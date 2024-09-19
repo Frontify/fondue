@@ -49,7 +49,7 @@ jobs:
           '@frontify/fondue': patch
           ---
 
-          Update icons" > "$CHANGESET_FILE"
+          feat: update icons" > "$CHANGESET_FILE"
 
       - name: Create Pull Request
         if: steps.git-check.outputs.changes == 'true'
