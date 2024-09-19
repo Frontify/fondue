@@ -56,8 +56,8 @@ jobs:
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: Update icons
-          title: 'chore: update icons'
+          commit-message: 'feat: update icons'
+          title: 'feat: update icons'
           body: |
             This PR updates the icons using the latest changes.
             
