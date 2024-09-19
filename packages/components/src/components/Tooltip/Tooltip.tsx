@@ -38,7 +38,7 @@ TooltipRoot.displayName = 'Tooltip.Root';
 export type TooltipTriggerProps = {
     /**
      * Change the default rendered element for the one passed as a child, merging their props and behavior.
-     * @default true
+     * @default false
      */
     asChild?: boolean;
     children: ReactNode;
@@ -46,7 +46,7 @@ export type TooltipTriggerProps = {
 };
 
 export const TooltipTrigger = (
-    { asChild = true, children, 'data-test-id': dataTestId = 'fondue-tooltip-trigger' }: TooltipTriggerProps,
+    { asChild = false, children, 'data-test-id': dataTestId = 'fondue-tooltip-trigger' }: TooltipTriggerProps,
     ref: ForwardedRef<HTMLButtonElement>,
 ) => {
     return (
