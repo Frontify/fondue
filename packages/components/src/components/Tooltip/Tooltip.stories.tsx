@@ -5,10 +5,7 @@ import { type Meta, type StoryObj } from '@storybook/react';
 import { useState } from 'react';
 
 import { Button } from '../Button/Button';
-import { Dialog } from '../Dialog/Dialog';
-import { Dropdown } from '../Dropdown/Dropdown';
 import { Flex } from '../Flex/Flex';
-import { Flyout } from '../Flyout/Flyout';
 import { Label } from '../Label/Label';
 import { Switch } from '../Switch/Switch';
 import { TextInput } from '../TextInput/TextInput';
@@ -134,65 +131,5 @@ export const WithButton: Story = {
             </Tooltip.Trigger>
             <Tooltip.Content>I am a tooltip!</Tooltip.Content>
         </Tooltip.Root>
-    ),
-};
-
-export const WithDropdown: Story = {
-    render: () => (
-        <Dropdown.Root>
-            <Tooltip.Root>
-                <Tooltip.Trigger asChild={true}>
-                    <Dropdown.Trigger>
-                        <Button>Hover me!</Button>
-                    </Dropdown.Trigger>
-                </Tooltip.Trigger>
-                <Tooltip.Content side="right">I am a tooltip!</Tooltip.Content>
-            </Tooltip.Root>
-            <Dropdown.Content>
-                <Dropdown.Item>Item 1</Dropdown.Item>
-                <Dropdown.Item>Item 2</Dropdown.Item>
-                <Dropdown.Item>Item 3</Dropdown.Item>
-            </Dropdown.Content>
-        </Dropdown.Root>
-    ),
-};
-
-export const WithFlyout: Story = {
-    render: () => (
-        <Flyout.Root>
-            <Tooltip.Root>
-                <Tooltip.Trigger asChild={true}>
-                    <Flyout.Trigger>
-                        <Button>Hover me!</Button>
-                    </Flyout.Trigger>
-                </Tooltip.Trigger>
-                <Tooltip.Content side="right">I am a tooltip!</Tooltip.Content>
-            </Tooltip.Root>
-            <Flyout.Content>
-                <Flyout.Body>
-                    <p>Flyout content</p>
-                </Flyout.Body>
-            </Flyout.Content>
-        </Flyout.Root>
-    ),
-};
-
-export const WithDialog: Story = {
-    render: () => (
-        <Dialog.Root>
-            <Tooltip.Root>
-                <Tooltip.Trigger asChild={true}>
-                    <Dialog.Trigger>
-                        <Button>Hover me!</Button>
-                    </Dialog.Trigger>
-                </Tooltip.Trigger>
-                <Tooltip.Content side="right">I am a tooltip!</Tooltip.Content>
-            </Tooltip.Root>
-            <Dialog.Content>
-                <Dialog.Body>
-                    <p>Dialog content</p>
-                </Dialog.Body>
-            </Dialog.Content>
-        </Dialog.Root>
     ),
 };

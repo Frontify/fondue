@@ -113,12 +113,11 @@ export const DialogRoot = ({ children, ...props }: DialogRootProps) => {
 DialogRoot.displayName = 'Dialog.Root';
 
 export const DialogTrigger = (
-    { asChild = true, children, 'data-test-id': dataTestId = 'fondue-dialog-trigger', ...props }: DialogTriggerProps,
+    { asChild = true, children, 'data-test-id': dataTestId = 'fondue-dialog-trigger' }: DialogTriggerProps,
     ref: ForwardedRef<HTMLButtonElement>,
 ) => {
     return (
         <RadixDialog.Trigger
-            {...props}
             onMouseDown={addAutoFocusAttribute}
             data-auto-focus-visible="true"
             data-auto-focus-trigger

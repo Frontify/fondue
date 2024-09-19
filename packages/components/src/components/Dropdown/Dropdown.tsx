@@ -47,16 +47,11 @@ export type DropdownTriggerProps = {
 };
 
 export const DropdownTrigger = (
-    {
-        asChild = true,
-        children,
-        'data-test-id': dataTestId = 'fondue-dropdown-trigger',
-        ...props
-    }: DropdownTriggerProps,
+    { asChild = true, children, 'data-test-id': dataTestId = 'fondue-dropdown-trigger' }: DropdownTriggerProps,
     ref: ForwardedRef<HTMLButtonElement>,
 ) => {
     return (
-        <RadixDropdown.Trigger {...props} asChild={asChild} data-test-id={dataTestId} ref={ref}>
+        <RadixDropdown.Trigger asChild={asChild} data-test-id={dataTestId} ref={ref}>
             {children}
         </RadixDropdown.Trigger>
     );

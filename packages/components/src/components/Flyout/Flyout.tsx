@@ -43,12 +43,11 @@ export type FlyoutTriggerProps = {
 };
 
 export const FlyoutTrigger = (
-    { asChild = true, children, 'data-test-id': dataTestId = 'fondue-flyout-trigger', ...props }: FlyoutTriggerProps,
+    { asChild = true, children, 'data-test-id': dataTestId = 'fondue-flyout-trigger' }: FlyoutTriggerProps,
     ref: ForwardedRef<HTMLButtonElement>,
 ) => {
     return (
         <RadixPopover.Trigger
-            {...props}
             onMouseDown={addAutoFocusAttribute}
             data-auto-focus-visible="true"
             data-auto-focus-trigger
