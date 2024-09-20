@@ -67,7 +67,15 @@ export type DialogContentProps = {
     'data-test-id'?: string;
 };
 
-export type DialogTriggerProps = { children?: ReactNode; 'data-test-id'?: string };
+export type DialogTriggerProps = {
+    /**
+     * Change the default rendered element for the one passed as a child, merging their props and behavior.
+     * @default true
+     */
+    asChild?: boolean;
+    children?: ReactNode;
+    'data-test-id'?: string;
+};
 
 export type DialogHeaderProps = {
     /**
@@ -105,7 +113,7 @@ export const DialogRoot = ({ children, ...props }: DialogRootProps) => {
 DialogRoot.displayName = 'Dialog.Root';
 
 export const DialogTrigger = (
-    { children, 'data-test-id': dataTestId = 'fondue-dialog-trigger' }: DialogTriggerProps,
+    { asChild = true, children, 'data-test-id': dataTestId = 'fondue-dialog-trigger' }: DialogTriggerProps,
     ref: ForwardedRef<HTMLButtonElement>,
 ) => {
     return (
@@ -114,7 +122,7 @@ export const DialogTrigger = (
             data-auto-focus-visible="true"
             data-auto-focus-trigger
             data-test-id={dataTestId}
-            asChild
+            asChild={asChild}
             ref={ref}
         >
             {children}
