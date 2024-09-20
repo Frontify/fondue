@@ -62,7 +62,7 @@
 }
 
 .group {
-    .item ~ & {
+    .item ~ &, .group ~ & {
         border-top: var(--line-width) solid var(--line-color-strong);
     }
     &:has(+ .item) {
