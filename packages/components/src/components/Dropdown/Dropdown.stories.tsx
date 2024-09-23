@@ -86,14 +86,22 @@ export const ItemGroups: Story = {
                 <Button>Trigger</Button>
             </Dropdown.Trigger>
             <Dropdown.Content>
-                <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
                 <Dropdown.Group>
+                    <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
                     <Dropdown.Item onSelect={() => {}}>Item 2</Dropdown.Item>
                     <Dropdown.Item onSelect={() => {}}>Item 3</Dropdown.Item>
+                </Dropdown.Group>
+                <Dropdown.Group>
                     <Dropdown.Item onSelect={() => {}}>Item 4</Dropdown.Item>
                 </Dropdown.Group>
-                <Dropdown.Item onSelect={() => {}}>Item 5</Dropdown.Item>
-                <Dropdown.Item onSelect={() => {}}>Item 6</Dropdown.Item>
+                <Dropdown.Group>
+                    <Dropdown.Item onSelect={() => {}}>Item 5</Dropdown.Item>
+                </Dropdown.Group>
+                <Dropdown.Group>
+                    <Dropdown.Item onSelect={() => {}}>Item 6</Dropdown.Item>
+                    <Dropdown.Item onSelect={() => {}}>Item 7</Dropdown.Item>
+                    <Dropdown.Item onSelect={() => {}}>Item 8</Dropdown.Item>
+                </Dropdown.Group>
             </Dropdown.Content>
         </Dropdown.Root>
     ),
