@@ -37,7 +37,7 @@ export const SelectItem = (
 ) => {
     return (
         <li data-test-id={dataTestId} ref={forwardedRef} {...props}>
-            {props.children}
+            <div className={styles.itemValue}>{props.children}</div>
             <IconCheckMark className={styles.checkmarkIcon} />
         </li>
     );

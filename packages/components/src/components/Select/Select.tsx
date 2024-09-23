@@ -124,7 +124,7 @@ export const SelectInput = (
                               ...(forwardedRef ? { ref: forwardedRef } : {}),
                           }))}
                 >
-                    <span className={styles.input}>{selectedItem ? selectedItem.label : placeholder}</span>
+                    <span className={styles.selectedValue}>{selectedItem ? selectedItem.label : placeholder}</span>
                     {inputSlots}
                     {clearButton && (
                         <RadixSlot

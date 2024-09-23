@@ -8,6 +8,7 @@
     @include focus-outline;
     @include transition-colors;
 
+    min-width: 0;
     width: 100%;
     position: relative;
     display: flex;
@@ -58,6 +59,18 @@
     }
 }
 
+.selectedValue {
+    width: calc(100%);
+    background-color: transparent;
+    text-indent: sizeToken(3);
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
 .input {
     width: 100%;
     background-color: transparent;
@@ -68,6 +81,14 @@
     outline: 2px solid transparent;
     outline-offset: 2px;
     border-radius: calc(var(--radius) - var(--line-width));
+    white-space: nowrap;
+    line-height: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.input,
+.selectedValue {
 
     &::placeholder {
         color: var(--text-color-x-weak);
@@ -236,6 +257,14 @@
     &[data-selected='true'][data-highlighted='false'] {
         background-color: var(--box-selected-color);
         color: var(--box-selected-inverse-color);
+    }
+
+    .itemValue {
+        width: calc(100%);
+        display: inline-block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 }
 
