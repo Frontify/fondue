@@ -262,7 +262,40 @@ export const ExternallyControlled: Story = {
     },
 };
 
-export const Overflow: Story = {
+export const OverflowingText: Story = {
+    args: {
+        placeholder: 'Select an item',
+    },
+    render: (args) => {
+        return (
+            <div style={{ display: 'flex', gap: 8, maxWidth: 600 }}>
+                <Select {...args}>
+                    <Select.Item value="test1">
+                        Test1 - This is a very long text to see how it overflows This is a very long text to see how it
+                        overflows This is a very long text to see how it overflows y long text to see how it overflows
+                        This is a very long text to see how it overflows This is a very long text to see how it
+                        overflows y long text to see how it overflows This is a very long text to see how it overflows
+                        This is a very long text to see how it overflows
+                    </Select.Item>
+                    <Select.Item value="test2">Test2</Select.Item>
+                    <Select.Item value="test3">Test3</Select.Item>
+                </Select>
+                <Select.Combobox {...args}>
+                    <Select.Item value="test1">Test1 - This is a very long text to see how it overflows</Select.Item>
+                    <Select.Item value="test2">Test2</Select.Item>
+                    <Select.Item value="test3">Test3</Select.Item>
+                </Select.Combobox>
+                <Select.Combobox {...args}>
+                    <Select.Item value="test1">Test1 - This is a very long text to see how it overflows</Select.Item>
+                    <Select.Item value="test2">Test2</Select.Item>
+                    <Select.Item value="test3">Test3</Select.Item>
+                </Select.Combobox>
+            </div>
+        );
+    },
+};
+
+export const ListOverflow: Story = {
     decorators: [
         (Story) => (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>

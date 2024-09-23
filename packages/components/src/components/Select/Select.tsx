@@ -44,6 +44,11 @@ export type SelectComponentProps = {
      */
     disabled?: boolean;
     /**
+     * The alignment of the menu.
+     * @default "start"
+     */
+    alignMenu?: 'start' | 'center' | 'end';
+    /**
      * The aria label of the select component.
      */
     'aria-label'?: string;
@@ -62,6 +67,7 @@ export const SelectInput = (
         placeholder = '',
         status = 'neutral',
         disabled,
+        alignMenu = 'start',
         'aria-label': ariaLabel,
         'data-test-id': dataTestId = 'fondue-select',
     }: SelectComponentProps,
@@ -124,7 +130,7 @@ export const SelectInput = (
                               ...(forwardedRef ? { ref: forwardedRef } : {}),
                           }))}
                 >
-                    <span className={styles.input}>{selectedItem ? selectedItem.label : placeholder}</span>
+                    <span className={styles.selectedValue}>{selectedItem ? selectedItem.label : placeholder}</span>
                     {inputSlots}
                     {clearButton && (
                         <RadixSlot
@@ -158,6 +164,7 @@ export const SelectInput = (
             </RadixPopover.Anchor>
 
             <SelectMenu
+                align={alignMenu}
                 highlightedIndex={highlightedIndex}
                 getMenuProps={getMenuProps}
                 getItemProps={getItemProps}

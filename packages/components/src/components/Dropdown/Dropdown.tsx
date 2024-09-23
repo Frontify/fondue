@@ -148,7 +148,7 @@ export const DropdownSubTrigger = (
 ) => {
     return (
         <RadixDropdown.SubTrigger className={styles.subTrigger} data-test-id={dataTestId} ref={ref}>
-            {children}
+            <div className={styles.itemContent}>{children}</div>
             <IconCaretRight className={styles.subMenuIndicator} size={16} />
         </RadixDropdown.SubTrigger>
     );
@@ -209,7 +209,7 @@ export const DropdownItem = (
             disabled={disabled}
             {...props}
         >
-            {children}
+            <div className={styles.itemContent}>{children}</div>
         </RadixDropdown.Item>
     );
 };
