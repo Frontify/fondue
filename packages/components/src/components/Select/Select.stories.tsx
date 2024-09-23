@@ -2,7 +2,6 @@
 
 import { IconIcon } from '@frontify/fondue-icons';
 import { type Meta, type StoryObj } from '@storybook/react';
-import { useState } from 'react';
 
 import { Button } from '../Button/Button';
 
@@ -270,10 +269,21 @@ export const OverflowingText: Story = {
         return (
             <div style={{ display: 'flex', gap: 8, maxWidth: 600 }}>
                 <Select {...args}>
-                    <Select.Item value="test1">Test1 - This is a very long text to see how it overflows</Select.Item>
+                    <Select.Item value="test1">
+                        Test1 - This is a very long text to see how it overflows This is a very long text to see how it
+                        overflows This is a very long text to see how it overflows y long text to see how it overflows
+                        This is a very long text to see how it overflows This is a very long text to see how it
+                        overflows y long text to see how it overflows This is a very long text to see how it overflows
+                        This is a very long text to see how it overflows
+                    </Select.Item>
                     <Select.Item value="test2">Test2</Select.Item>
                     <Select.Item value="test3">Test3</Select.Item>
                 </Select>
+                <Select.Combobox {...args}>
+                    <Select.Item value="test1">Test1 - This is a very long text to see how it overflows</Select.Item>
+                    <Select.Item value="test2">Test2</Select.Item>
+                    <Select.Item value="test3">Test3</Select.Item>
+                </Select.Combobox>
                 <Select.Combobox {...args}>
                     <Select.Item value="test1">Test1 - This is a very long text to see how it overflows</Select.Item>
                     <Select.Item value="test2">Test2</Select.Item>

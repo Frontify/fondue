@@ -2,6 +2,7 @@
 
 @import '../../../utilities/sizeToken.module.scss';
 @import '../../../utilities/transitions.module.scss';
+@import '../../../utilities/mediaQuery.module.scss';
 
 .content,
 .subContent {
@@ -10,8 +11,14 @@
     background-color: var(--base-color);
     border: var(--line-width) solid var(--line-color-strong);
     box-shadow: var(--shadow-matrix);
-    min-width: 250px;
     overflow: auto;
+    width: 250px;
+    min-width: 250px;
+
+    @include sm {
+        width: auto;
+        max-width: 350px;
+    }
 
     &:focus-within {
         border-color: var(--line-color-xx-strong);
@@ -53,6 +60,13 @@
         cursor: not-allowed;
         color: var(--text-color-disabled);
         background-color: var(--box-disabled-color);
+    }
+
+    .itemContent {
+        width: calc(100%);
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
     }
 
     .subMenuIndicator {

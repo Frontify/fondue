@@ -132,6 +132,37 @@ export const SubMenus: Story = {
     ),
 };
 
+export const OverflowingText: Story = {
+    render: ({ ...args }) => (
+        <Dropdown.Root {...args}>
+            <Dropdown.Trigger>
+                <Button>Trigger</Button>
+            </Dropdown.Trigger>
+            <Dropdown.Content>
+                <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}}>
+                    Item 2 - This is a very long text that overflows the element it is contained in
+                </Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}}>Item 3</Dropdown.Item>
+                <Dropdown.SubMenu>
+                    <Dropdown.SubTrigger>
+                        Item 4 - This is a very long text that overflows the element it is contained in
+                    </Dropdown.SubTrigger>
+                    <Dropdown.SubContent>
+                        <Dropdown.Item onSelect={() => {}}>Item 4.1</Dropdown.Item>
+                        <Dropdown.Item onSelect={() => {}}>
+                            Item 4.2 - This is a very long text that overflows the element it is contained in
+                        </Dropdown.Item>
+                        <Dropdown.Item onSelect={() => {}}>Item 4.3</Dropdown.Item>
+                    </Dropdown.SubContent>
+                </Dropdown.SubMenu>
+                <Dropdown.Item onSelect={() => {}}>Item 5</Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}}>Item 6</Dropdown.Item>
+            </Dropdown.Content>
+        </Dropdown.Root>
+    ),
+};
+
 export const Decorator: Story = {
     render: ({ ...args }) => (
         <Dropdown.Root {...args}>

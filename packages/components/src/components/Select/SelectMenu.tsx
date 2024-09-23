@@ -5,11 +5,11 @@ import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { type UseComboboxPropGetters, type UseSelectPropGetters } from 'downshift';
 import { isValidElement, useRef, type ForwardedRef, type MouseEvent, type ReactElement, type ReactNode } from 'react';
 
-import { usePreventDropdownOverflow } from '#/hooks/usePreventDropdownOverflow';
-
 import { type SelectItemProps } from './SelectItem';
 import styles from './styles/select.module.scss';
 import { getSelectOptionValue, recursiveMap } from './utils';
+
+import { usePreventDropdownOverflow } from '#/hooks/usePreventDropdownOverflow';
 
 export type SelectMenuProps = {
     /**
@@ -39,6 +39,11 @@ export type SelectMenuProps = {
     filterText?: string;
     /**
      * @internal
+     * The alignment of the menu.
+     */
+    align: 'start' | 'center' | 'end';
+    /**
+     * @internal
      * The type of the menu.
      */
     selectedItem?: {
@@ -58,6 +63,7 @@ export const SelectMenu = ({
     getItemProps,
     children,
     filterText,
+    align,
     selectedItem,
     hasInteractedSinceOpening,
 }: SelectMenuProps) => {
@@ -72,7 +78,12 @@ export const SelectMenu = ({
 
     return (
         <RadixPopover.Portal>
-            <RadixPopover.Content onOpenAutoFocus={handleOnOpenAutoFocus} className={styles.portal}>
+            <RadixPopover.Content
+                align={align}
+                collisionPadding={16}
+                onOpenAutoFocus={handleOnOpenAutoFocus}
+                className={styles.portal}
+            >
                 <ul
                     className={styles.menu}
                     {...getMenuProps()}
