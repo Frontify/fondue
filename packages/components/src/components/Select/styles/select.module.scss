@@ -62,7 +62,7 @@
 }
 
 .selectedValue {
-    width: calc(100%);
+    width: 100%;
     background-color: transparent;
     text-indent: sizeToken(3);
     display: inline-block;
@@ -271,7 +271,7 @@
     }
 
     .itemValue {
-        width: calc(100%);
+        width: 100%;
         display: inline-block;
         overflow: hidden;
         text-overflow: ellipsis;

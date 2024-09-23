@@ -13,10 +13,10 @@
     box-shadow: var(--shadow-matrix);
     overflow: auto;
     width: 250px;
-    min-width: 250px;
 
     @include sm {
         width: auto;
+        min-width: 250px;
         max-width: 350px;
     }
 
@@ -63,7 +63,7 @@
     }
 
     .itemContent {
-        width: calc(100%);
+        width: 100%;
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
