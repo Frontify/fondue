@@ -4,10 +4,10 @@ import { IconCaretRight } from '@frontify/fondue-icons';
 import * as RadixDropdown from '@radix-ui/react-dropdown-menu';
 import { forwardRef, useRef, type ForwardedRef, type ReactNode } from 'react';
 
-import styles from './styles/dropdown.module.scss';
-
 import { usePreventDropdownOverflow } from '#/hooks/usePreventDropdownOverflow';
 import { syncRefs } from '#/utilities/domUtilities';
+
+import styles from './styles/dropdown.module.scss';
 
 export type DropdownRootProps = {
     children?: ReactNode;

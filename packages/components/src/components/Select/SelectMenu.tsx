@@ -5,11 +5,11 @@ import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { type UseComboboxPropGetters, type UseSelectPropGetters } from 'downshift';
 import { isValidElement, useRef, type ForwardedRef, type MouseEvent, type ReactElement, type ReactNode } from 'react';
 
+import { usePreventDropdownOverflow } from '#/hooks/usePreventDropdownOverflow';
+
 import { type SelectItemProps } from './SelectItem';
 import styles from './styles/select.module.scss';
 import { getSelectOptionValue, recursiveMap } from './utils';
-
-import { usePreventDropdownOverflow } from '#/hooks/usePreventDropdownOverflow';
 
 export type SelectMenuProps = {
     /**
