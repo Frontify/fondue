@@ -49,6 +49,7 @@ export const DividerComponent = (
 ): ReactElement => {
     return (
         <Separator.Root
+            data-fondue-component="Divider"
             ref={ref}
             className={cn(
                 dividerStyles({

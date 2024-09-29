@@ -27,7 +27,12 @@ export type TooltipRootProps = {
 export const TooltipRoot = ({ children, enterDelay = 700, open, onOpenChange }: TooltipRootProps) => {
     return (
         <RadixTooltip.Provider>
-            <RadixTooltip.Root delayDuration={enterDelay} open={open} onOpenChange={onOpenChange}>
+            <RadixTooltip.Root
+                data-fondue-component="Tooltip"
+                delayDuration={enterDelay}
+                open={open}
+                onOpenChange={onOpenChange}
+            >
                 {children}
             </RadixTooltip.Root>
         </RadixTooltip.Provider>

@@ -65,6 +65,7 @@ const SliderComponent = (
     const sliderThumbRef = useRef<HTMLSpanElement | null>(null);
     return (
         <RadixSlider.Root
+            data-fondue-component="Slider"
             ref={ref}
             className={styles.root}
             value={value}

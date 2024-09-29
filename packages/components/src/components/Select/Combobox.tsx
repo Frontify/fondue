@@ -131,7 +131,7 @@ export const SelectCombobox = (
     };
 
     return (
-        <RadixPopover.Root open={isOpen}>
+        <RadixPopover.Root data-fondue-component="Select" open={isOpen}>
             <RadixPopover.Anchor asChild>
                 <div ref={forwardedRef} className={styles.root} data-status={valueInvalid ? 'error' : status}>
                     <input

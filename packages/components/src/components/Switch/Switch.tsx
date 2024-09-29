@@ -67,6 +67,7 @@ const SwitchComponent = (
     ref: ForwardedRef<HTMLButtonElement>,
 ) => (
     <RadixSwitch.Root
+        data-fondue-component="Switch"
         ref={ref}
         checked={value}
         defaultChecked={defaultValue}

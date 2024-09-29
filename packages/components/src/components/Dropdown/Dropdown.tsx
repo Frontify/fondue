@@ -29,7 +29,12 @@ export const DropdownRoot = ({
     'data-test-id': dataTestId = 'fondue-dropdown',
 }: DropdownRootProps) => {
     return (
-        <RadixDropdown.Root open={open} onOpenChange={onOpenChange} data-test-id={dataTestId}>
+        <RadixDropdown.Root
+            data-fondue-component="Dropdown"
+            open={open}
+            onOpenChange={onOpenChange}
+            data-test-id={dataTestId}
+        >
             {children}
         </RadixDropdown.Root>
     );

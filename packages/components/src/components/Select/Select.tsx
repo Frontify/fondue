@@ -100,7 +100,7 @@ export const SelectInput = (
         });
 
     return (
-        <RadixPopover.Root open={isOpen}>
+        <RadixPopover.Root data-fondue-component="Select" open={isOpen}>
             <RadixPopover.Anchor
                 asChild
                 onMouseDown={(mouseEvent) => {

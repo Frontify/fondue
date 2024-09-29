@@ -48,7 +48,13 @@ export const ColorPickerRoot = (
     const [currentFormat, setCurrentFormat] = useState<ColorFormat>(defaultFormat);
 
     return (
-        <div className={styles.root} data-picker-type="custom-color" data-test-id={dataTestId} ref={forwardedRef}>
+        <div
+            data-fondue-component="ColorPicker"
+            className={styles.root}
+            data-picker-type="custom-color"
+            data-test-id={dataTestId}
+            ref={forwardedRef}
+        >
             {Children.map(children, (child) => (
                 <ColorPickerSlot
                     {...props}

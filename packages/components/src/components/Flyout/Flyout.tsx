@@ -110,6 +110,7 @@ export const FlyoutContent = (
     return (
         <RadixPopover.Portal>
             <RadixPopover.Content
+                data-fondue-component="Flyout"
                 style={
                     {
                         '--flyout-max-width': maxWidth,

@@ -81,6 +81,7 @@ export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(
     ) => {
         return (
             <button
+                data-fondue-component="Button"
                 ref={ref}
                 type={type}
                 data-test-id={dataTestId}

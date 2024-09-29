@@ -56,6 +56,7 @@ export const LoadingBar = forwardRef<ElementRef<typeof ProgressRadixPrimitive.Ro
     ) => {
         return (
             <ProgressRadixPrimitive.Root
+                data-fondue-component="LoadingBar"
                 ref={ref}
                 data-test-id={dataTestId}
                 className={loadingBarContainerStyles({ rounded, size, variant })}

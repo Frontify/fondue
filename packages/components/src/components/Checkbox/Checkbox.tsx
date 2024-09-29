@@ -79,6 +79,7 @@ export const CheckboxComponent = (
 ) => {
     return (
         <CheckboxPrimitive.Root
+            data-fondue-component="Checkbox"
             ref={ref}
             checked={value}
             defaultChecked={defaultValue}

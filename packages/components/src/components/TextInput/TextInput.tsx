@@ -118,7 +118,12 @@ export const TextFieldRoot = (
     const wasClicked = useRef(false);
 
     return (
-        <div className={cn(styles.root, className)} data-status={status} data-test-id={dataTestId}>
+        <div
+            data-fondue-component="TextInput"
+            className={cn(styles.root, className)}
+            data-status={status}
+            data-test-id={dataTestId}
+        >
             {status === 'loading' ? (
                 <div className={styles.loadingStatus} data-test-id={`${dataTestId}-loader`} />
             ) : null}

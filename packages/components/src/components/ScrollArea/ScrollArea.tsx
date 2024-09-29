@@ -40,6 +40,7 @@ const ScrollAreaComponent = (
 ): ReactElement => {
     return (
         <RadixScrollArea.Root
+            data-fondue-component="ScrollArea"
             type={type}
             className={styles.root}
             style={{ maxWidth }}

@@ -31,7 +31,13 @@ export const Box = ({
     ...props
 }: BoxProps) => {
     return (
-        <Component className={styles.root} data-test-id={dataTestId} {...props} style={propsToCssVariables(props)}>
+        <Component
+            data-fondue-component="Box"
+            className={styles.root}
+            data-test-id={dataTestId}
+            {...props}
+            style={propsToCssVariables(props)}
+        >
             {children}
         </Component>
     );

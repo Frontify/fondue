@@ -27,6 +27,7 @@ export const LabelComponent = (
 ) => {
     return (
         <LabelPrimitive.Root
+            data-fondue-component="Label"
             ref={ref}
             data-required={props.required}
             className={cn(

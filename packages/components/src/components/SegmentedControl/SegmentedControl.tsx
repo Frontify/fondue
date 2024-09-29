@@ -42,6 +42,7 @@ export const SegmentedControlRoot = (
 
     return (
         <ToggleGroupPrimitive.Root
+            data-fondue-component="SegmentedControl"
             ref={ref}
             {...rootProps}
             className={styles.root}

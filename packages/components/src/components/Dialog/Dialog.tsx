@@ -106,7 +106,9 @@ const DialogContext = createContext<DialogContextType>({ isModal: false });
 export const DialogRoot = ({ children, ...props }: DialogRootProps) => {
     return (
         <DialogContext.Provider value={{ isModal: props.modal ?? false }}>
-            <RadixDialog.Root {...props}>{children}</RadixDialog.Root>
+            <RadixDialog.Root data-fondue-component="Dialog" {...props}>
+                {children}
+            </RadixDialog.Root>
         </DialogContext.Provider>
     );
 };

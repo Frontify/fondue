@@ -21,7 +21,12 @@ export type SectionProps = LayoutComponentProps & {
 
 export const Section = ({ 'data-test-id': dataTestId = 'fondue-section', children, ...props }: SectionProps) => {
     return (
-        <section className={styles.root} data-test-id={dataTestId} style={propsToCssVariables(props)}>
+        <section
+            data-fondue-component="Section"
+            className={styles.root}
+            data-test-id={dataTestId}
+            style={propsToCssVariables(props)}
+        >
             {children}
         </section>
     );
