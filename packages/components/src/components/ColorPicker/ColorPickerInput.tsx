@@ -10,6 +10,7 @@ import { type RgbaColor } from './types';
 import { colorToCss } from './utils';
 
 type ColorPickerInputProps = {
+    id?: string;
     /**
      * The active color in the color picker
      */
@@ -29,13 +30,13 @@ type ColorPickerInputProps = {
 } & CommonAriaAttrs;
 
 export const ColorPickerInput = (
-    { currentColor, onClear, 'data-test-id': dataTestId = 'color-picker-input', ...props }: ColorPickerInputProps,
+    { id, currentColor, onClear, 'data-test-id': dataTestId = 'color-picker-input', ...props }: ColorPickerInputProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
     const colorNameId = useId();
 
     return (
-        <div className={styles.root} {...props} ref={forwardedRef} data-test-id={dataTestId}>
+        <div id={id} className={styles.root} {...props} ref={forwardedRef} data-test-id={dataTestId}>
             {currentColor?.red !== undefined ? (
                 <div
                     aria-describedby={colorNameId}
