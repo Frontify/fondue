@@ -1,0 +1,9 @@
+import{j as t}from"./jsx-runtime-Nms4Y4qS.js";import{a as e}from"./chunk-454WOBUV-CM0pFb8Z.js";import{r as j}from"./index-BwDkhjyp.js";import{L as k}from"./Label-DGO3QOB6.js";import{C as v,a as D}from"./Checkbox-D8isvlC-.js";import"./v4-CQkTLCs1.js";import"./_commonjsHelpers-BosuxZz1.js";import"./index-Brw_kfkv.js";import"./index-DxjWwZXO.js";import"./styleUtilities-BnElyh0X.js";import"./fondue-icons330-C1IajNtr.js";import"./index-BWD2N0gV.js";import"./index-DOnKqARA.js";import"./index-DGaPG0k3.js";import"./index-BgCrdp81.js";import"./index-kUwV4muI.js";import"./index-BwIM2_zL.js";import"./focusStyle-IgMhxCMT.js";const H={title:"Components/Checkbox",component:v,tags:["autodocs"],parameters:{status:{type:"released"}},args:{onChange:e("onChange"),onBlur:e("onBlur"),onFocus:e("onFocus")},render:s=>{const[x,h]=j.useState(s.value),C=f=>{e("onChange")(f),h(n=>n==="indeterminate"?!0:!n)};return t.jsxs("div",{className:"tw-flex tw-gap-1.5 tw-items-center",children:[t.jsx(D,{...s,id:"checkbox","aria-labelledby":"label",value:x,onChange:C}),t.jsx(k,{id:"label",htmlFor:"checkbox",children:"Checkbox"})]})}},r={},a={args:{value:"indeterminate"}},o={args:{disabled:!0}};var m,i,c;r.parameters={...r.parameters,docs:{...(m=r.parameters)==null?void 0:m.docs,source:{originalSource:"{}",...(c=(i=r.parameters)==null?void 0:i.docs)==null?void 0:c.source}}};var p,l,d;a.parameters={...a.parameters,docs:{...(p=a.parameters)==null?void 0:p.docs,source:{originalSource:`{
+  args: {
+    value: 'indeterminate'
+  }
+}`,...(d=(l=a.parameters)==null?void 0:l.docs)==null?void 0:d.source}}};var u,b,g;o.parameters={...o.parameters,docs:{...(u=o.parameters)==null?void 0:u.docs,source:{originalSource:`{
+  args: {
+    disabled: true
+  }
+}`,...(g=(b=o.parameters)==null?void 0:b.docs)==null?void 0:g.source}}};const J=["Default","Indeterminate","Disabled"];export{r as Default,o as Disabled,a as Indeterminate,J as __namedExportsOrder,H as default};
