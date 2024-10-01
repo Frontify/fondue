@@ -5,25 +5,29 @@
 @import '../../../utilities/transitions.module.scss';
 @import '../../../utilities/mediaQuery.module.scss';
 
-
 .root {
     @include focus-outline;
     @include transition-colors;
 
     & {
-        min-width: 0;
-        width: 100%;
         position: relative;
         display: flex;
         align-items: stretch;
+        text-align: start;
+
         font-family: var(--body-family-stack);
         font-weight: 400;
         font-size: var(--body-size-medium);
+
+        min-width: 0;
+        width: 100%;
         line-height: var(--body-size-medium-line-height);
-        text-align: start;
         height: sizeToken(9);
+        box-sizing: border-box;
+
         color: var(--text-color);
         background-color: var(--base-color);
+
         border-radius: var(--radius);
         border: var(--line-width) solid var(--line-color-strong);
         cursor: pointer;
@@ -93,7 +97,6 @@
 
 .input,
 .selectedValue {
-
     &::placeholder {
         color: var(--text-color-x-weak);
     }
@@ -235,7 +238,7 @@
     }
 
     @include sm {
-        max-width: 500px
+        max-width: 500px;
     }
 }
 

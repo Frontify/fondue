@@ -7,10 +7,14 @@
 .root {
     position: relative;
     display: flex;
+
     align-items: center;
+
     user-select: none;
     touch-action: none;
+
     width: 100%;
+    box-sizing: border-box;
 
     &[data-disabled] {
         pointer-events: none;
