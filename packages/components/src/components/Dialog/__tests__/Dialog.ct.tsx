@@ -378,3 +378,45 @@ test('should not render focus visible input on click', async ({ mount, page }) =
     await expect(textInput3).toHaveCSS(...FOCUS_OUTLINE_CSS);
     await expect(textInput3).not.toHaveCSS(...FOCUS_BORDER_CSS);
 });
+
+test('should render borders on footer and header by default', async ({ mount, page }) => {
+    await mount(
+        <Dialog.Root open>
+            <Dialog.Trigger>
+                <Button>{DIALOG_TRIGGER_TEXT}</Button>
+            </Dialog.Trigger>
+            <Dialog.Content>
+                <Dialog.Header data-test-id={DIALOG_HEADER_TEST_ID}>{DIALOG_HEADER_TEXT}</Dialog.Header>
+                <Dialog.Body data-test-id={DIALOG_BODY_TEST_ID}>{DIALOG_BODY_TEXT}</Dialog.Body>
+                <Dialog.Footer data-test-id={DIALOG_FOOTER_TEST_ID}>{DIALOG_FOOTER_TEXT}</Dialog.Footer>
+            </Dialog.Content>
+        </Dialog.Root>,
+    );
+    const headerElement = page.getByTestId(DIALOG_HEADER_TEST_ID);
+    const footerElement = page.getByTestId(DIALOG_FOOTER_TEST_ID);
+    await expect(headerElement).toHaveCSS('border-bottom-width', '1px');
+    await expect(footerElement).toHaveCSS('border-top-width', '1px');
+});
+
+test('should not render borders when showBorder is false', async ({ mount, page }) => {
+    await mount(
+        <Dialog.Root open>
+            <Dialog.Trigger>
+                <Button>{DIALOG_TRIGGER_TEXT}</Button>
+            </Dialog.Trigger>
+            <Dialog.Content>
+                <Dialog.Header showBorder={false} data-test-id={DIALOG_HEADER_TEST_ID}>
+                    {DIALOG_HEADER_TEXT}
+                </Dialog.Header>
+                <Dialog.Body data-test-id={DIALOG_BODY_TEST_ID}>{DIALOG_BODY_TEXT}</Dialog.Body>
+                <Dialog.Footer showBorder={false} data-test-id={DIALOG_FOOTER_TEST_ID}>
+                    {DIALOG_FOOTER_TEXT}
+                </Dialog.Footer>
+            </Dialog.Content>
+        </Dialog.Root>,
+    );
+    const headerElement = page.getByTestId(DIALOG_HEADER_TEST_ID);
+    const footerElement = page.getByTestId(DIALOG_FOOTER_TEST_ID);
+    await expect(headerElement).not.toHaveCSS('border-bottom-width', '1px');
+    await expect(footerElement).not.toHaveCSS('border-top-width', '1px');
+});
