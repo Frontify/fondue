@@ -14,6 +14,7 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
 }
 
 .triggerList {
+    position: relative;
     flex-shrink: 0;
     display: flex;
     border-bottom: 1px solid var(--line-color);
@@ -21,11 +22,21 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     height: sizeToken(12);
     padding-left: sizeToken(3);
     padding-right: sizeToken(3);
-    overflow: hidden;
+    overflow: scroll;
 
     &[data-size='large'] {
         height: sizeToken(14);
     }
+}
+
+.triggerListWrapper {
+    position: relative;
+}
+
+.overflowDropdownTrigger {
+    position: absolute;
+    top: 0;
+    right: 0;
 }
 
 .trigger {

@@ -101,6 +101,8 @@ export const DropdownContent = (
                     dropdownIsOpen.current = false;
                 }}
                 onFocus={() => {
+                    console.log('onFocus');
+
                     if (!dropdownIsOpen.current) {
                         setMaxHeight();
                         syncRefs(localRef, ref);

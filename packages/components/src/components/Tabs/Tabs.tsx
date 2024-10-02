@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconDotsVertical } from '@frontify/fondue-icons';
 import * as RadixTabs from '@radix-ui/react-tabs';
 import {
     createContext,
@@ -13,9 +14,13 @@ import {
     useLayoutEffect,
     type RefObject,
     useMemo,
+    cloneElement,
 } from 'react';
 
 import { useControllableState } from '#/hooks/useControllableState';
+
+import { Button } from '../Button/Button';
+import { Dropdown, DropdownItem } from '../Dropdown/Dropdown';
 
 import styles from './styles/tabs.module.scss';
 
@@ -49,7 +54,13 @@ const TabConfigContext = createContext<{
     disabled: false,
 });
 
-type TabTrigger = { ref: ForwardedRef<HTMLButtonElement>; element: JSX.Element };
+type TabTrigger = {
+    ref: RefObject<HTMLButtonElement>;
+    element: JSX.Element;
+    disabled: boolean;
+    value: string;
+    children: ReactNode;
+};
 
 const TabTriggerContext = createContext<{
     addTrigger: (trigger: TabTrigger) => void;
@@ -68,44 +79,34 @@ export const TabsRoot = (
         onChange: onValueChange,
     });
     const [triggers, setTriggers] = useState<TabTrigger[]>([]);
+    const [triggersOutOfView, setTriggersOutOfView] = useState<{ value: string; element: JSX.Element }[]>([]);
+    const getTriggersOutOfView = (triggers: TabTrigger[], triggerListRef: RefObject<HTMLDivElement>) => {
+        const triggersOutOfView: { value: string; element: JSX.Element }[] = [];
+        for (const trigger of triggers) {
+            if (trigger.ref.current && triggerListRef.current) {
+                if (
+                    trigger.ref.current.getBoundingClientRect().right >
+                    triggerListRef.current?.getBoundingClientRect().right
+                ) {
+                    triggersOutOfView.push({
+                        value: trigger.value,
+                        element: cloneElement(trigger.element, { ref: undefined }),
+                    });
+                }
+            }
+        }
+        return triggersOutOfView;
+    };
 
     const handleAddTrigger = (trigger: TabTrigger) => {
         setTriggers((prev) => [...prev, trigger]);
-
-        getTriggersInView(triggers);
-    };
-
-    const getTriggersInView = (triggers: TabTrigger[]) => {
-        return triggers.filter((trigger) => {
-            console.log('ref', trigger.ref);
-
-            if (trigger.ref.current && triggerListRef.current) {
-                console.log('trigger', trigger.ref.current.getBoundingClientRect().right);
-                return (
-                    trigger.ref.current.getBoundingClientRect().right <
-                    triggerListRef.current?.getBoundingClientRect().right
-                );
-            }
-            return false;
-        });
-    };
-
-    const calculateOverflow = () => {
-        if (triggerListRef.current) {
-            const isOverflowing = triggerListRef.current.scrollWidth > triggerListRef.current.clientWidth;
-            console.log('isOverflowing', isOverflowing);
-            return isOverflowing;
-        }
-        return false;
     };
 
     useLayoutEffect(() => {
-        const inViewTriggers = getTriggersInView(triggers);
-        console.log(
-            'inViewTriggers',
-            inViewTriggers.map((trigger) => trigger.element),
-        );
+        setTriggersOutOfView(getTriggersOutOfView(triggers, triggerListRef));
     }, [triggerListRef, triggers]);
+
+    console.log('triggersOutOfView', triggersOutOfView);
 
     return (
         <TabTriggerContext.Provider value={{ addTrigger: handleAddTrigger }}>
@@ -119,10 +120,42 @@ export const TabsRoot = (
                 }}
                 value={value}
             >
-                <RadixTabs.List ref={triggerListRef} data-size={size} className={styles.triggerList}>
-                    {triggers.map((trigger) => trigger.element)}
-                </RadixTabs.List>
+                <div className={styles.triggerListWrapper}>
+                    <RadixTabs.List ref={triggerListRef} data-size={size} className={styles.triggerList}>
+                        {triggers.map((trigger) => (
+                            <RadixTabs.Trigger
+                                key={trigger.ref.current?.value}
+                                value={trigger.value}
+                                className={styles.trigger}
+                            >
+                                {trigger.element}
+                            </RadixTabs.Trigger>
+                        ))}
+                    </RadixTabs.List>
+                    <Dropdown.Root>
+                        <div className={styles.overflowDropdownTrigger}>
+                            <Dropdown.Trigger>
+                                <Button emphasis="default" aspect="square">
+                                    <IconDotsVertical size={16} />
+                                </Button>
+                            </Dropdown.Trigger>
+                        </div>
+                        <Dropdown.Content>
+                            {triggersOutOfView.map((trigger) => (
+                                <Dropdown.Item
+                                    onSelect={() => {
+                                        setValue(trigger.value);
+                                    }}
+                                    key={trigger.value}
+                                >
+                                    {trigger.element}
+                                </Dropdown.Item>
+                            ))}
+                        </Dropdown.Content>
+                    </Dropdown.Root>
+                </div>
                 {children}
+
                 {/* Active indicator */}
                 <div className={styles.activeIndicator} />
             </RadixTabs.Root>
@@ -146,7 +179,7 @@ type TabsTriggerProps = {
     children: ReactNode;
 };
 
-export const TabsTrigger = ({ children, ...itemProps }: TabsTriggerProps, ref: ForwardedRef<HTMLButtonElement>) => {
+export const TabsTrigger = ({ children }: TabsTriggerProps, ref: ForwardedRef<HTMLButtonElement>) => {
     const { value, disabled } = useContext(TabConfigContext);
 
     const { addTrigger } = useContext(TabTriggerContext);
@@ -155,19 +188,11 @@ export const TabsTrigger = ({ children, ...itemProps }: TabsTriggerProps, ref: F
 
     useEffect(() => {
         addTrigger({
-            ref: ref || localRef,
-            element: (
-                <RadixTabs.Trigger
-                    ref={ref || localRef}
-                    {...itemProps}
-                    className={styles.trigger}
-                    asChild={false}
-                    disabled={disabled}
-                    value={value || ''}
-                >
-                    {children}
-                </RadixTabs.Trigger>
-            ),
+            ref: localRef || ref,
+            value: value || '',
+            children,
+            disabled,
+            element: <span ref={localRef || ref}>{children}</span>,
         });
     }, []);
 
