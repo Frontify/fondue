@@ -22,3 +22,4 @@ export { Slider } from './components/Slider/Slider';
 export { Switch } from './components/Switch/Switch';
 export { TextInput } from './components/TextInput/TextInput';
 export { Tooltip } from './components/Tooltip/Tooltip';
+export { Tabs } from './components/Tabs/Tabs';

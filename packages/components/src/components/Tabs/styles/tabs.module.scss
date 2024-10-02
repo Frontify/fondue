@@ -1,0 +1,54 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@import '../../../utilities/sizeToken.module.scss';
+@import '../../../utilities/transitions.module.scss';
+@import '../../../utilities/focusStyle.module.scss';
+
+$radius-without-border: calc(var(--radius) - var(--line-width));
+
+.root {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.triggerList {
+    flex-shrink: 0;
+    display: flex;
+    border-bottom: 1px solid var(--line-color);
+    gap: sizeToken(1);
+    height: sizeToken(12);
+    padding-left: sizeToken(3);
+    padding-right: sizeToken(3);
+    overflow: hidden;
+
+    &[data-size='large'] {
+        height: sizeToken(14);
+    }
+}
+
+.trigger {
+    padding-left: sizeToken(2);
+    padding-right: sizeToken(2);
+    color: var(--text-color-weak);
+    font-size: var(--body-size-large);
+    white-space: nowrap;
+
+    &:hover {
+        color: var(--text-color);
+    }
+
+    &[data-state='active'] {
+        color: var(--text-color);
+        font-weight: 500;
+    }
+
+    &:disabled {
+        color: var(--text-color-disabled);
+    }
+}
+
+.content {
+    padding: sizeToken(3);
+}
