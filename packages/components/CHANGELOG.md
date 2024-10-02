@@ -1,5 +1,24 @@
 # @frontify/fondue-components
 
+## 4.0.0
+
+### Patch Changes
+
+-   [#2073](https://github.com/Frontify/fondue/pull/2073) [`48425da`](https://github.com/Frontify/fondue/commit/48425da83b0f66ac664de50952fd7beacbaf78b1) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - feat: expose ColorPicker.Input id
+
+-   [#2065](https://github.com/Frontify/fondue/pull/2065) [`c0c4b59`](https://github.com/Frontify/fondue/commit/c0c4b59649762678ee4fdc6841c28eee3a2f93cb) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - feat: expose asChild prop on trigger components
+
+-   [#2070](https://github.com/Frontify/fondue/pull/2070) [`a5fb47a`](https://github.com/Frontify/fondue/commit/a5fb47a3120c464bf5c342bd2dfd0449ff057033) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: adressed overflow issues on `Select` and `Dropdown`
+
+-   [#2074](https://github.com/Frontify/fondue/pull/2074) [`df31cd3`](https://github.com/Frontify/fondue/commit/df31cd3cb9cefc8c2a4c17df622dc6fd00093630) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix: add specific box sizing definition
+
+-   [#2075](https://github.com/Frontify/fondue/pull/2075) [`619b67e`](https://github.com/Frontify/fondue/commit/619b67e4f94eb1eac43d5d6dfb52861e9644631a) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - feat: add ability to hide borders on `Dialog` component
+
+-   [#2069](https://github.com/Frontify/fondue/pull/2069) [`3152ee5`](https://github.com/Frontify/fondue/commit/3152ee575b3286b43d64c9541660ded3f8efc083) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: fix missing group dividers when dropdown only contains groups
+
+-   Updated dependencies [[`24d6c3e`](https://github.com/Frontify/fondue/commit/24d6c3e4b2cc04f25d20f579e5e69140d9523e7c), [`a76912c`](https://github.com/Frontify/fondue/commit/a76912c7568408643f92cb8d36dc00a8e8629062)]:
+    -   @frontify/fondue-icons@0.5.0
+
 ## 3.3.6
 
 ### Patch Changes
