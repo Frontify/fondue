@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconDotsVertical } from '@frontify/fondue-icons';
+import { IconDotsHorizontal } from '@frontify/fondue-icons';
 import * as RadixTabs from '@radix-ui/react-tabs';
 import {
     createContext,
@@ -80,17 +80,23 @@ export const TabsRoot = (
     });
     const [triggers, setTriggers] = useState<TabTrigger[]>([]);
     const [triggersOutOfView, setTriggersOutOfView] = useState<{ value: string; element: JSX.Element }[]>([]);
-    const getTriggersOutOfView = (triggers: TabTrigger[], triggerListRef: RefObject<HTMLDivElement>) => {
+
+    const handleAddTrigger = (trigger: TabTrigger) => {
+        setTriggers((prev) => [...prev, trigger]);
+    };
+
+    const calculateTriggersOutOfView = (triggers: TabTrigger[], triggerListRef: RefObject<HTMLDivElement>) => {
         const triggersOutOfView: { value: string; element: JSX.Element }[] = [];
         for (const trigger of triggers) {
             if (trigger.ref.current && triggerListRef.current) {
                 if (
                     trigger.ref.current.getBoundingClientRect().right >
-                    triggerListRef.current?.getBoundingClientRect().right
+                        triggerListRef.current?.getBoundingClientRect().right ||
+                    trigger.ref.current.getBoundingClientRect().left < 0
                 ) {
                     triggersOutOfView.push({
                         value: trigger.value,
-                        element: cloneElement(trigger.element, { ref: undefined }),
+                        element: cloneElement(trigger.element, { ref: null }),
                     });
                 }
             }
@@ -98,20 +104,33 @@ export const TabsRoot = (
         return triggersOutOfView;
     };
 
-    const handleAddTrigger = (trigger: TabTrigger) => {
-        setTriggers((prev) => [...prev, trigger]);
-    };
-
     useLayoutEffect(() => {
-        setTriggersOutOfView(getTriggersOutOfView(triggers, triggerListRef));
-    }, [triggerListRef, triggers]);
+        setTriggersOutOfView(calculateTriggersOutOfView(triggers, triggerListRef));
+    }, [triggerListRef, triggers, value]);
+
+    useEffect(() => {
+        window.addEventListener('resize', () => {
+            setTriggersOutOfView(calculateTriggersOutOfView(triggers, triggerListRef));
+        });
+
+        triggerListRef.current?.addEventListener('scroll', () => {
+            setTriggersOutOfView(calculateTriggersOutOfView(triggers, triggerListRef));
+        });
+
+        return () => {
+            window.removeEventListener('resize', () => {
+                setTriggersOutOfView(calculateTriggersOutOfView(triggers, triggerListRef));
+            });
+            triggerListRef.current?.removeEventListener('scroll', () => {
+                setTriggersOutOfView(calculateTriggersOutOfView(triggers, triggerListRef));
+            });
+        };
+    }, [triggers, triggerListRef]);
 
     useEffect(() => {
         const activeTrigger = triggerListRef.current?.querySelector('[data-state="active"]');
-        console.log('activeTrigger', activeTrigger);
-
         if (activeTrigger) {
-            activeTrigger.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'end' });
+            activeTrigger.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
         }
     }, [value]);
 
@@ -140,14 +159,14 @@ export const TabsRoot = (
                         ))}
                     </RadixTabs.List>
                     <Dropdown.Root>
-                        <div className={styles.overflowDropdownTrigger}>
+                        {triggersOutOfView.length > 0 && (
                             <Dropdown.Trigger>
-                                <Button emphasis="default" aspect="square">
-                                    <IconDotsVertical size={16} />
+                                <Button emphasis="default" aspect="square" size="small">
+                                    <IconDotsHorizontal size={16} />
                                 </Button>
                             </Dropdown.Trigger>
-                        </div>
-                        <Dropdown.Content>
+                        )}
+                        <Dropdown.Content align="end">
                             {triggersOutOfView.map((trigger) => (
                                 <Dropdown.Item
                                     onSelect={() => {

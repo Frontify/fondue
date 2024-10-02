@@ -43,7 +43,7 @@ export const Default: Story = {
             </Tabs.Tab>
             <Tabs.Tab value="third">
                 <Tabs.Trigger>
-                    <span>Third trigger fdsa </span>
+                    <span>Third trigger fdsa hudsiafhadsf a dsf gadszu </span>
                 </Tabs.Trigger>
                 <Tabs.Content>ThirdContent</Tabs.Content>
             </Tabs.Tab>
