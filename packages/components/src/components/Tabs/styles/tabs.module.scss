@@ -22,7 +22,7 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     height: sizeToken(12);
     padding-left: sizeToken(3);
     padding-right: sizeToken(3);
-    overflow: scroll;
+    overflow: hidden;
 
     &[data-size='large'] {
         height: sizeToken(14);

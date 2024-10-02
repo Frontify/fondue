@@ -13,14 +13,14 @@ import {
     useRef,
     useLayoutEffect,
     type RefObject,
-    useMemo,
     cloneElement,
 } from 'react';
 
 import { useControllableState } from '#/hooks/useControllableState';
+import { syncRefs } from '#/utilities/domUtilities';
 
 import { Button } from '../Button/Button';
-import { Dropdown, DropdownItem } from '../Dropdown/Dropdown';
+import { Dropdown } from '../Dropdown/Dropdown';
 
 import styles from './styles/tabs.module.scss';
 
@@ -106,7 +106,14 @@ export const TabsRoot = (
         setTriggersOutOfView(getTriggersOutOfView(triggers, triggerListRef));
     }, [triggerListRef, triggers]);
 
-    console.log('triggersOutOfView', triggersOutOfView);
+    useEffect(() => {
+        const activeTrigger = triggerListRef.current?.querySelector('[data-state="active"]');
+        console.log('activeTrigger', activeTrigger);
+
+        if (activeTrigger) {
+            activeTrigger.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'end' });
+        }
+    }, [value]);
 
     return (
         <TabTriggerContext.Provider value={{ addTrigger: handleAddTrigger }}>
