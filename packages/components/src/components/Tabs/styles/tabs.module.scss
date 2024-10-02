@@ -19,26 +19,31 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     display: flex;
     gap: sizeToken(1);
     height: sizeToken(12);
-    padding-left: sizeToken(3);
-    padding-right: sizeToken(3);
-    overflow: hidden;
+
     flex: 1;
     min-width: 0;
+    overflow-x: hidden;
     &[data-size='large'] {
         height: sizeToken(14);
     }
+
 }
 
 .triggerListWrapper {
+    position: relative;
     width: 100%;
     display: flex;
     align-items: center;
+    padding-left: sizeToken(3);
+    padding-right: sizeToken(3);
     gap: sizeToken(2);
     border-bottom: 1px solid var(--line-color);
 }
 
 
 .trigger {
+    @include focus-outline;
+    @include transition-colors;
     padding-left: sizeToken(2);
     padding-right: sizeToken(2);
     color: var(--text-color-weak);
@@ -63,4 +68,18 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
 
 .content {
     padding: sizeToken(3);
+}
+
+
+.activeIndicator {
+    position: absolute;
+    height: 3px;
+    border-top-left-radius: var(--radius-x-large);
+    border-top-right-radius: var(--radius-x-large);
+    background-color: var(--box-selected-strong-color);
+    bottom: 0;
+    left: 0;
+    width: 0;
+    margin-left: sizeToken(3);
+    transition: left 0.3s ease-in-out, width 0.3s ease-in-out;
 }

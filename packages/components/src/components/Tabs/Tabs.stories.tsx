@@ -21,7 +21,7 @@ const meta: Meta<typeof TabsRoot> = {
         },
     },
     args: {
-        defaultValue: 'first',
+        defaultValue: 'third',
         onValueChange: action('onValueChange'),
     },
 };

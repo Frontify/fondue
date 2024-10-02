@@ -2,27 +2,16 @@
 
 import { IconDotsHorizontal } from '@frontify/fondue-icons';
 import * as RadixTabs from '@radix-ui/react-tabs';
-import {
-    createContext,
-    forwardRef,
-    useContext,
-    useState,
-    type ForwardedRef,
-    type ReactNode,
-    useEffect,
-    useRef,
-    useLayoutEffect,
-    type RefObject,
-    cloneElement,
-} from 'react';
+import { createContext, forwardRef, useContext, type ForwardedRef, type ReactNode, useEffect, useRef } from 'react';
 
 import { useControllableState } from '#/hooks/useControllableState';
-import { syncRefs } from '#/utilities/domUtilities';
 
 import { Button } from '../Button/Button';
 import { Dropdown } from '../Dropdown/Dropdown';
 
+import { useTabTriggers } from './__tests__/useTabTriggers';
 import styles from './styles/tabs.module.scss';
+import { type TabTrigger } from './types';
 
 export type TabsRootProps = {
     id?: string;
@@ -54,14 +43,6 @@ const TabConfigContext = createContext<{
     disabled: false,
 });
 
-type TabTrigger = {
-    ref: RefObject<HTMLButtonElement>;
-    element: JSX.Element;
-    disabled: boolean;
-    value: string;
-    children: ReactNode;
-};
-
 const TabTriggerContext = createContext<{
     addTrigger: (trigger: TabTrigger) => void;
 }>({
@@ -72,88 +53,34 @@ export const TabsRoot = (
     { children, value: propsValue, defaultValue, onValueChange, size = 'default' }: TabsRootProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
-    const triggerListRef = useRef<HTMLDivElement>(null);
-    const [value, setValue] = useControllableState({
+    const [activeTab, setActiveTab] = useControllableState({
         prop: propsValue,
         defaultProp: defaultValue,
         onChange: onValueChange,
     });
-    const [triggers, setTriggers] = useState<TabTrigger[]>([]);
-    const [triggersOutOfView, setTriggersOutOfView] = useState<{ value: string; element: JSX.Element }[]>([]);
 
-    const handleAddTrigger = (trigger: TabTrigger) => {
-        setTriggers((prev) => [...prev, trigger]);
-    };
-
-    const calculateTriggersOutOfView = (triggers: TabTrigger[], triggerListRef: RefObject<HTMLDivElement>) => {
-        const triggersOutOfView: { value: string; element: JSX.Element }[] = [];
-        for (const trigger of triggers) {
-            if (trigger.ref.current && triggerListRef.current) {
-                if (
-                    trigger.ref.current.getBoundingClientRect().right >
-                        triggerListRef.current?.getBoundingClientRect().right ||
-                    trigger.ref.current.getBoundingClientRect().left < 0
-                ) {
-                    triggersOutOfView.push({
-                        value: trigger.value,
-                        element: cloneElement(trigger.element, { ref: null }),
-                    });
-                }
-            }
-        }
-        return triggersOutOfView;
-    };
-
-    useLayoutEffect(() => {
-        setTriggersOutOfView(calculateTriggersOutOfView(triggers, triggerListRef));
-    }, [triggerListRef, triggers, value]);
-
-    useEffect(() => {
-        window.addEventListener('resize', () => {
-            setTriggersOutOfView(calculateTriggersOutOfView(triggers, triggerListRef));
-        });
-
-        triggerListRef.current?.addEventListener('scroll', () => {
-            setTriggersOutOfView(calculateTriggersOutOfView(triggers, triggerListRef));
-        });
-
-        return () => {
-            window.removeEventListener('resize', () => {
-                setTriggersOutOfView(calculateTriggersOutOfView(triggers, triggerListRef));
-            });
-            triggerListRef.current?.removeEventListener('scroll', () => {
-                setTriggersOutOfView(calculateTriggersOutOfView(triggers, triggerListRef));
-            });
-        };
-    }, [triggers, triggerListRef]);
-
-    useEffect(() => {
-        const activeTrigger = triggerListRef.current?.querySelector('[data-state="active"]');
-        if (activeTrigger) {
-            activeTrigger.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-        }
-    }, [value]);
+    const { triggerListRef, triggersOutOfView, addTrigger, triggers, activeIndicatorRef } = useTabTriggers({
+        activeTab,
+    });
 
     return (
-        <TabTriggerContext.Provider value={{ addTrigger: handleAddTrigger }}>
+        <TabTriggerContext.Provider value={{ addTrigger }}>
             <RadixTabs.Root
                 ref={ref}
                 className={styles.root}
                 onValueChange={(value) => {
+                    console.log('value', value);
+
                     if (value) {
-                        setValue(value);
+                        setActiveTab(value);
                     }
                 }}
-                value={value}
+                value={activeTab}
             >
                 <div className={styles.triggerListWrapper}>
                     <RadixTabs.List ref={triggerListRef} data-size={size} className={styles.triggerList}>
                         {triggers.map((trigger) => (
-                            <RadixTabs.Trigger
-                                key={trigger.ref.current?.value}
-                                value={trigger.value}
-                                className={styles.trigger}
-                            >
+                            <RadixTabs.Trigger key={trigger.value} value={trigger.value} className={styles.trigger}>
                                 {trigger.element}
                             </RadixTabs.Trigger>
                         ))}
@@ -170,7 +97,7 @@ export const TabsRoot = (
                             {triggersOutOfView.map((trigger) => (
                                 <Dropdown.Item
                                     onSelect={() => {
-                                        setValue(trigger.value);
+                                        setActiveTab(trigger.value);
                                     }}
                                     key={trigger.value}
                                 >
@@ -179,11 +106,10 @@ export const TabsRoot = (
                             ))}
                         </Dropdown.Content>
                     </Dropdown.Root>
+                    <span ref={activeIndicatorRef} className={styles.activeIndicator} />
                 </div>
                 {children}
-
                 {/* Active indicator */}
-                <div className={styles.activeIndicator} />
             </RadixTabs.Root>
         </TabTriggerContext.Provider>
     );
