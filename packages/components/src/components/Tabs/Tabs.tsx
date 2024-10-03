@@ -83,6 +83,7 @@ export const TabsRoot = (
                                 value={trigger.value}
                                 disabled={trigger.disabled}
                                 className={styles.trigger}
+                                asChild
                             >
                                 {trigger.element}
                             </RadixTabs.Trigger>
@@ -147,11 +148,9 @@ export const TabsTrigger = ({ children }: TabsTriggerProps, ref: ForwardedRef<HT
             ref: localRef || ref,
             value: value || '',
             disabled,
-            element: <span ref={localRef || ref}>{children}</span>,
+            element: <button ref={localRef || ref}>{children}</button>,
         });
     }, []);
-
-    return null;
 };
 TabsTrigger.displayName = 'Tabs.Trigger';
 

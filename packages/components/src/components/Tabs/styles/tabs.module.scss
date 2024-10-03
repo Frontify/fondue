@@ -46,6 +46,9 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     font-size: var(--body-size-large);
     white-space: nowrap;
     margin: sizeToken(2);
+    display: flex;
+    align-items: center;
+    gap: sizeToken(1);
 
     &:hover,
     &:focus {
