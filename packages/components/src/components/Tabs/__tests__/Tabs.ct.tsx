@@ -11,7 +11,7 @@ const SECOND_TAB_TRIGGER_TEST_ID = 'test-second-tab-trigger';
 const SECOND_TAB_CONTENT_TEST_ID = 'test-second-tab-content';
 const ACTIVE_TAB_INDICATOR_TEST_ID = 'active-tab-indicator';
 
-test('should render with first tab active', async ({ mount, page }) => {
+test('should render with first tab active', async ({ mount }) => {
     const component = await mount(
         <Tabs.Root data-test-id={TABS_ROOT_TEST_ID}>
             <Tabs.Tab value="first">
