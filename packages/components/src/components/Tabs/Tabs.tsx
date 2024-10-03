@@ -20,7 +20,7 @@ export type TabsRootProps = {
      * The default active tab
      * Used for uncontrolled components
      */
-    defaultActiveTab: string;
+    defaultActiveTab?: string;
     /**
      * The controlled value of the active tab
      */
@@ -50,7 +50,14 @@ const TabTriggerContext = createContext<{
 });
 
 export const TabsRoot = (
-    { children, activeTab: propsActiveTab, defaultActiveTab, onActiveTabChange, size = 'default' }: TabsRootProps,
+    {
+        children,
+        activeTab: propsActiveTab,
+        defaultActiveTab,
+        onActiveTabChange,
+        size = 'default',
+        ...props
+    }: TabsRootProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     const [activeTab, setActiveTab] = useControllableState({
@@ -74,6 +81,7 @@ export const TabsRoot = (
                     }
                 }}
                 value={activeTab ?? triggers[0]?.value}
+                {...props}
             >
                 <div className={styles.triggerListWrapper}>
                     <RadixTabs.List ref={triggerListRef} data-size={size} className={styles.triggerList}>
@@ -111,7 +119,11 @@ export const TabsRoot = (
                             ))}
                         </Dropdown.Content>
                     </Dropdown.Root>
-                    <span ref={activeIndicatorRef} className={styles.activeIndicator} />
+                    <span
+                        data-test-id="active-tab-indicator"
+                        ref={activeIndicatorRef}
+                        className={styles.activeIndicator}
+                    />
                 </div>
                 {children}
                 {/* Active indicator */}
@@ -136,7 +148,7 @@ type TabsTriggerProps = {
     children: ReactNode;
 };
 
-export const TabsTrigger = ({ children }: TabsTriggerProps, ref: ForwardedRef<HTMLButtonElement>) => {
+export const TabsTrigger = ({ children, ...props }: TabsTriggerProps, ref: ForwardedRef<HTMLButtonElement>) => {
     const { value, disabled } = useContext(TabConfigContext);
 
     const { addTrigger } = useContext(TabTriggerContext);
@@ -148,7 +160,11 @@ export const TabsTrigger = ({ children }: TabsTriggerProps, ref: ForwardedRef<HT
             ref: localRef || ref,
             value: value || '',
             disabled,
-            element: <button ref={localRef || ref}>{children}</button>,
+            element: (
+                <button ref={localRef || ref} {...props} data-bla="ttt">
+                    {children}
+                </button>
+            ),
         });
     }, []);
 };
