@@ -126,7 +126,6 @@ export const TabsRoot = (
                     />
                 </div>
                 {children}
-                {/* Active indicator */}
             </RadixTabs.Root>
         </TabTriggerContext.Provider>
     );
