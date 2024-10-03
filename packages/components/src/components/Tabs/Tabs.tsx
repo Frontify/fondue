@@ -78,7 +78,12 @@ export const TabsRoot = (
                 <div className={styles.triggerListWrapper}>
                     <RadixTabs.List ref={triggerListRef} data-size={size} className={styles.triggerList}>
                         {triggers.map((trigger) => (
-                            <RadixTabs.Trigger key={trigger.value} value={trigger.value} className={styles.trigger}>
+                            <RadixTabs.Trigger
+                                key={trigger.value}
+                                value={trigger.value}
+                                disabled={trigger.disabled}
+                                className={styles.trigger}
+                            >
                                 {trigger.element}
                             </RadixTabs.Trigger>
                         ))}
@@ -94,6 +99,7 @@ export const TabsRoot = (
                         <Dropdown.Content align="end">
                             {triggersOutOfView.map((trigger) => (
                                 <Dropdown.Item
+                                    disabled={trigger.disabled}
                                     onSelect={() => {
                                         setActiveTab(trigger.value);
                                     }}
@@ -140,7 +146,6 @@ export const TabsTrigger = ({ children }: TabsTriggerProps, ref: ForwardedRef<HT
         addTrigger({
             ref: localRef || ref,
             value: value || '',
-            children,
             disabled,
             element: <span ref={localRef || ref}>{children}</span>,
         });

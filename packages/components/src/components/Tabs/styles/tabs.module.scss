@@ -36,6 +36,7 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     padding-left: sizeToken(3);
     padding-right: sizeToken(3);
     gap: sizeToken(2);
+    overflow: hidden;
     border-bottom: 1px solid var(--line-color);
 }
 

@@ -4,19 +4,23 @@ import { cloneElement, type RefObject, useEffect, useLayoutEffect, useRef, useSt
 
 import { type TabTrigger } from '../types';
 
-const getOverflowingTriggers = (triggers: TabTrigger[], triggerListRef: RefObject<HTMLDivElement>) => {
-    const triggersOutOfView: { value: string; element: JSX.Element }[] = [];
-    for (const trigger of triggers) {
-        if (trigger.ref.current && triggerListRef.current) {
-            if (
-                trigger.ref.current.offsetLeft + trigger.ref.current.offsetWidth >
-                    triggerListRef.current?.scrollLeft + triggerListRef.current?.offsetWidth ||
-                trigger.ref.current.offsetLeft - triggerListRef.current?.scrollLeft < 0
-            ) {
-                triggersOutOfView.push({
-                    value: trigger.value,
-                    element: cloneElement(trigger.element, { ref: null }),
-                });
+const getOverflowingTriggers = (triggers: TabTrigger[], triggerListElement: HTMLDivElement) => {
+    const triggersOutOfView: TabTrigger[] = [];
+    if (triggerListElement) {
+        for (const trigger of triggers) {
+            const triggerElement = trigger.ref?.current;
+            if (triggerElement) {
+                if (
+                    triggerElement.offsetLeft + triggerElement.offsetWidth >
+                        triggerListElement?.scrollLeft + triggerListElement.offsetWidth ||
+                    triggerElement.offsetLeft - triggerListElement.scrollLeft < 0
+                ) {
+                    triggersOutOfView.push({
+                        value: trigger.value,
+                        disabled: trigger.disabled,
+                        element: cloneElement(trigger.element, { ref: null }),
+                    });
+                }
             }
         }
     }
@@ -27,8 +31,9 @@ const moveActiveIndicator = (
     triggerListRef: RefObject<HTMLDivElement>,
     activeIndicatorRef: RefObject<HTMLSpanElement>,
 ) => {
-    const activeTriggerElement = triggerListRef.current?.querySelector('[data-state="active"]') as HTMLElement;
+    const activeTriggerElement = triggerListRef.current?.querySelector('[data-state="active"]') as HTMLButtonElement;
     const triggerListElement = triggerListRef.current as HTMLDivElement;
+    const activeIndicatorElement = activeIndicatorRef.current as HTMLSpanElement;
 
     if (!triggerListElement || !activeTriggerElement) {
         return;
@@ -42,17 +47,17 @@ const moveActiveIndicator = (
         const willFitAllItemsToTheLeft =
             triggerListElement.offsetWidth > activeTriggerElement.offsetWidth + activeTriggerElement.offsetLeft;
         if (willFitAllItemsToTheLeft) {
-            activeIndicatorRef.current!.style.left = `${activeTriggerElement.offsetLeft}px`;
+            activeIndicatorElement.style.left = `${activeTriggerElement.offsetLeft}px`;
         } else {
-            activeIndicatorRef.current!.style.left = `${triggerListElement.offsetWidth - activeTriggerElement.offsetWidth}px`;
+            activeIndicatorElement.style.left = `${triggerListElement.offsetWidth - activeTriggerElement.offsetWidth}px`;
         }
-        activeIndicatorRef.current!.style.width = `${activeTriggerElement?.offsetWidth}px`;
+        activeIndicatorElement.style.width = `${activeTriggerElement?.offsetWidth}px`;
     } else if (isOverflowingRight) {
-        activeIndicatorRef.current!.style.left = `${triggerListElement.clientWidth - activeTriggerElement.offsetWidth}px`;
-        activeIndicatorRef.current!.style.width = `${activeTriggerElement.offsetWidth}px`;
+        activeIndicatorElement.style.left = `${triggerListElement.clientWidth - activeTriggerElement.offsetWidth}px`;
+        activeIndicatorElement.style.width = `${activeTriggerElement.offsetWidth}px`;
     } else {
-        activeIndicatorRef.current!.style.left = `${activeTriggerElement.offsetLeft}px`;
-        activeIndicatorRef.current!.style.width = `${activeTriggerElement.offsetWidth}px`;
+        activeIndicatorElement.style.left = `${activeTriggerElement.offsetLeft}px`;
+        activeIndicatorElement.style.width = `${activeTriggerElement.offsetWidth}px`;
     }
 };
 
@@ -64,13 +69,13 @@ export const useTabTriggers = ({
     triggerListRef: RefObject<HTMLDivElement>;
     activeIndicatorRef: RefObject<HTMLSpanElement>;
     triggers: TabTrigger[];
-    triggersOutOfView: { value: string; element: JSX.Element }[];
+    triggersOutOfView: TabTrigger[];
     addTrigger: (trigger: TabTrigger) => void;
 } => {
     const triggerListRef = useRef<HTMLDivElement>(null);
     const activeIndicatorRef = useRef<HTMLSpanElement>(null);
     const [triggers, setTriggers] = useState<TabTrigger[]>([]);
-    const [triggersOutOfView, setTriggersOutOfView] = useState<{ value: string; element: JSX.Element }[]>([]);
+    const [triggersOutOfView, setTriggersOutOfView] = useState<TabTrigger[]>([]);
 
     // move the active indicator and scroll to the correct position when the tab changes
     useEffect(() => {
@@ -85,10 +90,18 @@ export const useTabTriggers = ({
         const activeTriggerElement = triggerListRef.current?.querySelector('[data-state="active"]') as HTMLElement;
         const triggerListElement = triggerListRef.current as HTMLDivElement;
 
+        // move the active indicator to the initial active tab
+        if (activeTriggerElement) {
+            moveActiveIndicator(triggerListRef, activeIndicatorRef);
+        }
+
         // calculate the overflowing elements when item starts overflowing the parent
         const intersectionObserver = new IntersectionObserver(
             () => {
-                setTriggersOutOfView(getOverflowingTriggers(triggers, triggerListRef));
+                console.log('intersection observer');
+
+                setTriggersOutOfView(getOverflowingTriggers(triggers, triggerListElement));
+                moveActiveIndicator(triggerListRef, activeIndicatorRef);
             },
             {
                 root: triggerListElement,
@@ -96,7 +109,7 @@ export const useTabTriggers = ({
             },
         );
         for (const trigger of triggers) {
-            if (trigger.ref.current) {
+            if (trigger.ref?.current) {
                 intersectionObserver.observe(trigger.ref.current);
             }
         }
