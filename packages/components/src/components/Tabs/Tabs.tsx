@@ -2,16 +2,16 @@
 
 import { IconDotsHorizontal } from '@frontify/fondue-icons';
 import * as RadixTabs from '@radix-ui/react-tabs';
-import { createContext, forwardRef, useContext, type ForwardedRef, type ReactNode, useEffect, useRef } from 'react';
-
-import { useControllableState } from '#/hooks/useControllableState';
+import { createContext, forwardRef, useContext, useEffect, useRef, type ForwardedRef, type ReactNode } from 'react';
 
 import { Button } from '../Button/Button';
 import { Dropdown } from '../Dropdown/Dropdown';
 
-import { useTabTriggers } from './__tests__/useTabTriggers';
+import { useTabTriggers } from './hooks/useTabTriggers';
 import styles from './styles/tabs.module.scss';
 import { type TabTrigger } from './types';
+
+import { useControllableState } from '#/hooks/useControllableState';
 
 export type TabsRootProps = {
     id?: string;
@@ -20,11 +20,11 @@ export type TabsRootProps = {
      * The default active tab
      * Used for uncontrolled components
      */
-    defaultValue: string;
+    defaultActiveTab: string;
     /**
      * The controlled value of the active tab
      */
-    value?: string;
+    activeTab?: string;
     /**
      * The height of the tabs
      */
@@ -32,7 +32,7 @@ export type TabsRootProps = {
     /**
      * Event handler called when the active tab changes
      */
-    onValueChange?: (value: string) => void;
+    onActiveTabChange?: (value: string) => void;
 };
 
 const TabConfigContext = createContext<{
@@ -50,16 +50,16 @@ const TabTriggerContext = createContext<{
 });
 
 export const TabsRoot = (
-    { children, value: propsValue, defaultValue, onValueChange, size = 'default' }: TabsRootProps,
+    { children, activeTab: propsActiveTab, defaultActiveTab, onActiveTabChange, size = 'default' }: TabsRootProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     const [activeTab, setActiveTab] = useControllableState({
-        prop: propsValue,
-        defaultProp: defaultValue,
-        onChange: onValueChange,
+        prop: propsActiveTab,
+        defaultProp: defaultActiveTab,
+        onChange: onActiveTabChange,
     });
 
-    const { triggerListRef, triggersOutOfView, addTrigger, triggers, activeIndicatorRef } = useTabTriggers({
+    const { triggerListRef, activeIndicatorRef, triggers, triggersOutOfView, addTrigger } = useTabTriggers({
         activeTab,
     });
 
@@ -69,8 +69,6 @@ export const TabsRoot = (
                 ref={ref}
                 className={styles.root}
                 onValueChange={(value) => {
-                    console.log('value', value);
-
                     if (value) {
                         setActiveTab(value);
                     }

@@ -26,7 +26,6 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     &[data-size='large'] {
         height: sizeToken(14);
     }
-
 }
 
 .triggerListWrapper {
@@ -39,7 +38,6 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     gap: sizeToken(2);
     border-bottom: 1px solid var(--line-color);
 }
-
 
 .trigger {
     @include focus-outline;
@@ -63,15 +61,14 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
         color: var(--text-color);
         font-weight: 500;
     }
-    
 }
 
 .content {
     padding: sizeToken(3);
 }
 
-
 .activeIndicator {
+    @include transition;
     position: absolute;
     height: 3px;
     border-top-left-radius: var(--radius-x-large);
@@ -81,5 +78,4 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     left: 0;
     width: 0;
     margin-left: sizeToken(3);
-    transition: left 0.3s ease-in-out, width 0.3s ease-in-out;
 }

@@ -21,9 +21,16 @@ const meta: Meta<typeof TabsRoot> = {
         },
     },
     args: {
-        defaultValue: 'third',
-        onValueChange: action('onValueChange'),
+        defaultActiveTab: 'third',
+        onActiveTabChange: action('onActiveTabChange'),
     },
+    decorators: [
+        (Story) => (
+            <div style={{ padding: '100px' }}>
+                <Story />
+            </div>
+        ),
+    ],
 };
 
 export const Default: Story = {
@@ -31,21 +38,36 @@ export const Default: Story = {
         <Tabs.Root {...args}>
             <Tabs.Tab value="first">
                 <Tabs.Trigger>
-                    <span>First trigger dsafds</span>
+                    <span>First Tab</span>
                 </Tabs.Trigger>
-                <Tabs.Content>FirstContent fdas sdaf</Tabs.Content>
+                <Tabs.Content>
+                    <b>First Content</b>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
+                    et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                    aliquip ex ea commodo consequat.
+                </Tabs.Content>
             </Tabs.Tab>
-            <Tabs.Tab value="second">
+            <Tabs.Tab value="second" disabled>
                 <Tabs.Trigger>
-                    <span>Second trigger fdsa sdaf</span>
+                    <span>Second Tab</span>
                 </Tabs.Trigger>
-                <Tabs.Content>SecondContent fdas sdfa</Tabs.Content>
+                <Tabs.Content>
+                    <b>Second Content</b>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
+                    et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                    aliquip ex ea commodo consequat.
+                </Tabs.Content>
             </Tabs.Tab>
             <Tabs.Tab value="third">
                 <Tabs.Trigger>
-                    <span>Third trigger fdsa hudsiafhadsf a dsf gadszu </span>
+                    <span>Third Tab</span>
                 </Tabs.Trigger>
-                <Tabs.Content>ThirdContent</Tabs.Content>
+                <Tabs.Content>
+                    <b>Third Content</b>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
+                    et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                    aliquip ex ea commodo consequat.
+                </Tabs.Content>
             </Tabs.Tab>
         </Tabs.Root>
     ),
