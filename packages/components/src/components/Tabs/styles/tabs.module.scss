@@ -41,11 +41,11 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
 .trigger {
     @include focus-outline;
     @include transition-colors;
-    padding-left: sizeToken(2);
-    padding-right: sizeToken(2);
+
     color: var(--text-color-weak);
     font-size: var(--body-size-large);
     white-space: nowrap;
+    margin: sizeToken(2);
 
     &:hover,
     &:focus {
