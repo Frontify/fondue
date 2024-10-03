@@ -167,6 +167,8 @@ export const TabsTrigger = ({ children, ...props }: TabsTriggerProps, ref: Forwa
             ),
         });
     }, []);
+
+    return null;
 };
 TabsTrigger.displayName = 'Tabs.Trigger';
 

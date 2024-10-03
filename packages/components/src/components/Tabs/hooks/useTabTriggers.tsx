@@ -98,8 +98,6 @@ export const useTabTriggers = ({
         // calculate the overflowing elements when item starts overflowing the parent
         const intersectionObserver = new IntersectionObserver(
             () => {
-                console.log('intersection observer');
-
                 setTriggersOutOfView(getOverflowingTriggers(triggers, triggerListElement));
                 moveActiveIndicator(triggerListRef, activeIndicatorRef);
             },
@@ -116,7 +114,6 @@ export const useTabTriggers = ({
 
         // observe addition of the dropdown trigger which reduces the available width
         const mutationObserver = new MutationObserver(() => {
-            console.log('mutation observer');
             activeTriggerElement.scrollIntoView({ behavior: 'instant', block: 'nearest', inline: 'end' });
             moveActiveIndicator(triggerListRef, activeIndicatorRef);
         });
