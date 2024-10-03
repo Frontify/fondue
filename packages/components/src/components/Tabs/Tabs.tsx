@@ -73,7 +73,7 @@ export const TabsRoot = (
                         setActiveTab(value);
                     }
                 }}
-                value={activeTab}
+                value={activeTab ?? triggers[0]?.value}
             >
                 <div className={styles.triggerListWrapper}>
                     <RadixTabs.List ref={triggerListRef} data-size={size} className={styles.triggerList}>
