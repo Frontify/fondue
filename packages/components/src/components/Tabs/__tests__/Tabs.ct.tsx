@@ -13,6 +13,9 @@ const THIRD_TAB_TRIGGER_TEST_ID = 'test-third-tab-trigger';
 const THIRD_TAB_CONTENT_TEST_ID = 'test-third-tab-content';
 const ACTIVE_TAB_INDICATOR_TEST_ID = 'active-tab-indicator';
 
+const DROPDOWN_TRIGGER_TEST_ID = 'overflow-items-dropdown-trigger';
+const DROPDOWN_CONTENT_TEST_ID = 'overflow-items-dropdown-content';
+
 test('should render with first tab active', async ({ mount }) => {
     const component = await mount(
         <Tabs.Root data-test-id={TABS_ROOT_TEST_ID}>
@@ -293,4 +296,221 @@ test('should move indicator on tab change', async ({ mount, page }) => {
     indicatorCenter = indicatorBox.x + indicatorBox.width / 2;
 
     expect(Math.abs(secondTriggerCenter - indicatorCenter)).toBeLessThanOrEqual(tolerance);
+});
+
+test.describe('small viewports', () => {
+    test.use({ viewport: { width: 400, height: 800 } });
+
+    test('should render overflowing tabs', async ({ mount }) => {
+        const component = await mount(
+            <Tabs.Root data-test-id={TABS_ROOT_TEST_ID}>
+                <Tabs.Tab value="first">
+                    <Tabs.Trigger data-test-id={FIRST_TAB_TRIGGER_TEST_ID}>First Tab with long test after</Tabs.Trigger>
+                    <Tabs.Content data-test-id={FIRST_TAB_CONTENT_TEST_ID}>First Content</Tabs.Content>
+                </Tabs.Tab>
+                <Tabs.Tab value="second" disabled>
+                    <Tabs.Trigger data-test-id={SECOND_TAB_TRIGGER_TEST_ID}>
+                        Second Tab with long test after
+                    </Tabs.Trigger>
+                    <Tabs.Content data-test-id={SECOND_TAB_CONTENT_TEST_ID}>Second Content</Tabs.Content>
+                </Tabs.Tab>
+                <Tabs.Tab value="third">
+                    <Tabs.Trigger data-test-id={THIRD_TAB_TRIGGER_TEST_ID}>Third Tab with long test after</Tabs.Trigger>
+                    <Tabs.Content data-test-id={THIRD_TAB_CONTENT_TEST_ID}>Third Content</Tabs.Content>
+                </Tabs.Tab>
+            </Tabs.Root>,
+        );
+
+        await expect(component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID)).toBeVisible();
+        await expect(component.getByTestId(SECOND_TAB_TRIGGER_TEST_ID)).toBeVisible();
+        await expect(component.getByTestId(THIRD_TAB_TRIGGER_TEST_ID)).not.toBeInViewport();
+        await expect(component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID)).toHaveAttribute('data-state', 'active');
+        await expect(component.getByTestId(SECOND_TAB_TRIGGER_TEST_ID)).not.toHaveAttribute('data-state', 'active');
+        await expect(component.getByTestId(THIRD_TAB_TRIGGER_TEST_ID)).not.toHaveAttribute('data-state', 'active');
+        await expect(component.getByTestId(FIRST_TAB_CONTENT_TEST_ID)).toBeVisible();
+        await expect(component.getByTestId(SECOND_TAB_CONTENT_TEST_ID)).not.toBeVisible();
+        await expect(component.getByTestId(THIRD_TAB_CONTENT_TEST_ID)).not.toBeVisible();
+    });
+
+    test('should show overflowing tabs on select', async ({ mount, page }) => {
+        const component = await mount(
+            <Tabs.Root data-test-id={TABS_ROOT_TEST_ID}>
+                <Tabs.Tab value="first">
+                    <Tabs.Trigger data-test-id={FIRST_TAB_TRIGGER_TEST_ID}>First Tab with long test after</Tabs.Trigger>
+                    <Tabs.Content data-test-id={FIRST_TAB_CONTENT_TEST_ID}>First Content</Tabs.Content>
+                </Tabs.Tab>
+                <Tabs.Tab value="second">
+                    <Tabs.Trigger data-test-id={SECOND_TAB_TRIGGER_TEST_ID}>
+                        Second Tab with long test after
+                    </Tabs.Trigger>
+                    <Tabs.Content data-test-id={SECOND_TAB_CONTENT_TEST_ID}>Second Content</Tabs.Content>
+                </Tabs.Tab>
+                <Tabs.Tab value="third">
+                    <Tabs.Trigger data-test-id={THIRD_TAB_TRIGGER_TEST_ID}>Third Tab with long test after</Tabs.Trigger>
+                    <Tabs.Content data-test-id={THIRD_TAB_CONTENT_TEST_ID}>Third Content</Tabs.Content>
+                </Tabs.Tab>
+            </Tabs.Root>,
+        );
+
+        await expect(component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID)).toBeInViewport();
+        await expect(component.getByTestId(SECOND_TAB_TRIGGER_TEST_ID)).toBeInViewport();
+        await expect(component.getByTestId(THIRD_TAB_TRIGGER_TEST_ID)).not.toBeInViewport();
+        await expect(component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID)).toHaveAttribute('data-state', 'active');
+        await expect(component.getByTestId(SECOND_TAB_TRIGGER_TEST_ID)).not.toHaveAttribute('data-state', 'active');
+        await expect(component.getByTestId(THIRD_TAB_TRIGGER_TEST_ID)).not.toHaveAttribute('data-state', 'active');
+        await expect(component.getByTestId(FIRST_TAB_CONTENT_TEST_ID)).toBeVisible();
+        await expect(component.getByTestId(SECOND_TAB_CONTENT_TEST_ID)).not.toBeVisible();
+        await expect(component.getByTestId(THIRD_TAB_CONTENT_TEST_ID)).not.toBeVisible();
+
+        await component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID).focus();
+        await page.keyboard.press('ArrowRight');
+        await page.keyboard.press('ArrowRight');
+
+        await page.waitForTimeout(500);
+
+        await expect(component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID)).not.toBeInViewport();
+        await expect(component.getByTestId(SECOND_TAB_TRIGGER_TEST_ID)).toBeInViewport();
+        await expect(component.getByTestId(THIRD_TAB_TRIGGER_TEST_ID)).toBeInViewport();
+        await expect(component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID)).not.toHaveAttribute('data-state', 'active');
+        await expect(component.getByTestId(SECOND_TAB_TRIGGER_TEST_ID)).not.toHaveAttribute('data-state', 'active');
+        await expect(component.getByTestId(THIRD_TAB_TRIGGER_TEST_ID)).toHaveAttribute('data-state', 'active');
+        await expect(component.getByTestId(FIRST_TAB_CONTENT_TEST_ID)).not.toBeVisible();
+        await expect(component.getByTestId(SECOND_TAB_CONTENT_TEST_ID)).not.toBeVisible();
+        await expect(component.getByTestId(THIRD_TAB_CONTENT_TEST_ID)).toBeVisible();
+    });
+
+    test('should render overflowing tabs in dropdown', async ({ mount, page }) => {
+        const FIRST_TAB_TRIGGER_TEXT = 'First Tab with long test after';
+        const SECOND_TAB_TRIGGER_TEXT = 'Second Tab with long test after';
+        const THIRD_TAB_TRIGGER_TEXT = 'Third Tab with long test after';
+        const component = await mount(
+            <Tabs.Root data-test-id={TABS_ROOT_TEST_ID}>
+                <Tabs.Tab value="first">
+                    <Tabs.Trigger data-test-id={FIRST_TAB_TRIGGER_TEST_ID}>{FIRST_TAB_TRIGGER_TEXT}</Tabs.Trigger>
+                    <Tabs.Content data-test-id={FIRST_TAB_CONTENT_TEST_ID}>First Content</Tabs.Content>
+                </Tabs.Tab>
+                <Tabs.Tab value="second" disabled>
+                    <Tabs.Trigger data-test-id={SECOND_TAB_TRIGGER_TEST_ID}>{SECOND_TAB_TRIGGER_TEXT}</Tabs.Trigger>
+                    <Tabs.Content data-test-id={SECOND_TAB_CONTENT_TEST_ID}>Second Content</Tabs.Content>
+                </Tabs.Tab>
+                <Tabs.Tab value="third">
+                    <Tabs.Trigger data-test-id={THIRD_TAB_TRIGGER_TEST_ID}>{THIRD_TAB_TRIGGER_TEXT}</Tabs.Trigger>
+                    <Tabs.Content data-test-id={THIRD_TAB_CONTENT_TEST_ID}>Third Content</Tabs.Content>
+                </Tabs.Tab>
+            </Tabs.Root>,
+        );
+
+        await expect(component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID)).toBeInViewport();
+        await expect(component.getByTestId(SECOND_TAB_TRIGGER_TEST_ID)).toBeInViewport();
+        await expect(component.getByTestId(THIRD_TAB_TRIGGER_TEST_ID)).not.toBeInViewport();
+        await expect(component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID)).toHaveAttribute('data-state', 'active');
+        await expect(component.getByTestId(SECOND_TAB_TRIGGER_TEST_ID)).not.toHaveAttribute('data-state', 'active');
+        await expect(component.getByTestId(THIRD_TAB_TRIGGER_TEST_ID)).not.toHaveAttribute('data-state', 'active');
+        await expect(component.getByTestId(FIRST_TAB_CONTENT_TEST_ID)).toBeVisible();
+        await expect(component.getByTestId(SECOND_TAB_CONTENT_TEST_ID)).not.toBeVisible();
+        await expect(component.getByTestId(THIRD_TAB_CONTENT_TEST_ID)).not.toBeVisible();
+
+        await component.getByTestId(DROPDOWN_TRIGGER_TEST_ID).click();
+        const dropdownContent = page.getByTestId(DROPDOWN_CONTENT_TEST_ID);
+        await expect(dropdownContent).toBeVisible();
+        await expect(dropdownContent.getByText(SECOND_TAB_TRIGGER_TEXT)).toBeVisible();
+        await expect(dropdownContent.getByText(SECOND_TAB_TRIGGER_TEXT)).toBeDisabled();
+        await expect(dropdownContent.getByText(THIRD_TAB_TRIGGER_TEXT)).toBeVisible();
+    });
+
+    test('should update overflowing tabs when scrolled', async ({ mount, page }) => {
+        const FIRST_TAB_TRIGGER_TEXT = 'First Tab with long test after';
+        const SECOND_TAB_TRIGGER_TEXT = 'Second Tab with long test after';
+        const THIRD_TAB_TRIGGER_TEXT = 'Third Tab with long test after';
+        const component = await mount(
+            <Tabs.Root data-test-id={TABS_ROOT_TEST_ID}>
+                <Tabs.Tab value="first">
+                    <Tabs.Trigger data-test-id={FIRST_TAB_TRIGGER_TEST_ID}>{FIRST_TAB_TRIGGER_TEXT}</Tabs.Trigger>
+                    <Tabs.Content data-test-id={FIRST_TAB_CONTENT_TEST_ID}>First Content</Tabs.Content>
+                </Tabs.Tab>
+                <Tabs.Tab value="second" disabled>
+                    <Tabs.Trigger data-test-id={SECOND_TAB_TRIGGER_TEST_ID}>{SECOND_TAB_TRIGGER_TEXT}</Tabs.Trigger>
+                    <Tabs.Content data-test-id={SECOND_TAB_CONTENT_TEST_ID}>Second Content</Tabs.Content>
+                </Tabs.Tab>
+                <Tabs.Tab value="third">
+                    <Tabs.Trigger data-test-id={THIRD_TAB_TRIGGER_TEST_ID}>{THIRD_TAB_TRIGGER_TEXT}</Tabs.Trigger>
+                    <Tabs.Content data-test-id={THIRD_TAB_CONTENT_TEST_ID}>Third Content</Tabs.Content>
+                </Tabs.Tab>
+            </Tabs.Root>,
+        );
+
+        await expect(component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID)).toBeInViewport();
+        await expect(component.getByTestId(SECOND_TAB_TRIGGER_TEST_ID)).toBeInViewport();
+        await expect(component.getByTestId(THIRD_TAB_TRIGGER_TEST_ID)).not.toBeInViewport();
+        await expect(component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID)).toHaveAttribute('data-state', 'active');
+        await expect(component.getByTestId(SECOND_TAB_TRIGGER_TEST_ID)).not.toHaveAttribute('data-state', 'active');
+        await expect(component.getByTestId(THIRD_TAB_TRIGGER_TEST_ID)).not.toHaveAttribute('data-state', 'active');
+        await expect(component.getByTestId(FIRST_TAB_CONTENT_TEST_ID)).toBeVisible();
+        await expect(component.getByTestId(SECOND_TAB_CONTENT_TEST_ID)).not.toBeVisible();
+        await expect(component.getByTestId(THIRD_TAB_CONTENT_TEST_ID)).not.toBeVisible();
+
+        await component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID).focus();
+        await page.keyboard.press('ArrowRight');
+        await page.keyboard.press('ArrowRight');
+
+        await component.getByTestId(DROPDOWN_TRIGGER_TEST_ID).click();
+        const dropdownContent = page.getByTestId(DROPDOWN_CONTENT_TEST_ID);
+        await expect(page.getByTestId(DROPDOWN_CONTENT_TEST_ID)).toBeVisible();
+        await expect(dropdownContent.getByText(SECOND_TAB_TRIGGER_TEXT)).toBeVisible();
+        await expect(dropdownContent.getByText(SECOND_TAB_TRIGGER_TEXT)).toBeDisabled();
+        await expect(dropdownContent.getByText(THIRD_TAB_TRIGGER_TEXT)).toBeVisible();
+    });
+
+    test('should allow selecting tabs in dropdown', async ({ mount, page }) => {
+        const FIRST_TAB_TRIGGER_TEXT = 'First Tab with long test after';
+        const SECOND_TAB_TRIGGER_TEXT = 'Second Tab with long test after';
+        const THIRD_TAB_TRIGGER_TEXT = 'Third Tab with long test after';
+        const component = await mount(
+            <Tabs.Root data-test-id={TABS_ROOT_TEST_ID}>
+                <Tabs.Tab value="first">
+                    <Tabs.Trigger data-test-id={FIRST_TAB_TRIGGER_TEST_ID}>{FIRST_TAB_TRIGGER_TEXT}</Tabs.Trigger>
+                    <Tabs.Content data-test-id={FIRST_TAB_CONTENT_TEST_ID}>First Content</Tabs.Content>
+                </Tabs.Tab>
+                <Tabs.Tab value="second" disabled>
+                    <Tabs.Trigger data-test-id={SECOND_TAB_TRIGGER_TEST_ID}>{SECOND_TAB_TRIGGER_TEXT}</Tabs.Trigger>
+                    <Tabs.Content data-test-id={SECOND_TAB_CONTENT_TEST_ID}>Second Content</Tabs.Content>
+                </Tabs.Tab>
+                <Tabs.Tab value="third">
+                    <Tabs.Trigger data-test-id={THIRD_TAB_TRIGGER_TEST_ID}>{THIRD_TAB_TRIGGER_TEXT}</Tabs.Trigger>
+                    <Tabs.Content data-test-id={THIRD_TAB_CONTENT_TEST_ID}>Third Content</Tabs.Content>
+                </Tabs.Tab>
+            </Tabs.Root>,
+        );
+
+        await expect(component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID)).toBeInViewport();
+        await expect(component.getByTestId(SECOND_TAB_TRIGGER_TEST_ID)).toBeInViewport();
+        await expect(component.getByTestId(THIRD_TAB_TRIGGER_TEST_ID)).not.toBeInViewport();
+        await expect(component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID)).toHaveAttribute('data-state', 'active');
+        await expect(component.getByTestId(SECOND_TAB_TRIGGER_TEST_ID)).not.toHaveAttribute('data-state', 'active');
+        await expect(component.getByTestId(THIRD_TAB_TRIGGER_TEST_ID)).not.toHaveAttribute('data-state', 'active');
+        await expect(component.getByTestId(FIRST_TAB_CONTENT_TEST_ID)).toBeVisible();
+        await expect(component.getByTestId(SECOND_TAB_CONTENT_TEST_ID)).not.toBeVisible();
+        await expect(component.getByTestId(THIRD_TAB_CONTENT_TEST_ID)).not.toBeVisible();
+
+        await component.getByTestId(DROPDOWN_TRIGGER_TEST_ID).click();
+        const dropdownContent = page.getByTestId(DROPDOWN_CONTENT_TEST_ID);
+        await expect(dropdownContent).toBeVisible();
+        await expect(dropdownContent.getByText(SECOND_TAB_TRIGGER_TEXT)).toBeVisible();
+        await expect(dropdownContent.getByText(SECOND_TAB_TRIGGER_TEXT)).toBeDisabled();
+        await expect(dropdownContent.getByText(THIRD_TAB_TRIGGER_TEXT)).toBeVisible();
+
+        await dropdownContent.getByText(THIRD_TAB_TRIGGER_TEXT).click();
+
+        await page.waitForTimeout(500);
+
+        await expect(component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID)).not.toBeInViewport();
+        await expect(component.getByTestId(SECOND_TAB_TRIGGER_TEST_ID)).toBeInViewport();
+        await expect(component.getByTestId(THIRD_TAB_TRIGGER_TEST_ID)).toBeInViewport();
+        await expect(component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID)).not.toHaveAttribute('data-state', 'active');
+        await expect(component.getByTestId(SECOND_TAB_TRIGGER_TEST_ID)).not.toHaveAttribute('data-state', 'active');
+        await expect(component.getByTestId(THIRD_TAB_TRIGGER_TEST_ID)).toHaveAttribute('data-state', 'active');
+        await expect(component.getByTestId(FIRST_TAB_CONTENT_TEST_ID)).not.toBeVisible();
+        await expect(component.getByTestId(SECOND_TAB_CONTENT_TEST_ID)).not.toBeVisible();
+        await expect(component.getByTestId(THIRD_TAB_CONTENT_TEST_ID)).toBeVisible();
+    });
 });

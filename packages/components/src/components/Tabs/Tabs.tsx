@@ -99,13 +99,13 @@ export const TabsRoot = (
                     </RadixTabs.List>
                     <Dropdown.Root>
                         {triggersOutOfView.length > 0 && (
-                            <Dropdown.Trigger>
+                            <Dropdown.Trigger data-test-id="overflow-items-dropdown-trigger">
                                 <Button emphasis="default" aspect="square" size="small">
                                     <IconDotsHorizontal size={16} />
                                 </Button>
                             </Dropdown.Trigger>
                         )}
-                        <Dropdown.Content align="end">
+                        <Dropdown.Content align="end" data-test-id="overflow-items-dropdown-content">
                             {triggersOutOfView.map((trigger) => (
                                 <Dropdown.Item
                                     disabled={trigger.disabled}
