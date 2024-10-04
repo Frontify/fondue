@@ -30,8 +30,6 @@ const moveActiveIndicator = (triggerListElement: HTMLDivElement, activeIndicator
         return;
     }
 
-    console.log(activeTriggerElement);
-
     const isOverflowingLeft = triggerListElement?.scrollLeft > activeTriggerElement?.offsetLeft;
     const isOverflowingRight =
         activeTriggerElement?.offsetLeft + activeTriggerElement?.offsetWidth > triggerListElement?.offsetWidth;
