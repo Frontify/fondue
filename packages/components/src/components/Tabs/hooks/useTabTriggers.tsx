@@ -18,16 +18,19 @@ const getOverflowingTriggers = (triggers: TabTrigger[], triggerListElement: HTML
     });
 };
 
-const moveActiveIndicator = (
-    triggerListElement: HTMLDivElement,
-    activeTriggerElement: HTMLButtonElement,
-    activeIndicatorRef: RefObject<HTMLSpanElement>,
-) => {
-    const activeIndicatorElement = activeIndicatorRef.current as HTMLSpanElement;
+const moveActiveIndicator = (triggerListElement: HTMLDivElement, activeIndicatorRef: RefObject<HTMLSpanElement>) => {
+    const activeIndicatorElement = activeIndicatorRef.current;
+    const activeTriggerElement = triggerListElement?.querySelector('[data-state="active"]');
 
-    if (!triggerListElement || !activeTriggerElement) {
+    if (
+        !triggerListElement ||
+        !(activeTriggerElement instanceof HTMLButtonElement) ||
+        !(activeIndicatorElement instanceof HTMLSpanElement)
+    ) {
         return;
     }
+
+    console.log(activeTriggerElement);
 
     const isOverflowingLeft = triggerListElement?.scrollLeft > activeTriggerElement?.offsetLeft;
     const isOverflowingRight =
@@ -69,27 +72,27 @@ export const useTabTriggers = ({
 
     // move the active indicator and scroll to the correct position when the tab changes
     useEffect(() => {
-        const activeTriggerElement = triggerListRef.current?.querySelector('[data-state="active"]');
         const triggerListElement = triggerListRef.current;
+        const activeTriggerElement = triggerListElement?.querySelector('[data-state="active"]');
 
         if (activeTriggerElement instanceof HTMLButtonElement && triggerListElement instanceof HTMLDivElement) {
-            moveActiveIndicator(triggerListElement, activeTriggerElement, activeIndicatorRef);
+            moveActiveIndicator(triggerListElement, activeIndicatorRef);
             activeTriggerElement.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'end' });
         }
     }, [activeTab, activeIndicatorRef]);
 
     useLayoutEffect(() => {
-        const activeTriggerElement = triggerListRef.current?.querySelector('[data-state="active"]');
         const triggerListElement = triggerListRef.current;
+        const activeTriggerElement = triggerListElement?.querySelector('[data-state="active"]');
 
         if (triggerListElement instanceof HTMLDivElement && activeTriggerElement instanceof HTMLButtonElement) {
             // move the active indicator to the initial active tab
-            moveActiveIndicator(triggerListElement, activeTriggerElement, activeIndicatorRef);
+            moveActiveIndicator(triggerListElement, activeIndicatorRef);
 
             // observe addition of the dropdown trigger which reduces the available width
             const mutationObserver = new MutationObserver(() => {
                 activeTriggerElement.scrollIntoView({ behavior: 'instant', block: 'nearest', inline: 'end' });
-                moveActiveIndicator(triggerListElement, activeTriggerElement, activeIndicatorRef);
+                moveActiveIndicator(triggerListElement, activeIndicatorRef);
             });
             if (triggerListElement.parentNode) {
                 mutationObserver.observe(triggerListElement.parentNode, { childList: true });
@@ -99,7 +102,7 @@ export const useTabTriggers = ({
             const intersectionObserver = new IntersectionObserver(
                 () => {
                     setTriggersOutOfView(getOverflowingTriggers(triggers, triggerListElement));
-                    moveActiveIndicator(triggerListElement, activeTriggerElement, activeIndicatorRef);
+                    moveActiveIndicator(triggerListElement, activeIndicatorRef);
                 },
                 {
                     root: triggerListElement,
