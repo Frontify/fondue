@@ -5,26 +5,17 @@ import { cloneElement, type RefObject, useEffect, useLayoutEffect, useRef, useSt
 import { type TabTrigger } from '../types';
 
 const getOverflowingTriggers = (triggers: TabTrigger[], triggerListElement: HTMLDivElement) => {
-    const triggersOutOfView: TabTrigger[] = [];
-    if (triggerListElement) {
-        for (const trigger of triggers) {
-            const triggerElement = trigger.ref?.current;
-            if (triggerElement) {
-                if (
-                    triggerElement.offsetLeft + triggerElement.offsetWidth >
-                        triggerListElement?.scrollLeft + triggerListElement.offsetWidth ||
-                    triggerElement.offsetLeft - triggerListElement.scrollLeft < 0
-                ) {
-                    triggersOutOfView.push({
-                        value: trigger.value,
-                        disabled: trigger.disabled,
-                        element: cloneElement(trigger.element, { ref: null }),
-                    });
-                }
-            }
+    return triggers.filter((trigger) => {
+        const triggerElement = trigger.ref?.current;
+        if (!triggerElement) {
+            return false;
         }
-    }
-    return triggersOutOfView;
+        return (
+            triggerElement.offsetLeft + triggerElement.offsetWidth >
+                triggerListElement?.scrollLeft + triggerListElement.offsetWidth ||
+            triggerElement.offsetLeft - triggerListElement.scrollLeft < 0
+        );
+    });
 };
 
 const moveActiveIndicator = (

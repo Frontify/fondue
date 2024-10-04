@@ -104,7 +104,7 @@ export const TabsRoot = (
                                 value={trigger.value}
                                 disabled={trigger.disabled}
                                 className={styles.trigger}
-                                asChild
+                                ref={trigger.ref}
                             >
                                 {trigger.element}
                             </RadixTabs.Trigger>
@@ -121,6 +121,7 @@ export const TabsRoot = (
                         <Dropdown.Content align="end" data-test-id="overflow-items-dropdown-content">
                             {triggersOutOfView.map((trigger) => (
                                 <Dropdown.Item
+                                    {...trigger.props}
                                     disabled={trigger.disabled}
                                     onSelect={() => handleSetActiveTab(trigger.value)}
                                     key={trigger.value}
@@ -170,11 +171,8 @@ export const TabsTrigger = ({ children, ...props }: TabsTriggerProps, ref: Forwa
             ref: localRef || ref,
             value: value ?? '',
             disabled,
-            element: (
-                <button ref={localRef || ref} {...props}>
-                    {children}
-                </button>
-            ),
+            props,
+            element: children,
         });
     }, []);
 
