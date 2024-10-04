@@ -16,8 +16,10 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     font-family: var(--body-family-stack);
     font-weight: 400;
     text-align: center;
+
     min-width: max-content;
     height: sizeToken(9);
+    box-sizing: border-box;
 
     background-color: var(--base-color-alt);
     border: var(--line-width) solid var(--line-color-strong);

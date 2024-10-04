@@ -18,17 +18,24 @@
 .scrollbar {
     @include transition-colors;
     display: flex;
+
     user-select: none;
     /* disable browser handling of all panning and zooming gestures on touch devices */
     touch-action: none;
+
     padding: 2px;
+    box-sizing: border-box;
+
     background: var(--box-neutral-color);
+
     &:hover {
         background: var(--box-neutral-color-hover);
     }
+
     &[data-orientation='vertical'] {
         width: var(--scrollbar-size);
     }
+
     &[data-orientation='horizontal'] {
         flex-direction: column;
         height: var(--scrollbar-size);

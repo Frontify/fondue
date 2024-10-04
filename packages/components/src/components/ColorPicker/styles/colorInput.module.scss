@@ -20,6 +20,7 @@
     font-weight: 400;
     font-size: var(--body-size-medium);
     line-height: var(--body-size-medium-line-height);
+    box-sizing: border-box;
 
     text-align: start;
     height: sizeToken(9);
