@@ -1,0 +1,30 @@
+import{j as s}from"./jsx-runtime-Nms4Y4qS.js";import{r as O}from"./index-BwDkhjyp.js";import{P}from"./index-Brw_kfkv.js";import{s as _,c as k}from"./styleUtilities-BnElyh0X.js";import"./_commonjsHelpers-BosuxZz1.js";import"./index-DxjWwZXO.js";var I="Separator",p="horizontal",R=["horizontal","vertical"],j=O.forwardRef((e,d)=>{const{decorative:m,orientation:r=p,...c}=e,a=A(r)?r:p,E=m?{role:"none"}:{"aria-orientation":a==="vertical"?a:void 0,role:"separator"};return s.jsx(P.div,{"data-orientation":a,...E,...c,ref:d})});j.displayName=I;function A(e){return R.includes(e)}var H=j;const F=_({base:"tw-flex tw-self-stretch tw-justify-center ",variants:{direction:{horizontal:"tw-flex-col tw-h-0 tw-border-t tw-w-full",vertical:"tw-flex-row tw-w-0 tw-border-r tw-h-full "},color:{weak:"tw-border-line-weak",default:"tw-border-line",strong:"tw-border-line-strong","x-strong":"tw-border-x-line-strong"},variant:{solid:"tw-border-solid",dashed:"tw-border-dashed",noline:"tw-border-none"}},compoundVariants:[{direction:"horizontal",padding:"small",class:"tw-my-4"},{direction:"horizontal",padding:"medium",class:"tw-my-7"},{direction:"horizontal",padding:"large",class:"tw-my-12"},{direction:"vertical",padding:"small",class:"tw-mx-4"},{direction:"vertical",padding:"medium",class:"tw-mx-7"},{direction:"vertical",padding:"large",class:"tw-mx-12"}],defaultVariants:{padding:"medium",direction:"horizontal",color:"default",variant:"solid"}}),u=({"data-test-id":e="fondue-divider",direction:d="horizontal",className:m,variant:r,...c},a)=>s.jsx(H,{ref:a,className:k(F({direction:d,variant:r,...c}),m),"data-test-id":e});u.displayName="Divider";const D=O.forwardRef(u);u.__docgenInfo={description:"",methods:[],displayName:"Divider",props:{variant:{required:!1,tsType:{name:"union",raw:"'noline' | 'dashed' | 'solid'",elements:[{name:"literal",value:"'noline'"},{name:"literal",value:"'dashed'"},{name:"literal",value:"'solid'"}]},description:`The style of the divider
+@default "solid"`},padding:{required:!1,tsType:{name:"union",raw:"'none' | 'small' | 'medium' | 'large'",elements:[{name:"literal",value:"'none'"},{name:"literal",value:"'small'"},{name:"literal",value:"'medium'"},{name:"literal",value:"'large'"}]},description:`The padding of the divider
+@default "medium"`},color:{required:!1,tsType:{name:"union",raw:"'weak' | 'default' | 'strong' | 'x-strong'",elements:[{name:"literal",value:"'weak'"},{name:"literal",value:"'default'"},{name:"literal",value:"'strong'"},{name:"literal",value:"'x-strong'"}]},description:`The color of the divider
+@default "default"`},direction:{required:!1,tsType:{name:"union",raw:"'horizontal' | 'vertical'",elements:[{name:"literal",value:"'horizontal'"},{name:"literal",value:"'vertical'"}]},description:`The direction of the divider
+@default "horizontal"`,defaultValue:{value:"'horizontal'",computed:!1}},"data-test-id":{required:!1,tsType:{name:"string"},description:"",defaultValue:{value:"'fondue-divider'",computed:!1}},className:{required:!1,tsType:{name:"string"},description:""}}};D.__docgenInfo={description:"",methods:[],displayName:"Divider",props:{variant:{required:!1,tsType:{name:"union",raw:"'noline' | 'dashed' | 'solid'",elements:[{name:"literal",value:"'noline'"},{name:"literal",value:"'dashed'"},{name:"literal",value:"'solid'"}]},description:`The style of the divider
+@default "solid"`},padding:{required:!1,tsType:{name:"union",raw:"'none' | 'small' | 'medium' | 'large'",elements:[{name:"literal",value:"'none'"},{name:"literal",value:"'small'"},{name:"literal",value:"'medium'"},{name:"literal",value:"'large'"}]},description:`The padding of the divider
+@default "medium"`},color:{required:!1,tsType:{name:"union",raw:"'weak' | 'default' | 'strong' | 'x-strong'",elements:[{name:"literal",value:"'weak'"},{name:"literal",value:"'default'"},{name:"literal",value:"'strong'"},{name:"literal",value:"'x-strong'"}]},description:`The color of the divider
+@default "default"`},direction:{required:!1,tsType:{name:"union",raw:"'horizontal' | 'vertical'",elements:[{name:"literal",value:"'horizontal'"},{name:"literal",value:"'vertical'"}]},description:`The direction of the divider
+@default "horizontal"`,defaultValue:{value:"'horizontal'",computed:!1}},"data-test-id":{required:!1,tsType:{name:"string"},description:"",defaultValue:{value:"'fondue-divider'",computed:!1}},className:{required:!1,tsType:{name:"string"},description:""}}};const Q={title:"Components/Divider",component:D,tags:["autodocs"],args:{color:"default",variant:"solid",padding:"medium",direction:"horizontal"},parameters:{status:{type:"released"}}},t={args:{}},i={args:{color:"strong"}},o={args:{variant:"dashed"}},n={args:{padding:"large"}},l={args:{direction:"vertical"},decorators:[e=>s.jsx("div",{className:"tw-h-8",children:s.jsx(e,{})})]};var v,f,g;t.parameters={...t.parameters,docs:{...(v=t.parameters)==null?void 0:v.docs,source:{originalSource:`{
+  args: {}
+}`,...(g=(f=t.parameters)==null?void 0:f.docs)==null?void 0:g.source}}};var h,w,y;i.parameters={...i.parameters,docs:{...(h=i.parameters)==null?void 0:h.docs,source:{originalSource:`{
+  args: {
+    color: 'strong'
+  }
+}`,...(y=(w=i.parameters)==null?void 0:w.docs)==null?void 0:y.source}}};var T,x,z;o.parameters={...o.parameters,docs:{...(T=o.parameters)==null?void 0:T.docs,source:{originalSource:`{
+  args: {
+    variant: 'dashed'
+  }
+}`,...(z=(x=o.parameters)==null?void 0:x.docs)==null?void 0:z.source}}};var N,S,q;n.parameters={...n.parameters,docs:{...(N=n.parameters)==null?void 0:N.docs,source:{originalSource:`{
+  args: {
+    padding: 'large'
+  }
+}`,...(q=(S=n.parameters)==null?void 0:S.docs)==null?void 0:q.source}}};var b,C,V;l.parameters={...l.parameters,docs:{...(b=l.parameters)==null?void 0:b.docs,source:{originalSource:`{
+  args: {
+    direction: 'vertical'
+  },
+  decorators: [Story => <div className="tw-h-8">
+                <Story />
+            </div>]
+}`,...(V=(C=l.parameters)==null?void 0:C.docs)==null?void 0:V.source}}};const W=["Primary","CustomColor","CustomStyle","CustomHeight","Vertical"];export{i as CustomColor,n as CustomHeight,o as CustomStyle,t as Primary,l as Vertical,W as __namedExportsOrder,Q as default};
