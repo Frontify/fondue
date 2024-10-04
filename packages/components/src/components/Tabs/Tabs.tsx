@@ -13,14 +13,14 @@ import {
     type ReactNode,
 } from 'react';
 
+import { useControllableState } from '#/hooks/useControllableState';
+
 import { Button } from '../Button/Button';
 import { Dropdown } from '../Dropdown/Dropdown';
 
 import { useTabTriggers } from './hooks/useTabTriggers';
 import styles from './styles/tabs.module.scss';
 import { type TabTrigger } from './types';
-
-import { useControllableState } from '#/hooks/useControllableState';
 
 export type TabsRootProps = {
     id?: string;
