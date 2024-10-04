@@ -28,11 +28,10 @@ const getOverflowingTriggers = (triggers: TabTrigger[], triggerListElement: HTML
 };
 
 const moveActiveIndicator = (
-    triggerListRef: RefObject<HTMLDivElement>,
+    triggerListElement: HTMLDivElement,
+    activeTriggerElement: HTMLButtonElement,
     activeIndicatorRef: RefObject<HTMLSpanElement>,
 ) => {
-    const activeTriggerElement = triggerListRef.current?.querySelector('[data-state="active"]') as HTMLButtonElement;
-    const triggerListElement = triggerListRef.current as HTMLDivElement;
     const activeIndicatorElement = activeIndicatorRef.current as HTMLSpanElement;
 
     if (!triggerListElement || !activeTriggerElement) {
@@ -72,59 +71,61 @@ export const useTabTriggers = ({
     triggersOutOfView: TabTrigger[];
     addTrigger: (trigger: TabTrigger) => void;
 } => {
-    const triggerListRef = useRef<HTMLDivElement>(null);
-    const activeIndicatorRef = useRef<HTMLSpanElement>(null);
+    const triggerListRef = useRef<HTMLDivElement | null>(null);
+    const activeIndicatorRef = useRef<HTMLSpanElement | null>(null);
     const [triggers, setTriggers] = useState<TabTrigger[]>([]);
     const [triggersOutOfView, setTriggersOutOfView] = useState<TabTrigger[]>([]);
 
     // move the active indicator and scroll to the correct position when the tab changes
     useEffect(() => {
         const activeTriggerElement = triggerListRef.current?.querySelector('[data-state="active"]');
-        if (activeTriggerElement) {
-            moveActiveIndicator(triggerListRef, activeIndicatorRef);
+        const triggerListElement = triggerListRef.current;
+
+        if (activeTriggerElement instanceof HTMLButtonElement && triggerListElement instanceof HTMLDivElement) {
+            moveActiveIndicator(triggerListElement, activeTriggerElement, activeIndicatorRef);
             activeTriggerElement.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'end' });
         }
     }, [activeTab, activeIndicatorRef]);
 
     useLayoutEffect(() => {
-        const activeTriggerElement = triggerListRef.current?.querySelector('[data-state="active"]') as HTMLElement;
-        const triggerListElement = triggerListRef.current as HTMLDivElement;
+        const activeTriggerElement = triggerListRef.current?.querySelector('[data-state="active"]');
+        const triggerListElement = triggerListRef.current;
 
-        // move the active indicator to the initial active tab
-        if (activeTriggerElement) {
-            moveActiveIndicator(triggerListRef, activeIndicatorRef);
-        }
+        if (triggerListElement instanceof HTMLDivElement && activeTriggerElement instanceof HTMLButtonElement) {
+            // move the active indicator to the initial active tab
+            moveActiveIndicator(triggerListElement, activeTriggerElement, activeIndicatorRef);
 
-        // calculate the overflowing elements when item starts overflowing the parent
-        const intersectionObserver = new IntersectionObserver(
-            () => {
-                setTriggersOutOfView(getOverflowingTriggers(triggers, triggerListElement));
-                moveActiveIndicator(triggerListRef, activeIndicatorRef);
-            },
-            {
-                root: triggerListElement,
-                threshold: 1,
-            },
-        );
-        for (const trigger of triggers) {
-            if (trigger.ref?.current) {
-                intersectionObserver.observe(trigger.ref.current);
+            // observe addition of the dropdown trigger which reduces the available width
+            const mutationObserver = new MutationObserver(() => {
+                activeTriggerElement.scrollIntoView({ behavior: 'instant', block: 'nearest', inline: 'end' });
+                moveActiveIndicator(triggerListElement, activeTriggerElement, activeIndicatorRef);
+            });
+            if (triggerListElement.parentNode) {
+                mutationObserver.observe(triggerListElement.parentNode, { childList: true });
             }
-        }
 
-        // observe addition of the dropdown trigger which reduces the available width
-        const mutationObserver = new MutationObserver(() => {
-            activeTriggerElement.scrollIntoView({ behavior: 'instant', block: 'nearest', inline: 'end' });
-            moveActiveIndicator(triggerListRef, activeIndicatorRef);
-        });
-        if (triggerListElement.parentNode) {
-            mutationObserver.observe(triggerListElement.parentNode, { childList: true });
-        }
+            // calculate the overflowing elements when item starts overflowing the parent
+            const intersectionObserver = new IntersectionObserver(
+                () => {
+                    setTriggersOutOfView(getOverflowingTriggers(triggers, triggerListElement));
+                    moveActiveIndicator(triggerListElement, activeTriggerElement, activeIndicatorRef);
+                },
+                {
+                    root: triggerListElement,
+                    threshold: 1,
+                },
+            );
+            for (const trigger of triggers) {
+                if (trigger.ref?.current) {
+                    intersectionObserver.observe(trigger.ref.current);
+                }
+            }
 
-        return () => {
-            intersectionObserver.disconnect();
-            mutationObserver.disconnect();
-        };
+            return () => {
+                intersectionObserver.disconnect();
+                mutationObserver.disconnect();
+            };
+        }
     }, [triggers, triggerListRef, activeIndicatorRef]);
 
     return {

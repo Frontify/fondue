@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type RefObject } from 'react';
+import { type ReactElement, type RefObject } from 'react';
 
 export type TabTrigger = {
     ref?: RefObject<HTMLButtonElement>;
-    element: JSX.Element;
-    disabled: boolean;
+    element: ReactElement;
+    disabled?: boolean;
     value: string;
 };

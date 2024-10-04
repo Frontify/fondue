@@ -2,7 +2,16 @@
 
 import { IconDotsHorizontal } from '@frontify/fondue-icons';
 import * as RadixTabs from '@radix-ui/react-tabs';
-import { createContext, forwardRef, useContext, useEffect, useRef, type ForwardedRef, type ReactNode } from 'react';
+import {
+    createContext,
+    forwardRef,
+    useCallback,
+    useContext,
+    useEffect,
+    useRef,
+    type ForwardedRef,
+    type ReactNode,
+} from 'react';
 
 import { Button } from '../Button/Button';
 import { Dropdown } from '../Dropdown/Dropdown';
@@ -27,8 +36,9 @@ export type TabsRootProps = {
     activeTab?: string;
     /**
      * The height of the tabs
+     * @default 'medium'
      */
-    size?: 'default' | 'large';
+    size?: 'medium' | 'large';
     /**
      * Event handler called when the active tab changes
      */
@@ -37,7 +47,7 @@ export type TabsRootProps = {
 
 const TabConfigContext = createContext<{
     value: string;
-    disabled: boolean;
+    disabled?: boolean;
 }>({
     value: '',
     disabled: false,
@@ -55,7 +65,7 @@ export const TabsRoot = (
         activeTab: propsActiveTab,
         defaultActiveTab,
         onActiveTabChange,
-        size = 'default',
+        size = 'medium',
         ...props
     }: TabsRootProps,
     ref: ForwardedRef<HTMLDivElement>,
@@ -66,6 +76,13 @@ export const TabsRoot = (
         onChange: onActiveTabChange,
     });
 
+    const handleSetActiveTab = useCallback(
+        (value: string) => {
+            setActiveTab(value);
+        },
+        [setActiveTab],
+    );
+
     const { triggerListRef, activeIndicatorRef, triggers, triggersOutOfView, addTrigger } = useTabTriggers({
         activeTab,
     });
@@ -75,11 +92,7 @@ export const TabsRoot = (
             <RadixTabs.Root
                 ref={ref}
                 className={styles.root}
-                onValueChange={(value) => {
-                    if (value) {
-                        setActiveTab(value);
-                    }
-                }}
+                onValueChange={handleSetActiveTab}
                 value={activeTab ?? triggers[0]?.value}
                 {...props}
             >
@@ -109,9 +122,7 @@ export const TabsRoot = (
                             {triggersOutOfView.map((trigger) => (
                                 <Dropdown.Item
                                     disabled={trigger.disabled}
-                                    onSelect={() => {
-                                        setActiveTab(trigger.value);
-                                    }}
+                                    onSelect={() => handleSetActiveTab(trigger.value)}
                                     key={trigger.value}
                                 >
                                     {trigger.element}
@@ -139,7 +150,7 @@ type TabsTabProps = {
 };
 
 export const TabsTab = ({ children, value, disabled }: TabsTabProps) => (
-    <TabConfigContext.Provider value={{ value, disabled: !!disabled }}>{children}</TabConfigContext.Provider>
+    <TabConfigContext.Provider value={{ value, disabled }}>{children}</TabConfigContext.Provider>
 );
 TabsTab.displayName = 'Tabs.Tab';
 
@@ -157,15 +168,15 @@ export const TabsTrigger = ({ children, ...props }: TabsTriggerProps, ref: Forwa
     useEffect(() => {
         addTrigger({
             ref: localRef || ref,
-            value: value || '',
+            value: value ?? '',
             disabled,
             element: (
-                <button ref={localRef || ref} {...props} data-bla="ttt">
+                <button ref={localRef || ref} {...props}>
                     {children}
                 </button>
             ),
         });
-    }, []);
+    }, [addTrigger, children, disabled, localRef, ref, value, props]);
 
     return null;
 };
@@ -179,7 +190,7 @@ export const TabsContent = ({ children, ...itemProps }: TabsContentProps, ref: F
     const { value } = useContext(TabConfigContext);
 
     return (
-        <RadixTabs.Content ref={ref} {...itemProps} className={styles.content} value={value || ''}>
+        <RadixTabs.Content ref={ref} {...itemProps} className={styles.content} value={value ?? ''}>
             {children}
         </RadixTabs.Content>
     );
