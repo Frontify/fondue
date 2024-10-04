@@ -176,7 +176,7 @@ export const TabsTrigger = ({ children, ...props }: TabsTriggerProps, ref: Forwa
                 </button>
             ),
         });
-    }, [addTrigger, children, disabled, localRef, ref, value, props]);
+    }, []);
 
     return null;
 };
