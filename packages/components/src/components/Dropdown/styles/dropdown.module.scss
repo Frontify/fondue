@@ -67,6 +67,10 @@
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
+        display: flex;
+        gap: sizeToken(1);
+        align-items: center;
+        margin-left: sizeToken(2);
     }
 
     .subMenuIndicator {

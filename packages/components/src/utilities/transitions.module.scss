@@ -6,6 +6,11 @@
         transition-duration: $duration;
         transition-timing-function: $timing-function;
         transition-delay: $delay;
+
+        @media (prefers-reduced-motion: reduce) {
+            transition-duration: 0ms;
+            animation-duration: 0ms;
+        }
     }
 }
 

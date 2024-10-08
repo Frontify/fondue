@@ -1,0 +1,83 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@import '../../../utilities/sizeToken.module.scss';
+@import '../../../utilities/transitions.module.scss';
+@import '../../../utilities/focusStyle.module.scss';
+
+$radius-without-border: calc(var(--radius) - var(--line-width));
+
+.root {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.triggerList {
+    position: relative;
+    flex-shrink: 0;
+    display: flex;
+    gap: sizeToken(1);
+    height: sizeToken(12);
+    flex: 1;
+    min-width: 0;
+    overflow-x: hidden;
+    &[data-size='large'] {
+        height: sizeToken(14);
+    }
+}
+
+.triggerListWrapper {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding-left: sizeToken(3);
+    padding-right: sizeToken(3);
+    gap: sizeToken(2);
+    border-bottom: 1px solid var(--line-color);
+}
+
+.trigger {
+    @include focus-outline;
+    @include transition-colors;
+
+    color: var(--text-color-weak);
+    font-size: var(--body-size-large);
+    white-space: nowrap;
+    margin: sizeToken(2);
+    display: flex;
+    align-items: center;
+    gap: sizeToken(1);
+
+    &:hover,
+    &:focus {
+        color: var(--text-color);
+    }
+
+    &:disabled {
+        color: var(--text-color-disabled);
+    }
+
+    &[data-state='active'] {
+        color: var(--text-color);
+        font-weight: 500;
+    }
+}
+
+.content {
+    padding: sizeToken(3);
+}
+
+.activeIndicator {
+    @include transition;
+    position: absolute;
+    height: 3px;
+    border-top-left-radius: var(--radius-x-large);
+    border-top-right-radius: var(--radius-x-large);
+    background-color: var(--box-selected-strong-color);
+    bottom: 0;
+    left: 0;
+    width: 0;
+    margin-left: sizeToken(3);
+}
