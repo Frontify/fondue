@@ -3,26 +3,35 @@
 @import '../../../utilities/sizeToken.module.scss';
 @import '../../../utilities/focusStyle.module.scss';
 @import '../../../utilities/transitions.module.scss';
+@import '../../../utilities/mediaQuery.module.scss';
 
 .root {
     @include focus-outline;
     @include transition-colors;
 
-    width: 100%;
-    position: relative;
-    display: flex;
-    align-items: stretch;
-    font-family: var(--body-family-stack);
-    font-weight: 400;
-    font-size: var(--body-size-medium);
-    line-height: var(--body-size-medium-line-height);
-    text-align: start;
-    height: sizeToken(9);
-    color: var(--text-color);
-    background-color: var(--base-color);
-    border-radius: var(--radius);
-    border: var(--line-width) solid var(--line-color-strong);
-    cursor: pointer;
+    & {
+        position: relative;
+        display: flex;
+        align-items: stretch;
+        text-align: start;
+
+        font-family: var(--body-family-stack);
+        font-weight: 400;
+        font-size: var(--body-size-medium);
+
+        min-width: 0;
+        width: 100%;
+        line-height: var(--body-size-medium-line-height);
+        height: sizeToken(9);
+        box-sizing: border-box;
+
+        color: var(--text-color);
+        background-color: var(--base-color);
+
+        border-radius: var(--radius);
+        border: var(--line-width) solid var(--line-color-strong);
+        cursor: pointer;
+    }
 
     &:hover {
         border-color: var(--line-color-x-strong);
@@ -58,6 +67,18 @@
     }
 }
 
+.selectedValue {
+    width: 100%;
+    background-color: transparent;
+    text-indent: sizeToken(3);
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
 .input {
     width: 100%;
     background-color: transparent;
@@ -68,7 +89,14 @@
     outline: 2px solid transparent;
     outline-offset: 2px;
     border-radius: calc(var(--radius) - var(--line-width));
+    white-space: nowrap;
+    line-height: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 
+.input,
+.selectedValue {
     &::placeholder {
         color: var(--text-color-x-weak);
     }
@@ -162,13 +190,15 @@
 
 .caret {
     @include transition-transform;
-    display: flex;
-    height: 100%;
-    width: sizeToken(4);
-    align-items: center;
-    justify-content: center;
-    margin: 0 sizeToken(1);
-    color: var(--text-color-weak);
+    & {
+        display: flex;
+        height: 100%;
+        width: sizeToken(4);
+        align-items: center;
+        justify-content: center;
+        margin: 0 sizeToken(1);
+        color: var(--text-color-weak);
+    }
 
     &:hover {
         color: var(--text-color-weak-hover);
@@ -198,12 +228,17 @@
     margin-top: sizeToken(2);
     background-color: var(--base-color);
     border: var(--line-width) solid var(--line-color-x-strong);
-    width: var(--radix-popover-trigger-width);
+    max-width: calc(100dvw - sizeToken(8));
+    min-width: var(--radix-popover-trigger-width);
     overflow: auto;
     padding: sizeToken(2) 0;
 
     &:has(li[role='option']) {
         display: block;
+    }
+
+    @include sm {
+        max-width: 500px;
     }
 }
 
@@ -213,13 +248,15 @@
 
 .item {
     @include transition-colors;
-    display: flex;
-    justify-content: space-between;
-    padding: sizeToken(3) sizeToken(5);
-    cursor: pointer;
-    text-align: start;
-    font-size: var(--body-size-medium);
-    line-height: var(--body-size-medium-line-height);
+    & {
+        display: flex;
+        justify-content: space-between;
+        padding: sizeToken(3) sizeToken(5);
+        cursor: pointer;
+        text-align: start;
+        font-size: var(--body-size-medium);
+        line-height: var(--body-size-medium-line-height);
+    }
 
     &[data-highlighted='true'] {
         background-color: var(--box-neutral-strong-color);
@@ -236,6 +273,14 @@
     &[data-selected='true'][data-highlighted='false'] {
         background-color: var(--box-selected-color);
         color: var(--box-selected-inverse-color);
+    }
+
+    .itemValue {
+        width: 100%;
+        display: inline-block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 }
 

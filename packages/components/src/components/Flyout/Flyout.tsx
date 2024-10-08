@@ -27,6 +27,40 @@ export type FlyoutRootProps = {
     children?: ReactNode;
 };
 
+export const FlyoutRoot = ({ children, ...props }: FlyoutRootProps) => {
+    return <RadixPopover.Root {...props}>{children}</RadixPopover.Root>;
+};
+FlyoutRoot.displayName = 'Flyout.Root';
+
+export type FlyoutTriggerProps = {
+    /**
+     * Change the default rendered element for the one passed as a child, merging their props and behavior.
+     * @default true
+     */
+    asChild?: boolean;
+    children?: ReactNode;
+    'data-test-id'?: string;
+};
+
+export const FlyoutTrigger = (
+    { asChild = true, children, 'data-test-id': dataTestId = 'fondue-flyout-trigger' }: FlyoutTriggerProps,
+    ref: ForwardedRef<HTMLButtonElement>,
+) => {
+    return (
+        <RadixPopover.Trigger
+            onMouseDown={addAutoFocusAttribute}
+            data-auto-focus-visible="true"
+            data-auto-focus-trigger
+            data-test-id={dataTestId}
+            asChild={asChild}
+            ref={ref}
+        >
+            {children}
+        </RadixPopover.Trigger>
+    );
+};
+FlyoutTrigger.displayName = 'Flyout.Trigger';
+
 export type FlyoutContentProps = {
     /**
      * Add rounded corners to the flyout
@@ -56,46 +90,6 @@ export type FlyoutContentProps = {
     children?: ReactNode;
     'data-test-id'?: string;
 };
-
-export type FlyoutTriggerProps = { children?: ReactNode; 'data-test-id'?: string };
-
-export type FlyoutHeaderProps = {
-    /**
-     * Show a close button in the header
-     * @default false
-     */
-    showCloseButton?: boolean;
-    children?: ReactNode;
-    'data-test-id'?: string;
-};
-
-export type FlyoutFooterProps = { children?: ReactNode; 'data-test-id'?: string };
-
-export type FlyoutBodyProps = { children?: ReactNode; 'data-test-id'?: string };
-
-export const FlyoutRoot = ({ children, ...props }: FlyoutRootProps) => {
-    return <RadixPopover.Root {...props}>{children}</RadixPopover.Root>;
-};
-FlyoutRoot.displayName = 'Flyout.Root';
-
-export const FlyoutTrigger = (
-    { children, 'data-test-id': dataTestId = 'fondue-flyout-trigger' }: FlyoutTriggerProps,
-    ref: ForwardedRef<HTMLButtonElement>,
-) => {
-    return (
-        <RadixPopover.Trigger
-            onMouseDown={addAutoFocusAttribute}
-            data-auto-focus-visible="true"
-            data-auto-focus-trigger
-            data-test-id={dataTestId}
-            asChild
-            ref={ref}
-        >
-            {children}
-        </RadixPopover.Trigger>
-    );
-};
-FlyoutTrigger.displayName = 'Flyout.Trigger';
 
 export const FlyoutContent = (
     {
@@ -146,6 +140,16 @@ export const FlyoutContent = (
 };
 FlyoutContent.displayName = 'Flyout.Content';
 
+export type FlyoutHeaderProps = {
+    /**
+     * Show a close button in the header
+     * @default false
+     */
+    showCloseButton?: boolean;
+    children?: ReactNode;
+    'data-test-id'?: string;
+};
+
 export const FlyoutHeader = (
     { showCloseButton, children, 'data-test-id': dataTestId = 'fondue-flyout-header' }: FlyoutHeaderProps,
     ref: ForwardedRef<HTMLDivElement>,
@@ -163,6 +167,8 @@ export const FlyoutHeader = (
 };
 FlyoutHeader.displayName = 'Flyout.Header';
 
+export type FlyoutFooterProps = { children?: ReactNode; 'data-test-id'?: string };
+
 export const FlyoutFooter = (
     { children, 'data-test-id': dataTestId = 'fondue-flyout-footer' }: FlyoutFooterProps,
     ref: ForwardedRef<HTMLDivElement>,
@@ -174,6 +180,8 @@ export const FlyoutFooter = (
     );
 };
 FlyoutFooter.displayName = 'Flyout.Footer';
+
+export type FlyoutBodyProps = { children?: ReactNode; 'data-test-id'?: string };
 
 export const FlyoutBody = (
     { children, 'data-test-id': dataTestId = 'fondue-flyout-body' }: FlyoutBodyProps,

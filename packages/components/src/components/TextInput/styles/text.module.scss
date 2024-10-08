@@ -12,12 +12,16 @@
         position: relative;
         display: flex;
         align-items: stretch;
+
         font-family: var(--body-family-stack);
         font-weight: 400;
         font-size: var(--body-size-medium);
+
         line-height: var(--body-size-medium-line-height);
         text-align: start;
         height: sizeToken(9);
+        box-sizing: border-box;
+
         color: var(--text-color);
         background-color: var(--base-color);
         border-radius: var(--radius);

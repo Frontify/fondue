@@ -39,6 +39,11 @@ export type SelectMenuProps = {
     filterText?: string;
     /**
      * @internal
+     * The alignment of the menu.
+     */
+    align: 'start' | 'center' | 'end';
+    /**
+     * @internal
      * The type of the menu.
      */
     selectedItem?: {
@@ -58,6 +63,7 @@ export const SelectMenu = ({
     getItemProps,
     children,
     filterText,
+    align,
     selectedItem,
     hasInteractedSinceOpening,
 }: SelectMenuProps) => {
@@ -72,7 +78,12 @@ export const SelectMenu = ({
 
     return (
         <RadixPopover.Portal>
-            <RadixPopover.Content onOpenAutoFocus={handleOnOpenAutoFocus} className={styles.portal}>
+            <RadixPopover.Content
+                align={align}
+                collisionPadding={16}
+                onOpenAutoFocus={handleOnOpenAutoFocus}
+                className={styles.portal}
+            >
                 <ul
                     className={styles.menu}
                     {...getMenuProps()}

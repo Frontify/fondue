@@ -2,6 +2,7 @@
 
 @import '../../../utilities/sizeToken.module.scss';
 @import '../../../utilities/transitions.module.scss';
+@import '../../../utilities/mediaQuery.module.scss';
 
 .content,
 .subContent {
@@ -10,8 +11,14 @@
     background-color: var(--base-color);
     border: var(--line-width) solid var(--line-color-strong);
     box-shadow: var(--shadow-matrix);
-    min-width: 250px;
     overflow: auto;
+    width: 250px;
+
+    @include sm {
+        width: auto;
+        min-width: 250px;
+        max-width: 350px;
+    }
 
     &:focus-within {
         border-color: var(--line-color-xx-strong);
@@ -55,6 +62,17 @@
         background-color: var(--box-disabled-color);
     }
 
+    .itemContent {
+        width: 100%;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        display: flex;
+        gap: sizeToken(1);
+        align-items: center;
+        margin-left: sizeToken(2);
+    }
+
     .subMenuIndicator {
         order: 2;
         margin-left: auto;
@@ -62,7 +80,7 @@
 }
 
 .group {
-    .item ~ & {
+    .item ~ &, .group ~ & {
         border-top: var(--line-width) solid var(--line-color-strong);
     }
     &:has(+ .item) {

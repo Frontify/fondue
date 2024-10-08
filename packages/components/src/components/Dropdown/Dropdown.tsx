@@ -36,14 +36,22 @@ export const DropdownRoot = ({
 };
 DropdownRoot.displayName = 'Dropdown.Root';
 
-export type DropdownTriggerProps = { children?: ReactNode; 'data-test-id'?: string };
+export type DropdownTriggerProps = {
+    /**
+     * Change the default rendered element for the one passed as a child, merging their props and behavior.
+     * @default true
+     */
+    asChild?: boolean;
+    children?: ReactNode;
+    'data-test-id'?: string;
+};
 
 export const DropdownTrigger = (
-    { children, 'data-test-id': dataTestId = 'fondue-dropdown-trigger' }: DropdownTriggerProps,
+    { asChild = true, children, 'data-test-id': dataTestId = 'fondue-dropdown-trigger' }: DropdownTriggerProps,
     ref: ForwardedRef<HTMLButtonElement>,
 ) => {
     return (
-        <RadixDropdown.Trigger asChild data-test-id={dataTestId} ref={ref}>
+        <RadixDropdown.Trigger asChild={asChild} data-test-id={dataTestId} ref={ref}>
             {children}
         </RadixDropdown.Trigger>
     );
@@ -56,6 +64,11 @@ export type DropdownContentProps = {
     onOpen?: () => void;
     onClose?: () => void;
     /**
+     * Defines the alignment of the dropdown.
+     * @default "start"
+     */
+    align?: 'start' | 'center' | 'end';
+    /**
      * Defines the preferred side of the dropdown. It will not be respected if there are collisions with the viewport.
      * @default "bottom"
      */
@@ -67,6 +80,7 @@ export const DropdownContent = (
         onOpen,
         onClose,
         side = 'bottom',
+        align = 'start',
         children,
         'data-test-id': dataTestId = 'fondue-dropdown-content',
     }: DropdownContentProps,
@@ -80,7 +94,7 @@ export const DropdownContent = (
     return (
         <RadixDropdown.Portal>
             <RadixDropdown.Content
-                align="start"
+                align={align}
                 collisionPadding={8}
                 sideOffset={8}
                 side={side}
@@ -140,7 +154,7 @@ export const DropdownSubTrigger = (
 ) => {
     return (
         <RadixDropdown.SubTrigger className={styles.subTrigger} data-test-id={dataTestId} ref={ref}>
-            {children}
+            <div className={styles.itemContent}>{children}</div>
             <IconCaretRight className={styles.subMenuIndicator} size={16} />
         </RadixDropdown.SubTrigger>
     );
@@ -201,7 +215,7 @@ export const DropdownItem = (
             disabled={disabled}
             {...props}
         >
-            {children}
+            <div className={styles.itemContent}>{children}</div>
         </RadixDropdown.Item>
     );
 };

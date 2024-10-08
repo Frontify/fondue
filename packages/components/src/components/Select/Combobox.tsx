@@ -41,6 +41,11 @@ export type ComboboxProps = {
      */
     disabled?: boolean;
     /**
+     * The alignment of the menu.
+     * @default "start"
+     */
+    alignMenu?: 'start' | 'center' | 'end';
+    /**
      * The aria label of the combobox component.
      */
     'aria-label'?: string;
@@ -61,6 +66,7 @@ export const SelectCombobox = (
         disabled,
         'aria-label': ariaLabel,
         'data-test-id': dataTestId = 'fondue-select-combobox',
+        alignMenu = 'start',
     }: ComboboxProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
@@ -191,6 +197,7 @@ export const SelectCombobox = (
             </RadixPopover.Anchor>
 
             <SelectMenu
+                align={alignMenu}
                 highlightedIndex={highlightedIndex}
                 filterText={filterText}
                 getMenuProps={getMenuProps}

@@ -1,5 +1,38 @@
 # @frontify/fondue
 
+## 12.2.15
+
+### Patch Changes
+
+-   Updated dependencies [[`48425da`](https://github.com/Frontify/fondue/commit/48425da83b0f66ac664de50952fd7beacbaf78b1), [`c0c4b59`](https://github.com/Frontify/fondue/commit/c0c4b59649762678ee4fdc6841c28eee3a2f93cb), [`a5fb47a`](https://github.com/Frontify/fondue/commit/a5fb47a3120c464bf5c342bd2dfd0449ff057033), [`df31cd3`](https://github.com/Frontify/fondue/commit/df31cd3cb9cefc8c2a4c17df622dc6fd00093630), [`619b67e`](https://github.com/Frontify/fondue/commit/619b67e4f94eb1eac43d5d6dfb52861e9644631a), [`3152ee5`](https://github.com/Frontify/fondue/commit/3152ee575b3286b43d64c9541660ded3f8efc083), [`24d6c3e`](https://github.com/Frontify/fondue/commit/24d6c3e4b2cc04f25d20f579e5e69140d9523e7c), [`a76912c`](https://github.com/Frontify/fondue/commit/a76912c7568408643f92cb8d36dc00a8e8629062)]:
+    -   @frontify/fondue-components@4.0.0
+    -   @frontify/fondue-icons@0.5.0
+
+## 12.2.14
+
+### Patch Changes
+
+-   Updated dependencies [[`31e06eb`](https://github.com/Frontify/fondue/commit/31e06ebf538762c66507ffe1b3daf9da5388a360)]:
+    -   @frontify/fondue-icons@0.4.3
+    -   @frontify/fondue-components@3.3.6
+
+## 12.2.13
+
+### Patch Changes
+
+-   [#2060](https://github.com/Frontify/fondue/pull/2060) [`2f6024c`](https://github.com/Frontify/fondue/commit/2f6024c929fd48cf6d1d0b0ebd9c99222809a55c) Thanks [@fulopdaniel](https://github.com/fulopdaniel)! - feat(RTE): portal the link modal
+
+-   Updated dependencies [[`4359fc8`](https://github.com/Frontify/fondue/commit/4359fc8756527db48dc88ff6d690ac3c24d842f5)]:
+    -   @frontify/fondue-components@3.3.5
+
+## 12.2.12
+
+### Patch Changes
+
+-   Updated dependencies [[`6f7840d`](https://github.com/Frontify/fondue/commit/6f7840db1e2ac779c8e5eb4b72edbdf0c30811b1), [`b13ee96`](https://github.com/Frontify/fondue/commit/b13ee96a5e734ad99ab59114ba16ceec4e28fb6e), [`7593ce4`](https://github.com/Frontify/fondue/commit/7593ce48adeaf903dec853ef3ceeb31f8bd3e203), [`ad7ece2`](https://github.com/Frontify/fondue/commit/ad7ece27e40a8b33e960d4e9ddc358b38a04d8c7)]:
+    -   @frontify/fondue-components@3.3.4
+    -   @frontify/fondue-charts@1.8.15
+
 ## 12.2.11
 
 ### Patch Changes

@@ -67,9 +67,22 @@ export type DialogContentProps = {
     'data-test-id'?: string;
 };
 
-export type DialogTriggerProps = { children?: ReactNode; 'data-test-id'?: string };
+export type DialogTriggerProps = {
+    /**
+     * Change the default rendered element for the one passed as a child, merging their props and behavior.
+     * @default true
+     */
+    asChild?: boolean;
+    children?: ReactNode;
+    'data-test-id'?: string;
+};
 
 export type DialogHeaderProps = {
+    /**
+     * Show a border at the bottom of the header
+     * @default true
+     */
+    showBorder?: boolean;
     /**
      * Show a close button in the header
      * @default true
@@ -79,7 +92,15 @@ export type DialogHeaderProps = {
     'data-test-id'?: string;
 };
 
-export type DialogFooterProps = { children?: ReactNode; 'data-test-id'?: string };
+export type DialogFooterProps = {
+    /**
+     * Show a border at the top of the footer
+     * @default true
+     */
+    showBorder?: boolean;
+    children?: ReactNode;
+    'data-test-id'?: string;
+};
 
 export type DialogBodyProps = { children?: ReactNode; 'data-test-id'?: string };
 
@@ -105,7 +126,7 @@ export const DialogRoot = ({ children, ...props }: DialogRootProps) => {
 DialogRoot.displayName = 'Dialog.Root';
 
 export const DialogTrigger = (
-    { children, 'data-test-id': dataTestId = 'fondue-dialog-trigger' }: DialogTriggerProps,
+    { asChild = true, children, 'data-test-id': dataTestId = 'fondue-dialog-trigger' }: DialogTriggerProps,
     ref: ForwardedRef<HTMLButtonElement>,
 ) => {
     return (
@@ -114,7 +135,7 @@ export const DialogTrigger = (
             data-auto-focus-visible="true"
             data-auto-focus-trigger
             data-test-id={dataTestId}
-            asChild
+            asChild={asChild}
             ref={ref}
         >
             {children}
@@ -183,11 +204,22 @@ export const DialogContent = (
 DialogContent.displayName = 'Dialog.Content';
 
 export const DialogHeader = (
-    { children, showCloseButton = true, 'data-test-id': dataTestId = 'fondue-dialog-header' }: DialogHeaderProps,
+    {
+        children,
+        showBorder = true,
+        showCloseButton = true,
+        'data-test-id': dataTestId = 'fondue-dialog-header',
+    }: DialogHeaderProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
-        <div data-test-id={dataTestId} ref={ref} className={styles.header} data-dialog-layout-component>
+        <div
+            data-test-id={dataTestId}
+            ref={ref}
+            className={styles.header}
+            data-show-border={showBorder}
+            data-dialog-layout-component
+        >
             <div>{children}</div>
             {showCloseButton && (
                 <RadixDialog.Close role="button" data-test-id={`${dataTestId}-close`} className="tw-cursor-pointer">
@@ -200,11 +232,17 @@ export const DialogHeader = (
 DialogHeader.displayName = 'Dialog.Header';
 
 export const DialogFooter = (
-    { children, 'data-test-id': dataTestId = 'fondue-dialog-footer' }: DialogFooterProps,
+    { showBorder = true, children, 'data-test-id': dataTestId = 'fondue-dialog-footer' }: DialogFooterProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
-        <div data-test-id={dataTestId} ref={ref} className={styles.footer} data-dialog-layout-component>
+        <div
+            data-test-id={dataTestId}
+            ref={ref}
+            className={styles.footer}
+            data-show-border={showBorder}
+            data-dialog-layout-component
+        >
             {children}
         </div>
     );

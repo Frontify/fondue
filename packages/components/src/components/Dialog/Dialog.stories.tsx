@@ -393,6 +393,31 @@ export const MobileView: Story = {
     },
 };
 
+export const WithoutBorders: Story = {
+    args: {
+        children: 'I am a dialog content',
+    },
+    render: (args) => {
+        return (
+            <Dialog.Root>
+                <Dialog.Trigger>
+                    <Button>Open dialog</Button>
+                </Dialog.Trigger>
+                <Dialog.Content {...args}>
+                    <Dialog.Header showBorder={false}>
+                        <Dialog.Title>Header</Dialog.Title>
+                    </Dialog.Header>
+                    <Dialog.Body {...args} />
+                    <Dialog.Footer showBorder={false}>
+                        <Button emphasis="default">Cancel</Button>
+                        <Button>Submit</Button>
+                    </Dialog.Footer>
+                </Dialog.Content>
+            </Dialog.Root>
+        );
+    },
+};
+
 export const ControlledComponent: Story = {
     args: {
         children: 'I am a dialog content',
