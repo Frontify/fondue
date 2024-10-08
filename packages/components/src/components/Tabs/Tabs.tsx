@@ -87,6 +87,8 @@ export const TabsRoot = (
         activeTab,
     });
 
+    console.log(triggers);
+
     return (
         <TabTriggerContext.Provider value={{ addTrigger }}>
             <RadixTabs.Root
@@ -100,6 +102,7 @@ export const TabsRoot = (
                     <RadixTabs.List ref={triggerListRef} data-size={size} className={styles.triggerList}>
                         {triggers.map((trigger) => (
                             <RadixTabs.Trigger
+                                {...trigger.props}
                                 key={trigger.value}
                                 value={trigger.value}
                                 disabled={trigger.disabled}
