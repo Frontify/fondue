@@ -174,6 +174,11 @@ DropdownSubContent.displayName = 'Dropdown.SubContent';
 export type DropdownItemProps = {
     children: ReactNode;
     /**
+     * The height of the item.
+     * @default "compact"
+     */
+    padding?: 'compact' | 'tight';
+    /**
      * Disables the item.
      */
     disabled?: boolean;
@@ -191,6 +196,7 @@ export type DropdownItemProps = {
 export const DropdownItem = (
     {
         children,
+        padding = 'compact',
         disabled,
         textValue,
         onSelect,
@@ -203,6 +209,7 @@ export const DropdownItem = (
         <RadixDropdown.Item
             onSelect={onSelect}
             className={styles.item}
+            data-padding={padding}
             textValue={textValue}
             data-test-id={dataTestId}
             ref={ref}

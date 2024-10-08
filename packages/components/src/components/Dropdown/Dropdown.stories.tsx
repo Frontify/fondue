@@ -311,3 +311,26 @@ export const RightSide: Story = {
         </Dropdown.Root>
     ),
 };
+
+export const TightItems: Story = {
+    render: ({ ...args }) => (
+        <Dropdown.Root {...args}>
+            <Dropdown.Trigger>
+                <Button>Trigger</Button>
+            </Dropdown.Trigger>
+            <Dropdown.Content side="right">
+                <Dropdown.Item padding="tight" onSelect={() => {}}>
+                    <p>Item 1</p>
+                    <p>Item 1 description</p>
+                </Dropdown.Item>
+                <Dropdown.Item padding="tight" onSelect={() => {}}>
+                    <p>Item 2</p>
+                    <p>Item 2 description</p>
+                </Dropdown.Item>
+                <Dropdown.Item padding="tight" onSelect={() => {}}>
+                    Item 3
+                </Dropdown.Item>
+            </Dropdown.Content>
+        </Dropdown.Root>
+    ),
+};
