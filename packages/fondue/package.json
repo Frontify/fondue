@@ -110,7 +110,7 @@
         "@radix-ui/react-popover": "^1.1.1",
         "@radix-ui/react-toolbar": "^1.1.0",
         "@radix-ui/react-tooltip": "^1.1.2",
-        "@react-aria/accordion": "3.0.0-alpha.29",
+        "@react-aria/accordion": "3.0.0-alpha.34",
         "@react-aria/aria-modal-polyfill": "^3.7.11",
         "@react-aria/breadcrumbs": "^3.5.16",
         "@react-aria/button": "^3.9.8",
