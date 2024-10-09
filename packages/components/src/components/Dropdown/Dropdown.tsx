@@ -69,6 +69,11 @@ export type DropdownContentProps = {
      */
     padding?: 'comfortable' | 'compact';
     /**
+     * Defines the alignment of the dropdown.
+     * @default "start"
+     */
+    align?: 'start' | 'center' | 'end';
+    /**
      * Defines the preferred side of the dropdown. It will not be respected if there are collisions with the viewport.
      * @default "bottom"
      */
@@ -81,6 +86,7 @@ export const DropdownContent = (
         onClose,
         side = 'bottom',
         padding = 'comfortable',
+        align = 'start',
         children,
         'data-test-id': dataTestId = 'fondue-dropdown-content',
     }: DropdownContentProps,
@@ -94,7 +100,7 @@ export const DropdownContent = (
     return (
         <RadixDropdown.Portal>
             <RadixDropdown.Content
-                align="start"
+                align={align}
                 collisionPadding={8}
                 sideOffset={8}
                 side={side}
