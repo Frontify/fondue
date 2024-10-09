@@ -64,6 +64,11 @@ export type DropdownContentProps = {
     onOpen?: () => void;
     onClose?: () => void;
     /**
+     * The vertical padding around each dropdown item.
+     * @default "comfortable"
+     */
+    padding?: 'comfortable' | 'compact';
+    /**
      * Defines the preferred side of the dropdown. It will not be respected if there are collisions with the viewport.
      * @default "bottom"
      */
@@ -75,6 +80,7 @@ export const DropdownContent = (
         onOpen,
         onClose,
         side = 'bottom',
+        padding = 'comfortable',
         children,
         'data-test-id': dataTestId = 'fondue-dropdown-content',
     }: DropdownContentProps,
@@ -93,6 +99,7 @@ export const DropdownContent = (
                 sideOffset={8}
                 side={side}
                 className={styles.content}
+                data-padding={padding}
                 data-test-id={dataTestId}
                 ref={localRef}
                 onCloseAutoFocus={() => {
@@ -174,11 +181,6 @@ DropdownSubContent.displayName = 'Dropdown.SubContent';
 export type DropdownItemProps = {
     children: ReactNode;
     /**
-     * The height of the item.
-     * @default "compact"
-     */
-    padding?: 'compact' | 'tight';
-    /**
      * Disables the item.
      */
     disabled?: boolean;
@@ -196,7 +198,6 @@ export type DropdownItemProps = {
 export const DropdownItem = (
     {
         children,
-        padding = 'compact',
         disabled,
         textValue,
         onSelect,
@@ -209,7 +210,6 @@ export const DropdownItem = (
         <RadixDropdown.Item
             onSelect={onSelect}
             className={styles.item}
-            data-padding={padding}
             textValue={textValue}
             data-test-id={dataTestId}
             ref={ref}

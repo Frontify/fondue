@@ -14,14 +14,22 @@
     overflow: auto;
     width: 250px;
 
+    &:focus-within {
+        border-color: var(--line-color-xx-strong);
+    }
+
+    &[data-padding='compact'] .item {
+        padding: sizeToken(2) sizeToken(5);
+    }
+
+    &[data-padding='comfortable'] .item {
+        padding: sizeToken(3) sizeToken(5);
+    }
+
     @include sm {
         width: auto;
         min-width: 250px;
         max-width: 350px;
-    }
-
-    &:focus-within {
-        border-color: var(--line-color-xx-strong);
     }
 }
 
@@ -44,14 +52,6 @@
     color: var(--text-color-weak);
     outline-style: none;
     box-sizing: border-box;
-
-    &[data-height='tight'] {
-        padding: sizeToken(2) sizeToken(5);
-    }
-
-    &[data-padding='compact'] {
-        padding: sizeToken(3) sizeToken(5);
-    }
 
     &[data-state='open'] {
         background-color: var(--box-neutral-color);
