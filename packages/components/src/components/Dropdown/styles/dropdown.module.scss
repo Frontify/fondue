@@ -14,14 +14,22 @@
     overflow: auto;
     width: 250px;
 
+    &:focus-within {
+        border-color: var(--line-color-xx-strong);
+    }
+
+    &[data-padding='compact'] .item {
+        padding: sizeToken(2) sizeToken(5);
+    }
+
+    &[data-padding='comfortable'] .item {
+        padding: sizeToken(3) sizeToken(5);
+    }
+
     @include sm {
         width: auto;
         min-width: 250px;
         max-width: 350px;
-    }
-
-    &:focus-within {
-        border-color: var(--line-color-xx-strong);
     }
 }
 
@@ -34,9 +42,7 @@
     @include transition-colors;
     display: flex;
     align-items: center;
-    height: sizeToken(10);
     gap: sizeToken(1.5);
-    padding: sizeToken(3) sizeToken(5);
     margin: sizeToken(1);
     border-radius: sizeToken(1);
     cursor: pointer;
@@ -46,6 +52,7 @@
     color: var(--text-color-weak);
     outline-style: none;
     box-sizing: border-box;
+
     &[data-state='open'] {
         background-color: var(--box-neutral-color);
         color: var(--text-color);
@@ -80,7 +87,8 @@
 }
 
 .group {
-    .item ~ &, .group ~ & {
+    .item ~ &,
+    .group ~ & {
         border-top: var(--line-width) solid var(--line-color-strong);
     }
     &:has(+ .item) {

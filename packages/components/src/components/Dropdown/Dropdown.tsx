@@ -64,6 +64,11 @@ export type DropdownContentProps = {
     onOpen?: () => void;
     onClose?: () => void;
     /**
+     * The vertical padding around each dropdown item.
+     * @default "comfortable"
+     */
+    padding?: 'comfortable' | 'compact';
+    /**
      * Defines the alignment of the dropdown.
      * @default "start"
      */
@@ -80,6 +85,7 @@ export const DropdownContent = (
         onOpen,
         onClose,
         side = 'bottom',
+        padding = 'comfortable',
         align = 'start',
         children,
         'data-test-id': dataTestId = 'fondue-dropdown-content',
@@ -99,6 +105,7 @@ export const DropdownContent = (
                 sideOffset={8}
                 side={side}
                 className={styles.content}
+                data-padding={padding}
                 data-test-id={dataTestId}
                 ref={localRef}
                 onCloseAutoFocus={() => {
