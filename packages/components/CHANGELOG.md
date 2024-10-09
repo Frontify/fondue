@@ -1,5 +1,13 @@
 # @frontify/fondue-components
 
+## 4.0.1
+
+### Patch Changes
+
+-   [#2077](https://github.com/Frontify/fondue/pull/2077) [`bcb3602`](https://github.com/Frontify/fondue/commit/bcb3602f3603c16e7d78e570e7e441ed56d8bc0c) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: refactor Tabs Component
+
+-   [#2078](https://github.com/Frontify/fondue/pull/2078) [`755dc52`](https://github.com/Frontify/fondue/commit/755dc5221af955425e288fc7588da2494d40f75c) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - feat(`DropdownItem´): add ability to control item height and padding:
+
 ## 4.0.0
 
 ### Patch Changes
