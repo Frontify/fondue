@@ -213,6 +213,14 @@ export const LongContent: Story = {
     },
 };
 
+export const WithCustomWidth: Story = {
+    args: {
+        width: '500px',
+        side: 'bottom',
+        children: 'Lorem ipsum dolor sit amet.',
+    },
+};
+
 export const WithCustomMaxWidth: Story = {
     args: {
         maxWidth: '200px',
