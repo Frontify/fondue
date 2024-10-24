@@ -1,5 +1,11 @@
 # @frontify/fondue-components
 
+## 4.0.2
+
+### Patch Changes
+
+-   [#2081](https://github.com/Frontify/fondue/pull/2081) [`4da753b`](https://github.com/Frontify/fondue/commit/4da753bd86eeaac876c5687dd8b68e6608410a9a) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - feat(`Flyout`): add rounded and shadow options
+
 ## 4.0.1
 
 ### Patch Changes
