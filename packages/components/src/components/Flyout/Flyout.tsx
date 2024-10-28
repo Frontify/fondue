@@ -88,6 +88,11 @@ export type FlyoutContentProps = {
      */
     padding?: 'none' | 'tight' | 'compact' | 'comfortable' | 'spacious';
     /**
+     * Define the fixed width of the flyout
+     * @default "fit-content"
+     */
+    width?: string;
+    /**
      * Define the maximum width of the flyout
      * @default "360px"
      */
@@ -102,6 +107,7 @@ export const FlyoutContent = (
         maxWidth = '360px',
         padding = 'compact',
         rounded = 'medium',
+        width = 'fit-content',
         shadow = 'medium',
         'data-test-id': dataTestId = 'fondue-flyout-content',
         children,
@@ -119,6 +125,7 @@ export const FlyoutContent = (
                 style={
                     {
                         '--flyout-max-width': maxWidth,
+                        '--flyout-width': width,
                     } as CSSProperties
                 }
                 ref={localRef}

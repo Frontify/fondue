@@ -43,7 +43,7 @@
     }
 
     @include sm {
-        width: fit-content;
+        width: var(--flyout-width);
         max-width: var(--flyout-max-width);
         margin-top: 0;
         background-color: var(--base-color);
