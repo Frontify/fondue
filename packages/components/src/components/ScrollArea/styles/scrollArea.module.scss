@@ -48,7 +48,6 @@
     border-radius: var(--scrollbar-size);
     position: relative;
 
-    /* increase target size for touch devices https://www.w3.org/WAI/WCAG21/Understanding/target-size.html */
     &::before {
         content: '';
         position: absolute;
