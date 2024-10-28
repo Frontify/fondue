@@ -63,10 +63,15 @@ FlyoutTrigger.displayName = 'Flyout.Trigger';
 
 export type FlyoutContentProps = {
     /**
-     * Add rounded corners to the flyout
-     * @default true
+     * Add a shadow to the flyout
+     * @default "medium"
      */
-    rounded?: boolean;
+    shadow?: 'none' | 'medium' | 'large';
+    /**
+     * Add rounded corners to the flyout
+     * @default "medium"
+     */
+    rounded?: 'none' | 'medium' | 'large';
     /**
      * Define the prefered side of the flyout. Can be overriden by viewport collisions viewport.
      * @default "bottom"
@@ -101,8 +106,9 @@ export const FlyoutContent = (
         align = 'start',
         maxWidth = '360px',
         padding = 'compact',
-        rounded,
+        rounded = 'medium',
         width = 'fit-content',
+        shadow = 'medium',
         'data-test-id': dataTestId = 'fondue-flyout-content',
         children,
         ...props
@@ -136,6 +142,7 @@ export const FlyoutContent = (
                 className={styles.root}
                 data-flyout-spacing={padding}
                 data-rounded={rounded}
+                data-shadow={shadow}
                 data-test-id={dataTestId}
                 onFocus={addShowFocusRing}
                 {...props}

@@ -12,11 +12,21 @@
     margin-top: sizeToken(4);
     overflow: auto;
 
-    &[data-rounded='true'] {
+    &[data-rounded='medium'] {
         border-radius: var(--radius);
     }
 
-    @include shadow-md;
+    &[data-rounded='large'] {
+        border-radius: var(--radius-large);
+    }
+
+    &[data-shadow='medium'] {
+        @include shadow-md;
+    }
+    
+    &[data-shadow='large'] {
+        @include shadow-lg;
+    }
 
     // Responsive dialog background element
     &::before {
