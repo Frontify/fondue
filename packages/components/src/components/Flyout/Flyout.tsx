@@ -98,13 +98,13 @@ export type FlyoutContentProps = {
 
 export const FlyoutContent = (
     {
-        width = 'fit-content',
+        align = 'start',
         maxWidth = '360px',
         padding = 'compact',
-        align = 'start',
+        rounded,
+        width = 'fit-content',
         'data-test-id': dataTestId = 'fondue-flyout-content',
         children,
-        rounded,
         ...props
     }: FlyoutContentProps,
     ref: ForwardedRef<HTMLDivElement>,
