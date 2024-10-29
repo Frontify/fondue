@@ -18,11 +18,13 @@
         border-color: var(--line-color-xx-strong);
     }
 
-    &[data-padding='compact'] .item {
+    &[data-padding='compact'] .item,
+    &[data-padding='compact'] .subTrigger {
         padding: sizeToken(2) sizeToken(5);
     }
 
-    &[data-padding='comfortable'] .item {
+    &[data-padding='comfortable'] .item,
+    &[data-padding='comfortable'] .subTrigger {
         padding: sizeToken(3) sizeToken(5);
     }
 

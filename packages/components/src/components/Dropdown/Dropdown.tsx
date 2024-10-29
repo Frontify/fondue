@@ -168,15 +168,32 @@ export const DropdownSubTrigger = (
 };
 DropdownSubTrigger.displayName = 'Dropdown.SubTrigger';
 
-export type DropdownSubContentProps = { children: ReactNode; 'data-test-id'?: string };
+export type DropdownSubContentProps = {
+    /**
+     * The vertical padding around each dropdown item.
+     * @default "comfortable"
+     */
+    padding?: 'comfortable' | 'compact';
+    children: ReactNode;
+    'data-test-id'?: string;
+};
 
 export const DropdownSubContent = (
-    { children, 'data-test-id': dataTestId = 'fondue-dropdown-subcontent' }: DropdownSubContentProps,
+    {
+        padding = 'comfortable',
+        children,
+        'data-test-id': dataTestId = 'fondue-dropdown-subcontent',
+    }: DropdownSubContentProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
         <RadixDropdown.Portal>
-            <RadixDropdown.SubContent className={styles.subContent} data-test-id={dataTestId} ref={ref}>
+            <RadixDropdown.SubContent
+                className={styles.subContent}
+                data-padding={padding}
+                data-test-id={dataTestId}
+                ref={ref}
+            >
                 {children}
             </RadixDropdown.SubContent>
         </RadixDropdown.Portal>
