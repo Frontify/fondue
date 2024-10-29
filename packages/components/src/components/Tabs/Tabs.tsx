@@ -87,8 +87,6 @@ export const TabsRoot = (
         activeTab,
     });
 
-    console.log(triggers);
-
     return (
         <TabTriggerContext.Provider value={{ addTrigger }}>
             <RadixTabs.Root
