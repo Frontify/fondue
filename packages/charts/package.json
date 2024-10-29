@@ -95,7 +95,7 @@
         "eslint": "^8.57.1",
         "eslint-plugin-notice": "^1.0.0",
         "eslint-plugin-storybook": "^0.10.1",
-        "happy-dom": "^15.7.4",
+        "happy-dom": "^14.12.3",
         "postcss": "^8.4.47",
         "prettier": "^3.3.3",
         "react": "^18.3.1",
