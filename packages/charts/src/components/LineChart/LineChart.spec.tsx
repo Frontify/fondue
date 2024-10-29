@@ -36,7 +36,7 @@ describe('LineChart', () => {
     it('Should read the data-ready attribute and set the value', () => {
         const { container } = render(<LineChart series={dataWithMissingValues} width={400} height={200} />);
 
-        const svgContainer = container.getElementsByTagName('svg')[0];
+        const svgContainer = container.querySelector('svg');
 
         expect(svgContainer?.getAttribute('width')).toBe('400');
         expect(svgContainer?.getAttribute('height')).toBe('200');
