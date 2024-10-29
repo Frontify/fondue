@@ -119,7 +119,6 @@ export const Flyout = ({
     });
 
     const { buttonProps, isPressed } = useButton(
-        // @ts-expect-error preventFocusOnPress is an undocumented property in react-aria
         { onPress: () => toggle(), elementType: 'div', isDisabled: isTriggerDisabled, preventFocusOnPress: true },
         triggerRef,
     );
