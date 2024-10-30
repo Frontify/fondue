@@ -1,5 +1,13 @@
 # @frontify/fondue-tokens
 
+## 3.5.8
+
+### Patch Changes
+
+-   [#2085](https://github.com/Frontify/fondue/pull/2085) [`7c39542`](https://github.com/Frontify/fondue/commit/7c39542df14f8c3cb3db82197f1405504caf9dfa) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - chore: update dependencies
+
+-   [#2089](https://github.com/Frontify/fondue/pull/2089) [`064db3d`](https://github.com/Frontify/fondue/commit/064db3d1e4bdb9a2df2516bd618c2488eb554223) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update more deps
+
 ## 3.5.7
 
 ### Patch Changes
