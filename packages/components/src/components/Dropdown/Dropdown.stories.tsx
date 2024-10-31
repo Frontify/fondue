@@ -40,7 +40,7 @@ const meta: Meta<typeof DropdownRoot> = {
     tags: ['autodocs'],
     parameters: {
         status: {
-            type: 'in_progress',
+            type: 'released',
         },
     },
     args: {},

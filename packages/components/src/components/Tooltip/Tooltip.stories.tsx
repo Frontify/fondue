@@ -25,7 +25,7 @@ const meta: Meta<typeof TooltipRoot> = {
     tags: ['autodocs'],
     parameters: {
         status: {
-            type: 'in_progress',
+            type: 'released',
         },
     },
     render: ({ ...args }) => {

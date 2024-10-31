@@ -15,7 +15,7 @@ const meta: Meta<typeof Slider> = {
     tags: ['autodocs'],
     parameters: {
         status: {
-            type: 'in_progress',
+            type: 'released',
         },
     },
     argTypes: {

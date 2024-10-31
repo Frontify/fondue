@@ -46,7 +46,7 @@ const meta: Meta<typeof DialogContent> = {
     tags: ['autodocs'],
     parameters: {
         status: {
-            type: 'in_progress',
+            type: 'released',
         },
     },
     args: {},

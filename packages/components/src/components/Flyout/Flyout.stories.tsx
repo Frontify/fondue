@@ -25,7 +25,7 @@ const meta: Meta<typeof FlyoutContent> = {
     tags: ['autodocs'],
     parameters: {
         status: {
-            type: 'in_progress',
+            type: 'released',
         },
     },
     args: {
