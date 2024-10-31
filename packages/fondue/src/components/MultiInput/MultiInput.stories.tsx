@@ -11,6 +11,9 @@ import { IconSize } from '@foundation/Icon/IconSize';
 
 import { MultiInput as MultiInputComponent, MultiInputLayout, type MultiInputProps } from './MultiInput';
 
+/**
+ ### This component is deprecated, please use a [new Layout component](/docs/current_layout-grid--documentation) instead.
+ */
 export default {
     title: 'Components/Multi Input',
     component: MultiInputComponent,
@@ -23,6 +26,11 @@ export default {
         layout: {
             options: Object.values(MultiInputLayout),
             control: { type: 'radio' },
+        },
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
         },
     },
 } as Meta<MultiInputProps>;
