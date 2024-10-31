@@ -7,10 +7,18 @@ import { CheckboxState } from '@components/Checkbox/Checkbox';
 
 import { Checklist as ChecklistComponent, ChecklistDirection, type ChecklistProps } from './Checklist';
 
+/**
+ ### This component is deprecated, please use multiple instances of the [new Checkbox component](/docs/current_components-checkbox--documentation) instead.
+ */
 export default {
     title: 'Components/Checklist',
     component: ChecklistComponent,
     tags: ['autodocs'],
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
+    },
     argTypes: {
         columns: {
             options: [1, 2, 3, 4],

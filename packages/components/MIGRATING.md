@@ -13,6 +13,9 @@ This document describes the changes that you need to make to your code to migrat
         -   [Checkbox](#checkbox)
             -   [Old](#old-1)
             -   [New](#new-1)
+        -   [Checklist](#checklist)
+            -   [Old](#old-1)
+            -   [New](#new-1)
         -   [Color Picker](#color-picker)
             -   [Old](#old-2)
             -   [New](#new-2)
@@ -135,6 +138,60 @@ Changes:
         <Tooltip.Content>Tooltip</Tooltip.Content>
     </Tooltip.Root>
 </Label>
+```
+
+### Checklist
+
+Changes:
+
+-   The `state` property has been removed and replaced by `value` (`boolean | 'indeterminate'`).
+-   The `label` property has been replaced by the `Label` component as a sibling of the `Checkbox`.
+    -   `hideLabel` have been removed as Label is now a sibling component.
+-   The `onChange` function signature has changed to expose the full event instead of the value.
+-   The properties `value` and `groupInputProps` have been removed without replacement.
+-   The property `ariaLabel` has been renamed to `aria-label`.
+-   The size `CheckboxSize.XLarge` has been removed without replacement.
+
+#### Old
+
+```tsx
+<ChecklistComponent
+    direction={ChecklistDirection.Horizontal}
+    checkboxes={[]}
+    activeValues={[]}
+    setActiveValues={[]}
+/>
+```
+
+#### New
+
+```tsx
+<Flex gap="1rem" direction="column">
+    <Flex gap="4px" direction="row">
+        <Checkbox {...args} id="checkbox1" aria-labelledby="label" value={true} onChange={() => {}} />
+        <Label id="label" htmlFor="checkbox1">
+            Checkbox 1
+        </Label>
+    </Flex>
+    <Flex gap="4px" direction="row">
+        <Checkbox {...args} id="checkbox2" aria-labelledby="label" value={false} onChange={() => {}} />
+        <Label id="label" htmlFor="checkbox2">
+            Checkbox 2
+        </Label>
+    </Flex>
+    <Flex gap="4px" direction="row">
+        <Checkbox
+            {...args}
+            id="checkbox3"
+            aria-labelledby="label"
+            value="indeterminate"
+            onChange={() => {}}
+        />
+        <Label id="label" htmlFor="checkbox3">
+            Checkbox 3
+        </Label>
+    </Flex>
+</Flex>
 ```
 
 ### Color Picker
