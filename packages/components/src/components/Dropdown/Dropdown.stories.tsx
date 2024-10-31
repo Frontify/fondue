@@ -87,7 +87,7 @@ export const DangerItems: Story = {
             </Dropdown.Trigger>
             <Dropdown.Content>
                 <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
-                <Dropdown.Item onSelect={() => {}} style="danger">
+                <Dropdown.Item onSelect={() => {}} emphasis="danger">
                     Item 2
                     <Dropdown.Slot name="right">
                         <IconIcon size={16} />
