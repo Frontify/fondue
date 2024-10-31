@@ -28,6 +28,9 @@ This document describes the changes that you need to make to your code to migrat
         -   [Label (old `InputLabel`)](#label-old-inputlabel)
             -   [Old](#label-old)
             -   [New](#label-new)
+        -   [Layout Components](#layout-components)
+            -   [Old](#layout-old)
+            -   [New](#layout-new)
         -   [Loading Bar](#loading-bar)
             -   [Old](#loading-bar-old)
             -   [New](#loading-bar-new)
@@ -585,6 +588,53 @@ Changes:
         <Tooltip.Content>Tooltip</Tooltip.Content>
     </Tooltip.Root>
 </Label>
+```
+
+### Layout Components
+
+Changes:
+
+- All proprietaary properties were removed, the new Layout Components now accept CSSProperties as props
+- The Style properties allow for responsive styling by passing an object with breakpoints as keys and CSSProperties as values
+- `Stack` has been combined with `Flex`
+- `Container` has been combined with `Box`
+
+#### Old
+
+```tsx
+<FondueStack
+  alignItems="start"
+  as="div"
+  bg=""
+  color=""
+  data-test-id="custom-test-id"
+  direction="column"
+  justify="start"
+  margin={0}
+  padding={12}
+  spacing={8}
+>
+    <div />
+    <div />
+    <div />
+</FondueStack>
+```
+
+#### New
+
+```tsx
+<Flex
+  direction={{
+    base: 'row',
+    sm: 'column'
+  }}
+  alignItems="start"
+  gap="20px"
+>
+    <div />
+    <div />
+    <div />
+</Flex>
 ```
 
 ### Loading Bar
