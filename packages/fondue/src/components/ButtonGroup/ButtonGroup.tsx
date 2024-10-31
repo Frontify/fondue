@@ -13,6 +13,9 @@ const spacing: Record<ButtonSize, string> = {
     [ButtonSize.Large]: 'tw-gap-x-3',
 };
 
+/**
+ * @deprecated Please use updated the `Flex` layout component from `@frontify/fondue/components` as a wrapper arount the `Button` component instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#button the migration guide}.
+ */
 export const ButtonGroup = ({
     children,
     size,
