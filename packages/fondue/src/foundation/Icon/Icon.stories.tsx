@@ -7,6 +7,9 @@ import { IconEnum } from './IconEnum';
 import { type IconProps } from './IconProps';
 import { IconSize } from './IconSize';
 
+/**
+ ### This component is deprecated, please import Icons from the icons package [new Text Input component](/story/icons_icons--default) instead.
+ */
 export default {
     title: 'Foundation/Icon',
     args: {
@@ -16,6 +19,11 @@ export default {
         size: {
             options: Object.keys(IconSize),
             control: { type: 'select' },
+        },
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
         },
     },
 } as Meta<IconProps>;
