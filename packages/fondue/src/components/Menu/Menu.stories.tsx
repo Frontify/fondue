@@ -21,6 +21,11 @@ export default {
     title: 'Components/Menu',
     component: Menu,
     tags: ['autodocs'],
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
+    },
 } as Meta<MenuProps>;
 
 const TemplateWithoutTrigger: StoryFn = () => (

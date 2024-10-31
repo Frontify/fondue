@@ -8,50 +8,47 @@ This document describes the changes that you need to make to your code to migrat
     -   [Table of contents](#table-of-contents)
     -   [Components](#components)
         -   [Button](#button)
-            -   [Old](#old)
-            -   [New](#new)
-        -   [Checkbox](#checkbox)
-            -   [Old](#old-1)
-            -   [New](#new-1)
-        -   [Checklist](#checklist)
-            -   [Old](#old-1)
-            -   [New](#new-1)
+            -   [Old](#button-old)
+            -   [New](#button-new)
+        -   [Checkbox (replaces `Checkbox` and `Checklist`)](#checkbox)
+            -   [Old](#checkbox-old)
+            -   [New](#checkbox-new)
         -   [Color Picker](#color-picker)
-            -   [Old](#old-2)
-            -   [New](#new-2)
+            -   [Old](#color-picker-old)
+            -   [New](#color-picker-new)
         -   [Dialog](#dialog)
-            -   [Old](#old-3)
-            -   [New](#new-3)
-        -   [Dropdown (replaces `Dropdown` and `Menu`)](#dropdown-replaces-dropdown-and-menu)
-            -   [Old](#old-4)
-            -   [New](#new-4)
+            -   [Old](#dialog-old)
+            -   [New](#dialog-new)
+        -   [Dropdown (replaces `Dropdown`, `Menu` and `ActionMenu`)](#dropdown-replaces-dropdown-menu-and-actionmenu)
+            -   [Old](#dropdown-old)
+            -   [New](#dropdown-new)
         -   [Flyout (old `InlineDialog`)](#flyout-old-inlinedialog)
-            -   [Old](#old-5)
-            -   [New](#new-5)
+            -   [Old](#flyout-old)
+            -   [New](#flyout-new)
         -   [Label (old `InputLabel`)](#label-old-inputlabel)
-            -   [Old](#old-6)
-            -   [New](#new-6)
+            -   [Old](#label-old)
+            -   [New](#label-new)
         -   [Loading Bar](#loading-bar)
-            -   [Old](#old-7)
-            -   [New](#new-7)
+            -   [Old](#loading-bar-old)
+            -   [New](#loading-bar-new)
         -   [Segmented Control](#segmented-control)
-            -   [Old](#old-8)
-            -   [New](#new-8)
+            -   [Old](#segmented-control-old)
+            -   [New](#segmented-control-new)
         -   [Select](#select)
-            -   [Old](#old-9)
-            -   [New](#new-9)
+            -   [Old](#select-old)
+            -   [New](#select-new)
         -   [Slider](#slider)
-            -   [Old](#old-10)
-            -   [New](#new-10)
+            -   [Old](#slider-old)
+            -   [New](#slider-new)
         -   [Switch](#switch)
-            -   [Old](#old-11)
-            -   [New](#new-11)
+            -   [Old](#switch-old)
+            -   [New](#switch-new)
         -   [Text Input](#text-input)
-            -   [Old](#old-12)
-            -   [New](#new-12)
+            -   [Old](#text-input-old)
+            -   [New](#text-input-new)
         -   [Tooltip](#tooltip)
-            -   [Old](#old-13)
-            -   [New](#new-13)
+            -   [Old](#tooltip-old)
+            -   [New](#tooltip-new)
 
 ## Components
 
@@ -125,6 +122,15 @@ Changes:
 />
 ```
 
+```tsx
+<ChecklistComponent
+    direction={ChecklistDirection.Horizontal}
+    checkboxes={[]}
+    activeValues={[]}
+    setActiveValues={[]}
+/>
+```
+
 #### New
 
 ```tsx
@@ -139,31 +145,6 @@ Changes:
     </Tooltip.Root>
 </Label>
 ```
-
-### Checklist
-
-Changes:
-
--   The `state` property has been removed and replaced by `value` (`boolean | 'indeterminate'`).
--   The `label` property has been replaced by the `Label` component as a sibling of the `Checkbox`.
-    -   `hideLabel` have been removed as Label is now a sibling component.
--   The `onChange` function signature has changed to expose the full event instead of the value.
--   The properties `value` and `groupInputProps` have been removed without replacement.
--   The property `ariaLabel` has been renamed to `aria-label`.
--   The size `CheckboxSize.XLarge` has been removed without replacement.
-
-#### Old
-
-```tsx
-<ChecklistComponent
-    direction={ChecklistDirection.Horizontal}
-    checkboxes={[]}
-    activeValues={[]}
-    setActiveValues={[]}
-/>
-```
-
-#### New
 
 ```tsx
 <Flex gap="1rem" direction="column">
@@ -193,6 +174,8 @@ Changes:
     </Flex>
 </Flex>
 ```
+
+
 
 ### Color Picker
 
@@ -362,7 +345,7 @@ return (
 </Dialog.Root>
 ```
 
-### Dropdown (replaces `Dropdown` and `Menu`)
+### Dropdown (replaces `Dropdown`, `Menu` and `ActionMenu`)
 
 Changes:
 

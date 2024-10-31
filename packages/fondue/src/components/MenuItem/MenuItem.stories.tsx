@@ -20,6 +20,9 @@ const SwitchComponent = () => {
     return <Switch size="small" mode={switchValue ? 'on' : 'off'} onChange={toggleSwitch} />;
 };
 
+/**
+ ### This component is deprecated, please use the [new Dropdown component](/docs/current_components-dropdown--documentation) instead.
+ */
 export default {
     title: 'Components/Menu Item',
     component: MenuItemComponent,
@@ -50,6 +53,11 @@ export default {
         selectionIndicator: {
             options: Object.values(SelectionIndicatorIcon),
             control: { type: 'radio' },
+        },
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
         },
     },
 } as Meta;

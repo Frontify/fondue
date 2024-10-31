@@ -8,12 +8,20 @@ import IconMusicNote from '@foundation/Icon/Generated/IconMusicNote';
 
 import { ActionMenu as ActionMenuComponent, type ActionMenuProps } from './ActionMenu';
 
+/**
+ ### This component is deprecated, please use the [new Dropdown component](/docs/current_components-dropdown--documentation) instead.
+ */
 export default {
     title: 'Components/Action Menu',
     component: ActionMenuComponent,
     tags: ['autodocs'],
     argTypes: {
         onClick: { action: 'onClick' },
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
     },
 } as Meta;
 
