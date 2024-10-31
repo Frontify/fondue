@@ -60,7 +60,7 @@
         color: var(--text-color);
     }
 
-    &[data-style='danger'] {
+    &[data-emphasis='danger'] {
         color: var(--text-color-negative);
     }
 
@@ -69,7 +69,7 @@
         color: var(--box-neutral-strong-inverse-color);
     }
 
-    &[data-style='danger'][data-highlighted] {
+    &[data-emphasis='danger'][data-highlighted] {
         background-color: var(--text-color-negative);
         color: var(--box-neutral-strong-inverse-color);
     }
