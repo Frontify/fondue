@@ -12,7 +12,7 @@ const meta: Meta<typeof ColorPickerInput> = {
     tags: ['autodocs'],
     parameters: {
         status: {
-            type: 'in_progress',
+            type: 'released',
         },
     },
     args: {},

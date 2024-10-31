@@ -4,10 +4,18 @@ import { type Meta, type StoryFn } from '@storybook/react';
 
 import { Portal, type PortalProps } from './Portal';
 
+/**
+ ### This component was deprecated, as it is not used anywhere.
+ */
 export default {
     title: 'Utilities/Portal',
     component: Portal,
     tags: ['autodocs'],
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
+    },
 } as Meta<PortalProps>;
 
 const Template: StoryFn<PortalProps> = () => (

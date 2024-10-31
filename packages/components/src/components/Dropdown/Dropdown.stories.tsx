@@ -40,7 +40,7 @@ const meta: Meta<typeof DropdownRoot> = {
     tags: ['autodocs'],
     parameters: {
         status: {
-            type: 'in_progress',
+            type: 'released',
         },
     },
     args: {},
@@ -72,6 +72,26 @@ export const DisabledItems: Story = {
                 <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
                 <Dropdown.Item onSelect={() => {}} disabled>
                     Item 2
+                </Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}}>Item 3</Dropdown.Item>
+            </Dropdown.Content>
+        </Dropdown.Root>
+    ),
+};
+
+export const DangerItems: Story = {
+    render: ({ ...args }) => (
+        <Dropdown.Root {...args}>
+            <Dropdown.Trigger>
+                <Button>Trigger</Button>
+            </Dropdown.Trigger>
+            <Dropdown.Content>
+                <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}} emphasis="danger">
+                    Item 2
+                    <Dropdown.Slot name="right">
+                        <IconIcon size={16} />
+                    </Dropdown.Slot>
                 </Dropdown.Item>
                 <Dropdown.Item onSelect={() => {}}>Item 3</Dropdown.Item>
             </Dropdown.Content>

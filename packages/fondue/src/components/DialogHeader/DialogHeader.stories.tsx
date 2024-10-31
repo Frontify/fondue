@@ -10,6 +10,9 @@ import { DIALOG_PADDING, type DialogHeaderProps } from '../../types';
 
 import { DialogHeader as DialogHeaderComponent } from './DialogHeader';
 
+/**
+ ### This component is deprecated, please use the [new Dialog](/docs/current_components-dialog--documentation) component instead.
+ */
 export default {
     title: 'Experimental/DialogHeader',
     component: DialogHeaderComponent,
@@ -30,6 +33,11 @@ export default {
         },
         'data-test-id': {
             type: 'string',
+        },
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
         },
     },
 } as Meta<DialogHeaderProps>;

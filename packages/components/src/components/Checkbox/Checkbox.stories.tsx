@@ -4,6 +4,7 @@ import { action } from '@storybook/addon-actions';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { type FormEvent, useState } from 'react';
 
+import { Flex } from '../Flex/Flex';
 import { Label } from '../Label/Label';
 
 import { Checkbox, CheckboxComponent } from './Checkbox';
@@ -54,5 +55,38 @@ export const Indeterminate: Story = {
 export const Disabled: Story = {
     args: {
         disabled: true,
+    },
+};
+
+export const Checklist: Story = {
+    render: (args) => {
+        return (
+            <Flex gap="1rem" direction="column">
+                <Flex gap="4px" direction="row">
+                    <Checkbox {...args} id="checkbox" aria-labelledby="label" value={true} onChange={() => {}} />
+                    <Label id="label" htmlFor="checkbox">
+                        Checkbox 1
+                    </Label>
+                </Flex>
+                <Flex gap="4px" direction="row">
+                    <Checkbox {...args} id="checkbox" aria-labelledby="label" value={false} onChange={() => {}} />
+                    <Label id="label" htmlFor="checkbox">
+                        Checkbox 2
+                    </Label>
+                </Flex>
+                <Flex gap="4px" direction="row">
+                    <Checkbox
+                        {...args}
+                        id="checkbox"
+                        aria-labelledby="label"
+                        value="indeterminate"
+                        onChange={() => {}}
+                    />
+                    <Label id="label" htmlFor="checkbox">
+                        Checkbox 3
+                    </Label>
+                </Flex>
+            </Flex>
+        );
     },
 };

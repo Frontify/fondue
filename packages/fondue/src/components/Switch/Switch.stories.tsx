@@ -54,6 +54,11 @@ export default {
         name: 'switch-name',
         size: 'small',
     },
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
+    },
 } as Meta<SwitchProps>;
 
 type Props = SwitchProps & { hug?: boolean };

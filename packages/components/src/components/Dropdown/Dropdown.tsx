@@ -212,6 +212,11 @@ export type DropdownItemProps = {
      */
     textValue?: string;
     /**
+     * The style of the item.
+     * @default "default"
+     */
+    emphasis?: 'default' | 'danger';
+    /**
      * Callback that is called when the item is selected.
      */
     onSelect?: (event: Event) => void;
@@ -224,6 +229,7 @@ export const DropdownItem = (
         disabled,
         textValue,
         onSelect,
+        emphasis = 'default',
         'data-test-id': dataTestId = 'fondue-dropdown-subtrigger',
         ...props
     }: DropdownItemProps,
@@ -235,6 +241,7 @@ export const DropdownItem = (
             className={styles.item}
             textValue={textValue}
             data-test-id={dataTestId}
+            data-emphasis={emphasis}
             ref={ref}
             disabled={disabled}
             {...props}

@@ -20,6 +20,9 @@ const spacingSelect = {
     defaultValue: '',
 };
 
+/**
+ ### This component is deprecated, please use the [new Flex layout component](/docs/current_layout-flex--documentation) instead.
+ */
 export default {
     title: 'Layout/Stack',
     component: StackComponent,
@@ -81,6 +84,11 @@ export default {
         alignItems: 'start',
         spacing: 8,
         'data-test-id': 'custom-test-id',
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
     },
 } as Meta<STACK_PROPS>;
 

@@ -22,7 +22,7 @@ const meta: Meta<typeof Grid> = {
     tags: ['autodocs'],
     parameters: {
         status: {
-            type: 'in_progress',
+            type: 'released',
         },
     },
     args: {

@@ -28,6 +28,9 @@ export type ContainerProps = {
 
 export const CONTAINER_TEST_ID = 'fondue-container';
 
+/**
+ * @deprecated Use `Box` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#layout-components the migration guide}.
+ */
 export const Container = ({
     children,
     'data-test-id': dataTestId = CONTAINER_TEST_ID,

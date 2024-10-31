@@ -75,6 +75,9 @@ const ITEM_HOVER_CLASSES = 'hover:tw-bg-box-neutral-hover hover:tw-text-box-neut
 const ITEM_BASE_CLASSES = merge(['tw-w-full tw-text-left tw-py-2 tw-px-5 tw-rounded', ITEM_HOVER_CLASSES]);
 const ITEM_CHECKED_CLASSES = 'tw-bg-box-selected';
 
+/**
+ * @deprecated Use `Dropdown` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dropdown the migration guide}.
+ */
 export const MenuItem = ({
     title,
     decorator,

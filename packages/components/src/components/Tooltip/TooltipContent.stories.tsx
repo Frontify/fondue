@@ -20,7 +20,7 @@ const meta: Meta<typeof TooltipContent> = {
     },
     parameters: {
         status: {
-            type: 'in_progress',
+            type: 'released',
         },
     },
 
