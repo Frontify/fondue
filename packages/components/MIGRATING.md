@@ -187,6 +187,7 @@ Changes:
     -   You can pass `ColorPicker.Values` as a child to show the value input fields.
     -   You can pass `ColorPicker.Gradient` as a child to show the color gradient input.
 -   The format is now handled internally. You can pass in the initial format with the prop `defaultFormat`.
+-   The brand color picker has been removed without replacement.
 
 #### Old
 

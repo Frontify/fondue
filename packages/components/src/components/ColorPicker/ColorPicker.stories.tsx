@@ -22,7 +22,7 @@ const meta: Meta<typeof ColorPickerRoot> = {
     tags: ['autodocs'],
     parameters: {
         status: {
-            type: 'in_progress',
+            type: 'released',
         },
     },
     args: {},
@@ -36,13 +36,10 @@ export const Default: Story = {
     render: (args) => {
         const [currentColor, setCurrentColor] = useState(args.currentColor);
         return (
-            <>
-                <span>{JSON.stringify(currentColor)}</span>
-                <ColorPicker.Root defaultFormat="HEX" currentColor={currentColor} onColorChange={setCurrentColor}>
-                    <ColorPicker.Values />
-                    <ColorPicker.Gradient />
-                </ColorPicker.Root>
-            </>
+            <ColorPicker.Root defaultFormat="HEX" currentColor={currentColor} onColorChange={setCurrentColor}>
+                <ColorPicker.Values />
+                <ColorPicker.Gradient />
+            </ColorPicker.Root>
         );
     },
 };

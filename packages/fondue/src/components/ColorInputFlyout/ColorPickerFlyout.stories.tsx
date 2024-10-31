@@ -8,6 +8,9 @@ import { EXAMPLE_PALETTES } from '../ColorPicker/example-palettes';
 
 import { ColorPickerFlyout as ColorPickerFlyoutComponent, type ColorPickerFlyoutProps } from './ColorPickerFlyout';
 
+/**
+ ### This component is deprecated, please use the `Flyout` together with the [new Color Picker component](/docs/current_components-colorpicker--documentation) instead.
+ */
 export default {
     title: 'Components/Color Picker/Flyout',
     component: ColorPickerFlyoutComponent,
@@ -19,6 +22,11 @@ export default {
     },
     argTypes: {
         onDelete: { action: 'onDelete' },
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
     },
 } as Meta<ColorPickerFlyoutProps>;
 
