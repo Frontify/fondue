@@ -7,6 +7,9 @@ import { IconSize } from '@foundation/Icon/IconSize';
 
 import { TooltipIcon, type TooltipIconProps, TooltipIconTriggerStyle } from './TooltipIcon';
 
+/**
+ ### This component is deprecated, please use the [new Tooltip component](/docs/current_components-tooltip--documentation) instead.
+ */
 export default {
     title: 'Deprecated/TooltipIcon',
     component: TooltipIcon,
@@ -22,6 +25,11 @@ export default {
             content: 'Lorem ipsum dolor sit amet.',
         },
         triggerStyle: 'Primary',
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
     },
 } as Meta<TooltipIconProps>;
 

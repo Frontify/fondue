@@ -5,6 +5,9 @@ import { createPortal } from 'react-dom';
 
 export type PortalProps = { children?: ReactNode; container?: HTMLElement };
 
+/**
+ * @deprecated This component was deprecated, as it is not used anywhere.
+ */
 export const Portal = ({ container = document.body, children }: PortalProps): ReactPortal => {
     return createPortal(children, container);
 };

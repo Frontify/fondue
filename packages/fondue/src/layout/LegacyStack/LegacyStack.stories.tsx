@@ -26,6 +26,9 @@ const Placeholder = ({
     ></div>
 );
 
+/**
+ ### This component is deprecated, please use the [new Flex layout component](/docs/current_layout-flex--documentation) instead.
+ */
 export default {
     title: 'Deprecated/LegacyStack',
     component: LegacyStack,
@@ -54,6 +57,11 @@ export default {
         direction: {
             options: ['row', 'column'],
             control: { type: 'radio' },
+        },
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
         },
     },
 } as Meta<LegacyStackProps>;

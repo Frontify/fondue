@@ -32,6 +32,9 @@ const spacingSelect = {
     defaultValue: '',
 };
 
+/**
+ ### This component is deprecated, please use the [new Flex layout component](/docs/current_layout-flex--documentation) instead.
+ */
 export default {
     title: 'Layout/Flex',
     component: Flex,
@@ -117,6 +120,11 @@ export default {
         maxWidth: undefined,
         minHeight: '300px',
         maxHeight: undefined,
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
     },
 } as Meta<FlexProps>;
 

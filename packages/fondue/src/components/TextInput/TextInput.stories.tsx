@@ -59,6 +59,11 @@ export default {
         onClear: { table: { disable: true }, action: 'onClear' },
         onFocus: { table: { disable: true }, action: 'onFocus' },
     },
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
+    },
 } as Meta<TextInputProps>;
 
 type TextInputStoryProps = TextInputProps & { focus?: boolean };
