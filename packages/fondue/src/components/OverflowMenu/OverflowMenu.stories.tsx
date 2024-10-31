@@ -27,6 +27,9 @@ const MIXED_ITEMS = [
     { label: 'Span Item 1' },
 ];
 
+/**
+ ### This component is deprecated, please use the [new Dropdown component](/docs/current_components-dropdown--documentation) instead.
+ */
 export default {
     title: 'Components/OverflowMenu',
     component: OverflowMenu,
@@ -38,6 +41,11 @@ export default {
             </div>
         ),
     ],
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
+    },
 } as Meta<OverflowMenuProps>;
 
 const Template: StoryFn<OverflowMenuProps> = (args: OverflowMenuProps) => <OverflowMenu {...args} />;

@@ -31,6 +31,9 @@ This document describes the changes that you need to make to your code to migrat
         -   [Loading Bar](#loading-bar)
             -   [Old](#loading-bar-old)
             -   [New](#loading-bar-new)
+        -   [Scroll Wrapper](#scroll-wrapper)
+            -   [Old](#scroll-wrapper-old)
+            -   [New](#scroll-wrapper-new)
         -   [Segmented Control](#segmented-control)
             -   [Old](#segmented-control-old)
             -   [New](#segmented-control-new)
@@ -605,6 +608,39 @@ Changes:
 <LoadingBar value={50} style="success" rounded />
 ```
 
+### Scroll Area
+
+Changes:
+
+-   The properties `direction` and `tabIndex` have been removed
+-   The property `scrollShadow`has been renamed to `showShadow` and is now `false` by default
+-   The properties `maxHeight`and `maxWidth`have been added
+-   The property `type` has been added.
+
+#### Old
+
+```tsx
+<ScrollWrapper direction={ScrollWrapperDirection.Vertical}>
+    <p className="tw-w-[200px]">
+        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis assumenda
+        itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure explicabo, fugiat
+        perferendis consequatur.
+    </p>
+</ScrollWrapper>
+```
+
+#### New
+
+```tsx
+<ScrollArea showShadow>
+    <p className="tw-w-[200px]">
+        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis assumenda
+        itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure explicabo, fugiat
+        perferendis consequatur.
+    </p>
+</ScrollArea>
+```
+
 ### Segmented Control
 
 Changes:
@@ -915,6 +951,7 @@ Changes:
 -   The property `dotted` have been removed, `className` can be used to add custom border styles.
 -   The event `onEnterPressed` has been removed, use `onKeyDown` with a `event.key === 'Enter'` condition instead.
 -   The properties `decorator`, `clearable` / `onClear`, `copyable` and `extraActions` have been removed with the introduction of the `TextInput.Slot` component.
+-   The `type` property has been added to specify the type of the input. This replaces the `NumberInput` and `PasswordInput` component.
 
     -   `TextInput.Slot` can be used to add decorators, actions, etc. to the input.
 

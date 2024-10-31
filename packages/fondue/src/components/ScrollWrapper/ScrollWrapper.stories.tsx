@@ -11,6 +11,9 @@ import { TextInput } from '@components/TextInput';
 import { ScrollWrapper } from './ScrollWrapper';
 import { ScrollWrapperDirection, type ScrollWrapperProps } from './types';
 
+/**
+ ### This component is deprecated, please use the [new Scroll Area](/docs/current_components-text-scroll-area--documentation) instead.
+ */
 export default {
     title: 'Components/ScrollWrapper',
     component: ScrollWrapper,
@@ -35,6 +38,11 @@ export default {
         tabindex: 0,
         'data-test-id': 'custom-data-test-id',
         scrollShadows: true,
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
     },
 } as Meta<ScrollWrapperProps>;
 

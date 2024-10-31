@@ -11,6 +11,9 @@ import { Box } from '../Box/Box';
 import { NumberInput } from './NumberInput';
 import { type NumberInputProps } from './types';
 
+/**
+ ### This component is deprecated, please use the [new Text Input component](/docs/current_components-text-input--documentation) with `type="number"` instead.
+ */
 // @ts-expect-error type changed?
 export default {
     title: 'Components/Number Input',
@@ -87,6 +90,11 @@ export default {
         },
         'data-test-id': {
             table: { disable: true },
+        },
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
         },
     },
 } as Meta<NumberInputProps>;

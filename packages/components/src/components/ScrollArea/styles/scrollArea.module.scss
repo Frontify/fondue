@@ -13,6 +13,10 @@
     width: 100%;
     height: 100%;
     padding-right: var(--scrollbar-size);
+
+    &[data-show-shadow="true"] {
+        box-shadow: inset 0px -11px 8px 0px var(--box-neutral-color);
+    }
 }
 
 .scrollbar {

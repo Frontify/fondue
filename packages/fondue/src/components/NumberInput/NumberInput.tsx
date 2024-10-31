@@ -16,6 +16,9 @@ const INCREMENT_KEYS = ['ArrowUp', 'ArrowRight'];
 const DECREMENT_KEYS = ['ArrowDown', 'ArrowLeft'];
 const SPECIAL_KEYS = ['Backspace', 'Tab'];
 
+/**
+ * @deprecated Use `TextInput` from `@frontify/fondue/components` with `type="number"` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#text-input the migration guide}.
+ */
 export const NumberInput = ({
     id: propId,
     size,
