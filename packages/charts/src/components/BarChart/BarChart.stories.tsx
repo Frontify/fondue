@@ -165,6 +165,18 @@ const filterOnePointPerMonth = (series: BarChartSeries[]): BarChartSeries[] => {
     return filteredSeries;
 };
 
+const planetImagesMap: Record<string, string> = {
+    Mercury:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Mercury_in_true_color.jpg/800px-Mercury_in_true_color.jpg',
+    Venus: 'https://cdn.mos.cms.futurecdn.net/RifjtkFLBEFgzkZqWEh69P-1200-80.jpg',
+    Earth: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/The_Earth_seen_from_Apollo_17.jpg/1200px-The_Earth_seen_from_Apollo_17.jpg',
+    Mars: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Mars_-_August_30_2021_-_Flickr_-_Kevin_M._Gill.png/800px-Mars_-_August_30_2021_-_Flickr_-_Kevin_M._Gill.png',
+    Jupiter: 'https://upload.wikimedia.org/wikipedia/commons/2/2b/Jupiter_and_its_shrunken_Great_Red_Spot.jpg',
+    Saturn: 'https://cdn.mos.cms.futurecdn.net/TWpr5dTCno77m2J2aFgLxD-1200-80.jpg',
+    Uranus: 'https://ychef.files.bbci.co.uk/1280x720/p0257vk5.jpg',
+    Neptune: 'https://c.tadst.com/gfx/600x337/neptune.jpg?1',
+};
+
 const addDetailsWithUrl = (series: BarChartSeries[]): BarChartSeries<{ url: string }>[] => {
     const seriesWithDetails = [];
     for (const item of series) {
@@ -175,6 +187,21 @@ const addDetailsWithUrl = (series: BarChartSeries[]): BarChartSeries<{ url: stri
     }
 
     return seriesWithDetails;
+};
+
+const addImageUrlToDataPoints = (series: BarChartSeries[]) => {
+    const seriesWithImageUrls = [];
+    for (const item of series) {
+        const dataPointsWithDetails = item.dataPoints.map((dataPoint) => {
+            return {
+                ...dataPoint,
+                imageUrl: planetImagesMap[dataPoint.label],
+            };
+        });
+        seriesWithImageUrls.push({ ...item, dataPoints: dataPointsWithDetails });
+    }
+
+    return seriesWithImageUrls;
 };
 
 const TemplateWithUrl: StoryFn<BarChartProps<{ url: string }>> = (args) => <BarChart<{ url: string }> {...args} />;
@@ -193,6 +220,13 @@ SingleDataSetWithOnClick.args = {
     width: 1000,
     height: 500,
     onBarClick: (e) => alert(e.datum.details.url),
+};
+
+export const SingleDataSetWithTooltipImages = Template.bind({});
+SingleDataSetWithTooltipImages.args = {
+    series: addImageUrlToDataPoints(planetsRadiusData),
+    width: 1000,
+    height: 500,
 };
 
 export const SingleDataSetWith100Points = Template.bind({});
