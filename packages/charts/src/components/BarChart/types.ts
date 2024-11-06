@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type LabelFormatter, type ValueFormatter } from '@components/common/types';
 import { type AxisScale, type EventHandlerParams } from '@visx/xychart';
 import { type ScaleBand } from 'd3-scale';
+
+import { type LabelFormatter, type ValueFormatter } from '@components/common/types';
 
 type BarChartDataPointBase = {
     label: string;
