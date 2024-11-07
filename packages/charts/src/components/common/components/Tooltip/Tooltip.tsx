@@ -8,10 +8,10 @@ import { type CSSProperties, useContext } from 'react';
 import { type BarChartDataPoint } from '@components/BarChart';
 import { type LineChartDataPoint } from '@components/LineChart';
 import { Crosshair } from '@components/common/components/Tooltip/Crosshair';
-import { TooltipContent } from '@components/common/components/Tooltip/TooltipContent';
 import { MISSING_VALUE_LABEL } from '@components/common/components/consts';
 import { type LabelFormatter, type ValueFormatter } from '@components/common/types';
 
+import { TooltipContent } from './TooltipContent';
 import { getHeadingFromDatum, getTooltipEntries, isNoDataKey } from './helpers';
 import { useKeyToForceRepaint, usePositions } from './hooks/';
 
@@ -93,6 +93,7 @@ export const Tooltip = ({
     );
     const shouldReverseEntries = stackingGlyphs;
     const sortedEntries = shouldReverseEntries ? [...entries].reverse() : entries;
+    const imageUrl = (tooltipContext.tooltipData?.nearestDatum?.datum as BarChartDataPoint)?.imageUrl;
 
     return (
         <svg ref={containerRef} style={INVISIBLE_STYLES} key={wrapperKey}>
@@ -134,8 +135,9 @@ export const Tooltip = ({
                                 locale,
                                 labelFormatter,
                             )}
-                            entries={sortedEntries}
                             description={tooltipContext.tooltipData.nearestDatum?.datum?.description}
+                            imageUrl={imageUrl}
+                            entries={sortedEntries}
                         />
                     </TooltipInPortal>
                 </>

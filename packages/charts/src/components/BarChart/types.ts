@@ -10,6 +10,7 @@ type BarChartDataPointBase = {
     value: number | null;
     description?: string;
     valueContext?: string;
+    imageUrl?: string;
 };
 
 export type BarChartDataPoint<DataPointDetails extends Record<string, any> | void = void> =

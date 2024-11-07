@@ -13,18 +13,24 @@ type TooltipContentV2Props = {
     entries: TooltipEntry[];
     title?: string;
     description?: string;
+    imageUrl?: string;
 };
 
-export const TooltipContent = ({ title, description, entries }: TooltipContentV2Props) => {
+export const TooltipContent = ({ title, description, imageUrl, entries }: TooltipContentV2Props) => {
     const descriptionLines = description?.split('\n') ?? [];
     const dataPoint = entries[1];
 
     return (
         <div className="tw-bg-[var(--text-color)] tw-p-3 tw-rounded tw-border tw-border-button-border">
+            {imageUrl && (
+                <div className="tw--m-1">
+                    <img src={imageUrl} alt={description} className="tw-w-48 tw-h-28 tw-object-cover tw-mb-5" />
+                </div>
+            )}
             <div className={title ? 'tw-pb-3' : ''}>
-                <div className="tw-text-sm tw-leading-5 tw-text-base-alt tw-font-bold">{title}</div>
+                <div className="tw-text-body-small tw-text-base tw-font-bold">{title}</div>
                 {dataPoint?.type && (
-                    <div className="tw-text-sm tw-text-base-alt tw-pb-2">
+                    <div className="tw-text-body-small tw-text-base tw-pb-2">
                         {dataPoint.type}: {dataPoint.title}
                     </div>
                 )}
@@ -60,7 +66,7 @@ export type TooltipItemProps = {
 
 const TooltipItem = ({ title, value, color, type, valueContext }: TooltipItemProps) => {
     return (
-        <div key={`${title}-value`} className="tw-text-[var(--fc-base-color)] tw-text-sm tw-font-normal">
+        <div key={`${title}-value`} className="tw-text-body-small tw-text-base">
             {color && (
                 <span
                     className="tw-inline-block tw-w-2 tw-h-2 tw-rounded-full tw-mr-1"
@@ -70,7 +76,7 @@ const TooltipItem = ({ title, value, color, type, valueContext }: TooltipItemPro
                 />
             )}
             <span>{`${type || title}: `}</span>
-            <span className="tw-font-semibold">{`${value} ${valueContext || ''}`}</span>
+            <span className="tw-text-body-small tw-font-bold">{`${value} ${valueContext || ''}`}</span>
         </div>
     );
 };
