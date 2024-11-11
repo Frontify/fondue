@@ -1,7 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type Key, cloneElement, useEffect, useRef, useState } from 'react';
-
 import { Checkbox, CheckboxState } from '@components/Checkbox/Checkbox';
 import IconArrowBidirectional from '@foundation/Icon/Generated/IconArrowBidirectional';
 import IconArrowDown from '@foundation/Icon/Generated/IconArrowDown';
@@ -9,6 +7,7 @@ import IconArrowUp from '@foundation/Icon/Generated/IconArrowUp';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
+import { type Key, cloneElement, useEffect, useRef, useState } from 'react';
 
 import { type ColumnAlign, SelectionMode, SortDirection } from './Table';
 
@@ -103,7 +102,7 @@ export const TableColumnHeader = ({
         <th
             ref={ref}
             className={merge([
-                'tw-text-xs tw-font-medium tw-text-black-100 dark:tw-text-white tw-px-4 tw-py-3 tw-outline-none tw-group focus-visible:bg-violet-90',
+                'tw-px-4 tw-py-3 tw-outline-none tw-group focus-visible:bg-violet-90',
                 allowsSorting ? 'tw-cursor-pointer' : '',
             ])}
             data-test-id="table-column"
@@ -111,7 +110,12 @@ export const TableColumnHeader = ({
             onClick={allowsSorting ? () => handleSortChange(column.key, sortDirection) : () => null}
         >
             <ButtonOrSpan
-                className={merge(['tw-flex tw-gap-x-1 tw-items-center', FOCUS_VISIBLE_STYLE, cursorStyle, alignStyles])}
+                className={merge([
+                    'tw-text-xs tw-font-medium tw-text-black-100 dark:tw-text-white tw-flex tw-gap-x-1 tw-items-center',
+                    FOCUS_VISIBLE_STYLE,
+                    cursorStyle,
+                    alignStyles,
+                ])}
             >
                 {rendered}
                 {allowsSorting && (
