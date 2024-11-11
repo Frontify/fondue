@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type Key, cloneElement, useEffect, useRef, useState } from 'react';
+
 import { Checkbox, CheckboxState } from '@components/Checkbox/Checkbox';
 import IconArrowBidirectional from '@foundation/Icon/Generated/IconArrowBidirectional';
 import IconArrowDown from '@foundation/Icon/Generated/IconArrowDown';
@@ -7,7 +9,6 @@ import IconArrowUp from '@foundation/Icon/Generated/IconArrowUp';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import { type Key, cloneElement, useEffect, useRef, useState } from 'react';
 
 import { type ColumnAlign, SelectionMode, SortDirection } from './Table';
 
