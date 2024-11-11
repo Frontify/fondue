@@ -1,5 +1,16 @@
 # @frontify/fondue-components
 
+## 5.0.0
+
+### Minor Changes
+
+-   [#2090](https://github.com/Frontify/fondue/pull/2090) [`23b2020`](https://github.com/Frontify/fondue/commit/23b20208773dfe813711ddeed7c84ee91f7bb813) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: deprcated old components
+
+### Patch Changes
+
+-   Updated dependencies [[`f4be8c1`](https://github.com/Frontify/fondue/commit/f4be8c152f50063e0bb8eaf9e4efc4b47acb05af)]:
+    -   @frontify/fondue-icons@0.6.0
+
 ## 4.0.2
 
 ### Patch Changes

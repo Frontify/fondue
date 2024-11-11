@@ -1,5 +1,20 @@
 # @frontify/fondue
 
+## 12.3.0
+
+### Minor Changes
+
+-   [#2090](https://github.com/Frontify/fondue/pull/2090) [`23b2020`](https://github.com/Frontify/fondue/commit/23b20208773dfe813711ddeed7c84ee91f7bb813) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: deprcated old components
+
+### Patch Changes
+
+-   [#2100](https://github.com/Frontify/fondue/pull/2100) [`f0bbcd1`](https://github.com/Frontify/fondue/commit/f0bbcd1563229d4f0d6e2ed6419eeb0debcc0fe1) Thanks [@joseazevedo88](https://github.com/joseazevedo88)! - Align column header styles in table component
+
+-   Updated dependencies [[`973a8c5`](https://github.com/Frontify/fondue/commit/973a8c5b2c837d6842fe93c662f428fcf5a33064), [`23b2020`](https://github.com/Frontify/fondue/commit/23b20208773dfe813711ddeed7c84ee91f7bb813), [`f4be8c1`](https://github.com/Frontify/fondue/commit/f4be8c152f50063e0bb8eaf9e4efc4b47acb05af)]:
+    -   @frontify/fondue-charts@1.8.17
+    -   @frontify/fondue-components@5.0.0
+    -   @frontify/fondue-icons@0.6.0
+
 ## 12.2.17
 
 ### Patch Changes
