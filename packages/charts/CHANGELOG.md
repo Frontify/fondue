@@ -1,5 +1,11 @@
 # @frontify/fondue-charts
 
+## 1.8.17
+
+### Patch Changes
+
+-   [#2096](https://github.com/Frontify/fondue/pull/2096) [`973a8c5`](https://github.com/Frontify/fondue/commit/973a8c5b2c837d6842fe93c662f428fcf5a33064) Thanks [@joseazevedo88](https://github.com/joseazevedo88)! - add support for image rendering inside tooltips
+
 ## 1.8.16
 
 ### Patch Changes
