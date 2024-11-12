@@ -5,11 +5,11 @@ import { sv } from '#/utilities/styleUtilities';
 
 export const buttonStyles = sv({
     base:
-        'tw-group tw-border tw-relative tw-flex tw-flex-row tw-gap-2 tw-items-center tw-justify-center tw-cursor-pointer tw-font-body tw-font-medium ' +
+        'tw-group tw-relative tw-flex tw-flex-row tw-gap-2 tw-items-center tw-justify-center tw-cursor-pointer tw-font-body tw-font-medium ' +
         `${FOCUS_OUTLINE}`,
     variants: {
         disabled: {
-            true: 'tw-not-allowed tw-pointer-events-none tw-border-transparent tw-text-box-disabled-inverse tw-bg-box-disabled',
+            true: 'tw-not-allowed tw-pointer-events-none tw-text-box-disabled-inverse tw-bg-box-disabled',
         },
         rounding: {
             medium: 'tw-rounded',
@@ -46,7 +46,7 @@ export const buttonStyles = sv({
             variant: 'default',
             emphasis: 'default',
             class:
-                'tw-bg-button-background tw-border-button-border ' +
+                'tw-bg-button-background' +
                 'hover:tw-bg-button-background-hover ' +
                 'active:tw-bg-button-background-pressed',
         },
@@ -54,17 +54,14 @@ export const buttonStyles = sv({
             disabled: false,
             variant: 'default',
             emphasis: 'weak',
-            class:
-                'tw-border-transparent ' +
-                'hover:tw-bg-button-background-hover hover:tw-border-button-border ' +
-                'active:tw-bg-button-background-pressed',
+            class: 'hover:tw-bg-button-background-hover active:tw-bg-button-background-pressed',
         },
         {
             disabled: false,
             variant: 'default',
             emphasis: 'strong',
             class:
-                'tw-bg-button-strong-background tw-border-button-strong-border ' +
+                'tw-bg-button-strong-background' +
                 'hover:tw-bg-button-strong-background-hover ' +
                 'active:tw-bg-button-strong-background-pressed',
         },
@@ -73,7 +70,7 @@ export const buttonStyles = sv({
             variant: 'positive',
             emphasis: 'default',
             class:
-                'tw-bg-button-positive-background tw-border-button-positive-border ' +
+                'tw-bg-button-positive-background' +
                 'hover:tw-bg-button-positive-background-hover ' +
                 'active:tw-bg-button-positive-background-pressed',
         },
@@ -81,17 +78,14 @@ export const buttonStyles = sv({
             disabled: false,
             variant: 'positive',
             emphasis: 'weak',
-            class:
-                'tw-border-transparent ' +
-                'hover:tw-bg-button-positive-background-hover hover:tw-border-button-positive-border ' +
-                'active:tw-bg-button-positive-background-pressed',
+            class: 'hover:tw-bg-button-positive-background-hover active:tw-bg-button-positive-background-pressed',
         },
         {
             disabled: false,
             variant: 'positive',
             emphasis: 'strong',
             class:
-                'tw-bg-button-strong-positive-background tw-border-button-strong-positive-border ' +
+                'tw-bg-button-strong-positive-background' +
                 'hover:tw-bg-button-strong-positive-background-hover ' +
                 'active:tw-bg-button-strong-positive-background-pressed',
         },
@@ -100,7 +94,7 @@ export const buttonStyles = sv({
             variant: 'negative',
             emphasis: 'default',
             class:
-                'tw-bg-button-negative-background tw-border-button-negative-border ' +
+                'tw-bg-button-negative-background' +
                 'hover:tw-bg-button-negative-background-hover ' +
                 'active:tw-bg-button-negative-background-pressed',
         },
@@ -108,17 +102,14 @@ export const buttonStyles = sv({
             disabled: false,
             variant: 'negative',
             emphasis: 'weak',
-            class:
-                'tw-border-transparent ' +
-                'hover:tw-bg-button-negative-background-hover hover:tw-border-button-negative-border ' +
-                'active:tw-bg-button-negative-background-pressed',
+            class: 'hover:tw-bg-button-negative-background-hover active:tw-bg-button-negative-background-pressed',
         },
         {
             disabled: false,
             variant: 'negative',
             emphasis: 'strong',
             class:
-                'tw-bg-button-strong-negative-background tw-border-button-strong-negative-border ' +
+                'tw-bg-button-strong-negative-background' +
                 'hover:tw-bg-button-strong-negative-background-hover ' +
                 'active:tw-bg-button-strong-negative-background-pressed',
         },
@@ -127,7 +118,7 @@ export const buttonStyles = sv({
             variant: 'danger',
             emphasis: 'default',
             class:
-                'tw-bg-button-background tw-border-button-border ' +
+                'tw-bg-button-background' +
                 'hover:tw-bg-button-background-hover ' +
                 'active:tw-bg-button-background-pressed',
         },
@@ -135,17 +126,14 @@ export const buttonStyles = sv({
             disabled: false,
             variant: 'danger',
             emphasis: 'weak',
-            class:
-                'tw-border-transparent ' +
-                'hover:tw-bg-button-background-hover ' +
-                'active:tw-bg-button-background-pressed',
+            class: 'hover:tw-bg-button-background-hover active:tw-bg-button-background-pressed',
         },
         {
             disabled: false,
             variant: 'danger',
             emphasis: 'strong',
             class:
-                'tw-bg-button-danger-background tw-border-button-danger-border ' +
+                'tw-bg-button-danger-background' +
                 'hover:tw-bg-button-danger-background-hover ' +
                 'active:tw-bg-button-danger-background-pressed',
         },
@@ -153,10 +141,7 @@ export const buttonStyles = sv({
             disabled: false,
             variant: 'loud',
             emphasis: 'default',
-            class:
-                'tw-bg-box-selected tw-border-button-border ' +
-                'hover:tw-bg-box-selected-hover ' +
-                'active:tw-bg-box-selected-pressed ',
+            class: 'tw-bg-box-selected hover:tw-bg-box-selected-hover active:tw-bg-box-selected-pressed',
         },
         {
             disabled: false,
@@ -169,7 +154,7 @@ export const buttonStyles = sv({
             variant: 'loud',
             emphasis: 'strong',
             class:
-                'tw-bg-box-selected-strong tw-border-box-selected-strong ' +
+                'tw-bg-box-selected-strong' +
                 'hover:tw-bg-box-selected-strong-hover ' +
                 'active:tw-bg-box-selected-strong-pressed ',
         },
