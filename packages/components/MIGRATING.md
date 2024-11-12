@@ -8,47 +8,53 @@ This document describes the changes that you need to make to your code to migrat
     -   [Table of contents](#table-of-contents)
     -   [Components](#components)
         -   [Button](#button)
-            -   [Old](#old)
-            -   [New](#new)
-        -   [Checkbox](#checkbox)
-            -   [Old](#old-1)
-            -   [New](#new-1)
+            -   [Old](#button-old)
+            -   [New](#button-new)
+        -   [Checkbox (replaces `Checkbox` and `Checklist`)](#checkbox)
+            -   [Old](#checkbox-old)
+            -   [New](#checkbox-new)
         -   [Color Picker](#color-picker)
-            -   [Old](#old-2)
-            -   [New](#new-2)
+            -   [Old](#color-picker-old)
+            -   [New](#color-picker-new)
         -   [Dialog](#dialog)
-            -   [Old](#old-3)
-            -   [New](#new-3)
-        -   [Dropdown (replaces `Dropdown` and `Menu`)](#dropdown-replaces-dropdown-and-menu)
-            -   [Old](#old-4)
-            -   [New](#new-4)
+            -   [Old](#dialog-old)
+            -   [New](#dialog-new)
+        -   [Dropdown (replaces `Dropdown`, `Menu` and `ActionMenu`)](#dropdown-replaces-dropdown-menu-and-actionmenu)
+            -   [Old](#dropdown-old)
+            -   [New](#dropdown-new)
         -   [Flyout (old `InlineDialog`)](#flyout-old-inlinedialog)
-            -   [Old](#old-5)
-            -   [New](#new-5)
+            -   [Old](#flyout-old)
+            -   [New](#flyout-new)
         -   [Label (old `InputLabel`)](#label-old-inputlabel)
-            -   [Old](#old-6)
-            -   [New](#new-6)
+            -   [Old](#label-old)
+            -   [New](#label-new)
+        -   [Layout Components](#layout-components)
+            -   [Old](#layout-old)
+            -   [New](#layout-new)
         -   [Loading Bar](#loading-bar)
-            -   [Old](#old-7)
-            -   [New](#new-7)
+            -   [Old](#loading-bar-old)
+            -   [New](#loading-bar-new)
+        -   [Scroll Wrapper](#scroll-wrapper)
+            -   [Old](#scroll-wrapper-old)
+            -   [New](#scroll-wrapper-new)
         -   [Segmented Control](#segmented-control)
-            -   [Old](#old-8)
-            -   [New](#new-8)
+            -   [Old](#segmented-control-old)
+            -   [New](#segmented-control-new)
         -   [Select](#select)
-            -   [Old](#old-9)
-            -   [New](#new-9)
+            -   [Old](#select-old)
+            -   [New](#select-new)
         -   [Slider](#slider)
-            -   [Old](#old-10)
-            -   [New](#new-10)
+            -   [Old](#slider-old)
+            -   [New](#slider-new)
         -   [Switch](#switch)
-            -   [Old](#old-11)
-            -   [New](#new-11)
+            -   [Old](#switch-old)
+            -   [New](#switch-new)
         -   [Text Input](#text-input)
-            -   [Old](#old-12)
-            -   [New](#new-12)
+            -   [Old](#text-input-old)
+            -   [New](#text-input-new)
         -   [Tooltip](#tooltip)
-            -   [Old](#old-13)
-            -   [New](#new-13)
+            -   [Old](#tooltip-old)
+            -   [New](#tooltip-new)
 
 ## Components
 
@@ -122,6 +128,15 @@ Changes:
 />
 ```
 
+```tsx
+<ChecklistComponent
+    direction={ChecklistDirection.Horizontal}
+    checkboxes={[]}
+    activeValues={[]}
+    setActiveValues={[]}
+/>
+```
+
 #### New
 
 ```tsx
@@ -137,6 +152,37 @@ Changes:
 </Label>
 ```
 
+```tsx
+<Flex gap="1rem" direction="column">
+    <Flex gap="4px" direction="row">
+        <Checkbox {...args} id="checkbox1" aria-labelledby="label" value={true} onChange={() => {}} />
+        <Label id="label" htmlFor="checkbox1">
+            Checkbox 1
+        </Label>
+    </Flex>
+    <Flex gap="4px" direction="row">
+        <Checkbox {...args} id="checkbox2" aria-labelledby="label" value={false} onChange={() => {}} />
+        <Label id="label" htmlFor="checkbox2">
+            Checkbox 2
+        </Label>
+    </Flex>
+    <Flex gap="4px" direction="row">
+        <Checkbox
+            {...args}
+            id="checkbox3"
+            aria-labelledby="label"
+            value="indeterminate"
+            onChange={() => {}}
+        />
+        <Label id="label" htmlFor="checkbox3">
+            Checkbox 3
+        </Label>
+    </Flex>
+</Flex>
+```
+
+
+
 ### Color Picker
 
 Changes:
@@ -147,6 +193,7 @@ Changes:
     -   You can pass `ColorPicker.Values` as a child to show the value input fields.
     -   You can pass `ColorPicker.Gradient` as a child to show the color gradient input.
 -   The format is now handled internally. You can pass in the initial format with the prop `defaultFormat`.
+-   The brand color picker has been removed without replacement.
 
 #### Old
 
@@ -305,7 +352,7 @@ return (
 </Dialog.Root>
 ```
 
-### Dropdown (replaces `Dropdown` and `Menu`)
+### Dropdown (replaces `Dropdown`, `Menu` and `ActionMenu`)
 
 Changes:
 
@@ -543,6 +590,53 @@ Changes:
 </Label>
 ```
 
+### Layout Components
+
+Changes:
+
+- All proprietaary properties were removed, the new Layout Components now accept CSSProperties as props
+- The Style properties allow for responsive styling by passing an object with breakpoints as keys and CSSProperties as values
+- `Stack` has been combined with `Flex`
+- `Container` has been combined with `Box`
+
+#### Old
+
+```tsx
+<FondueStack
+  alignItems="start"
+  as="div"
+  bg=""
+  color=""
+  data-test-id="custom-test-id"
+  direction="column"
+  justify="start"
+  margin={0}
+  padding={12}
+  spacing={8}
+>
+    <div />
+    <div />
+    <div />
+</FondueStack>
+```
+
+#### New
+
+```tsx
+<Flex
+  direction={{
+    base: 'row',
+    sm: 'column'
+  }}
+  alignItems="start"
+  gap="20px"
+>
+    <div />
+    <div />
+    <div />
+</Flex>
+```
+
 ### Loading Bar
 
 Changes:
@@ -562,6 +656,39 @@ Changes:
 
 ```tsx
 <LoadingBar value={50} style="success" rounded />
+```
+
+### Scroll Area
+
+Changes:
+
+-   The properties `direction` and `tabIndex` have been removed
+-   The property `scrollShadow`has been renamed to `showShadow` and is now `false` by default
+-   The properties `maxHeight`and `maxWidth`have been added
+-   The property `type` has been added.
+
+#### Old
+
+```tsx
+<ScrollWrapper direction={ScrollWrapperDirection.Vertical}>
+    <p className="tw-w-[200px]">
+        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis assumenda
+        itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure explicabo, fugiat
+        perferendis consequatur.
+    </p>
+</ScrollWrapper>
+```
+
+#### New
+
+```tsx
+<ScrollArea showShadow>
+    <p className="tw-w-[200px]">
+        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis assumenda
+        itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure explicabo, fugiat
+        perferendis consequatur.
+    </p>
+</ScrollArea>
 ```
 
 ### Segmented Control
@@ -874,6 +1001,7 @@ Changes:
 -   The property `dotted` have been removed, `className` can be used to add custom border styles.
 -   The event `onEnterPressed` has been removed, use `onKeyDown` with a `event.key === 'Enter'` condition instead.
 -   The properties `decorator`, `clearable` / `onClear`, `copyable` and `extraActions` have been removed with the introduction of the `TextInput.Slot` component.
+-   The `type` property has been added to specify the type of the input. This replaces the `NumberInput` and `PasswordInput` component.
 
     -   `TextInput.Slot` can be used to add decorators, actions, etc. to the input.
 

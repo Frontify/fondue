@@ -14,6 +14,9 @@ export type MultiInputProps = {
     'data-test-id'?: string;
 };
 
+/**
+ * @deprecated Use a Layout component from `frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md the migration guide}.
+ */
 export const MultiInput = ({
     layout,
     spanLastItem,

@@ -9,6 +9,9 @@ export const IconTemplate: Template = ({ interfaces, componentName, jsx }, { tpl
 
       ${interfaces}
 
+      /**
+      * @deprecated Import Icons from \`@frontify/fondue/components\` instead.
+      */
       function ${componentName}(props: GeneratedIconProps): ReactElement<GeneratedIconProps> {
         const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
 

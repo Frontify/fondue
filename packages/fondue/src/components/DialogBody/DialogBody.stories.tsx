@@ -6,6 +6,9 @@ import { DIALOG_PADDING, type DialogBodyProps } from '../../types';
 
 import { DialogBody } from './DialogBody';
 
+/**
+ ### This component is deprecated, please use the [new Dialog](/docs/current_components-dialog--documentation) component instead.
+ */
 export default {
     title: 'Experimental/DialogBody',
     component: DialogBody,
@@ -17,6 +20,11 @@ export default {
         padding: {
             options: ['none', ...DIALOG_PADDING],
             control: { type: 'select' },
+        },
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
         },
     },
 } as Meta<DialogBodyProps>;

@@ -13,7 +13,7 @@ const meta: Meta<typeof Box> = {
     tags: ['autodocs'],
     parameters: {
         status: {
-            type: 'in_progress',
+            type: 'released',
         },
     },
     args: {

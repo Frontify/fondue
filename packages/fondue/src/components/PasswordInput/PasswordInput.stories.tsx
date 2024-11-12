@@ -7,6 +7,9 @@ import { Validation } from '@utilities/validation';
 
 import { PasswordInput, type PasswordInputProps } from './PasswordInput';
 
+/**
+ ### This component is deprecated, please use the [new Text Input component](/docs/current_components-text-input--documentation) with `type="password"` instead.
+ */
 export default {
     title: 'Components/Password Input',
     component: PasswordInput,
@@ -54,6 +57,11 @@ export default {
         },
         'data-test-id': {
             table: { disable: true },
+        },
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
         },
     },
     args: {},

@@ -11,6 +11,9 @@ import { DIALOG_PADDING, type DialogFooterProps } from '../../types';
 
 import { DialogFooter } from './DialogFooter';
 
+/**
+ ### This component is deprecated, please use the [new Dialog](/docs/current_components-dialog--documentation) component instead.
+ */
 export default {
     title: 'Experimental/DialogFooter',
     component: DialogFooter,
@@ -44,6 +47,11 @@ export default {
         },
         separator: {
             type: 'boolean',
+        },
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
         },
     },
 } as Meta<DialogFooterProps>;

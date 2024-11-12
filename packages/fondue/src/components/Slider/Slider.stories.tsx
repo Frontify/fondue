@@ -31,6 +31,11 @@ export default {
         max: 100,
         stepMultiplier: 5,
     },
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
+    },
 } as Meta<SliderProps>;
 
 const SliderTemplate: StoryFn<SliderProps> = (args: SliderProps) => {

@@ -35,6 +35,9 @@ const tooltipHoverClasses = {
     [TooltipIconTriggerStyle.Primary]: 'hover:tw-text-text hover:tw-bg-box-neutral',
 };
 
+/**
+ * @deprecated Please use updated tooltip component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tooltip the migration guide}.
+ */
 export const TooltipIcon = ({
     tooltip,
     iconSize = IconSize.Size16,

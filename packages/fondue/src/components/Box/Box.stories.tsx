@@ -14,6 +14,9 @@ const spacingSelect = {
     defaultValue: '',
 };
 
+/**
+ ### This component is deprecated, please use the [new Box layout component](/docs/current_layout-box--documentation) instead.
+ */
 export default {
     title: 'Layout/Box',
     component: BoxComponent,
@@ -51,6 +54,11 @@ export default {
         'data-test-id': BOX_TEST_ID,
         children:
             'You can pass any props you want into this component. In the controls you can find examples with camelCased, aria and data attributes.',
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
     },
 } as Meta<Props>;
 

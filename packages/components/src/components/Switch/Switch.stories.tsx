@@ -16,7 +16,7 @@ const meta: Meta<typeof Switch> = {
     tags: ['autodocs'],
     parameters: {
         status: {
-            type: 'in_progress',
+            type: 'released',
         },
     },
     argTypes: {

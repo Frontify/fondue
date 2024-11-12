@@ -60,8 +60,17 @@
         color: var(--text-color);
     }
 
+    &[data-emphasis='danger'] {
+        color: var(--text-color-negative);
+    }
+
     &[data-highlighted] {
         background-color: var(--box-neutral-strong-color);
+        color: var(--box-neutral-strong-inverse-color);
+    }
+
+    &[data-emphasis='danger'][data-highlighted] {
+        background-color: var(--text-color-negative);
         color: var(--box-neutral-strong-inverse-color);
     }
 

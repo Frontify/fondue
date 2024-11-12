@@ -61,6 +61,9 @@ const alignMap: Record<LegacyStackAlign, string> = {
 
 const DEFAULT_DATA_TEST_ID = 'fondue-legacy-stack';
 
+/**
+ * @deprecated Use `Flex` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#layout-components the migration guide}.
+ */
 export const LegacyStack = ({
     children,
     padding,

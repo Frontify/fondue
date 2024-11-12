@@ -29,6 +29,11 @@ export default {
         disabled: false,
         size: 'medium',
     },
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
+    },
 } as Meta<SegmentedControlsProps>;
 
 const SegmentedControlsTemplate: StoryFn<SegmentedControlsProps> = (args: SegmentedControlsProps) => {

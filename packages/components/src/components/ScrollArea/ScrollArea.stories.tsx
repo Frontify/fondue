@@ -11,7 +11,7 @@ const meta: Meta<typeof ScrollArea> = {
     tags: ['autodocs'],
     parameters: {
         status: {
-            type: 'in_progress',
+            type: 'released',
         },
     },
     args: {},
@@ -142,6 +142,30 @@ export const VisibleWhenScrolling: Story = {
     render: () => {
         return (
             <ScrollArea type="scroll" maxHeight={200} maxWidth={300}>
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec dui in nunc ultricies ornare.
+                    Quisque auctor, nunc nec aliquam fermentum, odio turpis ultricies elit, in ultricies nunc justo
+                    vitae purus. Integer auctor, libero in ultricies tincidunt, odio libero posuere justo, vel ultricies
+                    nunc justo vitae purus. Integer auctor, libero in ultricies tincidunt, odio libero posuere justo,
+                    vel ultricies nunc justo vitae purus. Integer auctor, libero in ultricies tincidunt, odio libero
+                    posuere justo, vel ultricies nunc justo vitae purus. Integer auctor, libero in ultricies tincidunt,
+                    odio libero posuere justo, vel ultricies nunc justo vitae purus. Integer auctor, libero in ultricies
+                    tincidunt, odio libero posuere justo, vel ultricies nunc justo vitae purus. Integer auctor, libero
+                    in ultricies tincidunt, odio libero posuere justo, vel ultricies nunc justo vitae purus. Integer
+                    auctor, libero in ultricies tincidunt, odio libero posuere justo, vel ultricies nunc justo vitae
+                    purus. Integer auctor, libero in ultricies tincidunt, odio libero posuere justo, vel ultricies nunc
+                    justo vitae purus. Integer auctor, libero in ultricies tincidunt, odio libero posuere justo, vel
+                    ultricies nunc justo vitae purus.
+                </p>
+            </ScrollArea>
+        );
+    },
+};
+
+export const WithShadow: Story = {
+    render: () => {
+        return (
+            <ScrollArea type="scroll" maxHeight={200} maxWidth={300} showShadow>
                 <p>
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec dui in nunc ultricies ornare.
                     Quisque auctor, nunc nec aliquam fermentum, odio turpis ultricies elit, in ultricies nunc justo

@@ -20,6 +20,11 @@ describe('Tooltip', () => {
     it('should render the value context if it is present in datum', () => {
         vi.mocked(useContext).mockReturnValue({
             tooltipData: {
+                nearestDatum: {
+                    datum: {
+                        imageUrl: '/image.png',
+                    },
+                },
                 datumByKey: {
                     test1: {
                         datum: {
@@ -58,10 +63,11 @@ describe('Tooltip', () => {
             tooltipPosition: { tooltipLeft: 20, tooltipTop: 30 },
             glyphProps: [],
         });
-        const { getByText } = render(<Tooltip crossHairStyle="line" />);
+        const { getByText, getByRole } = render(<Tooltip crossHairStyle="line" />);
 
         expect(getByText(/5%/i)).toBeDefined();
         expect(getByText(/10%/i)).toBeDefined();
         expect(getByText(/ctr 20%/i)).toBeDefined();
+        expect(getByRole('img')).toBeDefined();
     });
 });

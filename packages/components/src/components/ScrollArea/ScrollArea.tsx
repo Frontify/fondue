@@ -24,6 +24,10 @@ export type ScrollAreaProps = {
      * @default '100%'
      */
     maxWidth?: string | number;
+    /**
+     * Determines if a inset shadow should be shown the edge of the component
+     */
+    showShadow?: boolean;
     'data-test-id'?: string;
     children: ReactNode;
 };
@@ -33,6 +37,7 @@ const ScrollAreaComponent = (
         type,
         maxHeight = '100%',
         maxWidth = '100%',
+        showShadow = false,
         children,
         'data-test-id': dataTestId = 'fondue-scroll-area',
     }: ScrollAreaProps,
@@ -50,6 +55,7 @@ const ScrollAreaComponent = (
                 className={styles.viewport}
                 style={{ maxHeight }}
                 data-test-id={`${dataTestId}-viewport`}
+                data-show-shadow={showShadow}
             >
                 {children}
             </RadixScrollArea.Viewport>

@@ -30,6 +30,9 @@ export type GridProps = {
 
 export const GRID_TEST_ID = 'fondue-grid';
 
+/**
+ * @deprecated Use `Grid` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#grid the migration guide}.
+ */
 export const Grid = ({
     column = 2,
     spacing = 4,

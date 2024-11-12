@@ -51,6 +51,11 @@ export default {
             defaultValue: false,
         },
     },
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
+    },
 } as Meta;
 
 const DropdownTemplate: StoryFn<DropdownProps> = (args: DropdownProps) => {

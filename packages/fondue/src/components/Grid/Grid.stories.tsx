@@ -16,6 +16,9 @@ const spacingSelect = {
     defaultValue: '',
 };
 
+/**
+ ### This component is deprecated, please use the [new Grid layout component](/docs/current_layout-grid--documentation) instead.
+ */
 export default {
     title: 'Layout/Grid',
     component: Grid,
@@ -56,6 +59,11 @@ export default {
         bg: 'tw-bg-box-positive-strong',
         color: 'tw-text-box-positive-strong-inverse',
         as: 'div',
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
     },
 } as Meta<GridProps>;
 

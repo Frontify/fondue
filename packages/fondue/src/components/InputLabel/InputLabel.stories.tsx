@@ -24,6 +24,11 @@ export default {
             content: 'Lorem ipsum dolor sit amet.',
         },
     },
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
+    },
 } as Meta;
 
 export const InputLabel: StoryFn<InputLabelProps> = (args: InputLabelProps) => <InputLabelComponent {...args} />;

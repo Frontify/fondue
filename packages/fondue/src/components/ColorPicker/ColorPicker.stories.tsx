@@ -8,6 +8,9 @@ import { ColorFormat } from '../../types/colors';
 import { ColorPicker, type ColorPickerProps } from './ColorPicker';
 import { EXAMPLE_PALETTES } from './example-palettes';
 
+/**
+ ### This component is deprecated, please use the [new Color Picker component](/docs/current_components-colorpicker--documentation) instead.
+ */
 export default {
     title: 'Components/Color Picker',
     component: ColorPicker,
@@ -17,6 +20,11 @@ export default {
     },
     argTypes: {
         onSelect: { action: 'Select Color' },
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
     },
 } as Meta<ColorPickerProps>;
 
