@@ -1,0 +1,88 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+.table {
+    text-align: left;
+    border-collapse: collapse;
+    table-layout: auto;
+    min-width: max-content;
+    width: 100%;
+}
+
+.header {
+    background-color: var(--color-background-header);
+    color: var(--color-text-header);
+    font-weight: bold;
+    .row {
+        background-color: var(--base-color);
+        &[data-sticky] {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+    }
+}
+
+.headerCell {
+    font-weight: 400;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+
+    &[data-align='center'] {
+        text-align: center;
+    }
+
+    &[data-align='right'] {
+        text-align: right;
+    }
+
+    &[data-align='left'] {
+        text-align: left;
+    }
+}
+
+.body {
+    .row {
+        position: relative;
+        border-color: rgb(234 235 235);
+        border-top-width: var(--line-width);
+
+        &:hover {
+            background-color: var(--color-background-hover);
+        }
+
+        &[data-selected] {
+            background-color: var(--color-background-selected);
+        }
+    }
+    &[data-sticky-first-column] {
+        .cell:first-child {
+            position: sticky;
+            left: 0;
+            z-index: 1;
+        }
+    }
+}
+
+.rowCell {
+    color: rgb(108 112 112 / var(--tw-text-opacity));
+    font-weight: 400;
+    font-size: 0.813rem;
+    line-height: 1rem;
+    padding: 1rem;
+
+    &[data-align='center'] {
+        text-align: center;
+    }
+
+    &[data-align='right'] {
+        text-align: right;
+    }
+
+    &[data-align='left'] {
+        text-align: left;
+    }
+}
