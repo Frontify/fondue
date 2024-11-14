@@ -51,11 +51,11 @@
         border-top-width: var(--line-width);
 
         &:hover {
-            background-color: var(--color-background-hover);
+            background-color: #f1f1f1;
         }
 
-        &[data-selected] {
-            background-color: var(--color-background-selected);
+        &[data-selected='true'] {
+            background-color: #fafafa;
         }
     }
     &[data-sticky-first-column] {
