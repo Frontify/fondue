@@ -2,6 +2,7 @@
 
 import { IconCheckMark, IconExclamationMarkTriangle } from '@frontify/fondue-icons';
 import {
+    type FocusEvent,
     forwardRef,
     useRef,
     type ChangeEvent,
@@ -82,11 +83,11 @@ export type TextInputProps = {
     /**
      * Event handler called when the text input is blurred
      */
-    onBlur?: (event: ChangeEvent<HTMLInputElement>) => void;
+    onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
     /**
      * Event handler called when the text input is focused
      */
-    onFocus?: (event: ChangeEvent<HTMLInputElement>) => void;
+    onFocus?: (event: FocusEvent<HTMLInputElement>) => void;
     /**
      * Event handler called when a key is pressed
      */
