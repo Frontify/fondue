@@ -487,14 +487,12 @@ export const ScrollBehavior: Story = {
                             <Table.RowCell>{TABLE_DATA[index % 6]?.status}</Table.RowCell>
                             <Table.RowCell>{TABLE_DATA[index % 6]?.lastLogin}</Table.RowCell>
                             <Table.RowCell>
-                                <div onClick={(e) => e.stopPropagation()}>
-                                    <Flex gap="0.5rem">
-                                        <Button size="small">Edit</Button>
-                                        <Button size="small" variant="danger">
-                                            Delete
-                                        </Button>
-                                    </Flex>
-                                </div>
+                                <Flex gap="0.5rem">
+                                    <Button size="small">Edit</Button>
+                                    <Button size="small" variant="danger">
+                                        Delete
+                                    </Button>
+                                </Flex>
                             </Table.RowCell>
                         </Table.Row>
                     ))}

@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-// CSS Custom Properties with fallback values
 :root {
     --table-border-color: rgb(234 235 235);
     --table-header-bg: #f5f5f5;
@@ -206,13 +205,11 @@
     }
 }
 
-// New scrollable body styles
 .body[data-scrollable='true'] {
     display: block;
     overflow-y: auto;
     background-color: inherit;
 
-    // Ensure sticky header works with scrollable body
     thead {
         position: sticky;
         top: 0;
