@@ -1,24 +1,82 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+// CSS Custom Properties with fallback values
+:root {
+    --table-border-color: rgb(234 235 235);
+    --table-header-bg: #f5f5f5;
+    --table-header-color: #333333;
+    --table-row-hover-bg: #f1f1f1;
+    --table-row-selected-bg: #fafafa;
+    --table-row-striped-bg: #fafafa;
+    --table-text-color: rgb(108 112 112);
+    --table-border-width: 1px;
+    --table-cell-padding: 1rem;
+    --table-cell-padding-dense: 0.5rem 0.75rem;
+    --table-font-size: 0.813rem;
+    --table-line-height: 1rem;
+    --table-loading-overlay: rgba(245, 245, 245, 0.5);
+    --table-primary-color: #0066ff;
+}
+
+.tableWrapper {
+    position: relative;
+    width: 100%;
+
+    &[data-loading='true'] {
+        &::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-color: var(--table-loading-overlay);
+            z-index: 2;
+        }
+    }
+}
+
 .table {
     text-align: left;
     border-collapse: collapse;
     table-layout: auto;
     min-width: max-content;
     width: 100%;
+
+    &[data-full-width='false'] {
+        width: auto;
+    }
+
+    &[data-bordered='true'] {
+        border: var(--table-border-width) solid var(--table-border-color);
+
+        .headerCell,
+        .rowCell {
+            border: var(--table-border-width) solid var(--table-border-color);
+        }
+    }
+
+    &[data-striped='true'] {
+        .body .row:nth-child(even) {
+            background-color: var(--table-row-striped-bg);
+        }
+    }
+
+    &[data-dense='true'] {
+        .headerCell,
+        .rowCell {
+            padding: var(--table-cell-padding-dense);
+        }
+    }
 }
 
 .header {
-    background-color: var(--color-background-header);
-    color: var(--color-text-header);
+    background-color: var(--table-header-bg);
+    color: var(--table-header-color);
     font-weight: bold;
-    .row {
-        background-color: var(--base-color);
-        &[data-sticky] {
-            position: sticky;
-            top: 0;
-            z-index: 1;
-        }
+
+    &[data-sticky='true'] {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        background-color: var(--table-header-bg);
     }
 }
 
@@ -26,10 +84,20 @@
     font-weight: 400;
     outline: 2px solid transparent;
     outline-offset: 2px;
-    padding-top: 0.75rem;
-    padding-bottom: 0.75rem;
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding: var(--table-cell-padding);
+    transition: background-color 0.2s ease;
+
+    &[data-truncate='true'] {
+        max-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &[data-no-shrink='true'] {
+        width: 1%;
+        white-space: nowrap;
+    }
 
     &[data-align='center'] {
         text-align: center;
@@ -44,35 +112,128 @@
     }
 }
 
-.body {
-    .row {
-        position: relative;
-        border-color: rgb(234 235 235);
-        border-top-width: var(--line-width);
+.sortButton {
+    appearance: none;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    width: 100%;
+    text-align: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
 
-        &:hover {
-            background-color: #f1f1f1;
-        }
+    &:hover {
+        color: var(--table-primary-color);
+    }
 
-        &[data-selected='true'] {
-            background-color: #fafafa;
+    &:focus-visible {
+        outline: 2px solid var(--table-primary-color);
+        outline-offset: 2px;
+    }
+
+    &::after {
+        content: '';
+        width: 0.75rem;
+        height: 0.75rem;
+        opacity: 0.5;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: contain;
+    }
+
+    [aria-sort='ascending'] & {
+        &::after {
+            opacity: 1;
+            content: '↑';
         }
     }
-    &[data-sticky-first-column] {
-        .cell:first-child {
-            position: sticky;
-            left: 0;
-            z-index: 1;
+
+    [aria-sort='descending'] & {
+        &::after {
+            opacity: 1;
+            content: '↓';
         }
     }
 }
 
+.body {
+    .row {
+        position: relative;
+        border-color: var(--table-border-color);
+        border-top-width: var(--table-border-width);
+
+        transition: background-color 0.2s ease;
+
+        &[data-interactive='true'] {
+            cursor: pointer;
+
+            &:not([data-disabled='true']) {
+                &:hover {
+                    .rowCell {
+                        background-color: var(--table-row-hover-bg);
+                    }
+                }
+
+                &:focus-visible {
+                    outline: 2px solid var(--table-primary-color);
+                    outline-offset: -2px;
+                }
+            }
+        }
+
+        &[data-selected='true'] {
+            background-color: var(--table-row-selected-bg);
+        }
+
+        &[data-disabled='true'] {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+    }
+
+    &[data-sticky-first-column='true'] {
+        .rowCell:first-child {
+            position: sticky;
+            left: -1px;
+            z-index: 1;
+            box-shadow: 1px 0 0 var(--table-border-color);
+        }
+    }
+}
+
+// New scrollable body styles
+.body[data-scrollable='true'] {
+    display: block;
+    overflow-y: auto;
+    background-color: inherit;
+
+    // Ensure sticky header works with scrollable body
+    thead {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+}
+
 .rowCell {
-    color: rgb(108 112 112 / var(--tw-text-opacity));
+    color: var(--table-text-color);
     font-weight: 400;
-    font-size: 0.813rem;
-    line-height: 1rem;
-    padding: 1rem;
+    font-size: var(--table-font-size);
+    line-height: var(--table-line-height);
+    padding: var(--table-cell-padding);
+    background-color: #fff;
+
+    &[data-truncate='true'] {
+        max-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 
     &[data-align='center'] {
         text-align: center;
