@@ -584,9 +584,9 @@ export const Interactive: Story = {
         <Table.Root>
             <Table.Header>
                 <Table.Row>
-                    <Table.HeaderCell width="250px">Name</Table.HeaderCell>
-                    <Table.HeaderCell width="150px">Invited by</Table.HeaderCell>
-                    <Table.HeaderCell width="120px">Last seen</Table.HeaderCell>
+                    <Table.HeaderCell>Name</Table.HeaderCell>
+                    <Table.HeaderCell>Invited by</Table.HeaderCell>
+                    <Table.HeaderCell>Last seen</Table.HeaderCell>
                 </Table.Row>
             </Table.Header>
             <Table.Body>
@@ -614,9 +614,9 @@ export const WithLinks: Story = {
         <Table.Root>
             <Table.Header>
                 <Table.Row>
-                    <Table.HeaderCell width="250px">Name</Table.HeaderCell>
-                    <Table.HeaderCell width="150px">Invited by</Table.HeaderCell>
-                    <Table.HeaderCell width="120px">Last seen</Table.HeaderCell>
+                    <Table.HeaderCell>Name</Table.HeaderCell>
+                    <Table.HeaderCell>Invited by</Table.HeaderCell>
+                    <Table.HeaderCell>Last seen</Table.HeaderCell>
                 </Table.Row>
             </Table.Header>
             <Table.Body>
@@ -624,7 +624,7 @@ export const WithLinks: Story = {
                     <Table.Row
                         key={user.email}
                         href={`/users/${user.email}`}
-                        onNavigate={() => alert(`Navigating to ${user.email}`)}
+                        onNavigate={(href) => alert(`Navigating to ${href}`)}
                     >
                         <Table.RowCell>
                             <div className="flex items-center gap-2">
@@ -648,9 +648,9 @@ export const Disabled: Story = {
         <Table.Root>
             <Table.Header>
                 <Table.Row>
-                    <Table.HeaderCell width="250px">Name</Table.HeaderCell>
-                    <Table.HeaderCell width="150px">Invited by</Table.HeaderCell>
-                    <Table.HeaderCell width="120px">Last seen</Table.HeaderCell>
+                    <Table.HeaderCell>Name</Table.HeaderCell>
+                    <Table.HeaderCell>Invited by</Table.HeaderCell>
+                    <Table.HeaderCell>Last seen</Table.HeaderCell>
                 </Table.Row>
             </Table.Header>
             <Table.Body>
@@ -682,9 +682,9 @@ export const WithCaption: Story = {
         <Table.Root caption="User Management Dashboard">
             <Table.Header>
                 <Table.Row>
-                    <Table.HeaderCell width="250px">Name</Table.HeaderCell>
-                    <Table.HeaderCell width="150px">Invited by</Table.HeaderCell>
-                    <Table.HeaderCell width="120px">Last seen</Table.HeaderCell>
+                    <Table.HeaderCell>Name</Table.HeaderCell>
+                    <Table.HeaderCell>Invited by</Table.HeaderCell>
+                    <Table.HeaderCell>Last seen</Table.HeaderCell>
                 </Table.Row>
             </Table.Header>
             <Table.Body>
@@ -740,7 +740,6 @@ export const WithSearchAndFilters: Story = {
         const filteredAndSortedData = useMemo(() => {
             let result = [...TABLE_DATA];
 
-            // Apply search filter
             if (searchTerm) {
                 result = result.filter(
                     (user) =>
