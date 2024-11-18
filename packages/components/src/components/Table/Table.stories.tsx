@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconMagnifier, IconPen, IconTrashBin } from '@frontify/fondue-icons';
+import { IconFunnel, IconMagnifier, IconPen, IconTrashBin } from '@frontify/fondue-icons';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { useState, useMemo, type FormEvent } from 'react';
 
@@ -764,12 +764,15 @@ export const WithSearchAndFilters: Story = {
                         onChange={(e) => setSearchTerm(e.target.value)}
                     >
                         <TextInput.Slot>
-                            <IconMagnifier />
+                            <IconMagnifier size="16" />
                         </TextInput.Slot>
                     </TextInput>
                     <Dropdown.Root>
                         <Dropdown.Trigger>
-                            <Button>Filter by age</Button>
+                            <Button emphasis="default">
+                                <IconFunnel size="16" />
+                                Filter by age
+                            </Button>
                         </Dropdown.Trigger>
                         <Dropdown.Content>
                             <Dropdown.Item onSelect={() => setAgeFilter('all')}>All</Dropdown.Item>
