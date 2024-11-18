@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-/* (c) Copyright Frontify Ltd., all rights reserved. */
 import { IconArrowDown, IconArrowUp } from '@frontify/fondue-icons';
 import { type ReactNode, useId, forwardRef, useMemo, type KeyboardEvent } from 'react';
 
@@ -241,6 +240,7 @@ type BaseTableRowProps = {
      * Accessible label for the row
      */
     'aria-label'?: string;
+    'data-test-id'?: string;
 };
 
 type ClickableTableRowProps = BaseTableRowProps & {
@@ -276,7 +276,19 @@ type NonInteractiveTableRowProps = BaseTableRowProps & {
 type TableRowProps = ClickableTableRowProps | NavigableTableRowProps | NonInteractiveTableRowProps;
 
 export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
-    ({ selected = false, disabled = false, href, onNavigate, onClick, children, 'aria-label': ariaLabel }, ref) => {
+    (
+        {
+            selected = false,
+            disabled = false,
+            href,
+            onNavigate,
+            onClick,
+            children,
+            'aria-label': ariaLabel,
+            'data-test-id': dataTestId,
+        },
+        ref,
+    ) => {
         const isInteractive = (onClick !== undefined || onNavigate !== undefined) && !disabled;
         const isLink = Boolean(onNavigate && href);
 
@@ -318,6 +330,7 @@ export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
                 aria-label={ariaLabel}
                 onClick={isInteractive ? handleClick : undefined}
                 onKeyDown={isInteractive ? handleKeyDown : undefined}
+                data-test-id={dataTestId}
             >
                 {children}
             </tr>
