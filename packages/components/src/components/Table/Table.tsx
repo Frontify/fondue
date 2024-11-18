@@ -2,7 +2,7 @@
 
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 import { IconArrowDown, IconArrowUp } from '@frontify/fondue-icons';
-import { type ReactNode, useId, forwardRef, useMemo, KeyboardEvent } from 'react';
+import { type ReactNode, useId, forwardRef, useMemo, type KeyboardEvent } from 'react';
 
 import styles from './styles/table.module.scss';
 import { handleKeyDown } from './utils';
