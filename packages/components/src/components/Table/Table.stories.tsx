@@ -162,11 +162,16 @@ export const WithSearchFilterSort: Story = {
     render: () => {
         const [searchTerm, setSearchTerm] = useState('');
         const [ageFilter, setAgeFilter] = useState<'all' | 'young' | 'old'>('all');
-        const [sortStates, setSortStates] = useState<Record<string, SortDirection>>({});
+        // Changed to track only the active sort column and direction
+        const [activeSort, setActiveSort] = useState<{
+            column: string;
+            direction: SortDirection;
+        } | null>(null);
 
         const filteredAndSortedData = useMemo(() => {
             let result = [...TABLE_DATA];
 
+            // Apply search filter
             if (searchTerm) {
                 result = result.filter(
                     (row) =>
@@ -175,38 +180,33 @@ export const WithSearchFilterSort: Story = {
                 );
             }
 
+            // Apply age filter
             if (ageFilter !== 'all') {
                 result = result.filter((row) => (ageFilter === 'young' ? row.age < 30 : row.age >= 30));
             }
 
-            if (Object.keys(sortStates).length > 0) {
+            // Apply sort if active
+            if (activeSort) {
+                const { column, direction } = activeSort;
                 result.sort((a, b) => {
-                    for (const [key, direction] of Object.entries(sortStates)) {
-                        if (direction === undefined) {
-                            continue;
-                        }
-                        const valueA = key === 'name' ? `${a.firstName} ${a.lastName}` : a[key as keyof TableRow];
-                        const valueB = key === 'name' ? `${b.firstName} ${b.lastName}` : b[key as keyof TableRow];
+                    const valueA = column === 'name' ? `${a.firstName} ${a.lastName}` : a[column as keyof TableRow];
+                    const valueB = column === 'name' ? `${b.firstName} ${b.lastName}` : b[column as keyof TableRow];
 
-                        if (valueA < valueB) {
-                            return direction === 'ascending' ? -1 : 1;
-                        }
-                        if (valueA > valueB) {
-                            return direction === 'ascending' ? 1 : -1;
-                        }
+                    if (valueA < valueB) {
+                        return direction === 'ascending' ? -1 : 1;
+                    }
+                    if (valueA > valueB) {
+                        return direction === 'ascending' ? 1 : -1;
                     }
                     return 0;
                 });
             }
 
             return result;
-        }, [searchTerm, ageFilter, sortStates]);
+        }, [searchTerm, ageFilter, activeSort]);
 
         const handleSortChange = (column: string, direction: SortDirection) => {
-            setSortStates((prev) => ({
-                ...prev,
-                [column]: direction,
-            }));
+            setActiveSort({ column, direction });
         };
 
         return (
@@ -238,21 +238,21 @@ export const WithSearchFilterSort: Story = {
                         <Table.Row>
                             <Table.HeaderCell
                                 sortable
-                                sortDirection={sortStates.name}
+                                sortDirection={activeSort?.column === 'name' ? activeSort.direction : undefined}
                                 onSortChange={(direction) => handleSortChange('name', direction)}
                             >
                                 Name
                             </Table.HeaderCell>
                             <Table.HeaderCell
                                 sortable
-                                sortDirection={sortStates.age}
+                                sortDirection={activeSort?.column === 'age' ? activeSort.direction : undefined}
                                 onSortChange={(direction) => handleSortChange('age', direction)}
                             >
                                 Age
                             </Table.HeaderCell>
                             <Table.HeaderCell
                                 sortable
-                                sortDirection={sortStates.role}
+                                sortDirection={activeSort?.column === 'role' ? activeSort.direction : undefined}
                                 onSortChange={(direction) => handleSortChange('role', direction)}
                             >
                                 Role
