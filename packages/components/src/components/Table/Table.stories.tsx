@@ -70,12 +70,6 @@ const TABLE_DATA = [
         initialLogin: 'SSO',
         lastLogin: 'SSO',
         twoFa: true,
-        analytics: 24,
-        guidelines: 24,
-        libraries: 24,
-        projects: 24,
-        groups: 24,
-        targets: 24,
     },
     {
         id: 2,
@@ -90,12 +84,6 @@ const TABLE_DATA = [
         initialLogin: 'SSO',
         lastLogin: 'SSO',
         twoFa: true,
-        analytics: 24,
-        guidelines: 24,
-        libraries: 24,
-        projects: 24,
-        groups: 24,
-        targets: 24,
     },
     {
         id: 3,
@@ -110,12 +98,6 @@ const TABLE_DATA = [
         initialLogin: 'SSO',
         lastLogin: 'SSO',
         twoFa: true,
-        analytics: 24,
-        guidelines: 24,
-        libraries: 24,
-        projects: 24,
-        groups: 24,
-        targets: 24,
     },
     {
         id: 4,
@@ -130,12 +112,6 @@ const TABLE_DATA = [
         initialLogin: 'SSO',
         lastLogin: 'SSO',
         twoFa: true,
-        analytics: 24,
-        guidelines: 24,
-        libraries: 24,
-        projects: 24,
-        groups: 24,
-        targets: 24,
     },
     {
         id: 5,
@@ -150,12 +126,6 @@ const TABLE_DATA = [
         initialLogin: 'SSO',
         lastLogin: 'SSO',
         twoFa: true,
-        analytics: 24,
-        guidelines: 24,
-        libraries: 24,
-        projects: 24,
-        groups: 24,
-        targets: 24,
     },
 ];
 
@@ -164,20 +134,15 @@ export const Basic: Story = {
         <Table.Root {...args}>
             <Table.Header>
                 <Table.Row>
-                    <Table.HeaderCell width="250px">Name</Table.HeaderCell>
-                    <Table.HeaderCell width="80px">Admin</Table.HeaderCell>
-                    <Table.HeaderCell width="150px">Invited by</Table.HeaderCell>
-                    <Table.HeaderCell width="120px">Last seen</Table.HeaderCell>
-                    <Table.HeaderCell width="120px">Initial login</Table.HeaderCell>
-                    <Table.HeaderCell width="120px">Last login</Table.HeaderCell>
-                    <Table.HeaderCell width="80px">2FA</Table.HeaderCell>
-                    <Table.HeaderCell width="100px">Analytics access</Table.HeaderCell>
-                    <Table.HeaderCell width="100px">Guidelines</Table.HeaderCell>
-                    <Table.HeaderCell width="100px">Libraries</Table.HeaderCell>
-                    <Table.HeaderCell width="100px">Projects</Table.HeaderCell>
-                    <Table.HeaderCell width="100px">Groups</Table.HeaderCell>
-                    <Table.HeaderCell width="100px">Targets</Table.HeaderCell>
-                    <Table.HeaderCell width="80px">Actions</Table.HeaderCell>
+                    <Table.HeaderCell>Name</Table.HeaderCell>
+                    <Table.HeaderCell>Admin</Table.HeaderCell>
+                    <Table.HeaderCell>Invited by</Table.HeaderCell>
+                    <Table.HeaderCell>Last seen</Table.HeaderCell>
+                    <Table.HeaderCell>Initial login</Table.HeaderCell>
+                    <Table.HeaderCell>Last login</Table.HeaderCell>
+                    <Table.HeaderCell>2FA</Table.HeaderCell>
+                    <Table.HeaderCell>Analytics access</Table.HeaderCell>
+                    <Table.HeaderCell>Actions</Table.HeaderCell>
                 </Table.Row>
             </Table.Header>
             <Table.Body>
@@ -202,11 +167,7 @@ export const Basic: Story = {
                         <Table.RowCell>
                             <Switch size="small" aria-label="Analytics" />
                         </Table.RowCell>
-                        <Table.RowCell>{user.guidelines}</Table.RowCell>
-                        <Table.RowCell>{user.libraries}</Table.RowCell>
-                        <Table.RowCell>{user.projects}</Table.RowCell>
-                        <Table.RowCell>{user.groups}</Table.RowCell>
-                        <Table.RowCell>{user.targets}</Table.RowCell>
+
                         <Table.RowCell>
                             <Flex gap="0.25rem">
                                 <Button size="small" aspect="square" emphasis="weak">
@@ -420,12 +381,6 @@ export const StickyFirstColumn: Story = {
                         <Table.HeaderCell>Initial login</Table.HeaderCell>
                         <Table.HeaderCell>Last login</Table.HeaderCell>
                         <Table.HeaderCell>2FA</Table.HeaderCell>
-                        <Table.HeaderCell>Analytics</Table.HeaderCell>
-                        <Table.HeaderCell>Guidelines</Table.HeaderCell>
-                        <Table.HeaderCell>Libraries</Table.HeaderCell>
-                        <Table.HeaderCell>Projects</Table.HeaderCell>
-                        <Table.HeaderCell>Groups</Table.HeaderCell>
-                        <Table.HeaderCell>Targets</Table.HeaderCell>
                     </Table.Row>
                 </Table.Header>
                 <Table.Body stickyFirstColumn>
@@ -444,12 +399,6 @@ export const StickyFirstColumn: Story = {
                             <Table.RowCell>{user.initialLogin}</Table.RowCell>
                             <Table.RowCell>{user.lastLogin}</Table.RowCell>
                             <Table.RowCell>{user.twoFa ? 'Yes' : 'No'}</Table.RowCell>
-                            <Table.RowCell>{user.analytics}</Table.RowCell>
-                            <Table.RowCell>{user.guidelines}</Table.RowCell>
-                            <Table.RowCell>{user.libraries}</Table.RowCell>
-                            <Table.RowCell>{user.projects}</Table.RowCell>
-                            <Table.RowCell>{user.groups}</Table.RowCell>
-                            <Table.RowCell>{user.targets}</Table.RowCell>
                         </Table.Row>
                     ))}
                 </Table.Body>

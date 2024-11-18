@@ -13,7 +13,7 @@ type HorizontalAlignment = 'left' | 'center' | 'right';
 type TableRootProps = {
     /**
      * Whether the table should have a fixed or auto layout
-     * @default 'fixed'
+     * @default 'auto'
      */
     layout?: 'auto' | 'fixed';
     /**
@@ -35,7 +35,7 @@ export const TableRoot = forwardRef<HTMLDivElement, TableRootProps>(
     (
         {
             caption,
-            layout = 'fixed',
+            layout = 'auto',
             fullWidth = true,
             children,
             'aria-label': ariaLabel,
