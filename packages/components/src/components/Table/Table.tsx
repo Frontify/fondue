@@ -1,29 +1,25 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 /* (c) Copyright Frontify Ltd., all rights reserved. */
-import { type ReactNode, useId, forwardRef } from 'react';
+import { IconArrowDown, IconArrowUp } from '@frontify/fondue-icons';
+import { type ReactNode, useId, forwardRef, useMemo } from 'react';
 
 import styles from './styles/table.module.scss';
 import { handleKeyDown } from './utils';
 
-type SortDirection = 'ascending' | 'descending' | 'other' | undefined;
+type SortDirection = 'ascending' | 'descending' | undefined;
 type HorizontalAlignment = 'left' | 'center' | 'right';
 
 type TableRootProps = {
     /**
+     * Whether the table should have a fixed or auto layout
+     * @default 'fixed'
+     */
+    layout?: 'auto' | 'fixed';
+    /**
      * Optional caption text for the table that appears above it
      */
     caption?: string;
-    /**
-     * Whether to add zebra striping to rows
-     * @default false
-     */
-    striped?: boolean;
-    /**
-     * Whether to add borders between rows and columns
-     * @default true
-     */
-    bordered?: boolean;
     /**
      * Whether to make the table take full width of its container
      * @default true
@@ -37,19 +33,19 @@ type TableRootProps = {
     children: ReactNode;
     'aria-label'?: string;
     'aria-describedby'?: string;
+    'aria-busy'?: boolean;
 };
 
 export const TableRoot = forwardRef<HTMLDivElement, TableRootProps>(
     (
         {
             caption,
-            striped = false,
-            bordered = true,
+            layout = 'fixed',
             fullWidth = true,
-            loading = false,
             children,
             'aria-label': ariaLabel,
             'aria-describedby': ariaDescribedBy,
+            'aria-busy': ariaBusy = false,
         },
         ref,
     ) => {
@@ -57,12 +53,11 @@ export const TableRoot = forwardRef<HTMLDivElement, TableRootProps>(
             <div ref={ref} onKeyDown={handleKeyDown} role="grid" tabIndex={-1}>
                 <table
                     className={styles.table}
-                    data-striped={striped}
-                    data-bordered={bordered}
+                    data-layout={layout}
                     data-full-width={fullWidth}
                     aria-label={ariaLabel}
                     aria-describedby={ariaDescribedBy}
-                    aria-busy={loading}
+                    aria-busy={ariaBusy}
                 >
                     {caption && <caption>{caption}</caption>}
                     {children}
@@ -81,12 +76,13 @@ type TableHeaderProps = {
     sticky?: boolean;
     children: ReactNode;
     'aria-label'?: string;
+    'aria-busy'?: boolean;
 };
 
 export const TableHeader = forwardRef<HTMLTableSectionElement, TableHeaderProps>(
-    ({ children, sticky = false, 'aria-label': ariaLabel }, ref) => {
+    ({ children, sticky = false, 'aria-label': ariaLabel, 'aria-busy': ariaBusy }, ref) => {
         return (
-            <thead ref={ref} className={styles.header} data-sticky={sticky} aria-label={ariaLabel}>
+            <thead ref={ref} className={styles.header} data-sticky={sticky} aria-label={ariaLabel} aria-busy={ariaBusy}>
                 {children}
             </thead>
         );
@@ -101,15 +97,9 @@ type TableSortTranslations = {
 
 type TableHeaderCellProps = {
     /**
-     * Handler called when the sort direction changes
-     * @param direction - The new sort direction
+     * Width of the column (in PX)
      */
-    onSortChange?: (direction: SortDirection) => void;
-    /**
-     * Whether the column is sortable
-     * @default false
-     */
-    sortable?: boolean;
+    width?: string;
     /**
      * Current sort direction of the column
      */
@@ -130,10 +120,6 @@ type TableHeaderCellProps = {
      */
     sortTranslations?: TableSortTranslations;
     /**
-     * Width of the column (any valid CSS width)
-     */
-    width?: string;
-    /**
      * Whether the column should have a minimum width
      * @default false
      */
@@ -143,29 +129,44 @@ type TableHeaderCellProps = {
      * @default 'col'
      */
     scope?: 'col' | 'row';
+    /**
+     * Handler called when the sort direction changes
+     * @param direction - The new sort direction
+     */
+    onSortChange?: (direction: SortDirection) => void;
     children: ReactNode;
 };
 
 export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellProps>(
     (
         {
-            onSortChange,
-            sortable,
             sortDirection,
+            width,
             align = 'left',
             truncate = false,
             sortTranslations,
-            width,
             noShrink = false,
             scope = 'col',
+            onSortChange,
             children,
         },
         ref,
     ) => {
         const buttonId = useId();
 
+        const sortLabel = useMemo(() => {
+            const columnName = typeof children === 'string' ? children : '';
+            if (sortDirection === 'ascending') {
+                return (sortTranslations?.sortDescending ?? 'Sort by {column} descending').replace(
+                    '{column}',
+                    columnName,
+                );
+            }
+            return (sortTranslations?.sortAscending ?? 'Sort by {column} ascending').replace('{column}', columnName);
+        }, [children, sortDirection, sortTranslations]);
+
         const handleSortChange = () => {
-            if (!sortable || !onSortChange) {
+            if (!onSortChange) {
                 return;
             }
 
@@ -175,39 +176,32 @@ export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellP
             onSortChange(newDirection);
         };
 
-        const getSortLabel = () => {
-            const columnName = typeof children === 'string' ? children : '';
-            if (sortDirection === 'ascending') {
-                return (sortTranslations?.sortDescending ?? 'Sort by {column} descending').replace(
-                    '{column}',
-                    columnName,
-                );
-            }
-            return (sortTranslations?.sortAscending ?? 'Sort by {column} ascending').replace('{column}', columnName);
-        };
-
         return (
             <th
                 ref={ref}
                 className={styles.headerCell}
                 style={{
-                    width,
                     textAlign: align,
+                    width,
                 }}
                 data-truncate={truncate}
                 data-no-shrink={noShrink}
                 role="columnheader"
                 scope={scope}
-                aria-sort={sortDirection}
             >
-                {sortable ? (
+                {onSortChange ? (
                     <button
                         id={buttonId}
                         onClick={handleSortChange}
                         className={styles.sortButton}
-                        aria-label={getSortLabel()}
+                        aria-label={sortLabel}
                     >
                         {children}
+                        {sortDirection === 'ascending' ? (
+                            <IconArrowUp size="12" />
+                        ) : sortDirection === 'descending' ? (
+                            <IconArrowDown size="12" />
+                        ) : null}
                     </button>
                 ) : (
                     children
@@ -224,19 +218,22 @@ type TableBodyProps = {
      * @default false
      */
     stickyFirstColumn?: boolean;
+    'aria-busy'?: boolean;
     children: ReactNode;
 };
 
-export const TableBody = forwardRef<HTMLTableSectionElement, TableBodyProps>(({ stickyFirstColumn, children }, ref) => {
-    return (
-        <tbody ref={ref} className={styles.body} data-sticky-first-column={stickyFirstColumn}>
-            {children}
-        </tbody>
-    );
-});
+export const TableBody = forwardRef<HTMLTableSectionElement, TableBodyProps>(
+    ({ stickyFirstColumn, 'aria-busy': ariaBusy, children }, ref) => {
+        return (
+            <tbody ref={ref} className={styles.body} data-sticky-first-column={stickyFirstColumn} aria-busy={ariaBusy}>
+                {children}
+            </tbody>
+        );
+    },
+);
 TableBody.displayName = 'Table.Body';
 
-type TableRowProps = {
+type BaseTableRowProps = {
     /**
      * Whether the row is in a selected state
      * @default false
@@ -248,22 +245,72 @@ type TableRowProps = {
      */
     disabled?: boolean;
     /**
-     * Handler called when the row is clicked or activated via keyboard
-     * If provided, the row will be hoverable and interactive
+     * Content to be rendered within the row
      */
-    onClick?: () => void;
-    children: ReactNode;
+    children: React.ReactNode;
+    /**
+     * Accessible label for the row
+     */
     'aria-label'?: string;
 };
 
+type ClickableTableRowProps = BaseTableRowProps & {
+    /**
+     * Handler called when the row is clicked or activated via keyboard
+     * If provided, the row will be hoverable and interactive
+     */
+    onClick: () => void;
+    onNavigate?: never;
+    href?: never;
+};
+
+type NavigableTableRowProps = BaseTableRowProps & {
+    onClick?: never;
+    /**
+     * Handler called when the row is clicked or activated via keyboard for navigation
+     * Must be provided together with href
+     */
+    onNavigate: () => void;
+    /**
+     * URL associated with this row for navigation
+     * Must be provided together with onNavigate
+     */
+    href: string;
+};
+
+type NonInteractiveTableRowProps = BaseTableRowProps & {
+    onClick?: never;
+    onNavigate?: never;
+    href?: never;
+};
+
+type TableRowProps = ClickableTableRowProps | NavigableTableRowProps | NonInteractiveTableRowProps;
+
 export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
-    ({ selected = false, disabled = false, onClick, children, 'aria-label': ariaLabel }, ref) => {
-        const isInteractive = onClick !== undefined && !disabled;
+    ({ selected = false, disabled = false, href, onNavigate, onClick, children, 'aria-label': ariaLabel }, ref) => {
+        const isInteractive = (onClick !== undefined || onNavigate !== undefined) && !disabled;
+        const isLink = Boolean(onNavigate && href);
+
+        const handleClick = () => {
+            if (disabled) {
+                return;
+            }
+
+            if (onNavigate) {
+                onNavigate();
+            } else if (onClick) {
+                onClick();
+            }
+        };
 
         const handleKeyDown = (event: React.KeyboardEvent<HTMLTableRowElement>) => {
-            if (isInteractive && (event.key === 'Enter' || event.key === ' ')) {
+            if (!isInteractive) {
+                return;
+            }
+
+            if (event.key === 'Enter' || event.key === ' ') {
                 event.preventDefault();
-                onClick();
+                handleClick();
             }
         };
 
@@ -271,15 +318,16 @@ export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
             <tr
                 ref={ref}
                 className={styles.row}
+                data-href={href}
                 data-selected={selected}
                 data-interactive={isInteractive}
                 data-disabled={disabled}
-                role={isInteractive ? 'button' : 'row'}
+                role={isLink ? 'link' : isInteractive ? 'button' : 'row'}
                 tabIndex={isInteractive ? 0 : undefined}
                 aria-selected={selected}
                 aria-disabled={disabled}
                 aria-label={ariaLabel}
-                onClick={isInteractive ? onClick : undefined}
+                onClick={isInteractive ? handleClick : undefined}
                 onKeyDown={isInteractive ? handleKeyDown : undefined}
             >
                 {children}
@@ -291,27 +339,31 @@ TableRow.displayName = 'Table.Row';
 
 type TableRowCellProps = {
     /**
-     * Horizontal alignment of the content
-     * @default 'left'
-     */
-    align?: HorizontalAlignment;
-    /**
      * Whether to truncate content with ellipsis when it overflows
      * @default false
      */
     truncate?: boolean;
+    /**
+     * Width of the column (in PX)
+     */
+    width?: string;
+    /**
+     * Horizontal alignment of the content
+     * @default 'left'
+     */
+    align?: HorizontalAlignment;
     children: ReactNode;
     'aria-label'?: string;
 };
 
 export const TableRowCell = forwardRef<HTMLTableCellElement, TableRowCellProps>(
-    ({ children, align = 'left', truncate = false, 'aria-label': ariaLabel }, ref) => {
+    ({ truncate, width, align = 'left', 'aria-label': ariaLabel, children }, ref) => {
         return (
             <td
                 ref={ref}
-                className={styles.rowCell}
-                style={{ textAlign: align }}
                 data-truncate={truncate}
+                className={styles.rowCell}
+                style={{ textAlign: align, width }}
                 aria-label={ariaLabel}
             >
                 {children}

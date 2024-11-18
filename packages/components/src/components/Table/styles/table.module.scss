@@ -1,47 +1,26 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
-
-:root {
-    --table-border-color: rgb(234 235 235);
-    --table-header-bg: #f5f5f5;
-    --table-header-color: #333333;
-    --table-row-hover-bg: #f1f1f1;
-    --table-row-selected-bg: #fafafa;
-    --table-row-striped-bg: #fafafa;
-    --table-text-color: rgb(108 112 112);
-    --table-border-width: 1px;
-    --table-cell-padding: 1rem;
-    --table-cell-padding-dense: 0.5rem 0.75rem;
-    --table-font-size: 0.813rem;
-    --table-line-height: 1rem;
-    --table-loading-overlay: rgba(245, 245, 245, 0.5);
-    --table-primary-color: #0066ff;
-}
+@import '../../../utilities/sizeToken.module.scss';
+@import '../../../utilities/focusStyle.module.scss';
 
 .table {
     text-align: left;
     border-collapse: collapse;
-    table-layout: auto;
-    min-width: max-content;
     width: 100%;
     position: relative;
 
+    &[data-layout='fixed'] {
+        table-layout: fixed;
+    }
+
+    &[data-layout='auto'] {
+        table-layout: auto;
+        [data-truncate='true'] {
+            max-width: 0;
+        }
+    }
+
     &[data-full-width='false'] {
         width: auto;
-    }
-
-    &[data-bordered='true'] {
-        border: var(--table-border-width) solid var(--table-border-color);
-
-        .headerCell,
-        .rowCell {
-            border: var(--table-border-width) solid var(--table-border-color);
-        }
-    }
-
-    &[data-striped='true'] {
-        .body .row:nth-child(even) {
-            background-color: var(--table-row-striped-bg);
-        }
     }
 
     &[aria-busy='true'] {
@@ -49,7 +28,7 @@
             content: '';
             position: absolute;
             inset: 0;
-            background-color: var(--table-loading-overlay);
+            background-color: rgba(245, 245, 245, 0.5);
             z-index: 2;
         }
     }
@@ -58,34 +37,30 @@
 caption {
     padding: 0.5rem 0;
     text-align: left;
-    color: var(--table-text-color);
-    font-size: var(--table-font-size);
+    color: var(--text-color);
+    font-size: var(--body-size-small);
 }
 
 .header {
-    background-color: var(--table-header-bg);
-    color: var(--table-header-color);
-    font-weight: bold;
+    border-top: 1px solid var(--line-color);
+    border-bottom: 1px solid var(--line-color);
 
     &[data-sticky='true'] {
         position: sticky;
         top: 0;
         z-index: 2;
-        background-color: var(--table-header-bg);
+        background-color: var(--base-color);
     }
 }
 
 .headerCell {
+    padding: sizeToken(3) sizeToken(2);
+    font-size: var(--body-size-small);
     font-weight: 400;
-    outline: 2px solid transparent;
-    outline-offset: 2px;
-    padding: var(--table-cell-padding);
-    transition: background-color 0.2s ease;
-    font-size: var(--table-font-size);
-    line-height: var(--table-line-height);
+    line-height: sizeToken(4);
+    color: var(--text-color);
 
     &[data-truncate='true'] {
-        max-width: 0;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -96,7 +71,6 @@ caption {
         white-space: nowrap;
     }
 
-    /* Added explicit alignment styles to match props */
     &[data-align='center'] {
         text-align: center;
     }
@@ -123,97 +97,68 @@ caption {
     text-align: inherit;
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.25rem;
 
     &:hover {
-        color: var(--table-primary-color);
+        color: var(--text-color-hover);
     }
 
     &:focus-visible {
-        outline: 2px solid var(--table-primary-color);
-        outline-offset: 2px;
-    }
-
-    &::after {
-        content: '';
-        width: 0.75rem;
-        height: 0.75rem;
-        opacity: 0.5;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-size: contain;
-    }
-
-    [aria-sort='ascending'] & {
-        &::after {
-            opacity: 1;
-            content: '↑';
-        }
-    }
-
-    [aria-sort='descending'] & {
-        &::after {
-            opacity: 1;
-            content: '↓';
-        }
+        @include focus-outline;
     }
 }
 
 .body {
+    padding: 0 sizeToken(6);
     &[data-sticky-first-column='true'] {
         .rowCell:first-child {
             position: sticky;
             left: 0;
             z-index: 1;
-            background-color: #fff; /* Ensure the sticky column has a background */
-            box-shadow: 1px 0 0 var(--table-border-color);
+            background-color: var(--base-color);
         }
     }
 }
 
 .row {
     position: relative;
-    border-color: var(--table-border-color);
-    border-top-width: var(--table-border-width);
+    border-bottom: 1px solid var(--line-color);
     transition: background-color 0.2s ease;
 
     &[data-interactive='true'] {
         cursor: pointer;
 
-        &:not([data-disabled='true']) {
+        &:not([data-disabled='true']):not([data-selected='true']) {
             &:hover {
-                .rowCell {
-                    background-color: var(--table-row-hover-bg);
-                }
+                background-color: var(--base-color-alt);
             }
 
             &:focus-visible {
-                outline: 2px solid var(--table-primary-color);
-                outline-offset: -2px;
+                @include focus-outline;
+                z-index: 1;
             }
         }
     }
 
     &[data-selected='true'] {
-        background-color: var(--table-row-selected-bg);
+        background-color: var(--box-selected-color);
     }
 
     &[data-disabled='true'] {
         opacity: 0.6;
         cursor: not-allowed;
+        pointer-events: none;
     }
 }
 
 .rowCell {
-    color: var(--table-text-color);
+    color: var(--text-color);
     font-weight: 400;
-    font-size: var(--table-font-size);
-    line-height: var(--table-line-height);
-    padding: var(--table-cell-padding);
-    background-color: #fff;
+    font-size: var(--body-size-x-small);
+    line-height: sizeToken(4);
+    padding: sizeToken(2);
 
     &[data-truncate='true'] {
-        max-width: 0;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;

@@ -11,8 +11,11 @@ import { Flex } from '../Flex/Flex';
 import { TextInput } from '../TextInput/TextInput';
 
 import { Table, TableHeader, TableRoot, TableHeaderCell, TableBody, TableRow, TableRowCell } from './Table';
+import { Switch } from '../Switch/Switch';
 
+export default { component: Table };
 type Story = StoryObj<typeof meta>;
+
 const meta: Meta<typeof Table.Root> = {
     component: TableRoot,
     subcomponents: {
@@ -35,121 +38,386 @@ const meta: Meta<typeof Table.Root> = {
     },
     args: {},
 };
-export default meta;
 
-type SortDirection = 'ascending' | 'descending' | 'other' | undefined;
+const TABLE_DATA = [
+    {
+        id: 1,
+        firstName: 'Chris',
+        lastName: 'Glasser',
+        name: 'Chris Glasser',
+        age: 32,
+        role: 'Senior Developer',
+        email: 'c.a.glasser@outlook.com',
+        invited: 'Rhonda Rhodes',
+        lastSeen: 'Oct 23, 2024',
+        initialLogin: 'SSO',
+        lastLogin: 'SSO',
+        twoFa: true,
+        analytics: 24,
+        guidelines: 24,
+        libraries: 24,
+        projects: 24,
+        groups: 24,
+        targets: 24,
+    },
+    {
+        id: 2,
+        firstName: 'David',
+        lastName: 'Elson',
+        name: 'David Elson',
+        age: 28,
+        role: 'Product Manager',
+        email: 'david29@gmail.com',
+        invited: 'Rodger Struck',
+        lastSeen: 'Oct 21, 2024',
+        initialLogin: 'SSO',
+        lastLogin: 'SSO',
+        twoFa: true,
+        analytics: 24,
+        guidelines: 24,
+        libraries: 24,
+        projects: 24,
+        groups: 24,
+        targets: 24,
+    },
+    {
+        id: 3,
+        firstName: 'Eddie',
+        lastName: 'Lake',
+        name: 'Eddie Lake',
+        age: 35,
+        role: 'UX Designer',
+        email: 'eddie_lake@gmail.com',
+        invited: 'Frances Swann',
+        lastSeen: 'Nov 11, 2024',
+        initialLogin: 'SSO',
+        lastLogin: 'SSO',
+        twoFa: true,
+        analytics: 24,
+        guidelines: 24,
+        libraries: 24,
+        projects: 24,
+        groups: 24,
+        targets: 24,
+    },
+    {
+        id: 4,
+        firstName: 'James',
+        lastName: 'Hall',
+        name: 'James Hall',
+        age: 41,
+        role: 'Technical Lead',
+        email: 'james_hall@gmail.com',
+        invited: 'Alex Buckmaster',
+        lastSeen: 'Nov 12, 2024',
+        initialLogin: 'SSO',
+        lastLogin: 'SSO',
+        twoFa: true,
+        analytics: 24,
+        guidelines: 24,
+        libraries: 24,
+        projects: 24,
+        groups: 24,
+        targets: 24,
+    },
+    {
+        id: 5,
+        firstName: 'Jerry',
+        lastName: 'Helfer',
+        name: 'Jerry Helfer',
+        age: 39,
+        role: 'Frontend Developer',
+        email: 'jerry73@aol.com',
+        invited: 'Bradley Lawlor',
+        lastSeen: 'Nov 1, 2024',
+        initialLogin: 'SSO',
+        lastLogin: 'SSO',
+        twoFa: true,
+        analytics: 24,
+        guidelines: 24,
+        libraries: 24,
+        projects: 24,
+        groups: 24,
+        targets: 24,
+    },
+    {
+        id: 6,
+        firstName: 'Judith',
+        lastName: 'Rodriguez',
+        name: 'Judith Rodriguez',
+        age: 33,
+        role: 'Product Designer',
+        email: 'judith403@gmail.com',
+        invited: 'John Dukes',
+        lastSeen: 'Oct 30, 2024',
+        initialLogin: 'SSO',
+        lastLogin: 'SSO',
+        twoFa: true,
+        analytics: 24,
+        guidelines: 24,
+        libraries: 24,
+        projects: 24,
+        groups: 24,
+        targets: 24,
+    },
+    {
+        id: 7,
+        firstName: 'Kathy',
+        lastName: 'Pacheco',
+        name: 'Kathy Pacheco',
+        age: 36,
+        role: 'Backend Developer',
+        email: 'k_pacheco@gmail.com',
+        invited: 'James Hall',
+        lastSeen: 'Nov 7, 2024',
+        initialLogin: 'SSO',
+        lastLogin: 'SSO',
+        twoFa: true,
+        analytics: 24,
+        guidelines: 24,
+        libraries: 24,
+        projects: 24,
+        groups: 24,
+        targets: 24,
+    },
+    {
+        id: 8,
+        firstName: 'Kimberly',
+        lastName: 'Mastrangelo',
+        name: 'Kimberly Mastrangelo',
+        age: 29,
+        role: 'QA Engineer',
+        email: 'k.r.mastrangelo@outlook.com',
+        invited: 'Corina McCoy',
+        lastSeen: 'Oct 29, 2024',
+        initialLogin: 'SSO',
+        lastLogin: 'SSO',
+        twoFa: true,
+        analytics: 24,
+        guidelines: 24,
+        libraries: 24,
+        projects: 24,
+        groups: 24,
+        targets: 24,
+    },
+    {
+        id: 9,
+        firstName: 'Mary',
+        lastName: 'Freund',
+        name: 'Mary Freund',
+        age: 44,
+        role: 'System Architect',
+        email: 'm.k.freund@aol.com',
+        invited: 'Autumn Phillips',
+        lastSeen: 'Oct 31, 2024',
+        initialLogin: 'SSO',
+        lastLogin: 'SSO',
+        twoFa: true,
+        analytics: 24,
+        guidelines: 24,
+        libraries: 24,
+        projects: 24,
+        groups: 24,
+        targets: 24,
+    },
+    {
+        id: 10,
+        firstName: 'Patricia',
+        lastName: 'Sanders',
+        name: 'Patricia Sanders',
+        age: 31,
+        role: 'DevOps Engineer',
+        email: 'patricia95@outlook.com',
+        invited: 'Patricia Sanders',
+        lastSeen: 'Oct 28, 2024',
+        initialLogin: 'SSO',
+        lastLogin: 'SSO',
+        twoFa: true,
+        analytics: 24,
+        guidelines: 24,
+        libraries: 24,
+        projects: 24,
+        groups: 24,
+        targets: 24,
+    },
+    {
+        id: 11,
+        firstName: 'Ricky',
+        lastName: 'Smith',
+        name: 'Ricky Smith',
+        age: 37,
+        role: 'Data Engineer',
+        email: 'r.m.smith@gmail.com',
+        invited: 'Iva Ryan',
+        lastSeen: 'Oct 20, 2024',
+        initialLogin: 'SSO',
+        lastLogin: 'SSO',
+        twoFa: true,
+        analytics: 24,
+        guidelines: 24,
+        libraries: 24,
+        projects: 24,
+        groups: 24,
+        targets: 24,
+    },
+    {
+        id: 12,
+        firstName: 'Stephanie',
+        lastName: 'Sharkey',
+        name: 'Stephanie Sharkey',
+        age: 34,
+        role: 'Full Stack Developer',
+        email: 's.t.sharkey@outlook.com',
+        invited: 'Kenneth Allen',
+        lastSeen: 'Oct 26, 2024',
+        initialLogin: 'SSO',
+        lastLogin: 'SSO',
+        twoFa: true,
+        analytics: 24,
+        guidelines: 24,
+        libraries: 24,
+        projects: 24,
+        groups: 24,
+        targets: 24,
+    },
+];
 
-type TableRow = {
-    id: string;
-    firstName: string;
-    lastName: string;
-    age: number;
-    status: 'active' | 'inactive' | 'pending';
-    lastLogin: string;
-    role: string;
+export const Basic: Story = {
+    render: () => (
+        <Table.Root>
+            <Table.Header>
+                <Table.Row>
+                    <Table.HeaderCell width="250px">Name</Table.HeaderCell>
+                    <Table.HeaderCell width="80px">Admin</Table.HeaderCell>
+                    <Table.HeaderCell width="150px">Invited by</Table.HeaderCell>
+                    <Table.HeaderCell width="120px">Last seen</Table.HeaderCell>
+                    <Table.HeaderCell width="120px">Initial login</Table.HeaderCell>
+                    <Table.HeaderCell width="120px">Last login</Table.HeaderCell>
+                    <Table.HeaderCell width="80px">2FA</Table.HeaderCell>
+                    <Table.HeaderCell width="100px">Analytics access</Table.HeaderCell>
+                    <Table.HeaderCell width="100px">Guidelines</Table.HeaderCell>
+                    <Table.HeaderCell width="100px">Libraries</Table.HeaderCell>
+                    <Table.HeaderCell width="100px">Projects</Table.HeaderCell>
+                    <Table.HeaderCell width="100px">Groups</Table.HeaderCell>
+                    <Table.HeaderCell width="100px">Targets</Table.HeaderCell>
+                    <Table.HeaderCell width="80px">Actions</Table.HeaderCell>
+                </Table.Row>
+            </Table.Header>
+            <Table.Body>
+                {TABLE_DATA.map((user) => (
+                    <Table.Row key={user.email}>
+                        <Table.RowCell>
+                            <div className="flex items-center gap-2">
+                                <div>
+                                    <div className="font-medium">{user.name}</div>
+                                    <div className="text-sm text-gray-500">{user.email}</div>
+                                </div>
+                            </div>
+                        </Table.RowCell>
+                        <Table.RowCell>
+                            <Switch aria-label="Admin" />
+                        </Table.RowCell>
+                        <Table.RowCell>{user.invited}</Table.RowCell>
+                        <Table.RowCell>{user.lastSeen}</Table.RowCell>
+                        <Table.RowCell>{user.initialLogin}</Table.RowCell>
+                        <Table.RowCell>{user.lastLogin}</Table.RowCell>
+                        <Table.RowCell>{user.twoFa ? 'Yes' : 'No'}</Table.RowCell>
+                        <Table.RowCell>
+                            {' '}
+                            <Switch aria-label="Analytics" />
+                        </Table.RowCell>
+                        <Table.RowCell>{user.guidelines}</Table.RowCell>
+                        <Table.RowCell>{user.libraries}</Table.RowCell>
+                        <Table.RowCell>{user.projects}</Table.RowCell>
+                        <Table.RowCell>{user.groups}</Table.RowCell>
+                        <Table.RowCell>{user.targets}</Table.RowCell>
+                        <Table.RowCell>
+                            <Flex gap="0.25rem">
+                                <Button size="small" aspect="square" emphasis="weak">
+                                    <IconPen size={16} />
+                                </Button>
+                                <Button variant="danger" size="small" aspect="square" emphasis="weak">
+                                    <IconTrashBin size={16} />
+                                </Button>
+                            </Flex>
+                        </Table.RowCell>
+                    </Table.Row>
+                ))}
+            </Table.Body>
+        </Table.Root>
+    ),
 };
 
-const TABLE_HEADERS = [
-    { key: 'firstName', label: 'First name' },
-    { key: 'lastName', label: 'Last name' },
-    { key: 'age', label: 'Age' },
-    { key: 'actions', label: 'Actions' },
-];
-
-const TABLE_DATA: TableRow[] = [
-    {
-        id: '1',
-        firstName: 'Dave',
-        lastName: 'McDaveman',
-        age: 42,
-        status: 'active',
-        lastLogin: '2024-03-15',
-        role: 'Admin',
-    },
-    { id: '2', firstName: 'John', lastName: 'Doe', age: 23, status: 'pending', lastLogin: '2024-03-14', role: 'User' },
-    {
-        id: '3',
-        firstName: 'Chris',
-        lastName: 'Christman',
-        age: 35,
-        status: 'inactive',
-        lastLogin: '2024-03-01',
-        role: 'Editor',
-    },
-    {
-        id: '4',
-        firstName: 'Tod',
-        lastName: 'Hunter',
-        age: 12,
-        status: 'active',
-        lastLogin: '2024-03-15',
-        role: 'Viewer',
-    },
-    {
-        id: '5',
-        firstName: 'Alice',
-        lastName: 'Johnson',
-        age: 28,
-        status: 'active',
-        lastLogin: '2024-03-16',
-        role: 'Admin',
-    },
-    {
-        id: '6',
-        firstName: 'Bob',
-        lastName: 'Smith',
-        age: 45,
-        status: 'inactive',
-        lastLogin: '2024-02-28',
-        role: 'Editor',
-    },
-];
-
-const TABLE_ACTIONS = [
-    <Button size="small" aspect="square" emphasis="weak" key="edit">
-        <IconPen size="16" />
-    </Button>,
-    <Button size="small" aspect="square" emphasis="weak" variant="danger" key="delete">
-        <IconTrashBin size="16" />
-    </Button>,
-];
-
-export const Default: Story = {
-    args: {
-        striped: true,
-        fullWidth: false,
-        loading: true,
-        caption: 'asdsd',
-        bordered: true,
-    },
-
+export const Sortable: Story = {
     render: () => {
-        const handleRowClick = (id: string) => {
-            console.log(`Row ${id} clicked`);
-        };
+        const [sortField, setSortField] = useState<string | null>(null);
+        const [sortDirection, setSortDirection] = useState<'ascending' | 'descending'>();
+
+        const sortedUsers = [...TABLE_DATA].sort((a, b) => {
+            if (!sortField || !sortDirection) {
+                return 0;
+            }
+
+            const aValue = a[sortField as keyof typeof a];
+            const bValue = b[sortField as keyof typeof b];
+
+            if (sortDirection === 'ascending') {
+                return aValue > bValue ? 1 : -1;
+            } else {
+                return aValue < bValue ? 1 : -1;
+            }
+        });
 
         return (
             <Table.Root>
                 <Table.Header>
                     <Table.Row>
-                        {TABLE_HEADERS.map((header) => (
-                            <Table.HeaderCell key={header.key}>{header.label}</Table.HeaderCell>
-                        ))}
+                        <Table.HeaderCell
+                            width="250px"
+                            sortDirection={sortField === 'name' ? sortDirection : undefined}
+                            onSortChange={(direction) => {
+                                setSortField('name');
+                                setSortDirection(direction);
+                            }}
+                        >
+                            Name
+                        </Table.HeaderCell>
+                        <Table.HeaderCell
+                            width="150px"
+                            sortDirection={sortField === 'invited' ? sortDirection : undefined}
+                            onSortChange={(direction) => {
+                                setSortField('invited');
+                                setSortDirection(direction);
+                            }}
+                        >
+                            Invited by
+                        </Table.HeaderCell>
+                        <Table.HeaderCell
+                            width="120px"
+                            sortDirection={sortField === 'lastSeen' ? sortDirection : undefined}
+                            onSortChange={(direction) => {
+                                setSortField('lastSeen');
+                                setSortDirection(direction);
+                            }}
+                        >
+                            Last seen
+                        </Table.HeaderCell>
+                        {/* Other columns without sorting */}
                     </Table.Row>
                 </Table.Header>
                 <Table.Body>
-                    {TABLE_DATA.map((row) => (
-                        <Table.Row
-                            key={row.id}
-                            onClick={() => handleRowClick(row.id)}
-                            aria-label={`${row.firstName} ${row.lastName}'s details`}
-                        >
-                            <Table.RowCell>{row.firstName}</Table.RowCell>
-                            <Table.RowCell>{row.lastName}</Table.RowCell>
-                            <Table.RowCell>{row.age}</Table.RowCell>
+                    {sortedUsers.map((user) => (
+                        <Table.Row key={user.email}>
                             <Table.RowCell>
-                                <Flex gap=".5rem">{TABLE_ACTIONS}</Flex>
+                                <div className="flex items-center gap-2">
+                                    <div>
+                                        <div className="font-medium">{user.name}</div>
+                                        <div className="text-sm text-gray-500">{user.email}</div>
+                                    </div>
+                                </div>
                             </Table.RowCell>
+                            <Table.RowCell>{user.invited}</Table.RowCell>
+                            <Table.RowCell>{user.lastSeen}</Table.RowCell>
                         </Table.Row>
                     ))}
                 </Table.Body>
@@ -158,15 +426,286 @@ export const Default: Story = {
     },
 };
 
-export const WithSearchFilterSort: Story = {
+export const StickyHeader: Story = {
+    render: () => (
+        <div className="h-96 overflow-auto border rounded-lg">
+            <Table.Root>
+                <Table.Header sticky>
+                    <Table.Row>
+                        <Table.HeaderCell width="250px">Name</Table.HeaderCell>
+                        <Table.HeaderCell width="150px">Invited by</Table.HeaderCell>
+                        <Table.HeaderCell width="120px">Last seen</Table.HeaderCell>
+                        <Table.HeaderCell width="120px">Initial login</Table.HeaderCell>
+                        <Table.HeaderCell width="120px">Last login</Table.HeaderCell>
+                        <Table.HeaderCell width="80px">2FA</Table.HeaderCell>
+                    </Table.Row>
+                </Table.Header>
+                <Table.Body>
+                    {[...TABLE_DATA, ...TABLE_DATA, ...TABLE_DATA].map((user, index) => (
+                        <Table.Row key={`${user.email}-${index}`}>
+                            <Table.RowCell>
+                                <div className="flex items-center gap-2">
+                                    <div>
+                                        <div className="font-medium">{user.name}</div>
+                                        <div className="text-sm text-gray-500">{user.email}</div>
+                                    </div>
+                                </div>
+                            </Table.RowCell>
+                            <Table.RowCell>{user.invited}</Table.RowCell>
+                            <Table.RowCell>{user.lastSeen}</Table.RowCell>
+                            <Table.RowCell>{user.initialLogin}</Table.RowCell>
+                            <Table.RowCell>{user.lastLogin}</Table.RowCell>
+                            <Table.RowCell>{user.twoFa ? 'Yes' : 'No'}</Table.RowCell>
+                        </Table.Row>
+                    ))}
+                </Table.Body>
+            </Table.Root>
+        </div>
+    ),
+};
+
+export const Interactive: Story = {
+    render: () => (
+        <Table.Root>
+            <Table.Header>
+                <Table.Row>
+                    <Table.HeaderCell width="250px">Name</Table.HeaderCell>
+                    <Table.HeaderCell width="150px">Invited by</Table.HeaderCell>
+                    <Table.HeaderCell width="120px">Last seen</Table.HeaderCell>
+                </Table.Row>
+            </Table.Header>
+            <Table.Body>
+                {TABLE_DATA.map((user) => (
+                    <Table.Row key={user.email} onClick={() => alert(`Clicked on ${user.name}`)}>
+                        <Table.RowCell>
+                            <div className="flex items-center gap-2">
+                                <div>
+                                    <div className="font-medium">{user.name}</div>
+                                    <div className="text-sm text-gray-500">{user.email}</div>
+                                </div>
+                            </div>
+                        </Table.RowCell>
+                        <Table.RowCell>{user.invited}</Table.RowCell>
+                        <Table.RowCell>{user.lastSeen}</Table.RowCell>
+                    </Table.Row>
+                ))}
+            </Table.Body>
+        </Table.Root>
+    ),
+};
+
+export const WithLinks: Story = {
+    render: () => (
+        <Table.Root>
+            <Table.Header>
+                <Table.Row>
+                    <Table.HeaderCell width="250px">Name</Table.HeaderCell>
+                    <Table.HeaderCell width="150px">Invited by</Table.HeaderCell>
+                    <Table.HeaderCell width="120px">Last seen</Table.HeaderCell>
+                </Table.Row>
+            </Table.Header>
+            <Table.Body>
+                {TABLE_DATA.map((user) => (
+                    <Table.Row
+                        key={user.email}
+                        href={`/users/${user.email}`}
+                        onNavigate={() => alert(`Navigating to ${user.email}`)}
+                    >
+                        <Table.RowCell>
+                            <div className="flex items-center gap-2">
+                                <div>
+                                    <div className="font-medium">{user.name}</div>
+                                    <div className="text-sm text-gray-500">{user.email}</div>
+                                </div>
+                            </div>
+                        </Table.RowCell>
+                        <Table.RowCell>{user.invited}</Table.RowCell>
+                        <Table.RowCell>{user.lastSeen}</Table.RowCell>
+                    </Table.Row>
+                ))}
+            </Table.Body>
+        </Table.Root>
+    ),
+};
+
+export const StickyFirstColumn: Story = {
+    render: () => (
+        <div style={{ width: '500px', overflow: 'auto' }}>
+            <Table.Root layout="auto">
+                <Table.Header>
+                    <Table.Row>
+                        <Table.HeaderCell width="200px">Name</Table.HeaderCell>
+                        <Table.HeaderCell>Invited by</Table.HeaderCell>
+                        <Table.HeaderCell>Last seen</Table.HeaderCell>
+                        <Table.HeaderCell>Initial login</Table.HeaderCell>
+                        <Table.HeaderCell>Last login</Table.HeaderCell>
+                        <Table.HeaderCell>2FA</Table.HeaderCell>
+                        <Table.HeaderCell>Analytics</Table.HeaderCell>
+                        <Table.HeaderCell>Guidelines</Table.HeaderCell>
+                        <Table.HeaderCell>Libraries</Table.HeaderCell>
+                        <Table.HeaderCell>Projects</Table.HeaderCell>
+                        <Table.HeaderCell>Groups</Table.HeaderCell>
+                        <Table.HeaderCell>Targets</Table.HeaderCell>
+                    </Table.Row>
+                </Table.Header>
+                <Table.Body stickyFirstColumn>
+                    {TABLE_DATA.map((user) => (
+                        <Table.Row key={user.email}>
+                            <Table.RowCell>
+                                <div className="flex items-center gap-2">
+                                    <div>
+                                        <div className="font-medium">{user.name}</div>
+                                        <div className="text-sm text-gray-500">{user.email}</div>
+                                    </div>
+                                </div>
+                            </Table.RowCell>
+                            <Table.RowCell>{user.invited}</Table.RowCell>
+                            <Table.RowCell>{user.lastSeen}</Table.RowCell>
+                            <Table.RowCell>{user.initialLogin}</Table.RowCell>
+                            <Table.RowCell>{user.lastLogin}</Table.RowCell>
+                            <Table.RowCell>{user.twoFa ? 'Yes' : 'No'}</Table.RowCell>
+                            <Table.RowCell>{user.analytics}</Table.RowCell>
+                            <Table.RowCell>{user.guidelines}</Table.RowCell>
+                            <Table.RowCell>{user.libraries}</Table.RowCell>
+                            <Table.RowCell>{user.projects}</Table.RowCell>
+                            <Table.RowCell>{user.groups}</Table.RowCell>
+                            <Table.RowCell>{user.targets}</Table.RowCell>
+                        </Table.Row>
+                    ))}
+                </Table.Body>
+            </Table.Root>
+        </div>
+    ),
+};
+
+export const LoadingState: Story = {
+    render: () => (
+        <Table.Root loading>
+            <Table.Header>
+                <Table.Row>
+                    <Table.HeaderCell width="250px">Name</Table.HeaderCell>
+                    <Table.HeaderCell width="150px">Invited by</Table.HeaderCell>
+                    <Table.HeaderCell width="120px">Last seen</Table.HeaderCell>
+                </Table.Row>
+            </Table.Header>
+            <Table.Body>
+                {Array.from({ length: 5 }).map((_, index) => (
+                    <Table.Row key={index}>
+                        <Table.RowCell>
+                            <div className="flex items-center gap-2">
+                                <div className="w-8 h-8 rounded-full bg-gray-200 animate-pulse" />
+                                <div>
+                                    <div className="w-32 h-4 bg-gray-200 rounded animate-pulse" />
+                                    <div className="w-48 h-3 mt-1 bg-gray-200 rounded animate-pulse" />
+                                </div>
+                            </div>
+                        </Table.RowCell>
+                        <Table.RowCell>
+                            <div className="w-24 h-4 bg-gray-200 rounded animate-pulse" />
+                        </Table.RowCell>
+                        <Table.RowCell>
+                            <div className="w-20 h-4 bg-gray-200 rounded animate-pulse" />
+                        </Table.RowCell>
+                    </Table.Row>
+                ))}
+            </Table.Body>
+        </Table.Root>
+    ),
+};
+
+export const Disabled: Story = {
+    render: () => (
+        <Table.Root>
+            <Table.Header>
+                <Table.Row>
+                    <Table.HeaderCell width="250px">Name</Table.HeaderCell>
+                    <Table.HeaderCell width="150px">Invited by</Table.HeaderCell>
+                    <Table.HeaderCell width="120px">Last seen</Table.HeaderCell>
+                </Table.Row>
+            </Table.Header>
+            <Table.Body>
+                {TABLE_DATA.map((user, index) => (
+                    <Table.Row
+                        key={user.email}
+                        onClick={() => alert(`Clicked on ${user.name}`)}
+                        disabled={index % 3 === 0}
+                    >
+                        <Table.RowCell>
+                            <div className="flex items-center gap-2">
+                                <div>
+                                    <div className="font-medium">{user.name}</div>
+                                    <div className="text-sm text-gray-500">{user.email}</div>
+                                </div>
+                            </div>
+                        </Table.RowCell>
+                        <Table.RowCell>{user.invited}</Table.RowCell>
+                        <Table.RowCell>{user.lastSeen}</Table.RowCell>
+                    </Table.Row>
+                ))}
+            </Table.Body>
+        </Table.Root>
+    ),
+};
+
+export const WithCaption: Story = {
+    render: () => (
+        <Table.Root caption="User Management Dashboard">
+            <Table.Header>
+                <Table.Row>
+                    <Table.HeaderCell width="250px">Name</Table.HeaderCell>
+                    <Table.HeaderCell width="150px">Invited by</Table.HeaderCell>
+                    <Table.HeaderCell width="120px">Last seen</Table.HeaderCell>
+                </Table.Row>
+            </Table.Header>
+            <Table.Body>
+                {TABLE_DATA.slice(0, 5).map((user) => (
+                    <Table.Row key={user.email}>
+                        <Table.RowCell>
+                            <div className="flex items-center gap-2">
+                                <div>
+                                    <div className="font-medium">{user.name}</div>
+                                    <div className="text-sm text-gray-500">{user.email}</div>
+                                </div>
+                            </div>
+                        </Table.RowCell>
+                        <Table.RowCell>{user.invited}</Table.RowCell>
+                        <Table.RowCell>{user.lastSeen}</Table.RowCell>
+                    </Table.Row>
+                ))}
+            </Table.Body>
+        </Table.Root>
+    ),
+};
+
+export const TruncatedContent: Story = {
+    render: () => (
+        <div style={{ width: '200px' }}>
+            <Table.Root>
+                <Table.Header>
+                    <Table.Row>
+                        <Table.HeaderCell truncate>Name</Table.HeaderCell>
+                        <Table.HeaderCell>Invited by</Table.HeaderCell>
+                        <Table.HeaderCell truncate>Last seen</Table.HeaderCell>
+                    </Table.Row>
+                </Table.Header>
+                <Table.Body>
+                    {TABLE_DATA.slice(0, 5).map((user) => (
+                        <Table.Row key={user.email}>
+                            <Table.RowCell truncate>{user.name}</Table.RowCell>
+                            <Table.RowCell>{user.invited}</Table.RowCell>
+                            <Table.RowCell truncate>{user.lastSeen}</Table.RowCell>
+                        </Table.Row>
+                    ))}
+                </Table.Body>
+            </Table.Root>
+        </div>
+    ),
+};
+
+export const WithSearchAndFilters: Story = {
     render: () => {
         const [searchTerm, setSearchTerm] = useState('');
         const [ageFilter, setAgeFilter] = useState<'all' | 'young' | 'old'>('all');
-        // Changed to track only the active sort column and direction
-        const [activeSort, setActiveSort] = useState<{
-            column: string;
-            direction: SortDirection;
-        } | null>(null);
 
         const filteredAndSortedData = useMemo(() => {
             let result = [...TABLE_DATA];
@@ -174,40 +713,18 @@ export const WithSearchFilterSort: Story = {
             // Apply search filter
             if (searchTerm) {
                 result = result.filter(
-                    (row) =>
-                        row.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                        row.lastName.toLowerCase().includes(searchTerm.toLowerCase()),
+                    (user) =>
+                        user.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        user.lastName.toLowerCase().includes(searchTerm.toLowerCase()),
                 );
             }
 
-            // Apply age filter
             if (ageFilter !== 'all') {
-                result = result.filter((row) => (ageFilter === 'young' ? row.age < 30 : row.age >= 30));
-            }
-
-            // Apply sort if active
-            if (activeSort) {
-                const { column, direction } = activeSort;
-                result.sort((a, b) => {
-                    const valueA = column === 'name' ? `${a.firstName} ${a.lastName}` : a[column as keyof TableRow];
-                    const valueB = column === 'name' ? `${b.firstName} ${b.lastName}` : b[column as keyof TableRow];
-
-                    if (valueA < valueB) {
-                        return direction === 'ascending' ? -1 : 1;
-                    }
-                    if (valueA > valueB) {
-                        return direction === 'ascending' ? 1 : -1;
-                    }
-                    return 0;
-                });
+                result = result.filter((user) => (ageFilter === 'young' ? user.age < 30 : user.age >= 30));
             }
 
             return result;
-        }, [searchTerm, ageFilter, activeSort]);
-
-        const handleSortChange = (column: string, direction: SortDirection) => {
-            setActiveSort({ column, direction });
-        };
+        }, [searchTerm, ageFilter]);
 
         return (
             <Flex direction="column" gap="1rem">
@@ -236,39 +753,17 @@ export const WithSearchFilterSort: Story = {
                 <Table.Root>
                     <Table.Header>
                         <Table.Row>
-                            <Table.HeaderCell
-                                sortable
-                                sortDirection={activeSort?.column === 'name' ? activeSort.direction : undefined}
-                                onSortChange={(direction) => handleSortChange('name', direction)}
-                            >
-                                Name
-                            </Table.HeaderCell>
-                            <Table.HeaderCell
-                                sortable
-                                sortDirection={activeSort?.column === 'age' ? activeSort.direction : undefined}
-                                onSortChange={(direction) => handleSortChange('age', direction)}
-                            >
-                                Age
-                            </Table.HeaderCell>
-                            <Table.HeaderCell
-                                sortable
-                                sortDirection={activeSort?.column === 'role' ? activeSort.direction : undefined}
-                                onSortChange={(direction) => handleSortChange('role', direction)}
-                            >
-                                Role
-                            </Table.HeaderCell>
-                            <Table.HeaderCell>Actions</Table.HeaderCell>
+                            <Table.HeaderCell>Name</Table.HeaderCell>
+                            <Table.HeaderCell>Age</Table.HeaderCell>
+                            <Table.HeaderCell>Role</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
-                        {filteredAndSortedData.map((row) => (
-                            <Table.Row key={row.id} onClick={() => console.log(`View details for ${row.firstName}`)}>
-                                <Table.RowCell>{`${row.firstName} ${row.lastName}`}</Table.RowCell>
-                                <Table.RowCell>{row.age}</Table.RowCell>
-                                <Table.RowCell>{row.role}</Table.RowCell>
-                                <Table.RowCell>
-                                    <Flex gap=".5rem">{TABLE_ACTIONS}</Flex>
-                                </Table.RowCell>
+                        {filteredAndSortedData.map((user) => (
+                            <Table.Row key={user.id} onClick={() => console.log(`View details for ${user.firstName}`)}>
+                                <Table.RowCell>{user.name}</Table.RowCell>
+                                <Table.RowCell>{user.age}</Table.RowCell>
+                                <Table.RowCell>{user.role}</Table.RowCell>
                             </Table.Row>
                         ))}
                     </Table.Body>
@@ -280,17 +775,17 @@ export const WithSearchFilterSort: Story = {
 
 export const WithSelection: Story = {
     render: () => {
-        const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
+        const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
 
         const handleSelectAll = () => {
             if (selectedRows.size === TABLE_DATA.length) {
                 setSelectedRows(new Set());
             } else {
-                setSelectedRows(new Set(TABLE_DATA.map((row) => row.id)));
+                setSelectedRows(new Set(TABLE_DATA.map((user) => user.id)));
             }
         };
 
-        const handleSelectRow = (event: FormEvent<HTMLButtonElement>, id: string) => {
+        const handleSelectRow = (event: FormEvent<HTMLButtonElement>, id: number) => {
             event.stopPropagation();
             const newSelection = new Set(selectedRows);
             if (newSelection.has(id)) {
@@ -314,94 +809,31 @@ export const WithSelection: Story = {
                                 onChange={handleSelectAll}
                             />
                         </Table.HeaderCell>
-                        {TABLE_HEADERS.map(({ key, label }) => (
-                            <Table.HeaderCell key={key}>{label}</Table.HeaderCell>
-                        ))}
+                        <Table.HeaderCell>Name</Table.HeaderCell>
+                        <Table.HeaderCell>Age</Table.HeaderCell>
                     </Table.Row>
                 </Table.Header>
                 <Table.Body>
-                    {TABLE_DATA.map((row) => (
+                    {TABLE_DATA.map((user) => (
                         <Table.Row
-                            key={row.id}
-                            selected={selectedRows.has(row.id)}
-                            onClick={() => console.log(`View details for ${row.firstName}`)}
+                            key={user.id}
+                            selected={selectedRows.has(user.id)}
+                            onClick={() => console.log(`View details for ${user.firstName}`)}
                         >
                             <Table.RowCell>
                                 <Checkbox
-                                    value={selectedRows.has(row.id)}
-                                    onChange={(event) => handleSelectRow(event, row.id)}
+                                    value={selectedRows.has(user.id)}
+                                    onChange={(event) => handleSelectRow(event, user.id)}
                                 />
                             </Table.RowCell>
-                            <Table.RowCell>{row.firstName}</Table.RowCell>
-                            <Table.RowCell>{row.lastName}</Table.RowCell>
-                            <Table.RowCell>{row.age}</Table.RowCell>
-                            <Table.RowCell>
-                                <Flex gap=".5rem">{TABLE_ACTIONS}</Flex>
-                            </Table.RowCell>
+                            <Table.RowCell>{user.name}</Table.RowCell>
+                            <Table.RowCell>{user.age}</Table.RowCell>
                         </Table.Row>
                     ))}
                 </Table.Body>
             </Table.Root>
         );
     },
-};
-
-export const TableStyles: Story = {
-    name: 'Style Variations',
-    render: () => (
-        <Flex direction="column" gap="2rem">
-            <Table.Root striped caption="Striped Table">
-                <Table.Header>
-                    <Table.Row>
-                        <Table.HeaderCell>Default Borders</Table.HeaderCell>
-                        <Table.HeaderCell>Normal Row</Table.HeaderCell>
-                    </Table.Row>
-                </Table.Header>
-                <Table.Body>
-                    {TABLE_DATA.map((row) => (
-                        <Table.Row key={row.id} onClick={() => console.log(`Clicked ${row.firstName}`)}>
-                            <Table.RowCell>{row.firstName}</Table.RowCell>
-                            <Table.RowCell>{row.role}</Table.RowCell>
-                        </Table.Row>
-                    ))}
-                </Table.Body>
-            </Table.Root>
-
-            <Table.Root bordered={false} caption="Borderless">
-                <Table.Header>
-                    <Table.Row>
-                        <Table.HeaderCell>Interactive Rows</Table.HeaderCell>
-                        <Table.HeaderCell>No Borders</Table.HeaderCell>
-                    </Table.Row>
-                </Table.Header>
-                <Table.Body>
-                    {TABLE_DATA.map((row) => (
-                        <Table.Row key={row.id} onClick={() => console.log(`Clicked ${row.firstName}`)}>
-                            <Table.RowCell>{row.firstName}</Table.RowCell>
-                            <Table.RowCell>{row.role}</Table.RowCell>
-                        </Table.Row>
-                    ))}
-                </Table.Body>
-            </Table.Root>
-
-            <Table.Root striped fullWidth={false} caption="Compact Width">
-                <Table.Header>
-                    <Table.Row>
-                        <Table.HeaderCell>Auto Width</Table.HeaderCell>
-                        <Table.HeaderCell>With Stripes</Table.HeaderCell>
-                    </Table.Row>
-                </Table.Header>
-                <Table.Body>
-                    {TABLE_DATA.slice(0, 3).map((row) => (
-                        <Table.Row key={row.id} onClick={() => console.log(`Clicked ${row.firstName}`)}>
-                            <Table.RowCell>{row.firstName}</Table.RowCell>
-                            <Table.RowCell>{row.role}</Table.RowCell>
-                        </Table.Row>
-                    ))}
-                </Table.Body>
-            </Table.Root>
-        </Flex>
-    ),
 };
 
 export const CellAlignments: Story = {
@@ -417,15 +849,15 @@ export const CellAlignments: Story = {
                 </Table.Row>
             </Table.Header>
             <Table.Body>
-                {TABLE_DATA.map((row) => (
-                    <Table.Row key={row.id} onClick={() => console.log(`Clicked ${row.firstName}'s row`)}>
-                        <Table.RowCell align="left">{row.firstName}</Table.RowCell>
-                        <Table.RowCell align="center">{row.role}</Table.RowCell>
-                        <Table.RowCell align="right">{row.age}</Table.RowCell>
+                {TABLE_DATA.map((user) => (
+                    <Table.Row key={user.id} onClick={() => console.log(`Clicked ${user.firstName}'s user`)}>
+                        <Table.RowCell align="left">{user.firstName}</Table.RowCell>
+                        <Table.RowCell align="center">{user.role}</Table.RowCell>
+                        <Table.RowCell align="right">{user.age}</Table.RowCell>
                         <Table.RowCell>
                             <Flex justify="space-between" align="center">
-                                <span>{row.status}</span>
-                                <span>{row.lastLogin}</span>
+                                <span>{user.invited}</span>
+                                <span>{user.lastLogin}</span>
                             </Flex>
                         </Table.RowCell>
                     </Table.Row>
@@ -435,29 +867,26 @@ export const CellAlignments: Story = {
     ),
 };
 
-export const ContentTruncation: Story = {
-    name: 'Truncation & Width Control',
+export const WidthControl: Story = {
     render: () => (
         <div style={{ width: '800px' }}>
             <Table.Root>
                 <Table.Header>
                     <Table.Row>
-                        <Table.HeaderCell width="100px" truncate noShrink>
-                            Fixed Width & No Shrink
-                        </Table.HeaderCell>
-                        <Table.HeaderCell width="200px" truncate>
+                        <Table.HeaderCell width="100px">Fixed Width & No Shrink</Table.HeaderCell>
+                        <Table.HeaderCell width="100px" truncate>
                             Truncated Very Long Header Title That Should Be Cut Off
                         </Table.HeaderCell>
-                        <Table.HeaderCell width="30%">Percentage Width</Table.HeaderCell>
+                        <Table.HeaderCell width="50%">Percentage Width</Table.HeaderCell>
                         <Table.HeaderCell>Auto Width</Table.HeaderCell>
                     </Table.Row>
                 </Table.Header>
                 <Table.Body>
-                    {TABLE_DATA.map((row) => (
-                        <Table.Row key={row.id} onClick={() => console.log(`Clicked ${row.firstName}'s row`)}>
-                            <Table.RowCell truncate>Fixed Width Content</Table.RowCell>
-                            <Table.RowCell truncate>
-                                {`${row.firstName} ${row.lastName} - ${row.role} - ${row.status}`}
+                    {TABLE_DATA.map((user) => (
+                        <Table.Row key={user.id}>
+                            <Table.RowCell width="50px">Fixed Width Content</Table.RowCell>
+                            <Table.RowCell truncate width="100px">
+                                {`${user.firstName} ${user.lastName} - ${user.role} - ${user.lastLogin}`}
                             </Table.RowCell>
                             <Table.RowCell>Normal Cell</Table.RowCell>
                             <Table.RowCell>Auto Width Content</Table.RowCell>
@@ -466,82 +895,5 @@ export const ContentTruncation: Story = {
                 </Table.Body>
             </Table.Root>
         </div>
-    ),
-};
-
-export const ScrollBehavior: Story = {
-    name: 'Sticky Header & Column',
-    render: () => (
-        <div style={{ height: '400px', width: '800px', overflow: 'auto', border: '1px solid #ccc' }}>
-            <Table.Root>
-                <Table.Header sticky>
-                    <Table.Row>
-                        <Table.HeaderCell noShrink>ID</Table.HeaderCell>
-                        <Table.HeaderCell width="200px">Name</Table.HeaderCell>
-                        <Table.HeaderCell width="150px">Role</Table.HeaderCell>
-                        <Table.HeaderCell width="150px">Status</Table.HeaderCell>
-                        <Table.HeaderCell width="150px">Last Login</Table.HeaderCell>
-                        <Table.HeaderCell width="200px">Actions</Table.HeaderCell>
-                    </Table.Row>
-                </Table.Header>
-                <Table.Body stickyFirstColumn>
-                    {Array.from({ length: 20 }).map((_, index) => (
-                        <Table.Row key={index} onClick={() => console.log(`Clicked row ${index + 1}`)}>
-                            <Table.RowCell>{index + 1}</Table.RowCell>
-                            <Table.RowCell truncate>
-                                {`${TABLE_DATA[index % 6]?.firstName} ${TABLE_DATA[index % 6]?.lastName}`}
-                            </Table.RowCell>
-                            <Table.RowCell>{TABLE_DATA[index % 6]?.role}</Table.RowCell>
-                            <Table.RowCell>{TABLE_DATA[index % 6]?.status}</Table.RowCell>
-                            <Table.RowCell>{TABLE_DATA[index % 6]?.lastLogin}</Table.RowCell>
-                            <Table.RowCell>
-                                <Flex gap="0.5rem">
-                                    <Button size="small">Edit</Button>
-                                    <Button size="small" variant="danger">
-                                        Delete
-                                    </Button>
-                                </Flex>
-                            </Table.RowCell>
-                        </Table.Row>
-                    ))}
-                </Table.Body>
-            </Table.Root>
-        </div>
-    ),
-};
-
-export const RowStates: Story = {
-    name: 'Row States & Interactions',
-    render: () => (
-        <Table.Root>
-            <Table.Header>
-                <Table.Row>
-                    <Table.HeaderCell>State</Table.HeaderCell>
-                    <Table.HeaderCell>Description</Table.HeaderCell>
-                </Table.Row>
-            </Table.Header>
-            <Table.Body>
-                <Table.Row onClick={() => console.log('Regular click')}>
-                    <Table.RowCell>Interactive Row</Table.RowCell>
-                    <Table.RowCell>Default state with hover effect and click handler</Table.RowCell>
-                </Table.Row>
-                <Table.Row selected onClick={() => console.log('Selected click')}>
-                    <Table.RowCell>Selected Row</Table.RowCell>
-                    <Table.RowCell>Selected state with interaction</Table.RowCell>
-                </Table.Row>
-                <Table.Row disabled>
-                    <Table.RowCell>Disabled Row</Table.RowCell>
-                    <Table.RowCell>Non-interactive state</Table.RowCell>
-                </Table.Row>
-                <Table.Row selected disabled>
-                    <Table.RowCell>Selected & Disabled</Table.RowCell>
-                    <Table.RowCell>Selected but non-interactive</Table.RowCell>
-                </Table.Row>
-                <Table.Row>
-                    <Table.RowCell>Non-interactive Row</Table.RowCell>
-                    <Table.RowCell>No click handler, no hover effect</Table.RowCell>
-                </Table.Row>
-            </Table.Body>
-        </Table.Root>
     ),
 };
