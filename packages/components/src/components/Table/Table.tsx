@@ -25,11 +25,6 @@ type TableRootProps = {
      * @default true
      */
     fullWidth?: boolean;
-    /**
-     * Whether the table is in a loading state
-     * @default false
-     */
-    loading?: boolean;
     children: ReactNode;
     'aria-label'?: string;
     'aria-describedby'?: string;

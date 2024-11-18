@@ -315,7 +315,7 @@ export const Basic: Story = {
                             </div>
                         </Table.RowCell>
                         <Table.RowCell>
-                            <Switch aria-label="Admin" />
+                            <Switch size="small" aria-label="Admin" />
                         </Table.RowCell>
                         <Table.RowCell>{user.invited}</Table.RowCell>
                         <Table.RowCell>{user.lastSeen}</Table.RowCell>
@@ -323,8 +323,7 @@ export const Basic: Story = {
                         <Table.RowCell>{user.lastLogin}</Table.RowCell>
                         <Table.RowCell>{user.twoFa ? 'Yes' : 'No'}</Table.RowCell>
                         <Table.RowCell>
-                            {' '}
-                            <Switch aria-label="Analytics" />
+                            <Switch size="small" aria-label="Analytics" />
                         </Table.RowCell>
                         <Table.RowCell>{user.guidelines}</Table.RowCell>
                         <Table.RowCell>{user.libraries}</Table.RowCell>
@@ -533,6 +532,56 @@ export const StickyHeader: Story = {
     ),
 };
 
+export const StickyFirstColumn: Story = {
+    render: () => (
+        <div style={{ width: '700px', overflow: 'auto' }}>
+            <Table.Root layout="auto">
+                <Table.Header>
+                    <Table.Row>
+                        <Table.HeaderCell>Name</Table.HeaderCell>
+                        <Table.HeaderCell>Invited by</Table.HeaderCell>
+                        <Table.HeaderCell>Last seen</Table.HeaderCell>
+                        <Table.HeaderCell>Initial login</Table.HeaderCell>
+                        <Table.HeaderCell>Last login</Table.HeaderCell>
+                        <Table.HeaderCell>2FA</Table.HeaderCell>
+                        <Table.HeaderCell>Analytics</Table.HeaderCell>
+                        <Table.HeaderCell>Guidelines</Table.HeaderCell>
+                        <Table.HeaderCell>Libraries</Table.HeaderCell>
+                        <Table.HeaderCell>Projects</Table.HeaderCell>
+                        <Table.HeaderCell>Groups</Table.HeaderCell>
+                        <Table.HeaderCell>Targets</Table.HeaderCell>
+                    </Table.Row>
+                </Table.Header>
+                <Table.Body stickyFirstColumn>
+                    {TABLE_DATA.map((user) => (
+                        <Table.Row key={user.email}>
+                            <Table.RowCell>
+                                <div className="flex items-center gap-2">
+                                    <div>
+                                        <div className="font-medium">{user.name}</div>
+                                        <div className="text-sm text-gray-500">{user.email}</div>
+                                    </div>
+                                </div>
+                            </Table.RowCell>
+                            <Table.RowCell>{user.invited}</Table.RowCell>
+                            <Table.RowCell>{user.lastSeen}</Table.RowCell>
+                            <Table.RowCell>{user.initialLogin}</Table.RowCell>
+                            <Table.RowCell>{user.lastLogin}</Table.RowCell>
+                            <Table.RowCell>{user.twoFa ? 'Yes' : 'No'}</Table.RowCell>
+                            <Table.RowCell>{user.analytics}</Table.RowCell>
+                            <Table.RowCell>{user.guidelines}</Table.RowCell>
+                            <Table.RowCell>{user.libraries}</Table.RowCell>
+                            <Table.RowCell>{user.projects}</Table.RowCell>
+                            <Table.RowCell>{user.groups}</Table.RowCell>
+                            <Table.RowCell>{user.targets}</Table.RowCell>
+                        </Table.Row>
+                    ))}
+                </Table.Body>
+            </Table.Root>
+        </div>
+    ),
+};
+
 export const Interactive: Story = {
     render: () => (
         <Table.Root>
@@ -590,91 +639,6 @@ export const WithLinks: Story = {
                         </Table.RowCell>
                         <Table.RowCell>{user.invited}</Table.RowCell>
                         <Table.RowCell>{user.lastSeen}</Table.RowCell>
-                    </Table.Row>
-                ))}
-            </Table.Body>
-        </Table.Root>
-    ),
-};
-
-export const StickyFirstColumn: Story = {
-    render: () => (
-        <div style={{ width: '700px', overflow: 'auto' }}>
-            <Table.Root layout="auto">
-                <Table.Header>
-                    <Table.Row>
-                        <Table.HeaderCell>Name</Table.HeaderCell>
-                        <Table.HeaderCell>Invited by</Table.HeaderCell>
-                        <Table.HeaderCell>Last seen</Table.HeaderCell>
-                        <Table.HeaderCell>Initial login</Table.HeaderCell>
-                        <Table.HeaderCell>Last login</Table.HeaderCell>
-                        <Table.HeaderCell>2FA</Table.HeaderCell>
-                        <Table.HeaderCell>Analytics</Table.HeaderCell>
-                        <Table.HeaderCell>Guidelines</Table.HeaderCell>
-                        <Table.HeaderCell>Libraries</Table.HeaderCell>
-                        <Table.HeaderCell>Projects</Table.HeaderCell>
-                        <Table.HeaderCell>Groups</Table.HeaderCell>
-                        <Table.HeaderCell>Targets</Table.HeaderCell>
-                    </Table.Row>
-                </Table.Header>
-                <Table.Body stickyFirstColumn>
-                    {TABLE_DATA.map((user) => (
-                        <Table.Row key={user.email}>
-                            <Table.RowCell>
-                                <div className="flex items-center gap-2">
-                                    <div>
-                                        <div className="font-medium">{user.name}</div>
-                                        <div className="text-sm text-gray-500">{user.email}</div>
-                                    </div>
-                                </div>
-                            </Table.RowCell>
-                            <Table.RowCell>{user.invited}</Table.RowCell>
-                            <Table.RowCell>{user.lastSeen}</Table.RowCell>
-                            <Table.RowCell>{user.initialLogin}</Table.RowCell>
-                            <Table.RowCell>{user.lastLogin}</Table.RowCell>
-                            <Table.RowCell>{user.twoFa ? 'Yes' : 'No'}</Table.RowCell>
-                            <Table.RowCell>{user.analytics}</Table.RowCell>
-                            <Table.RowCell>{user.guidelines}</Table.RowCell>
-                            <Table.RowCell>{user.libraries}</Table.RowCell>
-                            <Table.RowCell>{user.projects}</Table.RowCell>
-                            <Table.RowCell>{user.groups}</Table.RowCell>
-                            <Table.RowCell>{user.targets}</Table.RowCell>
-                        </Table.Row>
-                    ))}
-                </Table.Body>
-            </Table.Root>
-        </div>
-    ),
-};
-
-export const LoadingState: Story = {
-    render: () => (
-        <Table.Root loading>
-            <Table.Header>
-                <Table.Row>
-                    <Table.HeaderCell width="250px">Name</Table.HeaderCell>
-                    <Table.HeaderCell width="150px">Invited by</Table.HeaderCell>
-                    <Table.HeaderCell width="120px">Last seen</Table.HeaderCell>
-                </Table.Row>
-            </Table.Header>
-            <Table.Body>
-                {Array.from({ length: 5 }).map((_, index) => (
-                    <Table.Row key={index}>
-                        <Table.RowCell>
-                            <div className="flex items-center gap-2">
-                                <div className="w-8 h-8 rounded-full bg-gray-200 animate-pulse" />
-                                <div>
-                                    <div className="w-32 h-4 bg-gray-200 rounded animate-pulse" />
-                                    <div className="w-48 h-3 mt-1 bg-gray-200 rounded animate-pulse" />
-                                </div>
-                            </div>
-                        </Table.RowCell>
-                        <Table.RowCell>
-                            <div className="w-24 h-4 bg-gray-200 rounded animate-pulse" />
-                        </Table.RowCell>
-                        <Table.RowCell>
-                            <div className="w-20 h-4 bg-gray-200 rounded animate-pulse" />
-                        </Table.RowCell>
                     </Table.Row>
                 ))}
             </Table.Body>
