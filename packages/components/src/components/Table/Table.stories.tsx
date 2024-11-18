@@ -441,7 +441,6 @@ export const Sortable: Story = {
                 <Table.Header>
                     <Table.Row>
                         <Table.HeaderCell
-                            width="250px"
                             sortDirection={sortField === 'name' ? sortDirection : undefined}
                             onSortChange={(direction) => {
                                 setSortField('name');
@@ -451,7 +450,6 @@ export const Sortable: Story = {
                             Name
                         </Table.HeaderCell>
                         <Table.HeaderCell
-                            width="150px"
                             sortDirection={sortField === 'invited' ? sortDirection : undefined}
                             onSortChange={(direction) => {
                                 setSortField('invited');
@@ -461,7 +459,6 @@ export const Sortable: Story = {
                             Invited by
                         </Table.HeaderCell>
                         <Table.HeaderCell
-                            width="120px"
                             sortDirection={sortField === 'lastSeen' ? sortDirection : undefined}
                             onSortChange={(direction) => {
                                 setSortField('lastSeen');
