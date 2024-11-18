@@ -33,11 +33,11 @@ test('should handle sorting functionality', async ({ mount }) => {
     const component = await mount(
         <Table.Root>
             <Table.Header>
-                <tr>
+                <Table.Row>
                     <Table.HeaderCell sortDirection="ascending" onSortChange={onSortChange}>
                         Name
                     </Table.HeaderCell>
-                </tr>
+                </Table.Row>
             </Table.Header>
         </Table.Root>,
     );
