@@ -10,22 +10,22 @@ import { Dropdown } from '../Dropdown/Dropdown';
 import { Flex } from '../Flex/Flex';
 import { TextInput } from '../TextInput/TextInput';
 
-import { Table } from './Table';
+import { Table, TableHeader, TableRoot, TableHeaderCell, TableBody, TableRow, TableRowCell } from './Table';
 
 type Story = StoryObj<typeof meta>;
 const meta: Meta<typeof Table.Root> = {
-    component: Table.Root,
+    component: TableRoot,
     subcomponents: {
         // @ts-expect-error Storybook types are incorrect
-        'Table.Header': Table.Header,
+        'Table.Header': TableHeader,
         // @ts-expect-error Storybook types are incorrect
-        'Table.HeaderCell': Table.HeaderCell,
+        'Table.HeaderCell': TableHeaderCell,
         // @ts-expect-error Storybook types are incorrect
-        'Table.Body': Table.Body,
+        'Table.Body': TableBody,
         // @ts-expect-error Storybook types are incorrect
-        'Table.Row': Table.Row,
+        'Table.Row': TableRow,
         // @ts-expect-error Storybook types are incorrect
-        'Table.RowCell': Table.RowCell,
+        'Table.RowCell': TableRowCell,
     },
     tags: ['autodocs'],
     parameters: {
@@ -115,6 +115,14 @@ const TABLE_ACTIONS = [
 ];
 
 export const Default: Story = {
+    args: {
+        striped: true,
+        fullWidth: false,
+        loading: true,
+        caption: 'asdsd',
+        bordered: true,
+    },
+
     render: () => {
         const handleRowClick = (id: string) => {
             console.log(`Row ${id} clicked`);

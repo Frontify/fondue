@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 /* (c) Copyright Frontify Ltd., all rights reserved. */
-import { type HTMLAttributes, type ReactNode, useId } from 'react';
+import { type ReactNode, useId } from 'react';
 
 import styles from './styles/table.module.scss';
 import { handleKeyDown } from './utils';
@@ -10,7 +10,6 @@ type SortDirection = 'ascending' | 'descending' | 'other' | undefined;
 type HorizontalAlignment = 'left' | 'center' | 'right';
 
 type TableRootProps = {
-    children: ReactNode;
     /**
      * Optional caption text for the table that appears above it
      */
@@ -35,17 +34,18 @@ type TableRootProps = {
      * @default false
      */
     loading?: boolean;
+    children: ReactNode;
     'aria-label'?: string;
     'aria-describedby'?: string;
 };
 
-const TableRoot = ({
-    children,
+export const TableRoot = ({
     caption,
     striped = false,
     bordered = true,
     fullWidth = true,
     loading = false,
+    children,
     'aria-label': ariaLabel,
     'aria-describedby': ariaDescribedBy,
 }: TableRootProps) => {
@@ -68,19 +68,16 @@ const TableRoot = ({
 };
 
 type TableHeaderProps = {
-    children: ReactNode;
     /**
      * Whether header should stick to the top when scrolling
      * @default false
      */
     sticky?: boolean;
-    /**
-     * Accessible label for the header section
-     */
+    children: ReactNode;
     'aria-label'?: string;
 };
 
-const TableHeader = ({ children, sticky = false, 'aria-label': ariaLabel }: TableHeaderProps) => {
+export const TableHeader = ({ children, sticky = false, 'aria-label': ariaLabel }: TableHeaderProps) => {
     return (
         <thead className={styles.header} data-sticky={sticky} aria-label={ariaLabel}>
             {children}
@@ -89,25 +86,11 @@ const TableHeader = ({ children, sticky = false, 'aria-label': ariaLabel }: Tabl
 };
 
 type TableSortTranslations = {
-    /**
-     * Label for ascending sort. Variables: {column} - column name
-     * @default "Sort by {column} ascending"
-     */
     sortAscending?: string;
-    /**
-     * Label for descending sort. Variables: {column} - column name
-     * @default "Sort by {column} descending"
-     */
     sortDescending?: string;
-    /**
-     * Label for removing sort. Variables: {column} - column name
-     * @default "Remove sort from {column}"
-     */
-    removeSort?: string;
 };
 
 type TableHeaderCellProps = {
-    children: ReactNode;
     /**
      * Handler called when the sort direction changes
      * @param direction - The new sort direction
@@ -133,7 +116,8 @@ type TableHeaderCellProps = {
      */
     truncate?: boolean;
     /**
-     * Translations for sort button aria-labels
+     * Label for asceding/descending sort. Variables: {column} - column name
+     * @default "Sort by {column} ascending/descending"
      */
     sortTranslations?: TableSortTranslations;
     /**
@@ -150,12 +134,11 @@ type TableHeaderCellProps = {
      * @default 'col'
      */
     scope?: 'col' | 'row';
-} & Omit<HTMLAttributes<HTMLTableCellElement>, 'align'>;
+    children: ReactNode;
+};
 
-const TableHeaderCell = ({
+export const TableHeaderCell = ({
     onSortChange,
-    style,
-    children,
     sortable,
     sortDirection,
     align = 'left',
@@ -164,7 +147,7 @@ const TableHeaderCell = ({
     width,
     noShrink = false,
     scope = 'col',
-    ...props
+    children,
 }: TableHeaderCellProps) => {
     const buttonId = useId();
 
@@ -184,9 +167,6 @@ const TableHeaderCell = ({
         if (sortDirection === 'ascending') {
             return (sortTranslations?.sortDescending ?? 'Sort by {column} descending').replace('{column}', columnName);
         }
-        if (sortDirection === 'descending') {
-            return (sortTranslations?.removeSort ?? 'Remove sort from {column}').replace('{column}', columnName);
-        }
         return (sortTranslations?.sortAscending ?? 'Sort by {column} ascending').replace('{column}', columnName);
     };
 
@@ -194,7 +174,6 @@ const TableHeaderCell = ({
         <th
             className={styles.headerCell}
             style={{
-                ...style,
                 width,
                 textAlign: align,
             }}
@@ -203,7 +182,6 @@ const TableHeaderCell = ({
             role="columnheader"
             scope={scope}
             aria-sort={sortDirection}
-            {...props}
         >
             {sortable ? (
                 <button
@@ -222,15 +200,15 @@ const TableHeaderCell = ({
 };
 
 type TableBodyProps = {
-    children: ReactNode;
     /**
      * Whether the first column should stick to the viewport when scrolling horizontally
      * @default false
      */
     stickyFirstColumn?: boolean;
+    children: ReactNode;
 };
 
-const TableBody = ({ stickyFirstColumn, children }: TableBodyProps) => {
+export const TableBody = ({ stickyFirstColumn, children }: TableBodyProps) => {
     return (
         <tbody className={styles.body} data-sticky-first-column={stickyFirstColumn}>
             {children}
@@ -239,7 +217,6 @@ const TableBody = ({ stickyFirstColumn, children }: TableBodyProps) => {
 };
 
 type TableRowProps = {
-    children: ReactNode;
     /**
      * Whether the row is in a selected state
      * @default false
@@ -255,13 +232,11 @@ type TableRowProps = {
      * If provided, the row will be hoverable and interactive
      */
     onClick?: () => void;
-    /**
-     * Accessible label for the row
-     */
+    children: ReactNode;
     'aria-label'?: string;
 };
 
-const TableRow = ({
+export const TableRow = ({
     selected = false,
     disabled = false,
     onClick,
@@ -297,7 +272,6 @@ const TableRow = ({
 };
 
 type TableRowCellProps = {
-    children: ReactNode;
     /**
      * Horizontal alignment of the content
      * @default 'left'
@@ -308,13 +282,16 @@ type TableRowCellProps = {
      * @default false
      */
     truncate?: boolean;
-    /**
-     * Accessible label for the cell
-     */
+    children: ReactNode;
     'aria-label'?: string;
 };
 
-const TableRowCell = ({ children, align = 'left', truncate = false, 'aria-label': ariaLabel }: TableRowCellProps) => {
+export const TableRowCell = ({
+    children,
+    align = 'left',
+    truncate = false,
+    'aria-label': ariaLabel,
+}: TableRowCellProps) => {
     return (
         <td className={styles.rowCell} style={{ textAlign: align }} data-truncate={truncate} aria-label={ariaLabel}>
             {children}
