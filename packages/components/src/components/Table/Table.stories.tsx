@@ -13,10 +13,8 @@ import { TextInput } from '../TextInput/TextInput';
 
 import { Table, TableHeader, TableRoot, TableHeaderCell, TableBody, TableRow, TableRowCell } from './Table';
 
-export default { component: Table };
 type Story = StoryObj<typeof meta>;
-
-const meta: Meta<typeof Table.Root> = {
+const meta: Meta<typeof TableRoot> = {
     component: TableRoot,
     subcomponents: {
         // @ts-expect-error Storybook types are incorrect
@@ -37,7 +35,26 @@ const meta: Meta<typeof Table.Root> = {
         },
     },
     args: {},
+    argTypes: {
+        layout: {
+            control: {
+                type: 'select',
+                options: ['auto', 'fixed'],
+            },
+            defaultValue: 'auto',
+        },
+        fullWidth: {
+            control: 'boolean',
+            defaultValue: true,
+        },
+        caption: {
+            control: 'text',
+            defaultValue: '',
+        },
+    },
 };
+
+export default meta;
 
 const TABLE_DATA = [
     {
@@ -283,8 +300,8 @@ const TABLE_DATA = [
 ];
 
 export const Basic: Story = {
-    render: () => (
-        <Table.Root>
+    render: ({ ...args }) => (
+        <Table.Root {...args}>
             <Table.Header>
                 <Table.Row>
                     <Table.HeaderCell width="250px">Name</Table.HeaderCell>
@@ -348,8 +365,8 @@ export const Basic: Story = {
 };
 
 export const AutoLayout: Story = {
-    render: () => (
-        <Table.Root layout="auto">
+    render: ({ ...args }) => (
+        <Table.Root {...args} layout="auto">
             <Table.Header>
                 <tr>
                     <Table.HeaderCell width="100px">Name</Table.HeaderCell>
@@ -371,8 +388,8 @@ export const AutoLayout: Story = {
 };
 
 export const FixedLayout: Story = {
-    render: () => (
-        <Table.Root layout="fixed">
+    render: ({ ...args }) => (
+        <Table.Root {...args} layout="fixed">
             <Table.Header>
                 <tr>
                     <Table.HeaderCell width="100px">Name</Table.HeaderCell>
@@ -394,8 +411,8 @@ export const FixedLayout: Story = {
 };
 
 export const NonFullWidth: Story = {
-    render: () => (
-        <Table.Root fullWidth={false}>
+    render: ({ ...args }) => (
+        <Table.Root {...args} fullWidth={false}>
             <Table.Header>
                 <tr>
                     <Table.HeaderCell>Name</Table.HeaderCell>
@@ -417,7 +434,7 @@ export const NonFullWidth: Story = {
 };
 
 export const Sortable: Story = {
-    render: () => {
+    render: ({ ...args }) => {
         const [sortField, setSortField] = useState<string | null>(null);
         const [sortDirection, setSortDirection] = useState<'ascending' | 'descending'>();
 
@@ -437,7 +454,7 @@ export const Sortable: Story = {
         });
 
         return (
-            <Table.Root>
+            <Table.Root {...args}>
                 <Table.Header>
                     <Table.Row>
                         <Table.HeaderCell
@@ -492,9 +509,9 @@ export const Sortable: Story = {
 };
 
 export const StickyHeader: Story = {
-    render: () => (
+    render: ({ ...args }) => (
         <div className="h-96 overflow-auto border rounded-lg">
-            <Table.Root>
+            <Table.Root {...args}>
                 <Table.Header sticky>
                     <Table.Row>
                         <Table.HeaderCell width="250px">Name</Table.HeaderCell>
@@ -530,9 +547,9 @@ export const StickyHeader: Story = {
 };
 
 export const StickyFirstColumn: Story = {
-    render: () => (
+    render: ({ ...args }) => (
         <div style={{ width: '700px', overflow: 'auto' }}>
-            <Table.Root layout="auto">
+            <Table.Root {...args} layout="auto">
                 <Table.Header>
                     <Table.Row>
                         <Table.HeaderCell>Name</Table.HeaderCell>
@@ -580,8 +597,8 @@ export const StickyFirstColumn: Story = {
 };
 
 export const Interactive: Story = {
-    render: () => (
-        <Table.Root>
+    render: ({ ...args }) => (
+        <Table.Root {...args}>
             <Table.Header>
                 <Table.Row>
                     <Table.HeaderCell>Name</Table.HeaderCell>
@@ -610,8 +627,8 @@ export const Interactive: Story = {
 };
 
 export const WithLinks: Story = {
-    render: () => (
-        <Table.Root>
+    render: ({ ...args }) => (
+        <Table.Root {...args}>
             <Table.Header>
                 <Table.Row>
                     <Table.HeaderCell>Name</Table.HeaderCell>
@@ -644,8 +661,8 @@ export const WithLinks: Story = {
 };
 
 export const Disabled: Story = {
-    render: () => (
-        <Table.Root>
+    render: ({ ...args }) => (
+        <Table.Root {...args}>
             <Table.Header>
                 <Table.Row>
                     <Table.HeaderCell>Name</Table.HeaderCell>
@@ -678,8 +695,8 @@ export const Disabled: Story = {
 };
 
 export const WithCaption: Story = {
-    render: () => (
-        <Table.Root caption="User Management Dashboard">
+    render: ({ ...args }) => (
+        <Table.Root {...args} caption="User Management Dashboard">
             <Table.Header>
                 <Table.Row>
                     <Table.HeaderCell>Name</Table.HeaderCell>
@@ -708,9 +725,9 @@ export const WithCaption: Story = {
 };
 
 export const TruncatedContent: Story = {
-    render: () => (
+    render: ({ ...args }) => (
         <div style={{ width: '200px' }}>
-            <Table.Root>
+            <Table.Root {...args}>
                 <Table.Header>
                     <Table.Row>
                         <Table.HeaderCell truncate>Name</Table.HeaderCell>
@@ -733,7 +750,7 @@ export const TruncatedContent: Story = {
 };
 
 export const WithSearchAndFilters: Story = {
-    render: () => {
+    render: ({ ...args }) => {
         const [searchTerm, setSearchTerm] = useState('');
         const [ageFilter, setAgeFilter] = useState<'all' | 'young' | 'old'>('all');
 
@@ -782,7 +799,7 @@ export const WithSearchAndFilters: Story = {
                     </Dropdown.Root>
                 </Flex>
 
-                <Table.Root>
+                <Table.Root {...args}>
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell>Name</Table.HeaderCell>
@@ -806,7 +823,7 @@ export const WithSearchAndFilters: Story = {
 };
 
 export const WithSelection: Story = {
-    render: () => {
+    render: ({ ...args }) => {
         const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
 
         const handleSelectAll = () => {
@@ -832,7 +849,7 @@ export const WithSelection: Story = {
         const isPartiallySelected = selectedRows.size > 0 && selectedRows.size < TABLE_DATA.length;
 
         return (
-            <Table.Root>
+            <Table.Root {...args}>
                 <Table.Header>
                     <Table.Row>
                         <Table.HeaderCell>
@@ -870,8 +887,8 @@ export const WithSelection: Story = {
 
 export const CellAlignments: Story = {
     name: 'Cell Alignment Options',
-    render: () => (
-        <Table.Root>
+    render: ({ ...args }) => (
+        <Table.Root {...args}>
             <Table.Header>
                 <Table.Row>
                     <Table.HeaderCell align="left">Left Header</Table.HeaderCell>
@@ -900,9 +917,9 @@ export const CellAlignments: Story = {
 };
 
 export const WidthControl: Story = {
-    render: () => (
+    render: ({ ...args }) => (
         <div style={{ width: '800px' }}>
-            <Table.Root>
+            <Table.Root {...args}>
                 <Table.Header>
                     <Table.Row>
                         <Table.HeaderCell width="100px">Fixed Width & No Shrink</Table.HeaderCell>
