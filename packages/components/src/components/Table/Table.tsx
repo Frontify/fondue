@@ -91,7 +91,12 @@ type TableSortTranslations = {
 
 type TableHeaderCellProps = {
     /**
-     * Width of the column (in PX)
+     * Scope of the column
+     * @default 'col'
+     */
+    scope?: HTMLTableCellElement['scope'];
+    /**
+     * Width of the column
      */
     width?: string;
     /**
@@ -130,6 +135,7 @@ type TableHeaderCellProps = {
 export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellProps>(
     (
         {
+            scope = 'col',
             sortDirection,
             width,
             align = 'left',
@@ -175,7 +181,7 @@ export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellP
                 }}
                 data-truncate={truncate}
                 data-no-shrink={noShrink}
-                scope="col"
+                scope={scope}
             >
                 {onSortChange ? (
                     <button
@@ -318,13 +324,13 @@ export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
         return (
             <tr
                 ref={ref}
+                tabIndex={isInteractive ? 0 : undefined}
+                role={isLink ? 'link' : isInteractive ? 'button' : 'row'}
                 className={styles.row}
                 data-href={href}
                 data-selected={selected}
                 data-interactive={isInteractive}
                 data-disabled={disabled}
-                role={isLink ? 'link' : isInteractive ? 'button' : 'row'}
-                tabIndex={isInteractive ? 0 : undefined}
                 aria-selected={selected}
                 aria-disabled={disabled}
                 aria-label={ariaLabel}
