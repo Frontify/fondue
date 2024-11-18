@@ -35,10 +35,9 @@
 }
 
 caption {
-    padding: 0.5rem 0;
+    padding: sizeToken(3) sizeToken(2);
     text-align: left;
     color: var(--text-color);
-    font-size: var(--body-size-small);
 }
 
 .header {
