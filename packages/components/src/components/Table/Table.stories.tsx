@@ -157,146 +157,6 @@ const TABLE_DATA = [
         groups: 24,
         targets: 24,
     },
-    {
-        id: 6,
-        firstName: 'Judith',
-        lastName: 'Rodriguez',
-        name: 'Judith Rodriguez',
-        age: 33,
-        role: 'Product Designer',
-        email: 'judith403@gmail.com',
-        invited: 'John Dukes',
-        lastSeen: 'Oct 30, 2024',
-        initialLogin: 'SSO',
-        lastLogin: 'SSO',
-        twoFa: true,
-        analytics: 24,
-        guidelines: 24,
-        libraries: 24,
-        projects: 24,
-        groups: 24,
-        targets: 24,
-    },
-    {
-        id: 7,
-        firstName: 'Kathy',
-        lastName: 'Pacheco',
-        name: 'Kathy Pacheco',
-        age: 36,
-        role: 'Backend Developer',
-        email: 'k_pacheco@gmail.com',
-        invited: 'James Hall',
-        lastSeen: 'Nov 7, 2024',
-        initialLogin: 'SSO',
-        lastLogin: 'SSO',
-        twoFa: true,
-        analytics: 24,
-        guidelines: 24,
-        libraries: 24,
-        projects: 24,
-        groups: 24,
-        targets: 24,
-    },
-    {
-        id: 8,
-        firstName: 'Kimberly',
-        lastName: 'Mastrangelo',
-        name: 'Kimberly Mastrangelo',
-        age: 29,
-        role: 'QA Engineer',
-        email: 'k.r.mastrangelo@outlook.com',
-        invited: 'Corina McCoy',
-        lastSeen: 'Oct 29, 2024',
-        initialLogin: 'SSO',
-        lastLogin: 'SSO',
-        twoFa: true,
-        analytics: 24,
-        guidelines: 24,
-        libraries: 24,
-        projects: 24,
-        groups: 24,
-        targets: 24,
-    },
-    {
-        id: 9,
-        firstName: 'Mary',
-        lastName: 'Freund',
-        name: 'Mary Freund',
-        age: 44,
-        role: 'System Architect',
-        email: 'm.k.freund@aol.com',
-        invited: 'Autumn Phillips',
-        lastSeen: 'Oct 31, 2024',
-        initialLogin: 'SSO',
-        lastLogin: 'SSO',
-        twoFa: true,
-        analytics: 24,
-        guidelines: 24,
-        libraries: 24,
-        projects: 24,
-        groups: 24,
-        targets: 24,
-    },
-    {
-        id: 10,
-        firstName: 'Patricia',
-        lastName: 'Sanders',
-        name: 'Patricia Sanders',
-        age: 31,
-        role: 'DevOps Engineer',
-        email: 'patricia95@outlook.com',
-        invited: 'Patricia Sanders',
-        lastSeen: 'Oct 28, 2024',
-        initialLogin: 'SSO',
-        lastLogin: 'SSO',
-        twoFa: true,
-        analytics: 24,
-        guidelines: 24,
-        libraries: 24,
-        projects: 24,
-        groups: 24,
-        targets: 24,
-    },
-    {
-        id: 11,
-        firstName: 'Ricky',
-        lastName: 'Smith',
-        name: 'Ricky Smith',
-        age: 37,
-        role: 'Data Engineer',
-        email: 'r.m.smith@gmail.com',
-        invited: 'Iva Ryan',
-        lastSeen: 'Oct 20, 2024',
-        initialLogin: 'SSO',
-        lastLogin: 'SSO',
-        twoFa: true,
-        analytics: 24,
-        guidelines: 24,
-        libraries: 24,
-        projects: 24,
-        groups: 24,
-        targets: 24,
-    },
-    {
-        id: 12,
-        firstName: 'Stephanie',
-        lastName: 'Sharkey',
-        name: 'Stephanie Sharkey',
-        age: 34,
-        role: 'Full Stack Developer',
-        email: 's.t.sharkey@outlook.com',
-        invited: 'Kenneth Allen',
-        lastSeen: 'Oct 26, 2024',
-        initialLogin: 'SSO',
-        lastLogin: 'SSO',
-        twoFa: true,
-        analytics: 24,
-        guidelines: 24,
-        libraries: 24,
-        projects: 24,
-        groups: 24,
-        targets: 24,
-    },
 ];
 
 export const Basic: Story = {
@@ -523,23 +383,25 @@ export const StickyHeader: Story = {
                     </Table.Row>
                 </Table.Header>
                 <Table.Body>
-                    {[...TABLE_DATA, ...TABLE_DATA, ...TABLE_DATA].map((user, index) => (
-                        <Table.Row key={`${user.email}-${index}`}>
-                            <Table.RowCell>
-                                <div className="flex items-center gap-2">
-                                    <div>
-                                        <div className="font-medium">{user.name}</div>
-                                        <div className="text-sm text-gray-500">{user.email}</div>
+                    {[...TABLE_DATA, ...TABLE_DATA, ...TABLE_DATA, ...TABLE_DATA, ...TABLE_DATA, ...TABLE_DATA].map(
+                        (user, index) => (
+                            <Table.Row key={`${user.email}-${index}`}>
+                                <Table.RowCell>
+                                    <div className="flex items-center gap-2">
+                                        <div>
+                                            <div className="font-medium">{user.name}</div>
+                                            <div className="text-sm text-gray-500">{user.email}</div>
+                                        </div>
                                     </div>
-                                </div>
-                            </Table.RowCell>
-                            <Table.RowCell>{user.invited}</Table.RowCell>
-                            <Table.RowCell>{user.lastSeen}</Table.RowCell>
-                            <Table.RowCell>{user.initialLogin}</Table.RowCell>
-                            <Table.RowCell>{user.lastLogin}</Table.RowCell>
-                            <Table.RowCell>{user.twoFa ? 'Yes' : 'No'}</Table.RowCell>
-                        </Table.Row>
-                    ))}
+                                </Table.RowCell>
+                                <Table.RowCell>{user.invited}</Table.RowCell>
+                                <Table.RowCell>{user.lastSeen}</Table.RowCell>
+                                <Table.RowCell>{user.initialLogin}</Table.RowCell>
+                                <Table.RowCell>{user.lastLogin}</Table.RowCell>
+                                <Table.RowCell>{user.twoFa ? 'Yes' : 'No'}</Table.RowCell>
+                            </Table.Row>
+                        ),
+                    )}
                 </Table.Body>
             </Table.Root>
         </div>
