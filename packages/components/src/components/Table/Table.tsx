@@ -344,10 +344,6 @@ type TableRowCellProps = {
      */
     truncate?: boolean;
     /**
-     * Width of the column (in PX)
-     */
-    width?: string;
-    /**
      * Horizontal alignment of the content
      * @default 'left'
      */
@@ -357,13 +353,13 @@ type TableRowCellProps = {
 };
 
 export const TableRowCell = forwardRef<HTMLTableCellElement, TableRowCellProps>(
-    ({ truncate, width, align = 'left', 'aria-label': ariaLabel, children }, ref) => {
+    ({ truncate, align = 'left', 'aria-label': ariaLabel, children }, ref) => {
         return (
             <td
                 ref={ref}
                 data-truncate={truncate}
                 className={styles.rowCell}
-                style={{ textAlign: align, width }}
+                style={{ textAlign: align }}
                 aria-label={ariaLabel}
             >
                 {children}

@@ -348,6 +348,75 @@ export const Basic: Story = {
     ),
 };
 
+export const AutoLayout: Story = {
+    render: () => (
+        <Table.Root layout="auto">
+            <Table.Header>
+                <tr>
+                    <Table.HeaderCell width="100px">Name</Table.HeaderCell>
+                    <Table.HeaderCell>Role</Table.HeaderCell>
+                    <Table.HeaderCell>Last Seen</Table.HeaderCell>
+                </tr>
+            </Table.Header>
+            <Table.Body>
+                {TABLE_DATA.map((user) => (
+                    <Table.Row key={user.id}>
+                        <Table.RowCell>{user.name}</Table.RowCell>
+                        <Table.RowCell>{user.role}</Table.RowCell>
+                        <Table.RowCell>{user.lastSeen}</Table.RowCell>
+                    </Table.Row>
+                ))}
+            </Table.Body>
+        </Table.Root>
+    ),
+};
+
+export const FixedLayout: Story = {
+    render: () => (
+        <Table.Root layout="fixed">
+            <Table.Header>
+                <tr>
+                    <Table.HeaderCell width="100px">Name</Table.HeaderCell>
+                    <Table.HeaderCell>Role</Table.HeaderCell>
+                    <Table.HeaderCell>Last Seen</Table.HeaderCell>
+                </tr>
+            </Table.Header>
+            <Table.Body>
+                {TABLE_DATA.map((user) => (
+                    <Table.Row key={user.id}>
+                        <Table.RowCell>{user.name}</Table.RowCell>
+                        <Table.RowCell>{user.role}</Table.RowCell>
+                        <Table.RowCell>{user.lastSeen}</Table.RowCell>
+                    </Table.Row>
+                ))}
+            </Table.Body>
+        </Table.Root>
+    ),
+};
+
+export const NonFullWidth: Story = {
+    render: () => (
+        <Table.Root fullWidth={false}>
+            <Table.Header>
+                <tr>
+                    <Table.HeaderCell>Name</Table.HeaderCell>
+                    <Table.HeaderCell>Role</Table.HeaderCell>
+                    <Table.HeaderCell>Last Seen</Table.HeaderCell>
+                </tr>
+            </Table.Header>
+            <Table.Body>
+                {TABLE_DATA.map((user) => (
+                    <Table.Row key={user.id}>
+                        <Table.RowCell>{user.name}</Table.RowCell>
+                        <Table.RowCell>{user.role}</Table.RowCell>
+                        <Table.RowCell>{user.lastSeen}</Table.RowCell>
+                    </Table.Row>
+                ))}
+            </Table.Body>
+        </Table.Root>
+    ),
+};
+
 export const Sortable: Story = {
     render: () => {
         const [sortField, setSortField] = useState<string | null>(null);
@@ -884,8 +953,8 @@ export const WidthControl: Story = {
                 <Table.Body>
                     {TABLE_DATA.map((user) => (
                         <Table.Row key={user.id}>
-                            <Table.RowCell width="50px">Fixed Width Content</Table.RowCell>
-                            <Table.RowCell truncate width="100px">
+                            <Table.RowCell>Fixed Width Content</Table.RowCell>
+                            <Table.RowCell truncate>
                                 {`${user.firstName} ${user.lastName} - ${user.role} - ${user.lastLogin}`}
                             </Table.RowCell>
                             <Table.RowCell>Normal Cell</Table.RowCell>
