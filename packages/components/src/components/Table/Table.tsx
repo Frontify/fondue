@@ -119,11 +119,7 @@ type TableHeaderCellProps = {
      * @default false
      */
     noShrink?: boolean;
-    /**
-     * Scope of the header cell (column or row)
-     * @default 'col'
-     */
-    scope?: 'col' | 'row';
+
     /**
      * Handler called when the sort direction changes
      * @param direction - The new sort direction
@@ -141,7 +137,6 @@ export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellP
             truncate = false,
             sortTranslations,
             noShrink = false,
-            scope = 'col',
             onSortChange,
             children,
         },
@@ -181,7 +176,7 @@ export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellP
                 }}
                 data-truncate={truncate}
                 data-no-shrink={noShrink}
-                scope={scope}
+                scope="col"
             >
                 {onSortChange ? (
                     <button
