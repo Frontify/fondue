@@ -2,7 +2,7 @@
 
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 import { IconArrowDown, IconArrowUp } from '@frontify/fondue-icons';
-import { type ReactNode, useId, forwardRef, useMemo } from 'react';
+import { type ReactNode, useId, forwardRef, useMemo, KeyboardEvent } from 'react';
 
 import styles from './styles/table.module.scss';
 import { handleKeyDown } from './utils';
@@ -75,7 +75,7 @@ type TableHeaderProps = {
 };
 
 export const TableHeader = forwardRef<HTMLTableSectionElement, TableHeaderProps>(
-    ({ children, sticky = false, 'aria-label': ariaLabel, 'aria-busy': ariaBusy }, ref) => {
+    ({ sticky = false, children, 'aria-label': ariaLabel, 'aria-busy': ariaBusy }, ref) => {
         return (
             <thead ref={ref} className={styles.header} data-sticky={sticky} aria-label={ariaLabel} aria-busy={ariaBusy}>
                 {children}
@@ -181,7 +181,6 @@ export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellP
                 }}
                 data-truncate={truncate}
                 data-no-shrink={noShrink}
-                role="columnheader"
                 scope={scope}
             >
                 {onSortChange ? (
@@ -213,12 +212,12 @@ type TableBodyProps = {
      * @default false
      */
     stickyFirstColumn?: boolean;
-    'aria-busy'?: boolean;
     children: ReactNode;
+    'aria-busy'?: boolean;
 };
 
 export const TableBody = forwardRef<HTMLTableSectionElement, TableBodyProps>(
-    ({ stickyFirstColumn, 'aria-busy': ariaBusy, children }, ref) => {
+    ({ stickyFirstColumn, children, 'aria-busy': ariaBusy }, ref) => {
         return (
             <tbody ref={ref} className={styles.body} data-sticky-first-column={stickyFirstColumn} aria-busy={ariaBusy}>
                 {children}
@@ -242,7 +241,7 @@ type BaseTableRowProps = {
     /**
      * Content to be rendered within the row
      */
-    children: React.ReactNode;
+    children: ReactNode;
     /**
      * Accessible label for the row
      */
@@ -265,7 +264,7 @@ type NavigableTableRowProps = BaseTableRowProps & {
      * Handler called when the row is clicked or activated via keyboard for navigation
      * Must be provided together with href
      */
-    onNavigate: () => void;
+    onNavigate: (href: string) => void;
     /**
      * URL associated with this row for navigation
      * Must be provided together with onNavigate
@@ -292,13 +291,13 @@ export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
             }
 
             if (onNavigate) {
-                onNavigate();
+                onNavigate(href);
             } else if (onClick) {
                 onClick();
             }
         };
 
-        const handleKeyDown = (event: React.KeyboardEvent<HTMLTableRowElement>) => {
+        const handleKeyDown = (event: KeyboardEvent<HTMLTableRowElement>) => {
             if (!isInteractive) {
                 return;
             }
@@ -348,7 +347,7 @@ type TableRowCellProps = {
 };
 
 export const TableRowCell = forwardRef<HTMLTableCellElement, TableRowCellProps>(
-    ({ truncate, align = 'left', 'aria-label': ariaLabel, children }, ref) => {
+    ({ truncate, align = 'left', children, 'aria-label': ariaLabel }, ref) => {
         return (
             <td
                 ref={ref}
