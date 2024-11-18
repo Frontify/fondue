@@ -8,10 +8,10 @@ import { Button } from '../Button/Button';
 import { Checkbox } from '../Checkbox/Checkbox';
 import { Dropdown } from '../Dropdown/Dropdown';
 import { Flex } from '../Flex/Flex';
+import { Switch } from '../Switch/Switch';
 import { TextInput } from '../TextInput/TextInput';
 
 import { Table, TableHeader, TableRoot, TableHeaderCell, TableBody, TableRow, TableRowCell } from './Table';
-import { Switch } from '../Switch/Switch';
 
 export default { component: Table };
 type Story = StoryObj<typeof meta>;
@@ -530,11 +530,11 @@ export const WithLinks: Story = {
 
 export const StickyFirstColumn: Story = {
     render: () => (
-        <div style={{ width: '500px', overflow: 'auto' }}>
+        <div style={{ width: '700px', overflow: 'auto' }}>
             <Table.Root layout="auto">
                 <Table.Header>
                     <Table.Row>
-                        <Table.HeaderCell width="200px">Name</Table.HeaderCell>
+                        <Table.HeaderCell>Name</Table.HeaderCell>
                         <Table.HeaderCell>Invited by</Table.HeaderCell>
                         <Table.HeaderCell>Last seen</Table.HeaderCell>
                         <Table.HeaderCell>Initial login</Table.HeaderCell>
