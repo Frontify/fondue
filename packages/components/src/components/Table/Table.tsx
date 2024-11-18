@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 /* (c) Copyright Frontify Ltd., all rights reserved. */
-import { type ReactNode, useId } from 'react';
+import { type ReactNode, useId, forwardRef } from 'react';
 
 import styles from './styles/table.module.scss';
 import { handleKeyDown } from './utils';
@@ -39,33 +39,39 @@ type TableRootProps = {
     'aria-describedby'?: string;
 };
 
-export const TableRoot = ({
-    caption,
-    striped = false,
-    bordered = true,
-    fullWidth = true,
-    loading = false,
-    children,
-    'aria-label': ariaLabel,
-    'aria-describedby': ariaDescribedBy,
-}: TableRootProps) => {
-    return (
-        <div onKeyDown={handleKeyDown} role="grid" tabIndex={-1}>
-            <table
-                className={styles.table}
-                data-striped={striped}
-                data-bordered={bordered}
-                data-full-width={fullWidth}
-                aria-label={ariaLabel}
-                aria-describedby={ariaDescribedBy}
-                aria-busy={loading}
-            >
-                {caption && <caption>{caption}</caption>}
-                {children}
-            </table>
-        </div>
-    );
-};
+export const TableRoot = forwardRef<HTMLDivElement, TableRootProps>(
+    (
+        {
+            caption,
+            striped = false,
+            bordered = true,
+            fullWidth = true,
+            loading = false,
+            children,
+            'aria-label': ariaLabel,
+            'aria-describedby': ariaDescribedBy,
+        },
+        ref,
+    ) => {
+        return (
+            <div ref={ref} onKeyDown={handleKeyDown} role="grid" tabIndex={-1}>
+                <table
+                    className={styles.table}
+                    data-striped={striped}
+                    data-bordered={bordered}
+                    data-full-width={fullWidth}
+                    aria-label={ariaLabel}
+                    aria-describedby={ariaDescribedBy}
+                    aria-busy={loading}
+                >
+                    {caption && <caption>{caption}</caption>}
+                    {children}
+                </table>
+            </div>
+        );
+    },
+);
+TableRoot.displayName = 'Table.Root';
 
 type TableHeaderProps = {
     /**
@@ -77,13 +83,16 @@ type TableHeaderProps = {
     'aria-label'?: string;
 };
 
-export const TableHeader = ({ children, sticky = false, 'aria-label': ariaLabel }: TableHeaderProps) => {
-    return (
-        <thead className={styles.header} data-sticky={sticky} aria-label={ariaLabel}>
-            {children}
-        </thead>
-    );
-};
+export const TableHeader = forwardRef<HTMLTableSectionElement, TableHeaderProps>(
+    ({ children, sticky = false, 'aria-label': ariaLabel }, ref) => {
+        return (
+            <thead ref={ref} className={styles.header} data-sticky={sticky} aria-label={ariaLabel}>
+                {children}
+            </thead>
+        );
+    },
+);
+TableHeader.displayName = 'Table.Header';
 
 type TableSortTranslations = {
     sortAscending?: string;
@@ -137,67 +146,77 @@ type TableHeaderCellProps = {
     children: ReactNode;
 };
 
-export const TableHeaderCell = ({
-    onSortChange,
-    sortable,
-    sortDirection,
-    align = 'left',
-    truncate = false,
-    sortTranslations,
-    width,
-    noShrink = false,
-    scope = 'col',
-    children,
-}: TableHeaderCellProps) => {
-    const buttonId = useId();
+export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellProps>(
+    (
+        {
+            onSortChange,
+            sortable,
+            sortDirection,
+            align = 'left',
+            truncate = false,
+            sortTranslations,
+            width,
+            noShrink = false,
+            scope = 'col',
+            children,
+        },
+        ref,
+    ) => {
+        const buttonId = useId();
 
-    const handleSortChange = () => {
-        if (!sortable || !onSortChange) {
-            return;
-        }
+        const handleSortChange = () => {
+            if (!sortable || !onSortChange) {
+                return;
+            }
 
-        const newDirection: SortDirection =
-            sortDirection === undefined || sortDirection === 'descending' ? 'ascending' : 'descending';
+            const newDirection: SortDirection =
+                sortDirection === undefined || sortDirection === 'descending' ? 'ascending' : 'descending';
 
-        onSortChange(newDirection);
-    };
+            onSortChange(newDirection);
+        };
 
-    const getSortLabel = () => {
-        const columnName = typeof children === 'string' ? children : '';
-        if (sortDirection === 'ascending') {
-            return (sortTranslations?.sortDescending ?? 'Sort by {column} descending').replace('{column}', columnName);
-        }
-        return (sortTranslations?.sortAscending ?? 'Sort by {column} ascending').replace('{column}', columnName);
-    };
+        const getSortLabel = () => {
+            const columnName = typeof children === 'string' ? children : '';
+            if (sortDirection === 'ascending') {
+                return (sortTranslations?.sortDescending ?? 'Sort by {column} descending').replace(
+                    '{column}',
+                    columnName,
+                );
+            }
+            return (sortTranslations?.sortAscending ?? 'Sort by {column} ascending').replace('{column}', columnName);
+        };
 
-    return (
-        <th
-            className={styles.headerCell}
-            style={{
-                width,
-                textAlign: align,
-            }}
-            data-truncate={truncate}
-            data-no-shrink={noShrink}
-            role="columnheader"
-            scope={scope}
-            aria-sort={sortDirection}
-        >
-            {sortable ? (
-                <button
-                    id={buttonId}
-                    onClick={handleSortChange}
-                    className={styles.sortButton}
-                    aria-label={getSortLabel()}
-                >
-                    {children}
-                </button>
-            ) : (
-                children
-            )}
-        </th>
-    );
-};
+        return (
+            <th
+                ref={ref}
+                className={styles.headerCell}
+                style={{
+                    width,
+                    textAlign: align,
+                }}
+                data-truncate={truncate}
+                data-no-shrink={noShrink}
+                role="columnheader"
+                scope={scope}
+                aria-sort={sortDirection}
+            >
+                {sortable ? (
+                    <button
+                        id={buttonId}
+                        onClick={handleSortChange}
+                        className={styles.sortButton}
+                        aria-label={getSortLabel()}
+                    >
+                        {children}
+                    </button>
+                ) : (
+                    children
+                )}
+            </th>
+        );
+    },
+);
+TableHeaderCell.displayName = 'Table.HeaderCell';
 
 type TableBodyProps = {
     /**
@@ -208,13 +227,14 @@ type TableBodyProps = {
     children: ReactNode;
 };
 
-export const TableBody = ({ stickyFirstColumn, children }: TableBodyProps) => {
+export const TableBody = forwardRef<HTMLTableSectionElement, TableBodyProps>(({ stickyFirstColumn, children }, ref) => {
     return (
-        <tbody className={styles.body} data-sticky-first-column={stickyFirstColumn}>
+        <tbody ref={ref} className={styles.body} data-sticky-first-column={stickyFirstColumn}>
             {children}
         </tbody>
     );
-};
+});
+TableBody.displayName = 'Table.Body';
 
 type TableRowProps = {
     /**
@@ -236,40 +256,38 @@ type TableRowProps = {
     'aria-label'?: string;
 };
 
-export const TableRow = ({
-    selected = false,
-    disabled = false,
-    onClick,
-    children,
-    'aria-label': ariaLabel,
-}: TableRowProps) => {
-    const isInteractive = onClick !== undefined && !disabled;
+export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
+    ({ selected = false, disabled = false, onClick, children, 'aria-label': ariaLabel }, ref) => {
+        const isInteractive = onClick !== undefined && !disabled;
 
-    const handleKeyDown = (event: React.KeyboardEvent<HTMLTableRowElement>) => {
-        if (isInteractive && (event.key === 'Enter' || event.key === ' ')) {
-            event.preventDefault();
-            onClick();
-        }
-    };
+        const handleKeyDown = (event: React.KeyboardEvent<HTMLTableRowElement>) => {
+            if (isInteractive && (event.key === 'Enter' || event.key === ' ')) {
+                event.preventDefault();
+                onClick();
+            }
+        };
 
-    return (
-        <tr
-            className={styles.row}
-            data-selected={selected}
-            data-interactive={isInteractive}
-            data-disabled={disabled}
-            role={isInteractive ? 'button' : 'row'}
-            tabIndex={isInteractive ? 0 : undefined}
-            aria-selected={selected}
-            aria-disabled={disabled}
-            aria-label={ariaLabel}
-            onClick={isInteractive ? onClick : undefined}
-            onKeyDown={isInteractive ? handleKeyDown : undefined}
-        >
-            {children}
-        </tr>
-    );
-};
+        return (
+            <tr
+                ref={ref}
+                className={styles.row}
+                data-selected={selected}
+                data-interactive={isInteractive}
+                data-disabled={disabled}
+                role={isInteractive ? 'button' : 'row'}
+                tabIndex={isInteractive ? 0 : undefined}
+                aria-selected={selected}
+                aria-disabled={disabled}
+                aria-label={ariaLabel}
+                onClick={isInteractive ? onClick : undefined}
+                onKeyDown={isInteractive ? handleKeyDown : undefined}
+            >
+                {children}
+            </tr>
+        );
+    },
+);
+TableRow.displayName = 'Table.Row';
 
 type TableRowCellProps = {
     /**
@@ -286,18 +304,22 @@ type TableRowCellProps = {
     'aria-label'?: string;
 };
 
-export const TableRowCell = ({
-    children,
-    align = 'left',
-    truncate = false,
-    'aria-label': ariaLabel,
-}: TableRowCellProps) => {
-    return (
-        <td className={styles.rowCell} style={{ textAlign: align }} data-truncate={truncate} aria-label={ariaLabel}>
-            {children}
-        </td>
-    );
-};
+export const TableRowCell = forwardRef<HTMLTableCellElement, TableRowCellProps>(
+    ({ children, align = 'left', truncate = false, 'aria-label': ariaLabel }, ref) => {
+        return (
+            <td
+                ref={ref}
+                className={styles.rowCell}
+                style={{ textAlign: align }}
+                data-truncate={truncate}
+                aria-label={ariaLabel}
+            >
+                {children}
+            </td>
+        );
+    },
+);
+TableRowCell.displayName = 'Table.RowCell';
 
 export const Table = {
     Root: TableRoot,
