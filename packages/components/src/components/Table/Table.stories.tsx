@@ -187,7 +187,7 @@ export const Basic: Story = {
 
 export const AutoLayout: Story = {
     render: ({ ...args }) => (
-        <Table.Root {...args} layout="auto">
+        <Table.Root {...args}>
             <Table.Header>
                 <tr>
                     <Table.HeaderCell width="100px">Name</Table.HeaderCell>
@@ -371,8 +371,8 @@ export const StickyHeader: Story = {
 
 export const StickyFirstColumn: Story = {
     render: ({ ...args }) => (
-        <div style={{ width: '700px', overflow: 'auto' }}>
-            <Table.Root {...args} layout="auto">
+        <div style={{ width: '300px', overflow: 'auto' }}>
+            <Table.Root {...args}>
                 <Table.Header>
                     <Table.Row>
                         <Table.HeaderCell>Name</Table.HeaderCell>
@@ -537,7 +537,7 @@ export const WithCaption: Story = {
 
 export const TruncatedContent: Story = {
     render: ({ ...args }) => (
-        <div style={{ width: '200px' }}>
+        <div style={{ width: '500px' }}>
             <Table.Root {...args}>
                 <Table.Header>
                     <Table.Row>
@@ -710,7 +710,7 @@ export const CellAlignments: Story = {
             </Table.Header>
             <Table.Body>
                 {TABLE_DATA.map((user) => (
-                    <Table.Row key={user.id} onClick={() => console.log(`Clicked ${user.firstName}'s user`)}>
+                    <Table.Row key={user.id}>
                         <Table.RowCell align="left">{user.firstName}</Table.RowCell>
                         <Table.RowCell align="center">{user.role}</Table.RowCell>
                         <Table.RowCell align="right">{user.age}</Table.RowCell>
@@ -730,7 +730,7 @@ export const CellAlignments: Story = {
 export const WidthControl: Story = {
     render: ({ ...args }) => (
         <div style={{ width: '800px' }}>
-            <Table.Root {...args}>
+            <Table.Root {...args} layout="fixed">
                 <Table.Header>
                     <Table.Row>
                         <Table.HeaderCell width="100px">Fixed Width & No Shrink</Table.HeaderCell>
