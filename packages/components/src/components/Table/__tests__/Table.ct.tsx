@@ -28,6 +28,172 @@ test('should render basic table structure', async ({ mount }) => {
     await expect(component.getByRole('columnheader')).toHaveCount(2);
 });
 
+test('should handle table layout modes', async ({ mount }) => {
+    const component = await mount(
+        <Table.Root layout="fixed" fullWidth={false} caption="Table Caption">
+            <Table.Header>
+                <Table.Row>
+                    <Table.HeaderCell>Name</Table.HeaderCell>
+                </Table.Row>
+            </Table.Header>
+        </Table.Root>,
+    );
+
+    await expect(component.locator('table')).toHaveAttribute('data-layout', 'fixed');
+    await expect(component.locator('table')).toHaveAttribute('data-full-width', 'false');
+    await expect(component.locator('caption')).toHaveText('Table Caption');
+});
+
+test('should handle ARIA attributes', async ({ mount }) => {
+    const component = await mount(
+        <Table.Root aria-label="Test Table" aria-describedby="table-desc">
+            <Table.Header>
+                <Table.Row>
+                    <Table.HeaderCell>Name</Table.HeaderCell>
+                </Table.Row>
+            </Table.Header>
+        </Table.Root>,
+    );
+
+    await expect(component.locator('table')).toHaveAttribute('aria-label', 'Test Table');
+    await expect(component.locator('table')).toHaveAttribute('aria-describedby', 'table-desc');
+});
+
+test('should handle sticky header and ARIA attributes', async ({ mount }) => {
+    const component = await mount(
+        <Table.Root>
+            <Table.Header sticky aria-label="Header Section" aria-busy={true}>
+                <Table.Row>
+                    <Table.HeaderCell>Name</Table.HeaderCell>
+                </Table.Row>
+            </Table.Header>
+        </Table.Root>,
+    );
+
+    await expect(component.locator('thead')).toHaveAttribute('data-sticky', 'true');
+    await expect(component.locator('thead')).toHaveAttribute('aria-label', 'Header Section');
+    await expect(component.locator('thead')).toHaveAttribute('aria-busy', 'true');
+});
+
+test('should handle all HeaderCell configurations', async ({ mount }) => {
+    const onSortChange = sinon.spy();
+    const component = await mount(
+        <Table.Root>
+            <Table.Header>
+                <Table.Row>
+                    <Table.HeaderCell
+                        scope="col"
+                        width="100px"
+                        align="right"
+                        truncate
+                        noShrink
+                        sortDirection="ascending"
+                        onSortChange={onSortChange}
+                        sortTranslations={{
+                            sortAscending: 'Sort {column} up',
+                            sortDescending: 'Sort {column} down',
+                        }}
+                    >
+                        Name
+                    </Table.HeaderCell>
+                </Table.Row>
+            </Table.Header>
+        </Table.Root>,
+    );
+
+    const headerCell = component.locator('th');
+    await expect(headerCell).toHaveAttribute('scope', 'col');
+    await expect(headerCell).toHaveAttribute('style', /width: 100px/);
+    await expect(headerCell).toHaveAttribute('data-align', 'right');
+    await expect(headerCell).toHaveAttribute('data-truncate', 'true');
+    await expect(headerCell).toHaveAttribute('data-no-shrink', 'true');
+});
+
+test('should handle sticky first column', async ({ mount }) => {
+    const component = await mount(
+        <Table.Root>
+            <Table.Body stickyFirstColumn aria-busy={true}>
+                <Table.Row>
+                    <Table.RowCell>Test</Table.RowCell>
+                </Table.Row>
+            </Table.Body>
+        </Table.Root>,
+    );
+
+    await expect(component.locator('tbody')).toHaveAttribute('data-sticky-first-column', 'true');
+    await expect(component.locator('tbody')).toHaveAttribute('aria-busy', 'true');
+});
+
+test('should handle all row states and interactions', async ({ mount }) => {
+    const onClick = sinon.spy();
+    const onNavigate = sinon.spy();
+    const component = await mount(
+        <Table.Root>
+            <Table.Body>
+                <Table.Row selected={true} disabled={false} href="/test" onNavigate={onNavigate} aria-label="Test Row">
+                    <Table.RowCell>Test</Table.RowCell>
+                </Table.Row>
+                <Table.Row onClick={onClick}>
+                    <Table.RowCell>Test</Table.RowCell>
+                </Table.Row>
+            </Table.Body>
+        </Table.Root>,
+    );
+
+    const firstRow = component.locator('tr').nth(0);
+    await expect(firstRow).toHaveAttribute('data-selected', 'true');
+    await expect(firstRow).toHaveAttribute('data-disabled', 'false');
+    await expect(firstRow).toHaveAttribute('data-href', '/test');
+    await expect(firstRow).toHaveAttribute('role', 'link');
+    await expect(firstRow).toHaveAttribute('aria-label', 'Test Row');
+
+    await firstRow.click();
+    sinon.assert.calledOnceWithExactly(onNavigate, '/test');
+
+    const secondRow = component.locator('tr').nth(1);
+    await expect(secondRow).toHaveAttribute('role', 'button');
+    await secondRow.click();
+    sinon.assert.calledOnce(onClick);
+});
+
+test('should handle all cell configurations', async ({ mount }) => {
+    const component = await mount(
+        <Table.Root>
+            <Table.Body>
+                <Table.Row>
+                    <Table.RowCell truncate align="center" aria-label="Test Cell">
+                        Very long content that should be truncated
+                    </Table.RowCell>
+                </Table.Row>
+            </Table.Body>
+        </Table.Root>,
+    );
+
+    const cell = component.locator('td');
+    await expect(cell).toHaveAttribute('data-truncate', 'true');
+    await expect(cell).toHaveAttribute('data-align', 'center');
+    await expect(cell).toHaveAttribute('aria-label', 'Test Cell');
+});
+
+test('should cycle through sort directions', async ({ mount }) => {
+    const onSortChange = sinon.spy();
+
+    const component = await mount(
+        <Table.Root>
+            <Table.Header>
+                <Table.Row>
+                    <Table.HeaderCell onSortChange={onSortChange}>Name</Table.HeaderCell>
+                </Table.Row>
+            </Table.Header>
+        </Table.Root>,
+    );
+
+    const sortButton = component.getByRole('button');
+
+    await sortButton.click();
+    sinon.assert.calledWith(onSortChange, 'ascending');
+});
+
 test('should handle sorting functionality', async ({ mount }) => {
     const onSortChange = sinon.spy();
     const component = await mount(
@@ -59,7 +225,7 @@ test('should handle row selection', async ({ mount }) => {
     );
 
     await component.getByRole('button').click();
-    sinon.assert.calledOnce(onClick);
+    sinon.assert.calledOnceWithExactly(onClick, false);
     await expect(component.getByRole('button')).toHaveAttribute('aria-selected', 'false');
 });
 
@@ -124,35 +290,4 @@ test('should handle keyboard navigation', async ({ mount, page }) => {
 
     await page.keyboard.press('ArrowDown');
     await expect(component.getByTestId('action-btn-2')).toBeFocused();
-});
-
-test('should apply sticky header', async ({ mount }) => {
-    const component = await mount(
-        <Table.Root>
-            <Table.Header sticky>
-                <Table.Row>
-                    <Table.HeaderCell>Name</Table.HeaderCell>
-                </Table.Row>
-            </Table.Header>
-        </Table.Root>,
-    );
-
-    await expect(component.locator('thead')).toHaveAttribute('data-sticky', 'true');
-});
-
-test('should handle cell dimentions', async ({ mount }) => {
-    const component = await mount(
-        <Table.Root>
-            <Table.Body>
-                <Table.Row>
-                    <Table.RowCell align="right" truncate>
-                        Test
-                    </Table.RowCell>
-                </Table.Row>
-            </Table.Body>
-        </Table.Root>,
-    );
-
-    await expect(component.locator('td')).toHaveAttribute('style', /text-align: right/);
-    await expect(component.locator('td')).toHaveAttribute('data-truncate', 'true');
 });
