@@ -52,12 +52,6 @@ caption {
     line-height: sizeToken(4);
     color: var(--text-color);
 
-    &[data-truncate='true'] {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
     &[data-no-shrink='true'] {
         width: 1%;
         white-space: nowrap;
@@ -107,21 +101,6 @@ caption {
     border-bottom: 1px solid var(--line-color);
     transition: background-color 0.2s ease;
 
-    &[data-interactive='true'] {
-        cursor: pointer;
-
-        &:not([data-disabled='true']):not([data-selected='true']) {
-            &:hover {
-                background-color: var(--base-color-alt);
-            }
-
-            &:focus-visible {
-                @include focus-outline;
-                z-index: 1;
-            }
-        }
-    }
-
     &[data-selected='true'] {
         background-color: var(--box-selected-color);
     }
@@ -131,6 +110,21 @@ caption {
         cursor: not-allowed;
         pointer-events: none;
     }
+
+    &[data-interactive='true'] {
+        cursor: pointer;
+
+        &:not([data-disabled='true']) {
+            &:focus-visible {
+                @include focus-outline;
+                z-index: 1;
+            }
+
+            &:not([data-selected='true']):hover {
+                background-color: var(--base-color-alt);
+            }
+        }
+    }
 }
 
 .rowCell {
@@ -139,6 +133,21 @@ caption {
     font-size: var(--body-size-x-small);
     line-height: sizeToken(4);
     padding: sizeToken(2);
+}
+
+.headerCell,
+.rowCell {
+    &[data-align='left'] {
+        text-align: left;
+    }
+
+    &[data-align='center'] {
+        text-align: center;
+    }
+
+    &[data-align='right'] {
+        text-align: right;
+    }
 
     &[data-truncate='true'] {
         white-space: nowrap;

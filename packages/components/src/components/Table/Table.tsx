@@ -1,13 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconArrowDown, IconArrowUp } from '@frontify/fondue-icons';
-import { type ReactNode, useId, forwardRef, useMemo, type KeyboardEvent } from 'react';
+import { type ReactNode, forwardRef, useMemo, type KeyboardEvent, type CSSProperties } from 'react';
 
 import styles from './styles/table.module.scss';
 import { handleKeyDown } from './utils';
-
-type SortDirection = 'ascending' | 'descending' | undefined;
-type HorizontalAlignment = 'left' | 'center' | 'right';
 
 type TableRootProps = {
     /**
@@ -27,31 +24,29 @@ type TableRootProps = {
     children: ReactNode;
     'aria-label'?: string;
     'aria-describedby'?: string;
-    'aria-busy'?: boolean;
 };
 
-export const TableRoot = forwardRef<HTMLDivElement, TableRootProps>(
+export const TableRoot = forwardRef<HTMLTableElement, TableRootProps>(
     (
         {
-            caption,
-            layout = 'auto',
             fullWidth = true,
+            layout = 'auto',
+            caption,
             children,
             'aria-label': ariaLabel,
             'aria-describedby': ariaDescribedBy,
-            'aria-busy': ariaBusy = false,
         },
         ref,
     ) => {
         return (
-            <div ref={ref} onKeyDown={handleKeyDown} role="grid" tabIndex={-1}>
+            <div onKeyDown={handleKeyDown} role="grid" tabIndex={-1}>
                 <table
+                    ref={ref}
                     className={styles.table}
                     data-layout={layout}
                     data-full-width={fullWidth}
                     aria-label={ariaLabel}
                     aria-describedby={ariaDescribedBy}
-                    aria-busy={ariaBusy}
                 >
                     {caption && <caption>{caption}</caption>}
                     {children}
@@ -84,10 +79,8 @@ export const TableHeader = forwardRef<HTMLTableSectionElement, TableHeaderProps>
 );
 TableHeader.displayName = 'Table.Header';
 
-type TableSortTranslations = {
-    sortAscending?: string;
-    sortDescending?: string;
-};
+type SortDirection = 'ascending' | 'descending' | undefined;
+type HorizontalAlignment = 'left' | 'center' | 'right';
 
 type TableHeaderCellProps = {
     /**
@@ -98,7 +91,7 @@ type TableHeaderCellProps = {
     /**
      * Width of the column
      */
-    width?: string;
+    width?: CSSProperties['width'];
     /**
      * Current sort direction of the column
      */
@@ -114,16 +107,18 @@ type TableHeaderCellProps = {
      */
     truncate?: boolean;
     /**
-     * Label for asceding/descending sort. Variables: {column} - column name
+     * Aria label for asceding/descending sort. Variables: {column} - column name
      * @default "Sort by {column} ascending/descending"
      */
-    sortTranslations?: TableSortTranslations;
+    sortTranslations?: {
+        sortAscending?: string;
+        sortDescending?: string;
+    };
     /**
      * Whether the column should have a minimum width
      * @default false
      */
     noShrink?: boolean;
-
     /**
      * Handler called when the sort direction changes
      * @param direction - The new sort direction
@@ -135,29 +130,27 @@ type TableHeaderCellProps = {
 export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellProps>(
     (
         {
+            noShrink = false,
+            truncate = false,
+            align = 'left',
             scope = 'col',
+            sortTranslations,
             sortDirection,
             width,
-            align = 'left',
-            truncate = false,
-            sortTranslations,
-            noShrink = false,
             onSortChange,
             children,
         },
         ref,
     ) => {
-        const buttonId = useId();
-
         const sortLabel = useMemo(() => {
-            const columnName = typeof children === 'string' ? children : '';
-            if (sortDirection === 'ascending') {
-                return (sortTranslations?.sortDescending ?? 'Sort by {column} descending').replace(
-                    '{column}',
-                    columnName,
-                );
+            if (typeof children === 'string') {
+                if (sortDirection === 'ascending') {
+                    return sortTranslations?.sortDescending ?? `Sort by ${children} descending`;
+                }
+                return sortTranslations?.sortAscending ?? `Sort by ${children} ascending`;
             }
-            return (sortTranslations?.sortAscending ?? 'Sort by {column} ascending').replace('{column}', columnName);
+
+            return sortDirection === 'ascending' ? 'Sort descending' : 'Sort ascending';
         }, [children, sortDirection, sortTranslations]);
 
         const handleSortChange = () => {
@@ -174,22 +167,17 @@ export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellP
         return (
             <th
                 ref={ref}
-                className={styles.headerCell}
                 style={{
-                    textAlign: align,
                     width,
                 }}
+                className={styles.headerCell}
+                scope={scope}
+                data-align={align}
                 data-truncate={truncate}
                 data-no-shrink={noShrink}
-                scope={scope}
             >
                 {onSortChange ? (
-                    <button
-                        id={buttonId}
-                        onClick={handleSortChange}
-                        className={styles.sortButton}
-                        aria-label={sortLabel}
-                    >
+                    <button className={styles.sortButton} aria-label={sortLabel} onClick={handleSortChange}>
                         {children}
                         {sortDirection === 'ascending' ? (
                             <IconArrowUp size="12" />
@@ -284,11 +272,11 @@ type TableRowProps = ClickableTableRowProps | NavigableTableRowProps | NonIntera
 export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
     (
         {
-            selected = false,
             disabled = false,
+            selected = false,
             href,
-            onNavigate,
             onClick,
+            onNavigate,
             children,
             'aria-label': ariaLabel,
             'data-test-id': dataTestId,
@@ -324,16 +312,16 @@ export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
         return (
             <tr
                 ref={ref}
+                className={styles.row}
                 tabIndex={isInteractive ? 0 : undefined}
                 role={isLink ? 'link' : isInteractive ? 'button' : 'row'}
-                className={styles.row}
+                data-disabled={disabled}
+                data-interactive={isInteractive}
                 data-href={href}
                 data-selected={selected}
-                data-interactive={isInteractive}
-                data-disabled={disabled}
-                aria-selected={selected}
                 aria-disabled={disabled}
                 aria-label={ariaLabel}
+                aria-selected={selected}
                 onClick={isInteractive ? handleClick : undefined}
                 onKeyDown={isInteractive ? handleKeyDown : undefined}
                 data-test-id={dataTestId}
@@ -363,13 +351,7 @@ type TableRowCellProps = {
 export const TableRowCell = forwardRef<HTMLTableCellElement, TableRowCellProps>(
     ({ truncate, align = 'left', children, 'aria-label': ariaLabel }, ref) => {
         return (
-            <td
-                ref={ref}
-                data-truncate={truncate}
-                className={styles.rowCell}
-                style={{ textAlign: align }}
-                aria-label={ariaLabel}
-            >
+            <td ref={ref} className={styles.rowCell} data-align={align} data-truncate={truncate} aria-label={ariaLabel}>
                 {children}
             </td>
         );

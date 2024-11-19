@@ -140,30 +140,19 @@ test('should apply sticky header', async ({ mount }) => {
     await expect(component.locator('thead')).toHaveAttribute('data-sticky', 'true');
 });
 
-test('should handle cell alignment', async ({ mount }) => {
+test('should handle cell dimentions', async ({ mount }) => {
     const component = await mount(
         <Table.Root>
             <Table.Body>
                 <Table.Row>
-                    <Table.RowCell align="right">Test</Table.RowCell>
+                    <Table.RowCell align="right" truncate>
+                        Test
+                    </Table.RowCell>
                 </Table.Row>
             </Table.Body>
         </Table.Root>,
     );
 
     await expect(component.locator('td')).toHaveAttribute('style', /text-align: right/);
-});
-
-test('should handle cell truncation', async ({ mount }) => {
-    const component = await mount(
-        <Table.Root>
-            <Table.Body>
-                <Table.Row>
-                    <Table.RowCell truncate>Long text</Table.RowCell>
-                </Table.Row>
-            </Table.Body>
-        </Table.Root>,
-    );
-
     await expect(component.locator('td')).toHaveAttribute('data-truncate', 'true');
 });

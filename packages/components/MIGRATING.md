@@ -49,6 +49,9 @@ This document describes the changes that you need to make to your code to migrat
         -   [Switch](#switch)
             -   [Old](#switch-old)
             -   [New](#switch-new)
+        -   [Table](#table)
+            -   [Old](#table-old)
+            -   [New](#table-new)
         -   [Text Input](#text-input)
             -   [Old](#text-input-old)
             -   [New](#text-input-new)
@@ -129,12 +132,7 @@ Changes:
 ```
 
 ```tsx
-<ChecklistComponent
-    direction={ChecklistDirection.Horizontal}
-    checkboxes={[]}
-    activeValues={[]}
-    setActiveValues={[]}
-/>
+<ChecklistComponent direction={ChecklistDirection.Horizontal} checkboxes={[]} activeValues={[]} setActiveValues={[]} />
 ```
 
 #### New
@@ -167,21 +165,13 @@ Changes:
         </Label>
     </Flex>
     <Flex gap="4px" direction="row">
-        <Checkbox
-            {...args}
-            id="checkbox3"
-            aria-labelledby="label"
-            value="indeterminate"
-            onChange={() => {}}
-        />
+        <Checkbox {...args} id="checkbox3" aria-labelledby="label" value="indeterminate" onChange={() => {}} />
         <Label id="label" htmlFor="checkbox3">
             Checkbox 3
         </Label>
     </Flex>
 </Flex>
 ```
-
-
 
 ### Color Picker
 
@@ -594,25 +584,25 @@ Changes:
 
 Changes:
 
-- All proprietaary properties were removed, the new Layout Components now accept CSSProperties as props
-- The Style properties allow for responsive styling by passing an object with breakpoints as keys and CSSProperties as values
-- `Stack` has been combined with `Flex`
-- `Container` has been combined with `Box`
+-   All proprietaary properties were removed, the new Layout Components now accept CSSProperties as props
+-   The Style properties allow for responsive styling by passing an object with breakpoints as keys and CSSProperties as values
+-   `Stack` has been combined with `Flex`
+-   `Container` has been combined with `Box`
 
 #### Old
 
 ```tsx
 <FondueStack
-  alignItems="start"
-  as="div"
-  bg=""
-  color=""
-  data-test-id="custom-test-id"
-  direction="column"
-  justify="start"
-  margin={0}
-  padding={12}
-  spacing={8}
+    alignItems="start"
+    as="div"
+    bg=""
+    color=""
+    data-test-id="custom-test-id"
+    direction="column"
+    justify="start"
+    margin={0}
+    padding={12}
+    spacing={8}
 >
     <div />
     <div />
@@ -624,12 +614,12 @@ Changes:
 
 ```tsx
 <Flex
-  direction={{
-    base: 'row',
-    sm: 'column'
-  }}
-  alignItems="start"
-  gap="20px"
+    direction={{
+        base: 'row',
+        sm: 'column',
+    }}
+    alignItems="start"
+    gap="20px"
 >
     <div />
     <div />
@@ -672,9 +662,8 @@ Changes:
 ```tsx
 <ScrollWrapper direction={ScrollWrapperDirection.Vertical}>
     <p className="tw-w-[200px]">
-        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis assumenda
-        itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure explicabo, fugiat
-        perferendis consequatur.
+        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis assumenda itaque tenetur
+        ducimus quia qui! Tempore enim beatae est suscipit excepturi iure explicabo, fugiat perferendis consequatur.
     </p>
 </ScrollWrapper>
 ```
@@ -684,9 +673,8 @@ Changes:
 ```tsx
 <ScrollArea showShadow>
     <p className="tw-w-[200px]">
-        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis assumenda
-        itaque tenetur ducimus quia qui! Tempore enim beatae est suscipit excepturi iure explicabo, fugiat
-        perferendis consequatur.
+        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor velit reiciendis nobis assumenda itaque tenetur
+        ducimus quia qui! Tempore enim beatae est suscipit excepturi iure explicabo, fugiat perferendis consequatur.
     </p>
 </ScrollArea>
 ```
@@ -985,6 +973,320 @@ Changes:
     aria-describedby="dark-mode-switch-description"
     data-test-id="switch-test"
 />
+```
+
+### Table
+
+Changes:
+
+-   The Table component now uses a composable API with subcomponents instead of configuration objects and props
+-   Props like `columns` and `rows` have been removed in favor of direct JSX composition
+-   The `Table` component now provides multiple subcomponents:
+    -   `Table.Root`: The main wrapper component for the table
+    -   `Table.Header`: Container for the header section
+    -   `Table.HeaderCell`: Individual header cells with built-in callbacks for sorting
+    -   `Table.Body`: Container for the table body
+    -   `Table.Row`: Individual table rows with interactive capabilities
+    -   `Table.RowCell`: Individual table cells
+-   Sorting is now handled at the cell level rather than the table level
+-   Selection is now implemented through composition rather than through props
+-   Layout properties are now controlled via props on `Table.Root`
+-   Sorting, searching and filtering functionality removed in favor of external control
+-   New features:
+    -   Sticky header support via `sticky` prop on `Table.Header`
+    -   Sticky first column support via `stickyFirstColumn` prop on `Table.Body`
+    -   Direct support for interactive rows (clickable/links) via `onClick`/`href` props
+    -   Better control over cell alignment, dimentions and truncation
+    -   Keyboard navigation with arrow keys
+
+#### Old
+
+```tsx
+const [selectedRows, setSelectedRows] = useState<(string | number)[]>([]);
+const [sortedRows, setSortedRows] = useState<Row[]>(rows);
+const [filter, setFilter] = useState('');
+const [roleFilter, setRoleFilter] = useState<string>('all');
+
+const onSortChange = (key: string, direction?: SortDirection) => {
+    const clonedRows = [...sortedRows];
+    clonedRows.sort((a, b) => {
+        const keyA = a.cells[key].sortId;
+        const keyB = b.cells[key].sortId;
+
+        if (direction === SortDirection.Descending) {
+            return keyA < keyB ? -1 : 1;
+        } else {
+            return keyA < keyB ? 1 : -1;
+        }
+    });
+    setSortedRows(clonedRows);
+};
+
+useEffect(() => {
+    if (filter === '' && roleFilter === 'all') {
+        setSortedRows(rows);
+        return;
+    }
+
+    const filtered = rows.filter((row) => {
+        const matchesSearch = filter === '' || 
+            Object.values(row.cells).some((cell) => 
+                String(cell.sortId).toLowerCase().includes(filter.toLowerCase())
+            );
+        
+        const matchesRole = roleFilter === 'all' || 
+            row.cells.role.sortId === roleFilter;
+
+        return matchesSearch && matchesRole;
+    });
+    
+    setSortedRows(filtered);
+}, [filter, roleFilter]);
+
+const columns: Column[] = [
+    { name: 'User', key: 'user' },
+    { 
+        name: 'Active Sessions', 
+        key: 'activeSessions', 
+        sortable: true,
+        align: 'right' 
+    },
+    { name: 'Last Active', key: 'lastActive' },
+];
+
+const rows: Row[] = [
+    {
+        key: 'row-1',
+        cells: {
+            user: {
+                sortId: 'anna',
+                value: (
+                    <div className="tw-flex tw-items-center tw-gap-2">
+                        <div>
+                            <div className="tw-font-medium">Anna Smith</div>
+                            <div className="tw-text-sm tw-text-gray-500">
+                                anna.smith@example.com
+                            </div>
+                        </div>
+                    </div>
+                ),
+            },
+            activeSessions: {
+                sortId: 108,
+                value: <Badge>108</Badge>,
+            },
+            lastActive: {
+                sortId: 12,
+                value: '12 days ago',
+            },
+        },
+    },
+];
+
+return (
+    <Flex direction="column" gap="1rem">
+        <Flex gap="1rem">
+            <TextInput
+                value={filter}
+                onChange={(val) => setFilter(val)}
+                placeholder="Search users..."
+                decorator={<IconMagnifier />}
+            />
+
+            <Dropdown
+                activeItemId={roleFilter}
+                onChange={setRoleFilter}
+                menuBlocks={[
+                    {
+                        id: 'roles',
+                        menuItems: [
+                            { id: 'all', title: 'All Roles' },
+                            { id: 'admin', title: 'Admin' },
+                            { id: 'user', title: 'User' },
+                        ],
+                    },
+                ]}
+            >
+                <Button icon={<IconFunnel />}>
+                    Filter by role
+                </Button>
+            </Dropdown>
+        </Flex>
+
+        <Table
+            columns={columns}
+            rows={sortedRows}
+            selectionMode={SelectionMode.MultiSelect}
+            selectedRowIds={selectedRows}
+            onSelectionChange={(ids) => setSelectedRows((ids as (string | number)[]) || [])}
+            onSortChange={onSortChange}
+        />
+    </Flex>
+);
+```
+
+#### New
+
+```tsx
+const [searchTerm, setSearchTerm] = useState('');
+
+const [roleFilter, setRoleFilter] = useState('all');
+
+const [sortField, setSortField] = useState<keyof User | null>(null);
+const [sortDirection, setSortDirection] = useState<'ascending' | 'descending'>();
+
+const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
+
+const handleSelectAll = () => {
+    if (selectedRows.size === users.length) {
+        setSelectedRows(new Set());
+    } else {
+        setSelectedRows(new Set(users.map((user) => user.id)));
+    }
+};
+
+const handleSelectRow = (event: FormEvent<HTMLButtonElement>, id: string) => {
+    event.stopPropagation();
+    const newSelection = new Set(selectedRows);
+    if (newSelection.has(id)) {
+        newSelection.delete(id);
+    } else {
+        newSelection.add(id);
+    }
+    setSelectedRows(newSelection);
+};
+
+const processedData = useMemo(() => {
+    let result = [...users];
+
+    if (searchTerm) {
+        result = result.filter(
+            (user) =>
+                user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                user.email.toLowerCase().includes(searchTerm.toLowerCase()),
+        );
+    }
+
+    if (roleFilter !== 'all') {
+        result = result.filter((user) => user.role === roleFilter);
+    }
+
+    if (sortField && sortDirection) {
+        result.sort((a, b) => {
+            const aValue = a[sortField];
+            const bValue = b[sortField];
+
+            if (sortDirection === 'ascending') {
+                return aValue > bValue ? 1 : -1;
+            } else {
+                return aValue < bValue ? 1 : -1;
+            }
+        });
+    }
+
+    return result;
+}, [users, searchTerm, roleFilter, sortField, sortDirection]);
+
+const isAllSelected = selectedRows.size === processedData.length;
+const isPartiallySelected = selectedRows.size > 0 && selectedRows.size < processedData.length;
+
+return (
+    <Flex direction="column" gap="1rem">
+        <Flex gap="1rem">
+            <TextInput placeholder="Search users..." value={searchTerm} onChange={(e) => setSearchTerm(e)}>
+                <TextInput.Slot name="left">
+                    <IconMagnifier size="16" />
+                </TextInput.Slot>
+            </TextInput>
+
+            <Dropdown.Root>
+                <Dropdown.Trigger>
+                    <Button emphasis="default">
+                        <IconFunnel size="16" />
+                        Filter by role
+                    </Button>
+                </Dropdown.Trigger>
+                <Dropdown.Content>
+                    <Dropdown.Item onSelect={() => setRoleFilter('all')}>All Roles</Dropdown.Item>
+                    <Dropdown.Item onSelect={() => setRoleFilter('admin')}>Admin</Dropdown.Item>
+                    <Dropdown.Item onSelect={() => setRoleFilter('user')}>User</Dropdown.Item>
+                </Dropdown.Content>
+            </Dropdown.Root>
+        </Flex>
+
+        <Table.Root>
+            <Table.Header sticky>
+                <Table.Row>
+                    <Table.HeaderCell>
+                        <Checkbox
+                            value={isPartiallySelected ? 'indeterminate' : isAllSelected}
+                            onChange={handleSelectAll}
+                            aria-label="Select all users"
+                        />
+                    </Table.HeaderCell>
+                    <Table.HeaderCell
+                        sortDirection={sortField === 'name' ? sortDirection : undefined}
+                        onSortChange={(direction) => {
+                            setSortField('name');
+                            setSortDirection(direction);
+                        }}
+                    >
+                        User
+                    </Table.HeaderCell>
+                    <Table.HeaderCell
+                        sortDirection={sortField === 'activeSessions' ? sortDirection : undefined}
+                        onSortChange={(direction) => {
+                            setSortField('activeSessions');
+                            setSortDirection(direction);
+                        }}
+                        align="right"
+                    >
+                        Active Sessions
+                    </Table.HeaderCell>
+                    <Table.HeaderCell
+                        sortDirection={sortField === 'lastActive' ? sortDirection : undefined}
+                        onSortChange={(direction) => {
+                            setSortField('lastActive');
+                            setSortDirection(direction);
+                        }}
+                    >
+                        Last Active
+                    </Table.HeaderCell>
+                </Table.Row>
+            </Table.Header>
+
+            <Table.Body>
+                {processedData.map((user) => (
+                    <Table.Row
+                        key={user.id}
+                        selected={selectedRows.has(user.id)}
+                        onClick={() => console.log(`View details for ${user.name}`)}
+                    >
+                        <Table.RowCell>
+                            <Checkbox
+                                value={selectedRows.has(user.id)}
+                                onChange={(event) => handleSelectRow(event, user.id)}
+                                aria-label={`Select ${user.name}`}
+                            />
+                        </Table.RowCell>
+                        <Table.RowCell>
+                            <div className="tw-flex tw-items-center tw-gap-2">
+                                <div>
+                                    <div className="tw-font-medium">{user.name}</div>
+                                    <div className="tw-text-sm tw-text-gray-500">{user.email}</div>
+                                </div>
+                            </div>
+                        </Table.RowCell>
+                        <Table.RowCell align="right">
+                            <Badge>{user.activeSessions}</Badge>
+                        </Table.RowCell>
+                        <Table.RowCell>{user.lastActive}</Table.RowCell>
+                    </Table.Row>
+                ))}
+            </Table.Body>
+        </Table.Root>
+    </Flex>
+);
 ```
 
 ### Text Input
