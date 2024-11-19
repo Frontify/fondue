@@ -61,8 +61,8 @@ test('should handle ARIA attributes', async ({ mount }) => {
 
 test('should handle sticky header and ARIA attributes', async ({ mount }) => {
     const component = await mount(
-        <Table.Root>
-            <Table.Header sticky aria-label="Header Section" aria-busy={true}>
+        <Table.Root sticky="head">
+            <Table.Header aria-label="Header Section" aria-busy={true}>
                 <Table.Row>
                     <Table.HeaderCell>Name</Table.HeaderCell>
                 </Table.Row>
@@ -70,9 +70,38 @@ test('should handle sticky header and ARIA attributes', async ({ mount }) => {
         </Table.Root>,
     );
 
-    await expect(component.locator('thead')).toHaveAttribute('data-sticky', 'true');
+    await expect(component.locator('table')).toHaveAttribute('data-sticky', 'head');
     await expect(component.locator('thead')).toHaveAttribute('aria-label', 'Header Section');
     await expect(component.locator('thead')).toHaveAttribute('aria-busy', 'true');
+});
+
+test('should handle sticky first column', async ({ mount }) => {
+    const component = await mount(
+        <Table.Root sticky="col">
+            <Table.Body aria-busy={true}>
+                <Table.Row>
+                    <Table.RowCell>Test</Table.RowCell>
+                </Table.Row>
+            </Table.Body>
+        </Table.Root>,
+    );
+
+    await expect(component.locator('table')).toHaveAttribute('data-sticky', 'col');
+    await expect(component.locator('tbody')).toHaveAttribute('aria-busy', 'true');
+});
+
+test('should handle sticky first column and head', async ({ mount }) => {
+    const component = await mount(
+        <Table.Root sticky="both">
+            <Table.Body>
+                <Table.Row>
+                    <Table.RowCell>Test</Table.RowCell>
+                </Table.Row>
+            </Table.Body>
+        </Table.Root>,
+    );
+
+    await expect(component.locator('table')).toHaveAttribute('data-sticky', 'both');
 });
 
 test('should handle all HeaderCell configurations', async ({ mount }) => {
@@ -107,21 +136,6 @@ test('should handle all HeaderCell configurations', async ({ mount }) => {
     await expect(headerCell).toHaveAttribute('data-align', 'right');
     await expect(headerCell).toHaveAttribute('data-truncate', 'true');
     await expect(headerCell).toHaveAttribute('data-no-shrink', 'true');
-});
-
-test('should handle sticky first column', async ({ mount }) => {
-    const component = await mount(
-        <Table.Root>
-            <Table.Body stickyFirstColumn aria-busy={true}>
-                <Table.Row>
-                    <Table.RowCell>Test</Table.RowCell>
-                </Table.Row>
-            </Table.Body>
-        </Table.Root>,
-    );
-
-    await expect(component.locator('tbody')).toHaveAttribute('data-sticky-first-column', 'true');
-    await expect(component.locator('tbody')).toHaveAttribute('aria-busy', 'true');
 });
 
 test('should handle all row states and interactions', async ({ mount }) => {
@@ -290,4 +304,39 @@ test('should handle keyboard navigation', async ({ mount, page }) => {
 
     await page.keyboard.press('ArrowDown');
     await expect(component.getByTestId('action-btn-2')).toBeFocused();
+});
+
+test('should set title when content is truncated', async ({ mount }) => {
+    const component = await mount(
+        <div style={{ width: '200px' }}>
+            <Table.Root layout="fixed">
+                <Table.Header>
+                    <Table.Row>
+                        <Table.HeaderCell width="100px" truncate>
+                            This is a very long header cell content that should definitely get truncated
+                        </Table.HeaderCell>
+                    </Table.Row>
+                </Table.Header>
+                <Table.Body>
+                    <Table.Row>
+                        <Table.RowCell truncate>
+                            This is a very long row cell content that should definitely get truncated
+                        </Table.RowCell>
+                    </Table.Row>
+                </Table.Body>
+            </Table.Root>
+        </div>,
+    );
+
+    const headerCell = component.locator('th');
+    await expect(headerCell).toHaveAttribute(
+        'title',
+        'This is a very long header cell content that should definitely get truncated',
+    );
+
+    const rowCell = component.locator('td');
+    await expect(rowCell).toHaveAttribute(
+        'title',
+        'This is a very long row cell content that should definitely get truncated',
+    );
 });

@@ -5,20 +5,46 @@
 .table {
     position: relative;
     text-align: left;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
+
+    $sticky-base: (
+        position: sticky,
+        z-index: 1,
+        background-color: var(--base-color),
+    );
+
+    &[data-sticky='head'],
+    &[data-sticky='both'] {
+        thead {
+            @each $prop, $value in $sticky-base {
+                #{$prop}: $value;
+            }
+            top: 0;
+            z-index: 2;
+        }
+    }
+
+    &[data-sticky='col'],
+    &[data-sticky='both'] {
+        .rowCell:first-child {
+            @each $prop, $value in $sticky-base {
+                #{$prop}: $value;
+            }
+            left: 0;
+            border-right: 1px solid var(--line-color);
+        }
+    }
 
     &[data-full-width='true'] {
         width: 100%;
     }
-
     &[data-full-width='false'] {
         width: auto;
     }
-
     &[data-layout='fixed'] {
         table-layout: fixed;
     }
-
     &[data-layout='auto'] {
         table-layout: auto;
         [data-truncate='true'] {
@@ -33,24 +59,15 @@ caption {
     color: var(--text-color);
 }
 
-.header {
-    border-top: 1px solid var(--line-color);
-    border-bottom: 1px solid var(--line-color);
-
-    &[data-sticky='true'] {
-        position: sticky;
-        top: -1px;
-        z-index: 2;
-        background-color: var(--base-color);
-    }
-}
-
 .headerCell {
     padding: sizeToken(3) sizeToken(2);
     font-size: var(--body-size-small);
     font-weight: 400;
     line-height: sizeToken(4);
     color: var(--text-color);
+
+    border-top: 1px solid var(--line-color);
+    border-bottom: 1px solid var(--line-color);
 
     &[data-no-shrink='true'] {
         width: 1%;
@@ -85,20 +102,10 @@ caption {
 
 .body {
     padding: 0 sizeToken(6);
-
-    &[data-sticky-first-column='true'] {
-        .rowCell:first-child {
-            position: sticky;
-            left: 0;
-            z-index: 1;
-            background-color: var(--base-color);
-        }
-    }
 }
 
 .row {
     position: relative;
-    border-bottom: 1px solid var(--line-color);
     transition: background-color 0.2s ease;
 
     &[data-selected='true'] {
@@ -129,10 +136,14 @@ caption {
 
 .rowCell {
     color: var(--text-color);
+
     font-weight: 400;
     font-size: var(--body-size-x-small);
+
     line-height: sizeToken(4);
     padding: sizeToken(2);
+
+    border-bottom: 1px solid var(--line-color);
 }
 
 .headerCell,

@@ -329,63 +329,23 @@ export const Sortable: Story = {
     },
 };
 
-export const StickyHeader: Story = {
+export const StickyHead: Story = {
     render: ({ ...args }) => (
-        <div className="h-96 overflow-auto border rounded-lg">
-            <Table.Root {...args}>
-                <Table.Header sticky>
-                    <Table.Row>
-                        <Table.HeaderCell width="250px">Name</Table.HeaderCell>
-                        <Table.HeaderCell width="150px">Invited by</Table.HeaderCell>
-                        <Table.HeaderCell width="120px">Last seen</Table.HeaderCell>
-                        <Table.HeaderCell width="120px">Initial login</Table.HeaderCell>
-                        <Table.HeaderCell width="120px">Last login</Table.HeaderCell>
-                        <Table.HeaderCell width="80px">2FA</Table.HeaderCell>
-                    </Table.Row>
-                </Table.Header>
-                <Table.Body>
-                    {[...TABLE_DATA, ...TABLE_DATA, ...TABLE_DATA, ...TABLE_DATA, ...TABLE_DATA, ...TABLE_DATA].map(
-                        (user, index) => (
-                            <Table.Row key={`${user.email}-${index}`}>
-                                <Table.RowCell>
-                                    <div className="flex items-center gap-2">
-                                        <div>
-                                            <div className="font-medium">{user.name}</div>
-                                            <div className="text-sm text-gray-500">{user.email}</div>
-                                        </div>
-                                    </div>
-                                </Table.RowCell>
-                                <Table.RowCell>{user.invited}</Table.RowCell>
-                                <Table.RowCell>{user.lastSeen}</Table.RowCell>
-                                <Table.RowCell>{user.initialLogin}</Table.RowCell>
-                                <Table.RowCell>{user.lastLogin}</Table.RowCell>
-                                <Table.RowCell>{user.twoFa ? 'Yes' : 'No'}</Table.RowCell>
-                            </Table.Row>
-                        ),
-                    )}
-                </Table.Body>
-            </Table.Root>
-        </div>
-    ),
-};
-
-export const StickyFirstColumn: Story = {
-    render: ({ ...args }) => (
-        <div style={{ width: '300px', overflow: 'auto' }}>
-            <Table.Root {...args}>
-                <Table.Header>
-                    <Table.Row>
-                        <Table.HeaderCell>Name</Table.HeaderCell>
-                        <Table.HeaderCell>Invited by</Table.HeaderCell>
-                        <Table.HeaderCell>Last seen</Table.HeaderCell>
-                        <Table.HeaderCell>Initial login</Table.HeaderCell>
-                        <Table.HeaderCell>Last login</Table.HeaderCell>
-                        <Table.HeaderCell>2FA</Table.HeaderCell>
-                    </Table.Row>
-                </Table.Header>
-                <Table.Body stickyFirstColumn>
-                    {TABLE_DATA.map((user) => (
-                        <Table.Row key={user.email}>
+        <Table.Root {...args} sticky="head">
+            <Table.Header>
+                <Table.Row>
+                    <Table.HeaderCell width="250px">Name</Table.HeaderCell>
+                    <Table.HeaderCell width="150px">Invited by</Table.HeaderCell>
+                    <Table.HeaderCell width="120px">Last seen</Table.HeaderCell>
+                    <Table.HeaderCell width="120px">Initial login</Table.HeaderCell>
+                    <Table.HeaderCell width="120px">Last login</Table.HeaderCell>
+                    <Table.HeaderCell width="80px">2FA</Table.HeaderCell>
+                </Table.Row>
+            </Table.Header>
+            <Table.Body>
+                {[...TABLE_DATA, ...TABLE_DATA, ...TABLE_DATA, ...TABLE_DATA, ...TABLE_DATA, ...TABLE_DATA].map(
+                    (user, index) => (
+                        <Table.Row key={`${user.email}-${index}`}>
                             <Table.RowCell>
                                 <div className="flex items-center gap-2">
                                     <div>
@@ -400,10 +360,110 @@ export const StickyFirstColumn: Story = {
                             <Table.RowCell>{user.lastLogin}</Table.RowCell>
                             <Table.RowCell>{user.twoFa ? 'Yes' : 'No'}</Table.RowCell>
                         </Table.Row>
-                    ))}
-                </Table.Body>
-            </Table.Root>
-        </div>
+                    ),
+                )}
+            </Table.Body>
+        </Table.Root>
+    ),
+};
+
+export const StickyFirstColumn: Story = {
+    parameters: {
+        viewport: {
+            viewports: {
+                mobile: {
+                    name: 'Mobile',
+                    styles: {
+                        width: '320px',
+                        height: '600px',
+                    },
+                },
+            },
+            defaultViewport: 'mobile',
+        },
+    },
+    render: ({ ...args }) => (
+        <Table.Root {...args} sticky="col">
+            <Table.Header>
+                <Table.Row>
+                    <Table.HeaderCell>Name</Table.HeaderCell>
+                    <Table.HeaderCell>Invited by</Table.HeaderCell>
+                    <Table.HeaderCell>Last seen</Table.HeaderCell>
+                    <Table.HeaderCell>Initial login</Table.HeaderCell>
+                    <Table.HeaderCell>Last login</Table.HeaderCell>
+                    <Table.HeaderCell>2FA</Table.HeaderCell>
+                </Table.Row>
+            </Table.Header>
+            <Table.Body>
+                {TABLE_DATA.map((user) => (
+                    <Table.Row key={user.email}>
+                        <Table.RowCell>
+                            <div className="flex items-center gap-2">
+                                <div>
+                                    <div className="font-medium">{user.name}</div>
+                                    <div className="text-sm text-gray-500">{user.email}</div>
+                                </div>
+                            </div>
+                        </Table.RowCell>
+                        <Table.RowCell>{user.invited}</Table.RowCell>
+                        <Table.RowCell>{user.lastSeen}</Table.RowCell>
+                        <Table.RowCell>{user.initialLogin}</Table.RowCell>
+                        <Table.RowCell>{user.lastLogin}</Table.RowCell>
+                        <Table.RowCell>{user.twoFa ? 'Yes' : 'No'}</Table.RowCell>
+                    </Table.Row>
+                ))}
+            </Table.Body>
+        </Table.Root>
+    ),
+};
+
+export const StickyHeadAndCol: Story = {
+    parameters: {
+        viewport: {
+            viewports: {
+                mobile: {
+                    name: 'Mobile',
+                    styles: {
+                        width: '320px',
+                        height: '600px',
+                    },
+                },
+            },
+            defaultViewport: 'mobile',
+        },
+    },
+    render: ({ ...args }) => (
+        <Table.Root {...args} sticky="both">
+            <Table.Header>
+                <Table.Row>
+                    <Table.HeaderCell>Name</Table.HeaderCell>
+                    <Table.HeaderCell>Invited by</Table.HeaderCell>
+                    <Table.HeaderCell>Last seen</Table.HeaderCell>
+                    <Table.HeaderCell>Initial login</Table.HeaderCell>
+                    <Table.HeaderCell>Last login</Table.HeaderCell>
+                    <Table.HeaderCell>2FA</Table.HeaderCell>
+                </Table.Row>
+            </Table.Header>
+            <Table.Body>
+                {[...TABLE_DATA, ...TABLE_DATA, ...TABLE_DATA].map((user) => (
+                    <Table.Row key={user.email}>
+                        <Table.RowCell>
+                            <div className="flex items-center gap-2">
+                                <div>
+                                    <div className="font-medium">{user.name}</div>
+                                    <div className="text-sm text-gray-500">{user.email}</div>
+                                </div>
+                            </div>
+                        </Table.RowCell>
+                        <Table.RowCell>{user.invited}</Table.RowCell>
+                        <Table.RowCell>{user.lastSeen}</Table.RowCell>
+                        <Table.RowCell>{user.initialLogin}</Table.RowCell>
+                        <Table.RowCell>{user.lastLogin}</Table.RowCell>
+                        <Table.RowCell>{user.twoFa ? 'Yes' : 'No'}</Table.RowCell>
+                    </Table.Row>
+                ))}
+            </Table.Body>
+        </Table.Root>
     ),
 };
 

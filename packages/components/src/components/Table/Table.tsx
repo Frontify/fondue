@@ -1,7 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconArrowDown, IconArrowUp } from '@frontify/fondue-icons';
-import { type ReactNode, forwardRef, useMemo, type KeyboardEvent, type CSSProperties } from 'react';
+import { type ReactNode, forwardRef, useMemo, type KeyboardEvent, type CSSProperties, useRef } from 'react';
+
+import { useSyncRefs } from '#/hooks/useSyncRefs';
+import { useTextTruncation } from '#/hooks/useTextTruncation';
 
 import styles from './styles/table.module.scss';
 import { handleKeyDown } from './utils';
@@ -12,6 +15,10 @@ type TableRootProps = {
      * @default 'auto'
      */
     layout?: 'auto' | 'fixed';
+    /**
+     * Whether header should stick to the top when scrolling
+     */
+    sticky?: 'head' | 'col' | 'both';
     /**
      * Optional caption text for the table that appears above it
      */
@@ -29,8 +36,9 @@ type TableRootProps = {
 export const TableRoot = forwardRef<HTMLTableElement, TableRootProps>(
     (
         {
-            fullWidth = true,
             layout = 'auto',
+            fullWidth = true,
+            sticky,
             caption,
             children,
             'aria-label': ariaLabel,
@@ -44,6 +52,7 @@ export const TableRoot = forwardRef<HTMLTableElement, TableRootProps>(
                     ref={ref}
                     className={styles.table}
                     data-layout={layout}
+                    data-sticky={sticky}
                     data-full-width={fullWidth}
                     aria-label={ariaLabel}
                     aria-describedby={ariaDescribedBy}
@@ -58,20 +67,15 @@ export const TableRoot = forwardRef<HTMLTableElement, TableRootProps>(
 TableRoot.displayName = 'Table.Root';
 
 type TableHeaderProps = {
-    /**
-     * Whether header should stick to the top when scrolling
-     * @default false
-     */
-    sticky?: boolean;
     children: ReactNode;
     'aria-label'?: string;
     'aria-busy'?: boolean;
 };
 
 export const TableHeader = forwardRef<HTMLTableSectionElement, TableHeaderProps>(
-    ({ sticky = false, children, 'aria-label': ariaLabel, 'aria-busy': ariaBusy }, ref) => {
+    ({ children, 'aria-label': ariaLabel, 'aria-busy': ariaBusy }, ref) => {
         return (
-            <thead ref={ref} className={styles.header} data-sticky={sticky} aria-label={ariaLabel} aria-busy={ariaBusy}>
+            <thead ref={ref} className={styles.header} aria-label={ariaLabel} aria-busy={ariaBusy}>
                 {children}
             </thead>
         );
@@ -88,6 +92,10 @@ type TableHeaderCellProps = {
      * @default 'col'
      */
     scope?: HTMLTableCellElement['scope'];
+    /**
+     * Number of columns the cell should span
+     */
+    colSpan?: HTMLTableCellElement['colSpan'];
     /**
      * Width of the column
      */
@@ -136,12 +144,18 @@ export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellP
             scope = 'col',
             sortTranslations,
             sortDirection,
+            colSpan,
             width,
             onSortChange,
             children,
         },
         ref,
     ) => {
+        const cellRef = useRef<HTMLTableCellElement>(null);
+        useSyncRefs<HTMLTableCellElement>(cellRef, ref);
+
+        useTextTruncation(cellRef);
+
         const sortLabel = useMemo(() => {
             if (typeof children === 'string') {
                 if (sortDirection === 'ascending') {
@@ -166,12 +180,13 @@ export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellP
 
         return (
             <th
-                ref={ref}
+                ref={cellRef}
                 style={{
                     width,
                 }}
                 className={styles.headerCell}
                 scope={scope}
+                colSpan={colSpan}
                 data-align={align}
                 data-truncate={truncate}
                 data-no-shrink={noShrink}
@@ -195,19 +210,14 @@ export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellP
 TableHeaderCell.displayName = 'Table.HeaderCell';
 
 type TableBodyProps = {
-    /**
-     * Whether the first column should stick to the viewport when scrolling horizontally
-     * @default false
-     */
-    stickyFirstColumn?: boolean;
     children: ReactNode;
     'aria-busy'?: boolean;
 };
 
 export const TableBody = forwardRef<HTMLTableSectionElement, TableBodyProps>(
-    ({ stickyFirstColumn, children, 'aria-busy': ariaBusy }, ref) => {
+    ({ children, 'aria-busy': ariaBusy }, ref) => {
         return (
-            <tbody ref={ref} className={styles.body} data-sticky-first-column={stickyFirstColumn} aria-busy={ariaBusy}>
+            <tbody ref={ref} className={styles.body} aria-busy={ariaBusy}>
                 {children}
             </tbody>
         );
@@ -335,6 +345,10 @@ TableRow.displayName = 'Table.Row';
 
 type TableRowCellProps = {
     /**
+     * Number of columns the cell should span
+     */
+    colSpan?: HTMLTableCellElement['colSpan'];
+    /**
      * Whether to truncate content with ellipsis when it overflows
      * @default false
      */
@@ -349,9 +363,21 @@ type TableRowCellProps = {
 };
 
 export const TableRowCell = forwardRef<HTMLTableCellElement, TableRowCellProps>(
-    ({ truncate, align = 'left', children, 'aria-label': ariaLabel }, ref) => {
+    ({ colSpan, truncate, align = 'left', children, 'aria-label': ariaLabel }, ref) => {
+        const cellRef = useRef<HTMLTableCellElement>(null);
+        useSyncRefs<HTMLTableCellElement>(cellRef, ref);
+
+        useTextTruncation(cellRef);
+
         return (
-            <td ref={ref} className={styles.rowCell} data-align={align} data-truncate={truncate} aria-label={ariaLabel}>
+            <td
+                ref={cellRef}
+                className={styles.rowCell}
+                colSpan={colSpan}
+                data-align={align}
+                data-truncate={truncate}
+                aria-label={ariaLabel}
+            >
                 {children}
             </td>
         );
