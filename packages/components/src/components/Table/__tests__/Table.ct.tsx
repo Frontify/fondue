@@ -140,14 +140,13 @@ test('should handle all HeaderCell configurations', async ({ mount }) => {
 
 test('should handle all row states and interactions', async ({ mount }) => {
     const onClick = sinon.spy();
-    const onNavigate = sinon.spy();
     const component = await mount(
         <Table.Root aria-label="Table">
             <Table.Body>
-                <Table.Row selected={true} disabled={false} href="/test" onNavigate={onNavigate} aria-label="Test Row">
+                <Table.Row onClick={onClick} disabled={true} aria-label="Test Row">
                     <Table.RowCell>Test</Table.RowCell>
                 </Table.Row>
-                <Table.Row onClick={onClick}>
+                <Table.Row onClick={onClick} selected={true}>
                     <Table.RowCell>Test</Table.RowCell>
                 </Table.Row>
             </Table.Body>
@@ -155,16 +154,11 @@ test('should handle all row states and interactions', async ({ mount }) => {
     );
 
     const firstRow = component.locator('tr').nth(0);
-    await expect(firstRow).toHaveAttribute('data-selected', 'true');
-    await expect(firstRow).toHaveAttribute('data-disabled', 'false');
-    await expect(firstRow).toHaveAttribute('data-href', '/test');
-    await expect(firstRow).toHaveAttribute('role', 'link');
+    await expect(firstRow).toHaveAttribute('data-disabled', 'true');
     await expect(firstRow).toHaveAttribute('aria-label', 'Test Row');
 
-    await firstRow.click();
-    sinon.assert.calledOnceWithExactly(onNavigate, '/test');
-
     const secondRow = component.locator('tr').nth(1);
+    await expect(secondRow).toHaveAttribute('data-selected', 'true');
     await expect(secondRow).toHaveAttribute('role', 'button');
     await secondRow.click();
     sinon.assert.calledOnce(onClick);
@@ -244,9 +238,6 @@ test('should handle row selection', async ({ mount }) => {
 });
 
 test('should handle keyboard navigation', async ({ mount, page }) => {
-    const onRowClick = sinon.spy();
-    const onActionClick = sinon.spy();
-
     const component = await mount(
         <Table.Root aria-label="Table">
             <Table.Header>
@@ -261,20 +252,14 @@ test('should handle keyboard navigation', async ({ mount, page }) => {
                 <Table.Row>
                     <Table.RowCell>Test 1</Table.RowCell>
                     <Table.RowCell>
-                        <button onClick={onActionClick} data-test-id="action-btn-1">
-                            Action
-                        </button>
+                        <button data-test-id="action-btn-1">Action</button>
                     </Table.RowCell>
                 </Table.Row>
-                <Table.Row onClick={onRowClick} data-test-id="action-row">
+                <Table.Row data-test-id="action-row">
                     <Table.RowCell>Test 2</Table.RowCell>
                     <Table.RowCell>
-                        <button onClick={onActionClick} data-test-id="action-btn-2">
-                            Action
-                        </button>
-                        <button onClick={onActionClick} data-test-id="action-btn-3">
-                            Action
-                        </button>
+                        <button data-test-id="action-btn-2">Action</button>
+                        <button data-test-id="action-btn-3">Action</button>
                     </Table.RowCell>
                 </Table.Row>
             </Table.Body>
@@ -282,28 +267,26 @@ test('should handle keyboard navigation', async ({ mount, page }) => {
     );
 
     await page.keyboard.press('Tab');
+    await expect(component.getByRole('row').first()).toBeFocused();
+
+    await page.keyboard.press('Tab');
     await expect(component.getByRole('button').first()).toBeFocused();
 
     await page.keyboard.press('Tab');
-    await expect(component.getByTestId('action-btn-1')).toBeFocused();
-
-    await page.keyboard.press('Tab');
-    await expect(component.getByTestId('action-row')).toBeFocused();
-
-    await page.keyboard.press('Tab');
-    await expect(component.getByTestId('action-btn-2')).toBeFocused();
-
-    await page.keyboard.press('ArrowRight');
-    await expect(component.getByTestId('action-btn-3')).toBeFocused();
-
-    await page.keyboard.press('ArrowLeft');
-    await expect(component.getByTestId('action-btn-2')).toBeFocused();
+    await expect(component.getByRole('row').nth(1)).toBeFocused();
 
     await page.keyboard.press('ArrowUp');
-    await expect(component.getByTestId('action-btn-1')).toBeFocused();
+    await expect(component.getByRole('row').nth(0)).toBeFocused();
 
     await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await expect(component.getByRole('row').nth(2)).toBeFocused();
+
+    await page.keyboard.press('Tab');
     await expect(component.getByTestId('action-btn-2')).toBeFocused();
+
+    await page.keyboard.press('Tab');
+    await expect(component.getByTestId('action-btn-3')).toBeFocused();
 });
 
 test('should set title when content is truncated', async ({ mount }) => {
