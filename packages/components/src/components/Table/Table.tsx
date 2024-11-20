@@ -181,9 +181,7 @@ export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellP
         return (
             <th
                 ref={cellRef}
-                style={{
-                    width,
-                }}
+                style={{ width }}
                 className={styles.headerCell}
                 scope={scope}
                 colSpan={colSpan}
