@@ -27,6 +27,7 @@
 
     &[data-sticky='col'],
     &[data-sticky='both'] {
+        .headerCell:first-child,
         .rowCell:first-child {
             @each $prop, $value in $sticky-base {
                 #{$prop}: $value;
