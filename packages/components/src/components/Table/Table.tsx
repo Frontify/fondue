@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconArrowDown, IconArrowUp } from '@frontify/fondue-icons';
+import { IconArrowDown, IconArrowUp, IconArrowBidirectional } from '@frontify/fondue-icons';
 import {
     forwardRef,
     useMemo,
@@ -183,7 +183,9 @@ export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellP
                             <IconArrowUp size="12" />
                         ) : sortDirection === 'descending' ? (
                             <IconArrowDown size="12" />
-                        ) : null}
+                        ) : (
+                            <IconArrowBidirectional className={styles.sortIndicator} size="12" />
+                        )}
                     </button>
                 ) : (
                     children

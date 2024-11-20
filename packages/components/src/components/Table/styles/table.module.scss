@@ -98,6 +98,10 @@
     &:focus-visible {
         @include focus-outline;
     }
+
+    .sortIndicator {
+        color: var(--text-color-disabled);
+    }
 }
 
 .body {
