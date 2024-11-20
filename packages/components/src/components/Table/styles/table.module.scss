@@ -60,7 +60,6 @@
 }
 
 .headerCell {
-    padding: sizeToken(3) sizeToken(2);
     font-size: var(--body-size-small);
     font-weight: 400;
     line-height: sizeToken(4);
@@ -68,6 +67,10 @@
 
     border-top: 1px solid var(--line-color);
     border-bottom: 1px solid var(--line-color);
+
+    [data-sortable='false'] {
+        padding: sizeToken(3) sizeToken(2);
+    }
 
     &[data-no-shrink='true'] {
         width: 1%;
@@ -81,11 +84,11 @@
     text-align: inherit;
     align-items: center;
     gap: 0.25rem;
+    padding: sizeToken(3) sizeToken(2);
 
     appearance: none;
     background: none;
     border: none;
-    padding: 0;
     margin: 0;
     font: inherit;
     color: inherit;

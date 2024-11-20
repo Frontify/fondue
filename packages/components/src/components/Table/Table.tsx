@@ -175,6 +175,7 @@ export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellP
                 data-align={align}
                 data-truncate={truncate}
                 data-no-shrink={noShrink}
+                data-sortable={!!onSortChange}
             >
                 {onSortChange ? (
                     <button className={styles.sortButton} aria-label={sortLabel} onClick={handleSortChange}>
