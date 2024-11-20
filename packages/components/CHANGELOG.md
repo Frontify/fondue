@@ -1,5 +1,21 @@
 # @frontify/fondue-components
 
+## 5.1.0
+
+### Minor Changes
+
+-   [#2104](https://github.com/Frontify/fondue/pull/2104) [`153fa39`](https://github.com/Frontify/fondue/commit/153fa396837f3f83f88d2b77494682b29e02049f) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - feat(`Table`): refactor table component
+
+### Patch Changes
+
+-   [#2101](https://github.com/Frontify/fondue/pull/2101) [`83aaade`](https://github.com/Frontify/fondue/commit/83aaade99bb6f8e32377322d5515e71933446c4f) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - refactor(`Button`): remove borders
+
+-   [#2107](https://github.com/Frontify/fondue/pull/2107) [`16311cf`](https://github.com/Frontify/fondue/commit/16311cf29228cfedeb2fe978bcc5d9a5992fded5) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: add missing box sizing css rule for `Tabs` Component
+
+-   [#2108](https://github.com/Frontify/fondue/pull/2108) [`5b7d662`](https://github.com/Frontify/fondue/commit/5b7d66283360517446f121bcc735da7cd3ebd0b4) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: align dropdown styles with figma design
+
+-   [#2102](https://github.com/Frontify/fondue/pull/2102) [`d89a825`](https://github.com/Frontify/fondue/commit/d89a825b82343908f2c9b8829bffb1e23359d9ce) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix(`TextInput`): update focus and blur callback event types
+
 ## 5.0.0
 
 ### Minor Changes
