@@ -12,14 +12,14 @@ const FOCUSABLE_SELECTORS = ['button', '[href]', 'input', 'select', 'textarea', 
 /**
  * Valid keyboard navigation keys for table interaction
  */
-type NavigationKey = 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight' | 'Home' | 'End';
+export type NavigationKey = 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight' | 'Home' | 'End';
 
 /**
  * Type guard to check if a string is a valid navigation key
  * @param key - The key to check
  * @returns True if the key is a valid navigation key
  */
-const isNavigationKey = (key: string): key is NavigationKey => {
+export const isNavigationKey = (key: string): key is NavigationKey => {
     return ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(key);
 };
 
@@ -28,7 +28,7 @@ const isNavigationKey = (key: string): key is NavigationKey => {
  * @param cell - The table cell to search within
  * @returns The first focusable element or null if none found
  */
-const getFocusableElement = (cell: HTMLElement | null) => {
+export const getFocusableElement = (cell: HTMLElement | null) => {
     return cell?.querySelector<HTMLElement>(FOCUSABLE_SELECTORS) ?? null;
 };
 
@@ -37,7 +37,7 @@ const getFocusableElement = (cell: HTMLElement | null) => {
  * @param container - The container element to search within
  * @returns Array of focusable elements
  */
-const getAllFocusableElements = (container: HTMLElement) => {
+export const getAllFocusableElements = (container: HTMLElement) => {
     return Array.from(container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTORS));
 };
 
@@ -47,7 +47,7 @@ const getAllFocusableElements = (container: HTMLElement) => {
  * @param index - The index of the cell to retrieve
  * @returns The cell element at the specified index
  */
-const getCellAtIndex = (row: HTMLElement, index: number) => {
+export const getCellAtIndex = (row: HTMLElement, index: number) => {
     return row.children[index] as HTMLElement;
 };
 
@@ -57,7 +57,7 @@ const getCellAtIndex = (row: HTMLElement, index: number) => {
  * @param key - The navigation key pressed
  * @returns The next cell element or null if none exists
  */
-const getAdjacentCell = (currentCell: Element, key: NavigationKey): HTMLElement | null => {
+export const getAdjacentCell = (currentCell: Element, key: NavigationKey): HTMLElement | null => {
     const currentRow = currentCell.closest('tr');
     if (!currentRow) {
         return null;
@@ -92,7 +92,7 @@ const getAdjacentCell = (currentCell: Element, key: NavigationKey): HTMLElement 
  * @param key - The navigation key pressed
  * @returns The next cell containing a focusable element or null if none exists
  */
-const getNextFocusableCell = (currentCell: Element, key: NavigationKey): HTMLElement | null => {
+export const getNextFocusableCell = (currentCell: Element, key: NavigationKey): HTMLElement | null => {
     const nextCell = getAdjacentCell(currentCell, key);
     if (!nextCell) {
         return null;
@@ -106,7 +106,7 @@ const getNextFocusableCell = (currentCell: Element, key: NavigationKey): HTMLEle
  * @param event - The keyboard event
  * @param currentCell - The current cell element
  */
-const handleGridNavigation = (event: KeyboardEvent<HTMLTableElement>, currentCell: Element) => {
+export const handleGridNavigation = (event: KeyboardEvent<HTMLTableElement>, currentCell: Element) => {
     if (!isNavigationKey(event.key)) {
         return;
     }
@@ -129,7 +129,11 @@ const handleGridNavigation = (event: KeyboardEvent<HTMLTableElement>, currentCel
  * @param table - The table element
  * @param target - The currently focused element
  */
-const handleLinearNavigation = (event: KeyboardEvent<HTMLTableElement>, table: HTMLElement, target: HTMLElement) => {
+export const handleLinearNavigation = (
+    event: KeyboardEvent<HTMLTableElement>,
+    table: HTMLElement,
+    target: HTMLElement,
+) => {
     const focusableElements = getAllFocusableElements(table);
     const currentIndex = focusableElements.indexOf(target);
     if (currentIndex === -1) {

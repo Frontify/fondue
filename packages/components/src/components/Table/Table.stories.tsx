@@ -43,14 +43,6 @@ const meta: Meta<typeof TableRoot> = {
             },
             defaultValue: 'auto',
         },
-        fullWidth: {
-            control: 'boolean',
-            defaultValue: true,
-        },
-        caption: {
-            control: 'text',
-            defaultValue: '',
-        },
     },
 };
 
@@ -214,29 +206,6 @@ export const FixedLayout: Story = {
             <Table.Header>
                 <tr>
                     <Table.HeaderCell width="100px">Name</Table.HeaderCell>
-                    <Table.HeaderCell>Role</Table.HeaderCell>
-                    <Table.HeaderCell>Last Seen</Table.HeaderCell>
-                </tr>
-            </Table.Header>
-            <Table.Body>
-                {TABLE_DATA.map((user) => (
-                    <Table.Row key={user.id}>
-                        <Table.RowCell>{user.name}</Table.RowCell>
-                        <Table.RowCell>{user.role}</Table.RowCell>
-                        <Table.RowCell>{user.lastSeen}</Table.RowCell>
-                    </Table.Row>
-                ))}
-            </Table.Body>
-        </Table.Root>
-    ),
-};
-
-export const NonFullWidth: Story = {
-    render: ({ ...args }) => (
-        <Table.Root {...args} fullWidth={false}>
-            <Table.Header>
-                <tr>
-                    <Table.HeaderCell>Name</Table.HeaderCell>
                     <Table.HeaderCell>Role</Table.HeaderCell>
                     <Table.HeaderCell>Last Seen</Table.HeaderCell>
                 </tr>
@@ -567,7 +536,8 @@ export const Disabled: Story = {
 
 export const WithCaption: Story = {
     render: ({ ...args }) => (
-        <Table.Root {...args} caption="User Management Dashboard">
+        <Table.Root {...args}>
+            <Table.Caption>User Management Dashboard</Table.Caption>
             <Table.Header>
                 <Table.Row>
                     <Table.HeaderCell>Name</Table.HeaderCell>

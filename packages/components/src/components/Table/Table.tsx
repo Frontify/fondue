@@ -19,33 +19,13 @@ type TableRootProps = {
      * Whether header should stick to the top when scrolling
      */
     sticky?: 'head' | 'col' | 'both';
-    /**
-     * Optional caption text for the table that appears above it
-     */
-    caption?: string;
-    /**
-     * Whether to make the table take full width of its container
-     * @default true
-     */
-    fullWidth?: boolean;
     children: ReactNode;
     'aria-label'?: string;
     'aria-describedby'?: string;
 };
 
 export const TableRoot = forwardRef<HTMLTableElement, TableRootProps>(
-    (
-        {
-            layout = 'auto',
-            fullWidth = true,
-            sticky,
-            caption,
-            children,
-            'aria-label': ariaLabel,
-            'aria-describedby': ariaDescribedBy,
-        },
-        ref,
-    ) => {
+    ({ layout = 'auto', sticky, children, 'aria-label': ariaLabel, 'aria-describedby': ariaDescribedBy }, ref) => {
         return (
             <div onKeyDown={handleKeyDown} role="grid" tabIndex={-1}>
                 <table
@@ -53,11 +33,9 @@ export const TableRoot = forwardRef<HTMLTableElement, TableRootProps>(
                     className={styles.table}
                     data-layout={layout}
                     data-sticky={sticky}
-                    data-full-width={fullWidth}
                     aria-label={ariaLabel}
                     aria-describedby={ariaDescribedBy}
                 >
-                    {caption && <caption>{caption}</caption>}
                     {children}
                 </table>
             </div>
@@ -65,6 +43,15 @@ export const TableRoot = forwardRef<HTMLTableElement, TableRootProps>(
     },
 );
 TableRoot.displayName = 'Table.Root';
+
+export const TableCaption = forwardRef<HTMLTableCaptionElement, { children: ReactNode }>(({ children }, ref) => {
+    return (
+        <caption ref={ref} className={styles.caption}>
+            {children}
+        </caption>
+    );
+});
+TableCaption.displayName = 'Table.Caption';
 
 type TableHeaderProps = {
     children: ReactNode;
@@ -385,6 +372,7 @@ TableRowCell.displayName = 'Table.RowCell';
 
 export const Table = {
     Root: TableRoot,
+    Caption: TableCaption,
     Header: TableHeader,
     HeaderCell: TableHeaderCell,
     Body: TableBody,

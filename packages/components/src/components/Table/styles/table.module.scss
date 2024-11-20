@@ -8,6 +8,7 @@
     text-align: left;
     border-collapse: separate;
     border-spacing: 0;
+    width: 100%;
 
     $sticky-base: (
         position: sticky,
@@ -38,9 +39,6 @@
         }
     }
 
-    &[data-full-width='true'] {
-        width: 100%;
-    }
     &[data-full-width='false'] {
         width: auto;
     }
@@ -55,7 +53,7 @@
     }
 }
 
-caption {
+.caption {
     padding: sizeToken(3) sizeToken(2);
     text-align: left;
     color: var(--text-color);

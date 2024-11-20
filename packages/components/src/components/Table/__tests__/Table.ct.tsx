@@ -30,7 +30,8 @@ test('should render basic table structure', async ({ mount }) => {
 
 test('should handle table layout modes', async ({ mount }) => {
     const component = await mount(
-        <Table.Root layout="fixed" fullWidth={false} caption="Table Caption">
+        <Table.Root layout="fixed">
+            <Table.Caption>Table Caption</Table.Caption>
             <Table.Header>
                 <Table.Row>
                     <Table.HeaderCell>Name</Table.HeaderCell>
@@ -40,7 +41,6 @@ test('should handle table layout modes', async ({ mount }) => {
     );
 
     await expect(component.locator('table')).toHaveAttribute('data-layout', 'fixed');
-    await expect(component.locator('table')).toHaveAttribute('data-full-width', 'false');
     await expect(component.locator('caption')).toHaveText('Table Caption');
 });
 
