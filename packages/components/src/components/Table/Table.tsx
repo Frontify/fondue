@@ -176,9 +176,15 @@ export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellP
                 data-truncate={truncate}
                 data-no-shrink={noShrink}
                 data-sortable={!!onSortChange}
+                aria-sort={onSortChange ? sortDirection || 'none' : undefined}
             >
                 {onSortChange ? (
-                    <button className={styles.sortButton} aria-label={sortLabel} onClick={handleSortChange}>
+                    <button
+                        className={styles.sortButton}
+                        aria-label={sortLabel}
+                        data-active={!!sortDirection}
+                        onClick={handleSortChange}
+                    >
                         {children}
                         {sortDirection === 'ascending' ? (
                             <IconArrowUp size="12" />

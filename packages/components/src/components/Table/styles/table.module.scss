@@ -63,12 +63,12 @@
     font-size: var(--body-size-small);
     font-weight: 400;
     line-height: sizeToken(4);
-    color: var(--text-color);
+    color: var(--text-color-weak);
 
     border-top: 1px solid var(--line-color);
     border-bottom: 1px solid var(--line-color);
 
-    [data-sortable='false'] {
+    &[data-sortable='false'] {
         padding: sizeToken(3) sizeToken(2);
     }
 
@@ -96,6 +96,10 @@
 
     &:hover {
         color: var(--text-color-hover);
+    }
+
+    &[data-active='true'] {
+        color: var(--text-color);
     }
 
     &:focus-visible {
