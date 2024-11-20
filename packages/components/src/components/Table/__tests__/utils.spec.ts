@@ -1,206 +1,155 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type KeyboardEvent } from 'react';
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-import {
-    getAdjacentCell,
-    getAllFocusableElements,
-    getFocusableElement,
-    handleKeyDown,
-    isNavigationKey,
-} from '../utils';
+import { handleKeyDown } from '../utils';
 
-describe('Table Navigation', () => {
-    let table: HTMLTableElement;
-
-    const createTable = (html: string) => {
-        const div = document.createElement('div');
-        div.innerHTML = html;
-        return div.firstElementChild as HTMLTableElement;
-    };
-
-    const createKeyboardEvent = (key: string, ctrlKey = false, target?: HTMLElement) => {
-        return {
-            key,
-            ctrlKey,
-            target: target || document.createElement('button'),
-            preventDefault: () => {},
-        } as unknown as KeyboardEvent<HTMLTableElement>;
-    };
-
+describe('handleKeyDown', () => {
     beforeEach(() => {
-        table = createTable(`
+        document.body.innerHTML = `
             <table>
-                <tbody>
-                    <tr>
-                        <td><button id="btn1">Button 1</button></td>
-                        <td><input id="input1" type="text" /></td>
-                        <td><button id="btn2">Button 2</button></td>
+                <thead>
+                    <tr tabindex="0">
+                        <th>Header</th>
                     </tr>
-                    <tr>
-                        <td><button id="btn3">Button 3</button></td>
-                        <td><select id="select1"><option>Option</option></select></td>
-                        <td><button id="btn4">Button 4</button></td>
+                </thead>
+                <tbody>
+                    <tr tabindex="0">
+                        <td>Row 1</td>
+                    </tr>
+                    <tr tabindex="0">
+                        <td>Row 2</td>
+                    </tr>
+                    <tr tabindex="0">
+                        <td>Row 3</td>
                     </tr>
                 </tbody>
             </table>
-        `);
-        document.body.appendChild(table);
+        `;
     });
 
-    describe('getFocusableElement', () => {
-        it('should find the first focusable element in a cell', () => {
-            const cell = table.querySelector('td');
-            const button = cell?.querySelector('button');
-            const focusable = getFocusableElement(cell as HTMLElement);
-            expect(focusable).toBe(button);
-        });
+    it('moves focus to previous row when ArrowUp is pressed', () => {
+        const rows = document.querySelectorAll('tr');
+        const currentRow = rows[2];
+        const previousRow = rows[1];
 
-        it('should return null for cell with no focusable elements', () => {
-            const cell = document.createElement('td');
-            const focusable = getFocusableElement(cell);
-            expect(focusable).toBeNull();
-        });
+        currentRow?.focus();
+
+        const event = new KeyboardEvent('keydown', { key: 'ArrowUp' });
+        Object.defineProperty(event, 'target', { value: currentRow });
+
+        const preventDefaultSpy = vi.spyOn(event, 'preventDefault');
+        const focusSpy = vi.spyOn(previousRow, 'focus' as never);
+
+        handleKeyDown(event as unknown as KeyboardEvent<HTMLTableElement>);
+
+        expect(preventDefaultSpy).toHaveBeenCalled();
+        expect(focusSpy).toHaveBeenCalled();
     });
 
-    describe('getAllFocusableElements', () => {
-        it('should return all focusable elements in the container', () => {
-            const elements = getAllFocusableElements(table);
-            expect(elements).toHaveLength(6);
-            expect(elements[0]?.id).toBe('btn1');
-            expect(elements[1]?.id).toBe('input1');
-        });
+    it('moves focus to next row when ArrowDown is pressed', () => {
+        const rows = document.querySelectorAll('tr');
+        const currentRow = rows[1];
+        const nextRow = rows[2];
+
+        currentRow?.focus();
+
+        const event = new KeyboardEvent('keydown', { key: 'ArrowDown' });
+        Object.defineProperty(event, 'target', { value: currentRow });
+
+        const preventDefaultSpy = vi.spyOn(event, 'preventDefault');
+        const focusSpy = vi.spyOn(nextRow, 'focus' as never);
+
+        handleKeyDown(event as unknown as KeyboardEvent<HTMLTableElement>);
+
+        expect(preventDefaultSpy).toHaveBeenCalled();
+        expect(focusSpy).toHaveBeenCalled();
     });
 
-    describe('getAdjacentCell', () => {
-        it('should get the cell above', () => {
-            const currentCell = table.querySelector('tr:nth-child(2) td:first-child');
-            const adjacentCell = getAdjacentCell(currentCell!, 'ArrowUp');
-            expect(adjacentCell).toBe(table.querySelector('tr:first-child td:first-child'));
-        });
+    it('allows navigation between header and body rows', () => {
+        const rows = document.querySelectorAll('tr');
+        const headerRow = rows[0];
+        const firstBodyRow = rows[1];
 
-        it('should get the cell below', () => {
-            const currentCell = table.querySelector('tr:first-child td:first-child');
-            const adjacentCell = getAdjacentCell(currentCell!, 'ArrowDown');
-            expect(adjacentCell).toBe(table.querySelector('tr:nth-child(2) td:first-child'));
-        });
+        headerRow?.focus();
 
-        it('should get the cell to the right', () => {
-            const currentCell = table.querySelector('td:first-child');
-            const adjacentCell = getAdjacentCell(currentCell!, 'ArrowRight');
-            expect(adjacentCell).toBe(table.querySelector('td:nth-child(2)'));
-        });
+        const event = new KeyboardEvent('keydown', { key: 'ArrowDown' });
+        Object.defineProperty(event, 'target', { value: headerRow });
 
-        it('should get the cell to the left', () => {
-            const currentCell = table.querySelector('td:nth-child(2)');
-            const adjacentCell = getAdjacentCell(currentCell!, 'ArrowLeft');
-            expect(adjacentCell).toBe(table.querySelector('td:first-child'));
-        });
+        const preventDefaultSpy = vi.spyOn(event, 'preventDefault');
+        const focusSpy = vi.spyOn(firstBodyRow, 'focus' as never);
+
+        handleKeyDown(event as unknown as KeyboardEvent<HTMLTableElement>);
+
+        expect(preventDefaultSpy).toHaveBeenCalled();
+        expect(focusSpy).toHaveBeenCalled();
     });
 
-    describe('handleKeyDown', () => {
-        it('should handle arrow up navigation', () => {
-            const button = table.querySelector('#btn3') as HTMLButtonElement;
-            const event = createKeyboardEvent('ArrowUp', false, button);
-            const spy = vi.spyOn(table.querySelector('#btn1') as HTMLButtonElement, 'focus');
+    it('does nothing when at the first row and ArrowUp is pressed', () => {
+        const rows = document.querySelectorAll('tr');
+        const firstRow = rows[0];
 
-            handleKeyDown(event);
+        firstRow?.focus();
 
-            expect(spy).toHaveBeenCalled();
-        });
+        const event = new KeyboardEvent('keydown', { key: 'ArrowUp' });
+        Object.defineProperty(event, 'target', { value: firstRow });
 
-        it('should handle arrow down navigation', () => {
-            const button = table.querySelector('#btn1') as HTMLButtonElement;
-            const event = createKeyboardEvent('ArrowDown', false, button);
-            const spy = vi.spyOn(table.querySelector('#btn3') as HTMLButtonElement, 'focus');
+        const preventDefaultSpy = vi.spyOn(event, 'preventDefault');
 
-            handleKeyDown(event);
+        handleKeyDown(event as unknown as KeyboardEvent<HTMLTableElement>);
 
-            expect(spy).toHaveBeenCalled();
-        });
-
-        it('should handle linear navigation with arrow right', () => {
-            const button = table.querySelector('#btn1') as HTMLButtonElement;
-            const event = createKeyboardEvent('ArrowRight', false, button);
-            const spy = vi.spyOn(table.querySelector('#input1') as HTMLInputElement, 'focus');
-
-            handleKeyDown(event);
-
-            expect(spy).toHaveBeenCalled();
-        });
-
-        it('should handle linear navigation with arrow left', () => {
-            const input = table.querySelector('#input1') as HTMLInputElement;
-            const event = createKeyboardEvent('ArrowLeft', false, input);
-            const spy = vi.spyOn(table.querySelector('#btn1') as HTMLButtonElement, 'focus');
-
-            handleKeyDown(event);
-
-            expect(spy).toHaveBeenCalled();
-        });
-
-        it('should handle Ctrl+Home navigation', () => {
-            const button = table.querySelector('#btn2') as HTMLButtonElement;
-            const event = createKeyboardEvent('Home', true, button);
-            const spy = vi.spyOn(table.querySelector('#btn1') as HTMLButtonElement, 'focus');
-
-            handleKeyDown(event);
-
-            expect(spy).toHaveBeenCalled();
-        });
-
-        it('should handle Ctrl+End navigation', () => {
-            const button = table.querySelector('#btn1') as HTMLButtonElement;
-            const event = createKeyboardEvent('End', true, button);
-            const spy = vi.spyOn(table.querySelector('#btn2') as HTMLButtonElement, 'focus');
-
-            handleKeyDown(event);
-
-            expect(spy).toHaveBeenCalled();
-        });
-
-        it('should do nothing if table is not found', () => {
-            const button = document.createElement('button');
-            const event = createKeyboardEvent('ArrowRight', false, button);
-            const preventDefault = vi.fn();
-            event.preventDefault = preventDefault;
-
-            handleKeyDown(event);
-
-            expect(preventDefault).not.toHaveBeenCalled();
-        });
-
-        it('should wrap around when reaching the end of focusable elements', () => {
-            const lastButton = table.querySelector('#btn4') as HTMLButtonElement;
-            const event = createKeyboardEvent('ArrowRight', false, lastButton);
-            const spy = vi.spyOn(table.querySelector('#btn1') as HTMLButtonElement, 'focus');
-
-            handleKeyDown(event);
-
-            expect(spy).toHaveBeenCalled();
-        });
+        expect(preventDefaultSpy).not.toHaveBeenCalled();
     });
 
-    describe('isNavigationKey', () => {
-        it('should return true for valid navigation keys', () => {
-            expect(isNavigationKey('ArrowUp')).toBe(true);
-            expect(isNavigationKey('ArrowDown')).toBe(true);
-            expect(isNavigationKey('ArrowLeft')).toBe(true);
-            expect(isNavigationKey('ArrowRight')).toBe(true);
-            expect(isNavigationKey('Home')).toBe(true);
-            expect(isNavigationKey('End')).toBe(true);
-        });
+    it('does nothing when at the last row and ArrowDown is pressed', () => {
+        const rows = document.querySelectorAll('tr');
+        const lastRow = rows[rows.length - 1];
 
-        it('should return false for invalid navigation keys', () => {
-            expect(isNavigationKey('Enter')).toBe(false);
-            expect(isNavigationKey('Tab')).toBe(false);
-            expect(isNavigationKey('Space')).toBe(false);
-        });
+        lastRow?.focus();
+
+        const event = new KeyboardEvent('keydown', { key: 'ArrowDown' });
+        Object.defineProperty(event, 'target', { value: lastRow });
+
+        const preventDefaultSpy = vi.spyOn(event, 'preventDefault');
+
+        handleKeyDown(event as unknown as KeyboardEvent<HTMLTableElement>);
+
+        expect(preventDefaultSpy).not.toHaveBeenCalled();
     });
 
-    afterEach(() => {
-        document.body.removeChild(table);
-        vi.clearAllMocks();
+    it('ignores non-arrow keys', () => {
+        const rows = document.querySelectorAll('tr');
+        const currentRow = rows[1];
+
+        currentRow?.focus();
+
+        const event = new KeyboardEvent('keydown', { key: 'Enter' });
+        Object.defineProperty(event, 'target', { value: currentRow });
+
+        const preventDefaultSpy = vi.spyOn(event, 'preventDefault');
+
+        handleKeyDown(event as unknown as KeyboardEvent<HTMLTableElement>);
+
+        expect(preventDefaultSpy).not.toHaveBeenCalled();
+    });
+
+    it('ignores events when target is not a row', () => {
+        const rows = document.querySelectorAll('tr');
+
+        if (!rows[1]) {
+            throw new Error('No row found');
+        }
+
+        const cell = rows[1].querySelector('td')!;
+
+        const event = new KeyboardEvent('keydown', { key: 'ArrowDown' });
+        Object.defineProperty(event, 'target', { value: cell });
+
+        const preventDefaultSpy = vi.spyOn(event, 'preventDefault');
+
+        handleKeyDown(event as unknown as KeyboardEvent<HTMLTableElement>);
+
+        expect(preventDefaultSpy).not.toHaveBeenCalled();
     });
 });

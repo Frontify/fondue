@@ -108,6 +108,11 @@
     position: relative;
     transition: background-color 0.2s ease;
 
+    &:focus-visible {
+        @include focus-outline;
+        z-index: 1;
+    }
+
     &[data-selected='true'] {
         background-color: var(--box-selected-color);
     }
@@ -122,11 +127,6 @@
         cursor: pointer;
 
         &:not([data-disabled='true']) {
-            &:focus-visible {
-                @include focus-outline;
-                z-index: 1;
-            }
-
             &:not([data-selected='true']):hover {
                 background-color: var(--base-color-alt);
             }

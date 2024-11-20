@@ -1,7 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconArrowDown, IconArrowUp } from '@frontify/fondue-icons';
-import { type ReactNode, forwardRef, useMemo, type KeyboardEvent, type CSSProperties, useRef } from 'react';
+import {
+    forwardRef,
+    useMemo,
+    useRef,
+    type ReactNode,
+    type KeyboardEvent,
+    type CSSProperties,
+    type ReactElement,
+} from 'react';
 
 import { useSyncRefs } from '#/hooks/useSyncRefs';
 import { useTextTruncation } from '#/hooks/useTextTruncation';
@@ -258,29 +266,17 @@ type TableRowProps = ClickableTableRowProps | NavigableTableRowProps | NonIntera
 
 export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
     (
-        {
-            disabled = false,
-            selected = false,
-            href,
-            onClick,
-            onNavigate,
-            children,
-            'aria-label': ariaLabel,
-            'data-test-id': dataTestId,
-        },
+        { disabled = false, selected = false, onClick, children, 'aria-label': ariaLabel, 'data-test-id': dataTestId },
         ref,
     ) => {
-        const isInteractive = (onClick !== undefined || onNavigate !== undefined) && !disabled;
-        const isLink = Boolean(onNavigate && href);
+        const isInteractive = (onClick !== undefined) !== undefined && !disabled;
 
         const handleClick = () => {
             if (disabled) {
                 return;
             }
 
-            if (onNavigate) {
-                onNavigate(href);
-            } else if (onClick) {
+            if (onClick) {
                 onClick(selected);
             }
         };
@@ -300,11 +296,10 @@ export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
             <tr
                 ref={ref}
                 className={styles.row}
-                tabIndex={isInteractive ? 0 : undefined}
-                role={isLink ? 'link' : isInteractive ? 'button' : 'row'}
+                tabIndex={0}
+                role={isInteractive ? 'button' : 'row'}
                 data-disabled={disabled}
                 data-interactive={isInteractive}
-                data-href={href}
                 data-selected={selected}
                 aria-disabled={disabled}
                 aria-label={ariaLabel}
@@ -340,7 +335,7 @@ type TableRowCellProps = {
 };
 
 export const TableRowCell = forwardRef<HTMLTableCellElement, TableRowCellProps>(
-    ({ colSpan, truncate, align = 'left', children, 'aria-label': ariaLabel }, ref) => {
+    ({ colSpan, truncate, align = 'left', children, 'aria-label': ariaLabel }, ref): ReactElement => {
         const cellRef = useRef<HTMLTableCellElement>(null);
         useSyncRefs<HTMLTableCellElement>(cellRef, ref);
 
