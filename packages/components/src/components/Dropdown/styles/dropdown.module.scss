@@ -51,7 +51,7 @@
     text-align: start;
     font-size: var(--body-size-medium);
     line-height: var(--body-size-medium-line-height);
-    color: var(--text-color-weak);
+    color: var(--text-color);
     outline-style: none;
     box-sizing: border-box;
 
@@ -77,7 +77,6 @@
     &[data-disabled] {
         cursor: not-allowed;
         color: var(--text-color-disabled);
-        background-color: var(--box-disabled-color);
     }
 
     .itemContent {
