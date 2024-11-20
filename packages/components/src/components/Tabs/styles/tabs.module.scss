@@ -12,6 +12,7 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     flex-direction: column;
     width: 100%;
     height: 100%;
+    box-sizing: border-box;
 }
 
 .triggerList {
