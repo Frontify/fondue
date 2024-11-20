@@ -271,7 +271,7 @@ export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
         { disabled = false, selected = false, onClick, children, 'aria-label': ariaLabel, 'data-test-id': dataTestId },
         ref,
     ) => {
-        const isInteractive = (onClick !== undefined) !== undefined && !disabled;
+        const isInteractive = onClick !== undefined && !disabled;
 
         const handleClick = () => {
             if (disabled) {
