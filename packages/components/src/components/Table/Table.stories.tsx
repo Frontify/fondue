@@ -34,7 +34,9 @@ const meta: Meta<typeof TableRoot> = {
             type: 'released',
         },
     },
-    args: {},
+    args: {
+        'aria-label': 'User Management Table',
+    },
     argTypes: {
         layout: {
             control: {

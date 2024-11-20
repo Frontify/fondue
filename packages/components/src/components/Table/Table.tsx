@@ -5,6 +5,7 @@ import { type ReactNode, forwardRef, useMemo, type KeyboardEvent, type CSSProper
 
 import { useSyncRefs } from '#/hooks/useSyncRefs';
 import { useTextTruncation } from '#/hooks/useTextTruncation';
+import { type CommonAriaAttrs } from '#/utilities/types';
 
 import styles from './styles/table.module.scss';
 import { handleKeyDown } from './utils';
@@ -20,22 +21,13 @@ type TableRootProps = {
      */
     sticky?: 'head' | 'col' | 'both';
     children: ReactNode;
-    'aria-label'?: string;
-    'aria-describedby'?: string;
-};
+} & CommonAriaAttrs;
 
 export const TableRoot = forwardRef<HTMLTableElement, TableRootProps>(
-    ({ layout = 'auto', sticky, children, 'aria-label': ariaLabel, 'aria-describedby': ariaDescribedBy }, ref) => {
+    ({ layout = 'auto', sticky, children, ...props }, ref) => {
         return (
             <div onKeyDown={handleKeyDown} role="grid" tabIndex={-1}>
-                <table
-                    ref={ref}
-                    className={styles.table}
-                    data-layout={layout}
-                    data-sticky={sticky}
-                    aria-label={ariaLabel}
-                    aria-describedby={ariaDescribedBy}
-                >
+                <table ref={ref} className={styles.table} data-layout={layout} data-sticky={sticky} {...props}>
                     {children}
                 </table>
             </div>

@@ -30,7 +30,7 @@ test('should render basic table structure', async ({ mount }) => {
 
 test('should handle table layout modes', async ({ mount }) => {
     const component = await mount(
-        <Table.Root layout="fixed">
+        <Table.Root layout="fixed" aria-label="Table">
             <Table.Caption>Table Caption</Table.Caption>
             <Table.Header>
                 <Table.Row>
@@ -61,7 +61,7 @@ test('should handle ARIA attributes', async ({ mount }) => {
 
 test('should handle sticky header and ARIA attributes', async ({ mount }) => {
     const component = await mount(
-        <Table.Root sticky="head">
+        <Table.Root sticky="head" aria-label="Table">
             <Table.Header aria-label="Header Section" aria-busy={true}>
                 <Table.Row>
                     <Table.HeaderCell>Name</Table.HeaderCell>
@@ -77,7 +77,7 @@ test('should handle sticky header and ARIA attributes', async ({ mount }) => {
 
 test('should handle sticky first column', async ({ mount }) => {
     const component = await mount(
-        <Table.Root sticky="col">
+        <Table.Root sticky="col" aria-label="Table">
             <Table.Body aria-busy={true}>
                 <Table.Row>
                     <Table.RowCell>Test</Table.RowCell>
@@ -92,7 +92,7 @@ test('should handle sticky first column', async ({ mount }) => {
 
 test('should handle sticky first column and head', async ({ mount }) => {
     const component = await mount(
-        <Table.Root sticky="both">
+        <Table.Root sticky="both" aria-label="Table">
             <Table.Body>
                 <Table.Row>
                     <Table.RowCell>Test</Table.RowCell>
@@ -107,7 +107,7 @@ test('should handle sticky first column and head', async ({ mount }) => {
 test('should handle all HeaderCell configurations', async ({ mount }) => {
     const onSortChange = sinon.spy();
     const component = await mount(
-        <Table.Root>
+        <Table.Root aria-label="Table">
             <Table.Header>
                 <Table.Row>
                     <Table.HeaderCell
@@ -142,7 +142,7 @@ test('should handle all row states and interactions', async ({ mount }) => {
     const onClick = sinon.spy();
     const onNavigate = sinon.spy();
     const component = await mount(
-        <Table.Root>
+        <Table.Root aria-label="Table">
             <Table.Body>
                 <Table.Row selected={true} disabled={false} href="/test" onNavigate={onNavigate} aria-label="Test Row">
                     <Table.RowCell>Test</Table.RowCell>
@@ -172,7 +172,7 @@ test('should handle all row states and interactions', async ({ mount }) => {
 
 test('should handle all cell configurations', async ({ mount }) => {
     const component = await mount(
-        <Table.Root>
+        <Table.Root aria-label="Table">
             <Table.Body>
                 <Table.Row>
                     <Table.RowCell truncate align="center" aria-label="Test Cell">
@@ -193,7 +193,7 @@ test('should cycle through sort directions', async ({ mount }) => {
     const onSortChange = sinon.spy();
 
     const component = await mount(
-        <Table.Root>
+        <Table.Root aria-label="Table">
             <Table.Header>
                 <Table.Row>
                     <Table.HeaderCell onSortChange={onSortChange}>Name</Table.HeaderCell>
@@ -211,7 +211,7 @@ test('should cycle through sort directions', async ({ mount }) => {
 test('should handle sorting functionality', async ({ mount }) => {
     const onSortChange = sinon.spy();
     const component = await mount(
-        <Table.Root>
+        <Table.Root aria-label="Table">
             <Table.Header>
                 <Table.Row>
                     <Table.HeaderCell sortDirection="ascending" onSortChange={onSortChange}>
@@ -229,7 +229,7 @@ test('should handle sorting functionality', async ({ mount }) => {
 test('should handle row selection', async ({ mount }) => {
     const onClick = sinon.spy();
     const component = await mount(
-        <Table.Root>
+        <Table.Root aria-label="Table">
             <Table.Body>
                 <Table.Row selected={false} onClick={onClick}>
                     <Table.RowCell>Test</Table.RowCell>
@@ -248,7 +248,7 @@ test('should handle keyboard navigation', async ({ mount, page }) => {
     const onActionClick = sinon.spy();
 
     const component = await mount(
-        <Table.Root>
+        <Table.Root aria-label="Table">
             <Table.Header>
                 <Table.Row>
                     <Table.HeaderCell sortDirection="ascending" onSortChange={sinon.spy()}>
@@ -309,7 +309,7 @@ test('should handle keyboard navigation', async ({ mount, page }) => {
 test('should set title when content is truncated', async ({ mount }) => {
     const component = await mount(
         <div style={{ width: '200px' }}>
-            <Table.Root layout="fixed">
+            <Table.Root layout="fixed" aria-label="Table">
                 <Table.Header>
                     <Table.Row>
                         <Table.HeaderCell width="100px" truncate>
