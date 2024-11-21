@@ -57,6 +57,13 @@ export const Flex = ({
     as: Component = 'div',
     'data-test-id': dataTestId = 'fondue-flex',
     children,
+    role,
+    'aria-label': ariaLabel,
+    'aria-hidden': ariaHidden,
+    'aria-describedby': ariaDescribedBy,
+    'aria-labelledby': ariaLabelledBy,
+    'aria-expanded': ariaExpanded,
+    'aria-haspopup': ariaHasPopup,
     ...props
 }: FlexProps) => {
     return (
@@ -64,6 +71,13 @@ export const Flex = ({
             className={styles.root}
             data-test-id={dataTestId}
             style={propsToCssVariables(props, { justify: 'justify-content' })}
+            role={role}
+            aria-label={ariaLabel}
+            aria-hidden={ariaHidden}
+            aria-describedby={ariaDescribedBy}
+            aria-labelledby={ariaLabelledBy}
+            aria-expanded={ariaExpanded}
+            aria-haspopup={ariaHasPopup}
         >
             {children}
         </Component>

@@ -61,6 +61,13 @@ export const Grid = ({
     as: Component = 'div',
     'data-test-id': dataTestId = 'fondue-grid',
     children,
+    role,
+    'aria-label': ariaLabel,
+    'aria-hidden': ariaHidden,
+    'aria-describedby': ariaDescribedBy,
+    'aria-labelledby': ariaLabelledBy,
+    'aria-expanded': ariaExpanded,
+    'aria-haspopup': ariaHasPopup,
     ...props
 }: GridProps) => {
     return (
@@ -68,6 +75,13 @@ export const Grid = ({
             className={styles.root}
             data-test-id={dataTestId}
             style={propsToCssVariables(props, { justify: 'justify-items' })}
+            role={role}
+            aria-label={ariaLabel}
+            aria-hidden={ariaHidden}
+            aria-describedby={ariaDescribedBy}
+            aria-labelledby={ariaLabelledBy}
+            aria-expanded={ariaExpanded}
+            aria-haspopup={ariaHasPopup}
         >
             {children}
         </Component>

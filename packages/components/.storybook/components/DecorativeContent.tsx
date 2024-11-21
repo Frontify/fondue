@@ -24,3 +24,4 @@ export const DecorativeContent = () => {
         />
     );
 };
+DecorativeContent.displayName = 'DecorativeContent';
