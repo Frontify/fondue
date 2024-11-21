@@ -19,9 +19,31 @@ export type SectionProps = LayoutComponentProps & {
     'data-test-id'?: string;
 } & CommonAriaProps;
 
-export const Section = ({ 'data-test-id': dataTestId = 'fondue-section', children, ...props }: SectionProps) => {
+export const Section = ({
+    'data-test-id': dataTestId = 'fondue-section',
+    children,
+    role,
+    'aria-label': ariaLabel,
+    'aria-hidden': ariaHidden,
+    'aria-describedby': ariaDescribedBy,
+    'aria-labelledby': ariaLabelledBy,
+    'aria-expanded': ariaExpanded,
+    'aria-haspopup': ariaHasPopup,
+    ...props
+}: SectionProps) => {
     return (
-        <section className={styles.root} data-test-id={dataTestId} style={propsToCssVariables(props)}>
+        <section
+            className={styles.root}
+            data-test-id={dataTestId}
+            style={propsToCssVariables(props)}
+            role={role}
+            aria-label={ariaLabel}
+            aria-hidden={ariaHidden}
+            aria-describedby={ariaDescribedBy}
+            aria-labelledby={ariaLabelledBy}
+            aria-expanded={ariaExpanded}
+            aria-haspopup={ariaHasPopup}
+        >
             {children}
         </section>
     );
