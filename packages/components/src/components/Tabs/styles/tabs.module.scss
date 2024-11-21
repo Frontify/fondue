@@ -38,6 +38,7 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     padding-right: sizeToken(3);
     gap: sizeToken(2);
     border-bottom: 1px solid var(--line-color);
+    box-sizing: border-box;
 }
 
 .trigger {
