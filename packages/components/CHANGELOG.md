@@ -1,5 +1,13 @@
 # @frontify/fondue-components
 
+## 5.1.1
+
+### Patch Changes
+
+-   [#2109](https://github.com/Frontify/fondue/pull/2109) [`21f2d80`](https://github.com/Frontify/fondue/commit/21f2d807de4512f70c9a0b7e41b906e9fc5505c5) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: don't spread customization props alongside aria in layout components
+
+-   [#2110](https://github.com/Frontify/fondue/pull/2110) [`a8fd119`](https://github.com/Frontify/fondue/commit/a8fd119ab90dba998aeef62f51fed855448529b8) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix(`Tabs`): web app overriding triggerListWrapper box sizing
+
 ## 5.1.0
 
 ### Minor Changes
