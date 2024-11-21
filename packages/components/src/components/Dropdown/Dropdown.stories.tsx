@@ -5,6 +5,7 @@ import { type Meta, type StoryObj } from '@storybook/react';
 import { useState } from 'react';
 
 import { Button } from '../Button/Button';
+import { Tooltip } from '../Tooltip/Tooltip';
 
 import {
     Dropdown,
@@ -347,6 +348,27 @@ export const CompactPadding: Story = {
                     <p>Item 2</p>
                     <p>Item 2 description</p>
                 </Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}}>Item 3</Dropdown.Item>
+            </Dropdown.Content>
+        </Dropdown.Root>
+    ),
+};
+
+export const WithTooltip: Story = {
+    render: ({ ...args }) => (
+        <Dropdown.Root {...args}>
+            <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                    <Dropdown.Trigger asChild>
+                        <Button>Trigger</Button>
+                    </Dropdown.Trigger>
+                </Tooltip.Trigger>
+                <Tooltip.Content>Dropdown tooltip</Tooltip.Content>
+            </Tooltip.Root>
+
+            <Dropdown.Content>
+                <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}}>Item 2</Dropdown.Item>
                 <Dropdown.Item onSelect={() => {}}>Item 3</Dropdown.Item>
             </Dropdown.Content>
         </Dropdown.Root>

@@ -43,7 +43,7 @@ export type FlyoutTriggerProps = {
 };
 
 export const FlyoutTrigger = (
-    { asChild = true, children, 'data-test-id': dataTestId = 'fondue-flyout-trigger' }: FlyoutTriggerProps,
+    { asChild = true, children, 'data-test-id': dataTestId = 'fondue-flyout-trigger', ...props }: FlyoutTriggerProps,
     ref: ForwardedRef<HTMLButtonElement>,
 ) => {
     return (
@@ -54,6 +54,7 @@ export const FlyoutTrigger = (
             data-test-id={dataTestId}
             asChild={asChild}
             ref={ref}
+            {...props}
         >
             {children}
         </RadixPopover.Trigger>

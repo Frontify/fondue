@@ -24,10 +24,10 @@ export type TooltipRootProps = {
     children: Array<ReactElement<TooltipTriggerProps | TooltipContentProps>>;
 };
 
-export const TooltipRoot = ({ children, enterDelay = 700, open, onOpenChange }: TooltipRootProps) => {
+export const TooltipRoot = ({ children, enterDelay = 700, open, onOpenChange, ...props }: TooltipRootProps) => {
     return (
         <RadixTooltip.Provider>
-            <RadixTooltip.Root delayDuration={enterDelay} open={open} onOpenChange={onOpenChange}>
+            <RadixTooltip.Root delayDuration={enterDelay} open={open} onOpenChange={onOpenChange} {...props}>
                 {children}
             </RadixTooltip.Root>
         </RadixTooltip.Provider>
