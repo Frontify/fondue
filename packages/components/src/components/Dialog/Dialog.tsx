@@ -126,7 +126,7 @@ export const DialogRoot = ({ children, ...props }: DialogRootProps) => {
 DialogRoot.displayName = 'Dialog.Root';
 
 export const DialogTrigger = (
-    { asChild = true, children, 'data-test-id': dataTestId = 'fondue-dialog-trigger' }: DialogTriggerProps,
+    { asChild = true, children, 'data-test-id': dataTestId = 'fondue-dialog-trigger', ...props }: DialogTriggerProps,
     ref: ForwardedRef<HTMLButtonElement>,
 ) => {
     return (
@@ -137,6 +137,7 @@ export const DialogTrigger = (
             data-test-id={dataTestId}
             asChild={asChild}
             ref={ref}
+            {...props}
         >
             {children}
         </RadixDialog.Trigger>

@@ -544,3 +544,24 @@ export const WithButtonInTheHeader: Story = {
         );
     },
 };
+
+export const WithTooltip: Story = {
+    args: {
+        children: 'I am a dialog content',
+    },
+    render: (args) => (
+        <Dialog.Root>
+            <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                    <Dialog.Trigger asChild>
+                        <Button>Trigger</Button>
+                    </Dialog.Trigger>
+                </Tooltip.Trigger>
+                <Tooltip.Content>Dropdown tooltip</Tooltip.Content>
+            </Tooltip.Root>
+            <Dialog.Content>
+                <Dialog.Body {...args} />
+            </Dialog.Content>
+        </Dialog.Root>
+    ),
+};

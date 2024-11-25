@@ -4,6 +4,7 @@ import { type Meta, type StoryObj } from '@storybook/react';
 
 import { Button } from '../Button/Button';
 import { TextInput } from '../TextInput/TextInput';
+import { Tooltip } from '../Tooltip/Tooltip';
 
 import { Flyout, FlyoutBody, FlyoutContent, FlyoutFooter, FlyoutHeader, FlyoutRoot, FlyoutTrigger } from './Flyout';
 
@@ -306,5 +307,26 @@ export const Overflow: Story = {
                 </Flyout.Root>
             ))}
         </>
+    ),
+};
+
+export const WithTooltip: Story = {
+    args: {
+        children: 'Hello World',
+    },
+    render: (args) => (
+        <Flyout.Root>
+            <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                    <Flyout.Trigger asChild>
+                        <Button>Trigger</Button>
+                    </Flyout.Trigger>
+                </Tooltip.Trigger>
+                <Tooltip.Content>Flyout tooltip</Tooltip.Content>
+            </Tooltip.Root>
+            <Flyout.Content>
+                <Flyout.Body {...args} />
+            </Flyout.Content>
+        </Flyout.Root>
     ),
 };
