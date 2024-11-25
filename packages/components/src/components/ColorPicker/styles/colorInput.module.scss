@@ -4,17 +4,14 @@
 @import '../../../utilities/transitions.module.scss';
 
 .root {
-    @include focus-outline;
     @include transition-colors;
 
     width: 100%;
     position: relative;
-    display: flex;
     justify-content: start;
     align-items: center;
     gap: sizeToken(2);
-    padding-left: sizeToken(3);
-    padding-right: sizeToken(3);
+    overflow: hidden;
 
     font-family: var(--body-family-stack);
     font-weight: 400;
@@ -23,12 +20,10 @@
     box-sizing: border-box;
 
     text-align: start;
-    height: sizeToken(9);
     color: var(--text-color-x-weak);
     background-color: var(--base-color);
     border-radius: var(--radius);
     border: var(--line-width) solid var(--line-color-strong);
-    cursor: pointer;
 
     &:hover {
         border-color: var(--line-color-x-strong);
@@ -41,6 +36,10 @@
         color: var(--line-color-xx-strong);
     }
 
+    &:has(button[data-color-input-select]:focus-visible) {
+        @include focus-outline-styles
+    }
+
     &:has(input:disabled),
     &[data-disabled='true'] {
         border-color: var(--line-color-weak);
@@ -50,8 +49,17 @@
     }
 }
 
-.colorName {
+.button {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap: sizeToken(2);
     flex-grow: 1;
+    padding-left: sizeToken(3);
+    padding-right: sizeToken(3);
+    height: sizeToken(9);
+    outline: none;
+    width: 100%;
 }
 
 .colorIndicator {
@@ -60,8 +68,26 @@
     border-radius: sizeToken(1);
 }
 
+.actions {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: sizeToken(3);
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+}
+.clear {
+    outline: none;
+    padding: sizeToken(1);
+    margin: sizeToken(1);
+    @include focus-outline;
+    pointer-events: all;
+}
+
 .caret {
     @include transition-all;
+
 }
 
 [data-state='open'] {
