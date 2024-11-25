@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconCaretDown, IconDroplet, IconTrashBin } from '@frontify/fondue-icons';
-import { type ForwardedRef, forwardRef, useId } from 'react';
+import { type ForwardedRef, forwardRef } from 'react';
 
 import { type CommonAriaAttrs } from '#/utilities/types';
 
@@ -24,42 +24,54 @@ type ColorPickerInputProps = {
      */
     onClear?: () => void;
     /**
+     * Event handler called when the color picker input is clicked
+     */
+    onClick?: () => void;
+    /**
      * The test id of the color picker input
      */
     'data-test-id'?: string;
 } & CommonAriaAttrs;
 
 export const ColorPickerInput = (
-    { id, currentColor, onClear, 'data-test-id': dataTestId = 'color-picker-input', ...props }: ColorPickerInputProps,
+    {
+        id,
+        currentColor,
+        isOpen,
+        onClear,
+        onClick,
+        'data-test-id': dataTestId = 'color-picker-input',
+        ...props
+    }: ColorPickerInputProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
-    const colorNameId = useId();
-
     return (
         <div id={id} className={styles.root} {...props} ref={forwardedRef} data-test-id={dataTestId}>
-            {currentColor?.red !== undefined ? (
-                <div
-                    aria-describedby={colorNameId}
-                    className={styles.colorIndicator}
-                    style={{ backgroundColor: colorToCss(currentColor) }}
-                />
-            ) : (
-                <>
-                    <IconDroplet size={16} />
-                    <span>Select Color</span>
-                </>
-            )}
+            <button className={styles.button} onClick={onClick} data-color-input-select>
+                {currentColor?.red !== undefined ? (
+                    <div
+                        aria-hidden
+                        className={styles.colorIndicator}
+                        style={{ backgroundColor: colorToCss(currentColor) }}
+                    />
+                ) : (
+                    <>
+                        <IconDroplet size={16} />
+                        <span>Select Color</span>
+                    </>
+                )}
 
-            <span id={colorNameId} className={styles.colorName}>
-                {currentColor?.name}
-            </span>
-            {onClear && (
-                <button type="button" aria-label="Clear color" onClick={onClear} className={styles.clear}>
-                    <IconTrashBin size={16} />
-                </button>
-            )}
-            <div>
-                <IconCaretDown size={16} className={styles.caret} />
+                <span className={styles.colorName}>{currentColor?.name}</span>
+            </button>
+            <div className={styles.actions}>
+                {onClear && (
+                    <button type="button" aria-label="Clear color" onClick={onClear} className={styles.clear}>
+                        <IconTrashBin size={16} />
+                    </button>
+                )}
+                <div className={styles.caret} data-state={isOpen ? 'open' : 'closed'}>
+                    <IconCaretDown size={16} className={styles.caret} />
+                </div>
             </div>
         </div>
     );
