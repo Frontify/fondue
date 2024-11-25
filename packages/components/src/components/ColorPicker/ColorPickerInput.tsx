@@ -45,14 +45,12 @@ export const ColorPickerInput = (
     }: ColorPickerInputProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
-    const colorNameId = useId();
-
     return (
         <div id={id} className={styles.root} {...props} ref={forwardedRef} data-test-id={dataTestId}>
             <button className={styles.button} onClick={onClick} data-color-input-select>
                 {currentColor?.red !== undefined ? (
                     <div
-                        aria-describedby={colorNameId}
+                        aria-hidden
                         className={styles.colorIndicator}
                         style={{ backgroundColor: colorToCss(currentColor) }}
                     />
@@ -63,9 +61,7 @@ export const ColorPickerInput = (
                     </>
                 )}
 
-                <span id={colorNameId} className={styles.colorName}>
-                    {currentColor?.name}
-                </span>
+                <span className={styles.colorName}>{currentColor?.name}</span>
             </button>
             <div className={styles.actions}>
                 {onClear && (
