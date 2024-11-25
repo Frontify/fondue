@@ -1,5 +1,13 @@
 # @frontify/fondue-components
 
+## 5.1.2
+
+### Patch Changes
+
+-   [#2113](https://github.com/Frontify/fondue/pull/2113) [`6bb8d86`](https://github.com/Frontify/fondue/commit/6bb8d8601c6e43d76d90d1d136d3f4d30eb0e889) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: a11y fixes for color picker input
+
+-   [#2112](https://github.com/Frontify/fondue/pull/2112) [`013f14e`](https://github.com/Frontify/fondue/commit/013f14e6da0493c10b0e82abe2741b9d921a8b73) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix(`Triggers`): nesting triggers causes one of them to not work
+
 ## 5.1.1
 
 ### Patch Changes
