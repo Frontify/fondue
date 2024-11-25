@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconCaretDown, IconDroplet, IconTrashBin } from '@frontify/fondue-icons';
-import { type ForwardedRef, forwardRef, useId } from 'react';
+import { type ForwardedRef, forwardRef } from 'react';
 
 import { type CommonAriaAttrs } from '#/utilities/types';
 
