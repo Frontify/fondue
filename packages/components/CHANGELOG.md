@@ -1,5 +1,11 @@
 # @frontify/fondue-components
 
+## 5.1.3
+
+### Patch Changes
+
+-   [#2116](https://github.com/Frontify/fondue/pull/2116) [`8889a65`](https://github.com/Frontify/fondue/commit/8889a65decd61fc58bca78f0b89cc5b7da353a2d) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix(`Table`): missing export
+
 ## 5.1.2
 
 ### Patch Changes

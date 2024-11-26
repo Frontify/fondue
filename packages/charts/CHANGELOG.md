@@ -1,5 +1,11 @@
 # @frontify/fondue-charts
 
+## 1.8.18
+
+### Patch Changes
+
+-   [#2115](https://github.com/Frontify/fondue/pull/2115) [`fd1da3c`](https://github.com/Frontify/fondue/commit/fd1da3c3761db295fa7ad6d86d02c278d833e10a) Thanks [@joewoodson](https://github.com/joewoodson)! - adjust chart tooltip styling to accomodate very long titles used in combination with tooltip preview images
+
 ## 1.8.17
 
 ### Patch Changes
