@@ -20,6 +20,7 @@ export { SegmentedControl } from './components/SegmentedControl/SegmentedControl
 export { Select } from './components/Select/Select';
 export { Slider } from './components/Slider/Slider';
 export { Switch } from './components/Switch/Switch';
+export { Table } from './components/Table/Table';
 export { Tabs } from './components/Tabs/Tabs';
 export { TextInput } from './components/TextInput/TextInput';
 export { Tooltip } from './components/Tooltip/Tooltip';
