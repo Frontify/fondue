@@ -21,10 +21,10 @@ export const TooltipContent = ({ title, description, imageUrl, entries }: Toolti
     const dataPoint = entries[1];
 
     return (
-        <div className="tw-bg-[var(--text-color)] tw-p-3 tw-rounded tw-border tw-border-button-border">
+        <div className="tw-bg-[var(--text-color)] tw-p-3 tw-rounded tw-border tw-border-button-border tw-max-w-[260px]">
             {imageUrl && (
                 <div className="tw--m-1">
-                    <img src={imageUrl} alt={description} className="tw-w-48 tw-h-28 tw-object-cover tw-mb-5" />
+                    <img className="tw-w-full" src={imageUrl} alt={description} className="tw-w-48 tw-h-28 tw-object-cover tw-mb-5 tw-w-full" />
                 </div>
             )}
             <div className={title ? 'tw-pb-3' : ''}>
@@ -37,7 +37,9 @@ export const TooltipContent = ({ title, description, imageUrl, entries }: Toolti
                 {descriptionLines.length > 0 && (
                     <div className="tw-text-base tw-text-xs">
                         {descriptionLines.map((line) => (
-                            <div key={line}>{line}</div>
+                            <div key={line} className="tw-truncate">
+                                {line}
+                            </div>
                         ))}
                     </div>
                 )}
