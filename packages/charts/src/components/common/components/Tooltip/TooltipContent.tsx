@@ -24,7 +24,7 @@ export const TooltipContent = ({ title, description, imageUrl, entries }: Toolti
         <div className="tw-bg-[var(--text-color)] tw-p-3 tw-rounded tw-border tw-border-button-border tw-max-w-[260px]">
             {imageUrl && (
                 <div className="tw--m-1">
-                    <img className="tw-w-full" src={imageUrl} alt={description} className="tw-w-48 tw-h-28 tw-object-cover tw-mb-5 tw-w-full" />
+                    <img src={imageUrl} alt={description} className="tw-h-28 tw-object-cover tw-mb-5 tw-w-full" />
                 </div>
             )}
             <div className={title ? 'tw-pb-3' : ''}>
