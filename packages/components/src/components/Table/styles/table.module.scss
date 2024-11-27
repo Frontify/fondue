@@ -68,6 +68,10 @@
     border-top: 1px solid var(--line-color);
     border-bottom: 1px solid var(--line-color);
 
+    &:hover {
+        color: var(--text-color-hover);
+    }
+
     &[data-sortable='false'] {
         padding: sizeToken(3) sizeToken(2);
     }
@@ -93,10 +97,6 @@
     font: inherit;
     color: inherit;
     cursor: pointer;
-
-    &:hover {
-        color: var(--text-color-hover);
-    }
 
     &[data-active='true'] {
         color: var(--text-color);
