@@ -79,15 +79,11 @@
         color: var(--text-color-disabled);
     }
 
-    .itemContent {
+    .itemText {
         width: 100%;
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
-        display: flex;
-        gap: sizeToken(1);
-        align-items: center;
-        margin-left: sizeToken(2);
     }
 
     .subMenuIndicator {
@@ -128,7 +124,7 @@
     }
 
     // 2 slots without any name should be implicitly ordered
-    &:not([data-name='right']) ~ :not([data-name='left']) {
+    &:not([data-name='right']) ~ .slot:not([data-name='left']) {
         order: 1;
         margin-left: auto;
 

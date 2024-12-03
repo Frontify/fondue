@@ -374,3 +374,30 @@ export const WithTooltip: Story = {
         </Dropdown.Root>
     ),
 };
+
+export const LinkItems: Story = {
+    render: ({ ...args }) => (
+        <Dropdown.Root {...args}>
+            <Dropdown.Trigger>
+                <Button>Trigger</Button>
+            </Dropdown.Trigger>
+            <Dropdown.Content>
+                <Dropdown.Item onSelect={() => {}}>
+                    <a href="https://frontify.com">Link 1</a>
+                    <Dropdown.Slot name="right">
+                        <IconIcon size={16} />
+                    </Dropdown.Slot>
+                </Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}}>
+                    <a href="https://frontify.com">Link 2</a>
+                    <Dropdown.Slot name="left">
+                        <IconIcon size={16} />
+                    </Dropdown.Slot>
+                </Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}}>
+                    <span>Item 3</span>
+                </Dropdown.Item>
+            </Dropdown.Content>
+        </Dropdown.Root>
+    ),
+};

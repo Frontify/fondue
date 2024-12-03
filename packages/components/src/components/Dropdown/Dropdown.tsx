@@ -2,12 +2,33 @@
 
 import { IconCaretRight } from '@frontify/fondue-icons';
 import * as RadixDropdown from '@radix-ui/react-dropdown-menu';
-import { forwardRef, useRef, type ForwardedRef, type ReactNode } from 'react';
+import { Slot } from '@radix-ui/react-slot';
+import { c } from 'node_modules/vite/dist/node/types.d-aGj9QkWt';
+import { Children, forwardRef, isValidElement, useMemo, useRef, type ForwardedRef, type ReactNode } from 'react';
 
 import { usePreventDropdownOverflow } from '#/hooks/usePreventDropdownOverflow';
 import { syncRefs } from '#/utilities/domUtilities';
 
+import { Flex } from '../Flex/Flex';
+
 import styles from './styles/dropdown.module.scss';
+
+const useProcessedChildren = (children: ReactNode) => {
+    return useMemo(() => {
+        const isLink = isValidElement(children) && children.type === 'a';
+
+        const content = [];
+        for (const child of Children.toArray(children)) {
+            if (isValidElement(child)) {
+                content.push(child);
+            } else {
+                content.push(<span className={styles.itemText}>{child}</span>);
+            }
+        }
+
+        return { isLink, content };
+    }, [children]);
+};
 
 export type DropdownRootProps = {
     children?: ReactNode;
@@ -164,9 +185,10 @@ export const DropdownSubTrigger = (
     { children, 'data-test-id': dataTestId = 'fondue-dropdown-subtrigger' }: DropdownSubTriggerProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
+    const { content } = useProcessedChildren(children);
     return (
         <RadixDropdown.SubTrigger className={styles.subTrigger} data-test-id={dataTestId} ref={ref}>
-            <div className={styles.itemContent}>{children}</div>
+            {content}
             <IconCaretRight className={styles.subMenuIndicator} size={16} />
         </RadixDropdown.SubTrigger>
     );
@@ -240,6 +262,9 @@ export const DropdownItem = (
     }: DropdownItemProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
+    const { content, isLink } = useProcessedChildren(children);
+
+    const Wrapper = isLink ? Slot : 'div';
     return (
         <RadixDropdown.Item
             onSelect={onSelect}
@@ -249,9 +274,10 @@ export const DropdownItem = (
             data-emphasis={emphasis}
             ref={ref}
             disabled={disabled}
+            asChild
             {...props}
         >
-            <div className={styles.itemContent}>{children}</div>
+            <Wrapper>{content}</Wrapper>
         </RadixDropdown.Item>
     );
 };
