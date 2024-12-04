@@ -21,6 +21,7 @@ export type DropdownRootProps = {
      * Callback that is called when the open state of the dropdown changes.
      */
     onOpenChange?: (open: boolean) => void;
+
     'data-test-id'?: string;
 };
 
@@ -28,6 +29,7 @@ export const DropdownRoot = ({
     children,
     open,
     onOpenChange,
+
     'data-test-id': dataTestId = 'fondue-dropdown',
 }: DropdownRootProps) => {
     return (
@@ -85,6 +87,10 @@ export type DropdownContentProps = {
      * @default "bottom"
      */
     side?: 'top' | 'right' | 'bottom' | 'left';
+    /**
+     * Prevents the focus from being set on the trigger when the dropdown is closed.
+     */
+    preventTriggerFocusOnClose?: boolean;
 };
 
 export const DropdownContent = (
@@ -95,6 +101,7 @@ export const DropdownContent = (
         padding = 'comfortable',
         align = 'start',
         children,
+        preventTriggerFocusOnClose,
         'data-test-id': dataTestId = 'fondue-dropdown-content',
     }: DropdownContentProps,
     ref: ForwardedRef<HTMLDivElement>,
@@ -115,7 +122,10 @@ export const DropdownContent = (
                 data-padding={padding}
                 data-test-id={dataTestId}
                 ref={localRef}
-                onCloseAutoFocus={() => {
+                onCloseAutoFocus={(event) => {
+                    if (preventTriggerFocusOnClose) {
+                        event.preventDefault();
+                    }
                     syncRefs(localRef, ref);
                     onClose && onClose();
                     dropdownIsOpen.current = false;
