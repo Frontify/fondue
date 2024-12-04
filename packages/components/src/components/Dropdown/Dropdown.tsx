@@ -3,32 +3,13 @@
 import { IconCaretRight } from '@frontify/fondue-icons';
 import * as RadixDropdown from '@radix-ui/react-dropdown-menu';
 import { Slot } from '@radix-ui/react-slot';
-import { c } from 'node_modules/vite/dist/node/types.d-aGj9QkWt';
-import { Children, forwardRef, isValidElement, useMemo, useRef, type ForwardedRef, type ReactNode } from 'react';
+import { forwardRef, useRef, type ForwardedRef, type ReactNode } from 'react';
 
 import { usePreventDropdownOverflow } from '#/hooks/usePreventDropdownOverflow';
 import { syncRefs } from '#/utilities/domUtilities';
 
-import { Flex } from '../Flex/Flex';
-
+import { useProcessedChildren } from './hooks/useProcessedChildren';
 import styles from './styles/dropdown.module.scss';
-
-const useProcessedChildren = (children: ReactNode) => {
-    return useMemo(() => {
-        const isLink = isValidElement(children) && children.type === 'a';
-
-        const content = [];
-        for (const child of Children.toArray(children)) {
-            if (isValidElement(child)) {
-                content.push(child);
-            } else {
-                content.push(<span className={styles.itemText}>{child}</span>);
-            }
-        }
-
-        return { isLink, content };
-    }, [children]);
-};
 
 export type DropdownRootProps = {
     children?: ReactNode;
@@ -265,6 +246,7 @@ export const DropdownItem = (
     const { content, isLink } = useProcessedChildren(children);
 
     const Wrapper = isLink ? Slot : 'div';
+
     return (
         <RadixDropdown.Item
             onSelect={onSelect}

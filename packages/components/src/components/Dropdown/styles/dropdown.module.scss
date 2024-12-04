@@ -53,7 +53,6 @@
     line-height: var(--body-size-medium-line-height);
     color: var(--text-color);
     outline-style: none;
-    box-sizing: border-box;
 
     &[data-state='open'] {
         background-color: var(--box-neutral-color);
@@ -79,7 +78,7 @@
         color: var(--text-color-disabled);
     }
 
-    .itemText {
+    span {
         width: 100%;
         overflow: hidden;
         white-space: nowrap;
