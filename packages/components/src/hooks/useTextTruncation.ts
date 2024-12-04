@@ -7,10 +7,6 @@ import { useEffect, type RefObject } from 'react';
  * It observes the element's size and adds a title attribute with the full text
  * when the content is truncated.
  *
- * ! Note: Components utilizing this hook should have tests in place to verify
- * ! that in each scenario, the height is correctly adjusted accodrding to the
- * ! requirements of the component and the viewport.
- *
  * @param {RefObject<HTMLElement>} ref - Reference to the HTML element to observe for truncation.
  *
  * @example
