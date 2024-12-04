@@ -37,32 +37,32 @@ export type DividerProps = {
     className?: string;
 };
 
-export const DividerComponent = (
-    {
-        'data-test-id': dataTestId = 'fondue-divider',
-        direction = 'horizontal',
-        className,
-        variant,
-        ...props
-    }: DividerProps,
-    ref: ForwardedRef<HTMLDivElement | null>,
-): ReactElement => {
-    return (
-        <Separator.Root
-            ref={ref}
-            className={cn(
-                dividerStyles({
-                    direction,
-                    variant,
-                    ...props,
-                }),
-                className,
-            )}
-            data-test-id={dataTestId}
-        />
-    );
-};
+export const Divider = forwardRef<HTMLDivElement, DividerProps>(
+    (
+        {
+            'data-test-id': dataTestId = 'fondue-divider',
+            direction = 'horizontal',
+            className,
+            variant,
+            ...props
+        }: DividerProps,
+        ref: ForwardedRef<HTMLDivElement | null>,
+    ): ReactElement => {
+        return (
+            <Separator.Root
+                ref={ref}
+                className={cn(
+                    dividerStyles({
+                        direction,
+                        variant,
+                        ...props,
+                    }),
+                    className,
+                )}
+                data-test-id={dataTestId}
+            />
+        );
+    },
+);
 
-DividerComponent.displayName = 'Divider';
-
-export const Divider = forwardRef<HTMLDivElement, DividerProps>(DividerComponent);
+Divider.displayName = 'Divider';
