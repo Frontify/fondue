@@ -1,5 +1,14 @@
 # @frontify/fondue-components
 
+## 7.0.0
+
+### Patch Changes
+
+-   [#2121](https://github.com/Frontify/fondue/pull/2121) [`7a0994a`](https://github.com/Frontify/fondue/commit/7a0994a0168c848d02cd40ca8fb85df5ff88c4bb) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix(`Navigation`): header cell not hoverable unless interactible
+
+-   Updated dependencies [[`871ced0`](https://github.com/Frontify/fondue/commit/871ced040402f79db43cd72b948e4acb85be8aa3)]:
+    -   @frontify/fondue-icons@0.8.0
+
 ## 6.0.0
 
 ### Patch Changes

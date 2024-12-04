@@ -1,5 +1,11 @@
 # @frontify/fondue-charts
 
+## 1.8.19
+
+### Patch Changes
+
+-   [#2120](https://github.com/Frontify/fondue/pull/2120) [`c6e4fb2`](https://github.com/Frontify/fondue/commit/c6e4fb26fa0a6d8b8c8583681e02d2d27fcfb400) Thanks [@joewoodson](https://github.com/joewoodson)! - set tooltip description word-break to all
+
 ## 1.8.18
 
 ### Patch Changes
