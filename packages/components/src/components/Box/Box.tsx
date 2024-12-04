@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ReactNode } from 'react';
+import { forwardRef, type ReactNode } from 'react';
 
 import { type CommonAriaProps } from '#/helpers/aria';
 import { type Responsive, type LayoutComponentProps } from '#/helpers/layout';
@@ -24,34 +24,36 @@ export type BoxProps = LayoutComponentProps & {
     'data-test-id'?: string;
 } & CommonAriaProps;
 
-export const Box = ({
-    as: Component = 'div',
-    'data-test-id': dataTestId = 'fondue-box',
-    children,
-    role,
-    'aria-label': ariaLabel,
-    'aria-hidden': ariaHidden,
-    'aria-describedby': ariaDescribedBy,
-    'aria-labelledby': ariaLabelledBy,
-    'aria-expanded': ariaExpanded,
-    'aria-haspopup': ariaHasPopup,
-    ...props
-}: BoxProps) => {
-    return (
-        <Component
-            className={styles.root}
-            data-test-id={dataTestId}
-            style={propsToCssVariables(props)}
-            role={role}
-            aria-label={ariaLabel}
-            aria-hidden={ariaHidden}
-            aria-describedby={ariaDescribedBy}
-            aria-labelledby={ariaLabelledBy}
-            aria-expanded={ariaExpanded}
-            aria-haspopup={ariaHasPopup}
-        >
-            {children}
-        </Component>
-    );
-};
+export const Box = forwardRef<HTMLDivElement, BoxProps>(
+    ({
+        as: Component = 'div',
+        'data-test-id': dataTestId = 'fondue-box',
+        children,
+        role,
+        'aria-label': ariaLabel,
+        'aria-hidden': ariaHidden,
+        'aria-describedby': ariaDescribedBy,
+        'aria-labelledby': ariaLabelledBy,
+        'aria-expanded': ariaExpanded,
+        'aria-haspopup': ariaHasPopup,
+        ...props
+    }: BoxProps) => {
+        return (
+            <Component
+                className={styles.root}
+                data-test-id={dataTestId}
+                style={propsToCssVariables(props)}
+                role={role}
+                aria-label={ariaLabel}
+                aria-hidden={ariaHidden}
+                aria-describedby={ariaDescribedBy}
+                aria-labelledby={ariaLabelledBy}
+                aria-expanded={ariaExpanded}
+                aria-haspopup={ariaHasPopup}
+            >
+                {children}
+            </Component>
+        );
+    },
+);
 Box.displayName = 'Box';

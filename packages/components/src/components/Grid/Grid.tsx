@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ReactNode } from 'react';
+import { forwardRef, type ReactNode } from 'react';
 
 import { type CommonAriaProps } from '#/helpers/aria';
 import { type Responsive, type SizeValue, type LayoutComponentProps } from '#/helpers/layout';
@@ -57,34 +57,36 @@ export type GridProps = LayoutComponentProps & {
     'data-test-id'?: string;
 } & CommonAriaProps;
 
-export const Grid = ({
-    as: Component = 'div',
-    'data-test-id': dataTestId = 'fondue-grid',
-    children,
-    role,
-    'aria-label': ariaLabel,
-    'aria-hidden': ariaHidden,
-    'aria-describedby': ariaDescribedBy,
-    'aria-labelledby': ariaLabelledBy,
-    'aria-expanded': ariaExpanded,
-    'aria-haspopup': ariaHasPopup,
-    ...props
-}: GridProps) => {
-    return (
-        <Component
-            className={styles.root}
-            data-test-id={dataTestId}
-            style={propsToCssVariables(props, { justify: 'justify-items' })}
-            role={role}
-            aria-label={ariaLabel}
-            aria-hidden={ariaHidden}
-            aria-describedby={ariaDescribedBy}
-            aria-labelledby={ariaLabelledBy}
-            aria-expanded={ariaExpanded}
-            aria-haspopup={ariaHasPopup}
-        >
-            {children}
-        </Component>
-    );
-};
+export const Grid = forwardRef<HTMLDivElement, GridProps>(
+    ({
+        as: Component = 'div',
+        'data-test-id': dataTestId = 'fondue-grid',
+        children,
+        role,
+        'aria-label': ariaLabel,
+        'aria-hidden': ariaHidden,
+        'aria-describedby': ariaDescribedBy,
+        'aria-labelledby': ariaLabelledBy,
+        'aria-expanded': ariaExpanded,
+        'aria-haspopup': ariaHasPopup,
+        ...props
+    }: GridProps) => {
+        return (
+            <Component
+                className={styles.root}
+                data-test-id={dataTestId}
+                style={propsToCssVariables(props, { justify: 'justify-items' })}
+                role={role}
+                aria-label={ariaLabel}
+                aria-hidden={ariaHidden}
+                aria-describedby={ariaDescribedBy}
+                aria-labelledby={ariaLabelledBy}
+                aria-expanded={ariaExpanded}
+                aria-haspopup={ariaHasPopup}
+            >
+                {children}
+            </Component>
+        );
+    },
+);
 Grid.displayName = 'Grid';

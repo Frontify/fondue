@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ReactNode } from 'react';
+import { forwardRef, type ReactNode } from 'react';
 
 import { type CommonAriaProps } from '#/helpers/aria';
 import { type Responsive, type LayoutComponentProps } from '#/helpers/layout';
@@ -19,33 +19,35 @@ export type SectionProps = LayoutComponentProps & {
     'data-test-id'?: string;
 } & CommonAriaProps;
 
-export const Section = ({
-    'data-test-id': dataTestId = 'fondue-section',
-    children,
-    role,
-    'aria-label': ariaLabel,
-    'aria-hidden': ariaHidden,
-    'aria-describedby': ariaDescribedBy,
-    'aria-labelledby': ariaLabelledBy,
-    'aria-expanded': ariaExpanded,
-    'aria-haspopup': ariaHasPopup,
-    ...props
-}: SectionProps) => {
-    return (
-        <section
-            className={styles.root}
-            data-test-id={dataTestId}
-            style={propsToCssVariables(props)}
-            role={role}
-            aria-label={ariaLabel}
-            aria-hidden={ariaHidden}
-            aria-describedby={ariaDescribedBy}
-            aria-labelledby={ariaLabelledBy}
-            aria-expanded={ariaExpanded}
-            aria-haspopup={ariaHasPopup}
-        >
-            {children}
-        </section>
-    );
-};
+export const Section = forwardRef<HTMLDivElement, SectionProps>(
+    ({
+        'data-test-id': dataTestId = 'fondue-section',
+        children,
+        role,
+        'aria-label': ariaLabel,
+        'aria-hidden': ariaHidden,
+        'aria-describedby': ariaDescribedBy,
+        'aria-labelledby': ariaLabelledBy,
+        'aria-expanded': ariaExpanded,
+        'aria-haspopup': ariaHasPopup,
+        ...props
+    }: SectionProps) => {
+        return (
+            <section
+                className={styles.root}
+                data-test-id={dataTestId}
+                style={propsToCssVariables(props)}
+                role={role}
+                aria-label={ariaLabel}
+                aria-hidden={ariaHidden}
+                aria-describedby={ariaDescribedBy}
+                aria-labelledby={ariaLabelledBy}
+                aria-expanded={ariaExpanded}
+                aria-haspopup={ariaHasPopup}
+            >
+                {children}
+            </section>
+        );
+    },
+);
 Section.displayName = 'Section';
