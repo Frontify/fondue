@@ -270,3 +270,52 @@ test('should render the dropdown content to the right side of the trigger', asyn
     expect(boundingBox?.x).toBeGreaterThan(triggerBoundingBox?.x || -1);
     expect(boundingBox?.y).toBe(triggerBoundingBox?.y || -1);
 });
+
+test('should render <a> as the dropdown item', async ({ mount, page }) => {
+    await mount(
+        <Dropdown.Root open>
+            <Dropdown.Trigger>
+                <Button data-test-id={DROPDOWN_TRIGGER_TEST_ID}>Trigger</Button>
+            </Dropdown.Trigger>
+            <Dropdown.Content side="right" data-test-id={DROPDOWN_CONTENT_TEST_ID}>
+                <Dropdown.Item onSelect={() => {}}>
+                    <a href="https://frontify.com">Item 1</a>
+                </Dropdown.Item>
+            </Dropdown.Content>
+        </Dropdown.Root>,
+    );
+
+    const dropdownContentElement = page.getByTestId(DROPDOWN_CONTENT_TEST_ID);
+    await expect(dropdownContentElement.getByRole('menuitem').first()).toHaveAttribute('href', 'https://frontify.com');
+});
+
+test('should not focus trigger on close', async ({ mount, page }) => {
+    await mount(
+        <div>
+            <input type="text" id="dummy-input" placeholder="test" />
+            <Dropdown.Root>
+                <Dropdown.Trigger>
+                    <Button data-test-id={DROPDOWN_TRIGGER_TEST_ID}>Trigger</Button>
+                </Dropdown.Trigger>
+                <Dropdown.Content side="right" data-test-id={DROPDOWN_CONTENT_TEST_ID} preventTriggerFocusOnClose>
+                    <Dropdown.Item
+                        onSelect={() => {
+                            document.getElementById('dummy-input')?.focus();
+                        }}
+                    >
+                        <a href="https://frontify.com">Item 1</a>
+                    </Dropdown.Item>
+                </Dropdown.Content>
+            </Dropdown.Root>
+        </div>,
+    );
+
+    const dropdownContentElement = page.getByTestId(DROPDOWN_CONTENT_TEST_ID);
+    const triggerElement = page.getByTestId(DROPDOWN_TRIGGER_TEST_ID);
+    await triggerElement.focus();
+    await page.keyboard.press('Enter');
+    await expect(dropdownContentElement).toBeVisible();
+    await dropdownContentElement.getByRole('menuitem').first().focus();
+    await page.mouse.click(0, 0);
+    await expect(triggerElement).not.toBeFocused();
+});
