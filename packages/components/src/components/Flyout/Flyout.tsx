@@ -116,40 +116,43 @@ export const FlyoutContent = (
     }: FlyoutContentProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
-    const localRef = useRef(null);
+    const localRef = useRef<HTMLDivElement>(null);
 
     const { setMaxHeight } = usePreventDropdownOverflow(localRef);
 
     return (
         <RadixPopover.Portal>
-            <RadixPopover.Content
-                style={
-                    {
-                        '--flyout-max-width': maxWidth,
-                        '--flyout-width': width,
-                    } as CSSProperties
-                }
-                ref={localRef}
-                align={align}
-                collisionPadding={8}
-                sideOffset={8}
-                onOpenAutoFocus={() => {
-                    setMaxHeight();
-                    syncRefs(localRef, ref);
-                }}
-                onCloseAutoFocus={() => {
-                    syncRefs(localRef, ref);
-                }}
-                className={styles.root}
-                data-flyout-spacing={padding}
-                data-rounded={rounded}
-                data-shadow={shadow}
-                data-test-id={dataTestId}
-                onFocus={addShowFocusRing}
-                {...props}
-            >
-                {children}
-            </RadixPopover.Content>
+            <>
+                <div className={styles.overlay} />
+                <RadixPopover.Content
+                    style={
+                        {
+                            '--flyout-max-width': maxWidth,
+                            '--flyout-width': width,
+                        } as CSSProperties
+                    }
+                    ref={localRef}
+                    align={align}
+                    collisionPadding={8}
+                    sideOffset={8}
+                    onOpenAutoFocus={() => {
+                        setMaxHeight();
+                        syncRefs(localRef, ref);
+                    }}
+                    onCloseAutoFocus={() => {
+                        syncRefs(localRef, ref);
+                    }}
+                    className={styles.root}
+                    data-flyout-spacing={padding}
+                    data-rounded={rounded}
+                    data-shadow={shadow}
+                    data-test-id={dataTestId}
+                    onFocus={addShowFocusRing}
+                    {...props}
+                >
+                    {children}
+                </RadixPopover.Content>
+            </>
         </RadixPopover.Portal>
     );
 };
