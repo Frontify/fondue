@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ReactNode } from 'react';
+import { type ForwardedRef, forwardRef, type ReactNode } from 'react';
 
 import { type CommonAriaProps } from '#/helpers/aria';
 import { type Responsive, type SizeValue, type LayoutComponentProps } from '#/helpers/layout';
@@ -53,34 +53,40 @@ export type FlexProps = LayoutComponentProps & {
     'data-test-id'?: string;
 } & CommonAriaProps;
 
-export const Flex = ({
-    as: Component = 'div',
-    'data-test-id': dataTestId = 'fondue-flex',
-    children,
-    role,
-    'aria-label': ariaLabel,
-    'aria-hidden': ariaHidden,
-    'aria-describedby': ariaDescribedBy,
-    'aria-labelledby': ariaLabelledBy,
-    'aria-expanded': ariaExpanded,
-    'aria-haspopup': ariaHasPopup,
-    ...props
-}: FlexProps) => {
-    return (
-        <Component
-            className={styles.root}
-            data-test-id={dataTestId}
-            style={propsToCssVariables(props, { justify: 'justify-content' })}
-            role={role}
-            aria-label={ariaLabel}
-            aria-hidden={ariaHidden}
-            aria-describedby={ariaDescribedBy}
-            aria-labelledby={ariaLabelledBy}
-            aria-expanded={ariaExpanded}
-            aria-haspopup={ariaHasPopup}
-        >
-            {children}
-        </Component>
-    );
-};
+export const Flex = forwardRef<HTMLDivElement, FlexProps>(
+    (
+        {
+            as: Component = 'div',
+            'data-test-id': dataTestId = 'fondue-flex',
+            children,
+            role,
+            'aria-label': ariaLabel,
+            'aria-hidden': ariaHidden,
+            'aria-describedby': ariaDescribedBy,
+            'aria-labelledby': ariaLabelledBy,
+            'aria-expanded': ariaExpanded,
+            'aria-haspopup': ariaHasPopup,
+            ...props
+        }: FlexProps,
+        forwardedRef: ForwardedRef<HTMLDivElement>,
+    ) => {
+        return (
+            <Component
+                className={styles.root}
+                data-test-id={dataTestId}
+                style={propsToCssVariables(props, { justify: 'justify-content' })}
+                role={role}
+                aria-label={ariaLabel}
+                aria-hidden={ariaHidden}
+                aria-describedby={ariaDescribedBy}
+                aria-labelledby={ariaLabelledBy}
+                aria-expanded={ariaExpanded}
+                aria-haspopup={ariaHasPopup}
+                ref={forwardedRef}
+            >
+                {children}
+            </Component>
+        );
+    },
+);
 Flex.displayName = 'Flex';
