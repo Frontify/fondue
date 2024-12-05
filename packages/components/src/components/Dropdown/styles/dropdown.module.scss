@@ -53,7 +53,6 @@
     line-height: var(--body-size-medium-line-height);
     color: var(--text-color);
     outline-style: none;
-    box-sizing: border-box;
 
     &[data-state='open'] {
         background-color: var(--box-neutral-color);
@@ -79,15 +78,11 @@
         color: var(--text-color-disabled);
     }
 
-    .itemContent {
+    span {
         width: 100%;
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
-        display: flex;
-        gap: sizeToken(1);
-        align-items: center;
-        margin-left: sizeToken(2);
     }
 
     .subMenuIndicator {
@@ -128,7 +123,7 @@
     }
 
     // 2 slots without any name should be implicitly ordered
-    &:not([data-name='right']) ~ :not([data-name='left']) {
+    &:not([data-name='right']) ~ .slot:not([data-name='left']) {
         order: 1;
         margin-left: auto;
 

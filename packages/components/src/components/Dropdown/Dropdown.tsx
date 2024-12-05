@@ -2,11 +2,13 @@
 
 import { IconCaretRight } from '@frontify/fondue-icons';
 import * as RadixDropdown from '@radix-ui/react-dropdown-menu';
+import { Slot } from '@radix-ui/react-slot';
 import { forwardRef, useRef, type ForwardedRef, type ReactNode } from 'react';
 
 import { usePreventDropdownOverflow } from '#/hooks/usePreventDropdownOverflow';
 import { syncRefs } from '#/utilities/domUtilities';
 
+import { useProcessedChildren } from './hooks/useProcessedChildren';
 import styles from './styles/dropdown.module.scss';
 
 export type DropdownRootProps = {
@@ -19,6 +21,7 @@ export type DropdownRootProps = {
      * Callback that is called when the open state of the dropdown changes.
      */
     onOpenChange?: (open: boolean) => void;
+
     'data-test-id'?: string;
 };
 
@@ -26,6 +29,7 @@ export const DropdownRoot = ({
     children,
     open,
     onOpenChange,
+
     'data-test-id': dataTestId = 'fondue-dropdown',
 }: DropdownRootProps) => {
     return (
@@ -83,6 +87,10 @@ export type DropdownContentProps = {
      * @default "bottom"
      */
     side?: 'top' | 'right' | 'bottom' | 'left';
+    /**
+     * Prevents the focus from being set on the trigger when the dropdown is closed.
+     */
+    preventTriggerFocusOnClose?: boolean;
 };
 
 export const DropdownContent = (
@@ -93,6 +101,7 @@ export const DropdownContent = (
         padding = 'comfortable',
         align = 'start',
         children,
+        preventTriggerFocusOnClose,
         'data-test-id': dataTestId = 'fondue-dropdown-content',
     }: DropdownContentProps,
     ref: ForwardedRef<HTMLDivElement>,
@@ -113,7 +122,10 @@ export const DropdownContent = (
                 data-padding={padding}
                 data-test-id={dataTestId}
                 ref={localRef}
-                onCloseAutoFocus={() => {
+                onCloseAutoFocus={(event) => {
+                    if (preventTriggerFocusOnClose) {
+                        event.preventDefault();
+                    }
                     syncRefs(localRef, ref);
                     onClose && onClose();
                     dropdownIsOpen.current = false;
@@ -164,9 +176,10 @@ export const DropdownSubTrigger = (
     { children, 'data-test-id': dataTestId = 'fondue-dropdown-subtrigger' }: DropdownSubTriggerProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
+    const { content } = useProcessedChildren(children);
     return (
         <RadixDropdown.SubTrigger className={styles.subTrigger} data-test-id={dataTestId} ref={ref}>
-            <div className={styles.itemContent}>{children}</div>
+            {content}
             <IconCaretRight className={styles.subMenuIndicator} size={16} />
         </RadixDropdown.SubTrigger>
     );
@@ -240,6 +253,10 @@ export const DropdownItem = (
     }: DropdownItemProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
+    const { content, isLink } = useProcessedChildren(children);
+
+    const Wrapper = isLink ? Slot : 'div';
+
     return (
         <RadixDropdown.Item
             onSelect={onSelect}
@@ -249,9 +266,10 @@ export const DropdownItem = (
             data-emphasis={emphasis}
             ref={ref}
             disabled={disabled}
+            asChild
             {...props}
         >
-            <div className={styles.itemContent}>{children}</div>
+            <Wrapper>{content}</Wrapper>
         </RadixDropdown.Item>
     );
 };
