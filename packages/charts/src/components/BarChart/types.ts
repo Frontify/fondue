@@ -5,12 +5,13 @@ import { type ScaleBand } from 'd3-scale';
 
 import { type LabelFormatter, type ValueFormatter } from '@components/common/types';
 
-type BarChartDataPointBase = {
+type BarChartDataPointBase<DataPointDetails extends Record<string, any> | void = void> = {
     label: string;
     value: number | null;
     description?: string;
     valueContext?: string;
     imageUrl?: string;
+    onBarClick?: (e: BarChartClickHandlerParams<DataPointDetails>) => void;
 };
 
 export type BarChartDataPoint<DataPointDetails extends Record<string, any> | void = void> =
@@ -40,7 +41,6 @@ export type BarChartProps<DataPointDetails extends Record<string, any> | void = 
     legendPosition?: LegendPosition;
     valueFormatter?: ValueFormatter;
     labelFormatter?: LabelFormatter;
-    onBarClick?: (e: BarChartClickHandlerParams<DataPointDetails>) => void;
 };
 
 export type BarChartClickHandlerParams<DataPointDetails extends Record<string, any> | void = void> = EventHandlerParams<
