@@ -264,6 +264,39 @@ export const MobileView: Story = {
     },
 };
 
+export const MobileViewBottom: Story = {
+    parameters: {
+        viewport: {
+            viewports: {
+                mobile: {
+                    name: 'Mobile',
+                    styles: {
+                        width: '375px',
+                        height: '667px',
+                    },
+                },
+            },
+            defaultViewport: 'mobile',
+        },
+    },
+    render: ({ ...args }) => {
+        return (
+            <Flyout.Root>
+                <Flyout.Trigger>
+                    <Button className="tw-mt-[590px] tw-ml-28">Open flyout</Button>
+                </Flyout.Trigger>
+                <Flyout.Content {...args}>
+                    <Flyout.Header showCloseButton>Header</Flyout.Header>
+                    <Flyout.Body>I am a flyout</Flyout.Body>
+                    <Flyout.Footer>
+                        <Button>Submit</Button>
+                    </Flyout.Footer>
+                </Flyout.Content>
+            </Flyout.Root>
+        );
+    },
+};
+
 export const Overflow: Story = {
     decorators: [
         (Story) => (

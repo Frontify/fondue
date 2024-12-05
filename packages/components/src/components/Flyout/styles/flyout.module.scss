@@ -9,7 +9,6 @@
     background-color: var(--base-color);
     border: var(--line-width) solid var(--line-color);
     width: 100%;
-    margin-top: sizeToken(4);
     overflow: auto;
 
     &[data-rounded='medium'] {
@@ -23,23 +22,9 @@
     &[data-shadow='medium'] {
         @include shadow-md;
     }
-    
+
     &[data-shadow='large'] {
         @include shadow-lg;
-    }
-
-    // Responsive dialog background element
-    &::before {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100dvw;
-        height: 100dvh;
-        background-color: var(--box-positive-strong-inverse-color);
-        opacity: 0.3;
-        z-index: -1;
-        pointer-events: none;
     }
 
     @include sm {
@@ -47,19 +32,34 @@
         max-width: var(--flyout-max-width);
         margin-top: 0;
         background-color: var(--base-color);
-
-        &::before {
-            display: none;
-        }
     }
 
     // Mobile view flyout -> dialog responsiveness
     body > [data-radix-popper-content-wrapper]:has(&) {
         @include max-sm {
-            width: 100dvw;
-            padding: sizeToken(2);
-            transform: translate(0, 0) !important;
+            // Radix always leaves an 8px gap on the left side via its transform property
+            width: calc(100dvw - 1rem);
+            // This prevents overflowing of content since radix applies a min-width of max-content
+            min-width: 0 !important;
         }
+    }
+}
+
+// Responsive dialog background element
+.overlay {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100dvw;
+    height: 100dvh;
+    background-color: var(--box-positive-strong-inverse-color);
+    opacity: 0.3;
+    z-index: -1;
+    pointer-events: none;
+
+    @include sm {
+        display: none;
     }
 }
 
