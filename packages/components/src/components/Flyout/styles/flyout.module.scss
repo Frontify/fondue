@@ -37,8 +37,11 @@
     // Mobile view flyout -> dialog responsiveness
     body > [data-radix-popper-content-wrapper]:has(&) {
         @include max-sm {
-            // Radix always leaves an 8px gap on the left side via its transform property
-            width: calc(100dvw - 1rem);
+            &:has([data-side='top']),
+            &:has([data-side='bottom']) {
+                // Radix always leaves an 8px gap on the left side via its transform property
+                width: calc(100dvw - 16px);
+            }
             // This prevents overflowing of content since radix applies a min-width of max-content
             min-width: 0 !important;
         }
