@@ -105,6 +105,23 @@ const planetsRadiusData = (() => {
     ];
 })();
 
+const planetsRadiusDataWithSingleClickable = (() => {
+    const formattedData = planets.map((item, index) => {
+        return {
+            label: item.name,
+            value: parseFloat(item.radius),
+            onBarClick: index === 0 ? () => window.open('https://frontify.com') : null,
+        };
+    });
+
+    return [
+        {
+            name: 'Planets by Radius',
+            dataPoints: formattedData,
+        },
+    ];
+})();
+
 const exoplanetsRadiusData = (() => {
     const formattedData = exoplanets.slice(0, 100).map((item) => {
         return {
@@ -148,7 +165,9 @@ const browserUsageData = ((): BarChartSeries[] => {
         safariSeries.dataPoints.push({
             label: entry.date,
             value: parseFloat(entry.Safari),
-            valueContext: `(% less than Chrome ${Math.round(parseFloat(entry['Google Chrome']) - parseFloat(entry.Safari))}%)`,
+            valueContext: `(% less than Chrome ${Math.round(
+                parseFloat(entry['Google Chrome']) - parseFloat(entry.Safari),
+            )}%)`,
         });
     }
 
@@ -163,6 +182,22 @@ const filterOnePointPerMonth = (series: BarChartSeries[]): BarChartSeries[] => {
     }
 
     return filteredSeries;
+};
+
+const addOnClickToFirstPoint = (series: BarChartSeries[]): BarChartSeries[] => {
+    return series.reduce(
+        (prev, curr) => [
+            ...prev,
+            {
+                ...curr,
+                dataPoints: curr.dataPoints.map((dataPoint, index) => ({
+                    ...dataPoint,
+                    onBarClick: index === 0 ? () => window.open('https://frontify.com') : null,
+                })),
+            },
+        ],
+        [],
+    );
 };
 
 const planetImagesMap: Record<string, string> = {
@@ -214,12 +249,11 @@ SingleDataSet.args = {
     height: 500,
 };
 
-export const SingleDataSetWithOnClick = TemplateWithUrl.bind({});
-SingleDataSetWithOnClick.args = {
-    series: addDetailsWithUrl(planetsRadiusData),
+export const SingleDataSetWithSingleOnClick = TemplateWithUrl.bind({});
+SingleDataSetWithSingleOnClick.args = {
+    series: planetsRadiusDataWithSingleClickable,
     width: 1000,
     height: 500,
-    onBarClick: (e) => alert(e.datum.details.url),
 };
 
 export const SingleDataSetWithTooltipImages = Template.bind({});
@@ -243,12 +277,11 @@ MultipleDataSets.args = {
     height: 500,
 };
 
-export const MultipleDataSetsWithOnClick = TemplateWithUrl.bind({});
-MultipleDataSetsWithOnClick.args = {
-    series: addDetailsWithUrl(filterOnePointPerMonth(browserUsageData)),
+export const MultipleDataSetsWithSingleOnClick = TemplateWithUrl.bind({});
+MultipleDataSetsWithSingleOnClick.args = {
+    series: addDetailsWithUrl(addOnClickToFirstPoint(filterOnePointPerMonth(browserUsageData))),
     width: 1000,
     height: 500,
-    onBarClick: (e) => alert(e.datum.details.url),
 };
 
 export const LegendBelowChart = Template.bind({});

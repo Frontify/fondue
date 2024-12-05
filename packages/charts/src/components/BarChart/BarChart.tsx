@@ -31,7 +31,6 @@ export const BarChart = <DataPointDetails extends Record<string, any> | void = v
     legendPosition = 'top',
     valueFormatter = DEFAULT_VALUE_FORMATTER,
     labelFormatter = DEFAULT_LABEL_FORMATTER,
-    onBarClick,
 }: BarChartProps<DataPointDetails>) => {
     const [maxLabelHeight, setMaxLabelHeight] = useState<number>(0);
     const [firstLabelOverflowsBy, setFirstLabelOverflowsBy] = useState<number>(0);
@@ -57,54 +56,51 @@ export const BarChart = <DataPointDetails extends Record<string, any> | void = v
                 <Legend style="rectangle" names={series.map((series) => series.name)} />
             )}
             {margin && (
-                <span className={onBarClick ? 'bar-chart-cursor-pointer' : ''}>
-                    <XYChart
-                        theme={theme}
-                        width={width}
-                        height={height}
+                <XYChart
+                    theme={theme}
+                    width={width}
+                    height={height}
+                    horizontal={horizontal}
+                    xScale={
+                        horizontal
+                            ? { type: 'linear', padding: scalePadding, domain: linearScaleDomain }
+                            : { type: 'band', padding: scalePadding }
+                    }
+                    yScale={
+                        horizontal
+                            ? { type: 'band', padding: scalePadding }
+                            : { type: 'linear', padding: scalePadding, domain: linearScaleDomain }
+                    }
+                    margin={margin}
+                >
+                    <BandwidthAdjuster horizontal={horizontal} />
+                    <Grid
+                        key={'grid'}
+                        rows={!horizontal}
+                        columns={horizontal}
+                        numTicks={linearScaleTicks.length - 1}
+                        stroke={'var(--fc-grid-stroke-color)'}
+                    />
+                    <Axes
+                        linearAxesTicks={linearScaleTicks}
                         horizontal={horizontal}
-                        xScale={
-                            horizontal
-                                ? { type: 'linear', padding: scalePadding, domain: linearScaleDomain }
-                                : { type: 'band', padding: scalePadding }
-                        }
-                        yScale={
-                            horizontal
-                                ? { type: 'band', padding: scalePadding }
-                                : { type: 'linear', padding: scalePadding, domain: linearScaleDomain }
-                        }
-                        margin={margin}
-                        onPointerDown={onBarClick}
-                    >
-                        <BandwidthAdjuster horizontal={horizontal} />
-                        <Grid
-                            key={'grid'}
-                            rows={!horizontal}
-                            columns={horizontal}
-                            numTicks={linearScaleTicks.length - 1}
-                            stroke={'var(--fc-grid-stroke-color)'}
-                        />
-                        <Axes
-                            linearAxesTicks={linearScaleTicks}
-                            horizontal={horizontal}
-                            updateFirstLabelOverflowsBy={setFirstLabelOverflowsBy}
-                            updateMaxLabelHeight={setMaxLabelHeight}
-                            updateBandScaleTicks={setBandScaleTicks}
-                            valueFormatter={valueFormatter}
-                            labelFormatter={labelFormatter}
-                        />
-                        <Bars series={series} horizontal={horizontal} displayStyle={displayStyle} />
-                        <Tooltip
-                            crossHairStyle="bar"
-                            hideGlyphs
-                            colorAccessor={(key) => colorAccessorByKey(key, series)}
-                            horizontal={horizontal}
-                            scalePadding={scalePadding}
-                            valueFormatter={valueFormatter}
-                            labelFormatter={labelFormatter}
-                        />
-                    </XYChart>
-                </span>
+                        updateFirstLabelOverflowsBy={setFirstLabelOverflowsBy}
+                        updateMaxLabelHeight={setMaxLabelHeight}
+                        updateBandScaleTicks={setBandScaleTicks}
+                        valueFormatter={valueFormatter}
+                        labelFormatter={labelFormatter}
+                    />
+                    <Bars series={series} horizontal={horizontal} displayStyle={displayStyle} />
+                    <Tooltip
+                        crossHairStyle="bar"
+                        hideGlyphs
+                        colorAccessor={(key) => colorAccessorByKey(key, series)}
+                        horizontal={horizontal}
+                        scalePadding={scalePadding}
+                        valueFormatter={valueFormatter}
+                        labelFormatter={labelFormatter}
+                    />
+                </XYChart>
             )}
             {!hideLegend && legendPosition === 'bottom' && (
                 <Legend style="rectangle" names={series.map((series) => series.name)} />

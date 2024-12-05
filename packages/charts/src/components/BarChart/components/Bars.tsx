@@ -19,8 +19,16 @@ export const Bars = ({ series, horizontal, displayStyle }: BarGroupProps) => {
     const [focusedItemLabel, setFocusedItemLabel] = useState<string | null>(null);
     const isOverlapped = displayStyle === 'overlapped';
 
-    const onPointerMove = (e: EventHandlerParams<BarChartDataPoint>) => setFocusedItemLabel(e.datum.label);
+    const onPointerMove = (e: EventHandlerParams<BarChartDataPoint>) => {
+        setFocusedItemLabel(e.datum.label);
+        if (e.datum.onBarClick) {
+            document.body.style.cursor = 'pointer';
+        } else {
+            document.body.style.cursor = 'auto';
+        }
+    };
     const onPointerOut = () => setFocusedItemLabel(null);
+    const onPointerDown = (e: EventHandlerParams<BarChartDataPoint>) => e.datum.onBarClick && e.datum.onBarClick(e);
 
     const seriesElements = series.map((item, seriesIndex) => (
         <BarSeries
@@ -39,13 +47,14 @@ export const Bars = ({ series, horizontal, displayStyle }: BarGroupProps) => {
             }}
             onPointerMove={isOverlapped ? onPointerMove : undefined}
             onPointerOut={isOverlapped ? onPointerOut : undefined}
+            onPointerDown={isOverlapped ? onPointerDown : undefined}
         />
     ));
 
     return isOverlapped && seriesElements.length > 0 ? (
         seriesElements
     ) : (
-        <BarGroup onPointerMove={onPointerMove} onPointerOut={onPointerOut}>
+        <BarGroup onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerOut={onPointerOut}>
             {seriesElements}
         </BarGroup>
     );
