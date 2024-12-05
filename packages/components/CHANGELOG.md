@@ -1,5 +1,19 @@
 # @frontify/fondue-components
 
+## 7.0.1
+
+### Patch Changes
+
+-   [#2125](https://github.com/Frontify/fondue/pull/2125) [`c67fbf6`](https://github.com/Frontify/fondue/commit/c67fbf6bd2f87376b89fa26ebcdca7d46601e2ad) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: allow for passing a link as the dropdown item
+
+-   [#2126](https://github.com/Frontify/fondue/pull/2126) [`004d08d`](https://github.com/Frontify/fondue/commit/004d08d56ea875033d0285f9ad8bf97888c7942d) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - feat(`LayoutComponents`): add forwardRef
+
+-   [#2128](https://github.com/Frontify/fondue/pull/2128) [`194ec41`](https://github.com/Frontify/fondue/commit/194ec41101afa4099a212251973b595d88c72df9) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - feat(`Flyout`): enable trigger positioning for mobile viewports
+
+-   [#2125](https://github.com/Frontify/fondue/pull/2125) [`c67fbf6`](https://github.com/Frontify/fondue/commit/c67fbf6bd2f87376b89fa26ebcdca7d46601e2ad) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add option to prevent focusing the trigger on close
+
+-   [#2124](https://github.com/Frontify/fondue/pull/2124) [`6f04830`](https://github.com/Frontify/fondue/commit/6f0483024ed41b6745beeb82ee00039c2ba947cb) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - refactor: add tests to useTextTruncation hook
+
 ## 7.0.0
 
 ### Patch Changes
