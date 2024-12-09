@@ -58,7 +58,6 @@
     height: 100dvh;
     background-color: var(--box-positive-strong-inverse-color);
     opacity: 0.3;
-    z-index: -1;
     pointer-events: none;
 
     @include sm {
