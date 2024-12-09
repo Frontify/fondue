@@ -1,5 +1,11 @@
 # @frontify/fondue-components
 
+## 7.0.2
+
+### Patch Changes
+
+-   [#2130](https://github.com/Frontify/fondue/pull/2130) [`9e12e3f`](https://github.com/Frontify/fondue/commit/9e12e3f55c4076de574e0ad27dc1f7fa84c46655) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix(`Flyout`): overlay does not cover page content (mobile)
+
 ## 7.0.1
 
 ### Patch Changes
