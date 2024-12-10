@@ -68,6 +68,39 @@ test('should not inherit parent props', async ({ mount }) => {
     await expect(child).not.toHaveCSS('margin', '50px');
 });
 
+test('should render with size tokens', async ({ mount }) => {
+    const component = await mount(
+        <Grid
+            p={9}
+            m={12}
+            gapX={6}
+            gapY={10}
+            minWidth={120}
+            width={256}
+            minHeight={18}
+            height={20}
+            bottom={16}
+            top={15}
+            right={14}
+            left={13}
+        >
+            <Grid data-test-id="flex-child">{GRID_TEXT}</Grid>
+        </Grid>,
+    );
+
+    await expect(component).toHaveCSS('padding', '36px');
+    await expect(component).toHaveCSS('margin', '48px');
+    await expect(component).toHaveCSS('gap', '40px 24px');
+    await expect(component).toHaveCSS('min-width', '480px');
+    await expect(component).toHaveCSS('width', '1024px');
+    await expect(component).toHaveCSS('min-height', '72px');
+    await expect(component).toHaveCSS('height', '80px');
+    await expect(component).toHaveCSS('bottom', '64px');
+    await expect(component).toHaveCSS('top', '60px');
+    await expect(component).toHaveCSS('right', '56px');
+    await expect(component).toHaveCSS('left', '52px');
+});
+
 const ResponsiveComponent = (
     <Grid
         columns={{ base: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)' }}

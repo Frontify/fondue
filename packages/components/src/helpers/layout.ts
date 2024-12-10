@@ -5,13 +5,12 @@ import { type screens } from '../../tailwind.config';
 export type Breakpoint = keyof typeof screens;
 export type Responsive<TValue> = ({ [key in Breakpoint]?: TValue } & { base?: TValue }) | TValue;
 
-// `(string & {})` allows for arbitrary strings to be passed in while keeping the suggestion of the union type
-// eslint-disable-next-line @typescript-eslint/ban-types
-export type SizeValue = (string & {}) | 'auto' | 'fit-content' | 'intrinsic' | 'max-content' | 'min-content';
+export type SizeValue = SpacingValue | 'auto' | 'fit-content' | 'intrinsic' | 'max-content' | 'min-content';
 
-// `(string & {})` allows for arbitrary strings to be passed in while keeping the suggestion of the union type
-// eslint-disable-next-line @typescript-eslint/ban-types
-type SpacingValue = (string & {}) | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 8 | 10 | 12 | 16 | 20 | 24 | 32 | 40 | 48 | 56 | 64;
+type SpacingValue =
+    // `(string & {})` and `(number & {})` allows for arbitrary strings/numbers to be passed in while keeping the suggestion of the union type
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    (string & {}) | (number & {}) | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 8 | 10 | 12 | 16 | 20 | 24 | 32 | 40 | 48 | 56 | 64;
 
 type OverflowValue = 'visible' | 'hidden' | 'clip' | 'scroll' | 'auto';
 type PositionValue = 'static' | 'fixed' | 'absolute' | 'relative' | 'sticky';
@@ -121,17 +120,17 @@ export type LayoutComponentProps = {
     /**
      * The top property of the component.
      */
-    top?: Responsive<string>;
+    top?: Responsive<SpacingValue>;
     /**
      * The right property of the component.
      */
-    right?: Responsive<string>;
+    right?: Responsive<SpacingValue>;
     /**
      * The bottom property of the component.
      */
-    bottom?: Responsive<string>;
+    bottom?: Responsive<SpacingValue>;
     /**
      * The left property of the component.
      */
-    left?: Responsive<string>;
+    left?: Responsive<SpacingValue>;
 };

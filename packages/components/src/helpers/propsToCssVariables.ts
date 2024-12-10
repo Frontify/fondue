@@ -37,6 +37,12 @@ const transformValueBasedOnKey = (key: string, value: string | number): string |
         }
         return value;
     }
+
+    // Spacing tokens
+    if (typeof value === 'number') {
+        return `${value * 0.25}rem`;
+    }
+
     return value;
 };
 

@@ -8,8 +8,8 @@ describe('propsToCssVariables', () => {
     it('should convert basic props to CSS variables', () => {
         const props = { m: 10, p: 20 };
         const expected = {
-            '--margin': 10,
-            '--padding': 20,
+            '--margin': '2.5rem',
+            '--padding': '5rem',
         };
         expect(propsToCssVariables(props)).toStrictEqual(expected);
     });
@@ -18,7 +18,7 @@ describe('propsToCssVariables', () => {
         const props = { x: 5 };
         const extraAbbreviationToCssProperty = { x: 'custom-x' };
         const expected = {
-            '--custom-x': 5,
+            '--custom-x': '1.25rem',
         };
         expect(propsToCssVariables(props, extraAbbreviationToCssProperty)).toStrictEqual(expected);
     });
@@ -38,11 +38,11 @@ describe('propsToCssVariables', () => {
             p: { sm: 5, lg: 15 },
         };
         const expected = {
-            '--sm-margin': 10,
-            '--md-margin': 20,
-            '--lg-margin': 30,
-            '--sm-padding': 5,
-            '--lg-padding': 15,
+            '--sm-margin': '2.5rem',
+            '--md-margin': '5rem',
+            '--lg-margin': '7.5rem',
+            '--sm-padding': '1.25rem',
+            '--lg-padding': '3.75rem',
         };
         expect(propsToCssVariables(props)).toStrictEqual(expected);
     });
@@ -53,7 +53,7 @@ describe('propsToCssVariables', () => {
             columns: { sm: 2, md: 'repeat(4, 1fr)' },
         };
         const expected = {
-            '--margin': 10,
+            '--margin': '2.5rem',
             '--sm-grid-template-columns': 'repeat(2, 1fr)',
             '--md-grid-template-columns': 'repeat(4, 1fr)',
         };
@@ -64,8 +64,8 @@ describe('propsToCssVariables', () => {
         const props = { m: 10, x: 5 };
         const extraAbbreviationToCssProperty = { m: 'margin-custom', x: 'padding-custom' };
         const expected = {
-            '--margin-custom': 10,
-            '--padding-custom': 5,
+            '--margin-custom': '2.5rem',
+            '--padding-custom': '1.25rem',
         };
         expect(propsToCssVariables(props, extraAbbreviationToCssProperty)).toStrictEqual(expected);
     });
@@ -81,7 +81,7 @@ describe('propsToCssVariables', () => {
     it('should not add blocklisted attributes as CSS variables', () => {
         const props = { m: 10, 'aria-label': 'foo', fooBar: 'fooBar', role: 'foo' };
         const expected = {
-            '--margin': 10,
+            '--margin': '2.5rem',
             '--foo-bar': 'fooBar',
         };
         expect(propsToCssVariables(props)).toStrictEqual(expected);

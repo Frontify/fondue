@@ -28,12 +28,40 @@ test('should not inherit parent props', async ({ mount }) => {
     await expect(child).not.toHaveCSS('gap', '50px');
 });
 
+test('should render with size tokens', async ({ mount }) => {
+    const component = await mount(
+        <Flex
+            p={8}
+            my={10}
+            gap={16}
+            minWidth={120}
+            width={256}
+            minHeight={18}
+            height={20}
+            bottom={16}
+            top={15}
+            right={14}
+            left={13}
+        >
+            {FLEX_TEXT}
+        </Flex>,
+    );
+
+    await expect(component).toHaveCSS('padding', '32px');
+    await expect(component).toHaveCSS('margin', '40px 0px');
+    await expect(component).toHaveCSS('gap', '64px');
+    await expect(component).toHaveCSS('min-width', '480px');
+    await expect(component).toHaveCSS('width', '1024px');
+    await expect(component).toHaveCSS('min-height', '72px');
+    await expect(component).toHaveCSS('height', '80px');
+    await expect(component).toHaveCSS('bottom', '64px');
+    await expect(component).toHaveCSS('top', '60px');
+    await expect(component).toHaveCSS('right', '56px');
+    await expect(component).toHaveCSS('left', '52px');
+});
+
 const ResponsiveComponent = (
-    <Flex
-        direction={{ base: 'row', md: 'column' }}
-        gap={{ base: '80px', md: '120px' }}
-        p={{ base: '10px', md: '100px' }}
-    >
+    <Flex direction={{ base: 'row', md: 'column' }} gap={{ base: '80px', md: 30 }} p={{ base: '10px', md: 25 }}>
         {FLEX_TEXT}
     </Flex>
 );
