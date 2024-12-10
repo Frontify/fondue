@@ -32,3 +32,17 @@ export const Default: Story = {
         );
     },
 };
+
+export const WithSizeToken: Story = {
+    args: {
+        width: 25,
+        height: 25,
+    },
+    render: (args) => {
+        return (
+            <Box {...args}>
+                <DecorativeContent />
+            </Box>
+        );
+    },
+};
