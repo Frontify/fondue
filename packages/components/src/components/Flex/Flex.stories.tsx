@@ -135,3 +135,23 @@ export const Responsive: Story = {
         );
     },
 };
+
+export const WithSizeToken: Story = {
+    render: (args) => {
+        return (
+            <Flex {...args}>
+                <Flex px={36} gapX={12}>
+                    <DecorativeBox />
+                    <DecorativeBox />
+                </Flex>
+                <Flex p={5}>
+                    <DecorativeBox />
+                    <DecorativeBox />
+                    <DecorativeBox />
+                    <DecorativeBox />
+                    <DecorativeBox />
+                </Flex>
+            </Flex>
+        );
+    },
+};
