@@ -1,5 +1,16 @@
 # @frontify/fondue-components
 
+## 8.0.0
+
+### Patch Changes
+
+-   [#2130](https://github.com/Frontify/fondue/pull/2130) [`9e12e3f`](https://github.com/Frontify/fondue/commit/9e12e3f55c4076de574e0ad27dc1f7fa84c46655) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix(`Flyout`): overlay does not cover page content (mobile)
+
+-   [#2132](https://github.com/Frontify/fondue/pull/2132) [`25211f7`](https://github.com/Frontify/fondue/commit/25211f7554b09e63cd9f2818169483671e257b00) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: support size tokens in layout components
+
+-   Updated dependencies [[`17c9f47`](https://github.com/Frontify/fondue/commit/17c9f47e02782391bb29efb870dc1c21ad4b0af0)]:
+    -   @frontify/fondue-icons@0.9.0
+
 ## 7.0.1
 
 ### Patch Changes
