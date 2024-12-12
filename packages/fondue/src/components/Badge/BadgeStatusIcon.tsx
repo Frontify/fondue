@@ -9,7 +9,7 @@ import { badgeStatusClasses, isBadgeStatus } from './helpers';
 import { type BadgeStatusIconProps } from './types';
 
 export const BadgeStatusIcon = ({ status, disabled, 'data-test-id': dataTestId = 'badge' }: BadgeStatusIconProps) => (
-    <div className="tw-px-0.5 tw-flex-none tw-inline-flex tw-justify-center tw-items-center tw-pr-1">
+    <div className="tw-flex-none tw-inline-flex tw-justify-center tw-items-center ">
         <span
             data-test-id={`${dataTestId}-status`}
             className={merge([

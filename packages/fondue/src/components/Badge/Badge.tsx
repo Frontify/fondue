@@ -73,17 +73,13 @@ export const Badge = ({
                 {icon && (
                     <span
                         data-test-id={`${dataTestId}-icon`}
-                        className={merge([
-                            'tw-flex-none tw-leading-none',
-                            disabled && 'tw-opacity-30',
-                            !!children && 'tw-pr-1',
-                        ])}
+                        className={merge(['tw-flex-none tw-leading-none', disabled && 'tw-opacity-30'])}
                     >
                         {cloneElement(icon, { size: IconSize.Size16 })}
                     </span>
                 )}
                 {children && (
-                    <span className="tw-text-center tw-text-xxs tw-font-sans tw-font-normal tw-truncate tw-px-0.5">
+                    <span className="tw-text-center tw-text-xxs tw-font-sans tw-font-normal tw-truncate">
                         {children}
                     </span>
                 )}
