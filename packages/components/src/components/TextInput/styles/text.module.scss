@@ -69,6 +69,11 @@
         color: var(--text-color-x-weak);
     }
 
+    &:-moz-focusring {
+        outline: 2px solid transparent;
+        outline-offset: 2px;;
+    }
+
     // Remove border-radius and text-indent/padding on the left if there’s a left-side slot
     &:has(~ div:not([data-name='right'])) {
         text-indent: 0px;

@@ -179,21 +179,27 @@ export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellP
                 aria-sort={onSortChange ? sortDirection || 'none' : undefined}
             >
                 {onSortChange ? (
-                    <button
-                        className={styles.sortButton}
-                        aria-label={sortLabel}
-                        data-active={!!sortDirection}
-                        onClick={handleSortChange}
-                    >
-                        {children}
-                        {sortDirection === 'ascending' ? (
-                            <IconArrowUp size="12" />
-                        ) : sortDirection === 'descending' ? (
-                            <IconArrowDown size="12" />
-                        ) : (
-                            <IconArrowBidirectional className={styles.sortIndicator} size="12" />
-                        )}
-                    </button>
+                    <div className={styles.cellContent}>
+                        <button
+                            className={styles.sortButton}
+                            aria-label={sortLabel}
+                            data-active={!!sortDirection}
+                            onClick={handleSortChange}
+                        >
+                            {typeof children === 'string' && truncate ? (
+                                <span className={styles.buttonText}>{children}</span>
+                            ) : (
+                                children
+                            )}
+                            {sortDirection === 'ascending' ? (
+                                <IconArrowUp size="12" />
+                            ) : sortDirection === 'descending' ? (
+                                <IconArrowDown size="12" />
+                            ) : (
+                                <IconArrowBidirectional className={styles.sortIndicator} size="12" />
+                            )}
+                        </button>
+                    </div>
                 ) : (
                     children
                 )}

@@ -102,6 +102,10 @@
         color: var(--text-color);
     }
 
+    .buttonText {
+        flex: 1;
+    }
+
     &:focus-visible {
         @include focus-outline;
     }
@@ -159,19 +163,32 @@
 
 .headerCell,
 .rowCell {
+
     &[data-align='left'] {
         text-align: left;
+
+        .sortButton {
+            justify-content: flex-start;
+        }
     }
 
     &[data-align='center'] {
         text-align: center;
+
+        .sortButton {
+            justify-content: center;
+        }
     }
 
     &[data-align='right'] {
         text-align: right;
+
+        .sortButton {
+            justify-content: flex-end;
+        }
     }
 
-    &[data-truncate='true'] {
+    &[data-truncate='true'], &[data-truncate='true'] .buttonText {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
