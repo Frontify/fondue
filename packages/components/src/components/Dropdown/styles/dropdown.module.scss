@@ -11,8 +11,9 @@
     background-color: var(--base-color);
     border: var(--line-width) solid var(--line-color-strong);
     box-shadow: var(--shadow-matrix);
-    overflow: auto;
     width: 250px;
+    overflow: auto;
+    max-height: var(--radix-popper-available-height);
 
     &:focus-within {
         border-color: var(--line-color-xx-strong);

@@ -2,10 +2,9 @@
 
 import { IconCross } from '@frontify/fondue-icons';
 import * as RadixPopover from '@radix-ui/react-popover';
-import { forwardRef, useRef, type CSSProperties, type ForwardedRef, type ReactNode } from 'react';
+import { forwardRef, type CSSProperties, type ForwardedRef, type ReactNode } from 'react';
 
-import { usePreventDropdownOverflow } from '#/hooks/usePreventDropdownOverflow';
-import { addAutoFocusAttribute, addShowFocusRing, syncRefs } from '#/utilities/domUtilities';
+import { addAutoFocusAttribute, addShowFocusRing } from '#/utilities/domUtilities';
 
 import styles from './styles/flyout.module.scss';
 
@@ -116,10 +115,6 @@ export const FlyoutContent = (
     }: FlyoutContentProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
-    const localRef = useRef<HTMLDivElement>(null);
-
-    const { setMaxHeight } = usePreventDropdownOverflow(localRef);
-
     return (
         <RadixPopover.Portal>
             <>
@@ -131,17 +126,10 @@ export const FlyoutContent = (
                             '--flyout-width': width,
                         } as CSSProperties
                     }
-                    ref={localRef}
+                    ref={ref}
                     align={align}
                     collisionPadding={8}
                     sideOffset={8}
-                    onOpenAutoFocus={() => {
-                        setMaxHeight();
-                        syncRefs(localRef, ref);
-                    }}
-                    onCloseAutoFocus={() => {
-                        syncRefs(localRef, ref);
-                    }}
                     className={styles.root}
                     data-flyout-spacing={padding}
                     data-rounded={rounded}
