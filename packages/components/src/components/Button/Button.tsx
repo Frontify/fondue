@@ -59,6 +59,7 @@ export type ButtonProps = {
     hugWidth?: boolean;
     children?: ReactNode;
     onPress?: (event?: MouseEvent<HTMLButtonElement>) => void;
+    form?: string;
     'aria-label'?: string;
     'aria-describedby'?: string;
     'data-test-id'?: string;
@@ -72,6 +73,7 @@ export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(
             type = 'button',
             variant,
             size = 'medium',
+            form,
             'data-test-id': dataTestId = 'fondue-button',
             className = '',
             onPress = () => {},
@@ -83,6 +85,7 @@ export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(
             <button
                 ref={ref}
                 type={type}
+                form={form}
                 data-test-id={dataTestId}
                 className={cn(
                     buttonStyles({ size, variant, ...props }),
