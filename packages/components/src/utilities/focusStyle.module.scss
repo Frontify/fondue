@@ -13,7 +13,7 @@
 @mixin focus-outline {
     &:focus-visible,
     &:focus-visible:hover,
-    &:has([data-show-focus-ring='true']) {
+    &:has(>[data-show-focus-ring='true']) {
         @include focus-outline-styles;
     }
 }
