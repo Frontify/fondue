@@ -1,5 +1,15 @@
 # @frontify/fondue-components
 
+## 8.0.1
+
+### Patch Changes
+
+-   [#2138](https://github.com/Frontify/fondue/pull/2138) [`bddcdab`](https://github.com/Frontify/fondue/commit/bddcdabe534b2dad963471ab1383200dac0ce900) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: simplify height calculation for `Dropdown`, `Flyout` and `Select`
+
+-   [#2134](https://github.com/Frontify/fondue/pull/2134) [`82fa1b4`](https://github.com/Frontify/fondue/commit/82fa1b437a3d81c9fb55f926bc759c5f63905ccb) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: fix issue aligning content in table cells when sorting was available
+
+-   [#2134](https://github.com/Frontify/fondue/pull/2134) [`82fa1b4`](https://github.com/Frontify/fondue/commit/82fa1b437a3d81c9fb55f926bc759c5f63905ccb) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: fix issue where a second focus outline appeared on firefox
+
 ## 8.0.0
 
 ### Patch Changes
