@@ -72,12 +72,21 @@ export const getSizeClasses = (
     isDismissable: boolean,
 ) => {
     const isSmall = size === 'small';
+    const hasMaximumTwoComponents = !(children && status && icon);
 
     if (isSmall) {
-        return merge(['tw-h-5 tw-px-1.5', isDismissable && 'tw-pr-5']);
+        return merge([
+            'tw-h-5 tw-px-2 tw-gap-x-1',
+            hasMaximumTwoComponents && 'tw-gap-x-1.5',
+            isDismissable && 'tw-pr-5',
+        ]);
     } else {
-        const hasMaximumTwoComponents = !(children && status && icon);
-        return merge(['tw-h-6', 'tw-px-2', hasMaximumTwoComponents && 'tw-gap-x-0.5', isDismissable && 'tw-pr-6']);
+        return merge([
+            'tw-h-6',
+            'tw-px-2.5 tw-gap-x-1',
+            hasMaximumTwoComponents && 'tw-gap-x-2',
+            isDismissable && 'tw-pr-6',
+        ]);
     }
 };
 
