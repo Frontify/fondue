@@ -3,9 +3,7 @@
 import * as RadixPopover from '@radix-ui/react-popover';
 import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { type UseComboboxPropGetters, type UseSelectPropGetters } from 'downshift';
-import { isValidElement, useRef, type ForwardedRef, type MouseEvent, type ReactElement, type ReactNode } from 'react';
-
-import { usePreventDropdownOverflow } from '#/hooks/usePreventDropdownOverflow';
+import { isValidElement, type ForwardedRef, type MouseEvent, type ReactElement, type ReactNode } from 'react';
 
 import { type SelectItemProps } from './SelectItem';
 import styles from './styles/select.module.scss';
@@ -67,13 +65,8 @@ export const SelectMenu = ({
     selectedItem,
     hasInteractedSinceOpening,
 }: SelectMenuProps) => {
-    const ref = useRef<HTMLUListElement | null>(null);
-
-    const { setMaxHeight } = usePreventDropdownOverflow(ref);
-
     const handleOnOpenAutoFocus = (event: Event) => {
         event.preventDefault();
-        setMaxHeight();
     };
 
     return (
@@ -87,7 +80,6 @@ export const SelectMenu = ({
                 <ul
                     className={styles.menu}
                     {...getMenuProps()}
-                    ref={ref}
                     data-has-interacted={hasInteractedSinceOpening ? 'true' : 'false'}
                     data-test-id="fondue-select-menu"
                 >

@@ -231,6 +231,7 @@
     max-width: calc(100dvw - sizeToken(8));
     min-width: var(--radix-popover-trigger-width);
     overflow: auto;
+    max-height: var(--radix-popover-content-available-height);
     padding: sizeToken(2) 0;
 
     &:has(li[role='option']) {

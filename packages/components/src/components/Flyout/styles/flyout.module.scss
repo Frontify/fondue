@@ -10,6 +10,7 @@
     border: var(--line-width) solid var(--line-color);
     width: 100%;
     overflow: auto;
+    max-height: var(--radix-popover-content-available-height);
 
     &[data-rounded='medium'] {
         border-radius: var(--radius);

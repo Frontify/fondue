@@ -3,10 +3,7 @@
 import { IconCaretRight } from '@frontify/fondue-icons';
 import * as RadixDropdown from '@radix-ui/react-dropdown-menu';
 import { Slot } from '@radix-ui/react-slot';
-import { forwardRef, useRef, type ForwardedRef, type ReactNode } from 'react';
-
-import { usePreventDropdownOverflow } from '#/hooks/usePreventDropdownOverflow';
-import { syncRefs } from '#/utilities/domUtilities';
+import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
 
 import { useProcessedChildren } from './hooks/useProcessedChildren';
 import styles from './styles/dropdown.module.scss';
@@ -70,8 +67,6 @@ DropdownTrigger.displayName = 'Dropdown.Trigger';
 export type DropdownContentProps = {
     children?: ReactNode;
     'data-test-id'?: string;
-    onOpen?: () => void;
-    onClose?: () => void;
     /**
      * The vertical padding around each dropdown item.
      * @default "comfortable"
@@ -95,8 +90,6 @@ export type DropdownContentProps = {
 
 export const DropdownContent = (
     {
-        onOpen,
-        onClose,
         side = 'bottom',
         padding = 'comfortable',
         align = 'start',
@@ -106,11 +99,6 @@ export const DropdownContent = (
     }: DropdownContentProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
-    const localRef = useRef(null);
-    const dropdownIsOpen = useRef(false);
-
-    const { setMaxHeight } = usePreventDropdownOverflow(localRef);
-
     return (
         <RadixDropdown.Portal>
             <RadixDropdown.Content
@@ -121,21 +109,10 @@ export const DropdownContent = (
                 className={styles.content}
                 data-padding={padding}
                 data-test-id={dataTestId}
-                ref={localRef}
+                ref={ref}
                 onCloseAutoFocus={(event) => {
                     if (preventTriggerFocusOnClose) {
                         event.preventDefault();
-                    }
-                    syncRefs(localRef, ref);
-                    onClose && onClose();
-                    dropdownIsOpen.current = false;
-                }}
-                onFocus={() => {
-                    if (!dropdownIsOpen.current) {
-                        setMaxHeight();
-                        syncRefs(localRef, ref);
-                        onOpen && onOpen();
-                        dropdownIsOpen.current = true;
                     }
                 }}
             >

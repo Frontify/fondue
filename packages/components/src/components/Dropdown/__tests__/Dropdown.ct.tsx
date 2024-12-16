@@ -116,11 +116,15 @@ test('should call open and close callbacks', async ({ mount, page }) => {
     const onOpen = sinon.spy();
     const onClose = sinon.spy();
     const component = await mount(
-        <Dropdown.Root>
+        <Dropdown.Root
+            onOpenChange={(isOpen) => {
+                isOpen ? onOpen() : onClose();
+            }}
+        >
             <Dropdown.Trigger>
                 <Button data-test-id={DROPDOWN_TRIGGER_TEST_ID}>Trigger</Button>
             </Dropdown.Trigger>
-            <Dropdown.Content data-test-id={DROPDOWN_CONTENT_TEST_ID} onOpen={onOpen} onClose={onClose}>
+            <Dropdown.Content data-test-id={DROPDOWN_CONTENT_TEST_ID}>
                 <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
             </Dropdown.Content>
         </Dropdown.Root>,
