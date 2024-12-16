@@ -13,7 +13,7 @@
     box-shadow: var(--shadow-matrix);
     width: 250px;
     overflow: auto;
-    max-height: var(--radix-popper-available-height);
+    max-height: var(--radix-dropdown-menu-content-available-height);
 
     &:focus-within {
         border-color: var(--line-color-xx-strong);
