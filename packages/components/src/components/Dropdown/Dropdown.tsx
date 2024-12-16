@@ -67,8 +67,6 @@ DropdownTrigger.displayName = 'Dropdown.Trigger';
 export type DropdownContentProps = {
     children?: ReactNode;
     'data-test-id'?: string;
-    onOpen?: () => void;
-    onClose?: () => void;
     /**
      * The vertical padding around each dropdown item.
      * @default "comfortable"
@@ -92,8 +90,6 @@ export type DropdownContentProps = {
 
 export const DropdownContent = (
     {
-        onOpen,
-        onClose,
         side = 'bottom',
         padding = 'comfortable',
         align = 'start',
@@ -118,9 +114,7 @@ export const DropdownContent = (
                     if (preventTriggerFocusOnClose) {
                         event.preventDefault();
                     }
-                    onClose?.();
                 }}
-                onFocus={onOpen}
             >
                 {children}
             </RadixDropdown.Content>
