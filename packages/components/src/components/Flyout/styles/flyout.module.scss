@@ -3,8 +3,10 @@
 @import '../../../utilities/mediaQuery.module.scss';
 @import '../../../utilities/sizeToken.module.scss';
 @import '../../../utilities/shadow.module.scss';
+@import '../../../utilities/focusStyle.module.scss';
 
 .root {
+
     display: block;
     background-color: var(--base-color);
     border: var(--line-width) solid var(--line-color);
@@ -47,6 +49,8 @@
             min-width: 0 !important;
         }
     }
+
+    @include focus-outline;
 }
 
 // Responsive dialog background element
@@ -137,5 +141,6 @@
 }
 
 .close {
+    @include focus-outline;
     cursor: pointer;
 }
