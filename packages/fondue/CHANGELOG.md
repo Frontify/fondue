@@ -1,5 +1,14 @@
 # @frontify/fondue
 
+## 12.3.10
+
+### Patch Changes
+
+-   [#2136](https://github.com/Frontify/fondue/pull/2136) [`4864f40`](https://github.com/Frontify/fondue/commit/4864f401c0e319d6dc1d92784671f8d97edb9f0c) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: fix padding in badge component which cause the status to be offset
+
+-   Updated dependencies [[`f51cfdb`](https://github.com/Frontify/fondue/commit/f51cfdb1ef521f01c59b562b72bec81e314a9034), [`0a9f684`](https://github.com/Frontify/fondue/commit/0a9f6841238fc56450ad33e0fa04e4a0b0f68f61), [`dd3305a`](https://github.com/Frontify/fondue/commit/dd3305a3f7d2b61cd1d4f96a437f71c13cf78637), [`474bd89`](https://github.com/Frontify/fondue/commit/474bd89402cfb8a0fb57c0997f3035d86114f723), [`0068c39`](https://github.com/Frontify/fondue/commit/0068c39c30dcd9eef9e9f0f30f21c4428cbc8a53)]:
+    -   @frontify/fondue-components@8.0.2
+
 ## 12.3.9
 
 ### Patch Changes

@@ -1,5 +1,19 @@
 # @frontify/fondue-components
 
+## 8.0.2
+
+### Patch Changes
+
+-   [#2141](https://github.com/Frontify/fondue/pull/2141) [`f51cfdb`](https://github.com/Frontify/fondue/commit/f51cfdb1ef521f01c59b562b72bec81e314a9034) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - feat(`Button`): add form prop
+
+-   [#2140](https://github.com/Frontify/fondue/pull/2140) [`0a9f684`](https://github.com/Frontify/fondue/commit/0a9f6841238fc56450ad33e0fa04e4a0b0f68f61) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: explicitly specify button type
+
+-   [#2144](https://github.com/Frontify/fondue/pull/2144) [`dd3305a`](https://github.com/Frontify/fondue/commit/dd3305a3f7d2b61cd1d4f96a437f71c13cf78637) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: align dropdown colors with design
+
+-   [#2139](https://github.com/Frontify/fondue/pull/2139) [`474bd89`](https://github.com/Frontify/fondue/commit/474bd89402cfb8a0fb57c0997f3035d86114f723) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: improve focus outline for flyout
+
+-   [#2143](https://github.com/Frontify/fondue/pull/2143) [`0068c39`](https://github.com/Frontify/fondue/commit/0068c39c30dcd9eef9e9f0f30f21c4428cbc8a53) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix(`Button`): buttons within table cells are overflowing container
+
 ## 8.0.1
 
 ### Patch Changes
