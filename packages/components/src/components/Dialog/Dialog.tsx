@@ -33,6 +33,11 @@ export type DialogContentProps = {
      */
     rounded?: boolean;
     /**
+     * Define the padding of the dialog
+     * @default "compact"
+     */
+    padding?: 'none' | 'tight' | 'compact' | 'comfortable' | 'spacious';
+    /**
      * The vertical alignment of the divider
      * @default "center"
      */
@@ -179,6 +184,7 @@ export const DialogContent = (
         maxWidth = '800px',
         minWidth = '400px',
         minHeight = '200px',
+        padding = 'compact',
         verticalAlign = 'center',
         'data-test-id': dataTestId = 'fondue-dialog-content',
         showUnderlay = false,
@@ -202,6 +208,7 @@ export const DialogContent = (
                     ref={ref}
                     className={styles.content}
                     onFocus={addShowFocusRing}
+                    data-dialog-padding={padding}
                     data-dialog-rounded={rounded}
                     data-test-id={dataTestId}
                     data-dialog-vertical-align={verticalAlign}
