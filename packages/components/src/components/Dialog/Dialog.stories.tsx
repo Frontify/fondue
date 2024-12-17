@@ -338,32 +338,162 @@ export const WithFocusableContent: Story = {
 };
 
 export const WithNoPadding: Story = {
-    args: {
-        padding: 'none',
+    render: () => {
+        return (
+            <Dialog.Root>
+                <Dialog.Trigger>
+                    <Button>Open dialog</Button>
+                </Dialog.Trigger>
+                <Dialog.Content>
+                    <Dialog.Header padding="none">
+                        <Flex justify="space-between" align="center" width="100%" pr="1rem">
+                            <Dialog.Title>Header</Dialog.Title>
+                            <Button
+                                emphasis="default"
+                                onPress={() => {
+                                    alert('Button in the header clicked');
+                                }}
+                            >
+                                Button in the header
+                            </Button>
+                        </Flex>
+                    </Dialog.Header>
+                    <Dialog.Body padding="none">None</Dialog.Body>
+                    <Dialog.Footer padding="none">
+                        <Button emphasis="default">Cancel</Button>
+                        <Button>Submit</Button>
+                    </Dialog.Footer>
+                </Dialog.Content>
+            </Dialog.Root>
+        );
     },
 };
 
 export const WithTightPadding: Story = {
-    args: {
-        padding: 'tight',
+    render: () => {
+        return (
+            <Dialog.Root>
+                <Dialog.Trigger>
+                    <Button>Open dialog</Button>
+                </Dialog.Trigger>
+                <Dialog.Content>
+                    <Dialog.Header padding="tight">
+                        <Flex justify="space-between" align="center" width="100%" pr="1rem">
+                            <Dialog.Title>Header</Dialog.Title>
+                            <Button
+                                emphasis="default"
+                                onPress={() => {
+                                    alert('Button in the header clicked');
+                                }}
+                            >
+                                Button in the header
+                            </Button>
+                        </Flex>
+                    </Dialog.Header>
+                    <Dialog.Body padding="tight">Tight</Dialog.Body>
+                    <Dialog.Footer padding="tight">
+                        <Button emphasis="default">Cancel</Button>
+                        <Button>Submit</Button>
+                    </Dialog.Footer>
+                </Dialog.Content>
+            </Dialog.Root>
+        );
     },
 };
 
 export const WithCompactPadding: Story = {
-    args: {
-        padding: 'compact',
+    render: () => {
+        return (
+            <Dialog.Root>
+                <Dialog.Trigger>
+                    <Button>Open dialog</Button>
+                </Dialog.Trigger>
+                <Dialog.Content>
+                    <Dialog.Header padding="compact">
+                        <Flex justify="space-between" align="center" width="100%" pr="1rem">
+                            <Dialog.Title>Header</Dialog.Title>
+                            <Button
+                                emphasis="default"
+                                onPress={() => {
+                                    alert('Button in the header clicked');
+                                }}
+                            >
+                                Button in the header
+                            </Button>
+                        </Flex>
+                    </Dialog.Header>
+                    <Dialog.Body padding="compact">Compact</Dialog.Body>
+                    <Dialog.Footer padding="compact">
+                        <Button emphasis="default">Cancel</Button>
+                        <Button>Submit</Button>
+                    </Dialog.Footer>
+                </Dialog.Content>
+            </Dialog.Root>
+        );
     },
 };
 
 export const WithComfortablePadding: Story = {
-    args: {
-        padding: 'comfortable',
+    render: () => {
+        return (
+            <Dialog.Root>
+                <Dialog.Trigger>
+                    <Button>Open dialog</Button>
+                </Dialog.Trigger>
+                <Dialog.Content>
+                    <Dialog.Header padding="comfortable">
+                        <Flex justify="space-between" align="center" width="100%" pr="1rem">
+                            <Dialog.Title>Header</Dialog.Title>
+                            <Button
+                                emphasis="default"
+                                onPress={() => {
+                                    alert('Button in the header clicked');
+                                }}
+                            >
+                                Button in the header
+                            </Button>
+                        </Flex>
+                    </Dialog.Header>
+                    <Dialog.Body padding="comfortable">Confortable</Dialog.Body>
+                    <Dialog.Footer padding="comfortable">
+                        <Button emphasis="default">Cancel</Button>
+                        <Button>Submit</Button>
+                    </Dialog.Footer>
+                </Dialog.Content>
+            </Dialog.Root>
+        );
     },
 };
 
 export const WithSpaciousPadding: Story = {
-    args: {
-        padding: 'spacious',
+    render: () => {
+        return (
+            <Dialog.Root>
+                <Dialog.Trigger>
+                    <Button>Open dialog</Button>
+                </Dialog.Trigger>
+                <Dialog.Content>
+                    <Dialog.Header padding="spacious">
+                        <Flex justify="space-between" align="center" width="100%" pr="1rem">
+                            <Dialog.Title>Header</Dialog.Title>
+                            <Button
+                                emphasis="default"
+                                onPress={() => {
+                                    alert('Button in the header clicked');
+                                }}
+                            >
+                                Button in the header
+                            </Button>
+                        </Flex>
+                    </Dialog.Header>
+                    <Dialog.Body padding="spacious">Spacious</Dialog.Body>
+                    <Dialog.Footer padding="spacious">
+                        <Button emphasis="default">Cancel</Button>
+                        <Button>Submit</Button>
+                    </Dialog.Footer>
+                </Dialog.Content>
+            </Dialog.Root>
+        );
     },
 };
 

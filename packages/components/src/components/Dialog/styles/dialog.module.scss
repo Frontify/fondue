@@ -49,47 +49,6 @@
     &[data-dialog-rounded='true'] {
         border-radius: var(--radius-large);
     }
-
-    &[data-dialog-spacing='tight'] {
-        .header,
-        .footer,
-        .body {
-            padding: sizeToken(2);
-        }
-    }
-
-    &[data-dialog-spacing='compact'] {
-        .header,
-        .footer {
-            padding: sizeToken(4);
-        }
-
-        .body {
-            padding: sizeToken(2) sizeToken(4);
-        }
-    }
-
-    &[data-dialog-spacing='comfortable'] {
-        .header,
-        .footer {
-            padding: sizeToken(6);
-        }
-
-        .body {
-            padding: sizeToken(4) sizeToken(6);
-        }
-    }
-
-    &[data-dialog-spacing='spacious'] {
-        .header,
-        .footer {
-            padding: sizeToken(10);
-        }
-
-        .body {
-            padding: sizeToken(6) sizeToken(10);
-        }
-    }
 }
 
 .underlay {
@@ -130,6 +89,22 @@
         border-bottom: var(--line-width) solid var(--line-color);
     }
 
+    &[data-dialog-header-padding='tight'] {
+        padding: sizeToken(2);
+    }
+
+    &[data-dialog-header-padding='compact'] {
+        padding: sizeToken(4);
+    }
+
+    &[data-dialog-header-padding='comfortable'] {
+        padding: sizeToken(6);
+    }
+
+    &[data-dialog-header-padding='spacious'] {
+        padding: sizeToken(10);
+    }
+
     @include sm {
         grid-row: 1;
         grid-column: 2;
@@ -149,6 +124,22 @@
     grid-row: 4;
     grid-column: 1;
 
+    &[data-dialog-footer-padding='tight'] {
+        padding: sizeToken(2);
+    }
+
+    &[data-dialog-footer-padding='compact'] {
+        padding: sizeToken(4);
+    }
+
+    &[data-dialog-footer-padding='comfortable'] {
+        padding: sizeToken(6);
+    }
+
+    &[data-dialog-footer-padding='spacious'] {
+        padding: sizeToken(10);
+    }
+
     &[data-show-border='true'] {
         border-top: var(--line-width) solid var(--line-color);
     }
@@ -167,6 +158,22 @@
     overflow: hidden;
     grid-row: 3;
     grid-column: 1;
+
+    &[data-dialog-body-padding='tight'] {
+        padding: sizeToken(2);
+    }
+
+    &[data-dialog-body-padding='compact'] {
+        padding: sizeToken(2) sizeToken(4);
+    }
+
+    &[data-dialog-body-padding='comfortable'] {
+        padding: sizeToken(4) sizeToken(6);
+    }
+
+    &[data-dialog-body-padding='spacious'] {
+        padding: sizeToken(6) sizeToken(10);
+    }
 
     @include sm {
         grid-row: 2;
