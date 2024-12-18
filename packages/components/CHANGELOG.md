@@ -1,5 +1,11 @@
 # @frontify/fondue-components
 
+## 8.0.3
+
+### Patch Changes
+
+-   [#2146](https://github.com/Frontify/fondue/pull/2146) [`4b98a55`](https://github.com/Frontify/fondue/commit/4b98a5568c9e1ce4b962dd91d8646f71124603ed) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - feat(`Tabs`): add padding control
+
 ## 8.0.2
 
 ### Patch Changes
