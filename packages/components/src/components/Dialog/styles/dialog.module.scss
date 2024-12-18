@@ -104,6 +104,10 @@
             border-bottom: var(--line-width) solid var(--line-color);
         }
 
+        &[data-dialog-header-padding='none'] {
+            padding: sizeToken(0);
+        }
+
         &[data-dialog-header-padding='tight'] {
             padding: sizeToken(2);
         }
@@ -139,6 +143,10 @@
         grid-row: 3;
         grid-column: 1;
 
+        &[data-dialog-body-padding='none'] {
+            padding: sizeToken(0);
+        }
+
         &[data-dialog-body-padding='tight'] {
             padding: sizeToken(2);
         }
@@ -169,6 +177,10 @@
         font-weight: var(--font-weight-medium);
         grid-row: 4;
         grid-column: 1;
+
+        &[data-dialog-footer-padding='none'] {
+            padding: sizeToken(0);
+        }
 
         &[data-dialog-footer-padding='tight'] {
             padding: sizeToken(2);
