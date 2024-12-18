@@ -114,7 +114,7 @@ export type DialogFooterProps = {
 
 export type DialogBodyProps = {
     /**
-     * Define the padding of the dialog
+     * Define the padding for the dialog body
      * @default "compact"
      */
     padding?: 'none' | 'tight' | 'compact' | 'comfortable' | 'spacious';
