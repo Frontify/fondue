@@ -79,7 +79,7 @@ export type DialogTriggerProps = {
 
 export type DialogHeaderProps = {
     /**
-     * Define the padding of the dialog
+     * Define the padding for the dialog header
      * @default "compact"
      */
     padding?: 'none' | 'tight' | 'compact' | 'comfortable' | 'spacious';
