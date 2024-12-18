@@ -338,13 +338,13 @@ export const WithFocusableContent: Story = {
 };
 
 export const WithNoPadding: Story = {
-    render: () => {
+    render: (args) => {
         return (
             <Dialog.Root>
                 <Dialog.Trigger>
                     <Button>Open dialog</Button>
                 </Dialog.Trigger>
-                <Dialog.Content>
+                <Dialog.Content {...args}>
                     <Dialog.Header padding="none">
                         <Flex justify="space-between" align="center" width="100%" pr="1rem">
                             <Dialog.Title>Header</Dialog.Title>
@@ -370,13 +370,13 @@ export const WithNoPadding: Story = {
 };
 
 export const WithTightPadding: Story = {
-    render: () => {
+    render: (args) => {
         return (
             <Dialog.Root>
                 <Dialog.Trigger>
                     <Button>Open dialog</Button>
                 </Dialog.Trigger>
-                <Dialog.Content>
+                <Dialog.Content {...args}>
                     <Dialog.Header padding="tight">
                         <Flex justify="space-between" align="center" width="100%" pr="1rem">
                             <Dialog.Title>Header</Dialog.Title>
@@ -402,13 +402,13 @@ export const WithTightPadding: Story = {
 };
 
 export const WithCompactPadding: Story = {
-    render: () => {
+    render: (args) => {
         return (
             <Dialog.Root>
                 <Dialog.Trigger>
                     <Button>Open dialog</Button>
                 </Dialog.Trigger>
-                <Dialog.Content>
+                <Dialog.Content {...args}>
                     <Dialog.Header padding="compact">
                         <Flex justify="space-between" align="center" width="100%" pr="1rem">
                             <Dialog.Title>Header</Dialog.Title>
@@ -434,13 +434,13 @@ export const WithCompactPadding: Story = {
 };
 
 export const WithComfortablePadding: Story = {
-    render: () => {
+    render: (args) => {
         return (
             <Dialog.Root>
                 <Dialog.Trigger>
                     <Button>Open dialog</Button>
                 </Dialog.Trigger>
-                <Dialog.Content>
+                <Dialog.Content {...args}>
                     <Dialog.Header padding="comfortable">
                         <Flex justify="space-between" align="center" width="100%" pr="1rem">
                             <Dialog.Title>Header</Dialog.Title>
@@ -466,13 +466,13 @@ export const WithComfortablePadding: Story = {
 };
 
 export const WithSpaciousPadding: Story = {
-    render: () => {
+    render: (args) => {
         return (
             <Dialog.Root>
                 <Dialog.Trigger>
                     <Button>Open dialog</Button>
                 </Dialog.Trigger>
-                <Dialog.Content>
+                <Dialog.Content {...args}>
                     <Dialog.Header padding="spacious">
                         <Flex justify="space-between" align="center" width="100%" pr="1rem">
                             <Dialog.Title>Header</Dialog.Title>
