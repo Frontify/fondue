@@ -199,6 +199,10 @@ DropdownSubContent.displayName = 'Dropdown.SubContent';
 export type DropdownItemProps = {
     children: ReactNode;
     /**
+     * Marks the item as active.
+     */
+    active?: boolean;
+    /**
      * Disables the item.
      */
     disabled?: boolean;
@@ -221,6 +225,7 @@ export type DropdownItemProps = {
 export const DropdownItem = (
     {
         children,
+        active,
         disabled,
         textValue,
         onSelect,
@@ -239,6 +244,7 @@ export const DropdownItem = (
             onSelect={onSelect}
             className={styles.item}
             textValue={textValue}
+            data-active={active}
             data-test-id={dataTestId}
             data-emphasis={emphasis}
             ref={ref}

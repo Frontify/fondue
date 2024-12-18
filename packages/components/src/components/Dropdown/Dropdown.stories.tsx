@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconIcon } from '@frontify/fondue-icons';
+import { IconCheckMark, IconIcon } from '@frontify/fondue-icons';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { useState } from 'react';
 
@@ -56,6 +56,26 @@ export const Default: Story = {
             </Dropdown.Trigger>
             <Dropdown.Content>
                 <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}}>Item 2</Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}}>Item 3</Dropdown.Item>
+            </Dropdown.Content>
+        </Dropdown.Root>
+    ),
+};
+
+export const ActiveItem: Story = {
+    render: ({ ...args }) => (
+        <Dropdown.Root {...args}>
+            <Dropdown.Trigger>
+                <Button>Trigger</Button>
+            </Dropdown.Trigger>
+            <Dropdown.Content>
+                <Dropdown.Item active onSelect={() => {}}>
+                    Item 1
+                    <Dropdown.Slot name="right">
+                        <IconCheckMark size={16} />
+                    </Dropdown.Slot>
+                </Dropdown.Item>
                 <Dropdown.Item onSelect={() => {}}>Item 2</Dropdown.Item>
                 <Dropdown.Item onSelect={() => {}}>Item 3</Dropdown.Item>
             </Dropdown.Content>
