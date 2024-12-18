@@ -26,6 +26,11 @@ export type TabsRootProps = {
     id?: string;
     children: ReactNode;
     /**
+     * Define the padding of the dialog
+     * @default "compact"
+     */
+    padding?: 'none' | 'tight' | 'compact' | 'comfortable' | 'spacious';
+    /**
      * The default active tab
      * Used for uncontrolled components
      */
@@ -61,11 +66,12 @@ const TabTriggerContext = createContext<{
 
 export const TabsRoot = (
     {
-        children,
+        padding = 'compact',
         activeTab: propsActiveTab,
         defaultActiveTab,
-        onActiveTabChange,
         size = 'medium',
+        onActiveTabChange,
+        children,
         ...props
     }: TabsRootProps,
     ref: ForwardedRef<HTMLDivElement>,
@@ -94,6 +100,7 @@ export const TabsRoot = (
                 className={styles.root}
                 onValueChange={handleSetActiveTab}
                 value={activeTab ?? triggers[0]?.value}
+                data-tabs-content-padding={padding}
                 {...props}
             >
                 <div className={styles.triggerListWrapper}>

@@ -69,7 +69,21 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
 }
 
 .content {
-    padding: sizeToken(3);
+    [data-tabs-content-padding='tight'] & {
+        padding: sizeToken(2);
+    }
+
+    [data-tabs-content-padding='compact'] &{
+        padding: sizeToken(3);
+    }
+
+    [data-tabs-content-padding='comfortable'] &{
+        padding: sizeToken(4);
+    }
+
+    [data-tabs-content-padding='spacious'] &{
+        padding: sizeToken(6);
+    }
 }
 
 .activeIndicator {
