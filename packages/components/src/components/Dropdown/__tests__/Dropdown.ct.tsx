@@ -323,3 +323,21 @@ test('should not focus trigger on close', async ({ mount, page }) => {
     await page.mouse.click(0, 0);
     await expect(triggerElement).not.toBeFocused();
 });
+
+test('should render a dropdown item with active state', async ({ mount, page }) => {
+    await mount(
+        <Dropdown.Root open>
+            <Dropdown.Trigger>
+                <Button data-test-id={DROPDOWN_TRIGGER_TEST_ID}>Trigger</Button>
+            </Dropdown.Trigger>
+            <Dropdown.Content data-test-id={DROPDOWN_CONTENT_TEST_ID}>
+                <Dropdown.Item onSelect={() => {}} active>
+                    Item 1
+                </Dropdown.Item>
+            </Dropdown.Content>
+        </Dropdown.Root>,
+    );
+
+    const dropdownItemElement = page.getByTestId(DROPDOWN_CONTENT_TEST_ID);
+    await expect(dropdownItemElement.getByRole('menuitem').first()).toHaveAttribute('data-active', 'true');
+});

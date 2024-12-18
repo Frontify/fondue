@@ -55,6 +55,11 @@
     color: var(--text-color-weak);
     outline-style: none;
 
+    &[data-active='true'] {
+        background-color: var(--box-neutral-color);
+        color: var(--text-color);
+    }
+
     &[data-state='open'] {
         background-color: var(--box-neutral-color);
         color: var(--text-color);
