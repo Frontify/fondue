@@ -80,7 +80,6 @@ export type DialogTriggerProps = {
 export type DialogHeaderProps = {
     /**
      * Define the padding for the dialog header
-     * @default "compact"
      */
     padding?: 'none' | 'tight' | 'compact' | 'comfortable' | 'spacious';
     /**
@@ -100,7 +99,6 @@ export type DialogHeaderProps = {
 export type DialogFooterProps = {
     /**
      * Define the padding for the dialog footer
-     * @default "compact"
      */
     padding?: 'none' | 'tight' | 'compact' | 'comfortable' | 'spacious';
     /**
@@ -115,7 +113,6 @@ export type DialogFooterProps = {
 export type DialogBodyProps = {
     /**
      * Define the padding for the dialog body
-     * @default "compact"
      */
     padding?: 'none' | 'tight' | 'compact' | 'comfortable' | 'spacious';
     children?: ReactNode;
@@ -224,7 +221,7 @@ DialogContent.displayName = 'Dialog.Content';
 
 export const DialogHeader = (
     {
-        padding = 'compact',
+        padding,
         showBorder = true,
         showCloseButton = true,
         children,
@@ -253,12 +250,7 @@ export const DialogHeader = (
 DialogHeader.displayName = 'Dialog.Header';
 
 export const DialogFooter = (
-    {
-        padding = 'compact',
-        showBorder = true,
-        children,
-        'data-test-id': dataTestId = 'fondue-dialog-footer',
-    }: DialogFooterProps,
+    { padding, showBorder = true, children, 'data-test-id': dataTestId = 'fondue-dialog-footer' }: DialogFooterProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
@@ -277,7 +269,7 @@ export const DialogFooter = (
 DialogFooter.displayName = 'Dialog.Footer';
 
 export const DialogBody = (
-    { padding = 'compact', children, 'data-test-id': dataTestId = 'fondue-dialog-body' }: DialogBodyProps,
+    { padding, children, 'data-test-id': dataTestId = 'fondue-dialog-body' }: DialogBodyProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
