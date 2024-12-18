@@ -50,10 +50,16 @@ test('should render no padding', async ({ mount, page }) => {
             <Dialog.Trigger data-test-id={DIALOG_TRIGGER_TEST_ID}>
                 <Button>{DIALOG_TRIGGER_TEXT}</Button>
             </Dialog.Trigger>
-            <Dialog.Content padding="none" data-test-id={DIALOG_CONTENT_TEST_ID}>
-                <Dialog.Header data-test-id={DIALOG_HEADER_TEST_ID}>{DIALOG_HEADER_TEXT}</Dialog.Header>
-                <Dialog.Body data-test-id={DIALOG_BODY_TEST_ID}>{DIALOG_BODY_TEXT}</Dialog.Body>
-                <Dialog.Footer data-test-id={DIALOG_FOOTER_TEST_ID}>{DIALOG_FOOTER_TEXT}</Dialog.Footer>
+            <Dialog.Content data-test-id={DIALOG_CONTENT_TEST_ID}>
+                <Dialog.Header padding="none" data-test-id={DIALOG_HEADER_TEST_ID}>
+                    {DIALOG_HEADER_TEXT}
+                </Dialog.Header>
+                <Dialog.Body padding="none" data-test-id={DIALOG_BODY_TEST_ID}>
+                    {DIALOG_BODY_TEXT}
+                </Dialog.Body>
+                <Dialog.Footer padding="none" data-test-id={DIALOG_FOOTER_TEST_ID}>
+                    {DIALOG_FOOTER_TEXT}
+                </Dialog.Footer>
             </Dialog.Content>
         </Dialog.Root>,
     );
@@ -69,10 +75,16 @@ test('should render tight padding', async ({ mount, page }) => {
             <Dialog.Trigger data-test-id={DIALOG_TRIGGER_TEST_ID}>
                 <Button>{DIALOG_TRIGGER_TEXT}</Button>
             </Dialog.Trigger>
-            <Dialog.Content padding="tight" data-test-id={DIALOG_CONTENT_TEST_ID}>
-                <Dialog.Header data-test-id={DIALOG_HEADER_TEST_ID}>{DIALOG_HEADER_TEXT}</Dialog.Header>
-                <Dialog.Body data-test-id={DIALOG_BODY_TEST_ID}>{DIALOG_BODY_TEXT}</Dialog.Body>
-                <Dialog.Footer data-test-id={DIALOG_FOOTER_TEST_ID}>{DIALOG_FOOTER_TEXT}</Dialog.Footer>
+            <Dialog.Content data-test-id={DIALOG_CONTENT_TEST_ID}>
+                <Dialog.Header padding="tight" data-test-id={DIALOG_HEADER_TEST_ID}>
+                    {DIALOG_HEADER_TEXT}
+                </Dialog.Header>
+                <Dialog.Body padding="tight" data-test-id={DIALOG_BODY_TEST_ID}>
+                    {DIALOG_BODY_TEXT}
+                </Dialog.Body>
+                <Dialog.Footer padding="tight" data-test-id={DIALOG_FOOTER_TEST_ID}>
+                    {DIALOG_FOOTER_TEXT}
+                </Dialog.Footer>
             </Dialog.Content>
         </Dialog.Root>,
     );
@@ -88,10 +100,16 @@ test('should render compact padding', async ({ mount, page }) => {
             <Dialog.Trigger data-test-id={DIALOG_TRIGGER_TEST_ID}>
                 <Button>{DIALOG_TRIGGER_TEXT}</Button>
             </Dialog.Trigger>
-            <Dialog.Content padding="compact" data-test-id={DIALOG_CONTENT_TEST_ID}>
-                <Dialog.Header data-test-id={DIALOG_HEADER_TEST_ID}>{DIALOG_HEADER_TEXT}</Dialog.Header>
-                <Dialog.Body data-test-id={DIALOG_BODY_TEST_ID}>{DIALOG_BODY_TEXT}</Dialog.Body>
-                <Dialog.Footer data-test-id={DIALOG_FOOTER_TEST_ID}>{DIALOG_FOOTER_TEXT}</Dialog.Footer>
+            <Dialog.Content data-test-id={DIALOG_CONTENT_TEST_ID}>
+                <Dialog.Header padding="compact" data-test-id={DIALOG_HEADER_TEST_ID}>
+                    {DIALOG_HEADER_TEXT}
+                </Dialog.Header>
+                <Dialog.Body padding="compact" data-test-id={DIALOG_BODY_TEST_ID}>
+                    {DIALOG_BODY_TEXT}
+                </Dialog.Body>
+                <Dialog.Footer padding="compact" data-test-id={DIALOG_FOOTER_TEST_ID}>
+                    {DIALOG_FOOTER_TEXT}
+                </Dialog.Footer>
             </Dialog.Content>
         </Dialog.Root>,
     );
@@ -107,10 +125,14 @@ test('should render comfortable padding', async ({ mount, page }) => {
             <Dialog.Trigger data-test-id={DIALOG_TRIGGER_TEST_ID}>
                 <Button>{DIALOG_TRIGGER_TEXT}</Button>
             </Dialog.Trigger>
-            <Dialog.Content padding="comfortable" data-test-id={DIALOG_CONTENT_TEST_ID}>
-                <Dialog.Header data-test-id={DIALOG_HEADER_TEST_ID}>{DIALOG_HEADER_TEXT}</Dialog.Header>
-                <Dialog.Body data-test-id={DIALOG_BODY_TEST_ID}>{DIALOG_BODY_TEXT}</Dialog.Body>
-                <Dialog.Footer data-test-id={DIALOG_FOOTER_TEST_ID}>
+            <Dialog.Content data-test-id={DIALOG_CONTENT_TEST_ID}>
+                <Dialog.Header padding="comfortable" data-test-id={DIALOG_HEADER_TEST_ID}>
+                    {DIALOG_HEADER_TEXT}
+                </Dialog.Header>
+                <Dialog.Body padding="comfortable" data-test-id={DIALOG_BODY_TEST_ID}>
+                    {DIALOG_BODY_TEXT}
+                </Dialog.Body>
+                <Dialog.Footer padding="comfortable" data-test-id={DIALOG_FOOTER_TEST_ID}>
                     <Button>{DIALOG_FOOTER_TEXT}</Button>
                 </Dialog.Footer>
             </Dialog.Content>
@@ -128,10 +150,14 @@ test('should render spacious padding', async ({ mount, page }) => {
             <Dialog.Trigger data-test-id={DIALOG_TRIGGER_TEST_ID}>
                 <Button>{DIALOG_TRIGGER_TEXT}</Button>
             </Dialog.Trigger>
-            <Dialog.Content padding="spacious" data-test-id={DIALOG_CONTENT_TEST_ID}>
-                <Dialog.Header data-test-id={DIALOG_HEADER_TEST_ID}>{DIALOG_HEADER_TEXT}</Dialog.Header>
-                <Dialog.Body data-test-id={DIALOG_BODY_TEST_ID}>{DIALOG_BODY_TEXT}</Dialog.Body>
-                <Dialog.Footer data-test-id={DIALOG_FOOTER_TEST_ID}>
+            <Dialog.Content data-test-id={DIALOG_CONTENT_TEST_ID}>
+                <Dialog.Header padding="spacious" data-test-id={DIALOG_HEADER_TEST_ID}>
+                    {DIALOG_HEADER_TEXT}
+                </Dialog.Header>
+                <Dialog.Body padding="spacious" data-test-id={DIALOG_BODY_TEST_ID}>
+                    {DIALOG_BODY_TEXT}
+                </Dialog.Body>
+                <Dialog.Footer padding="spacious" data-test-id={DIALOG_FOOTER_TEST_ID}>
                     <Button>{DIALOG_FOOTER_TEXT}</Button>
                 </Dialog.Footer>
             </Dialog.Content>
