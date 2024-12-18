@@ -218,8 +218,12 @@ export const WithDecorator: Story = {
 };
 
 export const WithNoPadding: Story = {
+    args: {
+        padding: 'comfortable',
+    },
+
     render: (args) => (
-        <Tabs.Root {...args} padding="none">
+        <Tabs.Root padding="none" {...args}>
             <Tabs.Tab value="first">
                 <Tabs.Trigger>First Tab</Tabs.Trigger>
                 <Tabs.Content>
@@ -253,7 +257,7 @@ export const WithNoPadding: Story = {
 
 export const WithTightPadding: Story = {
     render: (args) => (
-        <Tabs.Root {...args} padding="tight">
+        <Tabs.Root padding="tight" {...args}>
             <Tabs.Tab value="first">
                 <Tabs.Trigger>First Tab</Tabs.Trigger>
                 <Tabs.Content>
@@ -287,7 +291,7 @@ export const WithTightPadding: Story = {
 
 export const WithCompactPadding: Story = {
     render: (args) => (
-        <Tabs.Root {...args} padding="compact">
+        <Tabs.Root padding="compact" {...args}>
             <Tabs.Tab value="first">
                 <Tabs.Trigger>First Tab</Tabs.Trigger>
                 <Tabs.Content>
@@ -321,7 +325,7 @@ export const WithCompactPadding: Story = {
 
 export const WithComfortablePadding: Story = {
     render: (args) => (
-        <Tabs.Root {...args} padding="comfortable">
+        <Tabs.Root padding="comfortable" {...args}>
             <Tabs.Tab value="first">
                 <Tabs.Trigger>First Tab</Tabs.Trigger>
                 <Tabs.Content>
@@ -355,7 +359,7 @@ export const WithComfortablePadding: Story = {
 
 export const WithSpaciousPadding: Story = {
     render: (args) => (
-        <Tabs.Root {...args} padding="spacious">
+        <Tabs.Root padding="spacious" {...args}>
             <Tabs.Tab value="first">
                 <Tabs.Trigger>First Tab</Tabs.Trigger>
                 <Tabs.Content>
