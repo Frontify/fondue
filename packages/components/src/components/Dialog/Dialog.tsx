@@ -79,6 +79,10 @@ export type DialogTriggerProps = {
 
 export type DialogHeaderProps = {
     /**
+     * Define the padding for the dialog header
+     */
+    padding?: 'none' | 'tight' | 'compact' | 'comfortable' | 'spacious';
+    /**
      * Show a border at the bottom of the header
      * @default true
      */
@@ -94,6 +98,10 @@ export type DialogHeaderProps = {
 
 export type DialogFooterProps = {
     /**
+     * Define the padding for the dialog footer
+     */
+    padding?: 'none' | 'tight' | 'compact' | 'comfortable' | 'spacious';
+    /**
      * Show a border at the top of the footer
      * @default true
      */
@@ -102,7 +110,14 @@ export type DialogFooterProps = {
     'data-test-id'?: string;
 };
 
-export type DialogBodyProps = { children?: ReactNode; 'data-test-id'?: string };
+export type DialogBodyProps = {
+    /**
+     * Define the padding for the dialog body
+     */
+    padding?: 'none' | 'tight' | 'compact' | 'comfortable' | 'spacious';
+    children?: ReactNode;
+    'data-test-id'?: string;
+};
 
 export type DialogSideContentProps = { children?: ReactNode; 'data-test-id'?: string };
 
@@ -170,8 +185,8 @@ export const DialogContent = (
         verticalAlign = 'center',
         'data-test-id': dataTestId = 'fondue-dialog-content',
         showUnderlay = false,
-        children,
         rounded = true,
+        children,
         ...props
     }: DialogContentProps,
     ref: ForwardedRef<HTMLDivElement>,
@@ -190,8 +205,8 @@ export const DialogContent = (
                     ref={ref}
                     className={styles.content}
                     onFocus={addShowFocusRing}
+                    data-dialog-padding={padding}
                     data-dialog-rounded={rounded}
-                    data-dialog-spacing={padding}
                     data-test-id={dataTestId}
                     data-dialog-vertical-align={verticalAlign}
                     {...props}
@@ -206,9 +221,10 @@ DialogContent.displayName = 'Dialog.Content';
 
 export const DialogHeader = (
     {
-        children,
+        padding,
         showBorder = true,
         showCloseButton = true,
+        children,
         'data-test-id': dataTestId = 'fondue-dialog-header',
     }: DialogHeaderProps,
     ref: ForwardedRef<HTMLDivElement>,
@@ -218,6 +234,7 @@ export const DialogHeader = (
             data-test-id={dataTestId}
             ref={ref}
             className={styles.header}
+            data-dialog-header-padding={padding}
             data-show-border={showBorder}
             data-dialog-layout-component
         >
@@ -233,7 +250,7 @@ export const DialogHeader = (
 DialogHeader.displayName = 'Dialog.Header';
 
 export const DialogFooter = (
-    { showBorder = true, children, 'data-test-id': dataTestId = 'fondue-dialog-footer' }: DialogFooterProps,
+    { padding, showBorder = true, children, 'data-test-id': dataTestId = 'fondue-dialog-footer' }: DialogFooterProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
@@ -241,6 +258,7 @@ export const DialogFooter = (
             data-test-id={dataTestId}
             ref={ref}
             className={styles.footer}
+            data-dialog-footer-padding={padding}
             data-show-border={showBorder}
             data-dialog-layout-component
         >
@@ -251,11 +269,17 @@ export const DialogFooter = (
 DialogFooter.displayName = 'Dialog.Footer';
 
 export const DialogBody = (
-    { children, 'data-test-id': dataTestId = 'fondue-dialog-body' }: DialogBodyProps,
+    { padding, children, 'data-test-id': dataTestId = 'fondue-dialog-body' }: DialogBodyProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
-        <div data-test-id={dataTestId} ref={ref} className={styles.body} data-dialog-layout-component>
+        <div
+            data-test-id={dataTestId}
+            ref={ref}
+            className={styles.body}
+            data-dialog-body-padding={padding}
+            data-dialog-layout-component
+        >
             {children}
         </div>
     );
