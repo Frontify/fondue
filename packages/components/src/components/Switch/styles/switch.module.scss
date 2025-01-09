@@ -37,7 +37,7 @@
     &[data-state='checked'] {
         background-color: var(--text-color-weak);
 
-        &:hover {
+        &:enabled:hover {
             background-color: var(--box-neutral-strong-color-hover);
         }
     }
