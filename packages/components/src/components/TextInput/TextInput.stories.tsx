@@ -6,10 +6,10 @@ import { type Meta, type StoryObj } from '@storybook/react';
 import { type ComponentProps } from 'react';
 
 import { Button } from '../Button/Button';
+import { Flex } from '../Flex/Flex';
 import { Label } from '../Label/Label';
 
 import { TextFieldRoot, TextFieldSlot, TextInput } from './TextInput';
-import { Flex } from '../Flex/Flex';
 
 type Story = StoryObj<typeof meta>;
 const meta: Meta<typeof TextFieldRoot> = {
