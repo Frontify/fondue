@@ -9,6 +9,7 @@ import { Button } from '../Button/Button';
 import { Label } from '../Label/Label';
 
 import { TextFieldRoot, TextFieldSlot, TextInput } from './TextInput';
+import { Flex } from '../Flex/Flex';
 
 type Story = StoryObj<typeof meta>;
 const meta: Meta<typeof TextFieldRoot> = {
@@ -178,14 +179,17 @@ export const Success: Story = {
         status: 'success',
     },
     render: (args) => (
-        <TextInput.Root {...args}>
-            <TextInput.Slot name="left">
-                <IconPen size={16} />
-            </TextInput.Slot>
-            <TextInput.Slot name="right">
-                <IconIcon size={16} />
-            </TextInput.Slot>
-        </TextInput.Root>
+        <Flex gap={2} direction="column">
+            <TextInput {...args} />
+            <TextInput.Root {...args}>
+                <TextInput.Slot name="left">
+                    <IconPen size={16} />
+                </TextInput.Slot>
+                <TextInput.Slot name="right">
+                    <IconIcon size={16} />
+                </TextInput.Slot>
+            </TextInput.Root>
+        </Flex>
     ),
 };
 
@@ -194,14 +198,17 @@ export const Errored: Story = {
         status: 'error',
     },
     render: (args) => (
-        <TextInput.Root {...args}>
-            <TextInput.Slot name="left">
-                <IconPen size={16} />
-            </TextInput.Slot>
-            <TextInput.Slot name="right">
-                <IconIcon size={16} />
-            </TextInput.Slot>
-        </TextInput.Root>
+        <Flex gap={2} direction="column">
+            <TextInput {...args} />
+            <TextInput.Root {...args}>
+                <TextInput.Slot name="left">
+                    <IconPen size={16} />
+                </TextInput.Slot>
+                <TextInput.Slot name="right">
+                    <IconIcon size={16} />
+                </TextInput.Slot>
+            </TextInput.Root>
+        </Flex>
     ),
 };
 
