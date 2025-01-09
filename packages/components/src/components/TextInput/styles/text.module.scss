@@ -71,7 +71,7 @@
 
     &:-moz-focusring {
         outline: 2px solid transparent;
-        outline-offset: 2px;;
+        outline-offset: 2px;
     }
 
     // Remove border-radius and text-indent/padding on the left if there’s a left-side slot
@@ -147,6 +147,7 @@
     align-items: center;
     height: 100%;
     margin-left: sizeToken(3);
+    margin-right: sizeToken(3);
     color: var(--text-color-positive);
 }
 
@@ -155,7 +156,14 @@
     align-items: center;
     height: 100%;
     margin-left: sizeToken(3);
+    margin-right: sizeToken(3);
     color: var(--text-color-negative);
+}
+
+// Icon with a right slot shouldn't have a margin right
+.iconSuccess:has(~ .slot[data-name='right']),
+.iconError:has(~ .slot[data-name='right']) {
+    margin-right: 0px;
 }
 
 .loadingStatus {
