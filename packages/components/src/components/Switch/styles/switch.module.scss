@@ -15,7 +15,7 @@
     background-color: var(--box-neutral-color);
     border: 1px solid var(--line-color-x-strong);
 
-    &:hover {
+    &:enabled:hover {
         background-color: var(--box-neutral-color-hover);
     }
 
@@ -38,11 +38,11 @@
         background-color: var(--text-color-weak);
 
         &:hover {
-            background: var(--box-neutral-strong-color-hover);
+            background-color: var(--box-neutral-strong-color-hover);
         }
     }
 
-    &[disabled] {
+    &:disabled {
         border-color: var(--line-color);
         background-color: var(--box-neutral-color);
 
@@ -51,6 +51,7 @@
         }
     }
 }
+
 .thumb {
     @include transition-transform;
 
