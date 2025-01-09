@@ -1,5 +1,20 @@
 # @frontify/fondue-components
 
+## 9.0.0
+
+### Patch Changes
+
+-   [#2145](https://github.com/Frontify/fondue/pull/2145) [`85c0267`](https://github.com/Frontify/fondue/commit/85c0267c36f3aa27d35a5a0ada69c455b1e3e786) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix(`Dialog`): missing granular padding control
+
+-   [#2150](https://github.com/Frontify/fondue/pull/2150) [`06e1fc6`](https://github.com/Frontify/fondue/commit/06e1fc61792e2de22299a276124be1987c10d026) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: adding margin to TextInput's success/error icon if no decorator on the right
+
+-   [#2146](https://github.com/Frontify/fondue/pull/2146) [`4b98a55`](https://github.com/Frontify/fondue/commit/4b98a5568c9e1ce4b962dd91d8646f71124603ed) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - feat(`Tabs`): add padding control
+
+-   [#2151](https://github.com/Frontify/fondue/pull/2151) [`f2188a0`](https://github.com/Frontify/fondue/commit/f2188a0a248edb08a1e0420eeebc09817dc6a594) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: remove hover state when switch is disabled and toggled
+
+-   Updated dependencies [[`ead020f`](https://github.com/Frontify/fondue/commit/ead020fcf3e7762f4b654230389961844f685da1)]:
+    -   @frontify/fondue-icons@0.10.0
+
 ## 8.0.2
 
 ### Patch Changes
