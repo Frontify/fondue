@@ -1,8 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import react from '@vitejs/plugin-react';
-import { build } from 'esbuild';
-import { type Plugin, defineConfig } from 'vite';
+import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import tsConfigPaths from 'vite-tsconfig-paths';
 
@@ -18,60 +17,6 @@ export const globals = {
     'react/jsx-runtime': 'react/jsx-runtime',
 };
 
-export const bundleIconsInDevPlugin = (): Plugin => {
-    let command: string;
-    return {
-        name: 'bundle-icons',
-        config(_config, { command: _command }) {
-            command = _command;
-        },
-        async load(id: string) {
-            // Only bundle icons when running the dev server.
-            if (command === 'serve' && id.endsWith('/Icon/Generated/index.ts')) {
-                const { outputFiles } = await build({
-                    absWorkingDir: process.cwd(),
-                    entryPoints: [id],
-                    bundle: true,
-                    write: false,
-                    platform: 'browser',
-                    jsx: 'automatic',
-                    format: 'esm',
-                    plugins: [
-                        {
-                            name: 'externals',
-                            setup(build) {
-                                build.onResolve({ namespace: 'file', filter: /.*/ }, (args) => {
-                                    if (args.kind === 'entry-point') {
-                                        return null;
-                                    }
-
-                                    // If the file is in our icons, use standard resolution.
-                                    if (args.path.startsWith('./Icon')) {
-                                        return null;
-                                    }
-
-                                    // If vendors, mark as external
-                                    return {
-                                        path: args.path,
-                                        external: true,
-                                    };
-                                });
-                            },
-                        },
-                    ],
-                });
-
-                if (!outputFiles || outputFiles.length !== 1) {
-                    return null;
-                }
-
-                return outputFiles[0].text;
-            }
-            return null;
-        },
-    };
-};
-
 export default defineConfig({
     // needs to be defined here, such that it is not undefined in the tests.
     define: {
@@ -82,7 +27,6 @@ export default defineConfig({
         react(),
         tsConfigPaths(),
         dts({ insertTypesEntry: true, rollupTypes: true, exclude: ['**/*.stories.tsx'] }),
-        bundleIconsInDevPlugin(),
     ],
     build: {
         lib: {

@@ -3,7 +3,7 @@
 import * as ToolbarPrimitive from '@radix-ui/react-toolbar';
 import { type ElementRef, forwardRef } from 'react';
 
-import { IconCaretDown16 } from '@foundation/Icon';
+import IconCaretDown16 from '@foundation/Icon/Generated/IconCaretDown16';
 import { merge } from '@utilities/merge';
 
 import { withTooltip } from './Tooltip';

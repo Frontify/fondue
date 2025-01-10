@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconDocument } from '@frontify/fondue-icons';
 import { action } from '@storybook/addon-actions';
 import { type Meta, type StoryFn } from '@storybook/react';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -26,7 +27,6 @@ import {
     useDynamicNavigationMock,
     useNavigationWithLazyLoadedItemsMock,
 } from '@components/Tree/utils';
-import IconDocument from '@foundation/Icon/Generated/IconDocument';
 
 import { Modality } from '../../types';
 
