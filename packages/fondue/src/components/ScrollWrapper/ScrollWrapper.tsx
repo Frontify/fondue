@@ -3,7 +3,8 @@
 import { useFocusRing } from '@react-aria/focus';
 import { type ReactElement, useRef } from 'react';
 
-import { FOCUS_STYLE, merge } from '../..';
+import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { merge } from '@utilities/merge';
 
 import { useScrollWrapper } from './hooks/useScrollWrapper';
 import { ScrollWrapperDirection, type ScrollWrapperProps, scrollWrapperDirections } from './types';

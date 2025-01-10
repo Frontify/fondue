@@ -3,9 +3,12 @@
 import { type PlatePlugin, createPluginFactory } from '@udecode/plate-core';
 import { type CSSProperties } from 'react';
 
+import { defaultStyles } from '@components/RichTextEditor/utils/defaultStyles';
 import { merge } from '@utilities/merge';
 
-import { MarkupElement, Plugin, type PluginProps, defaultStyles, getColumnBreakClasses } from '../../..';
+import { getColumnBreakClasses } from '../../ColumnBreakPlugin/utils/getColumnBreakClasses';
+import { MarkupElement } from '../../MarkupElement';
+import { Plugin, type PluginProps } from '../../Plugin';
 import { alignmentClassnames } from '../../helper';
 import { type TextStyleRenderElementProps, TextStyles } from '../types';
 
