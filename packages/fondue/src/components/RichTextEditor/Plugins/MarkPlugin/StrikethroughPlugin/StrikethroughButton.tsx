@@ -4,7 +4,7 @@ import { getPluginType } from '@udecode/plate-core';
 
 import { MarkToolbarButton } from '@components/RichTextEditor/Plugins/MarkPlugin/MarkToolbarButton';
 import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
-import { IconTextFormatStrikethrough } from '@foundation/Icon/Generated';
+import IconTextFormatStrikethrough from '@foundation/Icon/Generated/IconTextFormatStrikethrough';
 
 import { ButtonWrapper, IconStylingWrapper } from '../../helper';
 import { type PluginButtonProps } from '../../types';

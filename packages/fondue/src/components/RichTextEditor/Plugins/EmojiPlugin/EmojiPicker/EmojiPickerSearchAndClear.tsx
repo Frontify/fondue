@@ -2,7 +2,8 @@
 
 import { type UseEmojiPickerType } from '@udecode/plate-emoji';
 
-import { IconCross20, IconMagnifier16 } from '@foundation/Icon';
+import IconCross20 from '@foundation/Icon/Generated/IconCross20';
+import IconMagnifier16 from '@foundation/Icon/Generated/IconMagnifier16';
 
 export type EmojiPickerSearchAndClearProps = Pick<UseEmojiPickerType, 'i18n' | 'searchValue' | 'clearSearch'>;
 
