@@ -6,6 +6,7 @@ import { offset, shift } from '@floating-ui/dom';
 import { format, getYear } from 'date-fns';
 import { forwardRef, useState, type KeyboardEvent, type ReactNode } from 'react';
 import ReactDatePicker from 'react-datepicker';
+import { createPortal } from 'react-dom';
 
 import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
 import IconCaretLeft from '@foundation/Icon/Generated/IconCaretLeft';
@@ -147,6 +148,7 @@ export const DatePicker = forwardRef<ReactDatePickerRef, DatePickerProps>(
                     popperProps={{
                         strategy: 'fixed',
                     }}
+                    popperContainer={({ children }) => createPortal(children, document.body)}
                     popperModifiers={[shift({ padding: 8 }), offset(8)]}
                     renderCustomHeader={({ date, decreaseMonth, increaseMonth, increaseYear, decreaseYear }) => (
                         <div className="tw-flex tw-flex-col tw-gap-3">
