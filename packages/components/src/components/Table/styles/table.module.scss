@@ -39,12 +39,22 @@
         }
     }
 
+    &[data-font-size='small'] {
+        font-size: var(--body-size-x-small);
+    }
+
+    &[data-font-size='medium'] {
+        font-size: var(--body-size-small);
+    }
+
     &[data-full-width='false'] {
         width: auto;
     }
+
     &[data-layout='fixed'] {
         table-layout: fixed;
     }
+
     &[data-layout='auto'] {
         table-layout: auto;
         [data-truncate='true'] {
@@ -153,8 +163,6 @@
     color: var(--text-color);
 
     font-weight: 400;
-    font-size: var(--body-size-x-small);
-
     line-height: sizeToken(4);
     padding: sizeToken(2);
 

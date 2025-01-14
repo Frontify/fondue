@@ -44,6 +44,36 @@ test('should handle table layout modes', async ({ mount }) => {
     await expect(component.locator('caption')).toHaveText('Table Caption');
 });
 
+test('should handle table font size small', async ({ mount }) => {
+    const component = await mount(
+        <Table.Root aria-label="Table">
+            <Table.Caption>Table Caption</Table.Caption>
+            <Table.Header>
+                <Table.Row>
+                    <Table.HeaderCell>Name</Table.HeaderCell>
+                </Table.Row>
+            </Table.Header>
+        </Table.Root>,
+    );
+
+    await expect(component.locator('table')).toHaveAttribute('data-font-size', 'small');
+});
+
+test('should handle table font size medium', async ({ mount }) => {
+    const component = await mount(
+        <Table.Root fontSize="medium" aria-label="Table">
+            <Table.Caption>Table Caption</Table.Caption>
+            <Table.Header>
+                <Table.Row>
+                    <Table.HeaderCell>Name</Table.HeaderCell>
+                </Table.Row>
+            </Table.Header>
+        </Table.Root>,
+    );
+
+    await expect(component.locator('table')).toHaveAttribute('data-font-size', 'medium');
+});
+
 test('should handle ARIA attributes', async ({ mount }) => {
     const component = await mount(
         <Table.Root aria-label="Test Table" aria-describedby="table-desc">
