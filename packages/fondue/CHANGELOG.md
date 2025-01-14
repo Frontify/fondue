@@ -1,5 +1,13 @@
 # @frontify/fondue
 
+## 12.3.12
+
+### Patch Changes
+
+-   [#2154](https://github.com/Frontify/fondue/pull/2154) [`c9459b0`](https://github.com/Frontify/fondue/commit/c9459b08e9545495801b0506ed04d258761c0669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: specify popper container
+
+-   [#2152](https://github.com/Frontify/fondue/pull/2152) [`e06f4ae`](https://github.com/Frontify/fondue/commit/e06f4aeacf971d7efc643737027d94867920dd20) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: prevent loading barrel export of icons
+
 ## 12.3.11
 
 ### Patch Changes
