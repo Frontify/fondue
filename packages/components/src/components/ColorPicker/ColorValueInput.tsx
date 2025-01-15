@@ -156,7 +156,8 @@ export const ColorValueInput = (
                 <TextInput.Root
                     data-test-id="color-picker-value-input-alpha"
                     className={styles.valueInput}
-                    value={currentColor.alpha === undefined ? 100 : Math.trunc(currentColor.alpha * 100)}
+                    /* .toString() is a workaround for https://github.com/facebook/react/issues/9402 */
+                    value={currentColor.alpha === undefined ? 100 : Math.trunc(currentColor.alpha * 100).toString()}
                     type="number"
                     onChange={(event) => {
                         onColorChange({
