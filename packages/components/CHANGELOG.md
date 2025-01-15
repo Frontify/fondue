@@ -1,5 +1,20 @@
 # @frontify/fondue-components
 
+## 10.0.0
+
+### Patch Changes
+
+-   [#2162](https://github.com/Frontify/fondue/pull/2162) [`010074e`](https://github.com/Frontify/fondue/commit/010074e061936bcf0f37d4c7eefa1bdedf6492a5) Thanks [@syeo66](https://github.com/syeo66)! - fix(ColorPicker): allow empty alpha field
+
+-   [#2156](https://github.com/Frontify/fondue/pull/2156) [`76b51be`](https://github.com/Frontify/fondue/commit/76b51bec899b28104fc632f2b8bc9f5448e0ed23) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - feat(`Table`): add font size options
+
+-   [#2159](https://github.com/Frontify/fondue/pull/2159) [`f7b8b6b`](https://github.com/Frontify/fondue/commit/f7b8b6b5f9db37952c3740be0f37e0343441888b) Thanks [@syeo66](https://github.com/syeo66)! - fix: make ColorPicker inputs responsive based on container size
+
+-   [#2161](https://github.com/Frontify/fondue/pull/2161) [`2736fe4`](https://github.com/Frontify/fondue/commit/2736fe4a39a2c96eb25b62f5122f522ce77599e8) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - feat(`Dropdown`): add shadow and rounded option
+
+-   Updated dependencies [[`596c352`](https://github.com/Frontify/fondue/commit/596c352705547e0fe27c2b9e1b2f5079305eb776)]:
+    -   @frontify/fondue-icons@0.11.0
+
 ## 9.0.0
 
 ### Patch Changes
