@@ -179,6 +179,29 @@ export const Basic: Story = {
     ),
 };
 
+export const SmallText: Story = {
+    render: ({ ...args }) => (
+        <Table.Root {...args} fontSize="small">
+            <Table.Header>
+                <tr>
+                    <Table.HeaderCell width="100px">Name</Table.HeaderCell>
+                    <Table.HeaderCell>Role</Table.HeaderCell>
+                    <Table.HeaderCell>Last Seen</Table.HeaderCell>
+                </tr>
+            </Table.Header>
+            <Table.Body>
+                {TABLE_DATA.map((user) => (
+                    <Table.Row key={user.id}>
+                        <Table.RowCell>{user.name}</Table.RowCell>
+                        <Table.RowCell>{user.role}</Table.RowCell>
+                        <Table.RowCell>{user.lastSeen}</Table.RowCell>
+                    </Table.Row>
+                ))}
+            </Table.Body>
+        </Table.Root>
+    ),
+};
+
 export const AutoLayout: Story = {
     render: ({ ...args }) => (
         <Table.Root {...args}>

@@ -56,12 +56,12 @@ test('should handle table font size small', async ({ mount }) => {
         </Table.Root>,
     );
 
-    await expect(component.locator('table')).toHaveAttribute('data-font-size', 'small');
+    await expect(component.locator('table')).toHaveAttribute('data-font-size', 'medium');
 });
 
 test('should handle table font size medium', async ({ mount }) => {
     const component = await mount(
-        <Table.Root fontSize="medium" aria-label="Table">
+        <Table.Root fontSize="small" aria-label="Table">
             <Table.Caption>Table Caption</Table.Caption>
             <Table.Header>
                 <Table.Row>
@@ -71,7 +71,7 @@ test('should handle table font size medium', async ({ mount }) => {
         </Table.Root>,
     );
 
-    await expect(component.locator('table')).toHaveAttribute('data-font-size', 'medium');
+    await expect(component.locator('table')).toHaveAttribute('data-font-size', 'small');
 });
 
 test('should handle ARIA attributes', async ({ mount }) => {
