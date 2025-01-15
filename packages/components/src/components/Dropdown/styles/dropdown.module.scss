@@ -3,14 +3,16 @@
 @import '../../../utilities/sizeToken.module.scss';
 @import '../../../utilities/transitions.module.scss';
 @import '../../../utilities/mediaQuery.module.scss';
+@import '../../../utilities/shadow.module.scss';
 
 .content,
 .subContent {
+    @include shadow-lg;
+
     display: block;
     border-radius: var(--radius);
     background-color: var(--base-color);
     border: var(--line-width) solid var(--line-color);
-    box-shadow: var(--shadow-matrix);
     width: 250px;
     overflow: auto;
     max-height: var(--radix-dropdown-menu-content-available-height);
