@@ -3,7 +3,7 @@
 import { IconCaretRight } from '@frontify/fondue-icons';
 import * as RadixDropdown from '@radix-ui/react-dropdown-menu';
 import { Slot } from '@radix-ui/react-slot';
-import { type CSSProperties, forwardRef, type ForwardedRef, type ReactNode } from 'react';
+import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
 
 import { useProcessedChildren } from './hooks/useProcessedChildren';
 import styles from './styles/dropdown.module.scss';
@@ -65,26 +65,8 @@ export const DropdownTrigger = (
 DropdownTrigger.displayName = 'Dropdown.Trigger';
 
 export type DropdownContentProps = {
-    /**
-     * Add a shadow to the flyout
-     * @default "medium"
-     */
-    shadow?: 'none' | 'medium' | 'large';
-    /**
-     * Add rounded corners to the flyout
-     * @default "medium"
-     */
-    rounded?: 'none' | 'medium' | 'large';
-    /**
-     * Define a minimum width for the dropdown
-     * @default "250px"
-     */
-    minWidth?: string;
-    /**
-     * Define a maximum width for the dropdown
-     * @default "350px"
-     */
-    maxWidth?: string;
+    children?: ReactNode;
+    'data-test-id'?: string;
     /**
      * The vertical padding around each dropdown item.
      * @default "comfortable"
@@ -104,8 +86,6 @@ export type DropdownContentProps = {
      * Prevents the focus from being set on the trigger when the dropdown is closed.
      */
     preventTriggerFocusOnClose?: boolean;
-    children?: ReactNode;
-    'data-test-id'?: string;
 };
 
 export const DropdownContent = (
@@ -113,10 +93,6 @@ export const DropdownContent = (
         side = 'bottom',
         padding = 'comfortable',
         align = 'start',
-        rounded = 'medium',
-        shadow = 'medium',
-        minWidth = '250px',
-        maxWidth = '350px',
         children,
         preventTriggerFocusOnClose,
         'data-test-id': dataTestId = 'fondue-dropdown-content',
@@ -126,12 +102,6 @@ export const DropdownContent = (
     return (
         <RadixDropdown.Portal>
             <RadixDropdown.Content
-                style={
-                    {
-                        '--dropdown-max-width': maxWidth,
-                        '--dropdown-min-width': minWidth,
-                    } as CSSProperties
-                }
                 align={align}
                 collisionPadding={8}
                 sideOffset={8}
@@ -139,8 +109,6 @@ export const DropdownContent = (
                 className={styles.content}
                 data-padding={padding}
                 data-test-id={dataTestId}
-                data-rounded={rounded}
-                data-shadow={shadow}
                 ref={ref}
                 onCloseAutoFocus={(event) => {
                     if (preventTriggerFocusOnClose) {
@@ -197,16 +165,6 @@ DropdownSubTrigger.displayName = 'Dropdown.SubTrigger';
 
 export type DropdownSubContentProps = {
     /**
-     * Add a shadow to the flyout
-     * @default "medium"
-     */
-    shadow?: 'none' | 'medium' | 'large';
-    /**
-     * Add rounded corners to the flyout
-     * @default "medium"
-     */
-    rounded?: 'none' | 'medium' | 'large';
-    /**
      * The vertical padding around each dropdown item.
      * @default "comfortable"
      */
@@ -218,8 +176,6 @@ export type DropdownSubContentProps = {
 export const DropdownSubContent = (
     {
         padding = 'comfortable',
-        rounded = 'medium',
-        shadow = 'medium',
         children,
         'data-test-id': dataTestId = 'fondue-dropdown-subcontent',
     }: DropdownSubContentProps,
@@ -230,8 +186,6 @@ export const DropdownSubContent = (
             <RadixDropdown.SubContent
                 className={styles.subContent}
                 data-padding={padding}
-                data-rounded={rounded}
-                data-shadow={shadow}
                 data-test-id={dataTestId}
                 ref={ref}
             >
