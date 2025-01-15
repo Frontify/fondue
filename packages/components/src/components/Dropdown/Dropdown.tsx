@@ -65,8 +65,16 @@ export const DropdownTrigger = (
 DropdownTrigger.displayName = 'Dropdown.Trigger';
 
 export type DropdownContentProps = {
-    children?: ReactNode;
-    'data-test-id'?: string;
+    /**
+     * Add a shadow to the flyout
+     * @default "medium"
+     */
+    shadow?: 'none' | 'medium' | 'large';
+    /**
+     * Add rounded corners to the flyout
+     * @default "medium"
+     */
+    rounded?: 'none' | 'medium' | 'large';
     /**
      * The vertical padding around each dropdown item.
      * @default "comfortable"
@@ -86,6 +94,8 @@ export type DropdownContentProps = {
      * Prevents the focus from being set on the trigger when the dropdown is closed.
      */
     preventTriggerFocusOnClose?: boolean;
+    children?: ReactNode;
+    'data-test-id'?: string;
 };
 
 export const DropdownContent = (
@@ -93,6 +103,8 @@ export const DropdownContent = (
         side = 'bottom',
         padding = 'comfortable',
         align = 'start',
+        rounded = 'medium',
+        shadow = 'medium',
         children,
         preventTriggerFocusOnClose,
         'data-test-id': dataTestId = 'fondue-dropdown-content',
@@ -109,6 +121,8 @@ export const DropdownContent = (
                 className={styles.content}
                 data-padding={padding}
                 data-test-id={dataTestId}
+                data-rounded={rounded}
+                data-shadow={shadow}
                 ref={ref}
                 onCloseAutoFocus={(event) => {
                     if (preventTriggerFocusOnClose) {
@@ -165,6 +179,16 @@ DropdownSubTrigger.displayName = 'Dropdown.SubTrigger';
 
 export type DropdownSubContentProps = {
     /**
+     * Add a shadow to the flyout
+     * @default "medium"
+     */
+    shadow?: 'none' | 'medium' | 'large';
+    /**
+     * Add rounded corners to the flyout
+     * @default "medium"
+     */
+    rounded?: 'none' | 'medium' | 'large';
+    /**
      * The vertical padding around each dropdown item.
      * @default "comfortable"
      */
@@ -176,6 +200,8 @@ export type DropdownSubContentProps = {
 export const DropdownSubContent = (
     {
         padding = 'comfortable',
+        rounded = 'medium',
+        shadow = 'medium',
         children,
         'data-test-id': dataTestId = 'fondue-dropdown-subcontent',
     }: DropdownSubContentProps,
@@ -186,6 +212,8 @@ export const DropdownSubContent = (
             <RadixDropdown.SubContent
                 className={styles.subContent}
                 data-padding={padding}
+                data-rounded={rounded}
+                data-shadow={shadow}
                 data-test-id={dataTestId}
                 ref={ref}
             >
