@@ -3,7 +3,7 @@
 import { IconCaretRight } from '@frontify/fondue-icons';
 import * as RadixDropdown from '@radix-ui/react-dropdown-menu';
 import { Slot } from '@radix-ui/react-slot';
-import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
+import { type CSSProperties, forwardRef, type ForwardedRef, type ReactNode } from 'react';
 
 import { useProcessedChildren } from './hooks/useProcessedChildren';
 import styles from './styles/dropdown.module.scss';
@@ -76,6 +76,16 @@ export type DropdownContentProps = {
      */
     rounded?: 'none' | 'medium' | 'large';
     /**
+     * Define a minimum width for the dropdown
+     * @default "250px"
+     */
+    minWidth?: string;
+    /**
+     * Define a maximum width for the dropdown
+     * @default "350px"
+     */
+    maxWidth?: string;
+    /**
      * The vertical padding around each dropdown item.
      * @default "comfortable"
      */
@@ -105,6 +115,8 @@ export const DropdownContent = (
         align = 'start',
         rounded = 'medium',
         shadow = 'medium',
+        minWidth = '250px',
+        maxWidth = '350px',
         children,
         preventTriggerFocusOnClose,
         'data-test-id': dataTestId = 'fondue-dropdown-content',
@@ -114,6 +126,12 @@ export const DropdownContent = (
     return (
         <RadixDropdown.Portal>
             <RadixDropdown.Content
+                style={
+                    {
+                        '--dropdown-max-width': maxWidth,
+                        '--dropdown-min-width': minWidth,
+                    } as CSSProperties
+                }
                 align={align}
                 collisionPadding={8}
                 sideOffset={8}
