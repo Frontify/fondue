@@ -1,5 +1,15 @@
 # @frontify/fondue
 
+## 12.3.13
+
+### Patch Changes
+
+-   [#2160](https://github.com/Frontify/fondue/pull/2160) [`8799fa8`](https://github.com/Frontify/fondue/commit/8799fa8fcb54f3cbe9b2d00c265978bc75c4b723) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: explicitly set `pointer-events` to auto in datepicker portal
+
+-   Updated dependencies [[`010074e`](https://github.com/Frontify/fondue/commit/010074e061936bcf0f37d4c7eefa1bdedf6492a5), [`76b51be`](https://github.com/Frontify/fondue/commit/76b51bec899b28104fc632f2b8bc9f5448e0ed23), [`f7b8b6b`](https://github.com/Frontify/fondue/commit/f7b8b6b5f9db37952c3740be0f37e0343441888b), [`2736fe4`](https://github.com/Frontify/fondue/commit/2736fe4a39a2c96eb25b62f5122f522ce77599e8), [`596c352`](https://github.com/Frontify/fondue/commit/596c352705547e0fe27c2b9e1b2f5079305eb776)]:
+    -   @frontify/fondue-components@10.0.0
+    -   @frontify/fondue-icons@0.11.0
+
 ## 12.3.12
 
 ### Patch Changes
