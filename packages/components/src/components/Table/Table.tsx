@@ -25,6 +25,11 @@ type TableRootProps = {
      */
     layout?: 'auto' | 'fixed';
     /**
+     * Font size of the table content
+     * @default 'small'
+     */
+    fontSize?: 'small' | 'medium';
+    /**
      * Whether header should stick to the top when scrolling
      */
     sticky?: 'head' | 'col' | 'both';
@@ -32,10 +37,17 @@ type TableRootProps = {
 } & CommonAriaAttrs;
 
 export const TableRoot = forwardRef<HTMLTableElement, TableRootProps>(
-    ({ layout = 'auto', sticky, children, ...props }, ref) => {
+    ({ layout = 'auto', fontSize = 'medium', sticky, children, ...props }, ref) => {
         return (
             <div onKeyDown={handleKeyDown} role="grid" tabIndex={-1}>
-                <table ref={ref} className={styles.table} data-layout={layout} data-sticky={sticky} {...props}>
+                <table
+                    ref={ref}
+                    className={styles.table}
+                    data-layout={layout}
+                    data-font-size={fontSize}
+                    data-sticky={sticky}
+                    {...props}
+                >
                     {children}
                 </table>
             </div>
