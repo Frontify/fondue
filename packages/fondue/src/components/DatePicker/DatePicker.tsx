@@ -112,7 +112,7 @@ export const DatePicker = forwardRef<ReactDatePickerRef, DatePickerProps>(
         return (
             <div data-test-id={dataTestId}>
                 <ReactDatePickerComponent
-                    calendarClassName="tw-rounded-sm tw-border tw-border-line-x-strong react-datepicker-wrap"
+                    calendarClassName="tw-rounded-sm tw-border tw-border-line-x-strong react-datepicker-wrap tw-pointer-events-auto"
                     selected={value}
                     startDate={startDate}
                     endDate={endDate}
