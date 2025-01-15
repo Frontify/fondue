@@ -2,13 +2,13 @@
 
 @import '../../../utilities/sizeToken.module.scss';
 @import '../../../utilities/focusStyle.module.scss';
-@import '../../../utilities/mediaQuery.module.scss';
 
 .root {
     display: flex;
     flex-direction: column;
     gap: sizeToken(4);
     max-width: 700px;
+    container-type: inline-size;
 }
 
 .inputs {
@@ -16,7 +16,7 @@
     grid-template-columns: 1fr;
     gap: sizeToken(2);
 
-    @include sm {
+    @container (min-width: 19.5rem) {
         grid-template-columns: 100px 1fr 100px;
     }
 }
@@ -31,7 +31,7 @@
     flex-direction: column;
     gap: sizeToken(2);
 
-    @include sm {
+    @container (min-width: 19.5rem) {
         flex-direction: row;
     }
 }
@@ -50,6 +50,7 @@
 
 //remove arrows from number inputs
 .valueInput {
+
     input::-webkit-outer-spin-button,
     input::-webkit-inner-spin-button {
         -webkit-appearance: none;
