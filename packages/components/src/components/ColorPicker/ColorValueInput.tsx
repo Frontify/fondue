@@ -156,16 +156,13 @@ export const ColorValueInput = (
                 <TextInput.Root
                     data-test-id="color-picker-value-input-alpha"
                     className={styles.valueInput}
-                    value={currentColor.alpha === undefined ? '' : Math.trunc(currentColor.alpha * 100)}
+                    /* .toString() is a workaround for https://github.com/facebook/react/issues/9402 */
+                    value={currentColor.alpha === undefined ? 100 : Math.trunc(currentColor.alpha * 100).toString()}
                     type="number"
-                    onBlur={() => currentColor.alpha === undefined && onColorChange({ ...currentColor, alpha: 1 })}
                     onChange={(event) => {
                         onColorChange({
                             ...currentColor,
-                            alpha:
-                                event.target.value === ''
-                                    ? undefined
-                                    : getLimitedColorChannelValue(event.target.value, 0, 100) / 100,
+                            alpha: getLimitedColorChannelValue(event.target.value, 0, 100) / 100,
                         });
                     }}
                     aria-label="Color Opacity"
