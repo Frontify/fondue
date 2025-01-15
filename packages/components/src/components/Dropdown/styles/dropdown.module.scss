@@ -3,6 +3,7 @@
 @import '../../../utilities/sizeToken.module.scss';
 @import '../../../utilities/transitions.module.scss';
 @import '../../../utilities/mediaQuery.module.scss';
+@import '../../../utilities/shadow.module.scss';
 
 .content,
 .subContent {
@@ -29,10 +30,26 @@
         padding: sizeToken(3) sizeToken(5);
     }
 
+    &[data-rounded='medium'] {
+        border-radius: var(--radius);
+    }
+
+    &[data-rounded='large'] {
+        border-radius: var(--radius-large);
+    }
+
+    &[data-shadow='medium'] {
+        @include shadow-md;
+    }
+
+    &[data-shadow='large'] {
+        @include shadow-lg;
+    }
+
     @include sm {
         width: auto;
-        min-width: 250px;
-        max-width: 350px;
+        min-width: var(--dropdown-min-width);
+        max-width: var(--dropdown-max-width);
     }
 }
 
