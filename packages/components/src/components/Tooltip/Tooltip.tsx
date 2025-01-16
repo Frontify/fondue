@@ -50,7 +50,7 @@ export const TooltipTrigger = (
     ref: ForwardedRef<HTMLButtonElement>,
 ) => {
     return (
-        <RadixTooltip.Trigger data-test-id={dataTestId} asChild={asChild} ref={ref}>
+        <RadixTooltip.Trigger data-test-id={dataTestId} type="button" asChild={asChild} ref={ref}>
             {children}
         </RadixTooltip.Trigger>
     );
