@@ -326,3 +326,20 @@ test('should trigger callback on open state change', async ({ mount }) => {
     await component.hover();
     expect(onOpenChange.callCount).toBe(1);
 });
+
+test('should not submit form when clicking TooltipTrigger', async ({ mount, page }) => {
+    const onSubmit = sinon.spy();
+    const component = await mount(
+        <form onSubmit={onSubmit}>
+            <Tooltip.Root>
+                <Tooltip.Trigger data-test-id={TOOLTIP_TRIGGER_TEST_ID}>Click me in form</Tooltip.Trigger>
+                <Tooltip.Content data-test-id={TOOLTIP_CONTENT_TEST_ID}>{TOOLTIP_TEXT}</Tooltip.Content>
+            </Tooltip.Root>
+        </form>,
+    );
+
+    await expect(component).toBeVisible();
+    const trigger = page.getByTestId(TOOLTIP_TRIGGER_TEST_ID);
+    await trigger.click();
+    expect(onSubmit.callCount).toBe(0);
+});
