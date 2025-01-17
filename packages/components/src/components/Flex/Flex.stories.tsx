@@ -26,7 +26,7 @@ const meta: Meta<typeof Flex> = {
         },
     },
     args: {
-        gap: '20px',
+        gap: 4,
         direction: 'column',
     },
 };
@@ -36,14 +36,14 @@ export const Default: Story = {
     render: (args) => {
         return (
             <Flex {...args}>
-                <Flex gapX="10px">
+                <Flex gapX={3}>
                     <DecorativeBox />
                     <DecorativeBox />
                     <DecorativeBox />
                     <DecorativeBox />
                     <DecorativeBox />
                 </Flex>
-                <Flex gapX="10px">
+                <Flex gapX={3}>
                     <DecorativeBox />
                     <DecorativeBox />
                     <DecorativeBox />
@@ -59,7 +59,7 @@ export const Nested: Story = {
     render: (args) => {
         return (
             <Flex {...args}>
-                <Flex gapX="10px">
+                <Flex gapX={3}>
                     <DecorativeBox />
                     <DecorativeBox />
                     <DecorativeBox />
@@ -79,7 +79,7 @@ export const Nested: Story = {
                     <DecorativeBox />
                     <DecorativeBox />
                     <DecorativeBox />
-                    <Flex gapX="10px">
+                    <Flex gapX={3}>
                         <DecorativeBox />
                         <DecorativeBox />
                         <DecorativeBox />

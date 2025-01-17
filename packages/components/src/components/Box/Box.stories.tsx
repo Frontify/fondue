@@ -17,8 +17,8 @@ const meta: Meta<typeof Box> = {
         },
     },
     args: {
-        width: '100px',
-        height: '100px',
+        width: 25,
+        height: 25,
     },
 };
 export default meta;

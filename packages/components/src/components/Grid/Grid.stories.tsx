@@ -27,7 +27,7 @@ const meta: Meta<typeof Grid> = {
     },
     args: {
         columns: 'repeat(3, 1fr)',
-        gap: '16px',
+        gap: 4,
     },
 };
 export default meta;
