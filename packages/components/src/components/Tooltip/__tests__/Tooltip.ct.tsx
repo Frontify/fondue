@@ -3,8 +3,9 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import * as sinon from 'sinon';
 
-import { Tooltip } from '../Tooltip';
 import { Button } from '#/components/Button/Button';
+
+import { Tooltip } from '../Tooltip';
 
 const TOOLTIP_TRIGGER_TEST_ID = 'fondue-tooltip-trigger';
 const TOOLTIP_CONTENT_TEST_ID = 'fondue-tooltip-content';
