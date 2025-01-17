@@ -356,7 +356,7 @@ test('should submit form when clicking TooltipTrigger with a Button type submit 
     const component = await mount(
         <form onSubmit={onSubmit}>
             <Tooltip.Root>
-                <Tooltip.Trigger>
+                <Tooltip.Trigger asChild>
                     <Button data-test-id={BUTTON_TEST_ID} type="submit">
                         Click me in form
                     </Button>
@@ -367,7 +367,7 @@ test('should submit form when clicking TooltipTrigger with a Button type submit 
     );
 
     await expect(component).toBeVisible();
-    const trigger = page.getByTestId(TOOLTIP_TRIGGER_TEST_ID);
+    const trigger = page.getByTestId(BUTTON_TEST_ID);
     await trigger.click();
     expect(onSubmit.callCount).toBe(1);
 });
