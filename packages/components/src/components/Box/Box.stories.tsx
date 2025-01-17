@@ -33,10 +33,10 @@ export const Default: Story = {
     },
 };
 
-export const WithSizeToken: Story = {
+export const PixelValues: Story = {
     args: {
-        width: 25,
-        height: 25,
+        width: '100px',
+        height: '100px',
     },
     render: (args) => {
         return (

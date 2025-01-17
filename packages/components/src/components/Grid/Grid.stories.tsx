@@ -14,6 +14,7 @@ const DecorativeBox = (props: ComponentProps<typeof Box>) => (
         <DecorativeContent />
     </Box>
 );
+DecorativeBox.displayName = 'DecorativeBox';
 
 type Story = StoryObj<typeof Grid>;
 const meta: Meta<typeof Grid> = {

@@ -14,6 +14,7 @@ const DecorativeBox = (props: ComponentProps<typeof Box>) => (
         <DecorativeContent />
     </Box>
 );
+DecorativeBox.displayName = 'DecorativeBox';
 
 type Story = StoryObj<typeof Flex>;
 const meta: Meta<typeof Flex> = {
@@ -55,6 +56,32 @@ export const Default: Story = {
     },
 };
 
+export const PixelValues: Story = {
+    render: (args) => {
+        return (
+            <Flex {...args}>
+                <Flex gapX="12px">
+                    <DecorativeBox />
+                    <DecorativeBox />
+                    <DecorativeBox />
+                    <DecorativeBox />
+                    <DecorativeBox />
+                </Flex>
+                <Flex gapX="12px">
+                    <DecorativeBox />
+                    <DecorativeBox />
+                    <DecorativeBox />
+                    <DecorativeBox />
+                    <DecorativeBox />
+                </Flex>
+            </Flex>
+        );
+    },
+    args: {
+        gap: '16px',
+    },
+};
+
 export const Nested: Story = {
     render: (args) => {
         return (
@@ -73,7 +100,7 @@ export const Nested: Story = {
                         <DecorativeBox />
                     </Flex>
                 </Flex>
-                <Flex p="20px">
+                <Flex p={5}>
                     <DecorativeBox />
                     <DecorativeBox />
                     <DecorativeBox />
@@ -104,7 +131,7 @@ export const Responsive: Story = {
             >
                 <Flex
                     gapX={{ sm: '10px' }}
-                    gapY={{ base: '10px', sm: '0px' }}
+                    gapY={{ base: '10px', sm: 0 }}
                     direction={{
                         base: 'column',
                         sm: 'row',
@@ -119,7 +146,7 @@ export const Responsive: Story = {
 
                 <Flex
                     gapX={{ sm: '10px' }}
-                    gapY={{ base: '10px', sm: '0px' }}
+                    gapY={{ base: '10px', sm: 0 }}
                     direction={{
                         base: 'column',
                         sm: 'row',
