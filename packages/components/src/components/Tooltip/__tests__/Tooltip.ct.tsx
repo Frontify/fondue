@@ -3,12 +3,16 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import * as sinon from 'sinon';
 
+import { Button } from '#/components/Button/Button';
+
 import { Tooltip } from '../Tooltip';
 
 const TOOLTIP_TRIGGER_TEST_ID = 'fondue-tooltip-trigger';
 const TOOLTIP_CONTENT_TEST_ID = 'fondue-tooltip-content';
 const TOOLTIP_TEXT =
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.';
+
+const BUTTON_TEST_ID = 'fondue-button';
 
 test('should render without error', async ({ mount }) => {
     const component = await mount(
@@ -325,4 +329,45 @@ test('should trigger callback on open state change', async ({ mount }) => {
     expect(onOpenChange.callCount).toBe(0);
     await component.hover();
     expect(onOpenChange.callCount).toBe(1);
+});
+
+test('should not submit form when clicking TooltipTrigger', async ({ mount, page }) => {
+    const onSubmit = sinon.spy();
+    const component = await mount(
+        <form onSubmit={onSubmit}>
+            <Tooltip.Root>
+                <Tooltip.Trigger data-test-id={TOOLTIP_TRIGGER_TEST_ID}>Click me in form</Tooltip.Trigger>
+                <Tooltip.Content data-test-id={TOOLTIP_CONTENT_TEST_ID}>{TOOLTIP_TEXT}</Tooltip.Content>
+            </Tooltip.Root>
+        </form>,
+    );
+
+    await expect(component).toBeVisible();
+    const trigger = page.getByTestId(TOOLTIP_TRIGGER_TEST_ID);
+    await trigger.click();
+    expect(onSubmit.callCount).toBe(0);
+});
+
+test('should submit form when clicking TooltipTrigger with a Button type submit as trigger', async ({
+    mount,
+    page,
+}) => {
+    const onSubmit = sinon.spy();
+    const component = await mount(
+        <form onSubmit={onSubmit}>
+            <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                    <Button data-test-id={BUTTON_TEST_ID} type="submit">
+                        Click me in form
+                    </Button>
+                </Tooltip.Trigger>
+                <Tooltip.Content data-test-id={TOOLTIP_CONTENT_TEST_ID}>{TOOLTIP_TEXT}</Tooltip.Content>
+            </Tooltip.Root>
+        </form>,
+    );
+
+    await expect(component).toBeVisible();
+    const trigger = page.getByTestId(BUTTON_TEST_ID);
+    await trigger.click();
+    expect(onSubmit.callCount).toBe(1);
 });
