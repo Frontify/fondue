@@ -1,0 +1,1 @@
+import{r as c}from"./index-BEEaWAwe.js";const s=(e,r=10)=>{const u=c.useRef();return c.useCallback((...n)=>{clearTimeout(u.current),u.current=setTimeout(()=>e.apply(void 0,n),r)},[e,r])};export{s as u};
