@@ -21,7 +21,7 @@ export type SelectComponentProps = {
     /**
      * Callback function that is called when an item is selected.
      */
-    onSelect?: (selectedValue: string | null) => void;
+    onSelect?: (selectedValue?: string) => void;
     /**
      * The active value in the select component. This is used to control the select externally.
      */
