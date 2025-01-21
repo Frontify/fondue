@@ -18,7 +18,7 @@ export type ComboboxProps = {
     /**
      * Callback function that is called when an item is selected.
      */
-    onSelect?: (selectedValue: string) => void;
+    onSelect?: (selectedValue: string | null) => void;
     /**
      * The active value in the combobox component. This is used to control the combobox externally.
      */
@@ -91,7 +91,7 @@ export const SelectCombobox = (
         defaultSelectedItem: getItemByValue(defaultValue),
         defaultHighlightedIndex: 0,
         onSelectedItemChange: ({ selectedItem }) => {
-            onSelect && onSelect(selectedItem.value);
+            onSelect?.(selectedItem?.value ?? null);
         },
         onInputValueChange: ({ inputValue }) => {
             setFilterText(inputValue);

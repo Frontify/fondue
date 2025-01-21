@@ -253,8 +253,14 @@ test('should not open menu when disabled', async ({ mount, page }) => {
 });
 
 test('should allow to clear', async ({ mount, page }) => {
+    const onSelectChange = sinon.spy();
     const component = await mount(
-        <Select aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
+        <Select
+            onSelect={onSelectChange}
+            data-test-id={SELECT_TEST_ID}
+            aria-label="test"
+            placeholder={PLACEHOLDER_TEXT}
+        >
             <Select.Slot name="left">
                 <div data-test-id={SLOT_LEFT_TEST_ID}>Left Slot</div>
             </Select.Slot>
@@ -277,12 +283,16 @@ test('should allow to clear', async ({ mount, page }) => {
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
 
+    expect(onSelectChange.callCount).toBe(1);
+    expect(onSelectChange.calledWith('test2')).toBe(true);
     await expect(component).toContainText(ITEM_TEXT2);
 
     await page.click(`[data-test-id=${SLOT_CLEAR_TEST_ID}]`);
 
     await expect(component).not.toContainText(ITEM_TEXT2);
     await expect(component).toContainText(PLACEHOLDER_TEXT);
+    expect(onSelectChange.callCount).toBe(2);
+    expect(onSelectChange.calledWith(null)).toBe(true);
 });
 
 test('should render left slot', async ({ mount, page }) => {
