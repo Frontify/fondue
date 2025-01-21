@@ -42,8 +42,8 @@
     @include transition-colors;
     display: flex;
     align-items: center;
-    gap: sizeToken(1.5);
-    margin: sizeToken(1);
+    gap: sizeToken(1);
+    margin: sizeToken(2);
     border-radius: sizeToken(1);
     cursor: pointer;
     text-align: start;
