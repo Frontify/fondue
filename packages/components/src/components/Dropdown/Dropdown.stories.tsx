@@ -369,27 +369,6 @@ export const RightSide: Story = {
     ),
 };
 
-export const CompactPadding: Story = {
-    render: ({ ...args }) => (
-        <Dropdown.Root {...args}>
-            <Dropdown.Trigger>
-                <Button>Trigger</Button>
-            </Dropdown.Trigger>
-            <Dropdown.Content padding="compact" side="right">
-                <Dropdown.Item onSelect={() => {}}>
-                    <p>Item 1</p>
-                    <p>Item 1 description</p>
-                </Dropdown.Item>
-                <Dropdown.Item onSelect={() => {}}>
-                    <p>Item 2</p>
-                    <p>Item 2 description</p>
-                </Dropdown.Item>
-                <Dropdown.Item onSelect={() => {}}>Item 3</Dropdown.Item>
-            </Dropdown.Content>
-        </Dropdown.Root>
-    ),
-};
-
 export const WithTooltip: Story = {
     render: ({ ...args }) => (
         <Dropdown.Root {...args}>

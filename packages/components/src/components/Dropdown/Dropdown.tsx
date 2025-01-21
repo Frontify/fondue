@@ -68,11 +68,6 @@ export type DropdownContentProps = {
     children?: ReactNode;
     'data-test-id'?: string;
     /**
-     * The vertical padding around each dropdown item.
-     * @default "comfortable"
-     */
-    padding?: 'comfortable' | 'compact';
-    /**
      * Defines the alignment of the dropdown.
      * @default "start"
      */
@@ -91,7 +86,6 @@ export type DropdownContentProps = {
 export const DropdownContent = (
     {
         side = 'bottom',
-        padding = 'comfortable',
         align = 'start',
         children,
         preventTriggerFocusOnClose,
@@ -107,7 +101,6 @@ export const DropdownContent = (
                 sideOffset={8}
                 side={side}
                 className={styles.content}
-                data-padding={padding}
                 data-test-id={dataTestId}
                 ref={ref}
                 onCloseAutoFocus={(event) => {
@@ -164,31 +157,17 @@ export const DropdownSubTrigger = (
 DropdownSubTrigger.displayName = 'Dropdown.SubTrigger';
 
 export type DropdownSubContentProps = {
-    /**
-     * The vertical padding around each dropdown item.
-     * @default "comfortable"
-     */
-    padding?: 'comfortable' | 'compact';
     children: ReactNode;
     'data-test-id'?: string;
 };
 
 export const DropdownSubContent = (
-    {
-        padding = 'comfortable',
-        children,
-        'data-test-id': dataTestId = 'fondue-dropdown-subcontent',
-    }: DropdownSubContentProps,
+    { children, 'data-test-id': dataTestId = 'fondue-dropdown-subcontent' }: DropdownSubContentProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
         <RadixDropdown.Portal>
-            <RadixDropdown.SubContent
-                className={styles.subContent}
-                data-padding={padding}
-                data-test-id={dataTestId}
-                ref={ref}
-            >
+            <RadixDropdown.SubContent className={styles.subContent} data-test-id={dataTestId} ref={ref}>
                 {children}
             </RadixDropdown.SubContent>
         </RadixDropdown.Portal>

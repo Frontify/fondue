@@ -14,6 +14,7 @@ const DecorativeBox = (props: ComponentProps<typeof Box>) => (
         <DecorativeContent />
     </Box>
 );
+DecorativeBox.displayName = 'DecorativeBox';
 
 type Story = StoryObj<typeof Grid>;
 const meta: Meta<typeof Grid> = {
@@ -27,7 +28,7 @@ const meta: Meta<typeof Grid> = {
     },
     args: {
         columns: 'repeat(3, 1fr)',
-        gap: '16px',
+        gap: 4,
     },
 };
 export default meta;
