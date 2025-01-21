@@ -1,5 +1,17 @@
 # @frontify/fondue-components
 
+## 10.0.1
+
+### Patch Changes
+
+-   [#2166](https://github.com/Frontify/fondue/pull/2166) [`8616752`](https://github.com/Frontify/fondue/commit/86167527bdb24aed9751f05bc156d23bef350896) Thanks [@danialdezfouli](https://github.com/danialdezfouli)! - feat(`Tooltip`): add button type property to prevent form submission
+
+-   [#2164](https://github.com/Frontify/fondue/pull/2164) [`52d65e4`](https://github.com/Frontify/fondue/commit/52d65e45833216fd2bcca1a5645dd2c2427f7f2e) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - refactor(`Dropdown`): update shadow
+
+-   [#2169](https://github.com/Frontify/fondue/pull/2169) [`8dafc15`](https://github.com/Frontify/fondue/commit/8dafc150b9ca1c8ec50f1cbdd5ed7398bfb1a01d) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: catch null value in the `onSelect` callback for the Select component
+
+-   [#2168](https://github.com/Frontify/fondue/pull/2168) [`57d7a63`](https://github.com/Frontify/fondue/commit/57d7a632472ba2afe937a643cac5181788523640) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - feat(Dropdown): enforce compact paddings
+
 ## 10.0.0
 
 ### Patch Changes
