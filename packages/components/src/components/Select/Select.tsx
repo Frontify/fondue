@@ -25,7 +25,7 @@ export type SelectComponentProps = {
     /**
      * The active value in the select component. This is used to control the select externally.
      */
-    value?: string;
+    value?: string | null;
     /**
      * The default value of the select component. Used for uncontrolled usages.
      */

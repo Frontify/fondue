@@ -240,7 +240,7 @@ export const ExternallyControlled: Story = {
         },
     ],
     render: (args) => {
-        const [activeItem, setActiveItem] = useState<string>();
+        const [activeItem, setActiveItem] = useState<string | null>();
         return (
             <>
                 <Select

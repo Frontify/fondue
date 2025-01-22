@@ -22,7 +22,7 @@ export type ComboboxProps = {
     /**
      * The active value in the combobox component. This is used to control the combobox externally.
      */
-    value?: string;
+    value?: string | null;
     /**
      * The default value of the combobox component. Used for uncontrolled usages.
      */

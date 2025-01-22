@@ -93,7 +93,7 @@ export const useSelectData = (children: ReactNode) => {
     );
 
     const getItemByValue = useCallback(
-        (value?: string) => (value ? itemValues.find((item) => item.value === value) : undefined),
+        (value?: string | null) => (value ? itemValues.find((item) => item.value === value) : undefined),
         [itemValues],
     );
 
