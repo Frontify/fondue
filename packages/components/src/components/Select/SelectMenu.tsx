@@ -42,6 +42,12 @@ export type SelectMenuProps = {
     align: 'start' | 'center' | 'end';
     /**
      * @internal
+     * Defines the preferred side of the select. It will not be respected if there are collisions with the viewport.
+     * @default "bottom"
+     */
+    side: 'left' | 'right' | 'bottom' | 'top';
+    /**
+     * @internal
      * The type of the menu.
      */
     selectedItem?: {
@@ -62,6 +68,7 @@ export const SelectMenu = ({
     children,
     filterText,
     align,
+    side,
     selectedItem,
     hasInteractedSinceOpening,
 }: SelectMenuProps) => {
@@ -73,6 +80,7 @@ export const SelectMenu = ({
         <RadixPopover.Portal>
             <RadixPopover.Content
                 align={align}
+                side={side}
                 collisionPadding={16}
                 onOpenAutoFocus={handleOnOpenAutoFocus}
                 className={styles.portal}

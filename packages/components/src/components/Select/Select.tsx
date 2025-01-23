@@ -49,6 +49,11 @@ export type SelectComponentProps = {
      */
     alignMenu?: 'start' | 'center' | 'end';
     /**
+     * Defines the preferred side of the select. It will not be respected if there are collisions with the viewport.
+     * @default "bottom"
+     */
+    side?: 'left' | 'right' | 'bottom' | 'top';
+    /**
      * The aria label of the select component.
      */
     'aria-label'?: string;
@@ -68,6 +73,7 @@ export const SelectInput = (
         status = 'neutral',
         disabled,
         alignMenu = 'start',
+        side = 'bottom',
         'aria-label': ariaLabel,
         'data-test-id': dataTestId = 'fondue-select',
     }: SelectComponentProps,
@@ -165,6 +171,7 @@ export const SelectInput = (
 
             <SelectMenu
                 align={alignMenu}
+                side={side}
                 highlightedIndex={highlightedIndex}
                 getMenuProps={getMenuProps}
                 getItemProps={getItemProps}
