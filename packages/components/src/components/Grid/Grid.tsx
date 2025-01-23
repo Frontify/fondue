@@ -58,19 +58,22 @@ export type GridProps = LayoutComponentProps & {
 } & CommonAriaProps;
 
 export const Grid = forwardRef<HTMLDivElement, GridProps>(
-    ({
-        as: Component = 'div',
-        'data-test-id': dataTestId = 'fondue-grid',
-        children,
-        role,
-        'aria-label': ariaLabel,
-        'aria-hidden': ariaHidden,
-        'aria-describedby': ariaDescribedBy,
-        'aria-labelledby': ariaLabelledBy,
-        'aria-expanded': ariaExpanded,
-        'aria-haspopup': ariaHasPopup,
-        ...props
-    }: GridProps) => {
+    (
+        {
+            as: Component = 'div',
+            'data-test-id': dataTestId = 'fondue-grid',
+            children,
+            role,
+            'aria-label': ariaLabel,
+            'aria-hidden': ariaHidden,
+            'aria-describedby': ariaDescribedBy,
+            'aria-labelledby': ariaLabelledBy,
+            'aria-expanded': ariaExpanded,
+            'aria-haspopup': ariaHasPopup,
+            ...props
+        },
+        ref,
+    ) => {
         return (
             <Component
                 className={styles.root}
@@ -83,6 +86,7 @@ export const Grid = forwardRef<HTMLDivElement, GridProps>(
                 aria-labelledby={ariaLabelledBy}
                 aria-expanded={ariaExpanded}
                 aria-haspopup={ariaHasPopup}
+                ref={ref}
             >
                 {children}
             </Component>

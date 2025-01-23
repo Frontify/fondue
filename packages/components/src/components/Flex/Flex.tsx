@@ -67,8 +67,8 @@ export const Flex = forwardRef<HTMLDivElement, FlexProps>(
             'aria-expanded': ariaExpanded,
             'aria-haspopup': ariaHasPopup,
             ...props
-        }: FlexProps,
-        forwardedRef: ForwardedRef<HTMLDivElement>,
+        },
+        ref,
     ) => {
         return (
             <Component
@@ -82,7 +82,7 @@ export const Flex = forwardRef<HTMLDivElement, FlexProps>(
                 aria-labelledby={ariaLabelledBy}
                 aria-expanded={ariaExpanded}
                 aria-haspopup={ariaHasPopup}
-                ref={forwardedRef}
+                ref={ref}
             >
                 {children}
             </Component>
