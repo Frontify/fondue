@@ -44,7 +44,11 @@ export type ComboboxProps = {
      * The alignment of the menu.
      * @default "start"
      */
-    alignMenu?: 'start' | 'center' | 'end';
+    alignMenu?: 'start' | 'center' | 'end' /**
+     * Defines the preferred side of the select. It will not be respected if there are collisions with the viewport.
+     * @default "bottom"
+     */;
+    side?: 'left' | 'right' | 'bottom' | 'top';
     /**
      * The aria label of the combobox component.
      */
@@ -67,6 +71,7 @@ export const SelectCombobox = (
         'aria-label': ariaLabel,
         'data-test-id': dataTestId = 'fondue-select-combobox',
         alignMenu = 'start',
+        side = 'bottom',
     }: ComboboxProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
@@ -198,6 +203,7 @@ export const SelectCombobox = (
 
             <SelectMenu
                 align={alignMenu}
+                side={side}
                 highlightedIndex={highlightedIndex}
                 filterText={filterText}
                 getMenuProps={getMenuProps}
