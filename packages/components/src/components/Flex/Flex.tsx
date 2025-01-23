@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ForwardedRef, forwardRef, type ReactNode } from 'react';
+import { forwardRef, type ReactNode } from 'react';
 
 import { type CommonAriaProps } from '#/helpers/aria';
 import { type Responsive, type SizeValue, type LayoutComponentProps } from '#/helpers/layout';
