@@ -77,6 +77,7 @@ export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(
             'data-test-id': dataTestId = 'fondue-button',
             className = '',
             onPress = () => {},
+            hugWidth = true,
             ...props
         }: ButtonProps,
         ref: ForwardedRef<HTMLButtonElement | null>,
@@ -88,7 +89,7 @@ export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(
                 form={form}
                 data-test-id={dataTestId}
                 className={cn(
-                    buttonStyles({ size, variant, ...props }),
+                    buttonStyles({ size, variant, hugWidth, ...props }),
                     textStyles({ variant, ...props }),
                     iconStyles({ variant, ...props }),
                     className,
