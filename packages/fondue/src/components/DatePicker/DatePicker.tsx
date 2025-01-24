@@ -51,6 +51,7 @@ export type DatePickerProps = {
     children?: ReactNode;
     hasPopperArrow?: boolean;
     preventOpenOnFocus?: boolean;
+    inline?: boolean;
     filterDate?: (date: Date) => boolean;
     onOpen?: () => void;
     onClose?: () => void;
@@ -91,6 +92,7 @@ export const DatePicker = forwardRef<ReactDatePickerRef, DatePickerProps>(
             children,
             hasPopperArrow = true,
             preventOpenOnFocus = false,
+            inline = false,
             filterDate = () => true,
             variant = 'single',
             'data-test-id': dataTestId = 'date-picker',
@@ -112,7 +114,8 @@ export const DatePicker = forwardRef<ReactDatePickerRef, DatePickerProps>(
         return (
             <div data-test-id={dataTestId}>
                 <ReactDatePickerComponent
-                    calendarClassName="tw-rounded-sm tw-border tw-border-line-x-strong react-datepicker-wrap tw-pointer-events-auto"
+                    calendarClassName={`tw-rounded-sm tw-border tw-border-line-x-strong react-datepicker-wrap tw-pointer-events-auto${inline ? ' react-datepicker-inline' : ''}`}
+                    inline={inline}
                     selected={value}
                     startDate={startDate}
                     endDate={endDate}
