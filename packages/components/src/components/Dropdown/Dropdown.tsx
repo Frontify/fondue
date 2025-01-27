@@ -11,6 +11,11 @@ import styles from './styles/dropdown.module.scss';
 export type DropdownRootProps = {
     children?: ReactNode;
     /**
+     * When set to true, interaction with outside elements will be disabled and only menu content will be visible to screen readers.
+     * @default false
+     */
+    modal?: boolean;
+    /**
      * Controls the open state of the dropdown.
      */
     open?: boolean;
@@ -25,12 +30,12 @@ export type DropdownRootProps = {
 export const DropdownRoot = ({
     children,
     open,
+    modal = false,
     onOpenChange,
-
     'data-test-id': dataTestId = 'fondue-dropdown',
 }: DropdownRootProps) => {
     return (
-        <RadixDropdown.Root open={open} onOpenChange={onOpenChange} data-test-id={dataTestId}>
+        <RadixDropdown.Root open={open} modal={modal} onOpenChange={onOpenChange} data-test-id={dataTestId}>
             {children}
         </RadixDropdown.Root>
     );
