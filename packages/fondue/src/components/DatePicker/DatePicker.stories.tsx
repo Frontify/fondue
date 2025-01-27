@@ -7,7 +7,6 @@ import { useRef, useState } from 'react';
 import { Badge, BadgeEmphasis, BadgeStyle } from '@components/Badge';
 import { Button } from '@components/Button';
 import { FormControl } from '@components/FormControl';
-import { SegmentedControls } from '@components/SegmentedControls';
 import IconCalendar16 from '@foundation/Icon/Generated/IconCalendar16';
 import { Validation } from '@utilities/validation';
 
@@ -61,31 +60,6 @@ const TemplateWithFormControl: StoryFn<DatePickerProps> = (args: DatePickerProps
                         />
                     </FormControl>
                 </div>
-                <div className="tw-px-5 tw-py-3 tw-flex tw-flex-col tw-gap-3">
-                    <FormControl>
-                        <DatePicker
-                            {...args}
-                            variant="single"
-                            startDate={null}
-                            endDate={null}
-                            value={selectedDate as Date}
-                            onChange={(date) => setSelectedDate(date)}
-                        />
-                    </FormControl>
-                </div>
-            </div>
-            <div className="tw-px-5 tw-py-3 tw-flex tw-flex-col tw-gap-3">
-                <FormControl>
-                    <SegmentedControls
-                        activeItemId="a"
-                        items={[
-                            { id: 'a', value: 'abc' },
-                            { id: 'b', value: 'def' },
-                            { id: 'c', value: 'ghi' },
-                        ]}
-                        onChange={() => {}}
-                    />
-                </FormControl>
             </div>
         </div>
     );
@@ -199,3 +173,24 @@ const TemplateDateRange: StoryFn<DatePickerProps> = () => {
 };
 
 export const DateRange = TemplateDateRange.bind({});
+
+const WithWrapperDiv: StoryFn<DatePickerProps> = (args: DatePickerProps) => {
+    const [selectedDate, setSelectedDate] = useState<Date | null>();
+
+    return (
+        <div className="tw-w-[500px]">
+            <DatePicker
+                {...args}
+                variant="single"
+                startDate={null}
+                endDate={null}
+                value={selectedDate as Date}
+                onChange={(date) => setSelectedDate(date)}
+            />
+        </div>
+    );
+};
+export const Inline = WithWrapperDiv.bind({});
+Inline.args = {
+    inline: true,
+};
