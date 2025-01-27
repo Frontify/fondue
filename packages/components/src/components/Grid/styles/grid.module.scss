@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-@import '../../../helpers/layout.module.scss';
+@use "sass:list";
+@use '../../../helpers/layout.module.scss';
 
 $properties: (
     display,
@@ -14,19 +15,19 @@ $properties: (
     justify-items
 );
 
-$allProperties: join($properties, $layoutProperties);
+$allProperties: list.join($properties, layout.$layoutProperties);
 
 .root {
-    @include responsive-properties($allProperties);
+    @include layout.responsive-properties($allProperties);
 
     // Default values
     @each $property in $allProperties {
-        @include responsive-default-value($property, initial);
+        @include layout.responsive-default-value($property, initial);
     }
 
-    @include responsive-default-value(display, grid);
-    @include responsive-default-value(align-items, stretch);
-    @include responsive-default-value(justify-items, start);
-    @include responsive-default-value(grid-template-columns, minmax(0, 1fr));
-    @include responsive-default-value(grid-template-rows, none);
+    @include layout.responsive-default-value(display, grid);
+    @include layout.responsive-default-value(align-items, stretch);
+    @include layout.responsive-default-value(justify-items, start);
+    @include layout.responsive-default-value(grid-template-columns, minmax(0, 1fr));
+    @include layout.responsive-default-value(grid-template-rows, none);
 }

@@ -1,13 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-@import '../../../utilities/sizeToken.module.scss';
-@import '../../../utilities/focusStyle.module.scss';
-@import '../../../utilities/transitions.module.scss';
+@use '../../../utilities/sizeToken.module.scss';
+@use '../../../utilities/focusStyle.module.scss';
+@use '../../../utilities/transitions.module.scss';
 
 .root {
-    @include focus-outline;
-    @include transition-colors;
-
     position: relative;
     container-type: size;
     border-radius: 9999px;
@@ -15,23 +12,28 @@
     background-color: var(--box-neutral-color);
     border: 1px solid var(--line-color-x-strong);
 
+    & {
+        @include focusStyle.focus-outline;
+        @include transitions.transition-colors;
+    }
+
     &:enabled:hover {
         background-color: var(--box-neutral-color-hover);
     }
 
     &.small {
-        width: sizeToken(6);
-        height: sizeToken(3);
+        width: sizeToken.get(6);
+        height: sizeToken.get(3);
     }
 
     &.medium {
-        width: sizeToken(7.5);
-        height: sizeToken(4);
+        width: sizeToken.get(7.5);
+        height: sizeToken.get(4);
     }
 
     &.large {
-        width: sizeToken(9);
-        height: sizeToken(5);
+        width: sizeToken.get(9);
+        height: sizeToken.get(5);
     }
 
     &[data-state='checked'] {
@@ -53,8 +55,6 @@
 }
 
 .thumb {
-    @include transition-transform;
-
     display: block;
     transform: translate(-1px, -1px);
     will-change: transform;
@@ -66,6 +66,10 @@
     background-color: var(--base-color);
     border-radius: 9999px;
     border: 1px solid var(--box-neutral-inverse-color);
+
+    & {
+        @include transitions.transition-transform;
+    }
 
     &[data-state='checked'] {
         transform: translate(calc(100cqw - 100% + 1px), -1px);

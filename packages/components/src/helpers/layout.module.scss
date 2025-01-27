@@ -1,3 +1,6 @@
+@use "sass:list";
+@use "sass:map";
+@use "sass:meta";
 $screens: (
     base: 0px,
     xs: 390px,
@@ -75,144 +78,144 @@ $layoutProperties: (
             }
         }
 
-        @if (index($additional-properties, 'position')) {
+        @if (list.index($additional-properties, 'position')) {
             position: var(--#{$breakpoint}-position-computed);
         }
 
-        @if (index($additional-properties, 'overflow')) {
+        @if (list.index($additional-properties, 'overflow')) {
             overflow: var(--#{$breakpoint}-overflow-computed);
         }
-        @if (index($additional-properties, 'overflow-x')) {
+        @if (list.index($additional-properties, 'overflow-x')) {
             overflow-x: var(--#{$breakpoint}-overflow-x-computed);
         }
-        @if (index($additional-properties, 'overflow-y')) {
+        @if (list.index($additional-properties, 'overflow-y')) {
             overflow-y: var(--#{$breakpoint}-overflow-y-computed);
         }
 
-        @if (index($additional-properties, 'top')) {
+        @if (list.index($additional-properties, 'top')) {
             top: var(--#{$breakpoint}-top-computed);
         }
-        @if (index($additional-properties, 'right')) {
+        @if (list.index($additional-properties, 'right')) {
             right: var(--#{$breakpoint}-right-computed);
         }
-        @if (index($additional-properties, 'bottom')) {
+        @if (list.index($additional-properties, 'bottom')) {
             bottom: var(--#{$breakpoint}-bottom-computed);
         }
-        @if (index($additional-properties, 'left')) {
+        @if (list.index($additional-properties, 'left')) {
             left: var(--#{$breakpoint}-left-computed);
         }
 
-        @if (index($additional-properties, 'margin')) {
+        @if (list.index($additional-properties, 'margin')) {
             margin: var(--#{$breakpoint}-margin-computed);
         }
-        @if (index($additional-properties, 'margin-left')) {
+        @if (list.index($additional-properties, 'margin-left')) {
             margin-left: var(
                 --#{$breakpoint}-margin-left-computed,
                 var(--#{$breakpoint}-margin-x-computed, var(--#{$breakpoint}-margin-computed))
             );
         }
-        @if (index($additional-properties, 'margin-right')) {
+        @if (list.index($additional-properties, 'margin-right')) {
             margin-right: var(
                 --#{$breakpoint}-margin-right-computed,
                 var(--#{$breakpoint}-margin-x-computed, var(--#{$breakpoint}-margin-computed))
             );
         }
-        @if (index($additional-properties, 'margin-top')) {
+        @if (list.index($additional-properties, 'margin-top')) {
             margin-top: var(
                 --#{$breakpoint}-margin-top-computed,
                 var(--#{$breakpoint}-margin-y-computed, var(--#{$breakpoint}-margin-computed))
             );
         }
-        @if (index($additional-properties, 'margin-bottom')) {
+        @if (list.index($additional-properties, 'margin-bottom')) {
             margin-bottom: var(
                 --#{$breakpoint}-margin-bottom-computed,
                 var(--#{$breakpoint}-margin-y-computed, var(--#{$breakpoint}-margin-computed))
             );
         }
 
-        @if (index($additional-properties, 'padding')) {
+        @if (list.index($additional-properties, 'padding')) {
             padding: var(--#{$breakpoint}-padding-computed);
         }
-        @if (index($additional-properties, 'padding-left')) {
+        @if (list.index($additional-properties, 'padding-left')) {
             padding-left: var(
                 --#{$breakpoint}-padding-left-computed,
                 var(--#{$breakpoint}-padding-x-computed, var(--#{$breakpoint}-padding-computed))
             );
         }
-        @if (index($additional-properties, 'padding-right')) {
+        @if (list.index($additional-properties, 'padding-right')) {
             padding-right: var(
                 --#{$breakpoint}-padding-right-computed,
                 var(--#{$breakpoint}-padding-x-computed, var(--#{$breakpoint}-padding-computed))
             );
         }
-        @if (index($additional-properties, 'padding-top')) {
+        @if (list.index($additional-properties, 'padding-top')) {
             padding-top: var(
                 --#{$breakpoint}-padding-top-computed,
                 var(--#{$breakpoint}-padding-y-computed, var(--#{$breakpoint}-padding-computed))
             );
         }
-        @if (index($additional-properties, 'padding-bottom')) {
+        @if (list.index($additional-properties, 'padding-bottom')) {
             padding-bottom: var(
                 --#{$breakpoint}-padding-bottom-computed,
                 var(--#{$breakpoint}-padding-y-computed, var(--#{$breakpoint}-padding-computed))
             );
         }
 
-        @if index($additional-properties, 'width') {
+        @if list.index($additional-properties, 'width') {
             width: var(--#{$breakpoint}-width-computed);
         }
-        @if index($additional-properties, 'min-width') {
+        @if list.index($additional-properties, 'min-width') {
             min-width: var(--#{$breakpoint}-min-width-computed);
         }
-        @if index($additional-properties, 'max-width') {
+        @if list.index($additional-properties, 'max-width') {
             max-width: var(--#{$breakpoint}-max-width-computed);
         }
 
-        @if index($additional-properties, 'height') {
+        @if list.index($additional-properties, 'height') {
             height: var(--#{$breakpoint}-height-computed);
         }
-        @if index($additional-properties, 'min-height') {
+        @if list.index($additional-properties, 'min-height') {
             min-height: var(--#{$breakpoint}-min-height-computed);
         }
-        @if index($additional-properties, 'max-height') {
+        @if list.index($additional-properties, 'max-height') {
             max-height: var(--#{$breakpoint}-max-height-computed);
         }
 
-        @if index($additional-properties, 'display') {
+        @if list.index($additional-properties, 'display') {
             display: var(--#{$breakpoint}-display-computed);
         }
-        @if index($additional-properties, 'flex-direction') {
+        @if list.index($additional-properties, 'flex-direction') {
             flex-direction: var(--#{$breakpoint}-flex-direction-computed);
         }
-        @if index($additional-properties, 'align-items') {
+        @if list.index($additional-properties, 'align-items') {
             align-items: var(--#{$breakpoint}-align-items-computed);
         }
-        @if index($additional-properties, 'justify-content') {
+        @if list.index($additional-properties, 'justify-content') {
             justify-content: var(--#{$breakpoint}-justify-content-computed);
         }
-        @if index($additional-properties, 'flex-wrap') {
+        @if list.index($additional-properties, 'flex-wrap') {
             flex-wrap: var(--#{$breakpoint}-flex-wrap-computed);
         }
-        @if index($additional-properties, 'gap') {
+        @if list.index($additional-properties, 'gap') {
             gap: var(--#{$breakpoint}-gap-computed);
         }
-        @if index($additional-properties, 'gap-x') {
+        @if list.index($additional-properties, 'gap-x') {
             column-gap: var(--#{$breakpoint}-gap-x-computed, var(--#{$breakpoint}-gap-computed));
         }
-        @if index($additional-properties, 'gap-y') {
+        @if list.index($additional-properties, 'gap-y') {
             row-gap: var(--#{$breakpoint}-gap-y-computed, var(--#{$breakpoint}-gap-computed));
         }
 
-        @if index($additional-properties, 'grid-template-rows') {
+        @if list.index($additional-properties, 'grid-template-rows') {
             grid-template-rows: var(--#{$breakpoint}-grid-template-rows-computed);
         }
-        @if index($additional-properties, 'grid-template-columns') {
+        @if list.index($additional-properties, 'grid-template-columns') {
             grid-template-columns: var(--#{$breakpoint}-grid-template-columns-computed);
         }
-        @if index($additional-properties, 'grid-auto-flow') {
+        @if list.index($additional-properties, 'grid-auto-flow') {
             grid-auto-flow: var(--#{$breakpoint}-grid-auto-flow-computed);
         }
-        @if index($additional-properties, 'justify-items') {
+        @if list.index($additional-properties, 'justify-items') {
             justify-items: var(--#{$breakpoint}-justify-items-computed);
         }
     }
@@ -222,9 +225,9 @@ $layoutProperties: (
  * Apply default values for a property for all breakpoints if the value isn't a list or set the default value per breakpoint if you pass a list.
  */
 @mixin responsive-default-value($property, $value) {
-    @if type-of($value) == map {
+    @if meta.type-of($value) == map {
         @each $breakpoint, $_value in $screens {
-            $value-at-breakpoint: map-get($value, $breakpoint);
+            $value-at-breakpoint: map.get($value, $breakpoint);
 
             @if ($value-at-breakpoint == null) {
                 @error 'Value for "#{$property}" at breakpoint "#{$breakpoint}" is not defined.';

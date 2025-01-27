@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-@import '../../../utilities/sizeToken.module.scss';
-@import '../../../utilities/focusStyle.module.scss';
-@import '../../../utilities/transitions.module.scss';
+@use '../../../utilities/sizeToken.module.scss';
+@use '../../../utilities/focusStyle.module.scss';
+@use '../../../utilities/transitions.module.scss';
 
 .root {
     position: relative;
@@ -31,7 +31,7 @@
     position: relative;
     flex-grow: 1;
     border-radius: 4px;
-    height: sizeToken(1);
+    height: sizeToken.get(1);
 
     .range {
         position: absolute;
@@ -46,9 +46,6 @@
 }
 
 .thumb {
-    @include transition-colors;
-    @include transition(outline);
-
     --slider-thumb-hover-box-shadow-color: color-mix(
         in srgb,
         var(--box-neutral-inverse-color-pressed) 15%,
@@ -59,8 +56,8 @@
 
     display: block;
 
-    width: sizeToken(5);
-    height: sizeToken(5);
+    width: sizeToken.get(5);
+    height: sizeToken.get(5);
 
     background-color: var(--base-color);
     border: 1px solid var(--line-color-strong);
@@ -70,23 +67,28 @@
     cursor: pointer;
     box-sizing: border-box;
 
+    & {
+        @include transitions.transition-colors;
+        @include transitions.transition(outline);
+    }
+
     &:hover {
         box-shadow: 0px 3px 10px 0px var(--slider-thumb-hover-box-shadow-color);
 
         &:active,
         //firefox support requires this additional selector
         &[data-show-focus-ring='false']:focus-visible {
-            outline-width: sizeToken(2);
+            outline-width: sizeToken.get(2);
         }
     }
 
     &[data-show-focus-ring='false']:not(:active) {
-        outline-width: sizeToken(1);
+        outline-width: sizeToken.get(1);
     }
 
     &:not([data-show-focus-ring='false']) {
-        @include transition-box-shadow;
-        @include focus-outline;
+        @include transitions.transition-box-shadow;
+        @include focusStyle.focus-outline;
     }
 
     &[data-disabled] {

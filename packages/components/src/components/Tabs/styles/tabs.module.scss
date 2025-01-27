@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-@import '../../../utilities/sizeToken.module.scss';
-@import '../../../utilities/transitions.module.scss';
-@import '../../../utilities/focusStyle.module.scss';
+@use '../../../utilities/sizeToken.module.scss';
+@use '../../../utilities/transitions.module.scss';
+@use '../../../utilities/focusStyle.module.scss';
 
 $radius-without-border: calc(var(--radius) - var(--line-width));
 
@@ -19,13 +19,14 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     position: relative;
     flex-shrink: 0;
     display: flex;
-    gap: sizeToken(1);
-    height: sizeToken(12);
+    gap: sizeToken.get(1);
+    height: sizeToken.get(12);
     flex: 1;
     min-width: 0;
     overflow-x: hidden;
+
     &[data-size='large'] {
-        height: sizeToken(14);
+        height: sizeToken.get(14);
     }
 }
 
@@ -34,24 +35,26 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     width: 100%;
     display: flex;
     align-items: center;
-    padding-left: sizeToken(3);
-    padding-right: sizeToken(3);
-    gap: sizeToken(2);
+    padding-left: sizeToken.get(3);
+    padding-right: sizeToken.get(3);
+    gap: sizeToken.get(2);
     border-bottom: 1px solid var(--line-color);
     box-sizing: border-box;
 }
 
 .trigger {
-    @include focus-outline;
-    @include transition-colors;
-
     color: var(--text-color-weak);
     font-size: var(--body-size-large);
     white-space: nowrap;
-    margin: sizeToken(2);
+    margin: sizeToken.get(2);
     display: flex;
     align-items: center;
-    gap: sizeToken(1);
+    gap: sizeToken.get(1);
+
+    & {
+        @include focusStyle.focus-outline;
+        @include transitions.transition-colors;
+    }
 
     &:hover,
     &:focus {
@@ -70,24 +73,23 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
 
 .content {
     [data-tabs-content-padding='tight'] & {
-        padding: sizeToken(2);
+        padding: sizeToken.get(2);
     }
 
-    [data-tabs-content-padding='compact'] &{
-        padding: sizeToken(3);
+    [data-tabs-content-padding='compact'] & {
+        padding: sizeToken.get(3);
     }
 
-    [data-tabs-content-padding='comfortable'] &{
-        padding: sizeToken(4);
+    [data-tabs-content-padding='comfortable'] & {
+        padding: sizeToken.get(4);
     }
 
-    [data-tabs-content-padding='spacious'] &{
-        padding: sizeToken(6);
+    [data-tabs-content-padding='spacious'] & {
+        padding: sizeToken.get(6);
     }
 }
 
 .activeIndicator {
-    @include transition;
     position: absolute;
     height: 3px;
     border-top-left-radius: var(--radius-x-large);
@@ -96,5 +98,9 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     bottom: 0;
     left: 0;
     width: 0;
-    margin-left: sizeToken(3);
+    margin-left: sizeToken.get(3);
+
+    & {
+        @include transitions.transition;
+    }
 }

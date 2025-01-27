@@ -1,15 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-@import '../../../utilities/sizeToken.module.scss';
-@import '../../../utilities/focusStyle.module.scss';
-@import '../../../utilities/transitions.module.scss';
-@import '../../../utilities/mediaQuery.module.scss';
+@use '../../../utilities/sizeToken.module.scss';
+@use '../../../utilities/focusStyle.module.scss';
+@use '../../../utilities/transitions.module.scss';
+@use '../../../utilities/mediaQuery.module.scss';
 
 .content {
     display: block;
     position: fixed;
-    left: sizeToken(2);
-    right: sizeToken(2);
+    left: sizeToken.get(2);
+    right: sizeToken.get(2);
     top: 50%;
     transform: translateY(-50%);
     background-color: var(--base-color);
@@ -24,13 +24,15 @@
     grid-template-rows: auto auto minmax(0, 1fr) auto;
     box-sizing: border-box;
 
-    @include sm {
-        left: 50%;
-        transform: translateX(-50%) translateY(-50%);
-        width: fit-content;
-        min-width: var(--dialog-min-width);
-        grid-template-rows: auto minmax(0, 1fr) auto;
-        grid-template-columns: min-content auto;
+    & {
+        @include mediaQuery.sm {
+            left: 50%;
+            transform: translateX(-50%) translateY(-50%);
+            width: fit-content;
+            min-width: var(--dialog-min-width);
+            grid-template-rows: auto minmax(0, 1fr) auto;
+            grid-template-columns: min-content auto;
+        }
     }
 
     &:has([data-dialog-layout-component]) {
@@ -41,7 +43,7 @@
         top: 5rem;
         transform: translateY(0);
 
-        @include sm {
+        @include mediaQuery.sm {
             transform: translateX(-50%) translateY(0);
         }
     }
@@ -54,40 +56,40 @@
         .header,
         .footer,
         .body {
-            padding: sizeToken(2);
+            padding: sizeToken.get(2);
         }
     }
 
     &[data-dialog-padding='compact'] {
         .header,
         .footer {
-            padding: sizeToken(4);
+            padding: sizeToken.get(4);
         }
 
         .body {
-            padding: sizeToken(2) sizeToken(4);
+            padding: sizeToken.get(2) sizeToken.get(4);
         }
     }
 
     &[data-dialog-padding='comfortable'] {
         .header,
         .footer {
-            padding: sizeToken(6);
+            padding: sizeToken.get(6);
         }
 
         .body {
-            padding: sizeToken(4) sizeToken(6);
+            padding: sizeToken.get(4) sizeToken.get(6);
         }
     }
 
     &[data-dialog-padding='spacious'] {
         .header,
         .footer {
-            padding: sizeToken(10);
+            padding: sizeToken.get(10);
         }
 
         .body {
-            padding: sizeToken(6) sizeToken(10);
+            padding: sizeToken.get(6) sizeToken.get(10);
         }
     }
 
@@ -105,28 +107,30 @@
         }
 
         &[data-dialog-header-padding='none'] {
-            padding: sizeToken(0);
+            padding: sizeToken.get(0);
         }
 
         &[data-dialog-header-padding='tight'] {
-            padding: sizeToken(2);
+            padding: sizeToken.get(2);
         }
 
         &[data-dialog-header-padding='compact'] {
-            padding: sizeToken(4);
+            padding: sizeToken.get(4);
         }
 
         &[data-dialog-header-padding='comfortable'] {
-            padding: sizeToken(6);
+            padding: sizeToken.get(6);
         }
 
         &[data-dialog-header-padding='spacious'] {
-            padding: sizeToken(10);
+            padding: sizeToken.get(10);
         }
 
-        @include sm {
-            grid-row: 1;
-            grid-column: 2;
+        & {
+            @include mediaQuery.sm {
+                grid-row: 1;
+                grid-column: 2;
+            }
         }
 
         > div {
@@ -138,73 +142,77 @@
         display: flex;
         flex-direction: column;
         max-height: 100%;
-        gap: sizeToken(4);
+        gap: sizeToken.get(4);
         overflow: hidden;
         grid-row: 3;
         grid-column: 1;
 
         &[data-dialog-body-padding='none'] {
-            padding: sizeToken(0);
+            padding: sizeToken.get(0);
         }
 
         &[data-dialog-body-padding='tight'] {
-            padding: sizeToken(2);
+            padding: sizeToken.get(2);
         }
 
         &[data-dialog-body-padding='compact'] {
-            padding: sizeToken(2) sizeToken(4);
+            padding: sizeToken.get(2) sizeToken.get(4);
         }
 
         &[data-dialog-body-padding='comfortable'] {
-            padding: sizeToken(4) sizeToken(6);
+            padding: sizeToken.get(4) sizeToken.get(6);
         }
 
         &[data-dialog-body-padding='spacious'] {
-            padding: sizeToken(6) sizeToken(10);
+            padding: sizeToken.get(6) sizeToken.get(10);
         }
 
-        @include sm {
-            grid-row: 2;
-            grid-column: 2;
+        & {
+            @include mediaQuery.sm {
+                grid-row: 2;
+                grid-column: 2;
+            }
         }
     }
 
     .footer {
         display: flex;
         justify-content: flex-end;
-        gap: sizeToken(2);
+        gap: sizeToken.get(2);
         height: fit-content;
         font-weight: var(--font-weight-medium);
         grid-row: 4;
         grid-column: 1;
 
         &[data-dialog-footer-padding='none'] {
-            padding: sizeToken(0);
+            padding: sizeToken.get(0);
         }
 
         &[data-dialog-footer-padding='tight'] {
-            padding: sizeToken(2);
+            padding: sizeToken.get(2);
         }
 
         &[data-dialog-footer-padding='compact'] {
-            padding: sizeToken(4);
+            padding: sizeToken.get(4);
         }
 
         &[data-dialog-footer-padding='comfortable'] {
-            padding: sizeToken(6);
+            padding: sizeToken.get(6);
         }
 
         &[data-dialog-footer-padding='spacious'] {
-            padding: sizeToken(10);
+            padding: sizeToken.get(10);
         }
 
         &[data-show-border='true'] {
             border-top: var(--line-width) solid var(--line-color);
         }
 
-        @include sm {
-            grid-row: 3;
-            grid-column: 2;
+        & {
+            @include mediaQuery.sm {
+                grid-row: 3;
+                grid-column: 2;
+            }
         }
     }
 }
@@ -226,10 +234,12 @@
 .sideContent {
     grid-row: 1;
     grid-column: 1;
-    min-height: sizeToken(10);
-    min-width: sizeToken(10);
+    min-height: sizeToken.get(10);
+    min-width: sizeToken.get(10);
 
-    @include sm {
-        grid-row: 1 / span 3;
+    & {
+        @include mediaQuery.sm {
+            grid-row: 1 / span 3;
+        }
     }
 }
