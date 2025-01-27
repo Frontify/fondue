@@ -157,7 +157,7 @@ export const SelectedAsset = ({
                                 <DismissButton onDismiss={() => menuState.close()} />
                                 <ActionMenu
                                     menuBlocks={actions}
-                                    focus={focusStrategy}
+                                    focus={focusStrategy ?? undefined}
                                     onClick={() => menuState.close()}
                                 />
                                 <DismissButton onDismiss={() => menuState.close()} />
