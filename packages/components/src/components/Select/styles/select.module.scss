@@ -252,6 +252,14 @@
     &[data-side='top'] {
         margin-bottom: sizeToken(2);
     }
+
+    &[data-side='left'] {
+        margin-right: sizeToken(2);
+    }
+
+    &[data-side='right'] {
+        margin-left: sizeToken(2);
+    }
 }
 
 .item {
