@@ -345,7 +345,7 @@ export const Tree = memo(
         };
 
         const handleDragOver = ({ over }: DragOverEvent) => {
-            setOverId(over?.id ?? null);
+            setOverId(String(over?.id) || null);
         };
 
         const handleDragMove = ({ delta }: DragMoveEvent) => {

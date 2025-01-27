@@ -79,9 +79,8 @@ describe('Tree and TreeItem components', () => {
 
     it('renders the TreeItem with contentComponent correctly', () => {
         cy.mount(
-            <Tree key="tree" id="tree">
+            <Tree id="tree">
                 <TreeItem
-                    key="tree-item"
                     id="tree-item"
                     contentComponent={
                         <div>
