@@ -116,7 +116,7 @@ export const DatePicker = forwardRef<ReactDatePickerRef, DatePickerProps>(
             <div data-test-id={dataTestId}>
                 <ReactDatePickerComponent
                     calendarClassName={merge([
-                        'tw-rounded-sm tw-border tw-border-line-x-strong react-datepicker-wrap tw-pointer-events-auto',
+                        'react-datepicker-wrap tw-pointer-events-auto',
                         inline && 'react-datepicker-inline',
                     ])}
                     inline={inline}
