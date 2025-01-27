@@ -225,7 +225,6 @@
 .menu {
     display: none;
     border-radius: var(--radius);
-    margin-top: sizeToken(2);
     background-color: var(--base-color);
     border: var(--line-width) solid var(--line-color-x-strong);
     max-width: calc(100dvw - sizeToken(8));
@@ -245,6 +244,22 @@
 
 .portal {
     z-index: 30;
+
+    &[data-side='bottom'] {
+        margin-top: sizeToken(2);
+    }
+
+    &[data-side='top'] {
+        margin-bottom: sizeToken(2);
+    }
+
+    &[data-side='left'] {
+        margin-right: sizeToken(2);
+    }
+
+    &[data-side='right'] {
+        margin-left: sizeToken(2);
+    }
 }
 
 .item {
