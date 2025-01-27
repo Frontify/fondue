@@ -273,6 +273,12 @@ type TreeDragEvent = {
     over: TreeOver | null;
 };
 
+export type TreeDragStartEvent = Pick<TreeDragEvent, 'active'>;
+export type TreeDragMoveEvent = TreeDragEvent;
+export type TreeDragOverEvent = TreeDragMoveEvent;
+export type TreeDragEndEvent = TreeDragEvent;
+export type TreeDragCancelEvent = TreeDragEndEvent;
+
 export type TreeAnnouncements = {
     onDragStart({ active }: Pick<TreeDragEvent, 'active'>): string | undefined;
     onDragMove?({ active, over }: TreeDragEvent): string | undefined;

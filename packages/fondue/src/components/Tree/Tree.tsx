@@ -4,9 +4,7 @@ import {
     DndContext,
     type DragEndEvent,
     type DragMoveEvent,
-    type DragOverEvent,
     DragOverlay,
-    type DragStartEvent,
     KeyboardSensor,
     type MeasuringConfiguration,
     MeasuringStrategy,
@@ -38,6 +36,8 @@ import {
     type RegisterNodeChildrenPayload,
     type SensorContext,
     type TreeAnnouncements,
+    type TreeDragOverEvent,
+    type TreeDragStartEvent,
     type TreeItemProps,
     type TreeItemStyling,
     type TreeProps,
@@ -330,22 +330,22 @@ export const Tree = memo(
             });
         };
 
-        const handleDragStart = ({ active: { id: activeId, data } }: DragStartEvent) => {
-            setActiveId(String(activeId));
-            setOverId(String(activeId));
+        const handleDragStart = ({ active: { id: activeId, data } }: TreeDragStartEvent) => {
+            setActiveId(activeId);
+            setOverId(activeId);
 
             if (activeId && data.current) {
                 setCurrentPosition({
                     parentId: data.current.parentId,
-                    overId: String(activeId),
+                    overId: activeId,
                 });
             }
 
             document.body.style.setProperty('cursor', 'grabbing');
         };
 
-        const handleDragOver = ({ over }: DragOverEvent) => {
-            setOverId(String(over?.id) || null);
+        const handleDragOver = ({ over }: TreeDragOverEvent) => {
+            setOverId(over?.id ?? null);
         };
 
         const handleDragMove = ({ delta }: DragMoveEvent) => {

@@ -1,12 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import {
-    type DragEndEvent,
-    type DragMoveEvent,
-    type DragStartEvent,
-    useDndContext,
-    useDndMonitor,
-} from '@dnd-kit/core';
+import { useDndContext, useDndMonitor } from '@dnd-kit/core';
 import { type AnimateLayoutChanges, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { noop } from 'lodash-es';
@@ -14,6 +8,9 @@ import { Children, type MouseEvent, memo, useCallback, useEffect, useMemo, useRe
 
 import {
     type RegisterNodeChildrenPayload,
+    type TreeDragEndEvent,
+    type TreeDragMoveEvent,
+    type TreeDragStartEvent,
     TreeItemBorderClassMap,
     TreeItemBorderRadiusClassMap,
     TreeItemBorderStyleClassMap,
@@ -160,7 +157,7 @@ export const TreeItem = memo(
             ]);
 
             const handleItemDragEnd = useCallback(
-                (event: DragEndEvent) => {
+                (event: TreeDragEndEvent) => {
                     const { over, active } = event;
 
                     if (
@@ -173,7 +170,7 @@ export const TreeItem = memo(
 
                     if (isActive && over && canDrop && onDrop) {
                         onDrop({
-                            id: String(active.id),
+                            id: active.id,
                             parentId: activeProjection.parentId,
                             sort: activeProjection.position,
                             contentComponent,
@@ -185,7 +182,7 @@ export const TreeItem = memo(
             );
 
             const handleItemDragStart = useCallback(
-                (event: DragStartEvent) => {
+                (event: TreeDragStartEvent) => {
                     if (event.active.id !== id) {
                         return;
                     }
@@ -213,7 +210,7 @@ export const TreeItem = memo(
             );
 
             const handleItemDragMove = useCallback(
-                (event: DragMoveEvent) => {
+                (event: TreeDragMoveEvent) => {
                     if (event.active.id === id) {
                         document.body.style.setProperty('cursor', canDrop ? 'grabbing' : 'no-drop');
                     }
