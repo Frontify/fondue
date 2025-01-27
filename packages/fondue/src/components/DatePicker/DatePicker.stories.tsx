@@ -178,7 +178,7 @@ const WithWrapperDiv: StoryFn<DatePickerProps> = (args: DatePickerProps) => {
     const [selectedDate, setSelectedDate] = useState<Date | null>();
 
     return (
-        <div className="tw-bg-red-50 tw-p-8 tw-w-[500px]">
+        <div className="tw-w-[500px]">
             <DatePicker
                 {...args}
                 variant="single"
