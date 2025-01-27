@@ -15,29 +15,45 @@
 }
 
 @mixin transition-none {
-    @include transition(none);
+    & {
+        @include transition(none);
+    }
 }
 
 @mixin transition-all {
-    @include transition(all);
+    & {
+        @include transition(all);
+    }
 }
 
 @mixin transition-colors {
-    @include transition((color, background-color, border-color, text-decoration-color, outline-color, fill, stroke));
+    & {
+        @include transition(
+            (color, background-color, border-color, text-decoration-color, outline-color, fill, stroke)
+        );
+    }
 }
 
 @mixin transition-opacity {
-    @include transition(opacity);
+    & {
+        @include transition(opacity);
+    }
 }
 
 @mixin transition-transform {
-    @include transition(transform);
+    & {
+        @include transition(transform);
+    }
 }
 
 @mixin transition-box-shadow {
-    @include transition(box-shadow);
+    & {
+        @include transition(box-shadow);
+    }
 }
 
 @mixin transition-transform {
-    @include transition(transform);
+    & {
+        @include transition(transform);
+    }
 }

@@ -1,19 +1,21 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 @mixin focus-outline-styles {
-    outline-style: none;
-    transition-property: box-shadow;
-    transition-duration: 0ms;
+    & {
+        outline-style: none;
+        transition-property: box-shadow;
+        transition-duration: 0ms;
 
-    box-shadow:
-        0 0 0 2px var(--base-color),
-        0 0 0 6px var(--focus-ring-color);
+        box-shadow:
+            0 0 0 2px var(--base-color),
+            0 0 0 6px var(--focus-ring-color);
+    }
 }
 
 @mixin focus-outline {
     &:focus-visible,
     &:focus-visible:hover,
-    &:has(>[data-show-focus-ring='true']) {
+    &:has(> [data-show-focus-ring='true']) {
         @include focus-outline-styles;
     }
 }
