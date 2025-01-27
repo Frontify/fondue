@@ -20,18 +20,21 @@ export type SectionProps = LayoutComponentProps & {
 } & CommonAriaProps;
 
 export const Section = forwardRef<HTMLDivElement, SectionProps>(
-    ({
-        'data-test-id': dataTestId = 'fondue-section',
-        children,
-        role,
-        'aria-label': ariaLabel,
-        'aria-hidden': ariaHidden,
-        'aria-describedby': ariaDescribedBy,
-        'aria-labelledby': ariaLabelledBy,
-        'aria-expanded': ariaExpanded,
-        'aria-haspopup': ariaHasPopup,
-        ...props
-    }: SectionProps) => {
+    (
+        {
+            'data-test-id': dataTestId = 'fondue-section',
+            children,
+            role,
+            'aria-label': ariaLabel,
+            'aria-hidden': ariaHidden,
+            'aria-describedby': ariaDescribedBy,
+            'aria-labelledby': ariaLabelledBy,
+            'aria-expanded': ariaExpanded,
+            'aria-haspopup': ariaHasPopup,
+            ...props
+        },
+        ref,
+    ) => {
         return (
             <section
                 className={styles.root}
@@ -44,6 +47,7 @@ export const Section = forwardRef<HTMLDivElement, SectionProps>(
                 aria-labelledby={ariaLabelledBy}
                 aria-expanded={ariaExpanded}
                 aria-haspopup={ariaHasPopup}
+                ref={ref}
             >
                 {children}
             </section>

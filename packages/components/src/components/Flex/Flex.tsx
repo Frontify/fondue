@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ForwardedRef, forwardRef, type ReactNode } from 'react';
+import { forwardRef, type ReactNode } from 'react';
 
 import { type CommonAriaProps } from '#/helpers/aria';
 import { type Responsive, type SizeValue, type LayoutComponentProps } from '#/helpers/layout';
@@ -67,8 +67,8 @@ export const Flex = forwardRef<HTMLDivElement, FlexProps>(
             'aria-expanded': ariaExpanded,
             'aria-haspopup': ariaHasPopup,
             ...props
-        }: FlexProps,
-        forwardedRef: ForwardedRef<HTMLDivElement>,
+        },
+        ref,
     ) => {
         return (
             <Component
@@ -82,7 +82,7 @@ export const Flex = forwardRef<HTMLDivElement, FlexProps>(
                 aria-labelledby={ariaLabelledBy}
                 aria-expanded={ariaExpanded}
                 aria-haspopup={ariaHasPopup}
-                ref={forwardedRef}
+                ref={ref}
             >
                 {children}
             </Component>

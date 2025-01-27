@@ -25,19 +25,22 @@ export type BoxProps = LayoutComponentProps & {
 } & CommonAriaProps;
 
 export const Box = forwardRef<HTMLDivElement, BoxProps>(
-    ({
-        as: Component = 'div',
-        'data-test-id': dataTestId = 'fondue-box',
-        children,
-        role,
-        'aria-label': ariaLabel,
-        'aria-hidden': ariaHidden,
-        'aria-describedby': ariaDescribedBy,
-        'aria-labelledby': ariaLabelledBy,
-        'aria-expanded': ariaExpanded,
-        'aria-haspopup': ariaHasPopup,
-        ...props
-    }: BoxProps) => {
+    (
+        {
+            as: Component = 'div',
+            'data-test-id': dataTestId = 'fondue-box',
+            children,
+            role,
+            'aria-label': ariaLabel,
+            'aria-hidden': ariaHidden,
+            'aria-describedby': ariaDescribedBy,
+            'aria-labelledby': ariaLabelledBy,
+            'aria-expanded': ariaExpanded,
+            'aria-haspopup': ariaHasPopup,
+            ...props
+        },
+        ref,
+    ) => {
         return (
             <Component
                 className={styles.root}
@@ -50,6 +53,7 @@ export const Box = forwardRef<HTMLDivElement, BoxProps>(
                 aria-labelledby={ariaLabelledBy}
                 aria-expanded={ariaExpanded}
                 aria-haspopup={ariaHasPopup}
+                ref={ref}
             >
                 {children}
             </Component>
