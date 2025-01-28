@@ -1,14 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-@import '../../../utilities/sizeToken.module.scss';
-@import '../../../utilities/transitions.module.scss';
-@import '../../../utilities/mediaQuery.module.scss';
-@import '../../../utilities/shadow.module.scss';
+@use '../../../utilities/sizeToken.module.scss';
+@use '../../../utilities/transitions.module.scss';
+@use '../../../utilities/mediaQuery.module.scss';
+@use '../../../utilities/shadow.module.scss';
 
 .content,
 .subContent {
-    @include shadow-lg;
-
     display: block;
     border-radius: var(--radius);
     background-color: var(--base-color);
@@ -17,34 +15,39 @@
     overflow: auto;
     max-height: var(--radix-dropdown-menu-content-available-height);
 
+    & {
+        @include shadow.shadow-lg;
+    }
+
     &:focus-within {
         border-color: var(--line-color-x-strong);
     }
 
     .item,
     .subTrigger {
-        padding: sizeToken(2) sizeToken(3);
+        padding: sizeToken.get(2) sizeToken.get(3);
     }
 
-    @include sm {
-        width: auto;
-        min-width: 250px;
-        max-width: 350px;
+    & {
+        @include mediaQuery.sm {
+            width: auto;
+            min-width: 250px;
+            max-width: 350px;
+        }
     }
 }
 
 .subContent {
-    margin-left: sizeToken(2);
+    margin-left: sizeToken.get(2);
 }
 
 .item,
 .subTrigger {
-    @include transition-colors;
     display: flex;
     align-items: center;
-    gap: sizeToken(1);
-    margin: sizeToken(0.5) sizeToken(2);
-    border-radius: sizeToken(1);
+    gap: sizeToken.get(1);
+    margin: sizeToken.get(0.5) sizeToken.get(2);
+    border-radius: sizeToken.get(1);
     cursor: pointer;
     text-align: start;
     font-size: var(--body-size-medium);
@@ -52,12 +55,16 @@
     color: var(--text-color-weak);
     outline-style: none;
 
+    & {
+        @include transitions.transition-colors;
+    }
+
     &:first-child {
-        margin-top: sizeToken(2);
+        margin-top: sizeToken.get(2);
     }
 
     &:last-child {
-        margin-bottom: sizeToken(2);
+        margin-bottom: sizeToken.get(2);
     }
 
     &[data-state='open'] {
@@ -111,7 +118,7 @@
     display: flex;
     flex-shrink: 0;
     align-items: center;
-    gap: sizeToken(1.5);
+    gap: sizeToken.get(1.5);
 
     // Left slot
     &:not([data-name='right']) {
@@ -124,7 +131,7 @@
         margin-left: auto;
 
         & ~ .subMenuIndicator {
-            margin-left: sizeToken(1.5);
+            margin-left: sizeToken.get(1.5);
         }
     }
 

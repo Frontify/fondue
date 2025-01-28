@@ -1,25 +1,25 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-@import '../../../utilities/sizeToken.module.scss';
-@import '../../../utilities/text.module.scss';
+@use '../../../utilities/sizeToken.module.scss';
+@use '../../../utilities/text.module.scss';
 
 .root {
     background-color: var(--box-neutral-mighty-color);
     color: var(--box-neutral-mighty-inverse-color);
     border-radius: var(--radius);
-    max-width: sizeToken(48);
+    max-width: sizeToken.get(48);
     overflow: hidden;
     word-wrap: break-word;
     transform-origin: var(--radix-tooltip-content-transform-origin);
 
-    @include text-sm;
+    @include text.text-sm;
 
     &[data-tooltip-spacing='compact'] {
-        padding: sizeToken(1) sizeToken(2);
+        padding: sizeToken.get(1) sizeToken.get(2);
     }
 
     &[data-tooltip-spacing='spacious'] {
-        padding: sizeToken(2) sizeToken(3);
+        padding: sizeToken.get(2) sizeToken.get(3);
     }
 }
 

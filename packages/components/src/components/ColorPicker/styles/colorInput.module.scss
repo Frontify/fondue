@@ -1,16 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
-@import '../../../utilities/sizeToken.module.scss';
-@import '../../../utilities/focusStyle.module.scss';
-@import '../../../utilities/transitions.module.scss';
+@use '../../../utilities/sizeToken.module.scss';
+@use '../../../utilities/focusStyle.module.scss';
+@use '../../../utilities/transitions.module.scss';
 
 .root {
-    @include transition-colors;
-
     width: 100%;
     position: relative;
     justify-content: start;
     align-items: center;
-    gap: sizeToken(2);
+    gap: sizeToken.get(2);
     overflow: hidden;
 
     font-family: var(--body-family-stack);
@@ -25,6 +23,10 @@
     border-radius: var(--radius);
     border: var(--line-width) solid var(--line-color-strong);
 
+    & {
+        @include transitions.transition-colors;
+    }
+
     &:hover {
         border-color: var(--line-color-x-strong);
         color: var(--text-color-weak);
@@ -37,7 +39,7 @@
     }
 
     &:has(button[data-color-input-select]:focus-visible) {
-        @include focus-outline-styles
+        @include focusStyle.focus-outline-styles;
     }
 
     &:has(input:disabled),
@@ -53,40 +55,40 @@
     display: flex;
     justify-content: start;
     align-items: center;
-    gap: sizeToken(2);
+    gap: sizeToken.get(2);
     flex-grow: 1;
-    padding-left: sizeToken(3);
-    padding-right: sizeToken(3);
-    height: sizeToken(9);
+    padding-left: sizeToken.get(3);
+    padding-right: sizeToken.get(3);
+    height: sizeToken.get(9);
     outline: none;
     width: 100%;
 }
 
 .colorIndicator {
-    width: sizeToken(4);
-    height: sizeToken(4);
-    border-radius: sizeToken(1);
+    width: sizeToken.get(4);
+    height: sizeToken.get(4);
+    border-radius: sizeToken.get(1);
 }
 
 .actions {
     position: absolute;
     top: 0;
     bottom: 0;
-    right: sizeToken(3);
+    right: sizeToken.get(3);
     display: flex;
     align-items: center;
     pointer-events: none;
 }
 .clear {
     outline: none;
-    padding: sizeToken(1);
-    margin: sizeToken(1);
-    @include focus-outline;
+    padding: sizeToken.get(1);
+    margin: sizeToken.get(1);
+    @include focusStyle.focus-outline;
     pointer-events: all;
 }
 
 .caret {
-    @include transition-all;
+    @include transitions.transition-all;
 }
 
 [data-state='open'] {

@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-@import '../../../utilities/sizeToken.module.scss';
-@import '../../../utilities/transitions.module.scss';
-@import '../../../utilities/focusStyle.module.scss';
+@use '../../../utilities/sizeToken.module.scss';
+@use '../../../utilities/transitions.module.scss';
+@use '../../../utilities/focusStyle.module.scss';
 
 $radius-without-border: calc(var(--radius) - var(--line-width));
 
@@ -18,7 +18,7 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     text-align: center;
 
     min-width: max-content;
-    height: sizeToken(9);
+    height: sizeToken.get(9);
     box-sizing: border-box;
 
     background-color: var(--base-color-alt);
@@ -62,9 +62,9 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     align-items: center;
     justify-content: center;
     border-radius: inherit;
-    padding-left: sizeToken(4);
-    padding-right: sizeToken(4);
-    gap: sizeToken(2);
+    padding-left: sizeToken.get(4);
+    padding-right: sizeToken.get(4);
+    gap: sizeToken.get(2);
 
     font-size: var(--body-size-medium);
     line-height: var(--body-size-medium-line-height);
@@ -81,16 +81,19 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
 }
 
 .itemLabelActive {
-    @include transition-opacity;
     transition-timing-function: ease-in;
 
     display: inline-flex;
-    gap: sizeToken(2);
+    gap: sizeToken.get(2);
     align-items: center;
     justify-content: center;
     opacity: 0;
 
     font-weight: 500;
+
+    & {
+        @include transitions.transition-opacity;
+    }
 
     // Color the label based on the disabled state
     .item:disabled & {
@@ -103,17 +106,20 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
 }
 
 .itemLabelInactive {
-    @include transition-opacity;
     transition-timing-function: ease-out;
 
     position: absolute;
     display: inline-flex;
-    gap: sizeToken(2);
+    gap: sizeToken.get(2);
     align-items: center;
     justify-content: center;
     opacity: 1;
 
     font-weight: 400;
+
+    & {
+        @include transitions.transition-opacity;
+    }
 
     // Color the label based on the disabled state
     .item:disabled & {
@@ -126,8 +132,6 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
 }
 
 .activeIndicator {
-    @include transition-transform;
-
     display: none;
     position: absolute;
     z-index: -1;
@@ -136,6 +140,10 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     height: 100%;
 
     pointer-events: none;
+
+    & {
+        @include transitions.transition-transform;
+    }
 
     // Outline of active item
     &::before {
@@ -173,7 +181,6 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
 }
 
 .separator {
-    @include transition-opacity;
     // Make separators slow to disappear and fast to appear, in pair with the other `ease-in` transition
     transition-timing-function: ease-out;
 
@@ -183,6 +190,10 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     margin-left: -0.5px;
     margin-right: -0.5px;
     background-color: var(--line-color-strong);
+
+    & {
+        @include transitions.transition-opacity;
+    }
 
     // Hide the separator when the state is on to rely on the active item's border
     .item:first-child &,

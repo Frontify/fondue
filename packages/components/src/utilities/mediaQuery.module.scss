@@ -3,13 +3,17 @@
 $sm-breakpoint: 600px;
 
 @mixin sm {
-    @media (min-width: $sm-breakpoint) {
-        @content;
+    & {
+        @media (min-width: $sm-breakpoint) {
+            @content;
+        }
     }
 }
 
 @mixin max-sm {
-    @media not all and (min-width: $sm-breakpoint) {
-        @content;
+    & {
+        @media not all and (min-width: $sm-breakpoint) {
+            @content;
+        }
     }
 }

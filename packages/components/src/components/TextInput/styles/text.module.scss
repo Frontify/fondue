@@ -1,31 +1,31 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-@import '../../../utilities/sizeToken.module.scss';
-@import '../../../utilities/focusStyle.module.scss';
-@import '../../../utilities/transitions.module.scss';
+@use '../../../utilities/sizeToken.module.scss';
+@use '../../../utilities/focusStyle.module.scss';
+@use '../../../utilities/transitions.module.scss';
 
 .root {
-    @include focus-outline;
-    @include transition-colors;
+    position: relative;
+    display: flex;
+    align-items: stretch;
+
+    font-family: var(--body-family-stack);
+    font-weight: 400;
+    font-size: var(--body-size-medium);
+
+    line-height: var(--body-size-medium-line-height);
+    text-align: start;
+    height: sizeToken.get(9);
+    box-sizing: border-box;
+
+    color: var(--text-color);
+    background-color: var(--base-color);
+    border-radius: var(--radius);
+    border: var(--line-width) solid var(--line-color-strong);
 
     & {
-        position: relative;
-        display: flex;
-        align-items: stretch;
-
-        font-family: var(--body-family-stack);
-        font-weight: 400;
-        font-size: var(--body-size-medium);
-
-        line-height: var(--body-size-medium-line-height);
-        text-align: start;
-        height: sizeToken(9);
-        box-sizing: border-box;
-
-        color: var(--text-color);
-        background-color: var(--base-color);
-        border-radius: var(--radius);
-        border: var(--line-width) solid var(--line-color-strong);
+        @include focusStyle.focus-outline;
+        @include transitions.transition-colors;
     }
 
     &:hover {
@@ -60,7 +60,7 @@
     display: flex;
     align-items: center;
     text-align: inherit;
-    text-indent: sizeToken(3);
+    text-indent: sizeToken.get(3);
     outline: 2px solid transparent;
     outline-offset: 2px;
     border-radius: calc(var(--radius) - var(--line-width));
@@ -115,9 +115,9 @@
     flex-shrink: 0;
     align-items: center;
     cursor: text;
-    gap: sizeToken(1.5);
-    padding-left: sizeToken(3);
-    padding-right: sizeToken(1.5);
+    gap: sizeToken.get(1.5);
+    padding-left: sizeToken.get(3);
+    padding-right: sizeToken.get(1.5);
 
     // Left slot
     &:not([data-name='right']) {
@@ -131,7 +131,7 @@
         order: 0;
         margin-left: 0px;
         margin-right: 0px;
-        padding-right: sizeToken(3);
+        padding-right: sizeToken.get(3);
     }
 
     // 2 slots without any name should be implicitly ordered
@@ -146,8 +146,8 @@
     display: flex;
     align-items: center;
     height: 100%;
-    margin-left: sizeToken(3);
-    margin-right: sizeToken(3);
+    margin-left: sizeToken.get(3);
+    margin-right: sizeToken.get(3);
     color: var(--text-color-positive);
 }
 
@@ -155,8 +155,8 @@
     display: flex;
     align-items: center;
     height: 100%;
-    margin-left: sizeToken(3);
-    margin-right: sizeToken(3);
+    margin-left: sizeToken.get(3);
+    margin-right: sizeToken.get(3);
     color: var(--text-color-negative);
 }
 
@@ -169,10 +169,10 @@
 .loadingStatus {
     display: flex;
     position: absolute;
-    width: sizeToken(6);
-    height: sizeToken(6);
-    top: sizeToken(-3);
-    right: sizeToken(-3);
+    width: sizeToken.get(6);
+    height: sizeToken.get(6);
+    top: sizeToken.get(-3);
+    right: sizeToken.get(-3);
     pointer-events: none;
     align-items: center;
     justify-content: center;
@@ -185,8 +185,8 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        width: sizeToken(4);
-        height: sizeToken(4);
+        width: sizeToken.get(4);
+        height: sizeToken.get(4);
         border: var(--line-width) solid var(--text-color-interactive);
         border-top-color: transparent;
         border-radius: 9999px;

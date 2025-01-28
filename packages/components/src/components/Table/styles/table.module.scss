@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-@import '../../../utilities/sizeToken.module.scss';
-@import '../../../utilities/focusStyle.module.scss';
+@use '../../../utilities/sizeToken.module.scss';
+@use '../../../utilities/focusStyle.module.scss';
 
 .table {
     position: relative;
@@ -64,7 +64,7 @@
 }
 
 .caption {
-    padding: sizeToken(3) sizeToken(2);
+    padding: sizeToken.get(3) sizeToken.get(2);
     text-align: left;
     color: var(--text-color);
 }
@@ -72,7 +72,7 @@
 .headerCell {
     font-size: var(--body-size-small);
     font-weight: 400;
-    line-height: sizeToken(4);
+    line-height: sizeToken.get(4);
     color: var(--text-color-weak);
 
     border-top: 1px solid var(--line-color);
@@ -83,7 +83,7 @@
     }
 
     &[data-sortable='false'] {
-        padding: sizeToken(3) sizeToken(2);
+        padding: sizeToken.get(3) sizeToken.get(2);
     }
 
     &[data-no-shrink='true'] {
@@ -98,7 +98,7 @@
     text-align: inherit;
     align-items: center;
     gap: 0.25rem;
-    padding: sizeToken(3) sizeToken(2);
+    padding: sizeToken.get(3) sizeToken.get(2);
 
     appearance: none;
     background: none;
@@ -117,7 +117,7 @@
     }
 
     &:focus-visible {
-        @include focus-outline;
+        @include focusStyle.focus-outline;
     }
 
     .sortIndicator {
@@ -126,7 +126,7 @@
 }
 
 .body {
-    padding: 0 sizeToken(6);
+    padding: 0 sizeToken.get(6);
 }
 
 .row {
@@ -134,7 +134,7 @@
     transition: background-color 0.2s ease;
 
     &:focus-visible {
-        @include focus-outline;
+        @include focusStyle.focus-outline;
         z-index: 1;
     }
 
@@ -163,15 +163,14 @@
     color: var(--text-color);
 
     font-weight: 400;
-    line-height: sizeToken(4);
-    padding: sizeToken(2);
+    line-height: sizeToken.get(4);
+    padding: sizeToken.get(2);
 
     border-bottom: 1px solid var(--line-color);
 }
 
 .headerCell,
 .rowCell {
-
     &[data-align='left'] {
         text-align: left;
 
@@ -196,7 +195,8 @@
         }
     }
 
-    &[data-truncate='true'], &[data-truncate='true'] .buttonText {
+    &[data-truncate='true'],
+    &[data-truncate='true'] .buttonText {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;

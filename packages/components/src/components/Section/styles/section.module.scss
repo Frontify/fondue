@@ -1,16 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-@import '../../../helpers/layout.module.scss';
+@use "sass:list";
+@use '../../../helpers/layout.module.scss';
 
 $properties: (display);
-$allProperties: join($properties, $layoutProperties);
+$allProperties: list.join($properties, layout.$layoutProperties);
 
 .root {
-    @include responsive-properties($allProperties);
+    @include layout.responsive-properties($allProperties);
 
     // Default values
     @each $property in $allProperties {
-        @include responsive-default-value($property, initial);
+        @include layout.responsive-default-value($property, initial);
     }
-    @include responsive-default-value(display, block);
+    @include layout.responsive-default-value(display, block);
 }

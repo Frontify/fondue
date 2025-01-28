@@ -1,12 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-@import '../../../utilities/mediaQuery.module.scss';
-@import '../../../utilities/sizeToken.module.scss';
-@import '../../../utilities/shadow.module.scss';
-@import '../../../utilities/focusStyle.module.scss';
+@use '../../../utilities/mediaQuery.module.scss';
+@use '../../../utilities/sizeToken.module.scss';
+@use '../../../utilities/shadow.module.scss';
+@use '../../../utilities/focusStyle.module.scss';
 
 .root {
-
     display: block;
     background-color: var(--base-color);
     border: var(--line-width) solid var(--line-color);
@@ -23,23 +22,27 @@
     }
 
     &[data-shadow='medium'] {
-        @include shadow-md;
+        @include shadow.shadow-md;
     }
 
     &[data-shadow='large'] {
-        @include shadow-lg;
+        @include shadow.shadow-lg;
     }
 
-    @include sm {
-        width: var(--flyout-width);
-        max-width: var(--flyout-max-width);
-        margin-top: 0;
-        background-color: var(--base-color);
+    & {
+        @include focusStyle.focus-outline;
+
+        @include mediaQuery.sm {
+            width: var(--flyout-width);
+            max-width: var(--flyout-max-width);
+            margin-top: 0;
+            background-color: var(--base-color);
+        }
     }
 
     // Mobile view flyout -> dialog responsiveness
     body > [data-radix-popper-content-wrapper]:has(&) {
-        @include max-sm {
+        @include mediaQuery.max-sm {
             &:has([data-side='top']),
             &:has([data-side='bottom']) {
                 // Radix always leaves an 8px gap on the left side via its transform property
@@ -49,8 +52,6 @@
             min-width: 0 !important;
         }
     }
-
-    @include focus-outline;
 }
 
 // Responsive dialog background element
@@ -65,8 +66,10 @@
     opacity: 0.3;
     pointer-events: none;
 
-    @include sm {
-        display: none;
+    & {
+        @include mediaQuery.sm {
+            display: none;
+        }
     }
 }
 
@@ -78,69 +81,69 @@
     border-bottom: var(--line-width) solid var(--line-color);
 
     .root[data-flyout-spacing='tight'] & {
-        padding: sizeToken(2);
+        padding: sizeToken.get(2);
     }
 
     .root[data-flyout-spacing='compact'] & {
-        padding: sizeToken(4);
+        padding: sizeToken.get(4);
     }
 
     .root[data-flyout-spacing='comfortable'] & {
-        padding: sizeToken(6);
+        padding: sizeToken.get(6);
     }
 
     .root[data-flyout-spacing='spacious'] & {
-        padding: sizeToken(10);
+        padding: sizeToken.get(10);
     }
 }
 
 .body {
     display: flex;
     flex-direction: column;
-    gap: sizeToken(4);
+    gap: sizeToken.get(4);
 
     .root[data-flyout-spacing='tight'] & {
-        padding: sizeToken(2);
+        padding: sizeToken.get(2);
     }
 
     .root[data-flyout-spacing='compact'] & {
-        padding: sizeToken(2) sizeToken(4);
+        padding: sizeToken.get(2) sizeToken.get(4);
     }
 
     .root[data-flyout-spacing='comfortable'] & {
-        padding: sizeToken(4) sizeToken(6);
+        padding: sizeToken.get(4) sizeToken.get(6);
     }
 
     .root[data-flyout-spacing='spacious'] & {
-        padding: sizeToken(6) sizeToken(10);
+        padding: sizeToken.get(6) sizeToken.get(10);
     }
 }
 
 .footer {
     display: flex;
     justify-content: flex-end;
-    gap: sizeToken(2);
+    gap: sizeToken.get(2);
     font-weight: 400;
     border-top: var(--line-width) solid var(--line-color);
 
     .root[data-flyout-spacing='tight'] & {
-        padding: sizeToken(2);
+        padding: sizeToken.get(2);
     }
 
     .root[data-flyout-spacing='compact'] & {
-        padding: sizeToken(4);
+        padding: sizeToken.get(4);
     }
 
     .root[data-flyout-spacing='comfortable'] & {
-        padding: sizeToken(6);
+        padding: sizeToken.get(6);
     }
 
     .root[data-flyout-spacing='spacious'] & {
-        padding: sizeToken(10);
+        padding: sizeToken.get(10);
     }
 }
 
 .close {
-    @include focus-outline;
+    @include focusStyle.focus-outline;
     cursor: pointer;
 }

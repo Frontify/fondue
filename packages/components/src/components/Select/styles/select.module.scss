@@ -1,36 +1,35 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-@import '../../../utilities/sizeToken.module.scss';
-@import '../../../utilities/focusStyle.module.scss';
-@import '../../../utilities/transitions.module.scss';
-@import '../../../utilities/mediaQuery.module.scss';
+@use '../../../utilities/sizeToken.module.scss';
+@use '../../../utilities/focusStyle.module.scss';
+@use '../../../utilities/transitions.module.scss';
+@use '../../../utilities/mediaQuery.module.scss';
 
 .root {
-    @include focus-outline;
-    @include transition-colors;
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    text-align: start;
 
+    font-family: var(--body-family-stack);
+    font-weight: 400;
+    font-size: var(--body-size-medium);
+
+    min-width: 0;
+    width: 100%;
+    line-height: var(--body-size-medium-line-height);
+    height: sizeToken.get(9);
+    box-sizing: border-box;
+
+    color: var(--text-color);
+    background-color: var(--base-color);
+
+    border-radius: var(--radius);
+    border: var(--line-width) solid var(--line-color-strong);
+    cursor: pointer;
     & {
-        position: relative;
-        display: flex;
-        align-items: stretch;
-        text-align: start;
-
-        font-family: var(--body-family-stack);
-        font-weight: 400;
-        font-size: var(--body-size-medium);
-
-        min-width: 0;
-        width: 100%;
-        line-height: var(--body-size-medium-line-height);
-        height: sizeToken(9);
-        box-sizing: border-box;
-
-        color: var(--text-color);
-        background-color: var(--base-color);
-
-        border-radius: var(--radius);
-        border: var(--line-width) solid var(--line-color-strong);
-        cursor: pointer;
+        @include focusStyle.focus-outline;
+        @include transitions.transition-colors;
     }
 
     &:hover {
@@ -70,7 +69,7 @@
 .selectedValue {
     width: 100%;
     background-color: transparent;
-    text-indent: sizeToken(3);
+    text-indent: sizeToken.get(3);
     display: inline-block;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -85,7 +84,7 @@
     display: flex;
     align-items: center;
     text-align: inherit;
-    text-indent: sizeToken(3);
+    text-indent: sizeToken.get(3);
     outline: 2px solid transparent;
     outline-offset: 2px;
     border-radius: calc(var(--radius) - var(--line-width));
@@ -128,9 +127,9 @@
     flex-shrink: 0;
     align-items: center;
     cursor: text;
-    gap: sizeToken(1.5);
-    padding-left: sizeToken(3);
-    padding-right: sizeToken(2);
+    gap: sizeToken.get(1.5);
+    padding-left: sizeToken.get(3);
+    padding-right: sizeToken.get(2);
     color: var(--text-color);
 
     // Left slot
@@ -145,7 +144,7 @@
         order: 0;
         margin-left: 0px;
         margin-right: 0px;
-        padding-right: sizeToken(3);
+        padding-right: sizeToken.get(3);
 
         &:has(~ div[data-name='clear']) {
             padding-right: 0;
@@ -158,8 +157,8 @@
         align-items: center;
         cursor: text;
         height: 100%;
-        padding-left: sizeToken(3);
-        padding-right: sizeToken(2);
+        padding-left: sizeToken.get(3);
+        padding-right: sizeToken.get(2);
 
         &:has(~ div[data-name='left']) {
             text-indent: 0px;
@@ -174,7 +173,7 @@
     width: fit-content;
     align-items: center;
     justify-content: center;
-    padding: 0 sizeToken(3);
+    padding: 0 sizeToken.get(3);
     color: var(--text-color-weak);
 
     &:hover {
@@ -184,20 +183,21 @@
 
 .icons {
     display: flex;
-    gap: sizeToken(1);
-    padding: 0 sizeToken(1.5);
+    gap: sizeToken.get(1);
+    padding: 0 sizeToken.get(1.5);
 }
 
 .caret {
-    @include transition-transform;
+    display: flex;
+    height: 100%;
+    width: sizeToken.get(4);
+    align-items: center;
+    justify-content: center;
+    margin: 0 sizeToken.get(1);
+    color: var(--text-color-weak);
+
     & {
-        display: flex;
-        height: 100%;
-        width: sizeToken(4);
-        align-items: center;
-        justify-content: center;
-        margin: 0 sizeToken(1);
-        color: var(--text-color-weak);
+        @include transitions.transition-transform;
     }
 
     &:hover {
@@ -212,13 +212,13 @@
 
 .iconSuccess {
     height: 100%;
-    margin: 0 sizeToken(1);
+    margin: 0 sizeToken.get(1);
     color: var(--text-color-positive);
 }
 
 .iconError {
     height: 100%;
-    margin: 0 sizeToken(1);
+    margin: 0 sizeToken.get(1);
     color: var(--text-color-negative);
 }
 
@@ -227,18 +227,20 @@
     border-radius: var(--radius);
     background-color: var(--base-color);
     border: var(--line-width) solid var(--line-color-x-strong);
-    max-width: calc(100dvw - sizeToken(8));
+    max-width: calc(100dvw - sizeToken.get(8));
     min-width: var(--radix-popover-trigger-width);
     overflow: auto;
     max-height: var(--radix-popover-content-available-height);
-    padding: sizeToken(2) 0;
+    padding: sizeToken.get(2) 0;
 
     &:has(li[role='option']) {
         display: block;
     }
 
-    @include sm {
-        max-width: 500px;
+    & {
+        @include mediaQuery.sm {
+            max-width: 500px;
+        }
     }
 }
 
@@ -246,32 +248,33 @@
     z-index: 30;
 
     &[data-side='bottom'] {
-        margin-top: sizeToken(2);
+        margin-top: sizeToken.get(2);
     }
 
     &[data-side='top'] {
-        margin-bottom: sizeToken(2);
+        margin-bottom: sizeToken.get(2);
     }
 
     &[data-side='left'] {
-        margin-right: sizeToken(2);
+        margin-right: sizeToken.get(2);
     }
 
     &[data-side='right'] {
-        margin-left: sizeToken(2);
+        margin-left: sizeToken.get(2);
     }
 }
 
 .item {
-    @include transition-colors;
+    display: flex;
+    justify-content: space-between;
+    padding: sizeToken.get(3) sizeToken.get(5);
+    cursor: pointer;
+    text-align: start;
+    font-size: var(--body-size-medium);
+    line-height: var(--body-size-medium-line-height);
+
     & {
-        display: flex;
-        justify-content: space-between;
-        padding: sizeToken(3) sizeToken(5);
-        cursor: pointer;
-        text-align: start;
-        font-size: var(--body-size-medium);
-        line-height: var(--body-size-medium-line-height);
+        @include transitions.transition-colors;
     }
 
     &[data-highlighted='true'] {
@@ -301,8 +304,8 @@
 }
 
 .checkmarkIcon {
-    width: sizeToken(4);
-    height: sizeToken(4);
+    width: sizeToken.get(4);
+    height: sizeToken.get(4);
     display: none;
 }
 
