@@ -16,7 +16,7 @@ export const getLicElementClassNames = (element: TElement, includeColumnBreakCla
     merge([
         includeColumnBreakClasses && getColumnBreakClasses(element),
         element.align ? justifyClassNames[element.align as string] : 'tw-justify-start',
-        'tw-grid tw-grid-cols-[min-content_repeat(3,_auto)]',
+        'tw-inline-grid tw-grid-cols-[min-content_repeat(3,_auto)]',
     ]);
 
 export const ListItemContentMarkupElementNode = ({ attributes, children, element }: PlateRenderElementProps) => {
