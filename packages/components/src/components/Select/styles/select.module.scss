@@ -27,7 +27,6 @@
     border-radius: var(--radius);
     border: var(--line-width) solid var(--line-color-strong);
     cursor: pointer;
-
     & {
         @include focusStyle.focus-outline;
         @include transitions.transition-colors;
@@ -249,19 +248,19 @@
     z-index: 30;
 
     &[data-side='bottom'] {
-        margin-top: sizeToken(2);
+        margin-top: sizeToken.get(2);
     }
 
     &[data-side='top'] {
-        margin-bottom: sizeToken(2);
+        margin-bottom: sizeToken.get(2);
     }
 
     &[data-side='left'] {
-        margin-right: sizeToken(2);
+        margin-right: sizeToken.get(2);
     }
 
     &[data-side='right'] {
-        margin-left: sizeToken(2);
+        margin-left: sizeToken.get(2);
     }
 }
 
