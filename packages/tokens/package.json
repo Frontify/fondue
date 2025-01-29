@@ -31,7 +31,8 @@
     ],
     "scripts": {
         "clean": "rimraf dist",
-        "build": "pnpm clean && tsx src/build.ts",
+        "build:vite": "vite build",
+        "build": "pnpm clean && tsx src/new-build.ts",
         "build:debug": "pnpm clean && tsx src/build.ts --debug && pnpm build:tailwind:debug",
         "build:tailwind:debug": "tailwind -c ./dist/tailwind/tailwind.config.js -o ./dist/css/tailwind_unpurged.css",
         "lint": "eslint .",
@@ -48,16 +49,19 @@
         "@frontify/eslint-config-basic": "^0.20.6",
         "@types/chroma-js": "^2.4.5",
         "@types/node": "^22.10.10",
+        "@vitejs/plugin-react": "^4.3.4",
         "chalk": "^5.4.1",
         "chroma-js": "^2.6.0",
         "eslint": "^8.57.1",
         "eslint-plugin-notice": "^1.0.0",
         "nodemon": "^3.1.9",
         "prettier": "^3.4.2",
+        "react": "^17.0.2",
         "rimraf": "^6.0.1",
         "style-dictionary": "^3.9.2",
         "tailwindcss": "^3.4.17",
         "tsx": "^4.19.2",
-        "typescript": "^5.7.3"
+        "typescript": "^5.7.3",
+        "vite": "^5.4.14"
     }
 }
