@@ -3,7 +3,6 @@
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-/* (c) Copyright Frontify Ltd., all rights reserved. */
 const OUTPUT_DIRECTORY = join(import.meta.dirname, '../../../tmp/providers');
 const TEMPORARY_DIRECTORY = join(import.meta.dirname, '../../../tmp/providers/themes');
 const availableThemes: string[] = [];
@@ -28,10 +27,12 @@ export const createCssModule = () => {
     createTypes();
 };
 
-
 const createTypes = () => {
     const themeClassDefinitions = availableThemes
-        .map((themeName) => `        /**\n         * ${themeName} theme class\n         */\n        ${themeName}: string;`)
+        .map(
+            (themeName) =>
+                `        /**\n         * ${themeName} theme class\n         */\n        ${themeName}: string;`,
+        )
         .join('\n\n');
 
     const dtsContent = `declare const styles: {

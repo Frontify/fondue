@@ -6,6 +6,7 @@ import StyleDictionary from 'style-dictionary';
 
 import { figmaFormatter } from './formatters/figma';
 import { tailwindFormatter } from './formatters/tailwind';
+import { createProvider } from './utils/createProvider/createProvider';
 import { mergeFigmaFiles } from './utils/mergeFigmaFiles';
 import { transformColor } from './utils/transformColor';
 import { trimHyphens } from './utils/trimHyphens';
@@ -78,6 +79,29 @@ StyleDictionary.registerTransformGroup({
 /**
  * FORMATS
  */
+
+StyleDictionary.registerFormat({
+    name: 'css/variables',
+    formatter({ dictionary, options = {} }) {
+        const { selector, selectorFormat } = options;
+
+        if (selectorFormat === 'independent' && Array.isArray(selector)) {
+            return selector
+                .map(
+                    (sel) => `
+${sel} {
+    ${dictionary.allProperties.map((prop) => `--${prop.name}: ${prop.value};`).join('\n    ')}
+}`,
+                )
+                .join('\n\n');
+        }
+
+        // Original formatter logic for single selector...
+        return `${options.selector || ':root'} {
+    ${dictionary.allProperties.map((prop) => `${prop.name}: ${prop.value};`).join('\n    ')}
+}`;
+    },
+});
 
 StyleDictionary.registerFormat({
     name: 'tailwind',
@@ -195,6 +219,23 @@ StyleDictionary.extend({
                 },
             ],
         },
+        providers: {
+            transformGroup: 'css',
+            buildPath: `${TEMPORARY_DIRECTORY}/providers/themes/`,
+            files: [
+                {
+                    destination: 'default.module.css',
+                    format: 'css/variables',
+                    options: { selector: '.root' },
+                    filter: (token) => {
+                        if (!token.filePath.includes('brand')) {
+                            return token.attributes?.target !== 'figma';
+                        }
+                        return false;
+                    },
+                },
+            ],
+        },
     },
 }).buildAllPlatforms();
 
@@ -249,8 +290,24 @@ for (const theme of COLOR_THEMES) {
                     },
                 ],
             },
+            providers: {
+                transformGroup: 'css',
+                buildPath: `${TEMPORARY_DIRECTORY}/providers/themes/`,
+                files: [
+                    {
+                        destination: `${theme}.module.css`,
+                        format: 'css/variables',
+                        options: {
+                            selector: `.${theme}`,
+                            appendFile: true, // New option to append instead of overwrite
+                        },
+                        filter: (token) => token.filePath.includes(`.${theme}.ts`),
+                    },
+                ],
+            },
         },
     }).buildAllPlatforms();
 }
 
 mergeFigmaFiles();
+createProvider();

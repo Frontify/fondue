@@ -1,13 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { create } from 'node:domain';
-import { mkdir, mkdirSync, readdirSync, readFileSync, write, writeFileSync, rmSync } from 'node:fs';
+import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+
 import { createCssModule } from './createCssModule';
 
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 const OUTPUT_DIRECTORY = join(import.meta.dirname, '../../../tmp/providers');
-
 
 export const createProvider = () => {
     createCssModule();
@@ -23,11 +22,9 @@ export const ThemeProvider = ({ children, theme = "default" }: {
 }) => {
     return <div className={styles[theme]}>{children}</div>
 }
-`
+`;
     mkdirSync(OUTPUT_DIRECTORY, { recursive: true });
-    writeFileSync(join(OUTPUT_DIRECTORY, 'ThemeProvider.tsx'), providerTemplate, {
+    writeFileSync(join(OUTPUT_DIRECTORY, 'index.tsx'), providerTemplate, {
         encoding: 'utf8',
     });
 };
-
-

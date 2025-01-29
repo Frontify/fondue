@@ -988,6 +988,10 @@ importers:
         version: 5.1.4(typescript@5.7.3)(vite@5.4.14(@types/node@22.10.10)(sass@1.83.4)(terser@5.31.1))
 
   packages/tokens:
+    dependencies:
+      tailwindcss:
+        specifier: ^3.0.0
+        version: 3.4.17(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.7.3))
     devDependencies:
       '@frontify/eslint-config-basic':
         specifier: ^0.20.6
@@ -998,6 +1002,12 @@ importers:
       '@types/node':
         specifier: ^22.10.10
         version: 22.10.10
+      '@types/react':
+        specifier: ^18.3.18
+        version: 18.3.18
+      '@types/react-dom':
+        specifier: ^18.3.5
+        version: 18.3.5(@types/react@18.3.18)
       '@vitejs/plugin-react':
         specifier: ^4.3.4
         version: 4.3.4(vite@5.4.14(@types/node@22.10.10)(sass@1.83.4)(terser@5.31.1))
@@ -1020,17 +1030,17 @@ importers:
         specifier: ^3.4.2
         version: 3.4.2
       react:
-        specifier: ^17.0.2
-        version: 17.0.2
+        specifier: ^18.2.0
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.3.1(react@18.3.1)
       rimraf:
         specifier: ^6.0.1
         version: 6.0.1
       style-dictionary:
         specifier: ^3.9.2
         version: 3.9.2
-      tailwindcss:
-        specifier: ^3.4.17
-        version: 3.4.17(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.7.3))
       tsx:
         specifier: ^4.19.2
         version: 4.19.2
@@ -1038,8 +1048,14 @@ importers:
         specifier: ^5.7.3
         version: 5.7.3
       vite:
-        specifier: ^5.4.14
+        specifier: ^5.0.0
         version: 5.4.14(@types/node@22.10.10)(sass@1.83.4)(terser@5.31.1)
+      vite-plugin-css-injected-by-js:
+        specifier: ^3.3.0
+        version: 3.5.2(vite@5.4.14(@types/node@22.10.10)(sass@1.83.4)(terser@5.31.1))
+      vite-plugin-dts:
+        specifier: ^4.5.0
+        version: 4.5.0(@types/node@22.10.10)(rollup@4.32.0)(typescript@5.7.3)(vite@5.4.14(@types/node@22.10.10)(sass@1.83.4)(terser@5.31.1))
 
   storybook-docs:
     devDependencies:
@@ -8655,10 +8671,6 @@ packages:
       react: '>=16.13'
       react-dom: '>=16.13'
 
-  react@17.0.2:
-    resolution: {integrity: sha512-gnhPt75i/dq/z3/6q/0asP78D0u592D5L1pd7M8P+dck6Fu/jJeL6iVVK23fptSUZj8Vjf++7wXA8UNclGQcbA==}
-    engines: {node: '>=0.10.0'}
-
   react@18.3.1:
     resolution: {integrity: sha512-wS+hAgJShR0KhEvPJArfuPVN1+Hz1t0Y6n5jLrGQbkb4urgPE/0Rve+1kMB1v/oWgHgm4WIcV+i7F2pTVj+2iQ==}
     engines: {node: '>=0.10.0'}
@@ -9774,6 +9786,11 @@ packages:
     resolution: {integrity: sha512-7JZKEzcYV2Nx3u6rlvN8qdo3QV7Fxyt6hx+CCKz9fbWxdX5IvUOmTWEAxMrWxaiSf7CKGLJQ5rFu8prb/jBjOA==}
     engines: {node: ^18.0.0 || ^20.0.0 || >=22.0.0}
     hasBin: true
+
+  vite-plugin-css-injected-by-js@3.5.2:
+    resolution: {integrity: sha512-2MpU/Y+SCZyWUB6ua3HbJCrgnF0KACAsmzOQt1UvRVJCGF6S8xdA3ZUhWcWdM9ivG4I5az8PnQmwwrkC2CAQrQ==}
+    peerDependencies:
+      vite: '>2.0.0-0'
 
   vite-plugin-dts@4.5.0:
     resolution: {integrity: sha512-M1lrPTdi7gilLYRZoLmGYnl4fbPryVYsehPN9JgaxjJKTs8/f7tuAlvCCvOLB5gRDQTTKnptBcB0ACsaw2wNLw==}
@@ -19651,11 +19668,6 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
-  react@17.0.2:
-    dependencies:
-      loose-envify: 1.4.0
-      object-assign: 4.1.1
-
   react@18.3.1:
     dependencies:
       loose-envify: 1.4.0
@@ -20967,6 +20979,10 @@ snapshots:
       - sugarss
       - supports-color
       - terser
+
+  vite-plugin-css-injected-by-js@3.5.2(vite@5.4.14(@types/node@22.10.10)(sass@1.83.4)(terser@5.31.1)):
+    dependencies:
+      vite: 5.4.14(@types/node@22.10.10)(sass@1.83.4)(terser@5.31.1)
 
   vite-plugin-dts@4.5.0(@types/node@22.10.10)(rollup@4.32.0)(typescript@5.7.3)(vite@5.4.14(@types/node@22.10.10)(sass@1.83.4)(terser@5.31.1)):
     dependencies:
