@@ -24,7 +24,10 @@
         "./tokens": "./dist/js/tokens.json",
         "./tailwind": "./dist/tailwind/tailwind.config.js",
         "./styles": "./dist/css/all.css",
-        "./theme": "./dist/theme/fondue-theme.es.js",
+        "./theme": {
+            "types": "./dist/theme/fondue-theme.es.d.ts",
+            "import": "./dist/theme/fondue-theme.es.js"
+        },
         "./themes/*": "./dist/css/*"
     },
     "files": [
