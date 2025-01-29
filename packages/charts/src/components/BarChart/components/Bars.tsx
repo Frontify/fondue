@@ -28,7 +28,7 @@ export const Bars = ({ series, horizontal, displayStyle }: BarGroupProps) => {
         }
     };
     const onPointerOut = () => setFocusedItemLabel(null);
-    const onPointerDown = (e: EventHandlerParams<BarChartDataPoint>) => e.datum.onBarClick && e.datum.onBarClick(e);
+    const onPointerDown = (e: EventHandlerParams<BarChartDataPoint>) => e.datum.onBarClick?.(e);
 
     const seriesElements = series.map((item, seriesIndex) => (
         <BarSeries

@@ -110,7 +110,7 @@ const planetsRadiusDataWithSingleClickable = (() => {
         return {
             label: item.name,
             value: parseFloat(item.radius),
-            onBarClick: index === 0 ? () => window.open('https://frontify.com') : undefined,
+            onBarClick: index === 0 ? () => window.open('https://frontify.com', '_blank', 'noopener') : undefined,
         };
     });
 
@@ -190,22 +190,9 @@ const addOnClickToFirstPoint = (series: BarChartSeries[]): BarChartSeries[] => {
         ...singleSeries,
         dataPoints: singleSeries.dataPoints.map((dataPoint, index) => ({
             ...dataPoint,
-            onBarClick: index === 0 ? () => window.open('https://frontify.com') : undefined,
+            onBarClick: index === 0 ? () => window.open('https://frontify.com', '_blank', 'noopener') : undefined,
         })),
     }));
-    // return series.reduce(
-    //     (prev, curr) => [
-    //         ...prev,
-    //         {
-    //             ...curr,
-    //             dataPoints: curr.dataPoints.map((dataPoint, index) => ({
-    //                 ...dataPoint,
-    //                 onBarClick: index === 0 ? () => window.open('https://frontify.com') : null,
-    //             })),
-    //         },
-    //     ],
-    //     [],
-    // );
 };
 
 const planetImagesMap: Record<string, string> = {
