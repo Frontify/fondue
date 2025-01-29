@@ -110,7 +110,7 @@ const planetsRadiusDataWithSingleClickable = (() => {
         return {
             label: item.name,
             value: parseFloat(item.radius),
-            onBarClick: index === 0 ? () => window.open('https://frontify.com') : null,
+            onBarClick: index === 0 ? () => window.open('https://frontify.com') : undefined,
         };
     });
 
@@ -185,19 +185,27 @@ const filterOnePointPerMonth = (series: BarChartSeries[]): BarChartSeries[] => {
 };
 
 const addOnClickToFirstPoint = (series: BarChartSeries[]): BarChartSeries[] => {
-    return series.reduce(
-        (prev, curr) => [
-            ...prev,
-            {
-                ...curr,
-                dataPoints: curr.dataPoints.map((dataPoint, index) => ({
-                    ...dataPoint,
-                    onBarClick: index === 0 ? () => window.open('https://frontify.com') : null,
-                })),
-            },
-        ],
-        [],
-    );
+    console.log(series);
+    return series.map((singleSeries) => ({
+        ...singleSeries,
+        dataPoints: singleSeries.dataPoints.map((dataPoint, index) => ({
+            ...dataPoint,
+            onBarClick: index === 0 ? () => window.open('https://frontify.com') : undefined,
+        })),
+    }));
+    // return series.reduce(
+    //     (prev, curr) => [
+    //         ...prev,
+    //         {
+    //             ...curr,
+    //             dataPoints: curr.dataPoints.map((dataPoint, index) => ({
+    //                 ...dataPoint,
+    //                 onBarClick: index === 0 ? () => window.open('https://frontify.com') : null,
+    //             })),
+    //         },
+    //     ],
+    //     [],
+    // );
 };
 
 const planetImagesMap: Record<string, string> = {
@@ -251,7 +259,7 @@ SingleDataSet.args = {
 
 export const SingleDataSetWithSingleOnClick = TemplateWithUrl.bind({});
 SingleDataSetWithSingleOnClick.args = {
-    series: planetsRadiusDataWithSingleClickable,
+    series: addDetailsWithUrl(planetsRadiusDataWithSingleClickable),
     width: 1000,
     height: 500,
 };
