@@ -98,7 +98,7 @@ ${sel} {
 
         // Original formatter logic for single selector...
         return `${options.selector || ':root'} {
-    ${dictionary.allProperties.map((prop) => `${prop.name}: ${prop.value};`).join('\n    ')}
+    ${dictionary.allProperties.map((prop) => `--${prop.name}: ${prop.value};`).join('\n    ')}
 }`;
     },
 });
