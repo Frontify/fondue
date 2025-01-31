@@ -13,14 +13,14 @@ export default defineConfig({
         cssInjectedByJsPlugin(),
         dts({
             rollupTypes: true,
-            include: ['tmp/providers'],
+            include: ['src/components/Provider'],
             copyDtsFiles: true,
         }),
     ],
     build: {
         outDir: resolve(__dirname, 'dist/theme'),
         lib: {
-            entry: resolve(__dirname, 'src/components/themeProvider/ThemeProvider.tsx'), // Your entry file
+            entry: resolve(__dirname, 'src/components/Provider/ThemeProvider.tsx'), // Your entry file
             name: 'FondueTheme', // Global variable name when used in browser
             formats: ['es'],
             fileName: (format) => `fondue-theme.${format}.js`,
