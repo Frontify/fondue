@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconCross } from '@frontify/fondue-icons';
+import { ThemeProvider, useFondueTheme } from '@frontify/fondue-tokens/themeProvider';
 import * as RadixPopover from '@radix-ui/react-popover';
 import { forwardRef, type CSSProperties, type ForwardedRef, type ReactNode } from 'react';
 
@@ -115,9 +116,10 @@ export const FlyoutContent = (
     }: FlyoutContentProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
+    const theme = useFondueTheme();
     return (
         <RadixPopover.Portal>
-            <>
+            <ThemeProvider theme={theme}>
                 <div className={styles.overlay} />
                 <RadixPopover.Content
                     style={
@@ -140,7 +142,7 @@ export const FlyoutContent = (
                 >
                     {children}
                 </RadixPopover.Content>
-            </>
+            </ThemeProvider>
         </RadixPopover.Portal>
     );
 };

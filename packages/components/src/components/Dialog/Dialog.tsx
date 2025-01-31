@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconCross } from '@frontify/fondue-icons';
+import { ThemeProvider, useFondueTheme } from '@frontify/fondue-tokens/themeProvider';
 import * as RadixDialog from '@radix-ui/react-dialog';
 import { createContext, forwardRef, useContext, type CSSProperties, type ForwardedRef, type ReactNode } from 'react';
 
@@ -191,29 +192,32 @@ export const DialogContent = (
     }: DialogContentProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
+    const theme = useFondueTheme();
     return (
         <RadixDialog.Portal>
-            <DialogUnderlay showUnderlay={showUnderlay}>
-                <RadixDialog.Content
-                    style={
-                        {
-                            '--dialog-max-width': maxWidth,
-                            '--dialog-min-width': minWidth,
-                            '--dialog-min-height': minHeight,
-                        } as CSSProperties
-                    }
-                    ref={ref}
-                    className={styles.content}
-                    onFocus={addShowFocusRing}
-                    data-dialog-padding={padding}
-                    data-dialog-rounded={rounded}
-                    data-test-id={dataTestId}
-                    data-dialog-vertical-align={verticalAlign}
-                    {...props}
-                >
-                    {children}
-                </RadixDialog.Content>
-            </DialogUnderlay>
+            <ThemeProvider theme={theme}>
+                <DialogUnderlay showUnderlay={showUnderlay}>
+                    <RadixDialog.Content
+                        style={
+                            {
+                                '--dialog-max-width': maxWidth,
+                                '--dialog-min-width': minWidth,
+                                '--dialog-min-height': minHeight,
+                            } as CSSProperties
+                        }
+                        ref={ref}
+                        className={styles.content}
+                        onFocus={addShowFocusRing}
+                        data-dialog-padding={padding}
+                        data-dialog-rounded={rounded}
+                        data-test-id={dataTestId}
+                        data-dialog-vertical-align={verticalAlign}
+                        {...props}
+                    >
+                        {children}
+                    </RadixDialog.Content>
+                </DialogUnderlay>
+            </ThemeProvider>
         </RadixDialog.Portal>
     );
 };
