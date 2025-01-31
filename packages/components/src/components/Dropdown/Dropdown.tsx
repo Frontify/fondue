@@ -100,7 +100,6 @@ export const DropdownContent = (
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     const theme = useFondueTheme();
-
     return (
         <RadixDropdown.Portal>
             <ThemeProvider theme={theme}>
