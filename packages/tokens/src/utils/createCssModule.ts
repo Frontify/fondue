@@ -12,7 +12,7 @@ export const createCssModule = () => {
     const modules = fileList
         .map((file) => {
             const themeName = file.split('.')[0];
-            if (themeName) {
+            if (themeName && themeName !== 'base') {
                 availableThemes.push(themeName);
             }
             return readFileSync(join(TEMPORARY_DIRECTORY, file), 'utf8');

@@ -4,20 +4,45 @@ import React, { ComponentType } from 'react';
 import '../src/styles.scss';
 import "@frontify/fondue-tokens/themeProvider/styles"
 import { ThemeProvider } from '@frontify/fondue-tokens/themeProvider';
-import type { Preview, Decorator } from '@storybook/react';
+import type { Preview, Decorator, StoryContext } from '@storybook/react';
 
 import DocumentationTemplate from './DocumentationTemplate.mdx';
 
 
-const ThemeProviderWrapper: Decorator = (Story: ComponentType) => {
+const ThemeProviderWrapper: Decorator = (Story: ComponentType, context: StoryContext) => {
     return (
-        <ThemeProvider theme="light">
+        <ThemeProvider theme={context.globals.theme || "light"}>
             <Story />
         </ThemeProvider>
     );
 };
 
 const preview: Preview = {
+    globalTypes: {
+        theme: {
+            description: 'Global theme for components',
+            toolbar: {
+              // The label to show for this toolbar item
+              title: 'Theme',
+              icon: 'paintbrush',
+              // Array of plain string values or MenuItem shape (see below)
+              items: [
+                {
+                    left: "🌞",
+                    value: 'light',
+                    title: 'Light Theme',
+                },
+                {
+                    left: "🌙",
+                    value: 'dark',
+                    title: 'Dark Theme',
+                }
+              ],
+              // Change title based on selected value
+              dynamicTitle: true,
+            },
+          },
+    },
     parameters: {
         docs: {
             page: DocumentationTemplate,

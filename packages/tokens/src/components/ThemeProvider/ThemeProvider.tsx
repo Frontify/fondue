@@ -4,7 +4,7 @@ import { createContext, useContext, type ReactNode } from 'react';
 
 import styles from './generated/themes.module.css';
 
-type themeOptions = keyof typeof styles;
+type AvalaibleThemes = keyof typeof styles;
 
 type ThemeProviderProps = {
     children: ReactNode;
@@ -12,10 +12,10 @@ type ThemeProviderProps = {
      * The theme to apply
      * @default light
      * */
-    theme: themeOptions;
+    theme: AvalaibleThemes;
 };
 
-const ThemeContext = createContext<themeOptions>('light');
+const ThemeContext = createContext<AvalaibleThemes>('light');
 
 export const useFondueTheme = () => {
     return useContext(ThemeContext);
