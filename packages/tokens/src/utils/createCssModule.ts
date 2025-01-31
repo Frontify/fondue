@@ -3,8 +3,8 @@
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-const OUTPUT_DIRECTORY = join(import.meta.dirname, '../../../tmp/providers');
-const TEMPORARY_DIRECTORY = join(import.meta.dirname, '../../../tmp/providers/themes');
+const TEMPORARY_DIRECTORY = join(import.meta.dirname, '../../../tmp/ThemeProvider/themes');
+const OUTPUT_DIRECTORY = join(import.meta.dirname, '../../components/ThemeProvider/generated');
 const availableThemes: string[] = [];
 
 export const createCssModule = () => {

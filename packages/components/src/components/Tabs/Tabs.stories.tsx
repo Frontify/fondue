@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconIcon } from '@frontify/fondue-icons';
+import { ThemeProvider } from '@frontify/fondue-tokens/theme';
 import { action } from '@storybook/addon-actions';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { useState } from 'react';

@@ -1,9 +1,20 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import '@frontify/fondue-tokens/styles';
-import type { Preview } from '@storybook/react';
+import React from 'react';
+import type { Preview, Decorator } from '@storybook/react';
 import '../src/styles.scss';
 import DocumentationTemplate from './DocumentationTemplate.mdx';
+import { ThemeProvider } from '@frontify/fondue-tokens/theme';
+
+
+const ThemeProviderWrapper: Decorator = (Story: React.ComponentType) => {
+    return (
+        <ThemeProvider theme='default'>
+            <Story />
+        </ThemeProvider>
+    );
+};
 
 const preview: Preview = {
     parameters: {
@@ -51,6 +62,10 @@ const preview: Preview = {
             },
         },
     },
+    decorators: [ThemeProviderWrapper],
 };
+
+
+
 
 export default preview;

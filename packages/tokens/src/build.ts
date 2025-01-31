@@ -6,7 +6,7 @@ import StyleDictionary from 'style-dictionary';
 
 import { figmaFormatter } from './formatters/figma';
 import { tailwindFormatter } from './formatters/tailwind';
-import { createProvider } from './utils/createProvider/createProvider';
+import { createCssModule } from './utils/createCssModule';
 import { mergeFigmaFiles } from './utils/mergeFigmaFiles';
 import { transformColor } from './utils/transformColor';
 import { trimHyphens } from './utils/trimHyphens';
@@ -221,12 +221,12 @@ StyleDictionary.extend({
         },
         providers: {
             transformGroup: 'css',
-            buildPath: `${TEMPORARY_DIRECTORY}/providers/themes/`,
+            buildPath: `${TEMPORARY_DIRECTORY}/themeProvider/themes/`,
             files: [
                 {
                     destination: 'default.module.css',
                     format: 'css/variables',
-                    options: { selector: '.root' },
+                    options: { selector: '.default' },
                     filter: (token) => {
                         if (!token.filePath.includes('brand')) {
                             return token.attributes?.target !== 'figma';
@@ -292,7 +292,7 @@ for (const theme of COLOR_THEMES) {
             },
             providers: {
                 transformGroup: 'css',
-                buildPath: `${TEMPORARY_DIRECTORY}/providers/themes/`,
+                buildPath: `${TEMPORARY_DIRECTORY}/themeProvider/themes/`,
                 files: [
                     {
                         destination: `${theme}.module.css`,
@@ -310,4 +310,4 @@ for (const theme of COLOR_THEMES) {
 }
 
 mergeFigmaFiles();
-createProvider();
+createCssModule();
