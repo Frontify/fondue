@@ -219,7 +219,23 @@ StyleDictionary.extend({
                 },
             ],
         },
-        providers: {
+        themes_base: {
+            transformGroup: 'css',
+            buildPath: `${TEMPORARY_DIRECTORY}/themeProvider/themes/`,
+            files: [
+                {
+                    destination: 'base.module.css',
+                    format: 'css/variables',
+                    filter: (token) => {
+                        if (!token.filePath.includes('brand')) {
+                            return token.attributes?.target !== 'figma' && token.attributes?.category !== 'color';
+                        }
+                        return false;
+                    },
+                },
+            ],
+        },
+        themes_light: {
             transformGroup: 'css',
             buildPath: `${TEMPORARY_DIRECTORY}/themeProvider/themes/`,
             files: [
@@ -229,7 +245,7 @@ StyleDictionary.extend({
                     options: { selector: '.light' },
                     filter: (token) => {
                         if (!token.filePath.includes('brand')) {
-                            return token.attributes?.target !== 'figma';
+                            return token.attributes?.target !== 'figma' && token.attributes?.category === 'color';
                         }
                         return false;
                     },

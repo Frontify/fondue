@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconCaretRight } from '@frontify/fondue-icons';
+import { ThemeProvider, useFondueTheme } from '@frontify/fondue-tokens/themeProvider';
 import * as RadixDropdown from '@radix-ui/react-dropdown-menu';
 import { Slot } from '@radix-ui/react-slot';
 import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
@@ -98,24 +99,28 @@ export const DropdownContent = (
     }: DropdownContentProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
+    const theme = useFondueTheme();
+
     return (
         <RadixDropdown.Portal>
-            <RadixDropdown.Content
-                align={align}
-                collisionPadding={8}
-                sideOffset={8}
-                side={side}
-                className={styles.content}
-                data-test-id={dataTestId}
-                ref={ref}
-                onCloseAutoFocus={(event) => {
-                    if (preventTriggerFocusOnClose) {
-                        event.preventDefault();
-                    }
-                }}
-            >
-                {children}
-            </RadixDropdown.Content>
+            <ThemeProvider theme={theme}>
+                <RadixDropdown.Content
+                    align={align}
+                    collisionPadding={8}
+                    sideOffset={8}
+                    side={side}
+                    className={styles.content}
+                    data-test-id={dataTestId}
+                    ref={ref}
+                    onCloseAutoFocus={(event) => {
+                        if (preventTriggerFocusOnClose) {
+                            event.preventDefault();
+                        }
+                    }}
+                >
+                    {children}
+                </RadixDropdown.Content>
+            </ThemeProvider>
         </RadixDropdown.Portal>
     );
 };

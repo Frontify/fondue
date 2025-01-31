@@ -1,8 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ReactNode } from 'react';
+import { createContext, useContext, type ReactNode } from 'react';
 
 import styles from './generated/themes.module.css';
+
+type themeOptions = keyof typeof styles;
 
 type ThemeProviderProps = {
     children: ReactNode;
@@ -10,9 +12,19 @@ type ThemeProviderProps = {
      * The theme to apply
      * @default light
      * */
-    theme: keyof typeof styles;
+    theme: themeOptions;
+};
+
+const ThemeContext = createContext<themeOptions>('light');
+
+export const useFondueTheme = () => {
+    return useContext(ThemeContext);
 };
 
 export const ThemeProvider = ({ children, theme = 'light' }: ThemeProviderProps) => {
-    return <div className={styles[theme]}>{children}</div>;
+    return (
+        <ThemeContext.Provider value={theme}>
+            <div className={styles[theme]}>{children}</div>
+        </ThemeContext.Provider>
+    );
 };
