@@ -28,7 +28,7 @@
         @include mediaQuery.sm {
             left: 50%;
             transform: translateX(-50%) translateY(-50%);
-            width: fit-content;
+            width: max-content;
             min-width: var(--dialog-min-width);
             grid-template-rows: auto minmax(0, 1fr) auto;
             grid-template-columns: min-content auto;
