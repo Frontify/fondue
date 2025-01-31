@@ -11,9 +11,8 @@ import DocumentationTemplate from './DocumentationTemplate.mdx';
 
 
 const ThemeProviderWrapper: Decorator = (Story: ComponentType) => {
-    const theme = useDarkMode() ? "dark" : "light";
     return (
-        <ThemeProvider theme={theme}>
+        <ThemeProvider theme="light">
             <Story />
         </ThemeProvider>
     );
