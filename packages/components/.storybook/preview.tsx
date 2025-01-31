@@ -1,14 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
+import React, { ComponentType } from 'react';
 
-import '@frontify/fondue-tokens/styles';
-import React from 'react';
-import type { Preview, Decorator } from '@storybook/react';
 import '../src/styles.scss';
-import DocumentationTemplate from './DocumentationTemplate.mdx';
 import { ThemeProvider } from '@frontify/fondue-tokens/theme';
+import type { Preview, Decorator } from '@storybook/react';
+
+import DocumentationTemplate from './DocumentationTemplate.mdx';
 
 
-const ThemeProviderWrapper: Decorator = (Story: React.ComponentType) => {
+const ThemeProviderWrapper: Decorator = (Story: ComponentType) => {
     return (
         <ThemeProvider theme='default'>
             <Story />

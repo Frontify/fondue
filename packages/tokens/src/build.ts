@@ -224,9 +224,9 @@ StyleDictionary.extend({
             buildPath: `${TEMPORARY_DIRECTORY}/themeProvider/themes/`,
             files: [
                 {
-                    destination: 'default.module.css',
+                    destination: 'light.module.css',
                     format: 'css/variables',
-                    options: { selector: '.default' },
+                    options: { selector: '.light' },
                     filter: (token) => {
                         if (!token.filePath.includes('brand')) {
                             return token.attributes?.target !== 'figma';
