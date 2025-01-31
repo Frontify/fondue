@@ -5,13 +5,15 @@ import '../src/styles.scss';
 import "@frontify/fondue-tokens/themeProvider/styles"
 import { ThemeProvider } from '@frontify/fondue-tokens/themeProvider';
 import type { Preview, Decorator } from '@storybook/react';
+import { useDarkMode } from 'storybook-dark-mode';
 
 import DocumentationTemplate from './DocumentationTemplate.mdx';
 
 
 const ThemeProviderWrapper: Decorator = (Story: ComponentType) => {
+    const theme = useDarkMode() ? "dark" : "light";
     return (
-        <ThemeProvider theme='light'>
+        <ThemeProvider theme={theme}>
             <Story />
         </ThemeProvider>
     );
