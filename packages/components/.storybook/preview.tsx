@@ -2,7 +2,8 @@
 import React, { ComponentType } from 'react';
 
 import '../src/styles.scss';
-import { ThemeProvider } from '@frontify/fondue-tokens/theme';
+import "@frontify/fondue-tokens/themeProvider/styles"
+import { ThemeProvider } from '@frontify/fondue-tokens/themeProvider';
 import type { Preview, Decorator } from '@storybook/react';
 
 import DocumentationTemplate from './DocumentationTemplate.mdx';
@@ -10,7 +11,7 @@ import DocumentationTemplate from './DocumentationTemplate.mdx';
 
 const ThemeProviderWrapper: Decorator = (Story: ComponentType) => {
     return (
-        <ThemeProvider theme='default'>
+        <ThemeProvider theme='light'>
             <Story />
         </ThemeProvider>
     );
@@ -64,8 +65,5 @@ const preview: Preview = {
     },
     decorators: [ThemeProviderWrapper],
 };
-
-
-
 
 export default preview;

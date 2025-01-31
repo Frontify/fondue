@@ -38,6 +38,7 @@ const createTypes = () => {
     const dtsContent = `declare const styles: {
 ${themeClassDefinitions}
 };
+
 export default styles;`;
 
     writeFileSync(join(OUTPUT_DIRECTORY, 'themes.module.css.d.ts'), dtsContent, {

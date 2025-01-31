@@ -43,6 +43,11 @@
         "./charts/styles": "./dist/packages/charts/style.css",
         "./tokens/styles": "./dist/packages/tokens/style.css",
         "./tokens/tailwind": "./dist/packages/tokens/tailwind.config.js",
+        "./tokens/themes": "./dist/packages/tokens/theme/ThemeProvider.css",
+        "./tokens": {
+            "types": "./dist/packages/tokens/theme/fondue-theme-provider.es.d.ts",
+            "import": "./dist/packages/tokens/theme/fondue-theme-provider.es.js"
+        },
         ".": {
             "types": "./dist/index.d.ts",
             "require": "./dist/index.umd.js",
