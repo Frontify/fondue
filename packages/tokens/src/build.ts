@@ -81,24 +81,13 @@ StyleDictionary.registerTransformGroup({
  */
 
 StyleDictionary.registerFormat({
-    name: 'css/variables',
+    name: 'css/module/theme',
     formatter({ dictionary, options = {} }) {
-        const { selector, selectorFormat } = options;
+        const { selector, theme } = options;
+        const allTokens = [...dictionary.allProperties];
 
-        if (selectorFormat === 'independent' && Array.isArray(selector)) {
-            return selector
-                .map(
-                    (sel) => `
-${sel} {
-    ${dictionary.allProperties.map((prop) => `--${prop.name}: ${prop.value};`).join('\n    ')}
-}`,
-                )
-                .join('\n\n');
-        }
-
-        // Original formatter logic for single selector...
-        return `${options.selector || ':root'} {
-    ${dictionary.allProperties.map((prop) => `--${prop.name}: ${prop.value};`).join('\n    ')}
+        return `${selector || `.${theme}`} {
+    ${allTokens.map((prop) => `--${prop.name}: ${prop.value};`).join('\n    ')}
 }`;
     },
 });
@@ -219,36 +208,15 @@ StyleDictionary.extend({
                 },
             ],
         },
-        themes_base: {
-            transformGroup: 'css',
-            buildPath: `${TEMPORARY_DIRECTORY}/themeProvider/themes/`,
-            files: [
-                {
-                    destination: 'base.module.css',
-                    format: 'css/variables',
-                    filter: (token) => {
-                        if (!token.filePath.includes('brand')) {
-                            return token.attributes?.target !== 'figma' && token.attributes?.category !== 'color';
-                        }
-                        return false;
-                    },
-                },
-            ],
-        },
-        themes_light: {
+        light_theme: {
             transformGroup: 'css',
             buildPath: `${TEMPORARY_DIRECTORY}/themeProvider/themes/`,
             files: [
                 {
                     destination: 'light.module.css',
-                    format: 'css/variables',
-                    options: { selector: '.light' },
-                    filter: (token) => {
-                        if (!token.filePath.includes('brand')) {
-                            return token.attributes?.target !== 'figma' && token.attributes?.category === 'color';
-                        }
-                        return false;
-                    },
+                    format: 'css/module/theme',
+                    options: { theme: 'light' },
+                    filter: (token) => !token.filePath.includes('brand') && token.attributes?.target !== 'figma',
                 },
             ],
         },
@@ -306,18 +274,15 @@ for (const theme of COLOR_THEMES) {
                     },
                 ],
             },
-            providers: {
+            [theme]: {
                 transformGroup: 'css',
                 buildPath: `${TEMPORARY_DIRECTORY}/themeProvider/themes/`,
                 files: [
                     {
                         destination: `${theme}.module.css`,
-                        format: 'css/variables',
-                        options: {
-                            selector: `.${theme}`,
-                            appendFile: true, // New option to append instead of overwrite
-                        },
-                        filter: (token) => token.filePath.includes(`.${theme}.ts`),
+                        format: 'css/module/theme',
+                        options: { theme },
+                        filter: (token) => !token.filePath.includes('brand'),
                     },
                 ],
             },
