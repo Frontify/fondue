@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ThemeProvider } from "@frontify/fondue-tokens/themeProvider";
-import React, { ComponentProps, ComponentType, ReactNode } from "react";
+import { type ComponentProps, type ComponentType, type ReactNode } from "react";
 
 type withThemeOptions = {
     label?: string;
