@@ -446,3 +446,26 @@ test('should not render borders when showBorder is false', async ({ mount, page 
     await expect(headerElement).not.toHaveCSS('border-bottom-width', '1px');
     await expect(footerElement).not.toHaveCSS('border-top-width', '1px');
 });
+
+test('should have its content to expand to max width set by user', async ({ mount, page }) => {
+    await mount(
+        <Dialog.Root open>
+            <Dialog.Trigger>
+                <Button>{DIALOG_TRIGGER_TEXT}</Button>
+            </Dialog.Trigger>
+
+            <Dialog.Content maxWidth="810px">
+                <Dialog.Header showBorder={false} data-test-id={DIALOG_HEADER_TEST_ID}>
+                    <Dialog.Title>{DIALOG_HEADER_TEXT}</Dialog.Title>
+                </Dialog.Header>
+                <Dialog.Body data-test-id={DIALOG_BODY_TEST_ID}>
+                    <div style={{ width: '1234px' }}>Content</div>
+                </Dialog.Body>
+            </Dialog.Content>
+        </Dialog.Root>,
+    );
+
+    const contentElement = page.getByTestId(DIALOG_CONTENT_TEST_ID);
+    await expect(contentElement).toHaveCSS('max-width', '810px');
+    await expect(contentElement).toHaveCSS('width', '810px');
+});
