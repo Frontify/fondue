@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconCaretRight } from '@frontify/fondue-icons';
-import { ThemeProvider, useFondueTheme } from '@frontify/fondue-tokens/themeProvider';
+import { ThemeProvider, useFondueTheme } from '@frontify/fondue-tokens/theme-provider';
 import * as RadixDropdown from '@radix-ui/react-dropdown-menu';
 import { Slot } from '@radix-ui/react-slot';
 import { forwardRef, type ForwardedRef, type ReactNode } from 'react';

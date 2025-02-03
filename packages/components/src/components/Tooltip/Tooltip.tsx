@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ThemeProvider, useFondueTheme } from '@frontify/fondue-tokens/themeProvider';
+import { ThemeProvider, useFondueTheme } from '@frontify/fondue-tokens/theme-provider';
 import * as RadixTooltip from '@radix-ui/react-tooltip';
 import { forwardRef, type ForwardedRef, type ReactElement, type ReactNode } from 'react';
 
