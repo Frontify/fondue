@@ -1,4 +1,4 @@
-import{j as e}from"./jsx-runtime-OyuVp9gi.js";import{useMDXComponents as i}from"./index-XjeC9rGI.js";import"./index-DtebyF6Q.js";import"./_commonjsHelpers-Cpj98o6Y.js";function t(o){const n={a:"a",code:"code",h1:"h1",h2:"h2",h3:"h3",h4:"h4",li:"li",p:"p",pre:"pre",strong:"strong",ul:"ul",...i(),...o.components};return e.jsxs(e.Fragment,{children:[e.jsx(n.h1,{id:"getting-started",children:"Getting started"}),`
+import{j as e}from"./jsx-runtime-OyuVp9gi.js";import{useMDXComponents as s}from"./index-XjeC9rGI.js";import"./index-DtebyF6Q.js";import"./_commonjsHelpers-Cpj98o6Y.js";function t(o){const n={a:"a",code:"code",h1:"h1",h2:"h2",h3:"h3",h4:"h4",li:"li",p:"p",pre:"pre",strong:"strong",ul:"ul",...s(),...o.components};return e.jsxs(e.Fragment,{children:[e.jsx(n.h1,{id:"getting-started",children:"Getting started"}),`
 `,e.jsxs(n.p,{children:["Welcome to Fondue, the design system for the ",e.jsx(n.a,{href:"https://frontify.com",rel:"nofollow",children:"Frontify"})," ecosystem."]}),`
 `,e.jsx(n.h2,{id:"installation",children:"Installation"}),`
 `,e.jsx(n.p,{children:"Add the Fondue design system package as a dependency to your project."}),`
@@ -45,10 +45,14 @@ const App = () => (
 `})}),`
 `,e.jsx(n.h4,{id:"component-styles",children:"Component Styles"}),`
 `,e.jsx(n.p,{children:"The component styles are imported separately from the component itself. This allows you to import the styles only once in your application, instead of importing them with every usage."}),`
-`,e.jsx(n.pre,{children:e.jsx(n.code,{className:"language-tsx",children:`import "@frontify/fondue/[package]/styles";
+`,e.jsx(n.pre,{children:e.jsx(n.code,{className:"language-tsx",children:`// chart styles
+import '@frontify/fondue/charts/styles';
 
-//example
-import "@frontify/fondue/components/styles";
+// component styles
+import '@frontify/fondue/components/styles';
+
+// legacy component styles
+import '@frontify/fondue/styles';
 `})}),`
 `,e.jsxs(n.p,{children:["Usages of ",e.jsx(n.code,{children:"ThemeProvider"})," can be nested to specify a theme for a specific set of components, the closest provider will be used."]}),`
 `,e.jsx(n.pre,{children:e.jsx(n.code,{className:"language-tsx",children:`<ThemeProvider theme="light">
@@ -65,4 +69,4 @@ import "@frontify/fondue/components/styles";
 `,e.jsxs(n.li,{children:[e.jsx(n.a,{href:"https://fondue-components.frontify.com",rel:"nofollow",children:"Storybook"})," – Storybook for previewing Fondue components"]}),`
 `,e.jsxs(n.li,{children:[e.jsx(n.a,{href:"https://weare.frontify.com/document/1266?#/using-fondue",rel:"nofollow",children:"Fondue documentation"})," – Documentation for the Fondue design system"]}),`
 `,e.jsxs(n.li,{children:[e.jsx(n.a,{href:"https://tailwindcss.com/docs",rel:"nofollow",children:"Tailwind"})," – Utility-first CSS framework used in fondue"]}),`
-`]})]})}function l(o={}){const{wrapper:n}={...i(),...o.components};return n?e.jsx(n,{...o,children:e.jsx(t,{...o})}):t(o)}export{l as default};
+`]})]})}function l(o={}){const{wrapper:n}={...s(),...o.components};return n?e.jsx(n,{...o,children:e.jsx(t,{...o})}):t(o)}export{l as default};
