@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
-import React, { ComponentType } from 'react';
+
+import { type ComponentType } from 'react';
 
 import '../src/styles.scss';
 import "@frontify/fondue-tokens/themeProvider/styles"
-import type { Preview, Decorator, StoryContext } from '@storybook/react';
+import { type Preview, type Decorator, type StoryContext } from '@storybook/react';
 import { Flex } from '../src/components/Flex/Flex';
 
 import DocumentationTemplate from './DocumentationTemplate.mdx';
@@ -14,8 +15,8 @@ const ThemeProviderWrapper: Decorator = (Story: ComponentType, context: StoryCon
     if (context.globals.theme === 'both') {
         return (
             <Flex direction="column">
-                {withTheme(Story, 'light', { label: 'Light Theme' })}
-                {withTheme(Story, 'dark', { label: 'Dark Theme' })}
+                {withTheme(Story, 'light', { label: 'Light theme' })}
+                {withTheme(Story, 'dark', { label: 'Dark theme' })}
             </Flex>
         );
     }
@@ -32,17 +33,17 @@ const preview: Preview = {
               items: [
                 {
                     value: 'light',
-                    title: 'Light Theme',
+                    title: 'Light theme',
                     icon: "sun",
                 },
                 {
                     value: 'dark',
-                    title: 'Dark Theme',
+                    title: 'Dark theme',
                     icon: "moon",
                 },
                 {
                     value: 'both',
-                    title: 'Both Themes',
+                    title: 'Both themes',
                     icon: "contrast"
                 }
               ],
