@@ -72,6 +72,8 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
 }
 
 .content {
+    color: var(--text-color);
+
     [data-tabs-content-padding='tight'] & {
         padding: sizeToken.get(2);
     }

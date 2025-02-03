@@ -5,16 +5,22 @@ import '../src/styles.scss';
 import "@frontify/fondue-tokens/themeProvider/styles"
 import { ThemeProvider } from '@frontify/fondue-tokens/themeProvider';
 import type { Preview, Decorator, StoryContext } from '@storybook/react';
+import { Flex } from '../src/components/Flex/Flex';
 
 import DocumentationTemplate from './DocumentationTemplate.mdx';
+import { withTheme } from './components/StoryWithTeme';
 
 
 const ThemeProviderWrapper: Decorator = (Story: ComponentType, context: StoryContext) => {
-    return (
-        <ThemeProvider theme={context.globals.theme || "light"}>
-            <Story />
-        </ThemeProvider>
-    );
+    if (context.globals.theme === 'both') {
+        return (
+            <Flex direction="column">
+                {withTheme(Story, 'light', { label: 'Light Theme' })}
+                {withTheme(Story, 'dark', { label: 'Dark Theme' })}
+            </Flex>
+        );
+    }
+    return withTheme(Story, context.globals.theme);
 };
 
 const preview: Preview = {
@@ -22,28 +28,34 @@ const preview: Preview = {
         theme: {
             description: 'Global theme for components',
             toolbar: {
-              // The label to show for this toolbar item
               title: 'Theme',
               icon: 'paintbrush',
-              // Array of plain string values or MenuItem shape (see below)
               items: [
                 {
-                    left: "🌞",
                     value: 'light',
                     title: 'Light Theme',
+                    icon: "sun",
                 },
                 {
-                    left: "🌙",
                     value: 'dark',
                     title: 'Dark Theme',
+                    icon: "moon",
+                },
+                {
+                    value: 'both',
+                    title: 'Both Themes',
+                    icon: "contrast"
                 }
               ],
-              // Change title based on selected value
               dynamicTitle: true,
             },
           },
     },
+    initialGlobals: {
+        theme: 'light',
+    },
     parameters: {
+        layout: "fullscreen",
         docs: {
             page: DocumentationTemplate,
             toc: {
