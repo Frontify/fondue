@@ -86,7 +86,8 @@ StyleDictionary.registerFormat({
         const { selector, theme } = options;
         const allTokens = [...dictionary.allProperties];
 
-        return `${selector || `.${theme}`} {
+        const selectorString = selector ? `${selector}` : `.${theme}`;
+        return `${selectorString} {
     ${allTokens.map((prop) => `--${prop.name}: ${prop.value};`).join('\n    ')}
 }`;
     },
