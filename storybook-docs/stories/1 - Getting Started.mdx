@@ -51,6 +51,46 @@ import { Button } from '@frontify/fondue';
 const App = () => <Button>Click Me</Button>;
 ```
 
+### Styles
+
+#### Tokens / Themes [new in `v12.4`]
+We utilize a theme provider to provide the correct tokens to the components.
+
+To use the provider, you need to import the theme styles and wrap your application in the `ThemeProvider` component.
+The `ThemeProvider` will provide the correct tokens to the components based on the theme you provide. The currently available themes are `light` and `dark`.
+```tsx
+import "@frontify/fondue/tokens/themes";
+import { ThemeProvider } "@frontify/fondue/tokens";
+
+const App = () => (
+    <ThemeProvider theme="light">
+        ...YourApp
+    </ThemeProvider>
+);
+```
+
+#### Component Styles
+The component styles are imported separately from the component itself. This allows you to import the styles only once in your application, instead of importing them with every usage.
+
+```tsx
+import "@frontify/fondue/[package]/styles";
+
+//example
+import "@frontify/fondue/components/styles";
+```
+
+Usages of `ThemeProvider` can be nested to specify a theme for a specific set of components, the closest provider will be used.
+
+```tsx
+<ThemeProvider theme="light">
+    <ComponentUsingLightTheme />
+    <ThemeProvider theme="dark">
+        <ComponentUsingDarkTheme />
+    </ThemeProvider>
+</ThemeProvider>
+```
+
+
 ## Contributing
 
 See [Contribution guidelines](CONTRIBUTING.md) for contributing and local development help.

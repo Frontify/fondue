@@ -267,7 +267,7 @@ importers:
         version: 5.0.0
       '@frontify/eslint-config-react':
         specifier: ^0.17.7
-        version: 0.17.7(@types/eslint@8.56.9)(eslint@8.57.1)(prettier@3.4.2)(react@18.3.1)(typescript@5.7.3)
+        version: 0.17.7(eslint@8.57.1)(prettier@3.4.2)(react@18.3.1)(typescript@5.7.3)
       '@frontify/fondue-icons':
         specifier: workspace:^
         version: link:../icons
@@ -1083,9 +1083,6 @@ importers:
       '@storybook/react-vite':
         specifier: ^8.5.2
         version: 8.5.2(@storybook/test@8.5.2(storybook@8.5.2(prettier@3.4.2)))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.32.0)(storybook@8.5.2(prettier@3.4.2))(typescript@5.7.3)(vite@5.4.14(@types/node@22.10.10)(sass@1.83.4)(terser@5.31.1))
-      '@storybook/theming':
-        specifier: ^8.5.2
-        version: 8.5.2(storybook@8.5.2(prettier@3.4.2))
       '@types/node':
         specifier: ^22.10.10
         version: 22.10.10
@@ -10162,7 +10159,7 @@ snapshots:
       '@babel/traverse': 7.26.7
       '@babel/types': 7.26.7
       convert-source-map: 2.0.0
-      debug: 4.3.7
+      debug: 4.3.7(supports-color@5.5.0)
       gensync: 1.0.0-beta.2
       json5: 2.2.3
       semver: 6.3.1
@@ -11161,7 +11158,7 @@ snapshots:
       '@babel/parser': 7.26.1
       '@babel/template': 7.25.9
       '@babel/types': 7.26.0
-      debug: 4.3.7
+      debug: 4.3.7(supports-color@5.5.0)
       globals: 11.12.0
     transitivePeerDependencies:
       - supports-color
@@ -11173,7 +11170,7 @@ snapshots:
       '@babel/parser': 7.26.7
       '@babel/template': 7.25.9
       '@babel/types': 7.26.7
-      debug: 4.3.7
+      debug: 4.3.7(supports-color@5.5.0)
       globals: 11.12.0
     transitivePeerDependencies:
       - supports-color
@@ -11380,7 +11377,7 @@ snapshots:
   '@cypress/vite-dev-server@6.0.1(cypress@14.0.0)':
     dependencies:
       cypress: 14.0.0
-      debug: 4.3.7(supports-color@8.1.1)
+      debug: 4.3.7(supports-color@5.5.0)
       find-up: 6.3.0
       node-html-parser: 5.3.3
       semver: 7.6.3
@@ -11682,7 +11679,7 @@ snapshots:
   '@eslint/eslintrc@3.1.0':
     dependencies:
       ajv: 6.12.6
-      debug: 4.3.7
+      debug: 4.3.7(supports-color@5.5.0)
       espree: 10.1.0
       globals: 14.0.0
       ignore: 5.3.1
@@ -11791,22 +11788,6 @@ snapshots:
       - supports-color
       - typescript
 
-  '@frontify/eslint-config-react@0.17.7(@types/eslint@8.56.9)(eslint@8.57.1)(prettier@3.4.2)(react@18.3.1)(typescript@5.7.3)':
-    dependencies:
-      '@frontify/eslint-config-basic': 0.20.6(@types/eslint@8.56.9)(eslint@8.57.1)(prettier@3.4.2)(typescript@5.7.3)
-      eslint: 8.57.1
-      eslint-plugin-jsx-a11y: 6.9.0(eslint@8.57.1)
-      eslint-plugin-react: 7.34.4(eslint@8.57.1)
-      eslint-plugin-react-hooks: 4.6.2(eslint@8.57.1)
-      prettier: 3.4.2
-      react: 18.3.1
-    transitivePeerDependencies:
-      - '@types/eslint'
-      - eslint-import-resolver-node
-      - eslint-import-resolver-webpack
-      - supports-color
-      - typescript
-
   '@frontify/eslint-config-react@0.17.7(eslint@8.57.1)(prettier@3.4.2)(react@18.3.1)(typescript@5.7.3)':
     dependencies:
       '@frontify/eslint-config-basic': 0.20.6(@types/eslint@8.56.9)(eslint@8.57.1)(prettier@3.4.2)(typescript@5.7.3)
@@ -11849,7 +11830,7 @@ snapshots:
       axios: 1.7.9
       cheerio: 1.0.0
       domhandler: 5.0.3
-      extract-zip: 2.0.1(supports-color@8.1.1)
+      extract-zip: 2.0.1
       local-pkg: 0.5.1
       pathe: 1.1.2
       svgo: 3.3.2
@@ -14478,7 +14459,7 @@ snapshots:
       '@typescript-eslint/types': 7.16.0
       '@typescript-eslint/typescript-estree': 7.16.0(typescript@5.7.3)
       '@typescript-eslint/visitor-keys': 7.16.0
-      debug: 4.3.7
+      debug: 4.3.7(supports-color@5.5.0)
       eslint: 8.57.1
     optionalDependencies:
       typescript: 5.7.3
@@ -14499,7 +14480,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/typescript-estree': 7.16.0(typescript@5.7.3)
       '@typescript-eslint/utils': 7.16.0(eslint@8.57.1)(typescript@5.7.3)
-      debug: 4.3.7
+      debug: 4.3.7(supports-color@5.5.0)
       eslint: 8.57.1
       ts-api-utils: 1.3.0(typescript@5.7.3)
     optionalDependencies:
@@ -14515,7 +14496,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 7.16.0
       '@typescript-eslint/visitor-keys': 7.16.0
-      debug: 4.3.7
+      debug: 4.3.7(supports-color@5.5.0)
       globby: 11.1.0
       is-glob: 4.0.3
       minimatch: 9.0.5
@@ -14530,7 +14511,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 8.12.2
       '@typescript-eslint/visitor-keys': 8.12.2
-      debug: 4.3.7
+      debug: 4.3.7(supports-color@5.5.0)
       fast-glob: 3.3.3
       is-glob: 4.0.3
       minimatch: 9.0.5
@@ -15102,7 +15083,7 @@ snapshots:
       std-env: 3.8.0
       test-exclude: 7.0.1
       tinyrainbow: 2.0.0
-      vitest: 3.0.4(@types/node@22.10.10)(@vitest/ui@3.0.4)(happy-dom@15.7.4)(sass@1.83.4)(terser@5.31.1)
+      vitest: 3.0.4(@types/node@22.10.10)(@vitest/ui@3.0.4)(happy-dom@14.12.3)(sass@1.83.4)(terser@5.31.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -15168,7 +15149,7 @@ snapshots:
       sirv: 3.0.0
       tinyglobby: 0.2.10
       tinyrainbow: 2.0.0
-      vitest: 3.0.4(@types/node@22.10.10)(@vitest/ui@3.0.4)(happy-dom@15.7.4)(sass@1.83.4)(terser@5.31.1)
+      vitest: 3.0.4(@types/node@22.10.10)(@vitest/ui@3.0.4)(happy-dom@14.12.3)(sass@1.83.4)(terser@5.31.1)
 
   '@vitest/utils@2.0.5':
     dependencies:
@@ -16231,10 +16212,6 @@ snapshots:
       ms: 2.0.0
     optional: true
 
-  debug@3.2.7:
-    dependencies:
-      ms: 2.1.3
-
   debug@3.2.7(supports-color@8.1.1):
     dependencies:
       ms: 2.1.3
@@ -16244,10 +16221,6 @@ snapshots:
   debug@4.3.4:
     dependencies:
       ms: 2.1.2
-
-  debug@4.3.7:
-    dependencies:
-      ms: 2.1.3
 
   debug@4.3.7(supports-color@5.5.0):
     dependencies:
@@ -16685,7 +16658,7 @@ snapshots:
 
   esbuild-register@3.5.0(esbuild@0.24.2):
     dependencies:
-      debug: 4.3.7
+      debug: 4.3.7(supports-color@5.5.0)
       esbuild: 0.24.2
     transitivePeerDependencies:
       - supports-color
@@ -16799,7 +16772,7 @@ snapshots:
 
   eslint-import-resolver-node@0.3.9:
     dependencies:
-      debug: 3.2.7
+      debug: 3.2.7(supports-color@8.1.1)
       is-core-module: 2.13.1
       resolve: 1.22.8
     transitivePeerDependencies:
@@ -16807,7 +16780,7 @@ snapshots:
 
   eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.16.0(eslint@8.57.1)(typescript@5.7.3))(eslint-plugin-import@2.29.1)(eslint@8.57.1):
     dependencies:
-      debug: 4.3.7
+      debug: 4.3.7(supports-color@5.5.0)
       enhanced-resolve: 5.15.0
       eslint: 8.57.1
       eslint-module-utils: 2.8.0(@typescript-eslint/parser@7.16.0(eslint@8.57.1)(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.1)
@@ -16824,7 +16797,7 @@ snapshots:
 
   eslint-module-utils@2.8.0(@typescript-eslint/parser@7.16.0(eslint@8.57.1)(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.1):
     dependencies:
-      debug: 3.2.7
+      debug: 3.2.7(supports-color@8.1.1)
     optionalDependencies:
       '@typescript-eslint/parser': 7.16.0(eslint@8.57.1)(typescript@5.7.3)
       eslint: 8.57.1
@@ -16845,7 +16818,7 @@ snapshots:
       array.prototype.findlastindex: 1.2.4
       array.prototype.flat: 1.3.2
       array.prototype.flatmap: 1.3.2
-      debug: 3.2.7
+      debug: 3.2.7(supports-color@8.1.1)
       doctrine: 2.1.0
       eslint: 8.57.1
       eslint-import-resolver-node: 0.3.9
@@ -16993,7 +16966,7 @@ snapshots:
 
   eslint-plugin-yml@1.14.0(eslint@8.57.1):
     dependencies:
-      debug: 4.3.7
+      debug: 4.3.7(supports-color@5.5.0)
       eslint: 8.57.1
       eslint-compat-utils: 0.5.0(eslint@8.57.1)
       lodash: 4.17.21
@@ -17139,6 +17112,16 @@ snapshots:
       chardet: 0.7.0
       iconv-lite: 0.4.24
       tmp: 0.0.33
+
+  extract-zip@2.0.1:
+    dependencies:
+      debug: 4.3.7(supports-color@5.5.0)
+      get-stream: 5.2.0
+      yauzl: 2.10.0
+    optionalDependencies:
+      '@types/yauzl': 2.10.3
+    transitivePeerDependencies:
+      - supports-color
 
   extract-zip@2.0.1(supports-color@8.1.1):
     dependencies:
@@ -18755,7 +18738,7 @@ snapshots:
 
   micromark@2.11.4:
     dependencies:
-      debug: 4.3.7
+      debug: 4.3.7(supports-color@5.5.0)
       parse-entities: 2.0.0
     transitivePeerDependencies:
       - supports-color
@@ -18763,7 +18746,7 @@ snapshots:
   micromark@3.1.0:
     dependencies:
       '@types/debug': 4.1.7
-      debug: 4.3.7(supports-color@8.1.1)
+      debug: 4.3.7(supports-color@5.5.0)
       decode-named-character-reference: 1.0.2
       micromark-core-commonmark: 1.0.6
       micromark-factory-space: 1.0.0
@@ -21029,7 +21012,7 @@ snapshots:
 
   vite-tsconfig-paths@5.1.4(typescript@5.7.3)(vite@5.4.14(@types/node@22.10.10)(sass@1.83.4)(terser@5.31.1)):
     dependencies:
-      debug: 4.3.7
+      debug: 4.3.7(supports-color@5.5.0)
       globrex: 0.1.2
       tsconfck: 3.0.3(typescript@5.7.3)
     optionalDependencies:
@@ -21057,7 +21040,7 @@ snapshots:
       dom-accessibility-api: 0.5.16
       lodash-es: 4.17.21
       redent: 3.0.0
-      vitest: 3.0.4(@types/node@22.10.10)(@vitest/ui@3.0.4)(happy-dom@15.7.4)(sass@1.83.4)(terser@5.31.1)
+      vitest: 3.0.4(@types/node@22.10.10)(@vitest/ui@3.0.4)(happy-dom@14.12.3)(sass@1.83.4)(terser@5.31.1)
 
   vitest@3.0.4(@types/node@22.10.10)(@vitest/ui@3.0.4)(happy-dom@14.12.3)(sass@1.83.4)(terser@5.31.1):
     dependencies:
