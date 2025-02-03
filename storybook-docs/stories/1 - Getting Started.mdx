@@ -73,10 +73,14 @@ const App = () => (
 The component styles are imported separately from the component itself. This allows you to import the styles only once in your application, instead of importing them with every usage.
 
 ```tsx
-import "@frontify/fondue/[package]/styles";
+// chart styles
+import '@frontify/fondue/charts/styles';
 
-//example
-import "@frontify/fondue/components/styles";
+// component styles
+import '@frontify/fondue/components/styles';
+
+// legacy component styles
+import '@frontify/fondue/styles';
 ```
 
 Usages of `ThemeProvider` can be nested to specify a theme for a specific set of components, the closest provider will be used.
