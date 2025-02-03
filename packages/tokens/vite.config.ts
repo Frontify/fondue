@@ -11,20 +11,19 @@ export default defineConfig({
         react(),
         dts({
             rollupTypes: true,
-            include: ['src/components/ThemeProvider'],
             copyDtsFiles: true,
         }),
     ],
     build: {
         outDir: resolve(__dirname, 'dist/theme'),
         lib: {
-            entry: resolve(__dirname, 'src/components/ThemeProvider/ThemeProvider.tsx'), // Your entry file
-            name: 'FondueThemeProvider', // Global variable name when used in browser
+            entry: resolve(__dirname, 'src/index.ts'),
+            name: 'FondueTokens',
             formats: ['es'],
             fileName: (format) => `fondue-theme-provider.${format}.js`,
         },
         rollupOptions: {
-            external: ['react', 'react-dom'], // Don't bundle React
+            external: ['react', 'react-dom'],
             output: {
                 globals: {
                     react: 'React',
