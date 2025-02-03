@@ -1,61 +1,71 @@
 # @frontify/fondue-tokens
 
+## 3.6.0
+
+### Minor Changes
+
+- [#2182](https://github.com/Frontify/fondue/pull/2182) [`101b4cd`](https://github.com/Frontify/fondue/commit/101b4cd8b467d9fb731f83698751af6b862e7cb3) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add `ThemeProvider` to allow controlling the token theme used
+
+### Patch Changes
+
+- [#2177](https://github.com/Frontify/fondue/pull/2177) [`1a34562`](https://github.com/Frontify/fondue/commit/1a34562cd30c6c317d147c29ef52d90094d19f12) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+
 ## 3.5.8
 
 ### Patch Changes
 
--   [#2085](https://github.com/Frontify/fondue/pull/2085) [`7c39542`](https://github.com/Frontify/fondue/commit/7c39542df14f8c3cb3db82197f1405504caf9dfa) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - chore: update dependencies
+- [#2085](https://github.com/Frontify/fondue/pull/2085) [`7c39542`](https://github.com/Frontify/fondue/commit/7c39542df14f8c3cb3db82197f1405504caf9dfa) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - chore: update dependencies
 
--   [#2089](https://github.com/Frontify/fondue/pull/2089) [`064db3d`](https://github.com/Frontify/fondue/commit/064db3d1e4bdb9a2df2516bd618c2488eb554223) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update more deps
+- [#2089](https://github.com/Frontify/fondue/pull/2089) [`064db3d`](https://github.com/Frontify/fondue/commit/064db3d1e4bdb9a2df2516bd618c2488eb554223) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update more deps
 
 ## 3.5.7
 
 ### Patch Changes
 
--   [#2033](https://github.com/Frontify/fondue/pull/2033) [`48a6604`](https://github.com/Frontify/fondue/commit/48a660495177a065126c7ab1d700175cc7104961) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+- [#2033](https://github.com/Frontify/fondue/pull/2033) [`48a6604`](https://github.com/Frontify/fondue/commit/48a660495177a065126c7ab1d700175cc7104961) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
 
 ## 3.5.6
 
 ### Patch Changes
 
--   [#2022](https://github.com/Frontify/fondue/pull/2022) [`3db4385`](https://github.com/Frontify/fondue/commit/3db4385c2e3f92f2cd4cce12d3d6c8abaad4b326) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - chore: update dependencies
+- [#2022](https://github.com/Frontify/fondue/pull/2022) [`3db4385`](https://github.com/Frontify/fondue/commit/3db4385c2e3f92f2cd4cce12d3d6c8abaad4b326) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - chore: update dependencies
 
 ## 3.5.5
 
 ### Patch Changes
 
--   [#1992](https://github.com/Frontify/fondue/pull/1992) [`0c43841`](https://github.com/Frontify/fondue/commit/0c43841f4d3244fccdf4beb5cd5daa16841f61a8) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: modify focus-ring color token
+- [#1992](https://github.com/Frontify/fondue/pull/1992) [`0c43841`](https://github.com/Frontify/fondue/commit/0c43841f4d3244fccdf4beb5cd5daa16841f61a8) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: modify focus-ring color token
 
 ## 3.5.4
 
 ### Patch Changes
 
--   [#1968](https://github.com/Frontify/fondue/pull/1968) [`032dfff`](https://github.com/Frontify/fondue/commit/032dfffb1b7eed0dafbb6e12f7aa16a74f34b2a6) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+- [#1968](https://github.com/Frontify/fondue/pull/1968) [`032dfff`](https://github.com/Frontify/fondue/commit/032dfffb1b7eed0dafbb6e12f7aa16a74f34b2a6) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
 
 ## 3.5.3
 
 ### Patch Changes
 
--   [#1957](https://github.com/Frontify/fondue/pull/1957) [`6e96909`](https://github.com/Frontify/fondue/commit/6e96909c6dd8626b567372da6b0051f1b17e736a) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+- [#1957](https://github.com/Frontify/fondue/pull/1957) [`6e96909`](https://github.com/Frontify/fondue/commit/6e96909c6dd8626b567372da6b0051f1b17e736a) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
 
 ## 3.5.2
 
 ### Patch Changes
 
--   [#1922](https://github.com/Frontify/fondue/pull/1922) [`3690a68`](https://github.com/Frontify/fondue/commit/3690a6830f220aeb0216c3aa3c5ab6ddfb4520cf) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: bump dependencies
+- [#1922](https://github.com/Frontify/fondue/pull/1922) [`3690a68`](https://github.com/Frontify/fondue/commit/3690a6830f220aeb0216c3aa3c5ab6ddfb4520cf) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: bump dependencies
 
 ## 3.5.1
 
 ### Patch Changes
 
--   [#1827](https://github.com/Frontify/fondue/pull/1827) [`0c37185`](https://github.com/Frontify/fondue/commit/0c371857c3f7e897cb9f9699668ba1304cfaac69) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: make tokens ESM else intellisense is not working
+- [#1827](https://github.com/Frontify/fondue/pull/1827) [`0c37185`](https://github.com/Frontify/fondue/commit/0c371857c3f7e897cb9f9699668ba1304cfaac69) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: make tokens ESM else intellisense is not working
 
 ## 3.5.0
 
 ### Minor Changes
 
--   [#1807](https://github.com/Frontify/fondue/pull/1807) [`fc35a50`](https://github.com/Frontify/fondue/commit/fc35a509e641604eaf2a4b644c573929c3440be3) Thanks [@noahwaldner](https://github.com/noahwaldner)! - refactor: Finalized Monorepo transition, added subexport for new components, added contribution guidelines and readme
+- [#1807](https://github.com/Frontify/fondue/pull/1807) [`fc35a50`](https://github.com/Frontify/fondue/commit/fc35a509e641604eaf2a4b644c573929c3440be3) Thanks [@noahwaldner](https://github.com/noahwaldner)! - refactor: Finalized Monorepo transition, added subexport for new components, added contribution guidelines and readme
 
 ### Patch Changes
 
--   [#1811](https://github.com/Frontify/fondue/pull/1811) [`4fa8007`](https://github.com/Frontify/fondue/commit/4fa8007bf973494ff4621f526d8f2919115f95ff) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: housekeeping for v12 release
+- [#1811](https://github.com/Frontify/fondue/pull/1811) [`4fa8007`](https://github.com/Frontify/fondue/commit/4fa8007bf973494ff4621f526d8f2919115f95ff) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: housekeeping for v12 release
