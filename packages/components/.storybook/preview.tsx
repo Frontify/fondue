@@ -3,7 +3,6 @@ import React, { ComponentType } from 'react';
 
 import '../src/styles.scss';
 import "@frontify/fondue-tokens/themeProvider/styles"
-import { ThemeProvider } from '@frontify/fondue-tokens/themeProvider';
 import type { Preview, Decorator, StoryContext } from '@storybook/react';
 import { Flex } from '../src/components/Flex/Flex';
 
