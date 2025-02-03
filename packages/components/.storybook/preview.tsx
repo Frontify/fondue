@@ -1,12 +1,61 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import '@frontify/fondue-tokens/styles';
-import type { Preview } from '@storybook/react';
+import { type ComponentType } from 'react';
+
 import '../src/styles.scss';
+import "@frontify/fondue-tokens/theme-provider/styles"
+import { type Preview, type Decorator, type StoryContext } from '@storybook/react';
+import { Flex } from '../src/components/Flex/Flex';
+
 import DocumentationTemplate from './DocumentationTemplate.mdx';
+import { withTheme } from './components/StoryWithTeme';
+
+
+const ThemeProviderWrapper: Decorator = (Story: ComponentType, context: StoryContext) => {
+    if (context.globals.theme === 'both') {
+        return (
+            <Flex direction="column">
+                {withTheme(Story, 'light', { label: 'Light theme' })}
+                {withTheme(Story, 'dark', { label: 'Dark theme' })}
+            </Flex>
+        );
+    }
+    return withTheme(Story, context.globals.theme);
+};
 
 const preview: Preview = {
+    globalTypes: {
+        theme: {
+            description: 'Global theme for components',
+            toolbar: {
+              title: 'Theme',
+              icon: 'paintbrush',
+              items: [
+                {
+                    value: 'light',
+                    title: 'Light theme',
+                    icon: "sun",
+                },
+                {
+                    value: 'dark',
+                    title: 'Dark theme',
+                    icon: "moon",
+                },
+                {
+                    value: 'both',
+                    title: 'Both themes',
+                    icon: "contrast"
+                }
+              ],
+              dynamicTitle: true,
+            },
+          },
+    },
+    initialGlobals: {
+        theme: 'light',
+    },
     parameters: {
+        layout: "fullscreen",
         docs: {
             page: DocumentationTemplate,
             toc: {
@@ -51,6 +100,7 @@ const preview: Preview = {
             },
         },
     },
+    decorators: [ThemeProviderWrapper],
 };
 
 export default preview;

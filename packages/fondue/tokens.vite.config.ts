@@ -11,6 +11,10 @@ export default defineConfig({
                     src: 'node_modules/@frontify/fondue-tokens/dist/tailwind/tailwind.config.js',
                     dest: '',
                 },
+                {
+                    src: 'node_modules/@frontify/fondue-tokens/dist/theme',
+                    dest: '',
+                },
             ],
         }),
     ],

@@ -6,6 +6,7 @@ import StyleDictionary from 'style-dictionary';
 
 import { figmaFormatter } from './formatters/figma';
 import { tailwindFormatter } from './formatters/tailwind';
+import { createCssModule } from './utils/createCssModule';
 import { mergeFigmaFiles } from './utils/mergeFigmaFiles';
 import { transformColor } from './utils/transformColor';
 import { trimHyphens } from './utils/trimHyphens';
@@ -78,6 +79,19 @@ StyleDictionary.registerTransformGroup({
 /**
  * FORMATS
  */
+
+StyleDictionary.registerFormat({
+    name: 'css/module/theme',
+    formatter({ dictionary, options = {} }) {
+        const { selector, theme } = options;
+        const allTokens = [...dictionary.allProperties];
+
+        const selectorString = selector ? `${selector}` : `.${theme}`;
+        return `${selectorString} {
+    ${allTokens.map((prop) => `--${prop.name}: ${prop.value};`).join('\n    ')}
+}`;
+    },
+});
 
 StyleDictionary.registerFormat({
     name: 'tailwind',
@@ -195,6 +209,18 @@ StyleDictionary.extend({
                 },
             ],
         },
+        light_theme: {
+            transformGroup: 'css',
+            buildPath: `${TEMPORARY_DIRECTORY}/themeProvider/themes/`,
+            files: [
+                {
+                    destination: 'light.module.css',
+                    format: 'css/module/theme',
+                    options: { theme: 'light' },
+                    filter: (token) => !token.filePath.includes('brand') && token.attributes?.target !== 'figma',
+                },
+            ],
+        },
     },
 }).buildAllPlatforms();
 
@@ -249,8 +275,21 @@ for (const theme of COLOR_THEMES) {
                     },
                 ],
             },
+            [theme]: {
+                transformGroup: 'css',
+                buildPath: `${TEMPORARY_DIRECTORY}/themeProvider/themes/`,
+                files: [
+                    {
+                        destination: `${theme}.module.css`,
+                        format: 'css/module/theme',
+                        options: { theme },
+                        filter: (token) => !token.filePath.includes('brand'),
+                    },
+                ],
+            },
         },
     }).buildAllPlatforms();
 }
 
 mergeFigmaFiles();
+createCssModule();

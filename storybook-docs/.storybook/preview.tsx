@@ -1,20 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { dark, light } from './frontifyTheme';
-
 export const parameters = {
     options: {
         storySort: {
             order: ['Tokens', 'Foundation', 'Layout', 'Typography', 'Components'],
         },
-    },
-    darkMode: {
-        current: 'light',
-        darkClass: 'tw-dark',
-        classTarget: 'html',
-        stylePreview: true,
-        dark: { ...dark },
-        light: { ...light },
     },
     layout: 'fullscreen',
     outline: {
@@ -49,4 +39,35 @@ export const parameters = {
             },
         },
     },
+};
+export const globalTypes = {
+    theme: {
+        description: 'Global theme for components',
+        toolbar: {
+          title: 'Theme',
+          icon: 'paintbrush',
+          items: [
+            {
+                value: 'light',
+                title: 'Light Theme',
+                icon: "sun",
+            },
+            {
+                value: 'dark',
+                title: 'Dark Theme',
+                icon: "moon",
+            },
+            {
+                value: 'both',
+                title: 'Both Themes',
+                icon: "contrast"
+            }
+          ],
+          dynamicTitle: true,
+        },
+      },
+};
+
+export const initialGlobals = {
+    theme: 'light',
 };

@@ -23,6 +23,7 @@
     overflow: hidden;
     grid-template-rows: auto auto minmax(0, 1fr) auto;
     box-sizing: border-box;
+    color: var(--text-color);
 
     & {
         @include mediaQuery.sm {

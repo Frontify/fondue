@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { ThemeProvider, useFondueTheme } from '@frontify/fondue-tokens/theme-provider';
 import * as RadixPopover from '@radix-ui/react-popover';
 import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { type UseComboboxPropGetters, type UseSelectPropGetters } from 'downshift';
@@ -76,63 +77,66 @@ export const SelectMenu = ({
         event.preventDefault();
     };
 
+    const theme = useFondueTheme();
     return (
         <RadixPopover.Portal>
-            <RadixPopover.Content
-                align={align}
-                side={side}
-                collisionPadding={16}
-                onOpenAutoFocus={handleOnOpenAutoFocus}
-                className={styles.portal}
-            >
-                <ul
-                    className={styles.menu}
-                    {...getMenuProps()}
-                    data-has-interacted={hasInteractedSinceOpening ? 'true' : 'false'}
-                    data-test-id="fondue-select-menu"
+            <ThemeProvider theme={theme}>
+                <RadixPopover.Content
+                    align={align}
+                    side={side}
+                    collisionPadding={16}
+                    onOpenAutoFocus={handleOnOpenAutoFocus}
+                    className={styles.portal}
                 >
-                    {
-                        recursiveMap(
-                            children,
-                            (child, index) => {
-                                const isValid = <TProps,>(
-                                    child: ReactNode,
-                                ): child is ReactElement<TProps> & { ref: ForwardedRef<HTMLElement> } =>
-                                    // @ts-expect-error - We are explicitly checking for ref
-                                    isValidElement<TProps>(child) && child.ref !== undefined;
+                    <ul
+                        className={styles.menu}
+                        {...getMenuProps()}
+                        data-has-interacted={hasInteractedSinceOpening ? 'true' : 'false'}
+                        data-test-id="fondue-select-menu"
+                    >
+                        {
+                            recursiveMap(
+                                children,
+                                (child, index) => {
+                                    const isValid = <TProps,>(
+                                        child: ReactNode,
+                                    ): child is ReactElement<TProps> & { ref: ForwardedRef<HTMLElement> } =>
+                                        // @ts-expect-error - We are explicitly checking for ref
+                                        isValidElement<TProps>(child) && child.ref !== undefined;
 
-                                if (isValid<SelectItemProps>(child)) {
-                                    const optionData = getSelectOptionValue(child.props);
-                                    const itemProps = getItemProps({
-                                        item: optionData,
-                                        index,
-                                        ...(child.ref ? { ref: child.ref } : {}),
-                                    });
+                                    if (isValid<SelectItemProps>(child)) {
+                                        const optionData = getSelectOptionValue(child.props);
+                                        const itemProps = getItemProps({
+                                            item: optionData,
+                                            index,
+                                            ...(child.ref ? { ref: child.ref } : {}),
+                                        });
 
-                                    return (
-                                        <RadixSlot
-                                            className={styles.item}
-                                            data-highlighted={highlightedIndex === index}
-                                            data-selected={selectedItem?.value === optionData.value}
-                                            key={child.props.value}
-                                            // Workaround for the issue where the onClick event is not fired on touch devices because of portal usage
-                                            onTouchStart={(event) => {
-                                                if (itemProps.onClick) {
-                                                    itemProps.onClick(event as unknown as MouseEvent<HTMLElement>);
-                                                }
-                                            }}
-                                            {...itemProps}
-                                        >
-                                            {child}
-                                        </RadixSlot>
-                                    );
-                                }
-                            },
-                            filterText,
-                        ).parsedChildren
-                    }
-                </ul>
-            </RadixPopover.Content>
+                                        return (
+                                            <RadixSlot
+                                                className={styles.item}
+                                                data-highlighted={highlightedIndex === index}
+                                                data-selected={selectedItem?.value === optionData.value}
+                                                key={child.props.value}
+                                                // Workaround for the issue where the onClick event is not fired on touch devices because of portal usage
+                                                onTouchStart={(event) => {
+                                                    if (itemProps.onClick) {
+                                                        itemProps.onClick(event as unknown as MouseEvent<HTMLElement>);
+                                                    }
+                                                }}
+                                                {...itemProps}
+                                            >
+                                                {child}
+                                            </RadixSlot>
+                                        );
+                                    }
+                                },
+                                filterText,
+                            ).parsedChildren
+                        }
+                    </ul>
+                </RadixPopover.Content>
+            </ThemeProvider>
         </RadixPopover.Portal>
     );
 };

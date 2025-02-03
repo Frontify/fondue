@@ -15,7 +15,6 @@ const config: StorybookConfig = {
         },
         '@storybook/addon-links',
         '@storybook/addon-interactions',
-        'storybook-dark-mode',
         '@storybook/addon-a11y',
         '@etchteam/storybook-addon-status',
     ],
@@ -58,7 +57,6 @@ const config: StorybookConfig = {
             };
         }
 
-        console.log('pathPrefix', pathPrefix);
 
         return {
             current: {

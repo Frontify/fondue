@@ -232,6 +232,7 @@
     overflow: auto;
     max-height: var(--radix-popover-content-available-height);
     padding: sizeToken.get(2) 0;
+    color: var(--text-color);
 
     &:has(li[role='option']) {
         display: block;

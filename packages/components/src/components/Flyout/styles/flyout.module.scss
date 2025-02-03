@@ -12,6 +12,7 @@
     width: 100%;
     overflow: auto;
     max-height: var(--radix-popover-content-available-height);
+    color: var(--text-color);
 
     &[data-rounded='medium'] {
         border-radius: var(--radius);

@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { ThemeProvider, useFondueTheme } from '@frontify/fondue-tokens/theme-provider';
 import * as RadixTooltip from '@radix-ui/react-tooltip';
 import { forwardRef, type ForwardedRef, type ReactElement, type ReactNode } from 'react';
 
@@ -88,21 +89,24 @@ export const TooltipContent = (
     }: TooltipContentProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
+    const theme = useFondueTheme();
     return (
         <RadixTooltip.Portal>
-            <RadixTooltip.Content
-                data-test-id={dataTestId}
-                data-tooltip-spacing={padding}
-                className={cn(styles.root, className)}
-                style={{ maxWidth }}
-                collisionPadding={16}
-                sideOffset={8}
-                ref={ref}
-                {...props}
-            >
-                {children}
-                <RadixTooltip.Arrow aria-hidden="true" className={styles.arrow} />
-            </RadixTooltip.Content>
+            <ThemeProvider theme={theme}>
+                <RadixTooltip.Content
+                    data-test-id={dataTestId}
+                    data-tooltip-spacing={padding}
+                    className={cn(styles.root, className)}
+                    style={{ maxWidth }}
+                    collisionPadding={16}
+                    sideOffset={8}
+                    ref={ref}
+                    {...props}
+                >
+                    {children}
+                    <RadixTooltip.Arrow aria-hidden="true" className={styles.arrow} />
+                </RadixTooltip.Content>
+            </ThemeProvider>
         </RadixTooltip.Portal>
     );
 };
