@@ -28,7 +28,7 @@
             "types": "./dist/theme/fondue-theme-provider.es.d.ts",
             "import": "./dist/theme/fondue-theme-provider.es.js"
         },
-        "./theme-provider/styles": "./dist/theme/FondueTokens.css",
+        "./theme-provider/styles": "./dist/theme/index.css",
         "./themes/*": "./dist/css/*"
     },
     "files": [
