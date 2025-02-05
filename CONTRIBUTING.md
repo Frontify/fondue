@@ -13,6 +13,7 @@
 ```shell
 $ git clone git@github.com:Frontify/fondue.git
 $ pnpm i
+$ pnpm build # needs to be ran before starting storybook
 ```
 
 Run `pnpm storybook` to start the storybook development server.
@@ -53,7 +54,7 @@ The name of the branch is not really relevant. Nonetheless we usually go for a p
 Theres a nifty script that creates that files you'll need:
 
 ```shell
-pnpm component:create FancyComponent
+pnpm create:component FancyComponent
 ```
 
 This will add a folder inside `src/components` with the name `CoolCatsAndKittens` and three files:
