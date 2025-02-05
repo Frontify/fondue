@@ -20,3 +20,4 @@ declare global {
 
 import 'cypress-real-events/support';
 import '../../src/styles.css';
+import '@frontify/fondue-tokens/styles';
