@@ -1,8 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import styles from '@frontify/fondue-tokens/theme-tokens';
 import { createContext, useContext, type ReactNode } from 'react';
-
-import styles from './generated/themes.module.css';
 
 type AvalaibleThemes = keyof typeof styles;
 
@@ -15,7 +14,7 @@ type ThemeProviderProps = {
     theme: AvalaibleThemes;
 };
 
-const ThemeContext = createContext<AvalaibleThemes>('light');
+export const ThemeContext = createContext<AvalaibleThemes>('light');
 
 export const useFondueTheme = () => {
     return useContext(ThemeContext);
@@ -24,7 +23,9 @@ export const useFondueTheme = () => {
 export const ThemeProvider = ({ children, theme = 'light' }: ThemeProviderProps) => {
     return (
         <ThemeContext.Provider value={theme}>
-            <div className={styles[theme]}>{children}</div>
+            <div className={styles[theme]} data-test-id="in-components">
+                {children}
+            </div>
         </ThemeContext.Provider>
     );
 };
