@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { forwardRef, type ReactNode } from 'react';
+import { type ElementType, type ForwardedRef, forwardRef, type ReactNode } from 'react';
 
 import { type CommonAriaProps } from '#/helpers/aria';
 import { propsToCssVariables } from '#/helpers/propsToCssVariables';
@@ -26,20 +26,28 @@ export type TypographyDisplay = 'inline-block' | 'block' | 'inline' | 'none';
 export type TypographyWordBreak = 'break-words' | 'break-all' | 'normal';
 export type TypographyDecoration = 'underline' | 'line-through' | 'none';
 
-export type HeadingProps = SharedTypographyProps & {
+type TagType = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'span' | 'p';
+
+export type HeadingProps<TTag extends TagType> = SharedTypographyProps & {
     'data-test-id'?: string;
-    as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'span' | 'p';
+    as?: TTag;
     children?: ReactNode;
     color?: HeadingColor;
     size?: HeadingSize;
     weight?: HeadingWeight;
 } & CommonAriaProps;
 
-export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(
+type HeadingRefType<TTag extends TagType> = TTag extends 'span'
+    ? HTMLSpanElement
+    : TTag extends 'p'
+      ? HTMLParagraphElement
+      : HTMLHeadingElement;
+
+export const Heading = forwardRef(
     (
         {
             'data-test-id': dataTestId = 'fondue-heading',
-            as: Tag = 'span',
+            as: Tag = 'span' as ElementType,
             color = 'default',
             size = 'medium',
             weight = 'default',
@@ -78,5 +86,8 @@ export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(
             </Tag>
         );
     },
-);
+) as (<TTag extends TagType = 'span'>(
+    props: HeadingProps<TTag> & { ref?: ForwardedRef<HeadingRefType<TTag>> },
+) => JSX.Element) & { displayName: string };
+
 Heading.displayName = 'Heading';
