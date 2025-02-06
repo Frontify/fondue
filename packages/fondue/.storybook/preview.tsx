@@ -1,4 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import '@frontify/fondue-tokens/styles';
 import '@frontify/fondue-tokens/themes/theme.dark.css';
 
