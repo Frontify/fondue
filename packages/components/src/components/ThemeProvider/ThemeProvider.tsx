@@ -9,7 +9,7 @@ type ThemeProviderProps = {
     children: ReactNode;
     /**
      * The theme to apply
-     * @default light
+     * @default "light"
      * */
     theme: AvalaibleTheme;
 };
