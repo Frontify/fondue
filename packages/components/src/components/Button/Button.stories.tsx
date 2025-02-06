@@ -3,6 +3,7 @@
 import { IconColorFan, IconIcon } from '@frontify/fondue-icons';
 import { action } from '@storybook/addon-actions';
 import { type Meta, type StoryObj } from '@storybook/react';
+import { useState } from 'react';
 
 import { Button } from './Button';
 
@@ -69,4 +70,79 @@ export const WithIconAndLabel: Story = {
             Button Text
         </Button>
     ),
+};
+
+export const WithLoading: Story = {
+    name: 'Loading',
+    args: {
+        'aria-label-loading': 'Loading',
+    },
+    render: (args) => {
+        const [isLoading, setIsLoading] = useState(false);
+
+        return (
+            <Button
+                {...args}
+                loading={isLoading}
+                onPress={() => {
+                    setIsLoading(true);
+                    setTimeout(() => {
+                        setIsLoading(false);
+                    }, 2000);
+                }}
+            >
+                Submit
+            </Button>
+        );
+    },
+};
+
+export const WithError: Story = {
+    name: 'Error',
+    args: {
+        'aria-label-error': 'Error',
+    },
+    render: (args) => {
+        const [error, setError] = useState(false);
+
+        return (
+            <Button
+                {...args}
+                error={error}
+                onPress={() => {
+                    setError(true);
+                }}
+            >
+                Submit
+            </Button>
+        );
+    },
+};
+
+export const WithLoadingAndError: Story = {
+    name: 'Loading and error',
+    args: {
+        'aria-label-loading': 'Loading',
+    },
+    render: (args) => {
+        const [isLoading, setIsLoading] = useState(false);
+        const [error, setError] = useState(false);
+
+        return (
+            <Button
+                {...args}
+                loading={isLoading}
+                onPress={() => {
+                    setIsLoading(true);
+                    setTimeout(() => {
+                        setError(true);
+                        setIsLoading(false);
+                    }, 2000);
+                }}
+                error={error}
+            >
+                Submit
+            </Button>
+        );
+    },
 };

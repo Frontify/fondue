@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconArrowRoundClockwise, IconExclamationMarkTriangle } from '@frontify/fondue-icons';
 import { forwardRef, type ForwardedRef, type MouseEvent, type ReactNode } from 'react';
 
 import { cn } from '#/utilities/styleUtilities';
@@ -7,6 +8,8 @@ import { cn } from '#/utilities/styleUtilities';
 import { buttonStyles } from './styles/buttonStyles';
 import { iconStyles } from './styles/iconStyles';
 import { textStyles } from './styles/textStyles';
+
+import styles from './styles/button.module.scss';
 
 type ButtonRounding = 'medium' | 'full';
 
@@ -60,7 +63,11 @@ export type ButtonProps = {
     children?: ReactNode;
     onPress?: (event?: MouseEvent<HTMLButtonElement>) => void;
     form?: string;
+    loading?: boolean;
+    error?: boolean;
     'aria-label'?: string;
+    'aria-label-loading'?: string;
+    'aria-label-error'?: string;
     'aria-describedby'?: string;
     'data-test-id'?: string;
     className?: string;
@@ -74,10 +81,14 @@ export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(
             variant,
             size = 'medium',
             form,
+            loading,
+            error,
             'data-test-id': dataTestId = 'fondue-button',
             className = '',
             onPress = () => {},
             hugWidth = true,
+            'aria-label-loading': ariaLabelLoading = 'loading',
+            'aria-label-error': ariaLabelError = 'error',
             ...props
         }: ButtonProps,
         ref: ForwardedRef<HTMLButtonElement | null>,
@@ -88,10 +99,12 @@ export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(
                 type={type}
                 form={form}
                 data-test-id={dataTestId}
+                data-state={loading ? 'loading' : error ? 'error' : undefined}
                 className={cn(
                     buttonStyles({ size, variant, hugWidth, ...props }),
                     textStyles({ variant, ...props }),
                     iconStyles({ variant, ...props }),
+                    styles.root,
                     className,
                 )}
                 {...props}
@@ -102,7 +115,19 @@ export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(
                     onPress?.(event);
                 }}
             >
-                {children}
+                <span className={styles.children}>{children}</span>
+
+                <span className={styles.loading} aria-label={ariaLabelLoading}>
+                    <span className="tw-animate-spin tw-w-full tw-items-center tw-justify-center tw-flex">
+                        <IconArrowRoundClockwise size={20} />
+                    </span>
+                </span>
+
+                <span className={styles.error} aria-label={ariaLabelError}>
+                    <span className="tw-w-full tw-items-center tw-justify-center tw-flex">
+                        <IconExclamationMarkTriangle size={20} />
+                    </span>
+                </span>
             </button>
         );
     },
