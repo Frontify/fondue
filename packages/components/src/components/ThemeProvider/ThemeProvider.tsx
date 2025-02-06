@@ -23,7 +23,7 @@ export const useFondueTheme = () => {
 export const ThemeProvider = ({ children, theme = 'light' }: ThemeProviderProps) => {
     return (
         <ThemeContext.Provider value={theme}>
-            <div className={styles[theme]} data-test-id="in-components">
+            <div className={styles[theme]}>
                 {children}
             </div>
         </ThemeContext.Provider>
