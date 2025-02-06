@@ -1,5 +1,21 @@
 # @frontify/fondue
 
+## 12.5.0
+
+### Minor Changes
+
+- [#2187](https://github.com/Frontify/fondue/pull/2187) [`0901044`](https://github.com/Frontify/fondue/commit/0901044f3a7f655f658cbac63772798b4e8a9df6) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: move ThemeProvider into the components package
+
+- [#2188](https://github.com/Frontify/fondue/pull/2188) [`f9bf3d3`](https://github.com/Frontify/fondue/commit/f9bf3d3de65fa2f0b731f4c4ade77768f20d8d16) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: remove tokens from css bundles
+
+### Patch Changes
+
+- Updated dependencies [[`0901044`](https://github.com/Frontify/fondue/commit/0901044f3a7f655f658cbac63772798b4e8a9df6), [`f9bf3d3`](https://github.com/Frontify/fondue/commit/f9bf3d3de65fa2f0b731f4c4ade77768f20d8d16), [`a19a7c6`](https://github.com/Frontify/fondue/commit/a19a7c67a32bf057852ad2779f3543564678b140)]:
+    - @frontify/fondue-components@12.0.0
+    - @frontify/fondue-tokens@3.7.0
+    - @frontify/fondue-charts@3.0.0
+    - @frontify/fondue-icons@0.12.0
+
 ## 12.4.0
 
 ### Minor Changes
