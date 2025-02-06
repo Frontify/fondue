@@ -1,10 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ThemeProvider, useFondueTheme } from '@frontify/fondue-tokens/theme-provider';
 import * as RadixPopover from '@radix-ui/react-popover';
 import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { type UseComboboxPropGetters, type UseSelectPropGetters } from 'downshift';
 import { isValidElement, type ForwardedRef, type MouseEvent, type ReactElement, type ReactNode } from 'react';
+
+import { ThemeProvider, useFondueTheme } from '../ThemeProvider/ThemeProvider';
 
 import { type SelectItemProps } from './SelectItem';
 import styles from './styles/select.module.scss';

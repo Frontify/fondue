@@ -24,11 +24,10 @@
         "./tokens": "./dist/js/tokens.json",
         "./tailwind": "./dist/tailwind/tailwind.config.js",
         "./styles": "./dist/css/all.css",
-        "./theme-provider": {
-            "types": "./dist/theme/fondue-theme-provider.es.d.ts",
-            "import": "./dist/theme/fondue-theme-provider.es.js"
+        "./theme-tokens": {
+            "types": "./dist/theme/themes.module.css.d.ts",
+            "import": "./dist/theme/themes.module.css"
         },
-        "./theme-provider/styles": "./dist/theme/index.css",
         "./themes/*": "./dist/css/*"
     },
     "files": [
@@ -36,8 +35,7 @@
     ],
     "scripts": {
         "clean": "rimraf dist",
-        "build:vite": "vite build",
-        "build": "pnpm clean && tsx src/build.ts && vite build",
+        "build": "pnpm clean && tsx src/build.ts",
         "build:debug": "pnpm clean && tsx src/build.ts --debug && pnpm build:tailwind:debug",
         "build:tailwind:debug": "tailwind -c ./dist/tailwind/tailwind.config.js -o ./dist/css/tailwind_unpurged.css",
         "lint": "eslint .",
@@ -70,8 +68,6 @@
         "rimraf": "^6.0.1",
         "style-dictionary": "^3.9.2",
         "tsx": "^4.19.2",
-        "typescript": "^5.7.3",
-        "vite": "^5.4.14",
-        "vite-plugin-dts": "^4.5.0"
+        "typescript": "^5.7.3"
     }
 }
