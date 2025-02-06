@@ -24,3 +24,4 @@ export { Table } from './components/Table/Table';
 export { Tabs } from './components/Tabs/Tabs';
 export { TextInput } from './components/TextInput/TextInput';
 export { Tooltip } from './components/Tooltip/Tooltip';
+export { ThemeProvider, useFondueTheme, ThemeContext } from './components/ThemeProvider/ThemeProvider';

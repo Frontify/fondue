@@ -1,11 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconCross } from '@frontify/fondue-icons';
-import { ThemeProvider, useFondueTheme } from '@frontify/fondue-tokens/theme-provider';
 import * as RadixDialog from '@radix-ui/react-dialog';
 import { createContext, forwardRef, useContext, type CSSProperties, type ForwardedRef, type ReactNode } from 'react';
 
 import { addAutoFocusAttribute, addShowFocusRing } from '#/utilities/domUtilities';
+
+import { ThemeProvider, useFondueTheme } from '../ThemeProvider/ThemeProvider';
 
 import styles from './styles/dialog.module.scss';
 

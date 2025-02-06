@@ -1,10 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ThemeProvider, useFondueTheme } from '@frontify/fondue-tokens/theme-provider';
 import * as RadixTooltip from '@radix-ui/react-tooltip';
 import { forwardRef, type ForwardedRef, type ReactElement, type ReactNode } from 'react';
 
 import { cn } from '#/utilities/styleUtilities';
+
+import { ThemeProvider, useFondueTheme } from '../ThemeProvider/ThemeProvider';
 
 import styles from './styles/tooltip.module.scss';
 
