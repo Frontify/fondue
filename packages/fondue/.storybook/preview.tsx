@@ -1,5 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import '@frontify/fondue-tokens/styles';
+import '@frontify/fondue-tokens/themes/theme.dark.css';
+
 import { Decorator } from '@storybook/react';
 import '../src/styles.css';
 import { dark, light } from './frontifyTheme';
