@@ -1,5 +1,16 @@
 # @frontify/fondue-charts
 
+## 3.0.0
+
+### Minor Changes
+
+- [#2188](https://github.com/Frontify/fondue/pull/2188) [`f9bf3d3`](https://github.com/Frontify/fondue/commit/f9bf3d3de65fa2f0b731f4c4ade77768f20d8d16) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: remove tokens from css bundles
+
+### Patch Changes
+
+- Updated dependencies [[`0901044`](https://github.com/Frontify/fondue/commit/0901044f3a7f655f658cbac63772798b4e8a9df6), [`a19a7c6`](https://github.com/Frontify/fondue/commit/a19a7c67a32bf057852ad2779f3543564678b140)]:
+    - @frontify/fondue-tokens@3.7.0
+
 ## 2.0.0
 
 ### Patch Changes
