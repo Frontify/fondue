@@ -1,21 +1,20 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import styles from '@frontify/fondue-tokens/theme-tokens';
 import { createContext, useContext, type ReactNode } from 'react';
 
-import styles from './generated/themes.module.css';
-
-type AvalaibleThemes = keyof typeof styles;
+type AvailableTheme = keyof typeof styles;
 
 type ThemeProviderProps = {
     children: ReactNode;
     /**
      * The theme to apply
-     * @default light
+     * @default "light"
      * */
-    theme: AvalaibleThemes;
+    theme: AvailableTheme;
 };
 
-const ThemeContext = createContext<AvalaibleThemes>('light');
+export const ThemeContext = createContext<AvailableTheme>('light');
 
 export const useFondueTheme = () => {
     return useContext(ThemeContext);

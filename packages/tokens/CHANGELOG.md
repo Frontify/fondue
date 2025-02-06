@@ -1,5 +1,15 @@
 # @frontify/fondue-tokens
 
+## 3.7.0
+
+### Minor Changes
+
+- [#2187](https://github.com/Frontify/fondue/pull/2187) [`0901044`](https://github.com/Frontify/fondue/commit/0901044f3a7f655f658cbac63772798b4e8a9df6) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: move ThemeProvider into the components package
+
+### Patch Changes
+
+- [#2191](https://github.com/Frontify/fondue/pull/2191) [`a19a7c6`](https://github.com/Frontify/fondue/commit/a19a7c67a32bf057852ad2779f3543564678b140) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: remove leftover index file
+
 ## 3.6.0
 
 ### Minor Changes

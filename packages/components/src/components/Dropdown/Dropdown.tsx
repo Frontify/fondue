@@ -1,10 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconCaretRight } from '@frontify/fondue-icons';
-import { ThemeProvider, useFondueTheme } from '@frontify/fondue-tokens/theme-provider';
 import * as RadixDropdown from '@radix-ui/react-dropdown-menu';
 import { Slot } from '@radix-ui/react-slot';
 import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
+
+import { ThemeProvider, useFondueTheme } from '../ThemeProvider/ThemeProvider';
 
 import { useProcessedChildren } from './hooks/useProcessedChildren';
 import styles from './styles/dropdown.module.scss';

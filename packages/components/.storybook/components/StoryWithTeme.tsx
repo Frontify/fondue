@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ThemeProvider } from "@frontify/fondue-tokens/theme-provider";
+import { ThemeProvider } from "../../src/components/ThemeProvider/ThemeProvider";
 import { type ComponentProps, type ComponentType, type ReactNode } from "react";
 
 type withThemeOptions = {
