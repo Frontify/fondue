@@ -3,7 +3,7 @@
 import styles from '@frontify/fondue-tokens/theme-tokens';
 import { createContext, useContext, type ReactNode } from 'react';
 
-type AvalaibleThemes = keyof typeof styles;
+type AvalaibleTheme = keyof typeof styles;
 
 type ThemeProviderProps = {
     children: ReactNode;
@@ -11,10 +11,10 @@ type ThemeProviderProps = {
      * The theme to apply
      * @default light
      * */
-    theme: AvalaibleThemes;
+    theme: AvalaibleTheme;
 };
 
-export const ThemeContext = createContext<AvalaibleThemes>('light');
+export const ThemeContext = createContext<AvalaibleTheme>('light');
 
 export const useFondueTheme = () => {
     return useContext(ThemeContext);
