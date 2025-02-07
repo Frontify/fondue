@@ -12,6 +12,7 @@ export { Dropdown } from './components/Dropdown/Dropdown';
 export { Flex } from './components/Flex/Flex';
 export { Flyout } from './components/Flyout/Flyout';
 export { Grid } from './components/Grid/Grid';
+export { Heading } from './components/Heading/Heading';
 export { Label } from './components/Label/Label';
 export { LoadingBar } from './components/LoadingBar/LoadingBar';
 export { ScrollArea } from './components/ScrollArea/ScrollArea';
