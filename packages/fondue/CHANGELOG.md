@@ -1,5 +1,14 @@
 # @frontify/fondue
 
+## 12.5.1
+
+### Patch Changes
+
+- [#2196](https://github.com/Frontify/fondue/pull/2196) [`b8d41ea`](https://github.com/Frontify/fondue/commit/b8d41eaa3fd78a4fd992ae60344609420b9c4b13) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: Add missing dark theme in legacy token export
+
+- Updated dependencies [[`424f46c`](https://github.com/Frontify/fondue/commit/424f46c01f37c17f380c4e39c55d8cd3509267cb)]:
+    - @frontify/fondue-components@12.0.1
+
 ## 12.5.0
 
 ### Minor Changes

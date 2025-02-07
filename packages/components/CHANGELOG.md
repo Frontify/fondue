@@ -1,5 +1,11 @@
 # @frontify/fondue-components
 
+## 12.0.1
+
+### Patch Changes
+
+- [#2193](https://github.com/Frontify/fondue/pull/2193) [`424f46c`](https://github.com/Frontify/fondue/commit/424f46c01f37c17f380c4e39c55d8cd3509267cb) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add customizable distance to trigger for `Dropdown`
+
 ## 12.0.0
 
 ### Minor Changes
