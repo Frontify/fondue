@@ -3,7 +3,7 @@
 import { type ElementType, type ForwardedRef, forwardRef, type ReactNode } from 'react';
 
 import { type CommonAriaProps } from '#/helpers/aria';
-import { merge } from '#/utilities/merge';
+import { cn } from '#/utilities/styleUtilities';
 
 import styles from './styles/heading.module.scss';
 
@@ -51,7 +51,7 @@ export const Heading = forwardRef(
     ) => {
         return (
             <Tag
-                className={merge([
+                className={cn([
                     styles.root,
                     styles[`size-${size}`],
                     styles[`weight-${weight}`],
