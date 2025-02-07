@@ -15,6 +15,9 @@ import { useSyncRefs } from '#/hooks/useSyncRefs';
 import { useTextTruncation } from '#/hooks/useTextTruncation';
 import { type CommonAriaAttrs } from '#/utilities/types';
 
+import { Box } from '../Box/Box';
+import { LoadingCircle } from '../LoadingCircle/LoadingCircle';
+
 import styles from './styles/table.module.scss';
 import { handleKeyDown } from './utils';
 
@@ -127,6 +130,11 @@ type TableHeaderCellProps = {
      */
     noShrink?: boolean;
     /**
+     * State of the cell, used for displaying loading state
+     * @default 'idle'
+     */
+    state?: 'idle' | 'loading';
+    /**
      * Handler called when the sort direction changes
      * @param direction - The new sort direction
      */
@@ -145,6 +153,7 @@ export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellP
             sortDirection,
             colSpan,
             width,
+            state = 'idle',
             onSortChange,
             children,
         },
@@ -203,7 +212,12 @@ export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellP
                             ) : (
                                 children
                             )}
-                            {sortDirection === 'ascending' ? (
+
+                            {state === 'loading' ? (
+                                <Box pl={1}>
+                                    <LoadingCircle size="x-small" />
+                                </Box>
+                            ) : sortDirection === 'ascending' ? (
                                 <IconArrowUp size="12" />
                             ) : sortDirection === 'descending' ? (
                                 <IconArrowDown size="12" />

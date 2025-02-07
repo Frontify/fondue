@@ -323,6 +323,82 @@ export const Sortable: Story = {
     },
 };
 
+export const WithLoadingState: Story = {
+    render: ({ ...args }) => {
+        const [sortField, setSortField] = useState<string | null>(null);
+        const [sortDirection, setSortDirection] = useState<'ascending' | 'descending'>();
+
+        const sortedUsers = [...TABLE_DATA].sort((a, b) => {
+            if (!sortField || !sortDirection) {
+                return 0;
+            }
+
+            const aValue = a[sortField as keyof typeof a];
+            const bValue = b[sortField as keyof typeof b];
+
+            if (sortDirection === 'ascending') {
+                return aValue > bValue ? 1 : -1;
+            } else {
+                return aValue < bValue ? 1 : -1;
+            }
+        });
+
+        return (
+            <Table.Root {...args}>
+                <Table.Header>
+                    <Table.Row>
+                        <Table.HeaderCell
+                            sortDirection={sortField === 'name' ? sortDirection : undefined}
+                            onSortChange={(direction) => {
+                                setSortField('name');
+                                setSortDirection(direction);
+                            }}
+                        >
+                            Name
+                        </Table.HeaderCell>
+                        <Table.HeaderCell
+                            sortDirection={sortField === 'invited' ? sortDirection : undefined}
+                            onSortChange={(direction) => {
+                                setSortField('invited');
+                                setSortDirection(direction);
+                            }}
+                        >
+                            Invited by
+                        </Table.HeaderCell>
+                        <Table.HeaderCell
+                            state="loading"
+                            sortDirection={sortField === 'lastSeen' ? sortDirection : undefined}
+                            onSortChange={(direction) => {
+                                setSortField('lastSeen');
+                                setSortDirection(direction);
+                            }}
+                        >
+                            Last seen
+                        </Table.HeaderCell>
+                        {/* Other columns without sorting */}
+                    </Table.Row>
+                </Table.Header>
+                <Table.Body>
+                    {sortedUsers.map((user) => (
+                        <Table.Row key={user.email}>
+                            <Table.RowCell>
+                                <div className="flex items-center gap-2">
+                                    <div>
+                                        <div className="font-medium">{user.name}</div>
+                                        <div className="text-sm text-gray-500">{user.email}</div>
+                                    </div>
+                                </div>
+                            </Table.RowCell>
+                            <Table.RowCell>{user.invited}</Table.RowCell>
+                            <Table.RowCell>{user.lastSeen}</Table.RowCell>
+                        </Table.Row>
+                    ))}
+                </Table.Body>
+            </Table.Root>
+        );
+    },
+};
+
 export const StickyHead: Story = {
     render: ({ ...args }) => (
         <Table.Root {...args} sticky="head">
