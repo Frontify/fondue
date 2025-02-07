@@ -16,7 +16,6 @@ import { useTextTruncation } from '#/hooks/useTextTruncation';
 import { type CommonAriaAttrs } from '#/utilities/types';
 
 import { Box } from '../Box/Box';
-import { Flex } from '../Flex/Flex';
 import { LoadingCircle } from '../LoadingCircle/LoadingCircle';
 
 import styles from './styles/table.module.scss';
