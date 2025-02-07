@@ -14,7 +14,7 @@ export type LoadingCircleProps = {
      * The size of the loading circle
      * @default "medium"
      */
-    size?: 'x-small' | 'small' | 'medium' | 'large';
+    size?: 'xx-small' | 'x-small' | 'small' | 'medium' | 'large';
     'data-test-id'?: string;
 };
 

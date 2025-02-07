@@ -26,6 +26,11 @@
         border-top-color: transparent;
     }
 
+    &[data-size='xx-small'] {
+        width: sizeToken.get(3);
+        height: sizeToken.get(3);
+    }
+
     &[data-size='x-small'] {
         width: sizeToken.get(4);
         height: sizeToken.get(4);

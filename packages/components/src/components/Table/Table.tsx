@@ -206,7 +206,7 @@ export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellP
                         ) : (
                             children
                         )}
-                        <LoadingCircle data-test-id="fondue-loading-circle" size="x-small" />
+                        <LoadingCircle data-test-id="fondue-loading-circle" size="xx-small" />
                     </div>
                 ) : onSortChange ? (
                     <button
@@ -220,7 +220,7 @@ export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellP
                         ) : (
                             children
                         )}
-                        <Box width={4}>
+                        <Box width={3}>
                             {sortDirection === 'ascending' ? (
                                 <IconArrowUp size="12" />
                             ) : sortDirection === 'descending' ? (
