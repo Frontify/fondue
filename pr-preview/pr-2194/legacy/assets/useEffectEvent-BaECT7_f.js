@@ -1,0 +1,1 @@
+import{R as r,r as a}from"./index-v7USjxUg.js";const u=typeof document<"u"?r.useLayoutEffect:()=>{};function o(t){const c=a.useRef(null);return u(()=>{c.current=t},[t]),a.useCallback((...n)=>{const e=c.current;return e==null?void 0:e(...n)},[])}export{u as $,o as a};
