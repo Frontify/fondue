@@ -1,3 +1,7 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@use '../../../utilities/sizeToken.module.scss';
+
 @keyframes spin {
     to {
         transform: rotate(360deg);
@@ -9,8 +13,36 @@
     border-radius: 100%;
     border-width: 2px;
     border-style: solid;
-    border-color: red;
+    border-color: var(--text-color-interactive);
     border-top-color: transparent;
-    height: 4rem;
-    width: 4rem;
+
+    &[data-variant='success'] {
+        border-color: var(--text-color-positive);
+        border-top-color: transparent;
+    }
+
+    &[data-variant='danger'] {
+        border-color: var(--text-color-negative);
+        border-top-color: transparent;
+    }
+
+    &[data-size='x-small'] {
+        width: sizeToken.get(4);
+        height: sizeToken.get(4);
+    }
+
+    &[data-size='small'] {
+        width: sizeToken.get(5);
+        height: sizeToken.get(5);
+    }
+
+    &[data-size='medium'] {
+        width: sizeToken.get(8);
+        height: sizeToken.get(8);
+    }
+
+    &[data-size='large'] {
+        width: sizeToken.get(16);
+        height: sizeToken.get(16);
+    }
 }
