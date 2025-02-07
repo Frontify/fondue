@@ -16,6 +16,7 @@ import { useTextTruncation } from '#/hooks/useTextTruncation';
 import { type CommonAriaAttrs } from '#/utilities/types';
 
 import { Box } from '../Box/Box';
+import { Flex } from '../Flex/Flex';
 import { LoadingCircle } from '../LoadingCircle/LoadingCircle';
 
 import styles from './styles/table.module.scss';
@@ -199,33 +200,37 @@ export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellP
                 data-sortable={!!onSortChange}
                 aria-sort={onSortChange ? sortDirection || 'none' : undefined}
             >
-                {onSortChange ? (
+                {state === 'loading' ? (
                     <div className={styles.cellContent}>
-                        <button
-                            className={styles.sortButton}
-                            aria-label={sortLabel}
-                            data-active={!!sortDirection}
-                            onClick={handleSortChange}
-                        >
-                            {typeof children === 'string' && truncate ? (
-                                <span className={styles.buttonText}>{children}</span>
-                            ) : (
-                                children
-                            )}
-
-                            {state === 'loading' ? (
-                                <Box pl={1}>
-                                    <LoadingCircle size="x-small" />
-                                </Box>
-                            ) : sortDirection === 'ascending' ? (
+                        {typeof children === 'string' && truncate ? (
+                            <span className={styles.buttonText}>{children}</span>
+                        ) : (
+                            children
+                        )}
+                        <LoadingCircle data-test-id="fondue-loading-circle" size="x-small" />
+                    </div>
+                ) : onSortChange ? (
+                    <button
+                        className={styles.cellContent}
+                        aria-label={sortLabel}
+                        data-active={!!sortDirection}
+                        onClick={handleSortChange}
+                    >
+                        {typeof children === 'string' && truncate ? (
+                            <span className={styles.buttonText}>{children}</span>
+                        ) : (
+                            children
+                        )}
+                        <Box width={4}>
+                            {sortDirection === 'ascending' ? (
                                 <IconArrowUp size="12" />
                             ) : sortDirection === 'descending' ? (
                                 <IconArrowDown size="12" />
                             ) : (
                                 <IconArrowBidirectional className={styles.sortIndicator} size="12" />
                             )}
-                        </button>
-                    </div>
+                        </Box>
+                    </button>
                 ) : (
                     children
                 )}

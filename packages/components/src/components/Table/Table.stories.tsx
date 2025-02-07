@@ -357,6 +357,7 @@ export const WithLoadingState: Story = {
                             Name
                         </Table.HeaderCell>
                         <Table.HeaderCell
+                            state="loading"
                             sortDirection={sortField === 'invited' ? sortDirection : undefined}
                             onSortChange={(direction) => {
                                 setSortField('invited');
@@ -366,7 +367,6 @@ export const WithLoadingState: Story = {
                             Invited by
                         </Table.HeaderCell>
                         <Table.HeaderCell
-                            state="loading"
                             sortDirection={sortField === 'lastSeen' ? sortDirection : undefined}
                             onSortChange={(direction) => {
                                 setSortField('lastSeen');
