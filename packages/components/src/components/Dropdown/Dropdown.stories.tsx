@@ -390,13 +390,13 @@ export const WithTooltip: Story = {
     ),
 };
 
-export const SpaciousSpacing: Story = {
+export const SpaciousTriggerOffset: Story = {
     render: ({ ...args }) => (
         <Dropdown.Root {...args}>
             <Dropdown.Trigger>
                 <Button>Trigger</Button>
             </Dropdown.Trigger>
-            <Dropdown.Content spacing="spacious">
+            <Dropdown.Content triggerOffset="spacious">
                 <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
                 <Dropdown.Item onSelect={() => {}}>Item 2</Dropdown.Item>
                 <Dropdown.Item onSelect={() => {}}>Item 3</Dropdown.Item>

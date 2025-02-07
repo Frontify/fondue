@@ -71,7 +71,7 @@ export const DropdownTrigger = (
 };
 DropdownTrigger.displayName = 'Dropdown.Trigger';
 
-type DropdownContentSpacing = 'compact' | 'spacious';
+type DropdownSpacing = 'compact' | 'comfortable' | 'spacious';
 
 export type DropdownContentProps = {
     children?: ReactNode;
@@ -87,26 +87,27 @@ export type DropdownContentProps = {
      */
     side?: 'top' | 'right' | 'bottom' | 'left';
     /**
-     * Defines the spacing between the dropdown and it's trigger.
+     * Defines the spacing between the dropdown and its trigger.
      * @default 'compact'
      */
-    spacing?: DropdownContentSpacing;
+    triggerOffset?: DropdownSpacing;
     /**
      * Prevents the focus from being set on the trigger when the dropdown is closed.
      */
     preventTriggerFocusOnClose?: boolean;
 };
 
-const SPACING_MAP: Record<DropdownContentSpacing, number> = {
+const SPACING_MAP: Record<DropdownSpacing, number> = {
     compact: 8,
-    spacious: 12,
+    comfortable: 12,
+    spacious: 16,
 };
 
 export const DropdownContent = (
     {
         side = 'bottom',
         align = 'start',
-        spacing = 'compact',
+        triggerOffset = 'compact',
         children,
         preventTriggerFocusOnClose,
         'data-test-id': dataTestId = 'fondue-dropdown-content',
@@ -121,7 +122,7 @@ export const DropdownContent = (
                 <RadixDropdown.Content
                     align={align}
                     collisionPadding={8}
-                    sideOffset={SPACING_MAP[spacing]}
+                    sideOffset={SPACING_MAP[triggerOffset]}
                     side={side}
                     className={styles.content}
                     data-test-id={dataTestId}
