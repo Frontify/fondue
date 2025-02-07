@@ -2,4 +2,4 @@
 "@frontify/fondue-components": minor
 ---
 
-git status
+feat(Heading): migrate heading component
