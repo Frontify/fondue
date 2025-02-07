@@ -396,7 +396,7 @@ export const SpaciousSpacing: Story = {
             <Dropdown.Trigger>
                 <Button>Trigger</Button>
             </Dropdown.Trigger>
-            <Dropdown.Content distance="spacious">
+            <Dropdown.Content spacing="spacious">
                 <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
                 <Dropdown.Item onSelect={() => {}}>Item 2</Dropdown.Item>
                 <Dropdown.Item onSelect={() => {}}>Item 3</Dropdown.Item>
