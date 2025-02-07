@@ -50,7 +50,7 @@ test('should render with comfortable trigger distance', async ({ mount, page }) 
             <Dropdown.Trigger>
                 <Button data-test-id={DROPDOWN_TRIGGER_TEST_ID}>Trigger</Button>
             </Dropdown.Trigger>
-            <Dropdown.Content data-test-id={DROPDOWN_CONTENT_TEST_ID} triggerOffset="spacious">
+            <Dropdown.Content data-test-id={DROPDOWN_CONTENT_TEST_ID} triggerOffset="comfortable">
                 <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
                 <Dropdown.Item onSelect={() => {}}>Item 2</Dropdown.Item>
                 <Dropdown.Item onSelect={() => {}}>Item 3</Dropdown.Item>
