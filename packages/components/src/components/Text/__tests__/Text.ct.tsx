@@ -7,7 +7,7 @@ import { Text } from '../Text';
 const TEXT_TEST_ID = 'test-text';
 const SAMPLE_TEXT = 'The fox jumps over the lazy dog';
 
-test.only('should render without error', async ({ mount }) => {
+test('should render without error', async ({ mount }) => {
     const component = await mount(<Text data-test-id={TEXT_TEST_ID}>{SAMPLE_TEXT}</Text>);
     await expect(component).toBeVisible();
     await expect(component).toContainText(SAMPLE_TEXT);
