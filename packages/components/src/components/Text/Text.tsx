@@ -17,11 +17,11 @@ type TagType = 'a' | 'abbr' | 'address' | 'em' | 'label' | 'li' | 'span' | 'stro
 export type TextProps<TTag extends TagType = 'span'> = CommonAriaProps &
     TagProps<TTag> & {
         /**
-         * `id` represents the id of the element
+         * `id` of the element
          */
         id?: string;
         /**
-         * `size` is the size of the text
+         * `size` of the text
          *
          * Values are 'x-small', 'small', 'medium'  or 'large'
          *
@@ -29,7 +29,7 @@ export type TextProps<TTag extends TagType = 'span'> = CommonAriaProps &
          */
         size?: TextSize;
         /**
-         * `weight` is the weight of the font
+         * `weight` of the font
          *
          * Values are 'default', 'strong' or 'x-strong'
          *
@@ -37,7 +37,7 @@ export type TextProps<TTag extends TagType = 'span'> = CommonAriaProps &
          */
         weight?: TextWeight;
         /**
-         * `as` is the html element used to render
+         * the html element used to render it `as`
          *
          * Values are 'a', 'abbr', 'address', 'em', 'label', 'li', 'span', 'strong', 'time' or 'p'
          *
@@ -45,7 +45,7 @@ export type TextProps<TTag extends TagType = 'span'> = CommonAriaProps &
          */
         as?: TTag;
         /**
-         * `color` is the texts color
+         * `color` of the text
          *
          * Values are 'default', 'weak', 'x-weak', 'disabled', 'negative', 'positive', 'warning' or 'interactive'
          *
