@@ -22,6 +22,31 @@ const meta: Meta<typeof Text> = {
             control: 'select',
             options: [undefined, 'default', 'strong', 'x-strong'],
         },
+        size: {
+            type: 'string',
+            control: 'select',
+            options: [undefined, 'x-small', 'small', 'medium', 'large'],
+        },
+        color: {
+            type: 'string',
+            control: 'select',
+            options: [
+                undefined,
+                'default',
+                'weak',
+                'x-weak',
+                'disabled',
+                'negative',
+                'positive',
+                'warning',
+                'interactive',
+            ],
+        },
+        boxColor: {
+            type: 'string',
+            control: 'select',
+            options: [undefined, 'neutral', 'selected', 'disabled', 'positive', 'negative', 'warning'],
+        },
     },
 };
 export default meta;
