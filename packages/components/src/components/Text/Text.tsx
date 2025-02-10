@@ -16,12 +16,50 @@ type TagType = 'a' | 'abbr' | 'address' | 'em' | 'label' | 'li' | 'span' | 'stro
 
 export type TextProps<TTag extends TagType = 'span'> = CommonAriaProps &
     TagProps<TTag> & {
+        /**
+         * `id` represents the id of the element
+         */
         id?: string;
+        /**
+         * `size` is the size of the text
+         *
+         * Values are 'x-small', 'small', 'medium'  or 'large'
+         *
+         * @default 'medium'
+         */
         size?: TextSize;
+        /**
+         * `weight` is the weight of the font
+         *
+         * Values are 'default', 'strong' or 'x-strong'
+         *
+         * @default 'default'
+         */
         weight?: TextWeight;
+        /**
+         * `as` is the html element used to render
+         *
+         * Values are 'a', 'abbr', 'address', 'em', 'label', 'li', 'span', 'strong', 'time' or 'p'
+         *
+         * @default 'span'
+         */
         as?: TTag;
+        /**
+         * `color` is the texts color
+         *
+         * Values are 'default', 'weak', 'x-weak', 'disabled', 'negative', 'positive', 'warning' or 'interactive'
+         *
+         * @default 'default'
+         */
         color?: TextColor;
-        /** @description optional color prop that uses the inverse box color when accessibility contrast is needed */
+        /**
+         * `boxColor` is the texts color when used within a box
+         *
+         * Values are 'neutral', 'selected', 'disabled', 'positive', 'negative' or 'warning'
+         * `boxColor` overrides the `color` prop
+         *
+         * @description optional color prop that uses the inverse box color when accessibility contrast is needed
+         **/
         boxColor?: BoxColor;
         className?: string;
         children?: ReactNode;
