@@ -17,46 +17,35 @@ type TagType = 'a' | 'abbr' | 'address' | 'em' | 'label' | 'li' | 'span' | 'stro
 export type TextProps<TTag extends TagType = 'span'> = CommonAriaProps &
     TagProps<TTag> & {
         /**
-         * `id` of the element
+         * id of the element
          */
         id?: string;
         /**
-         * `size` of the text
-         *
-         * Values are 'x-small', 'small', 'medium'  or 'large'
+         * size of the text
          *
          * @default 'medium'
          */
         size?: TextSize;
         /**
-         * `weight` of the font
-         *
-         * Values are 'default', 'strong' or 'x-strong'
+         * weight of the font
          *
          * @default 'default'
          */
         weight?: TextWeight;
         /**
-         * the html element used to render it `as`
-         *
-         * Values are 'a', 'abbr', 'address', 'em', 'label', 'li', 'span', 'strong', 'time' or 'p'
+         * the html element used to render
          *
          * @default 'span'
          */
         as?: TTag;
         /**
-         * `color` of the text
-         *
-         * Values are 'default', 'weak', 'x-weak', 'disabled', 'negative', 'positive', 'warning' or 'interactive'
+         * color of the text
          *
          * @default 'default'
          */
         color?: TextColor;
         /**
-         * `boxColor` is the texts color when used within a box
-         *
-         * Values are 'neutral', 'selected', 'disabled', 'positive', 'negative' or 'warning'
-         * `boxColor` overrides the `color` prop
+         * the texts color when used within a box
          *
          * @description optional color prop that uses the inverse box color when accessibility contrast is needed
          **/
