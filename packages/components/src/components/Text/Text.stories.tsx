@@ -11,6 +11,18 @@ const meta: Meta<typeof Text> = {
     tags: ['autodocs'],
     parameters: {},
     args: {},
+    argTypes: {
+        as: {
+            type: 'string',
+            control: 'select',
+            options: [undefined, 'a', 'abbr', 'address', 'em', 'label', 'li', 'span', 'strong', 'time', 'p'],
+        },
+        weight: {
+            type: 'string',
+            control: 'select',
+            options: [undefined, 'default', 'strong', 'x-strong'],
+        },
+    },
 };
 export default meta;
 

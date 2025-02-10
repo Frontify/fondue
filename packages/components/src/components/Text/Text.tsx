@@ -40,12 +40,6 @@ type TextElementMap = {
 
 type TextElementType<TTag extends TagType> = TextElementMap[TTag];
 
-const weightMap: Record<TextWeight, string> = {
-    default: 'tw-font-regular',
-    strong: 'tw-font-medium',
-    'x-strong': 'tw-font-bold',
-};
-
 const sizeMap: Record<TextSize, string> = {
     'x-small': 'tw-text-body-x-small',
     small: 'tw-text-body-small',
@@ -75,15 +69,26 @@ const boxColorMap: Record<BoxColor, string> = {
 
 export const Text = forwardRef(
     (
-        { children, as: Tag = 'span', weight = 'default', size = 'medium', color = 'default', boxColor, ...props },
+        {
+            children,
+            as: Tag = 'span',
+            weight = 'default',
+            size = 'medium',
+            color = 'default',
+            boxColor,
+            className,
+            ...props
+        },
         ref,
     ) => (
         <Tag
             data-test-id="text"
             className={cn([
                 styles.root,
-                'tw-font-body tw-max-w-full',
-                weightMap[weight],
+                styles[`size-${size}`],
+                styles[`weight-${weight}`],
+                styles[`color-${color}`],
+                className,
                 sizeMap[size],
                 boxColor ? boxColorMap[boxColor] : colorMap[color],
             ])}

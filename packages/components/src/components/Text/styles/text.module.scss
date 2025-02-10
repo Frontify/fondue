@@ -1,1 +1,8 @@
-.root {}
+.root {
+    font-family: var(--body-family);
+    max-width: 100%;
+}
+
+.weight-default { font-weight: var(--body-weight-number); }
+.weight-strong { font-weight: var(--body-weight-strong-number); }
+.weight-x-strong { font-weight: var(--body-weight-x-strong-number); }
