@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type HTMLAttributes, type DetailedHTMLProps, type ReactNode, forwardRef, type ForwardedRef } from 'react';
+import { type ReactNode, forwardRef, type ForwardedRef, type HTMLAttributeAnchorTarget } from 'react';
 
 import { type CommonAriaProps } from '#/helpers/aria';
 import { cn } from '#/utilities/styleUtilities';
@@ -15,15 +15,31 @@ type BoxColor = 'neutral' | 'selected' | 'disabled' | 'positive' | 'negative' | 
 type TagType = 'a' | 'abbr' | 'address' | 'em' | 'label' | 'li' | 'span' | 'strong' | 'time' | 'p';
 
 export type TextProps<TTag extends TagType = 'span'> = CommonAriaProps &
-    DetailedHTMLProps<HTMLAttributes<TextElementType<TTag>>, TextElementType<TTag>> & {
+    TagProps<TTag> & {
+        id?: string;
         size?: TextSize;
         weight?: TextWeight;
         as?: TTag;
         color?: TextColor;
         /** @description optional color prop that uses the inverse box color when accessibility contrast is needed */
         boxColor?: BoxColor;
+        className?: string;
         children?: ReactNode;
     };
+
+type TagPropMap = {
+    a: { href?: string; target: HTMLAttributeAnchorTarget; rel?: string; title?: string };
+    abbr: { title?: string };
+    address: object;
+    em: object;
+    label: { for?: string };
+    li: { value?: string };
+    p: object;
+    span: object;
+    strong: object;
+    time: { dateTime?: string };
+};
+type TagProps<TTag extends TagType> = TagPropMap[TTag];
 
 type TextElementMap = {
     a: HTMLAnchorElement;
@@ -37,7 +53,6 @@ type TextElementMap = {
     strong: HTMLElement;
     time: HTMLTimeElement;
 };
-
 type TextElementType<TTag extends TagType> = TextElementMap[TTag];
 
 export const Text = forwardRef(
