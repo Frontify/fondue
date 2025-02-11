@@ -9,8 +9,11 @@ const meta: Meta<typeof Text> = {
     title: 'Typography/Text',
     component: Text,
     tags: ['autodocs'],
-    parameters: {},
-    args: {},
+    parameters: {
+        status: {
+            type: 'beta',
+        },
+    },
     argTypes: {
         as: {
             type: 'string',
