@@ -34,6 +34,9 @@ This document describes the changes that you need to make to your code to migrat
         -   [Loading Bar](#loading-bar)
             -   [Old](#loading-bar-old)
             -   [New](#loading-bar-new)
+        -   [Loading Circle](#loading-circle)
+            -   [Old](#loading-circle-old)
+            -   [New](#loading-circle-new)
         -   [Scroll Wrapper](#scroll-wrapper)
             -   [Old](#scroll-wrapper-old)
             -   [New](#scroll-wrapper-new)
@@ -648,6 +651,25 @@ Changes:
 <LoadingBar value={50} style="success" rounded />
 ```
 
+### Loading Circle
+
+Changes:
+
+-   The property `style` has been renamed to `variant`.
+-   App props now use a union type instead of an enum.
+
+#### Old
+
+```tsx
+<LoadingCircle style={LoadingCircleStyle.Success} size={LoadingCircleSize.Large} />
+```
+
+#### New
+
+```tsx
+<LoadingCircle variant="success" size="large" />
+```
+
 ### Scroll Area
 
 Changes:
@@ -1029,27 +1051,27 @@ useEffect(() => {
     }
 
     const filtered = rows.filter((row) => {
-        const matchesSearch = filter === '' || 
-            Object.values(row.cells).some((cell) => 
+        const matchesSearch = filter === '' ||
+            Object.values(row.cells).some((cell) =>
                 String(cell.sortId).toLowerCase().includes(filter.toLowerCase())
             );
-        
-        const matchesRole = roleFilter === 'all' || 
+
+        const matchesRole = roleFilter === 'all' ||
             row.cells.role.sortId === roleFilter;
 
         return matchesSearch && matchesRole;
     });
-    
+
     setSortedRows(filtered);
 }, [filter, roleFilter]);
 
 const columns: Column[] = [
     { name: 'User', key: 'user' },
-    { 
-        name: 'Active Sessions', 
-        key: 'activeSessions', 
+    {
+        name: 'Active Sessions',
+        key: 'activeSessions',
         sortable: true,
-        align: 'right' 
+        align: 'right'
     },
     { name: 'Last Active', key: 'lastActive' },
 ];

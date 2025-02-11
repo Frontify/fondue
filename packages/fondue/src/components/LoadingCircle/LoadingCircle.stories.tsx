@@ -4,9 +4,17 @@ import { type Meta, type StoryFn } from '@storybook/react';
 
 import { LoadingCircle, type LoadingCircleProps, LoadingCircleSize, LoadingCircleStyle } from './LoadingCircle';
 
+/**
+ ### This component is deprecated, please use the [new LoadingCircle component](/docs/current_components-loading-circle--documentation) instead.
+ */
 export default {
     title: 'Components/LoadingCircle',
     component: LoadingCircle,
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
+    },
     tags: ['autodocs'],
     argTypes: {
         style: {

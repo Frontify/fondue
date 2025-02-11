@@ -105,6 +105,21 @@ test('should handle sticky header and ARIA attributes', async ({ mount }) => {
     await expect(component.locator('thead')).toHaveAttribute('aria-busy', 'true');
 });
 
+test('should handle header with loading state', async ({ mount }) => {
+    const component = await mount(
+        <Table.Root sticky="head" aria-label="Table">
+            <Table.Header>
+                <Table.Row>
+                    <Table.HeaderCell state="loading">Name</Table.HeaderCell>
+                </Table.Row>
+            </Table.Header>
+        </Table.Root>,
+    );
+
+    await expect(component.locator('table')).toHaveAttribute('data-sticky', 'head');
+    await expect(component.locator('th').getByTestId('fondue-loading-circle')).toBeVisible();
+});
+
 test('should handle sticky first column', async ({ mount }) => {
     const component = await mount(
         <Table.Root sticky="col" aria-label="Table">
